@@ -1,9 +1,7 @@
 import { Component,OnInit,OnChanges, ViewChild, ElementRef, QueryList, Renderer2, 
-  ChangeDetectorRef, SimpleChanges, HostListener, AfterViewInit, 
-  AfterViewChecked, OnDestroy } from '@angular/core';
+  ChangeDetectorRef, SimpleChanges, HostListener, AfterViewInit, AfterViewChecked } from '@angular/core';
 import {FormGroup, FormControl, Validators} from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
 
 import {FieldConfig} from '../../models/field-config.interface';
 import {Field} from '../../models/field.interface';
@@ -36,7 +34,7 @@ interface CronDate {
   styleUrls:['./form-scheduler.component.css', '../dynamic-field/dynamic-field.css'] 
 })
 export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterViewInit, 
-  AfterViewChecked, OnDestroy{
+  AfterViewChecked {
 
   // Basic form-select props
   public config:FieldConfig;
@@ -47,7 +45,6 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   public helptext = globalHelptext;
   public timezone: string;
   public offset: string;
-  private dateFormatSubscription: Subscription;
 
   @ViewChild('calendar', { static: false, read:ElementRef}) calendar: ElementRef;
   @ViewChild('calendar', { static: false}) calendarComp:MatMonthView<any>;
@@ -312,12 +309,6 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
     // 'E' adds the day abbreviation
     this.ngDateFormat = `E ${this.localeService.getAngularFormat()}`;
-
-    this.localeService.getPrefs();
-
-    this.dateFormatSubscription = this.localeService.dateTimeFormatChange$.subscribe(() => {
-      this.ngDateFormat = `E ${this.localeService.getAngularFormat()}`;
-    })
   }
 
   ngAfterViewInit(){
@@ -741,7 +732,4 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     this._daysOfWeek = arr[4];
   }
 
-  ngOnDestroy() {
-    this.dateFormatSubscription.unsubscribe();
-  }
 }
