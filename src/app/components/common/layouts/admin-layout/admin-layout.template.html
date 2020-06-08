@@ -55,6 +55,7 @@
     <div class="footer-console-bar" *ngIf="isShowFooterConsole" ix-auto ix-auto-type="shell" ix-auto-identifier="footer-console">
       <pre #footerBarScroll class="message" (click)="onShowConsolePanel()">{{consoleMsg}}</pre>
     </div>
+    <div class="footer-console-end" *ngIf="isShowFooterConsole"></div>
   </mat-sidenav-content>
   <!-- Notificaation bar -->
   <mat-sidenav #notificationPanel mode="over" class="" align="end" (open)="onOpenNotify($event)" (close)="onCloseNotify($event)" class="notification-sidenav" position="end">

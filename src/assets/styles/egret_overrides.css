@@ -68,8 +68,7 @@ app-breadcrumb{
 .footer-console-bar {
   position: absolute;
   bottom: 0px;
-  left: -8px;
-  width: 100%;
+  width: calc(100% - 8px);
   height: 45px;
   background-color: #000;
   z-index: 10;
@@ -82,6 +81,12 @@ app-breadcrumb{
   -webkit-animation-delay: 0;
   -webkit-animation-play-state: running;
   -webkit-animation-fill-mode: forwards; */
+}
+
+@-moz-document url-prefix() {
+  .footer-console-bar {
+    width: calc(100% - 16px);
+  }
 }
 
 .footer-console-bar .message {
