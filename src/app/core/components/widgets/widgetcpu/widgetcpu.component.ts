@@ -72,6 +72,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   public screenType: string = 'Desktop'; // Desktop || Mobile
 
   // Mobile Stats
+  public tempAvailable: string = 'false';
   public tempMax: number;
   public tempMaxThreads: number[] = [];
   public tempMin: number;
@@ -132,6 +133,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   }
 
   parseCpuData(data){
+    this.tempAvailable = data.temperature && Object.keys(data.temperature).length > 0 ? 'true' : 'false';
     let usageColumn: any[] = ["Usage"];
     let temperatureColumn: any[] = ["Temperature"];
 
