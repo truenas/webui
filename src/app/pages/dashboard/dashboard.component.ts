@@ -42,8 +42,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private statsEvents: any;
   public tcStats: any;
 
-  public isFooterConsoleOpen: boolean;
-
   // For widgetsysinfo
   public isHA: boolean; // = false;
   public product_type = window.localStorage['product_type'];
@@ -184,12 +182,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit(){
 
     this.init();
-
-    this.ws.call('system.advanced.config').subscribe((res)=> {
-      if (res) {
-        this.isFooterConsoleOpen = res.consolemsg;
-      }
-    });
 
     if(this.product_type == 'ENTERPRISE'){
       this.ws.call('failover.licensed').subscribe((res)=> {

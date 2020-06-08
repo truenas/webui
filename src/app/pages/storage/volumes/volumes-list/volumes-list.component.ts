@@ -1563,7 +1563,6 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   expanded = false;
   public paintMe = true;
-  public isFooterConsoleOpen: boolean;
   public systemdatasetPool: any;
   public has_encrypted_root = {};
 
@@ -1661,10 +1660,5 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.dialogService.errorReport(T("Error getting pool data."), res.message, res.stack);
     });
 
-    this.ws.call('system.advanced.config').subscribe((res)=> {
-      if (res) {
-        this.isFooterConsoleOpen = res.consolemsg;
-      }
-    });
   }
 }

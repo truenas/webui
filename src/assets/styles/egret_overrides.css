@@ -41,18 +41,19 @@ app-breadcrumb{
 }
 
 .rightside-content-hold {
-  padding: 14px .03rem 35px .03rem !important;
+  padding: 14px .03rem 15px .03rem !important;
   overflow-x: hidden;
   overflow-y: scroll;
   display: block;
   position: absolute;
   top: 90px;
-  height: 92%;
+  height: calc(100% - 90px);
   width: 100%;
 }
 
 .rightside-content-hold.has-footer {
-  padding: 104px .03rem 10%;
+  padding: 104px .03rem 5%;
+  height: calc(100% - 135px);
 }
 
 @-webkit-keyframes silde_to_top {
@@ -89,7 +90,6 @@ app-breadcrumb{
   color: #00FF00;
   padding: 3px 20px 0px;
   background-color: #000;
-  border: 1px solid #222;
   height: 39px;
   white-space: pre-wrap;
   max-height: 42px;
