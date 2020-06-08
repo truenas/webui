@@ -13,7 +13,6 @@
           <div fxFlex="40">{{ "IPv6 Address" | translate }}</div>
           <mat-divider></mat-divider>
         </mat-list-item>
-          <!--<mat-divider></mat-divider>-->
         <mat-list-item *ngFor="let ip of ips | keyvalue; let i=index" class="dynamic-height">
           <div fxFlex="20">{{ip.key}}</div>
           <div fxFlex="40" *ngIf="ip.value.IPV4">
