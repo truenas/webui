@@ -1329,9 +1329,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       left: 240px;
       width: unset;
     }
-    .temp {
-      height: 0 !important;
-    }
 
     @media screen and (max-width: 599px) {
       .mat-card {
@@ -1368,9 +1365,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     #enabled {
       position: relative;
       top: 5px;
-    }
-    .temp {
-      height: 0 !important;
     }
     #TN_proactive_instructions {
       font-size: 120%;

@@ -44,7 +44,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
   public currentTrainDescription: string;
   public trainDescriptionOnPageLoad: string;
   public fullTrainList: any[];
-  public isFooterConsoleOpen: boolean;
   public isUpdateRunning = false;
   public updateMethod: string = 'update.update';
   public is_ha = false;
@@ -161,12 +160,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
         // To remember train descrip if user switches away and then switches back
         this.trainDescriptionOnPageLoad = this.currentTrainDescription;
       });
-    });
-
-    this.ws.call('system.advanced.config').subscribe((res)=> {
-      if (res) {
-        this.isFooterConsoleOpen = res.consolemsg;
-      }
     });
 
     if (!this.isfreenas) {

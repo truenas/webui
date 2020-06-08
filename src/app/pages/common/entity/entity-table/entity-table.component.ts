@@ -341,7 +341,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   setTableHeight() {
-    let rowNum = 6, n, addRows = 4;
+    let rowNum = 5, n, addRows = 4;
     // if (this.title === 'Boot Environments') {
     //   n = 6;
     // } else

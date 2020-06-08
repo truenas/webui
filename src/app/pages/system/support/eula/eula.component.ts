@@ -9,7 +9,6 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class EulaComponent implements OnInit {
   eula: any;
-  isFooterConsoleOpen: boolean;
 
   constructor(private ws: WebSocketService, private router: Router) { }
 
@@ -22,12 +21,6 @@ export class EulaComponent implements OnInit {
         this.eula = res;
       });
     };
-
-    this.ws.call('system.advanced.config').subscribe((res)=> {
-      if (res) {
-        this.isFooterConsoleOpen = res.consolemsg;
-      }
-    });
   }
 
   goToSupport() {
