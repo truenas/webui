@@ -57,13 +57,11 @@
       </mat-expansion-panel>
     </mat-accordion>
   </div>
-  <div class="footer-console-spacer" *ngIf="isFooterConsoleOpen"></div>
   <div *ngIf="zfsPoolRows.length < 1 && showDefaults">
     <mat-card>
       <mat-card-content name="no_pools">
         {{"No pools" | translate}}
       </mat-card-content>
     </mat-card>
-    <div class="footer-console-spacer" *ngIf="isFooterConsoleOpen"></div>
   </div>
 </div>

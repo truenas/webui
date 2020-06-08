@@ -1201,16 +1201,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     top: -18px;
   }
 
-  .footer-console-spacer {
-    height: 50px;
-  }
-
-  @-moz-document url-prefix() {
-    .footer-console-spacer {
-      height: 75px;
-    }
-  }
-
   // Support Section ////////////////////////
   app-support {
     .mat-card {
@@ -1235,10 +1225,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
     .lowerme {
       margin-top: 60px !important;
-    }
-
-    .footer-console-spacer {
-      height: 35px !important;
     }
 
     .support-title, #FN_col1, #FN_col2, #TN_col1, #TN_proactive_section_title {
@@ -1337,17 +1323,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       position: relative;
       left: 35px;
       // max-width: 75%;
-    }
-  }
-
-  @media (max-height: 700px) {
-    .footer-console-spacer {
-      height: 75px;
-    }
-    @-moz-document url-prefix() {
-      .footer-console-spacer {
-        height: 100px;
-      }
     }
   }
 
