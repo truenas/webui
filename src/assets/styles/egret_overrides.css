@@ -53,6 +53,7 @@ app-breadcrumb{
 
 .rightside-content-hold.has-footer {
   padding: 104px .03rem 10%;
+  height: 90%;
 }
 
 @-webkit-keyframes silde_to_top {
@@ -83,6 +84,16 @@ app-breadcrumb{
   -webkit-animation-fill-mode: forwards; */
 }
 
+.footer-console-end {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  width: 100%;
+  height: 45px;
+  background-color: #000;
+  z-index: -1;
+}
+
 @-moz-document url-prefix() {
   .footer-console-bar {
     width: calc(100% - 16px);
@@ -95,7 +106,6 @@ app-breadcrumb{
   color: #00FF00;
   padding: 3px 20px 0px;
   background-color: #000;
-  border: 1px solid #222;
   height: 39px;
   white-space: pre-wrap;
   max-height: 42px;
