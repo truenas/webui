@@ -14,8 +14,12 @@
 }
 
 .dynamic-height:nth-child(odd) {
+  background-color: rgba(0,0,0,0.1);;
 }
 
 .dynamic-height:nth-child(even) {
-  background-color: rgba(0,0,0,0.1);;
+}
+
+.pseudo-table-header {
+  padding-left: 8px;
 }
