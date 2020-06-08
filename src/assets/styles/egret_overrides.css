@@ -68,6 +68,7 @@ app-breadcrumb{
 .footer-console-bar {
   position: absolute;
   bottom: 0px;
+  left: -8px;
   width: 100%;
   height: 45px;
   background-color: #000;

@@ -1201,6 +1201,16 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     top: -18px;
   }
 
+  .footer-console-spacer {
+    height: 50px;
+  }
+
+  @-moz-document url-prefix() {
+    .footer-console-spacer {
+      height: 75px;
+    }
+  }
+
   // Support Section ////////////////////////
   app-support {
     .mat-card {
@@ -1225,6 +1235,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
     .lowerme {
       margin-top: 60px !important;
+    }
+
+    .footer-console-spacer {
+      height: 35px !important;
     }
 
     .support-title, #FN_col1, #FN_col2, #TN_col1, #TN_proactive_section_title {
@@ -1326,6 +1340,17 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
   }
 
+  @media (max-height: 700px) {
+    .footer-console-spacer {
+      height: 75px;
+    }
+    @-moz-document url-prefix() {
+      .footer-console-spacer {
+        height: 100px;
+      }
+    }
+  }
+
   app-production-status {
     .mat-card {
         top: 25px;
@@ -1340,7 +1365,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       left: 240px;
       width: unset;
     }
-    .temp {
+    .footer-console-spacer {
       height: 0 !important;
     }
 
@@ -1380,7 +1405,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       position: relative;
       top: 5px;
     }
-    .temp {
+    .footer-console-spacer {
       height: 0 !important;
     }
     #TN_proactive_instructions {
