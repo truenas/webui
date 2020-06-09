@@ -75,11 +75,36 @@ export class ServiceAFPComponent {
   ];
   private guest_users: any;
   private afp_srv_bindip: any;
+  private validBindIps: any;
+
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected userService: UserService, protected iscsiService: IscsiService,) {}
 
+  resourceTransformIncomingRestData(data) {
+    // If validIps is slow to load, skip check on load (It's still done on save)
+    if(this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
+      return this.compareBindIps(data);
+    }
+    return data;
+  }
+
+  compareBindIps(data) {
+    // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
+    data.afp_srv_bindip = data.afp_srv_bindip ? data.afp_srv_bindip : [];
+    if(this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
+      data.afp_srv_bindip.forEach(ip => {
+        if (!Object.values(this.validBindIps).includes(ip)) {
+          data.afp_srv_bindip.splice(data.afp_srv_bindip[ip], 1)
+        }
+      })
+    } else {
+      data.afp_srv_bindip = [];
+    }
+    return data;
+  }
+  
   afterInit(entityEdit: any) {
     let self = this;
     this.userService.listUsers().subscribe((res) => {
@@ -90,13 +115,17 @@ export class ServiceAFPComponent {
           );
       }
     });
-
+    
     this.ws.call('afp.bindip_choices').subscribe((res) => {
-      this.afp_srv_bindip =
-        _.find(this.fieldConfig, { 'name': 'afp_srv_bindip' });
-        Object.keys(res).forEach(key => {
-          this.afp_srv_bindip.options.push({ label: key, value: res[key] });
-        })
+      this.validBindIps = res;
+      this.afp_srv_bindip = _.find(this.fieldConfig, { 'name': 'afp_srv_bindip' });
+      Object.keys(res).forEach(key => {
+        this.afp_srv_bindip.options.push({ label: key, value: res[key] });
+      })
     });
+  }
+
+  beforeSubmit(value) {
+    value = this.compareBindIps(value);
   }
 }

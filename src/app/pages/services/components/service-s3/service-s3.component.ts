@@ -23,7 +23,7 @@ export class ServiceS3Component implements OnDestroy {
   private ip_address: any;
   private initial_path: any;
   private warned = false;
-
+  private validBindIps = ['0.0.0.0'];
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -134,6 +134,9 @@ export class ServiceS3Component implements OnDestroy {
       }
     });
     this.systemGeneralService.getIPChoices().subscribe(res=>{
+      res.forEach(ip => {
+        this.validBindIps.push(ip[0])
+      })
       this.ip_address = _.find(this.fieldConfig,{name:'bindip'});
       if (res.length > 0) {
         res.forEach(element => {
@@ -167,12 +170,33 @@ export class ServiceS3Component implements OnDestroy {
       this.initial_path = data.storage_path;
     }
     delete data['secret_key'];
+
+    // If length is one, we can't be sure the list is complete, so skip check on load 
+    // The check still takes place on save
+    if (this.validBindIps.length > 1) {
+      return this.compareBindIps(data);
+    }
     return data;
   }
 
-  submitFunction(this: any, entityForm: any,){
+  compareBindIps(data) {
+    // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
+    data.bindip = data.bindip ? data.bindip : '';
+    if(this.validBindIps) {
+      if (!this.validBindIps.includes(data.bindip)) {
+        data.bindip = '';
+      } else {
+      data.bindip = '';
+      }
+      return data;
+    }
+  }
 
+  submitFunction(this: any, entityForm: any){
     return this.ws.call('s3.update', [entityForm]);
+  }
 
+  beforeSubmit(value) {
+    value = this.compareBindIps(value);
   }
 }
