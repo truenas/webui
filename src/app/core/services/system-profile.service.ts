@@ -147,7 +147,13 @@ export class SystemProfileService extends BaseService {
 
   detectFeatures(_profile:any){
     // ENCLOSURE SUPPORT
-    let profile = Object.assign({}, _profile);
+    let profile = Object.assign({}, _profile);  
+    
+    if(!profile.system_product){
+      // Stick with defaults if value is null
+      return this.features;
+    }
+
     if(profile.system_product.includes('FREENAS-MINI-3.0') || profile.system_product.includes('TRUENAS-')){
       this.features.enclosure = true;
     } 
