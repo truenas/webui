@@ -148,14 +148,11 @@ export class ServiceNFSComponent {
     });
   }  
   
-  beforeSubmit(value) {
-    value = this.compareBindIps(value);
-  }
-
   beforeSubmit(data) {
     if (!data.nfs_srv_16) {
       data.nfs_srv_16 = false;
     }
+    data = this.compareBindIps(data);
   }
 
 }
