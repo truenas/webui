@@ -1097,7 +1097,6 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   expanded = false;
   public paintMe = true;
-  public isFooterConsoleOpen: boolean;
   public systemdatasetPool: any;
 
   constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
@@ -1164,12 +1163,6 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.showSpinner = false;
 
       this.dialogService.errorReport(T("Error getting pool data."), res.message, res.stack);
-    });
-
-    this.ws.call('system.advanced.config').subscribe((res)=> {
-      if (res) {
-        this.isFooterConsoleOpen = res.consolemsg;
-      }
     });
 
     this.ws.call('systemdataset.config').subscribe((res) => {

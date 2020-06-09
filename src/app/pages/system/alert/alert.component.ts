@@ -50,7 +50,6 @@ export class AlertConfigComponent implements OnInit {
   public formGroup: any;
   public settingFormGroup: any;
   public isReady = false;
-  public isFooterConsoleOpen: boolean;
   protected defaults = [];
 
   constructor(
@@ -69,12 +68,6 @@ export class AlertConfigComponent implements OnInit {
           label = res[i] + ' (Default)';
         }
         this.settingOptions.push({ label: label, value: res[i] });
-      }
-    });
-
-    this.ws.call('system.advanced.config').subscribe((res)=> {
-      if (res) {
-        this.isFooterConsoleOpen = res.consolemsg;
       }
     });
   

@@ -69,7 +69,6 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public dirty = false;
   protected existing_pools = [];
   public poolError = null;
-  public isFooterConsoleOpen: boolean;
   public loaderOpen = false;
 
   public submitTitle = T("Create");
@@ -389,11 +388,6 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     }, (err) => {
       this.loader.close();
       new EntityUtils().handleWSError(this, err, this.dialog)
-    });
-    this.ws.call('system.advanced.config').subscribe((res)=> {
-      if (res) {
-        this.isFooterConsoleOpen = res.consolemsg;
-      }
     });
 
   }
