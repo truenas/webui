@@ -46,8 +46,8 @@ export class CertificateListComponent {
 
   resourceTransformIncomingRestData(data) {
     data.forEach((i) => {
-      i.from = this.localeService.formatDateTime(Date.parse(i.from));
-      i.until = this.localeService.formatDateTime(Date.parse(i.until));
+      i.from ? i.from = this.localeService.formatDateTime(Date.parse(i.from)) : i.from = 'N/A';
+      i.until ? i.until = this.localeService.formatDateTime(Date.parse(i.until)) : i.until = 'N/A';
     })
     return data;
   }
