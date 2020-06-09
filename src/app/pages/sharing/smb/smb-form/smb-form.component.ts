@@ -58,6 +58,13 @@ export class SMBFormComponent {
     },
     {
       type: 'checkbox',
+      name: 'cifs_enabled',
+      value: true,
+      placeholder: helptext_sharing_smb.placeholder_enabled,
+      tooltip: helptext_sharing_smb.tooltip_enabled,
+    },
+    {
+      type: 'checkbox',
       name: 'cifs_timemachine',
       placeholder: helptext_sharing_smb.placeholder_timemachine,
       tooltip: helptext_sharing_smb.tooltip_timemachine,
