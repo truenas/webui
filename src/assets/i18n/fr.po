@@ -7565,10 +7565,10 @@ msgstr ""
 "utilisé pour exécuter la commande."
 
 msgid "Highest Usage"
-msgstr "Utilisation la plus élevée"
+msgstr "Utilisation max"
 
 msgid "Highest Usage:"
-msgstr "Utilisation la plus élevée:"
+msgstr "Utilisation max:"
 
 msgid ""
 "Highest port number of the  active side listen address that is open to "
@@ -8804,7 +8804,7 @@ msgid "Load colors from existing theme"
 msgstr "Charger les couleurs d'un thème existant"
 
 msgid "Loading dashboard data"
-msgstr ""
+msgstr "Chargement des données du tableau de bord"
 
 msgid "Local"
 msgstr "Charger la tâche de réplication précédente"
@@ -9859,7 +9859,7 @@ msgid "None"
 msgstr "Aucun"
 
 msgid "None requested"
-msgstr ""
+msgstr "Aucune demande"
 
 msgid "Normal"
 msgstr "Normal"
@@ -11189,7 +11189,7 @@ msgid "Recursive"
 msgstr "Récursif"
 
 msgid "Red"
-msgstr ""
+msgstr "Rouge"
 
 msgid ""
 "Redirect <i>HTTP</i> connections to <i>HTTPS</i>. A  <i>GUI SSL "
@@ -14608,7 +14608,7 @@ msgid "TLS Common Name Required"
 msgstr "TLS Nom commun requis"
 
 msgid "TLS Crypt Auth"
-msgstr ""
+msgstr "TLS Crypt Auth"
 
 msgid "TLS Crypt Auth Enabled"
 msgstr "TLS Crypt Auth Activé"
@@ -15604,12 +15604,13 @@ msgid ""
 msgstr ""
 
 msgid "This job will not run again until it is enabled."
-msgstr ""
+msgstr "Cette tâche ne sera pas relancée tant qu'il n'aura pas été activé."
 
 msgid ""
 "This name is already being used by an existing theme. Please choose a new "
 "name."
 msgstr ""
+"Ce nom est déjà utilisé par un thème existant. Veuillez choisir un nouveau nom."
 
 msgid "This operation might take a long time. Proceed?"
 msgstr "Cette opération peut prendre du temps. Poursuivre ?"
@@ -15655,7 +15656,7 @@ msgstr ""
 "connexion avec le système distant."
 
 msgid "Time Format"
-msgstr ""
+msgstr "Format de l'heure"
 
 msgid "Time Machine"
 msgstr "Time Machine"
@@ -15664,7 +15665,7 @@ msgid "Time Machine Quota"
 msgstr "Quota pour la Time Machine"
 
 msgid "Time Remaining"
-msgstr ""
+msgstr "Temps Restant"
 
 msgid "Timeout"
 msgstr "Délais d'attente"
@@ -15685,27 +15686,32 @@ msgid ""
 "To activate this periodic snapshot schedule, set  this option. To disable "
 "this task without deleting it, unset this  option."
 msgstr ""
+"Pour activer ce programme d'instantanés périodiques, choisissez cette option. Pour "
+"désactiver cette tâche sans la supprimer, désactivez cette option."
 
 msgid ""
 "To update the current software license or upgrade from TrueNAS Core® to "
 "TrueNAS  Enterprise®, copy the text of the TrueNAS license and paste it in "
 "this box."
 msgstr ""
+"Pour mettre à jour la licence actuelle du logiciel ou passer de TrueNAS Core® à "
+"TrueNAS Enterprise®, copiez le texte de la licence TrueNAS et collez-le dans cette "
+"case."
 
 msgid "Toggle Collapse"
 msgstr "Réduire"
 
 msgid "Toggle Display"
-msgstr ""
+msgstr "Basculer l'affichage"
 
 msgid "Toggle Hide/Open"
 msgstr "Masquer/Ouvrir"
 
 msgid "Toggle built-in groups"
-msgstr ""
+msgstr "Basculer les groupes intégrés"
 
 msgid "Toggle built-in users"
-msgstr ""
+msgstr "Basculer les utilisateurs intégrés"
 
 msgid ""
 "Token created with  <a "
@@ -15719,7 +15725,7 @@ msgstr ""
 "périodiquement et doivent être actualisés."
 
 msgid "Token expired, please log back in."
-msgstr ""
+msgstr "Token expiré, veuillez vous reconnecter."
 
 msgid ""
 "Top level of the LDAP directory tree to be used when searching for "
@@ -15740,13 +15746,13 @@ msgstr ""
 "Exemple : <b>arn:aws:aws:sns:us-west-2:11112122223333:MyTopic</b>."
 
 msgid "Topology"
-msgstr ""
+msgstr "Topologie"
 
 msgid "Train"
 msgstr "Canal"
 
 msgid "Transfer"
-msgstr ""
+msgstr "Transfert"
 
 msgid "Transfer Mode"
 msgstr "Mode de transfert"
@@ -15767,30 +15773,36 @@ msgid ""
 "Deduplicating data is  a one-way process. <b>Deduplicated data cannot be "
 "undeduplicated!</b>."
 msgstr ""
+"Réutiliser de manière transparente une seule copie des données dupliquées pour "
+"économiser de l'espace. La déduplication peut améliorer la capacité de stockage, "
+"mais elle est gourmande en mémoire vive.  Il est généralement recommandé de "
+"compresser les données avant d'utiliser la déduplication. La déduplication des "
+"données est un processus à sens unique. Les <b>données dédupliquées ne peuvent pas "
+"être dédupliquées </b>."
 
 msgid "Transport"
 msgstr "Transport"
 
 msgid "Transport Options"
-msgstr ""
+msgstr "Options de transport"
 
 msgid "Traverse"
 msgstr "Traverser"
 
 msgid "TrueCommand"
-msgstr ""
+msgstr "TrueCommand"
 
 msgid "TrueCommand Cloud Service"
-msgstr ""
+msgstr "Service Cloud TrueCommand"
 
 msgid "TrueCommand Cloud Service deregistered"
-msgstr ""
+msgstr "Le service Cloud TrueCommand désenregistré"
 
 msgid "TrueCommand Cloud Service has been deregistered."
-msgstr ""
+msgstr "Le service Cloud TrueCommand a été désenregistré"
 
 msgid "TrueNAS Community Forums"
-msgstr ""
+msgstr "Forums communautaires TrueNAS"
 
 msgid "TrueNAS Controller"
 msgstr "Contrôleur TrueNAS"
@@ -15799,10 +15811,10 @@ msgid "TrueNAS Controllers"
 msgstr "Contrôleurs TrueNAS"
 
 msgid "TrueNAS Documentation Site"
-msgstr ""
+msgstr "Site de documentation TrueNAS"
 
 msgid "TrueNAS URL"
-msgstr ""
+msgstr "URL TrueNAS"
 
 msgid "TrueNAS controller"
 msgstr "Contrôleur TrueNAS"
@@ -15832,19 +15844,19 @@ msgstr ""
 "des machines virtuelles."
 
 msgid "Two-Factor Auth"
-msgstr ""
+msgstr "Authentification à deux facteurs"
 
 msgid "Two-Factor Authentication Code"
-msgstr ""
+msgstr "Code d'authentification à deux facteurs"
 
 msgid "Two-Factor Authentication Settings"
-msgstr ""
+msgstr "Paramètres d'authentification à deux facteurs"
 
 msgid "Two-factor authentication IS currently enabled."
-msgstr ""
+msgstr "L'authentification à deux facteurs est actuellement activée."
 
 msgid "Two-factor authentication is NOT enabled."
-msgstr ""
+msgstr "L'authentification à deux facteurs n'est PAS activée."
 
 msgid ""
 "Two-letter <a  href=\"https://www.iso.org/obp/ui/#search/code/\" "
@@ -15913,12 +15925,14 @@ msgid ""
 "Umask is used for newly created files. Default is <i>000</i> (anyone can "
 "read, write, and execute)."
 msgstr ""
+"L'umask est utilisé pour les fichiers nouvellement créés. La valeur par défaut est "
+"<i>000</i> (tout le monde peut lire, écrire et exécuter)."
 
 msgid "Unable to download key, check network connection."
 msgstr "Impossible de télécharger la clé, vérifier la connexion réseau."
 
 msgid "Unable to terminate processes which are using this pool: "
-msgstr ""
+msgstr "Impossible de mettre fin aux processus qui utilisent ce volume: "
 
 msgid "Unencrypted pools can be imported directly."
 msgstr "Les volumes non chiffrés peuvent être importés directement."
@@ -15951,10 +15965,10 @@ msgstr ""
 "nommage</i>."
 
 msgid "Unix NSS Info"
-msgstr ""
+msgstr "Unix NSS Info"
 
 msgid "Unix Primary Group"
-msgstr ""
+msgstr "Groupe primaire Unix"
 
 msgid "Unix Shares (NFS)"
 msgstr "Partages Unix (NFS)"
@@ -15966,16 +15980,16 @@ msgid "Unlock"
 msgstr "Déverrouiller"
 
 msgid "Unlock "
-msgstr ""
+msgstr "Déverrouiller "
 
 msgid "Unlock Children"
-msgstr ""
+msgstr "Déverrouiller les enfants"
 
 msgid "Unlock Datasets"
-msgstr ""
+msgstr "Déverrouiller les datasets"
 
 msgid "Unlock Successful"
-msgstr ""
+msgstr "Déverrouillage réussi"
 
 msgid ""
 "Unlock the pool with a recovery  key file instead of a passphrase. Select a "
@@ -15987,15 +16001,16 @@ msgstr ""
 
 msgid "Unlock the pool with either a passphrase or a recovery key."
 msgstr ""
+"Déverrouillez le volume à l'aide d'une passphrase ou d'une clé de récupération."
 
 msgid "Unlock with Key file"
-msgstr ""
+msgstr "Déverrouiller avec un fichier clé"
 
 msgid "Unlocking Datasets"
-msgstr ""
+msgstr "Déverrouillage des datasets"
 
 msgid "Unlocking datasets for "
-msgstr ""
+msgstr "Déblocage des datasets pour "
 
 msgid "Unselect All"
 msgstr "Tout déselectionner"
@@ -16052,7 +16067,7 @@ msgid "Update Interval"
 msgstr "Intervalle de mise à jour"
 
 msgid "Update Jail"
-msgstr ""
+msgstr "Mise à jour du jail"
 
 msgid "Update License"
 msgstr "Mettre à jour la licence"
@@ -16064,13 +16079,13 @@ msgid "Update Plugins"
 msgstr "Mettre à jour les plugins"
 
 msgid "Update Preferences"
-msgstr ""
+msgstr "Préférences de mise à jour"
 
 msgid "Update Status"
 msgstr "Mettre à jour le statut"
 
 msgid "Update TrueCommand Settings"
-msgstr ""
+msgstr "Mettre à jour les paramètres de TrueCommand"
 
 msgid "Update in Progress"
 msgstr "Mise-à-jour en cours"
@@ -16085,6 +16100,7 @@ msgstr ""
 
 msgid "Update the jail operating system to the latest available patch?"
 msgstr ""
+"Mettre à jour le système d'exploitation du jail avec le dernier patch disponible ?"
 
 msgid "Updated"
 msgstr "Mis à jour"
@@ -16111,7 +16127,7 @@ msgid "Upgrade Pool"
 msgstr "Mettre à niveau le volume"
 
 msgid "Upgrade Waiting to Finish"
-msgstr ""
+msgstr "Mise à niveau en attente de terminer"
 
 msgid "Upgraded"
 msgstr "Mis à niveau"
@@ -16121,12 +16137,19 @@ msgid ""
 "and then transferred to the Standby Controller. The upgrade process starts "
 "concurrently on both TrueNAS Controllers."
 msgstr ""
+"Mise à niveau des deux contrôleurs. Les fichiers sont téléchargés vers le "
+"contrôleur actif, puis transférés vers le contrôleur en attente. Le processus de "
+"mise à niveau démarre simultanément sur les deux contrôleurs TrueNAS."
 
 msgid ""
 "Upgrades both controllers. Files are downloaded to the Active Controller "
 "and then transferred to the Standby Controller. The upgrade process starts "
 "concurrently on both TrueNAS Controllers. Continue with download?"
 msgstr ""
+"Mise à niveau des deux contrôleurs. Les fichiers sont téléchargés vers le "
+"contrôleur actif, puis transférés vers le contrôleur en attente. Le processus de "
+"mise à niveau démarre simultanément sur les deux contrôleurs TrueNAS. Poursuivre "
+"le téléchargement ?"
 
 msgid "Upload"
 msgstr "Envoyer"
@@ -16138,7 +16161,7 @@ msgid "Upload Config"
 msgstr "Charger une config"
 
 msgid "Upload Key file"
-msgstr ""
+msgstr "Téléverser le fichier clé"
 
 msgid ""
 "Upload a Google  <a "
@@ -16161,7 +16184,7 @@ msgid "Uploading file..."
 msgstr "Envoi du fichier..."
 
 msgid "Uploading..."
-msgstr ""
+msgstr "Téléversement..."
 
 msgid ""
 "Upsmon will wait up to this many seconds in master mode for the slaves to "
@@ -16180,7 +16203,7 @@ msgid "Usage collection"
 msgstr "Collecte de l'utilisation"
 
 msgid "Usages"
-msgstr ""
+msgstr "Usages"
 
 msgid ""
 "Use  <a href=\"https://rclone.org/crypt/\" target=\"_blank\">rclone "
@@ -16232,9 +16255,15 @@ msgid ""
 "IMPORTANT: Two-factor authentication is time-based and requires that the "
 "system time is set correctly."
 msgstr ""
+"Utilisez <i>Window</i> pour prolonger la validité des mots de passe au-delà du "
+"paramètre <i>Intervalle</i>. Par exemple, un paramètre de fenêtre de 1 signifie "
+"qu'un mot de passe avant et après le mot de passe actuel est valide, ce qui laisse "
+"trois mots de passe valides. L'extension de la fenêtre peut être utile dans les "
+"situations de latence élevée. IMPORTANT : L'authentification à deux facteurs est "
+"basée sur le temps et nécessite que l'heure du système soit correctement réglée."
 
 msgid "Use Apple-style Character Encoding"
-msgstr ""
+msgstr "Utiliser l'encodage de caractères de style Apple"
 
 msgid "Use DHCP. Unset to manually configure a static IPv4 connection."
 msgstr ""
@@ -16245,7 +16274,7 @@ msgid "Use Default Domain"
 msgstr "Utiliser le domaine par défaut"
 
 msgid "Use FQDN for Logging"
-msgstr ""
+msgstr "Utiliser le FQDN pour l'exploitation des logs"
 
 msgid "Use HTTPS for the connection to the  <b>CheckIP Server</b>."
 msgstr "Utilisez HTTPS pour la connexion au <b>serveur CheckIP</b>."
@@ -16259,7 +16288,7 @@ msgid "Use Signature Version 2"
 msgstr "Utiliser Signature Version 2"
 
 msgid "Use Syslog Only"
-msgstr ""
+msgstr "Utiliser uniquement Syslog"
 
 msgid "Use all disk space"
 msgstr "Utiliser tout l'espace disque"
@@ -16268,12 +16297,15 @@ msgid ""
 "Use an SSL certificate that was created or imported in  <b>System > "
 "Certificates</b> for secure S3 connections."
 msgstr ""
+"Utilisez un certificat SSL qui a été créé ou importé dans <b>Système -> "
+"Certificats</b> pour les connexions S3 sécurisées."
 
 msgid "Use an exported encryption key file to unlock datasets."
 msgstr ""
+"Utilisez un fichier de clé de chiffrement exporté pour déverrouiller les datasets."
 
 msgid "Use as Home Share"
-msgstr ""
+msgstr "Utiliser comme partage d'accueil (home)"
 
 msgid ""
 "Use compressed WRITE records to make the  stream more efficient. The "
@@ -16303,9 +16335,15 @@ msgid ""
 "unlocked, or an encrypted dataset is removed. Unsetting this option leaves "
 "all encryption key management with the local system."
 msgstr ""
+"Utilisez le serveur KMIP pour gérer les clés des datasets ZFS chiffrés. Le serveur "
+"de clés stocke, applique et détruit les clés de chiffrement chaque fois qu'un "
+"dataset chiffré est créé, qu'une clé existante est modifiée, qu'un dataset chiffré "
+"est déverrouillé ou qu'un dataset chiffré est supprimé. En désactivant cette "
+"option, toute la gestion des clés de chiffrement reste assurée par le système "
+"local."
 
 msgid "Use the encryption properties of the root dataset."
-msgstr ""
+msgstr "Utilisez les propriétés de chiffrement du dataset racine."
 
 msgid "Use the format <i>A.B.C.D/E</i> where <i>E</i> is the CIDR mask."
 msgstr "Utiliser le format <i>A.B.C.C.D/E</i> où <i>E</i> est le masque CIDR."
@@ -16315,6 +16353,10 @@ msgid ""
 "link the system to an authenticator app (such as Google Authenticator, "
 "LastPass Authenticator, etc.)  on a mobile device."
 msgstr ""
+"Utilisez ce formulaire pour mettre en place une authentification à deux facteurs "
+"pour ce système.  Reliez ensuite le système à une application d'authentification "
+"(telle que Google Authenticator, LastPass Authenticator, etc.) sur un appareil "
+"mobile."
 
 msgid ""
 "Use this option to allow legacy SMB clients to connect to the server. Note "
@@ -16360,13 +16402,13 @@ msgid "User Controls"
 msgstr "Contrôles utilisateur"
 
 msgid "User Data Quota "
-msgstr ""
+msgstr "Quota de données sur les utilisateurs "
 
 msgid "User Distinguished Name (DN) to use for authentication."
 msgstr "Nom distinctif de l'utilisateur (DN) à utiliser pour l'authentification."
 
 msgid "User Domain"
-msgstr ""
+msgstr "Domaine de l'utilisateur"
 
 msgid "User Guide"
 msgstr "Guide utilisateur"
@@ -16375,22 +16417,25 @@ msgid "User ID"
 msgstr "ID de l’utilisateur"
 
 msgid "User ID and Groups"
-msgstr ""
+msgstr "ID utilisateur et groupes"
 
 msgid ""
 "User ID to log in - optional - most swift systems use user and leave this "
 "blank <a href=\"https://rclone.org/swift/#standard-options\" "
 "target=\"_blank\">(rclone documentation)</a>."
 msgstr ""
+"ID utilisateur pour se connecter - facultatif - la plupart des systèmes rapides "
+"utilisent l'utilisateur et laissent ce champ vide <a href=\"https://rclone.org/"
+"swift/#standard-options\" target=\"_blank\">(documentation rclone)</a>."
 
 msgid "User Name"
-msgstr ""
+msgstr "Nom d'utilisateur"
 
 msgid "User Object Quota"
-msgstr ""
+msgstr "Quota d'objet utilisateur"
 
 msgid "User Quotas"
-msgstr ""
+msgstr "Quotas utilisateur"
 
 msgid "User account password for logging into the  remote system."
 msgstr "Mot de passe du compte utilisateur pour se connecter au système distant."
@@ -16418,9 +16463,11 @@ msgid ""
 "href=\"https://rclone.org/swift/#standard-options\" "
 "target=\"_blank\">(rclone documentation)</a>."
 msgstr ""
+"Domaine utilisateur - facultatif <a href=\"https://rclone.org/swift/#standard-"
+"options\" target=\"_blank\">(documentation rclone</a>)."
 
 msgid "User or Group"
-msgstr ""
+msgstr "Utilisateur ou groupe"
 
 msgid "User passed to <i>camcontrol security -u</i> to unlock SEDs"
 msgstr ""
@@ -16434,6 +16481,7 @@ msgstr ""
 
 msgid "User to run as during file transfers to and from  this module."
 msgstr ""
+"Utilisateur à utiliser lors des transferts de fichiers vers et depuis ce module."
 
 msgid ""
 "User who controls the dataset. This user always has permissions to read or "
@@ -16451,6 +16499,11 @@ msgid ""
 "decrypt the information stored in this dataset. Be sure to create a      "
 "memorable passphrase or physically secure the passphrase."
 msgstr ""
+"Chaîne définie par l'utilisateur utilisée pour déchiffrer le dataset. Peut être "
+"utilisée à la place d'une clé de chiffrement.<br>      ATTENTION : la passphrase "
+"est le seul moyen de déchiffrer les informations stockées dans cet dataset. "
+"Veillez à créer une passphrase mémorisable ou à sécuriser physiquement la "
+"passphrase ."
 
 msgid "Username"
 msgstr "Nom d'utilisateur"
@@ -16476,10 +16529,10 @@ msgstr ""
 "UsmUserData\"  target=\"_blank\">User-based Security Model (USM)</a>."
 
 msgid "Username or Password is incorrect."
-msgstr ""
+msgstr "Le nom d'utilisateur ou le mot de passe est incorrect."
 
 msgid "Username, Password, or 2FA Code is incorrect."
-msgstr ""
+msgstr "Le nom d'utilisateur, le mot de passe ou le code 2FA est incorrect."
 
 msgid ""
 "Usernames can be up to 16 characters long. When using NIS or other legacy "
@@ -16518,6 +16571,9 @@ msgid ""
 "WS-Discovery clients. This causes the computer appear in  the <i>Network "
 "Neighborhood</i> of modern Windows OSes."
 msgstr ""
+"Utilise le <i> nom NetBIOS </i> du service SMB pour publier le serveur auprès des "
+"clients WS-Discovery. Cela fait apparaître l'ordinateur dans le <i> Voisinage "
+"réseau </i> des systèmes d'exploitation Windows modernes."
 
 msgid "Using pool "
 msgstr "Utilisation du volume "
@@ -16529,7 +16585,7 @@ msgid "VLAN Parent Interface"
 msgstr "Interface parent VLAN"
 
 msgid "VLAN Settings"
-msgstr ""
+msgstr "Paramètres VLAN"
 
 msgid "VLAN Tag"
 msgstr "Tag VLAN"
@@ -16573,7 +16629,7 @@ msgid "VNET Virtual Networking"
 msgstr "Réseau virtuel VNET"
 
 msgid "VNET is required."
-msgstr ""
+msgstr "VNET est nécessaire."
 
 msgid "Valid"
 msgstr "Valide"
@@ -16582,7 +16638,7 @@ msgid "Validate Certificates"
 msgstr "Valider les certificats"
 
 msgid "Validate Connection"
-msgstr ""
+msgstr "Valider la connexion"
 
 msgid "Validate Remote Path"
 msgstr "Valider le chemin distant"
@@ -16612,16 +16668,16 @@ msgid "Verify passphrase"
 msgstr "Vérifier la passphrase"
 
 msgid "Verify the pool encryption passphrase."
-msgstr ""
+msgstr "Vérifiez la passphrase de chiffrement du volume."
 
 msgid "Version"
 msgstr "Version"
 
 msgid "Video, < 100ms latency"
-msgstr ""
+msgstr "Vidéo, latence < 100ms"
 
 msgid "Video, < 10ms latency"
-msgstr ""
+msgstr "Vidéo, latence < 10ms"
 
 msgid "View"
 msgstr "Voir"
@@ -16633,7 +16689,7 @@ msgid "View Logs"
 msgstr "Voir les logs"
 
 msgid "Violet"
-msgstr ""
+msgstr "Violet"
 
 msgid "Virtual CPUs"
 msgstr "CPUs virtuels"
@@ -16692,9 +16748,11 @@ msgid ""
 "WARNING: These unknown processes will be terminated while exporting the "
 "pool. "
 msgstr ""
+"AVERTISSEMENT : Ces processus inconnus seront interrompus lors de l'exportation du "
+"volume. "
 
 msgid "WS-Discovery"
-msgstr ""
+msgstr "WS-Discovery"
 
 msgid "Wait to start VM until VNC client connects."
 msgstr "Attendez de démarrer VM jusqu'à ce que le client VNC se connecte."
@@ -16709,7 +16767,7 @@ msgid "Wallclock time in seconds."
 msgstr "Durée de l'horloge murale en secondes."
 
 msgid "Warn"
-msgstr ""
+msgstr "Avertir"
 
 msgid "Warning"
 msgstr "Attention"
@@ -16724,25 +16782,25 @@ msgid "Web Interface"
 msgstr "Interface Web legacy"
 
 msgid "Web Interface HTTP -> HTTPS Redirect"
-msgstr ""
+msgstr "Interface Web HTTP -> Redirection HTTPS"
 
 msgid "Web Interface HTTP Port"
-msgstr ""
+msgstr "Interface Web Port HTTP"
 
 msgid "Web Interface HTTPS Port"
-msgstr ""
+msgstr "Interface Web Port HTTPS"
 
 msgid "Web Interface IPv4 Address"
-msgstr ""
+msgstr "Adresse IPv4 de l'interface web"
 
 msgid "Web Interface IPv6 Address"
-msgstr ""
+msgstr "Adresse IPv6 de l'interface web"
 
 msgid "WebDAV"
-msgstr ""
+msgstr "WebDAV"
 
 msgid "WebDAV Configuration"
-msgstr ""
+msgstr "Configuration WebDAV"
 
 msgid "WebDAV Shares"
 msgstr "Partages WebDAV"
@@ -16769,13 +16827,13 @@ msgid "Wed"
 msgstr "Mer"
 
 msgid "Weekly"
-msgstr ""
+msgstr "Hebdomadaire"
 
 msgid "Weeks"
 msgstr "Semaines"
 
 msgid "Welcome to your new NAS"
-msgstr ""
+msgstr "Bienvenue sur votre nouveau NAS"
 
 msgid "What and Where"
 msgstr "Quoi et où"
@@ -16788,6 +16846,9 @@ msgid ""
 "<code>tls_crypt_auth</code> is not provided,  a static key is automatically "
 "generated to be used with OpenVPN client."
 msgstr ""
+"Lorsque <code>tls_crypt_auth_enabled</code> est activé et que "
+"<code>tls_crypt_auth</code> n'est pas fourni, une clé statique est automatiquement "
+"générée pour être utilisée avec le client OpenVPN."
 
 msgid "When Syslog server is defined, only logs matching this level are sent."
 msgstr ""
@@ -16813,6 +16874,9 @@ msgid ""
 "attributes (gidNumber). When not checked, the primary group membership is "
 "calculated via  the \"primaryGroupID\" LDAP attribute."
 msgstr ""
+"Lorsqu'elle est vérifiée, l'appartenance au groupe principal est extraite des "
+"attributs LDAP (gidNumber). Lorsqu'elle n'est pas cochée, l'appartenance au groupe "
+"primaire est calculée via l'attribut LDAP \"primaryGroupID\"."
 
 msgid ""
 "When checked, winbind will retrieve the login shell and home directory  "
@@ -16820,12 +16884,21 @@ msgid ""
 "the SFU attributes  the smb4.conf parameters <code>template shell</code> "
 "and <code>template homedir</code> are used."
 msgstr ""
+"Lorsqu'il est coché, winbind récupère le shell de connexion et le répertoire "
+"d'accueil à partir des attributs LDAP. Lorsqu'il n'est pas coché ou lorsque "
+"l'entrée LDAP AD ne possède pas les attributs SFU, les paramètres smb4.conf, le "
+"shell de connexion et le répertoire d'<code>accueil</code> du <code>modèle</code> "
+"sont utilisés."
 
 msgid ""
 "When enabled, the ACLs grant read and  write access for owner or group and "
 "read-only for others. <b>Only</b> leave  unset when creating a share on a "
 "system that already has custom ACLs configured."
 msgstr ""
+"Lorsqu'elles sont activées, les ACLs accordent un accès en lecture et en écriture "
+"au propriétaire ou au groupe et en lecture seule aux autres. <b>Ne</b> laissez "
+"cette option désactivée <b>que</b> lorsque vous créez un partage sur un système "
+"qui a déjà configuré des ACLs personnalisées."
 
 msgid ""
 "When replicated snapshots are deleted  from the destination system: <br>  "
@@ -16915,11 +16988,16 @@ msgid ""
 "format <i>http://my.proxy.server:3128</i> or  "
 "<i>http://user:password@my.proxy.server:3128</i>"
 msgstr ""
+"Lorsque vous utilisez un proxy, saisissez les informations relatives au proxy pour "
+"le réseau au format <i>http://my.proxy.server:3128</i> ou <i>_COPY13@my.proxy."
+"server:3128</i>"
 
 msgid ""
 "When using a virtual host, this is also  used as the Kerberos principal "
 "name."
 msgstr ""
+"Lorsque l'on utilise un hôte virtuel, celui-ci est également utilisé comme nom "
+"principal de Kerberos."
 
 msgid "Who"
 msgstr "Qui"
@@ -16930,6 +17008,10 @@ msgid ""
 "identifiers\" target=\"_blank\">Windows Security Identifier</a>. Either a "
 "<i>SID</i> or a <i>Domain</i> and <i>Name</i> is required for this ACL."
 msgstr ""
+"À qui s'applique cette entrée de l'ALC, indiquée comme un <a href=\"https://docs."
+"microsoft.com/en-us/windows/win32/secauthz/security-identifiers\" target=\"_blank"
+"\">identificateur de sécurité Windows</a>. Un <i>SID</i> ou un <i>domaine</i> et "
+"un <i>nom</i> sont nécessaires pour cette ACL."
 
 msgid ""
 "Who this ACL entry applies to, shown as a user name. Requires adding the "
@@ -16945,7 +17027,7 @@ msgid "Winbind NSS Info"
 msgstr "Winbind NSS Info"
 
 msgid "Window"
-msgstr ""
+msgstr "Fenêtre"
 
 msgid "Windows Shares (SMB)"
 msgstr "Partages Windows (SMB)"
@@ -16954,13 +17036,13 @@ msgid "Wipe"
 msgstr "Effacement"
 
 msgid "Wipe Disk "
-msgstr ""
+msgstr "Effacer le disque "
 
 msgid "Wipe this disk?"
 msgstr "Effacer ce disque ?"
 
 msgid "Wiping disk..."
-msgstr ""
+msgstr "Effacement du disque..."
 
 msgid "Workgroup"
 msgstr "Groupe de travail"
@@ -16972,7 +17054,7 @@ msgid "Write Errors"
 msgstr "Erreurs d'écriture"
 
 msgid "Write Only"
-msgstr ""
+msgstr "Écriture seulement"
 
 msgid "Write a percentage limit of a single CPU core."
 msgstr "Écrivez une limite de pourcentage pour un seul cœur de processeur."
@@ -17253,7 +17335,7 @@ msgid "hostid_strict_check"
 msgstr "hostid_strict_check"
 
 msgid "hours"
-msgstr ""
+msgstr "heures"
 
 msgid "iSCSI"
 msgstr "iSCSI"
@@ -17306,7 +17388,7 @@ msgid "is already in use."
 msgstr "est déjà utilisé."
 
 msgid "is locked."
-msgstr ""
+msgstr "est verrouillé."
 
 msgid "jail_zfs"
 msgstr "jail_zfs"
@@ -17476,7 +17558,7 @@ msgid "template"
 msgstr "template"
 
 msgid "threads"
-msgstr ""
+msgstr "threads"
 
 msgid "to set up configuration first."
 msgstr "pour mettre en place la configuration en premier."
