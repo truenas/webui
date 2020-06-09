@@ -1,10 +1,10 @@
-<h1 mat-dialog-title [innerHTML]="title"></h1>
+<h1 mat-dialog-title [innerHTML]="title | translate"></h1>
 
 <div mat-dialog-content>
-  <span [innerHTML]="conf.message"></span>
+  <span [innerHTML]="conf.message | translate"></span>
   <br>
   <div *ngIf="conf['confirmInstructions']" >
-    <div [innerHTML]="instructions" [ngStyle]="{marginTop:'10px', marginBottom: '-1rem'}"></div>
+    <div [innerHTML]="instructions | translate" [ngStyle]="{marginTop:'10px', marginBottom: '-1rem'}"></div>
     <div id="double-confirm-mask" [ngStyle]="{opacity: '.38', position: 'relative', top: '35px'}"><pre>{{conf['name']}}</pre></div>
   </div>
   <ng-container *ngFor="let field of fieldConfig;" dynamicField [config]="field" [group]="formGroup" [fieldShow]="'show'">
@@ -13,10 +13,10 @@
       <mat-icon matTooltip="Show" *ngIf="!showPassword">visibility_off</mat-icon>
     </button>
   </ng-container>
-  <span [innerHTML]="conf.warning"></span>
+  <span [innerHTML]="conf.warning | translate"></span>
 </div>
 <div>
-  <mat-error *ngIf="error" type="danger" id="error_message"><div [innerHTML]="error"></div></mat-error>
+  <mat-error *ngIf="error" type="danger" id="error_message"><div [innerHTML]="error | translate"></div></mat-error>
 </div>
 
 <div mat-dialog-actions>
