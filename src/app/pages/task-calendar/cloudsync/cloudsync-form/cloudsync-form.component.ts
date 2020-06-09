@@ -392,13 +392,14 @@ export class CloudsyncFormComponent implements OnInit {
   }
 
   getBucketFolders(credential, bucket, node) {
+    const formValue = this.entityForm.formGroup.value;
     const children = [];
     let data = {
       "credentials": credential,
-      "encryption": false,
-      "filename_encryption": false,
-      "encryption_password": "",
-      "encryption_salt": "",
+      "encryption": formValue['encryption'] === undefined ? false : formValue['encryption'],
+      "filename_encryption": formValue['filename_encryption'] === undefined ? false : formValue['filename_encryption'],
+      "encryption_password": formValue['encryption_password'] === undefined ? "" : formValue['encryption_password'],
+      "encryption_salt": formValue['encryption_salt'] === undefined ? "" : formValue['encryption_salt'],
       "attributes": {
         "bucket": bucket,
         "folder": node.data.name,
@@ -416,11 +417,11 @@ export class CloudsyncFormComponent implements OnInit {
           const child = {};
           if (res[i].IsDir) {
             if (data.attributes.folder == '/') {
-              child['name'] = data.attributes.folder + res[i].Path;
+              child['name'] = data.attributes.folder + res[i].Name;
             } else {
-              child['name'] = data.attributes.folder + '/' + res[i].Path;
+              child['name'] = data.attributes.folder + '/' + res[i].Name;
             }
-            child['subTitle'] = res[i].Name;
+            child['subTitle'] = res[i].Decrypted ? `${res[i].Decrypted} (${res[i].Name})` : res[i].Name;
             child['hasChildren'] = true;
             children.push(child);
           }
