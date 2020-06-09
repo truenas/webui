@@ -1,22 +1,4 @@
-<mat-card class="loader-progress-wrapper" *ngIf="loaderPct < 101">
-  <mat-card-content class="loader-progress">
-    <div class="loader-progress-text">
-      <div class="label"><strong>{{"Loading dashboard data" | translate}}</strong></div>
-      <div class="percentage">{{loaderPct.toString()}}%</div>
-    </div>
-
-    <div class="loader-progress-bar">
-      <mat-progress-bar
-        color="primary"
-        mode="buffer"
-        bufferValue="0"
-        [value]="loaderPct">
-      </mat-progress-bar>
-    </div>
-
-  </mat-card-content>
-</mat-card>
-<div *ngIf="loaderPct == 101" class="widgets-wrapper-container" (window:resize)="onMobileResize($event)">  
+<div class="widgets-wrapper-container" (window:resize)="onMobileResize($event)">  
   
   <div class="widgets-wrapper"
        [style.width]="optimalDesktopWidth"
