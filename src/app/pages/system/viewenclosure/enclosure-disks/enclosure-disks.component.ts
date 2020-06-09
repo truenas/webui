@@ -1,6 +1,7 @@
 import { Component, Input, OnInit, AfterContentInit, OnChanges, SimpleChanges, ViewChild, ElementRef, NgZone, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 import { MaterialModule } from 'app/appMaterial.module';
+import { ErrorMessage } from 'app/core/classes/ix-interfaces';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Application, Container, extras, Text, DisplayObject, Graphics, Sprite, Texture, utils} from 'pixi.js';
 import 'pixi-projection';
@@ -38,6 +39,7 @@ interface DiskFailure {
 
 export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnDestroy {
 
+  protected aborted: boolean = false;
   private mediaObs;
   public mqAlias: string;
   @ViewChild('visualizer', { static: true}) visualizer: ElementRef;
@@ -329,10 +331,15 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.enclosure = new E60();
         break;
       default:
-        console.warn("DEFAULT ENCLOSURE")
-        this.enclosure = new M50();
+        this.controllerEvents.next(
+          {name: 'Error', 
+            data: { 
+              name: 'Unsupported Hardware', 
+              message: 'This chassis has an unknown or missing model value. (METHOD: createEnclosure)'
+            }
+          });
+        return true;
     }
-    //this.enclosure = new ES24();
     
     this.enclosure.events.subscribe((evt) => {
       switch(evt.name){
@@ -400,10 +407,20 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         enclosure = new E60();
         break;
       default:
-        console.log(profile.model);
-        enclosure = new ES24();
+        this.controllerEvents.next({
+            name: 'Error', 
+            data: { 
+              name: 'Unsupported Hardware', 
+              message: 'This chassis has an unknown or missing model value. (METHOD: createExtractedEnclosure)'
+            }
+        });
+        this.aborted = true;
+        return;
     }
-    
+    if(this.aborted){
+      return;
+    }
+
     enclosure.events.subscribe((evt) => {
       switch(evt.name){
         case "Ready":
@@ -634,6 +651,14 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   setDiskHealthState(disk: any, enclosure: any = this.enclosure, updateGL: boolean = false){
       let index = disk.enclosure.slot - 1;
       if(!enclosure.driveTrayObjects[index]){
+        this.controllerEvents.next({
+          name: 'Error', 
+          data: { 
+            name: 'Enclosure Drivetray Error', 
+            message: 'There is no driveTray at index ' + index + ' on model ' + enclosure.model + '!'
+          }
+        });
+
         console.warn("There is no driveTray at index " + index + " on model " + enclosure.model + "!");
         return;
       } else {

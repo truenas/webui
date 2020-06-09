@@ -5,6 +5,7 @@ import { MaterialModule } from 'app/appMaterial.module';
 import { EnclosureDisksComponent} from './enclosure-disks/enclosure-disks.component';
 
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { ErrorMessage } from 'app/core/classes/ix-interfaces';
 import { Subject } from 'rxjs';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
 
@@ -24,10 +25,10 @@ interface ViewConfig {
 })
 export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDestroy {
 
+  public errors: ErrorMessage[] = [];
   public events:Subject<CoreEvent> ;
   @ViewChild('navigation', { static: false}) nav: ElementRef
 
-  //public currentView: ViewConfig
   public currentView: ViewConfig =  { 
       name: 'Disks',
       alias: 'Disks',
@@ -60,10 +61,6 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
 
   constructor(private core: CoreService, protected router: Router){
 
-    /*if (window.localStorage.getItem('is_freenas') === 'true') {
-      this.router.navigate(['']);
-    }*/
-
     this.events = new Subject<CoreEvent>();
     this.events.subscribe((evt:CoreEvent) => {
       switch(evt.name){
@@ -79,10 +76,16 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
           evt.data.canvas.setAttribute('style', 'width: 80% ;');
           el.appendChild(evt.data.canvas);
           break;
+        case "Error":
+          this.errors.push(evt.data);
+          console.warn({ ERROR_REPORT: this.errors});
+          
+          break;
       }
     })
 
     core.register({observerClass: this, eventName: 'EnclosureData'}).subscribe((evt:CoreEvent) => {
+
       this.system = new SystemProfiler(this.system_product, evt.data);
       this.selectedEnclosure = this.system.profile[this.system.headIndex];
       core.emit({name: 'DisksRequest', sender: this});
