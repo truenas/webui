@@ -20,8 +20,9 @@ export default {
     legacyUIWarning: `${globalHelptext.legacyUIWarning}`,
     updateRunning_dialog : {
         title: T('Update in Progress'),
-        message: T(`A system update is in progress. It might have been \
- launched in another window or by an external source like TrueCommand. <b>${globalHelptext.sys_update_message}</b> `)
+        message: T('A system update is in progress. It might have been \
+ launched in another window or by an external source like TrueCommand.'),
+        message_pt2: T(` <b>${globalHelptext.sys_update_message}</b> `)
     },
 
     mat_tooltips : {

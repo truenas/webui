@@ -56,7 +56,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
   private checkChangesSubscription: Subscription;
   public showSpinner: boolean = false;
   public singleDescription: string;
-  sysUpdateMessage = T('A system update is in progress. ') + helptext.sysUpdateMessage;
+  sysUpdateMessage = T('A system update is in progress. ');
+  public sysUpdateMsgPt2 = helptext.sysUpdateMessage;
   public updatecheck_tooltip = T('Check the update server daily for \
                                   any updates on the chosen train. \
                                   Automatically download an update if \

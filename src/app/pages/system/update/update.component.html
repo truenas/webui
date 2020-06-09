@@ -149,7 +149,9 @@
 <mat-card id="update-in-progress-card" *ngIf="isUpdateRunning">
   <div class="row">
     <div class="col-md-12">
-      <p><i class="material-icons">warning</i><span id="update-running-msg">{{sysUpdateMessage}}</span></p>
+      <p><i class="material-icons">warning</i><span id="update-running-msg">
+        {{ is_ha? sysUpdateMessage : sysUpdateMessage + sysUpdateMsgPt2 }}</span>
+      </p>
     </div>
   </div>
 </mat-card>

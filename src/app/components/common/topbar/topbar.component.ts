@@ -529,8 +529,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   };
 
   showUpdateDialog() {
+    let message = this.is_ha ? helptext.updateRunning_dialog.message : 
+      helptext.updateRunning_dialog.message + helptext.updateRunning_dialog.message_pt2;
     this.dialogService.confirm(helptext.updateRunning_dialog.title, 
-      helptext.updateRunning_dialog.message,
+      message,
       true, T('Close'), false, '', '', '', '', true);
   };
 }
