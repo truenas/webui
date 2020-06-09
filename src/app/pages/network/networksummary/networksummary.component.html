@@ -4,13 +4,15 @@
   </mat-card-title>
   <mat-card-content>
     <mat-list>
+      <mat-divider></mat-divider>
+      <h3 mat-subheader>{{ "Interfaces" | translate }}</h3>
       <mat-list>
-        <mat-list-item>
+        <mat-list-item class="pseudo-table-header">
           <div fxFlex="20">{{ "Name" | translate }}</div>
           <div fxFlex="40">{{ "IPv4 Address" | translate }}</div>
           <div fxFlex="40">{{ "IPv6 Address" | translate }}</div>
-          <mat-divider></mat-divider>
         </mat-list-item>
+        <mat-divider></mat-divider>
         <mat-list-item *ngFor="let ip of ips | keyvalue; let i=index" class="dynamic-height">
           <div fxFlex="20">{{ip.key}}</div>
           <div fxFlex="40" *ngIf="ip.value.IPV4">
@@ -34,10 +36,18 @@
       </mat-list-item>
       <mat-divider></mat-divider>
       <h3 mat-subheader>{{ "Nameservers" | translate }}</h3>
-      <mat-list-item *ngFor="let server of nameservers">
-        <mat-icon mat-list-icon>dns</mat-icon>
-        {{server}}
-      </mat-list-item>
+      <ng-container *ngIf="nameservers.length > 0; else nonameservers">
+        <mat-list-item *ngFor="let server of nameservers">
+          <mat-icon mat-list-icon>dns</mat-icon>
+          {{server}}
+        </mat-list-item>
+      </ng-container>
+      <ng-template #nonameservers>
+        <mat-list-item>
+          <mat-icon mat-list-icon>info_circle</mat-icon>
+          {{"Name servers not configured" | translate}}
+        </mat-list-item>
+      </ng-template>
     </mat-list>
   </mat-card-content>
 </mat-card>

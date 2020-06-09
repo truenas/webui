@@ -1,3 +1,25 @@
+.mat-card {
+  padding: 16px 0;
+  overflow: hidden;
+}
+
+.mat-card-title {
+  padding: 0 16px;
+}
+
 .dynamic-height {
     height: fit-content;
+    padding: 8px;
+    max-width: 100%;
+}
+
+.dynamic-height:nth-child(odd) {
+  background-color: rgba(0,0,0,0.1);;
+}
+
+.dynamic-height:nth-child(even) {
+}
+
+.pseudo-table-header {
+  padding-left: 8px;
 }
