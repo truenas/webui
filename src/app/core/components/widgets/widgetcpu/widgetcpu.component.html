@@ -52,8 +52,15 @@
                     <div class="label-icon" *ngIf="tempMax >= 70" [ngClass]="{'warn': tempMax < 80, 'danger': tempMax > 79 }">
                       <mat-icon fontSet="mdi-set" fontIcon="mdi-alert" role="img"></mat-icon>
                     </div>
-                    <span class="label"><strong>{{"Hottest" | translate}}:</strong></span> &nbsp;&nbsp;{{tempMax}}°C &nbsp;
-                    <span class="subtext">({{tempMaxThreads.length < 2 ? 'Thread #' + tempMaxThreads.toString(): tempMaxThreads.length + ' threads at ' + tempMax + '°C'}})</span>
+                    <span class="label"><strong>{{"Hottest" | translate}}:</strong></span> &nbsp;&nbsp;
+                    <ng-container *ngIf="tempAvailable == 'true'; else notemps">
+                      <span>{{tempMax}}°C &nbsp;</span>
+                      <span class="subtext">({{tempMaxThreads.length < 2 ? 'Thread #' + tempMaxThreads.toString(): tempMaxThreads.length + ' threads at ' + tempMax + '°C'}})</span>
+                    </ng-container>
+                    <ng-template #notemps>
+                      {{"Data not provided" | translate}}
+                    </ng-template>
+
                   </mat-list-item>
                 </mat-list>
             </div>
@@ -76,14 +83,16 @@
           <div fxFlex="65" class="bottom">
             <div class="list-subheader">  <span class="capitalize">{{"Stats Per Thread" | translate}}</span></div>
             <mat-list>
-              <mat-list-item>
-                <span class="label">{{"Hottest:" | translate}}</span> &nbsp;&nbsp;{{tempMax}}°C &nbsp;&nbsp;
-                <span class="subtext">({{tempMaxThreads.length < 2 ? 'Thread #' + tempMaxThreads.toString(): tempMaxThreads.length + ' threads at ' + tempMax + '°C'}})</span>
-              </mat-list-item>
-              <mat-list-item>
-                <span class="label">{{"Coolest:" | translate}}</span> &nbsp;&nbsp;{{tempMin}}°C &nbsp;&nbsp;
-                <span class="subtext" >({{tempMinThreads.length < 2 ? 'Thread #' + tempMinThreads.toString() : tempMinThreads.length + ' threads at ' + tempMin + '°C'}})</span>
-              </mat-list-item>
+              <ng-container *ngIf="tempAvailable == 'true';">
+                <mat-list-item>
+                  <span class="label">{{"Hottest:" | translate}}</span> &nbsp;&nbsp;{{tempMax}}°C &nbsp;&nbsp;
+                  <span class="subtext">({{tempMaxThreads.length < 2 ? 'Thread #' + tempMaxThreads.toString(): tempMaxThreads.length + ' threads at ' + tempMax + '°C'}})</span>
+                </mat-list-item>
+                <mat-list-item>
+                  <span class="label">{{"Coolest:" | translate}}</span> &nbsp;&nbsp;{{tempMin}}°C &nbsp;&nbsp;
+                  <span class="subtext" >({{tempMinThreads.length < 2 ? 'Thread #' + tempMinThreads.toString() : tempMinThreads.length + ' threads at ' + tempMin + '°C'}})</span>
+                </mat-list-item>
+              </ng-container>
               <mat-list-item>
                 <span class="label">{{"Highest Usage:" | translate}}</span> &nbsp;&nbsp;{{usageMax}}% &nbsp;&nbsp;
                 <span class="subtext" >({{usageMaxThreads.length < 2 ? 'Thread #' + usageMaxThreads.toString(): usageMaxThreads.length + ' threads at ' + usageMax + '%'}})</span>
@@ -109,9 +118,11 @@
                     <div class="legend-swatch" style="background-color:var(--primary);"></div><span class="label">{{legendData[0].label}}:</span> {{legendData[0].data[legendIndex]}}%
                   </div>
 
-                  <div fxFlex="28" fxFlex.xs="calc(50% - 16px)" *ngIf="legendData[1]" class="legend-item temperature">
-                    <div class="legend-swatch" style="background-color: var(--accent)"></div><span class="label">{{legendData[1].label}}:</span> {{legendData[1].data[legendIndex]}}°C
-                  </div>
+                  <ng-container *ngIf="tempAvailable == 'true';">
+                    <div fxFlex="28" fxFlex.xs="calc(50% - 16px)" *ngIf="legendData[1]" class="legend-item temperature">
+                      <div class="legend-swatch" style="background-color: var(--accent)"></div><span class="label">{{legendData[1].label}}:</span> {{legendData[1].data[legendIndex]}}°C
+                    </div>
+                  </ng-container>
                 
                 </div>
               </div>
@@ -125,9 +136,11 @@
                     <div class="legend-swatch" style="background-color:var(--primary);"></div><span class="label">{{"Usage" | translate}}</span> 
                   </div>
 
-                  <div fxFlex="28" fxFlex.xs="calc(50% - 16px)"  class="legend-item temperature">
-                    <div class="legend-swatch" style="background-color: var(--accent)"></div><span class="label">{{"Temperature" | translate}}</span> 
-                  </div>
+                  <ng-container *ngIf="tempAvailable == 'true';">
+                    <div fxFlex="28" fxFlex.xs="calc(50% - 16px)"  class="legend-item temperature">
+                      <div class="legend-swatch" style="background-color: var(--accent)"></div><span class="label">{{"Temperature" | translate}}</span> 
+                    </div>
+                  </ng-container>
   
                 </div>
               </ng-template>
