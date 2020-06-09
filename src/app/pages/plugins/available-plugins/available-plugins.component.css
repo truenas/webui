@@ -29,3 +29,7 @@ button.plugin-button {
     color: white;
     margin-left: 16px;
 }
+
+span.subtitle {
+    font-size: 1.1rem;
+}
