@@ -55,10 +55,12 @@ cifs_srv_localmaster_tooltip: T('Set to determine if the system participates in\
  are present.'),
 
 cifs_srv_guest_placeholder: T('Guest Account'),
-cifs_srv_guest_tooltip: T('Account to be used for guest access. Default is\
- nobody. Account is required to have permissions to\
- the shared pool or dataset.\
- When the Guest Account user is deleted it resets to nobody.'),
+cifs_srv_guest_tooltip: T('Account to be used for guest access. Default is \
+ <i>nobody</i>. The chosen account is required to have permissions to the \
+ shared pool or dataset. To adjust permissions, edit the dataset Access \
+ Control List (ACL), add a new entry for the chosen guest account, and \
+ configure the permissions in that entry. If the selected <i>Guest Account</i> \
+ is deleted the field resets to <i>nobody</i>.'),
 
 cifs_srv_filemask_placeholder: T('File Mask'),
 cifs_srv_filemask_tooltip: T('Overrides default file creation mask of <i>0666</i> \
@@ -76,9 +78,11 @@ cifs_srv_admin_group_tooltip: T('Members of this group are local admins\
  cifs_srv_admin_group_validation : [ Validators.maxLength(120) ],
 
 cifs_srv_smb_options_placeholder: T('Auxiliary Parameters'),
-cifs_srv_smb_options_tooltip: T('Enter additional <b>smb.conf</b> options. See the <a href="http://www.oreilly.com/openbook/samba/book/appb_02.html"\
- target="_blank">Samba Guide</a>\
- for more information on these settings.'),
+cifs_srv_smb_options_tooltip: T('Enter additional <b>smb.conf</b> options. See the \
+ <a href="http://www.oreilly.com/openbook/samba/book/appb_02.html" target="_blank">Samba Guide</a> \
+ for more information on these settings.<br> \
+ To log more details when a client attempts to authenticate to the share, add \
+ <code>log level = 1, auth_audit:5</code>.'),
 
 cifs_srv_zeroconf_placeholder: T('Zeroconf share discovery'),
 cifs_srv_zeroconf_tooltip: T('Enable if Mac clients will be connecting to the SMB share.'),
