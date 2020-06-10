@@ -863,22 +863,7 @@ export class CloudCredentialsFormComponent {
               }]
             }
           ]
-        },
-        // show if provider support oauth
-        {
-          type: 'input',
-          name: 'client_id',
-          placeholder: helptext.client_id.placeholder,
-          tooltip: helptext.client_id.tooltip,
-          isHidden: true,
-        },
-        {
-          type: 'input',
-          name: 'client_secret',
-          placeholder: helptext.client_secret.placeholder,
-          tooltip: helptext.client_secret.tooltip,
-          isHidden: true,
-        },
+        }
       ]
     },
     { name: 'divider', divider: true },
@@ -1157,7 +1142,30 @@ export class CloudCredentialsFormComponent {
           ]
         },
       ]
-    }
+    },
+    // show if provider support oauth
+    {
+      name: helptext.fieldset_oauth_advanced_options,
+      label: true,
+      class: 'oauth',
+      width: '50%',
+      config: [
+        {
+          type: 'input',
+          name: 'client_id',
+          placeholder: helptext.client_id.placeholder,
+          tooltip: helptext.client_id.tooltip,
+          isHidden: true,
+        },
+        {
+          type: 'input',
+          name: 'client_secret',
+          placeholder: helptext.client_secret.placeholder,
+          tooltip: helptext.client_secret.tooltip,
+          isHidden: true,
+        }
+      ]
+    },
   ]
 
   protected fieldConfig: FieldConfig[];
@@ -1319,6 +1327,8 @@ export class CloudCredentialsFormComponent {
 
       this.oauthURL = _.find(this.providers, {'name': res}).credentials_oauth;
       this.credentialsOauth = this.oauthURL == null ? false : true;
+      entityForm.setDisabled('client_id', !this.credentialsOauth, !this.credentialsOauth)
+      entityForm.setDisabled('client_secret', !this.credentialsOauth, !this.credentialsOauth)
     });
     // preview service_account_credentials
     entityForm.formGroup.controls['service_account_credentials-GOOGLE_CLOUD_STORAGE'].valueChanges.subscribe((value)=>{

@@ -6,6 +6,7 @@ export const helptext_system_cloudcredentials = {
   fieldset_authentication: T('Authentication'),
   fieldset_authentication_advanced: T('Authentication Advanced Options'),
   fieldset_endpoint_advanced_options: T('Endpoint Advanced Options'),
+  fieldset_oauth_advanced_options: T('OAuth Advanced Options'),
 
   add_tooltip: T('Add Cloud Credential'),
 
