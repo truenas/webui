@@ -18,8 +18,9 @@ export default {
 
     cron_picker_placeholder: T('Schedule'),
     cron_picker_tooltip: T('Select a schedule preset or choose <i>Custom</i> \
- to open the advanced scheduler. Note that an in-progress cron task must finish \
- before the next scheduled task can begin.'),
+ to open the advanced scheduler. Note that an in-progress cron task postpones \
+ any later scheduled instance of the same task until the running task is \
+ complete.'),
     cron_picker_validation: [ Validators.required ],
 
     cron_stdout_placeholder: T('Hide Standard Output'),
