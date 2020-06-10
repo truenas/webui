@@ -76,7 +76,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   ngAfterViewInit(){
 
     this.core.register({ observerClass: this, eventName: 'UpdateConfig'}).subscribe((res: CoreEvent) => {
-      console.log(res);
       if(res.data.upd_autocheck == true){
         this.core.register({observerClass:this,eventName:"UpdateChecked"}).subscribe((evt:CoreEvent) => {
           if(evt.data.status == "AVAILABLE"){
