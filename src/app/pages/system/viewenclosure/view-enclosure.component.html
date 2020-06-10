@@ -1,5 +1,7 @@
-
-<div *ngIf="system && system.enclosures && system_manufacturer && system_manufacturer == 'ixsystems'" class="page-viewport" fxLayout="row wrap" >
+<ng-container *ngIf="errors && errors.length == 0;">
+<div *ngIf="system && system.enclosures && system_manufacturer && system_manufacturer == 'ixsystems';" 
+  class="page-viewport" 
+  fxLayout="row wrap" >
   
   <div fxFlex="100">
     <nav class="view-nav-bar" >
@@ -30,12 +32,31 @@
   </div>
 </div>
 
-<!-- Enclosure Selector -->
-<div fxFlex="240px" fxFlex.lt-lg="180px" #navigation  *ngIf="events && system && system.pools && system.enclosures && system.enclosures.length > 1" class="enclosure-selector" [ngClass.lt-lg]="lt-lg">
-  <ng-container *ngFor="let enclosure of system.profile; let i = index">
-    <div *ngIf="enclosure.enclosureKey != system.rearIndex" (click)="selectEnclosure(i)" class="enclosure enclosure-{{i}} {{selectedEnclosure.enclosureKey == i ? 'active' : '' }} ">
-      <div>{{enclosure.model}} ({{i}})</div>
+  <!-- Enclosure Selector -->
+    <div fxFlex="240px" fxFlex.lt-lg="180px" #navigation  *ngIf="events && system && system.pools && system.enclosures && system.enclosures.length > 1" class="enclosure-selector" [ngClass.lt-lg]="lt-lg">
+      <ng-container *ngFor="let enclosure of system.profile; let i = index">
+        <div *ngIf="enclosure.enclosureKey != system.rearIndex" (click)="selectEnclosure(i)" class="enclosure enclosure-{{i}} {{selectedEnclosure.enclosureKey == i ? 'active' : '' }} ">
+          <div>{{enclosure.model}} ({{i}})</div>
+        </div>
+      </ng-container>
     </div>
-  </ng-container>
 </div>
-</div>
+</ng-container>
+
+<ng-container *ngIf="errors && errors.length > 0">
+  <div class="error mat-card" style="margin: 16px auto 0; top:0; width: 600px;">
+    <h3 class="error-header">
+      <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+      {{errors[0].name}}
+    </h3>
+
+    <div class="error-message">
+      {{errors[0].message}}. Please visit our support page for help.
+    </div>
+
+    <div class="error-footer">
+      <button mat-button color="primary" (click)="router.navigate(['/system/support'])">CONTACT SUPPORT</button>
+    </div>
+
+    </div>
+</ng-container>

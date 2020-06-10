@@ -19,7 +19,8 @@ export class AFPListComponent {
   public columns: any[] = [
     {name: helptext_sharing_afp.column_name, prop: 'name', always_display: true },
     {name: helptext_sharing_afp.column_path, prop: 'path'},
-    {name: helptext_sharing_afp.column_comment, prop: 'comment'}
+    {name: helptext_sharing_afp.column_comment, prop: 'comment'},
+    {name: helptext_sharing_afp.column_enabled, prop: 'enabled'},
   ];
   public rowIdentifier = 'afp_name';
   public config: any = {

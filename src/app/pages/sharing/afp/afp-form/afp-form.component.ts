@@ -89,6 +89,13 @@ export class AFPFormComponent implements OnDestroy {
     },
     {
       type: 'checkbox',
+      name: 'afp_enabled',
+      value: true,
+      placeholder: helptext_sharing_afp.placeholder_enabled,
+      tooltip: helptext_sharing_afp.tooltip_enabled,
+    },
+    {
+      type: 'checkbox',
       name: 'afp_nodev',
       placeholder: helptext_sharing_afp.placeholder_nodev,
       tooltip: helptext_sharing_afp.tooltip_nodev

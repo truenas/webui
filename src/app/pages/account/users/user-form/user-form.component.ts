@@ -30,6 +30,7 @@ export class UserFormComponent {
   protected isNew: boolean;
   public entityForm: any;
   protected namesInUse = [];
+  private homeSharePath: string;
 
   public fieldSetDisplay  = 'default';//default | carousel | stepper
   public fieldConfig: FieldConfig[] = [];
@@ -326,6 +327,18 @@ export class UserFormComponent {
           entityForm.setDisabled('password_conf', password_disabled);
         };
       });
+
+      this.ws.call('sharing.smb.query', [[['enabled', '=', true], ['home', '=', true]], { get: true }])
+      // On a new form, if there is a home SMB share, populate the 'home' form explorer with it...
+        .subscribe(({path}) => {
+          this.homeSharePath = path;
+          this.entityForm.formGroup.controls['home'].setValue(this.homeSharePath);
+          // ...then add on /<username>
+          this.entityForm.formGroup.controls['username'].valueChanges.subscribe(value => {
+            this.entityForm.formGroup.controls['home'].setValue(`${this.homeSharePath}/${value}`);
+          })
+      });
+      // If there is no home share, the 'home' path is populated from helptext
     }
 
 
@@ -362,6 +375,11 @@ export class UserFormComponent {
       if (!entityForm.isNew) {
         entityForm.setDisabled('uid', true);
         entityForm.formGroup.controls['username'].setValue(res[0].username);
+        // Be sure namesInUse is loaded, edit it, set username again to force validation
+        setTimeout(() => {
+          this.namesInUse.splice(this.namesInUse.indexOf(res[0].username), 1);
+          entityForm.formGroup.controls['username'].setValue(res[0].username);
+        }, 500);
         entityForm.formGroup.controls['full_name'].setValue(res[0].full_name);
         entityForm.formGroup.controls['email'].setValue(res[0].email);
         entityForm.formGroup.controls['password_disabled'].setValue(res[0].password_disabled);

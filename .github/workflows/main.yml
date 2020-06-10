@@ -1,0 +1,17 @@
+name: CI
+on: [pull_request]
+jobs:
+  build:
+    name: Yarn Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: borales/actions-yarn@v2.1.0
+        with:
+          cmd: install # will run `yarn install` command
+      - uses: borales/actions-yarn@v2.1.0
+        with:
+          cmd: run extract # test against yarn run extract to make sure it doesn't break PO files
+      - uses: borales/actions-yarn@v2.1.0
+        with:
+          cmd: build:prod:aot # will run `yarn build:prod:aot` command

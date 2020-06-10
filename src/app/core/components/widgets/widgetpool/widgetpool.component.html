@@ -102,10 +102,10 @@
 
                   <mat-list-item>
                     <strong>{{"Available Space" | translate}}: </strong>&nbsp;&nbsp; 
-                    <span *ngIf="volumeData && volumeData.used_pct;else unavail">
+                    <span *ngIf="volumeData && used_pct;else unavail">
                       <span class="value">{{diskSize}}</span>
                       <span class="value-units">{{diskSizeLabel}}</span>&nbsp;&nbsp;
-                      <span class="value-used">({{volumeData.used_pct}} {{"used" | translate}})</span>&nbsp;&nbsp;
+                      <span class="value-used">({{used_pct}} {{"used" | translate}})</span>&nbsp;&nbsp;
                     </span>
                     <ng-template #unavail>
                       <span class="value">{{"Gathering data..." | translate}}</span>

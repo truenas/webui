@@ -22,9 +22,14 @@ export const helptext_sharing_webdav = {
  ownership of files to be accessed through WebDAV must be manually set \
  to the <samp>webdav</samp> or <samp>www</samp> user/group.'),
 
+    placeholder_enabled: T('Enabled'),
+    tooltip_enabled: T('Enable this WebDAV share. Unset to disable this WebDAV \
+ share without deleting it.'),
+
     column_name: T('Share Name'),
     column_comment: T('Description'),
     column_path: T('Path'),
+    column_enabled: T('Enabled'),
     column_ro: T('Read Only'),
     column_perm: T('Change User and Group Ownership'),
 

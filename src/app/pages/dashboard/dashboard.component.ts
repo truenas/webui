@@ -37,8 +37,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   private statsEvents: any;
   public tcStats: any;
 
-  public isFooterConsoleOpen: boolean;
-
   // For widgetsysinfo
   public isHA: boolean; // = false;
   public isFN: boolean = window.localStorage['is_freenas'];
@@ -166,13 +164,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.init();
 
-    this.ws.call('system.advanced.config').subscribe((res)=> {
-      if (res) {
-        this.isFooterConsoleOpen = res.consolemsg;
-      }
-    });
-
-    if(this.isFN.toString() == 'false'){
+    if(this.isFN !== null && this.isFN.toString() == 'false'){
       this.ws.call('failover.licensed').subscribe((res)=> {
         if (res) {
           this.isHA = true;
@@ -305,13 +297,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
       
       const rootDataset = evt.data[i].children[0];
- 
+      
       let zvol = {
         avail: avail,
         id:evt.data[i].id,
         name:evt.data[i].name,
-        used:rootDataset.used,
-        used_pct: rootDataset.used_pct.toString() + '%',
+        used:rootDataset ? rootDataset.used : -1,
+        used_pct: rootDataset ? rootDataset.used_pct.toString() + '%' : 'Unknown',
         is_decrypted:evt.data[i].is_decrypted,
         is_upgraded:evt.data[i].is_upgraded,
         mountpoint:evt.data[i].mountpoint,

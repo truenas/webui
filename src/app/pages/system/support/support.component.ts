@@ -11,7 +11,6 @@ import { helptext_system_support as helptext } from 'app/helptext/system/support
 })
 export class SupportComponent implements OnInit {
   public is_freenas: boolean;
-  public isFooterConsoleOpen: boolean;
   public scrshot: any;
   public subs: any;
   public isProduction: boolean;
@@ -48,13 +47,6 @@ export class SupportComponent implements OnInit {
         this.getTrueNASImage(res.system_product);
       };
     });
-    setTimeout(() => {
-      this.ws.call('system.advanced.config').subscribe((res)=> {
-        if (res) {
-          this.isFooterConsoleOpen = res.consolemsg;
-        }
-      });
-    }, 500);
   };
 
   getFNSysInfo(res) {

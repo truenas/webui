@@ -212,12 +212,6 @@ export default {
  bytes per second.'),
     speed_limit_errors: globalHelptext.human_readable.input_error,
 
-    dedup_placeholder: T('Send Deduplicated Stream'),
-    dedup_tooltip: T('Deduplicate the stream to avoid sending redundant \
- data blocks. The destination system must also support deduplicated \
- streams. See <a href="https://www.freebsd.org/cgi/man.cgi?query=zfs" \
- target="_blank">zfs(8)</a>.'),
-
     large_block_placeholder: T('Allow Blocks Larger than 128KB'),
     large_block_tooltip: T('Allow sending large data blocks. The \
  destination system must also support large blocks. See \

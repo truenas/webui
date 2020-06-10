@@ -5,6 +5,7 @@ export const helptext_sharing_smb = {
     column_name: T('Name'),
     column_path: T('Path'),
     column_comment: T('Description'),
+    column_enabled: T('Enabled'),
 
     placeholder_path: T('Path'),
     tooltip_path: T('Select pool, dataset, or directory to share.'),
@@ -19,6 +20,10 @@ export const helptext_sharing_smb = {
     tooltip_comment: T(
       "Description of the share or notes on how it is used."
     ),
+
+    placeholder_enabled: T('Enabled'),
+    tooltip_enabled: T('Enable this SMB share. Unset to disable this SMB share \
+ without deleting it.'),
 
     placeholder_home: T('Use as home share'),
     tooltip_home: T('Set to allow the share to host user home \
@@ -48,13 +53,16 @@ export const helptext_sharing_smb = {
     placeholder_recyclebin: T('Export Recycle Bin'),
     tooltip_recyclebin: T('Files that are deleted from the same \
  dataset are moved to the Recycle Bin and do not take any additional \
- space. When the files are in a different dataset or a child dataset, \
+ space. <b>Deleting files over NFS will remove the files permanently \
+ </b>. When the files are in a different dataset or a child dataset, \
  they are copied to the dataset where the Recycle Bin is located. To \
  prevent excessive space usage, files larger than 20 MiB are deleted \
  rather than moved. Adjust the <i>Auxiliary Parameter</i> \
  <samp>crossrename:sizelimit=</samp> setting to allow larger files. \
  For example, <samp>crossrename:sizelimit={50}</samp> allows moves of \
- files up to 50 MiB in size.'),
+ files up to 50 MiB in size. This means files can be permanently \
+ deleted or moved from the recycle bin. <b>This is not a replacement \
+ for ZFS snapshots.</b>'),
 
     placeholder_showhiddenfiles: T('Show Hidden Files'),
     tooltip_showhiddenfiles: T('Set to disable the Windows <i>hidden</i> attribute\
@@ -147,7 +155,9 @@ export const helptext_sharing_smb = {
     
     restart_smb_dialog: {
        title: T('Restart SMB Service?'),
-       message: T('Enabling <em>Time Machine</em> on an SMB share requires a restart of the SMB service.'),
+       message_time_machine: T('Enabling <em>Time Machine</em> on an SMB share requires restarting the SMB service.'),
+       message_allow_deny: T('Changes to <em>Hosts Allow</em> or <em>Hosts Deny</em> take effect when the \
+ SMB service restarts.'),
        action_btn: T('Save and Restart SMB Now'),
        cancel_btn: T('Save Without Restarting')
     },

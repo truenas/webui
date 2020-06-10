@@ -17,6 +17,7 @@ export interface UserPreferences {
   preferIconsOnly:boolean;
   rebootAfterManualUpdate:boolean;
   tableDisplayedColumns:any;
+  expandAvailablePlugins: boolean;
 }
 
 @Injectable()
@@ -35,7 +36,8 @@ export class PreferencesService {
     "allowPwToggle":true,
     "preferIconsOnly": false,
     "rebootAfterManualUpdate": false,
-    "tableDisplayedColumns":[]
+    "tableDisplayedColumns":[],
+    "expandAvailablePlugins": true,
   }
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
     private aroute: ActivatedRoute) {

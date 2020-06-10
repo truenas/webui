@@ -124,7 +124,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public queryResponse;
   public saveSubmitText = T("Save");
   public showPassword = false;
-  public isFooterConsoleOpen: boolean;
   public successMessage = T('Settings saved.')
 
   get controls() {
@@ -190,7 +189,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             this.conf.isBasicMode = true;
           }
         }
-        this.isFooterConsoleOpen = res.consolemsg;
       }
     });
 
@@ -385,16 +383,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     setTimeout(() => { this.setShowDefaults(); }, 500);
   }
 
-  checkIfConsoleMsgShows() {
-    setTimeout(() => {
-      this.ws.call('system.advanced.config').subscribe((res)=> {
-        if (res) {
-          this.isFooterConsoleOpen = res.consolemsg;
-        }
-      });
-    }, 500)
-  }
-
   setShowDefaults() {
     this.showDefaults = true;
   }
@@ -477,7 +465,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   doSubmit(event: Event) {  
-    this.checkIfConsoleMsgShows();
     event.preventDefault();
     event.stopPropagation();
     this.error = null;

@@ -90,6 +90,13 @@ export class DatasetAclComponent implements OnDestroy {
           updater: this.updateUserSearchOptions,
         },
         {
+          type: 'checkbox',
+          name: 'apply_user',
+          placeholder: helptext.apply_user.placeholder,
+          tooltip: helptext.apply_user.tooltip,
+          value: false,
+        },
+        {
           type: 'combobox',
           name: 'gid',
           placeholder: helptext.dataset_acl_gid_placeholder,
@@ -99,6 +106,13 @@ export class DatasetAclComponent implements OnDestroy {
           searchOptions: [],
           parent: this,
           updater: this.updateGroupSearchOptions,
+        },
+        {
+          type: 'checkbox',
+          name: 'apply_group',
+          placeholder: helptext.apply_group.placeholder,
+          tooltip: helptext.apply_group.tooltip,
+          value: false
         },
         {
           type: 'select',
@@ -443,7 +457,20 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   resourceTransformIncomingRestData(data) {
+    if (data.acl.length === 0) {
+      setTimeout(() => {
+        this.handleEmptyACL();
+      }, 1000)
+    }
     return {"aces": []}; // stupid hacky thing that gets around entityForm's treatment of data
+  }
+
+  handleEmptyACL() {
+    this.loader.close()
+    this.dialogService.errorReport(helptext.empty_acl_dialog.title, helptext.empty_acl_dialog.message)
+      .subscribe(() => {
+        this.router.navigate(new Array('/').concat(this.route_success));
+    })
   }
 
   async dataHandler(entityForm, defaults?) {
@@ -607,6 +634,8 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   async customSubmit(body) {
+    body.uid = body.apply_user ? body.uid : null;
+    body.gid = body.apply_group ? body.gid : null;
     const doesNotWantToEditDataset =
       this.storageService.isDatasetTopLevel(body.path.replace("mnt/", "")) &&
       !(await this.dialogService
