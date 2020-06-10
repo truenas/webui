@@ -152,12 +152,12 @@ from the source dataset.'),
  replication that is already in progress can continue to run past this \
  time.'),
 
-    restrict_schedule_placeholder: T('Define Periodic Snapshots to Replicate'),
-    restrict_schedule_tooltip: T('Only replicate snapshots that \
- match a defined creation time. To specify which snapshots will be replicated, \
- set this checkbox and define the snapshot creation times that will be replicated. \
- <br> For example, setting this time frame to <i>Hourly</i> will only replicate \
- snapshots that were created at the beginning of each hour.'),
+    restrict_schedule_placeholder: T('Replicate Specific Snapshots'),
+    restrict_schedule_tooltip: T('Only replicate snapshots that match a \
+ defined creation time. To specify which snapshots will be replicated, \
+ set this checkbox and define the snapshot creation times that will be \
+ replicated. For example, setting this time frame to <i>Hourly</i> will \
+ only replicate snapshots that were created at the beginning of each hour.'),
 
     restrict_schedule_picker_tooltip: T('Select a preset schedule or \
  choose <i>Custom</i> to use the advanced scheduler.'),
@@ -173,10 +173,9 @@ from the source dataset.'),
  after the <i>End</i> time will not be included in the replication.'),
 
     only_matching_schedule_placeholder: T('Only Replicate Snapshots Matching Schedule'),
-    only_matching_schedule_tooltip: T('Set to either use the \
- <b>Schedule</b> in place of the <b>Snapshot Replication Schedule</b> or \
- add the <b>Schedule</b> values to the \
- <b>Snapshot Replication Schedule</b>.'),
+    only_matching_schedule_tooltip: T('Set to use the <i>Schedule</i> in place \
+ of the <i>Replicate Specific Snapshots</i> time frame. The Schedule values are \
+ read over the <i>Replicate Specific Snapshots</i> time frame.'),
 
     readonly_placeholder: T('Destination Dataset Read-only Policy'),
     readonly_tooltip: T('<b>SET</b> will changes all destination datasets to <code>readonly=on</code>\
