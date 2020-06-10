@@ -26,6 +26,15 @@ export class ApiService {
   public debug:boolean = false;
 
   private apiDefinitions = {
+    UpdateConfigRequest:{
+      apiCall:{
+        protocol:"rest",
+        version:"1.0",
+        operation: "get",
+        namespace: "system/update/",
+        responseEvent: "UpdateConfig"
+      }
+    },
     UserDataRequest:{
       apiCall:{
         protocol:"websocket",

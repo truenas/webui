@@ -164,7 +164,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.init();
 
-    if(this.isFN.toString() == 'false'){
+    if(this.isFN !== null && this.isFN.toString() == 'false'){
       this.ws.call('failover.licensed').subscribe((res)=> {
         if (res) {
           this.isHA = true;

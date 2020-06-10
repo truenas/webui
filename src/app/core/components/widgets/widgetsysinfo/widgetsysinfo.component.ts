@@ -75,8 +75,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
 
   ngAfterViewInit(){
 
-    this.ws.call('update.get_auto_download').subscribe((res) => {
-      if(res == true){
+    this.core.register({ observerClass: this, eventName: 'UpdateConfig'}).subscribe((res: CoreEvent) => {
+      if(res.data.upd_autocheck == true){
         this.core.register({observerClass:this,eventName:"UpdateChecked"}).subscribe((evt:CoreEvent) => {
           if(evt.data.status == "AVAILABLE"){
             this.updateAvailable = true;
@@ -84,6 +84,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
         });
       }
     });
+    this.core.emit({name:"UpdateConfigRequest"});
 
     if(this.isHA && this.isPassive){
       this.core.register({observerClass:this,eventName:"HA_Status"}).subscribe((evt:CoreEvent) => {

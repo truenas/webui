@@ -110,6 +110,19 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   @ViewChild('disks', {static:false}) disks:TemplateRef<any>;
   @ViewChild('disk_details', {static:false}) disk_details:TemplateRef<any>;
   @ViewChild('empty', {static:false}) empty:TemplateRef<any>;
+
+  get used_pct(){
+    // Make sure the template always gets the correct type
+    // Template is expecting "n%"
+    if(this.volumeData.used_pct == "ERROR"){
+      return '';
+    } else if(this.volumeData.used_pct && typeof this.volumeData.used_pct == "number"){
+      return this.volumeData.used_pct.toString() + '%';
+    } else if(this.volumeData.used_pct && typeof this.volumeData.used_pct == "string" && this.volumeData.used_pct[this.volumeData.used_pct.length - 1] == '%'){
+      return this.volumeData.used_pct;
+    }
+  }
+
   public templates:any;
   public tpl = this.overview;
 
