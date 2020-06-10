@@ -208,20 +208,24 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
     this.core.emit({name: "SysInfoRequest", sender:this});
 
-    this.core.emit({name:"UserPreferencesRequest", sender:this});
-    this.core.register({observerClass:this,eventName:"UserPreferencesReady"}).subscribe((evt:CoreEvent) => {
-      if(this.isWaiting){
-        this.target.next({name:"SubmitComplete", sender: this});
-        this.isWaiting = false;
-      }
-      this.showWelcome = evt.data.showWelcomeDialog;
-      
-      setTimeout(() => {
-        if (this.showWelcome) {
-          this.onShowAbout();
-        }
-      }, 3500)
+    this.core.register({observerClass:this,eventName:"UserPreferences"}).subscribe((evt:CoreEvent) => {
+      this.preferencesHandler(evt);
     });
+    this.core.register({observerClass:this,eventName:"UserPreferencesReady"}).subscribe((evt:CoreEvent) => {
+      this.preferencesHandler(evt);
+    });
+    this.core.emit({name:"UserPreferencesRequest", sender:this});
+  }
+
+  preferencesHandler(evt:CoreEvent){
+    if(this.isWaiting){
+      this.target.next({name:"SubmitComplete", sender: this});
+      this.isWaiting = false;
+    }
+    this.showWelcome = evt.data.showWelcomeDialog;
+    if (this.showWelcome) {
+      this.onShowAbout();
+    }   
   }
 
   checkLegacyUISetting() {
