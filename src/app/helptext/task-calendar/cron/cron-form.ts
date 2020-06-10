@@ -18,8 +18,9 @@ export default {
     cron_user_validation : [ Validators.required ],
 
     cron_picker_placeholder: T('Schedule'),
-    cron_picker_tooltip: T('Select a schedule preset or choose <i>Custom</i>\
-                to open the advanced scheduler.'),
+    cron_picker_tooltip: T('Select a schedule preset or choose <i>Custom</i> \
+ to open the advanced scheduler. Note that an in-progress cron task must finish \
+ before the next scheduled task can begin.'),
     cron_picker_validation: [ Validators.required ],
 
     cron_stdout_placeholder: T('Hide Standard Output'),
