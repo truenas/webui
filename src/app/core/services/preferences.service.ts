@@ -12,29 +12,29 @@ interface PropertyReport {
 }
 
 export interface UserPreferences {
-  platform:string; // FreeNAS || TrueNAS
+  platform?:string; // FreeNAS || TrueNAS
   retroLogo?: boolean; // Brings back FreeNAS branding
-  timestamp:Date;
-  userTheme:string; // Theme name
+  timestamp?:Date;
+  userTheme?:string; // Theme name
   customThemes?: Theme[]; 
   favoriteThemes?: string[]; // Deprecate
-  showGuide:boolean; // Guided Tour on/off
+  showGuide?:boolean; // Guided Tour on/off
   showTooltips?:boolean; // Form Tooltips on/off // Deprecated, remove in v12!
-  metaphor:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
-  allowPwToggle:boolean;
-  preferIconsOnly:boolean;
-  rebootAfterManualUpdate:boolean;
-  tableDisplayedColumns:any;
-  hide_builtin_users: boolean;
-  hide_builtin_groups: boolean;
-  dateFormat:string;
-  timeFormat:string;
-  nicType:string
-  nicAttach: string,
-  showWelcomeDialog: boolean;
-  showUserListMessage: boolean;
-  showGroupListMessage: boolean;
-  expandAvailablePlugins: boolean;
+  metaphor?:string; // Prefer Cards || Tables || Auto (gui decides based on data array length)
+  allowPwToggle?:boolean;
+  preferIconsOnly?:boolean;
+  rebootAfterManualUpdate?:boolean;
+  tableDisplayedColumns?:any;
+  hide_builtin_users?: boolean;
+  hide_builtin_groups?: boolean;
+  dateFormat?:string;
+  timeFormat?:string;
+  nicType?:string
+  nicAttach?: string,
+  showWelcomeDialog?: boolean;
+  showUserListMessage?: boolean;
+  showGroupListMessage?: boolean;
+  expandAvailablePlugins?: boolean;
 }
 
 @Injectable()
@@ -67,10 +67,12 @@ export class PreferencesService {
     "expandAvailablePlugins": true,
   }
 
-  public preferences: UserPreferences = this.defaultPreferences;
+  public preferences: UserPreferences; 
 
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
     private aroute: ActivatedRoute) {
+
+    this.preferences = this.defaultPreferences;
 
     this.core.register({observerClass:this, eventName:"Authenticated",sender:this.api}).subscribe((evt:CoreEvent) => {
       // evt.data: boolean represents authentication status
@@ -91,7 +93,6 @@ export class PreferencesService {
     });
 
     this.core.register({observerClass:this, eventName:"UserData", sender:this.api }).subscribe((evt:CoreEvent) => {
-
       if (evt.data[0]) {
         const data = evt.data[0].attributes.preferences;
         if(!data){
@@ -173,23 +174,26 @@ export class PreferencesService {
   updatePreferences(data:UserPreferences){
 
     if(data && !this.startupComplete && this.debug){
+      console.warn("Startup is not complete!");
       console.warn(data);
       const report = this.sanityCheck(data);
       console.log(report);
     }
     
-    let clone = Object.assign({}, this.preferences);
-    const keys = Object.keys(clone);
+    let clone: UserPreferences = {}; 
+    const keys = Object.keys(this.preferences);
     keys.forEach((key) => {
-      if(clone[key] !== null && data[key] !== null){
+      if(data[key] !== undefined && data[key] !== null){
         // If middleware object contains a valid key, store the value
         clone[key] = data[key];
+      } else {
+        // Otherwise use the locally stored value
+        clone[key] = this.preferences[key];
       }
     });
     this.preferences = clone;
 
     if(this.startupComplete){ 
-      //Notify Guided Tour & Theme Service
       this.core.emit({name:"UserPreferencesChanged", data:this.preferences, sender: this});
     } 
     
