@@ -95,6 +95,23 @@ export class PreferencesService {
     this.core.register({observerClass:this, eventName:"UserData", sender:this.api }).subscribe((evt:CoreEvent) => {
       if (evt.data[0]) {
         const data = evt.data[0].attributes.preferences;
+        // TEST
+        /*const data = {
+          "platform":"freenas",// Detect platform
+          "timestamp":new Date(),
+          "userTheme":"ix-dark", // Theme name
+          "customThemes": [], // Theme Objects
+          "favoriteThemes": [], // Theme Names
+          "showGuide":true,
+          "showTooltips":true,
+          "metaphor":"auto",
+          "allowPwToggle":true,
+          "preferIconsOnly": false,
+          "rebootAfterManualUpdate": false,
+          "tableDisplayedColumns":[],
+          
+        }*/
+        // END TEST
         if(!data){
           // If preferences do not exist return after saving Preferences so that UI can retry.
           if(this.debug)console.log('Preferences not returned');
@@ -183,15 +200,18 @@ export class PreferencesService {
     let clone: UserPreferences = {}; 
     const keys = Object.keys(this.preferences);
     keys.forEach((key) => {
-      if(data[key] !== undefined && data[key] !== null){
+      if(data[key] !== undefined){
+        console.log(key);
         // If middleware object contains a valid key, store the value
         clone[key] = data[key];
       } else {
+        console.warn(key);
         // Otherwise use the locally stored value
         clone[key] = this.preferences[key];
       }
     });
     this.preferences = clone;
+    console.log(this.preferences);
 
     if(this.startupComplete){ 
       this.core.emit({name:"UserPreferencesChanged", data:this.preferences, sender: this});
