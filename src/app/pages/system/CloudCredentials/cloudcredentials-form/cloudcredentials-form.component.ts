@@ -993,6 +993,8 @@ export class CloudCredentialsFormComponent {
 
       this.oauthURL = _.find(this.providers, {'name': res}).credentials_oauth;
       this.credentialsOauth = this.oauthURL == null ? false : true;
+      entityForm.setDisabled('client_id', !this.credentialsOauth, !this.credentialsOauth);
+      entityForm.setDisabled('client_secret', !this.credentialsOauth, !this.credentialsOauth);
     });
     // preview service_account_credentials
     entityForm.formGroup.controls['service_account_credentials-GOOGLE_CLOUD_STORAGE'].valueChanges.subscribe((value)=>{
