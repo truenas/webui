@@ -84,7 +84,7 @@
 
             <div  fxFlex *ngIf="data" class="data-container">
               <div fxHide.gt-xs class="list-subheader">{{isPassive ? 'System Information (Standby)' : 'System Information'}}</div>
-              <div fxHide.xs class="list-subheader">Overview</div>
+              <div fxHide.xs class="list-subheader">{{'Overview' | translate}}</div>
 
               <mat-list>
                 <mat-list-item><strong>{{'Platform' | translate}}:</strong> &nbsp;&nbsp;{{data.system_product && manufacturer == 'ixsystems' ? data.system_product : 'Generic'}}</mat-list-item>
