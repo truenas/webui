@@ -12,6 +12,7 @@ export class SystemGeneralService {
 
   protected certificateList: string = 'certificate.query';
   protected caList: string = 'certificateauthority.query';
+  updateIsDone$ = new Subject();
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
@@ -59,4 +60,8 @@ export class SystemGeneralService {
 
   updateRunning = new EventEmitter<string>();
   updateRunningNoticeSent = new EventEmitter<string>();
+
+  updateDone() {
+    this.updateIsDone$.next();
+  }
 }

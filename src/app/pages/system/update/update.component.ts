@@ -409,22 +409,20 @@ export class UpdateComponent implements OnInit, OnDestroy {
       this.dialogRef.componentInstance.failure.subscribe((res) => {
         this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
       });
-    } else {
+    } else { // HA system
       this.ws.call('update.set_train', [this.train]).subscribe(() => { 
         this.dialogRef.componentInstance.setCall('failover.upgrade');
         this.dialogRef.componentInstance.disableProgressValue(true);
         this.dialogRef.componentInstance.submit();
-        this.dialogRef.componentInstance.success.subscribe((res) => {
-          if (!this.is_ha) { 
-            this.router.navigate(['/others/reboot']); 
-          } else  {
-            this.dialogService.closeAllDialogs();
-            this.router.navigate(['/']); 
-            this.dialogService.confirm(helptext.ha_update.complete_title, 
-              helptext.ha_update.complete_msg, true, 
-              helptext.ha_update.complete_action,false, '','','','', true).subscribe(() => {
-              });
-          }
+        this.dialogRef.componentInstance.success.subscribe(() => {        
+          this.dialogService.closeAllDialogs();
+          this.isUpdateRunning = false;
+          this.sysGenService.updateDone(); // Send 'finished' signal to topbar 
+          this.router.navigate(['/']); 
+          this.dialogService.confirm(helptext.ha_update.complete_title, 
+            helptext.ha_update.complete_msg, true, 
+            helptext.ha_update.complete_action,false, '','','','', true).subscribe(() => {
+            });
         });
         this.dialogRef.componentInstance.failure.subscribe((err) => {
           new EntityUtils().handleWSError(this, err, this.dialogService);

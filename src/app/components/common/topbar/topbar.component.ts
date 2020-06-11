@@ -40,6 +40,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   interval: any;
 
   continuosStreaming: Subscription;
+  updateIsDone: Subscription;
 
   showResilvering = false;
   pendingNetworkChanges = false;
@@ -108,6 +109,13 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.ws.subscribe('core.get_jobs').subscribe((res) => {
       if (res && res.fields.method === 'update.update' || res.fields.method === 'failover.upgrade') {
         this.updateIsRunning = true;
+        // When update starts on HA system, listen for 'finish', then quit listening
+        if (this.is_ha) {
+          this.updateIsDone = this.sysGenService.updateIsDone$.subscribe(() => {
+            this.updateIsRunning = false;
+            this.updateIsDone.unsubscribe();
+          })
+        }
         if (!this.updateNotificationSent) {
           this.updateInProgress();
           this.updateNotificationSent = true;
