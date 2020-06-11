@@ -872,10 +872,13 @@ msgid "Account Name"
 msgstr "账户名"
 
 msgid ""
-"Account to be used for guest access. Default is nobody. Account is required "
-"to have permissions to the shared pool or dataset. When the Guest Account "
-"user is deleted it resets to nobody."
-msgstr "用于访客访问的帐户。默认为nobody。帐户必须具有共享池或数据集的权限。删除来宾帐户用户后，它将重置为nobody。"
+"Account to be used for guest access. Default is  <i>nobody</i>. The chosen "
+"account is required to have permissions to the  shared pool or dataset. To "
+"adjust permissions, edit the dataset Access  Control List (ACL), add a new "
+"entry for the chosen guest account, and  configure the permissions in that "
+"entry. If the selected <i>Guest Account</i>  is deleted the field resets to "
+"<i>nobody</i>."
+msgstr ""
 
 msgid "Accounts"
 msgstr "账户"
@@ -2060,6 +2063,9 @@ msgstr "蓝色"
 
 msgid "Boot"
 msgstr "启动"
+
+msgid "Boot Environment"
+msgstr ""
 
 msgid "Boot Environments"
 msgstr "引导环境"
@@ -3394,6 +3400,9 @@ msgstr "创建或导入池"
 msgid "Create or Import pool"
 msgstr "创建或导入池"
 
+msgid "Created"
+msgstr ""
+
 msgid "Created Date"
 msgstr "创建日期"
 
@@ -3600,6 +3609,9 @@ msgstr "数据收集频率，以秒为单位。"
 msgid "Data not available"
 msgstr "数据不可用"
 
+msgid "Data not provided"
+msgstr ""
+
 msgid ""
 "Data transfer security. The connection is  authenticated with SSH. Data can "
 "be encrypted during transfer for  security or left unencrypted to maximize "
@@ -3729,9 +3741,6 @@ msgstr "默认Umask"
 
 msgid "Default is UTF-8 which supports all characters in all languages."
 msgstr "默认值为UTF-8，它支持所有语言的字符。"
-
-msgid "Define Periodic Snapshots to Replicate"
-msgstr "定义要复制的定期快照"
 
 msgid ""
 "Define a length of time to retain the snapshot  on this system using a "
@@ -4299,6 +4308,9 @@ msgstr "要编辑的磁盘："
 
 msgid "Dismiss"
 msgstr "解散"
+
+msgid "Dismiss All Alerts"
+msgstr ""
 
 msgid "Display Login"
 msgstr "显示登录"
@@ -5236,13 +5248,12 @@ msgstr ""
 "target=\"_blank\"> upsd.users（5）</a> 。"
 
 msgid ""
-"Enter additional <b>smb.conf</b> options. See the <a "
+"Enter additional <b>smb.conf</b> options. See the  <a "
 "href=\"http://www.oreilly.com/openbook/samba/book/appb_02.html\" "
-"target=\"_blank\">Samba Guide</a> for more information on these settings."
+"target=\"_blank\">Samba Guide</a>  for more information on these "
+"settings.<br>  To log more details when a client attempts to authenticate "
+"to the share, add  <code>log level = 1, auth_audit:5</code>."
 msgstr ""
-"输入附加<b> smb.conf </ b>选项。有关这些设置的更多信息，请参见<a "
-"href=\"http://www.oreilly.com/openbook/samba/book/appb_02.html\" "
-"target=\"_blank\"> Samba指南</a>。"
 
 msgid ""
 "Enter additional parameters from  <a "
@@ -6042,18 +6053,17 @@ msgstr "上传之前，文件将被拆分为该大小的块。可以同时传输
 
 msgid ""
 "Files that are deleted from the same  dataset are moved to the Recycle Bin "
-"and do not take any additional  space. When the files are in a different "
+"and do not take any additional  space. <b>Deleting files over NFS will "
+"remove the files permanently  </b>. When the files are in a different "
 "dataset or a child dataset,  they are copied to the dataset where the "
 "Recycle Bin is located. To  prevent excessive space usage, files larger "
 "than 20 MiB are deleted  rather than moved. Adjust the <i>Auxiliary "
 "Parameter</i>  <samp>crossrename:sizelimit=</samp> setting to allow larger "
 "files.  For example, <samp>crossrename:sizelimit={50}</samp> allows moves "
-"of  files up to 50 MiB in size."
+"of  files up to 50 MiB in size. This means files can be permanently  "
+"deleted or moved from the recycle bin. <b>This is not a replacement  for "
+"ZFS snapshots.</b>"
 msgstr ""
-"从同一数据集中删除的文件将移动到回收站，并且不会占用任何其他空间。当文件位于其他数据集或子数据集中时，它们将被复制到回收站所在的数据集中。为了防止占用过"
-"多空间，将删除而不移动大于20 MiB的文件。 调整<i>辅助参数</i>  "
-"<samp>crossrename:sizelimit=</samp>设置以允许更大的文件。例如，<samp>crossrename:"
-"sizelimit={50}</samp>允许移动最大50 MiB的文件。"
 
 msgid "Filesize"
 msgstr "文件大小"
@@ -7624,9 +7634,6 @@ msgstr "加载先前的复制任务"
 msgid "Load colors from existing theme"
 msgstr "从现有主题加载颜色"
 
-msgid "Loading dashboard data"
-msgstr ""
-
 msgid "Local"
 msgstr "本地"
 
@@ -8318,6 +8325,9 @@ msgstr "名称或命名惯例是必需的。一次只能使用一个字段。"
 msgid "Name or Naming Schema must be provided."
 msgstr "必须提供名称或命名惯例。"
 
+msgid "Name servers not configured"
+msgstr ""
+
 msgid "Name that was created with the SMB share."
 msgstr "用SMB共享创建的名称。"
 
@@ -8744,6 +8754,9 @@ msgstr "监狱可用的PTY数量的数值。"
 msgid "Numeric value to set the file descriptor table size."
 msgstr "用于设置文件描述符表大小的数值。"
 
+msgid "OAuth Advanced Options"
+msgstr ""
+
 msgid "OAuth Client ID"
 msgstr "Oauth客户端ID"
 
@@ -8846,14 +8859,12 @@ msgid "Only override the default if the initiator requires a different block siz
 msgstr "仅当启动器要求不同的块大小时才覆盖默认值。"
 
 msgid ""
-"Only replicate snapshots that  match a defined creation time. To specify "
+"Only replicate snapshots that match a  defined creation time. To specify "
 "which snapshots will be replicated,  set this checkbox and define the "
-"snapshot creation times that will be replicated.  <br> For example, setting "
-"this time frame to <i>Hourly</i> will only replicate  snapshots that were "
+"snapshot creation times that will be  replicated. For example, setting this "
+"time frame to <i>Hourly</i> will  only replicate snapshots that were "
 "created at the beginning of each hour."
 msgstr ""
-"仅复制与定义的创建时间匹配的快照。要指定要复制的快照，请设置此复选框并定义要复制的快照创建时间。<br>例如，将此时间范围设置为<i>每小时</i>"
-"只会复制在每个小时开始时创建的快照。"
 
 msgid ""
 "Only set LDAP authentication for SMB shares is required and the LDAP server "
@@ -9004,6 +9015,9 @@ msgid ""
 "Overrides default file creation mask of <i>0666</i>  which creates files "
 "with read and write access for everybody."
 msgstr "覆盖<i>0666</i>的默认文件创建掩码，该掩码创建对所有人具有读写访问权限的文件。"
+
+msgid "Overview"
+msgstr ""
 
 msgid "Owner"
 msgstr "所有者"
@@ -9667,6 +9681,12 @@ msgstr "原始文件"
 msgid "Raw filesize"
 msgstr "原始文件大小"
 
+msgid "Re-Open"
+msgstr ""
+
+msgid "Re-Open All Alerts"
+msgstr ""
+
 msgid "Read"
 msgstr "读取"
 
@@ -9919,6 +9939,9 @@ msgstr "复制 <i>"
 
 msgid "Replicate Custom Snapshots"
 msgstr "复制自定义快照"
+
+msgid "Replicate Specific Snapshots"
+msgstr ""
 
 msgid ""
 "Replicate all child dataset snapshots. When  set, <b>Exclude Child "
@@ -10720,6 +10743,12 @@ msgid ""
 "Select a schedule preset or choose <i>Custom</i>                to open the "
 "advanced scheduler."
 msgstr "选择计划预设或选择<i>自定义</i>以打开高级计划程序。"
+
+msgid ""
+"Select a schedule preset or choose <i>Custom</i>  to open the advanced "
+"scheduler. Note that an in-progress cron task postpones  any later "
+"scheduled instance of the same task until the running task is  complete."
+msgstr ""
 
 msgid ""
 "Select a schedule preset or choose <i>Custom</i> to open the advanced "
@@ -11536,12 +11565,6 @@ msgid ""
 msgstr "设置为在链接的定期快照任务完成后立即启动此复制任务，或者继续为此复制创建单独的<b>计划</b>。"
 
 msgid ""
-"Set to either use the  <b>Schedule</b> in place of the <b>Snapshot "
-"Replication Schedule</b> or  add the <b>Schedule</b> values to the  "
-"<b>Snapshot Replication Schedule</b>."
-msgstr "设置为使用<b>计划</b>代替<b>快照复制计划</b>或将<b>计划</b>值添加到<b>快照复制计划</b>。"
-
-msgid ""
 "Set to enable DHCP. Leave unset to create a static IPv4 or IPv6 "
 "configuration. Only one interface can be configured for DHCP."
 msgstr "设置来启用DHCP。保持未设置来创建一个静态IPv4或IPv6配置。只有一个网络接口可以配置用于 DHCP。"
@@ -11819,6 +11842,12 @@ msgid ""
 "Set to use SLAAC (Stateless Address Auto Configuration) to autoconfigure "
 "IPv6 in the jail."
 msgstr "设置为使用SLAAC（无状态地址自动配置）在监狱中自动配置IPv6。"
+
+msgid ""
+"Set to use the <i>Schedule</i> in place  of the <i>Replicate Specific "
+"Snapshots</i> time frame. The Schedule values are  read over the "
+"<i>Replicate Specific Snapshots</i> time frame."
+msgstr ""
 
 msgid ""
 "Set to use the Berkeley Packet Filter (<a "
@@ -12155,6 +12184,9 @@ msgstr "源"
 
 msgid "Source Location"
 msgstr "源位置"
+
+msgid "Space"
+msgstr ""
 
 msgid ""
 "Space-delimited list of allowed IP addresses <i>(192.168.1.10)</i> or "
@@ -13234,6 +13266,9 @@ msgid ""
 "The zvol default block size is automatically chosen based on the number of "
 "the disks in the pool for a general use case."
 msgstr "在一般情况下，将基于池中的磁盘数量自动选择zvol默认块大小。"
+
+msgid "There are no alerts."
+msgstr ""
 
 msgid "There are pending network interface changes. Review them now?"
 msgstr ""

@@ -49,18 +49,18 @@ export class BootEnvironmentListComponent {
     protected localeService: LocaleService) {}
 
   public columns: Array<any> = [
-    {name: 'Name', prop: 'name', always_display: true},
-    {name: 'Active', prop: 'active'},
-    {name: 'Created', prop: 'created'},
-    {name: 'Space', prop: 'rawspace'},
-    {name: 'Keep', prop: 'keep'},
+    {name: T('Name'), prop: 'name', always_display: true},
+    {name: T('Active'), prop: 'active'},
+    {name: T('Created'), prop: 'created'},
+    {name: T('Space'), prop: 'rawspace'},
+    {name: T('Keep'), prop: 'keep'},
   ];
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
     multiSelect: true,
     deleteMsg: {
-      title: 'Boot Environment',
+      title: T('Boot Environment'),
       key_props: ['name']
     },
   };
