@@ -50,7 +50,6 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
         _.find(menuItem, {state : "vm"}).disabled = true;
         _.find(_.find(menuItem, {state : "directoryservice"}).sub, {state : "nis"}).disabled = true;
         _.find(_.find(menuItem, {state : "network"}).sub, {state : "staticroutes"}).disabled = true;
-        _.find(_.find(menuItem, {state : "tasks"}).sub, {state : "initshutdown"}).disabled = true;
         _.find(_.find(menuItem, {state : "sharing"}).sub, {state : "nfs"}).disabled = true;
         _.find(_.find(menuItem, {state : "sharing"}).sub, {state : "webdav"}).disabled = true;
         _.find(_.find(menuItem, {state : "storage"}).sub, {state : "multipaths"}).disabled = true;
