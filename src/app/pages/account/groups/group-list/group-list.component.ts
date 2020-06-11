@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../services/ws.service';
@@ -49,7 +50,7 @@ export class GroupListComponent {
 
   constructor(private _router: Router, protected dialogService: DialogService, 
     protected loader: AppLoaderService,protected ws: WebSocketService,
-    protected prefService: PreferencesService){}
+    protected prefService: PreferencesService, private translate: TranslateService){}
 
   resourceTransformIncomingRestData(data) {
     // Default setting is to hide builtin groups 
@@ -155,16 +156,22 @@ export class GroupListComponent {
     let show;
     this.prefService.preferences.hide_builtin_groups ? show = helptext.builtins_dialog.show :
       show = helptext.builtins_dialog.hide;
-      this.dialogService.confirm(show + helptext.builtins_dialog.title, 
-        show + helptext.builtins_dialog.message, true, show)
-        .subscribe((res) => {
-         if (res) {
-            this.prefService.preferences.hide_builtin_groups = !this.prefService.preferences.hide_builtin_groups;
-            this.prefService.savePreferences();
-            this.entityList.needTableResize = false;
-            this.entityList.getData();
-         }
+      this.translate.get(show).subscribe((action: string) => {
+        this.translate.get(helptext.builtins_dialog.title).subscribe((title: string) => {
+          this.translate.get(helptext.builtins_dialog.message).subscribe((message: string) => {
+          this.dialogService.confirm(action + title, 
+            action + message, true, action)
+            .subscribe((res) => {
+            if (res) {
+                this.prefService.preferences.hide_builtin_groups = !this.prefService.preferences.hide_builtin_groups;
+                this.prefService.savePreferences();
+                this.entityList.needTableResize = false;
+                this.entityList.getData();
+            }
+          })
+        })
       })
+    })
   }
 
   showOneTimeBuiltinMsg() {
