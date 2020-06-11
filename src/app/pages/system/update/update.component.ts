@@ -57,7 +57,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
   public singleDescription: string;
   public updateType: string;
   public sysInfo: any;
-  sysUpdateMessage = T('A system update is in progress. ') + helptext.sysUpdateMessage;
+  sysUpdateMessage = T('A system update is in progress. ');
+  public sysUpdateMsgPt2 = helptext.sysUpdateMessage;
   public updatecheck_tooltip = T('Check the update server daily for \
                                   any updates on the chosen train. \
                                   Automatically download an update if \
@@ -547,16 +548,14 @@ export class UpdateComponent implements OnInit, OnDestroy {
         this.dialogRef.componentInstance.disableProgressValue(true);
         this.dialogRef.componentInstance.submit();
         this.dialogRef.componentInstance.success.subscribe((res) => {
-          if (!this.is_ha) { 
-            this.router.navigate(['/others/reboot']); 
-          } else  {
-            this.dialogService.closeAllDialogs();
-            this.router.navigate(['/']); 
-            this.dialogService.confirm(helptext.ha_update.complete_title, 
-              helptext.ha_update.complete_msg, true, 
-              helptext.ha_update.complete_action,false, '','','','', true).subscribe(() => {
-              });
-          }
+          this.dialogService.closeAllDialogs();
+          this.isUpdateRunning = false;
+          this.sysGenService.updateDone(); // Send 'finished' signal to topbar
+          this.router.navigate(['/']); 
+          this.dialogService.confirm(helptext.ha_update.complete_title, 
+            helptext.ha_update.complete_msg, true, 
+            helptext.ha_update.complete_action,false, '','','','', true).subscribe(() => {
+            });
         });
         this.dialogRef.componentInstance.failure.subscribe((err) => {
           new EntityUtils().handleWSError(this, err, this.dialogService);
