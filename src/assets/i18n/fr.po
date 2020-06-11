@@ -1429,7 +1429,7 @@ msgid "Advanced Remote Options"
 msgstr "Options (avancées) à distance"
 
 msgid "Advanced Replication Creation"
-msgstr "Création de réplications avancées"
+msgstr "Création avancée de réplication"
 
 msgid "Advanced Settings"
 msgstr "Réglages avancés"
