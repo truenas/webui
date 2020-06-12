@@ -175,8 +175,10 @@ export class ManualUpdateComponent extends ViewControllerComponent {
               });
             });
           };
-        } else  {
+        } else  { // HA system
           this.dialogService.closeAllDialogs();
+          this.isUpdateRunning = false;
+          this.systemService.updateDone(); // Send 'finished' signal to topbar
           this.router.navigate(['/']);
           this.dialogService.confirm(helptext.ha_update.complete_title,
             helptext.ha_update.complete_msg, true,
