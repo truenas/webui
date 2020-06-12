@@ -423,10 +423,11 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   getActions(rowData: any) {
+    rowData.is_passphrase = (rowData.key_format && rowData.key_format.parsed === 'passphrase' ? true : false);
     let rowDataPathSplit = [];
     const self = this;
-    if (rowData.path) {
-      rowDataPathSplit = rowData.path.split('/');
+    if (rowData.mountpoint) {
+      rowDataPathSplit = rowData.mountpoint.split('/');
     }
     let p1 = '';
     const actions = [];
@@ -435,24 +436,31 @@ export class VolumesListTableConfig implements InputTableConf {
       actions.push({
         id: rowData.name,
         name: 'Export/Disconnect',
-        label: T("Export/Disconnect"),
+        label: helptext.exportAction,
         onClick: (row1) => {
-          let encryptedStatus = row1.vol_encryptkey,
+          let encryptedStatus = row1.encrypt,
           self = this;
+
           if (rowData.is_decrypted && rowData.status !== 'UNKNOWN') {
             this.loader.open();
             this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
               if (res.length > 0) {
-                p1 = `These services depend on pool <i>${row1.name}</i> and will be disrupted if the pool is detached:`;
-                res.forEach((item) => {
-                  p1 += `<br><br>${item.type}:`;
-                  item.attachments.forEach((i) => {
-                    let tempArr = i.split(',');
-                    tempArr.forEach((i) => {
-                      p1 += `<br> - ${i}`
+                let servicesA, servicesB;
+                this.translate.get(helptext.exportMessages.servicesA).subscribe(a => {
+                  this.translate.get(helptext.exportMessages.servicesB).subscribe(b => {
+                    servicesA = a;
+                    servicesB = b;
+                    p1 =  a + `<i>${row1.name}</i>` + b;
+                    res.forEach((item) => {
+                      p1 += `<br><br>${item.type}:`;
+                      item.attachments.forEach((i) => {
+                        let tempArr = i.split(',');
+                        tempArr.forEach((i) => {
+                          p1 += `<br> - ${i}`
+                        })
+                      })
                     })
                   })
-
                 })
               }
               this.ws.call('pool.processes', [row1.id]).subscribe((res) => {
@@ -469,173 +477,227 @@ export class VolumesListTableConfig implements InputTableConf {
                     }
                   });
                   if (running_processes.length > 0) {
-                    p1 += `<br><br>These running services are using <b>${row1.name}</b>:`;
-                    running_processes.forEach((process) =>  {
-                      if (process.name) {
-                        p1 += `<br> - ${process.name}`
-                      }
-
-                    });
+                    this.translate.get(helptext.exportMessages.running).subscribe(runningMsg => {
+                      p1 += `<br><br>` + runningMsg + `<b>${row1.name}</b>:`;
+                      running_processes.forEach((process) =>  {
+                        if (process.name) {
+                          p1 += `<br> - ${process.name}`
+                        }
+                      });
+                    })
                   };
                   if (running_unknown_processes.length > 0) {
-                    p1 += '<br><br>These unknown processes are using this pool:';
-                    running_unknown_processes.forEach((process) => {
-                      if (process.pid) {
-                        p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0,40)}`;
-                      }
-                    });
-                    p1 += `<br><br>WARNING: These unknown processes will be terminated while exporting the pool.`;
+                    this.translate.get(helptext.exportMessages.unknown).subscribe(unknownMsg => {
+                      this.translate.get(helptext.exportMessages.terminated).subscribe(terminatedMsg => {
+                        p1 += `<br><br>` + unknownMsg;
+                        running_unknown_processes.forEach((process) => {
+                          if (process.pid) {
+                            p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0,40)}`;
+                          }
+                        });
+                        p1 += `<br><br>` + terminatedMsg;
+                      })
+                    })
                   }
                 };
                 this.loader.close();
                 doDetach();
-            })
-          },
-          (err) => {
-            this.loader.close();
-            this.dialogService.errorReport(T("Error exporting/disconnecting pool."), err.reason, err.trace.formatted);
-          })
-        } else {
-          doDetach();
-        }
-
-        function doDetach() {
-          const conf: DialogFormConfiguration = {
-            title: "Export/disconnect pool: '" + row1.name + "'",
-            fieldConfig: [{
-              type: 'paragraph',
-              name: 'pool_detach_warning',
-              paraText: helptext.detachDialog_pool_detach_warning_paratext_a + row1.name +
-                helptext.detachDialog_pool_detach_warning_paratext_b,
-              isHidden: rowData.status === 'UNKNOWN' ? true : false
-            }, {
-              type: 'paragraph',
-              name: 'unknown_status_detach_warning',
-              paraText: `${helptext.detachWarningForUnknownState.message_a} ${row1.name} ${helptext.detachWarningForUnknownState.message_b}`,
-              isHidden: rowData.status === 'UNKNOWN' ? false : true
-            },{
-              type: 'paragraph',
-              name: 'pool_processes',
-              paraText: p1,
-              isHidden: p1 === '' ? true : false
-            },{
-              type: 'paragraph',
-              name: 'pool_detach_warning',
-              paraText: "'" + row1.name + helptext.detachDialog_pool_detach_warning__encrypted_paratext,
-              isHidden: encryptedStatus !== '' ? false : true
-            }, {
-              type: 'checkbox',
-              name: 'destroy',
-              value: false,
-              placeholder: helptext.detachDialog_pool_detach_destroy_checkbox_placeholder,
-              isHidden: rowData.status === 'UNKNOWN' ? true : false
-            }, {
-              type: 'checkbox',
-              name: 'cascade',
-              value: rowData.status === 'UNKNOWN' ? false : true,
-              placeholder: helptext.detachDialog_pool_detach_cascade_checkbox_placeholder,
-            },{
-              type: 'input',
-              name: 'nameInput',
-              required: true,
-              isDoubleConfirm: true,
-              maskValue: row1.name,
-              validation: [Validators.pattern(row1.name)],
-              relation : [
-                {
-                  action : 'HIDE',
-                  when : [ {
-                    name : 'destroy',
-                    value : false,
-                  } ]
-                },
-              ]
-            },{
-              type: 'checkbox',
-              name: 'confirm',
-              placeholder: rowData.status === 'UNKNOWN' ? 
-                `${helptext.detachDialog_pool_detach_confim_checkbox_placeholder} ${helptext.unknown_status_alt_text}` :
-                `${helptext.detachDialog_pool_detach_confim_checkbox_placeholder}`,
-              required: true
-            }],
-            isCustActionVisible(actionId: string) {
-              if (actionId == 'download_key' && encryptedStatus === '') {
-                return false;
-              } else {
-                return true;
-              }
-            },
-            saveButtonText: T('Export/Disconnect'),
-            custActions: [
-              {
-                id: 'download_key',
-                name: 'Download Key',
-                function: () => {
-                  const dialogRef = self.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
-                  dialogRef.componentInstance.volumeId = row1.id;
-                  dialogRef.componentInstance.fileName = 'pool_' + row1.name + '_encryption.key';
-                }
-              }],
-            customSubmit: function (entityDialog) {
-              const value = entityDialog.formValue;
-              let dialogRef = self.mdDialog.open(EntityJobComponent, {data: {"title":"Exporting Pool"}, disableClose: true});
-              dialogRef.updateSize('300px');
-              dialogRef.componentInstance.setDescription(T("Exporting Pool..."));
-              dialogRef.componentInstance.setCall("pool.export", [row1.id, { destroy: value.destroy, cascade: value.cascade, restart_services: self.restartServices }]);
-              dialogRef.componentInstance.submit();
-              dialogRef.componentInstance.success.subscribe(res=>{
-                entityDialog.dialogRef.close(true);
-                if (!value.destroy) {
-                  self.dialogService.Info(T("Export/Disconnect Pool"), T("Successfully exported/disconnected '") + row1.name + "'");
-                } else {
-                  self.dialogService.Info(T("Export/Disconnect Pool"), T("Successfully exported/disconnected '") + row1.name +
-                  T("'. All data on that pool was destroyed."));
-                }
-                dialogRef.close(true);
-                self.parentVolumesListComponent.repaintMe();
-              }),
-              dialogRef.componentInstance.failure.subscribe((res) => {
-                let conditionalErrMessage = '';
-                if (res.error && res.error.includes('EBUSY')) {
-                  if (res.exc_info.extra && res.exc_info.extra['code'] === 'services_restart') {
-                    entityDialog.dialogRef.close(true);
-                    dialogRef.close(true);
-                    conditionalErrMessage = '<div class="warning-box">Warning: These services must be restarted to export the pool:<br>';
-                    res.exc_info.extra.services.forEach((item) => {
-                      conditionalErrMessage += `<br>- ${item}`;
-                    })
-                    conditionalErrMessage += '<br><br>Exporting/disconnecting will continue after services have been restarted.</div><br />';
-                      self.dialogService.confirm(T("Error exporting/disconnecting pool."),
-                        conditionalErrMessage, true, 'Restart Services and Continue')
-                          .subscribe((res) => {
-                            if (res) {
-                              self.restartServices = true;
-                              this.customSubmit(entityDialog);
-                            }
-                        })
-                  } else if (res.extra && res.extra['code'] === 'unstoppable_processes') {
-                    entityDialog.dialogRef.close(true);
-
-                    conditionalErrMessage =
-                    `Unable to terminate processes which are using this pool: ${res.extra['processes']}`;
-                    dialogRef.close(true);
-                    self.dialogService.errorReport(T("Error exporting/disconnecting pool."), conditionalErrMessage, res.exception);
-                  } else {
-                    entityDialog.dialogRef.close(true);
-                    dialogRef.close(true);
-                    self.dialogService.errorReport(T("Error exporting/disconnecting pool."), res.error, res.exception);                    
-                  }
-                } else {
-                  entityDialog.dialogRef.close(true);
-                  dialogRef.close(true);
-                  self.dialogService.errorReport(T("Error exporting/disconnecting pool."), res.error, res.exception);
-                };
+              },
+              (err) => {
+                this.loader.close()
+                new EntityUtils().handleWSError(self, err, self.dialogService);
               });
-            }
+            },
+            (err) => {
+              this.loader.close();
+              this.dialogService.errorReport(helptext.exportError, err.reason, err.trace.formatted);
+            })
+          } else {
+            doDetach();
           }
-          self.dialogService.dialogFormWide(conf);
+
+          function doDetach() {
+            let title, warningA, warningB, unknownA, unknownB, encrypted;
+            self.translate.get(helptext.exportDialog.title).subscribe(t => {
+              title = t;
+              self.translate.get(helptext.exportDialog.warningA).subscribe(a => {
+                self.translate.get(helptext.exportDialog.warningB).subscribe(b => {
+                  warningA = a;
+                  warningB = b;
+                  self.translate.get(helptext.exportDialog.unknownStateA).subscribe(ua => {
+                    self.translate.get(helptext.exportDialog.unknownStateB).subscribe(ub => {
+                      self.translate.get(helptext.exportDialog.encryptWarning).subscribe(enc => {
+                        unknownA = ua;
+                        unknownB = ub;
+                        encrypted = enc;
+                      })
+                    })
+                  })
+                })
+              })
+
+              const conf: DialogFormConfiguration = {
+                title: title + row1.name + "'",
+                fieldConfig: [{
+                  type: 'paragraph',
+                  name: 'pool_detach_warning',
+                  paraText: warningA + row1.name +
+                    warningB,
+                  isHidden: rowData.status === 'UNKNOWN' ? true : false
+                }, {
+                  type: 'paragraph',
+                  name: 'unknown_status_detach_warning',
+                  paraText: `${unknownA} ${row1.name} ${unknownB}`,
+                  isHidden: rowData.status === 'UNKNOWN' ? false : true
+                },{
+                  type: 'paragraph',
+                  name: 'pool_processes',
+                  paraText: p1,
+                  isHidden: p1 === '' ? true : false
+                },{
+                  type: 'paragraph',
+                  name: 'pool_detach_warning',
+                  paraText: "'" + row1.name + encrypted,
+                  isHidden: encryptedStatus > 0 ? false : true
+                }, {
+                  type: 'checkbox',
+                  name: 'destroy',
+                  value: false,
+                  placeholder: helptext.exportDialog.destroy,
+                  isHidden: rowData.status === 'UNKNOWN' ? true : false
+                }, {
+                  type: 'checkbox',
+                  name: 'cascade',
+                  value: rowData.status === 'UNKNOWN' ? false : true,
+                  placeholder: helptext.exportDialog.cascade,
+                },{
+                  type: 'input',
+                  name: 'nameInput',
+                  required: true,
+                  isDoubleConfirm: true,
+                  maskValue: row1.name,
+                  validation: [Validators.pattern(row1.name)],
+                  relation : [
+                    {
+                      action : 'HIDE',
+                      when : [ {
+                        name : 'destroy',
+                        value : false,
+                      } ]
+                    },
+                  ]
+                },{
+                  type: 'checkbox',
+                  name: 'confirm',
+                  placeholder: rowData.status === 'UNKNOWN' ?
+                    `${helptext.exportDialog.confirm} ${helptext.exportDialog.unknown_status_alt_text}` :
+                    `${helptext.exportDialog.confirm}`,
+                  required: true
+                }],
+                isCustActionVisible(actionId: string) {
+                  if (actionId == 'download_key' && encryptedStatus === 0) {
+                    return false;
+                  } else {
+                    return true;
+                  }
+                },
+                saveButtonText: helptext.exportDialog.saveButton,
+                custActions: [
+                  {
+                    id: 'download_key',
+                    name: helptext.downloadKey,
+                    function: () => {
+                      const dialogRef = self.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
+                      dialogRef.componentInstance.volumeId = row1.id;
+                      dialogRef.componentInstance.fileName = 'pool_' + row1.name + '_encryption.key';
+                    }
+                  }],
+                customSubmit: function (entityDialog) {
+                  const value = entityDialog.formValue;
+                  let dialogRef = self.mdDialog.open(EntityJobComponent, {data: {"title":helptext.exporting}, disableClose: true});
+                  dialogRef.updateSize('300px');
+                  dialogRef.componentInstance.setDescription(helptext.exporting);
+                  dialogRef.componentInstance.setCall("pool.export", [row1.id, { destroy: value.destroy, 
+                    cascade: value.cascade, restart_services: self.restartServices }]);
+                  dialogRef.componentInstance.submit();
+                  dialogRef.componentInstance.success.subscribe(res=>{
+                    entityDialog.dialogRef.close(true);
+                    this.translate.get(helptext.exportSuccess).subscribe(msg => {
+                      if (!value.destroy) {
+                        self.dialogService.Info(helptext.exportDisconnect, msg + row1.name + "'");
+                      } else {
+                        self.dialogService.Info(helptext.exportDisconnect, msg + row1.name +
+                        helptext.destroyed);
+                      }
+                      dialogRef.close(true);
+                      self.parentVolumesListComponent.repaintMe();
+                    })
+
+                  }),
+                  dialogRef.componentInstance.failure.subscribe((res) => {
+                    let conditionalErrMessage = '';
+                    if (res.error) {
+                      if (res.exc_info.extra && res.exc_info.extra['code'] === 'control_services') {
+                        entityDialog.dialogRef.close(true);
+                        dialogRef.close(true);
+                        let stopMsg, restartMsg, continueMsg;
+                        this.translate.get(helptext.exportMessages.onfail.stopServices).subscribe(stop => {
+                          this.translate.get(helptext.exportMessages.onfail.restartServices).subscribe(restart => {
+                            this.translate.get(helptext.exportMessages.onfail.continueMessage).subscribe(continueRes => {
+                              stopMsg = stop;
+                              restartMsg = restart;
+                              continueMsg = continueRes;
+                            })
+                          })
+                          if (res.exc_info.extra.stop_services.length > 0) {
+                              conditionalErrMessage += `<div class="warning-box">` + stopMsg;
+                              res.exc_info.extra.stop_services.forEach((item) => {
+                                conditionalErrMessage += `<br>- ${item}`;
+                              });
+                          }
+                          if (res.exc_info.extra.restart_services.length > 0) {
+                            if (res.exc_info.extra.stop_services.length > 0) {
+                              conditionalErrMessage += '<br><br>';
+                            }
+                            conditionalErrMessage += `<div class="warning-box">` + restartMsg;
+                            res.exc_info.extra.restart_services.forEach((item) => {
+                              conditionalErrMessage += `<br>- ${item}`;
+                            });
+                          }
+                          conditionalErrMessage += `<br><br>`+ continueMsg + `</div><br />`;
+                            self.dialogService.confirm(helptext.exportError,
+                              conditionalErrMessage, true, helptext.exportMessages.onfail.continueAction)
+                                .subscribe((res) => {
+                                  if (res) {
+                                    self.restartServices = true;
+                                    this.customSubmit(entityDialog);
+                                  }
+                              })
+                        })
+                      } else if (res.extra && res.extra['code'] === 'unstoppable_processes') {
+                        entityDialog.dialogRef.close(true);
+                        this.translate.get(helptext.exportMessages.onfail.unableToTerminate).subscribe(msg => {
+                          conditionalErrMessage = msg + res.extra['processes'];
+                          dialogRef.close(true);
+                          self.dialogService.errorReport(helptext.exportError, conditionalErrMessage, res.exception);
+                        })
+                      } else {
+                        entityDialog.dialogRef.close(true);
+                        dialogRef.close(true);
+                        self.dialogService.errorReport(helptext.exportError, res.error, res.exception);
+                      }
+                    } else {
+                      entityDialog.dialogRef.close(true);
+                      dialogRef.close(true);
+                      self.dialogService.errorReport(helptext.exportError, res.error, res.exception);
+                    };
+                  });
+                }
+              }            
+              self.dialogService.dialogFormWide(conf);
+            })
+          }
         }
-      }
     });
 
       if (rowData.is_decrypted) {
