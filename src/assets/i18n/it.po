@@ -5,98 +5,107 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid " Built-in Groups"
-msgstr ""
+msgstr " Gruppi Predefiniti"
 
 msgid " Builtin Users"
-msgstr ""
+msgstr " Utenti Predefiniti"
 
 msgid " Check Notifications for more details."
-msgstr "Controlla le notifiche per maggiori dettagli."
+msgstr " Controlla le notifiche per maggiori dettagli."
 
 msgid " Download Updates"
-msgstr "Scarica Aggiornamenti"
+msgstr " Scarica Aggiornamenti"
 
 msgid " First data vdev is a "
-msgstr ""
+msgstr " Il primo VDEV di dati e' un"
 
 msgid " First vdev has "
-msgstr ""
+msgstr " Il primo VDEV ha"
 
 msgid " First vdev is a "
-msgstr ""
+msgstr " Il primo VDEV e' un"
 
 msgid " KiB."
-msgstr ""
+msgstr " KiB"
 
 msgid " Plugin"
-msgstr ""
+msgstr " Plugin"
 
 msgid " Service"
-msgstr "Servizio"
+msgstr " Servizio"
 
 msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
 "port number of the UPS <i>Master</i> system. The default port is "
 "<i>3493</i>."
 msgstr ""
+" Quando il <b>UPS Mode</b> e' impostato come <i>slave</i>.Inserisci l'indirizzo "
+"della porta aperta sulla rete del tuo sistema UPS <i>Master</i>.La porta "
+"standard e': <i>3493</i>."
 
 msgid ""
 " a passphrase invalidates an existing pool  recovery key file. To save a "
 "backup of the existing encryption key  without making any changes, click "
 "<b>DOWNLOAD ENCRYPTION KEY</b>."
 msgstr ""
+" una passphrase invalida un file chiave di recupero del pool esistente."
+"Per salvare un backup esistente senza chiave criptata senza"
+"effettuare nessuna modifica, premi <b>DOWNLOAD ENCRYPTION KEY</b>." 
 
 msgid ""
 " addresses. When this has been chosen, additional addresses cannot be "
 "selected."
 msgstr ""
-"indirizzi. Quando questo è stato scelto, è impossibile selezionarne un "
+" indirizzi. Quando questo è stato scelto, è impossibile selezionarne un "
 "altro. "
 
 msgid " and "
-msgstr "e"
+msgstr " e"
 
 msgid " and all snapshots of it?"
-msgstr ""
+msgstr " e tutti i suoi snapshoot?"
 
 msgid " and will be disrupted if the pool is detached:"
-msgstr ""
+msgstr " e' verra' interrotto se la pool viene staccata:"
 
 msgid " and will be disrupted if the pool is locked:"
-msgstr ""
+msgstr " e' verra' interrotto se la pool viene bloccata:"
 
 msgid " built-in groups (default setting is <i>hidden</i>)."
-msgstr ""
+msgstr " Gruppi predefiniti (l'impostazione predefinita e' <i>hidden</i>)."
 
 msgid " builtin users (default setting is <i>hidden</i>)."
-msgstr ""
+msgstr " Utenti predefiniti (l'impostazione predefinita e' <i>hidden</i>)."
 
 msgid " but datastore "
-msgstr ""
+msgstr " ma l'archivio dati"
 
 msgid " disks"
-msgstr "dischi"
+msgstr " dischi"
 
 msgid " disks, new vdev has "
-msgstr ""
+msgstr " dischi, nuova vdev ha"
 
 msgid " has been unlocked."
-msgstr "è stato sbloccato."
+msgstr " è stato sbloccato."
 
 msgid " is "
-msgstr "è"
+msgstr " è"
 
 msgid " is a required field."
-msgstr ""
+msgstr " e' un campo obbligatorio"
 
 msgid " is required."
-msgstr "è richiesto."
+msgstr " è richiesto."
 
 msgid ""
 " is still running,  the Guest OS did not respond as expected. It is "
 "possible to use <i>Power Off</i> or the <i>Force Stop  After Timeout</i> "
 "option to stop the VM."
 msgstr ""
+" e' gia in esecuzione, il Sistema Ospite non risponde come aspettato."
+"E' possibile usare <i>Power Off</i> oppure il <i>Force Stop  After Timeout</i>"
+"come opzioni per arrestare VM."
 
 msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
@@ -106,28 +115,28 @@ msgstr ""
 "può ridurre le prestazioni di sistema."
 
 msgid " official plugins"
-msgstr ""
+msgstr " plugin ufficiale"
 
 msgid " seconds"
-msgstr ""
+msgstr " secondi"
 
 msgid " seconds."
-msgstr ""
+msgstr " secondi."
 
 msgid " service has been enabled."
 msgstr "il servizio è stato abilitato."
 
 msgid " should be at least "
-msgstr ""
+msgstr " dovrebbe essere almeno"
 
 msgid " should be no more than "
-msgstr ""
+msgstr " non dovrebbe essere piu' di "
 
 msgid " successfully saved."
-msgstr ""
+msgstr " salvataggio riuscito."
 
 msgid " successfully unlocked"
-msgstr ""
+msgstr " sblocco riuscito"
 
 msgid " system is powered on and connected to the network."
 msgstr "il sistema è acceso e connesso alla rete. "
@@ -142,7 +151,7 @@ msgid " updated."
 msgstr "aggiornato."
 
 msgid "% of all cores"
-msgstr ""
+msgstr "% di tutti i core"
 
 msgid ""
 "' is encrypted! If the passphrase for this encrypted pool has been lost, "
@@ -159,28 +168,28 @@ msgid "'. All data on that pool was destroyed."
 msgstr "'. Tutti i dati sul pool sono stati distrutti."
 
 msgid "(24 Hours)"
-msgstr ""
+msgstr "(24 ore)"
 
 msgid "(Examples: 500 KiB, 500M, 2 TB)"
-msgstr ""
+msgstr "(Esempio: 500 KiB, 500M, 2 TB)"
 
 msgid "(Legacy Encryption)"
-msgstr ""
+msgstr "(Crittografia Legacy)"
 
 msgid "(No description)"
 msgstr "(Nessuna descrizione)"
 
 msgid "(Remove pool from database)"
-msgstr ""
+msgstr "(Elimina la pool dal database)"
 
 msgid "(top-right), then"
-msgstr ""
+msgstr "(alto destra), poi"
 
 msgid ", new Metadata vdev is a "
-msgstr ""
+msgstr ",nuovo vdev Metadata è un"
 
 msgid ", new vdev is "
-msgstr ""
+msgstr ", nuovo vdev e' "
 
 msgid ". At least one is required."
 msgstr ". Ne è richiesto almeno uno."
@@ -192,7 +201,7 @@ msgid "... Make sure the "
 msgstr "... Sei sicuro che"
 
 msgid "0=Disabled, blank=inherit"
-msgstr ""
+msgstr "0=Disabilitati, vuoti=inherit"
 
 msgid "20 characters is the maximum length."
 msgstr "20 caratteri è la lunghezza massima."
@@ -206,19 +215,19 @@ msgstr ""
 "rete del sistema."
 
 msgid "</b> plugin deletes all data and snapshots stored with it."
-msgstr ""
+msgstr "</b> il plugin elimina tutti i dati e gli snapshoot memorizzati con esso."
 
 msgid "</b> with the keypair"
-msgstr ""
+msgstr "</b> con la coppia di chiavi"
 
 msgid "</i> cannot be running when deleting a mountpoint."
-msgstr ""
+msgstr "</i> non può essere in esecuzione quando si elimina un mountpoint."
 
 msgid "</i> has started."
 msgstr "</i> è iniziato."
 
 msgid "</i> keypair?</p>"
-msgstr ""
+msgstr "</i> le copie di chiavi?</p>"
 
 msgid "</i> now?"
 msgstr "</i> ora?"
