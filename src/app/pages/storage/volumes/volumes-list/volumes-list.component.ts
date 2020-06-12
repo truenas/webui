@@ -423,12 +423,11 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   getActions(rowData: any) {
-    rowData.is_passphrase = (rowData.key_format && rowData.key_format.parsed === 'passphrase' ? true : false);
     let rowDataPathSplit = [];
     const self = this;
-    if (rowData.mountpoint) {
-      rowDataPathSplit = rowData.mountpoint.split('/');
-    }
+if (rowData.path) {
+      rowDataPathSplit = rowData.path.split('/');
+}
     let p1 = '';
     const actions = [];
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
@@ -438,7 +437,7 @@ export class VolumesListTableConfig implements InputTableConf {
         name: 'Export/Disconnect',
         label: helptext.exportAction,
         onClick: (row1) => {
-          let encryptedStatus = row1.encrypt,
+          let encryptedStatus = row1.vol_encryptkey,
           self = this;
 
           if (rowData.is_decrypted && rowData.status !== 'UNKNOWN') {
