@@ -1,7 +1,7 @@
 import {Component, ViewContainerRef, OnInit} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {EntityFormService} from '../../services/entity-form.service';
-import {TREE_ACTIONS, KEYS, IActionMapping } from 'angular-tree-component';
+import {TREE_ACTIONS, KEYS, IActionMapping, TreeModel } from 'angular-tree-component';
 import { TranslateService } from '@ngx-translate/core';
 
 import {FieldConfig} from '../../models/field-config.interface';
@@ -151,6 +151,10 @@ export class FormExplorerComponent implements Field, OnInit {
      .filter(([key, value]) => {
             return (value === true);
       }).map((node) => event.treeModel.getNodeById(node[0]));
+    // this is to mark selected node, but not update form value
+    if (event.eventName === 'select' && this.group.controls[this.config.name].value && this.group.controls[this.config.name].value.indexOf(event.node.data.name) > -1) {
+      return;
+    }
     this.valueHandler(selectedTreeNodes);
   }
 
@@ -175,5 +179,27 @@ export class FormExplorerComponent implements Field, OnInit {
         }
     }
     this.group.controls[this.config.name].setValue(res);
+  }
+
+  loadNodeChildren(event) {
+    if (this.customTemplateStringOptions.useCheckbox && this.group.controls[this.config.name].value) {
+      for (const item of (event.node.data.children || [])) {
+        if (this.group.controls[this.config.name].value.indexOf(item.name) > -1) {
+          const target = event.treeModel.getNodeById(item.uuid);
+          target.setIsSelected(true);
+        }
+      }
+    }
+  }
+
+  onToggle(event) {
+    if (event.isExpanded && this.customTemplateStringOptions.useCheckbox && this.group.controls[this.config.name].value) {
+      for (const item of (event.node.data.children || [])) {
+        if (this.group.controls[this.config.name].value.indexOf(item.name) > -1) {
+          const target = event.treeModel.getNodeById(item.uuid);
+          target.setIsSelected(true);
+        }
+      }
+    }
   }
 }
