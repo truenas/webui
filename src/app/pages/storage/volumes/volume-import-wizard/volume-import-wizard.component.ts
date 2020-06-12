@@ -253,7 +253,6 @@ export class VolumeImportWizardComponent {
     if (this.productType === 'SCALE') {
       this.wizardConfig.splice(1,1);
       this.importIndex = 1;
-      console.log(this.wizardConfig);
     }
   }
 
