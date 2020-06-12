@@ -82,13 +82,22 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
           this.errors.push(evt.data);
           console.warn({ERROR_REPORT: this.errors});
           break;
+        case "SetEnclosureLabel":
+          core.emit(evt);
+          console.log(evt);
+          break;
       }
     })
 
     core.register({observerClass: this, eventName: 'EnclosureData'}).subscribe((evt:CoreEvent) => {
+      console.log(evt);
       this.system = new SystemProfiler(this.system_product, evt.data);
       this.selectedEnclosure = this.system.profile[this.system.headIndex];
       core.emit({name: 'DisksRequest', sender: this});
+    });
+
+    core.register({observerClass: this, eventName: 'EnclosureLabelChanged'}).subscribe((evt:CoreEvent) => {
+      this.system.enclosures[evt.data.index].label = evt.data.label;
     });
 
     core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
