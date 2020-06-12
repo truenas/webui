@@ -233,11 +233,14 @@ export class ReplicationFormComponent {
         }, {
             type: 'explorer',
             name: 'source_datasets_PULL',
+            multiple: true,
             placeholder: helptext.source_datasets_placeholder,
             tooltip: helptext.source_datasets_placeholder,
             initial: '',
             explorerType: 'directory',
             customTemplateStringOptions: {
+                useCheckbox: true,
+                useTriState: false,
                 displayField: 'Path',
                 isExpandedField: 'expanded',
                 idField: 'uuid',

@@ -16,7 +16,7 @@
             <tooltip class="formexinput-tooltip" style="float: right;" *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
         </div>
 
-        <tree-root #tree id="form-ex-input" *ngIf="treeVisible && !config.disabled" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true" id="box3" (select)="onClick($event)" (deselect)="onClick($event)">
+        <tree-root #tree id="form-ex-input" *ngIf="treeVisible && !config.disabled" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true" id="box3" (select)="onClick($event)" (deselect)="onClick($event)" (toggleExpanded)="onToggle($event)" (loadNodeChildren)="loadNodeChildren($event)">
             <ng-template #treeNodeTemplate let-node *ngIf="(config.explorerType == 'zvol')">
                 <mat-icon>folder</mat-icon>
                 <span title="{{node.data.mountpoint}}">{{ node.data.name }}</span>
