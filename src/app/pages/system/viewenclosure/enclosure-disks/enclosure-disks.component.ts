@@ -1010,12 +1010,16 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   labelForm(){
     let self = this;
+
+    const obj = self.system.enclosures[self.selectedEnclosure.enclosureKey];
+    const currentLabel = obj.label !== obj.name ? obj.label : self.selectedEnclosure.model;
     let conf = {
       title: T("Change Enclosure Label"),
       fieldConfig: [
         {
           type : 'input',
           inputType: 'text',
+          value: currentLabel,
           name : 'label',
           required: false,
           placeholder: "Enclosure Label",
