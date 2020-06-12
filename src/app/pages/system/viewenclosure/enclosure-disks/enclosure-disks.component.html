@@ -9,14 +9,21 @@
   ngClass.xs="xs">
 
   <mat-toolbar id="Disks-toolbar">
-    <div *ngIf="selectedEnclosure.enclosureKey > 0" class="mat-card-title-text">{{currentTab.alias}} on {{selectedEnclosure ? selectedEnclosure.model + ' (' + selectedEnclosure.enclosureKey + ')' : '...'}}</div>
-    <div *ngIf="selectedEnclosure.enclosureKey < 1" class="mat-card-title-text">{{currentTab.alias}} on {{selectedEnclosure ? system.platform + ' (' + selectedEnclosure.enclosureKey + ')' : '...'}}</div>
+    <div *ngIf="selectedEnclosure" class="mat-card-title-text">
+      {{currentTab.alias}} on 
+      {{system.enclosures[selectedEnclosure.enclosureKey].label == system.enclosures[selectedEnclosure.enclosureKey].name ? selectedEnclosure.model : system.enclosures[selectedEnclosure.enclosureKey].label}} 
+      ({{selectedEnclosure.enclosureKey}})
+    </div>
 
     <!-- ENCLOSURE MODEL -->
     <div class="model dom-overlay" style="opacity:0.75;">
       <div class="model-inner">
-        <!--<mat-icon svgIcon="truenas_logo_full" style="width:140px; height:auto; margin-top:12px;"></mat-icon>-->
       </div>
+    </div>
+
+    <!-- ENCLOSURE RENAME -->
+    <div class="enclosure-label-actions">
+      <button (click)="labelForm()" mat-button color="default">EDIT LABEL</button>
     </div>
 
   </mat-toolbar>

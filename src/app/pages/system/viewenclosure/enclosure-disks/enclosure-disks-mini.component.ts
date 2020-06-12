@@ -19,6 +19,7 @@ import { ExampleData } from './example-data';
 import { DomSanitizer } from "@angular/platform-browser";
 import { EnclosureDisksComponent, DiskFailure } from './enclosure-disks.component';
 import { Temperature } from 'app/core/services/disk-temperature.service';
+import { DialogService } from 'app/services/dialog.service';
 
 @Component({
   selector: 'enclosure-disks-mini',
@@ -35,8 +36,11 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
   constructor(public el:ElementRef, 
     protected core: CoreService, 
     public sanitizer: DomSanitizer,  
-    public mediaObserver: MediaObserver, public cdr: ChangeDetectorRef){
-    super(el, core, sanitizer, mediaObserver, cdr)
+    public mediaObserver: MediaObserver, 
+    public cdr: ChangeDetectorRef,
+    public dialogService: DialogService,
+  ){
+    super(el, core, sanitizer, mediaObserver, cdr, dialogService)
     this.pixiWidth = 960 * 0.6; // PIXI needs an explicit number. Make sure the template flex width matches this
     this.pixiHeight = 480;
   }
