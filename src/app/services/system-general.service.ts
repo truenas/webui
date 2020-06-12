@@ -1,6 +1,7 @@
 
 
 import { EventEmitter, Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RestService } from './rest.service';
 import { WebSocketService } from './ws.service';
@@ -13,6 +14,7 @@ export class SystemGeneralService {
   
   updateRunning = new EventEmitter<string>();
   updateRunningNoticeSent = new EventEmitter<string>();
+  updateIsDone$ = new Subject();
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
@@ -92,4 +94,7 @@ export class SystemGeneralService {
     return this.ws.call('directoryservices.cache_refresh');
   }
 
+  updateDone() {
+    this.updateIsDone$.next();
+  }
 }
