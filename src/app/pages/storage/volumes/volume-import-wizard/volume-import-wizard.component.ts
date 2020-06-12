@@ -33,6 +33,8 @@ export class VolumeImportWizardComponent {
   public subs: any;
   public saveSubmitText = T("Import");
   public entityWizard: any;
+  protected productType: any;
+  protected importIndex = 2;
 
   protected wizardConfig: Wizard[] = [{
       label: helptext.is_new_main_label,
@@ -181,8 +183,8 @@ export class VolumeImportWizardComponent {
     if (this.isNew) {
       this.router.navigate(new Array('/').concat(
         this.route_create));
-    } else if (stepper._selectedIndex === 1) {
-      if (this.encrypted.value) {
+    } else if (stepper._selectedIndex === (this.importIndex - 1)) {
+      if (this.encrypted && this.encrypted.value) {
         this.decryptDisks(stepper);
       } else {
         this.getImportableDisks();
@@ -246,6 +248,15 @@ export class VolumeImportWizardComponent {
     });
   }
 
+  preInit(entityWizard: EntityWizardComponent) {
+    this.productType = window.localStorage.getItem('product_type');
+    if (this.productType === 'SCALE') {
+      this.wizardConfig.splice(1,1);
+      this.importIndex = 1;
+      console.log(this.wizardConfig);
+    }
+  }
+
   afterInit(entityWizard: EntityWizardComponent) {
     const createPoolText = T("Create Pool")
     this.entityWizard = entityWizard;
@@ -260,24 +271,26 @@ export class VolumeImportWizardComponent {
         this.entityWizard.customNextText = T("Next");
       }
     });
+    
+    if (this.productType !== 'SCALE') {
+      this.encrypted = ( < FormGroup > entityWizard.formArray.get([1]).get('encrypted'));
+      this.devices = _.find(this.wizardConfig[1].fieldConfig, {'name': 'devices'});
+      this.devices_fg = ( < FormGroup > entityWizard.formArray.get([1]).get('devices'));
+      this.key = _.find(this.wizardConfig[1].fieldConfig, {'name': 'key'});
+      this.key_fg = ( < FormGroup > entityWizard.formArray.get([1]).get('key'));
+      this.passphrase = _.find(this.wizardConfig[1].fieldConfig, {'name': 'passphrase'});
+      this.passphrase_fg = ( < FormGroup > entityWizard.formArray.get([1]).get('passphrase'));
 
-    this.encrypted = ( < FormGroup > entityWizard.formArray.get([1]).get('encrypted'));
-    this.devices = _.find(this.wizardConfig[1].fieldConfig, {'name': 'devices'});
-    this.devices_fg = ( < FormGroup > entityWizard.formArray.get([1]).get('devices'));
-    this.key = _.find(this.wizardConfig[1].fieldConfig, {'name': 'key'});
-    this.key_fg = ( < FormGroup > entityWizard.formArray.get([1]).get('key'));
-    this.passphrase = _.find(this.wizardConfig[1].fieldConfig, {'name': 'passphrase'});
-    this.passphrase_fg = ( < FormGroup > entityWizard.formArray.get([1]).get('passphrase'));
+      this.ws.call('disk.get_encrypted', [{"unused": true}]).subscribe((res)=>{
+        for (let i = 0; i < res.length; i++) {
+          this.devices.options.push({label:res[i].name, value:res[i].dev});
+        }
+      });
+    }
 
-    this.ws.call('disk.get_encrypted', [{"unused": true}]).subscribe((res)=>{
-      for (let i = 0; i < res.length; i++) {
-        this.devices.options.push({label:res[i].name, value:res[i].dev});
-      }
-    });
-
-    this.guid = _.find(this.wizardConfig[2].fieldConfig, {'name': 'guid'});
+    this.guid = _.find(this.wizardConfig[this.importIndex].fieldConfig, {'name': 'guid'});
     this.guid_subscription =
-    ( < FormGroup > entityWizard.formArray.get([2]).get('guid'))
+    ( < FormGroup > entityWizard.formArray.get([this.importIndex]).get('guid'))
     .valueChanges.subscribe((res) => {
       let pool = _.find(this.guid.options, {'value': res});
       this.summary[T('Pool to import')] = pool['label'];
@@ -287,9 +300,11 @@ export class VolumeImportWizardComponent {
       }
     });
 
-    this.message_subscription = this.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
-      this.key_fg.setValue(message);
-    });
+    if (this.productType !== 'SCALE') {
+      this.message_subscription = this.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
+        this.key_fg.setValue(message);
+      });
+    }
   }
 
   customSubmit(value) {
@@ -369,7 +384,9 @@ export class VolumeImportWizardComponent {
 
   ngOnDestroy() {
     this.guid_subscription.unsubscribe();
-    this.message_subscription.unsubscribe();
+    if (this.message_subscription) {
+      this.message_subscription.unsubscribe();
+    }
     this.is_new_subscription.unsubscribe();
   }
 
