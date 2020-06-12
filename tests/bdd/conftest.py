@@ -1,16 +1,11 @@
 # !/usr/bin/env python3
 
 import pytest
+import os
 from configparser import ConfigParser
 from platform import system
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-
-
-configs = ConfigParser()
-configs.read('config.cfg')
-ip = configs['NAS_CONFIG']['ip']
-password = configs['NAS_CONFIG']['password']
 
 
 def browser():
@@ -38,8 +33,18 @@ def driver():
     return web_driver
 
 
-@pytest.fixture
-def ui_url():
-    global url
-    url = f"http://{ip}"
-    return url
+if os.path.exists('config.cfg'):
+    configs = ConfigParser()
+    configs.read('config.cfg')
+    ip = configs['NAS_CONFIG']['ip']
+    password = configs['NAS_CONFIG']['password']
+
+    @pytest.fixture
+    def ui_url():
+        global url
+        url = f"http://{ip}"
+        return url
+
+    @pytest.fixture
+    def root_password():
+        return password
