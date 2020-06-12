@@ -1042,16 +1042,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         entityDialog.loader.open();
         self.setEnclosureLabel(entityDialog.formValue.label);
       },
-      /*custActions: [
-        {
-          id: 'reset_to_default',
-          name: 'reset_to_default',
-          function: (actionId: string) => {
-            console.log(actionId);
-            self.setEnclosureLabel();
-          }
-        }
-      ]*/
     }
 
     this.dialogService.dialogForm(conf);
