@@ -84,13 +84,11 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
           break;
         case "SetEnclosureLabel":
           core.emit(evt);
-          console.log(evt);
           break;
       }
     })
 
     core.register({observerClass: this, eventName: 'EnclosureData'}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
       this.system = new SystemProfiler(this.system_product, evt.data);
       this.selectedEnclosure = this.system.profile[this.system.headIndex];
       core.emit({name: 'DisksRequest', sender: this});
@@ -98,6 +96,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
 
     core.register({observerClass: this, eventName: 'EnclosureLabelChanged'}).subscribe((evt:CoreEvent) => {
       this.system.enclosures[evt.data.index].label = evt.data.label;
+      this.events.next(evt);
     });
 
     core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {

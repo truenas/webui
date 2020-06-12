@@ -25,6 +25,9 @@ import { Subject } from 'rxjs';
 import { ExampleData } from './example-data';
 import { DomSanitizer } from "@angular/platform-browser";
 import { Temperature } from 'app/core/services/disk-temperature.service';
+import { DialogService } from 'app/services/dialog.service';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { T } from '../../../../translate-marker';
 
 export interface DiskFailure {
   disk: string;
@@ -42,6 +45,7 @@ export interface DiskFailure {
 
 export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnDestroy {
 
+  protected pendingDialog:any;
   protected aborted: boolean = false;
   private mediaObs;
   public mqAlias: string;
@@ -133,7 +137,14 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   public scaleArgs: string;
  
 
-  constructor(public el:ElementRef, protected core: CoreService, public sanitizer: DomSanitizer,  public mediaObserver: MediaObserver, public cdr: ChangeDetectorRef){
+  constructor(
+    public el:ElementRef, 
+    protected core: CoreService, 
+    public sanitizer: DomSanitizer,  
+    public mediaObserver: MediaObserver, 
+    public cdr: ChangeDetectorRef,
+    public dialogService: DialogService,
+  ){
     
     core.register({observerClass: this, eventName: 'DiskTemperatures'}).subscribe((evt:CoreEvent) => {
       if(!this.chassis || !this.chassis[this.view] || !this.chassis[this.view].driveTrayObjects){ return; }
@@ -199,6 +210,12 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       switch(evt.name){
         case "CanvasExtract":
           this.createExtractedEnclosure(evt.data);
+          break;
+        case "EnclosureLabelChanged":
+          if(this.pendingDialog !== undefined){
+            this.pendingDialog.loader.close();
+            this.pendingDialog.dialogRef.close();
+          }
           break;
       }
     });
@@ -988,8 +1005,57 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
 
     let args = {index: this.selectedEnclosure.enclosureKey, id: enclosure.id, label: value};
-    //this.core.emit({name: "SetEnclosureLabel", data: args, sender: this});
     this.controllerEvents.next({name: "SetEnclosureLabel", data: args, sender: this});
+  }
+
+  labelForm(){
+    let self = this;
+    let conf = {
+      title: T("Change Enclosure Label"),
+      fieldConfig: [
+        {
+          type : 'input',
+          inputType: 'text',
+          name : 'label',
+          required: false,
+          placeholder: "Enclosure Label",
+          relation : [
+            {
+              action : 'DISABLE',
+              when : [{
+                name : 'reset',
+                value : true,
+              }],
+            }
+          ],
+        },
+        {
+          type : 'checkbox',
+          value: false,
+          name : 'reset',
+          placeholder: "Reset to default",
+        },
+      ],
+      saveButtonText: T('SAVE'),
+      customSubmit: function (entityDialog) {
+        self.pendingDialog = entityDialog;
+        entityDialog.loader.open();
+        self.setEnclosureLabel(entityDialog.formValue.label);
+      },
+      /*custActions: [
+        {
+          id: 'reset_to_default',
+          name: 'reset_to_default',
+          function: (actionId: string) => {
+            console.log(actionId);
+            self.setEnclosureLabel();
+          }
+        }
+      ]*/
+    }
+
+    this.dialogService.dialogForm(conf);
+
   }
 
 }
