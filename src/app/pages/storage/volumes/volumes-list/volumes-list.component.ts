@@ -488,8 +488,8 @@ export class VolumesListTableConfig implements InputTableConf {
             this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
               if (res.length > 0) {
                 let servicesA, servicesB;
-                this.translate.get(helptext.exportMessages.servicesA).subscribe(a => {
-                  this.translate.get(helptext.exportMessages.servicesB).subscribe(b => {
+                self.translate.get(helptext.exportMessages.servicesA).subscribe(a => {
+                  self.translate.get(helptext.exportMessages.servicesB).subscribe(b => {
                     servicesA = a;
                     servicesB = b;
                     p1 =  a + `<i>${row1.name}</i>` + b;
@@ -519,7 +519,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     }
                   });
                   if (running_processes.length > 0) {
-                    this.translate.get(helptext.exportMessages.running).subscribe(runningMsg => {
+                    self.translate.get(helptext.exportMessages.running).subscribe(runningMsg => {
                       p1 += `<br><br>` + runningMsg + `<b>${row1.name}</b>:`;
                       running_processes.forEach((process) =>  {
                         if (process.name) {
@@ -529,8 +529,8 @@ export class VolumesListTableConfig implements InputTableConf {
                     })
                   };
                   if (running_unknown_processes.length > 0) {
-                    this.translate.get(helptext.exportMessages.unknown).subscribe(unknownMsg => {
-                      this.translate.get(helptext.exportMessages.terminated).subscribe(terminatedMsg => {
+                    self.translate.get(helptext.exportMessages.unknown).subscribe(unknownMsg => {
+                      self.translate.get(helptext.exportMessages.terminated).subscribe(terminatedMsg => {
                         p1 += `<br><br>` + unknownMsg;
                         running_unknown_processes.forEach((process) => {
                           if (process.pid) {
@@ -664,17 +664,17 @@ export class VolumesListTableConfig implements InputTableConf {
                   dialogRef.componentInstance.submit();
                   dialogRef.componentInstance.success.subscribe(res=>{
                     entityDialog.dialogRef.close(true);
-                    this.translate.get(helptext.exportSuccess).subscribe(msg => {
-                      if (!value.destroy) {
-                        self.dialogService.Info(helptext.exportDisconnect, msg + row1.name + "'");
-                      } else {
-                        self.dialogService.Info(helptext.exportDisconnect, msg + row1.name +
-                        helptext.destroyed);
-                      }
-                      dialogRef.close(true);
-                      self.parentVolumesListComponent.repaintMe();
+                    self.translate.get(helptext.exportSuccess).subscribe(msg => {
+                      self.translate.get(helptext.destroyed).subscribe(destroyed => {
+                        if (!value.destroy) {
+                          self.dialogService.Info(helptext.exportDisconnect, msg + row1.name + "'");
+                        } else {
+                          self.dialogService.Info(helptext.exportDisconnect, msg + row1.name + destroyed);
+                        }
+                        dialogRef.close(true);
+                        self.parentVolumesListComponent.repaintMe();
+                      })
                     })
-
                   }),
                   dialogRef.componentInstance.failure.subscribe((res) => {
                     let conditionalErrMessage = '';
@@ -683,9 +683,9 @@ export class VolumesListTableConfig implements InputTableConf {
                         entityDialog.dialogRef.close(true);
                         dialogRef.close(true);
                         let stopMsg, restartMsg, continueMsg;
-                        this.translate.get(helptext.exportMessages.onfail.stopServices).subscribe(stop => {
-                          this.translate.get(helptext.exportMessages.onfail.restartServices).subscribe(restart => {
-                            this.translate.get(helptext.exportMessages.onfail.continueMessage).subscribe(continueRes => {
+                        self.translate.get(helptext.exportMessages.onfail.stopServices).subscribe(stop => {
+                          self.translate.get(helptext.exportMessages.onfail.restartServices).subscribe(restart => {
+                            self.translate.get(helptext.exportMessages.onfail.continueMessage).subscribe(continueRes => {
                               stopMsg = stop;
                               restartMsg = restart;
                               continueMsg = continueRes;
@@ -718,7 +718,7 @@ export class VolumesListTableConfig implements InputTableConf {
                         })
                       } else if (res.extra && res.extra['code'] === 'unstoppable_processes') {
                         entityDialog.dialogRef.close(true);
-                        this.translate.get(helptext.exportMessages.onfail.unableToTerminate).subscribe(msg => {
+                        self.translate.get(helptext.exportMessages.onfail.unableToTerminate).subscribe(msg => {
                           conditionalErrMessage = msg + res.extra['processes'];
                           dialogRef.close(true);
                           self.dialogService.errorReport(helptext.exportError, conditionalErrMessage, res.exception);
