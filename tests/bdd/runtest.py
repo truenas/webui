@@ -22,10 +22,6 @@ Options:
                                              for pytest-bdd
 """ % argument[0]
 
-# if have no argument stop
-if len(argument) == 1:
-    print(UsageMSG)
-    exit()
 
 # list of argument that should be use.
 option_list = ["ip=", 'root-password=', 'convert-feature']
@@ -70,6 +66,7 @@ except getopt.GetoptError as e:
     sys.exit(1)
 
 global ip, password
+run_convert = False
 
 for output, arg in myopts:
     if output == '--ip':
@@ -78,26 +75,16 @@ for output, arg in myopts:
         password = arg
     if output == "--convert-feature":
         run_convert = True
-    else:
-        run_convert = False
 
 
 def run_testing():
-    if 'ip' not in globals():
-        print("Option '--ip' is missing")
-        print(UsageMSG)
-        sys.exit(1)
-    if 'password' not in globals():
-        print("Option '--root-password' is missing")
-        print(UsageMSG)
-        sys.exit(1)
-
-    cfg = "[NAS_CONFIG]\n"
-    cfg += f"ip = {ip}\n"
-    cfg += f"password = {password}\n"
-    cfg_file = open("config.cfg", 'w')
-    cfg_file.write(cfg)
-    cfg_file.close()
+    if 'ip' in globals() and 'password' in globals():
+        cfg = "[NAS_CONFIG]\n"
+        cfg += f"ip = {ip}\n"
+        cfg += f"password = {password}\n"
+        cfg_file = open("config.cfg", 'w')
+        cfg_file.write(cfg)
+        cfg_file.close()
 
     convert_jira_feature_file('ha-test')
     pytestcmd = [
