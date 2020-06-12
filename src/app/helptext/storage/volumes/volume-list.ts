@@ -24,27 +24,52 @@ snapshotDialog_recursive_tooltip: T('Set to include child datasets of the chosen
 vmware_sync_placeholder: T('VMWare Sync'),
 vmware_sync_tooltip: T(''),
 
-detachDialog_pool_detach_warning_paratext_a: T("WARNING: Exporting/disconnecting pool <i>"),
-detachDialog_pool_detach_warning_paratext_b: T("</i>.\
+exportAction: T("Export/Disconnect"),
+
+exportMessages: {
+    servicesA: T('These services depend on pool '),
+    servicesB: T(' and will be disrupted if the pool is detached:'),
+    running: T('These running services are using '),
+    unknown: T('These unknown processes are using this pool: '),
+    terminated: T('WARNING: These unknown processes will be terminated while exporting the pool. '),
+
+    onfail: {
+        stopServices: T('These services must be stopped to export the pool:'),
+        restartServices: T('These services must be restarted to export the pool:'),
+        continueMessage: T('Exporting/disconnecting will continue after services have been managed.'),
+        continueAction: T('Manage Services and Continue'),
+        unableToTerminate: T('Unable to terminate processes which are using this pool: ')
+    }
+},
+
+exportError: T("Error exporting/disconnecting pool."),
+
+exportDialog:  {
+    title: T("Export/disconnect pool: '"),
+    warningA: T("WARNING: Exporting/disconnecting pool <i>"),
+    warningB: T("</i>.\
  Data on the pool will not be available after export.\
  Data on the pool disks can be destroyed by setting the <b>Destroy data</b> option.\
  Back up critical data <b>before</b> exporting/disconnecting the pool."),
-
-detachWarningForUnknownState: {
-    message_a: T('The pool <i>'),
-    message_b: T('</i>is in the database but not connected to the machine. If it was exported by \
- mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />')
-},
-
-detachDialog_pool_detach_warning__encrypted_paratext: T("' is encrypted! If the passphrase for\
+    unknownStateA: T('The pool <i>'),
+    unknownStateB: T('</i>is in the database but not connected to the machine. If it was exported by \
+    mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />'),
+    encryptWarning: T("' is encrypted! If the passphrase for\
  this encrypted pool has been lost, the data will be PERMANENTLY UNRECOVERABLE!\
  Before exporting/disconnecting encrypted pools, download and safely\
  store the encryption key and any passphrase for it."),
+    destroy: T("Destroy data on this pool?"),
+    cascade: T("Delete configuration of shares that used this pool?"),
+    confirm: T("Confirm Export/Disconnect"),
+    unknown_status_alt_text: T('(Remove pool from database)'),
+    saveButton: T('Export/Disconnect')
+},
 
-detachDialog_pool_detach_destroy_checkbox_placeholder: T("Destroy data on this pool?"),
-detachDialog_pool_detach_cascade_checkbox_placeholder: T("Delete configuration of shares that used this pool?"),
-detachDialog_pool_detach_confim_checkbox_placeholder: T("Confirm Export/Disconnect"),
-unknown_status_alt_text: T('(Remove pool from database)'),
+downloadKey: T('Download Key'),
+exporting: T("Exporting Pool"),
+exportDisconnect: T("Export/Disconnect Pool"),
+exportSuccess: T("Successfully exported/disconnected '"),
+destroyed: T("'. All data on that pool was destroyed."),
 
 upgradePoolDialog_warning: T("Proceed with upgrading the pool? WARNING: Upgrading a pool is a\
  one-way operation that might make some features of\
