@@ -14611,7 +14611,7 @@ msgid "service failed to start."
 msgstr ""
 
 msgid "service failed to stop."
-msgstr ""
+msgstr "stop servizio fallito."
 
 msgid "shmsize"
 msgstr ""
@@ -14689,4 +14689,4 @@ msgid "while pool is encrypted"
 msgstr ""
 
 msgid "yes"
-msgstr ""
+msgstr "si'"
