@@ -194,6 +194,7 @@ export class ExtentFormComponent {
       name: 'enabled',
       placeholder: helptext_sharing_iscsi.extent_placeholder_enabled,
       tooltip: helptext_sharing_iscsi.extent_tooltip_enabled,
+      value: true,
     },
   ];
 
@@ -247,9 +248,11 @@ export class ExtentFormComponent {
     let extent_disk_field = _.find(this.fieldConfig, {'name' : 'disk'});
     //get device options
     this.iscsiService.getExtentDevices().subscribe((res) => {
+      let options = [];
       for(let i in res) {
-        extent_disk_field.options.push({label: res[i], value: i});
+        options.push({label: res[i], value: i});
       }
+      extent_disk_field.options = _.sortBy(options, ['label']);;
     })
 
     this.extent_type_control = entityForm.formGroup.controls['type'];
