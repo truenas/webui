@@ -258,11 +258,9 @@ msgstr ""
 
 msgid ""
 "</i>is in the database but not connected to the machine. If it was exported "
-"by  mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />"
+"by     mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br "
+"/>"
 msgstr ""
-"</i> está en la base de datos pero no está conectado a la máquina. Si se "
-"exportó por error, vuelva a conectar el hardware y use <b>Importar "
-"Pool</b>.<br /><br />"
 
 msgid ""
 "<a "
@@ -836,6 +834,11 @@ msgstr "Un tamaño de intercambio de 0 está FUERTEMENTE DESALENTADO."
 
 msgid "A system update is in progress. "
 msgstr "Una actualización del sistema está en progreso. "
+
+msgid ""
+"A system update is in progress. It might have been  launched in another "
+"window or by an external source like TrueCommand."
+msgstr ""
 
 msgid ""
 "A unique name to identify this keypair. Automatically generated keypairs "
@@ -2753,6 +2756,9 @@ msgstr "Cambiar contraseña de administrador"
 
 msgid "Change Device Order"
 msgstr "Cambiar orden de dispositivo"
+
+msgid "Change Enclosure Label"
+msgstr ""
 
 msgid "Change Passphrase"
 msgstr "Cambiar contraseña"
@@ -6835,9 +6841,6 @@ msgstr "Exportar/desconectar grupo: '"
 msgid "Exporting Pool"
 msgstr "Exportando Pool"
 
-msgid "Exporting Pool..."
-msgstr "Exportando Pool..."
-
 msgid "Exporting/disconnecting will continue after services have been managed."
 msgstr ""
 "La exportación/desconexión continuará después de que se hayan administrado "
@@ -9113,6 +9116,9 @@ msgstr ""
 "virtuales cuando no hay suficiente memoria libre para la RAM configurada de "
 "todas las máquinas virtuales. Usar con precaución."
 
+msgid "Memory:"
+msgstr ""
+
 msgid "Menu Label"
 msgstr "Etiqueta del menú"
 
@@ -10014,6 +10020,9 @@ msgstr "OQ % utilizado"
 
 msgid "OQ Objs Used"
 msgstr "OQ Objs Usados"
+
+msgid "OS Version:"
+msgstr ""
 
 msgid "Object Quota"
 msgstr "Cuota de objeto"
@@ -12718,6 +12727,9 @@ msgstr "Serial"
 
 msgid "Serial Number"
 msgstr "Número de serie"
+
+msgid "Serial Number:"
+msgstr ""
 
 msgid "Serial Port"
 msgstr "Puerto serie"

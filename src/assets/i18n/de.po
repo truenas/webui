@@ -256,12 +256,9 @@ msgstr ""
 
 msgid ""
 "</i>is in the database but not connected to the machine. If it was exported "
-"by  mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />"
+"by     mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br "
+"/>"
 msgstr ""
-"</i>befindet sich in der Datenbank, ist jedoch nicht mit dem Computer "
-"verbunden. Wenn es durch  einen  Fehler exportiert wurde, schließen Sie die "
-"Hardware erneut an, und verwenden sie die> <b>Pool importieren</b> "
-"Funktion.<br /><br />"
 
 msgid ""
 "<a "
@@ -690,6 +687,11 @@ msgstr ""
 
 msgid "A system update is in progress. "
 msgstr "Eine Systemaktualisierung wird gerade durchgeführt. "
+
+msgid ""
+"A system update is in progress. It might have been  launched in another "
+"window or by an external source like TrueCommand."
+msgstr ""
 
 msgid ""
 "A unique name to identify this keypair. Automatically generated keypairs "
@@ -2314,6 +2316,9 @@ msgstr "Administrator Passwort ändern"
 
 msgid "Change Device Order"
 msgstr "Gerätereihenfolge ändern"
+
+msgid "Change Enclosure Label"
+msgstr ""
 
 msgid "Change Passphrase"
 msgstr "Passphrase ändern"
@@ -5731,9 +5736,6 @@ msgstr ""
 msgid "Exporting Pool"
 msgstr ""
 
-msgid "Exporting Pool..."
-msgstr "Exportiere Pool..."
-
 msgid "Exporting/disconnecting will continue after services have been managed."
 msgstr ""
 
@@ -7718,6 +7720,9 @@ msgid ""
 "enough free memory for configured RAM of all VMs. Use with caution."
 msgstr ""
 
+msgid "Memory:"
+msgstr ""
+
 msgid "Menu Label"
 msgstr "Menübezeichnung"
 
@@ -8475,6 +8480,9 @@ msgid "OQ % Used"
 msgstr ""
 
 msgid "OQ Objs Used"
+msgstr ""
+
+msgid "OS Version:"
 msgstr ""
 
 msgid "Object Quota"
@@ -11054,6 +11062,9 @@ msgstr ""
 
 msgid "Serial Number"
 msgstr "Seriennummer"
+
+msgid "Serial Number:"
+msgstr ""
 
 msgid "Serial Port"
 msgstr "Serielle Schnittstelle"

@@ -230,7 +230,8 @@ msgstr ""
 
 msgid ""
 "</i>is in the database but not connected to the machine. If it was exported "
-"by  mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />"
+"by     mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br "
+"/>"
 msgstr ""
 
 msgid ""
@@ -601,6 +602,11 @@ msgid "A swap size of 0 is STRONGLY DISCOURAGED."
 msgstr ""
 
 msgid "A system update is in progress. "
+msgstr ""
+
+msgid ""
+"A system update is in progress. It might have been  launched in another "
+"window or by an external source like TrueCommand."
 msgstr ""
 
 msgid ""
@@ -2171,6 +2177,9 @@ msgstr "變更管理者密碼"
 
 msgid "Change Device Order"
 msgstr "變更裝置順序"
+
+msgid "Change Enclosure Label"
+msgstr ""
 
 msgid "Change Passphrase"
 msgstr "變更複雜密碼"
@@ -5437,9 +5446,6 @@ msgstr "匯出/中斷連線 儲存集區 ："
 msgid "Exporting Pool"
 msgstr "正在匯出儲存集區"
 
-msgid "Exporting Pool..."
-msgstr "正在匯出儲存集區..."
-
 msgid "Exporting/disconnecting will continue after services have been managed."
 msgstr ""
 
@@ -7391,6 +7397,9 @@ msgid ""
 "enough free memory for configured RAM of all VMs. Use with caution."
 msgstr ""
 
+msgid "Memory:"
+msgstr ""
+
 msgid "Menu Label"
 msgstr ""
 
@@ -8141,6 +8150,9 @@ msgid "OQ % Used"
 msgstr ""
 
 msgid "OQ Objs Used"
+msgstr ""
+
+msgid "OS Version:"
 msgstr ""
 
 msgid "Object Quota"
@@ -10387,6 +10399,9 @@ msgstr "序號"
 
 msgid "Serial Number"
 msgstr "序號"
+
+msgid "Serial Number:"
+msgstr ""
 
 msgid "Serial Port"
 msgstr "序列埠"
