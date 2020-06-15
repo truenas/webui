@@ -985,7 +985,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           value: currentLabel,
           name : 'label',
           required: false,
-          placeholder: "Enclosure Label",
+          placeholder: T("Enclosure Label"),
           relation : [
             {
               action : 'DISABLE',
@@ -1000,7 +1000,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           type : 'checkbox',
           value: false,
           name : 'reset',
-          placeholder: "Reset to default",
+          placeholder: T("Reset to default"),
         },
       ],
       saveButtonText: T('SAVE'),
