@@ -22,6 +22,9 @@ import { tween, easing, styler, value, keyframes } from 'popmotion';
 import { Subject } from 'rxjs';
 import { ExampleData } from './example-data';
 import { DomSanitizer } from "@angular/platform-browser";
+import { DialogService } from 'app/services/dialog.service';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { T } from '../../../../translate-marker';
 
 interface DiskFailure {
   disk: string;
@@ -39,6 +42,7 @@ interface DiskFailure {
 
 export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnDestroy {
 
+  protected pendingDialog:any;
   protected aborted: boolean = false;
   private mediaObs;
   public mqAlias: string;
@@ -121,7 +125,14 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   public scaleArgs: string;
  
 
-  constructor(public el:ElementRef, private core: CoreService, public sanitizer: DomSanitizer,  public mediaObserver: MediaObserver, public cdr: ChangeDetectorRef){
+  constructor(
+    public el:ElementRef, 
+    private core: CoreService, 
+    public sanitizer: DomSanitizer,  
+    public mediaObserver: MediaObserver, 
+    public cdr: ChangeDetectorRef,
+    public dialogService: DialogService,
+  ){
 
     //this.mediaObs = mediaObserver.media$.subscribe((evt) =>{
     core.register({observerClass: this, eventName: 'MediaChange'}).subscribe((evt:CoreEvent) => {
@@ -168,6 +179,12 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       switch(evt.name){
         case "CanvasExtract":
           this.createExtractedEnclosure(evt.data);
+          break;
+        case "EnclosureLabelChanged":
+          if(this.pendingDialog !== undefined){
+            this.pendingDialog.loader.close();
+            this.pendingDialog.dialogRef.close();
+          }
           break;
       }
     });
@@ -942,6 +959,58 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
 
     this.loadEnclosure(this.subenclosure ? this.subenclosure : this.selectedEnclosure);
+  }
+
+  setEnclosureLabel(value?: string){
+    let enclosure = this.system.enclosures[this.selectedEnclosure.enclosureKey];
+    if(!value){
+    value = enclosure.name;
+    }
+  
+    let args = {index: this.selectedEnclosure.enclosureKey, id: enclosure.id, label: value};
+    this.controllerEvents.next({name: "SetEnclosureLabel", data: args, sender: this});
+  }
+  
+  labelForm(){
+    let self = this;
+    
+    const obj = self.system.enclosures[self.selectedEnclosure.enclosureKey];
+    const currentLabel = obj.label !== obj.name ? obj.label : self.selectedEnclosure.model;
+    let conf = {
+      title: T("Change Enclosure Label"),
+      fieldConfig: [
+        {
+          type : 'input',
+          inputType: 'text',
+          value: currentLabel,
+          name : 'label',
+          required: false,
+          placeholder: "Enclosure Label",
+          relation : [
+            {
+              action : 'DISABLE',
+              when : [{
+              name : 'reset',
+              value : true,
+              }],
+            }
+          ],
+        },
+        {
+          type : 'checkbox',
+          value: false,
+          name : 'reset',
+          placeholder: "Reset to default",
+        },
+      ],
+      saveButtonText: T('SAVE'),
+      customSubmit: function (entityDialog) {
+        self.pendingDialog = entityDialog;
+        entityDialog.loader.open();
+        self.setEnclosureLabel(entityDialog.formValue.label);
+      },
+    }
+    this.dialogService.dialogForm(conf);
   }
 
 }

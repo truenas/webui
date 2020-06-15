@@ -7,13 +7,15 @@ nav.view-nav-bar{
   margin:-15px 0 32px;
 }
 
+.enclosure-label-actions{
+  position: absolute;
+  right: 16px;
+  z-index: 3;
+}
+
 .view-nav-bar .view-nav-btn{
-  /*display:inline-block;*/
   height:40px;
   text-transform: capitalize !important;
-  /*font-weight:500;
-  padding:0 16px;
-  text-align:center;*/
 }
 
 .view-card{
