@@ -49,7 +49,7 @@ src/environments/environment.ts
 
 # automation framework
 *.iso
-_pycache_
+__pycache__
 .pytest_cache
 config.py
 auto_config.py
