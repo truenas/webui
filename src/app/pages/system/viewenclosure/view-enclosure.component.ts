@@ -82,13 +82,11 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
           break;
         case "SetEnclosureLabel":
           core.emit(evt);
-          console.log(this.system);
           break;
       }
     })
 
     core.register({observerClass: this, eventName: 'EnclosureData'}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
       this.system = new SystemProfiler(this.system_product, evt.data);
       this.selectedEnclosure = this.system.profile[this.system.headIndex];
       core.emit({name: 'DisksRequest', sender: this});
