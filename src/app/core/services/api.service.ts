@@ -106,6 +106,33 @@ export class ApiService {
         responseEvent: "EnclosureData"
       }
     },
+    EnclosureUpdate:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        args: [],
+        namespace: "enclosure.update",
+        responseEvent: "EnclosureLabelChanged"
+      }
+    },
+    SetEnclosureLabel:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        args: [],
+        namespace: "enclosure.update",
+        responseEvent: "EnclosureLabelChanged"
+      },
+      preProcessor(def:ApiCall){
+        let redef = Object.assign({}, def);
+        const args = [def.args.id, {label: def.args.label}];
+        redef.args = args;
+        return redef;
+      },
+      postProcessor(res,callArgs,core){
+        return {label: res.label, index: callArgs.index, id: res.id};
+      }
+    },
     SetEnclosureSlotStatus:{
       apiCall:{
         protocol:"websocket",
