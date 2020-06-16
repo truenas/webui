@@ -66,6 +66,11 @@ export const helptext_system_kmip = {
  click <b>SAVE</b>.'),
     },
 
+    force_clear: {
+        placeholder: T('Force Clear'),
+        tooltip: T(''),
+    },
+
     jobDialog: {
         title: T('Saving KMIP Config'),
     },

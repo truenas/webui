@@ -114,6 +114,12 @@ export class KmipComponent {
                     placeholder: helptext_system_kmip.validate.placeholder,
                     tooltip: helptext_system_kmip.validate.tooltip
                 },
+                {
+                    type: 'checkbox',
+                    name: 'force_clear',
+                    placeholder: helptext_system_kmip.force_clear.placeholder,
+                    tooltip: helptext_system_kmip.force_clear.tooltip
+                },
             ]
         }
     ];
