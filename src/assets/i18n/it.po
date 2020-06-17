@@ -8691,60 +8691,60 @@ msgid "No Communication Warning Time"
 msgstr ""
 
 msgid "No Encryption (less secure, but faster)"
-msgstr ""
+msgstr "Nessuna crittazione (meno sicuro, ma più veloce)"
 
 msgid "No Logs"
-msgstr ""
+msgstr "Nessun log"
 
 msgid "No Pools"
-msgstr ""
+msgstr "Nessuna pool"
 
 msgid "No Repositories"
-msgstr ""
+msgstr "Nessun repository"
 
 msgid "No Safety Check (CAUTION)"
-msgstr ""
+msgstr "Nessun controllo di sicurezza (ATTENZIONE)"
 
 msgid "No Stat"
-msgstr ""
+msgstr "Nessuna statistica"
 
 msgid ""
 "No custom themes. Click <b>Create New Theme</b> to create a new custom "
 "theme."
-msgstr ""
+msgstr "Nessun tema custom, Clicca <b>Crea nuovo tema</b> per creare un tema custom."
 
 msgid "No interfaces configured with Virtual IP."
-msgstr ""
+msgstr "Nessuna interfaccia configurata con Virtual IP."
 
 msgid "No logs are available for this task."
-msgstr ""
+msgstr "Non c’è nessun log per questo task."
 
 msgid "No longer keep this Boot Environment?"
-msgstr ""
+msgstr "Non vuoi più tenere questo Ambiente di Avvio?"
 
 msgid "No network interfaces are marked critical for failover."
-msgstr ""
+msgstr "Nessuna interfaccia di rete è selezionata per il failover."
 
 msgid "No pools"
-msgstr ""
+msgstr "Nessuna pool"
 
 msgid "No pools are configured."
-msgstr ""
+msgstr "Non è stata configurata nessuna pool."
 
 msgid "No repositories is found."
-msgstr ""
+msgstr "Non sono stati trovati repository"
 
 msgid "No snapshots sent yet"
-msgstr ""
+msgstr "Nessun snapshot è stato spedito"
 
 msgid "No update found."
-msgstr ""
+msgstr "Nessun aggiornamento trovato."
 
 msgid "No updates available."
-msgstr ""
+msgstr "Non ci sono aggiornamenti disponibili."
 
 msgid "No, continue with import"
-msgstr ""
+msgstr "No, continua con l’importazione."
 
 msgid "Nobind"
 msgstr ""
@@ -8753,63 +8753,68 @@ msgid "Nodes CARP states do not agree."
 msgstr ""
 
 msgid "None"
-msgstr ""
+msgstr "Nessuno"
 
 msgid "None requested"
-msgstr ""
+msgstr "Nessuna richiesta"
 
 msgid "Normal"
-msgstr ""
+msgstr "Normale"
 
 msgid ""
 "Normal vdev type, used for primary storage operations. ZFS pools always "
 "have at least one DATA vdev."
 msgstr ""
+"Tipo di vdev normale, usata per operazioni di storage primarie. Le pool ZFS hanno sempre"
+"almeno una vdev DATA."
 
 msgid "Not Available"
-msgstr ""
+msgstr "Non disponibile"
 
 msgid "Notes"
-msgstr ""
+msgstr "Note"
 
 msgid "Notes about this disk."
-msgstr ""
+msgstr "Note su questo disco."
 
 msgid "Notes about this extent."
 msgstr ""
 
 msgid "Notes or identifiers about the theme."
-msgstr ""
+msgstr "Note o identificatori sul tema."
 
 msgid "Notice"
-msgstr ""
+msgstr "Nota"
 
 msgid "Nov"
 msgstr ""
 
 msgid "Number of CPUs"
-msgstr ""
+msgstr "Numero di CPU"
 
 msgid "Number of Cores"
-msgstr ""
+msgstr "Numero di Core"
 
 msgid "Number of Graph Points"
-msgstr ""
+msgstr "Numeri di punti del grafico"
 
 msgid ""
 "Number of SysV semaphores modified in a single <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=semop\" "
 "target=\"_blank\">semop(2)</a> call."
 msgstr ""
+"Numeri di semafori SysV modificati in una singola"
+"chiamata a  <a href=“https://www.freebsd.org/cgi/man.cgi?"
+"query=semop” target=“_blank”>semop(2)</a>."
 
 msgid "Number of SysV shared memory segments in bytes."
-msgstr ""
+msgstr "Numero di segmenti di memoria condivisa di SysV in byte. "
 
 msgid "Number of SysV shared memory segments."
-msgstr ""
+msgstr "Numero di segmenti di memoria di SysV."
 
 msgid "Number of Threads"
-msgstr ""
+msgstr "Numero di thread"
 
 msgid ""
 "Number of child jails allowed to be created by the jail or other jails "
