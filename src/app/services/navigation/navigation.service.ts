@@ -185,6 +185,20 @@ export class NavigationService {
       // ]
     },
     {
+      name: T('Containers'),
+      type: 'link',
+      tooltip: T('Containers'),
+      icon: 'folder_special',
+      state: 'containers',
+    },
+    {
+      name: T('Clustering'),
+      type: 'link',
+      tooltip: T('Clustering'),
+      icon: 'zoom_out_map',
+      state: 'clustering',
+    },
+    {
       name: T('Reporting'),
       type: 'link',
       tooltip: T('Reports'),

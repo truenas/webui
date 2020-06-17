@@ -47,7 +47,6 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
       // Temporarily hide some things in SCALE
       if (this.productType === 'SCALE') {
         _.find(_.find(menuItem, {state : "system"}).sub, {state : "kmip"}).disabled = true;
-        _.find(menuItem, {state : "vm"}).disabled = true;
         _.find(_.find(menuItem, {state : "directoryservice"}).sub, {state : "nis"}).disabled = true;
         _.find(_.find(menuItem, {state : "network"}).sub, {state : "staticroutes"}).disabled = true;
         _.find(_.find(menuItem, {state : "sharing"}).sub, {state : "nfs"}).disabled = true;
@@ -59,6 +58,9 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
             _.find(_.find(menuItem, {state : "storage"}).sub, {state : "multipaths"}).disabled = true;
           }
         });
+        // hide clustering and containers in not SCALE
+        _.find(menuItem, {state : "clustering"}).disabled = true;
+        _.find(menuItem, {state : "containers"}).disabled = true;
       }
       // ====================
 
