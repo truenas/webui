@@ -177,6 +177,7 @@
       (sort)='reorderEvent($event)'
       [selectionType]="'checkbox'"
       [selected]='selected'
+      (activate)="onActivate($event)"
       (select)='onSelect($event)'
       [style.height.px]="tableHeight"
       [scrollbarH]='true'
