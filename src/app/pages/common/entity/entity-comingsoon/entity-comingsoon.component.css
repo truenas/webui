@@ -3,5 +3,17 @@
 }
 
 .icon {
-    font-size: 64px;
+    font-size: 96px;
+    width: 96px;
+    height: auto;
+}
+
+.card {
+    width: 275px;
+    position: relative;
+    margin: auto;
+    top: 150px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }

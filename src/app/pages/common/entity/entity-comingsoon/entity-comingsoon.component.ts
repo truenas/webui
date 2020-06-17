@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import * as _ from 'lodash';
+import urls from '../../../../helptext/urls';
 
 @Component({
   selector: 'entity-comingsoon',
@@ -8,9 +9,15 @@ import * as _ from 'lodash';
   providers: []
 })
 export class EntityComingsoonComponent {
+  @Input('conf') conf = {};
+  public helpurl: any; 
 
   constructor() {
 
+    this.helpurl = urls.docurl;
+    if (this.conf['help_path']) {
+      this.helpurl = this.helpurl.concat(this.conf['help_path']);
+    }
   }
 
 }
