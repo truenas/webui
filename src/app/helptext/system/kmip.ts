@@ -68,7 +68,7 @@ export const helptext_system_kmip = {
 
     force_clear: {
         placeholder: T('Force Clear'),
-        tooltip: T(''),
+        tooltip: T('Cancel any pending Key synchronization.'),
     },
 
     jobDialog: {
