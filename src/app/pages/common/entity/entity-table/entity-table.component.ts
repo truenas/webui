@@ -118,6 +118,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public cardHeaderComponentHight = 0;
   public windowHeight: number;
 
+  public oldPagesize;
+  public activatedRowIndex;
+
   public allColumns: Array<any> = []; // Need this for the checkbox headings
   public columnFilter = true; // show the column filters by default
   public filterColumns: Array<any> = []; // ...for the filter function - becomes THE complete list of all columns, diplayed or not
@@ -363,6 +366,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       n = 0;
     }
     window.onresize = () => {
+      this.oldPagesize = this.paginationPageSize;
       this.zoomLevel = Math.round(window.devicePixelRatio * 100);
       // Browser zoom of exacly 175% causes pagination anomalies; Dropping row size to 49 fixes it
       this.zoomLevel === 175 ? this.rowHeight = 49 : this.rowHeight = 50;
@@ -796,6 +800,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     const endIndex = beginIndex + this.paginationPageSize ;
     this.fixedTableHight = true;
 
+
     if( beginIndex < this.currentRows.length && endIndex >= this.currentRows.length) {
       this.seenRows = this.currentRows.slice(beginIndex, this.currentRows.length);
     } else if( endIndex < this.currentRows.length ) {
@@ -821,6 +826,27 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     // Displays an accurate number for some edge cases
     if (this.paginationPageSize > this.currentRows.length) {
       this.paginationPageSize = this.currentRows.length;
+    }
+
+    // update scroll Info to make activate row scroll into the visible view if pagesize has been update
+    if (this.oldPagesize !== this.paginationPageSize && this.activatedRowIndex !== undefined && this.selected.length === 1) {
+      let viewPortIndex = 0;
+      if (this.table && this.table.bodyComponent) {
+        viewPortIndex = this.table.bodyComponent.getAdjustedViewPortIndex();
+      }
+      const bodyElement = document.getElementsByClassName('datatable-body')[0];
+      const offPage = this.oldPagesize - this.paginationPageSize;
+      const offHeight = offPage * this.table.rowHeight;
+      // adjust scrollbar to make activated item into the view
+      bodyElement.scroll({
+        top: bodyElement.scrollTop + (this.activatedRowIndex <= viewPortIndex + offPage ? 0 : offHeight),
+        behavior: 'smooth'
+      });
+
+      // scroll to bottom if the activatedRow is in the last page
+      if (this.activatedRowIndex + this.paginationPageSize > this.rows.length) {
+        bodyElement.scrollTop = bodyElement.scrollHeight;
+      }
     }
   }
 
@@ -1086,5 +1112,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onclick($event) {
     this.tableMouseEvent = $event;
+  }
+
+  onActivate(event) {
+    if (event.type === 'checkbox' && this.selected.indexOf(event.row) > -1) {
+      this.activatedRowIndex = this.table.bodyComponent.getRowIndex(event.row);
+    }
   }
 }
