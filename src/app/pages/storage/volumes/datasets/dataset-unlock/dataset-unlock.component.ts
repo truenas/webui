@@ -316,8 +316,8 @@ export class DatasetUnlockComponent implements OnDestroy {
         // don't pass empty passphrases, they won't work
         if (dataset.passphrase && dataset.passphrase !== '') {
           ds['passphrase'] = dataset.passphrase;
+          datasets.push(ds);
         }
-        datasets.push(ds);
       }
       if (!dataset.is_passphrase && !body.key_file) {
         ds['key'] = dataset.key;
