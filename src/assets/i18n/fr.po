@@ -13572,7 +13572,7 @@ msgstr ""
 "volume lorsque l'opération de détachement est confirmée."
 
 msgid "Set to preserve modification times of files."
-msgstr "Réglé pour préserver les temps de modification des fichiers."
+msgstr "Réglé pour préserver les heures de modification des fichiers."
 
 msgid ""
 "Set to preserve original file permissions. This is                useful "
