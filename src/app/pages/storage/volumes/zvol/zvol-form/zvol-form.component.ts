@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Validators, ValidationErrors, FormControl } from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -164,9 +165,9 @@ export class ZvolFormComponent {
       placeholder: helptext.zvol_sync_placeholder,
       tooltip: helptext.zvol_sync_tooltip,
       options: [
-        { label: 'Standard', value: 'STANDARD' },
-        { label: 'Always', value: 'ALWAYS' },
-        { label: 'Disabled', value: 'DISABLED' }
+        { label: T('Standard'), value: 'STANDARD' },
+        { label: T('Always'), value: 'ALWAYS' },
+        { label: T('Disabled'), value: 'DISABLED' }
       ],
     },
     {
@@ -175,13 +176,13 @@ export class ZvolFormComponent {
       placeholder: helptext.zvol_compression_placeholder,
       tooltip: helptext.zvol_compression_tooltip,
       options: [
-        {label : 'Off', value : "OFF"},
-        {label : 'lz4 (recommended)', value : "LZ4"},
-        {label : 'gzip (default level, 6)', value : "GZIP"},
-        {label : 'gzip (fastest)', value : "GZIP-1"},
-        {label : 'gzip (maximum, slow)', value : "GZIP-9"},
-        {label : 'zle (runs of zeros)', value : "ZLE"},
-        {label : 'lzjb (legacy, not recommended)', value : "LZJB"},
+        {label : T('Off'), value : "OFF"},
+        {label : T('lz4 (recommended)'), value : "LZ4"},
+        {label : T('gzip (default level, 6)'), value : "GZIP"},
+        {label : T('gzip (fastest)'), value : "GZIP-1"},
+        {label : T('gzip (maximum, slow)'), value : "GZIP-9"},
+        {label : T('zle (runs of zeros)'), value : "ZLE"},
+        {label : T('lzjb (legacy, not recommended)'), value : "LZJB"},
       ],
       validation: helptext.zvol_compression_validation,
       required: true,
@@ -192,9 +193,9 @@ export class ZvolFormComponent {
       placeholder: helptext.zvol_deduplication_placeholder,
       tooltip : helptext.zvol_deduplication_tooltip,
       options: [
-        {label : 'On', value : "ON"},
-        {label : 'Verify', value : "VERIFY"},
-        {label : 'Off', value : "OFF"},
+        {label : T('On'), value : "ON"},
+        {label : T('Verify'), value : "VERIFY"},
+        {label : T('Off'), value : "OFF"},
       ],
       validation: helptext.zvol_deduplication_validation,
       required: true,
@@ -261,7 +262,7 @@ export class ZvolFormComponent {
   constructor(protected router: Router, protected aroute: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
               protected loader: AppLoaderService, protected dialogService: DialogService,
-              protected storageService: StorageService
+              protected storageService: StorageService, private translate: TranslateService
               ) {}
 
 
@@ -285,14 +286,14 @@ export class ZvolFormComponent {
           this.namesInUse.push(/[^/]*$/.exec(children[i].name)[0]);
         };
       }
+      this.translate.get('Inherit').subscribe(inheritTr => {
 
       if(pk_dataset && pk_dataset[0].type ==="FILESYSTEM"){
 
-
-        const sync_inherit = [{label:`Inherit (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT'}];
-        const compression_inherit = [{label:`Inherit (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT'}];
-        const deduplication_inherit = [{label:`Inherit (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT'}];
-        const volblocksize_inherit = [{label:`Inherit`, value: 'INHERIT'}];
+          const sync_inherit = [{label:`${inheritTr} (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT'}];
+          const compression_inherit = [{label:`${inheritTr} (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT'}];
+          const deduplication_inherit = [{label:`${inheritTr} (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT'}];
+          const volblocksize_inherit = [{label:`${inheritTr}`, value: 'INHERIT'}];
 
         sync.options = sync_inherit.concat(sync.options);
         compression.options = compression_inherit.concat(compression.options);        
@@ -307,7 +308,6 @@ export class ZvolFormComponent {
           this.entityForm.formGroup.controls['volblocksize'].setValue(res);
           this.minimum_recommended_zvol_volblocksize = res;
         })
-
       } else {
         let parent_dataset = pk_dataset[0].name.split('/')
         parent_dataset.pop()
@@ -345,21 +345,21 @@ export class ZvolFormComponent {
           entityForm.formGroup.controls['volsize'].setValue(humansize);
 
           if (pk_dataset[0].sync.source === "INHERITED" || pk_dataset[0].sync.source === "DEFAULT" ){
-            sync_collection = [{label:`Inherit (${parent_dataset_res[0].sync.rawvalue})`, value: parent_dataset_res[0].sync.value}];
+            sync_collection = [{label:`${inheritTr} (${parent_dataset_res[0].sync.rawvalue})`, value: parent_dataset_res[0].sync.value}];
 
 
           } else {
-            sync_collection = [{label:`Inherit (${parent_dataset_res[0].sync.rawvalue})`, value: 'INHERIT'}];
+            sync_collection = [{label:`${inheritTr} (${parent_dataset_res[0].sync.rawvalue})`, value: 'INHERIT'}];
             entityForm.formGroup.controls['sync'].setValue(pk_dataset[0].sync.value);
           }
 
           sync.options = sync_collection.concat(sync.options);
 
           if (pk_dataset[0].compression.source === "INHERITED" || pk_dataset[0].compression.source === "DEFAULT" ){
-            compression_collection = [{label:`Inherit (${parent_dataset_res[0].compression.rawvalue})`, value: parent_dataset_res[0].compression.value}];
+            compression_collection = [{label:`${inheritTr} (${parent_dataset_res[0].compression.rawvalue})`, value: parent_dataset_res[0].compression.value}];
 
           } else {
-            compression_collection = [{label:`Inherit (${parent_dataset_res[0].compression.rawvalue})`, value: 'INHERIT'}];
+            compression_collection = [{label:`${inheritTr} (${parent_dataset_res[0].compression.rawvalue})`, value: 'INHERIT'}];
             entityForm.formGroup.controls['compression'].setValue(pk_dataset[0].compression.value);
           }
 
@@ -367,10 +367,10 @@ export class ZvolFormComponent {
 
 
           if (pk_dataset[0].deduplication.source === "INHERITED" || pk_dataset[0].deduplication.source === "DEFAULT" ){
-            deduplication_collection = [{label:`Inherit (${parent_dataset_res[0].deduplication.rawvalue})`, value: parent_dataset_res[0].deduplication.value}];
+            deduplication_collection = [{label:`${inheritTr} (${parent_dataset_res[0].deduplication.rawvalue})`, value: parent_dataset_res[0].deduplication.value}];
 
           } else {
-            deduplication_collection = [{label:`Inherit (${parent_dataset_res[0].deduplication.rawvalue})`, value: 'INHERIT'}];
+            deduplication_collection = [{label:`${inheritTr} (${parent_dataset_res[0].deduplication.rawvalue})`, value: 'INHERIT'}];
             entityForm.formGroup.controls['deduplication'].setValue(pk_dataset[0].deduplication.value);
           }
 
@@ -392,6 +392,8 @@ export class ZvolFormComponent {
       }
     })
 
+    })
+
 
 
   }
@@ -405,9 +407,13 @@ export class ZvolFormComponent {
       if(this.minimum_recommended_zvol_volblocksize){
         const recommended_size_number = parseInt(this.reverseZvolBlockSizeMap[this.minimum_recommended_zvol_volblocksize],0);
         if (res_number < recommended_size_number){
-          _.find(this.fieldConfig, {name:'volblocksize'}).warnings = `
-          Recommended block size based on pool topology: ${this.minimum_recommended_zvol_volblocksize}.
-          A smaller block size can reduce sequential I/O performance and space efficiency.`
+          this.translate.get(helptext.blocksize_warning.a).subscribe(blockMsgA => (
+            this.translate.get(helptext.blocksize_warning.b).subscribe(blockMsgB => {
+              _.find(this.fieldConfig, {name:'volblocksize'}).warnings = 
+              `${blockMsgA} ${this.minimum_recommended_zvol_volblocksize}. ${blockMsgB}`
+            })
+          ))
+
         } else {
           _.find(this.fieldConfig, {name:'volblocksize'}).warnings = null;
         };
@@ -485,7 +491,7 @@ export class ZvolFormComponent {
         });
       } else{
         this.loader.close();
-        this.dialogService.Info(T("Error saving ZVOL."), "Shrinking a ZVOL is not allowed in the User Interface. This can lead to data loss.")
+        this.dialogService.Info(helptext.zvol_save_errDialog.title, helptext.zvol_save_errDialog.msg)
       }
     })
   }
