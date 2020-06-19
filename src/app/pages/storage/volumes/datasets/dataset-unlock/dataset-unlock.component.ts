@@ -305,15 +305,19 @@ export class DatasetUnlockComponent implements OnDestroy {
 
   customSubmit(body) {
     const datasets = [];
-    for (let i = 0; i < body.datasets.length; i++) {
+    let num = 1; // only unlock the first dataset (the root) if unlock_children is disabled
+    if (body['unlock_children']) {
+      num = body.datasets.length;
+    }
+    for (let i = 0; i < num; i++) {
       const dataset = body.datasets[i];
       const ds = {name:dataset.name}
       if (dataset.is_passphrase) {
         // don't pass empty passphrases, they won't work
         if (dataset.passphrase && dataset.passphrase !== '') {
           ds['passphrase'] = dataset.passphrase;
+          datasets.push(ds);
         }
-        datasets.push(ds);
       }
       if (!dataset.is_passphrase && !body.key_file) {
         ds['key'] = dataset.key;
