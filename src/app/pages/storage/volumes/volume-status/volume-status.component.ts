@@ -352,7 +352,7 @@ export class VolumeStatusComponent implements OnInit {
       _.find(actions, { label: "Offline" }).isHidden = true;
     }
 
-    if (vdev_type === "MIRROR" || vdev_type === "REPLACING") {
+    if (vdev_type === "MIRROR" || vdev_type === "REPLACING" || vdev_type === "SPARE") {
       _.find(actions, { label: "Detach" }).isHidden = false;
     }
 
