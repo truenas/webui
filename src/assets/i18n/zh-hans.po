@@ -230,8 +230,9 @@ msgstr "</i>。导出后，池中的数据将不可用。可以通过设置<b>�
 
 msgid ""
 "</i>is in the database but not connected to the machine. If it was exported "
-"by  mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />"
-msgstr "</i>位于数据库中，但未连接到计算机。 如果错误导出，请重新连接硬件并使用<b>导入池</b>。<br /><br />"
+"by     mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br "
+"/>"
+msgstr ""
 
 msgid ""
 "<a "
@@ -698,6 +699,11 @@ msgstr "强烈反对使用为0的swap大小！"
 
 msgid "A system update is in progress. "
 msgstr "正在进行系统更新。"
+
+msgid ""
+"A system update is in progress. It might have been  launched in another "
+"window or by an external source like TrueCommand."
+msgstr ""
 
 msgid ""
 "A unique name to identify this keypair. Automatically generated keypairs "
@@ -2305,6 +2311,9 @@ msgstr "可以被设置为<i>0</i>，留空FreeNas将会在虚拟机启动时自
 msgid "Cancel"
 msgstr "取消"
 
+msgid "Cancel any pending Key synchronization."
+msgstr ""
+
 msgid "Cannot Delete while HA is Enabled"
 msgstr "启用 HA 时无法删除"
 
@@ -2381,6 +2390,9 @@ msgstr "修改管理员密码"
 
 msgid "Change Device Order"
 msgstr "更改设备顺序"
+
+msgid "Change Enclosure Label"
+msgstr ""
 
 msgid "Change Passphrase"
 msgstr "更改密码"
@@ -5924,9 +5936,6 @@ msgstr "导出/断开连接池：'"
 msgid "Exporting Pool"
 msgstr "正在导出池"
 
-msgid "Exporting Pool..."
-msgstr "正在导出池..."
-
 msgid "Exporting/disconnecting will continue after services have been managed."
 msgstr "管理完服务后，导出/断开连接将继续。"
 
@@ -6137,6 +6146,9 @@ msgstr "遵循符号链接并复制它们链接的项目。"
 
 msgid "Force"
 msgstr "强制"
+
+msgid "Force Clear"
+msgstr ""
 
 msgid "Force Delete"
 msgstr "强制删除"
@@ -7965,6 +7977,9 @@ msgid ""
 "enough free memory for configured RAM of all VMs. Use with caution."
 msgstr "内存过量使用功能允许在没有足够的可用内存来配置所有虚拟机的内存时启动多个虚拟机。请谨慎使用。"
 
+msgid "Memory:"
+msgstr ""
+
 msgid "Menu Label"
 msgstr "菜单标签"
 
@@ -8771,6 +8786,9 @@ msgstr "已使用对象配额 %"
 
 msgid "OQ Objs Used"
 msgstr "已使用的对象配额Objs"
+
+msgid "OS Version:"
+msgstr ""
 
 msgid "Object Quota"
 msgstr "对象配额"
@@ -11133,6 +11151,9 @@ msgstr "序列号"
 
 msgid "Serial Number"
 msgstr "序列号"
+
+msgid "Serial Number:"
+msgstr ""
 
 msgid "Serial Port"
 msgstr "串行端口"
