@@ -5111,10 +5111,10 @@ msgid "Download Logs"
 msgstr "Télécharger les logs"
 
 msgid "Download Private Key"
-msgstr "Télécharger la clé privée"
+msgstr "Télécharger Clé privée"
 
 msgid "Download Public Key"
-msgstr "Télécharger la clé publique"
+msgstr "Télécharger Clé publique"
 
 msgid "Download Recovery Key"
 msgstr "Télécharger la clé de récupération"
@@ -5215,10 +5215,10 @@ msgid "Edit Options"
 msgstr "Modifier les options"
 
 msgid "Edit Permissions"
-msgstr "Modifier les permissions"
+msgstr "Modifier les autorisations"
 
 msgid "Edit Share ACL"
-msgstr "Modifier les ACL du partage"
+msgstr "Modifier l'ACL du partage"
 
 msgid "Edit User"
 msgstr "Modifier l'utilisateur"
@@ -16167,7 +16167,7 @@ msgid "Update Plugins"
 msgstr "Mettre à jour les plugins"
 
 msgid "Update Preferences"
-msgstr "Préférences de mise à jour"
+msgstr "Mise à jour des préférences"
 
 msgid "Update Status"
 msgstr "Mettre à jour le statut"
@@ -17104,7 +17104,7 @@ msgid ""
 "identifiers\" target=\"_blank\">Windows Security Identifier</a>. Either a "
 "<i>SID</i> or a <i>Domain</i> and <i>Name</i> is required for this ACL."
 msgstr ""
-"À qui s'applique cette entrée de l'ALC, indiquée comme un <a "
+"À qui s'applique cette entrée de l'ACL, indiquée comme un <a "
 "href=\"https://docs.microsoft.com/en-us/windows/win32/secauthz/security-"
 "identifiers\" target=\"_blank\">identificateur de sécurité Windows</a>. Un "
 "<i>SID</i> ou un <i>domaine</i> et un <i>nom</i> sont nécessaires pour "
