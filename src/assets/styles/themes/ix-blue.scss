@@ -1033,16 +1033,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     margin-bottom: 5px;
   }
 
-  #toggle_pw {
+  .toggle_pw {
     @include variable(display, --toggle_pw_display_prop, $toggle_pw_display_prop);
   }
 
   datatable-selection > .empty-row {
     color: var(--alt-fg1);
-  }
-
-  #toggle_pw {
-    @include variable(display, --toggle_pw_display_prop, $toggle_pw_display_prop);
   }
 
   #show_Warning {
