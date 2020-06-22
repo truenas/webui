@@ -74,15 +74,15 @@ export class VolumesListTableConfig implements InputTableConf {
   public flattenedVolData: any;
   public tableData: TreeNode[] = [];
   public columns: Array < any > = [
-    { name: 'Name', prop: 'name', always_display: true  },
-    { name: 'Type', prop: 'type', },
-    { name: 'Used', prop: 'used_parsed', filesizePipe: false},
-    { name: 'Available', prop: 'available_parsed', filesizePipe: false},
-    { name: 'Compression', prop: 'compression', hidden: true },
-    { name: 'Compression Ratio', prop: 'compressratio', hidden: true },
-    { name: 'Readonly', prop: 'readonly', },
-    { name: 'Dedup', prop: 'deduplication', hidden: true },
-    { name: 'Comments', prop: 'comments', hidden: true }
+    { name: T('Name'), prop: 'name', always_display: true  },
+    { name: T('Type'), prop: 'type', },
+    { name: T('Used'), prop: 'used_parsed', filesizePipe: false},
+    { name: T('Available'), prop: 'available_parsed', filesizePipe: false},
+    { name: T('Compression'), prop: 'compression', hidden: true },
+    { name: T('Compression Ratio'), prop: 'compressratio', hidden: true },
+    { name: T('Readonly'), prop: 'readonly', },
+    { name: T('Dedup'), prop: 'deduplication', hidden: true },
+    { name: T('Comments'), prop: 'comments', hidden: true }
   ];
 
   public config: any = {
@@ -151,17 +151,22 @@ export class VolumesListTableConfig implements InputTableConf {
               this.loader.open();
               this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
                 if (res.length > 0) {
-                  p1 = T('These services depend on pool ') + `<i>${row1.name}</i>` + T(' and will be disrupted if the pool is locked:');
-                  res.forEach((item) => {
-                    p1 += `<br><br>${item.type}:`;
-                    item.attachments.forEach((i) => {
-                      const tempArr = i.split(',');
-                      tempArr.forEach((i) => {
-                        p1 += `<br> - ${i}`
-                      })
+                  self.translate.get(helptext.encryptMsgA).subscribe(servicesMsgA => {
+                    self.translate.get(helptext.encryptMsgB).subscribe(servicesMsgB => {
+                      p1 = servicesMsgA + `<i>${row1.name}</i>` + servicesMsgB;
+                      res.forEach((item) => {
+                        p1 += `<br><br>${item.type}:`;
+                        item.attachments.forEach((i) => {
+                          const tempArr = i.split(',');
+                          tempArr.forEach((i) => {
+                            p1 += `<br> - ${i}`
+                          })
+                        })
+    
+                      })                      
                     })
-
                   })
+
                 }
                 this.ws.call('pool.processes', [row1.id]).subscribe((res) => {
                   const running_processes = [];
@@ -177,22 +182,29 @@ export class VolumesListTableConfig implements InputTableConf {
                       }
                     });
                     if (running_processes.length > 0) {
-                      p1 += `<br><br>These running services are using <b>${row1.name}</b>:`;
-                      running_processes.forEach((process) =>  {
-                        if (process.name) {
-                          p1 += `<br> - ${process.name}`
-                        }
+                      self.translate.get(helptext.runningMsg).subscribe(servicesMsg => {
+                        p1 += `<br><br>${servicesMsg} <b>${row1.name}</b>:`;
+                        running_processes.forEach((process) =>  {
+                          if (process.name) {
+                            p1 += `<br> - ${process.name}`
+                          }
+  
+                        });
+                      })
 
-                      });
                     };
                     if (running_unknown_processes.length > 0) {
-                      p1 += '<br><br>These unknown processes are using this pool:';
-                      running_unknown_processes.forEach((process) => {
-                        if (process.pid) {
-                          p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0,40)}`;
-                        }
-                      });
-                      p1 += `<br><br>WARNING: These unknown processes will be terminated while locking the pool.`;
+                      self.translate.get(helptext.unknownMsg).subscribe(servicesMsg => {
+                        self.translate.get(helptext.terminatedMsg).subscribe(terminatedMsg => {
+                          p1 += `<br><br>${servicesMsg}`;
+                          running_unknown_processes.forEach((process) => {
+                            if (process.pid) {
+                              p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0,40)}`;
+                            }
+                          });
+                          p1 += `<br><br>${terminatedMsg}`;
+                        })
+                      })
                     }
                   };
                   this.loader.close();
@@ -200,12 +212,12 @@ export class VolumesListTableConfig implements InputTableConf {
                 },
                 (err) => {
                   this.loader.close();
-                  new EntityUtils().handleWSError(T("Error gathering data on pool."), err, this.dialogService);
+                  new EntityUtils().handleWSError(helptext.dataErrMsg, err, this.dialogService);
                 });
               },
               (err) => {
                 this.loader.close();
-                new EntityUtils().handleWSError(T("Error gathering data on pool."), err, this.dialogService);
+                new EntityUtils().handleWSError(helptext.dataErrMsg, err, this.dialogService);
               });
               function doLock() {
                 const conf: DialogFormConfiguration = {
@@ -422,7 +434,7 @@ export class VolumesListTableConfig implements InputTableConf {
             let done = false;
             const value = entityDialog.formValue;
             const params = [row1.id, {passphrase: value.passphrase, services_restart: value.services_restart}]
-            let dialogRef = self.mdDialog.open(EntityJobComponent, {data: {"title":"Unlocking Pool"}, disableClose: true});
+            let dialogRef = self.mdDialog.open(EntityJobComponent, {data: {"title":T("Unlocking Pool")}, disableClose: true});
             if(value.key) {
               params[1]['recoverykey'] = true;
               const formData: FormData = new FormData();
@@ -441,8 +453,10 @@ export class VolumesListTableConfig implements InputTableConf {
                 dialogRef.close(false);
                 entityDialog.dialogRef.close(true);
                 self.parentVolumesListComponent.repaintMe();
-                self.dialogService.Info(T("Unlock"), row1.name + T(" has been unlocked."), '300px', "info", true);
-                done = true;
+                self.translate.get(" has been unlocked.").subscribe(unlockTr => {
+                  self.dialogService.Info(T("Unlock"), row1.name + unlockTr, '300px', "info", true);
+                  done = true;
+                })
               }
             });
             dialogRef.componentInstance.failure.subscribe((res) => {
@@ -760,25 +774,30 @@ export class VolumesListTableConfig implements InputTableConf {
             this.getPoolData(row1.id).subscribe((res) => {
               if (res[0]) {
                 if (res[0].scan.function === "SCRUB" && res[0].scan.state === "SCANNING") {
-                  const message = "Stop the scrub on " + row1.name + "?";
-                  this.dialogService.confirm("Scrub Pool", message, false, T("Stop Scrub")).subscribe((res) => {
-                    if (res) {
-                      this.loader.open();
-                      this.ws.call('pool.scrub', [row1.id, 'STOP']).subscribe(
-                        (res) => {
-                          this.loader.close();
-                          this.dialogService.Info(T("Stop Scrub"), T('Stopping scrub on pool <i>') + row1.name + '</i>.', '300px', "info", true);
-                        },
-                        (err) => {
-                          this.loader.close();
-                          new EntityUtils().handleWSError(this, err, this.dialogService);
-                        }
-                      )
-                    }
-                  });
+                  self.translate.get("Stop the scrub on ").subscribe(msg => {
+                    this.dialogService.confirm(T("Scrub Pool"), msg + row1.name + '?', false, T("Stop Scrub"))
+                    .subscribe((res) => {
+                      if (res) {
+                        this.loader.open();
+                        this.ws.call('pool.scrub', [row1.id, 'STOP']).subscribe(
+                          (res) => {
+                            this.loader.close();
+                            self.translate.get('Stopping scrub on pool').subscribe(msg => {
+                              this.dialogService.Info(T("Stop Scrub"), `${msg} <i>${row1.name}</i>`, '300px', "info", true);
+                            })
+                          },
+                          (err) => {
+                            this.loader.close();
+                            new EntityUtils().handleWSError(this, err, this.dialogService);
+                          }
+                        )
+                      }
+                    });
+                  })
+
                 } else {
-                  const message = T("Start scrub on pool <i>") + row1.name + "</i>?";
-                  this.dialogService.confirm("Scrub Pool", message, false, T("Start Scrub")).subscribe((res) => {
+                  self.translate.get('Start scrub on pool').subscribe(msg => {               
+                  this.dialogService.confirm(T("Scrub Pool"), `${msg} <i>row1.name</i>?`, false, T("Start Scrub")).subscribe((res) => {
                     if (res) {
                       this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { "title": T('Scrub Pool') }, disableClose: false });
                       this.dialogRef.componentInstance.setCall('pool.scrub', [row1.id, 'START']);
@@ -787,9 +806,14 @@ export class VolumesListTableConfig implements InputTableConf {
                         (jobres) => {
                           this.dialogRef.close(false);
                           if (jobres.progress.percent == 100 && jobres.progress.description === "Scrub finished") {
-                            this.dialogService.Info(T('Scrub Complete'), T('Scrub complete on pool <i>') + row1.name + "</i>.", '300px', "info", true);
+                            self.translate.get('Scrub complete on pool').subscribe(msg => {
+                              this.dialogService.Info(T('Scrub Complete'), `${msg} <i>${row1.name}</i>.`, '300px', "info", true);
+                            })
                           } else {
-                            this.dialogService.Info(T('Stop Scrub'), T('Stopped the scrub on pool <i>') + row1.name + "</i>.", '300px', "info", true);
+                            self.translate.get('Stopped the scrub on pool').subscribe(msg => {
+                              this.dialogService.Info(T('Stop Scrub'), `${msg} <i>${row1.name}</i>.`, '300px', "info", true);
+                            
+                            })
                           }
                         }
                       );
@@ -798,6 +822,7 @@ export class VolumesListTableConfig implements InputTableConf {
                       });
                     }
                   });
+                  })
                 }
               }
             })
@@ -860,13 +885,15 @@ export class VolumesListTableConfig implements InputTableConf {
                     if (entityDialog) {
                       entityDialog.dialogRef.close(true);
                     }
-                    parent.dialogService.generalDialog({
-                      title: helptext.expand_pool_success_dialog.title,
-                      icon: 'info',
-                      is_html: true,
-                      message: `${helptext.expand_pool_success_dialog.message} <i>${row1.name}</i>`,
-                      hideCancel: true,
-                    });
+                    self.translate.get(helptext.expand_pool_success_dialog.message).subscribe(msg => {
+                      parent.dialogService.generalDialog({
+                        title: helptext.expand_pool_success_dialog.title,
+                        icon: 'info',
+                        is_html: true,
+                        message: `${msg} <i>${row1.name}</i>`,
+                        hideCancel: true,
+                      });
+                    })
                   }
                 },
                 (err) => {
@@ -878,14 +905,16 @@ export class VolumesListTableConfig implements InputTableConf {
 
 
             if (row1.encrypt === 0) {
-              this.dialogService.generalDialog({
-                title: helptext.expand_pool_dialog.title + row1.name,
-                message: helptext.expand_pool_dialog.message,
-                confirmBtnMsg: helptext.expand_pool_dialog.save_button,
-              }).subscribe((res) => {
-                if (res) {
-                  doExpand();
-                }
+              self.translate.get(helptext.expand_pool_dialog.title).subscribe(msg => {
+                this.dialogService.generalDialog({
+                  title: msg + row1.name,
+                  message: helptext.expand_pool_dialog.message,
+                  confirmBtnMsg: helptext.expand_pool_dialog.save_button,
+                }).subscribe((res) => {
+                  if (res) {
+                    doExpand();
+                  }
+                })
               })
             } else {
               self.dialogService.dialogForm(conf);
@@ -1032,46 +1061,59 @@ export class VolumesListTableConfig implements InputTableConf {
           name: T('Delete Dataset'),
           label: T("Delete Dataset"),
           onClick: (row1) => {
-            this.dialogService.doubleConfirm(
-              T('Delete Dataset <i><b>') + row1.name + '</b></i>',
-              T('The <i><b>') + row1.name + "</b></i> dataset and all snapshots stored with it <b>will be permanently deleted<b>.",
-              row1.name,
-              true,
-              T("DELETE DATASET")
-            ).subscribe((doubleConfirmDialog) => {
-              if (doubleConfirmDialog) {
-                this.loader.open();
-                this.ws.call('pool.dataset.delete', [row1.id, {"recursive": true}]).subscribe(
-                  (wsResp) => {
-                    this.loader.close();
-                    this.parentVolumesListComponent.repaintMe();
-                  },
-                  (e_res) => {
-                    this.loader.close();
-                    if (e_res.reason.indexOf('Device busy') > -1) {
-                      this.dialogService.confirm(T('Device Busy'), T('Force deletion of dataset ') + "<i>" + row1.name + "</i>?", false, T('Force Delete')).subscribe(
-                        (res) => {
-                          if (res) {
-                            this.loader.open();
-                            this.ws.call('pool.dataset.delete', [row1.id, {"recursive": true, "force": true}]).subscribe(
-                              (wsres) => {
-                                this.loader.close();
-                                this.parentVolumesListComponent.repaintMe();
-                              },
-                              (err) => {
-                                this.loader.close();
-                                this.dialogService.errorReport(T("Error deleting dataset ") + "<i>" + row1.name + "</i>.", err.reason, err.stack);
-                              }
-                            );
+            self.translate.get('Delete Dataset').subscribe(msg1 => {
+              self.translate.get('The').subscribe(theTr => {
+                self.translate.get('dataset and all snapshots stored with it <b>will be permanently deleted</b>.').subscribe(msg2 => {
+                  this.dialogService.doubleConfirm(
+                    `${msg1} <i><b>${row1.name}</b></i>`,
+                    `${theTr} <i><b>${row1.name}</b></i> ${msg2}`,
+                    row1.name,
+                    true,
+                    T("DELETE DATASET")
+                  ).subscribe((doubleConfirmDialog) => {
+                    if (doubleConfirmDialog) {
+                      this.loader.open();
+                      this.ws.call('pool.dataset.delete', [row1.id, {"recursive": true}]).subscribe(
+                        (wsResp) => {
+                          this.loader.close();
+                          this.parentVolumesListComponent.repaintMe();
+                        },
+                        (e_res) => {
+                          this.loader.close();
+                          if (e_res.reason.indexOf('Device busy') > -1) {
+                            self.translate.get('Force deletion of dataset ').subscribe(msg => {
+                              this.dialogService.confirm(T('Device Busy'),msg + "<i>" + row1.name + "</i>?", false, T('Force Delete')).subscribe(
+                                (res) => {
+                                  if (res) {
+                                    this.loader.open();
+                                    this.ws.call('pool.dataset.delete', [row1.id, {"recursive": true, "force": true}]).subscribe(
+                                      (wsres) => {
+                                        this.loader.close();
+                                        this.parentVolumesListComponent.repaintMe();
+                                      },
+                                      (err) => {
+                                        this.loader.close();
+                                        self.translate.get("Error deleting dataset ").subscribe(msg => {
+                                          this.dialogService.errorReport(msg + "<i>" + row1.name + "</i>.", err.reason, err.stack);
+                                        })
+                                      }
+                                    );
+                                  }
+                                }
+                              )
+                            })
+                          } else {
+                            self.translate.get("Error deleting dataset ").subscribe(msg => {
+                              this.dialogService.errorReport(msg + "<i>" + row1.name + "</i>.", e_res.reason, e_res.stack);
+                            })
                           }
-                        }
-                      )
-                    } else {
-                      this.dialogService.errorReport(T("Error deleting dataset ") + "<i>" + row1.name + "</i>.", e_res.reason, e_res.stack);
+                      });
                     }
-                });
-              }
-            });
+                  });
+                })
+              })
+            })
+
           }
         });
 
@@ -1085,22 +1127,29 @@ export class VolumesListTableConfig implements InputTableConf {
         name: T('Delete Zvol'),
         label: T("Delete Zvol"),
         onClick: (row1) => {
-          this.dialogService.doubleConfirm(T("Delete "),
-            T("Delete the zvol ") + "<b><i>" + row1.name + "</i></b>"+ T(" and all snapshots of it?"), row1.name,
-            true, T('Delete Zvol')).subscribe((confirmed) => {
-            if (confirmed === true) {
-              this.loader.open();
+          self.translate.get("Delete the zvol ").subscribe(msg1 => {
+            self.translate.get(" and all snapshots of it?").subscribe(msg2 => {
+              this.dialogService.doubleConfirm(T("Delete "),
+              msg1 + "<b><i>" + row1.name + "</i></b>"+ msg2, row1.name,
+              true, T('Delete Zvol')).subscribe((confirmed) => {
+              if (confirmed === true) {
+                this.loader.open();
+  
+                this.ws.call('pool.dataset.delete', [row1.id, {"recursive": true}]).subscribe((wsResp) => {
+                  this.loader.close();
+                  this.parentVolumesListComponent.repaintMe();
+  
+                }, (res) => {
+                  this.loader.close();
+                  self.translate.get('Error Deleting zvol ').subscribe(msg => {
+                    this.dialogService.errorReport(msg + row1.id, res.reason, res.stack);
+                  })
+                });
+              }
+            });              
+            })
+          })
 
-              this.ws.call('pool.dataset.delete', [row1.id, {"recursive": true}]).subscribe((wsResp) => {
-                this.loader.close();
-                this.parentVolumesListComponent.repaintMe();
-
-              }, (res) => {
-                this.loader.close();
-                this.dialogService.errorReport(T("Error Deleting zvol ") + row1.id, res.reason, res.stack);
-              });
-            }
-          });
 
         }
       });
@@ -1197,7 +1246,9 @@ export class VolumesListTableConfig implements InputTableConf {
               });
             }, (res) => {
               this.loader.close();
-              this.dialogService.errorReport(T("Error Promoting dataset ") + row1.id, res.reason, res.stack);
+              self.translate.get('Error Promoting dataset ').subscribe(msg => {
+                this.dialogService.errorReport(msg + row1.id, res.reason, res.stack);
+              })
             });
           }
         });
@@ -1413,9 +1464,13 @@ export class VolumesListTableConfig implements InputTableConf {
                     if (res) {
                       dialogRef.close()
                       entityDialog.dialogRef.close();
-                      self.dialogService.Info(helptext.encryption_options_dialog.dialog_saved_title, 
-                        helptext.encryption_options_dialog.dialog_saved_message1 + row.id + helptext.encryption_options_dialog.dialog_saved_message2);
-                      self.parentVolumesListComponent.repaintMe();
+                      self.translate.get(helptext.encryption_options_dialog.dialog_saved_message1).subscribe(msg1 => {
+                        self.translate.get(helptext.encryption_options_dialog.dialog_saved_message2).subscribe(msg2 => {
+                          self.dialogService.Info(helptext.encryption_options_dialog.dialog_saved_title, 
+                            msg1 + row.id + msg2);
+                          self.parentVolumesListComponent.repaintMe();
+                        })
+                      })
                     }
                   });
                   dialogRef.componentInstance.failure.subscribe(err =>{
@@ -1438,30 +1493,34 @@ export class VolumesListTableConfig implements InputTableConf {
             label: T('Lock'),
             onClick: (row) => {
               // lock
-              const title = helptext.lock_dataset_dialog.dialog_title + row.name;
-              const message = helptext.lock_dataset_dialog.dialog_message + row.name + '?'
               const params = [row.id];
               let force_umount = false;
-              const ds = this.dialogService.confirm(title, message, false, helptext.lock_dataset_dialog.button, 
-                true, helptext.lock_dataset_dialog.checkbox_message, 'pool.dataset.lock', params);
-              
-              ds.componentInstance.switchSelectionEmitter.subscribe((res) => {
-                force_umount = res;
-              });
-              ds.afterClosed().subscribe((status)=>{
-                if(status){
-                  this.loader.open();
-                  params.push({'force_umount':force_umount});
-                  this.ws.call(
-                    ds.componentInstance.method,params).subscribe((res)=>{
-                      this.loader.close();
-                      this.parentVolumesListComponent.repaintMe();
-                    }, (err)=>{
-                      this.loader.close();
-                      new EntityUtils().handleWSError(this, err, this.dialogService);
-                    });
-                }
-              });  
+              this.translate.get(helptext.lock_dataset_dialog.dialog_title).subscribe(titleTr => {
+                this.translate.get(helptext.lock_dataset_dialog.dialog_message).subscribe(messageTr => {
+                  const ds = this.dialogService.confirm(titleTr + row.name, `${messageTr} ${row.name}?`, 
+                    false, helptext.lock_dataset_dialog.button, 
+                    true, helptext.lock_dataset_dialog.checkbox_message, 'pool.dataset.lock', params);
+                  
+                  ds.componentInstance.switchSelectionEmitter.subscribe((res) => {
+                    force_umount = res;
+                  });
+                  ds.afterClosed().subscribe((status)=>{
+                    if(status){
+                      this.loader.open();
+                      params.push({'force_umount':force_umount});
+                      this.ws.call(
+                        ds.componentInstance.method,params).subscribe((res)=>{
+                          this.loader.close();
+                          this.parentVolumesListComponent.repaintMe();
+                        }, (err)=>{
+                          this.loader.close();
+                          new EntityUtils().handleWSError(this, err, this.dialogService);
+                        });
+                    }
+                  });  
+                })
+              })
+
             }
           });
         }
