@@ -252,11 +252,9 @@ msgstr ""
 
 msgid ""
 "</i>is in the database but not connected to the machine. If it was exported "
-"by  mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />"
+"by     mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br "
+"/>"
 msgstr ""
-"</i>находится в базе данных, но не подключен к машине. Если он был "
-"экспортирован по ошибке, повторно подключите оборудование и используйте "
-"<b>Импорт пула</b>.<br /><br />"
 
 msgid ""
 "<a "
@@ -798,6 +796,11 @@ msgstr "Размер свопа 0 НАСТОЯТЕЛЬНО НЕ РЕКОМЕНД
 
 msgid "A system update is in progress. "
 msgstr "Выполняется обновление системы. "
+
+msgid ""
+"A system update is in progress. It might have been  launched in another "
+"window or by an external source like TrueCommand."
+msgstr ""
 
 msgid ""
 "A unique name to identify this keypair. Automatically generated keypairs "
@@ -2501,6 +2504,9 @@ msgstr ""
 msgid "Cancel"
 msgstr "Отмена"
 
+msgid "Cancel any pending Key synchronization."
+msgstr ""
+
 msgid "Cannot Delete while HA is Enabled"
 msgstr "Невозможно удалить, пока включена ВД"
 
@@ -2582,6 +2588,9 @@ msgstr "Изменить пароль администратора"
 
 msgid "Change Device Order"
 msgstr "Изменить порядок устройств"
+
+msgid "Change Enclosure Label"
+msgstr ""
 
 msgid "Change Passphrase"
 msgstr "Сменить пароль"
@@ -6316,9 +6325,6 @@ msgstr ""
 msgid "Exporting Pool"
 msgstr ""
 
-msgid "Exporting Pool..."
-msgstr "Пул экспортируется..."
-
 msgid "Exporting/disconnecting will continue after services have been managed."
 msgstr ""
 
@@ -6534,6 +6540,9 @@ msgstr ""
 
 msgid "Force"
 msgstr "Принудить"
+
+msgid "Force Clear"
+msgstr ""
 
 msgid "Force Delete"
 msgstr "Принудительно удалить"
@@ -8480,6 +8489,9 @@ msgstr ""
 "свободной памяти недостаточно для сконфигурированной памяти всех "
 "виртуальных машин. Используйте с осторожностью."
 
+msgid "Memory:"
+msgstr ""
+
 msgid "Menu Label"
 msgstr ""
 
@@ -9327,6 +9339,9 @@ msgid "OQ % Used"
 msgstr ""
 
 msgid "OQ Objs Used"
+msgstr ""
+
+msgid "OS Version:"
 msgstr ""
 
 msgid "Object Quota"
@@ -11870,6 +11885,9 @@ msgstr "Серийный номер"
 
 msgid "Serial Number"
 msgstr "Серийный номер"
+
+msgid "Serial Number:"
+msgstr ""
 
 msgid "Serial Port"
 msgstr "Последовательный порт"
