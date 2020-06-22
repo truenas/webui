@@ -69,6 +69,16 @@ export const rootRouterConfig: Routes = [{
         data: { title: 'Virtual Machines', breadcrumb: 'Virtual Machines' }
       },
       {
+        path: 'containers',
+        loadChildren: 'app/pages/containers/containers.module#ContainersModule',
+        data: { title: 'Containers', breadcrumb: 'Containers' }
+      },
+      {
+        path: 'clustering',
+        loadChildren: 'app/pages/clustering/clustering.module#ClusteringModule',
+        data: { title: 'Clustering', breadcrumb: 'Clustering' }
+      },
+      {
         path: 'sharing',
         loadChildren: 'app/pages/sharing/sharing.module#SharingModule',
         data: { title: 'Sharing', breadcrumb: 'Sharing'}

@@ -63,6 +63,7 @@ import { EntityWizardComponent } from './entity-wizard/entity-wizard.component';
 import { EntityTaskComponent } from './entity-task/entity-task.component';
 import { EntityDialogComponent } from './entity-dialog/entity-dialog.component';
 import { EntitySnackbarComponent } from './entity-snackbar/entity-snackbar.component';
+import { EntityComingsoonComponent } from './entity-comingsoon/entity-comingsoon.component';
 
 import { FormPermissionsComponent } from './entity-form/components/form-permissions/form-permissions.component';
 import { EntityJobComponent } from './entity-job/entity-job.component';
@@ -142,7 +143,8 @@ import { FormStatusComponent } from './entity-form/components/form-status/form-s
     ToolbarButtonComponent,
     ToolbarMenuComponent,
     ToolbarMultimenuComponent,
-    FormStatusComponent
+    FormStatusComponent,
+    EntityComingsoonComponent,
   ],
   exports: [
     EntityTemplateDirective,
@@ -169,6 +171,7 @@ import { FormStatusComponent } from './entity-form/components/form-status/form-s
     ToolbarButtonComponent,
     ToolbarMenuComponent,
     ToolbarMultimenuComponent,
+    EntityComingsoonComponent,
   ],
   entryComponents: [
     FormButtonComponent,

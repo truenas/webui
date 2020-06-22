@@ -7,13 +7,16 @@ import { VmFormComponent } from './vm-form/';
 import { VMListComponent } from './vm-list/vm-list.component';
 import { VMWizardComponent } from './vm-wizard/';
 import { VMSerialShellComponent } from './vm-serial-shell';
+import { VMComingsoonComponent } from './vm-comingsoon/vm-comingsoon.component';
 import { DeviceAddComponent } from './devices/device-add2';
 
 export const routes: Routes = [
   {
     path: '',
     data: { title: 'Virtual Machines', breadcrumb: 'Virtual Machines' },
-    component: VMListComponent,
+    component: (() => {
+      return window.localStorage.getItem('product_type') === 'SCALE'? VMComingsoonComponent : VMListComponent;
+    })(),
   },
   {
     path: 'edit/:pk', component: VmFormComponent,
