@@ -25,7 +25,7 @@ export const helptext_system_ca = {
  <i>Import CA</i>. An <i>Internal CA</i> functions like a publicly trusted CA \
  to sign certificates for an internal network. They are not trusted outside \
  the private network. An <i>Intermediate CA</i> lives between the root and end \
- entity certificates and their main purpose is to define and authorize the \
+ entity certificates and its main purpose is to define and authorize the \
  types of certificates that can be requested from the root CA. <i>Import CA</i> \
  allows an existing CA to be imported onto the system.<br> \
  For more information see \
