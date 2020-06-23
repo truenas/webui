@@ -4,6 +4,7 @@ import { helptext_system_tunable as helptext } from 'app/helptext/system/tunable
 import { WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'system-tunable-edit',
@@ -18,6 +19,9 @@ export class TunableFormComponent {
             
   protected route_success: string[] = ['system', 'tunable'];
   protected isEntity: boolean = true;
+
+  protected product_type: any;
+  protected type_fc: any;
 
   protected fieldConfig: FieldConfig[] = [];
   protected fieldSets: FieldSet[] = [
@@ -49,11 +53,7 @@ export class TunableFormComponent {
           placeholder: helptext.type.placeholder,
           tooltip: helptext.type.tooltip,
           required: false,
-          options: [
-            { label: 'loader', value: 'LOADER' },
-            { label: 'rc.conf', value: 'RC' },
-            { label: 'sysctl', value: 'SYSCTL' },
-          ],
+          options: [],
           value: 'LOADER'
         },
         {
@@ -82,6 +82,19 @@ export class TunableFormComponent {
     protected ws: WebSocketService,
     protected _injector: Injector, 
     protected _appRef: ApplicationRef) {}
+
+  preInit(entityForm: any) {
+    this.type_fc = _.find(this.fieldSets[0].config, {name: 'type'});
+    this.ws.call('tunable.tunable_type_choices').subscribe(tunables => {
+      for (const key in tunables) {
+        this.type_fc.options.push({label: tunables[key], value: key});
+      }
+    })
+    this.product_type = window.localStorage.getItem('product_type');
+    if (this.product_type === 'SCALE') {
+      this.type_fc.value = 'SYSCTL';
+    }
+  }
 
   afterInit(entityForm: any) {
     entityForm.formGroup.controls['enabled'].setValue(true);
