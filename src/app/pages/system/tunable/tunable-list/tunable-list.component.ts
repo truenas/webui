@@ -12,15 +12,22 @@ import { T } from '../../../../translate-marker';
 
 export class TunableListComponent {
 
-  public title = "Tunables";
+  public title = T("Tunables");
+  public title_scale = T('Sysctl');
   protected wsDelete = "tunable.delete";
   public queryCall:string = 'tunable.query';
 
-  protected route_delete: string[] = ['system', 'tunable', 'delete'];
   protected route_edit: string[] = ['system', 'tunable', 'edit'];
   protected route_success: string[] = [ 'system', 'tunable' ];
   protected route_add: string[] = ["system", "tunable", "add"];
-  protected route_add_tooltip = "Add Tunable";
+  protected route_add_tooltip = T("Add Tunable");
+
+  protected route_edit_scale: string[] = ['system', 'sysctl', 'edit'];
+  protected route_success_scale: string[] = [ 'system', 'sysctl' ];
+  protected route_add_scale: string[] = ["system", "sysctl", "add"];
+  protected route_add_tooltip_scale = T("Add Sysctl");
+
+  protected product_type;
 
   public busy: Subscription;
   public sub: Subscription;
@@ -68,6 +75,15 @@ export class TunableListComponent {
   preInit(entityList: any) {
     this.entityList = entityList;
     this.sub = this.aroute.params.subscribe(params => {});
+    this.product_type = window.localStorage.getItem('product_type');
+    if (this.product_type === 'SCALE') {
+      this.route_add = this.route_add_scale;
+      this.route_edit = this.route_edit_scale;
+      this.route_success = this.route_success_scale;
+      this.route_add_tooltip = this.route_add_tooltip_scale;
+      this.config.deleteMsg.title = T('Sysctl');
+      this.title = this.title_scale;
+    }
   }
 
   wsMultiDeleteParams(selected: any) {

@@ -52,6 +52,9 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
         _.find(_.find(menuItem, {state : "sharing"}).sub, {state : "nfs"}).disabled = true;
         _.find(_.find(menuItem, {state : "sharing"}).sub, {state : "webdav"}).disabled = true;
         _.find(_.find(menuItem, {state : "storage"}).sub, {state : "multipaths"}).disabled = true;
+        // tunables are called sysctl in linux so we should use the routes/menus/etc that call it sysctl on scale
+        _.find(_.find(menuItem, {state : "system"}).sub, {state : "tunable"}).disabled = true;
+        _.find(_.find(menuItem, {state : "system"}).sub, {state : "sysctl"}).disabled = false;
       } else {
         this.ws.call('multipath.query').subscribe((res)=>{
           if (!res || res.length === 0) {

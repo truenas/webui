@@ -3,7 +3,8 @@ import { T } from "app/translate-marker";
 
 export const helptext_system_tunable = {
   metadata:{
-    fieldsets:[T('Tunable')]
+    fieldsets:[T('Tunable')],
+    fieldsets_scale:[T('Sysctl')]
   },
   var: {
     placeholder: T("Variable"),
