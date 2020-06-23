@@ -365,21 +365,25 @@ export class AdvancedComponent implements OnDestroy {
     this.entityForm = entityEdit;
     this.ws.call('system.product_type').subscribe((res)=>{
       this.product_type = res;
-      this.swapondrive = this.fieldSets.config('swapondrive');
-      this.swapondrive_subscription = entityEdit.formGroup.controls['swapondrive'].valueChanges.subscribe((value) => {
-        if (!value || value === '') {
-          this.storage.humanReadable = '';
-        }
-        const filteredValue = value ? this.storage.convertHumanStringToNum(value.toString(), false, 'g') : undefined;
-        if (filteredValue === 0) {
-          this.swapondrive.warnings = helptext_system_advanced.swapondrive_warning;
-        } else if (filteredValue > 99*1073741824 ){
-          this.swapondrive.warnings = helptext_system_advanced.swapondrive_max_warning;
-        } else {
-          this.swapondrive.warnings = null;
+      if (this.product_type === 'ENTERPRISE') {
+        entityEdit.setDisabled('swapondrive', true, true);
+      } else {
+        this.swapondrive = this.fieldSets.config('swapondrive');
+        this.swapondrive_subscription = entityEdit.formGroup.controls['swapondrive'].valueChanges.subscribe((value) => {
+          if (!value || value === '') {
+            this.storage.humanReadable = '';
+          }
+          const filteredValue = value ? this.storage.convertHumanStringToNum(value.toString(), false, 'g') : undefined;
+          if (filteredValue === 0) {
+            this.swapondrive.warnings = helptext_system_advanced.swapondrive_warning;
+          } else if (filteredValue > 99*1073741824 ){
+            this.swapondrive.warnings = helptext_system_advanced.swapondrive_max_warning;
+          } else {
+            this.swapondrive.warnings = null;
 
-        }
-      });
+          }
+        });
+      }
 
       entityEdit.formGroup.controls['overprovision'].valueChanges.subscribe((value) => {
         if (!value || value === '') {
