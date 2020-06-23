@@ -244,6 +244,7 @@ export class AdvancedComponent implements OnDestroy {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         this.is_ha = is_ha;
       });
+      entityEdit.setDisabled('swapondrive', true, true);
     }
     this.entityForm = entityEdit;
     this.ws.call('system.is_freenas').subscribe((res)=>{
