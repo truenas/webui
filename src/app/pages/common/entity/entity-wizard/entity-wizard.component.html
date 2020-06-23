@@ -47,15 +47,15 @@
           <ul >
             <li *ngFor="let item of conf.summary | keyvalue : originalOrder">
               <div *ngIf="item.value | keyvalue; else inobject">
-                <label>{{item.key + ':'}}</label>
+                <label>{{item.key}}:</label>
                 <ul class="wizard-ul">
                   <li *ngFor="let subitem of item.value | keyvalue : originalOrder">
-                    <div *ngIf="subitem.value">{{subitem.key + ' : ' + subitem.value}}</div>
+                    <div *ngIf="subitem.value">{{subitem.key | translate}}: {{subitem.value}}</div>
                   </li>
                 </ul>
               </div>
               <ng-template #inobject>
-                <div *ngIf="item.value">{{item.key + ' : ' + item.value}}</div>
+                <div *ngIf="item.value">{{item.key | translate}}: {{item.value}}</div>
               </ng-template>
             </li>
           </ul>

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-
+import { TranslateService } from '@ngx-translate/core';
 
 import { RestService, WebSocketService } from '../../../../services/';
 import { DialogService } from '../../../../services/dialog.service';
@@ -35,109 +35,111 @@ export class DeviceListComponent {
   public busy: Subscription;
   protected loaderOpen = false;
   public columns: Array<any> = [
-    {name: 'Device ID', prop:'id', always_display: true},
-    {name : 'Device', prop : 'dtype'},
-    {name : 'Order', prop : 'order'},
+    {name: T('Device ID'), prop:'id', always_display: true},
+    {name : T('Device'), prop : 'dtype'},
+    {name : T('Order'), prop : 'order'},
   ];
   public rowIdentifier = 'id';
-  public title = "VM ";
+  public title = T("VM ");
   public config: any = {
     paging : true,
     sorting : {columns : this.columns},
   };
   constructor(protected router: Router, protected aroute: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService,
-              public dialogService: DialogService, private cdRef:ChangeDetectorRef) {}
+              public dialogService: DialogService, private cdRef:ChangeDetectorRef,
+              private translate: TranslateService) {}
 
 
   isActionVisible(actionId: string, row: any) {
     return actionId === 'delete' && row.id === true ? false : true;
   }
 
-
   getActions(row) {
-    const actions = [];
-    actions.push({
-      id: row.id,
-      name: 'edit',
-      icon: 'edit',
-      label : T("Edit"),
-      onClick : (edit_row) => {
-        this.router.navigate(new Array('').concat(
-            [ "vm", this.pk, "devices", this.vm, "edit", edit_row.id, edit_row.dtype ]));
-      }
-    });
-    actions.push({
-      id: row.id,
-      name: 'delete',
-      icon: 'delete',
-      label : T("Delete"),
-      onClick : (delete_row) => {
-        this.deviceDelete(delete_row);
-      },
-    });
-    actions.push({
-      id: row.id,
-      name: 'reorder',
-      icon: 'reorder',
-      label : T("Change Device Order"),
-      onClick : (row1) => {
-        const localLoader = this.loader,
-        localRest = this.rest,
-        localws = this.ws,
-        localDialogService = this.dialogService
+    const self = this;
+        const actions = [];
+        actions.push({
+          id: row.id,
+          name: 'edit',
+          icon: 'edit',
+          label : T("Edit"),
+          onClick : (edit_row) => {
+            this.router.navigate(new Array('').concat(
+                [ "vm", this.pk, "devices", this.vm, "edit", edit_row.id, edit_row.dtype ]));
+          }
+        });
+        actions.push({
+          id: row.id,
+          name: 'delete',
+          icon: 'delete',
+          label : T("Delete"),
+          onClick : (delete_row) => {
+            this.deviceDelete(delete_row);
+          },
+        });
+        actions.push({
+          id: row.id,
+          name: 'reorder',
+          icon: 'reorder',
+          label : T("Change Device Order"),
+          onClick : (row1) => {
+            self.translate.get('Change order for ').subscribe(orderMsg => {
+              const conf: DialogFormConfiguration = { 
+                title: T('Change Device Order'),
+                message: orderMsg + `<b>${row1.dtype} ${row1.id}</b>`,
+                parent: this,
+                fieldConfig: [{
+                  type: 'input',
+                  name: 'order',
+                }
+              ],
+                saveButtonText: T('Save'),
+                preInit: function (entityDialog) {
+                  _.find(entityDialog.fieldConfig, {'name':'order'})['value'] = row1.order;
+                },
+                customSubmit: function (entityDialog) {
+                  const value = entityDialog.formValue;
+                  self.loader.open();
+                  self.ws.call('vm.device.update',[row1.id,{'order':value.order}]).subscribe((succ)=>{
+                    entityDialog.dialogRef.close(true);
+                    self.loader.close();
+                    this.parent.entityList.getData();
+                  },(err)=>{
+                    self.loader.close();
+                  },()=>{
+                    entityDialog.dialogRef.close(true);
+                    self.loader.close();
+                    this.parent.entityList.getData();
+                  });
+    
+                }
+              }
+              self.dialogService.dialogForm(conf);
+            })
 
-          const conf: DialogFormConfiguration = { 
-            title: T('Change Device Order'),
-            message: T('Change order for ') + `<b>${row1.dtype} ${row1.id}</b>`,
-            parent: this,
-            fieldConfig: [{
-              type: 'input',
-              name: 'order',
             }
-          ],
-            saveButtonText: T('Save'),
-            preInit: function (entityDialog) {
-              _.find(entityDialog.fieldConfig, {'name':'order'})['value'] = row1.order;
+          }),
+          actions.push({
+            id: row.id,
+            name: 'details',
+            icon: 'list',
+            label : T("Details"),
+            onClick : (device) => {
+              self.translate.get('Change order for ').subscribe(detailMsg => {
+                let details = ``
+                for (const attribute in device.attributes) {
+                  details = `${attribute}: ${device.attributes[attribute]} \n` + details;
+                }
+                this.dialogService.Info(detailMsg + `${row.dtype} ${row.id}`, details,'500px','info');
+              })
             },
-            customSubmit: function (entityDialog) {
-              const value = entityDialog.formValue;
-              localLoader.open();
-              localws.call('vm.device.update',[row1.id,{'order':value.order}]).subscribe((succ)=>{
-                entityDialog.dialogRef.close(true);
-                localLoader.close();
-                this.parent.entityList.getData();
-              },(err)=>{
-                localLoader.close();
-              },()=>{
-                entityDialog.dialogRef.close(true);
-                localLoader.close();
-                this.parent.entityList.getData();
-              });
-
-            }
-          }
-          this.dialogService.dialogForm(conf);
-        }
-      }),
-      actions.push({
-        id: row.id,
-        name: 'details',
-        icon: 'list',
-        label : T("Details"),
-        onClick : (device) => {
-          let details = ``
-          for (const attribute in device.attributes) {
-            details = `${attribute}: ${device.attributes[attribute]} \n` + details;
-          }
-          this.dialogService.Info(T('Details for ') + `${row.dtype} ${row.id}`, details,'500px','info');
-        },
-      });
-    return actions;
+          });
+        return actions;
     }
   
   deviceDelete(row){
-    this.dialogService.confirm(T("Delete"), T('Delete ') + `<b>${row.dtype} ${row.id}</b>`, 
+    this.translate.get('Delete ').subscribe(msg => {
+      this.dialogService.confirm(T("Delete"), msg + `<b>${row.dtype} ${row.id}</b>`, 
       true, T('Delete Device')).subscribe((res) => {
       if (res) {
         this.loader.open();
@@ -156,6 +158,7 @@ export class DeviceListComponent {
           );
         }
       }
+    })
     })
   }
   preInit(entityList: any) {

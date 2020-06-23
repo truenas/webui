@@ -36,7 +36,7 @@ export class VMWizardComponent {
   firstFormGroup: FormGroup;
   protected dialogRef: any;
   objectKeys = Object.keys;
-  summary_title = "VM Summary";
+  summary_title = T("VM Summary");
   public namesInUse = [];
   public statSize: any;
   public vcpus: number = 1;
@@ -727,7 +727,11 @@ volSizeValidator(name: string) {
 
     if (errors) {
       config.hasErrors = true;
-      config.warnings = T(`Cannot allocate ${self.storageService.humanReadable} to storage for this virtual machine.`);
+      self.translate.get('Cannot allocate').subscribe(msg => {
+        self.translate.get('to storage for this virtual machine.').subscribe(msg2 => {
+        config.warnings = `${msg} ${self.storageService.humanReadable} ${msg2}`;  
+        })
+      })
     } else {
       config.hasErrors = false;
       config.warnings = '';
