@@ -20,7 +20,6 @@ import { filter, map } from 'rxjs/operators';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import globalHelptext from './../../../helptext/global-helptext';
-import { LabelFactory } from 'app/core/classes/hardware/label-factory';
 
 @Component({
   selector: 'app-vm-wizard',
