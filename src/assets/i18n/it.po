@@ -3991,7 +3991,7 @@ msgid "DHCP Autoconfigure IPv4"
 msgstr "Configurazione automatica DHCP con IPv4"
 
 msgid "DNS Domain Name"
-msgstr "Nome Dominio DNS"
+msgstr "Nome dominio DNS"
 
 msgid "DNS Forwarder"
 msgstr ""
@@ -4018,13 +4018,13 @@ msgid "DOCUMENTATION"
 msgstr "DOCUMENTAZIONE"
 
 msgid "DQ % Used"
-msgstr "% Usata DQ"
+msgstr "% usata DQ"
 
 msgid "DQ Bytes Used"
-msgstr "Bytes Usati DQ"
+msgstr "Bytes usati DQ"
 
 msgid "DQ Used"
-msgstr "DQ Utilizzati"
+msgstr "DQ utilizzati"
 
 msgid "Daily"
 msgstr "Giornaliero"
@@ -4054,13 +4054,13 @@ msgid "Data"
 msgstr "Dati"
 
 msgid "Data Encipherment"
-msgstr "Cifratura Dati"
+msgstr "Cifratura dati"
 
 msgid "Data Quota"
-msgstr "Quota Dati"
+msgstr "Quota dati"
 
 msgid "Data VDevs"
-msgstr "Vdev Dati"
+msgstr "Vdev dati"
 
 msgid "Data collection frequency, in seconds."
 msgstr "Frequenza di raccolta dati, in secondi."
@@ -4087,22 +4087,22 @@ msgid "Database"
 msgstr "Database"
 
 msgid "Database Path"
-msgstr "Percorso Database"
+msgstr "Percorso database"
 
 msgid "Dataset"
 msgstr "Dataset"
 
 msgid "Dataset Actions"
-msgstr "Azioni Dataset"
+msgstr "Azioni dataset"
 
 msgid "Dataset Key"
-msgstr "Chiave Dataset"
+msgstr "Chiave dataset"
 
 msgid "Dataset Passphrase"
-msgstr "Password Dataset"
+msgstr "Password dataset"
 
 msgid "Dataset Path"
-msgstr "Percorso Dataset"
+msgstr "Percorso dataset"
 
 msgid "Datasets for "
 msgstr "Dataset per "
@@ -4114,13 +4114,13 @@ msgid "Date"
 msgstr "Data"
 
 msgid "Date Format"
-msgstr "Formato Data"
+msgstr "Formato data"
 
 msgid "Day of Month"
-msgstr "Giorno del Mese"
+msgstr "Giorno del mese"
 
 msgid "Day of Week"
-msgstr "Giorno della Settimana"
+msgstr "Giorno della settimana"
 
 msgid "Days"
 msgstr "Giorni"
@@ -4141,10 +4141,10 @@ msgstr ""
 "multiplo di sette viene garantito che lo scrub occorra nello stesso giorno della settimana."
 
 msgid "Days of Week"
-msgstr "Giorni della Settimana"
+msgstr "Giorni della settimana"
 
 msgid "Days of the Week"
-msgstr "Giorni della Settimana"
+msgstr "Giorni della settimana"
 
 msgid "Days when this task will run."
 msgstr "Giorni in cui verrà eseguito questo task."
@@ -4170,43 +4170,43 @@ msgid "Dec"
 msgstr "Dic"
 
 msgid "Decipher Only"
-msgstr "Decifrare Solamente"
+msgstr "Decifrare solamente"
 
 msgid "Decrypt pool"
 msgstr "Decriptare pool"
 
 msgid "Decrypting Disks"
-msgstr "Decodifica Dischi"
+msgstr "Decodifica dischi"
 
 msgid "Dedup"
 msgstr "Deduplica"
 
 msgid "Dedup VDev"
-msgstr "Vdev Deduplica"
+msgstr "Deduplica vdev"
 
 msgid "Default"
 msgstr "Default"
 
 msgid "Default ACL Options"
-msgstr "Opzioni ACL di Default"
+msgstr "Opzioni ACL di default"
 
 msgid "Default Gateway"
 msgstr ""
 
 msgid "Default Permissions"
-msgstr "Permessi di Default"
+msgstr "Permessi di default"
 
 msgid "Default Router For IPv4"
-msgstr "Default Router per IPv4"
+msgstr "Default router per IPv4"
 
 msgid "Default Router For IPv6"
-msgstr "Default Router per IPv6"
+msgstr "Default router per IPv6"
 
 msgid "Default Routes"
-msgstr "Rotte di Default"
+msgstr "Rotte di default"
 
 msgid "Default Umask"
-msgstr "Umask di Default"
+msgstr "Umask di default"
 
 msgid "Default is UTF-8 which supports all characters in all languages."
 msgstr "UTF-8 è il default che supporta tutti i caratteri in tutte le lingue."
@@ -4355,7 +4355,7 @@ msgstr ""
 "html\" target=\"_blank\">qui</a>"
 
 msgid "Delay Updates"
-msgstr "Ritardare Aggiornamenti"
+msgstr "Ritardare aggiornamenti"
 
 msgid "Delay VM Boot Until VNC Connects"
 msgstr "Ritardare l'Avvio della VM finché VNC non si connette"
@@ -4374,43 +4374,43 @@ msgid "Delete "
 msgstr "Elimina "
 
 msgid "Delete Dataset"
-msgstr "Elimina Dataset"
+msgstr "Elimina dataset"
 
 msgid "Delete Dataset <i><b>"
-msgstr "Elimina Dataset <i><b>"
+msgstr "Elimina dataset <i><b>"
 
 msgid "Delete Device"
-msgstr "Elimina Dispositivo"
+msgstr "Elimina dispositivo"
 
 msgid "Delete Group "
-msgstr "Elimina Gruppo"
+msgstr "Elimina gruppo"
 
 msgid "Delete Key"
-msgstr "Elimina Chiave"
+msgstr "Elimina chiave"
 
 msgid "Delete Mount Point"
-msgstr "Elimina Mount Point"
+msgstr "Elimina mount point"
 
 msgid "Delete Mountpoint"
-msgstr "Elimina Mountpoint"
+msgstr "Elimina mountpoint"
 
 msgid "Delete Path"
-msgstr "Elimina Percorso"
+msgstr "Elimina percorso"
 
 msgid "Delete Selected"
-msgstr "Elimina Selezionati"
+msgstr "Elimina selezionati"
 
 msgid "Delete User "
-msgstr "Elimina Utente"
+msgstr "Elimina utente"
 
 msgid "Delete Virtual Machine"
-msgstr "Elimina Macchina Virtuale"
+msgstr "Elimina macchina virtuale"
 
 msgid "Delete Virtual Machine Data?"
-msgstr "Eliminare i Dati della Macchina Virtuale?"
+msgstr "Eliminare i dati della macchina virtuale?"
 
 msgid "Delete Zvol"
-msgstr "Elimina Zvol"
+msgstr "Elimina zvol"
 
 msgid "Delete configuration of shares that used this pool?"
 msgstr ""
@@ -4584,7 +4584,7 @@ msgid "Detach"
 msgstr "Smontare"
 
 msgid "Detach Disk"
-msgstr "Smonta Disco"
+msgstr "Smonta disco"
 
 msgid "Detach disk "
 msgstr "Smontare disco"
@@ -4681,16 +4681,16 @@ msgid "Device"
 msgstr "Dispositivo"
 
 msgid "Device Attached"
-msgstr "Dispositivo Collegato"
+msgstr "Dispositivo collegato"
 
 msgid "Device Busy"
-msgstr "Dispositivo Occupato"
+msgstr "Dispositivo occupato"
 
 msgid "Device Order"
-msgstr "Ordine Dispositivo"
+msgstr "Ordine dispositivo"
 
 msgid "Device Type"
-msgstr "Tipo Dispositivo"
+msgstr "Tipo dispositivo"
 
 msgid "Device detached "
 msgstr "Dispositivo scollegato"
@@ -4702,10 +4702,10 @@ msgid "Difference"
 msgstr "Differenza"
 
 msgid "Digest Algorithm"
-msgstr "Algoritmo Digest"
+msgstr "Algoritmo digest"
 
 msgid "Digital Signature"
-msgstr "Firma Digitale"
+msgstr "Firma digitale"
 
 msgid "Direct the flow of data to the remote host."
 msgstr "Dirigere il flusso di dati verso l'host remoto."
@@ -4720,31 +4720,31 @@ msgid "Directory"
 msgstr "Directory"
 
 msgid "Directory Mask"
-msgstr "Maschera Directory"
+msgstr "Maschera directory"
 
 msgid "Directory Permissions"
-msgstr "Permessi Directory"
+msgstr "Permessi directory"
 
 msgid "Directory Services"
-msgstr "Servizi di Directory"
+msgstr "Servizi di directory"
 
 msgid "Directory Services Monitor"
-msgstr "Monitor Servizi di Directory"
+msgstr "Monitor dervizi di directory"
 
 msgid "Directory/Files"
 msgstr ""
 
 msgid "Disable Endpoint Region"
-msgstr "Disabilita Regione Endpoint"
+msgstr "Disabilita regione endpoint"
 
 msgid "Disable Failover"
-msgstr "Disabilita Failover"
+msgstr "Disabilita failover"
 
 msgid "Disable FreeNAS Cache"
-msgstr "Disabilita Cache FreeNAS"
+msgstr "Disabilita cache FreeNAS"
 
 msgid "Disable Hardware Offloading"
-msgstr "Disabilita Hardware Offloading"
+msgstr "Disabilita hardware offloading"
 
 msgid ""
 "Disable IPv4 source address selection for  the jail in favor of the primary "
@@ -4765,16 +4765,16 @@ msgstr ""
 "configurata per usare VNET."
 
 msgid "Disable LDAP User/Group Cache"
-msgstr "Disabilita la Cache Utente/Gruppo LDAP"
+msgstr "Disabilita la cache Utente/Gruppo LDAP"
 
 msgid "Disable Password"
-msgstr "Disabilita Password"
+msgstr "Disabilita password"
 
 msgid "Disable Physical Block Size Reporting"
-msgstr "Disabilita Segnalazione Dimensioni Blocco Fisico"
+msgstr "Disabilita segnalazione dimensioni blocco fisico"
 
 msgid "Disable Two-Factor Authentication"
-msgstr "Disabilita Autenticazione a 2 Fattori"
+msgstr "Disabilita autenticazione a 2 fattori"
 
 msgid "Disable automatic failover."
 msgstr "Disabilita failover automatico."
@@ -4793,7 +4793,7 @@ msgid "Disabled"
 msgstr "Disabilitato"
 
 msgid "Disabled (Not encrypted)"
-msgstr "Disabilitato (Non criptato)"
+msgstr "Disabilitato (non criptato)"
 
 msgid "Disabling encryption will result in a non-encrypted dataset, continue?"
 msgstr "Disabilitando la cifratura il dataset non sarà criptato, continuare?"
@@ -4808,43 +4808,43 @@ msgstr ""
 "interfaccia di rete è utilizzata da plugin, jail o macchine virtuali."
 
 msgid "Discover Remote Host Key"
-msgstr "Trova Chiave Host Remoto"
+msgstr "Trova chiave host remoto"
 
 msgid "Discovery Auth Group"
-msgstr "Trova Gruppo Auth"
+msgstr "Trova gruppo auth"
 
 msgid "Discovery Auth Method"
-msgstr "Trova Metodo Auth"
+msgstr "Trova metodo auth"
 
 msgid "Discovery Authentication Group"
-msgstr "Trova Gruppo Autenticazione"
+msgstr "Trova gruppo autenticazione"
 
 msgid "Discovery Authentication Method"
-msgstr "Trova Metodo Autenticazione"
+msgstr "Trova metodo autenticazione"
 
 msgid "Disk"
 msgstr "Disco"
 
 msgid "Disk Details"
-msgstr "Dettagli Disco"
+msgstr "Dettagli disco"
 
 msgid "Disk Imported: Log Summary"
-msgstr "Disco Importato: Riepilogo Log"
+msgstr "Disco importato: riepilogo log"
 
 msgid "Disk Reports"
-msgstr "Rapporti su Disco"
+msgstr "Rapporti su disco"
 
 msgid "Disk Selection Required"
-msgstr "Richiesta Selezione Disco"
+msgstr "Richiesta selezione disco"
 
 msgid "Disk Size"
-msgstr "Dimensione Disco"
+msgstr "Dimensione disco"
 
 msgid "Disk Type"
-msgstr "Tipo di Disco"
+msgstr "Tipo di disco"
 
 msgid "Disk Wiped successfully"
-msgstr "Disco Cancellato con successo"
+msgstr "Disco cancellato con successo"
 
 msgid "Disk sector size"
 msgstr "Dimensione del settore del disco"
@@ -4862,16 +4862,16 @@ msgid "Dismiss"
 msgstr "Rimuovi"
 
 msgid "Dismiss All Alerts"
-msgstr "Rimuovi Tutti gli Allarmi"
+msgstr "Rimuovi tutti gli allarmi"
 
 msgid "Display Login"
-msgstr "Visualizza Login"
+msgstr "Visualizza login"
 
 msgid "Display Note"
-msgstr "Visualizza Nota"
+msgstr "Visualizza nota"
 
 msgid "Display System Processes"
-msgstr "Visualizza Processi di Sistema"
+msgstr "Visualizza processi di sistema"
 
 msgid "Display console messages in real time at the bottom of the browser."
 msgstr ""
@@ -4906,19 +4906,19 @@ msgid "Domain"
 msgstr "Dominio"
 
 msgid "Domain Account Name"
-msgstr "Nome Account di Dominio"
+msgstr "Nome account di dominio"
 
 msgid "Domain Account Password"
-msgstr "Password dell'Account di Dominio"
+msgstr "Password dell'account di dominio"
 
 msgid "Domain Credentials"
-msgstr "Credenziali di Dominio"
+msgstr "Credenziali di dominio"
 
 msgid "Domain Forest Level"
-msgstr "Livello Foresta di Dominio"
+msgstr "Livello foresta di dominio"
 
 msgid "Domain Name"
-msgstr "Nome Dominio"
+msgstr "Nome dominio"
 
 msgid ""
 "Domain for the user <i>Name</i>. Required when a <i>SID</i> is not entered. "
@@ -4936,34 +4936,34 @@ msgid "Download"
 msgstr "Scarica"
 
 msgid "Download Client Config"
-msgstr "Scarica Configurazione Client"
+msgstr "Scarica configurazione client"
 
 msgid "Download Encryption Key"
-msgstr "Scarica la Chiave di Crittografia"
+msgstr "Scarica la chiave di crittografia"
 
 msgid "Download Key"
-msgstr "Scarica la Chiave"
+msgstr "Scarica la chiave"
 
 msgid "Download Logs"
-msgstr "Scarica Dati"
+msgstr "Scarica dati"
 
 msgid "Download Private Key"
-msgstr "Scarica Chiave Privata"
+msgstr "Scarica chiave privata"
 
 msgid "Download Public Key"
-msgstr "Scarica Chiave Pubblica"
+msgstr "Scarica chiave pubblica"
 
 msgid "Download Recovery Key"
-msgstr "Scarica la Chiave di Ripristino"
+msgstr "Scarica la chiave di ripristino"
 
 msgid "Download SSH Public Key"
-msgstr "Scarica Chiave Pubblica SSH"
+msgstr "Scarica chiave pubblica SSH"
 
 msgid "Download Sucessful"
-msgstr "Download Riuscito"
+msgstr "Download riuscito"
 
 msgid "Download Update"
-msgstr "Scarica Aggiornamento"
+msgstr "Scarica aggiornamento"
 
 msgid "Drive Account Type"
 msgstr ""
@@ -4982,7 +4982,7 @@ msgid "Driver"
 msgstr ""
 
 msgid "Drives List"
-msgstr "Lista Unità"
+msgstr "Lista unità"
 
 msgid ""
 "Drives and IDs registered to the Microsoft account.  Selecting a drive also "
@@ -4995,7 +4995,7 @@ msgid "Dry Run"
 msgstr "Prova"
 
 msgid "Dry Run Cloud Sync Task"
-msgstr "Prova Task Cloud Sync"
+msgstr "Prova task Cloud Sync"
 
 msgid "E-mail address that will receive SNMP service messages."
 msgstr ""
