@@ -47,7 +47,7 @@
                 <mat-icon *ngIf="selectStates[i]" class="fn-checked">check_circle</mat-icon>
                 <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
               </span>
-              {{ option.label }}
+              {{ option.label | translate }}
           </mat-option>
 
           <!-- else -->
@@ -59,7 +59,7 @@
                 <mat-icon *ngIf="selectStates[i]" class="fn-checked">check_circle</mat-icon>
                 <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
               </span>
-              {{ option.label }}
+              {{ option.label | translate }}
               </mat-option>
 
         </ng-container>
