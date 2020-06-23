@@ -1433,18 +1433,22 @@ export class VolumesListTableConfig implements InputTableConf {
                 const body = {};
                 const payload = [row.id];
                 if (formValue.inherit_encryption) {
-                  method = 'pool.dataset.inherit_parent_encryption_properties';
-                  entityDialog.loader.open();
-                  entityDialog.ws.call(method, payload).subscribe(res => {
-                    entityDialog.loader.close();
-                    self.dialogService.Info(helptext.encryption_options_dialog.dialog_saved_title, 
-                      helptext.encryption_options_dialog.dialog_saved_message1 + row.id + helptext.encryption_options_dialog.dialog_saved_message2);
+                  if (row.is_encrypted_root) { // only try to change to inherit if not currently inheriting
+                    method = 'pool.dataset.inherit_parent_encryption_properties';
+                    entityDialog.loader.open();
+                    entityDialog.ws.call(method, payload).subscribe(res => {
+                      entityDialog.loader.close();
+                      self.dialogService.Info(helptext.encryption_options_dialog.dialog_saved_title, 
+                        helptext.encryption_options_dialog.dialog_saved_message1 + row.id + helptext.encryption_options_dialog.dialog_saved_message2);
+                      entityDialog.dialogRef.close();
+                      self.parentVolumesListComponent.repaintMe();
+                    }, (err) => {
+                      entityDialog.loader.close();
+                      new EntityUtils().handleWSError(entityDialog, err, self.dialogService);
+                    });
+                  } else { // just close the dialog if the inherit checkbox is checked but we are already inheriting
                     entityDialog.dialogRef.close();
-                    self.parentVolumesListComponent.repaintMe();
-                  }, (err) => {
-                    entityDialog.loader.close();
-                    new EntityUtils().handleWSError(entityDialog, err, self.dialogService);
-                  });
+                  }
                 } else {
                   if (formValue.encryption_type === 'key') {
                     body['generate_key'] = formValue.generate_key;
