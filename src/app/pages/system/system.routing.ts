@@ -136,6 +136,25 @@ export const routes: Routes = [
         }
       ]
     }, {
+      path: 'sysctl',
+      data: { title: T('Sysctl'), breadcrumb: T('Sysctl'), icon: 'settings_overscan' },
+      children: [{
+          path: '',
+          component: TunableListComponent,
+          data: { title: T('Sysctl'), breadcrumb: T('Sysctl') },
+        }, {
+          path: 'add',
+          component: TunableFormComponent,
+          data: { title: T('Add'), breadcrumb: T('Add') },
+        },
+        {
+          path: 'edit/:pk',
+          component: TunableFormComponent,
+          data: { title: T('Edit'), breadcrumb: T('Edit') },
+        }
+      ]
+    },
+    {
       path: 'update',
       data: { title: T('Update'), breadcrumb: T('Update'), icon: 'update' },
       children:[
