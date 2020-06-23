@@ -1272,7 +1272,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
     .fn-sys-info-line {
       margin-top: 10px;
-      height: 40px;
+      margin-bottom: 10px;
 
       h4 {
         margin-bottom: 3px;
@@ -1284,7 +1284,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     #update-license-btn {
       background-color: var(--primary);
       color: white;
-      top: 53px;
     }
   }
 
