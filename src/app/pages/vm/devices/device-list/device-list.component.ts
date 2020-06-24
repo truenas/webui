@@ -138,8 +138,8 @@ export class DeviceListComponent {
     }
   
   deviceDelete(row){
-    this.translate.get('Delete ').subscribe(msg => {
-      this.dialogService.confirm(T("Delete"), msg + `<b>${row.dtype} ${row.id}</b>`, 
+    this.translate.get('Delete').subscribe(msg => {
+      this.dialogService.confirm(T("Delete"), `${msg} <b>${row.dtype} ${row.id}</b>`, 
       true, T('Delete Device')).subscribe((res) => {
       if (res) {
         this.loader.open();
