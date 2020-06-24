@@ -3,7 +3,7 @@ import { Validators } from '@angular/forms';
 import { regexValidator } from '../../../pages/common/entity/entity-form/validators/regex-validation';
 
 export default {
-dtype_placeholder: 'Type',
+dtype_placeholder: T('Type'),
 dtype_value: 'CDROM',
 dtype_validation: [Validators.required],
 
@@ -15,7 +15,7 @@ order_placeholder : T('Device Order'),
 order_tooltip : '',
 
 zvol_path_placeholder : 'Zvol',
-zvol_path_tooltip : 'Define the path to an existing zvol for VM use.',
+zvol_path_tooltip : T('Define the path to an existing zvol for VM use.'),
 zvol_path_validation : [Validators.required],
 options:[],
 
@@ -35,7 +35,7 @@ sectorsize_tooltip : T('Select a sector size in bytes. <i>Default</i> leaves the
  sector size unset and uses the ZFS volume values. Setting a sector size\
  changes both the logical and physical sector size.'),
 sectorsize_options: [
-  { label: 'Default', value:0 },
+  { label: T('Default'), value:0 },
   { label: '512', value:512 },
   { label: '4096', value:4096 },
 ],
