@@ -6398,88 +6398,88 @@ msgid "Extra Users"
 msgstr ""
 
 msgid "FTP Host to connect to. Example: <i>ftp.example.com</i>."
-msgstr ""
+msgstr "Host FTP a cui connettersi. Esempio: <i> ftp.example.com </i>."
 
 msgid "FTP Port number. Leave blank to use the default port <i>21</i>."
-msgstr ""
+msgstr "Numero porta FTP. Lascia vuoto per utilizzare la porta predefinita <i>21</i>."
 
 msgid "Fab Buttons"
-msgstr ""
+msgstr "Bottoni Fab"
 
 msgid "Failed"
-msgstr ""
+msgstr "Fallito"
 
 msgid "Failed sending test alert!"
-msgstr ""
+msgstr "Invio test di avviso fallito! "
 
 msgid "Failed to generate debug file."
-msgstr ""
+msgstr "Generazione file di debug fallito"
 
 msgid "Failover"
 msgstr ""
 
 msgid "Failover Configuration"
-msgstr ""
+msgstr "Configurazione Failover"
 
 msgid "Failover Group"
-msgstr ""
+msgstr "Gruppo Failover"
 
 msgid "Failover IP Address"
-msgstr ""
+msgstr "Indirizzo IP Failover"
 
 msgid "Failover Settings"
-msgstr ""
+msgstr "Impostazioni Failover"
 
 msgid "Failover VHID"
 msgstr ""
 
 msgid "Failover is administratively disabled."
-msgstr ""
+msgstr "Il Failover è disabilitato a livello amministrativo."
 
 msgid "Failover is in an error state."
-msgstr ""
+msgstr "Il Failover si trova in uno stato di errore."
 
 msgid "Fast (Less secure)"
-msgstr ""
+msgstr "Veloce (Meno Sicuro)"
 
 msgid "Features"
-msgstr ""
+msgstr "Caratteristiche"
 
 msgid "Feb"
 msgstr ""
 
 msgid "Fetch DataStores"
-msgstr ""
+msgstr "Recupera DataStore"
 
 msgid "Fetch Method"
-msgstr ""
+msgstr "Metodo di recupero"
 
 msgid "Fetching Encryption Summary"
-msgstr ""
+msgstr "Recupero del riepilogo della crittografia"
 
 msgid "Fetching Encryption Summary for "
-msgstr ""
+msgstr "Recupero del riepilogo della crittografia per "
 
 msgid "Fibre Channel "
-msgstr ""
+msgstr "Canale in Fibra "
 
 msgid "Fibre Channel Port "
-msgstr ""
+msgstr "Porta Canale in Fibra"
 
 msgid "File Information"
-msgstr ""
+msgstr "Informazione sul File"
 
 msgid "File Mask"
-msgstr ""
+msgstr "Machera File"
 
 msgid "File Permissions"
-msgstr ""
+msgstr "Autorizzazioni File"
 
 msgid "File upload complete"
-msgstr ""
+msgstr "Caricamento del file completato"
 
 msgid "Filename Encryption"
-msgstr ""
+msgstr "Crittografia nome file"
 
 msgid ""
 "Files are split into chunks of this size  before upload. The number of "
@@ -6487,6 +6487,10 @@ msgid ""
 "<b>Transfers</b> number. The single  largest file being transferred must "
 "fit into no more than 10,000  chunks."
 msgstr ""
+"I file vengono suddivisi in blocchi di queste dimensioni prima del caricamento. Il numero di"
+" blocchi che possono essere trasferiti contemporaneamente sono impostati dal"
+" numero di <b> Trasferimenti </b> . Il singolo file più grande da trasferire non deve"
+" essere più di 10.000 blocchi".
 
 msgid ""
 "Files that are deleted from the same  dataset are moved to the Recycle Bin "
@@ -6501,54 +6505,65 @@ msgid ""
 "deleted or moved from the recycle bin. <b>This is not a replacement  for "
 "ZFS snapshots.</b>"
 msgstr ""
+"I file che vengono eliminati dallo stesso Dataset vengono spostati nel Cestino"
+"e non occupano spazio aggiuntivo. <b> L'eliminazione dei file tramite NFS comporta"
+"la rimozione dei file in modo permanente </b>. Quando i file si trovano in un altro"
+"Dataset o in un Dataset figlio, vengono copiati nel Dataset in cui "
+"Si trova Cestino. Per impedire un uso eccessivo dello spazio, i file "
+"più grandi di 20 MiB vengono eliminati anziché spostati. Regolare il <i> Parametro "
+"Ausiliare </i> <samp> crossrename: sizelimit = </samp> per consentire dimensioni maggiori"
+"dei file. Ad esempio, <samp> crossrename: sizelimit = {50} </samp> consente gli spostamenti"
+"di file di dimensioni fino a 50 MiB. Ciò significa che i file possono essere permanentemente"
+"cancellati o spostati dal cestino. <b> Questo non è un sostituto per"
+"Snapshot ZFS. </b>"
 
 msgid "Filesize"
-msgstr ""
+msgstr "Dimensione del file"
 
 msgid "Filesystem type"
-msgstr ""
+msgstr "Tipo Filesystem"
 
 msgid "Filter"
-msgstr ""
+msgstr "Filtro"
 
 msgid "Filter Groups"
-msgstr ""
+msgstr "Filtra Gruppi"
 
 msgid "Filter Users"
-msgstr ""
+msgstr "Filtra Utenti"
 
 msgid "Filter disks by capacity"
-msgstr ""
+msgstr "Filtra dischi per capacità"
 
 msgid "Filter disks by name"
-msgstr ""
+msgstr "Filtra dischi per nome"
 
 msgid "Find this information later by clicking"
-msgstr ""
+msgstr "Trova queste informazioni in seguito facendo clic"
 
 msgid "Finding Pools"
-msgstr ""
+msgstr "Ricerca Pool"
 
 msgid "Finding pools to import..."
-msgstr ""
+msgstr "Ricerca Pool da importare ..."
 
 msgid "Finish Upgrade?"
-msgstr ""
+msgstr "Finisci Aggiornamento?"
 
 msgid "Finished"
-msgstr ""
+msgstr "Finito"
 
 msgid "Finished Time:"
-msgstr ""
+msgstr "Tempo finito:"
 
 msgid "Fix Credential"
-msgstr ""
+msgstr "Correggere le Credenziali"
 
 msgid "Flags"
 msgstr ""
 
 msgid "Flags Type"
-msgstr ""
+msgstr "Tipo Flag"
 
 msgid ""
 "Flags to pass to <a "
@@ -6556,48 +6571,55 @@ msgid ""
 "target=\"_blank\">LOGIN(1)</a> when logging in to the jail using the "
 "<b>console</b> function."
 msgstr ""
+"Flag da passare a <a"
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=login\" "
+"target=\"_blank\">LOGIN(1)</a> quando accedi alla jail usando la"
+"funzione <b>console</b>."
 
 msgid "Flip"
 msgstr ""
 
 msgid "Folder"
-msgstr ""
+msgstr "Cartella"
 
 msgid "Follow Symlinks"
-msgstr ""
+msgstr "Segui i collegamenti simbolici"
 
 msgid "Follow symlinks and copy the items to which they link."
-msgstr ""
+msgstr "Segui i collegamenti simbolici e copia gli elementi a cui si collegano."
 
 msgid "Force"
-msgstr ""
+msgstr "Forza"
 
 msgid "Force Delete"
-msgstr ""
+msgstr "Cancellazione Forzata"
 
 msgid "Force Delete?"
-msgstr ""
+msgstr "Cancellazione Forzara?"
 
 msgid "Force HDD Standby"
-msgstr ""
+msgstr "Forza Standby HDD"
 
 msgid "Force Stop After Timeout"
-msgstr ""
+msgstr "Forza Arresto dopo Timeout"
 
 msgid "Force deletion of dataset "
-msgstr ""
+msgstr "Forza cancellazione del dataset"
 
 msgid "Force size"
-msgstr ""
+msgstr "Forza dimesione"
 
 msgid ""
 "Force the VM to stop if it has not already  stopped within the specified "
 "shutdown timeout. Without this option selected, the VM will  receive the "
 "shutdown signal, but may or may not complete the shutdown process."
 msgstr ""
+"Forza l'arresto della VM se non è già stata arrestata entro il valore timeout "
+"di spegnimento specificato. Senza questa opzione selezionata, la VM riceverà il"
+"segnale di spegnimento, ma può o meno completare il processo di spegnimento."
 
 msgid "Force unmount "
-msgstr ""
+msgstr "Forza Espulsione"
 
 msgid ""
 "Force using  <a "
@@ -6605,46 +6627,57 @@ msgid ""
 "html\"  target=\"_blank\">Signature Version 2</a> to sign API requests. Set "
 "this  when configuring a custom Endpoint URL."
 msgstr ""
+"Forza usando <a"
+"href=\"https://docs.aws.amazon.com/general/latest/gr/signature-version-2."
+"html\"  target=\"_blank\">Firma Versione 2</a>per firmare le richieste API. "
+"Imposta questo quando configuri un Endpoint URL personalizzato"
 
 msgid ""
 "Forces the addition of the <b>NTP</b> server,   even if it is currently "
 "unreachable."
 msgstr ""
+"Forza l'aggiunta del server <b> NTP </b>, anche se è attualmente"
+"irraggiungibile."
 
 msgid ""
 "Forces the addition of the <b>NTP</b> server, even if it is currently "
 "unreachable."
 msgstr ""
+"Forza l'aggiunta del server <b> NTP </b>, anche se è attualmente"
+"irraggiungibile."
 
 msgid "Foreground 1"
-msgstr ""
+msgstr "Primo piano 1"
 
 msgid "Foreground 2"
-msgstr ""
+msgstr "Primo piano 2"
 
 msgid "Form Invalid"
-msgstr ""
+msgstr "Modulo non Valido"
 
 msgid "Free"
-msgstr ""
+msgstr "Libero"
 
 msgid "FreeBSD device names of each disk being edited."
-msgstr ""
+msgstr "Nomi dei dispositivi FreeBSD di ciascun disco in fase di modifica."
 
 msgid "FreeBSD disk device name."
-msgstr ""
+msgstr "Nome dispositivo disco di FreeBSD."
 
 msgid ""
 "FreeBSD release to use as the jail operating system.  Jails can run FreeBSD "
 "versions up to the same version as the host  system. Newer releases are not "
 "shown."
 msgstr ""
+"Versione di FreeBSD da utilizzare come sistema operativo jail. Le jail possono eseguire  "
+"versioni di FreeBSD fino alla stessa versione del sistema host. "
+"Le versioni più recenti non sono mostrate".
 
 msgid "Fri"
-msgstr ""
+msgstr "Fri"
 
 msgid "From"
-msgstr ""
+msgstr "Da"
 
 msgid ""
 "From <a  href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"  "
@@ -6652,6 +6685,10 @@ msgid ""
 "hostname and IP address of a connecting client. The connection is  rejected "
 "if no patterns match. Separate entries by pressing  <code>Enter</code>."
 msgstr ""
+"Da <a  href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"  "
+"target=\"_blank\">rsyncd.conf(5)</a>. Un elenco di modelli da confrontare con "
+"nome host e indirizzo IP di un client che si connette. La connessione viene rifiutata"
+"se non c'è corrispondenza. Separa le voci premendo <code> Enter </code>."
 
 msgid ""
 "From <a  href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"  "
@@ -6659,41 +6696,50 @@ msgid ""
 "hostname and IP address of a connecting client. The connection is  rejected "
 "when the patterns match. Separate entries by pressing  <code>Enter</code>."
 msgstr ""
+"From <a  href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"  "
+"target=\"_blank\">rsyncd.conf(5)</a>. Un elenco di modelli da confrontare con  "
+"nome host e indirizzo IP di un client che si connette. La connessione viene rifiutata"
+"se c'è corrispondenza. Separa le voci premendo <code> Enter </code>."
 
 msgid "From Email"
-msgstr ""
+msgstr "Da Email"
 
 msgid "From Name"
-msgstr ""
+msgstr "Da Nome"
 
 msgid "Full"
-msgstr ""
+msgstr "Pieno"
 
 msgid "Full Filesystem Replication"
-msgstr ""
+msgstr "Replicazione Completa del Filesystem "
 
 msgid "Full Name"
-msgstr ""
+msgstr "Nome Intero"
 
 msgid ""
 "Full path to the pool or dataset to share. Mandatory. Click <b>ADD "
 "ADDITIONAL PATH</b> to configure multiple paths."
 msgstr ""
+"Percorso completo del pool o del dataset da condividere. Obbligatorio. Fare clic su <b> AGGIUNGI"
+"PERCORSO AGGIUNTIVO </b> per configurare più percorsi."
 
 msgid "Full with random data"
-msgstr ""
+msgstr "Pieno di dati casuali"
 
 msgid "Full with zeros"
-msgstr ""
+msgstr "Pieno di zeri"
 
 msgid ""
 "Fully qualified domain name of the host with the  dynamic IP address. "
 "Separate multiple domains with a space, comma  (,), or semicolon (;). "
 "Example:  <i>myname.dyndns.org; myothername.dyndns.org</i>."
 msgstr ""
+"Nome di dominio completo dell'host con indirizzo IP dinamico."
+"Separa più domini con uno spazio, una virgola (,) o un punto e virgola (;)."
+"Esempio: <i>myname.dyndns.org; myothername.dyndns.org</i>."
 
 msgid "GENERAL"
-msgstr ""
+msgstr "GENERALE"
 
 msgid "GID"
 msgstr ""
@@ -6702,43 +6748,43 @@ msgid "GUI"
 msgstr ""
 
 msgid "GUI SSL Certificate"
-msgstr ""
+msgstr "Certificato SSL GUI"
 
 msgid "Gateway"
 msgstr ""
 
 msgid "Gathering data"
-msgstr ""
+msgstr "Raccolta dati"
 
 msgid "Gathering data..."
-msgstr ""
+msgstr "Raccolta dati..."
 
 msgid "General"
-msgstr ""
+msgstr "Generale"
 
 msgid "General Options"
-msgstr ""
+msgstr "Opzioni Generali"
 
 msgid "General Preferences"
-msgstr ""
+msgstr "Preferenze Generali"
 
 msgid "General VM Settings"
-msgstr ""
+msgstr "Impostazioni Generali VM"
 
 msgid "Generate Debug File"
-msgstr ""
+msgstr "Genera File di Debug"
 
 msgid "Generate Key"
-msgstr ""
+msgstr "Genera Chiave"
 
 msgid "Generate Keypair"
-msgstr ""
+msgstr "Genera Keypair"
 
 msgid "Generate New"
-msgstr ""
+msgstr "Genera Nuovo"
 
 msgid "Generate Reports"
-msgstr ""
+msgstr "Genera Report"
 
 msgid ""
 "Generate a name for the snapshot  using the naming schema from a previously "
