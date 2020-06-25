@@ -241,7 +241,7 @@ export class ProactiveComponent {
         }
       })
     }, 1000);
-     + helptext.proactive.title
+    
     setTimeout(() => {
       this.translate.get(helptext.proactive.title).subscribe(res => {
         _.find(this.fieldConfig, { name: 'TN_proactive_section_title' })
