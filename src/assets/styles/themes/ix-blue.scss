@@ -1200,7 +1200,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   // Support Section ////////////////////////
   app-support {
     .mat-card {
-      padding-bottom: 60px;
       min-width: 320px;
     }
     #top-row {
@@ -1401,8 +1400,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   app-fn-support {
     .mat-card {
       background-color: rgba(127,127,127,0.1);
-      margin: 0 15px !important;
-      top: 30px;
+      margin: 30px 15px 5px 15px !important;
     }
     .mat-card-actions {
       top: -40px;
@@ -1433,9 +1431,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   app-tn-support {
     .mat-card {
-      top: 50px;
       background-color: rgba(127,127,127,0.1);
-      margin: 0 15px !important;
+      margin: 50px 15px 5px 15px !important;
     }
     .mat-card-actions {
       height: 0px;
