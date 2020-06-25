@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
 import helptext from '../../../../../../helptext/services/components/service-rsync';
-import { RestService, WebSocketService } from '../../../../../../services';
+import { UserService, WebSocketService } from '../../../../../../services';
 import { FieldConfig } from '../../../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
@@ -72,18 +72,24 @@ export class RYSNCConfigurationFormComponent {
                     tooltip: helptext.rsyncmod_maxconn_tooltip,
                 },
                 {
-                    type: 'select',
+                    type: 'combobox',
                     name: 'user',
                     placeholder: helptext.rsyncmod_user_placeholder,
                     tooltip: helptext.rsyncmod_user_tooltip,
-                    options: []
+                    options: [],
+                    searchOptions: [],
+                    parent: this,
+                    updater: this.updateUserSearchOptions,
                 },
                 {
-                    type: 'select',
+                    type: 'combobox',
                     name: 'group',
                     placeholder: helptext.rsyncmod_group_placeholder,
                     tooltip: helptext.rsyncmod_group_tooltip,
-                    options: []
+                    options: [],
+                    searchOptions: [],
+                    parent: this,
+                    updater: this.updateGroupSearchOptions,
                 },
                 {
                     type: 'chip',
@@ -127,7 +133,7 @@ export class RYSNCConfigurationFormComponent {
     protected entityForm: any;
     protected customFilter: any;
     constructor( protected ws: WebSocketService, protected router: Router,
-        protected rest: RestService, protected route: ActivatedRoute) {
+        protected userService: UserService, protected route: ActivatedRoute) {
     }
 
     afterInit(entityForm: any) {
@@ -137,14 +143,14 @@ export class RYSNCConfigurationFormComponent {
         const accessSet = _.find(this.fieldSets, { name : helptext.rsyncd_fieldset_access });
 
         this.rsyncmod_user = accessSet.config.find(config => config.name === 'user');
-        entityForm.ws.call('user.query').subscribe((users) => {
+        this.userService.userQueryDSCache().subscribe((users) => {
             users.forEach((user) => {
                 this.rsyncmod_user.options.push({label : user.username, value : user.username})
             });
         });
 
         this.rsyncmod_group = accessSet.config.find(config => config.name === 'group');
-        entityForm.ws.call('group.query').subscribe((groups) => {
+        this.userService.groupQueryDSCache().subscribe((groups) => {
             groups.forEach((group) => {
                 this.rsyncmod_group.options.push({label : group.group, value : group.group})
             });
@@ -174,6 +180,26 @@ export class RYSNCConfigurationFormComponent {
         if (!this.isNew) {
             entityForm.submitFunction = this.submitFunction;
         };
+    }
+
+    updateGroupSearchOptions(value = "", parent) {
+        parent.userService.groupQueryDSCache(value).subscribe(items => {
+            const groups = [];
+            for (let i = 0; i < items.length; i++) {
+                groups.push({ label: items[i].group, value: items[i].group });
+            }
+            parent.rsyncmod_group.searchOptions = groups;
+        });
+    }
+
+    updateUserSearchOptions(value = "", parent) {
+        parent.userService.userQueryDSCache(value).subscribe(items => {
+            const users = [];
+            for (let i = 0; i < items.length; i++) {
+                users.push({ label: items[i].username, value: items[i].username });
+            }
+            parent.rsyncmod_user.searchOptions = users;
+        });
     }
 
     submitFunction(entityForm: any){
