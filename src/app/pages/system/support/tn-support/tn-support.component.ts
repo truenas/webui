@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import * as _ from 'lodash';
@@ -161,9 +162,15 @@ export class TnSupportComponent implements OnInit {
   ]
 
   constructor(public dialog: MatDialog, public loader: AppLoaderService,
-    public ws: WebSocketService, public dialogService: DialogService, public router: Router) { }
+    public ws: WebSocketService, public dialogService: DialogService, public router: Router,
+    private translate: TranslateService) { }
 
   ngOnInit() {
+    setTimeout(() => {
+      this.translate.get(helptext.contactUs).subscribe(res => {
+        _.find(this.fieldConfig, { name: 'FN_col2' }).paraText = '<i class="material-icons">mail</i>' + res;
+      })
+    }, 2000)
   }
 
   afterInit(entityEdit: any) {
