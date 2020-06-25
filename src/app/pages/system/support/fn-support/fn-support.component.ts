@@ -21,6 +21,7 @@ export class FnSupportComponent {
   public username_fc: any;
   public subs: any;
   public saveSubmitText = helptext.submitBtn;
+  public isEntity = true;
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
