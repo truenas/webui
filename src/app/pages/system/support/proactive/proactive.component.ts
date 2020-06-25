@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import * as _ from 'lodash';
+import { TranslateService } from '@ngx-translate/core';
 import { WebSocketService } from 'app/services/';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -193,7 +194,7 @@ export class ProactiveComponent {
 ]
 
   constructor(public ws: WebSocketService, protected loader: AppLoaderService, 
-    protected dialogService: DialogService) { }
+    protected dialogService: DialogService, private translate: TranslateService) { }
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
@@ -240,6 +241,13 @@ export class ProactiveComponent {
         }
       })
     }, 1000);
+     + helptext.proactive.title
+    setTimeout(() => {
+      this.translate.get(helptext.proactive.title).subscribe(res => {
+        _.find(this.fieldConfig, { name: 'TN_proactive_section_title' })
+          .paraText = '<i class="material-icons">swap_horiz</i>' + res;
+      })
+    }, 2000)
   }
 
   getContacts() {
