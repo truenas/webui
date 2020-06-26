@@ -346,9 +346,13 @@ export class DatasetPosixAclComponent implements OnDestroy {
   }
 
   resourceTransformIncomingRestData(data) {
-    // data.acl.forEach(item => {
-    //   item.id = 4;
-    // })
+    data.acl.forEach(item => {
+      if (item.id === -1) {
+        if (item.tag !== 'OTHER') {
+          item.tag = item.tag === 'USER' ? 'USER_OBJ' : 'GROUP_OBJ';
+        }
+      }
+    })
     if (data.acl.length === 0) {
       setTimeout(() => {
         this.handleEmptyACL();
@@ -457,6 +461,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
   }
 
   beforeSubmit(data) {
+    console.log(data)
     const dacl = [];
     for (let i = 0; i < data.aces.length; i++) {
       const d = {};
@@ -465,7 +470,6 @@ export class DatasetPosixAclComponent implements OnDestroy {
       d['id'] = -1;
       d['default'] = acl.default ? acl.default : false;
       if (acl.tag === "USER") {
-
         d['id'] = acl.user;
       } else if (acl.tag === "GROUP") {
         d['id'] = acl.group;
@@ -488,6 +492,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
   async customSubmit(body) {
     body.uid = body.apply_user ? body.uid : null;
     body.gid = body.apply_group ? body.gid : null;
+
     const doesNotWantToEditDataset =
       this.storageService.isDatasetTopLevel(body.path.replace("mnt/", "")) &&
       !(await this.dialogService
@@ -593,3 +598,10 @@ export class DatasetPosixAclComponent implements OnDestroy {
     });
   }
 }
+
+/* 
+ - What about flags and...
+ - setting uid and gid?
+ - Saving doesn't seem to overwrite, but adds to previces ACEs
+ - restrictions on default?
+*/

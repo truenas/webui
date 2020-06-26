@@ -186,13 +186,15 @@ posix_perms: {
 },
 
 posix_tag: {
-  placeholder: T('Who (scale)'),
+  placeholder: T('Who'),
   tooltip: T('Tag'),
   options: 
   [
     {label: T('User'), value: 'USER'},
     {label: T('Group'), value: 'GROUP'},
     {label: T('Other'), value: 'OTHER'},
+    {label: T('Group Obj'), value: 'GROUP_OBJ'},
+    {label: T('User Obj'), value: 'USER_OBJ'},
   ]
 },
 
