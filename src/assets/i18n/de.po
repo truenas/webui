@@ -87,7 +87,7 @@ msgid " should be less than "
 msgstr ""
 
 msgid " system is powered on and connected to the network."
-msgstr ""
+msgstr " dass das System betriebsbereit und mit dem Netzwerk verbunden ist."
 
 msgid " to include all "
 msgstr ""
@@ -2543,7 +2543,7 @@ msgid "Connected Initiators"
 msgstr ""
 
 msgid "Connecting to "
-msgstr ""
+msgstr "Verbinde zu "
 
 msgid "Connection Error"
 msgstr ""
