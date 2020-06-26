@@ -49,6 +49,7 @@ import { DatasetQuotasUserlistComponent } from './volumes/datasets/dataset-quota
 import { DatasetQuotasGrouplistComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
 import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
 import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
+import { DatasetPosixAclComponent } from './volumes/datasets/dataset-posix-acl/';
 
 @NgModule({
   imports : [
@@ -91,6 +92,7 @@ import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/datas
     DatasetQuotasGrouplistComponent,
     UserQuotaFormComponent,
     GroupQuotaFormComponent,
+    DatasetPosixAclComponent,
   ],
   entryComponents: [SnapshotDetailsComponent, UnlockDialogComponent],
   providers : [UserService, StorageService, MessageService, JobService, TranslateService]

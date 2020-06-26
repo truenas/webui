@@ -1023,13 +1023,22 @@ export class VolumesListTableConfig implements InputTableConf {
               name: T('Edit ACL'),
               label: T("Edit ACL"),
               matTooltip: helptext.acl_edit_msg,
-              isHidden: this.productType === 'SCALE' ? true : false, // Temporary, for SCALE
+              // isHidden: this.productType === 'SCALE' ? true : false, // Temporary, for SCALE
               ttposition: 'left',
               onClick: (row1) => {
-                this._router.navigate(new Array('/').concat([
-                  "storage", "pools", "id", row1.id.split('/')[0], "dataset",
-                  "acl", row1.id
-                ]));
+                this.ws.call('filesystem.getacl', [row1.mountpoint]).subscribe(res => {
+                  if(res.acltype === 'POSIX1E') {
+                    this._router.navigate(new Array('/').concat([
+                      "storage", "pools", "id", row1.id.split('/')[0], "dataset",
+                      "posix-acl", row1.id
+                    ]));                    
+                  } else {
+                    this._router.navigate(new Array('/').concat([
+                      "storage", "pools", "id", row1.id.split('/')[0], "dataset",
+                      "acl", row1.id
+                    ]));
+                  }
+                })
               }
             },
             {
