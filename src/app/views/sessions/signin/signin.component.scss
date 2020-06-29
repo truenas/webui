@@ -95,11 +95,12 @@ form button{
 .logo-wrapper img.logo-bg{
   position:absolute;
   z-index:1;
-  opacity:0.35;
+  opacity:0.75;
   top:0;
   left:0;
   width:100%;
   height:100%;
+  border-bottom: solid 1px #000;
 }
 
 .logo-wrapper .logo{
