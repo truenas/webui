@@ -64,7 +64,10 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
   }
 
   setValue() {
-    const value = this.address + "/" + this.netmask;
+    let value = this.address + "/" + this.netmask;
+    if (this.address.trim() === '' || this.address === undefined){ 
+      value = '';
+    }
     if (value !== this.value) {
       this.value = value;
       this.control.setValue(value);
