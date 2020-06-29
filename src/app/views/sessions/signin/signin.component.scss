@@ -90,20 +90,17 @@ form button{
   padding:76px 0;
   background-color: $bg2; //var(--bg2);
   position:relative;
-  /*background-image:url('/assets/images/board_1920.jpg');
-  background-size: contain;
-  background-attachment: fixed;
-  background-position: 80% 0;*/
 }
 
 .logo-wrapper img.logo-bg{
   position:absolute;
   z-index:1;
-  opacity:0.35;
+  opacity:0.75;
   top:0;
   left:0;
   width:100%;
   height:100%;
+  border-bottom: solid 1px #000;
 }
 
 .logo-wrapper .logo{
