@@ -54,9 +54,6 @@ msgstr "地址。选择此项后，将无法选择其他地址。"
 msgid " and "
 msgstr " 和 "
 
-msgid " and all snapshots of it?"
-msgstr " 以及它的所有快照吗？"
-
 msgid " and will be disrupted if the pool is detached:"
 msgstr " 如果将池分离，则会被破坏："
 
@@ -77,9 +74,6 @@ msgstr " 磁盘"
 
 msgid " disks, new vdev has "
 msgstr " 磁盘，新的vdev具有"
-
-msgid " has been unlocked."
-msgstr " 已被解锁。"
 
 msgid " is "
 msgstr " 是 "
@@ -569,6 +563,14 @@ msgstr ""
 "i> VirtIO </i>可以提供更好的性能。"
 
 msgid ""
+"<i>Internal Certificate</i> is used for internal or local  systems. "
+"<i>Certificate Signing Request</i> is used to get a CA signature.  "
+"<i>Import Certificate</i> allows an existing certificate to be imported "
+"onto  the system. <i>Import Certificate Signing Request</i> allows an "
+"existing CSR  to be imported onto the system."
+msgstr ""
+
+msgid ""
 "<i>PUSH</i> sends data to cloud storage. <i>PULL</i>  receives data from "
 "cloud storage. Changing the direction resets the  <i>Transfer Mode</i> to "
 "COPY."
@@ -687,6 +689,11 @@ msgstr ""
 "<samp>k</samp>（默认），<samp>M</samp>或<samp>G</samp>。请参阅<a "
 "href=\"https://rclone.org/docs/#bwlimit-bandwidth-spec\" "
 "target=\"_blank\">rclone --bwlimit </a>。"
+
+msgid ""
+"A smaller block size can reduce sequential I/O performance and space "
+"efficiency."
+msgstr ""
 
 msgid ""
 "A space-delimited list of network interfaces attached to a <b>VNET</b> "
@@ -980,6 +987,12 @@ msgstr "添加挂载点"
 
 msgid "Add Recovery Key"
 msgstr "添加恢复密钥"
+
+msgid "Add Sysctl"
+msgstr ""
+
+msgid "Add Tunable"
+msgstr ""
 
 msgid "Add Vdev"
 msgstr "添加Vdev"
@@ -1288,11 +1301,17 @@ msgstr "所有目录"
 msgid "All users"
 msgstr "所有用户"
 
+msgid "Allocate RAM for the VM. Minimum value is 256 MiB."
+msgstr ""
+
 msgid "Allocate a number of megabytes of RAM to the VM."
 msgstr "分配指定MiB的内存给虚拟机。"
 
 msgid "Allocate at least 256 MiB."
 msgstr "至少分配256 MiB。"
+
+msgid "Allocate space for the new zvol."
+msgstr ""
 
 msgid "Allow"
 msgstr "允许"
@@ -1574,6 +1593,9 @@ msgid ""
 "Alternative names that SMB clients can use when connecting to this NAS. Can "
 "be no greater than 15 characters."
 msgstr "SMB客户端连接到此NAS时可以使用的备用名称。不得超过15个字符。"
+
+msgid "Always"
+msgstr ""
 
 msgid "Always Chroot"
 msgstr "永远Chroot"
@@ -1930,6 +1952,9 @@ msgstr "附加参数 （upsd.conf）"
 msgid "Auxiliary parameters"
 msgstr "附加参数"
 
+msgid "Available"
+msgstr ""
+
 msgid "Available Disks"
 msgstr "可用磁盘"
 
@@ -1959,6 +1984,11 @@ msgstr "返回"
 
 msgid "Back to Support"
 msgstr "返回支持"
+
+msgid ""
+"Back up the encryption key now! If the key is lost, the data on the disks "
+"will also be lost with no hope of recovery."
+msgstr ""
 
 msgid "Backend"
 msgstr "后端"
@@ -2175,6 +2205,9 @@ msgid ""
 "dataset."
 msgstr "浏览可用于解锁此数据集的导出密钥文件。"
 
+msgid "Browse to the installer image file and click <b>Upload</b>."
+msgstr ""
+
 msgid "Browse to the keytab file to upload."
 msgstr "浏览要上传的密钥表文件。"
 
@@ -2203,6 +2236,9 @@ msgstr "浏览池或数据集以存储接收到的数据。"
 
 msgid "Bucket"
 msgstr "存储桶"
+
+msgid "Bug"
+msgstr ""
 
 msgid "Burst"
 msgstr "突发"
@@ -2248,6 +2284,9 @@ msgstr "CAs"
 
 msgid "CC"
 msgstr "CC"
+
+msgid "CD-ROM"
+msgstr ""
 
 msgid "CD-ROM Path"
 msgstr "CD-ROM路径"
@@ -2329,6 +2368,9 @@ msgstr "启用 HA 时无法编辑"
 msgid ""
 "Cannot open this ACL. Check the permissions this dataset  has inherited "
 "from parents."
+msgstr ""
+
+msgid "Capacity"
 msgstr ""
 
 msgid "Case Sensitivity"
@@ -2429,9 +2471,6 @@ msgstr "从<i>public</i>更改以提高系统安全性。只能包含字母数�
 
 msgid "Change log"
 msgstr "更改日志"
-
-msgid "Change order for "
-msgstr "更改顺序"
 
 msgid ""
 "Change the default password to improve system security. The new password "
@@ -2724,6 +2763,20 @@ msgid "Choose an option"
 msgstr "选择一个选项"
 
 msgid ""
+"Choose between <i>Internal CA</i>, <i>Intermediate CA</i>, and  <i>Import "
+"CA</i>. An <i>Internal CA</i> functions like a publicly trusted CA  to sign "
+"certificates for an internal network. They are not trusted outside  the "
+"private network. An <i>Intermediate CA</i> lives between the root and end  "
+"entity certificates and its main purpose is to define and authorize the  "
+"types of certificates that can be requested from the root CA. <i>Import "
+"CA</i>  allows an existing CA to be imported onto the system.<br>  For more "
+"information see  <a "
+"href=\"https://www.globalsign.com/en/blog/what-is-an-intermediate-or-"
+"subordinate-certificate-authority\">  What are Subordinate CAs and Why "
+"Would You Want Your Own?</a>"
+msgstr ""
+
+msgid ""
 "Choose between <i>Off</i>, <a "
 "href=\"http://info.ssl.com/article.aspx?id=10241\" "
 "target=\"_blank\">SSL</a> or <a "
@@ -2935,6 +2988,9 @@ msgstr "清除该磁盘的SED密码。"
 msgid "Clearing Cache..."
 msgstr "正在清除缓存..."
 
+msgid "Click"
+msgstr ""
+
 msgid ""
 "Click <b>Browse</b> to select an encryption key to upload. This allows the "
 "system to decrypt the disks."
@@ -2985,6 +3041,9 @@ msgstr "云同步<i>"
 
 msgid "Cluster Name"
 msgstr "集群名称"
+
+msgid "Clustering"
+msgstr ""
 
 msgid "Collection"
 msgstr "集"
@@ -3101,6 +3160,9 @@ msgstr "压缩连接"
 
 msgid "Compression"
 msgstr "压缩"
+
+msgid "Compression Ratio"
+msgstr ""
 
 msgid "Compression level"
 msgstr "压缩级别"
@@ -3255,6 +3317,9 @@ msgstr "联系支持"
 
 msgid "Container"
 msgstr "容器"
+
+msgid "Containers"
+msgstr ""
 
 msgid "Content Commitment"
 msgstr "内容承诺"
@@ -3843,6 +3908,9 @@ msgstr ""
 "dataset1</code> ）。可以选择多个源位置，或使用逗号（<code>,</code>）分隔符手动定义多个源位置。<br> "
 "<br>选择一个位置将显示可以复制的现有快照的数量。选择没有快照的位置会将复制任务配置为对该位置进行手动快照，然后将其复制到目标位置。"
 
+msgid "Define the path to an existing zvol for VM use."
+msgstr ""
+
 msgid "Define the server where all changes to the database are performed."
 msgstr "定义执行对数据库的所有更改的服务器。"
 
@@ -3885,9 +3953,6 @@ msgstr "删除 "
 
 msgid "Delete Dataset"
 msgstr "删除数据集"
-
-msgid "Delete Dataset <i><b>"
-msgstr "删除数据集 <i><b>"
 
 msgid "Delete Device"
 msgstr "删除设备"
@@ -3946,9 +4011,6 @@ msgstr "从加密密钥中删除密码。使现有的池恢复密钥文件无效
 
 msgid "Delete the selected item?"
 msgstr "删除所选项目？"
-
-msgid "Delete the zvol "
-msgstr "删除Zvol "
 
 msgid "Delete this path."
 msgstr "删除此路径。"
@@ -4077,9 +4139,6 @@ msgstr "分离磁盘"
 msgid "Details"
 msgstr "详细信息"
 
-msgid "Details for "
-msgstr "详细信息"
-
 msgid ""
 "Determine how  <a href=\"https://www.freebsd.org/cgi/man.cgi?query=chmod\" "
 "target=\"_blank\">chmod</a>  behaves when adjusting file ACLs. See the  <a "
@@ -4158,6 +4217,9 @@ msgstr "设备已连接"
 
 msgid "Device Busy"
 msgstr "设备正忙"
+
+msgid "Device ID"
+msgstr ""
 
 msgid "Device Order"
 msgstr "设备顺序"
@@ -5728,14 +5790,8 @@ msgstr "环境"
 msgid "Error"
 msgstr "错误"
 
-msgid "Error Deleting zvol "
-msgstr "删除zvol时出错 "
-
 msgid "Error Downloading File"
 msgstr "下载文件时出错"
-
-msgid "Error Promoting dataset "
-msgstr "提升数据集时出错 "
 
 msgid "Error Saving Configuration Settings"
 msgstr "保存配置设置时出错"
@@ -5760,9 +5816,6 @@ msgstr "创建虚拟机时出错。"
 
 msgid "Error decrypting disks"
 msgstr "解密磁盘时出错"
-
-msgid "Error deleting dataset "
-msgstr "删除zvol时出错 "
 
 msgid "Error details for "
 msgstr "错误详情"
@@ -6014,6 +6067,9 @@ msgstr "故障转移处于错误状态。"
 msgid "Fast (Less secure)"
 msgstr "快速（安全性较低）"
 
+msgid "Feature"
+msgstr ""
+
 msgid "Features"
 msgstr "特征"
 
@@ -6162,9 +6218,6 @@ msgstr "强制硬盘待机"
 msgid "Force Stop After Timeout"
 msgstr "超时后强制停止"
 
-msgid "Force deletion of dataset "
-msgstr "强制删除数据集 "
-
 msgid "Force size"
 msgstr "强制大小"
 
@@ -6208,6 +6261,9 @@ msgstr "表单无效"
 
 msgid "Free"
 msgstr "空闲"
+
+msgid "FreeBSD"
+msgstr ""
 
 msgid "FreeBSD device names of each disk being edited."
 msgstr "正在编辑每个磁盘的 FreeBSD 设备名称。"
@@ -6322,6 +6378,9 @@ msgstr "生成密钥"
 
 msgid "Generate Keypair"
 msgstr "生成密钥对"
+
+msgid "Generate MAC Address"
+msgstr ""
 
 msgid "Generate New"
 msgstr "新建"
@@ -6863,6 +6922,12 @@ msgstr "监狱的IPv6前缀。"
 
 msgid "ISNS Servers"
 msgstr "ISNS服务器"
+
+msgid "ISO save location"
+msgstr ""
+
+msgid "ISO upload location"
+msgstr ""
 
 msgid "Icon Buttons"
 msgstr "图标按钮"
@@ -7619,6 +7684,9 @@ msgstr "连接状态"
 msgid "Linked Service"
 msgstr "已连接服务"
 
+msgid "Linux"
+msgstr ""
+
 msgid ""
 "List of files and directories to exclude from sync.<br>  Separate entries "
 "by pressing <code>Enter</code>. See  <a "
@@ -8030,6 +8098,9 @@ msgstr "指标"
 
 msgid "MiB"
 msgstr "MiB"
+
+msgid "MiB. Units  smaller than MiB are not allowed."
+msgstr ""
 
 msgid "Microsoft Account"
 msgstr "微软账户"
@@ -8826,6 +8897,9 @@ msgstr "离线磁盘 "
 msgid "Ok"
 msgstr "是"
 
+msgid "On"
+msgstr ""
+
 msgid "On a Different System"
 msgstr "在不同的系统上"
 
@@ -8984,6 +9058,9 @@ msgstr ""
 
 msgid "Orange"
 msgstr "橙色"
+
+msgid "Order"
+msgstr ""
 
 msgid ""
 "Order of selected interface within the lagg. Configure a failover to set "
@@ -9732,6 +9809,9 @@ msgstr "读/写"
 msgid "Read/Write Access"
 msgstr "读取/写入访问"
 
+msgid "Readonly"
+msgstr ""
+
 msgid "Realm"
 msgstr "Realm"
 
@@ -9740,6 +9820,9 @@ msgstr "更新后重启"
 
 msgid "Rebuild Directory Service Cache"
 msgstr "重建目录服务缓存"
+
+msgid "Recommended block size based on pool topology:"
+msgstr ""
 
 msgid ""
 "Recommended when <i>Max. Poll</i> is greater   than 10. Only use on "
@@ -10510,9 +10593,6 @@ msgstr "清理任务"
 
 msgid "Scrub Tasks"
 msgstr "清理任务"
-
-msgid "Scrub complete on pool <i>"
-msgstr "池完成清理<i>"
 
 msgid "Scrub interval (in days)"
 msgstr "清理间隔（天）"
@@ -12298,6 +12378,9 @@ msgstr "加速初始同步（秒而不是分钟）。"
 msgid "Speeds up the initial synchronization (seconds instead of minutes)."
 msgstr "加速初始同步（秒而不是分钟）。"
 
+msgid "Standard"
+msgstr ""
+
 msgid "Standard (Secure)"
 msgstr "标准（安全）"
 
@@ -12324,9 +12407,6 @@ msgstr "开始对此云同步任务进行试运行？ 系统将连接到云服�
 
 msgid "Start on Boot"
 msgstr "开机启动"
-
-msgid "Start scrub on pool <i>"
-msgstr "开始清理池 <i>"
 
 msgid "Start the scrub now?"
 msgstr "立即开始清理吗？"
@@ -12395,14 +12475,8 @@ msgstr "停止清理"
 msgid "Stop this cloud sync?"
 msgstr "停止此云同步吗？"
 
-msgid "Stopped the scrub on pool <i>"
-msgstr "已停止清理池<i>"
-
 msgid "Stopping Jail"
 msgstr "正在停止监狱"
-
-msgid "Stopping scrub on pool <i>"
-msgstr "正在停止清理池 <i>"
 
 msgid ""
 "Stops the rollback when the safety  check finds any related clone snapshots "
@@ -12558,6 +12632,9 @@ msgstr "已同步"
 
 msgid "Synchronize Destination Snapshots With Source"
 msgstr "将目标快照与源同步"
+
+msgid "Sysctl"
+msgstr ""
 
 msgid "Syslog"
 msgstr "系统日志"
@@ -12822,9 +12899,6 @@ msgstr ""
 "</i>表示不执行任何规则集。仅当启用<b> allow_mount </b>和<b> allow_mount_devfs </b>权限并将<b> "
 "enforce_statfs </b>设置为a时，才能将<b> devfs </b>装入监狱。值小于<i> 2 </i>。"
 
-msgid "The <i><b>"
-msgstr "The <i><b>"
-
 msgid "The AFP"
 msgstr "AFP"
 
@@ -12914,6 +12988,17 @@ msgid "The administrator password is incorrect."
 msgstr "管理员密码错误。"
 
 msgid ""
+"The authority key identifier extension provides a means of  identifying the "
+"public key corresponding to the private key used to  sign a certificate. "
+"This extension is used where an issuer has  multiple signing keys (either "
+"due to multiple concurrent key pairs or  due to changeover). The "
+"identification MAY be based on either the  key identifier (the subject key "
+"identifier in the issuer's  certificate) or on the issuer name and serial "
+"number.<br>  See <a href=\"https://www.ietf.org/rfc/rfc3280.txt\">RFC 3280, "
+"section 4.2.1.1</a>  for more information."
+msgstr ""
+
+msgid ""
 "The base name is automatically prepended if the target name does not start "
 "with <i>iqn</i>. Lowercase alphanumeric characters plus dot (.), dash (-), "
 "and colon (:) are allowed. See the <i>Constructing iSCSI names using the "
@@ -12925,6 +13010,14 @@ msgstr ""
 "href=\"https://tools.ietf.org/html/rfc3721.html\" "
 "target=\"_blank\">RFC3721</a>的<i>Constructing iSCSI names using the "
 "iqn.format</i>章节。"
+
+msgid ""
+"The basic constraints extension identifies whether the  subject of the "
+"certificate is a CA and the maximum depth of valid  certification paths "
+"that include this certificate. <br>  See <a "
+"href=\"https://www.ietf.org/rfc/rfc3280.txt\">RFC 3280, section "
+"4.2.1.10</a>  for more information."
+msgstr ""
 
 msgid ""
 "The beginning UID/GID for which this system is authoritative. Any UID/GID "
@@ -13021,6 +13114,19 @@ msgstr "iSCSI"
 
 msgid "The imported pool contains encrypted datasets, unlock them now?"
 msgstr "导入的池包含加密的数据集，现在将其解锁吗？"
+
+msgid ""
+"The key usage extension defines the purpose  (e.g., encipherment, "
+"signature, certificate signing) of the key contained in  the certificate. "
+"The usage restriction might be employed when a key that  could be used for "
+"more than one operation is to be restricted. For  example, when an RSA key "
+"should be used only to verify signatures on  objects other than public key "
+"certificates and CRLs, the <i>Digital Signature</i>  bits would be "
+"asserted. Likewise, when an RSA key should be used only for key  "
+"management, the <i>Key Encipherment</i> bit would be asserted. <br>  See <a "
+"href=\"https://www.ietf.org/rfc/rfc3280.txt\">RFC 3280, section 4.2.1.3</a> "
+" for more information."
+msgstr ""
 
 msgid ""
 "The legacy user interface is deprecated. All management should be performed "
@@ -13338,6 +13444,9 @@ msgid ""
 "unless changed."
 msgstr "这些权限太复杂而无法显示，除非更改，否则无法保存。"
 
+msgid "These running services are using"
+msgstr ""
+
 msgid "These running services are using "
 msgstr "这些正在运行的服务正在使用"
 
@@ -13349,6 +13458,9 @@ msgstr "必须重新启动这些服务才能导出池："
 
 msgid "These services must be stopped to export the pool:"
 msgstr "必须停止这些服务才能导出池："
+
+msgid "These unknown processes are using this pool:"
+msgstr ""
 
 msgid "These unknown processes are using this pool: "
 msgstr "这些未知进程正在使用此池："
@@ -13497,6 +13609,9 @@ msgstr "周四"
 
 msgid "TiB"
 msgstr "TiB"
+
+msgid "Ticket"
+msgstr ""
 
 msgid ""
 "Time (in seconds) before the system  stops attempting to establish a "
@@ -13814,6 +13929,9 @@ msgstr "用密钥文件解锁"
 
 msgid "Unlocking Datasets"
 msgstr "正在解锁数据集"
+
+msgid "Unlocking Pool"
+msgstr ""
 
 msgid "Unlocking datasets for "
 msgstr "正在解锁的数据集"
@@ -14317,8 +14435,14 @@ msgstr "虚拟局域网标记"
 msgid "VLANs"
 msgstr "虚拟局域网"
 
+msgid "VM "
+msgstr ""
+
 msgid "VM Snapshot"
 msgstr "虚拟机快照"
+
+msgid "VM Summary"
+msgstr ""
 
 msgid "VM system time. Default is <i>Local</i>."
 msgstr "虚拟机系统时间。默认为<i>本地</i>。"
@@ -14376,6 +14500,9 @@ msgstr "变量"
 msgid "Verbose logging"
 msgstr "详细记录"
 
+msgid "Verify"
+msgstr ""
+
 msgid "Verify Credential"
 msgstr "验证凭据"
 
@@ -14421,6 +14548,9 @@ msgstr "虚拟IP地址"
 msgid "Virtual Interface"
 msgstr "虚拟接口"
 
+msgid "Virtual Machine (VM)"
+msgstr ""
+
 msgid "Virtual Machine (VM) Wizard type."
 msgstr "虚拟机（VM）向导类型。"
 
@@ -14463,6 +14593,9 @@ msgid ""
 "WARNING: These unknown processes will be terminated while exporting the "
 "pool. "
 msgstr "警告：这些未知进程将在导出池时终止。"
+
+msgid "WARNING: These unknown processes will be terminated while locking the pool."
+msgstr ""
 
 msgid "WS-Discovery"
 msgstr "WS-发现"
@@ -14697,6 +14830,9 @@ msgstr "Winbind NSS 信息"
 msgid "Window"
 msgstr "Window"
 
+msgid "Windows"
+msgstr ""
+
 msgid "Windows Shares (SMB)"
 msgstr "Windows共享（SMB）"
 
@@ -14878,6 +15014,9 @@ msgstr "下方确认。"
 msgid "boot"
 msgstr "boot"
 
+msgid "bytes."
+msgstr ""
+
 msgid "children_max"
 msgstr "children_max"
 
@@ -14977,6 +15116,15 @@ msgstr "正在收集信息..."
 msgid "group"
 msgstr "群组"
 
+msgid "gzip (default level, 6)"
+msgstr ""
+
+msgid "gzip (fastest)"
+msgstr ""
+
+msgid "gzip (maximum, slow)"
+msgstr ""
+
 msgid "host_domainname"
 msgstr "主机_域名"
 
@@ -15058,6 +15206,12 @@ msgstr "列表"
 
 msgid "login_flags"
 msgstr "login_flags"
+
+msgid "lz4 (recommended)"
+msgstr ""
+
+msgid "lzjb (legacy, not recommended)"
+msgstr ""
 
 msgid "mDNS"
 msgstr "mDNS"
@@ -15212,6 +15366,9 @@ msgstr "template"
 msgid "threads"
 msgstr "线程"
 
+msgid "to begin the download."
+msgstr ""
+
 msgid "to set up configuration first."
 msgstr "首先设置配置。"
 
@@ -15256,3 +15413,6 @@ msgstr "当池被加密时"
 
 msgid "yes"
 msgstr "是"
+
+msgid "zle (runs of zeros)"
+msgstr ""

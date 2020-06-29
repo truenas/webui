@@ -54,9 +54,6 @@ msgstr ""
 msgid " and "
 msgstr " 及 "
 
-msgid " and all snapshots of it?"
-msgstr " 以及其所有快照？"
-
 msgid " and will be disrupted if the pool is detached:"
 msgstr ""
 
@@ -77,9 +74,6 @@ msgstr " 磁碟"
 
 msgid " disks, new vdev has "
 msgstr ""
-
-msgid " has been unlocked."
-msgstr " 已解鎖。"
 
 msgid " is "
 msgstr " 為 "
@@ -495,6 +489,14 @@ msgid ""
 msgstr ""
 
 msgid ""
+"<i>Internal Certificate</i> is used for internal or local  systems. "
+"<i>Certificate Signing Request</i> is used to get a CA signature.  "
+"<i>Import Certificate</i> allows an existing certificate to be imported "
+"onto  the system. <i>Import Certificate Signing Request</i> allows an "
+"existing CSR  to be imported onto the system."
+msgstr ""
+
+msgid ""
 "<i>PUSH</i> sends data to cloud storage. <i>PULL</i>  receives data from "
 "cloud storage. Changing the direction resets the  <i>Transfer Mode</i> to "
 "COPY."
@@ -590,6 +592,11 @@ msgid ""
 "<samp>M</samp>, or <samp>G</samp>. See <a "
 "href=\"https://rclone.org/docs/#bwlimit-bandwidth-spec\" "
 "target=\"_blank\">rclone --bwlimit</a>."
+msgstr ""
+
+msgid ""
+"A smaller block size can reduce sequential I/O performance and space "
+"efficiency."
 msgstr ""
 
 msgid ""
@@ -871,6 +878,12 @@ msgstr ""
 msgid "Add Recovery Key"
 msgstr "新增回復密鑰"
 
+msgid "Add Sysctl"
+msgstr ""
+
+msgid "Add Tunable"
+msgstr ""
+
 msgid "Add Vdev"
 msgstr ""
 
@@ -1149,10 +1162,16 @@ msgstr "所有資料夾"
 msgid "All users"
 msgstr ""
 
+msgid "Allocate RAM for the VM. Minimum value is 256 MiB."
+msgstr ""
+
 msgid "Allocate a number of megabytes of RAM to the VM."
 msgstr ""
 
 msgid "Allocate at least 256 MiB."
+msgstr ""
+
+msgid "Allocate space for the new zvol."
 msgstr ""
 
 msgid "Allow"
@@ -1396,6 +1415,9 @@ msgstr ""
 msgid ""
 "Alternative names that SMB clients can use when connecting to this NAS. Can "
 "be no greater than 15 characters."
+msgstr ""
+
+msgid "Always"
 msgstr ""
 
 msgid "Always Chroot"
@@ -1729,6 +1751,9 @@ msgstr "附屬參數 (upsd.conf)"
 msgid "Auxiliary parameters"
 msgstr "附屬參數"
 
+msgid "Available"
+msgstr ""
+
 msgid "Available Disks"
 msgstr "可用磁碟"
 
@@ -1757,6 +1782,11 @@ msgid "Back"
 msgstr "返回"
 
 msgid "Back to Support"
+msgstr ""
+
+msgid ""
+"Back up the encryption key now! If the key is lost, the data on the disks "
+"will also be lost with no hope of recovery."
 msgstr ""
 
 msgid "Backend"
@@ -1971,6 +2001,9 @@ msgid ""
 "dataset."
 msgstr ""
 
+msgid "Browse to the installer image file and click <b>Upload</b>."
+msgstr ""
+
 msgid "Browse to the keytab file to upload."
 msgstr ""
 
@@ -1999,6 +2032,9 @@ msgstr ""
 
 msgid "Bucket"
 msgstr "儲存區"
+
+msgid "Bug"
+msgstr ""
 
 msgid "Burst"
 msgstr "併發"
@@ -2039,6 +2075,9 @@ msgid "CAs"
 msgstr "憑證授權中心 (CA)"
 
 msgid "CC"
+msgstr ""
+
+msgid "CD-ROM"
 msgstr ""
 
 msgid "CD-ROM Path"
@@ -2121,6 +2160,9 @@ msgstr ""
 msgid ""
 "Cannot open this ACL. Check the permissions this dataset  has inherited "
 "from parents."
+msgstr ""
+
+msgid "Capacity"
 msgstr ""
 
 msgid "Case Sensitivity"
@@ -2217,9 +2259,6 @@ msgstr ""
 
 msgid "Change log"
 msgstr "異動記錄"
-
-msgid "Change order for "
-msgstr ""
 
 msgid ""
 "Change the default password to improve system security. The new password "
@@ -2490,6 +2529,20 @@ msgid "Choose an option"
 msgstr ""
 
 msgid ""
+"Choose between <i>Internal CA</i>, <i>Intermediate CA</i>, and  <i>Import "
+"CA</i>. An <i>Internal CA</i> functions like a publicly trusted CA  to sign "
+"certificates for an internal network. They are not trusted outside  the "
+"private network. An <i>Intermediate CA</i> lives between the root and end  "
+"entity certificates and its main purpose is to define and authorize the  "
+"types of certificates that can be requested from the root CA. <i>Import "
+"CA</i>  allows an existing CA to be imported onto the system.<br>  For more "
+"information see  <a "
+"href=\"https://www.globalsign.com/en/blog/what-is-an-intermediate-or-"
+"subordinate-certificate-authority\">  What are Subordinate CAs and Why "
+"Would You Want Your Own?</a>"
+msgstr ""
+
+msgid ""
 "Choose between <i>Off</i>, <a "
 "href=\"http://info.ssl.com/article.aspx?id=10241\" "
 "target=\"_blank\">SSL</a> or <a "
@@ -2672,6 +2725,9 @@ msgstr ""
 msgid "Clearing Cache..."
 msgstr ""
 
+msgid "Click"
+msgstr ""
+
 msgid ""
 "Click <b>Browse</b> to select an encryption key to upload. This allows the "
 "system to decrypt the disks."
@@ -2722,6 +2778,9 @@ msgstr ""
 
 msgid "Cluster Name"
 msgstr "叢集名稱"
+
+msgid "Clustering"
+msgstr ""
 
 msgid "Collection"
 msgstr ""
@@ -2830,6 +2889,9 @@ msgid "Compress Connections"
 msgstr ""
 
 msgid "Compression"
+msgstr ""
+
+msgid "Compression Ratio"
 msgstr ""
 
 msgid "Compression level"
@@ -2982,6 +3044,9 @@ msgstr "連繫支援"
 
 msgid "Container"
 msgstr "容器"
+
+msgid "Containers"
+msgstr ""
 
 msgid "Content Commitment"
 msgstr ""
@@ -3522,6 +3587,9 @@ msgid ""
 "will create <i>zvol1</i> for  snapshot storage."
 msgstr ""
 
+msgid "Define the path to an existing zvol for VM use."
+msgstr ""
+
 msgid "Define the server where all changes to the database are performed."
 msgstr ""
 
@@ -3561,9 +3629,6 @@ msgstr "刪除 "
 
 msgid "Delete Dataset"
 msgstr "刪除資料集"
-
-msgid "Delete Dataset <i><b>"
-msgstr ""
 
 msgid "Delete Device"
 msgstr "刪除裝置"
@@ -3622,9 +3687,6 @@ msgstr ""
 
 msgid "Delete the selected item?"
 msgstr ""
-
-msgid "Delete the zvol "
-msgstr "刪除這個 zvol。"
 
 msgid "Delete this path."
 msgstr "刪除這個路徑。"
@@ -3753,9 +3815,6 @@ msgstr ""
 msgid "Details"
 msgstr "細節"
 
-msgid "Details for "
-msgstr ""
-
 msgid ""
 "Determine how  <a href=\"https://www.freebsd.org/cgi/man.cgi?query=chmod\" "
 "target=\"_blank\">chmod</a>  behaves when adjusting file ACLs. See the  <a "
@@ -3810,6 +3869,9 @@ msgstr ""
 
 msgid "Device Busy"
 msgstr "裝置忙碌"
+
+msgid "Device ID"
+msgstr ""
 
 msgid "Device Order"
 msgstr "裝置順序"
@@ -5251,14 +5313,8 @@ msgstr ""
 msgid "Error"
 msgstr "錯誤"
 
-msgid "Error Deleting zvol "
-msgstr ""
-
 msgid "Error Downloading File"
 msgstr ""
-
-msgid "Error Promoting dataset "
-msgstr "升級資料集時發生錯誤"
 
 msgid "Error Saving Configuration Settings"
 msgstr ""
@@ -5282,9 +5338,6 @@ msgid "Error creating VM."
 msgstr "建立 VM 時發生錯誤"
 
 msgid "Error decrypting disks"
-msgstr ""
-
-msgid "Error deleting dataset "
 msgstr ""
 
 msgid "Error details for "
@@ -5527,6 +5580,9 @@ msgstr ""
 msgid "Fast (Less secure)"
 msgstr ""
 
+msgid "Feature"
+msgstr ""
+
 msgid "Features"
 msgstr "功能"
 
@@ -5672,9 +5728,6 @@ msgstr ""
 msgid "Force Stop After Timeout"
 msgstr ""
 
-msgid "Force deletion of dataset "
-msgstr ""
-
 msgid "Force size"
 msgstr "強制大小"
 
@@ -5714,6 +5767,9 @@ msgid "Form Invalid"
 msgstr ""
 
 msgid "Free"
+msgstr ""
+
+msgid "FreeBSD"
 msgstr ""
 
 msgid "FreeBSD device names of each disk being edited."
@@ -5820,6 +5876,9 @@ msgid "Generate Key"
 msgstr ""
 
 msgid "Generate Keypair"
+msgstr ""
+
+msgid "Generate MAC Address"
 msgstr ""
 
 msgid "Generate New"
@@ -6349,6 +6408,12 @@ msgstr ""
 
 msgid "ISNS Servers"
 msgstr "ISNS 伺服器"
+
+msgid "ISO save location"
+msgstr ""
+
+msgid "ISO upload location"
+msgstr ""
 
 msgid "Icon Buttons"
 msgstr ""
@@ -7059,6 +7124,9 @@ msgstr "連接狀態"
 msgid "Linked Service"
 msgstr "已連結服務"
 
+msgid "Linux"
+msgstr ""
+
 msgid ""
 "List of files and directories to exclude from sync.<br>  Separate entries "
 "by pressing <code>Enter</code>. See  <a "
@@ -7448,6 +7516,9 @@ msgid "Metrics"
 msgstr ""
 
 msgid "MiB"
+msgstr ""
+
+msgid "MiB. Units  smaller than MiB are not allowed."
 msgstr ""
 
 msgid "Microsoft Account"
@@ -8194,6 +8265,9 @@ msgstr ""
 msgid "Ok"
 msgstr "確定"
 
+msgid "On"
+msgstr ""
+
 msgid "On a Different System"
 msgstr ""
 
@@ -8342,6 +8416,9 @@ msgid ""
 msgstr ""
 
 msgid "Orange"
+msgstr ""
+
+msgid "Order"
 msgstr ""
 
 msgid ""
@@ -9044,6 +9121,9 @@ msgstr ""
 msgid "Read/Write Access"
 msgstr "讀/寫存取"
 
+msgid "Readonly"
+msgstr ""
+
 msgid "Realm"
 msgstr "領域"
 
@@ -9052,6 +9132,9 @@ msgstr "更新後重新開機"
 
 msgid "Rebuild Directory Service Cache"
 msgstr "重建目錄服務快取"
+
+msgid "Recommended block size based on pool topology:"
+msgstr ""
 
 msgid ""
 "Recommended when <i>Max. Poll</i> is greater   than 10. Only use on "
@@ -9802,9 +9885,6 @@ msgstr ""
 
 msgid "Scrub Tasks"
 msgstr "Scrub 作業"
-
-msgid "Scrub complete on pool <i>"
-msgstr ""
 
 msgid "Scrub interval (in days)"
 msgstr ""
@@ -11462,6 +11542,9 @@ msgstr ""
 msgid "Speeds up the initial synchronization (seconds instead of minutes)."
 msgstr ""
 
+msgid "Standard"
+msgstr ""
+
 msgid "Standard (Secure)"
 msgstr "標準 (安全)"
 
@@ -11488,9 +11571,6 @@ msgstr ""
 
 msgid "Start on Boot"
 msgstr "開機時啟動"
-
-msgid "Start scrub on pool <i>"
-msgstr ""
 
 msgid "Start the scrub now?"
 msgstr "現在開始 Scrub？"
@@ -11557,14 +11637,8 @@ msgstr "停止 Scrub"
 msgid "Stop this cloud sync?"
 msgstr "停止雲端同步嗎？"
 
-msgid "Stopped the scrub on pool <i>"
-msgstr ""
-
 msgid "Stopping Jail"
 msgstr "正在停止 Jail"
-
-msgid "Stopping scrub on pool <i>"
-msgstr ""
 
 msgid ""
 "Stops the rollback when the safety  check finds any related clone snapshots "
@@ -11717,6 +11791,9 @@ msgid "Synced"
 msgstr ""
 
 msgid "Synchronize Destination Snapshots With Source"
+msgstr ""
+
+msgid "Sysctl"
 msgstr ""
 
 msgid "Syslog"
@@ -11970,9 +12047,6 @@ msgid ""
 "<b>enforce_statfs</b> is set to a value lower than <i>2</i>."
 msgstr ""
 
-msgid "The <i><b>"
-msgstr ""
-
 msgid "The AFP"
 msgstr ""
 
@@ -12057,12 +12131,31 @@ msgid "The administrator password is incorrect."
 msgstr ""
 
 msgid ""
+"The authority key identifier extension provides a means of  identifying the "
+"public key corresponding to the private key used to  sign a certificate. "
+"This extension is used where an issuer has  multiple signing keys (either "
+"due to multiple concurrent key pairs or  due to changeover). The "
+"identification MAY be based on either the  key identifier (the subject key "
+"identifier in the issuer's  certificate) or on the issuer name and serial "
+"number.<br>  See <a href=\"https://www.ietf.org/rfc/rfc3280.txt\">RFC 3280, "
+"section 4.2.1.1</a>  for more information."
+msgstr ""
+
+msgid ""
 "The base name is automatically prepended if the target name does not start "
 "with <i>iqn</i>. Lowercase alphanumeric characters plus dot (.), dash (-), "
 "and colon (:) are allowed. See the <i>Constructing iSCSI names using the "
 "iqn.format</i> section of <a "
 "href=\"https://tools.ietf.org/html/rfc3721.html\" "
 "target=\"_blank\">RFC3721</a>."
+msgstr ""
+
+msgid ""
+"The basic constraints extension identifies whether the  subject of the "
+"certificate is a CA and the maximum depth of valid  certification paths "
+"that include this certificate. <br>  See <a "
+"href=\"https://www.ietf.org/rfc/rfc3280.txt\">RFC 3280, section "
+"4.2.1.10</a>  for more information."
 msgstr ""
 
 msgid ""
@@ -12154,6 +12247,19 @@ msgid "The iSCSI"
 msgstr ""
 
 msgid "The imported pool contains encrypted datasets, unlock them now?"
+msgstr ""
+
+msgid ""
+"The key usage extension defines the purpose  (e.g., encipherment, "
+"signature, certificate signing) of the key contained in  the certificate. "
+"The usage restriction might be employed when a key that  could be used for "
+"more than one operation is to be restricted. For  example, when an RSA key "
+"should be used only to verify signatures on  objects other than public key "
+"certificates and CRLs, the <i>Digital Signature</i>  bits would be "
+"asserted. Likewise, when an RSA key should be used only for key  "
+"management, the <i>Key Encipherment</i> bit would be asserted. <br>  See <a "
+"href=\"https://www.ietf.org/rfc/rfc3280.txt\">RFC 3280, section 4.2.1.3</a> "
+" for more information."
 msgstr ""
 
 msgid ""
@@ -12452,6 +12558,9 @@ msgid ""
 "unless changed."
 msgstr ""
 
+msgid "These running services are using"
+msgstr ""
+
 msgid "These running services are using "
 msgstr ""
 
@@ -12462,6 +12571,9 @@ msgid "These services must be restarted to export the pool:"
 msgstr ""
 
 msgid "These services must be stopped to export the pool:"
+msgstr ""
+
+msgid "These unknown processes are using this pool:"
 msgstr ""
 
 msgid "These unknown processes are using this pool: "
@@ -12603,6 +12715,9 @@ msgid "Thu"
 msgstr ""
 
 msgid "TiB"
+msgstr ""
+
+msgid "Ticket"
 msgstr ""
 
 msgid ""
@@ -12911,6 +13026,9 @@ msgid "Unlock with Key file"
 msgstr ""
 
 msgid "Unlocking Datasets"
+msgstr ""
+
+msgid "Unlocking Pool"
 msgstr ""
 
 msgid "Unlocking datasets for "
@@ -13375,8 +13493,14 @@ msgstr ""
 msgid "VLANs"
 msgstr ""
 
+msgid "VM "
+msgstr ""
+
 msgid "VM Snapshot"
 msgstr "VM 快照"
+
+msgid "VM Summary"
+msgstr ""
 
 msgid "VM system time. Default is <i>Local</i>."
 msgstr ""
@@ -13434,6 +13558,9 @@ msgstr "變數"
 msgid "Verbose logging"
 msgstr "詳細資訊記錄"
 
+msgid "Verify"
+msgstr ""
+
 msgid "Verify Credential"
 msgstr "驗證認證"
 
@@ -13479,6 +13606,9 @@ msgstr "虛擬 IP 位址"
 msgid "Virtual Interface"
 msgstr "虛擬介面"
 
+msgid "Virtual Machine (VM)"
+msgstr ""
+
 msgid "Virtual Machine (VM) Wizard type."
 msgstr "虛擬機器 Wizard type."
 
@@ -13520,6 +13650,9 @@ msgstr "警告：鎖定儲存集區 <i>"
 msgid ""
 "WARNING: These unknown processes will be terminated while exporting the "
 "pool. "
+msgstr ""
+
+msgid "WARNING: These unknown processes will be terminated while locking the pool."
 msgstr ""
 
 msgid "WS-Discovery"
@@ -13735,6 +13868,9 @@ msgstr ""
 msgid "Window"
 msgstr ""
 
+msgid "Windows"
+msgstr ""
+
 msgid "Windows Shares (SMB)"
 msgstr "Windows 共用 (SMB)"
 
@@ -13910,6 +14046,9 @@ msgstr ""
 msgid "boot"
 msgstr ""
 
+msgid "bytes."
+msgstr ""
+
 msgid "children_max"
 msgstr ""
 
@@ -14009,6 +14148,15 @@ msgstr ""
 msgid "group"
 msgstr "群組"
 
+msgid "gzip (default level, 6)"
+msgstr ""
+
+msgid "gzip (fastest)"
+msgstr ""
+
+msgid "gzip (maximum, slow)"
+msgstr ""
+
 msgid "host_domainname"
 msgstr ""
 
@@ -14087,6 +14235,12 @@ msgid "list"
 msgstr "清單"
 
 msgid "login_flags"
+msgstr ""
+
+msgid "lz4 (recommended)"
+msgstr ""
+
+msgid "lzjb (legacy, not recommended)"
 msgstr ""
 
 msgid "mDNS"
@@ -14242,6 +14396,9 @@ msgstr "範本"
 msgid "threads"
 msgstr ""
 
+msgid "to begin the download."
+msgstr ""
+
 msgid "to set up configuration first."
 msgstr ""
 
@@ -14285,4 +14442,7 @@ msgid "while pool is encrypted"
 msgstr ""
 
 msgid "yes"
+msgstr ""
+
+msgid "zle (runs of zeros)"
 msgstr ""
