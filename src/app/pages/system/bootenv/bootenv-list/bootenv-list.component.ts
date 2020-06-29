@@ -74,7 +74,7 @@ export class BootEnvironmentListComponent {
 
   dataHandler(entityList: any) {
     entityList.rows.forEach((row) => {
-      if (row.active !== '-') {
+      if (row.active !== '-' && row.active !== '') {
         row.hideCheckbox = true;
       }
       row.rawspace = this.storage.convertBytestoHumanReadable(row.rawspace);
@@ -141,7 +141,7 @@ export class BootEnvironmentListComponent {
       }
     });
     
-    if (row.active === '-'){
+    if (row.active === '-' || row.active === ''){
       actions.push({
         label: T("Delete"),
         id: "delete",
@@ -196,7 +196,7 @@ export class BootEnvironmentListComponent {
     ttpos: "above",
     onClick: (selected) => {
       for(let i = selected.length -1; i >= 0 ; i--) {
-        if(selected[i].active !== '-') {
+        if(selected[i].active !== '-' && selected[i].active !== '') {
            selected.splice(i, 1);
         }
       }
@@ -207,7 +207,7 @@ export class BootEnvironmentListComponent {
   getSelectedNames(selectedBootenvs)  {
     let selected: any = [];
     for (let i in selectedBootenvs) {
-      if (selectedBootenvs[i].active ==='-') {
+      if (selectedBootenvs[i].active === '-' || selectedBootenvs[i].active === '') {
         selected.push([selectedBootenvs[i].id]);
       }
     }
