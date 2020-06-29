@@ -89,7 +89,7 @@
 
             <div class="right" fxFlex="60" fxFlex.xs fxLayout="column" fxLayoutAlign="space-around center">
               <div fxFlex="100">
-                <div class="list-subheader">{{currentSlideName}}</div>
+                <div class="list-subheader">{{"Overview" | translate}}</div>
                 <mat-list>
                   <mat-list-item><strong>{{"Media Type" | translate}}: </strong>&nbsp;&nbsp;{{nicState.active_media_type}}</mat-list-item>
                   <mat-list-item><strong>{{"Media Subtype" | translate}}: </strong>&nbsp;&nbsp;{{nicState.active_media_subtype}}</mat-list-item>
@@ -113,7 +113,7 @@
 
 
           <div class="slide addresses" *ngIf="path[1].name == 'addresses'" fxFlex="100">
-            <div class="list-subheader">{{currentSlideName}}</div>
+            <div class="list-subheader">{{"Addresses" | translate}}</div>
             <mat-list *ngIf="nicState && nicState.aliases.length > 0"> 
               <mat-list-item role="listitem"*ngFor="let ip of nicState.aliases;" [ngClass]="{'hidden': ip.type !== 'INET' && ip.type !== 'INET6'}">
                 <strong>{{ip.type}}:</strong>&nbsp;&nbsp; {{ip.address}}/{{ip.netmask}}
@@ -138,7 +138,7 @@
           </div>
 
           <div *ngIf="nicState.lagg_ports && path[1].name == 'interfaces'" class="slide lagg-ports"fxFlex="100">
-            <div class="list-subheader">{{currentSlideName}}</div>
+            <div class="list-subheader">{{"Interfaces" | translate}}</div>
             <mat-list> 
               <mat-list-item role="listitem" *ngFor="let port of nicState.lagg_ports;" >
                 <strong>{{"Interface" | translate}}:</strong>&nbsp;&nbsp; {{port}}
@@ -150,7 +150,7 @@
           </div>
 
           <div class="slide vlan-addresses" *ngIf="path[2].name == 'vlan addresses'"  fxFlex="100">
-            <div class="list-subheader">{{currentSlideName}}</div>
+            <div class="list-subheader">{{"VLAN Addresses" | translate}}</div>
             <mat-list *ngIf="nicState && vlanAliases(path[2].index).length > 0"> 
               <mat-list-item role="listitem"*ngFor="let ip of vlanAliases(path[2].index);" [ngClass]="{'hidden': ip.type !== 'INET' && ip.type !== 'INET6'}">
                 <strong>{{ip.type | translate}}:</strong>&nbsp;&nbsp; {{ip.address}}/{{ip.netmask}}

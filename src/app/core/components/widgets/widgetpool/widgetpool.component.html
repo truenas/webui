@@ -170,7 +170,7 @@
             <!-- FRONT RIGHT -->
             <div class="right" fxFlex="60" fxFlex.xs fxLayout="column" fxLayoutAlign="space-around center">
               <div fxFlex="100" *ngIf="poolState.topology && poolState.topology.data; else locked;">
-                <div class="list-subheader">  <span class="capitalize">{{currentSlideName}}</span></div>
+                <div class="list-subheader">  <span class="capitalize">{{"Overview" | translate}}</span></div>
                 <mat-list>
                   <mat-list-item><strong>{{"Path" | translate}}: </strong>&nbsp;&nbsp; {{poolState.path}}</mat-list-item>
 
@@ -214,7 +214,7 @@
 
           <!-- DATA -->
           <ng-template #data>
-            <div class="list-subheader"><span class="capitalize">{{currentSlideName}}</span></div>
+            <div class="list-subheader"><span class="capitalize">{{currentSlideName | translate}}</span></div>
             <mat-list *ngIf="poolState && poolState.topology.data">
               <mat-list-item role="listitem"*ngFor="let vdev of poolState.topology.data; let i=index"
                  (click)="updateSlide('disks', true, currentSlideIndex + 1, i, vdev)" 
@@ -260,7 +260,7 @@
 
           <!-- DISKS -->
           <ng-template #disks>
-            <div class="list-subheader"><span class="capitalize">Disks</span></div>
+            <div class="list-subheader"><span class="capitalize">{{"Disks" | translate}}</span></div>
 
             <mat-list *ngIf="!path[currentSlideIndex].dataSource.type || path[currentSlideIndex].dataSource.type !== 'DISK'">
               
