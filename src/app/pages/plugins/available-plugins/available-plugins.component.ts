@@ -41,6 +41,13 @@ export class AvailablePluginsComponent implements OnInit {
                 } else {
                     const officialRepo = this.availableRepo.filter(repo => repo.name === 'iXsystems');
                     this.selectedRepo = officialRepo.length > 0 ? officialRepo[0]['git_repository'] : this.availableRepo[0]['git_repository'];
+
+                    this.ws.job(this.queryCall, [{plugin_repository: this.availableRepo[0]['git_repository']}]).subscribe(community => {
+                          this.ws.job(this.queryCall, [{plugin_repository: this.availableRepo[1]['git_repository']}]).subscribe(official => {
+                            this.completeList = community.result.concat(official.result);
+                            this.parent.conf.allPlugins = this.completeList;
+                        })
+                    })
                 }
             },
             (err) => {
@@ -65,15 +72,6 @@ export class AvailablePluginsComponent implements OnInit {
     ngOnInit() {
         this.getInstances();
         this.getPlugin();
-        let opt = {}
-        opt['plugin_repository'] = 'https://github.com/ix-plugin-hub/iocage-plugin-index.git';
-        this.ws.job(this.queryCall, [opt]).subscribe((res) => {
-            let community = res;
-            this.ws.job(this.queryCall, [this.queryCallOption]).subscribe(official => {
-                this.completeList = community.result.concat(official.result);
-                this.parent.conf.allPlugins = this.completeList;
-            })
-        })
     }
 
     getPlugin(cache = true) {
