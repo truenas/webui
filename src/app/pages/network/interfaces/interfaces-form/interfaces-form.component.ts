@@ -533,6 +533,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
 
     return data;
   }
+  beforeSubmit(data) {
+    data.options = data.options.join(' ');
+  }
 
   afterSave() {
     this.core.emit({name: "NetworkInterfacesChanged", data: {commit:false, checkin: false}, sender:this});
