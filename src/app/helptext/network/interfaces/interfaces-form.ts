@@ -57,8 +57,7 @@ disable_offload_capabilities_warning_msg: T('Disabling hardware offloading can s
 
 int_options_placeholder : T('Options'),
 int_options_tooltip : T('Enter additional parameters from \
- <a href="https://www.freebsd.org/cgi/man.cgi?query=ifconfig" target="_blank">ifconfig(8)</a>. \
- Separate entries by pressing <code>Enter</code>.'),
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=ifconfig" target="_blank">ifconfig(8)</a>.'),
 
 alias_address_placeholder: T('IP Address'),
 alias_address_tooltip: T('Static IPv4 or IPv6 address and subnet mask. \
