@@ -3136,6 +3136,7 @@ msgid ""
 "<i>Command+v</i>. For most operating     systems, use <i>Ctrl+Insert</i> to "
 "copy and     <i>Shift+Insert</i> to paste."
 msgstr ""
+"コンテキストメニューのコピーと貼り付け操作はシェルでは無効になっています。コピーと貼り付けのショートカットキーは、Macでは、 <i>Command+C</i> と <i>Command+V</i> を使用します。その他ほとんどのオペレーティングシステムでは、 <i>Ctrl+Insert</i> を使用してコピーし、 <i>Shift+Insert</i> で貼り付けます。"
 
 msgid "Continue"
 msgstr "続ける"
@@ -3176,7 +3177,7 @@ msgid "Copies"
 msgstr ""
 
 msgid "Copy and Paste"
-msgstr ""
+msgstr "コピーと貼り付け"
 
 msgid "Cores"
 msgstr ""
