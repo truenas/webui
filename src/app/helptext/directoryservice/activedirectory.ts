@@ -46,24 +46,6 @@ activedirectory_bindpw_tooltip: T('Password for the Active Directory administrat
  Required the first time a domain is configured. After initial configuration, the password \
  is not needed to edit, start, or stop the service.'),
 
-activedirectory_ssl_name: 'ssl',
-activedirectory_ssl_placeholder: T('Encryption Mode'),
-activedirectory_ssl_tooltip: T('Choose between <i>Off</i>, <a\
- href="http://info.ssl.com/article.aspx?id=10241"\
- target="_blank">SSL</a> or <a\
- href="https://hpbn.co/transport-layer-security-tls/"\
- target="_blank">TLS</a>.'),
-
-activedirectory_certificate_name: 'certificate',
-activedirectory_certificate_placeholder: T('Certificate'),
-activedirectory_certificate_tooltip: T('Select the certificate of the Active Directory server \
- if SSL connections are used. Add a certificate here by creating a Certificate Authority (CA) \
- then creating a certificate on the Active Directory server. Import the certificate to this \
- system using the <b>System > Certificates</b> menu.'),
-
-ad_validate_certificates_placeholder: T('Validate Certificates'),
-ad_validate_certificates_tooltip: T('Check server certificates in a TLS session.'),
-
 activedirectory_verbose_logging_name: 'verbose_logging',
 activedirectory_verbose_logging_placeholder : T('Verbose logging'),
 activedirectory_verbose_logging_tooltip : T('Set to log attempts to join the domain to\
@@ -144,12 +126,6 @@ activedirectory_nss_info_tooltip : T('Choose the schema to use when querying AD 
  user/group info. <i>rfc2307</i> uses the schema support included in Windows 2003 R2, <i>sfu</i> is for\
  Service For Unix 3.0 or 3.5, and <i>sfu20</i> is for Service For Unix 2.0.'),
 
-activedirectory_sasl_wrapping_name: 'ldap_sasl_wrapping',
-activedirectory_sasl_wrapping_placeholder : T('SASL wrapping'),
-activedirectory_sasl_wrapping_tooltip : T('Choose how LDAP traffic is transmitted. Choices are\
- <i>plain</i> (plain text), <i>sign</i> (signed only), or <i>seal</i> (signed and encrypted). Windows 2000 SP3\
- and newer can be configured to enforce signed LDAP connections.'),
-
 activedirectory_enable_name: 'enable',
 activedirectory_enable_placeholder : T('Enable (requires password or Kerberos principal)'),
 activedirectory_enable_tooltip : T('Enable the Active Directory service.\
@@ -173,9 +149,6 @@ activedirectory_netbiosalias_tooltip : T('Alternative names that SMB clients can
  connecting to this NAS. Can be no greater than 15 characters.'),
 
  activedirectory_advanced_fields: [
-'ssl',
-'certificate',
-'validate_certificates',
 'verbose_logging',
 'unix_extensions',
 'allow_trusted_doms',
@@ -193,7 +166,6 @@ activedirectory_netbiosalias_tooltip : T('Alternative names that SMB clients can
 'dns_timeout',
 'idmap_backend',
 'nss_info',
-'ldap_sasl_wrapping',
 'netbiosname',
 'netbiosname_b',
 'netbiosalias'
