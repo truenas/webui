@@ -24,6 +24,7 @@ export class AvailablePluginsComponent implements OnInit {
     public selectedPlugin: any;
     public availableRepo = [];
     public selectedRepo: any;
+    public completeList: any;
     public installedPlugins: any = {};
     public expand = this.prefService.preferences.expandAvailablePlugins;
 
@@ -40,6 +41,13 @@ export class AvailablePluginsComponent implements OnInit {
                 } else {
                     const officialRepo = this.availableRepo.filter(repo => repo.name === 'iXsystems');
                     this.selectedRepo = officialRepo.length > 0 ? officialRepo[0]['git_repository'] : this.availableRepo[0]['git_repository'];
+
+                    this.ws.job(this.queryCall, [{plugin_repository: this.availableRepo[0]['git_repository']}]).subscribe(community => {
+                          this.ws.job(this.queryCall, [{plugin_repository: this.availableRepo[1]['git_repository']}]).subscribe(official => {
+                            this.completeList = community.result.concat(official.result);
+                            this.parent.conf.allPlugins = this.completeList;
+                        })
+                    })
                 }
             },
             (err) => {
