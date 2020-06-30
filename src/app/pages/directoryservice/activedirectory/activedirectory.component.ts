@@ -21,9 +21,12 @@ export class ActiveDirectoryComponent {
   public isEntity = false;
   protected isBasicMode = true;
   protected idmapBacked: any = null;
+  protected certificate: any;
   protected kerberos_realm: any;
   protected kerberos_principal: any;
+  protected ssl: any;
   protected nss_info: any;
+  protected ldap_sasl_wrapping: any;
   public adStatus = false;
   entityEdit: any;
 
@@ -167,7 +170,22 @@ export class ActiveDirectoryComponent {
     class: 'adv_row',
     label:false,
     config:[
-
+    {
+      type : 'select',
+      name : helptext.activedirectory_ssl_name,
+      placeholder : helptext.activedirectory_ssl_placeholder,
+      tooltip : helptext.activedirectory_ssl_tooltip,
+      options : []
+    },
+    {
+      type : 'select',
+      name : helptext.activedirectory_certificate_name,
+      placeholder : helptext.activedirectory_certificate_placeholder,
+      tooltip : helptext.activedirectory_certificate_tooltip,
+      options : [
+        {label : '---', value : null},
+      ]
+    }
   ]},
   {
     name: 'checkbox_col1',
@@ -175,6 +193,12 @@ export class ActiveDirectoryComponent {
     width: '33%',
     label:false,
     config:[
+    {
+      type : 'checkbox',
+      name : 'validate_certificates',
+      placeholder : helptext.ad_validate_certificates_placeholder,
+      tooltip : helptext.ad_validate_certificates_tooltip,
+    },
     {
       type : 'checkbox',
       name : helptext.activedirectory_verbose_logging_name,
@@ -290,6 +314,13 @@ export class ActiveDirectoryComponent {
       options : []
     },
     {
+      type : 'select',
+      name : helptext.activedirectory_sasl_wrapping_name,
+      placeholder : helptext.activedirectory_sasl_wrapping_placeholder,
+      tooltip : helptext.activedirectory_sasl_wrapping_tooltip,
+      options : []
+    },
+    {
       type : 'input',
       name : helptext.activedirectory_netbiosname_a_name,
       placeholder : helptext.activedirectory_netbiosname_a_placeholder,
@@ -381,10 +412,34 @@ export class ActiveDirectoryComponent {
       });
     });
 
+    this.systemGeneralService.getCertificates().subscribe((res) => {
+      this.certificate = _.find(this.fieldConfig, {name : 'certificate'});
+      res.forEach((item) => {
+        this.certificate.options.push(
+            {label : item.name, value : item.id});
+      });
+    });
+
+    this.ws.call('activedirectory.ssl_choices').subscribe((res) => {
+      this.ssl = _.find(this.fieldConfig, {name : 'ssl'});
+      res.forEach((item) => {
+        this.ssl.options.push(
+            {label : item, value : item});
+      });
+    });
+
     this.ws.call('activedirectory.nss_info_choices').subscribe((res) => {
       this.nss_info = _.find(this.fieldConfig, {name : 'nss_info'});
       res.forEach((item) => {
         this.nss_info.options.push(
+            {label : item, value : item});
+      });
+    });
+
+    this.ws.call('activedirectory.sasl_wrapping_choices').subscribe((res) => {
+      this.ldap_sasl_wrapping = _.find(this.fieldConfig, {name : 'ldap_sasl_wrapping'});
+      res.forEach((item) => {
+        this.ldap_sasl_wrapping.options.push(
             {label : item, value : item});
       });
     });
