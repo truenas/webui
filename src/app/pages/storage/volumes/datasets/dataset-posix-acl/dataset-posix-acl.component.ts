@@ -346,13 +346,6 @@ export class DatasetPosixAclComponent implements OnDestroy {
   }
 
   resourceTransformIncomingRestData(data) {
-    data.acl.forEach(item => {
-      if (item.id === -1) {
-        if (item.tag !== 'OTHER') {
-          item.tag = item.tag === 'USER' ? 'USER_OBJ' : 'GROUP_OBJ';
-        }
-      }
-    })
     if (data.acl.length === 0) {
       setTimeout(() => {
         this.handleEmptyACL();
@@ -461,7 +454,6 @@ export class DatasetPosixAclComponent implements OnDestroy {
   }
 
   beforeSubmit(data) {
-    console.log(data)
     const dacl = [];
     for (let i = 0; i < data.aces.length; i++) {
       const d = {};
@@ -545,18 +537,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
         });
       }
     }
-    //////
-    const payload = 
-    [{'path': body.path, 'dacl': dacl,
-      'uid': body.uid, 'gid': body.gid,
-      'acltype' : 'POSIX1E',
-      'options' : {'recursive': body.recursive,
-      'traverse': body.traverse,
-      'stripacl': body.stripacl
-      }
-    }]
-    console.log(payload)
-    //////////
+
     this.dialogRef.componentInstance.setCall(this.updateCall,
       [{'path': body.path, 'dacl': dacl,
         'uid': body.uid, 'gid': body.gid,
@@ -568,7 +549,6 @@ export class DatasetPosixAclComponent implements OnDestroy {
       }]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
-      console.log(res)
       this.entityForm.success = true;
       this.dialogRef.close();
       this.router.navigate(new Array('/').concat(
@@ -599,9 +579,3 @@ export class DatasetPosixAclComponent implements OnDestroy {
   }
 }
 
-/* 
- - What about flags and...
- - setting uid and gid?
- - Saving doesn't seem to overwrite, but adds to previces ACEs
- - restrictions on default?
-*/

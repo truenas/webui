@@ -195,6 +195,7 @@ posix_tag: {
     {label: T('Other'), value: 'OTHER'},
     {label: T('Group Obj'), value: 'GROUP_OBJ'},
     {label: T('User Obj'), value: 'USER_OBJ'},
+    {label: T('Mask'), value: 'MASK'}
   ]
 },
 
