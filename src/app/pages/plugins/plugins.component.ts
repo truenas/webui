@@ -72,6 +72,7 @@ export class PluginsComponent {
 
   protected cardHeaderComponent = AvailablePluginsComponent;
   protected availablePlugins;
+  protected allPlugins;
 
   public multiActions: Array<any> = [
     {
@@ -557,7 +558,8 @@ export class PluginsComponent {
   resourceTransformIncomingRestData(data) {
     return data.map(plugin =>  {
       plugin['boot'] = plugin['boot'] === 'on' ? true : false;
-      plugin['icon'] = _.find(this.availablePlugins, {plugin: plugin.plugin}).icon;
+      plugin['icon'] = _.find(this.allPlugins, {plugin: plugin.plugin}) ?
+        _.find(this.allPlugins, {plugin: plugin.plugin}).icon : '';
       return plugin;
     });
   }

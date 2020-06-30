@@ -24,6 +24,7 @@ export class AvailablePluginsComponent implements OnInit {
     public selectedPlugin: any;
     public availableRepo = [];
     public selectedRepo: any;
+    public completeList: any;
     public installedPlugins: any = {};
     public expand = this.prefService.preferences.expandAvailablePlugins;
 
@@ -64,6 +65,15 @@ export class AvailablePluginsComponent implements OnInit {
     ngOnInit() {
         this.getInstances();
         this.getPlugin();
+        let opt = {}
+        opt['plugin_repository'] = 'https://github.com/ix-plugin-hub/iocage-plugin-index.git';
+        this.ws.job(this.queryCall, [opt]).subscribe((res) => {
+            let community = res;
+            this.ws.job(this.queryCall, [this.queryCallOption]).subscribe(official => {
+                this.completeList = community.result.concat(official.result);
+                this.parent.conf.allPlugins = this.completeList;
+            })
+        })
     }
 
     getPlugin(cache = true) {
