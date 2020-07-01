@@ -30,6 +30,7 @@ import { DatasetQuotasUserlistComponent } from 'app/pages/storage/volumes/datase
 import { DatasetQuotasGrouplistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
 import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
 import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
+import { DatasetPosixAclComponent } from './volumes/datasets/dataset-posix-acl/';
 
 export const routes: Routes = [
   {
@@ -83,6 +84,10 @@ export const routes: Routes = [
           {
             path: 'id/:pk/dataset/acl/:path', component: DatasetAclComponent,
             data: { title: 'Edit ACL', breadcrumb: 'Edit ACL' }
+          },
+          {
+            path: 'id/:pk/dataset/posix-acl/:path', component: DatasetPosixAclComponent,
+            data: { title: 'Edit POSIX.1e ACL', breadcrumb: 'Edit POSIX.1e ACL' }
           },
           {
             path: 'id/:pk/dataset/unlock/:path', component: DatasetUnlockComponent,
