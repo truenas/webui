@@ -86,6 +86,7 @@ export class UserFormComponent {
           placeholder : helptext.user_form_password_confirm_placeholder,
           inputType : 'password',
           required: true,
+          togglePw: true,
           validation : this.validationService.matchOtherValidator('password'),
           isHidden: false
         },
@@ -104,6 +105,7 @@ export class UserFormComponent {
           name : helptext.user_form_password_edit_confirm_name,
           placeholder : helptext.user_form_password_edit_confirm_placeholder,
           inputType : 'password',
+          togglePw: true,
           validation : this.validationService.matchOtherValidator('password_edit'),
           isHidden: true
         },

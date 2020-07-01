@@ -283,6 +283,7 @@ export class AdvancedComponent implements OnDestroy {
           placeholder: helptext_system_advanced.sed_passwd2_placeholder,
           tooltip: helptext_system_advanced.sed_passwd2_tooltip,
           inputType: 'password',
+          togglePw: true,
           validation : this.validationService.matchOtherValidator('sed_passwd')
         }
       ]

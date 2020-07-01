@@ -115,7 +115,6 @@ export class AlertServiceComponent {
           type: 'input',
           name: 'AWSSNS-region',
           placeholder: helptext.AWSSNS_region_placeholder,
-          togglePw: true,
           tooltip: helptext.AWSSNS_region_tooltip,
           required: true,
           validation: [Validators.required],
