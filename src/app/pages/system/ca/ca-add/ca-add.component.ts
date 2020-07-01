@@ -40,6 +40,7 @@ export class CertificateAuthorityAddComponent {
         {
           type: 'select',
           name: 'create_type',
+          tooltip: helptext_system_ca.add.create_type.tooltip,
           placeholder: helptext_system_ca.add.create_type.placeholder,
           options: [
             { label: 'Internal CA', value: 'CA_CREATE_INTERNAL' },

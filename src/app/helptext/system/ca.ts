@@ -20,7 +20,17 @@ export const helptext_system_ca = {
     },
 
     create_type: {
-      placeholder: T("Type")
+      placeholder: T("Type"),
+      tooltip: T('Choose between <i>Internal CA</i>, <i>Intermediate CA</i>, and \
+ <i>Import CA</i>. An <i>Internal CA</i> functions like a publicly trusted CA \
+ to sign certificates for an internal network. They are not trusted outside \
+ the private network. An <i>Intermediate CA</i> lives between the root and end \
+ entity certificates and its main purpose is to define and authorize the \
+ types of certificates that can be requested from the root CA. <i>Import CA</i> \
+ allows an existing CA to be imported onto the system.<br> \
+ For more information see \
+ <a href="https://www.globalsign.com/en/blog/what-is-an-intermediate-or-subordinate-certificate-authority"> \
+ What are Subordinate CAs and Why Would You Want Your Own?</a>')
     },
 
     profiles: {
@@ -172,7 +182,11 @@ matches your certificate usage scenario.'),
     basic_constraints: {
       config: {
         placeholder: T('Basic Constraints Config'),
-        tooltip: T(''),
+        tooltip: T('The basic constraints extension identifies whether the \
+ subject of the certificate is a CA and the maximum depth of valid \
+ certification paths that include this certificate. <br> \
+ See <a href="https://www.ietf.org/rfc/rfc3280.txt">RFC 3280, section 4.2.1.10</a> \
+ for more information.'),
       },
       ca: {
         placeholder: T('CA'),
@@ -200,7 +214,15 @@ certificate still approved.'),
     authority_key_identifier: {
       config: {
         placeholder: T('Authority Key Config'),
-        tooltip: T(''),
+        tooltip: T('The authority key identifier extension provides a means of \
+ identifying the public key corresponding to the private key used to \
+ sign a certificate. This extension is used where an issuer has \
+ multiple signing keys (either due to multiple concurrent key pairs or \
+ due to changeover). The identification MAY be based on either the \
+ key identifier (the subject key identifier in the issuer\'s \
+ certificate) or on the issuer name and serial number.<br> \
+ See <a href="https://www.ietf.org/rfc/rfc3280.txt">RFC 3280, section 4.2.1.1</a> \
+ for more information.'),
       },
       authority_cert_issuer: {
         placeholder: T('Authority Cert Issuer'),
@@ -247,7 +269,16 @@ certificate still approved.'),
     key_usage: {
       config: {
         placeholder: T('Key Usage Config'),
-        tooltip: T(''),
+        tooltip: T('The key usage extension defines the purpose \
+ (e.g., encipherment, signature, certificate signing) of the key contained in \
+ the certificate. The usage restriction might be employed when a key that \
+ could be used for more than one operation is to be restricted. For \
+ example, when an RSA key should be used only to verify signatures on \
+ objects other than public key certificates and CRLs, the <i>Digital Signature</i> \
+ bits would be asserted. Likewise, when an RSA key should be used only for key \
+ management, the <i>Key Encipherment</i> bit would be asserted. <br> \
+ See <a href="https://www.ietf.org/rfc/rfc3280.txt">RFC 3280, section 4.2.1.3</a> \
+ for more information.')
       },
       enabled: {
         placeholder: T('Enabled'),
