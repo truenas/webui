@@ -56,5 +56,14 @@ zvol_volblocksize_tooltip: T('The zvol default block size is automatically chose
  general use case.'),
 
 zvol_volsize_zero_error: T('Volume size cannot be zero.'),
-zvol_volsize_shrink_error: T('Shrinking a ZVOL is not allowed in the User Interface. This can lead to data loss.')
+zvol_volsize_shrink_error: T('Shrinking a ZVOL is not allowed in the User Interface. This can lead to data loss.'),
+
+blocksize_warning: {
+    a: T('Recommended block size based on pool topology:'),
+    b: T('A smaller block size can reduce sequential I/O performance and space efficiency.')
+},
+zvol_save_errDialog: {
+    title: T('Error saving ZVOL.'),
+    msg: T('Shrinking a ZVOL is not allowed in the User Interface. This can lead to data loss.')
+}
 }
