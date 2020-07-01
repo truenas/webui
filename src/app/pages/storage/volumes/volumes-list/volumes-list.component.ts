@@ -1582,8 +1582,10 @@ export class VolumesListTableConfig implements InputTableConf {
         child.parent = data;
         node.children.push(this.dataHandler(child));
       }
+      node.children.sort((a, b) => a.data.id.localeCompare(b.data.id));
     }
     delete node.data.children;
+
     return node;
   }
 
