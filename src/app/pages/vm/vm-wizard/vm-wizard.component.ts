@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { RestService, WebSocketService, NetworkService, StorageService } from '../../../services';
 import { PreferencesService} from 'app/core/services/preferences.service';
 import { FormGroup, Validators, ValidationErrors, FormControl } from '@angular/forms';
@@ -34,7 +35,7 @@ export class VMWizardComponent {
   firstFormGroup: FormGroup;
   protected dialogRef: any;
   objectKeys = Object.keys;
-  summary_title = "VM Summary";
+  summary_title = T("VM Summary");
   public namesInUse = [];
   public statSize: any;
   public vcpus: number = 1;
@@ -368,7 +369,7 @@ export class VMWizardComponent {
     protected loader: AppLoaderService, protected dialog: MatDialog,
     public messageService: MessageService,private router: Router,
     private dialogService: DialogService, private storageService: StorageService,
-    protected prefService: PreferencesService) {
+    protected prefService: PreferencesService, private translate: TranslateService) {
 
   }
 
@@ -635,6 +636,34 @@ export class VMWizardComponent {
       ( < FormGroup > entityWizard.formArray.get([0])).controls['bootloader'].setValue(
         this.bootloader.options[0].value
       )
+      setTimeout(() => {
+        let global_label, global_tooltip;
+        this.translate.get(helptext.memory_placeholder).subscribe(mem => {
+          this.translate.get(helptext.global_label).subscribe(gLabel => {
+            this.translate.get(helptext.global_tooltip).subscribe(gTooltip => {
+              this.translate.get(helptext.memory_tooltip).subscribe(mem_tooltip => {
+                this.translate.get(helptext.memory_unit).subscribe(mem_unit => {
+                  global_label = gLabel;
+                  global_tooltip = gTooltip;
+                  _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' }).placeholder = `${mem} ${global_label}`;
+                  _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' }).tooltip = 
+                  `${mem_tooltip} ${global_tooltip} ${mem_unit}`;
+                })
+              })
+            })
+          })
+        });
+        this.translate.get(helptext.volsize_placeholder).subscribe(placeholder => {
+          this.translate.get(helptext.volsize_tooltip).subscribe(tooltip => {
+            this.translate.get(helptext.volsize_tooltip_B).subscribe(tooltipB => {
+              _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' }).placeholder = `${placeholder} ${global_label}`;
+              _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' }).tooltip = 
+                `${tooltip} ${global_label} ${tooltipB}`;
+            })
+          })
+        })
+      }, 2000)
+
   }
   getRndInteger(min, max) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
@@ -697,7 +726,11 @@ volSizeValidator(name: string) {
 
     if (errors) {
       config.hasErrors = true;
-      config.warnings = T(`Cannot allocate ${self.storageService.humanReadable} to storage for this virtual machine.`);
+      self.translate.get('Cannot allocate').subscribe(msg => {
+        self.translate.get('to storage for this virtual machine.').subscribe(msg2 => {
+        config.warnings = `${msg} ${self.storageService.humanReadable} ${msg2}`;  
+        })
+      })
     } else {
       config.hasErrors = false;
       config.warnings = '';

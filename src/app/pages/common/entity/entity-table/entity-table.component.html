@@ -51,7 +51,7 @@
                 <mat-icon *ngIf="isChecked(col)">check_circle</mat-icon>
                 <mat-icon *ngIf="!isChecked(col)">remove</mat-icon>
               </span>
-              <span>{{col.name}}</span>
+              <span>{{col.name | translate}}</span>
             </button>
           </div>
 

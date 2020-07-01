@@ -4,6 +4,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import * as _ from 'lodash';
 import { EntityFormService } from '../../../../pages/common/entity/entity-form/services/entity-form.service';
 import { TranslateService } from '@ngx-translate/core';
+import { T } from '../../../../translate-marker';
 
 import { RestService, WebSocketService, SystemGeneralService, NetworkService, VmService } from '../../../../services/';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -46,22 +47,22 @@ export class DeviceAddComponent implements OnInit {
       placeholder: helptext.dtype_placeholder,
       options: [
         {
-        label: 'CD-ROM',
+        label: T('CD-ROM'),
         value: 'CDROM',
         }, {
-        label: 'NIC',
+        label: T('NIC'),
         value: 'NIC',
         }, {
-        label: 'Disk',
+        label: T('Disk'),
         value: 'DISK',
         }, {
-        label: 'Raw File',
+        label: T('Raw File'),
         value: 'RAW',
         }, {
-        label: 'PCI Passthru Device',
+        label: T('PCI Passthru Device'),
         value: 'PCI',
         }, {
-        label: 'VNC',
+        label: T('VNC'),
         value: 'VNC',
         }
       ],

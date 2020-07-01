@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { T } from '../../../../translate-marker';
 import * as _ from 'lodash';
 import { EntityFormService } from '../../../../pages/common/entity/entity-form/services/entity-form.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -476,7 +477,7 @@ export class DeviceEditComponent implements OnInit {
     this.custActions = [
       {
         id: 'generate_mac_address',
-        name: 'Generate MAC Address',
+        name: T('Generate MAC Address'),
         function: () => {
           this.ws.call('vm.random_mac').subscribe((random_mac) => {
             this.nicFormGroup.controls['mac'].setValue(random_mac);

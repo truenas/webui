@@ -14,7 +14,7 @@ wizard_type_label: T('Select VM wizard type'),
 wizard_type_placeholder: T('Virtual Machine (VM) Wizard type.'),
 wizard_type_tooltip: T('Select the Virtual Machine (VM) Wizard type.'),
 wizard_type_options: [
-  {label: 'Virtual Machine (VM)', value: 'vm'},
+  {label: T('Virtual Machine (VM)'), value: 'vm'},
 ],
 wizard_type_validation : [ Validators.required ],
 wizard_type_value: 'vm',
@@ -23,9 +23,9 @@ os_label: T('Operating System'),
 os_placeholder: T('Guest Operating System'),
 os_tooltip: T('Choose the VM operating system type.'),
 os_options: [
-  {label: 'Windows', value: 'Windows'},
-  {label: 'Linux', value: 'Linux'},
-  {label: 'FreeBSD', value: 'FreeBSD'},
+  {label: T('Windows'), value: 'Windows'},
+  {label: T('Linux'), value: 'Linux'},
+  {label: T('FreeBSD'), value: 'FreeBSD'},
 ],
 os_validation : [ Validators.required ],
 
@@ -90,9 +90,12 @@ validation : [Validators.min(0) ],
 
 },
 
-memory_placeholder: T(`Memory Size ${globalHelptext.human_readable.suggestion_label}`),
+memory_placeholder: T('Memory Size'),
+global_label: globalHelptext.human_readable.suggestion_label,
 memory_validation : [Validators.required],
-memory_tooltip: T(`Allocate RAM for the VM. Minimum value is 256 MiB. ${globalHelptext.human_readable.suggestion_tooltip} bytes.`),
+memory_tooltip: T('Allocate RAM for the VM. Minimum value is 256 MiB.'),
+global_tooltip: globalHelptext.human_readable.suggestion_tooltip,
+memory_unit: T('bytes.'),
 memory_size_err: T('Allocate at least 256 MiB.'),
 memory_warning: T('Caution: Allocating too much memory can slow the \
  system or prevent VMs from running.'),
@@ -107,9 +110,10 @@ disk_radio_tooltip: T('Select <i>Create new disk image</i> to create a new\
 disk_radio_options_new_label: T("Create new disk image"),
 disk_radio_options_existing_label: T("Use existing disk image"),
 
-volsize_placeholder : T(`Size ${globalHelptext.human_readable.suggestion_label}`),
-volsize_tooltip: T(`Allocate space for the new zvol. ${globalHelptext.human_readable.suggestion_tooltip} MiB. Units \
- smaller than MiB are not allowed.`),
+volsize_placeholder : T('Size'),
+volsize_tooltip: T('Allocate space for the new zvol.'),
+volsize_tooltip_B: T('MiB. Units \
+ smaller than MiB are not allowed.'),
 volsize_validation: [Validators.required],
 volsize_min_err: T('Minimum size is 1 MiB'),
 
@@ -157,12 +161,12 @@ iso_path_validation : [ Validators.required ],
 upload_iso_checkbox_placeholder : T('Upload an installer image file'),
 upload_iso_checkbox_tooltip: T('Set to display image upload options.'),
 
-upload_iso_path_placeholder : 'ISO save location',
+upload_iso_path_placeholder : T('ISO save location'),
 upload_iso_path_tooltip: T('Choose a location to store the installer image file.'),
 upload_iso_path_validation: [],
 
-upload_iso_placeholder : 'ISO upload location',
-upload_iso_tooltip: 'Browse to the installer image file and click <b>Upload</b>.',
+upload_iso_placeholder : T('ISO upload location'),
+upload_iso_tooltip: T('Browse to the installer image file and click <b>Upload</b>.'),
 upload_iso_validation : [  ],
 
 vm_settings_title: T('General VM Settings'),
