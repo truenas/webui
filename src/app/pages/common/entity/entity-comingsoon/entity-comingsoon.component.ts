@@ -9,7 +9,7 @@ import urls from '../../../../helptext/urls';
   providers: []
 })
 export class EntityComingsoonComponent {
-  @Input('conf') conf = {};
+  @Input('conf') conf = {help_path:'hub/scale/dev-notes/'};
   public helpurl: any; 
 
   constructor() {
