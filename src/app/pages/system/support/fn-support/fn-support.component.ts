@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
+import { T } from "app/translate-marker";
 import * as _ from 'lodash';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -70,8 +72,8 @@ export class FnSupportComponent {
           placeholder : helptext.type.placeholder,
           tooltip : helptext.type.tooltip,
           options:[
-            {label: 'Bug', value: 'BUG'},
-            {label: 'Feature', value: 'FEATURE'}
+            {label: T('Bug'), value: 'BUG'},
+            {label: T('Feature'), value: 'FEATURE'}
           ],
           value: 'BUG'
         },
@@ -140,10 +142,16 @@ export class FnSupportComponent {
     }
   ]
 
-  constructor(protected ws: WebSocketService,  protected dialog: MatDialog) { }
+  constructor(protected ws: WebSocketService,  protected dialog: MatDialog,
+    protected translate: TranslateService) { }
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
+    setTimeout(() => {
+      this.translate.get(helptext.contactUs).subscribe(res => {
+        _.find(this.fieldConfig, { name: 'FN_col2' }).paraText = '<i class="material-icons">mail</i>' + res;
+      })
+    }, 2000)
   }
 
   blurEvent(parent){
@@ -202,7 +210,7 @@ export class FnSupportComponent {
   };
 
   openDialog(payload) {
-    const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Ticket","CloseOnClickOutside":true}});
+    const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":T("Ticket"),"CloseOnClickOutside":true}});
     let url;
     dialogRef.componentInstance.setCall('support.new_ticket', [payload]);
     dialogRef.componentInstance.submit();
