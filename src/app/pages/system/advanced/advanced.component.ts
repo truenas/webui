@@ -16,7 +16,7 @@ import { EntityUtils } from '../../common/entity/utils';
 
 @Component({
   selector: 'app-system-advanced',
-  templateUrl: 'advanced.component.html',
+  template: `<entity-form [conf]="this"></entity-form>`,
   styleUrls: ['advanced.component.css'],
   providers: [DatePipe]
 })
