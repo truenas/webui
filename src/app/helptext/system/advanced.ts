@@ -7,9 +7,9 @@ export const helptext_system_advanced = {
   fieldset_console: T('Console'),
   fieldset_storage: T('Storage'),
   fieldset_ui: T('GUI'),
-  fieldset_sed: T('SED'),
+  fieldset_sed: T('Self-Encrypting Drive'),
   fieldset_kernel: T('Kernel'),
-  fieldset_other: T('Other Options'),
+  fieldset_syslog: T('Syslog'),
 
   dialog_generate_debug_title: T("Generate Debug File"),
   dialog_generate_debug_message: T("This operation might take a long time. Proceed?"),
@@ -87,9 +87,6 @@ export const helptext_system_advanced = {
   cpu_in_percentage_placeholder: T('Report CPU Usage in Percentage'),
   cpu_in_percentage_tooltip: T('Set to display CPU usage as percentages in Reporting.'),
 
-  sed_options_message_paragraph: T('Self-Encrypting Drive Options'),
-  sed_options_tooltip: T(''),
-
   sed_user_placeholder: T('ATA Security User'),
   sed_user_tooltip: T('User passed to <i>camcontrol security -u</i> to unlock\
  SEDs'),
@@ -104,5 +101,36 @@ export const helptext_system_advanced = {
   swapondrive_max_warning: T("Maximum swap size is 99 GiB"),
 
   debug_download_failed_title: T("Error Downloading File"),
-  debug_download_failed_message: T("Debug could not be downloaded.")
+  debug_download_failed_message: T("Debug could not be downloaded."),
+
+  sysloglevel: {
+    placeholder: T("Syslog level"),
+    tooltip: T(
+      "When Syslog server is defined, only logs matching this\
+ level are sent."
+    ),
+    options: [
+      {label:T('Emergency'), value:'F_EMERG'},
+      {label:T('Alert'), value:'F_ALERT'},
+      {label:T('Critical'), value:'F_CRIT'},
+      {label:T('Error'), value:'F_ERR'},
+      {label:T('Warning'), value:'F_WARNING'},
+      {label:T('Notice'), value:'F_NOTICE'},
+      {label:T('Info'), value:'F_INFO'},
+      {label:T('Debug'), value:'F_DEBUG'},
+      {label:T('Is Debug'), value:'F_IS_DEBUG'}
+    ]
+  },
+
+  syslogserver: {
+    placeholder: T("Syslog server"),
+    tooltip: T(
+      "Remote syslog server DNS hostname or IP address.\
+ Nonstandard port numbers can be used by adding\
+ a colon and the port number to the hostname, like\
+ <samp>mysyslogserver:1928</samp>. Log entries\
+ are written to local logs and sent to the remote\
+ syslog server."
+    )
+  },
 };

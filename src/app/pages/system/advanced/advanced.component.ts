@@ -253,12 +253,6 @@ export class AdvancedComponent implements OnDestroy {
       width: '49%',
       config: [
         {
-          type: 'paragraph',
-          name: 'sed_options_message',
-          paraText: helptext_system_advanced.sed_options_message_paragraph,
-          tooltip: helptext_system_advanced.sed_options_tooltip
-        },
-        {
           type: 'select',
           name: 'sed_user',
           placeholder: helptext_system_advanced.sed_user_placeholder,
@@ -312,9 +306,9 @@ export class AdvancedComponent implements OnDestroy {
     },
     { name: 'spacer', label: false, width: '2%' },
     {
-      name: helptext_system_advanced.fieldset_other,
+      name: helptext_system_advanced.fieldset_syslog,
       label: true,
-      class: 'other',
+      class: 'syslog',
       width: '49%',
       config: [
         {
@@ -322,6 +316,19 @@ export class AdvancedComponent implements OnDestroy {
           name: 'fqdn_syslog',
           placeholder: helptext_system_advanced.fqdn_placeholder,
           tooltip: helptext_system_advanced.fqdn_tooltip
+        },
+        {
+          type: 'select',
+          name: 'sysloglevel',
+          placeholder: helptext_system_advanced.sysloglevel.placeholder,
+          tooltip: helptext_system_advanced.sysloglevel.tooltip,
+          options: helptext_system_advanced.sysloglevel.options,
+        },
+        {
+          type: 'input',
+          name: 'syslogserver',
+          placeholder: helptext_system_advanced.syslogserver.placeholder,
+          tooltip: helptext_system_advanced.syslogserver.tooltip,
         }
       ]
     },
