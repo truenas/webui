@@ -303,8 +303,12 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   checkMultipath(name:string){
-    const truth = name.startsWith("multipath/");
-    return truth;
+    if(name){
+      const truth = name.startsWith("multipath/");
+      return truth;
+    } else {
+      return false;
+    }
   }
 
   updateSlide(name:string,verified: boolean, slideIndex:number, dataIndex?: number, dataSource?:any){
