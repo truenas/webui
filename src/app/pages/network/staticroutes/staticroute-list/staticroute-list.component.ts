@@ -14,6 +14,7 @@ export class StaticRouteListComponent {
   protected route_add: string[] = [ 'network', 'staticroutes', 'add' ];
   protected route_add_tooltip: string = "Add Static Route";
   protected route_edit: string[] = [ 'network', 'staticroutes', 'edit' ];
+  protected wsDelete = 'staticroute.delete';
 
   public columns: Array<any> = [
     {name : T('Destination'), prop : 'destination', always_display: true },
