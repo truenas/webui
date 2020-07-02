@@ -185,24 +185,25 @@ export class ServiceOpenvpnServerComponent {
               type: 'select',
               name: 'client_certificate_id',
               placeholder: 'Client Certificate',
-              tooltip: 'This is very important.',
               options: this.certOptions
             }
           ],
           saveButtonText: ('Submit'),
           customSubmit: function (entityDialog) {
-            const value = entityDialog.formValue;
-            entityDialog.dialogRef.close(true);
-            self.loader.open();
-            self.services.generateOpenServerClientConfig(value.client_certificate_id, 
-              self.serverAddress).subscribe((key) => {
-              const filename = 'openVPNClientConfig.ovpn';
-              const blob = new Blob([key], {type: 'text/plain'});
-              self.storageService.downloadBlob(blob, filename);
-              self.loader.close();
-            }, err => {
-              self.loader.close();
-              self.dialog.errorReport(helptext.error_dialog_title, err.reason, err.trace.formatted)
+            self.ws.call('interface.websocket_local_ip').subscribe(localip => {
+              const value = entityDialog.formValue;
+              entityDialog.dialogRef.close(true);
+              self.loader.open();
+              self.services.generateOpenServerClientConfig(value.client_certificate_id, 
+                localip).subscribe((key) => {
+                const filename = 'openVPNClientConfig.ovpn';
+                const blob = new Blob([key], {type: 'text/plain'});
+                self.storageService.downloadBlob(blob, filename);
+                self.loader.close();
+              }, err => {
+                self.loader.close();
+                self.dialog.errorReport(helptext.error_dialog_title, err.reason, err.trace.formatted)
+              })
             })
           }
         }
