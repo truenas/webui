@@ -247,6 +247,28 @@ export class AdvancedComponent implements OnDestroy {
     },
     { name: 'spacer', label: false, width: '2%' },
     {
+      name: helptext_system_advanced.fieldset_kernel,
+      label: true,
+      class: 'kernel',
+      width: '49%',
+      config: [
+
+        {
+          type: 'checkbox',
+          name: 'autotune',
+          placeholder: helptext_system_advanced.autotune_placeholder,
+          tooltip: helptext_system_advanced.autotune_tooltip
+        },
+        {
+          type: 'checkbox',
+          name: 'debugkernel',
+          placeholder: helptext_system_advanced.debugkernel_placeholder,
+          tooltip: helptext_system_advanced.debugkernel_tooltip
+        },
+      ]
+    },
+    { name: 'divider', divider: true },
+    {
       name: helptext_system_advanced.fieldset_sed,
       label: true,
       class: 'sed',
@@ -280,28 +302,6 @@ export class AdvancedComponent implements OnDestroy {
           togglePw: true,
           validation : this.validationService.matchOtherValidator('sed_passwd')
         }
-      ]
-    },
-    { name: 'divider', divider: true },
-    {
-      name: helptext_system_advanced.fieldset_kernel,
-      label: true,
-      class: 'kernel',
-      width: '49%',
-      config: [
-
-        {
-          type: 'checkbox',
-          name: 'autotune',
-          placeholder: helptext_system_advanced.autotune_placeholder,
-          tooltip: helptext_system_advanced.autotune_tooltip
-        },
-        {
-          type: 'checkbox',
-          name: 'debugkernel',
-          placeholder: helptext_system_advanced.debugkernel_placeholder,
-          tooltip: helptext_system_advanced.debugkernel_tooltip
-        },
       ]
     },
     { name: 'spacer', label: false, width: '2%' },
