@@ -6,16 +6,16 @@ import { ApiService } from 'app/core/services/api.service';
 import { Router } from '@angular/router';
 
 export const DefaultTheme = {
-      name:'ix-official',
-      label: "iX Official",
+      name:'ix-dark',
+      label: "iX Dark",
       labelSwatch:"blue",
-      description:'Official iX System Colors on Dark',
+      description:'FreeNAS 11.2 default theme',
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
-      topbar:"var(--blue)",
-      accent:"var(--cyan)",
-      bg1:'#002535',
-      bg2:'#00344b',
+      topbar:"#111111",
+      accent:"var(--yellow)",
+      bg1:'#171E26',
+      bg2:'#232d35',
       fg1:'#aaaaaa',
       fg2:'#cccccc',
       'alt-bg1':'rgba(122,122,122,0.25)',
@@ -27,9 +27,9 @@ export const DefaultTheme = {
       red:'#ff0013',
       magenta:'#d238ff',
       violet:'#c17ecc',
-      blue:'#0095D5',
+      blue:'#0D5788',
       cyan:'#00d0d6',
-      green:'#21C150'
+      green:'#1F9642'
     }
 
 export interface Theme {
@@ -67,7 +67,7 @@ export interface Theme {
 export class ThemeService {
   readonly freeThemeDefaultIndex = 0;
   public activeTheme: string = 'default';
-  public defaultTheme: string = 'ix-official';
+  public defaultTheme: string = 'ix-dark';
   public activeThemeSwatch: string[];
 
   // Theme lists
@@ -77,32 +77,6 @@ export class ThemeService {
 
   public freenasThemes: Theme[] = [
     DefaultTheme,
-    {
-      name:'ix-dark',
-      label: "iX Dark",
-      labelSwatch:"blue",
-      description:'FreeNAS 11.2 default theme',
-      accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
-      primary:"var(--blue)",
-      topbar:"var(--blue)",
-      accent:"var(--yellow)",
-      bg1:'#171E26',
-      bg2:'#232d35',
-      fg1:'#aaaaaa',
-      fg2:'#cccccc',
-      'alt-bg1':'rgba(122,122,122,0.25)',
-      'alt-bg2':'#6F6E6C',
-      'alt-fg1':'#c1c1c1',
-      'alt-fg2':'#e1e1e1',
-      yellow:'#f0cb00',
-      orange:'#ee9302',
-      red:'#ff0013',
-      magenta:'#d238ff',
-      violet:'#c17ecc',
-      blue:'#0D5788',
-      cyan:'#00d0d6',
-      green:'#1F9642'
-    },
     {
       name:'ix-blue',
       label: "iX Blue",
