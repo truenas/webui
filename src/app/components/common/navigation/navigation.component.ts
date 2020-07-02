@@ -48,8 +48,6 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
       if (this.productType === 'SCALE') {
         _.find(_.find(menuItem, {state : "system"}).sub, {state : "kmip"}).disabled = true;
         _.find(_.find(menuItem, {state : "directoryservice"}).sub, {state : "nis"}).disabled = true;
-        _.find(_.find(menuItem, {state : "network"}).sub, {state : "staticroutes"}).disabled = true;
-        _.find(_.find(menuItem, {state : "sharing"}).sub, {state : "nfs"}).disabled = true;
         _.find(_.find(menuItem, {state : "sharing"}).sub, {state : "webdav"}).disabled = true;
         _.find(_.find(menuItem, {state : "storage"}).sub, {state : "multipaths"}).disabled = true;
         // tunables are called sysctl in linux so we should use the routes/menus/etc that call it sysctl on scale
