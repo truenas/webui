@@ -13,6 +13,7 @@ import { DialogService } from "../../../services/dialog.service";
 import { T } from '../../../translate-marker';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-system-advanced',
@@ -329,6 +330,29 @@ export class AdvancedComponent implements OnDestroy {
           name: 'syslogserver',
           placeholder: helptext_system_advanced.syslogserver.placeholder,
           tooltip: helptext_system_advanced.syslogserver.tooltip,
+        },
+        {
+          type: 'select',
+          name: 'syslog_transport',
+          placeholder: helptext_system_advanced.syslog_transport.placeholder,
+          tooltip: helptext_system_advanced.syslog_transport.tooltip,
+          options: helptext_system_advanced.syslog_transport.options,
+        },
+        {
+          type: 'select',
+          name: 'syslog_tls_certificate',
+          placeholder: helptext_system_advanced.syslog_tls_certificate.placeholder,
+          tooltip: helptext_system_advanced.syslog_tls_certificate.tooltip,
+          options: [],
+          relation: [
+            {
+              action: "SHOW",
+              when: [{
+                name: "syslog_transport",
+                value: 'TLS'
+              }]
+            }
+          ]
         }
       ]
     },
@@ -364,7 +388,14 @@ export class AdvancedComponent implements OnDestroy {
     }
 
   }
-
+  preInit() {
+    const syslog_tls_certificate_field = this.fieldSets.config('syslog_tls_certificate');
+    this.ws.call('certificate.query').subscribe((certs) => {
+      for (const cert of certs) {
+        syslog_tls_certificate_field.options.push({label: cert.name, value: cert.id});
+      }
+    })
+  }
   afterInit(entityEdit: any) {
     this.ws.call('failover.licensed').subscribe((is_ha) => {
       this.is_ha = is_ha;

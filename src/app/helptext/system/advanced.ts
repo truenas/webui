@@ -104,7 +104,7 @@ export const helptext_system_advanced = {
   debug_download_failed_message: T("Debug could not be downloaded."),
 
   sysloglevel: {
-    placeholder: T("Syslog level"),
+    placeholder: T("Syslog Level"),
     tooltip: T(
       "When Syslog server is defined, only logs matching this\
  level are sent."
@@ -123,7 +123,7 @@ export const helptext_system_advanced = {
   },
 
   syslogserver: {
-    placeholder: T("Syslog server"),
+    placeholder: T("Syslog Server"),
     tooltip: T(
       "Remote syslog server DNS hostname or IP address.\
  Nonstandard port numbers can be used by adding\
@@ -133,4 +133,19 @@ export const helptext_system_advanced = {
  syslog server."
     )
   },
+
+  syslog_transport: {
+    placeholder: T("Syslog Transport"),
+    tooltip: T(''),
+    options: [
+      {label:T('UDP'), value:'UDP'},
+      {label:T('TCP'), value:'TCP'},
+      {label:T('TLS'), value:'TLS'},
+    ]
+  },
+
+  syslog_tls_certificate: {
+    placeholder: T("Syslog TSL Certificate"),
+    tooltip: T(''),
+  }
 };
