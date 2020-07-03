@@ -2,8 +2,7 @@ import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 
 export default {
-rsyncd_fieldset_name: T('Name'),
-rsyncd_fieldset_path: T('Path'),
+rsyncd_fieldset_general: T('General'),
 rsyncd_fieldset_access: T('Access'),
 rsyncd_fieldset_other: T('Other Options'),
 
@@ -25,6 +24,9 @@ rsyncmod_name_validation: Validators.required,
 
 rsyncmod_comment_placeholder: T('Comment'),
 rsyncmod_comment_tooltip: T('Describe this module.'),
+
+rsyncmod_enabled_placeholder: T('Enabled'),
+rsyncmod_enabled_tooltip: T(''),
 
 rsyncmod_path_placeholder: T('Path'),
 rsyncmod_path_tooltip: T('Browse to the pool or dataset to store received \
