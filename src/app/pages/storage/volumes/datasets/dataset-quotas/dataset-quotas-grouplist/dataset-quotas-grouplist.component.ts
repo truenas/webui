@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { ValidationErrors, FormControl } from '@angular/forms';
 import { WebSocketService, StorageService, DialogService, AppLoaderService } from 'app/services';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -42,7 +43,8 @@ export class DatasetQuotasGrouplistComponent implements OnDestroy{
 
   constructor(protected ws: WebSocketService, protected storageService: StorageService,
     protected dialogService: DialogService, protected loader: AppLoaderService,
-    protected router: Router, protected aroute: ActivatedRoute) { }
+    protected router: Router, protected aroute: ActivatedRoute,
+    private translate: TranslateService) { }
 
   getAddActions() {
     return [{
@@ -173,12 +175,18 @@ export class DatasetQuotasGrouplistComponent implements OnDestroy{
   }
 
   dataHandler(data): void {
-    data.rows.forEach(row => {
-      row.quota = this.storageService.convertBytestoHumanReadable(row.quota, 0);
-      row.used_percent = `${Math.round((row.used_percent) * 100) / 100}%`;
-      row.obj_used_percent = `${Math.round((row.obj_used_percent) * 100) / 100}%`;
+    this.translate.get(helptext.shared.nameErr).subscribe(msg => {
+      data.rows.forEach(row => {
+        if (!row.name) {
+          row.name = `ID: ${row.id} - ERR:(${msg})`;
+        }
+        row.quota = this.storageService.convertBytestoHumanReadable(row.quota, 0);
+        row.used_percent = `${Math.round((row.used_percent) * 100) / 100}%`;
+        row.obj_used_percent = `${Math.round((row.obj_used_percent) * 100) / 100}%`;
+      })
+      return data;
     })
-    return data;
+
   }
 
   blurEvent(parent) {
