@@ -63,9 +63,6 @@ msgstr ""
 msgid " and "
 msgstr " y "
 
-msgid " and all snapshots of it?"
-msgstr " y todas sus instantáneas?"
-
 msgid " and will be disrupted if the pool is detached:"
 msgstr " y se verá interrumpido si el pool está separado:"
 
@@ -86,9 +83,6 @@ msgstr " discos"
 
 msgid " disks, new vdev has "
 msgstr " discos, nuevo vdev tiene "
-
-msgid " has been unlocked."
-msgstr " ha sido desbloqueado."
 
 msgid " is "
 msgstr " es "
@@ -667,6 +661,14 @@ msgstr ""
 "instalado en la VM admite controladores de red paravirtualizados VirtIO."
 
 msgid ""
+"<i>Internal Certificate</i> is used for internal or local  systems. "
+"<i>Certificate Signing Request</i> is used to get a CA signature.  "
+"<i>Import Certificate</i> allows an existing certificate to be imported "
+"onto  the system. <i>Import Certificate Signing Request</i> allows an "
+"existing CSR  to be imported onto the system."
+msgstr ""
+
+msgid ""
 "<i>PUSH</i> sends data to cloud storage. <i>PULL</i>  receives data from "
 "cloud storage. Changing the direction resets the  <i>Transfer Mode</i> to "
 "COPY."
@@ -819,6 +821,11 @@ msgstr ""
 "<samp>G</samp>. Consulte <a "
 "href=\"https://rclone.org/docs/#bwlimit-bandwidth-spec\" target=\"_blank\"> "
 "rclone --bwlimit</a>."
+
+msgid ""
+"A smaller block size can reduce sequential I/O performance and space "
+"efficiency."
+msgstr ""
 
 msgid ""
 "A space-delimited list of network interfaces attached to a <b>VNET</b> "
@@ -1368,6 +1375,9 @@ msgstr "Dirección"
 msgid "Address space limit in bytes for the jail."
 msgstr "Límite de espacio de direcciones en bytes para la jaula."
 
+msgid "Addresses"
+msgstr ""
+
 msgid ""
 "Adjust how often alert notifications are sent, use  the Frequency "
 "drop-down. Setting the Frequency to NEVER prevents that  alert from being "
@@ -1497,11 +1507,17 @@ msgstr "Todos los directorios"
 msgid "All users"
 msgstr "Todos los usuarios"
 
+msgid "Allocate RAM for the VM. Minimum value is 256 MiB."
+msgstr ""
+
 msgid "Allocate a number of megabytes of RAM to the VM."
 msgstr "Asigne una cantidad de megabytes de RAM a la VM."
 
 msgid "Allocate at least 256 MiB."
 msgstr "Asigne al menos 256 MiB."
+
+msgid "Allocate space for the new zvol."
+msgstr ""
 
 msgid "Allow"
 msgstr "Permitir"
@@ -1842,6 +1858,9 @@ msgid ""
 msgstr ""
 "Nombres alternativos que los clientes SMB pueden usar al conectarse a este "
 "NAS. No puede tener más de 15 caracteres."
+
+msgid "Always"
+msgstr ""
 
 msgid "Always Chroot"
 msgstr "Siempre chroot"
@@ -2240,6 +2259,9 @@ msgstr "Parámetros auxiliares (upsd.conf)"
 msgid "Auxiliary parameters"
 msgstr "Parámetros auxiliares"
 
+msgid "Available"
+msgstr ""
+
 msgid "Available Disks"
 msgstr "Discos disponibles"
 
@@ -2269,6 +2291,11 @@ msgstr "Volver"
 
 msgid "Back to Support"
 msgstr "Volver a soporte"
+
+msgid ""
+"Back up the encryption key now! If the key is lost, the data on the disks "
+"will also be lost with no hope of recovery."
+msgstr ""
 
 msgid "Backend"
 msgstr "Backend"
@@ -2511,6 +2538,9 @@ msgstr ""
 "Vaya al archivo de clave exportado que se puede utilizar para desbloquear "
 "este conjunto de datos."
 
+msgid "Browse to the installer image file and click <b>Upload</b>."
+msgstr ""
+
 msgid "Browse to the keytab file to upload."
 msgstr "Busque el archivo de tabla de claves para cargar."
 
@@ -2545,6 +2575,9 @@ msgstr "Busque el pool o conjunto de datos para almacenar los datos recibidos."
 
 msgid "Bucket"
 msgstr "Cubo"
+
+msgid "Bug"
+msgstr ""
 
 msgid "Burst"
 msgstr "Estallar"
@@ -2603,6 +2636,9 @@ msgstr "CAs"
 
 msgid "CC"
 msgstr "CC"
+
+msgid "CD-ROM"
+msgstr ""
 
 msgid "CD-ROM Path"
 msgstr "Ruta del CD-ROM"
@@ -2692,6 +2728,9 @@ msgid ""
 msgstr ""
 "No se puede abrir este ACL. Verifique los permisos que este conjunto de "
 "datos ha heredado de los padres."
+
+msgid "Capacity"
+msgstr ""
 
 msgid "Case Sensitivity"
 msgstr "Sensibilidad del caso"
@@ -2811,9 +2850,6 @@ msgstr ""
 
 msgid "Change log"
 msgstr "Cambiar registro"
-
-msgid "Change order for "
-msgstr "Cambiar orden para "
 
 msgid ""
 "Change the default password to improve system security. The new password "
@@ -3156,6 +3192,20 @@ msgid "Choose an option"
 msgstr "Elige una opcion"
 
 msgid ""
+"Choose between <i>Internal CA</i>, <i>Intermediate CA</i>, and  <i>Import "
+"CA</i>. An <i>Internal CA</i> functions like a publicly trusted CA  to sign "
+"certificates for an internal network. They are not trusted outside  the "
+"private network. An <i>Intermediate CA</i> lives between the root and end  "
+"entity certificates and its main purpose is to define and authorize the  "
+"types of certificates that can be requested from the root CA. <i>Import "
+"CA</i>  allows an existing CA to be imported onto the system.<br>  For more "
+"information see  <a "
+"href=\"https://www.globalsign.com/en/blog/what-is-an-intermediate-or-"
+"subordinate-certificate-authority\">  What are Subordinate CAs and Why "
+"Would You Want Your Own?</a>"
+msgstr ""
+
+msgid ""
 "Choose between <i>Off</i>, <a "
 "href=\"http://info.ssl.com/article.aspx?id=10241\" "
 "target=\"_blank\">SSL</a> or <a "
@@ -3412,6 +3462,9 @@ msgstr "Borre la contraseña de SED para este disco."
 msgid "Clearing Cache..."
 msgstr "Borrar caché..."
 
+msgid "Click"
+msgstr ""
+
 msgid ""
 "Click <b>Browse</b> to select an encryption key to upload. This allows the "
 "system to decrypt the disks."
@@ -3610,6 +3663,9 @@ msgstr "Comprimir conexiones"
 
 msgid "Compression"
 msgstr "Compresión"
+
+msgid "Compression Ratio"
+msgstr ""
 
 msgid "Compression level"
 msgstr "Nivel de compresión"
@@ -4440,6 +4496,9 @@ msgstr ""
 "después de <i>dataset1</i> creará <i>zvol1</i> para el almacenamiento de "
 "instantáneas."
 
+msgid "Define the path to an existing zvol for VM use."
+msgstr ""
+
 msgid "Define the server where all changes to the database are performed."
 msgstr "Defina el servidor donde se realizan todos los cambios en la base de datos."
 
@@ -4486,9 +4545,6 @@ msgstr "Eliminar "
 
 msgid "Delete Dataset"
 msgstr "Eliminar conjunto de datos"
-
-msgid "Delete Dataset <i><b>"
-msgstr "Eliminar conjunto de datos <i><b>"
 
 msgid "Delete Device"
 msgstr "Eliminar dispositivo"
@@ -4552,9 +4608,6 @@ msgstr ""
 
 msgid "Delete the selected item?"
 msgstr "¿Eliminar el elemento seleccionado?"
-
-msgid "Delete the zvol "
-msgstr "Eliminar el zvol "
 
 msgid "Delete this path."
 msgstr "Eliminar esta ruta."
@@ -4703,9 +4756,6 @@ msgstr "Separar disco "
 msgid "Details"
 msgstr "Detalles"
 
-msgid "Details for "
-msgstr "Detalles para "
-
 msgid ""
 "Determine how  <a href=\"https://www.freebsd.org/cgi/man.cgi?query=chmod\" "
 "target=\"_blank\">chmod</a>  behaves when adjusting file ACLs. See the  <a "
@@ -4799,6 +4849,9 @@ msgstr "Dispositivo conectado"
 
 msgid "Device Busy"
 msgstr "Dispositivo ocupado"
+
+msgid "Device ID"
+msgstr ""
 
 msgid "Device Order"
 msgstr "Orden de dispositivo"
@@ -5519,17 +5572,14 @@ msgstr ""
 "S.M.A.R.T.</a>."
 
 msgid ""
-"Enabling allows using a password to authenticate  the SSH login. Disabling "
-"changes authentication to require keys for  all users. This requires  <a "
+"Enabling allows using a password to authenticate  the SSH login. "
+"<i>Warning:</i> when directory services are enabled, allowing password  "
+"authentication can grant access to all users imported by the directory "
+"service.<br>  Disabling changes authentication to require keys for all "
+"users. This requires  <a "
 "href=\"http://the.earth.li/%7Esgtatham/putty/0.55/htmldoc/Chapter8.html\" "
 "target=\"_blank\">additional setup</a>  on both the SSH client and server."
 msgstr ""
-"La habilitación permite usar una contraseña para autenticar el inicio de "
-"sesión SSH. Deshabilitar la autenticación de cambios para requerir claves "
-"para todos los usuarios. Esto requiere <a "
-"href=\"http://the.earth.li/%7Esgtatham/putty/0.55/htmldoc/Chapter8.html\" "
-"target=\"_blank\">configuración adicional</a> tanto en el cliente SSH como "
-"en el servidor."
 
 msgid ""
 "Enabling sends the  <i>plugin instance</i> and <i>type instance</i> to "
@@ -6107,13 +6157,8 @@ msgstr ""
 msgid ""
 "Enter additional parameters from  <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=ifconfig\" "
-"target=\"_blank\">ifconfig(8)</a>.  Separate entries by pressing "
-"<code>Enter</code>."
+"target=\"_blank\">ifconfig(8)</a>."
 msgstr ""
-"Ingrese parámetros adicionales de <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=ifconfig\" "
-"target=\"_blank\">ifconfig(8)</a>. Separe las entradas presionando "
-"<code>Enter</code>."
 
 msgid "Enter an IPv4 address. This overrides the default gateway provided by DHCP."
 msgstr ""
@@ -6650,14 +6695,8 @@ msgstr "Entorno"
 msgid "Error"
 msgstr "Error"
 
-msgid "Error Deleting zvol "
-msgstr "Error al eliminar zvol "
-
 msgid "Error Downloading File"
 msgstr "Error al descargar el archivo"
-
-msgid "Error Promoting dataset "
-msgstr "Error al promover el conjunto de datos "
 
 msgid "Error Saving Configuration Settings"
 msgstr "Error al guardar la configuración"
@@ -6682,9 +6721,6 @@ msgstr "Error al crear VM."
 
 msgid "Error decrypting disks"
 msgstr "Error al desencriptar los discos"
-
-msgid "Error deleting dataset "
-msgstr "Error al eliminar el conjunto de datos "
 
 msgid "Error details for "
 msgstr "Detalles de error para "
@@ -6953,6 +6989,9 @@ msgstr "La conmutación por error está en un estado de error."
 msgid "Fast (Less secure)"
 msgstr "Rápido (menos seguro)"
 
+msgid "Feature"
+msgstr ""
+
 msgid "Features"
 msgstr "Característivas"
 
@@ -7119,9 +7158,6 @@ msgstr "Forzar HDD en espera"
 msgid "Force Stop After Timeout"
 msgstr "Forzar detención después del tiempo de espera"
 
-msgid "Force deletion of dataset "
-msgstr "Forzar la eliminación del conjunto de datos "
-
 msgid "Force size"
 msgstr "Forzar tamaño"
 
@@ -7173,6 +7209,9 @@ msgstr "Formulario inválido"
 
 msgid "Free"
 msgstr "Libre"
+
+msgid "FreeBSD"
+msgstr ""
 
 msgid "FreeBSD device names of each disk being edited."
 msgstr "Nombres de dispositivos FreeBSD de cada disco que se está editando."
@@ -7297,6 +7336,9 @@ msgstr "Generar clave"
 
 msgid "Generate Keypair"
 msgstr "Generar par de claves"
+
+msgid "Generate MAC Address"
+msgstr ""
 
 msgid "Generate New"
 msgstr "Generar nuevo"
@@ -7918,6 +7960,12 @@ msgstr "Prefijo IPv6 para la jaula."
 
 msgid "ISNS Servers"
 msgstr "Servidores ISNS"
+
+msgid "ISO save location"
+msgstr ""
+
+msgid "ISO upload location"
+msgstr ""
 
 msgid "Icon Buttons"
 msgstr "Botones de icono"
@@ -8765,6 +8813,9 @@ msgstr "Estado del enlace"
 msgid "Linked Service"
 msgstr "Servicio vinculado"
 
+msgid "Linux"
+msgstr ""
+
 msgid ""
 "List of files and directories to exclude from sync.<br>  Separate entries "
 "by pressing <code>Enter</code>. See  <a "
@@ -9220,6 +9271,9 @@ msgstr "Métricas"
 
 msgid "MiB"
 msgstr "MiB"
+
+msgid "MiB. Units  smaller than MiB are not allowed."
+msgstr ""
 
 msgid "Microsoft Account"
 msgstr "Cuenta de Microsoft"
@@ -10109,6 +10163,9 @@ msgstr "Disco sin conexión "
 msgid "Ok"
 msgstr "Ok"
 
+msgid "On"
+msgstr ""
+
 msgid "On a Different System"
 msgstr "En un sistema diferente"
 
@@ -10296,6 +10353,9 @@ msgstr ""
 
 msgid "Orange"
 msgstr "Naranja"
+
+msgid "Order"
+msgstr ""
 
 msgid ""
 "Order of selected interface within the lagg. Configure a failover to set "
@@ -11133,6 +11193,9 @@ msgstr "Leer/Escribir"
 msgid "Read/Write Access"
 msgstr "Acceso de lectura/Escritura"
 
+msgid "Readonly"
+msgstr ""
+
 msgid "Realm"
 msgstr "Reino"
 
@@ -11141,6 +11204,9 @@ msgstr "Reiniciar después de la actualización"
 
 msgid "Rebuild Directory Service Cache"
 msgstr "Reconstruir caché del servicio de directorio"
+
+msgid "Recommended block size based on pool topology:"
+msgstr ""
 
 msgid ""
 "Recommended when <i>Max. Poll</i> is greater   than 10. Only use on "
@@ -11985,9 +12051,6 @@ msgstr "Tarea Scrub"
 
 msgid "Scrub Tasks"
 msgstr "Tareas Scrub"
-
-msgid "Scrub complete on pool <i>"
-msgstr "Scrub completo en pool <i>"
 
 msgid "Scrub interval (in days)"
 msgstr "Intervalo de Scrub (en días)"
@@ -14235,6 +14298,9 @@ msgstr "Acelera la sincronización inicial (segundos en lugar de minutos)."
 msgid "Speeds up the initial synchronization (seconds instead of minutes)."
 msgstr "Acelera la sincronización inicial (segundos en lugar de minutos)."
 
+msgid "Standard"
+msgstr ""
+
 msgid "Standard (Secure)"
 msgstr "Estándar (seguro)"
 
@@ -14264,9 +14330,6 @@ msgstr ""
 
 msgid "Start on Boot"
 msgstr "Iniciar en el arranque"
-
-msgid "Start scrub on pool <i>"
-msgstr "Iniciar scrub on pool <i>"
 
 msgid "Start the scrub now?"
 msgstr "¿Iniciar el scrub ahora?"
@@ -14339,14 +14402,8 @@ msgstr "Detener Scrub"
 msgid "Stop this cloud sync?"
 msgstr "¿Detener esta sincronización en la nube?"
 
-msgid "Stopped the scrub on pool <i>"
-msgstr "Scrub detenido en el pool <i>"
-
 msgid "Stopping Jail"
 msgstr "Deteniendo Jaula"
-
-msgid "Stopping scrub on pool <i>"
-msgstr "Deteniendo scrub en pool <i>"
 
 msgid ""
 "Stops the rollback when the safety  check finds any related clone snapshots "
@@ -14800,9 +14857,6 @@ msgstr ""
 "<b>allow_mount</b> y <b>allow_mount_devfs</b> están habilitados y "
 "<b>enforce_statfs</b> está establecido en valor inferior a <i>2</i>."
 
-msgid "The <i><b>"
-msgstr "El <i> <b>"
-
 msgid "The AFP"
 msgstr "El AFP"
 
@@ -14917,6 +14971,17 @@ msgid "The administrator password is incorrect."
 msgstr "La contraseña del administrador es incorrecta."
 
 msgid ""
+"The authority key identifier extension provides a means of  identifying the "
+"public key corresponding to the private key used to  sign a certificate. "
+"This extension is used where an issuer has  multiple signing keys (either "
+"due to multiple concurrent key pairs or  due to changeover). The "
+"identification MAY be based on either the  key identifier (the subject key "
+"identifier in the issuer's  certificate) or on the issuer name and serial "
+"number.<br>  See <a href=\"https://www.ietf.org/rfc/rfc3280.txt\">RFC 3280, "
+"section 4.2.1.1</a>  for more information."
+msgstr ""
+
+msgid ""
 "The base name is automatically prepended if the target name does not start "
 "with <i>iqn</i>. Lowercase alphanumeric characters plus dot (.), dash (-), "
 "and colon (:) are allowed. See the <i>Constructing iSCSI names using the "
@@ -14930,6 +14995,14 @@ msgstr ""
 "Construcción de nombres iSCSI utilizando la sección iqn.format </i> de <a "
 "href=\"https://tools.ietf.org/html/rfc3721.html\" target=\"_blank\"> "
 "RFC3721 </ a >."
+
+msgid ""
+"The basic constraints extension identifies whether the  subject of the "
+"certificate is a CA and the maximum depth of valid  certification paths "
+"that include this certificate. <br>  See <a "
+"href=\"https://www.ietf.org/rfc/rfc3280.txt\">RFC 3280, section "
+"4.2.1.10</a>  for more information."
+msgstr ""
 
 msgid ""
 "The beginning UID/GID for which this system is authoritative. Any UID/GID "
@@ -15058,6 +15131,19 @@ msgid "The imported pool contains encrypted datasets, unlock them now?"
 msgstr ""
 "El grupo importado contiene conjuntos de datos cifrados, ¿desbloquearlos "
 "ahora?"
+
+msgid ""
+"The key usage extension defines the purpose  (e.g., encipherment, "
+"signature, certificate signing) of the key contained in  the certificate. "
+"The usage restriction might be employed when a key that  could be used for "
+"more than one operation is to be restricted. For  example, when an RSA key "
+"should be used only to verify signatures on  objects other than public key "
+"certificates and CRLs, the <i>Digital Signature</i>  bits would be "
+"asserted. Likewise, when an RSA key should be used only for key  "
+"management, the <i>Key Encipherment</i> bit would be asserted. <br>  See <a "
+"href=\"https://www.ietf.org/rfc/rfc3280.txt\">RFC 3280, section 4.2.1.3</a> "
+" for more information."
+msgstr ""
 
 msgid ""
 "The legacy user interface is deprecated. All management should be performed "
@@ -15485,6 +15571,9 @@ msgstr ""
 "Estos permisos son demasiado complicados para mostrarse y no se pueden "
 "guardar a menos que se modifiquen."
 
+msgid "These running services are using"
+msgstr ""
+
 msgid "These running services are using "
 msgstr "Estos servicios en ejecución están utilizando "
 
@@ -15496,6 +15585,9 @@ msgstr "Estos servicios deben reiniciarse para exportar el grupo:"
 
 msgid "These services must be stopped to export the pool:"
 msgstr "Estos servicios deben detenerse para exportar el grupo:"
+
+msgid "These unknown processes are using this pool:"
+msgstr ""
 
 msgid "These unknown processes are using this pool: "
 msgstr "Estos procesos desconocidos están utilizando este grupo: "
@@ -15682,6 +15774,9 @@ msgstr "Jueves"
 
 msgid "TiB"
 msgstr "TiB"
+
+msgid "Ticket"
+msgstr ""
 
 msgid ""
 "Time (in seconds) before the system  stops attempting to establish a "
@@ -16041,6 +16136,9 @@ msgstr "Desbloquear con archivo de clave"
 
 msgid "Unlocking Datasets"
 msgstr "Desbloqueo de conjuntos de datos"
+
+msgid "Unlocking Pool"
+msgstr ""
 
 msgid "Unlocking datasets for "
 msgstr "Desbloqueo de conjuntos de datos para "
@@ -16608,6 +16706,9 @@ msgstr ""
 msgid "Using pool "
 msgstr "Usando pool "
 
+msgid "VLAN Addresses"
+msgstr ""
+
 msgid "VLAN ID"
 msgstr "ID de VLAN"
 
@@ -16623,8 +16724,14 @@ msgstr "Etiqueta VLAN"
 msgid "VLANs"
 msgstr "VLANs"
 
+msgid "VM "
+msgstr ""
+
 msgid "VM Snapshot"
 msgstr "Instantánea de VM"
+
+msgid "VM Summary"
+msgstr ""
 
 msgid "VM system time. Default is <i>Local</i>."
 msgstr "Tiempo del sistema VM. El valor predeterminado es <i>Local</i>."
@@ -16685,6 +16792,9 @@ msgstr "Variable"
 msgid "Verbose logging"
 msgstr "Registro detallado"
 
+msgid "Verify"
+msgstr ""
+
 msgid "Verify Credential"
 msgstr "Verificar credencial"
 
@@ -16729,6 +16839,9 @@ msgstr "Dirección IP virtual"
 
 msgid "Virtual Interface"
 msgstr "Interfaz virtual"
+
+msgid "Virtual Machine (VM)"
+msgstr ""
 
 msgid "Virtual Machine (VM) Wizard type."
 msgstr "Tipo de asistente de máquina virtual (VM)."
@@ -16780,6 +16893,9 @@ msgid ""
 msgstr ""
 "ADVERTENCIA: Estos procesos desconocidos finalizarán mientras se exporta el "
 "grupo. "
+
+msgid "WARNING: These unknown processes will be terminated while locking the pool."
+msgstr ""
 
 msgid "WS-Discovery"
 msgstr "WS-Discovery"
@@ -17057,6 +17173,9 @@ msgstr "Información de Winbind NSS"
 msgid "Window"
 msgstr "Ventana"
 
+msgid "Windows"
+msgstr ""
+
 msgid "Windows Shares (SMB)"
 msgstr "Recursos compartidos de Windows (SMB)"
 
@@ -17247,6 +17366,9 @@ msgstr "a continuación para confirmar."
 msgid "boot"
 msgstr "arranque"
 
+msgid "bytes."
+msgstr ""
+
 msgid "children_max"
 msgstr "children_max"
 
@@ -17346,6 +17468,15 @@ msgstr "obteniendo info..."
 msgid "group"
 msgstr "grupo"
 
+msgid "gzip (default level, 6)"
+msgstr ""
+
+msgid "gzip (fastest)"
+msgstr ""
+
+msgid "gzip (maximum, slow)"
+msgstr ""
+
 msgid "host_domainname"
 msgstr "host_domainname"
 
@@ -17431,6 +17562,12 @@ msgstr "lista"
 
 msgid "login_flags"
 msgstr "login_flags"
+
+msgid "lz4 (recommended)"
+msgstr ""
+
+msgid "lzjb (legacy, not recommended)"
+msgstr ""
 
 msgid "mDNS"
 msgstr "mDNS"
@@ -17585,6 +17722,9 @@ msgstr "plantilla"
 msgid "threads"
 msgstr "hilos"
 
+msgid "to begin the download."
+msgstr ""
+
 msgid "to set up configuration first."
 msgstr "para establecer primero la configuración."
 
@@ -17629,3 +17769,6 @@ msgstr "mientras el pool está encriptado"
 
 msgid "yes"
 msgstr "si"
+
+msgid "zle (runs of zeros)"
+msgstr ""
