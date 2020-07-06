@@ -62,9 +62,6 @@ msgstr ""
 msgid " and "
 msgstr " и "
 
-msgid " and all snapshots of it?"
-msgstr " и все снимки этого?"
-
 msgid " and will be disrupted if the pool is detached:"
 msgstr " и будет нарушен, если пул отсоединен:"
 
@@ -85,9 +82,6 @@ msgstr " дисков"
 
 msgid " disks, new vdev has "
 msgstr " дисков, новый vdev имеет "
-
-msgid " has been unlocked."
-msgstr " был разблокирован."
 
 msgid " is "
 msgstr " - "
@@ -633,6 +627,14 @@ msgstr ""
 "драйверы VirtIO."
 
 msgid ""
+"<i>Internal Certificate</i> is used for internal or local  systems. "
+"<i>Certificate Signing Request</i> is used to get a CA signature.  "
+"<i>Import Certificate</i> allows an existing certificate to be imported "
+"onto  the system. <i>Import Certificate Signing Request</i> allows an "
+"existing CSR  to be imported onto the system."
+msgstr ""
+
+msgid ""
 "<i>PUSH</i> sends data to cloud storage. <i>PULL</i>  receives data from "
 "cloud storage. Changing the direction resets the  <i>Transfer Mode</i> to "
 "COPY."
@@ -781,6 +783,11 @@ msgstr ""
 "<samp>G</samp>. См. <a "
 "href=\"https://rclone.org/docs/#bwlimit-bandwidth-spec\" "
 "target=\"_blank\">rclone --bwlimit </a>."
+
+msgid ""
+"A smaller block size can reduce sequential I/O performance and space "
+"efficiency."
+msgstr ""
 
 msgid ""
 "A space-delimited list of network interfaces attached to a <b>VNET</b> "
@@ -1295,6 +1302,9 @@ msgstr "Адрес"
 msgid "Address space limit in bytes for the jail."
 msgstr "Ограничение адресного пространства в байтах для jail."
 
+msgid "Addresses"
+msgstr ""
+
 msgid ""
 "Adjust how often alert notifications are sent, use  the Frequency "
 "drop-down. Setting the Frequency to NEVER prevents that  alert from being "
@@ -1419,11 +1429,17 @@ msgstr "Все каталоги"
 msgid "All users"
 msgstr "Все пользователи"
 
+msgid "Allocate RAM for the VM. Minimum value is 256 MiB."
+msgstr ""
+
 msgid "Allocate a number of megabytes of RAM to the VM."
 msgstr "Выделить число мегабайт оперативной памяти ВМ."
 
 msgid "Allocate at least 256 MiB."
 msgstr "Выделить не менее 256 МиБ."
+
+msgid "Allocate space for the new zvol."
+msgstr ""
 
 msgid "Allow"
 msgstr "Разрешить"
@@ -1727,6 +1743,9 @@ msgid ""
 msgstr ""
 "Альтернативные имена, которые клиенты SMB могут использовать при "
 "подключении к этому NAS. Может быть не более 15 символов."
+
+msgid "Always"
+msgstr ""
 
 msgid "Always Chroot"
 msgstr "Всегда chroot"
@@ -2092,6 +2111,9 @@ msgstr "Вспомогательные параметры (upsd.conf)"
 msgid "Auxiliary parameters"
 msgstr "Вспомогательные параметры"
 
+msgid "Available"
+msgstr ""
+
 msgid "Available Disks"
 msgstr "Доступные диски"
 
@@ -2121,6 +2143,11 @@ msgstr "Назад"
 
 msgid "Back to Support"
 msgstr "Вернуться к Поддержке"
+
+msgid ""
+"Back up the encryption key now! If the key is lost, the data on the disks "
+"will also be lost with no hope of recovery."
+msgstr ""
 
 msgid "Backend"
 msgstr ""
@@ -2357,6 +2384,9 @@ msgid ""
 "dataset."
 msgstr ""
 
+msgid "Browse to the installer image file and click <b>Upload</b>."
+msgstr ""
+
 msgid "Browse to the keytab file to upload."
 msgstr "Перейдите к файлу keytab для загрузки."
 
@@ -2387,6 +2417,9 @@ msgid "Browse to the pool or dataset to store received  data."
 msgstr ""
 
 msgid "Bucket"
+msgstr ""
+
+msgid "Bug"
 msgstr ""
 
 msgid "Burst"
@@ -2437,6 +2470,9 @@ msgid "CAs"
 msgstr "Центры сертификации"
 
 msgid "CC"
+msgstr ""
+
+msgid "CD-ROM"
 msgstr ""
 
 msgid "CD-ROM Path"
@@ -2522,6 +2558,9 @@ msgstr "Невозможно редактировать, когда включе
 msgid ""
 "Cannot open this ACL. Check the permissions this dataset  has inherited "
 "from parents."
+msgstr ""
+
+msgid "Capacity"
 msgstr ""
 
 msgid "Case Sensitivity"
@@ -2633,9 +2672,6 @@ msgstr ""
 
 msgid "Change log"
 msgstr "Журнал изменений"
-
-msgid "Change order for "
-msgstr ""
 
 msgid ""
 "Change the default password to improve system security. The new password "
@@ -2958,6 +2994,20 @@ msgid "Choose an option"
 msgstr ""
 
 msgid ""
+"Choose between <i>Internal CA</i>, <i>Intermediate CA</i>, and  <i>Import "
+"CA</i>. An <i>Internal CA</i> functions like a publicly trusted CA  to sign "
+"certificates for an internal network. They are not trusted outside  the "
+"private network. An <i>Intermediate CA</i> lives between the root and end  "
+"entity certificates and its main purpose is to define and authorize the  "
+"types of certificates that can be requested from the root CA. <i>Import "
+"CA</i>  allows an existing CA to be imported onto the system.<br>  For more "
+"information see  <a "
+"href=\"https://www.globalsign.com/en/blog/what-is-an-intermediate-or-"
+"subordinate-certificate-authority\">  What are Subordinate CAs and Why "
+"Would You Want Your Own?</a>"
+msgstr ""
+
+msgid ""
 "Choose between <i>Off</i>, <a "
 "href=\"http://info.ssl.com/article.aspx?id=10241\" "
 "target=\"_blank\">SSL</a> or <a "
@@ -3191,6 +3241,9 @@ msgstr "Очистить пароль SED для этого диска."
 msgid "Clearing Cache..."
 msgstr ""
 
+msgid "Click"
+msgstr ""
+
 msgid ""
 "Click <b>Browse</b> to select an encryption key to upload. This allows the "
 "system to decrypt the disks."
@@ -3376,6 +3429,9 @@ msgid "Compress Connections"
 msgstr ""
 
 msgid "Compression"
+msgstr ""
+
+msgid "Compression Ratio"
 msgstr ""
 
 msgid "Compression level"
@@ -4130,6 +4186,9 @@ msgid ""
 "will create <i>zvol1</i> for  snapshot storage."
 msgstr ""
 
+msgid "Define the path to an existing zvol for VM use."
+msgstr ""
+
 msgid "Define the server where all changes to the database are performed."
 msgstr "Определите сервер, на котором выполняются все изменения в базе данных."
 
@@ -4169,9 +4228,6 @@ msgstr "Удалить"
 
 msgid "Delete Dataset"
 msgstr "Удалить набор данных"
-
-msgid "Delete Dataset <i><b>"
-msgstr "Удалить набор данных <i><b>"
 
 msgid "Delete Device"
 msgstr "Удалить устройство"
@@ -4235,9 +4291,6 @@ msgstr ""
 
 msgid "Delete the selected item?"
 msgstr "Удалить выбранный элемент?"
-
-msgid "Delete the zvol "
-msgstr "Удалить ZVol "
 
 msgid "Delete this path."
 msgstr "Удалить этот путь."
@@ -4372,9 +4425,6 @@ msgstr "Отсоединить диск"
 msgid "Details"
 msgstr "Детали"
 
-msgid "Details for "
-msgstr ""
-
 msgid ""
 "Determine how  <a href=\"https://www.freebsd.org/cgi/man.cgi?query=chmod\" "
 "target=\"_blank\">chmod</a>  behaves when adjusting file ACLs. See the  <a "
@@ -4446,6 +4496,9 @@ msgstr "Устройство подключено"
 
 msgid "Device Busy"
 msgstr "Устройство занято"
+
+msgid "Device ID"
+msgstr ""
 
 msgid "Device Order"
 msgstr "Порядок устройств"
@@ -5107,8 +5160,11 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enabling allows using a password to authenticate  the SSH login. Disabling "
-"changes authentication to require keys for  all users. This requires  <a "
+"Enabling allows using a password to authenticate  the SSH login. "
+"<i>Warning:</i> when directory services are enabled, allowing password  "
+"authentication can grant access to all users imported by the directory "
+"service.<br>  Disabling changes authentication to require keys for all "
+"users. This requires  <a "
 "href=\"http://the.earth.li/%7Esgtatham/putty/0.55/htmldoc/Chapter8.html\" "
 "target=\"_blank\">additional setup</a>  on both the SSH client and server."
 msgstr ""
@@ -5617,8 +5673,7 @@ msgstr ""
 msgid ""
 "Enter additional parameters from  <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=ifconfig\" "
-"target=\"_blank\">ifconfig(8)</a>.  Separate entries by pressing "
-"<code>Enter</code>."
+"target=\"_blank\">ifconfig(8)</a>."
 msgstr ""
 
 msgid "Enter an IPv4 address. This overrides the default gateway provided by DHCP."
@@ -6115,14 +6170,8 @@ msgstr "Окружение"
 msgid "Error"
 msgstr "Ошибка"
 
-msgid "Error Deleting zvol "
-msgstr "Ошибка удаления zvol "
-
 msgid "Error Downloading File"
 msgstr "Ошибка при загрузке файла"
-
-msgid "Error Promoting dataset "
-msgstr "Ошибка продвижения набора данных "
 
 msgid "Error Saving Configuration Settings"
 msgstr ""
@@ -6147,9 +6196,6 @@ msgstr "Ошибка создания ВМ."
 
 msgid "Error decrypting disks"
 msgstr "Ошибка расшифровки дисков"
-
-msgid "Error deleting dataset "
-msgstr "Ошибка удаления набора данных"
 
 msgid "Error details for "
 msgstr ""
@@ -6405,6 +6451,9 @@ msgstr "Аварийное переключение находится в сос
 msgid "Fast (Less secure)"
 msgstr "Быстро (менее безопасно)"
 
+msgid "Feature"
+msgstr ""
+
 msgid "Features"
 msgstr "Особенности"
 
@@ -6556,9 +6605,6 @@ msgstr ""
 msgid "Force Stop After Timeout"
 msgstr ""
 
-msgid "Force deletion of dataset "
-msgstr "Принудительное удаление набора данных "
-
 msgid "Force size"
 msgstr "Установить размер"
 
@@ -6607,6 +6653,9 @@ msgstr "Форма неверна"
 
 msgid "Free"
 msgstr "Свободно"
+
+msgid "FreeBSD"
+msgstr ""
 
 msgid "FreeBSD device names of each disk being edited."
 msgstr ""
@@ -6722,6 +6771,9 @@ msgstr ""
 
 msgid "Generate Keypair"
 msgstr "Генерировать пару ключей"
+
+msgid "Generate MAC Address"
+msgstr ""
 
 msgid "Generate New"
 msgstr "Создать новый"
@@ -7296,6 +7348,12 @@ msgstr "Префикс IPv4 для jail."
 
 msgid "ISNS Servers"
 msgstr "Сервера ISNS"
+
+msgid "ISO save location"
+msgstr ""
+
+msgid "ISO upload location"
+msgstr ""
 
 msgid "Icon Buttons"
 msgstr ""
@@ -8112,6 +8170,9 @@ msgstr "Состояние линка"
 msgid "Linked Service"
 msgstr ""
 
+msgid "Linux"
+msgstr ""
+
 msgid ""
 "List of files and directories to exclude from sync.<br>  Separate entries "
 "by pressing <code>Enter</code>. See  <a "
@@ -8547,6 +8608,9 @@ msgstr "Показатель"
 
 msgid "MiB"
 msgstr "МиБ"
+
+msgid "MiB. Units  smaller than MiB are not allowed."
+msgstr ""
 
 msgid "Microsoft Account"
 msgstr "Учетная запись Microsoft"
@@ -9383,6 +9447,9 @@ msgstr ""
 msgid "Ok"
 msgstr "Ok"
 
+msgid "On"
+msgstr ""
+
 msgid "On a Different System"
 msgstr "В другой системе"
 
@@ -9552,6 +9619,9 @@ msgstr ""
 "<i>389</i>.</li> </ul>"
 
 msgid "Orange"
+msgstr ""
+
+msgid "Order"
 msgstr ""
 
 msgid ""
@@ -10322,6 +10392,9 @@ msgstr ""
 msgid "Read/Write Access"
 msgstr "Доступ для чтения/записи"
 
+msgid "Readonly"
+msgstr ""
+
 msgid "Realm"
 msgstr "Область"
 
@@ -10330,6 +10403,9 @@ msgstr "Перезагрузить после обновления"
 
 msgid "Rebuild Directory Service Cache"
 msgstr "Перестроить кеш службы каталогов"
+
+msgid "Recommended block size based on pool topology:"
+msgstr ""
 
 msgid ""
 "Recommended when <i>Max. Poll</i> is greater   than 10. Only use on "
@@ -11146,9 +11222,6 @@ msgstr ""
 
 msgid "Scrub Tasks"
 msgstr "Задачи проверки"
-
-msgid "Scrub complete on pool <i>"
-msgstr "Завершена проверка пула <i>"
 
 msgid "Scrub interval (in days)"
 msgstr "Интервал проверки (в днях)"
@@ -13234,6 +13307,9 @@ msgstr "Ускоряет начальную синхронизацию (секу
 msgid "Speeds up the initial synchronization (seconds instead of minutes)."
 msgstr "Ускоряет начальную синхронизацию (секунды вместо минут)."
 
+msgid "Standard"
+msgstr ""
+
 msgid "Standard (Secure)"
 msgstr "Стандарт (Безопасный)"
 
@@ -13260,9 +13336,6 @@ msgstr ""
 
 msgid "Start on Boot"
 msgstr "Запустить при загрузке"
-
-msgid "Start scrub on pool <i>"
-msgstr "Начать проверку пула <i>"
 
 msgid "Start the scrub now?"
 msgstr "Начать проверку сейчас?"
@@ -13332,14 +13405,8 @@ msgstr "Остановить проверку"
 msgid "Stop this cloud sync?"
 msgstr "Остановить эту облачную синхронизацию?"
 
-msgid "Stopped the scrub on pool <i>"
-msgstr "Остановлена проверка пула <i>"
-
 msgid "Stopping Jail"
 msgstr "Остановка jail"
-
-msgid "Stopping scrub on pool <i>"
-msgstr "Останавливается проверка пула <i>"
 
 msgid ""
 "Stops the rollback when the safety  check finds any related clone snapshots "
@@ -13762,9 +13829,6 @@ msgstr ""
 "<b>allow_mount_devfs</b>, а для <b>enforce_statfs</b> установлено значение "
 "a значение ниже, чем <i>2</i>."
 
-msgid "The <i><b>"
-msgstr "<i><b>"
-
 msgid "The AFP"
 msgstr "AFP"
 
@@ -13870,6 +13934,17 @@ msgid "The administrator password is incorrect."
 msgstr "Пароль администратора неверен."
 
 msgid ""
+"The authority key identifier extension provides a means of  identifying the "
+"public key corresponding to the private key used to  sign a certificate. "
+"This extension is used where an issuer has  multiple signing keys (either "
+"due to multiple concurrent key pairs or  due to changeover). The "
+"identification MAY be based on either the  key identifier (the subject key "
+"identifier in the issuer's  certificate) or on the issuer name and serial "
+"number.<br>  See <a href=\"https://www.ietf.org/rfc/rfc3280.txt\">RFC 3280, "
+"section 4.2.1.1</a>  for more information."
+msgstr ""
+
+msgid ""
 "The base name is automatically prepended if the target name does not start "
 "with <i>iqn</i>. Lowercase alphanumeric characters plus dot (.), dash (-), "
 "and colon (:) are allowed. See the <i>Constructing iSCSI names using the "
@@ -13883,6 +13958,14 @@ msgstr ""
 "использованием iqn.format</i> в <a "
 "href=\"https://tools.ietf.org/html/rfc3721.html\" "
 "target=\"_blank\">RFC3721</a>."
+
+msgid ""
+"The basic constraints extension identifies whether the  subject of the "
+"certificate is a CA and the maximum depth of valid  certification paths "
+"that include this certificate. <br>  See <a "
+"href=\"https://www.ietf.org/rfc/rfc3280.txt\">RFC 3280, section "
+"4.2.1.10</a>  for more information."
+msgstr ""
 
 msgid ""
 "The beginning UID/GID for which this system is authoritative. Any UID/GID "
@@ -14003,6 +14086,19 @@ msgid "The iSCSI"
 msgstr "iSCSI"
 
 msgid "The imported pool contains encrypted datasets, unlock them now?"
+msgstr ""
+
+msgid ""
+"The key usage extension defines the purpose  (e.g., encipherment, "
+"signature, certificate signing) of the key contained in  the certificate. "
+"The usage restriction might be employed when a key that  could be used for "
+"more than one operation is to be restricted. For  example, when an RSA key "
+"should be used only to verify signatures on  objects other than public key "
+"certificates and CRLs, the <i>Digital Signature</i>  bits would be "
+"asserted. Likewise, when an RSA key should be used only for key  "
+"management, the <i>Key Encipherment</i> bit would be asserted. <br>  See <a "
+"href=\"https://www.ietf.org/rfc/rfc3280.txt\">RFC 3280, section 4.2.1.3</a> "
+" for more information."
 msgstr ""
 
 msgid ""
@@ -14372,6 +14468,9 @@ msgstr ""
 "Эти разрешения слишком сложны для отображения и не могут быть сохранены без "
 "изменения."
 
+msgid "These running services are using"
+msgstr ""
+
 msgid "These running services are using "
 msgstr ""
 
@@ -14382,6 +14481,9 @@ msgid "These services must be restarted to export the pool:"
 msgstr ""
 
 msgid "These services must be stopped to export the pool:"
+msgstr ""
+
+msgid "These unknown processes are using this pool:"
 msgstr ""
 
 msgid "These unknown processes are using this pool: "
@@ -14541,6 +14643,9 @@ msgstr "Чт"
 
 msgid "TiB"
 msgstr "ТиБ"
+
+msgid "Ticket"
+msgstr ""
 
 msgid ""
 "Time (in seconds) before the system  stops attempting to establish a "
@@ -14880,6 +14985,9 @@ msgid "Unlock with Key file"
 msgstr ""
 
 msgid "Unlocking Datasets"
+msgstr ""
+
+msgid "Unlocking Pool"
 msgstr ""
 
 msgid "Unlocking datasets for "
@@ -15402,6 +15510,9 @@ msgstr ""
 msgid "Using pool "
 msgstr "Используется пул "
 
+msgid "VLAN Addresses"
+msgstr ""
+
 msgid "VLAN ID"
 msgstr "VLAN ID"
 
@@ -15417,8 +15528,14 @@ msgstr "Тег VLAN"
 msgid "VLANs"
 msgstr "VLANы"
 
+msgid "VM "
+msgstr ""
+
 msgid "VM Snapshot"
 msgstr "Снимок ВМ"
+
+msgid "VM Summary"
+msgstr ""
 
 msgid "VM system time. Default is <i>Local</i>."
 msgstr "Системное время ВМ. По умолчанию <i>Местное</i>."
@@ -15478,6 +15595,9 @@ msgstr "Переменная"
 msgid "Verbose logging"
 msgstr "Подробное журналирование"
 
+msgid "Verify"
+msgstr ""
+
 msgid "Verify Credential"
 msgstr "Подтвердите учетные данные"
 
@@ -15522,6 +15642,9 @@ msgstr "Виртуальный IP-адрес"
 
 msgid "Virtual Interface"
 msgstr "Виртуальный интерфейс"
+
+msgid "Virtual Machine (VM)"
+msgstr ""
 
 msgid "Virtual Machine (VM) Wizard type."
 msgstr "Тип мастера виртуальной машины (ВМ)."
@@ -15568,6 +15691,9 @@ msgstr "ВНИМАНИЕ: Блокировка пула <i>"
 msgid ""
 "WARNING: These unknown processes will be terminated while exporting the "
 "pool. "
+msgstr ""
+
+msgid "WARNING: These unknown processes will be terminated while locking the pool."
 msgstr ""
 
 msgid "WS-Discovery"
@@ -15819,6 +15945,9 @@ msgstr "Информация Winbind NSS"
 msgid "Window"
 msgstr ""
 
+msgid "Windows"
+msgstr ""
+
 msgid "Windows Shares (SMB)"
 msgstr "Ресурсы Windows (SMB)"
 
@@ -16000,6 +16129,9 @@ msgstr "ниже, чтобы подтвердить."
 msgid "boot"
 msgstr "загрузка"
 
+msgid "bytes."
+msgstr ""
+
 msgid "children_max"
 msgstr ""
 
@@ -16099,6 +16231,15 @@ msgstr "сбор информации..."
 msgid "group"
 msgstr "группа"
 
+msgid "gzip (default level, 6)"
+msgstr ""
+
+msgid "gzip (fastest)"
+msgstr ""
+
+msgid "gzip (maximum, slow)"
+msgstr ""
+
 msgid "host_domainname"
 msgstr ""
 
@@ -16177,6 +16318,12 @@ msgid "list"
 msgstr "список"
 
 msgid "login_flags"
+msgstr ""
+
+msgid "lz4 (recommended)"
+msgstr ""
+
+msgid "lzjb (legacy, not recommended)"
 msgstr ""
 
 msgid "mDNS"
@@ -16332,6 +16479,9 @@ msgstr "шаблон"
 msgid "threads"
 msgstr ""
 
+msgid "to begin the download."
+msgstr ""
+
 msgid "to set up configuration first."
 msgstr ""
 
@@ -16376,3 +16526,6 @@ msgstr "пока пул зашифрован"
 
 msgid "yes"
 msgstr "да"
+
+msgid "zle (runs of zeros)"
+msgstr ""

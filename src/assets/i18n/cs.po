@@ -59,9 +59,6 @@ msgstr " adresy. Pokud je tato volba vybrána, další adresy již nemohou být 
 msgid " and "
 msgstr " a "
 
-msgid " and all snapshots of it?"
-msgstr " a všechny jeho snapshoty?"
-
 msgid " and will be disrupted if the pool is detached:"
 msgstr ""
 
@@ -82,9 +79,6 @@ msgstr " disky"
 
 msgid " disks, new vdev has "
 msgstr " disky, nový vdev má "
-
-msgid " has been unlocked."
-msgstr " byl odemčen."
 
 msgid " is "
 msgstr " je "
@@ -557,6 +551,14 @@ msgid ""
 msgstr ""
 
 msgid ""
+"<i>Internal Certificate</i> is used for internal or local  systems. "
+"<i>Certificate Signing Request</i> is used to get a CA signature.  "
+"<i>Import Certificate</i> allows an existing certificate to be imported "
+"onto  the system. <i>Import Certificate Signing Request</i> allows an "
+"existing CSR  to be imported onto the system."
+msgstr ""
+
+msgid ""
 "<i>PUSH</i> sends data to cloud storage. <i>PULL</i>  receives data from "
 "cloud storage. Changing the direction resets the  <i>Transfer Mode</i> to "
 "COPY."
@@ -652,6 +654,11 @@ msgid ""
 "<samp>M</samp>, or <samp>G</samp>. See <a "
 "href=\"https://rclone.org/docs/#bwlimit-bandwidth-spec\" "
 "target=\"_blank\">rclone --bwlimit</a>."
+msgstr ""
+
+msgid ""
+"A smaller block size can reduce sequential I/O performance and space "
+"efficiency."
 msgstr ""
 
 msgid ""
@@ -1090,6 +1097,9 @@ msgstr "Adresa"
 msgid "Address space limit in bytes for the jail."
 msgstr ""
 
+msgid "Addresses"
+msgstr ""
+
 msgid ""
 "Adjust how often alert notifications are sent, use  the Frequency "
 "drop-down. Setting the Frequency to NEVER prevents that  alert from being "
@@ -1204,10 +1214,16 @@ msgstr "Všechny složky"
 msgid "All users"
 msgstr ""
 
+msgid "Allocate RAM for the VM. Minimum value is 256 MiB."
+msgstr ""
+
 msgid "Allocate a number of megabytes of RAM to the VM."
 msgstr ""
 
 msgid "Allocate at least 256 MiB."
+msgstr ""
+
+msgid "Allocate space for the new zvol."
 msgstr ""
 
 msgid "Allow"
@@ -1449,6 +1465,9 @@ msgstr ""
 msgid ""
 "Alternative names that SMB clients can use when connecting to this NAS. Can "
 "be no greater than 15 characters."
+msgstr ""
+
+msgid "Always"
 msgstr ""
 
 msgid "Always Chroot"
@@ -1782,6 +1801,9 @@ msgstr ""
 msgid "Auxiliary parameters"
 msgstr "Pomocné parametry"
 
+msgid "Available"
+msgstr ""
+
 msgid "Available Disks"
 msgstr "Disky k dispozici"
 
@@ -1810,6 +1832,11 @@ msgid "Back"
 msgstr "Zpět"
 
 msgid "Back to Support"
+msgstr ""
+
+msgid ""
+"Back up the encryption key now! If the key is lost, the data on the disks "
+"will also be lost with no hope of recovery."
 msgstr ""
 
 msgid "Backend"
@@ -2024,6 +2051,9 @@ msgid ""
 "dataset."
 msgstr ""
 
+msgid "Browse to the installer image file and click <b>Upload</b>."
+msgstr ""
+
 msgid "Browse to the keytab file to upload."
 msgstr ""
 
@@ -2051,6 +2081,9 @@ msgid "Browse to the pool or dataset to store received  data."
 msgstr ""
 
 msgid "Bucket"
+msgstr ""
+
+msgid "Bug"
 msgstr ""
 
 msgid "Burst"
@@ -2092,6 +2125,9 @@ msgid "CAs"
 msgstr "Certif. autority"
 
 msgid "CC"
+msgstr ""
+
+msgid "CD-ROM"
 msgstr ""
 
 msgid "CD-ROM Path"
@@ -2174,6 +2210,9 @@ msgstr ""
 msgid ""
 "Cannot open this ACL. Check the permissions this dataset  has inherited "
 "from parents."
+msgstr ""
+
+msgid "Capacity"
 msgstr ""
 
 msgid "Case Sensitivity"
@@ -2270,9 +2309,6 @@ msgstr ""
 
 msgid "Change log"
 msgstr "Seznam změn"
-
-msgid "Change order for "
-msgstr ""
 
 msgid ""
 "Change the default password to improve system security. The new password "
@@ -2543,6 +2579,20 @@ msgid "Choose an option"
 msgstr ""
 
 msgid ""
+"Choose between <i>Internal CA</i>, <i>Intermediate CA</i>, and  <i>Import "
+"CA</i>. An <i>Internal CA</i> functions like a publicly trusted CA  to sign "
+"certificates for an internal network. They are not trusted outside  the "
+"private network. An <i>Intermediate CA</i> lives between the root and end  "
+"entity certificates and its main purpose is to define and authorize the  "
+"types of certificates that can be requested from the root CA. <i>Import "
+"CA</i>  allows an existing CA to be imported onto the system.<br>  For more "
+"information see  <a "
+"href=\"https://www.globalsign.com/en/blog/what-is-an-intermediate-or-"
+"subordinate-certificate-authority\">  What are Subordinate CAs and Why "
+"Would You Want Your Own?</a>"
+msgstr ""
+
+msgid ""
 "Choose between <i>Off</i>, <a "
 "href=\"http://info.ssl.com/article.aspx?id=10241\" "
 "target=\"_blank\">SSL</a> or <a "
@@ -2725,6 +2775,9 @@ msgstr ""
 msgid "Clearing Cache..."
 msgstr ""
 
+msgid "Click"
+msgstr ""
+
 msgid ""
 "Click <b>Browse</b> to select an encryption key to upload. This allows the "
 "system to decrypt the disks."
@@ -2883,6 +2936,9 @@ msgid "Compress Connections"
 msgstr ""
 
 msgid "Compression"
+msgstr ""
+
+msgid "Compression Ratio"
 msgstr ""
 
 msgid "Compression level"
@@ -3575,6 +3631,9 @@ msgid ""
 "will create <i>zvol1</i> for  snapshot storage."
 msgstr ""
 
+msgid "Define the path to an existing zvol for VM use."
+msgstr ""
+
 msgid "Define the server where all changes to the database are performed."
 msgstr ""
 
@@ -3614,9 +3673,6 @@ msgstr ""
 
 msgid "Delete Dataset"
 msgstr "Smazat datovou sadu"
-
-msgid "Delete Dataset <i><b>"
-msgstr ""
 
 msgid "Delete Device"
 msgstr ""
@@ -3675,9 +3731,6 @@ msgstr ""
 
 msgid "Delete the selected item?"
 msgstr ""
-
-msgid "Delete the zvol "
-msgstr "Smazat zfs svazek "
 
 msgid "Delete this path."
 msgstr "Smazat tento popis umístění."
@@ -3806,9 +3859,6 @@ msgstr ""
 msgid "Details"
 msgstr "Podrobnosti"
 
-msgid "Details for "
-msgstr ""
-
 msgid ""
 "Determine how  <a href=\"https://www.freebsd.org/cgi/man.cgi?query=chmod\" "
 "target=\"_blank\">chmod</a>  behaves when adjusting file ACLs. See the  <a "
@@ -3863,6 +3913,9 @@ msgstr ""
 
 msgid "Device Busy"
 msgstr "Zařízení je zaneprázdněno"
+
+msgid "Device ID"
+msgstr ""
 
 msgid "Device Order"
 msgstr "Pořadí zařízení"
@@ -4479,8 +4532,11 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enabling allows using a password to authenticate  the SSH login. Disabling "
-"changes authentication to require keys for  all users. This requires  <a "
+"Enabling allows using a password to authenticate  the SSH login. "
+"<i>Warning:</i> when directory services are enabled, allowing password  "
+"authentication can grant access to all users imported by the directory "
+"service.<br>  Disabling changes authentication to require keys for all "
+"users. This requires  <a "
 "href=\"http://the.earth.li/%7Esgtatham/putty/0.55/htmldoc/Chapter8.html\" "
 "target=\"_blank\">additional setup</a>  on both the SSH client and server."
 msgstr ""
@@ -4909,8 +4965,7 @@ msgstr ""
 msgid ""
 "Enter additional parameters from  <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=ifconfig\" "
-"target=\"_blank\">ifconfig(8)</a>.  Separate entries by pressing "
-"<code>Enter</code>."
+"target=\"_blank\">ifconfig(8)</a>."
 msgstr ""
 
 msgid "Enter an IPv4 address. This overrides the default gateway provided by DHCP."
@@ -5319,14 +5374,8 @@ msgstr "Prostředí"
 msgid "Error"
 msgstr "Chyba"
 
-msgid "Error Deleting zvol "
-msgstr "Chyba při mazání zfs svazku "
-
 msgid "Error Downloading File"
 msgstr ""
-
-msgid "Error Promoting dataset "
-msgstr "Chyba při povyšování datové sady "
 
 msgid "Error Saving Configuration Settings"
 msgstr ""
@@ -5351,9 +5400,6 @@ msgstr "Chyba při vytváření virt. stroje"
 
 msgid "Error decrypting disks"
 msgstr "Chyba při rozšifrovávání disku"
-
-msgid "Error deleting dataset "
-msgstr "Chyba při mazání datové sady "
 
 msgid "Error details for "
 msgstr ""
@@ -5595,6 +5641,9 @@ msgstr ""
 msgid "Fast (Less secure)"
 msgstr ""
 
+msgid "Feature"
+msgstr ""
+
 msgid "Features"
 msgstr ""
 
@@ -5740,9 +5789,6 @@ msgstr ""
 msgid "Force Stop After Timeout"
 msgstr ""
 
-msgid "Force deletion of dataset "
-msgstr ""
-
 msgid "Force size"
 msgstr "Vynutit velikost"
 
@@ -5782,6 +5828,9 @@ msgid "Form Invalid"
 msgstr ""
 
 msgid "Free"
+msgstr ""
+
+msgid "FreeBSD"
 msgstr ""
 
 msgid "FreeBSD device names of each disk being edited."
@@ -5889,6 +5938,9 @@ msgstr ""
 
 msgid "Generate Keypair"
 msgstr "Vytvořit dvojici klíčů"
+
+msgid "Generate MAC Address"
+msgstr ""
 
 msgid "Generate New"
 msgstr ""
@@ -6419,6 +6471,12 @@ msgstr "IPv6 předpona pro ohrazené prostředí."
 
 msgid "ISNS Servers"
 msgstr "ISNS servery"
+
+msgid "ISO save location"
+msgstr ""
+
+msgid "ISO upload location"
+msgstr ""
 
 msgid "Icon Buttons"
 msgstr ""
@@ -7135,6 +7193,9 @@ msgstr "Stav linky"
 msgid "Linked Service"
 msgstr ""
 
+msgid "Linux"
+msgstr ""
+
 msgid ""
 "List of files and directories to exclude from sync.<br>  Separate entries "
 "by pressing <code>Enter</code>. See  <a "
@@ -7524,6 +7585,9 @@ msgid "Metrics"
 msgstr ""
 
 msgid "MiB"
+msgstr ""
+
+msgid "MiB. Units  smaller than MiB are not allowed."
 msgstr ""
 
 msgid "Microsoft Account"
@@ -8270,6 +8334,9 @@ msgstr ""
 msgid "Ok"
 msgstr ""
 
+msgid "On"
+msgstr ""
+
 msgid "On a Different System"
 msgstr ""
 
@@ -8418,6 +8485,9 @@ msgid ""
 msgstr ""
 
 msgid "Orange"
+msgstr ""
+
+msgid "Order"
 msgstr ""
 
 msgid ""
@@ -9120,6 +9190,9 @@ msgstr ""
 msgid "Read/Write Access"
 msgstr "Přístup pro čtení/zápis"
 
+msgid "Readonly"
+msgstr ""
+
 msgid "Realm"
 msgstr ""
 
@@ -9127,6 +9200,9 @@ msgid "Reboot After Update"
 msgstr "Po aktualizaci restartovat"
 
 msgid "Rebuild Directory Service Cache"
+msgstr ""
+
+msgid "Recommended block size based on pool topology:"
 msgstr ""
 
 msgid ""
@@ -9877,9 +9953,6 @@ msgid "Scrub Task"
 msgstr ""
 
 msgid "Scrub Tasks"
-msgstr ""
-
-msgid "Scrub complete on pool <i>"
 msgstr ""
 
 msgid "Scrub interval (in days)"
@@ -11538,6 +11611,9 @@ msgstr ""
 msgid "Speeds up the initial synchronization (seconds instead of minutes)."
 msgstr ""
 
+msgid "Standard"
+msgstr ""
+
 msgid "Standard (Secure)"
 msgstr ""
 
@@ -11564,9 +11640,6 @@ msgstr ""
 
 msgid "Start on Boot"
 msgstr "Spouštět při zavádění systému"
-
-msgid "Start scrub on pool <i>"
-msgstr ""
 
 msgid "Start the scrub now?"
 msgstr ""
@@ -11633,13 +11706,7 @@ msgstr ""
 msgid "Stop this cloud sync?"
 msgstr ""
 
-msgid "Stopped the scrub on pool <i>"
-msgstr ""
-
 msgid "Stopping Jail"
-msgstr ""
-
-msgid "Stopping scrub on pool <i>"
 msgstr ""
 
 msgid ""
@@ -12046,9 +12113,6 @@ msgid ""
 "<b>enforce_statfs</b> is set to a value lower than <i>2</i>."
 msgstr ""
 
-msgid "The <i><b>"
-msgstr ""
-
 msgid "The AFP"
 msgstr ""
 
@@ -12133,12 +12197,31 @@ msgid "The administrator password is incorrect."
 msgstr ""
 
 msgid ""
+"The authority key identifier extension provides a means of  identifying the "
+"public key corresponding to the private key used to  sign a certificate. "
+"This extension is used where an issuer has  multiple signing keys (either "
+"due to multiple concurrent key pairs or  due to changeover). The "
+"identification MAY be based on either the  key identifier (the subject key "
+"identifier in the issuer's  certificate) or on the issuer name and serial "
+"number.<br>  See <a href=\"https://www.ietf.org/rfc/rfc3280.txt\">RFC 3280, "
+"section 4.2.1.1</a>  for more information."
+msgstr ""
+
+msgid ""
 "The base name is automatically prepended if the target name does not start "
 "with <i>iqn</i>. Lowercase alphanumeric characters plus dot (.), dash (-), "
 "and colon (:) are allowed. See the <i>Constructing iSCSI names using the "
 "iqn.format</i> section of <a "
 "href=\"https://tools.ietf.org/html/rfc3721.html\" "
 "target=\"_blank\">RFC3721</a>."
+msgstr ""
+
+msgid ""
+"The basic constraints extension identifies whether the  subject of the "
+"certificate is a CA and the maximum depth of valid  certification paths "
+"that include this certificate. <br>  See <a "
+"href=\"https://www.ietf.org/rfc/rfc3280.txt\">RFC 3280, section "
+"4.2.1.10</a>  for more information."
 msgstr ""
 
 msgid ""
@@ -12230,6 +12313,19 @@ msgid "The iSCSI"
 msgstr ""
 
 msgid "The imported pool contains encrypted datasets, unlock them now?"
+msgstr ""
+
+msgid ""
+"The key usage extension defines the purpose  (e.g., encipherment, "
+"signature, certificate signing) of the key contained in  the certificate. "
+"The usage restriction might be employed when a key that  could be used for "
+"more than one operation is to be restricted. For  example, when an RSA key "
+"should be used only to verify signatures on  objects other than public key "
+"certificates and CRLs, the <i>Digital Signature</i>  bits would be "
+"asserted. Likewise, when an RSA key should be used only for key  "
+"management, the <i>Key Encipherment</i> bit would be asserted. <br>  See <a "
+"href=\"https://www.ietf.org/rfc/rfc3280.txt\">RFC 3280, section 4.2.1.3</a> "
+" for more information."
 msgstr ""
 
 msgid ""
@@ -12528,6 +12624,9 @@ msgid ""
 "unless changed."
 msgstr ""
 
+msgid "These running services are using"
+msgstr ""
+
 msgid "These running services are using "
 msgstr ""
 
@@ -12538,6 +12637,9 @@ msgid "These services must be restarted to export the pool:"
 msgstr ""
 
 msgid "These services must be stopped to export the pool:"
+msgstr ""
+
+msgid "These unknown processes are using this pool:"
 msgstr ""
 
 msgid "These unknown processes are using this pool: "
@@ -12679,6 +12781,9 @@ msgid "Thu"
 msgstr ""
 
 msgid "TiB"
+msgstr ""
+
+msgid "Ticket"
 msgstr ""
 
 msgid ""
@@ -12987,6 +13092,9 @@ msgid "Unlock with Key file"
 msgstr ""
 
 msgid "Unlocking Datasets"
+msgstr ""
+
+msgid "Unlocking Pool"
 msgstr ""
 
 msgid "Unlocking datasets for "
@@ -13436,6 +13544,9 @@ msgstr ""
 msgid "Using pool "
 msgstr ""
 
+msgid "VLAN Addresses"
+msgstr ""
+
 msgid "VLAN ID"
 msgstr "Identif. VLAN"
 
@@ -13451,8 +13562,14 @@ msgstr ""
 msgid "VLANs"
 msgstr ""
 
+msgid "VM "
+msgstr ""
+
 msgid "VM Snapshot"
 msgstr "Zachycený stav virt. stroje"
+
+msgid "VM Summary"
+msgstr ""
 
 msgid "VM system time. Default is <i>Local</i>."
 msgstr ""
@@ -13510,6 +13627,9 @@ msgstr "Proměnná"
 msgid "Verbose logging"
 msgstr ""
 
+msgid "Verify"
+msgstr ""
+
 msgid "Verify Credential"
 msgstr ""
 
@@ -13555,6 +13675,9 @@ msgstr "Virtuální IP adresa"
 msgid "Virtual Interface"
 msgstr "Virtuální rozhraní"
 
+msgid "Virtual Machine (VM)"
+msgstr ""
+
 msgid "Virtual Machine (VM) Wizard type."
 msgstr ""
 
@@ -13596,6 +13719,9 @@ msgstr ""
 msgid ""
 "WARNING: These unknown processes will be terminated while exporting the "
 "pool. "
+msgstr ""
+
+msgid "WARNING: These unknown processes will be terminated while locking the pool."
 msgstr ""
 
 msgid "WS-Discovery"
@@ -13811,6 +13937,9 @@ msgstr ""
 msgid "Window"
 msgstr ""
 
+msgid "Windows"
+msgstr ""
+
 msgid "Windows Shares (SMB)"
 msgstr ""
 
@@ -13989,6 +14118,9 @@ msgstr "níže pro potvrzení."
 msgid "boot"
 msgstr "boot"
 
+msgid "bytes."
+msgstr ""
+
 msgid "children_max"
 msgstr "children_max"
 
@@ -14088,6 +14220,15 @@ msgstr "získávání informací..."
 msgid "group"
 msgstr "skupina"
 
+msgid "gzip (default level, 6)"
+msgstr ""
+
+msgid "gzip (fastest)"
+msgstr ""
+
+msgid "gzip (maximum, slow)"
+msgstr ""
+
 msgid "host_domainname"
 msgstr "host_domainname"
 
@@ -14167,6 +14308,12 @@ msgstr "seznam"
 
 msgid "login_flags"
 msgstr "login_flags"
+
+msgid "lz4 (recommended)"
+msgstr ""
+
+msgid "lzjb (legacy, not recommended)"
+msgstr ""
 
 msgid "mDNS"
 msgstr ""
@@ -14321,6 +14468,9 @@ msgstr "šablona"
 msgid "threads"
 msgstr ""
 
+msgid "to begin the download."
+msgstr ""
+
 msgid "to set up configuration first."
 msgstr ""
 
@@ -14365,3 +14515,6 @@ msgstr "zatímco je pool zašifrován"
 
 msgid "yes"
 msgstr "ano"
+
+msgid "zle (runs of zeros)"
+msgstr ""
