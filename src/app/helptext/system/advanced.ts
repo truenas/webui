@@ -106,7 +106,7 @@ export const helptext_system_advanced = {
   sysloglevel: {
     placeholder: T("Syslog Level"),
     tooltip: T(
-      "When Syslog server is defined, only logs matching this\
+      "When <i>Syslog Server</i> is defined, only logs matching this\
  level are sent."
     ),
     options: [
@@ -136,7 +136,9 @@ export const helptext_system_advanced = {
 
   syslog_transport: {
     placeholder: T("Syslog Transport"),
-    tooltip: T(''),
+    tooltip: T('<a href="https://tools.ietf.org/html/rfc8095" target="_blank">Transport Protocol</a>\
+ for the remote system log server connection. Choosing Transport Layer Security (TLS)\
+ also requires selecting a preconfigured system Certificate.'),
     options: [
       {label:T('UDP'), value:'UDP'},
       {label:T('TCP'), value:'TCP'},
@@ -145,7 +147,8 @@ export const helptext_system_advanced = {
   },
 
   syslog_tls_certificate: {
-    placeholder: T("Syslog TSL Certificate"),
-    tooltip: T(''),
+    placeholder: T("Syslog TLS Certificate"),
+    tooltip: T('The preconfigured system <i>Certificate</i> to use for authenticating\
+ the TLS protocol connection to the remote system log server.'),
   }
 };
