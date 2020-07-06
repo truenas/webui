@@ -20,6 +20,7 @@ export class ShellService {
   redirectUrl = '';
   public token: string;
   public jailId: string;
+  public vmId: number;
 
   //input and output and eventEmmitter
   private shellCmdOutput: any;
@@ -46,7 +47,9 @@ export class ShellService {
   onopen(event) {
     this.onOpenSubject.next(true);
     if (this.jailId) {
-      this.send(JSON.stringify({ "token": this.token, "jail": this.jailId }));
+      this.send(JSON.stringify({ "token": this.token, "options": {"jail": this.jailId }}));
+    } else if (this.vmId) {
+      this.send(JSON.stringify({ "token": this.token, "options": {"vm_id": this.vmId}}));
     } else {
       this.send(JSON.stringify({ "token": this.token }));
     }
