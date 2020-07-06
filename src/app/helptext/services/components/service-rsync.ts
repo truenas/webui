@@ -26,7 +26,8 @@ rsyncmod_comment_placeholder: T('Comment'),
 rsyncmod_comment_tooltip: T('Describe this module.'),
 
 rsyncmod_enabled_placeholder: T('Enabled'),
-rsyncmod_enabled_tooltip: T(''),
+rsyncmod_enabled_tooltip: T('Activate this module for use with Rsync. Unset this \
+field to deactivate the module without completely removing it.'),
 
 rsyncmod_path_placeholder: T('Path'),
 rsyncmod_path_tooltip: T('Browse to the pool or dataset to store received \
