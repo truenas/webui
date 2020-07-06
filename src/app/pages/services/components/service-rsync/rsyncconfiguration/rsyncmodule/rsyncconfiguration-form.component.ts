@@ -23,8 +23,9 @@ export class RYSNCConfigurationFormComponent {
     public fieldConfig: FieldConfig[] = [];
     public fieldSets: FieldSet[] = [
         {
-            name: helptext.rsyncd_fieldset_name, 
+            name: helptext.rsyncd_fieldset_general,
             label: true,
+            width: '49%',
             config: [{
                 type: 'input',
                 name: 'name',
@@ -32,27 +33,32 @@ export class RYSNCConfigurationFormComponent {
                 tooltip: helptext.rsyncmod_name_tooltip,
                 validation: Validators.required,
                 required: true
+            }, {
+                type : 'explorer',
+                initial: '/mnt',
+                explorerType: 'directory',
+                placeholder: helptext.rsyncmod_path_placeholder,
+                name: 'path',
+                tooltip: helptext.rsyncmod_path_tooltip,
+                validation: helptext.rsyncmod_path_validation,
+                required: true
+            }, {
+                type: 'input',
+                name: 'comment',
+                placeholder: helptext.rsyncmod_comment_placeholder,
+                tooltip: helptext.rsyncmod_comment_tooltip
+            }, {
+                type: 'checkbox',
+                name: 'enabled',
+                placeholder: helptext.rsyncmod_enabled_placeholder,
+                tooltip: helptext.rsyncmod_enabled_tooltip,
             }]
         },
-        { name: 'divider', divider: true },
-        {
-            name: helptext.rsyncd_fieldset_path, 
-            label: true,
-            config: [{
-                    type : 'explorer',
-                    initial: '/mnt',
-                    explorerType: 'directory',
-                    placeholder: helptext.rsyncmod_path_placeholder,
-                    name: 'path',
-                    tooltip: helptext.rsyncmod_path_tooltip,
-                    validation: helptext.rsyncmod_path_validation,
-                    required: true
-            }]
-        },
-        { name: 'divider', divider: true },
+        { name: 'spacer', label: false, width: '2%' },
         {
             name: helptext.rsyncd_fieldset_access,
             label: true,
+            width: '49%',
             config: [
                 {
                     type: 'select',
@@ -110,12 +116,6 @@ export class RYSNCConfigurationFormComponent {
             name: helptext.rsyncd_fieldset_other,
             label: true,
             config: [
-                {
-                    type: 'input',
-                    name: 'comment',
-                    placeholder: helptext.rsyncmod_comment_placeholder,
-                    tooltip: helptext.rsyncmod_comment_tooltip
-                },
                 {
                     type: 'textarea',
                     name: 'auxiliary',

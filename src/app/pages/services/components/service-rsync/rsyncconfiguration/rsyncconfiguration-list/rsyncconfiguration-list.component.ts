@@ -24,8 +24,9 @@ import { T } from '../../../../../../translate-marker';
         { name: T('Path'), prop: 'path' },
         { name: T('Mode'), prop: 'mode' },
         { name: T('Maximum connections'), prop: 'maxconn', hidden: true },
-        { name: T('User'), prop: 'user' },
-        { name: T('Group'), prop: 'group' },
+        { name: T('User'), prop: 'user', hidden: true },
+        { name: T('Group'), prop: 'group', hidden: true },
+        { name: T('Enabled'), prop: 'enabled' },
         { name: T('Host Allow'), prop: 'hostsallow', hidden: true },
         { name: T('Host Deny'), prop: 'hostsdeny', hidden: true },
         { name: T('Auxiliary parameters'), prop: 'auxiliary', hidden: true }
