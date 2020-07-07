@@ -20,11 +20,12 @@ Options:
 --root-password <password>                 - need root password for login
 --convert-feature                          - This convert Jira feature files
                                              for pytest-bdd
+--type  ha-bhyve                           - Which test suite to run
 """ % argument[0]
 
 
 # list of argument that should be use.
-option_list = ["ip=", 'root-password=', 'convert-feature']
+option_list = ["ip=", 'root-password=', 'convert-feature' 'type=']
 
 
 def convert_jira_feature_file(directory):
@@ -86,11 +87,11 @@ def run_testing():
         cfg_file.write(cfg)
         cfg_file.close()
 
-    convert_jira_feature_file('ha-test')
+    convert_jira_feature_file('ha-test-bhyve02')
     pytestcmd = [
         f"pytest-{version}",
         "-vs",
-        "ha-test",
+        "ha-test-bhyve02",
         "--junitxml=results/junit/webui_test.xml",
         "--cucumber-json=results/cucumber/webui_test.json"
     ]
@@ -99,6 +100,6 @@ def run_testing():
 
 
 if run_convert is True:
-    convert_jira_feature_file('ha-test')
+    convert_jira_feature_file('ha-test-bhyve02')
 else:
     run_testing()
