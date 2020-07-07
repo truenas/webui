@@ -178,7 +178,7 @@ export class DatasetQuotasGrouplistComponent implements OnDestroy{
     this.translate.get(helptext.shared.nameErr).subscribe(msg => {
       data.rows.forEach(row => {
         if (!row.name) {
-          row.name = `ID: ${row.id} - ERR:(${msg})`;
+          row.name = `*ERR* (${msg}), ID: ${row.id}`;
         }
         row.quota = this.storageService.convertBytestoHumanReadable(row.quota, 0);
         row.used_percent = `${Math.round((row.used_percent) * 100) / 100}%`;

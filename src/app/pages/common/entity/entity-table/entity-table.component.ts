@@ -1122,7 +1122,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getCellClass({ row, column, value }): any {
     return {
-      'entity-table-cell-error': value.includes('ERR:(')
+      'entity-table-cell-error': value.includes('*ERR*')
     };
   }
 }
