@@ -1519,16 +1519,26 @@ export class VolumesListTableConfig implements InputTableConf {
                   });
                   ds.afterClosed().subscribe((status)=>{
                     if(status){
-                      this.loader.open();
-                      params.push({'force_umount':force_umount});
-                      this.ws.call(
-                        ds.componentInstance.method,params).subscribe((res)=>{
-                          this.loader.close();
-                          this.parentVolumesListComponent.repaintMe();
-                        }, (err)=>{
-                          this.loader.close();
-                          new EntityUtils().handleWSError(this, err, this.dialogService);
+                      this.translate.get(helptext.lock_dataset_dialog.locking_dataset_description).subscribe(lock_ds_description => {
+                        const dialogRef = this.mdDialog.open(EntityJobComponent, {data: {"title":helptext.lock_dataset_dialog.locking_dataset}, disableClose: true});
+                        dialogRef.componentInstance.setDescription(lock_ds_description + rowData.name);
+                        params.push({'force_umount':force_umount});
+                        dialogRef.componentInstance.setCall(ds.componentInstance.method, params);
+                        dialogRef.componentInstance.submit();
+                        let done = false;
+                        dialogRef.componentInstance.success.subscribe((res) => {
+                          if (!done) {
+                            dialogRef.close(false);
+                            done = true;
+                            this.parentVolumesListComponent.repaintMe();
+                          }
                         });
+
+                        dialogRef.componentInstance.failure.subscribe((res) => {
+                          dialogRef.close(false);
+                          new EntityUtils().handleWSError(this, res ,this.dialogService);
+                        });
+                      });
                     }
                   });  
                 })
