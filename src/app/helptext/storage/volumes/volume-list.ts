@@ -124,7 +124,9 @@ lock_dataset_dialog: {
     dialog_title: T('Lock Dataset '),
     dialog_message: T('Lock dataset '),
     checkbox_message: T('Force unmount '),
-    button: T('Lock')
+    button: T('Lock'),
+    locking_dataset: T('Locking Dataset'),
+    locking_dataset_description: T('Locking dataset ')
 },
 encryptMsgA: T('These services depend on pool '),
 encryptMsgB: T(' and will be disrupted if the pool is locked:'),
