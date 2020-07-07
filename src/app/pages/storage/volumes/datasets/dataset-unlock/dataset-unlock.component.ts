@@ -68,15 +68,7 @@ export class DatasetUnlockComponent implements OnDestroy {
           name: 'unlock_children',
           placeholder: helptext.unlock_children_placeholder,
           tooltip: helptext.unlock_children_tooltip,
-          width: '30%',
-          value: true,
-        },
-        {
-          type: 'checkbox',
-          name: 'restart_services',
-          placeholder: helptext.restart_services_placeholder,
-          tooltip: helptext.restart_services_tooltip,
-          width: '30%',
+          width: '50%',
           value: true,
         },
         {
@@ -216,7 +208,7 @@ export class DatasetUnlockComponent implements OnDestroy {
               if (this.key_file_fg.value === false) { // only show key_file checkbox and upload if keys encrypted datasets exist
                 this.key_file_fg.setValue(true);
                 this.key_file_fc.isHidden = false;
-                this.key_file_fc.width = '30%';
+                this.key_file_fc.width = '50%';
               }
             }
             this.datasets.controls[i].controls['is_passphrase'].setValue(is_passphrase);
