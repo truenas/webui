@@ -25,7 +25,7 @@ Options:
 
 
 # list of argument that should be use.
-option_list = ["ip=", 'root-password=', 'convert-feature' 'type=']
+option_list = ["ip=", 'root-password=', 'convert-feature', 'type=']
 
 
 def convert_jira_feature_file(directory):
