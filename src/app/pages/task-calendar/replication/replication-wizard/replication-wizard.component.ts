@@ -1089,6 +1089,7 @@ export class ReplicationWizardComponent {
             saveButtonText: T("Create SSH Connection"),
             customSubmit: async function (entityDialog) {
                 const value = entityDialog.formValue;
+                let prerequisite = true;
                 self.entityWizard.loader.open();
 
                 if (value['private_key'] == 'NEW') {
@@ -1097,7 +1098,8 @@ export class ReplicationWizardComponent {
                             value['sshkeypair'] = res;
                         },
                         (err) => {
-                            new EntityUtils().handleWSError(this, err, this.dialogService);
+                            prerequisite = false;
+                            new EntityUtils().handleWSError(self, err, self.dialogService);
                         }
                     )
                 }
@@ -1107,11 +1109,16 @@ export class ReplicationWizardComponent {
                             value['remote_host_key'] = res;
                         },
                         (err) => {
-                            new EntityUtils().handleWSError(this, err, this.dialogService);
+                            prerequisite = false;
+                            new EntityUtils().handleWSError(self, err, self.dialogService);
                         }
                     )
                 }
 
+                if (!prerequisite) {
+                    self.entityWizard.loader.close();
+                    return;
+                }
                 const createdItems = {
                     private_key: null,
                     ssh_credentials: null,
