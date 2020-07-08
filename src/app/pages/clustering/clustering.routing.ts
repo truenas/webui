@@ -8,4 +8,4 @@ export const routes: Routes = [{
   component: ClusteringComingsoonComponent,
   data: { title: 'Clustering', breadcrumb: 'Clustering' },
 }];
-export const routing: ModuleWithProviders = RouterModule.forChild(routes);
+export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);
