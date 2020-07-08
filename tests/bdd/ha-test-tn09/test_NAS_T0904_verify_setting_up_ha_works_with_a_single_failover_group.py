@@ -119,21 +119,28 @@ def login_as_root_with_password(driver, password):
     driver.find_element_by_xpath('//button[@name="signin_button"]').click()
 
 
-@then('"End user License Agreement - TrueNAS" should appear')
-def end_user_license_agreement_truenas_should_appear(driver):
-    """"End user License Agreement - TrueNAS" should appear."""
+@then('"{agreement}" should appear')
+def end_user_license_agreement_truenas_should_appear(driver, agreement):
+    """"End User License Agreement - TrueNAS" should appear."""
+    wait_on_element(driver, 0.5, 30, 'xpath', f'//h1[contains(.,"{agreement}")]')
+    driver.find_element_by_xpath(f'//h1[contains(.,"{agreement}")]')
 
 
 @then('Click Agree')
 def click_agree(driver):
     """Click Agree."""
+    wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__I AGREE"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
 
 
 @then('We should be returned to license information')
 def we_should_be_returned_to_license_information(driver):
     """We should be returned to license information."""
+    wait_on_element(driver, 0.5, 30, 'xpath', '//p[contains(.,"License Information")]')
+    driver.find_element_by_xpath('//p[contains(.,"License Information")]')
 
 
 @then(parsers.parse('both serials show show under System Serial "{serial1}" and "{serial2}"'))
-def both_serials_show_show_under_system_serial_serial1_and_serial2(driver):
+def both_serials_show_show_under_system_serial_serial1_and_serial2(driver, serial1, serial2):
     """both serials show show under System Serial "serial1" and "serial2"."""
+    driver.find_element_by_xpath(f'//span[contains(.,"{serial1} / {serial2}")]')
