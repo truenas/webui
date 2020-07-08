@@ -157,7 +157,8 @@ export class SigninComponent implements OnInit, OnDestroy {
       window.localStorage.removeItem('middleware_token');
     }
 
-    this.http.get('./assets/buildtime', {responseType: 'text'}).subscribe((res) => {
+    const salt = (new Date()).getTime();
+    this.http.get(`./assets/buildtime?${salt}`, {responseType: 'text'}).subscribe((res) => {
       const buildtime = res;
       const previous_buildtime = window.localStorage.getItem('buildtime');
       if (buildtime !== previous_buildtime) {
