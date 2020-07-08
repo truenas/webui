@@ -157,20 +157,6 @@ export class SigninComponent implements OnInit, OnDestroy {
       window.localStorage.removeItem('middleware_token');
     }
 
-    const salt = (new Date()).getTime();
-    this.http.get(`./assets/buildtime?${salt}`, {responseType: 'text'}).subscribe((res) => {
-      const buildtime = res;
-      const previous_buildtime = window.localStorage.getItem('buildtime');
-      if (buildtime !== previous_buildtime) {
-        window.localStorage.clear();
-        window.localStorage.setItem('buildtime', buildtime);
-        if (middleware_token) {
-          window.localStorage.setItem('middleware_token', middleware_token);
-        }
-        document.location.reload(true);
-      }
-    });
-
     if (middleware_token) {
       this.ws.login_token(middleware_token)
       .subscribe((result) => {
@@ -194,11 +180,24 @@ export class SigninComponent implements OnInit, OnDestroy {
     }
   }
 
+  checkBuildtime() {
+    const salt = (new Date()).getTime();
+    this.http.get(`./assets/buildtime?${salt}`, {responseType: 'text'}).subscribe((res) => {
+      const buildtime = res;
+      const previous_buildtime = window.localStorage.getItem('buildtime');
+      if (buildtime !== previous_buildtime) {
+        window.localStorage.setItem('buildtime', buildtime);
+        document.location.reload(true);
+      }
+    });
+  }
+
   canLogin() {
     if (this.logo_ready && this.connected &&
        (this.failover_status === 'SINGLE' ||
         this.failover_status === 'MASTER' ||
         this.product_type === 'CORE' )) {
+          this.checkBuildtime();
           return true;
     } else {
       return false;
