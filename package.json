@@ -51,7 +51,7 @@
     "@angular/router": "9.1.1",
     "@ngx-translate/core": "12.1.1",
     "@ngx-translate/http-loader": "4.0.0",
-    "@swimlane/ngx-datatable": "16.0.3",
+    "@swimlane/ngx-datatable": "17.0.0",
     "angular-calendar": "0.28.2",
     "angular-draggable-droppable": "4.3.8",
     "angular-resizable-element": "3.3.0",
