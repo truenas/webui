@@ -1759,4 +1759,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     top: 14px;
   }
 
+  .entity-table-cell-error {
+    color: var(--red) !important;
+  }
+
  } // end of ix theme
