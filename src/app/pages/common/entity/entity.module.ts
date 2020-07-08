@@ -15,7 +15,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { DocsService} from '../../../services/docs.service';
 import { RestService, WebSocketService, JobService } from '../../../services/index';
-import { Ng2DropdownModule } from 'ng2-material-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 import { TreeTableModule } from 'primeng/treetable';
 import { NgxFilesizeModule } from 'ngx-filesize';
@@ -87,7 +86,7 @@ import { FormStatusComponent } from './entity-form/components/form-status/form-s
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule, DragDropModule,
     MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule.forRoot(),
-    Ng2DropdownModule, NgxUploaderModule, FlexLayoutModule, TranslateModule,
+    NgxUploaderModule, FlexLayoutModule, TranslateModule,
     OverlayModule, A11yModule, TreeTableModule, NgxFilesizeModule, CommonDirectivesModule
   ],
   declarations: [
