@@ -11,6 +11,14 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": [
+              "lodash",
+              "dom-set",
+              "dom-plane",
+              "@mattlewis92/dom-autoscroller",
+              "rxjs-compat",
+              "calendar-utils/date-adapters/date-fns"
+            ],
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
