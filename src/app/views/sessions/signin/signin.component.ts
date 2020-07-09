@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy, isDevMode } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatButton } from '@angular/material/button';
@@ -197,7 +197,9 @@ export class SigninComponent implements OnInit, OnDestroy {
        (this.failover_status === 'SINGLE' ||
         this.failover_status === 'MASTER' ||
         this.product_type === 'CORE' )) {
-          this.checkBuildtime();
+          if (!isDevMode()) {
+            this.checkBuildtime();
+          }
           return true;
     } else {
       return false;
