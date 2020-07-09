@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, OnDestroy, isDevMode } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatButton } from '@angular/material/button';
@@ -99,6 +99,7 @@ export class SigninComponent implements OnInit, OnDestroy {
           }, 6000);
         } else {
           if (this.canLogin()) {
+            this.checkBuildtime();
             this.loginToken();
           }
         }
@@ -123,7 +124,8 @@ export class SigninComponent implements OnInit, OnDestroy {
     }
 
     if (this.canLogin()) {
-        this.loginToken();
+      this.checkBuildtime();
+      this.loginToken();
     }
 
     this.ws.call('user.has_root_password').subscribe((res) => {
@@ -197,9 +199,6 @@ export class SigninComponent implements OnInit, OnDestroy {
        (this.failover_status === 'SINGLE' ||
         this.failover_status === 'MASTER' ||
         this.product_type === 'CORE' )) {
-          if (!isDevMode()) {
-            this.checkBuildtime();
-          }
           return true;
     } else {
       return false;
@@ -234,6 +233,7 @@ export class SigninComponent implements OnInit, OnDestroy {
             }
             window.sessionStorage.setItem('ha_status', this.ha_status.toString());
             if (this.canLogin()) {
+              this.checkBuildtime();
               this.loginToken();
             }
           }, err => {
