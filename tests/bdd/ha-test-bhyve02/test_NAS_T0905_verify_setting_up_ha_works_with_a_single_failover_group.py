@@ -21,7 +21,7 @@ def test_verify_setting_up_ha_works_with_a_single_failover_group_tn_bhyve02(driv
 def the_browser_is_open_navigate_to_url(driver, nas_url):
     """The browser is open navigate to "url"."""
     driver.get(f"http://{nas_url}/ui/sessions/signin")
-    time.sleep(5)
+    time.sleep(2)
 
 
 @when(parsers.parse('Login appear enter "root" and "{password}"'))
@@ -149,66 +149,146 @@ def both_serials_show_show_under_system_serial_serial1_and_serial2(driver, seria
 @then('Navigate to Network click Global Configuration')
 def navigate_to_network_click_global_configuration(driver):
     """Navigate to Network click Global Configuration."""
+    driver.find_element_by_xpath('//a[@name="Network-menu"]').click()
+    wait_on_element(driver, 0.5, 30, 'xpath', '//a[contains(.,"Global Configuration")]')
+    driver.find_element_by_xpath('//a[contains(.,"Global Configuration")]').click()
 
 
 @then(parsers.parse('Enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}", Hostname (Virtual) "{vhost}", Domain "{domain}", Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}", IPv4 Default Gateway "{gatway}"'))
 def enter_hostname_hostname_truenas_controller_2_hostname_virtual_domain_nameserver1_nameserver2_ipv4_default_gateway_(driver, host1, host2, vhost, domain, nameserver1, nameserver2, gatway):
     """Enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}", Hostname (Virtual) "{vhost}", Domain "{domain}", Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}", IPv4 Default Gateway "{gatway}"."""
+    wait_on_element(driver, 0.5, 30, 'xpath', '//a[contains(.,"Global Configuration")]')
+    driver.find_element_by_xpath('//input[@placeholder="Hostname"]').clear()
+    driver.find_element_by_xpath('//input[@placeholder="Hostname"]').send_keys(host1)
+    driver.find_element_by_xpath('//input[@placeholder="Hostname (TrueNAS Controller 2)"]').clear()
+    driver.find_element_by_xpath('//input[@placeholder="Hostname (TrueNAS Controller 2)"]').send_keys(host2)
+    driver.find_element_by_xpath('//input[@placeholder="Hostname (Virtual)"]').clear()
+    driver.find_element_by_xpath('//input[@placeholder="Hostname (Virtual)"]').send_keys(vhost)
+    driver.find_element_by_xpath('//input[@placeholder="Domain"]').clear()
+    driver.find_element_by_xpath('//input[@placeholder="Domain"]').send_keys(domain)
+    driver.find_element_by_xpath('//input[@placeholder="IPv4 Default Gateway"]').clear()
+    driver.find_element_by_xpath('//input[@placeholder="IPv4 Default Gateway"]').send_keys(gatway)
+    driver.find_element_by_xpath('//input[@placeholder="Nameserver 1"]').clear()
+    driver.find_element_by_xpath('//input[@placeholder="Nameserver 1"]').send_keys(nameserver1)
+    driver.find_element_by_xpath('//input[@placeholder="Nameserver 2"]').clear()
+    driver.find_element_by_xpath('//input[@placeholder="Nameserver 2"]').send_keys(nameserver2)
 
 
 @then('click save when finished')
 def click_save_when_finished(driver):
     """click save when finished."""
+    wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__SAVE"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
 @then('"Please wait" should appear while settings are being applied You should be returned to the same Global Configuration screen and "Settings saved." should appear below the save button at the bottom')
 def please_wait_should_appear_while_settings_are_being_applied_you_should_be_returned_to_the_same_global_configuration_screen_and_settings_saved_should_appear_below_the_save_button_at_the_bottom(driver):
     """"Please wait" should appear while settings are being applied You should be returned to the same Global Configuration screen and "Settings saved." should appear below the save button at the bottom."""
+    wait_on_element(driver, 0.5, 30, 'xpath', '//h6[contains(.,"Please wait")]')
+    wait_on_element(driver, 0.5, 30, 'xpath', '//div[contains(.,"Settings saved.")]')
+    driver.find_element_by_xpath('//div[contains(.,"Settings saved.")]')
 
 
 @then('Navigate to System then Failover, check disable failover, click save.')
 def navigate_to_system_click_failover_click_disable_failover_click_save(driver):
     """Navigate to System click Failover, click disable failover, click save."""
+    driver.find_element_by_xpath('//a[@name="System-menu"]').click()
+    wait_on_element(driver, 0.5, 30, 'xpath', '//a[contains(.,"Failover")]')
+    driver.find_element_by_xpath('//a[contains(.,"Failover")]').click()
+    wait_on_element(driver, 0.5, 30, 'xpath', '//h4[contains(.,"Failover Configuration")]')
+    driver.find_element_by_xpath('//label/div').click()
+    wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__SAVE"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    wait_on_element(driver, 0.5, 30, 'xpath', '//h1[contains(.,"Disable Failover")]')
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
+    driver.find_element_by_xpath('//button[@ix-auto="button__OK"]').click()
 
 
 @then('After settings are applied you should see "Settings applied"')
 def after_settings_are_applied_you_should_see_settings_applied(driver):
     """After settings are applied you should see "Settings applied"."""
+    wait_on_element(driver, 0.5, 30, 'xpath', '//h6[contains(.,"Please wait")]')
+    wait_on_element(driver, 0.5, 30, 'xpath', '//h1[contains(.,"Settings saved")]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
-@then('Navigate to Network then Interfaces, click next to igb0, click edit')
-def navigate_to_network_then_interfaces_click_next_to_igb0_click_edit(driver):
-    """Navigate to Network then Interfaces, click next to igb0, click edit."""
+@then('Navigate to Network then Interfaces, click next to vtnet0, click edit')
+def navigate_to_network_then_interfaces_click_next_to_vtnet0_click_edit(driver):
+    """Navigate to Network then Interfaces, click next to vtnet0, click edit."""
+    driver.find_element_by_xpath('//a[@name="Network-menu"]').click()
+    wait_on_element(driver, 0.5, 30, 'xpath', '//a[contains(.,"Interfaces")]')
+    driver.find_element_by_xpath('//a[contains(.,"Interfaces")]').click()
+    wait_on_element(driver, 0.5, 30, 'xpath', '//div[contains(.,"Interfaces")]')
+    driver.find_element_by_xpath('//a[@ix-auto-type="expander"]').click()
+    wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__EDIT_vtnet0_vtnet0"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_vtnet0_vtnet0"]').click()
 
 
 @then('Interface Settings should appear')
 def interface_settings_should_appear(driver):
     """Interface Settings should appear."""
+    wait_on_element(driver, 0.5, 30, 'xpath', '//h4[contains(.,"Interface Settings")]')
+    driver.find_element_by_xpath('//h4[contains(.,"Interface Settings")]')
 
 
-@then(parsers.parse('Uncheck DHCP, check Critical, Select 1 for Failover Group, enter the Failover VHID "{vhid}", IP Address (This Controller) "{ip1}" then select /"{netmask1}", IP Address (TrueNAS Controller 2) "{ip2}" then select /"{netmask2}", Virtual IP Address, "{vip}"'))
+@then(parsers.parse('Uncheck DHCP, check Critical, Select 1 for Failover Group, enter the Failover VHID "{vhid}", IP Address (This Controller) "{ip1}" then select /"{netmask1}", IP Address (TrueNAS Controller 2) "{ip2}" then select /"{netmask2}", Virtual IP Address "{vip}"'))
 def uncheck_dhcp_check_critical_select_1_for_failover_group_enter_the_failover_vhid_ip_address_this_controller__then_select_23_ip_address_truenas_controller_2_then_select_23_virtual_ip_address(driver, vhid, ip1, netmask1, ip2, netmask2, vip):
     """Uncheck DHCP, check Critical, Select 1 for Failover Group, enter the Failover VHID "{vhid}", IP Address (This Controller) "{ip1}" then select /"{netmask1}", IP Address (TrueNAS Controller 2) "{ip2}" then select /"{netmask2}", Virtual IP Address, "{vip}"."""
+    driver.find_element_by_xpath('//div[@ix-auto="checkbox__DHCP"]/mat-checkbox').click()
+    driver.find_element_by_xpath('//div[@ix-auto="checkbox__Critical"]/mat-checkbox').click()
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Failover Group"]').click()
+    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Failover Group_1"]').click()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Failover VHID"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Failover VHID"]').send_keys(vhid)
+    driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (This Controller)"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (This Controller)"]').send_keys(ip1)
+    driver.find_element_by_xpath('//mat-select[@ix-auto="input__IP Address (This Controller)"]').click()
+    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__{netmask1}"]').click()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Failover IP Address (TrueNAS Controller 2)"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Failover IP Address (TrueNAS Controller 2)"]').send_keys(ip2)
+    driver.find_element_by_xpath('//mat-select[@ix-auto="input__Failover IP Address (TrueNAS Controller 2)"]').click()
+    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__{netmask2}"]').click()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Virtual IP Address"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Virtual IP Address"]').send_keys(vip)
 
 
 @then('Click Apply and "Please wait" should appear while settings are being applied.')
 def click_apply_and_please_wait_should_appear_while_settings_are_being_applied(driver):
     """Click Apply and "Please wait" should appear while settings are being applied."""
+    wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__APPLY"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__APPLY"]').click()
+    wait_on_element(driver, 0.5, 30, 'xpath', '//h6[contains(.,"Please wait")]')
 
 
 @then('Click Test Changes, check Confirm, Click Test Changes again')
 def click_test_changes_check_confirm_click_test_changes_again(driver):
     """Click Test Changes, check Confirm, Click Test Changes again."""
+    wait_on_element(driver, 0.5, 30, 'xpath', '//p[contains(.,"Test changes now?")]')
+    wait_on_element(driver, 0.5, 30, 'xpath', '//button[contains(.,"TEST CHANGES")]')
+    driver.find_element_by_xpath('//button[contains(.,"TEST CHANGES")]').click()
+    wait_on_element(driver, 0.5, 30, 'xpath', '//h1[contains(.,"Test Changes")]')
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
+    driver.find_element_by_xpath('//button[@ix-auto="button__TEST CHANGES"]').click()
 
 
 @then('Please wait should appear while settings are being applied')
 def please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
+    wait_on_element(driver, 0.5, 30, 'xpath', '//h6[contains(.,"Please wait")]')
+    wait_on_element(driver, 0.5, 30, 'xpath', '//button[contains(.,"SAVE CHANGES")]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__TEST CHANGES"]').click()
+    wait_on_element(driver, 0.5, 30, 'xpath', '//h1[contains(.,"Save Changes")]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__CLOSE"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
 @then('Navigate to Storage click Disks then click name several times to sort in alphabetical order')
 def navigate_to_storage_click_disks_then_click_name_several_times_to_sort_in_alphabetical_order(driver):
     """Navigate to Storage click Disks then click name several times to sort in alphabetical order."""
+    driver.find_element_by_xpath('//a[@name="Storage-menu"]').click()
+    wait_on_element(driver, 0.5, 30, 'xpath', '//a[contains(.,"Disks")]')
+    driver.find_element_by_xpath('//a[contains(.,"Disks")]').click()
 
 
 @then('The list of disks should appear in alphabetical order starting with ada0-ada1 (the boot devices) and da0-da15 the disks we will wipe in next step to create pools')

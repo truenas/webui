@@ -25,3 +25,13 @@ def wait_on_element(driver, wait, loop, bytype, what):
         time.sleep(0.5)
     else:
         return False
+
+
+def wait_on_element_disappear(driver, wait, loop, bytype, what):
+    for _ in range(loop):
+        time.sleep(wait)
+        if is_element_present(driver, bytype, what):
+            return False
+        time.sleep(0.5)
+    else:
+        return True
