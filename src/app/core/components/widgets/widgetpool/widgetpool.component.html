@@ -93,6 +93,9 @@
                       <span *ngIf="poolHealth.level == 'error'" class="{{poolHealth.level}} icon">
                         &nbsp;<mat-icon class="poolHealth.level" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
                       </span>
+                      <span *ngIf="poolState.status == 'ONLINE' && !poolState.healthy" class="error icon">
+                        &nbsp;<mat-icon class="poolHealth.level" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+                      </span>
                       <span *ngIf="poolHealth.level == 'warn' && poolState.status == 'UNKNOWN'" class="{{poolHealth.level}} icon">
                         
                         &nbsp;<mat-icon role="img">help</mat-icon>
