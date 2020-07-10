@@ -109,37 +109,6 @@ export const helptext_system_general = {
     tooltip: T('Choose a time format.')
   },
 
-  stg_sysloglevel: {
-    placeholder: T("Syslog level"),
-    tooltip: T(
-      "When Syslog server is defined, only logs matching this\
- level are sent."
-    ),
-    options: [
-      {label:T('Emergency'), value:'F_EMERG'},
-      {label:T('Alert'), value:'F_ALERT'},
-      {label:T('Critical'), value:'F_CRIT'},
-      {label:T('Error'), value:'F_ERR'},
-      {label:T('Warning'), value:'F_WARNING'},
-      {label:T('Notice'), value:'F_NOTICE'},
-      {label:T('Info'), value:'F_INFO'},
-      {label:T('Debug'), value:'F_DEBUG'},
-      {label:T('Is Debug'), value:'F_IS_DEBUG'}
-    ]
-  },
-
-  stg_syslogserver: {
-    placeholder: T("Syslog server"),
-    tooltip: T(
-      "Remote syslog server DNS hostname or IP address.\
- Nonstandard port numbers can be used by adding\
- a colon and the port number to the hostname, like\
- <samp>mysyslogserver:1928</samp>. Log entries\
- are written to local logs and sent to the remote\
- syslog server."
-    )
-  },
-
   secretseed: {
     placeholder: T("Export Password Secret Seed"),
     tooltip: T('')

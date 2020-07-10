@@ -13,10 +13,11 @@ import { DialogService } from "../../../services/dialog.service";
 import { T } from '../../../translate-marker';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-system-advanced',
-  templateUrl: 'advanced.component.html',
+  template: `<entity-form [conf]="this"></entity-form>`,
   styleUrls: ['advanced.component.css'],
   providers: [DatePipe]
 })
@@ -247,17 +248,33 @@ export class AdvancedComponent implements OnDestroy {
     },
     { name: 'spacer', label: false, width: '2%' },
     {
+      name: helptext_system_advanced.fieldset_kernel,
+      label: true,
+      class: 'kernel',
+      width: '49%',
+      config: [
+
+        {
+          type: 'checkbox',
+          name: 'autotune',
+          placeholder: helptext_system_advanced.autotune_placeholder,
+          tooltip: helptext_system_advanced.autotune_tooltip
+        },
+        {
+          type: 'checkbox',
+          name: 'debugkernel',
+          placeholder: helptext_system_advanced.debugkernel_placeholder,
+          tooltip: helptext_system_advanced.debugkernel_tooltip
+        },
+      ]
+    },
+    { name: 'divider', divider: true },
+    {
       name: helptext_system_advanced.fieldset_sed,
       label: true,
       class: 'sed',
       width: '49%',
       config: [
-        {
-          type: 'paragraph',
-          name: 'sed_options_message',
-          paraText: helptext_system_advanced.sed_options_message_paragraph,
-          tooltip: helptext_system_advanced.sed_options_tooltip
-        },
         {
           type: 'select',
           name: 'sed_user',
@@ -288,33 +305,11 @@ export class AdvancedComponent implements OnDestroy {
         }
       ]
     },
-    { name: 'divider', divider: true },
-    {
-      name: helptext_system_advanced.fieldset_kernel,
-      label: true,
-      class: 'kernel',
-      width: '49%',
-      config: [
-
-        {
-          type: 'checkbox',
-          name: 'autotune',
-          placeholder: helptext_system_advanced.autotune_placeholder,
-          tooltip: helptext_system_advanced.autotune_tooltip
-        },
-        {
-          type: 'checkbox',
-          name: 'debugkernel',
-          placeholder: helptext_system_advanced.debugkernel_placeholder,
-          tooltip: helptext_system_advanced.debugkernel_tooltip
-        },
-      ]
-    },
     { name: 'spacer', label: false, width: '2%' },
     {
-      name: helptext_system_advanced.fieldset_other,
+      name: helptext_system_advanced.fieldset_syslog,
       label: true,
-      class: 'other',
+      class: 'syslog',
       width: '49%',
       config: [
         {
@@ -322,6 +317,42 @@ export class AdvancedComponent implements OnDestroy {
           name: 'fqdn_syslog',
           placeholder: helptext_system_advanced.fqdn_placeholder,
           tooltip: helptext_system_advanced.fqdn_tooltip
+        },
+        {
+          type: 'select',
+          name: 'sysloglevel',
+          placeholder: helptext_system_advanced.sysloglevel.placeholder,
+          tooltip: helptext_system_advanced.sysloglevel.tooltip,
+          options: helptext_system_advanced.sysloglevel.options,
+        },
+        {
+          type: 'input',
+          name: 'syslogserver',
+          placeholder: helptext_system_advanced.syslogserver.placeholder,
+          tooltip: helptext_system_advanced.syslogserver.tooltip,
+        },
+        {
+          type: 'select',
+          name: 'syslog_transport',
+          placeholder: helptext_system_advanced.syslog_transport.placeholder,
+          tooltip: helptext_system_advanced.syslog_transport.tooltip,
+          options: helptext_system_advanced.syslog_transport.options,
+        },
+        {
+          type: 'select',
+          name: 'syslog_tls_certificate',
+          placeholder: helptext_system_advanced.syslog_tls_certificate.placeholder,
+          tooltip: helptext_system_advanced.syslog_tls_certificate.tooltip,
+          options: [],
+          relation: [
+            {
+              action: "SHOW",
+              when: [{
+                name: "syslog_transport",
+                value: 'TLS'
+              }]
+            }
+          ]
         }
       ]
     },
@@ -357,7 +388,14 @@ export class AdvancedComponent implements OnDestroy {
     }
 
   }
-
+  preInit() {
+    const syslog_tls_certificate_field = this.fieldSets.config('syslog_tls_certificate');
+    this.ws.call('certificate.query').subscribe((certs) => {
+      for (const cert of certs) {
+        syslog_tls_certificate_field.options.push({label: cert.name, value: cert.id});
+      }
+    })
+  }
   afterInit(entityEdit: any) {
     this.ws.call('failover.licensed').subscribe((is_ha) => {
       this.is_ha = is_ha;

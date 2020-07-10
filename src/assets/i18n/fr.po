@@ -1384,6 +1384,9 @@ msgstr "Adresse"
 msgid "Address space limit in bytes for the jail."
 msgstr "Limite d'espace d'adressage en octets pour le jail."
 
+msgid "Addresses"
+msgstr ""
+
 msgid ""
 "Adjust how often alert notifications are sent, use  the Frequency "
 "drop-down. Setting the Frequency to NEVER prevents that  alert from being "
@@ -5631,17 +5634,14 @@ msgstr ""
 "S.M.A.R.T</a>. périodiques."
 
 msgid ""
-"Enabling allows using a password to authenticate  the SSH login. Disabling "
-"changes authentication to require keys for  all users. This requires  <a "
+"Enabling allows using a password to authenticate  the SSH login. "
+"<i>Warning:</i> when directory services are enabled, allowing password  "
+"authentication can grant access to all users imported by the directory "
+"service.<br>  Disabling changes authentication to require keys for all "
+"users. This requires  <a "
 "href=\"http://the.earth.li/%7Esgtatham/putty/0.55/htmldoc/Chapter8.html\" "
 "target=\"_blank\">additional setup</a>  on both the SSH client and server."
 msgstr ""
-"L'activation permet d'utiliser un mot de passe pour authentifier le login "
-"SSH. Désactiver l'authentification des changements pour exiger des clés "
-"pour tous les utilisateurs. Cela nécessite une <a "
-"href=\"http://the.earth.li/%7Esgtatham/putty/0.55/htmldoc/Chapter8.html\" "
-"target=\"_blank\">configuration supplémentaire</a> à la fois sur le client "
-"et le serveur SSH."
 
 msgid ""
 "Enabling sends the  <i>plugin instance</i> and <i>type instance</i> to "
@@ -6221,13 +6221,8 @@ msgstr ""
 msgid ""
 "Enter additional parameters from  <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=ifconfig\" "
-"target=\"_blank\">ifconfig(8)</a>.  Separate entries by pressing "
-"<code>Enter</code>."
+"target=\"_blank\">ifconfig(8)</a>."
 msgstr ""
-"Entrez des paramètres supplémentaires à partir de <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=ifconfig\" "
-"target=\"_blank\">ifconfig(8)</a>.  Séparez les entrées en appuyant sur la "
-"touche <code>Entrée</code>."
 
 msgid "Enter an IPv4 address. This overrides the default gateway provided by DHCP."
 msgstr ""
@@ -7527,6 +7522,9 @@ msgid ""
 msgstr ""
 "ID de groupe créé dans Accès autorisé. Requis lorsque la méthode "
 "d'authentification de la découverte est réglée sur CHAP ou CHAP mutuel."
+
+msgid "Group Obj"
+msgstr ""
 
 msgid "Group Object Quota"
 msgstr "Quota d'objets de groupe"
@@ -9097,6 +9095,9 @@ msgstr "Utilisateur Maproot"
 
 msgid "Mar"
 msgstr "Mar"
+
+msgid "Mask"
+msgstr ""
 
 msgid "Masquerade Address"
 msgstr "Adresse Masquerade"
@@ -14803,6 +14804,9 @@ msgstr "TLS Aucune réutilisation de session requise"
 msgid "TLS Policy"
 msgstr "Politique TLS"
 
+msgid "Tag"
+msgstr ""
+
 msgid "Take Snapshot"
 msgstr "Prendre un instantané"
 
@@ -16663,6 +16667,9 @@ msgstr ""
 msgid "User Name"
 msgstr "Nom d'utilisateur"
 
+msgid "User Obj"
+msgstr ""
+
 msgid "User Object Quota"
 msgstr "Quota d'objet utilisateur"
 
@@ -16811,6 +16818,9 @@ msgstr ""
 
 msgid "Using pool "
 msgstr "Utilisation du volume "
+
+msgid "VLAN Addresses"
+msgstr ""
 
 msgid "VLAN ID"
 msgstr "ID VLAN"

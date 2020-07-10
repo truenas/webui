@@ -1140,6 +1140,9 @@ msgstr "Adresse"
 msgid "Address space limit in bytes for the jail."
 msgstr "Adressraum Limit in Bytes für den Jail."
 
+msgid "Addresses"
+msgstr ""
+
 msgid ""
 "Adjust how often alert notifications are sent, use  the Frequency "
 "drop-down. Setting the Frequency to NEVER prevents that  alert from being "
@@ -4719,8 +4722,11 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Enabling allows using a password to authenticate  the SSH login. Disabling "
-"changes authentication to require keys for  all users. This requires  <a "
+"Enabling allows using a password to authenticate  the SSH login. "
+"<i>Warning:</i> when directory services are enabled, allowing password  "
+"authentication can grant access to all users imported by the directory "
+"service.<br>  Disabling changes authentication to require keys for all "
+"users. This requires  <a "
 "href=\"http://the.earth.li/%7Esgtatham/putty/0.55/htmldoc/Chapter8.html\" "
 "target=\"_blank\">additional setup</a>  on both the SSH client and server."
 msgstr ""
@@ -5163,8 +5169,7 @@ msgstr ""
 msgid ""
 "Enter additional parameters from  <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=ifconfig\" "
-"target=\"_blank\">ifconfig(8)</a>.  Separate entries by pressing "
-"<code>Enter</code>."
+"target=\"_blank\">ifconfig(8)</a>."
 msgstr ""
 
 msgid "Enter an IPv4 address. This overrides the default gateway provided by DHCP."
@@ -6271,6 +6276,9 @@ msgstr "Gruppen-ID"
 msgid ""
 "Group ID created in  Authorized Access. Required when the Discovery "
 "Authentication Method is set to  CHAP or Mutual CHAP."
+msgstr ""
+
+msgid "Group Obj"
 msgstr ""
 
 msgid "Group Object Quota"
@@ -7653,6 +7661,9 @@ msgstr ""
 
 msgid "Mar"
 msgstr "Mär"
+
+msgid "Mask"
+msgstr ""
 
 msgid "Masquerade Address"
 msgstr "Maskerade-Adresse"
@@ -12830,6 +12841,9 @@ msgstr ""
 msgid "TLS Policy"
 msgstr ""
 
+msgid "Tag"
+msgstr ""
+
 msgid "Take Snapshot"
 msgstr "Snapshot erstellen"
 
@@ -14411,6 +14425,9 @@ msgstr ""
 msgid "User Name"
 msgstr "Benutzername"
 
+msgid "User Obj"
+msgstr ""
+
 msgid "User Object Quota"
 msgstr ""
 
@@ -14523,6 +14540,9 @@ msgstr ""
 
 msgid "Using pool "
 msgstr "Verwende Pool "
+
+msgid "VLAN Addresses"
+msgstr ""
 
 msgid "VLAN ID"
 msgstr "VLAN ID"
