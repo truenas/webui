@@ -332,16 +332,18 @@ export class UserFormComponent {
         entityForm.setDisabled('password_conf', password_disabled);
       });
 
-      this.ws.call('sharing.smb.query', [[['enabled', '=', true], ['home', '=', true]], { get: true }])
+      this.ws.call('sharing.smb.query', [[['enabled', '=', true], ['home', '=', true]]])
       // On a new form, if there is a home SMB share, populate the 'home' form explorer with it...
-        .subscribe(({path}) => {
-          this.homeSharePath = path;
-          this.entityForm.formGroup.controls['home'].setValue(this.homeSharePath);
-          // ...then add on /<username>
-          this.entityForm.formGroup.controls['username'].valueChanges.subscribe(value => {
-            this.entityForm.formGroup.controls['home'].setValue(`${this.homeSharePath}/${value}`);
-          })
-      });
+        .subscribe((res) => {
+          if (res.length > 0) {
+            this.homeSharePath = res[0].path;
+            this.entityForm.formGroup.controls['home'].setValue(this.homeSharePath);
+            // ...then add on /<username>
+            this.entityForm.formGroup.controls['username'].valueChanges.subscribe(value => {
+              this.entityForm.formGroup.controls['home'].setValue(`${this.homeSharePath}/${value}`);
+            })
+          }
+        });
       // If there is no home share, the 'home' path is populated from helptext
     }
 
