@@ -59,9 +59,7 @@ export class DownloadKeyModalDialog {
 
     } else {
       mimetype = 'application/octet-stream';
-      console.log(payload);
       this.ws.call("pool.download_encryption_key", payload).subscribe((res) => {
-        console.log(res);
         this.loader.close();
         this.storage.streamDownloadFile(this.http, res, this.fileName, mimetype).subscribe(file => {
           if(res !== null && res !== "") {
