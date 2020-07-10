@@ -134,8 +134,10 @@ dataset_form_encryption: {
     encryption_checkbox_tooltip: T('Secure data within this dataset. Data is unusable until \
      unlocked with an encryption key or passphrase.'),
     encryption_type_placeholder: T('Encryption Type'),
-    encryption_type_tooltip: T('How the dataset is secured. Choose between securing with \
-    an encryption <i>Key</i> or a user-defined <i>Passphrase</i>.'),
+    encryption_type_tooltip: T('How the dataset is secured. Choose between securing with\
+ an encryption <i>Key</i> or a user-defined <i>Passphrase</i>. Creating a new key file\
+ invalidates any previously downloaded key file for this dataset. It is recommended\
+ to delete any obsolete key file backups and back up the new key file.'),
     encryption_type_options: [
         {label: T('Key'), value: 'key'},
         {label: T('Passphrase'), value: 'passphrase'}

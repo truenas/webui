@@ -39,9 +39,10 @@ manager_encryption_tooltip : T('Enable \
 manager_suggested_layout_tooltip : T('Create a recommended formation\
  of vdevs in a pool.'),
 
-manager_encryption_message : T("Always back up the key! Losing the key\
- will also lose all data on the disks with\
- no chance of recovery."),
+manager_encryption_message : T("This type of encryption is for users storing sensitive data.\
+ Encrypted disks can be removed from the pool and reused or disposed of without being erased.\
+ iXsystems, inc. cannot be held responsible for any lost or unrecoverable data as a consequence\
+ of using this feature."),
 
 manager_duplicate_title: T("Repeat Data VDev"),
 manager_duplicate_vdevs_tooltip: T("Create more data vdevs like the first."),
