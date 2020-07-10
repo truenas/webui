@@ -8,6 +8,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { EntityUtils } from '../../../../../app/pages/common/entity/utils';
+import helptext from '../../../../helptext/storage/volumes/download-key';
 import { T } from '../../../../translate-marker';
 
 @Component({
@@ -22,6 +23,7 @@ export class DownloadKeyModalDialog {
   public volumeName: any;
   public fileName: any;
   public isDownloaded: Boolean = false;
+  public help = helptext;
 
   constructor(
     protected translate: TranslateService,
@@ -57,7 +59,9 @@ export class DownloadKeyModalDialog {
 
     } else {
       mimetype = 'application/octet-stream';
+      console.log(payload);
       this.ws.call("pool.download_encryption_key", payload).subscribe((res) => {
+        console.log(res);
         this.loader.close();
         this.storage.streamDownloadFile(this.http, res, this.fileName, mimetype).subscribe(file => {
           if(res !== null && res !== "") {
