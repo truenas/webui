@@ -19,6 +19,8 @@
               "rxjs",
               "rxjs-compat",
               "is-cidr",
+              "cidr-regex",
+              "dygraphs",
               "angular-calendar",
               "chart.js",
               "cron-parser",
