@@ -22,8 +22,6 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
   public token: any;
   public xterm: any;
   private shellSubscription: any;
-  private precommand_displayed = false;
-
   public shell_tooltip = helptext.serial_shell_tooltip;
 
   clearLine = "\u001b[2K\r"
@@ -46,13 +44,6 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
         this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
           if (value !== undefined) {
             this.xterm.write(value);
-            if (!this.precommand_displayed) {
-              setTimeout(function() {
-                self.xterm.send('cu -l /dev/nmdm'+self.pk+'B\n');
-                self.xterm.send('\r');
-              }, 1000);
-              this.precommand_displayed = true;
-            }
           }
         });
         this.initializeTerminal();
@@ -105,6 +96,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   initializeWebShell(res: string) {
+    this.ss.vmId = Number(this.pk);
     this.ss.token = res;
     this.ss.connect();
   }

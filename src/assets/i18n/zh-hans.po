@@ -1187,6 +1187,9 @@ msgstr "地址"
 msgid "Address space limit in bytes for the jail."
 msgstr "监狱的地址空间限制（以bytes为单位）。"
 
+msgid "Addresses"
+msgstr ""
+
 msgid ""
 "Adjust how often alert notifications are sent, use  the Frequency "
 "drop-down. Setting the Frequency to NEVER prevents that  alert from being "
@@ -4859,14 +4862,14 @@ msgstr ""
 "target=\"_blank\"> S.M.A.R.T. 测试</a>。"
 
 msgid ""
-"Enabling allows using a password to authenticate  the SSH login. Disabling "
-"changes authentication to require keys for  all users. This requires  <a "
+"Enabling allows using a password to authenticate  the SSH login. "
+"<i>Warning:</i> when directory services are enabled, allowing password  "
+"authentication can grant access to all users imported by the directory "
+"service.<br>  Disabling changes authentication to require keys for all "
+"users. This requires  <a "
 "href=\"http://the.earth.li/%7Esgtatham/putty/0.55/htmldoc/Chapter8.html\" "
 "target=\"_blank\">additional setup</a>  on both the SSH client and server."
 msgstr ""
-"启用允许使用密码来验证SSH登录名。禁用更改身份验证以要求所有用户使用密钥。这需要在SSH客户端和服务器上进行<a "
-"href=\"http://the.earth.li/%7Esgtatham/putty/0.55/htmldoc/Chapter8.html\" "
-"target=\"_blank\">附加设置</a>。"
 
 msgid ""
 "Enabling sends the  <i>plugin instance</i> and <i>type instance</i> to "
@@ -5332,11 +5335,8 @@ msgstr ""
 msgid ""
 "Enter additional parameters from  <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=ifconfig\" "
-"target=\"_blank\">ifconfig(8)</a>.  Separate entries by pressing "
-"<code>Enter</code>."
+"target=\"_blank\">ifconfig(8)</a>."
 msgstr ""
-"从<a href=\"https://www.freebsd.org/cgi/man.cgi?query=ifconfig\" "
-"target=\"_blank\">ifconfig(8)</a>输入附加参数。通过按<code> Enter </ code>分隔条目。"
 
 msgid "Enter an IPv4 address. This overrides the default gateway provided by DHCP."
 msgstr "输入IPv4地址。这将会覆盖DHCP分配的默认网关。"
@@ -6483,6 +6483,9 @@ msgid ""
 "Group ID created in  Authorized Access. Required when the Discovery "
 "Authentication Method is set to  CHAP or Mutual CHAP."
 msgstr "在授权访问中创建的组ID。将“发现身份验证方法”设置为CHAP或“相互CHAP”时需要。"
+
+msgid "Group Obj"
+msgstr ""
 
 msgid "Group Object Quota"
 msgstr "组对象配额"
@@ -7896,6 +7899,9 @@ msgstr "Maproot用户"
 
 msgid "Mar"
 msgstr "三月"
+
+msgid "Mask"
+msgstr ""
 
 msgid "Masquerade Address"
 msgstr "地址伪装"
@@ -12771,6 +12777,9 @@ msgstr "TLS无需会话重用"
 msgid "TLS Policy"
 msgstr "TLS政策"
 
+msgid "Tag"
+msgstr ""
+
 msgid "Take Snapshot"
 msgstr "拍摄快照"
 
@@ -14301,6 +14310,9 @@ msgstr ""
 msgid "User Name"
 msgstr "用户名"
 
+msgid "User Obj"
+msgstr ""
+
 msgid "User Object Quota"
 msgstr "用户对象配额"
 
@@ -14419,6 +14431,9 @@ msgstr ""
 
 msgid "Using pool "
 msgstr "正在使用的池"
+
+msgid "VLAN Addresses"
+msgstr ""
 
 msgid "VLAN ID"
 msgstr "虚拟局域网ID"
