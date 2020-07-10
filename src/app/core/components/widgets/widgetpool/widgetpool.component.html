@@ -91,7 +91,6 @@
                         &nbsp;<mat-icon>check_circle</mat-icon>
                       </span>
                       <span *ngIf="poolHealth.level == 'error'" class="{{poolHealth.level}} icon">
-                        
                         &nbsp;<mat-icon class="poolHealth.level" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
                       </span>
                       <span *ngIf="poolHealth.level == 'warn' && poolState.status == 'UNKNOWN'" class="{{poolHealth.level}} icon">
@@ -181,7 +180,8 @@
                       <span class="value-units">{{diskSizeLabel}}</span>&nbsp;&nbsp;
                     </span>
                     <ng-template #unavail>
-                      <span class="value">{{"Gathering data..." | translate}}</span>
+                      <span *ngIf="displayValue !== 'Unknown' " class="value">{{"Gathering data..." | translate}}</span>
+                      <span *ngIf="displayValue == 'Unknown' " class="value">{{"Unknown" | translate}}</span>
                     </ng-template>
                   </mat-list-item>
                   
