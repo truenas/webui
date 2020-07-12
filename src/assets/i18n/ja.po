@@ -311,6 +311,13 @@ msgid ""
 msgstr ""
 
 msgid ""
+"<a href=\"https://tools.ietf.org/html/rfc8095\" target=\"_blank\">Transport "
+"Protocol</a> for the remote system log server connection. Choosing "
+"Transport Layer Security (TLS) also requires selecting a preconfigured "
+"system Certificate."
+msgstr ""
+
+msgid ""
 "<a href=\"https://www.backblaze.com/b2/cloud-storage.html\" "
 "target=\"_blank\">Backblaze B2</a> Application Key. To generate a new "
 "application key, log in to the Backblaze account, go to the <i>App Keys</i> "
@@ -818,6 +825,11 @@ msgid "Activate this Boot Environment?"
 msgstr "このブート環境をアクティブにしますか?"
 
 msgid "Activate this certificate extension."
+msgstr ""
+
+msgid ""
+"Activate this module for use with Rsync. Unset this field to deactivate the "
+"module without completely removing it."
 msgstr ""
 
 msgid ""
@@ -1943,9 +1955,6 @@ msgid "Boot Loader Type"
 msgstr ""
 
 msgid "Boot Method"
-msgstr ""
-
-msgid "Boot Pool"
 msgstr ""
 
 msgid "Boot Pool Condition"
@@ -7341,6 +7350,12 @@ msgstr ""
 msgid "Lock dataset "
 msgstr ""
 
+msgid "Locking Dataset"
+msgstr ""
+
+msgid "Locking dataset "
+msgstr ""
+
 msgid "Log"
 msgstr ""
 
@@ -7917,6 +7932,9 @@ msgid ""
 "href=\"https://help.dyn.com/remote-access-api/checkip-tool/\" "
 "target=\"_blank\">Dyn IP detection</a>.  to discover the remote socket IP "
 "address."
+msgstr ""
+
+msgid "Name not found"
 msgstr ""
 
 msgid "Name of NIS domain."
@@ -9874,9 +9892,6 @@ msgstr ""
 msgid "SAVE CONFIGURATION"
 msgstr ""
 
-msgid "SED"
-msgstr ""
-
 msgid "SED Password"
 msgstr ""
 
@@ -10668,15 +10683,15 @@ msgstr ""
 msgid "Self Healed"
 msgstr ""
 
+msgid "Self-Encrypting Drive"
+msgstr ""
+
 msgid ""
 "Self-Encrypting Drive (SED) passwords can be managed with KMIP. Enabling "
 "this option allows the key server to manage creating or updating the global "
 "SED password, creating or updating individual SED passwords, and retrieving "
 "SED passwords when SEDs are unlocked. Disabling this option leaves SED "
 "password management with the local system."
-msgstr ""
-
-msgid "Self-Encrypting Drive Options"
 msgstr ""
 
 msgid "Semi-automatic (TrueNAS CORE only)"
@@ -12048,10 +12063,16 @@ msgstr ""
 msgid "Syslog"
 msgstr ""
 
-msgid "Syslog level"
-msgstr "Syslogレベル"
+msgid "Syslog Level"
+msgstr ""
 
-msgid "Syslog server"
+msgid "Syslog Server"
+msgstr ""
+
+msgid "Syslog TLS Certificate"
+msgstr ""
+
+msgid "Syslog Transport"
 msgstr ""
 
 msgid "System"
@@ -12113,6 +12134,9 @@ msgid ""
 msgstr ""
 
 msgid "System-Generated Settings"
+msgstr ""
+
+msgid "TCP"
 msgstr ""
 
 msgid "TCP Port"
@@ -12635,6 +12659,11 @@ msgid ""
 "href=\"https://www.iana.org/assignments/service-names-port-numbers/service-"
 "names-port-numbers.xhtml\"  target=\"_blank\">Internet Assigned Numbers "
 "Authority (IANA) registry</a>."
+msgstr ""
+
+msgid ""
+"The preconfigured system <i>Certificate</i> to use for authenticating the "
+"TLS protocol connection to the remote system log server."
 msgstr ""
 
 msgid "The product of vCPUs, cores and threads must not exceed 16."
@@ -13189,6 +13218,9 @@ msgid ""
 "chooses the correct account type."
 msgstr ""
 
+msgid "UDP"
+msgstr ""
+
 msgid ""
 "UDP port number on the system receiving  SNMP trap notifications. The "
 "default is <i>162</i>."
@@ -13272,6 +13304,9 @@ msgstr "Unix 共有 (NFS)"
 msgid "Unkeep"
 msgstr ""
 
+msgid "Unknown"
+msgstr ""
+
 msgid "Unlock"
 msgstr ""
 
@@ -13333,9 +13368,6 @@ msgstr ""
 
 msgid "Until"
 msgstr ""
-
-msgid "Unused"
-msgstr "未使用"
 
 msgid "Upcoming tasks"
 msgstr ""
@@ -14038,7 +14070,9 @@ msgid ""
 "generated to be used with OpenVPN client."
 msgstr ""
 
-msgid "When Syslog server is defined, only logs matching this level are sent."
+msgid ""
+"When <i>Syslog Server</i> is defined, only logs matching this level are "
+"sent."
 msgstr ""
 
 msgid ""

@@ -369,6 +369,13 @@ msgstr ""
 "target=\"_blank\">(documentation rclone)</a>."
 
 msgid ""
+"<a href=\"https://tools.ietf.org/html/rfc8095\" target=\"_blank\">Transport "
+"Protocol</a> for the remote system log server connection. Choosing "
+"Transport Layer Security (TLS) also requires selecting a preconfigured "
+"system Certificate."
+msgstr ""
+
+msgid ""
 "<a href=\"https://www.backblaze.com/b2/cloud-storage.html\" "
 "target=\"_blank\">Backblaze B2</a> Application Key. To generate a new "
 "application key, log in to the Backblaze account, go to the <i>App Keys</i> "
@@ -1075,6 +1082,11 @@ msgstr "Activez cet environnement de démarrage ?"
 
 msgid "Activate this certificate extension."
 msgstr "Activez cette extension de certificat."
+
+msgid ""
+"Activate this module for use with Rsync. Unset this field to deactivate the "
+"module without completely removing it."
+msgstr ""
 
 msgid ""
 "Activates a tuning script which attempts to optimize  the system depending "
@@ -2442,9 +2454,6 @@ msgstr "Type de chargeur d'amorçage"
 
 msgid "Boot Method"
 msgstr "Méthode de démarrage"
-
-msgid "Boot Pool"
-msgstr "Volume de démarrage"
 
 msgid "Boot Pool Condition"
 msgstr "Statut du volume de démarrage"
@@ -8948,6 +8957,12 @@ msgstr "Verrouiller l'utilisateur"
 msgid "Lock dataset "
 msgstr "Verrouiller dataset "
 
+msgid "Locking Dataset"
+msgstr ""
+
+msgid "Locking dataset "
+msgstr ""
+
 msgid "Log"
 msgstr "Log"
 
@@ -9620,6 +9635,9 @@ msgstr ""
 "href=\"https://help.dyn.com/remote-access-api/checkip-tool/\" "
 "target=\"_blank\">détection Dyn IP</a> pour découvrir l'adresse IP du "
 "socket distant."
+
+msgid "Name not found"
+msgstr ""
 
 msgid "Name of NIS domain."
 msgstr "Nom du domaine NIS."
@@ -11901,9 +11919,6 @@ msgstr "ENREGISTRER LES MODIFICATIONS"
 msgid "SAVE CONFIGURATION"
 msgstr "SAUVEGARDER LA CONFIGURATION"
 
-msgid "SED"
-msgstr "SED"
-
 msgid "SED Password"
 msgstr "Mot de passe SED"
 
@@ -12871,6 +12886,9 @@ msgstr ""
 msgid "Self Healed"
 msgstr ""
 
+msgid "Self-Encrypting Drive"
+msgstr ""
+
 msgid ""
 "Self-Encrypting Drive (SED) passwords can be managed with KMIP. Enabling "
 "this option allows the key server to manage creating or updating the global "
@@ -12884,9 +12902,6 @@ msgstr ""
 "des mots de passe individuels du SED et la récupération des mots de passe "
 "du SED lorsque les SED sont déverrouillés. La désactivation de cette option "
 "laisse la gestion des mots de passe SED au système local."
-
-msgid "Self-Encrypting Drive Options"
-msgstr "Options Self-Encrypting Drive"
 
 msgid "Semi-automatic (TrueNAS CORE only)"
 msgstr "Semi-automatique (TrueNAS CORE uniquement)"
@@ -14662,11 +14677,17 @@ msgstr ""
 msgid "Syslog"
 msgstr "Syslog"
 
-msgid "Syslog level"
-msgstr "Niveau Syslog"
+msgid "Syslog Level"
+msgstr ""
 
-msgid "Syslog server"
-msgstr "Serveur syslog"
+msgid "Syslog Server"
+msgstr ""
+
+msgid "Syslog TLS Certificate"
+msgstr ""
+
+msgid "Syslog Transport"
+msgstr ""
 
 msgid "System"
 msgstr "Système"
@@ -14738,6 +14759,9 @@ msgstr ""
 
 msgid "System-Generated Settings"
 msgstr "Paramètres générés par le système"
+
+msgid "TCP"
+msgstr ""
 
 msgid "TCP Port"
 msgstr "Port TCP"
@@ -15388,6 +15412,11 @@ msgstr ""
 "href=\"https://www.iana.org/assignments/service-names-port-numbers/service-"
 "names-port-numbers.xhtml\"  target=\"_blank\">registre de l'Internet "
 "Assigned Numbers Authority (IANA)</a>."
+
+msgid ""
+"The preconfigured system <i>Certificate</i> to use for authenticating the "
+"TLS protocol connection to the remote system log server."
+msgstr ""
 
 msgid "The product of vCPUs, cores and threads must not exceed 16."
 msgstr "Le produit des vCPU, des cores et des threads ne doit pas dépasser 16."
@@ -16104,6 +16133,9 @@ msgstr ""
 "Type de compte Microsoft. La connexion à un compte Microsoft sélectionne "
 "automatiquement le bon type de compte."
 
+msgid "UDP"
+msgstr ""
+
 msgid ""
 "UDP port number on the system receiving  SNMP trap notifications. The "
 "default is <i>162</i>."
@@ -16203,6 +16235,9 @@ msgstr "Partages Unix (NFS)"
 msgid "Unkeep"
 msgstr "Enlever"
 
+msgid "Unknown"
+msgstr ""
+
 msgid "Unlock"
 msgstr "Déverrouiller"
 
@@ -16275,9 +16310,6 @@ msgstr "Désactiver le partage"
 
 msgid "Until"
 msgstr "Jusqu'à"
-
-msgid "Unused"
-msgstr "Inutilisé"
 
 msgid "Upcoming tasks"
 msgstr "Tâches à venir"
@@ -17109,10 +17141,10 @@ msgstr ""
 "<code>tls_crypt_auth</code> n'est pas fourni, une clé statique est "
 "automatiquement générée pour être utilisée avec le client OpenVPN."
 
-msgid "When Syslog server is defined, only logs matching this level are sent."
+msgid ""
+"When <i>Syslog Server</i> is defined, only logs matching this level are "
+"sent."
 msgstr ""
-"Lorsque le serveur Syslog est défini, seuls les logs correspondant à ce "
-"niveau sont envoyés."
 
 msgid ""
 "When a group is selected, the <i>root</i> user is also limited to the "
