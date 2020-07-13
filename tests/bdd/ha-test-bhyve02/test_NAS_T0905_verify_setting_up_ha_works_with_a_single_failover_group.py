@@ -43,7 +43,7 @@ def you_should_see_the_dashboard_and_serial_number_should_show_serial1(driver, i
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     wait_on_element(driver, 0.5, 30, 'xpath', '//li[@ix-auto="option__Dashboard"]')
     driver.find_element_by_xpath('//li[@ix-auto="option__Dashboard"]')
-    wait_on_element(driver, 1, 30, 'xpath', f'//span[contains(.,"{information}")]')
+    wait_on_element(driver, 0.5, 30, 'xpath', f'//span[contains(.,"{information}")]')
     driver.find_element_by_xpath(f'//span[contains(.,"{information}")]')
 
 
@@ -196,7 +196,7 @@ def navigate_to_system_click_failover_click_disable_failover_click_save(driver):
     wait_on_element(driver, 0.5, 30, 'xpath', '//a[contains(.,"Failover")]')
     driver.find_element_by_xpath('//a[contains(.,"Failover")]').click()
     wait_on_element(driver, 0.5, 30, 'xpath', '//h4[contains(.,"Failover Configuration")]')
-    driver.find_element_by_xpath('//label/div').click()
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
     wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     wait_on_element(driver, 0.5, 30, 'xpath', '//h1[contains(.,"Disable Failover")]')
@@ -234,8 +234,8 @@ def interface_settings_should_appear(driver):
 @then(parsers.parse('Uncheck DHCP, check Critical, Select 1 for Failover Group, enter the Failover VHID "{vhid}", IP Address (This Controller) "{ip1}" then select /"{netmask1}", IP Address (TrueNAS Controller 2) "{ip2}" then select /"{netmask2}", Virtual IP Address "{vip}"'))
 def uncheck_dhcp_check_critical_select_1_for_failover_group_enter_the_failover_vhid_ip_address_this_controller__then_select_23_ip_address_truenas_controller_2_then_select_23_virtual_ip_address(driver, vhid, ip1, netmask1, ip2, netmask2, vip):
     """Uncheck DHCP, check Critical, Select 1 for Failover Group, enter the Failover VHID "{vhid}", IP Address (This Controller) "{ip1}" then select /"{netmask1}", IP Address (TrueNAS Controller 2) "{ip2}" then select /"{netmask2}", Virtual IP Address, "{vip}"."""
-    driver.find_element_by_xpath('//div[@ix-auto="checkbox__DHCP"]/mat-checkbox').click()
-    driver.find_element_by_xpath('//div[@ix-auto="checkbox__Critical"]/mat-checkbox').click()
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__DHCP"]').click()
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Critical"]').click()
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Failover Group"]').click()
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Failover Group_1"]').click()
     driver.find_element_by_xpath('//input[@ix-auto="input__Failover VHID"]').clear()
@@ -276,7 +276,7 @@ def please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
     wait_on_element(driver, 0.5, 30, 'xpath', '//h6[contains(.,"Please wait")]')
     wait_on_element(driver, 0.5, 30, 'xpath', '//button[contains(.,"SAVE CHANGES")]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__TEST CHANGES"]').click()
+    driver.find_element_by_xpath('//button[contains(.,"SAVE CHANGES")]').click()
     wait_on_element(driver, 0.5, 30, 'xpath', '//h1[contains(.,"Save Changes")]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__CLOSE"]')
