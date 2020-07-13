@@ -90,6 +90,9 @@
           <span *ngIf="product_type === 'ENTERPRISE' && failover_status != 'SINGLE'"><div class="ha-status">
             <div class="ha-status-txt">
               <p>{{ha_status_text}}</p>
+              <span *ngIf="show_reasons"><p *ngFor='let reason of ha_disabled_reasons'>
+                {{reason_text[reason] | translate}}
+              </p></span>
               <span *ngIf="ha_info_ready">
                 <p>{{failover_statuses[failover_status]}}</p>
                 <span *ngIf="failover_ips.length > 0">
