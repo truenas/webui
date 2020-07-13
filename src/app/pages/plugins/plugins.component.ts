@@ -24,7 +24,7 @@ export class PluginsComponent {
     id: "config",
     tooltip: jailHelptext.globalConfig.tooltip,
     onClick: () => {
-      this.prerequisite().then((res)=>{
+      this.getActivatedPollInfo().then((res)=>{
         if (this.availablePools !== undefined) {
           this.activatePool();
         }
@@ -189,7 +189,11 @@ export class PluginsComponent {
       });
     }
 
-  prerequisite(): Promise<boolean> {
+  preInit() {
+    this.getActivatedPollInfo();
+  }
+
+  getActivatedPollInfo(): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
       await this.ws.call('pool.query').toPromise().then((res) => {
         if (res.length === 0) {

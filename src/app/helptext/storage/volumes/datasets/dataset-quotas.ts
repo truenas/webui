@@ -89,6 +89,7 @@ export default {
   shared: {
       input_error: globalHelptext.human_readable.input_error,
       set: T('Set Quota'),
-      cancel: T('Cancel')
+      cancel: T('Cancel'),
+      nameErr: T('Name not found')
   }
   }

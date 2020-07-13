@@ -99,6 +99,7 @@ export class SigninComponent implements OnInit, OnDestroy {
           }, 6000);
         } else {
           if (this.canLogin()) {
+            this.checkBuildtime();
             this.loginToken();
           }
         }
@@ -123,7 +124,8 @@ export class SigninComponent implements OnInit, OnDestroy {
     }
 
     if (this.canLogin()) {
-        this.loginToken();
+      this.checkBuildtime();
+      this.loginToken();
     }
 
     this.ws.call('user.has_root_password').subscribe((res) => {
@@ -157,19 +159,6 @@ export class SigninComponent implements OnInit, OnDestroy {
       window.localStorage.removeItem('middleware_token');
     }
 
-    this.http.get('./assets/buildtime', {responseType: 'text'}).subscribe((res) => {
-      const buildtime = res;
-      const previous_buildtime = window.localStorage.getItem('buildtime');
-      if (buildtime !== previous_buildtime) {
-        window.localStorage.clear();
-        window.localStorage.setItem('buildtime', buildtime);
-        if (middleware_token) {
-          window.localStorage.setItem('middleware_token', middleware_token);
-        }
-        document.location.reload(true);
-      }
-    });
-
     if (middleware_token) {
       this.ws.login_token(middleware_token)
       .subscribe((result) => {
@@ -191,6 +180,18 @@ export class SigninComponent implements OnInit, OnDestroy {
       this.ws.login_token(this.ws.token)
                        .subscribe((result) => { this.loginCallback(result); });
     }
+  }
+
+  checkBuildtime() {
+    const salt = (new Date()).getTime();
+    this.http.get(`./assets/buildtime?${salt}`, {responseType: 'text'}).subscribe((res) => {
+      const buildtime = res;
+      const previous_buildtime = window.localStorage.getItem('buildtime');
+      if (buildtime !== previous_buildtime) {
+        window.localStorage.setItem('buildtime', buildtime);
+        document.location.reload(true);
+      }
+    });
   }
 
   canLogin() {
@@ -232,6 +233,7 @@ export class SigninComponent implements OnInit, OnDestroy {
             }
             window.sessionStorage.setItem('ha_status', this.ha_status.toString());
             if (this.canLogin()) {
+              this.checkBuildtime();
               this.loginToken();
             }
           }, err => {

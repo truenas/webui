@@ -486,8 +486,14 @@ export class ActiveDirectoryComponent {
       data.bindpw = ""
     }
     data['site'] = data['site'] === null ? '' : data['site'];
+
+    if(data.kerberos_principal === null) {
+      data.kerberos_principal = '';
+    }
+
+    const allowedNullValues = ['certificate', 'kerberos_realm']
     for (let i in data) {
-      if(data[i]===null) {
+      if(!allowedNullValues.includes(i) && data[i]===null) {
         delete data[i];
       }
     }

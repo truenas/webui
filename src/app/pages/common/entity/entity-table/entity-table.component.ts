@@ -1119,4 +1119,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.activatedRowIndex = this.table.bodyComponent.getRowIndex(event.row);
     }
   }
+
+  getCellClass({ row, column, value }): any {
+    if (value) {
+      return {
+        'entity-table-cell-error': String(value).includes('*ERR*')
+      };
+    }
+  }
 }

@@ -319,6 +319,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     let vd = {};
 
     for(let i in evt.data){
+      if(typeof evt.data[i] == undefined || !evt.data[i]){ continue; }
+
       let avail = null;
       const used_pct = evt.data[i].used.parsed / (evt.data[i].used.parsed + evt.data[i].available.parsed);
       avail = evt.data[i].available.parsed;
@@ -384,7 +386,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     conf.push({name:'Memory', rendered: true });
 
     this.pools.forEach((pool, index) => {
-      conf.push({name:'Pool', identifier: 'name,' + pool.name, rendered: true })
+      conf.push({name:'Pool', identifier: 'name,' + pool.name, rendered: true });
     });
 
     this.nics.forEach((nic, index) => {
