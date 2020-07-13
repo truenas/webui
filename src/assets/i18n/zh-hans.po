@@ -326,6 +326,13 @@ msgstr ""
 "target=\"_blank\">（rclone文档）</a>。"
 
 msgid ""
+"<a href=\"https://tools.ietf.org/html/rfc8095\" target=\"_blank\">Transport "
+"Protocol</a> for the remote system log server connection. Choosing "
+"Transport Layer Security (TLS) also requires selecting a preconfigured "
+"system Certificate."
+msgstr ""
+
+msgid ""
 "<a href=\"https://www.backblaze.com/b2/cloud-storage.html\" "
 "target=\"_blank\">Backblaze B2</a> Application Key. To generate a new "
 "application key, log in to the Backblaze account, go to the <i>App Keys</i> "
@@ -913,6 +920,11 @@ msgstr "是否激活此引导环境？"
 
 msgid "Activate this certificate extension."
 msgstr "激活此证书扩展。"
+
+msgid ""
+"Activate this module for use with Rsync. Unset this field to deactivate the "
+"module without completely removing it."
+msgstr ""
 
 msgid ""
 "Activates a tuning script which attempts to optimize  the system depending "
@@ -2114,9 +2126,6 @@ msgstr "引导加载程序类型"
 
 msgid "Boot Method"
 msgstr "启动方法"
-
-msgid "Boot Pool"
-msgstr "启动池"
 
 msgid "Boot Pool Condition"
 msgstr "引导池状态"
@@ -7756,6 +7765,12 @@ msgstr "锁定用户"
 msgid "Lock dataset "
 msgstr "锁定数据集"
 
+msgid "Locking Dataset"
+msgstr ""
+
+msgid "Locking dataset "
+msgstr ""
+
 msgid "Log"
 msgstr "日志"
 
@@ -8365,6 +8380,9 @@ msgstr ""
 "报告外部IP地址的服务器的名称和端口。 例如，输入<i>checkip.dyndns.org:80</i>使用<a "
 "href=\"https://help.dyn.com/remote-access-api/checkip-tool/\" "
 "target=\"_blank\">动态IP检测</a>。查找远程套接字IP地址。"
+
+msgid "Name not found"
+msgstr ""
 
 msgid "Name of NIS domain."
 msgstr "NIS域的名称。"
@@ -10382,9 +10400,6 @@ msgstr ""
 msgid "SAVE CONFIGURATION"
 msgstr "保存配置"
 
-msgid "SED"
-msgstr ""
-
 msgid "SED Password"
 msgstr "SED密码"
 
@@ -11189,6 +11204,9 @@ msgstr ""
 msgid "Self Healed"
 msgstr "自我修复"
 
+msgid "Self-Encrypting Drive"
+msgstr ""
+
 msgid ""
 "Self-Encrypting Drive (SED) passwords can be managed with KMIP. Enabling "
 "this option allows the key server to manage creating or updating the global "
@@ -11198,9 +11216,6 @@ msgid ""
 msgstr ""
 "可以使用KMIP管理自加密驱动器（SED）密码。启用此选项后，密钥服务器可以在未锁定SED的情况下管理创建或更新全局SED密码，创建或更新单个SED密码"
 "以及检索SED密码。禁用此选项将使SED密码管理留在本地系统上。"
-
-msgid "Self-Encrypting Drive Options"
-msgstr "自加密驱动器选项"
 
 msgid "Semi-automatic (TrueNAS CORE only)"
 msgstr "半自动（仅限TrueNAS CORE）"
@@ -12645,11 +12660,17 @@ msgstr ""
 msgid "Syslog"
 msgstr "系统日志"
 
-msgid "Syslog level"
-msgstr "系统日志级别"
+msgid "Syslog Level"
+msgstr ""
 
-msgid "Syslog server"
-msgstr "系统日志服务器"
+msgid "Syslog Server"
+msgstr ""
+
+msgid "Syslog TLS Certificate"
+msgstr ""
+
+msgid "Syslog Transport"
+msgstr ""
 
 msgid "System"
 msgstr "系统"
@@ -12713,6 +12734,9 @@ msgstr "将监狱网络地址重新映射到其他IP地址空间的系统网络�
 
 msgid "System-Generated Settings"
 msgstr "系统生成的设置"
+
+msgid "TCP"
+msgstr ""
 
 msgid "TCP Port"
 msgstr "TCP端口"
@@ -13253,6 +13277,11 @@ msgstr ""
 "href=\"https://www.iana.org/assignments/service-names-port-numbers/service-"
 "names-port-numbers.xhtml\"  target=\"_blank\">Internet Assigned Numbers "
 "Authority (IANA) registry</a>部分。"
+
+msgid ""
+"The preconfigured system <i>Certificate</i> to use for authenticating the "
+"TLS protocol connection to the remote system log server."
+msgstr ""
 
 msgid "The product of vCPUs, cores and threads must not exceed 16."
 msgstr "vCPU，内核和线程的乘积不得超过16。"
@@ -13827,6 +13856,9 @@ msgid ""
 "chooses the correct account type."
 msgstr "Microsoft帐户的类型。登录到Microsoft帐户会自动选择正确的帐户类型。"
 
+msgid "UDP"
+msgstr ""
+
 msgid ""
 "UDP port number on the system receiving  SNMP trap notifications. The "
 "default is <i>162</i>."
@@ -13910,6 +13942,9 @@ msgstr "Unix共享（NFS）"
 msgid "Unkeep"
 msgstr "取消保留"
 
+msgid "Unknown"
+msgstr ""
+
 msgid "Unlock"
 msgstr "解锁"
 
@@ -13971,9 +14006,6 @@ msgstr "取消共享"
 
 msgid "Until"
 msgstr "直到"
-
-msgid "Unused"
-msgstr "未使用"
 
 msgid "Upcoming tasks"
 msgstr "即将到来的任务"
@@ -14710,8 +14742,10 @@ msgstr ""
 "启用<code>tls_crypt_auth_enabled</code>且未提供<code>tls_crypt_auth</code>"
 "时，将自动生成一个静态密钥以用于OpenVPN客户端。"
 
-msgid "When Syslog server is defined, only logs matching this level are sent."
-msgstr "定义Syslog服务器时，仅发送与此级别匹配的日志。"
+msgid ""
+"When <i>Syslog Server</i> is defined, only logs matching this level are "
+"sent."
+msgstr ""
 
 msgid ""
 "When a group is selected, the <i>root</i> user is also limited to the "
