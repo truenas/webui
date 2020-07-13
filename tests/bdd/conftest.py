@@ -21,7 +21,7 @@ def browser():
     firefox_capabilities['firefox_profile'] = profile.encoded
     firefox_capabilities['binary'] = binary
     web_driver = webdriver.Firefox(capabilities=firefox_capabilities)
-    web_driver.implicitly_wait(5)
+    web_driver.implicitly_wait(2)
     return web_driver
 
 
