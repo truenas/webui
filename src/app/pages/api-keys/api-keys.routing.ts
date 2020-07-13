@@ -8,4 +8,4 @@ export const routes: Routes = [{
   component: ApiKeysComponent,
   data: { title: 'API Keys', breadcrumb: 'API Keys' }
 }]
-export const routing: ModuleWithProviders = RouterModule.forChild(routes);
+export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);

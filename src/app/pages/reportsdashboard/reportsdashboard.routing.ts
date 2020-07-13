@@ -74,4 +74,4 @@ export const routes: Routes = [
   //{ path: '**', redirectTo: 'cpu', pathMatch: 'full' },
 ];
 
-export const routing: ModuleWithProviders = RouterModule.forChild(routes);
+export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);

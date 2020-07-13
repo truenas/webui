@@ -8,4 +8,4 @@ export const routes: Routes = [{
   component: ContainersComingsoonComponent,
   data: { title: 'Containers', breadcrumb: 'Containers' },
 }];
-export const routing: ModuleWithProviders = RouterModule.forChild(routes);
+export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);

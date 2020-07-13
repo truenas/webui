@@ -11,6 +11,26 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": [
+              "lodash",
+              "dom-set",
+              "dom-plane",
+              "@mattlewis92/dom-autoscroller",
+              "rxjs",
+              "rxjs-compat",
+              "is-cidr",
+              "cidr-regex",
+              "dygraphs",
+              "angular-calendar",
+              "chart.js",
+              "cron-parser",
+              "chartist",
+              "moment-timezone",
+              "marked",
+              "perfect-scrollbar",
+              "calendar-utils/date-adapters/date-fns",
+              "what-is-my-ip-address"
+            ],
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -205,7 +225,7 @@
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",
-      "styleext": "css"
+      "style": "css"
     },
     "@schematics/angular:directive": {
       "prefix": "app"

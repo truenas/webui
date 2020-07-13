@@ -44,7 +44,7 @@ import { WebSocketService } from 'app/services/ws.service';
   ]
 })
 export class CoreServices {
-  static forRoot(): ModuleWithProviders {
+  static forRoot(): ModuleWithProviders<CoreServices> {
     return {
       ngModule: CoreServices,
       providers: [
