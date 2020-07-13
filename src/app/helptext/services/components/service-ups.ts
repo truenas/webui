@@ -120,7 +120,7 @@ ups_emailnotify_tooltip : T('Set enable sending messages to the address defined 
 
 ups_toemail_placeholder : T('Email'),
 ups_toemail_tooltip : T('Enter any email addresses to receive status updates.\
- Separate multiple addresses with a <b>;</b> .'),
+ Separate entries by pressing <code>Enter</code>.'),
 
 ups_subject_placeholder : T('Email Subject'),
 ups_subject_tooltip : T('Enter the subject for status emails.'),
