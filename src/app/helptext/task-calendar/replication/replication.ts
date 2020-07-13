@@ -107,7 +107,7 @@ export default {
  <a href="https://www.freebsd.org/cgi/man.cgi?query=strftime" \
  target="_blank">strftime(3)</a> <i>%Y</i>, <i>%m</i>, <i>%d</i>, \
  <i>%H</i>, and <i>%M</i> strings that match the snapshots to include in \
- the replication.'),
+ the replication. Separate entries by pressing <code>Enter</code>.'),
 
     also_include_naming_schema_placeholder: T('Also Include Naming Schema'),
     also_include_naming_schema_tooltip: T('Pattern of naming custom \
@@ -119,7 +119,8 @@ export default {
  When a periodic snapshot is not linked to the replication, enter the \
  naming schema for manually created snapshots. Has the same <i>%Y</i>, \
  <i>%m</i>, <i>%d</i>, <i>%H</i>, and <i>%M</i> string requirements as \
- the <b>Naming Schema</b> in a <b>Periodic Snapshot Task</b>.'),
+ the <b>Naming Schema</b> in a <b>Periodic Snapshot Task</b>. Separate \
+ entries by pressing <code>Enter</code>.'),
 
     auto_placeholder: T('Run Automatically'),
     auto_tooltip: T('Set to either start this replication task \
