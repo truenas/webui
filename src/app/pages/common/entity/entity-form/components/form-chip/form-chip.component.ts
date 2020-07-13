@@ -31,9 +31,10 @@ export class FormChipComponent implements Field, OnInit {
     constructor(public translate: TranslateService) { }
 
     ngOnInit() {
-        this.group.controls[this.config.name].valueChanges.subscribe(res => {
-            this.chipLists = this.group.controls[this.config.name].value || [];
-        });
+      this.chipLists = this.group.controls[this.config.name].value || [];
+      this.group.controls[this.config.name].valueChanges.subscribe(res => {
+          this.chipLists = res || [];
+      });
     }
 
     add(event: MatChipInputEvent): void {
