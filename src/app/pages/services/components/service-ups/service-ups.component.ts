@@ -192,7 +192,7 @@ export class ServiceUPSComponent {
           tooltip : helptext.ups_emailnotify_tooltip,
         },
         {
-          type : 'input',
+          type : 'chip',
           name : 'toemail',
           placeholder : helptext.ups_toemail_placeholder,
           tooltip : helptext.ups_toemail_tooltip,
