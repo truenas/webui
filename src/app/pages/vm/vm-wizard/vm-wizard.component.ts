@@ -41,9 +41,12 @@ export class VMWizardComponent {
   public vcpus: number = 1;
   public cores: number = 1;
   public threads: number = 1;
+  public mode: string;
+  public model: string | null;
 
   entityWizard: any;
   public res;
+  private productType: string = window.localStorage.getItem('product_type');
 
   protected wizardConfig: Wizard[] = [
     {
@@ -133,6 +136,7 @@ export class VMWizardComponent {
           placeholder: helptext.vcpus_placeholder,
           inputType: 'number',
           min: 1,
+          required: true,
           validation : [ this.cpuValidator('threads'), Validators.required, Validators.min(1), Validators.max(16) ],
           tooltip: helptext.vcpus_tooltip,
         },
@@ -141,6 +145,7 @@ export class VMWizardComponent {
           name: 'cores',
           placeholder: helptext.cores.placeholder,
           inputType: 'number',
+          required: true,
           validation : [ this.cpuValidator('threads'), Validators.required, Validators.min(1), Validators.max(16) ],
           tooltip: helptext.cores.tooltip
         },
@@ -149,6 +154,7 @@ export class VMWizardComponent {
           name: 'threads',
           placeholder: helptext.threads.placeholder,
           inputType: 'number',
+          required: true,
           validation : [ 
             this.cpuValidator('threads'),
             Validators.required, 
@@ -156,6 +162,24 @@ export class VMWizardComponent {
             Validators.max(16),
           ],
           tooltip: helptext.threads.tooltip,
+        },
+        {
+          type: 'select',
+          name: 'cpu_mode',
+          placeholder: helptext.cpu_mode.placeholder,
+          tooltip: helptext.cpu_mode.tooltip,
+          options: helptext.cpu_mode.options,
+          isHidden: true
+        },
+        {
+          type: 'select',
+          name: 'cpu_model',
+          placeholder: helptext.cpu_model.placeholder,
+          tooltip: helptext.cpu_model.tooltip,
+          options: [
+            { label: '---', value: ''}
+          ],
+          value: null
         },
         {
           type: 'input',
@@ -193,7 +217,7 @@ export class VMWizardComponent {
           type: 'paragraph',
           name: 'memory_warning',
           paraText: helptext.memory_warning
-        },
+        }
       ]
     },
     {
@@ -392,6 +416,22 @@ export class VMWizardComponent {
       }
     });
 
+    if (this.productType === 'SCALE') {
+      _.find(this.wizardConfig[1].fieldConfig, {name : 'cpu_mode'})['isHidden'] = false;
+      const cpuModel = _.find(this.wizardConfig[1].fieldConfig, {name : 'cpu_model'});
+      cpuModel.isHidden = false;
+
+      this.ws.call('vm.cpu_model_choices').subscribe(models => {
+        for (let model in models) {
+          cpuModel.options.push(
+            {
+              label : model, value : model
+            }
+          );
+        };
+      })
+    }
+
     this.ws
       .call("pool.filesystem_choices", [["FILESYSTEM"]])
       .pipe(map(new EntityUtils().array1DToLabelValuePair))
@@ -408,6 +448,8 @@ export class VMWizardComponent {
         );
       });
     });
+
+
 
 
     ( < FormGroup > entityWizard.formArray.get([0]).get('bootloader')).valueChanges.subscribe((bootloader) => {
@@ -454,6 +496,18 @@ export class VMWizardComponent {
         this.threads = threads;
         this.summary[T('Number of Threads')] = threads;
       });
+
+      if (this.productType === 'SCALE') {
+        ( < FormGroup > entityWizard.formArray.get([1])).get('cpu_mode').valueChanges.subscribe((mode) => {
+          this.mode = mode;
+          this.summary[T('CPU Mode')] = mode;
+        });
+        ( < FormGroup > entityWizard.formArray.get([1])).get('cpu_model').valueChanges.subscribe((model) => {
+          this.model = model;
+          this.summary[T('CPU Model')] = model !== '' ? model : 'null';
+        });
+      }
+
       ( < FormGroup > entityWizard.formArray.get([1])).get('memory').valueChanges.subscribe((memory) => {
         this.summary[T('Memory')] =
           isNaN(this.storageService.convertHumanStringToNum(memory))
@@ -785,6 +839,11 @@ async customSubmit(value) {
     zvol_payload['create_zvol'] = true
     zvol_payload["zvol_name"] = hdd
     zvol_payload["zvol_volsize"] = this.storageService.convertHumanStringToNum(value.volsize);
+
+    if (this.productType === 'SCALE') {
+      vm_payload["cpu_mode"] = value.cpu_mode;
+      vm_payload["cpu_model"] = value.cpu_model === '' ? null : value.cpu_model;
+    }
 
     vm_payload["memory"]= value.memory;
     vm_payload["name"] = value.name;

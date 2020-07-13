@@ -90,6 +90,21 @@ validation : [Validators.min(0) ],
 
 },
 
+cpu_mode: {
+  placeholder: T('CPU Mode'),
+  tooltip: T(''),
+  options: [
+    {label: 'Custom', value: 'CUSTOM'},
+    {label: 'Host Model', value: 'HOST-MODEL'},
+    {label: 'Host Passthrough', value: 'HOST-PASSTHROUGH'},
+  ]
+},
+
+cpu_model: {
+  placeholder: T('CPU Model'),
+  tooltip: T(''),
+},
+
 memory_placeholder: T('Memory Size'),
 global_label: globalHelptext.human_readable.suggestion_label,
 memory_validation : [Validators.required],
