@@ -1,6 +1,6 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/Rx';
 import { AppLoaderComponent } from './app-loader.component';
 import { T } from '../../translate-marker';
 

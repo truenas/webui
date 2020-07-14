@@ -3,7 +3,7 @@
 import { Injectable } from '@angular/core';
 import { Router, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs/Rx';
 
 import { EntityUtils } from '../pages/common/entity/utils'
 import { WebSocketService } from './ws.service';

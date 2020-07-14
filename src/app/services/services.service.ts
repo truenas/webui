@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable, Subject, Subscription} from 'rxjs';
+import {Observable, Subject, Subscription} from 'rxjs/Rx';
 
 import {EntityUtils} from '../pages/common/entity/utils'
 import {WebSocketService} from './ws.service';
