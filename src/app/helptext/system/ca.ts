@@ -141,7 +141,6 @@ matches your certificate usage scenario.'),
  the system. This name must be unique within a\
  certificate chain.'
       ),
-      validation: [Validators.required]
     },
 
     san: {
@@ -151,7 +150,8 @@ matches your certificate usage scenario.'),
  secure. Separate domains by pressing <code>Enter</code> \
  For example, if the primary domain is <i>example.com</i>, \
  entering <i>www.example.com</i> secures both addresses."
-      )
+      ),
+      validation: [Validators.required]
     },
 
     certificate: {
