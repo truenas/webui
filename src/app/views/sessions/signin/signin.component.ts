@@ -58,6 +58,8 @@ export class SigninComponent implements OnInit, OnDestroy {
   }
   public failover_ips = [];
   public ha_disabled_reasons =[];
+  public show_reasons = false;
+  public reason_text = {};
   public ha_status_text = T('Checking HA status');
   public ha_status = false;
   public tc_ip;
@@ -82,6 +84,7 @@ export class SigninComponent implements OnInit, OnDestroy {
         this.tc_url = res.truecommand_url;
       }
     })
+    this.reason_text = helptext.ha_disabled_reasons;
    }
 
   checkSystemType() {
@@ -221,14 +224,20 @@ export class SigninComponent implements OnInit, OnDestroy {
           this.ws.call('failover.disabled_reasons').subscribe(reason => {
             this.checking_status = false;
             this.ha_disabled_reasons = reason;
+            this.show_reasons = false;
             if (reason.length === 0) {
               this.ha_status_text = T('HA is enabled.');
               this.ha_status = true;
-            } else if (reason.length === 1 && reason[0] === 'NO_SYSTEM_READY') {
-              this.ha_status_text = T('HA is reconnecting.');
+            } else if (reason.length === 1) {
+              if (reason[0] === 'NO_SYSTEM_READY') {
+                this.ha_status_text = T('HA is reconnecting.');
+              } else if (reason[0] === 'NO_FAILOVER') {
+                this.ha_status_text = T('HA is administratively disabled.');
+              }
               this.ha_status = false;
             } else {
-              this.ha_status_text = T('HA is disabled.');
+              this.ha_status_text = T('HA is in a faulted state');
+              this.show_reasons = true;
               this.ha_status = false;
             }
             window.sessionStorage.setItem('ha_status', this.ha_status.toString());
