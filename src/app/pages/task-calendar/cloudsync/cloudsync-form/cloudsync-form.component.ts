@@ -392,7 +392,7 @@ export class CloudsyncFormComponent implements OnInit {
   }
 
   getBucketFolders(credential, bucket, node) {
-    const formValue = this.entityForm.formGroup.value;
+    const formValue = this.formGroup.value;
     const children = [];
     let data = {
       "credentials": credential,
