@@ -137,7 +137,7 @@ dataset_form_encryption: {
     encryption_type_tooltip: T('How the dataset is secured. Choose between securing with\
  an encryption <i>Key</i> or a user-defined <i>Passphrase</i>. Creating a new key file\
  invalidates any previously downloaded key file for this dataset.\
- to delete any obsolete key file backups and back up the new key file.'),
+ Delete any previous key file backups and back up the new key file.'),
     encryption_type_options: [
         {label: T('Key'), value: 'key'},
         {label: T('Passphrase'), value: 'passphrase'}
