@@ -32,6 +32,7 @@ export class VMListComponent implements OnDestroy {
     protected route_edit: string[] = ['vm', 'edit'];
     protected dialogRef: any;
     private eventSubscription: Subscription;
+    private productType: string = window.localStorage.getItem('product_type');
 
     public entityList: any;
     public columns: Array<any> = [
@@ -45,7 +46,6 @@ export class VMListComponent implements OnDestroy {
         { name: T("Boot Loader Type"), prop: 'bootloader', hidden: true },
         { name: T('System Clock'), prop: 'time', hidden: true },
         { name: T("VNC Port"), prop: 'port', hidden: true },
-        { name: T("Com Port"), prop: 'com_port', hidden: true },
         { name: T("Description"), prop: 'description', hidden: true },
         { name: T("Shutdown Timeout"), prop: 'shutdown_timeout', hidden: true }
     ];
@@ -77,7 +77,11 @@ export class VMListComponent implements OnDestroy {
         private storageService: StorageService,
         private loader: AppLoaderService,
         private dialogService: DialogService,
-        private router: Router, protected dialog: MatDialog) { }
+        private router: Router, protected dialog: MatDialog) {
+            if (this.productType !== 'SCALE') {
+                this.columns.push({ name: T("Com Port"), prop: 'com_port', hidden: true })
+            }
+         }
 
     afterInit(entityList) {
         this.checkMemory();

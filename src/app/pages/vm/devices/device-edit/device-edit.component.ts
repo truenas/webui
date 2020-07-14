@@ -350,7 +350,7 @@ export class DeviceEditComponent implements OnInit {
     });
 
     // pci
-    this.ws.call('vm.device.pptdev_choices').subscribe((res) => {
+    this.ws.call('vm.device.passthrough_device_choices').subscribe((res) => {
       this.pptdev = _.find(this.pciFieldConfig, { 'name': 'pptdev' });
       this.pptdev.options = Object.keys(res || {}).map(pptdevId => ({
         label: pptdevId,

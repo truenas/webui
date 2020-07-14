@@ -169,7 +169,8 @@ export class VMWizardComponent {
           placeholder: helptext.cpu_mode.placeholder,
           tooltip: helptext.cpu_mode.tooltip,
           options: helptext.cpu_mode.options,
-          isHidden: true
+          isHidden: true,
+          value: helptext.cpu_mode.options[0]
         },
         {
           type: 'select',
@@ -179,7 +180,8 @@ export class VMWizardComponent {
           options: [
             { label: '---', value: ''}
           ],
-          value: null
+          value: '',
+          isHidden: true
         },
         {
           type: 'input',
@@ -421,7 +423,7 @@ export class VMWizardComponent {
       const cpuModel = _.find(this.wizardConfig[1].fieldConfig, {name : 'cpu_model'});
       cpuModel.isHidden = false;
 
-      this.ws.call('vm.cpu_model_choices').subscribe(models => {
+      this.vmService.getCPUModels().subscribe(models => {
         for (let model in models) {
           cpuModel.options.push(
             {
@@ -429,7 +431,7 @@ export class VMWizardComponent {
             }
           );
         };
-      })
+      });
     }
 
     this.ws
@@ -683,13 +685,16 @@ export class VMWizardComponent {
 
 
       this.bootloader = _.find(this.wizardConfig[0].fieldConfig, {name : 'bootloader'});
-      this.vmService.getBootloaderOptions().forEach((item) => {
-        this.bootloader.options.push({label : item[1], value : item[0]})
+
+      this.vmService.getBootloaderOptions().subscribe(options => {
+        for (const option in options) {
+          this.bootloader.options.push({ label: option, value: options[option]});
+        }
+        ( < FormGroup > entityWizard.formArray.get([0])).controls['bootloader'].setValue(
+          this.bootloader.options[0].value
+        )
       });
 
-      ( < FormGroup > entityWizard.formArray.get([0])).controls['bootloader'].setValue(
-        this.bootloader.options[0].value
-      )
       setTimeout(() => {
         let global_label, global_tooltip;
         this.translate.get(helptext.memory_placeholder).subscribe(mem => {

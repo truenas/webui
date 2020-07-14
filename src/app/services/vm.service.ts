@@ -21,11 +21,7 @@ export class VmService {
   }
 
   getBootloaderOptions() {
-    return [
-      ['UEFI', 'UEFI'],
-      ['UEFI_CSM', 'UEFI-CSM'],
-      ['GRUB', 'Grub']
-    ]
+    return this.ws.call('vm.bootloader_options');
   }
 
   getNICTypes() {
@@ -33,5 +29,9 @@ export class VmService {
       ['E1000', 'Intel e82585 (e1000)'],
       ['VIRTIO', 'VirtIO']
     ]
+  }
+
+  getCPUModels() {
+    return this.ws.call('vm.cpu_model_choices');
   }
 }
