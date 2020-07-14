@@ -463,7 +463,7 @@ export class DeviceEditComponent implements OnInit {
 
     if (this.productType !== 'SCALE') {
       _.find(this.vncFieldConfig, {name:'wait'}).isHidden = false;
-      _.find(this.vncFieldConfig, {name:'resolution'}).isHidden = false;
+      _.find(this.vncFieldConfig, {name:'vnc_resolution'}).isHidden = false;
     }
 
     this.afterInit();
