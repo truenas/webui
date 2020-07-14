@@ -288,6 +288,7 @@ def navigate_to_storage_click_disks_then_click_name_several_times_to_sort_in_alp
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
     wait_on_element(driver, 0.5, 30, 'xpath', '//mat-list-item[@ix-auto="option__Disks"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Disks"]').click()
+    # disk are already sorted
 
 
 @then('The list of disks should appear in alphabetical order starting with ada0 (the boot devices) and da0 to da1 the disks we will wipe in next step to create pools')
@@ -357,9 +358,6 @@ def navigate_to_system_then_failover_click_disable_failover_click_save(driver):
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
     wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//h1[contains(.,"Disable Failover")]')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
-    driver.find_element_by_xpath('//button[@ix-auto="button__OK"]').click()
 
 
 @then('Navigate to dashboard, and verify that both controllers show.')
