@@ -178,7 +178,7 @@ export const helptext_system_support = {
   },
 
   FN_instructions: T('Search the <a href="https://jira.ixsystems.com/projects/NAS/issues/" \
-   target="_blank">FreeNAS issue tracker</a> \
+   target="_blank">TrueNAS issue tracker</a> \
    to ensure the issue has not already been reported before \
    filing a bug report or feature request. If an issue has \
    already been created, add a comment to the existing issue. \
