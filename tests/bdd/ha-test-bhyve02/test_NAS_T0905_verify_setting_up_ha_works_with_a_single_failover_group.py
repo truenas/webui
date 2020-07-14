@@ -207,7 +207,6 @@ def navigate_to_system_click_failover_click_disable_failover_click_save(driver):
 @then('After settings are applied you should see "Settings applied"')
 def after_settings_are_applied_you_should_see_settings_applied(driver):
     """After settings are applied you should see "Settings applied"."""
-    wait_on_element(driver, 0.5, 30, 'xpath', '//h6[contains(.,"Please wait")]')
     wait_on_element(driver, 0.5, 30, 'xpath', '//h1[contains(.,"Settings saved")]')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
@@ -340,12 +339,17 @@ def click_create_pool_enter_tank_for_pool_name_check_the_box_next_to_da0_press_u
     wait_on_element(driver, 0.5, 30, 'xpath', '//h1[contains(.,"Warning")]')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     driver.find_element_by_xpath('//button[@ix-auto="button__CREATE POOL"]').click()
+
+
+@then('Create Pool should appear while pool is being created. You should be returned to list of pools and tank should appear in the list.')
+def create_pool_should_appear_while_pool_is_being_created_you_should_be_returned_to_list_of_pools_and_tank_should_appear_in_the_list(driver):
+    """Create Pool should appear while pool is being created. You should be returned to list of pools and tank should appear in the list."""
+    wait_on_element(driver, 0.2, 30, 'xpath', '//h1[contains(.,"Create Pool")]')
+    driver.find_element_by_xpath('//h1[contains(.,"Create Pool")]')
     wait_on_element_disappear(driver, 1, 30, 'xpath', '//h1[contains(.,"Create Pool")]')
-
-
-@then('Created Pool should appear while pool is being created. You should be returned to list of pools and tank should appear in the list.')
-def created_pool_should_appear_while_pool_is_being_created_you_should_be_returned_to_list_of_pools_and_tank_should_appear_in_the_list(driver):
-    """Created Pool should appear while pool is being created. You should be returned to list of pools and tank should appear in the list."""
+    wait_on_element(driver, 1, 30, 'xpath', '//mat-panel-title[contains(.,"tank")]')
+    driver.find_element_by_xpath('//mat-panel-title[contains(.,"tank")]')
+    driver.find_element_by_xpath('//mat-panel-title[@ix-auto="value__tank_name"]')
 
 
 @then('Navigate to System then Failover, uncheck disable failover, click save.')
