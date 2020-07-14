@@ -39,6 +39,7 @@ export class DeviceEditComponent implements OnInit {
   public vminfo: any;
   public boot: any;
   public error: string;
+  private productType: string = window.localStorage.getItem('product_type');
 
   public custActions: any[];
 
@@ -270,7 +271,8 @@ export class DeviceEditComponent implements OnInit {
       name : 'wait',
       placeholder : helptext.wait_placeholder,
       tooltip : helptext.wait_tooltip,
-      type: 'checkbox'
+      type: 'checkbox',
+      isHidden: true
     },
     {
       name : 'vnc_resolution',
@@ -278,6 +280,7 @@ export class DeviceEditComponent implements OnInit {
       tooltip : helptext.vnc_resolution_tooltip,
       type: 'select',
       options : helptext.vnc_resolution_options,
+      isHidden: true
     },
     {
       name : 'vnc_bind',
@@ -457,6 +460,11 @@ export class DeviceEditComponent implements OnInit {
         }
       })
     });
+
+    if (this.productType !== 'SCALE') {
+      _.find(this.vncFieldConfig, {name:'wait'}).isHidden = false;
+      _.find(this.vncFieldConfig, {name:'resolution'}).isHidden = false;
+    }
 
     this.afterInit();
   }

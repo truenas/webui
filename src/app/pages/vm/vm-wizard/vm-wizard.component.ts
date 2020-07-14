@@ -170,7 +170,7 @@ export class VMWizardComponent {
           tooltip: helptext.cpu_mode.tooltip,
           options: helptext.cpu_mode.options,
           isHidden: true,
-          value: helptext.cpu_mode.options[0]
+          value: helptext.cpu_mode.options[0].value
         },
         {
           type: 'select',
