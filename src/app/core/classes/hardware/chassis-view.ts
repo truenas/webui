@@ -32,8 +32,8 @@ export interface Range {
 }
 
 export interface Position {
-  x: number;
-  y: number;
+  x?: number;
+  y?: number;
 }
 
 export class ChassisView {
@@ -52,6 +52,7 @@ export class ChassisView {
    public driveTrays: any;
    public driveTrayObjects: DriveTray[] = [];
    public chassis:Sprite;
+   public chassisScale: Position;
    public driveTray:DriveTray;
    public chassisPath: string;
    public driveTrayBackgroundPath: string;
@@ -146,6 +147,8 @@ export class ChassisView {
      this.chassis = PIXI.Sprite.from(this.loader.resources[this.model + "_chassis"].texture.baseTexture);
      this.chassis.name = this.model + '_chassis';
      this.chassis.alpha = 0;
+     this.chassis.scale.x = this.chassisScale && this.chassisScale.x ? this.chassisScale.x : 1;
+     this.chassis.scale.y = this.chassisScale && this.chassisScale.y ? this.chassisScale.y : 1;
      this.container.addChild(this.chassis);
 
      // Render DriveTrays

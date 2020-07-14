@@ -18,7 +18,6 @@ import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/
 import { Validators, ValidationErrors, FormControl } from '@angular/forms';
 import { filter } from 'rxjs/operators';
 import { combineLatest } from 'rxjs';
-import { MAT_HAMMER_OPTIONS } from '@angular/material/core';
 
 interface DatasetFormData {
   name: string;

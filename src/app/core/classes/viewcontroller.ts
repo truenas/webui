@@ -1,16 +1,13 @@
-import { Component, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { CoreEvent } from 'app/core/services/core.service';
 import { View } from 'app/core/classes/view';
 import { Action } from 'app/core/classes/viewcontrol';
 
 export interface ViewControllerOptions {
-  //data: any[];
   events: Subject<CoreEvent>;
-  //actions?: Action[];
 }
 
-export abstract class ViewController implements OnDestroy {
+export abstract class ViewController {
 
   public name: string = "ViewController";
   protected controlEvents: Subject<CoreEvent>;
@@ -29,7 +26,5 @@ export abstract class ViewController implements OnDestroy {
     } else {
       this.controlEvents = new Subject();
     }
-  }
-
-  ngOnDestroy(){}
+  } 
 }

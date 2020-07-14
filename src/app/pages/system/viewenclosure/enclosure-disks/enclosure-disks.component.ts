@@ -354,7 +354,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.controllerEvents.next({name:"VisualizerReady", sender:this});
   }
 
-  createEnclosure(enclosure:any = this.selectedEnclosure){
+  createEnclosure(profile:any = this.selectedEnclosure){
+    const enclosure = this.system.enclosures[profile.enclosureKey];
     switch(enclosure.model){
       case "M Series":
         this.chassis = new M50();
@@ -441,9 +442,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   createExtractedEnclosure(profile){
+    const raw_enclosure = this.system.enclosures[profile.enclosureKey];
     let chassis;
     let enclosure;
-    switch(profile.model){
+    switch(raw_enclosure.model){
       case "M Series":
         chassis = new M50();
         break;
