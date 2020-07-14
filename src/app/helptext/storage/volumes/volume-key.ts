@@ -60,7 +60,7 @@ rekey_instructions: T('Reset the master key encryption used by this pool. \
  for the pool. <br /> <br />\
  Clicking <b>RESET ENCRYPTION</b> generates a new encryption key and \
  prompts to download a backup of the new key.'),
-rekey_password_label: T('Passphrase'),
+rekey_password_label: T('Encryption Passphrase'),
 rekey_password_placeholder: T('Administrator password'),
 rekey_password_tooltip: T('Enter the administrator password to authorize this operation.'),
 rekey_password_validation: [Validators.required],
