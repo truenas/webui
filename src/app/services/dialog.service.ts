@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
 import { T } from 'app/translate-marker';
 import { filter } from 'rxjs/operators';
-import { Observable } from 'rxjs/Rx';
+import { Observable } from 'rxjs';
 import { ConfirmDialog } from '../pages/common/confirm-dialog/confirm-dialog.component';
 import { EntityDialogComponent } from '../pages/common/entity/entity-dialog/entity-dialog.component';
 import { ErrorDialog } from '../pages/common/error-dialog/error-dialog.component';
