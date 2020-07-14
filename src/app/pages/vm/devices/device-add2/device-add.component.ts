@@ -235,7 +235,6 @@ export class DeviceAddComponent implements OnInit {
       tooltip: helptext.pptdev_tooltip,
       type: 'select',
       options: [],
-      validation: helptext.pptdev_validation,
       required: true
     },
     {
