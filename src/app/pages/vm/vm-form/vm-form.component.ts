@@ -28,6 +28,7 @@ export class VmFormComponent {
   public vcpus: number;
   public cores: number;
   public threads: number;
+  private productType: string = window.localStorage.getItem('product_type');
   protected queryCallOption: Array<any> = [];
 
   public fieldConfig: FieldConfig[] = []
@@ -116,6 +117,24 @@ export class VmFormComponent {
           tooltip: helptext.threads.tooltip,
           validation: [Validators.required, Validators.min(1), Validators.max(16), this.cpuValidator('threads'),]
         },
+        {
+          type: 'select',
+          name: 'cpu_mode',
+          placeholder: helptext.cpu_mode.placeholder,
+          tooltip: helptext.cpu_mode.tooltip,
+          options: helptext.cpu_mode.options,
+          isHidden: true
+        },
+        {
+          type: 'select',
+          name: 'cpu_model',
+          placeholder: helptext.cpu_model.placeholder,
+          tooltip: helptext.cpu_model.tooltip,
+          options: [
+            { label: '---', value: ''}
+          ],
+          isHidden: true
+        },
         { 
           type: 'input', 
           name : 'memory', 
@@ -150,8 +169,10 @@ export class VmFormComponent {
 
   afterInit(entityForm: any) {
     this.bootloader =_.find(this.fieldConfig, {name : 'bootloader'});
-    this.vmService.getBootloaderOptions().forEach((item) => {
-      this.bootloader.options.push({label : item[1], value : item[0]})
+    this.vmService.getBootloaderOptions().subscribe(options => {
+      for(const option in options) {
+        this.bootloader.options.push({label : option, value : options[option]})
+      }
     });
 
     entityForm.formGroup.controls['memory'].valueChanges.subscribe((value) => {
@@ -177,6 +198,22 @@ export class VmFormComponent {
     entityForm.formGroup.controls['threads'].valueChanges.subscribe((value) => {
       this.threads = value;
     })
+
+    if (this.productType === 'SCALE') {
+      _.find(this.fieldConfig, {name : 'cpu_mode'})['isHidden'] = false;
+      const cpuModel = _.find(this.fieldConfig, {name : 'cpu_model'});
+      cpuModel.isHidden = false;
+
+      this.vmService.getCPUModels().subscribe(models => {
+        for (let model in models) {
+          cpuModel.options.push(
+            {
+              label : model, value : models[model]
+            }
+          );
+        };
+      });
+    }
   }
 
   blurEvent(parent){

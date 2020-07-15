@@ -17,7 +17,6 @@ import { DeviceEditComponent } from './devices/device-edit/';
 import { DeviceListComponent } from './devices/device-list';
 import { VmFormComponent } from './vm-form/';
 import { VMListComponent } from './vm-list/vm-list.component';
-import { VMComingsoonComponent } from './vm-comingsoon/vm-comingsoon.component';
 import { routing } from './vm.routing';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { VMWizardComponent } from './vm-wizard/';
@@ -38,7 +37,6 @@ import { DeviceAddComponent } from './devices/device-add2';
     VMWizardComponent,
     VMSerialShellComponent,
     DeviceAddComponent,
-    VMComingsoonComponent,
   ],
   providers: [VmService, EntityFormService, NetworkService, SystemGeneralService, MessageService]
 })

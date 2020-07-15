@@ -39,6 +39,7 @@ export class DeviceEditComponent implements OnInit {
   public vminfo: any;
   public boot: any;
   public error: string;
+  private productType: string = window.localStorage.getItem('product_type');
 
   public custActions: any[];
 
@@ -241,7 +242,6 @@ export class DeviceEditComponent implements OnInit {
       tooltip: helptext.pptdev_tooltip,
       type: 'select',
       options: [],
-      validation: helptext.pptdev_validation,
       required: true
     },
     {
@@ -270,7 +270,8 @@ export class DeviceEditComponent implements OnInit {
       name : 'wait',
       placeholder : helptext.wait_placeholder,
       tooltip : helptext.wait_tooltip,
-      type: 'checkbox'
+      type: 'checkbox',
+      isHidden: true
     },
     {
       name : 'vnc_resolution',
@@ -278,6 +279,7 @@ export class DeviceEditComponent implements OnInit {
       tooltip : helptext.vnc_resolution_tooltip,
       type: 'select',
       options : helptext.vnc_resolution_options,
+      isHidden: true
     },
     {
       name : 'vnc_bind',
@@ -350,7 +352,7 @@ export class DeviceEditComponent implements OnInit {
     });
 
     // pci
-    this.ws.call('vm.device.pptdev_choices').subscribe((res) => {
+    this.ws.call('vm.device.passthrough_device_choices').subscribe((res) => {
       this.pptdev = _.find(this.pciFieldConfig, { 'name': 'pptdev' });
       this.pptdev.options = Object.keys(res || {}).map(pptdevId => ({
         label: pptdevId,
@@ -457,6 +459,11 @@ export class DeviceEditComponent implements OnInit {
         }
       })
     });
+
+    if (this.productType !== 'SCALE') {
+      _.find(this.vncFieldConfig, {name:'wait'}).isHidden = false;
+      _.find(this.vncFieldConfig, {name:'vnc_resolution'}).isHidden = false;
+    }
 
     this.afterInit();
   }
