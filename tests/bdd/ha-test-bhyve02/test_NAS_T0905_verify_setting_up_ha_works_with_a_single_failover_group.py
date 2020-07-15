@@ -349,7 +349,7 @@ def create_pool_should_appear_while_pool_is_being_created_you_should_be_returned
     wait_on_element_disappear(driver, 1, 30, 'xpath', '//h1[contains(.,"Create Pool")]')
     wait_on_element(driver, 1, 30, 'xpath', '//mat-panel-title[contains(.,"tank")]')
     driver.find_element_by_xpath('//mat-panel-title[contains(.,"tank")]')
-    driver.find_element_by_xpath('//mat-panel-title[@ix-auto="value__tank_name"]')
+    driver.find_element_by_xpath('//td[@ix-auto="value__tank_name"]')
 
 
 @then('Navigate to System then Failover, uncheck disable failover, click save.')
