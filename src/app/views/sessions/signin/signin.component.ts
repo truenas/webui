@@ -38,6 +38,7 @@ export class SigninComponent implements OnInit, OnDestroy {
   private interval: any;
   public exposeLegacyUI = false;
   public tokenObservable:Subscription;
+  public HAInterval;
   public isTwoFactor = false;
 
   signinData = {
@@ -96,8 +97,11 @@ export class SigninComponent implements OnInit, OnDestroy {
           clearInterval(this.interval);
         }
         if (this.product_type === 'ENTERPRISE' || this.product_type === 'SCALE') {
+          if (this.HAInterval) {
+            clearInterval(this.HAInterval);
+          }
           this.getHAStatus();
-          setInterval(() => {
+          this.HAInterval = setInterval(() => {
             this.getHAStatus();
           }, 6000);
         } else {
@@ -146,6 +150,12 @@ export class SigninComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+      if (this.interval) {
+        clearInterval(this.interval);
+      }
+      if (this.HAInterval) {
+        clearInterval(this.HAInterval);
+      }
       this.core.unregister({observerClass:this});
       if(this.tokenObservable){
         this.tokenObservable.unsubscribe();
@@ -300,6 +310,12 @@ export class SigninComponent implements OnInit, OnDestroy {
 
   redirect() {
     if (this.ws.token) {
+      if (this.interval) {
+        clearInterval(this.interval);
+      }
+      if (this.HAInterval) {
+        clearInterval(this.HAInterval);
+      }
       if (this.ws.redirectUrl) {
         this.router.navigateByUrl(this.ws.redirectUrl);
         this.ws.redirectUrl = '';
