@@ -8,6 +8,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import { EntityUtils } from '../../../../../app/pages/common/entity/utils';
+import helptext from '../../../../helptext/storage/volumes/download-key';
 import { T } from '../../../../translate-marker';
 
 @Component({
@@ -22,6 +23,7 @@ export class DownloadKeyModalDialog {
   public volumeName: any;
   public fileName: any;
   public isDownloaded: Boolean = false;
+  public help = helptext;
 
   constructor(
     protected translate: TranslateService,
