@@ -6,11 +6,11 @@ import { IscsiService } from '../../../../../services/';
 @Component({
   selector : 'app-iscsi-portal-list',
   template : `
-    <entity-table [conf]="this"></entity-table>
+    <entity-table [conf]="this" [title]="tableTitle"></entity-table>
   `
 })
 export class PortalListComponent {
-
+  public tableTitle = 'Portals';
   protected queryCall = 'iscsi.portal.query';
   protected wsDelete = 'iscsi.portal.delete';
   protected route_add: string[] = [ 'sharing', 'iscsi', 'portals', 'add' ];
