@@ -11,11 +11,10 @@ version = f"{major_v}" if system() == "Linux" else f"{major_v}.{minor_v}"
 cwd = str(os.getcwd())
 screenshot_path = f"{cwd}/screenshot"
 argument = sys.argv
-UsageMSG = """
-
-Usage for %s:
+UsageMSG = """Usage for %s:
 Options:
 
+--help                                     - Show all options
 --ip <0.0.0.0>                             - IP of the targeted TrueNAS server
 --root-password <password>                 - need root password for login
 --convert-feature                          - This convert Jira feature files
@@ -25,7 +24,7 @@ Options:
 
 
 # list of argument that should be use.
-option_list = ["ip=", 'root-password=', 'convert-feature', 'type=']
+option_list = ["help", "ip=", 'root-password=', 'convert-feature', 'type=']
 
 
 def convert_jira_feature_file(directory):
@@ -72,10 +71,13 @@ run_convert = False
 for output, arg in myopts:
     if output == '--ip':
         ip = arg
-    if output == '--root-password':
+    elif output == '--root-password':
         password = arg
-    if output == "--convert-feature":
+    elif output == "--convert-feature":
         run_convert = True
+    elif output == "--help":
+        print(UsageMSG)
+        exit(0)
 
 
 def run_testing():

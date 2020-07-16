@@ -287,7 +287,9 @@ def navigate_to_storage_click_disks_then_click_name_several_times_to_sort_in_alp
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
     wait_on_element(driver, 0.5, 30, 'xpath', '//mat-list-item[@ix-auto="option__Disks"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Disks"]').click()
-    # disk are already sorted
+    wait_on_element(driver, 0.5, 30, 'xpath', '//div[contains(.,"Disks")]')
+    wait_on_element(driver, 0.5, 30, 'xpath', '//span[contains(.,"Name")]')
+    # sort disk
     ada0 = ''
     while ada0 != 'ada0':
         driver.find_element_by_xpath('//span[contains(.,"Name")]').click()
@@ -297,6 +299,7 @@ def navigate_to_storage_click_disks_then_click_name_several_times_to_sort_in_alp
 @then('The list of disks should appear in alphabetical order starting with ada0 (the boot devices) and da0 to da1 the disks we will wipe in next step to create pools')
 def the_list_of_disks_should_appear_in_alphabetical_order_starting_with_ada0_the_boot_devices_and_da0_to_da15_the_disks_we_will_wipe_in_next_step_to_create_pools(driver):
     """The list of disks should appear in alphabetical order starting with ada0 (the boot devices) and da0 to da1 the disks we will wipe in next step to create pools."""
+    # Verify disk are sorted
     disk_list = {1: 'ada0', 2: 'da0', 3: 'da1'}
     for num in list(disk_list.keys()):
         disk = driver.find_element_by_xpath(f'(//datatable-body-cell[2]/div/div)[{num}]').text
