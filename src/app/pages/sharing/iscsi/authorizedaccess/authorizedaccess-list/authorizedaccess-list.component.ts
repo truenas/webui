@@ -6,11 +6,11 @@ import { T } from 'app/translate-marker';
 @Component({
   selector : 'app-iscsi-authorizedaccess-list',
   template : `
-    <entity-table [conf]="this"></entity-table>
+    <entity-table [conf]="this" [title]="tableTitle"></entity-table>
   `
 })
 export class AuthorizedAccessListComponent {
-
+  public tableTitle = 'Authorized Access';
   protected queryCall = 'iscsi.auth.query';
   protected wsDelete = 'iscsi.auth.delete';
   protected route_add: string[] = [ 'sharing', 'iscsi', 'auth', 'add' ];
