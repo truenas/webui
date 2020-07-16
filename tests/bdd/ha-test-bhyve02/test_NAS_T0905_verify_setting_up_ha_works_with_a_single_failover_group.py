@@ -288,12 +288,19 @@ def navigate_to_storage_click_disks_then_click_name_several_times_to_sort_in_alp
     wait_on_element(driver, 0.5, 30, 'xpath', '//mat-list-item[@ix-auto="option__Disks"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Disks"]').click()
     # disk are already sorted
+    ada0 = ''
+    while ada0 != 'ada0':
+        driver.find_element_by_xpath('//span[contains(.,"Name")]').click()
+        ada0 = driver.find_element_by_xpath('(//datatable-body-cell[2]/div/div)[1]').text
 
 
 @then('The list of disks should appear in alphabetical order starting with ada0 (the boot devices) and da0 to da1 the disks we will wipe in next step to create pools')
 def the_list_of_disks_should_appear_in_alphabetical_order_starting_with_ada0_the_boot_devices_and_da0_to_da15_the_disks_we_will_wipe_in_next_step_to_create_pools(driver):
     """The list of disks should appear in alphabetical order starting with ada0 (the boot devices) and da0 to da1 the disks we will wipe in next step to create pools."""
-    pass
+    disk_list = {1: 'ada0', 2: 'da0', 3: 'da1'}
+    for num in list(disk_list.keys()):
+        disk = driver.find_element_by_xpath(f'(//datatable-body-cell[2]/div/div)[{num}]').text
+        assert disk == disk_list[num]
 
 
 @then('Starting with da0, click >, click wipe, check confirm, and click continue. Repeat steps for da1 using the default quick wipe setting')
@@ -367,8 +374,26 @@ def navigate_to_system_then_failover_click_disable_failover_click_save(driver):
 @then('Navigate to dashboard, and verify that both controllers show.')
 def navigate_to_dashboard_and_verify_that_both_controllers_show(driver):
     """Navigate to dashboard, and verify that both controllers show."""
+    wait_on_element(driver, 0.5, 30, 'xpath', '//h4[contains(.,"Failover Configuration")]')
+    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(0.5)
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+    wait_on_element(driver, 0.5, 30, 'xpath', '//span[contains(.,"System Information")]')
+    driver.find_element_by_xpath('//span[contains(.,"System Information")]')
+    # need to wait for all controller to be online.
+    wait_on_element(driver, 1, 60, 'xpath', '//div[contains(.,"tn-bhyve02-nodea.tn.ixsystems.net")]')
+    driver.find_element_by_xpath('//div[contains(.,"tn-bhyve02-nodea.tn.ixsystems.net")]')
+    wait_on_element(driver, 1, 60, 'xpath', '//div[contains(.,"tn-bhyve02-nodeb.tn.ixsystems.net")]')
+    driver.find_element_by_xpath('//div[contains(.,"tn-bhyve02-nodeb.tn.ixsystems.net")]')
 
 
-@then('Both controllers should show model, and version on the dashboard.')
+@then('Both controllers should show version and license on the dashboard.')
 def both_controllers_should_show_model_and_version_on_the_dashboard(driver):
-    """Both controllers should show model, and version on the dashboard."""
+    """Both controllers should show version and license on the dashboard."""
+    version1 = driver.find_element_by_xpath('(//strong[contains(.,"Version:")])[1]/../div/span').text
+    version2 = driver.find_element_by_xpath('(//strong[contains(.,"Version:")])[2]/../div/span').text
+    assert version1 == version2
+    license1 = driver.find_element_by_xpath('(//strong[contains(.,"License:")])[1]/..').text
+    license2 = driver.find_element_by_xpath('(//strong[contains(.,"License:")])[2]/..').text
+    assert license1 == license2
