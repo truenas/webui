@@ -6,11 +6,11 @@ import { T } from 'app/translate-marker';
 @Component({
   selector : 'app-iscsi-extent-list',
   template : `
-    <entity-table [conf]="this"></entity-table>
+    <entity-table [conf]="this" [title]="tableTitle"></entity-table>
   `
 })
 export class ExtentListComponent {
-
+  public tableTitle = 'Extents';
   protected queryCall = 'iscsi.extent.query';
   protected route_add: string[] = [ 'sharing', 'iscsi', 'extent', 'add' ];
   protected route_add_tooltip: string = "Add Extent";

@@ -6,11 +6,11 @@ import { T } from "app/translate-marker";
 @Component({
   selector : 'app-iscsi-initiator-list',
   template : `
-    <entity-table [conf]="this"></entity-table>
+    <entity-table [conf]="this" [title]="tableTitle"></entity-table>
   `
 })
 export class InitiatorListComponent {
-
+  public tableTitle = 'Initiators';
   protected queryCall = 'iscsi.initiator.query';
   protected route_add: string[] = [ 'sharing', 'iscsi', 'initiators', 'add' ];
   protected route_add_tooltip: string = "Add Initiator";
