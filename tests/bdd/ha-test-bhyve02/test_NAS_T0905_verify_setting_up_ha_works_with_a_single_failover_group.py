@@ -18,8 +18,8 @@ def test_verify_setting_up_ha_works_with_a_single_failover_group_tn_bhyve02(driv
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
-def the_browser_is_open_navigate_to_url(driver, nas_url):
-    """The browser is open navigate to "url"."""
+def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
+    """The browser is open navigate to "nas(url"."""
     driver.get(f"http://{nas_url}/ui/sessions/signin")
     time.sleep(2)
 
