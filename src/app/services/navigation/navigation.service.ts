@@ -21,8 +21,10 @@ interface IChildItem {
 
 @Injectable()
 export class NavigationService {
-  // all menu for truenas features
-  public enterpriseFeatures = [];
+  // all menu for truenas enterprise features
+  public enterpriseFeatures = [
+    { menu: 'system', sub: 'kmip' }
+  ];
 
   // all menu for iXsystems hardware features
   public hardwareFeatures = [
@@ -73,7 +75,7 @@ export class NavigationService {
         { name: T('Update'), state: 'update' },
         { name: T('CAs'), state: 'ca' },
         { name: T('Certificates'), state: 'certificates' },
-        { name: T('KMIP'), state: 'kmip' },
+        { name: T('KMIP'), state: 'kmip', disabled: true },
         { name: T('ACME DNS'), state: 'acmedns' },
         { name: T('Failover'), state: 'failover', disabled: true },
         { name: T('Support'), state: 'support' },
