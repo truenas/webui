@@ -456,12 +456,15 @@ export class VMWizardComponent {
 
 
     ( < FormGroup > entityWizard.formArray.get([0]).get('bootloader')).valueChanges.subscribe((bootloader) => {
-      if(this.productType !== 'SCALE' && (bootloader === "UEFI_CSM" || bootloader === 'Legacy BIOS')){
+      console.log(bootloader)
+      if(this.productType !== 'SCALE' && bootloader === 'UEFI_CSM'){
         _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_vnc'})['isHidden'] = true;
         _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'})['isHidden'] = true;
+      _.find(this.wizardConfig[0].fieldConfig, {name : 'vnc_bind'}).isHidden = true;
 
       } else {
         _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_vnc'})['isHidden'] = false;
+        _.find(this.wizardConfig[0].fieldConfig, {name : 'vnc_bind'}).isHidden = false;
         if (this.productType !== 'SCALE') {
           _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'})['isHidden'] = false;
         }
@@ -834,6 +837,7 @@ blurEvent3(parent){
 }
 
 async customSubmit(value) {
+  console.log(value)
     this.prefService.savePreferences();
     let hdd;
     const vm_payload = {}
@@ -934,6 +938,7 @@ async customSubmit(value) {
           device.attributes.zvol_volsize = zvol_volsize
         };
       };
+      console.log(vm_payload)
       this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
         this.loader.close();
         this.router.navigate(['/vm']);
