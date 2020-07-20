@@ -456,8 +456,7 @@ export class VMWizardComponent {
 
 
     ( < FormGroup > entityWizard.formArray.get([0]).get('bootloader')).valueChanges.subscribe((bootloader) => {
-      console.log(bootloader)
-      if(this.productType !== 'SCALE' && bootloader === 'UEFI_CSM'){
+      if(this.productType !== 'SCALE' && bootloader !== 'UEFI'){
         _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_vnc'})['isHidden'] = true;
         _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'})['isHidden'] = true;
       _.find(this.wizardConfig[0].fieldConfig, {name : 'vnc_bind'}).isHidden = true;
@@ -614,7 +613,7 @@ export class VMWizardComponent {
       }
       else {
         if (!grub && this.productType !== 'SCALE') {
-          this.bootloader.options.push({label : 'Grub', value : 'GRUB'});
+          this.bootloader.options.push({label : 'Grub bhyve (specify grub.cfg)', value : 'GRUB'});
         }
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(1);
         ( < FormGroup > entityWizard.formArray.get([1])).controls['cores'].setValue(1);
@@ -837,7 +836,6 @@ blurEvent3(parent){
 }
 
 async customSubmit(value) {
-  console.log(value)
     this.prefService.savePreferences();
     let hdd;
     const vm_payload = {}
@@ -894,7 +892,7 @@ async customSubmit(value) {
             "vnc_web": true
           }
         });
-      } else if (value.bootloader !== 'UEFI_CSM') {
+      } else if (value.bootloader === 'UEFI') {
         vm_payload["devices"].push({
           "dtype": "VNC", "attributes": {
             "wait": value.wait,
@@ -938,7 +936,6 @@ async customSubmit(value) {
           device.attributes.zvol_volsize = zvol_volsize
         };
       };
-      console.log(vm_payload)
       this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
         this.loader.close();
         this.router.navigate(['/vm']);
