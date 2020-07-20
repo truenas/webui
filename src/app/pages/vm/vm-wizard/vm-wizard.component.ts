@@ -419,6 +419,7 @@ export class VMWizardComponent {
     });
 
     if (this.productType === 'SCALE') {
+      _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'})['isHidden'] = true;
       _.find(this.wizardConfig[1].fieldConfig, {name : 'cpu_mode'})['isHidden'] = false;
       const cpuModel = _.find(this.wizardConfig[1].fieldConfig, {name : 'cpu_model'});
       cpuModel.isHidden = false;
@@ -455,24 +456,27 @@ export class VMWizardComponent {
 
 
     ( < FormGroup > entityWizard.formArray.get([0]).get('bootloader')).valueChanges.subscribe((bootloader) => {
-      if(bootloader === "UEFI_CSM"){
+      if(bootloader === "UEFI_CSM" || bootloader === 'Legacy BIOS'){
         _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_vnc'})['isHidden'] = true;
         _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'})['isHidden'] = true;
 
       } else {
         _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_vnc'})['isHidden'] = false;
-        _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'})['isHidden'] = false;
-
+        if (this.productType !== 'SCALE') {
+          _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'})['isHidden'] = false;
+        }
       }
-
-
     });
 
     ( < FormGroup > entityWizard.formArray.get([0]).get('enable_vnc')).valueChanges.subscribe((res) => {
-      _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'}).isHidden = !res;
+      if (this.productType !== 'SCALE') {
+        _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'}).isHidden = !res;   
+      }
       _.find(this.wizardConfig[0].fieldConfig, {name : 'vnc_bind'}).isHidden = !res;
       if (res) {
-        ( < FormGroup > entityWizard.formArray.get([0]).get('wait')).enable();
+        if (this.productType !== 'SCALE') {
+          ( < FormGroup > entityWizard.formArray.get([0]).get('wait')).enable();
+        }
         ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).enable()
       } else {
         ( < FormGroup > entityWizard.formArray.get([0]).get('wait')).disable();
@@ -606,7 +610,7 @@ export class VMWizardComponent {
         ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue('40 GiB');
       }
       else {
-        if (!grub) {
+        if (!grub && this.productType !== 'SCALE') {
           this.bootloader.options.push({label : 'Grub', value : 'GRUB'});
         }
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(1);
@@ -688,10 +692,10 @@ export class VMWizardComponent {
 
       this.vmService.getBootloaderOptions().subscribe(options => {
         for (const option in options) {
-          this.bootloader.options.push({ label: option, value: options[option]});
+          this.bootloader.options.push({ label: options[option], value: option});
         }
         ( < FormGroup > entityWizard.formArray.get([0])).controls['bootloader'].setValue(
-          this.bootloader.options[0].value
+          this.bootloader.options[0].label
         )
       });
 
@@ -878,7 +882,6 @@ async customSubmit(value) {
     if(value.enable_vnc &&value.bootloader !== "UEFI_CSM"){
       vm_payload["devices"].push({
           "dtype": "VNC", "attributes": {
-            "wait": value.wait,
             "vnc_port": String(this.getRndInteger(5900,65535)),
             "vnc_resolution": "1024x768",
             "vnc_bind": value.vnc_bind,
@@ -886,7 +889,14 @@ async customSubmit(value) {
             "vnc_web": true
           }
         });
-    };
+        if (this.productType !== 'SCALE') {
+          vm_payload["devices"].push({
+            "dtype": "VNC", "attributes": {
+              "wait": value.wait,
+            }
+          });
+        }
+     };
     this.loader.open();
     if( value.hdd_path ){
       for (const device of vm_payload["devices"]){
