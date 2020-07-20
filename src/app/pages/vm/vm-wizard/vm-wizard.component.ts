@@ -456,7 +456,7 @@ export class VMWizardComponent {
 
 
     ( < FormGroup > entityWizard.formArray.get([0]).get('bootloader')).valueChanges.subscribe((bootloader) => {
-      if(bootloader === "UEFI_CSM" || bootloader === 'Legacy BIOS'){
+      if(this.productType !== 'SCALE' && (bootloader === "UEFI_CSM" || bootloader === 'Legacy BIOS')){
         _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_vnc'})['isHidden'] = true;
         _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'})['isHidden'] = true;
 
@@ -878,9 +878,10 @@ async customSubmit(value) {
         {"dtype": "DISK", "attributes": {"path": hdd, "type": value.hdd_type, 'physical_sectorsize': null, 'logical_sectorsize': null}},
       ]
     }
-    
-    if(value.enable_vnc &&value.bootloader !== "UEFI_CSM"){
-      vm_payload["devices"].push({
+
+    if (value.enable_vnc) {
+      if (this.productType === 'SCALE') {
+        vm_payload["devices"].push({
           "dtype": "VNC", "attributes": {
             "vnc_port": String(this.getRndInteger(5900,65535)),
             "vnc_resolution": "1024x768",
@@ -889,14 +890,20 @@ async customSubmit(value) {
             "vnc_web": true
           }
         });
-        if (this.productType !== 'SCALE') {
-          vm_payload["devices"].push({
-            "dtype": "VNC", "attributes": {
-              "wait": value.wait,
-            }
-          });
-        }
-     };
+      } else if (value.bootloader !== 'UEFI_CSM') {
+        vm_payload["devices"].push({
+          "dtype": "VNC", "attributes": {
+            "wait": value.wait,
+            "vnc_port": String(this.getRndInteger(5900,65535)),
+            "vnc_resolution": "1024x768",
+            "vnc_bind": value.vnc_bind,
+            "vnc_password": "",
+            "vnc_web": true
+          }
+        });
+      }
+    }
+    
     this.loader.open();
     if( value.hdd_path ){
       for (const device of vm_payload["devices"]){
