@@ -80,6 +80,13 @@ Login or signup is required.'),
     deregisterInfoDialog: {
         title: T('TrueCommand Cloud Service deregistered'),
         message: T('TrueCommand Cloud Service has been deregistered.')
-    }
+    },
+
+    stopTCConnectingDialog: {
+        title: T('Stop Connecting to TrueCommand Cloud Service'),
+        icon: 'warning',
+        message: T('Are you sure you want to stop connecting to TrueCommand Cloud Service?'),
+        confirmBtnMsg: T('Confirm'),
+    },
 }
 
