@@ -2,6 +2,8 @@
 """High Availability feature tests."""
 
 from function import wait_on_element, is_element_present, wait_on_element_disappear
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
 import time
 from pytest_bdd import (
     given,
@@ -113,7 +115,7 @@ def enable_permit_sudo_and_click_save(driver):
     element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
-    driver.find_element_by_xpath('//mat-checkbox[ix-auto="checkbox__Permit Sudo"]').click()
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Permit Sudo"]').click()
     wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
@@ -128,18 +130,37 @@ def change_should_be_saved(driver):
 @then('Open the user drop down to verify the value has been changed')
 def open_the_user_drop_down_to_verify_the_value_has_been_changed(driver):
     """Open the user drop down to verify the value has been changed."""
+    """Open the user drop down to verify the shell was changed."""
+    driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
+    wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__EDIT_ericbsd"]')
+    driver.find_element_by_xpath('//h4[contains(.,"Permit Sudo:")]')
 
 
 @then('Updated value should be visible')
 def updated_value_should_be_visible(driver):
     """Updated value should be visible."""
+    driver.find_element_by_xpath('//p[contains(.,"true")]')
 
 
-@then('Log out and back in with that user and open shell and confirm user can sudo')
-def log_out_and_back_in_with_that_user_and_open_shell_and_confirm_user_can_sudo(driver):
-    """Log out and back in with that user and open shell and confirm user can sudo."""
+@then('Open shell and run su user to become that user')
+def open_shell_and_run_su_user(driver):
+    """Open shell and run su user to become that user."""
+    wait_on_element(driver, 0.5, 30, 'xpath', '//mat-list-item[@ix-auto="option__Shell"]')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shell"]').click()
+    wait_on_element(driver, 4, 30, 'xpath', '//span[@class="reverse-video terminal-cursor"]')
+    actions = ActionChains(driver)
+    actions.send_keys('su ericbsd', Keys.ENTER)
+    actions.perform()
 
 
 @then('User should be able to use Sudo')
 def user_should_be_able_to_use_sudo(driver):
     """User should be able to use Sudo."""
+    actions = ActionChains(driver)
+    actions.send_keys('sudo ls /var/db/sudo', Keys.ENTER)
+    actions.perform()
+    wait_on_element(driver, 1, 30, 'xpath', '//span[contains(.,"Password:")]')
+    actions.send_keys('testing', Keys.ENTER)
+    actions.perform()
+    wait_on_element(driver, 1, 30, 'xpath', '//span[contains(.,"lectured")]')
+    driver.find_element_by_xpath('//span[contains(.,"lectured")]')
