@@ -106,7 +106,16 @@ export class IPMIComponent {
         tooltip : helptext.ipaddress_tooltip,
         validation : [ ipv4Validator('ipaddress') ],
         errors: helptext.ip_error,
-        hasErrors: false
+        hasErrors: false,
+        relation: [
+          {
+            action: 'DISABLE',
+            when: [{
+              name: 'dhcp',
+              value: true,
+            }]
+          },
+        ]
       },
       {
         type : 'input',
@@ -115,7 +124,16 @@ export class IPMIComponent {
         tooltip : helptext.netmask_tooltip,
         validation : [ ipv4Validator('netmask') ],
         errors: helptext.ip_error,
-        hasErrors: false
+        hasErrors: false,
+        relation: [
+          {
+            action: 'DISABLE',
+            when: [{
+              name: 'dhcp',
+              value: true,
+            }]
+          },
+        ]
       },
       {
         type : 'input',
@@ -124,7 +142,16 @@ export class IPMIComponent {
         tooltip : helptext.gateway_tooltip,
         validation : [ ipv4Validator('gateway') ],
         errors: helptext.ip_error,
-        hasErrors: false
+        hasErrors: false,
+        relation: [
+          {
+            action: 'DISABLE',
+            when: [{
+              name: 'dhcp',
+              value: true,
+            }]
+          },
+        ]
       },
       {
         type : 'input',
