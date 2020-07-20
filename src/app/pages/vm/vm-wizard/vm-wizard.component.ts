@@ -886,7 +886,6 @@ async customSubmit(value) {
         vm_payload["devices"].push({
           "dtype": "VNC", "attributes": {
             "vnc_port": String(this.getRndInteger(5900,65535)),
-            "vnc_resolution": "1024x768",
             "vnc_bind": value.vnc_bind,
             "vnc_password": "",
             "vnc_web": true
