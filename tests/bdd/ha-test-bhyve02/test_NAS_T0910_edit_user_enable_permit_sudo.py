@@ -130,7 +130,6 @@ def change_should_be_saved(driver):
 @then('Open the user drop down to verify the value has been changed')
 def open_the_user_drop_down_to_verify_the_value_has_been_changed(driver):
     """Open the user drop down to verify the value has been changed."""
-    """Open the user drop down to verify the shell was changed."""
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
     wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__EDIT_ericbsd"]')
     driver.find_element_by_xpath('//h4[contains(.,"Permit Sudo:")]')
@@ -139,7 +138,8 @@ def open_the_user_drop_down_to_verify_the_value_has_been_changed(driver):
 @then('Updated value should be visible')
 def updated_value_should_be_visible(driver):
     """Updated value should be visible."""
-    driver.find_element_by_xpath('//p[contains(.,"true")]')
+    element_text = driver.find_element_by_xpath('//h4[contains(.,"Permit Sudo:")]/../div/p').text
+    assert element_text == 'true'
 
 
 @then('Open shell and run su user to become that user')
