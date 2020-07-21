@@ -387,7 +387,7 @@ def navigate_to_dashboard_and_verify_that_both_controllers_show(driver):
     # need to wait for all controller to be online.
     wait_on_element(driver, 1, 60, 'xpath', '//div[contains(.,"tn-bhyve02-nodea.tn.ixsystems.net")]')
     driver.find_element_by_xpath('//div[contains(.,"tn-bhyve02-nodea.tn.ixsystems.net")]')
-    wait_on_element(driver, 1, 60, 'xpath', '//div[contains(.,"tn-bhyve02-nodeb.tn.ixsystems.net")]')
+    wait_on_element(driver, 1, 90, 'xpath', '//div[contains(.,"tn-bhyve02-nodeb.tn.ixsystems.net")]')
     driver.find_element_by_xpath('//div[contains(.,"tn-bhyve02-nodeb.tn.ixsystems.net")]')
 
 
