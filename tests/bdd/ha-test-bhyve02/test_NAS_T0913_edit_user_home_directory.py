@@ -28,8 +28,8 @@ def the_browser_is_open_navigate_to_tnbhyve02tnixsystemsnet(driver, nas_url):
 @when(parsers.parse('If login page appear enter "{user}" and "{password}"'))
 def if_login_page_appear_enter_root_and_testing(driver, user, password):
     """If login page appear enter "{user}" and "{password}"."""
-    wait_on_element(driver, 0.5, 5, 'xpath', '//input[@placeholder="Username"]')
-    if is_element_present(driver, 'xpath', '//input[@placeholder="Username"]'):
+    if not is_element_present(driver, 'xpath', '//mat-list-item[@ix-auto="option__Dashboard"]'):
+        wait_on_element(driver, 0.5, 5, 'xpath', '//input[@placeholder="Username"]')
         driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(user)
         driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
