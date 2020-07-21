@@ -397,7 +397,7 @@ export class SMBFormComponent {
     }
     // If this call returns true OR an [ENOENT] err comes back, just return to table
     // because the pool or ds is encrypted. Otherwise, do the next checks
-    this.ws.call('filesystem.path_is_encrypted', [sharePath]).subscribe(
+    this.ws.call('pool.dataset.path_in_locked_datasets', [sharePath]).subscribe(
       res => {
       if(res) {
         this.router.navigate(['/'].concat(this.route_success));

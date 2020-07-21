@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { shared, helptext_sharing_smb } from 'app/helptext/sharing';
 import vol_helptext  from 'app/helptext/storage/volumes/volume-list';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
@@ -47,7 +48,8 @@ export class SMBListComponent {
     buildTitle: share => `${T('Unshare')} ${share.name}`
   }
 
-  constructor(private ws: WebSocketService, private router: Router, private dialogService: DialogService) {}
+  constructor(private ws: WebSocketService, private router: Router, 
+    private dialogService: DialogService, private translate: TranslateService) {}
 
   afterInit(entityList: any) {
     this.entityList = entityList;
@@ -91,26 +93,22 @@ export class SMBListComponent {
         label: helptext_sharing_smb.action_edit_acl,
         onClick: row => {
           const datasetId = rowName;
-          // If path_is_encrypted is true or an [ENOENT] err returns, pool or ds is locked
-          this.ws.call('filesystem.path_is_encrypted', [row.path]).subscribe(
+          this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).subscribe(
             res => {
             if(res) {
-              this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, 
-                `${helptext_sharing_smb.action_edit_acl_dialog.message1} ${poolName} 
-                ${helptext_sharing_smb.action_edit_acl_dialog.message2}`)
+              this.translate.get(helptext_sharing_smb.action_edit_acl_dialog.message1).subscribe(msg1 => {
+                this.translate.get(helptext_sharing_smb.action_edit_acl_dialog.message2).subscribe(msg2 => {
+                  this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, 
+                    `${msg1} <i>${row.path}</i> ${msg2}`)
+                })
+              })
             } else {
               this.router.navigate(
                 ["/"].concat(["storage", "pools", "id", poolName, "dataset", "acl", datasetId]));
             }
           }, err => {
-            if (err.reason.includes('[ENOENT]')) { 
-              this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, 
-                `${helptext_sharing_smb.action_edit_acl_dialog.message1} ${poolName} 
-                ${helptext_sharing_smb.action_edit_acl_dialog.message2}`)
-            } else { // If some other err comes back from filesystem.path_is_encrypted
-              this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, 
-                err.reason, err.trace.formatted);
-            }
+            this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, 
+              err.reason, err.trace.formatted);
           })
         }
       },
