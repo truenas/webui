@@ -38,6 +38,7 @@ export class VMWizardComponent {
   summary_title = T("VM Summary");
   public namesInUse = [];
   public statSize: any;
+  public vncPort: number;
   public vcpus: number = 1;
   public cores: number = 1;
   public threads: number = 1;
@@ -476,6 +477,9 @@ export class VMWizardComponent {
       }
       _.find(this.wizardConfig[0].fieldConfig, {name : 'vnc_bind'}).isHidden = !res;
       if (res) {
+        this.ws.call('vm.vnc_port_wizard').subscribe(({vnc_port}) => {
+          this.vncPort = vnc_port;
+        })
         if (this.productType !== 'SCALE') {
           ( < FormGroup > entityWizard.formArray.get([0]).get('wait')).enable();
         }
@@ -885,7 +889,7 @@ async customSubmit(value) {
       if (this.productType === 'SCALE') {
         vm_payload["devices"].push({
           "dtype": "VNC", "attributes": {
-            "vnc_port": String(this.getRndInteger(5900,65535)),
+            "vnc_port": this.vncPort,
             "vnc_bind": value.vnc_bind,
             "vnc_password": "",
             "vnc_web": true
@@ -895,7 +899,7 @@ async customSubmit(value) {
         vm_payload["devices"].push({
           "dtype": "VNC", "attributes": {
             "wait": value.wait,
-            "vnc_port": String(this.getRndInteger(5900,65535)),
+            "vnc_port": this.vncPort,
             "vnc_resolution": "1024x768",
             "vnc_bind": value.vnc_bind,
             "vnc_password": "",
