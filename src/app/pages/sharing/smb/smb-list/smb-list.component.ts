@@ -4,10 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { shared, helptext_sharing_smb } from 'app/helptext/sharing';
 import vol_helptext  from 'app/helptext/storage/volumes/volume-list';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
-import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, WebSocketService } from 'app/services';
 import { T } from 'app/translate-marker';
-import { map } from 'rxjs/operators';
  
 @Component({
   selector : 'app-smb-list',
@@ -74,14 +72,21 @@ export class SMBListComponent {
         name: "share_acl",
         label: helptext_sharing_smb.action_share_acl,
         onClick: row => {
-          // A home share has a name (homes) set; row.name works for other shares
-          const searchName = row.home ? 'homes' : row.name;
-          this.ws.call('smb.sharesec.query', [[["share_name", "=", searchName]]]).subscribe(
-            (res) => {
-              this.router.navigate(
-                ["/"].concat(["sharing", "smb", "acl", res[0].id]));
-            }
-          );
+          this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).subscribe(
+            res => {
+              if(res) {
+                this.lockedPathDialog(row.path);
+              } else {
+                // A home share has a name (homes) set; row.name works for other shares
+                const searchName = row.home ? 'homes' : row.name;
+                this.ws.call('smb.sharesec.query', [[["share_name", "=", searchName]]]).subscribe(
+                  (res) => {
+                    this.router.navigate(
+                      ["/"].concat(["sharing", "smb", "acl", res[0].id]));
+                  }
+                );
+              }
+            })
         }
       },
       {
@@ -96,12 +101,7 @@ export class SMBListComponent {
           this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).subscribe(
             res => {
             if(res) {
-              this.translate.get(helptext_sharing_smb.action_edit_acl_dialog.message1).subscribe(msg1 => {
-                this.translate.get(helptext_sharing_smb.action_edit_acl_dialog.message2).subscribe(msg2 => {
-                  this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, 
-                    `${msg1} <i>${row.path}</i> ${msg2}`)
-                })
-              })
+              this.lockedPathDialog(row.path);
             } else {
               this.router.navigate(
                 ["/"].concat(["storage", "pools", "id", poolName, "dataset", "acl", datasetId]));
@@ -128,5 +128,14 @@ export class SMBListComponent {
       rows.splice(rows.indexOf(shareAclRow), 1);
     }
     return rows;
+  }
+
+  lockedPathDialog(path: string) {
+    this.translate.get(helptext_sharing_smb.action_edit_acl_dialog.message1).subscribe(msg1 => {
+      this.translate.get(helptext_sharing_smb.action_edit_acl_dialog.message2).subscribe(msg2 => {
+        this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, 
+          `${msg1} <i>${path}</i> ${msg2}`)
+      })
+    })
   }
 }
