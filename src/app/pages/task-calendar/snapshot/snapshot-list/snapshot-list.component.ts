@@ -27,7 +27,7 @@ export class SnapshotListComponent {
     { name: T('Enabled'), prop: 'enabled' },
     { name: T('State'), prop: 'task_state', state: 'state',},
   ];
-  public rowIdentifier = 'dataset';
+  public rowIdentifier = 'id';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
