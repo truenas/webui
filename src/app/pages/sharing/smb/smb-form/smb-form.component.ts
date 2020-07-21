@@ -407,7 +407,7 @@ export class SMBFormComponent {
      * nav to SMB shares list view.
      */
     const promptUserACLEdit = () => 
-      this.ws.call('filesystem.acl_is_trivial', [sharePath]).pipe(
+      this.ws.call('pool.dataset.path_in_locked_datasets', [sharePath]).pipe(
         switchMap((isTrivialACL: boolean) =>
           /* If share does not have trivial ACL, move on. Otherwise, perform some async data-gathering operations */
           !isTrivialACL || !datasetId.includes('/') || this.productType === 'SCALE'
