@@ -110,7 +110,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     }
 
   ngOnInit() {
-    if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
+    if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
       this.checkEULA();
 
       this.ws.call('failover.licensed').subscribe((is_ha) => {

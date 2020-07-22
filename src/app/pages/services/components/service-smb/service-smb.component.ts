@@ -264,7 +264,7 @@ export class ServiceSMBComponent {
 
   preInit(entityForm: any) {
     this.entityEdit = entityForm;
-    if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
+    if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         entityForm.setDisabled('netbiosname_b', !is_ha, !is_ha);
       });

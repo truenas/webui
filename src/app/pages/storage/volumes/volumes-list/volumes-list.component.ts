@@ -1024,7 +1024,7 @@ export class VolumesListTableConfig implements InputTableConf {
               label: T("Edit ACL"),
               matTooltip: helptext.acl_edit_msg,
               ttposition: 'left',
-              isHidden: this.productType === 'SCALE' ? true : false, // Temporary, for SCALE
+              isHidden: this.productType.includes('SCALE') ? true : false, // Temporary, for SCALE
               onClick: (row1) => {
                 this.ws.call('filesystem.getacl', [row1.mountpoint]).subscribe(res => {
                   if(res.acltype === 'POSIX1E') {

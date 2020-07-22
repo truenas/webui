@@ -4,7 +4,7 @@
 			<div class="logo-wrapper">
 				<mat-icon *ngIf="systemType==='CORE'" svgIcon="truenas_core_logo_full" class="logo" alt="TrueNAS CORE logo"></mat-icon>
 				<mat-icon *ngIf="systemType==='ENTERPRISE'" svgIcon="truenas_enterprise_logo_full" class="logo" alt="TrueNAS ENTERPRISE logo"></mat-icon>
-				<mat-icon *ngIf="systemType==='SCALE'" svgIcon="truenas_scale_logo_full" class="logo" alt="TrueNAS SCALE logo"></mat-icon>
+				<mat-icon *ngIf="systemType==='SCALE' || systemType==='SCALE_ENTERPRISE'" svgIcon="truenas_scale_logo_full" class="logo" alt="TrueNAS SCALE logo"></mat-icon>
 			</div>
 			<div id="title" *ngIf="extraMsg">{{ helptext.tagline | translate }}</div>
 		</div>

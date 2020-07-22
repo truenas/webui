@@ -301,7 +301,7 @@ export class NFSFormComponent {
       this.nfs_maproot_group.options = groups;
     });
 
-    if (this.productType === 'SCALE') {
+    if (this.productType.includes('SCALE')) {
       this.hideOnScale.forEach(name => {
         this.entityForm.setDisabled(name, true, true);
       })

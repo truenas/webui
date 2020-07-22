@@ -410,7 +410,7 @@ export class SMBFormComponent {
       this.ws.call('filesystem.acl_is_trivial', [sharePath]).pipe(
         switchMap((isTrivialACL: boolean) =>
           /* If share does not have trivial ACL, move on. Otherwise, perform some async data-gathering operations */
-          !isTrivialACL || !datasetId.includes('/') || this.productType === 'SCALE'
+          !isTrivialACL || !datasetId.includes('/') || this.productType.includes('SCALE')
             ? combineLatest(of(false), of({}))
             : combineLatest(
                 /* Check if user wants to edit the share's ACL */

@@ -24,7 +24,7 @@
           </div>
 
           <!-- TrueNAS Scale -->
-          <div class="branding topbar {{'truenas-' + product_type.toLowerCase()}}" *ngIf="!retroLogo && product_type == 'SCALE' ">
+          <div class="branding topbar {{'truenas-' + product_type.toLowerCase()}}" *ngIf="!retroLogo && (product_type == 'SCALE' || product_type == 'SCALE_ENTERPRISE') ">
             <a routerLink="/dashboard" class="logo"><mat-icon svgIcon="truenas_scale_logomark" alt="TrueNAS Core logo" class="app-logo"></mat-icon></a>
             <a routerLink="/dashboard" class="logo-text"><mat-icon svgIcon="truenas_scale_logotype" alt="TrueNAS Core" class="app-logo-text"></mat-icon></a>
           </div>

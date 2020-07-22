@@ -199,7 +199,7 @@ export class VmFormComponent {
       this.threads = value;
     })
 
-    if (this.productType === 'SCALE') {
+    if (this.productType.includes('SCALE')) {
       _.find(this.fieldConfig, {name : 'cpu_mode'})['isHidden'] = false;
       const cpuModel = _.find(this.fieldConfig, {name : 'cpu_model'});
       cpuModel.isHidden = false;

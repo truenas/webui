@@ -185,7 +185,7 @@ export class ServiceNFSComponent {
   }
 
   afterInit(entityForm: EntityFormComponent) {
-    if (this.productType === 'SCALE') {
+    if (this.productType.includes('SCALE')) {
       this.hideOnScale.forEach(name => {
         entityForm.setDisabled(name, true, true);
       })

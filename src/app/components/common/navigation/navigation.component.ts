@@ -45,7 +45,7 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
       */
 
       // Temporarily hide some things in SCALE
-      if (this.productType === 'SCALE') {
+      if (this.productType === 'SCALE' || this.productType === 'SCALE_ENTERPRISE') {
         _.find(_.find(menuItem, {state : "system"}).sub, {state : "kmip"}).disabled = true;
         _.find(_.find(menuItem, {state : "directoryservice"}).sub, {state : "nis"}).disabled = true;
         _.find(_.find(menuItem, {state : "sharing"}).sub, {state : "webdav"}).disabled = true;
@@ -65,7 +65,7 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
       }
       // ====================
 
-      if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
+      if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
         this.ws.call('failover.licensed').subscribe((is_ha) => {
           if (is_ha) {
             _.find(_.find(menuItem,
@@ -97,7 +97,8 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
          
           if (window.localStorage.getItem('product_type') !== 'CORE') {
             // hide jail and plugins section if product type is SCALE or ENTERPRISE with jail unregistered
-            if ((evt.data.license && evt.data.license.features.indexOf('JAILS') === -1) || window.localStorage.getItem('product_type') === 'SCALE') {
+            if ((evt.data.license && evt.data.license.features.indexOf('JAILS') === -1) || window.localStorage.getItem('product_type') === 'SCALE'
+            || window.localStorage.getItem('product_type') === 'SCALE_ENTERPRISE') {
               _.find(menuItem, {state : "plugins"}).disabled = true;
               _.find(menuItem, {state : "jails"}).disabled = true;
             }

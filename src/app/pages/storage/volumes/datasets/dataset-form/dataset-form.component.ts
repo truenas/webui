@@ -849,7 +849,7 @@ export class DatasetFormComponent implements Formconfiguration{
     // aclmode not yet available in SCALE
     this.productType = window.localStorage.getItem('product_type');
     const aclControl = entityForm.formGroup.get('aclmode');
-    if (this.productType !== 'SCALE') {
+    if (!this.productType.includes('SCALE')) {
       this.advanced_field.push('aclmode')
     } else {
       aclControl.disable();
@@ -902,7 +902,7 @@ export class DatasetFormComponent implements Formconfiguration{
       
       // ...with this
       const caseControl = entityForm.formGroup.get('casesensitivity');
-      if (this.productType !== 'SCALE') {
+      if (!this.productType.includes('SCALE')) {
         if (shareType === 'SMB') {
           aclControl.setValue('RESTRICTED');
           caseControl.setValue('INSENSITIVE');
@@ -1326,7 +1326,7 @@ export class DatasetFormComponent implements Formconfiguration{
         sync: this.getFieldValueOrRaw(wsResponse.sync)
      };
      // 
-     if (this.productType !== 'SCALE') {
+     if (!this.productType.includes('SCALE')) {
        returnValue.aclmode = this.getFieldValueOrRaw(wsResponse.aclmode);
      }
 

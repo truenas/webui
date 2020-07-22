@@ -419,7 +419,7 @@ export class VMWizardComponent {
       }
     });
 
-    if (this.productType === 'SCALE') {
+    if (this.productType === 'SCALE' || this.productType === 'SCALE_ENTERPRISE') {
       _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'})['isHidden'] = true;
       _.find(this.wizardConfig[1].fieldConfig, {name : 'cpu_mode'})['isHidden'] = false;
       const cpuModel = _.find(this.wizardConfig[1].fieldConfig, {name : 'cpu_model'});
@@ -457,7 +457,7 @@ export class VMWizardComponent {
 
 
     ( < FormGroup > entityWizard.formArray.get([0]).get('bootloader')).valueChanges.subscribe((bootloader) => {
-      if(this.productType !== 'SCALE' && bootloader !== 'UEFI'){
+      if(!this.productType.includes('SCALE') && bootloader !== 'UEFI'){
         _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_vnc'})['isHidden'] = true;
         _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'})['isHidden'] = true;
       _.find(this.wizardConfig[0].fieldConfig, {name : 'vnc_bind'}).isHidden = true;
@@ -465,14 +465,14 @@ export class VMWizardComponent {
       } else {
         _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_vnc'})['isHidden'] = false;
         _.find(this.wizardConfig[0].fieldConfig, {name : 'vnc_bind'}).isHidden = false;
-        if (this.productType !== 'SCALE') {
+        if (!this.productType.includes('SCALE')) {
           _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'})['isHidden'] = false;
         }
       }
     });
 
     ( < FormGroup > entityWizard.formArray.get([0]).get('enable_vnc')).valueChanges.subscribe((res) => {
-      if (this.productType !== 'SCALE') {
+      if (!this.productType.includes('SCALE')) {
         _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'}).isHidden = !res;   
       }
       _.find(this.wizardConfig[0].fieldConfig, {name : 'vnc_bind'}).isHidden = !res;
@@ -480,7 +480,7 @@ export class VMWizardComponent {
         this.ws.call('vm.vnc_port_wizard').subscribe(({vnc_port}) => {
           this.vncPort = vnc_port;
         })
-        if (this.productType !== 'SCALE') {
+        if (!this.productType.includes('SCALE')) {
           ( < FormGroup > entityWizard.formArray.get([0]).get('wait')).enable();
         }
         ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).enable()
@@ -509,7 +509,7 @@ export class VMWizardComponent {
         this.summary[T('Number of Threads')] = threads;
       });
 
-      if (this.productType === 'SCALE') {
+      if (this.productType.includes('SCALE')) {
         ( < FormGroup > entityWizard.formArray.get([1])).get('cpu_mode').valueChanges.subscribe((mode) => {
           this.mode = mode;
           this.summary[T('CPU Mode')] = mode;
@@ -616,7 +616,7 @@ export class VMWizardComponent {
         ( < FormGroup > entityWizard.formArray.get([2])).controls['volsize'].setValue('40 GiB');
       }
       else {
-        if (!grub && this.productType !== 'SCALE') {
+        if (!grub && !this.productType.includes('SCALE')) {
           this.bootloader.options.push({label : 'Grub bhyve (specify grub.cfg)', value : 'GRUB'});
         }
         ( < FormGroup > entityWizard.formArray.get([1])).controls['vcpus'].setValue(1);
@@ -855,7 +855,7 @@ async customSubmit(value) {
     zvol_payload["zvol_name"] = hdd
     zvol_payload["zvol_volsize"] = this.storageService.convertHumanStringToNum(value.volsize);
 
-    if (this.productType === 'SCALE') {
+    if (this.productType.includes('SCALE')) {
       vm_payload["cpu_mode"] = value.cpu_mode;
       vm_payload["cpu_model"] = value.cpu_model === '' ? null : value.cpu_model;
     }
@@ -886,7 +886,7 @@ async customSubmit(value) {
     }
 
     if (value.enable_vnc) {
-      if (this.productType === 'SCALE') {
+      if (this.productType.includes('SCALE')) {
         vm_payload["devices"].push({
           "dtype": "VNC", "attributes": {
             "vnc_port": this.vncPort,
