@@ -121,7 +121,7 @@ export class SMBListComponent {
       }
     ];
     // Temporary: Drop from menu if SCALE
-    if (this.productType === 'SCALE') {
+    if (this.productType.includes('SCALE')) {
       const aclRow = rows.find(row => row.name === 'edit_acl');
       const shareAclRow = rows.find(row => row.name === 'share_acl')
       rows.splice(rows.indexOf(aclRow), 1);
