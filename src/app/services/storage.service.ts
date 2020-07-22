@@ -67,12 +67,12 @@ export class StorageService {
 
   streamDownloadFile(http:HttpClient, url:string, filename:string, mime_type:string): Observable<any>{
     return http.post(url, '',
-    { responseType: 'blob' })
-    .map(
+    { responseType: 'blob' }).pipe(
+    map(
       (res) => {
             const blob = new Blob([res], {type: mime_type} );
             return blob;
-      });
+      }));
   }
 
   // Handles sorting for entity tables and some other ngx datatables
