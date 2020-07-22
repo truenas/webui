@@ -113,7 +113,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
       this.core.emit({name:"HAStatusRequest"});
       
     }
-    if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
+    if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
       this.ws.call('failover.licensed').subscribe((res) => {
         if (res) {
           this.updateMethod = 'failover.upgrade';

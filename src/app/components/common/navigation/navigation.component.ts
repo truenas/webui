@@ -65,7 +65,7 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
       }
       // ====================
 
-      if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
+      if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
         this.ws.call('failover.licensed').subscribe((is_ha) => {
           if (is_ha) {
             _.find(_.find(menuItem,
