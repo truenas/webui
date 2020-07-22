@@ -414,10 +414,12 @@ export class VMWizardComponent {
       if(bootloader === "UEFI_CSM"){
         _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_vnc'})['isHidden'] = true;
         _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'})['isHidden'] = true;
+        _.find(this.wizardConfig[0].fieldConfig, {name : 'vnc_bind'}).isHidden = true;
 
       } else {
         _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_vnc'})['isHidden'] = false;
         _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'})['isHidden'] = false;
+        _.find(this.wizardConfig[0].fieldConfig, {name : 'vnc_bind'}).isHidden = false;
 
       }
 
