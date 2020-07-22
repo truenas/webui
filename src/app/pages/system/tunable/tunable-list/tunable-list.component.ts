@@ -76,7 +76,7 @@ export class TunableListComponent {
     this.entityList = entityList;
     this.sub = this.aroute.params.subscribe(params => {});
     this.product_type = window.localStorage.getItem('product_type');
-    if (this.product_type === 'SCALE') {
+    if (this.product_type === 'SCALE' || this.product_type === 'SCALE_ENTERPRISE') {
       this.route_add = this.route_add_scale;
       this.route_edit = this.route_edit_scale;
       this.route_success = this.route_success_scale;

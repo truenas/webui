@@ -162,7 +162,7 @@
           <mat-icon *ngIf="retroLogo == 1" class="generic" svgIcon="freenas_logo_full"></mat-icon>
           <mat-icon *ngIf="retroLogo == 0 && product_type == 'CORE'" class="generic" svgIcon="truenas_core_logo_full"></mat-icon>
           <mat-icon *ngIf="retroLogo == 0 && product_type == 'ENTERPRISE'" class="generic" svgIcon="truenas_enterprise_logo_full"></mat-icon>
-          <mat-icon *ngIf="retroLogo == 0 && product_type == 'SCALE'" class="generic" svgIcon="truenas_scale_logo_full"></mat-icon>
+          <mat-icon *ngIf="retroLogo == 0 && product_type == 'SCALE' || product_type == 'SCALE_ENTERPRISE'" class="generic" svgIcon="truenas_scale_logo_full"></mat-icon>
     </mat-card>
 
     <ng-template *ngIf="configurable">
