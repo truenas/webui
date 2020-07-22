@@ -123,7 +123,7 @@ export class VMListComponent implements OnDestroy {
         if (!devices || devices.length === 0) {
             return false;
         };
-        if (vm.bootloader === 'GRUB' || vm.bootloader === "UEFI_CSM") {
+        if (this.productType !== 'SCALE' && (vm.bootloader === 'GRUB' || vm.bootloader === "UEFI_CSM")) {
             return false;
         };
         for (let i = 0; i < devices.length; i++) {
@@ -138,7 +138,7 @@ export class VMListComponent implements OnDestroy {
         if (!devices || devices.length === 0) {
             return false;
         };
-        if (vm.bootloader === 'GRUB' || vm.bootloader === "UEFI_CSM") {
+        if (this.productType !== 'SCALE' && (vm.bootloader === 'GRUB' || vm.bootloader === "UEFI_CSM")) {
             return false;
         };
         for (let i = 0; i < devices.length; i++) {
