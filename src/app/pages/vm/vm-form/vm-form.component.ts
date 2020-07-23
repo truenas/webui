@@ -171,7 +171,7 @@ export class VmFormComponent {
     this.bootloader =_.find(this.fieldConfig, {name : 'bootloader'});
     this.vmService.getBootloaderOptions().subscribe(options => {
       for(const option in options) {
-        this.bootloader.options.push({label : option, value : options[option]})
+        this.bootloader.options.push({label : options[option], value : option})
       }
     });
 
