@@ -1,5 +1,5 @@
 # coding=utf-8
-"""High Availability feature tests."""
+"""High Availability (tn-bhyve02) feature tests."""
 
 import time
 from function import wait_on_element, wait_on_element_disappear
@@ -12,9 +12,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T905.feature', 'Verify setting up HA works with a single failover group (tn-bhyve02)')
+@scenario('features/NAS-T905.feature', 'Verify setting up HA works with a single failover group')
 def test_verify_setting_up_ha_works_with_a_single_failover_group_tn_bhyve02(driver):
-    """Verify setting up HA works with a single failover group (tn-bhyve02)."""
+    """Verify setting up HA works with a single failover group."""
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
