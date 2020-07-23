@@ -11,32 +11,45 @@ version = f"{major_v}" if system() == "Linux" else f"{major_v}.{minor_v}"
 cwd = str(os.getcwd())
 screenshot_path = f"{cwd}/screenshot"
 argument = sys.argv
-UsageMSG = """Usage for %s:
+UsageMSG = f"""Usage for {argument[0]}:
 Options:
 
---help                                     - Show all options
---ip <0.0.0.0>                             - IP of the targeted TrueNAS server
---root-password <password>                 - need root password for login
---convert-feature                          - This convert Jira feature files
-                                             for pytest-bdd
---type  ha-bhyve                           - Which test suite to run
-""" % argument[0]
+--help                           - Show all options.
+--ip <0.0.0.0>                   - IP of the targeted TrueNAS server/
+--root-password <password>       - need root password for login.
+--convert-feature                - This convert Jira feature files
+                                   for pytest-bdd.
+--test-suite                     - To specify the test suite to run ha-bhyve02
+                                   is use by default.
+                                   test-suite options: ha-bhyve02, ha-tn09
+"""
 
 
 # list of argument that should be use.
-option_list = ["help", "ip=", 'root-password=', 'convert-feature', 'type=']
+option_list = [
+    "help",
+    "ip=",
+    'root-password=',
+    'convert-feature',
+    'test-suite='
+]
+
+test_suite_list = [
+    'ha-bhyve02',
+    'ha-tn09'
+]
 
 
 def convert_jira_feature_file(directory):
     # convert Jira feature file for pytest-bdd cucumber results.
-    feature_files = os.listdir(f'{directory}/features')
-    if '.keepme' in feature_files:
-        feature_files.remove('.keepme')
+    feature_list = os.listdir(f'{directory}/features')
+    if '.keepme' in feature_list:
+        feature_list.remove('.keepme')
 
-    for file in feature_files:
-        feature = open(f'{directory}/features/{file}', 'r')
+    for feature_file in feature_list:
+        feature = open(f'{directory}/features/{feature_file}', 'r')
         old_feature = feature.readlines()
-        new_feature = open(f'{directory}/features/{file}', 'w')
+        new_feature = open(f'{directory}/features/{feature_file}', 'w')
         for line in old_feature:
             if 'Feature:' in line:
                 feature_list = line.split(':')
@@ -66,6 +79,7 @@ except getopt.GetoptError as e:
     sys.exit(1)
 
 global ip, password
+test_suite = 'ha-bhyve02'
 run_convert = False
 
 for output, arg in myopts:
@@ -73,6 +87,14 @@ for output, arg in myopts:
         ip = arg
     elif output == '--root-password':
         password = arg
+    elif output == '--test-suite':
+        test_suite = arg
+        if test_suite not in test_suite_list:
+            print(f'--test-suite {test_suite} it not valide')
+            print('Only the folowing are allowed:')
+            for suite in test_suite_list:
+                print(f'    --test-suite {suite}')
+            exit(1)
     elif output == "--convert-feature":
         run_convert = True
     elif output == "--help":
@@ -89,11 +111,11 @@ def run_testing():
         cfg_file.write(cfg)
         cfg_file.close()
 
-    convert_jira_feature_file('ha-test-bhyve02')
+    convert_jira_feature_file(test_suite)
     pytestcmd = [
         f"pytest-{version}",
         "-vs",
-        "ha-test-bhyve02",
+        test_suite,
         "--junitxml=results/junit/webui_test.xml",
         "--cucumber-json=results/cucumber/webui_test.json"
     ]
@@ -102,6 +124,6 @@ def run_testing():
 
 
 if run_convert is True:
-    convert_jira_feature_file('ha-test-bhyve02')
+    convert_jira_feature_file(test_suite)
 else:
     run_testing()
