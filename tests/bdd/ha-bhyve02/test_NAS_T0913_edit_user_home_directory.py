@@ -1,5 +1,5 @@
 # coding=utf-8
-"""High Availability feature tests."""
+"""High Availability (tn-bhyve02) feature tests."""
 
 from function import wait_on_element, is_element_present, wait_on_element_disappear
 import time

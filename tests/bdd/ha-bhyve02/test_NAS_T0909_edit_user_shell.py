@@ -1,5 +1,5 @@
 # coding=utf-8
-"""High Availability feature tests."""
+"""High Availability (tn-bhyve02) feature tests."""
 
 from function import wait_on_element, is_element_present, wait_on_element_disappear
 import time
@@ -12,9 +12,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T909.feature', 'Edit User Shell (tn-bhyve02)')
+@scenario('features/NAS-T909.feature', 'Edit User Shell')
 def test_edit_user_shell_tnbhyve02(driver):
-    """Edit User Shell (tn-bhyve02)."""
+    """Edit User Shell."""
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))

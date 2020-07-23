@@ -1,5 +1,5 @@
 # coding=utf-8
-"""High Availability feature tests."""
+"""High Availability (tn-bhyve02) feature tests."""
 
 from function import wait_on_element, is_element_present, wait_on_element_disappear
 from selenium.webdriver.common.action_chains import ActionChains
@@ -14,9 +14,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T910.feature', 'Edit user enable Permit Sudo (tn-bhyve02)')
+@scenario('features/NAS-T910.feature', 'Edit user enable Permit Sudo')
 def test_edit_user_enable_permit_sudo_tnbhyve02(driver):
-    """Edit user enable Permit Sudo (tn-bhyve02)."""
+    """Edit user enable Permit Sudo."""
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
