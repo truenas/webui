@@ -84,10 +84,10 @@ export default {
     exclude_placeholder: T('Exclude Child Datasets'),
     exclude_tooltip: T('Exclude specific child dataset snapshots from \
  the replication. Use with <b>Recursive</b> snapshots. List child \
- dataset names to exclude. Separate multiple entries with a comma \
- (<code>,</code>). Example: <i>pool1/dataset1/child1</i>. A \
- recursive replication of <i>pool1/dataset1</i> snapshots includes all \
- child dataset snapshots except <i>child1</i>.'),
+ dataset names to exclude. Separate entries by pressing <code>Enter</code>. \
+ Example: <i>pool1/dataset1/child1</i>. A recursive replication of \
+ <i>pool1/dataset1</i> snapshots includes all child dataset snapshots \
+ except <i>child1</i>.'),
 
     properties_placeholder: T('Properties'),
     properties_tooltip: T('Include dataset properties with the replicated \

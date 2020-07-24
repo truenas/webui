@@ -284,7 +284,7 @@ export class ReplicationFormComponent {
             tooltip: helptext.recursive_tooltip,
             value: false,
         }, {
-            type: 'input',
+            type: 'chip',
             name: 'exclude',
             placeholder: helptext.exclude_placeholder,
             tooltip: helptext.exclude_tooltip,
@@ -1067,7 +1067,6 @@ export class ReplicationFormComponent {
             delete data['target_dataset_PULL'];
         }
 
-        data["exclude"] = typeof data['exclude'] === "string" ? data['exclude'].split(',') : data['exclude'];
         data["periodic_snapshot_tasks"] = typeof data['periodic_snapshot_tasks'] === "string" ? data['periodic_snapshot_tasks'].split(' ') : data['periodic_snapshot_tasks'];
 
         if (data['schedule']) {
