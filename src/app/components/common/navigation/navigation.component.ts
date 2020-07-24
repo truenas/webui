@@ -48,7 +48,6 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
       if (this.productType === 'SCALE' || this.productType === 'SCALE_ENTERPRISE') {
         _.find(_.find(menuItem, {state : "system"}).sub, {state : "kmip"}).disabled = true;
         _.find(_.find(menuItem, {state : "directoryservice"}).sub, {state : "nis"}).disabled = true;
-        _.find(_.find(menuItem, {state : "sharing"}).sub, {state : "webdav"}).disabled = true;
         _.find(_.find(menuItem, {state : "storage"}).sub, {state : "multipaths"}).disabled = true;
         // tunables are called sysctl in linux so we should use the routes/menus/etc that call it sysctl on scale
         _.find(_.find(menuItem, {state : "system"}).sub, {state : "tunable"}).disabled = true;
@@ -89,12 +88,12 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
           _.find(_.find(menuItem, { state: targetMenu.menu }).sub, { state : targetMenu.sub}).disabled = false;
         }
       }
- 
+
       this.core.register({
         observerClass: this,
         eventName: "SysInfo"
         }).subscribe((evt:CoreEvent) => {
-         
+
           if (window.localStorage.getItem('product_type') !== 'CORE') {
             // hide jail and plugins section if product type is SCALE or ENTERPRISE with jail unregistered
             if ((evt.data.license && evt.data.license.features.indexOf('JAILS') === -1) || window.localStorage.getItem('product_type') === 'SCALE'
