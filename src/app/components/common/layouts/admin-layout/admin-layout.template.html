@@ -40,6 +40,19 @@
         <div class="hostname-label" *ngIf="hostname" matTooltip="Hostname: {{hostname}}">{{hostname}}</div>
       </div>
       <navigation (onStateChange)="changeState($event)"></navigation>
+      <div class="sidenav-copyright-txt" *ngIf="!isSidenavCollapsed">
+        <p>TrueNAS {{product_type}}®</p>
+        <p>
+          © {{copyrightYear}} - <a href="http://www.ixsystems.com"
+              target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.
+        </p>
+      </div>  
+      <div class="sidenav-copyright-icon" *ngIf="isSidenavCollapsed" 
+        matTooltip="TrueNAS {{product_type}}® © {{copyrightYear}} by iXsystems Inc."
+        matTooltipPosition="right">
+        <mat-icon>copyright</mat-icon>
+      </div>
+         
     </div>
   </mat-sidenav>
   <mat-sidenav-content fxFlex="calc(100% - {{sidenavWidth}})" class="fn-maincontent" [style.margin-left]="sidenavWidth">
@@ -48,7 +61,7 @@
     <!-- Listens language change event -->
     <topbar [sidenav]="sidenav" [notificPanel]="notificationPanel" (onLangChange)="language.setMiddlewareLanguage($event)"></topbar>
     <!-- App content -->
-    <app-breadcrumb [product_type]="product_type"></app-breadcrumb>
+    <!-- <app-breadcrumb [product_type]="product_type"></app-breadcrumb> -->
     <div class="rightside-content-hold" [ngClass]="{'has-footer':isShowFooterConsole}">
       <router-outlet></router-outlet>
     </div>

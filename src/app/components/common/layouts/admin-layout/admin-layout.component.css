@@ -67,3 +67,16 @@
 .fn-maincontent {
   overflow:  hidden !important;
 }
+
+.sidenav-copyright-txt {
+  text-align: center;
+  margin: 1rem auto;
+  opacity: 0.5;
+  font-size: .6rem;
+}
+
+.sidenav-copyright-icon {
+  text-align: center;
+  margin: 3rem auto .5rem auto;
+  opacity: 0.4;
+}
