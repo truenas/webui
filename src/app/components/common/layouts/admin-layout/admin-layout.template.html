@@ -40,6 +40,17 @@
         <div class="hostname-label" *ngIf="hostname" matTooltip="Hostname: {{hostname}}">{{hostname}}</div>
       </div>
       <navigation (onStateChange)="changeState($event)"></navigation>
+      <div class="sidenav-copyright-txt" *ngIf="!isSidenavCollapsed">
+        <p>TrueNAS {{product_type}}®</p>
+        <p>
+          © {{copyrightYear}} - <a href="http://www.ixsystems.com"
+              target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.
+        </p>
+      </div>  
+      <div class="sidenav-copyright-txt" *ngIf="isSidenavCollapsed" matTooltip="TrueNAS {{product_type}}® © {{copyrightYear}} by iXsystems Inc.">
+        <mat-icon>copyright</mat-icon>
+      </div>
+         
     </div>
   </mat-sidenav>
   <mat-sidenav-content fxFlex="calc(100% - {{sidenavWidth}})" class="fn-maincontent" [style.margin-left]="sidenavWidth">
