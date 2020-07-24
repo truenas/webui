@@ -338,7 +338,7 @@ export class PluginsComponent {
                   .map(function (e) {
                     return _.split(e, '|').length > 1 ? _.split(e, '|')[1] : e;
                   })
-                  .join(',') : res[targetIndex][i];
+                  .join(',') : (i === 'boot' ? (res[targetIndex][i] === 'on' ? true : false) : res[targetIndex][i]);
               }
             }
             resolve(true);
