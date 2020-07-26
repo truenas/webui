@@ -12250,21 +12250,14 @@ msgstr "快照目录"
 
 msgid ""
 "Snapshot name format string. The default  is "
-"<code>snap-%Y-%m-%d-%H-%M</code>. Must include the strings <i>%Y</i>,  "
+"<code>auto-%Y-%m-%d_%H-%M</code>. Must include the strings <i>%Y</i>,  "
 "<i>%m</i>, <i>%d</i>, <i>%H</i>, and <i>%M</i>, which are replaced with  "
 "the four-digit year, month, day of month, hour, and minute as defined  in "
 "<a href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\" "
-"target=\"_blank\">strftime(3)</a>.  A string showing the snapshot lifetime "
-"is appended to the name.<br><br>  For example, snapshots of <i>pool1</i> "
-"with a Naming Schema of  <i>customsnap-%Y%m%d.%H%M</i> have names like  "
-"<i>pool1@customsnap-20190315.0527</i>."
+"target=\"_blank\">strftime(3)</a>.<br><br>  For example, snapshots of "
+"<i>pool1</i> with a Naming Schema of  <i>customsnap-%Y%m%d.%H%M</i> have "
+"names like  <i>pool1@customsnap-20190315.0527</i>."
 msgstr ""
-"快照名称格式字符串。默认值为<code>snap-%Y-%m-%d-%H-%M</code>。必须包含字符串<i>%Y</i>,  "
-"<i>%m</i>, <i>%d</i>, <i>%H</i>和<i>%M</i>，将其替换为<a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\" "
-"target=\"_blank\">strftime(3)</a>中定义的四位数的年，月，日，小时和分钟。显示快照生存期的字符串会附加到名称中。<br>"
-" <br>例如，命名模式为<i>customsnap-%Y%m%d.%H%M</i>的<i>pool1</i>快照的名称类似于<i>pool1@"
-"customsnap-20190315.0527</i>。"
 
 msgid ""
 "Snapshot schedule for this  replication task. Choose from previously "
@@ -13235,14 +13228,14 @@ msgstr "粘贴的字符串以空格结尾"
 msgid "The pasted string starts with a space"
 msgstr "粘贴的字符串以空格开头"
 
+msgid "The path"
+msgstr ""
+
 msgid "The physical location of the host."
 msgstr "主机的物理位置。"
 
 msgid "The pool <i>"
 msgstr "池<i>"
-
-msgid "The pool containing"
-msgstr ""
 
 msgid ""
 "The pool name that appears in the <b>connect to server</b> dialog of the "
@@ -15229,7 +15222,7 @@ msgstr "是一个协作网站，提供有用的指南和有关新存储系统的
 msgid "is already in use."
 msgstr "已在使用中。"
 
-msgid "is locked."
+msgid "is in a locked dataset."
 msgstr ""
 
 msgid "jail_zfs"
