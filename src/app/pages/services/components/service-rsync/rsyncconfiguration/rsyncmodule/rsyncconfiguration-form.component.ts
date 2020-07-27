@@ -175,7 +175,7 @@ export class RYSNCConfigurationFormComponent {
                     }
                 };
               });
-            }
+            };
         });
 
         if (!this.isNew) {
