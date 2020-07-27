@@ -16,6 +16,7 @@ import { RestService, WebSocketService, ServicesService } from '../../../../serv
 export class ServiceLLDPComponent {
   protected queryCall = 'lldp.config';
   protected route_success: string[] = [ 'services' ];
+  public title = helptext.formTitle;
 
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [

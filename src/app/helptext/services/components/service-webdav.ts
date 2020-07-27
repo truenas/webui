@@ -40,5 +40,7 @@ password_tooltip : T('The default of <i>davtest</i> is recommended to\
  change. <i>davtest</i> is a known value.'),
 
 password2_placeholder : T('Confirm Password'),
-fieldset_title: T('WebDAV Configuration')
+fieldset_title: T('Configuration'),
+
+formTitle: T('WebDAV')
 }

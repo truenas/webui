@@ -112,5 +112,7 @@ loglevel_options : [
 ],
 general_title: T('General Options'),
 v3_title: T('SNMP v3 Options'),
-other_title: T('Other Options')
+other_title: T('Other Options'),
+
+formTitle: T('SNMP')
 }

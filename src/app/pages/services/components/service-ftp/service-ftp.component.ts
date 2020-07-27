@@ -25,6 +25,7 @@ export class ServiceFTPComponent implements OnInit {
   protected warned = false;
   protected rootlogin: boolean;
   protected fieldConfig;
+  public title = helptext.formTitle;
 
   protected bwFields = ['localuserbw', 'localuserdlbw', 'anonuserbw', 'anonuserdlbw'];
 

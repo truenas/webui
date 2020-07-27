@@ -187,5 +187,7 @@ options_tooltip: T('Used to add additional <a href="https://linux.die.net/man/8/
  target="_blank">proftpd(8)</a> parameters.'),
 
 rootlogin_dialog_title : T('Allow Root Login'),
-rootlogin_dialog_message : T('Enabling this option can expose administrator credentials and is not recommended.')
+rootlogin_dialog_message : T('Enabling this option can expose administrator credentials and is not recommended.'),
+
+formTitle: T('FTP')
 }

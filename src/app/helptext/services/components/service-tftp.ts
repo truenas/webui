@@ -33,5 +33,7 @@ tftp_options_placeholder : T('Auxiliary Parameters'),
 tftp_options_tooltip : T('Add more options from <a\
  href="https://www.freebsd.org/cgi/man.cgi?query=tftpd"\
  target="_blank">tftpd(8)</a>. Add one option on each\
- line.')
+ line.'),
+
+ formTitle: T('TFTP')
 }

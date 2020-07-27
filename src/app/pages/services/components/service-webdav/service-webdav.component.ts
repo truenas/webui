@@ -19,6 +19,7 @@ export class ServiceWebdavComponent implements OnDestroy {
   protected queryCall: string = 'webdav.config';
   protected editCall: string = 'webdav.update';
   protected route_success: string[] = [ 'services' ];
+  public title = helptext.formTitle;
 
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [

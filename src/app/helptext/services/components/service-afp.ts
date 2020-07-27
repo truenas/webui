@@ -75,5 +75,7 @@ afp_srv_bindip_tooltip: T('Specify the IP addresses to listen for AFP connection
 
 afp_srv_global_aux_placeholder : T('Global Auxiliary Parameters'),
 afp_srv_global_aux_tooltip: T('Additional <a href="http://netatalk.sourceforge.net/3.0/htmldocs/afp.conf.5.html"\
- target="_blank">afp.conf(5)</a> parameters.')
+ target="_blank">afp.conf(5)</a> parameters.'),
+
+formTitle: T('AFP')
 }
