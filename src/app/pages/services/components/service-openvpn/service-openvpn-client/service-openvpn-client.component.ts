@@ -15,7 +15,7 @@ import helptext from 'app/helptext/services/components/service-openvpn';
 export class ServiceOpenvpnClientComponent {
   protected queryCall = 'openvpn.client.config';
   protected route_success: string[] = [ 'services' ];
-  public title = 'OpenVPN Client';
+  public title = helptext.client.formTitle;
 
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [

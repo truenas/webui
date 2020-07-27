@@ -26,6 +26,7 @@ export class ServiceS3Component implements OnDestroy {
   private initial_path: any;
   private warned = false;
   private validBindIps = [];
+  public title = helptext.formTitle;
 
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [

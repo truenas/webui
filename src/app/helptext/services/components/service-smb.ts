@@ -126,5 +126,7 @@ cifs_srv_enable_smb1_placeholder: T('Enable SMB1 support'),
 cifs_srv_enable_smb1_tooltip: T('Use this option to allow legacy SMB clients to connect to the\
  server. Note that SMB1 is being deprecated and it is advised\
  to upgrade clients to operating system versions that support\
- modern versions of the SMB protocol.')
+ modern versions of the SMB protocol.'),
+
+ formTitle: T('SMB')
 }

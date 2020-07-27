@@ -14,6 +14,7 @@ import { FieldConfig } from '../../../../../common/entity/entity-form/models/fie
 
 export class CconfigureRYSNCComponent {
   protected queryCall = 'rsyncd.config';
+  public title = helptext.configureFormTitle;
 
   protected route_success: string[] = [ 'services' ];
 

@@ -15,6 +15,7 @@ export class ServiceSMARTComponent {
 
   protected queryCall = 'smart.config';
   protected route_success: string[] = [ 'services' ];
+  public title = helptext.formTitle;
 
   public fieldSets: FieldSet[] = [
     {

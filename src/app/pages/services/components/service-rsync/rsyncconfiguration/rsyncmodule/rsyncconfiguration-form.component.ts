@@ -18,6 +18,7 @@ export class RYSNCConfigurationFormComponent {
     protected isEntity = true;
     public formGroup: FormGroup;
     protected pk: any;
+    public title = helptext.moduleFormTitle;
     protected addCall = 'rsyncmod.create';
     protected isNew: boolean;
     public fieldConfig: FieldConfig[] = [];
@@ -174,7 +175,7 @@ export class RYSNCConfigurationFormComponent {
                     }
                 };
               });
-            };
+            }
         });
 
         if (!this.isNew) {

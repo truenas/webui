@@ -17,6 +17,7 @@ export class ServiceSNMPComponent {
   protected updateCall = 'snmp.update';
   protected queryCall = 'snmp.config';
   protected route_success: string[] = [ 'services' ];
+  public title = helptext.formTitle;
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {

@@ -18,6 +18,7 @@ export class ServiceUPSComponent {
 
   protected queryCall = 'ups.config';
   protected route_success: string[] = [ 'services' ];
+  public title = helptext.formTitle;
 
   public fieldSets: FieldSet[] = [
     {
