@@ -49,6 +49,14 @@ IMPORTANT: Two-factor authentication is time-based and requires that the system 
   },
 
   sys: T('System-Generated Settings'),
+
+  submitDialog: {
+    title: T('Warning'),
+    message:  T('Changes to <i>One-Time Password (OTP) Digits</i>, <i>Interval</i> or <i>Secret</i> \
+    make it necessary to reconfigure your two-factor device or app. After saving these changes, immediately scan \
+    the QR Code or enter the setup key.'),
+    btn: T('Save')
+  },
   
   enabled_status_false: T('Two-factor authentication is NOT enabled.'),
   enabled_status_true: T('Two-factor authentication IS currently enabled.'),

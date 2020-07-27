@@ -232,20 +232,27 @@ export class TwoFactorComponent {
   }
 
   customSubmit(data) {
-    data.enabled = this.TwoFactorEnabled;
-    data.services = { ssh: data.ssh };
-    const extras = ['instructions', 'enabled_status', 'secret', 'uri', 'ssh'];
-    extras.map(extra => {
-      delete data[extra];
-    });
-    this.loader.open();
-    this.ws.call('auth.twofactor.update', [data]).subscribe(res => {
-      this.loader.close();
-    }, err => {
-      this.loader.close();
-      this.dialog.errorReport(helptext.two_factor.error,
-        err.reason, err.trace.formatted);
-    })
+    this.dialog.confirm(helptext.two_factor.submitDialog.title,
+      helptext.two_factor.submitDialog.message, true, helptext.two_factor.submitDialog.btn)
+      .subscribe(res => {
+        if (res) {
+          data.enabled = this.TwoFactorEnabled;
+          data.services = { ssh: data.ssh };
+          const extras = ['instructions', 'enabled_status', 'secret', 'uri', 'ssh'];
+          extras.map(extra => {
+            delete data[extra];
+          });
+          this.loader.open();
+          this.ws.call('auth.twofactor.update', [data]).subscribe(res => {
+            this.loader.close();
+            this.openQRDialog();
+          }, err => {
+            this.loader.close();
+            this.dialog.errorReport(helptext.two_factor.error,
+              err.reason, err.trace.formatted);
+          })
+        }
+      })
   }
 
   openQRDialog(): void {
