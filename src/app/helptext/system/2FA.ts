@@ -3,7 +3,7 @@ import { T } from "../../translate-marker";
 
 export const helptext = {
   two_factor: {
-      title: T('Two-Factor Authentication Settings'),
+      title: T('User Settings'),
       message: T('Use this form to set up Two-Factor Authentication for this system. \
  Then link the system to an authenticator app (such as Google Authenticator, LastPass Authenticator, etc.) \
  on a mobile device.'),
@@ -51,10 +51,12 @@ IMPORTANT: Two-factor authentication is time-based and requires that the system 
   sys: T('System-Generated Settings'),
 
   submitDialog: {
-    title: T('Warning'),
-    message:  T('Changes to <i>One-Time Password (OTP) Digits</i>, <i>Interval</i> or <i>Secret</i> \
-    make it necessary to reconfigure your two-factor device or app. After saving these changes, immediately scan \
-    the QR Code or enter the setup key.'),
+    title: T('Important'),
+    message:  T('These actions make it necessary to reconfigure your two-factor device or app:<br />\
+    - Changing the value of <i>One-Time Password (OTP) Digits</i><br /> \
+    - Changing the value of <i>Interval</i><br /> \
+    - Renewing the <i>Secret</i> <br /><br />\
+    After saving these changes, immediately scan the QR Code or enter the setup key.'),
     btn: T('Save')
   },
   
@@ -76,6 +78,8 @@ IMPORTANT: Two-factor authentication is time-based and requires that the system 
     message:  T('Renewing the secret will cause a new URI and a \
     new QR code to be generated, making it necessary to update your two-factor device or app.'),
     btn: T('Renew')
-  }
+  },
+
+  formTitle: T('Two-Factor Authentication')
   } // end form 
 }

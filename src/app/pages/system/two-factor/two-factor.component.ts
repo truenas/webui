@@ -16,6 +16,9 @@ export class TwoFactorComponent {
   private TwoFactorEnabled: boolean;
   public qrInfo: string;
   private secret: string;
+  public title = helptext.two_factor.formTitle;
+  private digitsOnLoad: string;
+  private intervalOnLoad: string;
 
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
@@ -185,6 +188,8 @@ export class TwoFactorComponent {
     data.ssh = data.services.ssh;
     this.secret = data.secret;
     this.TwoFactorEnabled = data.enabled;
+    this.digitsOnLoad = data.otp_digits;
+    this.intervalOnLoad = data.interval;
     this.updateEnabledStatus();
     return data;
   }
@@ -232,27 +237,39 @@ export class TwoFactorComponent {
   }
 
   customSubmit(data) {
-    this.dialog.confirm(helptext.two_factor.submitDialog.title,
-      helptext.two_factor.submitDialog.message, true, helptext.two_factor.submitDialog.btn)
-      .subscribe(res => {
-        if (res) {
-          data.enabled = this.TwoFactorEnabled;
-          data.services = { ssh: data.ssh };
-          const extras = ['instructions', 'enabled_status', 'secret', 'uri', 'ssh'];
-          extras.map(extra => {
-            delete data[extra];
-          });
-          this.loader.open();
-          this.ws.call('auth.twofactor.update', [data]).subscribe(res => {
-            this.loader.close();
-            this.openQRDialog();
-          }, err => {
-            this.loader.close();
-            this.dialog.errorReport(helptext.two_factor.error,
-              err.reason, err.trace.formatted);
-          })
-        }
-      })
+    if (data.otp_digits === this.digitsOnLoad && data.interval === this.intervalOnLoad) {
+      this.doSubmit(data);
+    } else {
+      this.dialog.confirm(helptext.two_factor.submitDialog.title,
+        helptext.two_factor.submitDialog.message, true, helptext.two_factor.submitDialog.btn)
+        .subscribe(res => {
+          if (res) {
+            this.intervalOnLoad = data.interval;
+            this.digitsOnLoad = data.otp_digits;
+            this.doSubmit(data, true);
+          }
+        })
+    }
+  }
+
+  doSubmit(data, openQR = false) {
+    data.enabled = this.TwoFactorEnabled;
+    data.services = { ssh: data.ssh };
+    const extras = ['instructions', 'enabled_status', 'secret', 'uri', 'ssh'];
+    extras.map(extra => {
+      delete data[extra];
+    });
+    this.loader.open();
+    this.ws.call('auth.twofactor.update', [data]).subscribe(res => {
+      this.loader.close();
+      if (openQR) {
+        this.openQRDialog();
+      }
+    }, err => {
+      this.loader.close();
+      this.dialog.errorReport(helptext.two_factor.error,
+        err.reason, err.trace.formatted);
+    })
   }
 
   openQRDialog(): void {
