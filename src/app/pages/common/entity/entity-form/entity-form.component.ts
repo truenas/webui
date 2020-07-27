@@ -93,6 +93,7 @@ export interface Formconfiguration {
   initialCount?
   initialCount_default?;
   responseOnSubmit?;
+  title?;
 
   goBack?();
   onSuccess?(res);

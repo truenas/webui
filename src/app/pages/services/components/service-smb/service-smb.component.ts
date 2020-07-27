@@ -37,6 +37,7 @@ export class ServiceSMBComponent {
   protected idNumber: any;
   public entityEdit: any;
   private validBindIps: any;
+  title = 'SMB';
 
   protected advanced_field = [
     'unixcharset',
