@@ -109,7 +109,7 @@ def the_user_edit_page_should_open(driver):
     driver.find_element_by_xpath('//h4[contains(.,"Identification")]')
 
 
-@then('Change "Disable Password" to No and click save')
+@then('Change "Disable Password" to Yes and click save')
 def change_disable_password_to_no_and_click_save(driver):
     """Change "Disable Password" to No and click save."""
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Disable Password"]').click()
@@ -126,9 +126,9 @@ def change_should_be_saved(driver):
     wait_on_element(driver, 0.5, 30, 'xpath', '//div[contains(.,"Users")]')
 
 
-@then('Open the user drop down to verify the user has been locked')
-def open_the_user_drop_down_to_verify_the_user_has_been_locked(driver):
-    """Open the user drop down to verify the user has been locked."""
+@then('Open the user drop down to verify the user Disable Password is true')
+def open_the_user_drop_down_to_verify_the_user_disable_password_is_true(driver):
+    """Open the user drop down to verify the user Disable Password is true."""
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
     wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__EDIT_ericbsd"]')
     driver.find_element_by_xpath('//h4[contains(.,"Password Disabled:")]')
