@@ -14,9 +14,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T915.feature', 'Edit User enable Password')
-def test_edit_user_enable_password(driver):
-    """Edit User enable Password."""
+@scenario('features/NAS-T916.feature', 'Edit User Change Password')
+def test_edit_user_change_password(driver):
+    """Edit User Change Password."""
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
@@ -109,12 +109,12 @@ def the_user_edit_page_should_open(driver):
     driver.find_element_by_xpath('//h4[contains(.,"Identification")]')
 
 
-@then('Change "Disable Password" to No and click save')
-def change_disable_password_to_no_and_click_save(driver):
-    """Change "Disable Password" to No and click save."""
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Disable Password"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//mat-option[@ix-auto="option__Disable Password_No"]')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Disable Password_No"]').click()
+@then('Change the password in both fields and click save')
+def change_the_password_in_both_fields_and_click_save(driver):
+    """Change the password in both fields and click save."""
+    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing1')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing1')
 
 
 @then('Change should be saved')
@@ -126,50 +126,46 @@ def change_should_be_saved(driver):
     wait_on_element(driver, 0.5, 30, 'xpath', '//div[contains(.,"Users")]')
 
 
-@then('Open the user drop down to verify the user Disable Password is false')
-def open_the_user_drop_down_to_verify_the_user_disable_password_is_false(driver):
-    """Open the user drop down to verify the user Disable Password is false."""
-    driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__EDIT_ericbsd"]')
-    driver.find_element_by_xpath('//h4[contains(.,"Password Disabled:")]')
-
-
-@then('Updated value should be visible')
-def updated_value_should_be_visible(driver):
-    """Updated value should be visible."""
-    element_text = driver.find_element_by_xpath('//h4[contains(.,"Password Disabled:")]/../div/p').text
-    assert element_text == 'false'
-
-
-@then('Try login with ssh')
-def try_login_with_ssh(driver):
-    """Try login with ssh."""
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Services"]').click()
-    wait_on_element(driver, 0.5, 10, 'xpath', '//span[contains(.,"Name")]')
-    element = driver.find_element_by_xpath('//mat-slide-toggle[@ix-auto="slider__SSH_Running"]')
-    class_attribute = element.get_attribute('class')
-    if 'mat-checked' not in class_attribute:
-        driver.find_element_by_xpath('//div[@ix-auto="overlay__SSH_Running"]').click()
-        time.sleep(4)
+@then('Log out and try to log back in with the old password for that user')
+def log_out_and_try_to_log_back_in_with_the_old_password_for_that_user(driver):
+    """Log out and try to log back in with the old password for that user."""
     wait_on_element(driver, 0.5, 30, 'xpath', '//mat-list-item[@ix-auto="option__Shell"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shell"]').click()
     wait_on_element(driver, 4, 30, 'xpath', '//span[@class="reverse-video terminal-cursor"]')
     actions = ActionChains(driver)
     actions.send_keys('ssh ericbsd@127.0.0.1', Keys.ENTER)
     actions.perform()
-    wait_on_element(driver, .5, 4, 'xpath', '//span[contains(.,"(yes/no)?")]')
-    if is_element_present(driver, 'xpath', '//span[contains(.,"(yes/no)?")]'):
-        actions = ActionChains(driver)
-        actions.send_keys('yes', Keys.ENTER)
-        actions.perform()
     wait_on_element(driver, .5, 4, 'xpath', '//span[contains(.,"password:")]')
     actions = ActionChains(driver)
     actions.send_keys('testing', Keys.ENTER)
     actions.perform()
 
 
-@then('User should be able to login')
-def user_should_be_able_to_login(driver):
-    """User should be able to login."""
-    wait_on_element(driver, 1, 5, 'xpath', '//span[contains(.,"Permission") and contains(.,"denied,")]')
+@then('User should not be able to log in ssh with the old password')
+def user_should_not_be_able_to_log_in_ssh_with_the_old_password(driver):
+    """User should not be able to log in ssh with the old password."""
+    wait_on_element(driver, 0.5, 4, 'xpath', '//span[contains(.,"Permission") and contains(.,"denied,")]')
+    assert is_element_present(driver, 'xpath', '//span[contains(.,"Permission") and contains(.,"denied,")]')
+
+
+@then('Try to log back in ssh with the new password for that user')
+def try_to_log_back_in_ssh_with_the_new_password_for_that_user(driver):
+    """Try to log back in ssh with the new password for that user."""
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+    wait_on_element(driver, 0.5, 30, 'xpath', '//mat-list-item[@ix-auto="option__Shell"]')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shell"]').click()
+    wait_on_element(driver, 4, 30, 'xpath', '//span[@class="reverse-video terminal-cursor"]')
+    actions = ActionChains(driver)
+    actions.send_keys('ssh ericbsd@127.0.0.1', Keys.ENTER)
+    actions.perform()
+    wait_on_element(driver, .5, 4, 'xpath', '//span[contains(.,"password:")]')
+    actions = ActionChains(driver)
+    actions.send_keys('testing1', Keys.ENTER)
+    actions.perform()
+
+
+@then('User should be able to log in with new password')
+def user_should_be_able_to_log_in_with_new_password(driver):
+    """User should be able to log in with new password."""
+    wait_on_element(driver, 0.5, 4, 'xpath', '//span[contains(.,"Permission") and contains(.,"denied,")]')
     assert not is_element_present(driver, 'xpath', '//span[contains(.,"Permission") and contains(.,"denied,")]')
