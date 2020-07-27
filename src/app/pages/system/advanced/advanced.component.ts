@@ -67,6 +67,7 @@ export class AdvancedComponent implements OnDestroy {
                   this.dialog.errorReport(helptext_system_advanced.debug_download_failed_title, helptext_system_advanced.debug_download_failed_message, err);
                 });
                 if (!failed) {
+                  let reported = false; // prevent error from popping up multiple times
                   this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Saving Debug") }, disableClose: true });
                   this.dialogRef.componentInstance.jobId = res[0];
                   this.dialogRef.componentInstance.wsshow();
@@ -75,8 +76,10 @@ export class AdvancedComponent implements OnDestroy {
                   });
                   this.dialogRef.componentInstance.failure.subscribe((save_debug_err) => {
                     this.dialogRef.close();
-                    this.dialog.errorReport(helptext_system_advanced.debug_dialog.failure_title, 
-                      helptext_system_advanced.debug_dialog.failure_msg);
+                    if (!reported) {
+                      new EntityUtils().handleWSError(this, save_debug_err, this.dialog);
+                      reported = true;
+                    }
                   });
                 }
               },
