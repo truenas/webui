@@ -12,6 +12,7 @@ import { RestService, UserService, WebSocketService } from '../../../../services
 export class ServiceTFTPComponent {
   protected queryCall = 'tftp.config';
   protected route_success: string[] = [ 'services' ];
+  public title = helptext.formTitle;
 
   protected fieldSets: FieldSet[] = [
     {

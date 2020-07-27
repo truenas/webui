@@ -17,7 +17,9 @@ export default {
             placeholder: T('TLS Crypt Auth'),
             tooltip: T('Provide static key for authentication/encryption of all control \
  channel packets when <code>tls_crypt_auth_enabled</code> is enabled.')
-        }        
+        },
+        formTitle: T('Open VPN Client')
+
     },
     // Helptext for server component
     server: {
@@ -57,7 +59,8 @@ export default {
         static_dialog: {
             title: T('New Static Key Settings'),
             buttonTxt: T('Close')
-        }
+        },
+        formTitle: T('Open VPN Server')
     }, 
     // Helptext for both components
     certificate: {

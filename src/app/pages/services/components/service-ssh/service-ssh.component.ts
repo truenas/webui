@@ -17,6 +17,7 @@ export class ServiceSSHComponent implements OnInit {
   // Form Layout
   protected isBasicMode: boolean = true;
   protected queryCall = 'ssh.config';
+  public title = helptext.formTitle;
   protected route_success: string[] = [ 'services' ];
 
   public fieldSets: FieldSet[] = [

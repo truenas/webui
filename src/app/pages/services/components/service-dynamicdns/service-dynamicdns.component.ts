@@ -14,6 +14,7 @@ import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-set
 
 export class ServiceDDNSComponent {
   protected addCall = 'dyndns.update';
+  public title = helptext.formTitle;
   protected route_success: string[] = [ 'services' ];
 
   public fieldSets = new FieldSets([

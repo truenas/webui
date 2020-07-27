@@ -16,5 +16,7 @@ lldp_country_validation_error: T('Country Code must contain a valid \
  of two capital letters.'),
 
 lldp_location_placeholder : T('Location'),
-lldp_location_tooltip: T('The physical location of the host.')
+lldp_location_tooltip: T('The physical location of the host.'),
+
+formTitle: T('LLDP')
 }

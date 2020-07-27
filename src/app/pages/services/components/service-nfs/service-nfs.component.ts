@@ -18,6 +18,8 @@ export class ServiceNFSComponent {
   protected route_success: string[] = ['services'];
   productType = window.localStorage.getItem('product_type');
   hideOnScale = ['servers', 'allow_nonroot', 'mountd_log', 'statd_lockd_log'];
+  public title = helptext.formTitle;
+
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {

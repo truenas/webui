@@ -16,6 +16,7 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 export class ServiceAFPComponent {
   protected route_success: string[] = [ 'services' ];
   protected queryCall = 'afp.config';
+  public title = helptext.formTitle;
 
   public fieldConfig: FieldConfig[] = [];
   

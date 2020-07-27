@@ -78,4 +78,6 @@ rsyncmod_auxiliary_tooltip: T('Enter any additional settings from <a\
  target="_blank">rsyncd.conf(5)</a>. Separate entries by \
  pressing <code>Enter</code>.'),
 
+configureFormTitle: T('Rsync Configure'),
+moduleFormTitle: T('Rsync Module')
 }

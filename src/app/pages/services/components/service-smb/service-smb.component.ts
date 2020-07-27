@@ -37,6 +37,7 @@ export class ServiceSMBComponent {
   protected idNumber: any;
   public entityEdit: any;
   private validBindIps: any;
+  public title = helptext.formTitle;
 
   protected advanced_field = [
     'unixcharset',
