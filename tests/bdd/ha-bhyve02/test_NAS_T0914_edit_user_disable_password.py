@@ -143,7 +143,7 @@ def updated_value_should_be_visible(driver):
 
 @then('Try login with ssh')
 def try_login_with_ssh(driver):
-    """Open shell try login with ssh."""
+    """Try login with ssh."""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Services"]').click()
     wait_on_element(driver, 0.5, 10, 'xpath', '//span[contains(.,"Name")]')
     element = driver.find_element_by_xpath('//mat-slide-toggle[@ix-auto="slider__SSH_Running"]')
