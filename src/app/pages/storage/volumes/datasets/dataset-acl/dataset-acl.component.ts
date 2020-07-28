@@ -34,6 +34,10 @@ export class DatasetAclComponent implements OnDestroy {
   protected isEntity = true;
   protected pk: string;
   protected path: string;
+  protected datasetId: string;
+  private aclIsTrivial = false;
+  private disableRecursive = false;
+  private recursivePreviousValue: boolean;
   protected userOptions: any[];
   protected groupOptions: any[];
   protected userSearchOptions: [];
@@ -283,14 +287,35 @@ export class DatasetAclComponent implements OnDestroy {
     },
   ];
 
+  public custActions: Array<any> = [
+    {
+      id : 'use_acl',
+      name : helptext.permissions_editor_button,
+      function : () => {
+        this.router.navigate(new Array('/').concat([
+          "storage", "pools", "permissions", this.datasetId
+        ]));
+      }
+    }
+  ];
+
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected aroute: ActivatedRoute, 
               protected ws: WebSocketService, protected userService: UserService,
               protected storageService: StorageService, protected dialogService: DialogService,
               protected loader: AppLoaderService, protected dialog: MatDialog) {}
 
+  
+  isCustActionVisible(actionId: string) {
+    if (actionId === 'use_acl' && this.aclIsTrivial === true) {
+      return true;
+    }
+    return false;
+  }
+
   preInit(entityEdit: any) {
     this.sub = this.aroute.params.subscribe(params => {
+      this.datasetId = params['path'];
       this.path = '/mnt/' + params['path'];
       const path_fc = _.find(this.fieldSets[0].config, {name:'path'});
       path_fc.value = this.path;
@@ -334,18 +359,24 @@ export class DatasetAclComponent implements OnDestroy {
     this.entityForm = entityEdit;
     this.recursive = entityEdit.formGroup.controls['recursive'];
     this.recursive_subscription = this.recursive.valueChanges.subscribe((value) => {
-      if (value === true) {
+      if (value === true && value !== this.recursivePreviousValue) {
         this.dialogService.confirm(helptext.dataset_acl_recursive_dialog_warning,
          helptext.dataset_acl_recursive_dialog_warning_message)
         .subscribe((res) => {
           if (!res) {
             this.recursive.setValue(false);
+            this.recursivePreviousValue = false;
+          } else {
+            this.recursivePreviousValue = true;
           }
+          this.entityForm.setDisabled('recursive', this.disableRecursive);    
         });
       }
     });
+
     this.ws.call('filesystem.acl_is_trivial', [this.path]).subscribe(acl_is_trivial => {
       this.entityForm.setDisabled('stripacl', acl_is_trivial);
+      this.aclIsTrivial = acl_is_trivial;
     }, (err) => {
       new EntityUtils().handleWSError(this.entityForm, err);
     });
@@ -358,7 +389,17 @@ export class DatasetAclComponent implements OnDestroy {
           if (!res) {
             this.stripacl.setValue(false);
           }
+          else {
+          this.entityForm.formGroup.controls['recursive'].setValue(true);
+          this.disableRecursive = true;
+          if (entityEdit.formGroup.controls['recursive'].value = true) {}      
+          }
         });
+      } else {
+        this.entityForm.formGroup.controls['recursive'].setValue(false);
+        this.disableRecursive = false;
+        this.entityForm.setDisabled('recursive', this.disableRecursive);   
+        this.recursivePreviousValue = false; 
       }
     });
     this.aces_fc = _.find(this.fieldConfig, {"name": "aces"});

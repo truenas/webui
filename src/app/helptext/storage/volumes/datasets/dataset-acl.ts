@@ -173,5 +173,36 @@ empty_acl_dialog: {
   title: T('Error'),
   message: T('Cannot open this ACL. Check the permissions this dataset \
  has inherited from parents.')
-}
+},
+
+posix_perms: {
+  placeholder: T('Permissions'),
+  tooltip: T('Permissions'),
+  options: [
+    {label: T('Read'), value: 'READ'},
+    {label: T('Write'), value: 'WRITE'},
+    {label: T('Execute'), value: 'EXECUTE'},
+  ]
+},
+
+posix_tag: {
+  placeholder: T('Who'),
+  tooltip: T('Tag'),
+  options: 
+  [
+    {label: T('User'), value: 'USER'},
+    {label: T('Group'), value: 'GROUP'},
+    {label: T('Other'), value: 'OTHER'},
+    {label: T('Group Obj'), value: 'GROUP_OBJ'},
+    {label: T('User Obj'), value: 'USER_OBJ'},
+    {label: T('Mask'), value: 'MASK'}
+  ]
+},
+
+posix_default: {
+  placeholder: T('Default'),
+  tooltip: T('Default')
+},
+
+permissions_editor_button: T('Use Permissions Editor')
 }
