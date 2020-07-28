@@ -1354,6 +1354,17 @@ export class VolumesListTableConfig implements InputTableConf {
                   isHidden: is_key,
                 },
                 {
+                  type : 'input',
+                  placeholder: dataset_helptext.dataset_form_encryption.confirm_passphrase_placeholder,
+                  name : 'confirm_passphrase',
+                  inputType : 'password',
+                  required: true,
+                  togglePw: true,
+                  validation : dataset_helptext.dataset_form_encryption.confirm_passphrase_validation,
+                  disabled: is_key,
+                  isHidden: is_key,
+                },
+                {
                   type: 'input',
                   name: 'pbkdf2iters',
                   placeholder: dataset_helptext.dataset_form_encryption.pbkdf2iters_placeholder,
@@ -1378,7 +1389,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 const encryption_type_fc = _.find(entityDialog.fieldConfig, {name: 'encryption_type'});
                 const generate_key_fg = entityDialog.formGroup.controls['generate_key'];
 
-                const all_encryption_fields = ['encryption_type', 'passphrase', 'pbkdf2iters', 'generate_key', 'key'];
+                const all_encryption_fields = ['encryption_type', 'passphrase', 'confirm_passphrase', 'pbkdf2iters', 'generate_key', 'key'];
 
                 if (inherit_encryption_fg.value) { // if already inheriting show as inherit
                   for (let i = 0; i < all_encryption_fields.length; i++) {
@@ -1397,6 +1408,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     }
                     const key = (encryption_type_fg.value === 'key');
                     entityDialog.setDisabled('passphrase', key, key);
+                    entityDialog.setDisabled('confirm_passphrase', key, key);
                     entityDialog.setDisabled('pbkdf2iters', key, key);
                     entityDialog.setDisabled('generate_key', !key, !key);
                     if (key) {
@@ -1418,6 +1430,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     entityDialog.setDisabled('key', true, true);
                   }
                   entityDialog.setDisabled('passphrase', key, key);
+                  entityDialog.setDisabled('confirm_passphrase', key, key);
                   entityDialog.setDisabled('pbkdf2iters', key, key);
                 });
 
