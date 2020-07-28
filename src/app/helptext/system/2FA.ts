@@ -54,7 +54,7 @@ IMPORTANT: Two-factor authentication is time-based and requires that the system 
 
   submitDialog: {
     title: T('Important'),
-    message:  T('These settings require the reconfiguration any existing client. \
+    message:  T('These settings require the reconfiguration of any existing client. \
  After saving these changes, use your device to scan the QR Code.'),
     btn: T('Save')
   },
