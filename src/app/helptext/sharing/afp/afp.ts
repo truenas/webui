@@ -167,5 +167,15 @@ export const helptext_sharing_afp = {
  by other option fields.'
   ),
 
+  smb_dialog: {
+    title: T('Recommendation'),
+    message: T('You have chosen to create an AFP Share. SMB is the recommended protocol for creating shares. Recent versions of MacOS \
+    and its <i>Time Machine®</i> backup work well with the SMB protocol.\
+    '),
+    button: T('Use AFP'),
+    custBtn: T('Go to SMB Form')
+  },
+
+  formTitle: T('AFP (Apple File Protocol)')
 
 };

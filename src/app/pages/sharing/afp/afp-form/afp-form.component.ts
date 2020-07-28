@@ -11,6 +11,7 @@ import * as _ from 'lodash';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DialogService, WebSocketService } from '../../../../services/';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 
 @Component({
   selector : 'app-afp-form',
@@ -28,9 +29,22 @@ export class AFPFormComponent implements OnDestroy {
   public afp_timemachine: any;
   public afp_timemachine_quota: any;
   public afp_timemachine_subscription: any;
+  public title = helptext_sharing_afp.formTitle;
   private namesInUse: string[] = [];
 
   private fieldSets = new FieldSets([
+    {
+      name: 'recommendation',
+      class: 'recommendation',
+      label: false,
+      config: [
+        {
+          name: 'recommendation',
+          type: 'paragraph',
+          paraText: helptext_sharing_afp.smb_dialog.message
+        }
+      ]
+    },
     {
       name: helptext_sharing_afp.fieldset_general,
       class: 'general',
@@ -357,6 +371,9 @@ export class AFPFormComponent implements OnDestroy {
   }
 
   afterInit(entityForm: any) {
+    if (!this.pk) {
+      this.openInfoDialog();
+    }
     this.entityForm = entityForm;
     if (entityForm.isNew) {
       entityForm.formGroup.controls['upriv'].setValue(true);
@@ -457,5 +474,21 @@ export class AFPFormComponent implements OnDestroy {
     if (pathControl.value && !nameControl.value) {
       nameControl.setValue(pathControl.value.split('/').pop());
     }
+  }
+
+  openInfoDialog() {
+    const conf: DialogFormConfiguration = {
+      title: helptext_sharing_afp.smb_dialog.title,
+      message: helptext_sharing_afp.smb_dialog.message,
+      fieldConfig: [],
+      saveButtonText: helptext_sharing_afp.smb_dialog.custBtn,
+      cancelButtonText: helptext_sharing_afp.smb_dialog.button,
+      parent: this,
+      customSubmit: (entityDialog) => {
+        entityDialog.dialogRef.close();
+        this.router.navigate(['sharing', 'smb', 'add']);
+      }
+    }
+    this.dialog.dialogFormWide(conf);
   }
 }
