@@ -1,9 +1,10 @@
 import { Validators } from "@angular/forms";
 import { T } from "../../translate-marker";
+import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 
 export const helptext = {
   two_factor: {
-      title: T('Two-Factor Authentication Settings'),
+      title: T('User Settings'),
       message: T('Use this form to set up Two-Factor Authentication for this system. \
  Then link the system to an authenticator app (such as Google Authenticator, LastPass Authenticator, etc.) \
  on a mobile device.'),
@@ -18,7 +19,8 @@ export const helptext = {
     placeholder: T('Interval'),
     tooltip: T('The lifespan (in seconds) of each One-Time Password. Default is 30 seconds. \
  The minimum lifetime is 5 seconds.'),
-    validation: [Validators.min(5)]
+    validation: [Validators.min(5), regexValidator(/^\d+$/)],
+    hint: T('Some authentication tools default to 30 seconds and do not support custom intervals.')
   },
   window: {
     placeholder: T('Window'),
@@ -49,6 +51,13 @@ IMPORTANT: Two-factor authentication is time-based and requires that the system 
   },
 
   sys: T('System-Generated Settings'),
+
+  submitDialog: {
+    title: T('Important'),
+    message:  T('These settings require the reconfiguration of any existing client. \
+ After saving these changes, use your device to scan the QR Code.'),
+    btn: T('Save')
+  },
   
   enabled_status_false: T('Two-factor authentication is NOT enabled.'),
   enabled_status_true: T('Two-factor authentication IS currently enabled.'),
@@ -68,6 +77,8 @@ IMPORTANT: Two-factor authentication is time-based and requires that the system 
     message:  T('Renewing the secret will cause a new URI and a \
     new QR code to be generated, making it necessary to update your two-factor device or app.'),
     btn: T('Renew')
-  }
+  },
+
+  formTitle: T('Two-Factor Authentication')
   } // end form 
 }

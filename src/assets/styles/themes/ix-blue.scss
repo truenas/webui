@@ -1752,4 +1752,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     color: var(--red) !important;
   }
 
+  mat-hint {
+    color: var(--yellow) !important;
+    font-size: 0.7rem;
+  }
+
  } // end of ix theme
