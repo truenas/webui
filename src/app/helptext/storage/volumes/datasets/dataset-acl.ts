@@ -202,5 +202,7 @@ posix_tag: {
 posix_default: {
   placeholder: T('Default'),
   tooltip: T('Default')
-}
+},
+
+permissions_editor_button: T('Use Permissions Editor')
 }
