@@ -322,7 +322,8 @@ export class VolumesListTableConfig implements InputTableConf {
       });
     }
 
-    if (this.parentVolumesListComponent.has_encrypted_root[rowData.name]) {
+    if (this.parentVolumesListComponent.has_encrypted_root[rowData.name] 
+      && this.parentVolumesListComponent.has_key_dataset[rowData.name]) {
       actions.push({
         label: T("Export Dataset Keys"),
         onClick: (row1) => {
@@ -1641,6 +1642,9 @@ export class VolumesListTableConfig implements InputTableConf {
         dataObj.is_encrypted_root = (dataObj.id === dataObj.encryption_root);
         if (dataObj.is_encrypted_root) {
           this.parentVolumesListComponent.has_encrypted_root[parent.pool] = true;
+          if (dataObj.key_format && dataObj.key_format.parsed === 'hex') {
+            this.parentVolumesListComponent.has_key_dataset[parent.pool] = true;
+          }
         }
         dataObj.non_encrypted_on_encrypted = (!dataObj.encrypted && parent.encrypted);
       }
@@ -1684,6 +1688,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   public paintMe = true;
   public systemdatasetPool: any;
   public has_encrypted_root = {};
+  public has_key_dataset = {};
 
   constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
@@ -1732,6 +1737,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
               pool.children[0].is_encrypted_root = (pool.children[0].id === pool.children[0].encryption_root);
               if (pool.children[0].is_encrypted_root) {
                 this.has_encrypted_root[pool.name] = true;
+                if (pool.children[0].key_format && pool.children[0].key_format.parsed === 'hex') {
+                  this.has_key_dataset[pool.name] = true;
+                }
               }
               pool.children[0].available_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].available.parsed || 0);
               pool.children[0].used_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].used.parsed || 0);
