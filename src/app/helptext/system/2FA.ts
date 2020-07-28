@@ -1,5 +1,6 @@
 import { Validators } from "@angular/forms";
 import { T } from "../../translate-marker";
+import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 
 export const helptext = {
   two_factor: {
@@ -18,7 +19,8 @@ export const helptext = {
     placeholder: T('Interval'),
     tooltip: T('The lifespan (in seconds) of each One-Time Password. Default is 30 seconds. \
  The minimum lifetime is 5 seconds.'),
-    validation: [Validators.min(5)]
+    validation: [Validators.min(5), regexValidator(/^\d+$/)],
+    hint: T('Some authentication tools default to 30 seconds and do not support custom intervals.')
   },
   window: {
     placeholder: T('Window'),
@@ -52,11 +54,8 @@ IMPORTANT: Two-factor authentication is time-based and requires that the system 
 
   submitDialog: {
     title: T('Important'),
-    message:  T('These actions make it necessary to reconfigure your two-factor device or app:<br />\
-    - Changing the value of <i>One-Time Password (OTP) Digits</i><br /> \
-    - Changing the value of <i>Interval</i><br /> \
-    - Renewing the <i>Secret</i> <br /><br />\
-    After saving these changes, immediately scan the QR Code or enter the setup key.'),
+    message:  T('These settings require the reconfiguration any existing client. \
+ After saving these changes, use your device to scan the QR Code.'),
     btn: T('Save')
   },
   
