@@ -27,6 +27,7 @@ export class SMBFormComponent {
   protected isEntity: boolean = true;
   protected isBasicMode: boolean = true;
   public isTimeMachineOn = false;
+  public title = helptext_sharing_smb.formTitle;
   public namesInUse: string[] = [];
   public productType = window.localStorage.getItem('product_type');
   private hostsAllowOnLoad = [];
