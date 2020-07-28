@@ -216,6 +216,14 @@ export class TwoFactorComponent {
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     this.getURI();
+    const intervalValue = _.find(this.fieldConfig, {name: 'interval'});
+    entityEdit.formGroup.controls['interval'].valueChanges.subscribe(val => {
+      if (parseInt(val) !== 30) {
+        intervalValue.hint = helptext.two_factor.interval.hint;
+      } else {
+        intervalValue.hint = null;
+      }
+    })
   }
 
   getURI() {
