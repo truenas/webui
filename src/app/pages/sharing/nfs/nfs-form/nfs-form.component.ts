@@ -256,7 +256,17 @@ export class NFSFormComponent {
               protected userService: UserService,
               protected rest: RestService,
               protected ws: WebSocketService, private dialog:DialogService,
-              public networkService: NetworkService) {}
+              public networkService: NetworkService) {
+                const pathsTemplate = this.fieldSets.config('paths').templateListField;
+                if (window.localStorage.getItem('product_type') === 'SCALE') {
+                  pathsTemplate.push({
+                    type: 'input',
+                    name: 'alias',
+                    placeholder: helptext_sharing_nfs.placeholder_alias,
+                    tooltip: helptext_sharing_nfs.tooltip_alias,
+                  });
+                }
+              }
 
   preInit(EntityForm: any) {
     this.route.params.subscribe(params => {
@@ -320,7 +330,7 @@ export class NFSFormComponent {
   resourceTransformIncomingRestData(data) {
     const paths = [];
     for (let i = 0; i < data['paths'].length; i++) {
-      paths.push({'path':data['paths'][i]});
+      paths.push({'path':data['paths'][i], alias: data['aliases'][i] ? data['aliases'][i] : undefined});
     }
     data['paths'] = paths;
 
@@ -343,6 +353,7 @@ export class NFSFormComponent {
     return {
       ...data,
       paths: data.paths.filter(p => !!p.path).map(p => p.path),
+      aliases: data.paths.filter(p => !!p.alias).map(p => p.alias),
       networks: data.networks.filter(n => !!n.network).map(n => n.network),
       hosts: data.hosts.filter(h => !!h.host).map(h => h.host)
     };

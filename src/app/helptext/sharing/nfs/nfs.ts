@@ -22,6 +22,9 @@ export const helptext_sharing_nfs = {
   ),
   validators_path: [Validators.required],
 
+  placeholder_alias: T("Alias"),
+  tooltip_alias: T(''),
+
   placeholder_delete: T("Delete Path"),
   tooltip_delete: T("Delete this path."),
 
