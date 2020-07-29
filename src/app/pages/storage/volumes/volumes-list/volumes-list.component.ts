@@ -1664,9 +1664,6 @@ export class VolumesListTableConfig implements InputTableConf {
         dataObj.is_encrypted_root = (dataObj.id === dataObj.encryption_root);
         if (dataObj.is_encrypted_root) {
           this.parentVolumesListComponent.has_encrypted_root[parent.pool] = true;
-          if (dataObj.key_format && dataObj.key_format.parsed === 'hex') {
-            this.parentVolumesListComponent.has_key_dataset[parent.pool] = true;
-          }
         }
         dataObj.non_encrypted_on_encrypted = (!dataObj.encrypted && parent.encrypted);
       }
@@ -1734,6 +1731,14 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.zfsPoolRows.pop();
     }
 
+    this.ws.call('pool.dataset.query_encrypted_roots_keys').subscribe(res => {
+      for (const key in res) {
+        if (res.hasOwnProperty(key)) {
+          const pool = key.split('/')[0];
+          this.has_key_dataset[pool] = true;
+        }  
+      }
+    });
 
 
     combineLatest(this.ws.call('pool.query', []), this.ws.call('pool.dataset.query', [])).subscribe(async ([pools, datasets]) => {
@@ -1759,9 +1764,6 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
               pool.children[0].is_encrypted_root = (pool.children[0].id === pool.children[0].encryption_root);
               if (pool.children[0].is_encrypted_root) {
                 this.has_encrypted_root[pool.name] = true;
-                if (pool.children[0].key_format && pool.children[0].key_format.parsed === 'hex') {
-                  this.has_key_dataset[pool.name] = true;
-                }
               }
               pool.children[0].available_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].available.parsed || 0);
               pool.children[0].used_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].used.parsed || 0);
