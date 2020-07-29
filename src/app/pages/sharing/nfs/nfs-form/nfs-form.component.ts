@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Validators } from '@angular/forms';
+
 import { helptext_sharing_nfs, shared } from 'app/helptext/sharing';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { T } from "app/translate-marker";
@@ -264,6 +266,7 @@ export class NFSFormComponent {
                     name: 'alias',
                     placeholder: helptext_sharing_nfs.placeholder_alias,
                     tooltip: helptext_sharing_nfs.tooltip_alias,
+                    validation: [Validators.pattern(/^\/.*/)],
                   });
                 }
               }
