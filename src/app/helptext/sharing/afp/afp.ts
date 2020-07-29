@@ -172,7 +172,7 @@ export const helptext_sharing_afp = {
     message: T('Beginning in 2013, Apple began using the SMB sharing protocol as the default option \
    for file sharing and ceased development of the AFP sharing protocol. It is recommended to use \
    SMB sharing over AFP unless files will be shared with legacy Apple products.'),
-    button: T('Continue to AFP Setup'),
+    button: T('Continue with AFP Setup'),
     custBtn: T('Create an SMB Share')
   },
 

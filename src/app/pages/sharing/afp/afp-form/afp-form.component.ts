@@ -470,6 +470,16 @@ export class AFPFormComponent implements OnDestroy {
       fieldConfig: [],
       saveButtonText: helptext_sharing_afp.smb_dialog.custBtn,
       cancelButtonText: helptext_sharing_afp.smb_dialog.button,
+      hideCancel: true,
+      custActions: [
+        {
+          name: helptext_sharing_afp.smb_dialog.button,
+          id: 'continue_with_afp',
+          function: () => {
+            this.dialog.closeAllDialogs();
+          }
+        }
+      ],
       parent: this,
       customSubmit: (entityDialog) => {
         entityDialog.dialogRef.close();
