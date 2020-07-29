@@ -24,6 +24,7 @@ export const helptext_sharing_nfs = {
 
   placeholder_alias: T("Alias"),
   tooltip_alias: T(''),
+  error_alias: T('Alias can be all empty or required for all pathes.'),
 
   placeholder_delete: T("Delete Path"),
   tooltip_delete: T("Delete this path."),

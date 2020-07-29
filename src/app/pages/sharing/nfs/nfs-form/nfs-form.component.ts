@@ -258,7 +258,7 @@ export class NFSFormComponent {
               protected ws: WebSocketService, private dialog:DialogService,
               public networkService: NetworkService) {
                 const pathsTemplate = this.fieldSets.config('paths').templateListField;
-                if (window.localStorage.getItem('product_type') === 'SCALE') {
+                if (this.productType.includes('SCALE')) {
                   pathsTemplate.push({
                     type: 'input',
                     name: 'alias',
@@ -316,6 +316,19 @@ export class NFSFormComponent {
         this.entityForm.setDisabled(name, true, true);
       })
     }
+
+    EntityForm.formGroup.controls['paths'].valueChanges.subscribe((res) => {
+      const aliases = res.filter(p => !!p.alias);
+
+      if (aliases.length > 0 && aliases.length !== res.length) {
+        this.fieldSets.config('paths').hasErrors = true;
+        this.fieldSets.config('paths').errors = helptext_sharing_nfs.error_alias;
+      } else {
+        this.fieldSets.config('paths').hasErrors = false;
+        this.fieldSets.config('paths').errors = '';
+      }
+    })
+
   }
 
   isCustActionVisible(actionId: string) {
