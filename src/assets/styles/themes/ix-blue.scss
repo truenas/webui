@@ -1772,4 +1772,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     font-size: 0.7rem;
   }
 
+  #cust_button_continue_with_afp {
+    background: var(--bg1);
+  }
+
  } // end of ix theme
