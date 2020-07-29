@@ -1751,11 +1751,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .entity-table-cell-error {
     color: var(--red) !important;
   }
-
-  app-afp-form #recommendation {
-    font-size: larger;
-    margin-bottom: 1.2rem;
-  }
   
   mat-hint {
     color: var(--yellow) !important;
