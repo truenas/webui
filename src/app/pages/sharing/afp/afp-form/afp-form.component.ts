@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptext_sharing_afp, shared } from 'app/helptext/sharing';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { T } from "app/translate-marker";
@@ -31,21 +30,7 @@ export class AFPFormComponent implements OnDestroy {
   public afp_timemachine_quota: any;
   public afp_timemachine_subscription: any;
   private namesInUse: string[] = [];
-  public fieldConfig: FieldConfig[] = []
   private fieldSets = new FieldSets([
-    {
-      name: 'recommendation',
-      class: 'recommendation',
-      label: false,
-      config: [
-        {
-          name: 'recommendation',
-          type: 'paragraph',
-          paraText: helptext_sharing_afp.smb_dialog.message,
-          isHidden: true
-        }
-      ]
-    },
     {
       name: helptext_sharing_afp.fieldset_general,
       class: 'general',
