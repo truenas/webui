@@ -1709,6 +1709,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.zfsPoolRows.pop();
     }
 
+    this.has_key_dataset = {};
+    this.has_encrypted_root = {};
     this.ws.call('pool.dataset.query_encrypted_roots_keys').subscribe(res => {
       for (const key in res) {
         if (res.hasOwnProperty(key)) {
