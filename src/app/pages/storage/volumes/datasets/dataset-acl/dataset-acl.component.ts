@@ -359,6 +359,7 @@ export class DatasetAclComponent implements OnDestroy {
     this.entityForm = entityEdit;
     this.recursive = entityEdit.formGroup.controls['recursive'];
     this.recursive_subscription = this.recursive.valueChanges.subscribe((value) => {
+      // This is here because valueChanges gets triggered when state is changed to disabled
       if (value === true && value !== this.recursivePreviousValue) {
         this.dialogService.confirm(helptext.dataset_acl_recursive_dialog_warning,
          helptext.dataset_acl_recursive_dialog_warning_message)
@@ -383,6 +384,8 @@ export class DatasetAclComponent implements OnDestroy {
     this.stripacl = entityEdit.formGroup.controls['stripacl'];
     this.stripacl_subscription = this.stripacl.valueChanges.subscribe((value) => {
       if (value === true) {
+        // Store this value here because it changes on response to dialog
+        const isRecursiveChecked = entityEdit.formGroup.controls['recursive'].value;
         this.dialogService.confirm(helptext.dataset_acl_stripacl_dialog_warning,
          helptext.dataset_acl_stripacl_dialog_warning_message)
         .subscribe((res) => {
@@ -390,9 +393,15 @@ export class DatasetAclComponent implements OnDestroy {
             this.stripacl.setValue(false);
           }
           else {
-          this.entityForm.formGroup.controls['recursive'].setValue(true);
-          this.disableRecursive = true;
-          if (entityEdit.formGroup.controls['recursive'].value = true) {}      
+            // If user already checked recursive, just disable it
+            if (isRecursiveChecked) {
+              this.entityForm.setDisabled('recursive', true);    
+            } else {
+              // Otherwise set recursive to true
+              this.entityForm.formGroup.controls['recursive'].setValue(true);
+              // ...and set this boolean to disable recursive after its value changes
+              this.disableRecursive = true;
+            } 
           }
         });
       } else {
