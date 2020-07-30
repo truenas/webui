@@ -224,8 +224,8 @@ def navigate_to_network_then_interfaces_click_next_to_igb0_click_edit(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Interfaces"]').click()
     wait_on_element(driver, 0.5, 30, 'xpath', '//div[contains(.,"Interfaces")]')
     driver.find_element_by_xpath('//a[@ix-auto-type="expander"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__EDIT_vtnet0_vtnet0"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_vtnet0_vtnet0"]').click()
+    wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__EDIT_igb0_igb0"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_igb0_igb0"]').click()
 
 
 @then('Interface Settings should appear')
