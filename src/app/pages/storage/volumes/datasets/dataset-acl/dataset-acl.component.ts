@@ -43,8 +43,6 @@ export class DatasetAclComponent implements OnDestroy {
   protected defaults: any;
   protected recursive: any;
   protected recursive_subscription: any;
-  protected stripacl: any;
-  protected stripacl_subscription: any;
   private aces: any;
   private aces_fc: any;
   private aces_subscription: any;
@@ -370,7 +368,6 @@ export class DatasetAclComponent implements OnDestroy {
     });
 
     this.ws.call('filesystem.acl_is_trivial', [this.path]).subscribe(acl_is_trivial => {
-      this.entityForm.setDisabled('stripacl', acl_is_trivial);
       this.aclIsTrivial = acl_is_trivial;
     }, (err) => {
       new EntityUtils().handleWSError(this.entityForm, err);
@@ -667,9 +664,7 @@ export class DatasetAclComponent implements OnDestroy {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Saving ACLs") }});
     this.dialogRef.componentInstance.setDescription(T("Saving ACLs..."));
     let dacl = body.dacl;
-    if (body.stripacl) {
-      dacl = [];
-    }
+
     await this.userService.getUserByName(body.uid).toPromise().then(userObj => {
       if (userObj && userObj.hasOwnProperty('pw_uid')) {
         body.uid = userObj.pw_uid;
@@ -710,8 +705,7 @@ export class DatasetAclComponent implements OnDestroy {
       [{'path': body.path, 'dacl': dacl,
         'uid': body.uid, 'gid': body.gid,
         'options' : {'recursive': body.recursive,
-        'traverse': body.traverse,
-        'stripacl': body.stripacl
+        'traverse': body.traverse
         }
       }]);
     this.dialogRef.componentInstance.submit();
