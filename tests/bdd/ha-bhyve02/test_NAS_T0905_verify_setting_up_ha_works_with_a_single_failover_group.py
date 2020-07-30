@@ -341,7 +341,7 @@ def click_create_pool_enter_tank_for_pool_name_check_the_box_next_to_da0_press_u
     wait_on_element(driver, 0.5, 30, 'xpath', '//div[contains(.,"Pool Manager")]')
     driver.find_element_by_xpath('//input[@placeholder="Name"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Name"]').send_keys('tank')
-    driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__disks-table-checkall"]').click()
+    driver.find_element_by_xpath('//mat-checkbox[@@id="pool-manager__disks-da0"]').click()
     wait_on_element(driver, 0.5, 30, 'xpath', '//button[@id="vdev__add-button"]')
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
     wait_on_element(driver, 0.5, 30, 'xpath', '//button[@name="create-button"]')
