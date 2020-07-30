@@ -22,6 +22,16 @@ export const helptext_sharing_nfs = {
   ),
   validators_path: [Validators.required],
 
+  placeholder_alias: T("Alias"),
+  tooltip_alias: T('To define a custom shortcut for the <i>Path</i>, \
+ enter a memorable name. Example: <i>/nfsshare</i>. NFS clients \
+ can connect using the <i>Alias</i> instead of the <i>Path</i> \
+ when the share is active. A share with multiple paths requires \
+ either not using aliases or defining an alias for each path in \
+ the share.'),
+  error_alias: T('The <i>Alias</i> field can either be left empty or \
+ have an alias defined for each path in the share.'),
+
   placeholder_delete: T("Delete Path"),
   tooltip_delete: T("Delete this path."),
 

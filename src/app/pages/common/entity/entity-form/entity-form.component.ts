@@ -679,7 +679,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       }
 
       for (const [key, value] of Object.entries(listValue[i])) {
-        (<FormGroup>formArray.controls[i]).controls[key].setValue(value);
+        if ((<FormGroup>formArray.controls[i]).controls[key]) {
+          (<FormGroup>formArray.controls[i]).controls[key].setValue(value);
+        }
       }
     }
     formArray.markAllAsTouched();
