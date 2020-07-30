@@ -29,6 +29,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
   private entityForm: any;
   protected userField: any;
   protected groupField: any;
+  productType = window.localStorage.getItem('product_type');
 
   public fieldSets: FieldSet[] = [
     {
@@ -166,6 +167,11 @@ export class DatasetPermissionsComponent implements OnDestroy {
     protected mdDialog: MatDialog,
     protected dialog: DialogService,
     protected router: Router) { }
+
+  // Temporarily hide ACL manager in SCALE
+  isCustActionVisible(actionId: string) {
+    return this.productType.includes('SCALE') ? false : true; 
+  }
 
   preInit(entityEdit: any) {
     entityEdit.isNew = true; // remove me when we find a way to get the permissions
