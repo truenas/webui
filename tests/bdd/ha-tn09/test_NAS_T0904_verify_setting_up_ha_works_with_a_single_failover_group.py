@@ -308,7 +308,7 @@ def the_list_of_disks_should_appear_in_alphabetical_order_starting_with_ada0_ada
     # Verify disk are sorted
     disk_list = {1: 'ada0', 2: 'ada1'}
     add_num = 3
-    for number in range(16):
+    for number in range(9):
         disk_list[add_num] = f'da{number}'
         add_num += 1
     for num in list(disk_list.keys()):
