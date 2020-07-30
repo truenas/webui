@@ -2,9 +2,7 @@
 """High Availability (tn-bhyve02) feature tests."""
 
 import time
-from function import wait_on_element, is_element_present, wait_on_element_disappear
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
+from function import wait_on_element, is_element_present
 from pytest_bdd import (
     given,
     scenario,
