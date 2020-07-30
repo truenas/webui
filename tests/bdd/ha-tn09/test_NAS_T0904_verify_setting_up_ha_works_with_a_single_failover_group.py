@@ -194,6 +194,9 @@ def please_wait_should_appear_while_settings_are_being_applied_you_should_be_ret
 @then('Navigate to System click Failover, check disable failover, click save.')
 def navigate_to_system_click_failover_click_disable_failover_click_save(driver):
     """Navigate to System click Failover, click disable failover, click save."""
+    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(0.5)
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
     wait_on_element(driver, 0.5, 30, 'xpath', '//mat-list-item[@ix-auto="option__Failover"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Failover"]').click()
