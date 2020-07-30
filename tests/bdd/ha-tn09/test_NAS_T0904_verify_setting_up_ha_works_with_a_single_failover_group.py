@@ -306,7 +306,7 @@ def navigate_to_storage_click_disks_then_click_name_several_times_to_sort_in_alp
 def the_list_of_disks_should_appear_in_alphabetical_order_starting_with_ada0_ada1_the_boot_devices_and_da0_da15_the_disks_we_will_wipe_in_next_step_to_create_pools(driver):
     """The list of disks should appear in alphabetical order starting with ada0-ada1 (the boot devices) and da0-da15 the disks we will wipe in next step to create pools."""
     # Verify disk are sorted
-    disk_list = {1: 'ada0', 2: 'ada0'}
+    disk_list = {1: 'ada0', 2: 'ada1'}
     add_num = 3
     for number in range(16):
         disk_list[add_num] = f'da{number}'
