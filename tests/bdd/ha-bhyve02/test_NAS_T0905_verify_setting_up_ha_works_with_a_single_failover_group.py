@@ -218,7 +218,7 @@ def navigate_to_network_then_interfaces_click_next_to_vtnet0_click_edit(driver):
     wait_on_element(driver, 0.5, 30, 'xpath', '//mat-list-item[@ix-auto="option__Interfaces"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Interfaces"]').click()
     wait_on_element(driver, 0.5, 30, 'xpath', '//div[contains(.,"Interfaces")]')
-    driver.find_element_by_xpath('//a[@ix-auto-type="expander"]').click()
+    driver.find_element_by_xpath('//a[@ix-auto="expander__vtnet0"]').click()
     wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__EDIT_vtnet0_vtnet0"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_vtnet0_vtnet0"]').click()
 
