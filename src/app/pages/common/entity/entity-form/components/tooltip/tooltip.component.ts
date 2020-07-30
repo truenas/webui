@@ -58,6 +58,10 @@ export class TooltipComponent {
   }
 
   toggleVis(state?) {
+    const tooltips: any = document.getElementsByClassName('tooltip-container');
+    for (let i = 0; i < tooltips.length; i++) {
+      tooltips[i].firstChild.classList.remove('show', 'lock');
+    }
     if (state ==='lock') {
       this.showTooltip(true);
       this.isLockTooltip = true;
