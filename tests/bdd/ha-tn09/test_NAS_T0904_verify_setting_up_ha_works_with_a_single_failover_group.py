@@ -194,7 +194,7 @@ def please_wait_should_appear_while_settings_are_being_applied_you_should_be_ret
 @then('Navigate to System click Failover, check disable failover, click save.')
 def navigate_to_system_click_failover_click_disable_failover_click_save(driver):
     """Navigate to System click Failover, click disable failover, click save."""
-    # make sure to scroll back up
+    # make sure to scroll back up the mat-list-item
     element = driver.find_element_by_xpath('//span[contains(.,"root")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
@@ -351,7 +351,7 @@ def click_create_pool_enter_tank_for_pool_name_check_the_box_next_to_da0_press_u
     wait_on_element(driver, 0.5, 30, 'xpath', '//div[contains(.,"Pool Manager")]')
     driver.find_element_by_xpath('//input[@placeholder="Name"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Name"]').send_keys('tank')
-    driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__disks-table-checkall"]').click()
+    driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__disks-da0"]').click()
     wait_on_element(driver, 0.5, 30, 'xpath', '//button[@id="vdev__add-button"]')
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
     wait_on_element(driver, 0.5, 30, 'xpath', '//button[@name="create-button"]')
@@ -375,7 +375,7 @@ def create_pool_should_appear_while_pool_is_being_created_you_should_be_returned
 @then('Navigate to System then Failover, uncheck disable failover, click save.')
 def navigate_to_system_then_failover_click_disable_failover_click_save(driver):
     """Navigate to System then Failover, uncheck disable failover, click save."""
-    # make sure to scroll back up
+    # make sure to scroll back up the mat-list-item
     element = driver.find_element_by_xpath('//span[contains(.,"root")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
@@ -391,6 +391,7 @@ def navigate_to_system_then_failover_click_disable_failover_click_save(driver):
 @then('Navigate to dashboard, and verify that both controllers show.')
 def navigate_to_dashboard_and_verify_that_both_controllers_show(driver):
     """Navigate to dashboard, and verify that both controllers show."""
+    # make sure to scroll back up the mat-list-item
     wait_on_element(driver, 0.5, 30, 'xpath', '//h4[contains(.,"Failover Configuration")]')
     element = driver.find_element_by_xpath('//span[contains(.,"root")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
