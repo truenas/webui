@@ -110,7 +110,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     }
 
   ngOnInit() {
-    if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
+    if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
       this.checkEULA();
 
       this.ws.call('failover.licensed').subscribe((is_ha) => {
@@ -701,6 +701,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           (res) => {
             self.loader.close();
             entityDialog.dialogRef.close();
+            // only show this for connecting TC
+            if (!self.tcConnected) {
+              self.dialogService.Info(helptext.checkEmailInfoDialog.title, helptext.checkEmailInfoDialog.message);
+            }
           },
           (err) => {
             self.loader.close();

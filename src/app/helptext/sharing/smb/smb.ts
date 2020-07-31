@@ -168,8 +168,8 @@ export const helptext_sharing_smb = {
     action_edit_acl: T('Edit Filesystem ACL'),
     action_edit_acl_dialog: {
       title: T('Error'),
-      message1: T('The pool containing'),
-      message2: T('is locked.')
+      message1: T('The path'),
+      message2: T('is in a locked dataset.')
    },
     
 
@@ -223,5 +223,7 @@ export const helptext_sharing_smb = {
     ae_type_tooltip: T('How permissions are applied to the share.\
  <i>Allowed</i> denies all permissions by default except those that are manually defined.\
  <i>Denied</i> allows all permissions by default except those that are manually defined.'),
+
+ formTitle: T('SMB')
 
 };

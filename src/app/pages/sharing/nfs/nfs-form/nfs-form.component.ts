@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Validators } from '@angular/forms';
+
 import { helptext_sharing_nfs, shared } from 'app/helptext/sharing';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { T } from "app/translate-marker";
@@ -256,7 +258,18 @@ export class NFSFormComponent {
               protected userService: UserService,
               protected rest: RestService,
               protected ws: WebSocketService, private dialog:DialogService,
-              public networkService: NetworkService) {}
+              public networkService: NetworkService) {
+                const pathsTemplate = this.fieldSets.config('paths').templateListField;
+                if (this.productType.includes('SCALE')) {
+                  pathsTemplate.push({
+                    type: 'input',
+                    name: 'alias',
+                    placeholder: helptext_sharing_nfs.placeholder_alias,
+                    tooltip: helptext_sharing_nfs.tooltip_alias,
+                    validation: [Validators.pattern(/^\/.*/)],
+                  });
+                }
+              }
 
   preInit(EntityForm: any) {
     this.route.params.subscribe(params => {
@@ -301,11 +314,24 @@ export class NFSFormComponent {
       this.nfs_maproot_group.options = groups;
     });
 
-    if (this.productType === 'SCALE') {
+    if (this.productType.includes('SCALE')) {
       this.hideOnScale.forEach(name => {
         this.entityForm.setDisabled(name, true, true);
       })
     }
+
+    EntityForm.formGroup.controls['paths'].valueChanges.subscribe((res) => {
+      const aliases = res.filter(p => !!p.alias);
+
+      if (aliases.length > 0 && aliases.length !== res.length) {
+        this.fieldSets.config('paths').hasErrors = true;
+        this.fieldSets.config('paths').errors = helptext_sharing_nfs.error_alias;
+      } else {
+        this.fieldSets.config('paths').hasErrors = false;
+        this.fieldSets.config('paths').errors = '';
+      }
+    })
+
   }
 
   isCustActionVisible(actionId: string) {
@@ -320,7 +346,7 @@ export class NFSFormComponent {
   resourceTransformIncomingRestData(data) {
     const paths = [];
     for (let i = 0; i < data['paths'].length; i++) {
-      paths.push({'path':data['paths'][i]});
+      paths.push({'path':data['paths'][i], alias: data['aliases'][i] ? data['aliases'][i] : undefined});
     }
     data['paths'] = paths;
 
@@ -343,6 +369,7 @@ export class NFSFormComponent {
     return {
       ...data,
       paths: data.paths.filter(p => !!p.path).map(p => p.path),
+      aliases: data.paths.filter(p => !!p.alias).map(p => p.alias),
       networks: data.networks.filter(n => !!n.network).map(n => n.network),
       hosts: data.hosts.filter(h => !!h.host).map(h => h.host)
     };

@@ -96,7 +96,7 @@ export class SigninComponent implements OnInit, OnDestroy {
         if (this.interval) {
           clearInterval(this.interval);
         }
-        if (this.product_type === 'ENTERPRISE' || this.product_type === 'SCALE') {
+        if (this.product_type.includes('ENTERPRISE') || this.product_type === 'SCALE') {
           if (this.HAInterval) {
             clearInterval(this.HAInterval);
           }
@@ -219,7 +219,7 @@ export class SigninComponent implements OnInit, OnDestroy {
   }
 
   getHAStatus() {
-    if ((this.product_type === 'ENTERPRISE' || this.product_type === 'SCALE')
+    if ((this.product_type.includes('ENTERPRISE') || this.product_type === 'SCALE')
       && !this.checking_status) {
       this.checking_status = true;
       this.ws.call('failover.status').subscribe(res => {

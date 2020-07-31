@@ -91,7 +91,7 @@ export class TunableFormComponent {
       }
     })
     this.product_type = window.localStorage.getItem('product_type');
-    if (this.product_type === 'SCALE') {
+    if (this.product_type === 'SCALE' || this.product_type === 'SCALE_ENTERPRISE') {
       this.type_fc.value = 'SYSCTL';
       this.type_fc.isHidden = true;
       this.route_success[1] = 'sysctl';

@@ -516,6 +516,17 @@ export class DatasetFormComponent implements Formconfiguration{
           isHidden: true,
         },
         {
+          type : 'input',
+          placeholder: helptext.dataset_form_encryption.confirm_passphrase_placeholder,
+          name : 'confirm_passphrase',
+          inputType : 'password',
+          required: true,
+          togglePw: true,
+          validation : helptext.dataset_form_encryption.confirm_passphrase_validation,
+          disabled: true,
+          isHidden: true,
+        },
+        {
           type: 'input',
           name: 'pbkdf2iters',
           placeholder: helptext.dataset_form_encryption.pbkdf2iters_placeholder,
@@ -678,6 +689,7 @@ export class DatasetFormComponent implements Formconfiguration{
 
   public passphrase_fields: Array<any> = [
     'passphrase',
+    'confirm_passphrase',
     'pbkdf2iters'
   ]
 
@@ -849,7 +861,7 @@ export class DatasetFormComponent implements Formconfiguration{
     // aclmode not yet available in SCALE
     this.productType = window.localStorage.getItem('product_type');
     const aclControl = entityForm.formGroup.get('aclmode');
-    if (this.productType !== 'SCALE') {
+    if (!this.productType.includes('SCALE')) {
       this.advanced_field.push('aclmode')
     } else {
       aclControl.disable();
@@ -902,7 +914,7 @@ export class DatasetFormComponent implements Formconfiguration{
       
       // ...with this
       const caseControl = entityForm.formGroup.get('casesensitivity');
-      if (this.productType !== 'SCALE') {
+      if (!this.productType.includes('SCALE')) {
         if (shareType === 'SMB') {
           aclControl.setValue('RESTRICTED');
           caseControl.setValue('INSENSITIVE');
@@ -1045,6 +1057,7 @@ export class DatasetFormComponent implements Formconfiguration{
               }
               const key = (this.encryption_type === 'key');
               this.entityForm.setDisabled('passphrase', key, key);
+              this.entityForm.setDisabled('confirm_passphrase', key, key);
               this.entityForm.setDisabled('pbkdf2iters', key, key);
               this.entityForm.setDisabled('generate_key', !key, !key);
               if (this.encrypted_parent) {
@@ -1095,6 +1108,7 @@ export class DatasetFormComponent implements Formconfiguration{
             this.encryption_type = type;
             const key = (type === 'key');
             this.entityForm.setDisabled('passphrase', key, key);
+            this.entityForm.setDisabled('confirm_passphrase', key, key);
             this.entityForm.setDisabled('pbkdf2iters', key, key);
             this.entityForm.setDisabled('generate_key', !key, !key);
             if (key) {
@@ -1326,7 +1340,7 @@ export class DatasetFormComponent implements Formconfiguration{
         sync: this.getFieldValueOrRaw(wsResponse.sync)
      };
      // 
-     if (this.productType !== 'SCALE') {
+     if (!this.productType.includes('SCALE')) {
        returnValue.aclmode = this.getFieldValueOrRaw(wsResponse.aclmode);
      }
 
@@ -1447,6 +1461,7 @@ export class DatasetFormComponent implements Formconfiguration{
     delete data.key;
     delete data.generate_key;
     delete data.passphrase;
+    delete data.confirm_passphrase;
     delete data.pbkdf2iters;
     delete data.encryption_type;
 

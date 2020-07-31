@@ -27,6 +27,7 @@ export class SMBFormComponent {
   protected isEntity: boolean = true;
   protected isBasicMode: boolean = true;
   public isTimeMachineOn = false;
+  public title = helptext_sharing_smb.formTitle;
   public namesInUse: string[] = [];
   public productType = window.localStorage.getItem('product_type');
   private hostsAllowOnLoad = [];
@@ -397,7 +398,7 @@ export class SMBFormComponent {
     }
     // If this call returns true OR an [ENOENT] err comes back, just return to table
     // because the pool or ds is encrypted. Otherwise, do the next checks
-    this.ws.call('filesystem.path_is_encrypted', [sharePath]).subscribe(
+    this.ws.call('pool.dataset.path_in_locked_datasets', [sharePath]).subscribe(
       res => {
       if(res) {
         this.router.navigate(['/'].concat(this.route_success));
@@ -410,7 +411,7 @@ export class SMBFormComponent {
       this.ws.call('filesystem.acl_is_trivial', [sharePath]).pipe(
         switchMap((isTrivialACL: boolean) =>
           /* If share does not have trivial ACL, move on. Otherwise, perform some async data-gathering operations */
-          !isTrivialACL || !datasetId.includes('/') || this.productType === 'SCALE'
+          !isTrivialACL || !datasetId.includes('/') || this.productType.includes('SCALE')
             ? combineLatest(of(false), of({}))
             : combineLatest(
                 /* Check if user wants to edit the share's ACL */

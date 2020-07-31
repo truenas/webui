@@ -250,7 +250,7 @@ export class VolumeImportWizardComponent {
 
   preInit(entityWizard: EntityWizardComponent) {
     this.productType = window.localStorage.getItem('product_type');
-    if (this.productType === 'SCALE') {
+    if (this.productType.includes('SCALE')) {
       this.wizardConfig.splice(1,1);
       this.importIndex = 1;
     }
@@ -271,7 +271,7 @@ export class VolumeImportWizardComponent {
       }
     });
     
-    if (this.productType !== 'SCALE') {
+    if (!this.productType.includes('SCALE')) {
       this.encrypted = ( < FormGroup > entityWizard.formArray.get([1]).get('encrypted'));
       this.devices = _.find(this.wizardConfig[1].fieldConfig, {'name': 'devices'});
       this.devices_fg = ( < FormGroup > entityWizard.formArray.get([1]).get('devices'));
@@ -299,7 +299,7 @@ export class VolumeImportWizardComponent {
       }
     });
 
-    if (this.productType !== 'SCALE') {
+    if (!this.productType.includes('SCALE')) {
       this.message_subscription = this.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
         this.key_fg.setValue(message);
       });

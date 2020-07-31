@@ -86,5 +86,7 @@ nfs_srv_statd_lockd_log_tooltip: T('Set to log <a\
  href="https://www.freebsd.org/cgi/man.cgi?query=rpc.statd"\
  target="_blank">rpc.statd(8)</a> and <a\
  href="https://www.freebsd.org/cgi/man.cgi?query=rpc.lockd"\
- target="_blank">rpc.lockd(8)</a> syslog requests.')
+ target="_blank">rpc.lockd(8)</a> syslog requests.'),
+
+formTitle: T('NFS')
 }

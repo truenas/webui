@@ -24,7 +24,7 @@
           </div>
 
           <!-- TrueNAS Scale -->
-          <div class="branding topbar {{'truenas-' + product_type.toLowerCase()}}" *ngIf="!retroLogo && product_type == 'SCALE' ">
+          <div class="branding topbar {{'truenas-' + product_type.toLowerCase()}}" *ngIf="!retroLogo && (product_type == 'SCALE' || product_type == 'SCALE_ENTERPRISE') ">
             <a routerLink="/dashboard" class="logo"><mat-icon svgIcon="truenas_scale_logomark" alt="TrueNAS Core logo" class="app-logo"></mat-icon></a>
             <a routerLink="/dashboard" class="logo-text"><mat-icon svgIcon="truenas_scale_logotype" alt="TrueNAS Core" class="app-logo-text"></mat-icon></a>
           </div>
@@ -40,6 +40,19 @@
         <div class="hostname-label" *ngIf="hostname" matTooltip="Hostname: {{hostname}}">{{hostname}}</div>
       </div>
       <navigation (onStateChange)="changeState($event)"></navigation>
+      <div class="sidenav-copyright-txt" *ngIf="!isSidenavCollapsed">
+        <p>TrueNAS {{product_type}}®</p>
+        <p>
+          © {{copyrightYear}} - <a href="http://www.ixsystems.com"
+              target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.
+        </p>
+      </div>  
+      <div class="sidenav-copyright-icon" *ngIf="isSidenavCollapsed" 
+        matTooltip="TrueNAS {{product_type}}® © {{copyrightYear}} by iXsystems Inc."
+        matTooltipPosition="right">
+        <mat-icon>copyright</mat-icon>
+      </div>
+         
     </div>
   </mat-sidenav>
   <mat-sidenav-content fxFlex="calc(100% - {{sidenavWidth}})" class="fn-maincontent" [style.margin-left]="sidenavWidth">
@@ -48,7 +61,7 @@
     <!-- Listens language change event -->
     <topbar [sidenav]="sidenav" [notificPanel]="notificationPanel" (onLangChange)="language.setMiddlewareLanguage($event)"></topbar>
     <!-- App content -->
-    <app-breadcrumb [product_type]="product_type"></app-breadcrumb>
+    <!-- <app-breadcrumb [product_type]="product_type"></app-breadcrumb> -->
     <div class="rightside-content-hold" [ngClass]="{'has-footer':isShowFooterConsole}">
       <router-outlet></router-outlet>
     </div>

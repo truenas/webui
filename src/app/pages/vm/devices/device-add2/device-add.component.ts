@@ -418,7 +418,7 @@ export class DeviceAddComponent implements OnInit {
       this.route_success = ['vm', this.vmid, 'devices', this.vmname];
     });
 
-    if (this.productType !== 'SCALE') {
+    if (!this.productType.includes('SCALE')) {
       _.find(this.vncFieldConfig, {name:'wait'}).isHidden = false;
       _.find(this.vncFieldConfig, {name:'vnc_resolution'}).isHidden = false;
     }

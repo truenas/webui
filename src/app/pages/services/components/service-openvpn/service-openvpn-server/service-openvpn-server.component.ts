@@ -20,6 +20,7 @@ export class ServiceOpenvpnServerComponent {
   protected entityEdit: any;
   public dialogConf: DialogFormConfiguration;
   protected certOptions: any;
+  public title = helptext.server.formTitle;
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {

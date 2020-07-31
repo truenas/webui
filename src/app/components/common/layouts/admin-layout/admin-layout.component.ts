@@ -11,6 +11,7 @@ import { RestService, WebSocketService } from '../../../../services';
 import { LanguageService } from '../../../../services/language.service';
 import { ThemeService } from '../../../../services/theme/theme.service';
 import { ConsolePanelModalDialog } from '../../dialog/consolepanel/consolepanel-dialog.component';
+import globalHelptext from '../../../../helptext/global-helptext';
 
 @Component({
   selector: 'app-admin-layout',
@@ -21,6 +22,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   private isMobile;
   screenSizeWatcher: Subscription;
   isSidenavOpen: Boolean = true;
+  isSidenavCollapsed = false;
   sidenavMode: string = 'over';
   isShowFooterConsole: Boolean = false;
   isSidenotOpen: Boolean = false;
@@ -32,6 +34,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   public logoTextPath: string = 'assets/images/light-logo-text.svg';
   public currentTheme: string = "";
   public retroLogo: boolean = false;
+  public copyrightYear = globalHelptext.copyright_year;
   // we will just have to add to this list as more languages are added
 
   @ViewChild(MatSidenav, { static: false}) private sideNave: MatSidenav;
@@ -113,6 +116,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     }).subscribe((evt:CoreEvent)=>{
       this.isSidenavOpen = evt.data.isOpen;
       this.sidenavMode = evt.data.mode;
+      this.isSidenavCollapsed = evt.data.isCollapsed;
     });
   }
 

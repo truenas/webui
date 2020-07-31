@@ -46,14 +46,14 @@ app-breadcrumb{
   overflow-y: scroll;
   display: block;
   position: absolute;
-  top: 90px;
-  height: calc(100% - 90px);
+  top: 50px;
+  height: calc(100% - 48px);
   width: 100%;
 }
 
 .rightside-content-hold.has-footer {
   padding: 104px .03rem 5%;
-  height: calc(100% - 135px);
+  height: calc(100% - 95px);
 }
 
 @-webkit-keyframes silde_to_top {

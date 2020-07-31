@@ -93,5 +93,7 @@ ssh_weak_ciphers_tooltip:T('Allow more ciphers for \
 ssh_weak_ciphers_options:[
   {label:T('None'), value: 'NONE'},
   {label:'AES128-CBC', value: 'AES128-CBC'}
-]
+],
+
+formTitle: T('SSH')
 }

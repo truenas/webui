@@ -61,5 +61,7 @@ password_tooltip: T('Password for logging in to the provider and \
 password2_placeholder : T('Confirm Password'),
 
 period_placeholder : T('Update Period'),
-period_tooltip: T('How often the IP is checked in seconds.')
+period_tooltip: T('How often the IP is checked in seconds.'),
+
+formTitle: T('Dynamic DNS')
 }

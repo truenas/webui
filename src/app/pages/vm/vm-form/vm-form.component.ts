@@ -171,7 +171,7 @@ export class VmFormComponent {
     this.bootloader =_.find(this.fieldConfig, {name : 'bootloader'});
     this.vmService.getBootloaderOptions().subscribe(options => {
       for(const option in options) {
-        this.bootloader.options.push({label : option, value : options[option]})
+        this.bootloader.options.push({label : options[option], value : option})
       }
     });
 
@@ -199,7 +199,7 @@ export class VmFormComponent {
       this.threads = value;
     })
 
-    if (this.productType === 'SCALE') {
+    if (this.productType.includes('SCALE')) {
       _.find(this.fieldConfig, {name : 'cpu_mode'})['isHidden'] = false;
       const cpuModel = _.find(this.fieldConfig, {name : 'cpu_model'});
       cpuModel.isHidden = false;

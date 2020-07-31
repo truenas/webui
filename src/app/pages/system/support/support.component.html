@@ -25,7 +25,7 @@
           </app-tn-sys-info>
         </ng-template>
         <div id="production-status-wrapper">
-          <app-production-status *ngIf="product_type === 'ENTERPRISE'"></app-production-status>
+          <app-production-status *ngIf="product_type.includes('ENTERPRISE')"></app-production-status>
         </div>
       </div>
       <div id="top-right" fxFlex="45%" fxFlex.xs="100">
@@ -37,7 +37,7 @@
         </div>
       </div>
     </div>
-    <div *ngIf="product_type === 'ENTERPRISE'" fxLayout="row">
+    <div *ngIf="product_type.includes('ENTERPRISE')" fxLayout="row">
       <app-proactive></app-proactive>
     </div>
     <div fxLayout="row" id="support_bottom-row">

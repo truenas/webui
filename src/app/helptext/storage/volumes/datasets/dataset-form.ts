@@ -1,4 +1,5 @@
 import {Validators} from '@angular/forms';
+import { matchOtherValidator } from "app/pages/common/entity/entity-form/validators/password-validation";
 import { T } from '../../../../translate-marker';
 
 export default {
@@ -152,6 +153,8 @@ dataset_form_encryption: {
      WARNING: the passphrase is the only means to decrypt the information stored in this dataset. Be sure to create a \
      memorable passphrase or physically secure the passphrase.'),
     passphrase_validation: [Validators.minLength(8)],
+    confirm_passphrase_placeholder: T('Confirm Passphrase'),
+    confirm_passphrase_validation: [matchOtherValidator("passphrase")],
     pbkdf2iters_placeholder: T('pbkdf2iters'),
     pbkdf2iters_tooltip: T('Number of password-based key derivation function 2 (PBKDF2) iterations to use for reducing vulnerability \
      to brute-force attacks. Entering a number larger than <i>100000</i> is required. See \

@@ -170,7 +170,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
       });
     });
 
-    if (this.product_type === 'ENTERPRISE') {
+    if (this.product_type.includes('ENTERPRISE')) {
       setTimeout(() => { // To get around too many concurrent calls???
         this.ws.call('failover.licensed').subscribe((res) => {
           if (res) {

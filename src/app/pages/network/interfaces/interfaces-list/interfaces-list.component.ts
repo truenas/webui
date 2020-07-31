@@ -158,7 +158,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
       }
     });
 
-    if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
+    if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         if (is_ha) {
           this.ws.call('failover.disabled_reasons').subscribe((failover_disabled) => {
