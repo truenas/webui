@@ -155,12 +155,12 @@ dataset_acl_stripacl_tooltip: T("Set to remove all ACLs from the current\
 stripACL_dialog: {
   title: T('Strip ACLs'),
   message: T('This action removes all ACLs from the current \
- dataset. ACLs are also recursively stripped from directories and files of the current dataset. \
- Stripping the ACL resets dataset permissions. This can make data inaccessible until new \
- permissions are created.'),
-  traverse_checkbox: T('Also strip permissions from child datasets of the current dataset'),
-  warning: T('Removes permissions recursively from all child \
-  datasets of the current dataset. This can make data inaccessible untin new permissions are created.')
+ dataset and any directories or files contained within this \
+ dataset. Stripping the ACL resets dataset permissions. This \
+ can make data inaccessible until new permissions are created.'),
+  traverse_checkbox: T('Remove the ACL and permissions from child datasets of the current dataset'),
+  warning: T('Removes the ACL and permissions recursively \
+ from all child datasets of the current dataset, including all directories and files contained within those child datasets. This can make data inaccessible until new permissions are created.')
 
 },
 
