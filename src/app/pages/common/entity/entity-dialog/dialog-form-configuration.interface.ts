@@ -17,4 +17,5 @@ export interface DialogFormConfiguration {
   afterInit?: any,
   parent?: any,
   confirmCheckbox?: boolean,
+  hideCancel?: boolean
 }

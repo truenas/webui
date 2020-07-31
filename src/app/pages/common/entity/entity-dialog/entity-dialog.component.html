@@ -29,9 +29,9 @@
   ix-auto-type="checkbox"
   ix-auto-identifier="CONFIRM">{{"Confirm" | translate}}</mat-checkbox>
   <span fxFlex></span>
-  <button mat-button class="mat-button mat-accent action-btn" (click)="cancel()" [name]="cancelButtonText + '_button'">{{cancelButtonText | translate}}</button>
+  <button mat-button *ngIf="!conf.hideCancel"  class="mat-button mat-accent action-btn" (click)="cancel()" [name]="cancelButtonText + '_button'">{{cancelButtonText | translate}}</button>
   <span *ngFor="let custBtn of conf.custActions">
-    <button id="cust_button_{{custBtn.id}}" mat-button class="mat-button mat-primary action-btn"
+    <button id="cust_button_{{custBtn.id}}" mat-button class="mat-button action-btn"
       *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" type="button"
       [ix-auto]=""
       ix-auto-type="button"

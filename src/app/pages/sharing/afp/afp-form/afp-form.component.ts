@@ -30,7 +30,6 @@ export class AFPFormComponent implements OnDestroy {
   public afp_timemachine: any;
   public afp_timemachine_quota: any;
   public afp_timemachine_subscription: any;
-  public title = helptext_sharing_afp.formTitle;
   private namesInUse: string[] = [];
   public fieldConfig: FieldConfig[] = []
   private fieldSets = new FieldSets([
@@ -375,7 +374,6 @@ export class AFPFormComponent implements OnDestroy {
   afterInit(entityForm: any) {
     if (!this.pk) {
       this.openInfoDialog();
-      _.find(this.fieldConfig, {name: 'recommendation'}).isHidden = false;
     }
     this.entityForm = entityForm;
     if (entityForm.isNew) {
@@ -479,6 +477,7 @@ export class AFPFormComponent implements OnDestroy {
     }
   }
 
+
   openInfoDialog() {
     const conf: DialogFormConfiguration = {
       title: helptext_sharing_afp.smb_dialog.title,
@@ -486,6 +485,16 @@ export class AFPFormComponent implements OnDestroy {
       fieldConfig: [],
       saveButtonText: helptext_sharing_afp.smb_dialog.custBtn,
       cancelButtonText: helptext_sharing_afp.smb_dialog.button,
+      hideCancel: true,
+      custActions: [
+        {
+          name: helptext_sharing_afp.smb_dialog.button,
+          id: 'continue_with_afp',
+          function: () => {
+            this.dialog.closeAllDialogs();
+          }
+        }
+      ],
       parent: this,
       customSubmit: (entityDialog) => {
         entityDialog.dialogRef.close();
