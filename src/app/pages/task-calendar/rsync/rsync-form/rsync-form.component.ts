@@ -40,7 +40,7 @@ export class RsyncFormComponent implements OnDestroy {
           type: 'explorer',
           initial: '/mnt',
           name: 'path',
-          explorerType: 'directory',
+          explorerType: 'file',
           placeholder: helptext.rsync_path_placeholder,
           tooltip: helptext.rsync_path_tooltip,
           required: true,
