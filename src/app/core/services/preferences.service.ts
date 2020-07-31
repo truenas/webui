@@ -29,12 +29,11 @@ export interface UserPreferences {
   hide_builtin_groups?: boolean;
   dateFormat?:string;
   timeFormat?:string;
-  nicType?:string
-  nicAttach?: string,
   showWelcomeDialog?: boolean;
   showUserListMessage?: boolean;
   showGroupListMessage?: boolean;
   expandAvailablePlugins?: boolean;
+  storedValues?: any;
 }
 
 @Injectable()
@@ -59,12 +58,11 @@ export class PreferencesService {
     "hide_builtin_groups": true,
     "dateFormat": 'YYYY-MM-DD',
     "timeFormat": 'HH:mm:ss',
-    "nicType": null,
-    "nicAttach": null,
     "showWelcomeDialog": true,
     "showUserListMessage": true,
     "showGroupListMessage": true,
     "expandAvailablePlugins": true,
+    "storedValues": {} // For key/value pairs to save most recent values in form fields, etc
   }
 
   public preferences: UserPreferences; 

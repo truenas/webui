@@ -44,6 +44,7 @@ export class VMWizardComponent {
   public threads: number = 1;
   public mode: string;
   public model: string | null;
+  private currentStep = 0;
 
   entityWizard: any;
   public res;
@@ -403,7 +404,36 @@ export class VMWizardComponent {
   preInit(entityWizard: EntityWizardComponent){
     this.entityWizard = entityWizard;
   }
-  
+
+  customNext(stepper) {
+    stepper.next();
+    this.currentStep = stepper._selectedIndex;
+    if (this.currentStep === 2) {
+      this.setValuesFromPref(2, 'datastore', 'vm_zvolLocation');
+    }
+    if (this.currentStep === 3) {
+      this.setValuesFromPref(3, 'NIC_type', 'vm_nicType', 0);
+      this.setValuesFromPref(3, 'nic_attach', 'vm_nicAttach', 0);
+    }
+  }
+
+  setValuesFromPref(stepNumber: number, fieldName: string, prefName: string, defaultIndex?: number) {
+    const field = ( < FormGroup > this.entityWizard.formArray.get([stepNumber])).controls[fieldName];
+    const options = _.find(this.wizardConfig[stepNumber].fieldConfig, {name : fieldName}).options; 
+    const storedValue = this.prefService.preferences.storedValues[prefName];
+    if (storedValue) {
+      const valueToSet = options.find(o => o.value === storedValue);
+      if (valueToSet) { 
+        field.setValue(valueToSet.value)
+      }
+      else if (defaultIndex) {
+        field.setValue(options[defaultIndex].value)
+      }
+    } else {
+      field.setValue(options[defaultIndex].value)
+    }
+  }
+
   afterInit(entityWizard: EntityWizardComponent) {
     this.ws.call('vm.query').subscribe((res) => {
       res.forEach(i => this.namesInUse.push(i.name));
@@ -452,9 +482,6 @@ export class VMWizardComponent {
         );
       });
     });
-
-
-
 
     ( < FormGroup > entityWizard.formArray.get([0]).get('bootloader')).valueChanges.subscribe((bootloader) => {
       if(!this.productType.includes('SCALE') && bootloader !== 'UEFI'){
@@ -584,12 +611,14 @@ export class VMWizardComponent {
           _.find(this.wizardConfig[2].fieldConfig, {'name' : 'datastore'}).errors = T(`Please select a valid path`);
         }
       }
-      });
       ( < FormGroup > entityWizard.formArray.get([3]).get('NIC_type')).valueChanges.subscribe((res) => {
-        this.prefService.preferences.nicType = res;
+        this.prefService.preferences.storedValues.vm_nicType = res;
+        this.prefService.savePreferences();
       });
-      ( < FormGroup > entityWizard.formArray.get([3]).get('nic_attach')).valueChanges.subscribe((res) => {
-        this.prefService.preferences.nicAttach = res;
+
+      this.prefService.preferences.storedValues.vm_zvolLocation = ( < FormGroup > entityWizard.formArray.get([2])).controls['datastore'].value;
+      this.prefService.savePreferences();
+
       });
       ( < FormGroup > entityWizard.formArray.get([4]).get('iso_path')).valueChanges.subscribe((iso_path) => {
         if (iso_path && iso_path !== undefined){
@@ -664,16 +693,12 @@ export class VMWizardComponent {
         label: nicId,
         value: nicId
       }));
-      let tempNICAttach = ( < FormGroup > entityWizard.formArray.get([3])).controls['nic_attach'];
-      setTimeout(() => {
-        if (!this.prefService.preferences.nicAttach) {
-          tempNICAttach.setValue(this.nic_attach.options[0].value)
-        } else {
-          tempNICAttach.setValue(this.prefService.preferences.nicAttach);
-        }
-      },2000)
-
-
+      
+      ( < FormGroup > entityWizard.formArray.get([3]).get('nic_attach')).valueChanges.subscribe((res) => {
+        this.prefService.preferences.storedValues.vm_nicAttach = res;
+        this.prefService.savePreferences();
+      });
+      
       this.ws.call('vm.random_mac').subscribe((mac_res)=>{
         ( < FormGroup > entityWizard.formArray.get([3])).controls['NIC_mac'].setValue(mac_res);
       });
@@ -684,15 +709,10 @@ export class VMWizardComponent {
           this.nicType.options.push({label : item[1], value : item[0]});
         });
         
-        let tempNICType = ( < FormGroup > entityWizard.formArray.get([3])).controls['NIC_type']
-        setTimeout(() => {
-          if (!this.prefService.preferences.nicType) {
-            tempNICType.setValue(this.nicType.options[0].value);
-          } else {
-            tempNICType.setValue(this.prefService.preferences.nicType)
-          }
-        }, 2000)
-
+        ( < FormGroup > entityWizard.formArray.get([3]).get('NIC_type')).valueChanges.subscribe((res) => {
+          this.prefService.preferences.storedValues.vm_nicType = res;
+          this.prefService.savePreferences();
+        });
 
       this.bootloader = _.find(this.wizardConfig[0].fieldConfig, {name : 'bootloader'});
 
@@ -840,7 +860,6 @@ blurEvent3(parent){
 }
 
 async customSubmit(value) {
-    this.prefService.savePreferences();
     let hdd;
     const vm_payload = {}
     const zvol_payload = {}
