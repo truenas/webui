@@ -83,9 +83,9 @@ Login or signup is required.'),
     },
 
     stopTCConnectingDialog: {
-        title: T('Stop Connecting to TrueCommand Cloud Service'),
+        title: T('Stop TrueCommand Cloud Connection'),
         icon: 'warning',
-        message: T('Are you sure you want to stop connecting to TrueCommand Cloud Service?'),
+        message: T('Are you sure you want to stop connecting to the TrueCommand Cloud Service?'),
         confirmBtnMsg: T('Confirm'),
     },
 }
