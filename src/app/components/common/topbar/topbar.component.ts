@@ -744,4 +744,26 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       }
     );
   }
+
+  stopTCConnecting() {
+    this.dialogService.generalDialog({
+      title: helptext.stopTCConnectingDialog.title,
+      icon: helptext.stopTCConnectingDialog.icon,
+      message: helptext.stopTCConnectingDialog.message,
+      confirmBtnMsg: helptext.stopTCConnectingDialog.confirmBtnMsg,
+    }).subscribe((res) => {
+      if (res) {
+        this.loader.open();
+        this.ws.call(this.tc_updateCall, [{"enabled" : false}]).subscribe(
+          (wsRes) => {
+            this.loader.close();
+          },
+          (err) => {
+            this.loader.close();
+            new EntityUtils().handleWSError(this, err, this.dialogService)
+          }
+        )
+      }
+    })
+  }
 }
