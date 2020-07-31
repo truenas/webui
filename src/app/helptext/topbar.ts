@@ -83,8 +83,9 @@ Login or signup is required.'),
     },
 
     checkEmailInfoDialog: {
-        title: T('Verify Email address'),
-        message: T('Please check your email to verify your email address.')
+        title: T('Verify Email Address'),
+        message: T('A message with verification instructions has been sent to the new email \
+address. Please verify the email address before continuing.')
     }
 }
 
