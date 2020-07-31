@@ -12,7 +12,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T904.feature', 'Verify setting up HA works with a single failover group')
+@scenario('features/NAS-T918.feature', 'Verify setting up HA works with a single failover group')
 def test_verify_setting_up_ha_works_with_a_single_failover_group(driver):
     """Verify setting up HA works with a single failover group."""
 
