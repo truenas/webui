@@ -83,6 +83,13 @@ export class ServiceOpenvpnServerComponent {
           placeholder : helptext.compression.placeholder,
           tooltip: helptext.compression.tooltip,
           options: helptext.compression.enum
+        },
+        {
+          type : 'select',
+          name : 'protocol',
+          placeholder : helptext.protocol.placeholder,
+          tooltip: helptext.protocol.tooltip,
+          options: helptext.protocol.enum
         }
       ]
     },
@@ -97,14 +104,6 @@ export class ServiceOpenvpnServerComponent {
       label: false,
       width: '43%',
       config: [
-
-        {
-          type : 'select',
-          name : 'protocol',
-          placeholder : helptext.protocol.placeholder,
-          tooltip: helptext.protocol.tooltip,
-          options: helptext.protocol.enum
-        },
         {
           type : 'select',
           name : 'device_type',
@@ -129,16 +128,17 @@ export class ServiceOpenvpnServerComponent {
           ]
         },
         {
-          type : 'input',
-          name : 'additional_parameters',
-          placeholder : helptext.additional_parameters.placeholder,
-          tooltip: helptext.additional_parameters.tooltip,
-        },
-        {
           type : 'checkbox',
           name : 'tls_crypt_auth_enabled',
           placeholder : helptext.tls_crypt_auth_enabled.placeholder,
           tooltip: helptext.tls_crypt_auth_enabled.tooltip,
+        },
+        {
+          type : 'textarea',
+          name : 'additional_parameters',
+          placeholder : helptext.additional_parameters.placeholder,
+          tooltip: helptext.additional_parameters.tooltip,
+          textAreaRows: 6
         },
         {
           type : 'textarea',
