@@ -400,6 +400,7 @@ export class GeneralComponent implements OnDestroy {
     });
 
     this.sysGeneralService.timezoneChoices().subscribe(tzChoices => {
+      tzChoices = _.sortBy(tzChoices, [function(o) { return o.label.toLowerCase(); }]);
       this.fieldSets
         .find(set => set.name === helptext.stg_fieldset_loc)
         .config.find(config => config.name === "timezone").options = tzChoices;
