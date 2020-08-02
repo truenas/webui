@@ -672,6 +672,11 @@ msgid ""
 msgstr "与将使用此API密钥推送指标的服务器IP匹配的简单模式列表。"
 
 msgid ""
+"A message with verification instructions has been sent to the new email "
+"address. Please verify the email address before continuing."
+msgstr ""
+
+msgid ""
 "A new jail hostid, if desired.<br> <b>Example hostid:</b> "
 "<i>1a2bc345-678d-90e1-23fa-4b56c78901de</i>."
 msgstr ""
@@ -784,6 +789,9 @@ msgstr "添加"
 
 msgid "AFP"
 msgstr "AFP"
+
+msgid "AFP (Apple File Protocol)"
+msgstr ""
 
 msgid "AFP3 Unix Privs"
 msgstr "AFP3 UNIX 权限"
@@ -1291,6 +1299,9 @@ msgstr "警报"
 msgid "Algorithm"
 msgstr "算法"
 
+msgid "Alias"
+msgstr ""
+
 msgid "Aliases"
 msgstr "别名"
 
@@ -1772,6 +1783,9 @@ msgstr "存档"
 msgid "Are you sure you want to deregister TrueCommand Cloud Service?"
 msgstr ""
 
+msgid "Are you sure you want to stop connecting to the TrueCommand Cloud Service?"
+msgstr ""
+
 msgid "Are you sure you want to sync from peer?"
 msgstr "是否确定要从对等节点同步？"
 
@@ -2072,6 +2086,13 @@ msgstr "在更新之前，请阅读发行说明。"
 
 msgid "Begin"
 msgstr "开始"
+
+msgid ""
+"Beginning in 2013, Apple began using the SMB sharing protocol as the "
+"default option    for file sharing and ceased development of the AFP "
+"sharing protocol. It is recommended to use    SMB sharing over AFP unless "
+"files will be shared with legacy Apple products."
+msgstr ""
 
 msgid "Berkeley Packet Filter"
 msgstr "Berkeley包过滤器"
@@ -3164,6 +3185,12 @@ msgstr "电脑帐户OU"
 msgid "Config could not be downloaded"
 msgstr "无法下载配置"
 
+msgid "Configuration"
+msgstr ""
+
+msgid "Configuration Options"
+msgstr ""
+
 msgid "Configure"
 msgstr "配置"
 
@@ -3333,6 +3360,9 @@ msgstr "继续"
 msgid "Continue to Legacy UI"
 msgstr "继续使用传统UI"
 
+msgid "Continue with AFP Setup"
+msgstr ""
+
 msgid "Continue with download?"
 msgstr "继续下载吗？"
 
@@ -3446,6 +3476,9 @@ msgstr "创建一个池："
 
 msgid "Create a recommended formation of vdevs in a pool."
 msgstr "在池中创建推荐的vdev形式。"
+
+msgid "Create an SMB Share"
+msgstr ""
 
 msgid "Create more data vdevs like the first."
 msgstr "与第一个类似，创建更多数据vdev。"
@@ -4501,6 +4534,9 @@ msgstr "空运行"
 
 msgid "Dry Run Cloud Sync Task"
 msgstr "空运行云同步任务"
+
+msgid "Dynamic DNS"
+msgstr ""
 
 msgid "E-mail address that will receive SNMP service messages."
 msgstr "接收SNMP服务消息的电子邮件地址。"
@@ -6016,6 +6052,9 @@ msgstr "区块类型"
 msgid "Extra Users"
 msgstr "附加用户"
 
+msgid "FTP"
+msgstr ""
+
 msgid "FTP Host to connect to. Example: <i>ftp.example.com</i>."
 msgstr "要连接的FTP主机。例如：<i> ftp.example.com </i>。"
 
@@ -7073,6 +7112,9 @@ msgid ""
 "New</i> to create a new SSH key for this credential."
 msgstr "从现有的SSH密钥对导入私钥，或选择<i> 新建 </i>为该凭证创建新的SSH密钥。"
 
+msgid "Important"
+msgstr ""
+
 msgid "Importing Disk"
 msgstr "正在导入磁盘"
 
@@ -7553,6 +7595,9 @@ msgstr "DNS超时（秒）。如果DNS查询超时，请增加此值。"
 
 msgid "LEGACY WEB INTERFACE"
 msgstr "传统Web界面"
+
+msgid "LLDP"
+msgstr ""
 
 msgid "LOGIN TO PROVIDER"
 msgstr "登录到提供商"
@@ -9001,6 +9046,12 @@ msgstr "开源"
 msgid "Open TrueCommand User Interface"
 msgstr "打开TrueCommand用户界面"
 
+msgid "Open VPN Client"
+msgstr ""
+
+msgid "Open VPN Server"
+msgstr ""
+
 msgid "OpenVPN Client Settings"
 msgstr "OpenVPN客户端设置"
 
@@ -9843,6 +9894,9 @@ msgstr "更新后重启"
 msgid "Rebuild Directory Service Cache"
 msgstr "重建目录服务缓存"
 
+msgid "Recommendation"
+msgstr ""
+
 msgid "Recommended block size based on pool topology:"
 msgstr ""
 
@@ -10007,11 +10061,21 @@ msgstr ""
 msgid "Remove passphrase"
 msgstr "删除密码"
 
+msgid "Remove the ACL and permissions from child datasets of the current dataset"
+msgstr ""
+
 msgid ""
 "Remove the existing API key and generate a new random key. A dialog shows "
 "the new key and has an option to copy the key. Back up and secure the API "
 "key! The key string is displayed only one time, at creation."
 msgstr "删除现有的API密钥并生成一个新的随机密钥。对话框会显示新密钥，并具有复制密钥的选项。请备份并保护好API密钥！关键字字符串在创建时仅显示一次。"
+
+msgid ""
+"Removes the ACL and permissions recursively  from all child datasets of the "
+"current dataset, including all directories and files contained within those "
+"child datasets. This can make data inaccessible until new permissions are "
+"created."
+msgstr ""
 
 msgid "Rename"
 msgstr "重命名"
@@ -10320,8 +10384,14 @@ msgstr "转速（RPM）"
 msgid "Routing Key"
 msgstr "路由键"
 
+msgid "Rsync Configure"
+msgstr ""
+
 msgid "Rsync Mode"
 msgstr "Rsync模式"
+
+msgid "Rsync Module"
+msgstr ""
 
 msgid "Rsync Tasks"
 msgstr "Rsync任务"
@@ -10374,6 +10444,9 @@ msgstr "S.M.A.R.T测试结果"
 msgid "S.M.A.R.T Test Results of "
 msgstr "S.M.A.R.T测试结果 "
 
+msgid "S.M.A.R.T."
+msgstr ""
+
 msgid "S.M.A.R.T. Test"
 msgstr "S.M.A.R.T.测试"
 
@@ -10383,8 +10456,8 @@ msgstr "S.M.A.R.T.测试"
 msgid "S.M.A.R.T. extra options"
 msgstr "S.M.A.R.T.附加选项"
 
-msgid "S3 Configuration Options"
-msgstr "S3配置选项"
+msgid "S3"
+msgstr ""
 
 msgid "SAVE"
 msgstr "保存"
@@ -10436,6 +10509,9 @@ msgid ""
 "(submission)."
 msgstr "SMTP端口号。通常为<i> 25,465 </i>（安全SMTP）或<i> 587 </i>（提交）。"
 
+msgid "SNMP"
+msgstr ""
+
 msgid "SNMP Community"
 msgstr "SNMP社区"
 
@@ -10447,6 +10523,9 @@ msgstr "SNMP v3支持"
 
 msgid "SNMPv3 Security Model"
 msgstr "SNMPv3安全模型"
+
+msgid "SSH"
+msgstr ""
 
 msgid "SSH Connection"
 msgstr "SSH连接"
@@ -10567,6 +10646,9 @@ msgstr "正在保存权限"
 
 msgid "Saving Permissions..."
 msgstr "正在保存权限..."
+
+msgid "Scan This QR Code"
+msgstr ""
 
 msgid "Schedule"
 msgstr "计划"
@@ -12275,6 +12357,11 @@ msgstr "快照已成功拍摄。"
 msgid "Snapshots"
 msgstr "快照"
 
+msgid ""
+"Some authentication tools default to 30 seconds and do not support custom "
+"intervals."
+msgstr ""
+
 msgid "Sort languages by:"
 msgstr "语言排序方式："
 
@@ -12470,6 +12557,9 @@ msgstr "如果存在快照，则停止回滚："
 msgid "Stop Scrub"
 msgstr "停止清理"
 
+msgid "Stop TrueCommand Cloud Connection"
+msgstr ""
+
 msgid "Stop this cloud sync?"
 msgstr "停止此云同步吗？"
 
@@ -12532,6 +12622,12 @@ msgstr "条带ACLs"
 
 msgid "Stripe"
 msgstr "条带"
+
+msgid "Stripping ACLs"
+msgstr ""
+
+msgid "Stripping ACLs..."
+msgstr ""
 
 msgid ""
 "Stripping the ACL resets dataset permissions. This can make data "
@@ -12730,6 +12826,9 @@ msgstr ""
 msgid "TEST CHANGES"
 msgstr ""
 
+msgid "TFTP"
+msgstr ""
+
 msgid "TLS"
 msgstr ""
 
@@ -12908,6 +13007,11 @@ msgstr ""
 "\"target=\"_blank\">devfs（8</a>规则集编号在安装时强制执行 <b> devfs </b>在监狱里。默认的<i> 0 "
 "</i>表示不执行任何规则集。仅当启用<b> allow_mount </b>和<b> allow_mount_devfs </b>权限并将<b> "
 "enforce_statfs </b>设置为a时，才能将<b> devfs </b>装入监狱。值小于<i> 2 </i>。"
+
+msgid ""
+"The <i>Alias</i> field can either be left empty or  have an alias defined "
+"for each path in the share."
+msgstr ""
 
 msgid "The AFP"
 msgstr "AFP"
@@ -13474,6 +13578,11 @@ msgstr "必须重新启动这些服务才能导出池："
 msgid "These services must be stopped to export the pool:"
 msgstr "必须停止这些服务才能导出池："
 
+msgid ""
+"These settings require the reconfiguration of any existing client.  After "
+"saving these changes, use your device to scan the QR Code."
+msgstr ""
+
 msgid "These unknown processes are using this pool:"
 msgstr ""
 
@@ -13496,6 +13605,13 @@ msgstr "该数据集"
 
 msgid "This Dataset and Child Datasets"
 msgstr "此数据集和子数据集"
+
+msgid ""
+"This action removes all ACLs from the current  dataset and any directories "
+"or files contained within this  dataset. Stripping the ACL resets dataset "
+"permissions. This  can make data inaccessible until new permissions are "
+"created."
+msgstr ""
 
 msgid ""
 "This allows your TrueNAS system to be monitored and administrated by "
@@ -13673,6 +13789,14 @@ msgid ""
 msgstr "要激活此定期快照计划，请设置此选项。要禁用此任务而不删除它，请取消设置此选项。"
 
 msgid ""
+"To define a custom shortcut for the <i>Path</i>,  enter a memorable name. "
+"Example: <i>/nfsshare</i>. NFS clients  can connect using the <i>Alias</i> "
+"instead of the <i>Path</i>  when the share is active. A share with multiple "
+"paths requires  either not using aliases or defining an alias for each path "
+"in  the share."
+msgstr ""
+
+msgid ""
 "To update the current software license or upgrade from TrueNAS Core® to "
 "TrueNAS  Enterprise®, copy the text of the TrueNAS license and paste it in "
 "this box."
@@ -13812,11 +13936,11 @@ msgstr "关闭硬件卸载以进行网络流量处理。警告：禁用硬件卸
 msgid "Two-Factor Auth"
 msgstr "双重验证"
 
+msgid "Two-Factor Authentication"
+msgstr ""
+
 msgid "Two-Factor Authentication Code"
 msgstr "双重身份验证码"
-
-msgid "Two-Factor Authentication Settings"
-msgstr "双重身份验证设置"
 
 msgid "Two-factor authentication IS currently enabled."
 msgstr "当前启用了双重身份验证。"
@@ -13862,6 +13986,9 @@ msgstr "正在更新"
 
 msgid "UPDATE LICENSE"
 msgstr "更新许可"
+
+msgid "UPS"
+msgstr ""
 
 msgid "UPS Mode"
 msgstr "UPS 模式"
@@ -14179,6 +14306,9 @@ msgstr ""
 "</i>设置之外。例如，Window设置为1"
 "表示当前密码前后的一个密码有效。留下三个有效的密码。扩展Window在高延迟情况下很有用。重要说明：双重身份验证是基于时间的，要求正确设置系统时间。"
 
+msgid "Use ACL Manager"
+msgstr ""
+
 msgid "Use Apple-style Character Encoding"
 msgstr "使用Apple-style的字符编码"
 
@@ -14196,6 +14326,9 @@ msgstr "使用HTTPS连接到<b> CheckIP服务器</b>。"
 
 msgid "Use HTTPS for the connection to the server that updates  the DNS record."
 msgstr "使用HTTPS连接到更新DNS记录的服务器。"
+
+msgid "Use Permissions Editor"
+msgstr ""
 
 msgid "Use Signature Version 2"
 msgstr "使用签名版本2"
@@ -14334,6 +14467,9 @@ msgstr "用户对象配额"
 
 msgid "User Quotas"
 msgstr "用户配额"
+
+msgid "User Settings"
+msgstr ""
 
 msgid "User account password for logging into the  remote system."
 msgstr "登录到远程系统的用户帐户密码。"
@@ -14539,6 +14675,9 @@ msgstr "验证凭据"
 
 msgid "Verify Deletion of "
 msgstr "验证删除 "
+
+msgid "Verify Email Address"
+msgstr ""
 
 msgid "Verify certificate authenticity."
 msgstr "验证证书的真实性。"

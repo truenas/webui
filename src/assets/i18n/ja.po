@@ -602,6 +602,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"A message with verification instructions has been sent to the new email "
+"address. Please verify the email address before continuing."
+msgstr ""
+
+msgid ""
 "A new jail hostid, if desired.<br> <b>Example hostid:</b> "
 "<i>1a2bc345-678d-90e1-23fa-4b56c78901de</i>."
 msgstr ""
@@ -701,6 +706,9 @@ msgid "ADD"
 msgstr ""
 
 msgid "AFP"
+msgstr ""
+
+msgid "AFP (Apple File Protocol)"
 msgstr ""
 
 msgid "AFP3 Unix Privs"
@@ -1165,6 +1173,9 @@ msgstr "アラート"
 msgid "Algorithm"
 msgstr "アルゴリズム"
 
+msgid "Alias"
+msgstr ""
+
 msgid "Aliases"
 msgstr "エイリアス"
 
@@ -1612,6 +1623,9 @@ msgstr "アーカイブ"
 msgid "Are you sure you want to deregister TrueCommand Cloud Service?"
 msgstr ""
 
+msgid "Are you sure you want to stop connecting to the TrueCommand Cloud Service?"
+msgstr ""
+
 msgid "Are you sure you want to sync from peer?"
 msgstr "ピアから同期してもよろしいですか？"
 
@@ -1902,6 +1916,13 @@ msgstr "アップデートする前に、リリースノートをお読みくだ
 
 msgid "Begin"
 msgstr "始める"
+
+msgid ""
+"Beginning in 2013, Apple began using the SMB sharing protocol as the "
+"default option    for file sharing and ceased development of the AFP "
+"sharing protocol. It is recommended to use    SMB sharing over AFP unless "
+"files will be shared with legacy Apple products."
+msgstr ""
 
 msgid "Berkeley Packet Filter"
 msgstr ""
@@ -2972,6 +2993,12 @@ msgstr ""
 msgid "Config could not be downloaded"
 msgstr ""
 
+msgid "Configuration"
+msgstr ""
+
+msgid "Configuration Options"
+msgstr ""
+
 msgid "Configure"
 msgstr "設定"
 
@@ -3143,6 +3170,9 @@ msgstr "続ける"
 msgid "Continue to Legacy UI"
 msgstr ""
 
+msgid "Continue with AFP Setup"
+msgstr ""
+
 msgid "Continue with download?"
 msgstr "ダウンロードを続行しますか?"
 
@@ -3246,6 +3276,9 @@ msgstr "プールの作成:"
 
 msgid "Create a recommended formation of vdevs in a pool."
 msgstr "Poolに推奨されるvdevのフォーメーションを作成します。"
+
+msgid "Create an SMB Share"
+msgstr ""
 
 msgid "Create more data vdevs like the first."
 msgstr ""
@@ -4243,6 +4276,9 @@ msgid "Dry Run"
 msgstr ""
 
 msgid "Dry Run Cloud Sync Task"
+msgstr ""
+
+msgid "Dynamic DNS"
 msgstr ""
 
 msgid "E-mail address that will receive SNMP service messages."
@@ -5664,6 +5700,9 @@ msgstr ""
 msgid "Extra Users"
 msgstr ""
 
+msgid "FTP"
+msgstr ""
+
 msgid "FTP Host to connect to. Example: <i>ftp.example.com</i>."
 msgstr ""
 
@@ -6694,6 +6733,9 @@ msgid ""
 "New</i> to create a new SSH key for this credential."
 msgstr ""
 
+msgid "Important"
+msgstr ""
+
 msgid "Importing Disk"
 msgstr ""
 
@@ -7150,6 +7192,9 @@ msgid ""
 msgstr ""
 
 msgid "LEGACY WEB INTERFACE"
+msgstr ""
+
+msgid "LLDP"
 msgstr ""
 
 msgid "LOGIN TO PROVIDER"
@@ -8540,6 +8585,12 @@ msgstr ""
 msgid "Open TrueCommand User Interface"
 msgstr ""
 
+msgid "Open VPN Client"
+msgstr ""
+
+msgid "Open VPN Server"
+msgstr ""
+
 msgid "OpenVPN Client Settings"
 msgstr ""
 
@@ -9342,6 +9393,9 @@ msgstr ""
 msgid "Rebuild Directory Service Cache"
 msgstr ""
 
+msgid "Recommendation"
+msgstr ""
+
 msgid "Recommended block size based on pool topology:"
 msgstr ""
 
@@ -9510,10 +9564,20 @@ msgstr ""
 msgid "Remove passphrase"
 msgstr ""
 
+msgid "Remove the ACL and permissions from child datasets of the current dataset"
+msgstr ""
+
 msgid ""
 "Remove the existing API key and generate a new random key. A dialog shows "
 "the new key and has an option to copy the key. Back up and secure the API "
 "key! The key string is displayed only one time, at creation."
+msgstr ""
+
+msgid ""
+"Removes the ACL and permissions recursively  from all child datasets of the "
+"current dataset, including all directories and files contained within those "
+"child datasets. This can make data inaccessible until new permissions are "
+"created."
 msgstr ""
 
 msgid "Rename"
@@ -9820,7 +9884,13 @@ msgstr ""
 msgid "Routing Key"
 msgstr ""
 
+msgid "Rsync Configure"
+msgstr ""
+
 msgid "Rsync Mode"
+msgstr ""
+
+msgid "Rsync Module"
 msgstr ""
 
 msgid "Rsync Tasks"
@@ -9872,6 +9942,9 @@ msgstr ""
 msgid "S.M.A.R.T Test Results of "
 msgstr ""
 
+msgid "S.M.A.R.T."
+msgstr ""
+
 msgid "S.M.A.R.T. Test"
 msgstr ""
 
@@ -9881,7 +9954,7 @@ msgstr "S.M.A.R.T. テスト"
 msgid "S.M.A.R.T. extra options"
 msgstr ""
 
-msgid "S3 Configuration Options"
+msgid "S3"
 msgstr ""
 
 msgid "SAVE"
@@ -9934,6 +10007,9 @@ msgid ""
 "(submission)."
 msgstr "SMTPポート番号。通常<i>25 か 465</i> （セキュアSMTP）、または <i>587</i> （サブミッション）。"
 
+msgid "SNMP"
+msgstr ""
+
 msgid "SNMP Community"
 msgstr ""
 
@@ -9944,6 +10020,9 @@ msgid "SNMP v3 Support"
 msgstr ""
 
 msgid "SNMPv3 Security Model"
+msgstr ""
+
+msgid "SSH"
 msgstr ""
 
 msgid "SSH Connection"
@@ -10064,6 +10143,9 @@ msgid "Saving Permissions"
 msgstr ""
 
 msgid "Saving Permissions..."
+msgstr ""
+
+msgid "Scan This QR Code"
 msgstr ""
 
 msgid "Schedule"
@@ -11695,6 +11777,11 @@ msgstr ""
 msgid "Snapshots"
 msgstr ""
 
+msgid ""
+"Some authentication tools default to 30 seconds and do not support custom "
+"intervals."
+msgstr ""
+
 msgid "Sort languages by:"
 msgstr "言語の並べ替え："
 
@@ -11888,6 +11975,9 @@ msgstr ""
 msgid "Stop Scrub"
 msgstr ""
 
+msgid "Stop TrueCommand Cloud Connection"
+msgstr ""
+
 msgid "Stop this cloud sync?"
 msgstr ""
 
@@ -11947,6 +12037,12 @@ msgid "Strip ACLs"
 msgstr ""
 
 msgid "Stripe"
+msgstr ""
+
+msgid "Stripping ACLs"
+msgstr ""
+
+msgid "Stripping ACLs..."
 msgstr ""
 
 msgid ""
@@ -12144,6 +12240,9 @@ msgstr ""
 msgid "TEST CHANGES"
 msgstr ""
 
+msgid "TFTP"
+msgstr ""
+
 msgid "TLS"
 msgstr ""
 
@@ -12311,6 +12410,11 @@ msgid ""
 "enforced. Mounting <b>devfs</b> inside a jail is only possible when the "
 "<b>allow_mount</b> and <b>allow_mount_devfs</b> permissions are enabled and "
 "<b>enforce_statfs</b> is set to a value lower than <i>2</i>."
+msgstr ""
+
+msgid ""
+"The <i>Alias</i> field can either be left empty or  have an alias defined "
+"for each path in the share."
 msgstr ""
 
 msgid "The AFP"
@@ -12857,6 +12961,11 @@ msgstr ""
 msgid "These services must be stopped to export the pool:"
 msgstr ""
 
+msgid ""
+"These settings require the reconfiguration of any existing client.  After "
+"saving these changes, use your device to scan the QR Code."
+msgstr ""
+
 msgid "These unknown processes are using this pool:"
 msgstr ""
 
@@ -12878,6 +12987,13 @@ msgid "This Dataset"
 msgstr ""
 
 msgid "This Dataset and Child Datasets"
+msgstr ""
+
+msgid ""
+"This action removes all ACLs from the current  dataset and any directories "
+"or files contained within this  dataset. Stripping the ACL resets dataset "
+"permissions. This  can make data inaccessible until new permissions are "
+"created."
 msgstr ""
 
 msgid ""
@@ -13051,6 +13167,14 @@ msgid ""
 msgstr ""
 
 msgid ""
+"To define a custom shortcut for the <i>Path</i>,  enter a memorable name. "
+"Example: <i>/nfsshare</i>. NFS clients  can connect using the <i>Alias</i> "
+"instead of the <i>Path</i>  when the share is active. A share with multiple "
+"paths requires  either not using aliases or defining an alias for each path "
+"in  the share."
+msgstr ""
+
+msgid ""
 "To update the current software license or upgrade from TrueNAS Core® to "
 "TrueNAS  Enterprise®, copy the text of the TrueNAS license and paste it in "
 "this box."
@@ -13189,10 +13313,10 @@ msgstr ""
 msgid "Two-Factor Auth"
 msgstr ""
 
-msgid "Two-Factor Authentication Code"
+msgid "Two-Factor Authentication"
 msgstr ""
 
-msgid "Two-Factor Authentication Settings"
+msgid "Two-Factor Authentication Code"
 msgstr ""
 
 msgid "Two-factor authentication IS currently enabled."
@@ -13236,6 +13360,9 @@ msgid "UPDATE IN PROGRESS"
 msgstr ""
 
 msgid "UPDATE LICENSE"
+msgstr ""
+
+msgid "UPS"
 msgstr ""
 
 msgid "UPS Mode"
@@ -13538,6 +13665,9 @@ msgid ""
 "system time is set correctly."
 msgstr ""
 
+msgid "Use ACL Manager"
+msgstr ""
+
 msgid "Use Apple-style Character Encoding"
 msgstr ""
 
@@ -13554,6 +13684,9 @@ msgid "Use HTTPS for the connection to the  <b>CheckIP Server</b>."
 msgstr ""
 
 msgid "Use HTTPS for the connection to the server that updates  the DNS record."
+msgstr ""
+
+msgid "Use Permissions Editor"
 msgstr ""
 
 msgid "Use Signature Version 2"
@@ -13680,6 +13813,9 @@ msgid "User Object Quota"
 msgstr ""
 
 msgid "User Quotas"
+msgstr ""
+
+msgid "User Settings"
 msgstr ""
 
 msgid "User account password for logging into the  remote system."
@@ -13881,6 +14017,9 @@ msgid "Verify Credential"
 msgstr "認証情報を検証"
 
 msgid "Verify Deletion of "
+msgstr ""
+
+msgid "Verify Email Address"
 msgstr ""
 
 msgid "Verify certificate authenticity."
