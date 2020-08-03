@@ -29,7 +29,6 @@ export class DatasetPermissionsComponent implements OnDestroy {
   private entityForm: any;
   protected userField: any;
   protected groupField: any;
-  productType = window.localStorage.getItem('product_type');
 
   public fieldSets: FieldSet[] = [
     {
@@ -140,19 +139,10 @@ export class DatasetPermissionsComponent implements OnDestroy {
       id : 'use_acl',
       name : helptext.acl_manager_button,
       function : () => {
-        this.ws.call('filesystem.getacl', [this.datasetPath]).subscribe(res => {
-          if(res.acltype === 'POSIX1E') {
-            this.router.navigate(new Array('/').concat([
-              "storage", "pools", "id", this.datasetId.split('/')[0], "dataset",
-              "posix-acl", this.datasetId
-            ]));                    
-          } else {
-            this.router.navigate(new Array('/').concat([
-              "storage", "pools", "id", this.datasetId.split('/')[0], "dataset",
-              "acl", this.datasetId
-            ]));
-          }
-        })
+        this.router.navigate(new Array('/').concat([
+          "storage", "pools", "id", this.datasetId.split('/')[0], "dataset",
+          "acl", this.datasetId
+        ]));
       }
     }
   ];
@@ -167,11 +157,6 @@ export class DatasetPermissionsComponent implements OnDestroy {
     protected mdDialog: MatDialog,
     protected dialog: DialogService,
     protected router: Router) { }
-
-  // Temporarily hide ACL manager in SCALE
-  isCustActionVisible(actionId: string) {
-    return this.productType.includes('SCALE') ? false : true; 
-  }
 
   preInit(entityEdit: any) {
     entityEdit.isNew = true; // remove me when we find a way to get the permissions
