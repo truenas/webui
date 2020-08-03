@@ -955,13 +955,14 @@ export class CertificateAddComponent {
           if (data[key] === '') {
             data[key] = null;
           }
-
-          if (type_prop.length === 1 && data[key]) {
-            for (let i = 0; i < data[key].length; i++) {
-              cert_extensions[type_prop[0]][data[key][i]] = true;
+          if (data[key]) {
+            if (type_prop.length === 1) {
+              for (let i = 0; i < data[key].length; i++) {
+                cert_extensions[type_prop[0]][data[key][i]] = true;
+              }
+            } else {
+              cert_extensions[type_prop[0]][type_prop[1]] = data[key];
             }
-          } else {
-            cert_extensions[type_prop[0]][type_prop[1]] = data[key];
           }
           delete data[key];
         }

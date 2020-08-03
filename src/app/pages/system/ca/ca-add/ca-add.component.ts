@@ -818,8 +818,8 @@ export class CertificateAuthorityAddComponent {
             } else {
               cert_extensions[type_prop[0]][type_prop[1]] = data[key];
             }
-            delete data[key];
           }
+          delete data[key]
         }
       });
       data['cert_extensions'] = cert_extensions;
