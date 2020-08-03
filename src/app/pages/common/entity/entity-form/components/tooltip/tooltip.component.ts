@@ -16,38 +16,25 @@ export class TooltipComponent {
 
   public isShowTooltip: boolean;
   public tooltipMsgStyle: any;
-  public isLockTooltip: boolean = false;
   public isWizard: boolean = false;
 
   public positionString: string = 'Default';
   public isMoved: boolean = false;
 
+  public previousTooltip = [];
+
   constructor(public translate: TranslateService) {}
 
   showTooltip($event) {
     this.isShowTooltip = $event;
-
     let formParent = this.findParent();
-    let screenW = document.body.clientWidth;
-    let screenH = document.body.clientHeight;
-    let posX = this.tooltip.nativeElement.getBoundingClientRect().left;
-    let posY = this.tooltip.nativeElement.getBoundingClientRect().bottom;
-
-    let posLeft = this.tooltip.nativeElement.offsetLeft
     let posRight = this.tooltip.nativeElement.offsetLeft + this.tooltip.nativeElement.offsetWidth;
-    let posTop = this.tooltip.nativeElement.offsetTop
-    let posBottom = this.tooltip.nativeElement.offsetTop + this.tooltip.nativeElement.offsetHeight;
-
-    let dynamicWidth = this.message.length * 8.5;
-    let tooltipHeight = this.tooltip.nativeElement.scrollHeight;
-
     this.tooltipMsgStyle = {
       'right': '32px',
       'top':'-32px',
       'min-height':'64px'
     };
 
-    const fpr = formParent ? formParent.offsetLeft + formParent.offsetWidth : null;
     let insideJob = formParent ? (formParent.clientWidth - posRight > 300 ? true : false) : null;
 
     if(this.positionOverride){
@@ -57,23 +44,29 @@ export class TooltipComponent {
     }
   }
 
-  toggleVis(state?) {
+  toggleVis(this) {
+    const el = this.tooltip.nativeElement.children[1].children[0].classList;
+    let show = false;
+    for (let i = 0; i < el.length; i++) {
+      if (el[i] === 'show') {
+        show = true;
+      }
+    }
+
     const tooltips: any = document.getElementsByClassName('tooltip-container');
     for (let i = 0; i < tooltips.length; i++) {
-      tooltips[i].firstChild.classList.remove('show', 'lock');
+      tooltips[i].firstChild.classList.remove('show');
     }
-    if (state ==='lock') {
+   
+    if (!show) {
+      el.add('show');
+      this.dragTarget.reset();
+      this.isMoved = false;
       this.showTooltip(true);
-      this.isLockTooltip = true;
       this.isShowTooltip = true;
     } else {
       this.showTooltip(false);
-      this.isLockTooltip = false;
       this.isShowTooltip = false;
-      setTimeout(() =>{
-        this.dragTarget.reset();
-        this.isMoved = false;
-      }, 1000);
     }
   }
 
