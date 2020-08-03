@@ -808,6 +808,11 @@ msgstr ""
 "pousseront les métriques à l'aide de cette clé API."
 
 msgid ""
+"A message with verification instructions has been sent to the new email "
+"address. Please verify the email address before continuing."
+msgstr ""
+
+msgid ""
 "A new jail hostid, if desired.<br> <b>Example hostid:</b> "
 "<i>1a2bc345-678d-90e1-23fa-4b56c78901de</i>."
 msgstr ""
@@ -934,6 +939,9 @@ msgstr "AJOUTER"
 
 msgid "AFP"
 msgstr "AFP"
+
+msgid "AFP (Apple File Protocol)"
+msgstr ""
 
 msgid "AFP3 Unix Privs"
 msgstr "AFP3 Unix Privs"
@@ -1496,6 +1504,9 @@ msgstr "Alertes"
 
 msgid "Algorithm"
 msgstr "Algorithme"
+
+msgid "Alias"
+msgstr ""
 
 msgid "Aliases"
 msgstr "Alias"
@@ -2076,6 +2087,9 @@ msgstr "Archive"
 msgid "Are you sure you want to deregister TrueCommand Cloud Service?"
 msgstr "Êtes-vous sûr de vouloir annuler le service TrueCommand Cloud ?"
 
+msgid "Are you sure you want to stop connecting to the TrueCommand Cloud Service?"
+msgstr ""
+
 msgid "Are you sure you want to sync from peer?"
 msgstr "Êtes-vous sûr de vouloir synchroniser à partir de vos pairs ?"
 
@@ -2397,6 +2411,13 @@ msgstr "Avant la mise à jour, veuillez lire les notes de version."
 
 msgid "Begin"
 msgstr "Début"
+
+msgid ""
+"Beginning in 2013, Apple began using the SMB sharing protocol as the "
+"default option    for file sharing and ceased development of the AFP "
+"sharing protocol. It is recommended to use    SMB sharing over AFP unless "
+"files will be shared with legacy Apple products."
+msgstr ""
 
 msgid "Berkeley Packet Filter"
 msgstr "Berkeley Packet Filter"
@@ -3708,6 +3729,12 @@ msgstr "Compte d'ordinateur OU"
 msgid "Config could not be downloaded"
 msgstr "La configuration n'a pas pu être téléchargée"
 
+msgid "Configuration"
+msgstr ""
+
+msgid "Configuration Options"
+msgstr ""
+
 msgid "Configure"
 msgstr "Configurer"
 
@@ -3900,6 +3927,9 @@ msgstr "Continuer"
 msgid "Continue to Legacy UI"
 msgstr "Continuer vers l'ancienne interface utilisateur (Legacy UI)"
 
+msgid "Continue with AFP Setup"
+msgstr ""
+
 msgid "Continue with download?"
 msgstr "Continuer avec le téléchargement?"
 
@@ -4015,6 +4045,9 @@ msgstr "Créez un volume :"
 
 msgid "Create a recommended formation of vdevs in a pool."
 msgstr "Créer une formation recommandée de vdevs dans un volume."
+
+msgid "Create an SMB Share"
+msgstr ""
 
 msgid "Create more data vdevs like the first."
 msgstr "Créez plus de vdevs de données comme le premier."
@@ -5216,6 +5249,9 @@ msgstr "Essai à Vide"
 
 msgid "Dry Run Cloud Sync Task"
 msgstr "Essai à vide de la tâche de synchronisation Cloud"
+
+msgid "Dynamic DNS"
+msgstr ""
 
 msgid "E-mail address that will receive SNMP service messages."
 msgstr "Adresse électronique qui recevra les messages du service SNMP."
@@ -6992,6 +7028,9 @@ msgstr "Type d'étendue"
 msgid "Extra Users"
 msgstr "Utilisateurs supplémentaires"
 
+msgid "FTP"
+msgstr ""
+
 msgid "FTP Host to connect to. Example: <i>ftp.example.com</i>."
 msgstr "Hôte FTP auquel se connecter. Exemple: <i>ftp.exemple.com</i> ."
 
@@ -8189,6 +8228,9 @@ msgstr ""
 "Importez la clé privée d'une paire de clés SSH existante ou sélectionnez "
 "<i>Générer nouveau</i> pour créer une nouvelle clé SSH pour ce credential."
 
+msgid "Important"
+msgstr ""
+
 msgid "Importing Disk"
 msgstr "Importation du disque"
 
@@ -8720,6 +8762,9 @@ msgstr ""
 
 msgid "LEGACY WEB INTERFACE"
 msgstr "INTERFACE WEB LEGACY"
+
+msgid "LLDP"
+msgstr ""
 
 msgid "LOGIN TO PROVIDER"
 msgstr "CONNEXION AU FOURNISSEUR"
@@ -10339,6 +10384,12 @@ msgstr "Open Source"
 msgid "Open TrueCommand User Interface"
 msgstr "Ouvrir l'interface utilisateur TrueCommand"
 
+msgid "Open VPN Client"
+msgstr ""
+
+msgid "Open VPN Server"
+msgstr ""
+
 msgid "OpenVPN Client Settings"
 msgstr "Paramètres du client OpenVPN"
 
@@ -11283,6 +11334,9 @@ msgstr "Redémarrer après la mise à jour"
 msgid "Rebuild Directory Service Cache"
 msgstr "Reconstruction du cache du service d'annuaire"
 
+msgid "Recommendation"
+msgstr ""
+
 msgid "Recommended block size based on pool topology:"
 msgstr ""
 
@@ -11469,6 +11523,9 @@ msgstr "Supprimer le fichier ?"
 msgid "Remove passphrase"
 msgstr "Supprimer la passphrase"
 
+msgid "Remove the ACL and permissions from child datasets of the current dataset"
+msgstr ""
+
 msgid ""
 "Remove the existing API key and generate a new random key. A dialog shows "
 "the new key and has an option to copy the key. Back up and secure the API "
@@ -11478,6 +11535,13 @@ msgstr ""
 "boîte de dialogue affiche la nouvelle clé et propose une option pour copier "
 "la clé. Sauvegardez et sécurisez la clé API ! La chaîne de la clé n'est "
 "affichée qu'une seule fois, à la création."
+
+msgid ""
+"Removes the ACL and permissions recursively  from all child datasets of the "
+"current dataset, including all directories and files contained within those "
+"child datasets. This can make data inaccessible until new permissions are "
+"created."
+msgstr ""
 
 msgid "Rename"
 msgstr "Renommer"
@@ -11823,8 +11887,14 @@ msgstr "Vitesse de rotation (RPM)"
 msgid "Routing Key"
 msgstr "Clé de routage"
 
+msgid "Rsync Configure"
+msgstr ""
+
 msgid "Rsync Mode"
 msgstr "Mode Rsync"
+
+msgid "Rsync Module"
+msgstr ""
 
 msgid "Rsync Tasks"
 msgstr "Rsync"
@@ -11883,6 +11953,9 @@ msgstr "Résultats du test S.M.A.R.T"
 msgid "S.M.A.R.T Test Results of "
 msgstr "Résultats du test S.M.A.R.T de "
 
+msgid "S.M.A.R.T."
+msgstr ""
+
 msgid "S.M.A.R.T. Test"
 msgstr "Test S.M.A.R.T"
 
@@ -11892,8 +11965,8 @@ msgstr "Tests S.M.A.R.T"
 msgid "S.M.A.R.T. extra options"
 msgstr "Options supplémentaires S.M.A.R.T"
 
-msgid "S3 Configuration Options"
-msgstr "Options de configuration S3"
+msgid "S3"
+msgstr ""
 
 msgid "SAVE"
 msgstr "ENREGISTRER"
@@ -11947,6 +12020,9 @@ msgstr ""
 "Numéro de port SMTP. Typiquement <i>25, 465</i> (SMTP sécurisé), ou "
 "<i>587</i> (soumission)."
 
+msgid "SNMP"
+msgstr ""
+
 msgid "SNMP Community"
 msgstr "Communauté SNMP"
 
@@ -11958,6 +12034,9 @@ msgstr "Support SNMP v3"
 
 msgid "SNMPv3 Security Model"
 msgstr "Modèle de sécurité SNMPv3"
+
+msgid "SSH"
+msgstr ""
 
 msgid "SSH Connection"
 msgstr "Connexion SSH"
@@ -12080,6 +12159,9 @@ msgstr "Enregistrement des autorisations"
 
 msgid "Saving Permissions..."
 msgstr "Enregistrement des autorisations..."
+
+msgid "Scan This QR Code"
+msgstr ""
 
 msgid "Schedule"
 msgstr "Planifier"
@@ -14220,6 +14302,11 @@ msgstr "Instantané pris avec succès."
 msgid "Snapshots"
 msgstr "Instantanés"
 
+msgid ""
+"Some authentication tools default to 30 seconds and do not support custom "
+"intervals."
+msgstr ""
+
 msgid "Sort languages by:"
 msgstr "Trier les langues par :"
 
@@ -14451,6 +14538,9 @@ msgstr "Arrêter la restauration si un instantané existe :"
 msgid "Stop Scrub"
 msgstr "Arrêter le Scrub"
 
+msgid "Stop TrueCommand Cloud Connection"
+msgstr ""
+
 msgid "Stop this cloud sync?"
 msgstr "Arrêter cette synchronisation Cloud ?"
 
@@ -14522,6 +14612,12 @@ msgstr "Supprimer les ACLs"
 
 msgid "Stripe"
 msgstr "Stripe"
+
+msgid "Stripping ACLs"
+msgstr ""
+
+msgid "Stripping ACLs..."
+msgstr ""
 
 msgid ""
 "Stripping the ACL resets dataset permissions. This can make data "
@@ -14735,6 +14831,9 @@ msgstr "TDB"
 msgid "TEST CHANGES"
 msgstr "TESTER CHANGEMENTS"
 
+msgid "TFTP"
+msgstr ""
+
 msgid "TLS"
 msgstr "TLS"
 
@@ -14917,6 +15016,11 @@ msgstr ""
 "environnement jail n'est possible que lorsque les autorisations "
 "<b>allow_mount</b> et <b>allow_mount_devfs</b> sont activées et que "
 "<b>enforce_statfs</b> a une valeur inférieure à <i>2</i>."
+
+msgid ""
+"The <i>Alias</i> field can either be left empty or  have an alias defined "
+"for each path in the share."
+msgstr ""
 
 msgid "The AFP"
 msgstr "L'AFP"
@@ -15665,6 +15769,11 @@ msgstr "Ces services doivent être relancés pour exporter le volume :"
 msgid "These services must be stopped to export the pool:"
 msgstr "Ces services doivent être arrêtés pour exporter le volume :"
 
+msgid ""
+"These settings require the reconfiguration of any existing client.  After "
+"saving these changes, use your device to scan the QR Code."
+msgstr ""
+
 msgid "These unknown processes are using this pool:"
 msgstr ""
 
@@ -15689,6 +15798,13 @@ msgstr "Ce dataset"
 
 msgid "This Dataset and Child Datasets"
 msgstr "Ce dataset et ses datasets enfants"
+
+msgid ""
+"This action removes all ACLs from the current  dataset and any directories "
+"or files contained within this  dataset. Stripping the ACL resets dataset "
+"permissions. This  can make data inaccessible until new permissions are "
+"created."
+msgstr ""
 
 msgid ""
 "This allows your TrueNAS system to be monitored and administrated by "
@@ -15908,6 +16024,14 @@ msgstr ""
 "option."
 
 msgid ""
+"To define a custom shortcut for the <i>Path</i>,  enter a memorable name. "
+"Example: <i>/nfsshare</i>. NFS clients  can connect using the <i>Alias</i> "
+"instead of the <i>Path</i>  when the share is active. A share with multiple "
+"paths requires  either not using aliases or defining an alias for each path "
+"in  the share."
+msgstr ""
+
+msgid ""
 "To update the current software license or upgrade from TrueNAS Core® to "
 "TrueNAS  Enterprise®, copy the text of the TrueNAS license and paste it in "
 "this box."
@@ -16064,11 +16188,11 @@ msgstr ""
 msgid "Two-Factor Auth"
 msgstr "Authentification à deux facteurs"
 
+msgid "Two-Factor Authentication"
+msgstr ""
+
 msgid "Two-Factor Authentication Code"
 msgstr "Code d'authentification à deux facteurs"
-
-msgid "Two-Factor Authentication Settings"
-msgstr "Paramètres d'authentification à deux facteurs"
 
 msgid "Two-factor authentication IS currently enabled."
 msgstr "L'authentification à deux facteurs est actuellement activée."
@@ -16119,6 +16243,9 @@ msgstr "MISE À JOUR EN COURS"
 
 msgid "UPDATE LICENSE"
 msgstr "MISE À JOUR LICENCE"
+
+msgid "UPS"
+msgstr ""
 
 msgid "UPS Mode"
 msgstr "Mode UPS"
@@ -16490,6 +16617,9 @@ msgstr ""
 "L'authentification à deux facteurs est basée sur le temps et nécessite que "
 "l'heure du système soit correctement réglée."
 
+msgid "Use ACL Manager"
+msgstr ""
+
 msgid "Use Apple-style Character Encoding"
 msgstr "Utiliser l'encodage de caractères de style Apple"
 
@@ -16511,6 +16641,9 @@ msgid "Use HTTPS for the connection to the server that updates  the DNS record."
 msgstr ""
 "Utilisez HTTPS pour la connexion au serveur qui met à jour l'enregistrement "
 "DNS."
+
+msgid "Use Permissions Editor"
+msgstr ""
 
 msgid "Use Signature Version 2"
 msgstr "Utiliser Signature Version 2"
@@ -16669,6 +16802,9 @@ msgstr "Quota d'objet utilisateur"
 
 msgid "User Quotas"
 msgstr "Quotas utilisateur"
+
+msgid "User Settings"
+msgstr ""
 
 msgid "User account password for logging into the  remote system."
 msgstr "Mot de passe du compte utilisateur pour se connecter au système distant."
@@ -16907,6 +17043,9 @@ msgstr "Vérifier les informations d'identification"
 
 msgid "Verify Deletion of "
 msgstr "Vérifier la suppression de "
+
+msgid "Verify Email Address"
+msgstr ""
 
 msgid "Verify certificate authenticity."
 msgstr "Vérifier l'authenticité du certificat."
