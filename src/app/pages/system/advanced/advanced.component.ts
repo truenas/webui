@@ -169,7 +169,7 @@ export class AdvancedComponent implements OnDestroy {
             ...helptext_system_advanced.swapondrive_validation,
             (control: FormControl): ValidationErrors => {
               const config = this.fieldConfig.find(c => c.name === 'swapondrive');
-              const errors = control.value && isNaN(this.storage.convertHumanStringToNum(control.value))
+              const errors = control.value && isNaN(this.storage.convertHumanStringToNum(control.value, false, 'g'))
                 ? { invalid_byte_string: true }
                 : null
 
@@ -197,7 +197,7 @@ export class AdvancedComponent implements OnDestroy {
           validation : [
             (control: FormControl): ValidationErrors => {
               const config = this.fieldConfig.find(c => c.name === 'overprovision');
-              const errors = control.value && isNaN(this.storage.convertHumanStringToNum(control.value))
+              const errors = control.value && isNaN(this.storage.convertHumanStringToNum(control.value, false, 'g'))
                 ? { invalid_byte_string: true }
                 : null
 
