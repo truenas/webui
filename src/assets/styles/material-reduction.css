@@ -128,6 +128,7 @@ entity-table .mat-toolbar.mat-card-toolbar{
   padding: 4px 0;
 }
 
+.form-element .mat-form-field-wrapper,
 .form-element input[type = "password"],
 .form-element input[type = "email"],
 .form-element input[type = "text"],
@@ -188,6 +189,19 @@ tooltip button i{
   font-size: 16px !important;
 }
 
+/* Normalize mat-select */
+.mat-form-field-label-wrapper,
+.mat-form-field-underline,
+.mat-form-field-subscript-wrapper {
+  display: none;
+}
+
+.mat-form-field-appearance-legacy .mat-form-field-infix {
+  padding: 0;
+  border: 0;
+}
+
+/* Buttons */
 .mat-button{
   border-radius : 0 !important;
 }
