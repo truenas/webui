@@ -13,7 +13,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T919.feature', 'Verify vlan with lagg0 parent interface using secondary failover group functions')
+@scenario('features/NAS-T920.feature', 'Verify vlan with lagg0 parent interface using secondary failover group functions')
 def test_verify_vlan_with_lagg0_parent_interface_using_secondary_failover_group_functions(driver):
     """Verify vlan with lagg0 parent interface using secondary failover group functions."""
 
