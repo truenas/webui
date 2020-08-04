@@ -30,6 +30,10 @@ export class FormUploadComponent {
     protected ws: WebSocketService,protected http: HttpClient, private loader: AppLoaderService,
     public dialog: DialogService, public translate: TranslateService) {}
 
+  public fileBtnClick(){
+    this.fileInput.nativeElement.click();
+  }
+
   upload(location = "/tmp/") {
     if(this.config.updater && this.config.parent ){
       this.config.updater(this, this.config.parent);
@@ -38,6 +42,7 @@ export class FormUploadComponent {
   this.loader.open();
 
   const fileBrowser = this.fileInput.nativeElement;
+
   if (fileBrowser.files && fileBrowser.files[0]) {
     const formData: FormData = new FormData();
     formData.append('data', JSON.stringify({

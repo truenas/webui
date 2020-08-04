@@ -188,18 +188,29 @@ entity-table .mat-toolbar.mat-card-toolbar{
   padding: 4px 0;
 }
 
+:root{
+  --light-theme-lines:rgba(0,0,0,0.15);
+  --dark-theme-lines:rgba(255,255,255,0.15);
+  --lines: var(--dark-theme-lines);
+}
+
+.mat-divider{
+  background: var(--lines) !important;
+}
+
 .form-element .mat-form-field-wrapper,
 .form-element input[type = "password"],
 .form-element input[type = "email"],
 .form-element input[type = "text"],
+.form-element input[type = "number"],
 .form-element select{
   width: 100%;
   background-color: var(--bg1);
   color: var(--fg1);
-  border: solid 1px var(--alt-fg1);
+  border: solid 1px var(--lines);
   padding: 8px;
   box-sizing: border-box;
-  color: var(--fg2);
+  color: var(--fg1);
 }
 
 .form-element input[type = "password"],
@@ -215,6 +226,10 @@ entity-table .mat-toolbar.mat-card-toolbar{
 
 .margin-for-error{
   position: static !important;
+}
+
+.mat-checkbox-frame{
+  border-color: var(--fg2) !important;
 }
 
 .mat-checkbox{
@@ -248,16 +263,25 @@ tooltip button i{
 /* Buttons */
 .mat-button{
   border-radius : 0 !important;
+  text-transform: capitalize !important;
 }
 
+button.mat-button.btn-default, button.mat-button.mat-accent.btn-default,
 button.mat-button[type="button"],
 button.mat-button.mat-accent[type="button"]{
   background-color:var(--alt-bg2) !important;
-  color:var(--fg1) !important;
+  color:var(--fg2) !important;
 }
 
 button.mat-button[type="button"]:hover,
 button.mat-button.mat-accent[type="button"]:hover{
   background-color:var(--alt-bg1) !important;
   color:var(--fg2) !important;
+}
+
+/* Nested Cards */
+.mat-card .form-card.mat-card{
+  box-shadow: unset;
+  background-color: none;
+  border: solid 1px var(--bg1);
 }
