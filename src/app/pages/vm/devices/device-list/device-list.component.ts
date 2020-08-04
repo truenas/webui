@@ -45,6 +45,16 @@ export class DeviceListComponent {
     paging : true,
     sorting : {columns : this.columns},
   };
+
+  protected globalConfig = {
+    id: "config",
+    tooltip: T('Close (return to VM list'),
+    icon: 'highlight_off',
+    onClick: () => {
+      this.router.navigate(new Array('').concat(['vm']));
+    }
+  };
+
   constructor(protected router: Router, protected aroute: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService, protected loader: AppLoaderService,
               public dialogService: DialogService, private cdRef:ChangeDetectorRef,
@@ -175,14 +185,5 @@ export class DeviceListComponent {
       this.cdRef.detectChanges();
       this.queryCallOption[0][0].push(parseInt(this.pk,10));
     });
-  }
-
-  getAddActions() {
-    return [{
-      label: T("Go Back to Virtual Machines"),
-      onClick: () => {
-        this.router.navigate(new Array('').concat(['vm']));
-      }
-    }];
   }
 }
