@@ -203,6 +203,7 @@ entity-table .mat-toolbar.mat-card-toolbar{
 .form-element input[type = "email"],
 .form-element input[type = "text"],
 .form-element input[type = "number"],
+.form-element textarea,
 .form-element select{
   width: 100%;
   background-color: var(--bg1);
