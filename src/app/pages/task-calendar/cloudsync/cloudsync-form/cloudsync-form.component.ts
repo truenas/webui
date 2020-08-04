@@ -316,7 +316,7 @@ export class CloudsyncFormComponent implements OnInit {
     value: true,
   },
   {
-    type: 'input',
+    type: 'chip',
     name: 'bwlimit',
     placeholder: helptext.bwlimit_placeholder,
     tooltip: helptext.bwlimit_tooltip,
@@ -682,20 +682,16 @@ export class CloudsyncFormComponent implements OnInit {
                           data.schedule.dow;
 
     if (data.bwlimit) {
-      let bwlimit_str = "";
+      const bwlimit = [];
       for (let i = 0; i < data.bwlimit.length; i++) {
         let sub_bwlimit = data.bwlimit[i].time + ",off";
         if (data.bwlimit[i].bandwidth != null) {
           const bw = (<any>window).filesize(data.bwlimit[i].bandwidth, {output: "object"});
           sub_bwlimit = data.bwlimit[i].time + "," + bw.value + bw.symbol;
         }
-        if (bwlimit_str != "") {
-          bwlimit_str += " " + sub_bwlimit;
-        } else {
-          bwlimit_str += sub_bwlimit;
-        }
+        bwlimit.push(sub_bwlimit);
       }
-      data.bwlimit = bwlimit_str;
+      data.bwlimit = bwlimit;
     }
 
     if (data.exclude) {
@@ -707,7 +703,6 @@ export class CloudsyncFormComponent implements OnInit {
 
   handleBwlimit(bwlimit: any): Array<any> {
     const bwlimtArr = [];
-    bwlimit = bwlimit.trim().split(' ');
 
     for (let i = 0; i < bwlimit.length; i++) {
       const sublimitArr = bwlimit[i].split(',');
@@ -737,6 +732,7 @@ export class CloudsyncFormComponent implements OnInit {
     }
     return bwlimtArr;
   }
+
   onSubmit(event: Event) {
     event.preventDefault();
     event.stopPropagation();
@@ -787,7 +783,7 @@ export class CloudsyncFormComponent implements OnInit {
     value['schedule'] = schedule;
 
     if (value.bwlimit !== undefined) {
-      value.bwlimit = value.bwlimit.trim() === '' ? [] : this.handleBwlimit(value.bwlimit);
+      value.bwlimit = this.handleBwlimit(value.bwlimit);
     }
 
     if (value.exclude !== undefined) {
