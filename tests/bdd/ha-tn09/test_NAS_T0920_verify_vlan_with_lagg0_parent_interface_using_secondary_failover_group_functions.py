@@ -23,19 +23,19 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """The browser is open navigate to "{nas_url}"."""
     if nas_url not in driver.current_url:
         driver.get(f"{nas_url}/ui/sessions/signin")
-        time.sleep(3)
+        time.sleep(5)
 
 
 @when(parsers.parse('Login appear enter "{user}" and "{password}"'))
 def login_appear_enter_user_and_password(driver, user, password):
     """Login appear enter "{user}" and "{password}"."""
     if not is_element_present(driver, 'xpath', '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        wait_on_element(driver, 0.5, 5, 'xpath', '//input[@placeholder="Username"]')
+        wait_on_element(driver, 1, 10, 'xpath', '//input[@placeholder="Username"]')
         driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(user)
         driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-        wait_on_element(driver, 0.5, 30, 'xpath', '//button[@name="signin_button"]')
+        wait_on_element(driver, 0.5, 4, 'xpath', '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
