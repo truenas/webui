@@ -930,6 +930,7 @@ export class ReplicationWizardComponent {
                 payload = {
                     dataset: dataset,
                     naming_schema: data['naming_schema']? data['naming_schema'] : this.defaultNamingSchema,
+                    recursive: data['recursive'] ? data['recursive'] : false,
                 }
                 snapshotPromises.push(this.ws.call(this.createCalls[item], [payload]).toPromise());
             }
