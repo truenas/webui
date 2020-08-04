@@ -21,8 +21,6 @@ export class TooltipComponent {
   public positionString: string = 'Default';
   public isMoved: boolean = false;
 
-  public previousTooltip = [];
-
   constructor(public translate: TranslateService) {}
 
   showTooltip($event) {
