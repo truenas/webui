@@ -1,3 +1,63 @@
+/* TYPOGRAPHY */
+
+
+@font-face {
+  font-family: 'IBM Plex Sans';
+  src: url("/assets/fonts/IBM_Plex_Sans/IBMPlexSans-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: Epilogue;
+  src: url("/assets/fonts/Epilogue/Epilogue-VariableFont_wght.ttf") format("truetype");
+}
+
+html {font-size: 87.5%;} /*14px*/
+
+body {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 400;
+  line-height: 1.65;
+}
+
+p {margin-bottom: 1.15rem;}
+
+
+h1, h2, h3, h4, h5 {
+  margin: 2.75rem 0 1.05rem;
+  margin: 0;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+h1 {
+  margin-top: 0;
+  font-size: 2.488em;
+}
+h1 { color: var(--fg1);}
+h1, h2{
+  font-family: 'Epilogue', sans-serif;
+  font-weight: 500;
+}
+
+h2 {font-size: 2.074em;}
+
+h3 {font-size: 1.728em;}
+
+h4 {font-size: 1.44em;}
+
+h5 {font-size: 1.2em;}
+
+small, .text_small {font-size: 0.833em;}
+
+.text-extra-small{ font-size: x-small;}
+
+span.code{
+  font-family:'Inconsolata';
+  opacity: 0.75;
+  background: rgba(255,255,255,0.1);
+}
+
 /*
  * Variables 
  * height 36px
@@ -139,6 +199,7 @@ entity-table .mat-toolbar.mat-card-toolbar{
   border: solid 1px var(--alt-fg1);
   padding: 8px;
   box-sizing: border-box;
+  color: var(--fg2);
 }
 
 .form-element input[type = "password"],
@@ -156,26 +217,8 @@ entity-table .mat-toolbar.mat-card-toolbar{
   position: static !important;
 }
 
-.form-element input[type = "checkbox"]{
-  appearance: none;
-  /* background-color: var(--primary); */
-  width: 20px;
-  height: 20px;
-  border: solid 2px var(--primary);
-  border-radius: 2px;
-  margin-right: 8px;
-  position: relative;
-}
-
-[type=radio]:checked::before,
-[type=checkbox]:checked::before {
-  content: "";
-  width: 14px;
-  height: 14px;
-  background-color: var(--primary);
-  position: absolute;
-  top: 2px;
-  left: 2px;
+.mat-checkbox{
+  opacity: 0.75;
 }
 
 tooltip button i{
@@ -205,4 +248,16 @@ tooltip button i{
 /* Buttons */
 .mat-button{
   border-radius : 0 !important;
+}
+
+button.mat-button[type="button"],
+button.mat-button.mat-accent[type="button"]{
+  background-color:var(--alt-bg2) !important;
+  color:var(--fg1) !important;
+}
+
+button.mat-button[type="button"]:hover,
+button.mat-button.mat-accent[type="button"]:hover{
+  background-color:var(--alt-bg1) !important;
+  color:var(--fg2) !important;
 }
