@@ -44,26 +44,30 @@ export class TooltipComponent {
     }
   }
 
-  toggleVis(this) {
+  toggleVis() {
+    /* Resets 'isShowTooltip' for any tooltip closed by removing the class (below)
+     so it will reopen on first click */
     const el = this.tooltip.nativeElement.children[1].children[0].classList;
-    let show = false;
+    this.isShowTooltip = false;
     for (let i = 0; i < el.length; i++) {
       if (el[i] === 'show') {
-        show = true;
+        // Or, if tooltip is already open, close it
+        this.isShowTooltip = true;
       }
     }
-
+    // Clears any open tooltip from screen
     const tooltips: any = document.getElementsByClassName('tooltip-container');
     for (let i = 0; i < tooltips.length; i++) {
       tooltips[i].firstChild.classList.remove('show');
     }
    
-    if (!show) {
+    if (!this.isShowTooltip) {
+      this.isShowTooltip = true;
       el.add('show');
       this.dragTarget.reset();
       this.isMoved = false;
       this.showTooltip(true);
-      this.isShowTooltip = true;
+      
     } else {
       this.showTooltip(false);
       this.isShowTooltip = false;
