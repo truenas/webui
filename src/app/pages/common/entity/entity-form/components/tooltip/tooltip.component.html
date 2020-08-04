@@ -6,8 +6,8 @@
 
   <div class="tooltip-container fn-theme-primary" [ngClass]="{'wizard': isWizard, 'moved': isMoved}">
     <div cdkDrag 
-      (cdkDragStarted)="hideTail($event)" 
-      class="tooltiptext {{positionString}}" [class.show]="isShowTooltip">
+      (cdkDragStarted)="hideTail($event)" #tooltiptext
+      class ="tooltiptext {{positionString}}" [class.show]="isShowTooltip">
 
       <div id="tooltip-header" cdkDragHandle>
         <div class="tooltip-header-text">{{"Help" | translate}}{{ header ? ': ' + (header | translate) : ''}}</div>

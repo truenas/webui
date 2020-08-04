@@ -13,6 +13,7 @@ export class TooltipComponent {
   @Input('position') positionOverride?: string;
   @ViewChild('tooltip', { static: true}) private tooltip: ElementRef;
   @ViewChild(CdkDrag, {static: true}) dragTarget: CdkDrag;
+  @ViewChild('tooltiptext', {static: true}) private tooltiptext: ElementRef;
 
   public isShowTooltip: boolean;
   public tooltipMsgStyle: any;
@@ -45,7 +46,7 @@ export class TooltipComponent {
   toggleVis() {
     /* Resets 'isShowTooltip' for any tooltip closed by removing the class (below)
      so it will reopen on first click */
-    const el = this.tooltip.nativeElement.children[1].children[0].classList;
+    const el = this.tooltiptext.nativeElement.classList
     this.isShowTooltip = false;
     for (let i = 0; i < el.length; i++) {
       if (el[i] === 'show') {
