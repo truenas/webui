@@ -141,7 +141,8 @@ entity-table .mat-toolbar.mat-card-toolbar{
   box-sizing: border-box;
 }
 
-.form-element input[type = "password"]{
+.form-element input[type = "password"],
+.form-element .has_toggle_pw input {
   width: calc(100% - 40px);
   display: inline;
 }

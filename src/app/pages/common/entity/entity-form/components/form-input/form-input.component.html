@@ -9,7 +9,7 @@
 	<input name = "DummyUsername" type="text" style="display:none;">
 	<input name = "DummyPassword" type="password" style="display:none;">
 
-	<div class="full-width" *ngIf="config.inputType != 'file' else elseBlock">
+        <div class="full-width" [ngClass]="{'has_toggle_pw': config.togglePw}" *ngIf="config.inputType != 'file' else elseBlock">
 		<mat-spinner
 			diameter='40'
 			class="form-input-spinner"
