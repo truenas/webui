@@ -12,7 +12,7 @@
 
 /* CSS Vars */
 :root {
---fn-dropshadow:0 1px 2px rgba(0,0,0,0);
+  --fn-dropshadow:0 1px 2px rgba(0,0,0,0);
 }
 
 /* Cards */
@@ -65,7 +65,7 @@ entity-table .mat-card > *{
 /*.widget-loader,
 .widget .mat-card-content,
 .no-padding{
-  padding:0px !important;
+padding:0px !important;
 }*/
 
 /* FreeNAS Specific */
@@ -84,14 +84,14 @@ button.menu-toggle .mat-icon{
  * This needs to be changed in the markup 
  * instead of using this type of hack */
 #filter{
-    position: static !important;
-    margin-top:-10px; /* The form field reserves too much space in mat-toolbar. This wins some of the screen back */
-    text-align:right;
-    max-height:38px;
-    /*padding:0 !important;
-    right: 150px;
-    top: 9px;
-    z-index: 10;*/
+  position: static !important;
+  margin-top:-10px; /* The form field reserves too much space in mat-toolbar. This wins some of the screen back */
+  text-align:right;
+  max-height:38px;
+  /*padding:0 !important;
+  right: 150px;
+  top: 9px;
+  z-index: 10;*/
 }
 
 entity-table .multiactions-title{
@@ -107,4 +107,87 @@ entity-table .mat-toolbar.mat-card-toolbar{
 .datatable-header,
 entity-table .mat-toolbar.mat-card-toolbar{
   box-shadow:var(--fn-dropshadow);
+}
+
+/*********************************************************************/
+/* Dematerialize Form Fields :) */
+.form-element{
+  margin: 16px 0;
+  text-align:left;
+}
+.form-element .label{
+}
+
+.form-element .label.input-text,
+.form-element .label.input-select{
+  font-size: x-small;
+}
+
+.form-element .label-container {
+  margin-bottom: 4px;
+  padding: 4px 0;
+}
+
+.form-element input[type = "password"],
+.form-element input[type = "email"],
+.form-element input[type = "text"],
+.form-element select{
+  width: 100%;
+  background-color: var(--bg1);
+  color: var(--fg1);
+  border: solid 1px var(--alt-fg1);
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.form-element input[type = "password"]{
+  width: calc(100% - 40px);
+  display: inline;
+}
+
+.form-element button.toggle_pw i{
+  font-size: 22px;
+  opacity: 0.75;
+}
+
+.margin-for-error{
+  position: static !important;
+}
+
+.form-element input[type = "checkbox"]{
+  appearance: none;
+  /* background-color: var(--primary); */
+  width: 20px;
+  height: 20px;
+  border: solid 2px var(--primary);
+  border-radius: 2px;
+  margin-right: 8px;
+  position: relative;
+}
+
+[type=radio]:checked::before,
+[type=checkbox]:checked::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  background-color: var(--primary);
+  position: absolute;
+  top: 2px;
+  left: 2px;
+}
+
+tooltip button i{
+  opacity: 0.5;
+}
+
+.label-container tooltip {
+  margin: 0 0 4px 4px;
+}
+
+.tooltip .material-icons{
+  font-size: 16px !important;
+}
+
+.mat-button{
+  border-radius : 0 !important;
 }
