@@ -441,33 +441,25 @@ export class VMListComponent implements OnDestroy {
         },
         {
             id: 'LOGS',
-            icon: "book",
-            label: T("View Logs"),
+            icon: "content_paste",
+            label: T("Download Logs"),
             onClick: vm => {
                 const path = `/var/log/libvirt/bhyve/${vm.id}_${vm.name}.log`;
                 const filename = `${vm.id}_${vm.name}.log`;
-                this.dialogService.confirm('Download Logs', 'You sure about that?', true).subscribe(res => {
-                    if (res) {
-                        this.ws.call('core.download', ['filesystem.get', [path], filename]).subscribe(
-                          (download_res) => {
-                            const url = download_res[1];
-                            const mimetype = 'text/plain';
-                            let failed = false;
-                            this.storageService.streamDownloadFile(this.http, url, filename, mimetype).subscribe(file => {
-                              this.storageService.downloadBlob(file, filename);
-                            }, err => {
-                              failed = true;
-                              new EntityUtils().handleWSError(this, err, this.dialogService);
-                            });
-                          },
-                          (err) => {
-                            new EntityUtils().handleWSError(this, err, this.dialogService);
-                          }
-                        );
-                      }
+                this.ws.call('core.download', ['filesystem.get', [path], filename]).subscribe(
+                    (download_res) => {
+                    const url = download_res[1];
+                    const mimetype = 'text/plain';
+                    this.storageService.streamDownloadFile(this.http, url, filename, mimetype).subscribe(file => {
+                        this.storageService.downloadBlob(file, filename);
+                    }, err => {
+                        new EntityUtils().handleWSError(this, err, this.dialogService);
                     });
-
-                
+                    },
+                    (err) => {
+                    new EntityUtils().handleWSError(this, err, this.dialogService);
+                    }
+                );
             }
         }];
     }
