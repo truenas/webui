@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 import { WebSocketService, StorageService, AppLoaderService, DialogService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
@@ -77,7 +78,8 @@ export class VMListComponent implements OnDestroy {
         private storageService: StorageService,
         private loader: AppLoaderService,
         private dialogService: DialogService,
-        private router: Router, protected dialog: MatDialog) {
+        private router: Router, protected dialog: MatDialog,
+        private http: HttpClient) {
             if (this.productType !== 'SCALE') {
                 this.columns.push({ name: T("Com Port"), prop: 'com_port', hidden: true })
             }
@@ -435,6 +437,37 @@ export class VMListComponent implements OnDestroy {
             label: T("Serial"),
             onClick: vm => {
                 this.router.navigate(new Array("").concat(["vm", "serial", vm.id]));
+            }
+        },
+        {
+            id: 'LOGS',
+            icon: "book",
+            label: T("View Logs"),
+            onClick: vm => {
+                const path = `/var/log/libvirt/bhyve/${vm.id}_${vm.name}.log`;
+                const filename = `${vm.id}_${vm.name}.log`;
+                this.dialogService.confirm('Download Logs', 'You sure about that?', true).subscribe(res => {
+                    if (res) {
+                        this.ws.call('core.download', ['filesystem.get', [path], filename]).subscribe(
+                          (download_res) => {
+                            const url = download_res[1];
+                            const mimetype = 'text/plain';
+                            let failed = false;
+                            this.storageService.streamDownloadFile(this.http, url, filename, mimetype).subscribe(file => {
+                              this.storageService.downloadBlob(file, filename);
+                            }, err => {
+                              failed = true;
+                              new EntityUtils().handleWSError(this, err, this.dialogService);
+                            });
+                          },
+                          (err) => {
+                            new EntityUtils().handleWSError(this, err, this.dialogService);
+                          }
+                        );
+                      }
+                    });
+
+                
             }
         }];
     }
