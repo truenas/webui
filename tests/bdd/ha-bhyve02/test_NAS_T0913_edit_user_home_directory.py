@@ -120,15 +120,16 @@ def change_should_be_saved(driver):
     wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     wait_on_element_disappear(driver, 1, 30, '//h6[contains(.,"Please wait")]')
-    wait_on_element(driver, 0.5, 30, '//div[contains(.,"Users")]')
+    wait_on_element(driver, 0.5, 5, '//div[contains(.,"Users")]')
 
 
 @then('open the drop down details pane for the user')
 def open_the_drop_down_details_pane_for_the_user(driver):
     """open the drop down details pane for the user."""
+    wait_on_element(driver, 0.5, 5, '//a[@ix-auto="expander__ericbsd"]')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
     wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__EDIT_ericbsd"]')
-    driver.find_element_by_xpath('//h4[contains(.,"Email:")]')
+    driver.find_element_by_xpath('//h4[contains(.,"Home directory:")]')
 
 
 @then('verify that the home directory has changed')
