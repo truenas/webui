@@ -218,6 +218,11 @@ entity-table .mat-toolbar.mat-card-toolbar{
   color: var(--fg1);
 }
 
+.form-element textarea{
+  max-width: calc(100% - 24px);
+  min-height: 96px;
+}
+
 .form-element input[type = "password"],
 .form-element .has_toggle_pw input {
   width: calc(100% - 40px);
@@ -290,8 +295,8 @@ button.mat-button.mat-accent[type="button"]{
 
 button.mat-button[type="button"]:hover,
 button.mat-button.mat-accent[type="button"]:hover{
-  background-color:var(--alt-bg1) !important;
-  color:var(--fg2) !important;
+  background-color: var(--alt-bg1) !important;
+  color: var(--fg2) !important;
 }
 
 /* Nested Cards */
@@ -299,4 +304,10 @@ button.mat-button.mat-accent[type="button"]:hover{
   box-shadow: unset;
   background-color: none;
   border: solid 1px var(--bg1);
+}
+
+/* Top bar fixes */
+.topbar .mat-icon-button,
+.topbar .mat-icon-button .mat-icon[alt="iXsystem logo"]{
+  color: var(--fg2) !important;
 }
