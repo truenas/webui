@@ -28,20 +28,20 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 @when(parsers.parse('If login page appear enter "{user}" and "{password}"'))
 def if_login_appear_enter_user_and_password(driver, user, password):
     """If login page appear enter "{user}" and "{password}"."""
-    wait_on_element(driver, 0.5, 5, 'xpath', '//input[@placeholder="Username"]')
-    if is_element_present(driver, 'xpath', '//input[@placeholder="Username"]'):
+    wait_on_element(driver, 0.5, 5, '//input[@placeholder="Username"]')
+    if is_element_present(driver, '//input[@placeholder="Username"]'):
         driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(user)
         driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-        wait_on_element(driver, 0.5, 30, 'xpath', '//button[@name="signin_button"]')
+        wait_on_element(driver, 0.5, 30, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
 
 
 @then('You should see the dashboard and "System Information"')
 def you_should_see_the_dashboard_and_system_information(driver):
     """You should see the dashboard and "System Information"."""
-    wait_on_element(driver, 0.5, 30, 'xpath', '//span[contains(.,"System Information")]')
+    wait_on_element(driver, 0.5, 30, '//span[contains(.,"System Information")]')
     driver.find_element_by_xpath('//span[contains(.,"System Information")]')
 
 
@@ -54,7 +54,7 @@ def click_on_the_accounts_item_in_the_left_side_menu(driver):
 @then('The Accounts menu should expand down')
 def the_accounts_menu_should_expand_down(driver):
     """The Accounts menu should expand down."""
-    wait_on_element(driver, 0.5, 30, 'xpath', '//mat-list-item[@ix-auto="option__Users"]')
+    wait_on_element(driver, 0.5, 30, '//mat-list-item[@ix-auto="option__Users"]')
     element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
     class_attribute = element.get_attribute('class')
     assert 'open' in class_attribute, class_attribute
@@ -69,10 +69,10 @@ def click_on_users(driver):
 @then('The Users page should open')
 def the_users_page_should_open(driver):
     """The Users page should open."""
-    wait_on_element(driver, 0.5, 5, 'xpath', '//h1[contains(.,"Display Note")]')
-    if is_element_present(driver, 'xpath', '//h1[contains(.,"Display Note")]'):
+    wait_on_element(driver, 0.5, 5, '//h1[contains(.,"Display Note")]')
+    if is_element_present(driver, '//h1[contains(.,"Display Note")]'):
         driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//div[contains(.,"Users")]')
+    wait_on_element(driver, 0.5, 30, '//div[contains(.,"Users")]')
     driver.find_element_by_xpath('//div[contains(.,"Users")]')
 
 
@@ -85,7 +85,7 @@ def click_the_add_button_on_the_right_side_of_the_screen(driver):
 @then('The Users Add Page should open')
 def the_users_add_page_should_open(driver):
     """The Users Add Page should open."""
-    wait_on_element(driver, 0.5, 30, 'xpath', '//h4[contains(.,"Identification")]')
+    wait_on_element(driver, 0.5, 30, '//h4[contains(.,"Identification")]')
     driver.find_element_by_xpath('//h4[contains(.,"Identification")]')
 
 
@@ -100,13 +100,13 @@ def fill_in_the_following_fields_full_name_username_password_confirm_password_an
     driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing')
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing')
-    wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__SUBMIT"]')
+    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SUBMIT"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
 
 
 @then('User should be created and added to the user list')
 def user_should_be_created_and_added_to_the_user_list(driver):
     """User should be created and added to the user list."""
-    wait_on_element_disappear(driver, 1, 30, 'xpath', '//h6[contains(.,"Please wait")]')
-    wait_on_element(driver, 0.5, 30, 'xpath', '//div[contains(.,"Users")]')
+    wait_on_element_disappear(driver, 1, 30, '//h6[contains(.,"Please wait")]')
+    wait_on_element(driver, 0.5, 30, '//div[contains(.,"Users")]')
     driver.find_element_by_xpath('//div[@ix-auto="value__ericbsd_Username"]')
