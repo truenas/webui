@@ -1,4 +1,4 @@
-import { Component, EventEmitter } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { WebSocketService } from '../../../../services';
@@ -16,7 +16,6 @@ export class DiskListComponent {
 
 	public columns: Array<any> = [
 	  { name: T('Name'), prop: 'name', always_display: true },
-	  { name: T('Pool'), prop: "pool" },
 	  { name: T('Serial'), prop: 'serial' },
 		{ name: T('Disk Size'), prop: 'readable_size' },
 		{ name: T('Disk Type'), prop: 'type', hidden: true },
@@ -99,34 +98,10 @@ export class DiskListComponent {
 		}
 	}]
 
-	protected disk_ready: EventEmitter<boolean> = new EventEmitter();
-	protected unusedDisk_ready: EventEmitter<boolean> = new EventEmitter();
 	protected unused: any;
-	protected disk_pool: Map<string, string> = new Map<string, string>();
 	constructor(protected ws: WebSocketService, protected router: Router,  public diskbucket: StorageService) {
-		this.ws.call('boot.get_disks', []).subscribe((boot_res) => {
-			for (const boot in boot_res) {
-				this.disk_pool.set(boot_res[boot], T('Boot Pool'));
-			}
-
-			this.ws.call('disk.get_unused', []).subscribe((unused_res) => {
-				this.unused = unused_res;
-				this.unusedDisk_ready.emit(true);
-				for (const unused in unused_res) {
-					this.disk_pool.set(unused_res[unused].name, T('Unused'));
-				}
-
-				this.ws.call('pool.query', []).subscribe((pool_res) => {
-					for (const pool in pool_res) {
-						this.ws.call('pool.get_disks', [pool_res[pool].id]).subscribe((res) => {
-							for (const k in res) {
-								this.disk_pool.set(res[k], pool_res[pool].name);
-							}
-							this.disk_ready.emit(true);
-						});
-					}
-				});
-			});
+		this.ws.call('disk.get_unused', []).subscribe((unused_res) => {
+			this.unused = unused_res;
 		});
 	}
 
@@ -159,11 +134,8 @@ export class DiskListComponent {
   }
 
   dataHandler(entityList: any) {
-    this.disk_ready.subscribe(() => {
-      for (const disk of entityList.rows) {
-        disk.readable_size = (<any>window).filesize(disk.size, { standard: 'iec' });
-        disk.pool = this.disk_pool.get(disk.name) || this.disk_pool.get(disk.devname);
-	    }
-    });
+    for (const disk of entityList.rows) {
+		disk.readable_size = (<any>window).filesize(disk.size, { standard: 'iec' });
+	}
   }
 }
