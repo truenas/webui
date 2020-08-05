@@ -31,7 +31,7 @@ def wait_on_element_disappear(driver, wait, loop, xpath):
         return False
 
 
-def arttribute_value_exist(driver, xpath, attribute, value):
+def attribute_value_exist(driver, xpath, attribute, value):
     element = driver.find_element_by_xpath(xpath)
     class_attribute = element.get_attribute(attribute)
     if value in class_attribute:
@@ -43,7 +43,7 @@ def arttribute_value_exist(driver, xpath, attribute, value):
 def wait_for_attribute_value(driver, wait, loop, xpath, attribute, value):
     for _ in range(loop):
         time.sleep(wait)
-        if arttribute_value_exist(driver, xpath, attribute, value):
+        if attribute_value_exist(driver, xpath, attribute, value):
             return True
     else:
         return False
