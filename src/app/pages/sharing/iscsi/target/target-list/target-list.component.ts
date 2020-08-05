@@ -7,12 +7,12 @@ import { EntityUtils } from '../../../../common/entity/utils';
 @Component({
   selector : 'app-iscsi-target-list',
   template : `
-    <entity-table [conf]="this"></entity-table>
+    <entity-table [conf]="this" [title]="tableTitle"></entity-table>
   `,
   providers: [IscsiService]
 })
 export class TargetListComponent {
-
+  public tableTitle = "Targets";
   protected queryCall = 'iscsi.target.query';
   protected wsDelete = 'iscsi.target.delete';
   protected route_add: string[] = [ 'sharing', 'iscsi', 'target', 'add' ];

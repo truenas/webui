@@ -9,12 +9,12 @@ import { EntityUtils } from '../../../../common/entity/utils';
 @Component({
   selector : 'app-iscsi-associated-target-list',
   template : `
-    <entity-table [conf]="this"></entity-table>
+    <entity-table [conf]="this" [title]="tableTitle"></entity-table>
   `,
   providers: [IscsiService],
 })
 export class AssociatedTargetListComponent {
-
+  public tableTitle = 'Associated Targets';
   protected queryCall = 'iscsi.targetextent.query';
   protected wsDelete = 'iscsi.targetextent.delete';
   protected route_add: string[] = [ 'sharing', 'iscsi', 'associatedtarget', 'add' ];
