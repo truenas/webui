@@ -31,6 +31,24 @@ def wait_on_element_disappear(driver, wait, loop, xpath):
         return False
 
 
+def attribute_value_exist(driver, xpath, attribute, value):
+    element = driver.find_element_by_xpath(xpath)
+    class_attribute = element.get_attribute(attribute)
+    if value in class_attribute:
+        return True
+    else:
+        return False
+
+
+def wait_for_attribute_value(driver, wait, loop, xpath, attribute, value):
+    for _ in range(loop):
+        time.sleep(wait)
+        if attribute_value_exist(driver, xpath, attribute, value):
+            return True
+    else:
+        return False
+
+
 def ssh_cmd(command, username, password, host):
     cmd = [] if password is None else ["sshpass", "-p", password]
     cmd += [
