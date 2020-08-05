@@ -194,6 +194,10 @@ entity-table .mat-toolbar.mat-card-toolbar{
   --lines: var(--dark-theme-lines);
 }
 
+.borderless{
+  border: none !important;
+}
+
 .mat-divider{
   background: var(--lines) !important;
 }
@@ -223,6 +227,16 @@ entity-table .mat-toolbar.mat-card-toolbar{
 .form-element button.toggle_pw i{
   font-size: 22px;
   opacity: 0.75;
+}
+
+.form-element.form-explorer .mat-form-field-wrapper{
+  padding-left: 0;
+}
+
+.form-element.form-explorer .mat-form-field-wrapper,
+.form-element.form-explorer .mat-form-field-flex,
+.form-element.form-explorer .mat-form-field-flex input {
+  border: none;
 }
 
 .margin-for-error{

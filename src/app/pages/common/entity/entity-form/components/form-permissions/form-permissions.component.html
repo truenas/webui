@@ -1,4 +1,4 @@
-<div id="{{config.name}}" class="dynamic-field form-permissions" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
+<div id="{{config.name}}" class="dynamic-field form-permissions form-element" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
 	ix-auto ix-auto-type="permissions" ix-auto-identifier="{{config.placeholder}}">
 	<div class="top">
 		<label>{{ config.placeholder | translate }}</label>
