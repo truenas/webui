@@ -1,4 +1,4 @@
-<div id="{{config.name}}" class="dynamic-field form-checkbox" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
+<div id="{{config.name}}" class="dynamic-field form-checkbox form-element" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
 	<mat-checkbox color="primary" *ngIf="!config.updater" [formControlName]="config.name" [required]="config.required" ix-auto ix-auto-type="checkbox" ix-auto-identifier="{{config.placeholder}}">
 		{{ config.placeholder | translate }}
 	</mat-checkbox>

@@ -19,7 +19,7 @@ export const DefaultTheme = {
       fg1:'#fff',
       fg2:'rgba(255,255,255,0.7)',
       'alt-bg1':'#383838',
-      'alt-bg2':'#373737',
+      'alt-bg2':'#545454',
       'alt-fg1':'rgba(194,194,194,0.5)',
       'alt-fg2':'#e1e1e1',
       yellow:'#f0cb00',
