@@ -8,6 +8,7 @@ import helptext from '../../../../helptext/network/interfaces/interfaces-list';
 import { EntityUtils } from '../../../common/entity/utils';
 import { CoreEvent } from 'app/core/services/core.service';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
+import { action } from 'popmotion';
 
 @Component({
   selector : 'app-interfaces-list',
@@ -24,6 +25,20 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
   protected route_add_tooltip: string = "Add Interface";
   protected route_edit: string[] = [ 'network', 'interfaces', 'edit' ];
   protected confirmDeleteDialog = {
+    buildTitle: intf => {
+      if (intf.type === "PHYSICAL"){
+        return T("Reset Configuration")
+      } else {
+        return T("Delete")
+      }
+    },
+    buttonMsg: intf => {
+      if (intf.type === "PHYSICAL"){
+        return T("Reset Configuration")
+      } else {
+        return T("Delete")
+      }
+    },
     message: helptext.delete_dialog_text,
   }
   protected hasDetails = true;
@@ -59,7 +74,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
     paging : true,
     sorting : {columns : this.columns},
     deleteMsg: {
-      title: 'Interface',
+      title: T('Interface'),
       key_props: ['name']
     },
   };
@@ -115,6 +130,12 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
   }
 
   getActions(row) {
+    let deleteLabel = T("Delete");
+    let deleteAction = T("Delete ");
+    if (row.type === "PHYSICAL") {
+      deleteLabel = T("Reset Configuration");
+      deleteAction = T("Reset configuration for ");
+    }
     return [{
       id: row.name,
       icon: 'edit',
@@ -131,12 +152,12 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
       id: row.name,
       icon: 'delete',
       name: "delete",
-      label: T("Delete"),
+      label: deleteLabel,
       onClick: (rowinner) => {
         if(this.ha_enabled) {
           this.dialog.Info(helptext.ha_enabled_delete_title, helptext.ha_enabled_delete_msg);
         } else {
-          this.entityList.doDelete(rowinner);
+          this.entityList.doDelete(rowinner, deleteAction);
         }
       },
     }]
@@ -269,7 +290,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
             this.entityList.getData();
             this.hasPendingChanges = false;
             this.checkinWaiting = false;
-            this.dialog.Info(helptext.rollback_changes_title, helptext.changes_rolled_back, '300px', "info", true);
+            this.dialog.Info(helptext.rollback_changes_title, helptext.changes_rolled_back, '500px', "info", true);
           }, err => {
             this.entityList.loader.close();
             this.entityList.loaderOpen = false;
