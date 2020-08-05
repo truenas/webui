@@ -71,12 +71,7 @@ export class CertificateAuthorityAddComponent {
       name : 'ec_curve',
       placeholder : helptext_system_ca.add.ec_curve.placeholder,
       tooltip: helptext_system_ca.add.ec_curve.tooltip,
-      options : [
-        {label: 'BrainpoolP512R1', value: 'BrainpoolP512R1'},
-        {label: 'BrainpoolP384R1', value: 'BrainpoolP384R1'},
-        {label: 'BrainpoolP256R1', value: 'BrainpoolP256R1'},
-        {label: 'SECP256K1', value: 'SECP256K1'},
-      ],
+      options : [],
       value: 'BrainpoolP512R1',
       isHidden: false,
       disabled: true,
@@ -302,6 +297,13 @@ export class CertificateAuthorityAddComponent {
         this.signedby.options.push(
             {label : item.name, value : item.id});
       });
+    });
+
+    this.ws.call('certificate.ec_curve_choices').subscribe((res) => {
+      const ec_curves_field = _.find(this.fieldConfig, { 'name': 'ec_curve' });
+      for(const key in res) {
+        ec_curves_field.options.push({label: res[key], value: key});
+      }
     });
 
     this.ws.call('notifier.choices', ['COUNTRY_CHOICES']).subscribe( (res) => {
