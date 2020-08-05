@@ -6,7 +6,7 @@ import { T } from '../../../../translate-marker';
 import * as _ from 'lodash';
 import { StorageService } from '../../../../services/storage.service';
 
-@Component ({
+@Component({
 	selector: 'disk-list',
 	template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
 })
@@ -15,19 +15,19 @@ export class DiskListComponent {
 	protected queryCall = "disk.query";
 
 	public columns: Array<any> = [
-	  { name: T('Name'), prop: 'name', always_display: true },
-	  { name: T('Serial'), prop: 'serial' },
+		{ name: T('Name'), prop: 'name', always_display: true },
+		{ name: T('Serial'), prop: 'serial' },
 		{ name: T('Disk Size'), prop: 'readable_size' },
 		{ name: T('Disk Type'), prop: 'type', hidden: true },
-	  { name: T('Description'), prop: 'description', hidden: true },
-	  { name: T('Model'), prop: 'model', hidden: true },
+		{ name: T('Description'), prop: 'description', hidden: true },
+		{ name: T('Model'), prop: 'model', hidden: true },
 		{ name: T('Transfer Mode'), prop: 'transfermode', hidden: true },
 		{ name: T("Rotation Rate (RPM)"), prop: 'rotationrate', hidden: true },
-	  { name: T('HDD Standby'), prop: 'hddstandby', hidden: true },
-	  { name: T('Adv. Power Management'), prop: 'advpowermgmt', hidden: true },
-	  { name: T('Acoustic Level'), prop: 'acousticlevel', hidden: true },
-	  { name: T('Enable S.M.A.R.T.'), prop: 'togglesmart', hidden: true },
-	  { name: T('S.M.A.R.T. extra options'), prop: 'smartoptions', hidden: true },
+		{ name: T('HDD Standby'), prop: 'hddstandby', hidden: true },
+		{ name: T('Adv. Power Management'), prop: 'advpowermgmt', hidden: true },
+		{ name: T('Acoustic Level'), prop: 'acousticlevel', hidden: true },
+		{ name: T('Enable S.M.A.R.T.'), prop: 'togglesmart', hidden: true },
+		{ name: T('S.M.A.R.T. extra options'), prop: 'smartoptions', hidden: true },
 	];
 	public config: any = {
 		paging: true,
@@ -36,7 +36,7 @@ export class DiskListComponent {
 		deleteMsg: {
 			title: 'User',
 			key_props: ['name']
-	    },
+		},
 	};
 	public diskIds: Array<any> = [];
 	public diskNames: Array<any> = [];
@@ -46,7 +46,7 @@ export class DiskListComponent {
 	public diskToggle: boolean;
 	public SMARToptions: Array<any> = [];
 
-  public multiActions: Array < any > = [{
+	public multiActions: Array<any> = [{
 		id: "medit",
 		label: T("Edit Disk(s)"),
 		icon: "edit",
@@ -54,7 +54,7 @@ export class DiskListComponent {
 		ttpos: "above",
 		onClick: (selected) => {
 			if (selected.length > 1) {
-				for(let i of selected) {
+				for (let i of selected) {
 					this.diskIds.push(i.identifier);
 					this.diskNames.push(i.name);
 					this.hddStandby.push(i.hddstandby);
@@ -68,24 +68,24 @@ export class DiskListComponent {
 				this.diskbucket.diskIdsBucket(this.diskIds);
 				this.diskbucket.diskNamesBucket(this.diskNames);
 				this.diskbucket.diskToggleBucket(this.diskToggle);
-				
+
 				// If all items match in an array, this fills in the value in the form; otherwise, blank
-				this.hddStandby.every( (val, i, arr) => val === arr[0] ) ?
+				this.hddStandby.every((val, i, arr) => val === arr[0]) ?
 					this.diskbucket.hddStandby = this.hddStandby[0] :
 					this.diskbucket.hddStandby = undefined;
-				
-				this.advPowerMgt.every( (val, i, arr) => val === arr[0] ) ?
+
+				this.advPowerMgt.every((val, i, arr) => val === arr[0]) ?
 					this.diskbucket.advPowerMgt = this.advPowerMgt[0] :
 					this.diskbucket.advPowerMgt = undefined;
-				
-				this.acousticLevel.every( (val, i, arr) => val === arr[0] ) ?
+
+				this.acousticLevel.every((val, i, arr) => val === arr[0]) ?
 					this.diskbucket.acousticLevel = this.acousticLevel[0] :
 					this.diskbucket.acousticLevel = undefined;
-				
-				this.SMARToptions.every( (val, i, arr) => val === arr[0] ) ?
+
+				this.SMARToptions.every((val, i, arr) => val === arr[0]) ?
 					this.diskbucket.SMARToptions = this.SMARToptions[0] :
 					this.diskbucket.SMARToptions = undefined;
-					
+
 				this.router.navigate(new Array('/').concat([
 					"storage", "disks", "bulk-edit"
 				]));
@@ -99,7 +99,7 @@ export class DiskListComponent {
 	}]
 
 	protected unused: any;
-	constructor(protected ws: WebSocketService, protected router: Router,  public diskbucket: StorageService) {
+	constructor(protected ws: WebSocketService, protected router: Router, public diskbucket: StorageService) {
 		this.ws.call('disk.get_unused', []).subscribe((unused_res) => {
 			this.unused = unused_res;
 		});
@@ -113,11 +113,11 @@ export class DiskListComponent {
 			label: T("Edit"),
 			onClick: (row) => {
 				this.router.navigate(new Array('/').concat([
-				"storage", "disks", "edit", row.identifier
+					"storage", "disks", "edit", row.identifier
 				]));
 			}
 		}];
-		if (_.find(this.unused, {"name": parentRow.name})) {
+		if (_.find(this.unused, { "name": parentRow.name })) {
 			actions.push({
 				id: parentRow.name,
 				icon: 'delete_sweep',
@@ -125,17 +125,17 @@ export class DiskListComponent {
 				label: T("Wipe"),
 				onClick: (row) => {
 					this.router.navigate(new Array('/').concat([
-					"storage", "disks", "wipe", row.devname
+						"storage", "disks", "wipe", row.devname
 					]));
 				}
 			})
 		}
 		return actions;
-  }
-
-  dataHandler(entityList: any) {
-    for (const disk of entityList.rows) {
-		disk.readable_size = (<any>window).filesize(disk.size, { standard: 'iec' });
 	}
-  }
+
+	dataHandler(entityList: any) {
+		for (const disk of entityList.rows) {
+			disk.readable_size = (<any>window).filesize(disk.size, { standard: 'iec' });
+		}
+	}
 }
