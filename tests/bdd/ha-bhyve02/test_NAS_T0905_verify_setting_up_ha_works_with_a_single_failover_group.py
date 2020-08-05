@@ -39,10 +39,6 @@ def login_appear_enter_root_and_password(driver, password):
 @then(parsers.parse('You should see the dashboard and "{information}"'))
 def you_should_see_the_dashboard_and_serial_number_should_show_serial1(driver, information):
     """You should see the dashboard and "information"."""
-    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__CLOSE"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-    # wait_on_element(driver, 0.5, 30, '//li[@ix-auto="option__Dashboard"]')
-    # driver.find_element_by_xpath('//li[@ix-auto="option__Dashboard"]')
     wait_on_element(driver, 0.5, 30, f'//span[contains(.,"{information}")]')
     driver.find_element_by_xpath(f'//span[contains(.,"{information}")]')
 
