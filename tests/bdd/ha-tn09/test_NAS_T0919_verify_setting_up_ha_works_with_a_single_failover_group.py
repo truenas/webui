@@ -28,13 +28,13 @@ def the_browser_is_open_navigate_to_url(driver, nas_url):
 @when(parsers.parse('Login appear enter "root" and "{password}"'))
 def login_appear_enter_root_and_password(driver, password):
     """Login appear enter "root" and "password"."""
-    if not is_element_present(driver, 'xpath', '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        wait_on_element(driver, 1, 10, 'xpath', '//input[@placeholder="Username"]')
+    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
+        wait_on_element(driver, 1, 10, '//input[@placeholder="Username"]')
         driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
         driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-        wait_on_element(driver, 0.5, 4, 'xpath', '//button[@name="signin_button"]')
+        wait_on_element(driver, 0.5, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
@@ -46,9 +46,9 @@ def login_appear_enter_root_and_password(driver, password):
 @then(parsers.parse('You should see the dashboard and serial number should show "{serial1}"'))
 def you_should_see_the_dashboard_and_serial_number_should_show_serial1(driver, serial1):
     """You should see the dashboard and serial number should show "serial1"."""
-    wait_on_element(driver, 1, 30, 'xpath', '//button[@ix-auto="button__CLOSE"]')
+    wait_on_element(driver, 1, 30, '//button[@ix-auto="button__CLOSE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-    wait_on_element(driver, 1, 30, 'xpath', f'//span[contains(.,"{serial1}")]')
+    wait_on_element(driver, 1, 30, f'//span[contains(.,"{serial1}")]')
     driver.find_element_by_xpath(f'//span[contains(.,"{serial1}")]')
 
 
@@ -56,14 +56,14 @@ def you_should_see_the_dashboard_and_serial_number_should_show_serial1(driver, s
 def navigate_to_system_and_click_support(driver):
     """Navigate to System and click Support."""
     driver.find_element_by_xpath('//a[@name="System-menu"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//a[contains(.,"Support")]')
+    wait_on_element(driver, 0.5, 30, '//a[contains(.,"Support")]')
     driver.find_element_by_xpath('//a[contains(.,"Support")]').click()
 
 
 @then('The Support page License Information should load')
 def the_support_page_license_information_should_load(driver):
     """The Support page License Information should load."""
-    wait_on_element(driver, 0.5, 30, 'xpath', '//p[contains(.,"License Information")]')
+    wait_on_element(driver, 0.5, 30, '//p[contains(.,"License Information")]')
     driver.find_element_by_xpath('//p[contains(.,"License Information")]')
 
 
@@ -76,7 +76,7 @@ def click_update_license(driver):
 @then('The "Update License" widget should open')
 def the_update_license_widget_should_open(driver):
     """The "Update License" widget should open."""
-    wait_on_element(driver, 0.5, 30, 'xpath', '//h1[contains(.,"Update License")]')
+    wait_on_element(driver, 0.5, 30, '//h1[contains(.,"Update License")]')
     driver.find_element_by_xpath('//h1[contains(.,"Update License")]')
 
 
@@ -96,7 +96,7 @@ def click_save_license(driver):
 @then('The following should appear "Reload the page for the license to take effect"')
 def the_following_should_appear_reload_the_page_for_the_license_to_take_effect(driver):
     """The following should appear "Reload the page for the license to take effect"."""
-    wait_on_element(driver, 0.5, 30, 'xpath', '//h1[contains(.,"Reload the page")]')
+    wait_on_element(driver, 0.5, 30, '//h1[contains(.,"Reload the page")]')
     driver.find_element_by_xpath('//h1[contains(.,"Reload the page")]')
 
 
@@ -109,7 +109,7 @@ def click_reload_now(driver):
 @then('We should return to login prompt')
 def we_should_return_to_login_prompt(driver):
     """We should return to login prompt."""
-    wait_on_element(driver, 0.5, 30, 'xpath', '//input[@placeholder="Username"]')
+    wait_on_element(driver, 0.5, 30, '//input[@placeholder="Username"]')
     driver.find_element_by_xpath('//input[@placeholder="Username"]')
 
 
@@ -120,28 +120,28 @@ def login_as_root_with_password(driver, password):
     driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
     driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-    wait_on_element(driver, 0.5, 30, 'xpath', '//button[@name="signin_button"]')
+    wait_on_element(driver, 0.5, 30, '//button[@name="signin_button"]')
     driver.find_element_by_xpath('//button[@name="signin_button"]').click()
 
 
 @then(parsers.parse('"{agreement}" should appear'))
 def end_user_license_agreement_truenas_should_appear(driver, agreement):
     """"End User License Agreement - TrueNAS" should appear."""
-    wait_on_element(driver, 0.5, 30, 'xpath', f'//h1[contains(.,"{agreement}")]')
+    wait_on_element(driver, 0.5, 30, f'//h1[contains(.,"{agreement}")]')
     driver.find_element_by_xpath(f'//h1[contains(.,"{agreement}")]')
 
 
 @then('Click Agree')
 def click_agree(driver):
     """Click Agree."""
-    wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__I AGREE"]')
+    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__I AGREE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
 
 
 @then('We should be returned to license information')
 def we_should_be_returned_to_license_information(driver):
     """We should be returned to license information."""
-    wait_on_element(driver, 0.5, 30, 'xpath', '//p[contains(.,"License Information")]')
+    wait_on_element(driver, 0.5, 30, '//p[contains(.,"License Information")]')
     driver.find_element_by_xpath('//p[contains(.,"License Information")]')
 
 
@@ -159,14 +159,14 @@ def both_serials_show_show_under_system_serial_serial1_and_serial2(driver, seria
 def navigate_to_network_click_global_configuration(driver):
     """Navigate to Network click Global Configuration."""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//mat-list-item[@ix-auto="option__Global Configuration"]')
+    wait_on_element(driver, 0.5, 30, '//mat-list-item[@ix-auto="option__Global Configuration"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Global Configuration"]').click()
 
 
 @then(parsers.parse('Enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}", Hostname (Virtual) "{vhost}", Domain "{domain}", Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}", IPv4 Default Gateway "{gatway}"'))
 def enter_hostname_hostname_truenas_controller_2_hostname_virtual_domain_nameserver1_nameserver2_ipv4_default_gateway_(driver, host1, host2, vhost, domain, nameserver1, nameserver2, gatway):
     """Enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}", Hostname (Virtual) "{vhost}", Domain "{domain}", Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}", IPv4 Default Gateway "{gatway}"."""
-    wait_on_element(driver, 0.5, 30, 'xpath', '//a[contains(.,"Global Configuration")]')
+    wait_on_element(driver, 0.5, 30, '//a[contains(.,"Global Configuration")]')
     driver.find_element_by_xpath('//input[@placeholder="Hostname"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Hostname"]').send_keys(host1)
     driver.find_element_by_xpath('//input[@placeholder="Hostname (TrueNAS Controller 2)"]').clear()
@@ -186,15 +186,15 @@ def enter_hostname_hostname_truenas_controller_2_hostname_virtual_domain_nameser
 @then('click save when finished')
 def click_save_when_finished(driver):
     """click save when finished."""
-    wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__SAVE"]')
+    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
 @then('"Please wait" should appear while settings are being applied You should be returned to the same Global Configuration screen and "Settings saved." should appear below the save button at the bottom')
 def please_wait_should_appear_while_settings_are_being_applied_you_should_be_returned_to_the_same_global_configuration_screen_and_settings_saved_should_appear_below_the_save_button_at_the_bottom(driver):
     """"Please wait" should appear while settings are being applied You should be returned to the same Global Configuration screen and "Settings saved." should appear below the save button at the bottom."""
-    wait_on_element(driver, 0.5, 30, 'xpath', '//h6[contains(.,"Please wait")]')
-    wait_on_element(driver, 0.5, 30, 'xpath', '//div[contains(.,"Settings saved.")]')
+    wait_on_element(driver, 0.5, 30, '//h6[contains(.,"Please wait")]')
+    wait_on_element(driver, 0.5, 30, '//div[contains(.,"Settings saved.")]')
     driver.find_element_by_xpath('//div[contains(.,"Settings saved.")]')
 
 
@@ -206,13 +206,13 @@ def navigate_to_system_click_failover_click_disable_failover_click_save(driver):
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//mat-list-item[@ix-auto="option__Failover"]')
+    wait_on_element(driver, 0.5, 30, '//mat-list-item[@ix-auto="option__Failover"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Failover"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//h4[contains(.,"Failover Configuration")]')
+    wait_on_element(driver, 0.5, 30, '//h4[contains(.,"Failover Configuration")]')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__SAVE"]')
+    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//h1[contains(.,"Disable Failover")]')
+    wait_on_element(driver, 0.5, 30, '//h1[contains(.,"Disable Failover")]')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     driver.find_element_by_xpath('//button[@ix-auto="button__OK"]').click()
 
@@ -220,7 +220,7 @@ def navigate_to_system_click_failover_click_disable_failover_click_save(driver):
 @then('After settings are applied you should see "Settings applied"')
 def after_settings_are_applied_you_should_see_settings_applied(driver):
     """After settings are applied you should see "Settings applied"."""
-    wait_on_element(driver, 0.5, 30, 'xpath', '//h1[contains(.,"Settings saved")]')
+    wait_on_element(driver, 0.5, 30, '//h1[contains(.,"Settings saved")]')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
@@ -228,18 +228,18 @@ def after_settings_are_applied_you_should_see_settings_applied(driver):
 def navigate_to_network_then_interfaces_click_next_to_igb0_click_edit(driver):
     """Navigate to Network then Interfaces, click next to igb0, click edit."""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//mat-list-item[@ix-auto="option__Interfaces"]')
+    wait_on_element(driver, 0.5, 30, '//mat-list-item[@ix-auto="option__Interfaces"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Interfaces"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//div[contains(.,"Interfaces")]')
+    wait_on_element(driver, 0.5, 30, '//div[contains(.,"Interfaces")]')
     driver.find_element_by_xpath('//a[@ix-auto="expander__igb0"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__EDIT_igb0_igb0"]')
+    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__EDIT_igb0_igb0"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_igb0_igb0"]').click()
 
 
 @then('Interface Settings should appear')
 def interface_settings_should_appear(driver):
     """Interface Settings should appear."""
-    wait_on_element(driver, 0.5, 30, 'xpath', '//h4[contains(.,"Interface Settings")]')
+    wait_on_element(driver, 0.5, 30, '//h4[contains(.,"Interface Settings")]')
     driver.find_element_by_xpath('//h4[contains(.,"Interface Settings")]')
 
 
@@ -267,17 +267,17 @@ def uncheck_dhcp_check_critical_select_1_for_failover_group_enter_the_failover_v
 @then('Click Apply and "Please wait" should appear while settings are being applied.')
 def click_apply_and_please_wait_should_appear_while_settings_are_being_applied(driver):
     """Click Apply and "Please wait" should appear while settings are being applied."""
-    wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__APPLY"]')
+    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__APPLY"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__APPLY"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//h6[contains(.,"Please wait")]')
+    wait_on_element(driver, 0.5, 30, '//h6[contains(.,"Please wait")]')
 
 
 @then('Click Test Changes, check Confirm, Click Test Changes again')
 def click_test_changes_check_confirm_click_test_changes_again(driver):
     """Click Test Changes, check Confirm, Click Test Changes again."""
-    wait_on_element(driver, 0.5, 30, 'xpath', '//button[contains(.,"TEST CHANGES")]')
+    wait_on_element(driver, 0.5, 30, '//button[contains(.,"TEST CHANGES")]')
     driver.find_element_by_xpath('//button[contains(.,"TEST CHANGES")]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//h1[contains(.,"Test Changes")]')
+    wait_on_element(driver, 0.5, 30, '//h1[contains(.,"Test Changes")]')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     driver.find_element_by_xpath('//button[@ix-auto="button__TEST CHANGES"]').click()
 
@@ -285,12 +285,12 @@ def click_test_changes_check_confirm_click_test_changes_again(driver):
 @then('Please wait should appear while settings are being applied')
 def please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
-    wait_on_element(driver, 0.5, 30, 'xpath', '//h6[contains(.,"Please wait")]')
-    wait_on_element(driver, 0.5, 30, 'xpath', '//button[contains(.,"SAVE CHANGES")]')
+    wait_on_element(driver, 0.5, 30, '//h6[contains(.,"Please wait")]')
+    wait_on_element(driver, 0.5, 30, '//button[contains(.,"SAVE CHANGES")]')
     driver.find_element_by_xpath('//button[contains(.,"SAVE CHANGES")]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//h1[contains(.,"Save Changes")]')
+    wait_on_element(driver, 0.5, 30, '//h1[contains(.,"Save Changes")]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__CLOSE"]')
+    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__CLOSE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
@@ -298,10 +298,10 @@ def please_wait_should_appear_while_settings_are_being_applied(driver):
 def navigate_to_storage_click_disks_then_click_name_several_times_to_sort_in_alphabetical_order(driver):
     """Navigate to Storage click Disks then click name several times to sort in alphabetical order."""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//mat-list-item[@ix-auto="option__Disks"]')
+    wait_on_element(driver, 0.5, 30, '//mat-list-item[@ix-auto="option__Disks"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Disks"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//div[contains(.,"Disks")]')
-    wait_on_element(driver, 0.5, 30, 'xpath', '//span[contains(.,"Name")]')
+    wait_on_element(driver, 0.5, 30, '//div[contains(.,"Disks")]')
+    wait_on_element(driver, 0.5, 30, '//span[contains(.,"Name")]')
     # sort disk
     ada0 = ''
     while ada0 != 'ada0':
@@ -327,15 +327,15 @@ def the_list_of_disks_should_appear_in_alphabetical_order_starting_with_ada0_ada
 def starting_with_da0_click_arrow_click_wipe_check_confirm_and_click_continue_repeat_steps_for_da1_da15_using_the_default_quick_wipe_setting(driver):
     """Starting with da0, click >, click wipe, check confirm, and click continue. Repeat steps for da1-da15 using the default quick wipe setting."""
     for num in range(16):
-        wait_on_element(driver, 0.5, 30, 'xpath', f'//a[@ix-auto="expander__da{num}"]')
+        wait_on_element(driver, 0.5, 30, f'//a[@ix-auto="expander__da{num}"]')
         driver.find_element_by_xpath(f'//a[@ix-auto="expander__da{num}"]').click()
         driver.find_element_by_xpath(f'//button[@ix-auto="button__WIPE_da{num}_da{num}"]').click()
-        wait_on_element(driver, 0.5, 30, 'xpath', f'//h1[contains(.,"Wipe Disk da{num}")]')
+        wait_on_element(driver, 0.5, 30, f'//h1[contains(.,"Wipe Disk da{num}")]')
         driver.find_element_by_xpath('//button[@ix-auto="button__WIPE"]').click()
-        wait_on_element(driver, 0.5, 30, 'xpath', f'//h1[contains(.,"Wipe Disk da{num}")]')
+        wait_on_element(driver, 0.5, 30, f'//h1[contains(.,"Wipe Disk da{num}")]')
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
         driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-        wait_on_element(driver, 1, 30, 'xpath', '//span[contains(.,"Disk Wiped successfully")]')
+        wait_on_element(driver, 1, 30, '//span[contains(.,"Disk Wiped successfully")]')
         driver.find_element_by_xpath('//button[contains(.,"CLOSE")]').click()
 
 
@@ -343,11 +343,11 @@ def starting_with_da0_click_arrow_click_wipe_check_confirm_and_click_continue_re
 def navigate_to_storage_click_pools_click_add_select_create_new_pool(driver):
     """Navigate to Storage click Pools, click Add, select Create new pool."""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//mat-list-item[@ix-auto="option__Pools"]')
+    wait_on_element(driver, 0.5, 30, '//mat-list-item[@ix-auto="option__Pools"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Pools"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//div[contains(.,"Pools")]')
+    wait_on_element(driver, 0.5, 30, '//div[contains(.,"Pools")]')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//label[contains(.,"Create a pool:")]')
+    wait_on_element(driver, 0.5, 30, '//label[contains(.,"Create a pool:")]')
     driver.find_element_by_xpath('//mat-radio-button[@ix-auto="radio__is_new_Create new pool"]').click()
 
 
@@ -355,15 +355,15 @@ def navigate_to_storage_click_pools_click_add_select_create_new_pool(driver):
 def click_create_pool_enter_tank_for_pool_name_check_the_box_next_to_da0_press_under_data_vdev_click_create_check_confirm_click_create_pool(driver):
     """Click create pool, enter tank for pool name, check the box next to da0, press under data vdev, click create, check confirm, click CREATE POOL."""
     driver.find_element_by_xpath('//button[@ix-auto="button__CREATE POOL"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//div[contains(.,"Pool Manager")]')
+    wait_on_element(driver, 0.5, 30, '//div[contains(.,"Pool Manager")]')
     driver.find_element_by_xpath('//input[@placeholder="Name"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Name"]').send_keys('tank')
     driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__disks-da0"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//button[@id="vdev__add-button"]')
+    wait_on_element(driver, 0.5, 30, '//button[@id="vdev__add-button"]')
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//button[@name="create-button"]')
+    wait_on_element(driver, 0.5, 30, '//button[@name="create-button"]')
     driver.find_element_by_xpath('//button[@name="create-button"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//h1[contains(.,"Warning")]')
+    wait_on_element(driver, 0.5, 30, '//h1[contains(.,"Warning")]')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     driver.find_element_by_xpath('//button[@ix-auto="button__CREATE POOL"]').click()
 
@@ -371,10 +371,10 @@ def click_create_pool_enter_tank_for_pool_name_check_the_box_next_to_da0_press_u
 @then('Create Pool should appear while pool is being created. You should be returned to list of pools and tank should appear in the list.')
 def create_pool_should_appear_while_pool_is_being_created_you_should_be_returned_to_list_of_pools_and_tank_should_appear_in_the_list(driver):
     """Create Pool should appear while pool is being created. You should be returned to list of pools and tank should appear in the list."""
-    wait_on_element(driver, 0.2, 30, 'xpath', '//h1[contains(.,"Create Pool")]')
+    wait_on_element(driver, 0.2, 30, '//h1[contains(.,"Create Pool")]')
     driver.find_element_by_xpath('//h1[contains(.,"Create Pool")]')
-    wait_on_element_disappear(driver, 1, 30, 'xpath', '//h1[contains(.,"Create Pool")]')
-    wait_on_element(driver, 1, 30, 'xpath', '//mat-panel-title[contains(.,"tank")]')
+    wait_on_element_disappear(driver, 1, 30, '//h1[contains(.,"Create Pool")]')
+    wait_on_element(driver, 1, 30, '//mat-panel-title[contains(.,"tank")]')
     driver.find_element_by_xpath('//mat-panel-title[contains(.,"tank")]')
     driver.find_element_by_xpath('//td[@ix-auto="value__tank_name"]')
 
@@ -387,11 +387,11 @@ def navigate_to_system_then_failover_click_disable_failover_click_save(driver):
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//mat-list-item[@ix-auto="option__Failover"]')
+    wait_on_element(driver, 0.5, 30, '//mat-list-item[@ix-auto="option__Failover"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Failover"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//h4[contains(.,"Failover Configuration")]')
+    wait_on_element(driver, 0.5, 30, '//h4[contains(.,"Failover Configuration")]')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//button[@ix-auto="button__SAVE"]')
+    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
@@ -399,17 +399,17 @@ def navigate_to_system_then_failover_click_disable_failover_click_save(driver):
 def navigate_to_dashboard_and_verify_that_both_controllers_show(driver):
     """Navigate to dashboard, and verify that both controllers show."""
     # make sure to scroll back up the mat-list-item
-    wait_on_element(driver, 0.5, 30, 'xpath', '//h4[contains(.,"Failover Configuration")]')
+    wait_on_element(driver, 0.5, 30, '//h4[contains(.,"Failover Configuration")]')
     element = driver.find_element_by_xpath('//span[contains(.,"root")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    wait_on_element(driver, 0.5, 30, 'xpath', '//span[contains(.,"System Information")]')
+    wait_on_element(driver, 0.5, 30, '//span[contains(.,"System Information")]')
     driver.find_element_by_xpath('//span[contains(.,"System Information")]')
     # need to wait for all controller to be online.
-    wait_on_element(driver, 1, 60, 'xpath', f'//span[contains(.,"{serial_one}")]')
+    wait_on_element(driver, 1, 60, f'//span[contains(.,"{serial_one}")]')
     driver.find_element_by_xpath(f'//span[contains(.,"{serial_one}")]')
-    wait_on_element(driver, 1, 90, 'xpath', f'//span[contains(.,"{serial_two}")]')
+    wait_on_element(driver, 1, 90, f'//span[contains(.,"{serial_two}")]')
     driver.find_element_by_xpath(f'//span[contains(.,"{serial_two}")]')
 
 
