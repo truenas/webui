@@ -34,6 +34,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   public logoTextPath: string = 'assets/images/light-logo-text.svg';
   public currentTheme: string = "";
   public retroLogo: boolean = false;
+  public isOpen = false;
   public copyrightYear = globalHelptext.copyright_year;
   // we will just have to add to this list as more languages are added
 
@@ -274,5 +275,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
         this.sideNave.close();
       }
     }
+  }
+
+  doSlide() {
+    this.isOpen = !this.isOpen;
   }
 }

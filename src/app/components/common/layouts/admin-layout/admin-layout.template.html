@@ -41,7 +41,7 @@
       </div>
       <navigation (onStateChange)="changeState($event)"></navigation>
       <div class="sidenav-copyright-txt" *ngIf="!isSidenavCollapsed">
-        <p>TrueNAS {{product_type}}®</p>
+        <p (click)="doSlide()">TrueNAS {{product_type}}®</p>
         <p>
           © {{copyrightYear}} - <a href="http://www.ixsystems.com"
               target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.
@@ -62,6 +62,10 @@
     <topbar [sidenav]="sidenav" [notificPanel]="notificationPanel" (onLangChange)="language.setMiddlewareLanguage($event)"></topbar>
     <!-- App content -->
     <!-- <app-breadcrumb [product_type]="product_type"></app-breadcrumb> -->
+    
+    <div class="slidein-nav" [ngClass]="{'slidein-open' : isOpen}"></div>
+    <div class="overlay" [ngClass]="{'isdark' : isOpen}" (click)="doSlide()"></div>
+
     <div class="rightside-content-hold" [ngClass]="{'has-footer':isShowFooterConsole}">
       <router-outlet></router-outlet>
     </div>
