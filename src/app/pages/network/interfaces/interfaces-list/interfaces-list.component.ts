@@ -8,7 +8,6 @@ import helptext from '../../../../helptext/network/interfaces/interfaces-list';
 import { EntityUtils } from '../../../common/entity/utils';
 import { CoreEvent } from 'app/core/services/core.service';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
-import { action } from 'popmotion';
 
 @Component({
   selector : 'app-interfaces-list',
