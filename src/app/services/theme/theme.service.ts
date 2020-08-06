@@ -455,8 +455,6 @@ export class ThemeService {
   varToValue(cssVar:string){
     const prop = cssVar.replace('var(--', '').replace(')', '');
     const theme = this.currentTheme();
-    console.log(prop);
-    console.log(this.currentTheme());
     return theme[prop];
   }
 
@@ -464,9 +462,7 @@ export class ThemeService {
 
     // Error Handling
     if(str.startsWith("var")){
-      console.log("This is a variable and not a hex value");
       str = this.varToValue(str);
-      console.log(str);
     }
 
     var spl = str.split('#');

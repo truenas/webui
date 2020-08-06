@@ -1,5 +1,8 @@
 /* TYPOGRAPHY */
 
+body {
+  background: var(--bg1);
+}
 
 @font-face {
   font-family: 'IBM Plex Sans';
@@ -226,6 +229,28 @@ entity-table .mat-toolbar.mat-card-toolbar{
 .form-element .mat-chip{
   font-size: smaller !important;
   padding: 1px 16px 0 !important;
+}
+
+/* Login Form */
+.login-form .form-element .mat-form-field-wrapper{
+  width: 100% !important;
+}
+
+.login-form .form-element .mat-form-field-wrapper input{
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0 0 2px 0;
+  position: relative;
+  top: 6px !important;
+}
+
+.login-form .form-element .mat-form-field-prefix .mat-icon {
+  font-size: 16px;
+}
+
+.login-form .form-element .mat-form-field-prefix{
+  margin-bottom: 2px;
 }
 
 .form-element textarea{
