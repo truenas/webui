@@ -13,6 +13,7 @@ export const DefaultTheme = {
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
       topbar:"#111111",
+      'topbar-txt': "var(--fg2)",
       accent:"var(--bg2)",
       bg1:'#1E1E1E',
       bg2:'#242424',
@@ -39,6 +40,7 @@ export interface Theme {
   labelSwatch?: string;
   accentColors: string[];
   topbar?: string; // CSS var from palette. Defaults to primary
+  'topbar-txt'?: string; // Text color for topbar. Will be auto generated if nothing is set
   favorite?:boolean; // Deprecate: Hasn't been used since the theme switcher was in the topbar
   hasDarkLogo?: boolean; // Deprecate: logo colors are set with CSS now
   logoPath?:string; // Deprecate: Themes haven't used this in a couple of releases now
@@ -397,11 +399,20 @@ export class ThemeService {
     let accentColor = this.colorFromMeta(theme["accent"]); // eg. yellow
     let primaryTextColor = this.textContrast(theme[primaryColor], theme["bg2"]);
     let accentTextColor = this.textContrast(theme[accentColor], theme["bg2"]);
-    let topbarTextColor = this.textContrast(theme[accentColor], theme["bg2"]);
-    (<any>document).documentElement.style.setProperty("--topbar-txt", primaryTextColor);
+
     (<any>document).documentElement.style.setProperty("--primary-txt", primaryTextColor);
     (<any>document).documentElement.style.setProperty("--accent-txt", accentTextColor);
     (<any>document).documentElement.style.setProperty("--highlight", accentTextColor);
+
+    let topbarTextColor;
+    if(!theme['topbar-txt'] && theme.topbar) {
+      topbarTextColor = this.textContrast(theme.topbar, theme["bg2"]);
+      (<any>document).documentElement.style.setProperty("--topbar-txt", topbarTextColor);
+    } else if(!theme['topbar-txt'] && !theme.topbar) {
+      //topbarTextColor = this.textContrast(theme[accentColor], theme["bg2"]);
+      topbarTextColor = this.textContrast(theme[primaryColor], theme["bg2"]);
+      (<any>document).documentElement.style.setProperty("--topbar-txt", topbarTextColor);
+    }
 
     // Logo light/dark
     if(theme["hasDarkLogo"]){
@@ -441,7 +452,23 @@ export class ThemeService {
     return txtColor;
   }
 
+  varToValue(cssVar:string){
+    const prop = cssVar.replace('var(--', '').replace(')', '');
+    const theme = this.currentTheme();
+    console.log(prop);
+    console.log(this.currentTheme());
+    return theme[prop];
+  }
+
   hexToRGB(str) {
+
+    // Error Handling
+    if(str.startsWith("var")){
+      console.log("This is a variable and not a hex value");
+      str = this.varToValue(str);
+      console.log(str);
+    }
+
     var spl = str.split('#');
     var hex = spl[1];
     if(hex.length == 3){

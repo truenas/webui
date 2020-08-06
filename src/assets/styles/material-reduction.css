@@ -213,13 +213,19 @@ entity-table .mat-toolbar.mat-card-toolbar{
 .form-element input[type = "number"],
 .form-element textarea,
 .form-element select{
-  width: 100%;
+  width: calc(100% - 24px) !important;
   background-color: var(--bg1);
   color: var(--fg1);
   border: solid 1px var(--lines);
   padding: 8px;
   box-sizing: border-box;
   color: var(--fg1);
+}
+
+/* Chips */
+.form-element .mat-chip{
+  font-size: smaller !important;
+  padding: 1px 16px 0 !important;
 }
 
 .form-element textarea{
@@ -230,13 +236,17 @@ entity-table .mat-toolbar.mat-card-toolbar{
 
 .form-element input[type = "password"],
 .form-element .has_toggle_pw input {
-  width: calc(100% - 40px);
+  width: calc(100% - 40px) !important;
   display: inline;
 }
 
 .form-element button.toggle_pw i{
   font-size: 22px;
   opacity: 0.75;
+}
+
+.form-element .mat-form-field-type-mat-select .mat-form-field-wrapper {
+  min-height: 33px;
 }
 
 .form-element.form-explorer .mat-form-field-wrapper{
@@ -305,6 +315,11 @@ button.mat-button.mat-accent[type="button"]:hover{
   color: var(--fg2) !important;
 }
 
+/* Menus */
+.mat-menu-item:hover {
+  background-color: var(--alt-bg1) !important;
+}
+
 /* Nested Cards */
 .mat-card .form-card.mat-card{
   box-shadow: unset; 
@@ -314,6 +329,6 @@ button.mat-button.mat-accent[type="button"]:hover{
 /* Top bar fixes */
 .topbar .mat-icon-button,
 .topbar .mat-icon-button .mat-icon[alt="iXsystem logo"]{
-  color: var(--fg2) !important;
+  color: var(--topbar-txt) !important;
 }
 
