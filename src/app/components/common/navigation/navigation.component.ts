@@ -19,6 +19,8 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
   iconTypeMenuTitle:string;
   menuItems:any[];
   @Output('onStateChange') onStateChange: EventEmitter<any> = new EventEmitter();
+  @Output('onSlideMenuTrigger') onSlideMenuTrigger: EventEmitter<any> = new EventEmitter();
+  @Output('onChangeSubmenu') onChangeSubmenu: EventEmitter<any> = new EventEmitter();
 
   constructor(private navService: NavigationService, private router: Router, private ws: WebSocketService, private docsService: DocsService) {
     super();
@@ -135,5 +137,13 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
     setTimeout(() => {
       Ps.update(navigationHold);
     }, 500);
+  }
+
+  toggleSlideoutMenu(state, sub) {
+    this.onSlideMenuTrigger.emit([state, sub]);
+  }
+
+  changeSubmenu(state, sub) {
+    this.onChangeSubmenu.emit([state, sub]);
   }
 }

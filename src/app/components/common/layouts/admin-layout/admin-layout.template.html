@@ -39,9 +39,9 @@
         </span>
         <div class="hostname-label" *ngIf="hostname" matTooltip="Hostname: {{hostname}}">{{hostname}}</div>
       </div>
-      <navigation (onStateChange)="changeState($event)"></navigation>
+      <navigation (onStateChange)="changeState($event)" (onSlideMenuTrigger)="doSlide($event)" (onChangeSubmenu)="changeSubmenu($event)"></navigation>
       <div class="sidenav-copyright-txt" *ngIf="!isSidenavCollapsed">
-        <p (click)="doSlide()">TrueNAS {{product_type}}®</p>
+        <p>TrueNAS {{product_type}}®</p>
         <p>
           © {{copyrightYear}} - <a href="http://www.ixsystems.com"
               target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.
@@ -63,7 +63,15 @@
     <!-- App content -->
     <!-- <app-breadcrumb [product_type]="product_type"></app-breadcrumb> -->
     
-    <div class="slidein-nav" [ngClass]="{'slidein-open' : isOpen}"></div>
+    <div class="slidein-nav" [ngClass]="{'slidein-open' : isOpen}">
+      <mat-list class="" role="list">
+        <mat-list-item routerLinkActive="selected" *ngFor="let subItem of subs; let j = index" (click)="doSlide()" 
+          class="sidebar-list-item" role="listitem" 
+            ix-auto ix-auto-type="option" ix-auto-identifier="{{subItem.name}}">
+            <a [routerLink]="['/', menuName, subItem.state]" id="{{i}}-{{j}}" *ngIf="!subItem.disabled" >{{subItem.name | translate}}</a>
+        </mat-list-item>
+    </mat-list>  
+    </div>
     <div class="overlay" [ngClass]="{'isdark' : isOpen}" (click)="doSlide()"></div>
 
     <div class="rightside-content-hold" [ngClass]="{'has-footer':isShowFooterConsole}">

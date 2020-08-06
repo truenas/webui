@@ -17,7 +17,9 @@
     <!-- Regular menu items -->
     <div *ngFor="let item of menuItems; let i = index">
         <!-- if it's not disabled and not a separator and not icon -->
-        <mat-list-item (click)="updateScroll()" sideNavAccordion class="sidebar-list-item" role="listitem" *ngIf="!item.disabled && item.type !== 'separator' && item.type !== 'icon'" [ngClass]="{'has-submenu': item.type === 'dropDown'}" routerLinkActive="open" id="nav-{{i}}"
+        <mat-list-item (click)="updateScroll()" sideNavAccordion class="sidebar-list-item" role="listitem" 
+            *ngIf="!item.disabled && item.type !== 'separator' && item.type !== 'icon'" 
+            [ngClass]="{'has-submenu': item.type === 'dropDown'}" routerLinkActive="open" id="nav-{{i}}"
             ix-auto ix-auto-type="option" ix-auto-identifier="{{item.name}}">
             <a [routerLink]="['/', item.state]" *ngIf="item.type === 'link'" name="{{item.name.replace(' ', '_')}}-menu">
                 <span class="menu-item-tooltip" [matTooltip]="item.tooltip" id="{{item.name}}" matTooltipPosition="right"></span>
@@ -34,6 +36,15 @@
                 <span fxFlex></span>
                 <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
             </a>
+
+            <a *ngIf="item.type === 'slideOut'" name="{{item.name.replace(' ', '_')}}-menu" (click)="toggleSlideoutMenu(item.state, item.sub)" (mouseover)="changeSubmenu(item.state, item.sub)">
+                <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="above"></span>
+                <mat-icon>{{item.icon}}</mat-icon>
+                <span>{{item.name | translate}}</span>
+                <span fxFlex></span>
+                <mat-icon class="menu-caret">keyboard_arrow_right</mat-icon>
+            </a>
+
             <a [href]="item.state" *ngIf="item.type === 'extLink'" target="_blank" name="{{item.name.replace(' ', '_')}}-menu">
                 <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="right"></span>
                 <mat-icon>{{item.icon}}</mat-icon>

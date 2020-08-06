@@ -35,6 +35,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   public currentTheme: string = "";
   public retroLogo: boolean = false;
   public isOpen = false;
+  menuName: string;
+  subs:any[];
   public copyrightYear = globalHelptext.copyright_year;
   // we will just have to add to this list as more languages are added
 
@@ -277,7 +279,18 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  doSlide() {
+  doSlide(menuInfo?) {
+    if (menuInfo) {
+      this.menuName = menuInfo[0];
+      this.subs = menuInfo[1];
+    }
     this.isOpen = !this.isOpen;
+  }
+
+  changeSubmenu(menuInfo) {
+    if (this.isOpen) {
+      this.menuName = menuInfo[0];
+      this.subs = menuInfo[1];
+    }
   }
 }
