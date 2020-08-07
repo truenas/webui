@@ -77,8 +77,7 @@ def click_on_users(driver):
 @then('The Users page should open')
 def the_users_page_should_open(driver):
     """The Users page should open."""
-    wait_on_element(driver, 0.5, 30, '//div[contains(.,"Users")]')
-    driver.find_element_by_xpath('//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 1, 10, '//div[contains(.,"Users")]')
 
 
 @then('On the right side of the table, click the Greater-Than-Sign for one of the users')
@@ -110,6 +109,7 @@ def the_user_edit_page_should_open(driver):
 @then('Change the path of the users Home Directory')
 def change_the_path_of_the_users_home_directory(driver):
     """Change the path of the users Home Directory."""
+    wait_on_element(driver, 1, 30, '//h4[contains(.,"Identification")]')
     driver.find_element_by_xpath('//input[@ix-auto="input__home"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__home"]').send_keys('/mnt/tank/ericbsd')
 
@@ -120,13 +120,13 @@ def change_should_be_saved(driver):
     wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     wait_on_element_disappear(driver, 1, 30, '//h6[contains(.,"Please wait")]')
-    wait_on_element(driver, 0.5, 5, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 1, 5, '//div[contains(.,"Users")]')
 
 
 @then('open the drop down details pane for the user')
 def open_the_drop_down_details_pane_for_the_user(driver):
     """open the drop down details pane for the user."""
-    wait_on_element(driver, 0.5, 5, '//a[@ix-auto="expander__ericbsd"]')
+    assert wait_on_element(driver, 1, 5, '//a[@ix-auto="expander__ericbsd"]')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
     wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__EDIT_ericbsd"]')
     driver.find_element_by_xpath('//h4[contains(.,"Home directory:")]')

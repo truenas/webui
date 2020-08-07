@@ -66,7 +66,7 @@ def navigate_to_services(driver):
 @then('the service page should open')
 def the_service_page_should_open(driver):
     """the service page should open."""
-    assert wait_on_element(driver, 0.5, 30, '//services')
+    assert wait_on_element(driver, 1, 5, '//services')
 
 
 @then('press on configure(pencil) SSH')
@@ -106,7 +106,7 @@ def click_save(driver):
 @then('click Start Automatically SSH checkbox and enable the SSH service')
 def click_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
     """click Start Automatically SSH checkbox and enable the SSH service."""
-    assert wait_on_element(driver, 0.5, 5, '//services')
+    assert wait_on_element(driver, 1, 5, '//services')
     # Scroll to SSH service
     element = driver.find_element_by_xpath('//button[@ix-auto="button__SSH_Actions"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
