@@ -9,8 +9,7 @@ import { EntityUtils } from '../../../../common/entity/utils';
 import { WebSocketService, DialogService, NetworkService } from '../../../../../services/';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import * as _ from 'lodash';
-import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
-import { ipv4or6cidrValidator } from '../../../../common/entity/entity-form/validators/ip-validation';
+import { ipv4or6OptionalCidrValidator } from '../../../../common/entity/entity-form/validators/ip-validation';
 
 @Component({
   selector: 'app-iscsi-initiator-form',
@@ -58,7 +57,7 @@ export class InitiatorFormComponent implements OnInit {
       name: 'auth_network',
       placeholder: helptext_sharing_iscsi.initiator_form_placeholder_auth_network,
       tooltip: helptext_sharing_iscsi.initiator_form_tooltip_auth_network,
-      validation: [ipv4or6cidrValidator('auth_network')],
+      validation: [ipv4or6OptionalCidrValidator('auth_network')],
       customEventMethod: (parent) => {
         for (let i = 0; i < parent.source.selectedOptions.selected.length; i++) {
           parent.listControl.value.add(parent.source.selectedOptions.selected[i].value.initiator_addr);
