@@ -144,7 +144,7 @@ def log_out_and_try_to_log_back_in_with_the_old_password_for_that_user(driver):
 @then('User should not be able to log in ssh with the old password')
 def user_should_not_be_able_to_log_in_ssh_with_the_old_password(driver):
     """User should not be able to log in ssh with the old password."""
-    wait_on_element(driver, 0.5, 4, '//span[contains(.,"Permission") and contains(.,"denied,")]')
+    wait_on_element(driver, 1, 5, '//span[contains(.,"Permission") and contains(.,"denied,")]')
     assert is_element_present(driver, '//span[contains(.,"Permission") and contains(.,"denied,")]')
 
 
