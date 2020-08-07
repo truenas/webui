@@ -138,9 +138,13 @@ export class SystemProfiler {
       if(!item.enclosure && this.rearIndex){
         let rearSlot = this.enclosures[this.rearIndex];
         rearDisk = this.enclosures[this.rearIndex].elements.filter((d) => {
-          if(d.data.Device == item.name) rearSlot = d.slot ;
-          return d.data.Device == item.name;
+
+          if(d.data && d.data.Device == item.name) {
+            rearSlot = d.slot ;
+            return d.data.Device == item.name;
+          }
         });
+        
         item.enclosure = rearDisk.length > 0 ? {number: this.rearIndex, slot: rearSlot} : undefined;
       }
 

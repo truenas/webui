@@ -33,7 +33,7 @@
 </div>
 
   <!-- Enclosure Selector -->
-    <div fxFlex="240px" fxFlex.lt-lg="180px" #navigation  *ngIf="events && system && system.pools && system.enclosures && system.enclosures.length > 1" class="enclosure-selector" [ngClass.lt-lg]="lt-lg">
+  <div fxFlex="240px" fxFlex.lt-lg="180px" #navigation  *ngIf="events && system && system.pools && system.enclosures && getTotalEnclosures() > 1" class="enclosure-selector" [ngClass.lt-lg]="lt-lg">
       <ng-container *ngFor="let enclosure of system.profile; let i = index">
         <div *ngIf="enclosure.enclosureKey != system.rearIndex" (click)="selectEnclosure(i)" class="enclosure enclosure-{{i}} {{selectedEnclosure.enclosureKey == i ? 'active' : '' }} ">
           <!--<div>{{enclosure.model}} ({{i}})</div>-->

@@ -221,4 +221,14 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     }
   }
 
+  getTotalEnclosures(target){
+    if(!target || target.profiles == null || target.profiles.length < 1 ){
+      return 0;
+    }
+
+    let enclosures = target.profiles.filter((enclosure) => !enclosure.model.toLowerCase().contains('rear'));
+    console.log(enclosures.length);
+    return enclosures.length;
+  }
+
 }
