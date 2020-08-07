@@ -76,7 +76,7 @@ def press_on_configure_ssh(driver):
     # Scroll to SSH service
     element = driver.find_element_by_xpath('//button[@ix-auto="button__SSH_Actions"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(5)
+    time.sleep(1)
     assert wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SSH_Actions"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SSH_Actions"]').click()
 
@@ -112,7 +112,7 @@ def click_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
     # Scroll to SSH service
     element = driver.find_element_by_xpath('//button[@ix-auto="button__SSH_Actions"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(5)
+    time.sleep(1)
     driver.find_element_by_xpath('//div[@ix-auto="value__SSH"]')
     value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__SSH_Start Automatically"]', 'class', 'mat-checkbox-checked')
     if not value_exist:
