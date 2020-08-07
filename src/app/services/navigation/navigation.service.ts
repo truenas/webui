@@ -64,7 +64,7 @@ export class NavigationService {
       type: 'link',
       tooltip: T('Network'),
       icon: 'device_hub',
-      state: 'system',
+      state: 'jails',
     },
     {
       name: T('Credentials'),
@@ -94,7 +94,7 @@ export class NavigationService {
       type: 'slideOut',
       tooltip: T('Virtualization'),
       icon: 'computer',
-      state: 'account',
+      state: 'vm',
       sub: [
         { name: T('Jails'), state: 'jails' },
         { name: T('Virtual Machines'), state: 'vm' },

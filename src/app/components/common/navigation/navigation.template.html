@@ -17,11 +17,11 @@
     <!-- Regular menu items -->
     <div *ngFor="let item of menuItems; let i = index">
         <!-- if it's not disabled and not a separator and not icon -->
-        <mat-list-item (click)="updateScroll()" sideNavAccordion class="sidebar-list-item" role="listitem" 
+        <mat-list-item (click)="updateHighlightedClass(item.state)" sideNavAccordion class="sidebar-list-item top-level" role="listitem" 
             *ngIf="!item.disabled && item.type !== 'separator' && item.type !== 'icon'" 
-            [ngClass]="{'has-submenu': item.type === 'dropDown'}" routerLinkActive="open" id="nav-{{i}}"
+            [ngClass]="{'has-submenu': item.type === 'slideOut', 'highlighted': isHighlighted === item.state}" routerLinkActive="open" id="nav-{{i}}"
             ix-auto ix-auto-type="option" ix-auto-identifier="{{item.name}}">
-            <a [routerLink]="['/', item.state]" *ngIf="item.type === 'link'" name="{{item.name.replace(' ', '_')}}-menu" (click)="closeSubMenu()">
+            <a [routerLink]="['/', item.state]" *ngIf="item.type === 'link'" name="{{item.name.replace(' ', '_')}}-menu" (click)="closeMenu()">
                 <span class="menu-item-tooltip" [matTooltip]="item.tooltip" id="{{item.name}}" matTooltipPosition="right"></span>
                 <!--<mat-icon>{{item.icon}}</mat-icon>-->
                 <mat-icon *ngIf="item.icon !== 'jail_icon' && item.icon !== 'console-line'">{{item.icon}}</mat-icon>
@@ -37,7 +37,7 @@
                 <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
             </a>
 
-            <a *ngIf="item.type === 'slideOut'" name="{{item.name.replace(' ', '_')}}-menu" (click)="toggleSlideoutMenu(item.state, item.sub)" (mouseover)="changeSubmenu(item.state, item.sub)">
+            <a *ngIf="item.type === 'slideOut'" name="{{item.name.replace(' ', '_')}}-menu" (click)="toggleMenu(item.state, item.sub)" (mouseover)="changeMenu(item.state, item.sub)">
                 <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="above"></span>
                 <mat-icon>{{item.icon}}</mat-icon>
                 <span>{{item.name | translate}}</span>
@@ -51,7 +51,7 @@
                 <span>{{item.name | translate}}</span>
             </a>
             <mat-nav-list class="sub-menu" role="list" *ngIf="item.type === 'dropDown'">
-                <mat-list-item routerLinkActive="selected" *ngFor="let subItem of item.sub; let j = index"
+                <mat-list-item routerLinkActive="selected" *ngFor="let subItem of item.sub; let j = index" class="sidebar-sublist-item"
                     ix-auto ix-auto-type="option" ix-auto-identifier="{{subItem.name}}">
                     <a [routerLink]="['/', item.state, subItem.state]" id="{{i}}-{{j}}" *ngIf="!subItem.disabled" >{{subItem.name | translate}}</a>
                 </mat-list-item>

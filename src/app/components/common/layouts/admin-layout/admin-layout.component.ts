@@ -279,12 +279,16 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  doSlide(menuInfo?) {
-    if (menuInfo) {
-      this.menuName = menuInfo[0];
-      this.subs = menuInfo[1];
+  toggleMenu(menuInfo?) {
+    if (this.isOpen) {
+      this.isOpen = false;
+    } else {
+      if (menuInfo) {
+        this.menuName = menuInfo[0];
+        this.subs = menuInfo[1];
+        this.isOpen = true;
+      }
     }
-    this.isOpen = !this.isOpen;
   }
 
   changeSubmenu(menuInfo) {
@@ -293,10 +297,4 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       this.subs = menuInfo[1];
     }
   }
-
-  closeSubmenu() {
-    if (this.isOpen) {
-      this.isOpen = false;
-    }
-  }
- }
+}

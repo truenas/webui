@@ -18,10 +18,13 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
   hasIconTypeMenuItem;
   iconTypeMenuTitle:string;
   menuItems:any[];
+  menuList = document.getElementsByClassName('top-level');
+  isHighlighted: string;
+
   @Output('onStateChange') onStateChange: EventEmitter<any> = new EventEmitter();
-  @Output('onSlideMenuTrigger') onSlideMenuTrigger: EventEmitter<any> = new EventEmitter();
-  @Output('onChangeSubmenu') onChangeSubmenu: EventEmitter<any> = new EventEmitter();
-  @Output('onCloseSubmenu') onCloseSubmenu: EventEmitter<any> = new EventEmitter();
+  @Output('onToggleMenu') onToggleMenu: EventEmitter<any> = new EventEmitter();
+  @Output('onChangeMenu') onChangeMenu: EventEmitter<any> = new EventEmitter();
+  @Output('onCloseMenu') onCloseMenu: EventEmitter<any> = new EventEmitter();
 
   constructor(private navService: NavigationService, private router: Router, private ws: WebSocketService, private docsService: DocsService) {
     super();
@@ -106,13 +109,13 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
             }
           }
 
-          // set the guide url
-          if (evt.data.version) {
-              window.localStorage.setItem('running_version', evt.data['version']);
-              const docUrl = this.docsService.docReplace("--docurl--");
-              const guide = _.find(menuItem, {name: 'Guide'});
-              guide.state = docUrl;
-          }
+          // set the guide url -- temporarily disabled for menuing project
+          // if (evt.data.version) {
+          //     window.localStorage.setItem('running_version', evt.data['version']);
+          //     const docUrl = this.docsService.docReplace("--docurl--");
+          //     const guide = _.find(menuItem, {name: 'Guide'});
+          //     guide.state = docUrl;
+          // }
 
           if(evt.data.features.enclosure){
             for(let i = 0; i < this.navService.hardwareFeatures.length; i++) {
@@ -133,22 +136,29 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
   }
 
   // Workaround to keep scrollbar displaying as needed
-  updateScroll() {
-    let navigationHold = document.getElementById('scroll-area');
-    setTimeout(() => {
-      Ps.update(navigationHold);
-    }, 500);
+  // updateScroll() {
+  //   let navigationHold = document.getElementById('scroll-area');
+  //   setTimeout(() => {
+  //     Ps.update(navigationHold);
+  //   }, 500);
+  // }
+
+  toggleMenu(state, sub) {
+    this.onToggleMenu.emit([state, sub]);
   }
 
-  toggleSlideoutMenu(state, sub) {
-    this.onSlideMenuTrigger.emit([state, sub]);
+  changeMenu(state, sub) {
+    this.onChangeMenu.emit([state, sub]);
   }
 
-  changeSubmenu(state, sub) {
-    this.onChangeSubmenu.emit([state, sub]);
+  closeMenu() {
+    this.onCloseMenu.emit();
   }
 
-  closeSubMenu() {
-    this.onCloseSubmenu.emit();
+  updateHighlightedClass(state) {
+  //   for (let i = 0; i < this.menuList.length; i++) {
+  //     this.menuList[i].classList.remove('highlighted');
+  //  }
+  this.isHighlighted = state;
   }
  }
