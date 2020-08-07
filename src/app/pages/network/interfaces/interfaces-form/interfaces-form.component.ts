@@ -310,6 +310,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   //
   protected ipListControl: any;
   protected failover_group: any;
+  protected failover_vhid: any;
   //
   public confirmSubmit = false;
   public confirmSubmitDialog = {
