@@ -74,6 +74,8 @@ tests/bdd/results/cucumber/*.json
 licenses.txt
 
 # generated screenshot files
+tests/bdd/screenshot/ha-bhyve02/*.png
+tests/bdd/screenshot/ha-tn09/*.png
 tests/screenshot/*.png
 .vs/slnx.sqlite
 
