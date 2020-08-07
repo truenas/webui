@@ -293,4 +293,10 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       this.subs = menuInfo[1];
     }
   }
-}
+
+  closeSubmenu() {
+    if (this.isOpen) {
+      this.isOpen = false;
+    }
+  }
+ }

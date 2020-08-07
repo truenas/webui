@@ -21,6 +21,7 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
   @Output('onStateChange') onStateChange: EventEmitter<any> = new EventEmitter();
   @Output('onSlideMenuTrigger') onSlideMenuTrigger: EventEmitter<any> = new EventEmitter();
   @Output('onChangeSubmenu') onChangeSubmenu: EventEmitter<any> = new EventEmitter();
+  @Output('onCloseSubmenu') onCloseSubmenu: EventEmitter<any> = new EventEmitter();
 
   constructor(private navService: NavigationService, private router: Router, private ws: WebSocketService, private docsService: DocsService) {
     super();
@@ -55,14 +56,14 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
         _.find(_.find(menuItem, {state : "system"}).sub, {state : "tunable"}).disabled = true;
         _.find(_.find(menuItem, {state : "system"}).sub, {state : "sysctl"}).disabled = false;
       } else {
-        this.ws.call('multipath.query').subscribe((res)=>{
-          if (!res || res.length === 0) {
-            _.find(_.find(menuItem, {state : "storage"}).sub, {state : "multipaths"}).disabled = true;
-          }
-        });
+        // this.ws.call('multipath.query').subscribe((res)=>{
+        //   if (!res || res.length === 0) {
+        //     _.find(_.find(menuItem, {state : "storage"}).sub, {state : "multipaths"}).disabled = true;
+        //   }
+        // });
         // hide clustering and containers in not SCALE
-        _.find(menuItem, {state : "clustering"}).disabled = true;
-        _.find(menuItem, {state : "containers"}).disabled = true;
+        // _.find(menuItem, {state : "clustering"}).disabled = true;
+        // _.find(menuItem, {state : "containers"}).disabled = true;
       }
       // ====================
 
@@ -146,4 +147,8 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
   changeSubmenu(state, sub) {
     this.onChangeSubmenu.emit([state, sub]);
   }
-}
+
+  closeSubMenu() {
+    this.onCloseSubmenu.emit();
+  }
+ }

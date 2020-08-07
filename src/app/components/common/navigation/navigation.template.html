@@ -21,7 +21,7 @@
             *ngIf="!item.disabled && item.type !== 'separator' && item.type !== 'icon'" 
             [ngClass]="{'has-submenu': item.type === 'dropDown'}" routerLinkActive="open" id="nav-{{i}}"
             ix-auto ix-auto-type="option" ix-auto-identifier="{{item.name}}">
-            <a [routerLink]="['/', item.state]" *ngIf="item.type === 'link'" name="{{item.name.replace(' ', '_')}}-menu">
+            <a [routerLink]="['/', item.state]" *ngIf="item.type === 'link'" name="{{item.name.replace(' ', '_')}}-menu" (click)="closeSubMenu()">
                 <span class="menu-item-tooltip" [matTooltip]="item.tooltip" id="{{item.name}}" matTooltipPosition="right"></span>
                 <!--<mat-icon>{{item.icon}}</mat-icon>-->
                 <mat-icon *ngIf="item.icon !== 'jail_icon' && item.icon !== 'console-line'">{{item.icon}}</mat-icon>

@@ -325,14 +325,27 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(background-color, --primary, $primary);
   }
 
-  .mat-color-primary,
-  .mat-button.mat-primary,
-  .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > a > span,
-  .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a
-  // .mat-focused .mat-form-field-label
-  {
+  .mat-color-primary, .mat-button.mat-primary {
     @include variable(color, --primary, $primary, !important);
   }
+
+
+  .sidebar-panel.mat-sidenav .sidebar-list-item {
+    border-left: 6px solid rgba(0, 0, 0, .0);
+  }
+
+  .sidebar-panel.mat-sidenav .sidebar-list-item.open {
+    border-color: var(--primary);
+
+    .mat-list-item-content > a > span {
+      color: var(--fg2) !important;
+    }
+
+    mat-icon {
+      color: var(--primary);
+    }
+  } 
+
 
   .mat-form-field.mat-focused.mat-primary {
     @include variable(color, --fg2, $fg2, !important);

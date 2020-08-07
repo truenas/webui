@@ -39,7 +39,7 @@
         </span>
         <div class="hostname-label" *ngIf="hostname" matTooltip="Hostname: {{hostname}}">{{hostname}}</div>
       </div>
-      <navigation (onStateChange)="changeState($event)" (onSlideMenuTrigger)="doSlide($event)" (onChangeSubmenu)="changeSubmenu($event)"></navigation>
+      <navigation (onStateChange)="changeState($event)" (onSlideMenuTrigger)="doSlide($event)" (onChangeSubmenu)="changeSubmenu($event)" (onCloseSubmenu)="closeSubmenu()"></navigation>
       <div class="sidenav-copyright-txt" *ngIf="!isSidenavCollapsed">
         <p>TrueNAS {{product_type}}®</p>
         <p>
