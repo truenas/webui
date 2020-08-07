@@ -34,12 +34,12 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 def login_appear_enter_root_and_password(driver, user, password):
     """login appear enter "{user}" and "{password}"."""
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        wait_on_element(driver, 1, 10, '//input[@placeholder="Username"]')
+        assert wait_on_element(driver, 1, 10, '//input[@placeholder="Username"]')
         driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(user)
         driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-        wait_on_element(driver, 0.5, 4, '//button[@name="signin_button"]')
+        assert wait_on_element(driver, 0.5, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
@@ -51,9 +51,9 @@ def login_appear_enter_root_and_password(driver, user, password):
 @then('you should see the dashboard')
 def you_should_see_the_dashboard(driver):
     """you should see the dashboard."""
-    wait_on_element(driver, 1, 5, '//button[@ix-auto="button__CLOSE"]')
+    assert wait_on_element(driver, 1, 5, '//button[@ix-auto="button__CLOSE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-    wait_on_element(driver, 0.5, 30, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 0.5, 30, '//span[contains(.,"System Information")]')
     driver.find_element_by_xpath('//span[contains(.,"System Information")]')
 
 
@@ -66,8 +66,7 @@ def navigate_to_services(driver):
 @then('the service page should open')
 def the_service_page_should_open(driver):
     """the service page should open."""
-    wait_on_element(driver, 0.5, 30, '//div[@ix-auto="value__SSH"]')
-    driver.find_element_by_xpath('//div[@ix-auto="value__SSH"]')
+    assert wait_on_element(driver, 0.5, 30, '//services')
 
 
 @then('press on configure(pencil) SSH')
@@ -77,15 +76,14 @@ def press_on_configure_ssh(driver):
     element = driver.find_element_by_xpath('//button[@ix-auto="button__SSH_Actions"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(1)
-    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SSH_Actions"]')
+    assert wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SSH_Actions"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SSH_Actions"]').click()
 
 
 @then('the SSH General Options page should open')
 def the_ssh_general_options_page_should_open(driver):
     """the SSH General Options page should open."""
-    wait_on_element(driver, 0.5, 30, '//h4[contains(text(),General) and contains(text(),Options)]')
-    driver.find_element_by_xpath('//h4[contains(text(),General) and contains(text(),Options)]')
+    assert wait_on_element(driver, 0.5, 10, '//h4[contains(text(),General) and contains(text(),Options)]')
 
 
 @then('click the checkbox "Log in as root with password"')
@@ -101,14 +99,14 @@ def click_the_checkbox_log_in_as_root_with_password(driver):
 @then('click Save')
 def click_save(driver):
     """click Save."""
-    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
 @then('click Start Automatically SSH checkbox and enable the SSH service')
 def click_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
     """click Start Automatically SSH checkbox and enable the SSH service."""
-    wait_on_element(driver, 0.5, 5, '//div[@ix-auto="value__SSH"]')
+    assert wait_on_element(driver, 0.5, 5, '//services')
     # Scroll to SSH service
     element = driver.find_element_by_xpath('//button[@ix-auto="button__SSH_Actions"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)

@@ -48,3 +48,21 @@ if os.path.exists('config.cfg'):
     @pytest.fixture
     def root_password():
         return password
+
+
+@pytest.mark.hookwrapper
+def pytest_runtest_makereport(item):
+    """
+    Extends the PyTest Plugin to take and embed screenshot whenever test fails.
+    """
+    outcome = yield
+    report = outcome.get_result()
+    if report.when == 'call' or report.when == "setup":
+        xfail = hasattr(report, 'wasxfail')
+        if (report.skipped and xfail) or (report.failed and not xfail):
+            file_name = f'screenshot/{report.nodeid.replace("::", "_")}.png'
+            _capture_screenshot(file_name)
+
+
+def _capture_screenshot(name):
+    web_driver.save_screenshot(name)
