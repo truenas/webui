@@ -2,7 +2,6 @@
 """High Availability (tn09) feature tests."""
 
 import time
-from selenium.webdriver.common.keys import Keys
 from function import (
     is_element_present,
     wait_on_element,
