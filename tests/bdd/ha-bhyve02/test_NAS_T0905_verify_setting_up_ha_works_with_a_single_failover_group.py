@@ -2,7 +2,7 @@
 """High Availability (tn-bhyve02) feature tests."""
 
 import time
-from function import wait_on_element, wait_on_element_disappear
+from function import wait_on_element, wait_on_element_disappear, is_element_present
 from pytest_bdd import (
     given,
     scenario,
@@ -20,20 +20,27 @@ def test_verify_setting_up_ha_works_with_a_single_failover_group_tn_bhyve02(driv
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """The browser is open navigate to "nas(url"."""
-    driver.get(f"http://{nas_url}/ui/sessions/signin")
-    time.sleep(2)
+    if nas_url not in driver.current_url:
+        driver.get(f"http://{nas_url}/ui/sessions/signin")
+        time.sleep(2)
 
 
 @when(parsers.parse('Login appear enter "root" and "{password}"'))
 def login_appear_enter_root_and_password(driver, password):
-    """Login appear enter "root" and "password"."""
-    wait_on_element(driver, 0.5, 30, '//input[@placeholder="Username"]')
-    driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
-    driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-    wait_on_element(driver, 0.5, 30, '//button[@name="signin_button"]')
-    driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
+        """Login appear enter "root" and "password"."""
+        wait_on_element(driver, 0.5, 30, '//input[@placeholder="Username"]')
+        driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
+        driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
+        driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
+        driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
+        wait_on_element(driver, 0.5, 30, '//button[@name="signin_button"]')
+        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+    else:
+        element = driver.find_element_by_xpath('//span[contains(.,"root")]')
+        driver.execute_script("arguments[0].scrollIntoView();", element)
+        time.sleep(0.5)
+        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
 @then(parsers.parse('You should see the dashboard and "{information}"'))
