@@ -159,7 +159,7 @@ export class SystemProfileService extends BaseService {
     } 
 
     // HIGH AVAILABILITY SUPPORT
-    if(profile.license.system_serial_ha || profile.system_product == "BHYVE"){
+    if((profile.license && profile.license.system_serial_ha) || profile.system_product == "BHYVE"){
       this.features.HA = true;
 
       // HA Status Change Call
