@@ -2785,6 +2785,9 @@ msgstr "再製到新資料集"
 msgid "Close"
 msgstr "關閉"
 
+msgid "Close (return to VM list"
+msgstr ""
+
 msgid "Cloud Credentials"
 msgstr "雲端憑證"
 
@@ -5980,9 +5983,6 @@ msgstr ""
 
 msgid "Go Back to Jails"
 msgstr "回到 Jails"
-
-msgid "Go Back to Virtual Machines"
-msgstr ""
 
 msgid "Go to Active Directory Form"
 msgstr ""
@@ -9544,6 +9544,9 @@ msgstr ""
 msgid ""
 "Reset all user preferences to their default values. (Custom themes are "
 "preserved)"
+msgstr ""
+
+msgid "Reset configuration for "
 msgstr ""
 
 msgid "Reset font size to default value"
