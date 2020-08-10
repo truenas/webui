@@ -3042,6 +3042,9 @@ msgstr "克隆到新数据集"
 msgid "Close"
 msgstr "关闭"
 
+msgid "Close (return to VM list"
+msgstr ""
+
 msgid "Cloud Credentials"
 msgstr "云凭据"
 
@@ -6472,9 +6475,6 @@ msgstr "用于解锁SED的全局密码。"
 
 msgid "Go Back to Jails"
 msgstr "转到监狱"
-
-msgid "Go Back to Virtual Machines"
-msgstr ""
 
 msgid "Go to Active Directory Form"
 msgstr "转到活动目录表单"
@@ -10232,6 +10232,9 @@ msgid ""
 "Reset all user preferences to their default values. (Custom themes are "
 "preserved)"
 msgstr "将所有用户首选项重置为其默认值。（保留自定义主题）"
+
+msgid "Reset configuration for "
+msgstr ""
 
 msgid "Reset font size to default value"
 msgstr "重置字体大小到默认值"
