@@ -73,11 +73,11 @@ def the_service_page_should_open(driver):
 @then('press on configure(pencil) SSH')
 def press_on_configure_ssh(driver):
     """press on configure(pencil) SSH."""
+    assert wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__S3_Actions"]')
     # Scroll to SSH service
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__SSH_Actions"]')
+    element = driver.find_element_by_xpath('//button[@ix-auto="button__S3_Actions"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(1)
-    assert wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SSH_Actions"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SSH_Actions"]').click()
 
 
@@ -109,8 +109,9 @@ def click_save(driver):
 def click_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
     """click Start Automatically SSH checkbox and enable the SSH service."""
     assert wait_on_element(driver, 1, 5, '//services')
+    assert wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__S3_Actions"]')
     # Scroll to SSH service
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__SSH_Actions"]')
+    element = driver.find_element_by_xpath('//button[@ix-auto="button__S3_Actions"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(1)
     driver.find_element_by_xpath('//div[@ix-auto="value__SSH"]')
