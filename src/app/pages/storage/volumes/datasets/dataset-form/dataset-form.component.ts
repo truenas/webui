@@ -1474,9 +1474,29 @@ export class DatasetFormComponent implements Formconfiguration{
 
     return ((this.isNew === true ) ? this.addSubmit(body) : this.editSubmit(body)).subscribe((restPostResp) => {
       this.loader.close();
+      this.ws.call('filesystem.acl_is_trivial', [`/mnt/${this.parent}`]).subscribe(res => {
+        if (res === false) {
+          this.dialogService.confirm(helptext.afterSubmitDialog.title,
+            helptext.afterSubmitDialog.message, true, helptext.afterSubmitDialog.actionBtn, false, '', '', '','',
+            false, helptext.afterSubmitDialog.cancelBtn).subscribe(res => {
+            if (res) {
+              const poolName = body.name.split('/')[0];
+              this.router.navigate(new Array('/').concat(
+                ['storage', 'pools', 'id', poolName, 'dataset', 'acl', body.name]
+              ))
+            } else {
+              this.router.navigate(new Array('/').concat(
+                this.route_success));
+            }
+          })
+        } else {
+          this.router.navigate(new Array('/').concat(
+            this.route_success));
+        }
 
-      this.router.navigate(new Array('/').concat(
-        this.route_success));
+      })
+
+
     }, (res) => {
       this.loader.close();
       new EntityUtils().handleWSError(this.entityForm, res);

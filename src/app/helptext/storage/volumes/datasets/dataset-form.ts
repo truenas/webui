@@ -168,6 +168,13 @@ dataset_form_encryption: {
     key_tooltip: T('Enter or paste a string to use as the encryption key for this dataset.'),
     key_validation: [Validators.minLength(64), Validators.maxLength(64)],
     non_encrypted_warning_title: T('Warning'),
-    non_encrypted_warning_warning: T('Disabling encryption will result in a non-encrypted dataset, continue?')
-}
+    non_encrypted_warning_warning: T('Disabling encryption will result in a non-encrypted dataset, continue?'),
+},
+    afterSubmitDialog: {
+        title: T('Set ACL for this dataset'),
+        message: T('The parent of this dataset has an ACL (Access Control List), Would you like to go to the ACL manager \
+ to set an ACL for this dataset? '), 
+        actionBtn: T('Go to ACL Manager'),
+        cancelBtn: T('Return to pool list')
+    }
 }
