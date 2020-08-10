@@ -124,12 +124,13 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       options: [{label: '---', value: null}]
     },
     {
-      type: 'input',
+      type: 'select',
       name: 'failover_vhid',
       placeholder: helptext.failover_vhid_placeholder,
       tooltip: helptext.failover_vhid_tooltip,
       isHidden: true,
       disabled: true,
+      options: [{label: '---', value: null}]
     },
     {
       type: 'select',
@@ -230,6 +231,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   //
   protected ipListControl: any;
   protected failover_group: any;
+  protected failover_vhid: any;
   //
   public confirmSubmit = false;
   public confirmSubmitDialog = {
@@ -267,8 +269,13 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     this.type = _.find(this.fieldConfig, {'name' : 'type'});
     this.ipListControl = _.find(this.fieldConfig, {'name' : 'aliases'});
     this.failover_group = _.find(this.fieldConfig, {'name': 'failover_group'});
+    this.failover_vhid = _.find(this.fieldConfig, {'name': 'failover_vhid'});
     for (let i = 1; i <= 32; i++) {
       this.failover_group.options.push({label:i, value:i});
+    }
+
+    for (let i = 1; i <= 255; i++) {
+      this.failover_vhid.options.push({label:i, value:i});
     }
 
     this.vlan_pint = _.find(this.fieldConfig, {'name' : 'vlan_parent_interface'});
