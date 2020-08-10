@@ -427,7 +427,8 @@ export class ThemeService {
   public textContrast(cssVar, bgVar){
     let txtColor = '';
     // Convert hex value to RGB
-    let props = this.hexToRGB(cssVar); 
+    const cssVarType = this.getValueType(cssVar);
+    let props = cssVarType == 'hex' ? this.hexToRGB(cssVar) : { rgb: this.rgbToArray(cssVar) }; 
 
     // Find the average value to determine brightness
     let brightest = (props.rgb[0] + props.rgb[1] + props.rgb[2]) / 3;
@@ -439,7 +440,8 @@ export class ThemeService {
     } else {
       // RGB averages between 144-197 are to be 
       // matched to bg2 css variable.
-      let bgProp = this.hexToRGB(bgVar);
+      const bgPropType = this.getValueType(bgVar);
+      let bgProp = bgPropType == 'hex' ?  this.hexToRGB(bgVar) : { rgb: this.rgbToArray(bgVar) };
       let bgAvg = (bgProp.rgb[0] + bgProp.rgb[1] + bgProp.rgb[2]) / 3;
       if(bgAvg < 127){
         txtColor = "#333333";
@@ -452,18 +454,27 @@ export class ThemeService {
     return txtColor;
   }
 
-  varToValue(cssVar:string){
-    const prop = cssVar.replace('var(--', '').replace(')', '');
-    const theme = this.currentTheme();
-    return theme[prop];
+  getValueType(value:string){
+    let valueType: string;
+    if(value.startsWith("var")){
+      valueType = "cssVar";
+    } else if(value.startsWith("#")){
+      valueType = "hex";
+    } else if(value.startsWith("rgb(")){
+      valueType = "rgb";
+    } else if(value.startsWith("rgba(")){
+      valueType = "rgba";
+    } else {
+      valueType = "unknown";
+    }
+
+    return valueType;
+    
   }
 
   hexToRGB(str) {
-
-    // Error Handling
-    if(str.startsWith("var")){
-      str = this.varToValue(str);
-    }
+    const valueType = this.getValueType(str); // cssVar || hex || rgb || rgba
+    if(valueType != "hex") console.error("This method takes a hex value as a parameter but was given a value of type " + valueType);
 
     var spl = str.split('#');
     var hex = spl[1];
@@ -487,6 +498,29 @@ export class ThemeService {
       rgb:rgb
     }
   }
+
+  rgbToHex(value: string){
+    const arr = this.rgbToArray(value);
+    const alpha = arr.length > 3;
+    const r = parseInt(arr[0]);
+    const g = parseInt(arr[1]);
+    const b = parseInt(arr[2]);
+
+    let hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    console.log(hex);
+    return hex;
+  }
+
+  rgbToArray(value: string){
+    const alpha = value.startsWith("rgba");
+    const prefix = alpha ? "rgba(" : "rgb(";
+    const trimFront = value.replace(prefix, "");
+    const trimmed = trimFront.replace(")", "");
+    const output = trimmed.split(",");
+    
+    return output;
+  }
+
   
   public colorFromMeta(meta:string){
     let trimFront = meta.replace('var(--','');
