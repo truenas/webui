@@ -39,7 +39,7 @@
         </span>
         <div class="hostname-label" *ngIf="hostname" matTooltip="Hostname: {{hostname}}">{{hostname}}</div>
       </div>
-      <navigation (onStateChange)="changeState($event)" (onToggleMenu)="toggleMenu($event)" (onChangeMenu)="changeSubmenu($event)" (onCloseMenu)="toggleMenu()"></navigation>
+      <navigation (onStateChange)="changeState($event)" (onToggleMenu)="toggleMenu($event)" (onCloseMenu)="toggleMenu()"></navigation>
       <div class="sidenav-copyright-txt" *ngIf="!isSidenavCollapsed">
         <p>TrueNAS {{product_type}}®</p>
         <p>
@@ -60,9 +60,8 @@
     <!-- Template reference variables of Left sidebar and Right notification is supplied -->
     <!-- Listens language change event -->
     <topbar [sidenav]="sidenav" [notificPanel]="notificationPanel" (onLangChange)="language.setMiddlewareLanguage($event)"></topbar>
-    <!-- App content -->
-    <!-- <app-breadcrumb [product_type]="product_type"></app-breadcrumb> -->
     
+    <!-- Slide-in menu and overlay -->
     <div class="slidein-nav" [ngClass]="{'slidein-open' : isOpen}">
       <mat-list class="" role="list">
         <mat-list-item routerLinkActive="selected" *ngFor="let subItem of subs; let j = index" (click)="toggleMenu()" 
@@ -70,10 +69,12 @@
             ix-auto ix-auto-type="option" ix-auto-identifier="{{subItem.name}}">
             <a [routerLink]="['/', menuName, subItem.state]" id="{{i}}-{{j}}" *ngIf="!subItem.disabled" >{{subItem.name | translate}}</a>
         </mat-list-item>
-    </mat-list>  
+      </mat-list>  
     </div>
     <div class="overlay" [ngClass]="{'isdark' : isOpen}" (click)="toggleMenu()"></div>
+    <!-- end slide-in -->
 
+    <!-- App content -->
     <div class="rightside-content-hold" [ngClass]="{'has-footer':isShowFooterConsole}">
       <router-outlet></router-outlet>
     </div>

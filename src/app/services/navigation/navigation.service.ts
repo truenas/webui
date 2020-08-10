@@ -57,14 +57,14 @@ export class NavigationService {
       type: 'link',
       tooltip: T('Dashboard'),
       icon: 'security',
-      state: 'tasks',
+      state: 'data-protection',
     },
     {
       name: T('Network'),
       type: 'link',
       tooltip: T('Network'),
       icon: 'device_hub',
-      state: 'jails',
+      state: 'network',
     },
     {
       name: T('Credentials'),

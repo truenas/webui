@@ -19,6 +19,7 @@ import {ConfigurationComponent} from './configuration/';
 import {IPMIComponent} from './ipmi';
 import { NetworkSummaryComponent } from './networksummary/networksummary.component';
 import {routing} from './network.routing';
+import { NetworkComingsoonComponent } from './network-comingsoon/network-comingsoon.component';
 
 @NgModule({
   imports : [
@@ -33,6 +34,7 @@ import {routing} from './network.routing';
     ConfigurationComponent,
     IPMIComponent,
     NetworkSummaryComponent,
+    NetworkComingsoonComponent
   ],
   providers : [NetworkService, EntityFormService, CoreService]
 })

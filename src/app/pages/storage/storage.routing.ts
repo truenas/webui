@@ -31,10 +31,12 @@ import { DatasetQuotasGrouplistComponent } from 'app/pages/storage/volumes/datas
 import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
 import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 import { DatasetPosixAclComponent } from './volumes/datasets/dataset-posix-acl/';
+import { StorageComingsoonComponent } from './storage-comingsoon/storage-comingsoon.component';
 
 export const routes: Routes = [
   {
-    path: '',
+    path: '', component: StorageComingsoonComponent,
+    // path: '',
     data: { title: 'Storage' },
     children: [
       {

@@ -156,9 +156,6 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
   }
 
   updateHighlightedClass(state) {
-  //   for (let i = 0; i < this.menuList.length; i++) {
-  //     this.menuList[i].classList.remove('highlighted');
-  //  }
-  this.isHighlighted = state;
+    this.isHighlighted = state;
   }
  }

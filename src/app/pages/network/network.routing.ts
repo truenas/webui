@@ -8,10 +8,12 @@ import {StaticRouteFormComponent} from './staticroutes/staticroute-form/';
 import {StaticRouteListComponent} from './staticroutes/staticroute-list/';
 import {IPMIComponent} from './ipmi/';
 import { NetworkSummaryComponent } from './networksummary/networksummary.component';
+import { NetworkComingsoonComponent } from './network-comingsoon/network-comingsoon.component';
 
 export const routes: Routes = [
   {
-    path: '',
+    path: '', component: NetworkComingsoonComponent,
+    // path: '',
     data: {title: 'Network'},
     children: [
       {
