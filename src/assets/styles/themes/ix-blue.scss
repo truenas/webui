@@ -331,11 +331,18 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .sidebar-panel.mat-sidenav .sidebar-list-item {
     border-left: 6px solid rgba(0, 0, 0, .0);
+    border-bottom: 1px solid rgba(255, 255, 255, .05);
+  }
+
+  .sidebar-panel.mat-sidenav .sidebar-list-item, .slidein-nav mat-list-item {
+    :hover {
+      background-color: darken(#232d35, 1%);
+    }
   }
 
   .sidebar-panel.mat-sidenav .sidebar-list-item.highlighted {
-    border-color: var(--primary);
-
+    border-left: 6px solid var(--primary);
+    background-color: darken(#232d35, 3%);
     .mat-list-item-content > a {
       background-color: darken(#232d35, 3%);
   

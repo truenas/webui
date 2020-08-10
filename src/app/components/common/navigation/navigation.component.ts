@@ -23,7 +23,6 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
 
   @Output('onStateChange') onStateChange: EventEmitter<any> = new EventEmitter();
   @Output('onToggleMenu') onToggleMenu: EventEmitter<any> = new EventEmitter();
-  @Output('onChangeMenu') onChangeMenu: EventEmitter<any> = new EventEmitter();
   @Output('onCloseMenu') onCloseMenu: EventEmitter<any> = new EventEmitter();
 
   constructor(private navService: NavigationService, private router: Router, private ws: WebSocketService, private docsService: DocsService) {
@@ -145,10 +144,6 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
 
   toggleMenu(state, sub) {
     this.onToggleMenu.emit([state, sub]);
-  }
-
-  changeMenu(state, sub) {
-    this.onChangeMenu.emit([state, sub]);
   }
 
   closeMenu() {

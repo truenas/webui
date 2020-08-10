@@ -32,15 +32,16 @@
         </div>
 
       </div>
-      <div class="app-user">
-        <span class="app-user-name">
+      <!-- <div class="app-user"> -->
+        <!-- <span class="app-user-name">
           <mat-icon class="icon-xs text-muted">lock</mat-icon>
           root
-        </span>
-        <div class="hostname-label" *ngIf="hostname" matTooltip="Hostname: {{hostname}}">{{hostname}}</div>
-      </div>
+        </span> -->
+        <!-- <div class="hostname-label" *ngIf="hostname" matTooltip="Hostname: {{hostname}}">{{hostname}}</div>
+      </div> -->
       <navigation (onStateChange)="changeState($event)" (onToggleMenu)="toggleMenu($event)" (onCloseMenu)="toggleMenu()"></navigation>
       <div class="sidenav-copyright-txt" *ngIf="!isSidenavCollapsed">
+        <div class="hostname-label" *ngIf="hostname" matTooltip="Hostname: {{hostname}}">{{hostname}}</div>
         <p>TrueNAS {{product_type}}®</p>
         <p>
           © {{copyrightYear}} - <a href="http://www.ixsystems.com"
