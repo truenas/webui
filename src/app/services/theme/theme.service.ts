@@ -18,7 +18,7 @@ export const DefaultTheme = {
       bg1:'#1E1E1E',
       bg2:'#242424',
       fg1:'#fff',
-      fg2:'rgba(255,255,255,0.7)',
+      fg2:'rgba(255,255,255,0.85)',
       'alt-bg1':'#383838',
       'alt-bg2':'#545454',
       'alt-fg1':'rgba(194,194,194,0.5)',
