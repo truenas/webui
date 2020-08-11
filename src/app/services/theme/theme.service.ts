@@ -92,8 +92,8 @@ export class ThemeService {
       bg2:'#ffffff',
       fg1:'#222222',
       fg2:'#333333',
-      'alt-bg1':'rgba(122,152,182,0.05)',
-      'alt-bg2':'#fafaf5',
+      'alt-bg1':'#ababab',
+      'alt-bg2':'#cdcdcd',
       'alt-fg1':'#181a26',
       'alt-fg2':'#282a36',
       yellow:'#f0cb00',
@@ -170,8 +170,8 @@ export class ThemeService {
       bg2:'#F5F5F5',
       fg1:'#222222',
       fg2:'#333333',
-      'alt-bg1':'rgba(122,152,182,0.05)',
-      'alt-bg2':'#fafaf5',
+      'alt-bg1':'#ababab',
+      'alt-bg2':'#cdcdcd',
       'alt-fg1':'#181a26',
       'alt-fg2':'#282a36',
       yellow:'#f0cb00',
@@ -280,6 +280,14 @@ export class ThemeService {
       this.core.emit({name:"ThemeData", data:this.findTheme(this.activeTheme), sender:this});
     });
 
+    // Use only for testing
+    this.core.register({observerClass:this, eventName:"ThemeChangeRequest"}).subscribe((evt:CoreEvent) => {
+      console.log(evt);
+      //this.core.emit({name:"ThemeData", data:this.findTheme(evt.data), sender:this});
+     
+      this.changeTheme(evt.data);
+    });
+
     this.core.register({observerClass:this,eventName:"GlobalPreviewChanged"}).subscribe((evt:CoreEvent) => {
       if(evt.data){
         this.globalPreview = true;
@@ -360,7 +368,7 @@ export class ThemeService {
 
   changeTheme(theme:string) {
     this.core.emit({name:"ChangeThemePreference", data:theme, sender:this});
-    }
+  }
 
   saveCurrentTheme(){
     let theme = this.currentTheme();

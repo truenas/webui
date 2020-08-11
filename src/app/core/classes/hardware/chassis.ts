@@ -19,6 +19,11 @@ export class Chassis {
     this.front.driveTrayBackgroundPath = "assets/images/hardware/m50/m50_960w_drivetray_bg.png" 
     this.front.driveTrayHandlePath = "assets/images/hardware/m50/m50_960w_drivetray_handle.png"
     this.front.totalDriveTrays = 24;
+
+    /*setTimeout(() => {
+      this.front.setChassisOpacity(1);
+      console.log(this.front);
+    }, 3000);*/
   }
 
 }

@@ -1,6 +1,6 @@
 nav.view-nav-bar{
-  background-color:var(--alt-bg1);
-  color:var(--alt-fg1);
+  background-color: var(--bg2);
+  color:var(--fg2);
   width:100%;
   height:32px;
   padding-bottom: 4px;
@@ -29,11 +29,18 @@ nav.view-nav-bar{
   padding:0;
 }
 
+.view-card .mat-toolbar{
+  color: var(--fg2);
+  /*border-bottom:solid 1px var(--lines);*/
+  background-color: unset;
+}
+
 .view-card #disks-overview{
   height:304px;
-  background-color:rgba(0, 0, 0, 0.85);
+  /*background-color:rgba(0, 0, 0, 0.85);*/
   position: relative;
-  color:#ccc;
+  /*color:#ccc;*/
+  color:var(--fg2);
   cursor:default;
   user-select:none;
   overflow:hidden;
@@ -50,8 +57,10 @@ nav.view-nav-bar{
 
 .view-card #disks-details-header{
   font-size: 1.15rem;
-  border-bottom:solid 1px var(--bg1);
+  /*border-top:solid 1px var(--lines);*/
+  border-bottom:solid 1px var(--lines);
   padding:12px 16px;
+  /*background-color: rgba(0,0,0,0.05);*/
 }
 
 .view-card .tiles{
@@ -280,7 +289,7 @@ div.vdev-disk {
 }
 
 .disks-overview-wrapper{
-  background:#000;
+  /*background:#000;*/
 }
 
 /* lt-lg */

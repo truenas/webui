@@ -16,12 +16,12 @@
 }
 
 nav.view-nav-bar{
-  background-color:var(--alt-bg1);
+  background-color: var(--bg2);
   color:var(--alt-fg1);
   width:100%;
-  /*height:34px;
-  padding-bottom: 4px;
-  margin:-15px 0 32px;*/
+  box-shadow: 0 1px 6px rgba(0,0,0,0.5);
+  position: relative;
+  z-index: 2;
 }
 
 .view-nav-btn-icon, 
@@ -59,8 +59,8 @@ nav.view-nav-bar{
 }
 
 .enclosure-selector{
-  color: #efefef;
-  background-color: #000;
+  color: var(--fg2);
+  background-color: var(--bg2);
   width: 240px;
   height: 100%;
   overflow: auto;
@@ -100,7 +100,7 @@ nav.view-nav-bar{
 }
 
 .main-content{
-  height:100%;
+  /*height:100%;*/
   overflow:auto;
   position:relative;
 }

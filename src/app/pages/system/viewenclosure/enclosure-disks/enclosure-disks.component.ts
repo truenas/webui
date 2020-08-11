@@ -188,6 +188,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     });
 
     core.register({observerClass: this, eventName: 'ThemeChanged'}).subscribe((evt:CoreEvent) => {
+      console.log(evt);
       if(this.theme == evt.data){ return; }
       this.theme = evt.data;
       this.setCurrentView(this.currentView);
@@ -198,6 +199,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
     core.emit({name: 'ThemeDataRequest', sender: this});
 
+  }
+
+  toggleTheme(){
+    const request = this.theme.name == 'ix-blue' ? 'default' : 'ix-blue';
+    this.core.emit({name: "ThemeChangeRequest", data: request, sender: this})
   }
 
   clearDisk(){

@@ -69,7 +69,7 @@ export class ChassisView {
    public vertical: boolean = false;
    public filters: any[] = [];
    public disabledOpacity = 0.25;
-   public chassisOpacity?: number;
+   public chassisOpacity: number = 0.75;
    public initialized: boolean = false;
    public loader: any;
    public autoPosition: boolean = true;
@@ -313,6 +313,16 @@ export class ChassisView {
     if(this.initialized){
       dt.handle.alpha = color == 'none' ? this.disabledOpacity : 1;
     }
+  }
+
+  setChassisOpacity(value: number){
+    this.chassisOpacity = value;
+    if(this.chassis){
+      // If chassis has already ben rendered to stage
+      this.chassis.alpha = value;
+    }
+    console.warn(this.chassisOpacity);
+    console.warn(this.chassis);
   }
 
 }
