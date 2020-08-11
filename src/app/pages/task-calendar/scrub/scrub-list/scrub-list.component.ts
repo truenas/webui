@@ -31,7 +31,7 @@ export class ScrubListComponent {
     { name: 'Threshold days', prop: 'threshold' },
     { name: 'Description', prop: 'description' },
     { name: 'Schedule', prop: 'schedule', widget: { icon: 'calendar-range', component: 'TaskScheduleListComponent' } },
-    { name: 'Next Run', prop: 'next_run' },
+    { name: 'Next Run', prop: 'scrub_next_run' },
     { name: 'Enabled', prop: 'enabled' },
   ];
   public rowIdentifier = 'id';
