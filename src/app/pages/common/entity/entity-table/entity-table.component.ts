@@ -1,7 +1,7 @@
 
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { Router, NavigationStart } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
@@ -167,6 +167,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public sortKey: string;
 
   protected toDeleteRow: any;
+  private routeSub: any;
+
   public hasDetails = () =>
     this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
   public getRowDetailHeight = () =>
@@ -183,11 +185,26 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.multiActionsIconsOnly = evt.data.preferIconsOnly;
       });
       this.core.emit({name:"UserPreferencesRequest", sender:this});
+      // watch for navigation events as ngOnDestroy doesn't always trigger on these
+      this.routeSub = this.router.events.subscribe((event) => {
+        if (event instanceof NavigationStart) {
+          this.cleanup();
+        }
+      });
   }
 
   ngOnDestroy(){
+    this.cleanup();
+  }
+
+  cleanup() {
     this.core.unregister({observerClass:this});
-    clearInterval(this.interval);
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+    if (!this.routeSub.closed) {
+      this.routeSub.unsubscribe();
+    }
   }
 
   ngOnInit() {
@@ -660,10 +677,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   //generate delete msg
-  getDeleteMessage(item) {
+  getDeleteMessage(item, action=T("Delete ")) {
     let deleteMsg = T("Delete the selected item?");
     if (this.conf.config.deleteMsg) {
-      deleteMsg = T("Delete ") + this.conf.config.deleteMsg.title;
+      deleteMsg = action + this.conf.config.deleteMsg.title;
       let msg_content = ' <b>' + item[this.conf.config.deleteMsg.key_props[0]];
       if (this.conf.config.deleteMsg.key_props.length > 1) {
         for (let i = 1; i < this.conf.config.deleteMsg.key_props.length; i++) {
@@ -681,11 +698,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     return deleteMsg;
   }
 
-  doDelete(item) {
+  doDelete(item, action?) {
     const deleteMsg =
       this.conf.confirmDeleteDialog && this.conf.confirmDeleteDialog.isMessageComplete
         ? ''
-        : this.getDeleteMessage(item);
+        : this.getDeleteMessage(item, action);
 
     let id;
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.id_prop) {
@@ -697,6 +714,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     const dialog = this.conf.confirmDeleteDialog || {};
     if (dialog.buildTitle) {
       dialog.title = dialog.buildTitle(item);
+    }
+    if (dialog.buttonMsg) {
+      dialog.button = dialog.buttonMsg(item);
     }
 
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.doubleConfirm) {

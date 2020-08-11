@@ -322,7 +322,8 @@ export class VolumesListTableConfig implements InputTableConf {
       });
     }
 
-    if (this.parentVolumesListComponent.has_encrypted_root[rowData.name]) {
+    if (this.parentVolumesListComponent.has_encrypted_root[rowData.name] 
+      && this.parentVolumesListComponent.has_key_dataset[rowData.name]) {
       actions.push({
         label: T("Export Dataset Keys"),
         onClick: (row1) => {
@@ -1013,23 +1014,18 @@ export class VolumesListTableConfig implements InputTableConf {
               label: T("Edit Permissions"),
               ttposition: 'left',
               onClick: (row1) => {
-                this._router.navigate(new Array('/').concat([
-                  "storage", "pools", "permissions", row1.id
-                ]));
-              }
-            },
-            {
-              id: rowData.name,
-              name: T('Edit ACL'),
-              label: T("Edit ACL"),
-              matTooltip: helptext.acl_edit_msg,
-              isHidden: this.productType === 'SCALE' ? true : false, // Temporary, for SCALE
-              ttposition: 'left',
-              onClick: (row1) => {
-                this._router.navigate(new Array('/').concat([
-                  "storage", "pools", "id", row1.id.split('/')[0], "dataset",
-                  "acl", row1.id
-                ]));
+                this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + rowData.id]).subscribe(acl_is_trivial => {
+                  if (acl_is_trivial) {
+                    this._router.navigate(new Array('/').concat([
+                      "storage", "pools", "permissions", row1.id
+                    ]));
+                  } else {
+                    this._router.navigate(new Array('/').concat([
+                      "storage", "pools", "id", row1.id.split('/')[0], "dataset",
+                      "acl", row1.id
+                    ]));
+                  }
+                })
               }
             },
             {
@@ -1354,6 +1350,17 @@ export class VolumesListTableConfig implements InputTableConf {
                   isHidden: is_key,
                 },
                 {
+                  type : 'input',
+                  placeholder: dataset_helptext.dataset_form_encryption.confirm_passphrase_placeholder,
+                  name : 'confirm_passphrase',
+                  inputType : 'password',
+                  required: true,
+                  togglePw: true,
+                  validation : dataset_helptext.dataset_form_encryption.confirm_passphrase_validation,
+                  disabled: is_key,
+                  isHidden: is_key,
+                },
+                {
                   type: 'input',
                   name: 'pbkdf2iters',
                   placeholder: dataset_helptext.dataset_form_encryption.pbkdf2iters_placeholder,
@@ -1378,7 +1385,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 const encryption_type_fc = _.find(entityDialog.fieldConfig, {name: 'encryption_type'});
                 const generate_key_fg = entityDialog.formGroup.controls['generate_key'];
 
-                const all_encryption_fields = ['encryption_type', 'passphrase', 'pbkdf2iters', 'generate_key', 'key'];
+                const all_encryption_fields = ['encryption_type', 'passphrase', 'confirm_passphrase', 'pbkdf2iters', 'generate_key', 'key'];
 
                 if (inherit_encryption_fg.value) { // if already inheriting show as inherit
                   for (let i = 0; i < all_encryption_fields.length; i++) {
@@ -1397,6 +1404,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     }
                     const key = (encryption_type_fg.value === 'key');
                     entityDialog.setDisabled('passphrase', key, key);
+                    entityDialog.setDisabled('confirm_passphrase', key, key);
                     entityDialog.setDisabled('pbkdf2iters', key, key);
                     entityDialog.setDisabled('generate_key', !key, !key);
                     if (key) {
@@ -1418,6 +1426,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     entityDialog.setDisabled('key', true, true);
                   }
                   entityDialog.setDisabled('passphrase', key, key);
+                  entityDialog.setDisabled('confirm_passphrase', key, key);
                   entityDialog.setDisabled('pbkdf2iters', key, key);
                 });
 
@@ -1544,23 +1553,15 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   clickAction(rowData) {
-    let aclEditDisabled = false;
-    let permissionsEditDisabled = false;
+    let editPermissions = rowData.actions[0].actions.find(o => o.name === 'Edit Permissions');
     if (!rowData.locked) {
-      this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + rowData.id]).subscribe(acl_is_trivial => {
-        !rowData.id.includes('/') || !acl_is_trivial ? permissionsEditDisabled = true : permissionsEditDisabled = false;
-        rowData.id.includes('/') ? aclEditDisabled = false : aclEditDisabled = true;
-        let editACL = rowData.actions[0].actions.find(o => o.name === 'Edit ACL');
-          if (editACL) {
-            editACL.disabled = aclEditDisabled;
-          }
-        let editPermissions = rowData.actions[0].actions.find(o => o.name === 'Edit Permissions')
-        if (editPermissions) {
-          editPermissions.disabled = permissionsEditDisabled;
-          aclEditDisabled ? editPermissions.matTooltip = helptext.permissions_edit_msg1 :
-          editPermissions.matTooltip = helptext.permissions_edit_msg2
-        }
-      })
+      if (!rowData.id.includes('/')) {
+        editPermissions.disabled = true;
+        editPermissions.matTooltip = helptext.permissions_edit_msg1;
+      } else {
+        editPermissions.disabled = false;
+        editPermissions.matTooltip = null;
+      }
     }
   }
 
@@ -1684,6 +1685,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   public paintMe = true;
   public systemdatasetPool: any;
   public has_encrypted_root = {};
+  public has_key_dataset = {};
 
   constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
@@ -1707,6 +1709,16 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.zfsPoolRows.pop();
     }
 
+    this.has_key_dataset = {};
+    this.has_encrypted_root = {};
+    this.ws.call('pool.dataset.query_encrypted_roots_keys').subscribe(res => {
+      for (const key in res) {
+        if (res.hasOwnProperty(key)) {
+          const pool = key.split('/')[0];
+          this.has_key_dataset[pool] = true;
+        }  
+      }
+    });
 
 
     combineLatest(this.ws.call('pool.query', []), this.ws.call('pool.dataset.query', [])).subscribe(async ([pools, datasets]) => {

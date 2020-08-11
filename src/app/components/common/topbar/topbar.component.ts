@@ -701,6 +701,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           (res) => {
             self.loader.close();
             entityDialog.dialogRef.close();
+            // only show this for connecting TC
+            if (!self.tcConnected) {
+              self.dialogService.Info(helptext.checkEmailInfoDialog.title, helptext.checkEmailInfoDialog.message);
+            }
           },
           (err) => {
             self.loader.close();

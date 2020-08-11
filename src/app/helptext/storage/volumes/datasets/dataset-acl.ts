@@ -152,6 +152,18 @@ dataset_acl_stripacl_tooltip: T("Set to remove all ACLs from the current\
  dataset. ACLs are also recursively stripped from directories and child\
  datasets when those options are set."),
 
+stripACL_dialog: {
+  title: T('Strip ACLs'),
+  message: T('This action removes all ACLs from the current \
+ dataset and any directories or files contained within this \
+ dataset. Stripping the ACL resets dataset permissions. This \
+ can make data inaccessible until new permissions are created.'),
+  traverse_checkbox: T('Remove the ACL and permissions from child datasets of the current dataset'),
+  warning: T('Removes the ACL and permissions recursively \
+ from all child datasets of the current dataset, including all directories and files contained within those child datasets. This can make data inaccessible until new permissions are created.')
+
+},
+
 dataset_acl_stripacl_dialog_warning: T('Warning'),
 dataset_acl_stripacl_dialog_warning_message: T('Stripping the ACL resets\
  dataset permissions. This can make data inaccessible until new\
@@ -173,5 +185,36 @@ empty_acl_dialog: {
   title: T('Error'),
   message: T('Cannot open this ACL. Check the permissions this dataset \
  has inherited from parents.')
-}
+},
+
+posix_perms: {
+  placeholder: T('Permissions'),
+  tooltip: T('Permissions'),
+  options: [
+    {label: T('Read'), value: 'READ'},
+    {label: T('Write'), value: 'WRITE'},
+    {label: T('Execute'), value: 'EXECUTE'},
+  ]
+},
+
+posix_tag: {
+  placeholder: T('Who'),
+  tooltip: T('Tag'),
+  options: 
+  [
+    {label: T('User'), value: 'USER'},
+    {label: T('Group'), value: 'GROUP'},
+    {label: T('Other'), value: 'OTHER'},
+    {label: T('Group Obj'), value: 'GROUP_OBJ'},
+    {label: T('User Obj'), value: 'USER_OBJ'},
+    {label: T('Mask'), value: 'MASK'}
+  ]
+},
+
+posix_default: {
+  placeholder: T('Default'),
+  tooltip: T('Default')
+},
+
+permissions_editor_button: T('Use Permissions Editor')
 }

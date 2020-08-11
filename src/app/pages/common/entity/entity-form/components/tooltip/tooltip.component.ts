@@ -13,10 +13,10 @@ export class TooltipComponent {
   @Input('position') positionOverride?: string;
   @ViewChild('tooltip', { static: true}) private tooltip: ElementRef;
   @ViewChild(CdkDrag, {static: true}) dragTarget: CdkDrag;
+  @ViewChild('tooltiptext', {static: true}) private tooltiptext: ElementRef;
 
   public isShowTooltip: boolean;
   public tooltipMsgStyle: any;
-  public isLockTooltip: boolean = false;
   public isWizard: boolean = false;
 
   public positionString: string = 'Default';
@@ -26,28 +26,14 @@ export class TooltipComponent {
 
   showTooltip($event) {
     this.isShowTooltip = $event;
-
     let formParent = this.findParent();
-    let screenW = document.body.clientWidth;
-    let screenH = document.body.clientHeight;
-    let posX = this.tooltip.nativeElement.getBoundingClientRect().left;
-    let posY = this.tooltip.nativeElement.getBoundingClientRect().bottom;
-
-    let posLeft = this.tooltip.nativeElement.offsetLeft
     let posRight = this.tooltip.nativeElement.offsetLeft + this.tooltip.nativeElement.offsetWidth;
-    let posTop = this.tooltip.nativeElement.offsetTop
-    let posBottom = this.tooltip.nativeElement.offsetTop + this.tooltip.nativeElement.offsetHeight;
-
-    let dynamicWidth = this.message.length * 8.5;
-    let tooltipHeight = this.tooltip.nativeElement.scrollHeight;
-
     this.tooltipMsgStyle = {
       'right': '32px',
       'top':'-32px',
       'min-height':'64px'
     };
 
-    const fpr = formParent ? formParent.offsetLeft + formParent.offsetWidth : null;
     let insideJob = formParent ? (formParent.clientWidth - posRight > 300 ? true : false) : null;
 
     if(this.positionOverride){
@@ -57,19 +43,33 @@ export class TooltipComponent {
     }
   }
 
-  toggleVis(state?) {
-    if (state ==='lock') {
-      this.showTooltip(true);
-      this.isLockTooltip = true;
+  toggleVis() {
+    /* Resets 'isShowTooltip' for any tooltip closed by removing the class (below)
+     so it will reopen on first click */
+    const el = this.tooltiptext.nativeElement.classList
+    this.isShowTooltip = false;
+    for (let i = 0; i < el.length; i++) {
+      if (el[i] === 'show') {
+        // Or, if tooltip is already open, close it
+        this.isShowTooltip = true;
+      }
+    }
+    // Clears any open tooltip from screen
+    const tooltips: any = document.getElementsByClassName('tooltip-container');
+    for (let i = 0; i < tooltips.length; i++) {
+      tooltips[i].firstChild.classList.remove('show');
+    }
+   
+    if (!this.isShowTooltip) {
       this.isShowTooltip = true;
+      el.add('show');
+      this.dragTarget.reset();
+      this.isMoved = false;
+      this.showTooltip(true);
+      
     } else {
       this.showTooltip(false);
-      this.isLockTooltip = false;
       this.isShowTooltip = false;
-      setTimeout(() =>{
-        this.dragTarget.reset();
-        this.isMoved = false;
-      }, 1000);
     }
   }
 

@@ -88,5 +88,11 @@ Login or signup is required.'),
         message: T('Are you sure you want to stop connecting to the TrueCommand Cloud Service?'),
         confirmBtnMsg: T('Confirm'),
     },
+
+    checkEmailInfoDialog: {
+        title: T('Verify Email Address'),
+        message: T('A message with verification instructions has been sent to the new email \
+address. Please verify the email address before continuing.')
+    }
 }
 
