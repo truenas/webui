@@ -151,12 +151,7 @@ export class CertificateAddComponent {
           name: 'ec_curve',
           placeholder: helptext_system_certificates.add.ec_curve.placeholder,
           tooltip: helptext_system_ca.add.ec_curve.tooltip,
-          options: [
-            { label: 'BrainpoolP512R1', value: 'BrainpoolP512R1' },
-            { label: 'BrainpoolP384R1', value: 'BrainpoolP384R1' },
-            { label: 'BrainpoolP256R1', value: 'BrainpoolP256R1' },
-            { label: 'SECP256K1', value: 'SECP256K1' },
-          ],
+          options: [],
           value: 'BrainpoolP384R1',
           isHidden: true,
           disabled: true,
@@ -696,6 +691,13 @@ export class CertificateAddComponent {
       });
     });
 
+    this.ws.call('certificate.ec_curve_choices').subscribe((res) => {
+      const ec_curves_field = _.find(this.fieldSets.find(set => set.name === helptext_system_ca.add.fieldset_type).config, { 'name': 'ec_curve' });
+      for(const key in res) {
+        ec_curves_field.options.push({label: res[key], value: key});
+      }
+    });
+
     this.systemGeneralService.getCertificateCountryChoices().subscribe((res) => {
       this.country = _.find(this.fieldSets[2].config, {'name' : 'country'});
       for (const item in res) {
@@ -955,13 +957,14 @@ export class CertificateAddComponent {
           if (data[key] === '') {
             data[key] = null;
           }
-
-          if (type_prop.length === 1 && data[key]) {
-            for (let i = 0; i < data[key].length; i++) {
-              cert_extensions[type_prop[0]][data[key][i]] = true;
+          if (data[key]) {
+            if (type_prop.length === 1) {
+              for (let i = 0; i < data[key].length; i++) {
+                cert_extensions[type_prop[0]][data[key][i]] = true;
+              }
+            } else {
+              cert_extensions[type_prop[0]][type_prop[1]] = data[key];
             }
-          } else {
-            cert_extensions[type_prop[0]][type_prop[1]] = data[key];
           }
           delete data[key];
         }

@@ -80,6 +80,12 @@ Login or signup is required.'),
     deregisterInfoDialog: {
         title: T('TrueCommand Cloud Service deregistered'),
         message: T('TrueCommand Cloud Service has been deregistered.')
+    },
+
+    checkEmailInfoDialog: {
+        title: T('Verify Email Address'),
+        message: T('A message with verification instructions has been sent to the new email \
+address. Please verify the email address before continuing.')
     }
 }
 
