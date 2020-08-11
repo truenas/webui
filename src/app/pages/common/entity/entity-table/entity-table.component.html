@@ -93,7 +93,8 @@
       <div id='config' *ngIf="conf.globalConfig">
         <button mat-icon-button id="{{ conf.globalConfig.id }}" [matTooltip]="conf.globalConfig.tooltip" (click)="conf.globalConfig.onClick()"
           ix-auto ix-auto-type="settings" ix-auto-identifier="{{title}}">
-          <mat-icon>settings</mat-icon>
+          <mat-icon *ngIf="conf.globalConfig.icon; else settingsIcon">{{conf.globalConfig.icon}}</mat-icon>
+          <ng-template #settingsIcon><mat-icon>settings</mat-icon></ng-template>
         </button>
       </div>
     </div><!-- end of mat-toolbar -->
