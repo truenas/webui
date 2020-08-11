@@ -57,7 +57,7 @@ export class NavigationService {
       type: 'link',
       tooltip: T('Dashboard'),
       icon: 'security',
-      state: 'data-protection',
+      state: 'tasks',
     },
     {
       name: T('Network'),

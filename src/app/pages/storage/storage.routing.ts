@@ -31,14 +31,17 @@ import { DatasetQuotasGrouplistComponent } from 'app/pages/storage/volumes/datas
 import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
 import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 import { DatasetPosixAclComponent } from './volumes/datasets/dataset-posix-acl/';
-import { StorageComingsoonComponent } from './storage-comingsoon/storage-comingsoon.component';
+import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 
 export const routes: Routes = [
   {
-    path: '', component: StorageComingsoonComponent,
-    // path: '',
+    path: '',
     data: { title: 'Storage' },
     children: [
+      {
+        path: '',
+        component: EntityDashboardComponent,
+      },
       {
         path: 'pools',
         data: { title: 'Pools', breadcrumb: 'Pools', icon: 'view_stream' },
