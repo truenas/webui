@@ -1,7 +1,7 @@
 
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { Router, NavigationStart } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
@@ -167,6 +167,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public sortKey: string;
 
   protected toDeleteRow: any;
+  private routeSub: any;
+
   public hasDetails = () =>
     this.conf.rowDetailComponent || (this.allColumns.length > 0 && this.conf.columns.length !== this.allColumns.length);
   public getRowDetailHeight = () =>
@@ -183,11 +185,26 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.multiActionsIconsOnly = evt.data.preferIconsOnly;
       });
       this.core.emit({name:"UserPreferencesRequest", sender:this});
+      // watch for navigation events as ngOnDestroy doesn't always trigger on these
+      this.routeSub = this.router.events.subscribe((event) => {
+        if (event instanceof NavigationStart) {
+          this.cleanup();
+        }
+      });
   }
 
   ngOnDestroy(){
+    this.cleanup();
+  }
+
+  cleanup() {
     this.core.unregister({observerClass:this});
-    clearInterval(this.interval);
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+    if (!this.routeSub.closed) {
+      this.routeSub.unsubscribe();
+    }
   }
 
   ngOnInit() {
