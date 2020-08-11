@@ -173,7 +173,8 @@ dataset_form_encryption: {
 },
     afterSubmitDialog: {
         title: T('Set ACL for this dataset'),
-        message: T('The parent of this dataset has an Access Control List (ACL). Do you want to set an ACL for this \ dataset using the ACL Manager? '), 
+        message: T('The parent of this dataset has an Access Control List (ACL). Do you want to set an ACL for this \
+dataset using the ACL Manager? '), 
         actionBtn: T('Go to ACL Manager'),
         cancelBtn: T('Return to pool list')
     }
