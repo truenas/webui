@@ -202,7 +202,7 @@ export class SigninComponent implements OnInit, OnDestroy {
       const previous_buildtime = window.localStorage.getItem('buildtime');
       if (buildtime !== previous_buildtime) {
         window.localStorage.setItem('buildtime', buildtime);
-        document.location.reload(true);
+        window.location.reload(true);
       }
     });
   }
@@ -262,6 +262,11 @@ export class SigninComponent implements OnInit, OnDestroy {
           () => {
             this.checking_status = false;
           });
+        } else {
+          if (this.canLogin()) {
+            this.checkBuildtime();
+            this.loginToken();
+          }
         }
       }, err => {
         this.checking_status = false;

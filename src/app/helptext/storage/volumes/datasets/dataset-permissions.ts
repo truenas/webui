@@ -47,5 +47,7 @@ dataset_permissions_dialog_warning_message: T('Changing dataset permission mode 
 heading_dataset_path: T('Dataset Path'),
 heading_owner: T('Owner'),
 heading_access: T('Access'),
-heading_advanced: T('Advanced')
+heading_advanced: T('Advanced'),
+
+acl_manager_button: T('Use ACL Manager')
 }

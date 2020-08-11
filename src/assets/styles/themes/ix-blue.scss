@@ -1767,5 +1767,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   openvpn-server-edit .buttons {
     margin-top: 1rem
   }
+  
+  mat-hint {
+    color: var(--yellow) !important;
+    font-size: 0.7rem;
+  }
 
  } // end of ix theme
