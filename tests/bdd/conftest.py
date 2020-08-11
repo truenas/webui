@@ -2,10 +2,12 @@
 
 import pytest
 import os
+import time
 from configparser import ConfigParser
 from platform import system
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.common.exceptions import NoSuchElementException
 
 
 def browser():
@@ -61,8 +63,26 @@ def pytest_runtest_makereport(item):
         xfail = hasattr(report, 'wasxfail')
         if (report.skipped and xfail) or (report.failed and not xfail):
             file_name = f'screenshot/{report.nodeid.replace("::", "_")}.png'
-            _capture_screenshot(file_name)
+            # look if there is a Error window
+            error_exist = element_exist('//h1[contains(.,"Error")]')
+            if error_exist:
+                web_driver.find_element_by_xpath('//div[@ix-auto="button__backtrace-toggle"]').click()
+                time.sleep(2)
+            # //textarea <- xpath for TraceBack
+            capture_screenshot(file_name)
+            # Press CLOSE if exist
+            close_button_exist = element_exist('//button[@ix-auto="button__CLOSE"]')
+            if close_button_exist:
+                web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
-def _capture_screenshot(name):
+def capture_screenshot(name):
     web_driver.save_screenshot(name)
+
+
+def element_exist(xpath):
+    try:
+        web_driver.find_element_by_xpath(xpath)
+        return True
+    except NoSuchElementException:
+        return False
