@@ -30,7 +30,6 @@ import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/d
 export class DatasetAclComponent implements OnDestroy {
 
   protected queryCall = 'filesystem.getacl';
-  protected queryCallOption: Array<any>;
   protected updateCall = 'filesystem.setacl';
   protected isEntity = true;
   protected pk: string;
@@ -313,12 +312,17 @@ export class DatasetAclComponent implements OnDestroy {
 
   preInit(entityEdit: any) {
     this.sub = this.aroute.params.subscribe(params => {
-      console.log(params)
       this.datasetId = params['path'];
       this.path = '/mnt/' + params['path'];
       const path_fc = _.find(this.fieldSets[0].config, {name:'path'});
       path_fc.value = this.path;
-      this.pk = this.path;
+      this.route.queryParams.subscribe(qparams => {
+        if (qparams && qparams.default) {
+          this.pk = qparams.default;
+        } else {
+          this.pk = this.path;
+        }
+      });
     });
 
     this.userService.userQueryDSCache().subscribe(items => {
@@ -346,12 +350,6 @@ export class DatasetAclComponent implements OnDestroy {
         this.defaults.options.push(
             {label : item, value : item});
       });
-    });
-
-    this.route.queryParams.subscribe(params => {
-      if (params && params.default) {
-        this.queryCallOption = [[params.default]];
-      }
     });
   }
 
