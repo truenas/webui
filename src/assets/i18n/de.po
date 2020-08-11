@@ -2948,6 +2948,9 @@ msgstr ""
 msgid "Close"
 msgstr "Schließen"
 
+msgid "Close (return to VM list"
+msgstr ""
+
 msgid "Cloud Credentials"
 msgstr "Cloud-Anmeldeinformationen"
 
@@ -6271,9 +6274,6 @@ msgid "Global password to unlock SEDs."
 msgstr ""
 
 msgid "Go Back to Jails"
-msgstr ""
-
-msgid "Go Back to Virtual Machines"
 msgstr ""
 
 msgid "Go to Active Directory Form"
@@ -10000,6 +10000,9 @@ msgid ""
 msgstr ""
 "Setzen Sie alle Benutzereinstellungen auf ihre Standardwerte zurück. "
 "(Benutzerdefinierte Themen bleiben erhalten)"
+
+msgid "Reset configuration for "
+msgstr ""
 
 msgid "Reset font size to default value"
 msgstr "Setzen Sie die Schriftgröße auf den Standardwert zurück"

@@ -1,5 +1,4 @@
 .form-ex-flex-container {
-    max-width: 630px;
     padding: 7px;
 }
 
@@ -8,16 +7,40 @@
     width: 90%;
 }
 
+.form-element.form-explorer{ 
+  //background: var(--bg1);
+} 
+
+.tbody{ 
+  display: table; 
+  width: 100%;
+  border: solid 1px var(--lines);
+}
+.tr{ 
+  display: table-row; 
+  border-bottom: var(--lines);
+}
+
+.td{ 
+  display: table-cell; 
+  vertical-align: middle;
+}
+
 #box1 {
-    display: inline-block;
-    width: 10%;
-    max-width: 45px;
-    margin-right: 5px;
+  text-align: center;
+  padding-bottom: 2px;
 }
 
 #box2 {
-    display: inline-block;
     width: 87%;
+}
+
+#box2 input{ padding-bottom: 4px; }
+
+.tree-container{
+  border-left: solid 1px var(--lines);
+  border-right: solid 1px var(--lines);
+  border-bottom: solid 1px var(--lines);
 }
 
 .form-ex-folder {
@@ -32,11 +55,6 @@
 
 #form-ex-input {
     width: 100%;
-}
-
-.formexinput-tooltip {
-    position: relative;
-    top: 20px;
 }
 
 .dataset-subtitle {
@@ -76,8 +94,7 @@
 }
 
 mat-icon.explorer-folder {
-    width: 36px;
-    font-size: 36px;
+    font-size: 24px;
 }
 // @media screen and (min-width: 1100px) {
 //     #box1 {

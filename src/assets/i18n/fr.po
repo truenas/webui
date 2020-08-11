@@ -3558,6 +3558,9 @@ msgstr "Cloner vers un nouveau dataset"
 msgid "Close"
 msgstr "Fermer"
 
+msgid "Close (return to VM list"
+msgstr ""
+
 msgid "Cloud Credentials"
 msgstr "Identifiants Cloud"
 
@@ -7501,9 +7504,6 @@ msgstr "Mot de passe global pour déverrouiller les SED."
 
 msgid "Go Back to Jails"
 msgstr "Retour aux Jails"
-
-msgid "Go Back to Virtual Machines"
-msgstr "Retour aux machines virtuelles"
 
 msgid "Go to Active Directory Form"
 msgstr "Aller au formulaire de l'Active Directory"
@@ -11718,6 +11718,9 @@ msgid ""
 msgstr ""
 "Réinitialiser toutes les préférences de l'utilisateur à leurs valeurs par "
 "défaut. (Les thèmes personnalisés sont conservés)"
+
+msgid "Reset configuration for "
+msgstr ""
 
 msgid "Reset font size to default value"
 msgstr "Réinitialiser la taille de police à sa valeur par défaut"

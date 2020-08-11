@@ -3557,6 +3557,9 @@ msgstr "Clonar a un nuevo conjunto de datos"
 msgid "Close"
 msgstr "Cerrar"
 
+msgid "Close (return to VM list"
+msgstr ""
+
 msgid "Cloud Credentials"
 msgstr "Credenciales en la nube"
 
@@ -7499,9 +7502,6 @@ msgstr "Contraseña global para desbloquear SED."
 
 msgid "Go Back to Jails"
 msgstr "Volver a las jaulas"
-
-msgid "Go Back to Virtual Machines"
-msgstr "Volver a Máquinas Virtuales"
 
 msgid "Go to Active Directory Form"
 msgstr "Ir al formulario de Active Directory"
@@ -11729,6 +11729,9 @@ msgid ""
 msgstr ""
 "Restablezca todas las preferencias del usuario a sus valores "
 "predeterminados. (Se conservan los temas personalizados)"
+
+msgid "Reset configuration for "
+msgstr ""
 
 msgid "Reset font size to default value"
 msgstr "Restablecer tamaño de fuente al valor predeterminado"

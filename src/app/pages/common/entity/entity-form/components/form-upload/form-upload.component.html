@@ -1,11 +1,16 @@
-<div id="{{config.name}}" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
+<div id="{{config.name}}" class="dynamic-field form-input form-element" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
   ix-auto ix-auto-type="file-uploader" ix-auto-identifier="{{config.placeholder}}">
   <div class="top">
     <label>{{ config.placeholder | translate }}</label>
     <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip" [style.margin-left.px]="5"></tooltip>
   </div>
+
+  <div>
+      <button mat-button color="accent" class="btn-default" (click)="fileBtnClick()">Upload</button>
+  </div>
+
   <div *ngIf="config.hideButton;else showButton">
-      <mat-card-content>
+      <mat-card-content style="display: none;">
           <input type="file" *ngIf="!config.multiple;else multipleFiles" #fileInput accept="{{config.acceptedFiles}}" (change)="upload(config.fileLocation)" [formControlName]="config.name">
           <ng-template #multipleFiles>
             <input type="file" #fileInput accept="{{config.acceptedFiles}}" (change)="upload(config.fileLocation)" [formControlName]="config.name" multiple>
@@ -15,7 +20,7 @@
       <mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
   </div>
   <ng-template #showButton>
-      <mat-card-content>
+      <mat-card-content style="display: none;">
           <input type="file" #fileInput accept="{{config.acceptedFiles}}" [formControlName]="config.name">
       </mat-card-content>
       <mat-card-actions class="buttons">

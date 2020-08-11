@@ -13,21 +13,22 @@ export const DefaultTheme = {
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
       topbar:"#111111",
-      accent:"var(--yellow)",
-      bg1:'#171E26',
-      bg2:'#232d35',
-      fg1:'#aaaaaa',
-      fg2:'#cccccc',
-      'alt-bg1':'rgba(122,122,122,0.25)',
-      'alt-bg2':'#6F6E6C',
-      'alt-fg1':'#c1c1c1',
+      'topbar-txt': "var(--fg2)",
+      accent:"var(--bg2)",
+      bg1:'#1E1E1E',
+      bg2:'#242424',
+      fg1:'#fff',
+      fg2:'rgba(255,255,255,0.85)',
+      'alt-bg1':'#383838',
+      'alt-bg2':'#545454',
+      'alt-fg1':'rgba(194,194,194,0.5)',
       'alt-fg2':'#e1e1e1',
       yellow:'#f0cb00',
       orange:'#ee9302',
       red:'#ff0013',
       magenta:'#d238ff',
       violet:'#c17ecc',
-      blue:'#0D5788',
+      blue:'#0095D5',
       cyan:'#00d0d6',
       green:'#1F9642'
     }
@@ -39,6 +40,7 @@ export interface Theme {
   labelSwatch?: string;
   accentColors: string[];
   topbar?: string; // CSS var from palette. Defaults to primary
+  'topbar-txt'?: string; // Text color for topbar. Will be auto generated if nothing is set
   favorite?:boolean; // Deprecate: Hasn't been used since the theme switcher was in the topbar
   hasDarkLogo?: boolean; // Deprecate: logo colors are set with CSS now
   logoPath?:string; // Deprecate: Themes haven't used this in a couple of releases now
@@ -397,11 +399,20 @@ export class ThemeService {
     let accentColor = this.colorFromMeta(theme["accent"]); // eg. yellow
     let primaryTextColor = this.textContrast(theme[primaryColor], theme["bg2"]);
     let accentTextColor = this.textContrast(theme[accentColor], theme["bg2"]);
-    let topbarTextColor = this.textContrast(theme[accentColor], theme["bg2"]);
-    (<any>document).documentElement.style.setProperty("--topbar-txt", primaryTextColor);
+
     (<any>document).documentElement.style.setProperty("--primary-txt", primaryTextColor);
     (<any>document).documentElement.style.setProperty("--accent-txt", accentTextColor);
     (<any>document).documentElement.style.setProperty("--highlight", accentTextColor);
+
+    let topbarTextColor;
+    if(!theme['topbar-txt'] && theme.topbar) {
+      topbarTextColor = this.textContrast(theme.topbar, theme["bg2"]);
+      (<any>document).documentElement.style.setProperty("--topbar-txt", topbarTextColor);
+    } else if(!theme['topbar-txt'] && !theme.topbar) {
+      //topbarTextColor = this.textContrast(theme[accentColor], theme["bg2"]);
+      topbarTextColor = this.textContrast(theme[primaryColor], theme["bg2"]);
+      (<any>document).documentElement.style.setProperty("--topbar-txt", topbarTextColor);
+    }
 
     // Logo light/dark
     if(theme["hasDarkLogo"]){
@@ -416,7 +427,8 @@ export class ThemeService {
   public textContrast(cssVar, bgVar){
     let txtColor = '';
     // Convert hex value to RGB
-    let props = this.hexToRGB(cssVar); 
+    const cssVarType = this.getValueType(cssVar);
+    let props = cssVarType == 'hex' ? this.hexToRGB(cssVar) : { rgb: this.rgbToArray(cssVar) }; 
 
     // Find the average value to determine brightness
     let brightest = (props.rgb[0] + props.rgb[1] + props.rgb[2]) / 3;
@@ -428,7 +440,8 @@ export class ThemeService {
     } else {
       // RGB averages between 144-197 are to be 
       // matched to bg2 css variable.
-      let bgProp = this.hexToRGB(bgVar);
+      const bgPropType = this.getValueType(bgVar);
+      let bgProp = bgPropType == 'hex' ?  this.hexToRGB(bgVar) : { rgb: this.rgbToArray(bgVar) };
       let bgAvg = (bgProp.rgb[0] + bgProp.rgb[1] + bgProp.rgb[2]) / 3;
       if(bgAvg < 127){
         txtColor = "#333333";
@@ -441,7 +454,28 @@ export class ThemeService {
     return txtColor;
   }
 
+  getValueType(value:string){
+    let valueType: string;
+    if(value.startsWith("var")){
+      valueType = "cssVar";
+    } else if(value.startsWith("#")){
+      valueType = "hex";
+    } else if(value.startsWith("rgb(")){
+      valueType = "rgb";
+    } else if(value.startsWith("rgba(")){
+      valueType = "rgba";
+    } else {
+      valueType = "unknown";
+    }
+
+    return valueType;
+    
+  }
+
   hexToRGB(str) {
+    const valueType = this.getValueType(str); // cssVar || hex || rgb || rgba
+    if(valueType != "hex") console.error("This method takes a hex value as a parameter but was given a value of type " + valueType);
+
     var spl = str.split('#');
     var hex = spl[1];
     if(hex.length == 3){
@@ -464,6 +498,29 @@ export class ThemeService {
       rgb:rgb
     }
   }
+
+  rgbToHex(value: string){
+    const arr = this.rgbToArray(value);
+    const alpha = arr.length > 3;
+    const r = parseInt(arr[0]);
+    const g = parseInt(arr[1]);
+    const b = parseInt(arr[2]);
+
+    let hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    console.log(hex);
+    return hex;
+  }
+
+  rgbToArray(value: string){
+    const alpha = value.startsWith("rgba");
+    const prefix = alpha ? "rgba(" : "rgb(";
+    const trimFront = value.replace(prefix, "");
+    const trimmed = trimFront.replace(")", "");
+    const output = trimmed.split(",");
+    
+    return output;
+  }
+
   
   public colorFromMeta(meta:string){
     let trimFront = meta.replace('var(--','');
