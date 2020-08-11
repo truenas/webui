@@ -1014,23 +1014,18 @@ export class VolumesListTableConfig implements InputTableConf {
               label: T("Edit Permissions"),
               ttposition: 'left',
               onClick: (row1) => {
-                this._router.navigate(new Array('/').concat([
-                  "storage", "pools", "permissions", row1.id
-                ]));
-              }
-            },
-            {
-              id: rowData.name,
-              name: T('Edit ACL'),
-              label: T("Edit ACL"),
-              matTooltip: helptext.acl_edit_msg,
-              isHidden: this.productType === 'SCALE' ? true : false, // Temporary, for SCALE
-              ttposition: 'left',
-              onClick: (row1) => {
-                this._router.navigate(new Array('/').concat([
-                  "storage", "pools", "id", row1.id.split('/')[0], "dataset",
-                  "acl", row1.id
-                ]));
+                this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + rowData.id]).subscribe(acl_is_trivial => {
+                  if (acl_is_trivial) {
+                    this._router.navigate(new Array('/').concat([
+                      "storage", "pools", "permissions", row1.id
+                    ]));
+                  } else {
+                    this._router.navigate(new Array('/').concat([
+                      "storage", "pools", "id", row1.id.split('/')[0], "dataset",
+                      "acl", row1.id
+                    ]));
+                  }
+                })
               }
             },
             {
@@ -1558,23 +1553,15 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   clickAction(rowData) {
-    let aclEditDisabled = false;
-    let permissionsEditDisabled = false;
+    let editPermissions = rowData.actions[0].actions.find(o => o.name === 'Edit Permissions');
     if (!rowData.locked) {
-      this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + rowData.id]).subscribe(acl_is_trivial => {
-        !rowData.id.includes('/') || !acl_is_trivial ? permissionsEditDisabled = true : permissionsEditDisabled = false;
-        rowData.id.includes('/') ? aclEditDisabled = false : aclEditDisabled = true;
-        let editACL = rowData.actions[0].actions.find(o => o.name === 'Edit ACL');
-          if (editACL) {
-            editACL.disabled = aclEditDisabled;
-          }
-        let editPermissions = rowData.actions[0].actions.find(o => o.name === 'Edit Permissions')
-        if (editPermissions) {
-          editPermissions.disabled = permissionsEditDisabled;
-          aclEditDisabled ? editPermissions.matTooltip = helptext.permissions_edit_msg1 :
-          editPermissions.matTooltip = helptext.permissions_edit_msg2
-        }
-      })
+      if (!rowData.id.includes('/')) {
+        editPermissions.disabled = true;
+        editPermissions.matTooltip = helptext.permissions_edit_msg1;
+      } else {
+        editPermissions.disabled = false;
+        editPermissions.matTooltip = null;
+      }
     }
   }
 

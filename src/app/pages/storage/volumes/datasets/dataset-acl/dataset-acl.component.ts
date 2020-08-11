@@ -21,7 +21,7 @@ import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-a
 import { MatDialog } from '@angular/material/dialog';
 import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
 import {EntityUtils} from '../../../../common/entity/utils';
-import { ConfirmDialog } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 
 @Component({
   selector : 'app-dataset-acl',
@@ -34,6 +34,8 @@ export class DatasetAclComponent implements OnDestroy {
   protected isEntity = true;
   protected pk: string;
   protected path: string;
+  protected datasetId: string;
+  private aclIsTrivial = false;
   protected userOptions: any[];
   protected groupOptions: any[];
   protected userSearchOptions: [];
@@ -41,8 +43,6 @@ export class DatasetAclComponent implements OnDestroy {
   protected defaults: any;
   protected recursive: any;
   protected recursive_subscription: any;
-  protected stripacl: any;
-  protected stripacl_subscription: any;
   private aces: any;
   private aces_fc: any;
   private aces_subscription: any;
@@ -267,13 +267,6 @@ export class DatasetAclComponent implements OnDestroy {
               value: false,
             }]
           }],
-        },
-        {
-          type: 'checkbox',
-          name: 'stripacl',
-          placeholder: helptext.dataset_acl_stripacl_placeholder,
-          tooltip: helptext.dataset_acl_stripacl_tooltip,
-          value: false,
         }
       ]
     },
@@ -283,14 +276,43 @@ export class DatasetAclComponent implements OnDestroy {
     },
   ];
 
+  public custActions: Array<any> = [
+    {
+      id : 'use_perm_editor',
+      name : helptext.permissions_editor_button,
+      function : () => {
+        this.router.navigate(new Array('/').concat([
+          "storage", "pools", "permissions", this.datasetId
+        ]));
+      }
+    },
+    {
+      id : 'strip_acl',
+      name : helptext.dataset_acl_stripacl_placeholder,
+      function : () => {
+        this.doStripACL();
+      }
+    }
+  ];
+
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected aroute: ActivatedRoute, 
               protected ws: WebSocketService, protected userService: UserService,
               protected storageService: StorageService, protected dialogService: DialogService,
               protected loader: AppLoaderService, protected dialog: MatDialog) {}
 
+  
+  isCustActionVisible(actionId: string) {
+    if (this.aclIsTrivial) {
+      return actionId === 'use_perm_editor' ? true : false;
+    } else {
+      return actionId === 'strip_acl' ? true : false;
+    }
+  }
+
   preInit(entityEdit: any) {
     this.sub = this.aroute.params.subscribe(params => {
+      this.datasetId = params['path'];
       this.path = '/mnt/' + params['path'];
       const path_fc = _.find(this.fieldSets[0].config, {name:'path'});
       path_fc.value = this.path;
@@ -340,27 +362,17 @@ export class DatasetAclComponent implements OnDestroy {
         .subscribe((res) => {
           if (!res) {
             this.recursive.setValue(false);
-          }
+          }    
         });
       }
     });
+
     this.ws.call('filesystem.acl_is_trivial', [this.path]).subscribe(acl_is_trivial => {
-      this.entityForm.setDisabled('stripacl', acl_is_trivial);
+      this.aclIsTrivial = acl_is_trivial;
     }, (err) => {
       new EntityUtils().handleWSError(this.entityForm, err);
     });
-    this.stripacl = entityEdit.formGroup.controls['stripacl'];
-    this.stripacl_subscription = this.stripacl.valueChanges.subscribe((value) => {
-      if (value === true) {
-        this.dialogService.confirm(helptext.dataset_acl_stripacl_dialog_warning,
-         helptext.dataset_acl_stripacl_dialog_warning_message)
-        .subscribe((res) => {
-          if (!res) {
-            this.stripacl.setValue(false);
-          }
-        });
-      }
-    });
+
     this.aces_fc = _.find(this.fieldConfig, {"name": "aces"});
     this.aces = this.entityForm.formGroup.controls['aces'];
     this.aces_subscription = this.aces.valueChanges.subscribe(res => {
@@ -592,7 +604,6 @@ export class DatasetAclComponent implements OnDestroy {
   ngOnDestroy() {
     this.recursive_subscription.unsubscribe();
     this.aces_subscription.unsubscribe();
-    this.stripacl_subscription.unsubscribe();
   }
 
   beforeSubmit(data) {
@@ -653,9 +664,7 @@ export class DatasetAclComponent implements OnDestroy {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Saving ACLs") }});
     this.dialogRef.componentInstance.setDescription(T("Saving ACLs..."));
     let dacl = body.dacl;
-    if (body.stripacl) {
-      dacl = [];
-    }
+
     await this.userService.getUserByName(body.uid).toPromise().then(userObj => {
       if (userObj && userObj.hasOwnProperty('pw_uid')) {
         body.uid = userObj.pw_uid;
@@ -696,8 +705,7 @@ export class DatasetAclComponent implements OnDestroy {
       [{'path': body.path, 'dacl': dacl,
         'uid': body.uid, 'gid': body.gid,
         'options' : {'recursive': body.recursive,
-        'traverse': body.traverse,
-        'stripacl': body.stripacl
+        'traverse': body.traverse
         }
       }]);
     this.dialogRef.componentInstance.submit();
@@ -729,5 +737,47 @@ export class DatasetAclComponent implements OnDestroy {
       }
       config.searchOptions = users;
     });
+  }
+
+  doStripACL() {
+    const conf: DialogFormConfiguration = {
+      title: helptext.stripACL_dialog.title,
+      message: helptext.stripACL_dialog.message,
+      fieldConfig: [
+        {
+          type: 'checkbox',
+          name: 'traverse',
+          placeholder: helptext.stripACL_dialog.traverse_checkbox
+        }
+      ],
+      // warning:helptext.stripACL_dialog.warning,
+      saveButtonText: helptext.dataset_acl_stripacl_placeholder,
+      parent: this,
+      customSubmit: (entityDialog) => {
+        entityDialog.dialogRef.close();
+
+        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Stripping ACLs") }});
+        this.dialogRef.componentInstance.setDescription(T("Stripping ACLs..."));
+
+        this.dialogRef.componentInstance.setCall(this.updateCall,
+          [{'path': this.path, 'dacl': [],
+            'options' : {'recursive': true,
+            'traverse': entityDialog.formValue.traverse ? true : false,
+            'stripacl': true
+            }
+          }]);
+        this.dialogRef.componentInstance.submit();
+        this.dialogRef.componentInstance.success.subscribe((res) => {
+          this.entityForm.success = true;
+          this.dialogRef.close();
+          this.router.navigate(new Array('/').concat(
+            this.route_success));
+        });
+        this.dialogRef.componentInstance.failure.subscribe((err) => {
+          new EntityUtils().handleWSError(this.entityForm, err);
+        });
+      }
+    }
+    this.dialogService.dialogFormWide(conf);
   }
 }
