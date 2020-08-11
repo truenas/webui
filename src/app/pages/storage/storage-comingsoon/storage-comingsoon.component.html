@@ -1,0 +1,19 @@
+<div fxLayout="column">
+    <div>
+        <entity-comingsoon></entity-comingsoon>
+    </div>
+    <div [ngStyle]="{'position': 'relative', 'top': '150px', 'margin': 'auto'}">
+        <mat-card>
+            <mat-card-content>
+                <ul>
+                    <li><a [routerLink]="['pools']">Pools</a></li>
+                    <li><a [routerLink]="['snapshots']">Snapshots</a></li>
+                    <li><a [routerLink]="['vmware-snapshots']">VMware Snapshots</a></li>
+                    <li><a [routerLink]="['disks']">Disks</a></li>
+                    <li><a [routerLink]="['import-disk']">Import Disks</a></li>
+                </ul>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>
+
