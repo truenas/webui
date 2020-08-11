@@ -322,7 +322,8 @@ export class VolumesListTableConfig implements InputTableConf {
       });
     }
 
-    if (this.parentVolumesListComponent.has_encrypted_root[rowData.name]) {
+    if (this.parentVolumesListComponent.has_encrypted_root[rowData.name] 
+      && this.parentVolumesListComponent.has_key_dataset[rowData.name]) {
       actions.push({
         label: T("Export Dataset Keys"),
         onClick: (row1) => {
@@ -1697,6 +1698,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   public paintMe = true;
   public systemdatasetPool: any;
   public has_encrypted_root = {};
+  public has_key_dataset = {};
 
   constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
@@ -1720,6 +1722,16 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.zfsPoolRows.pop();
     }
 
+    this.has_key_dataset = {};
+    this.has_encrypted_root = {};
+    this.ws.call('pool.dataset.query_encrypted_roots_keys').subscribe(res => {
+      for (const key in res) {
+        if (res.hasOwnProperty(key)) {
+          const pool = key.split('/')[0];
+          this.has_key_dataset[pool] = true;
+        }  
+      }
+    });
 
 
     combineLatest(this.ws.call('pool.query', []), this.ws.call('pool.dataset.query', [])).subscribe(async ([pools, datasets]) => {
