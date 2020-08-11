@@ -32,21 +32,15 @@
         </div>
 
       </div>
-      <!-- <div class="app-user"> -->
-        <!-- <span class="app-user-name">
-          <mat-icon class="icon-xs text-muted">lock</mat-icon>
-          root
-        </span> -->
-        <!-- <div class="hostname-label" *ngIf="hostname" matTooltip="Hostname: {{hostname}}">{{hostname}}</div>
-      </div> -->
+
       <navigation (onStateChange)="changeState($event)" (onToggleMenu)="toggleMenu($event)" (onCloseMenu)="toggleMenu()"></navigation>
       <div class="sidenav-copyright-txt" *ngIf="!isSidenavCollapsed">
         <div class="hostname-label" *ngIf="hostname" matTooltip="Hostname: {{hostname}}">{{hostname}}</div>
-        <p>TrueNAS {{product_type}}®</p>
-        <p>
+        <div>TrueNAS {{product_type}}®</div>
+        <div>
           © {{copyrightYear}} - <a href="http://www.ixsystems.com"
               target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.
-        </p>
+        </div>
       </div>  
       <div class="sidenav-copyright-icon" *ngIf="isSidenavCollapsed" 
         matTooltip="TrueNAS {{product_type}}® © {{copyrightYear}} by iXsystems Inc."

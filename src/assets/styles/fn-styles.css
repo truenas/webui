@@ -925,7 +925,7 @@ div.hopscotch-bubble .hopscotch-nav-button.prev:hover {
     width: 48px;
     line-height: 48px;
 }
-.sidebar-panel.mat-sidenav .sidebar-list-item mat-icon.menu-caret {
+/* .sidebar-panel.mat-sidenav .sidebar-list-item mat-icon.menu-caret {
     float: right;
     -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
@@ -936,7 +936,7 @@ div.hopscotch-bubble .hopscotch-nav-button.prev:hover {
     float: right;
     -webkit-transform: rotate(180deg);
     transform: rotate(180deg);
-}
+} */
 .sidebar-panel.mat-sidenav .mat-list-item-content > a {
     width: 100%;
     display: flex;
@@ -949,8 +949,8 @@ div.hopscotch-bubble .hopscotch-nav-button.prev:hover {
     /* height: 60px !important; */
     padding: 5px 0;
     overflow: hidden;
-    -webkit-transition: all .3s cubic-bezier(.35,0,.25,1);
-    transition: all .3s cubic-bezier(.35,0,.25,1);
+    /* -webkit-transition: all .3s cubic-bezier(.35,0,.25,1);
+    transition: all .3s cubic-bezier(.35,0,.25,1); */
 }
 /* .sidebar-panel.mat-sidenav .sidebar-list-item.open {
     max-height: 1000px;
@@ -1047,13 +1047,20 @@ div.hopscotch-bubble .hopscotch-nav-button.prev:hover {
     margin: 0;
 }
 .collapsed-menu .sidebar-panel .mat-nav-list > div > .sidebar-list-item a span:not(.menu-item-tooltip),
-.collapsed-menu .sidebar-panel .mat-nav-list > div >  .sidebar-list-item a .menu-caret,
 .collapsed-menu .sidebar-panel .nav-section-title, 
 .collapsed-menu .sidebar-panel .icon-menu-separator,
 .collapsed-menu .sidebar-panel .app-user,
 .collapsed-menu .sidebar-panel .sub-menu {
     display: none;
 }
+
+.collapsed-menu .sidebar-panel .mat-nav-list > div >  .sidebar-list-item a .menu-caret {
+    position: absolute;
+    left: 33px;
+    top: 16px;
+    font-size: medium;
+}
+
 
 /*---- Pages (Sign in, sign up, forgot, lockscreen) -----*/
 .page-wrap {

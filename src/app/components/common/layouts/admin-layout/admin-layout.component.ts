@@ -281,7 +281,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   // For the slide-in menu
   toggleMenu(menuInfo?) {
-    if (this.isOpen && !menuInfo) {
+    if (this.isOpen && !menuInfo || this.isOpen && menuInfo[0] === this.menuName) {
       this.isOpen = false;
     } else if (menuInfo) {
         this.menuName = menuInfo[0];

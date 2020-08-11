@@ -19,7 +19,7 @@
         <!-- if it's not disabled and not a separator and not icon -->
         <mat-list-item (click)="updateHighlightedClass(item.state)" class="sidebar-list-item top-level" role="listitem" 
             *ngIf="!item.disabled && item.type !== 'separator' && item.type !== 'icon'" 
-            [ngClass]="{'has-submenu': item.type === 'slideOut', 'highlighted': isHighlighted === item.state}" routerLinkActive="open" id="nav-{{i}}"
+            [ngClass]="{'has-submenu': item.type === 'slideOut', 'highlighted': isHighlighted === item.state}" routerLinkActive="highlighted" id="nav-{{i}}"
             ix-auto ix-auto-type="option" ix-auto-identifier="{{item.name}}">
             <a [routerLink]="['/', item.state]" *ngIf="item.type === 'link'" name="{{item.name.replace(' ', '_')}}-menu" (click)="closeMenu()">
                 <span class="menu-item-tooltip" [matTooltip]="item.tooltip" id="{{item.name}}" matTooltipPosition="right"></span>
