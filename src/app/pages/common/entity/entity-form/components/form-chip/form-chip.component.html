@@ -1,5 +1,11 @@
-<div id="{{config.name}}" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow"
+<div id="{{config.name}}" class="dynamic-field form-input form-element" [formGroup]="group" [ngClass]="fieldShow"
     [class.has-pwtoggle]="config.togglePw" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
+
+    <div class="label-container">
+      <label>{{config.placeholder | translate}}</label>
+      <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
+    </div>
+
     <mat-form-field class="full-width">
         <mat-chip-list #chipList class="form-chip"
             [required]="config.required"
@@ -39,7 +45,6 @@
         </mat-chip-list>
     </mat-form-field>
 
-    <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
     <div class="margin-for-error">
         <form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>
         <mat-error *ngIf="config['hasErrors']">

@@ -1,4 +1,10 @@
-<div id="{{config.name}}" class="dynamic-field form-select {{config.inlineLabel ? 'inline-label' : 'not'}}" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" [hidden]="config.isHidden">
+<div id="{{config.name}}" class="form-element dynamic-field form-select {{config.inlineLabel ? 'inline-label' : 'not'}}" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" [hidden]="config.isHidden">
+
+  <div class="label-container">
+    <label class="label input-select">{{config.placeholder | translate}}</label>
+    <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
+  </div>
+
   <ng-container *ngIf="config.inlineLabel">
     <div class="label half-width">{{config.inlineLabel}}</div>
   </ng-container>
@@ -15,7 +21,6 @@
       [formControlName]="config.name" 
       [multiple]="config.multiple" 
       [required]="config.required" 
-      [placeholder]="config.placeholder | translate" 
       (selectionChange)="onChangeOption($event)"
       ix-auto ix-auto-type="select" ix-auto-identifier="{{config.placeholder}}">
 
@@ -79,7 +84,6 @@
 
 
   </mat-form-field>
-  <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
   <div class="margin-for-error">
     <form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>
     <mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>

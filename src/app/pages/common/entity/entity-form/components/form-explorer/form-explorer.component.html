@@ -1,7 +1,14 @@
-<div id="{{config.name}}" class="dynamic-field form-explorer" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
+<div id="{{config.name}}" class="dynamic-field form-explorer form-element" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
     ix-auto ix-auto-type="explorer" ix-auto-identifier='{{config.placeholder}}'>
-        <div class="form-ex-flex-container" id="form-ex-flex-container">
-        <div id="box1">
+
+        <div class="label-container">
+          <label>{{config.placeholder | translate}}</label>
+          <tooltip class="formexinput-tooltip" *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
+        </div>
+
+        <div class="tbody">
+        <div class="form-ex-flex-container tr" id="form-ex-flex-container">
+        <div id="box1" class="td">
             <button mat-icon-button aria-label="Toggle Tree" type="button" (click)="toggleTree()" [disabled]="config.disabled"
                 ix-auto
                 ix-auto-type="button"
@@ -10,7 +17,7 @@
             </button>
         </div>
 
-        <div id="box2">
+        <div id="box2" class="td">
             <mat-form-field class="full-width" id="formexinput">
                 <textarea matInput *ngIf="config.multiple; else textInput" [placeholder]="config.placeholder | translate" [formControlName]="config.name" [required]="config.required"></textarea>
                 <ng-template #textInput>
@@ -20,9 +27,12 @@
                         ix-auto-identifier="{{config.name}}">
                 </ng-template>
             </mat-form-field>
-            <tooltip class="formexinput-tooltip" style="float: right;" *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
         </div>
 
+      </div>
+        </div>
+
+        <div class="tree-container" [ngClass]="{'borderless': !treeVisible}">
         <tree-root #tree id="form-ex-input" *ngIf="treeVisible && !config.disabled" [nodes]="nodes" [options]="customTemplateStringOptions" [focused]="true" id="box3" (select)="onClick($event)" (deselect)="onClick($event)" (toggleExpanded)="onToggle($event)" (loadNodeChildren)="loadNodeChildren($event)">
             <ng-template #treeNodeTemplate let-node *ngIf="(config.explorerType == 'zvol')">
                 <mat-icon>folder</mat-icon>

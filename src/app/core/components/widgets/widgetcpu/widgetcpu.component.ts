@@ -359,8 +359,11 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       const cssVar = ds.label == 'Temperature' ? 'accent' : 'primary'; 
       const color = this.stripVar(this.currentTheme[cssVar])
       
-      const bgRGB = this.themeService.hexToRGB(this.currentTheme[color]).rgb;
-      const borderRGB = this.themeService.hexToRGB(this.currentTheme[color]).rgb;
+      const themeColor = this.currentTheme[color];
+      const valueType = this.themeService.getValueType(themeColor);
+
+      const bgRGB = valueType == 'hex' ? this.themeService.hexToRGB(themeColor).rgb : this.themeService.rgbToArray(themeColor);
+      const borderRGB = valueType == 'hex' ? this.themeService.hexToRGB(themeColor).rgb : this.themeService.rgbToArray(themeColor);
 
       ds.backgroundColor = this.rgbToString(bgRGB, 0.85);
       ds.borderColor = this.rgbToString(bgRGB);
@@ -391,9 +394,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     // Get highlight color
     let currentTheme = this.themeService.currentTheme();
     let txtColor = currentTheme.fg2;
+    const valueType = this.themeService.getValueType(txtColor);
 
     // convert to rgb
-    let rgb = this.themeService.hexToRGB(txtColor).rgb;
+    let rgb = valueType == 'hex' ? this.themeService.hexToRGB(txtColor).rgb : this.themeService.rgbToArray(txtColor);
 
     // return rgba
     let rgba =  "rgba(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + "," + opacity + ")";
