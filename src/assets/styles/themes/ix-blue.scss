@@ -440,8 +440,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-menu-content button.mat-menu-item:focus,
   .mat-menu-content button.mat-menu-item:focus .mat-icon:not(.theme-picker-swatch-icon),
   .ngx-datatable .datatable-body .datatable-row-wrapper:focus {
-    @include variable(background, --primary, $primary, !important);
-    @include variable(color, --primary-txt, $primary-txt !important);
+    //@include variable(background, --primary, $primary, !important);
+    //@include variable(color, --primary-txt, $primary-txt !important);
+    //background-color:rgba(0,0,0,0.05);
 }
 
 .ngx-datatable .datatable-body .datatable-row-wrapper:hover .mat-checkbox .mat-checkbox-frame {
