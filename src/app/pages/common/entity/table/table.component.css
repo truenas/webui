@@ -1,0 +1,61 @@
+div.app-table {
+    margin: 24px;
+    background: var(--bg2);
+    min-width: fit-content;
+    height: calc(100% - 12px);
+}
+div.table-title {
+    background: var(--bg2);
+    padding: 10px 24px;
+}
+
+div.table-title > h3 {
+    color: var(--fg1);
+}
+
+div.table-title-action > button {
+    background-color: var(--alt-bg2);
+    color: var(--fg1);
+}
+
+table.table-component{
+    width: 100%;
+    vertical-align: middle;
+    background: var(--bg2);
+}
+
+table.table-component tbody,
+table.table-component thead,
+table.table-component tr,
+table.table-component th,
+table.table-component td {
+    vertical-align: middle;
+    color: var(--fg1);
+}
+
+table.table-component tr.mat-row:hover{
+    background: var(--alt-bg2);
+}
+
+div.table-cell {
+    display: flex;
+    align-items: center;
+}
+
+div.table-row-action {
+    justify-content: flex-end;
+}
+
+mat-icon.state-icon {
+    font-size: 19px;
+    height: auto;
+    width: auto;
+    margin-right: 4px;
+}
+
+mat-icon.STATE_UP {
+    color: var(--green);
+}
+mat-icon.STATE_DOWN {
+    color: var(--grey);
+}
