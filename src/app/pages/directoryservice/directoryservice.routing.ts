@@ -12,7 +12,6 @@ import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-
 import { IdmapListComponent } from './idmap-list';
 import { IdmapFormComponent } from './idmap-form';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
-import { DirectoryservicesComponent } from './directoryservices/directoryservices.component';
 
 export const routes: Routes = [{
   path: '',

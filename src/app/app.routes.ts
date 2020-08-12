@@ -133,6 +133,11 @@ export const rootRouterConfig: Routes = [{
         loadChildren : './pages/data-protection/data-protection.module#DataProtectionModule',
         data: { title: 'Data Protection', breadcrumb: 'Data Protection'}
       },
+      {
+        path : 'credentials',
+        loadChildren : './pages/credentials/credentials.module#CredentialsModule',
+        data: { title: 'Credentials', breadcrumb: 'Credentials'}
+      },
     ]
   },
   {

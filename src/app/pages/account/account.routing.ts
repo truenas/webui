@@ -9,6 +9,7 @@ import { UserFormComponent } from './users/user-form/';
 import { ChangePasswordComponent } from "./users/change-password/change-password.component";
 import { TwoFactorComponent } from '../system/two-factor/two-factor.component';
 import { DirectoryservicesComponent } from '../directoryservice/directoryservices/directoryservices.component';
+import { CredentialsComponent } from './../credentials/credentials.component';
 
 export const routes: Routes = [{
   path: '',
@@ -64,10 +65,17 @@ export const routes: Routes = [{
     component: TwoFactorComponent,
     data: { title: ('Two-Factor Auth'), breadcrumb: ('Two-Factor Auth') },
   },
+
+  // Temporary dashboards attached to accounts for now
   {
     path: 'directory-services',
     component: DirectoryservicesComponent,
-    data: { title: ('Two-Factor Auth'), breadcrumb: ('Two-Factor Auth') },
+    data: { title: ('Directory Services') },
+  },
+  {
+    path: 'temp-misc',
+    component: CredentialsComponent,
+    data: { title: ('Credentials') }
   }
 ]
 }];
