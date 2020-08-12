@@ -71,7 +71,7 @@ export class NavigationService {
       type: 'slideOut',
       tooltip: T('Credentials'),
       icon: 'vpn_key',
-      state: 'account',
+      state: 'account', // rename to credentials
       sub: [
         { name: T('Local Users'), state: 'users' },
         { name: T('Local Groups'), state: 'groups' },
@@ -79,7 +79,8 @@ export class NavigationService {
         { name: T('Backup Credentials'), state: 'temp-misc' },
         { name: T('Certificates'), state: 'temp-misc' },
         { name: T('2FA'), state: 'two-factor' },
-        { name: T('KMIP'), state: 'kmip', disabled: true },
+        // KMIP probably needs to be moved to credentials routing component to work here
+        // { name: T('KMIP'), state: 'kmip', disabled: true },
       ]
     },
     {
@@ -87,7 +88,7 @@ export class NavigationService {
       type: 'link',
       tooltip: T('Applications'),
       icon: 'apps',
-      state: 'plugins',
+      state: 'plugins', // rename to applications?
     },
     {
       name: T('Virtualization'),
