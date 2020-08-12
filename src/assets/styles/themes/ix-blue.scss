@@ -1763,13 +1763,18 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     color: var(--red) !important;
   }
 
-  #cust_button_continue_with_afp {
-    background: var(--bg1);
-  }
-  
   mat-hint {
     color: var(--yellow) !important;
     font-size: 0.7rem;
+  }
+
+  #cust_button_continue_with_afp {
+    background: var(--bg1);
+  }
+
+  openvpn-client-edit .buttons, 
+  openvpn-server-edit .buttons {
+    margin-top: 1rem
   }
 
  } // end of ix theme
