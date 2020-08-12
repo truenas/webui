@@ -45,6 +45,7 @@ nav.view-nav-bar{
   text-transform: capitalize !important;
   border-bottom: solid 2px rgba(0,0,0,0);
   border-radius:0;
+  color: var(--fg2);
 }
 
 .view-nav-bar .view-nav-btn.active{

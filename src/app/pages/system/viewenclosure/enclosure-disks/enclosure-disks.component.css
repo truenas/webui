@@ -63,9 +63,14 @@ nav.view-nav-bar{
   /*background-color: rgba(0,0,0,0.05);*/
 }
 
+.view-card #disks-details,
+.view-card #disks-details-header{
+  background: var(--bg2);
+}
+
 .view-card .tiles{
   text-align: center;
-  border-left:solid 1px var(--bg1);
+  border-left:solid 1px var(--lines);
 }
 
 .view-card .tiles:first-child{
@@ -79,6 +84,7 @@ nav.view-nav-bar{
 
 .view-card .tiles.active{
   background-color:rgba(0,0,0,0.1);
+  background-color:var(--contrast-darker);
 }
 
 .view-card .primary-number{
@@ -282,6 +288,7 @@ div.vdev-disk {
 .view-card#Disks .mat-card-content#Disks-content{
   opacity:1;
   position:static;
+  background: var(--contrast-darkest);
 }
 
 .semibold{

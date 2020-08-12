@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 
 export const DefaultTheme = {
       name:'ix-dark',
+      darkTheme: true,
       label: "iX Dark",
       labelSwatch:"blue",
       description:'FreeNAS 11.2 default theme',
@@ -35,6 +36,7 @@ export const DefaultTheme = {
 
 export interface Theme {
   name: string;
+  darkTheme?: boolean;
   description:string;
   label: string;
   labelSwatch?: string;
@@ -81,6 +83,7 @@ export class ThemeService {
     DefaultTheme,
     {
       name:'ix-blue',
+      darkTheme: false,
       label: "iX Blue",
       labelSwatch:"blue",
       description:'Official iX System Colors on light',
@@ -91,7 +94,7 @@ export class ThemeService {
       bg1:'#dddddd',
       bg2:'#ffffff',
       fg1:'#222222',
-      fg2:'#333333',
+      fg2:'#666666',
       'alt-bg1':'#ababab',
       'alt-bg2':'#cdcdcd',
       'alt-fg1':'#181a26',
@@ -107,16 +110,18 @@ export class ThemeService {
     },
     {
       name:'dracula',
+      darkTheme: true,
       label: "Dracula",
       labelSwatch:"blue",
       description:'Dracula color theme',
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
       topbar:"var(--blue)",
+      'topbar-txt':"var(--fg1)",
       accent:"var(--violet)",
       bg1:'#181a26',
       bg2:'#282a36',
-      fg1:'#a8a8a2',
+      fg1:'#efefef',
       fg2:'#cacac5',
       'alt-bg1':'rgba(122,122,122,0.25)',
       'alt-bg2':'rgba(122,122,122,0.5)',
@@ -133,12 +138,14 @@ export class ThemeService {
     },
     {
       name:'nord',
+      darkTheme: true,
       label: "Nord",
       labelSwatch:"blue",
       description:'Unofficial nord color theme based on https://www.nordtheme.com/',
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--alt-bg2)",
       topbar:"var(--alt-bg2)",
+      'topbar-txt':"var(--fg2)",
       accent:"var(--blue)",
       bg1:'#2e3440',
       bg2:'#3b4252',
@@ -159,6 +166,7 @@ export class ThemeService {
     },
     {
       name:'paper',
+      darkTheme: false,
       label: "Paper",
       labelSwatch:"blue",
       description:'FreeNAS 11.2 default theme',
@@ -169,7 +177,7 @@ export class ThemeService {
       bg1:'#D5D5D5',
       bg2:'#F5F5F5',
       fg1:'#222222',
-      fg2:'#333333',
+      fg2:'#666666',
       'alt-bg1':'#ababab',
       'alt-bg2':'#cdcdcd',
       'alt-fg1':'#181a26',
@@ -185,12 +193,14 @@ export class ThemeService {
     },
     {
       name:'solarized-dark',
+      darkTheme: true,
       label: "Solarized Dark",
       labelSwatch:"bg2",
       description:'Solarized dark color scheme',
       accentColors:['blue', 'magenta', 'cyan', 'violet', 'green', 'orange', 'yellow', 'red'],
       primary:"var(--fg1)",
       topbar:"var(--fg1)",
+      'topbar-txt':"#cdcdcd",
       accent:"var(--cyan)",
       bg1:'#002b36',
       bg2:'#073642',
@@ -211,12 +221,14 @@ export class ThemeService {
     },
     {
       name:'midnight',
+      darkTheme: true,
       label: "Midnight",
       labelSwatch:"blue",
       description:'Dark theme with blues and greys',
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
       topbar:"var(--blue)",
+      'topbar-txt':"var(--fg2)",
       accent:"var(--violet)",
       bg1:'#212a35',
       bg2:'#303d48',
@@ -237,6 +249,7 @@ export class ThemeService {
     },
     {
       name:'high-contrast',
+      darkTheme: false,
       label: "High Contrast",
       labelSwatch:"fg1",
       description:'High contrast theme based on Legacy UI color scheme',
@@ -248,8 +261,8 @@ export class ThemeService {
       bg2:'#ffffff',
       fg1:'#222222',
       fg2:'#333333',
-      'alt-bg1':'rgba(122,152,182,0.05)',
-      'alt-bg2':'#fafaf5',
+      'alt-bg1':'#ababab',
+      'alt-bg2':'#cdcdcd',
       'alt-fg1':'#181a26',
       'alt-fg2':'#282a36',
       yellow:'#f0cb00',
@@ -282,10 +295,22 @@ export class ThemeService {
 
     // Use only for testing
     this.core.register({observerClass:this, eventName:"ThemeChangeRequest"}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
       //this.core.emit({name:"ThemeData", data:this.findTheme(evt.data), sender:this});
-     
       this.changeTheme(evt.data);
+
+      const theme = this.findTheme(evt.data);
+      const color = theme.red;
+      (<any>document).documentElement.style.setProperty("--default-green", color);
+      console.log("Starting color: " + color);
+
+      const darker = this.darken(color, 10);
+      (<any>document).documentElement.style.setProperty("--darker", darker);
+      console.log("10% darker: " + darker);
+      
+      const lighter = this.lighten(color, 10);
+      (<any>document).documentElement.style.setProperty("--lighter", lighter);
+      console.log("10% lighter: " + lighter);
+     
     });
 
     this.core.register({observerClass:this,eventName:"GlobalPreviewChanged"}).subscribe((evt:CoreEvent) => {
@@ -376,6 +401,7 @@ export class ThemeService {
   }
 
   setCssVars(theme:Theme){ 
+    // Sets CSS Custom Properties for an entire theme
     let keys = Object.keys(theme);
 
     // Filter out deprecated properties and meta properties
@@ -411,6 +437,19 @@ export class ThemeService {
     (<any>document).documentElement.style.setProperty("--primary-txt", primaryTextColor);
     (<any>document).documentElement.style.setProperty("--accent-txt", accentTextColor);
     (<any>document).documentElement.style.setProperty("--highlight", accentTextColor);
+
+    // Set multiple background color contrast options
+    let contrastSrc = theme['bg2'];
+    let contrastDarker = this.darken(contrastSrc, 5);
+    let contrastDarkest = this.darken(contrastSrc, 10);
+    let contrastLighter = this.lighten(contrastSrc, 5);
+    let contrastLightest = this.lighten(contrastSrc, 10);
+
+    (<any>document).documentElement.style.setProperty("--contrast-darker", contrastDarker);
+    (<any>document).documentElement.style.setProperty("--contrast-darkest", contrastDarkest);
+    (<any>document).documentElement.style.setProperty("--contrast-lighter", contrastLighter);
+    (<any>document).documentElement.style.setProperty("--contrast-lightest", contrastLightest);
+
 
     let topbarTextColor;
     if(!theme['topbar-txt'] && theme.topbar) {
@@ -507,30 +546,31 @@ export class ThemeService {
     }
   }
 
-  rgbToHex(value: string){
+  rgbToHex(value: string):string {
     const arr = this.rgbToArray(value);
+    console.log(arr);
     const alpha = arr.length > 3;
-    const r = parseInt(arr[0]);
-    const g = parseInt(arr[1]);
-    const b = parseInt(arr[2]);
+    const r = arr[0];
+    const g = arr[1];
+    const b = arr[2];
 
     let hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
     console.log(hex);
     return hex;
   }
 
-  rgbToArray(value: string){
+  rgbToArray(value: string):number[]{
     const alpha = value.startsWith("rgba");
     const prefix = alpha ? "rgba(" : "rgb(";
     const trimFront = value.replace(prefix, "");
     const trimmed = trimFront.replace(")", "");
     const output = trimmed.split(",");
     
-    return output;
+    return output.map((str) => parseFloat(str));
   }
 
   
-  public colorFromMeta(meta:string){
+  public colorFromMeta(meta:string):string{
     let trimFront = meta.replace('var(--','');
     let trimmed = trimFront.replace(')','');
     return trimmed;
@@ -544,6 +584,85 @@ export class ThemeService {
     this._customThemes = customThemes;
     this.allThemes = this.freenasThemes.concat(this.customThemes);
     this.core.emit({name:"ThemeListsChanged"});
+  }
+
+  forceRGB(value: string): number[]{
+    const valueType = this.getValueType(value);
+    let rgb: number[];
+    if(valueType == 'cssVar'){
+      console.error('Cannot convert a variable. Please provide hex or rgb value');
+    } else {
+      rgb = valueType == 'hex' ? this.hexToRGB(value).rgb : this.rgbToArray(value);
+      return rgb;
+    }
+  }
+
+  darken(value: string, pc: number): string{
+    return this.adjustLightness(value, pc, "darken");
+  }
+
+  lighten(value: string, pc: number ): string{ 
+    return this.adjustLightness(value, pc, "lighten");
+  }
+
+  adjustLightness(value: string, pc: number, method: string = "darken"): string{ 
+    const rgb: number[] = this.forceRGB(value);
+    const hsl: number[] = this.rgbToHSL(rgb, false, false);
+    let lightness:number = method == "lighten" ? hsl[2] + pc : hsl[2] - pc;
+    lightness = lightness > 100 ? 100 : lightness;
+
+    const adjusted = [hsl[0],hsl[1], lightness];
+   
+    const css =  "hsl(" + adjusted[0] + ", " + adjusted[1] + "%, " + adjusted[2] + "%)";
+
+    const rgbStr = rgb.toString();
+    const hslStr = adjusted.toString();
+    
+    return css;
+  }
+
+  rgbToHSL(param: any, inputString: boolean = true, outputString: boolean = true): any{
+    const value = inputString ? this.forceRGB(param) : param;
+     
+    const r = value[0] /= 255;
+    const g = value[1] /= 255;
+    const b = value[2] /= 255;
+    
+    const cmin = Math.min(r,g,b);
+    const cmax = Math.max(r,g,b);
+    const delta = cmax - cmin;
+    
+    let h = 0;
+    let s = 0;
+    let l = 0;
+
+    // Calculate Hue
+    if(delta == 0){
+      h = 0;
+    } else if(cmax == r){
+      h = ((g - b) / delta) % 6;
+    } else if(cmax == g){
+      h = (b - r) / delta + 2;
+    } else {
+      h = (r - g) / delta + 4;
+    }
+
+    h = Math.round(h * 60);
+    // Make negative hues positive behind 360°
+    if(h < 0) h += 360;
+
+    // Calculate saturation and lightness
+    l = (cmax + cmin) / 2;
+    s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+
+    l = +(l * 100).toFixed(1);
+    s = +(s * 100).toFixed(1);
+
+    if(outputString){ 
+      return "hsl(" + h + ", " + s + "%, " + l + "%)" 
+    } else {
+      return [h,s,l];
+    }
   }
 
 }

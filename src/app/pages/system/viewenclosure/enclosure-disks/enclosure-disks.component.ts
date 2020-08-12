@@ -202,7 +202,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   toggleTheme(){
-    const request = this.theme.name == 'ix-blue' ? 'default' : 'ix-blue';
+    const themeName = 'ix-blue';
+    const defaultName = 'dracula';
+    const request = this.theme.name == themeName? defaultName : themeName;
     this.core.emit({name: "ThemeChangeRequest", data: request, sender: this})
   }
 

@@ -69,7 +69,7 @@ export class ChassisView {
    public vertical: boolean = false;
    public filters: any[] = [];
    public disabledOpacity = 0.25;
-   public chassisOpacity: number = 0.75;
+   public chassisOpacity: number = 0.25;
    public initialized: boolean = false;
    public loader: any;
    public autoPosition: boolean = true;

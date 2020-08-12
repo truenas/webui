@@ -190,8 +190,8 @@ entity-table .mat-toolbar.mat-card-toolbar{
 }
 
 :root{
-  --light-theme-lines: rgba(0,0,0,0.15);
-  --dark-theme-lines: rgba(255,255,255,0.15);
+  --light-theme-lines: var(--contrast-lighter);
+  --dark-theme-lines: var(--contrast-darker);
   --lines: var(--dark-theme-lines);
   --sidenav-width: 240px;
   --btn-default-bg: var(--alt-bg2);
