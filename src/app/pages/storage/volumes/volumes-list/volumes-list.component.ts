@@ -1372,6 +1372,13 @@ export class VolumesListTableConfig implements InputTableConf {
                   isHidden: is_key,
                 },
                 {
+                  type: 'input',
+                  name: 'algorithm',
+                  placeholder: dataset_helptext.dataset_form_encryption.algorithm_placeholder,
+                  disabled: true,
+                  value: (row.encryption_algorithm && row.encryption_algorithm.value) ? row.encryption_algorithm.value : '' 
+                },
+                {
                   type: 'checkbox',
                   name: 'confirm',
                   placeholder: helptext.encryption_options_dialog.confirm_checkbox,
