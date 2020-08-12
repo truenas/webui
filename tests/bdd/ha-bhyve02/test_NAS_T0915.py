@@ -145,7 +145,12 @@ def updated_value_should_be_visible(driver):
 def try_login_with_ssh(driver):
     """Try login with ssh."""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Services"]').click()
-    wait_on_element(driver, 0.5, 10, '//span[contains(.,"Name")]')
+    assert wait_on_element(driver, 0.5, 10, '//services')
+    # Scroll to SSH service
+    assert wait_on_element(driver, 0.5, 10, '//button[@ix-auto="button__S3_Actions"]')
+    element = driver.find_element_by_xpath('//button[@ix-auto="button__S3_Actions"]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(1)
     element = driver.find_element_by_xpath('//mat-slide-toggle[@ix-auto="slider__SSH_Running"]')
     class_attribute = element.get_attribute('class')
     if 'mat-checked' not in class_attribute:
