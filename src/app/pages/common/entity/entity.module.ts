@@ -82,6 +82,8 @@ import { EntityRowDetailsComponent } from './entity-table/entity-row-details.com
 import { TaskScheduleListComponent } from 'app/pages/task-calendar/components/task-schedule-list/task-schedule-list.component';
 import { FormStatusComponent } from './entity-form/components/form-status/form-status.component';
 
+import { TableComponent } from './table/table.component';
+
 @NgModule({
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule, DragDropModule,
@@ -144,6 +146,7 @@ import { FormStatusComponent } from './entity-form/components/form-status/form-s
     ToolbarMultimenuComponent,
     FormStatusComponent,
     EntityComingsoonComponent,
+    TableComponent,
   ],
   exports: [
     EntityTemplateDirective,
@@ -171,6 +174,7 @@ import { FormStatusComponent } from './entity-form/components/form-status/form-s
     ToolbarMenuComponent,
     ToolbarMultimenuComponent,
     EntityComingsoonComponent,
+    TableComponent,
   ],
   entryComponents: [
     FormButtonComponent,
