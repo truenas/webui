@@ -316,7 +316,13 @@ export class DatasetAclComponent implements OnDestroy {
       this.path = '/mnt/' + params['path'];
       const path_fc = _.find(this.fieldSets[0].config, {name:'path'});
       path_fc.value = this.path;
-      this.pk = this.path;
+      this.route.queryParams.subscribe(qparams => {
+        if (qparams && qparams.default) {
+          this.pk = qparams.default;
+        } else {
+          this.pk = this.path;
+        }
+      });
     });
 
     this.userService.userQueryDSCache().subscribe(items => {
