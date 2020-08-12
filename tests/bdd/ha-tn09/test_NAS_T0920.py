@@ -70,16 +70,17 @@ def the_failover_page_should_open(driver):
     driver.find_element_by_xpath('//h4[contains(.,"Failover Configuration")]')
 
 
-@then('Select disable failover and click save Check confirm on the warning dialog and press OK')
-def select_disable_failover_and_click_save_check_confirm_on_the_warning_dialog_and_press_ok(driver):
-    """Select disable failover and click save Check confirm on the warning dialog and press OK."""
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
-    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SAVE"]')
+@then('Check disable failover and click save Check confirm on the warning dialog and press OK')
+def check_disable_failover_and_click_save_check_confirm_on_the_warning_dialog_and_press_ok(driver):
+    """Check disable failover and click save Check confirm on the warning dialog and press OK."""
     element = driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]')
     class_attribute = element.get_attribute('class')
+    if 'mat-checkbox-checked' not in class_attribute:
+        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
+    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    if 'mat-checkbox-checked' in class_attribute:
-        wait_on_element(driver, 0.5, 4, '//h1[contains(.,"Disable Failover")]')
+    if 'mat-checkbox-checked' not in class_attribute:
+        assert wait_on_element(driver, 0.5, 4, '//h1[contains(.,"Disable Failover")]')
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
         driver.find_element_by_xpath('//button[@ix-auto="button__OK"]').click()
 
@@ -285,6 +286,14 @@ def the_vlan1043_interface_should_be_in_the_Interfaces_list(driver):
     driver.find_element_by_xpath('//div[contains(.,"Interfaces")]')
     element_text = driver.find_element_by_xpath('//div[@ix-auto="value__vlan1043_Name"]').text
     assert element_text == 'vlan1043'
+
+
+@then('Uncheck disable failover and click save Check confirm on the warning dialog and press OK')
+def uncheck_disable_failover_and_click_save_check_confirm_on_the_warning_dialog_and_press_ok(driver):
+    """Uncheck disable failover and click save Check confirm on the warning dialog and press OK."""
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
+    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SAVE"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
 @then('Logout and log back in')
