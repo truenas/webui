@@ -70,15 +70,16 @@ def the_failover_page_should_open(driver):
     assert wait_on_element(driver, 0.5, 7, '//h4[contains(.,"Failover Configuration")]')
 
 
-@then('select disable failover and click save Check confirm on the warning dialog and press OK')
-def select_disable_failover_and_click_save_check_confirm_on_the_warning_dialog_and_press_ok(driver):
-    """select disable failover and click save Check confirm on the warning dialog and press OK."""
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SAVE"]')
+@then('check disable failover and click save Check confirm on the warning dialog and press OK')
+def check_disable_failover_and_click_save_check_confirm_on_the_warning_dialog_and_press_ok(driver):
+    """check disable failover and click save Check confirm on the warning dialog and press OK."""
     element = driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]')
     class_attribute = element.get_attribute('class')
+    if 'mat-checkbox-checked' not in class_attribute:
+        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
+    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    if 'mat-checkbox-checked' in class_attribute:
+    if 'mat-checkbox-checked' not in class_attribute:
         assert wait_on_element(driver, 0.5, 4, '//h1[contains(.,"Disable Failover")]')
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
         driver.find_element_by_xpath('//button[@ix-auto="button__OK"]').click()
@@ -109,6 +110,7 @@ def the_interface_page_should_open(driver):
 @then('click on the lagg0 angle bracket, then click edit')
 def click_on_lagg0_angle_bracket_then_click_edit(driver):
     """click on the lagg0 angle bracket, then click edit."""
+    assert wait_on_element(driver, 0.5, 5, '//a[@ix-auto="expander__lagg0"]')
     driver.find_element_by_xpath('//a[@ix-auto="expander__lagg0"]').click()
     assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__EDIT_lagg0_lagg0"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_lagg0_lagg0"]').click()
@@ -178,6 +180,14 @@ def click_on_vlan1043_angle_bracket_then_click_edit(driver):
 def vlan1043_interface_settings_should_appear(driver):
     """vlan1043 Interface Settings should appear."""
     assert wait_on_element(driver, 0.5, 7, '//h4[contains(.,"Interface Settings")]')
+
+
+@then('uncheck disable failover and click save Check confirm on the warning dialog and press OK')
+def uncheck_disable_failover_and_click_save_check_confirm_on_the_warning_dialog_and_press_ok(driver):
+    """uncheck disable failover and click save Check confirm on the warning dialog and press OK."""
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
+    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SAVE"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
 @then(parsers.parse('logout and log back in with "{user}" and "{password}'))
