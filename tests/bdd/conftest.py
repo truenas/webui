@@ -62,22 +62,29 @@ def pytest_runtest_makereport(item):
     if report.when == 'call' or report.when == "setup":
         xfail = hasattr(report, 'wasxfail')
         if (report.skipped and xfail) or (report.failed and not xfail):
-            file_name = f'screenshot/{report.nodeid.replace("::", "_")}.png'
+            screenshot_name = f'screenshot/{report.nodeid.replace("::", "_")}.png'
             # look if there is a Error window
             error_exist = element_exist('//h1[contains(.,"Error")]')
             if error_exist:
                 web_driver.find_element_by_xpath('//div[@ix-auto="button__backtrace-toggle"]').click()
                 time.sleep(2)
-            # //textarea <- xpath for TraceBack
-            capture_screenshot(file_name)
+                traceback_name = f'screenshot/{report.nodeid.replace("::", "_")}.txt'
+                save_traceback(traceback_name)
+            save_screenshot(screenshot_name)
             # Press CLOSE if exist
             close_button_exist = element_exist('//button[@ix-auto="button__CLOSE"]')
             if close_button_exist:
                 web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
-def capture_screenshot(name):
+def save_screenshot(name):
     web_driver.save_screenshot(name)
+
+
+def save_traceback(name):
+    traceback_file = open(name, 'w')
+    traceback_file.writelines(web_driver.find_element_by_xpath('//textarea').text)
+    traceback_file.close()
 
 
 def element_exist(xpath):
