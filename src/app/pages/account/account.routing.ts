@@ -7,6 +7,8 @@ import { MembersComponent } from './groups/members/members.component';
 import { UserListComponent } from './users/user-list/';
 import { UserFormComponent } from './users/user-form/';
 import { ChangePasswordComponent } from "./users/change-password/change-password.component";
+import { TwoFactorComponent } from '../system/two-factor/two-factor.component';
+import { DirectoryservicesComponent } from '../directoryservice/directoryservices/directoryservices.component';
 
 export const routes: Routes = [{
   path: '',
@@ -56,6 +58,17 @@ export const routes: Routes = [{
         data: {title: 'Update Members', breadcrumb: 'Members'}
       }
     ]
-  }]
+  },
+  {
+    path: 'two-factor',
+    component: TwoFactorComponent,
+    data: { title: ('Two-Factor Auth'), breadcrumb: ('Two-Factor Auth') },
+  },
+  {
+    path: 'directory-services',
+    component: DirectoryservicesComponent,
+    data: { title: ('Two-Factor Auth'), breadcrumb: ('Two-Factor Auth') },
+  }
+]
 }];
 export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);

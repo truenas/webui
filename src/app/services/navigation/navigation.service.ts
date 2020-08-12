@@ -75,11 +75,11 @@ export class NavigationService {
       sub: [
         { name: T('Local Users'), state: 'users' },
         { name: T('Local Groups'), state: 'groups' },
-        { name: T('Directory Services'), state: 'activedirectory' },
-        { name: T('Backup Credentials'), state: 'cloudcredentials' },
+        { name: T('Directory Services'), state: 'directory-services' },
+        { name: T('Backup Credentials'), state: 'credentials' },
         { name: T('Certificates'), state: 'certificates' },
-        // { name: T('KMIP'), state: 'kmip', disabled: true },
         { name: T('2FA'), state: 'two-factor' },
+        { name: T('KMIP'), state: 'kmip', disabled: true },
       ]
     },
     {
@@ -119,7 +119,7 @@ export class NavigationService {
         { name: T('General'), state: 'general' },
         { name: T('Advanced'), state: 'advanced' },
         { name: T('Boot'), state: 'boot' },
-        // { name: T('Failover'), state: 'failover', disabled: true },
+        { name: T('Failover'), state: 'failover', disabled: true },
       ]
     },
 
