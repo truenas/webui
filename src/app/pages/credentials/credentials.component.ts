@@ -13,8 +13,16 @@ export class CredentialsComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  goSomewhere(link) {
+  systemNav(link) {
     this.router.navigate(['system', link])
+  }
+
+  nav(link) {
+    this.router.navigate([link]);
+  }
+
+  navExternal(link) {
+    return window.open(link);
   }
  
 }
