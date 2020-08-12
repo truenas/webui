@@ -82,6 +82,13 @@ Login or signup is required.'),
         message: T('TrueCommand Cloud Service has been deregistered.')
     },
 
+    stopTCConnectingDialog: {
+        title: T('Stop TrueCommand Cloud Connection'),
+        icon: 'warning',
+        message: T('Are you sure you want to stop connecting to the TrueCommand Cloud Service?'),
+        confirmBtnMsg: T('Confirm'),
+    },
+
     checkEmailInfoDialog: {
         title: T('Verify Email Address'),
         message: T('A message with verification instructions has been sent to the new email \
