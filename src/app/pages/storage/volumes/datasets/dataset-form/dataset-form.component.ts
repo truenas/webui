@@ -1481,17 +1481,9 @@ export class DatasetFormComponent implements Formconfiguration{
             helptext.afterSubmitDialog.message, true, helptext.afterSubmitDialog.actionBtn, false, '', '', '','',
             false, helptext.afterSubmitDialog.cancelBtn).subscribe(res => {
             if (res) {
-              this.ws.call('filesystem.getacl', [parentPath]).subscribe(({acltype}) => {
-                if (acltype === 'POSIX1E') {
-                  this.router.navigate(new Array('/').concat(
-                    ['storage', 'pools', 'id', restPostResp.pool, 'dataset', 'posix-acl', restPostResp.name]
-                  ), { queryParams: { default: parentPath } })
-                } else {
-                  this.router.navigate(new Array('/').concat(
-                    ['storage', 'pools', 'id', restPostResp.pool, 'dataset', 'acl', restPostResp.name]
-                  ) , { queryParams: { default: parentPath } })
-                }
-              })
+              this.router.navigate(new Array('/').concat(
+                ['storage', 'pools', 'id', restPostResp.pool, 'dataset', 'acl', restPostResp.name]
+              ) , { queryParams: { default: parentPath } })
             } else {
               this.router.navigate(new Array('/').concat(
                 this.route_success));
