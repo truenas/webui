@@ -8,7 +8,7 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from "app/translate-marker";
 import * as _ from 'lodash';
 import { combineLatest, of } from 'rxjs';
-import { catchError, map, switchMap, take, tap, filter } from 'rxjs/operators';
+import { catchError, map, switchMap, take, tap, filter, debounceTime } from 'rxjs/operators';
 import { AppLoaderService, DialogService, RestService, WebSocketService } from '../../../../services/';
 import { Validators } from '@angular/forms';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -32,6 +32,7 @@ export class SMBFormComponent {
   public productType = window.localStorage.getItem('product_type');
   private hostsAllowOnLoad = [];
   private hostsDenyOnLoad = [];
+  private stripACLWarningSent = false; 
 
   protected fieldSets: FieldSet[] = [
     {
@@ -521,6 +522,27 @@ export class SMBFormComponent {
         const v = path.split('/').pop();
         nameControl.setValue(v);
       }
+
+      if (!this.stripACLWarningSent) {
+        this.ws.call('filesystem.acl_is_trivial', [path]).subscribe(res => {
+          if (res === false && !entityForm.formGroup.controls['acl'].value) {
+            this.stripACLWarningSent = true;
+            this.showStripACLWarning();
+          }
+        })
+      }
+    });
+
+    const path_fc = entityForm.formGroup.controls['path'];
+    entityForm.formGroup.controls['acl'].valueChanges.debounceTime(100).subscribe(res => { 
+      if (!res && path_fc.value && !this.stripACLWarningSent) {
+        this.ws.call('filesystem.acl_is_trivial', [path_fc.value]).subscribe (res => {
+          if (!res) {
+            this.stripACLWarningSent = true;
+            this.showStripACLWarning();
+          }
+        })
+      }
     });
 
     setTimeout(() => {
@@ -543,6 +565,11 @@ export class SMBFormComponent {
         }
       }
     });
+  }
+
+  showStripACLWarning() {
+    this.dialog.confirm(helptext_sharing_smb.stripACLDialog.title, helptext_sharing_smb.stripACLDialog.message,
+      true, helptext_sharing_smb.stripACLDialog.button, false,null,null,null,null,true);
   }
 
   clearPresets() {
