@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import * as domHelper from '../../helpers/dom.helper';
 import { RestService, WebSocketService } from 'app/services';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { ApiService } from 'app/core/services/api.service';
 import { Router } from '@angular/router';
 
@@ -143,7 +144,7 @@ export class ThemeService {
       labelSwatch:"blue",
       description:'Unofficial nord color theme based on https://www.nordtheme.com/',
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
-      primary:"var(--alt-bg2)",
+      primary:"var(--cyan)",
       topbar:"var(--alt-bg2)",
       'topbar-txt':"var(--fg2)",
       accent:"var(--blue)",
@@ -280,10 +281,13 @@ export class ThemeService {
   private loggedIn:boolean;
   public globalPreview: boolean = false;
   public globalPreviewData: any;
+  private utils: ThemeUtils;
 
   public userThemeLoaded: boolean = false;
   constructor(private rest: RestService, private ws: WebSocketService, private core:CoreService, private api:ApiService,
               private route: Router) {
+
+    this.utils = new ThemeUtils();
 
     // Set default list
     this.allThemes = this.freenasThemes;
@@ -295,22 +299,20 @@ export class ThemeService {
 
     // Use only for testing
     this.core.register({observerClass:this, eventName:"ThemeChangeRequest"}).subscribe((evt:CoreEvent) => {
-      //this.core.emit({name:"ThemeData", data:this.findTheme(evt.data), sender:this});
       this.changeTheme(evt.data);
 
       const theme = this.findTheme(evt.data);
       const color = theme.red;
       (<any>document).documentElement.style.setProperty("--default-green", color);
-      console.log("Starting color: " + color);
 
-      const darker = this.darken(color, 10);
+      const darker = this.utils.darken(color, 10);
       (<any>document).documentElement.style.setProperty("--darker", darker);
-      console.log("10% darker: " + darker);
       
-      const lighter = this.lighten(color, 10);
+      const lighter = this.utils.lighten(color, 10);
       (<any>document).documentElement.style.setProperty("--lighter", lighter);
-      console.log("10% lighter: " + lighter);
      
+      this.core.emit({name:'ThemeChanged', data: this.findTheme(this.activeTheme), sender:this});
+      
     });
 
     this.core.register({observerClass:this,eventName:"GlobalPreviewChanged"}).subscribe((evt:CoreEvent) => {
@@ -412,7 +414,7 @@ export class ThemeService {
       
       // Generate aux. text styles 
       if(this.freenasThemes[0].accentColors.indexOf(color) !== -1){
-        let txtColor = this.textContrast(theme[color], theme["bg2"]);
+        let txtColor = this.utils.textContrast(theme[color], theme["bg2"]);
         (<any>document).documentElement.style.setProperty("--" + color + "-txt", txtColor);
       }
 
@@ -429,10 +431,10 @@ export class ThemeService {
     (<any>document).documentElement.style.setProperty("--accent",theme["accent"]);
 
     // Set Material aux. text styles
-    let primaryColor = this.colorFromMeta(theme["primary"]); // eg. blue
-    let accentColor = this.colorFromMeta(theme["accent"]); // eg. yellow
-    let primaryTextColor = this.textContrast(theme[primaryColor], theme["bg2"]);
-    let accentTextColor = this.textContrast(theme[accentColor], theme["bg2"]);
+    let primaryColor = this.utils.colorFromMeta(theme["primary"]); // eg. blue
+    let accentColor = this.utils.colorFromMeta(theme["accent"]); // eg. yellow
+    let primaryTextColor = this.utils.textContrast(theme[primaryColor], theme["bg2"]);
+    let accentTextColor = this.utils.textContrast(theme[accentColor], theme["bg2"]);
 
     (<any>document).documentElement.style.setProperty("--primary-txt", primaryTextColor);
     (<any>document).documentElement.style.setProperty("--accent-txt", accentTextColor);
@@ -440,10 +442,10 @@ export class ThemeService {
 
     // Set multiple background color contrast options
     let contrastSrc = theme['bg2'];
-    let contrastDarker = this.darken(contrastSrc, 5);
-    let contrastDarkest = this.darken(contrastSrc, 10);
-    let contrastLighter = this.lighten(contrastSrc, 5);
-    let contrastLightest = this.lighten(contrastSrc, 10);
+    let contrastDarker = this.utils.darken(contrastSrc, 5);
+    let contrastDarkest = this.utils.darken(contrastSrc, 10);
+    let contrastLighter = this.utils.lighten(contrastSrc, 5);
+    let contrastLightest = this.utils.lighten(contrastSrc, 10);
 
     (<any>document).documentElement.style.setProperty("--contrast-darker", contrastDarker);
     (<any>document).documentElement.style.setProperty("--contrast-darkest", contrastDarkest);
@@ -453,11 +455,11 @@ export class ThemeService {
 
     let topbarTextColor;
     if(!theme['topbar-txt'] && theme.topbar) {
-      topbarTextColor = this.textContrast(theme.topbar, theme["bg2"]);
+      topbarTextColor = this.utils.textContrast(theme.topbar, theme["bg2"]);
       (<any>document).documentElement.style.setProperty("--topbar-txt", topbarTextColor);
     } else if(!theme['topbar-txt'] && !theme.topbar) {
-      //topbarTextColor = this.textContrast(theme[accentColor], theme["bg2"]);
-      topbarTextColor = this.textContrast(theme[primaryColor], theme["bg2"]);
+      
+      topbarTextColor = this.utils.textContrast(theme[primaryColor], theme["bg2"]);
       (<any>document).documentElement.style.setProperty("--topbar-txt", topbarTextColor);
     }
 
@@ -471,109 +473,8 @@ export class ThemeService {
     }
   }
 
-  public textContrast(cssVar, bgVar){
-    let txtColor = '';
-    // Convert hex value to RGB
-    const cssVarType = this.getValueType(cssVar);
-    let props = cssVarType == 'hex' ? this.hexToRGB(cssVar) : { rgb: this.rgbToArray(cssVar) }; 
-
-    // Find the average value to determine brightness
-    let brightest = (props.rgb[0] + props.rgb[1] + props.rgb[2]) / 3;
-    // Find a good threshold for when to have light text color
-    if(brightest < 144){
-      txtColor = "#ffffff"
-    } else if(brightest > 191) {
-      txtColor = "#333333"
-    } else {
-      // RGB averages between 144-197 are to be 
-      // matched to bg2 css variable.
-      const bgPropType = this.getValueType(bgVar);
-      let bgProp = bgPropType == 'hex' ?  this.hexToRGB(bgVar) : { rgb: this.rgbToArray(bgVar) };
-      let bgAvg = (bgProp.rgb[0] + bgProp.rgb[1] + bgProp.rgb[2]) / 3;
-      if(bgAvg < 127){
-        txtColor = "#333333";
-      } else {
-        txtColor = "#ffffff";
-      }
-    }
-
-
-    return txtColor;
-  }
-
-  getValueType(value:string){
-    let valueType: string;
-    if(value.startsWith("var")){
-      valueType = "cssVar";
-    } else if(value.startsWith("#")){
-      valueType = "hex";
-    } else if(value.startsWith("rgb(")){
-      valueType = "rgb";
-    } else if(value.startsWith("rgba(")){
-      valueType = "rgba";
-    } else {
-      valueType = "unknown";
-    }
-
-    return valueType;
-    
-  }
-
   hexToRGB(str) {
-    const valueType = this.getValueType(str); // cssVar || hex || rgb || rgba
-    if(valueType != "hex") console.error("This method takes a hex value as a parameter but was given a value of type " + valueType);
-
-    var spl = str.split('#');
-    var hex = spl[1];
-    if(hex.length == 3){
-      hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
-    }
-
-    var value = '';
-    var rgb = [];
-    for(let i = 0; i < 6; i++){
-      let mod = i % 2;
-      let even = 0;
-      value += hex[i];
-      if(mod !== even){
-        rgb.push(parseInt(value, 16))
-        value = '';
-      }
-    }
-    return {
-      hex:hex,
-      rgb:rgb
-    }
-  }
-
-  rgbToHex(value: string):string {
-    const arr = this.rgbToArray(value);
-    console.log(arr);
-    const alpha = arr.length > 3;
-    const r = arr[0];
-    const g = arr[1];
-    const b = arr[2];
-
-    let hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-    console.log(hex);
-    return hex;
-  }
-
-  rgbToArray(value: string):number[]{
-    const alpha = value.startsWith("rgba");
-    const prefix = alpha ? "rgba(" : "rgb(";
-    const trimFront = value.replace(prefix, "");
-    const trimmed = trimFront.replace(")", "");
-    const output = trimmed.split(",");
-    
-    return output.map((str) => parseFloat(str));
-  }
-
-  
-  public colorFromMeta(meta:string):string{
-    let trimFront = meta.replace('var(--','');
-    let trimmed = trimFront.replace(')','');
-    return trimmed;
+    return this.utils.hexToRGB(str);
   }
 
   get customThemes(){
@@ -584,85 +485,6 @@ export class ThemeService {
     this._customThemes = customThemes;
     this.allThemes = this.freenasThemes.concat(this.customThemes);
     this.core.emit({name:"ThemeListsChanged"});
-  }
-
-  forceRGB(value: string): number[]{
-    const valueType = this.getValueType(value);
-    let rgb: number[];
-    if(valueType == 'cssVar'){
-      console.error('Cannot convert a variable. Please provide hex or rgb value');
-    } else {
-      rgb = valueType == 'hex' ? this.hexToRGB(value).rgb : this.rgbToArray(value);
-      return rgb;
-    }
-  }
-
-  darken(value: string, pc: number): string{
-    return this.adjustLightness(value, pc, "darken");
-  }
-
-  lighten(value: string, pc: number ): string{ 
-    return this.adjustLightness(value, pc, "lighten");
-  }
-
-  adjustLightness(value: string, pc: number, method: string = "darken"): string{ 
-    const rgb: number[] = this.forceRGB(value);
-    const hsl: number[] = this.rgbToHSL(rgb, false, false);
-    let lightness:number = method == "lighten" ? hsl[2] + pc : hsl[2] - pc;
-    lightness = lightness > 100 ? 100 : lightness;
-
-    const adjusted = [hsl[0],hsl[1], lightness];
-   
-    const css =  "hsl(" + adjusted[0] + ", " + adjusted[1] + "%, " + adjusted[2] + "%)";
-
-    const rgbStr = rgb.toString();
-    const hslStr = adjusted.toString();
-    
-    return css;
-  }
-
-  rgbToHSL(param: any, inputString: boolean = true, outputString: boolean = true): any{
-    const value = inputString ? this.forceRGB(param) : param;
-     
-    const r = value[0] /= 255;
-    const g = value[1] /= 255;
-    const b = value[2] /= 255;
-    
-    const cmin = Math.min(r,g,b);
-    const cmax = Math.max(r,g,b);
-    const delta = cmax - cmin;
-    
-    let h = 0;
-    let s = 0;
-    let l = 0;
-
-    // Calculate Hue
-    if(delta == 0){
-      h = 0;
-    } else if(cmax == r){
-      h = ((g - b) / delta) % 6;
-    } else if(cmax == g){
-      h = (b - r) / delta + 2;
-    } else {
-      h = (r - g) / delta + 4;
-    }
-
-    h = Math.round(h * 60);
-    // Make negative hues positive behind 360°
-    if(h < 0) h += 360;
-
-    // Calculate saturation and lightness
-    l = (cmax + cmin) / 2;
-    s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
-
-    l = +(l * 100).toFixed(1);
-    s = +(s * 100).toFixed(1);
-
-    if(outputString){ 
-      return "hsl(" + h + ", " + s + "%, " + l + "%)" 
-    } else {
-      return [h,s,l];
-    }
   }
 
 }

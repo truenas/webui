@@ -1,6 +1,7 @@
 import {Component, Input, AfterViewInit, OnDestroy, OnChanges, SimpleChanges, ViewChild, ElementRef} from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { ViewComponent } from 'app/core/components/view/view.component';
 import { Report, ReportData } from '../report/report.component';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
@@ -79,8 +80,11 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
   public culling:number = 6;
   public controlUid: string;
 
+  private utils: ThemeUtils;
+
   constructor(private core:CoreService, public themeService:ThemeService) {
     super();
+    this.utils = new ThemeUtils();
     this.controlUid = "chart_" + UUID.UUID();
     this.legendEvents = new BehaviorSubject({xHTML:''});
     this.legendLabels = new BehaviorSubject([]);
@@ -104,8 +108,8 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     let labels = data.shift();
 
     const fg2 = this.themeService.currentTheme().fg2;
-    const fg2Type = this.themeService.getValueType(fg2);
-    let fg2RGB = fg2Type == 'hex' ? this.themeService.hexToRGB(this.themeService.currentTheme().fg2).rgb : this.themeService.rgbToArray(fg2);
+    const fg2Type = this.utils.getValueType(fg2);
+    let fg2RGB = fg2Type == 'hex' ? this.utils.hexToRGB(this.themeService.currentTheme().fg2).rgb : this.utils.rgbToArray(fg2);
     let gridLineColor = 'rgba(' + fg2RGB[0] + ', ' + fg2RGB[1]+ ', ' + fg2RGB[2]+ ', 0.25)'
 
     let options = {
