@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import * as _ from 'lodash';
@@ -7,7 +7,6 @@ import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { WebSocketService, DialogService, CloudCredentialService} from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { FieldRelationService } from '../../../common/entity/entity-form/services/field-relation.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/task-calendar/cloudsync/cloudsync-form';
@@ -17,18 +16,19 @@ import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'cloudsync-add',
-  templateUrl: './cloudsync-form.component.html',
-  styleUrls: ['./cloudsync-form.component.css'],
-  providers: [EntityFormService, FieldRelationService, CloudCredentialService]
+  template: `<entity-form [conf]='this'></entity-form>`,
+  providers: [EntityFormService, CloudCredentialService]
 })
-export class CloudsyncFormComponent implements OnInit {
+export class CloudsyncFormComponent {
 
   protected addCall = 'cloudsync.create';
   protected editCall = 'cloudsync.update';
   public route_success: string[] = ['tasks', 'cloudsync'];
   protected entityForm: EntityFormComponent;
   protected isEntity: boolean = true;
+  protected queryCall = 'cloudsync.query';
   protected queryPayload = [];
+  protected customFilter;
 
   public fieldConfig: FieldConfig[] = [{
     type: 'input',
@@ -352,7 +352,6 @@ export class CloudsyncFormComponent implements OnInit {
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
     protected entityFormService: EntityFormService,
-    protected fieldRelationService: FieldRelationService,
     protected loader: AppLoaderService,
     protected dialog: DialogService,
     protected ws: WebSocketService,
@@ -438,32 +437,6 @@ export class CloudsyncFormComponent implements OnInit {
       });
   }
 
-  setRelation(config: FieldConfig) {
-    const activations =
-        this.fieldRelationService.findActivationRelation(config.relation);
-    if (activations) {
-      const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
-          activations, this.formGroup);
-      const tobeHide = this.fieldRelationService.isFormControlToBeHide(
-          activations, this.formGroup);
-      this.setDisabled(config.name, tobeDisabled, tobeHide);
-
-      this.fieldRelationService.getRelatedFormControls(config, this.formGroup)
-          .forEach(control => {
-            control.valueChanges.subscribe(
-                () => { this.relationUpdate(config, activations); });
-          });
-    }
-  }
-
-  relationUpdate(config: FieldConfig, activations: any) {
-    const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
-        activations, this.formGroup);
-    const tobeHide = this.fieldRelationService.isFormControlToBeHide(
-          activations, this.formGroup);
-    this.setDisabled(config.name, tobeDisabled, tobeHide);
-  }
-
   setDisabled(name: string, disable: boolean, hide: boolean = false, status?:string) {
     if (hide) {
       disable = hide;
@@ -484,19 +457,51 @@ export class CloudsyncFormComponent implements OnInit {
     }
   }
 
-  async ngOnInit() {
-    this.credentials = _.find(this.fieldConfig, { 'name': 'credentials' });
-    this.bucket_field = _.find(this.fieldConfig, {'name': 'bucket'});
-    this.bucket_input_field = _.find(this.fieldConfig, {'name': 'bucket_input'});
+  preInit() {
+    this.aroute.params.subscribe(params => {
+        this.pk = params['pk'];
+        if (this.pk) {
+          this.customFilter = [[["id", "=", parseInt(params['pk'], 10)]]]
+        }
+    });
+  }
 
-    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-
-    for (const i in this.fieldConfig) {
-      const config = this.fieldConfig[i];
-      if (config.relation.length > 0) {
-        this.setRelation(config);
+  dataHandler(entityForm) {
+    const data = entityForm.wsResponse;
+    for (const i in data) {
+      const fg = entityForm.formGroup.controls[i];
+      if (fg) {
+        const current_field = this.fieldConfig.find((control) => control.name === i);
+        fg.setValue(data[i]);
       }
     }
+    if (data.credentials) {
+      entityForm.formGroup.controls['credentials'].setValue(data.credentials.id);
+    }
+    if (data.attributes) {
+      for (let attr in data.attributes) {
+        attr = attr === 'encryption' ? 'task_encryption' : attr;
+        if (entityForm.formGroup.controls[attr]) {
+          if (attr === 'task_encryption') {
+            entityForm.formGroup.controls[attr].setValue(data.attributes['encryption'] == null ? '' : data.attributes['encryption']);
+          } else {
+            entityForm.formGroup.controls[attr].setValue(data.attributes[attr]);
+          }
+          if (attr === 'bucket' && entityForm.formGroup.controls['bucket_input']) {
+            entityForm.formGroup.controls['bucket_input'].setValue(data.attributes[attr]);
+          }
+        }
+      }
+    }
+  }
+
+  async afterInit(entityForm) {
+    this.entityForm = entityForm;
+    this.formGroup = entityForm.formGroup;
+
+    this.credentials = _.find(entityForm.fieldConfig, { 'name': 'credentials' });
+    this.bucket_field = _.find(entityForm.fieldConfig, {'name': 'bucket'});
+    this.bucket_input_field = _.find(entityForm.fieldConfig, {'name': 'bucket_input'});
 
     await this.cloudcredentialService.getCloudsyncCredentials().then(
       (res) => {
@@ -507,11 +512,13 @@ export class CloudsyncFormComponent implements OnInit {
       }
     )
 
-    this.folder_field = _.find(this.fieldConfig, { "name": "folder"});
+    this.folder_field = _.find(entityForm.fieldConfig, { "name": "folder"});
     this.formGroup.controls['credentials'].valueChanges.subscribe((res)=>{
       // reset folder tree view
       if (!this.folder_field.disabled) {
-        this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
+        if (this.folder_field.customTemplateStringOptions.explorer) {
+          this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
+        }
       }
 
       if (res!=null) {
@@ -579,12 +586,16 @@ export class CloudsyncFormComponent implements OnInit {
 
     this.formGroup.controls['bucket_input'].valueChanges.subscribe((res)=> {
       this.setBucketError(null);
-      this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
+      if (this.folder_field.customTemplateStringOptions.explorer) {
+        this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
+      }
     });
 
     this.formGroup.controls['bucket'].valueChanges.subscribe((res)=> {
       this.setBucketError(null);
-      this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
+      if (this.folder_field.customTemplateStringOptions.explorer) {
+        this.folder_field.customTemplateStringOptions.explorer.ngOnInit();
+      }
     });
 
     this.formGroup.controls['bwlimit'].valueChanges.subscribe((res)=> {
@@ -619,59 +630,6 @@ export class CloudsyncFormComponent implements OnInit {
           paragraph.paragraphIcon = 'add_to_photos';
       }
     });
-
-    this.aroute.params.subscribe(params => {
-      if (this.isEntity) {
-        this.pk = params['pk'];
-        this.pid = params['pk'];
-        if (this.pk && !this.isNew) {
-          this.queryPayload.push("id")
-          this.queryPayload.push("=")
-          this.queryPayload.push(parseInt(params['pk']));
-          this.pk = [this.queryPayload];
-        } else {
-          this.isNew = true;
-        }
-      }
-    });
-
-    if (!this.isNew) {
-      this.ws.call('cloudsync.query', [this.pk]).subscribe((res) => {
-        if (res) {
-          this.data = this.resourceTransformIncomingRestData(res[0]);
-          for (let i in this.data) {
-            let fg = this.formGroup.controls[i];
-            if (fg) {
-              let current_field = this.fieldConfig.find((control) => control.name === i);
-              fg.setValue(this.data[i]);
-            }
-          }
-          if (this.data.credentials) {
-            this.formGroup.controls['credentials'].setValue(this.data.credentials.id);
-          }
-          if (this.data.attributes) {
-            for (let attr in this.data.attributes) {
-              attr = attr === 'encryption' ? 'task_encryption' : attr;
-              if (this.formGroup.controls[attr]) {
-                if (attr === 'task_encryption') {
-                  this.formGroup.controls[attr].setValue(this.data.attributes['encryption'] == null ? '' : this.data.attributes['encryption']);
-                } else {
-                  this.formGroup.controls[attr].setValue(this.data.attributes[attr]);
-                }
-                if (attr === 'bucket' && this.formGroup.controls['bucket_input']) {
-                  this.formGroup.controls['bucket_input'].setValue(this.data.attributes[attr]);
-                }
-              }
-            }
-          }
-        }
-      });
-    }
-
-  }
-
-  goBack() {
-    this.router.navigate(new Array('').concat(this.route_success));
   }
 
   resourceTransformIncomingRestData(data) {
@@ -733,15 +691,12 @@ export class CloudsyncFormComponent implements OnInit {
     return bwlimtArr;
   }
 
-  onSubmit(event: Event) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.error = null;
-    let value = _.cloneDeep(this.formGroup.value);
-    let attributes = {};
-    let schedule = {};
+  submitDataHandler(formValue) {
+    const value = _.cloneDeep(formValue);
+    const attributes = {};
+    const schedule = {};
 
-    value['credentials'] = parseInt(value.credentials);
+    value['credentials'] = parseInt(value.credentials, 10);
 
     if (value.bucket != undefined) {
       attributes['bucket'] = value.bucket;
@@ -772,29 +727,20 @@ export class CloudsyncFormComponent implements OnInit {
 
     value['attributes'] = attributes;
 
-    let spl = value.cloudsync_picker.split(" ");
-    delete value.cloudsync_picker;
-    schedule['minute'] = spl[0];
-    schedule['hour'] = spl[1];
-    schedule['dom'] = spl[2];
-    schedule['month'] = spl[3];
-    schedule['dow'] = spl[4];
+    if (value.cloudsync_picker) {
+      const spl = value.cloudsync_picker.split(" ");
+      delete value.cloudsync_picker;
+      schedule['minute'] = spl[0];
+      schedule['hour'] = spl[1];
+      schedule['dom'] = spl[2];
+      schedule['month'] = spl[3];
+      schedule['dow'] = spl[4];
+    }
 
     value['schedule'] = schedule;
 
     if (value.bwlimit !== undefined) {
       value.bwlimit = this.handleBwlimit(value.bwlimit);
-    }
-
-    if (value.exclude !== undefined) {
-      const exclude = [];
-      value.exclude.split("\n").map(item => {
-        const trimmedItem = item.trim();
-        if (trimmedItem !== '') {
-          exclude.push(trimmedItem);
-        }
-      });
-      value.exclude = exclude;
     }
 
     if (!this.formGroup.valid) {
@@ -804,7 +750,11 @@ export class CloudsyncFormComponent implements OnInit {
     if (value['direction'] == 'PULL') {
       value['snapshot'] = false;
     }
+    return value;
+  }
 
+  customSubmit(value) {
+    value = this.submitDataHandler(value);
     if (!this.pk) {
       this.loader.open();
       this.ws.call(this.addCall, [value]).subscribe((res)=>{
@@ -816,7 +766,7 @@ export class CloudsyncFormComponent implements OnInit {
       });
     } else {
       this.loader.open();
-      this.ws.call(this.editCall, [parseInt(this.pid), value]).subscribe(
+      this.ws.call(this.editCall, [parseInt(this.pk, 10), value]).subscribe(
         (res)=>{
           this.loader.close();
           this.router.navigate(new Array('/').concat(this.route_success));
@@ -827,6 +777,14 @@ export class CloudsyncFormComponent implements OnInit {
         }
       );
     }
+  }
+
+  isCustActionDisabled(id) {
+    return !this.entityForm.valid;
+  }
+
+  isCustActionVisible(id) {
+    return this.pk === undefined;
   }
 
 }
