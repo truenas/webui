@@ -124,11 +124,17 @@ target="_blank">here.</a>')
         placeholder: T('Protocol'),
         tooltip: T('Choose the protocol to use when connecting with the remote system.'),
         enum: [{
+            label: 'UDP',
+            value: 'UDP',
+            },{
             label: 'UDP4',
             value: 'UDP4',
             },{
             label: 'UDP6',
             value: 'UDP6',
+            }, {
+            label: 'TCP',
+            value: 'TCP'
             }, {
             label: 'TCP4',
             value: 'TCP4'
