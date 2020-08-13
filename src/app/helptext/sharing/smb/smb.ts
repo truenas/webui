@@ -229,7 +229,7 @@ export const helptext_sharing_smb = {
  stripACLDialog: {
     title: T('Warning'),
     message: T('An ACL is detected on the selected path but <i>Enable ACL</i> is not selected for this share. \
- ACLs must be stripped from the dataset prior to creation of an SMB share.'),
+ ACLs must be stripped from the dataset prior to creating an SMB share.'),
     button: T('Close')
  }
 
