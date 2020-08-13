@@ -21,7 +21,7 @@
             *ngIf="!item.disabled && item.type !== 'separator' && item.type !== 'icon'" 
             [ngClass]="{'has-submenu': item.type === 'slideOut', 'highlighted': isHighlighted === item.state}" routerLinkActive="highlighted" id="nav-{{i}}"
             ix-auto ix-auto-type="option" ix-auto-identifier="{{item.name}}">
-            <a [routerLink]="['/', item.state]" *ngIf="item.type === 'link'" name="{{item.name.replace(' ', '_')}}-menu" (click)="closeMenu()">
+            <a [routerLink]="['/', item.state]" *ngIf="item.type === 'link'" name="{{item.name.replace(' ', '_')}}-menu" (click)="closeMenu()" class="sidenav-link">
                 <span class="menu-item-tooltip" [matTooltip]="item.tooltip" id="{{item.name}}" matTooltipPosition="right"></span>
                 <!--<mat-icon>{{item.icon}}</mat-icon>-->
                 <mat-icon *ngIf="item.icon !== 'jail_icon' && item.icon !== 'console-line'">{{item.icon}}</mat-icon>
@@ -29,15 +29,7 @@
                 <mat-icon *ngIf="item.icon === 'console-line'" role="img" fontSet="mdi-set" fontIcon="mdi-{{item.icon}}" style="font-size:24px;"></mat-icon>
                 <span>{{item.name | translate}}</span>
             </a>
-            <a *ngIf="item.type === 'dropDown'" name="{{item.name.replace(' ', '_')}}-menu">
-                <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="above"></span>
-                <mat-icon>{{item.icon}}</mat-icon>
-                <span>{{item.name | translate}}</span>
-                <span fxFlex></span>
-                <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
-            </a>
-
-            <a *ngIf="item.type === 'slideOut'" name="{{item.name.replace(' ', '_')}}-menu" (click)="toggleMenu(item.state, item.sub)">
+            <a *ngIf="item.type === 'slideOut'" name="{{item.name.replace(' ', '_')}}-menu" (click)="toggleMenu(item.state, item.sub)" class="sidenav-link">
                 <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="above"></span>
                 <mat-icon>{{item.icon}}</mat-icon>
                 <span>{{item.name | translate}}</span>
@@ -45,17 +37,11 @@
                 <mat-icon class="menu-caret">keyboard_arrow_right</mat-icon>
             </a>
 
-            <a [href]="item.state" *ngIf="item.type === 'extLink'" target="_blank" name="{{item.name.replace(' ', '_')}}-menu">
+            <a [href]="item.state" *ngIf="item.type === 'extLink'" target="_blank" name="{{item.name.replace(' ', '_')}}-menu" class="sidenav-link">
                 <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="right"></span>
                 <mat-icon>{{item.icon}}</mat-icon>
                 <span>{{item.name | translate}}</span>
             </a>
-            <mat-nav-list class="sub-menu" role="list" *ngIf="item.type === 'dropDown'">
-                <mat-list-item routerLinkActive="selected" *ngFor="let subItem of item.sub; let j = index" class="sidebar-sublist-item"
-                    ix-auto ix-auto-type="option" ix-auto-identifier="{{subItem.name}}">
-                    <a [routerLink]="['/', item.state, subItem.state]" id="{{i}}-{{j}}" *ngIf="!subItem.disabled" >{{subItem.name | translate}}</a>
-                </mat-list-item>
-            </mat-nav-list>
             <a mat-button style="height: 0; position: absolute;">
                 <!-- 'absorbs' the focus behavior -->
             </a>

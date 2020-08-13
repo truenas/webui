@@ -41,14 +41,6 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
         }
       });
 
-      /* Temporarily moved to the SCALE conditional below
-      this.ws.call('multipath.query').subscribe((res)=>{
-        if (!res || res.length === 0) {
-          _.find(_.find(menuItem, {state : "storage"}).sub, {state : "multipaths"}).disabled = true;
-        }
-      });
-      */
-
       // Temporarily hide some things in SCALE
       if (this.productType === 'SCALE' || this.productType === 'SCALE_ENTERPRISE') {
         _.find(_.find(menuItem, {state : "system"}).sub, {state : "kmip"}).disabled = true;
@@ -57,15 +49,6 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
         // tunables are called sysctl in linux so we should use the routes/menus/etc that call it sysctl on scale
         _.find(_.find(menuItem, {state : "system"}).sub, {state : "tunable"}).disabled = true;
         _.find(_.find(menuItem, {state : "system"}).sub, {state : "sysctl"}).disabled = false;
-      } else {
-        // this.ws.call('multipath.query').subscribe((res)=>{
-        //   if (!res || res.length === 0) {
-        //     _.find(_.find(menuItem, {state : "storage"}).sub, {state : "multipaths"}).disabled = true;
-        //   }
-        // });
-        // hide clustering and containers in not SCALE
-        // _.find(menuItem, {state : "clustering"}).disabled = true;
-        // _.find(menuItem, {state : "containers"}).disabled = true;
       }
       // ====================
 
@@ -108,7 +91,7 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
             }
           }
 
-          // set the guide url -- temporarily disabled for menuing project
+          // set the guide url -- temporarily(?) disabled for menuing project
           // if (evt.data.version) {
           //     window.localStorage.setItem('running_version', evt.data['version']);
           //     const docUrl = this.docsService.docReplace("--docurl--");
@@ -122,7 +105,6 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
               _.find(_.find(menuItem, { state: targetMenu.menu }).sub, { state : targetMenu.sub}).disabled = false;
             }
           }
-
       });
 
       this.core.emit({name:"SysInfoRequest", sender:this});
@@ -135,12 +117,12 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
   }
 
   // Workaround to keep scrollbar displaying as needed
-  // updateScroll() {
-  //   let navigationHold = document.getElementById('scroll-area');
-  //   setTimeout(() => {
-  //     Ps.update(navigationHold);
-  //   }, 500);
-  // }
+  updateScroll() {
+    let navigationHold = document.getElementById('scroll-area');
+    setTimeout(() => {
+      Ps.update(navigationHold);
+    }, 500);
+  }
 
   toggleMenu(state, sub) {
     this.onToggleMenu.emit([state, sub]);

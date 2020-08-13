@@ -327,31 +327,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-color-primary, .mat-button.mat-primary {
     @include variable(color, --primary, $primary, !important);
   }
-//////////////////////////////////
-
-  .sidebar-panel.mat-sidenav .sidebar-list-item {
-    border-left: 6px solid rgba(0, 0, 0, .0);
-    border-bottom: 1px solid rgba(255, 255, 255, .05);
-  }
-
-  .sidebar-panel.mat-sidenav .sidebar-list-item, .slidein-nav mat-list-item {
-    :hover {
-      background-color: darken($bg2, 1%);
-    }
-  }
-
-  .sidebar-panel.mat-sidenav .sidebar-list-item.highlighted {
-    border-left: 6px solid var(--primary);
-    background-color: darken($bg2, 3%);
-    .mat-list-item-content > a {
-      background-color: darken($bg2, 3%);
-  
-      mat-icon {
-        color: var(--primary);
-      }
-    }   
-  } 
-///////////////////////////////////////
 
   .mat-form-field.mat-focused.mat-primary {
     @include variable(color, --fg2, $fg2, !important);
@@ -459,9 +434,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-menu-content button.mat-menu-item:focus,
   .mat-menu-content button.mat-menu-item:focus .mat-icon:not(.theme-picker-swatch-icon),
   .ngx-datatable .datatable-body .datatable-row-wrapper:focus {
-    //@include variable(background, --primary, $primary, !important);
-    //@include variable(color, --primary-txt, $primary-txt !important);
-    //background-color:rgba(0,0,0,0.05);
+    @include variable(background, --primary, $primary, !important);
+    @include variable(color, --primary-txt, $primary-txt !important);
+    background-color:rgba(0,0,0,0.05);
 }
 
 .ngx-datatable .datatable-body .datatable-row-wrapper:hover .mat-checkbox .mat-checkbox-frame {
@@ -1786,11 +1761,44 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     margin-top: 1rem
   }
 
+  /// Slide-in menu ///////////////////////////////
+
+  .sidebar-panel.mat-sidenav .sidebar-list-item {
+    border-left: 6px solid rgba(0, 0, 0, .0);
+    border-bottom: 1px solid rgba(255, 255, 255, .05);
+  }
+
+  .sidebar-panel.mat-sidenav .sidebar-list-item, .slide-in-nav-item {
+    :hover {
+      // background-color: darken($bg2, 1%);
+      background: rgba(0, 0, 0, .045) !important;
+
+    }
+  }
+
+  .slidein-nav-link:hover {
+    background-color: rgba(0, 0, 0, 0) !important;
+  }
+
+  .sidebar-panel.mat-sidenav .sidebar-list-item.highlighted {
+    border-left: 6px solid var(--primary);
+    // background-color: darken($bg2, 3%);
+    background-color: var(--bg2);
+    .mat-list-item-content > a {
+      background-color: var(--bg2);
+      // background-color: darken($bg2, 3%);
+  
+      mat-icon {
+        color: var(--primary);
+      }
+    }   
+  } 
+
   .slidein-nav {
     height: 100vh;
     width: 239px;
-    // background-color: $bg2;
-    background-color: darken($bg2, 3%);
+    background-color: var(--bg2);
+    // background-color: darken($bg2, 3%);
     position: absolute;
     left: -239px;
     top: 50px;
@@ -1816,5 +1824,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .isdark {
     display: block;
   }
+
+  // End slide-in menu ////////////////
 
  } // end of ix theme
