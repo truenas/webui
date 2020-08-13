@@ -322,7 +322,7 @@ export class CloudsyncFormComponent {
     tooltip: helptext.bwlimit_tooltip,
   },
   {
-    type: 'textarea',
+    type: 'chip',
     name: 'exclude',
     placeholder: helptext.exclude_placeholder,
     tooltip: helptext.exclude_tooltip,
@@ -652,10 +652,6 @@ export class CloudsyncFormComponent {
       data.bwlimit = bwlimit;
     }
 
-    if (data.exclude) {
-      data.exclude = _.join(data.exclude, '\n');
-    }
-
     return data;
   }
 
@@ -778,13 +774,4 @@ export class CloudsyncFormComponent {
       );
     }
   }
-
-  isCustActionDisabled(id) {
-    return !this.entityForm.valid;
-  }
-
-  isCustActionVisible(id) {
-    return this.pk === undefined;
-  }
-
 }
