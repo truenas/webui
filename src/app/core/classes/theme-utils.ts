@@ -113,6 +113,8 @@ export class ThemeUtils {
     let rgb: number[];
     if(valueType == 'cssVar'){
       console.error('Cannot convert a variable. Please provide hex or rgb value');
+    } else if(valueType == 'hsl'){
+      console.error('Cannot convert hsl. Please provide hex or rgb value');
     } else {
       rgb = valueType == 'hex' ? this.hexToRGB(value).rgb : this.rgbToArray(value);
       return rgb;

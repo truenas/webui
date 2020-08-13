@@ -324,7 +324,8 @@ div.vdev-disk {
 
 /* MINI OVERRIDES */
 .view-card.mini {
-  color: #fff;
+  /*color: #fff;*/
+  min-width: 960px;
 }
 
 .view-card.mini .alert{
@@ -351,7 +352,7 @@ div.vdev-disk {
 .view-card.mini .dom-overlay#visualizer,
 .view-card.mini #general-overview,
 .view-card.mini #drive-temps {
-  background-color: var(--black);
+  /*background-color: var(--contrast-darker);*/
 }
 
 .view-card.mini #legend {
@@ -392,13 +393,19 @@ div.vdev-disk {
   height: calc(320px - 16px - 48px);
 }
 
-.view-card.mini #disks-overview{
-  /*border: solid 1px var(--cyan);*/
+.view-card.mini #disks-details{
+  padding:16px;
+  background-color: unset;
 }
 
-.view-card.mini #disks-details{
-  /*border: solid 1px var(--magenta);*/
-  padding:16px;
+.view-card.mini #disks-details,
+.view-card.mini #disks-overview{
+  padding-bottom: 64px;
+
+}
+
+.view-card.mini #disks-details .back-btn{
+  background: unset !important;
 }
 
 .view-card.mini #disks-details li{
@@ -406,14 +413,12 @@ div.vdev-disk {
 }
 
 .mini div.header-container{
-  /*margin-bottom:16px;*/
   position:relative;
 }
 
 .mini h3.header{
-  /*text-transform: capitalize;*/
   padding-bottom: 4px;
-  border-bottom:solid 1px rgba(255,255,255,0.25);
+  border-bottom:solid 1px var(--lines);
 }
 
 .mini .header-container .mat-button.back-btn{
@@ -472,6 +477,13 @@ div.vdev-disk {
   font-size: 0.65rem;
   width: 18px;
   height: 18px;
+}
+
+.mini .mat-card-content{
+  background-color: var(--contrast-color-darker);
+  height: 600px;
+  min-height: 600px;
+  background-color: var(--contrast-darker);
 }
 
 /* END MINI OVERRIDES */

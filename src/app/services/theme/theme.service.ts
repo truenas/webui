@@ -8,7 +8,6 @@ import { Router } from '@angular/router';
 
 export const DefaultTheme = {
       name:'ix-dark',
-      darkTheme: true,
       label: "iX Dark",
       labelSwatch:"blue",
       description:'FreeNAS 11.2 default theme',
@@ -37,7 +36,6 @@ export const DefaultTheme = {
 
 export interface Theme {
   name: string;
-  darkTheme?: boolean;
   description:string;
   label: string;
   labelSwatch?: string;
@@ -84,7 +82,6 @@ export class ThemeService {
     DefaultTheme,
     {
       name:'ix-blue',
-      darkTheme: false,
       label: "iX Blue",
       labelSwatch:"blue",
       description:'Official iX System Colors on light',
@@ -111,7 +108,6 @@ export class ThemeService {
     },
     {
       name:'dracula',
-      darkTheme: true,
       label: "Dracula",
       labelSwatch:"blue",
       description:'Dracula color theme',
@@ -139,7 +135,6 @@ export class ThemeService {
     },
     {
       name:'nord',
-      darkTheme: true,
       label: "Nord",
       labelSwatch:"blue",
       description:'Unofficial nord color theme based on https://www.nordtheme.com/',
@@ -167,7 +162,6 @@ export class ThemeService {
     },
     {
       name:'paper',
-      darkTheme: false,
       label: "Paper",
       labelSwatch:"blue",
       description:'FreeNAS 11.2 default theme',
@@ -194,7 +188,6 @@ export class ThemeService {
     },
     {
       name:'solarized-dark',
-      darkTheme: true,
       label: "Solarized Dark",
       labelSwatch:"bg2",
       description:'Solarized dark color scheme',
@@ -222,7 +215,6 @@ export class ThemeService {
     },
     {
       name:'midnight',
-      darkTheme: true,
       label: "Midnight",
       labelSwatch:"blue",
       description:'Dark theme with blues and greys',
@@ -250,7 +242,6 @@ export class ThemeService {
     },
     {
       name:'high-contrast',
-      darkTheme: false,
       label: "High Contrast",
       labelSwatch:"fg1",
       description:'High contrast theme based on Legacy UI color scheme',
@@ -440,6 +431,12 @@ export class ThemeService {
     (<any>document).documentElement.style.setProperty("--accent-txt", accentTextColor);
     (<any>document).documentElement.style.setProperty("--highlight", accentTextColor);
 
+    // Set line colors
+    const isDark: boolean = this.darkTest(theme.bg2);
+    console.log(isDark);
+    const lineColor = isDark ? 'var(--dark-theme-lines)' : 'var(--light-theme-lines)';
+    (<any>document).documentElement.style.setProperty("--lines", lineColor);
+
     // Set multiple background color contrast options
     let contrastSrc = theme['bg2'];
     let contrastDarker = this.utils.darken(contrastSrc, 5);
@@ -485,6 +482,13 @@ export class ThemeService {
     this._customThemes = customThemes;
     this.allThemes = this.freenasThemes.concat(this.customThemes);
     this.core.emit({name:"ThemeListsChanged"});
+  }
+
+  darkTest(css: string): boolean{
+    const rgb = this.utils.forceRGB(css);
+    const hsl = this.utils.rgbToHSL(rgb, false, false);
+   
+    return hsl[2] < 50 ? true : false;
   }
 
 }
