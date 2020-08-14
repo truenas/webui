@@ -407,13 +407,31 @@ export class ThemeService {
     (<any>document).documentElement.style.setProperty("--highlight", accentTextColor);
 
     // Logo light/dark
-    if(theme["hasDarkLogo"]){
+    /*if(theme["hasDarkLogo"]){
       theme.logoPath = 'assets/images/logo.svg';
       theme.logoTextPath = 'assets/images/logo-text.svg';
     } else {
       theme.logoPath = 'assets/images/light-logo.svg';
       theme.logoTextPath = 'assets/images/light-logo-text.svg';
-    }
+    }*/
+
+    // Set line colors
+    const isDark: boolean = this.darkTest(theme.bg2);
+    const lineColor = isDark ? 'var(--dark-theme-lines)' : 'var(--light-theme-lines)';
+    (<any>document).documentElement.style.setProperty("--lines", lineColor);
+
+    // Set multiple background color contrast options
+    let contrastSrc = theme['bg2'];
+    let contrastDarker = this.utils.darken(contrastSrc, 5);
+    let contrastDarkest = this.utils.darken(contrastSrc, 10);
+    let contrastLighter = this.utils.lighten(contrastSrc, 5);
+    let contrastLightest = this.utils.lighten(contrastSrc, 10);
+
+    (<any>document).documentElement.style.setProperty("--contrast-darker", contrastDarker);
+    (<any>document).documentElement.style.setProperty("--contrast-darkest", contrastDarkest);
+    (<any>document).documentElement.style.setProperty("--contrast-lighter", contrastLighter);
+    (<any>document).documentElement.style.setProperty("--contrast-lightest", contrastLightest);
+
   }
 
   get customThemes(){
@@ -424,6 +442,13 @@ export class ThemeService {
     this._customThemes = customThemes;
     this.allThemes = this.freenasThemes.concat(this.customThemes);
     this.core.emit({name:"ThemeListsChanged"});
+  }
+
+  darkTest(css: string){
+    const rgb = this.utils.forceRGB(css);
+    const hsl = this.utils.rgbToHSL(rgb, false, false);
+
+    return hsl[2] < 50 ? true : false;
   }
 
 }
