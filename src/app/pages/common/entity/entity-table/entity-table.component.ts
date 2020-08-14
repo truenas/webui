@@ -471,7 +471,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           this.loaderOpen = false;
         }
         if (res.hasOwnProperty("reason") && (res.hasOwnProperty("trace") && res.hasOwnProperty("type"))) {
-          this.dialogService.errorReport(res.type, res.reason, res.trace.formatted);
+          this.dialogService.errorReport(res.type || res.trace.class, res.reason, res.trace.formatted);
         }
         else {
           new EntityUtils().handleError(this, res);
