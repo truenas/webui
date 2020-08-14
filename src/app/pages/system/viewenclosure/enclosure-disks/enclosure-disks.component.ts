@@ -2,6 +2,7 @@ import { Component, Input, OnInit, AfterContentInit, OnChanges, SimpleChanges, V
 import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 import { MaterialModule } from 'app/appMaterial.module';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { Application, Container, extras, Text, DisplayObject, Graphics, Sprite, Texture, utils} from 'pixi.js';
 import 'pixi-projection';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
@@ -115,6 +116,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   public selectedDisk: any;
 
   public theme: any;
+  protected themeUtils: ThemeUtils;
   public currentView: string; // pools || status || expanders || details
   public exitingView: string; // pools || status || expanders || details
   private defaultView = 'pools';
@@ -146,6 +148,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     public dialogService: DialogService,
   ){
     
+    this.themeUtils = new ThemeUtils();
+
     core.register({observerClass: this, eventName: 'DiskTemperatures'}).subscribe((evt:CoreEvent) => {
       if(!this.chassis || !this.chassis[this.view] || !this.chassis[this.view].driveTrayObjects){ return; }
 
@@ -194,6 +198,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       if(this.labels && this.labels.events){
         this.labels.events.next(evt);
       }
+      this.optimizeChassisOpacity();
     });
 
     core.emit({name: 'ThemeDataRequest', sender: this});
@@ -415,6 +420,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           this.setDisksEnabledState();
           this.setCurrentView(this.defaultView);
           
+          this.optimizeChassisOpacity();
           
         break;
         case "DriveSelected":
@@ -496,12 +502,15 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           enclosure.container.height = enclosure.container.height / 2;
           enclosure.container.x = 0; //this.app._options.width / 2 - enclosure.container.width / 2;
           enclosure.container.y = 0; //this.app._options.height / 2 - enclosure.container.height / 2;
-          enclosure.chassis.alpha = 0.35;
+          //enclosure.chassis.alpha = 0.75;
+          //enclosure.chassis.alpha = 0.35;
+          this.optimizeChassisOpacity(enclosure);
 
           profile.disks.forEach((disk, index) =>{
             this.setDiskHealthState(disk, enclosure);
           });
           this.extractEnclosure(enclosure, profile);
+          console.log(enclosure, profile);
           
         break;
       }
@@ -684,6 +693,24 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       }
     });
 
+  }
+
+  optimizeChassisOpacity(extractedEnclosure?){
+    const css = (<any>document).documentElement.style.getPropertyValue('--contrast-darkest');
+    const hsl = this.themeUtils.hslToArray(css);
+    
+    let opacity;
+    if(extractedEnclosure){
+      opacity = hsl[2] < 60 ? 0.35 : 0.75;
+      extractedEnclosure.chassis.alpha = opacity;
+    } else {
+      opacity = hsl[2] < 60 ? 0.25 : 0.75;
+      this.chassis.front.setChassisOpacity(opacity);
+
+      if(this.chassis.rear){
+        this.chassis.rear.setChassisOpacity(opacity);
+      }
+    }
   }
 
   setDisksEnabledState(enclosure?){

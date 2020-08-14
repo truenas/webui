@@ -1,6 +1,7 @@
 import { Component, AfterViewInit, Input, ViewChild, OnDestroy} from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { MaterialModule } from 'app/appMaterial.module';
 import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
@@ -56,6 +57,7 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
   public maxY: number = 100; // Highest number in data
   public startTime;
   public endTime;
+  private utils: ThemeUtils;
 
   constructor(public router: Router, public translate: TranslateService){
     super(translate);
@@ -66,7 +68,8 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
       }
     }, 5000)
     let theme = this.themeService.currentTheme();
-    this.widgetColorCssVar = theme[this.themeService.colorFromMeta(theme.primary)];
+    this.utils = new ThemeUtils();
+    this.widgetColorCssVar = theme[this.utils.colorFromMeta(theme.primary)];
   }
 
   ngOnDestroy(){
