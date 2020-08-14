@@ -74,7 +74,14 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
             console.warn("No navigation UI detected")
             return;
           }
-          let el = this.nav.nativeElement.querySelector(".enclosure-" + evt.data.profile.enclosureKey);
+          const selector = ".enclosure-" + evt.data.profile.enclosureKey;
+          let el = this.nav.nativeElement.querySelector(selector);
+
+          let oldCanvas = this.nav.nativeElement.querySelector(selector + ' canvas');
+          if(oldCanvas){
+            el.removeChild(oldCanvas);
+          }
+
           evt.data.canvas.setAttribute('style', 'width: 80% ;');
           el.appendChild(evt.data.canvas);
           break;
@@ -87,6 +94,12 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
           break;
       }
     })
+
+    core.register({observerClass: this, eventName: 'ThemeChanged'}).subscribe((evt:CoreEvent) => {
+      if(this.system) {
+        this.extractVisualizations();
+      }
+    });
 
     core.register({observerClass: this, eventName: 'EnclosureData'}).subscribe((evt:CoreEvent) => {
       this.system = new SystemProfiler(this.system_product, evt.data);
