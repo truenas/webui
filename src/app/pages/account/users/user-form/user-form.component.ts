@@ -389,6 +389,7 @@ export class UserFormComponent {
         entityForm.formGroup.controls['locked'].setValue(res[0].locked);
         entityForm.formGroup.controls['sudo'].setValue(res[0].sudo);
         entityForm.formGroup.controls['microsoft_account'].setValue(res[0].microsoft_account);
+        entityForm.formGroup.controls['smb'].setValue(res[0].smb);
         entityForm.formGroup.controls['sshpubkey'].setValue(res[0].sshpubkey);
         entityForm.formGroup.controls['groups'].setValue(res[0].groups);
         entityForm.formGroup.controls['home'].setValue(res[0].home);
@@ -411,6 +412,7 @@ export class UserFormComponent {
           entityForm.setDisabled('home',true);
           entityForm.setDisabled('home_mode',true);
           this.fieldSets.hideConfig("home_mode");
+          entityForm.setDisabled('smb', true);
         } else {
           entityForm.formGroup.controls['uid'].setValue(res[0].uid);
           entityForm.setDisabled('group',false);
