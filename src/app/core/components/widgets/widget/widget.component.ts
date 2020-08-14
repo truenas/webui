@@ -2,6 +2,7 @@ import { Component, AfterViewInit, Input, ViewChild, Output, EventEmitter } from
 import { NgForm } from '@angular/forms';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { MaterialModule } from 'app/appMaterial.module';
 import { iXObject } from 'app/core/classes/ix-object';
@@ -23,6 +24,7 @@ import { T } from '../../../../translate-marker';
 export class WidgetComponent extends iXObject implements AfterViewInit {
 
   protected core:CoreService;
+  protected utils: ThemeUtils;
   protected themeService: ThemeService;
   @Input() widgetSize: string;
   @Input() rendered?:boolean = true;
@@ -40,6 +42,7 @@ export class WidgetComponent extends iXObject implements AfterViewInit {
     super();
     this.core = CoreServiceInjector.get(CoreService);
     this.themeService = CoreServiceInjector.get(ThemeService);
+    this.utils = new ThemeUtils();
   }
 
   ngAfterViewInit(){

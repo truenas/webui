@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import * as domHelper from '../../helpers/dom.helper';
 import { RestService, WebSocketService } from 'app/services';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { ApiService } from 'app/core/services/api.service';
 import { Router } from '@angular/router';
 
@@ -69,6 +70,7 @@ export class ThemeService {
   public activeTheme: string = 'default';
   public defaultTheme: string = 'ix-dark';
   public activeThemeSwatch: string[];
+  private utils: ThemeUtils;
 
   // Theme lists
   public allThemes: Theme[];
@@ -269,6 +271,7 @@ export class ThemeService {
   public userThemeLoaded: boolean = false;
   constructor(private rest: RestService, private ws: WebSocketService, private core:CoreService, private api:ApiService,
               private route: Router) {
+    this.utils = new ThemeUtils();
 
     // Set default list
     this.allThemes = this.freenasThemes;
@@ -376,7 +379,7 @@ export class ThemeService {
       
       // Generate aux. text styles 
       if(this.freenasThemes[0].accentColors.indexOf(color) !== -1){
-        let txtColor = this.textContrast(theme[color], theme["bg2"]);
+        let txtColor = this.utils.textContrast(theme[color], theme["bg2"]);
         (<any>document).documentElement.style.setProperty("--" + color + "-txt", txtColor);
       }
 
@@ -393,11 +396,11 @@ export class ThemeService {
     (<any>document).documentElement.style.setProperty("--accent",theme["accent"]);
 
     // Set Material aux. text styles
-    let primaryColor = this.colorFromMeta(theme["primary"]); // eg. blue
-    let accentColor = this.colorFromMeta(theme["accent"]); // eg. yellow
-    let primaryTextColor = this.textContrast(theme[primaryColor], theme["bg2"]);
-    let accentTextColor = this.textContrast(theme[accentColor], theme["bg2"]);
-    let topbarTextColor = this.textContrast(theme[accentColor], theme["bg2"]);
+    let primaryColor = this.utils.colorFromMeta(theme["primary"]); // eg. blue
+    let accentColor = this.utils.colorFromMeta(theme["accent"]); // eg. yellow
+    let primaryTextColor = this.utils.textContrast(theme[primaryColor], theme["bg2"]);
+    let accentTextColor = this.utils.textContrast(theme[accentColor], theme["bg2"]);
+    let topbarTextColor = this.utils.textContrast(theme[accentColor], theme["bg2"]);
     (<any>document).documentElement.style.setProperty("--topbar-txt", primaryTextColor);
     (<any>document).documentElement.style.setProperty("--primary-txt", primaryTextColor);
     (<any>document).documentElement.style.setProperty("--accent-txt", accentTextColor);
@@ -411,64 +414,6 @@ export class ThemeService {
       theme.logoPath = 'assets/images/light-logo.svg';
       theme.logoTextPath = 'assets/images/light-logo-text.svg';
     }
-  }
-
-  public textContrast(cssVar, bgVar){
-    let txtColor = '';
-    // Convert hex value to RGB
-    let props = this.hexToRGB(cssVar); 
-
-    // Find the average value to determine brightness
-    let brightest = (props.rgb[0] + props.rgb[1] + props.rgb[2]) / 3;
-    // Find a good threshold for when to have light text color
-    if(brightest < 144){
-      txtColor = "#ffffff"
-    } else if(brightest > 191) {
-      txtColor = "#333333"
-    } else {
-      // RGB averages between 144-197 are to be 
-      // matched to bg2 css variable.
-      let bgProp = this.hexToRGB(bgVar);
-      let bgAvg = (bgProp.rgb[0] + bgProp.rgb[1] + bgProp.rgb[2]) / 3;
-      if(bgAvg < 127){
-        txtColor = "#333333";
-      } else {
-        txtColor = "#ffffff";
-      }
-    }
-
-
-    return txtColor;
-  }
-
-  hexToRGB(str) {
-    var spl = str.split('#');
-    var hex = spl[1];
-    if(hex.length == 3){
-      hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
-    }
-
-    var value = '';
-    var rgb = [];
-    for(let i = 0; i < 6; i++){
-      let mod = i % 2;
-      let even = 0;
-      value += hex[i];
-      if(mod !== even){
-        rgb.push(parseInt(value, 16))
-        value = '';
-      }
-    }
-    return {
-      hex:hex,
-      rgb:rgb
-    }
-  }
-  
-  public colorFromMeta(meta:string){
-    let trimFront = meta.replace('var(--','');
-    let trimmed = trimFront.replace(')','');
-    return trimmed;
   }
 
   get customThemes(){

@@ -359,8 +359,8 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       const cssVar = ds.label == 'Temperature' ? 'accent' : 'primary'; 
       const color = this.stripVar(this.currentTheme[cssVar])
       
-      const bgRGB = this.themeService.hexToRGB(this.currentTheme[color]).rgb;
-      const borderRGB = this.themeService.hexToRGB(this.currentTheme[color]).rgb;
+      const bgRGB = this.utils.hexToRGB(this.currentTheme[color]).rgb;
+      const borderRGB = this.utils.hexToRGB(this.currentTheme[color]).rgb;
 
       ds.backgroundColor = this.rgbToString(bgRGB, 0.85);
       ds.borderColor = this.rgbToString(bgRGB);
@@ -393,7 +393,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     let txtColor = currentTheme.fg2;
 
     // convert to rgb
-    let rgb = this.themeService.hexToRGB(txtColor).rgb;
+    let rgb = this.utils.hexToRGB(txtColor).rgb;
 
     // return rgba
     let rgba =  "rgba(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + "," + opacity + ")";
