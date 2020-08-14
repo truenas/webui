@@ -128,6 +128,16 @@ export const rootRouterConfig: Routes = [{
         loadChildren : './pages/api-keys/api-keys.module#ApiKeysModule',
         data: { title: 'API Keys', breadcrumb: 'API Keys'}
       },
+      {
+        path : 'data-protection',
+        loadChildren : './pages/data-protection/data-protection.module#DataProtectionModule',
+        data: { title: 'Data Protection', breadcrumb: 'Data Protection'}
+      },
+      {
+        path : 'credentials',
+        loadChildren : './pages/credentials/credentials.module#CredentialsModule',
+        data: { title: 'Credentials', breadcrumb: 'Credentials'}
+      },
     ]
   },
   {

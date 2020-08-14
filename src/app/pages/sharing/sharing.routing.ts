@@ -27,12 +27,18 @@ import { ExtentListComponent } from './iscsi/extent/extent-list/';
 import { ExtentFormComponent } from './iscsi/extent/extent-form/';
 import { AssociatedTargetListComponent } from './iscsi/associated-target/associated-target-list/';
 import { AssociatedTargetFormComponent } from './iscsi/associated-target/associated-target-form/';
+import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
+
 
 export const routes: Routes = [
   {
     path: '',
     data: { title: 'Sharing' },
     children: [
+    {
+      path: '',
+      component: EntityDashboardComponent,
+    },
     {
       path: 'afp',
       data: { title: 'AFP', breadcrumb: 'AFP', icon: 'share'},
