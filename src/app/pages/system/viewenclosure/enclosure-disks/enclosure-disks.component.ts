@@ -510,7 +510,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
             this.setDiskHealthState(disk, enclosure);
           });
           this.extractEnclosure(enclosure, profile);
-          console.log(enclosure, profile);
           
         break;
       }

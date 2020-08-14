@@ -80,14 +80,12 @@ export class ThemeUtils {
 
   rgbToHex(value: string):string {
     const arr = this.rgbToArray(value);
-    console.log(arr);
     const alpha = arr.length > 3;
     const r = arr[0];
     const g = arr[1];
     const b = arr[2];
 
     let hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-    console.log(hex);
     return hex;
   }
 
