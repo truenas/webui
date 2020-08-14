@@ -201,7 +201,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
 
   parseUptime() {
     const seconds = Math.round(this.data.uptime_seconds);
-    console.log(this.data.uptime_seconds)
     const uptime = {
       days: Math.floor(seconds / (3600*24)),
       hrs: Math.floor(seconds % (3600*24) / 3600),
