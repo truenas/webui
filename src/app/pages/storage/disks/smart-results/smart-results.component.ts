@@ -38,11 +38,11 @@ export class SmartResultsComponent {
                     this.title = res + this.disk;
                 }
             );
-            this.queryCallOption = [[["disk", "=", this.disk]], { "get": true }];
+            this.queryCallOption = [[["disk", "=", this.disk]]];
         });
     }
 
     resourceTransformIncomingRestData(data) {
-        return data.tests;
+        return data.tests || [];
     }
 }
