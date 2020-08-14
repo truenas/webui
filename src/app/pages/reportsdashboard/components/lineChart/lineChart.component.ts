@@ -1,6 +1,7 @@
 import {Component, Input, AfterViewInit, OnDestroy, OnChanges, SimpleChanges, ViewChild, ElementRef} from '@angular/core';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { ViewComponent } from 'app/core/components/view/view.component';
 import { Report, ReportData } from '../report/report.component';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
@@ -75,6 +76,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
   }
 
   public theme: Theme;
+  private utils: ThemeUtils;
   public timeFormat: string = "%H:%M";
   public culling:number = 6;
   public controlUid: string;
@@ -85,6 +87,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     this.legendEvents = new BehaviorSubject({xHTML:''});
     this.legendLabels = new BehaviorSubject([]);
     this.legendAnalytics = new BehaviorSubject([]);
+    this.utils = new ThemeUtils();
   } 
 
   applyHandledData(columns, linechartData, legendLabels){
@@ -103,7 +106,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     let data = this.makeTimeAxis(this.data);
     let labels = data.shift();
 
-    let fg2RGB = this.themeService.hexToRGB(this.themeService.currentTheme().fg2);
+    let fg2RGB = this.utils.hexToRGB(this.themeService.currentTheme().fg2);
     let gridLineColor = 'rgba(' + fg2RGB.rgb[0] + ', ' + fg2RGB.rgb[1]+ ', ' + fg2RGB.rgb[2]+ ', 0.25)'
 
     let options = {
