@@ -291,19 +291,7 @@ export class ThemeService {
     // Use only for testing
     this.core.register({observerClass:this, eventName:"ThemeChangeRequest"}).subscribe((evt:CoreEvent) => {
       this.changeTheme(evt.data);
-
-      const theme = this.findTheme(evt.data);
-      const color = theme.red;
-      (<any>document).documentElement.style.setProperty("--default-green", color);
-
-      const darker = this.utils.darken(color, 10);
-      (<any>document).documentElement.style.setProperty("--darker", darker);
-      
-      const lighter = this.utils.lighten(color, 10);
-      (<any>document).documentElement.style.setProperty("--lighter", lighter);
-     
       this.core.emit({name:'ThemeChanged', data: this.findTheme(this.activeTheme), sender:this});
-      
     });
 
     this.core.register({observerClass:this,eventName:"GlobalPreviewChanged"}).subscribe((evt:CoreEvent) => {
@@ -433,7 +421,6 @@ export class ThemeService {
 
     // Set line colors
     const isDark: boolean = this.darkTest(theme.bg2);
-    console.log(isDark);
     const lineColor = isDark ? 'var(--dark-theme-lines)' : 'var(--light-theme-lines)';
     (<any>document).documentElement.style.setProperty("--lines", lineColor);
 

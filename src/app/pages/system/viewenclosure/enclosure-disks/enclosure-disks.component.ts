@@ -192,7 +192,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     });
 
     core.register({observerClass: this, eventName: 'ThemeChanged'}).subscribe((evt:CoreEvent) => {
-      console.log(evt);
       if(this.theme == evt.data){ return; }
       this.theme = evt.data;
       this.setCurrentView(this.currentView);
@@ -206,13 +205,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   }
 
-  toggleTheme(){
-    const themeName = 'ix-blue';
-    const defaultName = 'default';
-    const request = this.theme.name == themeName? defaultName : themeName;
-    this.core.emit({name: "ThemeChangeRequest", data: request, sender: this})
-  }
-
   clearDisk(){
     this.setCurrentView(this.defaultView);
   }
@@ -223,7 +215,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       switch(evt.name){
         case "CanvasExtract":
           this.createExtractedEnclosure(evt.data);
-          console.warn(evt);
           break;
         case "EnclosureLabelChanged":
           if(this.pendingDialog !== undefined){

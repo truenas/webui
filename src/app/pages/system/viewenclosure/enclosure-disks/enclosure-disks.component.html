@@ -1,11 +1,3 @@
-<!--
-<div>
-  <div style="display:inline-block; margin-bottom:32px; width: 100px; height: 100px; background: var(--darker);"></div>
-  <div style="display:inline-block; margin-bottom:32px; width: 100px; height: 100px; background: var(--default-green);"></div>
-  <div style="display:inline-block; margin-bottom:32px; width: 100px; height: 100px; background: var(--lighter);"></div>
-</div>
--->
-
 <mat-card 
   class="view-card rackmount" 
   [ngClass]="{'multiple-enclosures': system && system.profile && system.profile.length > 1}"
@@ -31,7 +23,6 @@
 
     <!-- ENCLOSURE RENAME -->
     <div class="enclosure-label-actions">
-      <button (click)="toggleTheme()" mat-button color="default">TOGGLE THEME</button>
       <button (click)="labelForm()" mat-button color="default">EDIT LABEL</button>
     </div>
 
