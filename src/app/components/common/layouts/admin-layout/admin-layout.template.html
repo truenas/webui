@@ -59,11 +59,13 @@
     <!-- Slide-in menu and overlay -->
     <div class="slidein-nav" [ngClass]="{'slidein-open' : isOpen}">
       <mat-list class="" role="list">
-        <mat-list-item routerLinkActive="selected" *ngFor="let subItem of subs; let j = index" (click)="toggleMenu()" 
+        <ng-container *ngFor="let subItem of subs; let j = index">
+          <mat-list-item *ngIf="!subItem.disabled" routerLinkActive="selected" (click)="toggleMenu()" 
           class="sidebar-list-item slide-in-nav-item" role="listitem" 
             ix-auto ix-auto-type="option" ix-auto-identifier="{{subItem.name}}">
             <a [routerLink]="['/', menuName, subItem.state]" id="{{i}}-{{j}}" *ngIf="!subItem.disabled" class="slidein-nav-link">{{subItem.name | translate}}</a>
         </mat-list-item>
+        </ng-container>
       </mat-list>  
     </div>
     <div class="overlay" [ngClass]="{'isdark' : isOpen}" (click)="toggleMenu()"></div>
