@@ -41,26 +41,7 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
         }
       });
 
-      // Temporarily hide some things in SCALE
-      if (this.productType === 'SCALE' || this.productType === 'SCALE_ENTERPRISE') {
-        _.find(_.find(menuItem, {state : "system"}).sub, {state : "kmip"}).disabled = true;
-        _.find(_.find(menuItem, {state : "directoryservice"}).sub, {state : "nis"}).disabled = true;
-        _.find(_.find(menuItem, {state : "storage"}).sub, {state : "multipaths"}).disabled = true;
-        // tunables are called sysctl in linux so we should use the routes/menus/etc that call it sysctl on scale
-        _.find(_.find(menuItem, {state : "system"}).sub, {state : "tunable"}).disabled = true;
-        _.find(_.find(menuItem, {state : "system"}).sub, {state : "sysctl"}).disabled = false;
-      }
-      // ====================
-
       if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
-        this.ws.call('failover.licensed').subscribe((is_ha) => {
-          if (is_ha) {
-            _.find(_.find(menuItem,
-              {name : "System"}).sub,
-              {name : "Failover"}).disabled = false;
-          }
-        });
-
         this.ws
           .call("system.feature_enabled", ["VM"])
           .pipe(filter(vmsEnabled => !vmsEnabled))
@@ -68,8 +49,6 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
             _.find(menuItem, { state: "vm" }).disabled = true;
           });
 
-        // hide acme for truenas
-        _.find(_.find(menuItem, { state: 'system' }).sub, { state : 'acmedns'}).disabled = true;
 
         for(let i = 0; i < this.navService.enterpriseFeatures.length; i++) {
           const targetMenu = this.navService.enterpriseFeatures[i];
@@ -82,13 +61,13 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
         eventName: "SysInfo"
         }).subscribe((evt:CoreEvent) => {
 
-          if (window.localStorage.getItem('product_type') !== 'CORE') {
+          if (window.localStorage.getItem('product_type') !== 'CORE') { console.log((evt.data))
             // hide jail and plugins section if product type is SCALE or ENTERPRISE with jail unregistered
-            if ((evt.data.license && evt.data.license.features.indexOf('JAILS') === -1) || window.localStorage.getItem('product_type') === 'SCALE'
-            || window.localStorage.getItem('product_type') === 'SCALE_ENTERPRISE') {
-              _.find(menuItem, {state : "plugins"}).disabled = true;
-              _.find(menuItem, {state : "jails"}).disabled = true;
-            }
+            if ((evt.data.license && evt.data.license.features.indexOf('JAILS') === -1) || 
+              window.localStorage.getItem('product_type').includes('SCALE')){
+                _.find(menuItem, {state : "plugins"}).disabled = true;
+                _.find(menuItem, {state : "jails"}).disabled = true;
+              }                        
           }
 
           // set the guide url -- temporarily(?) disabled for menuing project

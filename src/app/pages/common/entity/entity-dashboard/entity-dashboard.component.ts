@@ -16,6 +16,7 @@ export class EntityDashboardComponent implements OnInit {
 
 	protected freenas_exclude = ['failover', 'viewenclosure'];
 	protected truenas_exclude = ['acmedns'];
+	protected scale_exclude = ['nis', 'multipaths']
 	constructor(
 				protected ws: WebSocketService,
 				protected router: Router,
@@ -39,16 +40,19 @@ export class EntityDashboardComponent implements OnInit {
 		}
 		
 		let exclude = [];
-		if (window.localStorage.getItem('is_freenas') === 'false') {
-			exclude = exclude.concat(this.truenas_exclude);
-			this.ws.call('failover.licensed').subscribe((is_ha) => {
-				if (!is_ha) { // allow failover
-					this.remove('failover');
-				}
-			});
-		} else { // if freenas
-			exclude = exclude.concat(this.freenas_exclude);
-		}
+			if (window.localStorage.getItem('product_type').includes('SCALE')) {
+				exclude = exclude.concat(this.scale_exclude);
+			}
+		// if (window.localStorage.getItem('is_freenas') === 'false') {
+		// 	exclude = exclude.concat(this.truenas_exclude);
+		// 	this.ws.call('failover.licensed').subscribe((is_ha) => {
+		// 		if (!is_ha) { // allow failover
+		// 			this.remove('failover');
+		// 		}
+		// 	});
+		// } else { // if freenas
+		// 	exclude = exclude.concat(this.freenas_exclude);
+		// }
 		this.ws.call('ipmi.is_loaded').subscribe((res)=>{
 			if(res !== true){ 
 				this.remove('ipmi');
