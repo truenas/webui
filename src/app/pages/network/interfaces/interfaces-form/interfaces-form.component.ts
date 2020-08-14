@@ -312,6 +312,8 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   protected failover_group: any;
   protected failover_vhid: any;
 
+  public save_button_enabled: boolean;
+
   protected aliases_subscription: any;
   //
   public confirmSubmit = false;
@@ -438,17 +440,19 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               const address = alias['address']
               const failover_address = alias['failover_address'];
               const virtual_address = alias['failover_virtual_address'];
-              if ((failover_address && !virtual_address) || (!failover_address && virtual_address)) {
+              if (!(address && failover_address && virtual_address) && !(!address && !failover_address && !virtual_address)) {
                 mismatch_found = true;
               }
             }
 
             if (mismatch_found) {
               this.aliases_fc.hasErrors = true;
-              this.aliases_fc.errors = 'foo';
+              this.aliases_fc.errors = helptext.failover_alias_set_error;
+              this.save_button_enabled = false;
             } else {
               this.aliases_fc.hasErrors = false;
               this.aliases_fc.errors = '';
+              this.save_button_enabled = true;
             }
           });
         }
