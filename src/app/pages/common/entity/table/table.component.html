@@ -2,7 +2,7 @@
   <div class="table-title" fxLayout="row" fxLayoutAlign="space-between center">
     <h3 *ngIf="title">{{title}}</h3>
     <div class="table-title-action">
-      <button mat-flat-button onClick="">Add</button>
+      <button mat-flat-button *ngIf="tableConf.add" (click)="tableConf.add()">Add</button>
       <!-- customize title actiions -->
 
     </div>
@@ -38,7 +38,7 @@
       </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns" [hidden]="hideHeader"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="editRow(row)"></tr>
   </table>
 </div>

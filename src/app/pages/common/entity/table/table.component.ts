@@ -8,7 +8,9 @@ export interface InputTableConf {
   columns: any[];
   queryCall: string;
   queryCallOption?: any;
+  hideHeader?: boolean; // hide table header row
 
+  add?(); // add action function
   dataSourceHelper?(any); // customise handle/modify dataSource 
   getActions?(); // actions for each row
 }
@@ -24,11 +26,14 @@ export class TableComponent implements OnInit {
   public title = '';
   public dataSource;
   public displayedColumns;
-
+  public hideHeader = false;
 
   constructor(private ws: WebSocketService) { }
   ngOnInit() {
     this.title = this.tableConf.title || '';
+    if (this.tableConf.hideHeader) {
+      this.hideHeader = this.tableConf.hideHeader;
+    }
     this.displayedColumns = this.tableConf.columns.map(col => col.name);
 
     if (this.tableConf.getActions) {
