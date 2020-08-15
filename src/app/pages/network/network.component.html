@@ -1,0 +1,30 @@
+<div class="dashboard">
+    <div class="title" fxLayout="row" fxLayoutAlign="space-between center" >
+        <h1>Netwrok</h1>
+        <button mat-icon-button><mat-icon>settings</mat-icon></button>
+    </div>
+    <div class="content" fxLayout="row" fxFill>
+        <div class="right-column" fxFlex="65%">
+            <div id="interface">
+                <app-table [conf]="interfaceTableConf"></app-table>
+            </div>
+            <div id="static-routes">
+                <app-table [conf]="staticRoutesTableConf"></app-table>
+            </div>
+        </div>
+        <div class="left-column" fxFlex="35%">
+            <div id="nameserver">
+                <card-widget [conf]="nameserverWidget"></card-widget>
+            </div>
+            <div id="default-routes">
+                <card-widget [conf]="defaultRoutesWidget"></card-widget>
+            </div>
+            <div id="openvpn">
+                <mat-card>Simple card</mat-card>
+            </div>
+            <div id="ipmi">
+                <mat-card>Simple card</mat-card>
+            </div>
+        </div>
+    </div>
+</div>
