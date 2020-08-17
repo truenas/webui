@@ -2,13 +2,6 @@ import { Injectable } from '@angular/core';
 import { BaseService } from './base.service';
 import { CoreEvent } from './core.service';
 
-/*export interface Temperature {
-  keys: string[];
-  values: any;
-  unit: string;
-  symbolText: string;
-}*/
-
 @Injectable({
   providedIn: 'root'
 })
