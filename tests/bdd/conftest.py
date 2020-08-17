@@ -75,6 +75,10 @@ def pytest_runtest_makereport(item):
             close_button_exist = element_exist('//button[@ix-auto="button__CLOSE"]')
             if close_button_exist:
                 web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+            # if test that use disable failover make sure to enable failover back.
+            if 'T0905' in screenshot_name or 'T0919' in screenshot_name or 'T0920' in screenshot_name or 'T0922' in screenshot_name:
+                if element_exist('//mat-icon[@svgicon="ha_disabled"]'):
+                    enable_failover()
 
 
 def save_screenshot(name):
@@ -93,3 +97,38 @@ def element_exist(xpath):
         return True
     except NoSuchElementException:
         return False
+
+
+def wait_on_element(wait, loop, xpath):
+    for _ in range(loop):
+        time.sleep(wait)
+        if element_exist(xpath):
+            return True
+    else:
+        return False
+
+
+def enable_failover():
+    # make sure to scroll back up the mat-list-item
+    element = web_driver.find_element_by_xpath('//span[contains(.,"root")]')
+    web_driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(0.5)
+    web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
+    wait_on_element(0.5, 7, '//mat-list-item[@ix-auto="option__Failover"]')
+    web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Failover"]').click()
+    wait_on_element(0.5, 7, '//h4[contains(.,"Failover Configuration")]')
+    element = web_driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]')
+    class_attribute = element.get_attribute('class')
+    if 'mat-checkbox-checked' in class_attribute:
+        web_driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
+        wait_on_element(0.5, 7, '//button[@ix-auto="button__SAVE"]')
+        web_driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+        wait_on_element(0.5, 7, '//h1[contains(.,"Settings saved")]')
+        web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    time.sleep(1)
+    # make sure to scroll back up the mat-list-item
+    element = web_driver.find_element_by_xpath('//span[contains(.,"root")]')
+    web_driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(0.5)
+    web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+    wait_on_element(1, 90, '//mat-icon[@svgicon="ha_enabled"]')
