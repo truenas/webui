@@ -147,6 +147,10 @@ export class VdevComponent implements OnInit {
       }
     }
     totalsize = smallestdisk * this.disks.length;
+
+    if (this.type === undefined) { // do the same as getType() to prevent issues while repeating
+      this.type = this.manager.first_data_vdev_type;
+    }
     if (this.type === "mirror") {
       estimate = smallestdisk;
     } else if (this.type === "raidz") {
