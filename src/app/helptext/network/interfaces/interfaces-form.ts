@@ -112,6 +112,9 @@ failover_virtual_alias_address_tooltip: T('IP address to use for \
  administrative access to the system. The netmask <i>/32</i> is \
  required for this value and cannot be changed.'),
 
+failover_alias_set_error: T('An IP address must be provided for\
+ each controller and the virtual interface.'),
+
 vlan_pint_placeholder: T('Parent Interface'),
 vlan_pint_tooltip: T('Select the VLAN Parent Interface. Usually an Ethernet\
  card connected to a switch port configured for the VLAN. New link\
