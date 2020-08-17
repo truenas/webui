@@ -56,6 +56,7 @@ export class DatasetAclComponent implements OnDestroy {
   protected dialogRef: any
   protected route_success: string[] = [ 'storage', 'pools' ];
   public save_button_enabled = true;
+  private isTrivialMessageSent = false;
 
   protected uid_fc: any;
   protected gid_fc: any;
@@ -468,6 +469,17 @@ export class DatasetAclComponent implements OnDestroy {
     });
   }
 
+  chooseDefaultSetting(value: string) {
+      let num;
+      value === 'RESTRICTED' ? num = 2 : num = 3;
+      while(this.aces.controls.length > num) {
+        this.aces.removeAt(num)
+      }
+      this.ws.call('filesystem.get_default_acl', [value]).subscribe((res) => {
+        this.dataHandler(this.entityForm, res);
+      });
+  }
+
   setDisabled(fieldConfig, formControl, disable, hide) {
     fieldConfig.disabled = disable;
     fieldConfig['isHidden'] = hide;
@@ -605,6 +617,55 @@ export class DatasetAclComponent implements OnDestroy {
       }
     }
     this.loader.close();
+    if (this.aclIsTrivial && !this.isTrivialMessageSent) {
+      const conf: DialogFormConfiguration = {
+        title: helptext.typeDialog.title,
+        fieldConfig: [
+          {
+            type: 'radio',
+            name: 'useDefault',
+            options: [
+              {label: helptext.typeDialog.radio_preset,
+               name: 'defaultACL',
+               tooltip: helptext.typeDialog.radio_preset_tooltip,
+               value: true},
+              {label: helptext.typeDialog.radio_custom,
+               name: 'customACL',
+               value: false},
+            ],
+            value: true
+          },
+          {
+            type: 'select',
+            name: 'defaultOptions',
+            placeholder: helptext.typeDialog.input.placeholder,
+            options: this.defaults.options,
+            relation: [
+              {
+                action: 'SHOW',
+                when: [{
+                  name: 'useDefault',
+                  value: true,
+                }]
+              },
+            ],
+            required: true
+          }
+        ],
+        saveButtonText: helptext.typeDialog.button,
+        parent: this,
+        customSubmit: (entityDialog) => {
+          entityDialog.dialogRef.close();
+          const { useDefault, defaultOptions } = entityDialog.formValue;
+          if (useDefault && defaultOptions) {
+            this.chooseDefaultSetting(defaultOptions);
+          }
+          this.isTrivialMessageSent = true;
+        }
+      }
+      this.dialogService.dialogFormWide(conf);
+    }
+    
   }
 
   ngOnDestroy() {
