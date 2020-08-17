@@ -216,5 +216,17 @@ posix_default: {
   tooltip: T('Default')
 },
 
-permissions_editor_button: T('Use Permissions Editor')
+permissions_editor_button: T('Use Permissions Editor'),
+
+typeDialog: {
+  title: T('Create an ACL'),
+  radio_preset: T('Select a preset ACL'),
+  radio_preset_tooltip: T('Choosing an entry loads a preset ACL that is configured \
+ to match general permissions situations.'),
+  radio_custom: T('Create a custom ACL'),
+  input: {
+    placeholder: T('Default ACL options'),
+  },
+  button: T('Continue')
+}
 }
