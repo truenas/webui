@@ -178,4 +178,4 @@ def navigate_to_dashboard(driver):
 def serial2_should_be_rebooting(driver, serial2):
     """"{serial2}" should be rebootting."""
     assert not is_element_present(driver, f'//span[contains(.,"{serial2}")]')
-    assert is_element_present('//mat-icon[@svgicon="ha_disabled"]')
+    assert is_element_present(driver, '//mat-icon[@svgicon="ha_disabled"]')
