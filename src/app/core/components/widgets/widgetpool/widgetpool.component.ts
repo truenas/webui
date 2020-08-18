@@ -52,6 +52,7 @@ interface Slide {
   index?: string;
   dataSource?: any;
   template: TemplateRef<any>;
+  topology?: string;
 }
 
 interface PoolDiagnosis {
@@ -112,9 +113,14 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   @ViewChild('empty', {static:false}) empty:TemplateRef<any>;
   public templates:any;
   public tpl = this.overview;
+  currentTopology: string = "data";
 
   // NAVIGATION
   public currentSlide:string = "0";
+
+  get currentSlideTopology(){
+    return this.path[parseInt(this.currentSlide)].topology;
+  }
 
   get currentSlideIndex(){
     return this.path.length > 0 ? parseInt(this.currentSlide) : this.title;
@@ -372,8 +378,9 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     };
   }
 
-  updateSlide(name:string,verified: boolean, slideIndex:number, dataIndex?: number, dataSource?:any){
+  updateSlide(name:string,verified: boolean, slideIndex:number, dataIndex?: number, topology?:string, vdev?: any){
     if(name !=="overview" && !verified){ return; }
+    const dataSource = vdev ? vdev : { children: this.poolState.topology[topology] };
     const direction = parseInt(this.currentSlide) < slideIndex ? 'forward' : 'back';
     if(direction == 'forward'){
       // Setup next path segment
@@ -381,8 +388,10 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
         name: name,
         index: typeof dataIndex !== 'undefined' ? dataIndex.toString() : null,
         dataSource: typeof dataSource !== 'undefined' ? dataSource : null,
-        template: this.templates[name]
+        template: this.templates[name],
+        topology: topology
       }
+      this.currentTopology = 'topology';
   
       this.path[slideIndex] = slide;
     } else if(direction == 'back'){
@@ -391,6 +400,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }
 
     this.updateSlidePosition(slideIndex);
+
   }
 
   updateSlidePosition(value){
@@ -412,6 +422,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }).start(el.set);
     
     this.currentSlide = value.toString();
+    const path = this.path[this.currentSlide];
     this.title = this.currentSlide == "0" ? "Pool" : this.poolState.name;
     
   }
