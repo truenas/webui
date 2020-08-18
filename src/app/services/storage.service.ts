@@ -179,7 +179,7 @@ export class StorageService {
 
         sorter = [];
         for (let elem of timeArr) {
-         sorter.push(moment(elem).format('l LT'));
+         sorter.push(moment(elem).format('YYYY-MM-DD HH:mm:ss')); // formate should matched locale service
         }
       }
     else {
