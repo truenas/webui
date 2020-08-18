@@ -60,7 +60,7 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
         observerClass: this,
         eventName: "SysInfo"
         }).subscribe((evt:CoreEvent) => {
-          console.log(evt)
+
           if (window.localStorage.getItem('product_type') !== 'CORE') {
             // hide jail and plugins section if product type is SCALE or ENTERPRISE with jail unregistered
             if ((evt.data.license && evt.data.license.features.indexOf('JAILS') === -1) || 
