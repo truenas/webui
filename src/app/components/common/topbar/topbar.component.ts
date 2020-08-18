@@ -26,7 +26,7 @@ import { TaskManagerComponent } from '../dialog/task-manager/task-manager.compon
 import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 import { DialogFormConfiguration } from '../../../pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { TruecommandComponent } from '../dialog/truecommand/truecommand.component';
-
+import { ResilverProgressDialogComponent } from '../dialog/resilver-progress/resilver-progress.component';
 
 @Component({
   selector: 'topbar',
@@ -418,8 +418,9 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   showResilveringDetails() {
-    this.dialogService.Info(T('Resilvering Status'),
-      `Resilvering ${this.resilveringDetails.name} - ${Math.ceil(this.resilveringDetails.scan.percentage)}%`);
+    this.dialogRef = this.dialog.open(ResilverProgressDialogComponent);
+    this.dialogRef.componentInstance.parent = this;
+    this.dialogRef.componentInstance.diskName = this.resilveringDetails.name;
   }
 
   onGoToLegacy() {
