@@ -216,7 +216,6 @@ permissions_editor_button: T('Use Permissions Editor'),
 
 type_dialog: {
   title: T('Create an ACL'),
-  // message: T('No ACL'),
   radio_preset: T('Select a preset ACL'),
   radio_preset_tooltip: T('Choosing an entry loads a preset ACL that is \
  configured to match general permissions situations.'),
@@ -231,5 +230,7 @@ preset_dialog: {
   message: T('The chosen preset ACL will REPLACE the ACL currently displayed in the form, \
  deleting unsaved changes.'),
   button: T('Select')
-}
+},
+
+preset_cust_action_btn: T('Select an ACL Preset')
 }

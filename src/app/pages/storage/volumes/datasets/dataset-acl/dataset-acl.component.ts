@@ -2,6 +2,7 @@ import {
   Component,
   OnDestroy,
 } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import {
   FormGroup,
 } from '@angular/forms';
@@ -289,7 +290,7 @@ export class DatasetAclComponent implements OnDestroy {
     },
     {
       id : 'show_defaults',
-      name : 'ACL Presets',
+      name : helptext.preset_cust_action_btn,
       function : () => {
         this.showChoiceDialog(true);
       }
@@ -300,7 +301,8 @@ export class DatasetAclComponent implements OnDestroy {
               protected aroute: ActivatedRoute, 
               protected ws: WebSocketService, protected userService: UserService,
               protected storageService: StorageService, protected dialogService: DialogService,
-              protected loader: AppLoaderService, protected dialog: MatDialog) {}
+              protected loader: AppLoaderService, protected dialog: MatDialog,
+              private translate: TranslateService) {}
 
   
   isCustActionVisible(actionId: string) {
@@ -614,11 +616,16 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   showChoiceDialog(presetsOnly = false) {
-    const title = presetsOnly ? helptext.type_dialog.radio_preset : helptext.type_dialog.title;
+    let msg1, msg2;
+    this.translate.get(helptext.type_dialog.radio_preset_tooltip).subscribe(m1 => {
+      this.translate.get(helptext.preset_dialog.message).subscribe(m2 => {
+        msg1 = m1;
+        msg2 = m2;
+      })
+    })
     const conf: DialogFormConfiguration = {
       title: presetsOnly ? helptext.type_dialog.radio_preset : helptext.type_dialog.title,
-      message: presetsOnly ? `${helptext.type_dialog.radio_preset_tooltip} 
-      ${helptext.preset_dialog.message}` : null,
+      message: presetsOnly ? `${msg1} ${msg2}` : null,
       fieldConfig: [
         {
           type: 'radio',
