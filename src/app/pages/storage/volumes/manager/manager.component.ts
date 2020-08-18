@@ -399,7 +399,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   addVdev(group, initial_values={}) {
     this.dirty = true;
     this.vdevs[group].push(initial_values);
-    this.getCurrentLayout();
+    setTimeout(() => { // there appears to be a slight race condition with adding/removing
+      this.getCurrentLayout();
+    }, 100);
   }
 
   removeVdev(vdev: VdevComponent) {
@@ -416,7 +418,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         this.vdevs[vdev.group] = []; // should only be one cache/spare/log
       }
     }
-    this.getCurrentLayout();
+    setTimeout(() => { // there appears to be a slight race condition with adding/removing
+      this.getCurrentLayout();
+    }, 100);
   }
 
   getCurrentLayout() {
