@@ -22,6 +22,12 @@
             {{element[column.prop]}}
           </ng-template>
         </div>
+        <div class="table-cell" *ngIf="column.state && tableConf.getInOutInfo">
+            <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-upload-network" class="state-icon sent-icon"></mat-icon>
+            {{element.sent}}
+            <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-download-network" class="state-icon received-icon"></mat-icon>
+            {{element.received}}
+        </div>
       </td>
     </ng-container>
 
@@ -30,10 +36,9 @@
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let element">
         <div class="table-cell table-row-action">
-          <button mat-icon-button (click)="deleteRow(element)">
-            <mat-icon>delete</mat-icon>
+          <button mat-icon-button *ngFor="let rowAction of tableConf.getActions(element)" >
+            <mat-icon (click)="rowAction.onClick(element)" >{{rowAction.icon}}</mat-icon>
           </button>
-          <!-- customize row actiions -->
         </div>
       </td>
     </ng-container>

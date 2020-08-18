@@ -12,6 +12,7 @@ export interface InputTableConf {
 
   add?(); // add action function
   dataSourceHelper?(any); // customise handle/modify dataSource 
+  getInOutInfo?(any); // get in out info if has state column
   getActions?(); // actions for each row
 }
 
@@ -43,8 +44,11 @@ export class TableComponent implements OnInit {
       if (this.tableConf.dataSourceHelper) {
          this.tableConf.dataSourceHelper(res);
       } 
+      if (this.tableConf.getInOutInfo) {
+        this.tableConf.getInOutInfo(res);
+      }
         this.dataSource = res;
-    })
+    });
   }
 
   // getProp(data, prop) {
