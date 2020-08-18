@@ -32,7 +32,7 @@ bucket_input_tooltip: T('Enter the pre-defined S3 bucket to use.'),
 bucket_input_validation : [ Validators.required ],
 
 folder_placeholder: T('Folder'),
-folder_tooltip: T('Enter the name of the destination folder.'),
+folder_tooltip: T('Enter or select the cloud storage location to use for this task.'),
 
 encryption_placeholder: T('Server Side Encryption'),
 encryption_tooltip: T('Choose <i>AES-256</i> or <i>None</i>.'),
