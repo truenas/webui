@@ -95,7 +95,7 @@ export class NavigationService {
       type: 'slideOut',
       tooltip: T('Virtualization'),
       icon: 'computer',
-      state: 'jails',
+      state: 'virtualization',
       sub: [
         { name: T('Jails'), state: 'jails' },
         { name: T('Virtual Machines'), state: 'vm' },

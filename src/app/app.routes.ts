@@ -93,8 +93,8 @@ export const rootRouterConfig: Routes = [{
         loadChildren: './pages/plugins/plugins.module#PluginsModule',
         data: { title: 'Plugins', breadcrumb: 'Plugins' },
       },
-      {
-        path: 'jails',
+      { // Listing partially updated for new 12.1 menu - TODO Move components, finish update ////////////////
+        path: 'virtualization',
         loadChildren: './pages/jails/jails.module#JailsModule',
         data: { title: 'Jails', breadcrumb: 'Jails' },
       },

@@ -66,7 +66,7 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
             if ((evt.data.license && evt.data.license.features.indexOf('JAILS') === -1) || 
               window.localStorage.getItem('product_type').includes('SCALE')){
                 _.find(menuItem, {state : "plugins"}).disabled = true;
-                _.find(menuItem, {state : "jails"}).disabled = true;
+                _.find(_.find(menuItem, {state : "virtualization"}).sub, { state : 'jails' }).disabled = true;
               }                        
           }
 
