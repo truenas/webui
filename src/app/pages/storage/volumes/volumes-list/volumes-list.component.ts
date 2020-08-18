@@ -798,7 +798,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
                 } else {
                   self.translate.get('Start scrub on pool').subscribe(msg => {               
-                  this.dialogService.confirm(T("Scrub Pool"), `${msg} <i>row1.name</i>?`, false, T("Start Scrub")).subscribe((res) => {
+                  this.dialogService.confirm(T("Scrub Pool"), `${msg} <i>${row1.name}</i>?`, false, T("Start Scrub")).subscribe((res) => {
                     if (res) {
                       this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { "title": T('Scrub Pool') }, disableClose: false });
                       this.dialogRef.componentInstance.setCall('pool.scrub', [row1.id, 'START']);
