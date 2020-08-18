@@ -419,8 +419,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   showResilveringDetails() {
     this.dialogRef = this.dialog.open(ResilverProgressDialogComponent);
-    this.dialogRef.componentInstance.parent = this;
-    this.dialogRef.componentInstance.diskName = this.resilveringDetails.name;
   }
 
   onGoToLegacy() {
