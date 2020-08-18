@@ -1777,4 +1777,79 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     margin-top: 1rem
   }
 
+  /// Slide-in menu ///////////////////////////////
+
+  .sidebar-panel.mat-sidenav .sidebar-list-item {
+    border-left: 6px solid rgba(0, 0, 0, .0);
+    border-bottom: 1px solid rgba(255, 255, 255, .05);
+  }
+
+  .sidebar-panel.mat-sidenav .sidebar-list-item:hover {
+    border-left: 6px solid rgba(0, 0, 0, .045);
+  }
+
+  .sidenav-link:hover, .slide-in-nav-item:hover {
+    background: rgba(0, 0, 0, .045) !important;
+  }
+
+  .sidebar-panel.mat-sidenav .sidebar-list-item.highlighted {
+    border-left: 6px solid var(--primary);
+    background-color: var(--bg2);
+    .mat-list-item-content > a {
+      background-color: var(--bg2);
+  
+      mat-icon {
+        color: var(--primary);
+      }
+    }   
+  } 
+
+  .slidein-nav {
+    height: 100vh;
+    width: 239px;
+    background-color: var(--bg2); // TODO: Replace with a darker shade of bg2 when available
+    position: absolute;
+    left: -239px;
+    top: 50px;
+    transition: 200ms;
+    z-index: 3;
+  }
+
+  .slidein-open {
+    left: 0 !important;
+    transition: 200ms;
+  }
+
+  .overlay {
+    background-color: rgba(0, 0, 0, .6);
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
+    display: none;
+    transition: 200ms;
+    z-index: 1;
+  }
+
+  .isdark {
+    display: block;
+  }
+
+  // End slide-in menu ////////////////
+
+  app-dataset-acl {
+    button[id='cust_button_ACL Presets'] {
+      position: absolute;
+      top: 350px;
+      left: 15px
+    }
+    @media screen and (max-width: 599px) {
+      button[id='cust_button_ACL Presets'] {
+        left: unset;
+        top: 250px;
+        right: 50px;
+      }
+    }
+  }
+
+
  } // end of ix theme

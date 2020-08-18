@@ -40,7 +40,7 @@ export class DatasetAclComponent implements OnDestroy {
   protected groupOptions: any[];
   protected userSearchOptions: [];
   protected groupSearchOptions: [];
-  protected defaults: any;
+  protected defaults = [];
   protected recursive: any;
   protected recursive_subscription: any;
   private aces: any;
@@ -113,13 +113,6 @@ export class DatasetAclComponent implements OnDestroy {
           placeholder: helptext.apply_group.placeholder,
           tooltip: helptext.apply_group.tooltip,
           value: false
-        },
-        {
-          type: 'select',
-          name: 'default_acl_choices',
-          placeholder: helptext.acl_defaults_placeholder,
-          tooltip: helptext.acl_defaults_tooltip,
-          options: []
         }
       ]
     },
@@ -293,6 +286,13 @@ export class DatasetAclComponent implements OnDestroy {
       function : () => {
         this.doStripACL();
       }
+    },
+    {
+      id : 'show_defaults',
+      name : 'ACL Presets',
+      function : () => {
+        this.showChoiceDialog(true);
+      }
     }
   ];
 
@@ -304,6 +304,9 @@ export class DatasetAclComponent implements OnDestroy {
 
   
   isCustActionVisible(actionId: string) {
+    if (actionId === 'show_defaults') {
+      return true;
+    }
     if (this.aclIsTrivial) {
       return actionId === 'use_perm_editor' ? true : false;
     } else {
@@ -346,11 +349,9 @@ export class DatasetAclComponent implements OnDestroy {
       this.gid_fc.options = this.groupOptions;
     });
     this.ws.call('filesystem.default_acl_choices').subscribe((res) => {
-      this.defaults = _.find(this.fieldConfig, {"name": "default_acl_choices"});
-      res.forEach((item) => {
-        this.defaults.options.push(
-            {label : item, value : item});
-      });
+      res.forEach(item => {
+        this.defaults.push({ label: item, value: item });
+      })
     });
   }
 
@@ -456,16 +457,6 @@ export class DatasetAclComponent implements OnDestroy {
         }
       }
       this.save_button_enabled = canSave;
-    });
-    this.entityForm.formGroup.controls['default_acl_choices'].valueChanges.subscribe((value) => {
-      let num;
-      value === 'RESTRICTED' ? num = 2 : num = 3;
-      while(this.aces.controls.length > num) {
-        this.aces.removeAt(num)
-      }
-      this.ws.call('filesystem.get_default_acl', [value]).subscribe((res) => {
-        this.dataHandler(this.entityForm, res);
-      });
     });
   }
 
@@ -618,54 +609,62 @@ export class DatasetAclComponent implements OnDestroy {
     }
     this.loader.close();
     if (this.aclIsTrivial && !this.isTrivialMessageSent) {
-      const conf: DialogFormConfiguration = {
-        title: helptext.typeDialog.title,
-        fieldConfig: [
-          {
-            type: 'radio',
-            name: 'useDefault',
-            options: [
-              {label: helptext.typeDialog.radio_preset,
-               name: 'defaultACL',
-               tooltip: helptext.typeDialog.radio_preset_tooltip,
-               value: true},
-              {label: helptext.typeDialog.radio_custom,
-               name: 'customACL',
-               value: false},
-            ],
-            value: true
-          },
-          {
-            type: 'select',
-            name: 'defaultOptions',
-            placeholder: helptext.typeDialog.input.placeholder,
-            options: this.defaults.options,
-            relation: [
-              {
-                action: 'SHOW',
-                when: [{
-                  name: 'useDefault',
-                  value: true,
-                }]
-              },
-            ],
-            required: true
-          }
-        ],
-        saveButtonText: helptext.typeDialog.button,
-        parent: this,
-        customSubmit: (entityDialog) => {
-          entityDialog.dialogRef.close();
-          const { useDefault, defaultOptions } = entityDialog.formValue;
-          if (useDefault && defaultOptions) {
-            this.chooseDefaultSetting(defaultOptions);
-          }
-          this.isTrivialMessageSent = true;
-        }
-      }
-      this.dialogService.dialogFormWide(conf);
+      this.showChoiceDialog();
     }
-    
+  }
+
+  showChoiceDialog(presetsOnly = false) {
+    const title = presetsOnly ? helptext.type_dialog.radio_preset : helptext.type_dialog.title;
+    const conf: DialogFormConfiguration = {
+      title: presetsOnly ? helptext.type_dialog.radio_preset : helptext.type_dialog.title,
+      message: presetsOnly ? `${helptext.type_dialog.radio_preset_tooltip} 
+      ${helptext.preset_dialog.message}` : null,
+      fieldConfig: [
+        {
+          type: 'radio',
+          name: 'useDefault',
+          options: [
+            {label: helptext.type_dialog.radio_preset,
+             name: 'defaultACL',
+             tooltip: helptext.type_dialog.radio_preset_tooltip,
+             value: true},
+            {label: helptext.type_dialog.radio_custom,
+             name: 'customACL',
+             value: false},
+          ],
+          value: true,
+          isHidden: presetsOnly
+        },
+        {
+          type: 'select',
+          name: 'defaultOptions',
+          placeholder: helptext.type_dialog.input.placeholder,
+          options: this.defaults,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'useDefault',
+                value: true,
+              }]
+            },
+          ],
+          required: true
+        }
+      ],
+      saveButtonText: helptext.type_dialog.button,
+      parent: this,
+      hideCancel: !presetsOnly,
+      customSubmit: (entityDialog) => {
+        entityDialog.dialogRef.close();
+        const { useDefault, defaultOptions } = entityDialog.formValue;
+        if (useDefault && defaultOptions) {
+          this.chooseDefaultSetting(defaultOptions);
+        }
+        this.isTrivialMessageSent = true;
+      }
+    }
+    this.dialogService.dialogForm(conf);
   }
 
   ngOnDestroy() {
