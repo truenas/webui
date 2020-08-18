@@ -32,6 +32,7 @@ export class ResilverProgressDialogComponent implements OnInit {
     this.subscription = this.ws.subscribe('zfs.pool.scan').subscribe(res => {
       if(res && res.fields.scan.function.indexOf('RESILVER') > -1 ) {
         this.resilveringDetails = res.fields;
+        this.diskName = this.resilveringDetails.name;
         this.progressTotalPercent = this.resilveringDetails.scan.percentage;
         this.state = this.resilveringDetails.scan.state;
       }
