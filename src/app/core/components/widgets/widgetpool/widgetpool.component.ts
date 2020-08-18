@@ -113,7 +113,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   @ViewChild('empty', {static:false}) empty:TemplateRef<any>;
   public templates:any;
   public tpl = this.overview;
-  currentTopology: string = "data";
 
   // NAVIGATION
   public currentSlide:string = "0";
@@ -391,7 +390,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
         template: this.templates[name],
         topology: topology
       }
-      this.currentTopology = 'topology';
   
       this.path[slideIndex] = slide;
     } else if(direction == 'back'){
