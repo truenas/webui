@@ -79,14 +79,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(){
-    window.onblur = () => {
-      this.stopListeners();
-    } 
-
-    window.onfocus = () => {
-      this.startListeners();
-    }
-
     this.checkScreenSize();
   }
 
@@ -276,8 +268,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   startListeners(){
-
-    this.statsEvents = this.ws.sub("reporting.realtime").subscribe((evt)=>{
+    console.warn("Subscribing...");
+    this.core.register({observerClass: this, eventName: "RealtimeStats"}).subscribe((e: CoreEvent) => {
+      const evt = e.data;
       if(evt.cpu){
         this.statsDataEvents.next({name:"CpuStats", data:evt.cpu});
       }
