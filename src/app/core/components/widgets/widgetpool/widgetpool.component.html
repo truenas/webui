@@ -188,22 +188,22 @@
                     </ng-template>
                   </mat-list-item>
                   
-                  <mat-list-item (click)="updateSlide('data', poolState.topology.data.length > 0, 1)" [ngClass]="{'clickable': poolState.topology.data.length > 0}">
+                  <mat-list-item (click)="updateSlide('data', poolState.topology.data.length > 0, 1, undefined, 'data')" [ngClass]="{'clickable': poolState.topology.data.length > 0}">
                     <strong>{{"Data" | translate}}: </strong>&nbsp;&nbsp; {{poolState.topology.data.length}} vdev<span *ngIf="poolState.topology.data.length > 1">s</span>
                     <mat-icon *ngIf="poolState.topology.data.length > 0" class="next-slide" ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
                   </mat-list-item>
 
-                  <mat-list-item (click)="updateSlide('disks', poolState.topology.cache.length > 0, 1, 0, { children: poolState.topology.cache})" [ngClass]="{'clickable': poolState.topology.cache.length > 0}">
+                  <mat-list-item (click)="updateSlide('disks', poolState.topology.cache.length > 0, 1, 0, 'cache')" [ngClass]="{'clickable': poolState.topology.cache.length > 0}">
                     <strong>{{"Caches" | translate}}: </strong>&nbsp;&nbsp; {{poolState.topology.cache.length}}
                     <mat-icon *ngIf="poolState.topology.cache.length > 0" class="next-slide" ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
                   </mat-list-item>
 
-                  <mat-list-item (click)="updateSlide('disks', poolState.topology.spare.length > 0, 1, 0, {children: poolState.topology.spare})" [ngClass]="{'clickable': poolState.topology.spare.length > 0}">
+                  <mat-list-item (click)="updateSlide('disks', poolState.topology.spare.length > 0, 1, 0, 'spare')" [ngClass]="{'clickable': poolState.topology.spare.length > 0}">
                     <strong>{{"Spares" | translate}}: </strong>&nbsp;&nbsp; {{poolState.topology.spare.length}}
                     <mat-icon *ngIf="poolState.topology.spare.length > 0" class="next-slide" ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
                   </mat-list-item>
 
-                  <mat-list-item (click)="updateSlide('disks', poolState.topology.log.length > 0, 1, 0, {children: poolState.topology.log})" [ngClass]="{'clickable': poolState.topology.log.length > 0}">
+                  <mat-list-item (click)="updateSlide('data', poolState.topology.log.length > 0, 1, 0, 'log')" [ngClass]="{'clickable': poolState.topology.log.length > 0}">
                     <strong>{{"Logs" | translate}}: </strong>&nbsp;&nbsp; {{poolState.topology.log.length}}
                     <mat-icon *ngIf="poolState.topology.log.length > 0" class="next-slide" ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
                   </mat-list-item>
@@ -218,9 +218,9 @@
           <!-- DATA -->
           <ng-template #data>
             <div class="list-subheader"><span class="capitalize">{{currentSlideName | translate}}</span></div>
-            <mat-list *ngIf="poolState && poolState.topology.data">
-              <mat-list-item role="listitem"*ngFor="let vdev of poolState.topology.data; let i=index"
-                 (click)="updateSlide('disks', true, currentSlideIndex + 1, i, vdev)" 
+            <mat-list *ngIf="poolState && poolState.topology[currentSlideTopology]">
+              <mat-list-item role="listitem"*ngFor="let vdev of poolState.topology[currentSlideTopology]; let i=index"
+                 (click)="updateSlide('disks', true, currentSlideIndex + 1, i, currentSlideTopology, vdev)" 
                  [ngClass]="{'clickable': true}">
                   <strong>{{vdev.type}}:</strong>&nbsp;&nbsp; {{vdev.status}}
                   <!-- STATUS ICONS -->
@@ -268,7 +268,7 @@
             <mat-list *ngIf="!path[currentSlideIndex].dataSource.type || path[currentSlideIndex].dataSource.type !== 'DISK'">
               
               <mat-list-item role="listitem" *ngFor="let disk of path[currentSlideIndex].dataSource.children; let i=index" 
-                 (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, disk )" 
+                 (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, currentSlideTopology, disk )" 
                  (click)="getDiskDetails('name', disk.disk, checkMultipath(disk.disk))" 
                  [ngClass]="{'clickable': true}">
                 <strong >
