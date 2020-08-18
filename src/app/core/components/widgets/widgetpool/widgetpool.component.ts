@@ -420,7 +420,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }).start(el.set);
     
     this.currentSlide = value.toString();
-    const path = this.path[this.currentSlide];
     this.title = this.currentSlide == "0" ? "Pool" : this.poolState.name;
     
   }
