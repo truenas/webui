@@ -52,6 +52,10 @@
         matTooltipPosition="right">
         <mat-icon>copyright</mat-icon>
       </div>
+      <div>
+        <button (click)="openModal('custom-modal-1')">Open Modal 1</button>
+        <button (click)="openModal('custom-modal-2')">Open Modal 2</button>
+      </div>
          
     </div>
   </mat-sidenav>
@@ -76,3 +80,14 @@
     </div>
   </mat-sidenav>
 </mat-sidenav-container>
+
+<jw-modal id="custom-modal-1">
+    <h1>A Custom Modal!</h1>
+    <p>Home page text: <input type="text" [(ngModel)]="bodyText" /></p>
+    <button (click)="closeModal('custom-modal-1');">Close</button>
+</jw-modal>
+
+<jw-modal id="custom-modal-2">
+    <h1 style="height:1000px">A Tall Custom Modal!</h1>
+    <button (click)="closeModal('custom-modal-2');">Close</button>
+</jw-modal>

@@ -10,6 +10,7 @@ import * as domHelper from '../../../../helpers/dom.helper';
 import { RestService, WebSocketService } from '../../../../services';
 import { LanguageService } from '../../../../services/language.service';
 import { ThemeService } from '../../../../services/theme/theme.service';
+import { ModalService } from '../../../../services/modal.service';
 import { ConsolePanelModalDialog } from '../../dialog/consolepanel/consolepanel-dialog.component';
 import globalHelptext from '../../../../helptext/global-helptext';
 
@@ -37,6 +38,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   public copyrightYear = globalHelptext.copyright_year;
   // we will just have to add to this list as more languages are added
 
+  bodyText = 'This text can be updated in modal 1'; // delete me, used for sample model thingy
+
   @ViewChild(MatSidenav, { static: false}) private sideNave: MatSidenav;
   @ViewChild('footerBarScroll', { static: true}) private footerBarScroll: ElementRef;
   freenasThemes;
@@ -53,6 +56,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     protected rest: RestService,
     protected ws: WebSocketService,
     public language: LanguageService,
+    public modalService: ModalService,
     public dialog: MatDialog) {
     // detect server type
     ws.call('system.product_type').subscribe((res)=>{
@@ -274,5 +278,14 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
         this.sideNave.close();
       }
     }
+  }
+
+  openModal(id: string) {
+    console.log(id);
+    this.modalService.open(id);
+  }
+
+  closeModal(id: string) {
+    this.modalService.close(id);
   }
 }
