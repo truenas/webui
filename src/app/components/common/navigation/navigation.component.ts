@@ -52,7 +52,10 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
 
         for(let i = 0; i < this.navService.enterpriseFeatures.length; i++) {
           const targetMenu = this.navService.enterpriseFeatures[i];
-          _.find(_.find(menuItem, { state: targetMenu.menu }).sub, { state : targetMenu.sub}).disabled = false;
+          const enterpriseItem = (_.find(_.find(menuItem, { state: targetMenu.menu }).sub, { state : targetMenu.sub}))
+          if (enterpriseItem) {
+            enterpriseItem.disabled = false;
+          }
         }
       }
 

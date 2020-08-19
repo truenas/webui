@@ -69,10 +69,6 @@ export const routes: Routes = [
       data: { title: T('Advanced'), breadcrumb: T('Advanced'), icon: 'settings' },
 
     }, {
-      path: 'viewenclosure',
-      component: ViewEnclosureComponent,
-      data: { title: T('View Enclosure'), breadcrumb: T('View Enclosure'), icon: 'settings' },
-    }, {
       path: 'reporting',
       component: ReportingComponent,
       data: { title: T('Reporting'), breadcrumb: T('Reporting') },
