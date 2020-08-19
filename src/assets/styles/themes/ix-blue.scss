@@ -1652,17 +1652,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       margin-top: -13px;
       margin-bottom: 20px;
     }
-    #aces0 {
-      position: absolute;
-      left: 15px;
-      top: 340px;
-
-      @media screen and ( max-width: 599px) {
-        position: relative;
-        top: -435px;
-        left: 60px;
-      }
-    }
     .error-div {
       min-height: 24px;
       margin-top: -12px;
@@ -1839,7 +1828,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   app-dataset-acl {
     button[id='cust_button_Select an ACL Preset'] {
       position: absolute;
-      top: 350px;
+      top: 300px;
       left: 15px
     }
     @media screen and (max-width: 599px) {
