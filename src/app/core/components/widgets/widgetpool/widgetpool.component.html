@@ -295,7 +295,7 @@
 
             <mat-list *ngIf="path[currentSlideIndex].dataSource.type == 'DISK'">
               <mat-list-item role="listitem" 
-                 (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, path[currentSlideIndex].dataSource)" 
+                 (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, currentSlideTopology, path[currentSlideIndex].dataSource)" 
                  (click)="getDiskDetails('name', path[currentSlideIndex].dataSource.disk, checkMultipath(path[currentSlideIndex].dataSource.disk))" 
                  [ngClass]="{'clickable': true}">
                 <strong>
