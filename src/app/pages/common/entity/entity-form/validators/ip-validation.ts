@@ -57,6 +57,34 @@ import * as isCidr from 'is-cidr';
     }
   }
 
+    // Accepts ipv4 or ipv6 addresses with an OPTIONAL CIDR (ie, /24)
+    export function ipv4or6OptionalCidrValidator(control: string) {
+      let thisControl: FormControl;
+    
+      return function ipValidate(control: FormControl) {
+    
+        if (!control.parent) {
+          return null;
+        }
+    
+        // Initializing the validator.
+        if (!thisControl) {
+          thisControl = control;
+        }
+        if(thisControl.value == "" || thisControl.value == undefined) {
+          return null;
+        }
+  
+        if (!isCidr.v4(thisControl.value) && !isCidr.v6(thisControl.value) &&
+          !ipRegex({exact: true, includeBoundaries: true }).test(thisControl.value))
+        {
+              return {ip2 : true};
+          };
+  
+        return null;
+      }
+    }
+
   // Accepts ipv4 addresses with no CIDR (ie, /24)
   export function ipv4Validator(control: string) {
     let thisControl: FormControl;

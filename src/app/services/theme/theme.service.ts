@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import * as domHelper from '../../helpers/dom.helper';
 import { RestService, WebSocketService } from 'app/services';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { ApiService } from 'app/core/services/api.service';
 import { Router } from '@angular/router';
 
@@ -13,21 +14,22 @@ export const DefaultTheme = {
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
       topbar:"#111111",
-      accent:"var(--yellow)",
-      bg1:'#171E26',
-      bg2:'#232d35',
-      fg1:'#aaaaaa',
-      fg2:'#cccccc',
-      'alt-bg1':'rgba(122,122,122,0.25)',
-      'alt-bg2':'#6F6E6C',
-      'alt-fg1':'#c1c1c1',
+      'topbar-txt': "var(--fg2)",
+      accent:"var(--bg2)",
+      bg1:'#1E1E1E',
+      bg2:'#242424',
+      fg1:'#fff',
+      fg2:'rgba(255,255,255,0.85)',
+      'alt-bg1':'#383838',
+      'alt-bg2':'#545454',
+      'alt-fg1':'rgba(194,194,194,0.5)',
       'alt-fg2':'#e1e1e1',
       yellow:'#f0cb00',
       orange:'#ee9302',
       red:'#ff0013',
       magenta:'#d238ff',
       violet:'#c17ecc',
-      blue:'#0D5788',
+      blue:'#0095D5',
       cyan:'#00d0d6',
       green:'#1F9642'
     }
@@ -39,6 +41,7 @@ export interface Theme {
   labelSwatch?: string;
   accentColors: string[];
   topbar?: string; // CSS var from palette. Defaults to primary
+  'topbar-txt'?: string; // Text color for topbar. Will be auto generated if nothing is set
   favorite?:boolean; // Deprecate: Hasn't been used since the theme switcher was in the topbar
   hasDarkLogo?: boolean; // Deprecate: logo colors are set with CSS now
   logoPath?:string; // Deprecate: Themes haven't used this in a couple of releases now
@@ -89,9 +92,9 @@ export class ThemeService {
       bg1:'#dddddd',
       bg2:'#ffffff',
       fg1:'#222222',
-      fg2:'#333333',
-      'alt-bg1':'rgba(122,152,182,0.05)',
-      'alt-bg2':'#fafaf5',
+      fg2:'#666666',
+      'alt-bg1':'#ababab',
+      'alt-bg2':'#cdcdcd',
       'alt-fg1':'#181a26',
       'alt-fg2':'#282a36',
       yellow:'#f0cb00',
@@ -111,10 +114,11 @@ export class ThemeService {
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
       topbar:"var(--blue)",
+      'topbar-txt':"var(--fg1)",
       accent:"var(--violet)",
       bg1:'#181a26',
       bg2:'#282a36',
-      fg1:'#a8a8a2',
+      fg1:'#efefef',
       fg2:'#cacac5',
       'alt-bg1':'rgba(122,122,122,0.25)',
       'alt-bg2':'rgba(122,122,122,0.5)',
@@ -135,8 +139,9 @@ export class ThemeService {
       labelSwatch:"blue",
       description:'Unofficial nord color theme based on https://www.nordtheme.com/',
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
-      primary:"var(--alt-bg2)",
+      primary:"var(--cyan)",
       topbar:"var(--alt-bg2)",
+      'topbar-txt':"var(--fg2)",
       accent:"var(--blue)",
       bg1:'#2e3440',
       bg2:'#3b4252',
@@ -167,9 +172,9 @@ export class ThemeService {
       bg1:'#D5D5D5',
       bg2:'#F5F5F5',
       fg1:'#222222',
-      fg2:'#333333',
-      'alt-bg1':'rgba(122,152,182,0.05)',
-      'alt-bg2':'#fafaf5',
+      fg2:'#666666',
+      'alt-bg1':'#ababab',
+      'alt-bg2':'#cdcdcd',
       'alt-fg1':'#181a26',
       'alt-fg2':'#282a36',
       yellow:'#f0cb00',
@@ -189,6 +194,7 @@ export class ThemeService {
       accentColors:['blue', 'magenta', 'cyan', 'violet', 'green', 'orange', 'yellow', 'red'],
       primary:"var(--fg1)",
       topbar:"var(--fg1)",
+      'topbar-txt':"#cdcdcd",
       accent:"var(--cyan)",
       bg1:'#002b36',
       bg2:'#073642',
@@ -215,6 +221,7 @@ export class ThemeService {
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
       topbar:"var(--blue)",
+      'topbar-txt':"var(--fg2)",
       accent:"var(--violet)",
       bg1:'#212a35',
       bg2:'#303d48',
@@ -246,8 +253,8 @@ export class ThemeService {
       bg2:'#ffffff',
       fg1:'#222222',
       fg2:'#333333',
-      'alt-bg1':'rgba(122,152,182,0.05)',
-      'alt-bg2':'#fafaf5',
+      'alt-bg1':'#ababab',
+      'alt-bg2':'#cdcdcd',
       'alt-fg1':'#181a26',
       'alt-fg2':'#282a36',
       yellow:'#f0cb00',
@@ -265,10 +272,13 @@ export class ThemeService {
   private loggedIn:boolean;
   public globalPreview: boolean = false;
   public globalPreviewData: any;
+  private utils: ThemeUtils;
 
   public userThemeLoaded: boolean = false;
   constructor(private rest: RestService, private ws: WebSocketService, private core:CoreService, private api:ApiService,
               private route: Router) {
+
+    this.utils = new ThemeUtils();
 
     // Set default list
     this.allThemes = this.freenasThemes;
@@ -276,6 +286,12 @@ export class ThemeService {
 
     this.core.register({observerClass:this, eventName:"ThemeDataRequest"}).subscribe((evt:CoreEvent) => {
       this.core.emit({name:"ThemeData", data:this.findTheme(this.activeTheme), sender:this});
+    });
+
+    // Use only for testing
+    this.core.register({observerClass:this, eventName:"ThemeChangeRequest"}).subscribe((evt:CoreEvent) => {
+      this.changeTheme(evt.data);
+      this.core.emit({name:'ThemeChanged', data: this.findTheme(this.activeTheme), sender:this});
     });
 
     this.core.register({observerClass:this,eventName:"GlobalPreviewChanged"}).subscribe((evt:CoreEvent) => {
@@ -358,7 +374,7 @@ export class ThemeService {
 
   changeTheme(theme:string) {
     this.core.emit({name:"ChangeThemePreference", data:theme, sender:this});
-    }
+  }
 
   saveCurrentTheme(){
     let theme = this.currentTheme();
@@ -366,6 +382,7 @@ export class ThemeService {
   }
 
   setCssVars(theme:Theme){ 
+    // Sets CSS Custom Properties for an entire theme
     let keys = Object.keys(theme);
 
     // Filter out deprecated properties and meta properties
@@ -376,7 +393,7 @@ export class ThemeService {
       
       // Generate aux. text styles 
       if(this.freenasThemes[0].accentColors.indexOf(color) !== -1){
-        let txtColor = this.textContrast(theme[color], theme["bg2"]);
+        let txtColor = this.utils.textContrast(theme[color], theme["bg2"]);
         (<any>document).documentElement.style.setProperty("--" + color + "-txt", txtColor);
       }
 
@@ -393,15 +410,42 @@ export class ThemeService {
     (<any>document).documentElement.style.setProperty("--accent",theme["accent"]);
 
     // Set Material aux. text styles
-    let primaryColor = this.colorFromMeta(theme["primary"]); // eg. blue
-    let accentColor = this.colorFromMeta(theme["accent"]); // eg. yellow
-    let primaryTextColor = this.textContrast(theme[primaryColor], theme["bg2"]);
-    let accentTextColor = this.textContrast(theme[accentColor], theme["bg2"]);
-    let topbarTextColor = this.textContrast(theme[accentColor], theme["bg2"]);
-    (<any>document).documentElement.style.setProperty("--topbar-txt", primaryTextColor);
+    let primaryColor = this.utils.colorFromMeta(theme["primary"]); // eg. blue
+    let accentColor = this.utils.colorFromMeta(theme["accent"]); // eg. yellow
+    let primaryTextColor = this.utils.textContrast(theme[primaryColor], theme["bg2"]);
+    let accentTextColor = this.utils.textContrast(theme[accentColor], theme["bg2"]);
+
     (<any>document).documentElement.style.setProperty("--primary-txt", primaryTextColor);
     (<any>document).documentElement.style.setProperty("--accent-txt", accentTextColor);
     (<any>document).documentElement.style.setProperty("--highlight", accentTextColor);
+
+    // Set line colors
+    const isDark: boolean = this.darkTest(theme.bg2);
+    const lineColor = isDark ? 'var(--dark-theme-lines)' : 'var(--light-theme-lines)';
+    (<any>document).documentElement.style.setProperty("--lines", lineColor);
+
+    // Set multiple background color contrast options
+    let contrastSrc = theme['bg2'];
+    let contrastDarker = this.utils.darken(contrastSrc, 5);
+    let contrastDarkest = this.utils.darken(contrastSrc, 10);
+    let contrastLighter = this.utils.lighten(contrastSrc, 5);
+    let contrastLightest = this.utils.lighten(contrastSrc, 10);
+
+    (<any>document).documentElement.style.setProperty("--contrast-darker", contrastDarker);
+    (<any>document).documentElement.style.setProperty("--contrast-darkest", contrastDarkest);
+    (<any>document).documentElement.style.setProperty("--contrast-lighter", contrastLighter);
+    (<any>document).documentElement.style.setProperty("--contrast-lightest", contrastLightest);
+
+
+    let topbarTextColor;
+    if(!theme['topbar-txt'] && theme.topbar) {
+      topbarTextColor = this.utils.textContrast(theme.topbar, theme["bg2"]);
+      (<any>document).documentElement.style.setProperty("--topbar-txt", topbarTextColor);
+    } else if(!theme['topbar-txt'] && !theme.topbar) {
+      
+      topbarTextColor = this.utils.textContrast(theme[primaryColor], theme["bg2"]);
+      (<any>document).documentElement.style.setProperty("--topbar-txt", topbarTextColor);
+    }
 
     // Logo light/dark
     if(theme["hasDarkLogo"]){
@@ -413,62 +457,8 @@ export class ThemeService {
     }
   }
 
-  public textContrast(cssVar, bgVar){
-    let txtColor = '';
-    // Convert hex value to RGB
-    let props = this.hexToRGB(cssVar); 
-
-    // Find the average value to determine brightness
-    let brightest = (props.rgb[0] + props.rgb[1] + props.rgb[2]) / 3;
-    // Find a good threshold for when to have light text color
-    if(brightest < 144){
-      txtColor = "#ffffff"
-    } else if(brightest > 191) {
-      txtColor = "#333333"
-    } else {
-      // RGB averages between 144-197 are to be 
-      // matched to bg2 css variable.
-      let bgProp = this.hexToRGB(bgVar);
-      let bgAvg = (bgProp.rgb[0] + bgProp.rgb[1] + bgProp.rgb[2]) / 3;
-      if(bgAvg < 127){
-        txtColor = "#333333";
-      } else {
-        txtColor = "#ffffff";
-      }
-    }
-
-
-    return txtColor;
-  }
-
   hexToRGB(str) {
-    var spl = str.split('#');
-    var hex = spl[1];
-    if(hex.length == 3){
-      hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
-    }
-
-    var value = '';
-    var rgb = [];
-    for(let i = 0; i < 6; i++){
-      let mod = i % 2;
-      let even = 0;
-      value += hex[i];
-      if(mod !== even){
-        rgb.push(parseInt(value, 16))
-        value = '';
-      }
-    }
-    return {
-      hex:hex,
-      rgb:rgb
-    }
-  }
-  
-  public colorFromMeta(meta:string){
-    let trimFront = meta.replace('var(--','');
-    let trimmed = trimFront.replace(')','');
-    return trimmed;
+    return this.utils.hexToRGB(str);
   }
 
   get customThemes(){
@@ -479,6 +469,13 @@ export class ThemeService {
     this._customThemes = customThemes;
     this.allThemes = this.freenasThemes.concat(this.customThemes);
     this.core.emit({name:"ThemeListsChanged"});
+  }
+
+  darkTest(css: string): boolean{
+    const rgb = this.utils.forceRGB(css);
+    const hsl = this.utils.rgbToHSL(rgb, false, false);
+   
+    return hsl[2] < 50 ? true : false;
   }
 
 }

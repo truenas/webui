@@ -11,11 +11,16 @@ import { KerberosKeytabsListComponent } from './kerberoskeytabs/kerberoskeytabs-
 import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-form';
 import { IdmapListComponent } from './idmap-list';
 import { IdmapFormComponent } from './idmap-form';
+import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 
 export const routes: Routes = [{
   path: '',
   data: { title: 'Directory Services' },
   children: [
+    {
+      path: '',
+      component: EntityDashboardComponent,
+    },
   {
     path: 'ldap',
     component: LdapComponent,

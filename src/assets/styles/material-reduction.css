@@ -1,3 +1,66 @@
+/* TYPOGRAPHY */
+
+body {
+  background: var(--bg1);
+}
+
+@font-face {
+  font-family: 'IBM Plex Sans';
+  src: url("/assets/fonts/IBM_Plex_Sans/IBMPlexSans-Regular.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: Epilogue;
+  src: url("/assets/fonts/Epilogue/Epilogue-VariableFont_wght.ttf") format("truetype");
+}
+
+html {font-size: 87.5%;} /*14px*/
+
+body {
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 400;
+  line-height: 1.65;
+}
+
+p {margin-bottom: 1.15rem;}
+
+
+h1, h2, h3, h4, h5 {
+  margin: 2.75rem 0 1.05rem;
+  margin: 0;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+h1 {
+  margin-top: 0;
+  font-size: 2.488em;
+}
+h1 { color: var(--fg1);}
+h1, h2{
+  font-family: 'Epilogue', sans-serif;
+  font-weight: 500;
+}
+
+h2 {font-size: 2.074em;}
+
+h3 {font-size: 1.728em;}
+
+h4 {font-size: 1.44em;}
+
+h5 {font-size: 1.2em;}
+
+small, .text_small {font-size: 0.833em;}
+
+.text-extra-small{ font-size: x-small;}
+
+span.code{
+  font-family:'Inconsolata';
+  opacity: 0.75;
+  background: rgba(255,255,255,0.1);
+}
+
 /*
  * Variables 
  * height 36px
@@ -12,7 +75,7 @@
 
 /* CSS Vars */
 :root {
---fn-dropshadow:0 1px 2px rgba(0,0,0,0);
+  --fn-dropshadow:0 1px 2px rgba(0,0,0,0);
 }
 
 /* Cards */
@@ -65,7 +128,7 @@ entity-table .mat-card > *{
 /*.widget-loader,
 .widget .mat-card-content,
 .no-padding{
-  padding:0px !important;
+padding:0px !important;
 }*/
 
 /* FreeNAS Specific */
@@ -76,22 +139,20 @@ button.menu-toggle .mat-icon{
   right:-10px;
 }
 
-.form-card{}
-
 /* This element is part of entity-table.
  * It currently uses css to do artificially 
  * put itselt inside the title bar.
  * This needs to be changed in the markup 
  * instead of using this type of hack */
 #filter{
-    position: static !important;
-    margin-top:-10px; /* The form field reserves too much space in mat-toolbar. This wins some of the screen back */
-    text-align:right;
-    max-height:38px;
-    /*padding:0 !important;
-    right: 150px;
-    top: 9px;
-    z-index: 10;*/
+  position: static !important;
+  margin-top:-10px; /* The form field reserves too much space in mat-toolbar. This wins some of the screen back */
+  text-align:right;
+  max-height:38px;
+  /*padding:0 !important;
+  right: 150px;
+  top: 9px;
+  z-index: 10;*/
 }
 
 entity-table .multiactions-title{
@@ -108,3 +169,195 @@ entity-table .mat-toolbar.mat-card-toolbar{
 entity-table .mat-toolbar.mat-card-toolbar{
   box-shadow:var(--fn-dropshadow);
 }
+
+/*********************************************************************/
+/* Dematerialize Form Fields :) */
+.form-element{
+  margin: 16px 0;
+  text-align:left;
+}
+.form-element .label{
+}
+
+.form-element .label.input-text,
+.form-element .label.input-select{
+  font-size: x-small;
+}
+
+.form-element .label-container {
+  margin-bottom: 4px;
+  padding: 4px 0;
+}
+
+:root{
+  --contrast-normal: var(--bg2);
+  --light-theme-lines: var(--contrast-darkest);
+  --dark-theme-lines: var(--contrast-lighter);
+  --lines: var(--dark-theme-lines);
+  --sidenav-width: 240px;
+  --btn-default-bg: var(--alt-bg2);
+}
+
+.borderless{
+  border: none !important;
+}
+
+.mat-divider{
+  background: var(--lines) !important;
+  opacity: 1 !important;
+}
+
+.fieldset {
+  padding-bottom: 24px;
+}
+
+.form-element .mat-form-field-wrapper,
+.form-element input[type = "password"],
+.form-element input[type = "email"],
+.form-element input[type = "text"],
+.form-element input[type = "number"],
+.form-element textarea,
+.form-element select{
+  width: calc(100% - 24px) !important;
+  background-color: var(--bg1);
+  color: var(--fg1);
+  border: solid 1px var(--lines);
+  padding: 8px;
+  box-sizing: border-box;
+  color: var(--fg1);
+}
+
+/* Chips */
+.form-element .mat-chip{
+  font-size: smaller !important;
+  padding: 1px 16px 0 !important;
+}
+
+/* Login Form */
+.login-form .form-element .mat-form-field-wrapper{
+  width: 100% !important;
+}
+
+.login-form .form-element .mat-form-field-wrapper input{
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0 0 2px 0;
+  position: relative;
+  top: 6px !important;
+}
+
+.login-form .form-element .mat-form-field-prefix .mat-icon {
+  font-size: 16px;
+}
+
+.login-form .form-element .mat-form-field-prefix{
+  margin-bottom: 2px;
+}
+
+.form-element textarea{
+  min-width: calc(100% - 24px);
+  max-width: calc(100% - 24px);
+  min-height: 96px;
+}
+
+.form-element input[type = "password"],
+.form-element .has_toggle_pw input {
+  width: calc(100% - 40px) !important;
+  display: inline;
+}
+
+.form-element button.toggle_pw i{
+  font-size: 22px;
+  opacity: 0.75;
+}
+
+.form-element .mat-form-field-type-mat-select .mat-form-field-wrapper {
+  min-height: 33px;
+}
+
+.form-element.form-explorer .mat-form-field-wrapper{
+  padding-left: 0;
+}
+
+.form-element.form-explorer .mat-form-field-wrapper,
+.form-element.form-explorer .mat-form-field-flex,
+.form-element.form-explorer .mat-form-field-flex input {
+  border: none;
+}
+
+.margin-for-error{
+  position: static !important;
+}
+
+.mat-checkbox-frame{
+  border-color: var(--fg2) !important;
+}
+
+.mat-checkbox{
+  opacity: 0.75;
+}
+
+tooltip button i{
+  opacity: 0.5;
+}
+
+.label-container tooltip {
+  margin: 0 0 4px 4px;
+}
+
+.tooltip .material-icons{
+  font-size: 16px !important;
+}
+
+/* Normalize mat-select */
+.mat-form-field-label-wrapper,
+.mat-form-field-underline,
+.mat-form-field-subscript-wrapper {
+  display: none;
+}
+
+.mat-form-field-appearance-legacy .mat-form-field-infix {
+  padding: 0;
+  border: 0;
+}
+
+/* Buttons */
+.mat-button, .mat-flat-button {
+  border-radius : 0 !important;
+  text-transform: capitalize !important;
+}
+
+button.mat-button,
+button.mat-button.btn-default, button.mat-default,
+button.mat-button.mat-accent.btn-default,
+button.mat-flat-button,
+button.mat-button[type="button"],
+button.mat-button.mat-accent[type="button"]{
+  background-color:var(--btn-default-bg) !important;
+  color:var(--fg2) !important;
+}
+
+button.mat-button[type="button"]:hover,
+button.mat-button.mat-accent[type="button"]:hover{
+  background-color: var(--alt-bg1) !important;
+  color: var(--fg2) !important;
+}
+
+/* Menus */
+.mat-menu-item:hover {
+  background-color: var(--alt-bg1) !important;
+}
+
+/* Nested Cards */
+.mat-card .form-card.mat-card{
+  box-shadow: unset; 
+  border: none;
+}
+
+/* Top bar fixes */
+.topbar .mat-icon-button,
+.topbar .mat-icon-button .mat-icon[alt="iXsystem logo"]{
+  color: var(--topbar-txt) !important;
+}
+

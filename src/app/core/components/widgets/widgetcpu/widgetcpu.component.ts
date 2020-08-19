@@ -1,6 +1,7 @@
 import { Component, AfterViewInit, Input, ViewChild, OnDestroy, ElementRef} from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { MaterialModule } from 'app/appMaterial.module';
 import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
@@ -87,10 +88,13 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
   public labels: string[] = [];
   protected currentTheme: any;
+  private utils: ThemeUtils;
 
 
   constructor(public router: Router, public translate: TranslateService, public mediaObserver: MediaObserver, private el: ElementRef){
     super(translate);
+
+    this.utils = new ThemeUtils();
 
     mediaObserver.media$.subscribe((evt) =>{
       const size = {
@@ -359,8 +363,11 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       const cssVar = ds.label == 'Temperature' ? 'accent' : 'primary'; 
       const color = this.stripVar(this.currentTheme[cssVar])
       
-      const bgRGB = this.themeService.hexToRGB(this.currentTheme[color]).rgb;
-      const borderRGB = this.themeService.hexToRGB(this.currentTheme[color]).rgb;
+      const themeColor = this.currentTheme[color];
+      const valueType = this.utils.getValueType(themeColor);
+
+      const bgRGB = valueType == 'hex' ? this.utils.hexToRGB(themeColor).rgb : this.utils.rgbToArray(themeColor);
+      const borderRGB = valueType == 'hex' ? this.utils.hexToRGB(themeColor).rgb : this.utils.rgbToArray(themeColor);
 
       ds.backgroundColor = this.rgbToString(bgRGB, 0.85);
       ds.borderColor = this.rgbToString(bgRGB);
@@ -391,9 +398,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     // Get highlight color
     let currentTheme = this.themeService.currentTheme();
     let txtColor = currentTheme.fg2;
+    const valueType = this.utils.getValueType(txtColor);
 
     // convert to rgb
-    let rgb = this.themeService.hexToRGB(txtColor).rgb;
+    let rgb = valueType == 'hex' ? this.utils.hexToRGB(txtColor).rgb : this.utils.rgbToArray(txtColor);
 
     // return rgba
     let rgba =  "rgba(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + "," + opacity + ")";

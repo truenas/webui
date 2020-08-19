@@ -60,8 +60,9 @@
 
 .hostname-label {
 	text-align: center;
-	font-size: smaller;
-	margin: auto;
+	font-size: larger;
+  margin: auto;
+  margin-bottom: 10px;
 }
 
 .fn-maincontent {
@@ -73,6 +74,9 @@
   margin: 1rem auto;
   opacity: 0.5;
   font-size: .6rem;
+  position: absolute;
+  bottom: 0;
+  left: 70px;
 }
 
 .sidenav-copyright-icon {

@@ -769,9 +769,6 @@ msgstr "当“源”是池的顶级数据集时，无法更改ACL。"
 msgid "ACME Certificate"
 msgstr "ACME证书"
 
-msgid "ACME DNS"
-msgstr "ACME DNS"
-
 msgid "ACME DNS Authenticators"
 msgstr "ACME DNS验证器"
 
@@ -907,9 +904,6 @@ msgid ""
 "entry. If the selected <i>Guest Account</i>  is deleted the field resets to "
 "<i>nobody</i>."
 msgstr ""
-
-msgid "Accounts"
-msgstr "账户"
 
 msgid "Acoustic Level"
 msgstr "噪音等级"
@@ -1321,6 +1315,11 @@ msgid ""
 "icon (top-right) to toggle the display of built-in users."
 msgstr "默认情况下，除<i> root </i>外的所有内置用户都是隐藏的。使用齿轮图标（右上角）切换内置用户的显示。"
 
+msgid ""
+"All data stored in this dataset will be decrypted and the dataset marked  "
+"as non-encrypted. Do you want to continue?"
+msgstr ""
+
 msgid "All dirs"
 msgstr "所有目录"
 
@@ -1663,6 +1662,12 @@ msgstr "所选用户可以使用的磁盘空间量。输入<code> 0 </code>（�
 msgid "Amount of locked memory in bytes for the jail."
 msgstr "监狱的锁定内存量（以bytes为单位）"
 
+msgid ""
+"An ACL is detected on the selected path but <i>Enable ACL</i> is not "
+"selected for this share.  ACLs must be stripped from the dataset prior to "
+"creating an SMB share."
+msgstr ""
+
 msgid "An ACL is present in this path"
 msgstr "此路径中存在ACL"
 
@@ -1701,9 +1706,6 @@ msgstr ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
 "target=\"_blank\">smb.conf(5)</a>。**必须**在客户端连接之前预先设置连接路径。"
 
-msgid "Apple Shares (AFP)"
-msgstr "苹果共享 (AFP)"
-
 msgid "Application Credential ID"
 msgstr "应用程序凭证ID"
 
@@ -1715,6 +1717,9 @@ msgstr "应用程序凭证秘密"
 
 msgid "Application Key"
 msgstr "应用程序密钥"
+
+msgid "Applications"
+msgstr ""
 
 msgid "Apply"
 msgstr "应用"
@@ -2036,6 +2041,9 @@ msgstr "背景1"
 msgid "Background 2"
 msgstr "背景2"
 
+msgid "Backup Credentials"
+msgstr ""
+
 msgid "Bandwidth"
 msgstr "带宽"
 
@@ -2120,9 +2128,6 @@ msgstr "绑定到"
 
 msgid "Bind to Port"
 msgstr "绑定到端口"
-
-msgid "Block Shares (iSCSI)"
-msgstr "块共享(iSCSI)"
 
 msgid "Block Size"
 msgstr "块大小"
@@ -2311,9 +2316,6 @@ msgid ""
 "(OTP)  will be required to sign into this system. Be sure to immediately "
 "set up another two-factor device."
 msgstr "注意：启用“双重身份验证”后，将需要使用一次性密码（OTP）来登录此系统。确保立即设置另一个双重设备。"
-
-msgid "CAs"
-msgstr "CAs"
 
 msgid "CC"
 msgstr "CC"
@@ -3042,20 +3044,17 @@ msgstr "克隆到新数据集"
 msgid "Close"
 msgstr "关闭"
 
+msgid "Close (return to VM list"
+msgstr ""
+
 msgid "Cloud Credentials"
 msgstr "云凭据"
-
-msgid "Cloud Sync Tasks"
-msgstr "云同步任务"
 
 msgid "Cloud sync <i>"
 msgstr "云同步<i>"
 
 msgid "Cluster Name"
 msgstr "集群名称"
-
-msgid "Clustering"
-msgstr ""
 
 msgid "Collection"
 msgstr "集"
@@ -3336,9 +3335,6 @@ msgstr "联系支持"
 msgid "Container"
 msgstr "容器"
 
-msgid "Containers"
-msgstr ""
-
 msgid "Content Commitment"
 msgstr "内容承诺"
 
@@ -3563,9 +3559,6 @@ msgstr "关键性"
 msgid "Cron Job"
 msgstr "计划任务"
 
-msgid "Cron Jobs"
-msgstr "计划任务"
-
 msgid ""
 "Cryptographic protocols for securing client/server connections. Select "
 "which <a href=\"https://en.wikipedia.org/wiki/Transport_Layer_Security\" "
@@ -3697,6 +3690,9 @@ msgstr "数据"
 
 msgid "Data Encipherment"
 msgstr "数据加密"
+
+msgid "Data Protection"
+msgstr ""
 
 msgid "Data Quota"
 msgstr "数据配额"
@@ -4344,9 +4340,6 @@ msgstr "禁用"
 msgid "Disabled (Not encrypted)"
 msgstr "禁用（未加密）"
 
-msgid "Disabling encryption will result in a non-encrypted dataset, continue?"
-msgstr "禁用加密将导致数据集未加密，继续吗？"
-
 msgid ""
 "Disabling hardware offloading can severely reduce network performance. "
 "Disabling this feature is only recommended when an interface is used for "
@@ -4415,9 +4408,6 @@ msgstr "显示登录"
 
 msgid "Display Note"
 msgstr "显示备注"
-
-msgid "Display System Processes"
-msgstr "系统进程"
 
 msgid "Display console messages in real time at the bottom of the browser."
 msgstr "在浏览器底部实时显示控制台消息。"
@@ -6473,7 +6463,7 @@ msgstr "用于解锁SED的全局密码。"
 msgid "Go Back to Jails"
 msgstr "转到监狱"
 
-msgid "Go Back to Virtual Machines"
+msgid "Go to ACL Manager"
 msgstr ""
 
 msgid "Go to Active Directory Form"
@@ -6543,9 +6533,6 @@ msgstr "在与该模块之间进行文件传输期间运行的组。"
 msgid "Group to which this ACL entry applies."
 msgstr "此ACL条目适用的组。"
 
-msgid "Groups"
-msgstr "群组"
-
 msgid "Guest Access"
 msgstr "来宾访问"
 
@@ -6554,9 +6541,6 @@ msgstr "来宾账户"
 
 msgid "Guest Operating System"
 msgstr "来宾操作系统"
-
-msgid "Guide"
-msgstr "指南"
 
 msgid "HA Disabled"
 msgstr "HA已禁用"
@@ -6890,9 +6874,6 @@ msgid ""
 "<i>/32</i> is  required for this value and cannot be changed."
 msgstr "用于管理访问系统的IP地址。网络掩码<i>/32</i>是此值所必需的，不能更改。"
 
-msgid "IPMI"
-msgstr "IPMI"
-
 msgid "IPMI Configuration"
 msgstr "IPMI配置"
 
@@ -7098,9 +7079,6 @@ msgstr "立即连接到TrueCommand。"
 msgid "Import"
 msgstr "导入"
 
-msgid "Import Disk"
-msgstr "导入磁盘"
-
 msgid "Import a pool that exists but is not connected."
 msgstr "导入存在但未连接的池。"
 
@@ -7190,9 +7168,6 @@ msgid "Inherits"
 msgstr "继承"
 
 msgid "Init/Shutdown Script"
-msgstr "初始化/关闭脚本"
-
-msgid "Init/Shutdown Scripts"
 msgstr "初始化/关闭脚本"
 
 msgid ""
@@ -7452,9 +7427,6 @@ msgstr "六月"
 msgid "KDC"
 msgstr "KDC"
 
-msgid "KMIP"
-msgstr "KMIP"
-
 msgid "KMIP Key Status"
 msgstr "KMIP密钥状态"
 
@@ -7483,16 +7455,10 @@ msgstr "保留此引导环境吗？"
 msgid "Kerberos Keytab"
 msgstr "Kerberos密钥表"
 
-msgid "Kerberos Keytabs"
-msgstr "Kerberos密钥表"
-
 msgid "Kerberos Principal"
 msgstr "Kerberos主体"
 
 msgid "Kerberos Realm"
-msgstr "Kerberos领域"
-
-msgid "Kerberos Realms"
 msgstr "Kerberos领域"
 
 msgid "Kerberos Settings"
@@ -7767,6 +7733,9 @@ msgstr "本地"
 msgid "Local Account"
 msgstr "本地帐号"
 
+msgid "Local Groups"
+msgstr ""
+
 msgid "Local Master"
 msgstr "本地管理员"
 
@@ -7775,6 +7744,9 @@ msgstr "本地用户下载带宽："
 
 msgid "Local User Upload Bandwidth: "
 msgstr "本地用户上传带宽："
+
+msgid "Local Users"
+msgstr ""
 
 msgid "Locality"
 msgstr "地区"
@@ -8226,6 +8198,9 @@ msgstr "此任务将在哪分钟运行。"
 
 msgid "Mirror"
 msgstr "镜像"
+
+msgid "Misc"
+msgstr ""
 
 msgid "Mixing disks of different sizes in a vdev is not allowed."
 msgstr "不允许在vdev中混合不同大小的磁盘。"
@@ -9486,9 +9461,6 @@ msgstr "插件已更新"
 msgid "Plugin installed successfully"
 msgstr "插件安装成功"
 
-msgid "Plugins"
-msgstr "插件"
-
 msgid "Pool"
 msgstr "池"
 
@@ -10149,9 +10121,6 @@ msgstr "复制 <i>"
 msgid "Replication Schedule"
 msgstr "复制计划"
 
-msgid "Replication Tasks"
-msgstr "复制任务"
-
 msgid "Report CPU Usage in Percentage"
 msgstr "报告CPU使用率（百分比）"
 
@@ -10232,6 +10201,9 @@ msgid ""
 "Reset all user preferences to their default values. (Custom themes are "
 "preserved)"
 msgstr "将所有用户首选项重置为其默认值。（保留自定义主题）"
+
+msgid "Reset configuration for "
+msgstr ""
 
 msgid "Reset font size to default value"
 msgstr "重置字体大小到默认值"
@@ -10334,6 +10306,9 @@ msgstr ""
 msgid "Retro Logo"
 msgstr "复古Logo"
 
+msgid "Return to pool list"
+msgstr ""
+
 msgid ""
 "Reveal <i>tun</i> devices for the jail with an individual devfs ruleset. "
 "Allow the creation of <i>tun</i> devices in the jail."
@@ -10393,9 +10368,6 @@ msgstr "Rsync模式"
 msgid "Rsync Module"
 msgstr ""
 
-msgid "Rsync Tasks"
-msgstr "Rsync任务"
-
 msgid "Run As User"
 msgstr "以用户身份运行"
 
@@ -10448,9 +10420,6 @@ msgid "S.M.A.R.T."
 msgstr ""
 
 msgid "S.M.A.R.T. Test"
-msgstr "S.M.A.R.T.测试"
-
-msgid "S.M.A.R.T. Tests"
 msgstr "S.M.A.R.T.测试"
 
 msgid "S.M.A.R.T. extra options"
@@ -10690,9 +10659,6 @@ msgid "Scrub Started"
 msgstr "开始清理"
 
 msgid "Scrub Task"
-msgstr "清理任务"
-
-msgid "Scrub Tasks"
 msgstr "清理任务"
 
 msgid "Scrub interval (in days)"
@@ -11381,6 +11347,9 @@ msgstr "服务停止失败"
 
 msgid "Services"
 msgstr "服务"
+
+msgid "Set ACL for this dataset"
+msgstr ""
 
 msgid "Set Frequency"
 msgstr "频率设定"
@@ -12168,8 +12137,8 @@ msgstr "共享名称"
 msgid "Share Type"
 msgstr "共享类型"
 
-msgid "Sharing"
-msgstr "共享"
+msgid "Shares"
+msgstr ""
 
 msgid "Sharing Controls"
 msgstr "共享控制"
@@ -12354,9 +12323,6 @@ msgstr ""
 msgid "Snapshot successfully taken."
 msgstr "快照已成功拍摄。"
 
-msgid "Snapshots"
-msgstr "快照"
-
 msgid ""
 "Some authentication tools default to 30 seconds and do not support custom "
 "intervals."
@@ -12523,9 +12489,6 @@ msgid ""
 msgstr ""
 "静态IPv4或IPv6地址和子网掩码。例如：<i>10.0.0.3</i>和<i>/24</i>。单击<i>ADD</i>添加另一个IP地址。单击<i>"
 "删除</ i>会删除该IP地址。"
-
-msgid "Static Routes"
-msgstr "静态路由"
 
 msgid "Stats Per Thread"
 msgstr "每线程统计"
@@ -12763,11 +12726,11 @@ msgstr "系统信息"
 msgid "System Information"
 msgstr "系统信息"
 
-msgid "System Processes"
-msgstr "系统进程"
-
 msgid "System Serial"
 msgstr "系统序列号"
+
+msgid "System Settings"
+msgstr ""
 
 msgid "System Time Zone:"
 msgstr "系统时区："
@@ -12921,9 +12884,6 @@ msgstr "任务正在运行"
 
 msgid "Task started"
 msgstr "任务已开始"
-
-msgid "Tasks"
-msgstr "任务"
 
 msgid "Team Drive ID"
 msgstr "团队驱动器ID"
@@ -13322,6 +13282,11 @@ msgid ""
 "The operation timed out. The requested resource might be offline. Check the "
 "network connection."
 msgstr "操作超时。请求的资源可能处于脱机状态。检查网络连接。"
+
+msgid ""
+"The parent of this dataset has an Access Control List (ACL). Do you want to "
+"set an ACL for this dataset using the ACL Manager? "
+msgstr ""
 
 msgid "The passwords do not match."
 msgstr "密码不匹配。"
@@ -14047,9 +14012,6 @@ msgstr "Unix NSS信息"
 msgid "Unix Primary Group"
 msgstr "Unix主要组"
 
-msgid "Unix Shares (NFS)"
-msgstr "Unix共享（NFS）"
-
 msgid "Unkeep"
 msgstr "取消保留"
 
@@ -14620,9 +14582,6 @@ msgstr "虚拟机同步"
 msgid "VMware Sync"
 msgstr "虚拟机同步"
 
-msgid "VMware-Snapshots"
-msgstr "虚拟机快照"
-
 msgid "VNC"
 msgstr "VNC"
 
@@ -14818,9 +14777,6 @@ msgstr "WebDAV"
 msgid "WebDAV Configuration"
 msgstr "WebDAV配置"
 
-msgid "WebDAV Shares"
-msgstr "WebDAV共享"
-
 msgid "WebDAV account password."
 msgstr "WebDAV账户密码。"
 
@@ -15004,9 +14960,6 @@ msgstr "Window"
 
 msgid "Windows"
 msgstr ""
-
-msgid "Windows Shares (SMB)"
-msgstr "Windows共享（SMB）"
 
 msgid "Wipe"
 msgstr "擦除"

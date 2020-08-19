@@ -93,8 +93,8 @@ export const rootRouterConfig: Routes = [{
         loadChildren: './pages/plugins/plugins.module#PluginsModule',
         data: { title: 'Plugins', breadcrumb: 'Plugins' },
       },
-      {
-        path: 'jails',
+      { // Listing partially updated for new 12.1 menu - TODO Move components, finish update ////////////////
+        path: 'virtualization',
         loadChildren: './pages/jails/jails.module#JailsModule',
         data: { title: 'Jails', breadcrumb: 'Jails' },
       },
@@ -127,6 +127,16 @@ export const rootRouterConfig: Routes = [{
         path : 'apikeys',
         loadChildren : './pages/api-keys/api-keys.module#ApiKeysModule',
         data: { title: 'API Keys', breadcrumb: 'API Keys'}
+      },
+      {
+        path : 'data-protection',
+        loadChildren : './pages/data-protection/data-protection.module#DataProtectionModule',
+        data: { title: 'Data Protection', breadcrumb: 'Data Protection'}
+      },
+      {
+        path : 'credentials',
+        loadChildren : './pages/credentials/credentials.module#CredentialsModule',
+        data: { title: 'Credentials', breadcrumb: 'Credentials'}
       },
     ]
   },

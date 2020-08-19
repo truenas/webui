@@ -81,6 +81,7 @@ import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-m
 import { EntityRowDetailsComponent } from './entity-table/entity-row-details.component';
 import { TaskScheduleListComponent } from 'app/pages/task-calendar/components/task-schedule-list/task-schedule-list.component';
 import { FormStatusComponent } from './entity-form/components/form-status/form-status.component';
+import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.component';
 
 import { TableComponent } from './table/table.component';
 
@@ -147,6 +148,7 @@ import { TableComponent } from './table/table.component';
     FormStatusComponent,
     EntityComingsoonComponent,
     TableComponent,
+    EntityDashboardComponent,
   ],
   exports: [
     EntityTemplateDirective,

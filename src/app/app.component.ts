@@ -238,7 +238,7 @@ export class AppComponent {
       const chunkFailedMessage = /Loading chunk [\d]+ failed/;
 
       if (chunkFailedMessage.test(err.message)) {
-        window.location.reload();
+        window.location.reload(true);
       }
       console.error(err);
     }

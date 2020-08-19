@@ -669,9 +669,6 @@ msgstr ""
 msgid "ACME Certificate"
 msgstr ""
 
-msgid "ACME DNS"
-msgstr ""
-
 msgid "ACME DNS Authenticators"
 msgstr ""
 
@@ -797,9 +794,6 @@ msgid ""
 "entry. If the selected <i>Guest Account</i>  is deleted the field resets to "
 "<i>nobody</i>."
 msgstr ""
-
-msgid "Accounts"
-msgstr "帳戶"
 
 msgid "Acoustic Level"
 msgstr "噪音位準"
@@ -1182,6 +1176,11 @@ msgid ""
 "icon (top-right) to toggle the display of built-in users."
 msgstr ""
 
+msgid ""
+"All data stored in this dataset will be decrypted and the dataset marked  "
+"as non-encrypted. Do you want to continue?"
+msgstr ""
+
 msgid "All dirs"
 msgstr "所有資料夾"
 
@@ -1480,6 +1479,12 @@ msgstr ""
 msgid "Amount of locked memory in bytes for the jail."
 msgstr ""
 
+msgid ""
+"An ACL is detected on the selected path but <i>Enable ACL</i> is not "
+"selected for this share.  ACLs must be stripped from the dataset prior to "
+"creating an SMB share."
+msgstr ""
+
 msgid "An ACL is present in this path"
 msgstr ""
 
@@ -1515,9 +1520,6 @@ msgid ""
 "connectpath **must** be preset before a client connects."
 msgstr ""
 
-msgid "Apple Shares (AFP)"
-msgstr "Apple 共用 (AFP)"
-
 msgid "Application Credential ID"
 msgstr ""
 
@@ -1528,6 +1530,9 @@ msgid "Application Credential Secret"
 msgstr ""
 
 msgid "Application Key"
+msgstr ""
+
+msgid "Applications"
 msgstr ""
 
 msgid "Apply"
@@ -1835,6 +1840,9 @@ msgstr ""
 msgid "Background 2"
 msgstr ""
 
+msgid "Backup Credentials"
+msgstr ""
+
 msgid "Bandwidth"
 msgstr ""
 
@@ -1919,9 +1927,6 @@ msgstr "繫結至"
 
 msgid "Bind to Port"
 msgstr "繫結至連接埠"
-
-msgid "Block Shares (iSCSI)"
-msgstr "Block 共用 (iSCSI)"
 
 msgid "Block Size"
 msgstr "區塊大小"
@@ -2103,9 +2108,6 @@ msgid ""
 "(OTP)  will be required to sign into this system. Be sure to immediately "
 "set up another two-factor device."
 msgstr ""
-
-msgid "CAs"
-msgstr "憑證授權中心 (CA)"
 
 msgid "CC"
 msgstr ""
@@ -2785,20 +2787,17 @@ msgstr "再製到新資料集"
 msgid "Close"
 msgstr "關閉"
 
+msgid "Close (return to VM list"
+msgstr ""
+
 msgid "Cloud Credentials"
 msgstr "雲端憑證"
-
-msgid "Cloud Sync Tasks"
-msgstr "雲端同步作業"
 
 msgid "Cloud sync <i>"
 msgstr ""
 
 msgid "Cluster Name"
 msgstr "叢集名稱"
-
-msgid "Clustering"
-msgstr ""
 
 msgid "Collection"
 msgstr ""
@@ -3069,9 +3068,6 @@ msgstr "連繫支援"
 msgid "Container"
 msgstr "容器"
 
-msgid "Containers"
-msgstr ""
-
 msgid "Content Commitment"
 msgstr ""
 
@@ -3279,9 +3275,6 @@ msgstr ""
 msgid "Cron Job"
 msgstr ""
 
-msgid "Cron Jobs"
-msgstr "例行作業 (Cron Jobs)"
-
 msgid ""
 "Cryptographic protocols for securing client/server connections. Select "
 "which <a href=\"https://en.wikipedia.org/wiki/Transport_Layer_Security\" "
@@ -3405,6 +3398,9 @@ msgid "Data"
 msgstr ""
 
 msgid "Data Encipherment"
+msgstr ""
+
+msgid "Data Protection"
 msgstr ""
 
 msgid "Data Quota"
@@ -4002,9 +3998,6 @@ msgstr ""
 msgid "Disabled (Not encrypted)"
 msgstr ""
 
-msgid "Disabling encryption will result in a non-encrypted dataset, continue?"
-msgstr ""
-
 msgid ""
 "Disabling hardware offloading can severely reduce network performance. "
 "Disabling this feature is only recommended when an interface is used for "
@@ -4073,9 +4066,6 @@ msgstr "顯示登入畫面"
 
 msgid "Display Note"
 msgstr ""
-
-msgid "Display System Processes"
-msgstr "顯示系統程序"
 
 msgid "Display console messages in real time at the bottom of the browser."
 msgstr ""
@@ -5981,7 +5971,7 @@ msgstr ""
 msgid "Go Back to Jails"
 msgstr "回到 Jails"
 
-msgid "Go Back to Virtual Machines"
+msgid "Go to ACL Manager"
 msgstr ""
 
 msgid "Go to Active Directory Form"
@@ -6049,9 +6039,6 @@ msgstr ""
 msgid "Group to which this ACL entry applies."
 msgstr ""
 
-msgid "Groups"
-msgstr "群組"
-
 msgid "Guest Access"
 msgstr "來賓存取"
 
@@ -6060,9 +6047,6 @@ msgstr "來賓帳號"
 
 msgid "Guest Operating System"
 msgstr "Guest 作業系統"
-
-msgid "Guide"
-msgstr "使用說明"
 
 msgid "HA Disabled"
 msgstr "HA 已停用"
@@ -6387,9 +6371,6 @@ msgid ""
 "<i>/32</i> is  required for this value and cannot be changed."
 msgstr ""
 
-msgid "IPMI"
-msgstr ""
-
 msgid "IPMI Configuration"
 msgstr "IPMI 組態"
 
@@ -6581,9 +6562,6 @@ msgstr ""
 msgid "Import"
 msgstr "匯入"
 
-msgid "Import Disk"
-msgstr "匯入磁碟"
-
 msgid "Import a pool that exists but is not connected."
 msgstr ""
 
@@ -6672,9 +6650,6 @@ msgstr "繼程"
 
 msgid "Init/Shutdown Script"
 msgstr ""
-
-msgid "Init/Shutdown Scripts"
-msgstr "開機/關機 指令碼"
 
 msgid ""
 "Initial secret authentication key.  When an authentication key is not set, "
@@ -6914,9 +6889,6 @@ msgstr ""
 msgid "KDC"
 msgstr ""
 
-msgid "KMIP"
-msgstr ""
-
 msgid "KMIP Key Status"
 msgstr ""
 
@@ -6945,16 +6917,10 @@ msgstr ""
 msgid "Kerberos Keytab"
 msgstr ""
 
-msgid "Kerberos Keytabs"
-msgstr ""
-
 msgid "Kerberos Principal"
 msgstr ""
 
 msgid "Kerberos Realm"
-msgstr ""
-
-msgid "Kerberos Realms"
 msgstr ""
 
 msgid "Kerberos Settings"
@@ -7215,6 +7181,9 @@ msgstr "本機"
 msgid "Local Account"
 msgstr "本機帳戶"
 
+msgid "Local Groups"
+msgstr ""
+
 msgid "Local Master"
 msgstr ""
 
@@ -7223,6 +7192,9 @@ msgstr "本機使用者下載頻寬"
 
 msgid "Local User Upload Bandwidth: "
 msgstr "本機使用者上傳頻寬"
+
+msgid "Local Users"
+msgstr ""
 
 msgid "Locality"
 msgstr "位置"
@@ -7648,6 +7620,9 @@ msgid "Minutes when this task will run."
 msgstr ""
 
 msgid "Mirror"
+msgstr ""
+
+msgid "Misc"
 msgstr ""
 
 msgid "Mixing disks of different sizes in a vdev is not allowed."
@@ -8831,9 +8806,6 @@ msgstr "外掛已更新"
 msgid "Plugin installed successfully"
 msgstr "外掛已經安裝成功"
 
-msgid "Plugins"
-msgstr "外掛"
-
 msgid "Pool"
 msgstr "儲存集區"
 
@@ -9462,9 +9434,6 @@ msgstr "複寫 <i>"
 msgid "Replication Schedule"
 msgstr ""
 
-msgid "Replication Tasks"
-msgstr "複寫作業"
-
 msgid "Report CPU Usage in Percentage"
 msgstr ""
 
@@ -9544,6 +9513,9 @@ msgstr ""
 msgid ""
 "Reset all user preferences to their default values. (Custom themes are "
 "preserved)"
+msgstr ""
+
+msgid "Reset configuration for "
 msgstr ""
 
 msgid "Reset font size to default value"
@@ -9639,6 +9611,9 @@ msgstr ""
 msgid "Retro Logo"
 msgstr ""
 
+msgid "Return to pool list"
+msgstr ""
+
 msgid ""
 "Reveal <i>tun</i> devices for the jail with an individual devfs ruleset. "
 "Allow the creation of <i>tun</i> devices in the jail."
@@ -9698,9 +9673,6 @@ msgstr ""
 msgid "Rsync Module"
 msgstr ""
 
-msgid "Rsync Tasks"
-msgstr "Rsync 作業"
-
 msgid "Run As User"
 msgstr ""
 
@@ -9752,9 +9724,6 @@ msgstr ""
 
 msgid "S.M.A.R.T. Test"
 msgstr "S.M.A.R.T 測試"
-
-msgid "S.M.A.R.T. Tests"
-msgstr "S.M.A.R.T. 測試"
 
 msgid "S.M.A.R.T. extra options"
 msgstr "S.M.A.R.T. 額外選項"
@@ -9994,9 +9963,6 @@ msgstr ""
 
 msgid "Scrub Task"
 msgstr ""
-
-msgid "Scrub Tasks"
-msgstr "Scrub 作業"
 
 msgid "Scrub interval (in days)"
 msgstr ""
@@ -10651,6 +10617,9 @@ msgstr "服務停止失敗"
 
 msgid "Services"
 msgstr "服務"
+
+msgid "Set ACL for this dataset"
+msgstr ""
 
 msgid "Set Frequency"
 msgstr ""
@@ -11363,8 +11332,8 @@ msgstr "共用名稱"
 msgid "Share Type"
 msgstr "共用類型"
 
-msgid "Sharing"
-msgstr "共用"
+msgid "Shares"
+msgstr ""
 
 msgid "Sharing Controls"
 msgstr ""
@@ -11544,9 +11513,6 @@ msgstr ""
 msgid "Snapshot successfully taken."
 msgstr ""
 
-msgid "Snapshots"
-msgstr "快照"
-
 msgid ""
 "Some authentication tools default to 30 seconds and do not support custom "
 "intervals."
@@ -11709,9 +11675,6 @@ msgid ""
 "<i>/24</i>. Click <i>ADD</i> to add another  IP address. Clicking "
 "<i>DELETE</i> removes that IP address."
 msgstr ""
-
-msgid "Static Routes"
-msgstr "靜態路由"
 
 msgid "Stats Per Thread"
 msgstr ""
@@ -11947,11 +11910,11 @@ msgstr "系統資訊"
 msgid "System Information"
 msgstr "系統資訊"
 
-msgid "System Processes"
-msgstr "系統程序"
-
 msgid "System Serial"
 msgstr "系統序號"
+
+msgid "System Settings"
+msgstr ""
 
 msgid "System Time Zone:"
 msgstr "系統時區："
@@ -12103,9 +12066,6 @@ msgstr "作業執行中"
 
 msgid "Task started"
 msgstr ""
-
-msgid "Tasks"
-msgstr "作業"
 
 msgid "Team Drive ID"
 msgstr ""
@@ -12479,6 +12439,11 @@ msgstr ""
 msgid ""
 "The operation timed out. The requested resource might be offline. Check the "
 "network connection."
+msgstr ""
+
+msgid ""
+"The parent of this dataset has an Access Control List (ACL). Do you want to "
+"set an ACL for this dataset using the ACL Manager? "
 msgstr ""
 
 msgid "The passwords do not match."
@@ -13169,9 +13134,6 @@ msgstr ""
 msgid "Unix Primary Group"
 msgstr ""
 
-msgid "Unix Shares (NFS)"
-msgstr "Unix 共用 (NFS)"
-
 msgid "Unkeep"
 msgstr ""
 
@@ -13702,9 +13664,6 @@ msgstr "VMWare 同步"
 msgid "VMware Sync"
 msgstr ""
 
-msgid "VMware-Snapshots"
-msgstr "VMWare 快照"
-
 msgid "VNC"
 msgstr ""
 
@@ -13900,9 +13859,6 @@ msgstr ""
 msgid "WebDAV Configuration"
 msgstr ""
 
-msgid "WebDAV Shares"
-msgstr "WebDAV 共用"
-
 msgid "WebDAV account password."
 msgstr "WebDAV 帳戶密碼。"
 
@@ -14066,9 +14022,6 @@ msgstr ""
 
 msgid "Windows"
 msgstr ""
-
-msgid "Windows Shares (SMB)"
-msgstr "Windows 共用 (SMB)"
 
 msgid "Wipe"
 msgstr "抹除"

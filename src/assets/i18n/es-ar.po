@@ -931,9 +931,6 @@ msgstr ""
 msgid "ACME Certificate"
 msgstr "Certificado ACME"
 
-msgid "ACME DNS"
-msgstr "DNS ACME"
-
 msgid "ACME DNS Authenticators"
 msgstr "Autenticadores DNS ACME"
 
@@ -1079,9 +1076,6 @@ msgstr ""
 "agregue una nueva entrada para la cuenta de invitado elegida y configure "
 "los permisos en esa entrada. Si se elimina la <i>Cuenta de invitado</i> "
 "seleccionada, el campo se restablece a <i>nobody</i>."
-
-msgid "Accounts"
-msgstr "Cuentas"
 
 msgid "Acoustic Level"
 msgstr "Nivel Acústico"
@@ -1548,6 +1542,11 @@ msgstr ""
 "predeterminada. Use el ícono de ajustes (arriba a la derecha) para alternar "
 "la visualización de los usuarios integrados."
 
+msgid ""
+"All data stored in this dataset will be decrypted and the dataset marked  "
+"as non-encrypted. Do you want to continue?"
+msgstr ""
+
 msgid "All dirs"
 msgstr "Todos los directorios"
 
@@ -1956,6 +1955,12 @@ msgstr ""
 msgid "Amount of locked memory in bytes for the jail."
 msgstr "Cantidad de memoria bloqueada en bytes para la jaula."
 
+msgid ""
+"An ACL is detected on the selected path but <i>Enable ACL</i> is not "
+"selected for this share.  ACLs must be stripped from the dataset prior to "
+"creating an SMB share."
+msgstr ""
+
 msgid "An ACL is present in this path"
 msgstr "Un ACL está presente en esta ruta"
 
@@ -2000,9 +2005,6 @@ msgstr ""
 "compatibles . Connectpath **debe** estar preestablecido antes de que un "
 "cliente se conecte."
 
-msgid "Apple Shares (AFP)"
-msgstr "Comparticiones Apple (AFP)"
-
 msgid "Application Credential ID"
 msgstr "ID de credencial de la aplicación"
 
@@ -2014,6 +2016,9 @@ msgstr "Credencial secreta de la aplicación"
 
 msgid "Application Key"
 msgstr "Clave de la aplicación"
+
+msgid "Applications"
+msgstr ""
 
 msgid "Apply"
 msgstr "Aplicar"
@@ -2373,6 +2378,9 @@ msgstr "Fondo 1"
 msgid "Background 2"
 msgstr "Fondo 2"
 
+msgid "Backup Credentials"
+msgstr ""
+
 msgid "Bandwidth"
 msgstr "Ancho de banda"
 
@@ -2457,9 +2465,6 @@ msgstr "Enlazar a"
 
 msgid "Bind to Port"
 msgstr "Enlazar al Puerto"
-
-msgid "Block Shares (iSCSI)"
-msgstr "Compartición de bloques (iSCSI)"
 
 msgid "Block Size"
 msgstr "Tamaño de bloque"
@@ -2690,9 +2695,6 @@ msgstr ""
 "requerirá una contraseña de un solo uso (OTP) para iniciar sesión en este "
 "sistema. Asegúrese de configurar de inmediato otro dispositivo de dos "
 "factores."
-
-msgid "CAs"
-msgstr "CAs"
 
 msgid "CC"
 msgstr "CC"
@@ -3557,20 +3559,17 @@ msgstr "Clonar a un nuevo conjunto de datos"
 msgid "Close"
 msgstr "Cerrar"
 
+msgid "Close (return to VM list"
+msgstr ""
+
 msgid "Cloud Credentials"
 msgstr "Credenciales en la nube"
-
-msgid "Cloud Sync Tasks"
-msgstr "Tareas de sincronización en la nube"
 
 msgid "Cloud sync <i>"
 msgstr "Sincronización en la nube <i>"
 
 msgid "Cluster Name"
 msgstr "Nombre del clúster"
-
-msgid "Clustering"
-msgstr "Agrupamiento"
 
 msgid "Collection"
 msgstr "Colección"
@@ -3895,9 +3894,6 @@ msgstr "Contacto de soporte"
 msgid "Container"
 msgstr "Contenedor"
 
-msgid "Containers"
-msgstr "Contenedores"
-
 msgid "Content Commitment"
 msgstr "Compromiso de contenido"
 
@@ -4134,9 +4130,6 @@ msgstr "Critica"
 msgid "Cron Job"
 msgstr "Cron Job"
 
-msgid "Cron Jobs"
-msgstr "Trabajos Cron"
-
 msgid ""
 "Cryptographic protocols for securing client/server connections. Select "
 "which <a href=\"https://en.wikipedia.org/wiki/Transport_Layer_Security\" "
@@ -4285,6 +4278,9 @@ msgstr "Datos"
 
 msgid "Data Encipherment"
 msgstr "Cifrado de datos"
+
+msgid "Data Protection"
+msgstr ""
 
 msgid "Data Quota"
 msgstr "Cuota de datos"
@@ -5027,11 +5023,6 @@ msgstr "Deshabilitado"
 msgid "Disabled (Not encrypted)"
 msgstr "Deshabilitado (Sin encriptación)"
 
-msgid "Disabling encryption will result in a non-encrypted dataset, continue?"
-msgstr ""
-"Deshabilitar el cifrado dará como resultado un conjunto de datos no "
-"cifrado, ¿continuar?"
-
 msgid ""
 "Disabling hardware offloading can severely reduce network performance. "
 "Disabling this feature is only recommended when an interface is used for "
@@ -5104,9 +5095,6 @@ msgstr "Mostrar inicio de sesión"
 
 msgid "Display Note"
 msgstr "Mostrar nota"
-
-msgid "Display System Processes"
-msgstr "Procesos del Sistema"
 
 msgid "Display console messages in real time at the bottom of the browser."
 msgstr ""
@@ -7500,8 +7488,8 @@ msgstr "Contraseña global para desbloquear SED."
 msgid "Go Back to Jails"
 msgstr "Volver a las jaulas"
 
-msgid "Go Back to Virtual Machines"
-msgstr "Volver a Máquinas Virtuales"
+msgid "Go to ACL Manager"
+msgstr ""
 
 msgid "Go to Active Directory Form"
 msgstr "Ir al formulario de Active Directory"
@@ -7576,9 +7564,6 @@ msgstr ""
 msgid "Group to which this ACL entry applies."
 msgstr "Grupo al que se aplica esta entrada de ACL."
 
-msgid "Groups"
-msgstr "Grupos"
-
 msgid "Guest Access"
 msgstr "Acceso de invitado"
 
@@ -7587,9 +7572,6 @@ msgstr "Cuenta de invitado"
 
 msgid "Guest Operating System"
 msgstr "Sistema operativo invitado"
-
-msgid "Guide"
-msgstr "Guía"
 
 msgid "HA Disabled"
 msgstr "HA deshabilitado"
@@ -7986,9 +7968,6 @@ msgstr ""
 "máscara de red <i>/32</i> es necesaria para este valor y no se puede "
 "cambiar."
 
-msgid "IPMI"
-msgstr "IPMI"
-
 msgid "IPMI Configuration"
 msgstr "Configuración de IPMI"
 
@@ -8221,9 +8200,6 @@ msgstr "Conectar de inmediato a TrueCommand."
 msgid "Import"
 msgstr "Importar"
 
-msgid "Import Disk"
-msgstr "Importar disco"
-
 msgid "Import a pool that exists but is not connected."
 msgstr "Importe un grupo que existe pero que no está conectado."
 
@@ -8328,9 +8304,6 @@ msgstr "Hereda"
 
 msgid "Init/Shutdown Script"
 msgstr "Script de inicio/apagado"
-
-msgid "Init/Shutdown Scripts"
-msgstr "Scripts de inicio/apagado"
 
 msgid ""
 "Initial secret authentication key.  When an authentication key is not set, "
@@ -8618,9 +8591,6 @@ msgstr "Junio"
 msgid "KDC"
 msgstr "KDC"
 
-msgid "KMIP"
-msgstr "KMIP"
-
 msgid "KMIP Key Status"
 msgstr "Estado de clave KMIP"
 
@@ -8653,17 +8623,11 @@ msgstr "¿Mantener este entorno de arranque?"
 msgid "Kerberos Keytab"
 msgstr "Tab.Cla Kerberos "
 
-msgid "Kerberos Keytabs"
-msgstr "Kerberos Keytabs"
-
 msgid "Kerberos Principal"
 msgstr "Principal Kerberos"
 
 msgid "Kerberos Realm"
 msgstr "Reino Kerberos"
-
-msgid "Kerberos Realms"
-msgstr "Reinos Kerberos"
 
 msgid "Kerberos Settings"
 msgstr "Configuración de Kerberos"
@@ -8961,6 +8925,9 @@ msgstr "Local"
 msgid "Local Account"
 msgstr "Cuenta local"
 
+msgid "Local Groups"
+msgstr ""
+
 msgid "Local Master"
 msgstr "Maestro local"
 
@@ -8969,6 +8936,9 @@ msgstr "Ancho de banda de descarga de usuario local"
 
 msgid "Local User Upload Bandwidth: "
 msgstr "Ancho de banda de carga de usuario local: "
+
+msgid "Local Users"
+msgstr ""
 
 msgid "Locality"
 msgstr "Localidad"
@@ -9468,6 +9438,9 @@ msgstr "Minutos cuando se ejecutará esta tarea."
 
 msgid "Mirror"
 msgstr "Espejo"
+
+msgid "Misc"
+msgstr ""
 
 msgid "Mixing disks of different sizes in a vdev is not allowed."
 msgstr "No se permite mezclar discos de diferentes tamaños en un vdev."
@@ -10887,9 +10860,6 @@ msgstr "Complementos actualizados"
 msgid "Plugin installed successfully"
 msgstr "Complemento instalado correctamente"
 
-msgid "Plugins"
-msgstr "Complementos"
-
 msgid "Pool"
 msgstr "Pool"
 
@@ -11634,9 +11604,6 @@ msgstr "Replicación <i>"
 msgid "Replication Schedule"
 msgstr "Horario de replicación"
 
-msgid "Replication Tasks"
-msgstr "Tareas de replicación"
-
 msgid "Report CPU Usage in Percentage"
 msgstr "Informar uso de CPU en porcentaje"
 
@@ -11729,6 +11696,9 @@ msgid ""
 msgstr ""
 "Restablezca todas las preferencias del usuario a sus valores "
 "predeterminados. (Se conservan los temas personalizados)"
+
+msgid "Reset configuration for "
+msgstr ""
 
 msgid "Reset font size to default value"
 msgstr "Restablecer tamaño de fuente al valor predeterminado"
@@ -11843,6 +11813,9 @@ msgstr ""
 msgid "Retro Logo"
 msgstr "Logotipo retro"
 
+msgid "Return to pool list"
+msgstr ""
+
 msgid ""
 "Reveal <i>tun</i> devices for the jail with an individual devfs ruleset. "
 "Allow the creation of <i>tun</i> devices in the jail."
@@ -11907,9 +11880,6 @@ msgstr "Modo Rsync"
 msgid "Rsync Module"
 msgstr ""
 
-msgid "Rsync Tasks"
-msgstr "Tareas Rsync"
-
 msgid "Run As User"
 msgstr "Ejecutar como usuario"
 
@@ -11969,9 +11939,6 @@ msgstr ""
 
 msgid "S.M.A.R.T. Test"
 msgstr "Prueba S.M.A.R.T."
-
-msgid "S.M.A.R.T. Tests"
-msgstr "Pruebas S.M.A.R.T."
 
 msgid "S.M.A.R.T. extra options"
 msgstr "Opciones extra de S.M.A.R.T."
@@ -12215,9 +12182,6 @@ msgstr "Scrub Iniciado"
 
 msgid "Scrub Task"
 msgstr "Tarea Scrub"
-
-msgid "Scrub Tasks"
-msgstr "Tareas Scrub"
 
 msgid "Scrub interval (in days)"
 msgstr "Intervalo de Scrub (en días)"
@@ -13066,6 +13030,9 @@ msgstr "El servicio no pudo detenerse"
 
 msgid "Services"
 msgstr "Servicios"
+
+msgid "Set ACL for this dataset"
+msgstr ""
 
 msgid "Set Frequency"
 msgstr "Establecer frecuencia"
@@ -14099,8 +14066,8 @@ msgstr "Nombre de compartición"
 msgid "Share Type"
 msgstr "Tipo de compartición"
 
-msgid "Sharing"
-msgstr "Compartir"
+msgid "Shares"
+msgstr ""
 
 msgid "Sharing Controls"
 msgstr "Compartir controles"
@@ -14311,9 +14278,6 @@ msgstr ""
 msgid "Snapshot successfully taken."
 msgstr "Instantánea tomada con éxito."
 
-msgid "Snapshots"
-msgstr "Instantáneas"
-
 msgid ""
 "Some authentication tools default to 30 seconds and do not support custom "
 "intervals."
@@ -14514,9 +14478,6 @@ msgstr ""
 "Dirección IPv4 o IPv6 estática y máscara de subred. Ejemplo: "
 "<i>10.0.0.3</i> y <i>/24</i>. Haga clic en <i>AÑADIR</i> para agregar otra "
 "dirección IP. Al hacer clic en <i>ELIMINAR</i>, se borra esa dirección IP."
-
-msgid "Static Routes"
-msgstr "Rutas estáticas"
 
 msgid "Stats Per Thread"
 msgstr "Estadísticas por hilo"
@@ -14768,11 +14729,11 @@ msgstr "Info del sistema"
 msgid "System Information"
 msgstr "Información del sistema"
 
-msgid "System Processes"
-msgstr "Procesos del sistema"
-
 msgid "System Serial"
 msgstr "Sistema en serie"
+
+msgid "System Settings"
+msgstr ""
 
 msgid "System Time Zone:"
 msgstr "Zona horaria del sistema:"
@@ -14935,9 +14896,6 @@ msgstr "La tarea se está ejecutando"
 
 msgid "Task started"
 msgstr "Tarea iniciada"
-
-msgid "Tasks"
-msgstr "Tareas"
 
 msgid "Team Drive ID"
 msgstr "ID de unidad de equipo"
@@ -15461,6 +15419,11 @@ msgid ""
 msgstr ""
 "La operación expiró. El recurso solicitado puede estar fuera de línea. "
 "Verifique la conexión de red."
+
+msgid ""
+"The parent of this dataset has an Access Control List (ACL). Do you want to "
+"set an ACL for this dataset using the ACL Manager? "
+msgstr ""
 
 msgid "The passwords do not match."
 msgstr "Las contraseñas no coinciden."
@@ -16348,9 +16311,6 @@ msgstr "Información de Unix NSS"
 msgid "Unix Primary Group"
 msgstr "Grupo primario de Unix"
 
-msgid "Unix Shares (NFS)"
-msgstr "Comparticiones Unix (NFS)"
-
 msgid "Unkeep"
 msgstr "No mantener"
 
@@ -17003,9 +16963,6 @@ msgstr "Sincronización VMWare"
 msgid "VMware Sync"
 msgstr "Sincronización VMware"
 
-msgid "VMware-Snapshots"
-msgstr "Instantáneas-VMware"
-
 msgid "VNC"
 msgstr "VNC"
 
@@ -17213,9 +17170,6 @@ msgstr "WebDAV"
 
 msgid "WebDAV Configuration"
 msgstr "Configuración WebDAV"
-
-msgid "WebDAV Shares"
-msgstr "Comparticiones de WebDAV"
 
 msgid "WebDAV account password."
 msgstr "Contraseña de la cuenta WebDAV."
@@ -17443,9 +17397,6 @@ msgstr "Ventana"
 
 msgid "Windows"
 msgstr "Windows"
-
-msgid "Windows Shares (SMB)"
-msgstr "Recursos compartidos de Windows (SMB)"
 
 msgid "Wipe"
 msgstr "Limpiar"

@@ -192,12 +192,13 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         options: [{label: '---', value: null}]
       },
       {
-        type: 'input',
+        type: 'select',
         name: 'failover_vhid',
         placeholder: helptext.failover_vhid_placeholder,
         tooltip: helptext.failover_vhid_tooltip,
         isHidden: true,
         disabled: true,
+        options: [{label: '---', value: null}]
       },
     ]},
     {
@@ -309,6 +310,11 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   //
   protected ipListControl: any;
   protected failover_group: any;
+  protected failover_vhid: any;
+
+  public save_button_enabled: boolean;
+
+  protected aliases_subscription: any;
   //
   public confirmSubmit = false;
   public confirmSubmitDialog = {
@@ -369,8 +375,13 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     this.type = _.find(this.fieldConfig, {'name' : 'type'});
     this.ipListControl = _.find(this.fieldConfig, {'name' : 'aliases'});
     this.failover_group = _.find(this.fieldConfig, {'name': 'failover_group'});
+    this.failover_vhid = _.find(this.fieldConfig, {'name': 'failover_vhid'});
     for (let i = 1; i <= 32; i++) {
       this.failover_group.options.push({label:i, value:i});
+    }
+
+    for (let i = 1; i <= 255; i++) {
+      this.failover_vhid.options.push({label:i, value:i});
     }
 
     if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
@@ -421,6 +432,30 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         for (let i = 0; i < this.failover_fields.length; i++) {
           entityForm.setDisabled(this.failover_fields[i], !is_ha, !is_ha);
         }
+        if (is_ha) {
+          this.aliases_subscription = this.entityForm.formGroup.controls['aliases'].valueChanges.subscribe(res => {
+            let mismatch_found = false;
+            for (let i = 0; i < res.length; i++) {
+              const alias = res[i];
+              const address = alias['address']
+              const failover_address = alias['failover_address'];
+              const virtual_address = alias['failover_virtual_address'];
+              if (!(address && failover_address && virtual_address) && !(!address && !failover_address && !virtual_address)) {
+                mismatch_found = true;
+              }
+            }
+
+            if (mismatch_found) {
+              this.aliases_fc.hasErrors = true;
+              this.aliases_fc.errors = helptext.failover_alias_set_error;
+              this.save_button_enabled = false;
+            } else {
+              this.aliases_fc.hasErrors = false;
+              this.aliases_fc.errors = '';
+              this.save_button_enabled = true;
+            }
+          });
+        }
       });
     }
     if (entityForm.isNew) {
@@ -469,13 +504,14 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           aliases.push({address:strings[0],
                         netmask:parseInt(strings[1],10)});
         }
-        if (!!data.aliases[i]['failover_address'] &&
-            !!data.aliases[i]['failover_virtual_address']) {
+        if (!!data.aliases[i]['failover_address']) {
           const f_strings = data.aliases[i]['failover_address'].split('/');
           if (f_strings[0]) {
             failover_aliases.push({address:f_strings[0],
                           netmask:parseInt(f_strings[1],10)});
           }
+        }
+        if (!!data.aliases[i]['failover_virtual_address']) {
           const fv_strings = data.aliases[i]['failover_virtual_address'].split('/');
           if (fv_strings[0]) {
             failover_virtual_aliases.push({address:fv_strings[0],
@@ -543,6 +579,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   ngOnDestroy() {
     if (this.type_subscription) {
       this.type_subscription.unsubscribe();
+    }
+    if (this.aliases_subscription) {
+      this.aliases_subscription.unsubscribe();
     }
   }
 }

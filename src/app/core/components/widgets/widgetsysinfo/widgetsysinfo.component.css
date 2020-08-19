@@ -25,6 +25,11 @@
   color:#efefef;
 }
 
+.widget .left button.mat-button{
+  background-color: var(--primary) !important;
+  color: var(--primary-txt) !important;
+}
+
 .view-overview .mat-card-title-text{
   margin-left:calc(40% + 16px) !important;
 }
@@ -76,8 +81,9 @@ span.passive{
 }
 
 .slide.overview .left{
-  background-color:var(--primary);
-  color:#efefef;
+  /*background-color:var(--primary);*/
+  /*background-color:var(--contrast-darker);
+  color: var(--fg2);*/
   position:relative;
   padding:0;
 }
