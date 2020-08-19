@@ -17,6 +17,10 @@ export class EntityDashboardComponent implements OnInit {
 	protected freenas_exclude = ['failover', 'viewenclosure'];
 	protected truenas_exclude = ['acmedns'];
 	protected scale_exclude = ['nis', 'multipaths']
+	protected enterpriseOnly= ['viewenclosure'];
+
+	productType = window.localStorage.getItem('product_type');
+
 	constructor(
 				protected ws: WebSocketService,
 				protected router: Router,
@@ -40,8 +44,11 @@ export class EntityDashboardComponent implements OnInit {
 		}
 		
 		let exclude = [];
-			if (window.localStorage.getItem('product_type').includes('SCALE')) {
+			if (this.productType.includes('SCALE')) {
 				exclude = exclude.concat(this.scale_exclude);
+			}
+			if (!this.productType.includes('ENTERPRISE')) {
+				exclude = exclude.concat(this.enterpriseOnly);
 			}
 		// if (window.localStorage.getItem('is_freenas') === 'false') {
 		// 	exclude = exclude.concat(this.truenas_exclude);

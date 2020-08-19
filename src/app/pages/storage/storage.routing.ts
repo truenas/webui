@@ -32,6 +32,7 @@ import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/datase
 import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 import { DatasetPosixAclComponent } from './volumes/datasets/dataset-posix-acl/';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
+import { ViewEnclosureComponent } from 'app/pages/system/viewenclosure/view-enclosure.component';
 
 export const routes: Routes = [
   {
@@ -203,7 +204,12 @@ export const routes: Routes = [
       {
         path: 'import-disk', component: ImportDiskComponent,
         data: { title: 'Import Disk', breadcrumb: 'Import Disk', icon: 'view_stream' }
-      }
+      },
+      {
+        path: 'viewenclosure',
+        component: ViewEnclosureComponent,
+        data: { title: 'View Enclosure', breadcrumb: 'View Enclosure', icon: 'settings' },
+      },
     ]
   }
 ];
