@@ -20,6 +20,9 @@ import {IPMIComponent} from './ipmi';
 import { NetworkSummaryComponent } from './networksummary/networksummary.component';
 import {routing} from './network.routing';
 
+import { NetworkComponent } from './netwrok.component';
+import { CardWidgetComponent } from './card-widget.component';
+
 @NgModule({
   imports : [
     EntityModule, CommonModule, FormsModule,
@@ -33,6 +36,9 @@ import {routing} from './network.routing';
     ConfigurationComponent,
     IPMIComponent,
     NetworkSummaryComponent,
+    //
+    NetworkComponent,
+    CardWidgetComponent,
   ],
   providers : [NetworkService, EntityFormService, CoreService]
 })
