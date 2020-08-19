@@ -64,17 +64,18 @@ def pytest_runtest_makereport(item):
         if (report.skipped and xfail) or (report.failed and not xfail):
             screenshot_name = f'screenshot/{report.nodeid.replace("::", "_")}.png'
             # look if there is a Error window
-            error_exist = element_exist('//h1[contains(.,"Error")]')
-            if error_exist:
+            if element_exist('//h1[contains(.,"Error")]'):
                 web_driver.find_element_by_xpath('//div[@ix-auto="button__backtrace-toggle"]').click()
                 time.sleep(2)
                 traceback_name = f'screenshot/{report.nodeid.replace("::", "_")}.txt'
                 save_traceback(traceback_name)
             save_screenshot(screenshot_name)
             # Press CLOSE if exist
-            close_button_exist = element_exist('//button[@ix-auto="button__CLOSE"]')
-            if close_button_exist:
+            if element_exist('//button[@ix-auto="button__CLOSE"]'):
                 web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+            else:
+                if element_exist('//button[@ix-auto="button__I AGREE"]'):
+                    web_driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
             # if test that use disable failover make sure to enable failover back.
             if 'T0905' in screenshot_name or 'T0919' in screenshot_name or 'T0920' in screenshot_name or 'T0922' in screenshot_name:
                 if element_exist('//mat-icon[@svgicon="ha_disabled"]'):
