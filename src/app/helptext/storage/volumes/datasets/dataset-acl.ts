@@ -227,8 +227,8 @@ type_dialog: {
 },
 
 preset_dialog: {
-  message: T('The chosen preset ACL will REPLACE the ACL currently displayed in the form, \
- deleting unsaved changes.'),
+  message: T('The chosen preset ACL will REPLACE the ACL currently displayed in the form \
+ and delete any unsaved changes.'),
   button: T('Select')
 },
 
