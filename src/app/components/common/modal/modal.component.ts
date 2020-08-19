@@ -5,12 +5,12 @@ import { ModalService } from '../../../services/modal.service';
 @Component({
     selector: 'jw-modal',
     template: 
-        `<div class="jw-modal">
+        `<div [ngClass]="id==='slide-in-form' ? 'slide-in-form' : 'jw-modal'">
             <div class="jw-modal-body">
                 <ng-content></ng-content>
             </div>
         </div>
-        <div class="jw-modal-background"></div>`,
+        <div class="jw-modal-background" (click)="close()"></div>`,
     styleUrls: ['./modal.component.css'],
 
 })

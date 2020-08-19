@@ -50,6 +50,7 @@
       <div>
         <button (click)="openModal('custom-modal-1')">Open Modal 1</button>
         <button (click)="openModal('custom-modal-2')">Open Modal 2</button>
+        <button (click)="openModal('slide-in-form')">Side Form</button>
       </div>
          
     </div>
@@ -100,4 +101,9 @@
 <jw-modal id="custom-modal-2">
     <h1 style="height:1000px">A Tall Custom Modal!</h1>
     <button (click)="closeModal('custom-modal-2');">Close</button>
+</jw-modal>
+
+<jw-modal id="slide-in-form">
+  <h1>Slide-in Form</h1>
+  <button (click)="closeModal('slide-in-form');">Close</button>
 </jw-modal>

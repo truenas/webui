@@ -16,12 +16,32 @@
     overflow: auto;
 }
 
+.slide-in-form {
+    width: 400px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    /* left: 0; */
+
+    /* z-index must be higher than .jw-modal-background */
+    z-index: 1000;
+        
+    /* enables scrolling for tall modals */
+    overflow: auto;
+}
+
 .jw-modal-body {
     padding: 20px;
     background: #fff;
 
     /* margin exposes part of the modal background */
     margin: 40px;
+}
+
+.slide-in-form .jw-modal-body {
+    margin: 0;
+    height: 100vh;
 }
 
 .jw-modal-background {
