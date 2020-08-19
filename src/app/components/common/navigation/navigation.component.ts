@@ -18,7 +18,12 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
   hasIconTypeMenuItem;
   iconTypeMenuTitle:string;
   menuItems:any[];
+  menuList = document.getElementsByClassName('top-level');
+  isHighlighted: string;
+
   @Output('onStateChange') onStateChange: EventEmitter<any> = new EventEmitter();
+  @Output('onToggleMenu') onToggleMenu: EventEmitter<any> = new EventEmitter();
+  @Output('onCloseMenu') onCloseMenu: EventEmitter<any> = new EventEmitter();
 
   constructor(private navService: NavigationService, private router: Router, private ws: WebSocketService, private docsService: DocsService) {
     super();
@@ -36,43 +41,7 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
         }
       });
 
-      /* Temporarily moved to the SCALE conditional below
-      this.ws.call('multipath.query').subscribe((res)=>{
-        if (!res || res.length === 0) {
-          _.find(_.find(menuItem, {state : "storage"}).sub, {state : "multipaths"}).disabled = true;
-        }
-      });
-      */
-
-      // Temporarily hide some things in SCALE
-      if (this.productType === 'SCALE' || this.productType === 'SCALE_ENTERPRISE') {
-        _.find(_.find(menuItem, {state : "system"}).sub, {state : "kmip"}).disabled = true;
-        _.find(_.find(menuItem, {state : "directoryservice"}).sub, {state : "nis"}).disabled = true;
-        _.find(_.find(menuItem, {state : "storage"}).sub, {state : "multipaths"}).disabled = true;
-        // tunables are called sysctl in linux so we should use the routes/menus/etc that call it sysctl on scale
-        _.find(_.find(menuItem, {state : "system"}).sub, {state : "tunable"}).disabled = true;
-        _.find(_.find(menuItem, {state : "system"}).sub, {state : "sysctl"}).disabled = false;
-      } else {
-        this.ws.call('multipath.query').subscribe((res)=>{
-          if (!res || res.length === 0) {
-            _.find(_.find(menuItem, {state : "storage"}).sub, {state : "multipaths"}).disabled = true;
-          }
-        });
-        // hide clustering and containers in not SCALE
-        _.find(menuItem, {state : "clustering"}).disabled = true;
-        _.find(menuItem, {state : "containers"}).disabled = true;
-      }
-      // ====================
-
       if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
-        this.ws.call('failover.licensed').subscribe((is_ha) => {
-          if (is_ha) {
-            _.find(_.find(menuItem,
-              {name : "System"}).sub,
-              {name : "Failover"}).disabled = false;
-          }
-        });
-
         this.ws
           .call("system.feature_enabled", ["VM"])
           .pipe(filter(vmsEnabled => !vmsEnabled))
@@ -80,8 +49,6 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
             _.find(menuItem, { state: "vm" }).disabled = true;
           });
 
-        // hide acme for truenas
-        _.find(_.find(menuItem, { state: 'system' }).sub, { state : 'acmedns'}).disabled = true;
 
         for(let i = 0; i < this.navService.enterpriseFeatures.length; i++) {
           const targetMenu = this.navService.enterpriseFeatures[i];
@@ -96,20 +63,20 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
 
           if (window.localStorage.getItem('product_type') !== 'CORE') {
             // hide jail and plugins section if product type is SCALE or ENTERPRISE with jail unregistered
-            if ((evt.data.license && evt.data.license.features.indexOf('JAILS') === -1) || window.localStorage.getItem('product_type') === 'SCALE'
-            || window.localStorage.getItem('product_type') === 'SCALE_ENTERPRISE') {
-              _.find(menuItem, {state : "plugins"}).disabled = true;
-              _.find(menuItem, {state : "jails"}).disabled = true;
-            }
+            if ((evt.data.license && evt.data.license.features.indexOf('JAILS') === -1) || 
+              window.localStorage.getItem('product_type').includes('SCALE')){
+                _.find(menuItem, {state : "plugins"}).disabled = true;
+                _.find(_.find(menuItem, {state : "virtualization"}).sub, { state : 'jails' }).disabled = true;
+              }                        
           }
 
-          // set the guide url
-          if (evt.data.version) {
-              window.localStorage.setItem('running_version', evt.data['version']);
-              const docUrl = this.docsService.docReplace("--docurl--");
-              const guide = _.find(menuItem, {name: 'Guide'});
-              guide.state = docUrl;
-          }
+          // set the guide url -- temporarily(?) disabled for menuing project
+          // if (evt.data.version) {
+          //     window.localStorage.setItem('running_version', evt.data['version']);
+          //     const docUrl = this.docsService.docReplace("--docurl--");
+          //     const guide = _.find(menuItem, {name: 'Guide'});
+          //     guide.state = docUrl;
+          // }
 
           if(evt.data.features.enclosure){
             for(let i = 0; i < this.navService.hardwareFeatures.length; i++) {
@@ -117,7 +84,6 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
               _.find(_.find(menuItem, { state: targetMenu.menu }).sub, { state : targetMenu.sub}).disabled = false;
             }
           }
-
       });
 
       this.core.emit({name:"SysInfoRequest", sender:this});
@@ -136,4 +102,16 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
       Ps.update(navigationHold);
     }, 500);
   }
-}
+
+  toggleMenu(state, sub) {
+    this.onToggleMenu.emit([state, sub]);
+  }
+
+  closeMenu() {
+    this.onCloseMenu.emit();
+  }
+
+  updateHighlightedClass(state) {
+    this.isHighlighted = state;
+  }
+ }

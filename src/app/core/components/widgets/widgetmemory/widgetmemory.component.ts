@@ -2,6 +2,7 @@ import { Component, AfterViewInit, Input, ViewChild, OnDestroy, ElementRef } fro
 import { DomSanitizer, SafeHtml, SafeStyle, SafeScript, SafeUrl, SafeResourceUrl } from '@angular/platform-browser';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { MaterialModule } from 'app/appMaterial.module';
 import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
@@ -84,8 +85,13 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   
   public screenType:string = 'Desktop';
 
+  private utils: ThemeUtils;
+
   constructor(public router: Router, public translate: TranslateService, private sanitizer:DomSanitizer, public mediaObserver: MediaObserver, private el: ElementRef){
     super(translate);
+
+    this.utils = new ThemeUtils();
+
     mediaObserver.media$.subscribe((evt) =>{
       const st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
       this.screenType = st;
@@ -245,13 +251,13 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     // Create the data...
     data.forEach((item, index) => {
       const bgColor = this.colorPattern[index];
-      const bgColorType = this.themeService.getValueType(bgColor);
+      const bgColorType = this.utils.getValueType(bgColor);
 
       const borderColor = this.currentTheme.bg2;
-      const borderColorType = this.themeService.getValueType(borderColor);
+      const borderColorType = this.utils.getValueType(borderColor);
 
-      const bgRGB = bgColorType == 'hex' ? this.themeService.hexToRGB(bgColor).rgb : this.themeService.rgbToArray(bgColor);
-      const borderRGB = borderColorType == 'hex' ? this.themeService.hexToRGB(borderColor).rgb : this.themeService.rgbToArray(borderColor);
+      const bgRGB = bgColorType == 'hex' ? this.utils.hexToRGB(bgColor).rgb : this.utils.rgbToArray(bgColor);
+      const borderRGB = borderColorType == 'hex' ? this.utils.hexToRGB(borderColor).rgb : this.utils.rgbToArray(borderColor);
 
       ds.backgroundColor.push(this.rgbToString(bgRGB, 0.85));
       ds.borderColor.push(this.rgbToString(bgRGB));

@@ -89,8 +89,8 @@ export const helptext_sharing_smb = {
 
     placeholder_abe: T('Access Based Share Enumeration'),
     tooltip_abe: T('Restrict share visibility to users with read or write access\
- to the share. See <a href="https://www.freebsd.org/cgi/man.cgi?query=smb.conf"\
- target=_blank>smb.conf(5)</a>.'),
+ to the share. See the <a href="https://www.freebsd.org/cgi/man.cgi?query=smb.conf"\
+ target=_blank>smb.conf</a> manual page.'),
 
     placeholder_hostsallow: T('Hosts Allow'),
     tooltip_hostsallow: T('Enter a list of allowed hostnames or IP addresses.\
@@ -157,8 +157,8 @@ export const helptext_sharing_smb = {
     placeholder_path_suffix: T('Path Suffix'),
     tooltip_path_suffix: T('Appends a suffix to the share connection path. \
  This is used to provide unique shares on a per-user, per-computer, or per-IP address basis. \
- Suffixes can contain a macro. See \
- <a href="https://www.freebsd.org/cgi/man.cgi?query=smb.conf" target="_blank">smb.conf(5)</a> for\
+ Suffixes can contain a macro. See the \
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=smb.conf" target="_blank">smb.conf</a> manual page for \
  a list of supported macros. The connectpath **must** be preset before a client connects.'),
 
     actions_basic_mode: T('Basic Mode'),

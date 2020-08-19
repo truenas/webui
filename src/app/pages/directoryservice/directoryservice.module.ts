@@ -19,6 +19,7 @@ import { KerberosKeytabsListComponent } from './kerberoskeytabs/kerberoskeytabs-
 import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-form';
 import { IdmapListComponent } from './idmap-list/idmap-list.component';
 import { IdmapFormComponent } from './idmap-form/idmap-form.component';
+import { DirectoryservicesComponent } from './directoryservices/directoryservices.component';
 
 @NgModule({
   imports: [
@@ -36,6 +37,7 @@ import { IdmapFormComponent } from './idmap-form/idmap-form.component';
     KerberosKeytabsFormComponent,
     IdmapListComponent,
     IdmapFormComponent,
+    DirectoryservicesComponent,
   ],
   providers: [SystemGeneralService]
 }) export class DirectoryServiceModule {}

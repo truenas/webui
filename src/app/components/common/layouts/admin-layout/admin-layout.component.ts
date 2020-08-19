@@ -35,6 +35,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   public logoTextPath: string = 'assets/images/light-logo-text.svg';
   public currentTheme: string = "";
   public retroLogo: boolean = false;
+  public isOpen = false;
+  menuName: string;
+  subs:any[];
   public copyrightYear = globalHelptext.copyright_year;
   // we will just have to add to this list as more languages are added
 
@@ -287,5 +290,16 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   closeModal(id: string) {
     this.modalService.close(id);
+  }
+  
+  // For the slide-in menu
+  toggleMenu(menuInfo?) {
+    if (this.isOpen && !menuInfo || this.isOpen && menuInfo[0] === this.menuName) {
+      this.isOpen = false;
+    } else if (menuInfo) {
+        this.menuName = menuInfo[0];
+        this.subs = menuInfo[1];
+        this.isOpen = true;
+    }
   }
 }

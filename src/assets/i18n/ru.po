@@ -891,9 +891,6 @@ msgstr ""
 msgid "ACME Certificate"
 msgstr "Сертификат ACME"
 
-msgid "ACME DNS"
-msgstr ""
-
 msgid "ACME DNS Authenticators"
 msgstr ""
 
@@ -1039,9 +1036,6 @@ msgstr ""
 "гостевой учетной записи и настройте разрешения в этой записи. Если "
 "выбранная <i>Гостевая учетная запись</i> удалена, поле сбрасывается в "
 "<i>nobody</i>."
-
-msgid "Accounts"
-msgstr "Учетные записи"
 
 msgid "Acoustic Level"
 msgstr "Уровень шума"
@@ -1501,6 +1495,11 @@ msgstr ""
 "Используйте значок шестеренки (вверху справа), чтобы переключать "
 "отображение встроенных пользователей."
 
+msgid ""
+"All data stored in this dataset will be decrypted and the dataset marked  "
+"as non-encrypted. Do you want to continue?"
+msgstr ""
+
 msgid "All dirs"
 msgstr "Все каталоги"
 
@@ -1890,6 +1889,12 @@ msgstr ""
 msgid "Amount of locked memory in bytes for the jail."
 msgstr "Количество блокированной памяти в байтах для jail."
 
+msgid ""
+"An ACL is detected on the selected path but <i>Enable ACL</i> is not "
+"selected for this share.  ACLs must be stripped from the dataset prior to "
+"creating an SMB share."
+msgstr ""
+
 msgid "An ACL is present in this path"
 msgstr "ACL присутствует в этом пути"
 
@@ -1927,9 +1932,6 @@ msgid ""
 "connectpath **must** be preset before a client connects."
 msgstr ""
 
-msgid "Apple Shares (AFP)"
-msgstr "Ресурсы Apple (AFP)"
-
 msgid "Application Credential ID"
 msgstr ""
 
@@ -1941,6 +1943,9 @@ msgstr ""
 
 msgid "Application Key"
 msgstr "Ключ приложения"
+
+msgid "Applications"
+msgstr ""
 
 msgid "Apply"
 msgstr "Применить"
@@ -2285,6 +2290,9 @@ msgstr ""
 msgid "Background 2"
 msgstr ""
 
+msgid "Backup Credentials"
+msgstr ""
+
 msgid "Bandwidth"
 msgstr "Пропускная способность"
 
@@ -2369,9 +2377,6 @@ msgstr "Привязка к"
 
 msgid "Bind to Port"
 msgstr "Привязка к порту"
-
-msgid "Block Shares (iSCSI)"
-msgstr "Блочные ресурсы (iSCSI)"
 
 msgid "Block Size"
 msgstr "Размер блока"
@@ -2600,9 +2605,6 @@ msgstr ""
 "ПРЕДУПРЕЖДЕНИЕ. После включения двухфакторной аутентификации для входа в "
 "эту систему потребуется одноразовый пароль (OTP). Обязательно немедленно "
 "настройте другое двухфакторное устройство."
-
-msgid "CAs"
-msgstr "Центры сертификации"
 
 msgid "CC"
 msgstr ""
@@ -3468,17 +3470,11 @@ msgstr ""
 msgid "Cloud Credentials"
 msgstr "Облачные учетные данные"
 
-msgid "Cloud Sync Tasks"
-msgstr "Задачи облачной синхронизации"
-
 msgid "Cloud sync <i>"
 msgstr "Облачная синхронизация <i>"
 
 msgid "Cluster Name"
 msgstr "Имя кластера"
-
-msgid "Clustering"
-msgstr "Кластеризация"
 
 msgid "Collection"
 msgstr "Коллекция"
@@ -3799,9 +3795,6 @@ msgstr "Связаться с поддержкой"
 msgid "Container"
 msgstr "Контейнер"
 
-msgid "Containers"
-msgstr "Контейнеры"
-
 msgid "Content Commitment"
 msgstr ""
 
@@ -4040,9 +4033,6 @@ msgstr "Критичность"
 msgid "Cron Job"
 msgstr "Задание Cron"
 
-msgid "Cron Jobs"
-msgstr "Задания Cron"
-
 msgid ""
 "Cryptographic protocols for securing client/server connections. Select "
 "which <a href=\"https://en.wikipedia.org/wiki/Transport_Layer_Security\" "
@@ -4191,6 +4181,9 @@ msgstr "Данные"
 
 msgid "Data Encipherment"
 msgstr "Шифрование данных"
+
+msgid "Data Protection"
+msgstr ""
 
 msgid "Data Quota"
 msgstr "Квота данных"
@@ -4860,9 +4853,6 @@ msgstr "Отключено"
 msgid "Disabled (Not encrypted)"
 msgstr "Отключено (не зашифровано)"
 
-msgid "Disabling encryption will result in a non-encrypted dataset, continue?"
-msgstr "Отключение шифрования приведет к незашифрованному набору данных, продолжить?"
-
 msgid ""
 "Disabling hardware offloading can severely reduce network performance. "
 "Disabling this feature is only recommended when an interface is used for "
@@ -4934,9 +4924,6 @@ msgstr "Сообщение при входе"
 
 msgid "Display Note"
 msgstr "Показать примечание"
-
-msgid "Display System Processes"
-msgstr "Системные процессы"
 
 msgid "Display console messages in real time at the bottom of the browser."
 msgstr ""
@@ -7102,6 +7089,9 @@ msgstr "Глобальный пароль для разблокировки SED.
 msgid "Go Back to Jails"
 msgstr "Вернуться в jail'ы"
 
+msgid "Go to ACL Manager"
+msgstr ""
+
 msgid "Go to Active Directory Form"
 msgstr ""
 
@@ -7171,9 +7161,6 @@ msgstr ""
 msgid "Group to which this ACL entry applies."
 msgstr "Группа, к которой относится данная запись ACL."
 
-msgid "Groups"
-msgstr "Группы"
-
 msgid "Guest Access"
 msgstr "Гостевой доступ"
 
@@ -7182,9 +7169,6 @@ msgstr "Гостевая учетная запись"
 
 msgid "Guest Operating System"
 msgstr "Гостевая операционная система"
-
-msgid "Guide"
-msgstr "Гид"
 
 msgid "HA Disabled"
 msgstr "ВД отключена"
@@ -7547,9 +7531,6 @@ msgstr ""
 "IP-адрес для использования для административного доступа к системе. Маска "
 "сети <i>/32</i> требуется для этого значения и не может быть изменена."
 
-msgid "IPMI"
-msgstr "IPMI"
-
 msgid "IPMI Configuration"
 msgstr ""
 
@@ -7772,9 +7753,6 @@ msgstr ""
 msgid "Import"
 msgstr "Импорт"
 
-msgid "Import Disk"
-msgstr "Импорт диска"
-
 msgid "Import a pool that exists but is not connected."
 msgstr "Импортировать пул, который существует, но не подключен."
 
@@ -7875,9 +7853,6 @@ msgstr "Наследует"
 
 msgid "Init/Shutdown Script"
 msgstr ""
-
-msgid "Init/Shutdown Scripts"
-msgstr "Скрипты запуска/завершения"
 
 msgid ""
 "Initial secret authentication key.  When an authentication key is not set, "
@@ -8155,9 +8130,6 @@ msgstr "Июн"
 msgid "KDC"
 msgstr "KDC"
 
-msgid "KMIP"
-msgstr ""
-
 msgid "KMIP Key Status"
 msgstr ""
 
@@ -8190,17 +8162,11 @@ msgstr "Сохранить эту загрузочную среду?"
 msgid "Kerberos Keytab"
 msgstr "Kerberos Keytab"
 
-msgid "Kerberos Keytabs"
-msgstr "Kerberos Keytabs"
-
 msgid "Kerberos Principal"
 msgstr "Основной Kerberos"
 
 msgid "Kerberos Realm"
 msgstr "Область Kerberos"
-
-msgid "Kerberos Realms"
-msgstr "Области Kerberos"
 
 msgid "Kerberos Settings"
 msgstr "Настройки Kerberos"
@@ -8485,6 +8451,9 @@ msgstr "Локальный"
 msgid "Local Account"
 msgstr ""
 
+msgid "Local Groups"
+msgstr ""
+
 msgid "Local Master"
 msgstr "Локальный Мастер"
 
@@ -8492,6 +8461,9 @@ msgid "Local User Download Bandwidth"
 msgstr "Пропускная способность загрузки локального пользователя"
 
 msgid "Local User Upload Bandwidth: "
+msgstr ""
+
+msgid "Local Users"
 msgstr ""
 
 msgid "Locality"
@@ -8966,6 +8938,9 @@ msgstr ""
 
 msgid "Mirror"
 msgstr "Зеркало"
+
+msgid "Misc"
+msgstr ""
 
 msgid "Mixing disks of different sizes in a vdev is not allowed."
 msgstr ""
@@ -10288,9 +10263,6 @@ msgstr "Плагин обновлен"
 msgid "Plugin installed successfully"
 msgstr "Плагин успешно установлен"
 
-msgid "Plugins"
-msgstr "Плагины"
-
 msgid "Pool"
 msgstr "Пул"
 
@@ -10982,9 +10954,6 @@ msgstr "Репликация <i>"
 msgid "Replication Schedule"
 msgstr "Расписание репликации"
 
-msgid "Replication Tasks"
-msgstr "Задания репликации"
-
 msgid "Report CPU Usage in Percentage"
 msgstr ""
 
@@ -11188,6 +11157,9 @@ msgstr ""
 msgid "Retro Logo"
 msgstr ""
 
+msgid "Return to pool list"
+msgstr ""
+
 msgid ""
 "Reveal <i>tun</i> devices for the jail with an individual devfs ruleset. "
 "Allow the creation of <i>tun</i> devices in the jail."
@@ -11249,9 +11221,6 @@ msgstr ""
 msgid "Rsync Module"
 msgstr ""
 
-msgid "Rsync Tasks"
-msgstr "Задания Rsync"
-
 msgid "Run As User"
 msgstr "Запуск от имени пользователя"
 
@@ -11310,9 +11279,6 @@ msgstr ""
 
 msgid "S.M.A.R.T. Test"
 msgstr "Тест S.M.A.R.T."
-
-msgid "S.M.A.R.T. Tests"
-msgstr "Тесты S.M.A.R.T."
 
 msgid "S.M.A.R.T. extra options"
 msgstr "Дополнительные параметры S.M.A.R.T."
@@ -11556,9 +11522,6 @@ msgstr "Проверка начата"
 
 msgid "Scrub Task"
 msgstr ""
-
-msgid "Scrub Tasks"
-msgstr "Задачи проверки"
 
 msgid "Scrub interval (in days)"
 msgstr "Интервал проверки (в днях)"
@@ -12344,6 +12307,9 @@ msgstr "Не удалось остановить службу"
 
 msgid "Services"
 msgstr "Службы"
+
+msgid "Set ACL for this dataset"
+msgstr ""
 
 msgid "Set Frequency"
 msgstr ""
@@ -13314,8 +13280,8 @@ msgstr "Имя ресурса"
 msgid "Share Type"
 msgstr "Тип ресурса"
 
-msgid "Sharing"
-msgstr "Общий доступ"
+msgid "Shares"
+msgstr ""
 
 msgid "Sharing Controls"
 msgstr ""
@@ -13508,9 +13474,6 @@ msgstr ""
 msgid "Snapshot successfully taken."
 msgstr "Снимок успешно создан."
 
-msgid "Snapshots"
-msgstr "Снимки"
-
 msgid ""
 "Some authentication tools default to 30 seconds and do not support custom "
 "intervals."
@@ -13693,9 +13656,6 @@ msgstr ""
 "Статический адрес IPv4 или IPv6 и маска подсети. Пример: <i>10.0.0.3</i> и "
 "<i>/24</i>. Нажмите <i>ДОБАВИТЬ</i>, чтобы добавить другой IP-адрес. "
 "Нажатие <i>УДАЛИТЬ</i> удаляет этот IP-адрес."
-
-msgid "Static Routes"
-msgstr "Статические маршруты"
 
 msgid "Stats Per Thread"
 msgstr "Статистика на тред"
@@ -13936,11 +13896,11 @@ msgstr "Системная информация"
 msgid "System Information"
 msgstr "Системная информация"
 
-msgid "System Processes"
-msgstr "Системные процессы"
-
 msgid "System Serial"
 msgstr "Серийный номер системы"
+
+msgid "System Settings"
+msgstr ""
 
 msgid "System Time Zone:"
 msgstr ""
@@ -14096,9 +14056,6 @@ msgstr "Задача выполняется"
 
 msgid "Task started"
 msgstr "Задача запущена"
-
-msgid "Tasks"
-msgstr "Задания"
 
 msgid "Team Drive ID"
 msgstr "Идентификатор Team Drive"
@@ -14554,6 +14511,11 @@ msgid ""
 msgstr ""
 "Время операции вышло. Запрашиваемый ресурс может быть отключен. Проверьте "
 "подключение к сети."
+
+msgid ""
+"The parent of this dataset has an Access Control List (ACL). Do you want to "
+"set an ACL for this dataset using the ACL Manager? "
+msgstr ""
 
 msgid "The passwords do not match."
 msgstr "Пароли не совпадают."
@@ -15345,9 +15307,6 @@ msgstr ""
 msgid "Unix Primary Group"
 msgstr ""
 
-msgid "Unix Shares (NFS)"
-msgstr "Ресурсы Unix (NFS)"
-
 msgid "Unkeep"
 msgstr "Отпустить"
 
@@ -15953,9 +15912,6 @@ msgstr "Синхронизация VMWare"
 msgid "VMware Sync"
 msgstr "Синхронизация VMware"
 
-msgid "VMware-Snapshots"
-msgstr "VMware-Снимки"
-
 msgid "VNC"
 msgstr "VNC"
 
@@ -16157,9 +16113,6 @@ msgstr ""
 msgid "WebDAV Configuration"
 msgstr ""
 
-msgid "WebDAV Shares"
-msgstr "Ресурсы WebDAV"
-
 msgid "WebDAV account password."
 msgstr "Пароль учетной записи WebDAV."
 
@@ -16357,9 +16310,6 @@ msgstr ""
 
 msgid "Windows"
 msgstr ""
-
-msgid "Windows Shares (SMB)"
-msgstr "Ресурсы Windows (SMB)"
 
 msgid "Wipe"
 msgstr "Стереть"

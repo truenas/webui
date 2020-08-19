@@ -190,10 +190,12 @@ entity-table .mat-toolbar.mat-card-toolbar{
 }
 
 :root{
-  --light-theme-lines: rgba(0,0,0,0.15);
-  --dark-theme-lines: rgba(255,255,255,0.15);
+  --contrast-normal: var(--bg2);
+  --light-theme-lines: var(--contrast-darkest);
+  --dark-theme-lines: var(--contrast-lighter);
   --lines: var(--dark-theme-lines);
   --sidenav-width: 240px;
+  --btn-default-bg: var(--alt-bg2);
 }
 
 .borderless{
@@ -326,11 +328,13 @@ tooltip button i{
   text-transform: capitalize !important;
 }
 
-button.mat-button.btn-default, button.mat-button.mat-accent.btn-default,
+button.mat-button,
+button.mat-button.btn-default, button.mat-default,
+button.mat-button.mat-accent.btn-default,
 button.mat-flat-button,
 button.mat-button[type="button"],
 button.mat-button.mat-accent[type="button"]{
-  background-color:var(--alt-bg2) !important;
+  background-color:var(--btn-default-bg) !important;
   color:var(--fg2) !important;
 }
 
