@@ -117,17 +117,17 @@
                     <mat-icon *ngIf="poolState.topology.data.length > 0" class="next-slide">chevron_right</mat-icon>
                   </mat-list-item>
 
-                  <mat-list-item (click)="updateSlide('disks', poolState.topology.cache.length > 0, 1, 0, 'cache')" [ngClass]="{'clickable': poolState.topology.cache.length > 0}">
+                  <mat-list-item (click)="updateSlide('data', poolState.topology.cache.length > 0, 1, 0, 'cache')" [ngClass]="{'clickable': poolState.topology.cache.length > 0}">
                     <strong>{{"Caches" | translate}}: </strong>&nbsp;&nbsp; {{poolState.topology.cache.length}}
                     <mat-icon *ngIf="poolState.topology.cache.length > 0" class="next-slide">chevron_right</mat-icon>
                   </mat-list-item>
 
-                  <mat-list-item (click)="updateSlide('disks', poolState.topology.spare.length > 0, 1, 0, 'spare')" [ngClass]="{'clickable': poolState.topology.spare.length > 0}">
+                  <mat-list-item (click)="updateSlide('data', poolState.topology.spare.length > 0, 1, 0, 'spare')" [ngClass]="{'clickable': poolState.topology.spare.length > 0}">
                     <strong>{{"Spares" | translate}}: </strong>&nbsp;&nbsp; {{poolState.topology.spare.length}}
                     <mat-icon *ngIf="poolState.topology.spare.length > 0" class="next-slide">chevron_right</mat-icon>
                   </mat-list-item>
 
-                  <mat-list-item (click)="updateSlide('disks', poolState.topology.log.length > 0, 1, 0, 'log')" [ngClass]="{'clickable': poolState.topology.log.length > 0}">
+                  <mat-list-item (click)="updateSlide('data', poolState.topology.log.length > 0, 1, 0, 'log')" [ngClass]="{'clickable': poolState.topology.log.length > 0}">
                     <strong>{{"Logs" | translate}}: </strong>&nbsp;&nbsp; {{poolState.topology.log.length}}
                     <mat-icon *ngIf="poolState.topology.log.length > 0" class="next-slide">chevron_right</mat-icon>
                   </mat-list-item>
