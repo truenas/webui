@@ -115,17 +115,18 @@ def enable_failover():
     web_driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
-    wait_on_element(0.5, 7, '//mat-list-item[@ix-auto="option__Failover"]')
+    wait_on_element(0.5, 5, '//mat-list-item[@ix-auto="option__Failover"]')
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Failover"]').click()
-    wait_on_element(0.5, 7, '//h4[contains(.,"Failover Configuration")]')
+    wait_on_element(0.5, 5, '//h4[contains(.,"Failover Configuration")]')
     element = web_driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]')
     class_attribute = element.get_attribute('class')
     if 'mat-checkbox-checked' in class_attribute:
         web_driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
-        wait_on_element(0.5, 7, '//button[@ix-auto="button__SAVE"]')
+        wait_on_element(0.5, 5, '//button[@ix-auto="button__SAVE"]')
         web_driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-        wait_on_element(0.5, 7, '//h1[contains(.,"Settings saved")]')
-        web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+        wait_on_element(0.5, 4, '//h1[contains(.,"Settings saved")]')
+        if element_exist('//button[@ix-auto="button__CLOSE"]'):
+            web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     time.sleep(1)
     # make sure to scroll back up the mat-list-item
     element = web_driver.find_element_by_xpath('//span[contains(.,"root")]')
