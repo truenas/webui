@@ -28,6 +28,7 @@ export class TableComponent implements OnInit {
   public dataSource;
   public displayedColumns;
   public hideHeader = false;
+  public actions;
 
   constructor(private ws: WebSocketService) { }
   ngOnInit() {
@@ -38,7 +39,8 @@ export class TableComponent implements OnInit {
     this.displayedColumns = this.tableConf.columns.map(col => col.name);
 
     if (this.tableConf.getActions) {
-      this.displayedColumns.push('action'); // 
+      this.displayedColumns.push('action'); // add action column to table
+      this.actions = this.tableConf.getActions(); // get all row actions
     }
     this.ws.call(this.tableConf.queryCall).subscribe(res => {
       if (this.tableConf.dataSourceHelper) {

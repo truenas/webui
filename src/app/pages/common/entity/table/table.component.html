@@ -36,9 +36,9 @@
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let element">
         <div class="table-cell table-row-action">
-          <button mat-icon-button *ngFor="let rowAction of tableConf.getActions(element)" >
-            <mat-icon (click)="rowAction.onClick(element)" >{{rowAction.icon}}</mat-icon>
-          </button>
+            <button mat-icon-button *ngFor="let rowAction of actions" (click)="rowAction.onClick(element)"  >
+              <mat-icon >{{rowAction.icon}}</mat-icon>
+            </button>
         </div>
       </td>
     </ng-container>
