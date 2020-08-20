@@ -86,8 +86,7 @@
 }
 
 jw-modal {
-    /* modals are hidden by default */
-    display: none;
+    display: block;
 }
 
 #slide-in-form #close-icon {

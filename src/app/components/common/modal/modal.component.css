@@ -10,17 +10,21 @@
     left: 0;
 
     /* z-index must be higher than .jw-modal-background */
-    z-index: 1000;
+    z-index: -10;
         
     /* enables scrolling for tall modals */
     overflow: auto;
+}
+
+.jw-modal.open {
+    z-index: 1000;
 }
 
 .slide-in-form {
     width: 400px;
     position: fixed;
     top: 0;
-    right: 0;
+    right: -400px;
     bottom: 0;
     /* left: 0; */
 
@@ -29,6 +33,12 @@
         
     /* enables scrolling for tall modals */
     overflow: auto;
+    transition: 200ms;
+}
+
+.slide-in-form.open {
+    right: 0;
+    transition: 200ms;
 }
 
 .jw-modal-body {
@@ -58,7 +68,12 @@
     opacity: 0.75;
        
     /* z-index must be below .jw-modal and above everything else  */
+    z-index: -10;
+    transition: 100ms;
+}
+.jw-modal-background.open {
     z-index: 900;
+    transition: 200ms;
 }
 
 body.jw-modal-open {

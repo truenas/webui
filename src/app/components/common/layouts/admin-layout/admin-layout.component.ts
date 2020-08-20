@@ -284,7 +284,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   openModal(id: string) {
-    console.log(id);
     this.modalService.open(id);
   }
 

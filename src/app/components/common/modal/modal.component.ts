@@ -5,12 +5,12 @@ import { ModalService } from '../../../services/modal.service';
 @Component({
     selector: 'jw-modal',
     template: 
-        `<div [ngClass]="id==='slide-in-form' ? 'slide-in-form' : 'jw-modal'">
+        `<div class={{id}} [ngClass]="id!=='slide-in-form' ? 'jw-modal' : ''">
             <div class="jw-modal-body">
                 <ng-content></ng-content>
             </div>
         </div>
-        <div class="jw-modal-background" (click)="close()"></div>`,
+        <div class="jw-modal-background {{id}}-background" (click)="close()"></div>`,
     styleUrls: ['./modal.component.css'],
 
 })
@@ -53,13 +53,19 @@ export class ModalComponent implements OnInit, OnDestroy {
 
     // open modal
     open(): void {
-        this.element.style.display = 'block';
+        const modal = document.querySelector(`.${this.id}`);
+        const background = document.querySelector(`.${this.id}-background`)
+        modal.classList.add('open');
+        background.classList.add('open');
         document.body.classList.add('jw-modal-open');
     }
 
     // close modal
     close(): void {
-        this.element.style.display = 'none';
+        const modal = document.querySelector(`.${this.id}`);
+        const background = document.querySelector(`.${this.id}-background`)
+        modal.classList.remove('open');
+        background.classList.remove('open');
         document.body.classList.remove('jw-modal-open');
     }
 }
