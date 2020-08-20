@@ -178,6 +178,10 @@ export class ZvolFormComponent {
       options: [
         {label : T('Off'), value : "OFF"},
         {label : T('lz4 (recommended)'), value : "LZ4"},
+        {label : T('zstd (default level, 3)'), value : "ZSTD" },
+        {label : T('zstd (Medium, slow)'), value : "ZSTD-5" },
+        {label : T('zstd (Maximum, very slow)'), value : "ZSTD-7" },
+        {label : T('zstd-fast (default level, 1)'), value : "ZSTD-FAST" },
         {label : T('gzip (default level, 6)'), value : "GZIP"},
         {label : T('gzip (fastest)'), value : "GZIP-1"},
         {label : T('gzip (maximum, slow)'), value : "GZIP-9"},
