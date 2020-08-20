@@ -42,6 +42,7 @@
 .slide-in-form .jw-modal-body {
     margin: 0;
     height: 100vh;
+    background-color: var(--bg2);
 }
 
 .jw-modal-background {

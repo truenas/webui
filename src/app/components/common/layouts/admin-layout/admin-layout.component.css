@@ -89,3 +89,11 @@ jw-modal {
     /* modals are hidden by default */
     display: none;
 }
+
+#slide-in-form #close-icon {
+  color: var(--fg1);
+  cursor: pointer;
+  position: absolute;
+  right: 15px;
+  top: 20px;
+}
