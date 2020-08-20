@@ -1,6 +1,6 @@
 @import '~@angular/material/theming';
 @include mat-core();
-@import '../scss-imports/cssvars';
+@import './scss-imports/cssvars';
 
 
 // mandatory stuff for theming
@@ -38,6 +38,21 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 // include the custom theme object into the angular material theme
 .ix-blue {
   @include angular-material-theme($freenas-theme);
+
+  // UI SHELL
+  .mat-sidenav-container {
+    height: 100vh;
+  }
+
+  topbar .mat-toolbar-multiple-rows {
+    min-height: unset;
+  }
+
+  .mat-sidenav{
+    min-width: 240px;
+  }
+
+  // END UI SHELL
 
   .mat-bg-primary,
   .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
