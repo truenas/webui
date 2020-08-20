@@ -193,12 +193,12 @@
                     <mat-icon *ngIf="poolState.topology.data.length > 0" class="next-slide" ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
                   </mat-list-item>
 
-                  <mat-list-item (click)="updateSlide('disks', poolState.topology.cache.length > 0, 1, 0, 'cache')" [ngClass]="{'clickable': poolState.topology.cache.length > 0}">
+                  <mat-list-item (click)="updateSlide('data', poolState.topology.cache.length > 0, 1, 0, 'cache')" [ngClass]="{'clickable': poolState.topology.cache.length > 0}">
                     <strong>{{"Caches" | translate}}: </strong>&nbsp;&nbsp; {{poolState.topology.cache.length}}
                     <mat-icon *ngIf="poolState.topology.cache.length > 0" class="next-slide" ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
                   </mat-list-item>
 
-                  <mat-list-item (click)="updateSlide('disks', poolState.topology.spare.length > 0, 1, 0, 'spare')" [ngClass]="{'clickable': poolState.topology.spare.length > 0}">
+                  <mat-list-item (click)="updateSlide('data', poolState.topology.spare.length > 0, 1, 0, 'spare')" [ngClass]="{'clickable': poolState.topology.spare.length > 0}">
                     <strong>{{"Spares" | translate}}: </strong>&nbsp;&nbsp; {{poolState.topology.spare.length}}
                     <mat-icon *ngIf="poolState.topology.spare.length > 0" class="next-slide" ix-auto ix-auto-type="button" ix-auto-identifier="nextSlide">chevron_right</mat-icon>
                   </mat-list-item>
@@ -295,7 +295,7 @@
 
             <mat-list *ngIf="path[currentSlideIndex].dataSource.type == 'DISK'">
               <mat-list-item role="listitem" 
-                 (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, path[currentSlideIndex].dataSource)" 
+                 (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, currentSlideTopology, path[currentSlideIndex].dataSource)" 
                  (click)="getDiskDetails('name', path[currentSlideIndex].dataSource.disk, checkMultipath(path[currentSlideIndex].dataSource.disk))" 
                  [ngClass]="{'clickable': true}">
                 <strong>
