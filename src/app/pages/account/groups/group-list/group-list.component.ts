@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {Router} from '@angular/router';
+import {Router, ActivatedRoute} from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -9,6 +9,7 @@ import helptext from '../../../../helptext/account/group-list';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { GroupFormComponent } from '../group-form/group-form.component';
 
 @Component({
   selector : 'app-group-list',
@@ -30,6 +31,7 @@ export class GroupListComponent {
       this.toggleBuiltins();
     }
   };
+  protected addComponent: GroupFormComponent;
   
   public columns: Array<any> = [
     {name : 'Group', prop : 'group', always_display: true},
@@ -50,8 +52,12 @@ export class GroupListComponent {
 
   constructor(private _router: Router, protected dialogService: DialogService, 
     protected loader: AppLoaderService,protected ws: WebSocketService,
-    protected prefService: PreferencesService, private translate: TranslateService){}
+    protected prefService: PreferencesService, private translate: TranslateService,
+    protected aroute: ActivatedRoute){}
 
+  ngOnInit() {
+    this.addComponent = new GroupFormComponent(this._router,this.ws,this.dialogService,this.aroute);
+  }
   resourceTransformIncomingRestData(data) {
     // Default setting is to hide builtin groups 
     if (this.prefService.preferences.hide_builtin_groups) {

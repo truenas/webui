@@ -23,6 +23,7 @@ import { ModalComponent } from './modal/modal.component';
 import { LanguageService } from '../../services/language.service';
 import { HttpClientModule } from '@angular/common/http';
 import { LocaleService } from '../../services/locale.service';
+import { EntityModule } from '../.././/pages/common/entity/entity.module';
 
 import { AngularSvgIconModule, SvgIconRegistryService } from 'angular-svg-icon';
 
@@ -37,6 +38,7 @@ import { AngularSvgIconModule, SvgIconRegistryService } from 'angular-svg-icon';
     TranslateModule,
     ChartistModule,
     HttpClientModule,
+    EntityModule,
     AngularSvgIconModule.forRoot()
   ],
   declarations: [

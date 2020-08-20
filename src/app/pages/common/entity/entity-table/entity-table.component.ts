@@ -66,6 +66,8 @@ export interface InputTableConf {
   callGetFunction?(entity: EntityTableComponent): any;
   prerequisiteFailedHandler?(entity: EntityTableComponent);
   afterDelete?();
+  addComponent?();
+  editComponent?();
 }
 
 export interface EntityTableAction {
@@ -670,7 +672,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     // } else {
     //   this.router.navigate(new Array('/').concat(this.conf.route_add));
     // }
-    this.modalService.open('slide-in-form');
+    this.modalService.open('slide-in-form', this.conf.addComponent);
   }
 
   doEdit(id) {
