@@ -235,11 +235,11 @@ def select_critical_for_failover_group_select_2(driver):
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Failover Group_2"]').click()
 
 
-@then('For Failover VHID enter 30')
-def for_failover_vhid_enter_30(driver):
-    """For Failover VHID enter 30."""
-    driver.find_element_by_xpath('//input[@ix-auto="input__Failover VHID"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Failover VHID"]').send_keys('30')
+@then('For Failover VHID select 30')
+def for_failover_vhid_select_30(driver):
+    """For Failover VHID select 30."""
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Failover VHID"]').click()
+    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Failover VHID_30"]').click()
 
 
 @then('For parent interface select lagg0 created by previous step')
