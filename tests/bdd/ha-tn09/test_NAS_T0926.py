@@ -90,7 +90,7 @@ def shell_should_should_open():
     """Shell should should open."""
 
 
-@then('input "wbinfo -u"')
+@then(parsers.parse('input "{cmd}"'))
 def input_wbinfo_u():
     """input "wbinfo -u"."""
 
@@ -100,7 +100,7 @@ def verify_that_ad_object_is_in__wbinfo_u_output():
     """verify that "{ad_object}" is in  wbinfo -u output."""
 
 
-@then('input "wbinfo -g"')
+@then(parsers.parse('input "{cmd}"'))
 def input_wbinfo_g():
     """input "wwbinfo -g"."""
 
@@ -110,7 +110,7 @@ def verify_that_ad01domain_admin_is_in_wbinfo_g_output():
     """verify that "{ad_object}" is in wbinfo -g output."""
 
 
-@then('input "wbinfo -t"')
+@then(parsers.parse('input "{cmd}"'))
 def input_wbinfo_t():
     """input "wbinfo -t"."""
 
