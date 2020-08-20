@@ -38,8 +38,13 @@ export const helptext_sharing_smb = {
  as the home share.'),
 
     placeholder_purpose: T('Purpose'),
-    tooltip_purpose: T('Select a preset configuration for the share. This\
- applies predetermined values and disables changing some share options.'),
+    tooltip_purpose: T('Choosing a preset configuration for the share \
+ locks in several predetermined values for the share's Advanced Options, \
+ including the <i>Path Suffix</i>. To see which options have been set \
+ and/or locked, click <b>Advanced Options</b> after selecting a <i>Purpose</i>. \
+ <code>%U</code> is added as the <i>Path Suffix</i> when a Multi-user, \
+ Multi-protocol, or Private <i>Purpose</i> is selected. To retain full control \
+ over all the Advanced Options, select <i>No presets</i>.
 
    placeholder_timemachine: T('Time Machine'),
    tooltip_timemachine: T('Enable Time Machine backups on this share.'),
@@ -159,7 +164,7 @@ export const helptext_sharing_smb = {
  This is used to provide unique shares on a per-user, per-computer, or per-IP address basis. \
  Suffixes can contain a macro. See the \
  <a href="https://www.freebsd.org/cgi/man.cgi?query=smb.conf" target="_blank">smb.conf</a> manual page for \
- a list of supported macros. The connectpath **must** be preset before a client connects.'),
+ a list of supported macros. The connectpath <b>must</b> be preset before a client connects.'),
 
     actions_basic_mode: T('Basic Mode'),
     actions_advanced_mode: T('Advanced Mode'),
