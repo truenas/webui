@@ -74,4 +74,7 @@ export class BreadcrumbComponent implements OnInit {
     });
   }
 
+  gotoRoute(url) {
+    this.router.navigateByUrl(url);
+  }
 }
