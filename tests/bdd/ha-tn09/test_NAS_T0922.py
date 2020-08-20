@@ -155,8 +155,6 @@ def click_save_changes_click_save(driver):
     driver.find_element_by_xpath('//button[contains(.,"SAVE CHANGES")]').click()
     assert wait_on_element(driver, 0.5, 5, '//h1[contains(.,"Save Changes")]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element(driver, 0.5, 5, '//button[@ix-auto="button__CLOSE"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
 @then('a message indicating that network changes have been applied should appeared, and you should be able to close')
@@ -190,9 +188,9 @@ def uncheck_disable_failover_and_click_save_check_confirm_on_the_warning_dialog_
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
-@then(parsers.parse('logout and log back in with "{user}" and "{password}'))
+@then(parsers.parse('logout and log back in with "{user}" and "{password}"'))
 def logout_and_log_back_in(driver, user, password):
-    """logout and log back in with "{user}" and "{password}."""
+    """logout and log back in with "{user}" and "{password}"."""
     # make sure to scroll back up the mat-list-item
     element = driver.find_element_by_xpath('//span[contains(.,"root")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
@@ -203,12 +201,12 @@ def logout_and_log_back_in(driver, user, password):
     assert wait_on_element(driver, 0.5, 5, '//button[@ix-auto="option__Log Out"]')
     driver.find_element_by_xpath('//button[@ix-auto="option__Log Out"]').click()
     time.sleep(4)
-    wait_on_element(driver, 1, 5, '//input[@placeholder="Username"]')
+    assert wait_on_element(driver, 1, 5, '//input[@placeholder="Username"]')
     driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(user)
     driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-    assert wait_on_element(driver, 0.5, 30, '//button[@name="signin_button"]')
+    assert wait_on_element(driver, 0.5, 5, '//button[@name="signin_button"]')
     driver.find_element_by_xpath('//button[@name="signin_button"]').click()
 
 
@@ -228,8 +226,8 @@ def verify_both_controllers_are_on_dashboard(driver, serial1, serial2):
 @then('HA status icon should appear and it should reflect that HA is enabled when clicked')
 def ha_status_icon_should_appear_and_it_should_reflect_that_ha_is_enabled_when_clicked(driver):
     """HA status icon should appear and it should reflect that HA is enabled when clicked."""
-    assert wait_on_element(driver, 0.5, 5, '//button[@ix-auto="button__haStatus"]')
+    assert wait_on_element(driver, 1, 5, '//button[@ix-auto="button__haStatus"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__haStatus"]').click()
-    assert wait_on_element(driver, 0.5, 5, '//h1[contains(.,"HA Enabled)]')
+    assert wait_on_element(driver, 0.5, 5, '//h1[contains(.,"HA Enabled")]')
     driver.find_element_by_xpath('//span[contains(.,"HA is enabled")]')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
