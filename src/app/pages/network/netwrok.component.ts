@@ -30,7 +30,8 @@ export class NetworkComponent implements OnDestroy{
     getActions: this.getInterfaceActions,
     getInOutInfo: this.getInterfaceInOutInfo.bind(this),
     add: function() {
-
+      console.log('add interface');
+      
     },
   }
 
@@ -43,7 +44,7 @@ export class NetworkComponent implements OnDestroy{
     ],
     getActions: this.getStaticRoutesActions,
     add: function() {
-
+      console.log('add static routes');
     },
   }
 
@@ -169,7 +170,7 @@ export class NetworkComponent implements OnDestroy{
 
   }
 
-  getInterfaceActions(row) {
+  getInterfaceActions() {
     return [{
       icon: 'delete',
       name: "delete",
@@ -177,16 +178,17 @@ export class NetworkComponent implements OnDestroy{
       onClick: (rowinner) => {
         console.log('delete interface', rowinner);
         
-        if (this.interfaceTableConf.ha_enabled) {
-          this.dialog.Info(helptext.ha_enabled_delete_title, helptext.ha_enabled_delete_msg);
-        } else {
-          // this.entityList.doDelete(rowinner);
-        }
+        // if (this.interfaceTableConf.ha_enabled) {
+        //   this.dialog.Info(helptext.ha_enabled_delete_title, helptext.ha_enabled_delete_msg);
+        // } else {
+        //   // this.entityList.doDelete(rowinner);
+        // }
+        event.stopPropagation();
       },
     }]
   }
 
-  getStaticRoutesActions(row) {
+  getStaticRoutesActions() {
     return [{
       icon: 'delete',
       name: "delete",
@@ -194,6 +196,7 @@ export class NetworkComponent implements OnDestroy{
       onClick: (rowinner) => {
         console.log('delete static routes', rowinner);
         // this.entityList.doDelete(rowinner);
+        event.stopPropagation();
       },
     }]
   }
@@ -204,24 +207,27 @@ export class NetworkComponent implements OnDestroy{
     }
   }
 
-  getIpmiActions(row) {
+  getIpmiActions() {
     return [{
       icon: 'highlight',
       name: "identify",
       label: T("Identify Light"),
       onClick: (rowinner) => {
         console.log('identify ligtht', rowinner);
+        event.stopPropagation();
       },
     }, {
-      id: row.id,
       icon: 'launch',
       name: "manage",
       label: T("Manage"),
       onClick: (rowinner) => {
         console.log('manage', rowinner);
+        event.stopPropagation();
       },
     }]
   }
 
-
+  networkSetting() {
+    console.log('network setting')
+  }
 }
