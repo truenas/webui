@@ -23,7 +23,7 @@
 .slide-in-form {
     width: 400px;
     position: fixed;
-    top: 0;
+    top: 50px;
     right: -400px;
     bottom: 0;
     /* left: 0; */
@@ -51,14 +51,14 @@
 
 .slide-in-form .jw-modal-body {
     margin: 0;
-    height: 100vh;
+    height: calc(100vh - 50px);
     background-color: var(--bg2);
 }
 
 .jw-modal-background {
     /* modal background fixed across whole screen */
     position: fixed;
-    top: 0;
+    top: 50px;
     right: 0;
     bottom: 0;
     left: 0;
@@ -76,7 +76,7 @@
     transition: 200ms;
 }
 
-body.jw-modal-open {
+body.jw-modal-open .slide-in-form .jw-modal-body {
     /* body overflow is hidden to hide main scrollbar when modal window is open */
     overflow: hidden;
 }

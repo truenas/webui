@@ -23,6 +23,7 @@ import {RestService, WebSocketService} from '../../../../services/';
 import { CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import {AppLoaderService} from '../../../../services/app-loader/app-loader.service';
+import { ModalService } from '../../../../services/modal.service';
 import {EntityTemplateDirective} from '../entity-template.directive';
 import {EntityUtils} from '../utils';
 
@@ -159,6 +160,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               public adminLayout: AdminLayoutComponent,
               private dialog:DialogService,
               public translate: TranslateService,
+              private modalService: ModalService,
               private cdr: ChangeDetectorRef) {
                 this.loader.callStarted.subscribe(() => this.showSpinner = true);
                 this.loader.callDone.subscribe(() => this.showSpinner = false);
@@ -545,6 +547,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                           }
                         });
     }
+    this.modalService.close('slide-in-form');
   }
 
   clearErrors() {

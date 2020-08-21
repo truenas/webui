@@ -24,6 +24,7 @@ export class GroupListComponent {
   protected route_add_tooltip = T("Add Group");
   protected route_edit: string[] = [ 'account', 'groups', 'edit' ];
   protected entityList: any;
+  refreshTableSubscription: any;
   protected loaderOpen = false;
   protected globalConfig = {
     id: "config",
@@ -57,7 +58,7 @@ export class GroupListComponent {
     protected aroute: ActivatedRoute, private modalService: ModalService){}
 
   ngOnInit() {
-    this.addComponent = new GroupFormComponent(this._router,this.ws,this.dialogService,this.aroute);
+    this.addComponent = new GroupFormComponent(this._router,this.ws,this.dialogService,this.aroute,this.modalService);
   }
   resourceTransformIncomingRestData(data) {
     // Default setting is to hide builtin groups 
@@ -80,6 +81,11 @@ export class GroupListComponent {
         this.showOneTimeBuiltinMsg();
       }
     }, 2000)
+
+    this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
+      this.entityList.getData();
+    })
+
   }
   isActionVisible(actionId: string, row: any) {
     if (actionId === 'delete' && row.builtin === true) {
