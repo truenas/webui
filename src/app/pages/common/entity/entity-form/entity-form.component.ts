@@ -53,6 +53,7 @@ export interface Formconfiguration {
   queryKey?;  // use this to define your id for websocket call
   isNew?;
   pk?;
+  rowid?;
   custom_get_query?;
   fieldConfig?: FieldConfig[];
   resourceTransformIncomingRestData?;
@@ -212,7 +213,13 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         this.resourceName = this.resourceName + '/';
       }
       if (this.conf.isEntity) {
-        this.pk = params['pk'];
+        if (this.conf.rowid) {
+          this.pk = this.conf.rowid;
+          // delete this.conf.rowid;
+        } else {
+          this.pk = params['pk'];
+        }
+        
         if (this.pk && !this.conf.isNew) {
           if (this.conf.editCall) {
             this.submitFunction = this.editCall;  // this is strange so I AM NOTING it...  this.editCall internally calls this.conf.editCall with some fluff.

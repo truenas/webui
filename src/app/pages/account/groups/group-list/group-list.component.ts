@@ -109,7 +109,7 @@ export class GroupListComponent {
         onClick : (members_edit) => {
           // this._router.navigate(new Array('/').concat(
           //   [ "account", "groups", "edit", members_edit.id ]));
-          // this.modalService.open('slide-in-form', this.addComponent, members_edit.id)
+          this.modalService.open('slide-in-form', this.addComponent, members_edit.id)
         }
       })
       actions.push({
