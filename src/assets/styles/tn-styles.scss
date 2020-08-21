@@ -242,7 +242,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-drawer,
   .sidebar-panel.mat-sidenav .navigation-hold#scroll-area,
   .mat-card,.mat-paginator,
-  .mat-button-toggle,
+  //.mat-button-toggle,
   .mat-select-content, .mat-select-panel,
   .mat-select-panel-done-animating,
   .mat-expansion-panel,
@@ -335,11 +335,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   .mat-form-field-ripple{
-    @include variable(background-color, --primary, $primary);
+    //@include variable(background-color, --primary, $primary);
   }
 
   .mat-color-primary, .mat-button.mat-primary {
-    @include variable(color, --primary, $primary, !important);
+    //@include variable(color, --primary, $primary, !important);
   }
 
   .mat-form-field.mat-focused.mat-primary {
@@ -875,8 +875,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
  .mat-button.mat-basic, .mat-button.mat-primary {
-    @include variable(background-color, --primary, $primary);
-    color: white !important;
+    //@include variable(background-color, --primary, $primary);
+    //color: white !important;
   }
 
   .mat-button.mat-accent {
@@ -1788,7 +1788,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .sidenav-link:hover, 
   .slide-in-nav-item:hover, 
-  .mat-button:hover {
+  .mat-button.mat-default:hover {
     //background: rgba(0, 0, 0, .045) !important;
     background: var(--hover-bg) !important;
   }

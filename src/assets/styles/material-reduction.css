@@ -329,12 +329,19 @@ tooltip button i{
   text-transform: capitalize !important;
 }
 
-button.mat-button,
-button.mat-button.btn-default, button.mat-default,
+.mat-card-actions .mat-button, 
+.mat-card-actions .mat-flat-button{
+  background:var(--btn-default-bg) !important;
+  background-color:var(--btn-default-bg) !important;
+  color:var(--fg2) !important;
+}
+
+.mat-button, .mat-flat-button,
+button.mat-button.btn-default, 
+.mat-card-actions button.mat-default, button.mat-default,
 button.mat-button.mat-accent.btn-default,
-button.mat-flat-button,
-button.mat-button[type="button"],
-button.mat-button.mat-accent[type="button"]{
+button.mat-button[type="button"]:not(button.mat-primary) {
+  background:var(--btn-default-bg) !important;
   background-color:var(--btn-default-bg) !important;
   color:var(--fg2) !important;
 }
@@ -343,6 +350,12 @@ button.mat-button[type="button"]:hover,
 button.mat-button.mat-accent[type="button"]:hover{
   background-color: var(--alt-bg1) !important;
   color: var(--fg2) !important;
+}
+
+button.mat-button.mat-primary{
+  background-color:var(--primary) !important;
+  color:var(--primary-txt) !important;
+  opacity: 1 !important;
 }
 
 /* Menus */
