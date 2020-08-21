@@ -208,8 +208,8 @@ def the_pools_page_should_open(driver):
 @then('click on the dozer 3 dots button, select Add Dataset')
 def click_on_the_dozer_3_dots_button_select_add_dataset(driver):
     """click on the dozer 3 dots button, select Add Dataset."""
-    assert wait_on_element(driver, 1, 5, '//mat-icon[@ix-auto="options__dozer"]')
-    driver.find_element_by_xpath('//mat-icon[@ix-auto="options__dozer"]').click()
+    assert wait_on_element(driver, 1, 5, '//mat-icon[@id="actions_menu_button__dozer"]')
+    driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__dozer"]').click()
     assert wait_on_element(driver, 1, 5, '//button[@ix-auto="action__dozer_Add Dataset"]')
     driver.find_element_by_xpath('//button[@ix-auto="action__dozer_Add Dataset"]').click()
 
@@ -238,28 +238,45 @@ def my_acl_dataset_should_be_created(driver, dataset_name):
 @then('click on "my_acl_dataset" 3 dots button, select Edit Permissions')
 def click_on_my_acl_dataset_3_dots_button_select_edit_permissions(driver):
     """click on "my_acl_dataset" 3 dots button, select Edit Permissions."""
+    assert wait_on_element(driver, 1, 5, '//mat-icon[@id="actions_menu_button__dozer"]')
+    driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__dozer"]').click()
+    assert wait_on_element(driver, 1, 5, '//button[@ix-auto="action__my_acl_dataset_Edit Permissions"]')
+    driver.find_element_by_xpath('//button[@ix-auto="action__my_acl_dataset_Edit Permissions"]').click()
 
 
 @then('the Edit Permissions page should open')
 def the_edit_permissions_page_should_open(driver):
     """the Edit Permissions page should open."""
+    assert wait_on_element(driver, 0.5, 5, '//h4[contains(.,"Dataset Path")]')
 
 
 @then('click on Use ACL Manager')
 def click_on_use_acl_manager(driver):
     """click on Use ACL Manager."""
+    driver.find_element_by_xpath('//button[@ix-auto="button__USE ACL MANAGER"]').click()
 
 
 @then('the Edit ACL page should open')
 def the_edit_acl_page_should_open(driver):
     """the Edit ACL page should open."""
+    assert wait_on_element(driver, 0.5, 5, '//h4[contains(.,"File Information")]')
 
 
 @then(parsers.parse('setting permissions set User to root and then select "{group_name}" for Groups, check the Apply Group and select OPEN for Default ACL Option'))
-def setting_permissions_set_user_to_root_and_then_select_goup_name_for_groups_check_the_apply_group_and_select_open_for_default_acl_option(driver):
+def setting_permissions_set_user_to_root_and_then_select_goup_name_for_groups_check_the_apply_group_and_select_open_for_default_acl_option(driver, group_name):
     """setting permissions set User to root and then select "{group_name}" for Groups, check the Apply Group and select OPEN for Default ACL Option."""
+    driver.find_element_by_xpath('//input[@placeholder="User"]').clear()
+    driver.find_element_by_xpath('//input[@placeholder="User"]').send_keys('root')
+    driver.find_element_by_xpath('//input[@placeholder="Group"]').clear()
+    driver.find_element_by_xpath('//input[@placeholder="Group"]').send_keys(group_name)
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply Group"]').click()
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Default ACL Options"]').click()
+    assert wait_on_element(driver, 0.5, 5, '//mat-option[@ix-auto="option__Default ACL Options_OPEN"]')
+    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Default ACL Options_OPEN"]').click()
 
 
 @then('click the Save button')
 def click_the_save_button(driver):
     """click the Save button."""
+    wait_on_element(driver, 0.5, 5, '//button[@ix-auto="button__SAVE"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
