@@ -37,6 +37,7 @@
       -->
 
       <div *ngIf="formReady">
+        <mat-selection-list>
         <ng-container *ngFor="let option of config.options; let i=index">
           <!-- if disabled -->
           <mat-option *ngIf="option.disable && !option.hiddenFromDisplay" [value]="option.value" disabled style="opacity:0.5"
@@ -63,6 +64,7 @@
               </mat-option>
 
         </ng-container>
+        </mat-selection-list>
       </div>
 
       <div *ngIf="!formReady || config.options.length == 0">
