@@ -667,12 +667,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   doAdd() {
-    // if (this.conf.doAdd) {
-    //   this.conf.doAdd();
-    // } else {
-    //   this.router.navigate(new Array('/').concat(this.conf.route_add));
-    // }
-    this.modalService.open('slide-in-form', this.conf.addComponent);
+    if (this.conf.doAdd) {
+      this.conf.doAdd();
+    } else {
+      this.router.navigate(new Array('/').concat(this.conf.route_add));
+    }
+    // this.modalService.open('slide-in-form', this.conf.addComponent);
   }
 
   doEdit(id) {

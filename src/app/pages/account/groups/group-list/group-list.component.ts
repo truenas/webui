@@ -7,6 +7,7 @@ import { WebSocketService } from '../../../../services/ws.service';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import helptext from '../../../../helptext/account/group-list';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import { ModalService } from '../../../../services/modal.service';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { GroupFormComponent } from '../group-form/group-form.component';
@@ -53,7 +54,7 @@ export class GroupListComponent {
   constructor(private _router: Router, protected dialogService: DialogService, 
     protected loader: AppLoaderService,protected ws: WebSocketService,
     protected prefService: PreferencesService, private translate: TranslateService,
-    protected aroute: ActivatedRoute){}
+    protected aroute: ActivatedRoute, private modalService: ModalService){}
 
   ngOnInit() {
     this.addComponent = new GroupFormComponent(this._router,this.ws,this.dialogService,this.aroute);
@@ -106,8 +107,9 @@ export class GroupListComponent {
         label : helptext.group_list_actions_label_edit,
         name: helptext.group_list_actions_id_edit,
         onClick : (members_edit) => {
-          this._router.navigate(new Array('/').concat(
-            [ "account", "groups", "edit", members_edit.id ]));
+          // this._router.navigate(new Array('/').concat(
+          //   [ "account", "groups", "edit", members_edit.id ]));
+          // this.modalService.open('slide-in-form', this.addComponent, members_edit.id)
         }
       })
       actions.push({
@@ -186,6 +188,9 @@ export class GroupListComponent {
     this.dialogService.confirm(helptext.builtinMessageDialog.title, helptext.builtinMessageDialog.message, 
       true, helptext.builtinMessageDialog.button, false, '', '', '', '', true);
   }
-        
+
+  doAdd() {
+    this.modalService.open('slide-in-form', this.addComponent);
+  }       
   
 }
