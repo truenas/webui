@@ -44,7 +44,7 @@ export const helptext_sharing_smb = {
  and/or locked, click <b>Advanced Options</b> after selecting a <i>Purpose</i>. \
  <code>%U</code> is added as the <i>Path Suffix</i> when a Multi-user, \
  Multi-protocol, or Private <i>Purpose</i> is selected. To retain full control \
- over all the Advanced Options, select <i>No presets</i>.
+ over all the Advanced Options, select <i>No presets</i>.'),
 
    placeholder_timemachine: T('Time Machine'),
    tooltip_timemachine: T('Enable Time Machine backups on this share.'),
