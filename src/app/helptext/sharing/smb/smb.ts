@@ -39,7 +39,7 @@ export const helptext_sharing_smb = {
 
     placeholder_purpose: T('Purpose'),
     tooltip_purpose: T('Choosing a preset configuration for the share \
- locks in several predetermined values for the share's Advanced Options, \
+ locks in several predetermined values for the share Advanced Options, \
  including the <i>Path Suffix</i>. To see which options have been set \
  and/or locked, click <b>Advanced Options</b> after selecting a <i>Purpose</i>. \
  <code>%U</code> is added as the <i>Path Suffix</i> when a Multi-user, \
