@@ -976,7 +976,7 @@ export class ReplicationWizardComponent {
                 payload['netcat_active_side'] = 'REMOTE'; // default?
             }
             
-            payload['readonly'] = data['readonly'] ? 'SET' : 'IGNORE';
+            payload['readonly'] = data['schedule_method'] === 'cron' || data['readonly'] ? 'SET' : 'IGNORE';
 
             return this.ws.call('replication.target_unmatched_snapshots', [
                 payload['direction'],
