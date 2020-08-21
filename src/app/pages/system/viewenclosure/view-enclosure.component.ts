@@ -68,6 +68,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
           this.extractVisualizations();
           break;
         case "EnclosureCanvas":
+          this.getTotalEnclosures();
           if(!this.nav){
             console.warn("No navigation UI detected")
             return;
@@ -221,13 +222,12 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     }
   }
 
-  getTotalEnclosures(target){
-    if(!target || target.profiles == null || target.profiles.length < 1 ){
+  getTotalEnclosures(target:SystemProfiler = this.system){
+    if(!target || target.profile == null || target.profile.length < 1 ){
       return 0;
     }
 
-    let enclosures = target.profiles.filter((enclosure) => !enclosure.model.toLowerCase().contains('rear'));
-    console.log(enclosures.length);
+    let enclosures = target.profile.filter((enclosure) => !enclosure.model.toLowerCase().includes('rear'));
     return enclosures.length;
   }
 
