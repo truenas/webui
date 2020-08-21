@@ -79,4 +79,8 @@ export class TableComponent implements OnInit {
         return stateClass.DOWN;
     }
   }
+
+  showInOutInfo(element) {
+    return `Sent: ${element.sent} Received: ${element.received}`;
+  }
 }

@@ -59,6 +59,7 @@ mat-icon.STATE_UP {
 mat-icon.STATE_DOWN {
     color: var(--grey);
 }
-mat-icon.received-icon {
+
+div.state-info {
     margin-left: 10px;
 }
