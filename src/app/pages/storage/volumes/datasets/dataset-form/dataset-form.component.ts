@@ -170,6 +170,10 @@ export class DatasetFormComponent implements Formconfiguration{
         options: [
           { label: 'off', value: 'OFF' },
           { label: 'lz4 (recommended)', value: 'LZ4' ,},
+          { label: 'zstd (default level, 3)', value: 'ZSTD' },
+          { label: 'zstd (Medium, slow)', value: 'ZSTD-5' },
+          { label: 'zstd (Maximum, very slow)', value: 'ZSTD-7' },
+          { label: 'zstd-fast (default level, 1)', value: 'ZSTD-FAST' },
           { label: 'gzip (fastest)', value: 'GZIP-1' },
           { label: 'gzip (default level, 6)', value: 'GZIP' },
           { label: 'gzip (maximum, slow)', value: 'GZIP-9' },
