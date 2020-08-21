@@ -3,7 +3,7 @@
         <h1>Network</h1>
         <button mat-icon-button (click)="networkSetting()"><mat-icon>settings</mat-icon></button>
     </div>
-    <div class="content" fxLayout="row" fxFill>
+    <div class="content" fxLayout="row" fxFill fxLayout.xs="column" fxLayout.sm="column">
         <div class="right-column" fxFlex="65%">
             <div id="interface">
                 <app-table [conf]="interfaceTableConf"></app-table>

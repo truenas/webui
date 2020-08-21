@@ -21,7 +21,7 @@ div.table-title-action > button {
 table.table-component{
     width: 100%;
     vertical-align: middle;
-    background: var(--bg2);
+    font: inherit;
 }
 
 table.table-component tbody,
@@ -30,7 +30,7 @@ table.table-component tr,
 table.table-component th,
 table.table-component td {
     vertical-align: middle;
-    color: var(--fg1);
+    font: inherit;
 }
 
 table.table-component tr.mat-row:hover{
