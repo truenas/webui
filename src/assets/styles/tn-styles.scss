@@ -2,7 +2,6 @@
 @include mat-core();
 @import './scss-imports/cssvars';
 
-
 // mandatory stuff for theming
 $freenas-primary: mat-palette($md-primary);
 $freenas-accent:  mat-palette($md-accent);
@@ -449,9 +448,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-menu-content button.mat-menu-item:focus,
   .mat-menu-content button.mat-menu-item:focus .mat-icon:not(.theme-picker-swatch-icon),
   .ngx-datatable .datatable-body .datatable-row-wrapper:focus {
-    @include variable(background, --primary, $primary, !important);
-    @include variable(color, --primary-txt, $primary-txt !important);
-    background-color:rgba(0,0,0,0.05);
+    //@include variable(background, --primary, $primary, !important);
+    //@include variable(color, --primary-txt, $primary-txt !important);
+    background-color:var(--hover-bg);
 }
 
 .ngx-datatable .datatable-body .datatable-row-wrapper:hover .mat-checkbox .mat-checkbox-frame {
@@ -1787,8 +1786,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     border-left: 6px solid rgba(0, 0, 0, .045);
   }
 
-  .sidenav-link:hover, .slide-in-nav-item:hover {
-    background: rgba(0, 0, 0, .045) !important;
+  .sidenav-link:hover, 
+  .slide-in-nav-item:hover, 
+  .mat-button:hover {
+    //background: rgba(0, 0, 0, .045) !important;
+    background: var(--hover-bg) !important;
   }
 
   .sidebar-panel.mat-sidenav .sidebar-list-item.highlighted {

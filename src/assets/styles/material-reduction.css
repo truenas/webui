@@ -196,6 +196,7 @@ entity-table .mat-toolbar.mat-card-toolbar{
   --lines: var(--dark-theme-lines);
   --sidenav-width: 240px;
   --btn-default-bg: var(--alt-bg2);
+  --hover-bg: var(--lines) !important;
 }
 
 .borderless{
@@ -345,8 +346,13 @@ button.mat-button.mat-accent[type="button"]:hover{
 }
 
 /* Menus */
-.mat-menu-item:hover {
-  background-color: var(--alt-bg1) !important;
+
+.mat-option:hover:not(.mat-option-disabled),
+.sidenav-link:hover,
+.slide-in-nav-item:hover,
+.mat-menu-item:hover,
+.mat-button:hover{
+  background-color: var(--hover-bg) !important;
 }
 
 /* Nested Cards */
