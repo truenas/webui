@@ -423,8 +423,11 @@ export class VMListComponent implements OnDestroy {
             label: T("VNC"),
             onClick: vnc_vm => {
                 const vnc = vnc_vm.devices.find(o => o.dtype === 'VNC');
-                const bind = vnc.attributes.vnc_bind;
-                this.ws.call("vm.get_vnc_web", [vnc_vm.id], bind).subscribe(res => {
+                let bind = vnc.attributes.vnc_bind;
+                if (bind === '0.0.0.0' || bind === '::') {
+                    bind = window.location.hostname;
+                }
+                this.ws.call("vm.get_vnc_web", [vnc_vm.id, bind]).subscribe(res => {
                     for (const vnc_port in res) {
                         window.open(res[vnc_port]);
                     }
