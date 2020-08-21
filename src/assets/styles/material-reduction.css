@@ -324,6 +324,10 @@ tooltip button i{
 }
 
 /* Buttons */
+.mat-button.mat-accent .mat-button-focus-overlay{
+  background-color: unset !important;
+}
+
 .mat-button, .mat-flat-button {
   border-radius : 0 !important;
   text-transform: capitalize !important;
@@ -355,6 +359,12 @@ button.mat-button.mat-accent[type="button"]:hover{
 button.mat-button.mat-primary{
   background-color:var(--primary) !important;
   color:var(--primary-txt) !important;
+  opacity: 1 !important;
+}
+
+button.mat-button.mat-accent{
+  background-color:var(--accent) !important;
+  color:var(--accent-txt) !important;
   opacity: 1 !important;
 }
 

@@ -355,7 +355,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   .mat-button.mat-accent {
-    @include variable(color, --accent, $accent, !important);
+    //@include variable(color, --accent-txt, #000, !important);
+    //@include variable(background-color, --accent, $accent, !important);
   }
 
   .mat-button:disabled {
@@ -880,8 +881,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   .mat-button.mat-accent {
-    @include variable(background-color, --accent, $accent);
-    color: black !important;
+    //@include variable(background-color, --accent, $accent);
+    //color: black !important;
   }
 
   // Gets checkboxes in SMART tests to pick up theme color
