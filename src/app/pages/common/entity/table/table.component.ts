@@ -14,6 +14,7 @@ export interface InputTableConf {
   dataSourceHelper?(any); // customise handle/modify dataSource 
   getInOutInfo?(any); // get in out info if has state column
   getActions?(); // actions for each row
+  isActionVisible?(): boolean; // determine if action is visible
 }
 
 @Component({
@@ -44,7 +45,7 @@ export class TableComponent implements OnInit {
     }
     this.ws.call(this.tableConf.queryCall).subscribe(res => {
       if (this.tableConf.dataSourceHelper) {
-         this.tableConf.dataSourceHelper(res);
+         res = this.tableConf.dataSourceHelper(res);
       } 
       if (this.tableConf.getInOutInfo) {
         this.tableConf.getInOutInfo(res);
