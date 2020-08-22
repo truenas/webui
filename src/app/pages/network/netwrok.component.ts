@@ -70,11 +70,15 @@ export class NetworkComponent implements OnDestroy{
   
   public openvpnTableConf = {
     title: "OpenVPN",
-    queryCall: 'staticroute.query',
+    queryCall: 'service.query',
     columns: [
-      { name: T('Destination'), prop: 'destination', always_display: true },
-      { name: T('Gateway'), prop: 'gateway' },
+      { name: T('Service'), prop: 'service_label' },
+      { name: T('State'), prop: 'state' },
     ],
+    hideHeader: true,
+    dataSourceHelper: this.openvpnDataSourceHelper,
+    getActions: this.getOpenVpnActions,
+    isActionVisible: this.isOpenVpnActionVisible,
   }
 
   public ipmiTableConf = {
@@ -167,7 +171,7 @@ export class NetworkComponent implements OnDestroy{
       }
       rows[i].mac_address = rows[i]['state']['link_address'];
     }
-
+    return res;
   }
 
   getInterfaceActions() {
@@ -205,6 +209,7 @@ export class NetworkComponent implements OnDestroy{
     for (const item of res) {
       item.channel_lable = 'Channel' + item.channel;
     }
+    return res;
   }
 
   getIpmiActions() {
@@ -229,5 +234,41 @@ export class NetworkComponent implements OnDestroy{
 
   networkSetting() {
     console.log('network setting')
+  }
+
+  openvpnDataSourceHelper(res) {
+    return res.filter(item => {
+      if (item.service.includes('openvpn_')) {
+        item.service_label = item.service.charAt(8).toUpperCase() + item.service.slice(9);
+        return item;
+      }
+    });
+  }
+
+  getOpenVpnActions() {
+    return [{
+      icon: 'stop',
+      name: "stop",
+      label: T("Stop"),
+      onClick: (rowinner) => {
+        console.log('Stop', rowinner);
+        event.stopPropagation();
+      },
+    }, {
+      icon: 'play_arrow',
+      name: "start",
+      label: T("Start"),
+      onClick: (rowinner) => {
+        console.log('start', rowinner);
+        event.stopPropagation();
+      },
+    }];
+  }
+
+  isOpenVpnActionVisible(name, row) {
+    if ((name === 'start' && row.state === 'START') || (name === 'stop' && row.state === 'STOPPED')) {
+      return false;
+    }
+    return true;
   }
 }
