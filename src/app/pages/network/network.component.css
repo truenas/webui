@@ -7,7 +7,3 @@ div.title {
     margin: 0px 24px;
     color: var(--fg2);
 }
-
-div.right-column div {
-    height: calc(50% - 34px);
-}

@@ -1,29 +1,23 @@
 <div class="dashboard">
-    <div class="title" fxLayout="row" fxLayoutAlign="space-between center" >
+    <div class="title" fxLayout="row" fxLayoutAlign="space-between center">
         <h1>Network</h1>
-        <button mat-icon-button (click)="networkSetting()"><mat-icon>settings</mat-icon></button>
+        <button mat-icon-button (click)="networkSetting()">
+            <mat-icon>settings</mat-icon>
+        </button>
     </div>
     <div class="content" fxLayout="row" fxFill fxLayout.xs="column" fxLayout.sm="column">
         <div class="right-column" fxFlex="65%">
-            <div id="interface">
-                <app-table [conf]="interfaceTableConf"></app-table>
-            </div>
-            <div id="static-routes">
-                <app-table [conf]="staticRoutesTableConf"></app-table>
+            <div fxLayout="column" fxFlex>
+                <app-table [conf]="interfaceTableConf" fxFlex></app-table>
+                <app-table [conf]="staticRoutesTableConf" fxFlex></app-table>
             </div>
         </div>
         <div class="left-column" fxFlex="35%">
-            <div id="nameserver">
-                <card-widget [conf]="nameserverWidget"></card-widget>
-            </div>
-            <div id="default-routes">
-                <card-widget [conf]="defaultRoutesWidget"></card-widget>
-            </div>
-            <div id="openvpn">
-                <app-table [conf]="openvpnTableConf"></app-table>
-            </div>
-            <div id="ipmi">
-                <app-table [conf]="ipmiTableConf"></app-table>
+            <div fxLayout="column" fxFlex>
+                <card-widget [conf]="nameserverWidget" fxFlex></card-widget>
+                <card-widget [conf]="defaultRoutesWidget" fxFlex></card-widget>
+                <app-table [conf]="openvpnTableConf" fxFlex></app-table>
+                <app-table [conf]="ipmiTableConf" fxFlex></app-table>
             </div>
         </div>
     </div>
