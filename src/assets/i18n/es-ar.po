@@ -78,6 +78,12 @@ msgstr " usuarios incorporados (la configuración predeterminada es <i>oculta</i
 msgid " but datastore "
 msgstr " pero el almacén de datos "
 
+msgid " day, "
+msgstr ""
+
+msgid " days, "
+msgstr ""
+
 msgid " disks"
 msgstr " discos"
 
@@ -108,6 +114,12 @@ msgid ""
 msgstr ""
 " es el tamaño de registro mínimo recomendado. Elegir un tamaño más pequeño "
 "puede reducir el rendimiento del sistema."
+
+msgid " minute"
+msgstr ""
+
+msgid " minutes"
+msgstr ""
 
 msgid " official plugins"
 msgstr " complementos oficiales"
@@ -1964,6 +1976,11 @@ msgstr ""
 msgid "An ACL is present in this path"
 msgstr "Un ACL está presente en esta ruta"
 
+msgid ""
+"An IP address must be provided for each controller and the virtual "
+"interface."
+msgstr ""
+
 msgid "An update is already applied. Please reboot the system."
 msgstr "Ya se ha aplicado una actualización. Por favor reinicie el sistema."
 
@@ -1992,18 +2009,11 @@ msgstr ""
 msgid ""
 "Appends a suffix to the share connection path.  This is used to provide "
 "unique shares on a per-user, per-computer, or per-IP address basis.  "
-"Suffixes can contain a macro. See  <a "
+"Suffixes can contain a macro. See the  <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
-"target=\"_blank\">smb.conf(5)</a> for a list of supported macros. The "
-"connectpath **must** be preset before a client connects."
+"target=\"_blank\">smb.conf</a> manual page for  a list of supported macros. "
+"The connectpath **must** be preset before a client connects."
 msgstr ""
-"Agrega un sufijo a la ruta de conexión compartida. Esto se utiliza para "
-"proporcionar recursos compartidos únicos por usuario, por computadora o por "
-"dirección IP. Los sufijos pueden contener una macro. Consulte <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
-"target=\"_blank\">smb.conf(5)</a> para obtener una lista de macros "
-"compatibles . Connectpath **debe** estar preestablecido antes de que un "
-"cliente se conecte."
 
 msgid "Application Credential ID"
 msgstr "ID de credencial de la aplicación"
@@ -4024,6 +4034,9 @@ msgstr "Crear instantánea"
 msgid "Create Theme"
 msgstr "Crear tema"
 
+msgid "Create a custom ACL"
+msgstr ""
+
 msgid "Create a new Pool."
 msgstr "Crea un nuevo Pool."
 
@@ -4035,6 +4048,9 @@ msgstr "Crea un pool:"
 
 msgid "Create a recommended formation of vdevs in a pool."
 msgstr "Cree una formación recomendada de vdevs en un pool."
+
+msgid "Create an ACL"
+msgstr ""
 
 msgid "Create an SMB Share"
 msgstr ""
@@ -6409,6 +6425,9 @@ msgstr ""
 "href=\"https://portal.ixsystems.com/portal/login/\" target=\"_blank\"> "
 "iXsystems Account Services</a>. Se requiere iniciar sesión o registrarse."
 
+msgid "Enter or select the cloud storage location to use for this task."
+msgstr ""
+
 msgid "Enter passphrase to lock pool "
 msgstr "Ingrese la contraseña para bloquear el pool "
 
@@ -6634,9 +6653,6 @@ msgstr "Ingrese el nombre de la empresa u organización."
 
 msgid "Enter the name of the contact person."
 msgstr "Ingrese el nombre de la persona de contacto."
-
-msgid "Enter the name of the destination folder."
-msgstr "Ingrese el nombre de la carpeta de destino."
 
 msgid ""
 "Enter the name of the loader, sysctl, or rc.conf variable to configure. "
@@ -11749,6 +11765,9 @@ msgstr "Resilvering"
 msgid "Resilvering Status"
 msgstr "Estado resilvering"
 
+msgid "Resilvering pool: "
+msgstr ""
+
 msgid "Resolution"
 msgstr "Resolución"
 
@@ -11802,13 +11821,9 @@ msgstr "Restringir PAM"
 
 msgid ""
 "Restrict share visibility to users with read or write access to the share. "
-"See <a href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
-"target=_blank>smb.conf(5)</a>."
+"See the <a href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
+"target=_blank>smb.conf</a> manual page."
 msgstr ""
-"Restrinja la visibilidad del recurso compartido a los usuarios con acceso "
-"de lectura o escritura al recurso compartido. Consulte <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" target=_blank> "
-"smb.conf (5) </a>."
 
 msgid "Retro Logo"
 msgstr "Logotipo retro"
@@ -12305,6 +12320,9 @@ msgstr ""
 "target=\"_blank\"> Lista de compatibilidad de herramientas UPS de red </a> "
 "para obtener una lista de los dispositivos UPS compatibles."
 
+msgid "Select"
+msgstr ""
+
 msgid "Select "
 msgstr "Seleccionar "
 
@@ -12441,6 +12459,9 @@ msgstr "Seleccione un pool, conjunto de datos o zvol."
 msgid "Select a power management profile from the menu."
 msgstr "Seleccione un perfil de administración de energía del menú."
 
+msgid "Select a preset ACL"
+msgstr ""
+
 msgid ""
 "Select a preset configuration for the share. This applies predetermined "
 "values and disables changing some share options."
@@ -12533,6 +12554,9 @@ msgid ""
 msgstr ""
 "Seleccione un certificado SSL válido creado o importado en <b>Sistema > "
 "Certificados</b> para usar para conexiones cifradas."
+
+msgid "Select an ACL Preset"
+msgstr ""
 
 msgid "Select an IP address to use for VNC sessions."
 msgstr "Seleccione una dirección IP para usar en las sesiones de VNC."
@@ -14497,6 +14521,9 @@ msgstr "Estado actualizado"
 msgid "Status:"
 msgstr "Estado:"
 
+msgid "Status: "
+msgstr ""
+
 msgid "Stop"
 msgstr "Detener"
 
@@ -15179,6 +15206,11 @@ msgstr ""
 "La clave pública del certificado se utiliza para cifrar datos de usuario "
 "solo durante las operaciones de acuerdo de claves. Requiere que <b>Acuerdo "
 "de clave</b> también esté establecido."
+
+msgid ""
+"The chosen preset ACL will REPLACE the ACL currently displayed in the form  "
+"and delete any unsaved changes."
+msgstr ""
 
 msgid "The contents of all added disks will be erased."
 msgstr "Se borrará el contenido de todos los discos agregados."
@@ -17043,9 +17075,6 @@ msgstr "Video, <10 ms de latencia"
 msgid "View"
 msgstr "Ver"
 
-msgid "View Enclosure"
-msgstr "Ver recinto"
-
 msgid "View Logs"
 msgstr "Ver registros"
 
@@ -17988,3 +18017,15 @@ msgstr "si"
 
 msgid "zle (runs of zeros)"
 msgstr "zle (series de ceros)"
+
+msgid "zstd (Maximum, very slow)"
+msgstr ""
+
+msgid "zstd (Medium, slow)"
+msgstr ""
+
+msgid "zstd (default level, 3)"
+msgstr ""
+
+msgid "zstd-fast (default level, 1)"
+msgstr ""
