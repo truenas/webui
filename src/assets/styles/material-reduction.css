@@ -212,6 +212,8 @@ entity-table .mat-toolbar.mat-card-toolbar{
   padding-bottom: 24px;
 }
 
+.form-element.form-combobox .mat-form-field,
+.form-element.form-combobox .mat-menu-trigger,
 .form-element .mat-form-field-wrapper,
 .form-element input[type = "password"],
 .form-element input[type = "email"],
@@ -226,6 +228,47 @@ entity-table .mat-toolbar.mat-card-toolbar{
   padding: 8px;
   box-sizing: border-box;
   color: var(--fg1);
+}
+
+/* Combo Box */
+.form-element.form-combobox .label-container{
+  margin-bottom: 0;
+  padding-bottom: 3px;
+}
+
+.form-element.form-combobox .mat-form-field-wrapper input,
+.form-element.form-combobox .mat-form-field-wrapper{
+  background-color: unset;
+  border: unset;
+  padding: unset;
+}
+
+.form-element.form-combobox .mat-form-field{
+  max-width: calc(100% - 82px) !important;
+  height: 33px;
+  margin-right: 1px;
+}
+
+.form-element.form-combobox .mat-menu-trigger:hover {
+  cursor: pointer;
+}
+
+.form-element.form-combobox .mat-menu-trigger{
+  /*width: 20px;
+  padding: 2px;*/
+  position: relative;
+  top: 2px;
+  padding: 9px 2px 8px;
+}
+
+.form-element.form-combobox .mat-menu-trigger .mat-icon{
+  position: relative !important; 
+  top: 7px !important;
+}
+
+.form-element.form-combobox .mat-form-field,
+.form-element.form-combobox .mat-menu-trigger{
+  height: 33px;
 }
 
 /* Chips */
@@ -284,6 +327,11 @@ entity-table .mat-toolbar.mat-card-toolbar{
 .form-element.form-explorer .mat-form-field-wrapper,
 .form-element.form-explorer .mat-form-field-flex,
 .form-element.form-explorer .mat-form-field-flex input {
+  border: none;
+}
+
+.form-element.form-combobox .mat-form-field-flex,
+.form-element.form-combobox .mat-form-field-flex input {
   border: none;
 }
 
