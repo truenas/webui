@@ -23,7 +23,7 @@
 .slide-in-form {
     width: 400px;
     position: fixed;
-    top: 0;
+    top: 50px;
     right: -400px;
     bottom: 0;
     /* left: 0; */
@@ -39,6 +39,8 @@
 .slide-in-form.open {
     right: 0;
     transition: 200ms;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .jw-modal-body {
@@ -51,14 +53,14 @@
 
 .slide-in-form .jw-modal-body {
     margin: 0;
-    height: 100vh;
+    height: 100%;
     background-color: var(--bg2);
 }
 
 .jw-modal-background {
     /* modal background fixed across whole screen */
     position: fixed;
-    top: 0;
+    top: 50px;
     right: 0;
     bottom: 0;
     left: 0;
