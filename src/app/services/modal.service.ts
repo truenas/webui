@@ -1,8 +1,15 @@
 ﻿import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ModalService {
     private modals: any[] = [];
+
+    refreshTable$ = new Subject();
+
+    refresh() {
+        this.refreshTable$.next();
+    }
 
     add(modal: any) {
         // add modal to array of active modals

@@ -7,6 +7,7 @@ import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/account/groups';
 
 import { WebSocketService, UserService, DialogService } from '../../../../services/';
+import { ModalService } from 'app/services/modal.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
@@ -86,7 +87,7 @@ export class GroupFormComponent {
   constructor(protected router: Router, 
     protected ws: WebSocketService, 
     private dialog:DialogService,
-    protected aroute: ActivatedRoute) {
+    protected aroute: ActivatedRoute, private modalService: ModalService) {
   }
 
   preInit(entityForm: any) {
@@ -138,5 +139,9 @@ export class GroupFormComponent {
       }
 
     });
+  }
+
+  afterSubmit() {
+    this.modalService.refresh();
   }
 }

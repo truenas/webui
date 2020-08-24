@@ -78,7 +78,7 @@
     transition: 200ms;
 }
 
-body.jw-modal-open {
+body.jw-modal-open .slide-in-form .jw-modal-body {
     /* body overflow is hidden to hide main scrollbar when modal window is open */
     overflow: hidden;
 }
