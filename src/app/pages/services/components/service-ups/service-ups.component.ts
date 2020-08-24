@@ -293,7 +293,6 @@ export class ServiceUPSComponent {
   }
 
   getKeyByValue(object, value) {
-    console.log(object, value)
     return Object.keys(object).find(key => object[key] === value);
   }
 
