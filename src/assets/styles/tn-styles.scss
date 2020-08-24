@@ -406,7 +406,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   .egret-swatch, .mat-checkbox-frame, .mat-radio-outer-circle {
-    @include variable(border-color, --fg1, $fg1);
+    @include variable(border-color, --primary, $primary);
     // border-color: gray;
   }
 
@@ -751,16 +751,16 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   // style to make sure all radio buttons catch the theme color
   .mat-radio-button.mat-accent .mat-radio-inner-circle {
-    background-color: var(--accent) !important;
+    @include variable(background-color, --primary, $primary, !important);
   }
 
   .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
-    border-color: var(--accent) !important;
+    @include variable(border-color, --primary, $primary, !important);
   }
 
   // Fix icon color in notification area
   .info-icon {
-    @include variable(color, --primary, $primary !important);
+    @include variable(color, --primary, $primary, !important);
   }
 
   .mat-spinner circle {
@@ -1780,7 +1780,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .sidebar-panel.mat-sidenav .sidebar-list-item {
     border-left: 6px solid rgba(0, 0, 0, .0);
-    border-bottom: 1px solid rgba(255, 255, 255, .05);
+    border-bottom: 1px solid var(--lines);
   }
 
   .sidebar-panel.mat-sidenav .sidebar-list-item:hover {
@@ -1809,7 +1809,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .slidein-nav {
     height: 100vh;
     width: 239px;
-    background-color: var(--bg2); // TODO: Replace with a darker shade of bg2 when available
+    background-color: var(--contrast-darker);
     position: absolute;
     left: -239px;
     top: 50px;
@@ -1834,6 +1834,14 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .isdark {
     display: block;
+  }
+
+  .slidein-nav .mat-list{
+    padding: 0;
+  }
+
+  .slidein-nav .mat-list-item{
+    border-bottom: solid 1px var(--lines);
   }
 
   // End slide-in menu ////////////////
