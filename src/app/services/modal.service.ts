@@ -7,7 +7,7 @@ export class ModalService {
 
     public refreshTable$ = new Subject();
 
-    refresh() {
+    refreshTable() {
         this.refreshTable$.next();
     }
 

@@ -62,7 +62,6 @@ export class ModalComponent implements OnInit, OnDestroy {
         modal.classList.add('open');
         background.classList.add('open');
         this.formOpen = true;
-        console.log(this.formOpen)
         document.body.classList.add('jw-modal-open');
     }
 
@@ -74,6 +73,5 @@ export class ModalComponent implements OnInit, OnDestroy {
         background.classList.remove('open');
         document.body.classList.remove('jw-modal-open');
         this.formOpen = false;
-        console.log(this.formOpen)
     }
 }

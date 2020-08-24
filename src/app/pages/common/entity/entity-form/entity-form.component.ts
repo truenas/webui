@@ -34,9 +34,6 @@ import {FieldRelationService} from './services/field-relation.service';
 import {  DialogService } from '../../../../services/';
 import { T } from '../../../../translate-marker';
 
-import {AdminLayoutComponent} from '../../../../components/common/layouts/admin-layout/admin-layout.component';
-
-
 export interface Formconfiguration {
   prerequisite?;
   fieldSets?;
@@ -157,7 +154,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               protected entityFormService: EntityFormService,
               protected fieldRelationService: FieldRelationService,
               protected loader: AppLoaderService,
-              public adminLayout: AdminLayoutComponent,
               private dialog:DialogService,
               public translate: TranslateService,
               private modalService: ModalService,

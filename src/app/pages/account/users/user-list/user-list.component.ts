@@ -6,18 +6,14 @@ import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
-import { ModalService } from '../../../../services/modal.service';
-import { StorageService, UserService, ValidationService } from '../../../../services/';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import * as _ from 'lodash';
 import helptext from '../../../../helptext/account/user-list';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { UserFormComponent } from '../user-form/user-form.component';
 
 @Component({
   selector: 'app-user-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
-  providers: [UserService]
+  template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
 export class UserListComponent {
 
@@ -33,7 +29,6 @@ export class UserListComponent {
   protected hasDetails = true;
   protected queryCall = 'user.query';
   protected wsDelete = 'user.delete';
-  protected addComponent: UserFormComponent;
   // protected queryCallOption = [['OR', [['uid', '=', 0], ['builtin', '=', false]]]];
   protected queryCallOption = [];
   protected globalConfig = {
@@ -79,13 +74,7 @@ export class UserListComponent {
   constructor(private router: Router,
               protected dialogService: DialogService, protected loader: AppLoaderService,
               protected ws: WebSocketService, protected prefService: PreferencesService,
-              private translate: TranslateService, private modalService: ModalService,
-              private storageService: StorageService, private userService: UserService,
-              private validationService: ValidationService) {
-  }
-
-  ngOnInit() {
-    this.addComponent = new UserFormComponent(this.router,this.ws,this.storageService,this.loader,this.userService,this.validationService);
+              private translate: TranslateService) {
   }
 
   afterInit(entityList: any) { 
@@ -225,8 +214,4 @@ export class UserListComponent {
     this.dialogService.confirm(helptext.builtinMessageDialog.title, helptext.builtinMessageDialog.message, 
       true, helptext.builtinMessageDialog.button, false, '', '', '', '', true);
   }
-
-  doAdd() {
-    this.modalService.open('slide-in-form', this.addComponent);
-  }  
 }

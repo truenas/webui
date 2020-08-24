@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
 
 import * as _ from 'lodash';
-import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/account/groups';
 
-import { WebSocketService, UserService, DialogService } from '../../../../services/';
+import { WebSocketService, UserService } from '../../../../services/';
 import { ModalService } from 'app/services/modal.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
@@ -17,8 +16,6 @@ import { forbiddenValues } from '../../../common/entity/entity-form/validators/f
   template: `<entity-form [conf]="this"></entity-form>`
 })
 export class GroupFormComponent {
-
-  // protected route_success: string[] = ['account', 'groups']; removed for slide in form
   protected isEntity: boolean = true;
   protected namesInUse = [];
   protected queryCall = 'group.query';
@@ -79,40 +76,34 @@ export class GroupFormComponent {
     }
   ]
 
-
   public users: any[];
   private bsdgrp_gid: any;
   private allow: any;
 
   constructor(protected router: Router, 
     protected ws: WebSocketService, 
-    private dialog:DialogService,
-    protected aroute: ActivatedRoute, private modalService: ModalService) {
-  }
-
-  preInit(entityForm: any) {
-    this.aroute.params.subscribe(params => {
-      let opt = params.pk ? [{'gid':params.pk}] : [];
-      
-
-      this.ws.call('group.query').subscribe(
-        (res)=>{
-          _.remove(res, function(group) {
-            return group['id'] == params['pk'];
-          });
-          this.namesInUse.push(...res.map(group => group.group));
-      });
-
-    });
+    private modalService: ModalService) {
   }
 
   resourceTransformIncomingRestData(data) {
     data['name'] = data['group'];
+    this.getNamesInUse(data['name']);
     return data;
   }
 
+  getNamesInUse(currentName?: string) {
+    this.ws.call('group.query').subscribe(
+      (res)=>{
+        if (currentName) {
+          _.remove(res, function(group) {
+            return group['group'] == currentName;
+          });
+        }
+        this.namesInUse.push(...res.map(group => group.group));
+    });
+  }
+
   afterInit(entityForm: any) {
-    console.log(parent)
     this.ws.call('user.query',[]).subscribe((res) => {
       this.users = res.map((u) =>{
         let user = Object.assign({}, u);
@@ -134,6 +125,7 @@ export class GroupFormComponent {
         entityForm.formGroup.controls['allow_duplicate_gid'].setValue(true);
         _.find(this.fieldSets[0].config, { name: 'allow_duplicate_gid' }).isHidden = true;
       } else {
+        this.getNamesInUse();
         this.ws.call('group.get_next_gid').subscribe((res)=>{
           entityForm.formGroup.controls['gid'].setValue(res);
         })
@@ -143,5 +135,7 @@ export class GroupFormComponent {
   }
 
   afterSubmit() {
-    this.modalService.refresh();
+    this.modalService.refreshTable();
   }
+
+}

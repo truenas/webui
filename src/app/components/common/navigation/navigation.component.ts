@@ -33,14 +33,6 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
     this.iconTypeMenuTitle = this.navService.iconTypeMenuTitle;
     // Loads menu items from NavigationService
     this.navService.menuItems$.subscribe(menuItem => {
-      this.ws.call('ipmi.is_loaded').subscribe((res)=>{
-        if(!res){
-           _.find(_.find(menuItem,
-            {name : "Network"}).sub,
-            {name : "IPMI"}).disabled = true;
-        }
-      });
-
       if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
         this.ws
           .call("system.feature_enabled", ["VM"])
