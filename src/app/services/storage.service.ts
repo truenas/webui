@@ -98,9 +98,9 @@ export class StorageService {
     }
     // Select table columns labled with GiB, Mib, etc
     // Regex checks for ' XiB' with a leading space and X === K, M, G or T
+    // also include bytes unit, which will get from convertBytestoHumanReadable function
     if (typeof(tempArr[n]) === 'string' &&
-      (tempArr[n].slice(-2) === ' B' || /\s[KMGT]iB$/.test(tempArr[n].slice(-4) ))) {
-
+      (tempArr[n].slice(-2) === ' B' || /\s[KMGT]iB$/.test(tempArr[n].slice(-4) ) || tempArr[n].slice(-6) === ' bytes')) {
     let bytes = [], kbytes = [], mbytes = [], gbytes = [], tbytes = [];
     for (let i of tempArr) {
       if (i) {
@@ -179,7 +179,7 @@ export class StorageService {
 
         sorter = [];
         for (let elem of timeArr) {
-         sorter.push(moment(elem).format('l LT'));
+         sorter.push(moment(elem).format('YYYY-MM-DD HH:mm:ss')); // formate should matched locale service
         }
       }
     else {

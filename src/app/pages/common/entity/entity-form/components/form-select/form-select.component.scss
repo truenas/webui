@@ -23,3 +23,8 @@
 .inline-label .mat-form-field {
   padding:8px;
 }
+
+mat-selection-list {
+  max-height: 400px;
+  overflow: auto;
+}
