@@ -73,5 +73,6 @@ export class ModalComponent implements OnInit, OnDestroy {
         background.classList.remove('open');
         document.body.classList.remove('jw-modal-open');
         this.formOpen = false;
+        this.modalService.refreshForm();
     }
 }

@@ -6,9 +6,14 @@ export class ModalService {
     private modals: any[] = [];
 
     public refreshTable$ = new Subject();
+    public refreshForm$ = new Subject();
 
     refreshTable() {
         this.refreshTable$.next();
+    }
+
+    refreshForm() {
+        this.refreshForm$.next();
     }
 
     add(modal: any) {

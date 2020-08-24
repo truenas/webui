@@ -58,8 +58,16 @@ export class GroupListComponent {
     protected aroute: ActivatedRoute, private modalService: ModalService){}
 
   ngOnInit() {
+    this.refreshGroupForm();
+    this.modalService.refreshForm$.subscribe(() => {
+      this.refreshGroupForm();
+    })
+  }
+  
+  refreshGroupForm() {
     this.addComponent = new GroupFormComponent(this._router,this.ws,this.modalService);
   }
+
   resourceTransformIncomingRestData(data) {
     // Default setting is to hide builtin groups 
     if (this.prefService.preferences.hide_builtin_groups) {

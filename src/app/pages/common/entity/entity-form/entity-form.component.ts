@@ -529,7 +529,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                               this.conf.responseOnSubmit(res);
                             }
                           }
-
+                          this.modalService.close('slide-in-form');
                         },
                         (res) => {
                           this.loader.close();
@@ -541,9 +541,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                           else {
                             new EntityUtils().handleError(this, res);
                           }
+                          this.modalService.close('slide-in-form');
                         });
     }
-    this.modalService.close('slide-in-form');
   }
 
   clearErrors() {
