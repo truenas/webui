@@ -155,7 +155,7 @@ def input_wbinfo_u(driver, cmd):
 @then(parsers.parse('verify that "{ad_object}" is in  wbinfo -u output'))
 def verify_that_ad_object_is_in__wbinfo_u_output(driver, ad_object):
     """verify that "{ad_object}" is in  wbinfo -u output."""
-    assert wait_on_element(driver, 1, 5, f'//span[contains(.,"{ad_object}")]')
+    assert wait_on_element(driver, 1, 10, f'//span[contains(.,"{ad_object}")]')
 
 
 @then(parsers.parse('input "{cmd}"'))
@@ -238,8 +238,8 @@ def my_acl_dataset_should_be_created(driver, dataset_name):
 @then('click on "my_acl_dataset" 3 dots button, select Edit Permissions')
 def click_on_my_acl_dataset_3_dots_button_select_edit_permissions(driver):
     """click on "my_acl_dataset" 3 dots button, select Edit Permissions."""
-    assert wait_on_element(driver, 1, 5, '//mat-icon[@id="actions_menu_button__dozer"]')
-    driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__dozer"]').click()
+    assert wait_on_element(driver, 1, 5, '//mat-icon[@id="actions_menu_button__my_acl_dataset"]')
+    driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__my_acl_dataset"]').click()
     assert wait_on_element(driver, 1, 5, '//button[@ix-auto="action__my_acl_dataset_Edit Permissions"]')
     driver.find_element_by_xpath('//button[@ix-auto="action__my_acl_dataset_Edit Permissions"]').click()
 
