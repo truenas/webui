@@ -211,12 +211,14 @@ export class ServiceUPSComponent {
       } 
     });
 
-    entityForm.formGroup.controls['ups_driver'].valueChanges.subscribe((res) => {;
-      this.ups_driver_key = this.getKeyByValue(this.ups_drivers_list, res);
-      if (this.ups_drivers_list[res]) {
-        entityForm.formGroup.controls['ups_driver'].setValue(this.ups_drivers_list[res]);
-      }
-    });
+    setTimeout(() => {
+      entityForm.formGroup.controls['ups_driver'].valueChanges.subscribe((res) => {;
+        this.ups_driver_key = this.getKeyByValue(this.ups_drivers_list, res);
+        if (this.ups_drivers_list[res]) {
+          entityForm.formGroup.controls['ups_driver'].setValue(this.ups_drivers_list[res]);
+        }
+      });
+    }, 100)
 
     entityForm.formGroup.controls['ups_mode'].valueChanges.subscribe((res) => {
       if (res === 'slave') {
