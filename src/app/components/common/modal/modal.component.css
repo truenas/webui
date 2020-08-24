@@ -26,7 +26,6 @@
     top: 50px;
     right: -400px;
     bottom: 0;
-    /* left: 0; */
 
     /* z-index must be higher than .jw-modal-background */
     z-index: 1000;
@@ -82,3 +81,12 @@ body.jw-modal-open .slide-in-form .jw-modal-body {
     /* body overflow is hidden to hide main scrollbar when modal window is open */
     overflow: hidden;
 }
+
+#close-icon {
+    color: var(--fg1);
+    cursor: pointer;
+    position: absolute;
+    right: 25px;
+    top: 30px;
+    z-index: 10;
+  }

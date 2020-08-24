@@ -89,10 +89,3 @@ jw-modal {
     display: block;
 }
 
-#slide-in-form #close-icon {
-  color: var(--fg1);
-  cursor: pointer;
-  position: absolute;
-  right: 15px;
-  top: 20px;
-}

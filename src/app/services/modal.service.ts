@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 export class ModalService {
     private modals: any[] = [];
 
-    refreshTable$ = new Subject();
+    public refreshTable$ = new Subject();
 
     refresh() {
         this.refreshTable$.next();

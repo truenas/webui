@@ -18,7 +18,7 @@ import { forbiddenValues } from '../../../common/entity/entity-form/validators/f
 })
 export class GroupFormComponent {
 
-  protected route_success: string[] = ['account', 'groups'];
+  // protected route_success: string[] = ['account', 'groups']; removed for slide in form
   protected isEntity: boolean = true;
   protected namesInUse = [];
   protected queryCall = 'group.query';
@@ -112,6 +112,7 @@ export class GroupFormComponent {
   }
 
   afterInit(entityForm: any) {
+    console.log(parent)
     this.ws.call('user.query',[]).subscribe((res) => {
       this.users = res.map((u) =>{
         let user = Object.assign({}, u);
@@ -144,4 +145,3 @@ export class GroupFormComponent {
   afterSubmit() {
     this.modalService.refresh();
   }
-}

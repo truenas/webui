@@ -41,8 +41,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   public copyrightYear = globalHelptext.copyright_year;
   // we will just have to add to this list as more languages are added
 
-  bodyText = 'This text can be updated in modal 1'; // delete me, used for sample model thingy
-
   @ViewChild(MatSidenav, { static: false}) private sideNave: MatSidenav;
   @ViewChild('footerBarScroll', { static: true}) private footerBarScroll: ElementRef;
   freenasThemes;
