@@ -276,12 +276,14 @@ export class ServiceUPSComponent {
       } 
     });
 
-    entityForm.formGroup.controls['driver'].valueChanges.subscribe((res) => {;
-      this.ups_driver_key = this.getKeyByValue(this.ups_drivers_list, res);
-      if (this.ups_drivers_list[res]) {
-        entityForm.formGroup.controls['driver'].setValue(this.ups_drivers_list[res]);
-      }
-    });
+    setTimeout(() => {
+      entityForm.formGroup.controls['driver'].valueChanges.subscribe((res) => {;
+        this.ups_driver_key = this.getKeyByValue(this.ups_drivers_list, res);
+        if (this.ups_drivers_list[res]) {
+          entityForm.formGroup.controls['driver'].setValue(this.ups_drivers_list[res]);
+        }
+      });
+    }, 100)
 
     entityForm.formGroup.controls['mode'].valueChanges.subscribe((res) => {
         generalSet.config.find(conf => conf.name === 'remotehost').isHidden = res === 'MASTER';
