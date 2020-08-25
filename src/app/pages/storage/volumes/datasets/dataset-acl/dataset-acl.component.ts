@@ -478,6 +478,12 @@ export class DatasetAclComponent implements OnDestroy {
         this.handleEmptyACL();
       }, 1000)
     }
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('homeShare')) {
+      this.ws.call('filesystem.get_default_acl', ['HOME']).subscribe(res => {
+        data.acl = res;
+      })
+    }
     return {"aces": []}; // stupid hacky thing that gets around entityForm's treatment of data
   }
 
