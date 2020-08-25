@@ -38,8 +38,13 @@ export const helptext_sharing_smb = {
  as the home share.'),
 
     placeholder_purpose: T('Purpose'),
-    tooltip_purpose: T('Select a preset configuration for the share. This\
- applies predetermined values and disables changing some share options.'),
+    tooltip_purpose: T('Choosing a preset configuration for the share \
+ locks in several predetermined values for the share Advanced Options, \
+ including the <i>Path Suffix</i>. To see which options have been set \
+ and/or locked, click <b>Advanced Options</b> after selecting a <i>Purpose</i>. \
+ <code>%U</code> is added as the <i>Path Suffix</i> when a Multi-user, \
+ Multi-protocol, or Private <i>Purpose</i> is selected. To retain full control \
+ over all the Advanced Options, select <i>No presets</i>.'),
 
    placeholder_timemachine: T('Time Machine'),
    tooltip_timemachine: T('Enable Time Machine backups on this share.'),
@@ -89,8 +94,8 @@ export const helptext_sharing_smb = {
 
     placeholder_abe: T('Access Based Share Enumeration'),
     tooltip_abe: T('Restrict share visibility to users with read or write access\
- to the share. See <a href="https://www.freebsd.org/cgi/man.cgi?query=smb.conf"\
- target=_blank>smb.conf(5)</a>.'),
+ to the share. See the <a href="https://www.freebsd.org/cgi/man.cgi?query=smb.conf"\
+ target=_blank>smb.conf</a> manual page.'),
 
     placeholder_hostsallow: T('Hosts Allow'),
     tooltip_hostsallow: T('Enter a list of allowed hostnames or IP addresses.\
@@ -157,9 +162,9 @@ export const helptext_sharing_smb = {
     placeholder_path_suffix: T('Path Suffix'),
     tooltip_path_suffix: T('Appends a suffix to the share connection path. \
  This is used to provide unique shares on a per-user, per-computer, or per-IP address basis. \
- Suffixes can contain a macro. See \
- <a href="https://www.freebsd.org/cgi/man.cgi?query=smb.conf" target="_blank">smb.conf(5)</a> for\
- a list of supported macros. The connectpath **must** be preset before a client connects.'),
+ Suffixes can contain a macro. See the \
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=smb.conf" target="_blank">smb.conf</a> manual page for \
+ a list of supported macros. The connectpath <b>must</b> be preset before a client connects.'),
 
     actions_basic_mode: T('Basic Mode'),
     actions_advanced_mode: T('Advanced Mode'),
@@ -223,5 +228,14 @@ export const helptext_sharing_smb = {
     ae_type_tooltip: T('How permissions are applied to the share.\
  <i>Allowed</i> denies all permissions by default except those that are manually defined.\
  <i>Denied</i> allows all permissions by default except those that are manually defined.'),
+
+ formTitle: T('SMB'),
+
+ stripACLDialog: {
+    title: T('Warning'),
+    message: T('An ACL is detected on the selected path but <i>Enable ACL</i> is not selected for this share. \
+ ACLs must be stripped from the dataset prior to creating an SMB share.'),
+    button: T('Close')
+ }
 
 };

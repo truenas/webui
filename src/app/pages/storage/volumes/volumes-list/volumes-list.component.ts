@@ -798,7 +798,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
                 } else {
                   self.translate.get('Start scrub on pool').subscribe(msg => {               
-                  this.dialogService.confirm(T("Scrub Pool"), `${msg} <i>row1.name</i>?`, false, T("Start Scrub")).subscribe((res) => {
+                  this.dialogService.confirm(T("Scrub Pool"), `${msg} <i>${row1.name}</i>?`, false, T("Start Scrub")).subscribe((res) => {
                     if (res) {
                       this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { "title": T('Scrub Pool') }, disableClose: false });
                       this.dialogRef.componentInstance.setCall('pool.scrub', [row1.id, 'START']);
@@ -1370,6 +1370,13 @@ export class VolumesListTableConfig implements InputTableConf {
                   validation: dataset_helptext.dataset_form_encryption.pbkdf2iters_validation,
                   disabled: is_key,
                   isHidden: is_key,
+                },
+                {
+                  type: 'input',
+                  name: 'algorithm',
+                  placeholder: dataset_helptext.dataset_form_encryption.algorithm_placeholder,
+                  disabled: true,
+                  value: (row.encryption_algorithm && row.encryption_algorithm.value) ? row.encryption_algorithm.value : '' 
                 },
                 {
                   type: 'checkbox',

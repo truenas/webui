@@ -142,7 +142,7 @@
 
     <!-- DETAILS/TITLE -->
     <div id="disks-details-header" [class]="currentView"> 
-      <a class="back fn-theme-primary" (click)="clearDisk()" *ngIf="currentView == 'details'"><mat-icon role="img">chevron_left</mat-icon></a>
+      <a class="btn-default back fn-theme-primary" (click)="clearDisk()" *ngIf="currentView == 'details'"><mat-icon role="img">chevron_left</mat-icon></a>
       {{selectedDisk ? 'Disk Details for ' + selectedDisk.name : 'Disks Overview'}} 
     </div>
 
@@ -166,7 +166,7 @@
             <div *ngIf="unhealthyPools && unhealthyPools.length == 1" class="subtitle">Pool "{{unhealthyPools[0].name}}" is {{unhealthyPools[0].status}}.</div>
             <div *ngIf="unhealthyPools && unhealthyPools.length > 1" class="subtitle">{{unhealthyPools[0]}} and {{unhealthyPools.length - 1}} other pools are not healthy.</div>
             <div *ngIf="unhealthyPools && unhealthyPools.length < 1" class="subtitle">All pools are online.</div>
-            <button mat-button color="primary" (click)="setCurrentView('pools')">SHOW POOLS</button>
+            <button mat-button class="" color="primary" (click)="setCurrentView('pools')">SHOW POOLS</button>
           </div>
   
           <div *ngIf="system; else loading" fxFlex class="tiles" [class.active]="currentView == 'status' " fxLayout="column" fxLayoutAlign="center center">

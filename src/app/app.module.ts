@@ -24,6 +24,7 @@ import { TruecommandComponent } from './components/common/dialog/truecommand/tru
 import { DirectoryServicesMonitorComponent } from './components/common/dialog/directory-services-monitor/directory-services-monitor.component';
 import { ConsolePanelModalDialog } from './components/common/dialog/consolepanel/consolepanel-dialog.component';
 import { DownloadKeyModalDialog } from './components/common/dialog/downloadkey/downloadkey-dialog.component';
+import { ResilverProgressDialogComponent } from './components/common/dialog/resilver-progress/resilver-progress.component';
 import {SelectDialogComponent} from './pages/common/select-dialog/select-dialog.component'
 import { ErrorDialog } from './pages/common/error-dialog/error-dialog.component';
 import { InfoDialog } from './pages/common/info-dialog/info-dialog.component';
@@ -94,6 +95,7 @@ export function createTranslateLoader(http: HttpClient) {
     DirectoryServicesMonitorComponent,
     ConsolePanelModalDialog,
     DownloadKeyModalDialog,
+    ResilverProgressDialogComponent,
     SelectDialogComponent
   ],
   providers: [
@@ -121,6 +123,7 @@ export function createTranslateLoader(http: HttpClient) {
     DirectoryServicesMonitorComponent,
     ConsolePanelModalDialog,
     DownloadKeyModalDialog,
+    ResilverProgressDialogComponent,
     SelectDialogComponent,
     EntityDialogComponent,
     FormCheckboxComponent,

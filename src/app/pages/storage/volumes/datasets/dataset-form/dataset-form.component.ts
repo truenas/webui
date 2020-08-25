@@ -170,6 +170,10 @@ export class DatasetFormComponent implements Formconfiguration{
         options: [
           { label: 'off', value: 'OFF' },
           { label: 'lz4 (recommended)', value: 'LZ4' ,},
+          { label: 'zstd (default level, 3)', value: 'ZSTD' },
+          { label: 'zstd (Medium, slow)', value: 'ZSTD-5' },
+          { label: 'zstd (Maximum, very slow)', value: 'ZSTD-7' },
+          { label: 'zstd-fast (default level, 1)', value: 'ZSTD-FAST' },
           { label: 'gzip (fastest)', value: 'GZIP-1' },
           { label: 'gzip (default level, 6)', value: 'GZIP' },
           { label: 'gzip (maximum, slow)', value: 'GZIP-9' },
@@ -537,6 +541,17 @@ export class DatasetFormComponent implements Formconfiguration{
           validation: helptext.dataset_form_encryption.pbkdf2iters_validation,
           disabled: true,
           isHidden: true,
+        },
+        {
+          type: 'select',
+          name: 'algorithm',
+          placeholder: helptext.dataset_form_encryption.algorithm_placeholder,
+          tooltip: helptext.dataset_form_encryption.algorithm_tooltip,
+          required: true,
+          value: "AES-256-CCM",
+          options: [],
+          disabled: true,
+          isHidden: true,
         }
       ]
     },
@@ -682,6 +697,7 @@ export class DatasetFormComponent implements Formconfiguration{
   public encryption_fields: Array<any> = [
     'encryption_type',
     'generate_key',
+    'algorithm',
   ]
 
   public key_fields: Array<any> = [
@@ -1032,6 +1048,20 @@ export class DatasetFormComponent implements Formconfiguration{
           this.entityForm.setDisabled('inherit_encryption', true, true);
         }
         else {
+          const encryption_algorithm_fc = _.find(this.fieldConfig, {name:'algorithm'});
+          const encryption_algorithm_fg = this.entityForm.formGroup.controls['algorithm'];
+          let parent_algorithm;
+          if (this.encrypted_parent && pk_dataset[0].encryption_algorithm) {
+            parent_algorithm = pk_dataset[0].encryption_algorithm.value;
+            encryption_algorithm_fg.setValue(parent_algorithm);
+          }
+          this.ws.call('pool.dataset.encryption_algorithm_choices').subscribe(algorithms => {
+            for (const algorithm in algorithms) {
+              if (algorithms.hasOwnProperty(algorithm)) {
+                encryption_algorithm_fc.options.push({label:algorithm, value:algorithm});
+              }
+            }
+          });
           _.find(this.fieldConfig, {name:'encryption'}).isHidden = true;
           const inherit_encryption_fg = this.entityForm.formGroup.controls['inherit_encryption'];
           const encryption_fg = this.entityForm.formGroup.controls['encryption'];
@@ -1053,6 +1083,7 @@ export class DatasetFormComponent implements Formconfiguration{
             }
             if (!inherit) {
               this.entityForm.setDisabled('encryption_type', inherit, inherit);
+              this.entityForm.setDisabled('algorithm', inherit, inherit);
               if (this.passphrase_parent) { // keep it hidden if it passphrase
                 _.find(this.fieldConfig, {name:'encryption_type'}).isHidden = true;
               }
@@ -1457,6 +1488,7 @@ export class DatasetFormComponent implements Formconfiguration{
           data.encryption_options.passphrase = data.passphrase;
           data.encryption_options.pbkdf2iters = data.pbkdf2iters;
         }
+        data.encryption_options.algorithm = data.algorithm;
       }
     }
     delete data.key;
@@ -1465,6 +1497,7 @@ export class DatasetFormComponent implements Formconfiguration{
     delete data.confirm_passphrase;
     delete data.pbkdf2iters;
     delete data.encryption_type;
+    delete data.algorithm;
 
     return this.ws.call('pool.dataset.create', [ data ]);
   }
@@ -1474,9 +1507,26 @@ export class DatasetFormComponent implements Formconfiguration{
 
     return ((this.isNew === true ) ? this.addSubmit(body) : this.editSubmit(body)).subscribe((restPostResp) => {
       this.loader.close();
-
-      this.router.navigate(new Array('/').concat(
-        this.route_success));
+      const parentPath = `/mnt/${this.parent}`;
+      this.ws.call('filesystem.acl_is_trivial', [parentPath]).subscribe(res => {
+        if (res === false) {
+          this.dialogService.confirm(helptext.afterSubmitDialog.title,
+            helptext.afterSubmitDialog.message, true, helptext.afterSubmitDialog.actionBtn, false, '', '', '','',
+            false, helptext.afterSubmitDialog.cancelBtn).subscribe(res => {
+            if (res) {
+              this.router.navigate(new Array('/').concat(
+                ['storage', 'pools', 'id', restPostResp.pool, 'dataset', 'acl', restPostResp.name]
+              ) , { queryParams: { default: parentPath } })
+            } else {
+              this.router.navigate(new Array('/').concat(
+                this.route_success));
+            }
+          })
+        } else {
+          this.router.navigate(new Array('/').concat(
+            this.route_success));
+        }
+      })
     }, (res) => {
       this.loader.close();
       new EntityUtils().handleWSError(this.entityForm, res);

@@ -244,8 +244,8 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
 
     // Create the data...
     data.forEach((item, index) => {
-      const bgRGB = this.themeService.hexToRGB(this.colorPattern[index]).rgb;
-      const borderRGB = this.themeService.hexToRGB(this.currentTheme.bg2).rgb;
+      const bgRGB = this.utils.hexToRGB(this.colorPattern[index]).rgb;
+      const borderRGB = this.utils.hexToRGB(this.currentTheme.bg2).rgb;
 
       ds.backgroundColor.push(this.rgbToString(bgRGB, 0.85));
       ds.borderColor.push(this.rgbToString(bgRGB));

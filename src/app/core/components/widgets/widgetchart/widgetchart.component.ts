@@ -66,7 +66,7 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
       }
     }, 5000)
     let theme = this.themeService.currentTheme();
-    this.widgetColorCssVar = theme[this.themeService.colorFromMeta(theme.primary)];
+    this.widgetColorCssVar = theme[this.utils.colorFromMeta(theme.primary)];
   }
 
   ngOnDestroy(){

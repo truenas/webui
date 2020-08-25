@@ -2,6 +2,7 @@ import {
   Component,
   OnDestroy,
 } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import {
   FormGroup,
 } from '@angular/forms';
@@ -40,7 +41,7 @@ export class DatasetAclComponent implements OnDestroy {
   protected groupOptions: any[];
   protected userSearchOptions: [];
   protected groupSearchOptions: [];
-  protected defaults: any;
+  protected defaults = [];
   protected recursive: any;
   protected recursive_subscription: any;
   private aces: any;
@@ -57,6 +58,7 @@ export class DatasetAclComponent implements OnDestroy {
   protected route_success: string[] = [ 'storage', 'pools' ];
   public save_button_enabled = true;
   private homeShare: boolean;
+  private isTrivialMessageSent = false;
 
   protected uid_fc: any;
   protected gid_fc: any;
@@ -113,13 +115,6 @@ export class DatasetAclComponent implements OnDestroy {
           placeholder: helptext.apply_group.placeholder,
           tooltip: helptext.apply_group.tooltip,
           value: false
-        },
-        {
-          type: 'select',
-          name: 'default_acl_choices',
-          placeholder: helptext.acl_defaults_placeholder,
-          tooltip: helptext.acl_defaults_tooltip,
-          options: []
         }
       ]
     },
@@ -293,6 +288,13 @@ export class DatasetAclComponent implements OnDestroy {
       function : () => {
         this.doStripACL();
       }
+    },
+    {
+      id : 'show_defaults',
+      name : helptext.preset_cust_action_btn,
+      function : () => {
+        this.showChoiceDialog(true);
+      }
     }
   ];
 
@@ -300,10 +302,14 @@ export class DatasetAclComponent implements OnDestroy {
               protected aroute: ActivatedRoute, 
               protected ws: WebSocketService, protected userService: UserService,
               protected storageService: StorageService, protected dialogService: DialogService,
-              protected loader: AppLoaderService, protected dialog: MatDialog) {}
+              protected loader: AppLoaderService, protected dialog: MatDialog,
+              private translate: TranslateService) {}
 
   
   isCustActionVisible(actionId: string) {
+    if (actionId === 'show_defaults') {
+      return true;
+    }
     if (this.aclIsTrivial) {
       return actionId === 'use_perm_editor' ? true : false;
     } else {
@@ -321,7 +327,13 @@ export class DatasetAclComponent implements OnDestroy {
       this.path = '/mnt/' + params['path'];
       const path_fc = _.find(this.fieldSets[0].config, {name:'path'});
       path_fc.value = this.path;
-      this.pk = this.path;
+      this.route.queryParams.subscribe(qparams => {
+        if (qparams && qparams.default) {
+          this.pk = qparams.default;
+        } else {
+          this.pk = this.path;
+        }
+      });
     });
 
     this.userService.userQueryDSCache().subscribe(items => {
@@ -344,11 +356,9 @@ export class DatasetAclComponent implements OnDestroy {
       this.gid_fc.options = this.groupOptions;
     });
     this.ws.call('filesystem.default_acl_choices').subscribe((res) => {
-      this.defaults = _.find(this.fieldConfig, {"name": "default_acl_choices"});
-      res.forEach((item) => {
-        this.defaults.options.push(
-            {label : item, value : item});
-      });
+      res.forEach(item => {
+        this.defaults.push({ label: item, value: item });
+      })
     });
   }
 
@@ -454,7 +464,9 @@ export class DatasetAclComponent implements OnDestroy {
       }
       this.save_button_enabled = canSave;
     });
-    this.entityForm.formGroup.controls['default_acl_choices'].valueChanges.subscribe((value) => {
+  }
+
+  chooseDefaultSetting(value: string) {
       let num;
       value === 'RESTRICTED' ? num = 2 : num = 3;
       while(this.aces.controls.length > num) {
@@ -463,7 +475,6 @@ export class DatasetAclComponent implements OnDestroy {
       this.ws.call('filesystem.get_default_acl', [value]).subscribe((res) => {
         this.dataHandler(this.entityForm, res);
       });
-    });
   }
 
   setDisabled(fieldConfig, formControl, disable, hide) {
@@ -610,6 +621,68 @@ export class DatasetAclComponent implements OnDestroy {
       }
     }
     this.loader.close();
+    if (this.aclIsTrivial && !this.isTrivialMessageSent) {
+      this.showChoiceDialog();
+    }
+  }
+
+  showChoiceDialog(presetsOnly = false) {
+    let msg1, msg2;
+    this.translate.get(helptext.type_dialog.radio_preset_tooltip).subscribe(m1 => {
+      this.translate.get(helptext.preset_dialog.message).subscribe(m2 => {
+        msg1 = m1;
+        msg2 = m2;
+      })
+    })
+    const conf: DialogFormConfiguration = {
+      title: presetsOnly ? helptext.type_dialog.radio_preset : helptext.type_dialog.title,
+      message: presetsOnly ? `${msg1} ${msg2}` : null,
+      fieldConfig: [
+        {
+          type: 'radio',
+          name: 'useDefault',
+          options: [
+            {label: helptext.type_dialog.radio_preset,
+             name: 'defaultACL',
+             tooltip: helptext.type_dialog.radio_preset_tooltip,
+             value: true},
+            {label: helptext.type_dialog.radio_custom,
+             name: 'customACL',
+             value: false},
+          ],
+          value: true,
+          isHidden: presetsOnly
+        },
+        {
+          type: 'select',
+          name: 'defaultOptions',
+          placeholder: helptext.type_dialog.input.placeholder,
+          options: this.defaults,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'useDefault',
+                value: true,
+              }]
+            },
+          ],
+          required: true
+        }
+      ],
+      saveButtonText: helptext.type_dialog.button,
+      parent: this,
+      hideCancel: !presetsOnly,
+      customSubmit: (entityDialog) => {
+        entityDialog.dialogRef.close();
+        const { useDefault, defaultOptions } = entityDialog.formValue;
+        if (useDefault && defaultOptions) {
+          this.chooseDefaultSetting(defaultOptions);
+        }
+        this.isTrivialMessageSent = true;
+      }
+    }
+    this.dialogService.dialogForm(conf);
   }
 
   ngOnDestroy() {

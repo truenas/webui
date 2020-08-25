@@ -8,6 +8,7 @@ import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/view
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewchartline.component';
 import { WebSocketService, SystemGeneralService } from '../../../../services/';
+import { LocaleService } from "app/services/locale.service";
 import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 import { TextLimiterDirective } from 'app/core/components/directives/text-limiter/text-limiter.directive';
 
@@ -57,9 +58,12 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   public ha_status:string;
   public updateMethod = 'update.update';
   public screenType: string = 'Desktop';
+  public uptimeString = '';
+  public dateTime: string;
 
   constructor(public router: Router, public translate: TranslateService, private ws: WebSocketService,
-    public sysGenService: SystemGeneralService,  public mediaObserver: MediaObserver){
+    public sysGenService: SystemGeneralService,  public mediaObserver: MediaObserver,
+    private locale: LocaleService){
     super(translate);
     this.configurable = false;
     this.sysGenService.updateRunning.subscribe((res) => { 
@@ -190,8 +194,36 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
         this.isFN = false;
       }    
 
+      this.parseUptime();
       this.ready = true;
 
+  }
+
+  parseUptime() {
+    const seconds = Math.round(this.data.uptime_seconds);
+    const uptime = {
+      days: Math.floor(seconds / (3600*24)),
+      hrs: Math.floor(seconds % (3600*24) / 3600),
+      min: Math.floor(seconds % 3600 / 60)
+    }
+    const { days, hrs, min } = uptime;
+
+    let pmin = min.toString();
+    if (pmin.length === 1) {
+      pmin = '0' + pmin;
+    }
+
+    if (days > 0) {
+      days === 1 ? this.uptimeString += days + T(' day, ') : 
+      this.uptimeString += days + T(' days, ') + `${hrs}:${pmin}`;
+    } else if (hrs > 0) {
+        this.uptimeString += `${hrs}:${pmin}`;
+    } else {
+      min === 1 ? this.uptimeString += min + T(' minute') : 
+      this.uptimeString += min + T(' minutes')
+    }
+    
+    this.dateTime = (this.locale.getTimeOnly(this.data.datetime.$date, false, this.data.timezone)); 
   }
 
   formatMemory(physmem:number, units:string){

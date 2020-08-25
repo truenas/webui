@@ -78,6 +78,30 @@ export class LocaleService {
         return moment(date).format(`${this.dateFormat} ${this.timeFormat}`);
     }
 
+    getTimeOnly(date, seconds=true, tz?) {
+        tz ? moment.tz.setDefault(tz) : moment.tz.setDefault(this.timeZone);
+        let format: string;
+        if (!seconds) {
+            switch(this.timeFormat) {
+                case 'HH:mm:ss':
+                    format = 'HH:mm';
+                    break;
+                case 'hh:mm:ss a':
+                    format = 'hh:mm a';
+                    break;
+                case 'hh:mm:ss A':
+                    format = 'hh:mm A';
+                    break;
+                default:
+                    format = this.timeFormat;
+            }
+        }
+        else {
+            format = this.timeFormat;
+        }
+        return moment(date).format(format);
+    }
+
     saveDateTimeFormat(dateFormat, timeFormat) {
         this.dateFormat = dateFormat;
         this.timeFormat = timeFormat;
