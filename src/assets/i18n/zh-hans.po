@@ -69,6 +69,12 @@ msgstr " 内置用户（默认设置为<i>隐藏</i>）。"
 msgid " but datastore "
 msgstr " 但数据存储 "
 
+msgid " day, "
+msgstr ""
+
+msgid " days, "
+msgstr ""
+
 msgid " disks"
 msgstr " 磁盘"
 
@@ -94,6 +100,12 @@ msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
 "system performance."
 msgstr " 是最小推荐记录数据大小。选择一个更小的大小可能会降低系统性能。"
+
+msgid " minute"
+msgstr ""
+
+msgid " minutes"
+msgstr ""
 
 msgid " official plugins"
 msgstr ""
@@ -1671,6 +1683,11 @@ msgstr ""
 msgid "An ACL is present in this path"
 msgstr "此路径中存在ACL"
 
+msgid ""
+"An IP address must be provided for each controller and the virtual "
+"interface."
+msgstr ""
+
 msgid "An update is already applied. Please reboot the system."
 msgstr "已应用更新。请重新启动系统。"
 
@@ -1697,14 +1714,11 @@ msgstr "在设置用户 CN 时，在 LDAP 查询中为组和用户追加<i>@real
 msgid ""
 "Appends a suffix to the share connection path.  This is used to provide "
 "unique shares on a per-user, per-computer, or per-IP address basis.  "
-"Suffixes can contain a macro. See  <a "
+"Suffixes can contain a macro. See the  <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
-"target=\"_blank\">smb.conf(5)</a> for a list of supported macros. The "
-"connectpath **must** be preset before a client connects."
+"target=\"_blank\">smb.conf</a> manual page for  a list of supported macros. "
+"The connectpath **must** be preset before a client connects."
 msgstr ""
-"在共享连接路径上添加后缀。这用于基于每个用户，每台计算机或每个IP地址提供唯一共享。后缀可以包含一个宏。有关受支持的宏的列表，请参见<a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
-"target=\"_blank\">smb.conf(5)</a>。**必须**在客户端连接之前预先设置连接路径。"
 
 msgid "Application Credential ID"
 msgstr "应用程序凭证ID"
@@ -3461,6 +3475,9 @@ msgstr "创建快照"
 msgid "Create Theme"
 msgstr "创建主题"
 
+msgid "Create a custom ACL"
+msgstr ""
+
 msgid "Create a new Pool."
 msgstr "创建一个新的池。"
 
@@ -3472,6 +3489,9 @@ msgstr "创建一个池："
 
 msgid "Create a recommended formation of vdevs in a pool."
 msgstr "在池中创建推荐的vdev形式。"
+
+msgid "Create an ACL"
+msgstr ""
 
 msgid "Create an SMB Share"
 msgstr ""
@@ -5503,6 +5523,9 @@ msgstr ""
 "输入或粘贴<a href=\"https://portal.ixsystems.com/portal/login/\" "
 "target=\"_blank\">iXsystems帐户服务</a>提供的API密钥。需要登录或注册。"
 
+msgid "Enter or select the cloud storage location to use for this task."
+msgstr ""
+
 msgid "Enter passphrase to lock pool "
 msgstr "输入密码以锁定池 "
 
@@ -5696,9 +5719,6 @@ msgstr "输入公司或组织名。"
 
 msgid "Enter the name of the contact person."
 msgstr "输入联系人的姓名。"
-
-msgid "Enter the name of the destination folder."
-msgstr "输入目标文件夹名称。"
 
 msgid ""
 "Enter the name of the loader, sysctl, or rc.conf variable to configure. "
@@ -10246,6 +10266,9 @@ msgstr "重新同步"
 msgid "Resilvering Status"
 msgstr "重新同步状态"
 
+msgid "Resilvering pool: "
+msgstr ""
+
 msgid "Resolution"
 msgstr "分辨率"
 
@@ -10296,12 +10319,9 @@ msgstr "限制PAM"
 
 msgid ""
 "Restrict share visibility to users with read or write access to the share. "
-"See <a href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
-"target=_blank>smb.conf(5)</a>."
+"See the <a href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
+"target=_blank>smb.conf</a> manual page."
 msgstr ""
-"将共享的可见性限制为对共享具有读取或写入访问权限的用户。参见<a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" target=_blank> "
-"smb.conf（5）</a>。"
 
 msgid "Retro Logo"
 msgstr "复古Logo"
@@ -10765,6 +10785,9 @@ msgstr ""
 "有关支持的UPS设备列表，请参阅<a href=\"http://networkupstools.org/stable-hcl.html\" "
 "target=\"_blank\">网络UPS工具兼容性列表</a> 。"
 
+msgid "Select"
+msgstr ""
+
 msgid "Select "
 msgstr "选择"
 
@@ -10876,6 +10899,9 @@ msgstr "选择一个池，数据集，或zvol。"
 msgid "Select a power management profile from the menu."
 msgstr "从菜单中选择电源管理配置文件。"
 
+msgid "Select a preset ACL"
+msgstr ""
+
 msgid ""
 "Select a preset configuration for the share. This applies predetermined "
 "values and disables changing some share options."
@@ -10942,6 +10968,9 @@ msgid ""
 "Select a valid SSL certificate created or imported  in <b>System > "
 "Certificates</b> to use for encrypted connections."
 msgstr "选择在<b>系统>证书</b>中创建或导入的有效SSL证书，以用于加密连接。"
+
+msgid "Select an ACL Preset"
+msgstr ""
 
 msgid "Select an IP address to use for VNC sessions."
 msgstr "选择要用于VNC会话的IP地址。"
@@ -12508,6 +12537,9 @@ msgstr "状态已更新"
 msgid "Status:"
 msgstr "状态："
 
+msgid "Status: "
+msgstr ""
+
 msgid "Stop"
 msgstr "停止"
 
@@ -13109,6 +13141,11 @@ msgid ""
 "The certificate's public key is used to encipher user data only during key "
 "agreement operations. Requires that <b>Key Agreement</b> is also set."
 msgstr "证书的公用密钥仅在密钥协商操作期间才用于加密用户数据。要求还设置<b>密钥协议</ b>。"
+
+msgid ""
+"The chosen preset ACL will REPLACE the ACL currently displayed in the form  "
+"and delete any unsaved changes."
+msgstr ""
 
 msgid "The contents of all added disks will be erased."
 msgstr "所有已添加磁盘的内容将被删除。"
@@ -14659,9 +14696,6 @@ msgstr "视频，延迟小于10毫秒"
 msgid "View"
 msgstr "查看"
 
-msgid "View Enclosure"
-msgstr "查看机箱"
-
 msgid "View Logs"
 msgstr "查看日志"
 
@@ -15537,4 +15571,16 @@ msgid "yes"
 msgstr "是"
 
 msgid "zle (runs of zeros)"
+msgstr ""
+
+msgid "zstd (Maximum, very slow)"
+msgstr ""
+
+msgid "zstd (Medium, slow)"
+msgstr ""
+
+msgid "zstd (default level, 3)"
+msgstr ""
+
+msgid "zstd-fast (default level, 1)"
 msgstr ""
