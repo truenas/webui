@@ -57,6 +57,7 @@ export class DatasetAclComponent implements OnDestroy {
   protected dialogRef: any
   protected route_success: string[] = [ 'storage', 'pools' ];
   public save_button_enabled = true;
+  private homeShare: boolean;
   private isTrivialMessageSent = false;
 
   protected uid_fc: any;
@@ -317,6 +318,10 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   preInit(entityEdit: any) {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('homeShare')) {
+      this.homeShare = true;
+    }
     this.sub = this.aroute.params.subscribe(params => {
       this.datasetId = params['path'];
       this.path = '/mnt/' + params['path'];
@@ -358,11 +363,6 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   afterInit(entityEdit: any) {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('homeShare')) {
-      entityEdit.formGroup.controls['default_acl_choices'].setValue('HOME');
-    }
-
     this.entityForm = entityEdit;
     this.recursive = entityEdit.formGroup.controls['recursive'];
     this.recursive_subscription = this.recursive.valueChanges.subscribe((value) => {
@@ -488,8 +488,16 @@ export class DatasetAclComponent implements OnDestroy {
       setTimeout(() => {
         this.handleEmptyACL();
       }, 1000)
+      return {"aces": []};
+    } else {
+      if (this.homeShare) {
+        this.ws.call('filesystem.get_default_acl', ['HOME']).subscribe(res => {
+          data.acl = res;
+          return {"aces": []};
+        })
+      }
     }
-    return {"aces": []}; // stupid hacky thing that gets around entityForm's treatment of data
+     // stupid hacky thing that gets around entityForm's treatment of data
   }
 
   handleEmptyACL() {
