@@ -2,7 +2,7 @@
 <mat-card>
   <mat-spinner [diameter]='40' id="entity-spinner" *ngIf="showSpinner" #entityspinner></mat-spinner>
   <form [formGroup]="formGroup" #entityForm="ngForm" (keydown.enter)="$event.preventDefault()">
-    <mat-horizontal-stepper [linear]="conf?.isLinear" formArrayName="formArray" #stepper>
+    <mat-vertical-stepper [linear]="conf?.isLinear" formArrayName="formArray" #stepper>
       <div *ngFor="let step of conf.wizardConfig; let i = index">
         <mat-step formGroupName="{{i}}" [stepControl]="formArray?.get([i])">
           <ng-template matStepLabel>{{step.label | translate}}</ng-template>
@@ -70,6 +70,6 @@
             ix-auto ix-auto-type="button" ix-auto-identifier="{{saveSubmitText | uppercase}}">{{saveSubmitText | translate}}</button>
         </mat-card-actions>
       </mat-step>
-    </mat-horizontal-stepper>
+    </mat-vertical-stepper>
   </form>
 </mat-card>

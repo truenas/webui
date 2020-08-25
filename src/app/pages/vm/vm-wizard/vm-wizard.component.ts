@@ -7,6 +7,7 @@ import { FormGroup, Validators, ValidationErrors, FormControl } from '@angular/f
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import { MessageService } from '../../common/entity/entity-form/services/message.service';
+import { ModalService } from 'app/services/modal.service';
 import * as _ from 'lodash';
 
 import { VmService } from '../../../services/vm.service';
@@ -397,7 +398,8 @@ export class VMWizardComponent {
     protected loader: AppLoaderService, protected dialog: MatDialog,
     public messageService: MessageService,private router: Router,
     private dialogService: DialogService, private storageService: StorageService,
-    protected prefService: PreferencesService, private translate: TranslateService) {
+    protected prefService: PreferencesService, private translate: TranslateService,
+    protected modalService: ModalService) {
 
   }
 

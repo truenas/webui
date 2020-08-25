@@ -41,6 +41,9 @@
     overflow-y: auto;
     overflow-x: hidden;
 }
+.slide-in-form.open.wide {
+    width: 800px;
+}
 
 .jw-modal-body {
     padding: 20px;

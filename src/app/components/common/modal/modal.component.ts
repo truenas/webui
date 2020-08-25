@@ -8,7 +8,8 @@ import { ModalService } from '../../../services/modal.service';
         `<div class={{id}} [ngClass]="id!=='slide-in-form' ? 'jw-modal' : ''">
             <div class="jw-modal-body">
                 <mat-icon id="close-icon" (click)="close()">close</mat-icon>
-                <entity-form [conf]="conf" *ngIf="formOpen" class="slidein-entity-form"></entity-form>
+                <entity-wizard [conf]="conf" *ngIf="formOpen" class="slidein-entity-form"></entity-wizard>
+
             </div>
         </div>
         <div class="jw-modal-background {{id}}-background" (click)="close()"></div>`,
@@ -57,12 +58,17 @@ export class ModalComponent implements OnInit, OnDestroy {
     // open modal
     open(conf:any): void {
         this.conf = conf;
+        console.log(conf)
         const modal = document.querySelector(`.${this.id}`);
-        const background = document.querySelector(`.${this.id}-background`)
+        const background = document.querySelector(`.${this.id}-background`);
+        const slideIn = document.querySelector('.slide-in-form');
         modal.classList.add('open');
         background.classList.add('open');
         this.formOpen = true;
         document.body.classList.add('jw-modal-open');
+        if (conf.columnsOnForm && conf.columnsOnForm === 2) {
+            slideIn.classList.add('wide');
+        }
     }
 
     // close modal
