@@ -155,4 +155,8 @@ export class CertificateListComponent {
         }
       }];
   }
+
+  wsDeleteParams(row, id) {
+    return [id, true]; // send ture value for force delete
+  }
 }

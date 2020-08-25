@@ -778,7 +778,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }),
         switchMap(() =>
           (this.conf.wsDelete
-            ? this.ws.call(this.conf.wsDelete, [id])
+            ? this.ws.call(this.conf.wsDelete, (this.conf.wsDeleteParams? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id]))
             : this.rest.delete(this.conf.resource_name + "/" + id, {})
           ).pipe(
             take(1),
