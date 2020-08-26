@@ -250,8 +250,13 @@ def uncheck_dhcp_check_critical_select_1_for_failover_group_select_the_failover_
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Failover Group"]').click()
     assert wait_on_element(driver, 1, 5, '//mat-option[@ix-auto="option__Failover Group_1"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Failover Group_1"]').click()
+    assert wait_on_element(driver, 1, 5, '//mat-select[@ix-auto="select__Failover VHID"]')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Failover VHID"]').click()
     assert wait_on_element(driver, 1, 5, f'//mat-option[@ix-auto="option__Failover VHID_{vhid}"]')
+    # Scroll vhid in to view
+    element = driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Failover VHID_{vhid}"]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(1)
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Failover VHID_{vhid}"]').click()
     driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (This Controller)"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (This Controller)"]').send_keys(ip1)
