@@ -78,10 +78,10 @@ msgid " but datastore "
 msgstr " но хранилище "
 
 msgid " day, "
-msgstr ""
+msgstr " день, "
 
 msgid " days, "
-msgstr ""
+msgstr " дней, "
 
 msgid " disks"
 msgstr " дисков"
@@ -115,10 +115,10 @@ msgstr ""
 "уменьшить производительность системы."
 
 msgid " minute"
-msgstr ""
+msgstr " минута"
 
 msgid " minutes"
-msgstr ""
+msgstr " минут"
 
 msgid " official plugins"
 msgstr "официальные плагины"
@@ -213,7 +213,7 @@ msgid "20 characters is the maximum length."
 msgstr "Максимальная длина 20 символов."
 
 msgid "2FA"
-msgstr ""
+msgstr "2ФА"
 
 msgid ": Automatic update check failed. Please check system network settings."
 msgstr ""
@@ -383,6 +383,10 @@ msgid ""
 "Transport Layer Security (TLS) also requires selecting a preconfigured "
 "system Certificate."
 msgstr ""
+"<a href=\"https://tools.ietf.org/html/rfc8095\" target=\"_blank\">Транспортный "
+"протокол</a> для подключения к удаленному серверу системного журнала. Выбор "
+"безопасности транспортного уровня (TLS) также требует выбора предварительно "
+"настроенного системного сертификата. "
 
 msgid ""
 "<a href=\"https://www.backblaze.com/b2/cloud-storage.html\" "
@@ -787,6 +791,9 @@ msgid ""
 "A message with verification instructions has been sent to the new email "
 "address. Please verify the email address before continuing."
 msgstr ""
+"На новый адрес электронной почты было отправлено сообщение с инструкциями по "
+"подтверждению. Пожалуйста, подтвердите адрес электронной почты, прежде чем "
+"продолжить."
 
 msgid ""
 "A new jail hostid, if desired.<br> <b>Example hostid:</b> "
@@ -1073,6 +1080,8 @@ msgid ""
 "Activate this module for use with Rsync. Unset this field to deactivate the "
 "module without completely removing it."
 msgstr ""
+"Активируйте этот модуль для использования с Rsync. Отключите это поле, чтобы "
+"отключить модуль, не удаляя его полностью."
 
 msgid ""
 "Activates a tuning script which attempts to optimize  the system depending "
@@ -1380,7 +1389,7 @@ msgid "Address space limit in bytes for the jail."
 msgstr "Ограничение адресного пространства в байтах для jail."
 
 msgid "Addresses"
-msgstr ""
+msgstr "Адреса"
 
 msgid ""
 "Adjust how often alert notifications are sent, use  the Frequency "
@@ -1481,7 +1490,7 @@ msgid "Algorithm"
 msgstr "Алгоритм"
 
 msgid "Alias"
-msgstr ""
+msgstr "Псевдоним"
 
 msgid "Aliases"
 msgstr "Псевдонимы"
@@ -1511,6 +1520,8 @@ msgid ""
 "All data stored in this dataset will be decrypted and the dataset marked  "
 "as non-encrypted. Do you want to continue?"
 msgstr ""
+"Все данные, хранящиеся в этом наборе данных, будут расшифрованы, а набор "
+"данных помечен как незашифрованный. Вы хотите продолжить?"
 
 msgid "All dirs"
 msgstr "Все каталоги"
@@ -1906,6 +1917,9 @@ msgid ""
 "selected for this share.  ACLs must be stripped from the dataset prior to "
 "creating an SMB share."
 msgstr ""
+"ACL обнаружен на выбранном пути, но <i>Включить ACL</i> не выбран для этого "
+"общего ресурса. Перед созданием общего ресурса SMB необходимо удалить "
+"списки ACL из набора данных."
 
 msgid "An ACL is present in this path"
 msgstr "ACL присутствует в этом пути"
@@ -1914,6 +1928,8 @@ msgid ""
 "An IP address must be provided for each controller and the virtual "
 "interface."
 msgstr ""
+"IP-адрес должен быть предоставлен для каждого контроллера и виртуального "
+"интерфейса."
 
 msgid "An update is already applied. Please reboot the system."
 msgstr "Обновление уже применено. Пожалуйста, перезагрузите систему."
@@ -1962,7 +1978,7 @@ msgid "Application Key"
 msgstr "Ключ приложения"
 
 msgid "Applications"
-msgstr ""
+msgstr "Приложения"
 
 msgid "Apply"
 msgstr "Применить"
@@ -2042,7 +2058,7 @@ msgid "Are you sure you want to deregister TrueCommand Cloud Service?"
 msgstr "Вы уверены, что хотите отменить регистрацию TrueCommand Cloud Service?"
 
 msgid "Are you sure you want to stop connecting to the TrueCommand Cloud Service?"
-msgstr ""
+msgstr "Вы уверены, что хотите прекратить подключение к TrueCommand Cloud Service?"
 
 msgid "Are you sure you want to sync from peer?"
 msgstr "Вы уверены, что хотите синхронизироваться с напарника?"
@@ -2286,6 +2302,14 @@ msgid ""
 "responsible for any lost or unrecoverable data as a consequence of using "
 "this feature."
 msgstr ""
+"Сделайте резервную копию ключа шифрования сейчас! Если ключ потерян, данные "
+"на дисках также будут потеряны без надежды на восстановление. Нажмите <b>"
+"Загрузить ключ шифрования</b>, чтобы начать загрузку. Этот тип шифрования "
+"предназначен для пользователей, хранящих конфиденциальные данные. "
+"Зашифрованные диски можно удалить из пула и повторно использовать или "
+"утилизировать без стирания. iXsystems, Inc. не несет ответственности за "
+"потерю или невозможность восстановления данных в результате использования "
+"этой функции."
 
 msgid "Backend"
 msgstr ""
@@ -2367,6 +2391,10 @@ msgid ""
 "sharing protocol. It is recommended to use    SMB sharing over AFP unless "
 "files will be shared with legacy Apple products."
 msgstr ""
+"Начиная с 2013 года Apple начала использовать протокол обмена SMB в качестве "
+"опции по умолчанию для обмена файлами и прекратила разработку протокола "
+"обмена AFP. Рекомендуется использовать общий доступ к SMB через AFP, если "
+"файлы не будут использоваться совместно с устаревшими продуктами Apple."
 
 msgid "Berkeley Packet Filter"
 msgstr "Berkeley Packet Filter"
@@ -2657,10 +2685,10 @@ msgid "CPU Details"
 msgstr "Подробности процессора"
 
 msgid "CPU Mode"
-msgstr ""
+msgstr "Режим ЦП"
 
 msgid "CPU Model"
-msgstr ""
+msgstr "Модель ЦП"
 
 msgid "CPU Usage"
 msgstr "Использование процессора"
@@ -3482,7 +3510,7 @@ msgid "Close"
 msgstr "Закрыть"
 
 msgid "Close (return to VM list"
-msgstr ""
+msgstr "Закрыть (вернуться в список ВМ"
 
 msgid "Cloud Credentials"
 msgstr "Облачные учетные данные"
@@ -3643,7 +3671,7 @@ msgid "Config could not be downloaded"
 msgstr "Конфиг не может быть загружен"
 
 msgid "Configuration"
-msgstr ""
+msgstr "Конфигурация"
 
 msgid "Configuration Options"
 msgstr ""
@@ -3837,7 +3865,7 @@ msgid "Continue to Legacy UI"
 msgstr "Продолжить в устаревшем интерфейсе"
 
 msgid "Continue with AFP Setup"
-msgstr ""
+msgstr "Продолжить настройку AFP"
 
 msgid "Continue with download?"
 msgstr "Продолжить загрузку?"
@@ -3846,7 +3874,7 @@ msgid "Contract Type"
 msgstr "Тип контракта"
 
 msgid "Control"
-msgstr ""
+msgstr "Управление"
 
 msgid "Control left sidebar's display style."
 msgstr "Управляйте стилем отображения левой боковой панели."
@@ -3943,7 +3971,7 @@ msgid "Create Theme"
 msgstr "Создать тему"
 
 msgid "Create a custom ACL"
-msgstr ""
+msgstr "Создать собственный ACL"
 
 msgid "Create a new Pool."
 msgstr "Создать новый пул."
@@ -3958,10 +3986,10 @@ msgid "Create a recommended formation of vdevs in a pool."
 msgstr "Создать рекомендуемую структуру vdev в пуле."
 
 msgid "Create an ACL"
-msgstr ""
+msgstr "Создать ACL"
 
 msgid "Create an SMB Share"
-msgstr ""
+msgstr "Создать общий ресурс SMB"
 
 msgid "Create more data vdevs like the first."
 msgstr "Создать больше vdev данных как первый."
@@ -3988,7 +4016,7 @@ msgid "Created"
 msgstr "Создан"
 
 msgid "Created Date"
-msgstr ""
+msgstr "Дата создания"
 
 msgid ""
 "Creates dataset snapshots even when there  have been no changes to the "
@@ -4206,7 +4234,7 @@ msgid "Data Encipherment"
 msgstr "Шифрование данных"
 
 msgid "Data Protection"
-msgstr ""
+msgstr "Защита данных"
 
 msgid "Data Quota"
 msgstr "Квота данных"
@@ -4895,10 +4923,10 @@ msgid "Discovery Auth Method"
 msgstr "Метод аутентификации обнаружения"
 
 msgid "Discovery Authentication Group"
-msgstr ""
+msgstr "Группа аутентификации обнаружения"
 
 msgid "Discovery Authentication Method"
-msgstr ""
+msgstr "Метод аутентификации обнаружения"
 
 msgid "Disk"
 msgstr "Диск"
@@ -5083,10 +5111,10 @@ msgid "EC Curve"
 msgstr "Кривая EC"
 
 msgid "EDIT"
-msgstr ""
+msgstr "РЕДАКТИРОВАТЬ"
 
 msgid "ENTER LICENSE"
-msgstr ""
+msgstr "РЕДАКТИРОВАТЬ ЛИЦЕНЗИЮ"
 
 msgid "ERROR: Not Enough Memory"
 msgstr "ОШИБКА: Недостаточно памяти"
@@ -5107,7 +5135,7 @@ msgid "Edit ACL"
 msgstr "Редактировать ACL"
 
 msgid "Edit API Key"
-msgstr ""
+msgstr "Редактировать ключ API"
 
 msgid "Edit Alert Service"
 msgstr "Изменить службу оповещения"
@@ -5116,13 +5144,13 @@ msgid "Edit Disk(s)"
 msgstr "Редактировать диск(и)"
 
 msgid "Edit Encryption Options for "
-msgstr ""
+msgstr "Редактировать опции шифрования для "
 
 msgid "Edit Filesystem ACL"
-msgstr ""
+msgstr "Редактировать ACL ФС"
 
 msgid "Edit Group"
-msgstr ""
+msgstr "Редактировать группу"
 
 msgid "Edit Idmap"
 msgstr "Редактировать Idmap"
@@ -5134,10 +5162,10 @@ msgid "Edit Permissions"
 msgstr "Изменить разрешения"
 
 msgid "Edit Share ACL"
-msgstr ""
+msgstr "Редактировать ACL ресурса"
 
 msgid "Edit User"
-msgstr ""
+msgstr "Редактировать пользователя"
 
 msgid "Edit Zvol"
 msgstr "Редактировать Zvol"
@@ -5197,30 +5225,32 @@ msgid ""
 msgstr ""
 
 msgid "Enable (requires password or Kerberos principal)"
-msgstr ""
+msgstr "Включить (требуется пароль или принципал Kerberos)"
 
 msgid "Enable ACL"
-msgstr ""
+msgstr "Включить ACL"
 
 msgid ""
 "Enable ACL support for the SMB share. Disabling ACL  support for a share "
 "deletes that ACL."
 msgstr ""
+"Включить поддержку ACL для общего ресурса SMB. Отключение поддержки ACL для "
+"общего ресурса удаляет этот ACL."
 
 msgid "Enable Active Directory"
-msgstr ""
+msgstr "Включить Active Directory"
 
 msgid "Enable Alternate Data Streams"
-msgstr ""
+msgstr "Включить альтернативные потоки данных"
 
 msgid "Enable Apple SMB2/3 Protocol Extensions"
-msgstr ""
+msgstr "Включить расширения Apple протоеола SMB2/3"
 
 msgid "Enable Atime"
 msgstr "Включить atime"
 
 msgid "Enable Autotune"
-msgstr ""
+msgstr "Включить автонастройку"
 
 msgid "Enable Browser"
 msgstr "Включить браузер"
@@ -5229,7 +5259,7 @@ msgid "Enable Debug Kernel"
 msgstr "Включить отладочное ядро"
 
 msgid "Enable FSRVP"
-msgstr ""
+msgstr "Включить FSRVP"
 
 msgid "Enable FXP"
 msgstr "Включить FXP"
@@ -5238,7 +5268,7 @@ msgid "Enable NFSv4"
 msgstr "Включить NFSv4"
 
 msgid "Enable Netwait Feature"
-msgstr ""
+msgstr "Включить функуию Netwait"
 
 msgid "Enable Password Toggle"
 msgstr "Разрешить просмотр пароля"
@@ -5250,7 +5280,7 @@ msgid "Enable SMB1 support"
 msgstr "Включить поддержку SMB1"
 
 msgid "Enable SMB2/3 Durable Handles"
-msgstr ""
+msgstr "Включить SMB2/3 Durable Handles"
 
 msgid "Enable Serial Console"
 msgstr "Включить последовательную консоль"
@@ -5271,10 +5301,10 @@ msgid "Enable Time Machine backups on this share."
 msgstr "Включите резервное копирование Time Machine на этом ресурсе."
 
 msgid "Enable Two-Factor Auth for SSH"
-msgstr ""
+msgstr "Включить двухфакторную аутентификацию для SSH"
 
 msgid "Enable Two-Factor Authentication"
-msgstr ""
+msgstr "Включить двухфакторную аутентификацию"
 
 msgid ""
 "Enable Unix privileges supported by OSX 10.5 and higher. Do not enable this "
@@ -5339,7 +5369,7 @@ msgid "Enable the SNMPv3 security model."
 msgstr "Включить модель безопасности SNMPv3."
 
 msgid "Enable this AFP share. Unset to disable this AFP share  without deleting it."
-msgstr ""
+msgstr "Включить этот ресурс AFP. Отключите, чтобы отключить этот общий ресурс AFP без его удаления."
 
 msgid ""
 "Enable this Cloud Sync Task. Unset to disable this Cloud Sync Task without "
@@ -5349,15 +5379,17 @@ msgstr ""
 "эту задачу синхронизации, не удаляя ее."
 
 msgid "Enable this NFS share. Unset to disable this NFS share  without deleting it."
-msgstr ""
+msgstr "Включить этот ресурс NFS. Отключите, чтобы отключить этот общий ресурс NFS без его удаления."
 
 msgid "Enable this SMB share. Unset to disable this SMB share  without deleting it."
-msgstr ""
+msgstr "Включить этот ресурс SMB. Отключите, чтобы отключить этот общий ресурс SMB без его удаления."
 
 msgid ""
 "Enable this WebDAV share. Unset to disable this WebDAV  share without "
 "deleting it."
 msgstr ""
+"Включить этот ресурс WebDAV. Отключите, чтобы отключить этот общий ресурс "
+"WebDAV без его удаления."
 
 msgid ""
 "Enable this cron job. When unset, disable the                cron job "
@@ -5386,12 +5418,18 @@ msgid ""
 "Enable to prevent binding to local address and port.  Must be enabled if "
 "OpenVPN client and server are to run concurrently."
 msgstr ""
+"Включите, чтобы предотвратить привязку к локальному адресу и порту. Должен "
+"быть включен, если клиент и сервер OpenVPN должны работать одновременно."
 
 msgid ""
 "Enable two-factor authentication for SSH access to the system. It is "
 "recommended  to leave this DISABLED until after two-factor authentication "
 "is successfully tested with the UI."
 msgstr ""
+"Включить двухфакторную аутентификацию для SSH-доступа к системе. Рекомендуется "
+"оставлять этот параметр ОТКЛЮЧЕННЫМ до тех пор, пока двухфакторная "
+"аутентификация не будет успешно протестирована с пользовательским "
+"интерфейсом."
 
 msgid "Enable when the device number is inconstant across a reboot."
 msgstr "Включите, если номер устройства непостоянен при перезагрузке."
@@ -5408,7 +5446,7 @@ msgstr ""
 "пользователя и пароль, если включено."
 
 msgid "Enable/disable TLS Web Client Authentication."
-msgstr ""
+msgstr "Включение/отключение проверки подлинности веб-клиента TLS."
 
 msgid "Enabled"
 msgstr "Включено"
@@ -5424,6 +5462,8 @@ msgid ""
 "Enabling <em>Time Machine</em> on an SMB share requires restarting the SMB "
 "service."
 msgstr ""
+"Для включения <em>Time Machine</em> на общем ресурсе SMB требуется перезапуск "
+"службы SMB."
 
 msgid ""
 "Enabling allows the system to conduct periodic <a "
@@ -5467,7 +5507,7 @@ msgid "Enabling this option may have performance implications on your pools."
 msgstr "Включение этой опции может повлиять на производительность пула."
 
 msgid "Encipher Only"
-msgstr ""
+msgstr "Только шифрование"
 
 msgid "Enclosure"
 msgstr "Корпус"
@@ -5508,7 +5548,7 @@ msgstr ""
 "выполненной задачи, чтобы просмотреть список переданных файлов."
 
 msgid "Encrypted Datasets"
-msgstr ""
+msgstr "Зашифрованные наборы данных"
 
 msgid "Encrypted pool disks must be decrypted prior to import."
 msgstr "Диски зашифрованного пула должны быть расшифрованы до импорта."
@@ -5520,10 +5560,10 @@ msgid "Encryption (more secure, but slower)"
 msgstr "Шифрование (более безопасно, но медленнее)"
 
 msgid "Encryption Actions"
-msgstr ""
+msgstr "Действия по шифрованию"
 
 msgid "Encryption Algorithm"
-msgstr ""
+msgstr "Алгоритм шифрования"
 
 msgid "Encryption Key"
 msgstr "Ключ шифрования"
@@ -5544,13 +5584,13 @@ msgid "Encryption Mode"
 msgstr "Режим шифрования"
 
 msgid "Encryption Options"
-msgstr ""
+msgstr "Параметры шифрования"
 
 msgid "Encryption Options Saved"
-msgstr ""
+msgstr "Параметры шифрования сохранены"
 
 msgid "Encryption Passphrase"
-msgstr ""
+msgstr "Кодовая фраза шифрования"
 
 msgid "Encryption Password"
 msgstr "Пароль шифрования"
@@ -5562,13 +5602,13 @@ msgid "Encryption Salt"
 msgstr "Соль шифрования"
 
 msgid "Encryption Type"
-msgstr ""
+msgstr "Тип шифрования"
 
 msgid "Encryption key that can unlock the dataset."
-msgstr ""
+msgstr "Ключ шифрования, который может разблокировать набор данных."
 
 msgid "Encryption options for "
-msgstr ""
+msgstr "Параметры шифрования для "
 
 msgid "End"
 msgstr "Конец"
@@ -5584,10 +5624,10 @@ msgstr ""
 "выполняться после этого времени."
 
 msgid "Endpoint Advanced Options"
-msgstr ""
+msgstr "Дополнительные параметры конечной точки"
 
 msgid "Endpoint Type"
-msgstr ""
+msgstr "Тип конечной точки"
 
 msgid "Endpoint URL"
 msgstr "URL конечной точки"
@@ -5736,7 +5776,7 @@ msgid "Enter a name for the new credential."
 msgstr "Введите имя для новых полномочий."
 
 msgid "Enter a name for the new theme."
-msgstr ""
+msgstr "Введите имя для новой темы."
 
 msgid "Enter a name for the share."
 msgstr "Введите имя для ресурса."
@@ -5794,7 +5834,7 @@ msgid "Enter a password of at least eight characters."
 msgstr "Введите пароль от 8 символов или более."
 
 msgid "Enter a port number to use for the connection."
-msgstr ""
+msgstr "Введите номер порта, который будет использоваться для подключения."
 
 msgid ""
 "Enter a port to bind <a "
@@ -6003,6 +6043,8 @@ msgid ""
 "Enter any email addresses to receive status updates. Separate entries by "
 "pressing <code>Enter</code>."
 msgstr ""
+"Введите любые адреса электронной почты, чтобы получать обновления статуса. "
+"Разделите записи, нажав <code>Enter</code>."
 
 msgid ""
 "Enter any extra options from <a "
@@ -6023,7 +6065,7 @@ msgstr ""
 "target=\"_blank\">UPSD.CONF(5)</a>."
 
 msgid "Enter any information about this S.M.A.R.T. test."
-msgstr ""
+msgstr "Введите любую информацию об этом тесте S.M.A.R.T.."
 
 msgid "Enter any notes about the jail."
 msgstr "Введите любые заметки о jail."
@@ -6043,7 +6085,7 @@ msgstr ""
 "пользователя."
 
 msgid "Enter or paste a string to use as the encryption key for this dataset."
-msgstr ""
+msgstr "Введите или вставьте строку, которая будет использоваться в качестве ключа шифрования для этого набора данных."
 
 msgid "Enter or paste an Authentication token."
 msgstr "Введите или вставьте токен аутентификации."
@@ -6112,7 +6154,7 @@ msgid ""
 msgstr ""
 
 msgid "Enter or select the cloud storage location to use for this task."
-msgstr ""
+msgstr "Введите или выберите облачное хранилище, которое будет использоваться для этой задачи."
 
 msgid "Enter passphrase to lock pool "
 msgstr "Введите пароль для блокировки пула "
@@ -6163,7 +6205,7 @@ msgstr ""
 "создания интерфейса."
 
 msgid "Enter the IP address and netmask of the server."
-msgstr ""
+msgstr "Введите IP-адрес и сетевую маску сервера."
 
 msgid ""
 "Enter the IP address of a DNS forwarder. Required for recursive queries "
@@ -6199,6 +6241,8 @@ msgid ""
 "Enter the IP address which runs the  S3 service. <i>0.0.0.0</i> tells the "
 "server to listen  on all addresses."
 msgstr ""
+"Введите IP-адрес, на котором работает служба S3. <i>0.0.0.0</i> указывает "
+"серверу прослушивать все адреса."
 
 msgid ""
 "Enter the IPv4 address for <a "
@@ -6251,6 +6295,8 @@ msgid ""
 "Enter the current passphrase for the encrypted pool. This will be used to "
 "encrypt the new disk and integrate it into the pool."
 msgstr ""
+"Введите текущую парольную фразу для зашифрованного пула. Она будет "
+"использоваться для шифрования нового диска и его интеграции в пул."
 
 msgid "Enter the decryption passphrase."
 msgstr "Введите пароль расшифровки."
@@ -6273,6 +6319,8 @@ msgid ""
 "Enter the email of the contact person. Use the format "
 "<i>name</i>@<i>domain.com</i>."
 msgstr ""
+"Введите адрес электронной почты контактного лица. Используйте формат"
+"<i>name</i>@<i>domain.com</i>."
 
 msgid "Enter the filesystem to snapshot."
 msgstr "Введите файловую систему для снимка."
@@ -6362,6 +6410,8 @@ msgid ""
 "Enter the password to be used for the  Active Directory administrator "
 "account."
 msgstr ""
+"Введите пароль, который будет использоваться для учетной записи "
+"администратора Active Directory."
 
 msgid "Enter the password used to connect to the IPMI interface from a web browser."
 msgstr ""
@@ -6372,7 +6422,7 @@ msgid "Enter the phone number of the contact person."
 msgstr "Введите номер телефона контактного лица."
 
 msgid "Enter the pre-Windows 2000 domain name."
-msgstr ""
+msgstr "Введите имя домена до Windows 2000."
 
 msgid "Enter the pre-defined S3 bucket to use."
 msgstr "Введите предопределенный S3 bucket для использования."
@@ -6383,7 +6433,7 @@ msgid ""
 msgstr "Введите относительное отличительное имя объекта сайта в Active Directory."
 
 msgid "Enter the root password to authorize this operation."
-msgstr ""
+msgstr "Введите пароль root, чтобы разрешить эту операцию."
 
 msgid ""
 "Enter the routing table (<a "
@@ -6438,7 +6488,7 @@ msgstr ""
 "существовал. В противном случае укажите размер файла для нового файла."
 
 msgid "Enterprise level"
-msgstr ""
+msgstr "Уровень предприятия"
 
 msgid "Environment"
 msgstr "Окружение"
@@ -6450,7 +6500,7 @@ msgid "Error Downloading File"
 msgstr "Ошибка при загрузке файла"
 
 msgid "Error Saving Configuration Settings"
-msgstr ""
+msgstr "Ошибка при сохранении настроек конфигурации"
 
 msgid "Error Saving Proactive Support Settings"
 msgstr "Ошибка сохранения настроек проактивной поддержки"
@@ -6474,7 +6524,7 @@ msgid "Error decrypting disks"
 msgstr "Ошибка расшифровки дисков"
 
 msgid "Error details for "
-msgstr ""
+msgstr "Сведения об ошибке для "
 
 msgid "Error exporting the Private Key"
 msgstr "Ошибка экспорта закрытого ключа"
@@ -6516,7 +6566,7 @@ msgid "Error submitting file"
 msgstr "Ошибка при отправке файла"
 
 msgid "Error updating disks"
-msgstr ""
+msgstr "Ошибка обновления дисков"
 
 msgid "Error:"
 msgstr ""
@@ -6530,7 +6580,7 @@ msgid "Error: "
 msgstr "Ошибка: "
 
 msgid "Errors"
-msgstr ""
+msgstr "Ошибки"
 
 msgid ""
 "Establishing a connection requires  that one of the connection systems has "
@@ -6553,7 +6603,7 @@ msgid "Estimated total raw data capacity"
 msgstr "Расчетная общая емкость сырых данных"
 
 msgid "Excellent effort"
-msgstr ""
+msgstr "Отличное усилие"
 
 msgid "Exclude"
 msgstr "Исключить"
@@ -6585,28 +6635,28 @@ msgid "Execute"
 msgstr "Исполнить"
 
 msgid "Expand Pool"
-msgstr ""
+msgstr "Расширить пул"
 
 msgid "Expand pool "
-msgstr ""
+msgstr "Расширить пул "
 
 msgid "Expand pool to fit all available disk space."
-msgstr ""
+msgstr "Расширить пул используя все доступное дисковое пространство."
 
 msgid "Expiration Date"
 msgstr "Дата окончания срока"
 
 msgid "Export"
-msgstr ""
+msgstr "Экспорт"
 
 msgid "Export Certificate"
 msgstr "Экспортировать сертификат"
 
 msgid "Export Dataset Keys"
-msgstr ""
+msgstr "Экспорт ключей набора данных"
 
 msgid "Export Dataset Keys for "
-msgstr ""
+msgstr "Экспорт ключей набора данных для "
 
 msgid "Export Password Secret Seed"
 msgstr "Экспортировать секретное семя пароля"
@@ -6633,7 +6683,7 @@ msgstr ""
 "and-shadow-copy-sets\" target=_blank>Shadow Copies</a> для клиентов VSS."
 
 msgid "Export dataset keys which can be used to unlock datasets for "
-msgstr ""
+msgstr "Экспорт ключей набора данных, которые можно использовать для разблокировки наборов данных для "
 
 msgid "Export/Disconnect"
 msgstr "Экспортировать/Отключить"
@@ -6642,13 +6692,13 @@ msgid "Export/Disconnect Pool"
 msgstr "Экспортировать/Отключить пул"
 
 msgid "Export/disconnect pool: '"
-msgstr ""
+msgstr "Экспортировать/Отключить пул: '"
 
 msgid "Exporting Pool"
-msgstr ""
+msgstr "Пул экспортруется"
 
 msgid "Exporting/disconnecting will continue after services have been managed."
-msgstr ""
+msgstr "Экспорт/отключение продолжится после того, как службы будут управляться."
 
 msgid "Expose zilstat via SNMP"
 msgstr "Отображать zilstat через SNMP"
@@ -6657,16 +6707,16 @@ msgid "Extend"
 msgstr "Расширить"
 
 msgid "Extend Vdev"
-msgstr ""
+msgstr "Расширить Vdev"
 
 msgid "Extended Key Usage"
-msgstr ""
+msgstr "Расширенное использование ключа"
 
 msgid "Extending Vdev"
-msgstr ""
+msgstr "Расширение Vdev"
 
 msgid "Extending vdev..."
-msgstr ""
+msgstr "Расширение vdev..."
 
 msgid "Extent"
 msgstr "Экстент"
@@ -6675,7 +6725,7 @@ msgid "Extent Name"
 msgstr "Имя экстента"
 
 msgid "Extent Type"
-msgstr ""
+msgstr "Тип экстента"
 
 msgid "Extra Users"
 msgstr "Дополнительные пользователи"
