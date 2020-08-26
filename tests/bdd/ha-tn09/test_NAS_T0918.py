@@ -83,7 +83,7 @@ def press_on_configure_ssh(driver):
 @then('the SSH General Options page should open')
 def the_ssh_general_options_page_should_open(driver):
     """the SSH General Options page should open."""
-    assert wait_on_element(driver, 0.5, 10, '//h4[contains(text(),General) and contains(text(),Options)]')
+    assert wait_on_element(driver, 1, 10, '//h4[contains(text(),General) and contains(text(),Options)]')
 
 
 @then('click the checkbox "Log in as root with password"')
@@ -107,7 +107,7 @@ def click_save(driver):
 def click_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
     """click Start Automatically SSH checkbox and enable the SSH service."""
     assert wait_on_element(driver, 1, 5, '//services')
-    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__S3_Actions"]')
+    assert wait_on_element(driver, 1, 7, '//button[@ix-auto="button__S3_Actions"]')
     # Scroll to SSH service
     element = driver.find_element_by_xpath('//button[@ix-auto="button__S3_Actions"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
