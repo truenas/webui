@@ -534,7 +534,9 @@ export class SMBFormComponent {
     });
 
     const path_fc = entityForm.formGroup.controls['path'];
-    entityForm.formGroup.controls['acl'].valueChanges.debounceTime(100).subscribe(res => { 
+    entityForm.formGroup.controls['acl'].valueChanges
+    .pipe (debounceTime(100))
+      .subscribe(res => { 
       if (!res && path_fc.value && !this.stripACLWarningSent) {
         this.ws.call('filesystem.acl_is_trivial', [path_fc.value]).subscribe (res => {
           if (!res) {
