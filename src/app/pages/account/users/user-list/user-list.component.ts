@@ -86,13 +86,13 @@ export class UserListComponent {
   }
 
   ngOnInit() {
-    this.refreshGroupForm();
+    this.refreshUserForm();
     this.modalService.refreshForm$.subscribe(() => {
-      this.refreshGroupForm();
+      this.refreshUserForm();
     })
   }
   
-  refreshGroupForm() {
+  refreshUserForm() {
     this.addComponent = new UserFormComponent(this.router,this.ws, this.storageService,this.loader,
       this.userService,this.validationService,this.modalService);
   }

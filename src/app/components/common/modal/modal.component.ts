@@ -93,5 +93,6 @@ export class ModalComponent implements OnInit, OnDestroy {
         this.slideIn.classList.remove('wide');
         this.formOpen = false;
         this.modalService.refreshForm();
+        this.wizard = false;
     }
 }
