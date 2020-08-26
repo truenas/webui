@@ -230,15 +230,22 @@ def interface_settings_should_appear(driver):
     assert wait_on_element(driver, 0.5, 30, '//h4[contains(.,"Interface Settings")]')
 
 
-@then(parsers.parse('Uncheck DHCP, check Critical, Select 1 for Failover Group, enter the Failover VHID "{vhid}", IP Address (This Controller) "{ip1}" then select /"{netmask1}", IP Address (TrueNAS Controller 2) "{ip2}" then select /"{netmask2}", Virtual IP Address "{vip}"'))
-def uncheck_dhcp_check_critical_select_1_for_failover_group_enter_the_failover_vhid_ip_address_this_controller__then_select_23_ip_address_truenas_controller_2_then_select_23_virtual_ip_address(driver, vhid, ip1, netmask1, ip2, netmask2, vip):
-    """Uncheck DHCP, check Critical, Select 1 for Failover Group, enter the Failover VHID "{vhid}", IP Address (This Controller) "{ip1}" then select /"{netmask1}", IP Address (TrueNAS Controller 2) "{ip2}" then select /"{netmask2}", Virtual IP Address, "{vip}"."""
+@then(parsers.parse('Uncheck DHCP, check Critical, Select 1 for Failover Group, select the Failover VHID "{vhid}", IP Address (This Controller) "{ip1}" then select /"{netmask1}", IP Address (TrueNAS Controller 2) "{ip2}" then select /"{netmask2}", Virtual IP Address "{vip}"'))
+def uncheck_dhcp_check_critical_select_1_for_failover_group_select_the_failover_vhid_ip_address_this_controller__then_select_23_ip_address_truenas_controller_2_then_select_23_virtual_ip_address(driver, vhid, ip1, netmask1, ip2, netmask2, vip):
+    """Uncheck DHCP, check Critical, Select 1 for Failover Group, select the Failover VHID "{vhid}", IP Address (This Controller) "{ip1}" then select /"{netmask1}", IP Address (TrueNAS Controller 2) "{ip2}" then select /"{netmask2}", Virtual IP Address, "{vip}"."""
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__DHCP"]').click()
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Critical"]').click()
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Failover Group"]').click()
+    assert wait_on_element(driver, 1, 5, '//mat-option[@ix-auto="option__Failover Group_1"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Failover Group_1"]').click()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Failover VHID"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Failover VHID"]').send_keys(vhid)
+    assert wait_on_element(driver, 1, 5, '//mat-select[@ix-auto="select__Failover VHID"]')
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Failover VHID"]').click()
+    assert wait_on_element(driver, 1, 5, f'//mat-option[@ix-auto="option__Failover VHID_{vhid}"]')
+    # Scroll vhid in to view
+    element = driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Failover VHID_{vhid}"]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(1)
+    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Failover VHID_{vhid}"]').click()
     driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (This Controller)"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (This Controller)"]').send_keys(ip1)
     driver.find_element_by_xpath('//mat-select[@ix-auto="input__IP Address (This Controller)"]').click()
