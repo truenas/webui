@@ -121,8 +121,6 @@ export class GroupListComponent {
         label : helptext.group_list_actions_label_edit,
         name: helptext.group_list_actions_id_edit,
         onClick : (members_edit) => {
-          // this._router.navigate(new Array('/').concat(
-          //   [ "account", "groups", "edit", members_edit.id ]));
           this.modalService.open('slide-in-form', this.addComponent, members_edit.id)
         }
       })

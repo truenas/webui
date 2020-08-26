@@ -7,9 +7,15 @@ import { ModalService } from '../../../services/modal.service';
     template: 
         `<div class={{id}} [ngClass]="id!=='slide-in-form' ? 'jw-modal' : ''">
             <div class="jw-modal-body">
-                <mat-icon id="close-icon" (click)="close()">close</mat-icon>
-                <entity-wizard [conf]="conf" *ngIf="formOpen" class="slidein-entity-form"></entity-wizard>
-
+            <div class="slidein-title-bar">
+                <mat-icon id="close-icon" (click)="close()">close</mat-icon>      
+            </div>
+                <ng-container *ngIf="!wizard; else wizardBlock">
+                    <entity-form [conf]="conf" *ngIf="formOpen" class="slidein-entity-form"></entity-form>
+                </ng-container>
+                <ng-template #wizardBlock>
+                    <entity-wizard [conf]="conf" *ngIf="formOpen" class="slidein-entity-form"></entity-wizard>         
+                </ng-template>
             </div>
         </div>
         <div class="jw-modal-background {{id}}-background" (click)="close()"></div>`,
@@ -21,6 +27,10 @@ export class ModalComponent implements OnInit, OnDestroy {
     private element: any;
     public conf: any;
     public formOpen = false;
+    public wizard = false;
+    modal 
+    background
+    slideIn 
 
     constructor(private modalService: ModalService, private el: ElementRef) {
         this.element = el.nativeElement;
@@ -47,6 +57,7 @@ export class ModalComponent implements OnInit, OnDestroy {
 
         // add self (this modal instance) to the modal service so it's accessible from controllers
         this.modalService.add(this);
+
     }
 
     // remove self from modal service when component is destroyed
@@ -58,26 +69,28 @@ export class ModalComponent implements OnInit, OnDestroy {
     // open modal
     open(conf:any): void {
         this.conf = conf;
-        console.log(conf)
-        const modal = document.querySelector(`.${this.id}`);
-        const background = document.querySelector(`.${this.id}-background`);
-        const slideIn = document.querySelector('.slide-in-form');
-        modal.classList.add('open');
-        background.classList.add('open');
+        this.modal = document.querySelector(`.${this.id}`);
+        this.background = document.querySelector(`.${this.id}-background`);
+        this.slideIn = document.querySelector('.slide-in-form');
+
+        if (conf.wizardConfig) {
+            this.wizard = true;
+        }
+        this.modal.classList.add('open');
+        this.background.classList.add('open');
         this.formOpen = true;
         document.body.classList.add('jw-modal-open');
         if (conf.columnsOnForm && conf.columnsOnForm === 2) {
-            slideIn.classList.add('wide');
+            this.slideIn.classList.add('wide');
         }
     }
 
     // close modal
     close(): void {
-        const modal = document.querySelector(`.${this.id}`);
-        const background = document.querySelector(`.${this.id}-background`)
-        modal.classList.remove('open');
-        background.classList.remove('open');
+        this.modal.classList.remove('open');
+        this.background.classList.remove('open');
         document.body.classList.remove('jw-modal-open');
+        this.slideIn.classList.remove('wide');
         this.formOpen = false;
         this.modalService.refreshForm();
     }

@@ -96,10 +96,13 @@ export class VMListComponent implements OnDestroy {
          }
 
     ngOnInit() {
-        this.refreshGroupForm();
+        this.refreshVMWizard();
+        this.modalService.refreshForm$.subscribe(() => {
+            this.refreshVMWizard();
+          })
     }
 
-    refreshGroupForm() {
+    refreshVMWizard() {
         this.addComponent = new VMWizardComponent(this.rest,this.ws,this.vmService,this.networkService, this.loader,
             this.dialog,this.messageService,this.router,this.dialogService,this.storageService,this.prefService,
             this.translate,this.modalService);

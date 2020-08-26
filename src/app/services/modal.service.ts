@@ -27,7 +27,6 @@ export class ModalService {
     }
 
     open(id: string, conf: any, rowid?: any) {
-        console.log(conf)
         if (rowid) {
             conf.rowid = rowid;
         }

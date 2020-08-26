@@ -5,6 +5,7 @@ import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-set
 import * as _ from 'lodash';
 import helptext from '../../../../helptext/account/user-form';
 import { AppLoaderService, StorageService, UserService, WebSocketService, ValidationService } from '../../../../services/';
+import { ModalService } from 'app/services/modal.service';
 import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
@@ -26,6 +27,7 @@ export class UserFormComponent {
   public entityForm: any;
   protected namesInUse = [];
   private homeSharePath: string;
+  protected columnsOnForm = 2;
 
   public fieldSetDisplay  = 'default';//default | carousel | stepper
   public fieldSets: FieldSets = new FieldSets([
@@ -33,6 +35,7 @@ export class UserFormComponent {
       name: helptext.user_form_title_name,
       class: helptext.user_form_title_class,
       label:true,
+      width: '50%',
       config:[
         {
           type : 'input',
@@ -68,7 +71,15 @@ export class UserFormComponent {
           placeholder : helptext.user_form_email_placeholder,
           tooltip : helptext.user_form_email_tooltip,
           validation: [Validators.email]
-        },
+        }
+      ]
+    },
+    {
+      name: 'helptext.user_form_title_name',
+      class: helptext.user_form_title_class,
+      label:false,
+      width: '50%',
+      config:[
         {
           type : 'input',
           name : helptext.user_form_password_name,
@@ -119,6 +130,7 @@ export class UserFormComponent {
       name:helptext.user_form_ids_groups_title,
       class: helptext.user_form_ids_groups_title_class,
       label:true,
+      width: '50%',
       config:[
         {
           type : 'input',
@@ -135,7 +147,15 @@ export class UserFormComponent {
           tooltip : helptext.user_form_group_create_tooltip,
           value : true,
           isHidden: false
-        },
+        }
+      ]
+    },
+    {
+      name:helptext.user_form_ids_groups_title,
+      class: helptext.user_form_ids_groups_title_class,
+      label:false,
+      width: '50%',
+      config:[
         {
           type : 'select',
           name : helptext.user_form_primary_group_name,
@@ -282,7 +302,8 @@ export class UserFormComponent {
               protected storageService: StorageService,
               public loader: AppLoaderService,
               private userService: UserService,
-              protected validationService: ValidationService
+              protected validationService: ValidationService,
+              private modalService: ModalService
               ) {
       this.ws.call('user.query').subscribe(
         (res)=>{
@@ -503,5 +524,9 @@ export class UserFormComponent {
       parent.fieldSets.config("username").warnings =
         username.length > 8 ? helptext.user_form_blur_event2_warning : null;
     };
+  }
+
+  afterSubmit() {
+    this.modalService.refreshTable();
   }
 }

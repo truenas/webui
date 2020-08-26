@@ -22,7 +22,6 @@ export class GroupFormComponent {
   protected addCall = 'group.create';
   protected editCall = 'group.update';
   protected queryKey = 'id';
-  protected columnsOnForm = 2;
 
   protected fieldConfig: FieldConfig[] = [];
 
