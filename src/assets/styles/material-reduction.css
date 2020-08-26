@@ -197,6 +197,7 @@ entity-table .mat-toolbar.mat-card-toolbar{
   --sidenav-width: 240px;
   --btn-default-bg: var(--alt-bg2);
   --hover-bg: var(--lines) !important;
+  --font-family-body: 'IBM Plex Sans';
 }
 
 .borderless{
@@ -213,6 +214,7 @@ entity-table .mat-toolbar.mat-card-toolbar{
 }
 
 .form-element.form-combobox .mat-form-field,
+.form-element.form-ip-netmask .mat-form-field,
 .form-element.form-combobox .mat-menu-trigger,
 .form-element .mat-form-field-wrapper,
 .form-element input[type = "password"],
@@ -254,8 +256,6 @@ entity-table .mat-toolbar.mat-card-toolbar{
 }
 
 .form-element.form-combobox .mat-menu-trigger{
-  /*width: 20px;
-  padding: 2px;*/
   position: relative;
   top: 2px;
   padding: 9px 2px 8px;
@@ -269,6 +269,33 @@ entity-table .mat-toolbar.mat-card-toolbar{
 .form-element.form-combobox .mat-form-field,
 .form-element.form-combobox .mat-menu-trigger{
   height: 33px;
+}
+
+/* IP w/Netmask*/
+.form-element.form-ip-netmask .mat-form-field-wrapper input,
+.form-element.form-ip-netmask .mat-form-field-wrapper{
+  background-color: unset;
+  border: unset;
+  padding: unset;
+}
+
+.form-element.form-combobox .mat-select-trigger{
+  position: relative;
+  top: 2px;
+  padding: 9px 2px 8px;
+}
+
+/* Form List */
+.form-list .form-list-item {
+  position: relative;
+  right: 18px;
+  top: 50%;
+}
+
+.form-list .list-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Chips */
@@ -372,9 +399,9 @@ tooltip button i{
 }
 
 /* Buttons */
-.mat-button.mat-accent .mat-button-focus-overlay{
+/*.mat-button.mat-default, .mat-button.mat-accent .mat-button-focus-overlay{
   background-color: unset !important;
-}
+}*/
 
 .mat-button, .mat-flat-button {
   border-radius : 0 !important;
@@ -390,6 +417,7 @@ tooltip button i{
 
 .mat-button, .mat-flat-button,
 button.mat-button.btn-default, 
+button.mat-button.mat-default, 
 .mat-card-actions button.mat-default, button.mat-default,
 button.mat-button.mat-accent.btn-default,
 button.mat-button[type="button"]:not(button.mat-primary) {

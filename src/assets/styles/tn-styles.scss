@@ -871,8 +871,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   .mat-button {
-    text-transform: uppercase !important;
-    font-weight: 500 !important;
+    text-transform: capitalize !important;
+    font-weight: bold !important;
+    @include variable(font-family, --font-family-body, $font-family-body, !important);
+    background: var(--btn-default-bg);
   }
 
  .mat-button.mat-basic, .mat-button.mat-primary {
@@ -886,9 +888,17 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   // Gets checkboxes in SMART tests to pick up theme color
+  .mat-checkbox-checked .mat-checkbox-background,
   .mat-primary .mat-pseudo-checkbox-checked, .mat-primary .mat-pseudo-checkbox-indeterminate {
-    @include variable(background, --accent, $accent !important);
+    @include variable(background, --primary, $primary, !important);
+    border: none;
   }
+
+  .mat-checkbox .mat-checkbox-background{
+    border: solid 2px;
+    @include variable(border-color, --primary, $primary, !important);
+  }
+
   // for multi-selection only
   .mat-option-pseudo-checkbox.mat-pseudo-checkbox{
     display:none ;
@@ -1564,27 +1574,48 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       padding: 5px;
   }
 
-  app-interfaces-form {
+  //app-interfaces-form {
+  .fieldset-container {
     .disabled-select .mat-select-arrow {
       opacity: 0.38;
     }
     entity-form-list .form-list > div  {
-      flex-direction: column !important;
+      //flex-direction: column !important;
       padding: 15px;
-      background-color: rgba(127,127,127,0.1);
-      margin-bottom: 10px;
+      //background-color: rgba(127,127,127,0.1);
+      background-color: var(--contrast-darker);
+      margin: 16px;
     }
+
+    entity-form-list .form-list .form-list-item > div.form-line  {
+      display: none;
+    }
+
+    entity-form-list .form-list .form-list-item > div.form-line:first-child {
+      display: block;
+    }
+
+    entity-form-list .form-list .form-list-item.ipwithnetmask .list-action,
+    entity-form-list .form-list .form-list-item.input .list-action{
+      padding-top: 12px;
+    }
+
     #failover_address, #failover_virtual_address {
       width: 85%;
     }
     #address {
-      width: calc(100% - 72px);
+      //width: calc(100% - 72px);
     }
     .listBtn {
-      bottom: 40px;
+      //bottom: 40px;
     }
     .list-action {
-      height: 1px;
+      //height: 1px;
+    }
+
+    entity-form-list form-ipwithnetmask .form-element,
+    entity-form-list form-input .form-element{
+      margin-top: 0;
     }
   }
 
