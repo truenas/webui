@@ -236,6 +236,15 @@ export const helptext_sharing_smb = {
     message: T('An ACL is detected on the selected path but <i>Enable ACL</i> is not selected for this share. \
  ACLs must be stripped from the dataset prior to creating an SMB share.'),
     button: T('Close')
+ },
+
+ manglingDialog: {
+   title: T('Warning'),
+   message: T('The value has changed for the field <i>Use Apple-style character encoding</i>. \
+ This parameter alters how file names are read from and written to storage. Changes to \
+ this paramater after data has already been written may impact ability to access or delete files containing \
+ mangled characters.'),
+   action: T('Proceed with change')
  }
 
 };
