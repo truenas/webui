@@ -272,12 +272,14 @@ def setting_permissions_set_user_to_root_and_then_select_AD01_administrator_for_
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Default ACL Options"]').click()
     assert wait_on_element(driver, 1, 5, '//mat-option[@ix-auto="option__Default ACL Options_OPEN"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Default ACL Options_OPEN"]').click()
-    assert wait_on_element(driver, 1, 5, '//mat-button[@ix-auto="button__gid"]')
-    driver.find_element_by_xpath('//mat-button[@ix-auto="button__gid"]').click()
-    assert wait_on_element(driver, 1, 5, '//button[@ix-auto="option__AD01\\administrator"]')
-    driver.find_element_by_xpath('//button[@ix-auto="option__AD01\\administrator"]').click()
     assert wait_on_element(driver, 1, 5, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply Group"]').click()
+    assert wait_on_element(driver, 1, 5, '//input[@placeholder="Group"]')
+    driver.find_element_by_xpath('//input[@placeholder="Group"]').clear()
+    driver.find_element_by_xpath('//input[@placeholder="Group"]').send_keys('AD01\\administrator')
+    # driver.find_element_by_xpath('//mat-button[@ix-auto="button__gid"]').click()
+    # assert wait_on_element(driver, 1, 5, '//button[@ix-auto="option__AD01\\administrator"]')
+    # driver.find_element_by_xpath('//button[@ix-auto="option__AD01\\administrator"]').click()
 
 
 @then('click the Save button, should be return to pool page')
@@ -292,6 +294,7 @@ def click_the_save_button(driver):
 @then('verify that group name is "AD01\administrator"')
 def verify_that_group_name_is_AD01_administrator(driver):
     """verify that group name is "AD01\administrator."""
+    assert wait_on_element(driver, 1, 5, '//*[contains(.,"AD01\\administrator")]')
 
 
 @then('Navigate to Dashboard')
