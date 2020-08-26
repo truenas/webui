@@ -131,14 +131,15 @@ def navigate_to_systems_then_system_dataset(driver):
 @then('the Configure System Dataset page should open')
 def the_configure_system_dataset_page_should_open(driver):
     """the Configure System Dataset page should open."""
-    assert wait_on_element(driver, 0.5, 5, '//h4[contains(.,"Configure System Dataset")]')
+    assert wait_on_element(driver, 1, 5, '//h4[contains(.,"Configure System Dataset")]')
 
 
 @then('click on System Dataser Pool select dozer')
 def click_on_system_dataser_pool_select_dozer(driver):
     """click on System Dataser Pool select dozer."""
+    assert wait_on_element(driver, 1, 5, '//mat-select[@ix-auto="select__System Dataset Pool"]')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__System Dataset Pool"]').click()
-    assert wait_on_element(driver, 0.5, 5, '//mat-option[@ix-auto="option__System Dataset Pool_dozer"]')
+    assert wait_on_element(driver, 1, 5, '//mat-option[@ix-auto="option__System Dataset Pool_dozer"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__System Dataset Pool_dozer"]').click()
 
 

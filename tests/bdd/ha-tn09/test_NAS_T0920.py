@@ -255,6 +255,7 @@ def for_parent_interface_select_lagg0_created_by_previous_step(driver):
 @then(parsers.parse('For IP Address (This Conroller) enter "{ip}" select /"{netmask}" for netmask'))
 def for_ip_address_this_conroller_enter_ip_select_28_for_netmask(driver, ip, netmask):
     """For IP Address (This Conroller) enter "{ip}" select /"{netmask}" for netmask."""
+    wait_on_element(driver, 0.5, 5, '//input[@ix-auto="input__IP Address (This Controller)"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (This Controller)"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (This Controller)"]').send_keys(ip)
     driver.find_element_by_xpath('//mat-select[@ix-auto="input__IP Address (This Controller)"]').click()

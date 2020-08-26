@@ -248,8 +248,10 @@ def uncheck_dhcp_check_critical_select_1_for_failover_group_select_the_failover_
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__DHCP"]').click()
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Critical"]').click()
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Failover Group"]').click()
+    assert wait_on_element(driver, 1, 5, '//mat-option[@ix-auto="option__Failover Group_1"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Failover Group_1"]').click()
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Failover VHID"]').click()
+    assert wait_on_element(driver, 1, 5, f'//mat-option[@ix-auto="option__Failover VHID_{vhid}"]')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Failover VHID_{vhid}"]').click()
     driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (This Controller)"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (This Controller)"]').send_keys(ip1)
@@ -384,13 +386,13 @@ def navigate_to_system_then_failover_click_disable_failover_click_save(driver):
     # make sure to scroll back up the mat-list-item
     element = driver.find_element_by_xpath('//span[contains(.,"root")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+    time.sleep(1)
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
-    assert wait_on_element(driver, 0.5, 30, '//mat-list-item[@ix-auto="option__Failover"]')
+    assert wait_on_element(driver, 1, 5, '//mat-list-item[@ix-auto="option__Failover"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Failover"]').click()
-    assert wait_on_element(driver, 0.5, 30, '//h4[contains(.,"Failover Configuration")]')
+    assert wait_on_element(driver, 1, 5, '//h4[contains(.,"Failover Configuration")]')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
-    assert wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 1, 5, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
@@ -398,10 +400,10 @@ def navigate_to_system_then_failover_click_disable_failover_click_save(driver):
 def navigate_to_dashboard_and_verify_that_both_controllers_show(driver):
     """Navigate to dashboard, and verify that both controllers show."""
     # make sure to scroll back up the mat-list-item
-    assert wait_on_element(driver, 0.5, 30, '//h4[contains(.,"Failover Configuration")]')
+    assert wait_on_element(driver, 1, 30, '//h4[contains(.,"Failover Configuration")]')
     element = driver.find_element_by_xpath('//span[contains(.,"root")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+    time.sleep(1)
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 0.5, 30, '//span[contains(.,"System Information")]')
     driver.find_element_by_xpath('//span[contains(.,"System Information")]')

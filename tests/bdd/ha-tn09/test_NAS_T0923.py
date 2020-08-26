@@ -88,13 +88,13 @@ def click_the_add_button_on_the_right_side_of_the_screen(driver):
 @then('The Users Add Page should open')
 def the_users_add_page_should_open(driver):
     """The Users Add Page should open."""
-    assert wait_on_element(driver, 0.5, 30, '//h4[contains(.,"Identification")]')
+    assert wait_on_element(driver, 1, 30, '//h4[contains(.,"Identification")]')
 
 
 @then('Fill in the following fields Full Name, Username, Password, Confirm Password and click Save')
 def fill_in_the_following_fields_full_name_username_password_confirm_password_and_click_save(driver):
     """Fill in the following fields Full Name, Username, Password, Confirm Password and click Save."""
-    assert wait_on_element(driver, 0.5, 30, '//input[@ix-auto="input__Full Name"]')
+    assert wait_on_element(driver, 1, 30, '//input[@ix-auto="input__Full Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').send_keys('Eric Turgeon')
     driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').clear()
@@ -103,7 +103,7 @@ def fill_in_the_following_fields_full_name_username_password_confirm_password_an
     driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing')
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing')
-    assert wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SUBMIT"]')
+    assert wait_on_element(driver, 1, 30, '//button[@ix-auto="button__SUBMIT"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
 
 

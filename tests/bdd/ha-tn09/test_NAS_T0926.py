@@ -62,14 +62,16 @@ def navigate_to_network_then_global_configuration(driver):
 @then('the Network Global Configuration page should open')
 def the_network_global_configuration_page_should_open(driver):
     """the Network Global Configuration page should open."""
-    assert wait_on_element(driver, 0.5, 30, '//a[contains(.,"Global Configuration")]')
+    assert wait_on_element(driver, 1, 30, '//a[contains(.,"Global Configuration")]')
 
 
 @then(parsers.parse('change the first nameserver to "{ad_nameserver}" and Dommain to "{ad_domain}"'))
 def change_the_first_nameserver_to_ad_nameserver_and_dommain_to_ad_domain(driver, ad_nameserver, ad_domain):
     """change the first nameserver to "{ad_nameserver}" and Dommain to "{ad_domain}"."""
+    assert wait_on_element(driver, 1, 5, '//input[@placeholder="Nameserver 1"]')
     driver.find_element_by_xpath('//input[@placeholder="Nameserver 1"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Nameserver 1"]').send_keys(ad_nameserver)
+    assert wait_on_element(driver, 0.5, 5, '//input[@placeholder="Domain"]')
     driver.find_element_by_xpath('//input[@placeholder="Domain"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Domain"]').send_keys(ad_domain)
 
@@ -100,6 +102,7 @@ def the_domain_credentials_page_should_open(driver):
 @then(parsers.parse('input Domain name "{ad_domain}", Account name "{ad_user}", Password "{ad_password}"'))
 def input_domain_name_ad_domain_account_name_ad_user_password_ad_pasword(driver, ad_domain, ad_user, ad_password):
     """input Domain name "{ad_domain}", Account name "{ad_user}", Password "ad_password"."""
+    assert wait_on_element(driver, 0.5, 30, '//input[@ix-auto="input__Domain Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Domain Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Domain Name"]').send_keys(ad_domain)
     driver.find_element_by_xpath('//input[@ix-auto="input__Domain Account Name"]').clear()
@@ -155,7 +158,7 @@ def input_wbinfo_u(driver, cmd):
 @then(parsers.parse('verify that "{ad_object}" is in  wbinfo -u output'))
 def verify_that_ad_object_is_in__wbinfo_u_output(driver, ad_object):
     """verify that "{ad_object}" is in  wbinfo -u output."""
-    assert wait_on_element(driver, 1, 10, f'//span[contains(.,"{ad_object}")]')
+    assert wait_on_element(driver, 1, 15, f'//span[contains(.,"{ad_object}")]')
 
 
 @then(parsers.parse('input "{cmd}"'))
@@ -259,29 +262,43 @@ def click_on_use_acl_manager(driver):
 @then('the Edit ACL page should open')
 def the_edit_acl_page_should_open(driver):
     """the Edit ACL page should open."""
-    assert wait_on_element(driver, 0.5, 5, '//h4[contains(.,"File Information")]')
+    assert wait_on_element(driver, 1, 5, '//h4[contains(.,"File Information")]')
 
 
-@then(parsers.parse('setting permissions set User to root and then select "{group_name}" for Groups, check the Apply Group and select OPEN for Default ACL Option'))
-def setting_permissions_set_user_to_root_and_then_select_goup_name_for_groups_check_the_apply_group_and_select_open_for_default_acl_option(driver, group_name):
-    """setting permissions set User to root and then select "{group_name}" for Groups, check the Apply Group and select OPEN for Default ACL Option."""
-    driver.find_element_by_xpath('//input[@placeholder="User"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="User"]').send_keys('root')
-    assert wait_on_element(driver, 0.5, 5, '//mat-option[@ix-auto="option__root"]')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__root"]').click()
-    assert wait_on_element(driver, 0.5, 5, '//mat-button[@ix-auto="button__gid"]')
-    driver.find_element_by_xpath('//mat-button[@ix-auto="button__gid"]').click()
-    assert wait_on_element(driver, 0.5, 5, f'//button[@ix-auto="option__{group_name}"]')
-    driver.find_element_by_xpath(f'//button[@ix-auto="option__{group_name}"]').click()
-    assert wait_on_element(driver, 0.5, 5, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply Group"]').click()
+@then(parsers.parse('select OPEN for Default ACL Option, then select "{group_name}" for Group name, check the Apply Group'))
+def setting_permissions_set_user_to_root_and_then_select_AD01_administrator_for_groups_check_the_apply_group_and_select_open_for_default_acl_option(driver):
+    """select OPEN for Default ACL Option, then select "AD01\administrator" for Group name, check the Apply Group."""
+    assert wait_on_element(driver, 1, 5, '//mat-select[@ix-auto="select__Default ACL Options"]')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Default ACL Options"]').click()
-    assert wait_on_element(driver, 0.5, 5, '//mat-option[@ix-auto="option__Default ACL Options_OPEN"]')
+    assert wait_on_element(driver, 1, 5, '//mat-option[@ix-auto="option__Default ACL Options_OPEN"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Default ACL Options_OPEN"]').click()
+    assert wait_on_element(driver, 1, 5, '//mat-button[@ix-auto="button__gid"]')
+    driver.find_element_by_xpath('//mat-button[@ix-auto="button__gid"]').click()
+    assert wait_on_element(driver, 1, 5, '//button[@ix-auto="option__AD01\\administrator"]')
+    driver.find_element_by_xpath('//button[@ix-auto="option__AD01\\administrator"]').click()
+    assert wait_on_element(driver, 1, 5, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]')
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply Group"]').click()
 
 
-@then('click the Save button')
+@then('click the Save button, should be return to pool page')
 def click_the_save_button(driver):
-    """click the Save button."""
+    """click the Save button, should be return to pool page"""
     wait_on_element(driver, 0.5, 5, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 1, 5, '//mat-panel-title[contains(.,"dozer")]')
+    driver.find_element_by_xpath('//td[@ix-auto="value__dozer_name"]')
+
+
+@then('verify that group name is "AD01\administrator"')
+def verify_that_group_name_is_AD01_administrator(driver):
+    """verify that group name is "AD01\administrator."""
+
+
+@then('Navigate to Dashboard')
+def navigate_to_dashboard(driver):
+    """Navigate to Dashboard"""
+    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(0.5)
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+    assert wait_on_element(driver, 0.5, 30, '//span[contains(.,"System Information")]')
