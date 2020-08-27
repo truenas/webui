@@ -1004,6 +1004,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
      display:none;
    }
 
+  /*
   #password, #sed_passwd, #em_pass1, #bsdusr_passwd_currnt,
     #Passphrase, #passphrase, #disk_passwd, #ldap_bindpw, #iscsi_target_auth_secret,
       #iscsi_target_auth_peersecret, #dc_passwd, #secret_key, #ad_bindpw, #v3_password,
@@ -1038,6 +1039,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   app-support .has-pwtoggle > mat-form-field {
     width: calc( 100% - 66px ) !important;
   }
+  */
 
   app-entity-dialog .has-pwtoggle  {
     padding: 0 0 10px 0 !important;
@@ -1574,7 +1576,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       padding: 5px;
   }
 
-  //app-interfaces-form {
   .fieldset-container {
     .disabled-select .mat-select-arrow {
       opacity: 0.38;
@@ -1588,12 +1589,13 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
 
     entity-form-list .form-list .form-list-item > div.form-line  {
-      display: none;
-    }
-
-    entity-form-list .form-list .form-list-item > div.form-line:first-child {
+      //display: none;
       display: block;
     }
+
+    //entity-form-list .form-list .form-list-item > div.form-line:first-child {
+      //display: block;
+    //}
 
     entity-form-list .form-list .form-list-item.ipwithnetmask .list-action,
     entity-form-list .form-list .form-list-item.input .list-action{
@@ -1616,6 +1618,16 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     entity-form-list form-ipwithnetmask .form-element,
     entity-form-list form-input .form-element{
       margin-top: 0;
+    }
+  }
+
+  app-interfaces-form {
+    entity-form-list .form-list .form-list-item > div.form-line {
+      display: none;
+    }
+
+    entity-form-list .form-list .form-list-item > div.form-line:first-child {
+      display: block;
     }
   }
 
@@ -1878,11 +1890,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   // End slide-in menu ////////////////
 
   app-dataset-acl {
-    button[id='cust_button_Select an ACL Preset'] {
+    /*button[id='cust_button_Select an ACL Preset'] {
       position: absolute;
       top: 350px;
       left: 15px
-    }
+    }*/
     @media screen and (max-width: 599px) {
       button[id='cust_button_Select an ACL Preset'] {
         left: unset;

@@ -3,12 +3,19 @@
     <ng-container *ngIf="listsFromArray?.controls">
         <div *ngFor="let liControl of listsFromArray.controls; let i = index" [fxLayout]="config.width == '100%' ? 'row wrap' : (default)"
                                 ix-auto ix-auto-type="list-item" ix-auto-identifier="{{i}}" class="form-list-item {{config.listFields[0][0].type}}">
-            <div *ngFor="let field of config.listFields[i]; let ii = index" fxFlex="calc(100% - 100px)"
-                fxFlex.gt-xs="calc({{field.width}} - 100px - 32px)"
-                [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'">
+            <ng-container *ngFor="let field of config.listFields[i]; let ii = index" >
+              <div *ngIf="!field.isHidden" fxFlex="{{config.deleteButtonOnFirst ? '100%' : 'calc(100% - 100px)'}}"
+                [ngClass]="{'form-inline': field.class == 'inline', 'form-line': field.class !== 'inline', 'list-action-block-wrapper' : config.deleteButtonOnFirst}"
+                fxFlex.gt-xs="calc({{field.width}} - 100px - 32px)">
+                
                 <div dynamicField [config]="field" [group]="listsFromArray.controls[i]"></div>
-            </div>
-            <div *ngIf="!config.hideButton" class="list-action" fxFlex="100px" [style.padding-bottom]="config.width == '100%' ? '10px' : '0'">
+
+              </div>
+            </ng-container>
+            <div *ngIf="!config.hideButton" class="list-action" 
+              [ngClass]="{'list-action-inline': !config.deleteButtonOnFirst, 'list-action-block' : config.deleteButtonOnFirst}"
+              fxFlex="{{ config.deleteButtonOnFirst ? '100' : '100px'}}" 
+              [style.padding-bottom]="config.width == '100%' ? '10px' : '0'">
             <ng-container *ngIf="config.deleteButtonOnFirst; else defaultButtons">
               <div>
                     <button *ngIf="i === listsFromArray.controls.length-1" mat-button color="primary" 

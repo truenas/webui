@@ -213,6 +213,30 @@ entity-table .mat-toolbar.mat-card-toolbar{
   padding-bottom: 24px;
 }
 
+.full-width{
+  position: relative;
+}
+
+.form-element.form-combobox .mat-form-field,
+.form-element.form-ip-netmask .mat-form-field,
+.form-element.form-combobox .mat-menu-trigger,
+.form-element .mat-form-field-wrapper,
+.form-element input[type = "password"],
+.form-element input[type = "email"],
+.form-element input[type = "text"],
+.form-element input[type = "number"],
+.form-element textarea,
+.form-element select{
+  background-color: var(--bg1);
+  color: var(--fg1);
+  border: solid 1px var(--lines);
+  padding: 8px;
+  box-sizing: border-box;
+  color: var(--fg1);
+}
+
+.form-element,
+#password,
 .form-element.form-combobox .mat-form-field,
 .form-element.form-ip-netmask .mat-form-field,
 .form-element.form-combobox .mat-menu-trigger,
@@ -224,12 +248,22 @@ entity-table .mat-toolbar.mat-card-toolbar{
 .form-element textarea,
 .form-element select{
   width: calc(100% - 24px) !important;
-  background-color: var(--bg1);
-  color: var(--fg1);
-  border: solid 1px var(--lines);
-  padding: 8px;
-  box-sizing: border-box;
-  color: var(--fg1);
+}
+
+entity-form-list .list-action-block-wrapper .form-element,
+entity-form-list .list-action-block-wrapper #password,
+entity-form-list .list-action-block-wrapper .form-element.form-combobox .mat-form-field,
+entity-form-list .list-action-block-wrapper .form-element.form-ip-netmask .mat-form-field,
+entity-form-list .list-action-block-wrapper .form-element.form-combobox .mat-menu-trigger,
+entity-form-list .list-action-block-wrapper .form-element .mat-form-field-wrapper,
+entity-form-list .list-action-block-wrapper .form-element input[type = "password"],
+entity-form-list .list-action-block-wrapper .form-element input[type = "email"],
+entity-form-list .list-action-block-wrapper .form-element input[type = "text"],
+entity-form-list .list-action-block-wrapper .form-element input[type = "number"],
+entity-form-list .list-action-block-wrapper .form-element textarea,
+entity-form-list .list-action-block-wrapper .has-tooltip mat-form-field.full-width,
+entity-form-list .list-action-block-wrapper .form-element select{
+  width: 100% !important;
 }
 
 /* Combo Box */
@@ -246,7 +280,7 @@ entity-table .mat-toolbar.mat-card-toolbar{
 }
 
 .form-element.form-combobox .mat-form-field{
-  max-width: calc(100% - 82px) !important;
+  max-width: calc(100% - 58px) !important;
   height: 33px;
   margin-right: 1px;
 }
@@ -292,10 +326,15 @@ entity-table .mat-toolbar.mat-card-toolbar{
   top: 50%;
 }
 
-.form-list .list-action {
+.form-list .list-action-inline {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.form-list .list-action {
+  display: flex;
+  justify-content: right;
 }
 
 /* Chips */
@@ -334,8 +373,14 @@ entity-table .mat-toolbar.mat-card-toolbar{
 
 .form-element input[type = "password"],
 .form-element .has_toggle_pw input {
-  width: calc(100% - 40px) !important;
+  /*width: calc(100% - 40px) !important;*/
   display: inline;
+}
+
+.form-element button.toggle_pw {
+  position: absolute;
+  bottom: -3px;
+  right: 32px;
 }
 
 .form-element button.toggle_pw i{
@@ -345,6 +390,7 @@ entity-table .mat-toolbar.mat-card-toolbar{
 
 .form-element .mat-form-field-type-mat-select .mat-form-field-wrapper {
   min-height: 33px;
+  width: 100% !important;
 }
 
 .form-element.form-explorer .mat-form-field-wrapper{
