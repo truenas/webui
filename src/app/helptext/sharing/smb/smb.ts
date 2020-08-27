@@ -240,9 +240,9 @@ export const helptext_sharing_smb = {
 
  manglingDialog: {
    title: T('Warning'),
-   message: T('The value has changed for the field <i>Use Apple-style character encoding</i>. \
- This parameter alters how file names are read from and written to storage. Changes to \
- this paramater after data has already been written may impact ability to access or delete files containing \
+   message: T('The <i>Use Apple-style character encoding</i> value has changed. \
+ This parameter affects how file names are read from and written to storage. Changes to \
+ this parameter after data is written can prevent accessing or deleting files containing \
  mangled characters.'),
    action: T('I Understand')
  }
