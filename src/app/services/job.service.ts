@@ -32,50 +32,45 @@ export class JobService {
     return source;
   }
 
-  showLogs(job_id, title?, cancelMsg?) {
+  showLogs(job, title?, cancelMsg?) {
     let dialog_title, cancelButtonMsg;
     title ? dialog_title = title : dialog_title = T("Logs");
     cancelMsg ? cancelButtonMsg = cancelMsg : cancelButtonMsg = T('Close');
-    this.ws.call("core.get_jobs").subscribe((res) => {
-      for(let i = 0; i < res.length; i++) {
-        if (res[i].id === job_id) {
-          if (res[i].error) {
-            if (res[i].logs_path) {
-              this.dialog.errorReport(T('Error'), res[i].error, res[i].exception, res[i]);
-            } else {
-              this.dialog.errorReport(T('Error'), res[i].error, res[i].exception);
-            }
-          } else {
-            if (res[i].logs_excerpt === '') {
-              this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
-            } else {
-              const target_job = res[i];
-              this.dialog.confirm(dialog_title, `<pre>${res[i].logs_excerpt}</pre>`, true, T('Download Logs'),
-                false, '', '', '', '', false, cancelButtonMsg, true).subscribe(
-                (dialog_res) => {
-                  if (dialog_res) {
-                    this.ws.call('core.download', ['filesystem.get', [target_job.logs_path], target_job.id + '.log']).subscribe(
-                      (snack_res) => {
-                        const url = snack_res[1];
-                        const mimetype = 'text/plain';
-                        let failed = false;
-                        this.storage.streamDownloadFile(this.http, url, target_job.id + '.log', mimetype).subscribe(file => {
-                          this.storage.downloadBlob(file, target_job.id + '.log');
-                        }, err => {
-                          failed = true;
-                          new EntityUtils().handleWSError(this, err);
-                        });
-                      },
-                      (snack_res) => {
-                        new EntityUtils().handleWSError(this, snack_res);
-                      }
-                    );
-                  }
-                });
-            }
-          }
-        }
+
+    if (job.error) {
+      if (job.logs_path) {
+        this.dialog.errorReport(T('Error'), job.error, job.exception, job);
+      } else {
+        this.dialog.errorReport(T('Error'), job.error, job.exception);
       }
-    });
+    } else {
+      if (job.logs_excerpt === '') {
+        this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
+      } else {
+        const target_job = job;
+        this.dialog.confirm(dialog_title, `<pre>${job.logs_excerpt}</pre>`, true, T('Download Logs'),
+          false, '', '', '', '', false, cancelButtonMsg, true).subscribe(
+          (dialog_res) => {
+            if (dialog_res) {
+              this.ws.call('core.download', ['filesystem.get', [target_job.logs_path], target_job.id + '.log']).subscribe(
+                (snack_res) => {
+                  const url = snack_res[1];
+                  const mimetype = 'text/plain';
+                  let failed = false;
+                  this.storage.streamDownloadFile(this.http, url, target_job.id + '.log', mimetype).subscribe(file => {
+                    this.storage.downloadBlob(file, target_job.id + '.log');
+                  }, err => {
+                    failed = true;
+                    new EntityUtils().handleWSError(this, err);
+                  });
+                },
+                (snack_res) => {
+                  new EntityUtils().handleWSError(this, snack_res);
+                }
+              );
+            }
+          });
+      }
+    }
   }
 }
