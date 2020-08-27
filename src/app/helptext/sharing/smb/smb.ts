@@ -239,7 +239,7 @@ export const helptext_sharing_smb = {
  This parameter alters how file names are read from and written to storage. Changes to \
  this paramater after data has already been written may impact ability to access or delete files containing \
  mangled characters.'),
-   action: T('Proceed with change')
+   action: T('I Understand')
  }
 
 };
