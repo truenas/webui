@@ -181,13 +181,13 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
     this.dialogRef.componentInstance.success.subscribe((job_res) => {
       this.dialogRef.close();
       this.entityForm.success = true;
-      this.job.showLogs(job_res.id, T('Disk Imported: Log Summary'), T('Close'));
+      this.job.showLogs(job_res, T('Disk Imported: Log Summary'), T('Close'));
       this.custActions = [
         {
           id: 'view_import_log',
           name: 'View Import Log',
           function: () => {
-            this.job.showLogs(job_res.id, T('Logs'), T('Close'));
+            this.job.showLogs(job_res, T('Logs'), T('Close'));
           }
         }
       ];
