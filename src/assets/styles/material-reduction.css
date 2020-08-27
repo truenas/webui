@@ -95,8 +95,6 @@ entity-form .mat-card{
   margin:0 auto;
 }
 
-/*entity-form .mat-content,
-entity-table .mat-content,*/
 entity-form .mat-card > *,
 entity-table .mat-card > *{
   padding:16px !important;
@@ -125,11 +123,6 @@ entity-table .mat-card > *{
 }
 
 /* Special Override Classes */
-/*.widget-loader,
-.widget .mat-card-content,
-.no-padding{
-padding:0px !important;
-}*/
 
 /* FreeNAS Specific */
 
@@ -149,10 +142,6 @@ button.menu-toggle .mat-icon{
   margin-top:-10px; /* The form field reserves too much space in mat-toolbar. This wins some of the screen back */
   text-align:right;
   max-height:38px;
-  /*padding:0 !important;
-  right: 150px;
-  top: 9px;
-  z-index: 10;*/
 }
 
 entity-table .multiactions-title{
@@ -164,7 +153,6 @@ entity-table .mat-toolbar.mat-card-toolbar{
   z-index:2;
 }
 /* Elements with shadows */
-/*.mat-card,*/
 .datatable-header,
 entity-table .mat-toolbar.mat-card-toolbar{
   box-shadow:var(--fn-dropshadow);
@@ -445,10 +433,6 @@ tooltip button i{
 }
 
 /* Buttons */
-/*.mat-button.mat-default, .mat-button.mat-accent .mat-button-focus-overlay{
-  background-color: unset !important;
-}*/
-
 .mat-button, .mat-flat-button {
   border-radius : 0 !important;
   text-transform: capitalize !important;
