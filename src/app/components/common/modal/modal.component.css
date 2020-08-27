@@ -45,8 +45,31 @@
     width: 800px;
 }
 
+.slidein-title-bar {
+    position: sticky;
+    z-index: 20000;
+    top: 0; 
+    margin: 0 15px 20px;
+    height: 50px;
+    align-items: center;
+    border-bottom: 2px solid rgba(255, 255, 255, .05);
+    background-color: var(--bg2);
+}
+
+.formtitle {
+    color: var(--fg1);
+}
+
+#close-icon {
+    color: var(--fg1);
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    z-index: 10;
+  }
+
 .jw-modal-body {
-    padding: 20px;
+    padding: 0 20px 20px 20px;
     background: #fff;
 
     /* margin exposes part of the modal background */
@@ -85,11 +108,3 @@ body.jw-modal-open .slide-in-form .jw-modal-body {
     overflow: hidden;
 }
 
-#close-icon {
-    color: var(--fg1);
-    cursor: pointer;
-    position: absolute;
-    right: 25px;
-    top: 30px;
-    z-index: 10;
-  }

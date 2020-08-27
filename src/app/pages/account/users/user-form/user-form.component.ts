@@ -28,6 +28,7 @@ export class UserFormComponent {
   protected namesInUse = [];
   private homeSharePath: string;
   protected columnsOnForm = 2;
+  public formTitle: string;
 
   public fieldSetDisplay  = 'default';//default | carousel | stepper
   public fieldSets: FieldSets = new FieldSets([
@@ -372,6 +373,9 @@ export class UserFormComponent {
     if (!entityForm.isNew) {
       this.fieldSets.hideConfig("group_create");
       entityForm.formGroup.controls['group_create'].setValue(false);
+      this.formTitle = helptext.title_edit;
+    } else {
+      this.formTitle = helptext.title_add;
     }
 
     /* list groups */
