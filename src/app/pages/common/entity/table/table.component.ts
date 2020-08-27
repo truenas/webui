@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, AfterViewInit } from '@angular/core';
 import { WebSocketService } from 'app/services';
 
 import * as _ from 'lodash';
@@ -22,16 +22,28 @@ export interface InputTableConf {
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.css'],
 })
-export class TableComponent implements OnInit {
+export class TableComponent implements OnInit, AfterViewInit {
   @Input('conf') tableConf: InputTableConf;
+  @ViewChild('table') table;
 
   public title = '';
   public dataSource;
+  public displayedDataSource;
   public displayedColumns;
   public hideHeader = false;
   public actions;
+  private limitRows;
+  public showViewMore = false;
 
   constructor(private ws: WebSocketService) { }
+  ngAfterViewInit() {
+    if (this.table) {
+      let tableHeight = this.table.nativeElement.offsetHeight;
+      this.limitRows = Math.floor((tableHeight - (this.tableConf.hideHeader ? 0 : 56)) / 48);
+      console.log(this.limitRows);
+
+    }
+  }
   ngOnInit() {
     this.title = this.tableConf.title || '';
     if (this.tableConf.hideHeader) {
@@ -51,6 +63,11 @@ export class TableComponent implements OnInit {
         this.tableConf.getInOutInfo(res);
       }
         this.dataSource = res;
+        if (this.limitRows) {
+          this.displayedDataSource = this.dataSource.slice(0, this.limitRows);
+          console.log(this.displayedDataSource);
+          this.showViewMore = this.dataSource.length !== this.displayedDataSource.length;
+        }
     });
   }
 

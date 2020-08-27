@@ -17,6 +17,10 @@ div.table-title-action > button {
     color: var(--fg1);
 }
 
+div.table-container {
+    height: inherit;
+}
+
 table.table-component{
     width: 100%;
     vertical-align: middle;
@@ -61,4 +65,9 @@ mat-icon.STATE_DOWN {
 
 div.state-info {
     margin-left: 10px;
+}
+
+div.view-more-row {
+    padding: 9px;
+    align-self: center;
 }
