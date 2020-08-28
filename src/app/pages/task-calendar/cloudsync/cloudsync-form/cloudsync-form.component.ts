@@ -425,7 +425,7 @@ export class CloudsyncFormComponent {
         dialogRef.componentInstance.submit();
         dialogRef.componentInstance.success.subscribe((res) => {
           this.matDialog.closeAll();
-          this.job.showLogs(res.id);
+          this.job.showLogs(res);
         });
         dialogRef.componentInstance.failure.subscribe((err) => {
           this.matDialog.closeAll()
