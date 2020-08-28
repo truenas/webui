@@ -77,7 +77,7 @@ export class UserFormComponent {
     {
       name: 'helptext.user_form_title_name',
       class: helptext.user_form_title_class,
-      label:false,
+      label: true,
       width: '50%',
       config:[
         {
@@ -151,9 +151,9 @@ export class UserFormComponent {
       ]
     },
     {
-      name:helptext.user_form_ids_groups_title,
+      name:'',
       class: helptext.user_form_ids_groups_title_class,
-      label:false,
+      label:true,
       width: '50%',
       config:[
         {
