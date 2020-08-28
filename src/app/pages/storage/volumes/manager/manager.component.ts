@@ -50,7 +50,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public isNew = true;
   public vol_encrypt: number = 0;
   public isEncrypted: boolean = false;
-  public encryption_algorithm = "AES-256-CCM";
+  public encryption_algorithm = "AES-256-GCM";
   public encryption_algorithm_options = [];
   public re_has_errors = false;
   public nameFilter: RegExp;
