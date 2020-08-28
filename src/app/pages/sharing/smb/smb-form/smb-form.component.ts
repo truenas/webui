@@ -33,6 +33,8 @@ export class SMBFormComponent {
   private hostsAllowOnLoad = [];
   private hostsDenyOnLoad = [];
   private stripACLWarningSent = false; 
+  private mangleWarningSent = false;
+  private mangle: boolean;
 
   protected fieldSets: FieldSet[] = [
     {
@@ -305,6 +307,7 @@ export class SMBFormComponent {
   }
 
   resourceTransformIncomingRestData(data) {
+    this.mangle = data.aapl_name_mangling;
     this.hostsAllowOnLoad = data.hostsallow ? [...data.hostsallow] : [];
     this.hostsDenyOnLoad = data.hostsdeny ? [...data.hostsdeny] : [];
     return data;
@@ -513,6 +516,17 @@ export class SMBFormComponent {
     this.entityForm = entityForm;
     if (entityForm.isNew) {
       entityForm.formGroup.controls['browsable'].setValue(true);
+    } else {
+      setTimeout(() => {
+        entityForm.formGroup.controls['aapl_name_mangling'].valueChanges.subscribe(value => {
+          if (value !== this.mangle && !this.mangleWarningSent) {
+            this.mangleWarningSent = true;
+            this.dialog.confirm(helptext_sharing_smb.manglingDialog.title, helptext_sharing_smb.manglingDialog.message,
+              true, helptext_sharing_smb.manglingDialog.action, false, null, null, null, null, true);
+          }
+        })
+      }, 1000)
+
     }
 
     /*  If name is empty, auto-populate after path selection */
