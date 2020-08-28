@@ -71,9 +71,13 @@ export class ModalComponent implements OnInit, OnDestroy {
     // open modal
     open(conf:any): void {
         this.conf = conf;
+        // Takes a bit for title to be set dynamically in the form
+        const checkTitle = setInterval(() => {
+            this.title = this.conf.title ? this.conf.title : '';
+        }, 100)
         setTimeout(() => {
-            this.title = this.conf.title;
-        }, 800);
+            clearInterval(checkTitle);
+        }, 1000);
         this.modal = document.querySelector(`.${this.id}`);
         this.background = document.querySelector(`.${this.id}-background`);
         this.slideIn = document.querySelector('.slide-in-form');

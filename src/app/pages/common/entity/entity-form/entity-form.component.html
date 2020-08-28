@@ -14,7 +14,7 @@
             *ngIf="showSpinner" #entityspinner>
           </mat-spinner> 
         
-        <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" class="form-wrap" #entityForm="ngForm" *ngIf="showDefaults">
+        <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" class="form-wrap" #entityForm="ngForm">
                 <div class="fieldset-container fieldset-display-default" *ngIf="fieldSets">
             <ng-container *ngFor="let fieldSet of fieldSets; let i = index">
               <div [ngClass]="fieldSet.class" class="fieldset divider-{{fieldSet.divider}}"

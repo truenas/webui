@@ -146,7 +146,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public error: string;
   public success = false;
   public data: Object = {};
-  public showDefaults: boolean = false;
   public showSpinner: boolean = false;
   public isFromPending = false;
   constructor(protected router: Router, protected route: ActivatedRoute,
@@ -316,6 +315,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       }
 
       if (!this.isNew) {
+        this.loader.open();
         this.getFunction.subscribe((res) => {
           if (res.data){
             this.data = res.data;
@@ -378,9 +378,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
           if (this.conf.initial) {
             this.conf.initial.bind(this.conf)(this);
           }
-          // Gets called on most entity forms after ws data returns, 
-          // thus hiding messages like 'no data'
-          this.showDefaults = true;
+          this.loader.close()
         });
       }
     });
@@ -390,12 +388,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if (this.conf.blurEvent) {
       this.conf.blurEvent(this);
     }
-    // ...but for entity forms that don't make a data request, this kicks in 
-    setTimeout(() => { this.setShowDefaults(); }, 500);
-  }
-
-  setShowDefaults() {
-    this.showDefaults = true;
   }
 
   ngOnChanges() {

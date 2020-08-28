@@ -1844,20 +1844,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     .jw-modal-body entity-wizard {
       mat-card {
         padding: 0;
-        margin: 18px;
+        margin: 18px 0;
       }
-      .mat-vertical-stepper-header {
-        padding: 0 0 24px 0;
-      }
-      
-      .mat-vertical-content-container {
-        margin-left: 0;
-
-        .mat-vertical-content {
-          padding: 0;
-        }
     }
-  }
 
 
  } // end of ix theme
