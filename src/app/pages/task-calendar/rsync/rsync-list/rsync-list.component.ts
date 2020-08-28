@@ -128,7 +128,7 @@ export class RsyncListComponent {
       if (row.state === 'RUNNING') {
         this.entityList.runningStateButton(row.job.id);
       } else {
-        this.job.showLogs(row.job.id);
+        this.job.showLogs(row.job);
       }
     } else {
       this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
