@@ -547,7 +547,7 @@ export class DatasetFormComponent implements Formconfiguration{
           placeholder: helptext.dataset_form_encryption.algorithm_placeholder,
           tooltip: helptext.dataset_form_encryption.algorithm_tooltip,
           required: true,
-          value: "AES-256-CCM",
+          value: "AES-256-GCM",
           options: [],
           disabled: true,
           isHidden: true,
