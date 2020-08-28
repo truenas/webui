@@ -31,8 +31,8 @@
 			autocomplete="new-password"
 			ix-auto
 			ix-auto-type="input"
-      ix-auto-identifier="{{config.placeholder}}"
-      id="{{config.id}}"
+			ix-auto-identifier="{{config.placeholder}}"
+			[id]="config.name"
 			(change)="valueChange()"
 			(paste)="onPaste($event)"
 			(input)="onInput()">

@@ -7,11 +7,11 @@ import { ModalService } from '../../../services/modal.service';
     template: 
         `<div class={{id}} [ngClass]="id!=='slide-in-form' ? 'jw-modal' : ''">
             <div class="jw-modal-body">
-                <ng-container *ngIf="!wizard; else wizardBlock">
                 <div class="slidein-title-bar" fxLayout="row" >
-                    <h3 fxFlex="90%" class="formtitle">{{title}}</h3>
-                    <mat-icon fxFlex="10%" id="close-icon" (click)="close()">close</mat-icon>      
+                    <h3 fxFlex="90%" class="formtitle">{{title | translate}}</h3>
+                    <mat-icon fxFlex="10%" id="close-icon" (click)="close()">cancel</mat-icon>      
                 </div>
+                <ng-container *ngIf="!wizard; else wizardBlock">
                     <entity-form [conf]="conf" *ngIf="formOpen" class="slidein-entity-form"></entity-form>
                 </ng-container>
                 <ng-template #wizardBlock>
@@ -72,7 +72,7 @@ export class ModalComponent implements OnInit, OnDestroy {
     open(conf:any): void {
         this.conf = conf;
         setTimeout(() => {
-            this.title = this.conf.formTitle;
+            this.title = this.conf.title;
         }, 800);
         this.modal = document.querySelector(`.${this.id}`);
         this.background = document.querySelector(`.${this.id}-background`);

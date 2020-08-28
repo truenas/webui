@@ -49,8 +49,8 @@
     position: sticky;
     z-index: 20000;
     top: 0; 
-    margin: 0 15px 20px;
-    height: 50px;
+    margin: 0 15px 10px;
+    height: 75px;
     align-items: center;
     border-bottom: 2px solid rgba(255, 255, 255, .05);
     background-color: var(--bg2);

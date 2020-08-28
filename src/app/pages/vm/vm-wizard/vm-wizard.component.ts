@@ -46,6 +46,7 @@ export class VMWizardComponent {
   public mode: string;
   public model: string | null;
   private currentStep = 0;
+  public title = helptext.formTitle;
 
   entityWizard: any;
   public res;

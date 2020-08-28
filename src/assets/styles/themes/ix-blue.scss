@@ -1841,7 +1841,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
 
     // Remove indentation for form elements on vertical stepper
-    entity-wizard {
+    .jw-modal-body entity-wizard {
+      mat-card {
+        padding: 0;
+        margin: 18px;
+      }
       .mat-vertical-stepper-header {
         padding: 0 0 24px 0;
       }

@@ -22,7 +22,7 @@ export class GroupFormComponent {
   protected addCall = 'group.create';
   protected editCall = 'group.update';
   protected queryKey = 'id';
-  public formTitle: string;
+  public title: string;
 
   protected fieldConfig: FieldConfig[] = [];
 
@@ -125,9 +125,9 @@ export class GroupFormComponent {
 
         entityForm.formGroup.controls['allow_duplicate_gid'].setValue(true);
         _.find(this.fieldSets[0].config, { name: 'allow_duplicate_gid' }).isHidden = true;
-        this.formTitle = helptext.title_edit;
+        this.title = helptext.title_edit;
       } else {
-        this.formTitle = helptext.title_add;
+        this.title = helptext.title_add;
         this.getNamesInUse();
         this.ws.call('group.get_next_gid').subscribe((res)=>{
           entityForm.formGroup.controls['gid'].setValue(res);
