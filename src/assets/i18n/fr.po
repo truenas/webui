@@ -78,6 +78,12 @@ msgstr " utilisateurs intégrés (le réglage par défaut est <i>caché</i>)."
 msgid " but datastore "
 msgstr " mais le magasin de données "
 
+msgid " day, "
+msgstr ""
+
+msgid " days, "
+msgstr ""
+
 msgid " disks"
 msgstr " disques"
 
@@ -108,6 +114,12 @@ msgid ""
 msgstr ""
 " est la taille d’enregistrement minimale recommandée. Le choix d’une taille "
 "plus petite peut réduire les performances du système."
+
+msgid " minute"
+msgstr ""
+
+msgid " minutes"
+msgstr ""
 
 msgid " official plugins"
 msgstr " plugins officiels"
@@ -1960,6 +1972,11 @@ msgstr ""
 msgid "An ACL is present in this path"
 msgstr "Une ACL est présente dans ce chemin"
 
+msgid ""
+"An IP address must be provided for each controller and the virtual "
+"interface."
+msgstr ""
+
 msgid "An update is already applied. Please reboot the system."
 msgstr "Une mise à jour est déjà appliquée. Veuillez redémarrer le système."
 
@@ -1988,17 +2005,11 @@ msgstr ""
 msgid ""
 "Appends a suffix to the share connection path.  This is used to provide "
 "unique shares on a per-user, per-computer, or per-IP address basis.  "
-"Suffixes can contain a macro. See  <a "
+"Suffixes can contain a macro. See the  <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
-"target=\"_blank\">smb.conf(5)</a> for a list of supported macros. The "
-"connectpath **must** be preset before a client connects."
+"target=\"_blank\">smb.conf</a> manual page for  a list of supported macros. "
+"The connectpath **must** be preset before a client connects."
 msgstr ""
-"Ajoute un suffixe au chemin de connexion de partage.  Il est utilisé pour "
-"fournir des partages uniques par utilisateur, par ordinateur ou par adresse "
-"IP.  Les suffixes peuvent contenir une macro. Voir <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
-"target=\"_blank\">smb.conf(5)</a> pour une liste des macros supportées. Le "
-"connectpath **doit** être prédéfini avant qu'un client ne se connecte."
 
 msgid "Application Credential ID"
 msgstr ""
@@ -4030,6 +4041,9 @@ msgstr "Créer un instantané"
 msgid "Create Theme"
 msgstr "Créer le thème"
 
+msgid "Create a custom ACL"
+msgstr ""
+
 msgid "Create a new Pool."
 msgstr "Créez un nouveau volume."
 
@@ -4041,6 +4055,9 @@ msgstr "Créez un volume :"
 
 msgid "Create a recommended formation of vdevs in a pool."
 msgstr "Créer une formation recommandée de vdevs dans un volume."
+
+msgid "Create an ACL"
+msgstr ""
 
 msgid "Create an SMB Share"
 msgstr ""
@@ -6408,6 +6425,9 @@ msgstr ""
 "target=\"_blank\">services de comptes d'iXsystems</a>. La connexion ou "
 "l'inscription est requise."
 
+msgid "Enter or select the cloud storage location to use for this task."
+msgstr ""
+
 msgid "Enter passphrase to lock pool "
 msgstr "Entrez la passphrase pour verrouiller le volume "
 
@@ -6634,9 +6654,6 @@ msgstr "Entrez le nom de la société ou de l'organisation."
 
 msgid "Enter the name of the contact person."
 msgstr "Entrez le nom de la personne à contacter."
-
-msgid "Enter the name of the destination folder."
-msgstr "Entrez le nom du dossier de destination."
 
 msgid ""
 "Enter the name of the loader, sysctl, or rc.conf variable to configure. "
@@ -11738,6 +11755,9 @@ msgstr "Resilvering"
 msgid "Resilvering Status"
 msgstr "Statut resilvering"
 
+msgid "Resilvering pool: "
+msgstr ""
+
 msgid "Resolution"
 msgstr "Résolution"
 
@@ -11791,13 +11811,9 @@ msgstr "Restreindre PAM"
 
 msgid ""
 "Restrict share visibility to users with read or write access to the share. "
-"See <a href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
-"target=_blank>smb.conf(5)</a>."
+"See the <a href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
+"target=_blank>smb.conf</a> manual page."
 msgstr ""
-"Restreindre la visibilité du partage aux utilisateurs ayant un accès en "
-"lecture ou en écriture au partage. Voir <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
-"target=_blank>smb.conf(5)</a>."
 
 msgid "Retro Logo"
 msgstr "Logo FreeNAS"
@@ -12289,6 +12305,9 @@ msgstr ""
 "target=\"_blank\">liste de compatibilité des Outils UPS réseau</a> pour "
 "obtenir la liste des périphériques UPS pris en charge."
 
+msgid "Select"
+msgstr ""
+
 msgid "Select "
 msgstr "Sélectionner "
 
@@ -12427,6 +12446,9 @@ msgstr "Sélectionnez un volume, un dataset ou un zvol."
 msgid "Select a power management profile from the menu."
 msgstr "Sélectionnez un profil de gestion de l'alimentation dans le menu."
 
+msgid "Select a preset ACL"
+msgstr ""
+
 msgid ""
 "Select a preset configuration for the share. This applies predetermined "
 "values and disables changing some share options."
@@ -12521,6 +12543,9 @@ msgid ""
 msgstr ""
 "Sélectionnez un certificat SSL valide créé ou importé dans <b>Système > "
 "Certificats</b> à utiliser pour les connexions chiffrées."
+
+msgid "Select an ACL Preset"
+msgstr ""
 
 msgid "Select an IP address to use for VNC sessions."
 msgstr "Sélectionnez une adresse IP à utiliser pour les sessions VNC."
@@ -14487,6 +14512,9 @@ msgstr "Mis à jour du statut"
 msgid "Status:"
 msgstr "Statut :"
 
+msgid "Status: "
+msgstr ""
+
 msgid "Stop"
 msgstr "Arrêter"
 
@@ -15154,6 +15182,11 @@ msgstr ""
 "La clé publique du certificat est utilisée pour chiffrer les données de "
 "l'utilisateur uniquement lors des opérations d'accord de clé. Il faut que "
 "le <b>Key Agreement</b> de clé soit également défini."
+
+msgid ""
+"The chosen preset ACL will REPLACE the ACL currently displayed in the form  "
+"and delete any unsaved changes."
+msgstr ""
 
 msgid "The contents of all added disks will be erased."
 msgstr "Le contenu de tous les disques ajoutés sera effacé."
@@ -17025,9 +17058,6 @@ msgstr "Vidéo, latence < 10ms"
 msgid "View"
 msgstr "Voir"
 
-msgid "View Enclosure"
-msgstr "Voir l'annexe"
-
 msgid "View Logs"
 msgstr "Voir les logs"
 
@@ -17972,4 +18002,16 @@ msgid "yes"
 msgstr "oui"
 
 msgid "zle (runs of zeros)"
+msgstr ""
+
+msgid "zstd (Maximum, very slow)"
+msgstr ""
+
+msgid "zstd (Medium, slow)"
+msgstr ""
+
+msgid "zstd (default level, 3)"
+msgstr ""
+
+msgid "zstd-fast (default level, 1)"
 msgstr ""

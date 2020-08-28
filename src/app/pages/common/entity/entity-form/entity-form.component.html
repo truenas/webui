@@ -33,7 +33,7 @@
                   ix-auto-type="button"
                   ix-auto-identifier="{{saveSubmitText | uppercase}}"
                   >{{saveSubmitText | translate}}</button>
-                <button id="goback_button" *ngIf="conf.route_success" class="btn  btn-block btn-lg mat-accent" type="button" (click)="goBack()" mat-button color="accent"
+                <button id="goback_button" *ngIf="conf.route_success" class="btn  btn-block btn-lg" type="button" (click)="goBack()" mat-button color="default"
                   [ix-auto]=""
                   ix-auto-type="button"
                   ix-auto-identifier="CANCEL"
@@ -41,7 +41,7 @@
                 <!-- </div> -->
                 <!-- <div class="btn-group btn-group-justified"> -->
                 <span *ngFor="let custBtn of conf.custActions">
-                  <button id="cust_button_{{custBtn.name}}" mat-button class="mat-basic" *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" [disabled]="conf.isCustActionDisabled !== undefined ? conf.isCustActionDisabled(custBtn.id) : custBtn.disabled" type="button" (click)="custBtn['function']()"
+                  <button id="cust_button_{{custBtn.name}}" color="default"  mat-button class="mat-basic" *ngIf="!conf.isCustActionVisible || conf.isCustActionVisible(custBtn.id)" [disabled]="conf.isCustActionDisabled !== undefined ? conf.isCustActionDisabled(custBtn.id) : custBtn.disabled" type="button" (click)="custBtn['function']()"
                     [ix-auto]=""
                     ix-auto-type="button"
                     ix-auto-identifier="{{custBtn.name | uppercase}}"

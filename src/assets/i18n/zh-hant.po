@@ -69,6 +69,12 @@ msgstr ""
 msgid " but datastore "
 msgstr ""
 
+msgid " day, "
+msgstr ""
+
+msgid " days, "
+msgstr ""
+
 msgid " disks"
 msgstr " 磁碟"
 
@@ -93,6 +99,12 @@ msgstr ""
 msgid ""
 " is the minimum recommended record size. Choosing a smaller size can reduce "
 "system performance."
+msgstr ""
+
+msgid " minute"
+msgstr ""
+
+msgid " minutes"
 msgstr ""
 
 msgid " official plugins"
@@ -1488,6 +1500,11 @@ msgstr ""
 msgid "An ACL is present in this path"
 msgstr ""
 
+msgid ""
+"An IP address must be provided for each controller and the virtual "
+"interface."
+msgstr ""
+
 msgid "An update is already applied. Please reboot the system."
 msgstr ""
 
@@ -1514,10 +1531,10 @@ msgstr ""
 msgid ""
 "Appends a suffix to the share connection path.  This is used to provide "
 "unique shares on a per-user, per-computer, or per-IP address basis.  "
-"Suffixes can contain a macro. See  <a "
+"Suffixes can contain a macro. See the  <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
-"target=\"_blank\">smb.conf(5)</a> for a list of supported macros. The "
-"connectpath **must** be preset before a client connects."
+"target=\"_blank\">smb.conf</a> manual page for  a list of supported macros. "
+"The connectpath **must** be preset before a client connects."
 msgstr ""
 
 msgid "Application Credential ID"
@@ -3182,6 +3199,9 @@ msgstr "建立快照"
 msgid "Create Theme"
 msgstr ""
 
+msgid "Create a custom ACL"
+msgstr ""
+
 msgid "Create a new Pool."
 msgstr "建立新儲存集區。"
 
@@ -3192,6 +3212,9 @@ msgid "Create a pool:"
 msgstr "建立儲存集區："
 
 msgid "Create a recommended formation of vdevs in a pool."
+msgstr ""
+
+msgid "Create an ACL"
 msgstr ""
 
 msgid "Create an SMB Share"
@@ -5063,6 +5086,9 @@ msgid ""
 "required."
 msgstr ""
 
+msgid "Enter or select the cloud storage location to use for this task."
+msgstr ""
+
 msgid "Enter passphrase to lock pool "
 msgstr ""
 
@@ -5238,9 +5264,6 @@ msgid "Enter the name of the company or organization."
 msgstr ""
 
 msgid "Enter the name of the contact person."
-msgstr ""
-
-msgid "Enter the name of the destination folder."
 msgstr ""
 
 msgid ""
@@ -9554,6 +9577,9 @@ msgstr ""
 msgid "Resilvering Status"
 msgstr ""
 
+msgid "Resilvering pool: "
+msgstr ""
+
 msgid "Resolution"
 msgstr "解析度"
 
@@ -9604,8 +9630,8 @@ msgstr ""
 
 msgid ""
 "Restrict share visibility to users with read or write access to the share. "
-"See <a href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
-"target=_blank>smb.conf(5)</a>."
+"See the <a href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
+"target=_blank>smb.conf</a> manual page."
 msgstr ""
 
 msgid "Retro Logo"
@@ -10060,6 +10086,9 @@ msgid ""
 "supported UPS devices."
 msgstr ""
 
+msgid "Select"
+msgstr ""
+
 msgid "Select "
 msgstr ""
 
@@ -10169,6 +10198,9 @@ msgstr "選擇儲存集區、資料集或 zvol"
 msgid "Select a power management profile from the menu."
 msgstr ""
 
+msgid "Select a preset ACL"
+msgstr ""
+
 msgid ""
 "Select a preset configuration for the share. This applies predetermined "
 "values and disables changing some share options."
@@ -10234,6 +10266,9 @@ msgstr ""
 msgid ""
 "Select a valid SSL certificate created or imported  in <b>System > "
 "Certificates</b> to use for encrypted connections."
+msgstr ""
+
+msgid "Select an ACL Preset"
 msgstr ""
 
 msgid "Select an IP address to use for VNC sessions."
@@ -11694,6 +11729,9 @@ msgstr "狀態已更新"
 msgid "Status:"
 msgstr "狀態："
 
+msgid "Status: "
+msgstr ""
+
 msgid "Stop"
 msgstr "停止"
 
@@ -12271,6 +12309,11 @@ msgstr ""
 msgid ""
 "The certificate's public key is used to encipher user data only during key "
 "agreement operations. Requires that <b>Key Agreement</b> is also set."
+msgstr ""
+
+msgid ""
+"The chosen preset ACL will REPLACE the ACL currently displayed in the form  "
+"and delete any unsaved changes."
 msgstr ""
 
 msgid "The contents of all added disks will be erased."
@@ -13741,9 +13784,6 @@ msgstr ""
 msgid "View"
 msgstr "檢視"
 
-msgid "View Enclosure"
-msgstr "檢視機箱"
-
 msgid "View Logs"
 msgstr "檢視記錄"
 
@@ -14591,4 +14631,16 @@ msgid "yes"
 msgstr ""
 
 msgid "zle (runs of zeros)"
+msgstr ""
+
+msgid "zstd (Maximum, very slow)"
+msgstr ""
+
+msgid "zstd (Medium, slow)"
+msgstr ""
+
+msgid "zstd (default level, 3)"
+msgstr ""
+
+msgid "zstd-fast (default level, 1)"
 msgstr ""

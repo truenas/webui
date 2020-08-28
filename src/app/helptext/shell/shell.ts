@@ -4,7 +4,7 @@ export default {
   usage_tooltip: T(
     '<b>Ctrl+C</b> kills a foreground process.<br>\
     Many utilities are built-in:<br> <b>Iperf</b>,\
-    <b>Netperf</b>, <b>IOzone</b>, <b>arcsat</b>,\
+    <b>Netperf</b>, <b>IOzone</b>, <b>arcstat</b>,\
     <b>tw_cli</b>, <br><b>MegaCli</b>,\
     <b>freenas-debug</b>, <b>tmux</b>,\
     <b>Dmidecode</b>.'

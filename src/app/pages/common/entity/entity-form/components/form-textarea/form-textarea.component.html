@@ -2,7 +2,10 @@
   ix-auto ix-auto-type="textarea" ix-auto-identifier="{{config.placeholder}}">
 
   <div class="label-container">
-    <label class="label text-input">{{config.placeholder | translate}}</label>
+    <label class="label text-input">
+      {{config.placeholder | translate}}
+      <span *ngIf="config.required">*</span>
+    </label>
     <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
   </div>
 
