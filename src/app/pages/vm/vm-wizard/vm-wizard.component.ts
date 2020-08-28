@@ -30,7 +30,6 @@ import globalHelptext from './../../../helptext/global-helptext';
 export class VMWizardComponent {
 
   protected addWsCall = 'vm.create';
-  public route_success: string[] = ['vm'];
   public summary = {};
   isLinear = true;
   firstFormGroup: FormGroup;
@@ -47,6 +46,7 @@ export class VMWizardComponent {
   public model: string | null;
   private currentStep = 0;
   public title = helptext.formTitle;
+  public hideCancel = true;
 
   entityWizard: any;
   public res;

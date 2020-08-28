@@ -19,7 +19,6 @@ export class UserFormComponent {
   protected queryCall = 'user.query';
   protected addCall = 'user.create';
   protected editCall = 'user.update';
-  protected route_success: string[] = ['account', 'users' ];
   protected pk: string;
   protected queryKey = 'id';
   protected isEntity  = true;
