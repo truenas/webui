@@ -10,7 +10,7 @@ export const DefaultTheme = {
       name:'ix-dark',
       label: "iX Dark",
       labelSwatch:"blue",
-      description:'FreeNAS 12 default theme',
+      description:'TrueNAS 12 default theme',
       accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
       topbar:"#111111",
