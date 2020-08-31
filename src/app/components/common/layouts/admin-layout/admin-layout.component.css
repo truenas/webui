@@ -76,7 +76,7 @@
   font-size: .6rem;
   position: absolute;
   bottom: 0;
-  left: 70px;
+  width: 100%;
 }
 
 .sidenav-copyright-icon {

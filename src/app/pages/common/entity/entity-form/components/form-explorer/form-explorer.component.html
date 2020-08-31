@@ -2,7 +2,10 @@
     ix-auto ix-auto-type="explorer" ix-auto-identifier='{{config.placeholder}}'>
 
         <div class="label-container">
-          <label>{{config.placeholder | translate}}</label>
+          <label>
+            {{config.placeholder | translate}}
+            <span *ngIf="config.required">*</span>
+          </label>
           <tooltip class="formexinput-tooltip" *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
         </div>
 

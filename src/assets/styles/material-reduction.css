@@ -95,8 +95,6 @@ entity-form .mat-card{
   margin:0 auto;
 }
 
-/*entity-form .mat-content,
-entity-table .mat-content,*/
 entity-form .mat-card > *,
 entity-table .mat-card > *{
   padding:16px !important;
@@ -125,11 +123,6 @@ entity-table .mat-card > *{
 }
 
 /* Special Override Classes */
-/*.widget-loader,
-.widget .mat-card-content,
-.no-padding{
-padding:0px !important;
-}*/
 
 /* FreeNAS Specific */
 
@@ -149,10 +142,6 @@ button.menu-toggle .mat-icon{
   margin-top:-10px; /* The form field reserves too much space in mat-toolbar. This wins some of the screen back */
   text-align:right;
   max-height:38px;
-  /*padding:0 !important;
-  right: 150px;
-  top: 9px;
-  z-index: 10;*/
 }
 
 entity-table .multiactions-title{
@@ -164,7 +153,6 @@ entity-table .mat-toolbar.mat-card-toolbar{
   z-index:2;
 }
 /* Elements with shadows */
-/*.mat-card,*/
 .datatable-header,
 entity-table .mat-toolbar.mat-card-toolbar{
   box-shadow:var(--fn-dropshadow);
@@ -196,6 +184,8 @@ entity-table .mat-toolbar.mat-card-toolbar{
   --lines: var(--dark-theme-lines);
   --sidenav-width: 240px;
   --btn-default-bg: var(--alt-bg2);
+  --hover-bg: var(--lines) !important;
+  --font-family-body: 'IBM Plex Sans';
 }
 
 .borderless{
@@ -211,6 +201,33 @@ entity-table .mat-toolbar.mat-card-toolbar{
   padding-bottom: 24px;
 }
 
+.full-width{
+  position: relative;
+}
+
+.form-element.form-combobox .mat-form-field,
+.form-element.form-ip-netmask .mat-form-field,
+.form-element.form-combobox .mat-menu-trigger,
+.form-element .mat-form-field-wrapper,
+.form-element input[type = "password"],
+.form-element input[type = "email"],
+.form-element input[type = "text"],
+.form-element input[type = "number"],
+.form-element textarea,
+.form-element select{
+  background-color: var(--bg1);
+  color: var(--fg1);
+  border: solid 1px var(--lines);
+  padding: 8px;
+  box-sizing: border-box;
+  color: var(--fg1);
+}
+
+.form-element,
+#password,
+.form-element.form-combobox .mat-form-field,
+.form-element.form-ip-netmask .mat-form-field,
+.form-element.form-combobox .mat-menu-trigger,
 .form-element .mat-form-field-wrapper,
 .form-element input[type = "password"],
 .form-element input[type = "email"],
@@ -219,12 +236,93 @@ entity-table .mat-toolbar.mat-card-toolbar{
 .form-element textarea,
 .form-element select{
   width: calc(100% - 24px) !important;
-  background-color: var(--bg1);
-  color: var(--fg1);
-  border: solid 1px var(--lines);
-  padding: 8px;
-  box-sizing: border-box;
-  color: var(--fg1);
+}
+
+entity-form-list .list-action-block-wrapper .form-element,
+entity-form-list .list-action-block-wrapper #password,
+entity-form-list .list-action-block-wrapper .form-element.form-combobox .mat-form-field,
+entity-form-list .list-action-block-wrapper .form-element.form-ip-netmask .mat-form-field,
+entity-form-list .list-action-block-wrapper .form-element.form-combobox .mat-menu-trigger,
+entity-form-list .list-action-block-wrapper .form-element .mat-form-field-wrapper,
+entity-form-list .list-action-block-wrapper .form-element input[type = "password"],
+entity-form-list .list-action-block-wrapper .form-element input[type = "email"],
+entity-form-list .list-action-block-wrapper .form-element input[type = "text"],
+entity-form-list .list-action-block-wrapper .form-element input[type = "number"],
+entity-form-list .list-action-block-wrapper .form-element textarea,
+entity-form-list .list-action-block-wrapper .has-tooltip mat-form-field.full-width,
+entity-form-list .list-action-block-wrapper .form-element select{
+  width: 100% !important;
+}
+
+/* Combo Box */
+.form-element.form-combobox .label-container{
+  margin-bottom: 0;
+  padding-bottom: 3px;
+}
+
+.form-element.form-combobox .mat-form-field-wrapper input,
+.form-element.form-combobox .mat-form-field-wrapper{
+  background-color: unset;
+  border: unset;
+  padding: unset;
+}
+
+.form-element.form-combobox .mat-form-field{
+  max-width: calc(100% - 58px) !important;
+  height: 33px;
+  margin-right: 1px;
+}
+
+.form-element.form-combobox .mat-menu-trigger:hover {
+  cursor: pointer;
+}
+
+.form-element.form-combobox .mat-menu-trigger{
+  position: relative;
+  top: 2px;
+  padding: 9px 2px 8px;
+}
+
+.form-element.form-combobox .mat-menu-trigger .mat-icon{
+  position: relative !important; 
+  top: 7px !important;
+}
+
+.form-element.form-combobox .mat-form-field,
+.form-element.form-combobox .mat-menu-trigger{
+  height: 33px;
+}
+
+/* IP w/Netmask*/
+.form-element.form-ip-netmask .mat-form-field-wrapper input,
+.form-element.form-ip-netmask .mat-form-field-wrapper{
+  background-color: unset;
+  border: unset;
+  padding: unset;
+}
+
+.form-element.form-combobox .mat-select-trigger{
+  position: relative;
+  top: 2px;
+  padding: 9px 2px 8px;
+}
+
+/* Form List */
+.form-list .form-list-item {
+  position: relative;
+  right: 18px;
+  top: 50%;
+}
+
+.form-list .list-action-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-list .list-action {
+  display: flex;
+  justify-content: right;
 }
 
 /* Chips */
@@ -263,8 +361,14 @@ entity-table .mat-toolbar.mat-card-toolbar{
 
 .form-element input[type = "password"],
 .form-element .has_toggle_pw input {
-  width: calc(100% - 40px) !important;
+  /*width: calc(100% - 40px) !important;*/
   display: inline;
+}
+
+.form-element button.toggle_pw {
+  position: absolute;
+  bottom: -3px;
+  right: 32px;
 }
 
 .form-element button.toggle_pw i{
@@ -274,6 +378,7 @@ entity-table .mat-toolbar.mat-card-toolbar{
 
 .form-element .mat-form-field-type-mat-select .mat-form-field-wrapper {
   min-height: 33px;
+  width: 100% !important;
 }
 
 .form-element.form-explorer .mat-form-field-wrapper{
@@ -283,6 +388,11 @@ entity-table .mat-toolbar.mat-card-toolbar{
 .form-element.form-explorer .mat-form-field-wrapper,
 .form-element.form-explorer .mat-form-field-flex,
 .form-element.form-explorer .mat-form-field-flex input {
+  border: none;
+}
+
+.form-element.form-combobox .mat-form-field-flex,
+.form-element.form-combobox .mat-form-field-flex input {
   border: none;
 }
 
@@ -328,12 +438,20 @@ tooltip button i{
   text-transform: capitalize !important;
 }
 
-button.mat-button,
-button.mat-button.btn-default, button.mat-default,
+.mat-card-actions .mat-button, 
+.mat-card-actions .mat-flat-button{
+  background:var(--btn-default-bg) !important;
+  background-color:var(--btn-default-bg) !important;
+  color:var(--fg2) !important;
+}
+
+.mat-button, .mat-flat-button,
+button.mat-button.btn-default, 
+button.mat-button.mat-default, 
+.mat-card-actions button.mat-default, button.mat-default,
 button.mat-button.mat-accent.btn-default,
-button.mat-flat-button,
-button.mat-button[type="button"],
-button.mat-button.mat-accent[type="button"]{
+button.mat-button[type="button"]:not(button.mat-primary) {
+  background:var(--btn-default-bg) !important;
   background-color:var(--btn-default-bg) !important;
   color:var(--fg2) !important;
 }
@@ -344,9 +462,26 @@ button.mat-button.mat-accent[type="button"]:hover{
   color: var(--fg2) !important;
 }
 
+button.mat-button.mat-primary{
+  background-color:var(--primary) !important;
+  color:var(--primary-txt) !important;
+  opacity: 1 !important;
+}
+
+button.mat-button.mat-accent{
+  background-color:var(--accent) !important;
+  color:var(--accent-txt) !important;
+  opacity: 1 !important;
+}
+
 /* Menus */
-.mat-menu-item:hover {
-  background-color: var(--alt-bg1) !important;
+
+.mat-option:hover:not(.mat-option-disabled),
+.sidenav-link:hover,
+.slide-in-nav-item:hover,
+.mat-menu-item:hover,
+.mat-button:hover{
+  background-color: var(--hover-bg) !important;
 }
 
 /* Nested Cards */

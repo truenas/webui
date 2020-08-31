@@ -174,10 +174,6 @@ dataset_acl_toplevel_dialog_message: T('Editing top-level datasets can\
 
 dataset_acl_add_item_btn: T('Add ACL Item'),
 
-acl_defaults_placeholder: T('Default ACL Options'),
-acl_defaults_tooltip: T('Choosing an entry loads a preset ACL that is \
- configured to match general permissions situations.'),
-
 user_not_found: T('Could not find a user name for this user ID.'),
 group_not_found: T('Could not find a group name for this group ID.'),
 
@@ -216,5 +212,25 @@ posix_default: {
   tooltip: T('Default')
 },
 
-permissions_editor_button: T('Use Permissions Editor')
+permissions_editor_button: T('Use Permissions Editor'),
+
+type_dialog: {
+  title: T('Create an ACL'),
+  radio_preset: T('Select a preset ACL'),
+  radio_preset_tooltip: T('Choosing an entry loads a preset ACL that is \
+ configured to match general permissions situations.'),
+  radio_custom: T('Create a custom ACL'),
+  input: {
+    placeholder: T('Default ACL Options'),
+  },
+  button: T('Continue')
+},
+
+preset_dialog: {
+  message: T('The chosen preset ACL will REPLACE the ACL currently displayed in the form \
+ and delete any unsaved changes.'),
+  button: T('Select')
+},
+
+preset_cust_action_btn: T('Select an ACL Preset')
 }

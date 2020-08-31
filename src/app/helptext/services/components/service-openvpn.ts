@@ -129,10 +129,22 @@ target="_blank">here.</a>')
         enum: [{
             label: 'UDP',
             value: 'UDP',
+            },{
+            label: 'UDP4',
+            value: 'UDP4',
+            },{
+            label: 'UDP6',
+            value: 'UDP6',
             }, {
             label: 'TCP',
             value: 'TCP'
-        }]
+            }, {
+            label: 'TCP4',
+            value: 'TCP4'
+            }, {
+            label: 'TCP6',
+            value: 'TCP6'
+            }]
     },
     error_dialog_title: T('Error')
 }

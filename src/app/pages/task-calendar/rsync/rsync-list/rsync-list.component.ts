@@ -30,7 +30,7 @@ export class RsyncListComponent {
     { name: T('Remote Host'), prop: 'remotehost' },
     { name: T('Remote SSH Port'), prop: 'remoteport', hidden: true },
     { name: T('Remote Module Name'), prop: 'remotemodule' },
-    { name: T('Remote Path'), prop: 'path', hidden: true },
+    { name: T('Remote Path'), prop: 'remotepath', hidden: true },
     { name: T('Direction'), prop: 'direction', hidden: true },
     { name: T('Schedule'), prop: 'cron', hidden: true, widget: { icon: 'calendar-range', component: 'TaskScheduleListComponent' } },
     { name: T('Short Description'), prop: 'desc', hidden: true },
@@ -128,7 +128,7 @@ export class RsyncListComponent {
       if (row.state === 'RUNNING') {
         this.entityList.runningStateButton(row.job.id);
       } else {
-        this.job.showLogs(row.job.id);
+        this.job.showLogs(row.job);
       }
     } else {
       this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
