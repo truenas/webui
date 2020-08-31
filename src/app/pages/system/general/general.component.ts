@@ -323,6 +323,7 @@ export class GeneralComponent implements OnDestroy {
   }
 
   resourceTransformIncomingRestData(value) {
+    console.log(value)
     this.http_port = value['ui_port'];
     this.https_port = value['ui_httpsport'];
     this.redirect = value['ui_httpsredirect'];

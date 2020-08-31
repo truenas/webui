@@ -128,6 +128,13 @@ export class LocaleService {
     getPreferredTimeFormat() {
         return this.timeFormat;
     }
+
+    getDateAndTime(tz?) {
+        if (tz) {
+            moment.tz.setDefault(tz);
+        }
+        return [moment().format(this.dateFormat), moment().format(this.timeFormat)];
+    }
     
     // Translates moment.js format to angular template format for use in special cases such as form-scheduler
     getAngularFormat() {

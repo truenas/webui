@@ -64,6 +64,7 @@ import { FnSysInfoComponent } from './support/fn-sys-info/fn-sys-info.component'
 import { KmipComponent} from './kmip/kmip.component';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { QRDialog } from './two-factor/two-factor.component';
+import { GeneralSettingsComponent } from './general-settings/general-settings.component';
 
 @NgModule({
   imports: [
@@ -122,7 +123,8 @@ import { QRDialog } from './two-factor/two-factor.component';
     FnSysInfoComponent,
     KmipComponent,
     TwoFactorComponent,
-    QRDialog
+    QRDialog,
+    GeneralSettingsComponent
   ],
   entryComponents: [QRDialog],
   providers: []

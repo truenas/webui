@@ -1,0 +1,57 @@
+/* .temp-dash {
+    margin: auto;
+    max-width: 800px;
+}
+
+ul {
+    margin-top: 20px;
+}
+
+li {
+    font-size: larger !important;
+}
+
+li:hover {
+    cursor: pointer;
+    opacity: .7;
+} */
+
+.wrapper {
+    margin: 20px;
+    display: grid;
+    /* height: 90vh; */
+    /* max-width: 1200px; */
+    margin: 0 auto;
+    /* grid-template-columns: 25% auto; */
+    /* fit-content(8rem) is basically min height 8rem, fit content otherwise*/
+    grid-template-rows: fit-content(50vh);
+    grid-template-areas: "big-card small-card1 small-card2"
+                         "big-card medium-card medium-card";   
+        .card-one {
+            grid-area: big-card;
+        }
+        .card-two {
+            grid-area: small-card1;
+        }
+        .card-three {
+            grid-area: small-card2;
+        }
+        .card-four {
+            grid-area: medium-card;
+        }
+
+        mat-card {
+            margin: 5px;
+
+            h3 {
+                margin-bottom: 10px;
+                opacity: 0.6;
+            }
+            .label {
+
+            }
+            .value {
+                margin-left: 10px;
+            }
+        }
+}

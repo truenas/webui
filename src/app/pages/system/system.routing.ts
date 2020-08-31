@@ -48,6 +48,7 @@ import { KmipComponent} from './kmip/kmip.component';
 import { T } from '../../translate-marker';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { CredentialsComponent } from './../credentials/credentials.component';
+import { GeneralSettingsComponent } from './general-settings/general-settings.component';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -60,7 +61,7 @@ export const routes: Routes = [
       data: { title: T('General'), breadcrumb: T('General'), icon: 'build' },
       children: [{
         path: '',
-        component: GeneralComponent,
+        component: GeneralSettingsComponent,
         data: { title: T('General'), breadcrumb: T('General') },
       }]
     }, {

@@ -209,5 +209,8 @@ export const helptext_system_general = {
   config_upload: {
     title: T('Upload Config'),
     message: T('Uploading...')
-  }
+  },
+  enabled: T('Enabled'),
+  disabled: T('Disabled'),
+  default: T('Default')
 };

@@ -1,0 +1,61 @@
+<!-- <div class="temp-dash" fxLayout="row wrap" fxLayout.sm="column" fxLayoutGap="20px">
+    <mat-card fxFlex="45" fxFlex.sm="100" fxFlex.xs="100">
+        <h3>Credentials</h3>
+        <mat-divider></mat-divider>
+        <p>One</p>
+    </mat-card>
+
+    <mat-card fxFlex="45" fxFlex.sm="100" fxFlex.xs="100">
+        <h3>Certificates</h3>
+        <mat-divider></mat-divider>
+        <p>Two</p>
+    </mat-card>
+
+    <mat-card fxFlex="45" fxFlex.sm="100" fxFlex.xs="100">
+        <h3>Misc</h3>
+        <mat-divider></mat-divider>
+        <p>Three</p>
+    </mat-card>
+
+    <mat-card fxFlex="45" fxFlex.sm="100" fxFlex.xs="100">
+        <h3>Platform-dependent</h3>
+        <mat-divider></mat-divider>
+        <p>Four</p>
+    </mat-card>
+</div> -->
+
+<div class="wrapper">
+    <mat-card class="card-one">
+        <h3>Credentials</h3>
+        <mat-divider></mat-divider>
+        <p>One</p>
+    </mat-card>
+
+    <mat-card class="card-two">
+        <h3>GUI</h3>
+        <mat-divider></mat-divider>
+        <div *ngIf="GUI">
+            <div *ngFor="let i of GUI">
+                <span class="label">{{ i.label | translate }}</span>
+                <span class="value">{{ i.value | translate }}</span>
+            </div>
+        </div>
+    </mat-card>
+
+    <mat-card class="card-three">
+        <h3>Localization</h3>
+        <mat-divider></mat-divider>
+        <div *ngIf="localization">
+            <div *ngFor="let i of localization">
+                <span class="label">{{ i.label | translate }}</span>
+                <span class="value">{{ i.value | translate }}</span>
+            </div>
+        </div>
+    </mat-card>
+
+    <mat-card class="card-four">
+        <h3>Platform-dependent</h3>
+        <mat-divider></mat-divider>
+        <p>Four</p>
+    </mat-card>
+</div>
