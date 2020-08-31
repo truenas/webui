@@ -145,3 +145,10 @@ def ssh_connection_should_be_successful_and_the_boot_environments_of_should_be_l
     """SSH connection should be successful and the boot environments of should be listed."""
     assert ssh_result['result'], ssh_result['output']
     assert 'default' in ssh_result['output'], ssh_result['output']
+
+
+@then(parsers.parse('run ssh root@"{host}" "{cmd}" with password "{password}"'))
+def run_ssh_root_host__fenced___force_with_password(driver, host, cmd, password):
+    """And run ssh root@"{host}" "{cmd}" with password "{password}"."""
+    ssh_result = ssh_cmd('fenced --force', 'root', password, host)
+    assert ssh_result['result'], ssh_result['output']
