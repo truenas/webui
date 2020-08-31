@@ -38,8 +38,10 @@ export class SupportComponent implements OnInit {
 
   ngOnInit() {
     this.product_type = window.localStorage['product_type'];
+    console.log(this.product_type)
     this.ws.call('system.info').subscribe((res) => {
-      if (this.product_type === 'CORE') {
+      // if (this.product_type === 'CORE') {
+        if (!this.product_type.includes('ENTERPRISE')) {
         this.getFNSysInfo(res);
         this.getFreeNASImage(res.system_product)
       } else {
@@ -122,5 +124,14 @@ export class SupportComponent implements OnInit {
         this.product_image = 'ix-original.png';
       break;
     }
+  }
+
+
+  updateLicense() {
+    console.log('Update license')
+  }
+
+  fileTicket() {
+    console.log('file a ticket')
   }
 }
