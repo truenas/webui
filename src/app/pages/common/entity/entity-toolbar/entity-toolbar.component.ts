@@ -23,7 +23,7 @@ import {EntityUtils} from '../utils';
 
 import { Subscription } from 'rxjs/Subscription';
 import { CoreEvent } from 'app/core/services/core.service';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { Control } from './models/control.interface';
 import { ControlConfig } from './models/control-config.interface';
 
