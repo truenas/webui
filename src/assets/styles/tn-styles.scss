@@ -1742,9 +1742,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     background-color: var(--contrast-darker);
     position: absolute;
     left: -239px;
-    top: 50px;
+    top: 48px;
     transition: 200ms;
-    z-index: 3;
+    z-index: 4;
   }
 
   .slidein-open {
@@ -1759,7 +1759,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     width: 100vw;
     display: none;
     transition: 200ms;
-    z-index: 1;
+    z-index: 3;
   }
 
   .isdark {

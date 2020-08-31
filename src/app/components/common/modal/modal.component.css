@@ -23,7 +23,7 @@
 .slide-in-form {
     width: 400px;
     position: fixed;
-    top: 50px;
+    top: 48px;
     right: -400px;
     bottom: 0;
 
@@ -85,7 +85,7 @@
 .jw-modal-background {
     /* modal background fixed across whole screen */
     position: fixed;
-    top: 50px;
+    top: 48px;
     right: 0;
     bottom: 0;
     left: 0;
