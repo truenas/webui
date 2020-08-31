@@ -12,8 +12,7 @@ import { TableConfig } from '../common/entity/entity-table/entity-table.componen
   templateUrl: './network.component.html',
   styleUrls: ['./network.component.css']
 })
-export class NetworkComponent implements OnDestroy{
-
+export class NetworkComponent implements OnDestroy {
   protected summayCall = 'network.general.summary';
 
   protected reportEvent;
