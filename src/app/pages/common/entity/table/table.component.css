@@ -69,5 +69,7 @@ div.state-info {
 
 div.view-more-row {
     padding: 9px;
-    align-self: center;
+    background: var(--bg2);
+    width: 100%;
+    text-align: center;
 }
