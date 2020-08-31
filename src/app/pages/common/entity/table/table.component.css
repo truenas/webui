@@ -72,6 +72,12 @@ div.state-info {
 div.view-more-row {
     padding: 9px;
     background: var(--bg2);
+    color: var(--fg2);
     width: 100%;
     text-align: center;
+    cursor: pointer;
+}
+
+div.view-more-row:hover {
+    background: var(--alt-bg2);
 }

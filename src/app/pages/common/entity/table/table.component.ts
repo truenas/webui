@@ -39,17 +39,18 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   private enableViewMore = false;
   public showCollapse = false;
 
+  private TABLE_MIN_ROWS = 5;
+
   constructor(private ws: WebSocketService) { }
   calculateLimitRows() {
-    console.log('cacl');
     if (this.table) {
       this.tableHeight = this.table.nativeElement.offsetHeight;
       if (this.enableViewMore) {
         return;
       }
       this.limitRows = Math.floor((this.tableHeight - (this.tableConf.hideHeader ? 0 : 56)) / 48);
-      console.log(this.limitRows);
-      
+      this.limitRows = Math.max(this.limitRows, this.TABLE_MIN_ROWS);
+
       if (this.dataSource) {
         this.displayedDataSource = this.dataSource.slice(0, this.limitRows);
         this.showViewMore = this.dataSource.length !== this.displayedDataSource.length;
@@ -60,7 +61,6 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
   }
   ngAfterViewInit() {
-     console.log('afterchecked', this.tableConf.title, this.apptable.nativeElement.offsetHeight, this.table.nativeElement.offsetHeight);
     this.calculateLimitRows();
   }
 
@@ -90,7 +90,6 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
         this.dataSource = res;
         if (this.limitRows) {
           this.displayedDataSource = this.dataSource.slice(0, this.limitRows - 1);
-          console.log(this.displayedDataSource);
           this.showViewMore = this.dataSource.length !== this.displayedDataSource.length;
         }
     });
@@ -136,7 +135,6 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   collapse() {
     this.enableViewMore = false;
-    // this.displayedDataSource = this.dataSource;
     this.displayedDataSource = this.dataSource.slice(0, this.limitRows);
     this.showViewMore = true;
     this.showCollapse = false;
