@@ -25,6 +25,7 @@ table.table-component{
     width: 100%;
     vertical-align: middle;
     font: inherit;
+    background: var(--bg2);
 }
 
 table.table-component tbody,
@@ -34,6 +35,7 @@ table.table-component th,
 table.table-component td {
     vertical-align: middle;
     font: inherit;
+    color: var(--fg2);
 }
 
 table.table-component tr.mat-row:hover{
