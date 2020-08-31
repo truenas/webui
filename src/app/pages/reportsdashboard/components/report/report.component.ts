@@ -4,7 +4,7 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { WebSocketService } from 'app/services/';
 import { ReportsService } from '../../reports.service';
 import { MaterialModule } from 'app/appMaterial.module';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { LineChartComponent } from '../lineChart/lineChart.component';
