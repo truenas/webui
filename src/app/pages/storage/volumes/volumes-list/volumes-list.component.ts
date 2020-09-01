@@ -510,7 +510,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     servicesB = b;
                     p1 =  a + `<i>${row1.name}</i>` + b;
                     res.forEach((item) => {
-                      p1 += `<br><br>${item.type}:`;
+                      p1 += `<br><b>${item.type}:</b>`;
                       item.attachments.forEach((i) => {
                         let tempArr = i.split(',');
                         tempArr.forEach((i) => {
@@ -520,6 +520,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     })
                   })
                 })
+                p1 += `<br /><br />`;
               }
               this.ws.call('pool.processes', [row1.id]).subscribe((res) => {
                 let running_processes = [];
@@ -536,7 +537,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   });
                   if (running_processes.length > 0) {
                     self.translate.get(helptext.exportMessages.running).subscribe(runningMsg => {
-                      p1 += `<br><br>` + runningMsg + `<b>${row1.name}</b>:`;
+                      p1 += runningMsg + `<b>${row1.name}</b>:`;
                       running_processes.forEach((process) =>  {
                         if (process.name) {
                           p1 += `<br> - ${process.name}`

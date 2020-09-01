@@ -29,7 +29,7 @@ exportAction: T("Export/Disconnect"),
 exportMessages: {
     servicesA: T('These services depend on pool '),
     servicesB: T(' and will be disrupted if the pool is detached:'),
-    running: T('These running services are using '),
+    running: T('These running processes are using '),
     unknown: T('These unknown processes are using this pool: '),
     terminated: T('WARNING: These unknown processes will be terminated while exporting the pool. '),
 
