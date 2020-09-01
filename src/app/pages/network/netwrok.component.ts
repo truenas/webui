@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { WebSocketService, NetworkService, DialogService, StorageService } from '../../services';
@@ -6,13 +6,15 @@ import { T } from '../../translate-marker';
 import helptext from '../../helptext/network/interfaces/interfaces-list';
 import { CardWidgetConf } from './card-widget.component';
 import { TableConfig } from '../common/entity/entity-table/entity-table.component';
+import { ModalService } from '../../services/modal.service';
+import { ConfigurationComponent } from './configuration/configuration.component';
 
 @Component({
   selector: 'app-interfaces-list',
   templateUrl: './network.component.html',
   styleUrls: ['./network.component.css']
 })
-export class NetworkComponent implements OnDestroy {
+export class NetworkComponent implements OnInit, OnDestroy {
   protected summayCall = 'network.general.summary';
 
   protected reportEvent;
@@ -94,12 +96,15 @@ export class NetworkComponent implements OnDestroy {
 
   public networkSummary;
 
+  protected addComponent: ConfigurationComponent;
+
   constructor(
     private ws: WebSocketService,
     private router: Router,
     private networkService: NetworkService,
     private dialog: DialogService,
-    private storageService: StorageService) {
+    private storageService: StorageService,
+    private modalService: ModalService,) {
       this.ws.call(this.summayCall).subscribe(
         (res) => {
           this.networkSummary = res;
@@ -107,6 +112,17 @@ export class NetworkComponent implements OnDestroy {
           this.defaultRoutesWidget.data.ipv4 = res.default_routes;
         }
       );
+  }
+
+  ngOnInit() {
+    this.refreshUserForm();
+    this.modalService.refreshForm$.subscribe(() => {
+      this.refreshUserForm();
+    })
+  }
+
+  refreshUserForm() {
+    this.addComponent = new ConfigurationComponent(this.router,this.ws);
   }
 
   ngOnDestroy() {
@@ -232,7 +248,7 @@ export class NetworkComponent implements OnDestroy {
   }
 
   networkSetting() {
-    console.log('network setting')
+    this.modalService.open('slide-in-form', this.addComponent);
   }
 
   openvpnDataSourceHelper(res) {
