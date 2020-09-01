@@ -98,6 +98,10 @@
   margin:0;
 }
 
+.fieldset-label {
+  height: 17px;
+}
+
 // pw show button
 #show-pw {
   margin-bottom: 10px;
@@ -137,4 +141,8 @@ span.form-message.warning {
 #error_message {
   margin-top: 4px;
   padding-left: 3px;
+}
+
+h4 {
+
 }

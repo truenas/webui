@@ -10,6 +10,8 @@ no_pools_dialog: {
   action: T('Create Pool')
 },
 
+formTitle: T('Create Virtual Machine'),
+
 wizard_type_label: T('Select VM wizard type'),
 wizard_type_placeholder: T('Virtual Machine (VM) Wizard type.'),
 wizard_type_tooltip: T('Select the Virtual Machine (VM) Wizard type.'),

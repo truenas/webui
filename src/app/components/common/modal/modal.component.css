@@ -1,0 +1,110 @@
+﻿/* MODAL STYLES
+-------------------------------*/
+
+.jw-modal {
+    /* modal container fixed across whole screen */
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    /* z-index must be higher than .jw-modal-background */
+    z-index: -10;
+        
+    /* enables scrolling for tall modals */
+    overflow: auto;
+}
+
+.jw-modal.open {
+    z-index: 1000;
+}
+
+.slide-in-form {
+    width: 400px;
+    position: fixed;
+    top: 48px;
+    right: -400px;
+    bottom: 0;
+
+    /* z-index must be higher than .jw-modal-background */
+    z-index: 1000;
+        
+    /* enables scrolling for tall modals */
+    overflow: auto;
+    transition: 200ms;
+}
+
+.slide-in-form.open {
+    right: 0;
+    transition: 200ms;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.slide-in-form.open.wide {
+    width: 800px;
+}
+
+.slidein-title-bar {
+    position: sticky;
+    z-index: 20000;
+    top: 0; 
+    margin: 0 15px 10px;
+    height: 75px;
+    align-items: center;
+    border-bottom: 2px solid rgba(255, 255, 255, .05);
+    background-color: var(--bg2);
+}
+
+.formtitle {
+    color: var(--fg1);
+}
+
+#close-icon {
+    color: var(--fg1);
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    z-index: 10;
+  }
+
+.jw-modal-body {
+    padding: 0 20px 20px 20px;
+    background: #fff;
+
+    /* margin exposes part of the modal background */
+    margin: 40px;
+}
+
+.slide-in-form .jw-modal-body {
+    margin: 0;
+    min-height: 100%;
+    background-color: var(--bg2);
+}
+
+.jw-modal-background {
+    /* modal background fixed across whole screen */
+    position: fixed;
+    top: 48px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    /* semi-transparent black  */
+    background-color: #000;
+    opacity: 0.75;
+       
+    /* z-index must be below .jw-modal and above everything else  */
+    z-index: -10;
+    transition: 100ms;
+}
+.jw-modal-background.open {
+    z-index: 900;
+    transition: 200ms;
+}
+
+body.jw-modal-open .slide-in-form .jw-modal-body {
+    /* body overflow is hidden to hide main scrollbar when modal window is open */
+    overflow: hidden;
+}
+

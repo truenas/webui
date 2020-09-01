@@ -17,11 +17,13 @@ import { ThemeService } from '../../services/theme/theme.service';
 import { DialogService } from '../../services/dialog.service';
 import { CustomizerComponent } from './customizer/customizer.component';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
+import { ModalComponent } from './modal/modal.component';
 //import { LineChartComponent } from './lineChart';
 //import { LineChartService } from './lineChart/lineChart.service';
 import { LanguageService } from '../../services/language.service';
 import { HttpClientModule } from '@angular/common/http';
 import { LocaleService } from '../../services/locale.service';
+import { EntityModule } from '../.././/pages/common/entity/entity.module';
 
 import { AngularSvgIconModule, SvgIconRegistryService } from 'angular-svg-icon';
 
@@ -36,6 +38,7 @@ import { AngularSvgIconModule, SvgIconRegistryService } from 'angular-svg-icon';
     TranslateModule,
     ChartistModule,
     HttpClientModule,
+    EntityModule,
     AngularSvgIconModule.forRoot()
   ],
   declarations: [
@@ -43,6 +46,7 @@ import { AngularSvgIconModule, SvgIconRegistryService } from 'angular-svg-icon';
     AuthLayoutComponent,
     TopbarComponent,
     NavigationComponent,
+    ModalComponent,
     NotificationsComponent, CustomizerComponent, BreadcrumbComponent, //LineChartComponent
   ],
   providers: [ThemeService, DialogService, /*LineChartService,*/ LanguageService, LocaleService, SvgIconRegistryService],
