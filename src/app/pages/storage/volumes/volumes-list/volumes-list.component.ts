@@ -26,6 +26,7 @@ import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job
 import { EntityUtils } from '../../../common/entity/utils';
 import { combineLatest } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { ModalService } from 'app/services/modal.service';
 
 export interface ZfsPoolData {
   pool: string;
@@ -1706,8 +1707,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
-    public sorter: StorageService, protected job: JobService, protected storage: StorageService, protected pref: PreferencesService, protected messageService: MessageService, protected http:HttpClient) {
-    super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, sorter, job, pref, mdDialog);
+    public sorter: StorageService, protected job: JobService, protected storage: StorageService, protected pref: PreferencesService, 
+      protected messageService: MessageService, protected http:HttpClient, modalService: ModalService) {
+    super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, sorter, job, pref, mdDialog, modalService);
   }
 
   public repaintMe() {

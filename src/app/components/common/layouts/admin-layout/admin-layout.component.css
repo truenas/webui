@@ -84,3 +84,8 @@
   margin: 3rem auto .5rem auto;
   opacity: 0.4;
 }
+
+jw-modal {
+    display: block;
+}
+

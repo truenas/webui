@@ -14,6 +14,7 @@ import { ErdService } from '../../../../services/erd.service';
 import { RestService } from '../../../../services/rest.service';
 import { StorageService } from '../../../../services/storage.service';
 import { WebSocketService } from '../../../../services/ws.service';
+import { ModalService } from '../../../../services/modal.service';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../utils';
 import { EntityTableRowDetailsComponent } from './entity-table-row-details/entity-table-row-details.component';
@@ -65,6 +66,8 @@ export interface InputTableConf {
   callGetFunction?(entity: EntityTableComponent): any;
   prerequisiteFailedHandler?(entity: EntityTableComponent);
   afterDelete?();
+  addComponent?();
+  editComponent?();
 }
 
 export interface EntityTableAction {
@@ -180,7 +183,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected erdService: ErdService, protected translate: TranslateService,
     public storageService: StorageService, protected job: JobService, protected prefService: PreferencesService,
-    protected matDialog: MatDialog) {
+    protected matDialog: MatDialog, private modalService: ModalService) {
       this.core.register({observerClass:this, eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
         this.multiActionsIconsOnly = evt.data.preferIconsOnly;
       });
@@ -669,6 +672,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       this.router.navigate(new Array('/').concat(this.conf.route_add));
     }
+    // this.modalService.open('slide-in-form', this.conf.addComponent);
   }
 
   doEdit(id) {

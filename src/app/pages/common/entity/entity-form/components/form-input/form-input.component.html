@@ -14,7 +14,7 @@
 
         <div class="full-width" [ngClass]="{'has_toggle_pw': config.togglePw}" *ngIf="config.inputType != 'file' else elseBlock">
 		<mat-spinner
-			diameter='40'
+			diameter='30'
 			class="form-input-spinner"
 			id="{{config.name}}_form-input-spinner"
 			*ngIf="config.isLoading">
@@ -34,8 +34,8 @@
 			autocomplete="new-password"
 			ix-auto
 			ix-auto-type="input"
-      ix-auto-identifier="{{config.placeholder}}"
-      id="{{config.id}}"
+			ix-auto-identifier="{{config.placeholder}}"
+			[id]="config.name"
 			(change)="valueChange()"
 			(paste)="onPaste($event)"
 			(input)="onInput()">

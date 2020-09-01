@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {Router} from '@angular/router';
+import {Router, ActivatedRoute} from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -7,8 +7,10 @@ import { WebSocketService } from '../../../../services/ws.service';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import helptext from '../../../../helptext/account/group-list';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import { ModalService } from '../../../../services/modal.service';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { GroupFormComponent } from '../group-form/group-form.component';
 
 @Component({
   selector : 'app-group-list',
@@ -22,6 +24,7 @@ export class GroupListComponent {
   protected route_add_tooltip = T("Add Group");
   protected route_edit: string[] = [ 'account', 'groups', 'edit' ];
   protected entityList: any;
+  refreshTableSubscription: any;
   protected loaderOpen = false;
   protected globalConfig = {
     id: "config",
@@ -30,6 +33,7 @@ export class GroupListComponent {
       this.toggleBuiltins();
     }
   };
+  protected addComponent: GroupFormComponent;
   
   public columns: Array<any> = [
     {name : 'Group', prop : 'group', always_display: true},
@@ -50,7 +54,19 @@ export class GroupListComponent {
 
   constructor(private _router: Router, protected dialogService: DialogService, 
     protected loader: AppLoaderService,protected ws: WebSocketService,
-    protected prefService: PreferencesService, private translate: TranslateService){}
+    protected prefService: PreferencesService, private translate: TranslateService,
+    protected aroute: ActivatedRoute, private modalService: ModalService){}
+
+  ngOnInit() {
+    this.refreshGroupForm();
+    this.modalService.refreshForm$.subscribe(() => {
+      this.refreshGroupForm();
+    })
+  }
+  
+  refreshGroupForm() {
+    this.addComponent = new GroupFormComponent(this._router,this.ws,this.modalService);
+  }
 
   resourceTransformIncomingRestData(data) {
     // Default setting is to hide builtin groups 
@@ -73,6 +89,11 @@ export class GroupListComponent {
         this.showOneTimeBuiltinMsg();
       }
     }, 2000)
+
+    this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
+      this.entityList.getData();
+    })
+
   }
   isActionVisible(actionId: string, row: any) {
     if (actionId === 'delete' && row.builtin === true) {
@@ -100,8 +121,7 @@ export class GroupListComponent {
         label : helptext.group_list_actions_label_edit,
         name: helptext.group_list_actions_id_edit,
         onClick : (members_edit) => {
-          this._router.navigate(new Array('/').concat(
-            [ "account", "groups", "edit", members_edit.id ]));
+          this.modalService.open('slide-in-form', this.addComponent, members_edit.id)
         }
       })
       actions.push({
@@ -180,6 +200,9 @@ export class GroupListComponent {
     this.dialogService.confirm(helptext.builtinMessageDialog.title, helptext.builtinMessageDialog.message, 
       true, helptext.builtinMessageDialog.button, false, '', '', '', '', true);
   }
-        
+
+  doAdd() {
+    this.modalService.open('slide-in-form', this.addComponent);
+  }       
   
 }

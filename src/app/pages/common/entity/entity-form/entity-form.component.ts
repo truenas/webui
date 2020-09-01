@@ -23,6 +23,7 @@ import {RestService, WebSocketService} from '../../../../services/';
 import { CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import {AppLoaderService} from '../../../../services/app-loader/app-loader.service';
+import { ModalService } from '../../../../services/modal.service';
 import {EntityTemplateDirective} from '../entity-template.directive';
 import {EntityUtils} from '../utils';
 
@@ -32,9 +33,6 @@ import {EntityFormService} from './services/entity-form.service';
 import {FieldRelationService} from './services/field-relation.service';
 import {  DialogService } from '../../../../services/';
 import { T } from '../../../../translate-marker';
-
-import {AdminLayoutComponent} from '../../../../components/common/layouts/admin-layout/admin-layout.component';
-
 
 export interface Formconfiguration {
   prerequisite?;
@@ -53,6 +51,7 @@ export interface Formconfiguration {
   queryKey?;  // use this to define your id for websocket call
   isNew?;
   pk?;
+  rowid?;
   custom_get_query?;
   fieldConfig?: FieldConfig[];
   resourceTransformIncomingRestData?;
@@ -94,6 +93,7 @@ export interface Formconfiguration {
   initialCount_default?;
   responseOnSubmit?;
   title?;
+  columnsOnForm?: number;
 
   goBack?();
   onSuccess?(res);
@@ -146,7 +146,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public error: string;
   public success = false;
   public data: Object = {};
-  public showDefaults: boolean = false;
   public showSpinner: boolean = false;
   public isFromPending = false;
   constructor(protected router: Router, protected route: ActivatedRoute,
@@ -155,9 +154,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               protected entityFormService: EntityFormService,
               protected fieldRelationService: FieldRelationService,
               protected loader: AppLoaderService,
-              public adminLayout: AdminLayoutComponent,
               private dialog:DialogService,
               public translate: TranslateService,
+              private modalService: ModalService,
               private cdr: ChangeDetectorRef) {
                 this.loader.callStarted.subscribe(() => this.showSpinner = true);
                 this.loader.callDone.subscribe(() => this.showSpinner = false);
@@ -212,7 +211,13 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         this.resourceName = this.resourceName + '/';
       }
       if (this.conf.isEntity) {
-        this.pk = params['pk'];
+        if (this.conf.rowid) {
+          this.pk = this.conf.rowid;
+          // delete this.conf.rowid;
+        } else {
+          this.pk = params['pk'];
+        }
+        
         if (this.pk && !this.conf.isNew) {
           if (this.conf.editCall) {
             this.submitFunction = this.editCall;  // this is strange so I AM NOTING it...  this.editCall internally calls this.conf.editCall with some fluff.
@@ -310,6 +315,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       }
 
       if (!this.isNew) {
+        this.loader.open();
         this.getFunction.subscribe((res) => {
           if (res.data){
             this.data = res.data;
@@ -372,9 +378,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
           if (this.conf.initial) {
             this.conf.initial.bind(this.conf)(this);
           }
-          // Gets called on most entity forms after ws data returns, 
-          // thus hiding messages like 'no data'
-          this.showDefaults = true;
+          this.loader.close()
         });
       }
     });
@@ -384,12 +388,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if (this.conf.blurEvent) {
       this.conf.blurEvent(this);
     }
-    // ...but for entity forms that don't make a data request, this kicks in 
-    setTimeout(() => { this.setShowDefaults(); }, 500);
-  }
-
-  setShowDefaults() {
-    this.showDefaults = true;
   }
 
   ngOnChanges() {
@@ -524,7 +522,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                               this.conf.responseOnSubmit(res);
                             }
                           }
-
+                          this.modalService.close('slide-in-form');
                         },
                         (res) => {
                           this.loader.close();
@@ -536,6 +534,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                           else {
                             new EntityUtils().handleError(this, res);
                           }
+                          this.modalService.close('slide-in-form');
                         });
     }
   }

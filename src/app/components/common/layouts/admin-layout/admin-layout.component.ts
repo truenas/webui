@@ -10,6 +10,7 @@ import * as domHelper from '../../../../helpers/dom.helper';
 import { RestService, WebSocketService } from '../../../../services';
 import { LanguageService } from '../../../../services/language.service';
 import { ThemeService } from '../../../../services/theme/theme.service';
+import { ModalService } from '../../../../services/modal.service';
 import { ConsolePanelModalDialog } from '../../dialog/consolepanel/consolepanel-dialog.component';
 import globalHelptext from '../../../../helptext/global-helptext';
 
@@ -56,6 +57,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     protected rest: RestService,
     protected ws: WebSocketService,
     public language: LanguageService,
+    public modalService: ModalService,
     public dialog: MatDialog) {
     // detect server type
     ws.call('system.product_type').subscribe((res)=>{
@@ -279,6 +281,14 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     }
   }
 
+  openModal(id: string) {
+    this.modalService.open(id, {});
+  }
+
+  closeModal(id: string) {
+    this.modalService.close(id);
+  }
+  
   // For the slide-in menu
   toggleMenu(menuInfo?) {
     if (this.isOpen && !menuInfo || this.isOpen && menuInfo[0] === this.menuName) {

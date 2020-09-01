@@ -7,6 +7,7 @@ import { FormGroup, Validators, ValidationErrors, FormControl } from '@angular/f
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import { MessageService } from '../../common/entity/entity-form/services/message.service';
+import { ModalService } from 'app/services/modal.service';
 import * as _ from 'lodash';
 
 import { VmService } from '../../../services/vm.service';
@@ -29,7 +30,6 @@ import globalHelptext from './../../../helptext/global-helptext';
 export class VMWizardComponent {
 
   protected addWsCall = 'vm.create';
-  public route_success: string[] = ['vm'];
   public summary = {};
   isLinear = true;
   firstFormGroup: FormGroup;
@@ -45,6 +45,8 @@ export class VMWizardComponent {
   public mode: string;
   public model: string | null;
   private currentStep = 0;
+  public title = helptext.formTitle;
+  public hideCancel = true;
 
   entityWizard: any;
   public res;
@@ -397,7 +399,8 @@ export class VMWizardComponent {
     protected loader: AppLoaderService, protected dialog: MatDialog,
     public messageService: MessageService,private router: Router,
     private dialogService: DialogService, private storageService: StorageService,
-    protected prefService: PreferencesService, private translate: TranslateService) {
+    protected prefService: PreferencesService, private translate: TranslateService,
+    protected modalService: ModalService) {
 
   }
 

@@ -4,6 +4,8 @@ import { matchOtherValidator } from '../../pages/common/entity/entity-form/valid
 import { UserService } from 'app/services';
 
 export default {
+title_add: T('Add User'),
+title_edit: T('Edit User'),
 user_form_title_name: T('Identification'),
 user_form_title_class:'name-and-contact',
 user_form_full_name_name: 'full_name',
