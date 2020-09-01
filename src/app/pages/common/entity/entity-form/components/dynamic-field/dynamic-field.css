@@ -48,3 +48,7 @@
   position: relative;
   top: -12px;
 }
+.form-input-spinner {
+  position: absolute;
+  left: 150px;
+}

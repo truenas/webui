@@ -2,7 +2,11 @@ import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
-import { WebSocketService, StorageService, AppLoaderService, DialogService } from '../../../services/';
+import { WebSocketService, StorageService, AppLoaderService, DialogService, RestService, VmService, NetworkService } from '../../../services/';
+import { ModalService } from 'app/services/modal.service';
+import { MessageService } from '../../common/entity/entity-form/services/message.service';
+import { TranslateService } from '@ngx-translate/core';
+import { PreferencesService} from 'app/core/services/preferences.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { MatDialog } from '@angular/material/dialog';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
@@ -14,6 +18,7 @@ import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+import { VMWizardComponent } from '../vm-wizard/vm-wizard.component';
 
 @Component({
     selector: 'vm-list',
@@ -22,7 +27,8 @@ import { Subscription } from 'rxjs';
         <p *ngIf="availMem"><strong>{{memTitle | translate}}</strong> {{availMem}} - {{memWarning | translate}}</p>
     </div>
     <entity-table [title]='title' [conf]='this'></entity-table>`,
-    styleUrls: ['./vm-list.component.css']
+    styleUrls: ['./vm-list.component.css'],
+      providers : [ VmService, MessageService ]
 })
 export class VMListComponent implements OnDestroy {
 
@@ -34,6 +40,7 @@ export class VMListComponent implements OnDestroy {
     protected dialogRef: any;
     private eventSubscription: Subscription;
     private productType: string = window.localStorage.getItem('product_type');
+    protected addComponent: VMWizardComponent;
 
     public entityList: any;
     public columns: Array<any> = [
@@ -79,11 +86,27 @@ export class VMListComponent implements OnDestroy {
         private loader: AppLoaderService,
         private dialogService: DialogService,
         private router: Router, protected dialog: MatDialog,
-        private http: HttpClient) {
+        private http: HttpClient, private modalService: ModalService, private rest: RestService,
+        private vmService: VmService, private networkService: NetworkService,
+        private messageService: MessageService, private prefService: PreferencesService,
+        private translate: TranslateService) {
             if (this.productType !== 'SCALE') {
                 this.columns.push({ name: T("Com Port"), prop: 'com_port', hidden: true })
             }
          }
+
+    ngOnInit() {
+        this.refreshVMWizard();
+        this.modalService.refreshForm$.subscribe(() => {
+            this.refreshVMWizard();
+          })
+    }
+
+    refreshVMWizard() {
+        this.addComponent = new VMWizardComponent(this.rest,this.ws,this.vmService,this.networkService, this.loader,
+            this.dialog,this.messageService,this.router,this.dialogService,this.storageService,this.prefService,
+            this.translate,this.modalService);
+      }
 
     afterInit(entityList) {
         this.checkMemory();
@@ -488,4 +511,8 @@ export class VMListComponent implements OnDestroy {
     ngOnDestroy() {
         this.eventSubscription.unsubscribe();
     }
+
+    doAdd() {
+        this.modalService.open('slide-in-form', this.addComponent);
+      } 
  }
