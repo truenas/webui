@@ -29,6 +29,7 @@ li:hover {
                          "big-card medium-card medium-card";   
         .card-one {
             grid-area: big-card;
+            min-width: 450px;
         }
         .card-two {
             grid-area: small-card1;
