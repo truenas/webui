@@ -1,61 +1,30 @@
-<!-- <div class="temp-dash" fxLayout="row wrap" fxLayout.sm="column" fxLayoutGap="20px">
-    <mat-card fxFlex="45" fxFlex.sm="100" fxFlex.xs="100">
-        <h3>Credentials</h3>
-        <mat-divider></mat-divider>
-        <p>One</p>
-    </mat-card>
-
-    <mat-card fxFlex="45" fxFlex.sm="100" fxFlex.xs="100">
-        <h3>Certificates</h3>
-        <mat-divider></mat-divider>
-        <p>Two</p>
-    </mat-card>
-
-    <mat-card fxFlex="45" fxFlex.sm="100" fxFlex.xs="100">
-        <h3>Misc</h3>
-        <mat-divider></mat-divider>
-        <p>Three</p>
-    </mat-card>
-
-    <mat-card fxFlex="45" fxFlex.sm="100" fxFlex.xs="100">
-        <h3>Platform-dependent</h3>
-        <mat-divider></mat-divider>
-        <p>Four</p>
-    </mat-card>
-</div> -->
-
 <div class="wrapper">
-    <mat-card class="card-one">
-        <h3>Support</h3>
+    <mat-card class="system-card">
+        <div class="title-bar">
+            <h3>{{ supportTitle }}</h3>
+        </div>
         <mat-divider></mat-divider>
         <app-support></app-support>
     </mat-card>
 
-    <mat-card class="card-two">
-        <h3>GUI</h3>
+    <mat-card class="data-card{{i+1}}" *ngFor="let card of dataCards; index as i; ">
+        <div class="title-bar">
+            <h3 fxFlex="95%">{{ card.title }}</h3>
+            <mat-icon fxFlex="5%">settings</mat-icon>
+        </div>
         <mat-divider></mat-divider>
-        <div *ngIf="GUI">
-            <div *ngFor="let i of GUI">
-                <span class="label">{{ i.label | translate }}</span>
-                <span class="value">{{ i.value | translate }}</span>
-            </div>
+        <div *ngFor="let item of card.items">
+            <span class="label">{{ item.label | translate }}</span>
+            <span class="value">{{ item.value | translate }}</span>
         </div>
     </mat-card>
 
-    <mat-card class="card-three">
-        <h3>Localization</h3>
-        <mat-divider></mat-divider>
-        <div *ngIf="localization">
-            <div *ngFor="let i of localization">
-                <span class="label">{{ i.label | translate }}</span>
-                <span class="value">{{ i.value | translate }}</span>
-            </div>
+    <mat-card class="ntp-card">
+        <div class="title-bar">
+            <h3 fxFlex="95%">{{ ntpTitle }}</h3>
+            <mat-icon fxFlex="5%">cancel</mat-icon>
         </div>
-    </mat-card>
-
-    <mat-card class="card-four">
-        <!-- <h3>NTP Servers</h3> -->
-        <!-- <mat-divider></mat-divider> -->
+        <mat-divider></mat-divider>
         <app-ntpserver-list></app-ntpserver-list>
     </mat-card>
 </div>

@@ -1,44 +1,22 @@
-/* .temp-dash {
-    margin: auto;
-    max-width: 800px;
-}
-
-ul {
-    margin-top: 20px;
-}
-
-li {
-    font-size: larger !important;
-}
-
-li:hover {
-    cursor: pointer;
-    opacity: .7;
-} */
-
 .wrapper {
     margin: 20px;
     display: grid;
-    /* height: 90vh; */
-    /* max-width: 1200px; */
     margin: 0 auto;
-    /* grid-template-columns: 25% auto; */
-    /* fit-content(8rem) is basically min height 8rem, fit content otherwise*/
     grid-template-rows: fit-content(50vh);
-    grid-template-areas: "big-card small-card1 small-card2"
-                         "big-card medium-card medium-card";   
-        .card-one {
-            grid-area: big-card;
+    grid-template-areas: "system-card data-card1 data-card2"
+                         "system-card ntp-card ntp-card";   
+        .system-card {
+            grid-area: system-card;
             min-width: 450px;
         }
-        .card-two {
-            grid-area: small-card1;
+        .data-card1 {
+            grid-area: data-card1;
         }
-        .card-three {
-            grid-area: small-card2;
+        .data- card2 {
+            grid-area: data-card2;
         }
-        .card-four {
-            grid-area: medium-card;
+        .ntp-card {
+            grid-area: ntp-card;
         }
 
         mat-card {

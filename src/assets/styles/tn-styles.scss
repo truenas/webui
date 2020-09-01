@@ -1138,7 +1138,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     .sys-image {
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
       height: 350px;
 
       div {
@@ -1173,6 +1173,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     }
 
     .button-group {
+      position: absolute;
+      bottom: 25px;
+      left: 25px;
+
       button {
         margin-right: 8px;
       }

@@ -212,5 +212,9 @@ export const helptext_system_general = {
   },
   enabled: T('Enabled'),
   disabled: T('Disabled'),
-  default: T('Default')
+  default: T('Default'),
+  localeTitle: T('Localization'),
+  guiTitle: T('GUI'),
+  ntpTitle: T('NTP Servers'),
+  supportTitle: T('Support')
 };
