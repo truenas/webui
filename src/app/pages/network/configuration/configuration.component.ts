@@ -1,8 +1,8 @@
-import { ApplicationRef, Component, Injector } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
-import { RestService, TooltipsService, WebSocketService } from '../../../services/';
+import { TooltipsService, WebSocketService } from '../../../services/';
 import { EntityFormComponent } from '../../common/entity/entity-form';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -27,7 +27,6 @@ export class ConfigurationComponent {
   
     {
       name: helptext.hostname_and_domain,
-      width: "50%",
       label: true,
       config: [
       {
@@ -68,7 +67,6 @@ export class ConfigurationComponent {
     {
       name: helptext.service_announcement,
       class: "service_announcement",
-      width: "50%",
       label: true,
       config: [{
         type: 'checkbox',
@@ -91,7 +89,6 @@ export class ConfigurationComponent {
     ]},
     {
       name: helptext.nameservers,
-      width: "50%",
       label: true,
       config: [
       {
@@ -115,7 +112,6 @@ export class ConfigurationComponent {
     ]},
     {
       name: helptext.gateway,
-      width: "50%",
       label: true,
       config: [
       {
@@ -179,11 +175,10 @@ export class ConfigurationComponent {
   ];
   private entityEdit: EntityFormComponent;
   private failover_fields = ['hostname_b', 'hostname_virtual'];
+  public title = helptext.title;
 
-  constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService,
-              protected _injector: Injector, protected _appRef: ApplicationRef,
-              protected tooltipsService: TooltipsService) {}
+  constructor(protected router: Router,
+              protected ws: WebSocketService) {}
 
   afterInit(entityEdit: any) { 
     this.entityEdit = entityEdit; 

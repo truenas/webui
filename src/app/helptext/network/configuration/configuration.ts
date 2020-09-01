@@ -2,6 +2,7 @@ import { T } from '../../../translate-marker';
 import globalHelptext from '../../../helptext/global-helptext';
 
 export default {
+title: T('Global Configuration'),
 
 hostname_placeholder : T('Hostname'),
 hostname_tooltip : T('System hostname.'),
