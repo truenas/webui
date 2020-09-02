@@ -2,8 +2,12 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { WebSocketService, SystemGeneralService, DialogService, LanguageService } from '../../../services/';
 import { LocaleService } from '../../../services/locale.service';
 import { ModalService } from '../../../services/modal.service';
+import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { StorageService } from '../../../services/storage.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { LocalizationFormComponent } from './localization-form/localization-form.component';
+import { GuiFormComponent } from './gui-form/gui-form.component';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { Subscription } from 'rxjs';
 
@@ -19,12 +23,15 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   localeData: any;
   configData: any;
   refreshCardData: Subscription;
-  protected addComponent = new LocalizationFormComponent(this.language,this.ws,this.dialog,this.loader,
+  protected localizationComponent = new LocalizationFormComponent(this.language,this.ws,this.dialog,this.loader,
     this.sysGeneralService,this.localeService,this.modalService);
+  protected guiComponent = new GuiFormComponent(this.router,this.language,this.ws,this.dialog,this.loader,
+    this.http,this.storage,this.sysGeneralService)
 
   constructor(private ws: WebSocketService, private localeService: LocaleService,
     private sysGeneralService: SystemGeneralService, private modalService: ModalService,
-    private language: LanguageService, private dialog: DialogService, private loader: AppLoaderService) { }
+    private language: LanguageService, private dialog: DialogService, private loader: AppLoaderService,
+    private router: Router, private http: HttpClient, private storage: StorageService) { }
 
   ngOnInit(): void {
     this.getDataCardData();
@@ -39,6 +46,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
       this.dataCards = [ 
         {
           title: helptext.guiTitle,
+          id: 'gui',
           items: [
             {label: helptext.stg_guicertificate.placeholder, value: res.ui_certificate.name},
             {label: helptext.stg_guiaddress.placeholder, value: res.ui_address.join(', ')},
@@ -58,6 +66,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
           this.localeData = 
           {
             title: helptext.localeTitle,
+            id: 'localization',
             items: [
               {label: helptext.stg_language.placeholder, value: languages[res.language]},
               {label: helptext.date_format.placeholder, value: this.localeService.getDateAndTime(res.timezone)[0]},
@@ -72,9 +81,10 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     });
   }
   
-  doAdd() {
-    this.sysGeneralService.sendLocalizationData(this.configData);
-    this.modalService.open('slide-in-form', this.addComponent);
+  doAdd(id: string) {
+    const addComponent = id === 'gui' ? this.guiComponent : this.localizationComponent;
+    this.sysGeneralService.sendConfigData(this.configData);
+    this.modalService.open('slide-in-form', addComponent);
   }  
 
   ngOnDestroy() {

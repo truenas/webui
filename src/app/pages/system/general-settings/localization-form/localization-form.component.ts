@@ -102,7 +102,7 @@ export class LocalizationFormComponent implements OnDestroy{
     public localeService: LocaleService,
     private modalService: ModalService
   ) {     
-      this.getDataFromDash = this.sysGeneralService.sendLocalizationData$.subscribe(res => {
+      this.getDataFromDash = this.sysGeneralService.sendConfigData$.subscribe(res => {
         this.configData = res;
       })
     }

@@ -10,7 +10,7 @@
     <mat-card class="data-card{{i+1}}" *ngFor="let card of dataCards; index as i; ">
         <div class="title-bar">
             <h3 fxFlex="95%">{{ card.title }}</h3>
-            <mat-icon fxFlex="5%" (click)="doAdd()" class="action-icon">settings</mat-icon>
+            <mat-icon fxFlex="5%" (click)="doAdd(card.id)" class="action-icon">settings</mat-icon>
         </div>
         <mat-divider></mat-divider>
         <div *ngFor="let item of card.items">
