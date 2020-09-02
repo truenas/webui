@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { WebSocketService, SystemGeneralService } from '../../../services/';
+import { WebSocketService, SystemGeneralService, DialogService, LanguageService } from '../../../services/';
 import { LocaleService } from '../../../services/locale.service';
+import { ModalService } from '../../../services/modal.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
+import { LocalizationFormComponent } from './localization-form/localization-form.component';
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 
 @Component({
   selector: 'app-general-settings',
@@ -12,12 +15,18 @@ export class GeneralSettingsComponent implements OnInit {
   dataCards = [];
   supportTitle = helptext.supportTitle;
   ntpTitle = helptext.ntpTitle;
+  localeData: any;
+  configData: any;
+  protected addComponent = new LocalizationFormComponent(this.language,this.ws,this.dialog,this.loader,
+    this.sysGeneralService,this.localeService);
 
   constructor(private ws: WebSocketService, private localeService: LocaleService,
-    private sysGeneralService: SystemGeneralService) { }
+    private sysGeneralService: SystemGeneralService, private modalService: ModalService,
+    private language: LanguageService, private dialog: DialogService, private loader: AppLoaderService) { }
 
   ngOnInit(): void {
     this.ws.call('system.general.config').subscribe(res => {
+      this.configData = res;
       this.dataCards = [ 
         {
           title: helptext.guiTitle,
@@ -35,7 +44,7 @@ export class GeneralSettingsComponent implements OnInit {
       ];
      
       this.sysGeneralService.languageChoices().subscribe(languages => {
-        const localeData = 
+        this.localeData = 
           {
             title: helptext.localeTitle,
             items: [
@@ -46,9 +55,13 @@ export class GeneralSettingsComponent implements OnInit {
             ]
           };
 
-        this.dataCards.push(localeData);
+        this.dataCards.push(this.localeData);
       })
     });
   }
+  doAdd() {
+    this.sysGeneralService.sendLocalizationData(this.configData);
+    this.modalService.open('slide-in-form', this.addComponent);
+  }  
 
 }

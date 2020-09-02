@@ -38,7 +38,6 @@ export class SupportComponent implements OnInit {
 
   ngOnInit() {
     this.product_type = window.localStorage['product_type'];
-    console.log(this.product_type)
     this.ws.call('system.info').subscribe((res) => {
       // if (this.product_type === 'CORE') {
         if (!this.product_type.includes('ENTERPRISE')) {

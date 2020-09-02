@@ -285,36 +285,40 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         }
       }
 
-      if (this.conf.queryCall) {
-        if(this.pk) {
-          let pk = this.pk;
-          let filter = []
-          if (this.conf.pk) {
-           filter.push(this.conf.pk);
-           pk = this.conf.pk;
-          }
-          if (this.conf.queryCallOption) {
-            filter.push(this.conf.queryCallOption);
-          }
-          if (this.conf.customFilter){
-            filter = this.conf.customFilter;
-          }
-          if (this.conf.queryKey) {
-            filter = [[[this.conf.queryKey, '=', parseInt(pk, 10) || pk]]]; // parse pk to int if possible (returns NaN otherwise)
-          }
-          this.getFunction = this.ws.call(this.conf.queryCall, filter);
-        } else {
-          this.getFunction = this.ws.call(this.conf.queryCall, []);
-        }
+      if (this.conf.queryCall === 'none') {
+        this.getFunction = this.noGetFunction();
       } else {
-        let getQuery = this.resourceName;
-        if (this.conf.custom_get_query) {
-          getQuery = this.conf.custom_get_query;
+        if (this.conf.queryCall) {
+          if(this.pk) {
+            let pk = this.pk;
+            let filter = []
+            if (this.conf.pk) {
+             filter.push(this.conf.pk);
+             pk = this.conf.pk;
+            }
+            if (this.conf.queryCallOption) {
+              filter.push(this.conf.queryCallOption);
+            }
+            if (this.conf.customFilter){
+              filter = this.conf.customFilter;
+            }
+            if (this.conf.queryKey) {
+              filter = [[[this.conf.queryKey, '=', parseInt(pk, 10) || pk]]]; // parse pk to int if possible (returns NaN otherwise)
+            }
+            this.getFunction = this.ws.call(this.conf.queryCall, filter);
+          } else {
+            this.getFunction = this.ws.call(this.conf.queryCall, []);
+          }
+        } else {
+          let getQuery = this.resourceName;
+          if (this.conf.custom_get_query) {
+            getQuery = this.conf.custom_get_query;
+          }
+          this.getFunction = this.rest.get(getQuery, {}, this.conf.route_usebaseUrl);
         }
-        this.getFunction = this.rest.get(getQuery, {}, this.conf.route_usebaseUrl);
       }
 
-      if (!this.isNew) {
+      if (!this.isNew && this.conf.queryCall !== 'none') {
         this.loader.open();
         this.getFunction.subscribe((res) => {
           if (res.data){
@@ -388,6 +392,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if (this.conf.blurEvent) {
       this.conf.blurEvent(this);
     }
+  }
+
+  noGetFunction() {
+    this.conf.resourceTransformIncomingRestData('no get function');
   }
 
   ngOnChanges() {

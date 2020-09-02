@@ -65,6 +65,7 @@ import { KmipComponent} from './kmip/kmip.component';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { QRDialog } from './two-factor/two-factor.component';
 import { GeneralSettingsComponent } from './general-settings/general-settings.component';
+import { LocalizationFormComponent } from './general-settings/localization-form/localization-form.component';
 
 @NgModule({
   imports: [
@@ -124,7 +125,8 @@ import { GeneralSettingsComponent } from './general-settings/general-settings.co
     KmipComponent,
     TwoFactorComponent,
     QRDialog,
-    GeneralSettingsComponent
+    GeneralSettingsComponent,
+    LocalizationFormComponent
   ],
   entryComponents: [QRDialog],
   providers: []
