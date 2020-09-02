@@ -323,10 +323,11 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     hideCheckbox: false
   }
 
+  public title: string;
+
   constructor(protected router: Router, protected route: ActivatedRoute,
-              protected rest: RestService, protected entityFormService: EntityFormService,
               protected networkService: NetworkService, protected dialog: DialogService,
-              protected ws: WebSocketService, protected translate: TranslateService) {
+              protected ws: WebSocketService) {
     super();
   }
 
@@ -363,6 +364,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     this.route.params.subscribe(params => {
       if (params['pk']) {
         this.vlan_pint.type = 'input';
+        this.title = helptext.title_edit;
+      } else {
+        this.title = helptext.title_add;
       }
     });
   }

@@ -3,6 +3,9 @@ import { Validators } from '@angular/forms';
 import { rangeValidator } from '../../../pages/common/entity/entity-form/validators/range-validation';
 
 export default {
+title_add: T('Add Interface'),
+title_edit: T('Edit Interface'),
+
 int_type_placeholder: T('Type'),
 int_type_tooltip: T('Choose the\
  type of interface. <i>Bridge</i> creates a logical link between\
