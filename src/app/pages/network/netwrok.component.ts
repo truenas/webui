@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { WebSocketService, NetworkService, DialogService, StorageService } from '../../services';
 import { T } from '../../translate-marker';
@@ -8,6 +8,7 @@ import { CardWidgetConf } from './card-widget.component';
 import { TableConfig } from '../common/entity/entity-table/entity-table.component';
 import { ModalService } from '../../services/modal.service';
 import { ConfigurationComponent } from './configuration/configuration.component';
+import { InterfacesFormComponent } from './interfaces/interfaces-form/interfaces-form.component';
 
 @Component({
   selector: 'app-interfaces-list',
@@ -30,10 +31,13 @@ export class NetworkComponent implements OnInit, OnDestroy {
     dataSourceHelper: this.interfaceDataSourceHelper,
     getActions: this.getInterfaceActions,
     getInOutInfo: this.getInterfaceInOutInfo.bind(this),
+    parent: this,
     add: function() {
-      console.log('add interface');
-      
+      this.parent.modalService.open('slide-in-form', this.parent.interfaceComponent);
     },
+    edit: function(row) {
+      this.parent.modalService.open('slide-in-form', this.parent.interfaceComponent, row.id);
+    }
   }
 
   public staticRoutesTableConf = {
@@ -97,10 +101,13 @@ export class NetworkComponent implements OnInit, OnDestroy {
   public networkSummary;
 
   protected addComponent: ConfigurationComponent;
+  protected interfaceComponent: InterfacesFormComponent;
+
 
   constructor(
     private ws: WebSocketService,
     private router: Router,
+    private aroute: ActivatedRoute,
     private networkService: NetworkService,
     private dialog: DialogService,
     private storageService: StorageService,
@@ -123,6 +130,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   refreshUserForm() {
     this.addComponent = new ConfigurationComponent(this.router,this.ws);
+    this.interfaceComponent = new InterfacesFormComponent(this.router, this.aroute, this.networkService, this.dialog, this.ws);
   }
 
   ngOnDestroy() {
