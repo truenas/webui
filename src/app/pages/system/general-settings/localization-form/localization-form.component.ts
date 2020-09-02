@@ -4,6 +4,7 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { DialogService, LanguageService, SystemGeneralService, WebSocketService } from '../../../../services/';
+import { ModalService } from '../../../../services/modal.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { LocaleService } from 'app/services/locale.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -21,6 +22,7 @@ export class LocalizationFormComponent implements OnDestroy{
   public languageList: { label: string; value: string }[] = [];
   public languageKey: string;  
   private dateTimeChangeSubscription: Subscription;
+  private getDataFromDash: Subscription;
   public title = helptext.localeTitle;
   public fieldConfig: FieldConfig[] = []
 
@@ -35,13 +37,6 @@ export class LocalizationFormComponent implements OnDestroy{
           placeholder: helptext.stg_language.placeholder,
           tooltip: helptext.stg_language.tooltip,
           options: [],
-        },
-        {
-          type: "select",
-          name: "kbdmap",
-          placeholder: helptext.stg_kbdmap.placeholder,
-          tooltip: helptext.stg_kbdmap.tooltip,
-          options: [{ label: "---", value: null }],
         },
         {
           type: "radio",
@@ -62,6 +57,13 @@ export class LocalizationFormComponent implements OnDestroy{
           value: true,
         },
         {
+          type: "select",
+          name: "kbdmap",
+          placeholder: helptext.stg_kbdmap.placeholder,
+          tooltip: helptext.stg_kbdmap.tooltip,
+          options: [{ label: "---", value: null }],
+        },
+        {
           type: 'combobox',
           name: 'timezone',
           placeholder: helptext.stg_timezone.placeholder,
@@ -76,7 +78,6 @@ export class LocalizationFormComponent implements OnDestroy{
           options: [],
           isLoading: true
         },
-        { type: 'paragraph', name: 'spacer', width: '2%' },
         {
           type: 'select',
           name: 'time_format',
@@ -98,28 +99,25 @@ export class LocalizationFormComponent implements OnDestroy{
     protected dialog: DialogService,
     protected loader: AppLoaderService,
     private sysGeneralService: SystemGeneralService,
-    public localeService: LocaleService
+    public localeService: LocaleService,
+    private modalService: ModalService
   ) {     
-      this.sysGeneralService.sendLocalizationData$.subscribe(res => {
+      this.getDataFromDash = this.sysGeneralService.sendLocalizationData$.subscribe(res => {
         this.configData = res;
       })
     }
 
-  resourceTransformIncomingRestData(value) {
-    console.log(this.configData)
-    this.setTimeOptions(this.configData.timezone);
-    return this.configData;
-  }
-
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
-
+    this.setTimeOptions(this.configData.timezone);
     this.makeLanguageList();
 
     this.sysGeneralService.kbdMapChoices().subscribe(mapChoices => {
       this.fieldSets
         .find(set => set.name === helptext.stg_fieldset_loc)
         .config.find(config => config.name === "kbdmap").options = mapChoices;
+        this.entityForm.formGroup.controls['kbdmap'].setValue(this.configData.kbdmap);
+
     });
 
     this.sysGeneralService.timezoneChoices().subscribe(tzChoices => {
@@ -127,6 +125,7 @@ export class LocalizationFormComponent implements OnDestroy{
       this.fieldSets
         .find(set => set.name === helptext.stg_fieldset_loc)
         .config.find(config => config.name === "timezone").options = tzChoices;
+        this.entityForm.formGroup.controls['timezone'].setValue(this.configData.timezone);
     });
  
     entityEdit.formGroup.controls['language_sort'].valueChanges.subscribe((res)=> {
@@ -183,6 +182,7 @@ export class LocalizationFormComponent implements OnDestroy{
         options,
         this.sortLanguagesByName ? "label" : "value"
       );
+      this.entityForm.formGroup.controls['language'].setValue(this.configData.language);
     });
   }
    
@@ -201,16 +201,19 @@ export class LocalizationFormComponent implements OnDestroy{
     delete body.date_format;
     delete body.time_format;
     console.log(body)
-    // this.loader.open();
-    // return this.ws.call('system.general.update', [body]).subscribe(() => {
-    //   this.loader.close();
-    //   this.entityForm.success = true;
-    //   this.entityForm.formGroup.markAsPristine();
-    //   this.afterSubmit(body);
-    // }, (res) => {
-    //   this.loader.close();
-    //   new EntityUtils().handleWSError(this.entityForm, res);
-    // });
+    this.loader.open();
+    return this.ws.call('system.general.update', [body]).subscribe(() => {
+      this.sysGeneralService.refreshSysGeneral();
+      this.loader.close();
+      this.entityForm.success = true;
+      this.entityForm.formGroup.markAsPristine();
+      this.modalService.close('slide-in-form');
+      this.afterSubmit(body);
+    }, (res) => {
+      this.loader.close();
+      this.modalService.close('slide-in-form');
+      new EntityUtils().handleWSError(this.entityForm, res);
+    });
   }
 
   getKeyByValue(object, value) {
@@ -219,6 +222,7 @@ export class LocalizationFormComponent implements OnDestroy{
 
   ngOnDestroy() {
     this.dateTimeChangeSubscription.unsubscribe();
+    this.getDataFromDash.unsubscribe();
   }
 
 }

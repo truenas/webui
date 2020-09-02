@@ -16,6 +16,7 @@ export class SystemGeneralService {
   updateRunningNoticeSent = new EventEmitter<string>();
   updateIsDone$ = new Subject();
   sendLocalizationData$ = new Subject();
+  refreshSysGeneral$ = new Subject();
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
@@ -102,4 +103,8 @@ export class SystemGeneralService {
   sendLocalizationData(data: any) {
     this.sendLocalizationData$.next(data);
   }
-}
+
+  refreshSysGeneral() {
+    this.refreshSysGeneral$.next();
+  }
+ }

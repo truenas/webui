@@ -395,7 +395,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   noGetFunction() {
-    this.conf.resourceTransformIncomingRestData('no get function');
+    return;
   }
 
   ngOnChanges() {
