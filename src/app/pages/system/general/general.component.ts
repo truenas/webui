@@ -14,6 +14,7 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { LocaleService } from 'app/services/locale.service';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import globalHelptext from '../../../helptext/global-helptext';
 import { EntityUtils } from '../../common/entity/utils';
 
 @Component({
@@ -201,6 +202,15 @@ export class GeneralComponent implements OnDestroy {
       name: 'pool_keys',
       placeholder: helptext.poolkeys.placeholder,
       tooltip: helptext.poolkeys.tooltip
+    },
+    {
+      type: 'input',
+      name: 'rootpw',
+      inputType: 'password',
+      required: true,
+      togglePw: true,
+      placeholder: globalHelptext.rootpw.placeholder,
+      tooltip: globalHelptext.rootpw.tooltip
     }
   ];
   public saveConfigFormConf: DialogFormConfiguration = {
@@ -519,47 +529,59 @@ export class GeneralComponent implements OnDestroy {
   }
 
   saveConfigSubmit(entityDialog) {
-    parent = entityDialog.parent;
+    const parent = entityDialog.parent;
     entityDialog.loader.open();
-    entityDialog.ws.call('system.info', []).subscribe((res) => {
-      let fileName = "";
-      let mimetype;
-      if (res) {
-        let hostname = res.hostname.split('.')[0];
-        let date = entityDialog.datePipe.transform(new Date(),"yyyyMMddHHmmss");
-        fileName = hostname + '-' + res.version + '-' + date;
-        if (entityDialog.formValue['secretseed'] || entityDialog.formValue['pool_keys']) {
-          mimetype = 'application/x-tar';
-          fileName += '.tar';
-        } else {
-          mimetype = 'application/x-sqlite3';
-          fileName += '.db';
-        }
-      }
+    parent.sysGeneralService.checkRootPW(entityDialog.formValue['rootpw']).subscribe(passres => {
+      if (passres) {
+        entityDialog.ws.call('system.info', []).subscribe((res) => {
+          let fileName = "";
+          let mimetype;
+          if (res) {
+            let hostname = res.hostname.split('.')[0];
+            let date = entityDialog.datePipe.transform(new Date(),"yyyyMMddHHmmss");
+            fileName = hostname + '-' + res.version + '-' + date;
+            if (entityDialog.formValue['secretseed'] || entityDialog.formValue['pool_keys']) {
+              mimetype = 'application/x-tar';
+              fileName += '.tar';
+            } else {
+              mimetype = 'application/x-sqlite3';
+              fileName += '.db';
+            }
+          }
 
-      entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'],
-                                                               'pool_keys': entityDialog.formValue['pool_keys'] }],
-                                                               fileName])
-        .subscribe(
-          (download) => {
-            const url = download[1];
-            entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype).subscribe(file => {
-              entityDialog.loader.close();
-              entityDialog.dialogRef.close();
-              entityDialog.parent.storage.downloadBlob(file, fileName);
-            }, err => {
-              entityDialog.loader.close();
-              entityDialog.dialogRef.close();
-              entityDialog.parent.dialog.errorReport(helptext.config_download.failed_title, 
-                helptext.config_download.failed_message, err.message);
-            });
+          entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'],
+                                                                  'pool_keys': entityDialog.formValue['pool_keys'] }],
+                                                                  fileName])
+            .subscribe(
+              (download) => {
+                const url = download[1];
+                entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype).subscribe(file => {
+                  entityDialog.loader.close();
+                  entityDialog.dialogRef.close();
+                  entityDialog.parent.storage.downloadBlob(file, fileName);
+                }, err => {
+                  entityDialog.loader.close();
+                  entityDialog.dialogRef.close();
+                  entityDialog.parent.dialog.errorReport(helptext.config_download.failed_title, 
+                    helptext.config_download.failed_message, err.message);
+                });
+              },
+              (err) => {
+                entityDialog.loader.close();
+                entityDialog.dialogRef.close();
+                new EntityUtils().handleWSError(entityDialog, err, entityDialog.dialog);
+              }
+            );
           },
           (err) => {
             entityDialog.loader.close();
             entityDialog.dialogRef.close();
             new EntityUtils().handleWSError(entityDialog, err, entityDialog.dialog);
-          }
-        );
+          });
+      } else {
+        entityDialog.loader.close();
+        parent.dialog.Info(globalHelptext.rootpw.error_title, globalHelptext.rootpw.error_msg, '340px');
+      }
     },
     (err) => {
       entityDialog.loader.close();
