@@ -64,8 +64,4 @@ export class SystemGeneralService {
   updateDone() {
     this.updateIsDone$.next();
   }
-
-  checkRootPW(password) {
-    return this.ws.call('auth.check_user', ['root', password]);
-  }
 }

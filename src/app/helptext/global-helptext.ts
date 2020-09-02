@@ -36,11 +36,4 @@ ha_connecting_text: T('Waiting for active TrueNAS controller to come up...'),
 pasteValueStartsWithSpace: T('The pasted string starts with a space'),
 pasteValueEndsWithSpace: T('The pasted string ends with a space'),
 
-rootpw: {
-  placeholder: T('Root Password'),
-  tooltip: T('Enter the root password to authorize this operation.'),
-  error_msg: T('The administrator password is incorrect.'),
-  error_title: T('Warning')
-}
-
 }
