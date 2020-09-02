@@ -11,6 +11,7 @@ export interface InputTableConf {
   hideHeader?: boolean; // hide table header row
 
   add?(); // add action function
+  edit?(any); // edit row
   dataSourceHelper?(any); // customise handle/modify dataSource 
   getInOutInfo?(any); // get in out info if has state column
   getActions?(); // actions for each row
@@ -101,6 +102,9 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   editRow(row) {
     console.log(row);
+    if (this.tableConf.edit) {
+      this.tableConf.edit(row);
+    }
   }
 
   deleteRow(row) {
