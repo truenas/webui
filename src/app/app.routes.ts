@@ -91,7 +91,7 @@ export const rootRouterConfig: Routes = [{
       {
         path: 'reportsdashboard',
         loadChildren: './pages/reportsdashboard/reportsdashboard.module#ReportsDashboardModule',
-        data: { title: 'Reporting', breadcrumb: 'Reporting', toplevel: true }
+        data: { title: 'Reporting', breadcrumb: 'Reporting' }
       },
       {
         path: 'systemprocesses',
