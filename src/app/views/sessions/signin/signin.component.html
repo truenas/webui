@@ -49,6 +49,7 @@
                     [(ngModel)]="signinData.otp"
                     #otp="ngModel"
                     required
+                    autocomplete="off"
                     placeholder="{{'Two-Factor Authentication Code' | translate}}"
                     >
                   <mat-error>
@@ -74,23 +75,9 @@
                 </div>
                 <div class="">
                   <mat-form-field class="full-width">
-<<<<<<< HEAD
                     <input matInput type="password" name="password2" formControlName="password2" required placeholder="{{'Confirm Password' | translate}}">
                     <mat-error *ngIf="password2.errors && (password2.dirty || password2.touched)">
                       <span *ngIf="password2.errors">{{"Passwords do not match" | translate}}</span>
-=======
-                    <span matPrefix><mat-icon style="color:var(--fg1);position:relative;top:2px;">phonelink</mat-icon>&nbsp;&nbsp;</span>
-                    <input matInput name="otp"
-                      [(ngModel)]="signinData.otp"
-                      #otp="ngModel"
-                      required
-                      autocomplete="off"
-                      placeholder="{{'Two-Factor Authentication Code' | translate}}"
-                      >
-                    <mat-error>
-                      <span *ngIf="!failed">{{"Please enter your 2FA code" | translate}}</span>
-                      <span *ngIf="failed">{{"Please enter your 2FA code again" | translate}}</span>
->>>>>>> adbc259d4... NAS-107401 disable autocomplete for one-time pw
                     </mat-error>
                   </mat-form-field>
                 </div>
