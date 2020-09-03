@@ -1,9 +1,15 @@
-<div id="FN-sys-info-wrapper">
-  <div class="fn-sys-info-line"><h4>{{"OS Version:" | translate}}</h4> {{FN_version}}</div>
-  <div class="fn-sys-info-line"><h4>{{"Model:" | translate}}</h4> {{FN_model}}</div>
-  <div class="container" fxLayout="row">
-    <div class="fn-sys-info-line" fxFlex="50%"><h4>{{"Memory:" | translate}}</h4> {{FN_memory}}</div>
-    <div *ngIf="FN_serial" class="fn-sys-info-line" fxFlex="50%"><h4>{{"Serial Number:" | translate}}</h4> {{FN_serial}}</div>
+<div id="sys-info-wrapper">
+  <div class="sys-info-line"><span class="label"> {{"OS Version:" | translate}}</span> 
+    <span class="value">{{version}}</span>
+  </div>
+  <div class="sys-info-line"><span class="label"> {{"Model:" | translate}}</span> 
+    <span class="value">{{model}}</span>
+  </div>
+  <div class="sys-info-line"><span class="label"> {{"Memory:" | translate}}</span> 
+    <span class="value">{{memory}}</span>
+  </div>
+  <div *ngIf="serial" class="fn-sys-info-line"><span class="label"> {{"Serial Number:" | translate}}</span> 
+    <span class="value">{{serial}}</span>
   </div>
 </div>
 

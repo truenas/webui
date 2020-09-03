@@ -10,10 +10,10 @@ import { helptext_system_support as helptext } from 'app/helptext/system/support
   templateUrl: './fn-sys-info.component.html'
 })
 export class FnSysInfoComponent {
-  @Input() FN_version;
-  @Input() FN_model;
-  @Input() FN_memory;
-  @Input() FN_serial;
+  @Input() version;
+  @Input() model;
+  @Input() memory;
+  @Input() serial;
   @Input() FN_instructions;
 
   constructor(protected loader: AppLoaderService, protected dialogService: DialogService,

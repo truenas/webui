@@ -8,13 +8,13 @@
           ></app-sys-image>
         </div>
       </div>
-      <div id="top-left" fxFlex="50%" fxFlex.xs="100">
+      <div id="top-left" fxFlex="50%" fxFlex.xs="100" *ngIf="systemInfo">
           <app-fn-sys-info
-          *ngIf="!systemInfo.license; else TNsysinfo"
-          [FN_version]='systemInfo.version'
-          [FN_model]="systemInfo.model"
-          [FN_memory]="systemInfo.memory"
-          [FN_serial]="systemInfo.serial"
+          *ngIf="!hasLicense; else TNsysinfo"
+          [version]='systemInfo.version'
+          [model]="systemInfo.model"
+          [memory]="systemInfo.memory"
+          [serial]="systemInfo.serial"
           
           ></app-fn-sys-info>
           <!-- <div id="fn-spacer" *ngIf="product_type === 'CORE'"></div> -->
@@ -31,6 +31,10 @@
           >
           </app-tn-sys-info>
         </ng-template>
+
+        <div class="links" *ngFor="let link of links">
+          <div [innerHTML]=link></div>
+        </div>
         <!-- <div id="production-status-wrapper">
           <app-production-status *ngIf="product_type.includes('ENTERPRISE')"></app-production-status>
         </div> -->

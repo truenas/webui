@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import * as _ from 'lodash';
-import { WebSocketService } from '../../../services/';
+import { WebSocketService, AppLoaderService, DialogService } from '../../../services/';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import { ModalService } from '../../../services/modal.service';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
+import { LicenseComponent } from './license/license.component';
 
 @Component({
   selector : 'app-support',
@@ -19,12 +21,18 @@ export class SupportComponent implements OnInit {
   public isProductImageTall = false;
   public serverList = ['M40', 'M50', 'X10', 'X20', 'Z20', 'Z30', 'Z35', 'Z50'];
   public systemInfo: any;
+  public hasLicense = false;
   public licenseInfo: any;
+  public links = [helptext.docHub, helptext.forums, helptext.licensing];
+
+  protected addComponent = new LicenseComponent(this.ws,this.modalService,this.loader,this.dialog);
 
   public custActions: Array<any> = [];
 
   constructor(protected ws: WebSocketService,
-              protected prefService: PreferencesService)
+              protected prefService: PreferencesService,
+              private modalService: ModalService, private loader: AppLoaderService,
+              private dialog: DialogService)
               {}
 
   ngOnInit() {
@@ -37,6 +45,7 @@ export class SupportComponent implements OnInit {
         this.getServerImage(res.system_product);
       };
       if (res.license) {
+        this.hasLicense = true;
         this.licenseInfo = res.license;
         this.parseLicenseInfo();
       }
@@ -101,7 +110,7 @@ export class SupportComponent implements OnInit {
   }
 
   updateLicense() {
-    console.log('Update license')
+      this.modalService.open('slide-in-form', this.addComponent);
   }
 
   fileTicket() {
