@@ -67,6 +67,7 @@ import { QRDialog } from './two-factor/two-factor.component';
 import { GeneralSettingsComponent } from './general-settings/general-settings.component';
 import { LocalizationFormComponent } from './general-settings/localization-form/localization-form.component';
 import { GuiFormComponent } from './general-settings/gui-form/gui-form.component';
+import { LicenseComponent } from './support/license/license.component';
 
 @NgModule({
   imports: [
@@ -128,7 +129,8 @@ import { GuiFormComponent } from './general-settings/gui-form/gui-form.component
     QRDialog,
     GeneralSettingsComponent,
     LocalizationFormComponent,
-    GuiFormComponent
+    GuiFormComponent,
+    LicenseComponent
   ],
   entryComponents: [QRDialog],
   providers: []

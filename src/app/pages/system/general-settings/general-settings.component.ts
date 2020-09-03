@@ -23,6 +23,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   localeData: any;
   configData: any;
   refreshCardData: Subscription;
+  
   protected localizationComponent = new LocalizationFormComponent(this.language,this.ws,this.dialog,this.loader,
     this.sysGeneralService,this.localeService,this.modalService);
   protected guiComponent = new GuiFormComponent(this.router,this.language,this.ws,this.dialog,this.loader,
