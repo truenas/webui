@@ -30,7 +30,6 @@ export class RoutePartsService {
         if (snapshot.data['toplevel']){
           toplevel = snapshot.data['toplevel'];
         }
-        console.log(snapshot.data);
         routeParts.push({
           title: snapshot.data['title'], 
           breadcrumb: snapshot.data['breadcrumb'] , 
