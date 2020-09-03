@@ -22,6 +22,8 @@ import {routing} from './network.routing';
 
 import { NetworkComponent } from './netwrok.component';
 import { CardWidgetComponent } from './card-widget.component';
+import { NameserverFormComponent } from './nameserver-form.component';
+import { DefaultRouteFormComponent } from './default-route-form.component';
 
 @NgModule({
   imports : [
@@ -39,6 +41,8 @@ import { CardWidgetComponent } from './card-widget.component';
     //
     NetworkComponent,
     CardWidgetComponent,
+    NameserverFormComponent,
+    DefaultRouteFormComponent,
   ],
   providers : [NetworkService, EntityFormService, CoreService]
 })
