@@ -26,7 +26,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   protected localizationComponent = new LocalizationFormComponent(this.language,this.ws,this.dialog,this.loader,
     this.sysGeneralService,this.localeService,this.modalService);
   protected guiComponent = new GuiFormComponent(this.router,this.language,this.ws,this.dialog,this.loader,
-    this.http,this.storage,this.sysGeneralService)
+    this.http,this.storage,this.sysGeneralService,this.modalService)
 
   constructor(private ws: WebSocketService, private localeService: LocaleService,
     private sysGeneralService: SystemGeneralService, private modalService: ModalService,

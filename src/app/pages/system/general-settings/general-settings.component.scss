@@ -3,6 +3,7 @@
     display: grid;
     margin: 0 auto;
     grid-template-rows: fit-content(50vh);
+    grid-template-columns: 50% 25% 25%;
     grid-template-areas: "system-card data-card1 data-card2"
                          "system-card ntp-card ntp-card";   
         .system-card {

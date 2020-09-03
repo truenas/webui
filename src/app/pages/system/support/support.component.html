@@ -5,30 +5,29 @@
         <div class="sys-image">
             <app-sys-image
             [product_image]="product_image"
-            [ngClass]="[product_type === 'CORE' ? 'fn-sys-image' : 'tn-sys-image']"
           ></app-sys-image>
         </div>
       </div>
       <div id="top-left" fxFlex="50%" fxFlex.xs="100">
           <app-fn-sys-info
-          *ngIf="!product_type.includes('ENTERPRISE'); else TNsysinfo"
-          [FN_version]='FN_version'
-          [FN_model]="FN_model"
-          [FN_memory]="FN_memory"
-          [FN_serial]="FN_serial"
-          [FN_instructions]="FN_instructions"
+          *ngIf="!systemInfo.license; else TNsysinfo"
+          [FN_version]='systemInfo.version'
+          [FN_model]="systemInfo.model"
+          [FN_memory]="systemInfo.memory"
+          [FN_serial]="systemInfo.serial"
+          
           ></app-fn-sys-info>
-          <div id="fn-spacer" *ngIf="product_type === 'CORE'"></div>
+          <!-- <div id="fn-spacer" *ngIf="product_type === 'CORE'"></div> -->
         <ng-template #TNsysinfo>
           <app-tn-sys-info
-            [customer_name]='customer_name'
-            [features]='features'
-            [contract_type]='contract_type'
-            [expiration_date]='expiration_date'
-            [model]='model'
-            [sys_serial]='sys_serial'
-            [add_hardware]='add_hardware'
-            [daysLeftinContract]='daysLeftinContract'
+            [customer_name]='licenseInfo.customer_name'
+            [features]='licenseInfo.features'
+            [contract_type]='licenseInfo.contract_type'
+            [expiration_date]='licenseInfo.expiration_date'
+            [model]='systemInfo.model'
+            [sys_serial]='systemInfo.serial'
+            [add_hardware]='licenseInfo.add_hardware'
+            [daysLeftinContract]='licenseInfo.daysLeftinContract'
           >
           </app-tn-sys-info>
         </ng-template>

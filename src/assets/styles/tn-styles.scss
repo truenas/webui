@@ -1228,6 +1228,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
       h4 {
         margin-bottom: 3px;
+        display: inline-block;
       }
     }
     #update-license-btn {

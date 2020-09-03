@@ -10,25 +10,16 @@ import { helptext_system_support as helptext } from 'app/helptext/system/support
   providers: []
 })
 export class SupportComponent implements OnInit {
-  public product_type: string;
   public scrshot: any;
   public subs: any;
   public isProduction: boolean;
   public updateButton: any;
-  public FN_version;
-  public FN_model;
-  public FN_memory;
-  public FN_serial;
   public FN_instructions;
-  public customer_name;
-  public features;
-  public contract_type;
-  public expiration_date;
-  public model;
-  public sys_serial;
-  public add_hardware;
-  public daysLeftinContract;
   public product_image = '';
+  public isProductImageTall = false;
+  public serverList = ['M40', 'M50', 'X10', 'X20', 'Z20', 'Z30', 'Z35', 'Z50'];
+  public systemInfo: any;
+  public licenseInfo: any;
 
   public custActions: Array<any> = [];
 
@@ -37,43 +28,34 @@ export class SupportComponent implements OnInit {
               {}
 
   ngOnInit() {
-    this.product_type = window.localStorage['product_type'];
     this.ws.call('system.info').subscribe((res) => {
-      // if (this.product_type === 'CORE') {
-        if (!this.product_type.includes('ENTERPRISE')) {
-        this.getFNSysInfo(res);
-        this.getFreeNASImage(res.system_product)
+      this.systemInfo = res;
+      this.systemInfo.memory = (res.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
+      if (res.system_product.includes('MINI')) {
+        this.getMiniImage(res.system_product)
       } else {
-        this.getTNSysInfo(res);
-        this.getTrueNASImage(res.system_product);
+        this.getServerImage(res.system_product);
       };
+      if (res.license) {
+        this.licenseInfo = res.license;
+        this.parseLicenseInfo();
+      }
     });
   };
 
-  getFNSysInfo(res) {
-    this.FN_version = res.version;
-    this.FN_model = res.system_product;
-    this.FN_memory = (res.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB'
-    res.system_serial ? this.FN_serial = res.system_serial : this.FN_serial = '';
-    this.FN_instructions = helptext.FN_instructions;
-  }
-
-  getTNSysInfo(res) {
-    this.model = res.system_product;
-    if (res.license) {
-      this.customer_name = res.license.customer_name;
-      res.license.features.length === 0 ? this.features = 'NONE' : this.features = res.license.features.join(', ');
-      this.contract_type = res.license.contract_type;
-      let expDateConverted = new Date(res.license.contract_end.$value);
-      this.expiration_date = res.license.contract_end.$value;
-      res.license.system_serial_ha ?
-          this.sys_serial = res.license.system_serial + ' / ' + res.license.system_serial_ha :
-          this.sys_serial = res.license.system_serial;
-      res.license.addhw.length === 0 ? this.add_hardware = 'NONE' : this.add_hardware = res.license.addhw.join(', ');
-      const now = new Date(res.datetime.$date);
-      const then = expDateConverted;
-      this.daysLeftinContract = this.daysTillExpiration(now, then);
-    };
+  parseLicenseInfo() {
+    this.licenseInfo.features.length === 0 ? this.licenseInfo.featuresString = 'NONE' : 
+      this.licenseInfo.featuresString = this.licenseInfo.features.join(', ');
+    let expDateConverted = new Date(this.licenseInfo.contract_end.$value);
+    this.licenseInfo.expiration_date = this.licenseInfo.contract_end.$value;
+    this.licenseInfo.system_serial_ha ?
+        this.licenseInfo.sys_serial = this.licenseInfo.system_serial + ' / ' + this.licenseInfo.system_serial_ha :
+        this.licenseInfo.sys_serial = this.licenseInfo.system_serial;
+    this.licenseInfo.addhw.length === 0 ? this.licenseInfo.add_hardware = 'NONE' : 
+      this.licenseInfo.add_hardware = this.licenseInfo.addhw.join(', ');
+    const now = new Date(this.licenseInfo.datetime.$date);
+    const then = expDateConverted;
+    this.licenseInfo.daysLeftinContract = this.daysTillExpiration(now, then);
   }
 
   daysTillExpiration(now, then) {
@@ -81,30 +63,22 @@ export class SupportComponent implements OnInit {
     return Math.round((then.getTime() - now.getTime())/(oneDay))
   }
 
-  getTrueNASImage(sys_product) {
-    if (sys_product.includes('X10')) {
-      this.product_image = '/servers/X10.png';
-    } else if (sys_product.includes('X20')) {
-      this.product_image = '/servers/X20.png';
-    } else if (sys_product.includes('M40')) {
-      this.product_image = '/servers/M40.png';
-    }  else if (sys_product.includes('M50')) {
-      this.product_image = '/servers/M50.png';
-    } else if (sys_product.includes('Z20')) {
-      this.product_image = '/servers/Z20.png';
-    } else if (sys_product.includes('M50')) {
-      this.product_image = '/servers/M50.png';
-    } else if (sys_product.includes('Z35')) {
-      this.product_image = '/servers/Z35.png';
-    } else if (sys_product.includes('Z50')) {
-      this.product_image = '/servers/Z50.png';
-    }
-    else {
+  getServerImage(sys_product) {
+    let imagePath = '';
+    this.serverList.forEach(model => {
+      if (sys_product.includes(model)) {
+        imagePath = `/servers/${model}.png`;
+      }
+    })
+    if (imagePath) {
+      this.product_image = imagePath;
+    } else {
       this.product_image = 'ix-original.png';
+      this.isProductImageTall = true;
     }
   }
 
-  getFreeNASImage(sys_product) {
+  getMiniImage(sys_product) {
     switch(sys_product){
       case "FREENAS-MINI-2.0":
       case "FREENAS-MINI-3.0-E":
@@ -123,8 +97,8 @@ export class SupportComponent implements OnInit {
         this.product_image = 'ix-original.png';
       break;
     }
+    this.isProductImageTall = true;
   }
-
 
   updateLicense() {
     console.log('Update license')

@@ -200,7 +200,6 @@ export class LocalizationFormComponent implements OnDestroy{
     this.localeService.saveDateTimeFormat(body.date_format, body.time_format);
     delete body.date_format;
     delete body.time_format;
-    console.log(body)
     this.loader.open();
     return this.ws.call('system.general.update', [body]).subscribe(() => {
       this.sysGeneralService.refreshSysGeneral();

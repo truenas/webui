@@ -13,6 +13,7 @@ import { DialogService, LanguageService, RestService, StorageService,
   SystemGeneralService, WebSocketService } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { LocaleService } from 'app/services/locale.service';
+import { ModalService } from '../../../../services/modal.service';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -235,6 +236,7 @@ export class GuiFormComponent {
     public http: HttpClient,
     protected storage: StorageService,
     private sysGeneralService: SystemGeneralService,
+    private modalService: ModalService
   ) {
     this.getDataFromDash = this.sysGeneralService.sendConfigData$.subscribe(res => {
       this.configData = res;
@@ -484,6 +486,8 @@ export class GuiFormComponent {
     this.loader.open();
     return this.ws.call('system.general.update', [body]).subscribe(() => {
       this.loader.close();
+      this.modalService.close('slide-in-form');
+      this.sysGeneralService.refreshSysGeneral();
       this.entityForm.success = true;
       this.entityForm.formGroup.markAsPristine();
       this.afterSubmit(body);
@@ -498,7 +502,7 @@ export class GuiFormComponent {
   }
 
   ngOnDestroy() {
-    // this.dateTimeChangeSubscription.unsubscribe();
+    this.getDataFromDash.unsubscribe();
   }
 
 }
