@@ -8,7 +8,11 @@
             <mat-list-item>
               <mat-icon class="card-widget-list-icon">{{widgetConf.icon}}</mat-icon>
               <div class="list-group-title">IPv4:</div>
-              <div *ngFor="let item of widgetConf.data.ipv4">{{item}}</div>
+              <ul class="sub-ip-list">
+                <li class="ip-list" *ngFor="let item of widgetConf.data.ipv4">
+                    {{item.ip || item}} <span *ngIf="item.dhcp">{{'(DHCP)'}}</span>
+                </li>
+              </ul>
             </mat-list-item>
         </mat-list>
         <mat-list *ngIf="widgetConf.data.ipv6">
