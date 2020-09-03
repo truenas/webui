@@ -28,7 +28,9 @@ export class BreadcrumbComponent implements OnInit {
       // prepend / to first part
       if(i === 0) {
         item.url = `/${item.url}`;
-        item.disabled = true;
+        if (!item['toplevel']) {
+          item.disabled = true;
+        }
         return item;
       }
       // prepend previous part to current part
@@ -44,7 +46,9 @@ export class BreadcrumbComponent implements OnInit {
         // prepend / to first part
         if(i === 0) {
           item.url = `/${item.url}`;
-          item.disabled = true;
+          if (!item['toplevel']) {
+            item.disabled = true;
+          }
           return item;
         }
         // prepend previous part to current part
