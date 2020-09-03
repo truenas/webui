@@ -18,6 +18,7 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
 import { NavigationService } from "./services/navigation/navigation.service";
 import { AuthService } from './services/auth/auth.service';
 import { ConfirmDialog } from './pages/common/confirm-dialog/confirm-dialog.component';
+import { PasswordDialog } from './pages/common/password-dialog/password-dialog.component';
 import { AboutModalDialog } from './components/common/dialog/about/about-dialog.component';
 import { TaskManagerComponent } from './components/common/dialog/task-manager/task-manager.component';
 import { TruecommandComponent } from './components/common/dialog/truecommand/truecommand.component';
@@ -87,6 +88,7 @@ export function createTranslateLoader(http: HttpClient) {
   declarations: [
     AppComponent,
     ConfirmDialog,
+    PasswordDialog,
     ErrorDialog, InfoDialog,
     GeneralDialogComponent,
     AboutModalDialog,
@@ -114,6 +116,7 @@ export function createTranslateLoader(http: HttpClient) {
   entryComponents: [
     AppLoaderComponent,
     ConfirmDialog,
+    PasswordDialog,
     ErrorDialog,
     InfoDialog,
     GeneralDialogComponent,
