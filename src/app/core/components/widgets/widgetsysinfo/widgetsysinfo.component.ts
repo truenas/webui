@@ -58,7 +58,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   public ha_status:string;
   public updateMethod = 'update.update';
   public screenType: string = 'Desktop';
-  public uptimeString = '';
+  public uptimeString: string;
   public dateTime: string;
 
   constructor(public router: Router, public translate: TranslateService, private ws: WebSocketService,
@@ -200,6 +200,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   }
 
   parseUptime() {
+    this.uptimeString = '';
     const seconds = Math.round(this.data.uptime_seconds);
     const uptime = {
       days: Math.floor(seconds / (3600*24)),
