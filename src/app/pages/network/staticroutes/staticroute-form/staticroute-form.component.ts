@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { ipv4or6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import helptext from '../../../../helptext/network/staticroutes/staticroutes';
@@ -15,7 +15,6 @@ export class StaticRouteFormComponent {
   protected addCall = 'staticroute.create';
   protected editCall = 'staticroute.update';
 
-  protected route_success: string[] = [ 'network', 'staticroutes' ];
   protected isEntity = true;
 
   protected fieldSets: FieldSet[] = [
@@ -48,8 +47,17 @@ export class StaticRouteFormComponent {
       ]
     }
   ];
-
-  constructor(protected router: Router, protected rest: RestService,
+  public title: string;
+  constructor(protected aroute: ActivatedRoute,
               protected ws: WebSocketService,
               protected networkService: NetworkService) {}
+  preInit() {
+    this.aroute.params.subscribe(params => {
+      if (params['pk']) {
+        this.title = helptext.title_edit;
+      } else {
+        this.title = helptext.title_add;
+      }
+    });
+  }
 }
