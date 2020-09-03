@@ -16,7 +16,7 @@ export class RoutePartsService {
   ngOnInit() {
   }
   generateRouteParts(snapshot: ActivatedRouteSnapshot): IRoutePart[] {
-    var routeParts = <IRoutePart[]>[];
+    var routeParts = <any[]>[];
     if (snapshot) {
       if (snapshot.firstChild) {
         routeParts = routeParts.concat(this.generateRouteParts(snapshot.firstChild));
@@ -26,10 +26,16 @@ export class RoutePartsService {
         for(let i = 1; i < snapshot.url.length; i++) {
           targetUrl = targetUrl + '/' + snapshot.url[i];
         }
+        let toplevel = false;
+        if (snapshot.data['toplevel']){
+          toplevel = snapshot.data['toplevel'];
+        }
+        console.log(snapshot.data);
         routeParts.push({
           title: snapshot.data['title'], 
           breadcrumb: snapshot.data['breadcrumb'] , 
-          url: targetUrl
+          url: targetUrl,
+          toplevel: toplevel
         });
       }
     }
