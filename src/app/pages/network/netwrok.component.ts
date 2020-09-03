@@ -9,6 +9,9 @@ import { TableConfig } from '../common/entity/entity-table/entity-table.componen
 import { ModalService } from '../../services/modal.service';
 import { ConfigurationComponent } from './configuration/configuration.component';
 import { InterfacesFormComponent } from './interfaces/interfaces-form/interfaces-form.component';
+import { StaticRouteFormComponent } from './staticroutes/staticroute-form/staticroute-form.component';
+import { NameserverFormComponent } from './nameserver-form.component';
+import { DefaultRouteFormComponent } from './default-route-form.component';
 
 @Component({
   selector: 'app-interfaces-list',
@@ -17,6 +20,7 @@ import { InterfacesFormComponent } from './interfaces/interfaces-form/interfaces
 })
 export class NetworkComponent implements OnInit, OnDestroy {
   protected summayCall = 'network.general.summary';
+  protected configCall = 'network.configuration.config';
 
   protected reportEvent;
   public interfaceTableConf = {
@@ -48,9 +52,13 @@ export class NetworkComponent implements OnInit, OnDestroy {
       { name: T('Gateway'), prop: 'gateway' },
     ],
     getActions: this.getStaticRoutesActions,
+    parent: this,
     add: function() {
-      console.log('add static routes');
+      this.parent.modalService.open('slide-in-form', this.parent.staticRouteFormComponent);
     },
+    edit: function(row) {
+      this.parent.modalService.open('slide-in-form', this.parent.staticRouteFormComponent, row.id);
+    }
   }
 
   public nameserverWidget: CardWidgetConf = {
@@ -59,7 +67,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     parent: this,
     icon: 'dns',
     onclick: function() {
-      console.log('edit nameserver', this.parent.networkSummary.nameservers);
+      this.parent.modalService.open('slide-in-form', this.parent.nameserverFormComponent);
     },
   }
 
@@ -69,7 +77,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     parent: this,
     icon: 'router',
     onclick: function() {
-      console.log('edit default routes', this.parent.networkSummary.default_routes);
+      this.parent.modalService.open('slide-in-form', this.parent.defaultRouteFormComponent);
     }
   }
   
@@ -102,7 +110,9 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   protected addComponent: ConfigurationComponent;
   protected interfaceComponent: InterfacesFormComponent;
-
+  protected staticRouteFormComponent: StaticRouteFormComponent;
+  protected nameserverFormComponent: NameserverFormComponent;
+  protected defaultRouteFormComponent: DefaultRouteFormComponent;
 
   constructor(
     private ws: WebSocketService,
@@ -112,13 +122,19 @@ export class NetworkComponent implements OnInit, OnDestroy {
     private dialog: DialogService,
     private storageService: StorageService,
     private modalService: ModalService,) {
-      this.ws.call(this.summayCall).subscribe(
-        (res) => {
-          this.networkSummary = res;
-          this.nameserverWidget.data.ipv4 = res.nameservers;
-          this.defaultRoutesWidget.data.ipv4 = res.default_routes;
+      this.ws.call(this.configCall).subscribe(
+        (config_res) => {
+          this.ws.call(this.summayCall).subscribe(
+            (res) => {
+              this.networkSummary = res;
+              this.nameserverWidget.data.ipv4 = res.nameservers.map(item => {
+                return {ip: item, dhcp: (item !== config_res.nameserver1 && item !== config_res.nameserver2 && item !== config_res.nameserver3) ? true : false};
+              });
+              this.defaultRoutesWidget.data.ipv4 = res.default_routes;
+            }
+          );
         }
-      );
+      )
   }
 
   ngOnInit() {
@@ -131,6 +147,9 @@ export class NetworkComponent implements OnInit, OnDestroy {
   refreshUserForm() {
     this.addComponent = new ConfigurationComponent(this.router,this.ws);
     this.interfaceComponent = new InterfacesFormComponent(this.router, this.aroute, this.networkService, this.dialog, this.ws);
+    this.staticRouteFormComponent = new StaticRouteFormComponent(this.aroute, this.ws, this.networkService);
+    this.nameserverFormComponent = new NameserverFormComponent(this.aroute, this.ws, this.networkService);
+    this.defaultRouteFormComponent = new DefaultRouteFormComponent(this.aroute, this.ws, this.networkService);
   }
 
   ngOnDestroy() {
