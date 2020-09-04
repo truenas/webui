@@ -76,7 +76,7 @@ rootpw: {
   tooltip: T('Enter the root password to authorize this operation.'),
   error_msg: T('The administrator password is incorrect.'),
   error_title: T('Warning'),
-  dialog_title: T('Action Requires Credential Confirmation')
+  dialog_title: T('Action Requires Administrator Confirmation')
 }
 
 }
