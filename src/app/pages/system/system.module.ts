@@ -54,13 +54,12 @@ import { FailoverComponent } from './failover/failover.component';
 import { ReportingComponent } from './reporting/reporting.component';
 import { EnclosureModule } from './viewenclosure/enclosure.module';
 import { EulaComponent } from './support/eula/eula.component';
-import { TnSysInfoComponent } from './support/tn-sys-info/tn-sys-info.component';
 import { SysImageComponent } from './support/sys-image/sys-image.component';
 import { ProductionStatusComponent } from './support/production-status/production-status.component';
 import { ProactiveComponent } from './support/proactive/proactive.component';
 import { TnSupportComponent } from './support/tn-support/tn-support.component';
 import { FnSupportComponent } from './support/fn-support/fn-support.component';
-import { FnSysInfoComponent } from './support/fn-sys-info/fn-sys-info.component'
+import { SysInfoComponent } from './support/sys-info/sys-info.component'
 import { KmipComponent} from './kmip/kmip.component';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { QRDialog } from './two-factor/two-factor.component';
@@ -117,13 +116,12 @@ import { LicenseComponent } from './support/license/license.component';
     FailoverComponent,
     ReportingComponent,
     EulaComponent,
-    TnSysInfoComponent,
     SysImageComponent,
     ProductionStatusComponent,
     ProactiveComponent,
     TnSupportComponent,
     FnSupportComponent,
-    FnSysInfoComponent,
+    SysInfoComponent,
     KmipComponent,
     TwoFactorComponent,
     QRDialog,

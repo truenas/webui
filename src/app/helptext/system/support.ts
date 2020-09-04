@@ -202,4 +202,8 @@ export const helptext_system_support = {
 
   licensing: T('<a href="https://www.ixsystems.com/support/" target="_blank">\
  TrueNAS Liscensing</a> - Learn more about enterprise-grade support.'),
+
+  updateTxt: T('Update License'),
+  enterTxt: T('Enter License'),
+  ticket: T('Submit a Ticket')
 };

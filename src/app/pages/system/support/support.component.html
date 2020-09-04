@@ -1,60 +1,47 @@
-<!-- <mat-card class="form-card"> -->
-  <div class="mat-content" fxLayout="column">
-    <div id="top-row" class="container" fxLayout="row wrap">
-      <div id="top-right" fxFlex="50%" fxFlex.xs="100">
-        <div class="sys-image">
-            <app-sys-image
-            [product_image]="product_image"
-          ></app-sys-image>
-        </div>
-      </div>
-      <div id="top-left" fxFlex="50%" fxFlex.xs="100" *ngIf="systemInfo">
-          <app-fn-sys-info
-          *ngIf="!hasLicense; else TNsysinfo"
-          [version]='systemInfo.version'
-          [model]="systemInfo.model"
-          [memory]="systemInfo.memory"
-          [serial]="systemInfo.serial"
-          
-          ></app-fn-sys-info>
-          <!-- <div id="fn-spacer" *ngIf="product_type === 'CORE'"></div> -->
-        <ng-template #TNsysinfo>
-          <app-tn-sys-info
-            [customer_name]='licenseInfo.customer_name'
-            [features]='licenseInfo.features'
-            [contract_type]='licenseInfo.contract_type'
-            [expiration_date]='licenseInfo.expiration_date'
-            [model]='systemInfo.model'
-            [sys_serial]='systemInfo.serial'
-            [add_hardware]='licenseInfo.add_hardware'
-            [daysLeftinContract]='licenseInfo.daysLeftinContract'
-          >
-          </app-tn-sys-info>
-        </ng-template>
-
-        <div class="links" *ngFor="let link of links">
-          <div [innerHTML]=link></div>
-        </div>
-        <!-- <div id="production-status-wrapper">
-          <app-production-status *ngIf="product_type.includes('ENTERPRISE')"></app-production-status>
-        </div> -->
+<div class="mat-content" fxLayout="column">
+  <div id="top-row" class="container" fxLayout="row wrap">
+    <div id="top-right" fxFlex="50%" fxFlex.xs="100">
+      <div class="sys-image">
+          <app-sys-image
+          [product_image]="product_image"
+        ></app-sys-image>
       </div>
     </div>
-    <!-- <div class="fn-sys-info-line" id="fn-instructions" [innerHTML]="FN_instructions | translate"></div> -->
-    <div class="button-group">
-      <button id="update-license-btn" (click)="updateLicense()"mat-button color="primary">{{"Enter License" | translate}}</button>
-      <button id="file-ticket-btn" (click)="fileTicket()" mat-button color="default">{{"File a Ticket" | translate}}</button>
-    </div>
-
-    <!-- <div *ngIf="product_type.includes('ENTERPRISE')" fxLayout="row">
-      <app-proactive></app-proactive>
-    </div>
-    <div fxLayout="row" id="support_bottom-row">
-      <app-fn-support *ngIf="product_type === 'CORE'; else TNsupport"></app-fn-support>
-      <ng-template #TNsupport>
-        <app-tn-support></app-tn-support>
+    <div id="top-left" fxFlex="50%" fxFlex.xs="100" *ngIf="systemInfo">
+        <app-sys-info
+        *ngIf="!hasLicense; else licensedSysInfo"
+        [version]='systemInfo.version'
+        [model]="systemInfo.model"
+        [memory]="systemInfo.memory"
+        [serial]="systemInfo.serial"
+        [hasLicense]="hasLicense"
+        ></app-sys-info>
+      <ng-template #licensedSysInfo>
+        <app-sys-info
+          [customer_name]='licenseInfo.customer_name'
+          [features]='licenseInfo.features'
+          [contract_type]='licenseInfo.contract_type'
+          [expiration_date]='licenseInfo.expiration_date'
+          [model]='systemInfo.model'
+          [serial]='systemInfo.serial'
+          [add_hardware]='licenseInfo.add_hardware'
+          [daysLeftinContract]='licenseInfo.daysLeftinContract'
+          [hasLicense]="hasLicense"
+        >
+        </app-sys-info>
       </ng-template>
-    </div> -->
-  </div>
-<!-- </mat-card> -->
 
+      <div class="links" *ngFor="let link of links">
+        <div [innerHTML]=link></div>
+      </div>
+    </div>
+  </div>
+  <div class="button-group">
+    <button id="update-license-btn" (click)="updateLicense()"mat-button color="primary">
+      {{ licenseButtonText | translate }}
+    </button>
+    <button id="file-ticket-btn" (click)="fileTicket()" mat-button color="default">
+      {{ ticketText | translate }}
+    </button>
+  </div>
+</div>

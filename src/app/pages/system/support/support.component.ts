@@ -22,8 +22,10 @@ export class SupportComponent implements OnInit {
   public serverList = ['M40', 'M50', 'X10', 'X20', 'Z20', 'Z30', 'Z35', 'Z50'];
   public systemInfo: any;
   public hasLicense = false;
-  public licenseInfo: any;
+  public licenseInfo = null;
   public links = [helptext.docHub, helptext.forums, helptext.licensing];
+  public licenseButtonText: string;
+  public ticketText = helptext.ticket;
 
   protected addComponent = new LicenseComponent(this.ws,this.modalService,this.loader,this.dialog);
 
@@ -49,6 +51,7 @@ export class SupportComponent implements OnInit {
         this.licenseInfo = res.license;
         this.parseLicenseInfo();
       }
+      this.licenseButtonText = this.hasLicense ? helptext.updateTxt : helptext.enterTxt;
     });
   };
 
@@ -57,12 +60,12 @@ export class SupportComponent implements OnInit {
       this.licenseInfo.featuresString = this.licenseInfo.features.join(', ');
     let expDateConverted = new Date(this.licenseInfo.contract_end.$value);
     this.licenseInfo.expiration_date = this.licenseInfo.contract_end.$value;
-    this.licenseInfo.system_serial_ha ?
-        this.licenseInfo.sys_serial = this.licenseInfo.system_serial + ' / ' + this.licenseInfo.system_serial_ha :
-        this.licenseInfo.sys_serial = this.licenseInfo.system_serial;
+    this.systemInfo.system_serial_ha ?
+        this.systemInfo.serial = this.systemInfo.system_serial + ' / ' + this.systemInfo.system_serial_ha :
+        this.systemInfo.serial = this.systemInfo.system_serial;
     this.licenseInfo.addhw.length === 0 ? this.licenseInfo.add_hardware = 'NONE' : 
       this.licenseInfo.add_hardware = this.licenseInfo.addhw.join(', ');
-    const now = new Date(this.licenseInfo.datetime.$date);
+    const now = new Date(this.systemInfo.datetime.$date);
     const then = expDateConverted;
     this.licenseInfo.daysLeftinContract = this.daysTillExpiration(now, then);
   }

@@ -1,11 +1,9 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
 import { DialogService, WebSocketService } from '../../../../services/';
 import { ModalService } from '../../../../services/modal.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 
 @Component({
@@ -16,9 +14,6 @@ import { helptext_system_support as helptext } from 'app/helptext/system/support
 export class LicenseComponent {
   private queryCall = 'none';
   private updateCall = 'system.license_update';
-  title: 'License';
-  public fieldConfig: FieldConfig[] = []
-
   public fieldSets: FieldSet[] = [
     {
       name: 'license',
@@ -33,29 +28,21 @@ export class LicenseComponent {
       ]
     }
   ];
-
-  private entityForm: any;
+  public title: 'License';
+  public entityForm: any;
 
   constructor(private ws: WebSocketService, private modalService: ModalService,
     private loader: AppLoaderService, private dialog: DialogService) { }
 
-  ngOnInit(): void {
+  customSubmit(form) {
+    this.loader.open();
+    this.ws.call(this.updateCall, [form.license]).subscribe(() => {
+      this.loader.close();
+      this.modalService.close('slide-in-form');
+    }, err => {
+      this.loader.close();
+      this.dialog.errorReport('Error', err.reason)
+    })
   }
-
-  beforeSubmit(data) {
-    console.log(data)
-  }
-
-  // customSubmit(license) {
-  //   this.loader.open();
-  //   this.ws.call('system.license_update', [license]).subscribe(() => {
-  //     this.loader.close();
-  //     this.modalService.close('slide-in-form');
-  //   }), err => {
-  //     this.loader.close();
-  //     this.dialog.errorReport('Error', err)
-  //     ;
-  //   }
-  // }
 
 }
