@@ -276,6 +276,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           // If preferred columns have been set for THIS table...
           if (i.title === this.title) {
             this.conf.columns = i.cols;
+            // Remove columns from display and preferred cols if they don't exist in the table
+            let notFound = [];
+            this.conf.columns.forEach(col => {
+              let found = this.filterColumns.find(o => o.prop === col.prop);
+              if (!found) {
+                notFound.push(col.prop);
+              }
+            })
+            this.conf.columns = this.conf.columns.filter(col => !notFound.includes(col.prop));
+            this.selectColumnsToShowOrHide();
           }
         });
         if (this.title === 'Users') {
