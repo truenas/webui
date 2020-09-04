@@ -13,12 +13,12 @@ import { greaterThan } from "app/pages/common/entity/entity-form/validators/comp
   template : `<entity-form [conf]="this"></entity-form>`
 })
 export class NTPServerFormComponent {
-
-  protected route_success: string[] = [ 'system', 'ntpservers' ];
+  // protected route_success: string[] = [ 'system', 'ntpservers' ];
   protected addCall = 'system.ntpserver.create';
   protected editCall = 'system.ntpserver.update';
   protected queryCall = 'system.ntpserver.query';
   protected isEntity: boolean = true;
+  public title = helptext.header;
 
   protected pk: any;
   protected queryKey = 'id';
@@ -27,7 +27,7 @@ export class NTPServerFormComponent {
     { 
       name: helptext.header,
       class: 'ntp',
-      label: true,
+      label: false,
       config: [
         {
           type : 'input',
@@ -89,11 +89,11 @@ export class NTPServerFormComponent {
   ];
 
   constructor(
-      protected router: Router,
-      protected route: ActivatedRoute,
-      protected ws: WebSocketService,
-      protected _injector: Injector,
-      protected _appRef: ApplicationRef
+      // protected router: Router,
+      // protected route: ActivatedRoute,
+      // protected ws: WebSocketService,
+      // protected _injector: Injector,
+      // protected _appRef: ApplicationRef
   ) {}
 
 }

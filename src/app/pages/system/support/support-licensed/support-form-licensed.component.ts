@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import * as _ from 'lodash';
@@ -11,18 +10,22 @@ import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-jo
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
-
+import { ModalService } from '../../../../services/modal.service';
 
 @Component({
-  selector: 'app-tn-support',
+  selector: 'app-support-form-licensed',
   template : `<entity-form [conf]="this"></entity-form>`
 
 })
-export class TnSupportComponent implements OnInit {
+export class SupportFormLicensedComponent {
+  private queryCall = 'none';
+
   public entityEdit: any;
   public screenshot: any;
   public subs: any;
   public saveSubmitText = helptext.submitBtn;
+  protected columnsOnForm = 2;
+  public title = helptext.ticket;
   public custActions: Array<any> = [];
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
@@ -163,15 +166,7 @@ export class TnSupportComponent implements OnInit {
 
   constructor(public dialog: MatDialog, public loader: AppLoaderService,
     public ws: WebSocketService, public dialogService: DialogService, public router: Router,
-    private translate: TranslateService) { }
-
-  ngOnInit() {
-    setTimeout(() => {
-      this.translate.get(helptext.contactUs).subscribe(res => {
-        _.find(this.fieldConfig, { name: 'FN_col2' }).paraText = '<i class="material-icons">mail</i>' + res;
-      })
-    }, 2000)
-  }
+    private modalService: ModalService) { }
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
@@ -188,7 +183,8 @@ export class TnSupportComponent implements OnInit {
         id : 'eula',
         name: helptext.update_license.eula_button,
         function : () => {
-          this.router.navigate(['/system/support/eula'])
+          this.modalService.close('slide-in-form');
+          this.router.navigate(['/system/support/eula']);
         }
       }
     ]
@@ -304,5 +300,6 @@ export class TnSupportComponent implements OnInit {
     this.entityEdit.formGroup.controls['environment'].setValue('production');
     this.entityEdit.formGroup.controls['criticality'].setValue('inquiry');
     this.subs = [];
+    this.modalService.close('slide-in-form');
   };
 }

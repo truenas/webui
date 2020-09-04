@@ -1,19 +1,19 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { TranslateService } from '@ngx-translate/core';
 import { T } from "app/translate-marker";
 import * as _ from 'lodash';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService } from 'app/services/';
+import { ModalService } from '../../../../services/modal.service';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 
 @Component({
-  selector: 'app-fn-support',
+  selector: 'app-support-form-unlicensed',
   template : `<entity-form [conf]="this"></entity-form>`
 })
-export class FnSupportComponent {
+export class SupportFormUnlicensedComponent {
   public entityEdit: any;
   public password: any;
   public username: any;
@@ -24,18 +24,13 @@ export class FnSupportComponent {
   public subs: any;
   public saveSubmitText = helptext.submitBtn;
   public isEntity = true;
+  public title = helptext.ticket;
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
       name: 'column1',
-      width: '47%',
       label: false,
       config:[
-        {
-          type: 'paragraph',
-          name: 'FN_col2',
-          paraText: '<i class="material-icons">mail</i>' + helptext.contactUs
-        },
         {
           type: 'paragraph',
           name: 'FN_jira-info',
@@ -92,16 +87,8 @@ export class FnSupportComponent {
       ]
     },
     {
-      name: 'middle',
-      label: false,
-      width: '5%',
-      config:[]
-    },
-    {
     name: 'column2',
-    width: '47%',
     label: false,
-    class: 'lowerme',
     config: [
         {
           type : 'checkbox',
@@ -144,15 +131,10 @@ export class FnSupportComponent {
   ]
 
   constructor(protected ws: WebSocketService,  protected dialog: MatDialog,
-    protected translate: TranslateService) { }
+    private modalService: ModalService) { }
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
-    setTimeout(() => {
-      this.translate.get(helptext.contactUs).subscribe(res => {
-        _.find(this.fieldConfig, { name: 'FN_col2' }).paraText = '<i class="material-icons">mail</i>' + res;
-      })
-    }, 2000)
   }
 
   blurEvent(parent){
@@ -250,6 +232,7 @@ export class FnSupportComponent {
     this.entityEdit.formGroup.reset();
     this.entityEdit.formGroup.controls['type'].setValue('BUG');
     this.subs = [];
+    this.modalService.close('slide-in-form');
   };
 
 

@@ -57,8 +57,8 @@ import { EulaComponent } from './support/eula/eula.component';
 import { SysImageComponent } from './support/sys-image/sys-image.component';
 import { ProductionStatusComponent } from './support/production-status/production-status.component';
 import { ProactiveComponent } from './support/proactive/proactive.component';
-import { TnSupportComponent } from './support/tn-support/tn-support.component';
-import { FnSupportComponent } from './support/fn-support/fn-support.component';
+import { SupportFormLicensedComponent } from './support/support-licensed/support-form-licensed.component';
+import { SupportFormUnlicensedComponent } from './support/support-unlicensed/support-form-unlicensed.component';
 import { SysInfoComponent } from './support/sys-info/sys-info.component'
 import { KmipComponent} from './kmip/kmip.component';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
@@ -119,8 +119,8 @@ import { LicenseComponent } from './support/license/license.component';
     SysImageComponent,
     ProductionStatusComponent,
     ProactiveComponent,
-    TnSupportComponent,
-    FnSupportComponent,
+    SupportFormLicensedComponent,
+    SupportFormUnlicensedComponent,
     SysInfoComponent,
     KmipComponent,
     TwoFactorComponent,

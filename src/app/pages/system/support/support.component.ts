@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import * as _ from 'lodash';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { WebSocketService, AppLoaderService, DialogService } from '../../../services/';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { ModalService } from '../../../services/modal.service';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { LicenseComponent } from './license/license.component';
+import { SupportFormLicensedComponent } from './support-licensed/support-form-licensed.component';
+import { SupportFormUnlicensedComponent } from './support-unlicensed/support-form-unlicensed.component';
 
 @Component({
   selector : 'app-support',
@@ -27,14 +31,18 @@ export class SupportComponent implements OnInit {
   public licenseButtonText: string;
   public ticketText = helptext.ticket;
 
-  protected addComponent = new LicenseComponent(this.ws,this.modalService,this.loader,this.dialog);
+  protected licenseComponent = new LicenseComponent(this.ws,this.modalService,this.loader,this.dialog);
+  protected supportFormLicensed = new SupportFormLicensedComponent(this.mdDialog,this.loader,
+    this.ws,this.dialog,this.router,this.modalService);
+  protected supportFormUnlicensed = new SupportFormUnlicensedComponent(this.ws,this.mdDialog,this.modalService);
 
   public custActions: Array<any> = [];
 
   constructor(protected ws: WebSocketService,
               protected prefService: PreferencesService,
               private modalService: ModalService, private loader: AppLoaderService,
-              private dialog: DialogService)
+              private dialog: DialogService, private mdDialog: MatDialog,
+              private router: Router)
               {}
 
   ngOnInit() {
@@ -113,10 +121,11 @@ export class SupportComponent implements OnInit {
   }
 
   updateLicense() {
-      this.modalService.open('slide-in-form', this.addComponent);
+      this.modalService.open('slide-in-form', this.licenseComponent);
   }
 
   fileTicket() {
-    console.log('file a ticket')
+    const component = this.hasLicense ? this.supportFormLicensed : this.supportFormUnlicensed;
+    this.modalService.open('slide-in-form', component);
   }
 }

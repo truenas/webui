@@ -28,7 +28,7 @@ export class LicenseComponent {
       ]
     }
   ];
-  public title: 'License';
+  public title = 'License';
   public entityForm: any;
 
   constructor(private ws: WebSocketService, private modalService: ModalService,

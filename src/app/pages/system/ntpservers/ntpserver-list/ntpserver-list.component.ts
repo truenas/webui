@@ -1,4 +1,6 @@
 import {Component} from '@angular/core';
+import { ModalService } from '../../../../services/modal.service';
+import { NTPServerFormComponent } from '../ntpserver-form/ntpserver-form.component';
 
 @Component({
   selector : 'app-ntpserver-list',
@@ -31,4 +33,17 @@ export class NTPServerListComponent {
       key_props: ['address']
     },
   };
+
+  private addComponent = new NTPServerFormComponent();
+
+  constructor(private modalService: ModalService) {}
+
+  doAdd() {
+    this.modalService.open('slide-in-form', this.addComponent);
+  }
+
+  doEdit(e) {
+    console.log(e)
+    this.modalService.open('slide-in-form', this.addComponent, e)
+  }
 }
