@@ -257,6 +257,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
               }
             })
             this.conf.columns = this.conf.columns.filter(col => !notFound.includes(col.prop));
+            this.selectColumnsToShowOrHide();
           }
         });
         if (this.title === 'Users') {
