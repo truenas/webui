@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { WebSocketService, NetworkService, DialogService, StorageService } from '../../services';
+import { WebSocketService, NetworkService, DialogService, StorageService, AppLoaderService } from '../../services';
 import { T } from '../../translate-marker';
 import helptext from '../../helptext/network/interfaces/interfaces-list';
 import { CardWidgetConf } from './card-widget.component';
@@ -12,6 +12,7 @@ import { InterfacesFormComponent } from './interfaces/interfaces-form/interfaces
 import { StaticRouteFormComponent } from './staticroutes/staticroute-form/staticroute-form.component';
 import { NameserverFormComponent } from './nameserver-form.component';
 import { DefaultRouteFormComponent } from './default-route-form.component';
+import { IPMIComponent } from './ipmi/ipmi.component';
 
 @Component({
   selector: 'app-interfaces-list',
@@ -101,18 +102,24 @@ export class NetworkComponent implements OnInit, OnDestroy {
       { name: T('Channel'), prop: 'channel_lable' },
     ],
     hideHeader: true,
+    parent: this,
     dataSourceHelper: this.ipmiDataSourceHelper,
     getActions: this.getIpmiActions,
+    edit: function(row) {
+      this.parent.modalService.open('slide-in-form', this.parent.impiFormComponent, row.id);
+    },
   }
 
 
   public networkSummary;
+  public impiEnabled: boolean;
 
   protected addComponent: ConfigurationComponent;
   protected interfaceComponent: InterfacesFormComponent;
   protected staticRouteFormComponent: StaticRouteFormComponent;
   protected nameserverFormComponent: NameserverFormComponent;
   protected defaultRouteFormComponent: DefaultRouteFormComponent;
+  protected impiFormComponent: IPMIComponent;
 
   constructor(
     private ws: WebSocketService,
@@ -121,6 +128,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     private networkService: NetworkService,
     private dialog: DialogService,
     private storageService: StorageService,
+    private loader: AppLoaderService,
     private modalService: ModalService,) {
       this.ws.call(this.configCall).subscribe(
         (config_res) => {
@@ -134,7 +142,11 @@ export class NetworkComponent implements OnInit, OnDestroy {
             }
           );
         }
-      )
+      );
+
+      this.ws.call('ipmi.is_loaded').subscribe((res)=>{
+        this.impiEnabled = res;
+      });
   }
 
   ngOnInit() {
@@ -150,6 +162,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.staticRouteFormComponent = new StaticRouteFormComponent(this.aroute, this.ws, this.networkService);
     this.nameserverFormComponent = new NameserverFormComponent(this.aroute, this.ws, this.networkService);
     this.defaultRouteFormComponent = new DefaultRouteFormComponent(this.aroute, this.ws, this.networkService);
+    this.impiFormComponent = new IPMIComponent(this.ws, this.dialog, this.loader);
   }
 
   ngOnDestroy() {

@@ -17,7 +17,7 @@
                 <card-widget [conf]="nameserverWidget" fxFlex></card-widget>
                 <card-widget [conf]="defaultRoutesWidget" fxFlex></card-widget>
                 <app-table [conf]="openvpnTableConf" fxFlex></app-table>
-                <app-table [conf]="ipmiTableConf" fxFlex></app-table>
+                <app-table *ngIf="impiEnabled" [conf]="ipmiTableConf" fxFlex></app-table>
             </div>
         </div>
     </div>
