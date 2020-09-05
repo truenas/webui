@@ -23,7 +23,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   protected addCall = 'interface.create';
   protected editCall = 'interface.update';
   protected queryKey = 'id';
-  protected route_success: string[] = [ 'network', 'interfaces' ];
   protected isEntity = true;
   protected is_ha = false;
   private aliases_fc: any;
@@ -361,17 +360,15 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     this.interface_divider = _.find(this.fieldSets, {'name': 'interface_divider'});
     this.failover_divider = _.find(this.fieldSets, {'name': 'failover_divider'});
     this.vlan_pint = _.find(this.vlan_fieldset.config, {'name' : 'vlan_parent_interface'});
-    this.route.params.subscribe(params => {
-      if (params['pk']) {
-        this.vlan_pint.type = 'input';
-        this.title = helptext.title_edit;
-      } else {
-        this.title = helptext.title_add;
-      }
-    });
   }
 
   afterInit(entityForm: any) {
+    if (entityForm.pk !== undefined) {
+      this.vlan_pint.type = 'input';
+      this.title = helptext.title_edit;
+    } else {
+      this.title = helptext.title_add;
+    }
     this.vlan_pint = _.find(this.fieldConfig, {'name' : 'vlan_parent_interface'});
     this.bridge_members = _.find(this.fieldConfig, {'name' : 'bridge_members'});
     this.lag_ports = _.find(this.fieldConfig, {'name' : 'lag_ports'});
@@ -576,8 +573,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
 
   afterSave() {
     this.core.emit({name: "NetworkInterfacesChanged", data: {commit:false, checkin: false}, sender:this});
-    this.router.navigate(new Array('/').concat(
-      this.route_success));
   }
 
   ngOnDestroy() {

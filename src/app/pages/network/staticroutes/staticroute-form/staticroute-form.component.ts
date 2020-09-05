@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { ipv4or6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import helptext from '../../../../helptext/network/staticroutes/staticroutes';
-import { NetworkService, RestService, WebSocketService } from '../../../../services/';
+import { NetworkService, WebSocketService } from '../../../../services/';
 
 @Component({
   selector : 'app-staticroute-form',
@@ -51,13 +51,12 @@ export class StaticRouteFormComponent {
   constructor(protected aroute: ActivatedRoute,
               protected ws: WebSocketService,
               protected networkService: NetworkService) {}
-  preInit() {
-    this.aroute.params.subscribe(params => {
-      if (params['pk']) {
-        this.title = helptext.title_edit;
-      } else {
-        this.title = helptext.title_add;
-      }
-    });
+
+  afterInit(entityForm) {
+    if (entityForm.pk !== undefined) {
+      this.title = helptext.title_edit;
+    } else {
+      this.title = helptext.title_add;
+    }
   }
 }
