@@ -1,9 +1,7 @@
-import { ApplicationRef, Component, Injector, Input, ViewChild, ElementRef} from '@angular/core';
-import { Router } from '@angular/router';
+import { Component} from '@angular/core';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import {  DialogService, RestService, TooltipsService, WebSocketService, 
-  NetworkService, SnackbarService } from '../../../services/';
+import {  DialogService, WebSocketService } from '../../../services/';
 import { FormGroup } from '@angular/forms';
 import { regexValidator } from '../../common/entity/entity-form/validators/regex-validation';
 import { ipv4Validator } from '../../common/entity/entity-form/validators/ip-validation';
@@ -17,43 +15,14 @@ import { T } from '../../../translate-marker';
 
 @Component({
   selector : 'app-ipmi',
-  template : `
-  <mat-card class="ipmi-card">
-  <mat-spinner
-    diameter='25'
-    class="form-select-spinner"
-    id="ipmi_controller-spinner"
-    *ngIf="!currentControllerLabel && is_ha">
-  </mat-spinner>
-  <mat-select *ngIf="is_ha" #storageController name="controller" placeholder="Controller" (selectionChange)="loadData()" [(ngModel)]="remoteController" [style.margin-top.px]="15">
-
-    <mat-option [value]="false">Active: {{controllerName}} {{currentControllerLabel}}</mat-option>
-    <mat-option [value]="true">Standby: {{controllerName}} {{failoverControllerLabel}}</mat-option>
-  </mat-select><br/>
-  <mat-select #selectedChannel name="channel" placeholder="Channel" (selectionChange)="switchChannel()" [(ngModel)]="selectedValue">
-    <mat-option *ngFor="let channel of channels" [value]="channel.value">
-      Channel {{channel.value}}
-    </mat-option>
-  </mat-select>
-  </mat-card>
-  <entity-form [conf]="this"></entity-form>
-  `,
+  template : `<entity-form [conf]="this"></entity-form>`,
   styleUrls: ['./ipmi.component.css'],
-  providers : [ TooltipsService, SnackbarService ],
 })
 export class IPMIComponent {
-  @ViewChild('selectedChannel', { static: true}) select: ElementRef;
-  selectedValue: string;
+  public title = "IMPI"
+  protected queryCall="ipmi.query";
 
-  protected resource_name = '';
-  public formGroup: FormGroup;
-  public busy: Subscription;
-  public channels = [];
-  protected channel: any;
-  protected netmask: any;
-  protected ipaddress: any;
   protected entityEdit: any;
-  public remoteController = false;
   public is_ha = false;
   public controllerName = globalHelptext.Ctrlr;
   public currentControllerLabel: string;
@@ -187,38 +156,68 @@ export class IPMIComponent {
       divider:true
   }];
 
-  constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService,
-              protected _injector: Injector, protected _appRef: ApplicationRef,
-              protected tooltipsService: TooltipsService,
-              protected networkService: NetworkService, protected dialog: DialogService,
-              protected loader: AppLoaderService, protected snackBar: SnackbarService
-            ) {}
+  public queryKey = 'id';
+  public channelValue;
+  protected isEntity = true;
 
+  constructor(
+    protected ws: WebSocketService,
+    protected dialog: DialogService,
+    protected loader: AppLoaderService
+    ) {}
 
-  preInit(entityEdit: any) {
-    if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
-      this.ws.call('failover.licensed').subscribe((is_ha) => {
-        this.is_ha = is_ha;
+  async prerequisite(): Promise<boolean>  {
+    return new Promise(async (resolve, reject) => {
+      if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
+        await this.ws.call('failover.licensed').toPromise().then((is_ha) => {
+          this.is_ha = is_ha;
+        });
         if (this.is_ha) {
-          this.ws.call('failover.node').subscribe((node) => {
+          await this.ws.call('failover.node').toPromise().then((node) => {
             this.currentControllerLabel  = (node === 'A') ? '1' : '2';
             this.failoverControllerLabel = (node === 'A') ? '2' : '1';
           });
+          this.fieldSets.unshift({
+            name: helptext.ipmi_remote_controller,
+            class: 'remote-controller',
+            width: "100%",
+            label: true,
+            config: [
+              {
+                type : 'radio',
+                name : 'remoteController',
+                placeholder : '',
+                options: [
+                  {
+                    label: `Active: ${this.controllerName} ${this.currentControllerLabel}`,
+                    value: false,
+                  },
+                  {
+                    label: `Standby: ${this.controllerName} ${this.failoverControllerLabel}`,
+                    value: true,
+                  }
+                ],
+                value: false,
+              }
+            ]
+          }, {
+            name:'ipmi_divider',
+            divider:true
+          });
+          resolve(true);
+        } else {
+          resolve(true);
         };
-      });
-    }
+      } else {
+        resolve(true);
+      };
+    })
+    
   }
 
   afterInit(entityEdit: any) {
-    entityEdit.isNew = true;
-    this.ws.call('ipmi.query', []).subscribe((res) => {
-      for (let i = 0; i < res.length; i++) {
-        this.channels.push({label: res[i].channel, value: res[i].channel})
-      }
-    });
+    this.channelValue = entityEdit.pk;
     this.entityEdit = entityEdit;
-    this.loadData();
 
     entityEdit.formGroup.controls['password'].statusChanges.subscribe((status) => {
       this.setErrorStatus(status, _.find(this.fieldConfig, {name: "password"}));
@@ -242,6 +241,13 @@ export class IPMIComponent {
      entityEdit.formGroup.controls['gateway'].statusChanges.subscribe((status) => {
       this.setErrorStatus(status, _.find(this.fieldConfig, {name: "gateway"}));
      })
+
+     if (entityEdit.formGroup.controls['remoteController']) {
+      entityEdit.formGroup.controls['remoteController'].valueChanges.subscribe((res) => {
+       this.loadData();
+      })
+     }
+     
   }
 
   setErrorStatus(status, field) {
@@ -249,9 +255,9 @@ export class IPMIComponent {
   }
 
   customSubmit(payload){
-    let call = this.ws.call('ipmi.update', [ this.selectedValue, payload ]);
-    if (this.remoteController) {
-      call = this.ws.call('failover.call_remote', ['ipmi.update', [ this.selectedValue, payload ]]);
+    let call = this.ws.call('ipmi.update', [ this.channelValue, payload ]);
+    if (this.entityEdit.formGroup.controls['remoteController'] && this.entityEdit.formGroup.controls['remoteController'].value) {
+      call = this.ws.call('failover.call_remote', ['ipmi.update', [ this.channelValue, payload ]]);
     }
 
     this.loader.open();
@@ -264,22 +270,14 @@ export class IPMIComponent {
     });
   }
 
-  switchChannel(){
-    const myFilter = [];
-    myFilter.push("id")
-    myFilter.push("=")
-    myFilter.push(this.selectedValue)
-    this.loadData([[myFilter]]);
-  }
-
   loadData(filter = []){
-    let query = this.ws.call('ipmi.query', filter);
-    if (this.remoteController) {
-      query = this.ws.call('failover.call_remote', ['ipmi.query', [filter]]);
+    let query = this.ws.call(this.queryCall, filter);
+    if (this.entityEdit.formGroup.controls['remoteController'] && this.entityEdit.formGroup.controls['remoteController'].value) {
+      query = this.ws.call('failover.call_remote', [this.queryCall, [filter]]);
     }
     query.subscribe((res) => {
       for (let i = 0; i < res.length; i++) {
-        this.selectedValue = res[i].channel;
+        this.channelValue = res[i].channel;
         this.entityEdit.formGroup.controls['netmask'].setValue(res[i].netmask);
         this.entityEdit.formGroup.controls['dhcp'].setValue(res[i].dhcp);
         this.entityEdit.formGroup.controls['ipaddress'].setValue(res[i].ipaddress);
