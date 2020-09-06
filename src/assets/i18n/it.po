@@ -936,6 +936,9 @@ msgstr ""
 msgid "Add Tunable"
 msgstr ""
 
+msgid "Add User"
+msgstr ""
+
 msgid "Add Vdev"
 msgstr ""
 
@@ -3285,6 +3288,9 @@ msgid "Create Snapshot"
 msgstr "Creare Snapshot"
 
 msgid "Create Theme"
+msgstr ""
+
+msgid "Create Virtual Machine"
 msgstr ""
 
 msgid "Create a custom ACL"
@@ -12831,10 +12837,10 @@ msgid ""
 "unless changed."
 msgstr ""
 
-msgid "These running services are using"
+msgid "These running processes are using "
 msgstr ""
 
-msgid "These running services are using "
+msgid "These running services are using"
 msgstr ""
 
 msgid "These services depend on pool "
