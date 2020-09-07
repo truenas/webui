@@ -228,7 +228,9 @@
             <div class="list-subheader"><span class="capitalize">{{"Disk Details" | translate}}</span></div>
             <mat-list >
               <mat-list-item *ngIf="!currentMultipathDetails" role="listitem">
-                <strong> {{"Name" | translate}}:</strong>&nbsp;&nbsp; {{currentMultipathDetails ? checkMultipathLabel(path[currentSlideIndex].dataSource.disk) : path[currentSlideIndex].dataSource.disk}}
+                <strong> {{"Name" | translate}}:</strong>&nbsp;&nbsp; 
+                <span *ngIf="currentMultipathDetails"> {{checkMultipathLabel(path[currentSlideIndex].dataSource.disk)}}</span>
+                <span *ngIf="!currentMultipathDetails"> {{path[currentSlideIndex].dataSource.disk ? path[currentSlideIndex].dataSource.disk : 'unknown'}}</span>
               </mat-list-item>
 
             <ng-template [ngIf]="currentMultipathDetails">
@@ -256,7 +258,7 @@
             </mat-list>
             
             <!-- Dynamic disk details-->
-            <div class="list-subheader">{{"Advanced Details" | translate}}</div>
+            <div *ngIf="currentDiskDetails" class="list-subheader">{{"Advanced Details" | translate}}</div>
             <mat-list>
               <ng-container *ngFor="let key of currentDiskDetailsKeys">
                 <mat-list-item *ngIf="key != 'identifier' && currentDiskDetails[key]" role="listitem">

@@ -213,18 +213,19 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
     this.core.register({observerClass:this,eventName:"MultipathData"}).subscribe((evt:CoreEvent) => {
       this.currentMultipathDetails = evt.data[0];
-      console.log(this.currentMultipathDetails);
       const activeDisk = evt.data[0].children.filter(prop => prop.status == "ACTIVE");
       this.core.emit({name:"DisksRequest", data:[[["name", "=", activeDisk[0].name]]]});
     });
 
     this.core.register({observerClass:this,eventName:"DisksData"}).subscribe((evt:CoreEvent) => {
-      delete evt.data[0].enclosure;
-      delete evt.data[0].name;
-      delete evt.data[0].devname;
-      delete evt.data[0].multipath_name;
-      delete evt.data[0].multipath_member;
-      this.currentDiskDetails = evt.data[0];
+      if(evt.data[0]){
+        delete evt.data[0].enclosure;
+        delete evt.data[0].name;
+        delete evt.data[0].devname;
+        delete evt.data[0].multipath_name;
+        delete evt.data[0].multipath_member;
+        this.currentDiskDetails = evt.data[0];
+      }  
     });
   }
 
@@ -296,6 +297,10 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   checkMultipathLabel(name){
+    if(!name || name == null){
+      return 'unknown';
+    }
+
     const truth = this.checkMultipath(name);
     let diskName = name;
     if(truth){
