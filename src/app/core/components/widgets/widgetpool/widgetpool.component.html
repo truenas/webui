@@ -152,8 +152,17 @@
                     &nbsp;&nbsp;
                   </span>
 
+                  <span *ngIf="vdev.status !== 'ONLINE'" class="{{poolHealth.level}} vdev.status" >
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                    &nbsp;&nbsp;
+                  </span>
+
                   <span *ngIf="vdev.children.length <= 4;" class="vdev" >
-                    <span *ngFor="let device of vdev.children; let child = index">{{device.disk}}<span *ngIf="child < 4 - 1 && child !== vdev.children.length - 1">,</span>&nbsp;&nbsp;</span>
+                    <span *ngFor="let device of vdev.children; let child = index">
+                      {{device.disk ? device.disk: device.status}}
+                      <span *ngIf="child < 4 - 1 && child !== vdev.children.length - 1">,</span>
+                      &nbsp;&nbsp;
+                    </span>
                   </span>
 
                   <span *ngIf="vdev.children.length > 4;" class="vdev">
