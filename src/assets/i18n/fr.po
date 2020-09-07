@@ -1184,6 +1184,9 @@ msgstr ""
 msgid "Add Tunable"
 msgstr ""
 
+msgid "Add User"
+msgstr ""
+
 msgid "Add Vdev"
 msgstr "Ajouter Vdev"
 
@@ -4036,6 +4039,9 @@ msgstr "Créer un instantané"
 
 msgid "Create Theme"
 msgstr "Créer le thème"
+
+msgid "Create Virtual Machine"
+msgstr ""
 
 msgid "Create a custom ACL"
 msgstr ""
@@ -15753,11 +15759,11 @@ msgstr ""
 "Ces autorisations sont trop compliquées pour être affichées et ne peuvent "
 "être sauvegardées à moins d'être modifiées."
 
-msgid "These running services are using"
+msgid "These running processes are using "
 msgstr ""
 
-msgid "These running services are using "
-msgstr "Ces services en cours d'exécution utilisent "
+msgid "These running services are using"
+msgstr ""
 
 msgid "These services depend on pool "
 msgstr "Ces services dépendent du volume "

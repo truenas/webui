@@ -1198,6 +1198,9 @@ msgstr "Añadir Sysctl"
 msgid "Add Tunable"
 msgstr "Agregar sintonizable"
 
+msgid "Add User"
+msgstr ""
+
 msgid "Add Vdev"
 msgstr "Añadir Vdev"
 
@@ -4029,6 +4032,9 @@ msgstr "Crear instantánea"
 
 msgid "Create Theme"
 msgstr "Crear tema"
+
+msgid "Create Virtual Machine"
+msgstr ""
 
 msgid "Create a custom ACL"
 msgstr ""
@@ -15781,11 +15787,11 @@ msgstr ""
 "Estos permisos son demasiado complicados para mostrarse y no se pueden "
 "guardar a menos que se modifiquen."
 
+msgid "These running processes are using "
+msgstr ""
+
 msgid "These running services are using"
 msgstr "Estos servicios en ejecución están utilizando"
-
-msgid "These running services are using "
-msgstr "Estos servicios en ejecución están utilizando "
 
 msgid "These services depend on pool "
 msgstr "Estos servicios dependen del grupo "
