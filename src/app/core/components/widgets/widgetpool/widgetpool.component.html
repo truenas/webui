@@ -175,10 +175,23 @@
                  (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, currentSlideTopology, disk )" 
                  (click)="getDiskDetails('name', disk.disk, checkMultipath(disk.disk))" 
                  [ngClass]="{'clickable': true}">
-                <strong>{{checkMultipathLabel(disk.disk)}}<span *ngIf="checkMultipath(disk.disk)">&nbsp;({{"multipath" | translate}})</span>:</strong>&nbsp;&nbsp; {{disk.status | translate}}
+                <strong *ngIf="disk.status !== 'REMOVED' || disk.disk == null">
+                  {{checkMultipathLabel(disk.disk)}}
+                  <span *ngIf="checkMultipath(disk.disk)">&nbsp;({{"multipath" | translate}})</span>
+                  &nbsp;&nbsp; 
+                </strong>
+
+                <span *ngIf="disk.status == 'REMOVED' || disk.disk == null">DEVICE&nbsp;</span>
+                {{disk.status | translate}}
+
                 <span *ngIf="disk.status == 'ONLINE'" class="{{poolHealth.level}} healthy" >
                   <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                 </span>
+
+                <span *ngIf="disk.status == 'REMOVED'" class="{{poolHealth.level}} disk.status" >
+                  <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                </span>
+
                 <mat-icon class="next-slide">chevron_right</mat-icon>
               </mat-list-item>
               
