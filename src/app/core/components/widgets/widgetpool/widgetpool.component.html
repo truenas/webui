@@ -184,9 +184,11 @@
                  (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, currentSlideTopology, disk )" 
                  (click)="getDiskDetails('name', disk.disk, checkMultipath(disk.disk))" 
                  [ngClass]="{'clickable': true}">
-                <strong *ngIf="disk.status !== 'REMOVED' || disk.disk == null">
-                  {{checkMultipathLabel(disk.disk)}}
-                  <span *ngIf="checkMultipath(disk.disk)">&nbsp;({{"multipath" | translate}})</span>
+                <strong>
+                  <span> 
+                    {{disk.status == 'REMOVED' || disk.disk == null ? 'unknown' : checkMultipathLabel(disk.disk)}}
+                  </span>
+                  <span *ngIf="checkMultipath(disk.disk)">&nbsp;({{"multipath" | translate}})</span>:
                   &nbsp;&nbsp; 
                 </strong>
 
