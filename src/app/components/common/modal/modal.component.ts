@@ -71,6 +71,9 @@ export class ModalComponent implements OnInit, OnDestroy {
     // open modal
     open(conf:any): void {
         this.conf = conf;
+        this.conf.isModalForm = true;
+        this.conf.closeModalForm = this.close.bind(this);
+
         // Takes a bit for title to be set dynamically in the form
         const checkTitle = setInterval(() => {
             this.title = this.conf.title ? this.conf.title : '';
