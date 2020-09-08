@@ -245,13 +245,14 @@
                     <span *ngFor="let device of vdev.children; let child = index">
                       <mat-icon *ngIf="trimMultipath(device.disk.name).isMultipath" class="multipath-icon" role="img" svgIcon="multipath"></mat-icon>
                       <span>{{trimMultipath(device.disk.name).isMultipath ? device.disk.name : device.disk}}</span>
-                      {{trimMultipath(device.disk.name).name}}<span *ngIf="child < 3 - 1 && child !== vdev.children.length - 1">,</span>&nbsp;&nbsp;</span>
+                      {{trimMultipath(device.disk.name).name == null ? device.disk.status : trimMultipath(device.disk.name)}}
+                      <span *ngIf="child < 3 - 1 && child !== vdev.children.length - 1">,</span>&nbsp;&nbsp;</span>
                   </span>
 
                   <span *ngIf="vdev.children.length > 3;" class="vdev">
                     <span *ngFor="let device of vdev.children; let child = index" [ngClass]="{'hidden': child >= 3}">
                       <mat-icon *ngIf="trimMultipath(device.disk).isMultipath" class="multipath-icon" role="img" svgIcon="multipath"></mat-icon>
-                      <span>{{trimMultipath(device.disk).isMultipath ? trimMultipath(device.disk).name : device.disk}}</span>
+                      <span>{{device.disk  == null ? device.status : trimMultipath(device.disk).name}}</span>
                       <span *ngIf="child < 3 - 1 && child !== vdev.children.length - 1">,</span>&nbsp;&nbsp;</span>
                     <span>&nbsp;&nbsp; ({{vdev.children.length - 3}} more)</span>
                   </span>
@@ -273,8 +274,8 @@
                  [ngClass]="{'clickable': true}">
                 <strong >
                   <mat-icon *ngIf="checkMultipath(disk.disk)" class="multipath-icon" role="img" svgIcon="multipath"></mat-icon>
-                  <span *ngIf="disk.status !== 'UNAVAIL'">{{trimMultipath(disk.disk).fullName}}</span>
-                  <span *ngIf="disk.status == 'UNAVAIL'">Unknown Disk</span>
+                  <span *ngIf="disk.status !== 'UNAVAIL' && disk.status !== 'REMOVED' && disk.disk !== null">{{trimMultipath(disk.disk).fullName}}</span>
+                  <span *ngIf="disk.status == 'UNAVAIL' || disk.status == 'REMOVED' || disk.disk == null">Unknown Disk</span>
                   :
                 </strong>
                 &nbsp;&nbsp; {{disk.status | translate}}
@@ -320,7 +321,9 @@
             <div class="list-subheader"><span class="capitalize">{{"Disk Details" | translate}}</span></div>
             <mat-list >
               <mat-list-item *ngIf="!currentMultipathDetails" role="listitem">
-                <strong> {{"Name" | translate}}:</strong>&nbsp;&nbsp; {{currentMultipathDetails ? checkMultipathLabel(path[currentSlideIndex].dataSource.disk) : path[currentSlideIndex].dataSource.disk}}
+                <strong> {{"Name" | translate}}:</strong>&nbsp;&nbsp; 
+                <span *ngIf="currentMultipathDetails"> {{checkMultipathLabel(path[currentSlideIndex].dataSource.disk)}}</span>
+                <span *ngIf="!currentMultipathDetails"> {{path[currentSlideIndex].dataSource.disk ? path[currentSlideIndex].dataSource.disk : 'unknown'}}</span>
               </mat-list-item>
 
             <ng-template [ngIf]="currentMultipathDetails">
