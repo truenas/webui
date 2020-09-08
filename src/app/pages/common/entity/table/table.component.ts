@@ -1,6 +1,8 @@
 import { Component, OnInit, Input, ViewChild, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { WebSocketService } from 'app/services';
 
+import { TableService } from './table.service';
+
 import * as _ from 'lodash';
 
 export interface InputTableConf {
@@ -8,20 +10,30 @@ export interface InputTableConf {
   columns: any[];
   queryCall: string;
   queryCallOption?: any;
+  deleteCall?: string;
   hideHeader?: boolean; // hide table header row
+  deleteMsg?: {
+    title: string,
+    key_props: string[],
+    id_prop?: string,
+    doubleConfirm?(item),
+  }; //
 
   add?(); // add action function
   edit?(any); // edit row
+  delete?(item); // customize delete row method
   dataSourceHelper?(any); // customise handle/modify dataSource 
   getInOutInfo?(any); // get in out info if has state column
   getActions?(); // actions for each row
   isActionVisible?(): boolean; // determine if action is visible
+  getDeleteCallParams?(row, id): any; // get delete Params
 }
 
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.css'],
+  providers: [TableService]
 })
 export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   @Input('conf') tableConf: InputTableConf;
@@ -42,7 +54,9 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   private TABLE_MIN_ROWS = 5;
 
-  constructor(private ws: WebSocketService) { }
+  constructor(private ws: WebSocketService,
+    private tableService: TableService) { }
+
   calculateLimitRows() {
     if (this.table) {
       this.tableHeight = this.table.nativeElement.offsetHeight;
@@ -61,6 +75,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
       }
     }
   }
+
   ngAfterViewInit() {
     this.calculateLimitRows();
   }
@@ -77,23 +92,11 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
     this.displayedColumns = this.tableConf.columns.map(col => col.name);
 
-    if (this.tableConf.getActions) {
+    if (this.tableConf.getActions || this.tableConf.deleteCall) {
       this.displayedColumns.push('action'); // add action column to table
-      this.actions = this.tableConf.getActions(); // get all row actions
+      this.actions = this.tableConf.getActions ? this.tableConf.getActions() : []; // get all row actions
     }
-    this.ws.call(this.tableConf.queryCall).subscribe(res => {
-      if (this.tableConf.dataSourceHelper) {
-         res = this.tableConf.dataSourceHelper(res);
-      } 
-      if (this.tableConf.getInOutInfo) {
-        this.tableConf.getInOutInfo(res);
-      }
-        this.dataSource = res;
-        if (this.limitRows) {
-          this.displayedDataSource = this.dataSource.slice(0, this.limitRows - 1);
-          this.showViewMore = this.dataSource.length !== this.displayedDataSource.length;
-        }
-    });
+    this.tableService.getData(this);
   }
 
   // getProp(data, prop) {
@@ -101,29 +104,22 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   // }
 
   editRow(row) {
-    console.log(row);
     if (this.tableConf.edit) {
       this.tableConf.edit(row);
     }
   }
 
   deleteRow(row) {
-    console.log('delete', row);
+    if (this.tableConf.delete) {
+      this.tableConf.delete(row);
+    } else {
+      this.tableService.delete(this, row);
+    }
     event.stopPropagation();
   }
 
   unifyState(state) {
-    const stateClass = {
-      UP: 'STATE_UP',
-      DOWN: 'STATE_DOWN',
-    }
-    switch(state.toUpperCase()) {
-      case 'UP':
-        return stateClass.UP;
-        break;
-      case 'DOWN':
-        return stateClass.DOWN;
-    }
+    return this.tableService.unifyState(state);
   }
 
   showInOutInfo(element) {
