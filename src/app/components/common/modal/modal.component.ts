@@ -92,7 +92,10 @@ export class ModalComponent implements OnInit, OnDestroy {
         this.background.classList.add('open');
         this.formOpen = true;
         document.body.classList.add('jw-modal-open');
-        if (conf.columnsOnForm && conf.columnsOnForm === 2) {
+
+        this.conf.columnsOnForm = 1;
+        if (this.el.nativeElement.offsetWidth >= 960) {
+            this.conf.columnsOnForm = 2;
             this.slideIn.classList.add('wide');
         }
     }
