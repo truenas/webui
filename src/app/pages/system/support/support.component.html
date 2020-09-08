@@ -12,6 +12,7 @@
         *ngIf="!hasLicense; else licensedSysInfo"
         [version]='systemInfo.version'
         [model]="systemInfo.model"
+        [product]='systemInfo.system_product'
         [memory]="systemInfo.memory"
         [serial]="systemInfo.serial"
         [hasLicense]="hasLicense"

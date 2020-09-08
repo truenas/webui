@@ -1202,24 +1202,28 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
         margin-left: -20px;
       }
     }
-  }
+    .links {
+      margin-bottom: 5px;
 
-  app-fn-sys-info {
-    #fn-support-title {
-      margin-bottom: 25px;
-    }
-    .fn-sys-info-line {
-      margin-top: 10px;
-      margin-bottom: 10px;
-
-      h4 {
-        margin-bottom: 3px;
+      a {
+        color: var(--primary);
       }
     }
-    #fn-instructions {
-      font-size: 110%;
-    }
+    
 
+  }
+
+  app-sys-info {
+    .label {
+      opacity: .8;
+      margin-right: 4px;
+    }
+    .sys-info-wrapper {
+      margin-bottom: 1rem;
+    }
+    .sys-info-line {
+      margin-bottom: 5px;
+    }
   }
 
   app-tn-sys-info {
@@ -1805,6 +1809,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
         padding: 0;
         margin: 18px 0;
       }
+    }
+
+    .lowerme-guiform {
+      margin-top: 32px !important;
     }
 
 

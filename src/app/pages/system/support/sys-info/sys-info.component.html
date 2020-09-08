@@ -2,7 +2,10 @@
   <div class="sys-info-line"><span class="label"> {{"OS Version:" | translate}}</span> 
     <span class="value">{{version}}</span>
   </div>
-  <div class="sys-info-line"><span class="label"> {{"Model:" | translate}}</span> 
+  <div class="sys-info-line"><span class="label"> {{"Product:" | translate}}</span> 
+    <span class="value">{{product}}</span>
+  </div>
+  <div class="sys-info-line"><span class="label" *ngIf="model"> {{"Model:" | translate}}</span> 
     <span class="value">{{model}}</span>
   </div>
   <div class="sys-info-line"><span class="label"> {{"Memory:" | translate}}</span> 

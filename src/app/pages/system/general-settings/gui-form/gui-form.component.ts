@@ -72,7 +72,8 @@ export class GuiFormComponent {
     {
       name: helptext.stg_fieldset_gui + '2',
       width: "50%",
-      label: true,
+      label: false,
+      class: 'lowerme-guiform',
       config: [
         {
           type: "input",

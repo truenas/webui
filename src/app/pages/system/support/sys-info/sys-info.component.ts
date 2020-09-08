@@ -10,6 +10,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 export class SysInfoComponent {
   @Input() version;
   @Input() model;
+  @Input() product;
   @Input() memory;
   @Input() serial;
   @Input() FN_instructions;

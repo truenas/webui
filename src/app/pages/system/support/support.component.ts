@@ -114,7 +114,7 @@ export class SupportComponent implements OnInit {
         this.product_image = 'freenas_mini_xl_cropped.png';
       break;
       default:
-        this.product_image = 'ix-original.png';
+        this.product_image = 'ix-original-cropped.png';
       break;
     }
     this.isProductImageTall = true;

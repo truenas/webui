@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { WebSocketService, SystemGeneralService, DialogService, LanguageService } from '../../../services/';
+import { WebSocketService, SystemGeneralService, DialogService, LanguageService, StorageService } 
+  from '../../../services/';
 import { LocaleService } from '../../../services/locale.service';
 import { ModalService } from '../../../services/modal.service';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { StorageService } from '../../../services/storage.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { LocalizationFormComponent } from './localization-form/localization-form.component';
 import { GuiFormComponent } from './gui-form/gui-form.component';
