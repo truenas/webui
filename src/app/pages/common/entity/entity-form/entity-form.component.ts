@@ -542,7 +542,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                           else {
                             new EntityUtils().handleError(this, res);
                           }
-                          this.modalService.close('slide-in-form');
                         });
     }
   }

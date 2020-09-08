@@ -34,16 +34,16 @@ export class NTPServerListComponent {
     },
   };
 
-  private addComponent = new NTPServerFormComponent();
+  // private addComponent = new NTPServerFormComponent();
 
   constructor(private modalService: ModalService) {}
 
-  doAdd() {
-    this.modalService.open('slide-in-form', this.addComponent);
-  }
+  // doAdd() {
+  //   this.modalService.open('slide-in-form', this.addComponent);
+  // }
 
-  doEdit(e) {
-    console.log(e)
-    this.modalService.open('slide-in-form', this.addComponent, e)
-  }
+  // doEdit(e) {
+  //   console.log(e)
+  //   this.modalService.open('slide-in-form', this.addComponent, e)
+  // }
 }

@@ -51,6 +51,10 @@
                 <th mat-header-cell *matHeaderCellDef> Max. Poll </th>
                 <td mat-cell *matCellDef="let server" (click)="doAdd('ntp', server.id)"> {{server.maxpoll}} </td>
               </ng-container>
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let server" (click)="doNTPDelete(server)"><mat-icon>delete</mat-icon></td>
+              </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
           </table>

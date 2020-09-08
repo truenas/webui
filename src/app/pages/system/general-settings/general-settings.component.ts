@@ -105,12 +105,27 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     }
     this.sysGeneralService.sendConfigData(this.configData);
     this.modalService.open('slide-in-form', addComponent, id);
-  }  
+  }
+
+  doNTPDelete(server: any) {
+    this.dialog.confirm('Delete server', `Delete ${server.address}?`, false, 'Delete').subscribe(res => {
+      if (res) {
+        this.loader.open();
+        this.ws.call('system.ntpserver.delete', [server.id]).subscribe(res => {
+          this.loader.close();
+          this.getNTPData();
+        }, err => {
+          this.loader.close();
+          this.dialog.errorReport('Error', err.reason, err.trace.formatted);
+        })
+      }
+    })
+  }
 
   getNTPData() {
     this.ws.call('system.ntpserver.query').subscribe(res => {
       this.dataSource = res;
-      this.displayedColumns = ['address', 'burst', 'iburst', 'prefer', 'minpoll', 'maxpoll'];
+      this.displayedColumns = ['address', 'burst', 'iburst', 'prefer', 'minpoll', 'maxpoll', 'actions'];
     })
   }
 
