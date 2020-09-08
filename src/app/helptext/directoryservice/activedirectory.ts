@@ -107,8 +107,8 @@ computer_account_OU_tooltip: T('The OU in which new computer accounts are create
 
 activedirectory_timeout_name: 'timeout',
 activedirectory_timeout_placeholder : T('AD Timeout'),
-activedirectory_timeout_tooltip : T('Number of seconds before timeout. If the AD service\
- does not immediately start after connecting to the domain, increase this value.'),
+activedirectory_timeout_tooltip : T('Number of seconds before timeout. To view the AD \
+ connection status, open the interface <i>Task Manager</i>.'),
 
 activedirectory_dns_timeout_name: 'dns_timeout',
 activedirectory_dns_timeout_placeholder : T('DNS Timeout'),
