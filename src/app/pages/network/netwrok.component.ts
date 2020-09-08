@@ -27,6 +27,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   public interfaceTableConf = {
     title: "Interfaces",
     queryCall: 'interface.query',
+    deleteCall: 'interface.delete',
     columns: [
       { name: T('Name'), prop: 'name', always_display: true },
       { name: T('Link State'), prop: 'link_state', state: { icon: 'fiber_manual_record' } },
@@ -34,7 +35,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
     ],
     ha_enabled: false,
     dataSourceHelper: this.interfaceDataSourceHelper,
-    getActions: this.getInterfaceActions,
     getInOutInfo: this.getInterfaceInOutInfo.bind(this),
     parent: this,
     add: function() {
@@ -42,23 +42,31 @@ export class NetworkComponent implements OnInit, OnDestroy {
     },
     edit: function(row) {
       this.parent.modalService.open('slide-in-form', this.parent.interfaceComponent, row.id);
+    },
+    deleteMsg: {
+      title: 'interfaces',
+      key_props: ['name'],
     }
   }
 
   public staticRoutesTableConf = {
     title: "Static Routes",
     queryCall: 'staticroute.query',
+    deleteCall: 'staticroute.delete',
     columns: [
       { name: T('Destination'), prop: 'destination', always_display: true },
       { name: T('Gateway'), prop: 'gateway' },
     ],
-    getActions: this.getStaticRoutesActions,
     parent: this,
     add: function() {
       this.parent.modalService.open('slide-in-form', this.parent.staticRouteFormComponent);
     },
     edit: function(row) {
       this.parent.modalService.open('slide-in-form', this.parent.staticRouteFormComponent, row.id);
+    },
+    deleteMsg: {
+      title: 'static route',
+      key_props: ['destination', 'gateway'],
     }
   }
 
@@ -104,7 +112,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
     hideHeader: true,
     parent: this,
     dataSourceHelper: this.ipmiDataSourceHelper,
-    getActions: this.getIpmiActions,
+    getActions: this.getIpmiActions.bind(this),
+    isActionVisible: this.isIpmiActionVisible,
     edit: function(row) {
       this.parent.modalService.open('slide-in-form', this.parent.impiFormComponent, row.id);
     },
@@ -229,37 +238,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
     return res;
   }
 
-  getInterfaceActions() {
-    return [{
-      icon: 'delete',
-      name: "delete",
-      label: T("Delete"),
-      onClick: (rowinner) => {
-        console.log('delete interface', rowinner);
-        
-        // if (this.interfaceTableConf.ha_enabled) {
-        //   this.dialog.Info(helptext.ha_enabled_delete_title, helptext.ha_enabled_delete_msg);
-        // } else {
-        //   // this.entityList.doDelete(rowinner);
-        // }
-        event.stopPropagation();
-      },
-    }]
-  }
-
-  getStaticRoutesActions() {
-    return [{
-      icon: 'delete',
-      name: "delete",
-      label: T("Delete"),
-      onClick: (rowinner) => {
-        console.log('delete static routes', rowinner);
-        // this.entityList.doDelete(rowinner);
-        event.stopPropagation();
-      },
-    }]
-  }
-
   ipmiDataSourceHelper(res) {
     for (const item of res) {
       item.channel_lable = 'Channel' + item.channel;
@@ -273,7 +251,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
       name: "identify",
       label: T("Identify Light"),
       onClick: (rowinner) => {
-        console.log('identify ligtht', rowinner);
+        this.dialog.select(
+          'IPMI Identify',this.impiFormComponent.options,'IPMI flash duration','ipmi.identify','seconds', "IPMI identify command issued");
         event.stopPropagation();
       },
     }, {
@@ -281,7 +260,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
       name: "manage",
       label: T("Manage"),
       onClick: (rowinner) => {
-        console.log('manage', rowinner);
+        window.open(`http://${rowinner.ipaddress}`);
         event.stopPropagation();
       },
     }]
@@ -322,6 +301,13 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   isOpenVpnActionVisible(name, row) {
     if ((name === 'start' && row.state === 'START') || (name === 'stop' && row.state === 'STOPPED')) {
+      return false;
+    }
+    return true;
+  }
+
+  isIpmiActionVisible(name, row) {
+    if (name === 'manage' && row.ipaddress === '0.0.0.0') {
       return false;
     }
     return true;
