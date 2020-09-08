@@ -1017,6 +1017,9 @@ msgstr ""
 msgid "Add Tunable"
 msgstr ""
 
+msgid "Add User"
+msgstr ""
+
 msgid "Add Vdev"
 msgstr "添加Vdev"
 
@@ -3471,6 +3474,9 @@ msgstr "创建快照"
 
 msgid "Create Theme"
 msgstr "创建主题"
+
+msgid "Create Virtual Machine"
+msgstr ""
 
 msgid "Create a custom ACL"
 msgstr ""
@@ -13569,11 +13575,11 @@ msgid ""
 "unless changed."
 msgstr "这些权限太复杂而无法显示，除非更改，否则无法保存。"
 
-msgid "These running services are using"
+msgid "These running processes are using "
 msgstr ""
 
-msgid "These running services are using "
-msgstr "这些正在运行的服务正在使用"
+msgid "These running services are using"
+msgstr ""
 
 msgid "These services depend on pool "
 msgstr "这些服务取决于池"

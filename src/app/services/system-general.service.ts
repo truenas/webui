@@ -107,4 +107,8 @@ export class SystemGeneralService {
   refreshSysGeneral() {
     this.refreshSysGeneral$.next();
   }
- }
+ 
+  checkRootPW(password) {
+    return this.ws.call('auth.check_user', ['root', password]);
+  }
+}

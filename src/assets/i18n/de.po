@@ -1000,6 +1000,9 @@ msgstr ""
 msgid "Add Tunable"
 msgstr ""
 
+msgid "Add User"
+msgstr ""
+
 msgid "Add Vdev"
 msgstr "Vdev hinzufügen"
 
@@ -3371,6 +3374,9 @@ msgstr "Snapshot erstellen"
 
 msgid "Create Theme"
 msgstr "Erstelle Theme"
+
+msgid "Create Virtual Machine"
+msgstr ""
 
 msgid "Create a custom ACL"
 msgstr ""
@@ -13681,10 +13687,10 @@ msgstr ""
 "Diese Berechtigungen sind zu kompliziert, um angezeigt zu werden, und "
 "können nur gespeichert werden, wenn sie geändert wurden."
 
-msgid "These running services are using"
+msgid "These running processes are using "
 msgstr ""
 
-msgid "These running services are using "
+msgid "These running services are using"
 msgstr ""
 
 msgid "These services depend on pool "
