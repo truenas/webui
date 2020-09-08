@@ -54,10 +54,14 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
 
   createEnclosure(enclosure: any = this.selectedEnclosure){
     switch(enclosure.model){
+      case "TRUENAS-MINI-3.0-E":
+      case "TRUENAS-MINI-3.0-E+":
       case "FREENAS-MINI-3.0-E":
       case "FREENAS-MINI-3.0-E+":
         this.chassis = new MINI();
       break;
+      case "TRUENAS-MINI-3.0-X":
+      case "TRUENAS-MINI-3.0-X+":
       case "FREENAS-MINI-3.0-X":
       case "FREENAS-MINI-3.0-X+":
         this.chassis = new MINIX();
@@ -65,6 +69,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
       /*case "FREENAS-MINI-2.0-XL":
         this.chassis = new MINIXL();
       break;*/
+      case "TRUENAS-MINI-3.0-XL+":
       case "FREENAS-MINI-3.0-XL+":
         this.chassis = new MINIXLPLUS();
       break;
