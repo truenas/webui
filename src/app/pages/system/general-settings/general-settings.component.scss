@@ -37,4 +37,18 @@
                 cursor: pointer;
             }
         }
+    .ntp-table {
+        width: 100%;
+        background-color: var(--bg2);
+
+        th, td {
+            color: var(--fg2);
+            border-color: rgba(255, 255, 255, 0.3) !important;
+            vertical-align: middle;
+        }
+        tr.mat-row, tr.mat-footer-row {
+            height: 30px;
+            cursor: pointer;
+        }
+    }
 }

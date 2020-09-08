@@ -8,6 +8,7 @@ import { StorageService } from '../../../services/storage.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { LocalizationFormComponent } from './localization-form/localization-form.component';
 import { GuiFormComponent } from './gui-form/gui-form.component';
+import { NTPServerFormComponent } from '../ntpservers/ntpserver-form/ntpserver-form.component';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { Subscription } from 'rxjs';
 
@@ -23,11 +24,15 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   localeData: any;
   configData: any;
   refreshCardData: Subscription;
+  displayedColumns: any;
+  dataSource: any;
+  refreshTable: Subscription;
   
   protected localizationComponent = new LocalizationFormComponent(this.language,this.ws,this.dialog,this.loader,
     this.sysGeneralService,this.localeService,this.modalService);
   protected guiComponent = new GuiFormComponent(this.router,this.language,this.ws,this.dialog,this.loader,
-    this.http,this.storage,this.sysGeneralService,this.modalService)
+    this.http,this.storage,this.sysGeneralService,this.modalService);
+  protected NTPServerFormComponent = new NTPServerFormComponent(this.modalService);
 
   constructor(private ws: WebSocketService, private localeService: LocaleService,
     private sysGeneralService: SystemGeneralService, private modalService: ModalService,
@@ -38,6 +43,10 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     this.getDataCardData();
     this.refreshCardData = this.sysGeneralService.refreshSysGeneral$.subscribe(() => {
       this.getDataCardData();
+    })
+    this.getNTPData();
+    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
+      this.getNTPData();
     })
   }
 
@@ -82,14 +91,32 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     });
   }
   
-  doAdd(id: string) {
-    const addComponent = id === 'gui' ? this.guiComponent : this.localizationComponent;
+  doAdd(name: string, id?: number) {
+    let addComponent;
+    switch (name) {
+      case 'gui':
+        addComponent = this.guiComponent;
+        break;
+      case 'ntp':
+        addComponent = id ? this.NTPServerFormComponent : new NTPServerFormComponent(this.modalService);
+        break;
+      default:
+        addComponent = this.localizationComponent;
+    }
     this.sysGeneralService.sendConfigData(this.configData);
-    this.modalService.open('slide-in-form', addComponent);
+    this.modalService.open('slide-in-form', addComponent, id);
   }  
+
+  getNTPData() {
+    this.ws.call('system.ntpserver.query').subscribe(res => {
+      this.dataSource = res;
+      this.displayedColumns = ['address', 'burst', 'iburst', 'prefer', 'minpoll', 'maxpoll'];
+    })
+  }
 
   ngOnDestroy() {
     this.refreshCardData.unsubscribe();
+    this.refreshTable.unsubscribe();
   }
 
 }

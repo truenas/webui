@@ -70,7 +70,7 @@ export class GuiFormComponent {
       ]
     },
     {
-      name: helptext.stg_fieldset_gui,
+      name: helptext.stg_fieldset_gui + '2',
       width: "50%",
       label: true,
       config: [
@@ -240,7 +240,6 @@ export class GuiFormComponent {
   ) {
     this.getDataFromDash = this.sysGeneralService.sendConfigData$.subscribe(res => {
       this.configData = res;
-      console.log(this.configData)
     })
   }
 
@@ -306,7 +305,7 @@ export class GuiFormComponent {
       });
 
     const httpsprotocolsField = this.fieldSets
-      .find(set => set.name === helptext.stg_fieldset_gui)
+      .find(set => set.name === helptext.stg_fieldset_gui + '2')
       .config.find(config => config.name === "ui_httpsprotocols");
 
     entityEdit.ws.call('system.general.ui_httpsprotocols_choices').subscribe(
@@ -315,8 +314,7 @@ export class GuiFormComponent {
           httpsprotocolsField.options.push({ label: res[key], value: key });
         }
         entityEdit.formGroup.controls['ui_httpsprotocols'].setValue(this.configData.ui_httpsprotocols);
-
-      });
+    });
 
     this.sysGeneralService
       .ipChoicesv4()

@@ -4,6 +4,7 @@ import { Validators } from "@angular/forms";
 
 import { helptext_system_ntpservers as helptext } from 'app/helptext/system/ntpservers';
 import { WebSocketService } from '../../../../services';
+import { ModalService } from 'app/services/modal.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { greaterThan } from "app/pages/common/entity/entity-form/validators/compare-validation";
@@ -89,11 +90,16 @@ export class NTPServerFormComponent {
   ];
 
   constructor(
+    private modalService: ModalService
       // protected router: Router,
       // protected route: ActivatedRoute,
       // protected ws: WebSocketService,
       // protected _injector: Injector,
       // protected _appRef: ApplicationRef
   ) {}
+
+  afterSubmit() {
+    this.modalService.refreshTable();
+  }
 
 }
