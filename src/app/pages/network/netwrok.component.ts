@@ -4,15 +4,15 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { WebSocketService, NetworkService, DialogService, StorageService, AppLoaderService } from '../../services';
 import { T } from '../../translate-marker';
 import helptext from '../../helptext/network/interfaces/interfaces-list';
-import { CardWidgetConf } from './card-widget.component';
+import { CardWidgetConf } from './card-widget/card-widget.component';
 import { TableConfig } from '../common/entity/entity-table/entity-table.component';
 import { ModalService } from '../../services/modal.service';
-import { ConfigurationComponent } from './configuration/configuration.component';
-import { InterfacesFormComponent } from './interfaces/interfaces-form/interfaces-form.component';
-import { StaticRouteFormComponent } from './staticroutes/staticroute-form/staticroute-form.component';
-import { NameserverFormComponent } from './nameserver-form.component';
-import { DefaultRouteFormComponent } from './default-route-form.component';
-import { IPMIComponent } from './ipmi/ipmi.component';
+import { ConfigurationComponent } from './forms/configuration.component';
+import { InterfacesFormComponent } from './forms/interfaces-form.component';
+import { StaticRouteFormComponent } from './forms/staticroute-form.component';
+import { NameserverFormComponent } from './forms/nameserver-form.component';
+import { DefaultRouteFormComponent } from './forms/default-route-form.component';
+import { IPMIFromComponent } from './forms/ipmi-form.component';
 
 @Component({
   selector: 'app-interfaces-list',
@@ -128,7 +128,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   protected staticRouteFormComponent: StaticRouteFormComponent;
   protected nameserverFormComponent: NameserverFormComponent;
   protected defaultRouteFormComponent: DefaultRouteFormComponent;
-  protected impiFormComponent: IPMIComponent;
+  protected impiFormComponent: IPMIFromComponent;
 
   constructor(
     private ws: WebSocketService,
@@ -171,7 +171,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.staticRouteFormComponent = new StaticRouteFormComponent(this.aroute, this.ws, this.networkService);
     this.nameserverFormComponent = new NameserverFormComponent(this.aroute, this.ws, this.networkService);
     this.defaultRouteFormComponent = new DefaultRouteFormComponent(this.aroute, this.ws, this.networkService);
-    this.impiFormComponent = new IPMIComponent(this.ws, this.dialog, this.loader);
+    this.impiFormComponent = new IPMIFromComponent(this.ws, this.dialog, this.loader);
   }
 
   ngOnDestroy() {
