@@ -1,0 +1,15 @@
+mat-card.card-widget {
+    height: calc(100% - 80px);
+}
+
+div.list-group-title {
+    padding: 0 16px 0 0;
+}
+
+mat-card-content.clickable {
+    cursor: pointer;
+}
+
+mat-icon.card-widget-list-icon {
+    padding: 4px 10px 4px 0;
+}
