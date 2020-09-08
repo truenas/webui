@@ -28,7 +28,7 @@ export class IPMIComponent {
   public currentControllerLabel: string;
   public failoverControllerLabel: string;
   public managementIP: string;
-  private options: Array<any> = [
+  public options: Array<any> = [
     {label:'Indefinitely', value: 'force'},
     {label:'15 seconds', value: 15},
     {label:'30 seconds', value: 30},

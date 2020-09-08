@@ -131,7 +131,6 @@ export class ConfigurationComponent {
     ]},
     {
       name: helptext.other,
-      width: "100%",
       label: true,
       config: [
       {
