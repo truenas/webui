@@ -48,8 +48,9 @@ export const helptext_system_advanced = {
 
   overprovision: {
     placeholder: T('SLOG Overprovision Size in GiB'),
-    tooltip: T('Overprovisioning can increase the performance and lifespan of SSDs. \
- Defining a number of GiB here overprovisions disks during pool creation. \
+    tooltip: T('Overprovisioning a Separate Log (SLOG) SSD can increase its performance and lifespan by \
+ distributing writes and erases across more drive flash blocks. \
+ Defining a number of GiB here overprovisions SLOG disks during pool creation. \
  Examples: 50 GiB, 10g, 5GB'),
     error: T('Invalid value. Valid values are numbers followed by optional unit letters \
  for GiB, like <code>256g</code> or <code>1 G</code> or <code>2 GiB</code>.'),
