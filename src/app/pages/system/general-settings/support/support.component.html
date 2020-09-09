@@ -46,5 +46,8 @@
     <button id="file-ticket-btn" (click)="fileTicket()" mat-button color="default">
       {{ ticketText | translate }}
     </button>
+    <button id="proactive-support-btn" (click)="openProactive()" mat-button color="default" *ngIf="hasLicense">
+      {{ proactiveText | translate }}
+    </button>
   </div>
 </div>

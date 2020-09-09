@@ -9,6 +9,8 @@ import { helptext_system_support as helptext } from 'app/helptext/system/support
 import { LicenseComponent } from './license/license.component';
 import { SupportFormLicensedComponent } from './support-licensed/support-form-licensed.component';
 import { SupportFormUnlicensedComponent } from './support-unlicensed/support-form-unlicensed.component';
+import { ProactiveComponent } from './proactive/proactive.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector : 'app-support',
@@ -31,11 +33,13 @@ export class SupportComponent implements OnInit {
   public links = [helptext.docHub, helptext.forums, helptext.licensing];
   public licenseButtonText: string;
   public ticketText = helptext.ticket;
+  public proactiveText = helptext.proactive.title;
 
   protected licenseComponent = new LicenseComponent(this.ws,this.modalService,this.loader,this.dialog);
   protected supportFormLicensed = new SupportFormLicensedComponent(this.mdDialog,this.loader,
     this.ws,this.dialog,this.router,this.modalService);
   protected supportFormUnlicensed = new SupportFormUnlicensedComponent(this.ws,this.mdDialog,this.modalService);
+  protected proactiveComponent = new ProactiveComponent(this.ws,this.loader,this.dialog,this.translate);
 
   public custActions: Array<any> = [];
 
@@ -43,11 +47,12 @@ export class SupportComponent implements OnInit {
               protected prefService: PreferencesService,
               private modalService: ModalService, private loader: AppLoaderService,
               private dialog: DialogService, private mdDialog: MatDialog,
-              private router: Router)
+              private router: Router, private translate: TranslateService)
               {}
 
   ngOnInit() {
     this.ws.call('system.info').subscribe((res) => {
+      console.log(res)
       this.systemInfo = res;
       this.systemInfo.memory = (res.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
       if (res.system_product.includes('MINI')) {
@@ -59,6 +64,13 @@ export class SupportComponent implements OnInit {
         this.hasLicense = true;
         this.licenseInfo = res.license;
         this.parseLicenseInfo();
+        this.ws.call('support.is_available').subscribe(res => {
+          if (res) {
+            this.ws.call('support.is_available_and_enabled').subscribe(res => {
+              console.log(res)
+            })
+          }
+        })
       }
       this.licenseButtonText = this.hasLicense ? helptext.updateTxt : helptext.enterTxt;
     });
@@ -128,5 +140,9 @@ export class SupportComponent implements OnInit {
   fileTicket() {
     const component = this.hasLicense ? this.supportFormLicensed : this.supportFormUnlicensed;
     this.modalService.open('slide-in-form', component);
+  }
+
+  openProactive() {
+    this.modalService.open('slide-in-form', this.proactiveComponent);
   }
 }

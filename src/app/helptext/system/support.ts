@@ -205,5 +205,5 @@ export const helptext_system_support = {
 
   updateTxt: T('Update License'),
   enterTxt: T('Enter License'),
-  ticket: T('Submit a Ticket')
+  ticket: T('File Ticket')
 };

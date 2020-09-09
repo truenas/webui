@@ -18,6 +18,8 @@ export class ProactiveComponent {
   public contacts: any;
   public controls: any;
   public save_button_enabled: boolean;
+  protected columnsOnForm = 2;
+  public title = helptext.proactive.title;
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
   {
@@ -25,11 +27,6 @@ export class ProactiveComponent {
     label: false,
     width: '100%',
     config:[
-      {
-        type: 'paragraph',
-        name: 'TN_proactive_section_title',
-        paraText: '<i class="material-icons">swap_horiz</i>' + helptext.proactive.title
-      },
       {
         type: 'paragraph',
         name: 'TN_proactive_instructions',
@@ -40,7 +37,7 @@ export class ProactiveComponent {
   {
     name: 'col1',
     label: false,
-    width: '47%',
+    width: '50%',
     config:[
       {
         type: 'paragraph',
@@ -106,15 +103,9 @@ export class ProactiveComponent {
     ]
   },
   {
-    name: 'middle',
-    label: false,
-    width: '5%',
-    config:[]
-  },
-  {
     name: 'col2',
     label: false,
-    width: '47%',
+    width: '50%',
     config:[
       {
         type: 'paragraph',

@@ -35,11 +35,6 @@ export class SupportFormLicensedComponent {
       label: false,
       config:[
         {
-          type: 'paragraph',
-          name: 'FN_col2',
-          paraText: '<i class="material-icons">mail</i>' + helptext.contactUs
-        },
-        {
           type : 'input',
           name : 'name',
           placeholder : helptext.name.placeholder,
