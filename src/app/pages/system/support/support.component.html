@@ -1,13 +1,13 @@
 <div class="mat-content" fxLayout="column">
   <div id="top-row" class="container" fxLayout="row wrap">
-    <div id="top-right" fxFlex="50%" fxFlex.xs="100">
+    <div id="top-right" [fxFlex]="isProductImageTall ? '40%' : '100%'">
       <div class="sys-image">
           <app-sys-image
           [product_image]="product_image"
         ></app-sys-image>
       </div>
     </div>
-    <div id="top-left" fxFlex="50%" fxFlex.xs="100" *ngIf="systemInfo">
+    <div id="top-left" [fxFlex]="isProductImageTall ? '60%' : '100%'" *ngIf="systemInfo">
         <app-sys-info
         *ngIf="!hasLicense; else licensedSysInfo"
         [version]='systemInfo.version'
@@ -32,12 +32,14 @@
         </app-sys-info>
       </ng-template>
 
-      <div class="links" *ngFor="let link of links">
-        <div [innerHTML]=link></div>
+      <div class="links-wrapper">
+        <div class="links" *ngFor="let link of links">
+          <div [innerHTML]=link></div>
+        </div>
       </div>
     </div>
   </div>
-  <div class="button-group">
+  <div class="button-group" [class]="isProductImageTall ? 'btn-fixed' : ''">
     <button id="update-license-btn" (click)="updateLicense()"mat-button color="primary">
       {{ licenseButtonText | translate }}
     </button>

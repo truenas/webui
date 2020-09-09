@@ -93,7 +93,7 @@ export class SupportComponent implements OnInit {
     if (imagePath) {
       this.product_image = imagePath;
     } else {
-      this.product_image = 'ix-original.png';
+      this.product_image = 'ix-original-cropped.png';
       this.isProductImageTall = true;
     }
   }

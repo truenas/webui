@@ -3,12 +3,12 @@
     display: grid;
     margin: 0 auto;
     grid-template-rows: fit-content(50vh);
-    grid-template-columns: 46% 27% 27%;
+    grid-template-columns: 50% repeat(2, 1fr);
     grid-template-areas: "system-card data-card1 data-card2"
                          "system-card ntp-card ntp-card";   
         .system-card {
             grid-area: system-card;
-            // min-width: 450px;
+            min-width: 350px;
         }
         .data-card1 {
             grid-area: data-card1;
@@ -40,6 +40,12 @@
             .card-list-item {
                 margin-bottom: 5px;
             }
+            .spacer {
+                height: 1rem;
+            }
+            .spacer-sm{
+                height: 8px;
+            }
         }
     .ntp-table {
         width: 100%;
@@ -69,10 +75,31 @@
 
 @media (max-width: 1299px) {
     .wrapper {
-        grid-template-columns: 50% auto;
+        grid-template-columns: 450px auto;
         grid-template-areas: "system-card data-card1"
                              "system-card data-card2"
                              "ntp-card ntp-card"
+    }
+
+}
+
+@media (max-width: 789px) {
+    .wrapper {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-areas: "system-card system-card"
+                             "data-card1 data-card2"
+                             "ntp-card ntp-card"
+    }
+
+}
+
+@media (max-width: 549px) {
+    .wrapper {
+        grid-template-columns: auto;
+        grid-template-areas: "system-card"
+                             "data-card1"
+                             "data-card2"
+                             "ntp-card"
     }
 
 }

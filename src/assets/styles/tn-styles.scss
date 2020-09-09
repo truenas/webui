@@ -1128,18 +1128,18 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   // Support Section ////////////////////////
   app-support {
-    .mat-card {
-      min-width: 320px;
-    }
-    #top-row {
-      margin: 0 15px;
-    }
+    // .mat-card {
+    //   min-width: 320px;
+    // }
+    // #top-row {
+    //   margin: 0 15px;
+    // }
 
     .sys-image {
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      height: 350px;
+      margin-bottom: 1rem;
 
       div {
         display: flex;
@@ -1172,13 +1172,21 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       right: 45%;
     }
 
-    .button-group {
+    .button-group.btn-fixed {
       position: absolute;
       bottom: 25px;
       left: 25px;
 
       button {
         margin-right: 8px;
+      }
+    }
+
+    @media screen and (max-width: 789px) {
+      .button-group.btn-fixed {
+        position: relative;
+        bottom: 0;
+        left: 0;
       }
     }
 
@@ -1202,6 +1210,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
         margin-left: -20px;
       }
     }
+
+    .links-wrapper {
+      margin-bottom: 1rem;
+    }
     .links {
       margin-bottom: 5px;
 
@@ -1219,6 +1231,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       margin-right: 4px;
     }
     .sys-info-wrapper {
+      margin-top: 5px;
       margin-bottom: 1rem;
     }
     .sys-info-line {
@@ -1250,6 +1263,13 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     img {
       max-width: 90%;
       height: auto;
+      max-height: 325px;
+
+      @media screen and (max-width: 789px) {
+        max-height: 250px;
+        margin-bottom: 1rem;
+      }
+
     }
   }
 

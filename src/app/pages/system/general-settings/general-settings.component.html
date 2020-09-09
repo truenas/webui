@@ -4,6 +4,7 @@
             <h3>{{ supportTitle }}</h3>
         </div>
         <mat-divider></mat-divider>
+        <div class="spacer"></div>
         <app-support></app-support>
     </mat-card>
 
@@ -13,9 +14,10 @@
             <mat-icon (click)="doAdd(card.id)" class="action-icon">settings</mat-icon>
         </div>
         <mat-divider></mat-divider>
+        <div class="spacer-sm"></div>
         <div *ngFor="let item of card.items" class="card-list-item">
-            <span class="label">{{ item.label | translate }}:</span>
-            <span class="value">{{ item.value | translate }}</span>
+          <span class="label">{{ item.label | translate }}:</span>
+          <span class="value">{{ item.value | translate }}</span>
         </div>
     </mat-card>
 
