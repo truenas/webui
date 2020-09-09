@@ -75,7 +75,8 @@ rootpw: {
   placeholder: T('Root Password'),
   tooltip: T('Enter the root password to authorize this operation.'),
   error_msg: T('The administrator password is incorrect.'),
-  error_title: T('Warning')
+  error_title: T('Warning'),
+  dialog_title: T('Action Requires Administrator Confirmation')
 }
 
 }
