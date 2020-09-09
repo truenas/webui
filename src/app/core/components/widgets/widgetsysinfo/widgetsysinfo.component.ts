@@ -229,6 +229,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   }
 
   getFreeNASImage(sys_product) {
+
     if (sys_product && sys_product.includes('CERTIFIED')) {
       this.product_image = '';
       this.certified = true;
@@ -238,20 +239,10 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
     switch(sys_product){
       case "FREENAS-MINI-2.0":
       case "FREENAS-MINI-3.0-E":
-      case "FREENAS-MINI-3.0-E+":
-      case "TRUENAS-MINI-3.0-E":
-      case "TRUENAS-MINI-3.0-E+":
         this.product_image = 'freenas_mini_cropped.png';
-      break;
-      case "FREENAS-MINI-3.0-X":
-      case "FREENAS-MINI-3.0-X+":
-      case "TRUENAS-MINI-3.0-X":
-      case "TRUENAS-MINI-3.0-X+":
-        this.product_image = 'freenas_mini_x_cropped.png';
       break;
       case "FREENAS-MINI-XL":
       case "FREENAS-MINI-3.0-XL+":
-      case "TRUENAS-MINI-3.0-XL+":
         this.product_image = 'freenas_mini_xl_cropped.png';
       break;
       default:
