@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { WebSocketService, AppLoaderService, DialogService } from '../../../services/';
+import { WebSocketService, AppLoaderService, DialogService } from '../../../../services';
 import { PreferencesService } from 'app/core/services/preferences.service';
-import { ModalService } from '../../../services/modal.service';
+import { ModalService } from '../../../../services/modal.service';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { LicenseComponent } from './license/license.component';
 import { SupportFormLicensedComponent } from './support-licensed/support-form-licensed.component';
@@ -13,6 +13,7 @@ import { SupportFormUnlicensedComponent } from './support-unlicensed/support-for
 @Component({
   selector : 'app-support',
   templateUrl: './support.component.html',
+  styleUrls: ['../general-settings.component.scss'],
   providers: []
 })
 export class SupportComponent implements OnInit {

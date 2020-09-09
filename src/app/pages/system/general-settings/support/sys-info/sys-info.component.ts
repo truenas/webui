@@ -5,7 +5,8 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
 @Component({
   selector: 'app-sys-info',
-  templateUrl: './sys-info.component.html'
+  templateUrl: './sys-info.component.html',
+  styleUrls: ['../../general-settings.component.scss'],
 })
 export class SysInfoComponent {
   @Input() version;

@@ -12,7 +12,6 @@ import { routing } from './system.routing';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
 
-import { GeneralComponent } from './general/general.component';
 import { AdvancedComponent } from './advanced/';
 import { DatasetComponent } from './dataset/';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
@@ -26,8 +25,7 @@ import { TunableListComponent } from './tunable/tunable-list/';
 import { TunableFormComponent } from './tunable/tunable-form/';
 import { UpdateComponent } from './update/';
 import { ManualUpdateComponent } from './update/manualupdate/';
-import { NTPServerFormComponent } from './ntpservers/ntpserver-form/';
-import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
+import { NTPServerFormComponent } from './general-settings/ntpservers/ntpserver-form';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
 import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
 import { SshConnectionsListComponent } from './ssh-connections/ssh-connections-list/ssh-connections-list.component';
@@ -41,7 +39,7 @@ import { CertificateAuthoritySignComponent } from './ca/ca-sign/';
 import { CertificateEditComponent } from './certificates/certificate-edit/';
 import { CertificateListComponent } from './certificates/certificate-list';
 import { CertificateAddComponent } from './certificates/certificate-add';
-import { SupportComponent } from './support/support.component';
+import { SupportComponent } from './general-settings/support/support.component';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
 import { TranslateModule } from '@ngx-translate/core';
 import { EmailComponent } from './email';
@@ -53,20 +51,20 @@ import { CertificateAcmeAddComponent } from './certificates/certificate-acme-add
 import { FailoverComponent } from './failover/failover.component';
 import { ReportingComponent } from './reporting/reporting.component';
 import { EnclosureModule } from './viewenclosure/enclosure.module';
-import { EulaComponent } from './support/eula/eula.component';
-import { SysImageComponent } from './support/sys-image/sys-image.component';
-import { ProductionStatusComponent } from './support/production-status/production-status.component';
-import { ProactiveComponent } from './support/proactive/proactive.component';
-import { SupportFormLicensedComponent } from './support/support-licensed/support-form-licensed.component';
-import { SupportFormUnlicensedComponent } from './support/support-unlicensed/support-form-unlicensed.component';
-import { SysInfoComponent } from './support/sys-info/sys-info.component'
+import { EulaComponent } from './general-settings/support/eula/eula.component';
+import { SysImageComponent } from './general-settings/support/sys-image/sys-image.component';
+import { ProductionStatusComponent } from './general-settings/support/production-status/production-status.component';
+import { ProactiveComponent } from './general-settings/support/proactive/proactive.component';
+import { SupportFormLicensedComponent } from './general-settings/support/support-licensed/support-form-licensed.component';
+import { SupportFormUnlicensedComponent } from './general-settings/support/support-unlicensed/support-form-unlicensed.component';
+import { SysInfoComponent } from './general-settings/support/sys-info/sys-info.component'
 import { KmipComponent} from './kmip/kmip.component';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { QRDialog } from './two-factor/two-factor.component';
 import { GeneralSettingsComponent } from './general-settings/general-settings.component';
 import { LocalizationFormComponent } from './general-settings/localization-form/localization-form.component';
 import { GuiFormComponent } from './general-settings/gui-form/gui-form.component';
-import { LicenseComponent } from './support/license/license.component';
+import { LicenseComponent } from './general-settings/support/license/license.component';
 
 @NgModule({
   imports: [
@@ -76,7 +74,6 @@ import { LicenseComponent } from './support/license/license.component';
     EnclosureModule, CommonDirectivesModule, QRCodeModule
   ],
   declarations: [
-    GeneralComponent,
     AdvancedComponent,
     DatasetComponent,
     BootEnvironmentListComponent,
@@ -90,7 +87,6 @@ import { LicenseComponent } from './support/license/license.component';
     TunableFormComponent,
     UpdateComponent,
     ManualUpdateComponent,
-    NTPServerListComponent,
     NTPServerFormComponent,
     AlertServiceListComponent,
     CloudCredentialsListComponent,

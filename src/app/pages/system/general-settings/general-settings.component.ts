@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { LocalizationFormComponent } from './localization-form/localization-form.component';
 import { GuiFormComponent } from './gui-form/gui-form.component';
-import { NTPServerFormComponent } from '../ntpservers/ntpserver-form/ntpserver-form.component';
+import { NTPServerFormComponent } from './ntpservers/ntpserver-form/ntpserver-form.component';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { Subscription } from 'rxjs';
 

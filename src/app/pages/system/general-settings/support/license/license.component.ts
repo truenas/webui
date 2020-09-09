@@ -1,9 +1,9 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
-import { DialogService, WebSocketService } from '../../../../services/';
-import { ModalService } from '../../../../services/modal.service';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { DialogService, WebSocketService } from '../../../../../services';
+import { ModalService } from '../../../../../services/modal.service';
+import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 
 @Component({

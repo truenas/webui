@@ -1,9 +1,5 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-
-//import {GeneralComponent} from './general/';
-
-import { GeneralComponent } from './general/general.component';
 import { AdvancedComponent } from './advanced/';
 import { ViewEnclosureComponent } from './viewenclosure/';
 import { DatasetComponent } from './dataset/';
@@ -18,8 +14,6 @@ import { TunableFormComponent } from './tunable/tunable-form/';
 import { TunableListComponent } from './tunable/tunable-list/';
 import { UpdateComponent } from './update/';
 import { ManualUpdateComponent } from './update/manualupdate/';
-import { NTPServerFormComponent } from './ntpservers/ntpserver-form';
-import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
 import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
 import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
@@ -36,14 +30,14 @@ import { CertificateListComponent } from './certificates/certificate-list';
 import { CertificateAddComponent } from './certificates/certificate-add';
 import { AcmednsListComponent } from './acmedns/acmedns-list/acmedns-list.component';
 import { AcmednsFormComponent } from './acmedns/acmedns-add/acmedns-form.component';
-import { SupportComponent } from './support/support.component';
+import { SupportComponent } from './general-settings/support/support.component';
 import { EmailComponent } from './email/';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
 import { CertificateAcmeAddComponent } from './certificates/certificate-acme-add/certificate-acme-add.component';
 import { FailoverComponent } from './failover/failover.component';
 import { ReportingComponent } from './reporting/reporting.component';
-import { EulaComponent } from './support/eula/eula.component';
+import { EulaComponent } from './general-settings/support/eula/eula.component';
 import { KmipComponent} from './kmip/kmip.component';
 import { T } from '../../translate-marker';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
@@ -51,7 +45,6 @@ import { CredentialsComponent } from './../credentials/credentials.component';
 import { GeneralSettingsComponent } from './general-settings/general-settings.component';
 
 export const routes: Routes = [
-  // {path : '', component : GeneralComponent },
   // {path : '', component : AdvancedComponent }
   {
     path: '',
@@ -174,25 +167,6 @@ export const routes: Routes = [
         },
       ]
     },
-     {
-      path: 'ntpservers',
-      data: { title: T('NTP Servers'), breadcrumb: T('NTP Servers'), icon: 'device_hub' },
-      children: [{
-          path: '',
-          component: NTPServerListComponent,
-          data: { title: T('NTP Servers'), breadcrumb: T('NTP Servers') },
-        }, {
-          path: 'add',
-          component: NTPServerFormComponent,
-          data: { title: T('Add'), breadcrumb: T('Add') },
-        },
-        {
-          path: 'edit/:pk',
-          component: NTPServerFormComponent,
-          data: { title: T('Edit'), breadcrumb: T('Edit') },
-        }
-      ]
-    }, 
     {
       path : 'email', 
       component : EmailComponent,
