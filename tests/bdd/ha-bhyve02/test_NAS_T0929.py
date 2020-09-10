@@ -69,6 +69,7 @@ def the_users_page_should_open(driver):
     assert wait_on_element(driver, 0.5, 5, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 1, 10, '//div[@ix-auto="value__ericbsd_Username"]')
 
+
 @then('On the right side of the table, click the Greater-Than-Sign for one of the users')
 def on_the_right_side_of_the_table_click_the_greaterthansign_for_one_of_the_users(driver):
     """On the right side of the table, click the Greater-Than-Sign for one of the users."""
@@ -135,3 +136,11 @@ def the_changed_permissions_should_be_what_they_were_changed_to(driver):
     assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__home_mode_otherRead"]', 'class', 'mat-checkbox-checked')
     assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__home_mode_otherWrite"]', 'class', 'mat-checkbox-checked')
     assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__home_mode_otherExec"]', 'class', 'mat-checkbox-checked') is False
+    # setting back the original permission for future test
+    assert wait_on_element(driver, 1, 5, '//mat-checkbox[@ix-auto="checkbox__home_mode_groupWrite"]')
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__home_mode_groupWrite"]').click()
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__home_mode_groupExec"]').click()
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__home_mode_otherWrite"]').click()
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__home_mode_otherExec"]').click()
+    assert wait_on_element(driver, 0.5, 5, '//button[@ix-auto="button__SAVE"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
