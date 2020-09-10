@@ -58,15 +58,18 @@ mat-icon.state-icon {
     margin-right: 4px;
 }
 
-mat-icon.STATE_UP {
+mat-icon.state-icon.STATE_UP {
     color: var(--green);
 }
-mat-icon.STATE_DOWN {
+mat-icon.state-icon.STATE_DOWN,
+mat-icon.state-info-icon.STATE_DOWN {
     color: var(--grey);
 }
 
 div.state-info {
     margin-left: 10px;
+    display: flex;
+    align-items: center;
 }
 
 div.view-more-row {

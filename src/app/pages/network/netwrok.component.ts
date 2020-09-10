@@ -185,7 +185,9 @@ export class NetworkComponent implements OnInit, OnDestroy {
       if(evt.interfaces){
         tableSource.map(row => {
           row.received = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].received_bytes);
+          row.received_bytes = evt.interfaces[row.id].received_bytes;
           row.sent = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].sent_bytes);
+          row.sent_bytes = evt.interfaces[row.id].sent_bytes;
           return row;
         });
       }

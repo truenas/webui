@@ -130,5 +130,22 @@ export class TableService {
           case 'DOWN':
             return stateClass.DOWN;
         }
-      }
+    }
+
+    updateStateInfoIcon(elemntId, type: 'sent' | 'received') {
+        const targetEl = document.getElementById(elemntId);
+        const targetIcon = targetEl.firstElementChild;
+        if (targetIcon) {
+            const arrowIcons = targetIcon.getElementsByClassName('arrow');
+            const targetIconEl = type === 'sent' ? arrowIcons[0] : arrowIcons[1];
+
+            setTimeout(function(){
+                targetIconEl.classList.add('active');
+            }, 0);
+
+        setTimeout(function(){
+            targetIconEl.classList.remove('active');
+        }, 2000);
+        }
+    }
 }

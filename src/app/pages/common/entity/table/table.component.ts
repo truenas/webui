@@ -54,6 +54,8 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   private TABLE_MIN_ROWS = 5;
 
+  protected idProp = 'id' ;
+
   constructor(private ws: WebSocketService,
     private tableService: TableService) { }
 
@@ -97,6 +99,8 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.actions = this.tableConf.getActions ? this.tableConf.getActions() : []; // get all row actions
     }
     this.tableService.getData(this);
+
+    this.idProp = this.tableConf.deleteMsg === undefined ? 'id' : this.tableConf.deleteMsg.id_prop || 'id' ;
   }
 
   // getProp(data, prop) {
@@ -123,6 +127,21 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   showInOutInfo(element) {
+    if (element.oldSent === undefined) {
+      element.oldSent = element.sent_bytes;
+    }
+    if (element.oldReceived === undefined) {
+      element.oldReceived = element.received_bytes;
+    }
+    if (element.sent_bytes - element.oldSent > 1024) {
+      element.oldSent = element.sent_bytes;
+      this.tableService.updateStateInfoIcon(element[this.idProp], 'sent');
+    }
+    if (element.received_bytes - element.oldReceived > 1024) {
+      element.oldReceived = element.received_bytes;
+      this.tableService.updateStateInfoIcon(element[this.idProp], 'received');
+    }
+
     return `Sent: ${element.sent} Received: ${element.received}`;
   }
 

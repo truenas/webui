@@ -23,8 +23,8 @@
               {{element[column.prop]}}
             </ng-template>
             <div *ngIf="column.state && tableConf.getInOutInfo" class="state-info">
-              <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-network" class="state-icon sent-icon" *ngIf="unifyState(element[column.prop]) === 'STATE_UP'" [matTooltip]="showInOutInfo(element)"></mat-icon>
-              <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-close-network" class="state-icon sent-icon" *ngIf="unifyState(element[column.prop]) === 'STATE_DOWN'"></mat-icon>
+              <mat-icon [id]="element[idProp]" class="state-info-icon" svgIcon="network-upload-download" *ngIf="unifyState(element[column.prop]) === 'STATE_UP'" [matTooltip]="showInOutInfo(element)" [class]="unifyState(element[column.prop])"></mat-icon>
+              <mat-icon class="state-info-icon" svgIcon="network-upload-download" *ngIf="unifyState(element[column.prop]) === 'STATE_DOWN'" [class]="unifyState(element[column.prop])"></mat-icon>
             </div>
           </div>
         </td>
