@@ -39,9 +39,9 @@ def ssh_key():
     return ssh_key_file.read().strip()
 
 
-@scenario('features/NAS-T930.feature', 'Adding sshkey to a user and verify it works')
-def test_adding_sshkey_to_a_user_and_verify_it_works(driver):
-    """Adding sshkey to a user and verify it works."""
+@scenario('features/NAS-T931.feature', 'Adding sshkey to the root user and verify it works')
+def test_adding_sshkey_to_the_root_user_and_verify_it_works(driver):
+    """Adding sshkey to the root user and verify it works."""
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
@@ -97,26 +97,26 @@ def click_on_the_accounts_click_on_users(driver):
 def the_users_page_should_open(driver):
     """The Users page should open."""
     assert wait_on_element(driver, 0.5, 5, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 1, 10, '//div[@ix-auto="value__ericbsd_Username"]')
+    assert wait_on_element(driver, 1, 10, '//div[@ix-auto="value__root_Username"]')
 
 
-@then('On the right side of the table, click the Greater-Than-Sign for one of the users')
-def on_the_right_side_of_the_table_click_the_greaterthansign_for_one_of_the_users(driver):
-    """On the right side of the table, click the Greater-Than-Sign for one of the users."""
-    assert wait_on_element(driver, 0.5, 5, '//a[@ix-auto="expander__ericbsd"]')
-    driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
+@then('On the right side of the table, click the Greater-Than-Sign for the root user')
+def on_the_right_side_of_the_table_click_the_greaterthansign_for_the_root_user(driver):
+    """On the right side of the table, click the Greater-Than-Sign for the root user."""
+    assert wait_on_element(driver, 0.5, 5, '//a[@ix-auto="expander__root"]')
+    driver.find_element_by_xpath('//a[@ix-auto="expander__root"]').click()
 
 
 @then('The User Field should expand down to list further details')
 def the_user_field_should_expand_down_to_list_further_details(driver):
     """The User Field should expand down to list further details."""
-    assert wait_on_element(driver, 0.5, 5, '//button[@ix-auto="button__EDIT_ericbsd"]')
+    assert wait_on_element(driver, 0.5, 5, '//button[@ix-auto="button__EDIT_root"]')
 
 
 @then('Click the Edit button that appears')
 def click_the_edit_button_that_appears(driver):
     """Click the Edit button that appears."""
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
+    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_root"]').click()
 
 
 @then('The User Edit Page should open')
@@ -138,22 +138,22 @@ def in_the_ssh_public_key_field_paste_a_public_key_and_save_the_change(driver, s
 @then('Change should be saved')
 def change_should_be_saved(driver):
     """Change should be saved."""
-    assert wait_on_element(driver, 0.5, 10, '//div[@ix-auto="value__ericbsd_Username"]')
+    assert wait_on_element(driver, 0.5, 10, '//div[@ix-auto="value__root_Username"]')
 
 
-@then('Reopen the user edit page and ensure that the key was saved')
-def reopen_the_user_edit_page_and_ensure_that_the_key_was_saved(driver):
-    """Reopen the user edit page and ensure that the key was saved."""
-    assert wait_on_element(driver, 0.5, 5, '//a[@ix-auto="expander__ericbsd"]')
-    driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
-    assert wait_on_element(driver, 0.5, 5, '//button[@ix-auto="button__EDIT_ericbsd"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
+@then('Reopen the root user edit page and ensure that the key was saved')
+def reopen_the_root_user_edit_page_and_ensure_that_the_key_was_saved(driver):
+    """Reopen the root user edit page and ensure that the key was saved."""
+    assert wait_on_element(driver, 0.5, 5, '//a[@ix-auto="expander__root"]')
+    driver.find_element_by_xpath('//a[@ix-auto="expander__root"]').click()
+    assert wait_on_element(driver, 0.5, 5, '//button[@ix-auto="button__EDIT_root"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_root"]').click()
     assert wait_on_element(driver, 0.5, 5, '//h4[contains(.,"Identification")]')
 
 
-@then('Public key should be on user page')
-def public_key_should_be_on_user_page(driver, ssh_key):
-    """Public key should be on user page."""
+@then('Public key should be on the root user page')
+def public_key_should_be_on_the_root_user_page(driver, ssh_key):
+    """Public key should be on the root user page."""
     assert wait_on_element(driver, 1, 5, '//h4[contains(.,"Identification")]')
     assert wait_on_element(driver, 0.5, 5, '//textarea[@placeholder="SSH Public Key"]')
     assert attribute_value_exist(driver, '//textarea[@placeholder="SSH Public Key"]', 'value', ssh_key)
@@ -164,7 +164,7 @@ def try_to_ssh_in_with_your_sshkey(driver):
     """Try to ssh in with your sshkey."""
     cmd = 'ls -al'
     global results
-    results = ssh_cmd(cmd, 'ericbsd', None, host)
+    results = ssh_cmd(cmd, 'root', None, host)
     assert results['result'], results['output']
 
 
