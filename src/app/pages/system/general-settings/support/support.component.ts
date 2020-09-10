@@ -11,6 +11,7 @@ import { SupportFormLicensedComponent } from './support-licensed/support-form-li
 import { SupportFormUnlicensedComponent } from './support-unlicensed/support-form-unlicensed.component';
 import { ProactiveComponent } from './proactive/proactive.component';
 import { TranslateService } from '@ngx-translate/core';
+import { tree } from 'd3';
 
 @Component({
   selector : 'app-support',
@@ -26,6 +27,7 @@ export class SupportComponent implements OnInit {
   public FN_instructions;
   public product_image = '';
   public isProductImageTall = false;
+  public extraMargin = true;
   public serverList = ['M40', 'M50', 'X10', 'X20', 'Z20', 'Z30', 'Z35', 'Z50'];
   public systemInfo: any;
   public hasLicense = false;
@@ -39,7 +41,8 @@ export class SupportComponent implements OnInit {
   protected supportFormLicensed = new SupportFormLicensedComponent(this.mdDialog,this.loader,
     this.ws,this.dialog,this.router,this.modalService);
   protected supportFormUnlicensed = new SupportFormUnlicensedComponent(this.ws,this.mdDialog,this.modalService);
-  protected proactiveComponent = new ProactiveComponent(this.ws,this.loader,this.dialog,this.translate);
+  protected proactiveComponent = new ProactiveComponent(this.ws,this.loader,this.dialog,this.translate,
+    this.modalService);
 
   public custActions: Array<any> = [];
 
@@ -52,7 +55,6 @@ export class SupportComponent implements OnInit {
 
   ngOnInit() {
     this.ws.call('system.info').subscribe((res) => {
-      console.log(res)
       this.systemInfo = res;
       this.systemInfo.memory = (res.physmem / 1024 / 1024 / 1024).toFixed(0) + ' GiB';
       if (res.system_product.includes('MINI')) {
@@ -67,7 +69,6 @@ export class SupportComponent implements OnInit {
         this.ws.call('support.is_available').subscribe(res => {
           if (res) {
             this.ws.call('support.is_available_and_enabled').subscribe(res => {
-              console.log(res)
             })
           }
         })
@@ -108,6 +109,7 @@ export class SupportComponent implements OnInit {
     } else {
       this.product_image = 'ix-original-cropped.png';
       this.isProductImageTall = true;
+      this.extraMargin = false;
     }
   }
 
@@ -131,6 +133,7 @@ export class SupportComponent implements OnInit {
       break;
     }
     this.isProductImageTall = true;
+    this.extraMargin = false
   }
 
   updateLicense() {
@@ -144,5 +147,13 @@ export class SupportComponent implements OnInit {
 
   openProactive() {
     this.modalService.open('slide-in-form', this.proactiveComponent);
+  }
+
+  updateProductionStatus(e: any) {
+    if (e.checked) {
+      this.dialog.confirm("Wha", 'Do you want to send the initial debug thingy to ixSystems?',)
+    } else {
+
+    }
   }
 }

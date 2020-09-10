@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
 import { WebSocketService } from 'app/services/';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from '../../../../../services/modal.service';
 import { DialogService } from 'app/services/dialog.service';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -29,7 +30,7 @@ export class ProactiveComponent {
     config:[
       {
         type: 'paragraph',
-        name: 'TN_proactive_instructions',
+        name: 'proactive_instructions',
         paraText: helptext.proactive.instructions
       },
     ]
@@ -41,7 +42,7 @@ export class ProactiveComponent {
     config:[
       {
         type: 'paragraph',
-        name: 'TN_proactive_title',
+        name: 'proactive_title',
         paraText: helptext.proactive.primary_contact
       },
       {
@@ -109,7 +110,7 @@ export class ProactiveComponent {
     config:[
       {
         type: 'paragraph',
-        name: 'TN_proactive_second_title',
+        name: 'proactive_second_title',
         paraText: helptext.proactive.secondary_contact
       },
       {
@@ -185,7 +186,8 @@ export class ProactiveComponent {
 ]
 
   constructor(public ws: WebSocketService, protected loader: AppLoaderService, 
-    protected dialogService: DialogService, private translate: TranslateService) { }
+    protected dialogService: DialogService, private translate: TranslateService,
+    private modalService: ModalService) { }
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
@@ -199,14 +201,13 @@ export class ProactiveComponent {
       'secondary_title',
       'secondary_email',
       'secondary_phone',
-      'TN_proactive_title'
+      'proactive_title'
     ];
 
     const proactiveParatext: Array<any> = [
-      'TN_proactive_section_title',
-      'TN_proactive_instructions',
-      'TN_proactive_title',
-      'TN_proactive_second_title',
+      'proactive_instructions',
+      'proactive_title',
+      'proactive_second_title',
     ];
 
     setTimeout(() => {
@@ -232,13 +233,7 @@ export class ProactiveComponent {
         }
       })
     }, 1000);
-    
-    setTimeout(() => {
-      this.translate.get(helptext.proactive.title).subscribe(res => {
-        _.find(this.fieldConfig, { name: 'TN_proactive_section_title' })
-          .paraText = '<i class="material-icons">swap_horiz</i>' + res;
-      })
-    }, 2000)
+
   }
 
   getContacts() {
@@ -255,11 +250,11 @@ export class ProactiveComponent {
   }
 
   beforeSubmit(data) {
-    delete data.TN_proactive_instructions;
-    delete data.TN_proactive_second_title;
-    delete data.TN_proactive_section_border;
-    delete data.TN_proactive_section_title
-    delete data.TN_proactive_title;
+    delete data.proactive_instructions;
+    delete data.proactive_second_title;
+    delete data.proactive_section_border;
+    delete data.proactive_section_title
+    delete data.proactive_title;
     if (!data.enabled) {
       data.enabled = false;
     }
@@ -269,6 +264,7 @@ export class ProactiveComponent {
     this.loader.open();
     this.ws.call('support.update', [data]).subscribe(() => {
       this.loader.close();
+      this.modalService.close('slide-in-form');
       this.dialogService.Info(helptext.proactive.dialog_title, 
         helptext.proactive.dialog_mesage, '350px', 'info', true);
     }, 

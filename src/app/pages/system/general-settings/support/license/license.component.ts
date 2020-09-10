@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
 import { DialogService, WebSocketService } from '../../../../../services';
@@ -28,7 +28,7 @@ export class LicenseComponent {
       ]
     }
   ];
-  public title = 'License';
+  public title = helptext.update_license.license_placeholder;
   public entityForm: any;
 
   constructor(private ws: WebSocketService, private modalService: ModalService,

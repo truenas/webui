@@ -215,6 +215,11 @@ export const helptext_system_general = {
   default: T('Default'),
   localeTitle: T('Localization'),
   guiTitle: T('GUI'),
+  guiPageTitle: T('GUI Settings'),
   ntpTitle: T('NTP Servers'),
-  supportTitle: T('Support')
+  supportTitle: T('Support'),
+  deleteServer: {
+    title: T('Delete Server'),
+    message: T('Delete')
+  }
 };

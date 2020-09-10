@@ -3,6 +3,7 @@ import { WebSocketService, SystemGeneralService, DialogService, LanguageService,
   from '../../../services/';
 import { LocaleService } from '../../../services/locale.service';
 import { ModalService } from '../../../services/modal.service';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
@@ -11,6 +12,10 @@ import { GuiFormComponent } from './gui-form/gui-form.component';
 import { NTPServerFormComponent } from './ntpservers/ntpserver-form/ntpserver-form.component';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { Subscription } from 'rxjs';
+import { EntityUtils } from '../../common/entity/utils';
+import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 
 @Component({
   selector: 'app-general-settings',
@@ -28,16 +33,87 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   dataSource: any;
   refreshTable: Subscription;
   
+  // Components included in this dashboard
   protected localizationComponent = new LocalizationFormComponent(this.language,this.ws,this.dialog,this.loader,
     this.sysGeneralService,this.localeService,this.modalService);
   protected guiComponent = new GuiFormComponent(this.router,this.language,this.ws,this.dialog,this.loader,
     this.http,this.storage,this.sysGeneralService,this.modalService);
   protected NTPServerFormComponent = new NTPServerFormComponent(this.modalService);
 
+  // Dialog forms and info for saving, uploading, resetting config
+  protected saveConfigFieldConf: FieldConfig[] = [
+    {
+      type: 'checkbox',
+      name: 'secretseed',
+      placeholder: helptext.secretseed.placeholder,
+      tooltip: helptext.secretseed.tooltip
+    },
+    {
+      type: 'checkbox',
+      name: 'pool_keys',
+      placeholder: helptext.poolkeys.placeholder,
+      tooltip: helptext.poolkeys.tooltip
+    }
+  ];
+
+  public saveConfigFormConf: DialogFormConfiguration = {
+    title: helptext.save_config_form.title,
+    message: helptext.save_config_form.message,
+    fieldConfig: this.saveConfigFieldConf,
+    method_ws: 'core.download',
+    saveButtonText: helptext.save_config_form.button_text,
+    customSubmit: this.saveConfigSubmit,
+    parent: this,
+    warning: helptext.save_config_form.warning,
+  }
+
+  protected uploadConfigFieldConf: FieldConfig[] = [
+    {
+      type: 'upload',
+      name: 'upload_config',
+      placeholder : helptext.upload_config.placeholder,
+      tooltip: helptext.upload_config_form.tooltip,
+      validation: helptext.upload_config_form.validation,
+      fileLocation: '',
+      updater: this.updater,
+      parent: this,
+      hideButton: true,
+    }
+  ];
+
+  public uploadConfigFormConf: DialogFormConfiguration = {
+    title: helptext.upload_config_form.title,
+    fieldConfig: this.uploadConfigFieldConf,
+    method_ws: 'config.upload',
+    saveButtonText: helptext.upload_config_form.button_text,
+    customSubmit: this.uploadConfigSubmit,
+    message: helptext.upload_config_form.message,
+  }
+
+  protected resetConfigFieldConf: FieldConfig[] = [
+    {
+      type: 'checkbox',
+      name: 'reboot_option',
+      placeholder: helptext.reset_config_placeholder,
+      required: true
+    }
+  ]
+
+  public resetConfigFormConf: DialogFormConfiguration = {
+    title: helptext.reset_config_form.title,
+    message: helptext.reset_config_form.message,
+    fieldConfig: this.resetConfigFieldConf,
+    method_ws: 'config.reset',
+    saveButtonText: helptext.reset_config_form.button_text,
+    customSubmit: this.resetConfigSubmit,
+    parent: this
+  }
+
   constructor(private ws: WebSocketService, private localeService: LocaleService,
     private sysGeneralService: SystemGeneralService, private modalService: ModalService,
     private language: LanguageService, private dialog: DialogService, private loader: AppLoaderService,
-    private router: Router, private http: HttpClient, private storage: StorageService) { }
+    private router: Router, private http: HttpClient, private storage: StorageService,
+    public mdDialog: MatDialog) { }
 
   ngOnInit(): void {
     this.getDataCardData();
@@ -66,6 +142,11 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
             {label: helptext.stg_guihttpsredirect.placeholder, value: res.ui_httpsredirect},
             {label: helptext.crash_reporting.placeholder, value: res.crash_reporting ? helptext.enabled : helptext.disabled},
             {label: helptext.usage_collection.placeholder, value: res.usage_collection ? helptext.enabled : helptext.disabled}
+          ],
+          actions: [
+            { label: helptext.actions.save_config, value: 'saveConfig', icon: 'save_alt'},
+            { label: helptext.actions.upload_config, value: 'upLoadConfig', icon: 'arrow_upward' },
+            { label: helptext.actions.reset_config, value: 'resetConfig', icon: 'replay' },
           ]
         }
       ];
@@ -108,7 +189,8 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   }
 
   doNTPDelete(server: any) {
-    this.dialog.confirm('Delete server', `Delete ${server.address}?`, false, 'Delete').subscribe(res => {
+    this.dialog.confirm(helptext.deleteServer.title, `${helptext.deleteServer.message} ${server.address}?`, 
+      false, helptext.deleteServer.message).subscribe(res => {
       if (res) {
         this.loader.open();
         this.ws.call('system.ntpserver.delete', [server.id]).subscribe(res => {
@@ -127,6 +209,105 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
       this.dataSource = res;
       this.displayedColumns = ['address', 'burst', 'iburst', 'prefer', 'minpoll', 'maxpoll', 'actions'];
     })
+  }
+
+  doCardActions(action: string) {
+    switch (action) {
+      case 'saveConfig':
+        this.dialog.dialogForm(this.saveConfigFormConf);
+        break;
+      case 'upLoadConfig':
+        this.dialog.dialogForm(this.uploadConfigFormConf);
+        break;
+      case 'resetConfig':
+        this.dialog.dialogForm(this.resetConfigFormConf);
+        break;
+    }
+  }
+
+  saveConfigSubmit(entityDialog) {
+    parent = entityDialog.parent;
+    entityDialog.loader.open();
+    entityDialog.ws.call('system.info', []).subscribe((res) => {
+      let fileName = "";
+      let mimetype;
+      if (res) {
+        let hostname = res.hostname.split('.')[0];
+        let date = entityDialog.datePipe.transform(new Date(),"yyyyMMddHHmmss");
+        fileName = hostname + '-' + res.version + '-' + date;
+        if (entityDialog.formValue['secretseed'] || entityDialog.formValue['pool_keys']) {
+          mimetype = 'application/x-tar';
+          fileName += '.tar';
+        } else {
+          mimetype = 'application/x-sqlite3';
+          fileName += '.db';
+        }
+      }
+
+      entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'],
+                                                               'pool_keys': entityDialog.formValue['pool_keys'] }],
+                                                               fileName])
+        .subscribe(
+          (download) => {
+            const url = download[1];
+            entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype).subscribe(file => {
+              entityDialog.loader.close();
+              entityDialog.dialogRef.close();
+              entityDialog.parent.storage.downloadBlob(file, fileName);
+            }, err => {
+              entityDialog.loader.close();
+              entityDialog.dialogRef.close();
+              entityDialog.parent.dialog.errorReport(helptext.config_download.failed_title, 
+                helptext.config_download.failed_message, err.message);
+            });
+          },
+          (err) => {
+            entityDialog.loader.close();
+            entityDialog.dialogRef.close();
+            new EntityUtils().handleWSError(entityDialog, err, entityDialog.dialog);
+          }
+        );
+    },
+    (err) => {
+      entityDialog.loader.close();
+      entityDialog.dialogRef.close();
+      new EntityUtils().handleWSError(entityDialog, err, entityDialog.dialog);
+    });
+  }
+
+  updater(file: any, parent: any){
+    const fileBrowser = file.fileInput.nativeElement;
+    if (fileBrowser.files && fileBrowser.files[0]) {
+      parent.subs = {"apiEndPoint":file.apiEndPoint, "file": fileBrowser.files[0]}
+    }
+  }
+
+  uploadConfigSubmit(entityDialog) {
+    console.log(entityDialog)
+    const parent = entityDialog.conf.fieldConfig[0].parent;
+    const formData: FormData = new FormData();
+
+    const dialogRef = parent.mdDialog.open(EntityJobComponent, 
+      {data: {"title":helptext.config_upload.title,"CloseOnClickOutside":false}});
+        dialogRef.componentInstance.setDescription(helptext.config_upload.message);
+        formData.append('data', JSON.stringify({
+          "method": "config.upload",
+          "params": []
+        }));
+    formData.append('file', parent.subs.file);
+    dialogRef.componentInstance.wspost(parent.subs.apiEndPoint, formData);
+    dialogRef.componentInstance.success.subscribe(res=>{
+      dialogRef.close();
+      parent.router.navigate(['/others/reboot']);
+    })
+    dialogRef.componentInstance.failure.subscribe((res) => {
+      dialogRef.componentInstance.setDescription(res.error);
+    });
+  }
+
+  resetConfigSubmit(entityDialog) {
+    const parent = entityDialog.parent;
+    parent.router.navigate(new Array('').concat(['others', 'config-reset']))
   }
 
   ngOnDestroy() {

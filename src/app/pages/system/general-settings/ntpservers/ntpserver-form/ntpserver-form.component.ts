@@ -1,9 +1,7 @@
-import { ApplicationRef, Component, Injector } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component } from '@angular/core';
 import { Validators } from "@angular/forms";
 
 import { helptext_system_ntpservers as helptext } from 'app/helptext/system/ntpservers';
-import { WebSocketService } from '../../../../../services';
 import { ModalService } from 'app/services/modal.service';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -14,7 +12,6 @@ import { greaterThan } from "app/pages/common/entity/entity-form/validators/comp
   template : `<entity-form [conf]="this"></entity-form>`
 })
 export class NTPServerFormComponent {
-  // protected route_success: string[] = [ 'system', 'ntpservers' ];
   protected addCall = 'system.ntpserver.create';
   protected editCall = 'system.ntpserver.update';
   protected queryCall = 'system.ntpserver.query';
@@ -91,11 +88,6 @@ export class NTPServerFormComponent {
 
   constructor(
     private modalService: ModalService
-      // protected router: Router,
-      // protected route: ActivatedRoute,
-      // protected ws: WebSocketService,
-      // protected _injector: Injector,
-      // protected _appRef: ApplicationRef
   ) {}
 
   afterSubmit() {

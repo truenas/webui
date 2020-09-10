@@ -72,6 +72,9 @@
         th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type {
             padding-left: 0 !important;
         }
+        .table-row:hover {
+          background-color: var(--hover-bg);;
+        }
     }
 
 
@@ -122,6 +125,12 @@
 //     justify-content: center;
 //     }
 // }
+
+.extra-margin {
+  text-align: center ;
+  margin-bottom: 1rem;
+}
+
 .title {
     color: var(--fg2);
     margin: 5px;

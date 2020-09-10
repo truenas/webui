@@ -2,19 +2,14 @@ import { Component, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
-import { map } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
-import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
-import { DialogService, LanguageService, RestService, StorageService, 
+import { DialogService, LanguageService, StorageService, 
   SystemGeneralService, WebSocketService } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { LocaleService } from 'app/services/locale.service';
 import { ModalService } from '../../../../services/modal.service';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 
@@ -23,7 +18,7 @@ import { EntityUtils } from '../../../common/entity/utils';
   template: `<entity-form [conf]="this"></entity-form>`,
   providers: []
 })
-export class GuiFormComponent {
+export class GuiFormComponent implements OnDestroy{
   protected queryCall = 'none';
   protected updateCall = 'system.general.update';
   public sortLanguagesByName = true;
@@ -35,8 +30,8 @@ export class GuiFormComponent {
   public fieldSets: FieldSet[] = [
     {
       name: helptext.stg_fieldset_gui,
-      width: "50%",
-      label: true,
+      width: "100%",
+      label: false,
       config: [
         {
           type: "select",
@@ -66,15 +61,7 @@ export class GuiFormComponent {
           required: true,
           options: [],
           validation: [this.IPValidator("ui_v6address", "::")]
-        }
-      ]
-    },
-    {
-      name: helptext.stg_fieldset_gui + '2',
-      width: "50%",
-      label: false,
-      class: 'lowerme-guiform',
-      config: [
+        },
         {
           type: "input",
           name: "ui_port",
@@ -107,7 +94,6 @@ export class GuiFormComponent {
         }
       ]
     },
-    { name: "divider", divider: true },
     {
       name: helptext.stg_fieldset_other,
       label: true,
@@ -126,98 +112,9 @@ export class GuiFormComponent {
         },
       ]
     },
-    { name: "divider", divider: true }
   ];
-
-  protected saveConfigFieldConf: FieldConfig[] = [
-    {
-      type: 'checkbox',
-      name: 'secretseed',
-      placeholder: helptext.secretseed.placeholder,
-      tooltip: helptext.secretseed.tooltip
-    },
-    {
-      type: 'checkbox',
-      name: 'pool_keys',
-      placeholder: helptext.poolkeys.placeholder,
-      tooltip: helptext.poolkeys.tooltip
-    }
-  ];
-  public saveConfigFormConf: DialogFormConfiguration = {
-    title: helptext.save_config_form.title,
-    message: helptext.save_config_form.message,
-    fieldConfig: this.saveConfigFieldConf,
-    method_ws: 'core.download',
-    saveButtonText: helptext.save_config_form.button_text,
-    customSubmit: this.saveConfigSubmit,
-    parent: this,
-    warning: helptext.save_config_form.warning,
-  }
-
-  protected uploadConfigFieldConf: FieldConfig[] = [
-    {
-      type: 'upload',
-      name: 'upload_config',
-      placeholder : helptext.upload_config.placeholder,
-      tooltip: helptext.upload_config_form.tooltip,
-      validation: helptext.upload_config_form.validation,
-      fileLocation: '',
-      updater: this.updater,
-      parent: this,
-      hideButton: true,
-    }
-  ];
-  public uploadConfigFormConf: DialogFormConfiguration = {
-    title: helptext.upload_config_form.title,
-    fieldConfig: this.uploadConfigFieldConf,
-    method_ws: 'config.upload',
-    saveButtonText: helptext.upload_config_form.button_text,
-    customSubmit: this.uploadConfigSubmit,
-    message: helptext.upload_config_form.message,
-  }
-
-  protected resetConfigFieldConf: FieldConfig[] = [
-    {
-      type: 'checkbox',
-      name: 'reboot_option',
-      placeholder: helptext.reset_config_placeholder,
-      required: true
-    }
-  ]
-
-  public resetConfigFormConf: DialogFormConfiguration = {
-    title: helptext.reset_config_form.title,
-    message: helptext.reset_config_form.message,
-    fieldConfig: this.resetConfigFieldConf,
-    method_ws: 'config.reset',
-    saveButtonText: helptext.reset_config_form.button_text,
-    customSubmit: this.resetConfigSubmit,
-    parent: this
-  }
-
-  public custActions: Array<any> = [
-  {
-    id : 'save_config',
-    name : helptext.actions.save_config,
-    function : () => {
-      this.dialog.dialogForm(this.saveConfigFormConf);
-    }
-  },{
-    id : 'upload_config',
-    name: helptext.actions.upload_config,
-    function : () => {
-      this.dialog.dialogForm(this.uploadConfigFormConf);
-    }
-  },{
-    id : 'reset_config',
-    name: helptext.actions.reset_config,
-    function: () => {
-      this.dialog.dialogForm(this.resetConfigFormConf);
-    }
-  }];
 
   private ui_certificate: any;
-
   private addresses: any;
   private v6addresses: any;
   private http_port: any;
@@ -226,7 +123,7 @@ export class GuiFormComponent {
   private guicertificate: any;
   private entityForm: any;
   private configData: any;
-  protected columnsOnForm = 2
+  protected title = helptext.guiPageTitle;
 
   constructor(
     protected router: Router,
@@ -306,7 +203,7 @@ export class GuiFormComponent {
       });
 
     const httpsprotocolsField = this.fieldSets
-      .find(set => set.name === helptext.stg_fieldset_gui + '2')
+      .find(set => set.name === helptext.stg_fieldset_gui)
       .config.find(config => config.name === "ui_httpsprotocols");
 
     entityEdit.ws.call('system.general.ui_httpsprotocols_choices').subscribe(
@@ -397,91 +294,7 @@ export class GuiFormComponent {
     this.language.setLang(value.language);
   }
 
-  saveConfigSubmit(entityDialog) {
-    parent = entityDialog.parent;
-    entityDialog.loader.open();
-    entityDialog.ws.call('system.info', []).subscribe((res) => {
-      let fileName = "";
-      let mimetype;
-      if (res) {
-        let hostname = res.hostname.split('.')[0];
-        let date = entityDialog.datePipe.transform(new Date(),"yyyyMMddHHmmss");
-        fileName = hostname + '-' + res.version + '-' + date;
-        if (entityDialog.formValue['secretseed'] || entityDialog.formValue['pool_keys']) {
-          mimetype = 'application/x-tar';
-          fileName += '.tar';
-        } else {
-          mimetype = 'application/x-sqlite3';
-          fileName += '.db';
-        }
-      }
-
-      entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'],
-                                                               'pool_keys': entityDialog.formValue['pool_keys'] }],
-                                                               fileName])
-        .subscribe(
-          (download) => {
-            const url = download[1];
-            entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype).subscribe(file => {
-              entityDialog.loader.close();
-              entityDialog.dialogRef.close();
-              entityDialog.parent.storage.downloadBlob(file, fileName);
-            }, err => {
-              entityDialog.loader.close();
-              entityDialog.dialogRef.close();
-              entityDialog.parent.dialog.errorReport(helptext.config_download.failed_title, 
-                helptext.config_download.failed_message, err.message);
-            });
-          },
-          (err) => {
-            entityDialog.loader.close();
-            entityDialog.dialogRef.close();
-            new EntityUtils().handleWSError(entityDialog, err, entityDialog.dialog);
-          }
-        );
-    },
-    (err) => {
-      entityDialog.loader.close();
-      entityDialog.dialogRef.close();
-      new EntityUtils().handleWSError(entityDialog, err, entityDialog.dialog);
-    });
-  }
-
-  updater(file: any, parent: any){
-    const fileBrowser = file.fileInput.nativeElement;
-    if (fileBrowser.files && fileBrowser.files[0]) {
-      parent.subs = {"apiEndPoint":file.apiEndPoint, "file": fileBrowser.files[0]}
-    }
-  }
-
-  uploadConfigSubmit(entityDialog) {
-    const parent = entityDialog.conf.fieldConfig[0].parent;
-    const formData: FormData = new FormData();
-
-    const dialogRef = parent.mdDialog.open(EntityJobComponent, 
-      {data: {"title":helptext.config_upload.title,"CloseOnClickOutside":false}});
-        dialogRef.componentInstance.setDescription(helptext.config_upload.message);
-        formData.append('data', JSON.stringify({
-          "method": "config.upload",
-          "params": []
-        }));
-    formData.append('file', parent.subs.file);
-    dialogRef.componentInstance.wspost(parent.subs.apiEndPoint, formData);
-    dialogRef.componentInstance.success.subscribe(res=>{
-      dialogRef.close();
-      parent.router.navigate(['/others/reboot']);
-    })
-    dialogRef.componentInstance.failure.subscribe((res) => {
-      dialogRef.componentInstance.setDescription(res.error);
-    });
-  }
-
-  resetConfigSubmit(entityDialog) {
-    const parent = entityDialog.parent;
-    parent.router.navigate(new Array('').concat(['others', 'config-reset']))
-  }
-
-  public customSubmit(body) {
+   public customSubmit(body) {
     this.loader.open();
     return this.ws.call('system.general.update', [body]).subscribe(() => {
       this.loader.close();
