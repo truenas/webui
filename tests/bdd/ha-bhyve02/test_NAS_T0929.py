@@ -144,3 +144,5 @@ def the_changed_permissions_should_be_what_they_were_changed_to(driver):
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__home_mode_otherExec"]').click()
     assert wait_on_element(driver, 0.5, 5, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 1, 5, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 1, 5, '//div[@ix-auto="value__ericbsd_Username"]')
