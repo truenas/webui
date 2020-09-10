@@ -834,6 +834,16 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(color, --yellow-txt, $yellow-txt);
   }
 
+  .fn-theme-contrast-darker{
+    background-color: var(--contrast-darker);
+    color: var(--fg2);
+  }
+
+  .fn-theme-contrast-lighter{
+    background-color: var(--contrast-lighter);
+    color: var(--fg2);
+  }
+
   // Fixes color on Reports page tabs
   #dashboardcontainerdiv .mat-ink-bar {
     @include variable(background-color, --primary, $primary);

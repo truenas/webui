@@ -11,7 +11,7 @@ export const DefaultTheme = {
       label: "iX Dark",
       labelSwatch:"blue",
       description:'TrueNAS 12 default theme',
-      accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
+      accentColors:['blue', 'violet', 'orange', 'cyan', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
       topbar:"#111111",
       'topbar-txt': "var(--fg2)",
@@ -71,6 +71,7 @@ export class ThemeService {
   readonly freeThemeDefaultIndex = 0;
   public activeTheme: string = 'default';
   public defaultTheme: string = 'ix-dark';
+  public defaultLightTheme: string = 'ix-blue';
   public activeThemeSwatch: string[];
 
   // Theme lists
@@ -482,4 +483,8 @@ export class ThemeService {
     return hsl[2] < 50 ? true : false;
   }
 
+  isDarkTheme(name: string = this.activeTheme): boolean{
+    const theme = this.findTheme(name);
+    return  this.darkTest(theme.bg2);
+  }
 }
