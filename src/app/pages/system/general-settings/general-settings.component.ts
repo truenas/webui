@@ -283,7 +283,6 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   }
 
   uploadConfigSubmit(entityDialog) {
-    console.log(entityDialog)
     const parent = entityDialog.conf.fieldConfig[0].parent;
     const formData: FormData = new FormData();
 
