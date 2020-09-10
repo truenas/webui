@@ -127,7 +127,7 @@ def click_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
 @then('the service should be enabled with no errors')
 def the_service_should_be_enabled_with_no_errors(driver):
     """the service should be enabled with no errors."""
-    wait_for_value = wait_for_attribute_value(driver, 0.5, 5, '//mat-slide-toggle[@ix-auto="slider__SSH_Running"]', 'class', 'mat-checked')
+    wait_for_value = wait_for_attribute_value(driver, 1, 5, '//mat-slide-toggle[@ix-auto="slider__SSH_Running"]', 'class', 'mat-checked')
     assert wait_for_value
     # make sure to scroll back up the mat-list-item
     element = driver.find_element_by_xpath('//span[contains(.,"root")]')
