@@ -205,5 +205,14 @@ export const helptext_system_support = {
 
   updateTxt: T('Update License'),
   enterTxt: T('Enter License'),
-  ticket: T('File Ticket')
+  ticket: T('File Ticket'),
+
+  updateProd: {
+    title: T('Update Production Status'),
+    message: T('Set production status as active'),
+    checkbox: T('Send initial debug'),
+    button: T('Proceed')
+  }
+
+  
 };

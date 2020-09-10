@@ -11,7 +11,8 @@ import { SupportFormLicensedComponent } from './support-licensed/support-form-li
 import { SupportFormUnlicensedComponent } from './support-unlicensed/support-form-unlicensed.component';
 import { ProactiveComponent } from './proactive/proactive.component';
 import { TranslateService } from '@ngx-translate/core';
-import { tree } from 'd3';
+import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
   selector : 'app-support',
@@ -75,6 +76,11 @@ export class SupportComponent implements OnInit {
       }
       this.licenseButtonText = this.hasLicense ? helptext.updateTxt : helptext.enterTxt;
     });
+    setTimeout(() => {
+      this.ws.call('truenas.is_production').subscribe((res) => {
+        this.isProduction = res;
+      });
+    }, 500)
   };
 
   parseLicenseInfo() {
@@ -151,9 +157,51 @@ export class SupportComponent implements OnInit {
 
   updateProductionStatus(e: any) {
     if (e.checked) {
-      this.dialog.confirm("Wha", 'Do you want to send the initial debug thingy to ixSystems?',)
+      this.dialog.dialogForm(this.updateProdStatusConf);
     } else {
-
+      this.ws.call('truenas.set_production', [false, false]).subscribe(() => {
+        this.dialog.Info(helptext.is_production_dialog.title, 
+          helptext.is_production_dialog.message, '300px', 'info', true);
+      },     (err) => {
+        this.loader.close();
+        this.dialog.errorReport(helptext.is_production_error_dialog.title,
+          err.error.message, err.error.traceback);
+      });
     }
+  }
+
+  protected updateProdStatus: FieldConfig[] = [
+    {
+      type: 'checkbox',
+      name: 'send_debug',
+      placeholder : helptext.updateProd.checkbox,
+      value: false
+    }
+  ];
+
+  public updateProdStatusConf: DialogFormConfiguration = {
+    title: helptext.updateProd.title,
+    fieldConfig: this.updateProdStatus,
+    method_ws: 'truenas.set_production',
+    saveButtonText: helptext.updateProd.button,
+    customSubmit: this.doProdUpdate,
+    message: helptext.updateProd.message,
+  }
+
+  doProdUpdate(entityDialog: any) {
+    const self = entityDialog;
+    self.loader.open();
+    self.ws.call(self.conf.method_ws, [true, self.formValue.send_debug]).subscribe(() => {
+      self.loader.close();
+      self.dialogRef.close();
+      self.dialog.Info(helptext.is_production_dialog.title, 
+        helptext.is_production_dialog.message, '300px', 'info', true);
+    },
+    (err) => {
+      self.loader.close();
+      self.dialogRef.close();
+      self.dialog.errorReport(helptext.is_production_error_dialog.title,
+        err.error.message, err.error.traceback);
+    });
   }
 }
