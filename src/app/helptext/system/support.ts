@@ -190,7 +190,7 @@ export const helptext_system_support = {
    Create a Jira account</a> to file an issue. Use a valid \
    email address when registering to receive issue status updates.'),
 
-   submitBtn: T('Submit'),
+   submitBtn: T('Save'),
   
    contactUs: T('Contact Support'),
 
