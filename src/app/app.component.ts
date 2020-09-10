@@ -118,6 +118,10 @@ export class AppComponent {
 
     // TRUENAS CORE
     this.matIconRegistry.addSvgIcon(
+      "truenas_core_logomark_color",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logomark_rgb.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
       "truenas_core_logomark",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logomark.svg")
     );
