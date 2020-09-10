@@ -455,6 +455,8 @@ export class DatasetFormComponent implements Formconfiguration{
           { label: 'verify', value: 'VERIFY' },
           { label: 'off', value: 'OFF' }
         ],
+        disabled: true,
+        isHidden: true,
       },
       {
         type: 'select',
@@ -738,6 +740,11 @@ export class DatasetFormComponent implements Formconfiguration{
 
   afterInit(entityForm: EntityFormComponent) {
     this.entityForm = entityForm;
+    this.ws.call('system.info').subscribe((res) => {
+        if (res.license && res.license.features.indexOf('DEDUP') > -1) {
+          this.entityForm.setDisabled('deduplication',false, false);
+        }
+      });
     if (!this.parent){
       _.find(this.fieldConfig, {name:'quota_warning_inherit'}).placeholder = helptext.dataset_form_default;
       _.find(this.fieldConfig, {name:'quota_critical_inherit'}).placeholder = helptext.dataset_form_default;
