@@ -1563,5 +1563,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       }
   }
 
+  // NTP form
+  input#minpoll, input#maxpoll {
+    width: 131px !important;
+  }
+
 
 } // end of ix theme
