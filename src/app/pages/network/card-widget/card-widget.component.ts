@@ -5,6 +5,7 @@ export interface CardWidgetConf {
     data: any,
     parent: any,
     icon?: string,
+    showGroupTitle?: boolean;
     onclick?(),
 }
 
@@ -19,8 +20,6 @@ export class CardWidgetComponent implements OnInit{
     constructor(){}
 
     ngOnInit() {
-        console.log(this.widgetConf);
-        
     }
 
 }

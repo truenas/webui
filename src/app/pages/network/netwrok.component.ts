@@ -73,7 +73,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     title: "Nameserver",
     data: {},
     parent: this,
-    icon: 'dns',
+    showGroupTitle: false,
     onclick: function() {
       this.parent.modalService.open('slide-in-form', this.parent.nameserverFormComponent);
     },
@@ -84,6 +84,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     data: {},
     parent: this,
     icon: 'router',
+    showGroupTitle: true,
     onclick: function() {
       this.parent.modalService.open('slide-in-form', this.parent.defaultRouteFormComponent);
     }
