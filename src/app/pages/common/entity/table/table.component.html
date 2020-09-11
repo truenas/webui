@@ -14,6 +14,10 @@
         <th mat-header-cell *matHeaderCellDef> {{column.name}} </th>
         <td mat-cell *matCellDef="let element">
           <div class="table-cell">
+            <div *ngIf="column.state && column.state.prop && tableConf.getInOutInfo" class="state-info">
+              <mat-icon [id]="element[idProp]" class="state-info-icon" svgIcon="network-upload-download" *ngIf="unifyState(element[column.state.prop]) === 'STATE_UP'" [matTooltip]="showInOutInfo(element)" [class]="unifyState(element[column.state.prop])"></mat-icon>
+              <mat-icon class="state-info-icon" svgIcon="network-upload-download-disabled" *ngIf="unifyState(element[column.state.prop]) === 'STATE_DOWN'" [class]="unifyState(element[column.state.prop])"></mat-icon>
+            </div>
             <mat-icon class="state-icon" *ngIf="column.state" [class]="unifyState(element[column.prop])">
               {{column.state.icon}}</mat-icon>
             <ul *ngIf="column.listview; else textView">
@@ -22,10 +26,6 @@
             <ng-template #textView>
               {{element[column.prop]}}
             </ng-template>
-            <div *ngIf="column.state && tableConf.getInOutInfo" class="state-info">
-              <mat-icon [id]="element[idProp]" class="state-info-icon" svgIcon="network-upload-download" *ngIf="unifyState(element[column.prop]) === 'STATE_UP'" [matTooltip]="showInOutInfo(element)" [class]="unifyState(element[column.prop])"></mat-icon>
-              <mat-icon class="state-info-icon" svgIcon="network-upload-download" *ngIf="unifyState(element[column.prop]) === 'STATE_DOWN'" [class]="unifyState(element[column.prop])"></mat-icon>
-            </div>
           </div>
         </td>
       </ng-container>

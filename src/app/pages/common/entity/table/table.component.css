@@ -67,7 +67,6 @@ mat-icon.state-info-icon.STATE_DOWN {
 }
 
 div.state-info {
-    margin-left: 10px;
     display: flex;
     align-items: center;
 }
