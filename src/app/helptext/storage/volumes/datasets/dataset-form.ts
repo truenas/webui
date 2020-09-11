@@ -76,6 +76,7 @@ dataset_form_deduplication_tooltip: T('Transparently reuse a single copy of dupl
  data to save space. Deduplication can improve storage capacity, but is RAM intensive. \
  Compressing data is generally recommended before using deduplication. Deduplicating data is \
  a one-way process. <b>Deduplicated data cannot be undeduplicated!</b>.'),
+dataset_form_deduplication_warning: T('Deduplication is ram intensive and premanently affects data'),
 
 dataset_form_readonly_placeholder: T('Read-only'),
 dataset_form_readonly_tooltip: T('Set to prevent the dataset from being modified.'),

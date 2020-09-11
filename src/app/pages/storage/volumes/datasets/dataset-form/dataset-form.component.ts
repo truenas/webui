@@ -73,6 +73,10 @@ export class DatasetFormComponent implements Formconfiguration{
   protected recordsize_fg: any;
   protected recommended_size_number: any;
   protected recordsize_warning: any;
+  protected dedup_warned = false;
+  protected dedup_value: any;
+  protected dedup_fg: any;
+  protected dedup_field: any;
   public namesInUse = [];
   public nameIsCaseInsensitive = false;
 
@@ -740,11 +744,27 @@ export class DatasetFormComponent implements Formconfiguration{
 
   afterInit(entityForm: EntityFormComponent) {
     this.entityForm = entityForm;
-    this.ws.call('system.info').subscribe((res) => {
+    if (window.localStorage.getItem('is_freenas') === 'false') {
+      this.ws.call('system.info').subscribe((res) => {
         if (res.license && res.license.features.indexOf('DEDUP') > -1) {
           this.entityForm.setDisabled('deduplication',false, false);
         }
       });
+    } else {
+      this.entityForm.setDisabled('deduplication',false, false);
+    }
+
+    this.dedup_fg = this.entityForm.formGroup.controls['deduplication'];
+    this.dedup_field = _.find(this.fieldConfig, {name:'deduplication'});
+    this.dedup_value = this.dedup_fg.value;
+    this.dedup_fg.valueChanges.subscribe(dedup=>{
+      if (dedup === 'INHERIT' || dedup === 'OFF') {
+        this.dedup_field.warnings = ''
+      } else {
+        this.dedup_field.warnings = helptext.dataset_form_deduplication_warning;;
+      }
+    });
+    
     if (!this.parent){
       _.find(this.fieldConfig, {name:'quota_warning_inherit'}).placeholder = helptext.dataset_form_default;
       _.find(this.fieldConfig, {name:'quota_critical_inherit'}).placeholder = helptext.dataset_form_default;
