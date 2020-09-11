@@ -1,11 +1,11 @@
-div.app-table {
+mat-card.app-table {
     margin: 24px;
     background: var(--bg2);
     height: calc(100% - 50px);
 }
 div.table-title {
     background: var(--bg2);
-    padding: 10px 24px;
+    padding: 10px 16px;
 }
 
 div.table-title > h3 {

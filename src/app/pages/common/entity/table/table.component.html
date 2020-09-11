@@ -1,4 +1,4 @@
-<div class="app-table" fxLayout="column" #apptable>
+<mat-card class="app-table" fxLayout="column" #apptable>
   <div class="table-title" fxLayout="row" fxLayoutAlign="space-between center">
     <h3 *ngIf="title">{{title}}</h3>
     <div class="table-title-action">
@@ -53,4 +53,4 @@
   </div>
   <div class="view-more-row" *ngIf="showViewMore" (click)="openViewMore()">View More</div>
   <div class="view-more-row" *ngIf="showCollapse" (click)="collapse()">Collapse</div>
-</div>
+</mat-card>
