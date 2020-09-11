@@ -75,6 +75,7 @@ export class EntityUtils {
       let scroll = false;
       if (res.extra.excerpt) {
         this.errorReport(res, dialog);
+        entity.modalService.close('slide-in-form');
       }
       for (let i = 0; i < res.extra.length; i++) {
         let field = res.extra[i][0].split('.');
@@ -117,11 +118,13 @@ export class EntityUtils {
             entity.error = error;
           } else {
             this.errorReport(res, dialog);
+            entity.modalService.close('slide-in-form');
           }
         }
       }
     } else {
       this.errorReport(res, dialog);
+      entity.modalService.close('slide-in-form');
     }
   }
 
