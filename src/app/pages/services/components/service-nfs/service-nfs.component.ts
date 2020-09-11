@@ -4,7 +4,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { map } from 'rxjs/operators';
 import helptext from '../../../../helptext/services/components/service-nfs';
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
 
@@ -19,6 +19,7 @@ export class ServiceNFSComponent {
   productType = window.localStorage.getItem('product_type');
   hideOnScale = ['servers', 'allow_nonroot', 'mountd_log', 'statd_lockd_log'];
   public title = helptext.formTitle;
+  private v4krbValue: boolean;
 
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
@@ -161,9 +162,11 @@ export class ServiceNFSComponent {
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
+    private dialog: DialogService
   ) {}
 
   resourceTransformIncomingRestData(data) {
+    this.v4krbValue = data.v4_krb;
     // If validIps is slow to load, skip check on load (It's still done on save)
     if (this.validBindIps, this.validBindIps.length) {
       return this.compareBindIps(data);
@@ -221,6 +224,33 @@ export class ServiceNFSComponent {
       }
     }
     data = this.compareBindIps(data);
+  }
+
+  afterSave(data) {
+    if (!data.formGroup.value.v4_krb || (data.formGroup.value.v4_krb && this.v4krbValue)) {
+      this.router.navigate(this.route_success);
+    } else {
+      this.ws.call('kerberos.keytab.has_nfs_principal').subscribe(res => {
+        console.log('here', res)
+        if (!res) {
+          this.ws.call('directoryservices.get_state').subscribe(( { activedirectory }) => {
+            if (activedirectory === 'HEALTHY') {
+              this.dialog.confirm('Hmmm', 'You sure about that?').subscribe(res => {
+                if (res) {
+                  // 'Present form for nfs principal credentials'
+                } else {
+                  this.router.navigate(this.route_success);
+                }
+              })
+            } else {
+              this.router.navigate(this.route_success);
+            }
+          })
+        } else {
+          this.router.navigate(this.route_success);
+        }
+      })
+    }
   }
 
 }
