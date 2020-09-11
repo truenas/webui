@@ -29,8 +29,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     queryCall: 'interface.query',
     deleteCall: 'interface.delete',
     columns: [
-      { name: T('Name'), prop: 'name', always_display: true },
-      { name: T('Link State'), prop: 'link_state', state: { icon: 'fiber_manual_record' } },
+      { name: T('Name'), prop: 'name', state: { prop: 'link_state' }},
       { name: T('IP Addresses'), prop: 'addresses', listview: true },
     ],
     ha_enabled: false,
