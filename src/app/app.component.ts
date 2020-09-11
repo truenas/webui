@@ -201,6 +201,11 @@ export class AppComponent {
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/network-upload-download.svg")
     )
 
+    this.matIconRegistry.addSvgIcon(
+      'network-upload-download-disabled',
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/network-upload-download-disabled.svg")
+    )
+
     const product = productText.product.trim();
     this.title.setTitle(product + ' - ' + window.location.hostname);
     if(window.localStorage.product_type){
