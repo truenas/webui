@@ -12,7 +12,7 @@ import helptext from '../../../helptext/network/configuration/configuration';
 })
 export class DefaultRouteFormComponent {
   protected queryCall = 'network.configuration.config';
-  protected updateCall = 'network.configuration.update';
+  protected eidtCall = 'network.configuration.update';
 
   protected isNew = false;
   protected isOneColumnForm = true;
