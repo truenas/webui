@@ -29,6 +29,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   protected offload_warned = false;
   protected offload_warning_sub: any;
 
+  protected isOneColumnForm = true;
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {

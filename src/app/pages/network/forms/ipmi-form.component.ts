@@ -56,7 +56,6 @@ export class IPMIFromComponent {
   public fieldSets: FieldSet[] = [
     {
       name: helptext.ipmi_configuration,
-      width: "100%",
       label: true,
       config: [
         {
@@ -129,12 +128,7 @@ export class IPMIFromComponent {
       ]
     },
     {
-      name: 'ipmi_divider',
-      divider: true
-    },
-    {
       name: helptext.ipmi_password_reset,
-      width: "100%",
       label: true,
       config: [
         {

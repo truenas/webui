@@ -15,6 +15,7 @@ export class NameserverFormComponent {
   protected updateCall = 'network.configuration.update';
 
   protected isNew = false;
+  protected isOneColumnForm = true;
 
   protected fieldSets: FieldSet[] = [
     {

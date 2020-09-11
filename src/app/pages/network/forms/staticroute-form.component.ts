@@ -16,6 +16,7 @@ export class StaticRouteFormComponent {
   protected editCall = 'staticroute.update';
 
   protected isEntity = true;
+  protected isOneColumnForm = true;
 
   protected fieldSets: FieldSet[] = [
     {
