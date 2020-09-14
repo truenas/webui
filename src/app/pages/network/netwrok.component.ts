@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { WebSocketService, NetworkService, DialogService, StorageService, AppLoaderService } from '../../services';
+import { WebSocketService, NetworkService, DialogService, StorageService, AppLoaderService, ServicesService } from '../../services';
 import { T } from '../../translate-marker';
 import helptext from '../../helptext/network/interfaces/interfaces-list';
 import { CardWidgetConf } from './card-widget/card-widget.component';
@@ -13,6 +13,8 @@ import { StaticRouteFormComponent } from './forms/staticroute-form.component';
 import { NameserverFormComponent } from './forms/nameserver-form.component';
 import { DefaultRouteFormComponent } from './forms/default-route-form.component';
 import { IPMIFromComponent } from './forms/ipmi-form.component';
+import { OpenvpnClientComponent } from './forms/service-openvpn-client.component';
+import { OpenvpnServerComponent } from './forms/service-openvpn-server.component';
 
 @Component({
   selector: 'app-interfaces-list',
@@ -98,9 +100,18 @@ export class NetworkComponent implements OnInit, OnDestroy {
       { name: T('State'), prop: 'state' },
     ],
     hideHeader: true,
+    parent: this,
     dataSourceHelper: this.openvpnDataSourceHelper,
     getActions: this.getOpenVpnActions,
     isActionVisible: this.isOpenVpnActionVisible,
+    edit: function(row) {
+      console.log(row);
+      if (row.service === 'openvpn_client') {
+        this.parent.modalService.open('slide-in-form', this.parent.openvpnClientComponent, row.id);
+      } else if (row.service === 'openvpn_server') {
+        this.parent.modalService.open('slide-in-form', this.parent.openvpnServerComponent, row.id);
+      }
+    },
   }
 
   public ipmiTableConf = {
@@ -128,6 +139,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
   protected staticRouteFormComponent: StaticRouteFormComponent;
   protected nameserverFormComponent: NameserverFormComponent;
   protected defaultRouteFormComponent: DefaultRouteFormComponent;
+  protected openvpnClientComponent: OpenvpnClientComponent;
+  protected openvpnServerComponent: OpenvpnServerComponent;
   protected impiFormComponent: IPMIFromComponent;
 
   constructor(
@@ -138,7 +151,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
     private dialog: DialogService,
     private storageService: StorageService,
     private loader: AppLoaderService,
-    private modalService: ModalService,) {
+    private modalService: ModalService,
+    private servicesService: ServicesService) {
       this.ws.call(this.configCall).subscribe(
         (config_res) => {
           this.ws.call(this.summayCall).subscribe(
@@ -171,6 +185,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.staticRouteFormComponent = new StaticRouteFormComponent(this.aroute, this.ws, this.networkService);
     this.nameserverFormComponent = new NameserverFormComponent(this.aroute, this.ws, this.networkService);
     this.defaultRouteFormComponent = new DefaultRouteFormComponent(this.aroute, this.ws, this.networkService);
+    this.openvpnClientComponent = new OpenvpnClientComponent(this.servicesService);
+    this.openvpnServerComponent = new OpenvpnServerComponent(this.servicesService, this.dialog, this.loader, this.ws, this.storageService);
     this.impiFormComponent = new IPMIFromComponent(this.ws, this.dialog, this.loader);
   }
 
