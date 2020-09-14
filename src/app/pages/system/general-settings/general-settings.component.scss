@@ -1,27 +1,19 @@
 .wrapper {
-    margin: 20px;
-    display: grid;
-    margin: 0 auto;
-    grid-template-rows: fit-content(50vh);
-    grid-template-columns: 50% repeat(2, 1fr);
-    grid-template-areas: "title title title"
-                         "system-card data-card1 data-card2"
-                         "system-card ntp-card ntp-card";   
         .system-card {
-            grid-area: system-card;
+            //grid-area: system-card;
             min-width: 350px;
         }
         .data-card1 {
-            grid-area: data-card1;
+            //grid-area: data-card1;
         }
         .data-card2 {
-            grid-area: data-card2;
+            //grid-area: data-card2;
         }
         .ntp-card {
-            grid-area: ntp-card;
+            //grid-area: ntp-card;
         }
         .title {
-            grid-area: title;
+            //grid-area: title;
         }
 
         mat-card {
@@ -79,52 +71,6 @@
 
 
 }
-
-@media (max-width: 1299px) {
-    .wrapper {
-        grid-template-columns: 450px auto;
-        grid-template-areas: "title title"
-                             "system-card data-card1"
-                             "system-card data-card2"
-                             "ntp-card ntp-card"
-    }
-
-}
-
-@media (max-width: 789px) {
-    .wrapper {
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-areas: "title title"
-                             "system-card system-card"
-                             "data-card1 data-card2"
-                             "ntp-card ntp-card"
-    }
-
-}
-
-@media (max-width: 549px) {
-    .wrapper {
-        grid-template-columns: auto;
-        grid-template-areas: "title"
-                             "system-card"
-                             "data-card1"
-                             "data-card2"
-                             "ntp-card"
-    }
-
-}
-
-// .sys-image { not working here
-//     display: flex;
-//     justify-content: center;
-//     align-items: flex-start;
-//     margin-bottom: 1rem;
-
-//     div {
-//     display: flex;
-//     justify-content: center;
-//     }
-// }
 
 .extra-margin {
   text-align: center ;
@@ -186,7 +132,7 @@ app-proactive #secondary_name_form-input-spinner {
 //   }
 
 //   app-sys-image {
-    img {
+    /*img {
       max-width: 90%;
       height: auto;
       max-height: 325px;
@@ -195,7 +141,7 @@ app-proactive #secondary_name_form-input-spinner {
         max-height: 250px;
         margin-bottom: 1rem;
       }
-    }
+    }*/
 //   }
 
   app-production-status {

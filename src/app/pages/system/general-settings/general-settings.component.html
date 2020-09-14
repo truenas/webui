@@ -1,6 +1,15 @@
-<div class="wrapper">
-  <div class="title"><h2>{{ 'General Settings' | translate }}</h2></div>
-    <mat-card class="system-card">
+<div class="wrapper"
+  gdRows="fit-content(50vh)"
+  gdColumns="50% repeat(2, 1fr)"
+  gdColumns.md="450px auto"  
+  gdColumns.lt-md="auto"
+  gdAreas="title title title | system-card data-card1 data-card2 | system-card ntp-card ntp-card"
+  gdAreas.md="title title | system-card data-card1 | system-card data-card2 | ntp-card ntp-card"
+  gdAreas.lt-md="title | system-card | data-card1 | data-card2 | ntp-card">
+
+  <div gdArea="title" class="title"><h2>{{ 'General Settings' | translate }}</h2></div>
+    <mat-card class="system-card"
+      gdArea="system-card">
         <div class="title-bar">
             <h3>{{ supportTitle | translate }}</h3>
         </div>
@@ -9,7 +18,7 @@
         <app-support></app-support>
     </mat-card>
 
-    <mat-card class="data-card{{i+1}}" *ngFor="let card of dataCards; index as i; ">
+    <mat-card class="data-card{{i+1}}" gdArea="data-card{{i+1}}" *ngFor="let card of dataCards; index as i; ">
         <div class="title-bar">
             <h3>{{ card.title | translate }}</h3>
             <div class="action-icon">
@@ -39,7 +48,8 @@
         </div>
     </mat-card>
 
-    <mat-card class="ntp-card">
+    <mat-card class="ntp-card"
+      gdArea="ntp-card">
         <div class="title-bar">
             <h3>{{ ntpTitle }}</h3>
             <button mat-button color="default" class="action-icon" (click)="doAdd('ntp')">{{ 'Add' | translate }}</button>
