@@ -109,27 +109,6 @@
                     </div>
                   </div>
   
-                  <div class="disk-errors tr">
-                    <div class="td label">
-                      <strong>Disks w/Errors:</strong> 
-                    </div>
-                    <div class="td">
-                      {{unhealthyDisks.totalErrors}} 
-                      <span *ngIf="unhealthyDisks.totalErrors != '0' && unhealthyDisks.totalErrors != 'Unknown'">
-                        Disks
-                      </span>
-                      <span class="error icon" *ngIf="unhealthyDisks.totalErrors != '0' && unhealthyDisks.totalErrors != 'Unknown'">
-                        &nbsp;<mat-icon class="disk-errors" role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
-                      </span>
-    
-                      <!--<span  *ngIf="unhealthyDisks.totalErrors == '0'">
-                        Disks
-                        </span>-->
-                      <span class="safe icon" *ngIf="unhealthyDisks.totalErrors == '0'">
-                        &nbsp;<mat-icon class="healthy" role="img">check_circle</mat-icon>
-                      </span>
-                    </div>
-                  </div>
   
                   <div class="used-space tr">
                     <ng-container *ngIf="!volumeData || !volumeData.used_pct">
@@ -154,7 +133,6 @@
                       </div>
     
                       <ng-template #safeSpace>
-                        <!--<div class="td" *ngIf="volumeData.used_pct.length < 4 && volumeData.used_pct[0] != '9' && volumeData.used_pct != '8'">-->
                       <div class="td">
                         <span class="value-used">{{volumeData.used_pct}}</span>
                         <span class="safe icon">
@@ -162,8 +140,28 @@
                         </span>
                       </div>
                       </ng-template>
-                    </ng-container>
+                    </ng-container> 
                   </div>
+                  <!-- END ROW -->
+
+                  <div class="disk-errors tr">
+                    <div class="td label">
+                      <strong>Disks with Errors:</strong> 
+                    </div>
+                    <div class="td">
+                      {{unhealthyDisks.totalErrors}} 
+                      <span *ngIf="unhealthyDisks.totalErrors != '0' && unhealthyDisks.totalErrors != 'Unknown'">
+                        Disks
+                      </span>
+                      <span class="error icon" *ngIf="unhealthyDisks.totalErrors != '0' && unhealthyDisks.totalErrors != 'Unknown'">
+                        &nbsp;<mat-icon class="disk-errors" role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                      </span>
+                      <span class="safe icon" *ngIf="unhealthyDisks.totalErrors == '0'">
+                        &nbsp;<mat-icon class="healthy" role="img">check_circle</mat-icon>
+                      </span>
+                    </div>
+                  </div>
+
                 </div>
 
               </div>

@@ -31,7 +31,7 @@ export const DefaultTheme = {
       violet:'#c17ecc',
       blue:'#0095D5',
       cyan:'#00d0d6',
-      green:'#1F9642'
+      green:'#71BF44'
     }
 
 export interface Theme {
@@ -105,7 +105,7 @@ export class ThemeService {
       violet:'#c17ecc',
       blue:'#0095d5',
       cyan:'#00d0d6',
-      green:'#59d600'
+      green:'#71BF44'
     },
     {
       name:'dracula',

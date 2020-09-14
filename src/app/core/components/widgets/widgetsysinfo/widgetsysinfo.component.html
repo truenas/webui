@@ -16,7 +16,7 @@
 
           <!-- Summary Section -->
           <div fxFlex.xs="250px" fxFlex="40" 
-            [ngClass]="{'fn-theme-contrast-lighter': themeService.isDarkTheme() , 'fn-theme-contrast-darker': !themeService.isDarkTheme()}" 
+            [ngClass]="{'fn-theme-contrast-lighter': themeService.activeTheme == themeService.defaultTheme , 'fn-theme-primary': themeService.activeTheme != themeService.defaultTheme}" 
             class="left {{isPassive ? 'passive' : 'active'}}" 
             fxLayout="column" fxLayoutAlign="space-between center">
 

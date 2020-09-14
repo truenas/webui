@@ -146,7 +146,8 @@
 }
 
 .td.label{
-  width:48%;
+  width:40%;
+  line-height: 110%;
 }
 
 .td .mat-icon{
