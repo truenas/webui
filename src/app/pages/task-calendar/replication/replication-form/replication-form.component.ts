@@ -974,6 +974,10 @@ export class ReplicationFormComponent {
             wsResponse['restrict_schedule'] = true;
         }
         wsResponse['speed_limit'] = wsResponse['speed_limit'] ? this.storageService.convertBytestoHumanReadable(wsResponse['speed_limit'], 0) : undefined;
+        // block large_block changes if it is enabled
+        if (this.entityForm.wsResponse.large_block) {
+            this.entityForm.setDisabled('large_block', true, false);
+        }
         return wsResponse;
     }
 
