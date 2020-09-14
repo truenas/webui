@@ -95,7 +95,6 @@ export interface Formconfiguration {
   title?;
   columnsOnForm?: number;
 
-  isModalForm?: boolean;
   closeModalForm?();
   goBack?();
   onSuccess?(res);
@@ -414,11 +413,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   goBack() {
-    // stay in same route if the form is in a modal dialog
-    if (this.conf.isModalForm && this.conf.closeModalForm) {
-      this.conf.closeModalForm();
-      return;
-    }
     let route = this.conf.route_cancel;
     if (!route) {
       route = this.conf.route_success;
