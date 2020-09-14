@@ -114,28 +114,9 @@
 
 }
 
-// .sys-image { not working here
-//     display: flex;
-//     justify-content: center;
-//     align-items: flex-start;
-//     margin-bottom: 1rem;
-
-//     div {
-//     display: flex;
-//     justify-content: center;
-//     }
-// }
-
 .extra-margin {
   text-align: center ;
   margin-bottom: 1rem;
-}
-
-.success-check {
-  top: 4px;
-  left: 5px;
-  position: relative;
-  color: var(--green);
 }
 
 .title {
@@ -197,86 +178,3 @@ app-proactive #secondary_name_form-input-spinner {
       }
     }
 //   }
-
-  app-production-status {
-    .mat-card {
-        top: 25px;
-        background-color: rgba(127,127,127,0.1);
-        width: 400px;
-        height: 100px;
-        margin: 0 !important;
-    }
-    .mat-card-actions {
-      top: 25px;
-      position: absolute;
-      left: 240px;
-      width: unset;
-    }
-
-    @media screen and (max-width: 599px) {
-      .mat-card {
-        top: 25px;
-        width: auto;
-      }
-    }
-
-    @media screen and (max-width: 460px) {
-      .mat-card {
-        top: 25px;
-        height: auto;
-      }
-      .mat-card-actions {
-        position: relative;
-        top: unset;
-        left: unset;
-      }
-    }
-  }
-
-  app-proactive {
-    .mat-card {
-      top: 37px;
-      background-color: rgba(127,127,127,0.1);
-      margin: 0 15px !important;
-    }
-    .mat-card-actions {
-      height: 0px;
-      top: -45px;
-      position: relative;
-      left: 230px;
-    }
-    #enabled {
-      position: relative;
-      top: 5px;
-    }
-
-    #TN_proactive_instructions {
-      font-size: 120%;
-      margin-right: 10px;
-      margin-bottom: 20px;
-
-    }
-
-    @media screen and (max-width: 599px) {
-      .mat-card {
-        top: -35px;
-      }
-    }
-
-    @media screen and (max-width: 460px) {
-      .mat-card-actions {
-        top: 25px;
-        height: auto;
-        position: relative;
-        left: unset;
-        height: auto;
-        top: unset;
-      }
-    }
-  }
-
-  app-entity-dialog #tn_core_upgrade_license_message {
-    margin-bottom: 8px;
-  }
-
-// End support section //////////////
