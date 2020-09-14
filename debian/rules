@@ -30,7 +30,7 @@ binary-stamp:
 	echo "var product = '${PRODUCT}'" > src/assets/scripts/product.js
 	tar xf node_files.tgz
 	npm install -g yarn
-	yarn run build:prod:aot
+	/usr/local/bin/yarn run build:prod:aot
 	date +%s > dist/assets/buildtime
 	cp -r dist/* debian/truenas-webui/usr/share/truenas/webui
 	rm -rf dist/
