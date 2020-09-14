@@ -70,4 +70,13 @@ invalidInputValueWithUnit: T('Invalid value. Missing numerical value or invalid 
 
 pasteValueStartsWithSpace: T('The pasted string starts with a space'),
 pasteValueEndsWithSpace: T('The pasted string ends with a space'),
+
+rootpw: {
+  placeholder: T('Root Password'),
+  tooltip: T('Enter the root password to authorize this operation.'),
+  error_msg: T('The administrator password is incorrect.'),
+  error_title: T('Warning'),
+  dialog_title: T('Action Requires Administrator Confirmation')
+}
+
 }

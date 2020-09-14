@@ -1088,6 +1088,9 @@ msgstr ""
 msgid "Acoustic Level"
 msgstr "Nivel Acústico"
 
+msgid "Action Requires Administrator Confirmation"
+msgstr ""
+
 msgid "Actions"
 msgstr "Acciones"
 
@@ -1197,6 +1200,9 @@ msgstr "Añadir Sysctl"
 
 msgid "Add Tunable"
 msgstr "Agregar sintonizable"
+
+msgid "Add User"
+msgstr ""
 
 msgid "Add Vdev"
 msgstr "Añadir Vdev"
@@ -4029,6 +4035,9 @@ msgstr "Crear instantánea"
 
 msgid "Create Theme"
 msgstr "Crear tema"
+
+msgid "Create Virtual Machine"
+msgstr ""
 
 msgid "Create a custom ACL"
 msgstr ""
@@ -8752,6 +8761,9 @@ msgstr "INTERFAZ WEB HEREDADA"
 msgid "LLDP"
 msgstr ""
 
+msgid "LOG (Write Cache) Overprovision Size in GiB"
+msgstr ""
+
 msgid "LOGIN TO PROVIDER"
 msgstr "INICIAR SESIÓN AL PROVEEDOR"
 
@@ -10514,17 +10526,12 @@ msgstr "Salida"
 msgid "Outgoing Mail Server"
 msgstr "Servidor de correo saliente"
 
-msgid "Overprovision Size in GiB"
-msgstr "Tamaño de sobreaprovisionamiento en GiB"
-
 msgid ""
-"Overprovisioning can increase the performance and lifespan of SSDs.  "
-"Defining a number of GiB here overprovisions disks during pool creation.  "
-"Examples: 50 GiB, 10g, 5GB"
+"Overprovisioning a ZFS Log SSD can increase its performance and lifespan by "
+" distributing writes and erases across more drive flash blocks.  Defining a "
+"number of GiB here overprovisions ZFS Log disks during pool creation or "
+"extension.  Examples: 50 GiB, 10g, 5GB"
 msgstr ""
-"El sobreaprovisionamiento puede aumentar el rendimiento y la vida útil de "
-"las SSD. La definición de un número de GiB aquí sobreaprovisiona los discos "
-"durante la creación del grupo. Ejemplos: 50 GiB, 10g, 5GB"
 
 msgid ""
 "Overrides default directory creation mask of <i>0777</i>  which grants "
@@ -15781,11 +15788,11 @@ msgstr ""
 "Estos permisos son demasiado complicados para mostrarse y no se pueden "
 "guardar a menos que se modifiquen."
 
+msgid "These running processes are using "
+msgstr ""
+
 msgid "These running services are using"
 msgstr "Estos servicios en ejecución están utilizando"
-
-msgid "These running services are using "
-msgstr "Estos servicios en ejecución están utilizando "
 
 msgid "These services depend on pool "
 msgstr "Estos servicios dependen del grupo "

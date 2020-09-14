@@ -808,6 +808,9 @@ msgstr ""
 msgid "Acoustic Level"
 msgstr "Poziom akustyczny"
 
+msgid "Action Requires Administrator Confirmation"
+msgstr ""
+
 msgid "Actions"
 msgstr "Akcje"
 
@@ -906,6 +909,9 @@ msgid "Add Sysctl"
 msgstr ""
 
 msgid "Add Tunable"
+msgstr ""
+
+msgid "Add User"
 msgstr ""
 
 msgid "Add Vdev"
@@ -3188,6 +3194,9 @@ msgid "Create Snapshot"
 msgstr ""
 
 msgid "Create Theme"
+msgstr ""
+
+msgid "Create Virtual Machine"
 msgstr ""
 
 msgid "Create a custom ACL"
@@ -7034,6 +7043,9 @@ msgstr ""
 msgid "LLDP"
 msgstr ""
 
+msgid "LOG (Write Cache) Overprovision Size in GiB"
+msgstr ""
+
 msgid "LOGIN TO PROVIDER"
 msgstr ""
 
@@ -8524,13 +8536,11 @@ msgstr ""
 msgid "Outgoing Mail Server"
 msgstr ""
 
-msgid "Overprovision Size in GiB"
-msgstr ""
-
 msgid ""
-"Overprovisioning can increase the performance and lifespan of SSDs.  "
-"Defining a number of GiB here overprovisions disks during pool creation.  "
-"Examples: 50 GiB, 10g, 5GB"
+"Overprovisioning a ZFS Log SSD can increase its performance and lifespan by "
+" distributing writes and erases across more drive flash blocks.  Defining a "
+"number of GiB here overprovisions ZFS Log disks during pool creation or "
+"extension.  Examples: 50 GiB, 10g, 5GB"
 msgstr ""
 
 msgid ""
@@ -12707,10 +12717,10 @@ msgid ""
 "unless changed."
 msgstr ""
 
-msgid "These running services are using"
+msgid "These running processes are using "
 msgstr ""
 
-msgid "These running services are using "
+msgid "These running services are using"
 msgstr ""
 
 msgid "These services depend on pool "

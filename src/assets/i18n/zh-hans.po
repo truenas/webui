@@ -917,6 +917,9 @@ msgstr ""
 msgid "Acoustic Level"
 msgstr "噪音等级"
 
+msgid "Action Requires Administrator Confirmation"
+msgstr ""
+
 msgid "Actions"
 msgstr "动作"
 
@@ -1015,6 +1018,9 @@ msgid "Add Sysctl"
 msgstr ""
 
 msgid "Add Tunable"
+msgstr ""
+
+msgid "Add User"
 msgstr ""
 
 msgid "Add Vdev"
@@ -3471,6 +3477,9 @@ msgstr "创建快照"
 
 msgid "Create Theme"
 msgstr "创建主题"
+
+msgid "Create Virtual Machine"
+msgstr ""
 
 msgid "Create a custom ACL"
 msgstr ""
@@ -7582,6 +7591,9 @@ msgstr "传统Web界面"
 msgid "LLDP"
 msgstr ""
 
+msgid "LOG (Write Cache) Overprovision Size in GiB"
+msgstr ""
+
 msgid "LOGIN TO PROVIDER"
 msgstr "登录到提供商"
 
@@ -9157,14 +9169,12 @@ msgstr "发送"
 msgid "Outgoing Mail Server"
 msgstr "邮件发送服务器"
 
-msgid "Overprovision Size in GiB"
-msgstr "预留空间（GiB）"
-
 msgid ""
-"Overprovisioning can increase the performance and lifespan of SSDs.  "
-"Defining a number of GiB here overprovisions disks during pool creation.  "
-"Examples: 50 GiB, 10g, 5GB"
-msgstr "预留空间可以提高SSD的性能和使用寿命。在池创建过程中，在此处定义磁盘多少GiB的预留空间。示例：50 GiB，10g，5GB"
+"Overprovisioning a ZFS Log SSD can increase its performance and lifespan by "
+" distributing writes and erases across more drive flash blocks.  Defining a "
+"number of GiB here overprovisions ZFS Log disks during pool creation or "
+"extension.  Examples: 50 GiB, 10g, 5GB"
+msgstr ""
 
 msgid ""
 "Overrides default directory creation mask of <i>0777</i>  which grants "
@@ -13569,11 +13579,11 @@ msgid ""
 "unless changed."
 msgstr "这些权限太复杂而无法显示，除非更改，否则无法保存。"
 
-msgid "These running services are using"
+msgid "These running processes are using "
 msgstr ""
 
-msgid "These running services are using "
-msgstr "这些正在运行的服务正在使用"
+msgid "These running services are using"
+msgstr ""
 
 msgid "These services depend on pool "
 msgstr "这些服务取决于池"

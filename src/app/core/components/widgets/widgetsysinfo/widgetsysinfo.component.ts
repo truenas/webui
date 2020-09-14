@@ -58,7 +58,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   public ha_status:string;
   public updateMethod = 'update.update';
   public screenType: string = 'Desktop';
-  public uptimeString = '';
+  public uptimeString: string;
   public dateTime: string;
 
   constructor(public router: Router, public translate: TranslateService, private ws: WebSocketService,
@@ -200,6 +200,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   }
 
   parseUptime() {
+    this.uptimeString = '';
     const seconds = Math.round(this.data.uptime_seconds);
     const uptime = {
       days: Math.floor(seconds / (3600*24)),
@@ -279,14 +280,19 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
       case "FREENAS-MINI-2.0":
       case "FREENAS-MINI-3.0-E":
       case "FREENAS-MINI-3.0-E+":
+      case "TRUENAS-MINI-3.0-E":
+      case "TRUENAS-MINI-3.0-E+":
         this.product_image = 'freenas_mini_cropped.png';
       break;
       case "FREENAS-MINI-3.0-X":
       case "FREENAS-MINI-3.0-X+":
+      case "TRUENAS-MINI-3.0-X":
+      case "TRUENAS-MINI-3.0-X+":
         this.product_image = 'freenas_mini_x_cropped.png';
       break;
       case "FREENAS-MINI-XL":
       case "FREENAS-MINI-3.0-XL+":
+      case "TRUENAS-MINI-3.0-XL+":
         this.product_image = 'freenas_mini_xl_cropped.png';
       break;
       default:

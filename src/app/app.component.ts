@@ -118,6 +118,10 @@ export class AppComponent {
 
     // TRUENAS CORE
     this.matIconRegistry.addSvgIcon(
+      "truenas_core_logomark_color",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logomark_rgb.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
       "truenas_core_logomark",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logomark.svg")
     );
@@ -208,16 +212,23 @@ export class AppComponent {
 
     const product = productText.product.trim();
     this.title.setTitle(product + ' - ' + window.location.hostname);
+    const darkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    let path;
     if(window.localStorage.product_type){
       let cachedType = window.localStorage['product_type'].toLowerCase();
-      let path = "assets/images/truenas_" + cachedType + "_favicon.png";
-      this.setFavicon(path);
+      path = "assets/images/truenas_" + cachedType + "_favicon.png";
+      if (darkScheme) {
+        path = "assets/images/truenas_" + cachedType + "_ondark" + "_favicon.png";
+      }
     } else {
       ws.call('system.product_type').subscribe((res) => {
-        let path = "assets/images/truenas_" + res.toLowerCase() + "_favicon.png";
-        this.setFavicon(path);
+        path = "assets/images/truenas_" + res.toLowerCase() + "_favicon.png";
+        if (darkScheme) {
+          path = "assets/images/truenas_" + res.toLowerCase() + "_ondark" + "_favicon.png";
+        }
       });
     }
+    this.setFavicon(path);
 
     if (this.detectBrowser("Safari")) {
       document.body.className += " safari-platform";
