@@ -4,6 +4,7 @@ import { T } from 'app/translate-marker';
 import { filter } from 'rxjs/operators';
 import { Observable } from 'rxjs/Rx';
 import { ConfirmDialog } from '../pages/common/confirm-dialog/confirm-dialog.component';
+import { PasswordDialog } from '../pages/common/password-dialog/password-dialog.component';
 import { EntityDialogComponent } from '../pages/common/entity/entity-dialog/entity-dialog.component';
 import { ErrorDialog } from '../pages/common/error-dialog/error-dialog.component';
 import { InfoDialog } from '../pages/common/info-dialog/info-dialog.component';
@@ -70,6 +71,16 @@ export class DialogService {
         });
             return dialogRef;
         }
+        return dialogRef.afterClosed();
+    }
+
+    public passwordConfirm(message: string, disableClose: boolean = true): Observable<boolean> {
+        let dialogRef: MatDialogRef<PasswordDialog>;
+
+        dialogRef = this.dialog.open(PasswordDialog, {disableClose: disableClose});
+
+        dialogRef.componentInstance.message = message;
+
         return dialogRef.afterClosed();
     }
 

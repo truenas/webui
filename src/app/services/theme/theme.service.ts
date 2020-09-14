@@ -348,6 +348,10 @@ export class ThemeService {
     this.changeTheme(this.defaultTheme);
   }
 
+  get isDefaultTheme(){
+    return this.activeTheme == this.defaultTheme; 
+  }
+
   currentTheme():Theme{
     return this.findTheme(this.activeTheme);
   }
