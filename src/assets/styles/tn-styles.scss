@@ -50,6 +50,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   // END UI SHELL
 
+  img.fn-img {
+    width: 80%;
+    margin: 10%;
+  }
+
   .mat-bg-primary,
   .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
   .chats-wrap .conversations-hold .single-conversation.me .conversation-msg,
@@ -1551,7 +1556,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       }
     }
 
-    .sys-image {
+    /*.sys-image {
       display: flex;
       justify-content: center;
       align-items: flex-start;
@@ -1561,7 +1566,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       display: flex;
       justify-content: center;
       }
-  }
+    }*/
 
   // NTP form
   input#minpoll, input#maxpoll {

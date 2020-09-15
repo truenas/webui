@@ -496,3 +496,87 @@ button.mat-button.mat-accent{
   color: var(--topbar-txt) !important;
 }
 
+/* Material Cards*/
+.mat-card{
+  padding: 0 !important;
+  position: relative;
+}
+
+.mat-card .mat-toolbar-row,
+.mat-card .mat-card-content > div,
+.mat-card .mat-card-footer {
+  padding: 16px;
+}
+
+.mat-card .mat-toolbar-row{
+  border-bottom: solid 1px var(--lines);
+}
+
+.mat-card .mat-toolbar-row .actions{
+  position: absolute;
+  right: 16px;
+}
+
+.mat-card .mat-card-footer .actions button{
+  margin-right: 8px;
+}
+
+.mat-card-content{
+  /*padding-bottom: 80px;*/
+}
+
+.mat-card .mat-card-footer {
+  /*position: absolute;*/
+  width: calc(100% - 32px);
+  bottom: 0;
+  padding:16px;
+  margin-top: 8px;
+  height: 80px;
+}
+
+/* Material Tables */
+table.mat-table {
+  width: 100%;
+  background-color: var(--bg2) !important;
+}
+
+mat-row, 
+mat-header-row, 
+mat-footer-row, 
+th.mat-header-cell, 
+td.mat-cell, 
+td.mat-footer-cell{
+  border-bottom-color: var(--lines);
+}
+
+mat-row, 
+mat-header-row, 
+mat-footer-row, 
+th.mat-header-cell, 
+td.mat-cell, 
+td.mat-footer-cell{
+  color: var(--fg2) !important;
+}
+
+/* Material Lists */
+.mat-list-item{
+  border-bottom: solid 1px var(--lines);
+}
+
+.mat-list-item .value{
+  font-weight: 500;
+}
+
+.mat-list-item .label{
+  margin-right: 16px;
+}
+
+mat-card.mat-card .mat-list-base{
+  padding-top: 0;
+}
+
+.page-title{
+  width: calc(100% - 64px);
+  margin: 0 auto;
+  color: var(--fg1);
+}

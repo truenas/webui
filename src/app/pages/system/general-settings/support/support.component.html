@@ -1,51 +1,51 @@
-<div class="mat-content" fxLayout="column">
-  <div id="top-row" class="container" fxLayout="row wrap">
-    <div [fxFlex]="isProductImageTall ? '40%' : '100%'">
-      <div class="sys-image">
-          <app-sys-image
-          [product_image]="product_image"
-        ></app-sys-image>
-      </div>
-    </div>
-    <div 
-      *ngIf="systemInfo"
-      [fxFlex]="isProductImageTall ? '60%' : '100%'" 
-      [class]="extraMargin ? 'extra-margin' : 'regular-margin'">
-        <app-sys-info
-        *ngIf="!hasLicense; else licensedSysInfo"
-        [version]='systemInfo.version'
-        [model]="systemInfo.model"
-        [product]='systemInfo.system_product'
-        [memory]="systemInfo.memory"
-        [serial]="systemInfo.serial"
-        [hasLicense]="hasLicense"
-        ></app-sys-info>
-      <ng-template #licensedSysInfo>
-        <app-sys-info
-          [customer_name]='licenseInfo.customer_name'
-          [features]='licenseInfo.features'
-          [contract_type]='licenseInfo.contract_type'
-          [expiration_date]='licenseInfo.expiration_date'
-          [model]='systemInfo.model'
-          [serial]='systemInfo.serial'
-          [add_hardware]='licenseInfo.add_hardware'
-          [daysLeftinContract]='licenseInfo.daysLeftinContract'
-          [hasLicense]="hasLicense"
-        >
-        </app-sys-info>
-      </ng-template>
+<div class="" fxLayout="column">
+  <div class="mat-card-content" fxLayout="column">
+    <div id="top-row" class="container" fxLayout="row wrap">
 
-      <div class="links-wrapper">
-        <div class="links" *ngFor="let link of links">
-          <div [innerHTML]=link></div>
+      <div [fxFlex]="isProductImageTall ? '40%' : '100%'">  
+       <app-sys-image [product_image]="product_image"></app-sys-image>
+      </div>
+
+      <div 
+        *ngIf="systemInfo"
+        [fxFlex]="isProductImageTall ? '60%' : '100%'" 
+        [class]="extraMargin ? 'extra-margin' : 'regular-margin'">
+          <app-sys-info
+          *ngIf="!hasLicense; else licensedSysInfo"
+          [version]='systemInfo.version'
+          [model]="systemInfo.model"
+          [product]='systemInfo.system_product'
+          [memory]="systemInfo.memory"
+          [serial]="systemInfo.serial"
+          [hasLicense]="hasLicense"
+          ></app-sys-info>
+        <ng-template #licensedSysInfo>
+          <app-sys-info
+            [customer_name]='licenseInfo.customer_name'
+            [features]='licenseInfo.features'
+            [contract_type]='licenseInfo.contract_type'
+            [expiration_date]='licenseInfo.expiration_date'
+            [model]='systemInfo.model'
+            [serial]='systemInfo.serial'
+            [add_hardware]='licenseInfo.add_hardware'
+            [daysLeftinContract]='licenseInfo.daysLeftinContract'
+            [hasLicense]="hasLicense"
+          >
+          </app-sys-info>
+        </ng-template>
+  
+        <div class="links-wrapper">
+          <div class="links" *ngFor="let link of links">
+            <div [innerHTML]=link></div>
+          </div>
+        </div>
+        <div *ngIf="hasLicense">
+          <mat-checkbox (change)="updateProductionStatus($event)" [(ngModel)]="isProduction">
+            {{ 'This is a production system' | translate}}</mat-checkbox>
         </div>
       </div>
-      <div *ngIf="hasLicense">
-        <mat-checkbox (change)="updateProductionStatus($event)" [(ngModel)]="isProduction">
-          {{ 'This is a production system' | translate}}</mat-checkbox>
-      </div>
-    </div>
-  </div>
+
+<mat-card-footer fxFlex="100%" fxLayoutAlign="stretch"  class=".mat-footer ">
   <div class="button-group" [class]="isProductImageTall ? 'btn-fixed' : ''">
     <button id="update-license-btn" (click)="updateLicense()"mat-button color="primary">
       {{ licenseButtonText | translate }}
@@ -56,5 +56,10 @@
     <button id="proactive-support-btn" (click)="openProactive()" mat-button color="default" *ngIf="hasLicense">
       {{ proactiveText | translate }}
     </button>
+  </div>
+</mat-card-footer>
+
+    </div>
+  
   </div>
 </div>
