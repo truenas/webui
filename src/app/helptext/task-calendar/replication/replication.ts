@@ -215,7 +215,7 @@ export default {
     large_block_placeholder: T('Allow Blocks Larger than 128KB'),
     large_block_tooltip: T('Allow this replication to send large data blocks. The \
  destination system must also support large blocks. This setting cannot be changed \
- after the replication task is created. For more details, see \
+ after it has been enabled and the replication task is created. For more details, see \
  <a href="https://www.freebsd.org/cgi/man.cgi?query=zfs" \
  target="_blank">zfs(8)</a>.'),
 
