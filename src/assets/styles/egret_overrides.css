@@ -203,6 +203,10 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
   transform: rotateY(-180deg);
 }
 
+.widget .mat-card .carousel{
+  padding: 0 !important;
+}
+
 .widget-lg .mat-card,
 .widget-lg, .widget-lg.card-container{
   height:720px;
@@ -239,6 +243,14 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
 .widget.splitv .mat-card .mat-toolbar-row,
 .widget.splith .mat-card .mat-toolbar-row{
   padding:0 !important;
+}
+
+.widget .mat-card .mat-toolbar-row,
+.widget .mat-card .mat-toolbar-row,
+.widget.splitv .mat-card .mat-toolbar-row,
+.widget.splith .mat-card .mat-toolbar-row{
+  border-bottom: none !important;
+  height: 56px !important;
 }
 
 .widget .mat-card,
@@ -329,11 +341,15 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
 
 /* New Rules */
 .widget mat-card-content{
-  /*background: rgba(0,0,0,0.05);*/
+  padding: 0 !important;
 }
 
 .widget mat-toolbar-row{
   background: var(--bg2);
+}
+
+.widget .mat-card .mat-card-content > div{
+  padding: 0 !important;
 }
 
 /* MOBILE */
