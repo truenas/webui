@@ -49,6 +49,7 @@
                     [(ngModel)]="signinData.otp"
                     #otp="ngModel"
                     required
+                    autocomplete="off"
                     placeholder="{{'Two-Factor Authentication Code' | translate}}"
                     >
                   <mat-error>
