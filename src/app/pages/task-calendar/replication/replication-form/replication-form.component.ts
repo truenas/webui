@@ -978,6 +978,11 @@ export class ReplicationFormComponent {
                     speedLimitField['errors'] = helptext.speed_limit_errors;
                 };
         });
+        entityForm.formGroup.controls['large_block'].valueChanges.subscribe((value) => {
+            if (this.entityForm.pk !== undefined && !entityForm.formGroup.controls['large_block'].disabled) {
+                this.entityForm.setDisabled('large_block', true, false);
+            }
+        });
     }
 
     resourceTransformIncomingRestData(wsResponse) {
