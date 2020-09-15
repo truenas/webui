@@ -16,6 +16,7 @@ export class NameserverFormComponent {
 
   protected isNew = false;
   protected isOneColumnForm = true;
+  public afterModalFormClosed;
 
   protected fieldSets: FieldSet[] = [
     {

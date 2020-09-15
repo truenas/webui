@@ -153,38 +153,53 @@ export class NetworkComponent implements OnInit, OnDestroy {
     private loader: AppLoaderService,
     private modalService: ModalService,
     private servicesService: ServicesService) {
-      this.ws.call(this.configCall).subscribe(
-        (config_res) => {
-          this.ws.call(this.summayCall).subscribe(
-            (res) => {
-              this.networkSummary = res;
-              this.nameserverWidget.data.ipv4 = res.nameservers.map(item => {
-                return {ip: item, dhcp: (item !== config_res.nameserver1 && item !== config_res.nameserver2 && item !== config_res.nameserver3) ? true : false};
-              });
-              this.defaultRoutesWidget.data.ipv4 = res.default_routes;
-            }
-          );
-        }
-      );
-
-      this.ws.call('ipmi.is_loaded').subscribe((res)=>{
-        this.impiEnabled = res;
-      });
+      this.getNameserverDefaultRouteInfo();
   }
 
+  getNameserverDefaultRouteInfo() {
+    this.ws.call(this.configCall).subscribe(
+      (config_res) => {
+        this.ws.call(this.summayCall).subscribe(
+          (res) => {
+            this.networkSummary = res;
+            this.nameserverWidget.data.ipv4 = res.nameservers.map(item => {
+              return {ip: item, dhcp: (item !== config_res.nameserver1 && item !== config_res.nameserver2 && item !== config_res.nameserver3) ? true : false};
+            });
+            this.defaultRoutesWidget.data.ipv4 = res.default_routes;
+          }
+        );
+      }
+    );
+
+    this.ws.call('ipmi.is_loaded').subscribe((res)=>{
+      this.impiEnabled = res;
+    });
+  }
+
+  getNetworkSummary() {
+    this.ws.call(this.summayCall).subscribe(
+      (res) => {
+        this.networkSummary = res;
+        this.defaultRoutesWidget.data.ipv4 = res.default_routes;
+      }
+    );
+  }
   ngOnInit() {
-    this.refreshUserForm();
+    this.refreshNetworkForms();
     this.modalService.refreshForm$.subscribe(() => {
-      this.refreshUserForm();
+      this.refreshNetworkForms();
     })
   }
 
-  refreshUserForm() {
+  refreshNetworkForms() {
     this.addComponent = new ConfigurationComponent(this.router,this.ws);
+    this.addComponent.afterModalFormClosed = this.getNameserverDefaultRouteInfo.bind(this); // update nameserver, default route info
     this.interfaceComponent = new InterfacesFormComponent(this.router, this.aroute, this.networkService, this.dialog, this.ws);
     this.staticRouteFormComponent = new StaticRouteFormComponent(this.aroute, this.ws, this.networkService);
     this.nameserverFormComponent = new NameserverFormComponent(this.aroute, this.ws, this.networkService);
+    this.nameserverFormComponent.afterModalFormClosed = this.getNameserverDefaultRouteInfo.bind(this); // update nameserver info
     this.defaultRouteFormComponent = new DefaultRouteFormComponent(this.aroute, this.ws, this.networkService);
+    this.defaultRouteFormComponent.afterModalFormClosed = this.getNetworkSummary.bind(this); // update default route info
     this.openvpnClientComponent = new OpenvpnClientComponent(this.servicesService);
     this.openvpnServerComponent = new OpenvpnServerComponent(this.servicesService, this.dialog, this.loader, this.ws, this.storageService);
     this.impiFormComponent = new IPMIFromComponent(this.ws, this.dialog, this.loader);

@@ -179,6 +179,7 @@ export class ConfigurationComponent {
   private entityEdit: EntityFormComponent;
   private failover_fields = ['hostname_b', 'hostname_virtual'];
   public title = helptext.title;
+  public afterModalFormClosed;
 
   constructor(protected router: Router,
     protected ws: WebSocketService) { }

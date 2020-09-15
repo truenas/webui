@@ -12,7 +12,7 @@ import helptext from '../../../helptext/network/configuration/configuration';
 })
 export class DefaultRouteFormComponent {
   protected queryCall = 'network.configuration.config';
-  protected eidtCall = 'network.configuration.update';
+  protected editCall = 'network.configuration.update';
 
   protected isNew = false;
   protected isOneColumnForm = true;
@@ -41,6 +41,8 @@ export class DefaultRouteFormComponent {
   ];
 
   public title = helptext.gateway;
+  public afterModalFormClosed;
+
   constructor(protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
     protected networkService: NetworkService) { }
