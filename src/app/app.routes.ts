@@ -56,7 +56,7 @@ export const rootRouterConfig: Routes = [{
       {
         path:'services',
         loadChildren: 'app/pages/services/services.module#ServicesModule',
-        data: { title: 'Services', breadcrumb: 'Services' }
+        data: { title: 'Services', breadcrumb: 'Services', toplevel:true }
       },
       {
         path: 'directoryservice',
@@ -66,7 +66,7 @@ export const rootRouterConfig: Routes = [{
       {
         path: 'vm',
         loadChildren: 'app/pages/vm/vm.module#VmModule',
-        data: { title: 'Virtual Machines', breadcrumb: 'Virtual Machines' }
+        data: { title: 'Virtual Machines', breadcrumb: 'Virtual Machines', toplevel:true }
       },
       {
         path: 'sharing',
@@ -81,12 +81,12 @@ export const rootRouterConfig: Routes = [{
       {
         path: 'plugins',
         loadChildren: './pages/plugins/plugins.module#PluginsModule',
-        data: { title: 'Plugins', breadcrumb: 'Plugins' },
+        data: { title: 'Plugins', breadcrumb: 'Plugins', toplevel: true },
       },
       {
         path: 'jails',
         loadChildren: './pages/jails/jails.module#JailsModule',
-        data: { title: 'Jails', breadcrumb: 'Jails' },
+        data: { title: 'Jails', breadcrumb: 'Jails', toplevel: true },
       },
       {
         path: 'reportsdashboard',
