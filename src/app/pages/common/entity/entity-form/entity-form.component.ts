@@ -96,6 +96,7 @@ export interface Formconfiguration {
   columnsOnForm?: number;
 
   closeModalForm?();
+  afterModalFormClosed?(); // function will called once the modal form closed
   goBack?();
   onSuccess?(res);
 }
@@ -527,7 +528,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                               this.conf.responseOnSubmit(res);
                             }
                           }
-                          this.modalService.close('slide-in-form');
+                          this.modalService.close('slide-in-form').then(closed => {
+                            if (closed && this.conf.afterModalFormClosed) {
+                              this.conf.afterModalFormClosed();
+                            }
+                          });
                         },
                         (res) => {
                           this.loader.close();
