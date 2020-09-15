@@ -28,7 +28,7 @@ div.mat-toolbar{
   flex-direction: column;
 }
 
-.mat-toolbar-row{
+topbar .mat-toolbar .mat-toolbar-row{
   height:48px !important;
 }
 
@@ -178,6 +178,11 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
 }
 
 /* Widget Cards */
+
+/* Override our material overrides :)) */
+
+/* END of our Overrides*/
+
 .widget{
   position:relative;
   perspective: 1520px !important;

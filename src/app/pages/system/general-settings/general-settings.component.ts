@@ -20,7 +20,6 @@ import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-j
 @Component({
   selector: 'app-general-settings',
   templateUrl: './general-settings.component.html',
-  //styleUrls: ['./general-settings.component.scss']
 })
 export class GeneralSettingsComponent implements OnInit, OnDestroy {
   dataCards = [];

@@ -20,6 +20,7 @@ body {
   font-family: 'IBM Plex Sans', sans-serif;
   font-weight: 400;
   line-height: 1.65;
+  min-width: 480px;
 }
 
 p {margin-bottom: 1.15rem;}
@@ -508,8 +509,13 @@ button.mat-button.mat-accent{
   padding: 16px;
 }
 
+.mat-card .mat-toolbar{
+}
+
 .mat-card .mat-toolbar-row{
   border-bottom: solid 1px var(--lines);
+  min-height: 48px !important;
+  height: 56px;
 }
 
 .mat-card .mat-toolbar-row .actions{
@@ -526,12 +532,9 @@ button.mat-button.mat-accent{
 }
 
 .mat-card .mat-card-footer {
-  /*position: absolute;*/
-  width: calc(100% - 32px);
-  bottom: 0;
-  padding:16px;
+  width: 100%;
+  padding:0 16px;
   margin-top: 8px;
-  height: 80px;
 }
 
 /* Material Tables */
@@ -540,13 +543,25 @@ table.mat-table {
   background-color: var(--bg2) !important;
 }
 
-mat-row, 
-mat-header-row, 
-mat-footer-row, 
+.mat-table thead th{
+  background-color: var(--contrast-darker);
+  opacity: 0.75;
+  vertical-align: middle;
+}
+
+tr.mat-header-row,
+.mat-table thead tr{
+  max-height: 36px;
+  height: 36px;
+}
+
+.mat-row, 
+.mat-header-row, 
+.mat-footer-row, 
 th.mat-header-cell, 
 td.mat-cell, 
 td.mat-footer-cell{
-  border-bottom-color: var(--lines);
+  border-bottom-color: var(--lines) !important;
 }
 
 mat-row, 
@@ -556,17 +571,26 @@ th.mat-header-cell,
 td.mat-cell, 
 td.mat-footer-cell{
   color: var(--fg2) !important;
+  vertical-align: middle;
+  position: relative;
+}
+
+td.mat-cell .mat-icon{
+  position: absolute;
+  top: calc(50% - 12px);
 }
 
 /* Material Lists */
 .mat-list-item{
-  border-bottom: solid 1px var(--lines);
+  border-bottom: solid 1px var(--lines) !important;
 }
 
+.value,
 .mat-list-item .value{
   font-weight: 500;
 }
 
+.label,
 .mat-list-item .label{
   margin-right: 16px;
 }
@@ -575,8 +599,11 @@ mat-card.mat-card .mat-list-base{
   padding-top: 0;
 }
 
+/* This should probably be implemented as a component */
 .page-title{
   width: calc(100% - 64px);
   margin: 0 auto;
   color: var(--fg1);
 }
+
+

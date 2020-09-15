@@ -1,15 +1,17 @@
 <div class="" fxLayout="column">
   <div class="mat-card-content" fxLayout="column">
-    <div id="top-row" class="container" fxLayout="row wrap">
+    <div id="top-row" class="container" fxLayout="row wrap" fxLayoutAlign="space-around center">
 
       <div [fxFlex]="isProductImageTall ? '40%' : '100%'">  
        <app-sys-image [product_image]="product_image"></app-sys-image>
+
       </div>
 
-      <div 
-        *ngIf="systemInfo"
+      <div *ngIf="systemInfo"
         [fxFlex]="isProductImageTall ? '60%' : '100%'" 
+        fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="16px"
         [class]="extraMargin ? 'extra-margin' : 'regular-margin'">
+
           <app-sys-info
           *ngIf="!hasLicense; else licensedSysInfo"
           [version]='systemInfo.version'
@@ -43,21 +45,22 @@
           <mat-checkbox (change)="updateProductionStatus($event)" [(ngModel)]="isProduction">
             {{ 'This is a production system' | translate}}</mat-checkbox>
         </div>
-      </div>
+        
+        <!-- ACTION BUTTONS -->
+        <div fxLayout="row" fxLayoutGap="8px" class="actions button-group" [class]="isProductImageTall ? 'btn-fixed' : ''">
+          <button id="update-license-btn" (click)="updateLicense()"mat-button color="primary">
+            {{ licenseButtonText | translate }}
+          </button>
+          <button id="file-ticket-btn" (click)="fileTicket()" mat-button color="default">
+            {{ ticketText | translate }}
+          </button>
+          <button id="proactive-support-btn" (click)="openProactive()" mat-button color="default" *ngIf="hasLicense">
+            {{ proactiveText | translate }}
+          </button>
+        </div>
 
-<mat-card-footer fxFlex="100%" fxLayoutAlign="stretch"  class=".mat-footer ">
-  <div class="button-group" [class]="isProductImageTall ? 'btn-fixed' : ''">
-    <button id="update-license-btn" (click)="updateLicense()"mat-button color="primary">
-      {{ licenseButtonText | translate }}
-    </button>
-    <button id="file-ticket-btn" (click)="fileTicket()" mat-button color="default">
-      {{ ticketText | translate }}
-    </button>
-    <button id="proactive-support-btn" (click)="openProactive()" mat-button color="default" *ngIf="hasLicense">
-      {{ proactiveText | translate }}
-    </button>
-  </div>
-</mat-card-footer>
+
+      </div>
 
     </div>
   

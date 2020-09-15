@@ -17,7 +17,6 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 @Component({
   selector : 'app-support',
   templateUrl: './support.component.html',
-  styleUrls: ['../general-settings.component.scss'],
   providers: []
 })
 export class SupportComponent implements OnInit {
