@@ -205,15 +205,16 @@ def navigate_to_dashboard(driver):
     assert wait_on_element(driver, 0.5, 10, '//span[contains(.,"System Information")]')
 
 
-@then('Wait for for second node to be up')
-def wait_for_for_second_node_to_be_up(driver):
-    """Wait for for second node to be up"""
-    assert wait_on_element(driver, 1, 60, '//button[@ix-auto="button__INITIATE FAILOVER"]')
+@then('Wait for second node to be up')
+def wait_for_second_node_to_be_up(driver):
+    """Wait for second node to be up"""
+    assert wait_on_element(driver, 1, 60, '//mat-list-item[contains(.,"nodeb")]')
 
 
 @then('When the second node is up press INITIATE FAILOVER')
 def When_the_second_node_is_up_press_initiate_failover(driver):
     """When the second node is up press INITIATE FAILOVER"""
+    assert wait_on_element(driver, 1, 60, '//button[@ix-auto="button__INITIATE FAILOVER"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__INITIATE FAILOVER"]').click()
 
 
@@ -281,6 +282,7 @@ def the_add_dataset_name_and_options_page_should_open(driver):
 @then(parsers.parse('Input dataset name "{dataset_name}" and click save'))
 def input_dataset_name_my_acl_dataset_and_click_save(driver, dataset_name):
     """Input dataset name "{dataset_name}" and click save."""
+    assert wait_on_element(driver, 0.5, 5, '//input[@ix-auto="input__Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(dataset_name)
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
