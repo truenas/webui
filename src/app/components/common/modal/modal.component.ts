@@ -101,14 +101,17 @@ export class ModalComponent implements OnInit, OnDestroy {
     }
 
     // close modal
-    close(): void {
-        this.modal.classList.remove('open');
-        this.background.classList.remove('open');
-        document.body.classList.remove('jw-modal-open');
-        this.slideIn.classList.remove('wide');
-        this.formOpen = false;
-        this.modalService.refreshForm();
-        this.wizard = false;
-        this.title = '';
+    close(): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            this.modal.classList.remove('open');
+            this.background.classList.remove('open');
+            document.body.classList.remove('jw-modal-open');
+            this.slideIn.classList.remove('wide');
+            this.formOpen = false;
+            this.modalService.refreshForm();
+            this.wizard = false;
+            this.title = '';
+            resolve(true);
+        });
     }
 }

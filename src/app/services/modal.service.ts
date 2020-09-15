@@ -35,9 +35,9 @@ export class ModalService {
         modal.open(conf);
     }
 
-    close(id: string) {
+    close(id: string): Promise<boolean> {
         // close modal specified by id
         let modal: any = this.modals.filter(x => x.id === id)[0];
-        modal.close();
+        return modal.close();
     }
 }
