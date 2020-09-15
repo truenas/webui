@@ -97,7 +97,7 @@ export class ServiceS3Component implements OnDestroy {
       name : 'certificate',
       placeholder : helptext.certificate_placeholder,
       tooltip : helptext.certificate_tooltip,
-      options : []
+      options : [{label: '---', value: null}]
     },
   ];
   protected storage_path: any;
