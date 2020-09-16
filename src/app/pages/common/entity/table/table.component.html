@@ -39,9 +39,14 @@
               <mat-icon>delete</mat-icon>
             </button>
             <span *ngFor="let rowAction of actions">
-              <button mat-icon-button (click)="rowAction.onClick(element)" *ngIf="!tableConf.isActionVisible || tableConf.isActionVisible(rowAction.name, element)">
-                <mat-icon >{{rowAction.icon}}</mat-icon>
-              </button>
+              <div *ngIf="!tableConf.isActionVisible || tableConf.isActionVisible(rowAction.name, element)">
+                <mat-spinner [diameter]='40' *ngIf="element['onChanging']; else actionButtons"></mat-spinner>
+                <ng-template #actionButtons>
+                  <button mat-icon-button (click)="rowAction.onClick(element)" >
+                    <mat-icon >{{rowAction.icon}}</mat-icon>
+                  </button>
+                </ng-template>
+              </div>
             </span>
           </div>
         </td>

@@ -317,17 +317,22 @@ export class NetworkComponent implements OnInit, OnDestroy {
       icon: 'stop',
       name: "stop",
       label: T("Stop"),
+      onChanging: false,
       onClick: (rowinner) => {
+        rowinner['onChanging'] = true;
         this.ws.call('service.stop', [rowinner.service]).subscribe(
           (res) => {
             if (res) {
               this.dialog.Info(T("Service failed to stop"), T("OpenVPN ") + rowinner.service_label + " " +  T("service failed to stop."));
               rowinner.state = 'RUNNING';
+              rowinner['onChanging'] = false;
             } else {
               rowinner.state = 'STOPPED';
+              rowinner['onChanging'] = false;
             }
           },
           (err) => {
+            rowinner['onChanging'] = false;
             this.dialog.errorReport(T("Error stopping service OpenVPN ") + rowinner.service_label , err.message, err.stack);
           }
         )
@@ -338,17 +343,21 @@ export class NetworkComponent implements OnInit, OnDestroy {
       name: "start",
       label: T("Start"),
       onClick: (rowinner) => {
+        rowinner['onChanging'] = true;
         this.ws.call('service.start', [rowinner.service]).subscribe(
           (res) => {
             console.log(res);
             if (res) {
               rowinner.state = 'RUNNING';
+              rowinner['onChanging'] = false;
             } else {
               this.dialog.Info(T("Service failed to start"), T("OpenVPN ") + rowinner.service_label + " " +  T("service failed to start."));
               rowinner.state = 'STOPPED';
+              rowinner['onChanging'] = false;
             }
           },
           (err) => {
+            rowinner['onChanging'] = false;
             this.dialog.errorReport(T("Error starting service OpenVPN ") + rowinner.service_label , err.message, err.stack);
           }
         )
