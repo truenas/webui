@@ -287,7 +287,6 @@
             <mat-slide-toggle
               *ngIf="col.toggle"
               [disabled]="row.disableSlider"
-              color="accent"
               id="{{row.name}}_{{col.name}}-slidetoggle"
               [ix-auto]="col?.name"
               ix-auto-type="toggle"
@@ -295,6 +294,7 @@
               [checked]="row[col.prop]==='RUNNING'"
             ></mat-slide-toggle>
             <div id="{{row[conf.rowIdentifier || 'name' ]}}_{{col.name}}"
+                 *ngIf="!col.toggle"
                  title="{{convertDisplayValue(row[col.prop])}}"
                  [ix-auto]="col?.name"
                  ix-auto-type="value"
