@@ -19,9 +19,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T933.feature', 'Setting up Active Directory with the new system dataset')
+@scenario('features/NAS-T933.feature', 'Verify Active Directory works after failover with new system dataset')
 def test_setting_up_active_directory_with_the_new_system_dataset(driver):
-    """Setting up Active Directory with the new system dataset."""
+    """Verify Active Directory works after failover with new system dataset."""
 
 
 @given(parsers.parse('the browser is open navigate to "{nas_url}"'))
