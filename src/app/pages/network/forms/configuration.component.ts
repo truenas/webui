@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { TooltipsService, WebSocketService } from '../../../services';
 import { EntityFormComponent } from '../../common/entity/entity-form';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { ipv4Validator, ipv6Validator } from '../../common/entity/entity-form/validators/ip-validation';
 import helptext from '../../../helptext/network/configuration/configuration';
 
@@ -23,7 +23,7 @@ export class ConfigurationComponent {
   protected updateCall = 'network.configuration.update';
   public isEntity = false;
   public fieldConfig: FieldConfig[] = [];
-  public fieldSets: FieldSet[] = [
+  public fieldSets = new FieldSets([
     {
       name: helptext.hostname_and_domain,
       label: true,
@@ -133,6 +133,42 @@ export class ConfigurationComponent {
       ]
     },
     {
+      name: helptext.outbound_network,
+      label: true,
+      config: [
+        {
+          type: 'radio',
+          name: 'outbound_network_activity',
+          placeholder: '',
+          options: [
+            { label: helptext.outbound_network_activity.allow.placeholder, value: 'DENY', tooltip: helptext.outbound_network_activity.allow.tooltip, }, // deny type + empty list
+            { label: helptext.outbound_network_activity.deny.placeholder, value: 'ALLOW', tooltip: helptext.outbound_network_activity.deny.tooltip, }, // allow type + empty list
+            { label: helptext.outbound_network_activity.specific.placeholder, value: 'SPECIFIC', tooltip: helptext.outbound_network_activity.specific.tooltip, },
+          ],
+          value: 'DENY',
+        },
+        {
+          type: 'select',
+          multiple: true,
+          name: 'outbound_network_value',
+          placeholder: '',
+          tooltip: helptext.outbound_network_value.tooltip,
+          options: [],
+          relation: [{
+            action: "HIDE",
+            connective: 'OR',
+            when: [{
+              name: "outbound_network_activity",
+              value: 'ALLOW'
+            }, {
+              name: "outbound_network_activity",
+              value: 'DENY'
+            }]
+          }]
+        }
+      ]
+    },
+    {
       name: helptext.other,
       label: true,
       config: [
@@ -175,7 +211,7 @@ export class ConfigurationComponent {
       name: 'divider',
       divider: true
     }
-  ];
+  ]);
   private entityEdit: EntityFormComponent;
   private failover_fields = ['hostname_b', 'hostname_virtual'];
   public title = helptext.title;
@@ -184,6 +220,16 @@ export class ConfigurationComponent {
   constructor(protected router: Router,
     protected ws: WebSocketService) { }
 
+  preInit() {
+    const outbound_network_value_field = this.fieldSets.config("outbound_network_value");
+    this.ws.call('network.configuration.activity_choices').subscribe(
+      (res) => {
+        for (const [value, label] of res) {
+          outbound_network_value_field.options.push({label: label, value: value});
+        }
+      }
+    )
+  }
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
@@ -205,7 +251,16 @@ export class ConfigurationComponent {
     data['netbios'] = data['service_announcement']['netbios'];
     data['mdns'] = data['service_announcement']['mdns'];
     data['wsd'] = data['service_announcement']['wsd'];
-
+    if (data['activity']) {
+      if (data['activity'].activities.length === 0) {
+        data['outbound_network_activity'] = data['activity'].type;
+      } else {
+        if (data['activity'].type === 'ALLOW') {
+          data['outbound_network_activity'] = 'SPECIFIC';
+          data['outbound_network_value'] = data['activity'].activities;
+        }
+      }
+    }
     return data;
   }
 
@@ -225,5 +280,15 @@ export class ConfigurationComponent {
 
   submitFunction(body: any) {
     return this.ws.call('network.configuration.update', [body]);
+  }
+
+  beforeSubmit(data) {
+    if (data['outbound_network_activity'] === 'ALLOW' || data['outbound_network_activity'] === 'DENY') {
+      data['activity'] = {type: data['outbound_network_activity'], 'activities': []};
+    } else {
+      data['activity'] = {type: 'ALLOW', 'activities': data['outbound_network_value']};
+    }
+    delete data['outbound_network_activity'];
+    delete data['outbound_network_value'];
   }
 }

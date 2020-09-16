@@ -66,6 +66,7 @@ hosts_tooltip : T('Additional hosts to be appended to <i>/etc/hosts</i>.\
 hostname_and_domain: T('Hostname and Domain'),
 gateway: T('Default Gateway'),
 nameservers: T('DNS Servers'),
+outbound_network: T('Outbound Network'),
 other: T('Other Settings'),
 service_announcement: T('Service Announcement'),
 
@@ -84,4 +85,22 @@ wsd_placeholder: T('WS-Discovery'),
 wsd_tooltip: T('Uses the SMB Service <i>NetBIOS Name</i> to advertise \
  the server to WS-Discovery clients. This causes the computer appear in \
  the <i>Network Neighborhood</i> of modern Windows OSes.'),
+
+ outbound_network_activity: {
+    allow: {
+        placeholder: T('Allow All'),
+        tooltip: T(''),
+    },
+    deny: {
+        placeholder: T('Deny All'),
+        tooltip: T(''),
+    },
+    specific: {
+        placeholder: T('Allow Specific'),
+        tooltip: T(''),
+    },
+ },
+ outbound_network_value: {
+     tooltip: T(''),
+ }
 }
