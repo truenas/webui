@@ -102,7 +102,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     hideHeader: true,
     parent: this,
     dataSourceHelper: this.openvpnDataSourceHelper,
-    getActions: this.getOpenVpnActions,
+    getActions: this.getOpenVpnActions.bind(this),
     isActionVisible: this.isOpenVpnActionVisible,
     edit: function(row) {
       console.log(row);
@@ -318,7 +318,19 @@ export class NetworkComponent implements OnInit, OnDestroy {
       name: "stop",
       label: T("Stop"),
       onClick: (rowinner) => {
-        console.log('Stop', rowinner);
+        this.ws.call('service.stop', [rowinner.service]).subscribe(
+          (res) => {
+            if (res) {
+              this.dialog.Info(T("Service failed to stop"), T("OpenVPN ") + rowinner.service_label + " " +  T("service failed to stop."));
+              rowinner.state = 'RUNNING';
+            } else {
+              rowinner.state = 'STOPPED';
+            }
+          },
+          (err) => {
+            this.dialog.errorReport(T("Error stopping service OpenVPN ") + rowinner.service_label , err.message, err.stack);
+          }
+        )
         event.stopPropagation();
       },
     }, {
@@ -326,14 +338,27 @@ export class NetworkComponent implements OnInit, OnDestroy {
       name: "start",
       label: T("Start"),
       onClick: (rowinner) => {
-        console.log('start', rowinner);
+        this.ws.call('service.start', [rowinner.service]).subscribe(
+          (res) => {
+            console.log(res);
+            if (res) {
+              rowinner.state = 'RUNNING';
+            } else {
+              this.dialog.Info(T("Service failed to start"), T("OpenVPN ") + rowinner.service_label + " " +  T("service failed to start."));
+              rowinner.state = 'STOPPED';
+            }
+          },
+          (err) => {
+            this.dialog.errorReport(T("Error starting service OpenVPN ") + rowinner.service_label , err.message, err.stack);
+          }
+        )
         event.stopPropagation();
       },
     }];
   }
 
   isOpenVpnActionVisible(name, row) {
-    if ((name === 'start' && row.state === 'START') || (name === 'stop' && row.state === 'STOPPED')) {
+    if ((name === 'start' && row.state === 'RUNNING') || (name === 'stop' && row.state === 'STOPPED')) {
       return false;
     }
     return true;
