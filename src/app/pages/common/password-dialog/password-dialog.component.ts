@@ -2,7 +2,6 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Component, Output, EventEmitter} from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SystemGeneralService } from '../../../services/system-general.service';
-import { DialogService } from '../../../services/dialog.service';
 import globalHelptext from '../../../helptext/global-helptext';
 import { T } from '../../../translate-marker';
 import { EntityUtils } from '../../common/entity/utils';
@@ -34,7 +33,7 @@ export class PasswordDialog {
   @Output() switchSelectionEmitter = new EventEmitter<any>();
 
   constructor(public dialogRef: MatDialogRef < PasswordDialog >, protected translate: TranslateService, 
-              protected sysGeneralService: SystemGeneralService, protected dialog: DialogService) {
+              protected sysGeneralService: SystemGeneralService) {
   }
 
   onChangeEvent(event) {
@@ -46,14 +45,13 @@ export class PasswordDialog {
   submit() {
     this.sysGeneralService.checkRootPW(this.password).subscribe(res => {
       if (res) {
-        console.log('yay');
         this.dialogRef.close(true);
       } else {
         this.isSubmitEnabled = false;
         this.errors = globalHelptext.rootpw.error_msg;
       }
     }, err => {
-      new EntityUtils().handleWSError(this, err, this.dialog);
+      new EntityUtils().handleWSError(this, err);
     });
   }
   togglePW() {
