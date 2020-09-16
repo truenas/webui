@@ -48,6 +48,8 @@ import { KmipComponent} from './kmip/kmip.component';
 import { T } from '../../translate-marker';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { CredentialsComponent } from './../credentials/credentials.component';
+import { Services } from '../services/services.component';
+import { ShellComponent } from '../shell/shell.component';
 
 export const routes: Routes = [
   // {path : '', component : GeneralComponent },
@@ -373,6 +375,14 @@ export const routes: Routes = [
       path: 'temp-misc',
       component: CredentialsComponent,
       data: { title: ('Credentials') }
+    },
+    {
+      path: 'services',
+      component: Services
+    },
+    {
+      path: 'shell',
+      component: ShellComponent
     }
     ]
   }

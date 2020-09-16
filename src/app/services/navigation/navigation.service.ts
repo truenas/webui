@@ -38,19 +38,48 @@ export class NavigationService {
       icon: 'dashboard',
       state: 'dashboard',
     },
+    // {
+    //   name: T('Storage'),
+    //   type: 'link',
+    //   tooltip: T('Storage'),
+    //   icon: 'dns',
+    //   state: 'storage',
+    // },
     {
       name: T('Storage'),
-      type: 'link',
+      type: 'slideOut',
       tooltip: T('Storage'),
       icon: 'dns',
       state: 'storage',
+      sub: [
+        { name: T('Pools'), state: 'pools' },
+        { name: T('Snapshots'), state: 'snapshots' },
+        { name: T('VMware-Snapshots'), state: 'vmware-Snapshots' },
+        { name: T('Disks'), state: 'disks' },
+        { name: T('Import Disk'), state: 'import-disk'},
+        { name: T('Multipaths'), state: 'multipaths', disabled: false},
+      ]
     },
+    // {
+    //   name: T('Shares'),
+    //   type: 'link',
+    //   tooltip: T('Shares'),
+    //   icon: 'folder_shared',
+    //   state: 'sharing',
+    // },
     {
       name: T('Shares'),
-      type: 'link',
+      type: 'slideOut',
       tooltip: T('Shares'),
       icon: 'folder_shared',
       state: 'sharing',
+      sub: [
+        { name: T('Apple Shares (AFP)'), state: 'afp' },
+        { name: T('Block Shares (iSCSI)'), state: 'iscsi' },
+        { name: T('Unix Shares (NFS)'), state: 'nfs' },
+        { name: T('WebDAV Shares'), state: 'webdav' },
+        { name: T('Windows Shares (SMB)'), state: 'smb' },
+      ]
     },
     {
       name: T('Data Protection'),
@@ -90,16 +119,23 @@ export class NavigationService {
       icon: 'apps',
       state: 'plugins', // rename to applications?
     },
+    // {
+    //   name: T('Virtualization'),
+    //   type: 'slideOut',
+    //   tooltip: T('Virtualization'),
+    //   icon: 'computer',
+    //   state: 'virtualization',
+    //   sub: [
+    //     { name: T('Jails'), state: 'jails' },
+    //     { name: T('Virtual Machines'), state: 'vm' },
+    //   ]
+    // },
     {
       name: T('Virtualization'),
-      type: 'slideOut',
+      type: 'link',
       tooltip: T('Virtualization'),
       icon: 'computer',
-      state: 'virtualization',
-      sub: [
-        { name: T('Jails'), state: 'jails' },
-        { name: T('Virtual Machines'), state: 'vm' },
-      ]
+      state: 'vm',
     },
     {
       name: T('Reporting'),
@@ -121,6 +157,8 @@ export class NavigationService {
         { name: T('Advanced'), state: 'advanced' },
         { name: T('Boot'), state: 'boot' },
         { name: T('Failover'), state: 'failover', disabled: true },
+        { name: T('Services'), state: 'services' },
+        { name: T('Shell'), state: 'shell' },
         { name: T('Misc'), state: 'temp-misc' }
       ]
     }
