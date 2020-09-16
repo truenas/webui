@@ -52,7 +52,6 @@ import { FailoverComponent } from './failover/failover.component';
 import { ReportingComponent } from './reporting/reporting.component';
 import { EnclosureModule } from './viewenclosure/enclosure.module';
 import { EulaComponent } from './general-settings/support/eula/eula.component';
-import { SysImageComponent } from './general-settings/support/sys-image/sys-image.component';
 import { ProactiveComponent } from './general-settings/support/proactive/proactive.component';
 import { SupportFormLicensedComponent } from './general-settings/support/support-licensed/support-form-licensed.component';
 import { SupportFormUnlicensedComponent } from './general-settings/support/support-unlicensed/support-form-unlicensed.component';
@@ -111,7 +110,6 @@ import { LicenseComponent } from './general-settings/support/license/license.com
     FailoverComponent,
     ReportingComponent,
     EulaComponent,
-    SysImageComponent,
     ProactiveComponent,
     SupportFormLicensedComponent,
     SupportFormUnlicensedComponent,

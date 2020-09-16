@@ -1,14 +1,26 @@
 <div class="" fxLayout="column">
   <div class="mat-card-content" fxLayout="column">
-    <div id="top-row" class="container" fxLayout="row wrap" fxLayoutAlign="space-around center">
+    <div id="top-row" class="container" 
+      fxLayoutGap="16px"
+      fxLayout.lt-lg="row wrap" 
+      [fxLayout.xs]="isProductImageRack ? 'column' : 'row wrap'" 
+      [fxLayout.gt-md]="isProductImageRack ? 'column' : 'row wrap'" 
+      fxLayoutAlign="space-evenly center">
 
-      <div [fxFlex]="isProductImageTall ? '40%' : '100%'">  
-       <app-sys-image [product_image]="product_image"></app-sys-image>
+      <div [fxFlex.gt-md]="isProductImageRack ? 'calc(200px - 32px)' : '40%'" 
+        [fxFlex.gt-xs]="isProductImageRack ? 'calc(40% - 32px)' : '40%'" 
+        [fxFlex.xs]="isProductImageRack ? 'calc(200px - 32px)' : '40%'"
+        style="background-size:contain; background-repeat: no-repeat; background-position:50%;"
+        [style.background-image]="'url(assets/images/' + product_image + ')'">
+          <!--<app-sys-image [product_image]="product_image"></app-sys-image>-->
+          <img class="invisible" [src]="'assets/images/' + product_image"/>
 
       </div>
 
       <div *ngIf="systemInfo"
-        [fxFlex]="isProductImageTall ? '60%' : '100%'" 
+        [fxFlex.gt-md]="isProductImageRack ? 'calc(50% - 32px)' : 'calc(60% - 32px)'" 
+        fxFlex.gt-xs="calc(60% - 32px)" 
+        [fxFlex.xs]="isProductImageRack ? 'calc(50% - 32px)' : 'calc(60% - 32px)'" 
         fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="16px"
         [class]="extraMargin ? 'extra-margin' : 'regular-margin'">
 

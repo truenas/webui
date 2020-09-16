@@ -26,7 +26,7 @@ export class SupportComponent implements OnInit {
   public updateButton: any;
   public FN_instructions;
   public product_image = '';
-  public isProductImageTall = false;
+  public isProductImageRack = false;
   public extraMargin = true;
   public serverList = ['M40', 'M50', 'X10', 'X20', 'Z20', 'Z30', 'Z35', 'Z50'];
   public systemInfo: any;
@@ -109,11 +109,12 @@ export class SupportComponent implements OnInit {
         imagePath = `/servers/${model}.png`;
       }
     })
-    if (imagePath) {
+    if (imagePath){ 
+      this.isProductImageRack = true;
       this.product_image = imagePath;
     } else {
       this.product_image = 'ix-original-cropped.png';
-      this.isProductImageTall = true;
+      this.isProductImageRack = false;
       this.extraMargin = false;
     }
   }
@@ -139,10 +140,11 @@ export class SupportComponent implements OnInit {
         this.product_image = 'freenas_mini_xl_cropped.png';
       break;
       default:
-        this.product_image = 'ix-original-cropped.png';
+        //this.product_image = 'ix-original-cropped.png';
+        this.product_image = 'freenas_mini_xl_cropped.png';
       break;
     }
-    this.isProductImageTall = true;
+    this.isProductImageRack = false;
     this.extraMargin = false
   }
 
