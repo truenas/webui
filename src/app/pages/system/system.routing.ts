@@ -378,11 +378,13 @@ export const routes: Routes = [
     },
     {
       path: 'services',
-      component: Services
+      component: Services,
+      data: { title: T('Services'), breadcrumb: T('Services') },
     },
     {
       path: 'shell',
-      component: ShellComponent
+      component: ShellComponent,
+      data: { title: T('Shell'), breadcrumb: T('Shell') },
     }
     ]
   }
