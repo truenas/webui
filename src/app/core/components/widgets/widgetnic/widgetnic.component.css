@@ -23,7 +23,7 @@
 
 .xs.widget mat-toolbar-row.view-overview .controls,
 .widget mat-toolbar-row.view-overview .primary-nav{
-  color: var(--fg2);
+  color: #efefef; /* Don't use CSS var as text is over a dark image */
   font-family: var(--font-family-body);
 }
 
