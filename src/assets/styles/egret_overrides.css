@@ -136,6 +136,8 @@ ngx-datatable .mat-box-shadow{
 
 .mat-card-title-text{
   margin:16px;
+  font-family: var(--font-family-body), sans-serif;
+  font-size: 24px;
 }
 
 /* vm-cards */

@@ -11,7 +11,7 @@
   position:absolute;
   height:48px;
   width: 100%;
-  z-index:2;
+  z-index:4;
   background:unset;
   padding:0 8px;
   left:0;
@@ -23,7 +23,8 @@
 
 .xs.widget mat-toolbar-row.view-overview .controls,
 .widget mat-toolbar-row.view-overview .primary-nav{
-  color:#efefef;
+  color: var(--fg2);
+  font-family: var(--font-family-body);
 }
 
 .view-overview .primary-nav .card-title-text{
@@ -84,7 +85,7 @@
 
 .slide.overview .left{
   /*background-color:var(--primary);*/
-  background-color:#303437;
+  background-color:#666;
   background-size:cover;
   background-image:url('assets/images/backgrounds/rj45.jpg');
   background-position-y:center;
@@ -122,7 +123,7 @@
 
 .nic-name{
   font-size:250%;
-  /*border-bottom:solid 1px var(--grey);*/
+  font-family: var(--font-family-body);
 }
 
 .link-state{ margin: 16px 0 8px; }
