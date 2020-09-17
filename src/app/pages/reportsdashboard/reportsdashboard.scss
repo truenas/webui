@@ -53,19 +53,23 @@ ul.ct-legend {
 }
 
 nav.reports-toolbar{
-  position:relative;
+  position: absolute;
   z-index:2;
-  top: -15px;
+  width: 100%;
+  top: 0;
+  left: 0;
   box-shadow: 0 2px 3px rgba(0,0,0,0.5);
-  padding:4px 0 4px 32px;
+  padding: 4px 32px;
   background-color: var(--alt-bg1);
 }
 
 .master-container{
-  top: -15px;
-  height: calc(100vh - 92px - 48px); /* 92 is for the topbar && 48 is for the entity-toolbar */
-  /*top:92px;*/
-  position:relative;
+  position: absolute;
+  width: 100%;
+  top: 48px;
+  left: 0;
+  height: calc(100vh - 92px - 4px); /* 92 is for the topbar && 48 is for the entity-toolbar */
+  padding-bottom: 16px;
 
 }
 

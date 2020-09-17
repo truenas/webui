@@ -61,6 +61,7 @@ export interface InputTableConf {
   wsMultiDeleteParams?(selected): any;
   updateMultiAction?(selected): any;
   doAdd?();
+  doEdit?(id?:any);
   onCheckboxChange?(row): any;
   onSliderChange?(row): any;
   callGetFunction?(entity: EntityTableComponent): any;
@@ -686,8 +687,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   doEdit(id) {
-    this.router.navigate(
-      new Array('/').concat(this.conf.route_edit).concat(id));
+    if (this.conf.doEdit) {
+      this.conf.doEdit(id);
+    } else {
+      this.router.navigate(
+        new Array('/').concat(this.conf.route_edit).concat(id));
+    }
   }
 
   //generate delete msg

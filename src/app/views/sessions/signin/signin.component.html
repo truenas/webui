@@ -66,7 +66,7 @@
                     </mat-error>
                   </mat-form-field>
                 </div>
-                <button name="signin_button" mat-button class="fn-theme-primary full-width mb-1" id="signin_button" [disabled]="username.errors || password.errors">{{"Log in" | translate}}</button>
+                <button name="signin_button" mat-button color="primary" class="fn-theme-primary full-width mb-1" id="signin_button" [disabled]="username.errors || password.errors">{{"Log in" | translate}}</button>
               </form>
               <ng-template #setPassword>
                 <form (ngSubmit)="setpassword()" [formGroup]="setPasswordFormGroup" #setPasswordForm="ngForm">
@@ -89,7 +89,7 @@
                       </mat-error>
                     </mat-form-field>
                   </div>
-                  <button name="signin_button2" mat-button class="mat-accent full-width mb-1" type="submit" [disabled]="!setPasswordForm.form.valid">{{"Sign in" | translate}}</button>
+                  <button name="signin_button2" mat-button color="primary" class="mat-accent full-width mb-1" type="submit" [disabled]="!setPasswordForm.form.valid">{{"Sign in" | translate}}</button>
                 </form>
               </ng-template>
   

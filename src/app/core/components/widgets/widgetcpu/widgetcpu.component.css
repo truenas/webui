@@ -25,8 +25,8 @@
 
 }
 
-#cpu-load-cores{
-  /*opacity:0.5;*/
+#cpu-load-cores .mat-list-item{
+  border-bottom: none !important;
 }
 
 #cpu-load-cores .label-icon{
