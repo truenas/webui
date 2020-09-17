@@ -24,7 +24,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-button.mat-accent .mat-ripple-element,
   .mat-icon-button.mat-accent .mat-ripple-element,
   .mat-slide-toggle .mat-ripple-element {
-    @include variable(background, --accent, $accent, !important);
+    @include variable(background, --primary, $primary, !important);
   }
   .mat-button .mat-ripple-element, .mat-raised-button .mat-ripple-element {
     background: rgba(0, 0, 0, .12);
@@ -121,13 +121,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       @include variable(border-right-color, --primary, $primary);
   }
   .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
-    background-color: map-get($md-accent, 400);
-    @include variable(background, --accent, $accent, !important);
-
+    background-color: var(--primary);
   }
   .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar {
-    @include variable(background, --accent, $accent, !important);
-
+    background-color: var(--primary);
   }
   .mat-bg-accent,
   div.hopscotch-bubble .hopscotch-bubble-number,

@@ -1076,6 +1076,9 @@ msgstr ""
 msgid "Acoustic Level"
 msgstr "Niveau d'acoustique"
 
+msgid "Action Requires Administrator Confirmation"
+msgstr ""
+
 msgid "Actions"
 msgstr "Actions"
 
@@ -8749,6 +8752,9 @@ msgstr "INTERFACE WEB LEGACY"
 msgid "LLDP"
 msgstr ""
 
+msgid "LOG (Write Cache) Overprovision Size in GiB"
+msgstr ""
+
 msgid "LOGIN TO PROVIDER"
 msgstr "CONNEXION AU FOURNISSEUR"
 
@@ -10504,17 +10510,12 @@ msgstr "Montant"
 msgid "Outgoing Mail Server"
 msgstr "Serveur de courrier sortant"
 
-msgid "Overprovision Size in GiB"
-msgstr "Taille du surapprovisionnement en GiB"
-
 msgid ""
-"Overprovisioning can increase the performance and lifespan of SSDs.  "
-"Defining a number of GiB here overprovisions disks during pool creation.  "
-"Examples: 50 GiB, 10g, 5GB"
+"Overprovisioning a ZFS Log SSD can increase its performance and lifespan by "
+" distributing writes and erases across more drive flash blocks.  Defining a "
+"number of GiB here overprovisions ZFS Log disks during pool creation or "
+"extension.  Examples: 50 GiB, 10g, 5GB"
 msgstr ""
-"Le surapprovisionnement peut accroître les performances et la durée de vie "
-"des SSD.  La définition d'un certain nombre de GiB ici surprovisionne les "
-"disques lors de la création du volume.  Exemples : 50 GiB, 10g, 5GB"
 
 msgid ""
 "Overrides default directory creation mask of <i>0777</i>  which grants "
