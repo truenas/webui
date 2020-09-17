@@ -34,11 +34,11 @@
 
 .xs.widget mat-toolbar-row.view-overview .controls,
 .widget mat-toolbar-row.view-overview .primary-nav{
-  color:#efefef;
+  color: #efefef; /* Dont use CSS var here as it is over a dark image*/
+  font-family: var(--font-family-body);
 }
 
 .primary-nav .card-title-text{
-  font-size:1.5rem;
   font-weight:500;
   display:inline-block;
   vertical-align:middle;
@@ -121,7 +121,7 @@
 
 .pool-name{
   font-size:250%;
-  /*border-bottom:solid 1px var(--grey);*/
+  font-family: var(--font-family-body);
 }
 
 .table{ 
@@ -146,7 +146,8 @@
 }
 
 .td.label{
-  width:48%;
+  width:40%;
+  line-height: 110%;
 }
 
 .td .mat-icon{

@@ -11,7 +11,7 @@ export const DefaultTheme = {
       label: "iX Dark",
       labelSwatch:"blue",
       description:'TrueNAS 12 default theme',
-      accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
+      accentColors:['blue', 'magenta', 'orange', 'cyan', 'yellow', 'violet', 'red', 'green'],
       primary:"var(--blue)",
       topbar:"#111111",
       'topbar-txt': "var(--fg2)",
@@ -24,14 +24,14 @@ export const DefaultTheme = {
       'alt-bg2':'#545454',
       'alt-fg1':'rgba(194,194,194,0.5)',
       'alt-fg2':'#e1e1e1',
-      yellow:'#f0cb00',
-      orange:'#ee9302',
-      red:'#ff0013',
-      magenta:'#d238ff',
-      violet:'#c17ecc',
+      yellow:'#DED142',
+      orange:'#E68D37',
+      red:'#CE2929',
+      magenta:'#C006C7',
+      violet:'#7617D8',
       blue:'#0095D5',
       cyan:'#00d0d6',
-      green:'#1F9642'
+      green:'#71BF44'
     }
 
 export interface Theme {
@@ -71,6 +71,7 @@ export class ThemeService {
   readonly freeThemeDefaultIndex = 0;
   public activeTheme: string = 'default';
   public defaultTheme: string = 'ix-dark';
+  public defaultLightTheme: string = 'ix-blue';
   public activeThemeSwatch: string[];
 
   // Theme lists
@@ -85,7 +86,7 @@ export class ThemeService {
       label: "iX Blue",
       labelSwatch:"blue",
       description:'Official iX System Colors on light',
-      accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
+      accentColors:['blue', 'orange', 'cyan', 'violet', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
       topbar:"var(--blue)",
       accent:"var(--yellow)",
@@ -97,14 +98,14 @@ export class ThemeService {
       'alt-bg2':'#cdcdcd',
       'alt-fg1':'#181a26',
       'alt-fg2':'#282a36',
-      yellow:'#f0cb00',
-      orange:'#ee9302',
-      red:'#ff0013',
-      magenta:'#d238ff',
-      violet:'#c17ecc',
-      blue:'#0095d5',
+      yellow:'#DED142',
+      orange:'#E68D37',
+      red:'#CE2929',
+      magenta:'#C006C7',
+      violet:'#7617D8',
+      blue:'#0095D5',
       cyan:'#00d0d6',
-      green:'#59d600'
+      green:'#71BF44'
     },
     {
       name:'dracula',
@@ -482,4 +483,8 @@ export class ThemeService {
     return hsl[2] < 50 ? true : false;
   }
 
+  isDarkTheme(name: string = this.activeTheme): boolean{
+    const theme = this.findTheme(name);
+    return  this.darkTest(theme.bg2);
+  }
 }

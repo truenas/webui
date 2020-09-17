@@ -23,7 +23,7 @@ import { T } from '../../../../translate-marker';
 export class WidgetComponent extends iXObject implements AfterViewInit {
 
   protected core:CoreService;
-  protected themeService: ThemeService;
+  public themeService: ThemeService;
   @Input() widgetSize: string;
   @Input() rendered?:boolean = true;
   @Input() configurable:boolean = false;
