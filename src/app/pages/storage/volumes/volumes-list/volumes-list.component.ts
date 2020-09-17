@@ -327,10 +327,9 @@ export class VolumesListTableConfig implements InputTableConf {
       actions.push({
         label: T("Export Dataset Keys"),
         onClick: (row1) => {
-          const title = helptext.export_keys_title  + row1.name;
           const message = helptext.export_keys_message + row1.name;
           const fileName = "dataset_" + row1.name + "_keys.json";
-          this.dialogService.confirm(title, message, false, helptext.export_keys_button).subscribe(export_keys => {
+          this.dialogService.passwordConfirm(message).subscribe(export_keys => {
             if (export_keys) {
               this.loader.open();
               const mimetype = 'application/json';
