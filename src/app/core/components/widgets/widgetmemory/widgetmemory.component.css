@@ -105,9 +105,11 @@
 }
 
 h1.memory-used{
-  margin: 32px 0 0;
+  margin: 56px 0 0;
+  font-family: var(--font-family-body);
   font-weight: 400;
   font-size: 350%;
+  line-height: 20px;
 }
 
 h1.memory-used span.memory-used-units{

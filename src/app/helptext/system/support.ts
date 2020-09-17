@@ -190,7 +190,29 @@ export const helptext_system_support = {
    Create a Jira account</a> to file an issue. Use a valid \
    email address when registering to receive issue status updates.'),
 
-   submitBtn: T('Submit'),
+   submitBtn: T('Save'),
   
-   contactUs: T('Contact Support')
+   contactUs: T('Contact Support'),
+
+   docHub: T('<a href="https://www.truenas.com/docs/hub/" target="_blank">\
+ TrueNAS Documentation Hub</a> - Read and contribute to the open-source documentation.'),
+
+  forums: T('<a href="https://www.ixsystems.com/community/" target="_blank">\
+ TrueNAS Forums</a> - Find answers from other users in the forums.'),
+
+  licensing: T('<a href="https://www.ixsystems.com/support/" target="_blank">\
+ TrueNAS Liscensing</a> - Learn more about enterprise-grade support.'),
+
+  updateTxt: T('Update License'),
+  enterTxt: T('Enter License'),
+  ticket: T('File Ticket'),
+
+  updateProd: {
+    title: T('Update Production Status'),
+    message: T('Set production status as active'),
+    checkbox: T('Send initial debug'),
+    button: T('Proceed')
+  }
+
+  
 };

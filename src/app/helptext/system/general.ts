@@ -209,5 +209,17 @@ export const helptext_system_general = {
   config_upload: {
     title: T('Upload Config'),
     message: T('Uploading...')
+  },
+  enabled: T('Enabled'),
+  disabled: T('Disabled'),
+  default: T('Default'),
+  localeTitle: T('Localization'),
+  guiTitle: T('GUI'),
+  guiPageTitle: T('GUI Settings'),
+  ntpTitle: T('NTP Servers'),
+  supportTitle: T('Support'),
+  deleteServer: {
+    title: T('Delete Server'),
+    message: T('Delete')
   }
 };

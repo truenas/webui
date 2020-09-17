@@ -1,0 +1,80 @@
+<div class="" fxLayout="column">
+  <div class="mat-card-content" fxLayout="column">
+    <div id="top-row" class="container" 
+      fxLayoutGap="16px"
+      fxLayout.lt-lg="row wrap" 
+      [fxLayout.xs]="isProductImageRack ? 'column' : 'row wrap'" 
+      [fxLayout.gt-md]="isProductImageRack ? 'column' : 'row wrap'" 
+      fxLayoutAlign="space-evenly center">
+
+      <div [fxFlex.gt-md]="isProductImageRack ? 'calc(200px - 32px)' : '40%'" 
+        [fxFlex.gt-xs]="isProductImageRack ? 'calc(40% - 32px)' : '40%'" 
+        [fxFlex.xs]="isProductImageRack ? 'calc(200px - 32px)' : '40%'"
+        style="background-size:contain; background-repeat: no-repeat; background-position:50%;"
+        [style.background-image]="'url(assets/images/' + product_image + ')'">
+          <!--<app-sys-image [product_image]="product_image"></app-sys-image>-->
+          <img class="invisible" [src]="'assets/images/' + product_image"/>
+
+      </div>
+
+      <div *ngIf="systemInfo"
+        [fxFlex.gt-md]="isProductImageRack ? 'calc(50% - 32px)' : 'calc(60% - 32px)'" 
+        fxFlex.gt-xs="calc(60% - 32px)" 
+        [fxFlex.xs]="isProductImageRack ? 'calc(50% - 32px)' : 'calc(60% - 32px)'" 
+        fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="16px"
+        [class]="extraMargin ? 'extra-margin' : 'regular-margin'">
+
+          <app-sys-info
+          *ngIf="!hasLicense; else licensedSysInfo"
+          [version]='systemInfo.version'
+          [model]="systemInfo.model"
+          [product]='systemInfo.system_product'
+          [memory]="systemInfo.memory"
+          [serial]="systemInfo.serial"
+          [hasLicense]="hasLicense"
+          ></app-sys-info>
+        <ng-template #licensedSysInfo>
+          <app-sys-info
+            [customer_name]='licenseInfo.customer_name'
+            [features]='licenseInfo.features'
+            [contract_type]='licenseInfo.contract_type'
+            [expiration_date]='licenseInfo.expiration_date'
+            [model]='systemInfo.model'
+            [serial]='systemInfo.serial'
+            [add_hardware]='licenseInfo.add_hardware'
+            [daysLeftinContract]='licenseInfo.daysLeftinContract'
+            [hasLicense]="hasLicense"
+          >
+          </app-sys-info>
+        </ng-template>
+  
+        <div class="links-wrapper">
+          <div class="links" *ngFor="let link of links">
+            <div [innerHTML]=link></div>
+          </div>
+        </div>
+        <div *ngIf="hasLicense">
+          <mat-checkbox (change)="updateProductionStatus($event)" [(ngModel)]="isProduction">
+            {{ 'This is a production system' | translate}}</mat-checkbox>
+        </div>
+        
+        <!-- ACTION BUTTONS -->
+        <div fxLayout="row" fxLayoutGap="8px" class="actions button-group" [class]="isProductImageTall ? 'btn-fixed' : ''">
+          <button id="update-license-btn" (click)="updateLicense()"mat-button color="primary">
+            {{ licenseButtonText | translate }}
+          </button>
+          <button id="file-ticket-btn" (click)="fileTicket()" mat-button color="default">
+            {{ ticketText | translate }}
+          </button>
+          <button id="proactive-support-btn" (click)="openProactive()" mat-button color="default" *ngIf="hasLicense">
+            {{ proactiveText | translate }}
+          </button>
+        </div>
+
+
+      </div>
+
+    </div>
+  
+  </div>
+</div>

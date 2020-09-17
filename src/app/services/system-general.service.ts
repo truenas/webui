@@ -15,6 +15,8 @@ export class SystemGeneralService {
   updateRunning = new EventEmitter<string>();
   updateRunningNoticeSent = new EventEmitter<string>();
   updateIsDone$ = new Subject();
+  sendConfigData$ = new Subject();
+  refreshSysGeneral$ = new Subject();
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
@@ -98,6 +100,14 @@ export class SystemGeneralService {
     this.updateIsDone$.next();
   }
 
+  sendConfigData(data: any) {
+    this.sendConfigData$.next(data);
+  }
+
+  refreshSysGeneral() {
+    this.refreshSysGeneral$.next();
+  }
+ 
   checkRootPW(password) {
     return this.ws.call('auth.check_user', ['root', password]);
   }

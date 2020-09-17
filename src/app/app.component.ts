@@ -151,6 +151,10 @@ export class AppComponent {
       "truenas_scale_logo_full",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_logo_full.svg")
     );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_scale_logomark_color",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_logomark_rgb.svg")
+    );
     /*this.matIconRegistry.addSvgIcon(
       "truenas_scale_text_only",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_text_only.svg")
