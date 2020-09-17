@@ -41,7 +41,7 @@ app-breadcrumb{
 }
 
 .rightside-content-hold {
-  padding: 14px .03rem 15px .03rem !important;
+  padding: 14px 16px 15px !important;
   overflow-x: hidden;
   overflow-y: scroll;
   display: block;
@@ -49,6 +49,10 @@ app-breadcrumb{
   top: 50px;
   height: calc(100% - 48px);
   width: 100%;
+}
+
+.xs .rightside-content-hold{
+  padding:0 !important
 }
 
 .rightside-content-hold.has-footer {
@@ -119,7 +123,7 @@ app-breadcrumb{
 
 /* Cards & Tables */
 .mat-card{
-  margin:24px;/* This will be deprecated once Grid System is implemented*/
+  /*margin:24px;  This will be deprecated once Grid System is implemented*/
 }
 
 .mat-card-table{
@@ -334,7 +338,7 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
 .widget.splitv, .widget.splith, .widget.stats-widget{
   width:calc(600px * 0.9) !important;
   /*height:calc(400px * 0.95) !important;*/
-  margin: 8px;
+  margin: 8px 0;
   position: relative;
   left: calc(50% - 270px);
 }

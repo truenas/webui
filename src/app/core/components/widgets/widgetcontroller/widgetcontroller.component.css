@@ -167,7 +167,7 @@
 /* NARROW SCREENS */
 .xs.widget{
   width:100vw;
-  height: calc(100vh - 96px);
+  height: 100vh;
   position: absolute;
   /*top: 88px;
   z-index: 2;*/

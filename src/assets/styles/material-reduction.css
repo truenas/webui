@@ -557,8 +557,8 @@ table.mat-table {
 
 tr.mat-header-row,
 .mat-table thead tr{
-  max-height: 36px;
-  height: 36px;
+  max-height: 48px;
+  height: 48px;
 }
 
 .mat-row, 
