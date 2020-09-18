@@ -94,14 +94,6 @@ export class WebSocketService {
   ping() {
     if (this.connected) {
       this.socket.send(JSON.stringify({"msg" : "ping", "id" : UUID.UUID()}));
-      if (this.token && typeof(this.token) !== 'undefined') {
-        // check to see if the token is still valid (keepalive)
-        this.call('auth.token', [ this.token ]).subscribe((result) => {
-          if (!result && !this.shuttingdown) {
-            this._router.navigate(['/sessions/signin']);
-          }
-        });
-      }
       setTimeout(this.ping.bind(this), 20000);
     }
   }
