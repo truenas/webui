@@ -51,7 +51,6 @@ div.view-more-row {
     cursor: pointer;
 }
 
-table.table-component tr.mat-row:hover,
 div.view-more-row:hover {
     background: rgba(0,0,0,0.1);
 }

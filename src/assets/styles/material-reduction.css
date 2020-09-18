@@ -585,6 +585,10 @@ td.mat-cell .mat-icon{
   top: calc(50% - 12px);
 }
 
+.mat-row:hover,
+tr.mat-row:hover {
+  background: rgba(0,0,0,0.1);
+}
 /* Material Lists */
 .mat-list-item{
   border-bottom: solid 1px var(--lines) !important;
