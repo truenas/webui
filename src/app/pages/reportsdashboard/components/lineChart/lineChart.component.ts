@@ -7,7 +7,7 @@ import { Report, ReportData } from '../report/report.component';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
 
 import {UUID} from 'angular2-uuid';
-import * as moment from 'moment';
+import * as moment from 'moment-timezone';
 import Dygraph from 'dygraphs';
 import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
 import Chart from 'chart.js';
@@ -41,6 +41,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
   @Input() data: ReportData;
   @Input() report: Report;
   @Input() title: string;
+  @Input() timezone: string;
 
   @Input() legends?: string[]; 
   @Input() type: string = 'line';
@@ -202,7 +203,8 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
 
           for(let i = 0; i < rd.data.length; i++){ 
             let item = Object.assign([], rd.data[i]);
-            let date = new Date(rd.start * 1000 + i * rd.step * 1000);
+            let dateStr = moment.tz(new Date(rd.start * 1000 + i * rd.step * 1000), this.timezone).format();
+            let date = new Date(dateStr.substring(0, dateStr.length-9));
             item.unshift(date);
             rows.push(item);
           }
