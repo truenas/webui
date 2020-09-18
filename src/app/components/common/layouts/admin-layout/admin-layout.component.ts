@@ -22,6 +22,7 @@ import globalHelptext from '../../../../helptext/global-helptext';
 export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   private isMobile;
   screenSizeWatcher: Subscription;
+  getAdvancedConfig: Subscription;
   isSidenavOpen: Boolean = true;
   isSidenavCollapsed = false;
   sidenavMode: string = 'over';
@@ -197,7 +198,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   checkIfConsoleMsgShows() {
-    this.ws.call('system.advanced.config', [])
+    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig
       .subscribe(res => this.onShowConsoleFooterBar(res.consolemsg));
   }
 

@@ -44,6 +44,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   interval: any;
   updateIsDone: Subscription;
   getProductType: Subscription;
+  getAdvancedConfig: Subscription;
 
   showResilvering = false;
   pendingNetworkChanges = false;
@@ -238,7 +239,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   checkLegacyUISetting() {
-    this.ws.call('system.advanced.config').subscribe((res) => {
+    this.getAdvancedConfig = this.sysGenService.getAdvancedConfig.subscribe((res) => {
       if (res.legacy_ui) {
         this.exposeLegacyUI = res.legacy_ui;
         window.localStorage.setItem('exposeLegacyUI', res.legacy_ui);
@@ -256,6 +257,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.core.unregister({observerClass:this});
 
     this.getProductType.unsubscribe();
+    this.getAdvancedConfig.unsubscribe();
   }
 
   setLang(lang) {

@@ -17,34 +17,62 @@ export class SystemGeneralService {
   sendConfigData$ = new Subject();
   refreshSysGeneral$ = new Subject();
 
-  generalConfigInfo: any;
-  getGeneralConfig = new Observable<any>(observer => {
+  // Prevent repetitive api calls in a short time when data is already available
+  public generalConfigInfo: any;
+  public getGeneralConfig = new Observable<any>(observer => {
     if((!this.generalConfigInfo || _.isEmpty(this.generalConfigInfo))) {
+      // Since the api call can be made many times before the first response comes back, 
+      // set waiting to true to make if condition false after the first call
       this.generalConfigInfo = { waiting: true};
-      console.log('making api call to get config info')
+      console.log('making api call to get general config info')
       this.ws.call('system.general.config').subscribe(res => {
         this.generalConfigInfo = res;
         observer.next(this.generalConfigInfo);
       })
     } else {
+      // Check every ten ms to see if the object is ready, then stop checking and send the obj
       const wait = setInterval(() => {
         if (this.generalConfigInfo && !this.generalConfigInfo.waiting) {
           clearInterval(wait);
           observer.next(this.generalConfigInfo);
-          console.log('just sending config info', this.generalConfigInfo)
+          console.log('just sending general config info', this.generalConfigInfo)
         }
       }, 10)
     }
+    // After a pause, set object to empty so calls can be made
     setTimeout(() => {
       this.generalConfigInfo = {};
     }, 2000)
   });
 
-  productType = '';
-  getProductType = new Observable<string>(observer => {
+  public advancedConfigInfo: any;
+  public getAdvancedConfig = new Observable<any>(observer => {
+    if((!this.advancedConfigInfo || _.isEmpty(this.advancedConfigInfo))) {
+      this.advancedConfigInfo = { waiting: true};
+      console.log('making api call to get advanced config info')
+      this.ws.call('system.advanced.config').subscribe(res => {
+        this.advancedConfigInfo = res;
+        observer.next(this.advancedConfigInfo);
+      })
+    } else {
+      const wait = setInterval(() => {
+        if (this.advancedConfigInfo && !this.advancedConfigInfo.waiting) {
+          clearInterval(wait);
+          observer.next(this.advancedConfigInfo);
+          console.log('just sending advanced config info', this.advancedConfigInfo)
+        }
+      }, 10)
+    }
+    setTimeout(() => {
+      this.advancedConfigInfo = {};
+    }, 2000)
+  });
+
+  public productType = '';
+  public getProductType = new Observable<string>(observer => {
     if (!this.productType) {
       this.productType = 'pending';
-      console.log('api call for product type')
+      console.log('making api call for product type')
       this.ws.call('system.product_type').subscribe(res => {
         this.productType = res;
         observer.next(this.productType);
@@ -58,15 +86,13 @@ export class SystemGeneralService {
         }
       }, 10)
     }
+    setTimeout(() => {
+      this.productType = '';
+    }, 5000)
 
   })
   
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
-
-  // getProductType() {
-  //   console.log('getting product type')
-  //   return this.ws.call('system.product_type');
-  // }
 
   getCA() { return this.ws.call(this.caList, []); }
 
