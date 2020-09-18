@@ -1,15 +1,16 @@
 /* content padding top 14px bottom 15px*/
 div.dashboard {
-    height: calc(100vh - 80px);
+    height: calc(100vh - 120px);
 }
+
 div.content {
     flex: 1;
 }
 div.right-column div.left-column {
     height: inherit;
 }
-div.title {
+/* div.title {
     display: flex;
     margin: 0px 24px;
     color: var(--fg2);
-}
+} */
