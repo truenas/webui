@@ -1163,7 +1163,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
 
     }
-    if (rowData.type === "zvol" || rowData.type === "FILESYSTEM") {
+    if (rowData.type === "VOLUME" || rowData.type === "FILESYSTEM") {
       actions.push({
         id: rowData.name,
         name: T('Create Snapshot'),
@@ -1560,8 +1560,8 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   clickAction(rowData) {
-    let editPermissions = rowData.actions[0].actions.find(o => o.name === 'Edit Permissions');
-    if (!rowData.locked) {
+    const editPermissions = rowData.actions[0].actions.find(o => o.name === 'Edit Permissions');
+    if (!rowData.locked && editPermissions) {
       if (!rowData.id.includes('/')) {
         editPermissions.disabled = true;
         editPermissions.matTooltip = helptext.permissions_edit_msg1;
