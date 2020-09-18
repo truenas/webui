@@ -94,6 +94,14 @@ export class AppComponent {
 
     // TRUENAS ENTERPRISE
     this.matIconRegistry.addSvgIcon(
+      "truenas_logomark_color",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logomark_rgb.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_logotype_color",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logotype_rgb.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
       "truenas_logomark", // Generic Alias
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logomark.svg")
     );
@@ -117,11 +125,23 @@ export class AppComponent {
       "truenas_enterprise_text_only",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logotype.svg")
     );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_enterprise_logomark_color",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logomark_rgb.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_enterprise_logotype_color",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logotype_rgb.svg")
+    );
 
     // TRUENAS CORE
     this.matIconRegistry.addSvgIcon(
       "truenas_core_logomark_color",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logomark_rgb.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_core_logotype_color",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logotype_rgb.svg")
     );
     this.matIconRegistry.addSvgIcon(
       "truenas_core_logomark",
@@ -156,6 +176,10 @@ export class AppComponent {
     this.matIconRegistry.addSvgIcon(
       "truenas_scale_logomark_color",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_logomark_rgb.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_scale_logotype_color",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_logotype_rgb.svg")
     );
     /*this.matIconRegistry.addSvgIcon(
       "truenas_scale_text_only",
