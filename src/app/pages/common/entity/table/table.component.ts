@@ -52,6 +52,8 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   private enableViewMore = false;
   public showCollapse = false;
 
+  private TABLE_HEADER_HEIGHT = 48;
+  private TABLE_ROW_HEIGHT = 48;
   private TABLE_MIN_ROWS = 5;
 
   protected idProp = 'id' ;
@@ -65,7 +67,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
       if (this.enableViewMore) {
         return;
       }
-      this.limitRows = Math.floor((this.tableHeight - (this.tableConf.hideHeader ? 0 : 56)) / 48);
+      this.limitRows = Math.floor((this.tableHeight - (this.tableConf.hideHeader ? 0 : this.TABLE_HEADER_HEIGHT)) / this.TABLE_ROW_HEIGHT);
       this.limitRows = Math.max(this.limitRows, this.TABLE_MIN_ROWS);
 
       if (this.dataSource) {

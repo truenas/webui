@@ -1,45 +1,18 @@
+/* table component css */
 mat-card.app-table {
-    margin: 24px;
-    background: var(--bg2);
-    height: calc(100% - 50px);
-}
-div.table-title {
-    background: var(--bg2);
-    padding: 10px 16px;
-}
-
-div.table-title > h3 {
-    color: var(--fg1);
-}
-
-div.table-title-action > button {
-    background-color: var(--alt-bg2);
-    color: var(--fg1);
+    height: calc(100% - 8px);
 }
 
 div.table-container {
+    padding: 0px;
+}
+
+mat-card-content.table-container{
     height: inherit;
 }
 
-table.table-component{
-    width: 100%;
-    vertical-align: middle;
-    font: inherit;
-    background: var(--bg2);
-}
-
-table.table-component tbody,
-table.table-component thead,
-table.table-component tr,
-table.table-component th,
-table.table-component td {
-    vertical-align: middle;
-    font: inherit;
-    color: var(--fg2);
-}
-
-table.table-component tr.mat-row:hover{
-    background: var(--alt-bg2);
+div.table-container {
+    height: calc(100% - 41px);
 }
 
 div.table-cell {
@@ -51,7 +24,7 @@ div.table-row-action {
     justify-content: flex-end;
 }
 
-mat-icon.state-icon {
+/* mat-icon.state-icon {
     font-size: 19px;
     height: auto;
     width: auto;
@@ -60,10 +33,11 @@ mat-icon.state-icon {
 
 mat-icon.state-icon.STATE_UP {
     color: var(--green);
-}
-mat-icon.state-icon.STATE_DOWN,
-mat-icon.state-info-icon.STATE_DOWN {
-    color: var(--grey);
+} */
+
+mat-icon.state-icon,
+mat-icon.state-info-icon {
+    position: inherit;
 }
 
 div.state-info {
@@ -73,13 +47,11 @@ div.state-info {
 
 div.view-more-row {
     padding: 9px;
-    background: var(--bg2);
-    color: var(--fg2);
-    width: 100%;
     text-align: center;
     cursor: pointer;
 }
 
+table.table-component tr.mat-row:hover,
 div.view-more-row:hover {
-    background: var(--alt-bg2);
+    background: rgba(0,0,0,0.1);
 }

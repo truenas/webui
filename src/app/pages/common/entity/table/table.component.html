@@ -1,12 +1,11 @@
 <mat-card class="app-table" fxLayout="column" #apptable>
-  <div class="table-title" fxLayout="row" fxLayoutAlign="space-between center">
-    <h3 *ngIf="title">{{title}}</h3>
-    <div class="table-title-action">
-      <button mat-flat-button *ngIf="tableConf.add" (click)="tableConf.add()">Add</button>
-      <!-- customize title actiions -->
-
+  <mat-toolbar-row>
+    <h3 class="title" *ngIf="title">{{ title }}</h3>
+    <div class="actions">
+      <button mat-button color="default" class="action-icon" *ngIf="tableConf.add" (click)="tableConf.add()">{{ 'Add' | translate }}</button>
     </div>
-  </div>
+</mat-toolbar-row>
+<mat-card-content class="table-container">
   <div class="table-container" #table>
     <table mat-table [dataSource]="displayedDataSource" class="table-component">
       <!-- Info Column -->
@@ -18,7 +17,7 @@
               <mat-icon [id]="element[idProp]" class="state-info-icon" svgIcon="network-upload-download" *ngIf="unifyState(element[column.state.prop]) === 'STATE_UP'" [matTooltip]="showInOutInfo(element)" [class]="unifyState(element[column.state.prop])"></mat-icon>
               <mat-icon class="state-info-icon" svgIcon="network-upload-download-disabled" *ngIf="unifyState(element[column.state.prop]) === 'STATE_DOWN'" [class]="unifyState(element[column.state.prop])"></mat-icon>
             </div>
-            <mat-icon class="state-icon" *ngIf="column.state" [class]="unifyState(element[column.prop])">
+            <mat-icon class="state-icon" *ngIf="column.state && column.state.icon" [class]="unifyState(element[column.prop])">
               {{column.state.icon}}</mat-icon>
             <ul *ngIf="column.listview; else textView">
               <li *ngFor="let item of element[column.prop]"> {{item}} </li>
@@ -58,4 +57,5 @@
   </div>
   <div class="view-more-row" *ngIf="showViewMore" (click)="openViewMore()">View More</div>
   <div class="view-more-row" *ngIf="showCollapse" (click)="collapse()">Collapse</div>
+</mat-card-content>
 </mat-card>
