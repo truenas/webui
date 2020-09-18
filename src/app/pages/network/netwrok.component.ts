@@ -162,8 +162,17 @@ export class NetworkComponent implements OnInit, OnDestroy {
         this.ws.call(this.summayCall).subscribe(
           (res) => {
             this.networkSummary = res;
-            this.nameserverWidget.data.ipv4 = res.nameservers.map(item => {
-              return {ip: item, dhcp: (item !== config_res.nameserver1 && item !== config_res.nameserver2 && item !== config_res.nameserver3) ? true : false};
+            this.nameserverWidget.data.nameserver = res.nameservers.map(item => {
+              switch(item) {
+                case config_res.nameserver1:
+                  return {label: 'Nameserver 1', value: item};
+                case config_res.nameserver2:
+                  return {label: 'Nameserver 2', value: item};
+                case config_res.nameserver3:
+                  return {label: 'Nameserver 3', value: item};
+                default:
+                  return {label: 'Nameserver (DHCP)', value: item};
+              }
             });
             this.defaultRoutesWidget.data.ipv4 = res.default_routes;
           }
