@@ -1,6 +1,6 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable, OnInit, OnDestroy } from '@angular/core';
 import { RestService, WebSocketService, SystemGeneralService } from 'app/services';
-import { Observable ,  Observer ,  Subject } from 'rxjs';
+import { Observable ,  Observer ,  Subject, Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
 export interface NotificationAlert {
@@ -28,6 +28,7 @@ export class NotificationsService {
   private running = false;
   private locale = 'en-US';
   private timeZone = 'UTC'
+  private getGenConfig: Subscription;
 
   constructor(private restService: RestService, private ws: WebSocketService,
     private sysGeneralService: SystemGeneralService) {
@@ -38,7 +39,7 @@ export class NotificationsService {
 
   initMe(): void {
 
-    this.sysGeneralService.getGeneralConfig.subscribe((res) => {
+    this.getGenConfig = this.sysGeneralService.getGeneralConfig.subscribe((res) => {
       if (res.timezone !== 'WET' && res.timezone !== 'posixrules') {
         this.timeZone = res.timezone;
       }
@@ -190,6 +191,10 @@ export class NotificationsService {
     };
 
     return newNotification;
+  }
+
+  ngOnDestroy() {
+    this.getGenConfig.unsubscribe();
   }
 
 }

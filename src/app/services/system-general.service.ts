@@ -16,10 +16,57 @@ export class SystemGeneralService {
   updateIsDone$ = new Subject();
   sendConfigData$ = new Subject();
   refreshSysGeneral$ = new Subject();
+
   generalConfigInfo: any;
-  sendGenConfigInfo$ = new Subject();
+  getGeneralConfig = new Observable<any>(observer => {
+    if((!this.generalConfigInfo || _.isEmpty(this.generalConfigInfo))) {
+      this.generalConfigInfo = { waiting: true};
+      console.log('making api call to get config info')
+      this.ws.call('system.general.config').subscribe(res => {
+        this.generalConfigInfo = res;
+        observer.next(this.generalConfigInfo);
+      })
+    } else {
+      const wait = setInterval(() => {
+        if (this.generalConfigInfo && !this.generalConfigInfo.waiting) {
+          clearInterval(wait);
+          observer.next(this.generalConfigInfo);
+          console.log('just sending config info', this.generalConfigInfo)
+        }
+      }, 10)
+    }
+    setTimeout(() => {
+      this.generalConfigInfo = {};
+    }, 2000)
+  });
+
+  productType = '';
+  getProductType = new Observable<string>(observer => {
+    if (!this.productType) {
+      this.productType = 'pending';
+      console.log('api call for product type')
+      this.ws.call('system.product_type').subscribe(res => {
+        this.productType = res;
+        observer.next(this.productType);
+      })
+    } else {
+      const wait = setInterval(() => {
+        if (this.productType !== 'pending') {
+          clearInterval(wait);
+          console.log('just sending product type', this.productType)
+          observer.next(this.productType);
+        }
+      }, 10)
+    }
+
+  })
   
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
+
+  // getProductType() {
+  //   console.log('getting product type')
+  //   return this.ws.call('system.product_type');
+  // }
 
   getCA() { return this.ws.call(this.caList, []); }
 
@@ -112,26 +159,4 @@ export class SystemGeneralService {
   checkRootPW(password) {
     return this.ws.call('auth.check_user', ['root', password]);
   }
-  counter = 0;
-  getGeneralConfig = new Observable<any>(observer => {
-    if((!this.generalConfigInfo || _.isEmpty(this.generalConfigInfo)) && this.counter === 0) {
-      this.counter++;
-      console.log('making api call')
-      this.ws.call('system.general.config').subscribe(res => {
-        this.generalConfigInfo = res;
-        observer.next(this.generalConfigInfo);
-      })
-    } else {
-      setTimeout(() => {
-        observer.next(this.generalConfigInfo);
-        console.log('just sending', this.generalConfigInfo, this.counter)
-      }, 100)
-    }
-    setTimeout(() => {
-      this.generalConfigInfo = {};
-      this.counter = 0;
-    }, 5000)
-  });
-
-
 }

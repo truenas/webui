@@ -43,6 +43,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   interval: any;
   updateIsDone: Subscription;
+  getProductType: Subscription;
 
   showResilvering = false;
   pendingNetworkChanges = false;
@@ -210,7 +211,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.hostname = evt.data.hostname;
     });
 
-    this.ws.call('system.product_type').subscribe((res)=>{
+    this.getProductType = this.sysGenService.getProductType.subscribe((res)=>{
       this.systemType = res;
     })
 
@@ -253,6 +254,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.ws.unsubscribe('failover.disabled_reasons');
 
     this.core.unregister({observerClass:this});
+
+    this.getProductType.unsubscribe();
   }
 
   setLang(lang) {

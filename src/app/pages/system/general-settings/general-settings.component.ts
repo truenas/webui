@@ -31,7 +31,8 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   displayedColumns: any;
   dataSource: any;
   refreshTable: Subscription;
-  
+  getGenConfig: Subscription;
+
   // Components included in this dashboard
   protected localizationComponent = new LocalizationFormComponent(this.language,this.ws,this.dialog,this.loader,
     this.sysGeneralService,this.localeService,this.modalService);
@@ -126,7 +127,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   }
 
   getDataCardData() {
-    this.sysGeneralService.getGeneralConfig.subscribe(res => {
+    this.getGenConfig = this.sysGeneralService.getGeneralConfig.subscribe(res => {
       this.configData = res;
       this.dataCards = [ 
         {
@@ -311,6 +312,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.refreshCardData.unsubscribe();
     this.refreshTable.unsubscribe();
+    this.getGenConfig.unsubscribe();
   }
 
 }

@@ -1,7 +1,8 @@
-import { Component,OnInit,OnChanges, ViewChild, ElementRef, QueryList, Renderer2, 
+import { Component,OnInit,OnChanges, ViewChild, ElementRef, QueryList, Renderer2, OnDestroy,
   ChangeDetectorRef, SimpleChanges, HostListener, AfterViewInit, AfterViewChecked } from '@angular/core';
 import {FormGroup, FormControl, Validators} from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 
 import {FieldConfig} from '../../models/field-config.interface';
 import {Field} from '../../models/field.interface';
@@ -46,6 +47,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   public helptext = globalHelptext;
   public timezone: string;
   public offset: string;
+  private getGenConfig: Subscription;
 
   @ViewChild('calendar', { static: false, read:ElementRef}) calendar: ElementRef;
   @ViewChild('calendar', { static: false}) calendarComp:MatMonthView<any>;
@@ -268,7 +270,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     this.preset = this.presets[1];
     this._months = "*";
     
-    this.sysGeneralService.getGeneralConfig.subscribe((res) => {
+    this.getGenConfig =  this.sysGeneralService.getGeneralConfig.subscribe((res) => {
       this.timezone = res.timezone;
       moment.tz.setDefault(res.timezone);
 
@@ -732,6 +734,10 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     // Days of Week
     this.updateDaysOfWeekFields(arr[4]);
     this._daysOfWeek = arr[4];
+  }
+
+  ngOnDestroy() {
+    this.getGenConfig.unsubscribe();
   }
 
 }
