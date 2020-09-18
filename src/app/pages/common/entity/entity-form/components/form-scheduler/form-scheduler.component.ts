@@ -16,6 +16,7 @@ import * as parser from 'cron-parser';
 import { WebSocketService } from 'app/services/ws.service';
 import { EntityUtils } from '../../../utils';
 import globalHelptext from '../../../../../../helptext/global-helptext';
+import { SystemGeneralService } from 'app/services';
 
 interface CronPreset {
   label:string;
@@ -260,13 +261,14 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
 
   constructor(public translate: TranslateService, private renderer: Renderer2, 
     private cd: ChangeDetectorRef,public overlay: Overlay,
-    protected localeService: LocaleService, protected ws: WebSocketService){ 
+    protected localeService: LocaleService, protected ws: WebSocketService,
+    private sysGeneralService: SystemGeneralService){ 
     
     //Set default value
     this.preset = this.presets[1];
     this._months = "*";
     
-    this.ws.call('system.general.config').subscribe((res) => {
+    this.sysGeneralService.getGeneralConfig.subscribe((res) => {
       this.timezone = res.timezone;
       moment.tz.setDefault(res.timezone);
 

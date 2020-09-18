@@ -126,7 +126,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   }
 
   getDataCardData() {
-    this.ws.call('system.general.config').subscribe(res => {
+    this.sysGeneralService.getGeneralConfig.subscribe(res => {
       this.configData = res;
       this.dataCards = [ 
         {

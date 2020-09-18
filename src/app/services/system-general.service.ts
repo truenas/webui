@@ -1,7 +1,6 @@
-
-
 import { EventEmitter, Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
+import * as _ from 'lodash';
 import { map } from 'rxjs/operators';
 import { RestService } from './rest.service';
 import { WebSocketService } from './ws.service';
@@ -17,7 +16,9 @@ export class SystemGeneralService {
   updateIsDone$ = new Subject();
   sendConfigData$ = new Subject();
   refreshSysGeneral$ = new Subject();
-
+  generalConfigInfo: any;
+  sendGenConfigInfo$ = new Subject();
+  
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
   getCA() { return this.ws.call(this.caList, []); }
@@ -111,4 +112,26 @@ export class SystemGeneralService {
   checkRootPW(password) {
     return this.ws.call('auth.check_user', ['root', password]);
   }
+  counter = 0;
+  getGeneralConfig = new Observable<any>(observer => {
+    if((!this.generalConfigInfo || _.isEmpty(this.generalConfigInfo)) && this.counter === 0) {
+      this.counter++;
+      console.log('making api call')
+      this.ws.call('system.general.config').subscribe(res => {
+        this.generalConfigInfo = res;
+        observer.next(this.generalConfigInfo);
+      })
+    } else {
+      setTimeout(() => {
+        observer.next(this.generalConfigInfo);
+        console.log('just sending', this.generalConfigInfo, this.counter)
+      }, 100)
+    }
+    setTimeout(() => {
+      this.generalConfigInfo = {};
+      this.counter = 0;
+    }, 5000)
+  });
+
+
 }

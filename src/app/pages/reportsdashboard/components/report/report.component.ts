@@ -1,7 +1,7 @@
 import { Component, AfterViewInit, AfterContentInit, Input, ViewChild, OnDestroy, OnChanges, ElementRef} from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { WebSocketService } from 'app/services/';
+import { WebSocketService, SystemGeneralService } from 'app/services/';
 import { ReportsService } from '../../reports.service';
 import { MaterialModule } from 'app/appMaterial.module';
 import { Subject } from 'rxjs';
@@ -170,7 +170,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     public translate: TranslateService,
     private rs: ReportsService,
     private ws: WebSocketService,
-    protected localeService: LocaleService){
+    protected localeService: LocaleService, private sysGeneralService: SystemGeneralService){
     super(translate); 
     
     this.core.register({observerClass:this, eventName:"ReportData-" + this.chartId}).subscribe((evt:CoreEvent) => {
@@ -193,7 +193,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
 
     this.core.emit({name:"ThemeDataRequest", sender:this});
 
-    this.ws.call('system.general.config').subscribe(res => this.timezone = res.timezone);
+    this.sysGeneralService.getGeneralConfig.subscribe(res => this.timezone = res.timezone);
   }
 
   ngOnDestroy(){
