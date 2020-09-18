@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, OnDestroy, AfterViewInit, EventEmitter, 
 import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import * as _ from 'lodash';
-import { Subject, BehaviorSubject } from 'rxjs'; 
+import { Subject, BehaviorSubject, Subscription } from 'rxjs'; 
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
@@ -18,7 +18,7 @@ import { T } from '../../translate-marker';
 import {
   RestService,
   SystemGeneralService,
-  WebSocketService
+  WebSocketService,
 } from '../../services/';
 
 interface Tab {
@@ -74,13 +74,14 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   public fieldConfig:FieldConfig[] = [];
   public fieldSets: FieldSet[];
   public diskReportConfigReady: boolean = false;
+  private getAdvancedConfig: Subscription;
 
   constructor(private erdService: ErdService, 
     public translate: TranslateService, 
     private router:Router, 
     private core:CoreService,
     private rs: ReportsService,
-    protected ws: WebSocketService) {
+    protected ws: WebSocketService, private sysGeneralService: SystemGeneralService) {
 
     // EXAMPLE METHOD
     //this.viewport.scrollToIndex(5);
@@ -90,7 +91,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
     this.scrollContainer = document.querySelector('.rightside-content-hold ');//this.container.nativeElement;
     this.scrollContainer.style.overflow = 'hidden';
 
-    this.ws.call('system.advanced.config').subscribe((res)=> {
+    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe((res)=> {
       if (res) {
         this.isFooterConsoleOpen = res.consolemsg;
       }
@@ -160,6 +161,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   ngOnDestroy() {
     this.scrollContainer.style.overflow = 'auto';
     this.core.unregister({observerClass:this});
+    this.getAdvancedConfig.unsubscribe();
   }
 
   ngAfterViewInit(): void {

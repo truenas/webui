@@ -1,16 +1,17 @@
-import { Component } from "@angular/core";
+import { Component, OnDestroy } from "@angular/core";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { ConsolePanelModalDialog } from "app/components/common/dialog/consolepanel/consolepanel-dialog.component";
 import { Observable, Subscription } from "rxjs";
 import { filter, map, switchMap, take } from "rxjs/operators";
-import { WebSocketService } from "../ws.service";
+import { WebSocketService } from '../ws.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 
 @Component({
   selector: "app-app-loader",
   templateUrl: "./app-loader.component.html",
   styleUrls: ["./app-loader.component.css"]
 })
-export class AppLoaderComponent {
+export class AppLoaderComponent implements OnDestroy{
   title: string;
   message: string;
 
@@ -21,13 +22,14 @@ export class AppLoaderComponent {
 
   consoleDialog: MatDialogRef<ConsolePanelModalDialog>;
   private _consoleSubscription: Subscription;
+  private getAdvancedConfig: Subscription;
 
   constructor(
     public dialogRef: MatDialogRef<AppLoaderComponent>,
     private _dialog: MatDialog,
-    private _ws: WebSocketService,
+    private _ws: WebSocketService, private sysGeneralService: SystemGeneralService
   ) {
-    this._ws.call('system.advanced.config')
+    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig
       .subscribe(res => {
         if (res.consolemsg) {
           this.isShowConsole = true;
@@ -49,5 +51,9 @@ export class AppLoaderComponent {
       clearInterval(this.consoleDialog.componentInstance.intervalPing);
       this._consoleSubscription.unsubscribe();
     });
+  }
+
+  ngOnDestroy() {
+    this.getAdvancedConfig.unsubscribe();
   }
 }

@@ -16,12 +16,11 @@ import {
 import {FormBuilder, FormControl, FormGroup, FormArray, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs/Rx';
 import { TranslateService } from '@ngx-translate/core';
 
-import {RestService, WebSocketService} from '../../../../services/';
+import {RestService, WebSocketService, SystemGeneralService} from '../../../../services/';
 import { CoreEvent } from 'app/core/services/core.service';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import {AppLoaderService} from '../../../../services/app-loader/app-loader.service';
 import { ModalService } from '../../../../services/modal.service';
 import {EntityTemplateDirective} from '../entity-template.directive';
@@ -126,6 +125,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public saveSubmitText = T("Save");
   public showPassword = false;
   public successMessage = T('Settings saved.')
+  private getAdvancedConfig: Subscription;
 
   get controls() {
     return this.fieldConfig.filter(({type}) => type !== 'button');
@@ -157,7 +157,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               private dialog:DialogService,
               public translate: TranslateService,
               private modalService: ModalService,
-              private cdr: ChangeDetectorRef) {
+              private cdr: ChangeDetectorRef,
+              private sysGeneralService: SystemGeneralService) {
                 this.loader.callStarted.subscribe(() => this.showSpinner = true);
                 this.loader.callDone.subscribe(() => this.showSpinner = false);
               }
@@ -180,7 +181,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   async ngOnInit() {
     //get system general setting
-    this.ws.call('system.advanced.config').subscribe((res)=> {
+    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe((res)=> {
       if (res) {
         if (this.conf.isBasicMode) {
           if(res.advancedmode) {
@@ -724,5 +725,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if( typeof(this.sub) !== "undefined" && typeof(this.sub.unsubscribe) !== "undefined" ) {
       this.sub.unsubscribe(); 
     }
+    this.getAdvancedConfig.unsubscribe();
   }
 }

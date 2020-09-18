@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_sharing_smb, shared } from 'app/helptext/sharing';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
@@ -7,9 +7,9 @@ import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from "app/translate-marker";
 import * as _ from 'lodash';
-import { combineLatest, of } from 'rxjs';
+import { combineLatest, of, Subscription } from 'rxjs';
 import { catchError, map, switchMap, take, tap, filter, debounceTime } from 'rxjs/operators';
-import { AppLoaderService, DialogService, RestService, WebSocketService } from '../../../../services/';
+import { AppLoaderService, DialogService, RestService, WebSocketService, SystemGeneralService } from '../../../../services/';
 import { Validators } from '@angular/forms';
 import globalHelptext from 'app/helptext/global-helptext';
 
@@ -17,7 +17,7 @@ import globalHelptext from 'app/helptext/global-helptext';
   selector : 'app-smb-form',
   template : `<entity-form [conf]="this"></entity-form>`
 })
-export class SMBFormComponent {
+export class SMBFormComponent implements OnDestroy {
   protected queryCall = 'sharing.smb.query';
   protected addCall = 'sharing.smb.create';
   protected editCall = 'sharing.smb.update'
@@ -35,6 +35,7 @@ export class SMBFormComponent {
   private stripACLWarningSent = false; 
   private mangleWarningSent = false;
   private mangle: boolean;
+  private getAdvancedConfig: Subscription;
 
   protected fieldSets: FieldSet[] = [
     {
@@ -287,7 +288,8 @@ export class SMBFormComponent {
     protected ws: WebSocketService,
     private dialog: DialogService,
     protected loader: AppLoaderService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private sysGeneralService: SystemGeneralService
   ) {
     combineLatest(
       this.ws.call("sharing.smb.query", []),
@@ -565,7 +567,7 @@ export class SMBFormComponent {
       if (entityForm.formGroup.controls['timemachine'].value) { this.isTimeMachineOn = true };
     }, 700)
 
-    this.ws.call('system.advanced.config').subscribe(res => {
+    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe(res => {
       this.isBasicMode = !res.advancedmode;
       this.updateForm();
     })
@@ -602,6 +604,10 @@ export class SMBFormComponent {
     if (pathControl.value && !nameControl.value) {
       nameControl.setValue(pathControl.value.split('/').pop());
     }
+  }
+
+  ngOnDestroy() {
+    this.getAdvancedConfig.unsubscribe();
   }
 
 }

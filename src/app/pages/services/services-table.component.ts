@@ -1,6 +1,7 @@
 import { Component, OnChanges, OnInit, ViewChild, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { RestService, WebSocketService } from '../../services/';
+import { Subscription } from 'rxjs';
+import { RestService, WebSocketService, SystemGeneralService } from '../../services/';
 
 @Component({
   selector: 'services-table',
@@ -26,8 +27,10 @@ export class ServicesTableComponent implements OnChanges, OnInit {
   public baseWindowHeight: number = 910;
   public tableHeight:number;
   public isFooterConsoleOpen: boolean;
+  private getAdvancedConfig: Subscription;
 
-  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService) {}
+  constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService,
+    private sysGeneralService: SystemGeneralService) {}
 
   ngOnInit() {
     this.findPageSize();
@@ -36,10 +39,11 @@ export class ServicesTableComponent implements OnChanges, OnInit {
       this.findPageSize()
     }
 
-    this.ws.call('system.advanced.config').subscribe((res)=> {
+    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe((res)=> {
       if (res) {
         this.isFooterConsoleOpen = res.consolemsg;
         this.setTableHeight(this.datatable);
+        this.getAdvancedConfig.unsubscribe();
       }
     });
   }

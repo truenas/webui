@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { WebSocketService } from '../../../services/ws.service';
+import { Subscription } from 'rxjs';
+import { WebSocketService, SystemGeneralService } from '../../../services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from '../../../services/dialog.service';
@@ -15,13 +16,15 @@ export class ShutdownComponent implements OnInit {
   
   public product_type: string;
   public copyrightYear = globalHelptext.copyright_year;
+  public getProdType: Subscription;
 
   constructor(protected ws: WebSocketService, protected router: Router, 
     protected loader: AppLoaderService, public translate: TranslateService,
-    protected dialogService: DialogService) {
+    protected dialogService: DialogService, private sysGeneralService: SystemGeneralService) {
       this.ws = ws;
-      this.ws.call('system.product_type').subscribe((res)=>{
+      this.getProdType = this.sysGeneralService.getProductType.subscribe((res)=>{
         this.product_type = res;
+        this.getProdType.unsubscribe();
       });
   }
 
