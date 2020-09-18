@@ -1,9 +1,10 @@
 import { Component, OnDestroy } from "@angular/core";
-import { MatDialog, MatDialogRef, throwMatDialogContentAlreadyAttachedError } from "@angular/material/dialog";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { ConsolePanelModalDialog } from "app/components/common/dialog/consolepanel/consolepanel-dialog.component";
 import { Observable, Subscription } from "rxjs";
 import { filter, map, switchMap, take } from "rxjs/operators";
-import { WebSocketService, SystemGeneralService } from 'app/services';
+import { WebSocketService } from '../ws.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 
 @Component({
   selector: "app-app-loader",
