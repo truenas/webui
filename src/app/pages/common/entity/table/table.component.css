@@ -36,7 +36,8 @@ mat-icon.state-icon.STATE_UP {
 } */
 
 mat-icon.state-icon,
-mat-icon.state-info-icon {
+mat-icon.state-info-icon,
+mat-icon.table-action-button {
     position: inherit;
 }
 
