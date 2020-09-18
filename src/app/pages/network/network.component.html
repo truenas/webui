@@ -1,19 +1,19 @@
-<div class="dashboard" fxLayout="column" >
+<div class="dashboard" fxLayout="column" fxLayoutGap="8px">
     <div class="title" fxLayout="row" fxLayoutAlign="space-between center">
         <h1>Network</h1>
         <button mat-icon-button (click)="networkSetting()">
             <mat-icon>settings</mat-icon>
         </button>
     </div>
-    <div class="content" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column">
+    <div class="content" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxLayoutGap="8px">
         <div class="right-column" fxFlex="65" fxFlex.xs="100" fxFlex.sm="100">
-            <div fxLayout="column" fxFlexFill>
+            <div fxLayout="column" fxFlexFill fxLayoutGap="8px">
                 <app-table [conf]="interfaceTableConf" fxFlex></app-table>
                 <app-table [conf]="staticRoutesTableConf" fxFlex></app-table>
             </div>
         </div>
         <div class="left-column" fxFlex="35" fxFlex.xs="100" fxFlex.sm="100">
-            <div fxLayout="column" fxFlexFill>
+            <div fxLayout="column" fxFlexFill fxLayoutGap="8px">
                 <card-widget [conf]="nameserverWidget" fxFlex></card-widget>
                 <card-widget [conf]="defaultRoutesWidget" fxFlex></card-widget>
                 <app-table [conf]="openvpnTableConf" fxFlex></app-table>
