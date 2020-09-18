@@ -9,7 +9,7 @@
 }
 
 /* Navigation shorter and fixed to Top */
-topbar, app-breadcrumb{
+topbar{
   position:fixed;
   width:100%;
   z-index:5;
@@ -38,6 +38,7 @@ topbar .mat-toolbar .mat-toolbar-row{
 
 app-breadcrumb{
   top:48px;
+  display:inline-block;
 }
 
 .rightside-content-hold {

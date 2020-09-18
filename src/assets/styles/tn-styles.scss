@@ -77,7 +77,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       @include variable(border-left, --primary, $primary, !important);
   }
   .breadcrumb-bar {
-      @include variable(background, --bg2, $bg2, !important);
+      /*@include variable(background, --bg2, $bg2, !important);*/
       @include variable(color, --fg1, $fg1, !important);
   }
   /* Hopscotch Tour */
