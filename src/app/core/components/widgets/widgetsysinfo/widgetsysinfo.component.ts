@@ -43,7 +43,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   public certified = false;
   public failoverBtnLabel: string = "FAILOVER TO STANDBY"
   public updateAvailable:boolean = false;
-  private _updateBtnStatus:string = "default";
+  private _updateBtnStatus:string = this.themeService.isDefaultTheme ? "primary" : "default";
   public updateBtnLabel:string = T("Check for Updates")
   private _themeAccentColors: string[];
   public connectionIp = environment.remote
@@ -158,7 +158,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
 
   get updateBtnStatus(){
     if(this.updateAvailable){
-      this._updateBtnStatus = "default";
+      this._updateBtnStatus = this.themeService.isDefaultTheme ? "primary" : "default";
       this.updateBtnLabel = T("Updates Available");
     }
     return this._updateBtnStatus;

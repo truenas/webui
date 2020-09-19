@@ -356,8 +356,14 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
         borderWidth: 1,
       }
   
-      const cssVar = ds.label == 'Temperature' ? 'accent' : 'primary'; 
-      const color = this.stripVar(this.currentTheme[cssVar])
+      const accent = this.themeService.isDefaultTheme ? 'orange' : 'accent';
+      let color;
+      if(accent !== 'accent' && ds.label == 'Temperature'){
+        color =  accent;
+      } else {
+        const cssVar = ds.label == 'Temperature' ? accent : 'primary'; 
+        color = this.stripVar(this.currentTheme[cssVar])
+      }
       
       const bgRGB = this.utils.hexToRGB(this.currentTheme[color]).rgb;
       const borderRGB = this.utils.hexToRGB(this.currentTheme[color]).rgb;

@@ -15,7 +15,10 @@
           <div class="slide overview" fxFlex="100" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between">
 
           <!-- Summary Section -->
-          <div fxFlex.xs="250px" fxFlex="40" class="left fn-theme-primary {{isPassive ? 'passive' : 'active'}}" fxLayout="column" fxLayoutAlign="space-between center">
+          <div fxFlex.xs="250px" fxFlex="40" 
+            class="left fn-theme-primary {{isPassive ? 'passive' : 'active'}}" 
+            [ngClass]="{'fn-theme-contrast-lighter': themeService.activeTheme == themeService.defaultTheme , 'fn-theme-primary': themeService.activeTheme != themeService.defaultTheme}" 
+            fxLayout="column" fxLayoutAlign="space-between center">
 
             <!-- Mobile Only: Exit Widget -->
             <button fxHide.gt-xs class="mat-card-title-text primary-nav" mat-icon-button color="default" >
@@ -65,7 +68,7 @@
             <ng-template #noUpdateRunning>
               <div fxHide.xs fxFlex="18" class="update-action">
                 <button *ngIf="!isPassive" class="" mat-button color="{{updateBtnStatus}}" (click)="router.navigate(['system','update'])"
-                  ix-auto ix-auto-type="button" ix-auto-identifier="{{updateBtnLabel | uppercase}}">{{updateBtnLabel | translate}}</button>
+                                                               ix-auto ix-auto-type="button" ix-auto-identifier="{{updateBtnLabel | uppercase}}">{{updateBtnLabel | translate}}</button>
                 <simple-failover-button *ngIf="isPassive" [disabled]="!ha_status || ha_status !== 'HA Enabled'" ></simple-failover-button>
               </div>
             </ng-template>
