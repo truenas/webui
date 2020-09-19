@@ -7,31 +7,32 @@ import { ApiService } from 'app/core/services/api.service';
 import { Router } from '@angular/router';
 
 export const DefaultTheme = {
-      name:'ix-dark',
-      label: "iX Dark",
-      labelSwatch:"blue",
-      description:'FreeNAS 11.2 default theme',
-      accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
-      primary:"var(--blue)",
-      topbar:"#111111",
-      accent:"var(--yellow)",
-      bg1:'#171E26',
-      bg2:'#232d35',
-      fg1:'#aaaaaa',
-      fg2:'#cccccc',
-      'alt-bg1':'rgba(122,122,122,0.25)',
-      'alt-bg2':'#6F6E6C',
-      'alt-fg1':'#c1c1c1',
-      'alt-fg2':'#e1e1e1',
-      yellow:'#f0cb00',
-      orange:'#ee9302',
-      red:'#ff0013',
-      magenta:'#d238ff',
-      violet:'#c17ecc',
-      blue:'#0D5788',
-      cyan:'#00d0d6',
-      green:'#1F9642'
-    }
+  name:'ix-dark',
+  label: "iX Dark",
+  labelSwatch:"blue",
+  description:'TrueNAS 12 default theme',
+  accentColors:['blue', 'magenta', 'orange', 'cyan', 'yellow', 'violet', 'red', 'green'],
+  primary:"var(--blue)",
+  topbar:"#111111",
+  'topbar-txt': "var(--fg2)",
+  accent:"var(--alt-bg2)",
+  bg1:'#1E1E1E',
+  bg2:'#242424',
+  fg1:'#fff',
+  fg2:'rgba(255,255,255,0.85)',
+  'alt-bg1':'#383838',
+  'alt-bg2':'#545454',
+  'alt-fg1':'rgba(194,194,194,0.5)',
+  'alt-fg2':'#e1e1e1',
+  yellow:'#DED142',
+  orange:'#E68D37',
+  red:'#CE2929',
+  magenta:'#C006C7',
+  violet:'#7617D8',
+  blue:'#0095D5',
+  cyan:'#00d0d6',
+  green:'#71BF44'
+}
 
 export interface Theme {
   name: string;
@@ -84,26 +85,26 @@ export class ThemeService {
       label: "iX Blue",
       labelSwatch:"blue",
       description:'Official iX System Colors on light',
-      accentColors:['violet', 'orange', 'cyan', 'blue', 'yellow', 'magenta', 'red', 'green'],
+      accentColors:['blue', 'orange', 'cyan', 'violet', 'yellow', 'magenta', 'red', 'green'],
       primary:"var(--blue)",
       topbar:"var(--blue)",
       accent:"var(--yellow)",
       bg1:'#dddddd',
       bg2:'#ffffff',
       fg1:'#222222',
-      fg2:'#333333',
-      'alt-bg1':'rgba(122,152,182,0.05)',
-      'alt-bg2':'#fafaf5',
+      fg2:'#666666',
+      'alt-bg1':'#ababab',
+      'alt-bg2':'#cdcdcd',
       'alt-fg1':'#181a26',
       'alt-fg2':'#282a36',
-      yellow:'#f0cb00',
-      orange:'#ee9302',
-      red:'#ff0013',
-      magenta:'#d238ff',
-      violet:'#c17ecc',
-      blue:'#0095d5',
+      yellow:'#DED142',
+      orange:'#E68D37',
+      red:'#CE2929',
+      magenta:'#C006C7',
+      violet:'#7617D8',
+      blue:'#0095D5',
       cyan:'#00d0d6',
-      green:'#59d600'
+      green:'#71BF44'
     },
     {
       name:'dracula',
@@ -333,6 +334,10 @@ export class ThemeService {
   resetToDefaultTheme(){
     this.activeTheme = this.defaultTheme;
     this.changeTheme(this.defaultTheme);
+  }
+
+  get isDefaultTheme(){
+    return this.activeTheme == this.defaultTheme; 
   }
 
   currentTheme():Theme{

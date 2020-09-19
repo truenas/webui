@@ -855,6 +855,19 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(color, --yellow-txt, $yellow-txt);
   }
 
+  // These last two were a result of a backport. 
+  // 12.1 has --contrast-lighter and --contrast-darker vars 
+  // but 12.0 theme service does not create these
+  // so we will use --alt-bg1 instead
+  .fn-theme-contrast-darker{
+    background-color: var(--alt-bg1);
+    color: var(--fg2);
+  }
+  .fn-theme-contrast-lighter{
+    background-color: var(--alt-bg1);
+    color: var(--fg2);
+  }
+
   // Fixes color on Reports page tabs
   #dashboardcontainerdiv .mat-ink-bar {
     @include variable(background-color, --primary, $primary);
