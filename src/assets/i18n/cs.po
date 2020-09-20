@@ -392,6 +392,22 @@ msgstr ""
 "šifrování)</i>, <i>SSL (Implicitní TLS)</i>, nebo <i>TLS (STARTTLS)</i>."
 
 msgid ""
+"<a href=\"https://www.ixsystems.com/community/\" target=\"_blank\"> TrueNAS "
+"Forums</a> - Find answers from other users in the forums."
+msgstr ""
+
+msgid ""
+"<a href=\"https://www.ixsystems.com/support/\" target=\"_blank\"> TrueNAS "
+"Liscensing</a> - Learn more about enterprise-grade support."
+msgstr ""
+
+msgid ""
+"<a href=\"https://www.truenas.com/docs/hub/\" target=\"_blank\"> TrueNAS "
+"Documentation Hub</a> - Read and contribute to the open-source "
+"documentation."
+msgstr ""
+
+msgid ""
 "<b>COPY</b>: Files from the source are <i><u>copied</u></i> to the "
 "destination. If files with the same names are present on the destination, "
 "they are <i><u>overwritten</u></i>."
@@ -1430,13 +1446,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Allow sending large data blocks. The  destination system must also support "
-"large blocks. See  <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
-"target=\"_blank\">zfs(8)</a>."
-msgstr ""
-
-msgid ""
 "Allow the jail hostname to be changed with <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=hostname\" "
 "target=\"_blank\">hostname(1)</a> or <a "
@@ -1449,6 +1458,14 @@ msgid ""
 "must have FreeBSD 12.0 or newer installed with the <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=vmm\" "
 "target=\"_blank\">vmm(4)</a> kernel module loaded."
+msgstr ""
+
+msgid ""
+"Allow this replication to send large data blocks. The  destination system "
+"must also support large blocks. This setting cannot be changed  after it "
+"has been enabled and the replication task is created. For more details, see "
+" <a href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
+"target=\"_blank\">zfs(8)</a>."
 msgstr ""
 
 msgid ""
@@ -1594,6 +1611,9 @@ msgid ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
 "target=\"_blank\">smb.conf</a> manual page for  a list of supported macros. "
 "The connectpath **must** be preset before a client connects."
+msgstr ""
+
+msgid "Apple Shares (AFP)"
 msgstr ""
 
 msgid "Application Credential ID"
@@ -2002,6 +2022,9 @@ msgid "Bind to"
 msgstr ""
 
 msgid "Bind to Port"
+msgstr ""
+
+msgid "Block Shares (iSCSI)"
 msgstr ""
 
 msgid "Block Size"
@@ -3762,6 +3785,9 @@ msgstr ""
 msgid "Delete Selected"
 msgstr ""
 
+msgid "Delete Server"
+msgstr ""
+
 msgid "Delete User "
 msgstr ""
 
@@ -4276,9 +4302,6 @@ msgstr ""
 msgid "EDIT"
 msgstr ""
 
-msgid "ENTER LICENSE"
-msgstr ""
-
 msgid "ERROR: Not Enough Memory"
 msgstr ""
 
@@ -4753,6 +4776,9 @@ msgid ""
 msgstr ""
 
 msgid "Enter"
+msgstr ""
+
+msgid "Enter License"
 msgstr ""
 
 msgid ""
@@ -5750,6 +5776,9 @@ msgstr ""
 msgid "File Permissions"
 msgstr "Oprávnění k souborům"
 
+msgid "File Ticket"
+msgstr ""
+
 msgid "File upload complete"
 msgstr ""
 
@@ -5982,6 +6011,9 @@ msgstr ""
 msgid "GUI SSL Certificate"
 msgstr ""
 
+msgid "GUI Settings"
+msgstr ""
+
 msgid "Gateway"
 msgstr "Brána"
 
@@ -5998,6 +6030,9 @@ msgid "General Options"
 msgstr ""
 
 msgid "General Preferences"
+msgstr ""
+
+msgid "General Settings"
 msgstr ""
 
 msgid "General VM Settings"
@@ -6666,6 +6701,9 @@ msgstr ""
 msgid "Import"
 msgstr "Importovat"
 
+msgid "Import Disk"
+msgstr ""
+
 msgid "Import a pool that exists but is not connected."
 msgstr ""
 
@@ -6968,9 +7006,6 @@ msgstr "Velikost dat ohraničeného prostředí (v bajtech)"
 msgid "Jail stack size in bytes."
 msgstr ""
 
-msgid "Jails"
-msgstr "Ohraničená prostředí"
-
 msgid "Jails Started"
 msgstr ""
 
@@ -7240,9 +7275,6 @@ msgstr "Pomocné parametry pro libdefaults"
 
 msgid "License"
 msgstr "Licence"
-
-msgid "License Information"
-msgstr ""
 
 msgid "Lifetime"
 msgstr "Žívotnosti"
@@ -8332,8 +8364,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Number of seconds before timeout. If the AD service does not immediately "
-"start after connecting to the domain, increase this value."
+"Number of seconds before timeout. To view the AD  connection status, open "
+"the interface <i>Task Manager</i>."
 msgstr ""
 
 msgid ""
@@ -9121,6 +9153,9 @@ msgid ""
 "Proceed with upgrading the pool? WARNING: Upgrading a pool is a one-way "
 "operation that might make some features of the pool incompatible with older "
 "versions of TrueNAS: "
+msgstr ""
+
+msgid "Product:"
 msgstr ""
 
 msgid "Production status successfully updated"
@@ -10818,6 +10853,9 @@ msgid ""
 "the global SED password."
 msgstr ""
 
+msgid "Set production status as active"
+msgstr ""
+
 msgid ""
 "Set resource limitations of the jail using the <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=setrlimit\" "
@@ -11633,6 +11671,9 @@ msgstr ""
 
 msgid "Snapshot successfully taken."
 msgstr "Zachycený stav úspěšně pořízen."
+
+msgid "Snapshots"
+msgstr ""
 
 msgid ""
 "Some authentication tools default to 30 seconds and do not support custom "
@@ -12899,6 +12940,12 @@ msgid ""
 msgstr ""
 
 msgid ""
+"This feature is memory-intensive and <b>permanently affects how the data is "
+"stored</b>. It is recommended to be very familiar with the benefits and "
+"drawbacks of deduplication before activating this feature."
+msgstr ""
+
+msgid ""
 "This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB).   If "
 "units are not specified, the value defaults to"
 msgstr ""
@@ -13207,9 +13254,6 @@ msgstr ""
 msgid "UPDATE IN PROGRESS"
 msgstr ""
 
-msgid "UPDATE LICENSE"
-msgstr ""
-
 msgid "UPS"
 msgstr ""
 
@@ -13268,6 +13312,9 @@ msgid "Unix NSS Info"
 msgstr ""
 
 msgid "Unix Primary Group"
+msgstr ""
+
+msgid "Unix Shares (NFS)"
 msgstr ""
 
 msgid "Unkeep"
@@ -13369,6 +13416,9 @@ msgid "Update Plugins"
 msgstr ""
 
 msgid "Update Preferences"
+msgstr ""
+
+msgid "Update Production Status"
 msgstr ""
 
 msgid "Update Status"
@@ -13800,6 +13850,9 @@ msgstr ""
 msgid "VMware Sync"
 msgstr ""
 
+msgid "VMware-Snapshots"
+msgstr ""
+
 msgid "VNC"
 msgstr ""
 
@@ -13898,9 +13951,6 @@ msgstr ""
 msgid "Virtual Machine (VM) Wizard type."
 msgstr ""
 
-msgid "Virtual Machines"
-msgstr "Virtuální stroje"
-
 msgid "Virtual Machines cannot be created or started without a pool to store them."
 msgstr ""
 
@@ -13990,6 +14040,9 @@ msgid "WebDAV"
 msgstr ""
 
 msgid "WebDAV Configuration"
+msgstr ""
+
+msgid "WebDAV Shares"
 msgstr ""
 
 msgid "WebDAV account password."
@@ -14154,6 +14207,9 @@ msgid "Window"
 msgstr ""
 
 msgid "Windows"
+msgstr ""
+
+msgid "Windows Shares (SMB)"
 msgstr ""
 
 msgid "Wipe"
@@ -14458,6 +14514,9 @@ msgid "hostid_strict_check"
 msgstr "hostid_strict_check"
 
 msgid "hours"
+msgstr ""
+
+msgid "iBurst"
 msgstr ""
 
 msgid "iSCSI"
