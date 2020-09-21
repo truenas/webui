@@ -77,7 +77,8 @@
     </ngx-datatable>
     <div class="vdev-wrapper">
         <div class="vdev-type">
-        <div *ngIf="(group === 'data' || group === 'log' || group === 'special' || group === 'dedup')" class="datainfo">
+        <div *ngIf="(group === 'data' || group === 'log' || group === 'special' || group === 'dedup')" class="datainfo form-element">
+          <mat-form-field>
             <mat-select id="vdev__option-menu" *ngIf="(group === 'data' || group === 'log' || group === 'special' || group === 'dedup') && !vdev_type_disabled" [(ngModel)]="type" (ngModelChange)="onTypeChange($event)" class="form-control">
                 <mat-option value="stripe">{{"Stripe" | translate}}</mat-option>
                 <mat-option value="mirror" *ngIf="getDisks().length >= 2 && (group === 'data' || group === 'log' || group === 'special' || group === 'dedup')">{{"Mirror" | translate}}</mat-option>
@@ -85,13 +86,16 @@
                 <mat-option value="raidz2" *ngIf="getDisks().length >= 4 && group === 'data'">{{"Raid-z2" | translate}}</mat-option>
                 <mat-option value="raidz3" *ngIf="getDisks().length >= 5 && group === 'data'">{{"Raid-z3" | translate}}</mat-option>
             </mat-select>
-            <p *ngIf="group === 'data' && vdev_type_disabled">{{getType() | translate}}</p>
-            {{"Estimated raw capacity:" | translate}} {{size}}
-            <tooltip class="vdevTooltip" [message]=vdev_type_tooltip></tooltip>
+          </mat-form-field>
+          <div style="display:inline-block; margin-left:16px;">
+            <span *ngIf="group === 'data' && vdev_type_disabled">{{getType() | translate}}</span>
+            <span>{{"Estimated raw capacity:" | translate}} {{size}}</span>
+            <tooltip style="position:relative; top: 3px;" class="vdevTooltip" [message]=vdev_type_tooltip></tooltip>
+          </div>
         </div>
         </div>
         <div class="vdev-close">
-            <button id="vdev__close-button" mat-flat-button class="vdev-action-btn" *ngIf="removable" (click)="remove()" [disabled]="(group === 'data' && manager.vdevs['data'].length < 2)">X</button>
+            <button style="margin-top: 12px;" id="vdev__close-button" mat-flat-button class="vdev-action-btn" *ngIf="removable" (click)="remove()" [disabled]="(group === 'data' && manager.vdevs['data'].length < 2)">X</button>
         </div>
     </div>
     <div *ngIf="error" [style.color]="'red'" [innerHTML]="error" class="datainfo"></div>
