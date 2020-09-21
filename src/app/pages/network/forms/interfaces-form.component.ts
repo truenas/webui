@@ -29,12 +29,10 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   protected offload_warned = false;
   protected offload_warning_sub: any;
 
-  protected isOneColumnForm = true;
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {
       name: helptext.interface_settings,
-      width: "100%",
       label: true,
       class: 'interface_settings',
       config: [
@@ -71,15 +69,11 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           placeholder: helptext.int_ipv6auto_placeholder,
           tooltip: helptext.int_ipv6auto_tooltip
         }
-      ]
-    },
-    {
-      name: 'interface_divider',
-      divider: false
+      ],
+      colspan: 2,
     },
     {
       name: helptext.bridge_settings,
-      width: "100%",
       label: false,
       class: 'bridge_settings',
       config: [
@@ -93,11 +87,11 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           isHidden: true,
           disabled: true,
         },
-      ]
+      ],
+      colspan: 2,
     },
     {
       name: helptext.lag_settings,
-      width: "100%",
       label: false,
       class: 'lag_settings',
       config: [
@@ -125,11 +119,11 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           disabled: true,
           validation: helptext.lagg_interfaces_validation,
         },
-      ]
+      ],
+      colspan: 2,
     },
     {
       name: helptext.vlan_settings,
-      width: "100%",
       label: false,
       class: 'vlan_settings',
       config: [
@@ -163,15 +157,11 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           isHidden: true,
           disabled: true,
         },
-      ]
-    },
-    {
-      name: 'failover_divider',
-      divider: false
+      ],
+      colspan: 2,
     },
     {
       name: helptext.failover_settings,
-      width: "100%",
       label: false,
       class: 'failover_settings',
       config: [
@@ -201,15 +191,11 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           disabled: true,
           options: [{ label: '---', value: null }]
         },
-      ]
-    },
-    {
-      name: 'other_divider',
-      divider: true
+      ],
+      colspan: 2,
     },
     {
       name: helptext.other_settings,
-      width: "100%",
       label: true,
       class: 'other_settings',
       config: [
@@ -233,15 +219,11 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           placeholder: helptext.int_options_placeholder,
           tooltip: helptext.int_options_tooltip,
         },
-      ]
-    },
-    {
-      name: 'ip_divider',
-      divider: true
+      ],
+      colspan: 2,
     },
     {
       name: helptext.ip_addresses,
-      width: "100%",
       label: true,
       class: 'ip_addresses',
       config: [
@@ -284,7 +266,8 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           ],
           listFields: []
         }
-      ]
+      ],
+      colspan: 2,
     },
     {
       name: 'divider',
@@ -300,8 +283,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   private lag_fieldset;
   private bridge_fieldset;
   private failover_fieldset;
-  private interface_divider;
-  private failover_divider;
   private vlan_pcp: any;
   private vlan_pint: any;
   private lag_ports: any;
@@ -352,7 +333,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     this.vlan_fieldset.label = is_vlan;
     this.lag_fieldset.label = is_lagg;
     this.bridge_fieldset.label = is_bridge;
-    this.interface_divider.divider = is_vlan || is_lagg || is_bridge;
 
   }
 
@@ -362,8 +342,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     this.lag_fieldset = _.find(this.fieldSets, { 'class': 'lag_settings' });
     this.bridge_fieldset = _.find(this.fieldSets, { 'class': 'bridge_settings' });
     this.failover_fieldset = _.find(this.fieldSets, { 'class': 'failover_settings' });
-    this.interface_divider = _.find(this.fieldSets, { 'name': 'interface_divider' });
-    this.failover_divider = _.find(this.fieldSets, { 'name': 'failover_divider' });
     this.vlan_pint = _.find(this.vlan_fieldset.config, { 'name': 'vlan_parent_interface' });
   }
 
@@ -434,7 +412,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         this.failover_fieldset.label = is_ha;
-        this.failover_divider.divider = is_ha;
         for (let i = 0; i < this.failover_fields.length; i++) {
           entityForm.setDisabled(this.failover_fields[i], !is_ha, !is_ha);
         }
