@@ -24,7 +24,6 @@ export class SystemGeneralService {
       // Since the api call can be made many times before the first response comes back, 
       // set waiting to true to make if condition false after the first call
       this.generalConfigInfo = { waiting: true};
-      console.log('making api call to get general config info')
       this.ws.call('system.general.config').subscribe(res => {
         this.generalConfigInfo = res;
         observer.next(this.generalConfigInfo);
@@ -35,7 +34,6 @@ export class SystemGeneralService {
         if (this.generalConfigInfo && !this.generalConfigInfo.waiting) {
           clearInterval(wait);
           observer.next(this.generalConfigInfo);
-          console.log('just sending general config info', this.generalConfigInfo)
         }
       }, 10)
     }
@@ -49,7 +47,6 @@ export class SystemGeneralService {
   public getAdvancedConfig = new Observable<any>(observer => {
     if((!this.advancedConfigInfo || _.isEmpty(this.advancedConfigInfo))) {
       this.advancedConfigInfo = { waiting: true};
-      console.log('making api call to get advanced config info')
       this.ws.call('system.advanced.config').subscribe(res => {
         this.advancedConfigInfo = res;
         observer.next(this.advancedConfigInfo);
@@ -59,7 +56,6 @@ export class SystemGeneralService {
         if (this.advancedConfigInfo && !this.advancedConfigInfo.waiting) {
           clearInterval(wait);
           observer.next(this.advancedConfigInfo);
-          console.log('just sending advanced config info', this.advancedConfigInfo)
         }
       }, 10)
     }
@@ -72,7 +68,6 @@ export class SystemGeneralService {
   public getProductType = new Observable<string>(observer => {
     if (!this.productType) {
       this.productType = 'pending';
-      console.log('making api call for product type')
       this.ws.call('system.product_type').subscribe(res => {
         this.productType = res;
         observer.next(this.productType);
@@ -81,7 +76,6 @@ export class SystemGeneralService {
       const wait = setInterval(() => {
         if (this.productType !== 'pending') {
           clearInterval(wait);
-          console.log('just sending product type', this.productType)
           observer.next(this.productType);
         }
       }, 10)
