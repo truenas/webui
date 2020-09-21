@@ -414,6 +414,22 @@ msgstr ""
 "(STARTTLS)</i>."
 
 msgid ""
+"<a href=\"https://www.ixsystems.com/community/\" target=\"_blank\"> TrueNAS "
+"Forums</a> - Find answers from other users in the forums."
+msgstr ""
+
+msgid ""
+"<a href=\"https://www.ixsystems.com/support/\" target=\"_blank\"> TrueNAS "
+"Liscensing</a> - Learn more about enterprise-grade support."
+msgstr ""
+
+msgid ""
+"<a href=\"https://www.truenas.com/docs/hub/\" target=\"_blank\"> TrueNAS "
+"Documentation Hub</a> - Read and contribute to the open-source "
+"documentation."
+msgstr ""
+
+msgid ""
 "<b>COPY</b>: Files from the source are <i><u>copied</u></i> to the "
 "destination. If files with the same names are present on the destination, "
 "they are <i><u>overwritten</u></i>."
@@ -1791,17 +1807,6 @@ msgstr ""
 "appel système lié à <b>sysvshm</b>."
 
 msgid ""
-"Allow sending large data blocks. The  destination system must also support "
-"large blocks. See  <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
-"target=\"_blank\">zfs(8)</a>."
-msgstr ""
-"Permet d'envoyer de grands blocs de données. Le système de destination doit "
-"également supporter de grands blocs. Voir <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
-"target=\"_blank\">zfs(8)</a>."
-
-msgid ""
 "Allow the jail hostname to be changed with <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=hostname\" "
 "target=\"_blank\">hostname(1)</a> or <a "
@@ -1825,6 +1830,14 @@ msgstr ""
 "installé avec le module du noyau <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=vmm\" "
 "target=\"_blank\">vmm(4)</a> chargé."
+
+msgid ""
+"Allow this replication to send large data blocks. The  destination system "
+"must also support large blocks. This setting cannot be changed  after it "
+"has been enabled and the replication task is created. For more details, see "
+" <a href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
+"target=\"_blank\">zfs(8)</a>."
+msgstr ""
 
 msgid ""
 "Allow using open file handles that can withstand short disconnections.  "
@@ -2011,6 +2024,9 @@ msgid ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
 "target=\"_blank\">smb.conf</a> manual page for  a list of supported macros. "
 "The connectpath **must** be preset before a client connects."
+msgstr ""
+
+msgid "Apple Shares (AFP)"
 msgstr ""
 
 msgid "Application Credential ID"
@@ -2466,6 +2482,9 @@ msgstr "Binder à"
 
 msgid "Bind to Port"
 msgstr "Binder au port"
+
+msgid "Block Shares (iSCSI)"
+msgstr ""
 
 msgid "Block Size"
 msgstr "Taille du bloc"
@@ -4662,6 +4681,9 @@ msgstr "Supprimer le chemin"
 msgid "Delete Selected"
 msgstr "Supprimer la sélection"
 
+msgid "Delete Server"
+msgstr ""
+
 msgid "Delete User "
 msgstr "Supprimer Utilisateur "
 
@@ -5272,9 +5294,6 @@ msgstr "Courbe CE"
 msgid "EDIT"
 msgstr "EDITER"
 
-msgid "ENTER LICENSE"
-msgstr "ENTRER LA LICENCE"
-
 msgid "ERROR: Not Enough Memory"
 msgstr "ERREUR : Pas assez de mémoire"
 
@@ -5862,6 +5881,9 @@ msgstr ""
 
 msgid "Enter"
 msgstr "Entrer"
+
+msgid "Enter License"
+msgstr ""
 
 msgid ""
 "Enter a <a href=\"https://www.freebsd.org/doc/handbook/network-nis.html\" "
@@ -7124,6 +7146,9 @@ msgstr "Masque de fichier"
 msgid "File Permissions"
 msgstr "Autorisations de fichier"
 
+msgid "File Ticket"
+msgstr ""
+
 msgid "File upload complete"
 msgstr "Téléchargement du fichier terminé"
 
@@ -7407,6 +7432,9 @@ msgstr "IU"
 msgid "GUI SSL Certificate"
 msgstr "Certificat SSL GUI"
 
+msgid "GUI Settings"
+msgstr ""
+
 msgid "Gateway"
 msgstr "Passerelle"
 
@@ -7424,6 +7452,9 @@ msgstr "Options Générales"
 
 msgid "General Preferences"
 msgstr "Préférences générales"
+
+msgid "General Settings"
+msgstr ""
 
 msgid "General VM Settings"
 msgstr "Paramètres généraux de la VM"
@@ -8213,6 +8244,9 @@ msgstr "Connectez-vous immédiatement à TrueCommand."
 msgid "Import"
 msgstr "Importer"
 
+msgid "Import Disk"
+msgstr ""
+
 msgid "Import a pool that exists but is not connected."
 msgstr "Importer un volume existant mais non connecté."
 
@@ -8576,9 +8610,6 @@ msgstr "Taille des données du jail en octets."
 msgid "Jail stack size in bytes."
 msgstr "Taille de la pile du jail en octets."
 
-msgid "Jails"
-msgstr "Jails"
-
 msgid "Jails Started"
 msgstr "Les jails ont démarré"
 
@@ -8880,9 +8911,6 @@ msgstr "Paramètres auxiliaires Libdefaults"
 
 msgid "License"
 msgstr "Licence"
-
-msgid "License Information"
-msgstr "Informations de licence"
 
 msgid "Lifetime"
 msgstr "Durée de vie"
@@ -10154,11 +10182,9 @@ msgstr ""
 "le délai des requêtes AD DNS est dépassé."
 
 msgid ""
-"Number of seconds before timeout. If the AD service does not immediately "
-"start after connecting to the domain, increase this value."
+"Number of seconds before timeout. To view the AD  connection status, open "
+"the interface <i>Task Manager</i>."
 msgstr ""
-"Nombre de secondes avant le timeout. Si le service AD ne démarre pas "
-"immédiatement après la connexion au domaine, augmentez cette valeur."
 
 msgid ""
 "Number of seconds to wait after a network failure  before triggering a "
@@ -11128,6 +11154,9 @@ msgstr ""
 "d'un volume est une opération à sens unique qui pourrait rendre certaines "
 "fonctionnalités du volume incompatibles avec les anciennes versions de "
 "TrueNAS: "
+
+msgid "Product:"
+msgstr ""
 
 msgid "Production status successfully updated"
 msgstr "Statut de production mis à jour avec succès"
@@ -13147,6 +13176,9 @@ msgstr ""
 "Définissez ou modifiez le mot de passe de ce SED.  Ce mot de passe est "
 "utilisé à la place du mot de passe SED global."
 
+msgid "Set production status as active"
+msgstr ""
+
 msgid ""
 "Set resource limitations of the jail using the <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=setrlimit\" "
@@ -14293,6 +14325,9 @@ msgstr ""
 
 msgid "Snapshot successfully taken."
 msgstr "Instantané pris avec succès."
+
+msgid "Snapshots"
+msgstr ""
 
 msgid ""
 "Some authentication tools default to 30 seconds and do not support custom "
@@ -15883,6 +15918,12 @@ msgstr ""
 "être effectuées avec l'éditeur d'ACL."
 
 msgid ""
+"This feature is memory-intensive and <b>permanently affects how the data is "
+"stored</b>. It is recommended to be very familiar with the benefits and "
+"drawbacks of deduplication before activating this feature."
+msgstr ""
+
+msgid ""
 "This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB).   If "
 "units are not specified, the value defaults to"
 msgstr ""
@@ -16247,9 +16288,6 @@ msgstr "MISE À JOUR"
 msgid "UPDATE IN PROGRESS"
 msgstr "MISE À JOUR EN COURS"
 
-msgid "UPDATE LICENSE"
-msgstr "MISE À JOUR LICENCE"
-
 msgid "UPS"
 msgstr ""
 
@@ -16323,6 +16361,9 @@ msgstr "Unix NSS Info"
 
 msgid "Unix Primary Group"
 msgstr "Groupe primaire Unix"
+
+msgid "Unix Shares (NFS)"
+msgstr ""
 
 msgid "Unkeep"
 msgstr "Enlever"
@@ -16435,6 +16476,9 @@ msgstr "Mettre à jour les plugins"
 
 msgid "Update Preferences"
 msgstr "Mise à jour des préférences"
+
+msgid "Update Production Status"
+msgstr ""
 
 msgid "Update Status"
 msgstr "Mettre à jour le statut"
@@ -16988,6 +17032,9 @@ msgstr "VMWare Sync"
 msgid "VMware Sync"
 msgstr "VMWare Sync"
 
+msgid "VMware-Snapshots"
+msgstr ""
+
 msgid "VNC"
 msgstr "VNC"
 
@@ -17089,9 +17136,6 @@ msgstr ""
 msgid "Virtual Machine (VM) Wizard type."
 msgstr "Type d'assistant de machine virtuelle (VM)."
 
-msgid "Virtual Machines"
-msgstr "Machines virtuelles"
-
 msgid "Virtual Machines cannot be created or started without a pool to store them."
 msgstr ""
 "Les machines virtuelles ne peuvent pas être créées ou démarrées sans un "
@@ -17190,6 +17234,9 @@ msgstr "WebDAV"
 
 msgid "WebDAV Configuration"
 msgstr "Configuration WebDAV"
+
+msgid "WebDAV Shares"
+msgstr ""
 
 msgid "WebDAV account password."
 msgstr "Mot de passe du compte WebDAV."
@@ -17418,6 +17465,9 @@ msgid "Window"
 msgstr "Fenêtre"
 
 msgid "Windows"
+msgstr ""
+
+msgid "Windows Shares (SMB)"
 msgstr ""
 
 msgid "Wipe"
@@ -17736,6 +17786,9 @@ msgstr "hostid_strict_check"
 
 msgid "hours"
 msgstr "heures"
+
+msgid "iBurst"
+msgstr ""
 
 msgid "iSCSI"
 msgstr "iSCSI"
