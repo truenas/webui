@@ -102,6 +102,17 @@ add_principal_form: {
   action: T('Submit'),
   cancel: T('Cancel'),
   error_title: T('Error'),
-  error: T('There was a problem submitting the SPN entry.')
+  error: T('There was a problem submitting the SPN entry.'),
+},
+
+addSPN: {
+  btnTxt: T('Add NFS SPN'),
+  message: T('Adding NFS NPN requires sufficient privileges. Enter your credentials below.'),
+  username: T('Username'),
+  pw: T('Password'),
+  error: T('Error'),
+  success: T('Success'),
+  success_msg: T('You have successfully added credentials.')
+  
 }
 }

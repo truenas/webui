@@ -20,6 +20,7 @@ export class ServiceNFSComponent {
   hideOnScale = ['servers', 'allow_nonroot', 'mountd_log', 'statd_lockd_log'];
   public title = helptext.formTitle;
   private v4krbValue: boolean;
+  private hasNfsStatus: boolean;
 
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
@@ -160,6 +161,16 @@ export class ServiceNFSComponent {
     );
   private validBindIps = [];
 
+  public custActions: Array<any> = [
+    {
+      'id' : 'has_nfs_status',
+      'name' : helptext.addSPN.btnTxt,
+      function : () => {
+        this.addSPN();
+      }
+    },
+  ];
+
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
     private dialog: DialogService
@@ -172,6 +183,13 @@ export class ServiceNFSComponent {
       return this.compareBindIps(data);
     }
     return data;
+  }
+
+  isCustActionVisible(actionname: string) {
+  if (actionname === 'has_nfs_status' && (this.hasNfsStatus && this.v4krbValue)) {
+      return true;
+    }
+    return false;
   }
 
   compareBindIps(data) {
@@ -211,6 +229,10 @@ export class ServiceNFSComponent {
         entityForm.formGroup.controls['userd_manage_gids'].setValue(false);
       }
     })
+
+    this.ws.call('kerberos.keytab.has_nfs_principal').subscribe(res => {
+      this.hasNfsStatus = res;
+    })
   }
 
   beforeSubmit(data) {
@@ -229,59 +251,63 @@ export class ServiceNFSComponent {
   afterSave(data) {
     this.router.navigate(this.route_success);
     if (data.formGroup.value.v4_krb && !this.v4krbValue) {
-      const that = this;
-      this.ws.call('kerberos.keytab.has_nfs_principal').subscribe(res => {
-        if (!res) {
-          this.ws.call('directoryservices.get_state').subscribe(( { activedirectory }) => {
-            if (activedirectory === 'HEALTHY') {
-              this.dialog.confirm(helptext.add_principal_prompt.title,
-                helptext.add_principal_prompt.message,true, helptext.add_principal_prompt.affirmative,
-                false,'','','','',false, helptext.add_principal_prompt.negative).subscribe(res => {
-                if (res) {
-                  this.dialog.dialogForm(
-                    {
-                      title: helptext.add_principal_prompt.title,
-                      fieldConfig: [
-                        {
-                          type: 'input',
-                          name: 'username',
-                          placeholder: helptext.add_principal_form.username,
-                          required: true
-                        },
-                        {
-                          type: 'input',
-                          name: 'password',
-                          inputType: 'password',
-                          togglePw: true,
-                          placeholder: helptext.add_principal_form.password,
-                          required: true
-                        }
-                      ],
-                      saveButtonText: helptext.add_principal_form.action,
-                      customSubmit: function (entityDialog) {
-                        const value = entityDialog.formValue;
-                        const self = entityDialog;
-                        self.loader.open();
-                        self.ws.call('nfs.add_principal', [{username: value.username, password: value.password}])
-                          .subscribe(() => {
-                            self.loader.close();
-                            self.dialogRef.close(true);
-                          },
-                          err => {
-                            self.loader.close();
-                            self.dialogRef.close(true);
-                            that.dialog.errorReport(helptext.add_principal_form.error_title,
-                              err.reason, err.trace.formatted);
-                          });
-                      }
-                    }
-                  );
-                }
-              })
-            }
-          })
-        }
-      })
+      this.addSPN();
     }
+  }
+
+  addSPN() {
+    const that = this;
+    this.ws.call('kerberos.keytab.has_nfs_principal').subscribe(res => {
+      if (!res) {
+        this.ws.call('directoryservices.get_state').subscribe(( { activedirectory }) => {
+          if (activedirectory === 'HEALTHY') {
+            this.dialog.confirm(helptext.add_principal_prompt.title,
+              helptext.add_principal_prompt.message,true, helptext.add_principal_prompt.affirmative,
+              false,'','','','',false, helptext.add_principal_prompt.negative).subscribe(res => {
+              if (res) {
+                this.dialog.dialogForm(
+                  {
+                    title: helptext.add_principal_prompt.title,
+                    fieldConfig: [
+                      {
+                        type: 'input',
+                        name: 'username',
+                        placeholder: helptext.add_principal_form.username,
+                        required: true
+                      },
+                      {
+                        type: 'input',
+                        name: 'password',
+                        inputType: 'password',
+                        togglePw: true,
+                        placeholder: helptext.add_principal_form.password,
+                        required: true
+                      }
+                    ],
+                    saveButtonText: helptext.add_principal_form.action,
+                    customSubmit: function (entityDialog) {
+                      const value = entityDialog.formValue;
+                      const self = entityDialog;
+                      self.loader.open();
+                      self.ws.call('nfs.add_principal', [{username: value.username, password: value.password}])
+                        .subscribe(() => {
+                          self.loader.close();
+                          self.dialogRef.close(true);
+                        },
+                        err => {
+                          self.loader.close();
+                          self.dialogRef.close(true);
+                          that.dialog.errorReport(helptext.add_principal_form.error_title,
+                            err.reason, err.trace.formatted);
+                        });
+                    }
+                  }
+                );
+              }
+            })
+          }
+        })
+      }
+    })
   }
 }
