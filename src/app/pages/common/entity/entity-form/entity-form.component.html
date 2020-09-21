@@ -17,7 +17,7 @@
         <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" class="form-wrap" #entityForm="ngForm">
                 <div class="fieldset-container fieldset-display-default" *ngIf="fieldSets">
             <ng-container *ngFor="let fieldSet of fieldSets; let i = index">
-              <div [ngClass]="fieldSet.class" class="fieldset divider-{{fieldSet.divider}}"
+              <div [ngClass]="[fieldSet.class ? fieldSet.class : '', isFieldsetAvailabel(fieldSet) ? '' : 'empty-fieldset']" class="fieldset divider-{{fieldSet.divider}}"
                   fxLayout="row wrap" fxLayoutAlign="start start" fxFlex="100%" fxFlex.gt-xs="calc({{fieldSets[i].width}} - 16px)">
                 <mat-divider *ngIf="fieldSets[i].divider && i > 0"></mat-divider>
                   <h4 *ngIf="fieldSet.label && isFieldsetAvailabel(fieldSet)" class="fieldset-label">{{fieldSet.name | translate}}</h4>

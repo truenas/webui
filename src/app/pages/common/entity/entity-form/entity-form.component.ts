@@ -94,6 +94,8 @@ export interface Formconfiguration {
   title?;
   columnsOnForm?: number;
 
+  closeModalForm?();
+  afterModalFormClosed?(); // function will called once the modal form closed
   goBack?();
   onSuccess?(res);
 }
@@ -255,6 +257,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         this.fieldSets = this.conf.fieldSets.list ? this.conf.fieldSets.list() : this.conf.fieldSets;
         for(let i = 0; i < this.fieldSets.length; i++){
           let fieldset = this.fieldSets[i];
+          if (!fieldset.divider) {
+            fieldset.width = this.conf.columnsOnForm === 1 || fieldset.colspan === 2 ? '100%' : '50%';
+          }
+
           if(fieldset.config){
             this.fieldConfig = this.fieldConfig.concat(fieldset.config);
           }
@@ -531,7 +537,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                               this.conf.responseOnSubmit(res);
                             }
                           }
-                          this.modalService.close('slide-in-form');
+                          this.modalService.close('slide-in-form').then(closed => {
+                            if (closed && this.conf.afterModalFormClosed) {
+                              this.conf.afterModalFormClosed();
+                            }
+                          });
                         },
                         (res) => {
                           this.loader.close();
@@ -555,9 +565,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   isFieldsetAvailabel(fieldset) {
-    for (let i = 0; i < fieldset.config.length; i++) {
-      if (!fieldset.config[i].isHidden) {
-        return true;
+    if (fieldset.config) {
+      for (let i = 0; i < fieldset.config.length; i++) {
+        if (!fieldset.config[i].isHidden) {
+          return true;
+        }
       }
     }
     return false;

@@ -229,6 +229,17 @@ export class AppComponent {
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/anti-lock.svg")
     )
 
+    // network upload download
+    this.matIconRegistry.addSvgIcon(
+      'network-upload-download',
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/network-upload-download.svg")
+    )
+
+    this.matIconRegistry.addSvgIcon(
+      'network-upload-download-disabled',
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/network-upload-download-disabled.svg")
+    )
+
     const product = productText.product.trim();
     this.title.setTitle(product + ' - ' + window.location.hostname);
     const darkScheme = window.matchMedia('(prefers-color-scheme: dark)').matches;

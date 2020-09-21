@@ -1,0 +1,14 @@
+mat-card.card-widget {
+    height: calc(100% - 8px);
+    min-width: fit-content;
+}
+
+mat-list-item.card-widget-list-item {
+    min-height: 48px;
+    height: auto;
+    display: flex;
+}
+
+mat-icon.card-widget-list-icon {
+    padding: 4px 5px 4px 0;
+}

@@ -83,6 +83,8 @@ import { TaskScheduleListComponent } from 'app/pages/task-calendar/components/ta
 import { FormStatusComponent } from './entity-form/components/form-status/form-status.component';
 import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.component';
 
+import { TableComponent } from './table/table.component';
+
 @NgModule({
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule, DragDropModule,
@@ -145,6 +147,7 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     ToolbarMultimenuComponent,
     FormStatusComponent,
     EntityComingsoonComponent,
+    TableComponent,
     EntityDashboardComponent,
   ],
   exports: [
@@ -173,6 +176,7 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     ToolbarMenuComponent,
     ToolbarMultimenuComponent,
     EntityComingsoonComponent,
+    TableComponent,
   ],
   entryComponents: [
     FormButtonComponent,

@@ -1,33 +1,26 @@
 import { Component } from '@angular/core';
-import { ServicesService } from '../../../../../services';
+import { ServicesService } from '../../../services';
 import * as _ from 'lodash';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 
 import helptext from 'app/helptext/services/components/service-openvpn';
 
 
 @Component({
-  selector: 'openvpn-client-edit',
-  template: ` <entity-form [conf]="this"></entity-form>`,
+  selector: 'openvpn-client',
+  template: `<entity-form [conf]="this"></entity-form>`,
 })
 
-export class ServiceOpenvpnClientComponent {
+export class OpenvpnClientComponent {
   protected queryCall = 'openvpn.client.config';
-  protected route_success: string[] = [ 'services' ];
   public title = helptext.client.formTitle;
 
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {
-      name: helptext.client.header,
-      label: true,
-      config: []
-    },
-    {
       name: 'client-settings',
       label: false,
-      width: '53%',
       config: [
         {
           type : 'select',
@@ -88,15 +81,8 @@ export class ServiceOpenvpnClientComponent {
       ]
     },
     {
-      name: 'vertical-spacer',
-      label: false,
-      width: '4%',
-      config: []
-    },
-    {
       name: 'client-server-settings',
       label: false,
-      width: '43%',
       config: [
         {
           type : 'select',

@@ -2,6 +2,7 @@ import { T } from '../../../translate-marker';
 import globalHelptext from '../../../helptext/global-helptext';
 
 export default {
+title: T('Global Configuration'),
 
 hostname_placeholder : T('Hostname'),
 hostname_tooltip : T('System hostname.'),
@@ -65,6 +66,7 @@ hosts_tooltip : T('Additional hosts to be appended to <i>/etc/hosts</i>.\
 hostname_and_domain: T('Hostname and Domain'),
 gateway: T('Default Gateway'),
 nameservers: T('DNS Servers'),
+outbound_network: T('Outbound Network'),
 other: T('Other Settings'),
 service_announcement: T('Service Announcement'),
 
@@ -83,4 +85,24 @@ wsd_placeholder: T('WS-Discovery'),
 wsd_tooltip: T('Uses the SMB Service <i>NetBIOS Name</i> to advertise \
  the server to WS-Discovery clients. This causes the computer appear in \
  the <i>Network Neighborhood</i> of modern Windows OSes.'),
+
+ outbound_network_activity: {
+    allow: {
+        placeholder: T('Allow All'),
+        tooltip: T('Any system service can communicate externally.'),
+    },
+    deny: {
+        placeholder: T('Deny All'),
+        tooltip: T('This system cannot communicate externally.'),
+    },
+    specific: {
+        placeholder: T('Allow Specific'),
+        tooltip: T('Define the system services that are allowed to \
+communicate externally. All other external traffic is restricted.'),
+    },
+ },
+ outbound_network_value: {
+     tooltip: T('Select the system services that will be allowed to \
+communicate externally.'),
+ }
 }

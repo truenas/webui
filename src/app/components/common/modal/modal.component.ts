@@ -71,6 +71,9 @@ export class ModalComponent implements OnInit, OnDestroy {
     // open modal
     open(conf:any): void {
         this.conf = conf;
+        this.conf.isModalForm = true;
+        this.conf.closeModalForm = this.close.bind(this);
+
         // Takes a bit for title to be set dynamically in the form
         const checkTitle = setInterval(() => {
             this.title = this.conf.title ? this.conf.title : '';
@@ -89,20 +92,26 @@ export class ModalComponent implements OnInit, OnDestroy {
         this.background.classList.add('open');
         this.formOpen = true;
         document.body.classList.add('jw-modal-open');
-        if (conf.columnsOnForm && conf.columnsOnForm === 2) {
+
+        this.conf.columnsOnForm = 1;
+        if (this.el.nativeElement.offsetWidth >= 960 && !this.conf.isOneColumnForm) {
+            this.conf.columnsOnForm = 2;
             this.slideIn.classList.add('wide');
         }
     }
 
     // close modal
-    close(): void {
-        this.modal.classList.remove('open');
-        this.background.classList.remove('open');
-        document.body.classList.remove('jw-modal-open');
-        this.slideIn.classList.remove('wide');
-        this.formOpen = false;
-        this.modalService.refreshForm();
-        this.wizard = false;
-        this.title = '';
+    close(): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            this.modal.classList.remove('open');
+            this.background.classList.remove('open');
+            document.body.classList.remove('jw-modal-open');
+            this.slideIn.classList.remove('wide');
+            this.formOpen = false;
+            this.modalService.refreshForm();
+            this.wizard = false;
+            this.title = '';
+            resolve(true);
+        });
     }
 }

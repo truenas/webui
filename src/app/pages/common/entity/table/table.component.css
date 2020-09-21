@@ -1,0 +1,57 @@
+/* table component css */
+mat-card.app-table {
+    height: calc(100% - 8px);
+}
+
+div.table-container {
+    padding: 0px;
+}
+
+mat-card-content.table-container{
+    height: inherit;
+}
+
+div.table-container {
+    height: calc(100% - 41px);
+}
+
+div.table-cell {
+    display: flex;
+    align-items: center;
+}
+
+div.table-row-action {
+    justify-content: flex-end;
+}
+
+/* mat-icon.state-icon {
+    font-size: 19px;
+    height: auto;
+    width: auto;
+    margin-right: 4px;
+}
+
+mat-icon.state-icon.STATE_UP {
+    color: var(--green);
+} */
+
+mat-icon.state-icon,
+mat-icon.state-info-icon,
+mat-icon.table-action-button {
+    position: inherit;
+}
+
+div.state-info {
+    display: flex;
+    align-items: center;
+}
+
+div.view-more-row {
+    padding: 9px;
+    text-align: center;
+    cursor: pointer;
+}
+
+div.view-more-row:hover {
+    background: rgba(0,0,0,0.1);
+}

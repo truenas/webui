@@ -1,20 +1,18 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { ServicesService, DialogService, AppLoaderService, WebSocketService, StorageService } from 'app/services';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 
 import helptext from 'app/helptext/services/components/service-openvpn';
 
 @Component({
-  selector: 'openvpn-server-edit',
-  template: ` <entity-form [conf]="this"></entity-form>`,
+  selector: 'openvpn-server',
+  template: `<entity-form [conf]="this"></entity-form>`,
 })
 
-export class ServiceOpenvpnServerComponent {
+export class OpenvpnServerComponent {
   protected queryCall = 'openvpn.server.config';
-  protected route_success: string[] = [ 'services' ];
   protected certID: number;
   protected serverAddress: string;
   protected entityEdit: any;
@@ -24,14 +22,8 @@ export class ServiceOpenvpnServerComponent {
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {
-      name: helptext.server.header,
-      label: true,
-      config: []
-    },
-    {
       name: 'server-settings',
       label: false,
-      width: '53%',
       config: [
         {
           type : 'select',
@@ -94,15 +86,8 @@ export class ServiceOpenvpnServerComponent {
       ]
     },
     {
-      name: 'vertical-spacer',
-      label: false,
-      width: '4%',
-      config: []
-    },
-    {
       name: 'client-server-settings',
       label: false,
-      width: '43%',
       config: [
         {
           type : 'select',
@@ -213,9 +198,12 @@ export class ServiceOpenvpnServerComponent {
     }
   ];
 
-  constructor(protected services: ServicesService, protected dialog: DialogService,
-    protected loader: AppLoaderService, protected ws: WebSocketService, protected storageService: StorageService,
-    protected http: HttpClient) { }
+  constructor(
+    protected services: ServicesService,
+    protected dialog: DialogService,
+    protected loader: AppLoaderService,
+    protected ws: WebSocketService,
+    protected storageService: StorageService,) { }
 
   resourceTransformIncomingRestData(data) {
     data.server = `${data.server}/${data.netmask}`;
