@@ -21,6 +21,7 @@ export class ServiceNFSComponent {
   public title = helptext.formTitle;
   private v4krbValue: boolean;
   private hasNfsStatus: boolean;
+  private adHealth = '';
 
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
@@ -186,10 +187,11 @@ export class ServiceNFSComponent {
   }
 
   isCustActionVisible(actionname: string) {
-  if (actionname === 'has_nfs_status' && (this.hasNfsStatus && this.v4krbValue)) {
-      return true;
-    }
-    return false;
+    if (actionname === 'has_nfs_status' && (!this.hasNfsStatus && this.v4krbValue &&
+      this.adHealth === 'HEALTHY')) {
+        return true;
+      }
+      return false;
   }
 
   compareBindIps(data) {
@@ -232,6 +234,11 @@ export class ServiceNFSComponent {
 
     this.ws.call('kerberos.keytab.has_nfs_principal').subscribe(res => {
       this.hasNfsStatus = res;
+      if (!this.hasNfsStatus) {
+        this.ws.call('directoryservices.get_state').subscribe(( { activedirectory }) => {
+          this.adHealth = activedirectory;
+        })
+      }
     })
   }
 
@@ -257,57 +264,51 @@ export class ServiceNFSComponent {
 
   addSPN() {
     const that = this;
-    this.ws.call('kerberos.keytab.has_nfs_principal').subscribe(res => {
-      if (!res) {
-        this.ws.call('directoryservices.get_state').subscribe(( { activedirectory }) => {
-          if (activedirectory === 'HEALTHY') {
-            this.dialog.confirm(helptext.add_principal_prompt.title,
-              helptext.add_principal_prompt.message,true, helptext.add_principal_prompt.affirmative,
-              false,'','','','',false, helptext.add_principal_prompt.negative).subscribe(res => {
-              if (res) {
-                this.dialog.dialogForm(
-                  {
-                    title: helptext.add_principal_prompt.title,
-                    fieldConfig: [
-                      {
-                        type: 'input',
-                        name: 'username',
-                        placeholder: helptext.add_principal_form.username,
-                        required: true
-                      },
-                      {
-                        type: 'input',
-                        name: 'password',
-                        inputType: 'password',
-                        togglePw: true,
-                        placeholder: helptext.add_principal_form.password,
-                        required: true
-                      }
-                    ],
-                    saveButtonText: helptext.add_principal_form.action,
-                    customSubmit: function (entityDialog) {
-                      const value = entityDialog.formValue;
-                      const self = entityDialog;
-                      self.loader.open();
-                      self.ws.call('nfs.add_principal', [{username: value.username, password: value.password}])
-                        .subscribe(() => {
-                          self.loader.close();
-                          self.dialogRef.close(true);
-                        },
-                        err => {
-                          self.loader.close();
-                          self.dialogRef.close(true);
-                          that.dialog.errorReport(helptext.add_principal_form.error_title,
-                            err.reason, err.trace.formatted);
-                        });
-                    }
-                  }
-                );
+    if (!this.hasNfsStatus && this.adHealth === 'HEALTHY') {
+      this.dialog.confirm(helptext.add_principal_prompt.title,
+        helptext.add_principal_prompt.message,true, helptext.add_principal_prompt.affirmative,
+        false,'','','','',false, helptext.add_principal_prompt.negative).subscribe(res => {
+        if (res) {
+          this.dialog.dialogForm(
+            {
+              title: helptext.add_principal_prompt.title,
+              fieldConfig: [
+                {
+                  type: 'input',
+                  name: 'username',
+                  placeholder: helptext.add_principal_form.username,
+                  required: true
+                },
+                {
+                  type: 'input',
+                  name: 'password',
+                  inputType: 'password',
+                  togglePw: true,
+                  placeholder: helptext.add_principal_form.password,
+                  required: true
+                }
+              ],
+              saveButtonText: helptext.add_principal_form.action,
+              customSubmit: function (entityDialog) {
+                const value = entityDialog.formValue;
+                const self = entityDialog;
+                self.loader.open();
+                self.ws.call('nfs.add_principal', [{username: value.username, password: value.password}])
+                  .subscribe(() => {
+                    self.loader.close();
+                    self.dialogRef.close(true);
+                  },
+                  err => {
+                    self.loader.close();
+                    self.dialogRef.close(true);
+                    that.dialog.errorReport(helptext.add_principal_form.error_title,
+                      err.reason, err.trace.formatted);
+                  });
               }
-            })
-          }
-        })
-      }
-    })
+            }
+          );
+        }
+      })
+    }
   }
 }
