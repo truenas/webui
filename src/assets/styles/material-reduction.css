@@ -236,6 +236,8 @@ entity-table .mat-toolbar.mat-card-toolbar{
 .form-element textarea,
 .form-element select{
   width: calc(100% - 24px) !important;
+  line-height: normal !important; 
+  min-height: 33px;
 }
 
 entity-form-list .list-action-block-wrapper .form-element,
