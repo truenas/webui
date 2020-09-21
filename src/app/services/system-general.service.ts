@@ -15,7 +15,82 @@ export class SystemGeneralService {
   updateRunning = new EventEmitter<string>();
   updateRunningNoticeSent = new EventEmitter<string>();
   updateIsDone$ = new Subject();
+<<<<<<< HEAD
 
+=======
+  sendConfigData$ = new Subject();
+  refreshSysGeneral$ = new Subject();
+
+  // Prevent repetitive api calls in a short time when data is already available
+  public generalConfigInfo: any;
+  public getGeneralConfig = new Observable<any>(observer => {
+    if((!this.generalConfigInfo || _.isEmpty(this.generalConfigInfo))) {
+      // Since the api call can be made many times before the first response comes back, 
+      // set waiting to true to make if condition false after the first call
+      this.generalConfigInfo = { waiting: true};
+      this.ws.call('system.general.config').subscribe(res => {
+        this.generalConfigInfo = res;
+        observer.next(this.generalConfigInfo);
+      })
+    } else {
+      // Check every ten ms to see if the object is ready, then stop checking and send the obj
+      const wait = setInterval(() => {
+        if (this.generalConfigInfo && !this.generalConfigInfo.waiting) {
+          clearInterval(wait);
+          observer.next(this.generalConfigInfo);
+        }
+      }, 10)
+    }
+    // After a pause, set object to empty so calls can be made
+    setTimeout(() => {
+      this.generalConfigInfo = {};
+    }, 2000)
+  });
+
+  public advancedConfigInfo: any;
+  public getAdvancedConfig = new Observable<any>(observer => {
+    if((!this.advancedConfigInfo || _.isEmpty(this.advancedConfigInfo))) {
+      this.advancedConfigInfo = { waiting: true};
+      this.ws.call('system.advanced.config').subscribe(res => {
+        this.advancedConfigInfo = res;
+        observer.next(this.advancedConfigInfo);
+      })
+    } else {
+      const wait = setInterval(() => {
+        if (this.advancedConfigInfo && !this.advancedConfigInfo.waiting) {
+          clearInterval(wait);
+          observer.next(this.advancedConfigInfo);
+        }
+      }, 10)
+    }
+    setTimeout(() => {
+      this.advancedConfigInfo = {};
+    }, 2000)
+  });
+
+  public productType = '';
+  public getProductType = new Observable<string>(observer => {
+    if (!this.productType) {
+      this.productType = 'pending';
+      this.ws.call('system.product_type').subscribe(res => {
+        this.productType = res;
+        observer.next(this.productType);
+      })
+    } else {
+      const wait = setInterval(() => {
+        if (this.productType !== 'pending') {
+          clearInterval(wait);
+          observer.next(this.productType);
+        }
+      }, 10)
+    }
+    setTimeout(() => {
+      this.productType = '';
+    }, 5000)
+
+  })
+  
+>>>>>>> 56edd1585... NAS-107649 Skip product img if no license, clean up console
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
   getCA() { return this.ws.call(this.caList, []); }
