@@ -184,17 +184,21 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
       } else {
         this.manufacturer = "other";
       }
-      if (this.product_type === 'CORE') {
+      if (this.product_type === 'CORE'){ 
         this.systemLogo = 'logo.svg';
         this.getFreeNASImage(evt.data.system_product);
         this.isFN = true;
-      } else {
+      } else if(this.product_type.includes('ENTERPRISE') && evt.data.license !== null) {
         this.systemLogo = 'TrueNAS_Logomark_Black.svg';
         if (this.data.license && this.data.license.model) {
           this.getTrueNASImage(evt.data.license.model);
         }
         this.isFN = false;
-      }    
+      } else if(this.product_type == 'SCALE') {
+        this.systemLogo = 'TrueNAS_Logomark_Black.svg';
+        this.getFreeNASImage(evt.data.system_product);
+        this.isFN = false;
+      }
 
       this.parseUptime();
       this.ready = true;
