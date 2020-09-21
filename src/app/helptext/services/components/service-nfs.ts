@@ -88,5 +88,20 @@ nfs_srv_statd_lockd_log_tooltip: T('Set to log <a\
  href="https://www.freebsd.org/cgi/man.cgi?query=rpc.lockd"\
  target="_blank">rpc.lockd(8)</a> syslog requests.'),
 
-formTitle: T('NFS')
+formTitle: T('NFS'),
+
+add_principal_prompt: {
+  title: T('Add Kerberos SPN Entry'),
+  message: T('Would you like to add a Service Principal Name (SPN) now?'),
+  affirmative: T('Yes'),
+  negative: T('No')
+},
+add_principal_form: {
+  username: T('Name'),
+  password: T('Password'),
+  action: T('Submit'),
+  cancel: T('Cancel'),
+  error_title: T('Error'),
+  error: T('There was a problem submitting the SPN entry.')
+}
 }
