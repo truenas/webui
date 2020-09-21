@@ -7,13 +7,21 @@
       <div fxLayout="column" class="fields m-3">
         <ng-container *ngIf="isNew;else extend">
           <div fxLayout="row wrap" fxLayoutAlign="baseline" class="TEST">
-            <div fxFlex="40%" class="inline">
-              <mat-form-field>
-                <input matInput name="poolname" id="pool-manager__name-input-field" placeholder="{{'Name' | translate}}" [(ngModel)]="name" (input)="checkPoolName()" required>
-              </mat-form-field>
-              <tooltip class="volumeTooltip" [message]=name_tooltip></tooltip>
+
+            <div fxFlex="40%" class="inline form-element">
+              <div class="label-container">
+                <label class="label input-text">
+                  {{ 'Name' | translate }}*
+                </label>
+                <tooltip class="volumeTooltip" [message]=name_tooltip></tooltip>
+              </div>
+
+              <div class="full-width">
+                  <input matInput type="text" name="poolname" id="pool-manager__name-input-field" [(ngModel)]="name" (input)="checkPoolName()" required>
+              </div>
             </div>
-            <div fxFlex="25%" class="inline" style="padding-top:12px;">
+
+            <div fxFlex="25%" class="inline" style="padding-top: 50px;">
               <mat-checkbox
                 id="pool-manager__encryption-checkbox"
                 [(ngModel)]="isEncrypted"
@@ -24,20 +32,28 @@
               </mat-checkbox>
               <tooltip class="volumeTooltip" [message]=encryption_tooltip></tooltip>
             </div>
-            <div fxFlex class="inline encryption-select" style="padding-top:17px;">
-              <mat-select
-                *ngIf="isEncrypted"
-                id="pool-manager__encryption_algorithm-select"
-                [(ngModel)]="encryption_algorithm"
-                class="form-control"
-                placeholder="{{'Encryption Algorithm' | translate}}"
-              >
-                <mat-option *ngFor="let option of encryption_algorithm_options" [value]="option.value"
-                  id="encryption_algorithm_option_{{option.label}}">
-                    {{ option.label }}
-                </mat-option>
-  
-              </mat-select>
+
+            <div *ngIf="isEncrypted" fxFlex="30%" class="inline form-element encryption-select" style="padding-top: 4px;">
+              <div class="label-container">
+                <label class="label input-text">
+                  {{ 'Encryption Standard' | translate }}*
+                </label>
+              </div>
+
+              <mat-form-field class="full-width">
+                <mat-select
+                  id="pool-manager__encryption_algorithm-select"
+                  [(ngModel)]="encryption_algorithm"
+                  class="form-control"
+                  placeholder="{{'Encryption Algorithm' | translate}}"
+                >
+                  <mat-option *ngFor="let option of encryption_algorithm_options" [value]="option.value"
+                    id="encryption_algorithm_option_{{option.label}}">
+                      {{ option.label }}
+                  </mat-option>
+    
+                </mat-select>
+              </mat-form-field>
             </div>
           </div>
 

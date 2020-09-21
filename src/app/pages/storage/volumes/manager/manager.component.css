@@ -124,7 +124,7 @@ h4 {
 
 tooltip, tooltip.vdevTooltip{
   position:relative;
-  top:7px;
+  top:5px;
 }
 
 @media screen and (max-width: 1399px) {
