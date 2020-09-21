@@ -188,7 +188,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
         this.systemLogo = 'logo.svg';
         this.getFreeNASImage(evt.data.system_product);
         this.isFN = true;
-      } else if(this.product_type == 'Enterprise' && evt.data.license !== null) {
+      } else if(this.product_type.includes('ENTERPRISE') && evt.data.license !== null) {
         this.systemLogo = 'TrueNAS_Logomark_Black.svg';
         this.getTrueNASImage(evt.data.license.model);
         this.isFN = false;
