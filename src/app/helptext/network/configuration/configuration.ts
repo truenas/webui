@@ -89,18 +89,20 @@ wsd_tooltip: T('Uses the SMB Service <i>NetBIOS Name</i> to advertise \
  outbound_network_activity: {
     allow: {
         placeholder: T('Allow All'),
-        tooltip: T(''),
+        tooltip: T('Any system service can communicate externally.'),
     },
     deny: {
         placeholder: T('Deny All'),
-        tooltip: T(''),
+        tooltip: T('This system cannot communicate externally.'),
     },
     specific: {
         placeholder: T('Allow Specific'),
-        tooltip: T(''),
+        tooltip: T('Define the system services that are allowed to \
+communicate externally. All other external traffic is restricted.'),
     },
  },
  outbound_network_value: {
-     tooltip: T(''),
+     tooltip: T('Select the system services that will be allowed to \
+communicate externally.'),
  }
 }
