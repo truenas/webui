@@ -1,0 +1,47 @@
+<div class="sys-info-wrapper" *ngIf="!hasLicense; else licenseBlock">
+  <div class="sys-info-line"><span class="label"> {{"OS Version:" | translate}}</span> 
+    <span class="value">{{version}}</span>
+  </div>
+  <div class="sys-info-line"><span class="label"> {{"Product:" | translate}}</span> 
+    <span class="value">{{product}}</span>
+  </div>
+  <div class="sys-info-line"><span class="label" *ngIf="model"> {{"Model:" | translate}}</span> 
+    <span class="value">{{model}}</span>
+  </div>
+  <div class="sys-info-line"><span class="label"> {{"Memory:" | translate}}</span> 
+    <span class="value">{{memory}}</span>
+  </div>
+  <div *ngIf="serial" class="fn-sys-info-line"><span class="label"> {{"Serial Number:" | translate}}</span> 
+    <span class="value">{{serial}}</span>
+  </div>
+</div>
+
+<ng-template #licenseBlock>
+  <div class="sys-info-wrapper">
+    <div class="sys-info-line"><span class="label">{{'Customer Name' | translate}}:</span>
+      <span class="sys-info-text"> {{customer_name}}</span>
+    </div>
+    <div class="sys-info-line"><span class="label">{{'Features' | translate}}:</span>
+      <span class="sys-info-text"> {{features}}</span>
+    </div>
+    <div class="sys-info-line"><span class="label">{{'Contract Type' | translate}}:</span>
+      <span class="sys-info-text"> {{contract_type}}</span>
+    </div>
+    <div class="sys-info-line"><span class="label">{{'Expiration Date' | translate}}:</span>
+      <span class="sys-info-text"> {{expiration_date}}</span>
+      <span *ngIf="daysLeftinContract && daysLeftinContract > 0" class="sys-info-text"> 
+        ({{'expires in' | translate}} {{daysLeftinContract}} {{daysLeftinContract==1 ? 'day' : 'days' | translate}})</span>
+      <span *ngIf="daysLeftinContract==0" class="sys-info-text"> ({{'EXPIRES TODAY  ' | translate}})</span>
+      <span *ngIf="daysLeftinContract < 0 " class="sys-info-text"> ({{'EXPIRED' | translate}})</span>
+    </div>
+    <div class="sys-info-line"><span class="label">{{'Model' | translate}}:</span>
+      <span class="sys-info-text"> {{model}}</span>
+    </div>
+    <div class="sys-info-line"><span class="label">{{'System Serial' | translate}}:</span>
+      <span class="sys-info-text"> {{serial}}</span>
+    </div>
+    <div class="sys-info-line"><span class="label">{{'Additional Hardware' | translate}}:</span>
+      <span class="sys-info-text"> {{add_hardware}}</span>
+    </div>
+  </div>
+</ng-template>

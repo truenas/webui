@@ -898,6 +898,9 @@ msgstr ""
 msgid "Acoustic Level"
 msgstr "Akustikpegel"
 
+msgid "Action Requires Administrator Confirmation"
+msgstr ""
+
 msgid "Actions"
 msgstr "Aktionen"
 
@@ -7364,6 +7367,9 @@ msgstr "LEGACY WEB-SCHNITTSTELLE"
 msgid "LLDP"
 msgstr ""
 
+msgid "LOG (Write Cache) Overprovision Size in GiB"
+msgstr ""
+
 msgid "LOGIN TO PROVIDER"
 msgstr "LOGIN ZUM ANBIETER"
 
@@ -8867,13 +8873,11 @@ msgstr "Ausgehend"
 msgid "Outgoing Mail Server"
 msgstr ""
 
-msgid "Overprovision Size in GiB"
-msgstr ""
-
 msgid ""
-"Overprovisioning can increase the performance and lifespan of SSDs.  "
-"Defining a number of GiB here overprovisions disks during pool creation.  "
-"Examples: 50 GiB, 10g, 5GB"
+"Overprovisioning a ZFS Log SSD can increase its performance and lifespan by "
+" distributing writes and erases across more drive flash blocks.  Defining a "
+"number of GiB here overprovisions ZFS Log disks during pool creation or "
+"extension.  Examples: 50 GiB, 10g, 5GB"
 msgstr ""
 
 msgid ""

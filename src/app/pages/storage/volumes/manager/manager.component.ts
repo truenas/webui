@@ -9,7 +9,7 @@ import { of, Subscription } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
 import { DownloadKeyModalDialog } from '../../../../components/common/dialog/downloadkey/downloadkey-dialog.component';
 import helptext from '../../../../helptext/storage/volumes/manager/manager';
-import { DialogService, WebSocketService } from '../../../../services/';
+import { DialogService, WebSocketService, SystemGeneralService } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { StorageService } from '../../../../services/storage.service';
 import { T } from '../../../../translate-marker';
@@ -105,6 +105,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public canDuplicate = false;
 
   public busy: Subscription;
+  public getAdvancedConfig: Subscription;
 
   public name_tooltip = helptext.manager_name_tooltip;
 
@@ -131,7 +132,8 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     protected route: ActivatedRoute,
     public mdDialog: MatDialog,
     public translate: TranslateService,
-    public sorter: StorageService) {}
+    public sorter: StorageService,
+    private sysGeneralService: SystemGeneralService) {}
 
   duplicate() {
     const duplicable_disks = this.duplicable_disks;
@@ -286,7 +288,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         }
       }
     });
-    this.ws.call('system.advanced.config').subscribe(res => {
+    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe(res => {
       this.swapondrive = res.swapondrive;
     });
     this.route.params.subscribe(params => {
@@ -364,6 +366,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy() {
     //this.dragulaService.destroy("pool-vdev");
+    this.getAdvancedConfig.unsubscribe();
   }
 
   addVdev(group, initial_values={}) {

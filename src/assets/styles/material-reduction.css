@@ -6,20 +6,34 @@ body {
 
 @font-face {
   font-family: 'IBM Plex Sans';
-  src: url("/assets/fonts/IBM_Plex_Sans/IBMPlexSans-Regular.ttf") format("truetype");
+  src: url("assets/fonts/IBM_Plex_Sans/IBMPlexSans-Regular.ttf") format("truetype");
 }
 
 @font-face {
   font-family: Epilogue;
-  src: url("/assets/fonts/Epilogue/Epilogue-VariableFont_wght.ttf") format("truetype");
+  src: url("assets/fonts/Epilogue/Epilogue-VariableFont_wght.ttf") format("truetype");
 }
 
 html {font-size: 87.5%;} /*14px*/
 
+/* CSS Vars */
+:root {
+  --fn-dropshadow:0 1px 2px rgba(0,0,0,0);
+  --contrast-normal: var(--bg2);
+  --light-theme-lines: var(--contrast-darkest);
+  --dark-theme-lines: var(--contrast-lighter);
+  --lines: var(--dark-theme-lines);
+  --sidenav-width: 240px;
+  --btn-default-bg: var(--alt-bg2);
+  --hover-bg: var(--lines) !important;
+  --font-family-body: 'IBM Plex Sans';
+}
+
 body {
-  font-family: 'IBM Plex Sans', sans-serif;
+  font-family: var(--font-family-body), sans-serif;
   font-weight: 400;
   line-height: 1.65;
+  /*min-width: 320px;*/
 }
 
 p {margin-bottom: 1.15rem;}
@@ -73,10 +87,6 @@ span.code{
   height:36px !important;
 }
 
-/* CSS Vars */
-:root {
-  --fn-dropshadow:0 1px 2px rgba(0,0,0,0);
-}
 
 /* Cards */
 
@@ -177,16 +187,6 @@ entity-table .mat-toolbar.mat-card-toolbar{
   padding: 4px 0;
 }
 
-:root{
-  --contrast-normal: var(--bg2);
-  --light-theme-lines: var(--contrast-darkest);
-  --dark-theme-lines: var(--contrast-lighter);
-  --lines: var(--dark-theme-lines);
-  --sidenav-width: 240px;
-  --btn-default-bg: var(--alt-bg2);
-  --hover-bg: var(--lines) !important;
-  --font-family-body: 'IBM Plex Sans';
-}
 
 .borderless{
   border: none !important;
@@ -438,6 +438,11 @@ tooltip button i{
   text-transform: capitalize !important;
 }
 
+.mat-button[disabled] span.mat-button-wrapper,
+.mat-flat-button[disabled] span.mat-button-wrapper{
+  opacity: 0.5;
+}
+
 .mat-card-actions .mat-button, 
 .mat-card-actions .mat-flat-button{
   background:var(--btn-default-bg) !important;
@@ -495,4 +500,115 @@ button.mat-button.mat-accent{
 .topbar .mat-icon-button .mat-icon[alt="iXsystem logo"]{
   color: var(--topbar-txt) !important;
 }
+
+/* Material Cards*/
+.mat-card{
+  padding: 0 !important;
+  position: relative;
+}
+
+.mat-card .mat-toolbar-row,
+.mat-card .mat-card-content > div,
+.mat-card .mat-card-footer {
+  padding: 16px;
+}
+
+.mat-card .mat-toolbar{
+}
+
+.mat-card .mat-toolbar-row{
+  border-bottom: solid 1px var(--lines);
+  min-height: 48px !important;
+  height: 56px;
+}
+
+.mat-card .mat-toolbar-row .actions{
+  position: absolute;
+  right: 16px;
+}
+
+.mat-card .mat-card-footer .actions button{
+  margin-right: 8px;
+}
+
+.mat-card-content{
+  /*padding-bottom: 80px;*/
+}
+
+.mat-card .mat-card-footer {
+  width: 100%;
+  padding:0 16px;
+  margin-top: 8px;
+}
+
+/* Material Tables */
+table.mat-table {
+  width: 100%;
+  background-color: var(--bg2) !important;
+}
+
+.mat-table thead th{
+  background-color: var(--contrast-darker);
+  background-color: rgba(0,0,0,0.1);
+  opacity: 0.75;
+  vertical-align: middle;
+}
+
+tr.mat-header-row,
+.mat-table thead tr{
+  max-height: 48px;
+  height: 48px;
+}
+
+.mat-row, 
+.mat-header-row, 
+.mat-footer-row, 
+th.mat-header-cell, 
+td.mat-cell, 
+td.mat-footer-cell{
+  border-bottom-color: var(--lines) !important;
+}
+
+mat-row, 
+mat-header-row, 
+mat-footer-row, 
+th.mat-header-cell, 
+td.mat-cell, 
+td.mat-footer-cell{
+  color: var(--fg2) !important;
+  vertical-align: middle;
+  position: relative;
+}
+
+td.mat-cell .mat-icon{
+  position: absolute;
+  top: calc(50% - 12px);
+}
+
+/* Material Lists */
+.mat-list-item{
+  border-bottom: solid 1px var(--lines) !important;
+}
+
+.value,
+.mat-list-item .value{
+  font-weight: 500;
+}
+
+.label,
+.mat-list-item .label{
+  margin-right: 16px;
+}
+
+mat-card.mat-card .mat-list-base{
+  padding-top: 0;
+}
+
+/* This should probably be implemented as a component */
+.page-title{
+  width: calc(100% - 64px);
+  margin: 0 auto;
+  color: var(--fg1);
+}
+
 

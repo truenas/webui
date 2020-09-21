@@ -15,7 +15,10 @@
           <div class="slide overview" fxFlex="100" fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-between">
 
           <!-- Summary Section -->
-          <div fxFlex.xs="250px" fxFlex="40" class="left fn-theme-primary {{isPassive ? 'passive' : 'active'}}" fxLayout="column" fxLayoutAlign="space-between center">
+          <div fxFlex.xs="250px" fxFlex="40" 
+            [ngClass]="{'fn-theme-contrast-lighter': themeService.activeTheme == themeService.defaultTheme , 'fn-theme-primary': themeService.activeTheme != themeService.defaultTheme}" 
+            class="left {{isPassive ? 'passive' : 'active'}}" 
+            fxLayout="column" fxLayoutAlign="space-between center">
 
             <!-- Mobile Only: Exit Widget -->
             <button fxHide.gt-xs class="mat-card-title-text primary-nav" mat-icon-button color="default" >

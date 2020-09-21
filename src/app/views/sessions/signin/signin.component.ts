@@ -14,6 +14,7 @@ import { Observable, Subscription } from 'rxjs';
 
 import { T } from '../../../translate-marker';
 import {WebSocketService} from '../../../services/ws.service';
+import { SystemGeneralService } from '../../../services';
 import { DialogService } from '../../../services/dialog.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ApiService } from 'app/core/services/api.service';
@@ -65,6 +66,7 @@ export class SigninComponent implements OnInit, OnDestroy {
   public ha_status = false;
   public tc_ip;
   protected tc_url;
+  private getProdType: Subscription;
 
   constructor(private ws: WebSocketService, private router: Router,
     private snackBar: MatSnackBar, public translate: TranslateService,
@@ -72,7 +74,7 @@ export class SigninComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private core: CoreService,
     private api:ApiService,
-    private http:HttpClient) {
+    private http:HttpClient, private sysGeneralService: SystemGeneralService) {
     this.ws = ws;
     const ha_status = window.sessionStorage.getItem('ha_status');
     if (ha_status && ha_status === 'true') {
@@ -90,7 +92,7 @@ export class SigninComponent implements OnInit, OnDestroy {
 
   checkSystemType() {
     if (!this.logo_ready) {
-      this.ws.call('system.product_type').subscribe((res)=>{
+      this.getProdType = this.sysGeneralService.getProductType.subscribe((res)=>{
         this.logo_ready = true;
         this.product_type = res;
         if (this.interval) {
@@ -160,6 +162,7 @@ export class SigninComponent implements OnInit, OnDestroy {
       if(this.tokenObservable){
         this.tokenObservable.unsubscribe();
       }
+      this.getProdType.unsubscribe();
   }
 
   loginToken() {

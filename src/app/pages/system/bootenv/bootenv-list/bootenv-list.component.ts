@@ -1,5 +1,5 @@
 
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
@@ -9,7 +9,7 @@ import { fromEvent as observableFromEvent, Subscription } from 'rxjs';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { RestService } from '../../../../services/rest.service';
-import { WebSocketService } from '../../../../services/ws.service';
+import { WebSocketService, SystemGeneralService } from '../../../../services';
 import { StorageService } from '../../../../services/storage.service';
 import { LocaleService } from 'app/services/locale.service';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -20,7 +20,7 @@ import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/di
   selector : 'app-bootenv-list',
   template : `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
-export class BootEnvironmentListComponent {
+export class BootEnvironmentListComponent implements OnDestroy{
 
   @ViewChild('scrubIntervalEvent', { static: true}) scrubIntervalEvent: ElementRef;
 
@@ -43,10 +43,12 @@ export class BootEnvironmentListComponent {
   public header: string;
   public scrub_msg: string;
   public scrub_interval: number;
+  private getAdvancedConfig: Subscription;
+  private getConfigForActions: Subscription;
 
   constructor(private _rest: RestService, private _router: Router, public ws: WebSocketService,
     public dialog: DialogService, protected loader: AppLoaderService, private storage: StorageService,
-    protected localeService: LocaleService) {}
+    protected localeService: LocaleService, private sysGeneralService: SystemGeneralService) {}
 
   public columns: Array<any> = [
     {name: T('Name'), prop: 'name', always_display: true},
@@ -66,7 +68,7 @@ export class BootEnvironmentListComponent {
   };
 
   preInit() {
-    this.ws.call('system.advanced.config',{}).subscribe(res=>{
+    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe(res=>{
       this.scrub_interval = res.boot_scrub;
       this.updateBootState();
     });
@@ -304,7 +306,7 @@ export class BootEnvironmentListComponent {
     return [{
         label: T("Stats/Settings"),
         onClick: () => {
-          this.ws.call('system.advanced.config',{}).subscribe(res=>{
+          this.getConfigForActions = this.sysGeneralService.getAdvancedConfig.subscribe(res=>{
             this.scrub_interval = res.boot_scrub;
             let localWS = this.ws,
             localDialog = this.dialog;
@@ -397,6 +399,11 @@ export class BootEnvironmentListComponent {
           );
       }
     })
+  }
+
+  ngOnDestroy() {
+    this.getAdvancedConfig.unsubscribe();
+    this.getConfigForActions.unsubscribe();
   }
 
 }

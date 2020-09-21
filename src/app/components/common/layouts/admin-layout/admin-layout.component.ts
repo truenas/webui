@@ -7,7 +7,7 @@ import { CoreEvent, CoreService } from 'app/core/services/core.service';
 import * as Ps from 'perfect-scrollbar';
 import { Subscription } from "rxjs";
 import * as domHelper from '../../../../helpers/dom.helper';
-import { RestService, WebSocketService } from '../../../../services';
+import { RestService, WebSocketService, SystemGeneralService } from '../../../../services';
 import { LanguageService } from '../../../../services/language.service';
 import { ThemeService } from '../../../../services/theme/theme.service';
 import { ModalService } from '../../../../services/modal.service';
@@ -22,6 +22,7 @@ import globalHelptext from '../../../../helptext/global-helptext';
 export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   private isMobile;
   screenSizeWatcher: Subscription;
+  getAdvancedConfig: Subscription;
   isSidenavOpen: Boolean = true;
   isSidenavCollapsed = false;
   sidenavMode: string = 'over';
@@ -58,9 +59,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     protected ws: WebSocketService,
     public language: LanguageService,
     public modalService: ModalService,
-    public dialog: MatDialog) {
+    public dialog: MatDialog, private sysGeneralService: SystemGeneralService) {
     // detect server type
-    ws.call('system.product_type').subscribe((res)=>{
+    sysGeneralService.getProductType.subscribe((res)=>{
       this.product_type = res;
     });
 
@@ -197,7 +198,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   checkIfConsoleMsgShows() {
-    this.ws.call('system.advanced.config', [])
+    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig
       .subscribe(res => this.onShowConsoleFooterBar(res.consolemsg));
   }
 

@@ -1,9 +1,14 @@
 <div id="breadcrumb-bar" class="breadcrumb-bar" *ngIf="isEnabled">
-  <!-- <ul class="breadcrumb">
-    <li *ngFor="let part of routeParts" ix-auto ix-auto-type="option" ix-auto-identifier="{{part.breadcrumb}}">
-      {{part.breadcrumb | translate}}
+  <ul class="breadcrumb">
+    <li *ngFor="let part of routeParts"
+      ix-auto ix-auto-type="option" ix-auto-identifier="{{part.breadcrumb}}">
+      <span *ngIf="!part.disabled;else noclick">
+        <a [routerLink]="[part.url]">{{part.breadcrumb | translate}}</a>
+      </span>
+      <ng-template #noclick>
+        <a>{{part.breadcrumb | translate}}</a>
+      </ng-template>
     </li>
-  </ul> -->
-  <span fxFlex class="copyright-txt">TrueNAS {{product_type}}® © {{copyrightYear}} - <a href="http://www.ixsystems.com"
-      target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.</span>
+  </ul>
+  <!--span fxFlex class="copyright-txt">TrueNAS {{product_type}}® © {{copyrightYear}} - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.</span-->
 </div>

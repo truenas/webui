@@ -14,6 +14,7 @@ import { InteractionManagerService } from 'app/core/services/interaction-manager
 import { DataService } from 'app/core/services/data.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import { SystemGeneralService } from './services';
 import { WebSocketService } from './services/ws.service';
 import { DomSanitizer } from "@angular/platform-browser";
 import { MatIconRegistry } from "@angular/material/icon";
@@ -48,7 +49,8 @@ export class AppComponent {
     public cache: DataService,
     public domSanitizer: DomSanitizer,
     public matIconRegistry: MatIconRegistry,
-    public chartDataUtils: ChartDataUtilsService) {
+    public chartDataUtils: ChartDataUtilsService,
+    private sysGeneralService: SystemGeneralService) {
 
     /*
     * MISC CUSTOM ICONS
@@ -92,6 +94,14 @@ export class AppComponent {
 
     // TRUENAS ENTERPRISE
     this.matIconRegistry.addSvgIcon(
+      "truenas_logomark_color",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logomark_rgb.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_logotype_color",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logotype_rgb.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
       "truenas_logomark", // Generic Alias
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logomark.svg")
     );
@@ -115,11 +125,23 @@ export class AppComponent {
       "truenas_enterprise_text_only",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logotype.svg")
     );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_enterprise_logomark_color",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logomark_rgb.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_enterprise_logotype_color",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logotype_rgb.svg")
+    );
 
     // TRUENAS CORE
     this.matIconRegistry.addSvgIcon(
       "truenas_core_logomark_color",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logomark_rgb.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_core_logotype_color",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logotype_rgb.svg")
     );
     this.matIconRegistry.addSvgIcon(
       "truenas_core_logomark",
@@ -150,6 +172,14 @@ export class AppComponent {
     this.matIconRegistry.addSvgIcon(
       "truenas_scale_logo_full",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_logo_full.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_scale_logomark_color",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_logomark_rgb.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
+      "truenas_scale_logotype_color",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_logotype_rgb.svg")
     );
     /*this.matIconRegistry.addSvgIcon(
       "truenas_scale_text_only",
@@ -210,7 +240,7 @@ export class AppComponent {
         path = "assets/images/truenas_" + cachedType + "_ondark" + "_favicon.png";
       }
     } else {
-      ws.call('system.product_type').subscribe((res) => {
+      this.sysGeneralService.getProductType.subscribe((res) => {
         path = "assets/images/truenas_" + res.toLowerCase() + "_favicon.png";
         if (darkScheme) {
           path = "assets/images/truenas_" + res.toLowerCase() + "_ondark" + "_favicon.png";

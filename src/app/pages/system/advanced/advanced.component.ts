@@ -3,11 +3,12 @@ import { Component, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { Validators, ValidationErrors, FormControl } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { AdminLayoutComponent } from '../../../components/common/layouts/admin-layout/admin-layout.component';
-import { StorageService, ValidationService, WebSocketService } from '../../../services/';
+import { StorageService, ValidationService, WebSocketService, SystemGeneralService } from '../../../services/';
 import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
 import { DialogService } from "../../../services/dialog.service";
 import { T } from '../../../translate-marker';
@@ -34,6 +35,7 @@ export class AdvancedComponent implements OnDestroy {
   public entityForm: any;
   protected dialogRef: any;
   public product_type: string;
+  private getProdType: Subscription;
   public is_ha = false;
   public custActions: Array < any > = [{
     id: 'save_debug',
@@ -371,7 +373,8 @@ export class AdvancedComponent implements OnDestroy {
     public datePipe: DatePipe,
     public http: HttpClient,
     public storage: StorageService,
-    public validationService: ValidationService
+    public validationService: ValidationService,
+    private sysGeneralService: SystemGeneralService
     ) {}
 
   resourceTransformIncomingRestData(data) {
@@ -389,6 +392,7 @@ export class AdvancedComponent implements OnDestroy {
     if (this.swapondrive_subscription) {
       this.swapondrive_subscription.unsubscribe();
     }
+    this.getProdType.unsubscribe();
 
   }
   preInit() {
@@ -404,7 +408,7 @@ export class AdvancedComponent implements OnDestroy {
       this.is_ha = is_ha;
     });
     this.entityForm = entityEdit;
-    this.ws.call('system.product_type').subscribe((res)=>{
+    this.getProdType = this.sysGeneralService.getProductType.subscribe((res)=>{
       this.product_type = res;
       if (this.product_type === 'ENTERPRISE') {
         entityEdit.setDisabled('swapondrive', true, true);

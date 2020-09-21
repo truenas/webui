@@ -31,12 +31,11 @@ export class DocsService {
                 if (running_version) {
                     message = message.replace(/--runningversion--/g, running_version);
                 }
-    
-                const product_type = window.localStorage.getItem('product_type');
-                message = message.replace(/--nas--/g, `truenas ${product_type}`);
-                message = message.replace(/--NAS--/g, `TrueNAS ${product_type}`);
             }
 
+            const product_type = window.localStorage.getItem('product_type');
+            message = message.replace(/--nas--/g, `truenas ${product_type}`);
+            message = message.replace(/--NAS--/g, `TrueNAS ${product_type}`);
         }
 
         return message;

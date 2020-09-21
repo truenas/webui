@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as moment from 'moment-timezone';
 import { PreferencesService } from 'app/core/services/preferences.service';
-import { WebSocketService } from './ws.service';
+import { SystemGeneralService } from '../services';
 import { Subject } from 'rxjs';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
 import { T } from "app/translate-marker";
@@ -16,8 +16,9 @@ export class LocaleService {
     dateTimeFormatChange$ = new Subject();
     public target: Subject<CoreEvent> = new Subject();
 
-    constructor(public prefService: PreferencesService, public ws: WebSocketService, private core: CoreService) {
-        this.ws.call('system.general.config').subscribe(res => {
+    constructor(public prefService: PreferencesService, public sysGeneralService: SystemGeneralService, 
+        private core: CoreService) {
+        this.sysGeneralService.getGeneralConfig.subscribe(res => {
             this.timeZone = res.timezone;
         })
         if (window.localStorage.dateFormat) {
@@ -78,6 +79,11 @@ export class LocaleService {
         return moment(date).format(`${this.dateFormat} ${this.timeFormat}`);
     }
 
+    formatDateTimeWithNoTz(date) {      
+        moment.tz.setDefault('')
+        return moment(date).format(`${this.dateFormat} ${this.timeFormat}`);
+    }
+
     getTimeOnly(date, seconds=true, tz?) {
         tz ? moment.tz.setDefault(tz) : moment.tz.setDefault(this.timeZone);
         let format: string;
@@ -127,6 +133,13 @@ export class LocaleService {
 
     getPreferredTimeFormat() {
         return this.timeFormat;
+    }
+
+    getDateAndTime(tz?) {
+        if (tz) {
+            moment.tz.setDefault(tz);
+        }
+        return [moment().format(this.dateFormat), moment().format(this.timeFormat)];
     }
     
     // Translates moment.js format to angular template format for use in special cases such as form-scheduler

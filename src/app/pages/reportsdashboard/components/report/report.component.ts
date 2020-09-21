@@ -1,10 +1,10 @@
 import { Component, AfterViewInit, AfterContentInit, Input, ViewChild, OnDestroy, OnChanges, ElementRef} from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { WebSocketService } from 'app/services/';
+import { WebSocketService, SystemGeneralService } from 'app/services/';
 import { ReportsService } from '../../reports.service';
 import { MaterialModule } from 'app/appMaterial.module';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { LineChartComponent } from '../lineChart/lineChart.component';
@@ -108,6 +108,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
   public altSubtitle: string = '';
   public widgetColorCssVar: string = 'var(--primary)';
   public isActive:boolean = true;
+  private getGenConfig: Subscription;
 
   public currentStartDate: number;// as seconds from Unix Epoch
   public currentEndDate: number;// as seconds from Unix Epoch
@@ -161,7 +162,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
 
   formatTime(stamp){
     let parsed = Date.parse(stamp);
-    const result = this.localeService.formatDateTime(new Date(parsed), this.timezone);
+    const result = this.localeService.formatDateTimeWithNoTz(new Date(parsed));
     return result.toLowerCase() !== 'invalid date' ?  result : null;
 
   }
@@ -170,7 +171,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     public translate: TranslateService,
     private rs: ReportsService,
     private ws: WebSocketService,
-    protected localeService: LocaleService){
+    protected localeService: LocaleService, private sysGeneralService: SystemGeneralService){
     super(translate); 
     
     this.core.register({observerClass:this, eventName:"ReportData-" + this.chartId}).subscribe((evt:CoreEvent) => {
@@ -193,11 +194,12 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
 
     this.core.emit({name:"ThemeDataRequest", sender:this});
 
-    this.ws.call('system.general.config').subscribe(res => this.timezone = res.timezone);
+    this.getGenConfig = this.sysGeneralService.getGeneralConfig.subscribe(res => this.timezone = res.timezone);
   }
 
   ngOnDestroy(){
     this.core.unregister({observerClass:this});
+    this.getGenConfig.unsubscribe();
   }
 
   ngAfterViewInit(){

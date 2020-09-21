@@ -4,6 +4,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable, Subject, Subscription} from 'rxjs/Rx';
 import { TranslateService } from '@ngx-translate/core';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import * as _ from 'lodash';
 
 import { WebSocketService } from './ws.service'
@@ -366,10 +367,10 @@ export class LanguageService {
     code: 'zh-hans',
   }
 ];
-  queryCall = 'system.general.config';
   updateCall = 'system.general.update';
 
-  constructor(protected translate: TranslateService, protected ws: WebSocketService) {
+  constructor(protected translate: TranslateService, protected ws: WebSocketService,
+    private sysGeneralService: SystemGeneralService) {
   }
 
   getBrowserLanguage() {
@@ -380,7 +381,7 @@ export class LanguageService {
   }
 
   getMiddlewareLanguage() {
-    this.ws.call(this.queryCall, []).subscribe((res) => {
+    this.sysGeneralService.getGeneralConfig.subscribe((res) => {
       if (res && res.language) {
         this.setLang(res.language);
       } else {

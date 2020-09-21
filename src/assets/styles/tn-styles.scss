@@ -24,7 +24,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-button.mat-accent .mat-ripple-element,
   .mat-icon-button.mat-accent .mat-ripple-element,
   .mat-slide-toggle .mat-ripple-element {
-    @include variable(background, --accent, $accent, !important);
+    @include variable(background, --primary, $primary, !important);
   }
   .mat-button .mat-ripple-element, .mat-raised-button .mat-ripple-element {
     background: rgba(0, 0, 0, .12);
@@ -50,6 +50,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   // END UI SHELL
 
+  img.fn-img {
+    width: 80%;
+    margin: 10%;
+  }
+
   .mat-bg-primary,
   .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
   .chats-wrap .conversations-hold .single-conversation.me .conversation-msg,
@@ -72,7 +77,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       @include variable(border-left, --primary, $primary, !important);
   }
   .breadcrumb-bar {
-      @include variable(background, --bg2, $bg2, !important);
+      /*@include variable(background, --bg2, $bg2, !important);*/
       @include variable(color, --fg1, $fg1, !important);
   }
   /* Hopscotch Tour */
@@ -121,13 +126,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       @include variable(border-right-color, --primary, $primary);
   }
   .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
-    background-color: map-get($md-accent, 400);
-    @include variable(background, --accent, $accent, !important);
-
+    background-color: var(--primary);
   }
   .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar {
-    @include variable(background, --accent, $accent, !important);
-
+    background-color: var(--primary);
   }
   .mat-bg-accent,
   div.hopscotch-bubble .hopscotch-bubble-number,
@@ -834,6 +836,16 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(color, --yellow-txt, $yellow-txt);
   }
 
+  .fn-theme-contrast-darker{
+    background-color: var(--contrast-darker);
+    color: var(--fg2);
+  }
+
+  .fn-theme-contrast-lighter{
+    background-color: var(--contrast-lighter);
+    color: var(--fg2);
+  }
+
   // Fixes color on Reports page tabs
   #dashboardcontainerdiv .mat-ink-bar {
     @include variable(background-color, --primary, $primary);
@@ -1126,264 +1138,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     top: -18px;
   }
 
-  // Support Section ////////////////////////
-  app-support {
-    .mat-card {
-      min-width: 320px;
-    }
-    #top-row {
-      margin: 0 15px;
-    }
-
-    .sys-image {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 350px;
-
-      div {
-        display: flex;
-        justify-content: center;
-      }
-    }
-
-    .lowerme {
-      margin-top: 60px !important;
-    }
-
-    .support-title, #FN_col1, #FN_col2, #TN_col1, #TN_proactive_section_title {
-      font-size: 180%;
-      margin-bottom: 15px;
-
-      & .material-icons {
-        margin-right: 10px;
-        margin-left: -5px;
-        position: relative;
-        top: 10px;
-        font-size: 36px;
-      }
-    }
-
-    #category_form-select-spinner,
-    app-proactive #name_form-input-spinner,
-    app-proactive #secondary_name_form-input-spinner {
-      position: absolute;
-      top: -20px;
-      right: 45%;
-    }
-
-    @media screen and (max-width: 1025px) {
-      #fn-spacer {
-        height: 80px;
-      }
-    }
-
-    @media screen and (max-width: 400px) {
-      app-sys-image img {
-        max-width: 80%;
-      }
-      .mat-card {
-        margin-left: -10px;
-      }
-    }
-
-    @media screen and (max-width: 350px) {
-      .mat-card {
-        margin-left: -20px;
-      }
-    }
-  }
-
-  app-fn-sys-info {
-    #fn-support-title {
-      margin-bottom: 25px;
-    }
-    .fn-sys-info-line {
-      margin-top: 10px;
-      margin-bottom: 10px;
-
-      h4 {
-        margin-bottom: 3px;
-      }
-    }
-    #fn-instructions {
-      font-size: 110%;
-    }
-    #update-license-btn {
-      background-color: var(--primary);
-      color: white;
-    }
-  }
-
-  app-tn-sys-info {
-    .tn-sys-info-line {
-      margin-top: 10px;
-
-      h4 {
-        margin-bottom: 3px;
-      }
-    }
-    #update-license-btn {
-      background-color: var(--primary);
-      color: white;
-      top: 13px;
-    }
-
-    #tn-sys-col1 {
-      min-width: 184px;
-    }
-  }
-
-  app-sys-image {
-    img {
-      max-width: 90%;
-      height: auto;
-    }
-  }
-
-  @media screen and (min-width: 600px) and (max-width: 749px)  {
-    .tn-sys-image {
-      position: relative;
-      left: 35px;
-    }
-  }
-
-  app-production-status {
-    .mat-card {
-        top: 25px;
-        background-color: rgba(127,127,127,0.1);
-        width: 400px;
-        height: 100px;
-        margin: 0 !important;
-    }
-    .mat-card-actions {
-      top: 25px;
-      position: absolute;
-      left: 240px;
-      width: unset;
-    }
-
-    @media screen and (max-width: 599px) {
-      .mat-card {
-        top: 25px;
-        width: auto;
-      }
-    }
-
-    @media screen and (max-width: 460px) {
-      .mat-card {
-        top: 25px;
-        height: auto;
-      }
-      .mat-card-actions {
-        position: relative;
-        top: unset;
-        left: unset;
-      }
-    }
-  }
-
-  app-proactive {
-    .mat-card {
-      top: 37px;
-      background-color: rgba(127,127,127,0.1);
-      margin: 0 15px !important;
-    }
-    .mat-card-actions {
-      height: 0px;
-      top: -45px;
-      position: relative;
-      left: 230px;
-    }
-    #enabled {
-      position: relative;
-      top: 5px;
-    }
-
-    #TN_proactive_instructions {
-      font-size: 120%;
-      margin-right: 10px;
-      margin-bottom: 20px;
-
-    }
-
-    @media screen and (max-width: 599px) {
-      .mat-card {
-        top: -35px;
-      }
-    }
-
-    @media screen and (max-width: 460px) {
-      .mat-card-actions {
-        top: 25px;
-        height: auto;
-        position: relative;
-        left: unset;
-        height: auto;
-        top: unset;
-      }
-    }
-  }
-
-  app-fn-support {
-    .mat-card {
-      background-color: rgba(127,127,127,0.1);
-      margin: 30px 15px 5px 15px !important;
-    }
-    .mat-card-actions {
-      top: -40px;
-      position: relative;
-      width: 300px;
-    }
-    form {
-      margin-bottom: -40px;
-    }
-
-    @media screen and (max-width: 599px) {
-      .mat-card-actions {
-        top: 0;
-      }
-      .lowerme {
-        margin-top: 0 !important;
-      }
-      form {
-        margin-bottom: 4px;
-      }
-    }
-
-  }
-
-  app-entity-dialog #tn_core_upgrade_license_message {
-    margin-bottom: 8px;
-  }
-
-  app-tn-support {
-    .mat-card {
-      background-color: rgba(127,127,127,0.1);
-      margin: 50px 15px 5px 15px !important;
-    }
-    .mat-card-actions {
-      height: 0px;
-      top: -55px;
-      position: relative;
-      width: 400px;
-    }
-
-    @media screen and (max-width: 599px) {
-      .mat-card-actions {
-        top: 0;
-        height: 25px !important;
-      }
-      .lowerme {
-        margin-top: 0 !important;
-      }
-      .mat-card {
-        top: -15px;
-      }
-    }
-  }
-// End support section //////////////
-
   entity-form form-combobox mat-form-field {
     width: 50%;
     min-width: 180px;
@@ -1452,11 +1206,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   *::-webkit-scrollbar-thumb{
     background-color: rgba(127,127,127,0.5);
     border-radius:4px;
-  }
-
-
-  app-support a {
-    text-decoration: underline;
   }
 
   app-entity-dialog #pool_processes p,
@@ -1798,6 +1547,38 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
         margin: 18px 0;
       }
     }
+
+    .lowerme-guiform {
+      margin-top: 32px !important;
+    }
+
+    app-support .links-wrapper {
+      margin-bottom: 1rem;
+    }
+    app-support .links {
+      margin-bottom: 5px;
+      a {
+        color: var(--primary);
+        text-decoration: underline;
+      }
+    }
+
+    /*.sys-image {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+  
+      div {
+      display: flex;
+      justify-content: center;
+      }
+    }*/
+
+  // NTP form
+  input#minpoll, input#maxpoll {
+    width: 131px !important;
+  }
 
 
 } // end of ix theme

@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
-import { DialogService, WebSocketService, AppLoaderService } from '../../../../services';
+import { DialogService, WebSocketService, AppLoaderService, SystemGeneralService } from '../../../../services';
+import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 import { shared, helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { T } from "app/translate-marker";
@@ -14,6 +15,7 @@ export class GlobalconfigurationComponent {
 
   protected queryCall = 'iscsi.global.config';
   protected editCall = 'iscsi.global.update';
+  private getProdType: Subscription;
 
   public fieldSets: FieldSet[] = [
     {
@@ -60,14 +62,16 @@ export class GlobalconfigurationComponent {
   constructor(
     protected dialogService: DialogService,
     protected ws: WebSocketService,
-    protected loader: AppLoaderService) {}
+    protected loader: AppLoaderService,
+    private sysGeneralService: SystemGeneralService) {}
 
   afterInit(entityForm) {
     entityForm.submitFunction = entityForm.editCall;
-    this.ws.call('system.product_type').subscribe((res)=>{
+    this.getProdType = this.sysGeneralService.getProductType.subscribe((res)=>{
       if (res === 'ENTERPRISE') {
         entityForm.setDisabled('alua', false, false);
       }
+      this.getProdType.unsubscribe();
     });
   }
 
@@ -103,4 +107,5 @@ export class GlobalconfigurationComponent {
       }
     });
   }
+
 }
