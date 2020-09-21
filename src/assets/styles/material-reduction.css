@@ -200,6 +200,9 @@ entity-table .mat-toolbar.mat-card-toolbar{
 .fieldset {
   padding-bottom: 24px;
 }
+.fieldset.empty-fieldset {
+  padding-bottom: 0px;
+}
 
 .full-width{
   position: relative;
