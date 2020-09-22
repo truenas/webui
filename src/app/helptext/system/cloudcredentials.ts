@@ -54,7 +54,7 @@ export const helptext_system_cloudcredentials = {
     tooltip: T('Maximum number of parts in a multipart upload. This option defines \
  the maximum number of multipart chunks to use when doing a multipart upload. This can\
  be useful if a service does not support the AWS S3 specification of 10,000 chunks.'),
-    validation: regexValidator(/^\d+$/)
+    validation: [regexValidator(/^\d+$/)]
   },
 
   endpoint_s3: {
