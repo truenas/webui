@@ -421,7 +421,7 @@ export class CloudsyncFormComponent {
       function : () => {
         const payload = this.submitDataHandler(this.formGroup.value);
         const dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": helptext.job_dialog_title_dry_run }, disableClose: true});
-        dialogRef.componentInstance.setCall('cloudsync.sync_onetime', [payload]);
+        dialogRef.componentInstance.setCall('cloudsync.sync_onetime', [payload, {"dry_run": true}]);
         dialogRef.componentInstance.submit();
         dialogRef.componentInstance.success.subscribe((res) => {
           this.matDialog.closeAll();
