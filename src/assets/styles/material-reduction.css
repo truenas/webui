@@ -299,6 +299,10 @@ entity-form-list .list-action-block-wrapper .form-element select{
 }
 
 /* IP w/Netmask*/
+.form-element.form-ip-netmask .mat-form-field {
+  max-height: 33px;
+}
+
 .form-element.form-ip-netmask .mat-form-field-wrapper input,
 .form-element.form-ip-netmask .mat-form-field-wrapper{
   background-color: unset;
