@@ -21,6 +21,7 @@ export class EntityJobComponent implements OnInit {
 
   public title = '';
   public showCloseButton = true;
+  public showAbortButton = false; // enable to abort job
   public jobId: Number;
   public progressNumberType;
   public hideProgressValue = false;
@@ -132,6 +133,9 @@ export class EntityJobComponent implements OnInit {
           if (res.progress) {
             this.progress.emit(res.progress);
           }
+          if (this.job.state === 'ABORTED') {
+            this.success.emit(this.job);
+          }
         },
         () => {},
         () => {
@@ -216,5 +220,9 @@ export class EntityJobComponent implements OnInit {
         this.failure.emit(this.job);
       }
     }
+  }
+
+  abortJob() {
+    this.ws.call('core.job_abort', [this.job.id]).subscribe();
   }
 }

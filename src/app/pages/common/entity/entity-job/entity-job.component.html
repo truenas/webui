@@ -30,3 +30,6 @@
 	<button mat-button mat-dialog-close="close"
 		ix-auto ix-auto-type="button" ix-auto-identifier="CLOSE">{{"Close" | translate}}</button>
 </div>
+<div mat-dialog-actions *ngIf="showAbortButton || (job && job.state == 'RUNNING')">
+	<button mat-button ix-auto ix-auto-type="button" ix-auto-identifier="ABORT" (click)="abortJob()">{{"Abort" | translate}}</button>
+</div>
