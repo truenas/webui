@@ -276,6 +276,7 @@ entity-form-list .list-action-block-wrapper .form-element select{
   max-width: calc(100% - 58px) !important;
   height: 33px;
   margin-right: 1px;
+  padding: 0 8px;
 }
 
 .form-element.form-combobox .mat-menu-trigger:hover {
@@ -284,7 +285,7 @@ entity-form-list .list-action-block-wrapper .form-element select{
 
 .form-element.form-combobox .mat-menu-trigger{
   position: relative;
-  top: 2px;
+  top: -9px;
   padding: 9px 2px 8px;
 }
 
