@@ -149,7 +149,6 @@ export class ManualUpdateComponent extends ViewControllerComponent {
 
 
   customSubmit(entityForm: any) {
-    console.log(entityForm)
     this.save_button_enabled = false;
     this.systemService.updateRunningNoticeSent.emit();
     this.ws.call('user.query',[[["id", "=",1]]]).subscribe((ures)=>{
@@ -218,7 +217,6 @@ updater(file: any, parent: any){
       }));
     }
     formData.append('file', fileBrowser.files[0]);
-    console.log(parent)
     parent.subs = {"apiEndPoint":file.apiEndPoint, "formData": formData}
   } else {
     parent.save_button_enabled = false;
