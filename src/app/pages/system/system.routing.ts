@@ -349,7 +349,7 @@ export const routes: Routes = [
     {
       path: 'temp-misc',
       component: CredentialsComponent,
-      data: { title: ('Credentials') }
+      data: { title: ('Miscellaneous'), breadcrumb: T('Miscellaneous') }
     },
     {
       path: 'services',
