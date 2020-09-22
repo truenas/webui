@@ -10,6 +10,14 @@ import { ChangePasswordComponent } from "./users/change-password/change-password
 import { TwoFactorComponent } from '../system/two-factor/two-factor.component';
 import { DirectoryservicesComponent } from '../directoryservice/directoryservices/directoryservices.component';
 import { CredentialsComponent } from './../credentials/credentials.component';
+import { CloudCredentialsFormComponent } from '../system/CloudCredentials/cloudcredentials-form/cloudcredentials-form.component';
+import { CloudCredentialsListComponent } from '../system/CloudCredentials/CloudCredentials-list/CloudCredentials-list.component';
+import { SshConnectionsListComponent } from '../system/ssh-connections/ssh-connections-list/ssh-connections-list.component';
+import { SshConnectionsFormComponent } from '../system/ssh-connections/ssh-connections-form/ssh-connections-form.component';
+import { SshKeypairsListComponent } from '../system/ssh-keypairs/ssh-keypairs-list/ssh-keypairs-list.component';
+import { SshKeypairsFormComponent } from '../system/ssh-keypairs/ssh-keypairs-form/ssh-keypairs-form.component';
+
+import { T } from '../../translate-marker';
 
 export const routes: Routes = [{
   path: '',
@@ -73,9 +81,67 @@ export const routes: Routes = [{
     data: { title: ('Directory Services') },
   },
   {
+    path: 'sshconnections',
+    data: { title: T('SSH Connections'), breadcrumb: T('SSH Connections'), icon: 'cloud_circle'},
+    children: [
+      {
+        path: '',
+        component: SshConnectionsListComponent,
+        data: { title: T('SSH Connections'), breadcrumb: T('SSH Connections'), icon: 'cloud_circle'},
+      },
+      {
+        path: 'add',
+        component: SshConnectionsFormComponent,
+        data: { title: T('Add'), breadcrumb: T('Add') },
+      },
+      {
+        path: 'edit/:pk',
+        component: SshConnectionsFormComponent,
+        data: { title: T('Edit'), breadcrumb: T('Edit') },
+      }]
+    },
+    {
+      path: 'sshkeypairs',
+      data: { title: T('SSH Keypairs'), breadcrumb: T('SSH Keypairs'), icon: 'vpn_key' },
+      children: [{
+        path: '',
+        component: SshKeypairsListComponent,
+        data: { title: T('SSH Keypairs'), breadcrumb: T('SSH Keypairs') },
+      }, {
+        path: 'add',
+        component: SshKeypairsFormComponent,
+        data: { title: T('Add'), breadcrumb: T('Add') },
+      }, {
+        path: 'edit/:pk',
+        component: SshKeypairsFormComponent,
+        data: { title: T('Edit'), breadcrumb: T('Edit') },
+      }
+    ]
+  },
+  {
+    path: 'cloudcredentials',
+    data: { title: T('Cloud Credentials'), breadcrumb: T('Cloud Credentials'), icon: 'cloud_circle' },
+    children: [{
+        path: '',
+        component: CloudCredentialsListComponent,
+        data: { title: T('Cloud Credentials'), breadcrumb: T('Cloud Credentials') },
+      },
+      {
+        path: 'add',
+        component: CloudCredentialsFormComponent,
+        data: { title: T('Add'), breadcrumb: T('Add') },
+      },
+      {
+        path: 'edit/:pk',
+        component: CloudCredentialsFormComponent,
+        data: { title: T('Edit'), breadcrumb: T('Edit') },
+      },
+    ]
+  },
+  {
     path: 'temp-misc',
     component: CredentialsComponent,
-    data: { title: ('Credentials') }
+    data: { title: ('Miscellaneous'), breadcrumb: T('Miscellaneous') }
   }
 ]
 }];

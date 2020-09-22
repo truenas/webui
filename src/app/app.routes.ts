@@ -34,9 +34,9 @@ export const rootRouterConfig: Routes = [{
         data: { title: 'Dashboard', breadcrumb: 'Dashboard' }
       },
       {
-        path: 'account',
+        path: 'credentials',
         loadChildren: './pages/account/account.module#AccountModule',
-        data: { title: 'Accounts', breadcrumb: 'Accounts'}
+        data: { title: 'Credentials', breadcrumb: 'Credentials'}
       },
       {
         path: 'system',
