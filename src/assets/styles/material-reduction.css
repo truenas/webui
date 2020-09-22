@@ -341,14 +341,6 @@ entity-form-list .list-action-block-wrapper .form-element select{
 }
 
 /* Login Form */
-/*
-.login-form .form-element .mat-form-field-flex{
-  display: block;
-  position: relative;
-  top: -3px;
-}
-*/
-
 .login-form .form-element .mat-form-field-wrapper{
   width: 100% !important;
   min-height: unset;
