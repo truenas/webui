@@ -341,8 +341,18 @@ entity-form-list .list-action-block-wrapper .form-element select{
 }
 
 /* Login Form */
+/*
+.login-form .form-element .mat-form-field-flex{
+  display: block;
+  position: relative;
+  top: -3px;
+}
+*/
+
 .login-form .form-element .mat-form-field-wrapper{
   width: 100% !important;
+  min-height: unset;
+  max-height: 33px;
 }
 
 .login-form .form-element .mat-form-field-wrapper input{
@@ -350,8 +360,6 @@ entity-form-list .list-action-block-wrapper .form-element select{
   border: none;
   margin: 0;
   padding: 0 0 2px 0;
-  position: relative;
-  top: 6px !important;
 }
 
 .login-form .form-element .mat-form-field-prefix .mat-icon {
@@ -360,6 +368,14 @@ entity-form-list .list-action-block-wrapper .form-element select{
 
 .login-form .form-element .mat-form-field-prefix{
   margin-bottom: 2px;
+}
+
+.login-form .form-element.username .mat-form-field-prefix{
+  top: -5px;
+}
+
+.login-form .form-element.password .mat-form-field-prefix{
+  top: -16px;
 }
 
 .form-element textarea{
