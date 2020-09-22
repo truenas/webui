@@ -39,6 +39,7 @@
           <div fxFlex="80px" fxLayout="row" fxLayoutAlign="space-between center">
       	    <div fxFlex style="text-align: center; padding: 0 8px;">/</div>
       	    <mat-select *ngIf="!config.netmaskPreset" fxFlex="64px"
+                disableOptionCentering
       		[value]="netmask"
       		[placeholder]="Netmask | translate"
       		(selectionChange)="setNetmask($event)"
@@ -50,6 +51,7 @@
       		</mat-option>
       	    </mat-select>
       	    <mat-select *ngIf="config.netmaskPreset" fxFlex="72px"
+                disableOptionCentering
       		class="disabled-select"
       		[value]="config.netmaskPreset"
       		disabled
