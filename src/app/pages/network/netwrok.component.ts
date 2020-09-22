@@ -143,6 +143,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   protected openvpnServerComponent: OpenvpnServerComponent;
   protected impiFormComponent: IPMIFromComponent;
 
+  public hasConsoleFooter: false;
   constructor(
     private ws: WebSocketService,
     private router: Router,
@@ -197,6 +198,10 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.refreshNetworkForms();
     this.modalService.refreshForm$.subscribe(() => {
       this.refreshNetworkForms();
+    });
+
+    this.ws.call('system.advanced.config').subscribe(res => {
+      this.hasConsoleFooter = res.consolemsg;
     })
   }
 
