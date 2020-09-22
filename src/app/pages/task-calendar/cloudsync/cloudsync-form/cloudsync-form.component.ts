@@ -865,8 +865,4 @@ export class CloudsyncFormComponent {
   isCustActionDisabled(id) {
     return !this.entityForm.valid;
   }
-
-  isCustActionVisible(id) {
-    return this.pk === undefined;
-  }
 }
