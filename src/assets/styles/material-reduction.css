@@ -594,6 +594,8 @@ td.mat-cell .mat-icon{
 .mat-row:hover,
 tr.mat-row:hover {
   background: rgba(0,0,0,0.1);
+  cursor: pointer;
+
 }
 /* Material Lists */
 .mat-list-item{
