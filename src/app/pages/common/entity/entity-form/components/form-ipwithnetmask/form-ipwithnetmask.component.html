@@ -38,7 +38,8 @@
       	  </mat-form-field>
           <div fxFlex="80px" fxLayout="row" fxLayoutAlign="space-between center">
       	    <div fxFlex style="text-align: center; padding: 0 8px;">/</div>
-      	    <mat-select *ngIf="!config.netmaskPreset" fxFlex="64px"
+            <mat-form-field fxFlex="64px" *ngIf="!config.netmaskPreset" >
+      	      <mat-select 
                 disableOptionCentering
       		[value]="netmask"
       		[placeholder]="Netmask | translate"
@@ -49,8 +50,11 @@
       			ix-auto ix-auto-type="option" ix-auto-identifier="{{option.label}}">
       			{{option.label}}
       		</mat-option>
-      	    </mat-select>
-      	    <mat-select *ngIf="config.netmaskPreset" fxFlex="72px"
+      	      </mat-select>
+      	    </mat-form-field>
+
+            <mat-form-field fxFlex="72px" *ngIf="config.netmaskPreset" >
+      	      <mat-select 
                 disableOptionCentering
       		class="disabled-select"
       		[value]="config.netmaskPreset"
@@ -61,8 +65,10 @@
       			{{config.netmaskPreset}}
       		</mat-option>
       	    </mat-select>
-          </div>
+      	  </mat-form-field>
         </div>
+      </div>
+
 	<div class="margin-for-error">
 		<mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
 		<mat-error *ngIf="config.warnings">{{config.warnings | translate}}</mat-error>
