@@ -105,7 +105,7 @@ export class NavigationService {
         { name: T('Local Users'), state: 'users' },
         { name: T('Local Groups'), state: 'groups' },
         { name: T('Directory Services'), state: 'directory-services' },
-        // { name: T('Backup Credentials'), state: 'temp-misc' },
+        { name: T('Backup Credentials'), state: 'backup-credentials' },
         { name: T('Certificates'), state: 'temp-misc' },
         { name: T('2FA'), state: 'two-factor' },
         { name: T('Cloud Credentials'), state: 'cloudcredentials' },

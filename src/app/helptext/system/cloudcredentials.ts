@@ -438,5 +438,6 @@ target="_blank">OpenStack credentials file</a>.')
  <a href="https://tech.yandex.com/direct/doc/dg-v4/concepts/auth-token-docpage/" \
  target="_blank">Access Token</a>.'
     )
-  }
+  },
+  formTitle: T('Cloud Credentials')
 };

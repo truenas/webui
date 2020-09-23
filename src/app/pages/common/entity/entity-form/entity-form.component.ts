@@ -65,6 +65,7 @@ export interface Formconfiguration {
   custom_edit_query?;
   custom_add_query?
   custActions?: any[];
+  compactCustomActions?: any[];
   customFilter?:any[];
   confirmSubmit?;
   confirmSubmitDialog?:Object;

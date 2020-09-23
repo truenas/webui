@@ -1,3 +1,4 @@
+
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
@@ -16,6 +17,7 @@ import { SshConnectionsListComponent } from '../system/ssh-connections/ssh-conne
 import { SshConnectionsFormComponent } from '../system/ssh-connections/ssh-connections-form/ssh-connections-form.component';
 import { SshKeypairsListComponent } from '../system/ssh-keypairs/ssh-keypairs-list/ssh-keypairs-list.component';
 import { SshKeypairsFormComponent } from '../system/ssh-keypairs/ssh-keypairs-form/ssh-keypairs-form.component';
+import { BackupCredentialsComponent } from '../credentials/backup-credentials/backup-credentials.component';
 
 import { T } from '../../translate-marker';
 
@@ -142,6 +144,11 @@ export const routes: Routes = [{
     path: 'temp-misc',
     component: CredentialsComponent,
     data: { title: ('Miscellaneous'), breadcrumb: T('Miscellaneous') }
+  },
+  {
+    path: 'backup-credentials',
+    component: BackupCredentialsComponent,
+    data: { title: ('Backup Credentials'), breadcrumb: T('Backup Credentials') }
   }
 ]
 }];
