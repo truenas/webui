@@ -142,7 +142,14 @@ div.tooltiptext.center{
   top: 25px !important;
   left: -65px !important;
   min-height: 64px;
-  max-width: 350px !important;
+  max-width: 275px !important;
+}
+
+div.tooltiptext.center-left{
+  top: 25px !important;
+  left: -200px !important;
+  min-height: 64px;
+  max-width: 275px !important;
 }
 
 /* Arrow */
@@ -168,7 +175,12 @@ div.tooltiptext.right:before{
 
 div.tooltiptext.center:before{
   top: -8px;
-  left: 42px; /*calc(50% - 10px);*/
+  left: 62px; /*calc(50% - 10px);*/
+}
+
+div.tooltiptext.center-left:before{
+  top: -8px;
+  right: 57px; /*calc(50% - 10px);*/
 }
 
 .moved div.tooltiptext:before{

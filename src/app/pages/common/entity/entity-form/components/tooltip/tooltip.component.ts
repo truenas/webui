@@ -35,10 +35,15 @@ export class TooltipComponent {
       'min-height':'64px'
     };
     if (this.isSlideInForm && formParent.clientWidth < 420) {
-      this.positionOverride = 'center';
+      if (posRight < 200) {
+        this.positionOverride = 'center';
+      } else {
+        this.positionOverride = 'center-left';
+      }
     }
 
     let insideJob = formParent ? (formParent.clientWidth - posRight > 300 ? true : false) : null;
+    console.log(posRight)
 
     if(this.positionOverride){
       this.positionString = this.positionOverride;
