@@ -18,10 +18,11 @@ export interface InputTableConf {
     id_prop?: string,
     doubleConfirm?(item),
   }; //
+  tableComponent?: TableComponent;
 
   add?(); // add action function
   edit?(any); // edit row
-  delete?(item); // customize delete row method
+  delete?(item, table); // customize delete row method
   dataSourceHelper?(any); // customise handle/modify dataSource 
   getInOutInfo?(any); // get in out info if has state column
   getActions?(); // actions for each row
@@ -100,9 +101,14 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.displayedColumns.push('action'); // add action column to table
       this.actions = this.tableConf.getActions ? this.tableConf.getActions() : []; // get all row actions
     }
-    this.tableService.getData(this);
+    this.getData();
 
     this.idProp = this.tableConf.deleteMsg === undefined ? 'id' : this.tableConf.deleteMsg.id_prop || 'id' ;
+    this.tableConf.tableComponent = this;
+  }
+
+  getData() {
+    this.tableService.getData(this);
   }
 
   // getProp(data, prop) {
@@ -117,7 +123,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   deleteRow(row) {
     if (this.tableConf.delete) {
-      this.tableConf.delete(row);
+      this.tableConf.delete(row, this);
     } else {
       this.tableService.delete(this, row);
     }

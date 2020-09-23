@@ -309,6 +309,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   }
 
   public title: string;
+  public afterModalFormClosed;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected networkService: NetworkService, protected dialog: DialogService,
