@@ -22,9 +22,6 @@ export class CopyButtonComponent implements OnInit {
   onIconClick(){
     this.popupIsVisible = !this.popupIsVisible;
     this.copyToClipboard();
-    /*setTimeout(() => {
-      this.popupIsVisible = false;
-    }, 3000);*/
   }
 
   onPopupClose(){
@@ -32,7 +29,6 @@ export class CopyButtonComponent implements OnInit {
   }
 
   copyToClipboard(){
-    console.log(this.el);
     this.el.nativeElement.focus();
     this.el.nativeElement.select();
     (<any>document).execCommand("copy");
