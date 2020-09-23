@@ -8,6 +8,7 @@ import { TextLimiterTooltipComponent } from './text-limiter-tooltip/text-limiter
 })
 export class TextLimiterDirective implements AfterViewInit {
  
+  @Input() popup: boolean = true;
   @Input() threshold: number;
   private defaultThreshold = 10;
   private overlayRef: OverlayRef;
@@ -17,6 +18,7 @@ export class TextLimiterDirective implements AfterViewInit {
 
   @HostListener('mouseenter')
   show() {
+    if(!this.popup) return;
     if(this.text !== this.rawText){
 
       // Create tooltip portal
@@ -32,7 +34,8 @@ export class TextLimiterDirective implements AfterViewInit {
 
   @HostListener('mouseout')
   hide() {
-    this.overlayRef.detach();
+    if(!this.popup) return;
+    //this.overlayRef.detach();
   }
 
   constructor(private el: ElementRef, private overlayPositionBuilder: OverlayPositionBuilder, private overlay: Overlay) {
