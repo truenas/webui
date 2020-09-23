@@ -44,6 +44,14 @@ export class NetworkComponent implements OnInit, OnDestroy {
     edit: function(row) {
       this.parent.modalService.open('slide-in-form', this.parent.interfaceComponent, row.id);
     },
+    delete: function(row, table) {
+      const deleteAction = row.type === "PHYSICAL" ? T("Reset configuration for ") : T("Delete ");
+      if(this.ha_enabled) {
+        this.parent.dialog.Info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
+      } else {
+        table.tableService.delete(table, row, deleteAction);
+      }
+    },
     deleteMsg: {
       title: 'interfaces',
       key_props: ['name'],
