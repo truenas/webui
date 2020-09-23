@@ -138,6 +138,13 @@ div.tooltiptext.below{
   min-height:64px;
 }
 
+div.tooltiptext.center{
+  top: 25px !important;
+  left: -65px !important;
+  min-height: 64px;
+  max-width: 350px !important;
+}
+
 /* Arrow */
 div.tooltiptext.above:before{
   bottom: -8px;
@@ -157,6 +164,11 @@ div.tooltiptext.left:before{
 div.tooltiptext.right:before{
   top: calc(32px - 10px);
   left: -8px;
+}
+
+div.tooltiptext.center:before{
+  top: -8px;
+  left: 42px; /*calc(50% - 10px);*/
 }
 
 .moved div.tooltiptext:before{

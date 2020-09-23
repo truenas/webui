@@ -18,6 +18,7 @@ export class TooltipComponent {
   public isShowTooltip: boolean;
   public tooltipMsgStyle: any;
   public isWizard: boolean = false;
+  public isSlideInForm = false;
 
   public positionString: string = 'Default';
   public isMoved: boolean = false;
@@ -33,6 +34,9 @@ export class TooltipComponent {
       'top':'-32px',
       'min-height':'64px'
     };
+    if (this.isSlideInForm && formParent.clientWidth < 420) {
+      this.positionOverride = 'center';
+    }
 
     let insideJob = formParent ? (formParent.clientWidth - posRight > 300 ? true : false) : null;
 
@@ -90,6 +94,7 @@ export class TooltipComponent {
     } else if(formParent.offsetParent.offsetParent.offsetParent.offsetParent.tagName.toLowerCase() == 'mat-card'){
       card = formParent.offsetParent.offsetParent.offsetParent.offsetParent;
     }
+    this.isSlideInForm = card.parentNode.classList.value.includes('slidein-entity-form');
 
     if(card && card.parentNode.nodeName.toLowerCase() == 'entity-wizard'){
       this.isWizard = true;
