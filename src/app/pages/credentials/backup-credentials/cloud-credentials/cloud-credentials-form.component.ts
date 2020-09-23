@@ -22,7 +22,6 @@ export class CloudCredentialsFormComponent {
   protected queryCall = 'cloudsync.credentials.query';
   protected editCall = 'cloudsync.credentials.update';
   protected queryCallOption: Array<any> = [['id', '=']];
-  protected route_success: string[] = ['system', 'cloudcredentials'];
   protected formGroup: FormGroup;
   protected id: any;
   protected pk: any;
@@ -1481,7 +1480,6 @@ export class CloudCredentialsFormComponent {
     this.entityForm.submitFunction(value).subscribe(
       (res) => {
           this.entityForm.loader.close();
-          this.entityForm.router.navigate(new Array('/').concat(this.route_success));
       },
       (err) => {
           this.entityForm.loader.close();

@@ -19,6 +19,7 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
   SSHKeypairs = [];
   SSHCreds = [];
   cards: any;
+  tableConf: any;
   refreshTable: Subscription;
 
   // Components included in this dashboard
@@ -70,11 +71,55 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
             dataSource: this.SSHKeypairs, displayedColumns: ['name', 'actions']
           }
         ];
+
+        this.tableConf = [
+          {
+            title: 'Cloud Credentials',
+            queryCall: 'cloudsync.credentials.query',
+            columns: [
+              { name: 'Name', prop: 'name' },
+              { name: 'Provider', prop: 'provider'}
+            ],
+            hideHeader: false,
+            parent: this,
+            edit: function(row) {
+              console.log(row)
+              this.parent.modalService.open('slide-in-form', this.parent.cloudCredentials, row.id);
+            },
+          },
+          {
+            title: 'SSH Connections',
+            queryCall: 'keychain.credentials.query',
+            columns: [
+              { name: 'Name', prop: 'name' },
+            ],
+            hideHeader: false,
+            parent: this,
+            edit: function(row) {
+              console.log(row)
+              this.parent.modalService.open('slide-in-form', this.parent.sshConnections, row.id);
+            },
+          },
+          {
+            title: 'SSH Keypairs',
+            queryCall: 'keychain.credentials.query',
+            columns: [
+              { name: 'Name', prop: 'name' },
+            ],
+            hideHeader: false,
+            parent: this,
+            edit: function(row) {
+              console.log(row)
+              this.parent.modalService.open('slide-in-form', this.parent.sshConnections, row.id);
+            },
+          }
+        ]
       })
     })
   }
 
   doAdd(form: string, id?: number ) {
+    console.log(form, id)
     let addComponent;
     switch (form) {
       case 'cloudCredentials':
