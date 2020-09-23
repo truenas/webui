@@ -381,8 +381,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   showNetworkCheckinWaiting() {
-    // only popup dialog if not in network/interfaces page
-    if (this.router.url !== '/network/interfaces') {
+    // only popup dialog if not in network page
+    if (this.router.url !== '/network') {
       this.dialogService.confirm(
         network_interfaces_helptext.checkin_title,
         network_interfaces_helptext.pending_checkin_dialog_text,
