@@ -28,7 +28,8 @@
     bottom: 0;
 
     /* z-index must be higher than .jw-modal-background */
-    z-index: 1000;
+    /* ...but less than 1000 otherwise you cover select */
+    z-index: 999;
         
     /* enables scrolling for tall modals */
     overflow: auto;

@@ -16,7 +16,7 @@
           <div class="card-bottom">
             <div class="form-container" *ngIf="canLogin()">
               <form #signinForm="ngForm" (ngSubmit)="signin()" *ngIf="has_root_password; else setPassword">
-                <div class="form-element">
+                <div class="form-element username">
                   <div class="label-container">
                     <label class="label input-text">Username</label>
                   </div>
@@ -37,7 +37,7 @@
                     </mat-error>
                   </mat-form-field>
                 </div>
-                <div class="form-element">
+                <div class="form-element password">
                   <div class="label-container">
                     <label class="label input-text">Password</label>
                   </div>
