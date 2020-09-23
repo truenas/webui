@@ -47,6 +47,23 @@ export class NetworkComponent implements OnInit, OnDestroy {
     deleteMsg: {
       title: 'interfaces',
       key_props: ['name'],
+    },
+    confirmDeleteDialog: {
+      buildTitle: intf => {
+        if (intf.type === "PHYSICAL"){
+          return T("Reset Configuration")
+        } else {
+          return T("Delete")
+        }
+      },
+      buttonMsg: intf => {
+        if (intf.type === "PHYSICAL"){
+          return T("Reset Configuration")
+        } else {
+          return T("Delete")
+        }
+      },
+      message: helptext.delete_dialog_text,
     }
   }
 
