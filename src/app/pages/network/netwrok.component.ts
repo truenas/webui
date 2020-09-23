@@ -18,6 +18,7 @@ import { OpenvpnServerComponent } from './forms/service-openvpn-server.component
 import { CoreEvent } from 'app/core/services/core.service';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { EntityUtils } from '../../pages/common/entity/utils';
+import * as ipRegex from 'ip-regex';
 
 @Component({
   selector: 'app-interfaces-list',
@@ -216,7 +217,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
                   return {label: 'Nameserver (DHCP)', value: item};
               }
             });
-            this.defaultRoutesWidget.data.ipv4 = res.default_routes;
+            this.defaultRoutesWidget.data.ipv4 = res.default_routes.filter(item => ipRegex.v4().test(item));
+            this.defaultRoutesWidget.data.ipv6 = res.default_routes.filter(item => ipRegex.v6().test(item));
           }
         );
       }
