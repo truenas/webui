@@ -414,6 +414,12 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         this.failover_fieldset.label = is_ha;
         for (let i = 0; i < this.failover_fields.length; i++) {
+          if (window.localStorage.getItem('product_type').includes('SCALE')) {
+            _.remove(this.failover_fields, function (el) {
+              console.log(el);
+              return el === 'failover_vhid';
+            });
+          }
           entityForm.setDisabled(this.failover_fields[i], !is_ha, !is_ha);
         }
         if (is_ha) {
