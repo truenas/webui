@@ -43,7 +43,6 @@ export class TooltipComponent {
     }
 
     let insideJob = formParent ? (formParent.clientWidth - posRight > 300 ? true : false) : null;
-    console.log(posRight)
 
     if(this.positionOverride){
       this.positionString = this.positionOverride;
