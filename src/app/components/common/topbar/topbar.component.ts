@@ -416,7 +416,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         network_interfaces_helptext.pending_changes_message,
         true, T('Continue')).subscribe(res => {
           if (res) {
-            this.router.navigate(['/network/interfaces']);
+            this.router.navigate(['/network']);
           }
       });
     }
