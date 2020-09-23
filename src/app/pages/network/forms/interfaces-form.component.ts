@@ -416,7 +416,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         for (let i = 0; i < this.failover_fields.length; i++) {
           if (window.localStorage.getItem('product_type').includes('SCALE')) {
             _.remove(this.failover_fields, function (el) {
-              console.log(el);
               return el === 'failover_vhid';
             });
           }
