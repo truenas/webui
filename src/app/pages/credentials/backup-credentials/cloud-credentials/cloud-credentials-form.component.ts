@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-
+import { Subscription } from 'rxjs';
 import { helptext_system_cloudcredentials as helptext } from 'app/helptext/system/cloudcredentials';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import * as _ from 'lodash';
@@ -22,12 +22,14 @@ export class CloudCredentialsFormComponent {
   protected addCall = 'cloudsync.credentials.create';
   protected queryCall = 'cloudsync.credentials.query';
   protected editCall = 'cloudsync.credentials.update';
-  protected queryCallOption: Array<any> = [['id', '=']];
+  protected queryCallOption: Array<any>;
   protected formGroup: FormGroup;
   protected id: any;
   protected pk: any;
   protected keyID: number;
   protected isOneColumnForm = true;
+  private rowNum: any;
+  private getRow = new Subscription;
 
   protected selectedProvider: string = 'S3';
   protected credentialsOauth = false;
@@ -1269,9 +1271,9 @@ export class CloudCredentialsFormComponent {
               protected dialog: DialogService,
               protected replicationService: ReplicationService,
               private modalService: ModalService) {
-    this.modalService.getRow$.subscribe(row => {
-      this.pk = row;
-      // console.log(this.pk)
+    this.getRow = this.modalService.getRow$.subscribe(row => {
+      this.rowNum = row;
+      // this.getRow.unsubscribe();
     })
     const basicFieldset = _.find(this.fieldSets, {'class': 'basic'});
     this.providerField = _.find(basicFieldset.config, {'name': 'provider'});
@@ -1314,14 +1316,10 @@ export class CloudCredentialsFormComponent {
   }
 
   preInit() {
-    // this.aroute.params.subscribe(params => {
-      console.log(this.pk)
-      if (this.pk) {
-        this.queryCallOption[0].push(this.pk.toString());
-        console.log(this.queryCallOption)
-        this.id = this.pk;
-      }
-    // });
+    if (this.rowNum) {
+      this.queryCallOption = [['id', '=', this.rowNum]];
+      this.id = this.rowNum;
+    }
   }
 
   setFieldRequired(name: string, required: boolean, entityform: any) {

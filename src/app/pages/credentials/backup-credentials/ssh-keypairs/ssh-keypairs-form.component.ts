@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-
+import { Subscription } from 'rxjs';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import helptext from 'app/helptext/system/ssh-keypairs';
@@ -18,13 +18,15 @@ import { atLeastOne } from 'app/pages/common/entity/entity-form/validators/at-le
 export class SshKeypairsFormComponent {
 
     protected queryCall = 'keychaincredential.query';
-    protected queryCallOption = [["id", "="]];
+    protected queryCallOption: Array<any>;
     protected addCall = 'keychaincredential.create';
     protected editCall = 'keychaincredential.update';
     protected isEntity = true;
     protected entityForm: any;
     protected isOneColumnForm = true;
+    private rowNum: any;
     public title = helptext.formTitle;
+    private getRow = new Subscription;
 
     protected fieldConfig: FieldConfig[];
     public fieldSets: FieldSet[] = [
@@ -100,14 +102,19 @@ export class SshKeypairsFormComponent {
     ];
 
     constructor(private aroute: ActivatedRoute, private ws: WebSocketService, private loader: AppLoaderService,
-        private dialogService: DialogService, private storage: StorageService, private modalService: ModalService) { }
+        private dialogService: DialogService, private storage: StorageService, private modalService: ModalService) { 
+            this.getRow = this.modalService.getRow$.subscribe(rowId => {
+                this.rowNum = rowId;
+                // this.getRow.unsubscribe();
+            })
+        }
 
 
-    preInit(entityForm) {
-        this.entityForm = entityForm;
-            // if (this.entityForm.conf.recordId) {
-                this.queryCallOption[0].push('3');
-            // }
+    preInit() {
+        if (this.rowNum) {
+            this.queryCallOption = [["id", "=", this.rowNum]];
+            this.rowNum = null;
+        }
     }
 
     downloadKey(key_type) {
@@ -119,6 +126,7 @@ export class SshKeypairsFormComponent {
     }
 
     afterInit(entityForm) {
+        this.entityForm = entityForm;
         this.fieldConfig = entityForm.fieldConfig;
         this.entityForm.formGroup.controls['private_key'].valueChanges.subscribe((res) => {
             this.clearPreviousErrors();
@@ -161,6 +169,5 @@ export class SshKeypairsFormComponent {
     afterSubmit() {
         this.modalService.refreshTable();
     }
-
 
 }

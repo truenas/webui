@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
-
+import { Subscription } from 'rxjs';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/system/ssh-connections';
@@ -20,7 +20,7 @@ import { forbiddenValues } from '../../../common/entity/entity-form/validators/f
 export class SshConnectionsFormComponent {
 
     protected queryCall = 'keychaincredential.query';
-    protected queryCallOption = [["id", "="]];
+    protected queryCallOption: Array<any>;
     protected sshCalls = {
         manual: 'keychaincredential.create',
         semiautomatic: 'keychaincredential.remote_ssh_semiautomatic_setup',
@@ -31,6 +31,8 @@ export class SshConnectionsFormComponent {
     protected namesInUseConnection = [];
     protected namesInUse = [];
     public title = helptext.formTitle;
+    private rowNum: any;
+    private getRow = new Subscription;
 
     protected fieldConfig: FieldConfig[];
     public fieldSets: FieldSet[] = [
@@ -241,7 +243,9 @@ export class SshConnectionsFormComponent {
         private loader: AppLoaderService,
         private dialogService: DialogService,
         private replicationService: ReplicationService, private modalService: ModalService) {
-
+            this.getRow = this.modalService.getRow$.subscribe(rowId => {
+                this.rowNum = rowId;
+            })
     }
 
     isCustActionVisible(actionId) {
@@ -252,11 +256,8 @@ export class SshConnectionsFormComponent {
     }
 
     async preInit() {
-        let pk;
-        await this.aroute.params.subscribe(params => {
-            if (params['pk']) {
-                pk = params['pk'];
-                this.queryCallOption[0].push(params['pk']);
+            if (this.rowNum) {
+                this.queryCallOption = [["id", "=", this.rowNum]];
                 _.find(this.fieldSets[0].config, { name: 'setup_method' }).isHidden = true;
             } else {
                 _.find(this.fieldSets[1].config, { name: 'private_key'}).options.push({
@@ -264,10 +265,9 @@ export class SshConnectionsFormComponent {
                     value: 'NEW'
                 });
             }
-        });
         this.keychainCredentialService.getSSHConnections().toPromise().then(
             (res) => {
-                const sshConnections = res.filter(item => item.id != pk).map(sshConnection => sshConnection.name);
+                const sshConnections = res.filter(item => item.id != this.rowNum).map(sshConnection => sshConnection.name);
                 this.namesInUse.push(...sshConnections);
                 this.namesInUseConnection.push(...sshConnections);
             }
