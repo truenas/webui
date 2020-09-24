@@ -6,6 +6,7 @@ import { helptext_system_cloudcredentials as helptext } from 'app/helptext/syste
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import * as _ from 'lodash';
 import { CloudCredentialService, DialogService, WebSocketService, ReplicationService } from '../../../../services/';
+import { ModalService } from '../../../../services/modal.service';
 import { T } from '../../../../translate-marker';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
@@ -1266,7 +1267,12 @@ export class CloudCredentialsFormComponent {
               protected ws: WebSocketService,
               protected cloudcredentialService: CloudCredentialService,
               protected dialog: DialogService,
-              protected replicationService: ReplicationService) {
+              protected replicationService: ReplicationService,
+              private modalService: ModalService) {
+    this.modalService.getRow$.subscribe(row => {
+      this.pk = row;
+      // console.log(this.pk)
+    })
     const basicFieldset = _.find(this.fieldSets, {'class': 'basic'});
     this.providerField = _.find(basicFieldset.config, {'name': 'provider'});
     this.cloudcredentialService.getProviders().subscribe(
@@ -1308,12 +1314,14 @@ export class CloudCredentialsFormComponent {
   }
 
   preInit() {
-    this.aroute.params.subscribe(params => {
-      if (params['pk']) {
-        this.queryCallOption[0].push(params['pk']);
-        this.id = params['pk'];
+    // this.aroute.params.subscribe(params => {
+      console.log(this.pk)
+      if (this.pk) {
+        this.queryCallOption[0].push(this.pk.toString());
+        console.log(this.queryCallOption)
+        this.id = this.pk;
       }
-    });
+    // });
   }
 
   setFieldRequired(name: string, required: boolean, entityform: any) {
@@ -1480,9 +1488,13 @@ export class CloudCredentialsFormComponent {
     this.entityForm.submitFunction(value).subscribe(
       (res) => {
           this.entityForm.loader.close();
+          this.modalService.close('slide-in-form');
+          this.modalService.refreshTable();
+
       },
       (err) => {
           this.entityForm.loader.close();
+          this.modalService.refreshTable();
           if (err.hasOwnProperty("reason") && (err.hasOwnProperty("trace"))) {
               new EntityUtils().handleWSError(this, err, this.dialog);
           } else {

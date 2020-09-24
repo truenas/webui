@@ -7,6 +7,7 @@ export class ModalService {
 
     public refreshTable$ = new Subject();
     public refreshForm$ = new Subject();
+    public getRow$ = new Subject();
 
     refreshTable() {
         this.refreshTable$.next();
@@ -29,6 +30,7 @@ export class ModalService {
     open(id: string, conf: any, rowid?: any) {
         if (rowid) {
             conf.rowid = rowid;
+            this.getRow$.next(rowid);
         }
         // open modal specified by id
         let modal: any = this.modals.filter(x => x.id === id)[0];
