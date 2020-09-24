@@ -6,7 +6,7 @@ import { NetworkService, RestService, DialogService, WebSocketService } from '..
 
 import { T } from '../../../../translate-marker';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { ipv4or6cidrValidator, ipv4Validator } from '../../../common/entity/entity-form/validators/ip-validation';
+import { ipv4or6cidrValidator } from '../../../common/entity/entity-form/validators/ip-validation';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import helptext from '../../../../helptext/network/interfaces/interfaces-form';
 import { CoreService } from 'app/core/services/core.service';
@@ -14,7 +14,6 @@ import { ViewControllerComponent } from 'app/core/components/viewcontroller/view
 import globalHelptext from '../../../../helptext/global-helptext';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import isCidr, * as ipCidr from 'is-cidr';
-import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 
 @Component({
   selector : 'app-interfaces-form',
@@ -266,11 +265,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               isHidden: true,
               type: 'ipwithnetmask',
               width: '55%',
-<<<<<<< HEAD:src/app/pages/network/interfaces/interfaces-form/interfaces-form.component.ts
               validation : [ ipv4or6cidrValidator('failover_address') ],
-=======
-              validation: [ipv4Validator('failover_address')],
->>>>>>> 0221d2f2a... Prevent and warn users from using ipv6 on HA:src/app/pages/network/forms/interfaces-form.component.ts
             },
             {
               name: 'failover_virtual_address',
@@ -281,12 +276,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               type: 'ipwithnetmask',
               width: '55%',
               netmaskPreset: 32,
-<<<<<<< HEAD:src/app/pages/network/interfaces/interfaces-form/interfaces-form.component.ts
               validation : [ ipv4or6cidrValidator('failover_virtual_address') ],
-=======
-              validation: [ipv4Validator('failover_virtual_address')],
->>>>>>> 0221d2f2a... Prevent and warn users from using ipv6 on HA:src/app/pages/network/forms/interfaces-form.component.ts
-
             }
         ],
         listFields: []
@@ -443,7 +433,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           entityForm.setDisabled(this.failover_fields[i], !is_ha, !is_ha);
         }
         if (is_ha) {
-          _.find(this.ipListControl.templateListField, { 'name': 'address' }).validation = ipv4Validator('address');
           this.aliases_subscription = this.entityForm.formGroup.controls['aliases'].valueChanges.subscribe(res => {
             let v6_found = false;
             let mismatch_found = false;
@@ -455,12 +444,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               if (!(address && failover_address && virtual_address) && !(!address && !failover_address && !virtual_address)) {
                 mismatch_found = true;
               }
-              console.log(address);
-              console.log(isCidr.v6(address))
               if (isCidr.v6(address) ||
                   isCidr.v6(failover_address) ||
                   isCidr.v6(virtual_address)) {
-                console.log('bar');
                 v6_found = true;
               }
             }
