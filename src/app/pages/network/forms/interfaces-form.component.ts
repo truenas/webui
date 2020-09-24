@@ -441,7 +441,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               }
             }
             if (v6_found) {
-              console.log('foo')
               this.aliases_fc.hasErrors = true;
               this.aliases_fc.errors = helptext.failover_alias_v6_error;
               this.save_button_enabled = false;
