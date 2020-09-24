@@ -30,6 +30,7 @@ export class CloudCredentialsFormComponent {
   protected isOneColumnForm = true;
   private rowNum: any;
   private getRow = new Subscription;
+  public title = helptext.formTitle;
 
   protected selectedProvider: string = 'S3';
   protected credentialsOauth = false;
