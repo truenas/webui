@@ -12,7 +12,7 @@
         <span class="value">{{ nameserver.value | translate }}</span>
       </mat-list-item>
     </mat-list>
-    <mat-list *ngIf="widgetConf.data.ipv4">
+    <mat-list *ngIf="widgetConf.data.ipv4 && widgetConf.data.ipv4.length > 0">
       <mat-list-item class="card-widget-list-item card-list-item">
         <mat-icon class="card-widget-list-icon" *ngIf="widgetConf.icon">{{widgetConf.icon}}</mat-icon>
         <span class="label" *ngIf="widgetConf.showGroupTitle">{{ 'IPv4' | translate }}:</span>
@@ -26,7 +26,7 @@
 
       </mat-list-item>
     </mat-list>
-    <mat-list *ngIf="widgetConf.data.ipv6">
+    <mat-list *ngIf="widgetConf.data.ipv6 && widgetConf.data.ipv6.length > 0">
       <mat-list-item class="card-widget-list-item card-list-item">
         <mat-icon class="card-widget-list-icon" *ngIf="widgetConf.icon">{{widgetConf.icon}}</mat-icon>
         <span class="label">{{ 'IPv6' | translate }}:</span>

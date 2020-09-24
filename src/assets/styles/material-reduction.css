@@ -300,6 +300,10 @@ entity-form-list .list-action-block-wrapper .form-element select{
 }
 
 /* IP w/Netmask*/
+.form-element.form-ip-netmask .mat-form-field {
+  max-height: 33px;
+}
+
 .form-element.form-ip-netmask .mat-form-field-wrapper input,
 .form-element.form-ip-netmask .mat-form-field-wrapper{
   background-color: unset;
@@ -340,6 +344,8 @@ entity-form-list .list-action-block-wrapper .form-element select{
 /* Login Form */
 .login-form .form-element .mat-form-field-wrapper{
   width: 100% !important;
+  min-height: unset;
+  max-height: 33px;
 }
 
 .login-form .form-element .mat-form-field-wrapper input{
@@ -347,8 +353,6 @@ entity-form-list .list-action-block-wrapper .form-element select{
   border: none;
   margin: 0;
   padding: 0 0 2px 0;
-  position: relative;
-  top: 6px !important;
 }
 
 .login-form .form-element .mat-form-field-prefix .mat-icon {
@@ -359,6 +363,14 @@ entity-form-list .list-action-block-wrapper .form-element select{
   margin-bottom: 2px;
 }
 
+.login-form .form-element.username .mat-form-field-prefix{
+  top: -5px;
+}
+
+.login-form .form-element.password .mat-form-field-prefix{
+  top: -16px;
+}
+
 .form-element textarea{
   min-width: calc(100% - 24px);
   max-width: calc(100% - 24px);
@@ -367,7 +379,9 @@ entity-form-list .list-action-block-wrapper .form-element select{
 
 .form-element input[type = "password"],
 .form-element .has_toggle_pw input {
-  /*width: calc(100% - 40px) !important;*/
+  position: relative;
+  top: -6px;
+  height: inherit;
   display: inline;
 }
 

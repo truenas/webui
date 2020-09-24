@@ -28,7 +28,8 @@
     bottom: 0;
 
     /* z-index must be higher than .jw-modal-background */
-    z-index: 1000;
+    /* ...but less than 1000 otherwise you cover select */
+    z-index: 999;
         
     /* enables scrolling for tall modals */
     overflow: auto;
@@ -49,7 +50,8 @@
     position: sticky;
     z-index: 20000;
     top: 0; 
-    margin: 0 15px 10px;
+    margin: 0 -15px 10px;
+    padding: 0 30px;
     height: 75px;
     align-items: center;
     border-bottom: 2px solid rgba(255, 255, 255, .05);
@@ -64,7 +66,7 @@
     color: var(--fg1);
     cursor: pointer;
     position: absolute;
-    right: 0;
+    right: 30px;
     z-index: 10;
   }
 

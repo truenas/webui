@@ -15,17 +15,32 @@ import { DefaultRouteFormComponent } from './forms/default-route-form.component'
 import { IPMIFromComponent } from './forms/ipmi-form.component';
 import { OpenvpnClientComponent } from './forms/service-openvpn-client.component';
 import { OpenvpnServerComponent } from './forms/service-openvpn-server.component';
+import { CoreEvent } from 'app/core/services/core.service';
+import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
+import { EntityUtils } from '../../pages/common/entity/utils';
+import * as ipRegex from 'ip-regex';
 
 @Component({
   selector: 'app-interfaces-list',
   templateUrl: './network.component.html',
   styleUrls: ['./network.component.css']
 })
-export class NetworkComponent implements OnInit, OnDestroy {
+export class NetworkComponent extends ViewControllerComponent implements OnInit, OnDestroy {
   protected summayCall = 'network.general.summary';
   protected configCall = 'network.configuration.config';
 
   protected reportEvent;
+
+  public ha_enabled = false;
+  public hasPendingChanges = false;
+  public checkinWaiting = false;
+  public checkin_timeout = 60;
+  public checkin_timeout_pattern = /\d+/;
+  public checkin_remaining = null;
+  checkin_interval;
+
+  public helptext = helptext
+
   public interfaceTableConf = {
     title: "Interfaces",
     queryCall: 'interface.query',
@@ -34,19 +49,45 @@ export class NetworkComponent implements OnInit, OnDestroy {
       { name: T('Name'), prop: 'name', state: { prop: 'link_state' }},
       { name: T('IP Addresses'), prop: 'addresses', listview: true },
     ],
-    ha_enabled: false,
     dataSourceHelper: this.interfaceDataSourceHelper,
     getInOutInfo: this.getInterfaceInOutInfo.bind(this),
     parent: this,
+    tableComponent: undefined,
     add: function() {
       this.parent.modalService.open('slide-in-form', this.parent.interfaceComponent);
     },
     edit: function(row) {
       this.parent.modalService.open('slide-in-form', this.parent.interfaceComponent, row.id);
     },
+    delete: function(row, table) {
+      const deleteAction = row.type === "PHYSICAL" ? T("Reset configuration for ") : T("Delete ");
+      if(this.parent.ha_enabled) {
+        this.parent.dialog.Info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
+      } else {
+        table.tableService.delete(table, row, deleteAction);
+      }
+    },
+    afterDelete: this.afterDelete.bind(this),
     deleteMsg: {
       title: 'interfaces',
       key_props: ['name'],
+    },
+    confirmDeleteDialog: {
+      buildTitle: intf => {
+        if (intf.type === "PHYSICAL"){
+          return T("Reset Configuration")
+        } else {
+          return T("Delete")
+        }
+      },
+      buttonMsg: intf => {
+        if (intf.type === "PHYSICAL"){
+          return T("Reset Configuration")
+        } else {
+          return T("Delete")
+        }
+      },
+      message: helptext.delete_dialog_text,
     }
   }
 
@@ -154,6 +195,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     private loader: AppLoaderService,
     private modalService: ModalService,
     private servicesService: ServicesService) {
+      super();
       this.getNameserverDefaultRouteInfo();
   }
 
@@ -175,7 +217,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
                   return {label: 'Nameserver (DHCP)', value: item};
               }
             });
-            this.defaultRoutesWidget.data.ipv4 = res.default_routes;
+            this.defaultRoutesWidget.data.ipv4 = res.default_routes.filter(item => ipRegex.v4().test(item));
+            this.defaultRoutesWidget.data.ipv6 = res.default_routes.filter(item => ipRegex.v6().test(item));
           }
         );
       }
@@ -202,13 +245,159 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
     this.ws.call('system.advanced.config').subscribe(res => {
       this.hasConsoleFooter = res.consolemsg;
-    })
+    });
+
+    this.checkInterfacePendingChanges();
+    this.core.register({observerClass: this, eventName:"NetworkInterfacesChanged"}).subscribe((evt:CoreEvent) => {
+      if (evt && evt.data.checkin) {
+        this.checkin_remaining = null;
+        this.checkinWaiting = false;
+        if (this.checkin_interval) {
+          clearInterval(this.checkin_interval);
+        }
+        this.hasPendingChanges = false;
+      }
+    });
+
+    if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
+      this.ws.call('failover.licensed').subscribe((is_ha) => {
+        if (is_ha) {
+          this.ws.call('failover.disabled_reasons').subscribe((failover_disabled) => {
+            if (failover_disabled.length === 0) {
+              this.ha_enabled = true;
+            }
+          });
+        }
+      });
+    }
+  }
+
+  checkInterfacePendingChanges() {
+    if (this.interfaceTableConf.tableComponent) {
+      this.interfaceTableConf.tableComponent.getData();
+    }
+    this.checkPendingChanges();
+    this.checkWaitingCheckin();
+  }
+
+  checkPendingChanges() {
+    this.ws.call('interface.has_pending_changes').subscribe(res => {
+      this.hasPendingChanges = res;
+    });
+  }
+
+  checkWaitingCheckin() {
+    this.ws.call('interface.checkin_waiting').subscribe(res => {
+      if (res != null) {
+        const seconds = res.toFixed(0);
+        if (seconds > 0 && this.checkin_remaining == null) {
+          this.checkin_remaining = seconds;
+          this.checkin_interval = setInterval(() => {
+            if (this.checkin_remaining > 0) {
+              this.checkin_remaining -= 1;
+            } else {
+              this.checkin_remaining = null;
+              this.checkinWaiting = false;
+              clearInterval(this.checkin_interval);
+              window.location.reload(); // should just refresh after the timer goes off
+            }
+          }, 1000);
+        }
+        this.checkinWaiting = true;
+      } else {
+        this.checkinWaiting = false;
+        this.checkin_remaining = null;
+        if (this.checkin_interval) {
+          clearInterval(this.checkin_interval);
+        }
+      }
+    });
+  }
+
+  commitPendingChanges() {
+    this.dialog.confirm(
+      helptext.commit_changes_title,
+      helptext.commit_changes_warning,
+      false, helptext.commit_button).subscribe(confirm => {
+        if (confirm) {
+          this.loader.open();
+          this.ws.call('interface.commit', [{checkin_timeout: this.checkin_timeout}]).subscribe(res => {
+            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:false}, sender:this});
+            this.interfaceTableConf.tableComponent.getData();
+            this.loader.close();
+            // can't decide if this is worth keeping since the checkin happens intantaneously
+            //this.dialog.Info(helptext.commit_changes_title, helptext.changes_saved_successfully, '300px', "info", true);
+            this.checkWaitingCheckin();
+          }, err => {
+            this.loader.close();
+            new EntityUtils().handleWSError(this, err, this.dialog);
+          });
+        }
+      });
+  }
+
+  checkInNow() {
+    this.dialog.confirm(
+      helptext.checkin_title,
+      helptext.checkin_message,
+      true, helptext.checkin_button).subscribe(res => {
+        if (res) {
+          this.loader.open();
+          this.ws.call('interface.checkin').subscribe((success) => {
+            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:true}, sender:this});
+            this.loader.close();
+            this.dialog.Info(
+              helptext.checkin_complete_title,
+              helptext.checkin_complete_message);
+            this.hasPendingChanges = false;
+            this.checkinWaiting = false;
+            clearInterval(this.checkin_interval);
+            this.checkin_remaining = null;
+          }, (err) => {
+            this.loader.close();
+            new EntityUtils().handleWSError(this, err, this.dialog);
+          });
+        }
+      }
+    );
+  }
+
+  rollbackPendingChanges() {
+    this.dialog.confirm(
+      helptext.rollback_changes_title,
+      helptext.rollback_changes_warning,
+      false, helptext.rollback_button).subscribe(confirm => {
+        if (confirm) {
+          this.loader.open();
+          this.ws.call('interface.rollback').subscribe(res => {
+            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:false}, sender:this});
+            this.interfaceTableConf.tableComponent.getData();
+            this.hasPendingChanges = false;
+            this.checkinWaiting = false;
+            this.loader.close();
+            this.dialog.Info(helptext.rollback_changes_title, helptext.changes_rolled_back, '500px', "info", true);
+          }, err => {
+            this.loader.close();
+            new EntityUtils().handleWSError(this, err, this.dialog);
+          });
+        }
+      });
+  }
+
+  afterDelete() {
+    this.hasPendingChanges = true;
+    this.core.emit({name: "NetworkInterfacesChanged", data: {commit:false, checkin: false}, sender:this});
+  }
+
+  goToHA() {
+    this.router.navigate(new Array('/').concat('system', 'failover'));
   }
 
   refreshNetworkForms() {
     this.addComponent = new ConfigurationComponent(this.router,this.ws);
     this.addComponent.afterModalFormClosed = this.getNameserverDefaultRouteInfo.bind(this); // update nameserver, default route info
     this.interfaceComponent = new InterfacesFormComponent(this.router, this.aroute, this.networkService, this.dialog, this.ws);
+    this.interfaceComponent.afterModalFormClosed = this.checkInterfacePendingChanges.bind(this);
     this.staticRouteFormComponent = new StaticRouteFormComponent(this.aroute, this.ws, this.networkService);
     this.nameserverFormComponent = new NameserverFormComponent(this.aroute, this.ws, this.networkService);
     this.nameserverFormComponent.afterModalFormClosed = this.getNameserverDefaultRouteInfo.bind(this); // update nameserver info
@@ -223,6 +412,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     if (this.reportEvent) {
       this.reportEvent.complete();
     }
+    this.core.unregister({observerClass:this});
   }
 
   getInterfaceInOutInfo(tableSource) {

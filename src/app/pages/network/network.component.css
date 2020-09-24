@@ -18,3 +18,14 @@ div.right-column div.left-column {
     margin: 0px 24px;
     color: var(--fg2);
 } */
+
+mat-card > mat-card-actions.interface-pending-actions,
+div.disabled-notice {
+    margin: 0;
+    padding: 0 16px 16px;
+}
+
+.pseudolink {
+    text-decoration: underline;
+    cursor: pointer;
+}

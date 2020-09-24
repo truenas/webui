@@ -23,7 +23,7 @@ export class GroupFormComponent {
   protected editCall = 'group.update';
   protected queryKey = 'id';
   public title: string;
-
+  protected isOneColumnForm = true;
   protected fieldConfig: FieldConfig[] = [];
 
   public fieldSetDisplay  = 'default';

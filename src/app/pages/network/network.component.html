@@ -8,6 +8,35 @@
     <div class="content" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxLayoutGap="8px">
         <div class="right-column" fxFlex="65" fxFlex.xs="100" fxFlex.sm="100">
             <div fxLayout="column" fxFlexFill fxLayoutGap="8px">
+                <mat-card *ngIf="hasPendingChanges">
+                    <mat-card-content>
+                        <div *ngIf="!checkinWaiting;else checkIn">
+                            <p> {{helptext.pending_changes_text | translate}} </p>
+                            <p> {{helptext.checkin_text | translate }}
+                                <mat-form-field floatPlaceholder="never" id="timeout-field">
+                                    <input matInput [(ngModel)]="checkin_timeout" [pattern]="checkin_timeout_pattern">
+                                </mat-form-field>
+                                {{ helptext.checkin_text_2 | translate }}
+                            </p>
+                        </div>
+                        <ng-template #checkIn>
+                            <div>
+                                <p>{{helptext.pending_checkin_text | translate}} {{checkin_remaining}}
+                                    {{helptext.pending_checkin_text_2 | translate}}</p>
+                            </div>
+                        </ng-template>
+                    </mat-card-content>
+                    <mat-card-actions class="interface-pending-actions">
+                        <button mat-button *ngIf="!checkinWaiting" [disabled]="ha_enabled"
+                            (click)="commitPendingChanges()">{{helptext.commit_button | translate}}</button>
+                        <button mat-button *ngIf="checkinWaiting" [disabled]="ha_enabled"
+                            (click)="checkInNow()">{{helptext.keep_button | translate}}</button>
+                        <button mat-button [disabled]="ha_enabled"
+                            (click)="rollbackPendingChanges()">{{helptext.rollback_button | translate}}</button>
+                    </mat-card-actions>
+                    <div class="disabled-notice" *ngIf="ha_enabled">{{helptext.ha_enabled_text | translate}} (<span
+                            class="pseudolink" (click)="goToHA()">{{helptext.go_to_ha | translate}}</span>).</div>
+                </mat-card>
                 <app-table [conf]="interfaceTableConf" fxFlex></app-table>
                 <app-table [conf]="staticRoutesTableConf" fxFlex></app-table>
             </div>

@@ -41,6 +41,7 @@ import { TextLimiterDirective } from './directives/text-limiter/text-limiter.dir
 import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
 import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcontroller.component';
 import { ConvertPipe } from './pipes/convert.pipe';
+import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
 
 /*
  *
@@ -91,6 +92,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
     ConvertPipe,
+    CopyButtonComponent,
   ],
   exports: [ // Modules and Components here
     CommonModule,
@@ -125,6 +127,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     WidgetControllerComponent,
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
+    CopyButtonComponent,
   ],
   entryComponents:[
     ContextMenuComponent,
@@ -152,6 +155,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     WidgetControllerComponent,
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
+    CopyButtonComponent,
   ],
   providers:[
     StorageService
