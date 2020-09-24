@@ -15,11 +15,7 @@ import { Subscription } from 'rxjs';
   providers: [KeychainCredentialService, ReplicationService, CloudCredentialService]
 })
 export class BackupCredentialsComponent implements OnInit, OnDestroy {
-  cloudCreds = [];
-  SSHKeypairs = [];
-  SSHCreds = [];
   cards: any;
-  tableConf: any;
   refreshTable: Subscription;
 
   // Components included in this dashboard
@@ -38,117 +34,80 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
      private modalService: ModalService) {}
 
   ngOnInit(): void {
-    this.getCreds();
+    this.getCards();
     this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
-      this.getCreds();
+      this.getCards();
     })
   }
 
-  getCreds() {
-    this.ws.call('cloudsync.credentials.query').subscribe(credentials => {
-      this.cloudCreds = [];
-      credentials.forEach(cred => {
-        this.cloudCreds.push(cred);
-      })
-      this.ws.call('keychaincredential.query').subscribe(credentials=> {
-        this.SSHKeypairs = [];
-        this.SSHCreds = [];
-        credentials.forEach(cred => {
-          if (cred.type === 'SSH_KEY_PAIR') {
-            this.SSHKeypairs.push(cred);
-          } else if (cred.type === 'SSH_CREDENTIALS') {
-            this.SSHCreds.push(cred);
+  getCards() {
+    this.cards = [
+      { name: 'cloudCredentials', flex: 40,
+        tableConf: {
+          title: 'Cloud Credentials',
+          queryCall: 'cloudsync.credentials.query',
+          deleteCall: 'cloudsync.credentials.delete',
+          columns: [
+            { name: 'Name', prop: 'name' },
+            { name: 'Provider', prop: 'provider'}
+          ],
+          hideHeader: false,
+          parent: this,
+          add: function(row) {
+            this.parent.modalService.open('slide-in-form', this.parent.cloudCredentials);
+          },
+          edit: function(row) {
+            this.parent.modalService.open('slide-in-form', this.parent.cloudCredentials, row.id);
           }
-        })
-        this.cards = [
-          { name: 'cloudCredentials', flex: 40, label: 'Cloud Credentials',
-            dataSource: this.cloudCreds, displayedColumns: ['name', 'provider', 'actions']
+        }
+      },{ 
+        name: 'sshConnections', flex: 30,
+        tableConf: {
+          title: 'SSH Connections',
+          queryCall: 'keychaincredential.query',
+          deleteCall: 'keychaincredential.delete',
+          dataSourceHelper: this.sshConnectionsDataSourceHelper,
+          columns: [
+            { name: 'Name', prop: 'name' },
+          ],
+          hideHeader: false,
+          parent: this,
+          add: function(row) {
+            this.parent.modalService.open('slide-in-form', this.parent.sshConnections);
           },
-          { name: 'sshConnections', flex: 30, label: 'SSH Connections',
-            dataSource: this.SSHCreds, displayedColumns: ['name', 'actions']
-          },
-          { name: 'sshKeypairs', flex: 30, label: 'SSH Keypairs',
-            dataSource: this.SSHKeypairs, displayedColumns: ['name', 'actions']
+          edit: function(row) {
+            this.parent.modalService.open('slide-in-form', this.parent.sshConnections, row.id);
           }
-        ];
-
-        this.tableConf = [
-          {
-            title: 'Cloud Credentials',
-            queryCall: 'cloudsync.credentials.query',
-            columns: [
-              { name: 'Name', prop: 'name' },
-              { name: 'Provider', prop: 'provider'}
-            ],
-            hideHeader: false,
-            parent: this,
-            edit: function(row) {
-              console.log(row)
-              this.parent.modalService.open('slide-in-form', this.parent.cloudCredentials, row.id);
-            },
+        }
+      },{
+        name: 'sshKeypairs', flex: 30,
+        tableConf: {
+          title: 'SSH Keypairs',
+          queryCall: 'keychaincredential.query',
+          deleteCall: 'keychaincredential.delete',
+          dataSourceHelper: this.sshKeyPairsDataSourceHelper,
+          columns: [
+            { name: 'Name', prop: 'name' },
+          ],
+          hideHeader: false,
+          parent: this,
+          add: function(row) {
+            this.parent.modalService.open('slide-in-form', this.parent.sshKeypairs);
           },
-          {
-            title: 'SSH Connections',
-            queryCall: 'keychain.credentials.query',
-            columns: [
-              { name: 'Name', prop: 'name' },
-            ],
-            hideHeader: false,
-            parent: this,
-            edit: function(row) {
-              console.log(row)
-              this.parent.modalService.open('slide-in-form', this.parent.sshConnections, row.id);
-            },
+          edit: function(row) {
+            this.parent.modalService.open('slide-in-form', this.parent.sshKeypairs, row.id);
           },
-          {
-            title: 'SSH Keypairs',
-            queryCall: 'keychain.credentials.query',
-            columns: [
-              { name: 'Name', prop: 'name' },
-            ],
-            hideHeader: false,
-            parent: this,
-            edit: function(row) {
-              console.log(row)
-              this.parent.modalService.open('slide-in-form', this.parent.sshConnections, row.id);
-            },
-          }
-        ]
-      })
-    })
-  }
-
-  doAdd(form: string, id?: number ) {
-    console.log(form, id)
-    let addComponent;
-    switch (form) {
-      case 'cloudCredentials':
-        addComponent = this.cloudCredentials;
-        break;
-      case 'sshConnections':
-        addComponent = this.sshConnections;
-        break;
-      case 'sshKeypairs':
-        addComponent = this.sshKeypairs;
-    }
-    this.modalService.open('slide-in-form', addComponent, id);
-  }
-
-  doDelete(form: string, id: number ) {
-    const apiCall = form === 'cloudCredentials' ? 'cloudsync.credentials.delete' : 'keychaincredential.delete';
-    this.dialogService.confirm('Delete?', 'You sure about that?', 
-    false, 'Delete').subscribe(res => {
-      if (res) {
-        this.loader.open();
-        this.ws.call(apiCall, [id]).subscribe(res => {
-          this.loader.close();
-          this.getCreds();
-        }, err => {
-          this.loader.close();
-          this.dialogService.errorReport('Error', err.reason, err.trace.formatted);
-        })
+        }
       }
-    })
+    ];
+  }
+
+  sshConnectionsDataSourceHelper(res) {
+    return res.filter(item => item.type === 'SSH_CREDENTIALS');
+  }
+
+  sshKeyPairsDataSourceHelper(res) {
+    return res.filter(item => item.type === 'SSH_KEY_PAIR');
   }
 
   ngOnDestroy() {
