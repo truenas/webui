@@ -185,6 +185,7 @@ export class WebSocketService {
   }
 
   call(method, params?: any, debug = false): Observable<any> {
+    
     let uuid = UUID.UUID();
     let payload = {"id" : uuid, "msg" : "method", "method" : method, "params" : params};
 

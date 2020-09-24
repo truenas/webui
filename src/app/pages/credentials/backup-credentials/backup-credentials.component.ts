@@ -18,12 +18,9 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
   refreshTable: Subscription;
 
   // Components included in this dashboard
-  protected sshConnections = new SshConnectionsFormComponent(this.aroute,this.keychainCredentialService,
-    this.ws,this.loader, this.dialogService, this.replicationService, this.modalService);
-  protected sshKeypairs = new SshKeypairsFormComponent(this.aroute,this.ws,this.loader,
-    this.dialogService,this.storage,this.modalService);
-  protected cloudCredentials = new CloudCredentialsFormComponent(this.router, this.aroute,this.ws,
-    this.cloudCredentialsService, this.dialogService, this.replicationService,this.modalService);
+  protected sshConnections: SshConnectionsFormComponent;
+  protected sshKeypairs: SshKeypairsFormComponent;
+  protected cloudCredentials: CloudCredentialsFormComponent;
 
 
   constructor(private aroute: ActivatedRoute, private keychainCredentialService: KeychainCredentialService,
@@ -37,6 +34,10 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
     this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
       this.getCards();
     })
+    this.refreshForms();
+    this.modalService.refreshForm$.subscribe(() => {
+      this.refreshForms();
+    });
   }
 
   getCards() {
@@ -107,6 +108,15 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
 
   sshKeyPairsDataSourceHelper(res) {
     return res.filter(item => item.type === 'SSH_KEY_PAIR');
+  }
+
+  refreshForms() {
+    this.sshConnections = new SshConnectionsFormComponent(this.aroute,this.keychainCredentialService,
+      this.ws,this.loader, this.dialogService, this.replicationService, this.modalService);
+    this.sshKeypairs = new SshKeypairsFormComponent(this.aroute,this.ws,this.loader,
+      this.dialogService,this.storage,this.modalService);
+    this.cloudCredentials = new CloudCredentialsFormComponent(this.router, this.aroute,this.ws,
+      this.cloudCredentialsService, this.dialogService, this.replicationService,this.modalService);
   }
 
   ngOnDestroy() {

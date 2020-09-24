@@ -1274,7 +1274,7 @@ export class CloudCredentialsFormComponent {
               private modalService: ModalService) {
     this.getRow = this.modalService.getRow$.subscribe(row => {
       this.rowNum = row;
-      // this.getRow.unsubscribe();
+      this.getRow.unsubscribe();
     })
     const basicFieldset = _.find(this.fieldSets, {'class': 'basic'});
     this.providerField = _.find(basicFieldset.config, {'name': 'provider'});
@@ -1340,8 +1340,6 @@ export class CloudCredentialsFormComponent {
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
-
-    console.log(this.compactCustomActions.length)
 
     entityForm.formGroup.controls['provider'].valueChanges.subscribe((res) => {
       if (this.providerField.hasErrors) {

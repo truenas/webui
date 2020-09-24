@@ -245,6 +245,7 @@ export class SshConnectionsFormComponent {
         private replicationService: ReplicationService, private modalService: ModalService) {
             this.getRow = this.modalService.getRow$.subscribe(rowId => {
                 this.rowNum = rowId;
+                this.getRow.unsubscribe();
             })
     }
 

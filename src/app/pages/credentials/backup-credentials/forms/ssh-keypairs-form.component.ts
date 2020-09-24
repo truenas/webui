@@ -105,7 +105,7 @@ export class SshKeypairsFormComponent {
         private dialogService: DialogService, private storage: StorageService, private modalService: ModalService) { 
             this.getRow = this.modalService.getRow$.subscribe(rowId => {
                 this.rowNum = rowId;
-                // this.getRow.unsubscribe();
+                this.getRow.unsubscribe();
             })
         }
 
