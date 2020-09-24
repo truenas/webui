@@ -1194,10 +1194,10 @@ export class CloudCredentialsFormComponent {
   protected providerField: any;
   protected entityForm: any;
 
-  public custActions: Array<any> = [
+  public compactCustomActions: Array<any> = [
     {
       id: 'authenticate',
-      name: T('LOGIN TO PROVIDER'),
+      name: T('Log in to Provider'),
       function: () => {
         window.open(this.oauthURL+ "?origin=" + encodeURIComponent(window.location.toString()), "_blank", "width=640,height=480");
         const controls = this.entityForm.formGroup.controls;
@@ -1339,6 +1339,8 @@ export class CloudCredentialsFormComponent {
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
+
+    console.log(this.compactCustomActions.length)
 
     entityForm.formGroup.controls['provider'].valueChanges.subscribe((res) => {
       if (this.providerField.hasErrors) {

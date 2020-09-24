@@ -199,7 +199,7 @@ export class SshConnectionsFormComponent {
         }
     ];
 
-    protected custActions = [
+    protected compactCustomActions = [
         {
             id: 'discover_remote_host_key',
             name: helptext.discover_remote_host_key_button,

@@ -11,7 +11,6 @@ import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-backup-credentials',
   templateUrl: './backup-credentials.component.html',
-  styleUrls: ['./backup-credentials.component.scss'],
   providers: [KeychainCredentialService, ReplicationService, CloudCredentialService]
 })
 export class BackupCredentialsComponent implements OnInit, OnDestroy {
