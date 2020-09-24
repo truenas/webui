@@ -3,9 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { WebSocketService, KeychainCredentialService, AppLoaderService, 
   DialogService, ReplicationService, StorageService, CloudCredentialService } from 'app/services';
 import { ModalService } from '../../../services/modal.service';
-import { SshConnectionsFormComponent } from './ssh-connections/ssh-connections-form.component';
-import { SshKeypairsFormComponent } from './ssh-keypairs/ssh-keypairs-form.component';
-import { CloudCredentialsFormComponent } from './cloud-credentials/cloud-credentials-form.component';
+import { SshConnectionsFormComponent } from './forms/ssh-connections-form.component';
+import { SshKeypairsFormComponent } from './forms/ssh-keypairs-form.component';
+import { CloudCredentialsFormComponent } from './forms/cloud-credentials-form.component';
 import { Subscription } from 'rxjs';
 
 @Component({

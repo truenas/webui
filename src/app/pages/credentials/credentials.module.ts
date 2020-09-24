@@ -11,9 +11,9 @@ import { CommonDirectivesModule } from '../../directives/common/common-directive
 
 import { CredentialsComponent } from './credentials.component';
 import { BackupCredentialsComponent } from './backup-credentials/backup-credentials.component';
-import { SshConnectionsFormComponent } from './backup-credentials/ssh-connections/ssh-connections-form.component';
-import { CloudCredentialsFormComponent } from './backup-credentials/cloud-credentials/cloud-credentials-form.component';
-import { SshKeypairsFormComponent } from './backup-credentials/ssh-keypairs/ssh-keypairs-form.component';
+import { SshConnectionsFormComponent } from './backup-credentials/forms/ssh-connections-form.component';
+import { CloudCredentialsFormComponent } from './backup-credentials/forms/cloud-credentials-form.component';
+import { SshKeypairsFormComponent } from './backup-credentials/forms/ssh-keypairs-form.component';
 
 @NgModule({
   declarations: [ CredentialsComponent, BackupCredentialsComponent, SshConnectionsFormComponent, 
