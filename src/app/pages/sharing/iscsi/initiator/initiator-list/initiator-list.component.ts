@@ -10,7 +10,7 @@ import { T } from "app/translate-marker";
   `
 })
 export class InitiatorListComponent {
-  public tableTitle = 'Initiators';
+  public tableTitle = 'Initiators Groups';
   protected queryCall = 'iscsi.initiator.query';
   protected route_add: string[] = [ 'sharing', 'iscsi', 'initiators', 'add' ];
   protected route_add_tooltip: string = "Add Initiator";
