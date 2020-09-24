@@ -79,7 +79,7 @@ export class PluginAdvancedAddComponent implements OnInit, AfterViewInit {
       name: 'jail_name',
       placeholder: helptext.uuid_placeholder,
       required: true,
-      validation: [ Validators.required, regexValidator(/^[a-zA-Z0-9-_]+$/) ]
+      validation: [ Validators.required, regexValidator(this.jailService.jailNameRegex)]
     },
     {
       type: 'checkbox',
