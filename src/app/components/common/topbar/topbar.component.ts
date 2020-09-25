@@ -126,7 +126,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     }
     this.ws.subscribe('core.get_jobs').subscribe((res) => {
       if (res && res.fields.method === 'update.update' || res.fields.method === 'failover.upgrade') {
-        console.log(res)
         this.updateIsRunning = true;
         if (res.fields.state === 'FAILED' || res.fields.state === 'ABORTED') {
           this.updateIsRunning = false;
