@@ -130,11 +130,9 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       if (res && res.fields.method === 'update.update' || res.fields.method === 'failover.upgrade') {
         console.log(res)
         this.updateIsRunning = true;
-          console.log('here')
-        if (res.fields.state === 'FAILED') {
+        if (res.fields.state === 'FAILED' || res.fields.state === 'ABORTED') {
           this.updateIsRunning = false;
           this.systemWillRestart = false;
-          console.log(this.updateIsRunning)
         }
 
           // When update starts on HA system, listen for 'finish', then quit listening
@@ -148,7 +146,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
             if (res && res.fields && res.fields.arguments[0] && res.fields.arguments[0].reboot) {
               this.systemWillRestart = true;
               if (res.fields.state === 'SUCCESS') {
-                console.log('success!')
                 this.router.navigate(['/others/reboot']);
               } 
             }
