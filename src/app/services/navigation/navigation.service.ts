@@ -108,9 +108,6 @@ export class NavigationService {
         { name: T('Backup Credentials'), state: 'backup-credentials' },
         { name: T('Certificates'), state: 'temp-misc' },
         { name: T('2FA'), state: 'two-factor' },
-        // { name: T('Cloud Credentials'), state: 'cloudcredentials' },
-        // { name: T('SSH Connections'), state: 'sshconnections' },
-        // { name: T('SSH Keypairs'), state: 'sshkeypairs' },
         // KMIP probably needs to be moved to credentials routing component to work here
         // { name: T('KMIP'), state: 'kmip', disabled: true },
       ]

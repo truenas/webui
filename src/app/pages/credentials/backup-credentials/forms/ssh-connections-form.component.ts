@@ -31,6 +31,7 @@ export class SshConnectionsFormComponent {
     protected namesInUseConnection = [];
     protected namesInUse = [];
     public title = helptext.formTitle;
+    protected isOneColumnForm = true;
     private rowNum: any;
     private getRow = new Subscription;
 
@@ -249,11 +250,11 @@ export class SshConnectionsFormComponent {
             })
     }
 
-    isCustActionVisible(actionId) {
+    isCustActionDisabled(actionId) {
         if (this.entityForm.formGroup.controls['setup_method'].value === 'manual') {
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     async preInit() {

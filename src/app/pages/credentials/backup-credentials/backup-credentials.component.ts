@@ -16,6 +16,7 @@ import { Subscription } from 'rxjs';
 export class BackupCredentialsComponent implements OnInit, OnDestroy {
   cards: any;
   refreshTable: Subscription;
+  refreshForm: Subscription;
 
   // Components included in this dashboard
   protected sshConnections: SshConnectionsFormComponent;
@@ -35,7 +36,7 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
       this.getCards();
     })
     this.refreshForms();
-    this.modalService.refreshForm$.subscribe(() => {
+    this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
       this.refreshForms();
     });
   }
@@ -121,6 +122,7 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.refreshTable.unsubscribe();
+    this.refreshForm.unsubscribe();
   }
 
 }
