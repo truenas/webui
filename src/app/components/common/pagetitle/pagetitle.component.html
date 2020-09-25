@@ -1,0 +1,6 @@
+<div class="page-title" *ngIf="titleText">
+  <app-breadcrumb *ngIf="breadcrumbs && routeParts.length > 1" [product_type]="product_type"></app-breadcrumb>
+  <div>
+    <h2>{{ routeParts[routeParts.length - 1].title | translate }}</h2>
+  </div>
+</div>

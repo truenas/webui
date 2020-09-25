@@ -17,6 +17,7 @@ import { ThemeService } from '../../services/theme/theme.service';
 import { DialogService } from '../../services/dialog.service';
 import { CustomizerComponent } from './customizer/customizer.component';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
+import { PageTitleComponent } from './pagetitle/pagetitle.component';
 import { ModalComponent } from './modal/modal.component';
 //import { LineChartComponent } from './lineChart';
 //import { LineChartService } from './lineChart/lineChart.service';
@@ -47,9 +48,9 @@ import { AngularSvgIconModule, SvgIconRegistryService } from 'angular-svg-icon';
     TopbarComponent,
     NavigationComponent,
     ModalComponent,
-    NotificationsComponent, CustomizerComponent, BreadcrumbComponent, //LineChartComponent
+    NotificationsComponent, CustomizerComponent, BreadcrumbComponent, PageTitleComponent
   ],
   providers: [ThemeService, DialogService, /*LineChartService,*/ LanguageService, LocaleService, SvgIconRegistryService],
-  exports: [/*LineChartComponent*/]
+  exports: [PageTitleComponent]
 })
 export class AppCommonModule {}
