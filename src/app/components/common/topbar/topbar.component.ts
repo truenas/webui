@@ -72,6 +72,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   checkin_remaining: any;
   checkin_interval: any;
   public updateIsRunning = false;
+  public systemWillRestart = false;
   public updateNotificationSent = false;
   private user_check_in_prompted = false;
   public mat_tooltips = helptext.mat_tooltips;
@@ -127,7 +128,15 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     }
     this.ws.subscribe('core.get_jobs').subscribe((res) => {
       if (res && res.fields.method === 'update.update' || res.fields.method === 'failover.upgrade') {
+        console.log(res)
         this.updateIsRunning = true;
+          console.log('here')
+        if (res.fields.state === 'FAILED') {
+          this.updateIsRunning = false;
+          this.systemWillRestart = false;
+          console.log(this.updateIsRunning)
+        }
+
           // When update starts on HA system, listen for 'finish', then quit listening
           if (this.is_ha) {
             this.updateIsDone = this.sysGenService.updateIsDone$.subscribe(() => {
@@ -135,6 +144,16 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
               this.updateIsDone.unsubscribe();
             })
           }
+          if (!this.is_ha) {
+            if (res && res.fields && res.fields.arguments[0] && res.fields.arguments[0].reboot) {
+              this.systemWillRestart = true;
+              if (res.fields.state === 'SUCCESS') {
+                console.log('success!')
+                this.router.navigate(['/others/reboot']);
+              } 
+            }
+          } 
+
         if (!this.updateNotificationSent) {
           this.updateInProgress();
           this.updateNotificationSent = true;
@@ -590,7 +609,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   };
 
   showUpdateDialog() {
-    let message = this.is_ha ? helptext.updateRunning_dialog.message : 
+    let message = this.is_ha || !this.systemWillRestart ? helptext.updateRunning_dialog.message : 
       helptext.updateRunning_dialog.message + helptext.updateRunning_dialog.message_pt2;
     this.dialogService.confirm(helptext.updateRunning_dialog.title,
       message,
