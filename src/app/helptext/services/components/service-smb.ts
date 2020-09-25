@@ -26,9 +26,9 @@ cifs_srv_netbiosalias_tooltip: T('Enter any aliases, separated by spaces.\
 cifs_srv_netbiosalias_errmsg: T('Aliases must be 15 characters or less.'),
 
 cifs_srv_workgroup_placeholder: T('Workgroup'),
-cifs_srv_workgroup_tooltip: T('Must match Windows workgroup \
- name. This setting is ignored when the \
- Active Directory or LDAP services are running.'),
+cifs_srv_workgroup_tooltip: T('Must match Windows workgroup name. \
+ When this is unconfigured and Active Directory or LDAP are active, \
+ TrueNAS will detect and set the correct workgroup from these services.'),
 cifs_srv_workgroup_validation : [ Validators.required ],
 
 cifs_srv_description_placeholder: T('Description'),
