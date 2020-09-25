@@ -23,7 +23,7 @@ export class ISCSI implements OnInit {
       path: '/sharing/iscsi/portals',
     },
     {
-      label: 'Initiators',
+      label: 'Initiators Groups',
       path: '/sharing/iscsi/initiator',
     },
     {
