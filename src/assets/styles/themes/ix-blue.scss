@@ -245,12 +245,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   .mat-select-panel .mat-option:hover,
-  .ngx-datatable .datatable-body .datatable-row-wrapper:nth-child(odd) datatable-body-row{
+  .ngx-datatable .datatable-row-odd{
     @include variable(background, --alt-bg1, $alt-bg1);
     @include variable(color, --alt-fg1, $alt-fg1);
   }
 
-  .ngx-datatable .datatable-body .datatable-row-wrapper:nth-child(even) datatable-body-row{
+  .ngx-datatable .datatable-row-even{
     //@include variable(background, --alt-bg1, $alt-bg1);
     background-color:rgba(123,123,123,0.2);
     @include variable(color, --alt-fg1, $alt-fg1);
