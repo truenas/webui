@@ -991,6 +991,9 @@ msgstr "AUTORID"
 msgid "AWS Region"
 msgstr "Région AWS"
 
+msgid "Abort"
+msgstr ""
+
 msgid "About"
 msgstr "À propos"
 
@@ -1149,12 +1152,6 @@ msgstr "Changement IDMAP Active Directory !"
 msgid "Active Directory must be enabled before adding new domains."
 msgstr "Active Directory doit être activé avant d'ajouter de nouveaux domaines."
 
-msgid "Active Media Subtype"
-msgstr "Sous-type de support actif"
-
-msgid "Active Media Type"
-msgstr "Type de support actif"
-
 msgid "Adapter Type"
 msgstr "Type d'adaptateur"
 
@@ -1191,11 +1188,17 @@ msgstr "Ajouter un groupe"
 msgid "Add Idmap"
 msgstr "Ajouter Idmap"
 
+msgid "Add Interface"
+msgstr ""
+
 msgid "Add Mountpoint"
 msgstr "Ajouter un point de montage"
 
 msgid "Add Recovery Key"
 msgstr "Ajouter une clé de récupération"
+
+msgid "Add Static Route"
+msgstr ""
 
 msgid "Add Sysctl"
 msgstr ""
@@ -1583,6 +1586,9 @@ msgstr ""
 msgid "Allow"
 msgstr "Autoriser"
 
+msgid "Allow All"
+msgstr ""
+
 msgid "Allow All Initiators"
 msgstr "Autoriser tous les initiateurs"
 
@@ -1627,6 +1633,9 @@ msgstr "Autoriser l'authentification par mot de passe"
 
 msgid "Allow Root Login"
 msgstr "Autoriser la connexion Root"
+
+msgid "Allow Specific"
+msgstr ""
 
 msgid "Allow TCP Port Forwarding"
 msgstr "Autoriser la redirection de port TCP"
@@ -2006,6 +2015,9 @@ msgstr "Un autre thème utilise ce label. Veuillez saisir un nouveau label."
 
 msgid "Any notes about initiators."
 msgstr "Des notes sur les initiateurs."
+
+msgid "Any system service can communicate externally."
+msgstr ""
 
 msgid "Appdefaults Auxiliary Parameters"
 msgstr "Paramètres auxiliaires par défaut"
@@ -2393,9 +2405,6 @@ msgid "Background 1"
 msgstr ""
 
 msgid "Background 2"
-msgstr ""
-
-msgid "Backup Credentials"
 msgstr ""
 
 msgid "Bandwidth"
@@ -4478,9 +4487,6 @@ msgstr "Routeur par défaut pour IPv4"
 msgid "Default Router For IPv6"
 msgstr "Routeur par défaut pour IPv6"
 
-msgid "Default Routes"
-msgstr "Routes par défaut"
-
 msgid "Default Umask"
 msgstr "Umask par défaut"
 
@@ -4539,6 +4545,11 @@ msgstr ""
 "Définir le dataset à intégrer dans le jail et à remettre entièrement au "
 "jail. Entrez un nom de système de fichiers ZFS <i>sans</i> un nom de "
 "volume. <b>jail_zfs</b> doit être défini pour que cette option fonctionne."
+
+msgid ""
+"Define the maximum number of chunks for a multipart upload. This can  be "
+"useful if a service does not support the 10,000 chunk AWS S3 specification."
+msgstr ""
 
 msgid ""
 "Define the number of UIDS/GIDS available per domain  range. The minimum is "
@@ -4621,6 +4632,11 @@ msgstr ""
 
 msgid "Define the size of the raw file in GiB."
 msgstr "Définir la taille du fichier brut (raw) en GiB."
+
+msgid ""
+"Define the system services that are allowed to communicate externally. All "
+"other external traffic is restricted."
+msgstr ""
 
 msgid "Define the target as *iSCSI*, *Fibre Channel*, or *Both*."
 msgstr "Définissez la cible comme *iSCSI*, *Fibre Channel* ou *Both*."
@@ -4740,6 +4756,9 @@ msgstr "Supprimer le <b>"
 
 msgid "Deny"
 msgstr "Refuser"
+
+msgid "Deny All"
+msgstr ""
 
 msgid "Deny Hosts"
 msgstr "Refuser des Hôtes"
@@ -5333,6 +5352,9 @@ msgstr "Modifier le groupe"
 msgid "Edit Idmap"
 msgstr "Modifier Idmap"
 
+msgid "Edit Interface"
+msgstr ""
+
 msgid "Edit Options"
 msgstr "Modifier les options"
 
@@ -5341,6 +5363,9 @@ msgstr "Modifier les autorisations"
 
 msgid "Edit Share ACL"
 msgstr "Modifier l'ACL du partage"
+
+msgid "Edit Static Route"
+msgstr ""
 
 msgid "Edit User"
 msgstr "Modifier l'utilisateur"
@@ -5827,6 +5852,9 @@ msgstr "Protocole de chiffrement"
 
 msgid "Encryption Salt"
 msgstr "Sel de chiffremment"
+
+msgid "Encryption Standard"
+msgstr ""
 
 msgid "Encryption Type"
 msgstr "Type de chiffrement"
@@ -6875,8 +6903,14 @@ msgstr "Erreur lors de l'enregistrement du ZVOL."
 msgid "Error starting service "
 msgstr "Erreur de démarrage du service "
 
+msgid "Error starting service OpenVPN "
+msgstr ""
+
 msgid "Error stopping service "
 msgstr "Erreur d'arrêt du service "
+
+msgid "Error stopping service OpenVPN "
+msgstr ""
 
 msgid "Error submitting file"
 msgstr "Erreur de soumission du fichier"
@@ -8060,9 +8094,6 @@ msgstr "IPv6"
 msgid "IPv6 Address"
 msgstr "Adresse IPv6"
 
-msgid "IPv6 Auto Configure"
-msgstr "Configuration automatique IPv6"
-
 msgid "IPv6 Default Gateway"
 msgstr "Passerelle IPv6 par défaut"
 
@@ -8719,12 +8750,6 @@ msgstr ""
 msgid "KiB"
 msgstr "KiB"
 
-msgid "LAGG Ports"
-msgstr "Ports LAGG"
-
-msgid "LAGG Protocol"
-msgstr "Protocole LAGG"
-
 msgid "LAGG Settings"
 msgstr "Paramètres LAGG"
 
@@ -8920,9 +8945,6 @@ msgstr "État du lien."
 
 msgid "Link"
 msgstr "Lien"
-
-msgid "Link State"
-msgstr "État du lien"
 
 msgid "Linked Service"
 msgstr "Service lié"
@@ -9228,6 +9250,9 @@ msgstr ""
 "<i>9000</i> sont les tailles standard des MTU Ethernet. Si vous laissez le "
 "champ vide, la valeur par défaut est de <i>1500</i>."
 
+msgid "Maximum Upload Parts"
+msgstr ""
+
 msgid ""
 "Maximum amount of CPU time a jail process may consume. The kernel "
 "terminates processes exceeding the specified limit."
@@ -9478,6 +9503,9 @@ msgstr "Miroir"
 msgid "Misc"
 msgstr ""
 
+msgid "Miscellaneous"
+msgstr ""
+
 msgid "Mixing disks of different sizes in a vdev is not allowed."
 msgstr ""
 "Le mélange de disques de différentes tailles dans un vdev n'est pas "
@@ -9593,12 +9621,10 @@ msgid "Multipaths"
 msgstr "Chemins multiples"
 
 msgid ""
-"Must match Windows workgroup  name. This setting is ignored when the  "
-"Active Directory or LDAP services are running."
+"Must match Windows workgroup name.  When this is unconfigured and Active "
+"Directory or LDAP are active,  TrueNAS will detect and set the correct "
+"workgroup from these services."
 msgstr ""
-"Doit correspondre au nom du groupe de travail Windows. Ce paramètre est "
-"ignoré lorsque les services Active Directory ou LDAP sont en cours "
-"d'exécution."
 
 msgid ""
 "Mutual secret password. Required when Peer User is set. Must be different "
@@ -9758,9 +9784,6 @@ msgstr ""
 msgid "Name or Naming Schema must be provided."
 msgstr "Le nom ou le schéma de nommage doit être fourni."
 
-msgid "Name servers not configured"
-msgstr "Serveurs de noms non configurés"
-
 msgid "Name that was created with the SMB share."
 msgstr "Nom qui a été créé avec le partage SMB."
 
@@ -9772,9 +9795,6 @@ msgstr "Serveur de noms 2 (DNS)"
 
 msgid "Nameserver 3"
 msgstr "Serveur de noms 3 (DNS)"
-
-msgid "Nameservers"
-msgstr "Nom des serveurs"
 
 msgid "Naming Schema"
 msgstr "Schéma de nommage"
@@ -9851,9 +9871,6 @@ msgstr "Propriétés du réseau"
 
 msgid "Network Reports"
 msgstr "Rapports réseau"
-
-msgid "Network Summary"
-msgstr "Résumé réseau"
 
 msgid "Network Timeout Before Initiating Failover"
 msgstr "Délai d'attente réseau avant d'initier le basculement"
@@ -10414,6 +10431,9 @@ msgstr ""
 msgid "Open VPN Server"
 msgstr ""
 
+msgid "OpenVPN "
+msgstr ""
+
 msgid "OpenVPN Client Settings"
 msgstr "Paramètres du client OpenVPN"
 
@@ -10532,6 +10552,9 @@ msgstr "Autres Paramètres"
 
 msgid "Out"
 msgstr "Montant"
+
+msgid "Outbound Network"
+msgstr ""
 
 msgid "Outgoing Mail Server"
 msgstr "Serveur de courrier sortant"
@@ -11469,6 +11492,9 @@ msgstr "Restant"
 msgid "Remote"
 msgstr "Distant"
 
+msgid "Remote Controller"
+msgstr ""
+
 msgid "Remote Encryption"
 msgstr "Chiffrage à distance"
 
@@ -11861,8 +11887,8 @@ msgstr ""
 "devfs individuel. Permet la création de périphériques <i>tun</i> dans "
 "l'environnement jail."
 
-msgid "Revert CHANGES"
-msgstr "Rétablir les CHANGEMENTS"
+msgid "Revert Changes"
+msgstr ""
 
 msgid "Revert Network Interface Changes"
 msgstr "Annuler les modifications de l'interface réseau"
@@ -11988,9 +12014,6 @@ msgstr "ENREGISTRER"
 
 msgid "SAVE AND FAILOVER"
 msgstr "ENREGISTRER ET BASCULEMENT"
-
-msgid "SAVE CHANGES"
-msgstr "ENREGISTRER LES MODIFICATIONS"
 
 msgid "SAVE CONFIGURATION"
 msgstr "SAUVEGARDER LA CONFIGURATION"
@@ -12875,6 +12898,9 @@ msgstr ""
 "Sélectionnez l'interpréteur de commandes à utiliser pour les connexions "
 "locales et SSH."
 
+msgid "Select the system services that will be allowed to communicate externally."
+msgstr ""
+
 msgid ""
 "Select the type of LDAP server to use. This can be the        LDAP server "
 "provided by the Active Directory server or a stand-alone LDAP server."
@@ -13058,6 +13084,9 @@ msgstr "Rôle du serveur"
 
 msgid "Server Side Encryption"
 msgstr "Chiffrement côté serveur"
+
+msgid "Service"
+msgstr ""
 
 msgid "Service Account"
 msgstr "Compte de service"
@@ -14855,9 +14884,6 @@ msgstr ""
 msgid "TDB"
 msgstr "TDB"
 
-msgid "TEST CHANGES"
-msgstr "TESTER CHANGEMENTS"
-
 msgid "TFTP"
 msgstr ""
 
@@ -15985,6 +16011,9 @@ msgstr ""
 msgid "This operation might take a long time. Proceed?"
 msgstr "Cette opération peut prendre du temps. Poursuivre ?"
 
+msgid "This system cannot communicate externally."
+msgstr ""
+
 msgid "This system will restart when the update completes."
 msgstr "Ce système redémarrera lorsque la mise à jour sera terminée."
 
@@ -16369,6 +16398,9 @@ msgid "Unkeep"
 msgstr "Enlever"
 
 msgid "Unknown"
+msgstr ""
+
+msgid "Unknown CPU"
 msgstr ""
 
 msgid "Unlock"
@@ -17002,14 +17034,8 @@ msgstr ""
 msgid "VLAN ID"
 msgstr "ID VLAN"
 
-msgid "VLAN Parent Interface"
-msgstr "Interface parent VLAN"
-
 msgid "VLAN Settings"
 msgstr "Paramètres VLAN"
-
-msgid "VLAN Tag"
-msgstr "Tag VLAN"
 
 msgid "VLANs"
 msgstr "VLANs"
@@ -17753,9 +17779,6 @@ msgstr "exec_timeout"
 
 msgid "expires in"
 msgstr "expire en"
-
-msgid "gathering info..."
-msgstr "rassemblement des données..."
 
 msgid "group"
 msgstr "groupe"
