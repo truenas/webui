@@ -1,7 +1,10 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, ViewChild } from '@angular/core';
 import { Router, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { RoutePartsService } from '../../../services/route-parts/route-parts.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { Display } from 'app/core/components/display/display.component';
+import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
+import { ViewButtonComponent } from 'app/core/components/viewbutton/viewbutton.component';
 import globalHelptext from '../../../helptext/global-helptext';
 
 @Component({
@@ -9,7 +12,8 @@ import globalHelptext from '../../../helptext/global-helptext';
   templateUrl: './pagetitle.component.html',
   styleUrls: ['./pagetitle.component.css']
 })
-export class PageTitleComponent implements OnInit {
+export class PageTitleComponent implements OnInit, AfterViewInit {
+  @ViewChild('viewcontroller', {static: false}) viewcontroller: ViewControllerComponent;
   @Input() breadcrumbs: boolean;
   @Input() product_type;
   public titleText: string;
@@ -82,6 +86,20 @@ export class PageTitleComponent implements OnInit {
         return item;
       });
     });
+  }
+
+  ngAfterViewInit(){
+    //setTimeout(() =>{
+      this.createActions();
+    //}, 2000);
+  }
+
+  createActions(){
+    console.log(this.viewcontroller);
+    this.viewcontroller.layoutContainer = {layout: 'row', align: 'end center', gap:'2px'};
+    let btn = this.viewcontroller.create(ViewButtonComponent);
+    btn.label = "Global Action";
+    this.viewcontroller.addChild(btn);
   }
 
 }

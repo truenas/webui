@@ -25,6 +25,8 @@ import { LanguageService } from '../../services/language.service';
 import { HttpClientModule } from '@angular/common/http';
 import { LocaleService } from '../../services/locale.service';
 import { EntityModule } from '../.././/pages/common/entity/entity.module';
+import { CoreComponents } from 'app/core/components/corecomponents.module';
+import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 
 import { AngularSvgIconModule, SvgIconRegistryService } from 'angular-svg-icon';
 
@@ -40,6 +42,7 @@ import { AngularSvgIconModule, SvgIconRegistryService } from 'angular-svg-icon';
     ChartistModule,
     HttpClientModule,
     EntityModule,
+    CoreComponents,
     AngularSvgIconModule.forRoot()
   ],
   declarations: [
@@ -51,6 +54,6 @@ import { AngularSvgIconModule, SvgIconRegistryService } from 'angular-svg-icon';
     NotificationsComponent, CustomizerComponent, BreadcrumbComponent, PageTitleComponent
   ],
   providers: [ThemeService, DialogService, /*LineChartService,*/ LanguageService, LocaleService, SvgIconRegistryService],
-  exports: [PageTitleComponent]
+  exports: [PageTitleComponent, ViewControllerComponent]
 })
 export class AppCommonModule {}

@@ -9,10 +9,9 @@ import { Subject } from 'rxjs';
 export const ViewControllerMetadata = {
   template: `
   <div 
-  fxLayoutWrap
-  fxLayout="row" 
-  fxLayoutAlign="space-around center" 
-  fxLayoutGap="2%"
+  [fxLayout]="layoutContainer.layout" 
+  [fxLayoutAlign]="layoutContainer.align" 
+  [fxLayoutGap]="layoutContainer.gap"
   >
     <display style="display:none;" #display></display>
   </div>
@@ -35,11 +34,10 @@ export class ViewControllerComponent extends ViewController implements AfterView
 
   readonly componentName = ViewControllerComponent;
   @ViewChild('display', { static: true}) display;
-  //public displayList: ComponentRef[] = [];
   protected core: CoreService;
   public controlEvents: Subject<CoreEvent> = new Subject();
 
-  public layoutContainer:LayoutContainer = {layout:"row", align:"space-between center", gap:""}
+  public layoutContainer:LayoutContainer = {layout:"row", align:"space-between center", gap:"2%"}
   public layoutChild?:LayoutChild;
 
   constructor() {
@@ -70,4 +68,6 @@ export class ViewControllerComponent extends ViewController implements AfterView
     if(!container){ container = 'display'}
     this[container].removeChild(instance);
   }
+
+  public test(){ console.log("TEST"); }
 }
