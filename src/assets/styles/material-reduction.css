@@ -632,7 +632,7 @@ mat-card.mat-card .mat-list-base{
 
 /* This should probably be implemented as a component */
 .page-title{
-  width: calc(100% - 64px);
+  width: calc(100% - 16px);
   margin: 0 auto 32px;
   color: var(--fg1);
   padding-bottom: 8px;
