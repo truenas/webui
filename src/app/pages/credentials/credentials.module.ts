@@ -14,10 +14,11 @@ import { BackupCredentialsComponent } from './backup-credentials/backup-credenti
 import { SshConnectionsFormComponent } from './backup-credentials/forms/ssh-connections-form.component';
 import { CloudCredentialsFormComponent } from './backup-credentials/forms/cloud-credentials-form.component';
 import { SshKeypairsFormComponent } from './backup-credentials/forms/ssh-keypairs-form.component';
+import { CertificatesDashComponent } from './certificates-dash/certificates-dash.component';
 
 @NgModule({
   declarations: [ CredentialsComponent, BackupCredentialsComponent, SshConnectionsFormComponent, 
-    CloudCredentialsFormComponent, SshKeypairsFormComponent ],
+    CloudCredentialsFormComponent, SshKeypairsFormComponent, CertificatesDashComponent ],
   imports: [
     CommonModule,
     MatCardModule,
