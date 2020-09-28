@@ -14,6 +14,7 @@ import { CredentialsComponent } from './../credentials/credentials.component';
 import { BackupCredentialsComponent } from '../credentials/backup-credentials/backup-credentials.component';
 
 import { T } from '../../translate-marker';
+import { CertificatesDashComponent } from '../credentials/certificates-dash/certificates-dash.component';
 
 export const routes: Routes = [{
   path: '',
@@ -86,6 +87,11 @@ export const routes: Routes = [{
     path: 'backup-credentials',
     component: BackupCredentialsComponent,
     data: { title: ('Backup Credentials'), breadcrumb: T('Backup Credentials') }
+  },
+  {
+    path: 'certificates',
+    component: CertificatesDashComponent,
+    data: { title: ('Certificates'), breadcrumb: T('Certificates') }
   }
 ]
 }];
