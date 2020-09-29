@@ -66,8 +66,8 @@ export class ViewControllerComponent extends ViewController implements AfterView
 
   public removeChild(instance, container?: string){
     if(!container){ container = 'display'}
+    console.log("Removing Child");
     this[container].removeChild(instance);
   }
 
-  public test(){ console.log("TEST"); }
 }

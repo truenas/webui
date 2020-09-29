@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, Input, ViewChild } from '@angular/core';
 import { Router, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { RoutePartsService } from '../../../services/route-parts/route-parts.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
@@ -6,18 +6,22 @@ import { Display } from 'app/core/components/display/display.component';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { ViewButtonComponent } from 'app/core/components/viewbutton/viewbutton.component';
 import globalHelptext from '../../../helptext/global-helptext';
+import { EntityTableAddActionsComponent } from 'app/pages/common/entity/entity-table/entity-table-add-actions.component';
 
 @Component({
   selector: 'pagetitle',
   templateUrl: './pagetitle.component.html',
   styleUrls: ['./pagetitle.component.css']
 })
-export class PageTitleComponent implements OnInit, AfterViewInit {
+export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('viewcontroller', {static: false}) viewcontroller: ViewControllerComponent;
   @Input() breadcrumbs: boolean;
   @Input() product_type;
   public titleText: string;
   public copyrightYear = globalHelptext.copyright_year;
+  private hasInitialized: boolean = false;
+  private globalActionsConfig;
+  private globalActions;
 
   routeParts:any[];
   public isEnabled: boolean = true;
@@ -49,6 +53,14 @@ export class PageTitleComponent implements OnInit, AfterViewInit {
 
   // only execute when routechange
     this.router.events.filter(event => event instanceof NavigationEnd).subscribe((routeChange) => {
+      this.destroyActions();
+      /*console.log("ROUTE CHANGED!");
+      if(this.globalActions){
+        this.viewcontroller.removeChild(this.globalActions);
+        console.log("ALL CLEANED UP");
+        this.globalActionsConfig = null;
+      }*/
+
       this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
       this.titleText = this.routeParts && this.routeParts[0].title ? this.routeParts[0].title : '';
 
@@ -70,6 +82,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit {
 
   // Pseudo routing events (for reports page)
     this.core.register({observerClass:this, eventName:"PseudoRouteChange"}).subscribe((evt:CoreEvent) => {
+      this.destroyActions();
       let routeChange = evt.data;
       //this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
       this.routeParts = evt.data;
@@ -86,20 +99,60 @@ export class PageTitleComponent implements OnInit, AfterViewInit {
         return item;
       });
     });
+
+    this.core.register({observerClass:this, eventName:"GlobalActions"}).subscribe((evt:CoreEvent) => {
+      // CONFIG OBJECT EXAMPLE: { actionType: EntityTableAddActionsComponent, actionConfig: this };
+      this.globalActionsConfig = evt.data;
+
+      if(this.hasInitialized){
+        this.renderActions(this.globalActionsConfig);
+      }
+
+    });
   }
 
   ngAfterViewInit(){
-    //setTimeout(() =>{
-      this.createActions();
-    //}, 2000);
+    if(this.globalActionsConfig){
+      this.renderActions(this.globalActionsConfig);
+    }
+    this.hasInitialized = true;
   }
 
-  createActions(){
-    console.log(this.viewcontroller);
+  ngOnDestroy(){
+    this.core.unregister({observerClass: this});
+    delete this.globalActionsConfig;
+  }
+
+  createAction(){
     this.viewcontroller.layoutContainer = {layout: 'row', align: 'end center', gap:'2px'};
-    let btn = this.viewcontroller.create(ViewButtonComponent);
-    btn.label = "Global Action";
-    this.viewcontroller.addChild(btn);
+    this.globalActions = this.viewcontroller.create(ViewButtonComponent);
+    this.globalActions.label = 'Global Action';
+    this.globalActions.tooltipEnabled = true;
+    this.globalActions.tooltipPlacement = 'above';
+    this.globalActions.tooltipText = 'Tooltip Text Goes Here';
+    this.viewcontroller.addChild(this.globalActions);
+  }
+
+  renderActions(config: any){
+    this.viewcontroller.layoutContainer = {layout: 'row', align: 'end center', gap:'2px'};
+    this.globalActions = this.viewcontroller.create(config.actionType);
+    // Detect Action Types
+    switch(config.actionType){
+      case EntityTableAddActionsComponent:
+        this.globalActions.entity = config.actionConfig;
+      break;
+      
+    }
+    this.viewcontroller.addChild(this.globalActions);
+  }
+
+  destroyActions(){
+      if(this.globalActions){
+        this.viewcontroller.removeChild(this.globalActions);
+        this.globalActionsConfig = null;
+      }
+
+      this.globalActions = null;
   }
 
 }

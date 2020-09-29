@@ -1,4 +1,4 @@
-<div id="breadcrumb-bar" class="breadcrumb-bar" *ngIf="isEnabled && routeParts.length > 1">
+<div id="breadcrumb-bar" class="breadcrumb-bar" [ngClass]="{ 'invisible':!isEnabled && routeParts.length < 2 }">
   <ul class="breadcrumb">
     <li *ngFor="let part of routeParts; let i = index;"
       ix-auto ix-auto-type="option" ix-auto-identifier="{{part.breadcrumb}}">

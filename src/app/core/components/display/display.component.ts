@@ -17,8 +17,6 @@ export class Display implements OnInit,AfterViewInit{
   @ViewChild('test', { static: true, read:ViewContainerRef}) test:ViewContainerRef;
 
   constructor(private resolver: ComponentFactoryResolver, private viewContainerRef: ViewContainerRef, private renderer: Renderer2){
-    console.log("Display Component Constructor");
-    
   }
 
   ngOnInit(){}
@@ -27,8 +25,6 @@ export class Display implements OnInit,AfterViewInit{
   }
 
   create(component:any){
-    console.log("******** Create()!!!! ********");
-    console.log(this.wrapper);
     let compRef = <any>this.resolver.resolveComponentFactory(component).create(this.viewContainerRef.injector);
     this.children.push(compRef);
     return compRef.instance ;

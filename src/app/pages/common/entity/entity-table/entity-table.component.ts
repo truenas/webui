@@ -1,4 +1,3 @@
-
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, NavigationStart } from '@angular/router';
@@ -18,6 +17,7 @@ import { ModalService } from '../../../../services/modal.service';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../utils';
 import { EntityTableRowDetailsComponent } from './entity-table-row-details/entity-table-row-details.component';
+import { EntityTableAddActionsComponent } from './entity-table-add-actions.component';
 import { EntityJobComponent } from '../entity-job/entity-job.component';
 
 export interface InputTableConf {
@@ -321,6 +321,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
+    this.core.emit({ name:"GlobalActions", data: { actionType: EntityTableAddActionsComponent, actionConfig: this}, sender: this});
     if (this.filter) {
     observableFromEvent(this.filter.nativeElement, 'keyup').pipe(
       debounceTime(150),
