@@ -50,7 +50,7 @@
                     </mat-error>
                   </mat-form-field>
                 </div>
-                <div *ngIf="isTwoFactor">
+                <div *ngIf="!isTwoFactor" class="form-element">
                   <mat-form-field class="full-width">
                     <span matPrefix><mat-icon style="color:var(--fg1);position:relative;top:2px;">phonelink</mat-icon>&nbsp;&nbsp;</span>
                     <input matInput name="otp"
