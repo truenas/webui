@@ -423,10 +423,13 @@ export class CloudsyncFormComponent {
         const dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": helptext.job_dialog_title_dry_run }, disableClose: true});
         dialogRef.componentInstance.setCall('cloudsync.sync_onetime', [payload, {"dry_run": true}]);
         dialogRef.componentInstance.showAbortButton = true;
+        dialogRef.componentInstance.showRealtimeLogs = true;
+        dialogRef.componentInstance.hideProgressValue = true;
         dialogRef.componentInstance.submit();
         dialogRef.componentInstance.success.subscribe((res) => {
-          this.matDialog.closeAll();
-          this.job.showLogs(res);
+          dialogRef.componentInstance.showCloseButton = true;
+          // this.matDialog.closeAll();
+          // this.job.showLogs(res);
         });
         dialogRef.componentInstance.failure.subscribe((err) => {
           this.matDialog.closeAll()
