@@ -92,7 +92,10 @@ span.code{
 
 .mat-card{
   border:solid var(--highlights) rgba(255,255,255,0.025);
-  /*border-top-size:var(--highlights);*/
+}
+
+.mat-card.mat-card-padded{
+  padding: 16px 32px !important;
 }
 
 entity-table .mat-card,
@@ -641,6 +644,10 @@ mat-card.mat-card .mat-list-base{
   color: var(--fg1);
   padding-bottom: 8px;
   border-bottom: solid 1px var(--lines);
+}
+
+.page-title > div{
+  min-height: 40px;
 }
 
 .entity-table-controls > div{

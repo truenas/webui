@@ -322,7 +322,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
+
+    // Setup Actions in Page Title Component
     this.core.emit({ name:"GlobalActions", data: { actionType: EntityTableAddActionsComponent, actionConfig: this}, sender: this});
+
     if (this.filter) {
     observableFromEvent(this.filter.nativeElement, 'keyup').pipe(
       debounceTime(150),
