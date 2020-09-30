@@ -53,6 +53,21 @@ export class SshKeypairsFormComponent {
                     placeholder: helptext.private_key_placeholder,
                     tooltip: helptext.private_key_tooltip,
                 }, {
+                    type: 'button',
+                    name: 'remote_host_key_button',
+                    customEventActionLabel: helptext.generate_key_button,
+                    value: '',
+                    customEventMethod: () => {
+                        this.generateKeypair();
+                    },
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'setup_method',
+                            value: 'manual',
+                        }]
+                    }],
+                }, {
                     type: 'textarea',
                     name: 'public_key',
                     placeholder: helptext.public_key_placeholder,
@@ -64,27 +79,6 @@ export class SshKeypairsFormComponent {
     ]
 
     protected compactCustomActions = [
-        {
-            id: 'generate_key',
-            name: helptext.generate_key_button,
-            function: () => {
-                this.loader.open();
-                this.clearPreviousErrors();
-                let elements = document.getElementsByTagName('mat-error');
-                while (elements[0]) elements[0].parentNode.removeChild(elements[0]);
-                this.ws.call('keychaincredential.generate_ssh_key_pair').subscribe(
-                    (res) => {
-                        this.loader.close();
-                        this.entityForm.formGroup.controls['private_key'].setValue(res.private_key);
-                        this.entityForm.formGroup.controls['public_key'].setValue(res.public_key);
-                    },
-                    (err) => {
-                        this.loader.close();
-                        new EntityUtils().handleWSError(this, err, this.dialogService);
-                    }
-                )
-            }
-        },
         {
             id: 'download_private',
             name: helptext.download_private,
@@ -109,12 +103,29 @@ export class SshKeypairsFormComponent {
             })
         }
 
-
     preInit() {
         if (this.rowNum) {
             this.queryCallOption = [["id", "=", this.rowNum]];
             this.rowNum = null;
         }
+    }
+
+    generateKeypair() {
+        this.loader.open();
+        this.clearPreviousErrors();
+        let elements = document.getElementsByTagName('mat-error');
+        while (elements[0]) elements[0].parentNode.removeChild(elements[0]);
+        this.ws.call('keychaincredential.generate_ssh_key_pair').subscribe(
+            (res) => {
+                this.loader.close();
+                this.entityForm.formGroup.controls['private_key'].setValue(res.private_key);
+                this.entityForm.formGroup.controls['public_key'].setValue(res.public_key);
+            },
+            (err) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this, err, this.dialogService);
+            }
+        )
     }
 
     downloadKey(key_type) {

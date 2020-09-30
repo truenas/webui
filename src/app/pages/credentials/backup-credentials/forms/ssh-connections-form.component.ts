@@ -162,7 +162,22 @@ export class SshConnectionsFormComponent {
                             value: 'manual',
                         }]
                     }],
-                },
+                },{
+                    type: 'button',
+                    name: 'remote_host_key_button',
+                    customEventActionLabel: helptext.discover_remote_host_key_button,
+                    value: '',
+                    customEventMethod: () => {
+                        this.getRemoteHostKey();
+                    },
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'setup_method',
+                            value: 'manual',
+                        }]
+                    }],
+                }
             ]
         },
         {
@@ -200,32 +215,6 @@ export class SshConnectionsFormComponent {
         }
     ];
 
-    protected compactCustomActions = [
-        {
-            id: 'discover_remote_host_key',
-            name: helptext.discover_remote_host_key_button,
-            function: () => {
-                this.loader.open();
-                const payload = {
-                    'host': this.entityForm.value['host'],
-                    'port': this.entityForm.value['port'],
-                    'connect_timeout': this.entityForm.value['connect_timeout'],
-                };
-
-                this.ws.call('keychaincredential.remote_ssh_host_key_scan', [payload]).subscribe(
-                    (res) => {
-                        this.loader.close();
-                        this.entityForm.formGroup.controls['remote_host_key'].setValue(res);
-                    },
-                    (err) => {
-                        this.loader.close();
-                        new EntityUtils().handleWSError(this, err, this.dialogService);
-                    }
-                )
-            }
-        },
-    ];
-
     protected manualMethodFields = [
         'host',
         'port',
@@ -248,13 +237,6 @@ export class SshConnectionsFormComponent {
                 this.rowNum = rowId;
                 this.getRow.unsubscribe();
             })
-    }
-
-    isCustActionDisabled(actionId) {
-        if (this.entityForm.formGroup.controls['setup_method'].value === 'manual') {
-            return false;
-        }
-        return true;
     }
 
     async preInit() {
@@ -312,6 +294,26 @@ export class SshConnectionsFormComponent {
         });
     }
 
+    getRemoteHostKey() {
+        this.loader.open();
+        const payload = {
+            'host': this.entityForm.value['host'],
+            'port': this.entityForm.value['port'],
+            'connect_timeout': this.entityForm.value['connect_timeout'],
+        };
+
+        this.ws.call('keychaincredential.remote_ssh_host_key_scan', [payload]).subscribe(
+            (res) => {
+                this.loader.close();
+                this.entityForm.formGroup.controls['remote_host_key'].setValue(res);
+            },
+            (err) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this, err, this.dialogService);
+            }
+        )
+    }
+
     resourceTransformIncomingRestData(wsResponse) {
         for (const item in wsResponse.attributes) {
             wsResponse[item] = wsResponse.attributes[item];
@@ -320,6 +322,7 @@ export class SshConnectionsFormComponent {
     }
 
     async customSubmit(data) {
+        delete data.remote_host_key_button;
         this.loader.open();
         if (data['private_key'] == 'NEW') {
             await this.replicationService.genSSHKeypair().then(

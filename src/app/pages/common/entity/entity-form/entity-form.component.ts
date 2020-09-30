@@ -73,6 +73,7 @@ export interface Formconfiguration {
   blurEvent?;
   customEditCall?;
   save_button_enabled?;
+  hideSaveBtn?:boolean;
   form_message?: {
     type: string; // info || warning
     content: string;

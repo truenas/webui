@@ -35,6 +35,7 @@ export class CloudCredentialsFormComponent {
   protected selectedProvider: string = 'S3';
   protected credentialsOauth = false;
   protected oauthURL: any;
+  public hideSaveBtn = true;
 
   public fieldSets: FieldSet[] = [
     {
@@ -1229,9 +1230,14 @@ export class CloudCredentialsFormComponent {
         }
       }
     },
+    
+  ];
+
+  public custActions: Array<any> = [
     {
       id : 'validCredential',
       name : T('Verify Credential'),
+      buttonColor: 'primary',
       function : () => {
         this.entityForm.loader.open();
         this.entityForm.error = '';
@@ -1263,7 +1269,16 @@ export class CloudCredentialsFormComponent {
         }
       }
     }
-  ];
+    // , {
+    //   id: 'customSave',
+    //   name: T('Save'),
+    //   buttonType: 'submit',
+    //   function: () => {
+    //     console.log('submit')
+    //   }
+    // }
+
+  ]
 
   constructor(protected router: Router,
               protected aroute: ActivatedRoute,

@@ -7,15 +7,19 @@ import {Field} from '../../models/field.interface';
 
 @Component({
   selector : 'form-button',
-  styleUrls : [ 'form-button.component.scss' ],
   template : `
     <div 
       class="dynamic-field form-button"
       [formGroup]="group">
-      <button
-        [disabled]="config.disabled"
-        type="submit">
-        {{ config.label | translate }}
+
+      <button 
+        mat-button 
+        [color]="config.buttonColor ? config.buttonColor : default" type="button" 
+        (click)="config.customEventMethod($event)" 
+        [disabled]="config.disabled" 
+        *ngIf="!config['isHidden']"
+        ix-auto ix-auto-type="button" ix-auto-identifier="{{config.customEventActionLabel}}">
+          {{config.customEventActionLabel | translate}}
       </button>
     </div>
   `
