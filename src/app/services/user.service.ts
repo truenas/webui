@@ -12,7 +12,7 @@ export class UserService {
   protected uncachedGroupQuery = 'dscache.get_uncached_group';
   protected userQuery = 'user.query';
   protected groupQuery = 'group.query';
-  protected queryOptions = {'extra': {'search_dscache':true}, 'limit': 50};
+  protected queryOptions = {'extra': {'search_dscache':true}, 'limit': 100};
 
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
