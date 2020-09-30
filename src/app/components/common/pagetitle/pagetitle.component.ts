@@ -139,7 +139,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
     // Detect Action Types
     switch(config.actionType){
       case EntityTableAddActionsComponent:
-        this.globalActions.entity = config.actionConfig;
+        this.globalActions.applyConfig(config.actionConfig); // Passes entity object
       break;
       
     }

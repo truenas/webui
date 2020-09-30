@@ -501,6 +501,10 @@ button.mat-button.mat-accent{
 
 /* Menus */
 
+button.mat-menu-trigger.menu-toggle.mat-button{
+  max-height: 36px;
+}
+
 .mat-option:hover:not(.mat-option-disabled),
 .sidenav-link:hover,
 .slide-in-nav-item:hover,
@@ -639,4 +643,25 @@ mat-card.mat-card .mat-list-base{
   border-bottom: solid 1px var(--lines);
 }
 
+.entity-table-controls > div{
+  margin-left: 8px;
+}
 
+#row-filter.form-element{
+  display: inline;
+  max-height: 36px;
+  width: unset !important;
+  margin: 0;
+}
+
+#row-filter.form-element .mat-form-field-wrapper{
+  max-height: 36px !important;
+  width: inherit !important;
+}
+
+#row-filter.form-element .mat-form-field-wrapper .mat-input-element{
+  position: relative;
+  top: -4px;
+  height: 16px;
+  padding-left: 8px;
+}

@@ -101,7 +101,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() title = '';
   @Input('conf') conf: InputTableConf;
 
-  @ViewChild('filter', { static: false}) filter: ElementRef;
+  public filter: ElementRef;
+  //@ViewChild('filter', { static: false}) filter: ElementRef;
   @ViewChild('defaultMultiActions', { static: false}) defaultMultiActions: ElementRef;
   @ViewChild('entityTable', { static: false}) table: any;
   public tableMouseEvent: MouseEvent;
@@ -366,7 +367,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.paginationPageIndex  = 0;
         this.setPaginationInfo();
       });
-    };
+    }
   }
 
   dropLastMaxWidth() {
@@ -496,7 +497,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   handleData(res): any {
-
     if( typeof(res) === "undefined" || typeof(res.data) === "undefined" ) {
       res = {
         data: res
@@ -533,12 +533,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.conf.addRows(this);
     }
     if (!this.showDefaults) {
-      this.currentRows = this.filter.nativeElement.value === '' ? this.rows : this.currentRows;
+      this.currentRows = this.filter && this.filter.nativeElement.value === '' ? this.rows : this.currentRows;
       this.paginationPageIndex  = 0;
       this.setPaginationInfo();
       this.showDefaults = true;
     }
-    if ((this.expandedRows == 0 || !this.asyncView || this.excuteDeletion || this.needRefreshTable) && this.filter.nativeElement.value === '') {
+    if ((this.expandedRows == 0 || !this.asyncView || this.excuteDeletion || this.needRefreshTable) && this.filter && this.filter.nativeElement.value === '') {
       this.excuteDeletion = false;
       this.needRefreshTable = false;
       if (this.needTableResize || (!this.needTableResize && this.expandedRows > 0)) {

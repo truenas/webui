@@ -403,7 +403,9 @@ export class BootEnvironmentListComponent implements OnDestroy{
 
   ngOnDestroy() {
     this.getAdvancedConfig.unsubscribe();
-    this.getConfigForActions.unsubscribe();
+    if(this.getConfigForActions){
+      this.getConfigForActions.unsubscribe();
+    }
   }
 
 }
