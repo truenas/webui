@@ -86,6 +86,7 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
           title: 'SSH Keypairs',
           queryCall: 'keychaincredential.query',
           deleteCall: 'keychaincredential.delete',
+          getActions: this.sshKeyPairActions.bind(this),
           dataSourceHelper: this.sshKeyPairsDataSourceHelper,
           columns: [
             { name: 'Name', prop: 'name' },
@@ -109,6 +110,23 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
 
   sshKeyPairsDataSourceHelper(res) {
     return res.filter(item => item.type === 'SSH_KEY_PAIR');
+  }
+
+  sshKeyPairActions() {
+    return [{
+      icon: 'save_alt',
+      name: "download",
+      onClick: (rowinner) => {
+        const name = rowinner.name;
+        for (let key_type in rowinner.attributes) {
+          const key = rowinner.attributes[key_type];
+          const filename = name + '_' + key_type + '_rsa';
+          const blob = new Blob([key], {type: 'text/plain'});
+          this.storage.downloadBlob(blob, filename);
+        }
+        event.stopPropagation();
+      },
+    }]
   }
 
   refreshForms() {
