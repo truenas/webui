@@ -235,7 +235,7 @@ export class BootEnvironmentListComponent implements OnDestroy{
             this.entityList.selected = [];
           },
           (res) => {
-            new EntityUtils().handleError(this, res);
+            new EntityUtils().handleWSError(this, res, this.dialog);
             this.loader.close();
           }
           );
@@ -273,7 +273,7 @@ export class BootEnvironmentListComponent implements OnDestroy{
               this.entityList.selected = [];
             },
             (res) => {
-              new EntityUtils().handleError(this, res);
+              new EntityUtils().handleWSError(this, res, this.dialog);
               this.loader.close();
             }
             );
@@ -291,7 +291,7 @@ export class BootEnvironmentListComponent implements OnDestroy{
               this.entityList.selected = [];
             },
             (res) => {
-              new EntityUtils().handleError(this, res);
+              new EntityUtils().handleWSError(this, res, this.dialog);
               this.loader.close();
             }
             );
@@ -402,8 +402,12 @@ export class BootEnvironmentListComponent implements OnDestroy{
   }
 
   ngOnDestroy() {
-    this.getAdvancedConfig.unsubscribe();
-    this.getConfigForActions.unsubscribe();
+    if(this.getAdvancedConfig) {
+      this.getAdvancedConfig.unsubscribe();
+    }
+    if(this.getConfigForActions){
+      this.getConfigForActions.unsubscribe();
+    }
   }
 
 }
