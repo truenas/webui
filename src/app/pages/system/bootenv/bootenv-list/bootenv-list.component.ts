@@ -233,7 +233,7 @@ export class BootEnvironmentListComponent {
             this.entityList.selected = [];
           },
           (res) => {
-            new EntityUtils().handleError(this, res);
+            new EntityUtils().handleWSError(this, res, this.dialog);
             this.loader.close();
           }
           );
@@ -271,7 +271,7 @@ export class BootEnvironmentListComponent {
               this.entityList.selected = [];
             },
             (res) => {
-              new EntityUtils().handleError(this, res);
+              new EntityUtils().handleWSError(this, res, this.dialog);
               this.loader.close();
             }
             );
@@ -289,7 +289,7 @@ export class BootEnvironmentListComponent {
               this.entityList.selected = [];
             },
             (res) => {
-              new EntityUtils().handleError(this, res);
+              new EntityUtils().handleWSError(this, res, this.dialog);
               this.loader.close();
             }
             );
