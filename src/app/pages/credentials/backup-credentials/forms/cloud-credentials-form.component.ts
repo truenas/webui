@@ -1173,6 +1173,16 @@ export class CloudCredentialsFormComponent {
       width: '50%',
       config: [
         {
+          type: 'button',
+          name: 'oauth_signin_button',
+          isHidden: true,
+          customEventActionLabel: T('Log in to Provider'),
+          value: '',
+          customEventMethod: () => {
+              this.logInToProvider();
+          }
+        },
+        {
           type: 'input',
           name: 'client_id',
           placeholder: helptext.client_id.placeholder,
@@ -1185,8 +1195,7 @@ export class CloudCredentialsFormComponent {
           placeholder: helptext.client_secret.placeholder,
           tooltip: helptext.client_secret.tooltip,
           isHidden: true,
-        }
-      ]
+        }]
     },
   ]
 
@@ -1195,43 +1204,6 @@ export class CloudCredentialsFormComponent {
   protected providers: Array<any>;
   protected providerField: any;
   protected entityForm: any;
-
-  public compactCustomActions: Array<any> = [
-    {
-      id: 'authenticate',
-      name: T('Log in to Provider'),
-      function: () => {
-        window.open(this.oauthURL+ "?origin=" + encodeURIComponent(window.location.toString()), "_blank", "width=640,height=480");
-        const controls = this.entityForm.formGroup.controls;
-        const selectedProvider = this.selectedProvider;
-        const dialogService = this.dialog;
-        const getOnedriveList = this.getOnedriveList.bind(this);
-
-        window.addEventListener("message", doAuth, false);
-
-        function doAuth(message) {
-          if (message.data.oauth_portal) {
-            if (message.data.error) {
-              dialogService.errorReport(T('Error'), message.data.error);
-            } else {
-              for (const prop in message.data.result) {
-                let targetProp = prop;
-                if (prop != 'client_id' && prop != 'client_secret') {
-                  targetProp += '-' + selectedProvider;
-                }
-                controls[targetProp].setValue(message.data.result[prop]);
-              }
-            }
-            if (selectedProvider === 'ONEDRIVE') {
-              getOnedriveList(message.data);
-            }
-          }
-          window.removeEventListener("message", doAuth);
-        }
-      }
-    },
-    
-  ];
 
   public custActions: Array<any> = [
     {
@@ -1368,6 +1340,7 @@ export class CloudCredentialsFormComponent {
       this.credentialsOauth = this.oauthURL == null ? false : true;
       entityForm.setDisabled('client_id', !this.credentialsOauth, !this.credentialsOauth)
       entityForm.setDisabled('client_secret', !this.credentialsOauth, !this.credentialsOauth)
+      entityForm.setDisabled('oauth_signin_button', !this.credentialsOauth, !this.credentialsOauth)
     });
     // preview service_account_credentials
     entityForm.formGroup.controls['service_account_credentials-GOOGLE_CLOUD_STORAGE'].valueChanges.subscribe((value)=>{
@@ -1450,6 +1423,36 @@ export class CloudCredentialsFormComponent {
       })
   }
 
+  logInToProvider() {
+    window.open(this.oauthURL+ "?origin=" + encodeURIComponent(window.location.toString()), "_blank", "width=640,height=480");
+    const controls = this.entityForm.formGroup.controls;
+    const selectedProvider = this.selectedProvider;
+    const dialogService = this.dialog;
+    const getOnedriveList = this.getOnedriveList.bind(this);
+
+    window.addEventListener("message", doAuth, false);
+
+    function doAuth(message) {
+      if (message.data.oauth_portal) {
+        if (message.data.error) {
+          dialogService.errorReport(T('Error'), message.data.error);
+        } else {
+          for (const prop in message.data.result) {
+            let targetProp = prop;
+            if (prop != 'client_id' && prop != 'client_secret') {
+              targetProp += '-' + selectedProvider;
+            }
+            controls[targetProp].setValue(message.data.result[prop]);
+          }
+        }
+        if (selectedProvider === 'ONEDRIVE') {
+          getOnedriveList(message.data);
+        }
+      }
+      window.removeEventListener("message", doAuth);
+    }
+  }
+
   async makeNewKeyPair(value, submitting?: boolean) {
     await this.replicationService.genSSHKeypair().then(
       async (res) => {
@@ -1525,6 +1528,7 @@ export class CloudCredentialsFormComponent {
   }
 
   async customSubmit(value) {
+    delete value['oauth_signin_button'];
     if (value['private_key-SFTP'] === 'NEW') {
       this.makeNewKeyPair(value, true);
     } else {
