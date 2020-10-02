@@ -639,6 +639,8 @@ export class CloudsyncFormComponent {
                     this.loader.close();
                   } else {
                     entityForm.loader.close();
+                    entityForm.loaderOpen = false;
+                    entityForm.keepLoaderOpen = false;
                   }
                   this.bucket_field.options = [{label: '----------', value: ''}];
                   if (res) {
@@ -654,6 +656,8 @@ export class CloudsyncFormComponent {
                     this.loader.close();
                   } else {
                     entityForm.loader.close();
+                    entityForm.loaderOpen = false;
+                    entityForm.keepLoaderOpen = false;
                   }
                   this.setDisabled('bucket', true, true);
                   this.setDisabled('bucket_input', false, false);
