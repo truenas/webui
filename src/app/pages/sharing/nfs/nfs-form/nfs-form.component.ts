@@ -40,6 +40,7 @@ export class NFSFormComponent {
       config: [{
         type: 'list',
         name : 'paths',
+        width: '100%',
         templateListField: [{
           name: 'path',
           placeholder: helptext_sharing_nfs.placeholder_path,
