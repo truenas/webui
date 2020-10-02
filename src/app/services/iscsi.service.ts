@@ -2,7 +2,7 @@
 
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable, Subject, Subscription} from 'rxjs/Rx';
+import {Observable, Subject, Subscription} from 'rxjs';
 
 import {EntityUtils} from '../pages/common/entity/utils'
 import {RestService} from './rest.service';
