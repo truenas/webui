@@ -22,6 +22,7 @@ export class AppLoaderService {
   public close() {
     if (this.dialogRef) {
       this.dialogRef.close();
+      this.dialogRef = undefined;
     }
   }
 
