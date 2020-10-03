@@ -1117,7 +1117,7 @@ export class ReplicationFormComponent {
             }
 
             for (const prop in this.queryRes) {
-                if (prop !== 'id' && prop !== 'state' && prop !== 'embed' && prop !== 'job' && prop !== 'dedup' && data[prop] === undefined ) {
+                if (prop !== 'id' && prop !== 'state' && prop !== 'embed' && prop !== 'job' && prop !== 'dedup' && prop !== 'large_block' && data[prop] === undefined ) {
                     if (prop === 'only_matching_schedule' || prop === 'hold_pending_snapshots') {
                         data[prop] = false;
                     } else {
