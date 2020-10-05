@@ -678,3 +678,13 @@ mat-card.mat-card .mat-list-base{
   height: 16px;
   padding-left: 8px;
 }
+
+/* Expansion Panel Fixes */
+.mat-expansion-panel-header span.mat-content{
+  vertical-align: middle !important;
+  padding-top: 4px;
+}
+
+.mat-expansion-panel-header span.mat-expansion-indicator{
+  margin-top: -4px;
+}

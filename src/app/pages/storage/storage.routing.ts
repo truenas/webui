@@ -39,10 +39,6 @@ export const routes: Routes = [
     path: '',
     data: { title: 'Storage' },
     children: [
-      /*{
-        path: '',
-        component: EntityDashboardComponent,
-      },*/
       {
         path: '',
         data: { title: 'Storage', breadcrumb: 'Storage', icon: 'view_stream' },
