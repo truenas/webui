@@ -1,0 +1,122 @@
+<!-- START OF CONTROLS SECTION -->
+<div *ngIf="entity && conf" fxFlex class="entity-table-controls" fxLayout="row wrap" fxLayoutAlignGap="16px" fxLayoutAlign="end center">
+  
+  <!-- SEARCH -->
+  <div class="form-element" id="row-filter">
+    <mat-form-field floatPlaceholder="auto">
+      <span matPrefix><mat-icon>search</mat-icon></span>
+      <input matInput #filter placeholder="{{'Search' | translate}} {{entity.title | translate}}"
+        class="mat-input-element"
+        ix-auto
+        ix-auto-type="input"
+        ix-auto-identifier="Filter {{entity.conf.title}}">
+    </mat-form-field>
+  </div>
+  <!-- END SEARCH -->
+
+  <!-- START COLUMN FILTER -->
+  <div *ngIf="entity.columnFilter && entity.allColumns && entity.allColumns.length > 0">
+    <button mat-button [matMenuTriggerFor]="menu" color="default" class="menu-toggle"
+      ix-auto
+      ix-auto-type="button"
+      ix-auto-identifier="{{conf.title}}_COLUMNS">
+      <span>{{"Columns" | translate}} <mat-icon class="menu-caret">arrow_drop_down</mat-icon> </span>
+    </button>
+    <mat-menu #menu="matMenu" multiple overlapTrigger="false">
+
+      <!-- SELECT ALL -->
+      <div (click)="$event.stopPropagation()">
+        <button mat-menu-item (click)="entity.checkAll()" id="check-all"
+          ix-auto
+          ix-auto-type="action"
+          ix-auto-identifier="COLUMNS_SELECT">
+          <span>
+            <mat-icon *ngIf="entity.checkLength()">check_circle</mat-icon>
+            <mat-icon *ngIf="!entity.checkLength()">remove</mat-icon>
+          </span>
+          <span *ngIf="!entity.checkLength()">{{"Select All" | translate}}</span>
+          <span *ngIf="entity.checkLength()">{{"Unselect All" | translate}}</span>
+        </button>
+      </div>
+
+      <!-- INDIVIDUAL COLUMNS-->
+      <div (click)="$event.stopPropagation();">
+        <button mat-menu-item *ngFor="let col of entity.allColumns" (click)="entity.toggle(col);" id="menu_option-{{col.name}}"
+          ix-auto
+          ix-auto-type="action"
+          ix-auto-identifier="COLUMNS_{{col.name}}">
+          <span>
+            <mat-icon *ngIf="entity.isChecked(col)">check_circle</mat-icon>
+            <mat-icon *ngIf="!entity.isChecked(col)">remove</mat-icon>
+          </span>
+          <span>{{col.name | translate}}</span>
+        </button>
+      </div>
+
+      <div (click)="$event.stopPropagation()">
+        <button mat-menu-item (click)="resetColViewToDefaults()" id="reset_col_view"
+          ix-auto
+          ix-auto-type="action"
+          ix-auto-identifier="COLUMNS_Reset to Defaults">
+          <span>
+            <mat-icon>undo</mat-icon>
+          </span>
+          <span>{{"Reset to Defaults" | translate}}</span>
+        </button>
+      </div>
+    </mat-menu>
+  </div>
+  <!-- END COLUMN FILTER -->
+
+    <!-- CREATE & IMPORT BUTTONS -->
+    <div class="entity-add-actions-wrapper">
+      <button 
+        style="height:37px; margin-top:-1px;" 
+        mat-button color="default" 
+        (click)="navigate('storage/pools/import')"
+        class="menu-toggle" 
+        matTooltip="{{ 'Import an existing pool.' | translate}}"
+        ix-auto
+        ix-auto-type="button"
+        ix-auto-identifier="{{entity.conf.title}}_ACTIONS">
+        Import
+      </button>
+    </div>
+
+    <div class="entity-add-actions-wrapper">
+      <button 
+        style="height:37px; margin-top:-1px;" 
+        mat-button color="primary" 
+        (click)="navigate('storage/pools/manager')"
+        class="menu-toggle" 
+        matTooltip="{{ 'Create a new pool.' | translate}}"
+        ix-auto
+        ix-auto-type="button"
+        ix-auto-identifier="{{entity.conf.title}}_ACTIONS">
+        Create
+      </button>
+    </div>
+
+    <!-- END CREATE & IMPORT BUTTONS -->
+
+
+<!-- END OF CONTROLS SECTION -->
+
+  <!-- COG -->
+  <div>
+    <button mat-icon-button [matMenuTriggerFor]="volumesListMenu">
+      <mat-icon>settings</mat-icon>
+    </button>
+  
+    <mat-menu #volumesListMenu>
+      <button mat-menu-item (click)="navigate('storage/snapshots')">Snapshots</button>
+      <button mat-menu-item (click)="navigate('storage/vmware-Snapshots')">VMware-Snapshots</button>
+      <button mat-menu-item (click)="navigate('storage/disks')">Disks</button>
+      <button mat-menu-item (click)="navigate('storage/import-disk')">Import Disk</button>
+      <button mat-menu-item (click)="navigate('storage/multipaths')">Multipaths</button>
+    </mat-menu>
+  </div>
+
+</div>
+
+

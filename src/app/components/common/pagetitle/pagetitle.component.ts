@@ -7,6 +7,12 @@ import { ViewControllerComponent } from 'app/core/components/viewcontroller/view
 import { ViewButtonComponent } from 'app/core/components/viewbutton/viewbutton.component';
 import globalHelptext from '../../../helptext/global-helptext';
 import { EntityTableAddActionsComponent } from 'app/pages/common/entity/entity-table/entity-table-add-actions.component';
+import { VolumesListControlsComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list-controls.component';
+
+export interface GlobalAction {
+  applyConfig(config:any);
+}
+
 
 @Component({
   selector: 'pagetitle',
@@ -54,12 +60,6 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
   // only execute when routechange
     this.router.events.filter(event => event instanceof NavigationEnd).subscribe((routeChange) => {
       this.destroyActions();
-      /*console.log("ROUTE CHANGED!");
-      if(this.globalActions){
-        this.viewcontroller.removeChild(this.globalActions);
-        console.log("ALL CLEANED UP");
-        this.globalActionsConfig = null;
-      }*/
 
       this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
       this.titleText = this.routeParts && this.routeParts[0].title ? this.routeParts[0].title : '';
@@ -107,7 +107,6 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
       if(this.hasInitialized){
         this.renderActions(this.globalActionsConfig);
       }
-
     });
   }
 
@@ -134,15 +133,18 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   renderActions(config: any){
+    if(this.globalActions){
+      this.destroyActions();
+    }
+
     this.viewcontroller.layoutContainer = {layout: 'row', align: 'end center', gap:'2px'};
     this.globalActions = this.viewcontroller.create(config.actionType);
-    // Detect Action Types
-    switch(config.actionType){
-      case EntityTableAddActionsComponent:
-        this.globalActions.applyConfig(config.actionConfig); // Passes entity object
-      break;
-      
+
+    if(!this.globalActions.applyConfig){
+      throw "Components must implement GlobalAction Interface"
     }
+
+    this.globalActions.applyConfig(config.actionConfig); // Passes entity object
     this.viewcontroller.addChild(this.globalActions);
   }
 

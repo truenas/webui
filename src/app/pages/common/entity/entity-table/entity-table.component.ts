@@ -69,6 +69,7 @@ export interface InputTableConf {
   afterDelete?();
   addComponent?();
   editComponent?();
+  actionsConfig?;
 }
 
 export interface EntityTableAction {
@@ -159,6 +160,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this._multiActionsIconsOnly = value;
   }
 
+  // Global Actions in Page Title 
+  protected actionsConfig: any;
+
   protected loaderOpen = false;
   public selected = [];
   public removeFromSelectedTotal = 0;
@@ -186,6 +190,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     protected erdService: ErdService, protected translate: TranslateService,
     public storageService: StorageService, protected job: JobService, protected prefService: PreferencesService,
     protected matDialog: MatDialog, private modalService: ModalService) {
+
       this.core.register({observerClass:this, eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
         this.multiActionsIconsOnly = evt.data.preferIconsOnly;
       });
@@ -196,6 +201,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           this.cleanup();
         }
       });
+
   }
 
   ngOnDestroy(){
@@ -213,6 +219,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.actionsConfig = { actionType: EntityTableAddActionsComponent, actionConfig: this };
     this.cardHeaderReady = this.conf.cardHeaderComponent ? false : true;
     this.setTableHeight();
     this.hasActions = this.conf.noActions === true ? false : true;
@@ -324,7 +331,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
 
     // Setup Actions in Page Title Component
-    this.core.emit({ name:"GlobalActions", data: { actionType: EntityTableAddActionsComponent, actionConfig: this}, sender: this});
+    this.core.emit({ name:"GlobalActions", data: this.actionsConfig, sender: this});
 
     if (this.filter) {
     observableFromEvent(this.filter.nativeElement, 'keyup').pipe(

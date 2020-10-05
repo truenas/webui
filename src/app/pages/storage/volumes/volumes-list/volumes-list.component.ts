@@ -1,10 +1,10 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, AfterViewChecked } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -27,6 +27,7 @@ import { EntityUtils } from '../../../common/entity/utils';
 import { combineLatest } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ModalService } from 'app/services/modal.service';
+import { VolumesListControlsComponent } from './volumes-list-controls.component';
 
 export interface ZfsPoolData {
   pool: string;
@@ -129,6 +130,7 @@ export class VolumesListTableConfig implements InputTableConf {
         this.tableData.push(this.dataHandler(child));
       }
     }
+
   }
 
   isCustActionVisible(actionname: string) {
@@ -1674,7 +1676,7 @@ export class VolumesListTableConfig implements InputTableConf {
   templateUrl: './volumes-list.component.html',
   providers: []
 })
-export class VolumesListComponent extends EntityTableComponent implements OnInit {
+export class VolumesListComponent extends EntityTableComponent implements OnInit, AfterViewChecked {
 
   title = T("Pools");
   zfsPoolRows: ZfsPoolData[] = [];
@@ -1709,13 +1711,20 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
     public sorter: StorageService, protected job: JobService, protected storage: StorageService, protected pref: PreferencesService, 
       protected messageService: MessageService, protected http:HttpClient, modalService: ModalService) {
+
     super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, sorter, job, pref, mdDialog, modalService);
+
+    this.actionsConfig = { actionType: VolumesListControlsComponent, actionConfig: this};
+    this.core.emit({name: "GlobalActions", data: this.actionsConfig, sender: this});
   }
 
   public repaintMe() {
     this.showDefaults = false;
     this.paintMe = false;
     this.ngOnInit();
+  }
+
+  ngAfterViewChecked(){
   }
 
   async ngOnInit(): Promise<void> {

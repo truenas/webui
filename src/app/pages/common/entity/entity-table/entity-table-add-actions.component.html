@@ -130,7 +130,7 @@
     <!-- OLD TEMPLATE END -->
     <!--</div>-->
 
-  <mat-spinner [diameter]='40' id="entity-spinner" *ngIf="(!entity.showDefaults && entity.showSpinner) || !entity.cardHeaderReady" #entityspinner>
+  <mat-spinner [diameter]='40' id="entity-spinner" *ngIf="(!entity.showDefaults && entity.showSpinner)" #entityspinner>
   </mat-spinner>
 
   <ng-container *ngIf="conf && conf.custActions">
