@@ -132,7 +132,7 @@ dataset_form_special_small_blocks_tooltip: T('This value represents the threshol
  equal to this value will be assigned to the special allocation class while greater blocks\
  will be assigned to the regular class. Valid values are zero or a power of two from 512B \
  up to 1M. The default size is 0 which means no small file blocks will be allocated in the\
- special class.  Before setting this property, a special class vdev must be added to the pool.\
+ special class. Before setting this property, a special class vdev must be added to the pool.\
  See zpool(8) for more details on the special allocation'),
 
 dataset_form_encryption: {
