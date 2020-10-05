@@ -69,6 +69,7 @@ export class IdmapFormComponent {
           name: 'dns_domain_name',
           placeholder: helptext.idmap.dns_domain_name.placeholder,
           tooltip: helptext.idmap.dns_domain_name.tooltip,
+          value: ''
         },
         {
           type:  'input' ,
