@@ -52,8 +52,19 @@ export class IdmapListComponent {
       if (item.certificate) {
         item.cert_name = item.certificate.cert_name;
       }
-      if (item.name === 'DS_TYPE_ACTIVEDIRECTORY' &&  item.idmap_backend === 'AUTORID') {
-        let obj = data.find(o => o.name === 'DS_TYPE_DEFAULT_DOMAIN');
+      switch(item.name) {
+        case 'DS_TYPE_ACTIVEDIRECTORY':
+          item.name = T('Active Directory - Primary Domain');
+          break;
+        case 'DS_TYPE_LDAP':
+          item.name = T('LDAP - Priamry Domain');
+          break;
+        case 'DS_TYPE_DEFAULT_DOMAIN':
+          item.name = T('SMB - Primary Domain');
+          break;
+      }
+      if (item.name === 'Active Directory - Priamry Domain' &&  item.idmap_backend === 'AUTORID') {
+        let obj = data.find(o => o.name === 'SMB - Primary Domain');
         obj.disableEdit = true;
       }
     })

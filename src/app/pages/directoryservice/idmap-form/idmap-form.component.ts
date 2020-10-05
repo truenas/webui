@@ -323,7 +323,6 @@ export class IdmapFormComponent {
     });
 
     entityEdit.formGroup.controls['name'].valueChanges.subscribe(value => {
-      console.log(value)
       if (value === 'DS_TYPE_DEFAULT_DOMAIN') {
         entityEdit.formGroup.controls['idmap_backend'].setValue('TDB');
         this.hideField('idmap_backend', true, entityEdit);
@@ -331,16 +330,6 @@ export class IdmapFormComponent {
         this.hideField('idmap_backend', false, entityEdit);
       }
     })
-    // Causes inf loop
-    // entityEdit.formGroup.controls['idmap_backend'].valueChanges.subscribe(value => {
-    //   if (value === 'AUTORID') {
-    //     console.log(value)
-    //     this.hideField('name', true, entityEdit);
-    //   } else if (_.find(this.fieldConfig, { name: 'idmap_backend' }).isHidden) {
-    //     console.log(value)
-    //     this.hideField('name', false, entityEdit);
-    //   }
-    // })
 
     this.idmapService.getBackendChoices().subscribe((res) => {
       this.backendChoices = res;
