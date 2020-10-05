@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { T } from '../../../translate-marker';
 import * as _ from 'lodash';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
@@ -276,6 +277,18 @@ export class IdmapFormComponent {
       data.certificate = data.certificate.id;
     }
     this.requiredDomains.includes(data.name) ? this.readOnly = true : this.readOnly = false;
+
+    switch(data.name) {
+      case 'DS_TYPE_ACTIVEDIRECTORY':
+        data.name = T('Active Directory - Primary Domain');
+        break;
+      case 'DS_TYPE_LDAP':
+        data.name = T('LDAP - Primary Domain');
+        break;
+      case 'DS_TYPE_DEFAULT_DOMAIN':
+        data.name = T('SMB - Primary Domain');
+        break;
+    }
     return data;
   }
 
@@ -355,6 +368,17 @@ export class IdmapFormComponent {
   }
 
   beforeSubmit(data) {
+    switch(data.name) {
+      case 'Active Directory - Primary Domain':
+        data.name = 'DS_TYPE_ACTIVEDIRECTORY';
+        break;
+      case 'LDAP - Primary Domain':
+        data.name = 'DS_TYPE_LDAP';
+        break;
+      case 'SMB - Primary Domain':
+        data.name = 'DS_TYPE_DEFAULT_DOMAIN';
+        break;
+    }
     if (data.dns_domain_name === null) {
       data.dns_domain_name = '';
     }
