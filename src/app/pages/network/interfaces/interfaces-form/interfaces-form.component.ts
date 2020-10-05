@@ -13,6 +13,7 @@ import { CoreService } from 'app/core/services/core.service';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import globalHelptext from '../../../../helptext/global-helptext';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import isCidr, * as ipCidr from 'is-cidr';
 
 @Component({
   selector : 'app-interfaces-form',
