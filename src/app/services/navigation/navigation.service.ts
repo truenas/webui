@@ -38,35 +38,13 @@ export class NavigationService {
       icon: 'dashboard',
       state: 'dashboard',
     },
-    // {
-    //   name: T('Storage'),
-    //   type: 'link',
-    //   tooltip: T('Storage'),
-    //   icon: 'dns',
-    //   state: 'storage',
-    // },
     {
       name: T('Storage'),
-      type: 'slideOut',
+      type: 'link',
       tooltip: T('Storage'),
       icon: 'dns',
       state: 'storage',
-      sub: [
-        { name: T('Pools'), state: 'pools' },
-        { name: T('Snapshots'), state: 'snapshots' },
-        { name: T('VMware-Snapshots'), state: 'vmware-Snapshots' },
-        { name: T('Disks'), state: 'disks' },
-        { name: T('Import Disk'), state: 'import-disk'},
-        { name: T('Multipaths'), state: 'multipaths', disabled: false},
-      ]
     },
-    // {
-    //   name: T('Shares'),
-    //   type: 'link',
-    //   tooltip: T('Shares'),
-    //   icon: 'folder_shared',
-    //   state: 'sharing',
-    // },
     {
       name: T('Shares'),
       type: 'slideOut',
