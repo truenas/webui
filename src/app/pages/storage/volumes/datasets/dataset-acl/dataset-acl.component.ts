@@ -618,7 +618,8 @@ export class DatasetAclComponent implements OnDestroy {
       }
     }
     this.loader.close();
-    if (this.aclIsTrivial && !this.isTrivialMessageSent) {
+    this.dialogService.closeAllDialogs()
+    if (this.aclIsTrivial && !this.isTrivialMessageSent && !this.homeShare) {
       this.showChoiceDialog();
     }
   }
