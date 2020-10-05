@@ -363,10 +363,6 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   afterInit(entityEdit: any) {
-    if (this.homeShare) {
-      entityEdit.formGroup.controls['default_acl_choices'].setValue('HOME');
-    }
-
     this.entityForm = entityEdit;
     this.recursive = entityEdit.formGroup.controls['recursive'];
     this.recursive_subscription = this.recursive.valueChanges.subscribe((value) => {
@@ -621,7 +617,7 @@ export class DatasetAclComponent implements OnDestroy {
       }
     }
     this.loader.close();
-    if (this.aclIsTrivial && !this.isTrivialMessageSent) {
+    if (this.aclIsTrivial && !this.isTrivialMessageSent && !this.homeShare) {
       this.showChoiceDialog();
     }
   }
