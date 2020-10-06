@@ -1,5 +1,24 @@
+p-treetabletoggler {
+  position: relative;
+  top: 1px;
+  margin-right: 6px;
+}
+
 .icons {
     font-size: 24px; 
+}
+
+/* Lock Icons */
+span.icons .mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  position: relative;
+  top: 2px;
+}
+
+span.icons .mat-icon[svgIcon="anti-lock"] {
+  top: 4px;
 }
 
 .group-menu-header{
@@ -19,3 +38,4 @@
   background-color: var(--fg2);
   opacity: 0.35;
 }
+

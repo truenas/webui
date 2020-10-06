@@ -580,6 +580,7 @@ table.mat-table {
   background-color: var(--bg2) !important;
 }
 
+thead.ui-treetable-thead th,
 .mat-table thead th{
   background-color: var(--contrast-darker);
   background-color: rgba(0,0,0,0.1);
@@ -587,12 +588,19 @@ table.mat-table {
   vertical-align: middle;
 }
 
+.ui-treetable tr,
 tr.mat-header-row,
 .mat-table thead tr{
   max-height: 48px;
   height: 48px;
 }
 
+.ui-treetable tr{
+  border: unset;
+  border-bottom: solid 1px var(--lines);
+}
+
+.ui-treetable tr,
 .mat-row, 
 .mat-header-row, 
 .mat-footer-row, 
@@ -618,12 +626,22 @@ td.mat-cell .mat-icon{
   top: calc(50% - 12px);
 }
 
+.ui-treetable tr:hover,
 .mat-row:hover,
 tr.mat-row:hover {
-  background: rgba(0,0,0,0.1);
+  background: rgba(0,0,0,0.1) !important;
   cursor: pointer;
-
 }
+
+/* TreeTable Specific Rules */
+.ui-treetable tr > td:nth-child(1) {
+  padding-left: 16px;
+}
+
+thead.ui-treetable-thead tr{
+  border-top: solid 1px var(--lines);
+}
+
 /* Material Lists */
 .mat-list-item{
   border-bottom: solid 1px var(--lines) !important;
@@ -687,4 +705,14 @@ mat-card.mat-card .mat-list-base{
 
 .mat-expansion-panel-header span.mat-expansion-indicator{
   margin-top: -4px;
+  position: relative;
+  right: 13px;
+}
+
+.mat-expansion-panel.no-padding .mat-expansion-panel-body{
+  padding: 0;
+}
+
+.mat-expansion-panel.no-padding .mat-expansion-panel-body .ui-treetable-thead>tr>th:nth-child(1){
+  padding-left: 18px;
 }
