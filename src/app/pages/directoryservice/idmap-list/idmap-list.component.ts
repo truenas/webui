@@ -56,17 +56,7 @@ export class IdmapListComponent {
         let obj = data.find(o => o.name === 'DS_TYPE_DEFAULT_DOMAIN');
         obj.disableEdit = true;
       }
-      switch(item.name) {
-        case 'DS_TYPE_ACTIVEDIRECTORY':
-          item.name = T('Active Directory - Primary Domain');
-          break;
-        case 'DS_TYPE_LDAP':
-          item.name = T('LDAP - Primary Domain');
-          break;
-        case 'DS_TYPE_DEFAULT_DOMAIN':
-          item.name = T('SMB - Primary Domain');
-          break;
-      }
+      item.name = helptext.idmap.name.options.find(o => o.value === item.name).label;
     })
     return data;
   }
@@ -80,7 +70,7 @@ export class IdmapListComponent {
       label: T('Add'),
       onClick: () => {
         this.idmapService.getADStatus().subscribe((res) => {
-          if (res.enable) {
+          if (!res.enable) {
             this.router.navigate(['directoryservice', 'idmap', 'add'])
           } else {
             this.dialogService.confirm(helptext.idmap.enable_ad_dialog.title, helptext.idmap.enable_ad_dialog.message, 

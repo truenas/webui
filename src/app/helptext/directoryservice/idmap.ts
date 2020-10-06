@@ -10,6 +10,16 @@ export default {
     name: {
         placeholder: T('Name'),
         tooltip: T('Enter the pre-Windows 2000 domain name.'),
+        options: [
+            { label: 'Active Directory - Primary Domain', value: 'DS_TYPE_ACTIVEDIRECTORY'},
+            { label: 'SMB - Primary Domain', value: 'DS_TYPE_DEFAULT_DOMAIN'},
+            { label: 'LDAP - Primary Domain', value: 'DS_TYPE_LDAP'},
+            { label: 'Custom Value', value: 'custom'}
+        ]
+    },
+    custom_name: {
+        placeholder: T('Custom Name'),
+        tooltip: T('Enter the pre-Windows 2000 domain name.')
     },
     dns_domain_name: {
         placeholder: T('DNS Domain Name'),
