@@ -70,7 +70,7 @@ export class IdmapListComponent {
       label: T('Add'),
       onClick: () => {
         this.idmapService.getADStatus().subscribe((res) => {
-          if (!res.enable) {
+          if (res.enable) {
             this.router.navigate(['directoryservice', 'idmap', 'add'])
           } else {
             this.dialogService.confirm(helptext.idmap.enable_ad_dialog.title, helptext.idmap.enable_ad_dialog.message, 
