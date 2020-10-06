@@ -103,6 +103,17 @@ export class SshKeypairsFormComponent {
             })
         }
 
+    isCustActionDisabled(actionId: string) {
+        if (this.entityForm.formGroup.controls['name'].value) {
+            if (actionId === 'download_private') {
+                return !this.entityForm.formGroup.controls['private_key'].value;
+            } else if (actionId === 'download_public') {
+                return !this.entityForm.formGroup.controls['public_key'].value;
+            }
+        }
+        return true;
+    }
+
     preInit() {
         if (this.rowNum) {
             this.queryCallOption = [["id", "=", this.rowNum]];

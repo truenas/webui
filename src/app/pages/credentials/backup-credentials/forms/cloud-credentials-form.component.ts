@@ -1240,15 +1240,12 @@ export class CloudCredentialsFormComponent {
         this.verifyCredentials(value);
         }
       }
+    }, {
+      id: 'customSave',
+      name: T('Save'),
+      buttonType: 'submit',
+      buttonColor: 'default'
     }
-    // , {
-    //   id: 'customSave',
-    //   name: T('Save'),
-    //   buttonType: 'submit',
-    //   function: () => {
-    //     console.log('submit')
-    //   }
-    // }
 
   ]
 
@@ -1297,7 +1294,7 @@ export class CloudCredentialsFormComponent {
   }
 
   isCustActionDisabled(actionId: string) {
-    if (actionId === 'validCredential') {
+    if (actionId === 'validCredential' || actionId === 'customSave') {
       return this.entityForm.formGroup.invalid;
     }
     return false;
