@@ -7,6 +7,7 @@ import { SshConnectionsFormComponent } from './forms/ssh-connections-form.compon
 import { SshKeypairsFormComponent } from './forms/ssh-keypairs-form.component';
 import { CloudCredentialsFormComponent } from './forms/cloud-credentials-form.component';
 import { Subscription } from 'rxjs';
+import { T } from '../../../translate-marker';
 
 @Component({
   selector: 'app-backup-credentials',
@@ -49,8 +50,8 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
           queryCall: 'cloudsync.credentials.query',
           deleteCall: 'cloudsync.credentials.delete',
           columns: [
-            { name: 'Name', prop: 'name' },
-            { name: 'Provider', prop: 'provider'}
+            { name: T('Name'), prop: 'name' },
+            { name: T('Provider'), prop: 'provider'}
           ],
           hideHeader: false,
           parent: this,
@@ -69,9 +70,9 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
           deleteCall: 'keychaincredential.delete',
           dataSourceHelper: this.sshConnectionsDataSourceHelper,
           columns: [
-            { name: 'Name', prop: 'name' },
+            { name: T('Name'), prop: 'name' },
           ],
-          hideHeader: false,
+          hideHeader: true,
           parent: this,
           add: function(row) {
             this.parent.modalService.open('slide-in-form', this.parent.sshConnections);
@@ -89,9 +90,9 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
           getActions: this.sshKeyPairActions.bind(this),
           dataSourceHelper: this.sshKeyPairsDataSourceHelper,
           columns: [
-            { name: 'Name', prop: 'name' },
+            { name: T('Name'), prop: 'name' },
           ],
-          hideHeader: false,
+          hideHeader: true,
           parent: this,
           add: function(row) {
             this.parent.modalService.open('slide-in-form', this.parent.sshKeypairs);

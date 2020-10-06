@@ -1209,7 +1209,7 @@ export class CloudCredentialsFormComponent {
     {
       id : 'validCredential',
       name : T('Verify Credential'),
-      buttonColor: 'primary',
+      buttonColor: 'default',
       function : () => {
         this.entityForm.loader.open();
         this.entityForm.error = '';
@@ -1244,7 +1244,7 @@ export class CloudCredentialsFormComponent {
       id: 'customSave',
       name: T('Save'),
       buttonType: 'submit',
-      buttonColor: 'default'
+      buttonColor: 'primary'
     }
 
   ]
