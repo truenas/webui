@@ -332,7 +332,7 @@ def the_list_of_disks_should_appear_in_alphabetical_order_starting_with_ada0_ada
 @then('Starting with da0, click >, click wipe, check confirm, and click continue. Repeat steps for da1-da15 using the default quick wipe setting')
 def starting_with_da0_click_arrow_click_wipe_check_confirm_and_click_continue_repeat_steps_for_da1_da15_using_the_default_quick_wipe_setting(driver):
     """Starting with da0, click >, click wipe, check confirm, and click continue. Repeat steps for da1-da15 using the default quick wipe setting."""
-    for num in range(16):
+    for num in range(14):
         assert wait_on_element(driver, 0.5, 30, f'//a[@ix-auto="expander__da{num}"]')
         driver.find_element_by_xpath(f'//a[@ix-auto="expander__da{num}"]').click()
         driver.find_element_by_xpath(f'//button[@ix-auto="button__WIPE_da{num}_da{num}"]').click()
