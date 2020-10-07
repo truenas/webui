@@ -378,7 +378,7 @@ export class IdmapFormComponent {
       data.name = data.custom_name;
       delete data.custom_name;
     }
-    console.log(data)
+
     let options = {}
     for (let item in data) {
       if (this.optionsFields.includes(item)) {
