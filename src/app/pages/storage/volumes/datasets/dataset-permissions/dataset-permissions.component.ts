@@ -23,7 +23,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
   protected recursive_subscription: any;
   public formGroup: FormGroup;
   public error: string;
-  protected route_success: string[] = ['storage', 'pools'];
+  protected route_success: string[] = ['storage'];
   protected isEntity = true;
   protected dialogRef: any;
   private entityForm: any;
@@ -143,12 +143,12 @@ export class DatasetPermissionsComponent implements OnDestroy {
         this.ws.call('filesystem.getacl', [this.datasetPath]).subscribe(res => {
           if(res.acltype === 'POSIX1E') {
             this.router.navigate(new Array('/').concat([
-              "storage", "pools", "id", this.datasetId.split('/')[0], "dataset",
+              "storage", "id", this.datasetId.split('/')[0], "dataset",
               "posix-acl", this.datasetId
             ]));                    
           } else {
             this.router.navigate(new Array('/').concat([
-              "storage", "pools", "id", this.datasetId.split('/')[0], "dataset",
+              "storage", "id", this.datasetId.split('/')[0], "dataset",
               "acl", this.datasetId
             ]));
           }
