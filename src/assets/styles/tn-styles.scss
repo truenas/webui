@@ -858,6 +858,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     background: var(--btn-default-bg);
   }
 
+  .mat-button[color="default"]{
+    @include variable(color, --fg2, $fg2, !important);
+  }
+
  .mat-button.mat-basic, .mat-button.mat-primary {
   }
 

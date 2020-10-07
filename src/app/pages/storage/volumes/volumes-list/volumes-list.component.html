@@ -1,7 +1,7 @@
 
 <div *ngIf="zfsPoolRows.length > 0">
   <mat-accordion [multi]="true">
-    <mat-expansion-panel class="no-padding" *ngFor="let row of zfsPoolRows" [expanded]="row.status === 'LOCKED' ? false : true" id="expansionpanel_zfs_{{row.name}}"
+    <mat-expansion-panel class="no-padding" *ngFor="let row of zfsPoolRows; let pool = index;" [expanded]="row.status === 'LOCKED' ? false : true" id="expansionpanel_zfs_{{row.name}}"
       ix-auto ix-auto-type="expansion-panel" ix-auto-identifier="{{row.name}}">
       <mat-expansion-panel-header>
         <mat-panel-title>

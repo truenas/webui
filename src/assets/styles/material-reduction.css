@@ -227,7 +227,8 @@ input.mat-input-element::placeholder {
 .form-element input[type = "number"],
 .form-element textarea,
 .form-element select{
-  background-color: var(--bg1);
+  /*background-color: var(--bg1);*/
+  background-color: rgba(0,0,0,0.05);
   color: var(--fg1);
   border: solid 1px var(--lines);
   padding: 8px;

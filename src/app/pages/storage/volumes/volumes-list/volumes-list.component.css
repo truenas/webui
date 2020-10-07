@@ -47,11 +47,7 @@
     position: absolute;
     top: 8px;
     right: 29px;
-    z-index: 12;
-}
-
-.icon-row {
-    /*margin: -5px -5px 12px 0;*/
+    z-index: 123;
 }
 
 .green-icon {

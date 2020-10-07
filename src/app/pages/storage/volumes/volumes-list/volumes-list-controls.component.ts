@@ -1,11 +1,13 @@
 import { Component, ElementRef, Input, ViewChild, OnInit, AfterViewInit, OnDestroy,} from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+//import { Subscription } from 'rxjs';
+import { fromEvent as observableFromEvent, Observable, of, Subscription } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, switchMap, take, tap } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 
 import { RestService } from '../../../../services/rest.service';
 import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
-//import { VolumesListComponent } from './volumes-list.component';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 
 @Component({
   selector : 'app-volumes-list-controls',
@@ -27,7 +29,7 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
     return this.actions.length + addAction;
   }
 
-  constructor(protected translate: TranslateService, public router:Router) { }
+  constructor(protected translate: TranslateService, public router: Router, public core: CoreService) { }
 
   ngOnInit() { 
   }
@@ -37,7 +39,19 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
 
   ngAfterViewInit(){
     if (this.filter) {
-      this.entity.filter = this.filter;
+      //this.entity.filter = this.filter;
+
+      observableFromEvent(this.filter.nativeElement, 'keyup').pipe(
+        debounceTime(150),
+        distinctUntilChanged(),).subscribe((evt) => {
+          // Code goes here
+  
+          const filterValue: string = this.filter.nativeElement.value;
+          if (filterValue.length > 0) {
+            this.filterDatasets(filterValue);
+          }
+        });
+
     }
   }
 
@@ -53,6 +67,15 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
 
   navigate(path: string){
     this.router.navigate(path.split('/'));
+  }
+
+  filterDatasets(name: string){
+    console.log(name);
+    this.core.emit({ 
+      name:"TreeTableGlobalFilter", 
+      data:{ column: "dataset", value: name } , 
+      sender: this 
+    });
   }
 
 }
