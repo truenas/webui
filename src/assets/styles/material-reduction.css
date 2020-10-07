@@ -227,8 +227,7 @@ input.mat-input-element::placeholder {
 .form-element input[type = "number"],
 .form-element textarea,
 .form-element select{
-  /*background-color: var(--bg1);*/
-  background-color: rgba(0,0,0,0.05);
+  background-color: var(--bg1);
   color: var(--fg1);
   border: solid 1px var(--lines);
   padding: 8px;
@@ -674,6 +673,21 @@ mat-card.mat-card .mat-list-base{
 .page-title > div{
   min-height: 40px;
 }
+
+.page-title .form-element.form-combobox .mat-form-field,
+.page-title .form-element.form-ip-netmask .mat-form-field,
+.page-title .form-element.form-combobox .mat-menu-trigger,
+.page-title .form-element .mat-form-field-wrapper,
+.page-title .form-element input[type = "password"],
+.page-title .form-element input[type = "email"],
+.page-title .form-element input[type = "text"],
+.page-title .form-element input[type = "number"],
+.page-title .form-element textarea,
+.page-title .form-element select{
+  background-color: rgba(0,0,0,0.1);
+}
+
+
 
 .entity-table-controls > div{
   margin-left: 8px;
