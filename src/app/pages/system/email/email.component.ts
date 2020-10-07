@@ -21,6 +21,7 @@ export class EmailComponent implements OnDestroy {
   updateCall = 'mail.update';
   public entityEdit: any;
   public rootEmail: string;
+  private credentialsOauth = false;
   customSubmit = this.saveConfigSubmit;
   public custActions: Array < any > = [{
     id: 'send_mail',
@@ -125,12 +126,6 @@ export class EmailComponent implements OnDestroy {
       label: true,
       width: '49%',
       config: [
-        // {
-        //   type : 'checkbox',
-        //   name : 'smtp',
-        //   placeholder : helptext_system_email.smtp.placeholder,
-        //   tooltip : helptext_system_email.smtp.tooltip,
-        // },
         {
           type : 'input',
           name : 'outgoingserver',
@@ -286,6 +281,13 @@ export class EmailComponent implements OnDestroy {
     return data;
   }
 
+  isCustActionVisible(actionname: string) {
+    if (actionname === 'do_oauth' && this.credentialsOauth === false) {
+      return false;
+    }
+    return true;
+  }
+
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     const payload = [];
@@ -300,6 +302,8 @@ export class EmailComponent implements OnDestroy {
 
     this.smtp_subscription = this.smtp.valueChanges.subscribe((value) => {
       this.pass.hideButton = !value;
+      console.log(this.pass)
+      this.credentialsOauth = !value;
     });
   }
 
