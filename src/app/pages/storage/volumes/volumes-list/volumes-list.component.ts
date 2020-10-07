@@ -982,7 +982,7 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Add Dataset"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat([
-              "storage", "pools", "id", row1.id.split('/')[0], "dataset",
+              "storage", "id", row1.id.split('/')[0], "dataset",
               "add", row1.id
             ]));
           }
@@ -993,7 +993,7 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Add Zvol"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat([
-              "storage", "pools", "id", row1.id.split('/')[0], "zvol", "add",
+              "storage", "id", row1.id.split('/')[0], "zvol", "add",
               row1.id
             ]));
           }
@@ -1005,7 +1005,7 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T("Edit Options"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
-            "storage", "pools", "id", row1.id.split('/')[0], "dataset",
+            "storage", "id", row1.id.split('/')[0], "dataset",
             "edit", row1.id
           ]));
         }
@@ -1020,18 +1020,18 @@ export class VolumesListTableConfig implements InputTableConf {
                 this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + rowData.id]).subscribe(acl_is_trivial => {
                   if (acl_is_trivial) {
                     this._router.navigate(new Array('/').concat([
-                      "storage", "pools", "permissions", row1.id
+                      "storage", "permissions", row1.id
                     ]));
                   } else {
                     this.ws.call('filesystem.getacl', [row1.mountpoint]).subscribe(res => {
                       if(res.acltype === 'POSIX1E') {
                         this._router.navigate(new Array('/').concat([
-                          "storage", "pools", "id", row1.id.split('/')[0], "dataset",
+                          "storage", "id", row1.id.split('/')[0], "dataset",
                           "posix-acl", row1.id
                         ]));                    
                       } else {
                         this._router.navigate(new Array('/').concat([
-                          "storage", "pools", "id", row1.id.split('/')[0], "dataset",
+                          "storage", "id", row1.id.split('/')[0], "dataset",
                           "acl", row1.id
                         ]));
                       }
@@ -1046,7 +1046,7 @@ export class VolumesListTableConfig implements InputTableConf {
               label: T('User Quotas'),
               onClick: (row1) => {
                 this._router.navigate(new Array('/').concat([
-                  "storage", "pools", "user-quotas", row1.id
+                  "storage", "user-quotas", row1.id
                 ]));
               }
             },
@@ -1056,7 +1056,7 @@ export class VolumesListTableConfig implements InputTableConf {
               label: T('Group Quotas'),
               onClick: (row1) => {
                 this._router.navigate(new Array('/').concat([
-                  "storage", "pools", "group-quotas", row1.id
+                  "storage", "group-quotas", row1.id
                 ]));
               }
             },
