@@ -47,7 +47,16 @@ export class SshKeypairsFormComponent {
                     tooltip: helptext.name_tooltip,
                     required: true,
                     validation: [Validators.required]
-                }, {
+                }
+            ]
+        },
+        {
+            name: helptext.fieldset_basic,
+            label: false,
+            class: 'basic',
+            width: '100%',
+            config: [
+                {
                     type: 'button',
                     name: 'remote_host_key_button',
                     customEventActionLabel: helptext.generate_key_button,
