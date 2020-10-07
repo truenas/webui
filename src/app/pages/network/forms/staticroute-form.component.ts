@@ -17,6 +17,7 @@ export class StaticRouteFormComponent {
 
   protected isEntity = true;
   protected isOneColumnForm = true;
+  public afterModalFormClosed;
 
   protected fieldSets: FieldSet[] = [
     {
