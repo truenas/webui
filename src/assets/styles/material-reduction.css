@@ -721,7 +721,7 @@ mat-card.mat-card .mat-list-base{
 .mat-expansion-panel-header span.mat-expansion-indicator{
   margin-top: -4px;
   position: relative;
-  right: 13px;
+  right: 4px;
 }
 
 .mat-expansion-panel.no-padding .mat-expansion-panel-body{
