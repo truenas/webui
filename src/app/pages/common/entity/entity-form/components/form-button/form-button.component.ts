@@ -9,11 +9,12 @@ import {Field} from '../../models/field.interface';
   selector : 'form-button',
   template : `
     <div 
-      class="dynamic-field form-button"
+      class="dynamic-field form-element"
       [formGroup]="group">
 
       <button 
         mat-button 
+        [class]="config.buttonClass ? config.buttonClass : 'form-button'"
         [color]="config.buttonColor ? config.buttonColor : default" type="button" 
         (click)="config.customEventMethod($event)" 
         [disabled]="config.disabled" 

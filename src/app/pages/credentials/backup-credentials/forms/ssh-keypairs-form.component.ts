@@ -48,11 +48,6 @@ export class SshKeypairsFormComponent {
                     required: true,
                     validation: [Validators.required]
                 }, {
-                    type: 'textarea',
-                    name: 'private_key',
-                    placeholder: helptext.private_key_placeholder,
-                    tooltip: helptext.private_key_tooltip,
-                }, {
                     type: 'button',
                     name: 'remote_host_key_button',
                     customEventActionLabel: helptext.generate_key_button,
@@ -67,6 +62,11 @@ export class SshKeypairsFormComponent {
                             value: 'manual',
                         }]
                     }],
+                }, {
+                    type: 'textarea',
+                    name: 'private_key',
+                    placeholder: helptext.private_key_placeholder,
+                    tooltip: helptext.private_key_tooltip,
                 }, {
                     type: 'textarea',
                     name: 'public_key',
