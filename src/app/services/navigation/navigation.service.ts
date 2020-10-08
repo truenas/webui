@@ -84,7 +84,7 @@ export class NavigationService {
     {
       name: T('Data Protection'),
       type: 'link',
-      tooltip: T('Dashboard'),
+      tooltip: T('Data Protection'),
       icon: 'security',
       state: 'tasks',
     },
