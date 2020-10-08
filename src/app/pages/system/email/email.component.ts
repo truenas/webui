@@ -29,6 +29,14 @@ export class EmailComponent implements OnDestroy {
     function: () => {
       if (this.rootEmail){
         const value = _.cloneDeep(this.entityEdit.formGroup.value);
+        if (value.client_id) {
+          delete value.client_id;
+          delete value.client_secret;
+          delete value.refresh_token;
+          value.smtp = false;
+
+        }
+
         const product_type = window.localStorage.getItem('product_type');
         const mailObj = {
           "subject" : "TrueNAS Test Message",
@@ -56,7 +64,7 @@ export class EmailComponent implements OnDestroy {
     }
   },
   {
-    id: 'do_oauth',
+    id: 'authenticate',
     name: 'Log in to provider',
     function: () => {
       const dialogService = this.dialogservice;
@@ -282,7 +290,7 @@ export class EmailComponent implements OnDestroy {
   }
 
   isCustActionVisible(actionname: string) {
-    if (actionname === 'do_oauth' && this.credentialsOauth === false) {
+    if (actionname === 'authenticate' && this.credentialsOauth === false) {
       return false;
     }
     return true;
@@ -302,7 +310,6 @@ export class EmailComponent implements OnDestroy {
 
     this.smtp_subscription = this.smtp.valueChanges.subscribe((value) => {
       this.pass.hideButton = !value;
-      console.log(this.pass)
       this.credentialsOauth = !value;
     });
   }
@@ -321,16 +328,17 @@ export class EmailComponent implements OnDestroy {
         client_id: emailConfig.client_id,
         client_secret: emailConfig.client_secret,
         refresh_token: emailConfig.refresh_token,
-        access_token: '',
-        token_uri: ''
+        // access_token: '',
+        // token_uri: ''
       };
       emailConfig.oauth = oauth;
+    } else {
+      emailConfig.oauth = null;
     }
     delete emailConfig.client_id;
     delete emailConfig.client_secret;
     delete emailConfig.refresh_token;
 
-    console.log(emailConfig)
     this.ws
       .call(this.updateCall, [emailConfig])
       .subscribe(
