@@ -224,7 +224,9 @@ export class SupportFormLicensedComponent {
     let payload = {};
     payload['name'] = entityEdit.name;
     payload['email'] = entityEdit.email;
-    payload['cc'] = entityEdit.cc;
+    if (entityEdit.cc) {
+      payload['cc'] = entityEdit.cc;
+    }
     payload['phone'] = entityEdit.phone;
     payload['category'] = entityEdit.TNCategory;
     payload['environment'] = entityEdit.environment;
