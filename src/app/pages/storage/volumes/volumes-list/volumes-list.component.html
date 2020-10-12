@@ -21,13 +21,17 @@
             <span [style.margin-right.px]="5">
               <i class="material-icons green-icon" *ngIf="row.status==='HEALTHY'">check_circle</i>
               <i class="material-icons orange-icon" *ngIf="row.status==='DEGRADED'">warning</i>
-              <i class="material-icons yellow-icon" *ngIf="row.status==='LOCKED'">lock</i>
+              <i [ngClass]="['material-icons', row.vol_encrypt===1 && !row.is_decrypted ? 'red-icon' : 'yellow-icon']" 
+                *ngIf="row.status==='LOCKED'">lock</i>
               <i class="material-icons blue-icon" *ngIf="row.status==='UNKNOWN'">help</i>
               <i class="material-icons red-icon" 
                 *ngIf="row.status!=='HEALTHY' && row.status!=='DEGRADED' && row.status!=='LOCKED' && row.status!=='UNKNOWN'" 
               >cancel</i>
             </span>
             {{row.status}}<span *ngIf="row.usedStr && row.availStr">{{row.usedStr}} {{"Used" | translate}} / {{row.availStr}} {{"Free" | translate}}</span>
+            <span *ngIf="row.vol_encrypt===1 && !row.is_decrypted" style="margin-left:5px">
+              {{ 'This geli-encrypted pool failed to decrypt.' | translate }}
+            </span>
           </mat-panel-description>
         </mat-expansion-panel-header>
         <div fxLayoutAlign="end start" class="icon-row">
@@ -42,7 +46,7 @@
             >
             <app-entity-table-actions [icon_name]="'lock_outline'" [entity]="actionEncryptedComponent" [row]="row"></app-entity-table-actions>
           </div>
-          <div *ngIf="row.vol_encrypt > 0 && !row.is_decrypted" 
+          <div *ngIf="row.vol_encrypt > 1 && !row.is_decrypted" 
               class="encryption_icon pool-icon" 
               title="Unlock" 
               name="unlock"
