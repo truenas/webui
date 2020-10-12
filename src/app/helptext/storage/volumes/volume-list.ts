@@ -86,5 +86,11 @@ pool_lock_warning_paratext_b: T("</i>.\
 permissions_edit_msg: T('Root dataset permissions cannot be edited.'),
 acl_edit_msg: T('Root dataset ACL cannot be edited.'),
 
-unlock_msg: T('Unlock the pool with either a passphrase or a recovery key.')
+unlock_msg: T('Unlock the pool with either a passphrase or a recovery key.'),
+
+geli_error: {
+    title: T('Error'),
+    message: T('This geli-encrypted pool failed to decrypt.'),
+    button: T('Close')
+}
 }

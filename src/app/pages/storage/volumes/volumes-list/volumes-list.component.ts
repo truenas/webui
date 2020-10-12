@@ -308,110 +308,116 @@ export class VolumesListTableConfig implements InputTableConf {
   }
 
   unlockAction(row1) {
-    const self = this;
-    this.storageService.poolUnlockServiceChoices(row1.id).pipe(
-      map(serviceChoices => {
-        return {
-          title: "Unlock " + row1.name,
-          fieldConfig: [
-            {
-              type: 'paragraph',
-              name: 'unlock_msg',
-              paraText: helptext.unlock_msg,
-            },
-            {
-              type : 'input',
-              inputType: 'password',
-              name : 'passphrase',
-              togglePw: true,
-              required: true,
-              placeholder: helptext.unlockDialog_password_placeholder,
-            },
-            {
-              type: 'upload',
-              message: self.messageService,
-              updater: self.key_file_updater,
-              parent: self,
-              hideButton: true, 
-              name: 'key',
-              required: true,
-              placeholder: helptext.unlockDialog_recovery_key_placeholder,
-              tooltip: helptext.unlockDialog_recovery_key_tooltip,
-            },
-            {
-              type: 'select',
-              name: 'services_restart',
-              placeholder: helptext.unlockDialog_services_placeholder,
-              tooltip: helptext.unlockDialog_services_tooltip,
-              multiple: true,
-              value: serviceChoices.map(choice => choice.value),
-              options: serviceChoices
-            }
-          ],
-          afterInit: function(entityDialog) {
-                self.message_subscription = self.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
-                  entityDialog.formGroup.controls['key'].setValue(message);
-                });
-                // these disabled booleans are here to prevent recursion errors, disabling only needs to happen once
-                let keyDisabled = false;
-                let passphraseDisabled = false;
-                entityDialog.formGroup.controls['passphrase'].valueChanges.subscribe((passphrase) => {
-                  if (!passphraseDisabled) {
-                    if (passphrase && passphrase !== '') {
-                      keyDisabled = true;
-                      entityDialog.setDisabled('key', true, true);
-                    } else {
-                      keyDisabled = false;
-                      entityDialog.setDisabled('key', false, false);
-                    }
-                  }
-                });
-                entityDialog.formGroup.controls['key'].valueChanges.subscribe((key) => {
-                  if (!keyDisabled) {
-                    if (key && !passphraseDisabled) {
-                      passphraseDisabled = true;
-                      entityDialog.setDisabled('passphrase', true, true);
-                    }
-                  }
-                });
-          },
-          saveButtonText: T("Unlock"),
-          customSubmit: function (entityDialog) {
-            let done = false;
-            const value = entityDialog.formValue;
-            const params = [row1.id, {passphrase: value.passphrase, services_restart: value.services_restart}]
-            let dialogRef = self.mdDialog.open(EntityJobComponent, {data: {"title":"Unlocking Pool"}, disableClose: true});
-            if(value.key) {
-              params[1]['recoverykey'] = true;
-              const formData: FormData = new FormData();
-              formData.append('data', JSON.stringify({
-                "method": "pool.unlock",
-                "params": params
-              }));
-              formData.append('file', self.subs.file);
-              dialogRef.componentInstance.wspost(self.subs.apiEndPoint, formData);
-            } else {
-              dialogRef.componentInstance.setCall('pool.unlock', params);
-              dialogRef.componentInstance.submit();
-            }
-            dialogRef.componentInstance.success.subscribe((res) => {
-              if (!done) {
-                dialogRef.close(false);
-                entityDialog.dialogRef.close(true);
-                self.parentVolumesListComponent.repaintMe();
-                self.dialogService.Info(T("Unlock"), row1.name + T(" has been unlocked."), '300px', "info", true);
-                done = true;
+    if (!row1.is_decrypted && row1.vol_encrypt === 1) {
+      this.dialogService.confirm(helptext.geli_error.title, helptext.geli_error.message, true,
+        helptext.geli_error.button,false,'','','','',true)
+    } else {
+      const self = this;
+      this.storageService.poolUnlockServiceChoices(row1.id).pipe(
+        map(serviceChoices => {
+          return {
+            title: "Unlock " + row1.name,
+            fieldConfig: [
+              {
+                type: 'paragraph',
+                name: 'unlock_msg',
+                paraText: helptext.unlock_msg,
+              },
+              {
+                type : 'input',
+                inputType: 'password',
+                name : 'passphrase',
+                togglePw: true,
+                required: true,
+                placeholder: helptext.unlockDialog_password_placeholder,
+              },
+              {
+                type: 'upload',
+                message: self.messageService,
+                updater: self.key_file_updater,
+                parent: self,
+                hideButton: true, 
+                name: 'key',
+                required: true,
+                placeholder: helptext.unlockDialog_recovery_key_placeholder,
+                tooltip: helptext.unlockDialog_recovery_key_tooltip,
+              },
+              {
+                type: 'select',
+                name: 'services_restart',
+                placeholder: helptext.unlockDialog_services_placeholder,
+                tooltip: helptext.unlockDialog_services_tooltip,
+                multiple: true,
+                value: serviceChoices.map(choice => choice.value),
+                options: serviceChoices
               }
-            });
-            dialogRef.componentInstance.failure.subscribe((res) => {
-              dialogRef.close(false);
-              new EntityUtils().handleWSError(self, res ,self.dialogService);
-            });
-          }
-        };
-      }),
-      switchMap(conf => this.dialogService.dialogForm(conf))
-    ).subscribe(() => {})
+            ],
+            afterInit: function(entityDialog) {
+                  self.message_subscription = self.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
+                    entityDialog.formGroup.controls['key'].setValue(message);
+                  });
+                  // these disabled booleans are here to prevent recursion errors, disabling only needs to happen once
+                  let keyDisabled = false;
+                  let passphraseDisabled = false;
+                  entityDialog.formGroup.controls['passphrase'].valueChanges.subscribe((passphrase) => {
+                    if (!passphraseDisabled) {
+                      if (passphrase && passphrase !== '') {
+                        keyDisabled = true;
+                        entityDialog.setDisabled('key', true, true);
+                      } else {
+                        keyDisabled = false;
+                        entityDialog.setDisabled('key', false, false);
+                      }
+                    }
+                  });
+                  entityDialog.formGroup.controls['key'].valueChanges.subscribe((key) => {
+                    if (!keyDisabled) {
+                      if (key && !passphraseDisabled) {
+                        passphraseDisabled = true;
+                        entityDialog.setDisabled('passphrase', true, true);
+                      }
+                    }
+                  });
+            },
+            saveButtonText: T("Unlock"),
+            customSubmit: function (entityDialog) {
+              let done = false;
+              const value = entityDialog.formValue;
+              const params = [row1.id, {passphrase: value.passphrase, services_restart: value.services_restart}]
+              let dialogRef = self.mdDialog.open(EntityJobComponent, {data: {"title":"Unlocking Pool"}, disableClose: true});
+              if(value.key) {
+                params[1]['recoverykey'] = true;
+                const formData: FormData = new FormData();
+                formData.append('data', JSON.stringify({
+                  "method": "pool.unlock",
+                  "params": params
+                }));
+                formData.append('file', self.subs.file);
+                dialogRef.componentInstance.wspost(self.subs.apiEndPoint, formData);
+              } else {
+                dialogRef.componentInstance.setCall('pool.unlock', params);
+                dialogRef.componentInstance.submit();
+              }
+              dialogRef.componentInstance.success.subscribe((res) => {
+                if (!done) {
+                  dialogRef.close(false);
+                  entityDialog.dialogRef.close(true);
+                  self.parentVolumesListComponent.repaintMe();
+                  self.dialogService.Info(T("Unlock"), row1.name + T(" has been unlocked."), '300px', "info", true);
+                  done = true;
+                }
+              });
+              dialogRef.componentInstance.failure.subscribe((res) => {
+                dialogRef.close(false);
+                new EntityUtils().handleWSError(self, res ,self.dialogService);
+              });
+            }
+          };
+        }),
+        switchMap(conf => this.dialogService.dialogForm(conf))
+      ).subscribe(() => {})
+    }
+
   }
 
   getPoolData(poolId: number) {
