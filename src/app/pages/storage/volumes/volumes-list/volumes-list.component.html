@@ -20,6 +20,7 @@
             <span *ngIf="row.encrypt > 0">
               {{'(Legacy Encryption)' | translate}}
             </span>
+
           </mat-panel-title>
           <mat-panel-description>
             {{row.status}}&nbsp;
@@ -30,7 +31,8 @@
               <i class="material-icons green-icon" *ngIf="row.healthy; else status;">check_circle</i>
               <ng-template #status>
                 <i class="material-icons orange-icon" *ngIf="row.status==='DEGRADED'">warning</i>
-                <i class="material-icons yellow-icon" *ngIf="row.status==='LOCKED'">lock</i>
+                <i class="material-icons" [class]="row.encrypt===1 && !row.is_decrypted ? 'red-icon' : 'yellow-icon'" 
+                  *ngIf="row.status==='LOCKED'">lock</i>
                 <i class="material-icons blue-icon" *ngIf="row.status==='FAULTED'">help</i>
                 <i class="material-icons red-icon" 
                   *ngIf="row.status!=='DEGRADED' && row.status!=='LOCKED' && row.status!=='FAULTED'"
@@ -42,6 +44,9 @@
               {{row.usedStr}} {{"Used" | translate}} 
               &nbsp;<span style="opacity:0.5;">|</span>&nbsp;
               {{row.availStr}} {{"Free" | translate}}
+            </span>
+            <span *ngIf="row.encrypt===1 && !row.is_decrypted">
+              {{ 'This geli-encrypted pool failed to decrypt.' | translate }}
             </span>
           </mat-panel-description>
         </mat-expansion-panel-header>
