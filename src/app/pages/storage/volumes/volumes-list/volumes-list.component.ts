@@ -290,7 +290,7 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Encryption Key/Passphrase"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat(
-              ["storage", "pools", "changekey", row1.id]));
+              ["storage", "changekey", row1.id]));
           }
         });
       }
@@ -300,7 +300,7 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T("Encryption Key"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
-            ["storage", "pools", "createkey", row1.id]));
+            ["storage", "createkey", row1.id]));
         }
       });
     }
@@ -311,7 +311,7 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T("Manage Recovery Key"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
-            ["storage", "pools", "addkey", row1.id]));
+            ["storage", "addkey", row1.id]));
         }
       });
 
@@ -319,7 +319,7 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T("Reset Keys"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
-            ["storage", "pools", "rekey", row1.id]));
+            ["storage", "rekey", row1.id]));
 
         }
       });
@@ -767,7 +767,7 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Add Vdevs"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat(
-              ["storage", "pools", "manager", row1.id]));
+              ["storage", "manager", row1.id]));
           }
         });
         actions.push({
@@ -837,8 +837,9 @@ export class VolumesListTableConfig implements InputTableConf {
           name: 'Status',
           label: T("Status"),
           onClick: (row1) => {
+            console.log(row1.id);
             this._router.navigate(new Array('/').concat(
-              ["storage", "pools", "status", row1.id]));
+              ["storage", "status", row1.id]));
           }
         });
         actions.push({

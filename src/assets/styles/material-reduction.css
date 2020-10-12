@@ -621,9 +621,16 @@ td.mat-footer-cell{
   position: relative;
 }
 
+td.mat-cell.tree-cell{
+  max-width: 300px;
+}
+
 td.mat-cell .mat-icon{
-  position: absolute;
   top: calc(50% - 12px);
+}
+
+td.mat-cell .mat-icon.expansion-trigger{
+  font-size: 24px;
 }
 
 .ui-treetable tr:hover,
@@ -730,4 +737,41 @@ mat-card.mat-card .mat-list-base{
 
 .mat-expansion-panel.no-padding .mat-expansion-panel-body .ui-treetable-thead>tr>th:nth-child(1){
   padding-left: 18px;
+}
+
+/* Entity Tree Table Styles */
+/* Pseudo Tables */
+.ix-table {
+  display: table;
+}
+
+.ix-tr {
+  display: table-row;
+}
+
+.ix-td {
+  display: table-cell;
+}
+.ix-th {
+  display: table-cell;
+}
+
+.ix-tree-invisible {
+  display: none;
+}
+
+.ix-tree-node .ix-td .mat-icon
+
+.ix-tree ul,
+.ix-tree li {
+  margin-top: 0;
+  margin-bottom: 0;
+  list-style-type: none;
+}
+
+.ix-tree-node { 
+}
+
+.ix-tree-node .ix-tree-node {
+  padding-left: 40px;
 }
