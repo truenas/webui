@@ -523,19 +523,22 @@ export class DatasetAclComponent implements OnDestroy {
     if (defaults) {
       res.acl = defaults;
     }
-    const user = await this.userService.getUserObject(res.uid);
-    if (user && user.pw_name) {
-      entityForm.formGroup.controls['uid'].setValue(user.pw_name);
-    } else {
-      entityForm.formGroup.controls['uid'].setValue(res.uid);
-      this.uid_fc.warnings = helptext.user_not_found;
-    }
-    const group = await this.userService.getGroupObject(res.gid);
-    if (group && group.gr_name) {
-      entityForm.formGroup.controls['gid'].setValue(group.gr_name);
-    } else {
-      entityForm.formGroup.controls['gid'].setValue(res.gid);
-      this.gid_fc.warnings = helptext.group_not_found;
+    // Don't check for user and group if this call comes from the Presets dialog
+    if (!defaults) {
+      const user = await this.userService.getUserObject(res.uid);
+      if (user && user.pw_name) {
+        entityForm.formGroup.controls['uid'].setValue(user.pw_name);
+      } else {
+        entityForm.formGroup.controls['uid'].setValue(res.uid);
+        this.uid_fc.warnings = helptext.user_not_found;
+      }
+      const group = await this.userService.getGroupObject(res.gid);
+      if (group && group.gr_name) {
+        entityForm.formGroup.controls['gid'].setValue(group.gr_name);
+      } else {
+        entityForm.formGroup.controls['gid'].setValue(res.gid);
+        this.gid_fc.warnings = helptext.group_not_found;
+      }
     }
     let data = res.acl;
     let acl;
