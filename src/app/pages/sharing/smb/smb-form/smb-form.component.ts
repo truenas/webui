@@ -208,12 +208,12 @@ export class SMBFormComponent {
       this.hostsDenyOnLoad !== entityForm.formGroup.controls['cifs_hostsdeny'].value) {
           this.restartService(entityForm, 'allowdeny');
     } else {
-      this.checkACLactions(entityForm);   
-      this.checkACLactions(entityForm)
+      this.checkACLactions(entityForm);
     }
   }
 
   restartService(entityForm, source: string) {
+    console.log('should i restart?')
     let message = source === 'timemachine' ? helptext_sharing_smb.restart_smb_dialog.message_time_machine :
       helptext_sharing_smb.restart_smb_dialog.message_allow_deny;
     this.dialog.confirm(helptext_sharing_smb.restart_smb_dialog.title, message,
