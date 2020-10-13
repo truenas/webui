@@ -1580,7 +1580,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   dialogRef.componentInstance.submit();
                   dialogRef.componentInstance.success.subscribe((res) => {
                     dialogRef.close();
-                    this.dialogService.Info(`Key for <i>${row.name}</i>`, res.result);
+                    this.dialogService.Info(`Key for ${row.name}`, res.result);
                     this.loader.open();
                     this.ws.call('core.download', ['pool.dataset.export_key', [row.name, true], fileName]).subscribe(res => {
                       this.loader.close();
