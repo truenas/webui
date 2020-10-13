@@ -50,7 +50,7 @@
                     </mat-error>
                   </mat-form-field>
                 </div>
-                <div *ngIf="isTwoFactor">
+                <div *ngIf="isTwoFactor" class="form-element">
                   <mat-form-field class="full-width">
                     <span matPrefix><mat-icon style="color:var(--fg1);position:relative;top:2px;">phonelink</mat-icon>&nbsp;&nbsp;</span>
                     <input matInput name="otp"
@@ -73,7 +73,10 @@
                   <div>
                     <span>{{"Set new root account password:" | translate}}</span>
                   </div>
-                  <div class="">
+                  <div class="form-element">
+                    <div class="label-container">
+                      <label class="label input-text">{{'Password' | translate}}</label>
+                    </div>
                     <mat-form-field class="full-width">
                       <input matInput type="password" id="password" formControlName="password" required placeholder="{{'Password' | translate}}">
                       <mat-error *ngIf="password.errors && (password.dirty || password.touched)">
@@ -81,7 +84,10 @@
                       </mat-error>
                     </mat-form-field>
                   </div>
-                  <div class="">
+                  <div class="form-element">
+                    <div class="label-container">
+                      <label class="label input-text">{{'Reenter Password' | translate}}</label>
+                    </div>
                     <mat-form-field class="full-width">
                       <input matInput type="password" name="password2" formControlName="password2" required placeholder="{{'Confirm Password' | translate}}">
                       <mat-error *ngIf="password2.errors && (password2.dirty || password2.touched)">
