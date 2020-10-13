@@ -1564,6 +1564,42 @@ export class VolumesListTableConfig implements InputTableConf {
             }
           });
         }
+        if (rowData.encrypted && rowData.key_loaded && rowData.encryption_root === rowData.name) {
+          const fileName = "dataset_" + rowData.name + "_key.txt";
+          const mimetype = 'text/plain';
+          const message = helptext.export_keys_message + rowData.name;
+          encryption_actions.push({
+            id: rowData.name,
+            name: T('Export Key'),
+            label: T('Export Key'),
+            onClick: (row) => {
+              this.dialogService.passwordConfirm(message).subscribe(export_keys => {
+                if (export_keys) {
+                  const dialogRef = this.mdDialog.open(EntityJobComponent, {data: {"title":T('Retrieving Key')}, disableClose: true});
+                  dialogRef.componentInstance.setCall('pool.dataset.export_key', [row.name]);
+                  dialogRef.componentInstance.submit();
+                  dialogRef.componentInstance.success.subscribe((res) => {
+                    dialogRef.close();
+                    this.dialogService.Info(`Key for <i>${row.name}</i>`, res.result);
+                    this.loader.open();
+                    this.ws.call('core.download', ['pool.dataset.export_key', [row.name, true], fileName]).subscribe(res => {
+                      this.loader.close();
+                      const url = res[1];
+                      this.storageService.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
+                        if(res !== null && res !== "") {
+                          this.storageService.downloadBlob(file, fileName);
+                        }
+                      });
+                    }, (e) => {
+                      this.loader.close();
+                      new EntityUtils().handleWSError(this, e, this.dialogService);
+                    });
+                  });  
+                }
+              })
+            }
+          });
+        }
       }
     }
     return encryption_actions;
