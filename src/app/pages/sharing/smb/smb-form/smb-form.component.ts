@@ -213,7 +213,6 @@ export class SMBFormComponent {
   }
 
   restartService(entityForm, source: string) {
-    console.log('should i restart?')
     let message = source === 'timemachine' ? helptext_sharing_smb.restart_smb_dialog.message_time_machine :
       helptext_sharing_smb.restart_smb_dialog.message_allow_deny;
     this.dialog.confirm(helptext_sharing_smb.restart_smb_dialog.title, message,
