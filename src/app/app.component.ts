@@ -207,8 +207,12 @@ export class AppComponent {
 
     // TRUECOMMAND
     this.matIconRegistry.addSvgIcon(
+      "truecommand_logo_blue",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand-logo-mark-full-color-rgb.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
       "truecommand_logo_white",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand_iconmark_white.svg")
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand-logo-mark-white-rgb.svg")
     );
     this.matIconRegistry.addSvgIcon(
       "truecommand_logo_red",
