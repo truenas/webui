@@ -470,10 +470,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
-  callGetFunction(skipResize=false) {
+  callGetFunction(skipActions=false) {
     this.getFunction.subscribe(
       (res) => {
-        this.handleData(res, skipResize);
+        this.handleData(res, skipActions);
       },
       (res) => {
         if (this.loaderOpen) {
@@ -490,7 +490,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   };
 
-  handleData(res, skipResize=false): any {
+  handleData(res, skipActions=false): any {
 
     if( typeof(res) === "undefined" || typeof(res.data) === "undefined" ) {
       res = {
@@ -519,7 +519,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.rows = this.generateRows(res);
-    this.storageService.tableSorter(this.rows, this.sortKey, 'asc')
+    if (!skipActions) {
+      this.storageService.tableSorter(this.rows, this.sortKey, 'asc')
+    }
     if (this.conf.dataHandler) {
       this.conf.dataHandler(this);
     }
@@ -536,7 +538,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if ((this.expandedRows == 0 || !this.asyncView || this.excuteDeletion || this.needRefreshTable) && this.filter.nativeElement.value === '') {
       this.excuteDeletion = false;
       this.needRefreshTable = false;
-      if (!skipResize && (this.needTableResize || (!this.needTableResize && this.expandedRows > 0))) {
+      if (!skipActions && (this.needTableResize || (!this.needTableResize && this.expandedRows > 0))) {
         this.updateTableHeightAfterDetailToggle();
         }
       this.needTableResize = true;

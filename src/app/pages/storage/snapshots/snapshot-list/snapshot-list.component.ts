@@ -219,7 +219,7 @@ export class SnapshotListComponent {
         this.queryCallOption[0][2] = (["name", "!^", res.basename]);
       }
       this.ws.call(this.queryCall, this.queryCallOption).subscribe((res1) => {
-        entityList.handleData(res1);
+        entityList.handleData(res1, true);
       },
       (err) => {
           new EntityUtils().handleWSError(this, res, entityList.dialogService);

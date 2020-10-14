@@ -170,7 +170,7 @@ export class DatasetQuotasGrouplistComponent implements OnDestroy{
   callGetFunction(entityList) {
     let filter = this.useFullFilter ? this.fullFilter : this.emptyFilter;
     this.ws.call('pool.dataset.get_quota', [this.pk, 'GROUP', filter]).subscribe(res => {
-      entityList.handleData(res);
+      entityList.handleData(res, true);
     })
   }
 
