@@ -16,9 +16,19 @@ import { CloudCredentialsFormComponent } from './backup-credentials/forms/cloud-
 import { SshKeypairsFormComponent } from './backup-credentials/forms/ssh-keypairs-form.component';
 import { CertificatesDashComponent } from './certificates-dash/certificates-dash.component';
 
+import { CertificateEditComponent } from './certificates-dash/forms/certificate-edit.component';
+import { CertificateAddComponent } from './certificates-dash/forms/certificate-add.component';
+import { CertificateAuthorityAddComponent } from './certificates-dash/forms/ca-add.component';
+import { CertificateAuthorityEditComponent } from './certificates-dash/forms/ca-edit.component';
+import { CertificateAcmeAddComponent } from './certificates-dash/forms/certificate-acme-add.component';
+import { CertificateAuthoritySignComponent } from './certificates-dash/forms/ca-sign.component';
+import { AcmednsFormComponent } from './certificates-dash/forms/acmedns-form.component'
+
 @NgModule({
   declarations: [ CredentialsComponent, BackupCredentialsComponent, SshConnectionsFormComponent, 
-    CloudCredentialsFormComponent, SshKeypairsFormComponent, CertificatesDashComponent ],
+    CloudCredentialsFormComponent, SshKeypairsFormComponent, CertificatesDashComponent, CertificateAcmeAddComponent,
+    CertificateAddComponent, CertificateAuthorityAddComponent, CertificateAuthorityEditComponent,
+    CertificateAuthoritySignComponent, CertificateAcmeAddComponent, CertificateEditComponent, AcmednsFormComponent ],
   imports: [
     CommonModule,
     MatCardModule,
