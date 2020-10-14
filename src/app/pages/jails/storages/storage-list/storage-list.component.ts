@@ -38,6 +38,7 @@ export class StorageListComponent {
       key_props: ['source', 'destination']
     },
   };
+  protected entityList: any;
 
   constructor(protected router: Router, protected aroute: ActivatedRoute, protected dialog: DialogService,
               protected loader: AppLoaderService, protected ws: WebSocketService,
@@ -58,34 +59,29 @@ export class StorageListComponent {
   }
 
   afterInit(entityTable) {
-    entityTable.doDelete = this.doDelete;
-    entityTable.jailId = this.jailId;
-    entityTable.dialog = this.dialog;
-    this.getData = entityTable.getData;
+    this.entityList = entityTable;
   }
 
   dataHandler(entityList: any) {
-    entityList.rows = [];
+    const data = entityList.rows;
+    const rows = [];
 
-    if (this.queryRes[0]) {
-      for(let i in this.queryRes[0]) {
-        if (this.queryRes[0][i].type && this.queryRes[0][i].type != "SYSTEM") {
-          let row = [];
-          row['source'] = this.queryRes[0][i].entry[0];
-          row['destination'] = this.queryRes[0][i].entry[1];
-          row['fstype'] = this.queryRes[0][i].entry[2];
-          row['fsoptions'] = this.queryRes[0][i].entry[3];
-          row['dump'] = this.queryRes[0][i].entry[4];
-          row['_pass'] = this.queryRes[0][i].entry[5];
+    if (data[0]) {
+      for(const i in data[0]) {
+        if (data[0][i].type && data[0][i].type != "SYSTEM") {
+          const row = [];
+          row['source'] = data[0][i].entry[0];
+          row['destination'] = data[0][i].entry[1];
+          row['fstype'] = data[0][i].entry[2];
+          row['fsoptions'] = data[0][i].entry[3];
+          row['dump'] = data[0][i].entry[4];
+          row['_pass'] = data[0][i].entry[5];
           row['id'] = i;
-          entityList.rows.push(row);
+          rows.push(row);
         }
       }
+      entityList.rows = rows;
     }
-  }
-
-  getData () {
-
   }
 
   doDelete(item) {
@@ -103,14 +99,14 @@ export class StorageListComponent {
         });
         this.dialog.confirm(T("Delete"), deleteMsg, false, T('Delete Mount Point')).subscribe((res) => {
           if (res) {
-            this.loader.open();
-            this.loaderOpen = true;
+            this.entityList.loader.open();
+            this.entityList.loaderOpen = true;
             let data = {};
             this.busy = this.ws.call('jail.fstab', [this.jailId, { "action": "REMOVE", "index": item.id}]).subscribe(
-              (res) => { this.getData() },
+              (res) => { this.entityList.getData() },
               (res) => {
                 new EntityUtils().handleWSError(this, res, this.dialog);
-                this.loader.close();
+                this.entityList.loader.close();
               }
             );
           }
@@ -140,5 +136,23 @@ export class StorageListComponent {
         this.router.navigate(new Array('/').concat(this.route_add));
       }
     })
+  }
+
+  getActions(row) {
+    return [
+      {
+        name: 'edit',
+        id: "edit",
+        icon: 'edit',
+        label: T("Edit"),
+        onClick: (rowinner) => { this.entityList.doEdit(rowinner.id); },
+      }, {
+        name: 'delete',
+        id: "delete",
+        icon: 'delete',
+        label: T("Delete"),
+        onClick: (rowinner) => { this.doDelete(rowinner); },
+      }
+    ]
   }
 }
