@@ -384,6 +384,10 @@ entity-form-list .list-action-block-wrapper .form-element select{
   top: -16px;
 }
 
+.form-element .mat-form-field-suffix{
+  top: -2px;
+}
+
 .form-element textarea{
   min-width: calc(100% - 24px);
   max-width: calc(100% - 24px);

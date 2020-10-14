@@ -89,10 +89,6 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     }
 
     expandNode(rootNode){
-      /*if(this.filter.value.length > 0){ 
-        return; 
-      }*/
-
       const value = rootNode.expanded ? rootNode.expanded = false : true;
       this.treeDataSource = this.treeTableService.editNode('expanded', value, rootNode.indexPath, this.treeDataSource);
 
