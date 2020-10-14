@@ -23,7 +23,8 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
   @Input() conf: EntityTreeTable;
   @Input() expandRootNodes = false;
   @Input() parentId?: string;
-
+  
+  filter: FilterValue = { column: 'name', value: ''};
   showActions = true;
 
   // Table Props
@@ -39,12 +40,10 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     protected core: CoreService) { }
 
     ngOnInit() {
-      this.displayedColumns = this.conf.columns.map(col => col.prop);
+      let cols = this.conf.columns.filter(col => !col.hidden || col.always_display == true);
+      this.displayedColumns = cols.map(col => col.prop);
 
       const mutated = Object.assign([], this.conf.tableData);
-      console.warn("NEW POOL");
-      console.warn(this.conf.tableData);
-      console.log(mutated);
       
       this.treeDataSource = this.conf.tableData;
       let flattened = this.treeTableService.buildTable(mutated);
@@ -60,12 +59,13 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit(){
       this.core.register({ observerClass: this, eventName: "TreeTableGlobalFilter" }).subscribe((evt: CoreEvent) => {
-        console.log(evt);
+        const value = evt.data.value ? evt.data.value : '';
+        this.filterNodes(evt.data.column, value);
       });
 
       if(this.parentId){
         this.core.register({ observerClass: this, eventName: "TreeTableFilter" + this.parentId }).subscribe((evt: CoreEvent) => {
-          console.log(evt);
+          //console.log(evt);
         });
       }
     }
@@ -89,17 +89,31 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     }
 
     expandNode(rootNode){
-      console.log(this.treeDataSource);
+      /*if(this.filter.value.length > 0){ 
+        return; 
+      }*/
+
       const value = rootNode.expanded ? rootNode.expanded = false : true;
       this.treeDataSource = this.treeTableService.editNode('expanded', value, rootNode.indexPath, this.treeDataSource);
-      this.tableDataSource = this.treeTableService.buildTable(this.treeDataSource); 
+
+      //this.tableDataSource = this.treeTableService.buildTable(this.treeDataSource); 
+      if(this.filter.value.length > 0){
+        this.tableDataSource = this.treeTableService.filteredTable(this.filter.column, this.filter.value, this.treeDataSource, true);
+      } else {
+        this.tableDataSource = this.treeTableService.buildTable(this.treeDataSource); 
+      }
+
       this.table.renderRows();
     }
 
-    /*filterNodes(key: string, value: any){ 
-      this.treeDataSource = this.treeTableService.editNode('expanded', value, rootNode.indexPath, this.treeDataSource);
-      this.tableDataSource = this.treeTableService.buildTable(this.treeDataSource); 
+    filterNodes(key: string, value: any){ 
+      if(value.length > 0){
+        this.tableDataSource = this.treeTableService.filteredTable(key, value, this.treeDataSource);
+      } else {
+        this.tableDataSource = this.treeTableService.buildTable(this.treeDataSource); 
+      }
+      this.filter = { column: key, value: value };
       this.table.renderRows();
-    }*/
+    }
 
 }

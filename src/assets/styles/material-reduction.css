@@ -206,6 +206,10 @@ input.mat-input-element::placeholder {
   opacity: 1 !important;
 }
 
+.mat-divider-horizontal{
+  border-top-color: var(--lines) !important;
+}
+
 .fieldset {
   padding-bottom: 24px;
 }

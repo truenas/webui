@@ -42,14 +42,10 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
       //this.entity.filter = this.filter;
 
       observableFromEvent(this.filter.nativeElement, 'keyup').pipe(
-        debounceTime(150),
-        distinctUntilChanged(),).subscribe((evt) => {
-          // Code goes here
-  
+        debounceTime(500),
+        distinctUntilChanged(),).subscribe((evt) => { 
           const filterValue: string = this.filter.nativeElement.value;
-          if (filterValue.length > 0) {
-            this.filterDatasets(filterValue);
-          }
+          this.filterDatasets(filterValue);
         });
 
     }
@@ -70,10 +66,9 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
   }
 
   filterDatasets(name: string){
-    console.log(name);
     this.core.emit({ 
       name:"TreeTableGlobalFilter", 
-      data:{ column: "dataset", value: name } , 
+      data:{ column: "name", value: name } , 
       sender: this 
     });
   }
