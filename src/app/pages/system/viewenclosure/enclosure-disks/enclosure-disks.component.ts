@@ -472,7 +472,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'E16':
         chassis = new E16();
         break;
-      case "ES24f":
       case "E24":
         chassis = new E24();
         break;

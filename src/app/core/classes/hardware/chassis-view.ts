@@ -49,7 +49,7 @@ import {
      public events: Subject<CoreEvent>;
      public model: string;
      public driveTraysOffsetY: number = 0; // if drives don't start at top.
-       public driveTraysOffsetX: number = 0; // if drives don't start at top.
+     public driveTraysOffsetX: number = 0; // if drives don't start at top.
      public driveTrays: any;
      public driveTrayObjects: DriveTray[] = [];
      public chassis:Sprite;
@@ -75,6 +75,8 @@ import {
      public loader: any;
      public autoPosition: boolean = true;
      protected utils: ThemeUtils;
+     public gapX: number = 10;
+     public gapY: number = 2;
 
 
      constructor(){
@@ -282,11 +284,11 @@ import {
      }
 
      generatePosition(displayObject, index, xOffset: number = 0, yOffset: number = 0): Position{
-       let gapX = 10;
-       let gapY = 2;
+       //let gapX = 10;
+       //let gapY = 2;
        let mod = index % this.columns;
-       let nextPositionX = mod * (displayObject.width + gapX) + xOffset;
-       let nextPositionY = Math.floor(index / this.columns) * (displayObject.height + gapY) + yOffset;
+       let nextPositionX = mod * (displayObject.width + this.gapX) + xOffset;
+       let nextPositionY = Math.floor(index / this.columns) * (displayObject.height + this.gapY) + yOffset;
 
        return {x: nextPositionX, y: nextPositionY}
      }
