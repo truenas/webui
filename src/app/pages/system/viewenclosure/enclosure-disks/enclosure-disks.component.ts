@@ -15,8 +15,10 @@ import { ES12 } from 'app/core/classes/hardware/es12';
 import { E16 } from 'app/core/classes/hardware/e16';
 import { E24 } from 'app/core/classes/hardware/e24';
 import { ES24 } from 'app/core/classes/hardware/es24';
+import { ES24f } from 'app/core/classes/hardware/es24f';
 import { E60 } from 'app/core/classes/hardware/e60';
 import { ES60 } from 'app/core/classes/hardware/es60';
+import { ES102 } from 'app/core/classes/hardware/es102';
 import { DiskComponent } from './components/disk.component';
 import { TabContentComponent } from './components/tab-content/tab-content.component';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
@@ -380,6 +382,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case "ES24":
         this.chassis = new ES24();
         break;
+      case "ES24f":
+        this.chassis = new ES24f();
+        break;
       case "E24":
         this.chassis = new E24();
         break;
@@ -388,6 +393,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         break;
       case "E60":
         this.chassis = new E60();
+        break;
+      case "ES102":
+        this.chassis = new ES102();
         break;
       default:
         this.controllerEvents.next({
@@ -464,11 +472,15 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'E16':
         chassis = new E16();
         break;
+      case "ES24f":
       case "E24":
         chassis = new E24();
         break;
       case "ES24":
         chassis = new ES24();
+        break;
+      case "ES24f":
+        chassis = new ES24f();
         break;
       case "ES60":
         chassis = new ES60();
@@ -476,7 +488,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case "E60":
         chassis = new E60();
         break;
+      case "ES102":
+        chassis = new ES102();
+        break;
       default:
+          console.log(profile);
           this.controllerEvents.next({
             name: 'Error', 
             data: { 
