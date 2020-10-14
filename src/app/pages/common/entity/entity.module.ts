@@ -69,6 +69,7 @@ import { EntityJobComponent } from './entity-job/entity-job.component';
 
 // CDK
 import { CdkTableModule } from '@angular/cdk/table';
+import {CdkTreeModule} from '@angular/cdk/tree';
 import { OverlayModule } from '@angular/cdk/overlay';
 import {A11yModule} from '@angular/cdk/a11y';
 
@@ -89,7 +90,7 @@ import { TableComponent } from './table/table.component';
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule, DragDropModule,
     MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule.forRoot(),
-    NgxUploaderModule, FlexLayoutModule, TranslateModule,
+    NgxUploaderModule, FlexLayoutModule, TranslateModule, CdkTreeModule,
     OverlayModule, A11yModule, TreeTableModule, NgxFilesizeModule, CommonDirectivesModule
   ],
   declarations: [
@@ -177,6 +178,7 @@ import { TableComponent } from './table/table.component';
     ToolbarMultimenuComponent,
     EntityComingsoonComponent,
     TableComponent,
+    CdkTreeModule,
   ],
   entryComponents: [
     FormButtonComponent,

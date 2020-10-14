@@ -77,14 +77,15 @@ export class VolumesListTableConfig implements InputTableConf {
   public tableData: TreeNode[] = [];
   public columns: Array < any > = [
     { name: T('Name'), prop: 'name', always_display: true  },
-    { name: T('Type'), prop: 'type', },
-    { name: T('Used'), prop: 'used_parsed', filesizePipe: false},
-    { name: T('Available'), prop: 'available_parsed', filesizePipe: false},
+    { name: T('Type'), prop: 'type', hidden: false},
+    { name: T('Used'), prop: 'used_parsed', filesizePipe: false, hidden: false},
+    { name: T('Available'), prop: 'available_parsed', hidden: false, filesizePipe: false},
     { name: T('Compression'), prop: 'compression', hidden: true },
     { name: T('Compression Ratio'), prop: 'compressratio', hidden: true },
-    { name: T('Readonly'), prop: 'readonly', },
+    { name: T('Readonly'), prop: 'readonly', hidden: false},
     { name: T('Dedup'), prop: 'deduplication', hidden: true },
-    { name: T('Comments'), prop: 'comments', hidden: true }
+    { name: T('Comments'), prop: 'comments', hidden: true },
+    { name: T('Actions'), prop: 'actions', hidden: false }
   ];
 
   public config: any = {
@@ -94,7 +95,7 @@ export class VolumesListTableConfig implements InputTableConf {
   };
 
   protected dialogRef: any;
-  public route_add = ["storage", "pools", "import"];
+  public route_add = ["storage", "import"];
   public route_add_tooltip = T("Create or Import Pool");
   public showDefaults: boolean = false;
   public showSpinner:boolean;
@@ -290,7 +291,7 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Encryption Key/Passphrase"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat(
-              ["storage", "pools", "changekey", row1.id]));
+              ["storage", "changekey", row1.id]));
           }
         });
       }
@@ -300,7 +301,7 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T("Encryption Key"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
-            ["storage", "pools", "createkey", row1.id]));
+            ["storage", "createkey", row1.id]));
         }
       });
     }
@@ -311,7 +312,7 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T("Manage Recovery Key"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
-            ["storage", "pools", "addkey", row1.id]));
+            ["storage", "addkey", row1.id]));
         }
       });
 
@@ -319,7 +320,7 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T("Reset Keys"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
-            ["storage", "pools", "rekey", row1.id]));
+            ["storage", "rekey", row1.id]));
 
         }
       });
@@ -767,7 +768,7 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Add Vdevs"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat(
-              ["storage", "pools", "manager", row1.id]));
+              ["storage", "manager", row1.id]));
           }
         });
         actions.push({
@@ -838,7 +839,7 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Status"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat(
-              ["storage", "pools", "status", row1.id]));
+              ["storage", "status", row1.id]));
           }
         });
         actions.push({
@@ -981,6 +982,7 @@ export class VolumesListTableConfig implements InputTableConf {
           name: T('Add Dataset'),
           label: T("Add Dataset"),
           onClick: (row1) => {
+            console.log(row1);
             this._router.navigate(new Array('/').concat([
               "storage", "id", row1.id.split('/')[0], "dataset",
               "add", row1.id

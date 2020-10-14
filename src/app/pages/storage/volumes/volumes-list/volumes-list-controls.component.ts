@@ -15,6 +15,7 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 })
 export class VolumesListControlsComponent implements GlobalAction, OnInit, AfterViewInit, OnDestroy {
   @ViewChild('filter', { static: false}) filter: ElementRef;
+  filterValue: string = '';
   @Input('entity') entity: any; // Can't specify VolumesListComponent without creating circular dependency;
   public conf;
 
@@ -42,14 +43,10 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
       //this.entity.filter = this.filter;
 
       observableFromEvent(this.filter.nativeElement, 'keyup').pipe(
-        debounceTime(150),
-        distinctUntilChanged(),).subscribe((evt) => {
-          // Code goes here
-  
-          const filterValue: string = this.filter.nativeElement.value;
-          if (filterValue.length > 0) {
-            this.filterDatasets(filterValue);
-          }
+        debounceTime(250),
+        distinctUntilChanged(),).subscribe((evt) => { 
+          this.filterValue= this.filter.nativeElement.value ? this.filter.nativeElement.value : '';
+          this.filterDatasets(this.filterValue);
         });
 
     }
@@ -69,11 +66,16 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
     this.router.navigate(path.split('/'));
   }
 
-  filterDatasets(name: string){
-    console.log(name);
+  resetDatasetFilter(){
+    this.filterValue = '';
+    this.filter.nativeElement.value = '';
+    this.filterDatasets('');
+  }
+
+  filterDatasets(value: string){
     this.core.emit({ 
       name:"TreeTableGlobalFilter", 
-      data:{ column: "dataset", value: name } , 
+      data:{ column: "name", value: value } , 
       sender: this 
     });
   }

@@ -4,12 +4,15 @@
   <!-- SEARCH -->
   <div class="form-element" id="row-filter">
     <mat-form-field floatPlaceholder="auto">
-      <span matPrefix><mat-icon>search</mat-icon></span>
-      <input matInput #filter placeholder="{{'Search' | translate}} {{entity.title | translate}}"
+      <span matPrefix style="cursor: default; user-select: none;"><mat-icon>search</mat-icon></span>
+      <input matInput #filter placeholder="{{'Filter' | translate}} {{'Dataset Names' | translate}}"
         class="mat-input-element"
         ix-auto
         ix-auto-type="input"
         ix-auto-identifier="Filter {{entity.conf.title}}">
+      <span [ngClass]="{'hidden': !filterValue || filterValue.length == 0}" matSuffix style="opacity: 0.5; cursor: pointer; user-select: none;">
+        <mat-icon (click)="resetDatasetFilter()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+      </span>
     </mat-form-field>
   </div>
   <!-- END SEARCH -->
