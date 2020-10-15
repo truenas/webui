@@ -37,6 +37,10 @@ import {
     y?: number;
   }
 
+  export interface LayoutGenerator {
+    generatePosition: (displayObject, index, xOffset?: number, yOffset?: number, orientation?: string) => Position;
+  }
+
   export class ChassisView {
 
     /*
@@ -67,6 +71,8 @@ import {
      public slotRange: Range;
      public rows: number;
      public columns: number;
+     public orientation: string = "rows"; // 'rows' || 'columns'
+     public layout?: LayoutGenerator;
      public vertical: boolean = false;
      public filters: any[] = [];
      public disabledOpacity = 0.25;
@@ -284,6 +290,10 @@ import {
      }
 
      generatePosition(displayObject, index, xOffset: number = 0, yOffset: number = 0): Position{
+       if(this.layout){
+         return this.layout.generatePosition(displayObject, index, xOffset, yOffset, this.orientation);
+       }
+
        //let gapX = 10;
        //let gapY = 2;
        let mod = index % this.columns;
