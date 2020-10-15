@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Validators } from '@angular/forms';
 
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import * as _ from 'lodash';
 import { SystemGeneralService, WebSocketService } from '../../../../services/';
+import { ModalService } from 'app/services/modal.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 
@@ -17,7 +17,6 @@ import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.int
 export class CertificateAuthorityAddComponent {
 
   protected addCall = "certificateauthority.create";
-  protected route_success: string[] = [ 'system', 'ca' ];
   protected isEntity: boolean = true;
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
@@ -596,8 +595,7 @@ export class CertificateAuthorityAddComponent {
   private currenProfile: any;
   private entityForm: any;
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-              protected ws: WebSocketService,
+  constructor(protected ws: WebSocketService, private modalService: ModalService,
               protected systemGeneralService: SystemGeneralService) {}
 
   preInit() {
@@ -828,5 +826,10 @@ export class CertificateAuthorityAddComponent {
 
       delete data['profiles'];
     }
+  }
+
+  afterSubmit() {
+    this.modalService.close('slide-in-form');
+    this.modalService.refreshTable();
   }
 }

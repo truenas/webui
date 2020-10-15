@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { DialogService, WebSocketService } from '../../../../services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { DialogService, WebSocketService, AppLoaderService } from '../../../../services';
+import { Subscription } from 'rxjs';
+import { ModalService } from 'app/services/modal.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -16,7 +16,6 @@ export class AcmednsFormComponent {
   protected addCall: string = 'acme.dns.authenticator.create';
   protected queryCall: string = 'acme.dns.authenticator.query';
   protected editCall = 'acme.dns.authenticator.update';
-  protected route_success: string[] = ['system', 'acmedns'];
   protected isEntity: boolean = true;
 
   protected fieldConfig: FieldConfig[];
@@ -108,35 +107,15 @@ export class AcmednsFormComponent {
 
   protected entityForm: any;
   private pk: any;
-  protected queryCallOption: Array<any> = [["id", "="]];
+  protected queryCallOption: Array<any>;
+  private getRow = new Subscription;
 
-  constructor(protected router: Router, protected ws: WebSocketService, protected route: ActivatedRoute,
-    protected loader: AppLoaderService, protected dialog: DialogService) {}
-
-  preInit() {
-    this.route.params.subscribe(params => {
-      if (params['pk']) {
-        this.queryCallOption[0].push(parseInt(params['pk']));
-      }
-    });
-  }
+  constructor(protected ws: WebSocketService, protected loader: AppLoaderService, 
+    protected dialog: DialogService, private modalService: ModalService) {
+    }
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
-    this.route.params.subscribe(params => {
-      if (params['pk']) {
-        this.pk = parseInt(params['pk']);
-        this.ws.call(this.queryCall, [
-          [
-            ["id", "=", this.pk]
-          ]
-        ]).subscribe((res) => {
-          for (let item in res[0].attributes) {
-            this.entityForm.formGroup.controls[item + '-' + res[0].authenticator].setValue(res[0].attributes[item]);
-          }
-        });
-      }
-    });
   }
 
   customSubmit(value) {
@@ -168,10 +147,12 @@ export class AcmednsFormComponent {
     this.ws.call(newCall, data).subscribe(
       (res) => {
         this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
+        this.modalService.close('slide-in-form');
+        this.modalService.refreshTable();
       },
       (res) => {
         this.loader.close();
+        this.modalService.refreshTable();
         new EntityUtils().handleWSError(this.entityForm, res);
       }
     );

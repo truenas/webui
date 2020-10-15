@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 
 import * as _ from 'lodash';
 import { SystemGeneralService, WebSocketService } from '../../../../services/';
+import { ModalService } from 'app/services/modal.service';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
@@ -21,7 +21,6 @@ import { helptext_system_ca } from 'app/helptext/system/ca';
 export class CertificateAddComponent {
 
   protected addCall = "certificate.create";
-  protected route_success: string[] = [ 'system', 'certificates' ];
   protected isEntity: boolean = true;
   protected dialogRef: any;
   private entityForm: any;
@@ -678,9 +677,9 @@ export class CertificateAddComponent {
   public usageField: any;
   private currenProfile: any;
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-              protected ws: WebSocketService, protected dialog: MatDialog,
-              protected systemGeneralService: SystemGeneralService) {}
+  constructor(protected ws: WebSocketService, protected dialog: MatDialog,
+              protected systemGeneralService: SystemGeneralService,
+              private modalService: ModalService) {}
 
   preInit() {
     this.systemGeneralService.getUnsignedCAs().subscribe((res) => {
@@ -982,10 +981,12 @@ export class CertificateAddComponent {
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.dialog.closeAll();
-      this.router.navigate(new Array('/').concat(this.route_success));
+      this.modalService.close('slide-in-form');
+      this.modalService.refreshTable();
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
       this.dialogRef.close();
+      this.modalService.refreshTable();
       new EntityUtils().handleWSError(this.entityForm, res);
     });
 

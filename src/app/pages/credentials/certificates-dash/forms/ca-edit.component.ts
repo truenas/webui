@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { WebSocketService } from '../../../../services/';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { Subscription } from 'rxjs';
+import { WebSocketService, AppLoaderService } from '../../../../services/';
+import { ModalService } from 'app/services/modal.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -15,9 +15,10 @@ export class CertificateAuthorityEditComponent {
 
   protected queryCall: string = 'certificateauthority.query';
   protected editCall = 'certificateauthority.update';
-  protected route_success: string[] = ['system', 'ca'];
   protected isEntity: boolean = true;
-  protected queryCallOption: Array<any> = [["id", "="]];
+  protected queryCallOption: Array<any>;
+  private getRow = new Subscription;
+  private rowNum: any;
 
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
@@ -53,27 +54,14 @@ export class CertificateAuthorityEditComponent {
 
   private pk: any;
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected ws: WebSocketService, protected loader: AppLoaderService) {}
-
-  preInit() {
-    this.route.params.subscribe(params => {
-      if (params['pk']) { 
-        // fixme: entity-form should do this automatically but the logic appears broken
-        // and i don't know what fixing it will break, tbf after release
-        this.queryCallOption[0].push(parseInt(params['pk']));
-      }
-    });
-  }
-
-  afterInit(entityEdit: any) {
-    this.route.params.subscribe(params => {
-      if (params['pk']) {
-        // see above, this should just be handled properly by entity-form
-        this.pk = parseInt(params['pk']);
-      }
-    });
-  }
+  constructor(protected ws: WebSocketService, protected loader: AppLoaderService,
+    private modalService: ModalService) {
+      this.getRow = this.modalService.getRow$.subscribe(rowId => {
+        this.rowNum = rowId;
+        this.queryCallOption = [["id", "=", rowId]];
+        this.getRow.unsubscribe();
+      })
+    }
 
   customSubmit(value) {
     let payload = {};
@@ -83,10 +71,12 @@ export class CertificateAuthorityEditComponent {
     this.ws.call(this.editCall, [this.pk, payload]).subscribe(
       (res) => {
         this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
+        this.modalService.close('slide-in-form');
+        this.modalService.refreshTable();
       },
       (res) => {
         this.loader.close();
+        this.modalService.refreshTable();
         new EntityUtils().handleError(this, res);
       }
     );

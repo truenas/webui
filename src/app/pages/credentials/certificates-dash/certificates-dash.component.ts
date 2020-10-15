@@ -121,6 +121,7 @@ export class CertificatesDashComponent implements OnInit {
             this.parent.modalService.open('slide-in-form', this.parent.certificateAuthorityAddComponent);
           },
           edit: function(row) {
+            console.log(row)
             this.parent.modalService.open('slide-in-form', this.parent.certificateAuthorityEditComponent, row.id);
           },
           deleteMsg: {
@@ -157,21 +158,18 @@ export class CertificatesDashComponent implements OnInit {
   }
 
   refreshForms() {
-    this.certificateAddComponent = new CertificateAddComponent(this.router,this.route,
-      this.ws,this.dialog,this.systemGeneralService);
+    this.certificateAddComponent = new CertificateAddComponent(
+      this.ws,this.dialog,this.systemGeneralService,this.modalService);
     this.certificateEditComponent = new CertificateEditComponent(
       this.ws,this.dialog,this.loader,this.dialogService,this.modalService);
-    this.certificateAuthorityAddComponent = new CertificateAuthorityAddComponent(this.router,this.route,
-      this.ws,this.systemGeneralService);
-    this.certificateAuthorityEditComponent = new CertificateAuthorityEditComponent(this.router,this.route,
-      this.ws,this.loader);
+    this.certificateAuthorityAddComponent = new CertificateAuthorityAddComponent(this.ws,this.modalService,
+      this.systemGeneralService);
+    this.certificateAuthorityEditComponent = new CertificateAuthorityEditComponent(this.ws,this.loader,
+      this.modalService);
     this.certificateAuthoritySignComponent = new CertificateAuthoritySignComponent(this.router,this.route,
       this.ws,this.systemGeneralService);
     this.acmeAddComponent = new CertificateAcmeAddComponent(this.router,this.route,
       this.ws,this.loader,this.dialog,this.entityFormService,this.dialogService);
-    this.acmeDNSComponent = new AcmednsFormComponent(this.router,this.ws,this.route,
-      this.loader,this.dialogService);
+    this.acmeDNSComponent = new AcmednsFormComponent(this.ws,this.loader,this.dialogService,this.modalService);
   }
-
-
 }

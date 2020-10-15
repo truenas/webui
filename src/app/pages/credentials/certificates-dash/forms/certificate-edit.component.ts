@@ -64,28 +64,29 @@ export class CertificateEditComponent {
     }
   ];
 
-  private pk: any;
+  private rowNum: any;
   protected certificateField: any;
   protected privatekeyField: any;
   protected CSRField: any;
   protected entityForm: any;
-  protected dialogRef: any
+  protected dialogRef: any;
 
   // public title = helptext_system_certificates.formTitle;
   protected isOneColumnForm = true;
-  private rowid: any;
   private getRow = new Subscription;
 
   constructor(protected ws: WebSocketService, protected matDialog: MatDialog,
     protected loader: AppLoaderService, protected dialog: DialogService,
     private modalService: ModalService) {
       this.getRow = this.modalService.getRow$.subscribe(rowId => {
-        this.rowid = rowId;
+        this.rowNum = rowId;
+        this.queryCallOption = [["id", "=", rowId]];
         this.getRow.unsubscribe();
     })
   }
 
   resourceTransformIncomingRestData(data) {
+    console.log(data)
     if (data.CSR != null) {
       this.isCSR = true;
     }
@@ -114,9 +115,9 @@ export class CertificateEditComponent {
 
   customSubmit(value) {
     this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": "Updating Identifier" }});
-    this.dialogRef.componentInstance.setCall(this.editCall, [this.rowid, {'name':value['name']}]);
+    this.dialogRef.componentInstance.setCall(this.editCall, [this.rowNum, {'name':value['name']}]);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((res) => {
+    this.dialogRef.componentInstance.success.subscribe(() => {
       this.matDialog.closeAll();
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
