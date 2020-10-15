@@ -4,7 +4,7 @@ import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 
 import * as _ from 'lodash';
-import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
+import { SystemGeneralService, WebSocketService } from '../../../../services/';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
@@ -679,7 +679,7 @@ export class CertificateAddComponent {
   private currenProfile: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-              protected rest: RestService, protected ws: WebSocketService, protected dialog: MatDialog,
+              protected ws: WebSocketService, protected dialog: MatDialog,
               protected systemGeneralService: SystemGeneralService) {}
 
   preInit() {

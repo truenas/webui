@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RestService, WebSocketService } from '../../../../services/';
+import { WebSocketService } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
@@ -54,8 +54,7 @@ export class CertificateAuthorityEditComponent {
   private pk: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
-    protected loader: AppLoaderService) {}
+    protected ws: WebSocketService, protected loader: AppLoaderService) {}
 
   preInit() {
     this.route.params.subscribe(params => {

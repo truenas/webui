@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import * as _ from 'lodash';
-import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
+import { SystemGeneralService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 
@@ -60,8 +60,7 @@ export class CertificateAuthoritySignComponent {
   private pk: any;
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
-              protected rest: RestService, protected ws: WebSocketService,
-              protected systemService: SystemGeneralService) {}
+              protected ws: WebSocketService, protected systemService: SystemGeneralService) {}
 
   preInit() {
     this.systemService.getUnsignedCertificates().subscribe( (res) => {

@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { MatDialog } from '@angular/material/dialog';
 import { FormArray } from '@angular/forms';
-import { RestService, WebSocketService, DialogService } from '../../../../services/';
+import { WebSocketService, DialogService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -130,7 +130,7 @@ export class CertificateAcmeAddComponent {
 
   constructor(
     protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
+    protected ws: WebSocketService,
     protected loader: AppLoaderService, private dialog: MatDialog,
     protected entityFormService: EntityFormService, protected dialogService: DialogService
   ) { }

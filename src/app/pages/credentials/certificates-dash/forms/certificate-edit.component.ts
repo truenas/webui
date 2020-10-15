@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import * as _ from 'lodash';
-import { DialogService, RestService, WebSocketService } from '../../../../services/';
+import { DialogService, WebSocketService } from '../../../../services/';
+import { ModalService } from 'app/services/modal.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { MatDialog } from '@angular/material/dialog';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
@@ -18,9 +19,9 @@ export class CertificateEditComponent {
 
   protected queryCall: string = 'certificate.query';
   protected editCall = 'certificate.update';
-  protected route_success: string[] = ['system', 'certificates'];
   protected isEntity: boolean = true;
-  protected queryCallOption: Array<any> = [["id", "="]];
+  protected isCSR: boolean;
+  protected queryCallOption: Array<any>;
 
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
@@ -70,57 +71,59 @@ export class CertificateEditComponent {
   protected entityForm: any;
   protected dialogRef: any
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService, protected matDialog: MatDialog,
-    protected loader: AppLoaderService, protected dialog: DialogService) {}
+  // public title = helptext_system_certificates.formTitle;
+  protected isOneColumnForm = true;
+  private rowid: any;
+  private getRow = new Subscription;
 
-  preInit() {
-    this.certificateField = _.find(this.fieldConfig, { 'name': 'certificate' });
-    this.privatekeyField = _.find(this.fieldConfig, { 'name': 'privatekey' });
-    this.CSRField = _.find(this.fieldConfig, { 'name': 'CSR' });
-    this.route.params.subscribe(params => {
-      if (params['pk']) {
-        this.queryCallOption[0].push(parseInt(params['pk']));
-      }
-    });
+  constructor(protected ws: WebSocketService, protected matDialog: MatDialog,
+    protected loader: AppLoaderService, protected dialog: DialogService,
+    private modalService: ModalService) {
+      this.getRow = this.modalService.getRow$.subscribe(rowId => {
+        this.rowid = rowId;
+        this.getRow.unsubscribe();
+    })
+  }
+
+  resourceTransformIncomingRestData(data) {
+    if (data.CSR != null) {
+      this.isCSR = true;
+    }
+    this.setForm();
+    return data;
   }
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
-    this.route.params.subscribe(params => {
-      if (params['pk']) {
-        this.pk = parseInt(params['pk']);
-        this.ws.call(this.queryCall, [
-          [
-            ["id", "=", this.pk]
-          ]
-        ]).subscribe((res) => {
-          if (res[0]) {
-            if (res[0].CSR != null) {
-              this.CSRField['isHidden'] = false;
-              this.certificateField['isHidden'] = true;
-              this.privatekeyField['isHidden'] = false;
-            } else {
-              this.CSRField['isHidden'] = true;
-              this.certificateField['isHidden'] = false;
-              this.privatekeyField['isHidden'] = false;
-            }
-          }
-        });
-      }
-    });
+  }
+
+  setForm() {
+    this.certificateField = _.find(this.fieldConfig, { 'name': 'certificate' });
+    this.privatekeyField = _.find(this.fieldConfig, { 'name': 'privatekey' });
+    this.CSRField = _.find(this.fieldConfig, { 'name': 'CSR' });
+    if (this.isCSR) {
+      this.CSRField['isHidden'] = false;
+      this.certificateField['isHidden'] = true;
+      this.privatekeyField['isHidden'] = false;
+    } else {
+      this.CSRField['isHidden'] = true;
+      this.certificateField['isHidden'] = false;
+      this.privatekeyField['isHidden'] = false;
+    }
   }
 
   customSubmit(value) {
     this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": "Updating Identifier" }});
-    this.dialogRef.componentInstance.setCall(this.editCall, [this.pk, {'name':value['name']}]);
+    this.dialogRef.componentInstance.setCall(this.editCall, [this.rowid, {'name':value['name']}]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.matDialog.closeAll();
-      this.router.navigate(new Array('/').concat(this.route_success));
+      this.modalService.close('slide-in-form');
+      this.modalService.refreshTable();
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
       this.matDialog.closeAll();
+      this.modalService.refreshTable();
       new EntityUtils().handleWSError(this.entityForm, res);
     });
   }

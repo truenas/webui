@@ -1,17 +1,52 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+
+import * as _ from 'lodash';
+import { SystemGeneralService, WebSocketService, AppLoaderService, DialogService } from '../../../services/';
+import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
+import { ModalService } from '../../../services/modal.service';
 import { T } from '../../../translate-marker';
+import { CertificateAddComponent } from './forms/certificate-add.component';
+import { CertificateEditComponent } from './forms/certificate-edit.component';
+import { CertificateAuthorityAddComponent } from './forms/ca-add.component';
+import { CertificateAuthorityEditComponent } from './forms/ca-edit.component';
+import { CertificateAuthoritySignComponent } from './forms/ca-sign.component';
+import { CertificateAcmeAddComponent } from './forms/certificate-acme-add.component';
+import { AcmednsFormComponent } from './forms/acmedns-form.component';
 
 @Component({
   selector: 'app-certificates-dash',
-  templateUrl: './certificates-dash.component.html'
+  templateUrl: './certificates-dash.component.html',
+  providers: [EntityFormService]
 })
 export class CertificatesDashComponent implements OnInit {
   cards: any;
+  refreshTable: Subscription;
+  refreshForm: Subscription;
 
-  constructor() { }
+  protected certificateAddComponent: CertificateAddComponent;
+  protected certificateEditComponent: CertificateEditComponent;
+  protected certificateAuthorityAddComponent: CertificateAuthorityAddComponent;
+  protected certificateAuthorityEditComponent: CertificateAuthorityEditComponent;
+  protected certificateAuthoritySignComponent: CertificateAuthoritySignComponent;
+  protected acmeAddComponent: CertificateAcmeAddComponent;
+  protected acmeDNSComponent: AcmednsFormComponent;
+
+  constructor(private modalService: ModalService, private router: Router, private route: ActivatedRoute,
+    private ws: WebSocketService, private dialog: MatDialog, private systemGeneralService: SystemGeneralService,
+    private loader: AppLoaderService, private dialogService: DialogService, private entityFormService: EntityFormService) { }
 
   ngOnInit(): void {
     this.getCards();
+    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
+      this.getCards();
+    })
+    this.refreshForms();
+    this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
+      this.refreshForms();
+    });
   }
 
   getCards() {
@@ -29,10 +64,10 @@ export class CertificatesDashComponent implements OnInit {
           ],
           parent: this,
           add: function() {
-            // this.parent.modalService.open('slide-in-form', this.parent.staticRouteFormComponent);
+            this.parent.modalService.open('slide-in-form', this.parent.certificateAddComponent);
           },
           edit: function(row) {
-            // this.parent.modalService.open('slide-in-form', this.parent.staticRouteFormComponent, row.id);
+            this.parent.modalService.open('slide-in-form', this.parent.certificateEditComponent, row.id);
           },
           deleteMsg: {
             // title: 'static route',
@@ -56,7 +91,7 @@ export class CertificatesDashComponent implements OnInit {
           ],
           parent: this,
           add: function() {
-            // this.parent.modalService.open('slide-in-form', this.parent.staticRouteFormComponent);
+            // this.parent.modalService.open('slide-in-form', this.parent.cer);
           },
           edit: function(row) {
             // this.parent.modalService.open('slide-in-form', this.parent.staticRouteFormComponent, row.id);
@@ -83,10 +118,10 @@ export class CertificatesDashComponent implements OnInit {
           ],
           parent: this,
           add: function() {
-            // this.parent.modalService.open('slide-in-form', this.parent.staticRouteFormComponent);
+            this.parent.modalService.open('slide-in-form', this.parent.certificateAuthorityAddComponent);
           },
           edit: function(row) {
-            // this.parent.modalService.open('slide-in-form', this.parent.staticRouteFormComponent, row.id);
+            this.parent.modalService.open('slide-in-form', this.parent.certificateAuthorityEditComponent, row.id);
           },
           deleteMsg: {
             // title: 'static route',
@@ -106,10 +141,10 @@ export class CertificatesDashComponent implements OnInit {
           ],
           parent: this,
           add: function() {
-            // this.parent.modalService.open('slide-in-form', this.parent.staticRouteFormComponent);
+            this.parent.modalService.open('slide-in-form', this.parent.acmeDNSComponent);
           },
           edit: function(row) {
-            // this.parent.modalService.open('slide-in-form', this.parent.staticRouteFormComponent, row.id);
+            this.parent.modalService.open('slide-in-form', this.parent.acmeDNSComponent);
           },
           deleteMsg: {
             // title: 'static route',
@@ -119,6 +154,23 @@ export class CertificatesDashComponent implements OnInit {
       }
       
     ]
+  }
+
+  refreshForms() {
+    this.certificateAddComponent = new CertificateAddComponent(this.router,this.route,
+      this.ws,this.dialog,this.systemGeneralService);
+    this.certificateEditComponent = new CertificateEditComponent(
+      this.ws,this.dialog,this.loader,this.dialogService,this.modalService);
+    this.certificateAuthorityAddComponent = new CertificateAuthorityAddComponent(this.router,this.route,
+      this.ws,this.systemGeneralService);
+    this.certificateAuthorityEditComponent = new CertificateAuthorityEditComponent(this.router,this.route,
+      this.ws,this.loader);
+    this.certificateAuthoritySignComponent = new CertificateAuthoritySignComponent(this.router,this.route,
+      this.ws,this.systemGeneralService);
+    this.acmeAddComponent = new CertificateAcmeAddComponent(this.router,this.route,
+      this.ws,this.loader,this.dialog,this.entityFormService,this.dialogService);
+    this.acmeDNSComponent = new AcmednsFormComponent(this.router,this.ws,this.route,
+      this.loader,this.dialogService);
   }
 
 

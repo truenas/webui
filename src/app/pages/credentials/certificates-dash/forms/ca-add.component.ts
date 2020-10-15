@@ -4,7 +4,7 @@ import { Validators } from '@angular/forms';
 
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import * as _ from 'lodash';
-import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
+import { SystemGeneralService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 
@@ -597,7 +597,7 @@ export class CertificateAuthorityAddComponent {
   private entityForm: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-              protected rest: RestService, protected ws: WebSocketService,
+              protected ws: WebSocketService,
               protected systemGeneralService: SystemGeneralService) {}
 
   preInit() {
