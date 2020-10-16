@@ -70,82 +70,94 @@ export class AlertConfigComponent implements OnInit {
         }
         this.settingOptions.push({ label: label, value: res[i] });
       }
+    }, error => {
+      this.loader.close();
+      new EntityUtils().handleWSError(this, error, this.dialog);
     });
   
     const sets: FieldSet[] = [];
 
-    const categories: AlertCategory[] = await this.ws.call("alert.list_categories").toPromise();
-    categories.forEach((category, index) => {
-      const modulo = index % 2;
+    const cat = this.ws.call("alert.list_categories").toPromise();
+    cat.then(categories => {
+      categories.forEach((category, index) => {
+        const modulo = index % 2;
 
-      let config = [];
-      for (let i = 0; i < category.classes.length; i++) {
-        const c = category.classes[i];
-        const warningOptions = [];
-        for (let j = 0; j < this.warningOptions.length; j++) {
-          const option  = JSON.parse(JSON.stringify( this.warningOptions[j] )); // apparently this is the proper way to clone an object
-          if (option.value === c.level) {
-            option.label = option.label + " (Default)";
+        let config = [];
+        for (let i = 0; i < category.classes.length; i++) {
+          const c = category.classes[i];
+          const warningOptions = [];
+          for (let j = 0; j < this.warningOptions.length; j++) {
+            const option  = JSON.parse(JSON.stringify( this.warningOptions[j] )); // apparently this is the proper way to clone an object
+            if (option.value === c.level) {
+              option.label = option.label + " (Default)";
+            }
+            warningOptions.push(option);
           }
-          warningOptions.push(option);
+          config.push({
+            type: "select",
+            name: c.id + '_level',
+            inlineLabel: c.title,
+            placeholder: T("Set Warning Level"),
+            tooltip: helptext.level_tooltip,
+            options: warningOptions,
+            value: c.level
+          },
+          {
+            type: "select",
+            name: c.id + '_policy',
+            inlineLabel: " ",
+            placeholder: T("Set Frequency"),
+            tooltip: helptext.policy_tooltip,
+            options: this.settingOptions,
+            value: "IMMEDIATELY"
+          });
+
+          this.defaults.push({id: c.id, level: c.level, policy: 'IMMEDIATELY'});
         }
-        config.push({
-          type: "select",
-          name: c.id + '_level',
-          inlineLabel: c.title,
-          placeholder: T("Set Warning Level"),
-          tooltip: helptext.level_tooltip,
-          options: warningOptions,
-          value: c.level
-        },
-        {
-          type: "select",
-          name: c.id + '_policy',
-          inlineLabel: " ",
-          placeholder: T("Set Frequency"),
-          tooltip: helptext.policy_tooltip,
-          options: this.settingOptions,
-          value: "IMMEDIATELY"
-        });
 
-        this.defaults.push({id: c.id, level: c.level, policy: 'IMMEDIATELY'});
-      }
-
-      let fieldSet = {
-        name: category.title,
-        label: true,
-        width: "40%",
-        config: config
-      }
-    
-      sets.push(fieldSet);
-
-      if(modulo == 1 && index < categories.length - 2){
-        sets.push({ name: 'divider', divider: true },);
-      }
-
-    });
-
-    /* Final divider before action buttons */
-    sets.push({ name: 'divider', divider: true });
-
-    this.fieldSets = new FieldSets(sets);
-
-    this.fieldConfig = this.fieldSets.configs();
-    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-
-    this.ws.call(this.queryCall).subscribe((res) => {
-      this.loader.close();
-      for (const k in res.classes) {
-        for (const j in res.classes[k]) {
-          const prop = k + '_' + j;
-          this.formGroup.controls[prop].setValue(res.classes[k][j]);
+        let fieldSet = {
+          name: category.title,
+          label: true,
+          width: "40%",
+          config: config
         }
-      }
-    },
-    (err) => {
+      
+        sets.push(fieldSet);
+
+        if(modulo == 1 && index < categories.length - 2){
+          sets.push({ name: 'divider', divider: true },);
+        }
+
+      });
+
+      /* Final divider before action buttons */
+      sets.push({ name: 'divider', divider: true });
+
+      this.fieldSets = new FieldSets(sets);
+
+      this.fieldConfig = this.fieldSets.configs();
+      this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
+
+      this.ws.call(this.queryCall).subscribe((res) => {
+        this.loader.close();
+        for (const k in res.classes) {
+          for (const j in res.classes[k]) {
+            const prop = k + '_' + j;
+            if (this.formGroup.controls[prop]) {
+              this.formGroup.controls[prop].setValue(res.classes[k][j]);
+            } else {
+              console.log("Missing prop: " + prop); // some properties don't exist between both calls?
+            }
+          }
+        }
+      },
+      (err) => {
+        this.loader.close();
+        new EntityUtils().handleWSError(this, err, this.dialog)
+      });
+    }).catch(error => {
       this.loader.close();
-      new EntityUtils().handleWSError(this, err, this.dialog)
+      new EntityUtils().handleWSError(this, error, this.dialog);
     });
   }
 
