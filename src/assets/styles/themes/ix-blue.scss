@@ -27,8 +27,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-button.mat-accent .mat-ripple-element,
   .mat-icon-button.mat-accent .mat-ripple-element,
   .mat-slide-toggle .mat-ripple-element {
-    //@include variable(background, --accent, $accent, !important);
-//    opacity: 0.2;
   }
   .mat-button .mat-ripple-element, .mat-raised-button .mat-ripple-element {
     background: rgba(0, 0, 0, .12);
@@ -190,11 +188,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .fileupload-drop-zone.dz-file-over,
   .toolbar-avatar.online > .status-dot,
   .cal-open-day-events,
-  //.datatable-header,.datatable-footer,
   .mat-step-header .mat-step-icon,
   div.hopscotch-bubble{
         @include variable(background, --primary, $primary, !important);
-        //@include variable(color, #fff, #fff, !important);
         @include variable(color, --primary-txt, $primary-txt, !important);
 
   }
@@ -205,15 +201,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .datatable-header,.datatable-footer{
     border-top-style:solid;
     border-top-width:1px;
-    //@include variable(border-top-color, --bg1, $bg1, !important);
   }
   .datatable-header,.datatable-footer{
-//        @include variable(background, --bg2, $bg2, !important);
-//        @include variable(color, --fg2, $fg2, !important);
-//        @include variable(background, --primary, $primary, !important);
-//        @include variable(color, --primary-txt, $primary-txt, !important);
-    //@include variable(background, --bg2, $bg2, !important);
-    //background:rgba(0,0,0,0.25) !important;
     background:var(--contrast-darker) !important;
   }
 
@@ -451,8 +440,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-menu-content button.mat-menu-item:focus,
   .mat-menu-content button.mat-menu-item:focus .mat-icon:not(.theme-picker-swatch-icon),
   .ngx-datatable .datatable-body .datatable-row-wrapper:focus {
-    //@include variable(background, --primary, $primary, !important);
-    //@include variable(color, --primary-txt, $primary-txt !important);
     background: rgba(0,0,0,0.05) !important;
 }
 

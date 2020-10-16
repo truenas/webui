@@ -432,8 +432,6 @@ export class ThemeService {
     let contrastLighter = this.utils.lighten(contrastSrc, 5);
     let contrastLightest = this.utils.lighten(contrastSrc, 10);
 
-    console.log(contrastLighter);
-
     (<any>document).documentElement.style.setProperty("--contrast-darker", contrastDarker);
     (<any>document).documentElement.style.setProperty("--contrast-darkest", contrastDarkest);
     (<any>document).documentElement.style.setProperty("--contrast-lighter", contrastLighter);
