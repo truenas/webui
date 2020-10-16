@@ -27,7 +27,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-button.mat-accent .mat-ripple-element,
   .mat-icon-button.mat-accent .mat-ripple-element,
   .mat-slide-toggle .mat-ripple-element {
-    @include variable(background, --primary, $primary, !important);
+    //@include variable(background, --accent, $accent, !important);
 //    opacity: 0.2;
   }
   .mat-button .mat-ripple-element, .mat-raised-button .mat-ripple-element {
@@ -112,15 +112,20 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       border-right: 17px solid map-get($md-primary, 500);
       @include variable(border-right-color, --primary, $primary);
   }
-  .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
-    background-color: map-get($md-accent, 400);
-    @include variable(background, --primary, $primary, !important);
 
-  }
   .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar {
-    @include variable(background, --primary, $primary, !important);
-
+    //background-color: rgba(0, 0, 0, 0.5) !important;
+    background-color: var(--alt-fg1)  !important;
   }
+
+  .mat-slide-toggle.mat-primary.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar .mat-slide-toggle-thumb{
+    background-color: var(--primary) !important;
+  }
+
+  .mat-slide-toggle.mat-accent.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar .mat-slide-toggle-thumb{
+    background-color: var(--accent) !important;
+  }
+
   .mat-bg-accent,
   div.hopscotch-bubble .hopscotch-bubble-number,
   div.hopscotch-bubble .hopscotch-nav-button.next:hover,
@@ -200,15 +205,16 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .datatable-header,.datatable-footer{
     border-top-style:solid;
     border-top-width:1px;
-    @include variable(border-top-color, --bg1, $bg1, !important);
+    //@include variable(border-top-color, --bg1, $bg1, !important);
   }
   .datatable-header,.datatable-footer{
 //        @include variable(background, --bg2, $bg2, !important);
 //        @include variable(color, --fg2, $fg2, !important);
 //        @include variable(background, --primary, $primary, !important);
 //        @include variable(color, --primary-txt, $primary-txt, !important);
-    @include variable(background, --bg2, $bg2, !important);
-    background-color:rgba(0,0,0,0.75)
+    //@include variable(background, --bg2, $bg2, !important);
+    //background:rgba(0,0,0,0.25) !important;
+    background:var(--contrast-darker) !important;
   }
 
 
@@ -244,23 +250,39 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(color, --fg2, $fg2);
   }
 
-  .mat-select-panel .mat-option:hover,
-  .ngx-datatable .datatable-body .datatable-row-wrapper:nth-child(odd) datatable-body-row{
-    @include variable(background, --alt-bg1, $alt-bg1);
-    @include variable(color, --fg1, $fg1);
+  .mat-select-panel .mat-option:hover{
+    background-color: rgba(0,0,0,0.1);
   }
 
-  .ngx-datatable .datatable-body .datatable-row-wrapper:nth-child(even) datatable-body-row{
-    //@include variable(background, --alt-bg1, $alt-bg1);
-    background-color:rgba(123,123,123,0.2);
-    @include variable(color, --fg1, $fg1);
+  .ngx-datatable .datatable-body .datatable-row-wrapper datatable-body-row{
+    @include variable(background, --bg2, $bg2);
+    //@include variable(border-bottom-color, --alt-bg1, $alt-bg1);
+    border-bottom: solid 1px var(--lines) !important;
   }
+
+  /*.ngx-datatable .datatable-body .datatable-row-wrapper:nth-child(odd) datatable-body-row{
+    @include variable(background, --alt-bg1, $alt-bg1);
+    @include variable(color, --alt-fg1, $alt-fg1);
+  }*/
+
+  /*.ngx-datatable .datatable-body .datatable-row-wrapper:nth-child(even) datatable-body-row{
+    //@include variable(background, --alt-bg1, $alt-bg1);
+    border-bottom-color:rgba(123,123,123,0.2);
+    @include variable(color, --fg1, $fg1);
+  }*/
 
   .mat-card .mat-divider{
     @include variable(background, --alt-fg1, $alt-fg1);
     opacity:0.15;
   }
 
+  .sidebar-panel .mat-nav-list .mat-list-item{
+    border-bottom: solid 1px var(--lines);
+  }
+
+  .sidebar-panel .mat-nav-list .mat-list-item:first-child{
+    border-top: solid 1px var(--lines);
+  }
 
   .sidebar-panel .mat-nav-list .mat-list-item,
   .app-user .app-user-name, .text-muted,
@@ -440,8 +462,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .mat-menu-content button.mat-menu-item:focus,
   .mat-menu-content button.mat-menu-item:focus .mat-icon:not(.theme-picker-swatch-icon),
   .ngx-datatable .datatable-body .datatable-row-wrapper:focus {
-    @include variable(background, --primary, $primary, !important);
-    @include variable(color, --primary-txt, $primary-txt !important);
+    //@include variable(background, --primary, $primary, !important);
+    //@include variable(color, --primary-txt, $primary-txt !important);
+    background: rgba(0,0,0,0.05) !important;
 }
 
 .ngx-datatable .datatable-body .datatable-row-wrapper:hover .mat-checkbox .mat-checkbox-frame {

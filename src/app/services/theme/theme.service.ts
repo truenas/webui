@@ -15,9 +15,9 @@ export const DefaultTheme = {
   primary:"var(--blue)",
   topbar:"#111111",
   'topbar-txt': "var(--fg2)",
-  accent:"var(--alt-bg2)",
+  accent: "var(--alt-bg2)",
   bg1:'#1E1E1E',
-  bg2:'#242424',
+  bg2:'#282828',
   fg1:'#fff',
   fg2:'rgba(255,255,255,0.85)',
   'alt-bg1':'#383838',
@@ -431,6 +431,8 @@ export class ThemeService {
     let contrastDarkest = this.utils.darken(contrastSrc, 10);
     let contrastLighter = this.utils.lighten(contrastSrc, 5);
     let contrastLightest = this.utils.lighten(contrastSrc, 10);
+
+    console.log(contrastLighter);
 
     (<any>document).documentElement.style.setProperty("--contrast-darker", contrastDarker);
     (<any>document).documentElement.style.setProperty("--contrast-darkest", contrastDarkest);
