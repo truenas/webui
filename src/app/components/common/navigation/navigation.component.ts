@@ -62,6 +62,9 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
           const targetMenu = this.navService.turenasFeatures[i];
           _.find(_.find(menuItem, { state: targetMenu.menu }).sub, { state : targetMenu.sub}).disabled = false;
         }
+
+        _.find(_.find(menuItem, { state: 'system' }).sub, { state : 'two-factor'}).disabled = true;
+
       }
  
       this.core.register({
