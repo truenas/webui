@@ -24,6 +24,7 @@ export class CertificateAddComponent {
   protected isEntity: boolean = true;
   protected dialogRef: any;
   private entityForm: any;
+  private title: string;
   private CSRList = [];
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
@@ -735,6 +736,7 @@ export class CertificateAddComponent {
 
   afterInit(entity: any) {
     this.entityForm = entity;
+    this.title = helptext_system_certificates.add.title;
     this.fieldConfig = entity.fieldConfig;
     for (let i in this.csrFields) {
       this.hideField(this.csrFields[i], true, entity);

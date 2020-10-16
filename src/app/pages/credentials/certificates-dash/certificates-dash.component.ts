@@ -68,10 +68,6 @@ export class CertificatesDashComponent implements OnInit {
           },
           edit: function(row) {
             this.parent.modalService.open('slide-in-form', this.parent.certificateEditComponent, row.id);
-          },
-          deleteMsg: {
-            // title: 'static route',
-            // key_props: ['destination', 'gateway'],
           }
         }
       },
@@ -95,10 +91,6 @@ export class CertificatesDashComponent implements OnInit {
           },
           edit: function(row) {
             // this.parent.modalService.open('slide-in-form', this.parent.staticRouteFormComponent, row.id);
-          },
-          deleteMsg: {
-            // title: 'static route',
-            // key_props: ['destination', 'gateway'],
           }
         }
       },
@@ -121,12 +113,7 @@ export class CertificatesDashComponent implements OnInit {
             this.parent.modalService.open('slide-in-form', this.parent.certificateAuthorityAddComponent);
           },
           edit: function(row) {
-            console.log(row)
             this.parent.modalService.open('slide-in-form', this.parent.certificateAuthorityEditComponent, row.id);
-          },
-          deleteMsg: {
-            // title: 'static route',
-            // key_props: ['destination', 'gateway'],
           }
         }
       },
@@ -145,11 +132,7 @@ export class CertificatesDashComponent implements OnInit {
             this.parent.modalService.open('slide-in-form', this.parent.acmeDNSComponent);
           },
           edit: function(row) {
-            this.parent.modalService.open('slide-in-form', this.parent.acmeDNSComponent);
-          },
-          deleteMsg: {
-            // title: 'static route',
-            // key_props: ['destination', 'gateway'],
+            this.parent.modalService.open('slide-in-form', this.parent.acmeDNSComponent, row.id);
           }
         }
       }

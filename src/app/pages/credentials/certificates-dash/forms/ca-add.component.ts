@@ -18,6 +18,7 @@ export class CertificateAuthorityAddComponent {
 
   protected addCall = "certificateauthority.create";
   protected isEntity: boolean = true;
+  private title: string;
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
     {
@@ -641,6 +642,7 @@ export class CertificateAuthorityAddComponent {
   afterInit(entity: any) {
     this.fieldConfig = entity.fieldConfig;
     this.entityForm = entity;
+    this.title = helptext_system_ca.add.title;
 
     for (let i in this.intermediatecaFields) {
       this.hideField(this.intermediatecaFields[i], true, entity);

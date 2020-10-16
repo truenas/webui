@@ -20,6 +20,7 @@ export class CertificateEditComponent {
   protected queryCall: string = 'certificate.query';
   protected editCall = 'certificate.update';
   protected isEntity: boolean = true;
+  private title: string;
   protected isCSR: boolean;
   protected queryCallOption: Array<any>;
 
@@ -70,8 +71,6 @@ export class CertificateEditComponent {
   protected CSRField: any;
   protected entityForm: any;
   protected dialogRef: any;
-
-  // public title = helptext_system_certificates.formTitle;
   protected isOneColumnForm = true;
   private getRow = new Subscription;
 
@@ -86,7 +85,6 @@ export class CertificateEditComponent {
   }
 
   resourceTransformIncomingRestData(data) {
-    console.log(data)
     if (data.CSR != null) {
       this.isCSR = true;
     }
@@ -96,6 +94,7 @@ export class CertificateEditComponent {
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
+    this.title = helptext_system_certificates.edit.title;
   }
 
   setForm() {

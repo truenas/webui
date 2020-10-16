@@ -19,6 +19,8 @@ export class CertificateAuthorityEditComponent {
   protected queryCallOption: Array<any>;
   private getRow = new Subscription;
   private rowNum: any;
+  private title: string;
+  protected isOneColumnForm = true;
 
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
@@ -52,8 +54,6 @@ export class CertificateAuthorityEditComponent {
     }
   ];
 
-  private pk: any;
-
   constructor(protected ws: WebSocketService, protected loader: AppLoaderService,
     private modalService: ModalService) {
       this.getRow = this.modalService.getRow$.subscribe(rowId => {
@@ -61,14 +61,18 @@ export class CertificateAuthorityEditComponent {
         this.queryCallOption = [["id", "=", rowId]];
         this.getRow.unsubscribe();
       })
-    }
+  }
+
+  afterInit() {
+    this.title = helptext_system_ca.edit.title;
+  }
 
   customSubmit(value) {
     let payload = {};
     payload['name'] = value.name;
 
     this.loader.open();
-    this.ws.call(this.editCall, [this.pk, payload]).subscribe(
+    this.ws.call(this.editCall, [this.rowNum, payload]).subscribe(
       (res) => {
         this.loader.close();
         this.modalService.close('slide-in-form');

@@ -4,6 +4,7 @@ import { T } from "app/translate-marker";
 
 export const helptext_system_ca = {
   add: {
+    title: T('Add CA'),
     fieldset_basic: T('Identifier and Type'),
     fieldset_type: T('Certificate Options'),
     fieldset_certificate: T('Certificate Subject'),
@@ -340,6 +341,7 @@ certificate still approved.'),
   },
 
   edit: {
+    title: T('Edit CA'),
     fieldset_certificate: T('Certificate Authority'),
     name: {
       placeholder: T("Identifier"),
