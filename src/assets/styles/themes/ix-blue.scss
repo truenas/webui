@@ -112,7 +112,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar {
-    //background-color: rgba(0, 0, 0, 0.5) !important;
     background-color: var(--alt-fg1)  !important;
   }
 
@@ -245,7 +244,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   .ngx-datatable .datatable-body .datatable-row-wrapper datatable-body-row{
     @include variable(background, --bg2, $bg2);
-    //@include variable(border-bottom-color, --alt-bg1, $alt-bg1);
     border-bottom: solid 1px var(--lines) !important;
   }
 
