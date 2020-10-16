@@ -26,7 +26,10 @@ export class EntityJobComponent implements OnInit {
   public progressNumberType;
   public hideProgressValue = false;
   public altMessage: string;
+  public showRealtimeLogs = false;
 
+  private realtimeLogsSubscribed = false;
+  public realtimeLogs = '';
   @Output() progress = new EventEmitter();
   @Output() success = new EventEmitter();
   @Output() failure = new EventEmitter();
@@ -87,6 +90,10 @@ export class EntityJobComponent implements OnInit {
     this.title = title;
   }
 
+  enableRealtimeLogs(showRealtimeLogs: boolean) {
+    this.showRealtimeLogs = showRealtimeLogs;
+  }
+
   changeAltMessage(msg: string) {
     this.altMessage = msg;
   }
@@ -130,7 +137,10 @@ export class EntityJobComponent implements OnInit {
       .subscribe(
         (res) => {
           this.job = res;
-          if (res.progress) {
+          if (this.showRealtimeLogs && this.job.logs_path && !this.realtimeLogsSubscribed) {
+            this.getRealtimeLogs();
+          }
+          if (res.progress && !this.showRealtimeLogs) {
             this.progress.emit(res.progress);
           }
           if (this.job.state === 'ABORTED') {
@@ -143,6 +153,9 @@ export class EntityJobComponent implements OnInit {
             this.success.emit(this.job);
           } else if (this.job.state === 'FAILED') {
             this.failure.emit(this.job);
+          }
+          if (this.realtimeLogsSubscribed) {
+            this.ws.unsubscribe("filesystem.file_tail_follow:" + this.job.logs_path);
           }
         });
   }
@@ -224,5 +237,21 @@ export class EntityJobComponent implements OnInit {
 
   abortJob() {
     this.ws.call('core.job_abort', [this.job.id]).subscribe();
+  }
+
+  getRealtimeLogs() {
+    this.realtimeLogsSubscribed = true;
+    const subName = "filesystem.file_tail_follow:" + this.job.logs_path;
+    this.ws.sub(subName).subscribe((res) => {
+      this.scrollBottom();
+      if(res && res.data && typeof res.data === 'string'){
+        this.realtimeLogs += res.data;
+      }
+    });
+  }
+
+  scrollBottom() {
+    const cardContainer = document.getElementsByClassName("entity-job-dialog")[0];
+    cardContainer.scrollTop = cardContainer.scrollHeight;
   }
 }
