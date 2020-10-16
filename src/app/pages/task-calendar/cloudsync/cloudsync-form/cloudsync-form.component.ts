@@ -617,7 +617,12 @@ export class CloudsyncFormComponent {
           if (item.id == res) {
             const targetProvider = _.find(this.providers, {"name": item.provider});
             if (targetProvider && targetProvider['buckets']) {
-              this.loader.open();
+              if (entityForm.loaderOpen === false) {
+                this.loader.open();
+              } else {
+                entityForm.keepLoaderOpen = true;
+              }
+
               // update bucket fields name and tooltips based on provider
               if (item.provider == "AZUREBLOB" || item.provider == "HUBIC" ) {
                 this.bucket_field.placeholder = T("Container");
@@ -633,7 +638,13 @@ export class CloudsyncFormComponent {
 
               this.getBuckets(item).subscribe(
                 (res) => {
-                  this.loader.close();
+                  if (entityForm.loaderOpen === false) {
+                    this.loader.close();
+                  } else {
+                    entityForm.loader.close();
+                    entityForm.loaderOpen = false;
+                    entityForm.keepLoaderOpen = false;
+                  }
                   this.bucket_field.options = [{label: '----------', value: ''}];
                   if (res) {
                     res.forEach((subitem) => {
@@ -644,7 +655,13 @@ export class CloudsyncFormComponent {
                   this.setDisabled('bucket_input', true, true);
                 },
                 (err) => {
-                  this.loader.close();
+                  if (entityForm.loaderOpen === false) {
+                    this.loader.close();
+                  } else {
+                    entityForm.loader.close();
+                    entityForm.loaderOpen = false;
+                    entityForm.keepLoaderOpen = false;
+                  }
                   this.setDisabled('bucket', true, true);
                   this.setDisabled('bucket_input', false, false);
                   this.dialog.confirm(err.extra ? err.extra.excerpt : (T('Error: ') + err.error) , err.reason, true, T('Fix Credential')).subscribe(
