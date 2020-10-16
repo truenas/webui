@@ -952,7 +952,7 @@ div.hopscotch-bubble .hopscotch-nav-button.prev:hover {
     transition: all .3s cubic-bezier(.35,0,.25,1);
 }
 .sidebar-panel.mat-sidenav .sidebar-list-item.open {
-    max-height: 1000px;
+    max-height: 1100px;
     overflow: visible;
     height: auto;
 }
