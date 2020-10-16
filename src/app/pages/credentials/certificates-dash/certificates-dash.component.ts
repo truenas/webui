@@ -57,10 +57,14 @@ export class CertificatesDashComponent implements OnInit {
           title: T('Certificates'),
           queryCall: 'certificate.query',
           deleteCall: 'certificate.delete',
+          dataSourceHelper: this.certificatesDataSourceHelper,
           columns: [
             { name: T('Name'), prop: 'name'},
             { name: T('Issuer'), prop: 'issuer' },
-            { name: T('DN'), prop: 'dn' },
+            { name: T('From'), prop: 'from' },
+            { name: T('Until'), prop: 'until' },
+            { name: T('CN'), prop: 'common' },
+            { name: T('SAN'), prop: 'san' }
           ],
           parent: this,
           add: function() {
@@ -77,20 +81,20 @@ export class CertificatesDashComponent implements OnInit {
           title: T('Certificate Signing Requests'),
           queryCall: 'certificate.query',
           deleteCall: 'certificate.delete',
+          dataSourceHelper: this.csrDataSourceHelper,
           columns: [
             { name: T('Name'), prop: 'name'},
-            { name: T('Internal'), prop: 'internal'},
             { name: T('Issuer'), prop: 'issuer' },
-            { name: T('DN'), prop: 'dn' },
-            { name: T('From'), prop: 'from' },
-            { name: T('Until'), prop: 'until' },
+            { name: T('CN'), prop: 'common' },
+            { name: T('SAN'), prop: 'san' }
+
           ],
           parent: this,
           add: function() {
-            // this.parent.modalService.open('slide-in-form', this.parent.cer);
+            this.parent.modalService.open('slide-in-form', this.parent.certificateAddComponent);
           },
           edit: function(row) {
-            // this.parent.modalService.open('slide-in-form', this.parent.staticRouteFormComponent, row.id);
+            this.parent.modalService.open('slide-in-form', this.parent.certificateEditComponent, row.id);
           }
         }
       },
@@ -102,11 +106,11 @@ export class CertificatesDashComponent implements OnInit {
           deleteCall: 'certificateauthority.delete',
           columns: [
             { name: T('Name'), prop: 'name'},
-            { name: T('Internal'), prop: 'internal'},
             { name: T('Issuer'), prop: 'issuer' },
-            { name: T('DN'), prop: 'dn' },
             { name: T('From'), prop: 'from' },
             { name: T('Until'), prop: 'until' },
+            { name: T('CN'), prop: 'common' },
+            { name: T('SAN'), prop: 'san' }
           ],
           parent: this,
           add: function() {
@@ -138,6 +142,15 @@ export class CertificatesDashComponent implements OnInit {
       }
       
     ]
+  }
+
+  certificatesDataSourceHelper(res) {
+    console.log(res)
+    return res.filter(item => item.certificate !== null);
+  }
+
+  csrDataSourceHelper(res) {
+    return res.filter(item => item.CSR !== null);
   }
 
   refreshForms() {
