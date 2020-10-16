@@ -48,6 +48,7 @@ export interface DiskFailure {
 
 export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnDestroy {
 
+  public showCaption: boolean = true;
   protected pendingDialog:any;
   protected aborted: boolean = false;
   private mediaObs;
@@ -396,6 +397,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         break;
       case "ES102":
         this.chassis = new ES102();
+        this.showCaption = false;
         break;
       default:
         this.controllerEvents.next({

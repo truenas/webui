@@ -113,7 +113,7 @@
           </div>
 
         <!-- CAPTION OVERLAY -->
-        <div *ngIf="chassis && !chassis.rear && !chassis.internal" class="caption dom-overlay">Choose a Disk</div>
+        <div *ngIf="showCaption && chassis && !chassis.rear && !chassis.internal" class="caption dom-overlay">Choose a Disk</div>
 
         <!-- FRONT/REAR TOGGLE -->
         <!--<div *ngIf="subenclosure && currentView != 'expanders'" class="caption dom-overlay front-rear-toggle">-->

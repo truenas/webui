@@ -21,32 +21,28 @@ export class ES102 extends Chassis{
     this.front.orientation = "columns";
 
     // Scale
-    this.front.chassisScale = {x: 1, y: 1};
+    this.front.chassisScale = {x: 1.025, y: 1.1};
     this.front.driveTrays.scale.x = 1;
     this.front.driveTrays.scale.y = 1;
     
-    /*this.front.chassisScale = {x: 1, y: 1.05};
-    this.front.driveTrays.scale.x = 0.95;
-    this.front.driveTrays.scale.y = 0.65;*/
-    
     // Offsets
     this.front.driveTraysOffsetX = -20;
-    this.front.driveTraysOffsetY = -65;
+    this.front.driveTraysOffsetY = -47;
  
     this.front.layout = {
       generatePosition: (displayObject, index, offsetX, offsetY, orientation) =>{
-        let gapX = 8;// was 16
-        let gapY = 16;
+        let gapX = 4;// was 16
+        let gapY = 2;
 
         const cols = [
-          { start: 0, count: 14, iomGap: 10, iomIndex: 7, },
-          { start: 14, count: 14, iomGap: 10, iomIndex: 7, },
-          { start: 28, count: 14, iomGap: 10, iomIndex: 7, },
-          { start: 42, count: 12, iomGap: 30, iomIndex: 6, },
-          { start: 54, count: 12, iomGap: 20, iomIndex: 6, },
-          { start: 66, count: 12, iomGap: 20, iomIndex: 6, },
-          { start: 78, count: 12, iomGap: 20, iomIndex: 6, },
-          { start: 90, count: 12, iomGap: 20, iomIndex: 6, },
+          { start: 0, count: 14, iomGap: 38, iomIndex: 7, },
+          { start: 14, count: 14, iomGap: 38, iomIndex: 7, },
+          { start: 28, count: 14, iomGap: 38, iomIndex: 7, },
+          { start: 42, count: 12, iomGap: 100, iomIndex: 6, },
+          { start: 54, count: 12, iomGap: 70, iomIndex: 6, },
+          { start: 66, count: 12, iomGap: 70, iomIndex: 6, },
+          { start: 78, count: 12, iomGap: 70, iomIndex: 6, },
+          { start: 90, count: 12, iomGap: 70, iomIndex: 6, },
         ]
 
         const getCurrentColumn = () => {
@@ -59,17 +55,21 @@ export class ES102 extends Chassis{
         let currentColumn = getCurrentColumn();
         let col = cols[currentColumn];
 
-        let mod = (index) % col.count; //this.front[orientation];
-        const iomGapX = currentColumn > 4 ? 44 : 0;
-        const iomGapY = index - col.start >= col.iomIndex ? col.iomGap : 0;
+        let mod = (index - col.start) % col.count; //this.front[orientation];
+        const iomGapX = currentColumn > 3 ? 30 : 0;
+        const iomGapY = (index - col.start) >= col.iomIndex ? col.iomGap : 0;
 
         //let nextPositionX = Math.floor(index / this.front[orientation]) * (displayObject.width + gapX);
         //let nextPositionY = mod * (displayObject.height + gapY);
     
-        let nextPositionX =  (displayObject.width + gapX) * currentColumn + iomGapX;
-        let nextPositionY = mod * (displayObject.height + gapY + iomGapY);
+        let nextPositionX =  (displayObject.width + gapX) * currentColumn;
+        let nextPositionY = mod * (displayObject.height + gapY);
+       
+        if(currentColumn > 3){
+          nextPositionY += 15;
+        } 
     
-        return {x: nextPositionX + offsetX, y: nextPositionY + offsetY};
+        return {x: nextPositionX + offsetX + iomGapX, y: nextPositionY + offsetY + iomGapY};
       }
     }
   }
