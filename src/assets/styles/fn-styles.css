@@ -542,7 +542,9 @@ body .mat-select-trigger {
     background: rgba(255,255,255, 0.42);
 }
 .ngx-datatable.material .datatable-header {
-    border-bottom: 1px solid rgba(0, 0, 0, .12);
+    /*border-bottom: 1px solid rgba(0, 0, 0, .12);*/
+    border-bottom: solid 1px var(--lines);
+    border-top: solid 1px var(--lines);
     background: rgba(255,255,255, 0.66);
 }
 .ngx-datatable.material .datatable-header .datatable-header-cell {
@@ -571,7 +573,7 @@ body .mat-select-trigger {
     overflow: hidden;
 }
 .ngx-datatable.material .datatable-body .datatable-body-row:last-child {
-    border-bottom: 0px solid black;
+    /*border-bottom: 0px solid black;*/
 }
 .ngx-datatable.material .datatable-footer {
     border-top: 1px solid rgba(255,255,255, 0);
