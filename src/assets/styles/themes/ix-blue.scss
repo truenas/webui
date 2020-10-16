@@ -260,17 +260,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     border-bottom: solid 1px var(--lines) !important;
   }
 
-  /*.ngx-datatable .datatable-body .datatable-row-wrapper:nth-child(odd) datatable-body-row{
-    @include variable(background, --alt-bg1, $alt-bg1);
-    @include variable(color, --alt-fg1, $alt-fg1);
-  }*/
-
-  /*.ngx-datatable .datatable-body .datatable-row-wrapper:nth-child(even) datatable-body-row{
-    //@include variable(background, --alt-bg1, $alt-bg1);
-    border-bottom-color:rgba(123,123,123,0.2);
-    @include variable(color, --fg1, $fg1);
-  }*/
-
   .mat-card .mat-divider{
     @include variable(background, --alt-fg1, $alt-fg1);
     opacity:0.15;

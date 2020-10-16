@@ -51,6 +51,7 @@ interface DatasetFormData {
   refquota_warning_inherit: boolean;
   refquota_critical: number;
   refquota_critical_inherit: boolean;
+  special_small_block_size: number;
 };
 
 @Component({
@@ -89,7 +90,7 @@ export class DatasetFormComponent implements Formconfiguration{
   public nameIsCaseInsensitive = false;
   public productType: string;
 
-  public humanReadable = {'quota': '', 'refquota': '', 'reservation': '', 'refreservation': ''}
+  public humanReadable = {'quota': '', 'refquota': '', 'reservation': '', 'refreservation': '', 'special_small_block_size':''}
 
   private quota_subscription;
   private refquota_subscription;
@@ -109,7 +110,7 @@ export class DatasetFormComponent implements Formconfiguration{
   public parent_data: any;
   protected passphrase_parent = false;
 
-  protected size_fields = ['quota', 'refquota', 'reservation', 'refreservation'];
+  protected size_fields = ['quota', 'refquota', 'reservation', 'refreservation', 'special_small_block_size'];
   protected OrigSize = {};
   protected OrigHuman = {};
 
@@ -663,6 +664,34 @@ export class DatasetFormComponent implements Formconfiguration{
         value: 'SENSITIVE'
       },
       {
+        type: 'input',
+        name: 'special_small_block_size',
+        placeholder: helptext.dataset_form_special_small_blocks_placeholder,
+        tooltip: helptext.dataset_form_special_small_blocks_tooltip,
+        blurEvent:this.blurSpecialSmallBlocks,
+        blurStatus: true,
+        parent: this,
+        validation: [
+          (control: FormControl): ValidationErrors => {
+            const config = this.fieldConfig.find(c => c.name === 'special_small_block_size');
+            
+            const size = this.convertHumanStringToNum(control.value, 'special_small_block_size');
+            const errors = control.value && isNaN(size)
+              ? { invalid_byte_string: true }
+              : null
+
+            if (errors) {
+              config.hasErrors = true;
+              config.errors = globalHelptext.human_readable.input_error;
+            } else {
+              config.hasErrors = false;
+              config.errors = '';
+            }
+
+            return errors;
+          }]
+      },
+      {
         type: 'select',
         name: 'share_type',
         placeholder: helptext.dataset_form_share_type_placeholder,
@@ -696,6 +725,7 @@ export class DatasetFormComponent implements Formconfiguration{
     'refquota_critical',
     'refquota_warning_inherit',
     'refquota_critical_inherit',
+    'special_small_block_size'
     // 'aclmode' -- not yet available in SCALE
 
   ];
@@ -819,6 +849,7 @@ export class DatasetFormComponent implements Formconfiguration{
       data.quota = null;
       data.refreservation = null;
       data.reservation = null;
+      data.special_small_block_size = null;
       data.copies = ( data.copies !== undefined && data.copies !== null && data.name !== undefined) ? "1" : undefined;
 
 
@@ -862,6 +893,11 @@ export class DatasetFormComponent implements Formconfiguration{
     }
   }
 
+  blurSpecialSmallBlocks(parent){
+    if (parent.entityForm) {
+        parent.entityForm.formGroup.controls['special_small_block_size'].setValue(parent.humanReadable['special_small_block_size']);
+    }
+  }
 
 
   isCustActionVisible(actionId: string) {
@@ -1351,6 +1387,9 @@ export class DatasetFormComponent implements Formconfiguration{
   }
 
   resourceTransformIncomingRestData(wsResponse): any {
+    if (wsResponse.special_small_block_size && wsResponse.special_small_block_size.rawvalue === '0') {
+      delete wsResponse.special_small_block_size;
+    }
     const quota_warning = this.getFieldValueOrNone(wsResponse.quota_warning) ? this.getFieldValueOrNone(wsResponse.quota_warning) : this.warning;
     const quota_warning_inherit = this.isInherited(wsResponse.quota_warning, quota_warning);
     const quota_critical = this.getFieldValueOrNone(wsResponse.quota_critical) ? this.getFieldValueOrNone(wsResponse.quota_critical) : this.critical;
@@ -1396,7 +1435,8 @@ export class DatasetFormComponent implements Formconfiguration{
         refreservation: this.OrigHuman['refreservation'],
         reservation: this.OrigHuman['reservation'],
         snapdir: this.getFieldValueOrRaw(wsResponse.snapdir),
-        sync: this.getFieldValueOrRaw(wsResponse.sync)
+        sync: this.getFieldValueOrRaw(wsResponse.sync),
+        special_small_block_size: this.OrigHuman['special_small_block_size']
      };
      // 
      if (this.productType !== 'SCALE') {
@@ -1409,7 +1449,7 @@ export class DatasetFormComponent implements Formconfiguration{
     //    returnValue.recordsize = "" + ( 1024 * value ) + "K";
     //  }
 
-     if (sizeValues['quota'] || sizeValues['refquota'] || sizeValues['refreservation'] || sizeValues['reservation'] ||
+     if (sizeValues['quota'] || sizeValues['refquota'] || sizeValues['refreservation'] || sizeValues['reservation'] || sizeValues['special_small_block_size'] ||
       !quota_warning_inherit || !quota_critical_inherit || !refquota_warning_inherit|| !refquota_critical_inherit ||
       quota_warning !== this.warning || quota_critical !== this.critical || refquota_critical !== this.critical || refquota_warning !== this.warning) {
        this.isBasicMode = false;
@@ -1420,6 +1460,9 @@ export class DatasetFormComponent implements Formconfiguration{
 
   editSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);
+    if (data['special_small_block_size'] === 0) {
+      delete data.special_small_block_size;
+    }
 
     if (data.quota_warning_inherit) {
       data.quota_warning = 'INHERIT';
@@ -1458,6 +1501,9 @@ export class DatasetFormComponent implements Formconfiguration{
 
   addSubmit(body: any) {
     const data: any = this.sendAsBasicOrAdvanced(body);
+    if (data['special_small_block_size'] === 0) {
+      delete data.special_small_block_size;
+    }
 
     if (data.quota_warning_inherit) {
       delete(data.quota_warning);
