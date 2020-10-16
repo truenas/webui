@@ -287,8 +287,8 @@
             <mat-slide-toggle
               *ngIf="col.toggle"
               [disabled]="row.disableSlider"
-              color="accent"
               id="{{row.name}}_{{col.name}}-slidetoggle"
+              color="primary"
               [ix-auto]="col?.name"
               ix-auto-type="toggle"
               [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
