@@ -103,8 +103,13 @@ export class SMBListComponent {
             if(res) {
               this.lockedPathDialog(row.path);
             } else {
-              this.router.navigate(
-                ["/"].concat(["storage", "pools", "id", poolName, "dataset", "acl", datasetId]));
+              if (this.productType.includes('SCALE')) {
+                this.router.navigate(
+                  ["/"].concat(["storage", "pools", "id", poolName, "dataset", "posix-acl", datasetId]));
+              } else {
+                this.router.navigate(
+                  ["/"].concat(["storage", "pools", "id", poolName, "dataset", "acl", datasetId]));
+              }
             }
           }, err => {
             this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, 
@@ -122,9 +127,7 @@ export class SMBListComponent {
     ];
     // Temporary: Drop from menu if SCALE
     if (this.productType.includes('SCALE')) {
-      const aclRow = rows.find(row => row.name === 'edit_acl');
       const shareAclRow = rows.find(row => row.name === 'share_acl')
-      rows.splice(rows.indexOf(aclRow), 1);
       rows.splice(rows.indexOf(shareAclRow), 1);
     }
     return rows;
