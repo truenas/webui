@@ -1023,10 +1023,12 @@ export class VolumesListTableConfig implements InputTableConf {
               onClick: (row1) => {
                 this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + rowData.id]).subscribe(acl_is_trivial => {
                   if (acl_is_trivial) {
+                    console.log("acl_is_trivial!");
                     this._router.navigate(new Array('/').concat([
-                      "storage", "permissions", row1.id
+                      "storage", "permissions", rowData.id
                     ]));
                   } else {
+                    console.log("Not Trivial!");
                     this.ws.call('filesystem.getacl', [row1.mountpoint]).subscribe(res => {
                       if(res.acltype === 'POSIX1E') {
                         this._router.navigate(new Array('/').concat([
