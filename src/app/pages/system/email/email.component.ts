@@ -21,6 +21,7 @@ export class EmailComponent implements OnDestroy {
   updateCall = 'mail.update';
   public entityEdit: any;
   public rootEmail: string;
+  private credentialsOauth = false;
   customSubmit = this.saveConfigSubmit;
   public custActions: Array < any > = [{
     id: 'send_mail',
@@ -28,6 +29,12 @@ export class EmailComponent implements OnDestroy {
     function: () => {
       if (this.rootEmail){
         const value = _.cloneDeep(this.entityEdit.formGroup.value);
+        if (value.client_id) {
+          delete value.client_id;
+          delete value.client_secret;
+          delete value.refresh_token;
+          value.smtp = false;
+        }
         const product_type = window.localStorage.getItem('product_type');
         const mailObj = {
           "subject" : "TrueNAS Test Message",
@@ -53,6 +60,31 @@ export class EmailComponent implements OnDestroy {
         this.dialogservice.Info(T("email"), T("Configure the root user email address."));
       }
     }
+  },
+  {
+    id: 'authenticate',
+    name: 'Log in to provider',
+    function: () => {
+      const dialogService = this.dialogservice;
+      const controls = this.entityEdit.formGroup.controls;
+
+      window.open("https://freenas.org/oauth/gmail?origin=" + 
+        encodeURIComponent(window.location.toString()), "_blank", "width=640,height=480");
+      window.addEventListener("message", doAuth, false);
+
+      function doAuth(message) {
+        if (message.data.oauth_portal) {
+          if (message.data.error) {
+            dialogService.errorReport(T('Error'), message.data.error);
+          } else {
+            for (const prop in message.data.result) {
+              controls[prop].setValue(message.data.result[prop]);
+            }
+          }
+        }
+        window.removeEventListener("message", doAuth);
+      }
+    }
   }];
 
   public fieldSets = new FieldSets([
@@ -76,10 +108,43 @@ export class EmailComponent implements OnDestroy {
           tooltip : helptext_system_email.fromname.tooltip,
         },
         {
+          type: 'radio',
+          name: 'smtp',
+          placeholder: 'Authentication',
+          options: [
+            {label: 'SMTP',
+             name: 'smtp',
+             tooltip: 'whatevs',
+             value: true},
+            {label: 'GMail',
+             name: 'gmail',
+             tooltip: 'Gmail whatevs',
+             value: false},
+          ],
+          value: true
+        },
+      ]
+    },
+    { name: 'spacer', label: false, width: '2%' },
+    {
+      name: helptext_system_email.fieldsets.access,
+      label: true,
+      width: '49%',
+      config: [
+        {
           type : 'input',
           name : 'outgoingserver',
           placeholder : helptext_system_email.outgoingserver.placeholder,
           tooltip : helptext_system_email.outgoingserver.tooltip,
+          relation : [
+            {
+              action : 'HIDE',
+              when : [ {
+                name : 'smtp',
+                value : false,
+              } ]
+            },
+          ],
         },
         {
           type : 'input',
@@ -88,7 +153,16 @@ export class EmailComponent implements OnDestroy {
           validation: helptext_system_email.port.validation,
           required: true,
           placeholder : helptext_system_email.port.placeholder,
-          tooltip : helptext_system_email.port.tooltip
+          tooltip : helptext_system_email.port.tooltip,
+          relation : [
+            {
+              action : 'HIDE',
+              when : [ {
+                name : 'smtp',
+                value : false,
+              } ]
+            },
+          ],
         },
         {
           type : 'select',
@@ -100,20 +174,6 @@ export class EmailComponent implements OnDestroy {
             {label : 'SSL (Implicit TLS)', value : 'SSL'},
             {label : 'TLS (STARTTLS)', value : 'TLS'},
           ]
-        }
-      ]
-    },
-    { name: 'spacer', label: false, width: '2%' },
-    {
-      name: helptext_system_email.fieldsets.access,
-      label: true,
-      width: '49%',
-      config: [
-        {
-          type : 'checkbox',
-          name : 'smtp',
-          placeholder : helptext_system_email.smtp.placeholder,
-          tooltip : helptext_system_email.smtp.tooltip,
         },
         {
           type : 'input',
@@ -122,7 +182,7 @@ export class EmailComponent implements OnDestroy {
           tooltip : helptext_system_email.user.tooltip,
           relation : [
             {
-              action : 'DISABLE',
+              action : 'HIDE',
               when : [ {
                 name : 'smtp',
                 value : false,
@@ -140,7 +200,7 @@ export class EmailComponent implements OnDestroy {
           inputType : 'password',
           relation : [
             {
-              action : 'DISABLE',
+              action : 'HIDE',
               when : [ {
                 name : 'smtp',
                 value : false,
@@ -149,7 +209,49 @@ export class EmailComponent implements OnDestroy {
           ],
           togglePw : true, 
           validation: helptext_system_email.pass.validation,
-        }
+        },
+        {
+          type: 'input',
+          name: 'client_id',
+          placeholder: 'Client ID',
+          relation : [
+            {
+              action : 'HIDE',
+              when : [ {
+                name : 'smtp',
+                value : true,
+              } ]
+            },
+          ],
+        },
+        {
+          type: 'input',
+          name: 'client_secret',
+          placeholder: 'Client Secret',
+          relation : [
+            {
+              action : 'HIDE',
+              when : [ {
+                name : 'smtp',
+                value : true,
+              } ]
+            },
+          ],
+        },
+        {
+          type: 'input',
+          name: 'refresh_token',
+          placeholder: 'Refresh Token',
+          relation : [
+            {
+              action : 'HIDE',
+              when : [ {
+                name : 'smtp',
+                value : true,
+              } ]
+            },
+          ],
+        },
       ]
     },
     { name: 'divider', divider: true }
@@ -168,8 +270,18 @@ export class EmailComponent implements OnDestroy {
             ) {}
 
   resourceTransformIncomingRestData(data): void {
+    for (let i in data.oauth) {
+      data[i] = data.oauth[i];
+    }
     delete data.pass;
     return data;
+  }
+
+  isCustActionVisible(actionname: string) {
+    if (actionname === 'authenticate' && this.credentialsOauth === false) {
+      return false;
+    }
+    return true;
   }
 
   afterInit(entityEdit: any) {
@@ -186,6 +298,7 @@ export class EmailComponent implements OnDestroy {
 
     this.smtp_subscription = this.smtp.valueChanges.subscribe((value) => {
       this.pass.hideButton = !value;
+      this.credentialsOauth = !value;
     });
   }
 
@@ -198,6 +311,21 @@ export class EmailComponent implements OnDestroy {
     if (emailConfig.pass && typeof emailConfig.pass === 'string' && emailConfig.pass.trim() === '') {
       delete emailConfig.pass;
     }
+    if (emailConfig.client_id) {
+      let oauth = {
+        client_id: emailConfig.client_id,
+        client_secret: emailConfig.client_secret,
+        refresh_token: emailConfig.refresh_token,
+        // access_token: '',
+        // token_uri: ''
+      };
+      emailConfig.oauth = oauth;
+    } else {
+      emailConfig.oauth = null;
+    }
+    delete emailConfig.client_id;
+    delete emailConfig.client_secret;
+    delete emailConfig.refresh_token;
     this.ws
       .call(this.updateCall, [emailConfig])
       .subscribe(
