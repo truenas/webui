@@ -3,7 +3,7 @@ import { DriveTray } from './drivetray';
 import { Chassis } from './chassis';
 import { ChassisView } from './chassis-view';
 
-export class ES24f extends Chassis {
+export class ES24F extends Chassis {
 
   constructor(){
     super();

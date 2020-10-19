@@ -15,7 +15,7 @@ import { ES12 } from 'app/core/classes/hardware/es12';
 import { E16 } from 'app/core/classes/hardware/e16';
 import { E24 } from 'app/core/classes/hardware/e24';
 import { ES24 } from 'app/core/classes/hardware/es24';
-import { ES24f } from 'app/core/classes/hardware/es24f';
+import { ES24F } from 'app/core/classes/hardware/es24f';
 import { E60 } from 'app/core/classes/hardware/e60';
 import { ES60 } from 'app/core/classes/hardware/es60';
 import { ES102 } from 'app/core/classes/hardware/es102';
@@ -384,7 +384,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.chassis = new ES24();
         break;
       case "ES24f":
-        this.chassis = new ES24f();
+        this.chassis = new ES24F();
         break;
       case "E24":
         this.chassis = new E24();
@@ -481,7 +481,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         chassis = new ES24();
         break;
       case "ES24f":
-        chassis = new ES24f();
+        chassis = new ES24F();
         break;
       case "ES60":
         chassis = new ES60();
