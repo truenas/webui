@@ -982,8 +982,6 @@ export class VolumesListTableConfig implements InputTableConf {
           name: T('Add Dataset'),
           label: T("Add Dataset"),
           onClick: (row1) => {
-            console.log(row1);
-            console.warn(rowData);
             // Format: "storage/id/poolID/dataset/add/<Path>%2F<To>%2F<Dataset>"
             this._router.navigate(new Array('/').concat([
               "storage", "id", rowData.pool, "dataset",
@@ -1023,7 +1021,6 @@ export class VolumesListTableConfig implements InputTableConf {
               onClick: (row1) => {
                 this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + rowData.id]).subscribe(acl_is_trivial => {
                   if (acl_is_trivial) {
-                    console.log("acl_is_trivial!");
                     this._router.navigate(new Array('/').concat([
                       "storage", "permissions", rowData.id
                     ]));
@@ -1052,7 +1049,7 @@ export class VolumesListTableConfig implements InputTableConf {
               label: T('User Quotas'),
               onClick: (row1) => {
                 this._router.navigate(new Array('/').concat([
-                  "storage", "user-quotas", row1.id
+                  "storage", "user-quotas", rowData.id
                 ]));
               }
             },
@@ -1062,7 +1059,7 @@ export class VolumesListTableConfig implements InputTableConf {
               label: T('Group Quotas'),
               onClick: (row1) => {
                 this._router.navigate(new Array('/').concat([
-                  "storage", "group-quotas", row1.id
+                  "storage", "group-quotas", rowData.id
                 ]));
               }
             },
