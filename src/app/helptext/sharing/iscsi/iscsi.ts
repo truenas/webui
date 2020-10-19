@@ -347,6 +347,9 @@ export const helptext_sharing_iscsi = {
   usefor_placeholder: T("Sharing Platform"),
   usefor_tooltip: T("Choose the platform that will use this share. The associated options are applied to this share."),
 
+  target_placeholder: T('Target'),
+  target_tooltip: T('Create a new Target or choose an existing target for this share.'),
+
   step2_label: T("Portal"),
 
   portal_placeholder: T("Portal"),
