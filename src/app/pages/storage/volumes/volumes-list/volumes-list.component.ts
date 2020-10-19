@@ -983,9 +983,11 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Add Dataset"),
           onClick: (row1) => {
             console.log(row1);
+            console.warn(rowData);
+            // Format: "storage/id/poolID/dataset/add/<Path>%2F<To>%2F<Dataset>"
             this._router.navigate(new Array('/').concat([
-              "storage", "id", row1.id.split('/')[0], "dataset",
-              "add", row1.id
+              "storage", "id", rowData.pool, "dataset",
+              "add", rowData.id
             ]));
           }
         });
@@ -995,8 +997,8 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Add Zvol"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat([
-              "storage", "id", row1.id.split('/')[0], "zvol", "add",
-              row1.id
+              "storage", "id", rowData.pool, "zvol", "add",
+              rowData.id
             ]));
           }
         });
@@ -1007,8 +1009,8 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T("Edit Options"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
-            "storage", "id", row1.id.split('/')[0], "dataset",
-            "edit", row1.id
+            "storage", "id", rowData.pool, "dataset",
+            "edit", rowData.id
           ]));
         }
       });
@@ -1028,13 +1030,13 @@ export class VolumesListTableConfig implements InputTableConf {
                     this.ws.call('filesystem.getacl', [row1.mountpoint]).subscribe(res => {
                       if(res.acltype === 'POSIX1E') {
                         this._router.navigate(new Array('/').concat([
-                          "storage", "id", row1.id.split('/')[0], "dataset",
-                          "posix-acl", row1.id
+                          "storage", "id", rowData.pool, "dataset",
+                          "posix-acl", rowData.id
                         ]));                    
                       } else {
                         this._router.navigate(new Array('/').concat([
-                          "storage", "id", row1.id.split('/')[0], "dataset",
-                          "acl", row1.id
+                          "storage", "id", rowData.pool, "dataset",
+                          "acl", rowData.id
                         ]));
                       }
                     })
@@ -1083,7 +1085,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   ).subscribe((doubleConfirmDialog) => {
                     if (doubleConfirmDialog) {
                       this.loader.open();
-                      this.ws.call('pool.dataset.delete', [row1.id, {"recursive": true}]).subscribe(
+                      this.ws.call('pool.dataset.delete', [rowData.id, {"recursive": true}]).subscribe(
                         (wsResp) => {
                           this.loader.close();
                           this.parentVolumesListComponent.repaintMe();
@@ -1096,7 +1098,7 @@ export class VolumesListTableConfig implements InputTableConf {
                                 (res) => {
                                   if (res) {
                                     this.loader.open();
-                                    this.ws.call('pool.dataset.delete', [row1.id, {"recursive": true, "force": true}]).subscribe(
+                                    this.ws.call('pool.dataset.delete', [rowData.id, {"recursive": true, "force": true}]).subscribe(
                                       (wsres) => {
                                         this.loader.close();
                                         this.parentVolumesListComponent.repaintMe();
@@ -1145,7 +1147,7 @@ export class VolumesListTableConfig implements InputTableConf {
               if (confirmed === true) {
                 this.loader.open();
   
-                this.ws.call('pool.dataset.delete', [row1.id, {"recursive": true}]).subscribe((wsResp) => {
+                this.ws.call('pool.dataset.delete', [rowData.id, {"recursive": true}]).subscribe((wsResp) => {
                   this.loader.close();
                   this.parentVolumesListComponent.repaintMe();
   
@@ -1169,8 +1171,8 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T("Edit Zvol"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
-            "storage", "pools", "id", row1.id.split('/')[0], "zvol", "edit",
-            row1.id
+            "storage", "id", rowData.pool, "zvol", "edit",
+            rowData.id
           ]));
         }
       });
@@ -1279,8 +1281,8 @@ export class VolumesListTableConfig implements InputTableConf {
             onClick: (row1) => {
               //unlock
               this._router.navigate(new Array('/').concat([
-                "storage", "pools", "id", row1.id.split('/')[0], "dataset",
-                "unlock", row1.id
+                "storage", "id", rowData.pool, "dataset",
+                "unlock", rowData.id
               ]));
             }
           });
