@@ -146,6 +146,11 @@ export class CertificatesDashComponent implements OnInit {
 
   certificatesDataSourceHelper(res) {
     console.log(res)
+    res.forEach(certificate => {
+      if(_.isObject(certificate.issuer)) {
+        certificate.issuer = certificate.issuer.name;
+      }
+    })
     return res.filter(item => item.certificate !== null);
   }
 

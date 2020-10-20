@@ -30,7 +30,6 @@ export class CertificateEditComponent {
     {
       name: helptext_system_certificates.edit.fieldset_certificate,
       class: 'certificate',
-      width: '100%',
       config: [
         {
         type: 'input',
@@ -41,6 +40,11 @@ export class CertificateEditComponent {
         validation: helptext_system_certificates.edit.name.validation
       }
     ]
+  },
+  {
+    name: 'spacer',
+    class: 'spacer',
+    config:[]
   },{
     name: 'Subject',
     label: true,
@@ -60,7 +64,12 @@ export class CertificateEditComponent {
         type: 'paragraph',
         name: 'city',
         paraText: `${helptext_system_certificates.add.city.placeholder}: `
-      },
+      }
+    ]
+  },{
+    name: 'Subject-col-2',
+    class: 'subject lowerme',
+    config: [
       {
         type: 'paragraph',
         name: 'organization',
@@ -75,7 +84,12 @@ export class CertificateEditComponent {
         type: 'paragraph',
         name: 'email',
         paraText: `${helptext_system_certificates.add.email.placeholder}: `
-      },
+      }
+    ]
+  }, {
+    name: 'Subject Details',
+    class: 'subject-details break-all',
+    config: [
       {
         type: 'paragraph',
         name: 'common',
@@ -92,6 +106,10 @@ export class CertificateEditComponent {
         paraText: `${helptext_system_certificates.add.DN}: `
       }
     ]
+  }, {
+    name: 'spacer',
+    class: 'spacer',
+    config:[]
   },
   {
     name: 'Details',
@@ -121,7 +139,12 @@ export class CertificateEditComponent {
         type: 'paragraph',
         name: 'key_type',
         paraText: `${helptext_system_certificates.add.key_type.placeholder}: `
-      },
+      }
+    ]
+  }, {
+    name: 'Details-col2',
+    class: 'details-col-2',
+    config: [
       {
         type: 'paragraph',
         name: 'until',
@@ -157,7 +180,6 @@ export class CertificateEditComponent {
   protected CSRField: any;
   protected entityForm: any;
   protected dialogRef: any;
-  protected isOneColumnForm = true;
   private getRow = new Subscription;
   private incomingData: any;
 
@@ -188,13 +210,19 @@ export class CertificateEditComponent {
 
   setForm() {
     const fields = ['country', 'state', 'city', 'organization', 'organizational_unit', 'email', 'common', 'DN', 'cert_type',
-      'root_path', 'digest_algorithm', 'key_length', 'key_type', 'until', 'issuer', 'revoked', 'signed_by', 'lifetime'];
+      'root_path', 'digest_algorithm', 'key_length', 'key_type', 'until', 'revoked', 'signed_by', 'lifetime'];
     fields.forEach(field => {
       const paragraph = _.find(this.fieldConfig, { 'name': field });
       this.incomingData[field] || this.incomingData[field] === false ? 
         paragraph.paraText += this.incomingData[field] : paragraph.paraText += '---'; 
     })
     _.find(this.fieldConfig, { 'name': 'san' }).paraText += this.incomingData.san.join(',');
+    const issuer = _.find(this.fieldConfig, { 'name': 'issuer' });
+    if (_.isObject(this.incomingData.issuer)) {
+      issuer.paraText += this.incomingData.issuer.name;
+    } else {
+      this.incomingData.issuer ? issuer.paraText += this.incomingData.issuer : issuer.paraText += '---';
+    }
 
     // this.certificateField = _.find(this.fieldConfig, { 'name': 'certificate' });
     // this.privatekeyField = _.find(this.fieldConfig, { 'name': 'privatekey' });
