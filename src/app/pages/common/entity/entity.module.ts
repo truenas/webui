@@ -79,6 +79,7 @@ import { EntityToolbarComponent } from './entity-toolbar/entity-toolbar.componen
 import { ToolbarButtonComponent } from './entity-toolbar/components/toolbar-button/toolbar-button.component';
 import { ToolbarMenuComponent } from './entity-toolbar/components/toolbar-menu/toolbar-menu.component';
 import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
+import { ToolbarMultiSelectComponent } from './entity-toolbar/components/toolbar-multiselect/toolbar-multiselect.component';
 import { EntityRowDetailsComponent } from './entity-table/entity-row-details.component';
 import { TaskScheduleListComponent } from 'app/pages/task-calendar/components/task-schedule-list/task-schedule-list.component';
 import { FormStatusComponent } from './entity-form/components/form-status/form-status.component';
@@ -146,6 +147,7 @@ import { TableComponent } from './table/table.component';
     ToolbarButtonComponent,
     ToolbarMenuComponent,
     ToolbarMultimenuComponent,
+    ToolbarMultiSelectComponent,
     FormStatusComponent,
     EntityComingsoonComponent,
     TableComponent,
@@ -176,6 +178,7 @@ import { TableComponent } from './table/table.component';
     ToolbarButtonComponent,
     ToolbarMenuComponent,
     ToolbarMultimenuComponent,
+    ToolbarMultiSelectComponent,
     EntityComingsoonComponent,
     TableComponent,
     CdkTreeModule,

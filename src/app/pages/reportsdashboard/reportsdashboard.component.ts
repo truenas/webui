@@ -9,6 +9,7 @@ import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embe
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { ReportComponent, Report } from './components/report/report.component';
+import { ReportsGlobalControlsComponent } from './components/reports-global-controls/reports-global-controls.component';
 import { ReportsService } from './reports.service';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 
@@ -75,6 +76,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   public fieldSets: FieldSet[];
   public diskReportConfigReady: boolean = false;
   private getAdvancedConfig: Subscription;
+  public actionsConfig;
 
   constructor(private erdService: ErdService, 
     public translate: TranslateService, 
@@ -88,6 +90,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   }
 
   ngOnInit() { 
+
     this.scrollContainer = document.querySelector('.rightside-content-hold ');//this.container.nativeElement;
     this.scrollContainer.style.overflow = 'hidden';
 
@@ -168,6 +171,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
     this.erdService.attachResizeEventToElement("dashboardcontainerdiv"); 
     
     this.setupSubscriptions();
+
+    this.actionsConfig = { actionType: ReportsGlobalControlsComponent, actionConfig: this };
+    this.core.emit({ name:"GlobalActions", data: this.actionsConfig, sender: this });
   }
 
   getVisibility(key){
@@ -343,17 +349,24 @@ diskReportBuilderSetup(){
     // Entity-Toolbar Config
     this.toolbarConfig = [
           {
-            type: 'multimenu',
+            //type: 'multimenu',
+            type: 'multiselect',
             name: 'devices',
             label: T('Devices'),
+            placeholder: T('Devices'),
             disabled:false,
+            multiple: true,
             options: this.diskDevices.map((v) => v), // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
+            customTriggerValue: 'Select Disks',
           },
           {
-            type: 'multimenu',
+            type: 'multiselect',
             name: 'metrics',
             label: T('Metrics'),
+            placeholder: T('Metrics'),
+            customTriggerValue: T('Select Reports'),
             disabled: false,
+            multiple: true,
             options: this.diskMetrics ? this.diskMetrics.map((v) => v) : [T('Not Available')], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
           }
     ]
@@ -425,6 +438,7 @@ diskReportBuilderSetup(){
           this.buildDiskReport(evt.data.devices, evt.data.metrics);
         break;
         case 'ToolbarChanged':
+          console.log(evt);
           if(evt.data.devices && evt.data.metrics){
             this.buildDiskReport(evt.data.devices, evt.data.metrics);
           }

@@ -8,6 +8,7 @@ import { ViewButtonComponent } from 'app/core/components/viewbutton/viewbutton.c
 import globalHelptext from '../../../helptext/global-helptext';
 import { EntityTableAddActionsComponent } from 'app/pages/common/entity/entity-table/entity-table-add-actions.component';
 import { VolumesListControlsComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list-controls.component';
+import { ReportsGlobalControlsComponent } from 'app/pages/reportsdashboard/components/reports-global-controls/reports-global-controls.component';
 
 export interface GlobalAction {
   applyConfig(config:any);
@@ -82,7 +83,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Pseudo routing events (for reports page)
     this.core.register({observerClass:this, eventName:"PseudoRouteChange"}).subscribe((evt:CoreEvent) => {
-      this.destroyActions();
+      //this.destroyActions();
       let routeChange = evt.data;
       //this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
       this.routeParts = evt.data;
