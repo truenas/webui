@@ -3,7 +3,7 @@
     <li *ngFor="let part of routeParts"
       ix-auto ix-auto-type="option" ix-auto-identifier="{{part.breadcrumb}}">
       <span *ngIf="!part.disabled;else noclick">
-        <a [routerLink]="[part.url]">{{part.breadcrumb | translate}}</a>
+        <a (click)="gotoRoute(part.url)" class="clickable">{{part.breadcrumb | translate}}</a>
       </span>
       <ng-template #noclick>
         <a>{{part.breadcrumb | translate}}</a>
