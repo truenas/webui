@@ -336,6 +336,13 @@ identified as <i>not</i> critical can be ignored by the certificate-using system
 certificate still approved.'),
       },
     },
+    DN: T('Distinguished Name'),
+    type: T('Type'),
+    path: T('Path'),
+    unitl: T('Until'),
+    issuer: T('Issuer'),
+    revoked: T('Revoked'),
+    signed_by: T('Signed By')
   },
 
   edit: {

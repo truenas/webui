@@ -10,6 +10,7 @@ import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
+import { helptext } from 'app/helptext/system/reporting';
 
 @Component({
   selector: 'app-certificate-edit',
@@ -28,7 +29,6 @@ export class CertificateEditComponent {
   public fieldSets: FieldSet[] = [
     {
       name: helptext_system_certificates.edit.fieldset_certificate,
-      label: true,
       class: 'certificate',
       width: '100%',
       config: [
@@ -39,27 +39,113 @@ export class CertificateEditComponent {
         tooltip: helptext_system_certificates.edit.name.tooltip,
         required: true,
         validation: helptext_system_certificates.edit.name.validation
+      }
+    ]
+  },{
+    name: 'Subject',
+    label: true,
+    class: 'subject',
+    config: [
+      {
+        type: 'paragraph',
+        name: 'country',
+        paraText: `${helptext_system_certificates.add.country.placeholder}: `
       },
       {
-        type: 'textarea',
-        name: 'certificate',
-        placeholder: helptext_system_certificates.edit.certificate.placeholder,
-        isHidden: false,
-        readonly: true,
+        type: 'paragraph',
+        name: 'state',
+        paraText: `${helptext_system_certificates.add.state.placeholder}: `
       },
       {
-        type: 'textarea',
-        name: 'CSR',
-        placeholder: helptext_system_certificates.edit.csr.placeholder,
-        isHidden: false,
-        readonly: true,
+        type: 'paragraph',
+        name: 'city',
+        paraText: `${helptext_system_certificates.add.city.placeholder}: `
       },
       {
-        type: 'textarea',
-        name: 'privatekey',
-        placeholder: helptext_system_certificates.edit.privatekey.placeholder,
-        isHidden: false,
-        readonly: true,
+        type: 'paragraph',
+        name: 'organization',
+        paraText: `${helptext_system_certificates.add.organization.placeholder}: `
+      },
+      {
+        type: 'paragraph',
+        name: 'organizational_unit',
+        paraText: `${helptext_system_certificates.add.organizational_unit.placeholder}: `
+      },
+      {
+        type: 'paragraph',
+        name: 'email',
+        paraText: `${helptext_system_certificates.add.email.placeholder}: `
+      },
+      {
+        type: 'paragraph',
+        name: 'common',
+        paraText: `${helptext_system_certificates.add.common.placeholder}: `
+      },
+      {
+        type: 'paragraph',
+        name: 'san',
+        paraText: `${helptext_system_certificates.add.san.placeholder}: `
+      },
+      {
+        type: 'paragraph',
+        name: 'DN',
+        paraText: `${helptext_system_certificates.add.DN}: `
+      }
+    ]
+  },
+  {
+    name: 'Details',
+    class: 'details',
+    config: [
+      {
+        type: 'paragraph',
+        name: 'cert_type',
+        paraText: `${helptext_system_certificates.add.type}: `
+      },
+      {
+        type: 'paragraph',
+        name: 'root_path',
+        paraText: `${helptext_system_certificates.add.path}: `
+      },
+      {
+        type: 'paragraph',
+        name: 'digest_algorithm',
+        paraText: `${helptext_system_certificates.add.digest_algorithm.placeholder}: `
+      },
+      {
+        type: 'paragraph',
+        name: 'key_length',
+        paraText: `${helptext_system_certificates.add.key_length.placeholder}: `
+      },
+      {
+        type: 'paragraph',
+        name: 'key_type',
+        paraText: `${helptext_system_certificates.add.key_type.placeholder}: `
+      },
+      {
+        type: 'paragraph',
+        name: 'until',
+        paraText: `${helptext_system_certificates.add.unitl}: `
+      },
+      {
+        type: 'paragraph',
+        name: 'issuer',
+        paraText: `${helptext_system_certificates.add.issuer}: `
+      },
+      {
+        type: 'paragraph',
+        name: 'revoked',
+        paraText: `${helptext_system_certificates.add.revoked}: `
+      },
+      {
+        type: 'paragraph',
+        name: 'signed_by',
+        paraText: `${helptext_system_certificates.add.signed_by}: `
+      },
+      {
+        type: 'paragraph',
+        name: 'lifetime',
+        paraText: `${helptext_system_certificates.add.lifetime.placeholder}: `
       }
     ]
     }
@@ -73,6 +159,7 @@ export class CertificateEditComponent {
   protected dialogRef: any;
   protected isOneColumnForm = true;
   private getRow = new Subscription;
+  private incomingData: any;
 
   constructor(protected ws: WebSocketService, protected matDialog: MatDialog,
     protected loader: AppLoaderService, protected dialog: DialogService,
@@ -85,6 +172,8 @@ export class CertificateEditComponent {
   }
 
   resourceTransformIncomingRestData(data) {
+    console.log(data)
+    this.incomingData = data;
     if (data.CSR != null) {
       this.isCSR = true;
     }
@@ -98,18 +187,27 @@ export class CertificateEditComponent {
   }
 
   setForm() {
-    this.certificateField = _.find(this.fieldConfig, { 'name': 'certificate' });
-    this.privatekeyField = _.find(this.fieldConfig, { 'name': 'privatekey' });
-    this.CSRField = _.find(this.fieldConfig, { 'name': 'CSR' });
-    if (this.isCSR) {
-      this.CSRField['isHidden'] = false;
-      this.certificateField['isHidden'] = true;
-      this.privatekeyField['isHidden'] = false;
-    } else {
-      this.CSRField['isHidden'] = true;
-      this.certificateField['isHidden'] = false;
-      this.privatekeyField['isHidden'] = false;
-    }
+    const fields = ['country', 'state', 'city', 'organization', 'organizational_unit', 'email', 'common', 'DN', 'cert_type',
+      'root_path', 'digest_algorithm', 'key_length', 'key_type', 'until', 'issuer', 'revoked', 'signed_by', 'lifetime'];
+    fields.forEach(field => {
+      const paragraph = _.find(this.fieldConfig, { 'name': field });
+      this.incomingData[field] || this.incomingData[field] === false ? 
+        paragraph.paraText += this.incomingData[field] : paragraph.paraText += '---'; 
+    })
+    _.find(this.fieldConfig, { 'name': 'san' }).paraText += this.incomingData.san.join(',');
+
+    // this.certificateField = _.find(this.fieldConfig, { 'name': 'certificate' });
+    // this.privatekeyField = _.find(this.fieldConfig, { 'name': 'privatekey' });
+    // this.CSRField = _.find(this.fieldConfig, { 'name': 'CSR' });
+    // if (this.isCSR) {
+    //   this.CSRField['isHidden'] = false;
+    //   this.certificateField['isHidden'] = true;
+    //   this.privatekeyField['isHidden'] = false;
+    // } else {
+    //   this.CSRField['isHidden'] = true;
+    //   this.certificateField['isHidden'] = false;
+    //   this.privatekeyField['isHidden'] = false;
+    // }
   }
 
   customSubmit(value) {
