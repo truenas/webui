@@ -1,9 +1,9 @@
-<div *ngIf="config" class="form-element dynamic-field form-select" style="margin: unset;">
-  <mat-form-field value="fromFormField" #field>
+<div *ngIf="config" class="form-element dynamic-field form-select" style="margin: unset; position:relative">
+  <mat-label style="position: absolute; top: 8px; left: 16px;">{{config.customTriggerValue}}</mat-label>
+  <mat-form-field #field>
     <mat-select 
       #selectTrigger
-      [compareWith]="compareValues"
-      [value]="config.value"
+      [(value)]="config.value"
       multiple="config.multiple" 
       [required]="config.required" 
       (selectionChange)="onChangeOption($event)"
@@ -12,12 +12,10 @@
 
      
       <mat-select-trigger>
-        <span>
-          {{config.customTriggerValue}}
-        </span>
+        <!--{{config.customTriggerValue}}-->
       </mat-select-trigger>
      
-      <div class="mat-option" (click)="checkAll()" value="select_all">
+      <div *ngIf="config.options.length > 1" class="mat-option" (click)="checkAll()" value="select_all">
         <span>
           <mat-icon *ngIf="checkLength()" class="fn-checked">check_circle</mat-icon>
           <mat-icon *ngIf="!checkLength()" class="fn-unchecked">remove</mat-icon>

@@ -438,7 +438,6 @@ diskReportBuilderSetup(){
           this.buildDiskReport(evt.data.devices, evt.data.metrics);
         break;
         case 'ToolbarChanged':
-          console.log(evt);
           if(evt.data.devices && evt.data.metrics){
             this.buildDiskReport(evt.data.devices, evt.data.metrics);
           }
