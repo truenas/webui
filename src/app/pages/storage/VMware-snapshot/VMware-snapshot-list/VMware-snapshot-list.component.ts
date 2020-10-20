@@ -14,6 +14,7 @@ export class VMwareSnapshotListComponent {
   protected route_add: string[] = ["storage", "vmware-Snapshots", "add"];
   protected route_add_tooltip = "Add VMware Snapshot";
   protected entityList: any;
+  protected wsDelete = 'vmware.delete';
 
   public columns: Array<any> = [
     {name : 'Hostname', prop : 'hostname', always_display: true }, {name : 'Username', prop : 'username'},
