@@ -13,6 +13,7 @@ import { CoreService } from 'app/core/services/core.service';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import globalHelptext from '../../../../helptext/global-helptext';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import isCidr, * as ipCidr from 'is-cidr';
 
 @Component({
   selector : 'app-interfaces-form',
@@ -276,7 +277,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               width: '55%',
               netmaskPreset: 32,
               validation : [ ipv4or6cidrValidator('failover_virtual_address') ],
-
             }
         ],
         listFields: []
@@ -434,6 +434,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         }
         if (is_ha) {
           this.aliases_subscription = this.entityForm.formGroup.controls['aliases'].valueChanges.subscribe(res => {
+            let v6_found = false;
             let mismatch_found = false;
             for (let i = 0; i < res.length; i++) {
               const alias = res[i];
@@ -443,9 +444,17 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               if (!(address && failover_address && virtual_address) && !(!address && !failover_address && !virtual_address)) {
                 mismatch_found = true;
               }
+              if (isCidr.v6(address) ||
+                  isCidr.v6(failover_address) ||
+                  isCidr.v6(virtual_address)) {
+                v6_found = true;
+              }
             }
-
-            if (mismatch_found) {
+            if (v6_found) {
+              this.aliases_fc.hasErrors = true;
+              this.aliases_fc.errors = helptext.failover_alias_v6_error;
+              this.save_button_enabled = false;
+            } else if (mismatch_found) {
               this.aliases_fc.hasErrors = true;
               this.aliases_fc.errors = helptext.failover_alias_set_error;
               this.save_button_enabled = false;
