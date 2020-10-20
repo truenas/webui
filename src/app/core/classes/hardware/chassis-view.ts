@@ -37,6 +37,10 @@ import {
     y?: number;
   }
 
+  export interface LayoutGenerator {
+    generatePosition: (displayObject, index, xOffset?: number, yOffset?: number, orientation?: string) => Position;
+  }
+
   export class ChassisView {
 
     /*
@@ -49,7 +53,7 @@ import {
      public events: Subject<CoreEvent>;
      public model: string;
      public driveTraysOffsetY: number = 0; // if drives don't start at top.
-       public driveTraysOffsetX: number = 0; // if drives don't start at top.
+     public driveTraysOffsetX: number = 0; // if drives don't start at top.
      public driveTrays: any;
      public driveTrayObjects: DriveTray[] = [];
      public chassis:Sprite;
@@ -67,6 +71,8 @@ import {
      public slotRange: Range;
      public rows: number;
      public columns: number;
+     public orientation: string = "rows"; // 'rows' || 'columns'
+     public layout?: LayoutGenerator;
      public vertical: boolean = false;
      public filters: any[] = [];
      public disabledOpacity = 0.25;
@@ -75,6 +81,8 @@ import {
      public loader: any;
      public autoPosition: boolean = true;
      protected utils: ThemeUtils;
+     public gapX: number = 10;
+     public gapY: number = 2;
 
 
      constructor(){
@@ -282,11 +290,15 @@ import {
      }
 
      generatePosition(displayObject, index, xOffset: number = 0, yOffset: number = 0): Position{
-       let gapX = 10;
-       let gapY = 2;
+       if(this.layout){
+         return this.layout.generatePosition(displayObject, index, xOffset, yOffset, this.orientation);
+       }
+
+       //let gapX = 10;
+       //let gapY = 2;
        let mod = index % this.columns;
-       let nextPositionX = mod * (displayObject.width + gapX) + xOffset;
-       let nextPositionY = Math.floor(index / this.columns) * (displayObject.height + gapY) + yOffset;
+       let nextPositionX = mod * (displayObject.width + this.gapX) + xOffset;
+       let nextPositionY = Math.floor(index / this.columns) * (displayObject.height + this.gapY) + yOffset;
 
        return {x: nextPositionX, y: nextPositionY}
      }

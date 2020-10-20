@@ -23,6 +23,16 @@ export class ES60 extends Chassis {
     this.front.driveTrays.scale.y = 1.1;
     this.front.chassisScale = {y: 0.98};
 
+    this.front.layout = {
+      generatePosition: (displayObject, index, offsetX, offsetY, orientation) => {
+        let mod = index % this.front.rows;
+        let nextPositionX = Math.floor(index / this.front.rows) * (displayObject.width + this.front.gapX) + offsetX;
+        let nextPositionY = mod * (displayObject.height + this.front.gapY) + offsetY ;
+
+        return {x: nextPositionX, y: nextPositionY};
+      }
+    }
+
     this.generatePerspectiveOffset();
   }
 
