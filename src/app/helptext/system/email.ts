@@ -49,16 +49,6 @@ export const helptext_system_email = {
     )
   },
 
-  smtp: {
-    placeholder: T("SMTP Authentication"),
-    tooltip: T(
-      'Enable/disable\
- <a href="https://en.wikipedia.org/wiki/SMTP_Authentication"\
- target="_blank">SMTP AUTH</a> using PLAIN SASL.\
- Enter the required Username and Password if set.'
-    )
-  },
-
   user: {
     placeholder: T("Username"),
     tooltip: T(
@@ -75,5 +65,29 @@ export const helptext_system_email = {
  characters are accepted."
     ), 
     validation: [regexValidator(/^[ -~]+$/)]
+  },
+
+  auth: {
+    section_label: T('Authentication'),
+    smtp: {
+      placeholder: T("SMTP"),
+      tooltip: T(
+        'Enable\
+   <a href="https://en.wikipedia.org/wiki/SMTP_Authentication"\
+   target="_blank">SMTP AUTH</a> using PLAIN SASL.\
+   Enter the required Username and Password if set.'
+      )
+    },
+    gmail: {
+      placeholder: T('GMail OAuth'),
+      tooltip: T('Enable GMail OAuth authentication.')
+    },
+    client_id: {
+      placeholder: T('Client ID'),
+      tooltip: T('Use the <i>Log In to GMail</i> button to obtain the credentials for this form.')
+    },
+    client_secret: T('Client Secret'),
+    refresh_token: T('Refresh Token'),
+    login_button: T('Log In to GMail')
   }
 };
