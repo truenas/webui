@@ -24,14 +24,12 @@ export class SupportFormLicensedComponent {
   public screenshot: any;
   public subs: any;
   public saveSubmitText = helptext.submitBtn;
-  protected columnsOnForm = 2;
   public title = helptext.ticket;
   public custActions: Array<any> = [];
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
       name: 'column1',
-      width: '47%',
       label: false,
       config:[
         {
@@ -96,14 +94,7 @@ export class SupportFormLicensedComponent {
       ]
     },
     {
-      name: 'middle',
-      label: false,
-      width: '5%',
-      config:[]
-    },
-    {
     name: 'col2',
-    width: '47%',
     label: false,
     class: 'lowerme',
     config: [
@@ -121,12 +112,6 @@ export class SupportFormLicensedComponent {
           value: 'inquiry'
         },
         {
-          type : 'checkbox',
-          name : 'attach_debug',
-          placeholder : helptext.attach_debug.placeholder,
-          tooltip : helptext.attach_debug.tooltip,
-        },
-        {
           type : 'input',
           name : 'title',
           placeholder : helptext.title.placeholder,
@@ -142,6 +127,12 @@ export class SupportFormLicensedComponent {
           required: true,
           validation : helptext.body.validation,
           textAreaRows: 8
+        },
+        {
+          type : 'checkbox',
+          name : 'attach_debug',
+          placeholder : helptext.attach_debug.placeholder,
+          tooltip : helptext.attach_debug.tooltip,
         },
         {
           type: 'upload',
@@ -224,7 +215,9 @@ export class SupportFormLicensedComponent {
     let payload = {};
     payload['name'] = entityEdit.name;
     payload['email'] = entityEdit.email;
-    payload['cc'] = entityEdit.cc;
+    if (entityEdit.cc) {
+      payload['cc'] = entityEdit.cc;
+    }
     payload['phone'] = entityEdit.phone;
     payload['category'] = entityEdit.TNCategory;
     payload['environment'] = entityEdit.environment;

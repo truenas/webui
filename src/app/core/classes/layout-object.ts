@@ -279,9 +279,7 @@ import {
        let latestPosition: number = -1;
        let maxIndex = Object.keys(this.collection).length - 1;
 
-       dragTarget.inputStream
-         .debounceTime(15)
-         .subscribe((evt) => {
+       dragTarget.inputStream.pipe(debounceTime(15)).subscribe((evt) => {
          //console.log(evt);
          const pad = this.margin / 2;
          /*const dragBox = {

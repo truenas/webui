@@ -179,6 +179,8 @@ export class UserListComponent {
 
   resourceTransformIncomingRestData(d) {
     let data = Object.assign([], d);
+    this.usr_lst = [];
+    this.grp_lst = [];
     this.usr_lst.push(data);
     this.ws.call('group.query').subscribe((res)=>{
       this.grp_lst.push(res);

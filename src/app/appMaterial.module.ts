@@ -34,6 +34,7 @@ import { MatSortModule } from "@angular/material/sort";
 import { MatTableModule } from "@angular/material/table";
 import { MatNativeDateModule } from "@angular/material/core";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { MatBadgeModule } from "@angular/material/badge";
 
 @NgModule({
   imports: [
@@ -70,6 +71,7 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
     MatTableModule,
     //MatNativeDateModule,
     MatAutocompleteModule,
+    MatBadgeModule,
   ],
   exports: [
     MatCheckboxModule,
@@ -103,7 +105,8 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
     MatSortModule,
     MatTableModule,
     MatNativeDateModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatBadgeModule
   ]
 })
 export class MaterialModule {}

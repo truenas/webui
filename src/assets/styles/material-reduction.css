@@ -733,6 +733,7 @@ mat-card.mat-card .mat-list-base{
   padding-top: 4px;
 }
 
+<<<<<<< HEAD
 .mat-expansion-panel-header span.mat-expansion-indicator{
   margin-top: -4px;
   position: relative;
@@ -783,3 +784,15 @@ mat-card.mat-card .mat-list-base{
 .ix-tree-node .ix-tree-node {
   padding-left: 40px;
 }
+
+/* only affect the bage of truecommand icon on the top bar*/
+mat-icon.truecommand-icon > span.mat-badge-content {
+  font-family: 'Material Icons';
+}
+mat-icon.truecommand-icon.CONNECTED > span.mat-badge-content {
+  background: var(--green);
+}
+mat-icon.truecommand-icon.FAILED > span.mat-badge-content {
+  background: var(--warn);
+}
+

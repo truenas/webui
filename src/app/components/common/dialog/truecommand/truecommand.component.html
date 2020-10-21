@@ -11,7 +11,7 @@
         {{tc.status_reason | translate}}
     </div>
     <div id="tc-ip" *ngIf="tc.status === 'CONNECTED' && tc.remote_ip_address">
-        <mat-icon svgIcon="truecommand_logo_green" class="tc-icon"></mat-icon>
+        <mat-icon svgIcon="truecommand_logo_blue" class="tc-icon"></mat-icon>
         <span>{{tc.remote_ip_address}}</span>
     </div>
 </div>

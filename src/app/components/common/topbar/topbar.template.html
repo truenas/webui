@@ -35,10 +35,10 @@
         <mat-icon class="movement" svgIcon="truecommand_logo_white"></mat-icon>
       </button>
       <button mat-icon-button id="tc-status" [matTooltip]="mat_tooltips.tc_status | translate" class="topbar-button-right" (click)="showTCStatus()"
-        ix-auto ix-auto-type="button" ix-auto-identifier="tcStatus" *ngIf="tcStatus && tcStatus.status !== 'CONNECTING'">
-        <mat-icon svgIcon="truecommand_logo_white" *ngIf="tcStatus.status === 'CONNECTED'"></mat-icon>
-        <mat-icon svgIcon="truecommand_logo_red" *ngIf="tcStatus.status === 'FAILED'"></mat-icon>
-        <mat-icon svgIcon="truecommand_logo_grey" *ngIf="tcStatus.status === 'DISABLED'"></mat-icon>
+        ix-auto ix-auto-type="button" ix-auto-identifier="tcStatus" *ngIf="tcStatus && tcStatus.status !== 'CONNECTING'" >
+          <mat-icon svgIcon="truecommand_logo_white" class="truecommand-icon" matBadgeSize="small"
+            [matBadge]="tcStatus.status === 'CONNECTED' ? 'check' : tcStatus.status === 'FAILED' ? 'priority_high' : ''"
+            [class]="tcStatus.status"></mat-icon>
       </button>
       <!-- finish update -->
       <button *ngIf="upgradeWaitingToFinish" mat-icon-button id="finish-update" [matTooltip]="mat_tooltips.upgrade_waiting | translate" (click)="upgradePendingDialog()" class="topbar-button-right"
@@ -85,8 +85,7 @@
       <!-- Notification toggle button -->
       <button mat-icon-button [matTooltip]="mat_tooltips.alerts | translate" (click)="toggleNotific()" [style.overflow]="'visible'" class="topbar-button-right"
         ix-auto ix-auto-type="button" ix-auto-identifier="notifications">
-        <mat-icon>notifications</mat-icon>
-        <span *ngIf="notifications.length > 0" class="notification-number mat-bg-warn">{{notifications.length}}</span>
+        <mat-icon [matBadge]="notifications.length" matBadgeSize="small" matBadgeColor="warn">notifications</mat-icon>
       </button>
       <!-- User and UI menu -->
       <button name="Settings" mat-icon-button [matTooltip]="mat_tooltips.settings | translate" [matMenuTriggerFor]="accountMenu" class="topbar-button-right" (click)="checkLegacyUISetting()"
@@ -101,7 +100,7 @@
           </ng-container>
         </button-->
         <button class="hidden-button" mat-menu-item></button>
-        <button name="settings-change-password" mat-menu-item [routerLink]="['/account/users/change-password']"
+        <button name="settings-change-password" mat-menu-item [routerLink]="['/credentials/users/change-password']"
           ix-auto ix-auto-type="option" ix-auto-identifier="Change Password">
           <mat-icon>dialpad</mat-icon>
           <span>{{'Change Password' | translate}}</span>

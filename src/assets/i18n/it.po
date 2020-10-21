@@ -773,6 +773,9 @@ msgstr ""
 msgid "AWS Region"
 msgstr ""
 
+msgid "Abort"
+msgstr ""
+
 msgid "About"
 msgstr ""
 
@@ -901,12 +904,6 @@ msgstr ""
 msgid "Active Directory must be enabled before adding new domains."
 msgstr ""
 
-msgid "Active Media Subtype"
-msgstr ""
-
-msgid "Active Media Type"
-msgstr ""
-
 msgid "Adapter Type"
 msgstr ""
 
@@ -943,10 +940,16 @@ msgstr ""
 msgid "Add Idmap"
 msgstr ""
 
+msgid "Add Interface"
+msgstr ""
+
 msgid "Add Mountpoint"
 msgstr ""
 
 msgid "Add Recovery Key"
+msgstr ""
+
+msgid "Add Static Route"
 msgstr ""
 
 msgid "Add Sysctl"
@@ -1259,6 +1262,9 @@ msgstr ""
 msgid "Allow"
 msgstr ""
 
+msgid "Allow All"
+msgstr ""
+
 msgid "Allow All Initiators"
 msgstr ""
 
@@ -1302,6 +1308,9 @@ msgid "Allow Password Authentication"
 msgstr ""
 
 msgid "Allow Root Login"
+msgstr ""
+
+msgid "Allow Specific"
 msgstr ""
 
 msgid "Allow TCP Port Forwarding"
@@ -1565,6 +1574,9 @@ msgid "Another theme is using this label. Please enter a new label."
 msgstr ""
 
 msgid "Any notes about initiators."
+msgstr ""
+
+msgid "Any system service can communicate externally."
 msgstr ""
 
 msgid "Appdefaults Auxiliary Parameters"
@@ -1915,9 +1927,6 @@ msgid "Background 1"
 msgstr ""
 
 msgid "Background 2"
-msgstr ""
-
-msgid "Backup Credentials"
 msgstr ""
 
 msgid "Bandwidth"
@@ -3679,9 +3688,6 @@ msgstr ""
 msgid "Default Router For IPv6"
 msgstr ""
 
-msgid "Default Routes"
-msgstr ""
-
 msgid "Default Umask"
 msgstr ""
 
@@ -3718,6 +3724,11 @@ msgid ""
 "Define the dataset to be jailed and fully handed over to a jail. Enter a "
 "ZFS filesystem name <i>without</i> a pool name. <b>jail_zfs</b> must be set "
 "for this option to work."
+msgstr ""
+
+msgid ""
+"Define the maximum number of chunks for a multipart upload. This can  be "
+"useful if a service does not support the 10,000 chunk AWS S3 specification."
 msgstr ""
 
 msgid ""
@@ -3771,6 +3782,11 @@ msgstr ""
 "password."
 
 msgid "Define the size of the raw file in GiB."
+msgstr ""
+
+msgid ""
+"Define the system services that are allowed to communicate externally. All "
+"other external traffic is restricted."
 msgstr ""
 
 msgid "Define the target as *iSCSI*, *Fibre Channel*, or *Both*."
@@ -3882,6 +3898,9 @@ msgid "Deleting the <b>"
 msgstr ""
 
 msgid "Deny"
+msgstr ""
+
+msgid "Deny All"
 msgstr ""
 
 msgid "Deny Hosts"
@@ -4387,6 +4406,9 @@ msgstr ""
 msgid "Edit Idmap"
 msgstr ""
 
+msgid "Edit Interface"
+msgstr ""
+
 msgid "Edit Options"
 msgstr "Modifica Opzioni"
 
@@ -4394,6 +4416,9 @@ msgid "Edit Permissions"
 msgstr "Modifica Permessi"
 
 msgid "Edit Share ACL"
+msgstr ""
+
+msgid "Edit Static Route"
 msgstr ""
 
 msgid "Edit User"
@@ -4789,6 +4814,9 @@ msgid "Encryption Protocol"
 msgstr ""
 
 msgid "Encryption Salt"
+msgstr ""
+
+msgid "Encryption Standard"
 msgstr ""
 
 msgid "Encryption Type"
@@ -5576,7 +5604,13 @@ msgstr ""
 msgid "Error starting service "
 msgstr ""
 
+msgid "Error starting service OpenVPN "
+msgstr ""
+
 msgid "Error stopping service "
+msgstr ""
+
+msgid "Error stopping service OpenVPN "
 msgstr ""
 
 msgid "Error submitting file"
@@ -6593,9 +6627,6 @@ msgstr ""
 msgid "IPv6 Address"
 msgstr ""
 
-msgid "IPv6 Auto Configure"
-msgstr ""
-
 msgid "IPv6 Default Gateway"
 msgstr ""
 
@@ -7144,12 +7175,6 @@ msgstr ""
 msgid "KiB"
 msgstr ""
 
-msgid "LAGG Ports"
-msgstr ""
-
-msgid "LAGG Protocol"
-msgstr ""
-
 msgid "LAGG Settings"
 msgstr ""
 
@@ -7318,9 +7343,6 @@ msgid "Limit replication speed to this number of  bytes per second."
 msgstr ""
 
 msgid "Link"
-msgstr ""
-
-msgid "Link State"
 msgstr ""
 
 msgid "Linked Service"
@@ -7601,6 +7623,9 @@ msgid ""
 "<i>1500</i>."
 msgstr ""
 
+msgid "Maximum Upload Parts"
+msgstr ""
+
 msgid ""
 "Maximum amount of CPU time a jail process may consume. The kernel "
 "terminates processes exceeding the specified limit."
@@ -7803,6 +7828,9 @@ msgstr ""
 msgid "Misc"
 msgstr ""
 
+msgid "Miscellaneous"
+msgstr ""
+
 msgid "Mixing disks of different sizes in a vdev is not allowed."
 msgstr ""
 
@@ -7893,8 +7921,9 @@ msgid "Multipaths"
 msgstr ""
 
 msgid ""
-"Must match Windows workgroup  name. This setting is ignored when the  "
-"Active Directory or LDAP services are running."
+"Must match Windows workgroup name.  When this is unconfigured and Active "
+"Directory or LDAP are active,  TrueNAS will detect and set the correct "
+"workgroup from these services."
 msgstr ""
 
 msgid ""
@@ -8036,9 +8065,6 @@ msgstr ""
 msgid "Name or Naming Schema must be provided."
 msgstr ""
 
-msgid "Name servers not configured"
-msgstr ""
-
 msgid "Name that was created with the SMB share."
 msgstr ""
 
@@ -8049,9 +8075,6 @@ msgid "Nameserver 2"
 msgstr ""
 
 msgid "Nameserver 3"
-msgstr ""
-
-msgid "Nameservers"
 msgstr ""
 
 msgid "Naming Schema"
@@ -8123,9 +8146,6 @@ msgid "Network Properties"
 msgstr ""
 
 msgid "Network Reports"
-msgstr ""
-
-msgid "Network Summary"
 msgstr ""
 
 msgid "Network Timeout Before Initiating Failover"
@@ -8584,6 +8604,9 @@ msgstr ""
 msgid "Open VPN Server"
 msgstr ""
 
+msgid "OpenVPN "
+msgstr ""
+
 msgid "OpenVPN Client Settings"
 msgstr ""
 
@@ -8683,6 +8706,9 @@ msgid "Other Settings"
 msgstr ""
 
 msgid "Out"
+msgstr ""
+
+msgid "Outbound Network"
 msgstr ""
 
 msgid "Outgoing Mail Server"
@@ -9461,6 +9487,9 @@ msgstr ""
 msgid "Remote"
 msgstr ""
 
+msgid "Remote Controller"
+msgstr ""
+
 msgid "Remote Encryption"
 msgstr ""
 
@@ -9801,7 +9830,7 @@ msgid ""
 "Allow the creation of <i>tun</i> devices in the jail."
 msgstr ""
 
-msgid "Revert CHANGES"
+msgid "Revert Changes"
 msgstr ""
 
 msgid "Revert Network Interface Changes"
@@ -9917,9 +9946,6 @@ msgid "SAVE"
 msgstr ""
 
 msgid "SAVE AND FAILOVER"
-msgstr ""
-
-msgid "SAVE CHANGES"
 msgstr ""
 
 msgid "SAVE CONFIGURATION"
@@ -10644,6 +10670,9 @@ msgstr ""
 msgid "Select the shell to use for local and SSH logins."
 msgstr ""
 
+msgid "Select the system services that will be allowed to communicate externally."
+msgstr ""
+
 msgid ""
 "Select the type of LDAP server to use. This can be the        LDAP server "
 "provided by the Active Directory server or a stand-alone LDAP server."
@@ -10789,6 +10818,9 @@ msgid "Server Role"
 msgstr ""
 
 msgid "Server Side Encryption"
+msgstr ""
+
+msgid "Service"
 msgstr ""
 
 msgid "Service Account"
@@ -12168,9 +12200,6 @@ msgstr ""
 msgid "TDB"
 msgstr ""
 
-msgid "TEST CHANGES"
-msgstr ""
-
 msgid "TFTP"
 msgstr ""
 
@@ -13025,6 +13054,9 @@ msgstr ""
 msgid "This operation might take a long time. Proceed?"
 msgstr ""
 
+msgid "This system cannot communicate externally."
+msgstr ""
+
 msgid "This system will restart when the update completes."
 msgstr ""
 
@@ -13356,6 +13388,9 @@ msgid "Unkeep"
 msgstr ""
 
 msgid "Unknown"
+msgstr ""
+
+msgid "Unknown CPU"
 msgstr ""
 
 msgid "Unlock"
@@ -13855,13 +13890,7 @@ msgstr ""
 msgid "VLAN ID"
 msgstr ""
 
-msgid "VLAN Parent Interface"
-msgstr ""
-
 msgid "VLAN Settings"
-msgstr ""
-
-msgid "VLAN Tag"
 msgstr ""
 
 msgid "VLANs"
@@ -14513,9 +14542,6 @@ msgid "exec_timeout"
 msgstr ""
 
 msgid "expires in"
-msgstr ""
-
-msgid "gathering info..."
 msgstr ""
 
 msgid "group"
