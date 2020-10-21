@@ -1187,13 +1187,13 @@ export class VolumesListTableConfig implements InputTableConf {
             this.vmware_res_status = vmware_res;
           })
           this.dialogConf = {
-            title: "One time snapshot of " + row.id,
+            title: "One time snapshot of " + rowData.id,
             fieldConfig: [
               {
                 type: 'input',
                 name: 'dataset',
                 placeholder: helptext.snapshotDialog_dataset_placeholder,
-                value: row.id,
+                value: rowData.id,
                 isHidden: true,
                 readonly: true
               },
