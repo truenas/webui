@@ -61,7 +61,7 @@ export class DatasetFormComponent implements Formconfiguration{
 
   public volid: string;
   public sub: Subscription;
-  public route_success: string[] = ['storage', 'pools'];
+  public route_success: string[] = ['storage'];
   public isBasicMode = true;
   public pk: any;
   public customFilter: any[] = [];
@@ -1589,11 +1589,11 @@ export class DatasetFormComponent implements Formconfiguration{
               this.ws.call('filesystem.getacl', [parentPath]).subscribe(({acltype}) => {
                 if (acltype === 'POSIX1E') {
                   this.router.navigate(new Array('/').concat(
-                    ['storage', 'pools', 'id', restPostResp.pool, 'dataset', 'posix-acl', restPostResp.name]
+                    ['storage', 'id', restPostResp.pool, 'dataset', 'posix-acl', restPostResp.name]
                   ), { queryParams: { default: parentPath } })
                 } else {
                   this.router.navigate(new Array('/').concat(
-                    ['storage', 'pools', 'id', restPostResp.pool, 'dataset', 'acl', restPostResp.name]
+                    ['storage', 'id', restPostResp.pool, 'dataset', 'acl', restPostResp.name]
                   ) , { queryParams: { default: parentPath } })
                 }
               })

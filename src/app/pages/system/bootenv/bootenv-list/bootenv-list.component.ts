@@ -405,6 +405,7 @@ export class BootEnvironmentListComponent implements OnDestroy{
     if(this.getAdvancedConfig) {
       this.getAdvancedConfig.unsubscribe();
     }
+
     if(this.getConfigForActions){
       this.getConfigForActions.unsubscribe();
     }

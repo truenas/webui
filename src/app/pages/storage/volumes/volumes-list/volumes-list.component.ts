@@ -1,10 +1,10 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, AfterViewChecked } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -27,6 +27,7 @@ import { EntityUtils } from '../../../common/entity/utils';
 import { combineLatest } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ModalService } from 'app/services/modal.service';
+import { VolumesListControlsComponent } from './volumes-list-controls.component';
 
 export interface ZfsPoolData {
   pool: string;
@@ -76,14 +77,15 @@ export class VolumesListTableConfig implements InputTableConf {
   public tableData: TreeNode[] = [];
   public columns: Array < any > = [
     { name: T('Name'), prop: 'name', always_display: true  },
-    { name: T('Type'), prop: 'type', },
-    { name: T('Used'), prop: 'used_parsed', filesizePipe: false},
-    { name: T('Available'), prop: 'available_parsed', filesizePipe: false},
+    { name: T('Type'), prop: 'type', hidden: false},
+    { name: T('Used'), prop: 'used_parsed', filesizePipe: false, hidden: false},
+    { name: T('Available'), prop: 'available_parsed', hidden: false, filesizePipe: false},
     { name: T('Compression'), prop: 'compression', hidden: true },
     { name: T('Compression Ratio'), prop: 'compressratio', hidden: true },
-    { name: T('Readonly'), prop: 'readonly', },
+    { name: T('Readonly'), prop: 'readonly', hidden: false},
     { name: T('Dedup'), prop: 'deduplication', hidden: true },
-    { name: T('Comments'), prop: 'comments', hidden: true }
+    { name: T('Comments'), prop: 'comments', hidden: true },
+    { name: T('Actions'), prop: 'actions', hidden: false }
   ];
 
   public config: any = {
@@ -93,7 +95,7 @@ export class VolumesListTableConfig implements InputTableConf {
   };
 
   protected dialogRef: any;
-  public route_add = ["storage", "pools", "import"];
+  public route_add = ["storage", "import"];
   public route_add_tooltip = T("Create or Import Pool");
   public showDefaults: boolean = false;
   public showSpinner:boolean;
@@ -129,6 +131,7 @@ export class VolumesListTableConfig implements InputTableConf {
         this.tableData.push(this.dataHandler(child));
       }
     }
+
   }
 
   isCustActionVisible(actionname: string) {
@@ -288,7 +291,7 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Encryption Key/Passphrase"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat(
-              ["storage", "pools", "changekey", row1.id]));
+              ["storage", "changekey", row1.id]));
           }
         });
       }
@@ -298,7 +301,7 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T("Encryption Key"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
-            ["storage", "pools", "createkey", row1.id]));
+            ["storage", "createkey", row1.id]));
         }
       });
     }
@@ -309,7 +312,7 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T("Manage Recovery Key"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
-            ["storage", "pools", "addkey", row1.id]));
+            ["storage", "addkey", row1.id]));
         }
       });
 
@@ -317,7 +320,7 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T("Reset Keys"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat(
-            ["storage", "pools", "rekey", row1.id]));
+            ["storage", "rekey", row1.id]));
 
         }
       });
@@ -765,7 +768,7 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Add Vdevs"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat(
-              ["storage", "pools", "manager", row1.id]));
+              ["storage", "manager", row1.id]));
           }
         });
         actions.push({
@@ -836,7 +839,7 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Status"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat(
-              ["storage", "pools", "status", row1.id]));
+              ["storage", "status", row1.id]));
           }
         });
         actions.push({
@@ -979,9 +982,10 @@ export class VolumesListTableConfig implements InputTableConf {
           name: T('Add Dataset'),
           label: T("Add Dataset"),
           onClick: (row1) => {
+            // Format: "storage/id/poolID/dataset/add/<Path>%2F<To>%2F<Dataset>"
             this._router.navigate(new Array('/').concat([
-              "storage", "pools", "id", row1.id.split('/')[0], "dataset",
-              "add", row1.id
+              "storage", "id", rowData.pool, "dataset",
+              "add", rowData.id
             ]));
           }
         });
@@ -991,8 +995,8 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Add Zvol"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat([
-              "storage", "pools", "id", row1.id.split('/')[0], "zvol", "add",
-              row1.id
+              "storage", "id", rowData.pool, "zvol", "add",
+              rowData.id
             ]));
           }
         });
@@ -1003,8 +1007,8 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T("Edit Options"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
-            "storage", "pools", "id", row1.id.split('/')[0], "dataset",
-            "edit", row1.id
+            "storage", "id", rowData.pool, "dataset",
+            "edit", rowData.id
           ]));
         }
       });
@@ -1018,19 +1022,19 @@ export class VolumesListTableConfig implements InputTableConf {
                 this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + rowData.id]).subscribe(acl_is_trivial => {
                   if (acl_is_trivial) {
                     this._router.navigate(new Array('/').concat([
-                      "storage", "pools", "permissions", row1.id
+                      "storage", "permissions", rowData.id
                     ]));
                   } else {
                     this.ws.call('filesystem.getacl', [row1.mountpoint]).subscribe(res => {
                       if(res.acltype === 'POSIX1E') {
                         this._router.navigate(new Array('/').concat([
-                          "storage", "pools", "id", row1.id.split('/')[0], "dataset",
-                          "posix-acl", row1.id
+                          "storage", "id", rowData.pool, "dataset",
+                          "posix-acl", rowData.id
                         ]));                    
                       } else {
                         this._router.navigate(new Array('/').concat([
-                          "storage", "pools", "id", row1.id.split('/')[0], "dataset",
-                          "acl", row1.id
+                          "storage", "id", rowData.pool, "dataset",
+                          "acl", rowData.id
                         ]));
                       }
                     })
@@ -1044,7 +1048,7 @@ export class VolumesListTableConfig implements InputTableConf {
               label: T('User Quotas'),
               onClick: (row1) => {
                 this._router.navigate(new Array('/').concat([
-                  "storage", "pools", "user-quotas", row1.id
+                  "storage", "user-quotas", rowData.id
                 ]));
               }
             },
@@ -1054,7 +1058,7 @@ export class VolumesListTableConfig implements InputTableConf {
               label: T('Group Quotas'),
               onClick: (row1) => {
                 this._router.navigate(new Array('/').concat([
-                  "storage", "pools", "group-quotas", row1.id
+                  "storage", "group-quotas", rowData.id
                 ]));
               }
             },
@@ -1079,7 +1083,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   ).subscribe((doubleConfirmDialog) => {
                     if (doubleConfirmDialog) {
                       this.loader.open();
-                      this.ws.call('pool.dataset.delete', [row1.id, {"recursive": true}]).subscribe(
+                      this.ws.call('pool.dataset.delete', [rowData.id, {"recursive": true}]).subscribe(
                         (wsResp) => {
                           this.loader.close();
                           this.parentVolumesListComponent.repaintMe();
@@ -1092,7 +1096,7 @@ export class VolumesListTableConfig implements InputTableConf {
                                 (res) => {
                                   if (res) {
                                     this.loader.open();
-                                    this.ws.call('pool.dataset.delete', [row1.id, {"recursive": true, "force": true}]).subscribe(
+                                    this.ws.call('pool.dataset.delete', [rowData.id, {"recursive": true, "force": true}]).subscribe(
                                       (wsres) => {
                                         this.loader.close();
                                         this.parentVolumesListComponent.repaintMe();
@@ -1141,7 +1145,7 @@ export class VolumesListTableConfig implements InputTableConf {
               if (confirmed === true) {
                 this.loader.open();
   
-                this.ws.call('pool.dataset.delete', [row1.id, {"recursive": true}]).subscribe((wsResp) => {
+                this.ws.call('pool.dataset.delete', [rowData.id, {"recursive": true}]).subscribe((wsResp) => {
                   this.loader.close();
                   this.parentVolumesListComponent.repaintMe();
   
@@ -1165,8 +1169,8 @@ export class VolumesListTableConfig implements InputTableConf {
         label: T("Edit Zvol"),
         onClick: (row1) => {
           this._router.navigate(new Array('/').concat([
-            "storage", "pools", "id", row1.id.split('/')[0], "zvol", "edit",
-            row1.id
+            "storage", "id", rowData.pool, "zvol", "edit",
+            rowData.id
           ]));
         }
       });
@@ -1183,13 +1187,13 @@ export class VolumesListTableConfig implements InputTableConf {
             this.vmware_res_status = vmware_res;
           })
           this.dialogConf = {
-            title: "One time snapshot of " + row.id,
+            title: "One time snapshot of " + rowData.id,
             fieldConfig: [
               {
                 type: 'input',
                 name: 'dataset',
                 placeholder: helptext.snapshotDialog_dataset_placeholder,
-                value: row.id,
+                value: rowData.id,
                 isHidden: true,
                 readonly: true
               },
@@ -1275,8 +1279,8 @@ export class VolumesListTableConfig implements InputTableConf {
             onClick: (row1) => {
               //unlock
               this._router.navigate(new Array('/').concat([
-                "storage", "pools", "id", row1.id.split('/')[0], "dataset",
-                "unlock", row1.id
+                "storage", "id", rowData.pool, "dataset",
+                "unlock", rowData.id
               ]));
             }
           });
@@ -1674,7 +1678,7 @@ export class VolumesListTableConfig implements InputTableConf {
   templateUrl: './volumes-list.component.html',
   providers: []
 })
-export class VolumesListComponent extends EntityTableComponent implements OnInit {
+export class VolumesListComponent extends EntityTableComponent implements OnInit, AfterViewChecked {
 
   title = T("Pools");
   zfsPoolRows: ZfsPoolData[] = [];
@@ -1709,13 +1713,20 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
     public sorter: StorageService, protected job: JobService, protected storage: StorageService, protected pref: PreferencesService, 
       protected messageService: MessageService, protected http:HttpClient, modalService: ModalService) {
+
     super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, sorter, job, pref, mdDialog, modalService);
+
+    this.actionsConfig = { actionType: VolumesListControlsComponent, actionConfig: this};
+    this.core.emit({name: "GlobalActions", data: this.actionsConfig, sender: this});
   }
 
   public repaintMe() {
     this.showDefaults = false;
     this.paintMe = false;
     this.ngOnInit();
+  }
+
+  ngAfterViewChecked(){
   }
 
   async ngOnInit(): Promise<void> {

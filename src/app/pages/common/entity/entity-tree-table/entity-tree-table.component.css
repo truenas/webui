@@ -1,5 +1,22 @@
+p-treetabletoggler {
+  position: relative;
+  top: 1px;
+  margin-right: 6px;
+}
+
 .icons {
     font-size: 24px; 
+}
+
+/* Lock Icons */
+span.icons .mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+span.icons .mat-icon[svgIcon="anti-lock"] {
+  top: 4px;
 }
 
 .group-menu-header{
@@ -11,11 +28,16 @@
 .group-menu-header div.title{
   margin-left: 16px;
   margin-top: 4px;
-  opacity: 0.5;
-  font-size: 0.85rem;
+  opacity: 0.75;
+  font-size: xx-small;
 }
 
-.group-menu-header mat-divider {
-  background-color: var(--fg2);
-  opacity: 0.35;
+th.mat-header-cell:last-of-type, 
+td.mat-cell:last-of-type, 
+td.mat-footer-cell:last-of-type,
+th.action-class,
+td.action-class {
+  max-width: 24px;
+  padding: 0 16px;
+  text-align: right;
 }

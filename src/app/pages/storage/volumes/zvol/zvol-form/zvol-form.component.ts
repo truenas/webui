@@ -40,7 +40,7 @@ export class ZvolFormComponent {
   protected pk: any;
   protected path: string;
   public sub: Subscription;
-  protected route_success: string[] = [ 'storage', 'pools' ];
+  protected route_success: string[] = [ 'storage' ];
   public queryCall = "pool.dataset.query";
   protected compression: any;
   protected advanced_field: Array<any> = [ 'volblocksize' ];

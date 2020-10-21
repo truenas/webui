@@ -41,15 +41,11 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        component: EntityDashboardComponent,
-      },
-      {
-        path: 'pools',
-        data: { title: 'Pools', breadcrumb: 'Pools', icon: 'view_stream' },
+        data: { title: 'Storage', breadcrumb: 'Storage', icon: 'view_stream' },
         children: [
           {
             path: '', component: VolumesListComponent,
-            data: { title: 'Pools', breadcrumb: 'Pools' }
+            data: { title: 'Storage', breadcrumb: 'Storage' }
           },
           {
             path: 'id/:volid/dataset/add/:parent', component: DatasetFormComponent,

@@ -5,12 +5,12 @@ import { ViewControlComponent } from 'app/core/components/viewcontrol/viewcontro
 @Component({
   selector: 'viewbutton',
   templateUrl: './viewbutton.component.html',
-  styleUrls: ['./viewbutton.component.css']
+  //styleUrls: ['./viewbutton.component.css']
 })
 export class ViewButtonComponent extends ViewControlComponent implements OnInit {
 
   readonly componentName = ViewButtonComponent;
-  public raised: boolean = true;
+  public raised: boolean = false;
   public contextColor: string = "primary";
   public label: string = 'Button';
   public tooltipEnabled:boolean = false;
