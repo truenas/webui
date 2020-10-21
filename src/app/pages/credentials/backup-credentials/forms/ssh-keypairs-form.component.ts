@@ -182,6 +182,9 @@ export class SshKeypairsFormComponent {
     }
 
     beforeSubmit(data) {
+        if (data.remote_host_key_button || data.remote_host_key_button === '') {
+            delete data.remote_host_key_button;
+        }
         delete data['key_instructions'];
         if (this.entityForm.isNew) {
             data['type'] = 'SSH_KEY_PAIR';
