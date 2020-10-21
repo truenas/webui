@@ -1,5 +1,6 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, Input, ViewChild } from '@angular/core';
 import { Router, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { RoutePartsService } from '../../../services/route-parts/route-parts.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Display } from 'app/core/components/display/display.component';
@@ -59,27 +60,28 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
   // only execute when routechange
-    this.router.events.filter(event => event instanceof NavigationEnd).subscribe((routeChange) => {
-      this.destroyActions();
-
-      this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
-      this.titleText = this.routeParts && this.routeParts[0].title ? this.routeParts[0].title : '';
-
-      // generate url from parts
-      this.routeParts.reverse().map((item, i) => {
-        // prepend / to first part
-        if(i === 0) {
-          item.url = `/${item.url}`;
-          if (!item['toplevel']) {
-            item.disabled = true;
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)).subscribe((routeChange) => {
+        this.destroyActions();
+  
+        this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
+        this.titleText = this.routeParts && this.routeParts[0].title ? this.routeParts[0].title : '';
+  
+        // generate url from parts
+        this.routeParts.reverse().map((item, i) => {
+          // prepend / to first part
+          if(i === 0) {
+            item.url = `/${item.url}`;
+            if (!item['toplevel']) {
+              item.disabled = true;
+            }
+            return item;
           }
+          // prepend previous part to current part
+          item.url = `${this.routeParts[i - 1].url}/${item.url}`;
           return item;
-        }
-        // prepend previous part to current part
-        item.url = `${this.routeParts[i - 1].url}/${item.url}`;
-        return item;
+        });
       });
-    });
 
   // Pseudo routing events (for reports page)
     this.core.register({observerClass:this, eventName:"PseudoRouteChange"}).subscribe((evt:CoreEvent) => {

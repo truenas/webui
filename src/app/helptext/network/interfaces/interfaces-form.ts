@@ -117,6 +117,7 @@ failover_virtual_alias_address_tooltip: T('IP address to use for \
 
 failover_alias_set_error: T('An IP address must be provided for\
  each controller and the virtual interface.'),
+failover_alias_v6_error: T('IPv6 addresses are not allowed for HA.'),
 
 vlan_pint_placeholder: T('Parent Interface'),
 vlan_pint_tooltip: T('Select the VLAN Parent Interface. Usually an Ethernet\
