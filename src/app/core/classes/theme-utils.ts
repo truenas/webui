@@ -51,6 +51,22 @@ export class ThemeUtils {
     
   }
 
+  convertToRGB(value: string){
+    let valueType = this.getValueType(value);
+    switch(valueType){
+      case 'hex':
+        return this.hexToRGB(value);
+      break;
+      case 'rgba':
+        const hex = this.rgbToHex(value);
+        return this.hexToRGB(hex);
+      break;
+      default:
+        throw "Conversion from color format " + valueType + " is not currently supported."
+      break;
+    }
+  }
+
   hexToRGB(str) {
     const valueType = this.getValueType(str); // cssVar || hex || rgb || rgba
     if(valueType != "hex") console.error("This method takes a hex value as a parameter but was given a value of type " + valueType);
