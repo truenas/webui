@@ -24,5 +24,6 @@ export default {
  Click <b>Generate Keypair</b> to create a new keypair. \
  Encrypted keypairs or keypairs with passphrases are not supported.'),
    download_public: T('Download Public Key'),
-   download_private: T('Download Private Key')
+   download_private: T('Download Private Key'),
+   formTitle: T('SSH Keypairs')
 }

@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
-
+import { Subscription } from 'rxjs';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/system/ssh-connections';
 import { KeychainCredentialService, WebSocketService, DialogService, ReplicationService } from '../../../../services';
+import { ModalService } from 'app/services/modal.service';
 import * as _ from 'lodash';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -19,17 +20,20 @@ import { forbiddenValues } from '../../../common/entity/entity-form/validators/f
 export class SshConnectionsFormComponent {
 
     protected queryCall = 'keychaincredential.query';
-    protected queryCallOption = [["id", "="]];
+    protected queryCallOption: Array<any>;
     protected sshCalls = {
         manual: 'keychaincredential.create',
         semiautomatic: 'keychaincredential.remote_ssh_semiautomatic_setup',
     }
     protected addCall = this.sshCalls['manual'];
     protected editCall = 'keychaincredential.update';
-    protected route_success: string[] = ['system', 'sshconnections'];
     protected isEntity = true;
     protected namesInUseConnection = [];
     protected namesInUse = [];
+    public title = helptext.formTitle;
+    protected isOneColumnForm = true;
+    private rowNum: any;
+    private getRow = new Subscription;
 
     protected fieldConfig: FieldConfig[];
     public fieldSets: FieldSet[] = [
@@ -69,7 +73,6 @@ export class SshConnectionsFormComponent {
             name: helptext.fieldset_authentication,
             label: true,
             class: 'authentication',
-            width: '49%',
             config: [
                 {
                     type: 'input',
@@ -159,14 +162,28 @@ export class SshConnectionsFormComponent {
                             value: 'manual',
                         }]
                     }],
-                },
+                },{
+                    type: 'button',
+                    name: 'remote_host_key_button',
+                    customEventActionLabel: helptext.discover_remote_host_key_button,
+                    value: '',
+                    customEventMethod: () => {
+                        this.getRemoteHostKey();
+                    },
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'setup_method',
+                            value: 'manual',
+                        }]
+                    }],
+                }
             ]
         },
         {
             name: helptext.fieldset_advanced,
             label: true,
             class: 'advanced',
-            width: '49%',
             config: [
                 {
                     type: 'select',
@@ -198,32 +215,6 @@ export class SshConnectionsFormComponent {
         }
     ];
 
-    protected custActions = [
-        {
-            id: 'discover_remote_host_key',
-            name: helptext.discover_remote_host_key_button,
-            function: () => {
-                this.loader.open();
-                const payload = {
-                    'host': this.entityForm.value['host'],
-                    'port': this.entityForm.value['port'],
-                    'connect_timeout': this.entityForm.value['connect_timeout'],
-                };
-
-                this.ws.call('keychaincredential.remote_ssh_host_key_scan', [payload]).subscribe(
-                    (res) => {
-                        this.loader.close();
-                        this.entityForm.formGroup.controls['remote_host_key'].setValue(res);
-                    },
-                    (err) => {
-                        this.loader.close();
-                        new EntityUtils().handleWSError(this, err, this.dialogService);
-                    }
-                )
-            }
-        },
-    ];
-
     protected manualMethodFields = [
         'host',
         'port',
@@ -241,23 +232,16 @@ export class SshConnectionsFormComponent {
         private ws: WebSocketService,
         private loader: AppLoaderService,
         private dialogService: DialogService,
-        private replicationService: ReplicationService) {
-
-    }
-
-    isCustActionVisible(actionId) {
-        if (this.entityForm.formGroup.controls['setup_method'].value === 'manual') {
-            return true;
-        }
-        return false;
+        private replicationService: ReplicationService, private modalService: ModalService) {
+            this.getRow = this.modalService.getRow$.subscribe(rowId => {
+                this.rowNum = rowId;
+                this.getRow.unsubscribe();
+            })
     }
 
     async preInit() {
-        let pk;
-        await this.aroute.params.subscribe(params => {
-            if (params['pk']) {
-                pk = params['pk'];
-                this.queryCallOption[0].push(params['pk']);
+            if (this.rowNum) {
+                this.queryCallOption = [["id", "=", this.rowNum]];
                 _.find(this.fieldSets[0].config, { name: 'setup_method' }).isHidden = true;
             } else {
                 _.find(this.fieldSets[1].config, { name: 'private_key'}).options.push({
@@ -265,10 +249,9 @@ export class SshConnectionsFormComponent {
                     value: 'NEW'
                 });
             }
-        });
         this.keychainCredentialService.getSSHConnections().toPromise().then(
             (res) => {
-                const sshConnections = res.filter(item => item.id != pk).map(sshConnection => sshConnection.name);
+                const sshConnections = res.filter(item => item.id != this.rowNum).map(sshConnection => sshConnection.name);
                 this.namesInUse.push(...sshConnections);
                 this.namesInUseConnection.push(...sshConnections);
             }
@@ -311,6 +294,26 @@ export class SshConnectionsFormComponent {
         });
     }
 
+    getRemoteHostKey() {
+        this.loader.open();
+        const payload = {
+            'host': this.entityForm.value['host'],
+            'port': this.entityForm.value['port'],
+            'connect_timeout': this.entityForm.value['connect_timeout'],
+        };
+
+        this.ws.call('keychaincredential.remote_ssh_host_key_scan', [payload]).subscribe(
+            (res) => {
+                this.loader.close();
+                this.entityForm.formGroup.controls['remote_host_key'].setValue(res);
+            },
+            (err) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this, err, this.dialogService);
+            }
+        )
+    }
+
     resourceTransformIncomingRestData(wsResponse) {
         for (const item in wsResponse.attributes) {
             wsResponse[item] = wsResponse.attributes[item];
@@ -319,6 +322,7 @@ export class SshConnectionsFormComponent {
     }
 
     async customSubmit(data) {
+        delete data.remote_host_key_button;
         this.loader.open();
         if (data['private_key'] == 'NEW') {
             await this.replicationService.genSSHKeypair().then(
@@ -360,10 +364,12 @@ export class SshConnectionsFormComponent {
         this.entityForm.submitFunction(data).subscribe(
             (res) => {
                 this.loader.close();
-                this.entityForm.router.navigate(new Array('/').concat(this.route_success));
+                this.modalService.close('slide-in-form');
+                this.modalService.refreshTable();
             },
             (err) => {
                 this.loader.close();
+                this.modalService.refreshTable();
                 if (err.hasOwnProperty("reason") && (err.hasOwnProperty("trace"))) {
                     new EntityUtils().handleWSError(this, err, this.dialogService);
                 } else {

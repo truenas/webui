@@ -63,5 +63,6 @@ export default {
     password_tooltip: T('User account password for logging into the \
  remote system.'),
 
-    discover_remote_host_key_button: T('Discover Remote Host Key')
+    discover_remote_host_key_button: T('Discover Remote Host Key'),
+    formTitle: T('SSH Connections')
 }

@@ -245,6 +245,7 @@ input.mat-input-element::placeholder {
 .form-element.form-ip-netmask .mat-form-field,
 .form-element.form-combobox .mat-menu-trigger,
 .form-element .mat-form-field-wrapper,
+.form-element .form-button,
 .form-element input[type = "password"],
 .form-element input[type = "email"],
 .form-element input[type = "text"],

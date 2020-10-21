@@ -83,12 +83,9 @@ export class NavigationService {
         { name: T('Local Users'), state: 'users' },
         { name: T('Local Groups'), state: 'groups' },
         { name: T('Directory Services'), state: 'directory-services' },
-        // { name: T('Backup Credentials'), state: 'temp-misc' },
+        { name: T('Backup Credentials'), state: 'backup-credentials' },
         { name: T('Certificates'), state: 'temp-misc' },
         { name: T('2FA'), state: 'two-factor' },
-        { name: T('Cloud Credentials'), state: 'cloudcredentials' },
-        { name: T('SSH Connections'), state: 'sshconnections' },
-        { name: T('SSH Keypairs'), state: 'sshkeypairs' },
         // KMIP probably needs to be moved to credentials routing component to work here
         // { name: T('KMIP'), state: 'kmip', disabled: true },
       ]

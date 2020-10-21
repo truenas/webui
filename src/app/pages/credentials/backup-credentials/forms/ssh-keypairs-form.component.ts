@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-
+import { Subscription } from 'rxjs';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import helptext from 'app/helptext/system/ssh-keypairs';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { WebSocketService, DialogService, StorageService } from '../../../../services';
+import { ModalService } from 'app/services/modal.service';
 import { atLeastOne } from 'app/pages/common/entity/entity-form/validators/at-least-one-validation';
 
 @Component({
@@ -17,12 +18,15 @@ import { atLeastOne } from 'app/pages/common/entity/entity-form/validators/at-le
 export class SshKeypairsFormComponent {
 
     protected queryCall = 'keychaincredential.query';
-    protected queryCallOption = [["id", "="]];
+    protected queryCallOption: Array<any>;
     protected addCall = 'keychaincredential.create';
     protected editCall = 'keychaincredential.update';
-    protected route_success: string[] = ['system', 'sshkeypairs'];
     protected isEntity = true;
     protected entityForm: any;
+    protected isOneColumnForm = true;
+    private rowNum: any;
+    public title = helptext.formTitle;
+    private getRow = new Subscription;
 
     protected fieldConfig: FieldConfig[];
     public fieldSets: FieldSet[] = [
@@ -43,6 +47,30 @@ export class SshKeypairsFormComponent {
                     tooltip: helptext.name_tooltip,
                     required: true,
                     validation: [Validators.required]
+                }
+            ]
+        },
+        {
+            name: helptext.fieldset_basic,
+            label: false,
+            class: 'basic',
+            width: '100%',
+            config: [
+                {
+                    type: 'button',
+                    name: 'remote_host_key_button',
+                    customEventActionLabel: helptext.generate_key_button,
+                    value: '',
+                    customEventMethod: () => {
+                        this.generateKeypair();
+                    },
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'setup_method',
+                            value: 'manual',
+                        }]
+                    }],
                 }, {
                     type: 'textarea',
                     name: 'private_key',
@@ -59,28 +87,7 @@ export class SshKeypairsFormComponent {
         }
     ]
 
-    protected custActions = [
-        {
-            id: 'generate_key',
-            name: helptext.generate_key_button,
-            function: () => {
-                this.loader.open();
-                this.clearPreviousErrors();
-                let elements = document.getElementsByTagName('mat-error');
-                while (elements[0]) elements[0].parentNode.removeChild(elements[0]);
-                this.ws.call('keychaincredential.generate_ssh_key_pair').subscribe(
-                    (res) => {
-                        this.loader.close();
-                        this.entityForm.formGroup.controls['private_key'].setValue(res.private_key);
-                        this.entityForm.formGroup.controls['public_key'].setValue(res.public_key);
-                    },
-                    (err) => {
-                        this.loader.close();
-                        new EntityUtils().handleWSError(this, err, this.dialogService);
-                    }
-                )
-            }
-        },
+    protected compactCustomActions = [
         {
             id: 'download_private',
             name: helptext.download_private,
@@ -98,14 +105,47 @@ export class SshKeypairsFormComponent {
     ];
 
     constructor(private aroute: ActivatedRoute, private ws: WebSocketService, private loader: AppLoaderService,
-        private dialogService: DialogService, private storage: StorageService) { }
+        private dialogService: DialogService, private storage: StorageService, private modalService: ModalService) { 
+            this.getRow = this.modalService.getRow$.subscribe(rowId => {
+                this.rowNum = rowId;
+                this.getRow.unsubscribe();
+            })
+        }
+
+    isCustActionDisabled(actionId: string) {
+        if (this.entityForm.formGroup.controls['name'].value) {
+            if (actionId === 'download_private') {
+                return !this.entityForm.formGroup.controls['private_key'].value;
+            } else if (actionId === 'download_public') {
+                return !this.entityForm.formGroup.controls['public_key'].value;
+            }
+        }
+        return true;
+    }
 
     preInit() {
-        this.aroute.params.subscribe(params => {
-            if (params['pk']) {
-                this.queryCallOption[0].push(params['pk']);
+        if (this.rowNum) {
+            this.queryCallOption = [["id", "=", this.rowNum]];
+            this.rowNum = null;
+        }
+    }
+
+    generateKeypair() {
+        this.loader.open();
+        this.clearPreviousErrors();
+        let elements = document.getElementsByTagName('mat-error');
+        while (elements[0]) elements[0].parentNode.removeChild(elements[0]);
+        this.ws.call('keychaincredential.generate_ssh_key_pair').subscribe(
+            (res) => {
+                this.loader.close();
+                this.entityForm.formGroup.controls['private_key'].setValue(res.private_key);
+                this.entityForm.formGroup.controls['public_key'].setValue(res.public_key);
+            },
+            (err) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this, err, this.dialogService);
             }
-        });
+        )
     }
 
     downloadKey(key_type) {
@@ -142,6 +182,9 @@ export class SshKeypairsFormComponent {
     }
 
     beforeSubmit(data) {
+        if (data.remote_host_key_button || data.remote_host_key_button === '') {
+            delete data.remote_host_key_button;
+        }
         delete data['key_instructions'];
         if (this.entityForm.isNew) {
             data['type'] = 'SSH_KEY_PAIR';
@@ -156,4 +199,9 @@ export class SshKeypairsFormComponent {
         delete data['public_key'];
         return data;
     }
+
+    afterSubmit() {
+        this.modalService.refreshTable();
+    }
+
 }
