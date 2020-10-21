@@ -534,11 +534,9 @@ export class UpdateComponent implements OnInit, OnDestroy {
     this.sysGenService.updateRunningNoticeSent.emit();
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: true });
     if (!this.is_ha) {
-      this.dialogRef.componentInstance.setCall('update.update', [{ reboot: false }]);
+      this.dialogRef.componentInstance.setCall('update.update', [{ reboot: true }]);
       this.dialogRef.componentInstance.submit();
-      this.dialogRef.componentInstance.success.subscribe((res) => {
-        this.router.navigate(['/others/reboot']);
-      });
+
       this.dialogRef.componentInstance.failure.subscribe((res) => {
         this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
       });

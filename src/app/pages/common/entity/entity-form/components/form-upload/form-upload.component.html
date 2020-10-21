@@ -6,14 +6,23 @@
   </div>
 
   <div>
-      <button type="button" mat-button color="accent" class="btn-default" (click)="fileBtnClick()">Upload</button>
+      <button type="button" mat-button color="accent" class="btn-default" (click)="fileBtnClick()">
+        {{ 'Choose File' | translate }}
+      </button>
+      <div *ngIf="fileList" class="mt-1">
+        <div *ngFor="let file of fileList">
+          {{ file.name }}
+        </div>
+      </div>
   </div>
 
   <div *ngIf="config.hideButton;else showButton">
       <mat-card-content style="display: none;">
-          <input type="file" *ngIf="!config.multiple;else multipleFiles" #fileInput accept="{{config.acceptedFiles}}" (change)="upload(config.fileLocation)" [formControlName]="config.name">
+          <input id="fb" type="file" *ngIf="!config.multiple;else multipleFiles" #fileInput accept="{{config.acceptedFiles}}" 
+            (change)="upload(config.fileLocation)" [formControlName]="config.name">
           <ng-template #multipleFiles>
-            <input type="file" #fileInput accept="{{config.acceptedFiles}}" (change)="upload(config.fileLocation)" [formControlName]="config.name" multiple>
+            <input id="fb" type="file" #fileInput accept="{{config.acceptedFiles}}" (change)="upload(config.fileLocation)" 
+              [formControlName]="config.name" multiple>
           </ng-template>
       </mat-card-content>
       <mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors'] | translate"></div></mat-error>
@@ -21,7 +30,7 @@
   </div>
   <ng-template #showButton>
       <mat-card-content style="display: none;">
-          <input type="file" #fileInput accept="{{config.acceptedFiles}}" [formControlName]="config.name">
+          <input id="fb" type="file" #fileInput accept="{{config.acceptedFiles}}" [formControlName]="config.name">
       </mat-card-content>
       <mat-card-actions class="buttons">
           <button mat-button type="button" color="primary" (click)="upload(config.fileLocation)"
