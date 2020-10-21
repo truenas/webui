@@ -9,6 +9,7 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { helptext } from 'app/helptext/system/reporting';
 
 @Component({
   selector : 'app-email',
@@ -63,7 +64,7 @@ export class EmailComponent implements OnDestroy {
   },
   {
     id: 'authenticate',
-    name: 'Log in to provider',
+    name: helptext_system_email.auth.login_button,
     function: () => {
       const dialogService = this.dialogservice;
       const controls = this.entityEdit.formGroup.controls;
@@ -110,15 +111,15 @@ export class EmailComponent implements OnDestroy {
         {
           type: 'radio',
           name: 'smtp',
-          placeholder: 'Authentication',
+          placeholder: helptext_system_email.auth.section_label,
           options: [
-            {label: 'SMTP',
+            {label: helptext_system_email.auth.smtp.placeholder,
              name: 'smtp',
-             tooltip: 'whatevs',
+             tooltip: helptext_system_email.auth.smtp.tooltip,
              value: true},
-            {label: 'GMail',
+            {label: helptext_system_email.auth.gmail.placeholder,
              name: 'gmail',
-             tooltip: 'Gmail whatevs',
+             tooltip: helptext_system_email.auth.gmail.tooltip,
              value: false},
           ],
           value: true
@@ -170,9 +171,18 @@ export class EmailComponent implements OnDestroy {
           placeholder : helptext_system_email.security.placeholder,
           tooltip : helptext_system_email.security.tooltip,
           options : [
-            {label : 'Plain (No Encryption)', value : 'PLAIN'},
-            {label : 'SSL (Implicit TLS)', value : 'SSL'},
-            {label : 'TLS (STARTTLS)', value : 'TLS'},
+            {label : T('Plain (No Encryption)'), value : 'PLAIN'},
+            {label : T('SSL (Implicit TLS)'), value : 'SSL'},
+            {label : T('TLS (STARTTLS)'), value : 'TLS'},
+          ],
+          relation : [
+            {
+              action : 'HIDE',
+              when : [ {
+                name : 'smtp',
+                value : false,
+              } ]
+            },
           ]
         },
         {
@@ -213,7 +223,8 @@ export class EmailComponent implements OnDestroy {
         {
           type: 'input',
           name: 'client_id',
-          placeholder: 'Client ID',
+          placeholder: helptext_system_email.auth.client_id.placeholder,
+          tooltip: helptext_system_email.auth.client_id.tooltip,
           relation : [
             {
               action : 'HIDE',
@@ -227,7 +238,8 @@ export class EmailComponent implements OnDestroy {
         {
           type: 'input',
           name: 'client_secret',
-          placeholder: 'Client Secret',
+          placeholder: helptext_system_email.auth.client_secret,
+          togglePw: true,
           relation : [
             {
               action : 'HIDE',
@@ -241,7 +253,7 @@ export class EmailComponent implements OnDestroy {
         {
           type: 'input',
           name: 'refresh_token',
-          placeholder: 'Refresh Token',
+          placeholder: helptext_system_email.auth.refresh_token,
           relation : [
             {
               action : 'HIDE',
