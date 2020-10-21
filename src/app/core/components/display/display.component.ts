@@ -52,7 +52,6 @@ export class Display implements OnInit,AfterViewInit{
     let node: any;
     
     for(let i = 0; i < contents.length; i++){
-      console.log(typeof contents[i]);
       if(contents[i].tagName == "MD-CARD"){
 	this.renderer.appendChild(container, contents[i]);
 	this.renderer.removeChild(container, selector);

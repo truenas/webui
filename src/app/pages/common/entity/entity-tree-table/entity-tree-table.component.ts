@@ -62,20 +62,11 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
         const value = evt.data.value ? evt.data.value : '';
         this.filterNodes(evt.data.column, value);
       });
-
-      if(this.parentId){
-        this.core.register({ observerClass: this, eventName: "TreeTableFilter" + this.parentId }).subscribe((evt: CoreEvent) => {
-          //console.log(evt);
-        });
-      }
     }
 
     getData() {
-      console.log("GETTING DATA...");
       this.ws.call(this.conf.queryCall).subscribe(
         (res) => {
-          console.log(res);
-          //this.treeTableData = this.treeTableService.buildTree(res);
           let data = this.treeTableService.buildTree(res);
         },
         (err) => {
@@ -92,7 +83,6 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
       const value = rootNode.expanded ? rootNode.expanded = false : true;
       this.treeDataSource = this.treeTableService.editNode('expanded', value, rootNode.indexPath, this.treeDataSource);
 
-      //this.tableDataSource = this.treeTableService.buildTable(this.treeDataSource); 
       if(this.filter.value.length > 0){
         this.tableDataSource = this.treeTableService.filteredTable(this.filter.column, this.filter.value, this.treeDataSource, true);
       } else {

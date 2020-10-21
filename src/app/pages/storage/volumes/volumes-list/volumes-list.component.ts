@@ -1025,7 +1025,6 @@ export class VolumesListTableConfig implements InputTableConf {
                       "storage", "permissions", rowData.id
                     ]));
                   } else {
-                    console.log("Not Trivial!");
                     this.ws.call('filesystem.getacl', [row1.mountpoint]).subscribe(res => {
                       if(res.acltype === 'POSIX1E') {
                         this._router.navigate(new Array('/').concat([
