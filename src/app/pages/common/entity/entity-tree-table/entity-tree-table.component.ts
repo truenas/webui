@@ -51,9 +51,6 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
       
       if (this.conf.queryCall) {
         this.getData();
-      } else if (this.conf.tableData && this.expandRootNodes) {
-        /* Expand the root nodes by default */
-        //this.conf.tableData.filter(node => !node.parent).forEach(node => (node.expanded = true));
       }
     }
 
@@ -62,6 +59,11 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
         const value = evt.data.value ? evt.data.value : '';
         this.filterNodes(evt.data.column, value);
       });
+
+      if (this.conf.tableData && this.expandRootNodes) {
+        // Expand the root nodes by default
+        this.expandNode(this.tableDataSource[0]);
+      }
     }
 
     getData() {
