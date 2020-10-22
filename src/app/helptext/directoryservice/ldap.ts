@@ -104,9 +104,13 @@ ldap_idmap_backend_tooltip: T('Backend used to map Windows security \
  backend, click <i>EDIT IDMAP</i>.'),
 
 ldap_has_samba_schema_name : 'has_samba_schema',
-ldap_has_samba_schema_placeholder : T('Samba Schema'),
+ldap_has_samba_schema_placeholder : T('Samba Schema (DEPRECATED - see help text)'),
 ldap_has_samba_schema_tooltip: T('Only set LDAP authentication for\
- SMB shares is required and the LDAP server is already configured with Samba attributes.'),
+ SMB shares is required and the LDAP server is already configured with Samba attributes. DEPRECATED: \
+ Support for Samba Schema is <a\
+ href="https://www.samba.org/samba/history/samba-4.13.0.html" target="_blank">officially deprecated in Samba 4.13</a>. \
+ The feature will be removed sometime after Samba 4.14. Users should plan accordingly \
+ to upgrade the legacy Samba domain to a Samba AD domain.'),
 
 ldap_auxiliary_parameters_name : 'auxiliary_parameters',
 ldap_auxiliary_parameters_placeholder : T('Auxiliary Parameters'),
