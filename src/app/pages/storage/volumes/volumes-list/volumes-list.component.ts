@@ -1580,20 +1580,24 @@ export class VolumesListTableConfig implements InputTableConf {
                   dialogRef.componentInstance.submit();
                   dialogRef.componentInstance.success.subscribe((res) => {
                     dialogRef.close();
-                    this.dialogService.Info(`Key for ${row.name}`, res.result);
-                    this.loader.open();
-                    this.ws.call('core.download', ['pool.dataset.export_key', [row.name, true], fileName]).subscribe(res => {
-                      this.loader.close();
-                      const url = res[1];
-                      this.storageService.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
-                        if(res !== null && res !== "") {
-                          this.storageService.downloadBlob(file, fileName);
+                    this.dialogService.confirm(`Key for ${row.name}`, res.result, true, T('Download Key'), false,
+                      '','','','',false, T('Close')).subscribe(download => {
+                        if (download) {
+                          this.loader.open();
+                          this.ws.call('core.download', ['pool.dataset.export_key', [row.name, true], fileName]).subscribe(res => {
+                            this.loader.close();
+                            const url = res[1];
+                            this.storageService.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
+                              if(res !== null && res !== "") {
+                                this.storageService.downloadBlob(file, fileName);
+                              }
+                            });
+                          }, (e) => {
+                            this.loader.close();
+                            new EntityUtils().handleWSError(this, e, this.dialogService);
+                          });
                         }
-                      });
-                    }, (e) => {
-                      this.loader.close();
-                      new EntityUtils().handleWSError(this, e, this.dialogService);
-                    });
+                    })
                   });  
                 }
               })

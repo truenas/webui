@@ -115,6 +115,18 @@ export class DatasetUnlockComponent implements OnDestroy {
               width: '30%',
             },
             {
+              type: 'radio',
+              name: 'upload_choice',
+              placeholder: '',
+              options: [
+                {label: 'Paste key',
+                 value: true},
+                {label: 'Upload key',
+                 value: false}
+              ],
+              value: true
+            },
+            {
               type: 'textarea',
               name: 'key',
               placeholder: helptext.dataset_key_placeholder,
@@ -122,7 +134,19 @@ export class DatasetUnlockComponent implements OnDestroy {
               validation: helptext.dataset_key_validation,
               disabled: true,
               isHidden: true,
-              width: '0%'
+              width: '0%',
+            },
+            {
+              type: 'upload',
+              name: 'single_key_file',
+              placeholder: helptext.upload_key_file_placeholder,
+              tooltip: helptext.upload_key_file_tooltip,
+              message: this.messageService,
+              hideButton: true,
+              width: '100%',
+              updater: this.key_file_updater,
+              parent: this,
+              isHidden: true
             },
             {
               type: 'input',
@@ -197,6 +221,8 @@ export class DatasetUnlockComponent implements OnDestroy {
             const controls = listFields[i];
             const passphrase_fc = _.find(controls, {"name": "passphrase"});
             const name_text_fc = _.find(controls, {name: 'name_text'});
+            const upload_choice_fc = _.find(controls, {name: 'upload_choice'});
+            const single_key_file_fc = _.find(controls, {name: 'single_key_file'});
             const result = res.result[i];
 
             this.datasets.controls[i].controls['name'].setValue(result['name']);
@@ -205,6 +231,8 @@ export class DatasetUnlockComponent implements OnDestroy {
             const is_passphrase = (result.key_format === 'PASSPHRASE');
             if (!is_passphrase) { // hide key datasets by default
               name_text_fc.isHidden = true;
+              upload_choice_fc.isHidden = true;
+              single_key_file_fc.isHidden = true;
               if (this.key_file_fg.value === false) { // only show key_file checkbox and upload if keys encrypted datasets exist
                 this.key_file_fg.setValue(true);
                 this.key_file_fc.isHidden = false;
@@ -233,16 +261,22 @@ export class DatasetUnlockComponent implements OnDestroy {
         const controls = listFields[i];
         const key_fc = _.find(controls, {"name": "key"});
         const name_text_fc = _.find(controls, {name: 'name_text'});
+        const upload_choice_fc = _.find(controls, {name: 'upload_choice'});
+        const single_key_file_fc = _.find(controls, {name: 'single_key_file'});
         const is_passphrase = dataset_controls['is_passphrase'].value;
         const unlock_children = this.unlock_children_fg.value;
         if (dataset_controls['name'].value === this.pk) {
           if (!is_passphrase) {
             name_text_fc.isHidden = hide_key_datasets;
+            upload_choice_fc.isHidden = hide_key_datasets;
+            // single_key_file_fc.isHidden = hide_key_datasets;
             this.setDisabled(key_fc, dataset_controls['key'], hide_key_datasets, hide_key_datasets);
           }
         } else {
           if (unlock_children && !is_passphrase) {
             name_text_fc.isHidden = hide_key_datasets;
+            upload_choice_fc.isHidden = hide_key_datasets;
+            // single_key_file_fc.isHidden = hide_key_datasets;
             this.setDisabled(key_fc, dataset_controls['key'], hide_key_datasets, hide_key_datasets);
           }
         }
@@ -256,17 +290,25 @@ export class DatasetUnlockComponent implements OnDestroy {
           const key_fc = _.find(controls, {"name": "key"});
           const passphrase_fc = _.find(controls, {"name": "passphrase"});
           const name_text_fc = _.find(controls, {name: 'name_text'});
+          const upload_choice_fc = _.find(controls, {name: 'upload_choice'});
+          const single_key_file_fc = _.find(controls, {name: 'single_key_file'});
           const is_passphrase = dataset_controls['is_passphrase'].value;
           const hide_key_datasets = this.key_file_fg.value;
           if (is_passphrase) {
             name_text_fc.isHidden = !unlock_children;
+            upload_choice_fc.isHidden = !unlock_children;
+            // single_key_file_fc.isHidden = !unlock_children;
             this.setDisabled(passphrase_fc, dataset_controls['passphrase'], !unlock_children, !unlock_children);
           } else {
             if (hide_key_datasets) {
               name_text_fc.isHidden = true;
+              upload_choice_fc.isHidden = true;
+              single_key_file_fc.isHidden = true;
               this.setDisabled(key_fc, dataset_controls['key'], true, true);
             } else {
               name_text_fc.isHidden = !unlock_children;
+              upload_choice_fc.isHidden = !unlock_children;
+              // single_key_file_fc.isHidden = !unlock_children;
               this.setDisabled(key_fc, dataset_controls['key'], !unlock_children, !unlock_children);
             }
           }
