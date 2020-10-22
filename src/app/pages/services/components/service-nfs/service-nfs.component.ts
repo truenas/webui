@@ -232,6 +232,10 @@ export class ServiceNFSComponent {
       }
     })
 
+    entityForm.formGroup.controls['v4_krb'].valueChanges.subscribe((value) => {
+      value ? this.v4krbValue = true : this.v4krbValue = false;
+    })
+
     this.ws.call('kerberos.keytab.has_nfs_principal').subscribe(res => {
       this.hasNfsStatus = res;
       if (!this.hasNfsStatus) {
