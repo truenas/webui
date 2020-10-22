@@ -53,14 +53,15 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
 @then('You should see the dashboard and "System Information"')
 def you_should_see_the_dashboard_and_system_information(driver):
     """You should see the dashboard and "System Information"."""
-    assert wait_on_element(driver, 0.5, 5, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 1, 5, '//span[contains(.,"System Information")]')
 
 
 @then('Navigate to Network then Global Configuration')
 def navigate_to_network_then_global_configuration(driver):
     """Navigate to Network then Global Configuration."""
+    assert wait_on_element(driver, 1, 5, '//mat-list-item[@ix-auto="option__Network"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
-    assert wait_on_element(driver, 0.5, 30, '//mat-list-item[@ix-auto="option__Global Configuration"]')
+    assert wait_on_element(driver, 0.5, 5, '//mat-list-item[@ix-auto="option__Global Configuration"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Global Configuration"]').click()
 
 

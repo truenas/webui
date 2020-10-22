@@ -59,8 +59,9 @@ def you_should_see_the_dashboard_and_system_information(driver):
 @then('Navigate to Network then Global Configuration')
 def navigate_to_network_then_global_configuration(driver):
     """Navigate to Network then Global Configuration."""
+    assert wait_on_element(driver, 1, 5, '//mat-list-item[@ix-auto="option__Network"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
-    assert wait_on_element(driver, 0.5, 30, '//mat-list-item[@ix-auto="option__Global Configuration"]')
+    assert wait_on_element(driver, 0.5, 5, '//mat-list-item[@ix-auto="option__Global Configuration"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Global Configuration"]').click()
 
 
@@ -86,13 +87,14 @@ def click_save_please_wait_should_appear_while_settings_are_being_applied(driver
     """Click SAVE "Please wait" should appear while settings are being applied."""
     assert wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 0.5, 30, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 0.5, 30, '//div[contains(.,"Settings saved.")]')
+    assert wait_on_element_disappear(driver, 1, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 1, 30, '//div[contains(.,"Settings saved.")]')
 
 
 @then('Navigate to Directory Services then Active Directory')
 def navigate_to_directory_services_then_active_directory(driver):
     """Navigate to Directory Services then Active Directory."""
+    assert wait_on_element(driver, 1, 30, '//mat-list-item[@ix-auto="option__Directory Services"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Directory Services"]').click()
     assert wait_on_element(driver, 0.5, 30, '//mat-list-item[@ix-auto="option__Active Directory"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Active Directory"]').click()
@@ -101,13 +103,13 @@ def navigate_to_directory_services_then_active_directory(driver):
 @then('The Domain Credentials page should open')
 def the_domain_credentials_page_should_open(driver):
     """The Domain Credentials page should open."""
-    assert wait_on_element(driver, 0.5, 30, '//h4[contains(.,"Domain Credentials")]')
+    assert wait_on_element(driver, 1, 30, '//h4[contains(.,"Domain Credentials")]')
 
 
 @then(parsers.parse('Input Domain name "{ad_domain}", Account name "{ad_user}", Password "{ad_password}"'))
 def input_domain_name_ad_domain_account_name_ad_user_password_ad_pasword(driver, ad_domain, ad_user, ad_password):
     """Input Domain name "{ad_domain}", Account name "{ad_user}", Password "ad_password"."""
-    assert wait_on_element(driver, 0.5, 30, '//input[@ix-auto="input__Domain Name"]')
+    assert wait_on_element(driver, 1, 30, '//input[@ix-auto="input__Domain Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Domain Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Domain Name"]').send_keys(ad_domain)
     driver.find_element_by_xpath('//input[@ix-auto="input__Domain Account Name"]').clear()
@@ -129,20 +131,21 @@ def click_advanced_and_input_truenas_servers_to_computer_account_ou(driver, ca_o
 def check_the_enable_box_and_click_save(driver):
     """Check the Enable box and click SAVE."""
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]').click()
-    assert wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 1, 30, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
 @then('Active Directory should successfully save and start without an error')
 def active_directory_should_successfully_save_and_start_without_an_error(driver):
     """Active Directory should successfully save and start without an error."""
-    assert wait_on_element_disappear(driver, 0.5, 30, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 0.5, 10, '//div[contains(.,"Settings saved.")]')
+    assert wait_on_element_disappear(driver, 1, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 1, 10, '//div[contains(.,"Settings saved.")]')
 
 
 @then('Navigate to Shell')
 def navigate_to_shell(driver):
     """Navigate to Shell."""
+    assert wait_on_element(driver, 1, 10, '//mat-list-item[@ix-auto="option__Shell"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shell"]').click()
 
 
@@ -205,22 +208,11 @@ def navigate_to_dashboard(driver):
     assert wait_on_element(driver, 0.5, 10, '//span[contains(.,"System Information")]')
 
 
-@then('Wait for second node to be up')
-def wait_for_second_node_to_be_up(driver):
-    """Wait for second node to be up"""
-    assert wait_on_element(driver, 1, 60, '//mat-list-item[contains(.,"nodeb")]')
-
-
-@then('When the second node is up press INITIATE FAILOVER')
+@then('press INITIATE FAILOVER, check confirm and press FAILOVER')
 def When_the_second_node_is_up_press_initiate_failover(driver):
-    """When the second node is up press INITIATE FAILOVER"""
+    """press INITIATE FAILOVER, check confirm and press FAILOVER"""
     assert wait_on_element(driver, 1, 60, '//button[@ix-auto="button__INITIATE FAILOVER"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__INITIATE FAILOVER"]').click()
-
-
-@then('Check confirm and press FAILOVER')
-def check_confirm_and_press_failover(driver):
-    """Check confirm and press FAILOVER"""
     assert wait_on_element(driver, 1, 5, '//h1[contains(.,"Initiate Failover")]')
     driver.find_element_by_xpath('//mat-checkbox').click()
     assert wait_on_element(driver, 0.5, 5, '//div[2]/button[2]/span')
