@@ -119,6 +119,7 @@ export class DatasetUnlockComponent implements OnDestroy {
               type: 'radio',
               name: 'upload_choice',
               placeholder: '',
+              width: '30%',
               options: [
                 {label: 'Paste key',
                  value: true},
@@ -135,7 +136,7 @@ export class DatasetUnlockComponent implements OnDestroy {
               validation: helptext.dataset_key_validation,
               disabled: true,
               isHidden: true,
-              width: '0%',
+              width: '40%',
             },
             {
               type: 'upload',
@@ -144,7 +145,7 @@ export class DatasetUnlockComponent implements OnDestroy {
               tooltip: helptext.upload_key_file_tooltip,
               message: this.messageService,
               hideButton: true,
-              width: '100%',
+              width: '50%',
               updater: this.key_file_updater,
               parent: this,
               isHidden: true
