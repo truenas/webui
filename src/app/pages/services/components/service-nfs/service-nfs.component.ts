@@ -301,6 +301,7 @@ export class ServiceNFSComponent {
                   .subscribe(() => {
                     self.loader.close();
                     self.dialogRef.close(true);
+                    that.dialog.Info(helptext.addSPN.success, helptext.addSPN.success_msg);
                   },
                   err => {
                     self.loader.close();
