@@ -2,6 +2,9 @@ import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 
 export default {
+title_add: T('Add Static Route'),
+title_edit: T('Edit Static Route'),
+
 sr_fieldset_general: T('General Options'),
 
 sr_destination_placeholder : T('Destination'),

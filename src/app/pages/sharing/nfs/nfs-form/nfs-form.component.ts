@@ -40,6 +40,7 @@ export class NFSFormComponent {
       config: [{
         type: 'list',
         name : 'paths',
+        width: '100%',
         templateListField: [{
           name: 'path',
           placeholder: helptext_sharing_nfs.placeholder_path,
@@ -150,20 +151,20 @@ export class NFSFormComponent {
           placeholder: helptext_sharing_nfs.placeholder_security,
           options: [
             {
-              label: 'sys',
-              value: 'sys',
+              label: 'SYS',
+              value: 'SYS',
             },
             {
-              label: 'krb5',
-              value: 'krb5',
+              label: 'KRB5',
+              value: 'KRB5',
             },
             {
-              label: 'krb5i',
-              value: 'krb5i',
+              label: 'KRB5I',
+              value: 'KRB5I',
             },
             {
-              label: 'krb5p',
-              value: 'krb5p',
+              label: 'KRB5P',
+              value: 'KRB5P',
             }
           ],
           isHidden: false,

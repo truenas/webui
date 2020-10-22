@@ -268,9 +268,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   startListeners(){
-    console.warn("Subscribing...");
-    this.core.register({observerClass: this, eventName: "RealtimeStats"}).subscribe((e: CoreEvent) => {
-      const evt = e.data;
+    this.statsEvents = this.ws.sub("reporting.realtime").subscribe((evt) => {
       if(evt.cpu){
         this.statsDataEvents.next({name:"CpuStats", data:evt.cpu});
       }

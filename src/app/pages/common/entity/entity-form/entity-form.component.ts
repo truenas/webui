@@ -65,6 +65,7 @@ export interface Formconfiguration {
   custom_edit_query?;
   custom_add_query?
   custActions?: any[];
+  compactCustomActions?: any[];
   customFilter?:any[];
   confirmSubmit?;
   confirmSubmitDialog?:Object;
@@ -72,6 +73,7 @@ export interface Formconfiguration {
   blurEvent?;
   customEditCall?;
   save_button_enabled?;
+  hideSaveBtn?:boolean;
   form_message?: {
     type: string; // info || warning
     content: string;
@@ -94,6 +96,8 @@ export interface Formconfiguration {
   title?;
   columnsOnForm?: number;
 
+  closeModalForm?();
+  afterModalFormClosed?(); // function will called once the modal form closed
   goBack?();
   onSuccess?(res);
 }
@@ -126,6 +130,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public showPassword = false;
   public successMessage = T('Settings saved.')
   private getAdvancedConfig: Subscription;
+
+  protected loaderOpen = false;
+  protected keepLoaderOpen = false;
 
   get controls() {
     return this.fieldConfig.filter(({type}) => type !== 'button');
@@ -255,6 +262,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         this.fieldSets = this.conf.fieldSets.list ? this.conf.fieldSets.list() : this.conf.fieldSets;
         for(let i = 0; i < this.fieldSets.length; i++){
           let fieldset = this.fieldSets[i];
+          if (!fieldset.divider) {
+            fieldset.width = this.conf.columnsOnForm === 1 || fieldset.colspan === 2 ? '100%' : '50%';
+          }
+
           if(fieldset.config){
             this.fieldConfig = this.fieldConfig.concat(fieldset.config);
           }
@@ -319,8 +330,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         }
       }
 
-      if (!this.isNew && this.conf.queryCall !== 'none') {
+      if (!this.isNew && this.conf.queryCall !== 'none' && this.getFunction) {
         this.loader.open();
+        this.loaderOpen = true;
         this.getFunction.subscribe((res) => {
           if (res.data){
             this.data = res.data;
@@ -383,7 +395,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
           if (this.conf.initial) {
             this.conf.initial.bind(this.conf)(this);
           }
-          this.loader.close()
+          if (!this.keepLoaderOpen) {
+            this.loader.close();
+            this.loaderOpen = false;
+          }
         });
       }
     });
@@ -509,10 +524,12 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.busy = this.conf.customSubmit(value);
     } else {
       this.loader.open();
+      this.loaderOpen = true;
       this.busy = this.submitFunction(value)
                     .subscribe(
                         (res) => {
                           this.loader.close();
+                          this.loaderOpen = false;
                           if (this.conf.afterSave) {
                             this.conf.afterSave(this);
                           } else { 
@@ -531,10 +548,15 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                               this.conf.responseOnSubmit(res);
                             }
                           }
-                          this.modalService.close('slide-in-form');
+                          this.modalService.close('slide-in-form').then(closed => {
+                            if (closed && this.conf.afterModalFormClosed) {
+                              this.conf.afterModalFormClosed();
+                            }
+                          });
                         },
                         (res) => {
                           this.loader.close();
+                          this.loaderOpen = false;
                           if (this.conf.errorReport){
                             this.conf.errorReport(res);
                           } else if (res.hasOwnProperty("reason") && (res.hasOwnProperty("trace"))) {
@@ -555,9 +577,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   isFieldsetAvailabel(fieldset) {
-    for (let i = 0; i < fieldset.config.length; i++) {
-      if (!fieldset.config[i].isHidden) {
-        return true;
+    if (fieldset.config) {
+      for (let i = 0; i < fieldset.config.length; i++) {
+        if (!fieldset.config[i].isHidden) {
+          return true;
+        }
       }
     }
     return false;

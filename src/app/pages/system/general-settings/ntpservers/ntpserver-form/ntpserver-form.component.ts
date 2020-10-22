@@ -17,6 +17,7 @@ export class NTPServerFormComponent {
   protected queryCall = 'system.ntpserver.query';
   protected isEntity: boolean = true;
   public title = helptext.header;
+  protected isOneColumnForm = true;
 
   protected pk: any;
   protected queryKey = 'id';

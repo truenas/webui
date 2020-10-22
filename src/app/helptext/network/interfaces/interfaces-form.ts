@@ -3,6 +3,9 @@ import { Validators } from '@angular/forms';
 import { rangeValidator } from '../../../pages/common/entity/entity-form/validators/range-validation';
 
 export default {
+title_add: T('Add Interface'),
+title_edit: T('Edit Interface'),
+
 int_type_placeholder: T('Type'),
 int_type_tooltip: T('Choose the\
  type of interface. <i>Bridge</i> creates a logical link between\
@@ -114,6 +117,7 @@ failover_virtual_alias_address_tooltip: T('IP address to use for \
 
 failover_alias_set_error: T('An IP address must be provided for\
  each controller and the virtual interface.'),
+failover_alias_v6_error: T('IPv6 addresses are not allowed for HA.'),
 
 vlan_pint_placeholder: T('Parent Interface'),
 vlan_pint_tooltip: T('Select the VLAN Parent Interface. Usually an Ethernet\

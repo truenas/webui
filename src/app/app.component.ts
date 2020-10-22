@@ -207,26 +207,29 @@ export class AppComponent {
 
     // TRUECOMMAND
     this.matIconRegistry.addSvgIcon(
+      "truecommand_logo_blue",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand-logo-mark-full-color-rgb.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
       "truecommand_logo_white",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand_iconmark_white.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truecommand_logo_red",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand_iconmark_red.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truecommand_logo_grey",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand_iconmark_grey.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truecommand_logo_green",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand_iconmark_green.svg")
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand-logo-mark-white-rgb.svg")
     );
 
     // encryption icon
     this.matIconRegistry.addSvgIcon(
       "anti-lock",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/anti-lock.svg")
+    )
+
+    // network upload download
+    this.matIconRegistry.addSvgIcon(
+      'network-upload-download',
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/network-upload-download.svg")
+    )
+
+    this.matIconRegistry.addSvgIcon(
+      'network-upload-download-disabled',
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/network-upload-download-disabled.svg")
     )
 
     const product = productText.product.trim();

@@ -1,3 +1,4 @@
+
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
@@ -10,6 +11,9 @@ import { ChangePasswordComponent } from "./users/change-password/change-password
 import { TwoFactorComponent } from '../system/two-factor/two-factor.component';
 import { DirectoryservicesComponent } from '../directoryservice/directoryservices/directoryservices.component';
 import { CredentialsComponent } from './../credentials/credentials.component';
+import { BackupCredentialsComponent } from '../credentials/backup-credentials/backup-credentials.component';
+
+import { T } from '../../translate-marker';
 
 export const routes: Routes = [{
   path: '',
@@ -72,10 +76,16 @@ export const routes: Routes = [{
     component: DirectoryservicesComponent,
     data: { title: ('Directory Services') },
   },
+ 
   {
     path: 'temp-misc',
     component: CredentialsComponent,
-    data: { title: ('Credentials') }
+    data: { title: ('Miscellaneous'), breadcrumb: T('Miscellaneous') }
+  },
+  {
+    path: 'backup-credentials',
+    component: BackupCredentialsComponent,
+    data: { title: ('Backup Credentials'), breadcrumb: T('Backup Credentials') }
   }
 ]
 }];

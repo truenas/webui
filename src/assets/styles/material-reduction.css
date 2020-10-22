@@ -92,7 +92,10 @@ span.code{
 
 .mat-card{
   border:solid var(--highlights) rgba(255,255,255,0.025);
-  /*border-top-size:var(--highlights);*/
+}
+
+.mat-card.mat-card-padded{
+  padding: 16px 32px !important;
 }
 
 entity-table .mat-card,
@@ -187,6 +190,12 @@ entity-table .mat-toolbar.mat-card-toolbar{
   padding: 4px 0;
 }
 
+/* Bring back the native placeholder */
+input.mat-input-element::placeholder {
+  color: var(--fg2) !important;
+  -webkit-text-fill-color: var(--fg2) !important;
+  opacity: 0.5;
+}
 
 .borderless{
   border: none !important;
@@ -197,8 +206,15 @@ entity-table .mat-toolbar.mat-card-toolbar{
   opacity: 1 !important;
 }
 
+.mat-divider-horizontal{
+  border-top-color: var(--lines) !important;
+}
+
 .fieldset {
   padding-bottom: 24px;
+}
+.fieldset.empty-fieldset {
+  padding-bottom: 0px;
 }
 
 .full-width{
@@ -229,6 +245,7 @@ entity-table .mat-toolbar.mat-card-toolbar{
 .form-element.form-ip-netmask .mat-form-field,
 .form-element.form-combobox .mat-menu-trigger,
 .form-element .mat-form-field-wrapper,
+.form-element .form-button,
 .form-element input[type = "password"],
 .form-element input[type = "email"],
 .form-element input[type = "text"],
@@ -236,6 +253,8 @@ entity-table .mat-toolbar.mat-card-toolbar{
 .form-element textarea,
 .form-element select{
   width: calc(100% - 24px) !important;
+  line-height: normal !important; 
+  min-height: 33px;
 }
 
 entity-form-list .list-action-block-wrapper .form-element,
@@ -271,6 +290,7 @@ entity-form-list .list-action-block-wrapper .form-element select{
   max-width: calc(100% - 58px) !important;
   height: 33px;
   margin-right: 1px;
+  padding: 0 8px;
 }
 
 .form-element.form-combobox .mat-menu-trigger:hover {
@@ -279,7 +299,7 @@ entity-form-list .list-action-block-wrapper .form-element select{
 
 .form-element.form-combobox .mat-menu-trigger{
   position: relative;
-  top: 2px;
+  top: -9px;
   padding: 9px 2px 8px;
 }
 
@@ -294,6 +314,10 @@ entity-form-list .list-action-block-wrapper .form-element select{
 }
 
 /* IP w/Netmask*/
+.form-element.form-ip-netmask .mat-form-field {
+  max-height: 33px;
+}
+
 .form-element.form-ip-netmask .mat-form-field-wrapper input,
 .form-element.form-ip-netmask .mat-form-field-wrapper{
   background-color: unset;
@@ -334,6 +358,8 @@ entity-form-list .list-action-block-wrapper .form-element select{
 /* Login Form */
 .login-form .form-element .mat-form-field-wrapper{
   width: 100% !important;
+  min-height: unset;
+  max-height: 33px;
 }
 
 .login-form .form-element .mat-form-field-wrapper input{
@@ -341,8 +367,6 @@ entity-form-list .list-action-block-wrapper .form-element select{
   border: none;
   margin: 0;
   padding: 0 0 2px 0;
-  position: relative;
-  top: 6px !important;
 }
 
 .login-form .form-element .mat-form-field-prefix .mat-icon {
@@ -353,6 +377,18 @@ entity-form-list .list-action-block-wrapper .form-element select{
   margin-bottom: 2px;
 }
 
+.login-form .form-element.username .mat-form-field-prefix{
+  top: -5px;
+}
+
+.login-form .form-element.password .mat-form-field-prefix{
+  top: -16px;
+}
+
+.form-element .mat-form-field-suffix{
+  top: -2px;
+}
+
 .form-element textarea{
   min-width: calc(100% - 24px);
   max-width: calc(100% - 24px);
@@ -361,7 +397,9 @@ entity-form-list .list-action-block-wrapper .form-element select{
 
 .form-element input[type = "password"],
 .form-element .has_toggle_pw input {
-  /*width: calc(100% - 40px) !important;*/
+  position: relative;
+  top: -6px;
+  height: inherit;
   display: inline;
 }
 
@@ -481,6 +519,10 @@ button.mat-button.mat-accent{
 
 /* Menus */
 
+button.mat-menu-trigger.menu-toggle.mat-button{
+  max-height: 36px;
+}
+
 .mat-option:hover:not(.mat-option-disabled),
 .sidenav-link:hover,
 .slide-in-nav-item:hover,
@@ -547,6 +589,7 @@ table.mat-table {
   background-color: var(--bg2) !important;
 }
 
+thead.ui-treetable-thead th,
 .mat-table thead th{
   background-color: var(--contrast-darker);
   background-color: rgba(0,0,0,0.1);
@@ -554,12 +597,19 @@ table.mat-table {
   vertical-align: middle;
 }
 
+.ui-treetable tr,
 tr.mat-header-row,
 .mat-table thead tr{
   max-height: 48px;
   height: 48px;
 }
 
+.ui-treetable tr{
+  border: unset;
+  border-bottom: solid 1px var(--lines);
+}
+
+.ui-treetable tr,
 .mat-row, 
 .mat-header-row, 
 .mat-footer-row, 
@@ -580,9 +630,32 @@ td.mat-footer-cell{
   position: relative;
 }
 
+td.mat-cell.tree-cell{
+  max-width: 300px;
+}
+
 td.mat-cell .mat-icon{
-  position: absolute;
   top: calc(50% - 12px);
+}
+
+td.mat-cell .mat-icon.expansion-trigger{
+  font-size: 24px;
+}
+
+.ui-treetable tr:hover,
+.mat-row:hover,
+tr.mat-row:hover {
+  background: rgba(0,0,0,0.1) !important;
+  cursor: pointer;
+}
+
+/* TreeTable Specific Rules */
+.ui-treetable tr > td:nth-child(1) {
+  padding-left: 16px;
+}
+
+thead.ui-treetable-thead tr{
+  border-top: solid 1px var(--lines);
 }
 
 /* Material Lists */
@@ -606,9 +679,121 @@ mat-card.mat-card .mat-list-base{
 
 /* This should probably be implemented as a component */
 .page-title{
-  width: calc(100% - 64px);
-  margin: 0 auto;
+  width: calc(100% - 16px);
+  margin: 0 auto 32px;
   color: var(--fg1);
+  padding-bottom: 8px;
+  border-bottom: solid 1px var(--lines);
 }
 
+.page-title > div{
+  min-height: 40px;
+}
+
+.page-title .form-element.form-combobox .mat-form-field,
+.page-title .form-element.form-ip-netmask .mat-form-field,
+.page-title .form-element.form-combobox .mat-menu-trigger,
+.page-title .form-element .mat-form-field-wrapper,
+.page-title .form-element input[type = "password"],
+.page-title .form-element input[type = "email"],
+.page-title .form-element input[type = "text"],
+.page-title .form-element input[type = "number"],
+.page-title .form-element textarea,
+.page-title .form-element select{
+  background-color: rgba(0,0,0,0.1);
+}
+
+
+
+.entity-table-controls > div{
+  margin-left: 8px;
+}
+
+#row-filter.form-element{
+  display: inline;
+  max-height: 36px;
+  width: unset !important;
+  margin: 0;
+}
+
+#row-filter.form-element .mat-form-field-wrapper{
+  max-height: 36px !important;
+  width: inherit !important;
+}
+
+#row-filter.form-element .mat-form-field-wrapper .mat-input-element{
+  position: relative;
+  top: -4px;
+  height: 16px;
+  padding-left: 8px;
+}
+
+/* Expansion Panel Fixes */
+.mat-expansion-panel-header span.mat-content{
+  vertical-align: middle !important;
+  padding-top: 4px;
+}
+
+<<<<<<< HEAD
+.mat-expansion-panel-header span.mat-expansion-indicator{
+  margin-top: -4px;
+  position: relative;
+  right: 4px;
+}
+
+.mat-expansion-panel.no-padding .mat-expansion-panel-body{
+  padding: 0;
+}
+
+.mat-expansion-panel.no-padding .mat-expansion-panel-body .ui-treetable-thead>tr>th:nth-child(1){
+  padding-left: 18px;
+}
+
+/* Entity Tree Table Styles */
+/* Pseudo Tables */
+.ix-table {
+  display: table;
+}
+
+.ix-tr {
+  display: table-row;
+}
+
+.ix-td {
+  display: table-cell;
+}
+.ix-th {
+  display: table-cell;
+}
+
+.ix-tree-invisible {
+  display: none;
+}
+
+.ix-tree-node .ix-td .mat-icon
+
+.ix-tree ul,
+.ix-tree li {
+  margin-top: 0;
+  margin-bottom: 0;
+  list-style-type: none;
+}
+
+.ix-tree-node { 
+}
+
+.ix-tree-node .ix-tree-node {
+  padding-left: 40px;
+}
+
+/* only affect the bage of truecommand icon on the top bar*/
+mat-icon.truecommand-icon > span.mat-badge-content {
+  font-family: 'Material Icons';
+}
+mat-icon.truecommand-icon.CONNECTED > span.mat-badge-content {
+  background: var(--green);
+}
+mat-icon.truecommand-icon.FAILED > span.mat-badge-content {
+  background: var(--warn);
+}
 

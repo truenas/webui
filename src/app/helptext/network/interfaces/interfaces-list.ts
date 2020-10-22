@@ -19,9 +19,9 @@ commit_changes_warning: T("Test network interface changes? Network connectivity 
 
 changes_saved_successfully: T("Network changes applied successfully."),
 
-commit_button: T("TEST CHANGES"),
-keep_button: T("SAVE CHANGES"),
-rollback_button: T("Revert CHANGES"),
+commit_button: T("Test Changes"),
+keep_button: T("Save Changes"),
+rollback_button: T("Revert Changes"),
 rollback_changes_title: T("Revert Network Interface Changes"),
 rollback_changes_warning: T("Revert interface changes? All changes that are being tested will be lost."),
 changes_rolled_back: T("Interface changes reverted."),
@@ -30,7 +30,7 @@ checkin_title: T("Save Changes"),
 checkin_message: T("Save network interface changes?"),
 checkin_complete_title: T("Changes Saved"),
 checkin_complete_message: T("Network interface changes have been made permanent."),
-checkin_button: T('SAVE'),
+checkin_button: T('Save'),
 
 pending_changes_title: T("Pending Network Changes"),
 pending_changes_message: T("There are pending network interface changes. Review them now?"),
@@ -44,5 +44,5 @@ ha_enabled_delete_msg: T("Deleting interfaces while HA is enabled is not allowed
 ha_enabled_text: T("Cannot edit while HA is enabled."),
 go_to_ha: T("Go to HA settings"),
 
-delete_dialog_text: T("Network connectivity will be interrupted. ")
+delete_dialog_text: T("This change can interrupt connectivity and must be tested before making permanent. ")
 }

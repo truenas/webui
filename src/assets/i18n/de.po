@@ -379,6 +379,22 @@ msgid ""
 msgstr ""
 
 msgid ""
+"<a href=\"https://www.ixsystems.com/community/\" target=\"_blank\"> TrueNAS "
+"Forums</a> - Find answers from other users in the forums."
+msgstr ""
+
+msgid ""
+"<a href=\"https://www.ixsystems.com/support/\" target=\"_blank\"> TrueNAS "
+"Liscensing</a> - Learn more about enterprise-grade support."
+msgstr ""
+
+msgid ""
+"<a href=\"https://www.truenas.com/docs/hub/\" target=\"_blank\"> TrueNAS "
+"Documentation Hub</a> - Read and contribute to the open-source "
+"documentation."
+msgstr ""
+
+msgid ""
 "<b>COPY</b>: Files from the source are <i><u>copied</u></i> to the "
 "destination. If files with the same names are present on the destination, "
 "they are <i><u>overwritten</u></i>."
@@ -819,6 +835,9 @@ msgstr "AUTORID"
 msgid "AWS Region"
 msgstr "AWS Region"
 
+msgid "Abort"
+msgstr ""
+
 msgid "About"
 msgstr "Über"
 
@@ -949,12 +968,6 @@ msgstr "Active Directory IDMAP Änderung!"
 msgid "Active Directory must be enabled before adding new domains."
 msgstr "Active Directory muss aktiviert sein, bevor neue Domänen hinzugefügt werden."
 
-msgid "Active Media Subtype"
-msgstr "Aktiver Mediensubtyp"
-
-msgid "Active Media Type"
-msgstr "Aktiver Medientyp"
-
 msgid "Adapter Type"
 msgstr "Adapter Typ"
 
@@ -991,11 +1004,17 @@ msgstr "Gruppe Hinzufügen"
 msgid "Add Idmap"
 msgstr "Idmap hinzufügen"
 
+msgid "Add Interface"
+msgstr ""
+
 msgid "Add Mountpoint"
 msgstr "Einbindungspunkt hinzufügen"
 
 msgid "Add Recovery Key"
 msgstr "Wiederherstellungsschlüssel hinzufügen"
+
+msgid "Add Static Route"
+msgstr ""
 
 msgid "Add Sysctl"
 msgstr ""
@@ -1321,6 +1340,9 @@ msgstr ""
 msgid "Allow"
 msgstr "Erlauben"
 
+msgid "Allow All"
+msgstr ""
+
 msgid "Allow All Initiators"
 msgstr "Alle Initiatoren zulassen"
 
@@ -1365,6 +1387,9 @@ msgstr "Passwort-Authentifizierung erlauben"
 
 msgid "Allow Root Login"
 msgstr "Anmeldung des Root-Benutzers erlauben"
+
+msgid "Allow Specific"
+msgstr ""
 
 msgid "Allow TCP Port Forwarding"
 msgstr "TCP-Port-Weiterleitung zulassen"
@@ -1485,13 +1510,6 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Allow sending large data blocks. The  destination system must also support "
-"large blocks. See  <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
-"target=\"_blank\">zfs(8)</a>."
-msgstr ""
-
-msgid ""
 "Allow the jail hostname to be changed with <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=hostname\" "
 "target=\"_blank\">hostname(1)</a> or <a "
@@ -1504,6 +1522,14 @@ msgid ""
 "must have FreeBSD 12.0 or newer installed with the <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=vmm\" "
 "target=\"_blank\">vmm(4)</a> kernel module loaded."
+msgstr ""
+
+msgid ""
+"Allow this replication to send large data blocks. The  destination system "
+"must also support large blocks. This setting cannot be changed  after it "
+"has been enabled and the replication task is created. For more details, see "
+" <a href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
+"target=\"_blank\">zfs(8)</a>."
 msgstr ""
 
 msgid ""
@@ -1638,6 +1664,9 @@ msgstr ""
 msgid "Any notes about initiators."
 msgstr "Hinweise zu Initiatoren."
 
+msgid "Any system service can communicate externally."
+msgstr ""
+
 msgid "Appdefaults Auxiliary Parameters"
 msgstr ""
 
@@ -1653,6 +1682,9 @@ msgid ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
 "target=\"_blank\">smb.conf</a> manual page for  a list of supported macros. "
 "The connectpath **must** be preset before a client connects."
+msgstr ""
+
+msgid "Apple Shares (AFP)"
 msgstr ""
 
 msgid "Application Credential ID"
@@ -1985,9 +2017,6 @@ msgstr ""
 msgid "Background 2"
 msgstr ""
 
-msgid "Backup Credentials"
-msgstr ""
-
 msgid "Bandwidth"
 msgstr "Bandbreite"
 
@@ -2071,6 +2100,9 @@ msgid "Bind to"
 msgstr ""
 
 msgid "Bind to Port"
+msgstr ""
+
+msgid "Block Shares (iSCSI)"
 msgstr ""
 
 msgid "Block Size"
@@ -3740,9 +3772,6 @@ msgstr "Standard Router für IPv4"
 msgid "Default Router For IPv6"
 msgstr "Standard Router für IPv6"
 
-msgid "Default Routes"
-msgstr "Standard Routen"
-
 msgid "Default Umask"
 msgstr ""
 
@@ -3779,6 +3808,11 @@ msgid ""
 "Define the dataset to be jailed and fully handed over to a jail. Enter a "
 "ZFS filesystem name <i>without</i> a pool name. <b>jail_zfs</b> must be set "
 "for this option to work."
+msgstr ""
+
+msgid ""
+"Define the maximum number of chunks for a multipart upload. This can  be "
+"useful if a service does not support the 10,000 chunk AWS S3 specification."
 msgstr ""
 
 msgid ""
@@ -3834,6 +3868,11 @@ msgstr ""
 msgid "Define the size of the raw file in GiB."
 msgstr "Definieren Sie die Größe der Rohdatei in GiB."
 
+msgid ""
+"Define the system services that are allowed to communicate externally. All "
+"other external traffic is restricted."
+msgstr ""
+
 msgid "Define the target as *iSCSI*, *Fibre Channel*, or *Both*."
 msgstr "Definieren Sie das Ziel als *iSCSI*, *Fibre Channel* oder *Both*."
 
@@ -3886,6 +3925,9 @@ msgstr "Pfad löschen"
 msgid "Delete Selected"
 msgstr "Auswahl löschen"
 
+msgid "Delete Server"
+msgstr ""
+
 msgid "Delete User "
 msgstr ""
 
@@ -3937,6 +3979,9 @@ msgstr "Löschen der <b>"
 
 msgid "Deny"
 msgstr "Verweigern"
+
+msgid "Deny All"
+msgstr ""
 
 msgid "Deny Hosts"
 msgstr "Hosts verweigern"
@@ -4416,9 +4461,6 @@ msgstr ""
 msgid "EDIT"
 msgstr "BEARBEITEN"
 
-msgid "ENTER LICENSE"
-msgstr "LIZENZ EINGEBEN"
-
 msgid "ERROR: Not Enough Memory"
 msgstr "FEHLER: Nicht genug Arbeitsspeicher"
 
@@ -4458,6 +4500,9 @@ msgstr "Gruppe bearbeiten"
 msgid "Edit Idmap"
 msgstr "Idmap bearbeiten"
 
+msgid "Edit Interface"
+msgstr ""
+
 msgid "Edit Options"
 msgstr "Optionen bearbeiten"
 
@@ -4466,6 +4511,9 @@ msgstr "Berechtigungen bearbeiten"
 
 msgid "Edit Share ACL"
 msgstr "Freigabe-ACL bearbeiten"
+
+msgid "Edit Static Route"
+msgstr ""
 
 msgid "Edit User"
 msgstr "Benutzer bearbeiten"
@@ -4886,6 +4934,9 @@ msgstr ""
 msgid "Encryption Salt"
 msgstr ""
 
+msgid "Encryption Standard"
+msgstr ""
+
 msgid "Encryption Type"
 msgstr ""
 
@@ -4929,6 +4980,9 @@ msgid ""
 msgstr ""
 
 msgid "Enter"
+msgstr ""
+
+msgid "Enter License"
 msgstr ""
 
 msgid ""
@@ -5727,8 +5781,14 @@ msgstr "Fehler beim Speichern von ZVOL."
 msgid "Error starting service "
 msgstr "Fehler beim Starten des Dienstes "
 
+msgid "Error starting service OpenVPN "
+msgstr ""
+
 msgid "Error stopping service "
 msgstr "Fehler beim Beenden des Dienstes "
+
+msgid "Error stopping service OpenVPN "
+msgstr ""
 
 msgid "Error submitting file"
 msgstr "Fehler beim Senden der Datei"
@@ -5970,6 +6030,9 @@ msgstr ""
 msgid "File Permissions"
 msgstr "Dateiberechtigungen"
 
+msgid "File Ticket"
+msgstr ""
+
 msgid "File upload complete"
 msgstr "Datei-Upload abgeschlossen"
 
@@ -6204,6 +6267,9 @@ msgstr "GUI"
 msgid "GUI SSL Certificate"
 msgstr "GUI SSL Zertifikat"
 
+msgid "GUI Settings"
+msgstr ""
+
 msgid "Gateway"
 msgstr "Gateway"
 
@@ -6221,6 +6287,9 @@ msgstr "Allgemeine Optionen"
 
 msgid "General Preferences"
 msgstr "Allgemeine Einstellungen"
+
+msgid "General Settings"
+msgstr ""
 
 msgid "General VM Settings"
 msgstr "Allgemeine VM Einstellungen"
@@ -6743,9 +6812,6 @@ msgstr "IPv6"
 msgid "IPv6 Address"
 msgstr "IPv6 Adresse"
 
-msgid "IPv6 Auto Configure"
-msgstr ""
-
 msgid "IPv6 Default Gateway"
 msgstr "IPv6 Standard Gateway"
 
@@ -6900,6 +6966,9 @@ msgstr ""
 
 msgid "Import"
 msgstr "Importieren"
+
+msgid "Import Disk"
+msgstr ""
 
 msgid "Import a pool that exists but is not connected."
 msgstr ""
@@ -7201,9 +7270,6 @@ msgstr "Größe der Jail-Daten in Bytes."
 msgid "Jail stack size in bytes."
 msgstr "Größe des Jail-Stacks in Bytes."
 
-msgid "Jails"
-msgstr "Jails"
-
 msgid "Jails Started"
 msgstr "Jails gestartet"
 
@@ -7310,12 +7376,6 @@ msgstr ""
 
 msgid "KiB"
 msgstr "KiB"
-
-msgid "LAGG Ports"
-msgstr "LAGG Ports"
-
-msgid "LAGG Protocol"
-msgstr "LAGG Protokoll"
 
 msgid "LAGG Settings"
 msgstr "LAGG Einstellungen"
@@ -7486,9 +7546,6 @@ msgstr ""
 msgid "License"
 msgstr "Lizenz"
 
-msgid "License Information"
-msgstr "Lizenzinformationen"
-
 msgid "Lifetime"
 msgstr "Lebenszeit"
 
@@ -7497,9 +7554,6 @@ msgstr ""
 
 msgid "Link"
 msgstr ""
-
-msgid "Link State"
-msgstr "Verbindungsstatus"
 
 msgid "Linked Service"
 msgstr ""
@@ -7779,6 +7833,9 @@ msgid ""
 "<i>1500</i>."
 msgstr ""
 
+msgid "Maximum Upload Parts"
+msgstr ""
+
 msgid ""
 "Maximum amount of CPU time a jail process may consume. The kernel "
 "terminates processes exceeding the specified limit."
@@ -7981,6 +8038,9 @@ msgstr "Spiegel"
 msgid "Misc"
 msgstr ""
 
+msgid "Miscellaneous"
+msgstr ""
+
 msgid "Mixing disks of different sizes in a vdev is not allowed."
 msgstr ""
 
@@ -8071,8 +8131,9 @@ msgid "Multipaths"
 msgstr ""
 
 msgid ""
-"Must match Windows workgroup  name. This setting is ignored when the  "
-"Active Directory or LDAP services are running."
+"Must match Windows workgroup name.  When this is unconfigured and Active "
+"Directory or LDAP are active,  TrueNAS will detect and set the correct "
+"workgroup from these services."
 msgstr ""
 
 msgid ""
@@ -8214,9 +8275,6 @@ msgstr ""
 msgid "Name or Naming Schema must be provided."
 msgstr ""
 
-msgid "Name servers not configured"
-msgstr ""
-
 msgid "Name that was created with the SMB share."
 msgstr ""
 
@@ -8228,9 +8286,6 @@ msgstr "Nameserver 2"
 
 msgid "Nameserver 3"
 msgstr "Nameserver 3"
-
-msgid "Nameservers"
-msgstr "Nameservers"
 
 msgid "Naming Schema"
 msgstr "Namensschema"
@@ -8302,9 +8357,6 @@ msgstr "Netzwerkeigenschaften"
 
 msgid "Network Reports"
 msgstr "Netzwerkberichte"
-
-msgid "Network Summary"
-msgstr "Netzwerkzusammenfassung"
 
 msgid "Network Timeout Before Initiating Failover"
 msgstr ""
@@ -8584,8 +8636,8 @@ msgid ""
 msgstr ""
 
 msgid ""
-"Number of seconds before timeout. If the AD service does not immediately "
-"start after connecting to the domain, increase this value."
+"Number of seconds before timeout. To view the AD  connection status, open "
+"the interface <i>Task Manager</i>."
 msgstr ""
 
 msgid ""
@@ -8769,6 +8821,9 @@ msgstr ""
 msgid "Open VPN Server"
 msgstr ""
 
+msgid "OpenVPN "
+msgstr ""
+
 msgid "OpenVPN Client Settings"
 msgstr ""
 
@@ -8869,6 +8924,9 @@ msgstr "Andere Einstellungen"
 
 msgid "Out"
 msgstr "Ausgehend"
+
+msgid "Outbound Network"
+msgstr ""
 
 msgid "Outgoing Mail Server"
 msgstr ""
@@ -9422,6 +9480,9 @@ msgstr ""
 "Pools ist eine Einwegoperation, bei der einige Funktionen des Pools "
 "möglicherweise nicht mit älteren Versionen von TrueNAS kompatibel sind: "
 
+msgid "Product:"
+msgstr ""
+
 msgid "Production status successfully updated"
 msgstr "Produktionsstatus erfolgreich aktualisiert"
 
@@ -9731,6 +9792,9 @@ msgid "Remaining"
 msgstr "Verbleibend"
 
 msgid "Remote"
+msgstr ""
+
+msgid "Remote Controller"
 msgstr ""
 
 msgid "Remote Encryption"
@@ -10116,8 +10180,8 @@ msgstr ""
 "Enthüllen Sie <i>tun</i> Geräte für das Jail mit einem individuellen "
 "Devfs-Regelsatz. Erlauben Sie die Erstellung von <i>tun</i>-Geräten im Jail."
 
-msgid "Revert CHANGES"
-msgstr "ÄNDERUNGEN rückgängig machen"
+msgid "Revert Changes"
+msgstr ""
 
 msgid "Revert Network Interface Changes"
 msgstr "Wiederherstellen von Netzwerkschnittstellenänderungen"
@@ -10243,9 +10307,6 @@ msgstr "Speichern"
 
 msgid "SAVE AND FAILOVER"
 msgstr "SPEICHERN UND FAILOVER"
-
-msgid "SAVE CHANGES"
-msgstr "ÄNDERUNGEN SPEICHERN"
 
 msgid "SAVE CONFIGURATION"
 msgstr "KONFIGURATION SPEICHERN"
@@ -11104,6 +11165,9 @@ msgstr ""
 "Wählen Sie die Shell aus, die für lokale und SSH-Anmeldungen verwendet "
 "werden soll."
 
+msgid "Select the system services that will be allowed to communicate externally."
+msgstr ""
+
 msgid ""
 "Select the type of LDAP server to use. This can be the        LDAP server "
 "provided by the Active Directory server or a stand-alone LDAP server."
@@ -11292,6 +11356,9 @@ msgstr "Server Rolle"
 msgid "Server Side Encryption"
 msgstr "Serverseitige Verschlüsselung"
 
+msgid "Service"
+msgstr ""
+
 msgid "Service Account"
 msgstr "Dienstkonto"
 
@@ -11411,6 +11478,9 @@ msgid ""
 msgstr ""
 "Legen Sie das Passwort dieser SED fest oder ändern Sie es. Dieses Passwort "
 "wird anstelle des globalen SED-Passworts verwendet."
+
+msgid "Set production status as active"
+msgstr ""
 
 msgid ""
 "Set resource limitations of the jail using the <a "
@@ -12439,6 +12509,9 @@ msgstr ""
 msgid "Snapshot successfully taken."
 msgstr ""
 
+msgid "Snapshots"
+msgstr ""
+
 msgid ""
 "Some authentication tools default to 30 seconds and do not support custom "
 "intervals."
@@ -12896,9 +12969,6 @@ msgstr ""
 
 msgid "TDB"
 msgstr "TDB"
-
-msgid "TEST CHANGES"
-msgstr ""
 
 msgid "TFTP"
 msgstr ""
@@ -13792,6 +13862,12 @@ msgstr ""
 "mit dem ACL-Editor vorgenommen werden."
 
 msgid ""
+"This feature is memory-intensive and <b>permanently affects how the data is "
+"stored</b>. It is recommended to be very familiar with the benefits and "
+"drawbacks of deduplication before activating this feature."
+msgstr ""
+
+msgid ""
 "This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB).   If "
 "units are not specified, the value defaults to"
 msgstr ""
@@ -13843,6 +13919,9 @@ msgstr ""
 
 msgid "This operation might take a long time. Proceed?"
 msgstr "Dieser Vorgang kann lange dauern. Fortfahren?"
+
+msgid "This system cannot communicate externally."
+msgstr ""
 
 msgid "This system will restart when the update completes."
 msgstr "Dieses System wird nach Abschluss des Updates neu gestartet."
@@ -14117,9 +14196,6 @@ msgstr "AKTUALISIERUNG"
 msgid "UPDATE IN PROGRESS"
 msgstr "AKTUALISIERUNG IN ARBEIT"
 
-msgid "UPDATE LICENSE"
-msgstr "LIZENZ AKTUALISIEREN"
-
 msgid "UPS"
 msgstr ""
 
@@ -14189,11 +14265,17 @@ msgstr "Unix NSS Info"
 msgid "Unix Primary Group"
 msgstr "Primäre Unix Gruppe"
 
+msgid "Unix Shares (NFS)"
+msgstr ""
+
 msgid "Unkeep"
 msgstr ""
 
 msgid "Unknown"
 msgstr "Unbekannt"
+
+msgid "Unknown CPU"
+msgstr ""
 
 msgid "Unlock"
 msgstr "Entsperren"
@@ -14305,6 +14387,9 @@ msgid "Update Plugins"
 msgstr "Aktualisiere die Plugins"
 
 msgid "Update Preferences"
+msgstr ""
+
+msgid "Update Production Status"
 msgstr ""
 
 msgid "Update Status"
@@ -14720,14 +14805,8 @@ msgstr ""
 msgid "VLAN ID"
 msgstr "VLAN ID"
 
-msgid "VLAN Parent Interface"
-msgstr "Übergeordnete VLAN-Schnittstelle"
-
 msgid "VLAN Settings"
 msgstr "VLAN Einstellungen"
-
-msgid "VLAN Tag"
-msgstr "VLAN Tag"
 
 msgid "VLANs"
 msgstr "VLANs"
@@ -14749,6 +14828,9 @@ msgstr "VMWare Sync"
 
 msgid "VMware Sync"
 msgstr "VMware Sync"
+
+msgid "VMware-Snapshots"
+msgstr ""
 
 msgid "VNC"
 msgstr "VNC"
@@ -14851,9 +14933,6 @@ msgstr "Virtuelle Maschine (VM)"
 msgid "Virtual Machine (VM) Wizard type."
 msgstr "Typ des Assistenten für virtuelle Maschinen (VM)."
 
-msgid "Virtual Machines"
-msgstr "Virtuelle Maschinen"
-
 msgid "Virtual Machines cannot be created or started without a pool to store them."
 msgstr ""
 "Virtuelle Maschinen können nicht ohne einen Pool zum Speichern erstellt "
@@ -14952,6 +15031,9 @@ msgstr "WebDAV"
 
 msgid "WebDAV Configuration"
 msgstr "WebDAV Konfiguration"
+
+msgid "WebDAV Shares"
+msgstr ""
 
 msgid "WebDAV account password."
 msgstr "WebDAV Kontopasswort."
@@ -15115,6 +15197,9 @@ msgid "Window"
 msgstr "Fenster"
 
 msgid "Windows"
+msgstr ""
+
+msgid "Windows Shares (SMB)"
 msgstr ""
 
 msgid "Wipe"
@@ -15388,9 +15473,6 @@ msgstr ""
 msgid "expires in"
 msgstr ""
 
-msgid "gathering info..."
-msgstr ""
-
 msgid "group"
 msgstr "Gruppe"
 
@@ -15419,6 +15501,9 @@ msgid "hostid_strict_check"
 msgstr ""
 
 msgid "hours"
+msgstr ""
+
+msgid "iBurst"
 msgstr ""
 
 msgid "iSCSI"

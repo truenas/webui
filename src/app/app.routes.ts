@@ -34,9 +34,9 @@ export const rootRouterConfig: Routes = [{
         data: { title: 'Dashboard', breadcrumb: 'Dashboard' }
       },
       {
-        path: 'account',
+        path: 'credentials',
         loadChildren: './pages/account/account.module#AccountModule',
-        data: { title: 'Accounts', breadcrumb: 'Accounts'}
+        data: { title: 'Credentials', breadcrumb: 'Credentials'}
       },
       {
         path: 'system',
@@ -86,7 +86,7 @@ export const rootRouterConfig: Routes = [{
       {
         path: 'storage',
         loadChildren: './pages/storage/storage.module#StorageModule',
-        data: { title: 'Storage', breadcrumb: 'Storage' }
+        data: { title: 'Storage', breadcrumb: 'Storage', toplevel: true }
       },
       {
         path: 'plugins',

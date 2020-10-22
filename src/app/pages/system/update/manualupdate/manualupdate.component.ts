@@ -53,7 +53,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
       tooltip: helptext.filename.tooltip,
       fileLocation: '',
       message: this.messageService,
-      acceptedFiles: '.tar',
+      acceptedFiles: '.tar,.update',
       updater: this.updater,
       parent: this,
       hideButton: true,

@@ -9,7 +9,7 @@ import { ViewComponent } from 'app/core/components/view/view.component';
 import { CardComponent } from 'app/core/components/card/card.component';
 import { ViewControlComponent } from 'app/core/components/viewcontrol/viewcontrol.component';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
-import { Display,DisplayContainer } from 'app/core/components/display/display.component';
+import { Display } from 'app/core/components/display/display.component';
 import { ViewButtonComponent } from './viewbutton/viewbutton.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule }   from '@angular/forms';
@@ -41,6 +41,7 @@ import { TextLimiterDirective } from './directives/text-limiter/text-limiter.dir
 import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
 import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcontroller.component';
 import { ConvertPipe } from './pipes/convert.pipe';
+import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
 
 /*
  *
@@ -70,7 +71,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
     ViewControlComponent,
     ViewControllerComponent,
     Display,
-    DisplayContainer,
     ViewButtonComponent,
     ViewChartComponent,
     ViewChartDonutComponent,
@@ -91,6 +91,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
     ConvertPipe,
+    CopyButtonComponent,
   ],
   exports: [ // Modules and Components here
     CommonModule,
@@ -99,7 +100,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
     PortalModule,
     FlexLayoutModule,
     Display,
-    DisplayContainer,
     ContextMenuComponent,
     CopyPasteMessageComponent,
     PageComponent,
@@ -125,11 +125,11 @@ import { ConvertPipe } from './pipes/convert.pipe';
     WidgetControllerComponent,
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
+    CopyButtonComponent,
   ],
   entryComponents:[
     ContextMenuComponent,
     CopyPasteMessageComponent,
-    DisplayContainer,
     ViewComponent,
     ViewChartComponent,
     ViewChartDonutComponent,
@@ -152,6 +152,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     WidgetControllerComponent,
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
+    CopyButtonComponent,
   ],
   providers:[
     StorageService

@@ -411,6 +411,22 @@ msgstr ""
 "шифрования)</i>, <i>SSL (подразумевает TLS)</i>, or <i>TLS (STARTTLS)</i>."
 
 msgid ""
+"<a href=\"https://www.ixsystems.com/community/\" target=\"_blank\"> TrueNAS "
+"Forums</a> - Find answers from other users in the forums."
+msgstr ""
+
+msgid ""
+"<a href=\"https://www.ixsystems.com/support/\" target=\"_blank\"> TrueNAS "
+"Liscensing</a> - Learn more about enterprise-grade support."
+msgstr ""
+
+msgid ""
+"<a href=\"https://www.truenas.com/docs/hub/\" target=\"_blank\"> TrueNAS "
+"Documentation Hub</a> - Read and contribute to the open-source "
+"documentation."
+msgstr ""
+
+msgid ""
 "<b>COPY</b>: Files from the source are <i><u>copied</u></i> to the "
 "destination. If files with the same names are present on the destination, "
 "they are <i><u>overwritten</u></i>."
@@ -954,6 +970,9 @@ msgstr ""
 msgid "AWS Region"
 msgstr "AWS регион"
 
+msgid "Abort"
+msgstr ""
+
 msgid "About"
 msgstr "О продукте"
 
@@ -1112,12 +1131,6 @@ msgstr "Изменение Active Directory IDMAP!"
 msgid "Active Directory must be enabled before adding new domains."
 msgstr "Active Directory должен быть включен перед добавлением новых доменов."
 
-msgid "Active Media Subtype"
-msgstr "Подтип активной среды"
-
-msgid "Active Media Type"
-msgstr "Тип активной среды"
-
 msgid "Adapter Type"
 msgstr "Тип адаптера"
 
@@ -1154,11 +1167,17 @@ msgstr "Добавить группу"
 msgid "Add Idmap"
 msgstr "Добавить Idmap"
 
+msgid "Add Interface"
+msgstr ""
+
 msgid "Add Mountpoint"
 msgstr "Добавить точку монтирования"
 
 msgid "Add Recovery Key"
 msgstr "Добавить ключ восстановления"
+
+msgid "Add Static Route"
+msgstr ""
 
 msgid "Add Sysctl"
 msgstr "Добавить Sysctl"
@@ -1546,6 +1565,9 @@ msgstr "Выделить место для нового zvol."
 msgid "Allow"
 msgstr "Разрешить"
 
+msgid "Allow All"
+msgstr ""
+
 msgid "Allow All Initiators"
 msgstr "Разрешить все инициаторы"
 
@@ -1590,6 +1612,9 @@ msgstr "Разрешить аутентификацию по паролю"
 
 msgid "Allow Root Login"
 msgstr "Разрешить вход root"
+
+msgid "Allow Specific"
+msgstr ""
 
 msgid "Allow TCP Port Forwarding"
 msgstr "Разрешить переадресацию портов TCP"
@@ -1742,17 +1767,6 @@ msgstr ""
 "связанные с <b>sysvshm</b>."
 
 msgid ""
-"Allow sending large data blocks. The  destination system must also support "
-"large blocks. See  <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
-"target=\"_blank\">zfs(8)</a>."
-msgstr ""
-"Разрешить отправку больших блоков данных. Система назначения также должна "
-"поддерживать большие блоки.  См. <a "
-"href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
-"target=\"_blank\">zfs(8)</a>."
-
-msgid ""
 "Allow the jail hostname to be changed with <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=hostname\" "
 "target=\"_blank\">hostname(1)</a> or <a "
@@ -1775,6 +1789,14 @@ msgstr ""
 "должна быть установлена FreeBSD 12.0 или новее с загруженным модулем ядра "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=vmm\" "
 "target=\"_blank\">vmm(4)</a>."
+
+msgid ""
+"Allow this replication to send large data blocks. The  destination system "
+"must also support large blocks. This setting cannot be changed  after it "
+"has been enabled and the replication task is created. For more details, see "
+" <a href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
+"target=\"_blank\">zfs(8)</a>."
+msgstr ""
 
 msgid ""
 "Allow using open file handles that can withstand short disconnections.  "
@@ -1948,6 +1970,9 @@ msgstr "Другая тема использует этот ярлык. Пожа
 msgid "Any notes about initiators."
 msgstr "Любые заметки об инициаторах."
 
+msgid "Any system service can communicate externally."
+msgstr ""
+
 msgid "Appdefaults Auxiliary Parameters"
 msgstr "Вспомогательный параметры Appdefaults"
 
@@ -1965,6 +1990,9 @@ msgid ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smb.conf\" "
 "target=\"_blank\">smb.conf</a> manual page for  a list of supported macros. "
 "The connectpath **must** be preset before a client connects."
+msgstr ""
+
+msgid "Apple Shares (AFP)"
 msgstr ""
 
 msgid "Application Credential ID"
@@ -2333,9 +2361,6 @@ msgstr ""
 msgid "Background 2"
 msgstr ""
 
-msgid "Backup Credentials"
-msgstr ""
-
 msgid "Bandwidth"
 msgstr "Пропускная способность"
 
@@ -2425,6 +2450,9 @@ msgstr "Привязка к"
 
 msgid "Bind to Port"
 msgstr "Привязка к порту"
+
+msgid "Block Shares (iSCSI)"
+msgstr ""
 
 msgid "Block Size"
 msgstr "Размер блока"
@@ -4388,9 +4416,6 @@ msgstr "Маршрутизатор по умолчанию для IPv4"
 msgid "Default Router For IPv6"
 msgstr "Маршрутизатор по умолчанию для IPv6"
 
-msgid "Default Routes"
-msgstr "Маршруты по умолчанию"
-
 msgid "Default Umask"
 msgstr "Umask по умолчанию"
 
@@ -4449,6 +4474,11 @@ msgstr ""
 "установлен, чтобы эта опция работала."
 
 msgid ""
+"Define the maximum number of chunks for a multipart upload. This can  be "
+"useful if a service does not support the 10,000 chunk AWS S3 specification."
+msgstr ""
+
+msgid ""
 "Define the number of UIDS/GIDS available per domain  range. The minimum is "
 "<i>2000</i> and the recommended default is <i>100000</i>."
 msgstr ""
@@ -4499,6 +4529,11 @@ msgstr "Определите сервер, на котором выполняю�
 
 msgid "Define the size of the raw file in GiB."
 msgstr "Определите размер необработанного файла в ГиБ."
+
+msgid ""
+"Define the system services that are allowed to communicate externally. All "
+"other external traffic is restricted."
+msgstr ""
 
 msgid "Define the target as *iSCSI*, *Fibre Channel*, or *Both*."
 msgstr "Определите цель как *iSCSI*, *Fibre Channel* или *Оба*."
@@ -4553,6 +4588,9 @@ msgstr "Удалить путь"
 
 msgid "Delete Selected"
 msgstr "Удалить выбранные"
+
+msgid "Delete Server"
+msgstr ""
 
 msgid "Delete User "
 msgstr "Удалить пользователя "
@@ -4609,6 +4647,9 @@ msgid "Deleting the <b>"
 msgstr "Удаление <b>"
 
 msgid "Deny"
+msgstr ""
+
+msgid "Deny All"
 msgstr ""
 
 msgid "Deny Hosts"
@@ -5119,9 +5160,6 @@ msgstr "Кривая EC"
 msgid "EDIT"
 msgstr "РЕДАКТИРОВАТЬ"
 
-msgid "ENTER LICENSE"
-msgstr "РЕДАКТИРОВАТЬ ЛИЦЕНЗИЮ"
-
 msgid "ERROR: Not Enough Memory"
 msgstr "ОШИБКА: Недостаточно памяти"
 
@@ -5161,6 +5199,9 @@ msgstr "Редактировать группу"
 msgid "Edit Idmap"
 msgstr "Редактировать Idmap"
 
+msgid "Edit Interface"
+msgstr ""
+
 msgid "Edit Options"
 msgstr "Редактировать параметры"
 
@@ -5169,6 +5210,9 @@ msgstr "Изменить разрешения"
 
 msgid "Edit Share ACL"
 msgstr "Редактировать ACL ресурса"
+
+msgid "Edit Static Route"
+msgstr ""
 
 msgid "Edit User"
 msgstr "Редактировать пользователя"
@@ -5613,6 +5657,9 @@ msgstr "Протокол шифрования"
 msgid "Encryption Salt"
 msgstr "Соль шифрования"
 
+msgid "Encryption Standard"
+msgstr ""
+
 msgid "Encryption Type"
 msgstr "Тип шифрования"
 
@@ -5659,6 +5706,9 @@ msgstr ""
 
 msgid "Enter"
 msgstr "Введите"
+
+msgid "Enter License"
+msgstr ""
 
 msgid ""
 "Enter a <a href=\"https://www.freebsd.org/doc/handbook/network-nis.html\" "
@@ -6575,8 +6625,14 @@ msgstr "Ошибка сохранения ZVOL."
 msgid "Error starting service "
 msgstr "Ошибка запуска службы"
 
+msgid "Error starting service OpenVPN "
+msgstr ""
+
 msgid "Error stopping service "
 msgstr "Ошибка остановки службы"
+
+msgid "Error stopping service OpenVPN "
+msgstr ""
 
 msgid "Error submitting file"
 msgstr "Ошибка при отправке файла"
@@ -6834,6 +6890,9 @@ msgstr ""
 msgid "File Permissions"
 msgstr "Права доступа к файлу"
 
+msgid "File Ticket"
+msgstr ""
+
 msgid "File upload complete"
 msgstr "Загрузка файла завершена"
 
@@ -6960,10 +7019,10 @@ msgid ""
 "shutdown timeout. Without this option selected, the VM will  receive the "
 "shutdown signal, but may or may not complete the shutdown process."
 msgstr ""
-"Принудительно остановить виртуальную машину, если она еще не остановилась "
-"в течение указанного тайм-аута завершения работы. Если этот параметр не "
-"выбран, виртуальная машина получит сигнал выключения, но может или не "
-"может завершить процесс выключения."
+"Принудительно остановить виртуальную машину, если она еще не остановилась в "
+"течение указанного тайм-аута завершения работы. Если этот параметр не "
+"выбран, виртуальная машина получит сигнал выключения, но может или не может "
+"завершить процесс выключения."
 
 msgid "Force unmount "
 msgstr "Размонтировать принудительно "
@@ -7093,6 +7152,9 @@ msgstr ""
 msgid "GUI SSL Certificate"
 msgstr "SSL сертификат web-интерфейса"
 
+msgid "GUI Settings"
+msgstr ""
+
 msgid "Gateway"
 msgstr "Шлюз"
 
@@ -7110,6 +7172,9 @@ msgstr "Общие настройки"
 
 msgid "General Preferences"
 msgstr "Общие настройки"
+
+msgid "General Settings"
+msgstr ""
 
 msgid "General VM Settings"
 msgstr "Общие настройки ВМ"
@@ -7138,20 +7203,22 @@ msgid ""
 "replicated. Cannot be used with a <i>Name</i>."
 msgstr ""
 "Создать имя для снимка, используя схему именования из ранее созданной "
-"<b>Задачи периодического снимка</b>. Это позволяет реплицировать снимок. "
-"Не может использоваться с <i>именем</i>."
+"<b>Задачи периодического снимка</b>. Это позволяет реплицировать снимок. Не "
+"может использоваться с <i>именем</i>."
 
 msgid ""
 "Generate an alert when the    pool has this percent space remaining. This "
 "is typically    configured at the pool level when using zvols or at the "
 "extent level    for both file and device based extents."
 msgstr ""
-"Генерировать предупреждение, когда в пуле останется этот процент пространства. "
-"Обычно это настраивается на уровне пула при использовании zvols или на "
-"уровне экстентов для экстентов на основе файлов и устройств."
+"Генерировать предупреждение, когда в пуле останется этот процент "
+"пространства. Обычно это настраивается на уровне пула при использовании "
+"zvols или на уровне экстентов для экстентов на основе файлов и устройств."
 
 msgid "Generate idmap low range based on same algorithm that SSSD uses by default."
-msgstr "Генерировать нижний диапазон idmap на основе того же алгоритма, который SSSD использует по умолчанию."
+msgstr ""
+"Генерировать нижний диапазон idmap на основе того же алгоритма, который "
+"SSSD использует по умолчанию."
 
 msgid "Get Started"
 msgstr "Начать"
@@ -7331,9 +7398,9 @@ msgid ""
 "effect."
 msgstr ""
 "Скрытые столбцы недоступны для сортировки или фильтрации, но значения можно "
-"просмотреть, развернув строку. Скрытие столбцов повышает производительность. "
-"ПРИМЕЧАНИЕ: Это окно автоматически перезагрузится, чтобы новое представление "
-"вступило в силу."
+"просмотреть, развернув строку. Скрытие столбцов повышает "
+"производительность. ПРИМЕЧАНИЕ: Это окно автоматически перезагрузится, "
+"чтобы новое представление вступило в силу."
 
 msgid "Hide"
 msgstr "Скрыть"
@@ -7479,8 +7546,9 @@ msgid ""
 "iSCSI targets and portals of  the system. Separate entries by pressing "
 "<code>Enter</code>."
 msgstr ""
-"Имена хостов или IP-адреса серверов ISNS, в которых должны быть зарегистрированы "
-"цели и порталы iSCSI системы. Разделите записи, нажав <code>Enter</code>."
+"Имена хостов или IP-адреса серверов ISNS, в которых должны быть "
+"зарегистрированы цели и порталы iSCSI системы. Разделите записи, нажав "
+"<code>Enter</code>."
 
 msgid "Hosts"
 msgstr "Хосты"
@@ -7542,9 +7610,9 @@ msgid ""
 "less than <i>0</i>."
 msgstr ""
 "Сколько несамостоятельно выданных промежуточных сертификатов, которые могут "
-"следовать за этим сертификатом в допустимом пути сертификации. Ввод <i>0</i> "
-"позволяет одному дополнительному сертификату следовать в пути сертификата. "
-"Не может быть меньше <i>0</i>."
+"следовать за этим сертификатом в допустимом пути сертификации. Ввод "
+"<i>0</i> позволяет одному дополнительному сертификату следовать в пути "
+"сертификата. Не может быть меньше <i>0</i>."
 
 msgid "How often the IP is checked in seconds."
 msgstr "Как часто IP проверяется в секундах."
@@ -7562,8 +7630,8 @@ msgid ""
 "<i>Denied</i> allows all permissions by default except those that are "
 "manually defined."
 msgstr ""
-"Как разрешения применяются к общему ресурсу. <i>Разрешено</i> по "
-"умолчанию запрещает все разрешения, кроме тех, которые определены вручную. "
+"Как разрешения применяются к общему ресурсу. <i>Разрешено</i> по умолчанию "
+"запрещает все разрешения, кроме тех, которые определены вручную. "
 "<i>Запрещено</i> разрешает все разрешения по умолчанию, кроме тех, которые "
 "определены вручную."
 
@@ -7594,9 +7662,9 @@ msgid ""
 "allow further control of how the ACE is applied to files and directories in "
 "the dataset."
 msgstr ""
-"Как этот ACE применяется к вновь созданным каталогам и файлам в наборе данных. "
-"Базовые флаги включают или отключают наследование ACE. Расширенные флаги "
-"позволяют дополнительно управлять тем, как ACE применяется к файлам и "
+"Как этот ACE применяется к вновь созданным каталогам и файлам в наборе "
+"данных. Базовые флаги включают или отключают наследование ACE. Расширенные "
+"флаги позволяют дополнительно управлять тем, как ACE применяется к файлам и "
 "каталогам в наборе данных."
 
 msgid ""
@@ -7706,9 +7774,6 @@ msgstr "IPv6"
 
 msgid "IPv6 Address"
 msgstr "Адрес IPv6"
-
-msgid "IPv6 Auto Configure"
-msgstr "Автоконфигурация IPv6"
 
 msgid "IPv6 Default Gateway"
 msgstr "Шлюз IPv6 по умолчанию"
@@ -7888,6 +7953,9 @@ msgstr "Сразу подключиться к TrueCommand."
 msgid "Import"
 msgstr "Импорт"
 
+msgid "Import Disk"
+msgstr ""
+
 msgid "Import a pool that exists but is not connected."
 msgstr "Импортировать пул, который существует, но не подключен."
 
@@ -7923,7 +7991,9 @@ msgid "In"
 msgstr "Вход"
 
 msgid "In KiBs or greater. A default of <i>0 KiB</i> means unlimited. "
-msgstr "В КиБ или больше. Значение по умолчанию <i>0 KiB</i> означает неограниченное."
+msgstr ""
+"В КиБ или больше. Значение по умолчанию <i>0 KiB</i> означает "
+"неограниченное."
 
 msgid "Include Dataset Properties"
 msgstr "Включить свойства набора данных"
@@ -8150,7 +8220,9 @@ msgid "Invalid regex filter"
 msgstr "Неверное регулярное выражение фильтра"
 
 msgid "Invalid value. Missing numerical value or invalid numerical value/unit."
-msgstr "Неверное значение. Отсутствует числовое значение или неверное числовое значение/единица."
+msgstr ""
+"Неверное значение. Отсутствует числовое значение или неверное числовое "
+"значение/единица."
 
 msgid ""
 "Invalid value. Valid values are numbers followed by optional unit letters  "
@@ -8242,9 +8314,6 @@ msgstr "Размер данных jail в байтах."
 
 msgid "Jail stack size in bytes."
 msgstr "Размер стека jail в байтах."
-
-msgid "Jails"
-msgstr "Jail"
 
 msgid "Jails Started"
 msgstr "Jail запущены"
@@ -8354,12 +8423,6 @@ msgstr ""
 
 msgid "KiB"
 msgstr "КиБ"
-
-msgid "LAGG Ports"
-msgstr "Порты LAGG"
-
-msgid "LAGG Protocol"
-msgstr "Протокол LAGG"
 
 msgid "LAGG Settings"
 msgstr "Настройки LAGG"
@@ -8546,9 +8609,6 @@ msgstr "Вспомогательные параметры Libdefaults"
 msgid "License"
 msgstr "Лицензия"
 
-msgid "License Information"
-msgstr "Информация о лицензии"
-
 msgid "Lifetime"
 msgstr "Время жизни"
 
@@ -8557,9 +8617,6 @@ msgstr "Ограничьте скорость репликации этим ко
 
 msgid "Link"
 msgstr "Линк"
-
-msgid "Link State"
-msgstr "Состояние линка"
 
 msgid "Linked Service"
 msgstr "Связанная служба"
@@ -8578,7 +8635,8 @@ msgid ""
 "List of hostnames or IP addresses.  Separate entries by pressing "
 "<code>Enter</code>."
 msgstr ""
-"Список имен хостов или IP-адресов. Разделите записи, нажав <code>Enter</code>."
+"Список имен хостов или IP-адресов. Разделите записи, нажав "
+"<code>Enter</code>."
 
 msgid "List of system services to restart when the pool is unlocked."
 msgstr ""
@@ -8691,11 +8749,11 @@ msgid ""
 "secured in the system database and can be exported at any time from the "
 "pool options"
 msgstr ""
-"Потеря возможности разблокировать пул может привести к потере всех данных на "
-"дисках без возможности восстановления. Всегда делайте резервную копию файла "
-"ключа шифрования или парольной фразы для зашифрованного пула! Ключевой файл "
-"для зашифрованного пула защищен в системной базе данных и может быть "
-"экспортирован в любое время из параметров пула."
+"Потеря возможности разблокировать пул может привести к потере всех данных "
+"на дисках без возможности восстановления. Всегда делайте резервную копию "
+"файла ключа шифрования или парольной фразы для зашифрованного пула! "
+"Ключевой файл для зашифрованного пула защищен в системной базе данных и "
+"может быть экспортирован в любое время из параметров пула."
 
 msgid ""
 "Lowercase alphanumeric characters plus dot (.), dash (-), and colon (:) are "
@@ -8853,6 +8911,9 @@ msgid ""
 "and equipment. <i>1500</i> and <i>9000</i>  are standard Ethernet MTU "
 "sizes. Leaving blank restores the field to  the default value of "
 "<i>1500</i>."
+msgstr ""
+
+msgid "Maximum Upload Parts"
 msgstr ""
 
 msgid ""
@@ -9096,6 +9157,9 @@ msgstr "Зеркало"
 msgid "Misc"
 msgstr ""
 
+msgid "Miscellaneous"
+msgstr ""
+
 msgid "Mixing disks of different sizes in a vdev is not allowed."
 msgstr ""
 
@@ -9196,8 +9260,9 @@ msgid "Multipaths"
 msgstr ""
 
 msgid ""
-"Must match Windows workgroup  name. This setting is ignored when the  "
-"Active Directory or LDAP services are running."
+"Must match Windows workgroup name.  When this is unconfigured and Active "
+"Directory or LDAP are active,  TrueNAS will detect and set the correct "
+"workgroup from these services."
 msgstr ""
 
 msgid ""
@@ -9356,9 +9421,6 @@ msgstr ""
 msgid "Name or Naming Schema must be provided."
 msgstr "Необходимо указать имя или схему именования."
 
-msgid "Name servers not configured"
-msgstr ""
-
 msgid "Name that was created with the SMB share."
 msgstr ""
 
@@ -9370,9 +9432,6 @@ msgstr "Сервер имен 2"
 
 msgid "Nameserver 3"
 msgstr "Сервер имен 3"
-
-msgid "Nameservers"
-msgstr "Сервера имен"
 
 msgid "Naming Schema"
 msgstr "Схема именования"
@@ -9449,9 +9508,6 @@ msgstr "Свойства сети"
 
 msgid "Network Reports"
 msgstr "Отчеты сети"
-
-msgid "Network Summary"
-msgstr "Сводка сети"
 
 msgid "Network Timeout Before Initiating Failover"
 msgstr "Тайм-аут сети до начала аварийного переключения"
@@ -9755,11 +9811,9 @@ msgstr ""
 "если время ожидания запросов DNS AD истекает."
 
 msgid ""
-"Number of seconds before timeout. If the AD service does not immediately "
-"start after connecting to the domain, increase this value."
+"Number of seconds before timeout. To view the AD  connection status, open "
+"the interface <i>Task Manager</i>."
 msgstr ""
-"Количество секунд до истечения времени ожидания. Если служба AD не "
-"запускается сразу после подключения к домену, увеличьте это значение."
 
 msgid ""
 "Number of seconds to wait after a network failure  before triggering a "
@@ -9978,6 +10032,9 @@ msgstr ""
 msgid "Open VPN Server"
 msgstr ""
 
+msgid "OpenVPN "
+msgstr ""
+
 msgid "OpenVPN Client Settings"
 msgstr ""
 
@@ -10088,6 +10145,9 @@ msgstr ""
 
 msgid "Out"
 msgstr "Выход"
+
+msgid "Outbound Network"
+msgstr ""
 
 msgid "Outgoing Mail Server"
 msgstr "Сервер исходящей почты"
@@ -10648,6 +10708,9 @@ msgid ""
 "versions of TrueNAS: "
 msgstr ""
 
+msgid "Product:"
+msgstr ""
+
 msgid "Production status successfully updated"
 msgstr "Статус производства успешно обновлен"
 
@@ -10939,6 +11002,9 @@ msgid "Remaining"
 msgstr ""
 
 msgid "Remote"
+msgstr ""
+
+msgid "Remote Controller"
 msgstr ""
 
 msgid "Remote Encryption"
@@ -11319,7 +11385,7 @@ msgstr ""
 "Выявить <i>tun</i> устройства для jail с отдельным набором правил devfs. "
 "Разрешить создание <i>tun</i> устройств в jail."
 
-msgid "Revert CHANGES"
+msgid "Revert Changes"
 msgstr ""
 
 msgid "Revert Network Interface Changes"
@@ -11442,9 +11508,6 @@ msgid "SAVE"
 msgstr ""
 
 msgid "SAVE AND FAILOVER"
-msgstr ""
-
-msgid "SAVE CHANGES"
 msgstr ""
 
 msgid "SAVE CONFIGURATION"
@@ -12284,6 +12347,9 @@ msgstr ""
 "Выберите оболочку, которая будет использоваться для локального входа и "
 "входа по SSH."
 
+msgid "Select the system services that will be allowed to communicate externally."
+msgstr ""
+
 msgid ""
 "Select the type of LDAP server to use. This can be the        LDAP server "
 "provided by the Active Directory server or a stand-alone LDAP server."
@@ -12451,6 +12517,9 @@ msgstr "Роль сервера"
 msgid "Server Side Encryption"
 msgstr "Шифрование на стороне сервера"
 
+msgid "Service"
+msgstr ""
+
 msgid "Service Account"
 msgstr "Учетная запись сервиса"
 
@@ -12564,6 +12633,9 @@ msgid ""
 msgstr ""
 "Установите или измените пароль этого SED. Этот пароль используется вместо "
 "глобального пароля SED."
+
+msgid "Set production status as active"
+msgstr ""
 
 msgid ""
 "Set resource limitations of the jail using the <a "
@@ -13635,6 +13707,9 @@ msgstr ""
 msgid "Snapshot successfully taken."
 msgstr "Снимок успешно создан."
 
+msgid "Snapshots"
+msgstr ""
+
 msgid ""
 "Some authentication tools default to 30 seconds and do not support custom "
 "intervals."
@@ -14120,9 +14195,6 @@ msgid "TCP port used to access the iSCSI target. Default is <i>3260</i>."
 msgstr "TCP-порт, используемый для доступа к цели iSCSI. По умолчанию <i>3260</i>."
 
 msgid "TDB"
-msgstr ""
-
-msgid "TEST CHANGES"
 msgstr ""
 
 msgid "TFTP"
@@ -15067,6 +15139,12 @@ msgid ""
 msgstr ""
 
 msgid ""
+"This feature is memory-intensive and <b>permanently affects how the data is "
+"stored</b>. It is recommended to be very familiar with the benefits and "
+"drawbacks of deduplication before activating this feature."
+msgstr ""
+
+msgid ""
 "This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB).   If "
 "units are not specified, the value defaults to"
 msgstr ""
@@ -15122,6 +15200,9 @@ msgstr ""
 
 msgid "This operation might take a long time. Proceed?"
 msgstr "Эта операция может занять много времени. Продолжить?"
+
+msgid "This system cannot communicate externally."
+msgstr ""
 
 msgid "This system will restart when the update completes."
 msgstr "Эта система перезапустится после завершения обновления."
@@ -15412,9 +15493,6 @@ msgstr "ОБНОВИТЬ"
 msgid "UPDATE IN PROGRESS"
 msgstr "ПРОИСХОДИТ ОБНОВЛЕНИЕ"
 
-msgid "UPDATE LICENSE"
-msgstr "ОБНОВИТЬ ЛИЦЕНЗИЮ"
-
 msgid "UPS"
 msgstr ""
 
@@ -15483,10 +15561,16 @@ msgstr ""
 msgid "Unix Primary Group"
 msgstr ""
 
+msgid "Unix Shares (NFS)"
+msgstr ""
+
 msgid "Unkeep"
 msgstr "Отпустить"
 
 msgid "Unknown"
+msgstr ""
+
+msgid "Unknown CPU"
 msgstr ""
 
 msgid "Unlock"
@@ -15590,6 +15674,9 @@ msgid "Update Plugins"
 msgstr "Обновление плагинов"
 
 msgid "Update Preferences"
+msgstr ""
+
+msgid "Update Production Status"
 msgstr ""
 
 msgid "Update Status"
@@ -16058,14 +16145,8 @@ msgstr ""
 msgid "VLAN ID"
 msgstr "VLAN ID"
 
-msgid "VLAN Parent Interface"
-msgstr "Родительский интерфейс VLAN"
-
 msgid "VLAN Settings"
 msgstr ""
-
-msgid "VLAN Tag"
-msgstr "Тег VLAN"
 
 msgid "VLANs"
 msgstr "VLANы"
@@ -16087,6 +16168,9 @@ msgstr "Синхронизация VMWare"
 
 msgid "VMware Sync"
 msgstr "Синхронизация VMware"
+
+msgid "VMware-Snapshots"
+msgstr ""
 
 msgid "VNC"
 msgstr "VNC"
@@ -16188,9 +16272,6 @@ msgstr ""
 msgid "Virtual Machine (VM) Wizard type."
 msgstr "Тип мастера виртуальной машины (ВМ)."
 
-msgid "Virtual Machines"
-msgstr "Виртуальные машины"
-
 msgid "Virtual Machines cannot be created or started without a pool to store them."
 msgstr ""
 "Виртуальные машины не могут быть созданы или запущены без пула для их "
@@ -16284,6 +16365,9 @@ msgid "WebDAV"
 msgstr ""
 
 msgid "WebDAV Configuration"
+msgstr ""
+
+msgid "WebDAV Shares"
 msgstr ""
 
 msgid "WebDAV account password."
@@ -16482,6 +16566,9 @@ msgid "Window"
 msgstr ""
 
 msgid "Windows"
+msgstr ""
+
+msgid "Windows Shares (SMB)"
 msgstr ""
 
 msgid "Wipe"
@@ -16758,9 +16845,6 @@ msgstr ""
 msgid "expires in"
 msgstr "истекает через"
 
-msgid "gathering info..."
-msgstr "сбор информации..."
-
 msgid "group"
 msgstr "группа"
 
@@ -16789,6 +16873,9 @@ msgid "hostid_strict_check"
 msgstr ""
 
 msgid "hours"
+msgstr ""
+
+msgid "iBurst"
 msgstr ""
 
 msgid "iSCSI"

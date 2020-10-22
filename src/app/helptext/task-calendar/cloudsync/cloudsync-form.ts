@@ -5,7 +5,7 @@ export default {
 fieldset_transfer: T('Transfer'),
 fieldset_remote: T('Remote'),
 fieldset_control: T('Control'),
-fieldset_advanced_options: T('Advance Options'),
+fieldset_advanced_options: T('Advanced Options'),
 advanced_remote_options: T('Advanced Remote Options'),
 
 description_placeholder: T('Description'),

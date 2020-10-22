@@ -54,7 +54,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
   public busy: Subscription;
   protected fs: any = (<any>window).filesize;
   protected dialogRef: any
-  protected route_success: string[] = [ 'storage', 'pools' ];
+  protected route_success: string[] = [ 'storage'];
   public save_button_enabled = true;
 
   protected uid_fc: any;
@@ -226,7 +226,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
       name : helptext.permissions_editor_button,
       function : () => {
         this.router.navigate(new Array('/').concat([
-          "storage", "pools", "permissions", this.datasetId
+          "storage", "permissions", this.datasetId
         ]));
       }
     },

@@ -69,7 +69,7 @@ export class IdmapFormComponent {
           name: 'dns_domain_name',
           placeholder: helptext.idmap.dns_domain_name.placeholder,
           tooltip: helptext.idmap.dns_domain_name.tooltip,
-          required: true
+          value: ''
         },
         {
           type:  'input' ,
@@ -346,6 +346,9 @@ export class IdmapFormComponent {
   }
 
   beforeSubmit(data) {
+    if (data.dns_domain_name === null) {
+      data.dns_domain_name = '';
+    }
     let options = {}
     for (let item in data) {
       if (this.optionsFields.includes(item)) {

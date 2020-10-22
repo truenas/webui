@@ -1,0 +1,31 @@
+/* content padding top 14px bottom 15px*/
+div.dashboard {
+    height: calc(100vh - 120px);
+}
+
+div.dashboard.has-footer {
+    height: calc(100vh - 165px);
+}
+
+div.content {
+    flex: 1;
+}
+div.right-column div.left-column {
+    height: inherit;
+}
+/* div.title {
+    display: flex;
+    margin: 0px 24px;
+    color: var(--fg2);
+} */
+
+mat-card > mat-card-actions.interface-pending-actions,
+div.disabled-notice {
+    margin: 0;
+    padding: 0 16px 16px;
+}
+
+.pseudolink {
+    text-decoration: underline;
+    cursor: pointer;
+}

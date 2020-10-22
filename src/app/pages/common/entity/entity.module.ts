@@ -69,6 +69,7 @@ import { EntityJobComponent } from './entity-job/entity-job.component';
 
 // CDK
 import { CdkTableModule } from '@angular/cdk/table';
+import {CdkTreeModule} from '@angular/cdk/tree';
 import { OverlayModule } from '@angular/cdk/overlay';
 import {A11yModule} from '@angular/cdk/a11y';
 
@@ -78,16 +79,19 @@ import { EntityToolbarComponent } from './entity-toolbar/entity-toolbar.componen
 import { ToolbarButtonComponent } from './entity-toolbar/components/toolbar-button/toolbar-button.component';
 import { ToolbarMenuComponent } from './entity-toolbar/components/toolbar-menu/toolbar-menu.component';
 import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
+import { ToolbarMultiSelectComponent } from './entity-toolbar/components/toolbar-multiselect/toolbar-multiselect.component';
 import { EntityRowDetailsComponent } from './entity-table/entity-row-details.component';
 import { TaskScheduleListComponent } from 'app/pages/task-calendar/components/task-schedule-list/task-schedule-list.component';
 import { FormStatusComponent } from './entity-form/components/form-status/form-status.component';
 import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.component';
 
+import { TableComponent } from './table/table.component';
+
 @NgModule({
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule, DragDropModule,
     MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule.forRoot(),
-    NgxUploaderModule, FlexLayoutModule, TranslateModule,
+    NgxUploaderModule, FlexLayoutModule, TranslateModule, CdkTreeModule,
     OverlayModule, A11yModule, TreeTableModule, NgxFilesizeModule, CommonDirectivesModule
   ],
   declarations: [
@@ -143,8 +147,10 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     ToolbarButtonComponent,
     ToolbarMenuComponent,
     ToolbarMultimenuComponent,
+    ToolbarMultiSelectComponent,
     FormStatusComponent,
     EntityComingsoonComponent,
+    TableComponent,
     EntityDashboardComponent,
   ],
   exports: [
@@ -172,7 +178,10 @@ import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.co
     ToolbarButtonComponent,
     ToolbarMenuComponent,
     ToolbarMultimenuComponent,
+    ToolbarMultiSelectComponent,
     EntityComingsoonComponent,
+    TableComponent,
+    CdkTreeModule,
   ],
   entryComponents: [
     FormButtonComponent,

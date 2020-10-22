@@ -1,67 +1,60 @@
-<div id="volumes-list.component_html" class="material mat-card mat-card-table">
-  <div class="mat-toolbar mat-card-toolbar" fxLayoutAlign="space-between center">
-    <div class="mat-card-title-text" fxFlex="300px">{{ title | translate }}
-      <mat-spinner *ngIf="showSpinner" [diameter]='40' id="pools-spinner">
-      </mat-spinner>
-    </div>
-    <div style="text-align:right;"><app-entity-table-add-actions [entity]="this"></app-entity-table-add-actions></div>
-  </div>
-  <div *ngIf="zfsPoolRows.length > 0">
-    <mat-accordion [multi]="true">
-      <mat-expansion-panel *ngFor="let row of zfsPoolRows" [expanded]="row.status === 'LOCKED' ? false : true" id="expansionpanel_zfs_{{row.name}}"
-        ix-auto ix-auto-type="expansion-panel" ix-auto-identifier="{{row.name}}">
-        <mat-expansion-panel-header>
-          <mat-panel-title>
-            {{row.name}}
-            <span *ngIf="row.encrypt > 0"  title="Encryption On" id="volume_encrypt_on_{{row.name}}" class="panel_status_enc">
-                <mat-icon *ngIf="!row.is_decrypted" role="img" fontSet="mdi-set" fontIcon="mdi-lock" ></mat-icon>
-                <mat-icon *ngIf="row.is_decrypted" role="img" fontSet="mdi-set" fontIcon="mdi-lock-open-variant"></mat-icon>
-            </span>
-            <span *ngIf="row.encrypt > 0">
-              {{'(Legacy Encryption)' | translate}}
-            </span>
-          </mat-panel-title>
-          <mat-panel-description>
-            {{row.status}}&nbsp;
-            <span *ngIf="!row.healthy && row.status == 'ONLINE'">(Unhealthy)</span>
-           
-            &nbsp;
-            <span [style.margin-right.px]="5">
-              <i class="material-icons green-icon" *ngIf="row.healthy; else status;">check_circle</i>
-              <ng-template #status>
-                <i class="material-icons orange-icon" *ngIf="row.status==='DEGRADED'">warning</i>
-                <i class="material-icons yellow-icon" *ngIf="row.status==='LOCKED'">lock</i>
-                <i class="material-icons blue-icon" *ngIf="row.status==='FAULTED'">help</i>
-                <i class="material-icons red-icon" 
-                  *ngIf="row.status!=='DEGRADED' && row.status!=='LOCKED' && row.status!=='FAULTED'"
-                >cancel</i>
-              </ng-template>
-            </span>
-            <span *ngIf="row.usedStr && row.availStr">
-              &nbsp;<span style="opacity:0.5;">|</span>&nbsp;
-              {{row.usedStr}} {{"Used" | translate}} 
-              &nbsp;<span style="opacity:0.5;">|</span>&nbsp;
-              {{row.availStr}} {{"Free" | translate}}
-            </span>
-          </mat-panel-description>
-        </mat-expansion-panel-header>
 
-        <div fxLayoutAlign="end start" class="icon-row">
-          <div class="global_volume_based_action_menu pool-icon" title="Pool Operations" >
-            <app-entity-table-actions [icon_name]="'settings'" [entity]="actionComponent" [row]="row" [action]="'settings'" [groups]="true"></app-entity-table-actions>
-          </div>
+<div *ngIf="zfsPoolRows.length > 0">
+  <mat-accordion [multi]="true">
+    <mat-expansion-panel class="no-padding" *ngFor="let row of zfsPoolRows; let pool = index;" [expanded]="row.status === 'LOCKED' ? false : true" id="expansionpanel_zfs_{{row.name}}"
+      ix-auto ix-auto-type="expansion-panel" ix-auto-identifier="{{row.name}}">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          {{row.name}}
+          <span *ngIf="row.encrypt > 0"  title="Encryption On" id="volume_encrypt_on_{{row.name}}" class="panel_status_enc">
+              <mat-icon *ngIf="!row.is_decrypted" role="img" fontSet="mdi-set" fontIcon="mdi-lock" ></mat-icon>
+              <mat-icon *ngIf="row.is_decrypted" role="img" fontSet="mdi-set" fontIcon="mdi-lock-open-variant"></mat-icon>
+          </span>
+          <span *ngIf="row.encrypt > 0">
+            {{'(Legacy Encryption)' | translate}}
+          </span>
+        </mat-panel-title>
+        <mat-panel-description>
+          {{row.status}}&nbsp;
+          <span *ngIf="!row.healthy && row.status == 'ONLINE'">(Unhealthy)</span>
+         
+          &nbsp;
+          <span [style.margin-right.px]="5">
+            <i class="material-icons green-icon" *ngIf="row.healthy; else status;">check_circle</i>
+            <ng-template #status>
+              <i class="material-icons orange-icon" *ngIf="row.status==='DEGRADED'">warning</i>
+              <i class="material-icons yellow-icon" *ngIf="row.status==='LOCKED'">lock</i>
+              <i class="material-icons blue-icon" *ngIf="row.status==='FAULTED'">help</i>
+              <i class="material-icons red-icon" 
+                *ngIf="row.status!=='DEGRADED' && row.status!=='LOCKED' && row.status!=='FAULTED'"
+              >cancel</i>
+            </ng-template>
+          </span>
+          <span *ngIf="row.usedStr && row.availStr">
+            &nbsp;<span style="opacity:0.5;">|</span>&nbsp;
+            {{row.usedStr}} {{"Used" | translate}} 
+            &nbsp;<span style="opacity:0.5;">|</span>&nbsp;
+            {{row.availStr}} {{"Free" | translate}}
+          </span>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div fxLayoutAlign="end start" class="icon-row hidden">
+        <div class="global_volume_based_action_menu pool-icon" title="Pool Operations" >
+          <app-entity-table-actions [icon_name]="'settings'" [entity]="actionComponent" [row]="row" [action]="'settings'" [groups]="true"></app-entity-table-actions>
         </div>
-        <div>
-          <entity-tree-table *ngIf="row.volumesListTableConfig.tableData?.length > 0" [conf]="row.volumesListTableConfig" [expandRootNodes]="true"></entity-tree-table>
-        </div>
-      </mat-expansion-panel>
-    </mat-accordion>
-  </div>
-  <div *ngIf="zfsPoolRows.length < 1 && showDefaults">
-    <mat-card>
-      <mat-card-content name="no_pools">
-        {{"No pools" | translate}}
-      </mat-card-content>
-    </mat-card>
-  </div>
+      </div>
+      <div>
+        <entity-tree-table *ngIf="row.volumesListTableConfig.tableData?.length > 0" [conf]="row.volumesListTableConfig" [expandRootNodes]="true"></entity-tree-table>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
 </div>
+
+<div *ngIf="zfsPoolRows.length < 1 && showDefaults">
+  <mat-card class="mat-card-padded">
+    <mat-card-content name="no_pools">
+      {{"No pools" | translate}}
+    </mat-card-content>
+  </mat-card>
+</div> 

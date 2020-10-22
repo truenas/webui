@@ -30,6 +30,7 @@ vlan_tooltip : T('If the IPMI out-of-band management interface is on a\
  different VLAN from the management network, enter the IPMI VLAN.'),
 
 ipmi_configuration: T('IPMI Configuration'),
-ipmi_password_reset: T('IPMI Password Reset')
+ipmi_password_reset: T('IPMI Password Reset'),
 
+ipmi_remote_controller: T('Remote Controller'),
 }

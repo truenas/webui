@@ -62,6 +62,7 @@
 
 .update-button {
     margin-right: 3px;
+    top: 6px;
     /* float: right; */
 }
 
@@ -110,7 +111,7 @@
 mat-card {
     max-width: 960px;
     margin: 0 auto 15px auto;
-    padding: 20px;
+    padding: 20px !important;
 }
 
 #update-running-msg {

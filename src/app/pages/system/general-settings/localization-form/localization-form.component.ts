@@ -24,6 +24,7 @@ export class LocalizationFormComponent implements OnDestroy{
   private dateTimeChangeSubscription: Subscription;
   private getDataFromDash: Subscription;
   public title = helptext.localeTitle;
+  protected isOneColumnForm = true;
   public fieldConfig: FieldConfig[] = []
 
   public fieldSets: FieldSet[] = [
