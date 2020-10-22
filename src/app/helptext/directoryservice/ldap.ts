@@ -109,8 +109,8 @@ ldap_has_samba_schema_tooltip: T('Only set LDAP authentication for\
  SMB shares is required and the LDAP server is already configured with Samba attributes. DEPRECATED: \
  Support for Samba Schema is <a\
  href="https://www.samba.org/samba/history/samba-4.13.0.html" target="_blank">officially deprecated in Samba 4.13</a>. \
- The feature will be removed sometime after Samba 4.14. Users should plan accordingly \
- to upgrade the legacy Samba domain to a Samba AD domain.'),
+ The feature will be removed after Samba 4.14. Users should begin \
+ upgrading legacy Samba domains to Samba AD domains.'),
 
 ldap_auxiliary_parameters_name : 'auxiliary_parameters',
 ldap_auxiliary_parameters_placeholder : T('Auxiliary Parameters'),
