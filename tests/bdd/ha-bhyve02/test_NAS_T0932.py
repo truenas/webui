@@ -179,3 +179,10 @@ def navigate_to_dashboard(driver):
 def second_node_should_be_rebooting(driver):
     """Second node should be rebootting."""
     assert is_element_present(driver, '//mat-icon[@svgicon="ha_disabled"]')
+
+
+@then('Wait for second node to be up')
+def wait_for_second_node_to_be_up(driver):
+    """Wait for second node to be up"""
+    assert wait_on_element(driver, 1, 120, '//mat-list-item[contains(.,"nodeb")]')
+    assert wait_on_element(driver, 1, 10, '//mat-icon[@svgicon="ha_enabled"]')

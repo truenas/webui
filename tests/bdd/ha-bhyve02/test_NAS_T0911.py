@@ -34,7 +34,7 @@ def if_login_page_appear_enter_root_and_testing(driver, user, password):
         driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(user)
         driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-        wait_on_element(driver, 0.5, 30, '//button[@name="signin_button"]')
+        wait_on_element(driver, 0.5, 7, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
@@ -46,7 +46,7 @@ def if_login_page_appear_enter_root_and_testing(driver, user, password):
 @then('You should see the dashboard')
 def you_should_see_the_dashboard(driver):
     """You should see the dashboard."""
-    wait_on_element(driver, 0.5, 30, '//span[contains(.,"System Information")]')
+    wait_on_element(driver, 0.5, 7, '//span[contains(.,"System Information")]')
     driver.find_element_by_xpath('//span[contains(.,"System Information")]')
 
 
@@ -62,7 +62,7 @@ def click_on_the_accounts_item_in_the_left_side_menu(driver):
 @then('The Accounts menu should expand down')
 def the_accounts_menu_should_expand_down(driver):
     """The Accounts menu should expand down."""
-    wait_on_element(driver, 0.5, 30, '//mat-list-item[@ix-auto="option__Users"]')
+    wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Users"]')
     element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
     class_attribute = element.get_attribute('class')
     assert 'open' in class_attribute, class_attribute
@@ -77,7 +77,7 @@ def click_on_users(driver):
 @then('The Users page should open')
 def the_users_page_should_open(driver):
     """The Users page should open."""
-    wait_on_element(driver, 0.5, 30, '//div[contains(.,"Users")]')
+    wait_on_element(driver, 0.5, 7, '//div[contains(.,"Users")]')
     driver.find_element_by_xpath('//div[contains(.,"Users")]')
 
 
@@ -90,7 +90,7 @@ def on_the_right_side_of_the_table_click_the_greaterthansign_for_one_of_the_user
 @then('The User Field should expand down to list further details')
 def the_user_field_should_expand_down_to_list_further_details(driver):
     """The User Field should expand down to list further details."""
-    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__EDIT_ericbsd"]')
+    wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__EDIT_ericbsd"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]')
 
 
@@ -103,32 +103,32 @@ def click_the_edit_button_that_appears(driver):
 @then('The User Edit Page should open')
 def the_user_edit_page_should_open(driver):
     """The User Edit Page should open."""
-    wait_on_element(driver, 0.5, 30, '//h4[contains(.,"Identification")]')
+    wait_on_element(driver, 1, 7, '//h4[contains(.,"Identification")]')
     driver.find_element_by_xpath('//h4[contains(.,"Identification")]')
 
 
 @then(parsers.parse('Change the users email for "{email}" and click save'))
 def change_the_users_email_and_click_save(driver, email):
     """Change the users email for "{email}" and click save."""
-    wait_on_element(driver, 0.5, 30, '//input[@ix-auto="input__Email"]')
+    wait_on_element(driver, 1, 7, '//input[@ix-auto="input__Email"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').send_keys(email)
-    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SAVE"]')
+    wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
 @then('Change should be saved')
 def change_should_be_saved(driver):
     """Change should be saved."""
-    wait_on_element_disappear(driver, 1, 30, '//h6[contains(.,"Please wait")]')
-    wait_on_element(driver, 0.5, 30, '//div[contains(.,"Users")]')
+    wait_on_element_disappear(driver, 1, 7, '//h6[contains(.,"Please wait")]')
+    wait_on_element(driver, 0.5, 7, '//div[contains(.,"Users")]')
 
 
 @then('Open the user drop down to verify the email has been changed')
 def open_the_user_drop_down_to_verify_the_email_has_been_changed(driver):
     """Open the user drop down to verify the email has been changed."""
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
-    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__EDIT_ericbsd"]')
+    wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__EDIT_ericbsd"]')
     driver.find_element_by_xpath('//h4[contains(.,"Email:")]')
 
 
