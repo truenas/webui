@@ -29,7 +29,8 @@ export interface FieldConfig {
   listFields?: Array<FieldConfig>[], templateListField?: FieldConfig[],
   updateLocal?: boolean, isLoading?: boolean, textAreaRows?: number, netmaskPreset?: number,
   isLargeText?: boolean, paragraphIcon?: string, zeroStateMessage?: string, isDoubleConfirm?:boolean,
-  maskValue?: any, hideErrMsg?: boolean, id?: string, autocomplete?: boolean
+  maskValue?: any, hideErrMsg?: boolean, id?: string, autocomplete?: boolean,
+  buttonClass?: string, buttonColor?: string,
   customEventMethod?(data:any), onChangeOption?(data:any), hint?:string;
 }
 

@@ -207,20 +207,12 @@ export class AppComponent {
 
     // TRUECOMMAND
     this.matIconRegistry.addSvgIcon(
+      "truecommand_logo_blue",
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand-logo-mark-full-color-rgb.svg")
+    );
+    this.matIconRegistry.addSvgIcon(
       "truecommand_logo_white",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand_iconmark_white.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truecommand_logo_red",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand_iconmark_red.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truecommand_logo_grey",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand_iconmark_grey.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truecommand_logo_green",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand_iconmark_green.svg")
+      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand-logo-mark-white-rgb.svg")
     );
 
     // encryption icon

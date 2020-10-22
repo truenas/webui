@@ -79,7 +79,7 @@
 
     <!-- App content -->
     <div class="rightside-content-hold" [ngClass]="{'has-footer':isShowFooterConsole}">
-      <!--app-breadcrumb [product_type]="product_type"></app-breadcrumb-->
+      <pagetitle [breadcrumbs]="true" [product_type]="product_type"></pagetitle>
       <router-outlet></router-outlet>
     </div>
     <div class="footer-console-bar" *ngIf="isShowFooterConsole" ix-auto ix-auto-type="shell" ix-auto-identifier="footer-console">

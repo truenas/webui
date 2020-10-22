@@ -1,6 +1,6 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
-import {Subscription} from 'rxjs';
+import { Component, ElementRef, Input, ViewChild, OnInit, AfterViewInit, OnDestroy, SimpleChanges} from '@angular/core';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
 import {RestService} from '../../../../services/rest.service';
@@ -11,9 +11,10 @@ import {EntityTableComponent} from './entity-table.component';
   selector : 'app-entity-table-add-actions',
   templateUrl: './entity-table-add-actions.component.html'
 })
-export class EntityTableAddActionsComponent implements OnInit {
-
+export class EntityTableAddActionsComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('filter', { static: false}) filter: ElementRef;
   @Input('entity') entity: any;
+  public conf;
 
   public actions: any[];
   public menuTriggerMessage:string = "Click for options";
@@ -29,6 +30,21 @@ export class EntityTableAddActionsComponent implements OnInit {
   constructor(protected translate: TranslateService) { }
 
   ngOnInit() { 
-		this.actions = this.entity.getAddActions(); 
-	}
+    this.actions = this.entity.getAddActions(); 
+  }
+
+  ngOnDestroy(){
+  }
+
+  ngAfterViewInit(){
+    if (this.filter) {
+      this.entity.filter = this.filter;
+    }
+  }
+
+  applyConfig(entity){
+    this.entity = entity;
+    this.conf = entity.conf;
+  }
+
 }

@@ -43,6 +43,7 @@ export class IscsiWizardComponent {
         'initiators': null,
         'auth_network': null,
         'comment': null,
+        'target': null,
     };
     public summary: any;
     protected namesInUse = [];
@@ -237,6 +238,19 @@ export class IscsiWizardComponent {
                     value: 'SSD',
                     isHidden: true,
                 },
+                {
+                    type: 'select',
+                    name: 'target',
+                    placeholder: helptext_sharing_iscsi.target_placeholder,
+                    tooltip: helptext_sharing_iscsi.target_tooltip,
+                    options: [
+                        {
+                            label: 'Create New',
+                            value: 'NEW'
+                        }
+                    ],
+                    value: 'NEW',
+                },
             ]
         },
         {
@@ -373,7 +387,8 @@ export class IscsiWizardComponent {
                     disabled: true,
                 },
 
-            ]
+            ],
+            skip: false,
         },
         {
             label: helptext_sharing_iscsi.step3_label,
@@ -392,7 +407,8 @@ export class IscsiWizardComponent {
                     hasErrors: false,
                     validation: [this.IPValidator('auth_network')]
                 }
-            ]
+            ],
+            skip: false,
         }
     ]
 
@@ -535,6 +551,12 @@ export class IscsiWizardComponent {
                 disk_field.options.push({ label: res[i], value: i });
             }
         })
+        const taregt_field = _.find(this.wizardConfig[0].fieldConfig, { 'name': 'target' });
+        this.iscsiService.getTargets().subscribe((res) => {
+            for (const item of res) {
+                taregt_field.options.push({ label: item.name, value: item.id});
+            }
+        })
 
         this.entityWizard.formArray.controls[0].controls['type'].valueChanges.subscribe((value) => {
             this.formTypeUpdate(value);
@@ -557,6 +579,20 @@ export class IscsiWizardComponent {
 
         this.entityWizard.formArray.controls[0].controls['type'].setValue('DISK');
         this.entityWizard.formArray.controls[0].controls['usefor'].setValue('vmware');
+
+        this.entityWizard.formArray.controls[0].controls['target'].valueChanges.subscribe((value) => {
+            if (value !== 'NEW' && !this.wizardConfig[1].skip && !this.wizardConfig[2].skip) {
+                this.wizardConfig[1].skip = true;
+                this.wizardConfig[2].skip = true;
+                this.entityWizard.formArray.controls[1].controls['portal'].clearValidators();
+                this.entityWizard.formArray.controls[1].controls['portal'].updateValueAndValidity();
+            } else if (value === 'NEW' && this.wizardConfig[1].skip && this.wizardConfig[2].skip) {
+                this.wizardConfig[1].skip = false;
+                this.wizardConfig[2].skip = false;
+                this.entityWizard.formArray.controls[1].controls['portal'].setValidators([Validators.required]);
+                this.entityWizard.formArray.controls[1].controls['portal'].updateValueAndValidity();
+            }
+        });
     }
 
     step1Init() {
@@ -624,7 +660,7 @@ export class IscsiWizardComponent {
                         } else {
                             this.summaryObj[name] = value;
                             // get label value
-                            if (name == 'disk' || name == 'usefor' || name == 'portal') {
+                            if (name == 'disk' || name == 'usefor' || name == 'portal' || name == 'target') {
                                 const field = _.find(this.wizardConfig[step].fieldConfig, { name: name });
                                 if (field) {
                                     this.summaryObj[name] = _.find(field.options, { value: value }).label;
@@ -662,7 +698,8 @@ export class IscsiWizardComponent {
                 'Initiators': this.summaryObj.initiators,
                 'Authorized Networks': this.summaryObj.auth_network,
                 'Comment': this.summaryObj.comment,
-            }
+            },
+            'Target': this.summaryObj.target,
         };
         if (this.summaryObj.type === 'FILE') {
             delete summary['Extent']['Device'];
@@ -685,6 +722,9 @@ export class IscsiWizardComponent {
             delete summary['Initiator']['Comment'];
         }
 
+        if (this.summaryObj.target === 'Create New' ) {
+            delete summary['Target'];
+        }
         return summary;
     }
 
@@ -762,12 +802,17 @@ export class IscsiWizardComponent {
 
         for (const item in createdItems) {
             if (!toStop) {
-                if (!((item === 'zvol' && value['disk'] !== 'NEW') || (item === 'auth' && value['discovery_authgroup'] !== 'NEW') || (item === 'portal' && value[item] !== 'NEW'))) {
+                if (!(
+                    (item === 'zvol' && value['disk'] !== 'NEW') ||
+                    (item === 'auth' && value['discovery_authgroup'] !== 'NEW') ||
+                    (item === 'portal' && value[item] !== 'NEW') ||
+                    ((item === 'initiator' || item === 'portal' || item === 'target') && value['target'] !== 'NEW')
+                )) {
                     await this.doCreate(value, item).then(
                         (res) => {
                             if (item === 'zvol') {
                                 value['disk'] = 'zvol/' + res.id;
-                            } else if (item ==='auth') {
+                            } else if (item === 'auth') {
                                 value['discovery_authgroup'] = res.tag;
                             } else {
                                 value[item] = res.id;

@@ -56,7 +56,7 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
       {
         label: T('Set Quotas (Bulk)'),
         onClick: () => {
-          this.router.navigate(['storage', 'pools', 'user-quotas-form', this.pk]);
+          this.router.navigate(['storage', 'user-quotas-form', this.pk]);
         }
       }
     ]

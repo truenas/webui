@@ -1,0 +1,86 @@
+<p-treeTable #tt [value]="conf.tableData || treeTableData" filterMode="strict" [columns]="conf.columns" [resizableColumns]="true" [autoLayout]="true">
+	<ng-template pTemplate="header" let-columns>
+		<tr>
+			<th *ngFor="let col of columns" [ttSortableColumn]="col.prop" id="theader_{{col.prop}}" ttResizableColumn>
+				{{col.name | translate}}
+				<p-treeTableSortIcon [field]="col.prop"
+					ix-auto
+					ix-auto-type="sorter"
+					ix-auto-identifier="{{col.name}}"></p-treeTableSortIcon>
+			</th>
+			<th *ngIf="showActions"></th>
+		</tr>
+	</ng-template>
+	<ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-columns="columns">
+		<tr>
+			<td *ngFor="let col of columns; let i = index" id="tbody__{{col.prop}}_{{rowData[col.prop]}}"
+          		  [ix-auto]="col.prop"
+				  ix-auto-type="value"
+				  ix-auto-identifier="{{rowData.name}}">
+				<p-treeTableToggler [rowNode]="rowNode" *ngIf="i == 0"
+          			ix-auto
+					ix-auto-type="expander"
+					ix-auto-identifier="{{rowData.name}}"></p-treeTableToggler>
+				<span *ngIf="col.filesizePipe">{{ (rowData[col.prop] || 0) | filesize : {standard : "iec"} }}</span>
+				<span *ngIf="!col.filesizePipe">{{ rowData[col.prop]?.value || rowData[col.prop] }}</span>
+				<span class="icons">
+					<span *ngIf="col.prop === 'name' && rowData.hasOwnProperty('is_encrypted_root') && rowData.hasOwnProperty('non_encrypted_on_encrypted')">
+						&nbsp;
+						<mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-lock-open-variant"
+							*ngIf="rowData.is_encrypted_root && !rowData.locked">
+						</mat-icon>
+						<mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-lock" 
+							*ngIf="rowData.is_encrypted_root && rowData.locked">
+						</mat-icon>
+						<mat-icon svgIcon="anti-lock"
+							*ngIf="rowData.non_encrypted_on_encrypted || (!rowData.encrypted && rowData.has_encrypted_children)">
+						</mat-icon>
+					</span>
+				</span>
+			</td>
+			<td *ngIf="showActions && rowData.actions">
+				<mat-icon [matMenuTriggerFor]="appMenu" [style.cursor]="'pointer'" id="actions_menu_button__{{rowData.name}}"
+				(click)="conf.clickAction ? conf.clickAction(rowData) : clickAction()"
+				ix-auto
+				ix-auto-type="options"
+				ix-auto-identifier="{{rowData.name}}">more_vert</mat-icon>
+				<mat-menu style="padding:12px 0;" #appMenu="matMenu">
+					<span *ngIf="!rowData.group_actions;else groupMenu">
+						<span *ngFor="let action of rowData.actions" 
+							id="action_button__{{rowData.name}}_{{action.label}}" 
+							[matTooltip]="action.matTooltip" 
+							[matTooltipDisabled]="!action.disabled"
+							[matTooltipPosition]="action.ttposition ? action.ttposition : 'below'">
+							<button mat-menu-item *ngIf="!action.isHidden" (click)="action.onClick(rowData);" [disabled]="action.disabled"
+							ix-auto
+							ix-auto-type="action"
+							ix-auto-identifier="{{rowData.name}}_{{action.label}}">
+								<span>{{action.label | translate}}</span>
+							</button>
+						</span>
+					</span>
+					<ng-template #groupMenu>
+						<span *ngFor= "let group of rowData.actions">
+							<div class="group-menu-header" *ngIf="group.actions && group.actions.length > 0">
+								<mat-divider></mat-divider>
+                                                                <div class="title" ><strong>{{group?.title | translate}}</strong></div>
+							</div>
+							<span *ngFor="let action of group.actions"
+								id="action_button__{{rowData.name}}_{{action.label}}" 
+								[matTooltip]="action.matTooltip" 
+								[matTooltipDisabled]="!action.disabled"
+								[matTooltipPosition]="action.ttposition ? action.ttposition : 'left'">
+								<button mat-menu-item *ngIf="!action.isHidden" (click)="action.onClick(rowData);" [disabled]="action.disabled"
+								ix-auto
+								ix-auto-type="action"
+								ix-auto-identifier="{{rowData.name}}_{{action.label}}">
+									<span>{{action.label | translate}}</span>
+								</button>
+							</span>
+						</span>
+					</ng-template>
+				</mat-menu>
+			</td>
+		</tr>
+	</ng-template>
+</p-treeTable>

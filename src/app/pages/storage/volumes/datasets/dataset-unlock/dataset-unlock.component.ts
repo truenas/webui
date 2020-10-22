@@ -27,7 +27,7 @@ export class DatasetUnlockComponent implements OnDestroy {
 
   protected queryCall = 'pool.dataset.encryption_summary';
   protected updateCall = 'pool.dataset.unlock';
-  public route_success: string[] = ['storage', 'pools'];
+  public route_success: string[] = ['storage'];
   protected isEntity = true;
   protected isNew = true;
   protected pk: string;

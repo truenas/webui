@@ -27,6 +27,7 @@ import {ImportDiskComponent} from './import-disk/import-disk.component';
 import { DiskComponent, ManagerComponent, VdevComponent } from './volumes/manager/';
 // import { VolumesEditComponent } from './volumes/volumes-edit/';
 import { VolumesListComponent } from './volumes/volumes-list/';
+import { VolumesListControlsComponent } from './volumes/volumes-list/volumes-list-controls.component';
 import { VolumeStatusComponent } from './volumes/volume-status';
 import { MultipathsComponent } from './multipaths/multipaths.component';
 import { routing } from './storage.routing';
@@ -60,6 +61,7 @@ import { DatasetPosixAclComponent } from './volumes/datasets/dataset-posix-acl/'
   ],
   declarations : [
     VolumesListComponent,
+    VolumesListControlsComponent,
     ManagerComponent,
     DiskComponent,
     VdevComponent,
@@ -94,6 +96,7 @@ import { DatasetPosixAclComponent } from './volumes/datasets/dataset-posix-acl/'
     GroupQuotaFormComponent,
     DatasetPosixAclComponent,
   ],
+  exports:[ VolumesListControlsComponent ],
   entryComponents: [SnapshotDetailsComponent, UnlockDialogComponent],
   providers : [UserService, StorageService, MessageService, JobService, TranslateService]
 })
