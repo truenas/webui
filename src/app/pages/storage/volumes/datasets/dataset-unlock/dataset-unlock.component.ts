@@ -45,6 +45,7 @@ export class DatasetUnlockComponent implements OnDestroy {
   protected unlock_children_subscription: any;
 
   public subs: any;
+  showKeyTextArea = true;
 
   public fieldSetDisplay  = 'default';//default | carousel | stepper
   public fieldConfig: FieldConfig[] = [];
@@ -222,12 +223,17 @@ export class DatasetUnlockComponent implements OnDestroy {
             const passphrase_fc = _.find(controls, {"name": "passphrase"});
             const name_text_fc = _.find(controls, {name: 'name_text'});
             const upload_choice_fc = _.find(controls, {name: 'upload_choice'});
+            const key_fc = _.find(controls, {name: 'key'});
             const single_key_file_fc = _.find(controls, {name: 'single_key_file'});
             const result = res.result[i];
 
             this.datasets.controls[i].controls['name'].setValue(result['name']);
             name_text_fc.paraText = helptext.dataset_name_paratext + result['name'];
-
+            this.datasets.controls[i].controls['upload_choice'].valueChanges.subscribe(res => {
+              this.showKeyTextArea = res;
+              key_fc.isHidden = !this.showKeyTextArea;
+              single_key_file_fc.isHidden = this.showKeyTextArea;
+            })
             const is_passphrase = (result.key_format === 'PASSPHRASE');
             if (!is_passphrase) { // hide key datasets by default
               name_text_fc.isHidden = true;
@@ -269,14 +275,12 @@ export class DatasetUnlockComponent implements OnDestroy {
           if (!is_passphrase) {
             name_text_fc.isHidden = hide_key_datasets;
             upload_choice_fc.isHidden = hide_key_datasets;
-            // single_key_file_fc.isHidden = hide_key_datasets;
             this.setDisabled(key_fc, dataset_controls['key'], hide_key_datasets, hide_key_datasets);
           }
         } else {
           if (unlock_children && !is_passphrase) {
             name_text_fc.isHidden = hide_key_datasets;
             upload_choice_fc.isHidden = hide_key_datasets;
-            // single_key_file_fc.isHidden = hide_key_datasets;
             this.setDisabled(key_fc, dataset_controls['key'], hide_key_datasets, hide_key_datasets);
           }
         }
@@ -297,7 +301,6 @@ export class DatasetUnlockComponent implements OnDestroy {
           if (is_passphrase) {
             name_text_fc.isHidden = !unlock_children;
             upload_choice_fc.isHidden = !unlock_children;
-            // single_key_file_fc.isHidden = !unlock_children;
             this.setDisabled(passphrase_fc, dataset_controls['passphrase'], !unlock_children, !unlock_children);
           } else {
             if (hide_key_datasets) {
@@ -308,7 +311,6 @@ export class DatasetUnlockComponent implements OnDestroy {
             } else {
               name_text_fc.isHidden = !unlock_children;
               upload_choice_fc.isHidden = !unlock_children;
-              // single_key_file_fc.isHidden = !unlock_children;
               this.setDisabled(key_fc, dataset_controls['key'], !unlock_children, !unlock_children);
             }
           }
