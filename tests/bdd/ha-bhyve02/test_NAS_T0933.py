@@ -208,9 +208,9 @@ def navigate_to_dashboard(driver):
     assert wait_on_element(driver, 0.5, 10, '//span[contains(.,"System Information")]')
 
 
-@then('press INITIATE FAILOVER, check confirm and press FAILOVER')
-def When_the_second_node_is_up_press_initiate_failover(driver):
-    """press INITIATE FAILOVER, check confirm and press FAILOVER"""
+@then('Press INITIATE FAILOVER, check confirm and press FAILOVER')
+def press_initiate_failover_check_confirm_and_press_failover(driver):
+    """Press INITIATE FAILOVER, check confirm and press FAILOVER"""
     assert wait_on_element(driver, 1, 60, '//button[@ix-auto="button__INITIATE FAILOVER"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__INITIATE FAILOVER"]').click()
     assert wait_on_element(driver, 1, 5, '//h1[contains(.,"Initiate Failover")]')
