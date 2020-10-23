@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { WebSocketService, AppLoaderService } from '../../../../services/';
+import { HttpClient } from '@angular/common/http';
+import { WebSocketService, AppLoaderService, StorageService, DialogService } from '../../../../services/';
 import * as _ from 'lodash';
 import { ModalService } from 'app/services/modal.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -217,7 +218,8 @@ export class CertificateAuthorityEditComponent {
   ];
 
   constructor(protected ws: WebSocketService, protected loader: AppLoaderService,
-    private modalService: ModalService) {
+    private modalService: ModalService, private storage: StorageService, private http: HttpClient,
+    private dialog: DialogService) {
       this.getRow = this.modalService.getRow$.subscribe(rowId => {
         this.rowNum = rowId;
         this.queryCallOption = [["id", "=", rowId]];
@@ -226,11 +228,20 @@ export class CertificateAuthorityEditComponent {
   }
 
   resourceTransformIncomingRestData(data) {
-    console.log(data);
     this.incomingData = data;
     this.setForm();
     return data;
   }
+
+  protected custActions = [
+    {
+      id: 'sign_CSR',
+      name: 'Sign CSR',
+      function: () => {
+        console.log('sign CSR')
+      }
+    }
+  ]
 
   setForm() {
     const fields = ['country', 'state', 'city', 'organization', 'organizational_unit', 'email', 'common', 'DN', 'cert_type',
@@ -254,19 +265,49 @@ export class CertificateAuthorityEditComponent {
   }
 
   viewCertificate() {
-
+    this.dialog.Info('Here it is', this.incomingData.certificate);
   }
 
   exportCertificate() {
-
+    const fileName = this.incomingData.name + '.crt';
+    this.ws.call('core.download', ['filesystem.get', [this.incomingData.certificate_path], fileName]).subscribe(
+      (res) => {
+        const url = res[1];
+        const mimetype = 'application/x-x509-ca-cert';
+        this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
+          this.storage.downloadBlob(file, fileName);
+        }, err => {
+          this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title, 
+            helptext_system_certificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
+        });
+      },
+      (err) => {
+        new EntityUtils().handleWSError(this, err, this.dialog);
+      }
+    );
   }
 
   viewKey() {
-
+    this.dialog.Info('Here it is', this.incomingData.privatekey);
   }
 
   exportKey() {
-
+    const fileName = this.incomingData.name + '.key';
+    this.ws.call('core.download', ['filesystem.get', [this.incomingData.privatekey_path], fileName]).subscribe(
+      (res) => {
+        const url = res[1];
+        const mimetype = 'text/plain';
+        this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
+          this.storage.downloadBlob(file, fileName);
+        }, err => {
+          this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title, 
+            helptext_system_certificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
+        });
+      },
+      (err) => {
+        new EntityUtils().handleWSError(this, err, this.dialog);
+      }
+    );
   }
   
   customSubmit(value) {

@@ -237,13 +237,29 @@ export class CertificateEditComponent {
   }
 
   resourceTransformIncomingRestData(data) {
-    console.log(data)
     this.incomingData = data;
     if (data.CSR != null) {
       this.isCSR = true;
     }
     this.setForm();
     return data;
+  }
+
+  protected custActions = [
+    {
+      id: 'create_ACME',
+      name: 'Create ACME Certificate',
+      function: () => {
+        console.log('create ACME')
+      }
+    }
+  ]
+
+  isCustActionVisible(actionname: string) {
+    if (actionname === 'create_ACME' && !this.isCSR) {
+      return false;
+    }
+    return true;
   }
 
   afterInit(entityEdit: any) {

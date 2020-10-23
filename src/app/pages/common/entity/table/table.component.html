@@ -39,7 +39,7 @@
                 <mat-spinner [diameter]='40' *ngIf="element['onChanging']; else actionButtons"></mat-spinner>
                 <ng-template #actionButtons>
                   <button mat-icon-button (click)="rowAction.onClick(element)" >
-                    <mat-icon class="table-action-button">{{rowAction.icon}}</mat-icon>
+                    <mat-icon class="table-action-button" [matTooltip]="rowAction.matTooltip">{{rowAction.icon}}</mat-icon>
                   </button>
                 </ng-template>
               </div>

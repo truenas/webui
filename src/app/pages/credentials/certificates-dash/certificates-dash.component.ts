@@ -16,6 +16,8 @@ import { CertificateAuthorityEditComponent } from './forms/ca-edit.component';
 import { CertificateAuthoritySignComponent } from './forms/ca-sign.component';
 import { CertificateAcmeAddComponent } from './forms/certificate-acme-add.component';
 import { AcmednsFormComponent } from './forms/acmedns-form.component';
+import { helptext_system_certificates } from 'app/helptext/system/certificates';
+import { EntityUtils } from '../../common/entity/utils';
 
 @Component({
   selector: 'app-certificates-dash',
@@ -34,6 +36,7 @@ export class CertificatesDashComponent implements OnInit {
   protected certificateAuthoritySignComponent: CertificateAuthoritySignComponent;
   protected acmeAddComponent: CertificateAcmeAddComponent;
   protected acmeDNSComponent: AcmednsFormComponent;
+  private downloadActions: any;
 
   constructor(private modalService: ModalService, private router: Router, private route: ActivatedRoute,
     private ws: WebSocketService, private dialog: MatDialog, private systemGeneralService: SystemGeneralService,
@@ -60,6 +63,7 @@ export class CertificatesDashComponent implements OnInit {
           queryCall: 'certificate.query',
           deleteCall: 'certificate.delete',
           dataSourceHelper: this.certificatesDataSourceHelper,
+          getActions: this.certificateActions.bind(this),
           columns: [
             { name: T('Name'), prop: 'name'},
             { name: T('Issuer'), prop: 'issuer' },
@@ -84,6 +88,7 @@ export class CertificatesDashComponent implements OnInit {
           queryCall: 'certificate.query',
           deleteCall: 'certificate.delete',
           dataSourceHelper: this.csrDataSourceHelper,
+          getActions: this.csrActions.bind(this),
           columns: [
             { name: T('Name'), prop: 'name'},
             { name: T('Issuer'), prop: 'issuer' },
@@ -106,6 +111,7 @@ export class CertificatesDashComponent implements OnInit {
           title: T('Certificate Authorities'),
           queryCall: 'certificateauthority.query',
           deleteCall: 'certificateauthority.delete',
+          getActions: this.caActions.bind(this),
           columns: [
             { name: T('Name'), prop: 'name'},
             { name: T('Issuer'), prop: 'issuer' },
@@ -167,11 +173,87 @@ export class CertificatesDashComponent implements OnInit {
     this.certificateAuthorityAddComponent = new CertificateAuthorityAddComponent(this.ws,this.modalService,
       this.systemGeneralService);
     this.certificateAuthorityEditComponent = new CertificateAuthorityEditComponent(this.ws,this.loader,
-      this.modalService);
+      this.modalService,this.storage, this.http,this.dialogService);
     this.certificateAuthoritySignComponent = new CertificateAuthoritySignComponent(this.router,this.route,
       this.ws,this.systemGeneralService);
     this.acmeAddComponent = new CertificateAcmeAddComponent(this.router,this.route,
       this.ws,this.loader,this.dialog,this.entityFormService,this.dialogService);
     this.acmeDNSComponent = new AcmednsFormComponent(this.ws,this.loader,this.dialogService,this.modalService);
   }
+
+certificateActions() {
+    this.downloadActions = [{
+      icon: 'save_alt',
+      name: "download",
+      
+      onClick: (rowinner) => {
+        console.log(rowinner)
+        const path = rowinner.CSR ? rowinner.csr_path : rowinner.certificate_path;
+        const fileName = rowinner.name + '.crt'; // what about for a csr?
+          this.ws.call('core.download', ['filesystem.get', [path], fileName]).subscribe(
+            (res) => {
+              const url = res[1];
+              const mimetype = 'application/x-x509-user-cert';
+              this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
+                this.storage.downloadBlob(file, fileName);
+              }, err => {
+                this.dialogService.errorReport(helptext_system_certificates.list.download_error_dialog.title, 
+                  helptext_system_certificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
+              });
+            },
+            (err) => {
+              new EntityUtils().handleWSError(this, err, this.dialog);
+            }
+          );
+          const keyName = rowinner.name + '.key';
+          this.ws.call('core.download', ['filesystem.get', [rowinner.privatekey_path], keyName]).subscribe(
+            (res) => {
+              const url = res[1];
+              const mimetype = 'text/plain';
+              this.storage.streamDownloadFile(this.http, url, keyName, mimetype).subscribe(file => {
+                this.storage.downloadBlob(file, keyName);
+              }, err => {
+                this.dialogService.errorReport(helptext_system_certificates.list.download_error_dialog.title, 
+                  helptext_system_certificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
+              });
+            },
+            (err) => {
+              new EntityUtils().handleWSError(this, err, this.dialog);
+            }
+          );
+        event.stopPropagation();
+      },
+    }];
+    return this.downloadActions;
+  }
+
+  csrActions() {
+    let csrRowActions = [...this.downloadActions];
+    const acmeAction = {
+      icon: 'build',
+      name: 'create_ACME',
+      matTooltip: T('Create ACME Certificate'),
+      onClick: (rowinner) => {
+        console.log(rowinner)
+      }
+    }
+    csrRowActions.unshift(acmeAction);
+    return csrRowActions;
+  }
+
+  caActions() {
+    let caRowActions = [...this.downloadActions];
+    const acmeAction = {
+      icon: 'beenhere',
+      name: 'sign_CSR',
+      matTooltip: T('Sign CSR'),
+      onClick: (rowinner) => {
+        console.log(rowinner)
+      }
+    }
+    caRowActions.unshift(acmeAction);
+    return caRowActions;
+  }
+
+
 }
