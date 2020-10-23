@@ -61,7 +61,7 @@ export class DatasetFormComponent implements Formconfiguration{
 
   public volid: string;
   public sub: Subscription;
-  public route_success: string[] = ['storage', 'pools'];
+  public route_success: string[] = ['storage'];
   public isBasicMode = true;
   public pk: any;
   public customFilter: any[] = [];
@@ -175,12 +175,12 @@ export class DatasetFormComponent implements Formconfiguration{
           { label: 'off', value: 'OFF' },
           { label: 'lz4 (recommended)', value: 'LZ4' ,},
           { label: 'zstd (default level, 3)', value: 'ZSTD' },
-          { label: 'zstd (Medium, slow)', value: 'ZSTD-5' },
-          { label: 'zstd (Maximum, very slow)', value: 'ZSTD-7' },
+          { label: 'zstd-5 (slow)', value: 'ZSTD-5' },
+          { label: 'zstd-7 (very slow)', value: 'ZSTD-7' },
           { label: 'zstd-fast (default level, 1)', value: 'ZSTD-FAST' },
-          { label: 'gzip (fastest)', value: 'GZIP-1' },
+          { label: 'gzip-1 (fastest)', value: 'GZIP-1' },
           { label: 'gzip (default level, 6)', value: 'GZIP' },
-          { label: 'gzip (maximum, slow)', value: 'GZIP-9' },
+          { label: 'gzip-9 (maximum, slow)', value: 'GZIP-9' },
           { label: 'zle (runs of zeros)', value: 'ZLE' },
           { label: 'lzjb (legacy, not recommended)', value: 'LZJB' }
         ],
@@ -1589,11 +1589,11 @@ export class DatasetFormComponent implements Formconfiguration{
               this.ws.call('filesystem.getacl', [parentPath]).subscribe(({acltype}) => {
                 if (acltype === 'POSIX1E') {
                   this.router.navigate(new Array('/').concat(
-                    ['storage', 'pools', 'id', restPostResp.pool, 'dataset', 'posix-acl', restPostResp.name]
+                    ['storage', 'id', restPostResp.pool, 'dataset', 'posix-acl', restPostResp.name]
                   ), { queryParams: { default: parentPath } })
                 } else {
                   this.router.navigate(new Array('/').concat(
-                    ['storage', 'pools', 'id', restPostResp.pool, 'dataset', 'acl', restPostResp.name]
+                    ['storage', 'id', restPostResp.pool, 'dataset', 'acl', restPostResp.name]
                   ) , { queryParams: { default: parentPath } })
                 }
               })

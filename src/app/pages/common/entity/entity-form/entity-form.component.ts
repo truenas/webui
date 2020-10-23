@@ -65,6 +65,7 @@ export interface Formconfiguration {
   custom_edit_query?;
   custom_add_query?
   custActions?: any[];
+  compactCustomActions?: any[];
   customFilter?:any[];
   confirmSubmit?;
   confirmSubmitDialog?:Object;
@@ -72,6 +73,7 @@ export interface Formconfiguration {
   blurEvent?;
   customEditCall?;
   save_button_enabled?;
+  hideSaveBtn?:boolean;
   form_message?: {
     type: string; // info || warning
     content: string;

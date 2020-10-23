@@ -4,7 +4,7 @@
   <form [formGroup]="formGroup" #entityForm="ngForm" (keydown.enter)="$event.preventDefault()">
     <mat-vertical-stepper [linear]="conf?.isLinear" formArrayName="formArray" #stepper>
       <div *ngFor="let step of conf.wizardConfig; let i = index">
-        <mat-step formGroupName="{{i}}" [stepControl]="formArray?.get([i])">
+        <mat-step formGroupName="{{i}}" [stepControl]="formArray?.get([i])" *ngIf="!step.skip">
           <ng-template matStepLabel>{{step.label | translate}}</ng-template>
           <div class="form-wrap">
             <ng-container *ngFor="let field of step.fieldConfig; let j = index">

@@ -1,0 +1,71 @@
+<div *ngIf="config" class="form-element dynamic-field form-select" style="margin: unset; position:relative">
+  <mat-label style="position: absolute; top: 8px; left: 16px;">{{config.customTriggerValue}}</mat-label>
+  <mat-form-field #field>
+    <mat-select 
+      #selectTrigger
+      [(value)]="config.value"
+      multiple="config.multiple" 
+      [required]="config.required" 
+      (selectionChange)="onChangeOption($event)"
+      [triggerValue]="config.customTriggerValue"
+      ix-auto ix-auto-type="select" ix-auto-identifier="{{config.placeholder}}">
+
+     
+      <mat-select-trigger>
+        <!--{{config.customTriggerValue}}-->
+      </mat-select-trigger>
+     
+      <div *ngIf="config.options.length > 1" class="mat-option" (click)="checkAll()" value="select_all">
+        <span>
+          <mat-icon *ngIf="checkLength()" class="fn-checked">check_circle</mat-icon>
+          <mat-icon *ngIf="!checkLength()" class="fn-unchecked">remove</mat-icon>
+        </span>
+        Select All
+      </div>
+
+      <div>
+        <mat-selection-list>
+          <ng-container *ngFor="let option of config.options; let i=index">
+            <!-- if disabled -->
+            <mat-option *ngIf="option.disable && !option.hiddenFromDisplay" [value]="option.value" disabled style="opacity:0.5"
+              ix-auto
+              ix-auto-type="option"
+              ix-auto-identifier="{{config.placeholder}}_{{option.label}}">
+                <span style="color: var(--red);">
+                  <mat-icon *ngIf="checkLength()" class="fn-checked">check_circle</mat-icon>
+                  <mat-icon *ngIf="!checkLength()" class="fn-unchecked">remove</mat-icon>
+                </span>
+                {{ option.label | translate }}
+            </mat-option>
+  
+            <!-- else -->
+            <mat-option *ngIf="!option?.disable" [value]="option.value" (click)="onClick(option, i)"
+              ix-auto
+              ix-auto-type="option"
+              ix-auto-identifier="{{config.placeholder}}_{{option.label}}">
+                <span>
+                  <mat-icon *ngIf="selectStates[i]" class="fn-checked">check_circle</mat-icon>
+                  <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
+                </span>
+                {{ option.label | translate }}
+              </mat-option>
+
+        </ng-container>
+        </mat-selection-list>
+      </div>
+
+      <div *ngIf="config.options.length == 0">
+        <ng-container>
+          <mat-option disabled style="opacity:0.5"
+            ix-auto
+            ix-auto-type="option"
+            ix-auto-identifier="{{config.placeholder}}_zeroState">
+            {{config.zeroStateMessage ? config.zeroStateMessage : '--'}}
+          </mat-option>
+        </ng-container>
+      </div>
+    </mat-select>
+
+
+  </mat-form-field>
+</div>
