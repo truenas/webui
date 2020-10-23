@@ -119,6 +119,7 @@ def the_user_input_should_appear(driver):
 def in_user_input_enter_eric_and_select_ericbsd(driver, input, user):
     """In User Input enter "{input}" and select "{user}"."""
     driver.find_element_by_xpath('(//input[@placeholder="User"])[2]').send_keys(input)
+    assert wait_on_element(driver, 0.5, 5, f'//mat-option[@ix-auto="option__{user}"]')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__{user}"]').click()
 
 
