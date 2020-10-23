@@ -4,6 +4,9 @@ import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 
+import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface'
+
 import * as _ from 'lodash';
 import { SystemGeneralService, WebSocketService, AppLoaderService, DialogService, StorageService } from '../../../services/';
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
@@ -37,6 +40,7 @@ export class CertificatesDashComponent implements OnInit {
   protected acmeAddComponent: CertificateAcmeAddComponent;
   protected acmeDNSComponent: AcmednsFormComponent;
   private downloadActions: any;
+  private unsignedCAs = [];
 
   constructor(private modalService: ModalService, private router: Router, private route: ActivatedRoute,
     private ws: WebSocketService, private dialog: MatDialog, private systemGeneralService: SystemGeneralService,
@@ -52,6 +56,13 @@ export class CertificatesDashComponent implements OnInit {
     this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
       this.refreshForms();
     });
+    this.systemGeneralService.getUnsignedCertificates().subscribe( (res) => {
+      res.forEach((item) => {
+        this.unsignedCAs.push(
+          { label : item.name, value : parseInt(item.id)}
+        );
+      });
+    })
   }
 
   getCards() {
@@ -246,13 +257,46 @@ certificateActions() {
     const acmeAction = {
       icon: 'beenhere',
       name: 'sign_CSR',
-      matTooltip: T('Sign CSR'),
+      matTooltip: 'Sign CSR',
       onClick: (rowinner) => {
-        console.log(rowinner)
+        this.dialogService.dialogForm(this.signCSRFormConf);
+        event.stopPropagation();
       }
     }
     caRowActions.unshift(acmeAction);
     return caRowActions;
+  }
+
+  protected signCSRFieldConf: FieldConfig[] = [
+    {
+      type: 'select',
+      name: 'csr_cert_id',
+      placeholder: 'CSRs',
+      tooltip: 'Select the Certificate Signing Request to sign the Certificate Authority with.',
+      required: true,
+      options: this.unsignedCAs
+    },
+    {
+      type: 'input',
+      name: 'name',
+      placeholder: 'Idenfitier',
+      tooltip: 'Internal identifier of the certificate. Only alphanumeric, "_" and "-" are allowed.'
+    }
+  ];
+
+  public signCSRFormConf: DialogFormConfiguration = {
+    title: 'Sign CSR',
+    fieldConfig: this.signCSRFieldConf,
+    method_ws: 'certificateauthority.ca_sign_csr',
+    saveButtonText: 'Sign',
+    customSubmit: this.doSignCSR,
+    parent: this,
+  }
+
+  doSignCSR(entityDialog) {
+    console.log(entityDialog)
+    parent = entityDialog.parent;
+    console.log('do it')
   }
 
 

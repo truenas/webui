@@ -78,6 +78,7 @@ export class CertificateAuthoritySignComponent {
   }
 
   beforeSubmit(data: any) {
+    console.log(data)
     data.ca_id = parseInt(this.pk);
   }
 }
