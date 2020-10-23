@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 
 import * as _ from 'lodash';
-import { SystemGeneralService, WebSocketService, AppLoaderService, DialogService } from '../../../services/';
+import { SystemGeneralService, WebSocketService, AppLoaderService, DialogService, StorageService } from '../../../services/';
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
 import { ModalService } from '../../../services/modal.service';
 import { T } from '../../../translate-marker';
@@ -36,7 +37,8 @@ export class CertificatesDashComponent implements OnInit {
 
   constructor(private modalService: ModalService, private router: Router, private route: ActivatedRoute,
     private ws: WebSocketService, private dialog: MatDialog, private systemGeneralService: SystemGeneralService,
-    private loader: AppLoaderService, private dialogService: DialogService, private entityFormService: EntityFormService) { }
+    private loader: AppLoaderService, private dialogService: DialogService, private entityFormService: EntityFormService,
+    private storage: StorageService, private http: HttpClient) { }
 
   ngOnInit(): void {
     this.getCards();
@@ -145,7 +147,6 @@ export class CertificatesDashComponent implements OnInit {
   }
 
   certificatesDataSourceHelper(res) {
-    console.log(res)
     res.forEach(certificate => {
       if(_.isObject(certificate.issuer)) {
         certificate.issuer = certificate.issuer.name;
@@ -162,7 +163,7 @@ export class CertificatesDashComponent implements OnInit {
     this.certificateAddComponent = new CertificateAddComponent(
       this.ws,this.dialog,this.systemGeneralService,this.modalService);
     this.certificateEditComponent = new CertificateEditComponent(
-      this.ws,this.dialog,this.loader,this.dialogService,this.modalService);
+      this.ws,this.dialog,this.loader,this.dialogService,this.modalService,this.storage,this.http);
     this.certificateAuthorityAddComponent = new CertificateAuthorityAddComponent(this.ws,this.modalService,
       this.systemGeneralService);
     this.certificateAuthorityEditComponent = new CertificateAuthorityEditComponent(this.ws,this.loader,

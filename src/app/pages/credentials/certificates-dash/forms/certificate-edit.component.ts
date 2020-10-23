@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import * as _ from 'lodash';
-import { DialogService, WebSocketService } from '../../../../services/';
+import { DialogService, WebSocketService, StorageService } from '../../../../services/';
 import { ModalService } from 'app/services/modal.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -139,6 +140,27 @@ export class CertificateEditComponent {
         type: 'paragraph',
         name: 'key_type',
         paraText: `${helptext_system_certificates.add.key_type.placeholder}: `
+      },
+      {
+        name: 'certificate_label',
+        type: 'paragraph',
+        paraText: 'Certificate',
+      },
+      {
+        type: 'button',
+        name: 'certificate_view',
+        customEventActionLabel: 'View',
+        customEventMethod: () => {
+          this.viewCertificate();
+        }
+      },
+      {
+        type: 'button',
+        name: 'certificate_download',
+        customEventActionLabel: 'Download',
+        customEventMethod: () => {
+          this.exportCertificate();
+        }
       }
     ]
   }, {
@@ -169,6 +191,28 @@ export class CertificateEditComponent {
         type: 'paragraph',
         name: 'lifetime',
         paraText: `${helptext_system_certificates.add.lifetime.placeholder}: `
+      },
+      {
+        name: 'private_key_label',
+        type: 'paragraph',
+        paraText: 'Private Key'
+      },
+
+      {
+        type: 'button',
+        name: 'private_key_view',
+        customEventActionLabel: 'View',
+        customEventMethod: () => {
+          this.viewKey();
+        }
+      },
+      {
+        type: 'button',
+        name: 'private_key_download',
+        customEventActionLabel: 'Download',
+        customEventMethod: () => {
+          this.exportKey();
+        }
       }
     ]
     }
@@ -185,7 +229,7 @@ export class CertificateEditComponent {
 
   constructor(protected ws: WebSocketService, protected matDialog: MatDialog,
     protected loader: AppLoaderService, protected dialog: DialogService,
-    private modalService: ModalService) {
+    private modalService: ModalService, private storage: StorageService, private http: HttpClient) {
       this.getRow = this.modalService.getRow$.subscribe(rowId => {
         this.rowNum = rowId;
         this.queryCallOption = [["id", "=", rowId]];
@@ -223,19 +267,52 @@ export class CertificateEditComponent {
     } else {
       this.incomingData.issuer ? issuer.paraText += this.incomingData.issuer : issuer.paraText += '---';
     }
+  }
 
-    // this.certificateField = _.find(this.fieldConfig, { 'name': 'certificate' });
-    // this.privatekeyField = _.find(this.fieldConfig, { 'name': 'privatekey' });
-    // this.CSRField = _.find(this.fieldConfig, { 'name': 'CSR' });
-    // if (this.isCSR) {
-    //   this.CSRField['isHidden'] = false;
-    //   this.certificateField['isHidden'] = true;
-    //   this.privatekeyField['isHidden'] = false;
-    // } else {
-    //   this.CSRField['isHidden'] = true;
-    //   this.certificateField['isHidden'] = false;
-    //   this.privatekeyField['isHidden'] = false;
-    // }
+  exportCertificate() {
+    const fileName = this.incomingData.name + '.crt';
+      this.ws.call('core.download', ['filesystem.get', [this.incomingData.certificate_path], fileName]).subscribe(
+        (res) => {
+          const url = res[1];
+          const mimetype = 'application/x-x509-user-cert';
+          this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
+            this.storage.downloadBlob(file, fileName);
+          }, err => {
+            this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title, 
+              helptext_system_certificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
+          });
+        },
+        (err) => {
+          new EntityUtils().handleWSError(this, err, this.dialog);
+        }
+      );
+  }
+
+  exportKey() {
+    const fileName = this.incomingData.name + '.key';
+      this.ws.call('core.download', ['filesystem.get', [this.incomingData.privatekey_path], fileName]).subscribe(
+        (res) => {
+          const url = res[1];
+          const mimetype = 'text/plain';
+          this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
+            this.storage.downloadBlob(file, fileName);
+          }, err => {
+            this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title, 
+              helptext_system_certificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
+          });
+        },
+        (err) => {
+          new EntityUtils().handleWSError(this, err, this.dialog);
+        }
+      );
+  }
+
+  viewCertificate() {
+    this.dialog.Info('Here it is', this.incomingData.certificate);
+  }
+
+  viewKey() {
+    this.dialog.Info('Here it is', this.incomingData.privatekey);
   }
 
   customSubmit(value) {
