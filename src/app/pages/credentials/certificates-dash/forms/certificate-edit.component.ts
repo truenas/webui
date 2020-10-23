@@ -11,7 +11,6 @@ import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
-import { helptext } from 'app/helptext/system/reporting';
 
 @Component({
   selector: 'app-certificate-edit',
@@ -270,8 +269,9 @@ export class CertificateEditComponent {
   }
 
   exportCertificate() {
-    const fileName = this.incomingData.name + '.crt';
-      this.ws.call('core.download', ['filesystem.get', [this.incomingData.certificate_path], fileName]).subscribe(
+    const path = this.incomingData.CSR ? this.incomingData.csr_path : this.incomingData.certificate_path;
+    const fileName = this.incomingData.name + '.crt'; // is this right for a csr?
+      this.ws.call('core.download', ['filesystem.get', [path], fileName]).subscribe(
         (res) => {
           const url = res[1];
           const mimetype = 'application/x-x509-user-cert';
@@ -308,7 +308,11 @@ export class CertificateEditComponent {
   }
 
   viewCertificate() {
-    this.dialog.Info('Here it is', this.incomingData.certificate);
+    if (this.incomingData.CSR) {
+    this.dialog.Info('Here it is', this.incomingData.CSR);
+    } else {
+      this.dialog.Info('Here it is', this.incomingData.certificate);
+    }
   }
 
   viewKey() {
