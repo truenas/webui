@@ -79,10 +79,10 @@ msgid " but datastore "
 msgstr " mais le magasin de données "
 
 msgid " day, "
-msgstr ""
+msgstr " jour, "
 
 msgid " days, "
-msgstr ""
+msgstr " jours, "
 
 msgid " disks"
 msgstr " disques"
