@@ -47,6 +47,30 @@ export class SshKeypairsFormComponent {
                     tooltip: helptext.name_tooltip,
                     required: true,
                     validation: [Validators.required]
+                }
+            ]
+        },
+        {
+            name: helptext.fieldset_basic,
+            label: false,
+            class: 'basic',
+            width: '100%',
+            config: [
+                {
+                    type: 'button',
+                    name: 'remote_host_key_button',
+                    customEventActionLabel: helptext.generate_key_button,
+                    value: '',
+                    customEventMethod: () => {
+                        this.generateKeypair();
+                    },
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'setup_method',
+                            value: 'manual',
+                        }]
+                    }],
                 }, {
                     type: 'textarea',
                     name: 'private_key',
@@ -64,27 +88,6 @@ export class SshKeypairsFormComponent {
     ]
 
     protected compactCustomActions = [
-        {
-            id: 'generate_key',
-            name: helptext.generate_key_button,
-            function: () => {
-                this.loader.open();
-                this.clearPreviousErrors();
-                let elements = document.getElementsByTagName('mat-error');
-                while (elements[0]) elements[0].parentNode.removeChild(elements[0]);
-                this.ws.call('keychaincredential.generate_ssh_key_pair').subscribe(
-                    (res) => {
-                        this.loader.close();
-                        this.entityForm.formGroup.controls['private_key'].setValue(res.private_key);
-                        this.entityForm.formGroup.controls['public_key'].setValue(res.public_key);
-                    },
-                    (err) => {
-                        this.loader.close();
-                        new EntityUtils().handleWSError(this, err, this.dialogService);
-                    }
-                )
-            }
-        },
         {
             id: 'download_private',
             name: helptext.download_private,
@@ -109,12 +112,40 @@ export class SshKeypairsFormComponent {
             })
         }
 
+    isCustActionDisabled(actionId: string) {
+        if (this.entityForm.formGroup.controls['name'].value) {
+            if (actionId === 'download_private') {
+                return !this.entityForm.formGroup.controls['private_key'].value;
+            } else if (actionId === 'download_public') {
+                return !this.entityForm.formGroup.controls['public_key'].value;
+            }
+        }
+        return true;
+    }
 
     preInit() {
         if (this.rowNum) {
             this.queryCallOption = [["id", "=", this.rowNum]];
             this.rowNum = null;
         }
+    }
+
+    generateKeypair() {
+        this.loader.open();
+        this.clearPreviousErrors();
+        let elements = document.getElementsByTagName('mat-error');
+        while (elements[0]) elements[0].parentNode.removeChild(elements[0]);
+        this.ws.call('keychaincredential.generate_ssh_key_pair').subscribe(
+            (res) => {
+                this.loader.close();
+                this.entityForm.formGroup.controls['private_key'].setValue(res.private_key);
+                this.entityForm.formGroup.controls['public_key'].setValue(res.public_key);
+            },
+            (err) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this, err, this.dialogService);
+            }
+        )
     }
 
     downloadKey(key_type) {
@@ -151,6 +182,9 @@ export class SshKeypairsFormComponent {
     }
 
     beforeSubmit(data) {
+        if (data.remote_host_key_button || data.remote_host_key_button === '') {
+            delete data.remote_host_key_button;
+        }
         delete data['key_instructions'];
         if (this.entityForm.isNew) {
             data['type'] = 'SSH_KEY_PAIR';

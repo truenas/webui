@@ -7,6 +7,7 @@ import { SshConnectionsFormComponent } from './forms/ssh-connections-form.compon
 import { SshKeypairsFormComponent } from './forms/ssh-keypairs-form.component';
 import { CloudCredentialsFormComponent } from './forms/cloud-credentials-form.component';
 import { Subscription } from 'rxjs';
+import { T } from '../../../translate-marker';
 
 @Component({
   selector: 'app-backup-credentials',
@@ -49,8 +50,8 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
           queryCall: 'cloudsync.credentials.query',
           deleteCall: 'cloudsync.credentials.delete',
           columns: [
-            { name: 'Name', prop: 'name' },
-            { name: 'Provider', prop: 'provider'}
+            { name: T('Name'), prop: 'name' },
+            { name: T('Provider'), prop: 'provider'}
           ],
           hideHeader: false,
           parent: this,
@@ -69,9 +70,9 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
           deleteCall: 'keychaincredential.delete',
           dataSourceHelper: this.sshConnectionsDataSourceHelper,
           columns: [
-            { name: 'Name', prop: 'name' },
+            { name: T('Name'), prop: 'name' },
           ],
-          hideHeader: false,
+          hideHeader: true,
           parent: this,
           add: function(row) {
             this.parent.modalService.open('slide-in-form', this.parent.sshConnections);
@@ -86,11 +87,12 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
           title: 'SSH Keypairs',
           queryCall: 'keychaincredential.query',
           deleteCall: 'keychaincredential.delete',
+          getActions: this.sshKeyPairActions.bind(this),
           dataSourceHelper: this.sshKeyPairsDataSourceHelper,
           columns: [
-            { name: 'Name', prop: 'name' },
+            { name: T('Name'), prop: 'name' },
           ],
-          hideHeader: false,
+          hideHeader: true,
           parent: this,
           add: function(row) {
             this.parent.modalService.open('slide-in-form', this.parent.sshKeypairs);
@@ -109,6 +111,23 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
 
   sshKeyPairsDataSourceHelper(res) {
     return res.filter(item => item.type === 'SSH_KEY_PAIR');
+  }
+
+  sshKeyPairActions() {
+    return [{
+      icon: 'save_alt',
+      name: "download",
+      onClick: (rowinner) => {
+        const name = rowinner.name;
+        for (let key_type in rowinner.attributes) {
+          const key = rowinner.attributes[key_type];
+          const filename = name + '_' + key_type + '_rsa';
+          const blob = new Blob([key], {type: 'text/plain'});
+          this.storage.downloadBlob(blob, filename);
+        }
+        event.stopPropagation();
+      },
+    }]
   }
 
   refreshForms() {

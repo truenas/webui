@@ -25,6 +25,8 @@ export class SupportFormUnlicensedComponent {
   public saveSubmitText = helptext.submitBtn;
   public isEntity = true;
   public title = helptext.ticket;
+  protected isOneColumnForm = true;
+
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
@@ -84,12 +86,6 @@ export class SupportFormUnlicensedComponent {
           disabled: true,
           isLoading: false
         },
-      ]
-    },
-    {
-    name: 'column2',
-    label: false,
-    config: [
         {
           type : 'checkbox',
           name : 'attach_debug',

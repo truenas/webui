@@ -970,6 +970,9 @@ msgstr ""
 msgid "AWS Region"
 msgstr "AWS регион"
 
+msgid "Abort"
+msgstr ""
+
 msgid "About"
 msgstr "О продукте"
 
@@ -1128,12 +1131,6 @@ msgstr "Изменение Active Directory IDMAP!"
 msgid "Active Directory must be enabled before adding new domains."
 msgstr "Active Directory должен быть включен перед добавлением новых доменов."
 
-msgid "Active Media Subtype"
-msgstr "Подтип активной среды"
-
-msgid "Active Media Type"
-msgstr "Тип активной среды"
-
 msgid "Adapter Type"
 msgstr "Тип адаптера"
 
@@ -1170,11 +1167,17 @@ msgstr "Добавить группу"
 msgid "Add Idmap"
 msgstr "Добавить Idmap"
 
+msgid "Add Interface"
+msgstr ""
+
 msgid "Add Mountpoint"
 msgstr "Добавить точку монтирования"
 
 msgid "Add Recovery Key"
 msgstr "Добавить ключ восстановления"
+
+msgid "Add Static Route"
+msgstr ""
 
 msgid "Add Sysctl"
 msgstr "Добавить Sysctl"
@@ -1562,6 +1565,9 @@ msgstr "Выделить место для нового zvol."
 msgid "Allow"
 msgstr "Разрешить"
 
+msgid "Allow All"
+msgstr ""
+
 msgid "Allow All Initiators"
 msgstr "Разрешить все инициаторы"
 
@@ -1606,6 +1612,9 @@ msgstr "Разрешить аутентификацию по паролю"
 
 msgid "Allow Root Login"
 msgstr "Разрешить вход root"
+
+msgid "Allow Specific"
+msgstr ""
 
 msgid "Allow TCP Port Forwarding"
 msgstr "Разрешить переадресацию портов TCP"
@@ -1960,6 +1969,9 @@ msgstr "Другая тема использует этот ярлык. Пожа
 
 msgid "Any notes about initiators."
 msgstr "Любые заметки об инициаторах."
+
+msgid "Any system service can communicate externally."
+msgstr ""
 
 msgid "Appdefaults Auxiliary Parameters"
 msgstr "Вспомогательный параметры Appdefaults"
@@ -2347,9 +2359,6 @@ msgid "Background 1"
 msgstr ""
 
 msgid "Background 2"
-msgstr ""
-
-msgid "Backup Credentials"
 msgstr ""
 
 msgid "Bandwidth"
@@ -4407,9 +4416,6 @@ msgstr "Маршрутизатор по умолчанию для IPv4"
 msgid "Default Router For IPv6"
 msgstr "Маршрутизатор по умолчанию для IPv6"
 
-msgid "Default Routes"
-msgstr "Маршруты по умолчанию"
-
 msgid "Default Umask"
 msgstr "Umask по умолчанию"
 
@@ -4468,6 +4474,11 @@ msgstr ""
 "установлен, чтобы эта опция работала."
 
 msgid ""
+"Define the maximum number of chunks for a multipart upload. This can  be "
+"useful if a service does not support the 10,000 chunk AWS S3 specification."
+msgstr ""
+
+msgid ""
 "Define the number of UIDS/GIDS available per domain  range. The minimum is "
 "<i>2000</i> and the recommended default is <i>100000</i>."
 msgstr ""
@@ -4518,6 +4529,11 @@ msgstr "Определите сервер, на котором выполняю�
 
 msgid "Define the size of the raw file in GiB."
 msgstr "Определите размер необработанного файла в ГиБ."
+
+msgid ""
+"Define the system services that are allowed to communicate externally. All "
+"other external traffic is restricted."
+msgstr ""
 
 msgid "Define the target as *iSCSI*, *Fibre Channel*, or *Both*."
 msgstr "Определите цель как *iSCSI*, *Fibre Channel* или *Оба*."
@@ -4631,6 +4647,9 @@ msgid "Deleting the <b>"
 msgstr "Удаление <b>"
 
 msgid "Deny"
+msgstr ""
+
+msgid "Deny All"
 msgstr ""
 
 msgid "Deny Hosts"
@@ -5180,6 +5199,9 @@ msgstr "Редактировать группу"
 msgid "Edit Idmap"
 msgstr "Редактировать Idmap"
 
+msgid "Edit Interface"
+msgstr ""
+
 msgid "Edit Options"
 msgstr "Редактировать параметры"
 
@@ -5188,6 +5210,9 @@ msgstr "Изменить разрешения"
 
 msgid "Edit Share ACL"
 msgstr "Редактировать ACL ресурса"
+
+msgid "Edit Static Route"
+msgstr ""
 
 msgid "Edit User"
 msgstr "Редактировать пользователя"
@@ -5631,6 +5656,9 @@ msgstr "Протокол шифрования"
 
 msgid "Encryption Salt"
 msgstr "Соль шифрования"
+
+msgid "Encryption Standard"
+msgstr ""
 
 msgid "Encryption Type"
 msgstr "Тип шифрования"
@@ -6597,8 +6625,14 @@ msgstr "Ошибка сохранения ZVOL."
 msgid "Error starting service "
 msgstr "Ошибка запуска службы"
 
+msgid "Error starting service OpenVPN "
+msgstr ""
+
 msgid "Error stopping service "
 msgstr "Ошибка остановки службы"
+
+msgid "Error stopping service OpenVPN "
+msgstr ""
 
 msgid "Error submitting file"
 msgstr "Ошибка при отправке файла"
@@ -7741,9 +7775,6 @@ msgstr "IPv6"
 msgid "IPv6 Address"
 msgstr "Адрес IPv6"
 
-msgid "IPv6 Auto Configure"
-msgstr "Автоконфигурация IPv6"
-
 msgid "IPv6 Default Gateway"
 msgstr "Шлюз IPv6 по умолчанию"
 
@@ -8393,12 +8424,6 @@ msgstr ""
 msgid "KiB"
 msgstr "КиБ"
 
-msgid "LAGG Ports"
-msgstr "Порты LAGG"
-
-msgid "LAGG Protocol"
-msgstr "Протокол LAGG"
-
 msgid "LAGG Settings"
 msgstr "Настройки LAGG"
 
@@ -8592,9 +8617,6 @@ msgstr "Ограничьте скорость репликации этим ко
 
 msgid "Link"
 msgstr "Линк"
-
-msgid "Link State"
-msgstr "Состояние линка"
 
 msgid "Linked Service"
 msgstr "Связанная служба"
@@ -8891,6 +8913,9 @@ msgid ""
 "<i>1500</i>."
 msgstr ""
 
+msgid "Maximum Upload Parts"
+msgstr ""
+
 msgid ""
 "Maximum amount of CPU time a jail process may consume. The kernel "
 "terminates processes exceeding the specified limit."
@@ -9132,6 +9157,9 @@ msgstr "Зеркало"
 msgid "Misc"
 msgstr ""
 
+msgid "Miscellaneous"
+msgstr ""
+
 msgid "Mixing disks of different sizes in a vdev is not allowed."
 msgstr ""
 
@@ -9232,8 +9260,9 @@ msgid "Multipaths"
 msgstr ""
 
 msgid ""
-"Must match Windows workgroup  name. This setting is ignored when the  "
-"Active Directory or LDAP services are running."
+"Must match Windows workgroup name.  When this is unconfigured and Active "
+"Directory or LDAP are active,  TrueNAS will detect and set the correct "
+"workgroup from these services."
 msgstr ""
 
 msgid ""
@@ -9392,9 +9421,6 @@ msgstr ""
 msgid "Name or Naming Schema must be provided."
 msgstr "Необходимо указать имя или схему именования."
 
-msgid "Name servers not configured"
-msgstr ""
-
 msgid "Name that was created with the SMB share."
 msgstr ""
 
@@ -9406,9 +9432,6 @@ msgstr "Сервер имен 2"
 
 msgid "Nameserver 3"
 msgstr "Сервер имен 3"
-
-msgid "Nameservers"
-msgstr "Сервера имен"
 
 msgid "Naming Schema"
 msgstr "Схема именования"
@@ -9485,9 +9508,6 @@ msgstr "Свойства сети"
 
 msgid "Network Reports"
 msgstr "Отчеты сети"
-
-msgid "Network Summary"
-msgstr "Сводка сети"
 
 msgid "Network Timeout Before Initiating Failover"
 msgstr "Тайм-аут сети до начала аварийного переключения"
@@ -10012,6 +10032,9 @@ msgstr ""
 msgid "Open VPN Server"
 msgstr ""
 
+msgid "OpenVPN "
+msgstr ""
+
 msgid "OpenVPN Client Settings"
 msgstr ""
 
@@ -10122,6 +10145,9 @@ msgstr ""
 
 msgid "Out"
 msgstr "Выход"
+
+msgid "Outbound Network"
+msgstr ""
 
 msgid "Outgoing Mail Server"
 msgstr "Сервер исходящей почты"
@@ -10978,6 +11004,9 @@ msgstr ""
 msgid "Remote"
 msgstr ""
 
+msgid "Remote Controller"
+msgstr ""
+
 msgid "Remote Encryption"
 msgstr "Удаленное шифрование"
 
@@ -11356,7 +11385,7 @@ msgstr ""
 "Выявить <i>tun</i> устройства для jail с отдельным набором правил devfs. "
 "Разрешить создание <i>tun</i> устройств в jail."
 
-msgid "Revert CHANGES"
+msgid "Revert Changes"
 msgstr ""
 
 msgid "Revert Network Interface Changes"
@@ -11479,9 +11508,6 @@ msgid "SAVE"
 msgstr ""
 
 msgid "SAVE AND FAILOVER"
-msgstr ""
-
-msgid "SAVE CHANGES"
 msgstr ""
 
 msgid "SAVE CONFIGURATION"
@@ -12321,6 +12347,9 @@ msgstr ""
 "Выберите оболочку, которая будет использоваться для локального входа и "
 "входа по SSH."
 
+msgid "Select the system services that will be allowed to communicate externally."
+msgstr ""
+
 msgid ""
 "Select the type of LDAP server to use. This can be the        LDAP server "
 "provided by the Active Directory server or a stand-alone LDAP server."
@@ -12487,6 +12516,9 @@ msgstr "Роль сервера"
 
 msgid "Server Side Encryption"
 msgstr "Шифрование на стороне сервера"
+
+msgid "Service"
+msgstr ""
 
 msgid "Service Account"
 msgstr "Учетная запись сервиса"
@@ -14165,9 +14197,6 @@ msgstr "TCP-порт, используемый для доступа к цели
 msgid "TDB"
 msgstr ""
 
-msgid "TEST CHANGES"
-msgstr ""
-
 msgid "TFTP"
 msgstr ""
 
@@ -15172,6 +15201,9 @@ msgstr ""
 msgid "This operation might take a long time. Proceed?"
 msgstr "Эта операция может занять много времени. Продолжить?"
 
+msgid "This system cannot communicate externally."
+msgstr ""
+
 msgid "This system will restart when the update completes."
 msgstr "Эта система перезапустится после завершения обновления."
 
@@ -15536,6 +15568,9 @@ msgid "Unkeep"
 msgstr "Отпустить"
 
 msgid "Unknown"
+msgstr ""
+
+msgid "Unknown CPU"
 msgstr ""
 
 msgid "Unlock"
@@ -16110,14 +16145,8 @@ msgstr ""
 msgid "VLAN ID"
 msgstr "VLAN ID"
 
-msgid "VLAN Parent Interface"
-msgstr "Родительский интерфейс VLAN"
-
 msgid "VLAN Settings"
 msgstr ""
-
-msgid "VLAN Tag"
-msgstr "Тег VLAN"
 
 msgid "VLANs"
 msgstr "VLANы"
@@ -16815,9 +16844,6 @@ msgstr ""
 
 msgid "expires in"
 msgstr "истекает через"
-
-msgid "gathering info..."
-msgstr "сбор информации..."
 
 msgid "group"
 msgstr "группа"

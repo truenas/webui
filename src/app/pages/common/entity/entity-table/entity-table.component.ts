@@ -1,4 +1,3 @@
-
 import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, NavigationStart } from '@angular/router';
@@ -18,6 +17,7 @@ import { ModalService } from '../../../../services/modal.service';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../utils';
 import { EntityTableRowDetailsComponent } from './entity-table-row-details/entity-table-row-details.component';
+import { EntityTableAddActionsComponent } from './entity-table-add-actions.component';
 import { EntityJobComponent } from '../entity-job/entity-job.component';
 
 export interface InputTableConf {
@@ -69,6 +69,7 @@ export interface InputTableConf {
   afterDelete?();
   addComponent?();
   editComponent?();
+  actionsConfig?;
 }
 
 export interface EntityTableAction {
@@ -101,7 +102,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() title = '';
   @Input('conf') conf: InputTableConf;
 
-  @ViewChild('filter', { static: false}) filter: ElementRef;
+  public filter: ElementRef;
+  //@ViewChild('filter', { static: false}) filter: ElementRef;
   @ViewChild('defaultMultiActions', { static: false}) defaultMultiActions: ElementRef;
   @ViewChild('entityTable', { static: false}) table: any;
   public tableMouseEvent: MouseEvent;
@@ -158,6 +160,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this._multiActionsIconsOnly = value;
   }
 
+  // Global Actions in Page Title 
+  protected actionsConfig: any;
+
   protected loaderOpen = false;
   public selected = [];
   public removeFromSelectedTotal = 0;
@@ -185,6 +190,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     protected erdService: ErdService, protected translate: TranslateService,
     public storageService: StorageService, protected job: JobService, protected prefService: PreferencesService,
     protected matDialog: MatDialog, private modalService: ModalService) {
+
       this.core.register({observerClass:this, eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
         this.multiActionsIconsOnly = evt.data.preferIconsOnly;
       });
@@ -195,6 +201,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           this.cleanup();
         }
       });
+
   }
 
   ngOnDestroy(){
@@ -212,6 +219,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.actionsConfig = { actionType: EntityTableAddActionsComponent, actionConfig: this };
     this.cardHeaderReady = this.conf.cardHeaderComponent ? false : true;
     this.setTableHeight();
     this.hasActions = this.conf.noActions === true ? false : true;
@@ -321,6 +329,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
+
+    // Setup Actions in Page Title Component
+    this.core.emit({ name:"GlobalActions", data: this.actionsConfig, sender: this});
+
     if (this.filter) {
     observableFromEvent(this.filter.nativeElement, 'keyup').pipe(
       debounceTime(150),
@@ -365,7 +377,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.paginationPageIndex  = 0;
         this.setPaginationInfo();
       });
-    };
+    }
   }
 
   dropLastMaxWidth() {
@@ -495,7 +507,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   handleData(res): any {
-
     if( typeof(res) === "undefined" || typeof(res.data) === "undefined" ) {
       res = {
         data: res
@@ -532,12 +543,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.conf.addRows(this);
     }
     if (!this.showDefaults) {
-      this.currentRows = this.filter.nativeElement.value === '' ? this.rows : this.currentRows;
+      this.currentRows = this.filter && this.filter.nativeElement.value === '' ? this.rows : this.currentRows;
       this.paginationPageIndex  = 0;
       this.setPaginationInfo();
       this.showDefaults = true;
     }
-    if ((this.expandedRows == 0 || !this.asyncView || this.excuteDeletion || this.needRefreshTable) && this.filter.nativeElement.value === '') {
+    if ((this.expandedRows == 0 || !this.asyncView || this.excuteDeletion || this.needRefreshTable) && this.filter && this.filter.nativeElement.value === '') {
       this.excuteDeletion = false;
       this.needRefreshTable = false;
       if (this.needTableResize || (!this.needTableResize && this.expandedRows > 0)) {

@@ -1,4 +1,4 @@
-import {Location} from '@angular/common';
+import { Location } from '@angular/common';
 import {
   Component,
   ContentChildren,
@@ -13,7 +13,7 @@ import {
   OnChanges,
   AfterViewInit
 } from '@angular/core';
-//import {FormBuilder, FormControl, FormGroup, FormArray, Validators} from '@angular/forms';
+
 import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
 

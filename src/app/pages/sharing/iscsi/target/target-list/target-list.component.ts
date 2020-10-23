@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 import { IscsiService } from '../../../../../services/iscsi.service';
 import { T } from 'app/translate-marker';
@@ -11,7 +11,9 @@ import { EntityUtils } from '../../../../common/entity/utils';
   `,
   providers: [IscsiService]
 })
-export class TargetListComponent {
+export class TargetListComponent implements OnInit{
+  @Input('fcEnabled') fcEnabled: boolean;
+
   public tableTitle = "Targets";
   protected queryCall = 'iscsi.target.query';
   protected wsDelete = 'iscsi.target.delete';
@@ -41,6 +43,15 @@ export class TargetListComponent {
 
   protected entityList: any;
   constructor(private iscsiService: IscsiService) {}
+
+  ngOnInit() {
+    if (this.fcEnabled) {
+      this.columns.push({
+        name : T('Mode'),
+        prop : 'mode',
+      });
+    }
+  }
 
   afterInit(entityList: any) {
     this.entityList = entityList;

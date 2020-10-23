@@ -161,7 +161,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   h1,h2,h3,h4,h5,h6{
-    font-weight:500;
+    font-weight:600;
   }
 
   h4{
@@ -439,7 +439,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   // Treelists in storage/volumes
   .mat-expansion-panel-header{
-    background-color:rgba(0,0,0,0.1);
+    //background-color:rgba(0,0,0,0.1);
   }
   .mat-expansion-panel-body{
     position:relative;
@@ -858,6 +858,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     background: var(--btn-default-bg);
   }
 
+  .mat-button[color="default"]{
+    @include variable(color, --fg2, $fg2, !important);
+  }
+
  .mat-button.mat-basic, .mat-button.mat-primary {
   }
 
@@ -1019,12 +1023,12 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   .ui-treetable tr:nth-child(even){
-    background-color:rgba(123,123,123,0.2);
+    //background-color:rgba(23,23,23,0.1);
   }
 
   .ui-treetable tr:hover {
-    @include variable(background, --primary, $primary, !important);
-    @include variable(color, --primary-txt, $primary-txt);
+    //@include variable(background, --primary, $primary, !important);
+    //@include variable(color, --primary-txt, $primary-txt);
   }
 
   .ui-treetable-thead {
@@ -1036,6 +1040,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     white-space: nowrap;
     text-overflow: ellipsis;
     max-width: 300px;
+    vertical-align: middle;
   }
 
   app-volumes-list td[id^="tbody__comments_"] {

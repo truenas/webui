@@ -19,31 +19,18 @@ export class ProactiveComponent {
   public contacts: any;
   public controls: any;
   public save_button_enabled: boolean;
-  protected columnsOnForm = 2;
   public title = helptext.proactive.title;
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
   {
-    name: 'title_row',
-    label: false,
-    width: '100%',
-    config:[
-      {
-        type: 'paragraph',
-        name: 'proactive_instructions',
-        paraText: helptext.proactive.instructions
-      },
-    ]
-  },
-  {
     name: 'col1',
     label: false,
-    width: '50%',
     config:[
       {
         type: 'paragraph',
         name: 'proactive_title',
-        paraText: helptext.proactive.primary_contact
+        paraText: helptext.proactive.primary_contact,
+        tooltip: helptext.proactive.instructions
       },
       {
         type: 'input',
@@ -106,7 +93,6 @@ export class ProactiveComponent {
   {
     name: 'col2',
     label: false,
-    width: '50%',
     config:[
       {
         type: 'paragraph',

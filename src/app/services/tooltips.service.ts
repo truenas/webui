@@ -2,7 +2,7 @@
 
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable, Subject, Subscription} from 'rxjs/Rx';
+import {Observable, Subject, Subscription} from 'rxjs';
 
 import {Tooltip} from '../pages/common/tooltip';
 import {TOOLTIPS} from '../pages/common/tooltips';

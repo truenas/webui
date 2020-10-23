@@ -78,8 +78,8 @@
     <div class="vdev-wrapper">
         <div class="vdev-type">
         <div *ngIf="(group === 'data' || group === 'log' || group === 'special' || group === 'dedup')" class="datainfo form-element">
-          <mat-form-field>
-            <mat-select id="vdev__option-menu" *ngIf="(group === 'data' || group === 'log' || group === 'special' || group === 'dedup') && !vdev_type_disabled" [(ngModel)]="type" (ngModelChange)="onTypeChange($event)" class="form-control">
+          <mat-form-field *ngIf="(group === 'data' || group === 'log' || group === 'special' || group === 'dedup') && !vdev_type_disabled">
+            <mat-select matSelect id="vdev__option-menu" [(ngModel)]="type" (ngModelChange)="onTypeChange($event)" class="form-control">
                 <mat-option value="stripe">{{"Stripe" | translate}}</mat-option>
                 <mat-option value="mirror" *ngIf="getDisks().length >= 2 && (group === 'data' || group === 'log' || group === 'special' || group === 'dedup')">{{"Mirror" | translate}}</mat-option>
                 <mat-option value="raidz" *ngIf="getDisks().length >= 3 && group === 'data'">{{"Raid-z" | translate}}</mat-option>

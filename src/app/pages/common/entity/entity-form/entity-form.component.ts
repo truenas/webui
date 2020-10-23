@@ -73,6 +73,7 @@ export interface Formconfiguration {
   blurEvent?;
   customEditCall?;
   save_button_enabled?;
+  hideSaveBtn?:boolean;
   form_message?: {
     type: string; // info || warning
     content: string;
@@ -129,6 +130,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   public showPassword = false;
   public successMessage = T('Settings saved.')
   private getAdvancedConfig: Subscription;
+
+  protected loaderOpen = false;
+  protected keepLoaderOpen = false;
 
   get controls() {
     return this.fieldConfig.filter(({type}) => type !== 'button');
@@ -328,6 +332,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
       if (!this.isNew && this.conf.queryCall !== 'none' && this.getFunction) {
         this.loader.open();
+        this.loaderOpen = true;
         this.getFunction.subscribe((res) => {
           if (res.data){
             this.data = res.data;
@@ -390,7 +395,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
           if (this.conf.initial) {
             this.conf.initial.bind(this.conf)(this);
           }
-          this.loader.close()
+          if (!this.keepLoaderOpen) {
+            this.loader.close();
+            this.loaderOpen = false;
+          }
         });
       }
     });
@@ -516,10 +524,12 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.busy = this.conf.customSubmit(value);
     } else {
       this.loader.open();
+      this.loaderOpen = true;
       this.busy = this.submitFunction(value)
                     .subscribe(
                         (res) => {
                           this.loader.close();
+                          this.loaderOpen = false;
                           if (this.conf.afterSave) {
                             this.conf.afterSave(this);
                           } else { 
@@ -546,6 +556,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                         },
                         (res) => {
                           this.loader.close();
+                          this.loaderOpen = false;
                           if (this.conf.errorReport){
                             this.conf.errorReport(res);
                           } else if (res.hasOwnProperty("reason") && (res.hasOwnProperty("trace"))) {

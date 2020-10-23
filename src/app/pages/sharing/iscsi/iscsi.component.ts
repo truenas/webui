@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 import * as _ from 'lodash';
 import { WebSocketService, IscsiService } from 'app/services';
+import { T } from "app/translate-marker";
 
 @Component({
   selector: 'iscsi',
@@ -15,31 +16,31 @@ export class ISCSI implements OnInit {
 
   public activedTab: string = 'configuration';
   public navLinks: Array < any > = [{
-      label: 'Target Global Configuration',
+      label: T('Target Global Configuration'),
       path: '/sharing/iscsi/configuration',
     },
     {
-      label: 'Portals',
+      label: T('Portals'),
       path: '/sharing/iscsi/portals',
     },
     {
-      label: 'Initiators',
+      label: T('Initiators Groups'),
       path: '/sharing/iscsi/initiator',
     },
     {
-      label: 'Authorized Access',
+      label: T('Authorized Access'),
       path: '/sharing/iscsi/auth',
     },
     {
-      label: 'Targets',
+      label: T('Targets'),
       path: '/sharing/iscsi/target',
     },
     {
-      label: 'Extents',
+      label: T('Extents'),
       path: '/sharing/iscsi/extent',
     },
     {
-      label: 'Associated Targets',
+      label: T('Associated Targets'),
       path: '/sharing/iscsi/associatedtarget',
     }
   ];
@@ -53,7 +54,7 @@ export class ISCSI implements OnInit {
         if (res.license && res.license.features.indexOf('FIBRECHANNEL') > -1) {
           this.fcEnabled = true;
           this.navLinks.push( {
-            label: 'Fibre Channel Ports',
+            label: T('Fibre Channel Ports'),
             path: '/sharing/iscsi/fibrechannel',
           });
         }

@@ -842,6 +842,9 @@ msgstr "自动识别"
 msgid "AWS Region"
 msgstr "AWS地区"
 
+msgid "Abort"
+msgstr ""
+
 msgid "About"
 msgstr "关于"
 
@@ -982,12 +985,6 @@ msgstr "活动目录IDMAP发生变化！"
 msgid "Active Directory must be enabled before adding new domains."
 msgstr "在添加新域之前，必须先启用活动目录。"
 
-msgid "Active Media Subtype"
-msgstr "活动介质子类型"
-
-msgid "Active Media Type"
-msgstr "活动介质类型"
-
 msgid "Adapter Type"
 msgstr "适配器类型"
 
@@ -1024,11 +1021,17 @@ msgstr "添加组"
 msgid "Add Idmap"
 msgstr "添加Idmap"
 
+msgid "Add Interface"
+msgstr ""
+
 msgid "Add Mountpoint"
 msgstr "添加挂载点"
 
 msgid "Add Recovery Key"
 msgstr "添加恢复密钥"
+
+msgid "Add Static Route"
+msgstr ""
 
 msgid "Add Sysctl"
 msgstr ""
@@ -1372,6 +1375,9 @@ msgstr ""
 msgid "Allow"
 msgstr "允许"
 
+msgid "Allow All"
+msgstr ""
+
 msgid "Allow All Initiators"
 msgstr "允许所有启动器"
 
@@ -1416,6 +1422,9 @@ msgstr "允许密码验证"
 
 msgid "Allow Root Login"
 msgstr "允许Root登录"
+
+msgid "Allow Specific"
+msgstr ""
 
 msgid "Allow TCP Port Forwarding"
 msgstr "允许TCP端口转发"
@@ -1719,6 +1728,9 @@ msgstr "另一个主题在使用此标签。请输入新标签。"
 
 msgid "Any notes about initiators."
 msgstr "关于启动器的任何注释。"
+
+msgid "Any system service can communicate externally."
+msgstr ""
 
 msgid "Appdefaults Auxiliary Parameters"
 msgstr "应用默认值辅助参数"
@@ -2074,9 +2086,6 @@ msgstr "背景1"
 
 msgid "Background 2"
 msgstr "背景2"
-
-msgid "Backup Credentials"
-msgstr ""
 
 msgid "Bandwidth"
 msgstr "带宽"
@@ -3876,9 +3885,6 @@ msgstr "IPv4默认路由"
 msgid "Default Router For IPv6"
 msgstr "IPv6默认路由"
 
-msgid "Default Routes"
-msgstr "默认路由"
-
 msgid "Default Umask"
 msgstr "默认Umask"
 
@@ -3925,6 +3931,11 @@ msgid ""
 msgstr ""
 "定义要进入监狱并完全移交给监狱的数据集。输入一个ZFS文件系统名称，<i>不包含</i>池名称。<b>jail_zfs</b> "
 "必须设置此选项才能起作用。"
+
+msgid ""
+"Define the maximum number of chunks for a multipart upload. This can  be "
+"useful if a service does not support the 10,000 chunk AWS S3 specification."
+msgstr ""
 
 msgid ""
 "Define the number of UIDS/GIDS available per domain  range. The minimum is "
@@ -3985,6 +3996,11 @@ msgstr "定义执行所有密码更改的服务器。"
 
 msgid "Define the size of the raw file in GiB."
 msgstr "定义raw文件大小，以GiB为单位。"
+
+msgid ""
+"Define the system services that are allowed to communicate externally. All "
+"other external traffic is restricted."
+msgstr ""
 
 msgid "Define the target as *iSCSI*, *Fibre Channel*, or *Both*."
 msgstr "将目标定义为*iSCSI*，*光纤通道*或*两者*。"
@@ -4095,6 +4111,9 @@ msgstr "正在删除<b>"
 
 msgid "Deny"
 msgstr "拒绝"
+
+msgid "Deny All"
+msgstr ""
 
 msgid "Deny Hosts"
 msgstr "拒绝主机"
@@ -4625,6 +4644,9 @@ msgstr "编辑组"
 msgid "Edit Idmap"
 msgstr "编辑Idmap"
 
+msgid "Edit Interface"
+msgstr ""
+
 msgid "Edit Options"
 msgstr "编辑选项"
 
@@ -4633,6 +4655,9 @@ msgstr "编辑权限"
 
 msgid "Edit Share ACL"
 msgstr "编辑共享ACL"
+
+msgid "Edit Static Route"
+msgstr ""
 
 msgid "Edit User"
 msgstr "编辑用户"
@@ -5047,6 +5072,9 @@ msgstr "加密协议"
 
 msgid "Encryption Salt"
 msgstr "加密盐"
+
+msgid "Encryption Standard"
+msgstr ""
 
 msgid "Encryption Type"
 msgstr "加密方式"
@@ -5922,8 +5950,14 @@ msgstr "保存ZVOL时出错。"
 msgid "Error starting service "
 msgstr "启动服务时出错 "
 
+msgid "Error starting service OpenVPN "
+msgstr ""
+
 msgid "Error stopping service "
 msgstr "停止服务时出错 "
+
+msgid "Error stopping service OpenVPN "
+msgstr ""
 
 msgid "Error submitting file"
 msgstr "提交文件时出错"
@@ -6976,9 +7010,6 @@ msgstr "IPv6"
 msgid "IPv6 Address"
 msgstr "IPv6 地址"
 
-msgid "IPv6 Auto Configure"
-msgstr "自动配置IPv6"
-
 msgid "IPv6 Default Gateway"
 msgstr "IPv6默认网关"
 
@@ -7565,12 +7596,6 @@ msgstr ""
 msgid "KiB"
 msgstr "KiB"
 
-msgid "LAGG Ports"
-msgstr "链路聚合端口"
-
-msgid "LAGG Protocol"
-msgstr "链路聚合协议"
-
 msgid "LAGG Settings"
 msgstr "链路聚合设置"
 
@@ -7748,9 +7773,6 @@ msgstr "将复制速度限制为每秒此bytes数。"
 
 msgid "Link"
 msgstr "连接"
-
-msgid "Link State"
-msgstr "连接状态"
 
 msgid "Linked Service"
 msgstr "已连接服务"
@@ -8041,6 +8063,9 @@ msgstr ""
 "最大传输单位，可以通信的最大协议数据单位。最大可用MTU大小随网络接口和设备的不同而不同。 <i> 1500 </ i>和<i> 9000 </ "
 "i>是标准的以太网MTU大小。保留为空白将字段恢复为默认值<i> 1500 </ i>。"
 
+msgid "Maximum Upload Parts"
+msgstr ""
+
 msgid ""
 "Maximum amount of CPU time a jail process may consume. The kernel "
 "terminates processes exceeding the specified limit."
@@ -8260,6 +8285,9 @@ msgstr "镜像"
 msgid "Misc"
 msgstr ""
 
+msgid "Miscellaneous"
+msgstr ""
+
 msgid "Mixing disks of different sizes in a vdev is not allowed."
 msgstr "不允许在vdev中混合不同大小的磁盘。"
 
@@ -8362,9 +8390,10 @@ msgid "Multipaths"
 msgstr "多路径"
 
 msgid ""
-"Must match Windows workgroup  name. This setting is ignored when the  "
-"Active Directory or LDAP services are running."
-msgstr "必须与Windows工作组名称匹配。当活动目录或LDAP服务正在运行时，将忽略此设置。"
+"Must match Windows workgroup name.  When this is unconfigured and Active "
+"Directory or LDAP are active,  TrueNAS will detect and set the correct "
+"workgroup from these services."
+msgstr ""
 
 msgid ""
 "Mutual secret password. Required when Peer User is set. Must be different "
@@ -8511,9 +8540,6 @@ msgstr "名称或命名惯例是必需的。一次只能使用一个字段。"
 msgid "Name or Naming Schema must be provided."
 msgstr "必须提供名称或命名惯例。"
 
-msgid "Name servers not configured"
-msgstr ""
-
 msgid "Name that was created with the SMB share."
 msgstr "用SMB共享创建的名称。"
 
@@ -8525,9 +8551,6 @@ msgstr "域名服务器 2"
 
 msgid "Nameserver 3"
 msgstr "域名服务器 3"
-
-msgid "Nameservers"
-msgstr "域名服务器"
 
 msgid "Naming Schema"
 msgstr "命名惯例"
@@ -8599,9 +8622,6 @@ msgstr "网络属性"
 
 msgid "Network Reports"
 msgstr "网络报告"
-
-msgid "Network Summary"
-msgstr "网络概要"
 
 msgid "Network Timeout Before Initiating Failover"
 msgstr "启动故障转移之前的网络超时"
@@ -9085,6 +9105,9 @@ msgstr ""
 msgid "Open VPN Server"
 msgstr ""
 
+msgid "OpenVPN "
+msgstr ""
+
 msgid "OpenVPN Client Settings"
 msgstr "OpenVPN客户端设置"
 
@@ -9194,6 +9217,9 @@ msgstr "其他设定"
 
 msgid "Out"
 msgstr "发送"
+
+msgid "Outbound Network"
+msgstr ""
 
 msgid "Outgoing Mail Server"
 msgstr "邮件发送服务器"
@@ -10026,6 +10052,9 @@ msgstr "剩余"
 msgid "Remote"
 msgstr "远程"
 
+msgid "Remote Controller"
+msgstr ""
+
 msgid "Remote Encryption"
 msgstr "远程加密"
 
@@ -10373,7 +10402,7 @@ msgid ""
 "Allow the creation of <i>tun</i> devices in the jail."
 msgstr "使用单独的devfs规则集显示监狱的<i>tun</i>设备"
 
-msgid "Revert CHANGES"
+msgid "Revert Changes"
 msgstr ""
 
 msgid "Revert Network Interface Changes"
@@ -10491,9 +10520,6 @@ msgid "SAVE"
 msgstr "保存"
 
 msgid "SAVE AND FAILOVER"
-msgstr ""
-
-msgid "SAVE CHANGES"
 msgstr ""
 
 msgid "SAVE CONFIGURATION"
@@ -11240,6 +11266,9 @@ msgstr "选择要显示的ACE继承集<i> Flags </i>。<i>基础</i>显示非特
 msgid "Select the shell to use for local and SSH logins."
 msgstr "选择用于本地和SSH登录的shell。"
 
+msgid "Select the system services that will be allowed to communicate externally."
+msgstr ""
+
 msgid ""
 "Select the type of LDAP server to use. This can be the        LDAP server "
 "provided by the Active Directory server or a stand-alone LDAP server."
@@ -11397,6 +11426,9 @@ msgstr "服务器角色"
 
 msgid "Server Side Encryption"
 msgstr "服务器端加密"
+
+msgid "Service"
+msgstr ""
 
 msgid "Service Account"
 msgstr "服务账户"
@@ -12863,9 +12895,6 @@ msgstr "用于访问iSCSI目标的TCP端口。默认设置是 <i>3260</i>."
 msgid "TDB"
 msgstr ""
 
-msgid "TEST CHANGES"
-msgstr ""
-
 msgid "TFTP"
 msgstr ""
 
@@ -13771,6 +13800,9 @@ msgstr "现有主题已使用该名称。请选择一个新名称。"
 msgid "This operation might take a long time. Proceed?"
 msgstr "这项操作可能会需要很长时间。继续吗？"
 
+msgid "This system cannot communicate externally."
+msgstr ""
+
 msgid "This system will restart when the update completes."
 msgstr "更新完成后，该系统将重新启动。"
 
@@ -14111,6 +14143,9 @@ msgid "Unkeep"
 msgstr "取消保留"
 
 msgid "Unknown"
+msgstr ""
+
+msgid "Unknown CPU"
 msgstr ""
 
 msgid "Unlock"
@@ -14650,14 +14685,8 @@ msgstr ""
 msgid "VLAN ID"
 msgstr "虚拟局域网ID"
 
-msgid "VLAN Parent Interface"
-msgstr "虚拟局域网父接口"
-
 msgid "VLAN Settings"
 msgstr "虚拟局域网设置"
-
-msgid "VLAN Tag"
-msgstr "虚拟局域网标记"
 
 msgid "VLANs"
 msgstr "虚拟局域网"
@@ -15335,9 +15364,6 @@ msgstr "执行_超时"
 
 msgid "expires in"
 msgstr "过期日期在"
-
-msgid "gathering info..."
-msgstr "正在收集信息..."
 
 msgid "group"
 msgstr "群组"
