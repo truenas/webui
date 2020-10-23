@@ -415,7 +415,7 @@ def navigate_to_dashboard_and_verify_that_both_controllers_show(driver):
     # need to wait for all controller to be online.
     assert wait_on_element(driver, 1, 60, f'//span[contains(.,"{serial_one}")]')
     driver.find_element_by_xpath(f'//span[contains(.,"{serial_one}")]')
-    assert wait_on_element(driver, 1, 90, f'//span[contains(.,"{serial_two}")]')
+    assert wait_on_element(driver, 1, 120, f'//span[contains(.,"{serial_two}")]')
     driver.find_element_by_xpath(f'//span[contains(.,"{serial_two}")]')
 
 
