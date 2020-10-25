@@ -226,17 +226,11 @@ msgstr ""
 "</b> el complemento elimina todos los datos e instantáneas almacenados con "
 "él."
 
-msgid "</b> with the keypair"
-msgstr "</b> con el par de llaves"
-
 msgid "</i> cannot be running when deleting a mountpoint."
 msgstr "</i> no se puede ejecutar al eliminar un punto de montaje."
 
 msgid "</i> has started."
 msgstr "</i> fue iniciado."
-
-msgid "</i> keypair?</p>"
-msgstr "</i> pares de claves?</p>"
 
 msgid "</i> now?"
 msgstr "</i> ahora?"
@@ -424,7 +418,7 @@ msgstr ""
 
 msgid ""
 "<a href=\"https://www.ixsystems.com/support/\" target=\"_blank\"> TrueNAS "
-"Liscensing</a> - Learn more about enterprise-grade support."
+"Licensing</a> - Learn more about enterprise-grade support."
 msgstr ""
 
 msgid ""
@@ -790,9 +784,6 @@ msgid ""
 msgstr ""
 "<i>global</i> es un nombre reservado que no se puede usar como nombre "
 "compartido. Ingrese un nombre compartido diferente."
-
-msgid "<p>Delete the <i>"
-msgstr "<p>Eliminar el<i>"
 
 msgid ""
 "<p>Including the Password Secret Seed allows using this configuration file "
@@ -1495,9 +1486,6 @@ msgstr "Grupo de administradores"
 msgid "Adv. Power Management"
 msgstr "Adv. Administración de energía"
 
-msgid "Advance Options"
-msgstr "Opciones avanzadas"
-
 msgid "Advanced"
 msgstr "Avanzado"
 
@@ -2197,6 +2185,9 @@ msgstr ""
 msgid "Associated Target"
 msgstr "Objetivo asociado"
 
+msgid "Associated Targets"
+msgstr ""
+
 msgid ""
 "At least one module must be defined in <a                "
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"                "
@@ -2304,6 +2295,9 @@ msgstr "Config de clave de autoridad"
 
 msgid "Authority Key Identifier"
 msgstr "Identificador de clave de autoridad"
+
+msgid "Authorized Access"
+msgstr ""
 
 msgid "Authorized Hosts and IP addresses"
 msgstr "Hosts autorizados y Direcciones IP"
@@ -2440,6 +2434,9 @@ msgstr "Fondo 1"
 
 msgid "Background 2"
 msgstr "Fondo 2"
+
+msgid "Backup Credentials"
+msgstr ""
 
 msgid "Bandwidth"
 msgstr "Ancho de banda"
@@ -3150,6 +3147,9 @@ msgstr ""
 
 msgid "Choose Accent"
 msgstr "Elige acento"
+
+msgid "Choose File"
+msgstr ""
 
 msgid "Choose Pool for Plugin and Jail Manager"
 msgstr "Elija Pool para Complemento y Administrador de Jaula"
@@ -4100,6 +4100,12 @@ msgstr "Crea una ACL personalizada"
 msgid "Create a new Pool."
 msgstr "Crea un nuevo Pool."
 
+msgid "Create a new Target or choose an existing target for this share."
+msgstr ""
+
+msgid "Create a new pool."
+msgstr ""
+
 msgid "Create a new, empty pool."
 msgstr "Crea un nuevo, pool vacío."
 
@@ -4399,6 +4405,9 @@ msgstr "Acciones de conjunto de datos"
 
 msgid "Dataset Key"
 msgstr "Clave de conjunto de datos"
+
+msgid "Dataset Names"
+msgstr ""
 
 msgid "Dataset Passphrase"
 msgstr "Frase de contraseña del conjunto de datos"
@@ -6017,7 +6026,7 @@ msgid ""
 "be found  <a "
 "href=\"https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#"
 "HOSTSALLOW\" target=\"_blank\">here</a>. <br><br>  If neither *Hosts Allow* "
-"or *Hosts Deny* contains  an entry, then AFP share access is allowed for "
+"or *Hosts Deny* contains  an entry, then SMB share access is allowed for "
 "any host. <br><br>  If there is a *Hosts Allow* list but no *Hosts Deny* "
 "list, then only allow  hosts on the *Hosts Allow* list. <br><br>  If there "
 "is a *Hosts Deny* list but no *Hosts Allow* list, then allow all  hosts "
@@ -6026,25 +6035,11 @@ msgid ""
 "Allow* list. <br><br>  If there is a host not on the *Hosts Allow* and not "
 "on the *Hosts Deny* list,  then allow it."
 msgstr ""
-"Ingrese una lista de nombres de host permitidos o direcciones IP. Separe "
-"las entradas presionando <code>Enter</code>. Se puede encontrar una "
-"descripción más detallada con ejemplos <a "
-"href=\"https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#"
-"HOSTSALLOW\" target=\"_blank\">aquí</a>. <br> <br> Si ninguno de los * "
-"Hosts Allow * o * Hosts Deny * contiene una entrada, se permite el acceso "
-"compartido de AFP a cualquier host. <br> <br> Si hay una lista * Hosts "
-"Allow * pero no * Hosts Deny * list, solo se permiten hosts en la lista * "
-"Hosts Allow *. <br> <br> Si hay una lista * Hosts Deny * pero no hay * "
-"Hosts Allow * list, entonces permita todos los hosts que no estén en la "
-"lista * Hosts Deny *. <br> <br> Si hay una lista de * Hosts Allow * y * "
-"Hosts Deny *, entonces permita todos los hosts que estén en la lista * "
-"Hosts Allow *. <br> <br> Si hay un host que no está en * Hosts Allow * y no "
-"está en la lista * Hosts Deny *, entonces permítelo."
 
 msgid ""
 "Enter a list of denied hostnames or IP addresses. Separate entries by "
 "pressing <code>Enter</code>.  If neither *Hosts Allow* or *Hosts Deny* "
-"contains  an entry, then AFP share access is allowed for any host. <br><br> "
+"contains  an entry, then SMB share access is allowed for any host. <br><br> "
 " If there is a *Hosts Allow* list but no *Hosts Deny* list, then only allow "
 " hosts on the *Hosts Allow* list. <br><br>  If there is a *Hosts Deny* list "
 "but no *Hosts Allow* list, then allow all  hosts that are not on the *Hosts "
@@ -6053,17 +6048,6 @@ msgid ""
 "If there is a host not on the *Hosts Allow* and not on the *Hosts Deny* "
 "list,  then allow it."
 msgstr ""
-"Ingrese una lista de nombres de host o direcciones IP denegados. Separe las "
-"entradas presionando <code>Enter</code>. Si ninguno de los * Hosts Allow * "
-"o * Hosts Deny * contiene una entrada, se permite el acceso compartido de "
-"AFP a cualquier host. <br> <br> Si hay una lista * Hosts Allow * pero no * "
-"Hosts Deny * list, solo se permiten hosts en la lista * Hosts Allow *. <br> "
-"<br> Si hay una lista * Hosts Deny * pero no hay * Hosts Allow * list, "
-"entonces permita todos los hosts que no estén en la lista * Hosts Deny *. "
-"<br> <br> Si hay una lista de * Hosts Allow * y * Hosts Deny *, entonces "
-"permita todos los hosts que estén en la lista * Hosts Allow *. <br> <br> Si "
-"hay un host que no está en * Hosts Allow * y no está en la lista * Hosts "
-"Deny *, entonces permítelo."
 
 msgid ""
 "Enter a long string of random characters for  use as <a "
@@ -7120,6 +7104,9 @@ msgstr "Nombre de extensión"
 msgid "Extent Type"
 msgstr "Tipo de extensión"
 
+msgid "Extents"
+msgstr ""
+
 msgid "Extra Users"
 msgstr "Usuarios extra"
 
@@ -7199,6 +7186,9 @@ msgstr "Canal de fibra "
 
 msgid "Fibre Channel Port "
 msgstr "Puerto de canal de fibra "
+
+msgid "Fibre Channel Ports"
+msgstr ""
 
 msgid "File Information"
 msgstr "Información del archivo"
@@ -7515,9 +7505,6 @@ msgstr "Opciones generales"
 msgid "General Preferences"
 msgstr "Preferencias generales"
 
-msgid "General Settings"
-msgstr ""
-
 msgid "General VM Settings"
 msgstr "Configuraciones generales de VM"
 
@@ -7565,6 +7552,9 @@ msgstr ""
 
 msgid "Get Started"
 msgstr "Empezar"
+
+msgid "Get Support"
+msgstr ""
 
 msgid "GiB"
 msgstr "GiB"
@@ -8144,6 +8134,9 @@ msgstr "Prefijo IPv6"
 msgid "IPv6 Prefix Length"
 msgstr "Longitud del prefijo IPv6"
 
+msgid "IPv6 addresses are not allowed for HA."
+msgstr ""
+
 msgid "IPv6 interface for the jail."
 msgstr "Interfaz IPv6 para la jaula."
 
@@ -8312,14 +8305,14 @@ msgstr "Conectar de inmediato a TrueCommand."
 msgid "Import"
 msgstr "Importar"
 
-msgid "Import Disk"
-msgstr ""
-
 msgid "Import a pool that exists but is not connected."
 msgstr "Importe un grupo que existe pero que no está conectado."
 
 msgid "Import an existing pool"
 msgstr "Importar un grupo existente"
+
+msgid "Import an existing pool."
+msgstr ""
 
 msgid ""
 "Import the private key from an existing SSH keypair or  select <i>Generate "
@@ -8460,6 +8453,9 @@ msgstr "ID del grupo iniciador"
 
 msgid "Initiators"
 msgstr "Iniciadores"
+
+msgid "Initiators Groups"
+msgstr ""
 
 msgid ""
 "Initiators allowed access to this system. Enter an <a "
@@ -8849,9 +8845,6 @@ msgstr "LLDP"
 msgid "LOG (Write Cache) Overprovision Size in GiB"
 msgstr "Tamaño de sobreaprovisionamiento de LOG (caché de escritura) en GiB"
 
-msgid "LOGIN TO PROVIDER"
-msgstr "INICIAR SESIÓN AL PROVEEDOR"
-
 msgid "LUN ID"
 msgstr "LUN ID"
 
@@ -9090,6 +9083,9 @@ msgstr "Iniciar sesión"
 
 msgid "Log in as Root with Password"
 msgstr "Inicie sesión como root con contraseña"
+
+msgid "Log in to Provider"
+msgstr ""
 
 msgid "Log mountd(8) requests"
 msgstr "Solicitudes de registro mountd(8)"
@@ -9433,6 +9429,9 @@ msgstr "Nivel de verbosidad del mensaje en el registro de tareas de replicación
 
 msgid "Metadata"
 msgstr "Metadados"
+
+msgid "Metadata (Special) Small Block Size"
+msgstr ""
 
 msgid "Metadata VDev"
 msgstr "Metadatos VDev"
@@ -9961,9 +9960,6 @@ msgstr ""
 "snmp-community-strings/\" target=\"_blank\">¿Qué es una cadena comunitaria "
 "SNMP?</a>."
 
-msgid "Network connectivity will be interrupted. "
-msgstr "La conectividad de la red se interrumpirá. "
-
 msgid "Network connectivity will be interrupted. Proceed?"
 msgstr "La conectividad de la red se interrumpirá. ¿Continuar?"
 
@@ -10444,10 +10440,12 @@ msgstr ""
 
 msgid ""
 "Only set LDAP authentication for SMB shares is required and the LDAP server "
-"is already configured with Samba attributes."
+"is already configured with Samba attributes. DEPRECATED:  Support for Samba "
+"Schema is <a href=\"https://www.samba.org/samba/history/samba-4.13.0.html\" "
+"target=\"_blank\">officially deprecated in Samba 4.13</a>.  The feature "
+"will be removed after Samba 4.14. Users should begin  upgrading legacy "
+"Samba domains to Samba AD domains."
 msgstr ""
-"Solo se requiere establecer la autenticación LDAP para recursos compartidos "
-"SMB y el servidor LDAP ya está configurado con atributos Samba."
 
 msgid ""
 "Only works with Unix ACLs. New directories created on the share are set "
@@ -11025,6 +11023,9 @@ msgstr "Portal"
 msgid "Portal Group ID"
 msgstr "ID de grupo de portal"
 
+msgid "Portals"
+msgstr ""
+
 msgid "Ports"
 msgstr "Puertos"
 
@@ -11495,6 +11496,9 @@ msgstr ""
 "<i>31536000</i> segundos (un año). Esto significa que después de que un "
 "navegador se conecta a la interfaz web por primera vez, el navegador "
 "continúa usando HTTPS y renueva esta configuración cada año."
+
+msgid "Reenter Password"
+msgstr ""
 
 msgid "Refresh"
 msgstr "Refrezcar"
@@ -12184,8 +12188,8 @@ msgstr "SINCRONIZAR CLAVES"
 msgid "Samba Authentication"
 msgstr "Autenticación Samba"
 
-msgid "Samba Schema"
-msgstr "Esquema de Samba"
+msgid "Samba Schema (DEPRECATED - see help text)"
+msgstr ""
 
 msgid "Same as Source"
 msgstr "Lo mismo que la fuente"
@@ -12516,6 +12520,9 @@ msgid ""
 msgstr ""
 "Seleccione las direcciones IP para escuchar las solicitudes NFS. Deje en "
 "blanco para que NFS escuche todas las direcciones disponibles."
+
+msgid "Select Reports"
+msgstr ""
 
 msgid "Select Users Cached by this System"
 msgstr "Seleccionar usuarios en caché por este sistema"
@@ -14267,9 +14274,6 @@ msgstr ""
 "Mostrar todos los usuarios disponibles, incluidos aquellos que no han "
 "utilizado ningún dato."
 
-msgid "Show only entries that contain this text"
-msgstr "Mostrar solo las entradas que contienen este texto"
-
 msgid "Show only those users who are using data. This is the default view."
 msgstr ""
 "Mostrar solo aquellos usuarios que están utilizando datos. Esta es la vista "
@@ -14419,9 +14423,6 @@ msgstr ""
 
 msgid "Snapshot successfully taken."
 msgstr "Instantánea tomada con éxito."
-
-msgid "Snapshots"
-msgstr ""
 
 msgid ""
 "Some authentication tools default to 30 seconds and do not support custom "
@@ -15010,6 +15011,9 @@ msgstr "Objetivo"
 
 msgid "Target Alias"
 msgstr "Alias de objetivo"
+
+msgid "Target Global Configuration"
+msgstr ""
 
 msgid "Target Mode"
 msgstr "Modo del objetivo"
@@ -15907,9 +15911,6 @@ msgstr ""
 "Estos conjuntos de datos se desbloquearán con las credenciales "
 "proporcionadas."
 
-msgid "These items will be <b>"
-msgstr "Estos artículos serán <b>"
-
 msgid ""
 "These permissions are too complicated to be displayed and cannot be saved "
 "unless changed."
@@ -16040,6 +16041,11 @@ msgstr ""
 "utilizadas para un servicio sin repudio."
 
 msgid ""
+"This change can interrupt connectivity and must be tested before making "
+"permanent. "
+msgstr ""
+
+msgid ""
 "This dataset has an active ACL. Changes to permissions must be made with "
 "the ACL editor."
 msgstr ""
@@ -16132,6 +16138,18 @@ msgstr ""
 "Los discos cifrados se pueden quitar del grupo y reutilizarse o eliminarse "
 "sin borrarlos. iXsystems, inc. no se hace responsable de los datos perdidos "
 "o irrecuperables como consecuencia del uso de esta función."
+
+msgid ""
+"This value represents the threshold block size for including small file "
+"blocks into the special allocation class. Blocks smaller than or equal to "
+"this value will be assigned to the special allocation class while greater "
+"blocks will be assigned to the regular class. Valid values are zero or a "
+"power of two from 512B  up to 1M. The default size is 0 which means no "
+"small file blocks will be allocated in the special class. Before setting "
+"this property, a special class vdev must be added to the pool. See <a "
+"href=\"https://zfsonlinux.org/manpages/0.7.13/man8/zpool.8.html\" "
+"target=\"_blank\">zpool(8)</a> for more details on the special allocation"
+msgstr ""
 
 msgid "Thread number:"
 msgstr "Número de hilo:"
@@ -17155,9 +17173,6 @@ msgstr "Sincronización VMWare"
 msgid "VMware Sync"
 msgstr "Sincronización VMware"
 
-msgid "VMware-Snapshots"
-msgstr ""
-
 msgid "VNC"
 msgstr "VNC"
 
@@ -17882,11 +17897,11 @@ msgstr "grupo"
 msgid "gzip (default level, 6)"
 msgstr "gzip (nivel predeterminado, 6)"
 
-msgid "gzip (fastest)"
-msgstr "gzip (más rápido)"
+msgid "gzip-1 (fastest)"
+msgstr ""
 
-msgid "gzip (maximum, slow)"
-msgstr "gzip (máximo, lento)"
+msgid "gzip-9 (maximum, slow)"
+msgstr ""
 
 msgid "host_domainname"
 msgstr "host_domainname"
@@ -18184,14 +18199,14 @@ msgstr "si"
 msgid "zle (runs of zeros)"
 msgstr "zle (series de ceros)"
 
-msgid "zstd (Maximum, very slow)"
-msgstr "zstd (Máximo, muy lento)"
-
-msgid "zstd (Medium, slow)"
-msgstr "zstd (Medio, lento)"
-
 msgid "zstd (default level, 3)"
 msgstr "zstd (nivel predeterminado, 3)"
+
+msgid "zstd-5 (slow)"
+msgstr ""
+
+msgid "zstd-7 (very slow)"
+msgstr ""
 
 msgid "zstd-fast (default level, 1)"
 msgstr "zstd-fast (nivel rpedeterminado, 1)"
