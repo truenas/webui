@@ -105,7 +105,7 @@ export class SMBListComponent {
             } else {
               if (this.productType.includes('SCALE')) {
                 this.router.navigate(
-                  ["/"].concat(["storage", "pools", "id", poolName, "dataset", "posix-acl", datasetId]));
+                  ["/"].concat(["storage", "id", poolName, "dataset", "posix-acl", datasetId]));
               } else {
                 this.router.navigate(
                   ["/"].concat(["storage", "pools", "id", poolName, "dataset", "acl", datasetId]));
