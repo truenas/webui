@@ -45,6 +45,7 @@
   text-align:left;
   padding-left:15%;
   width:85%;
+  white-space: nowrap;
 }
 
 #cpu-load-cores-legend .legend-item .label{
@@ -52,7 +53,7 @@
 }
 
 #cpu-load-cores-legend .legend-item .legend-swatch{
-  margin: 4px 8px 0;
+  margin: 4px 4px 0;
 }
 
 #cpu-load-cores-values {
