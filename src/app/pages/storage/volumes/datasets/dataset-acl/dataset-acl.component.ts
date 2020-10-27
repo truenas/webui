@@ -744,8 +744,8 @@ export class DatasetAclComponent implements OnDestroy {
       return;
     }
 
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Saving ACLs") }});
-    this.dialogRef.componentInstance.setDescription(helptext.save_dialog_msg);
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": helptext.save_dialog.title }});
+    this.dialogRef.componentInstance.setDescription(helptext.save_dialog.message);
     let dacl = body.dacl;
 
     await this.userService.getUserByName(body.uid).toPromise().then(userObj => {
@@ -792,6 +792,8 @@ export class DatasetAclComponent implements OnDestroy {
         }
       }]);
     this.dialogRef.componentInstance.submit();
+    alert();
+
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.entityForm.success = true;
       this.dialogRef.close();
