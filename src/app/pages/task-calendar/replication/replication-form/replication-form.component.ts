@@ -1013,6 +1013,14 @@ export class ReplicationFormComponent {
         if (this.entityForm.wsResponse.large_block) {
             this.entityForm.setDisabled('large_block', true, false);
         }
+
+        if (wsResponse.properties_override) {
+            const properties_exclude_list = [];
+            for (const [key, value] of Object.entries(wsResponse['properties_override'])) {
+                properties_exclude_list.push(`${key}=${value}`);
+            }
+            wsResponse['properties_override'] = properties_exclude_list;
+        }
         return wsResponse;
     }
 
