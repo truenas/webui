@@ -126,6 +126,13 @@ export class ServiceSNMPComponent {
         tooltip : helptext.loglevel_tooltip,
         options : helptext.loglevel_options
       },
+      {
+        type : 'checkbox',
+        name : 'iftop',
+        placeholder : 'ifTop',
+        tooltip: 'ifTop',
+        value: false
+      }
     ]},
     { name: "divider", divider: true }
   ];
