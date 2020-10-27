@@ -232,5 +232,14 @@ preset_dialog: {
   button: T('Select')
 },
 
-preset_cust_action_btn: T('Select an ACL Preset')
+preset_cust_action_btn: T('Select an ACL Preset'),
+
+save_dialog: {
+  title: T('Updating Dataset ACL'),
+  message: T('This process continues in the background after closing this dialog.'),
+  abort_message: T('Clicking Continue allows TrueNAS to finish the update in the background while \
+ Abort stops the process and reverts the dataset ACL to the previously active ACL.') 
+} 
+
+
 }
