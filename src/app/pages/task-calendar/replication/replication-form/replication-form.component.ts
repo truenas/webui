@@ -418,6 +418,23 @@ export class ReplicationFormComponent {
                     tooltip: helptext.replicate_tooltip,
                 },
                 {
+                    type: 'chip',
+                    name: 'properties_override',
+                    placeholder: helptext.properties_override_placeholder,
+                    tooltip: helptext.properties_override_tooltip,
+                    relation: [{
+                        action: 'HIDE',
+                        connective: 'AND',
+                        when: [{
+                            name: 'replicate',
+                            value: false,
+                        }, {
+                            name: 'properties',
+                            value: false,
+                        }]
+                    }],
+                },
+                {
                     type: 'select',
                     multiple: true,
                     name: 'periodic_snapshot_tasks',
@@ -999,6 +1016,14 @@ export class ReplicationFormComponent {
             data['recursive'] = true;
             data['properties'] = true;
             data['exclude'] = [];
+        }
+        if (data['properties_override']) {
+            const properties_exclude_obj = {};
+            for (let item of data['properties_override']) {
+                item = item.split('=');
+                properties_exclude_obj[item[0]] = item[1];
+            }
+            data['properties_override'] = properties_exclude_obj;
         }
 
         if (data['speed_limit'] !== undefined && data['speed_limit'] !== null) {
