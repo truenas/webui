@@ -186,3 +186,5 @@ def wait_for_second_node_to_be_up(driver):
     """Wait for second node to be up"""
     assert wait_on_element(driver, 1, 120, '//mat-list-item[contains(.,"nodeb")]')
     assert wait_on_element(driver, 1, 10, '//mat-icon[@svgicon="ha_enabled"]')
+    # This 5 seconds of sleep is to let the system ketchup.
+    time.sleep(5)
