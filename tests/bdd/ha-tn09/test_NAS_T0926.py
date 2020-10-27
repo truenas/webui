@@ -41,12 +41,12 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
         driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(user)
         driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-        assert wait_on_element(driver, 0.5, 4, '//button[@name="signin_button"]')
+        assert wait_on_element(driver, 1, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
-        time.sleep(0.5)
+        time.sleep(1)
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -61,7 +61,7 @@ def navigate_to_network_then_global_configuration(driver):
     """Navigate to Network then Global Configuration."""
     assert wait_on_element(driver, 1, 5, '//mat-list-item[@ix-auto="option__Network"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
-    assert wait_on_element(driver, 0.5, 5, '//mat-list-item[@ix-auto="option__Global Configuration"]')
+    assert wait_on_element(driver, 1, 5, '//mat-list-item[@ix-auto="option__Global Configuration"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Global Configuration"]').click()
 
 
@@ -77,7 +77,7 @@ def change_the_first_nameserver_to_ad_nameserver_and_dommain_to_ad_domain(driver
     assert wait_on_element(driver, 1, 5, '//input[@placeholder="Nameserver 1"]')
     driver.find_element_by_xpath('//input[@placeholder="Nameserver 1"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Nameserver 1"]').send_keys(ad_nameserver)
-    assert wait_on_element(driver, 0.5, 5, '//input[@placeholder="Domain"]')
+    assert wait_on_element(driver, 1, 5, '//input[@placeholder="Domain"]')
     driver.find_element_by_xpath('//input[@placeholder="Domain"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Domain"]').send_keys(ad_domain)
 
@@ -85,7 +85,7 @@ def change_the_first_nameserver_to_ad_nameserver_and_dommain_to_ad_domain(driver
 @then('Click SAVE "Please wait" should appear while settings are being applied')
 def click_save_please_wait_should_appear_while_settings_are_being_applied(driver):
     """Click SAVE "Please wait" should appear while settings are being applied."""
-    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 1, 7, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Settings saved.")]')
@@ -96,7 +96,7 @@ def navigate_to_directory_services_then_active_directory(driver):
     """Navigate to Directory Services then Active Directory."""
     assert wait_on_element(driver, 1, 7, '//mat-list-item[@ix-auto="option__Directory Services"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Directory Services"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Active Directory"]')
+    assert wait_on_element(driver, 1, 7, '//mat-list-item[@ix-auto="option__Active Directory"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Active Directory"]').click()
 
 
@@ -109,7 +109,7 @@ def the_domain_credentials_page_should_open(driver):
 @then(parsers.parse('Input Domain name "{ad_domain}", Account name "{ad_user}", Password "{ad_password}"'))
 def input_domain_name_ad_domain_account_name_ad_user_password_ad_pasword(driver, ad_domain, ad_user, ad_password):
     """Input Domain name "{ad_domain}", Account name "{ad_user}", Password "ad_password"."""
-    assert wait_on_element(driver, 0.5, 7, '//input[@ix-auto="input__Domain Name"]')
+    assert wait_on_element(driver, 1, 7, '//input[@ix-auto="input__Domain Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Domain Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Domain Name"]').send_keys(ad_domain)
     driver.find_element_by_xpath('//input[@ix-auto="input__Domain Account Name"]').clear()
@@ -182,7 +182,7 @@ def input_wbinfo_g(driver, cmd):
 def verify_that_ad01domain_admin_is_in_wbinfo_g_output(driver, ad_object):
     """Verify that "{ad_object}" is in wbinfo -g output."""
     split_ad_object = ad_object.split()
-    wait_on_element(driver, 1, 5, f'//span[contains(.,"{split_ad_object[0]}") and contains(.,"{split_ad_object[1]}")]')
+    assert wait_on_element(driver, 1, 5, f'//span[contains(.,"{split_ad_object[0]}") and contains(.,"{split_ad_object[1]}")]')
 
 
 @then(parsers.parse('Input "{cmd}"'))
@@ -216,15 +216,16 @@ def press_initiate_failover_check_confirm_and_press_failover(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__INITIATE FAILOVER"]').click()
     assert wait_on_element(driver, 1, 5, '//h1[contains(.,"Initiate Failover")]')
     driver.find_element_by_xpath('//mat-checkbox').click()
-    assert wait_on_element(driver, 0.5, 5, '//div[2]/button[2]/span')
+    assert wait_on_element(driver, 1, 5, '//div[2]/button[2]/span')
     driver.find_element_by_xpath('//div[2]/button[2]/span').click()
 
 
 @then('Wait for the login page to appear')
 def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear"""
-    time.sleep(10)
-    assert wait_on_element(driver, 1, 25, '//input[@placeholder="Username"]')
+    assert wait_on_element(driver, 1, 30, '//input[@placeholder="Username"]')
+    time.sleep(5)
+    assert wait_on_element(driver, 1, 30, '//input[@placeholder="Username"]')
 
 
 @then(parsers.parse('At the login page enter "{user}" and "{password}"'))
