@@ -744,7 +744,7 @@ export class DatasetAclComponent implements OnDestroy {
     }
 
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Saving ACLs") }});
-    this.dialogRef.componentInstance.setDescription(T("Saving ACLs..."));
+    this.dialogRef.componentInstance.setDescription(helptext.save_dialog_msg);
     let dacl = body.dacl;
 
     await this.userService.getUserByName(body.uid).toPromise().then(userObj => {

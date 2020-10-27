@@ -232,5 +232,8 @@ preset_dialog: {
   button: T('Select')
 },
 
-preset_cust_action_btn: T('Select an ACL Preset')
+preset_cust_action_btn: T('Select an ACL Preset'),
+
+save_dialog_msg: T('Saving ACLs. This process continues in the background after closing this dialog.')
+
 }
