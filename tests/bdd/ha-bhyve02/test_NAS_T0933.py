@@ -133,6 +133,8 @@ def check_the_enable_box_and_click_save(driver):
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]').click()
     assert wait_on_element(driver, 1, 7, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    # This 5 seconds of sleep is to let the system ketchup.
+    time.sleep(5)
 
 
 @then('Active Directory should successfully save and start without an error')
