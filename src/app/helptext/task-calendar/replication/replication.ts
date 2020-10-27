@@ -102,6 +102,9 @@ export default {
     properties_override_placeholder: T('Properties Override'),
     properties_override_tooltip: T(''),
 
+    properties_exclude_placeholder: T('Properties Exclude'),
+    properties_exclude_tooltip: T(''),
+
     replicate_placeholder: T('Full Filesystem Replication'),
     replicate_tooltip: T('Completely replicate the selected dataset. The target \
 dataset will have all of the properties, snapshots, child datasets, and clones \
