@@ -116,7 +116,7 @@ other_title: T('Other Options'),
 formTitle: T('SNMP'),
 
 iftop: {
-  placeholder: T('iftop'),
-  tooltip: T('Include network performance statistics in SNMP messages.')
+  placeholder: T('Enanle iftop'),
+  tooltip: T('Include network performance statistics via iftop in SNMP messages.')
 }
 }

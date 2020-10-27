@@ -129,8 +129,8 @@ export class ServiceSNMPComponent {
       {
         type : 'checkbox',
         name : 'iftop',
-        placeholder : 'ifTop',
-        tooltip: 'ifTop',
+        placeholder : helptext.iftop.placeholder,
+        tooltip: helptext.iftop.tooltip,
         value: false
       }
     ]},
