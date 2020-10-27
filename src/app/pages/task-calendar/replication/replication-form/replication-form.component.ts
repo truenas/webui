@@ -626,6 +626,59 @@ export class ReplicationFormComponent {
                 },
                 {
                     type: 'checkbox',
+                    name: 'encryption',
+                    placeholder: helptext.encryption_placeholder,
+                    tooltip: helptext.encryption_tooltip,
+                    value: false,
+                },
+                {
+                    type: 'input',
+                    name: 'encryption_key',
+                    placeholder: helptext.encryption_key_placeholder,
+                    tooltip: helptext.encryption_key_tooltip,
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'encryption',
+                            value: true,
+                        }]
+                    }],
+                },
+                {
+                    type: 'select',
+                    name: 'encryption_key_format',
+                    placeholder: helptext.encryption_key_format_placeholder,
+                    tooltip: helptext.encryption_key_format_tooltip,
+                    options: [{
+                        label: 'HEX',
+                        value: 'HEX',
+                    }, {
+                        label: 'PASSPHRASE',
+                        value: 'PASSPHRASE',
+                    }],
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'encryption',
+                            value: true,
+                        }]
+                    }],
+                },
+                {
+                    type: 'input',
+                    name: 'encryption_key_location',
+                    placeholder: helptext.encryption_key_location_placeholder,
+                    tooltip: helptext.encryption_key_location_tooltip,
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'encryption',
+                            value: true,
+                        }]
+                    }],
+                },
+                {
+                    type: 'checkbox',
                     name: 'allow_from_scratch',
                     placeholder: helptext.allow_from_scratch_placeholder,
                     tooltip: helptext.allow_from_scratch_tooltip,

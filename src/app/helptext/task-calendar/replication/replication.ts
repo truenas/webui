@@ -189,6 +189,18 @@ from the source dataset.'),
  datasets to have the property <code>readonly=on</code>. <br><b>IGNORE</b> disables checking the\
  <code>readonly</code> property during replication.'),
 
+    encryption_placeholder: T('Encryption'),
+    encryption_tooltip: T(''),
+
+    encryption_key_placeholder: T('Encryption Key'),
+    encryption_key_tooltip: T(''),
+
+    encryption_key_format_placeholder: T('Encryption Key Format'),
+    encryption_key_format_tooltip: T(''),
+
+    encryption_key_location_placeholder: T('Encryption Key Location'),
+    encryption_key_location_tooltip: T(''),
+
     allow_from_scratch_placeholder: T('Synchronize Destination Snapshots With Source'),
     allow_from_scratch_tooltip: T('If the destination system has \
  snapshots but they do not have any data in common with the source \
