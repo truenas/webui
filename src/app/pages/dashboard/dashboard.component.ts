@@ -321,6 +321,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // unsubscribe from middleware
     this.statsEvents.complete();
+    this.formEvents.complete();
   }
 
   setVolumeData(evt:CoreEvent){
