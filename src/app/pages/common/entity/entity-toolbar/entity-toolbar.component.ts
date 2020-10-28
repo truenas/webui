@@ -6,12 +6,10 @@ import {
   Output,
   EventEmitter,
   OnDestroy,
-  OnInit,
   QueryList,
   TemplateRef,
   ViewChildren,
   OnChanges,
-  AfterViewInit
 } from '@angular/core';
 
 import * as _ from 'lodash';
@@ -35,10 +33,9 @@ import { ToolbarConfig, ControlConfig } from './models/control-config.interface'
   templateUrl : './entity-toolbar.component.html',
   styleUrls : [ './entity-toolbar.component.css' ],
 })
-export class EntityToolbarComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
+export class EntityToolbarComponent implements OnDestroy, OnChanges {
 
   @Input('conf') conf: ToolbarConfig; //ControlConfig[];
-  //@Input() target: Subject<CoreEvent>;
   public config;
   public controller: Subject<Control>;
   public values: any;
@@ -46,15 +43,8 @@ export class EntityToolbarComponent implements OnInit, OnDestroy, AfterViewInit,
   constructor(
     protected loader: AppLoaderService,
     public translate: TranslateService) {
-    this.controller = new Subject(); //this.conf && this.conf.target ? this.conf.target : new Subject();
-    //this.conf = this.defaultConfig;
+    this.controller = new Subject();
   }
-
-  ngAfterViewInit() {
-    //this.init();
-  }
-
-  ngOnInit() {}
 
   init(){
     this.controller.subscribe((evt:Control) => {
@@ -73,9 +63,7 @@ export class EntityToolbarComponent implements OnInit, OnDestroy, AfterViewInit,
         break;
       }
     });
-  //}
 
-  //init(){
     // Setup Initial Values
     let obj = {}
     this.config.controls.forEach((item) => {

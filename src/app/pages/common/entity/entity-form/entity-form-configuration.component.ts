@@ -16,10 +16,6 @@ import { ipv4Validator, ipv6Validator } from './validators/ip-validation';
 @Component({
   selector: 'entity-form-configuration',
   template: ``,
-  /*template: `
-  <entity-form #regularForm *ngIf="formType && formType == 'EntityFormComponent' " [conf]="this"></entity-form>
-  <entity-form-embedded #embeddedForm *ngIf="formType && formType == 'EntityFormEmbeddedComponent'" [data]='data' [target]="target" [conf]="this"></entity-form-embedded>
-  `,*/
   providers: [TooltipsService],
 })
 export class EntityFormConfigurationComponent implements Formconfiguration {
