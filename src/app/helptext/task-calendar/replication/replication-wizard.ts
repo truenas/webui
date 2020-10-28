@@ -53,6 +53,21 @@ export default {
  within the selected source dataset snapshots. Unset to only replicate \
  the selected dataset snapshots.'),
 
+    encryption_placeholder: T('Encryption'),
+    encryption_tooltip: T(''),
+
+    encryption_key_placeholder: T('Encryption Key'),
+    encryption_key_tooltip: T(''),
+
+    encryption_key_format_placeholder: T('Encryption Key Format'),
+    encryption_key_format_tooltip: T(''),
+
+    encryption_key_location_truenasdb_placeholder: T('Store Encryption key in TrueNAS database'),
+    encryption_key_location_truenasdb_tooltip: T(''),
+
+    encryption_key_location_placeholder: T('Encryption Key Location'),
+    encryption_key_location_tooltip: T(''),
+
     custom_snapshots_placeholder: T('Replicate Custom Snapshots'),
     custom_snapshots_tooltip: T('Replicate snapshots that have not been \
  created by an automated snapshot task. Requires setting a naming schema \
@@ -67,8 +82,8 @@ export default {
  pressing <code>Enter</code>. The number of snapshots matching the \
  patterns are shown.'),
 
-    encryption_placeholder: T('SSH Transfer Security'),
-    encryption_tooltip: T('Data transfer security. The connection is \
+   transport_placeholder: T('SSH Transfer Security'),
+   transport_tooltip: T('Data transfer security. The connection is \
  authenticated with SSH. Data can be encrypted during transfer for \
  security or left unencrypted to maximize transfer speed. Encryption is \
  recommended, but can be disabled for increased speed on secure networks.'),
