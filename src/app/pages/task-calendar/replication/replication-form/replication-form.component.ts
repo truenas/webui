@@ -665,15 +665,33 @@ export class ReplicationFormComponent {
                     }],
                 },
                 {
+                    type: 'checkbox',
+                    name: 'encryption_key_location_truenasdb',
+                    placeholder: helptext.encryption_key_location_truenasdb_placeholder,
+                    tooltip: helptext.encryption_key_location_truenasdb_tooltip,
+                    value: true,
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'encryption',
+                            value: true,
+                        }]
+                    }],
+                },
+                {
                     type: 'input',
                     name: 'encryption_key_location',
                     placeholder: helptext.encryption_key_location_placeholder,
                     tooltip: helptext.encryption_key_location_tooltip,
                     relation: [{
                         action: 'SHOW',
+                        connective: 'AND',
                         when: [{
                             name: 'encryption',
                             value: true,
+                        }, {
+                            name: 'encryption_key_location_truenasdb',
+                            value: false,
                         }]
                     }],
                 },
@@ -1074,6 +1092,12 @@ export class ReplicationFormComponent {
             }
             wsResponse['properties_override'] = properties_exclude_list;
         }
+
+        wsResponse.encryption_key_location_truenasdb = wsResponse.encryption_key_location === '$TrueNAS' ? true : false;
+        if (wsResponse.encryption_key_location_truenasdb) {
+            delete wsResponse.encryption_key_location;
+        }
+
         return wsResponse;
     }
 
@@ -1167,6 +1191,11 @@ export class ReplicationFormComponent {
         if (data['logging_level'] === 'DEFAULT') {
             delete data['logging_level'];
         }
+
+        if (data['encryption_key_location_truenasdb']) {
+            data['encryption_key_location'] = '$TrueNAS';
+        }
+        delete data['encryption_key_location_truenasdb'];
 
         // for edit replication task
         if (!this.entityForm.isNew) {
