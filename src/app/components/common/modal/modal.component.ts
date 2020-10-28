@@ -12,7 +12,12 @@ import { ModalService } from '../../../services/modal.service';
                     <mat-icon fxFlex="10%" id="close-icon" (click)="close()">cancel</mat-icon>      
                 </div>
                 <ng-container *ngIf="!wizard; else wizardBlock">
-                    <entity-form [conf]="conf" *ngIf="formOpen" class="slidein-entity-form"></entity-form>
+                  <ng-container *ngIf="(formOpen && conf && !conf.formType) || (formOpen && conf && conf.formType == 'EntityFormComponent') ">
+                    <entity-form *ngIf="conf.fieldSets" [conf]="conf" class="slidein-entity-form"></entity-form>
+                  </ng-container>
+                  <ng-container *ngIf="formOpen && conf && conf.formType && conf.formType == 'EntityFormEmbeddedComponent' ">
+                    <entity-form-embedded *ngIf="conf.fieldSets && conf.target && conf.data" [target]="conf.target" [data]="conf.values" [conf]="conf" class="slidein-entity-form"></entity-form-embedded>
+                  </ng-container>
                 </ng-container>
                 <ng-template #wizardBlock>
                     <entity-wizard [conf]="conf" *ngIf="formOpen" class="slidein-entity-form"></entity-wizard>         

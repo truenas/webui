@@ -8,9 +8,14 @@ import { WidgetControllerComponent } from 'app/core/components/widgets/widgetcon
 import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
 import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 
-import { RestService,WebSocketService } from '../../services/';
+import { RestService, WebSocketService } from '../../services/';
+import { ModalService } from 'app/services/modal.service';
 import { DashConfigItem } from 'app/core/components/widgets/widgetcontroller/widgetcontroller.component';
 import { tween, styler } from 'popmotion';
+import { EntityFormConfigurationComponent } from 'app/pages/common/entity/entity-form/entity-form-configuration.component';
+import { EntityFormEmbeddedComponent } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 
 @Component({
   selector: 'dashboard',
@@ -18,11 +23,15 @@ import { tween, styler } from 'popmotion';
   styleUrls: ['./dashboard.scss'],
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
- 
+
+  public formComponent: EntityFormConfigurationComponent;
+  public formEvents: Subject<CoreEvent>;
+
   public screenType: string = 'Desktop'; // Desktop || Mobile
   public optimalDesktopWidth: string = '100%';
   public widgetWidth: number = 540; // in pixels (Desktop only)
 
+  public dashStateReady: boolean = false;
   public dashState: DashConfigItem[]; // Saved State
   public activeMobileWidget: DashConfigItem[] = [];
   public availableWidgets: DashConfigItem[] = [];
@@ -61,7 +70,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   public showSpinner: boolean = true;
 
   constructor(protected core:CoreService, protected ws: WebSocketService, 
-    public mediaObserver: MediaObserver, private el: ElementRef){
+    public mediaObserver: MediaObserver, private el: ElementRef, public modalService: ModalService){
 
     core.register({observerClass: this, eventName: "SidenavStatus"}).subscribe((evt: CoreEvent) => {
       setTimeout(() => {
@@ -169,6 +178,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(){
+    this.modalService.refreshForm$.subscribe(() => {
+    });
 
     this.init();
 
@@ -196,7 +207,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   init(){
-
     this.startListeners();
 
     this.core.register({observerClass:this,eventName:"NicInfo"}).subscribe((evt:CoreEvent) => {
@@ -268,6 +278,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   startListeners(){
+    this.core.register({observerClass:this,eventName:"UserAttributes"}).subscribe((evt:CoreEvent) => {
+      if(evt.data.dashState){
+        this.applyState(evt.data.dashState);
+      }
+      this.dashStateReady = true;
+    });
+
     this.statsEvents = this.ws.sub("reporting.realtime").subscribe((evt) => {
       if(evt.cpu){
         this.statsDataEvents.next({name:"CpuStats", data:evt.cpu});
@@ -361,27 +378,59 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       if(!this.dashState){
         this.dashState = this.availableWidgets;
       }
+
+      this.formEvents = new Subject();
+      this.formEvents.subscribe((evt: CoreEvent) => {
+        switch(evt.name){
+          case 'FormSubmit':
+            this.formHandler(evt);
+          break;
+          case 'ToolbarChanged':
+            this.showConfigForm();
+          break;
+        }
+      });
+
+      // Setup Global Actions
+      const actionsConfig = {
+        actionType: EntityToolbarComponent,
+        actionConfig: {
+          target: this.formEvents,
+          controls: [
+            {
+              name: 'dashConfig',
+              label: 'Configure',
+              type: 'button',
+              value: 'click',
+              color: 'primary'
+            }
+          ]
+        }
+      };
+
+      this.core.emit({name:"GlobalActions", data: actionsConfig, sender: this});
+      this.core.emit({name:"UserAttributesRequest"}); // Fetch saved dashboard state
     }
   }
 
   generateDefaultConfig(){
     let conf: DashConfigItem[] = [
-      {name:'System Information', rendered: true },
+      {name:'System Information', rendered: true, id: '0' },
     ];
 
     if(this.isHA){
-      conf.push({name:'System Information(Standby)', identifier: 'passive,true', rendered: true })
+      conf.push({name:'System Information(Standby)', identifier: 'passive,true', rendered: true , id: conf.length.toString()})
     }
 
-    conf.push({name:'CPU', rendered: true });
-    conf.push({name:'Memory', rendered: true });
+    conf.push({name:'CPU', rendered: true, id: conf.length.toString() });
+    conf.push({name:'Memory', rendered: true, id: conf.length.toString() });
 
     this.pools.forEach((pool, index) => {
-      conf.push({name:'Pool', identifier: 'name,' + pool.name, rendered: true });
+      conf.push({name:'Pool', identifier: 'name,' + pool.name, rendered: true, id: conf.length.toString() });
     });
 
     this.nics.forEach((nic, index) => {
-      conf.push({name:'Interface', identifier: 'name,' + nic.name, rendered: true })
+      conf.push({name:'Interface', identifier: 'name,' + nic.name, rendered: true, id: conf.length.toString() })
     });
 
     return conf;
@@ -436,5 +485,137 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  showConfigForm(){
+    //this.modalService.open('slide-in-form', this.addComponent);
+    if(this.formComponent){
+      delete this.formComponent;
+    } 
+    this.generateFormComponent();
+    this.modalService.open('slide-in-form', this.formComponent);
+   
+  }
+
+  generateFormComponent(){
+    let widgetTypes = [];
+    this.dashState.forEach((item) => {
+      if(widgetTypes.indexOf(item.name) == -1){
+        widgetTypes.push(item.name);
+      }
+    });
+
+   /* let fieldSets = widgetTypes.map((widgetType) => {
+      return {
+        name: widgetType,
+        width: '100%',
+        label: true,
+        config: this.dashState.filter((w) => w.name == widgetType).map((widget) => {
+          let ph;
+          if(widget.identifier){
+            let spl = widget.identifier.split(',');
+            ph = spl[1];
+          } else {
+            ph = widget.name;
+          }
+
+          return {
+            type: 'checkbox',
+            name: ph,
+            value: widget.rendered,
+            placeholder: ph,
+          }
+        })
+      }
+    });*/
+
+   let fieldSets = [
+     {
+        name: "Toggle Widget Visibility",
+        width: '100%',
+        label: true,
+        config: this.dashState.map((widget) => {
+          let ph;
+          if(widget.identifier){
+            let spl = widget.identifier.split(',');
+            ph = spl[1];
+          } else {
+            ph = widget.name;
+          }
+
+          return {
+            type: 'checkbox',
+            name: ph,
+            value: widget.rendered,
+            placeholder: ph,
+          }
+        })
+      }
+   ];
+    
+    this.formComponent = new EntityFormConfigurationComponent();
+    this.formComponent.fieldSets = new FieldSets(fieldSets);
+    this.formComponent.title = 'Dashboard Configuration';
+    this.formComponent.formType = 'EntityFormComponent';
+    this.formComponent.target = this.formEvents;
+
+  }
+
+  formHandler(evt: CoreEvent){
+    // This method handles the form data
+
+    let clone = Object.assign([], this.dashState);
+    const keys = Object.keys(evt.data);
+
+    // Apply
+    keys.forEach((key) => {
+      const value = evt.data[key];
+      const dashItem = clone.filter((w) => {
+        if(w.identifier){
+          const spl = w.identifier.split(',');
+          const name = spl[1];
+          return key == name;
+        } else {
+          return key == w.name;
+        }
+      });
+
+      clone[parseInt(dashItem[0].id)].rendered = value;
+    });
+
+    this.dashState = clone;
+    this.modalService.close('slide-in-form').then( closed => {
+      console.log(closed);
+    });
+
+    // Save
+    this.ws.call('user.set_attribute', [1, 'dashState', clone]).subscribe((res) => {
+      console.log(res);
+    });
+  }
+
+  applyState(state){
+    // This reconciles current state with saved dashState
+
+    if(!this.dashState){
+      console.warn( "Cannot apply saved state to dashboard. Property dashState does not exist!");
+      return;
+    }
+
+    let clone = Object.assign([], this.dashState);
+    clone.forEach((widget, index) => {
+      let matches = state.filter((w) => {
+        let key = widget.identifier ? 'identifier' : 'name';
+
+        return widget[key] == w[key];
+      }); 
+
+      if(matches.length == 1){
+        clone[index] = matches[0];
+      }
+
+    });
+  
+    this.dashState = clone;
+  
+  }
 
 }
