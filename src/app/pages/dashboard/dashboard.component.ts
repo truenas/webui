@@ -582,13 +582,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.dashState = clone;
-    this.modalService.close('slide-in-form').then( closed => {
-      console.log(closed);
-    });
+    this.modalService.close('slide-in-form')/*.then( closed => {
+    });*/
 
     // Save
     this.ws.call('user.set_attribute', [1, 'dashState', clone]).subscribe((res) => {
-      console.log(res);
+      if(!res){
+        throw "Unable to save Dashboard State"
+      }
     });
   }
 
