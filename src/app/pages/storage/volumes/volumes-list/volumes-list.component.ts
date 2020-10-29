@@ -1580,15 +1580,15 @@ export class VolumesListTableConfig implements InputTableConf {
               this.dialogService.passwordConfirm(message).subscribe(export_keys => {
                 if (export_keys) {
                   const dialogRef = this.mdDialog.open(EntityJobComponent, {data: {"title":T('Retrieving Key')}, disableClose: true});
-                  dialogRef.componentInstance.setCall('pool.dataset.export_key', [row.name]);
+                  dialogRef.componentInstance.setCall('pool.dataset.export_key', [rowData.name]);
                   dialogRef.componentInstance.submit();
                   dialogRef.componentInstance.success.subscribe((res) => {
                     dialogRef.close();
-                    this.dialogService.confirm(`Key for ${row.name}`, res.result, true, T('Download Key'), false,
+                    this.dialogService.confirm(`Key for ${rowData.name}`, res.result, true, T('Download Key'), false,
                       '','','','',false, T('Close')).subscribe(download => {
                         if (download) {
                           this.loader.open();
-                          this.ws.call('core.download', ['pool.dataset.export_key', [row.name, true], fileName]).subscribe(res => {
+                          this.ws.call('core.download', ['pool.dataset.export_key', [rowData.name, true], fileName]).subscribe(res => {
                             this.loader.close();
                             const url = res[1];
                             this.storageService.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
