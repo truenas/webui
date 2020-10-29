@@ -101,6 +101,7 @@ export default {
 
     properties_override_placeholder: T('Properties Override'),
     properties_override_tooltip: T(''),
+    properties_override_error: T('Invalid Format.'),
 
     properties_exclude_placeholder: T('Properties Exclude'),
     properties_exclude_tooltip: T(''),

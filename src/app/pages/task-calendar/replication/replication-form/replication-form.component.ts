@@ -1036,6 +1036,17 @@ export class ReplicationFormComponent {
             };
         });
 
+        entityForm.formGroup.controls['properties_override'].valueChanges.subscribe((value) => {
+            if (value) {
+                for (const item of value) {
+                    if (item && (item.indexOf('=') <= 0 || item.indexOf('=') >= item.length - 1)) {
+                        entityForm.formGroup.controls['properties_override'].setErrors({manualValidateError: true, manualValidateErrorMsg: helptext.properties_override_error});
+                        return;
+                    }
+                }
+            }
+            entityForm.formGroup.controls['properties_override'].setErrors(null);
+        });
         entityForm.formGroup.controls['auto'].setValue(entityForm.formGroup.controls['auto'].value);
     }
 
