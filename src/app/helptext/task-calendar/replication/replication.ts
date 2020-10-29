@@ -193,16 +193,22 @@ from the source dataset.'),
     encryption_placeholder: T('Encryption'),
     encryption_tooltip: T(''),
 
-    encryption_key_placeholder: T('Encryption Key'),
-    encryption_key_tooltip: T(''),
-
     encryption_key_format_placeholder: T('Encryption Key Format'),
     encryption_key_format_tooltip: T(''),
 
-    encryption_key_location_truenasdb_placeholder: T('Store Encryption key in TrueNAS database'),
+    encryption_key_generate_placeholder: T('Generate Encryption Key'),
+    encryption_key_generate_tooltip: T(''),
+
+    encryption_key_hex_placeholder: T('Encryption Key'),
+    encryption_key_hex_tooltip: T(''),
+
+    encryption_key_passphrase_placeholder: T('Passphrase'),
+    encryption_key_passphrase_tooltip: T(''),
+
+    encryption_key_location_truenasdb_placeholder: T('Store Encryption key in Sending TrueNAS database'),
     encryption_key_location_truenasdb_tooltip: T(''),
 
-    encryption_key_location_placeholder: T('Encryption Key Location'),
+    encryption_key_location_placeholder: T('Encryption Key Location in Target System'),
     encryption_key_location_tooltip: T(''),
 
     allow_from_scratch_placeholder: T('Synchronize Destination Snapshots With Source'),

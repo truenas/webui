@@ -632,19 +632,6 @@ export class ReplicationFormComponent {
                     value: false,
                 },
                 {
-                    type: 'input',
-                    name: 'encryption_key',
-                    placeholder: helptext.encryption_key_placeholder,
-                    tooltip: helptext.encryption_key_tooltip,
-                    relation: [{
-                        action: 'SHOW',
-                        when: [{
-                            name: 'encryption',
-                            value: true,
-                        }]
-                    }],
-                },
-                {
                     type: 'select',
                     name: 'encryption_key_format',
                     placeholder: helptext.encryption_key_format_placeholder,
@@ -661,6 +648,63 @@ export class ReplicationFormComponent {
                         when: [{
                             name: 'encryption',
                             value: true,
+                        }]
+                    }],
+                },
+                {
+                    type: 'checkbox',
+                    name: 'encryption_key_generate',
+                    placeholder: helptext.encryption_key_generate_placeholder,
+                    tooltip: helptext.encryption_key_generate_tooltip,
+                    value: true,
+                    relation: [{
+                        action: 'SHOW',
+                        connective: 'AND',
+                        when: [{
+                            name: 'encryption',
+                            value: true,
+                        },  {
+                            name: 'encryption_key_format',
+                            value: 'HEX',
+                        }]
+                    }],
+                },
+                {
+                    type: 'input',
+                    name: 'encryption_key_hex',
+                    placeholder: helptext.encryption_key_hex_placeholder,
+                    tooltip: helptext.encryption_key_hex_tooltip,
+                    relation: [{
+                        action: 'SHOW',
+                        connective: 'AND',
+                        when: [{
+                            name: 'encryption',
+                            value: true,
+                        }, {
+                            name: 'encryption_key_format',
+                            value: 'HEX',
+                        }, {
+                            name: 'encryption_key_generate',
+                            value: false,
+                        }]
+                    }],
+                },
+                {
+                    type: 'input',
+                    inputType: 'password',
+                    togglePw: true,
+                    name: 'encryption_key_passphrase',
+                    placeholder: helptext.encryption_key_passphrase_placeholder,
+                    tooltip: helptext.encryption_key_passphrase_tooltip,
+                    relation: [{
+                        action: 'SHOW',
+                        connective: 'AND',
+                        when: [{
+                            name: 'encryption',
+                            value: true,
+                        }, {
+                            name: 'encryption_key_format',
+                            value: 'PASSPHRASE',
                         }]
                     }],
                 },
@@ -1109,6 +1153,13 @@ export class ReplicationFormComponent {
             delete wsResponse.encryption_key_location;
         }
 
+        if (wsResponse.encryption_key_format === 'HEX') {
+            wsResponse.encryption_key_generate = false;
+            wsResponse.encryption_key_hex = wsResponse.encryption_key;
+        } else {
+            wsResponse.encryption_key_passphrase = wsResponse.encryption_key;
+        }
+
         return wsResponse;
     }
 
@@ -1207,6 +1258,11 @@ export class ReplicationFormComponent {
             data['encryption_key_location'] = '$TrueNAS';
         }
         delete data['encryption_key_location_truenasdb'];
+
+        data['encryption_key'] = data['encryption_key_format'] === 'PASSPHRASE' ? data['encryption_key_passphrase'] : (data['encryption_key_generate'] ? this.replicationService.generateEncryptionHexKey(64): data['encryption_key_hex']);
+        delete data['encryption_key_passphrase'];
+        delete data['encryption_key_generate'];
+        delete data['encryption_key_hex'];
 
         // for edit replication task
         if (!this.entityForm.isNew) {
