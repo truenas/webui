@@ -26,12 +26,20 @@ export class EntityFormConfigurationComponent implements Formconfiguration {
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSets; 
 
-  //private entityEdit: EntityFormComponent | EntityFormEmbeddedComponent;
   private entityEdit: EntityFormComponent;
-  //private failover_fields = ['hostname_b', 'hostname_virtual'];
+  
   public title = '';
   public afterModalFormClosed;
   public formType: string;
+
+  _isOneColumnForm: boolean = false;
+  get isOneColumnForm(){
+    return this._isOneColumnForm;
+  }
+
+  set isOneColumnForm(value){
+    this._isOneColumnForm = value;
+  }
 
   // EntityForm
   public customSubmit?;
