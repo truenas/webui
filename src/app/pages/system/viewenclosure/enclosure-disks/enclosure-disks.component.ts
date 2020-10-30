@@ -383,7 +383,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case "ES24":
         this.chassis = new ES24();
         break;
-      case "ES24f":
+      case "ES24F":
         this.chassis = new ES24F();
         break;
       case "E24":
@@ -480,7 +480,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case "ES24":
         chassis = new ES24();
         break;
-      case "ES24f":
+      case "ES24F":
         chassis = new ES24F();
         break;
       case "ES60":
@@ -493,7 +493,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         chassis = new ES102();
         break;
       default:
-          console.log(profile);
           this.controllerEvents.next({
             name: 'Error', 
             data: { 
