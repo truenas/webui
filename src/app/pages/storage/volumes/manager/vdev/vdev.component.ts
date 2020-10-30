@@ -125,7 +125,7 @@ export class VdevComponent implements OnInit {
     this.vdev_disks_size_error = false;
     for (let i = 0; i < this.disks.length; i++) {
       let size = parseInt(this.disks[i].real_capacity, 10);
-      if (this.group !== 'log') {
+      if (this.group === 'data' || this.group === 'spares') {
         size -= swapsize;
       }
       stripeSize += size;
