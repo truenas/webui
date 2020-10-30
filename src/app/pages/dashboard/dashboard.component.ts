@@ -555,6 +555,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.formComponent = new EntityFormConfigurationComponent();
     this.formComponent.fieldSets = new FieldSets(fieldSets);
     this.formComponent.title = 'Dashboard Configuration';
+    this.formComponent.isOneColumnForm = true;
     this.formComponent.formType = 'EntityFormComponent';
     this.formComponent.target = this.formEvents;
 
