@@ -154,6 +154,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
             name: 'configFiles',
             label: helptext.actions.config_button,
             type: 'menu',
+            color: 'primary',
             options: [
               { label: helptext.actions.save_config, value: 'save_config' }, 
               { label: helptext.actions.upload_config, value: 'upload_config' }, 
