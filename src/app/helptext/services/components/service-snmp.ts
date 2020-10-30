@@ -1,6 +1,5 @@
 import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
-import { matchOtherValidator } from '../../../pages/common/entity/entity-form/validators/password-validation';
 
 export default {
 location_placeholder : T('Location'),
@@ -112,5 +111,12 @@ loglevel_options : [
 ],
 general_title: T('General Options'),
 v3_title: T('SNMP v3 Options'),
-other_title: T('Other Options')
+other_title: T('Other Options'),
+
+formTitle: T('SNMP'),
+
+iftop: {
+  placeholder: T('Enable iftop'),
+  tooltip: T('Include iftop network performance statistics in SNMP messages.')
+}
 }
