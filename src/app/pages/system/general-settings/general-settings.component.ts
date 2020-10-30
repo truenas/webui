@@ -130,7 +130,6 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
 
     this.formEvents = new Subject();
     this.formEvents.subscribe((evt: CoreEvent) => {
-      console.log(evt)
       switch (evt.data.configFiles.value) {
         case 'save_config':
           this.dialog.dialogForm(this.saveConfigFormConf);
