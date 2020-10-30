@@ -493,7 +493,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         chassis = new ES102();
         break;
       default:
-          console.log(raw_enclosure);
           this.controllerEvents.next({
             name: 'Error', 
             data: { 
