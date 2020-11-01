@@ -3698,6 +3698,9 @@ msgstr "Степень сжатия"
 msgid "Computer Account OU"
 msgstr "Учетная запись компьютера OU"
 
+msgid "Config Files"
+msgstr ""
+
 msgid "Config could not be downloaded"
 msgstr "Конфиг не может быть загружен"
 
@@ -5394,6 +5397,9 @@ msgstr "Включить iSCSI ALUA"
 
 msgid "Enable iXsystems Proactive Support"
 msgstr "Включить проактивную поддержку iXsystems"
+
+msgid "Enable iftop"
+msgstr ""
 
 msgid ""
 "Enable running services that require <a "
@@ -8021,6 +8027,9 @@ msgstr "Включить секретное семя пароля"
 
 msgid "Include dataset properties with the replicated  snapshots."
 msgstr "Включите свойства набора данных в реплицированные снимки."
+
+msgid "Include iftop network performance statistics in SNMP messages."
+msgstr ""
 
 msgid ""
 "Including the Password Secret Seed allows using this              "

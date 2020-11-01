@@ -3042,6 +3042,9 @@ msgstr "Livello di compressione"
 msgid "Computer Account OU"
 msgstr ""
 
+msgid "Config Files"
+msgstr ""
+
 msgid "Config could not be downloaded"
 msgstr "Impossibile scaricare la configurazione"
 
@@ -4587,6 +4590,9 @@ msgid "Enable iSCSI ALUA"
 msgstr ""
 
 msgid "Enable iXsystems Proactive Support"
+msgstr ""
+
+msgid "Enable iftop"
 msgstr ""
 
 msgid ""
@@ -6834,6 +6840,9 @@ msgid "Include Password Secret Seed"
 msgstr ""
 
 msgid "Include dataset properties with the replicated  snapshots."
+msgstr ""
+
+msgid "Include iftop network performance statistics in SNMP messages."
 msgstr ""
 
 msgid ""

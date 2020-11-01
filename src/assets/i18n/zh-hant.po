@@ -2972,6 +2972,9 @@ msgstr "壓縮層級"
 msgid "Computer Account OU"
 msgstr ""
 
+msgid "Config Files"
+msgstr ""
+
 msgid "Config could not be downloaded"
 msgstr ""
 
@@ -4486,6 +4489,9 @@ msgid "Enable iSCSI ALUA"
 msgstr "啟用 iSCSI ALUA"
 
 msgid "Enable iXsystems Proactive Support"
+msgstr ""
+
+msgid "Enable iftop"
 msgstr ""
 
 msgid ""
@@ -6723,6 +6729,9 @@ msgid "Include Password Secret Seed"
 msgstr "包括種子密碼"
 
 msgid "Include dataset properties with the replicated  snapshots."
+msgstr ""
+
+msgid "Include iftop network performance statistics in SNMP messages."
 msgstr ""
 
 msgid ""

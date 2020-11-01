@@ -3227,6 +3227,9 @@ msgstr "压缩级别"
 msgid "Computer Account OU"
 msgstr "电脑帐户OU"
 
+msgid "Config Files"
+msgstr ""
+
 msgid "Config could not be downloaded"
 msgstr "无法下载配置"
 
@@ -4830,6 +4833,9 @@ msgstr "启用iSCSI ALUA"
 
 msgid "Enable iXsystems Proactive Support"
 msgstr "启用iXsystems主动支持"
+
+msgid "Enable iftop"
+msgstr ""
 
 msgid ""
 "Enable running services that require <a "
@@ -7232,6 +7238,9 @@ msgstr "包括密码秘密种子"
 
 msgid "Include dataset properties with the replicated  snapshots."
 msgstr "在复制的快照中包括数据集属性。"
+
+msgid "Include iftop network performance statistics in SNMP messages."
+msgstr ""
 
 msgid ""
 "Including the Password Secret Seed allows using this              "
