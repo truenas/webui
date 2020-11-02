@@ -252,7 +252,8 @@ input.mat-input-element::placeholder {
 .form-element input[type = "number"],
 .form-element textarea,
 .form-element select{
-  width: calc(100% - 24px) !important;
+  /*width: calc(100% - 24px) !important;*/
+  width: 100% !important;
   line-height: normal !important; 
   min-height: 33px;
 }
@@ -287,7 +288,7 @@ entity-form-list .list-action-block-wrapper .form-element select{
 }
 
 .form-element.form-combobox .mat-form-field{
-  max-width: calc(100% - 58px) !important;
+  max-width: calc(100% - 34px) !important;
   height: 33px;
   margin-right: 1px;
   padding: 0 8px;
