@@ -87,14 +87,6 @@ def set_path_to_the_acl_dataset_mntdozermyacldataset(driver, path):
     driver.find_element_by_xpath('//input[@ix-auto="input__path"]').send_keys(path)
 
 
-@then(parsers.parse('Input "{description}" as description'))
-def input_my_smb_test_share_as_description(driver, description):
-    """Input "My smb test share" as description."""
-    assert wait_on_element(driver, 0.5, 5, '//input[@ix-auto="input__Description"]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys(description)
-
-
 @then(parsers.parse('Input "{smbname}" as name, Click to enable'))
 def input_mysmbshare_as_name_click_to_enable(driver, smbname):
     """Input "mysmbshare" as name, Click to enable."""
@@ -104,7 +96,15 @@ def input_mysmbshare_as_name_click_to_enable(driver, smbname):
     checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
     if not checkbox_checked:
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enabled"]').click()
-    assert not attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
+    assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
+
+
+@then(parsers.parse('Input "{description}" as description'))
+def input_my_smb_test_share_as_description(driver, description):
+    """Input "My smb test share" as description."""
+    assert wait_on_element(driver, 0.5, 5, '//input[@ix-auto="input__Description"]')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys(description)
 
 
 @then('Click Summit')
