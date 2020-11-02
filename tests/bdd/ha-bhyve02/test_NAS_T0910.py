@@ -138,6 +138,7 @@ def open_the_user_drop_down_to_verify_the_value_has_been_changed(driver):
 @then('Updated value should be visible')
 def updated_value_should_be_visible(driver):
     """Updated value should be visible."""
+    assert wait_on_element(driver, 1, 5, '//h4[contains(.,"Permit Sudo:")]/../div/p')
     element_text = driver.find_element_by_xpath('//h4[contains(.,"Permit Sudo:")]/../div/p').text
     assert element_text == 'true'
 
