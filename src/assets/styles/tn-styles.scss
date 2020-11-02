@@ -1223,6 +1223,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       padding: 15px;
       background-color: var(--contrast-darker);
       margin: 16px;
+      min-width: 100%;
     }
 
     entity-form-list .form-list .form-list-item > div.form-line  {

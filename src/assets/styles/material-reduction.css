@@ -391,8 +391,8 @@ entity-form-list .list-action-block-wrapper .form-element select{
 }
 
 .form-element textarea{
-  min-width: calc(100% - 24px);
-  max-width: calc(100% - 24px);
+  min-width: 100%;
+  max-width: 100%;
   min-height: 96px;
 }
 
