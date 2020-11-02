@@ -22,6 +22,7 @@ export class EmailComponent implements OnDestroy {
   public entityEdit: any;
   public rootEmail: string;
   private credentialsOauth = false;
+  private oauthCreds: any;
   customSubmit = this.saveConfigSubmit;
   public custActions: Array < any > = [{
     id: 'send_mail',
@@ -67,6 +68,7 @@ export class EmailComponent implements OnDestroy {
     id: 'authenticate',
     name: helptext_system_email.auth.login_button,
     function: () => {
+      const self = this;
       const dialogService = this.dialogservice;
       const controls = this.entityEdit.formGroup.controls;
 
@@ -79,9 +81,8 @@ export class EmailComponent implements OnDestroy {
           if (message.data.error) {
             dialogService.errorReport(T('Error'), message.data.error);
           } else {
-            for (const prop in message.data.result) {
-              controls[prop].setValue(message.data.result[prop]);
-            }
+            self.oauthCreds = message.data.result;
+            self.checkForOauthCreds();
           }
         }
         window.removeEventListener("message", doAuth);
@@ -223,47 +224,16 @@ export class EmailComponent implements OnDestroy {
           validation: helptext_system_email.pass.validation,
         },
         {
-          type: 'input',
-          name: 'client_id',
-          placeholder: helptext_system_email.auth.client_id.placeholder,
-          tooltip: helptext_system_email.auth.client_id.tooltip,
-          relation : [
-            {
-              action : 'HIDE',
-              when : [ {
-                name : 'smtp',
-                value : true,
-              } ]
-            },
-          ],
+          type: 'paragraph',
+          name: 'oauth_applied',
+          paraText: 'Oauth credentials have been applied.',
+          isHidden: true
         },
         {
-          type: 'input',
-          name: 'client_secret',
-          placeholder: helptext_system_email.auth.client_secret,
-          relation : [
-            {
-              action : 'HIDE',
-              when : [ {
-                name : 'smtp',
-                value : true,
-              } ]
-            },
-          ],
-        },
-        {
-          type: 'input',
-          name: 'refresh_token',
-          placeholder: helptext_system_email.auth.refresh_token,
-          relation : [
-            {
-              action : 'HIDE',
-              when : [ {
-                name : 'smtp',
-                value : true,
-              } ]
-            },
-          ],
+          type: 'paragraph',
+          name: 'oauth_not_applied',
+          paraText: 'Log in to Gmail to set up Oauth credentials.',
+          isHidden: true
         },
       ]
     },
@@ -283,9 +253,7 @@ export class EmailComponent implements OnDestroy {
             ) {}
 
   resourceTransformIncomingRestData(data): void {
-    for (let i in data.oauth) {
-      data[i] = data.oauth[i];
-    }
+    this.oauthCreds = data.oauth;
     delete data.pass;
     return data;
   }
@@ -312,7 +280,23 @@ export class EmailComponent implements OnDestroy {
     this.smtp_subscription = this.smtp.valueChanges.subscribe((value) => {
       this.pass.hideButton = !value;
       this.credentialsOauth = !value;
+      if (!value) {
+        this.checkForOauthCreds();
+      } else {
+        entityEdit.setDisabled('oauth_applied', true, true);
+        entityEdit.setDisabled('oauth_not_applied', true, true);
+      }
     });
+  }
+
+  checkForOauthCreds() {
+    if (this.oauthCreds.client_id) {
+      this.entityEdit.setDisabled('oauth_applied', false, false);
+      this.entityEdit.setDisabled('oauth_not_applied', true, true);
+    } else {
+      this.entityEdit.setDisabled('oauth_applied', true, true);
+      this.entityEdit.setDisabled('oauth_not_applied', false, false);
+    }
   }
 
   ngOnDestroy() {
@@ -324,21 +308,24 @@ export class EmailComponent implements OnDestroy {
     if (emailConfig.pass && typeof emailConfig.pass === 'string' && emailConfig.pass.trim() === '') {
       delete emailConfig.pass;
     }
-    if (emailConfig.client_id) {
+    if (this.oauthCreds.client_id) {
       let oauth = {
-        client_id: emailConfig.client_id,
-        client_secret: emailConfig.client_secret,
-        refresh_token: emailConfig.refresh_token,
-        // access_token: '',
-        // token_uri: ''
+        client_id: this.oauthCreds.client_id,
+        client_secret: this.oauthCreds.client_secret,
+        refresh_token: this.oauthCreds.refresh_token,
       };
       emailConfig.oauth = oauth;
     } else {
       emailConfig.oauth = null;
     }
-    delete emailConfig.client_id;
-    delete emailConfig.client_secret;
-    delete emailConfig.refresh_token;
+
+    if (emailConfig.oauth_applied) {
+      delete emailConfig.oauth_applied
+    }
+
+    if (emailConfig.oauth_not_applied) {
+      delete emailConfig.oauth_not_applied
+    }
 
     this.ws
       .call(this.updateCall, [emailConfig])
