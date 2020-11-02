@@ -406,8 +406,8 @@ entity-form-list .list-action-block-wrapper .form-element select{
 
 .form-element button.toggle_pw {
   position: absolute;
-  bottom: -3px;
-  right: 32px;
+  bottom: 2px;
+  right: 4px;
 }
 
 .form-element button.toggle_pw i{
