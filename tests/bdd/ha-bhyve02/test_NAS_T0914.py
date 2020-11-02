@@ -130,13 +130,14 @@ def change_should_be_saved(driver):
 def open_the_user_drop_down_to_verify_the_user_disable_password_is_true(driver):
     """Open the user drop down to verify the user Disable Password is true."""
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
-    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__EDIT_ericbsd"]')
+    assert wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__EDIT_ericbsd"]')
     driver.find_element_by_xpath('//h4[contains(.,"Password Disabled:")]')
 
 
 @then('Updated value should be visible')
 def updated_value_should_be_visible(driver):
     """Updated value should be visible."""
+    assert wait_on_element(driver, 1, 5, '//h4[contains(.,"Password Disabled:")]/../div/p')
     element_text = driver.find_element_by_xpath('//h4[contains(.,"Password Disabled:")]/../div/p').text
     assert element_text == 'true'
 
