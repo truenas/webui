@@ -86,7 +86,7 @@ export const rootRouterConfig: Routes = [{
       {
         path: 'storage',
         loadChildren: './pages/storage/storage.module#StorageModule',
-        data: { title: 'Storage', breadcrumb: 'Storage' }
+        data: { title: 'Storage', breadcrumb: 'Storage', toplevel: true }
       },
       {
         path: 'plugins',

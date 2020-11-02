@@ -22,8 +22,8 @@ import helptext from '../../../../helptext/storage/volumes/volume-import-wizard'
 })
 export class VolumeImportWizardComponent {
 
-  public route_success: string[] = ['storage', 'pools'];
-  public route_create: string[] = ['storage', 'pools', 'manager'];
+  public route_success: string[] = ['storage'];
+  public route_create: string[] = ['storage', 'manager'];
   public summary = {};
   isLinear = true;
   firstFormGroup: FormGroup;

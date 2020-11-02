@@ -3,6 +3,7 @@ import { Router, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot } from '@
 import { RoutePartsService } from '../../../services/route-parts/route-parts.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import globalHelptext from '../../../helptext/global-helptext';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-breadcrumb',
@@ -39,7 +40,7 @@ export class BreadcrumbComponent implements OnInit {
     });
 
   // only execute when routechange
-    this.router.events.filter(event => event instanceof NavigationEnd).subscribe((routeChange) => {
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe((routeChange) => {
       this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
       // generate url from parts
       this.routeParts.reverse().map((item, i) => {

@@ -44,5 +44,5 @@ ha_enabled_delete_msg: T("Deleting interfaces while HA is enabled is not allowed
 ha_enabled_text: T("Cannot edit while HA is enabled."),
 go_to_ha: T("Go to HA settings"),
 
-delete_dialog_text: T("Network connectivity will be interrupted. ")
+delete_dialog_text: T("This change can interrupt connectivity and must be tested before making permanent. ")
 }

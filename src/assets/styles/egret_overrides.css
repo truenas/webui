@@ -36,11 +36,6 @@ topbar .mat-toolbar .mat-toolbar-row{
   height:48px;
 }
 
-app-breadcrumb{
-  top:48px;
-  display:inline-block;
-}
-
 .rightside-content-hold {
   padding: 14px 16px 15px !important;
   overflow-x: hidden;
@@ -267,10 +262,10 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
 
 }
 
-.widget .mat-button{
+/*.widget .mat-button{
   text-transform:uppercase !important;
   font-weight:500 !important;
-}
+}*/
 
 .widget-fullscreen .mat-card,
 .widget-fullscreen, .widget-fullscreen .card-container{

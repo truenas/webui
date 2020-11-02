@@ -44,12 +44,10 @@
 
 .pool-icon {
     margin-left: 15px;
-    position: relative;
-    top: 10px;
-}
-
-.icon-row {
-    margin: -5px -5px 12px 0;
+    position: absolute;
+    top: 8px;
+    right: 20px;
+    z-index: 123;
 }
 
 .green-icon {
@@ -76,6 +74,10 @@
     max-width: 30%;
     width: 30%;
     min-width: 30%;
+}
+
+.mat-expansion-panel-body{
+  padding: 0;
 }
 
 .icons {

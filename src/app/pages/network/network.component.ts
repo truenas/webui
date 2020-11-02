@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Subject } from 'rxjs';
 
 import { WebSocketService, NetworkService, DialogService, StorageService, AppLoaderService, ServicesService } from '../../services';
 import { T } from '../../translate-marker';
@@ -18,6 +19,7 @@ import { OpenvpnServerComponent } from './forms/service-openvpn-server.component
 import { CoreEvent } from 'app/core/services/core.service';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { EntityUtils } from '../../pages/common/entity/utils';
+import { EntityToolbarComponent } from '../../pages/common/entity/entity-toolbar/entity-toolbar.component';
 import * as ipRegex from 'ip-regex';
 
 @Component({
@@ -30,6 +32,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   protected configCall = 'network.configuration.config';
 
   protected reportEvent;
+  public formEvents: Subject<CoreEvent>;
 
   public ha_enabled = false;
   public hasPendingChanges = false;
@@ -100,6 +103,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       { name: T('Gateway'), prop: 'gateway' },
     ],
     parent: this,
+    tableComponent: undefined,
     add: function() {
       this.parent.modalService.open('slide-in-form', this.parent.staticRouteFormComponent);
     },
@@ -146,7 +150,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     getActions: this.getOpenVpnActions.bind(this),
     isActionVisible: this.isOpenVpnActionVisible,
     edit: function(row) {
-      console.log(row);
       if (row.service === 'openvpn_client') {
         this.parent.modalService.open('slide-in-form', this.parent.openvpnClientComponent, row.id);
       } else if (row.service === 'openvpn_server') {
@@ -270,6 +273,35 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         }
       });
     }
+
+    this.globalActionsInit()
+  }
+
+  globalActionsInit(){
+
+    // Setup events
+    this.formEvents = new Subject();
+    this.formEvents.subscribe((evt: CoreEvent) => {
+      this.showConfigForm();
+    });
+
+    // Setup button
+    const actionsConfig = {
+      actionType: EntityToolbarComponent,
+      actionConfig:{
+        target: this.formEvents,
+        controls: [
+          {
+            name: 'networkConfig',
+            label: 'Configure',
+            type: 'button',
+            value: 'click',
+            color: 'primary'
+          }
+        ]
+      }
+    }
+    this.core.emit({name: "GlobalActions", data: actionsConfig, sender: this});
   }
 
   checkInterfacePendingChanges() {
@@ -399,6 +431,9 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     this.interfaceComponent = new InterfacesFormComponent(this.router, this.aroute, this.networkService, this.dialog, this.ws);
     this.interfaceComponent.afterModalFormClosed = this.checkInterfacePendingChanges.bind(this);
     this.staticRouteFormComponent = new StaticRouteFormComponent(this.aroute, this.ws, this.networkService);
+    if (this.staticRoutesTableConf.tableComponent) {
+      this.staticRouteFormComponent.afterModalFormClosed = this.staticRoutesTableConf.tableComponent.getData();
+    }
     this.nameserverFormComponent = new NameserverFormComponent(this.aroute, this.ws, this.networkService);
     this.nameserverFormComponent.afterModalFormClosed = this.getNameserverDefaultRouteInfo.bind(this); // update nameserver info
     this.defaultRouteFormComponent = new DefaultRouteFormComponent(this.aroute, this.ws, this.networkService);
@@ -412,6 +447,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     if (this.reportEvent) {
       this.reportEvent.complete();
     }
+
+    this.formEvents.complete();
     this.core.unregister({observerClass:this});
   }
 
@@ -503,7 +540,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     }]
   }
 
-  networkSetting() {
+  showConfigForm() {
     this.modalService.open('slide-in-form', this.addComponent);
   }
 
@@ -550,7 +587,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         rowinner['onChanging'] = true;
         this.ws.call('service.start', [rowinner.service]).subscribe(
           (res) => {
-            console.log(res);
             if (res) {
               rowinner.state = 'RUNNING';
               rowinner['onChanging'] = false;

@@ -4,6 +4,8 @@ export class EntityTreeTableColumn {
     name: string;
     prop: string;
     filesizePipe?: boolean;
+    hidden?: boolean;
+    always_display?: boolean
 }
 
 export class EntityTreeTable {

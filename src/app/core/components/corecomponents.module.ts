@@ -9,7 +9,7 @@ import { ViewComponent } from 'app/core/components/view/view.component';
 import { CardComponent } from 'app/core/components/card/card.component';
 import { ViewControlComponent } from 'app/core/components/viewcontrol/viewcontrol.component';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
-import { Display,DisplayContainer } from 'app/core/components/display/display.component';
+import { Display } from 'app/core/components/display/display.component';
 import { ViewButtonComponent } from './viewbutton/viewbutton.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule }   from '@angular/forms';
@@ -71,7 +71,6 @@ import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.compo
     ViewControlComponent,
     ViewControllerComponent,
     Display,
-    DisplayContainer,
     ViewButtonComponent,
     ViewChartComponent,
     ViewChartDonutComponent,
@@ -101,7 +100,6 @@ import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.compo
     PortalModule,
     FlexLayoutModule,
     Display,
-    DisplayContainer,
     ContextMenuComponent,
     CopyPasteMessageComponent,
     PageComponent,
@@ -132,7 +130,6 @@ import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.compo
   entryComponents:[
     ContextMenuComponent,
     CopyPasteMessageComponent,
-    DisplayContainer,
     ViewComponent,
     ViewChartComponent,
     ViewChartDonutComponent,

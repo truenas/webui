@@ -204,17 +204,11 @@ msgstr "：自动更新检查失败。请检查系统网络设置。"
 msgid "</b> plugin deletes all data and snapshots stored with it."
 msgstr "</b> 插件会删除所有与其一起存储的数据和快照。"
 
-msgid "</b> with the keypair"
-msgstr "</b> 与密钥对"
-
 msgid "</i> cannot be running when deleting a mountpoint."
 msgstr "删除挂载点时</i>无法运行。"
 
 msgid "</i> has started."
 msgstr "</i> 已启动。"
-
-msgid "</i> keypair?</p>"
-msgstr "</i> 密钥对？</p>"
 
 msgid "</i> now?"
 msgstr "</i> 现在？"
@@ -371,7 +365,7 @@ msgstr ""
 
 msgid ""
 "<a href=\"https://www.ixsystems.com/support/\" target=\"_blank\"> TrueNAS "
-"Liscensing</a> - Learn more about enterprise-grade support."
+"Licensing</a> - Learn more about enterprise-grade support."
 msgstr ""
 
 msgid ""
@@ -654,9 +648,6 @@ msgid ""
 "<i>global</i> is a reserved name that cannot be used as a share name. "
 "Please enter a different share name."
 msgstr "<i>global</i>是保留名称，不能用作共享名。请输入其他共享名。"
-
-msgid "<p>Delete the <i>"
-msgstr "<p>删除 <i>"
 
 msgid ""
 "<p>Including the Password Secret Seed allows using this configuration file "
@@ -1271,9 +1262,6 @@ msgstr "管理员组"
 msgid "Adv. Power Management"
 msgstr "高级电源管理"
 
-msgid "Advance Options"
-msgstr "高级选项"
-
 msgid "Advanced"
 msgstr "高级"
 
@@ -1865,6 +1853,9 @@ msgstr ""
 msgid "Associated Target"
 msgstr "关联目标"
 
+msgid "Associated Targets"
+msgstr ""
+
 msgid ""
 "At least one module must be defined in <a                "
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"                "
@@ -1968,6 +1959,9 @@ msgstr "授权密钥配置"
 
 msgid "Authority Key Identifier"
 msgstr "授权密钥标识符"
+
+msgid "Authorized Access"
+msgstr ""
 
 msgid "Authorized Hosts and IP addresses"
 msgstr "授权的主机和IP地址"
@@ -2086,6 +2080,9 @@ msgstr "背景1"
 
 msgid "Background 2"
 msgstr "背景2"
+
+msgid "Backup Credentials"
+msgstr ""
 
 msgid "Bandwidth"
 msgstr "带宽"
@@ -2693,6 +2690,9 @@ msgstr "选择<i>ON</i>来更新读取文件时的访问时间。选择<i>Off</i
 
 msgid "Choose Accent"
 msgstr "选择强调"
+
+msgid "Choose File"
+msgstr ""
 
 msgid "Choose Pool for Plugin and Jail Manager"
 msgstr "选择用于插件和监狱管理器的池"
@@ -3516,6 +3516,12 @@ msgstr ""
 msgid "Create a new Pool."
 msgstr "创建一个新的池。"
 
+msgid "Create a new Target or choose an existing target for this share."
+msgstr ""
+
+msgid "Create a new pool."
+msgstr ""
+
 msgid "Create a new, empty pool."
 msgstr "创建一个新的空池。"
 
@@ -3787,6 +3793,9 @@ msgstr "数据集动作"
 
 msgid "Dataset Key"
 msgstr "数据集密钥"
+
+msgid "Dataset Names"
+msgstr ""
 
 msgid "Dataset Passphrase"
 msgstr "数据集密码"
@@ -5201,7 +5210,7 @@ msgid ""
 "be found  <a "
 "href=\"https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#"
 "HOSTSALLOW\" target=\"_blank\">here</a>. <br><br>  If neither *Hosts Allow* "
-"or *Hosts Deny* contains  an entry, then AFP share access is allowed for "
+"or *Hosts Deny* contains  an entry, then SMB share access is allowed for "
 "any host. <br><br>  If there is a *Hosts Allow* list but no *Hosts Deny* "
 "list, then only allow  hosts on the *Hosts Allow* list. <br><br>  If there "
 "is a *Hosts Deny* list but no *Hosts Allow* list, then allow all  hosts "
@@ -5214,7 +5223,7 @@ msgstr ""
 msgid ""
 "Enter a list of denied hostnames or IP addresses. Separate entries by "
 "pressing <code>Enter</code>.  If neither *Hosts Allow* or *Hosts Deny* "
-"contains  an entry, then AFP share access is allowed for any host. <br><br> "
+"contains  an entry, then SMB share access is allowed for any host. <br><br> "
 " If there is a *Hosts Allow* list but no *Hosts Deny* list, then only allow "
 " hosts on the *Hosts Allow* list. <br><br>  If there is a *Hosts Deny* list "
 "but no *Hosts Allow* list, then allow all  hosts that are not on the *Hosts "
@@ -6122,6 +6131,9 @@ msgstr "区块名称"
 msgid "Extent Type"
 msgstr "区块类型"
 
+msgid "Extents"
+msgstr ""
+
 msgid "Extra Users"
 msgstr "附加用户"
 
@@ -6199,6 +6211,9 @@ msgstr "光纤通道 "
 
 msgid "Fibre Channel Port "
 msgstr "光纤通道端口 "
+
+msgid "Fibre Channel Ports"
+msgstr ""
 
 msgid "File Information"
 msgstr "文件信息"
@@ -6479,9 +6494,6 @@ msgstr "常规选项"
 msgid "General Preferences"
 msgstr "常规首选项"
 
-msgid "General Settings"
-msgstr ""
-
 msgid "General VM Settings"
 msgstr "常规虚拟机设置"
 
@@ -6520,6 +6532,9 @@ msgstr "根据SSSD默认使用的相同算法生成idmap低范围。"
 
 msgid "Get Started"
 msgstr "开始使用"
+
+msgid "Get Support"
+msgstr ""
 
 msgid "GiB"
 msgstr "GiB"
@@ -7025,6 +7040,9 @@ msgstr "IPv6前缀"
 msgid "IPv6 Prefix Length"
 msgstr "IPv6前缀长度"
 
+msgid "IPv6 addresses are not allowed for HA."
+msgstr ""
+
 msgid "IPv6 interface for the jail."
 msgstr "监狱的IPv6接口。"
 
@@ -7168,14 +7186,14 @@ msgstr "立即连接到TrueCommand。"
 msgid "Import"
 msgstr "导入"
 
-msgid "Import Disk"
-msgstr ""
-
 msgid "Import a pool that exists but is not connected."
 msgstr "导入存在但未连接的池。"
 
 msgid "Import an existing pool"
 msgstr "导入现有池"
+
+msgid "Import an existing pool."
+msgstr ""
 
 msgid ""
 "Import the private key from an existing SSH keypair or  select <i>Generate "
@@ -7296,6 +7314,9 @@ msgstr "启动器组ID"
 
 msgid "Initiators"
 msgstr "启动器"
+
+msgid "Initiators Groups"
+msgstr ""
 
 msgid ""
 "Initiators allowed access to this system. Enter an <a "
@@ -7651,9 +7672,6 @@ msgstr ""
 msgid "LOG (Write Cache) Overprovision Size in GiB"
 msgstr ""
 
-msgid "LOGIN TO PROVIDER"
-msgstr "登录到提供商"
-
 msgid "LUN ID"
 msgstr "LUN ID"
 
@@ -7875,6 +7893,9 @@ msgstr "登录"
 
 msgid "Log in as Root with Password"
 msgstr "使用密码以root身份登录"
+
+msgid "Log in to Provider"
+msgstr ""
 
 msgid "Log mountd(8) requests"
 msgstr "记录mountd(8)请求"
@@ -8178,6 +8199,9 @@ msgstr "复制任务日志中的消息详细级别。"
 
 msgid "Metadata"
 msgstr "元数据"
+
+msgid "Metadata (Special) Small Block Size"
+msgstr ""
 
 msgid "Metadata VDev"
 msgstr "元数据VDev"
@@ -8660,9 +8684,6 @@ msgstr ""
 "href=\"https://community.helpsystems.com/knowledge-base/intermapper/snmp/"
 "snmp-community-strings/\"  target=\"_blank\">什么是SNMP社区字符串？</a>。"
 
-msgid "Network connectivity will be interrupted. "
-msgstr "网络连接将被中断。"
-
 msgid "Network connectivity will be interrupted. Proceed?"
 msgstr "网络连接将中断。继续吗？"
 
@@ -9080,8 +9101,12 @@ msgstr ""
 
 msgid ""
 "Only set LDAP authentication for SMB shares is required and the LDAP server "
-"is already configured with Samba attributes."
-msgstr "仅需要为SMB共享设置LDAP身份验证，并且LDAP服务器已经配置了Samba属性。"
+"is already configured with Samba attributes. DEPRECATED:  Support for Samba "
+"Schema is <a href=\"https://www.samba.org/samba/history/samba-4.13.0.html\" "
+"target=\"_blank\">officially deprecated in Samba 4.13</a>.  The feature "
+"will be removed after Samba 4.14. Users should begin  upgrading legacy "
+"Samba domains to Samba AD domains."
+msgstr ""
 
 msgid ""
 "Only works with Unix ACLs. New directories created on the share are set "
@@ -9604,6 +9629,9 @@ msgstr "门户"
 msgid "Portal Group ID"
 msgstr "门户组 ID"
 
+msgid "Portals"
+msgstr ""
+
 msgid "Ports"
 msgstr "端口"
 
@@ -10013,6 +10041,9 @@ msgstr ""
 "target=\"_blank\"> "
 "HTTP严格传输安全性（HSTS）</a>的最大年龄设置为<i>31536000</i>"
 "秒（一年）。这意味着在浏览器首次连接到Web界面后，浏览器将继续使用HTTPS并每年更新此设置。"
+
+msgid "Reenter Password"
+msgstr ""
 
 msgid "Refresh"
 msgstr "刷新"
@@ -10632,8 +10663,8 @@ msgstr "同步密钥"
 msgid "Samba Authentication"
 msgstr "Samba认证"
 
-msgid "Samba Schema"
-msgstr "Samba架构"
+msgid "Samba Schema (DEPRECATED - see help text)"
+msgstr ""
 
 msgid "Same as Source"
 msgstr "与来源相同"
@@ -10924,6 +10955,9 @@ msgid ""
 "Select IP addresses to listen to for NFS requests. Leave empty for NFS to "
 "listen to all available addresses."
 msgstr "选择IP地址来监听NFS请求。NFS留空以监听所有可用地址。"
+
+msgid "Select Reports"
+msgstr ""
 
 msgid "Select Users Cached by this System"
 msgstr "选择此系统缓存的用户"
@@ -12300,9 +12334,6 @@ msgstr "显示所有可用的组，甚至包括那些未使用任何数据的组
 msgid "Show all available users, including those that have not used any data."
 msgstr "显示所有可用的用户，包括尚未使用任何数据的用户。"
 
-msgid "Show only entries that contain this text"
-msgstr "仅显示包含此文本的条目"
-
 msgid "Show only those users who are using data. This is the default view."
 msgstr "仅显示正在使用数据的用户。这是默认视图。"
 
@@ -12425,9 +12456,6 @@ msgstr ""
 
 msgid "Snapshot successfully taken."
 msgstr "快照已成功拍摄。"
-
-msgid "Snapshots"
-msgstr ""
 
 msgid ""
 "Some authentication tools default to 30 seconds and do not support custom "
@@ -12957,6 +12985,9 @@ msgstr "目标"
 
 msgid "Target Alias"
 msgstr "目标别名"
+
+msgid "Target Global Configuration"
+msgstr ""
 
 msgid "Target Mode"
 msgstr "目标模式"
@@ -13638,9 +13669,6 @@ msgstr "这些数据集已成功解锁。"
 msgid "These datasets will be unlocked with the provided credentials."
 msgstr "这些数据集将使用提供的凭据解锁。"
 
-msgid "These items will be <b>"
-msgstr "这些项目将是 <b>"
-
 msgid ""
 "These permissions are too complicated to be displayed and cannot be saved "
 "unless changed."
@@ -13740,6 +13768,11 @@ msgid ""
 msgstr "该证书的公钥验证用于不可抵赖服务的数字签名。"
 
 msgid ""
+"This change can interrupt connectivity and must be tested before making "
+"permanent. "
+msgstr ""
+
+msgid ""
 "This dataset has an active ACL. Changes to permissions must be made with "
 "the ACL editor."
 msgstr "该数据集具有活动的ACL。 必须使用ACL编辑器更改权限。"
@@ -13814,6 +13847,18 @@ msgid ""
 "disks can be removed from the pool and reused or disposed of without being "
 "erased. iXsystems, inc. cannot be held responsible for any lost or "
 "unrecoverable data as a consequence of using this feature."
+msgstr ""
+
+msgid ""
+"This value represents the threshold block size for including small file "
+"blocks into the special allocation class. Blocks smaller than or equal to "
+"this value will be assigned to the special allocation class while greater "
+"blocks will be assigned to the regular class. Valid values are zero or a "
+"power of two from 512B  up to 1M. The default size is 0 which means no "
+"small file blocks will be allocated in the special class. Before setting "
+"this property, a special class vdev must be added to the pool. See <a "
+"href=\"https://zfsonlinux.org/manpages/0.7.13/man8/zpool.8.html\" "
+"target=\"_blank\">zpool(8)</a> for more details on the special allocation"
 msgstr ""
 
 msgid "Thread number:"
@@ -14709,9 +14754,6 @@ msgstr "虚拟机同步"
 msgid "VMware Sync"
 msgstr "虚拟机同步"
 
-msgid "VMware-Snapshots"
-msgstr ""
-
 msgid "VNC"
 msgstr "VNC"
 
@@ -15371,10 +15413,10 @@ msgstr "群组"
 msgid "gzip (default level, 6)"
 msgstr ""
 
-msgid "gzip (fastest)"
+msgid "gzip-1 (fastest)"
 msgstr ""
 
-msgid "gzip (maximum, slow)"
+msgid "gzip-9 (maximum, slow)"
 msgstr ""
 
 msgid "host_domainname"
@@ -15669,13 +15711,13 @@ msgstr "是"
 msgid "zle (runs of zeros)"
 msgstr ""
 
-msgid "zstd (Maximum, very slow)"
-msgstr ""
-
-msgid "zstd (Medium, slow)"
-msgstr ""
-
 msgid "zstd (default level, 3)"
+msgstr ""
+
+msgid "zstd-5 (slow)"
+msgstr ""
+
+msgid "zstd-7 (very slow)"
 msgstr ""
 
 msgid "zstd-fast (default level, 1)"

@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { WebSocketService, SystemGeneralService, DialogService, LanguageService, StorageService } 
   from '../../../services/';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { LocaleService } from '../../../services/locale.service';
 import { ModalService } from '../../../services/modal.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -11,11 +12,12 @@ import { LocalizationFormComponent } from './localization-form/localization-form
 import { GuiFormComponent } from './gui-form/gui-form.component';
 import { NTPServerFormComponent } from './ntpservers/ntpserver-form/ntpserver-form.component';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { Subscription } from 'rxjs';
+import { Subscription, Subject } from 'rxjs';
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 
 @Component({
   selector: 'app-general-settings',
@@ -32,6 +34,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   dataSource: any;
   refreshTable: Subscription;
   getGenConfig: Subscription;
+  public formEvents: Subject<CoreEvent>;
 
   // Components included in this dashboard
   protected localizationComponent = new LocalizationFormComponent(this.language,this.ws,this.dialog,this.loader,
@@ -113,7 +116,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     private sysGeneralService: SystemGeneralService, private modalService: ModalService,
     private language: LanguageService, private dialog: DialogService, private loader: AppLoaderService,
     private router: Router, private http: HttpClient, private storage: StorageService,
-    public mdDialog: MatDialog) { }
+    public mdDialog: MatDialog, private core: CoreService) { }
 
   ngOnInit(): void {
     this.getDataCardData();
@@ -124,6 +127,44 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
       this.getNTPData();
     })
+
+    this.formEvents = new Subject();
+    this.formEvents.subscribe((evt: CoreEvent) => {
+      switch (evt.data.configFiles.value) {
+        case 'save_config':
+          this.dialog.dialogForm(this.saveConfigFormConf);
+          break;
+        
+        case 'upload_config':
+          this.dialog.dialogForm(this.uploadConfigFormConf);
+          break;
+
+        case 'reset_config':
+          this.dialog.dialogForm(this.resetConfigFormConf);
+          break;
+      }
+    });
+
+    const actionsConfig = {
+      actionType: EntityToolbarComponent,
+      actionConfig: {
+        target: this.formEvents,
+        controls: [
+          {
+            name: 'configFiles',
+            label: helptext.actions.config_button,
+            type: 'menu',
+            options: [
+              { label: helptext.actions.save_config, value: 'save_config' }, 
+              { label: helptext.actions.upload_config, value: 'upload_config' }, 
+              { label: helptext.actions.reset_config, value: 'reset_config' } 
+            ]
+          }
+        ]
+      }
+    };
+
+    this.core.emit({name:"GlobalActions", data: actionsConfig, sender: this});
   }
 
   getDataCardData() {
@@ -209,20 +250,6 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
       this.dataSource = res;
       this.displayedColumns = ['address', 'burst', 'iburst', 'prefer', 'minpoll', 'maxpoll', 'actions'];
     })
-  }
-
-  doCardActions(action: string) {
-    switch (action) {
-      case 'saveConfig':
-        this.dialog.dialogForm(this.saveConfigFormConf);
-        break;
-      case 'upLoadConfig':
-        this.dialog.dialogForm(this.uploadConfigFormConf);
-        break;
-      case 'resetConfig':
-        this.dialog.dialogForm(this.resetConfigFormConf);
-        break;
-    }
   }
 
   saveConfigSubmit(entityDialog) {

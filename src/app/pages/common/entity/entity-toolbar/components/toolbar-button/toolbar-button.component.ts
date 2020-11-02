@@ -16,7 +16,7 @@ import { Subject } from 'rxjs/Subject';
       class="toolbar-button">
       <button
         (click)="onClick(true)"
-        color="default"
+        [color]="config.color ? config.color : 'default'"
         mat-button
         [disabled]="config.disabled">
         {{ config.label | translate }}

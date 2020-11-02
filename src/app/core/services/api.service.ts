@@ -26,6 +26,24 @@ export class ApiService {
   public debug:boolean = false;
 
   private apiDefinitions = {
+    UserAttributesRequest:{
+      apiCall:{
+        protocol:"websocket",
+        version:"2.0",
+        namespace:"user.query",
+        args: [],// eg. [["id", "=", "foo"]]
+        responseEvent: "UserAttributes"
+      },
+      preProcessor(def:ApiCall){ 
+        let clone = Object.assign({}, def);
+        clone.args = [[["id", "=", 1]]];
+        return clone
+      },
+      postProcessor(res,callArgs,core){
+        let cloneRes = Object.assign({},res);
+        return cloneRes[0].attributes;
+      }
+    },
     UserDataRequest:{
       apiCall:{
         protocol:"websocket",
