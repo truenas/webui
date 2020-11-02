@@ -119,3 +119,12 @@ def add_ssh_key(keyPath):
         return False
     else:
         return True
+
+
+def cmd_test(command):
+    process = run(command, shell=True, stdout=PIPE, universal_newlines=True)
+    output = process.stdout
+    if process.returncode != 0:
+        return {'result': False, 'output': output}
+    else:
+        return {'result': True, 'output': output}
