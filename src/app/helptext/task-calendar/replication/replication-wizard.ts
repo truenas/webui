@@ -54,25 +54,25 @@ export default {
  the selected dataset snapshots.'),
 
     encryption_placeholder: T('Encryption'),
-    encryption_tooltip: T(''),
+    encryption_tooltip: T('Checking this box, enables additional options for encryption replication'),
 
     encryption_key_generate_placeholder: T('Generate Encryption Key'),
-    encryption_key_generate_tooltip: T(''),
+    encryption_key_generate_tooltip: T('If Hex key type is selected, this will autogenerate an encryption key'),
 
     encryption_key_hex_placeholder: T('Encryption Key'),
-    encryption_key_hex_tooltip: T(''),
+    encryption_key_hex_tooltip: T('Uncheck Generate Encryption Key to import your custom Hex key'),
 
     encryption_key_passphrase_placeholder: T('Passphrase'),
-    encryption_key_passphrase_tooltip: T(''),
+    encryption_key_passphrase_tooltip: T('If Passphrase key type is selected, enter an alphanumeric encryption key'),
 
     encryption_key_format_placeholder: T('Encryption Key Format'),
-    encryption_key_format_tooltip: T(''),
+    encryption_key_format_tooltip: T('Select Hex or Passphrase for encryption key type'),
 
     encryption_key_location_truenasdb_placeholder: T('Store Encryption key in Sending TrueNAS database'),
-    encryption_key_location_truenasdb_tooltip: T(''),
+    encryption_key_location_truenasdb_tooltip: T('Check this box to store the encryption key in the TrueNAS Database'),
 
     encryption_key_location_placeholder: T('Encryption Key Location in Target System'),
-    encryption_key_location_tooltip: T(''),
+    encryption_key_location_tooltip: T('Temporary location for encryption key used during ZFS receive'),
 
     custom_snapshots_placeholder: T('Replicate Custom Snapshots'),
     custom_snapshots_tooltip: T('Replicate snapshots that have not been \
