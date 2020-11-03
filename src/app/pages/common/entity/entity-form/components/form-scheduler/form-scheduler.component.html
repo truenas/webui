@@ -1,6 +1,10 @@
-<div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']" 
+<div id="{{config.name}}" class="dynamic-field form-select form-element" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']" 
   ix-auto ix-auto-type="scheduler" ix-auto-identifier="{{config.placeholder}}">
-    <mat-form-field class="full-width" matTooltip="{{currentValue}}" matTooltipPosition="above" [ngClass]="{'overlay-opened': isOpen}">
+    <div class="label-container">
+      <mat-label class="label input-text">{{config.placeholder}}</mat-label>
+      <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
+    </div>
+    <mat-form-field class="full-width" matTooltipPosition="above" [ngClass]="{'overlay-opened': isOpen}">
     <mat-select [formControlName]="config.name" [required]="config.required" [placeholder]="config.placeholder | translate" (change)="onChangeOption($event)">
       <mat-option *ngFor="let preset of presets" [value]="preset.value">
         {{ preset.label }} <em class="crontab">({{preset.value}})</em>
@@ -11,7 +15,6 @@
       </mat-option>
       </mat-select>
     </mat-form-field>
-    <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
     <div class="margin-for-error">
       <form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>
       <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
@@ -52,38 +55,56 @@
 
           <section style="text-align:left;">
             <h4 class="preview-label">{{"Presets" | translate}}</h4>
-            <mat-form-field class="cron-presets">
-              <mat-select placeholder="Choose a preset" [(ngModel)]="preset" [ngModelOptions]="{standalone: true}">
-                <mat-option *ngFor="let preset of presets" [value]="preset">
-                  {{ preset.label }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
+            <div class="form-element">
+              <mat-form-field class="cron-presets">
+                <mat-select placeholder="Choose a preset" [(ngModel)]="preset" [ngModelOptions]="{standalone: true}">
+                  <mat-option *ngFor="let preset of presets" [value]="preset">
+                    {{ preset.label }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
           </section>
           <mat-divider></mat-divider>
 
           <section style="text-align:left;" class="m-h-d">
             <div class="preview-label">
-              <h4 class="preview-label"><span *ngIf="!config.noMinutes">Minutes/</span>Hours/Days</h4>
-              <tooltip [header]="config.noMinutes ? helptext.scheduler.general.headerWithoutMinutes : helptext.scheduler.general.header" [message]="helptext.scheduler.general.tooltip"></tooltip>
+              <h4 class="preview-label"><span *ngIf="!config.noMinutes">
+                  Minutes/</span>Hours/Days
+                  <tooltip [header]="config.noMinutes ? helptext.scheduler.general.headerWithoutMinutes : helptext.scheduler.general.header" [message]="helptext.scheduler.general.tooltip"></tooltip>
+              </h4>
             </div>
-            <span id="no-spaces">{{"Separate values with commas, and without spaces." | translate}}</span>
-            <!--<mat-form-field >
-              <input matInput placeholder="Seconds">
-              </mat-form-field>-->
-              <mat-form-field *ngIf="!config.noMinutes">
+            <div id="no-spaces">({{"Separate values with commas, and without spaces." | translate}})</div>
+
+            <div class="form-element" *ngIf="!config.noMinutes">
+              <div class="label-container">
+                <mat-label class="label input-text">Minutes</mat-label>
+                <tooltip [header]="helptext.scheduler.minutes.header" [message]="helptext.scheduler.minutes.tooltip"></tooltip>
+              </div>
+              <mat-form-field>
                 <input matInput [(ngModel)]="minutes" [ngModelOptions]="{standalone: true}" [value]="minutes" placeholder="Minutes" required [ngClass]=" {'invalid' : validMinutes === false}">
               </mat-form-field>
-              <tooltip *ngIf="!config.noMinutes" [header]="helptext.scheduler.minutes.header" [message]="helptext.scheduler.minutes.tooltip"></tooltip>
+            </div>
+
+            <div class="form-element">
+              <div class="label-container">
+                <mat-label class="label input-text">Hours</mat-label>
+                <tooltip [header]="helptext.scheduler.hours.header" [message]="helptext.scheduler.hours.tooltip"></tooltip>
+              </div>
               <mat-form-field>
                 <input matInput [(ngModel)]="hours" [ngModelOptions]="{standalone: true}" [value]="hours" placeholder="Hours" required [ngClass]="{'invalid': validHours === false}">
               </mat-form-field>
-              <tooltip [header]="helptext.scheduler.hours.header" [message]="helptext.scheduler.hours.tooltip"></tooltip>
-              <br *ngIf="config.noMinutes"/>
+            </div>
+
+            <div class="form-element">
+              <div class="label-container">
+                <mat-label class="label input-text">Days</mat-label>
+                <tooltip [header]="helptext.scheduler.days.header" [message]="helptext.scheduler.days.tooltip"></tooltip>
+              </div>
               <mat-form-field>
                 <input matInput [(ngModel)]="days" [ngModelOptions]="{standalone: true}" [value]="days" placeholder="Days" required [ngClass]="{'invalid': validDays === false}">
               </mat-form-field>
-              <tooltip [header]="helptext.scheduler.days.header" [message]="helptext.scheduler.days.tooltip"></tooltip>
+            </div>
           </section>
           <mat-divider></mat-divider>
 
@@ -169,7 +190,7 @@
 
           <mat-divider></mat-divider>
 
-          <button mat-button color="accent" (click)="onPopupSave()" [disabled]="validPopup()" style="margin:9px;">{{"Done" | translate}}</button>
+          <button mat-button color="primary" (click)="onPopupSave()" [disabled]="validPopup()" style="margin:9px;">{{"Done" | translate}}</button>
         </div>
       </mat-card>
     </ng-template>
