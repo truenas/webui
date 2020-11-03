@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, OnChanges} from '@angular/core';
 import {Router} from '@angular/router';
 import {Subscription} from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
@@ -14,7 +14,7 @@ import * as _ from 'lodash';
   styleUrls: ['./entity-table-actions.component.scss'], 
   templateUrl : './entity-table-actions.component.html'
 })
-export class EntityTableActionsComponent implements OnInit {
+export class EntityTableActionsComponent implements OnInit, OnChanges {
 
   @Input('entity') entity: EntityTableComponent & { conf: any };
   @Input('row') row: any;
@@ -41,6 +41,14 @@ export class EntityTableActionsComponent implements OnInit {
     } else if (this.entity.filterColumns) {
       this.key_prop = this.entity.filterColumns[0].prop;
     }
+    this.getActions()
+  }
+
+  ngOnChanges() {
+    this.getActions()
+  }
+ 
+  getActions() {
     this.actions = this.entity.getActions(this.row);
   }
 }

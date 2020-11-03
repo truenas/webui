@@ -647,7 +647,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   goBack() {
-    this.router.navigate(['/', 'storage', 'pools']);
+    this.router.navigate(['/', 'storage']);
   }
 
   openDialog() {

@@ -17,7 +17,7 @@ import { ConfigurationComponent } from './forms/configuration.component';
 import { IPMIFromComponent } from './forms/ipmi-form.component';
 import { routing } from './network.routing';
 
-import { NetworkComponent } from './netwrok.component';
+import { NetworkComponent } from './network.component';
 import { CardWidgetComponent } from './card-widget/card-widget.component';
 import { NameserverFormComponent } from './forms/nameserver-form.component';
 import { DefaultRouteFormComponent } from './forms/default-route-form.component';

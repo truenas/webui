@@ -21,20 +21,6 @@
             <h3>{{ card.title | translate }}</h3>
             <div class="actions action-icon">
               <button mat-button color="default" (click)="doAdd(card.id)">{{ 'Settings' | translate }}</button>
-              <ng-container *ngIf="card.actions">
-                <button name="Actions" mat-icon-button [matMenuTriggerFor]="actionsMenu" class="topbar-button-right"
-                ix-auto ix-auto-type="button" ix-auto-identifier="actions">
-                  <mat-icon>more_vert</mat-icon>
-                </button>
-                <mat-menu #actionsMenu="matMenu">
-                  <button name="card.actions[i].value" mat-menu-item *ngFor="let action of card.actions; index as i"
-                    ix-auto ix-auto-type="option" ix-auto-identifier="card.actions[i].value"
-                    (click)="doCardActions(card.actions[i].value)">
-                    <mat-icon>{{ card.actions[i].icon }}</mat-icon>
-                    <span>{{ card.actions[i].label | translate}}</span>
-                  </button>
-                </mat-menu>
-              </ng-container>
             </div>
         </mat-toolbar-row>
         

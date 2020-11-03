@@ -21,10 +21,11 @@
 }
 
 .slide-in-form {
-    width: 400px;
+    width: 480px;
+    min-width: 480px;
     position: fixed;
     top: 48px;
-    right: -400px;
+    right: -480px;
     bottom: 0;
 
     /* z-index must be higher than .jw-modal-background */

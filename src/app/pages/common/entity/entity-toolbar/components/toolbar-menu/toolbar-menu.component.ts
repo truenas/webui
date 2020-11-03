@@ -17,7 +17,6 @@ export class ToolbarMenuComponent {
   constructor(public translate: TranslateService) {}
 
   onClick(value){
-    console.log(value);
     this.config.value = value;
     let message:Control = {name: this.config.name, value: this.config.value}
     this.controller.next(message);

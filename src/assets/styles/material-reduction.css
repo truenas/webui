@@ -252,7 +252,8 @@ input.mat-input-element::placeholder {
 .form-element input[type = "number"],
 .form-element textarea,
 .form-element select{
-  width: calc(100% - 24px) !important;
+  /*width: calc(100% - 24px) !important;*/
+  width: 100% !important;
   line-height: normal !important; 
   min-height: 33px;
 }
@@ -287,7 +288,7 @@ entity-form-list .list-action-block-wrapper .form-element select{
 }
 
 .form-element.form-combobox .mat-form-field{
-  max-width: calc(100% - 58px) !important;
+  max-width: calc(100% - 34px) !important;
   height: 33px;
   margin-right: 1px;
   padding: 0 8px;
@@ -390,8 +391,8 @@ entity-form-list .list-action-block-wrapper .form-element select{
 }
 
 .form-element textarea{
-  min-width: calc(100% - 24px);
-  max-width: calc(100% - 24px);
+  min-width: 100%;
+  max-width: 100%;
   min-height: 96px;
 }
 
@@ -405,8 +406,8 @@ entity-form-list .list-action-block-wrapper .form-element select{
 
 .form-element button.toggle_pw {
   position: absolute;
-  bottom: -3px;
-  right: 32px;
+  bottom: 2px;
+  right: 4px;
 }
 
 .form-element button.toggle_pw i{

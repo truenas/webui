@@ -206,17 +206,11 @@ msgstr ""
 msgid "</b> plugin deletes all data and snapshots stored with it."
 msgstr "</b> wtyczka usuwa wszytskie dane z migawki, które sa na niej przechwowywane"
 
-msgid "</b> with the keypair"
-msgstr "</b> za pomocą pary kluczy"
-
 msgid "</i> cannot be running when deleting a mountpoint."
 msgstr "</i> nie może byc uruchomiony podczas usuwania punktu montowania"
 
 msgid "</i> has started."
 msgstr "</i> wystartował."
-
-msgid "</i> keypair?</p>"
-msgstr "</i> para kluczy?</p>"
 
 msgid "</i> now?"
 msgstr "</i> teraz?"
@@ -342,7 +336,7 @@ msgstr ""
 
 msgid ""
 "<a href=\"https://www.ixsystems.com/support/\" target=\"_blank\"> TrueNAS "
-"Liscensing</a> - Learn more about enterprise-grade support."
+"Licensing</a> - Learn more about enterprise-grade support."
 msgstr ""
 
 msgid ""
@@ -577,9 +571,6 @@ msgid ""
 "<i>global</i> is a reserved name that cannot be used as a share name. "
 "Please enter a different share name."
 msgstr ""
-
-msgid "<p>Delete the <i>"
-msgstr "<p>Usuń <i>"
 
 msgid ""
 "<p>Including the Password Secret Seed allows using this configuration file "
@@ -1128,9 +1119,6 @@ msgstr "Grupa Adminsitratora"
 msgid "Adv. Power Management"
 msgstr "Zaawansowane Zarządznie Energią"
 
-msgid "Advance Options"
-msgstr "Opcje Zaawansowane"
-
 msgid "Advanced"
 msgstr "Zaawansowane"
 
@@ -1675,6 +1663,9 @@ msgstr ""
 msgid "Associated Target"
 msgstr ""
 
+msgid "Associated Targets"
+msgstr ""
+
 msgid ""
 "At least one module must be defined in <a                "
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"                "
@@ -1766,6 +1757,9 @@ msgid "Authority Key Config"
 msgstr ""
 
 msgid "Authority Key Identifier"
+msgstr ""
+
+msgid "Authorized Access"
 msgstr ""
 
 msgid "Authorized Hosts and IP addresses"
@@ -1884,6 +1878,9 @@ msgid "Background 1"
 msgstr ""
 
 msgid "Background 2"
+msgstr ""
+
+msgid "Backup Credentials"
 msgstr ""
 
 msgid "Bandwidth"
@@ -2472,6 +2469,9 @@ msgid ""
 msgstr ""
 
 msgid "Choose Accent"
+msgstr ""
+
+msgid "Choose File"
 msgstr ""
 
 msgid "Choose Pool for Plugin and Jail Manager"
@@ -3237,6 +3237,12 @@ msgstr ""
 msgid "Create a new Pool."
 msgstr ""
 
+msgid "Create a new Target or choose an existing target for this share."
+msgstr ""
+
+msgid "Create a new pool."
+msgstr ""
+
 msgid "Create a new, empty pool."
 msgstr ""
 
@@ -3493,6 +3499,9 @@ msgid "Dataset Actions"
 msgstr ""
 
 msgid "Dataset Key"
+msgstr ""
+
+msgid "Dataset Names"
 msgstr ""
 
 msgid "Dataset Passphrase"
@@ -4812,7 +4821,7 @@ msgid ""
 "be found  <a "
 "href=\"https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#"
 "HOSTSALLOW\" target=\"_blank\">here</a>. <br><br>  If neither *Hosts Allow* "
-"or *Hosts Deny* contains  an entry, then AFP share access is allowed for "
+"or *Hosts Deny* contains  an entry, then SMB share access is allowed for "
 "any host. <br><br>  If there is a *Hosts Allow* list but no *Hosts Deny* "
 "list, then only allow  hosts on the *Hosts Allow* list. <br><br>  If there "
 "is a *Hosts Deny* list but no *Hosts Allow* list, then allow all  hosts "
@@ -4825,7 +4834,7 @@ msgstr ""
 msgid ""
 "Enter a list of denied hostnames or IP addresses. Separate entries by "
 "pressing <code>Enter</code>.  If neither *Hosts Allow* or *Hosts Deny* "
-"contains  an entry, then AFP share access is allowed for any host. <br><br> "
+"contains  an entry, then SMB share access is allowed for any host. <br><br> "
 " If there is a *Hosts Allow* list but no *Hosts Deny* list, then only allow "
 " hosts on the *Hosts Allow* list. <br><br>  If there is a *Hosts Deny* list "
 "but no *Hosts Allow* list, then allow all  hosts that are not on the *Hosts "
@@ -5646,6 +5655,9 @@ msgstr ""
 msgid "Extent Type"
 msgstr ""
 
+msgid "Extents"
+msgstr ""
+
 msgid "Extra Users"
 msgstr ""
 
@@ -5722,6 +5734,9 @@ msgid "Fibre Channel "
 msgstr ""
 
 msgid "Fibre Channel Port "
+msgstr ""
+
+msgid "Fibre Channel Ports"
 msgstr ""
 
 msgid "File Information"
@@ -5989,9 +6004,6 @@ msgstr ""
 msgid "General Preferences"
 msgstr ""
 
-msgid "General Settings"
-msgstr ""
-
 msgid "General VM Settings"
 msgstr ""
 
@@ -6029,6 +6041,9 @@ msgid "Generate idmap low range based on same algorithm that SSSD uses by defaul
 msgstr ""
 
 msgid "Get Started"
+msgstr ""
+
+msgid "Get Support"
 msgstr ""
 
 msgid "GiB"
@@ -6522,6 +6537,9 @@ msgstr ""
 msgid "IPv6 Prefix Length"
 msgstr ""
 
+msgid "IPv6 addresses are not allowed for HA."
+msgstr ""
+
 msgid "IPv6 interface for the jail."
 msgstr ""
 
@@ -6651,13 +6669,13 @@ msgstr ""
 msgid "Import"
 msgstr ""
 
-msgid "Import Disk"
-msgstr ""
-
 msgid "Import a pool that exists but is not connected."
 msgstr ""
 
 msgid "Import an existing pool"
+msgstr ""
+
+msgid "Import an existing pool."
 msgstr ""
 
 msgid ""
@@ -6770,6 +6788,9 @@ msgid "Initiator Group ID"
 msgstr ""
 
 msgid "Initiators"
+msgstr ""
+
+msgid "Initiators Groups"
 msgstr ""
 
 msgid ""
@@ -7106,9 +7127,6 @@ msgstr ""
 msgid "LOG (Write Cache) Overprovision Size in GiB"
 msgstr ""
 
-msgid "LOGIN TO PROVIDER"
-msgstr ""
-
 msgid "LUN ID"
 msgstr ""
 
@@ -7322,6 +7340,9 @@ msgid "Log in"
 msgstr ""
 
 msgid "Log in as Root with Password"
+msgstr ""
+
+msgid "Log in to Provider"
 msgstr ""
 
 msgid "Log mountd(8) requests"
@@ -7614,6 +7635,9 @@ msgid "Message verbosity level in the replication  task log."
 msgstr ""
 
 msgid "Metadata"
+msgstr ""
+
+msgid "Metadata (Special) Small Block Size"
 msgstr ""
 
 msgid "Metadata VDev"
@@ -8057,9 +8081,6 @@ msgid ""
 "String?</a>."
 msgstr ""
 
-msgid "Network connectivity will be interrupted. "
-msgstr ""
-
 msgid "Network connectivity will be interrupted. Proceed?"
 msgstr ""
 
@@ -8459,7 +8480,11 @@ msgstr ""
 
 msgid ""
 "Only set LDAP authentication for SMB shares is required and the LDAP server "
-"is already configured with Samba attributes."
+"is already configured with Samba attributes. DEPRECATED:  Support for Samba "
+"Schema is <a href=\"https://www.samba.org/samba/history/samba-4.13.0.html\" "
+"target=\"_blank\">officially deprecated in Samba 4.13</a>.  The feature "
+"will be removed after Samba 4.14. Users should begin  upgrading legacy "
+"Samba domains to Samba AD domains."
 msgstr ""
 
 msgid ""
@@ -8945,6 +8970,9 @@ msgstr ""
 msgid "Portal Group ID"
 msgstr ""
 
+msgid "Portals"
+msgstr ""
+
 msgid "Ports"
 msgstr ""
 
@@ -9329,6 +9357,9 @@ msgid ""
 "<i>31536000</i> seconds (one year). This means that after a  browser "
 "connects to the web interface for the first time, the browser  continues to "
 "use HTTPS and renews this setting every year."
+msgstr ""
+
+msgid "Reenter Password"
 msgstr ""
 
 msgid "Refresh"
@@ -9938,7 +9969,7 @@ msgstr ""
 msgid "Samba Authentication"
 msgstr ""
 
-msgid "Samba Schema"
+msgid "Samba Schema (DEPRECATED - see help text)"
 msgstr ""
 
 msgid "Same as Source"
@@ -10219,6 +10250,9 @@ msgstr ""
 msgid ""
 "Select IP addresses to listen to for NFS requests. Leave empty for NFS to "
 "listen to all available addresses."
+msgstr ""
+
+msgid "Select Reports"
 msgstr ""
 
 msgid "Select Users Cached by this System"
@@ -11498,9 +11532,6 @@ msgstr ""
 msgid "Show all available users, including those that have not used any data."
 msgstr ""
 
-msgid "Show only entries that contain this text"
-msgstr ""
-
 msgid "Show only those users who are using data. This is the default view."
 msgstr ""
 
@@ -11617,9 +11648,6 @@ msgid ""
 msgstr ""
 
 msgid "Snapshot successfully taken."
-msgstr ""
-
-msgid "Snapshots"
 msgstr ""
 
 msgid ""
@@ -12141,6 +12169,9 @@ msgid "Target"
 msgstr ""
 
 msgid "Target Alias"
+msgstr ""
+
+msgid "Target Global Configuration"
 msgstr ""
 
 msgid "Target Mode"
@@ -12779,9 +12810,6 @@ msgstr ""
 msgid "These datasets will be unlocked with the provided credentials."
 msgstr ""
 
-msgid "These items will be <b>"
-msgstr ""
-
 msgid ""
 "These permissions are too complicated to be displayed and cannot be saved "
 "unless changed."
@@ -12879,6 +12907,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"This change can interrupt connectivity and must be tested before making "
+"permanent. "
+msgstr ""
+
+msgid ""
 "This dataset has an active ACL. Changes to permissions must be made with "
 "the ACL editor."
 msgstr ""
@@ -12948,6 +12981,18 @@ msgid ""
 "disks can be removed from the pool and reused or disposed of without being "
 "erased. iXsystems, inc. cannot be held responsible for any lost or "
 "unrecoverable data as a consequence of using this feature."
+msgstr ""
+
+msgid ""
+"This value represents the threshold block size for including small file "
+"blocks into the special allocation class. Blocks smaller than or equal to "
+"this value will be assigned to the special allocation class while greater "
+"blocks will be assigned to the regular class. Valid values are zero or a "
+"power of two from 512B  up to 1M. The default size is 0 which means no "
+"small file blocks will be allocated in the special class. Before setting "
+"this property, a special class vdev must be added to the pool. See <a "
+"href=\"https://zfsonlinux.org/manpages/0.7.13/man8/zpool.8.html\" "
+"target=\"_blank\">zpool(8)</a> for more details on the special allocation"
 msgstr ""
 
 msgid "Thread number:"
@@ -13794,9 +13839,6 @@ msgstr ""
 msgid "VMware Sync"
 msgstr ""
 
-msgid "VMware-Snapshots"
-msgstr ""
-
 msgid "VNC"
 msgstr ""
 
@@ -14430,10 +14472,10 @@ msgstr ""
 msgid "gzip (default level, 6)"
 msgstr ""
 
-msgid "gzip (fastest)"
+msgid "gzip-1 (fastest)"
 msgstr ""
 
-msgid "gzip (maximum, slow)"
+msgid "gzip-9 (maximum, slow)"
 msgstr ""
 
 msgid "host_domainname"
@@ -14726,13 +14768,13 @@ msgstr "tak"
 msgid "zle (runs of zeros)"
 msgstr ""
 
-msgid "zstd (Maximum, very slow)"
-msgstr ""
-
-msgid "zstd (Medium, slow)"
-msgstr ""
-
 msgid "zstd (default level, 3)"
+msgstr ""
+
+msgid "zstd-5 (slow)"
+msgstr ""
+
+msgid "zstd-7 (very slow)"
 msgstr ""
 
 msgid "zstd-fast (default level, 1)"
