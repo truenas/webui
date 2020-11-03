@@ -46,7 +46,7 @@ exportError: T("Error exporting/disconnecting pool."),
 
 exportDialog:  {
     title: T("Export/disconnect pool: '"),
-    warningSysDataset: T('This pool contains the system dataset!'),
+    warningSysDataset: T('This pool contains the SYSTEM DATASET.'),
     warningA: T("WARNING: Exporting/disconnecting pool <i>"),
     warningB: T("</i>.\
  Data on the pool will not be available after export.\
