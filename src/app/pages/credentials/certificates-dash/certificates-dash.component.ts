@@ -73,15 +73,13 @@ export class CertificatesDashComponent implements OnInit {
           title: T('Certificates'),
           queryCall: 'certificate.query',
           deleteCall: 'certificate.delete',
+          complex: true,
           dataSourceHelper: this.certificatesDataSourceHelper,
           getActions: this.certificateActions.bind(this),
           columns: [
-            { name: T('Name'), prop: 'name'},
-            { name: T('Issuer'), prop: 'issuer' },
-            { name: T('From'), prop: 'from' },
-            { name: T('Until'), prop: 'until' },
-            { name: T('CN'), prop: 'common' },
-            { name: T('SAN'), prop: 'san' }
+            { name: T('Name'), prop1: 'name', name2: T('Issuer'), prop2: 'issuer'},
+            { name: T('From'), prop1: 'from', name2: T('Until'), prop2: 'until' },
+            { name: T('CN'), prop1: 'common', name2: T('SAN'), prop2: 'san' }
           ],
           parent: this,
           add: function() {
@@ -98,14 +96,12 @@ export class CertificatesDashComponent implements OnInit {
           title: T('Certificate Signing Requests'),
           queryCall: 'certificate.query',
           deleteCall: 'certificate.delete',
+          complex: true,
           dataSourceHelper: this.csrDataSourceHelper,
           getActions: this.csrActions.bind(this),
           columns: [
-            { name: T('Name'), prop: 'name'},
-            { name: T('Issuer'), prop: 'issuer' },
-            { name: T('CN'), prop: 'common' },
-            { name: T('SAN'), prop: 'san' }
-
+            { name: T('Name'), prop1: 'name', name2: T('Issuer'), prop2: 'issuer' },
+            { name: T('CN'), prop1: 'common', name2: T('SAN'), prop2: 'san' },
           ],
           parent: this,
           add: function() {
@@ -122,14 +118,12 @@ export class CertificatesDashComponent implements OnInit {
           title: T('Certificate Authorities'),
           queryCall: 'certificateauthority.query',
           deleteCall: 'certificateauthority.delete',
+          complex: true,
           getActions: this.caActions.bind(this),
           columns: [
-            { name: T('Name'), prop: 'name'},
-            { name: T('Issuer'), prop: 'issuer' },
-            { name: T('From'), prop: 'from' },
-            { name: T('Until'), prop: 'until' },
-            { name: T('CN'), prop: 'common' },
-            { name: T('SAN'), prop: 'san' }
+            { name: T('Name'), prop1: 'name', name2: T('Issuer'), prop2: 'issuer'},
+            { name: T('From'), prop1: 'from', name2: T('Until'), prop2: 'until' },
+            { name: T('CN'), prop1: 'common', name2: T('SAN'), prop2: 'san' },
           ],
           parent: this,
           add: function() {
@@ -146,6 +140,7 @@ export class CertificatesDashComponent implements OnInit {
           title: T('ACME DNS Authenticators'),
           queryCall: 'acme.dns.authenticator.query',
           deleteCall: 'acme.dns.authenticator.delete',
+          complex: false,
           columns: [
             { name: T('Name'), prop: 'name'},
             { name: T('Authenticator'), prop: 'authenticator'}
