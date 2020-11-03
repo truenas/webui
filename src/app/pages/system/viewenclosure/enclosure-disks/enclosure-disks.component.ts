@@ -783,6 +783,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           break;
           case "FAULT":
             failed = true;
+            enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot, color: this.theme.red}});
           break;
           case "AVAILABLE":
             enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot, color: '#999999'}});

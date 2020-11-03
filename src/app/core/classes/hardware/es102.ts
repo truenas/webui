@@ -12,8 +12,8 @@ export class ES102 extends Chassis{
     this.front = new ChassisView();
     this.front.container = new PIXI.Container();
     this.front.chassisPath = "assets/images/hardware/es102/es102_960w.png";
-    this.front.driveTrayBackgroundPath = "assets/images/hardware/es102/es102_960w_drivetray_bg.png"; 
-    this.front.driveTrayHandlePath = "assets/images/hardware/es102/es102_960w_drivetray_handle.png";
+    this.front.driveTrayBackgroundPath = "assets/images/hardware/es102/es102_960w_drivetray_handle.png"; 
+    this.front.driveTrayHandlePath = "assets/images/hardware/es102/es102_960w_drivetray_bg_grey.png";
 
     this.front.totalDriveTrays = 102;
     this.front.rows = 12;
