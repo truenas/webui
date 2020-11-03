@@ -3,8 +3,12 @@
 import time
 import os
 import re
+import requests
+import json
 from selenium.common.exceptions import NoSuchElementException
 from subprocess import run, PIPE
+
+header = {'Content-Type': 'application/json', 'Vary': 'accept'}
 
 
 def is_element_present(driver, xpath):
@@ -121,10 +125,49 @@ def add_ssh_key(keyPath):
         return True
 
 
-def cmd_test(command):
+def run_cmd(command):
     process = run(command, shell=True, stdout=PIPE, universal_newlines=True)
     output = process.stdout
     if process.returncode != 0:
         return {'result': False, 'output': output}
     else:
         return {'result': True, 'output': output}
+
+
+def get(url, api_path, auth):
+    get_it = requests.get(
+        f'http://{url}/api/v2.0/{api_path}',
+        headers=header,
+        auth=auth
+    )
+    return get_it
+
+
+def post(url, api_path, auth, payload=None):
+    post_it = requests.post(
+        f'http://{url}/api/v2.0/{api_path}',
+        headers=header,
+        auth=auth,
+        data=json.dumps(payload) if payload else None
+    )
+    return post_it
+
+
+def put(url, api_path, auth, payload=None):
+    put_it = requests.put(
+        f'http://{url}/api/v2.0/{api_path}',
+        headers=header,
+        auth=auth,
+        data=json.dumps(payload) if payload else None
+    )
+    return put_it
+
+
+def delete(url, api_path, auth, payload=None):
+    delete_it = requests.delete(
+        f'http://{url}/api/v2.0/{api_path}',
+        headers=header,
+        auth=auth,
+        data=json.dumps(payload) if payload else None
+    )
+    return delete_it
