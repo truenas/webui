@@ -128,8 +128,8 @@
 
         <!-- EXPANDERS OVERLAY -->
         <div *ngIf="currentView == 'expanders' || exitingView == 'expanders'" class="expanders full-stage dom-overlay">
-          <div *ngIf="expanders" class="content" >
-            <div *ngFor="let expander of expanders" [style.width]="(100 / expanders.length).toString() + '%' " style="display:inline-block;">
+          <div *ngIf="expanders" class="content" fxLayout="row wrap" fxLayoutAlign="space-around center" fxLayoutGap="16px">
+            <div fxFlex="calc(33% - 32px)" *ngFor="let expander of expanders" [style.width]="(100 / expanders.length).toString() + '%' " style="display:inline-block;">
               <div class="primary-number" >{{ expander.status }}</div>
               <div class="title">{{expander.descriptor}}</div>
               <div class="subtitle">Expander Status </div>
