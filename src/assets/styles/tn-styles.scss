@@ -1572,5 +1572,11 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     margin-top: 32px !important;
   }
 
+  .complex-table-data {
+    font-size: 85%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+
 
 } // end of ix theme

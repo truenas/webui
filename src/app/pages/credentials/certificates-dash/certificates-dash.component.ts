@@ -183,7 +183,7 @@ export class CertificatesDashComponent implements OnInit {
     this.certificateAuthoritySignComponent = new CertificateAuthoritySignComponent(this.router,this.route,
       this.ws,this.systemGeneralService);
     this.acmeAddComponent = new CertificateAcmeAddComponent(this.router,this.route,
-      this.ws,this.loader,this.dialog,this.entityFormService,this.dialogService);
+      this.ws,this.loader,this.dialog,this.entityFormService,this.dialogService,this.modalService);
     this.acmeDNSComponent = new AcmednsFormComponent(this.ws,this.loader,this.dialogService,this.modalService);
   }
 
@@ -193,7 +193,6 @@ certificateActions() {
       name: "download",
       
       onClick: (rowinner) => {
-        console.log(rowinner)
         const path = rowinner.CSR ? rowinner.csr_path : rowinner.certificate_path;
         const fileName = rowinner.name + '.crt'; // what about for a csr?
           this.ws.call('core.download', ['filesystem.get', [path], fileName]).subscribe(
@@ -240,7 +239,8 @@ certificateActions() {
       name: 'create_ACME',
       matTooltip: T('Create ACME Certificate'),
       onClick: (rowinner) => {
-        console.log(rowinner)
+        this.modalService.open('slide-in-form', this.acmeAddComponent, rowinner.id);
+        event.stopPropagation();
       }
     }
     csrRowActions.unshift(acmeAction);

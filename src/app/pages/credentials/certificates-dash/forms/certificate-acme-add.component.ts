@@ -4,7 +4,9 @@ import * as _ from 'lodash';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { MatDialog } from '@angular/material/dialog';
 import { FormArray } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { WebSocketService, DialogService } from '../../../../services/';
+import { ModalService } from 'app/services/modal.service';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -28,6 +30,8 @@ export class CertificateAcmeAddComponent {
   public formArray: FormArray;
   public commonName: string;
   protected arrayControl: any;
+  private getRow = new Subscription;
+  private rowNum: any;
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
     {
@@ -121,9 +125,8 @@ export class CertificateAcmeAddComponent {
   ];
 
   protected entityForm: any;
-  private pk: any;
   protected dialogRef: any;
-  protected queryCallOption: Array<any> = [["id", "="]];
+  protected queryCallOption: Array<any>;
   protected initialCount = 1;
   private domainList: any;
   private domainList_fc: any;
@@ -132,24 +135,23 @@ export class CertificateAcmeAddComponent {
     protected router: Router, protected route: ActivatedRoute,
     protected ws: WebSocketService,
     protected loader: AppLoaderService, private dialog: MatDialog,
-    protected entityFormService: EntityFormService, protected dialogService: DialogService
-  ) { }
-
+    protected entityFormService: EntityFormService, protected dialogService: DialogService,
+    private modalService: ModalService
+  ) { 
+    this.getRow = this.modalService.getRow$.subscribe(rowId => {
+      this.rowNum = rowId;
+      this.queryCallOption = [["id", "=", rowId]];
+      this.getRow.unsubscribe();
+    })
+  }
+  
   preInit() { 
-    this.arrayControl = _.find(this.fieldSets[0].config, {'name' : 'dns_mapping_array'});
-    this.route.params.subscribe(params => {
-      if (params['pk']) {
-        this.pk = params['pk']; 
-        this.queryCallOption[0].push(parseInt(params['pk']));
-      }
-
-      this.ws.call('acme.dns.authenticator.query').subscribe(authenticators => {
-        let dns_map = _.find(this.fieldSets[2].config[0].templateListField, {'name' : 'authenticators'});
-        authenticators.forEach(item => {
-          dns_map.options.push({ label: item.name, value: item.id})
-        })
+    this.ws.call('acme.dns.authenticator.query').subscribe(authenticators => {
+      let dns_map = _.find(this.fieldSets[2].config[0].templateListField, {'name' : 'authenticators'});
+      authenticators.forEach(item => {
+        dns_map.options.push({ label: item.name, value: item.id})
       })
-    });
+    })
   }
 
   afterInit(entityEdit: any) {
@@ -164,7 +166,7 @@ export class CertificateAcmeAddComponent {
       this.commonName = res[0].common;
       this.csrOrg = res[0];
       
-      this.ws.call('certificate.get_domain_names', [this.pk]).subscribe(domains => {
+      this.ws.call('certificate.get_domain_names', [this.rowNum]).subscribe(domains => {
         if (domains && domains.length > 0) {
           for (let i = 0; i < domains.length; i++) {
             if (this.domainList.controls[i] === undefined) {
