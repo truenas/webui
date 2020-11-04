@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../../common/entity/entity-wizard/entity-wizard.component';
@@ -646,30 +646,39 @@ export class CertificateAddComponent {
     });
   }
 
-  afterInit(entity: any) {
-    console.log(entity)
-    this.entityWizard = entity;
+  afterInit(entityWizard: EntityWizardComponent) {
+    console.log(entityWizard)
+    this.entityWizard = entityWizard;
     this.title = helptext_system_certificates.add.title;
-    // this.fieldConfig = entity.fieldConfig;
+    // this.fieldConfig = entityWizard.fieldConfig;
     for (let i in this.internalFields) {
-      // this.hideField(this.internalFields[i], false, entity);
+      this.internalFields[i].forEach(field => {
+        console.log(field, i)
+        if (field !== 'none') {
+          this.hideField(field, false, entityWizard, i);
+        }
+      })
     }
     // this.hideField(this.internalFields[2], true, entity)
 
-    entity.formGroup.controls['create_type'].valueChanges.subscribe((res) => {
-      // ( < FormGroup > entityWizard.formArray.get([3]).get('NIC_type')).valueChanges.subscribe((res) => {
+    ( < FormGroup > entityWizard.formArray.get([0]).get('create_type')).valueChanges.subscribe((res) => {
+        console.log(res)
       if (res == 'CERTIFICATE_CREATE_INTERNAL') {
         for (let i in this.internalFields) {
-          // this.hideField(this.internalFields[i], false, entity);
+          this.internalFields[i].forEach(field => {
+          this.hideField(field, false, entityWizard, i);
+          })
         }
         for (let i in this.extensionFields) {
-          // this.hideField(this.extensionFields[i], false, entity);
+          this.extensionFields[i].forEach(field => {
+            this.hideField(field, false, entityWizard, i)
+          })
         }
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
-        if (entity.formGroup.controls['key_type'].value === 'RSA') {
-          entity.setDisabled('ec_curve', true);
-        } else if (entity.formGroup.controls['key_type'].value === 'EC') {
-          entity.setDisabled('key_length', true);
+        if (entityWizard.formGroup.controls['key_type'].value === 'RSA') {
+          entityWizard.setDisabled('ec_curve', true, '?');
+        } else if (entityWizard.formGroup.controls['key_type'].value === 'EC') {
+          entityWizard.setDisabled('key_length', true, '?');
         } 
 
       } else if (res == 'CERTIFICATE_CREATE_IMPORTED') {
@@ -678,28 +687,28 @@ export class CertificateAddComponent {
         }
         for (let i in this.importFields) {
           this.importFields[i].forEach(field => {
-            this.hideField(field, false, entity, i);
+            this.hideField(field, false, '?', i);
           })
         }
         for (let i in this.extensionFields) {
           // this.hideField(this.extensionFields[i], true, entity);
         }
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
-        if (!entity.formGroup.controls['csronsys'].value) {
-          entity.setDisabled('csrlist', true);
+        if (!entityWizard.formGroup.controls['csronsys'].value) {
+          entityWizard.setDisabled('csrlist', true, '?');
         } else {
-          entity.setDisabled('privatekey', true);
-          entity.setDisabled('passphrase', true);
-          entity.setDisabled('passphrase2', true);
+          entityWizard.setDisabled('privatekey', true, '?');
+          entityWizard.setDisabled('passphrase', true, '?');
+          entityWizard.setDisabled('passphrase2', true, '?');
         }
       }
     })
 
-    entity.formGroup.controls['name'].valueChanges.subscribe((res) => {
+    entityWizard.formGroup.controls['name'].valueChanges.subscribe((res) => {
       this.identifier = res;
     })
   
-    entity.formGroup.controls['name'].statusChanges.subscribe((res) => {
+    entityWizard.formGroup.controls['name'].statusChanges.subscribe((res) => {
       if (this.identifier && res === 'INVALID') {
         // _.find(this.fieldConfig)['hasErrors'] = true;
       } else {
@@ -707,18 +716,18 @@ export class CertificateAddComponent {
       }
     })
 
-    entity.formGroup.controls['ExtendedKeyUsage-enabled'].valueChanges.subscribe((res) => {
+    entityWizard.formGroup.controls['ExtendedKeyUsage-enabled'].valueChanges.subscribe((res) => {
       const usagesRequired = res !== undefined ? res : false;
       this.usageField.required = usagesRequired;
       if (usagesRequired) {
-        entity.formGroup.controls['ExtendedKeyUsage-usages'].setValidators([Validators.required]);
+        entityWizard.formGroup.controls['ExtendedKeyUsage-usages'].setValidators([Validators.required]);
       } else {
-        entity.formGroup.controls['ExtendedKeyUsage-usages'].clearValidators();
+        entityWizard.formGroup.controls['ExtendedKeyUsage-usages'].clearValidators();
       }
-      entity.formGroup.controls['ExtendedKeyUsage-usages'].updateValueAndValidity();
+      entityWizard.formGroup.controls['ExtendedKeyUsage-usages'].updateValueAndValidity();
     });
 
-    entity.formGroup.controls['profiles'].valueChanges.subscribe((res) => {
+    entityWizard.formGroup.controls['profiles'].valueChanges.subscribe((res) => {
       // undo revious profile settings
       this.loadProfiels(this.currenProfile, true);
       // load selected profile settings
@@ -769,10 +778,10 @@ export class CertificateAddComponent {
     }
   }
 
-  hideField(fieldName: any, show: boolean, entity: any, stepIndex: any) {
+  hideField(fieldName: any, show: boolean, entityWizard: any, stepIndex: any) {
     let target = _.find(this.wizardConfig[stepIndex].fieldConfig, {name : fieldName});
     target['isHidden'] = show;
-    entity.setDisabled(fieldName, show, show, stepIndex);
+    entityWizard.setDisabled(fieldName, show, stepIndex, show);
   }
 
   beforeSubmit(data: any) {
