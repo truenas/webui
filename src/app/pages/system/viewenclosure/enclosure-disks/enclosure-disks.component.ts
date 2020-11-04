@@ -152,7 +152,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   ){
     
     this.themeUtils = new ThemeUtils();
-
     core.register({observerClass: this, eventName: 'DisksChanged'}).subscribe((evt:CoreEvent) => {
       // REACT TO EVENT PROVIDED BY DISK.QUERY
     });
@@ -191,6 +190,29 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   clearDisk(){
     this.setCurrentView(this.defaultView);
+  }
+
+  protected startDiskTempListener(){
+
+    this.core.register({observerClass: this, eventName: 'DiskTemperatures'}).subscribe((evt:CoreEvent) => {
+      if(!this.chassis || !this.chassis[this.view] || !this.chassis[this.view].driveTrayObjects){ return; }
+      
+      let clone: Temperature = Object.assign({}, evt.data);
+      clone.values = {};
+      clone.keys = [];
+      
+      this.chassis[this.view].driveTrayObjects.forEach((dt, index) => {
+      const disk = this.findDiskBySlotNumber(parseInt(dt.id));
+      if(disk){
+        clone.keys.push(disk.name);
+        clone.values[disk.name] = evt.data.values[disk.name];
+      }
+      });
+      
+      this.temperatures = clone;
+    });
+    this.core.emit({name:"DiskTemperaturesSubscribe", sender:this});
+
   }
 
   ngAfterContentInit() {
