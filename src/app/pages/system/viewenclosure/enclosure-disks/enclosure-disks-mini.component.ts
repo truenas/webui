@@ -43,6 +43,8 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     super(el, core, sanitizer, mediaObserver, cdr, dialogService)
     this.pixiWidth = 960 * 0.6; // PIXI needs an explicit number. Make sure the template flex width matches this
     this.pixiHeight = 480;
+
+    this.startDiskTempListener();
   }
 
   createExtractedEnclosure(profile){

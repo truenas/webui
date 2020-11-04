@@ -317,4 +317,5 @@ export class SystemProfiler {
   getEnclosureLabel(key){
     return this.enclosures[key].label == this.enclosures[key].name ? this.enclosures[key].label : this.enclosures[key].model;
   }
+
 }
