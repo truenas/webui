@@ -581,7 +581,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   setCurrentView(opt: string){
-    //console.log("setCurrentView(" + opt + ")");
     if(this.currentView){ this.exitingView = this.currentView; }
     // pools || status || expanders || details
 
