@@ -158,7 +158,7 @@ export class VolumeImportWizardComponent {
   private disks_decrypted = false;
   protected stepper;
 
-  protected isNew = true;
+  protected isNew = false;
   protected is_new_subscription;
   protected encrypted;
   protected devices;
@@ -186,7 +186,8 @@ export class VolumeImportWizardComponent {
     } else if (stepper._selectedIndex === (this.importIndex - 1)) {
       if (this.encrypted && this.encrypted.value) {
         this.decryptDisks(stepper);
-      } else {
+      } 
+      else {
         this.getImportableDisks();
         stepper.next();
       }
@@ -251,27 +252,19 @@ export class VolumeImportWizardComponent {
   preInit(entityWizard: EntityWizardComponent) {
     this.productType = window.localStorage.getItem('product_type');
     if (this.productType.includes('SCALE')) {
-      this.wizardConfig.splice(1,1);
-      this.importIndex = 1;
+      this.wizardConfig.splice(0,2);
+      this.importIndex = 0;
+      this.getImportableDisks();
     }
   }
 
   afterInit(entityWizard: EntityWizardComponent) {
-    const createPoolText = T("Create Pool")
+    const nextText = T("Next ")
     this.entityWizard = entityWizard;
-    this.entityWizard.customNextText = createPoolText
-    this.is_new_subscription =
-    ( < FormGroup > entityWizard.formArray.get([0]).get('is_new'))
-      .valueChanges.subscribe((isNew) => {
-      this.isNew = isNew;
-      if (isNew) {
-        this.entityWizard.customNextText = createPoolText
-      } else {
-        this.entityWizard.customNextText = T("Next");
-      }
-    });
-    
+    this.entityWizard.customNextText = nextText;
+
     if (!this.productType.includes('SCALE')) {
+      console.log('-----------')
       this.encrypted = ( < FormGroup > entityWizard.formArray.get([1]).get('encrypted'));
       this.devices = _.find(this.wizardConfig[1].fieldConfig, {'name': 'devices'});
       this.devices_fg = ( < FormGroup > entityWizard.formArray.get([1]).get('devices'));
@@ -386,7 +379,9 @@ export class VolumeImportWizardComponent {
     if (this.message_subscription) {
       this.message_subscription.unsubscribe();
     }
-    this.is_new_subscription.unsubscribe();
+    if (this.is_new_subscription) {
+      this.is_new_subscription.unsubscribe();
+    }
   }
 
 }
