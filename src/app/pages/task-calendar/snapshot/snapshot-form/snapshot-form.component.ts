@@ -83,6 +83,7 @@ export class SnapshotFormComponent implements OnDestroy {
           placeholder: helptext.naming_schema_placeholder,
           tooltip: helptext.naming_schema_tooltip,
           value: 'auto-%Y-%m-%d_%H-%M',
+          validation: [Validators.required, Validators.pattern('[^/]+')],
         }, {
           type: 'scheduler',
           name: 'snapshot_picker',
