@@ -259,12 +259,9 @@ export class VolumeImportWizardComponent {
   }
 
   afterInit(entityWizard: EntityWizardComponent) {
-    const nextText = T("Next ")
     this.entityWizard = entityWizard;
-    this.entityWizard.customNextText = nextText;
 
     if (!this.productType.includes('SCALE')) {
-      console.log('-----------')
       this.encrypted = ( < FormGroup > entityWizard.formArray.get([1]).get('encrypted'));
       this.devices = _.find(this.wizardConfig[1].fieldConfig, {'name': 'devices'});
       this.devices_fg = ( < FormGroup > entityWizard.formArray.get([1]).get('devices'));
