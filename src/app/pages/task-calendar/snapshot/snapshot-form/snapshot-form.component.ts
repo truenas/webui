@@ -7,6 +7,7 @@ import { DialogService, StorageService, TaskService } from '../../../../services
 import { FieldConfig, UnitType } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
+import { slashValidation } from 'app/pages/common/entity/entity-form/validators/slash-validation';
 
 @Component({
   selector: 'cron-snapshot-task-add',
@@ -83,7 +84,7 @@ export class SnapshotFormComponent implements OnDestroy {
           placeholder: helptext.naming_schema_placeholder,
           tooltip: helptext.naming_schema_tooltip,
           value: 'auto-%Y-%m-%d_%H-%M',
-          validation: [Validators.required, Validators.pattern('[^/]+')],
+          validation: [Validators.required, slashValidation()],
         }, {
           type: 'scheduler',
           name: 'snapshot_picker',
