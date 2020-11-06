@@ -13,7 +13,7 @@ from pytest_bdd import (
 
 
 @scenario('features/NAS-T908.feature', 'Add User')
-def test_add_user_tnbhyve02(driver):
+def test_add_user(driver):
     """Add User."""
 
 

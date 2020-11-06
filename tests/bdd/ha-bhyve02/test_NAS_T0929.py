@@ -13,8 +13,8 @@ from pytest_bdd import (
 
 
 @scenario('features/NAS-T929.feature', 'Change user home directory permissions')
-def test_high_availability_tnbhyve02_change_user_home_directory_permissions(driver):
-    """High Availability (tn-bhyve02): Change user home directory permissions."""
+def test_change_user_home_directory_permissions(driver):
+    """Change user home directory permissions."""
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))

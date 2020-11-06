@@ -13,7 +13,7 @@ from pytest_bdd import (
 
 
 @scenario('features/NAS-T909.feature', 'Edit User Shell')
-def test_edit_user_shell_tnbhyve02(driver):
+def test_edit_user_shell(driver):
     """Edit User Shell."""
 
 
