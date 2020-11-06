@@ -155,7 +155,7 @@ def navigate_to_network_click_global_configuration(driver):
 @then(parsers.parse('Enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}", Hostname (Virtual) "{vhost}", Domain "{domain}", Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}", IPv4 Default Gateway "{gatway}"'))
 def enter_hostname_hostname_truenas_controller_2_hostname_virtual_domain_nameserver1_nameserver2_ipv4_default_gateway_(driver, host1, host2, vhost, domain, nameserver1, nameserver2, gatway):
     """Enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}", Hostname (Virtual) "{vhost}", Domain "{domain}", Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}", IPv4 Default Gateway "{gatway}"."""
-    assert wait_on_element(driver, 0.5, 7, '//a[contains(.,"Global Configuration")]')
+    assert wait_on_element(driver, 1, 7, '//a[contains(.,"Global Configuration")]')
     driver.find_element_by_xpath('//input[@placeholder="Hostname"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Hostname"]').send_keys(host1)
     driver.find_element_by_xpath('//input[@placeholder="Hostname (TrueNAS Controller 2)"]').clear()
@@ -227,12 +227,13 @@ def navigate_to_network_then_interfaces_click_next_to_vtnet0_click_edit(driver):
 @then('Interface Settings should appear')
 def interface_settings_should_appear(driver):
     """Interface Settings should appear."""
-    assert wait_on_element(driver, 0.5, 7, '//h4[contains(.,"Interface Settings")]')
+    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Interface Settings")]')
 
 
 @then(parsers.parse('Uncheck DHCP, check Critical, Select 1 for Failover Group, select the Failover VHID "{vhid}", IP Address (This Controller) "{ip1}" then select /"{netmask1}", IP Address (TrueNAS Controller 2) "{ip2}" then select /"{netmask2}", Virtual IP Address "{vip}"'))
 def uncheck_dhcp_check_critical_select_1_for_failover_group_select_the_failover_vhid_ip_address_this_controller__then_select_23_ip_address_truenas_controller_2_then_select_23_virtual_ip_address(driver, vhid, ip1, netmask1, ip2, netmask2, vip):
     """Uncheck DHCP, check Critical, Select 1 for Failover Group, select the Failover VHID "{vhid}", IP Address (This Controller) "{ip1}" then select /"{netmask1}", IP Address (TrueNAS Controller 2) "{ip2}" then select /"{netmask2}", Virtual IP Address, "{vip}"."""
+    assert wait_on_element(driver, 1, 7, '//mat-checkbox[@ix-auto="checkbox__DHCP"]')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__DHCP"]').click()
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Critical"]').click()
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Failover Group"]').click()
@@ -263,7 +264,7 @@ def click_apply_and_please_wait_should_appear_while_settings_are_being_applied(d
     """Click Apply and "Please wait" should appear while settings are being applied."""
     assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__APPLY"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__APPLY"]').click()
-    wait_on_element_disappear(driver, 0.5, 20, '//h6[contains(.,"Please wait")]')
+    wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
 
 
 @then('Click Test Changes, check Confirm, Click Test Changes again')
@@ -292,7 +293,7 @@ def please_wait_should_appear_while_settings_are_being_applied(driver):
 def navigate_to_storage_click_disks_then_click_name_several_times_to_sort_in_alphabetical_order(driver):
     """Navigate to Storage click Disks then click name several times to sort in alphabetical order."""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Disks"]')
+    assert wait_on_element(driver, 1, 7, '//mat-list-item[@ix-auto="option__Disks"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Disks"]').click()
     assert wait_on_element(driver, 0.5, 7, '//div[contains(.,"Disks")]')
     assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"Name")]')
@@ -363,7 +364,7 @@ def create_pool_should_appear_while_pool_is_being_created_you_should_be_returned
     """Create Pool should appear while pool is being created. You should be returned to list of pools and tank should appear in the list."""
     assert wait_on_element(driver, 0.2, 7, '//h1[contains(.,"Create Pool")]')
     driver.find_element_by_xpath('//h1[contains(.,"Create Pool")]')
-    assert wait_on_element_disappear(driver, 1, 7, '//h1[contains(.,"Create Pool")]')
+    assert wait_on_element_disappear(driver, 1, 30, '//h1[contains(.,"Create Pool")]')
     assert wait_on_element(driver, 1, 7, '//mat-panel-title[contains(.,"tank")]')
     driver.find_element_by_xpath('//td[@ix-auto="value__tank_name"]')
 
@@ -396,7 +397,7 @@ def navigate_to_dashboard_and_verify_that_both_controllers_show(driver):
     assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"System Information")]')
     # need to wait for all controller to be online.
     assert wait_on_element(driver, 1, 60, '//div[contains(.,"tn-bhyve03-nodea")]')
-    assert wait_on_element(driver, 1, 90, '//div[contains(.,"tn-bhyve03-nodeb")]')
+    assert wait_on_element(driver, 1, 180, '//div[contains(.,"tn-bhyve03-nodeb")]')
 
 
 @then('Both controllers should show version and license on the dashboard.')
