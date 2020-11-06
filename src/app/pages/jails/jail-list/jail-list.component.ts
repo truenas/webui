@@ -314,7 +314,7 @@ export class JailListComponent {
         id: "start",
         label: T("Start"),
         onClick: (row) => {
-          const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Starting Jail") }, disableClose: true });
+          const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Starting ") + row.id }, disableClose: true });
           dialogRef.componentInstance.setCall('jail.start', [row.host_hostuuid]);
           dialogRef.componentInstance.submit();
           dialogRef.componentInstance.success.subscribe((res) => {
@@ -330,7 +330,7 @@ export class JailListComponent {
         id: "restart",
         label: T("Restart"),
         onClick: (row) => {
-          const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Restarting Jail") }, disableClose: true });
+          const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Restarting ") + row.id }, disableClose: true });
           dialogRef.componentInstance.setCall('jail.restart', [row.host_hostuuid]);
           dialogRef.componentInstance.submit();
           dialogRef.componentInstance.success.subscribe((res) => {
@@ -347,7 +347,7 @@ export class JailListComponent {
         label: T("Stop"),
         onClick: (row) => {
           let dialog = {};
-          this.dialogService.confirm("Stop", "Stop the selected jail?", 
+          this.dialogService.confirm(T('Stop Jail'), T('Stop ') + row.id + '?', 
             dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true , T('Stop')).subscribe((dialog_res) => {
               if (dialog_res) {
                 const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Stopping Jail") }, disableClose: true });
@@ -370,9 +370,9 @@ export class JailListComponent {
         onClick: (row) => {
           this.dialogService.confirm(
             helptext.updateConfirmDialog.title,
-            helptext.updateConfirmDialog.message, true).subscribe((dialog_res)=> {
+            helptext.updateConfirmDialog.messageA + row.id + helptext.updateConfirmDialog.messageB, true).subscribe((dialog_res)=> {
               if (dialog_res) {
-                const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Updating Jail") }, disableClose: true });
+                const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Updating ") + row.id }, disableClose: true });
                 dialogRef.componentInstance.setCall('jail.update_to_latest_patch', [row.host_hostuuid]);
                 dialogRef.componentInstance.submit();
                 dialogRef.componentInstance.success.subscribe((res) => {
