@@ -125,6 +125,13 @@ export class DatasetUnlockComponent implements OnDestroy {
               width: '0%'
             },
             {
+              type: 'readfile',
+              name: 'single_key',
+              placeholder: 'Me FileReader',
+              disabled: true,
+              isHidden: true
+            },
+            {
               type: 'input',
               name: 'passphrase',
               placeholder: helptext.dataset_passphrase_placeholder,
@@ -202,6 +209,10 @@ export class DatasetUnlockComponent implements OnDestroy {
             this.datasets.controls[i].controls['name'].setValue(result['name']);
             name_text_fc.paraText = helptext.dataset_name_paratext + result['name'];
 
+            this.datasets.controls[i].controls['single_key'].valueChanges.subscribe(res => {
+              this.datasets.controls[i].controls['key'].setValue(res);
+            })
+
             const is_passphrase = (result.key_format === 'PASSPHRASE');
             if (!is_passphrase) { // hide key datasets by default
               name_text_fc.isHidden = true;
@@ -232,6 +243,7 @@ export class DatasetUnlockComponent implements OnDestroy {
         const dataset_controls = this.datasets.controls[i].controls;
         const controls = listFields[i];
         const key_fc = _.find(controls, {"name": "key"});
+        const single_key_fc = _.find(controls, {"name": "single_key"});
         const name_text_fc = _.find(controls, {name: 'name_text'});
         const is_passphrase = dataset_controls['is_passphrase'].value;
         const unlock_children = this.unlock_children_fg.value;
@@ -239,11 +251,13 @@ export class DatasetUnlockComponent implements OnDestroy {
           if (!is_passphrase) {
             name_text_fc.isHidden = hide_key_datasets;
             this.setDisabled(key_fc, dataset_controls['key'], hide_key_datasets, hide_key_datasets);
+            this.setDisabled(single_key_fc, dataset_controls['single_key'], hide_key_datasets, hide_key_datasets);
           }
         } else {
           if (unlock_children && !is_passphrase) {
             name_text_fc.isHidden = hide_key_datasets;
             this.setDisabled(key_fc, dataset_controls['key'], hide_key_datasets, hide_key_datasets);
+            this.setDisabled(single_key_fc, dataset_controls['single_key'], hide_key_datasets, hide_key_datasets);
           }
         }
       }
@@ -254,6 +268,7 @@ export class DatasetUnlockComponent implements OnDestroy {
         const dataset_controls = this.datasets.controls[i].controls;
         if (dataset_controls['name'].value !== this.pk) {
           const key_fc = _.find(controls, {"name": "key"});
+          const single_key_fc = _.find(controls, {"name": "single_key"});
           const passphrase_fc = _.find(controls, {"name": "passphrase"});
           const name_text_fc = _.find(controls, {name: 'name_text'});
           const is_passphrase = dataset_controls['is_passphrase'].value;
@@ -265,9 +280,11 @@ export class DatasetUnlockComponent implements OnDestroy {
             if (hide_key_datasets) {
               name_text_fc.isHidden = true;
               this.setDisabled(key_fc, dataset_controls['key'], true, true);
+              this.setDisabled(single_key_fc, dataset_controls['single_key'], true, true);
             } else {
               name_text_fc.isHidden = !unlock_children;
               this.setDisabled(key_fc, dataset_controls['key'], !unlock_children, !unlock_children);
+              this.setDisabled(single_key_fc, dataset_controls['single_key'], !unlock_children, !unlock_children);
             }
           }
         }
