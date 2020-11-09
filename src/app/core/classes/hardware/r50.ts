@@ -36,11 +36,11 @@ export class R50 extends Chassis{
         let gapY = 8;
 
         const cols = [
-          { start: 0, count: 12, iomGap: 6, iomIndex: 6, reverse: true,},
-          { start: 12, count: 12, iomGap: 6, iomIndex: 6, reverse: true, },
-          { start: 24, count: 12, iomGap: 6, iomIndex: 6, reverse: true, },
-          { start: 36, count: 12, iomGap: 6, iomIndex: 6, reverse: true, },
-          { start: 48, count: 12, iomGap: 6, iomIndex: 6, reverse: true, },
+          { start: 0, count: 12, iomGap: 8, iomIndex: 6, reverse: true,},
+          { start: 12, count: 12, iomGap: 8, iomIndex: 6, reverse: true, },
+          { start: 24, count: 12, iomGap: 8, iomIndex: 6, reverse: true, },
+          { start: 36, count: 12, iomGap: 8, iomIndex: 6, reverse: true, },
+          { start: 48, count: 12, iomGap: 8, iomIndex: 6, reverse: true, },
         ]
 
         const getCurrentColumn = () => {
@@ -61,7 +61,7 @@ export class R50 extends Chassis{
         let nextPositionY = mod * (displayObject.height + gapY);
     
         if(currentColumn % 2 == 0){
-          const altOffset = 8; // Altenating offset applies to every other column
+          const altOffset = 12; // Altenating offset applies to every other column
           nextPositionY += altOffset;
         } else {
           displayObject.rotation = this.degreesToRadians(180);
