@@ -2834,6 +2834,12 @@ msgid ""
 "value."
 msgstr ""
 
+msgid ""
+"Clicking Continue allows TrueNAS to finish the update in the background "
+"while  Abort stops the process and reverts the dataset ACL to the "
+"previously active ACL."
+msgstr ""
+
 msgid "Client Certificate"
 msgstr ""
 
@@ -2983,6 +2989,9 @@ msgid "Compression level"
 msgstr ""
 
 msgid "Computer Account OU"
+msgstr ""
+
+msgid "Config Files"
 msgstr ""
 
 msgid "Config could not be downloaded"
@@ -4499,6 +4508,9 @@ msgid "Enable iSCSI ALUA"
 msgstr ""
 
 msgid "Enable iXsystems Proactive Support"
+msgstr ""
+
+msgid "Enable iftop"
 msgstr ""
 
 msgid ""
@@ -6736,6 +6748,9 @@ msgid "Include Password Secret Seed"
 msgstr ""
 
 msgid "Include dataset properties with the replicated  snapshots."
+msgstr ""
+
+msgid "Include iftop network performance statistics in SNMP messages."
 msgstr ""
 
 msgid ""
@@ -12989,6 +13004,9 @@ msgstr ""
 msgid "This operation might take a long time. Proceed?"
 msgstr ""
 
+msgid "This process continues in the background after closing this dialog."
+msgstr ""
+
 msgid "This system cannot communicate externally."
 msgstr ""
 
@@ -13463,6 +13481,9 @@ msgid "Updates Available"
 msgstr ""
 
 msgid "Updates successfully downloaded"
+msgstr ""
+
+msgid "Updating Dataset ACL"
 msgstr ""
 
 msgid "Updating Jail"

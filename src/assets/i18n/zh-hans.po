@@ -3069,6 +3069,12 @@ msgid ""
 "value."
 msgstr "单击色标以选择一种颜色或输入一个十六进制的颜色值。"
 
+msgid ""
+"Clicking Continue allows TrueNAS to finish the update in the background "
+"while  Abort stops the process and reverts the dataset ACL to the "
+"previously active ACL."
+msgstr ""
+
 msgid "Client Certificate"
 msgstr "客户证书"
 
@@ -3226,6 +3232,9 @@ msgstr "压缩级别"
 
 msgid "Computer Account OU"
 msgstr "电脑帐户OU"
+
+msgid "Config Files"
+msgstr ""
 
 msgid "Config could not be downloaded"
 msgstr "无法下载配置"
@@ -4830,6 +4839,9 @@ msgstr "启用iSCSI ALUA"
 
 msgid "Enable iXsystems Proactive Support"
 msgstr "启用iXsystems主动支持"
+
+msgid "Enable iftop"
+msgstr ""
 
 msgid ""
 "Enable running services that require <a "
@@ -7232,6 +7244,9 @@ msgstr "包括密码秘密种子"
 
 msgid "Include dataset properties with the replicated  snapshots."
 msgstr "在复制的快照中包括数据集属性。"
+
+msgid "Include iftop network performance statistics in SNMP messages."
+msgstr ""
 
 msgid ""
 "Including the Password Secret Seed allows using this              "
@@ -13833,6 +13848,9 @@ msgstr "现有主题已使用该名称。请选择一个新名称。"
 msgid "This operation might take a long time. Proceed?"
 msgstr "这项操作可能会需要很长时间。继续吗？"
 
+msgid "This process continues in the background after closing this dialog."
+msgstr ""
+
 msgid "This system cannot communicate externally."
 msgstr ""
 
@@ -14317,6 +14335,9 @@ msgstr "有可用的更新"
 
 msgid "Updates successfully downloaded"
 msgstr "更新下载成功"
+
+msgid "Updating Dataset ACL"
+msgstr ""
 
 msgid "Updating Jail"
 msgstr "升级监狱"

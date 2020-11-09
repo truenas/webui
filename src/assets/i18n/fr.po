@@ -3580,6 +3580,12 @@ msgstr ""
 "Cliquez sur l'échantillon pour choisir une couleur ou entrez une valeur "
 "hexadécimal de la couleur."
 
+msgid ""
+"Clicking Continue allows TrueNAS to finish the update in the background "
+"while  Abort stops the process and reverts the dataset ACL to the "
+"previously active ACL."
+msgstr ""
+
 msgid "Client Certificate"
 msgstr "Certificat du client"
 
@@ -3765,6 +3771,9 @@ msgstr "Niveau de compression"
 
 msgid "Computer Account OU"
 msgstr "Compte d'ordinateur OU"
+
+msgid "Config Files"
+msgstr ""
 
 msgid "Config could not be downloaded"
 msgstr "La configuration n'a pas pu être téléchargée"
@@ -5558,6 +5567,9 @@ msgstr "Activer iSCSI ALUA"
 
 msgid "Enable iXsystems Proactive Support"
 msgstr "Activer le support proactif d'iXsystems"
+
+msgid "Enable iftop"
+msgstr ""
 
 msgid ""
 "Enable running services that require <a "
@@ -8314,6 +8326,9 @@ msgstr "Inclure le Password Secret Seed"
 
 msgid "Include dataset properties with the replicated  snapshots."
 msgstr "Inclure les propriétés du dataset avec les snapshots répliqués."
+
+msgid "Include iftop network performance statistics in SNMP messages."
+msgstr ""
 
 msgid ""
 "Including the Password Secret Seed allows using this              "
@@ -16015,6 +16030,9 @@ msgstr ""
 msgid "This operation might take a long time. Proceed?"
 msgstr "Cette opération peut prendre du temps. Poursuivre ?"
 
+msgid "This process continues in the background after closing this dialog."
+msgstr ""
+
 msgid "This system cannot communicate externally."
 msgstr ""
 
@@ -16558,6 +16576,9 @@ msgstr "Mise à jour disponible"
 
 msgid "Updates successfully downloaded"
 msgstr "Mises à jour téléchargées avec succès"
+
+msgid "Updating Dataset ACL"
+msgstr ""
 
 msgid "Updating Jail"
 msgstr "Mise à jour du jail"
