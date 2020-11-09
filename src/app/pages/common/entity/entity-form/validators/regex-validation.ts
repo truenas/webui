@@ -20,7 +20,11 @@ export function regexValidator(regexString: RegExp) {
       return null;
     }
 
-    if (!regexString.test(thisControl.value)) {
+    if (regexString.toString() == "/[/]/") {
+      if (regexString.test(thisControl.value)) {
+        return {notAllowSlash: true};
+      }
+    } else if (!regexString.test(thisControl.value)) {
       return {regex : true};
     }
 

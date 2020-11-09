@@ -41,4 +41,7 @@
     <mat-error *ngIf="control.hasError('invalidOptionSelected')">
         {{'Invalid option selected'| translate}}
     </mat-error>
+    <mat-error *ngIf="control.hasError('notAllowSlash')">
+        {{'Slash is not allowed'| translate}}
+    </mat-error>
 </div>
