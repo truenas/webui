@@ -9,8 +9,9 @@ import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { Chassis } from 'app/core/classes/hardware/chassis';
 import { ChassisView } from 'app/core/classes/hardware/chassis-view';
+import { R50 } from 'app/core/classes/hardware/r50';
 import { M50 } from 'app/core/classes/hardware/m50';
-import { M50Rear } from 'app/core/classes/hardware/m50_rear';
+//import { M50Rear } from 'app/core/classes/hardware/m50_rear';
 import { ES12 } from 'app/core/classes/hardware/es12';
 import { E16 } from 'app/core/classes/hardware/e16';
 import { E24 } from 'app/core/classes/hardware/e24';
@@ -368,13 +369,17 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
     const enclosure = this.system.enclosures[profile.enclosureKey];
     switch(enclosure.model){
+      case 'R50':
+        this.chassis = new R50(true);
+        this.showCaption = false;
+        break;
       case "M Series":
         const rearChassis = this.system.rearIndex ? true : false;
         this.chassis = new M50(rearChassis);
         break;
-      case "M Series Rear Bays":
+      /*case "M Series Rear Bays":
         this.chassis = new M50Rear();
-        break;
+        break;*/
       case "X Series":
       case 'ES12':
         this.chassis = new ES12();
@@ -465,6 +470,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     let chassis;
     let enclosure;
     switch(raw_enclosure.model){
+      case 'R50':
+        chassis = new R50();
+        break;
       case "M Series":
         chassis = new M50();
         break;
