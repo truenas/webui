@@ -64,7 +64,7 @@ export class R50 extends Chassis{
           const altOffset = 12; // Altenating offset applies to every other column
           nextPositionY += altOffset;
         } else {
-          displayObject.rotation = this.degreesToRadians(180);
+          displayObject.rotation = this.front.degreesToRadians(180);
           nextPositionX += displayObject.width;
           nextPositionY += displayObject.height;
         }
@@ -91,11 +91,6 @@ export class R50 extends Chassis{
 
     }
 
-  }
-
-  degreesToRadians(degrees){
-    const pi = Math.PI;
-    return degrees * (pi/180);
   }
 
   generatePerspectiveOffset(){
