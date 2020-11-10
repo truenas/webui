@@ -17,6 +17,7 @@ export class FormTextareaComponent implements Field {
   group: FormGroup;
   fieldShow: string;
   private hasPasteEvent = false;
+  public fileString;
 
   constructor(public translate: TranslateService) {}
   
@@ -42,6 +43,33 @@ export class FormTextareaComponent implements Field {
       this.hasPasteEvent = false;
     } else {
       this.config.warnings = null;
+    }
+  }
+
+  changeListener($event): void {
+    this.readFile($event.target);
+  }
+
+  readFile(inputValue: any) {
+    var file: File = inputValue.files[0];
+    var fReader: FileReader = new FileReader();
+
+    fReader.onloadend = (e) => {
+      this.fileString = fReader.result;
+      this.contents(fReader.result);
+    }
+    if (this.config.fileType == 'binary') {
+      fReader.readAsBinaryString(file);
+    } else {
+      fReader.readAsText(file);
+    }
+  }
+
+  contents(result:any) {
+    if (this.config.fileType == 'binary'){
+      this.group.controls[this.config.name].setValue(btoa(result));
+    } else {
+      this.group.controls[this.config.name].setValue(result);
     }
   }
 }

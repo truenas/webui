@@ -48,3 +48,8 @@
   position: relative;
   top: -12px;
 }
+
+.textarea-filereader {
+  margin-bottom: 20px;
+  margin-top: -5px;
+}
