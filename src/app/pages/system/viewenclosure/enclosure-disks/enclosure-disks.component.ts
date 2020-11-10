@@ -9,6 +9,8 @@ import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { Chassis } from 'app/core/classes/hardware/chassis';
 import { ChassisView } from 'app/core/classes/hardware/chassis-view';
+import { R10 } from 'app/core/classes/hardware/r10';
+import { R20 } from 'app/core/classes/hardware/r20';
 import { R40 } from 'app/core/classes/hardware/r40';
 import { R50 } from 'app/core/classes/hardware/r50';
 import { M50 } from 'app/core/classes/hardware/m50';
@@ -369,10 +371,17 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       this.clearDisk();
     }
     const enclosure = this.system.enclosures[profile.enclosureKey];
+    console.log(enclosure);
+    enclosure.model = "R10";
     switch(enclosure.model){
+      case 'R10':
+        this.chassis = new R10();
+        break;
+      case 'R20':
+        this.chassis = new R20(true);
+        break;
       case 'R40':
         this.chassis = new R40();
-        //this.showCaption = false;
         break;
       case 'R50':
         this.chassis = new R50(true);
@@ -475,6 +484,12 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     let chassis;
     let enclosure;
     switch(raw_enclosure.model){
+      case 'R10':
+        chassis = new R10();
+        break;
+      case 'R20':
+        chassis = new R20();
+        break;
       case 'R40':
         chassis = new R40();
         break;
