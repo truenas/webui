@@ -1087,25 +1087,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     height: 15px !important;
   }
 
-  .advanced-date-picker .cron-fields .mat-select-value,
-  .advanced-date-picker .cron-fields .mat-select-arrow,
-  .advanced-date-picker .cron-fields .mat-form-field.mat-focused.mat-primary .mat-select-arrow  {
-    color: white !important;
-  }
-
-  .advanced-date-picker .cron-fields .mat-form-field.mat-focused .mat-input-element {
-    color: white;
-  }
-
-  .advanced-date-picker .cron-fields .mat-form-field.mat-focused .mat-form-field-ripple {
-    background-color: white !important;
-  }
-
-  .advanced-date-picker .cron-fields .mat-form-field-underline {
-    background-color: white !important;
-    opacity: .99;
-  }
-
   app-select-dialog .mat-select-placeholder,
   app-ipmi .mat-select-placeholder {
     @include variable(color, --fg2, $fg2);
@@ -1242,6 +1223,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       padding: 15px;
       background-color: var(--contrast-darker);
       margin: 16px;
+      min-width: 100%;
     }
 
     entity-form-list .form-list .form-list-item > div.form-line  {

@@ -10,7 +10,7 @@
     <!-- OPTIONS-->
     <div >
       <button mat-menu-item *ngFor="let option of config.options" (click)="onClick(option);">
-        <span>{{option}}</span>
+        <span>{{option.label}}</span>
       </button>
     </div>
   </mat-menu>

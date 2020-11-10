@@ -241,5 +241,4 @@ save_dialog: {
  Abort stops the process and reverts the dataset ACL to the previously active ACL.') 
 } 
 
-
 }
