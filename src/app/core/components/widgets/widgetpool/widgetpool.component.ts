@@ -250,9 +250,17 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     });
 
     this.core.register({observerClass:this,eventName:"DisksData"}).subscribe((evt:CoreEvent) => {
-      if(evt.data.length == 0){
+      let currentName = this.path[this.currentSlideIndex] && this.path[this.currentSlideIndex].dataSource ?
+        this.currentMultipathDetails ? 
+          this.checkMultipathLabel(this.path[this.currentSlideIndex].dataSource.disk) :
+          this.path[this.currentSlideIndex].dataSource.disk ?
+            this.path[this.currentSlideIndex].dataSource.disk :
+            'unknown': 
+        'unknown';
+      
+      if ((!currentName || currentName === 'unknown') && evt.data.length == 0) {
         this.currentDiskDetails = null;
-      } else {
+      } else if (currentName && evt.data.length > 0 && currentName === evt.data[0].name) {
         delete evt.data[0].enclosure;
         delete evt.data[0].name;
         delete evt.data[0].devname;
@@ -320,15 +328,11 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   getDiskDetails(key:string, value:string, isMultipath?:boolean){
     if(isMultipath && key == 'name'){
-     
       let v = "multipath/" + this.checkMultipathLabel(value);
       this.core.emit({name:"MultipathRequest", data:[[[key, "=", v]]]});
-    
     } else if(!isMultipath) {
-
       delete this.currentMultipathDetails
       this.core.emit({name:"DisksRequest", data:[[[key, "=", value]]]});
-
     } else {
       console.warn("If this is a multipath disk, you must query by name!")
     }
