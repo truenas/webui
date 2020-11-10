@@ -1,5 +1,5 @@
 # coding=utf-8
-"""High Availability (tn-bhyve02) feature tests."""
+"""High Availability (tn-bhyve01) feature tests."""
 
 from function import wait_on_element, is_element_present, wait_on_element_disappear
 import time
@@ -12,7 +12,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T908.feature', 'Add User')
+@scenario('features/NAS-T947.feature', 'Add User')
 def test_add_user(driver):
     """Add User."""
 

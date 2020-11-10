@@ -1,5 +1,5 @@
 # coding=utf-8
-"""High Availability (tn-bhyve02) feature tests."""
+"""High Availability (tn-bhyve01) feature tests."""
 
 import time
 from function import wait_on_element, is_element_present, attribute_value_exist
@@ -12,7 +12,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T929.feature', 'Change user home directory permissions')
+@scenario('features/NAS-T958.feature', 'Change user home directory permissions')
 def test_change_user_home_directory_permissions(driver):
     """Change user home directory permissions."""
 

@@ -1,5 +1,5 @@
 # coding=utf-8
-"""High Availability (tn-bhyve02) feature tests."""
+"""High Availability (tn-bhyve01) feature tests."""
 
 import time
 from function import (
@@ -18,7 +18,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T939.feature', 'Create a smb share the ACL dataset')
+@scenario('features/NAS-T964.feature', 'Create a smb share the ACL dataset')
 def test_create_a_smb_share_the_acl_dataset(driver):
     """Create a smb share the ACL dataset."""
 

@@ -1,8 +1,8 @@
 # coding=utf-8
-"""High Availability (tn-bhyve02) feature tests."""
+"""High Availability (tn-bhyve01) feature tests."""
 
-from function import wait_on_element, is_element_present, wait_on_element_disappear
 import time
+from function import wait_on_element, is_element_present
 from pytest_bdd import (
     given,
     scenario,
@@ -12,9 +12,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T913.feature', 'Edit user home directory')
-def test_edit_user_home_directory(driver):
-    """Edit user home directory."""
+@scenario('features/NAS-T956.feature', 'Edit User Try Change Password with mismatched passwords')
+def test_edit_user_try_change_password_with_mismatched_passwords(driver):
+    """Edit User Try Change Password with mismatched passwords."""
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
@@ -77,7 +77,8 @@ def click_on_users(driver):
 @then('The Users page should open')
 def the_users_page_should_open(driver):
     """The Users page should open."""
-    assert wait_on_element(driver, 1, 10, '//div[contains(.,"Users")]')
+    wait_on_element(driver, 0.5, 30, '//div[contains(.,"Users")]')
+    driver.find_element_by_xpath('//div[contains(.,"Users")]')
 
 
 @then('On the right side of the table, click the Greater-Than-Sign for one of the users')
@@ -106,33 +107,21 @@ def the_user_edit_page_should_open(driver):
     driver.find_element_by_xpath('//h4[contains(.,"Identification")]')
 
 
-@then('Change the path of the users Home Directory')
-def change_the_path_of_the_users_home_directory(driver):
-    """Change the path of the users Home Directory."""
-    wait_on_element(driver, 1, 30, '//h4[contains(.,"Identification")]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__home"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__home"]').send_keys('/mnt/tank/ericbsd')
+@then('Change the password in both fields but make sure they are different and try to click save.')
+def change_the_password_in_both_fields_but_make_sure_they_are_different_and_try_to_click_save(driver):
+    """Change the password in both fields but make sure they are different and try to click save.."""
+    driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing2')
 
 
-@then('Change should be saved')
-def change_should_be_saved(driver):
-    """Change should be saved."""
+@then('You should not be able to save the changes')
+def you_should_not_be_able_to_save_the_changes(driver):
+    """You should not be able to save the changes."""
     wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SAVE"]')
+    element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
+    class_attribute = element.get_attribute('disabled')
+    assert class_attribute == 'true'
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    wait_on_element_disappear(driver, 1, 30, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 1, 5, '//div[contains(.,"Users")]')
-
-
-@then('open the drop down details pane for the user')
-def open_the_drop_down_details_pane_for_the_user(driver):
-    """open the drop down details pane for the user."""
-    assert wait_on_element(driver, 1, 5, '//a[@ix-auto="expander__ericbsd"]')
-    driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
-    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__EDIT_ericbsd"]')
-    driver.find_element_by_xpath('//h4[contains(.,"Home directory:")]')
-
-
-@then('verify that the home directory has changed')
-def verify_that_the_home_directory_has_changed(driver):
-    """verify that the home directory has changed."""
-    driver.find_element_by_xpath('//p[contains(.,"/mnt/tank/ericbsd")]')
+    wait_on_element(driver, 0.5, 30, '//h4[contains(.,"Identification")]')
+    driver.find_element_by_xpath('//h4[contains(.,"Identification")]')

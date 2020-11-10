@@ -1,5 +1,5 @@
 # coding=utf-8
-"""High Availability (tn-bhyve02) feature tests."""
+"""High Availability (tn-bhyve01) feature tests."""
 
 import time
 from function import (
@@ -16,7 +16,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T934.feature', 'Add an ACL Item and verify is preserve')
+@scenario('features/NAS-T963.feature', 'Add an ACL Item and verify is preserve')
 def test_add_an_acl_item_and_verify_is_preserve():
     """Add an ACL Item and verify is preserve."""
 

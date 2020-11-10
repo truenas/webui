@@ -1,5 +1,5 @@
 # coding=utf-8
-"""High Availability (tn-bhyve02) feature tests."""
+"""High Availability (tn-bhyve01) feature tests."""
 
 import time
 from selenium.webdriver.common.action_chains import ActionChains
@@ -19,7 +19,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T933.feature', 'Verify Active Directory works after failover with new system dataset')
+@scenario('features/NAS-T962.feature', 'Verify Active Directory works after failover with new system dataset')
 def test_setting_up_active_directory_with_the_new_system_dataset(driver):
     """Verify Active Directory works after failover with new system dataset."""
 

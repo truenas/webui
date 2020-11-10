@@ -18,7 +18,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T904.feature', 'Verify SSH Access with Root works')
+@scenario('features/NAS-T945.feature', 'Verify SSH Access with Root works')
 def test_verify_ssh_access_with_root_works(driver):
     """Verify SSH Access with Root works."""
 

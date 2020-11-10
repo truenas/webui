@@ -1,5 +1,5 @@
 # coding=utf-8
-"""High Availability (tn-bhyve02) feature tests."""
+"""High Availability (tn-bhyve01) feature tests."""
 
 import time
 from function import wait_on_element, wait_on_element_disappear, is_element_present
@@ -12,7 +12,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T905.feature', 'Verify setting up HA works with a single failover group')
+@scenario('features/NAS-T946.feature', 'Verify setting up HA works with a single failover group')
 def test_verify_setting_up_ha_works_with_a_single_failover_group(driver):
     """Verify setting up HA works with a single failover group."""
 
@@ -396,8 +396,8 @@ def navigate_to_dashboard_and_verify_that_both_controllers_show(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"System Information")]')
     # need to wait for all controller to be online.
-    assert wait_on_element(driver, 1, 60, '//div[contains(.,"tn-bhyve03-nodea")]')
-    assert wait_on_element(driver, 1, 180, '//div[contains(.,"tn-bhyve03-nodeb")]')
+    assert wait_on_element(driver, 1, 60, '//div[contains(.,"tn-bhyve01-nodea")]')
+    assert wait_on_element(driver, 1, 180, '//div[contains(.,"tn-bhyve01-nodeb")]')
 
 
 @then('Both controllers should show version and license on the dashboard.')

@@ -1,5 +1,5 @@
 # coding=utf-8
-"""High Availability (tn-bhyve02) feature tests."""
+"""High Availability (tn-bhyve01) feature tests."""
 
 import time
 from function import wait_on_element, is_element_present
@@ -12,7 +12,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T927.feature', 'Verify invalid email cannot enter be in the User Edit Page')
+@scenario('features/NAS-T957.feature', 'Verify invalid email cannot enter be in the User Edit Page')
 def test_verify_invalid_email_cannot_enter_be_in_the_user_edit_page(driver):
     """Verify invalid email cannot enter be in the User Edit Page."""
 

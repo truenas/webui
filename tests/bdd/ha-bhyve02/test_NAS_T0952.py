@@ -1,8 +1,7 @@
 # coding=utf-8
-"""High Availability (tn-bhyve02) feature tests."""
+"""High Availability (tn-bhyve01) feature tests."""
 
 from function import wait_on_element, is_element_present, wait_on_element_disappear
-from selenium.webdriver.common.keys import Keys
 import time
 from pytest_bdd import (
     given,
@@ -13,9 +12,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T912.feature', 'Edit user auxiliary group')
-def test_edit_user_auxiliary_group(driver):
-    """Edit user auxiliary group."""
+@scenario('features/NAS-T952.feature', 'Edit user home directory')
+def test_edit_user_home_directory(driver):
+    """Edit user home directory."""
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
@@ -78,8 +77,7 @@ def click_on_users(driver):
 @then('The Users page should open')
 def the_users_page_should_open(driver):
     """The Users page should open."""
-    wait_on_element(driver, 0.5, 30, '//div[contains(.,"Users")]')
-    driver.find_element_by_xpath('//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 1, 10, '//div[contains(.,"Users")]')
 
 
 @then('On the right side of the table, click the Greater-Than-Sign for one of the users')
@@ -108,34 +106,33 @@ def the_user_edit_page_should_open(driver):
     driver.find_element_by_xpath('//h4[contains(.,"Identification")]')
 
 
-@then('Add user to additional groups, like wheel and save change')
-def add_user_to_additional_groups_like_wheel_and_save_change(driver):
-    """Add user to additional groups, like wheel and save change."""
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]').click()
-    wait_on_element(driver, 0.5, 30, '//mat-option[@ix-auto="option__Auxiliary Groups_wheel"]')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_wheel"]').click()
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_wheel"]').send_keys(Keys.TAB)
-    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SAVE"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+@then('Change the path of the users Home Directory')
+def change_the_path_of_the_users_home_directory(driver):
+    """Change the path of the users Home Directory."""
+    wait_on_element(driver, 1, 30, '//h4[contains(.,"Identification")]')
+    driver.find_element_by_xpath('//input[@ix-auto="input__home"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__home"]').send_keys('/mnt/tank/ericbsd')
 
 
 @then('Change should be saved')
 def change_should_be_saved(driver):
     """Change should be saved."""
+    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SAVE"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     wait_on_element_disappear(driver, 1, 30, '//h6[contains(.,"Please wait")]')
-    wait_on_element(driver, 0.5, 30, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 1, 5, '//div[contains(.,"Users")]')
 
 
-@then('reopen the user edit page and ensure that the additional group was saved')
-def reopen_the_user_edit_page_and_ensure_that_the_additional_group_was_saved(driver):
-    """reopen the user edit page and ensure that the additional group was saved."""
+@then('open the drop down details pane for the user')
+def open_the_drop_down_details_pane_for_the_user(driver):
+    """open the drop down details pane for the user."""
+    assert wait_on_element(driver, 1, 5, '//a[@ix-auto="expander__ericbsd"]')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
     wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__EDIT_ericbsd"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
-    wait_on_element(driver, 0.5, 30, '//h4[contains(.,"Identification")]')
+    driver.find_element_by_xpath('//h4[contains(.,"Home directory:")]')
 
 
-@then('Aux Group added should be visible')
-def aux_group_added_should_be_visible(driver):
-    """Aux Group added should be visible."""
-    driver.find_element_by_xpath('//span[contains(.,"wheel,")]')
+@then('verify that the home directory has changed')
+def verify_that_the_home_directory_has_changed(driver):
+    """verify that the home directory has changed."""
+    driver.find_element_by_xpath('//p[contains(.,"/mnt/tank/ericbsd")]')
