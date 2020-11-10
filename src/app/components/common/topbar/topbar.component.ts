@@ -19,6 +19,7 @@ import { PreferencesService } from 'app/core/services/preferences.service';
 import { SystemGeneralService } from '../../../services/system-general.service';
 import { Theme, ThemeService } from '../../../services/theme/theme.service';
 import { WebSocketService } from '../../../services/ws.service';
+import { ModalService } from '../../../services/modal.service';
 import { T } from '../../../translate-marker';
 import { AboutModalDialog } from '../dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
@@ -45,6 +46,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   updateIsDone: Subscription;
   getProductType: Subscription;
   getAdvancedConfig: Subscription;
+  webSocketOnClose: Subscription;
 
   showResilvering = false;
   pendingNetworkChanges = false;
@@ -100,6 +102,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     public dialog: MatDialog,
     public translate: TranslateService,
     private prefServices: PreferencesService,
+    private modalService: ModalService,
     protected loader: AppLoaderService,
     public mediaObserver: MediaObserver) {
       super();
@@ -240,6 +243,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.preferencesHandler(evt);
     });
     this.core.emit({name:"UserPreferencesRequest", sender:this});
+
+    this.webSocketOnClose = this.ws.onCloseSubject.subscribe(res => {
+      this.modalService.close('slide-in-form');
+    })
   }
 
   preferencesHandler(evt:CoreEvent){
@@ -273,6 +280,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
     this.getProductType.unsubscribe();
     this.getAdvancedConfig.unsubscribe();
+    this.webSocketOnClose.unsubscribe();
   }
 
   setLang(lang) {
