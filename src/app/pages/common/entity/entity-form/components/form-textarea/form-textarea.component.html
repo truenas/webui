@@ -21,9 +21,15 @@
       (input)="onInput()">
     </textarea>
     <div *ngIf="config.filereader">
-      <span [style.margin-right.px]="10">{{config.placeholder | translate}}</span>
-      <input type="file" id="fileInput" (change)="changeListener($event)"/>
+      <input id="fb" #fileInput type="file" (change)="changeListener($event)" style="display:none"/>
+      <div class="textarea-filereader">
+        <span [style.margin-right.px]="10">{{'Paste value above or choose a file.' | translate}}</span>
+        <button type="button" mat-button color="accent" class="btn-default" (click)="fileBtnClick()">
+          {{ 'Choose File' | translate }}
+        </button>
+      </div>
     </div>
+    
   </div>
   <div class="margin-for-error">
     <form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>

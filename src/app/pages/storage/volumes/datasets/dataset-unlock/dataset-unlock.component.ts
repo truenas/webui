@@ -123,7 +123,7 @@ export class DatasetUnlockComponent implements OnDestroy {
               disabled: true,
               isHidden: true,
               width: '50%',
-              // filereader: true
+              filereader: true
             },
             {
               type: 'input',

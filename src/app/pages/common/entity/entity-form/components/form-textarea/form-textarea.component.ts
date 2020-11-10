@@ -1,4 +1,4 @@
-import {Component, ViewContainerRef} from '@angular/core';
+import {Component, ViewContainerRef, ViewChild, ElementRef} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -13,6 +13,8 @@ import globalHelptext from '../../../../../../helptext/global-helptext';
   styleUrls : [ '../dynamic-field/dynamic-field.css' ],
 })
 export class FormTextareaComponent implements Field {
+  @ViewChild('fileInput', { static: false}) fileInput: ElementRef<HTMLInputElement>;
+
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
@@ -71,5 +73,9 @@ export class FormTextareaComponent implements Field {
     } else {
       this.group.controls[this.config.name].setValue(result);
     }
+  }
+
+  public fileBtnClick(){
+    this.fileInput.nativeElement.click();
   }
 }
