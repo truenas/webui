@@ -1,6 +1,7 @@
 <div class="widgets-wrapper-container" (window:resize)="onMobileResize($event)">  
   
   <div class="widgets-wrapper"
+       *ngIf="dashStateReady"
        [style.width]="optimalDesktopWidth"
        fxLayout="row wrap"
        fxLayoutGap="grid 4px">

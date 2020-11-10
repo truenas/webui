@@ -7,6 +7,7 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { ReportComponent, Report } from './components/report/report.component';
 import { ReportsGlobalControlsComponent } from './components/reports-global-controls/reports-global-controls.component';
@@ -64,7 +65,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   // Report Builder Options (entity-form-embedded)
   public target: Subject<CoreEvent> = new Subject();
   public values = [];
-  public toolbarConfig: any[] = [];
+  public toolbarConfig: ToolbarConfig;
   protected isEntity: boolean = true;
   public diskDevices = [];
   public diskMetrics = [];
@@ -347,7 +348,9 @@ diskReportBuilderSetup(){
     this.generateValues();
     
     // Entity-Toolbar Config
-    this.toolbarConfig = [
+    this.toolbarConfig = {
+      target: this.target,
+      controls: [
           {
             //type: 'multimenu',
             type: 'multiselect',
@@ -369,7 +372,8 @@ diskReportBuilderSetup(){
             multiple: true,
             options: this.diskMetrics ? this.diskMetrics.map((v) => v) : [T('Not Available')], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
           }
-    ]
+      ]
+    }
 
     // Entity-Form Config
     this.fieldSets = [

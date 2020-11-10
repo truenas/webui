@@ -6,12 +6,10 @@ import {
   Output,
   EventEmitter,
   OnDestroy,
-  OnInit,
   QueryList,
   TemplateRef,
   ViewChildren,
   OnChanges,
-  AfterViewInit
 } from '@angular/core';
 
 import * as _ from 'lodash';
@@ -25,7 +23,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { Control } from './models/control.interface';
-import { ControlConfig } from './models/control-config.interface';
+import { ToolbarConfig, ControlConfig } from './models/control-config.interface';
 
 
 
@@ -35,74 +33,40 @@ import { ControlConfig } from './models/control-config.interface';
   templateUrl : './entity-toolbar.component.html',
   styleUrls : [ './entity-toolbar.component.css' ],
 })
-export class EntityToolbarComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
+export class EntityToolbarComponent implements OnDestroy, OnChanges {
 
-  @Input('conf') conf: ControlConfig[];
-  @Input() target: Subject<CoreEvent>;
+  @Input('conf') conf: ToolbarConfig; //ControlConfig[];
+  public config;
   public controller: Subject<Control>;
-  //public values: Control[];
   public values: any;
-  //public conf: ControlConfig[];
-
-  /*public defaultConfig:ControlConfig[] = [
-    {
-      type:"button",
-      name:'Devices',
-      label:"Test Button",
-      value:false,
-      disabled:false
-    }, 
-    {
-      type:"menu",
-      name:'Sources',
-      label:"Test Menu",
-      disabled:false,
-      options: ['Option1','Option2','Option3']
-    } ,
-    {
-      type:"multimenu",
-      name:'Multi',
-      label:"Test Multimenu",
-      disabled:false,
-      options: ['Option1','Option2','Option3']
-    } 
-  ]*/
 
   constructor(
     protected loader: AppLoaderService,
     public translate: TranslateService) {
     this.controller = new Subject();
-    //this.conf = this.defaultConfig;
   }
 
-  ngAfterViewInit() {
-    this.init();
-  }
-
-  ngOnInit() {
+  init(){
     this.controller.subscribe((evt:Control) => {
       let clone = Object.assign([], this.values);
       let control = clone[evt.name] = evt.value
-      //control.value = evt.value;
       this.values = clone;
-      this.target.next({name:"ToolbarChanged", data:this.values});
+      this.config.target.next({name:"ToolbarChanged", data:this.values});
     })
 
-    this.target.subscribe((evt:CoreEvent) => {
+    this.config.target.subscribe((evt:CoreEvent) => {
       switch(evt.name){
         case "Refresh":
           // The parent can ping toolbar for latest values
           // Useful for getting initial values
-          this.target.next({name:"ToolbarChanged", data:this.values});
+          this.config.target.next({name:"ToolbarChanged", data:this.values});
         break;
       }
     });
-  }
 
-  init(){
     // Setup Initial Values
     let obj = {}
-    this.conf.forEach((item) => {
+    this.config.controls.forEach((item) => {
       obj[item.name] = item.value;
     });
     this.values = obj;
@@ -111,6 +75,7 @@ export class EntityToolbarComponent implements OnInit, OnDestroy, AfterViewInit,
   ngOnChanges(changes) {
     if (changes.conf) {
       // Do Stuff
+      this.config = changes.conf.currentValue; // For when config is provided via template
       this.init();
     }
   }
@@ -118,5 +83,11 @@ export class EntityToolbarComponent implements OnInit, OnDestroy, AfterViewInit,
 
   ngOnDestroy() { 
     // Clean up after ourselves...
+  }
+
+  // For when config is provided via JS
+  applyConfig(conf){
+    this.config = conf;
+    this.init();
   }
 }

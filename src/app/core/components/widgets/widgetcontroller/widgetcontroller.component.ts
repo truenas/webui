@@ -25,6 +25,7 @@ export interface DashConfigItem {
   identifier?: string; // Comma separated 'key,value' eg. pool might have 'name,tank'
   rendered: boolean;
   position?: number;
+  id?: string;
 }
 
 @Component({

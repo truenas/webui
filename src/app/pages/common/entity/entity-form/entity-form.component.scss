@@ -4,19 +4,23 @@
 }*/
 
 .form-wrap {
-	display: flex;
-    flex-flow: row wrap;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-    box-sizing: border-box;
-    width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .form-line {
-	flex: 1 1 100%;
-    box-sizing: border-box;
-    -webkit-box-flex: 1;
-    max-width: 100%;
+  flex: 1 1 100%;
+  box-sizing: border-box;
+  -webkit-box-flex: 1;
+  max-width: 100%;
+}
+
+.form-line:last-child {
+  margin-right: 24px;
 }
 
 .form-inline {

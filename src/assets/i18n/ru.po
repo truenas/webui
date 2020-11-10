@@ -223,17 +223,11 @@ msgstr ""
 msgid "</b> plugin deletes all data and snapshots stored with it."
 msgstr "</b> плагин удаляет все данные и снимки, сохраненные с ним."
 
-msgid "</b> with the keypair"
-msgstr "</b> с парой ключей"
-
 msgid "</i> cannot be running when deleting a mountpoint."
 msgstr "</i> не может быть запущен при удалении точки монтирования."
 
 msgid "</i> has started."
 msgstr "</i> начата."
-
-msgid "</i> keypair?</p>"
-msgstr "</i> пара ключей?</p>"
 
 msgid "</i> now?"
 msgstr "</i> сейчас?"
@@ -417,7 +411,7 @@ msgstr ""
 
 msgid ""
 "<a href=\"https://www.ixsystems.com/support/\" target=\"_blank\"> TrueNAS "
-"Liscensing</a> - Learn more about enterprise-grade support."
+"Licensing</a> - Learn more about enterprise-grade support."
 msgstr ""
 
 msgid ""
@@ -749,9 +743,6 @@ msgid ""
 msgstr ""
 "<i>global</i> - зарезервированное имя, которое нельзя использовать в "
 "качестве имени общего ресурса. Пожалуйста, введите другое имя ресурса. "
-
-msgid "<p>Delete the <i>"
-msgstr "<p>Удалить <i>"
 
 msgid ""
 "<p>Including the Password Secret Seed allows using this configuration file "
@@ -1451,9 +1442,6 @@ msgstr "Група администраторов"
 msgid "Adv. Power Management"
 msgstr "Расш. управление питанием"
 
-msgid "Advance Options"
-msgstr "Дополнительные параметры"
-
 msgid "Advanced"
 msgstr "Расширенные"
 
@@ -2123,6 +2111,9 @@ msgstr ""
 msgid "Associated Target"
 msgstr "Ассоциированная цель"
 
+msgid "Associated Targets"
+msgstr ""
+
 msgid ""
 "At least one module must be defined in <a                "
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"                "
@@ -2226,6 +2217,9 @@ msgid "Authority Key Config"
 msgstr ""
 
 msgid "Authority Key Identifier"
+msgstr ""
+
+msgid "Authorized Access"
 msgstr ""
 
 msgid "Authorized Hosts and IP addresses"
@@ -2359,6 +2353,9 @@ msgid "Background 1"
 msgstr ""
 
 msgid "Background 2"
+msgstr ""
+
+msgid "Backup Credentials"
 msgstr ""
 
 msgid "Bandwidth"
@@ -3063,6 +3060,9 @@ msgstr ""
 msgid "Choose Accent"
 msgstr "Выберите акцент"
 
+msgid "Choose File"
+msgstr ""
+
 msgid "Choose Pool for Plugin and Jail Manager"
 msgstr "Выберите пул для менеджера плагинов и jail"
 
@@ -3519,6 +3519,12 @@ msgstr ""
 "Нажмите на образец, чтобы выбрать цвет или введите шестнадцатеричное "
 "значение цвета."
 
+msgid ""
+"Clicking Continue allows TrueNAS to finish the update in the background "
+"while  Abort stops the process and reverts the dataset ACL to the "
+"previously active ACL."
+msgstr ""
+
 msgid "Client Certificate"
 msgstr "Сертификат клиента"
 
@@ -3697,6 +3703,9 @@ msgstr "Степень сжатия"
 
 msgid "Computer Account OU"
 msgstr "Учетная запись компьютера OU"
+
+msgid "Config Files"
+msgstr ""
 
 msgid "Config could not be downloaded"
 msgstr "Конфиг не может быть загружен"
@@ -4010,6 +4019,12 @@ msgstr "Создать собственный ACL"
 msgid "Create a new Pool."
 msgstr "Создать новый пул."
 
+msgid "Create a new Target or choose an existing target for this share."
+msgstr ""
+
+msgid "Create a new pool."
+msgstr ""
+
 msgid "Create a new, empty pool."
 msgstr "Создать новый, пустой пул."
 
@@ -4310,6 +4325,9 @@ msgstr "Действия набора данных"
 
 msgid "Dataset Key"
 msgstr "Ключ набора данных"
+
+msgid "Dataset Names"
+msgstr ""
 
 msgid "Dataset Passphrase"
 msgstr "Пароль набора данных"
@@ -5386,6 +5404,9 @@ msgstr "Включить iSCSI ALUA"
 msgid "Enable iXsystems Proactive Support"
 msgstr "Включить проактивную поддержку iXsystems"
 
+msgid "Enable iftop"
+msgstr ""
+
 msgid ""
 "Enable running services that require <a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=mlock\" "
@@ -5784,7 +5805,7 @@ msgid ""
 "be found  <a "
 "href=\"https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#"
 "HOSTSALLOW\" target=\"_blank\">here</a>. <br><br>  If neither *Hosts Allow* "
-"or *Hosts Deny* contains  an entry, then AFP share access is allowed for "
+"or *Hosts Deny* contains  an entry, then SMB share access is allowed for "
 "any host. <br><br>  If there is a *Hosts Allow* list but no *Hosts Deny* "
 "list, then only allow  hosts on the *Hosts Allow* list. <br><br>  If there "
 "is a *Hosts Deny* list but no *Hosts Allow* list, then allow all  hosts "
@@ -5797,7 +5818,7 @@ msgstr ""
 msgid ""
 "Enter a list of denied hostnames or IP addresses. Separate entries by "
 "pressing <code>Enter</code>.  If neither *Hosts Allow* or *Hosts Deny* "
-"contains  an entry, then AFP share access is allowed for any host. <br><br> "
+"contains  an entry, then SMB share access is allowed for any host. <br><br> "
 " If there is a *Hosts Allow* list but no *Hosts Deny* list, then only allow "
 " hosts on the *Hosts Allow* list. <br><br>  If there is a *Hosts Deny* list "
 "but no *Hosts Allow* list, then allow all  hosts that are not on the *Hosts "
@@ -6801,6 +6822,9 @@ msgstr "Имя экстента"
 msgid "Extent Type"
 msgstr "Тип экстента"
 
+msgid "Extents"
+msgstr ""
+
 msgid "Extra Users"
 msgstr "Дополнительные пользователи"
 
@@ -6880,6 +6904,9 @@ msgstr "Fibre Channel "
 
 msgid "Fibre Channel Port "
 msgstr "Порт Fibre Channel "
+
+msgid "Fibre Channel Ports"
+msgstr ""
 
 msgid "File Information"
 msgstr "Информация о файле"
@@ -7173,9 +7200,6 @@ msgstr "Общие настройки"
 msgid "General Preferences"
 msgstr "Общие настройки"
 
-msgid "General Settings"
-msgstr ""
-
 msgid "General VM Settings"
 msgstr "Общие настройки ВМ"
 
@@ -7222,6 +7246,9 @@ msgstr ""
 
 msgid "Get Started"
 msgstr "Начать"
+
+msgid "Get Support"
+msgstr ""
 
 msgid "GiB"
 msgstr "ГиБ"
@@ -7790,6 +7817,9 @@ msgstr "Префикс IPv6"
 msgid "IPv6 Prefix Length"
 msgstr "Длина префикса IPv6"
 
+msgid "IPv6 addresses are not allowed for HA."
+msgstr ""
+
 msgid "IPv6 interface for the jail."
 msgstr "Интерфейс IPv6 для jail."
 
@@ -7953,14 +7983,14 @@ msgstr "Сразу подключиться к TrueCommand."
 msgid "Import"
 msgstr "Импорт"
 
-msgid "Import Disk"
-msgstr ""
-
 msgid "Import a pool that exists but is not connected."
 msgstr "Импортировать пул, который существует, но не подключен."
 
 msgid "Import an existing pool"
 msgstr "Импортировать существующий пул"
+
+msgid "Import an existing pool."
+msgstr ""
 
 msgid ""
 "Import the private key from an existing SSH keypair or  select <i>Generate "
@@ -8003,6 +8033,9 @@ msgstr "Включить секретное семя пароля"
 
 msgid "Include dataset properties with the replicated  snapshots."
 msgstr "Включите свойства набора данных в реплицированные снимки."
+
+msgid "Include iftop network performance statistics in SNMP messages."
+msgstr ""
 
 msgid ""
 "Including the Password Secret Seed allows using this              "
@@ -8099,6 +8132,9 @@ msgstr "Идентификатор группы инициаторов"
 
 msgid "Initiators"
 msgstr "Инициаторы"
+
+msgid "Initiators Groups"
+msgstr ""
 
 msgid ""
 "Initiators allowed access to this system. Enter an <a "
@@ -8484,9 +8520,6 @@ msgstr ""
 msgid "LOG (Write Cache) Overprovision Size in GiB"
 msgstr ""
 
-msgid "LOGIN TO PROVIDER"
-msgstr "ВОЙТИ К ПРОВАЙДЕРУ"
-
 msgid "LUN ID"
 msgstr "LUN ID"
 
@@ -8720,6 +8753,9 @@ msgstr "Войти"
 
 msgid "Log in as Root with Password"
 msgstr "Входить как root с паролем"
+
+msgid "Log in to Provider"
+msgstr ""
 
 msgid "Log mountd(8) requests"
 msgstr "Журналировать запросы mountd(8)"
@@ -9059,6 +9095,9 @@ msgstr ""
 "механизм репликации из FreeNAS 11.2 и более ранних версий.</li></ul>"
 
 msgid "Metadata"
+msgstr ""
+
+msgid "Metadata (Special) Small Block Size"
 msgstr ""
 
 msgid "Metadata VDev"
@@ -9550,9 +9589,6 @@ msgstr ""
 "snmp-community-strings/\" target=\"_blank\">Что такое Строка сообщества "
 "SNMP?</a>."
 
-msgid "Network connectivity will be interrupted. "
-msgstr "Сетевое подключение будет прервано. "
-
 msgid "Network connectivity will be interrupted. Proceed?"
 msgstr "Сетевое подключение будет прервано. Продолжить?"
 
@@ -10001,10 +10037,12 @@ msgstr ""
 
 msgid ""
 "Only set LDAP authentication for SMB shares is required and the LDAP server "
-"is already configured with Samba attributes."
+"is already configured with Samba attributes. DEPRECATED:  Support for Samba "
+"Schema is <a href=\"https://www.samba.org/samba/history/samba-4.13.0.html\" "
+"target=\"_blank\">officially deprecated in Samba 4.13</a>.  The feature "
+"will be removed after Samba 4.14. Users should begin  upgrading legacy "
+"Samba domains to Samba AD domains."
 msgstr ""
-"Настройте аутентификацию LDAP для общих ресурсов SMB только в случае "
-"необходимости и если сервер LDAP уже настроен с атрибутами Samba."
 
 msgid ""
 "Only works with Unix ACLs. New directories created on the share are set "
@@ -10540,6 +10578,9 @@ msgstr "Портал"
 msgid "Portal Group ID"
 msgstr "Ид. группы порталов"
 
+msgid "Portals"
+msgstr ""
+
 msgid "Ports"
 msgstr ""
 
@@ -10967,6 +11008,9 @@ msgstr ""
 "<i>31536000</i> секунд (один год). Это означает, что после первого "
 "подключения браузера к веб-интерфейсу браузер продолжает использовать HTTPS "
 "и обновляет этот параметр каждый год."
+
+msgid "Reenter Password"
+msgstr ""
 
 msgid "Refresh"
 msgstr "Обновить"
@@ -11624,8 +11668,8 @@ msgstr ""
 msgid "Samba Authentication"
 msgstr ""
 
-msgid "Samba Schema"
-msgstr "Схема Samba"
+msgid "Samba Schema (DEPRECATED - see help text)"
+msgstr ""
 
 msgid "Same as Source"
 msgstr "Так же, как источник"
@@ -11943,6 +11987,9 @@ msgid ""
 msgstr ""
 "Выберите IP-адреса для прослушивания запросов NFS. Оставьте пустым, чтобы "
 "NFS прослушивал все доступные адреса."
+
+msgid "Select Reports"
+msgstr ""
 
 msgid "Select Users Cached by this System"
 msgstr ""
@@ -13577,9 +13624,6 @@ msgstr ""
 msgid "Show all available users, including those that have not used any data."
 msgstr ""
 
-msgid "Show only entries that contain this text"
-msgstr "Показывать только записи, содержащие этот текст"
-
 msgid "Show only those users who are using data. This is the default view."
 msgstr ""
 
@@ -13706,9 +13750,6 @@ msgstr ""
 
 msgid "Snapshot successfully taken."
 msgstr "Снимок успешно создан."
-
-msgid "Snapshots"
-msgstr ""
 
 msgid ""
 "Some authentication tools default to 30 seconds and do not support custom "
@@ -14259,6 +14300,9 @@ msgstr "Цель"
 
 msgid "Target Alias"
 msgstr "Псевдоним цели"
+
+msgid "Target Global Configuration"
+msgstr ""
 
 msgid "Target Mode"
 msgstr "Режим цели"
@@ -15030,9 +15074,6 @@ msgstr ""
 msgid "These datasets will be unlocked with the provided credentials."
 msgstr ""
 
-msgid "These items will be <b>"
-msgstr "Эти предметы будут <b>"
-
 msgid ""
 "These permissions are too complicated to be displayed and cannot be saved "
 "unless changed."
@@ -15134,6 +15175,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"This change can interrupt connectivity and must be tested before making "
+"permanent. "
+msgstr ""
+
+msgid ""
 "This dataset has an active ACL. Changes to permissions must be made with "
 "the ACL editor."
 msgstr ""
@@ -15201,6 +15247,9 @@ msgstr ""
 msgid "This operation might take a long time. Proceed?"
 msgstr "Эта операция может занять много времени. Продолжить?"
 
+msgid "This process continues in the background after closing this dialog."
+msgstr ""
+
 msgid "This system cannot communicate externally."
 msgstr ""
 
@@ -15215,6 +15264,18 @@ msgid ""
 "disks can be removed from the pool and reused or disposed of without being "
 "erased. iXsystems, inc. cannot be held responsible for any lost or "
 "unrecoverable data as a consequence of using this feature."
+msgstr ""
+
+msgid ""
+"This value represents the threshold block size for including small file "
+"blocks into the special allocation class. Blocks smaller than or equal to "
+"this value will be assigned to the special allocation class while greater "
+"blocks will be assigned to the regular class. Valid values are zero or a "
+"power of two from 512B  up to 1M. The default size is 0 which means no "
+"small file blocks will be allocated in the special class. Before setting "
+"this property, a special class vdev must be added to the pool. See <a "
+"href=\"https://zfsonlinux.org/manpages/0.7.13/man8/zpool.8.html\" "
+"target=\"_blank\">zpool(8)</a> for more details on the special allocation"
 msgstr ""
 
 msgid "Thread number:"
@@ -15708,6 +15769,9 @@ msgstr "Доступны обновления"
 msgid "Updates successfully downloaded"
 msgstr "Обновления успешно загружены"
 
+msgid "Updating Dataset ACL"
+msgstr ""
+
 msgid "Updating Jail"
 msgstr "Обновление Jail"
 
@@ -16168,9 +16232,6 @@ msgstr "Синхронизация VMWare"
 
 msgid "VMware Sync"
 msgstr "Синхронизация VMware"
-
-msgid "VMware-Snapshots"
-msgstr ""
 
 msgid "VNC"
 msgstr "VNC"
@@ -16851,10 +16912,10 @@ msgstr "группа"
 msgid "gzip (default level, 6)"
 msgstr ""
 
-msgid "gzip (fastest)"
+msgid "gzip-1 (fastest)"
 msgstr ""
 
-msgid "gzip (maximum, slow)"
+msgid "gzip-9 (maximum, slow)"
 msgstr ""
 
 msgid "host_domainname"
@@ -17147,13 +17208,13 @@ msgstr "да"
 msgid "zle (runs of zeros)"
 msgstr ""
 
-msgid "zstd (Maximum, very slow)"
-msgstr ""
-
-msgid "zstd (Medium, slow)"
-msgstr ""
-
 msgid "zstd (default level, 3)"
+msgstr ""
+
+msgid "zstd-5 (slow)"
+msgstr ""
+
+msgid "zstd-7 (very slow)"
 msgstr ""
 
 msgid "zstd-fast (default level, 1)"

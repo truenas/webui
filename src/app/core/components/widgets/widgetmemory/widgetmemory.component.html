@@ -70,7 +70,7 @@
             <mat-list *ngIf="memData; else noLegend" fxFlex="100" fxHide.gt-xs>
               <mat-list-item *ngFor="let listItem of memData.data; let i=index"  class="legend-item">
                 <div class="legend-swatch" [style.background-color]="trustedSecurity(colorPattern[i])"></div>
-                <span class="label">{{listItem[0]}}:</span><span class="value">&nbsp;&nbsp; {{listItem[1]}} GiB</span>
+                <span class="label">{{listItem[0]}}:</span><span class="value">{{listItem[1]}} GiB</span>
               </mat-list-item>
             </mat-list>
           </div>
