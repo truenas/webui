@@ -328,13 +328,9 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   getDiskDetails(key:string, value:string, isMultipath?:boolean){
     if(isMultipath && key == 'name'){
-     
       let v = "multipath/" + this.checkMultipathLabel(value);
       this.core.emit({name:"MultipathRequest", data:[[[key, "=", v]]]});
-      console.log("---I am here---")
-    
     } else if(!isMultipath) {
-
       delete this.currentMultipathDetails
       this.core.emit({name:"DisksRequest", data:[[[key, "=", value]]]});
     } else {
