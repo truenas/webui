@@ -20,6 +20,10 @@
       (paste)="onPaste($event)"
       (input)="onInput()">
     </textarea>
+    <div *ngIf="config.filereader">
+      <span [style.margin-right.px]="10">{{config.placeholder | translate}}</span>
+      <input type="file" id="fileInput" (change)="changeListener($event)"/>
+    </div>
   </div>
   <div class="margin-for-error">
     <form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>
