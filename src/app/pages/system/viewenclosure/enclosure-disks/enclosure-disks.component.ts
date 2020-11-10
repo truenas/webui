@@ -9,6 +9,7 @@ import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { Chassis } from 'app/core/classes/hardware/chassis';
 import { ChassisView } from 'app/core/classes/hardware/chassis-view';
+import { R40 } from 'app/core/classes/hardware/r40';
 import { R50 } from 'app/core/classes/hardware/r50';
 import { M50 } from 'app/core/classes/hardware/m50';
 //import { M50Rear } from 'app/core/classes/hardware/m50_rear';
@@ -369,6 +370,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
     const enclosure = this.system.enclosures[profile.enclosureKey];
     switch(enclosure.model){
+      case 'R40':
+        this.chassis = new R40();
+        //this.showCaption = false;
+        break;
       case 'R50':
         this.chassis = new R50(true);
         this.showCaption = false;
@@ -413,7 +418,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           name: 'Error', 
           data: { 
             name: 'Unsupported Hardware', 
-            message: 'This chassis has an unknown or missing model value. (METHOD: createEnclosure)'
+            message: '\"' + enclosure.model + '\" is not a supported model. (METHOD: createEnclosure)'
           }
         });
         this.aborted = true;
@@ -470,6 +475,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     let chassis;
     let enclosure;
     switch(raw_enclosure.model){
+      case 'R40':
+        chassis = new R40();
+        break;
       case 'R50':
         chassis = new R50();
         break;
@@ -504,11 +512,12 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         chassis = new ES102();
         break;
       default:
+        console.log(this.system);
           this.controllerEvents.next({
             name: 'Error', 
             data: { 
               name: 'Unsupported Hardware', 
-              message: 'This chassis has an unknown or missing model value. (METHOD: createExtractedEnclosure)'
+              message: '\"' + raw_enclosure.model + '\" is not a supported model. (METHOD: createExtractedEnclosure)'
             }
           });
           this.aborted = true;
