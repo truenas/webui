@@ -122,7 +122,7 @@ export class DatasetUnlockComponent implements OnDestroy {
               validation: helptext.dataset_key_validation,
               disabled: true,
               isHidden: true,
-              width: '50%',
+              width: '0%',
               filereader: true
             },
             {
