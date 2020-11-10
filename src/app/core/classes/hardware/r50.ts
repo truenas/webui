@@ -75,18 +75,20 @@ export class R50 extends Chassis{
 
     if(rearChassis){
       this.rear = new ChassisView();
-      this.rear.driveTrays.scale = {x: 0.88, y: 0.88};
-      this.rear.driveTraysOffsetX = -16;
-      this.rear.driveTraysOffsetY = -65;
+      let rscale = 0.95;
+      this.rear.driveTrays.scale = {x: rscale, y: rscale};
+      this.rear.driveTraysOffsetX = -26;
+      this.rear.driveTraysOffsetY = -60;
       this.rear.container = new PIXI.Container();
-      this.rear.chassisPath = "assets/images/hardware/m50/m50_rear_960w.png";
-      this.rear.driveTrayBackgroundPath = "assets/images/hardware/m50/m50_960w_drivetray_bg.png" 
-      this.rear.driveTrayHandlePath = "assets/images/hardware/m50/m50_960w_drivetray_handle.png"
+      this.rear.chassisPath = "assets/images/hardware/r50/r50_rear_960w.png";
+      this.rear.driveTrayBackgroundPath = "assets/images/hardware/r50/r50_rear_960w_drivetray_bg.png" 
+      this.rear.driveTrayHandlePath = "assets/images/hardware/r50/r50_rear_960w_drivetray_handle.png"
       this.rear.columns = 1;
       this.rear.rows = 3;
       this.rear.slotRange = {start: 54, end: 56};
   
       this.rear.totalDriveTrays = 3;
+
     }
 
   }
