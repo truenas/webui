@@ -258,6 +258,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
         delete evt.data[0].devname;
         delete evt.data[0].multipath_name;
         delete evt.data[0].multipath_member;
+        delete evt.data[0].zfs_guid;
         this.currentDiskDetails = evt.data[0];
       }
     });
