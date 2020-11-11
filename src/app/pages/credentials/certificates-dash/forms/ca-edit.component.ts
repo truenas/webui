@@ -152,14 +152,6 @@ export class CertificateAuthorityEditComponent {
         customEventMethod: () => {
           this.viewCertificate();
         }
-      },
-      {
-        type: 'button',
-        name: 'certificate_download',
-        customEventActionLabel: 'Download',
-        customEventMethod: () => {
-          this.exportCertificate();
-        }
       }
     ]
   }, {
@@ -203,14 +195,6 @@ export class CertificateAuthorityEditComponent {
         customEventActionLabel: 'View',
         customEventMethod: () => {
           this.viewKey();
-        }
-      },
-      {
-        type: 'button',
-        name: 'private_key_download',
-        customEventActionLabel: 'Download',
-        customEventMethod: () => {
-          this.exportKey();
         }
       }
     ]
@@ -265,7 +249,12 @@ export class CertificateAuthorityEditComponent {
   }
 
   viewCertificate() {
-    this.dialog.Info('Here it is', this.incomingData.certificate);
+    this.dialog.confirm(this.incomingData.name, this.incomingData.certificate, true, 'Download', false, '',
+    '','','', false, 'Close').subscribe(res => {
+      if (res) {
+        this.exportCertificate();
+      }
+    })
   }
 
   exportCertificate() {
@@ -288,7 +277,12 @@ export class CertificateAuthorityEditComponent {
   }
 
   viewKey() {
-    this.dialog.Info('Here it is', this.incomingData.privatekey);
+    this.dialog.confirm(this.incomingData.name, this.incomingData.privatekey, true, 'Download', false, '',
+    '','','', false, 'Close').subscribe(res => {
+      if (res) {
+        this.exportKey();
+      }
+    })
   }
 
   exportKey() {

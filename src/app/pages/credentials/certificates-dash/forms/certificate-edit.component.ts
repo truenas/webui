@@ -141,24 +141,11 @@ export class CertificateEditComponent {
         paraText: `${helptext_system_certificates.add.key_type.placeholder}: `
       },
       {
-        name: 'certificate_label',
-        type: 'paragraph',
-        paraText: 'Certificate',
-      },
-      {
         type: 'button',
         name: 'certificate_view',
-        customEventActionLabel: 'View',
+        customEventActionLabel: 'View/Download Certificate',
         customEventMethod: () => {
           this.viewCertificate();
-        }
-      },
-      {
-        type: 'button',
-        name: 'certificate_download',
-        customEventActionLabel: 'Download',
-        customEventMethod: () => {
-          this.exportCertificate();
         }
       }
     ]
@@ -192,25 +179,11 @@ export class CertificateEditComponent {
         paraText: `${helptext_system_certificates.add.lifetime.placeholder}: `
       },
       {
-        name: 'private_key_label',
-        type: 'paragraph',
-        paraText: 'Private Key'
-      },
-
-      {
         type: 'button',
         name: 'private_key_view',
-        customEventActionLabel: 'View',
+        customEventActionLabel: 'View/Download Key',
         customEventMethod: () => {
           this.viewKey();
-        }
-      },
-      {
-        type: 'button',
-        name: 'private_key_download',
-        customEventActionLabel: 'Download',
-        customEventMethod: () => {
-          this.exportKey();
         }
       }
     ]
@@ -324,15 +297,33 @@ export class CertificateEditComponent {
   }
 
   viewCertificate() {
+    console.log(this.incomingData)
     if (this.incomingData.CSR) {
-    this.dialog.Info('Here it is', this.incomingData.CSR);
+    this.dialog.confirm(this.incomingData.name, this.incomingData.CSR, true, 'Download', false, '',
+      '','','', false, 'Close').subscribe(res => {
+        if (res) {
+          this.exportCertificate();
+        }
+      })
     } else {
-      this.dialog.Info('Here it is', this.incomingData.certificate);
+      this.dialog.confirm(this.incomingData.name, this.incomingData.certificate, true, 'Download', false, '',
+      '','','', false, 'Copy').subscribe(res => {
+        if (res) {
+          this.exportCertificate();
+        } else {
+          navigator.clipboard.writeText(this.incomingData.certificate)
+        }
+      })
     }
   }
 
   viewKey() {
-    this.dialog.Info('Here it is', this.incomingData.privatekey);
+    this.dialog.confirm(this.incomingData.name, this.incomingData.privatekey, true, 'Download', false, '',
+    '','','', false, 'Close').subscribe(res => {
+      if (res) {
+        this.exportKey();
+      }
+    })
   }
 
   customSubmit(value) {
