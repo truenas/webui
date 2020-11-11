@@ -577,29 +577,38 @@ export class VolumesListTableConfig implements InputTableConf {
             doDetach();
           }
 
-          function doDetach() {
-            let title, warningA, warningB, unknownA, unknownB, encrypted;
-            self.translate.get(helptext.exportDialog.title).subscribe(t => {
-              title = t;
-              self.translate.get(helptext.exportDialog.warningA).subscribe(a => {
-                self.translate.get(helptext.exportDialog.warningB).subscribe(b => {
-                  warningA = a;
-                  warningB = b;
-                  self.translate.get(helptext.exportDialog.unknownStateA).subscribe(ua => {
-                    self.translate.get(helptext.exportDialog.unknownStateB).subscribe(ub => {
-                      self.translate.get(helptext.exportDialog.encryptWarning).subscribe(enc => {
-                        unknownA = ua;
-                        unknownB = ub;
-                        encrypted = enc;
+          async function doDetach() {
+            const sysPool = await self.ws.call('systemdataset.config').pipe(map(res => res['pool'])).toPromise();
+            let title, warningA, warningB, unknownA, unknownB, encrypted, sysPoolWarning;
+            self.translate.get(helptext.exportDialog.warningSysDataset).subscribe(sysWarn => { 
+              sysPoolWarning = sysWarn;        
+              self.translate.get(helptext.exportDialog.title).subscribe(t => {
+                title = t;
+                self.translate.get(helptext.exportDialog.warningA).subscribe(a => {
+                  self.translate.get(helptext.exportDialog.warningB).subscribe(b => {
+                    warningA = a;
+                    warningB = b;
+                    self.translate.get(helptext.exportDialog.unknownStateA).subscribe(ua => {
+                      self.translate.get(helptext.exportDialog.unknownStateB).subscribe(ub => {
+                        self.translate.get(helptext.exportDialog.encryptWarning).subscribe(enc => {
+                          unknownA = ua;
+                          unknownB = ub;
+                          encrypted = enc;
+                        })
                       })
                     })
                   })
                 })
-              })
 
+              ;
               const conf: DialogFormConfiguration = {
                 title: title + row1.name + "'",
                 fieldConfig: [{
+                  type: 'paragraph',
+                  name: 'sysdataset_warning',
+                  paraText: sysPoolWarning,
+                  isHidden: sysPool === row1.name ? false : true
+                },{
                   type: 'paragraph',
                   name: 'pool_detach_warning',
                   paraText: warningA + row1.name +
@@ -757,6 +766,7 @@ export class VolumesListTableConfig implements InputTableConf {
               }            
               self.dialogService.dialogFormWide(conf);
             })
+          })
           }
         }
     });
@@ -1025,7 +1035,7 @@ export class VolumesListTableConfig implements InputTableConf {
                       "storage", "permissions", rowData.id
                     ]));
                   } else {
-                    this.ws.call('filesystem.getacl', [row1.mountpoint]).subscribe(res => {
+                    this.ws.call('filesystem.getacl', [rowData.mountpoint]).subscribe(res => {
                       if(res.acltype === 'POSIX1E') {
                         this._router.navigate(new Array('/').concat([
                           "storage", "id", rowData.pool, "dataset",
@@ -1732,7 +1742,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   async ngOnInit(): Promise<void> {
     this.showSpinner = true;
 
-    this.systemdatasetPool = await this.ws.call('systemdataset.config').pipe(map(res => res.pool)).toPromise;
+    this.systemdatasetPool = await this.ws.call('systemdataset.config').pipe(map(res => res.pool)).toPromise();
 
     while (this.zfsPoolRows.length > 0) {
       this.zfsPoolRows.pop();

@@ -23,7 +23,7 @@
     <mat-error *ngIf="control.hasError('range')">
         {{"The value is out of range. Enter a value between " | translate}} {{control.errors.rangeValue.min}} {{" and " | translate }} {{control.errors.rangeValue.max}}.
     </mat-error>
-    <mat-error *ngIf="control.hasError('regex') && !config.hideErrMsg">
+    <mat-error *ngIf="control.hasError('regex') || control.hasError('pattern') && !config.hideErrMsg">
         {{"Invalid format or character." | translate}}
     </mat-error>
     <mat-error *ngIf="control.hasError('ip')">

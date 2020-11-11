@@ -511,8 +511,8 @@ export class DatasetPosixAclComponent implements OnDestroy {
       return;
     }
 
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Saving ACLs") }});
-    this.dialogRef.componentInstance.setDescription(T("Saving ACLs..."));
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": helptext.save_dialog.title }});
+    this.dialogRef.componentInstance.setDescription(helptext.save_dialog.message);
     let dacl = body.dacl;
 
     await this.userService.getUserByName(body.uid).toPromise().then(userObj => {
