@@ -19,8 +19,6 @@ import { routing } from './network.routing';
 
 import { NetworkComponent } from './network.component';
 import { CardWidgetComponent } from './card-widget/card-widget.component';
-import { NameserverFormComponent } from './forms/nameserver-form.component';
-import { DefaultRouteFormComponent } from './forms/default-route-form.component';
 import { OpenvpnClientComponent } from './forms/service-openvpn-client.component';
 import { OpenvpnServerComponent } from './forms/service-openvpn-server.component';
 
@@ -36,8 +34,6 @@ import { OpenvpnServerComponent } from './forms/service-openvpn-server.component
     IPMIFromComponent,
     NetworkComponent,
     CardWidgetComponent,
-    NameserverFormComponent,
-    DefaultRouteFormComponent,
     OpenvpnClientComponent,
     OpenvpnServerComponent,
   ],

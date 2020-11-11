@@ -6,13 +6,10 @@ import { WebSocketService, NetworkService, DialogService, StorageService, AppLoa
 import { T } from '../../translate-marker';
 import helptext from '../../helptext/network/interfaces/interfaces-list';
 import { CardWidgetConf } from './card-widget/card-widget.component';
-import { TableConfig } from '../common/entity/entity-table/entity-table.component';
 import { ModalService } from '../../services/modal.service';
 import { ConfigurationComponent } from './forms/configuration.component';
 import { InterfacesFormComponent } from './forms/interfaces-form.component';
 import { StaticRouteFormComponent } from './forms/staticroute-form.component';
-import { NameserverFormComponent } from './forms/nameserver-form.component';
-import { DefaultRouteFormComponent } from './forms/default-route-form.component';
 import { IPMIFromComponent } from './forms/ipmi-form.component';
 import { OpenvpnClientComponent } from './forms/service-openvpn-client.component';
 import { OpenvpnServerComponent } from './forms/service-openvpn-server.component';
@@ -21,7 +18,6 @@ import { ViewControllerComponent } from 'app/core/components/viewcontroller/view
 import { EntityUtils } from '../../pages/common/entity/utils';
 import { EntityToolbarComponent } from '../../pages/common/entity/entity-toolbar/entity-toolbar.component';
 import * as ipRegex from 'ip-regex';
-import { config } from 'process';
 
 @Component({
   selector: 'app-interfaces-list',
@@ -118,26 +114,15 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   public globalSettingsWidget: CardWidgetConf = {
-    title: T('Global Settings'),
+    title: T('Global Configuration'),
     data: {},
     parent: this,
     icon: 'router',
     showGroupTitle: true,
     onclick: function() {
-      this.parent.modalService.open('slide-in-form', this.parent.nameserverFormComponent);
+      this.parent.modalService.open('slide-in-form', this.parent.addComponent);
     },
   }
-
-  // public defaultRoutesWidget: CardWidgetConf = {
-  //   title: T('Default Route'),
-  //   data: {},
-  //   parent: this,
-  //   icon: 'router',
-  //   showGroupTitle: true,
-  //   onclick: function() {
-  //     this.parent.modalService.open('slide-in-form', this.parent.defaultRouteFormComponent);
-  //   }
-  // }
   
   public openvpnTableConf = {
     title: T('OpenVPN'),
@@ -183,8 +168,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   protected addComponent: ConfigurationComponent;
   protected interfaceComponent: InterfacesFormComponent;
   protected staticRouteFormComponent: StaticRouteFormComponent;
-  protected nameserverFormComponent: NameserverFormComponent;
-  protected defaultRouteFormComponent: DefaultRouteFormComponent;
+  // protected nameserverFormComponent: NameserverFormComponent;
+  // protected defaultRouteFormComponent: DefaultRouteFormComponent;
   protected openvpnClientComponent: OpenvpnClientComponent;
   protected openvpnServerComponent: OpenvpnServerComponent;
   protected impiFormComponent: IPMIFromComponent;
@@ -207,7 +192,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   getGlobalSettings() {
     this.ws.call(this.configCall).subscribe(
       (config_res) => {
-        console.log(config_res)
         this.ws.call(this.summayCall).subscribe(
           (res) => {
             this.networkSummary = res;
@@ -245,8 +229,13 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
             this.globalSettingsWidget.data.httpproxy = config_res.httpproxy !== '' ? config_res.httpproxy : '---';
             this.globalSettingsWidget.data.hostnameDB = config_res.hosts !== '' ? config_res.hosts : '---';
 
-
-             console.log(this.globalSettingsWidget.data)
+            if(config_res.activity.type === 'DENY') {
+              this.globalSettingsWidget.data.outbound =  T('Allow All');
+            } else if (config_res.activity.activities.length === 0) {
+              this.globalSettingsWidget.data.outbound =  T('Deny All');
+            } else {
+              this.globalSettingsWidget.data.outbound = T('Allow ') + config_res.activity.activities.join(', ');
+            }
           }
         );
       }
@@ -256,19 +245,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       this.impiEnabled = res;
     });
   }
-
-  // getGlobalSettings2() {
-  //   this.ws.call(this.summayCall).subscribe(
-  //     (res) => {
-  //       console.log(res)
-  //       this.networkSummary = res;
-  //       this.globalSettingsWidget.data.ipv4 = res.default_routes;
-  //     }
-  //   );
-  //   this.ws.call('network.configuration.config').subscribe(res => {
-  //     console.log(res);
-  //   })
-  // }
 
   ngOnInit() {
     this.refreshNetworkForms();
@@ -457,17 +433,13 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
 
   refreshNetworkForms() {
     this.addComponent = new ConfigurationComponent(this.router,this.ws);
-    this.addComponent.afterModalFormClosed = this.getGlobalSettings.bind(this); // update nameserver, default route info
+    this.addComponent.afterModalFormClosed = this.getGlobalSettings.bind(this); // update global config card
     this.interfaceComponent = new InterfacesFormComponent(this.router, this.aroute, this.networkService, this.dialog, this.ws);
     this.interfaceComponent.afterModalFormClosed = this.checkInterfacePendingChanges.bind(this);
     this.staticRouteFormComponent = new StaticRouteFormComponent(this.aroute, this.ws, this.networkService);
     if (this.staticRoutesTableConf.tableComponent) {
       this.staticRouteFormComponent.afterModalFormClosed = this.staticRoutesTableConf.tableComponent.getData();
     }
-    this.nameserverFormComponent = new NameserverFormComponent(this.aroute, this.ws, this.networkService);
-    this.nameserverFormComponent.afterModalFormClosed = this.getGlobalSettings.bind(this); // update nameserver info
-    this.defaultRouteFormComponent = new DefaultRouteFormComponent(this.aroute, this.ws, this.networkService);
-    // this.defaultRouteFormComponent.afterModalFormClosed = this.getNetworkSummary.bind(this); // update default route info
     this.openvpnClientComponent = new OpenvpnClientComponent(this.servicesService);
     this.openvpnServerComponent = new OpenvpnServerComponent(this.servicesService, this.dialog, this.loader, this.ws, this.storageService);
     this.impiFormComponent = new IPMIFromComponent(this.ws, this.dialog, this.loader);
