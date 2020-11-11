@@ -360,14 +360,17 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
         borderWidth: 1,
       }
   
-      const cssVar = ds.label == 'Temperature' ? 'accent' : 'primary'; 
-      const color = this.stripVar(this.currentTheme[cssVar])
+      const accent = this.themeService.isDefaultTheme ? 'orange' : 'accent';
+      let color;
+      if(accent !== 'accent' && ds.label == 'Temperature'){
+        color =  accent;
+      } else {
+        const cssVar = ds.label == 'Temperature' ? accent : 'primary'; 
+        color = this.stripVar(this.currentTheme[cssVar])
+      }
       
-      const themeColor = this.currentTheme[color];
-      const valueType = this.utils.getValueType(themeColor);
-
-      const bgRGB = valueType == 'hex' ? this.utils.hexToRGB(themeColor).rgb : this.utils.rgbToArray(themeColor);
-      const borderRGB = valueType == 'hex' ? this.utils.hexToRGB(themeColor).rgb : this.utils.rgbToArray(themeColor);
+      const bgRGB = this.utils.convertToRGB(this.currentTheme[color]).rgb;
+      const borderRGB = this.utils.convertToRGB(this.currentTheme[color]).rgb;
 
       ds.backgroundColor = this.rgbToString(bgRGB, 0.85);
       ds.borderColor = this.rgbToString(bgRGB);
