@@ -168,8 +168,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   protected addComponent: ConfigurationComponent;
   protected interfaceComponent: InterfacesFormComponent;
   protected staticRouteFormComponent: StaticRouteFormComponent;
-  // protected nameserverFormComponent: NameserverFormComponent;
-  // protected defaultRouteFormComponent: DefaultRouteFormComponent;
   protected openvpnClientComponent: OpenvpnClientComponent;
   protected openvpnServerComponent: OpenvpnServerComponent;
   protected impiFormComponent: IPMIFromComponent;
