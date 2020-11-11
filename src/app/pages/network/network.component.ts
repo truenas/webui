@@ -16,7 +16,6 @@ import { OpenvpnServerComponent } from './forms/service-openvpn-server.component
 import { CoreEvent } from 'app/core/services/core.service';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { EntityUtils } from '../../pages/common/entity/utils';
-import { EntityToolbarComponent } from '../../pages/common/entity/entity-toolbar/entity-toolbar.component';
 import * as ipRegex from 'ip-regex';
 
 @Component({
@@ -277,35 +276,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         }
       });
     }
-
-    this.globalActionsInit()
-  }
-
-  globalActionsInit(){
-
-    // Setup events
-    this.formEvents = new Subject();
-    this.formEvents.subscribe((evt: CoreEvent) => {
-      this.showConfigForm();
-    });
-
-    // Setup button
-    const actionsConfig = {
-      actionType: EntityToolbarComponent,
-      actionConfig:{
-        target: this.formEvents,
-        controls: [
-          {
-            name: 'networkConfig',
-            label: 'Configure',
-            type: 'button',
-            value: 'click',
-            color: 'primary'
-          }
-        ]
-      }
-    }
-    this.core.emit({name: "GlobalActions", data: actionsConfig, sender: this});
   }
 
   checkInterfacePendingChanges() {
