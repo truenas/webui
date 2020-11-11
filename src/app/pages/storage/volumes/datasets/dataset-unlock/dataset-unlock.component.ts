@@ -122,7 +122,8 @@ export class DatasetUnlockComponent implements OnDestroy {
               validation: helptext.dataset_key_validation,
               disabled: true,
               isHidden: true,
-              width: '0%'
+              width: '0%',
+              filereader: true
             },
             {
               type: 'input',
@@ -201,7 +202,6 @@ export class DatasetUnlockComponent implements OnDestroy {
 
             this.datasets.controls[i].controls['name'].setValue(result['name']);
             name_text_fc.paraText = helptext.dataset_name_paratext + result['name'];
-
             const is_passphrase = (result.key_format === 'PASSPHRASE');
             if (!is_passphrase) { // hide key datasets by default
               name_text_fc.isHidden = true;
