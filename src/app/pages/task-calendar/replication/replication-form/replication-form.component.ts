@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/task-calendar/replication/replication';
+import repwizardhelptext from '../../../../helptext/task-calendar/replication/replication-wizard';
 import { WebSocketService, TaskService, KeychainCredentialService, ReplicationService, StorageService, DialogService } from 'app/services';
 import * as _ from 'lodash';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -422,7 +423,7 @@ export class ReplicationFormComponent {
                     type: 'chip',
                     name: 'properties_override',
                     placeholder: helptext.properties_override_placeholder,
-                    tooltip: helptext.properties_override_tooltip,
+                    tooltip: repwizardhelptext.properties_override_tooltip,
                     relation: [{
                         action: 'HIDE',
                         connective: 'AND',
@@ -628,14 +629,14 @@ export class ReplicationFormComponent {
                     type: 'checkbox',
                     name: 'encryption',
                     placeholder: helptext.encryption_placeholder,
-                    tooltip: helptext.encryption_tooltip,
+                    tooltip: repwizardhelptext.encryption_tooltip,
                     value: false,
                 },
                 {
                     type: 'select',
                     name: 'encryption_key_format',
                     placeholder: helptext.encryption_key_format_placeholder,
-                    tooltip: helptext.encryption_key_format_tooltip,
+                    tooltip: repwizardhelptext.encryption_key_format_tooltip,
                     options: [{
                         label: 'HEX',
                         value: 'HEX',
@@ -655,7 +656,7 @@ export class ReplicationFormComponent {
                     type: 'checkbox',
                     name: 'encryption_key_generate',
                     placeholder: helptext.encryption_key_generate_placeholder,
-                    tooltip: helptext.encryption_key_generate_tooltip,
+                    tooltip: repwizardhelptext.encryption_key_generate_tooltip,
                     value: true,
                     relation: [{
                         action: 'SHOW',
@@ -673,7 +674,7 @@ export class ReplicationFormComponent {
                     type: 'input',
                     name: 'encryption_key_hex',
                     placeholder: helptext.encryption_key_hex_placeholder,
-                    tooltip: helptext.encryption_key_hex_tooltip,
+                    tooltip: repwizardhelptext.encryption_key_hex_tooltip,
                     relation: [{
                         action: 'SHOW',
                         connective: 'AND',
@@ -695,7 +696,7 @@ export class ReplicationFormComponent {
                     togglePw: true,
                     name: 'encryption_key_passphrase',
                     placeholder: helptext.encryption_key_passphrase_placeholder,
-                    tooltip: helptext.encryption_key_passphrase_tooltip,
+                    tooltip: repwizardhelptext.encryption_key_passphrase_tooltip,
                     relation: [{
                         action: 'SHOW',
                         connective: 'AND',
@@ -712,7 +713,7 @@ export class ReplicationFormComponent {
                     type: 'checkbox',
                     name: 'encryption_key_location_truenasdb',
                     placeholder: helptext.encryption_key_location_truenasdb_placeholder,
-                    tooltip: helptext.encryption_key_location_truenasdb_tooltip,
+                    tooltip: repwizardhelptext.encryption_key_location_truenasdb_tooltip,
                     value: true,
                     relation: [{
                         action: 'SHOW',
@@ -726,7 +727,7 @@ export class ReplicationFormComponent {
                     type: 'input',
                     name: 'encryption_key_location',
                     placeholder: helptext.encryption_key_location_placeholder,
-                    tooltip: helptext.encryption_key_location_tooltip,
+                    tooltip: repwizardhelptext.encryption_key_location_tooltip,
                     relation: [{
                         action: 'SHOW',
                         connective: 'AND',
