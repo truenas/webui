@@ -6,6 +6,7 @@ from function import (
     wait_on_element,
     is_element_present,
     attribute_value_exist,
+    wait_on_element_disappear,
     run_cmd,
     post
 )
@@ -32,8 +33,8 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 
 
 @when(parsers.parse('If login page appear enter "{user}" and "{password}"'))
-def if_login_page_appear_enter_root_and_testing(driver, user, password):
-    """If login page appear enter "{user}" and "{password}"."""
+def if_login_page_appear_enter_root_and_password(driver, user, password):
+    """If login page appear enter "user" and "password"."""
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
         assert wait_on_element(driver, 1, 10, '//input[@placeholder="Username"]')
         driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
@@ -137,9 +138,9 @@ def the_service_page_should_open(driver):
     assert wait_on_element(driver, 1, 5, '//services')
 
 
-@then('If the SMB serivce is not started start the service')
-def if_the_smb_serivce_is_not_started_start_the_service(driver):
-    """If the SMB serivce is not started start the service."""
+@then('If the SMB service is not started start the service')
+def if_the_smb_service_is_not_started_start_the_service(driver):
+    """If the SMB service is not started start the service."""
     assert wait_on_element(driver, 1, 5, '//services')
     assert wait_on_element(driver, 1, 5, '//button[@ix-auto="button__S3_Actions"]')
     # Scroll to SMB service
@@ -176,3 +177,23 @@ def Verify_that_the_is_on_url_with_root_and_password(driver, nas_url, user, pass
     """Verify that the is on "{nas_url}" with "{user}" and "{password}"."""
     results = post(nas_url, 'filesystem/stat/', (user, password), f'{smb_path}/testfile.txt')
     assert results.status_code == 200, results.text
+
+
+@then('Click on Directory Services then Active Directory')
+def click_on_directory_services_then_active_directory(driver):
+    """Click on Directory Services then Active Directory."""
+    assert wait_on_element(driver, 1, 7, '//mat-list-item[@ix-auto="option__Directory Services"]')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Directory Services"]').click()
+    assert wait_on_element(driver, 1, 7, '//mat-list-item[@ix-auto="option__Active Directory"]')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Active Directory"]').click()
+
+
+@then('Click the Enable checkbox and click SAVE')
+def click_the_enable_checkbox_and_click_save(driver):
+    """Click the Enable checkbox and click SAVE."""
+    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Domain Credentials")]')
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]').click()
+    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SAVE"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 1, 10, '//div[contains(.,"Settings saved.")]')
