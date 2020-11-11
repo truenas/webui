@@ -31,8 +31,8 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 
 
 @when(parsers.parse('If login page appear enter "{user}" and "{password}"'))
-def if_login_page_appear_enter_root_and_testing(driver, user, password):
-    """If login page appear enter "{user}" and "{password}"."""
+def if_login_page_appear_enter_root_and_password(driver, user, password):
+    """If login page appear enter "user" and "password"."""
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
         assert wait_on_element(driver, 1, 10, '//input[@placeholder="Username"]')
         driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
@@ -97,11 +97,12 @@ def click_advanced_options(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
 
 
-@then('Click Enable checkbox and select ON for Encryption Mode')
-def click_enable_checkbox_and_select_on_for_encryption_mode(driver):
-    """Click Enable checkbox and select ON for Encryption Mode."""
+@then('Click Enable checkbox, then Samba Schema and select ON for Encryption Mode')
+def click_enable_checkbox_then_samba_schema_and_select_on_for_encryption_mode(driver):
+    """Click Enable checkbox, then Samba Schema and select ON for Encryption Mode."""
     assert wait_on_element(driver, 1, 5, '//mat-select[@ix-auto="select__Encryption Mode"]')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable"]').click()
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Samba Schema (DEPRECATED - see help text)"]').click()
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Encryption Mode"]').click()
     assert wait_on_element(driver, 0.5, 5, '//mat-option[@ix-auto="option__Encryption Mode_ON"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Encryption Mode_ON"]').click()
