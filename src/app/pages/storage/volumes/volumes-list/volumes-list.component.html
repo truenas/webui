@@ -12,7 +12,8 @@
         ix-auto ix-auto-type="expansion-panel" ix-auto-identifier="{{row.name}}">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            {{row.name}}
+            {{row.name}} <span *ngIf="row.name === systemdatasetPool" class="ml-1"> 
+              {{ '(System Dataset Pool)' | translate}}</span>
             <span *ngIf="row.encrypt > 0"  title="Encryption On" id="volume_encrypt_on_{{row.name}}" class="panel_status_enc">
                 <mat-icon *ngIf="!row.is_decrypted" role="img" fontSet="mdi-set" fontIcon="mdi-lock" ></mat-icon>
                 <mat-icon *ngIf="row.is_decrypted" role="img" fontSet="mdi-set" fontIcon="mdi-lock-open-variant"></mat-icon>
