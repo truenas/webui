@@ -21,6 +21,7 @@ import { ViewControllerComponent } from 'app/core/components/viewcontroller/view
 import { EntityUtils } from '../../pages/common/entity/utils';
 import { EntityToolbarComponent } from '../../pages/common/entity/entity-toolbar/entity-toolbar.component';
 import * as ipRegex from 'ip-regex';
+import { config } from 'process';
 
 @Component({
   selector: 'app-interfaces-list',
@@ -239,6 +240,11 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
               tempArr.push(T('WS-DISCOVERY'))
             }
             this.globalSettingsWidget.data.service_announcement = tempArr.join(', ');
+            this.globalSettingsWidget.data.additional_domains = config_res.domains.length > 0 ?
+              config_res.domains.join(', ') : '---';
+            this.globalSettingsWidget.data.httpproxy = config_res.httpproxy !== '' ? config_res.httpproxy : '---';
+            this.globalSettingsWidget.data.hostnameDB = config_res.hosts !== '' ? config_res.hosts : '---';
+
 
              console.log(this.globalSettingsWidget.data)
           }

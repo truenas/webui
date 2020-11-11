@@ -39,11 +39,32 @@
         </span>
       </mat-list-item>
     </mat-list>
-    <ul>
-      <li>{{ 'Hostname:' | translate }} {{widgetConf.data.hostname}}</li>
-      <li>{{ 'Domain:' | translate }} {{widgetConf.data.domain}}</li>
-      <li>{{ 'Netwait:' | translate }} {{widgetConf.data.netwait}}</li>
-      <li>{{ 'Service Announcement:' | translate }} {{widgetConf.data.service_announcement}}</li>
-    </ul>
+
+    <div fxLayout="row">
+      <div fxFlex="50%">
+        <mat-list>
+          <mat-list-item class="card-widget-list-item card-list-item">
+            <ul>
+              <li>{{ 'Hostname:' | translate }} {{widgetConf.data.hostname}}</li>
+              <li>{{ 'Domain:' | translate }} {{widgetConf.data.domain}}</li>
+              <li>{{ 'Additional Domains:' | translate }} {{widgetConf.data.additional_domains}}</li>
+              <li>{{ 'Netwait:' | translate }} {{widgetConf.data.netwait}}</li>
+            </ul>
+          </mat-list-item>
+        </mat-list>      
+      </div>
+      <div fxFlex="50%">
+        <mat-list>
+          <mat-list-item class="card-widget-list-item card-list-item">
+            <ul>
+              <li>{{ 'Service Announcement:' | translate }} {{widgetConf.data.service_announcement}}</li>
+              <li>{{ 'HTTP Proxy:' | translate }} {{widgetConf.data.httpproxy}}</li>
+              <li>{{ 'Hostname Database:' | translate }} {{widgetConf.data.hostnameDB}}</li>
+            </ul>
+          </mat-list-item>
+        </mat-list>      
+      </div>
+    </div>
+
   </mat-card-content>
 </mat-card>
