@@ -31,8 +31,8 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 
 
 @when(parsers.parse('If login page appear enter "{user}" and "{password}"'))
-def if_login_page_appear_enter_root_and_testing(driver, user, password):
-    """If login page appear enter "{user}" and "{password}"."""
+def if_login_page_appear_enter_root_and_password(driver, user, password):
+    """If login page appear enter "user" and "password"."""
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
         assert wait_on_element(driver, 1, 10, '//input[@placeholder="Username"]')
         driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
