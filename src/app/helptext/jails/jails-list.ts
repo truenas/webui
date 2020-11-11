@@ -20,6 +20,7 @@ export default {
     },
     updateConfirmDialog: {
         title: T('Update Jail'),
-        message: T('Update the jail operating system to the latest available patch?')
+        messageA: T('Update the jail operating system for '),
+        messageB: T(' to the latest available patch?')
     }
 }
