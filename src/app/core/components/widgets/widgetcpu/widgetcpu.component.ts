@@ -153,8 +153,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       usageColumn.push( parseInt(data[i.toString()].usage.toFixed(1)) );
       if(data.temperature && data.temperature[i]){
         temperatureColumn.push(parseInt(((data.temperature[i] / 10) - 273.05).toFixed(1)));
-      } else {
-        temperatureColumn.push(parseInt(data[i.toString()].usage.toFixed(1)));
       }
     }
     
