@@ -908,16 +908,19 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     let selectedEnclosure = this.getSelectedEnclosure();
     this.setDisksDisabled();
     let keys = Object.keys(selectedEnclosure.poolKeys);
-    if(keys.length > 0){
+    //if(keys.length > 0){
       selectedEnclosure.disks.forEach((disk, index) => {
         if(disk.enclosure.slot < this.enclosure.slotRange.start || disk.enclosure.slot > this.enclosure.slotRange.end){return};
-        if(!disk.vdev){return};
+        if(!disk.vdev){
+          this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot, color: '#999999'}});
+          return
+        };
         let pIndex = disk.vdev.poolIndex;
         this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot , color: this.theme[this.theme.accentColors[pIndex]]} });
       });
-    } else {
+    /*} else {
       return;
-    }
+    }*/
   }
 
   converter(size: number){
