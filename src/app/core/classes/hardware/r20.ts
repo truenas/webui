@@ -15,6 +15,7 @@ export class R20 extends Chassis {
     this.front.driveTrayBackgroundPath = "assets/images/hardware/r20/r20_960w_drivetray_bg.png" 
     this.front.driveTrayHandlePath = "assets/images/hardware/r20/r20_960w_drivetray_handle.png"
 
+    this.front.slotRange = {start:1, end:12};  
     this.front.totalDriveTrays = 12;
     this.front.columns = 4;
     this.front.rows = 3;
@@ -37,6 +38,7 @@ export class R20 extends Chassis {
       this.rear.driveTrayBackgroundPath = "assets/images/hardware/r20/r20_rear_960w_drivetray_handle.png" 
       this.rear.driveTrayHandlePath = "assets/images/hardware/r20/r20_rear_960w_drivetray_handle.png"
 
+      this.rear.slotRange = {start:13, end:14};  
       this.rear.totalDriveTrays = 2;
       this.rear.columns = 2;
       this.rear.rows = 1;
