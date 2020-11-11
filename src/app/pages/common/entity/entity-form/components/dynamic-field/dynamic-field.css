@@ -52,3 +52,7 @@
   position: absolute;
   left: 150px;
 }
+
+.textarea-filereader {
+  margin-top: 10px;
+}

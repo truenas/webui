@@ -1,4 +1,4 @@
-import {Component, ViewContainerRef} from '@angular/core';
+import {Component, ViewContainerRef, ViewChild, ElementRef} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -13,10 +13,13 @@ import globalHelptext from '../../../../../../helptext/global-helptext';
   styleUrls : [ '../dynamic-field/dynamic-field.css' ],
 })
 export class FormTextareaComponent implements Field {
+  @ViewChild('fileInput', { static: false}) fileInput: ElementRef<HTMLInputElement>;
+
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
   private hasPasteEvent = false;
+  public fileString;
 
   constructor(public translate: TranslateService) {}
   
@@ -43,5 +46,36 @@ export class FormTextareaComponent implements Field {
     } else {
       this.config.warnings = null;
     }
+  }
+
+  changeListener($event): void {
+    this.readFile($event.target);
+  }
+
+  readFile(inputValue: any) {
+    var file: File = inputValue.files[0];
+    var fReader: FileReader = new FileReader();
+
+    fReader.onloadend = (e) => {
+      this.fileString = fReader.result;
+      this.contents(fReader.result);
+    }
+    if (this.config.fileType == 'binary') {
+      fReader.readAsBinaryString(file);
+    } else {
+      fReader.readAsText(file);
+    }
+  }
+
+  contents(result:any) {
+    if (this.config.fileType == 'binary'){
+      this.group.controls[this.config.name].setValue(btoa(result));
+    } else {
+      this.group.controls[this.config.name].setValue(result);
+    }
+  }
+
+  public fileBtnClick(){
+    this.fileInput.nativeElement.click();
   }
 }
