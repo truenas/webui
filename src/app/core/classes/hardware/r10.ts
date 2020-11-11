@@ -20,8 +20,8 @@ export class R10 extends Chassis {
     this.front.rows = 4;
 
     this.front.gapX = 5;
-    this.front.chassisOffsetX = -44;
-    this.front.driveTraysOffsetX = -22;
+    this.front.chassisOffsetX = 0; //-44;
+    this.front.driveTraysOffsetX = 22; // -22
     this.front.driveTraysOffsetY = -24;
 
     const fscale = 1.27;

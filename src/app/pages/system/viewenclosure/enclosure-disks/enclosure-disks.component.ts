@@ -371,8 +371,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       this.clearDisk();
     }
     const enclosure = this.system.enclosures[profile.enclosureKey];
-    console.log(enclosure);
-    enclosure.model = "R10";
     switch(enclosure.model){
       case 'R10':
         this.chassis = new R10();
