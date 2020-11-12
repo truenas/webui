@@ -29,11 +29,11 @@ def the_browser_is_open_navigate_to_url(driver, nas_url):
 def login_appear_enter_root_and_password(driver, password):
     """Login appear enter "root" and "password"."""
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 1, 10, '//input[@placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
+        assert wait_on_element(driver, 1, 10, '//input[@data-placeholder="Username"]')
+        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
+        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
+        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
+        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(password)
         assert wait_on_element(driver, 0.5, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
@@ -108,17 +108,17 @@ def click_reload_now(driver):
 def we_should_return_to_login_prompt(driver):
     """We should return to login prompt."""
     global dont_pass
-    dont_pass = wait_on_element(driver, 0.5, 5, '//input[@placeholder="Username"]')
+    dont_pass = wait_on_element(driver, 0.5, 5, '//input[@data-placeholder="Username"]')
 
 
 @then(parsers.parse('Login as "root" with "{password}"'))
 def login_as_root_with_password(driver, password):
     """Login as "root" with "password"."""
     if dont_pass:
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
+        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
+        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
+        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
+        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(password)
         assert wait_on_element(driver, 0.5, 30, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
 

@@ -31,11 +31,11 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 def if_login_page_appear_enter_root_and_password(driver, user, password):
     """If login page appear enter "{user}" and "{password}"."""
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        wait_on_element(driver, 0.5, 5, '//input[@placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(user)
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
+        wait_on_element(driver, 0.5, 5, '//input[@data-placeholder="Username"]')
+        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
+        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys(user)
+        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
+        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(password)
         wait_on_element(driver, 0.5, 7, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:

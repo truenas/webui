@@ -28,12 +28,12 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 @when(parsers.parse('If login page appear enter "{user}" and "{password}"'))
 def if_login_appear_enter_user_and_password(driver, user, password):
     """If login page appear enter "{user}" and "{password}"."""
-    wait_on_element(driver, 0.5, 5, '//input[@placeholder="Username"]')
-    if is_element_present(driver, '//input[@placeholder="Username"]'):
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(user)
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
+    wait_on_element(driver, 0.5, 5, '//input[@data-placeholder="Username"]')
+    if is_element_present(driver, '//input[@data-placeholder="Username"]'):
+        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
+        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys(user)
+        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
+        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(password)
         wait_on_element(driver, 0.5, 30, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
 

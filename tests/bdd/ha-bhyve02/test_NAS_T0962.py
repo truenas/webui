@@ -36,11 +36,11 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 def if_login_page_appear_enter_root_and_password(driver, user, password):
     """If login page appear enter "{user}" and "{password}"."""
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 1, 10, '//input[@placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(user)
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
+        assert wait_on_element(driver, 1, 10, '//input[@data-placeholder="Username"]')
+        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
+        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys(user)
+        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
+        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(password)
         assert wait_on_element(driver, 1, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
@@ -224,18 +224,18 @@ def press_initiate_failover_check_confirm_and_press_failover(driver):
 @then('Wait for the login page to appear')
 def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear"""
-    assert wait_on_element(driver, 1, 30, '//input[@placeholder="Username"]')
+    assert wait_on_element(driver, 1, 30, '//input[@data-placeholder="Username"]')
     time.sleep(5)
-    assert wait_on_element(driver, 1, 30, '//input[@placeholder="Username"]')
+    assert wait_on_element(driver, 1, 30, '//input[@data-placeholder="Username"]')
 
 
 @then(parsers.parse('At the login page enter "{user}" and "{password}"'))
 def at_the_login_page_enter_root_and_password(driver, user, password):
     """At the login page enter "{user}" and "{password}"."""
-    driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys(user)
-    driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
+    driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
+    driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys(user)
+    driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
+    driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(password)
     assert wait_on_element(driver, 0.5, 4, '//button[@name="signin_button"]')
     driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     assert wait_on_element(driver, 1, 5, '//span[contains(.,"System Information")]')
