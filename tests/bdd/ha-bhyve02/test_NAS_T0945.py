@@ -58,9 +58,12 @@ def you_should_see_the_dashboard(driver):
     driver.find_element_by_xpath('//span[contains(.,"System Information")]')
 
 
-@then('navigate to Services')
-def navigate_to_services(driver):
-    """navigate to Services."""
+@then('go to System Settings, click Services')
+def go_to_system_settings_click_services(driver):
+    """go to System Settings, click Services."""
+    assert wait_on_element(driver, 0.5, 5, '//mat-list-item[@ix-auto="option__System Settings"]')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
+    assert wait_on_element(driver, 0.5, 5, '//mat-list-item[@ix-auto="option__Services"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Services"]').click()
 
 
