@@ -99,6 +99,13 @@ export default {
     properties_tooltip: T('Include dataset properties with the replicated \
  snapshots.'),
 
+    properties_override_placeholder: T('Properties Override'),
+    properties_override_tooltip: T('Replace existing dataset properties with these new defined properties in the replicated files.'),
+    properties_override_error: T('Invalid Format.'),
+
+    properties_exclude_placeholder: T('Properties Exclude'),
+    properties_exclude_tooltip: T('List any existing dataset properties to remove from the replicated files.'),
+
     replicate_placeholder: T('Full Filesystem Replication'),
     replicate_tooltip: T('Completely replicate the selected dataset. The target \
 dataset will have all of the properties, snapshots, child datasets, and clones \
@@ -182,6 +189,27 @@ from the source dataset.'),
  after finishing the replication. <br><b>REQUIRE</b> stops replication unless all existing destination\
  datasets to have the property <code>readonly=on</code>. <br><b>IGNORE</b> disables checking the\
  <code>readonly</code> property during replication.'),
+
+    encryption_placeholder: T('Encryption'),
+    encryption_tooltip: T(''),
+
+    encryption_key_format_placeholder: T('Encryption Key Format'),
+    encryption_key_format_tooltip: T(''),
+
+    encryption_key_generate_placeholder: T('Generate Encryption Key'),
+    encryption_key_generate_tooltip: T(''),
+
+    encryption_key_hex_placeholder: T('Encryption Key'),
+    encryption_key_hex_tooltip: T(''),
+
+    encryption_key_passphrase_placeholder: T('Passphrase'),
+    encryption_key_passphrase_tooltip: T(''),
+
+    encryption_key_location_truenasdb_placeholder: T('Store Encryption key in Sending TrueNAS database'),
+    encryption_key_location_truenasdb_tooltip: T(''),
+
+    encryption_key_location_placeholder: T('Encryption Key Location in Target System'),
+    encryption_key_location_tooltip: T(''),
 
     allow_from_scratch_placeholder: T('Synchronize Destination Snapshots With Source'),
     allow_from_scratch_tooltip: T('If the destination system has \

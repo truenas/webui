@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/task-calendar/replication/replication';
+import repwizardhelptext from '../../../../helptext/task-calendar/replication/replication-wizard';
 import { WebSocketService, TaskService, KeychainCredentialService, ReplicationService, StorageService, DialogService } from 'app/services';
 import * as _ from 'lodash';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -416,6 +417,41 @@ export class ReplicationFormComponent {
                     name: 'replicate',
                     placeholder: helptext.replicate_placeholder,
                     tooltip: helptext.replicate_tooltip,
+                    value: false,
+                },
+                {
+                    type: 'chip',
+                    name: 'properties_override',
+                    placeholder: helptext.properties_override_placeholder,
+                    tooltip: helptext.properties_override_tooltip,
+                    relation: [{
+                        action: 'HIDE',
+                        connective: 'AND',
+                        when: [{
+                            name: 'replicate',
+                            value: false,
+                        }, {
+                            name: 'properties',
+                            value: false,
+                        }]
+                    }],
+                },
+                {
+                    type: 'chip',
+                    name: 'properties_exclude',
+                    placeholder: helptext.properties_exclude_placeholder,
+                    tooltip: helptext.properties_exclude_tooltip,
+                    relation: [{
+                        action: 'HIDE',
+                        connective: 'AND',
+                        when: [{
+                            name: 'replicate',
+                            value: false,
+                        }, {
+                            name: 'properties',
+                            value: false,
+                        }]
+                    }],
                 },
                 {
                     type: 'select',
@@ -588,6 +624,121 @@ export class ReplicationFormComponent {
                             value: 'IGNORE',
                         }
                     ]
+                },
+                {
+                    type: 'checkbox',
+                    name: 'encryption',
+                    placeholder: helptext.encryption_placeholder,
+                    tooltip: repwizardhelptext.encryption_tooltip,
+                    value: false,
+                },
+                {
+                    type: 'select',
+                    name: 'encryption_key_format',
+                    placeholder: helptext.encryption_key_format_placeholder,
+                    tooltip: repwizardhelptext.encryption_key_format_tooltip,
+                    options: [{
+                        label: 'HEX',
+                        value: 'HEX',
+                    }, {
+                        label: 'PASSPHRASE',
+                        value: 'PASSPHRASE',
+                    }],
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'encryption',
+                            value: true,
+                        }]
+                    }],
+                },
+                {
+                    type: 'checkbox',
+                    name: 'encryption_key_generate',
+                    placeholder: helptext.encryption_key_generate_placeholder,
+                    tooltip: repwizardhelptext.encryption_key_generate_tooltip,
+                    value: true,
+                    relation: [{
+                        action: 'SHOW',
+                        connective: 'AND',
+                        when: [{
+                            name: 'encryption',
+                            value: true,
+                        },  {
+                            name: 'encryption_key_format',
+                            value: 'HEX',
+                        }]
+                    }],
+                },
+                {
+                    type: 'input',
+                    name: 'encryption_key_hex',
+                    placeholder: helptext.encryption_key_hex_placeholder,
+                    tooltip: repwizardhelptext.encryption_key_hex_tooltip,
+                    relation: [{
+                        action: 'SHOW',
+                        connective: 'AND',
+                        when: [{
+                            name: 'encryption',
+                            value: true,
+                        }, {
+                            name: 'encryption_key_format',
+                            value: 'HEX',
+                        }, {
+                            name: 'encryption_key_generate',
+                            value: false,
+                        }]
+                    }],
+                },
+                {
+                    type: 'input',
+                    inputType: 'password',
+                    togglePw: true,
+                    name: 'encryption_key_passphrase',
+                    placeholder: helptext.encryption_key_passphrase_placeholder,
+                    tooltip: repwizardhelptext.encryption_key_passphrase_tooltip,
+                    relation: [{
+                        action: 'SHOW',
+                        connective: 'AND',
+                        when: [{
+                            name: 'encryption',
+                            value: true,
+                        }, {
+                            name: 'encryption_key_format',
+                            value: 'PASSPHRASE',
+                        }]
+                    }],
+                },
+                {
+                    type: 'checkbox',
+                    name: 'encryption_key_location_truenasdb',
+                    placeholder: helptext.encryption_key_location_truenasdb_placeholder,
+                    tooltip: repwizardhelptext.encryption_key_location_truenasdb_tooltip,
+                    value: true,
+                    relation: [{
+                        action: 'SHOW',
+                        when: [{
+                            name: 'encryption',
+                            value: true,
+                        }]
+                    }],
+                },
+                {
+                    type: 'input',
+                    name: 'encryption_key_location',
+                    placeholder: helptext.encryption_key_location_placeholder,
+                    tooltip: repwizardhelptext.encryption_key_location_tooltip,
+                    relation: [{
+                        action: 'SHOW',
+                        connective: 'AND',
+                        when: [{
+                            name: 'encryption',
+                            value: true,
+                        }, {
+                            name: 'encryption_key_location_truenasdb',
+                            value: false,
+                        }]
+                    }],
                 },
                 {
                     type: 'checkbox',
@@ -930,6 +1081,17 @@ export class ReplicationFormComponent {
             };
         });
 
+        entityForm.formGroup.controls['properties_override'].valueChanges.subscribe((value) => {
+            if (value) {
+                for (const item of value) {
+                    if (item && (item.indexOf('=') <= 0 || item.indexOf('=') >= item.length - 1)) {
+                        entityForm.formGroup.controls['properties_override'].setErrors({manualValidateError: true, manualValidateErrorMsg: helptext.properties_override_error});
+                        return;
+                    }
+                }
+            }
+            entityForm.formGroup.controls['properties_override'].setErrors(null);
+        });
         entityForm.formGroup.controls['auto'].setValue(entityForm.formGroup.controls['auto'].value);
     }
 
@@ -978,6 +1140,27 @@ export class ReplicationFormComponent {
         if (this.entityForm.wsResponse.large_block) {
             this.entityForm.setDisabled('large_block', true, false);
         }
+
+        if (wsResponse.properties_override) {
+            const properties_exclude_list = [];
+            for (const [key, value] of Object.entries(wsResponse['properties_override'])) {
+                properties_exclude_list.push(`${key}=${value}`);
+            }
+            wsResponse['properties_override'] = properties_exclude_list;
+        }
+
+        wsResponse.encryption_key_location_truenasdb = wsResponse.encryption_key_location === '$TrueNAS' ? true : false;
+        if (wsResponse.encryption_key_location_truenasdb) {
+            delete wsResponse.encryption_key_location;
+        }
+
+        if (wsResponse.encryption_key_format === 'HEX') {
+            wsResponse.encryption_key_generate = false;
+            wsResponse.encryption_key_hex = wsResponse.encryption_key;
+        } else {
+            wsResponse.encryption_key_passphrase = wsResponse.encryption_key;
+        }
+
         return wsResponse;
     }
 
@@ -999,6 +1182,14 @@ export class ReplicationFormComponent {
             data['recursive'] = true;
             data['properties'] = true;
             data['exclude'] = [];
+        }
+        if (data['properties_override']) {
+            const properties_exclude_obj = {};
+            for (let item of data['properties_override']) {
+                item = item.split('=');
+                properties_exclude_obj[item[0]] = item[1];
+            }
+            data['properties_override'] = properties_exclude_obj;
         }
 
         if (data['speed_limit'] !== undefined && data['speed_limit'] !== null) {
@@ -1063,6 +1254,16 @@ export class ReplicationFormComponent {
         if (data['logging_level'] === 'DEFAULT') {
             delete data['logging_level'];
         }
+
+        if (data['encryption_key_location_truenasdb']) {
+            data['encryption_key_location'] = '$TrueNAS';
+        }
+        delete data['encryption_key_location_truenasdb'];
+
+        data['encryption_key'] = data['encryption_key_format'] === 'PASSPHRASE' ? data['encryption_key_passphrase'] : (data['encryption_key_generate'] ? this.replicationService.generateEncryptionHexKey(64): data['encryption_key_hex']);
+        delete data['encryption_key_passphrase'];
+        delete data['encryption_key_generate'];
+        delete data['encryption_key_hex'];
 
         // for edit replication task
         if (!this.entityForm.isNew) {
