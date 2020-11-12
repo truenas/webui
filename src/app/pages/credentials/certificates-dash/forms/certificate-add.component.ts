@@ -596,7 +596,7 @@ export class CertificateAddComponent {
 
   preInit() {
     this.systemGeneralService.getUnsignedCAs().subscribe((res) => {
-      this.signedby = this.wizardConfig.find(c => c.label === 'Certificate Options').fieldConfig.find(c => c.name === 'signedBy');
+      this.signedby = this.wizardConfig.find(c => c.label === 'Certificate Options').fieldConfig.find(c => c.name === 'signedby');
       res.forEach((item) => {
         this.signedby.options.push(
             {label : item.name, value : item.id});
@@ -647,13 +647,12 @@ export class CertificateAddComponent {
   }
 
   afterInit(entityWizard: EntityWizardComponent) {
-    console.log(entityWizard)
     this.entityWizard = entityWizard;
     this.title = helptext_system_certificates.add.title;
     // this.fieldConfig = entityWizard.fieldConfig;
     for (let i in this.internalFields) {
       this.internalFields[i].forEach(field => {
-        console.log(field, i)
+        // console.log(field, i)
         if (field !== 'none') {
           this.hideField(field, false, entityWizard, i);
         }
@@ -676,9 +675,9 @@ export class CertificateAddComponent {
         }
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
         if (entityWizard.formGroup.controls['key_type'].value === 'RSA') {
-          entityWizard.setDisabled('ec_curve', true, '?');
+          entityWizard.setDisabled('ec_curve', true, 1, true);
         } else if (entityWizard.formGroup.controls['key_type'].value === 'EC') {
-          entityWizard.setDisabled('key_length', true, '?');
+          entityWizard.setDisabled('key_length', true, 1, true);
         } 
 
       } else if (res == 'CERTIFICATE_CREATE_IMPORTED') {
@@ -687,62 +686,67 @@ export class CertificateAddComponent {
         }
         for (let i in this.importFields) {
           this.importFields[i].forEach(field => {
-            this.hideField(field, false, '?', i);
+            if (field !== 'none') {
+              this.hideField(field, false, '?', i);
+            }
           })
         }
         for (let i in this.extensionFields) {
           // this.hideField(this.extensionFields[i], true, entity);
         }
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
-        if (!entityWizard.formGroup.controls['csronsys'].value) {
-          entityWizard.setDisabled('csrlist', true, '?');
+        
+        if (!( < FormGroup > entityWizard.formArray.get([1])).controls['csronsys'].value) {
+          entityWizard.setDisabled('csrlist', true, 1, true);
         } else {
-          entityWizard.setDisabled('privatekey', true, '?');
-          entityWizard.setDisabled('passphrase', true, '?');
-          entityWizard.setDisabled('passphrase2', true, '?');
+          entityWizard.setDisabled('privatekey', true, 1, true);
+          entityWizard.setDisabled('passphrase', true, 1, true);
+          entityWizard.setDisabled('passphrase2', true, 1, true);
         }
       }
-    })
+    });
 
-    entityWizard.formGroup.controls['name'].valueChanges.subscribe((res) => {
+    ( < FormGroup > entityWizard.formArray.get([0]).get('name')).valueChanges.subscribe((res) => {
       this.identifier = res;
-    })
+    });
   
-    entityWizard.formGroup.controls['name'].statusChanges.subscribe((res) => {
+    ( < FormGroup > entityWizard.formArray.get([0]).get('name')).statusChanges.subscribe((res) => {
       if (this.identifier && res === 'INVALID') {
         // _.find(this.fieldConfig)['hasErrors'] = true;
       } else {
         // _.find(this.fieldConfig)['hasErrors'] = false;
       }
-    })
+    });
 
-    entityWizard.formGroup.controls['ExtendedKeyUsage-enabled'].valueChanges.subscribe((res) => {
+    ( < FormGroup > entityWizard.formArray.get([3]).get('ExtendedKeyUsage-enabled')).valueChanges.subscribe((res) => {
       const usagesRequired = res !== undefined ? res : false;
       this.usageField.required = usagesRequired;
       if (usagesRequired) {
-        entityWizard.formGroup.controls['ExtendedKeyUsage-usages'].setValidators([Validators.required]);
+        ( < FormGroup > entityWizard.formArray.get([3]).get('ExtendedKeyUsage-enabled')).setValidators([Validators.required]);
       } else {
-        entityWizard.formGroup.controls['ExtendedKeyUsage-usages'].clearValidators();
+        ( < FormGroup > entityWizard.formArray.get([3]).get('ExtendedKeyUsage-enabled')).clearValidators();
       }
-      entityWizard.formGroup.controls['ExtendedKeyUsage-usages'].updateValueAndValidity();
+      ( < FormGroup > entityWizard.formArray.get([3]).get('ExtendedKeyUsage-enabled')).updateValueAndValidity();
     });
 
-    entityWizard.formGroup.controls['profiles'].valueChanges.subscribe((res) => {
+    ( < FormGroup > entityWizard.formArray.get([0]).get('profiles')).valueChanges.subscribe((res) => {
       // undo revious profile settings
-      this.loadProfiels(this.currenProfile, true);
+      this.loadProfiles(this.currenProfile, true);
       // load selected profile settings
-      this.loadProfiels(res);
+      this.loadProfiles(res);
       this.currenProfile = res;
     });
   }
 
-  loadProfiels(value, reset?) {
+  loadProfiles(value, reset?) {
     if (value) {
+      console.log(value)
       Object.keys(value).forEach(item => {
         if (item === 'cert_extensions') {
           Object.keys(value['cert_extensions']).forEach(type => {
             Object.keys(value['cert_extensions'][type]).forEach(prop => {
-              let ctrl = this.entityWizard.formGroup.controls[`${type}-${prop}`];
+              console.log(type, prop);
+              let ctrl = ( < FormGroup > this.entityWizard.formArray.get([3]).get(`${type}-${prop}`));
               if (ctrl) {
                 if (reset && ctrl.value === value['cert_extensions'][type][prop]) {
                   ctrl.setValue(undefined);
@@ -750,7 +754,7 @@ export class CertificateAddComponent {
                   ctrl.setValue(value['cert_extensions'][type][prop]);
                 }
               } else {
-                ctrl = this.entityWizard.formGroup.controls[type];
+                ctrl = ( < FormGroup > this.entityWizard.formArray.get([3]).get(type));
                 const config = ctrl.value || [];
                 const optionIndex = config.indexOf(prop);
                 if (reset && value['cert_extensions'][type][prop] === true && optionIndex > -1) {
@@ -779,9 +783,10 @@ export class CertificateAddComponent {
   }
 
   hideField(fieldName: any, show: boolean, entityWizard: any, stepIndex: any) {
+    // console.log(fieldName, stepIndex)
     let target = _.find(this.wizardConfig[stepIndex].fieldConfig, {name : fieldName});
     target['isHidden'] = show;
-    entityWizard.setDisabled(fieldName, show, stepIndex, show);
+    this.entityWizard.setDisabled(fieldName, show, stepIndex, show);
   }
 
   beforeSubmit(data: any) {
