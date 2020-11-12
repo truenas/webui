@@ -506,18 +506,14 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           const f_strings = data.aliases[i]['failover_address'].split('/');
           if (f_strings[0]) {
             failover_aliases.push({
-              address: f_strings[0],
-              // netmask: parseInt(f_strings[1], 10)
-            });
+              address: f_strings[0]});
           }
         }
         if (!!data.aliases[i]['failover_virtual_address']) {
           const fv_strings = data.aliases[i]['failover_virtual_address'].split('/');
           if (fv_strings[0]) {
             failover_virtual_aliases.push({
-              address: fv_strings[0],
-              // netmask: parseInt(fv_strings[1], 10)
-            });
+              address: fv_strings[0]});
           }
         }
       }
@@ -543,11 +539,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       a[i].address = aliases[i].address + '/' + aliases[i].netmask;
       if (failover_aliases && failover_aliases[i]) {
         a[i].failover_address = failover_aliases[i].address;
-        // + '/' + failover_aliases[i].netmask;
       }
       if (failover_virtual_aliases && failover_virtual_aliases[i]) {
         a[i].failover_virtual_address = failover_virtual_aliases[i].address;
-        //  + '/' + failover_virtual_aliases[i].netmask
       }
     }
     data['aliases'] = a;
