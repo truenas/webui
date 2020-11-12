@@ -674,6 +674,10 @@ thead.ui-treetable-thead tr{
   margin-right: 16px;
 }
 
+.standard-list .label {
+  opacity: 0.65;
+}
+
 mat-card.mat-card .mat-list-base{
   padding-top: 0;
 }
