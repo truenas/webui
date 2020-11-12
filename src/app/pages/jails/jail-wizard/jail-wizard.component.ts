@@ -57,6 +57,16 @@ export class JailWizardComponent {
         value: '',
       }
     ],
+    vnetDefaultInterface: [
+      {
+          label: 'none',
+          value: 'none',
+      },
+      {
+          label: 'auto',
+          value: 'auto',
+      }
+    ]
   }
 
   protected wizardConfig: Wizard[] = [{
@@ -139,6 +149,14 @@ export class JailWizardComponent {
           hasErrors: false,
           errors: '',
           value: false,
+        },
+        {
+          type: 'select',
+          name: 'vnet_default_interface',
+          placeholder: helptext.vnet_default_interface_placeholder,
+          tooltip: helptext.vnet_default_interface_tooltip,
+          options: this.interfaces.vnetDefaultInterface,
+          value: 'auto'
         },
         {
           type: 'select',
@@ -291,6 +309,7 @@ export class JailWizardComponent {
   ]
 
   protected releaseField: any;
+  protected vnet_default_interfaceField: any;
   protected ip4_interfaceField: any;
   protected ip4_netmaskField: any;
   protected ip6_interfaceField: any;
@@ -342,11 +361,13 @@ export class JailWizardComponent {
     this.ip4_netmaskField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip4_netmask'});
     this.ip6_interfaceField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip6_interface'});
     this.ip6_prefixField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'ip6_prefix'});
+    this.vnet_default_interfaceField = _.find(this.wizardConfig[1].fieldConfig, {'name': 'vnet_default_interface'});
 
     this.jailService.getInterfaceChoice().subscribe(
       (res)=>{
         for (const i in res) {
           this.interfaces.vnetDisabled.push({ label: res[i], value: i});
+          this.interfaces.vnetDefaultInterface.push({ label: res[i], value: i });
         }
       },
       (res)=>{
