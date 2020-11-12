@@ -423,7 +423,7 @@ export class ReplicationFormComponent {
                     type: 'chip',
                     name: 'properties_override',
                     placeholder: helptext.properties_override_placeholder,
-                    tooltip: repwizardhelptext.properties_override_tooltip,
+                    tooltip: helptext.properties_override_tooltip,
                     relation: [{
                         action: 'HIDE',
                         connective: 'AND',
