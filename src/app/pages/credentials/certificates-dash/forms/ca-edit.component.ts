@@ -46,7 +46,7 @@ export class CertificateAuthorityEditComponent {
     class: 'spacer',
     config:[]
   },{
-    name: 'Subject',
+    name: helptext_system_certificates.edit.subject,
     label: true,
     class: 'subject',
     config: [
@@ -67,7 +67,7 @@ export class CertificateAuthorityEditComponent {
       }
     ]
   },{
-    name: 'Subject-col-2',
+    name: 'subject-col-2',
     class: 'subject lowerme',
     config: [
       {
@@ -87,7 +87,7 @@ export class CertificateAuthorityEditComponent {
       }
     ]
   }, {
-    name: 'Subject Details',
+    name: 'subject_details',
     class: 'subject-details break-all',
     config: [
       {
@@ -112,7 +112,7 @@ export class CertificateAuthorityEditComponent {
     config:[]
   },
   {
-    name: 'Details',
+    name: 'details',
     class: 'details',
     config: [
       {
@@ -148,14 +148,14 @@ export class CertificateAuthorityEditComponent {
       {
         type: 'button',
         name: 'certificate_view',
-        customEventActionLabel: 'View',
+        customEventActionLabel: helptext_system_certificates.viewButton.certificate,
         customEventMethod: () => {
           this.viewCertificate();
         }
       }
     ]
   }, {
-    name: 'Details-col2',
+    name: 'details-col2',
     class: 'details-col-2',
     config: [
       {
@@ -192,7 +192,7 @@ export class CertificateAuthorityEditComponent {
       {
         type: 'button',
         name: 'private_key_view',
-        customEventActionLabel: 'View',
+        customEventActionLabel: helptext_system_certificates.viewButton.key,
         customEventMethod: () => {
           this.viewKey();
         }
@@ -220,9 +220,9 @@ export class CertificateAuthorityEditComponent {
   protected custActions = [
     {
       id: 'sign_CSR',
-      name: 'Sign CSR',
+      name: helptext_system_certificates.edit.signCSR,
       function: () => {
-        console.log('sign CSR')
+        console.log('sign CSR') //////////////////////////////////////////////////
       }
     }
   ]
@@ -249,7 +249,8 @@ export class CertificateAuthorityEditComponent {
   }
 
   viewCertificate() {
-    this.dialog.confirm(this.incomingData.name, this.incomingData.certificate, true, 'Download', false, '',
+    this.dialog.confirm(this.incomingData.name, this.incomingData.certificate, true, 
+      helptext_system_certificates.viewDialog.download, false, '',
     '','','', false, 'Close').subscribe(res => {
       if (res) {
         this.exportCertificate();
@@ -277,7 +278,8 @@ export class CertificateAuthorityEditComponent {
   }
 
   viewKey() {
-    this.dialog.confirm(this.incomingData.name, this.incomingData.privatekey, true, 'Download', false, '',
+    this.dialog.confirm(this.incomingData.name, this.incomingData.privatekey, true, 
+      helptext_system_certificates.viewDialog.download, false, '',
     '','','', false, 'Close').subscribe(res => {
       if (res) {
         this.exportKey();

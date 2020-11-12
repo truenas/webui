@@ -22,6 +22,7 @@ export class ConfirmDialog {
   public data: string;
   public tooltip: string;
   public hideCancel = false;
+  public textToCopy: string;
   public customSumbit;
 
   @Output() switchSelectionEmitter = new EventEmitter<any>();

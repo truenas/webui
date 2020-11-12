@@ -347,6 +347,7 @@ certificate still approved.'),
 
   edit: {
     title: T('Edit Certificate'),
+    titleCSR: T('Edit CSR'),
     fieldset_certificate: T('Certificate'),
     name: {
       placeholder: T("Identifier"),
@@ -367,7 +368,11 @@ certificate still approved.'),
 
     csr: {
       placeholder: T("Signing Request")
-    }
+    },
+
+    subject: T('Subject'),
+
+    signCSR: T('Sign CSR')
   },
 
   list: {
@@ -427,5 +432,17 @@ certificate still approved.'),
       title: T('Error')
     }
     
-  }
+  },
+
+  viewButton: {
+    certificate: T('View/Download Certificate'),
+    csr: T('View/Download CSR'),
+    key: T('View/Download Key')
+  },
+
+  viewDialog: {
+    download: T('Download'),
+    close: T('Close'),
+    copy: T('Copy')
+  }  
 };

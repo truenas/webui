@@ -21,6 +21,7 @@
     ix-auto-type="checkbox"
     ix-auto-identifier="CONFIRM">{{"Confirm" | translate}}</mat-checkbox>
   <span fxFlex></span>
+  <copy-btn [text]="textToCopy" *ngIf="textToCopy"></copy-btn>
   <button *ngIf="!hideCancel" id="confirm-dialog__cancel-button" mat-button name="cancel_button" class="mat-button mat-accent" (click)="dialogRef.close(false)"
     ix-auto
     ix-auto-type="button"

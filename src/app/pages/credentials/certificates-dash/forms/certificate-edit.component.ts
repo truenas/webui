@@ -21,7 +21,8 @@ export class CertificateEditComponent {
   protected queryCall: string = 'certificate.query';
   protected editCall = 'certificate.update';
   protected isEntity: boolean = true;
-  private title: string;
+  private title = helptext_system_certificates.edit.title;
+  private viewButtonText = helptext_system_certificates.viewButton.certificate;
   protected isCSR: boolean;
   protected queryCallOption: Array<any>;
 
@@ -46,7 +47,7 @@ export class CertificateEditComponent {
     class: 'spacer',
     config:[]
   },{
-    name: 'Subject',
+    name: helptext_system_certificates.edit.subject,
     label: true,
     class: 'subject',
     config: [
@@ -87,7 +88,7 @@ export class CertificateEditComponent {
       }
     ]
   }, {
-    name: 'Subject Details',
+    name: 'subject-details',
     class: 'subject-details break-all',
     config: [
       {
@@ -112,7 +113,7 @@ export class CertificateEditComponent {
     config:[]
   },
   {
-    name: 'Details',
+    name: 'details',
     class: 'details',
     config: [
       {
@@ -143,7 +144,7 @@ export class CertificateEditComponent {
       {
         type: 'button',
         name: 'certificate_view',
-        customEventActionLabel: 'View/Download Certificate',
+        customEventActionLabel: this.viewButtonText,
         customEventMethod: () => {
           this.viewCertificate();
         }
@@ -181,7 +182,7 @@ export class CertificateEditComponent {
       {
         type: 'button',
         name: 'private_key_view',
-        customEventActionLabel: 'View/Download Key',
+        customEventActionLabel: helptext_system_certificates.viewButton.key,
         customEventMethod: () => {
           this.viewKey();
         }
@@ -213,6 +214,8 @@ export class CertificateEditComponent {
     this.incomingData = data;
     if (data.CSR != null) {
       this.isCSR = true;
+      this.title =  helptext_system_certificates.edit.titleCSR;
+      this.viewButtonText = helptext_system_certificates.viewButton.csr;
     }
     this.setForm();
     return data;
@@ -221,9 +224,9 @@ export class CertificateEditComponent {
   protected custActions = [
     {
       id: 'create_ACME',
-      name: 'Create ACME Certificate',
+      name: helptext_system_certificates.list.action_create_acme_certificate,
       function: () => {
-        console.log('create ACME')
+        console.log('create ACME') ////////////////////////////////////////
       }
     }
   ]
@@ -236,8 +239,7 @@ export class CertificateEditComponent {
   }
 
   afterInit(entityEdit: any) {
-    this.entityForm = entityEdit;
-    this.title = helptext_system_certificates.edit.title;
+    this.entityForm = entityEdit;   
   }
 
   setForm() {
@@ -255,6 +257,8 @@ export class CertificateEditComponent {
     } else {
       this.incomingData.issuer ? issuer.paraText += this.incomingData.issuer : issuer.paraText += '---';
     }
+    _.find(this.fieldConfig, { 'name': 'certificate_view' }).customEventActionLabel = this.viewButtonText;
+
   }
 
   exportCertificate() {
@@ -297,29 +301,29 @@ export class CertificateEditComponent {
   }
 
   viewCertificate() {
-    console.log(this.incomingData)
     if (this.incomingData.CSR) {
-    this.dialog.confirm(this.incomingData.name, this.incomingData.CSR, true, 'Download', false, '',
-      '','','', false, 'Close').subscribe(res => {
+    this.dialog.confirm(this.incomingData.name, this.incomingData.CSR, true, 
+      helptext_system_certificates.viewDialog.download, false, '',
+      '','','', false, helptext_system_certificates.viewDialog.close,false, this.incomingData.CSR).subscribe(res => {
         if (res) {
           this.exportCertificate();
         }
       })
     } else {
-      this.dialog.confirm(this.incomingData.name, this.incomingData.certificate, true, 'Download', false, '',
-      '','','', false, 'Copy').subscribe(res => {
+      this.dialog.confirm(this.incomingData.name, this.incomingData.certificate, true, 
+        helptext_system_certificates.viewDialog.download, false, '',
+      '','','', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.certificate).subscribe(res => {
         if (res) {
           this.exportCertificate();
-        } else {
-          navigator.clipboard.writeText(this.incomingData.certificate)
         }
       })
     }
   }
 
   viewKey() {
-    this.dialog.confirm(this.incomingData.name, this.incomingData.privatekey, true, 'Download', false, '',
-    '','','', false, 'Close').subscribe(res => {
+    this.dialog.confirm(this.incomingData.name, this.incomingData.privatekey, true, 
+      helptext_system_certificates.viewDialog.download, false, '',
+    '','','', false, helptext_system_certificates.viewDialog.close,false,this.incomingData.privatekey).subscribe(res => {
       if (res) {
         this.exportKey();
       }
