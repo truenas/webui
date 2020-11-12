@@ -566,6 +566,12 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           this.lag_ports.options.push({label: res[key], value: key});
         }
       });
+
+      this.networkService.getLaggProtocolChoices().subscribe((res) => {
+        for (let i=0;i<res.length;i++) {
+          this.lag_protocol.options.push({label: res[i], value: res[i]});
+        }
+      });
     } else if (type === "BRIDGE") {
       this.networkService.getBridgeMembersChoices(id).subscribe((res) => {
         for (const key in res) {
