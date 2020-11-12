@@ -99,6 +99,9 @@ export default {
     properties_tooltip: T('Include dataset properties with the replicated \
  snapshots.'),
 
+    properties_exclude_placeholder: T('Properties Exclude'),
+    properties_exclude_tooltip: T('List any dataset properties that will not be included with the replication.'),
+
     replicate_placeholder: T('Full Filesystem Replication'),
     replicate_tooltip: T('Completely replicate the selected dataset. The target \
 dataset will have all of the properties, snapshots, child datasets, and clones \

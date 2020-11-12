@@ -416,6 +416,24 @@ export class ReplicationFormComponent {
                     name: 'replicate',
                     placeholder: helptext.replicate_placeholder,
                     tooltip: helptext.replicate_tooltip,
+                    value: false,
+                },
+                {
+                    type: 'chip',
+                    name: 'properties_exclude',
+                    placeholder: helptext.properties_exclude_placeholder,
+                    tooltip: helptext.properties_exclude_tooltip,
+                    relation: [{
+                        action: 'HIDE',
+                        connective: 'AND',
+                        when: [{
+                            name: 'replicate',
+                            value: false,
+                        }, {
+                            name: 'properties',
+                            value: false,
+                        }]
+                    }],
                 },
                 {
                     type: 'select',
