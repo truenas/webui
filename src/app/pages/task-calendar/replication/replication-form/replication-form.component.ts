@@ -600,7 +600,7 @@ export class ReplicationFormComponent {
                     type: 'select',
                     name: 'encryption_key_format',
                     placeholder: helptext.encryption_key_format_placeholder,
-                    tooltip: helptext.encryption_key_format_tooltip,
+                    tooltip: repwizardhelptext.encryption_key_format_tooltip,
                     options: [{
                         label: 'HEX',
                         value: 'HEX',
