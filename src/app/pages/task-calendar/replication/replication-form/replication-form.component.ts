@@ -691,7 +691,7 @@ export class ReplicationFormComponent {
                     type: 'input',
                     name: 'encryption_key_location',
                     placeholder: helptext.encryption_key_location_placeholder,
-                    tooltip: helptext.encryption_key_location_tooltip,
+                    tooltip: repwizardhelptext.encryption_key_location_tooltip,
                     relation: [{
                         action: 'SHOW',
                         connective: 'AND',
