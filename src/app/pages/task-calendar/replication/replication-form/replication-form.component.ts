@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/task-calendar/replication/replication';
+import repwizardhelptext from '../../../../helptext/task-calendar/replication/replication-wizard';
 import { WebSocketService, TaskService, KeychainCredentialService, ReplicationService, StorageService, DialogService } from 'app/services';
 import * as _ from 'lodash';
 import { EntityUtils } from '../../../common/entity/utils';
