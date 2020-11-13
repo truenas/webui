@@ -660,7 +660,7 @@ export class ReplicationFormComponent {
                     togglePw: true,
                     name: 'encryption_key_passphrase',
                     placeholder: helptext.encryption_key_passphrase_placeholder,
-                    tooltip: helptext.encryption_key_passphrase_tooltip,
+                    tooltip: repwizardhelptext.encryption_key_passphrase_tooltip,
                     relation: [{
                         action: 'SHOW',
                         connective: 'AND',
