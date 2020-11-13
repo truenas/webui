@@ -638,7 +638,7 @@ export class ReplicationFormComponent {
                     type: 'input',
                     name: 'encryption_key_hex',
                     placeholder: helptext.encryption_key_hex_placeholder,
-                    tooltip: helptext.encryption_key_hex_tooltip,
+                    tooltip: repwizardhelptext.encryption_key_hex_tooltip,
                     relation: [{
                         action: 'SHOW',
                         connective: 'AND',
