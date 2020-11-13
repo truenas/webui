@@ -677,7 +677,7 @@ export class ReplicationFormComponent {
                     type: 'checkbox',
                     name: 'encryption_key_location_truenasdb',
                     placeholder: helptext.encryption_key_location_truenasdb_placeholder,
-                    tooltip: helptext.encryption_key_location_truenasdb_tooltip,
+                    tooltip: repwizardhelptext.encryption_key_location_truenasdb_tooltip,
                     value: true,
                     relation: [{
                         action: 'SHOW',
