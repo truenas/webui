@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { NetworkService, DialogService, WebSocketService } from '../../../services';
 import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { ipv4or6cidrValidator } from '../../common/entity/entity-form/validators/ip-validation';
+import { ipv4or6cidrValidator, ipv4or6Validator } from '../../common/entity/entity-form/validators/ip-validation';
 import helptext from '../../../helptext/network/interfaces/interfaces-form';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import globalHelptext from '../../../helptext/global-helptext';
@@ -231,6 +231,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         {
           type: 'list',
           name: 'aliases',
+          width: '100%',
           placeholder: helptext.alias_list_placeholder,
           label: helptext.alias_list_label,
           templateListField: [
@@ -239,7 +240,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               placeholder: helptext.alias_address_placeholder,
               tooltip: helptext.alias_address_tooltip,
               type: 'ipwithnetmask',
-              width: '55%',
               validation: [ipv4or6cidrValidator('address')],
             },
             {
@@ -248,9 +248,8 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               tooltip: helptext.failover_alias_address_tooltip,
               disabled: true,
               isHidden: true,
-              type: 'ipwithnetmask',
-              width: '55%',
-              validation: [ipv4or6cidrValidator('failover_address')],
+              type: 'input',
+              validation: [ipv4or6Validator('failover_address')],
             },
             {
               name: 'failover_virtual_address',
@@ -258,10 +257,8 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               tooltip: helptext.failover_virtual_alias_address_tooltip,
               disabled: true,
               isHidden: true,
-              type: 'ipwithnetmask',
-              width: '55%',
-              netmaskPreset: 32,
-              validation: [ipv4or6cidrValidator('failover_virtual_address')],
+              type: 'input',
+              validation: [ipv4or6Validator('failover_virtual_address')],
 
             }
           ],
@@ -509,18 +506,14 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           const f_strings = data.aliases[i]['failover_address'].split('/');
           if (f_strings[0]) {
             failover_aliases.push({
-              address: f_strings[0],
-              netmask: parseInt(f_strings[1], 10)
-            });
+              address: f_strings[0]});
           }
         }
         if (!!data.aliases[i]['failover_virtual_address']) {
           const fv_strings = data.aliases[i]['failover_virtual_address'].split('/');
           if (fv_strings[0]) {
             failover_virtual_aliases.push({
-              address: fv_strings[0],
-              netmask: parseInt(fv_strings[1], 10)
-            });
+              address: fv_strings[0]});
           }
         }
       }
@@ -545,10 +538,10 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       a[i] = {};
       a[i].address = aliases[i].address + '/' + aliases[i].netmask;
       if (failover_aliases && failover_aliases[i]) {
-        a[i].failover_address = failover_aliases[i].address + '/' + failover_aliases[i].netmask;
+        a[i].failover_address = failover_aliases[i].address;
       }
       if (failover_virtual_aliases && failover_virtual_aliases[i]) {
-        a[i].failover_virtual_address = failover_virtual_aliases[i].address + '/' + failover_virtual_aliases[i].netmask
+        a[i].failover_virtual_address = failover_virtual_aliases[i].address;
       }
     }
     data['aliases'] = a;
