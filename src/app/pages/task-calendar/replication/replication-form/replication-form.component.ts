@@ -593,7 +593,7 @@ export class ReplicationFormComponent {
                     type: 'checkbox',
                     name: 'encryption',
                     placeholder: helptext.encryption_placeholder,
-                    tooltip: helptext.encryption_tooltip,
+                    tooltip: repwizardhelptext.encryption_tooltip,
                     value: false,
                 },
                 {
