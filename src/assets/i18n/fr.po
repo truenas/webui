@@ -116,10 +116,10 @@ msgstr ""
 "plus petite peut réduire les performances du système."
 
 msgid " minute"
-msgstr ""
+msgstr " minute"
 
 msgid " minutes"
-msgstr ""
+msgstr " minutes"
 
 msgid " official plugins"
 msgstr " plugins officiels"
@@ -983,7 +983,7 @@ msgid "AWS Region"
 msgstr "Région AWS"
 
 msgid "Abort"
-msgstr ""
+msgstr "Abandonner"
 
 msgid "About"
 msgstr "À propos"
@@ -1087,7 +1087,7 @@ msgid "Acoustic Level"
 msgstr "Niveau d'acoustique"
 
 msgid "Action Requires Administrator Confirmation"
-msgstr ""
+msgstr "L'action nécessite la confirmation de l’administrateur"
 
 msgid "Actions"
 msgstr "Actions"
@@ -1180,7 +1180,7 @@ msgid "Add Idmap"
 msgstr "Ajouter Idmap"
 
 msgid "Add Interface"
-msgstr ""
+msgstr "Ajouter une interface"
 
 msgid "Add Mountpoint"
 msgstr "Ajouter un point de montage"
@@ -1189,16 +1189,16 @@ msgid "Add Recovery Key"
 msgstr "Ajouter une clé de récupération"
 
 msgid "Add Static Route"
-msgstr ""
+msgstr "Ajouter une route statique"
 
 msgid "Add Sysctl"
-msgstr ""
+msgstr "Ajouter Sysctl"
 
 msgid "Add Tunable"
 msgstr ""
 
 msgid "Add User"
-msgstr ""
+msgstr "Ajouter un utilisateur"
 
 msgid "Add Vdev"
 msgstr "Ajouter Vdev"
@@ -1423,7 +1423,7 @@ msgid "Address space limit in bytes for the jail."
 msgstr "Limite d'espace d'adressage en octets pour le jail."
 
 msgid "Addresses"
-msgstr ""
+msgstr "Adresses"
 
 msgid ""
 "Adjust how often alert notifications are sent, use  the Frequency "
@@ -1521,7 +1521,7 @@ msgid "Algorithm"
 msgstr "Algorithme"
 
 msgid "Alias"
-msgstr ""
+msgstr "Alias"
 
 msgid "Aliases"
 msgstr "Alias"
@@ -1552,6 +1552,8 @@ msgid ""
 "All data stored in this dataset will be decrypted and the dataset marked  "
 "as non-encrypted. Do you want to continue?"
 msgstr ""
+"Toutes les données stockées dans ce dataset seront décryptées et le dataset marqué "
+"comme non chiffré. Voulez-vous continuer?"
 
 msgid "All dirs"
 msgstr "Tous les dossiers"
@@ -1560,7 +1562,7 @@ msgid "All users"
 msgstr "Tous les utilisateurs"
 
 msgid "Allocate RAM for the VM. Minimum value is 256 MiB."
-msgstr ""
+msgstr "Allouer la RAM pour la VM. La valeur minimale est de 256 MiB."
 
 msgid "Allocate a number of megabytes of RAM to the VM."
 msgstr "Allouer un nombre de mégaoctets de RAM à la machine virtuelle."
@@ -1569,7 +1571,7 @@ msgid "Allocate at least 256 MiB."
 msgstr "Attribuer au moins 256 Mio."
 
 msgid "Allocate space for the new zvol."
-msgstr ""
+msgstr "Allouer de l’espace pour le nouveau zvol."
 
 msgid "Allow"
 msgstr "Autoriser"
@@ -1835,6 +1837,11 @@ msgid ""
 " <a href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
 "target=\"_blank\">zfs(8)</a>."
 msgstr ""
+"Autoriser cette réplication à envoyer de grands blocs de données. Le système de "
+"destination doit également prendre en charge les grands blocs. Ce paramètre ne "
+"peut pas être modifié une fois activé et la tâche de réplication est créée. Pour "
+"plus de détails, voir  <a href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
+"target=\"_blank\">zfs(8)</a>."
 
 msgid ""
 "Allow using open file handles that can withstand short disconnections.  "
