@@ -63,7 +63,7 @@ export default {
     encryption_key_hex_tooltip: T('Unset <i>Generate Encryption Key</i> to instead import a custom Hex key.'),
 
     encryption_key_passphrase_placeholder: T('Passphrase'),
-    encryption_key_passphrase_tooltip: T(''),
+    encryption_key_passphrase_tooltip: T('Enter an alphanumeric encryption key. Only available when <i>Passphrase</i> is the chosen key format.'),
 
     encryption_key_format_placeholder: T('Encryption Key Format'),
     encryption_key_format_tooltip: T(''),
