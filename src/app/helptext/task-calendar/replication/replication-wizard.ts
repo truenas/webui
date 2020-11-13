@@ -57,7 +57,7 @@ export default {
     encryption_tooltip: T('Set to use encryption when replicating data. Additional encryption options will appear.'),
 
     encryption_key_generate_placeholder: T('Generate Encryption Key'),
-    encryption_key_generate_tooltip: T(''),
+    encryption_key_generate_tooltip: T('If the <i>Hex key</i> type is chosen, an encryption key will be auto-generated.'),
 
     encryption_key_hex_placeholder: T('Encryption Key'),
     encryption_key_hex_tooltip: T(''),
