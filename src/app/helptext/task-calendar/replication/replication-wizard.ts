@@ -69,7 +69,7 @@ export default {
     encryption_key_format_tooltip: T(''),
 
     encryption_key_location_truenasdb_placeholder: T('Store Encryption key in Sending TrueNAS database'),
-    encryption_key_location_truenasdb_tooltip: T(''),
+    encryption_key_location_truenasdb_tooltip: T('Set to store the encryption key in the TrueNAS database.'),
 
     encryption_key_location_placeholder: T('Encryption Key Location in Target System'),
     encryption_key_location_tooltip: T(''),
