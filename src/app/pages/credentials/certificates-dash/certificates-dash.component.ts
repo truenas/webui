@@ -41,6 +41,7 @@ export class CertificatesDashComponent implements OnInit {
   protected acmeDNSComponent: AcmednsFormComponent;
   private downloadActions: any;
   private unsignedCAs = [];
+  private caId: any;
 
   constructor(private modalService: ModalService, private router: Router, private route: ActivatedRoute,
     private ws: WebSocketService, private dialog: MatDialog, private systemGeneralService: SystemGeneralService,
@@ -179,7 +180,7 @@ export class CertificatesDashComponent implements OnInit {
     this.certificateAuthorityAddComponent = new CertificateAuthorityAddComponent(this.ws,this.modalService,
       this.systemGeneralService);
     this.certificateAuthorityEditComponent = new CertificateAuthorityEditComponent(this.ws,this.loader,
-      this.modalService,this.storage, this.http,this.dialogService);
+      this.modalService,this.storage, this.http,this.dialogService,this.systemGeneralService);
     this.certificateAuthoritySignComponent = new CertificateAuthoritySignComponent(this.router,this.route,
       this.ws,this.systemGeneralService);
     this.acmeAddComponent = new CertificateAcmeAddComponent(this.router,this.route,
@@ -255,6 +256,7 @@ certificateActions() {
       matTooltip: 'Sign CSR',
       onClick: (rowinner) => {
         this.dialogService.dialogForm(this.signCSRFormConf);
+        this.caId = rowinner.id;
         event.stopPropagation();
       }
     }
@@ -289,10 +291,20 @@ certificateActions() {
   }
 
   doSignCSR(entityDialog) {
-    console.log(entityDialog)
-    parent = entityDialog.parent;
-    console.log('do it')
+    const self = entityDialog.parent
+    const payload = {
+      'ca_id': self.caId,
+      'csr_cert_id': entityDialog.formGroup.controls.csr_cert_id.value,
+      'name': entityDialog.formGroup.controls.name.value
+    }
+    entityDialog.loader.open();
+    entityDialog.ws.call('certificateauthority.ca_sign_csr', [payload]).subscribe(() => {
+      entityDialog.loader.close();
+      self.dialogService.closeAllDialogs();
+    }, (err) => {
+      entityDialog.loader.close();
+      self.dialogService.errorReport('Error', err.reason, err.trace.formatted);
+    })
   }
-
 
 }

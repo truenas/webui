@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { WebSocketService, AppLoaderService, StorageService, DialogService } from '../../../../services/';
+import { WebSocketService, AppLoaderService, StorageService, DialogService, SystemGeneralService } from '../../../../services/';
 import * as _ from 'lodash';
 import { ModalService } from 'app/services/modal.service';
+import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
@@ -24,6 +25,7 @@ export class CertificateAuthorityEditComponent {
   private rowNum: any;
   private title: string;
   private incomingData: any;
+  private unsignedCAs = [];
 
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
@@ -203,7 +205,7 @@ export class CertificateAuthorityEditComponent {
 
   constructor(protected ws: WebSocketService, protected loader: AppLoaderService,
     private modalService: ModalService, private storage: StorageService, private http: HttpClient,
-    private dialog: DialogService) {
+    private dialog: DialogService, private systemGeneralService: SystemGeneralService) {
       this.getRow = this.modalService.getRow$.subscribe(rowId => {
         this.rowNum = rowId;
         this.queryCallOption = [["id", "=", rowId]];
@@ -217,12 +219,41 @@ export class CertificateAuthorityEditComponent {
     return data;
   }
 
+  public signCSRFormConf: DialogFormConfiguration = {
+    title: 'Sign CSR',
+    fieldConfig: [{
+      type: 'select',
+      name: 'csr_cert_id',
+      placeholder: 'CSRs',
+      tooltip: 'Select the Certificate Signing Request to sign the Certificate Authority with.',
+      required: true,
+      options: this.unsignedCAs
+    },
+    {
+      type: 'input',
+      name: 'name',
+      placeholder: 'Idenfitier',
+      tooltip: 'Internal identifier of the certificate. Only alphanumeric, "_" and "-" are allowed.'
+    }],
+    method_ws: 'certificateauthority.ca_sign_csr',
+    saveButtonText: 'Sign',
+    customSubmit: this.doSignCSR,
+    parent: this,
+  }
+
   protected custActions = [
     {
       id: 'sign_CSR',
       name: helptext_system_certificates.edit.signCSR,
       function: () => {
-        console.log('sign CSR') //////////////////////////////////////////////////
+        this.systemGeneralService.getUnsignedCertificates().subscribe( (res) => {
+          res.forEach((item) => {
+            this.unsignedCAs.push(
+              { label : item.name, value : parseInt(item.id)}
+            );
+          });
+          this.dialog.dialogForm(this.signCSRFormConf);
+        })
       }
     }
   ]
@@ -246,6 +277,23 @@ export class CertificateAuthorityEditComponent {
 
   afterInit() {
     this.title = helptext_system_ca.edit.title;
+  }
+
+  doSignCSR(entityDialog) {
+    const self = entityDialog.parent
+    const payload = {
+      'ca_id': self.rowNum,
+      'csr_cert_id': entityDialog.formGroup.controls.csr_cert_id.value,
+      'name': entityDialog.formGroup.controls.name.value
+    }
+    entityDialog.loader.open();
+    entityDialog.ws.call('certificateauthority.ca_sign_csr', [payload]).subscribe(() => {
+      entityDialog.loader.close();
+      self.dialog.closeAllDialogs();
+    }, (err) => {
+      entityDialog.loader.close();
+      self.dialog.errorReport('Error', err.reason, err.trace.formatted);
+    })
   }
 
   viewCertificate() {
