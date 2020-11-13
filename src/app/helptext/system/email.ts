@@ -75,7 +75,7 @@ export const helptext_system_email = {
         'Enable\
    <a href="https://en.wikipedia.org/wiki/SMTP_Authentication"\
    target="_blank">SMTP AUTH</a> using PLAIN SASL.\
-   Enter the required Username and Password if set.'
+   Requires a valid Username and Password.'
       )
     },
     gmail: {
