@@ -309,13 +309,38 @@ const commands = {
 
 function processCommands(list){
   let output;
-  list.forEach((item, index) => {
+  let refinedList = refineReportData(list);
+
+  refinedList.forEach((item, index) => {
     let input = item.input == '--pipe' || item.input == '|' ? output : item.input;
     output = item.options ? commands[item.command](input, item.options) : commands[item.command](input);
 
   });
 
   return output;
+
+}
+
+function refineReportData(list) {
+  let output = [];
+  list.forEach(item => {
+    let data = item.input && item.input.data;
+    if (!Array.isArray(data)) return;
+    let refinedData = [];
+    data.forEach(array => {
+      let subArray = removeNullElement(array);
+      if (subArray.length == 0) return;
+      refinedData.push(subArray);
+    });
+    
+    output.push({...item, input: {...item.input, data: refinedData}});
+  });
+
+  return output;
+}
+
+function removeNullElement(list) {
+  return list.filter(item => item != null);
 }
 
 function emit(evt){
