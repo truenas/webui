@@ -130,7 +130,8 @@ export class ServiceUPSComponent {
           togglePw: true,
           placeholder : helptext.ups_monpwd_placeholder,
           tooltip : helptext.ups_monpwd_tooltip,
-          validation: helptext.ups_monpwd_validation
+          validation: helptext.ups_monpwd_validation,
+          required: true
         },
         {
           type : 'textarea',
