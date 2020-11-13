@@ -188,7 +188,7 @@ export class CertificateAuthorityEditComponent {
       {
         name: 'private_key_label',
         type: 'paragraph',
-        paraText: 'Private Key'
+        paraText: helptext_system_ca.private_key
       },
 
       {
@@ -220,23 +220,23 @@ export class CertificateAuthorityEditComponent {
   }
 
   public signCSRFormConf: DialogFormConfiguration = {
-    title: 'Sign CSR',
+    title: helptext_system_ca.list.action_sign,
     fieldConfig: [{
       type: 'select',
       name: 'csr_cert_id',
-      placeholder: 'CSRs',
-      tooltip: 'Select the Certificate Signing Request to sign the Certificate Authority with.',
+      placeholder: helptext_system_ca.sign.csr_cert_id.placeholder,
+      tooltip: helptext_system_ca.sign.csr_cert_id.tooltip,
       required: true,
       options: this.unsignedCAs
     },
     {
       type: 'input',
       name: 'name',
-      placeholder: 'Idenfitier',
-      tooltip: 'Internal identifier of the certificate. Only alphanumeric, "_" and "-" are allowed.'
+      placeholder: helptext_system_ca.sign.name.placeholder,
+      tooltip: helptext_system_ca.sign.name.tooltip
     }],
     method_ws: 'certificateauthority.ca_sign_csr',
-    saveButtonText: 'Sign',
+    saveButtonText: helptext_system_ca.sign.sign,
     customSubmit: this.doSignCSR,
     parent: this,
   }
@@ -292,7 +292,7 @@ export class CertificateAuthorityEditComponent {
       self.dialog.closeAllDialogs();
     }, (err) => {
       entityDialog.loader.close();
-      self.dialog.errorReport('Error', err.reason, err.trace.formatted);
+      self.dialog.errorReport(helptext_system_ca.error, err.reason, err.trace.formatted);
     })
   }
 

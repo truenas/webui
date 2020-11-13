@@ -401,6 +401,9 @@ certificate still approved.'),
  alphanumeric, "_" and "-" are allowed.'
       ),
       validation: [Validators.required]
-    }
-  }
+    },
+    sign: T('Sign')
+  },
+  error: T('Error'),
+  private_key: T('Private Key')
 };

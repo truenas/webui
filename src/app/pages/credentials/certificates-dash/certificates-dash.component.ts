@@ -20,6 +20,7 @@ import { CertificateAuthoritySignComponent } from './forms/ca-sign.component';
 import { CertificateAcmeAddComponent } from './forms/certificate-acme-add.component';
 import { AcmednsFormComponent } from './forms/acmedns-form.component';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
+import { helptext_system_ca } from 'app/helptext/system/ca';
 import { EntityUtils } from '../../common/entity/utils';
 
 @Component({
@@ -120,6 +121,7 @@ export class CertificatesDashComponent implements OnInit {
           queryCall: 'certificateauthority.query',
           deleteCall: 'certificateauthority.delete',
           complex: true,
+          dataSourceHelper: this.caDataSourceHelper,
           getActions: this.caActions.bind(this),
           columns: [
             { name: T('Name'), prop1: 'name', name2: T('Issuer'), prop2: 'issuer'},
@@ -170,6 +172,15 @@ export class CertificatesDashComponent implements OnInit {
 
   csrDataSourceHelper(res) {
     return res.filter(item => item.CSR !== null);
+  }
+
+  caDataSourceHelper(res) {
+    res.forEach(row => {
+      if (_.isObject(row.issuer)) {
+        row.issuer = row.issuer.name;
+      }
+    })
+    return res;
   }
 
   refreshForms() {
@@ -253,7 +264,7 @@ certificateActions() {
     const acmeAction = {
       icon: 'beenhere',
       name: 'sign_CSR',
-      matTooltip: 'Sign CSR',
+      matTooltip: helptext_system_ca.list.action_sign,
       onClick: (rowinner) => {
         this.dialogService.dialogForm(this.signCSRFormConf);
         this.caId = rowinner.id;
@@ -268,24 +279,24 @@ certificateActions() {
     {
       type: 'select',
       name: 'csr_cert_id',
-      placeholder: 'CSRs',
-      tooltip: 'Select the Certificate Signing Request to sign the Certificate Authority with.',
+      placeholder: helptext_system_ca.sign.csr_cert_id.placeholder,
+      tooltip: helptext_system_ca.sign.csr_cert_id.tooltip,
       required: true,
       options: this.unsignedCAs
     },
     {
       type: 'input',
       name: 'name',
-      placeholder: 'Idenfitier',
-      tooltip: 'Internal identifier of the certificate. Only alphanumeric, "_" and "-" are allowed.'
+      placeholder: helptext_system_ca.edit.name.placeholder,
+      tooltip: helptext_system_ca.sign.name.tooltip
     }
   ];
 
   public signCSRFormConf: DialogFormConfiguration = {
-    title: 'Sign CSR',
+    title: helptext_system_ca.sign.fieldset_certificate,
     fieldConfig: this.signCSRFieldConf,
     method_ws: 'certificateauthority.ca_sign_csr',
-    saveButtonText: 'Sign',
+    saveButtonText: helptext_system_ca.sign.sign,
     customSubmit: this.doSignCSR,
     parent: this,
   }
@@ -301,9 +312,10 @@ certificateActions() {
     entityDialog.ws.call('certificateauthority.ca_sign_csr', [payload]).subscribe(() => {
       entityDialog.loader.close();
       self.dialogService.closeAllDialogs();
+      self.refreshForms();
     }, (err) => {
       entityDialog.loader.close();
-      self.dialogService.errorReport('Error', err.reason, err.trace.formatted);
+      self.dialogService.errorReport(helptext_system_ca.error, err.reason, err.trace.formatted);
     })
   }
 
