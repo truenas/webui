@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
@@ -28,10 +28,11 @@ import { EntityUtils } from '../../common/entity/utils';
   templateUrl: './certificates-dash.component.html',
   providers: [EntityFormService]
 })
-export class CertificatesDashComponent implements OnInit {
+export class CertificatesDashComponent implements OnInit, OnDestroy {
   cards: any;
   refreshTable: Subscription;
   refreshForm: Subscription;
+  message: Subscription;
 
   protected certificateAddComponent: CertificateAddComponent;
   protected certificateEditComponent: CertificateEditComponent;
@@ -58,6 +59,11 @@ export class CertificatesDashComponent implements OnInit {
     this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
       this.refreshForms();
     });
+    this.message = this.modalService.message$.subscribe(res => {
+      if (res['action'] === 'open' && res['component'] === 'acmeComponent')  {
+        this.openForm(this.acmeAddComponent, res['row']);
+      }
+    })
     this.systemGeneralService.getUnsignedCertificates().subscribe( (res) => {
       res.forEach((item) => {
         this.unsignedCAs.push(
@@ -275,6 +281,12 @@ certificateActions() {
     return caRowActions;
   }
 
+  openForm(component, id) {
+    setTimeout(() => {
+      this.modalService.open('slide-in-form', component, id);
+    }, 200)
+  }
+
   protected signCSRFieldConf: FieldConfig[] = [
     {
       type: 'select',
@@ -312,11 +324,17 @@ certificateActions() {
     entityDialog.ws.call('certificateauthority.ca_sign_csr', [payload]).subscribe(() => {
       entityDialog.loader.close();
       self.dialogService.closeAllDialogs();
-      self.refreshForms();
+      self.getCards();
     }, (err) => {
       entityDialog.loader.close();
       self.dialogService.errorReport(helptext_system_ca.error, err.reason, err.trace.formatted);
     })
+  }
+
+  ngOnDestroy() {
+    this.message.unsubscribe();
+    this.refreshTable.unsubscribe();
+    this.refreshForm.unsubscribe();
   }
 
 }

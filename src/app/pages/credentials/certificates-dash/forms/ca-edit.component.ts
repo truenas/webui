@@ -290,6 +290,7 @@ export class CertificateAuthorityEditComponent {
     entityDialog.ws.call('certificateauthority.ca_sign_csr', [payload]).subscribe(() => {
       entityDialog.loader.close();
       self.dialog.closeAllDialogs();
+      self.modalService.refreshTable();
     }, (err) => {
       entityDialog.loader.close();
       self.dialog.errorReport(helptext_system_ca.error, err.reason, err.trace.formatted);

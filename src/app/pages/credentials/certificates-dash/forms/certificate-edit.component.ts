@@ -226,7 +226,9 @@ export class CertificateEditComponent {
       id: 'create_ACME',
       name: helptext_system_certificates.list.action_create_acme_certificate,
       function: () => {
-        console.log('create ACME') ////////////////////////////////////////
+        this.modalService.close('slide-in-form');
+        const message = { action: 'open', component: 'acmeComponent', row: this.rowNum };
+        this.modalService.message(message);
       }
     }
   ]
