@@ -60,7 +60,7 @@ export default {
     encryption_key_generate_tooltip: T('If the <i>Hex key</i> type is chosen, an encryption key will be auto-generated.'),
 
     encryption_key_hex_placeholder: T('Encryption Key'),
-    encryption_key_hex_tooltip: T(''),
+    encryption_key_hex_tooltip: T('Unset <i>Generate Encryption Key</i> to instead import a custom Hex key.'),
 
     encryption_key_passphrase_placeholder: T('Passphrase'),
     encryption_key_passphrase_tooltip: T(''),
