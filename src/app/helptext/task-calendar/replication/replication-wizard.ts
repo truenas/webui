@@ -72,7 +72,7 @@ export default {
     encryption_key_location_truenasdb_tooltip: T('Set to store the encryption key in the TrueNAS database.'),
 
     encryption_key_location_placeholder: T('Encryption Key Location in Target System'),
-    encryption_key_location_tooltip: T(''),
+    encryption_key_location_tooltip: T('Choose a temporary location for the encryption key that will decrypt replicated data.'),
 
     custom_snapshots_placeholder: T('Replicate Custom Snapshots'),
     custom_snapshots_tooltip: T('Replicate snapshots that have not been \
