@@ -4,7 +4,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { map } from 'rxjs/operators';
 import helptext from '../../../../helptext/services/components/service-nfs';
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
 
@@ -18,6 +18,9 @@ export class ServiceNFSComponent {
   protected route_success: string[] = ['services'];
   productType = window.localStorage.getItem('product_type');
   hideOnScale = ['servers', 'allow_nonroot', 'mountd_log', 'statd_lockd_log'];
+  private v4krbValue: boolean;
+  private hasNfsStatus: boolean;
+  private adHealth = '';
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {
@@ -157,16 +160,36 @@ export class ServiceNFSComponent {
     );
   private validBindIps = [];
 
+  public custActions: Array<any> = [
+    {
+      'id' : 'has_nfs_status',
+      'name' : helptext.addSPN.btnTxt,
+      function : () => {
+        this.addSPN();
+      }
+    },
+  ];
+
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
+    private dialog: DialogService
   ) {}
 
   resourceTransformIncomingRestData(data) {
+    this.v4krbValue = data.v4_krb;
     // If validIps is slow to load, skip check on load (It's still done on save)
     if (this.validBindIps, this.validBindIps.length) {
       return this.compareBindIps(data);
     }
     return data;
+  }
+
+  isCustActionVisible(actionname: string) {
+    if (actionname === 'has_nfs_status' && (!this.hasNfsStatus && this.v4krbValue &&
+      this.adHealth === 'HEALTHY')) {
+        return true;
+      }
+      return false;
   }
 
   compareBindIps(data) {
@@ -206,6 +229,19 @@ export class ServiceNFSComponent {
         entityForm.formGroup.controls['userd_manage_gids'].setValue(false);
       }
     })
+
+    entityForm.formGroup.controls['v4_krb'].valueChanges.subscribe((value) => {
+      value ? this.v4krbValue = true : this.v4krbValue = false;
+    })
+
+    this.ws.call('kerberos.keytab.has_nfs_principal').subscribe(res => {
+      this.hasNfsStatus = res;
+      if (!this.hasNfsStatus) {
+        this.ws.call('directoryservices.get_state').subscribe(( { activedirectory }) => {
+          this.adHealth = activedirectory;
+        })
+      }
+    })
   }
 
   beforeSubmit(data) {
@@ -219,6 +255,64 @@ export class ServiceNFSComponent {
       }
     }
     data = this.compareBindIps(data);
+  }
+
+  afterSave(data) {
+    this.router.navigate(this.route_success);
+    if (data.formGroup.value.v4_krb && !this.v4krbValue) {
+      this.addSPN();
+    }
+  }
+
+  addSPN() {
+    const that = this;
+    if (!this.hasNfsStatus && this.adHealth === 'HEALTHY') {
+      this.dialog.confirm(helptext.add_principal_prompt.title,
+        helptext.add_principal_prompt.message,true, helptext.add_principal_prompt.affirmative,
+        false,'','','','',false, helptext.add_principal_prompt.negative).subscribe(res => {
+        if (res) {
+          this.dialog.dialogForm(
+            {
+              title: helptext.add_principal_prompt.title,
+              fieldConfig: [
+                {
+                  type: 'input',
+                  name: 'username',
+                  placeholder: helptext.add_principal_form.username,
+                  required: true
+                },
+                {
+                  type: 'input',
+                  name: 'password',
+                  inputType: 'password',
+                  togglePw: true,
+                  placeholder: helptext.add_principal_form.password,
+                  required: true
+                }
+              ],
+              saveButtonText: helptext.add_principal_form.action,
+              customSubmit: function (entityDialog) {
+                const value = entityDialog.formValue;
+                const self = entityDialog;
+                self.loader.open();
+                self.ws.call('nfs.add_principal', [{username: value.username, password: value.password}])
+                  .subscribe(() => {
+                    self.loader.close();
+                    self.dialogRef.close(true);
+                    that.dialog.Info(helptext.addSPN.success, helptext.addSPN.success_msg);
+                  },
+                  err => {
+                    self.loader.close();
+                    self.dialogRef.close(true);
+                    that.dialog.errorReport(helptext.add_principal_form.error_title,
+                      err.reason, err.trace.formatted);
+                  });
+              }
+            }
+          );
+        }
+      })
+    }
   }
 
 }
