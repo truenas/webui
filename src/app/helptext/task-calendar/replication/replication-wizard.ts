@@ -54,7 +54,7 @@ export default {
  the selected dataset snapshots.'),
 
     encryption_placeholder: T('Encryption'),
-    encryption_tooltip: T(''),
+    encryption_tooltip: T('Set to use encryption when replicating data. Additional encryption options will appear.'),
 
     encryption_key_generate_placeholder: T('Generate Encryption Key'),
     encryption_key_generate_tooltip: T(''),
