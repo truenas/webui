@@ -620,7 +620,7 @@ export class ReplicationFormComponent {
                     type: 'checkbox',
                     name: 'encryption_key_generate',
                     placeholder: helptext.encryption_key_generate_placeholder,
-                    tooltip: helptext.encryption_key_generate_tooltip,
+                    tooltip: repwizardhelptext.encryption_key_generate_tooltip,
                     value: true,
                     relation: [{
                         action: 'SHOW',
