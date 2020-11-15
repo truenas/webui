@@ -81,6 +81,9 @@ export class AlertServiceComponent {
             label: 'SNMP Trap',
             value: 'SNMPTrap',
           }, {
+            label: 'Telegram',
+            value: 'Telegram',
+          }, {
             label: 'VictorOps',
             value: 'VictorOps',
           }],
@@ -597,6 +600,37 @@ export class AlertServiceComponent {
           }],
           value: 'public',
         },
+        // Telegram
+        {
+          type: 'input',
+          name: 'Telegram-bot_token',
+          placeholder: helptext.Telegram_bot_token_placeholder,
+          tooltip: helptext.Telegram_bot_token_tooltip,
+          relation: [{
+            action: "SHOW",
+            when: [{
+              name: "type",
+              value: 'Telegram',
+            }]
+          }],
+          required: true,
+          validation: [Validators.required],
+        },
+        {
+          type: 'input',
+          name: 'Telegram-chat_ids',
+          placeholder: helptext.Telegram_chat_ids_placeholder,
+          tooltip: helptext.Telegram_chat_ids_tooltip,
+          relation: [{
+            action: "SHOW",
+            when: [{
+              name: "type",
+              value: 'Telegram',
+            }]
+          }],
+          required: true,
+          validation: [Validators.required],
+        },
         // VictorOps
         {
           type: 'input',
@@ -700,6 +734,11 @@ export class AlertServiceComponent {
       } else {
         if (data[i] === '' && (i === 'SNMPTrap-v3_authprotocol' || i === 'SNMPTrap-v3_privprotocol')) {
           data[i] = null;
+        } else if(data[i] && i == 'Telegram-chat_ids') {
+          // Telegram chat IDs should be an array of integer
+          const arrayChatIds:[] = data[i].trim().split(/;|:|,| /).map((chatId: string) => Number(chatId));
+          // Avoid duplicated chat IDs
+          data[i] = Array.from(new Set(arrayChatIds));
         }
         payload['attributes'][i.split('-')[1]] = data[i];
       }
