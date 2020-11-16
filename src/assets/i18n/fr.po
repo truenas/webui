@@ -189,6 +189,9 @@ msgstr "(Pas de description)"
 msgid "(Remove pool from database)"
 msgstr "(Retirer le volume de la base de données)"
 
+msgid "(System Dataset Pool)"
+msgstr ""
+
 msgid "(top-right), then"
 msgstr "(en haut à droite), puis"
 
@@ -1167,6 +1170,9 @@ msgstr "Actif"
 msgid "Active Directory"
 msgstr "Active Directory"
 
+msgid "Active Directory - Primary Domain"
+msgstr ""
+
 msgid "Active Directory IDMAP change!"
 msgstr "Changement IDMAP Active Directory !"
 
@@ -1212,8 +1218,14 @@ msgstr "Ajouter Idmap"
 msgid "Add Interface"
 msgstr "Ajouter une interface"
 
+msgid "Add Kerberos SPN Entry"
+msgstr ""
+
 msgid "Add Mountpoint"
 msgstr "Ajouter un point de montage"
+
+msgid "Add NFS SPN"
+msgstr ""
 
 msgid "Add Recovery Key"
 msgstr "Ajouter une clé de récupération"
@@ -1306,6 +1318,9 @@ msgstr ""
 "nouveaux disques avec la topologie choisie. Les données existantes sur le "
 "volume sont conservées intactes."
 
+msgid "Adding NFS NPN requires sufficient privileges. Enter your credentials below."
+msgstr ""
+
 msgid "Adding Vdevs to an encrypted pool resets the passphrase and recovery key!"
 msgstr ""
 "L'ajout de Vdevs à un volume chiffré réinitialise la passphrase et la clé "
@@ -1367,6 +1382,9 @@ msgstr "VDev de données supplémentaires à créer"
 
 msgid "Additional Domains"
 msgstr "Domaines supplémentaires"
+
+msgid "Additional Domains:"
+msgstr ""
 
 msgid "Additional Hardware"
 msgstr "Matériel supplémentaire"
@@ -1582,8 +1600,8 @@ msgid ""
 "All data stored in this dataset will be decrypted and the dataset marked  "
 "as non-encrypted. Do you want to continue?"
 msgstr ""
-"Toutes les données stockées dans ce dataset seront décryptées et le dataset marqué "
-"comme non chiffré. Voulez-vous continuer?"
+"Toutes les données stockées dans ce dataset seront décryptées et le dataset "
+"marqué comme non chiffré. Voulez-vous continuer?"
 
 msgid "All dirs"
 msgstr "Tous les dossiers"
@@ -1605,6 +1623,9 @@ msgstr "Allouer de l’espace pour le nouveau zvol."
 
 msgid "Allow"
 msgstr "Autoriser"
+
+msgid "Allow "
+msgstr ""
 
 msgid "Allow All"
 msgstr ""
@@ -1867,10 +1888,11 @@ msgid ""
 " <a href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
 "target=\"_blank\">zfs(8)</a>."
 msgstr ""
-"Autoriser cette réplication à envoyer de grands blocs de données. Le système de "
-"destination doit également prendre en charge les grands blocs. Ce paramètre ne "
-"peut pas être modifié une fois activé et la tâche de réplication est créée. Pour "
-"plus de détails, voir  <a href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
+"Autoriser cette réplication à envoyer de grands blocs de données. Le "
+"système de destination doit également prendre en charge les grands blocs. "
+"Ce paramètre ne peut pas être modifié une fois activé et la tâche de "
+"réplication est créée. Pour plus de détails, voir  <a "
+"href=\"https://www.freebsd.org/cgi/man.cgi?query=zfs\"  "
 "target=\"_blank\">zfs(8)</a>."
 
 msgid ""
@@ -3299,6 +3321,11 @@ msgstr ""
 "nouveau</i> pour créer une nouvelle paire de clés et utilisez-la pour cette "
 "connexion."
 
+msgid ""
+"Choose a temporary location for the encryption key that will decrypt "
+"replicated data."
+msgstr ""
+
 msgid "Choose a time format."
 msgstr "Choisissez un format de temps."
 
@@ -3357,6 +3384,11 @@ msgid ""
 "href=\"https://www.globalsign.com/en/blog/what-is-an-intermediate-or-"
 "subordinate-certificate-authority\">  What are Subordinate CAs and Why "
 "Would You Want Your Own?</a>"
+msgstr ""
+
+msgid ""
+"Choose between a <i>Hex</i> (base 16 numeral) or <i>Passphrase</i> "
+"(alphanumeric) style encryption key."
 msgstr ""
 
 msgid ""
@@ -4264,6 +4296,9 @@ msgstr "Canal actuel:"
 msgid "Custom"
 msgstr "Personnalisé"
 
+msgid "Custom Name"
+msgstr ""
+
 msgid "Custom Path"
 msgstr "Chemin personnalisé"
 
@@ -4275,6 +4310,9 @@ msgstr "Serveur personnalisé"
 
 msgid "Custom Theme Name"
 msgstr "Nom du thème personnalisé"
+
+msgid "Custom Value"
+msgstr ""
 
 msgid "Customer Name"
 msgstr "Nom du client"
@@ -4323,6 +4361,9 @@ msgstr "DHCP"
 
 msgid "DHCP Autoconfigure IPv4"
 msgstr "DHCP Autoconfigure IPv4"
+
+msgid "DISABLED"
+msgstr ""
 
 msgid "DNS Domain Name"
 msgstr "Nom de domaine DNS"
@@ -4539,6 +4580,9 @@ msgstr "Passerelle par défaut"
 
 msgid "Default Permissions"
 msgstr "Permissions par défaut"
+
+msgid "Default Route"
+msgstr ""
 
 msgid "Default Router For IPv4"
 msgstr "Routeur par défaut pour IPv4"
@@ -5292,6 +5336,9 @@ msgstr ""
 "pas saisi. Les utilisateurs locaux ont le nom NetBIOS du serveur SMB : "
 "<code>freenas\\smbusers</code>."
 
+msgid "Domain:"
+msgstr ""
+
 msgid "Done"
 msgstr "Terminé"
 
@@ -5371,6 +5418,9 @@ msgstr "Courbe CE"
 
 msgid "EDIT"
 msgstr "EDITER"
+
+msgid "ENABLED"
+msgstr ""
 
 msgid "ERROR: Not Enough Memory"
 msgstr "ERREUR : Pas assez de mémoire"
@@ -5543,6 +5593,9 @@ msgstr "Activer NFSv4"
 msgid "Enable Netwait Feature"
 msgstr "Activer la fonction Netwait"
 
+msgid "Enable Network Performance Statistics"
+msgstr ""
+
 msgid "Enable Password Toggle"
 msgstr "Activer la visualisation du mot de passe"
 
@@ -5608,9 +5661,6 @@ msgstr "Activer iSCSI ALUA"
 
 msgid "Enable iXsystems Proactive Support"
 msgstr "Activer le support proactif d'iXsystems"
-
-msgid "Enable iftop"
-msgstr ""
 
 msgid ""
 "Enable running services that require <a "
@@ -5881,6 +5931,12 @@ msgstr "Algorithme de chiffrement"
 
 msgid "Encryption Key"
 msgstr "Clé de chiffrement"
+
+msgid "Encryption Key Format"
+msgstr ""
+
+msgid "Encryption Key Location in Target System"
+msgstr ""
 
 msgid "Encryption Key Passphrase"
 msgstr "Passphrase de la clé de chiffrement"
@@ -6349,6 +6405,11 @@ msgid "Enter an IPv6 address. This overrides the default gateway provided by DHC
 msgstr ""
 "Entrez une adresse IPv6. Ceci remplace la passerelle par défaut fournie par "
 "DHCP."
+
+msgid ""
+"Enter an alphanumeric encryption key. Only available when <i>Passphrase</i> "
+"is the chosen key format."
+msgstr ""
 
 msgid ""
 "Enter an alphanumeric name for the certificate. Underscore (_), and dash "
@@ -7052,6 +7113,9 @@ msgstr "Exporter les clés du dataset"
 msgid "Export Dataset Keys for "
 msgstr "Exporter les clés du dataset pour "
 
+msgid "Export Key"
+msgstr ""
+
 msgid "Export Password Secret Seed"
 msgstr "Exporter la valeur secrète du mot de passe"
 
@@ -7534,6 +7598,9 @@ msgstr "Paramètres généraux de la VM"
 msgid "Generate Debug File"
 msgstr "Générer un fichier de débugage"
 
+msgid "Generate Encryption Key"
+msgstr ""
+
 msgid "Generate Key"
 msgstr "Générer une clé"
 
@@ -7740,6 +7807,9 @@ msgstr "Liste des ports d'écoute HTTP"
 msgid "HTTP Proxy"
 msgstr "Proxy HTTP"
 
+msgid "HTTP Proxy:"
+msgstr ""
+
 msgid "HTTP host URL."
 msgstr "URL de l'hôte HTTP."
 
@@ -7862,6 +7932,9 @@ msgstr "Nom d'hôte"
 msgid "Hostname (Virtual)"
 msgstr "Nom d'hôte (virtuel)"
 
+msgid "Hostname Database:"
+msgstr ""
+
 msgid "Hostname and Domain"
 msgstr "Nom de Domaine et Domaine"
 
@@ -7902,6 +7975,9 @@ msgid "Hostname or IP address of the system to  receive SNMP trap notifications.
 msgstr ""
 "Nom d'hôte ou adresse IP du système pour recevoir les notifications SNMP "
 "trap."
+
+msgid "Hostname:"
+msgstr ""
 
 msgid ""
 "Hostnames or IP addresses of the  ISNS servers to be registered with the "
@@ -8288,6 +8364,11 @@ msgstr ""
 "passe."
 
 msgid ""
+"If the <i>Hex key</i> type is chosen, an encryption key will be "
+"auto-generated."
+msgstr ""
+
+msgid ""
 "If the IPMI out-of-band management interface is on a different VLAN from "
 "the management network, enter the IPMI VLAN."
 msgstr ""
@@ -8571,6 +8652,9 @@ msgstr "Contrôle inter-réseaux"
 msgid "Interval"
 msgstr "Intervalle"
 
+msgid "Invalid Format."
+msgstr ""
+
 msgid "Invalid IP address"
 msgstr "Adresse IP non valide"
 
@@ -8806,6 +8890,9 @@ msgstr "Paramètres LAGG"
 msgid "LDAP"
 msgstr "LDAP"
 
+msgid "LDAP - Primary Domain"
+msgstr ""
+
 msgid "LDAP Domain"
 msgstr "Domaine LDAP"
 
@@ -8997,6 +9084,9 @@ msgid "Linked Service"
 msgstr "Service lié"
 
 msgid "Linux"
+msgstr ""
+
+msgid "List any existing dataset properties to remove from the replicated files."
 msgstr ""
 
 msgid ""
@@ -9701,6 +9791,9 @@ msgstr "Interface NAT"
 msgid "NAT Port Forwarding"
 msgstr "Transfert de port NAT"
 
+msgid "NETBIOS-NS"
+msgstr ""
+
 msgid "NFS"
 msgstr "NFS"
 
@@ -9849,6 +9942,9 @@ msgstr "Serveur de noms 2 (DNS)"
 msgid "Nameserver 3"
 msgstr "Serveur de noms 3 (DNS)"
 
+msgid "Nameservers"
+msgstr ""
+
 msgid "Naming Schema"
 msgstr "Schéma de nommage"
 
@@ -9900,6 +9996,9 @@ msgstr "Masque de réseau"
 
 msgid "Netwait IP List"
 msgstr "Liste des IP Netwait"
+
+msgid "Netwait:"
+msgstr ""
 
 msgid "Network"
 msgstr "Réseau"
@@ -10483,6 +10582,9 @@ msgstr ""
 msgid "Open VPN Server"
 msgstr ""
 
+msgid "OpenVPN"
+msgstr ""
+
 msgid "OpenVPN "
 msgstr ""
 
@@ -10606,6 +10708,9 @@ msgid "Out"
 msgstr "Montant"
 
 msgid "Outbound Network"
+msgstr ""
+
+msgid "Outbound Network:"
 msgstr ""
 
 msgid "Outgoing Mail Server"
@@ -10785,6 +10890,9 @@ msgid ""
 msgstr ""
 "Collez la clé privée associée au certificat lorsqu'elle est disponible. "
 "Veuillez fournir une clé d'au moins 1024 bits."
+
+msgid "Paste value above or choose a file."
+msgstr ""
 
 msgid "Path"
 msgstr "Chemin"
@@ -11251,6 +11359,12 @@ msgstr "Interdit les écritures sur ce partage."
 msgid "Promote Dataset"
 msgstr "Promouvoir le dataset"
 
+msgid "Properties Exclude"
+msgstr ""
+
+msgid "Properties Override"
+msgstr ""
+
 msgid "Protocol"
 msgstr "Protocole"
 
@@ -11684,6 +11798,11 @@ msgstr "Remplacer"
 msgid "Replace Disk"
 msgstr "Remplacer le disque"
 
+msgid ""
+"Replace existing dataset properties with these new defined properties in "
+"the replicated files."
+msgstr ""
+
 msgid "Replacing Disk"
 msgstr "Remplacement du disque"
 
@@ -11931,6 +12050,9 @@ msgid ""
 "target=_blank>smb.conf</a> manual page."
 msgstr ""
 
+msgid "Retrieving Key"
+msgstr ""
+
 msgid "Retro Logo"
 msgstr "Logo FreeNAS"
 
@@ -12103,6 +12225,9 @@ msgstr "INSCRIPTION"
 msgid "SMB"
 msgstr "SMB"
 
+msgid "SMB - Primary Domain"
+msgstr ""
+
 msgid "SMB Service"
 msgstr "Service SMB"
 
@@ -12234,12 +12359,6 @@ msgstr ""
 
 msgid "Save network interface changes?"
 msgstr "Enregistrer les modifications de l'interface réseau ?"
-
-msgid "Saving ACLs"
-msgstr "Enregistrement des ACLs"
-
-msgid "Saving ACLs..."
-msgstr "Enregistrement des ACLs..."
 
 msgid "Saving Debug"
 msgstr "Sauvegarde du debug"
@@ -13155,6 +13274,9 @@ msgstr "Compte de service"
 msgid "Service Announcement"
 msgstr "Annonce de service"
 
+msgid "Service Announcement:"
+msgstr ""
+
 msgid "Service Key"
 msgstr "Clé de service"
 
@@ -13948,6 +14070,9 @@ msgstr "Réglé pour démarrer la VM automatiquement au démarrage."
 msgid "Set to start this VM when the system boots."
 msgstr "Réglé pour démarrer cette VM au démarrage du système."
 
+msgid "Set to store the encryption key in the TrueNAS database."
+msgstr ""
+
 msgid ""
 "Set to suppress informational messages from the                remote "
 "server."
@@ -14019,6 +14144,11 @@ msgid ""
 msgstr ""
 "Réglé pour utiliser SLAAC (Stateless Address Auto Configuration) pour "
 "autoconfigurer automatiquement IPv6 dans l'environnement jail."
+
+msgid ""
+"Set to use encryption when replicating data. Additional encryption options "
+"will appear."
+msgstr ""
 
 msgid ""
 "Set to use the <i>Schedule</i> in place  of the <i>Replicate Specific "
@@ -14616,6 +14746,9 @@ msgstr ""
 "une autre adresse IP. Cliquer sur <i>SUPPRIMER</i> supprime cette adresse "
 "IP."
 
+msgid "Static Routes"
+msgstr ""
+
 msgid "Stats Per Thread"
 msgstr "Stats Par Thread"
 
@@ -14700,6 +14833,9 @@ msgstr "Lieu de stockage des clichés originaux qui seront répliqués."
 
 msgid "Storage location for the replicated  snapshots."
 msgstr "Lieu de stockage des clichés répliqués."
+
+msgid "Store Encryption key in Sending TrueNAS database"
+msgstr ""
 
 msgid ""
 "Store system logs on the system dataset. Unset to store system logs in "
@@ -15832,6 +15968,9 @@ msgstr ""
 msgid "There is an upgrade waiting to finish."
 msgstr "Il y a une mise à jour qui attend d'être terminée."
 
+msgid "There was a problem submitting the SPN entry."
+msgstr ""
+
 msgid ""
 "These  <a href=\"https://support.apple.com/en-us/HT210803\" "
 "target=\"_blank\">protocol extensions</a>  can be used by macOS to improve "
@@ -16070,6 +16209,16 @@ msgstr ""
 
 msgid "This operation might take a long time. Proceed?"
 msgstr "Cette opération peut prendre du temps. Poursuivre ?"
+
+msgid ""
+"This pool contains the system dataset that stores critical data like "
+"debugging core files, encryption keys for pools, and Samba 4 metadata such "
+"as the user/group cache and share level permissions. Exporting this pool "
+"will transfer the system dataset to another available pool. If the only "
+"available pool is encrypted, that pool will no longer be able to be locked. "
+"When no other pools exist, the system dataset transfers back to the TrueNAS "
+"operating system device."
+msgstr ""
 
 msgid "This process continues in the background after closing this dialog."
 msgstr ""
@@ -16520,6 +16669,9 @@ msgstr "Déblocage des datasets pour "
 
 msgid "Unselect All"
 msgstr "Tout déselectionner"
+
+msgid "Unset <i>Generate Encryption Key</i> to instead import a custom Hex key."
+msgstr ""
 
 msgid "Unset to add a login prompt to the system before the console menu is shown."
 msgstr ""
@@ -17285,6 +17437,9 @@ msgstr ""
 msgid "WARNING: These unknown processes will be terminated while locking the pool."
 msgstr ""
 
+msgid "WS-DISCOVERY"
+msgstr ""
+
 msgid "WS-Discovery"
 msgstr "WS-Discovery"
 
@@ -17586,6 +17741,9 @@ msgstr "Effacement du disque..."
 msgid "Workgroup"
 msgstr "Groupe de travail"
 
+msgid "Would you like to add a Service Principal Name (SPN) now?"
+msgstr ""
+
 msgid "Write"
 msgstr "Écrire"
 
@@ -17627,6 +17785,9 @@ msgstr "Oui, déchiffrer les disques"
 
 msgid "You have left the domain."
 msgstr "Vous avez quitté le domaine."
+
+msgid "You have successfully added credentials."
+msgstr ""
 
 msgid "ZFS"
 msgstr "ZFS"

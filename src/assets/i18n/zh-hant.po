@@ -171,6 +171,9 @@ msgstr "(尚無敘述)"
 msgid "(Remove pool from database)"
 msgstr "(自資料庫移除資料池)"
 
+msgid "(System Dataset Pool)"
+msgstr ""
+
 msgid "(top-right), then"
 msgstr ""
 
@@ -863,6 +866,9 @@ msgstr ""
 msgid "Active Directory"
 msgstr "Active Directory"
 
+msgid "Active Directory - Primary Domain"
+msgstr ""
+
 msgid "Active Directory IDMAP change!"
 msgstr ""
 
@@ -908,7 +914,13 @@ msgstr ""
 msgid "Add Interface"
 msgstr ""
 
+msgid "Add Kerberos SPN Entry"
+msgstr ""
+
 msgid "Add Mountpoint"
+msgstr ""
+
+msgid "Add NFS SPN"
 msgstr ""
 
 msgid "Add Recovery Key"
@@ -984,6 +996,9 @@ msgid ""
 "the chosen topology. Existing data on the pool is kept intact."
 msgstr ""
 
+msgid "Adding NFS NPN requires sufficient privileges. Enter your credentials below."
+msgstr ""
+
 msgid "Adding Vdevs to an encrypted pool resets the passphrase and recovery key!"
 msgstr ""
 
@@ -1032,6 +1047,9 @@ msgstr ""
 
 msgid "Additional Domains"
 msgstr "附加網域"
+
+msgid "Additional Domains:"
+msgstr ""
 
 msgid "Additional Hardware"
 msgstr ""
@@ -1226,6 +1244,9 @@ msgstr ""
 
 msgid "Allow"
 msgstr "允許"
+
+msgid "Allow "
+msgstr ""
 
 msgid "Allow All"
 msgstr ""
@@ -2585,6 +2606,11 @@ msgid ""
 "keypair and use it for this  connection."
 msgstr ""
 
+msgid ""
+"Choose a temporary location for the encryption key that will decrypt "
+"replicated data."
+msgstr ""
+
 msgid "Choose a time format."
 msgstr "選擇時間格式"
 
@@ -2633,6 +2659,11 @@ msgid ""
 "href=\"https://www.globalsign.com/en/blog/what-is-an-intermediate-or-"
 "subordinate-certificate-authority\">  What are Subordinate CAs and Why "
 "Would You Want Your Own?</a>"
+msgstr ""
+
+msgid ""
+"Choose between a <i>Hex</i> (base 16 numeral) or <i>Passphrase</i> "
+"(alphanumeric) style encryption key."
 msgstr ""
 
 msgid ""
@@ -3370,6 +3401,9 @@ msgstr ""
 msgid "Custom"
 msgstr ""
 
+msgid "Custom Name"
+msgstr ""
+
 msgid "Custom Path"
 msgstr "自訂路徑"
 
@@ -3380,6 +3414,9 @@ msgid "Custom Server"
 msgstr "自訂伺服器"
 
 msgid "Custom Theme Name"
+msgstr ""
+
+msgid "Custom Value"
 msgstr ""
 
 msgid "Customer Name"
@@ -3418,6 +3455,9 @@ msgstr "DHCP"
 
 msgid "DHCP Autoconfigure IPv4"
 msgstr "DHCP 自動配置 IPv4"
+
+msgid "DISABLED"
+msgstr ""
 
 msgid "DNS Domain Name"
 msgstr ""
@@ -3610,6 +3650,9 @@ msgstr ""
 
 msgid "Default Permissions"
 msgstr "預設權限"
+
+msgid "Default Route"
+msgstr ""
 
 msgid "Default Router For IPv4"
 msgstr "IPv4 預設閘道"
@@ -4210,6 +4253,9 @@ msgid ""
 "<code>freenas\\smbusers</code>."
 msgstr ""
 
+msgid "Domain:"
+msgstr ""
+
 msgid "Done"
 msgstr "完成"
 
@@ -4284,6 +4330,9 @@ msgid "EC Curve"
 msgstr ""
 
 msgid "EDIT"
+msgstr ""
+
+msgid "ENABLED"
 msgstr ""
 
 msgid "ERROR: Not Enough Memory"
@@ -4438,6 +4487,9 @@ msgstr "啟用 NFSv4"
 msgid "Enable Netwait Feature"
 msgstr ""
 
+msgid "Enable Network Performance Statistics"
+msgstr ""
+
 msgid "Enable Password Toggle"
 msgstr ""
 
@@ -4495,9 +4547,6 @@ msgid "Enable iSCSI ALUA"
 msgstr "啟用 iSCSI ALUA"
 
 msgid "Enable iXsystems Proactive Support"
-msgstr ""
-
-msgid "Enable iftop"
 msgstr ""
 
 msgid ""
@@ -4692,6 +4741,12 @@ msgstr ""
 
 msgid "Encryption Key"
 msgstr "加密金鑰"
+
+msgid "Encryption Key Format"
+msgstr ""
+
+msgid "Encryption Key Location in Target System"
+msgstr ""
 
 msgid "Encryption Key Passphrase"
 msgstr ""
@@ -5052,6 +5107,11 @@ msgid "Enter an IPv4 address. This overrides the default gateway provided by DHC
 msgstr ""
 
 msgid "Enter an IPv6 address. This overrides the default gateway provided by DHCP."
+msgstr ""
+
+msgid ""
+"Enter an alphanumeric encryption key. Only available when <i>Passphrase</i> "
+"is the chosen key format."
 msgstr ""
 
 msgid ""
@@ -5610,6 +5670,9 @@ msgstr ""
 msgid "Export Dataset Keys for "
 msgstr ""
 
+msgid "Export Key"
+msgstr ""
+
 msgid "Export Password Secret Seed"
 msgstr ""
 
@@ -6031,6 +6094,9 @@ msgstr ""
 msgid "Generate Debug File"
 msgstr "產生偵錯檔"
 
+msgid "Generate Encryption Key"
+msgstr ""
+
 msgid "Generate Key"
 msgstr ""
 
@@ -6215,6 +6281,9 @@ msgstr ""
 msgid "HTTP Proxy"
 msgstr ""
 
+msgid "HTTP Proxy:"
+msgstr ""
+
 msgid "HTTP host URL."
 msgstr ""
 
@@ -6324,6 +6393,9 @@ msgstr "主機名稱"
 msgid "Hostname (Virtual)"
 msgstr "主機名稱 (虛擬)"
 
+msgid "Hostname Database:"
+msgstr ""
+
 msgid "Hostname and Domain"
 msgstr ""
 
@@ -6351,6 +6423,9 @@ msgid ""
 msgstr ""
 
 msgid "Hostname or IP address of the system to  receive SNMP trap notifications."
+msgstr ""
+
+msgid "Hostname:"
 msgstr ""
 
 msgid ""
@@ -6667,6 +6742,11 @@ msgid ""
 msgstr ""
 
 msgid ""
+"If the <i>Hex key</i> type is chosen, an encryption key will be "
+"auto-generated."
+msgstr ""
+
+msgid ""
 "If the IPMI out-of-band management interface is on a different VLAN from "
 "the management network, enter the IPMI VLAN."
 msgstr ""
@@ -6897,6 +6977,9 @@ msgstr ""
 msgid "Interval"
 msgstr "頻率"
 
+msgid "Invalid Format."
+msgstr ""
+
 msgid "Invalid IP address"
 msgstr "無效的 IP 位址"
 
@@ -7106,6 +7189,9 @@ msgstr "LAGG 設定"
 msgid "LDAP"
 msgstr ""
 
+msgid "LDAP - Primary Domain"
+msgstr ""
+
 msgid "LDAP Domain"
 msgstr "LDAP 網域"
 
@@ -7271,6 +7357,9 @@ msgid "Linked Service"
 msgstr "已連結服務"
 
 msgid "Linux"
+msgstr ""
+
+msgid "List any existing dataset properties to remove from the replicated files."
 msgstr ""
 
 msgid ""
@@ -7874,6 +7963,9 @@ msgstr "NAT 介面"
 msgid "NAT Port Forwarding"
 msgstr ""
 
+msgid "NETBIOS-NS"
+msgstr ""
+
 msgid "NFS"
 msgstr ""
 
@@ -8005,6 +8097,9 @@ msgstr "名稱伺服器 2"
 msgid "Nameserver 3"
 msgstr "名稱伺服器 3"
 
+msgid "Nameservers"
+msgstr ""
+
 msgid "Naming Schema"
 msgstr ""
 
@@ -8053,6 +8148,9 @@ msgid "Netmask"
 msgstr "遮罩"
 
 msgid "Netwait IP List"
+msgstr ""
+
+msgid "Netwait:"
 msgstr ""
 
 msgid "Network"
@@ -8533,6 +8631,9 @@ msgstr ""
 msgid "Open VPN Server"
 msgstr ""
 
+msgid "OpenVPN"
+msgstr ""
+
 msgid "OpenVPN "
 msgstr ""
 
@@ -8638,6 +8739,9 @@ msgid "Out"
 msgstr ""
 
 msgid "Outbound Network"
+msgstr ""
+
+msgid "Outbound Network:"
 msgstr ""
 
 msgid "Outgoing Mail Server"
@@ -8777,6 +8881,9 @@ msgstr ""
 msgid ""
 "Paste the private key associated with the Certificate when available. "
 "Please provide a key at least 1024 bits long."
+msgstr ""
+
+msgid "Paste value above or choose a file."
 msgstr ""
 
 msgid "Path"
@@ -9166,6 +9273,12 @@ msgstr ""
 msgid "Promote Dataset"
 msgstr "升級資料集"
 
+msgid "Properties Exclude"
+msgstr ""
+
+msgid "Properties Override"
+msgstr ""
+
 msgid "Protocol"
 msgstr "協定"
 
@@ -9540,6 +9653,11 @@ msgstr "取代"
 msgid "Replace Disk"
 msgstr "取代磁碟"
 
+msgid ""
+"Replace existing dataset properties with these new defined properties in "
+"the replicated files."
+msgstr ""
+
 msgid "Replacing Disk"
 msgstr "正在取代磁碟"
 
@@ -9754,6 +9872,9 @@ msgid ""
 "target=_blank>smb.conf</a> manual page."
 msgstr ""
 
+msgid "Retrieving Key"
+msgstr ""
+
 msgid "Retro Logo"
 msgstr ""
 
@@ -9913,6 +10034,9 @@ msgstr ""
 msgid "SMB"
 msgstr ""
 
+msgid "SMB - Primary Domain"
+msgstr ""
+
 msgid "SMB Service"
 msgstr ""
 
@@ -10040,12 +10164,6 @@ msgstr "要在系統更新之前，下載設定另存嗎？"
 
 msgid "Save network interface changes?"
 msgstr ""
-
-msgid "Saving ACLs"
-msgstr "正在儲存 ACL"
-
-msgid "Saving ACLs..."
-msgstr "正在儲存 ACL..."
 
 msgid "Saving Debug"
 msgstr "正在儲存偵錯資訊"
@@ -10767,6 +10885,9 @@ msgstr "服務帳戶"
 msgid "Service Announcement"
 msgstr ""
 
+msgid "Service Announcement:"
+msgstr ""
+
 msgid "Service Key"
 msgstr ""
 
@@ -11319,6 +11440,9 @@ msgstr ""
 msgid "Set to start this VM when the system boots."
 msgstr ""
 
+msgid "Set to store the encryption key in the TrueNAS database."
+msgstr ""
+
 msgid ""
 "Set to suppress informational messages from the                remote "
 "server."
@@ -11365,6 +11489,11 @@ msgstr ""
 msgid ""
 "Set to use SLAAC (Stateless Address Auto Configuration) to autoconfigure "
 "IPv6 in the jail."
+msgstr ""
+
+msgid ""
+"Set to use encryption when replicating data. Additional encryption options "
+"will appear."
 msgstr ""
 
 msgid ""
@@ -11837,6 +11966,9 @@ msgid ""
 "<i>DELETE</i> removes that IP address."
 msgstr ""
 
+msgid "Static Routes"
+msgstr ""
+
 msgid "Stats Per Thread"
 msgstr ""
 
@@ -11912,6 +12044,9 @@ msgid "Storage location for the original  snapshots that will be replicated."
 msgstr ""
 
 msgid "Storage location for the replicated  snapshots."
+msgstr ""
+
+msgid "Store Encryption key in Sending TrueNAS database"
 msgstr ""
 
 msgid ""
@@ -12808,6 +12943,9 @@ msgstr ""
 msgid "There is an upgrade waiting to finish."
 msgstr ""
 
+msgid "There was a problem submitting the SPN entry."
+msgstr ""
+
 msgid ""
 "These  <a href=\"https://support.apple.com/en-us/HT210803\" "
 "target=\"_blank\">protocol extensions</a>  can be used by macOS to improve "
@@ -12990,6 +13128,16 @@ msgstr ""
 
 msgid "This operation might take a long time. Proceed?"
 msgstr "這個作業需要花點時間，繼續進行嗎？"
+
+msgid ""
+"This pool contains the system dataset that stores critical data like "
+"debugging core files, encryption keys for pools, and Samba 4 metadata such "
+"as the user/group cache and share level permissions. Exporting this pool "
+"will transfer the system dataset to another available pool. If the only "
+"available pool is encrypted, that pool will no longer be able to be locked. "
+"When no other pools exist, the system dataset transfers back to the TrueNAS "
+"operating system device."
+msgstr ""
 
 msgid "This process continues in the background after closing this dialog."
 msgstr ""
@@ -13381,6 +13529,9 @@ msgid "Unlocking datasets for "
 msgstr ""
 
 msgid "Unselect All"
+msgstr ""
+
+msgid "Unset <i>Generate Encryption Key</i> to instead import a custom Hex key."
 msgstr ""
 
 msgid "Unset to add a login prompt to the system before the console menu is shown."
@@ -14007,6 +14158,9 @@ msgstr ""
 msgid "WARNING: These unknown processes will be terminated while locking the pool."
 msgstr ""
 
+msgid "WS-DISCOVERY"
+msgstr ""
+
 msgid "WS-Discovery"
 msgstr ""
 
@@ -14243,6 +14397,9 @@ msgstr ""
 msgid "Workgroup"
 msgstr "工作群組"
 
+msgid "Would you like to add a Service Principal Name (SPN) now?"
+msgstr ""
+
 msgid "Write"
 msgstr ""
 
@@ -14280,6 +14437,9 @@ msgid "Yes, decrypt the disks"
 msgstr "是的，解密這個磁碟"
 
 msgid "You have left the domain."
+msgstr ""
+
+msgid "You have successfully added credentials."
 msgstr ""
 
 msgid "ZFS"
