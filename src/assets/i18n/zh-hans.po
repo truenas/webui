@@ -171,9 +171,6 @@ msgstr "（没有描述）"
 msgid "(Remove pool from database)"
 msgstr "（从数据库中删除池）"
 
-msgid "(System Dataset Pool)"
-msgstr ""
-
 msgid "(top-right), then"
 msgstr "（右上），然后"
 
@@ -973,9 +970,6 @@ msgstr "活动的"
 msgid "Active Directory"
 msgstr "活动目录"
 
-msgid "Active Directory - Primary Domain"
-msgstr ""
-
 msgid "Active Directory IDMAP change!"
 msgstr "活动目录IDMAP发生变化！"
 
@@ -1021,14 +1015,8 @@ msgstr "添加Idmap"
 msgid "Add Interface"
 msgstr ""
 
-msgid "Add Kerberos SPN Entry"
-msgstr ""
-
 msgid "Add Mountpoint"
 msgstr "添加挂载点"
-
-msgid "Add NFS SPN"
-msgstr ""
 
 msgid "Add Recovery Key"
 msgstr "添加恢复密钥"
@@ -1110,9 +1098,6 @@ msgid ""
 "the chosen topology. Existing data on the pool is kept intact."
 msgstr "删除添加的磁盘，然后将池扩展到具有所选拓扑的新磁盘上。池中的现有数据保持不变。"
 
-msgid "Adding NFS NPN requires sufficient privileges. Enter your credentials below."
-msgstr ""
-
 msgid "Adding Vdevs to an encrypted pool resets the passphrase and recovery key!"
 msgstr "将Vdevs添加到加密池中会重置密码和恢复密钥！"
 
@@ -1169,9 +1154,6 @@ msgstr "要创建的附加数据VDev"
 
 msgid "Additional Domains"
 msgstr "附加域"
-
-msgid "Additional Domains:"
-msgstr ""
 
 msgid "Additional Hardware"
 msgstr "附加硬件"
@@ -1380,9 +1362,6 @@ msgstr ""
 
 msgid "Allow"
 msgstr "允许"
-
-msgid "Allow "
-msgstr ""
 
 msgid "Allow All"
 msgstr ""
@@ -2823,11 +2802,6 @@ msgid ""
 "keypair and use it for this  connection."
 msgstr "选择一个已保存的SSH密钥对或选择<i>新建</i>来创建一个新的密钥对并将其用于此连接。"
 
-msgid ""
-"Choose a temporary location for the encryption key that will decrypt "
-"replicated data."
-msgstr ""
-
 msgid "Choose a time format."
 msgstr "选择时间格式。"
 
@@ -2884,11 +2858,6 @@ msgid ""
 "href=\"https://www.globalsign.com/en/blog/what-is-an-intermediate-or-"
 "subordinate-certificate-authority\">  What are Subordinate CAs and Why "
 "Would You Want Your Own?</a>"
-msgstr ""
-
-msgid ""
-"Choose between a <i>Hex</i> (base 16 numeral) or <i>Passphrase</i> "
-"(alphanumeric) style encryption key."
 msgstr ""
 
 msgid ""
@@ -3679,9 +3648,6 @@ msgstr "当前分支："
 msgid "Custom"
 msgstr "自定义"
 
-msgid "Custom Name"
-msgstr ""
-
 msgid "Custom Path"
 msgstr "自定义路径"
 
@@ -3693,9 +3659,6 @@ msgstr "自定义服务器"
 
 msgid "Custom Theme Name"
 msgstr "自定义主题名称"
-
-msgid "Custom Value"
-msgstr ""
 
 msgid "Customer Name"
 msgstr "客户名称"
@@ -3737,9 +3700,6 @@ msgstr "DHCP"
 
 msgid "DHCP Autoconfigure IPv4"
 msgstr "DHCP自动配置IPv4"
-
-msgid "DISABLED"
-msgstr ""
 
 msgid "DNS Domain Name"
 msgstr "DNS域名"
@@ -3936,9 +3896,6 @@ msgstr "默认网关"
 
 msgid "Default Permissions"
 msgstr "默认权限"
-
-msgid "Default Route"
-msgstr ""
 
 msgid "Default Router For IPv4"
 msgstr "IPv4默认路由"
@@ -4590,9 +4547,6 @@ msgstr ""
 "用户<i>名称</i>的域。如果未输入<i> SID "
 "</i>，则为必填项。本地用户具有SMB服务器的NetBIOS名称：<code>freenas\\smbusers</code>。"
 
-msgid "Domain:"
-msgstr ""
-
 msgid "Done"
 msgstr "完成"
 
@@ -4668,9 +4622,6 @@ msgstr "EC曲线"
 
 msgid "EDIT"
 msgstr "编辑"
-
-msgid "ENABLED"
-msgstr ""
 
 msgid "ERROR: Not Enough Memory"
 msgstr "错误：内存不足"
@@ -4830,9 +4781,6 @@ msgstr "启用NFSv4"
 msgid "Enable Netwait Feature"
 msgstr "启用Netwait功能"
 
-msgid "Enable Network Performance Statistics"
-msgstr ""
-
 msgid "Enable Password Toggle"
 msgstr "启用密码切换"
 
@@ -4891,6 +4839,9 @@ msgstr "启用iSCSI ALUA"
 
 msgid "Enable iXsystems Proactive Support"
 msgstr "启用iXsystems主动支持"
+
+msgid "Enable iftop"
+msgstr ""
 
 msgid ""
 "Enable running services that require <a "
@@ -5109,12 +5060,6 @@ msgstr "加密算法"
 
 msgid "Encryption Key"
 msgstr "加密密钥"
-
-msgid "Encryption Key Format"
-msgstr ""
-
-msgid "Encryption Key Location in Target System"
-msgstr ""
 
 msgid "Encryption Key Passphrase"
 msgstr "加密密钥密码"
@@ -5513,11 +5458,6 @@ msgstr "输入IPv4地址。这将会覆盖DHCP分配的默认网关。"
 
 msgid "Enter an IPv6 address. This overrides the default gateway provided by DHCP."
 msgstr "输入IPv6地址。这将会覆盖DHCP分配的默认网关。"
-
-msgid ""
-"Enter an alphanumeric encryption key. Only available when <i>Passphrase</i> "
-"is the chosen key format."
-msgstr ""
 
 msgid ""
 "Enter an alphanumeric name for the certificate. Underscore (_), and dash "
@@ -6134,9 +6074,6 @@ msgstr "导出数据集密钥"
 msgid "Export Dataset Keys for "
 msgstr "导出的数据集密钥"
 
-msgid "Export Key"
-msgstr ""
-
 msgid "Export Password Secret Seed"
 msgstr "导出密码秘密种子"
 
@@ -6575,9 +6512,6 @@ msgstr "常规虚拟机设置"
 msgid "Generate Debug File"
 msgstr "生成调试文件"
 
-msgid "Generate Encryption Key"
-msgstr ""
-
 msgid "Generate Key"
 msgstr "生成密钥"
 
@@ -6766,9 +6700,6 @@ msgstr "HTTP端口侦听Backlog"
 msgid "HTTP Proxy"
 msgstr "HTTP代理"
 
-msgid "HTTP Proxy:"
-msgstr ""
-
 msgid "HTTP host URL."
 msgstr "HTTP主机地址。"
 
@@ -6878,9 +6809,6 @@ msgstr "主机名"
 msgid "Hostname (Virtual)"
 msgstr "主机名（虚拟）"
 
-msgid "Hostname Database:"
-msgstr ""
-
 msgid "Hostname and Domain"
 msgstr "主机名和域名"
 
@@ -6913,9 +6841,6 @@ msgstr "远程系统的主机名或IP地址。必须使用有效的URL方案。�
 
 msgid "Hostname or IP address of the system to  receive SNMP trap notifications."
 msgstr "接收SNMP陷阱通知的系统的主机名或IP地址。"
-
-msgid "Hostname:"
-msgstr ""
 
 msgid ""
 "Hostnames or IP addresses of the  ISNS servers to be registered with the "
@@ -7248,11 +7173,6 @@ msgid ""
 msgstr "如果设置，将检查用户主目录中的<b> .tlslogin </ b>文件，该文件包含一个或多个PEM编码的证书。如果未找到，则提示用户进行密码身份验证。"
 
 msgid ""
-"If the <i>Hex key</i> type is chosen, an encryption key will be "
-"auto-generated."
-msgstr ""
-
-msgid ""
 "If the IPMI out-of-band management interface is on a different VLAN from "
 "the management network, enter the IPMI VLAN."
 msgstr "如果IPMI带外管理接口与管理网络位于不同的VLAN，请输入IPMI VLAN。"
@@ -7500,9 +7420,6 @@ msgstr "互联网控制"
 msgid "Interval"
 msgstr "Interval"
 
-msgid "Invalid Format."
-msgstr ""
-
 msgid "Invalid IP address"
 msgstr "IP地址无效"
 
@@ -7721,9 +7638,6 @@ msgstr "链路聚合设置"
 msgid "LDAP"
 msgstr "LDAP"
 
-msgid "LDAP - Primary Domain"
-msgstr ""
-
 msgid "LDAP Domain"
 msgstr "LDAP域"
 
@@ -7897,9 +7811,6 @@ msgid "Linked Service"
 msgstr "已连接服务"
 
 msgid "Linux"
-msgstr ""
-
-msgid "List any existing dataset properties to remove from the replicated files."
 msgstr ""
 
 msgid ""
@@ -8543,9 +8454,6 @@ msgstr "NAT接口"
 msgid "NAT Port Forwarding"
 msgstr "NAT端口转发"
 
-msgid "NETBIOS-NS"
-msgstr ""
-
 msgid "NFS"
 msgstr "NFS"
 
@@ -8683,9 +8591,6 @@ msgstr "域名服务器 2"
 msgid "Nameserver 3"
 msgstr "域名服务器 3"
 
-msgid "Nameservers"
-msgstr ""
-
 msgid "Naming Schema"
 msgstr "命名惯例"
 
@@ -8735,9 +8640,6 @@ msgstr "网络掩码"
 
 msgid "Netwait IP List"
 msgstr "Netwait IP列表"
-
-msgid "Netwait:"
-msgstr ""
 
 msgid "Network"
 msgstr "网络"
@@ -9243,9 +9145,6 @@ msgstr ""
 msgid "Open VPN Server"
 msgstr ""
 
-msgid "OpenVPN"
-msgstr ""
-
 msgid "OpenVPN "
 msgstr ""
 
@@ -9360,9 +9259,6 @@ msgid "Out"
 msgstr "发送"
 
 msgid "Outbound Network"
-msgstr ""
-
-msgid "Outbound Network:"
 msgstr ""
 
 msgid "Outgoing Mail Server"
@@ -9511,9 +9407,6 @@ msgid ""
 "Paste the private key associated with the Certificate when available. "
 "Please provide a key at least 1024 bits long."
 msgstr "粘贴与证书关联的私钥（如果可用）。请提供至少1024位长密钥。"
-
-msgid "Paste value above or choose a file."
-msgstr ""
 
 msgid "Path"
 msgstr "路径"
@@ -9937,12 +9830,6 @@ msgstr "禁止写入此共享。"
 msgid "Promote Dataset"
 msgstr "升级数据集"
 
-msgid "Properties Exclude"
-msgstr ""
-
-msgid "Properties Override"
-msgstr ""
-
 msgid "Protocol"
 msgstr "协议"
 
@@ -10331,11 +10218,6 @@ msgstr "更换"
 msgid "Replace Disk"
 msgstr "更换磁盘"
 
-msgid ""
-"Replace existing dataset properties with these new defined properties in "
-"the replicated files."
-msgstr ""
-
 msgid "Replacing Disk"
 msgstr "正在更换磁盘"
 
@@ -10555,9 +10437,6 @@ msgid ""
 "target=_blank>smb.conf</a> manual page."
 msgstr ""
 
-msgid "Retrieving Key"
-msgstr ""
-
 msgid "Retro Logo"
 msgstr "复古Logo"
 
@@ -10719,9 +10598,6 @@ msgstr "注册"
 msgid "SMB"
 msgstr "SMB"
 
-msgid "SMB - Primary Domain"
-msgstr ""
-
 msgid "SMB Service"
 msgstr "SMB服务"
 
@@ -10849,6 +10725,12 @@ msgstr "在更新前保存此机器的配置设置？"
 
 msgid "Save network interface changes?"
 msgstr ""
+
+msgid "Saving ACLs"
+msgstr "正在保存ACLs"
+
+msgid "Saving ACLs..."
+msgstr "正在保存ACLs..."
 
 msgid "Saving Debug"
 msgstr "正在保存调试"
@@ -11603,9 +11485,6 @@ msgstr "服务账户"
 msgid "Service Announcement"
 msgstr "服务公告"
 
-msgid "Service Announcement:"
-msgstr ""
-
 msgid "Service Key"
 msgstr "服务密钥"
 
@@ -12216,9 +12095,6 @@ msgstr "设置为在启动时自动启动虚拟机。"
 msgid "Set to start this VM when the system boots."
 msgstr "设置为在系统启动时启动此虚拟机。"
 
-msgid "Set to store the encryption key in the TrueNAS database."
-msgstr ""
-
 msgid ""
 "Set to suppress informational messages from the                remote "
 "server."
@@ -12275,11 +12151,6 @@ msgid ""
 "Set to use SLAAC (Stateless Address Auto Configuration) to autoconfigure "
 "IPv6 in the jail."
 msgstr "设置为使用SLAAC（无状态地址自动配置）在监狱中自动配置IPv6。"
-
-msgid ""
-"Set to use encryption when replicating data. Additional encryption options "
-"will appear."
-msgstr ""
 
 msgid ""
 "Set to use the <i>Schedule</i> in place  of the <i>Replicate Specific "
@@ -12768,9 +12639,6 @@ msgstr ""
 "静态IPv4或IPv6地址和子网掩码。例如：<i>10.0.0.3</i>和<i>/24</i>。单击<i>ADD</i>添加另一个IP地址。单击<i>"
 "删除</ i>会删除该IP地址。"
 
-msgid "Static Routes"
-msgstr ""
-
 msgid "Stats Per Thread"
 msgstr "每线程统计"
 
@@ -12849,9 +12717,6 @@ msgstr "将要复制的原始快照的存储位置。"
 
 msgid "Storage location for the replicated  snapshots."
 msgstr "复制快照的存储位置。"
-
-msgid "Store Encryption key in Sending TrueNAS database"
-msgstr ""
 
 msgid ""
 "Store system logs on the system dataset. Unset to store system logs in "
@@ -13791,9 +13656,6 @@ msgstr ""
 msgid "There is an upgrade waiting to finish."
 msgstr "有一个升级等待完成。"
 
-msgid "There was a problem submitting the SPN entry."
-msgstr ""
-
 msgid ""
 "These  <a href=\"https://support.apple.com/en-us/HT210803\" "
 "target=\"_blank\">protocol extensions</a>  can be used by macOS to improve "
@@ -13985,16 +13847,6 @@ msgstr "现有主题已使用该名称。请选择一个新名称。"
 
 msgid "This operation might take a long time. Proceed?"
 msgstr "这项操作可能会需要很长时间。继续吗？"
-
-msgid ""
-"This pool contains the system dataset that stores critical data like "
-"debugging core files, encryption keys for pools, and Samba 4 metadata such "
-"as the user/group cache and share level permissions. Exporting this pool "
-"will transfer the system dataset to another available pool. If the only "
-"available pool is encrypted, that pool will no longer be able to be locked. "
-"When no other pools exist, the system dataset transfers back to the TrueNAS "
-"operating system device."
-msgstr ""
 
 msgid "This process continues in the background after closing this dialog."
 msgstr ""
@@ -14396,9 +14248,6 @@ msgstr "正在解锁的数据集"
 
 msgid "Unselect All"
 msgstr "取消全选"
-
-msgid "Unset <i>Generate Encryption Key</i> to instead import a custom Hex key."
-msgstr ""
 
 msgid "Unset to add a login prompt to the system before the console menu is shown."
 msgstr "在显示控制台菜单之前，取消设置为系统添加登录提示。"
@@ -15064,9 +14913,6 @@ msgstr "警告：这些未知进程将在导出池时终止。"
 msgid "WARNING: These unknown processes will be terminated while locking the pool."
 msgstr ""
 
-msgid "WS-DISCOVERY"
-msgstr ""
-
 msgid "WS-Discovery"
 msgstr "WS-发现"
 
@@ -15323,9 +15169,6 @@ msgstr ""
 msgid "Workgroup"
 msgstr "工作组"
 
-msgid "Would you like to add a Service Principal Name (SPN) now?"
-msgstr ""
-
 msgid "Write"
 msgstr "写入"
 
@@ -15367,9 +15210,6 @@ msgstr "是的，解密磁盘"
 
 msgid "You have left the domain."
 msgstr "您已离开域。"
-
-msgid "You have successfully added credentials."
-msgstr ""
 
 msgid "ZFS"
 msgstr "ZFS"
