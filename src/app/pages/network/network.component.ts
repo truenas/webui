@@ -343,7 +343,33 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   checkInNow() {
+    this.ws.call('interface.services_restarted_on_sync').subscribe(res => {
+      if (res.length > 0) {
+        let services = [];
+        let ips = [];
+        res.forEach(item => {
+          services.push(item.service);
+          item.ips.forEach(ip => {
+            ips.push(ip);
+          })
+        })
+        this.dialog.confirm(helptext.services_restarted.title, helptext.services_restarted.message_a + ' ' +
+           ips.join(', ') +  ' ' + helptext.services_restarted.message_b + ' ' +
+          services.join(', '),
+          true, helptext.services_restarted.button).subscribe(res => {
+          if (res) {
+            this.finishCheckin();
+          }
+        })
+      } else {
+        this.finishCheckin();
+      }
+    })
+  }
+
+  finishCheckin() {
     this.dialog.confirm(
+
       helptext.checkin_title,
       helptext.checkin_message,
       true, helptext.checkin_button).subscribe(res => {
