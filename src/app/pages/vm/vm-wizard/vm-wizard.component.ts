@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { RestService, WebSocketService, NetworkService, StorageService } from '../../../services';
 import { PreferencesService} from 'app/core/services/preferences.service';
@@ -403,7 +402,7 @@ export class VMWizardComponent {
   constructor(protected rest: RestService, protected ws: WebSocketService,
     public vmService: VmService, public networkService: NetworkService,
     protected loader: AppLoaderService, protected dialog: MatDialog,
-    public messageService: MessageService,private router: Router,
+    public messageService: MessageService,
     private dialogService: DialogService, private storageService: StorageService,
     protected prefService: PreferencesService, private translate: TranslateService,
     protected modalService: ModalService) {
@@ -804,7 +803,9 @@ cpuValidator(name: string) {
 
         if (errors) {
           config.hasErrors = true;
-          config.warnings = helptext.vcpus_warning + ` ${self.maxVCPUs}.`;
+          self.translate.get(helptext.vcpus_warning).subscribe(warning => {
+            config.warnings = warning + ` ${self.maxVCPUs}.`;
+          })
         } else {
           config.hasErrors = false;
           config.warnings = '';
@@ -952,7 +953,6 @@ async customSubmit(value) {
       this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
         this.loader.close();
         this.modalService.close('slide-in-form');
-        this.router.navigate(['/vm']);
     },(error) => {
       this.loader.close();
       this.dialogService.errorReport(T("Error creating VM."), error.reason, error.trace.formatted);
@@ -975,7 +975,7 @@ async customSubmit(value) {
       };
       this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
         this.loader.close();
-        this.router.navigate(['/vm']);
+        this.modalService.close('slide-in-form');
       },(error) => {
         this.loader.close();
         this.dialogService.errorReport(T("Error creating VM."), error.reason, error.trace.formatted);

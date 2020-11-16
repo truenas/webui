@@ -1,5 +1,6 @@
 import {ApplicationRef, Component, Injector} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { FormControl } from '@angular/forms';
 import * as _ from 'lodash';
 import {
@@ -155,7 +156,8 @@ export class VmFormComponent {
   constructor(protected router: Router,
               protected ws: WebSocketService, protected storageService: StorageService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
-              protected vmService: VmService, protected route: ActivatedRoute
+              protected vmService: VmService, protected route: ActivatedRoute,
+              private translate: TranslateService
               ) {}
 
   preInit(entityForm: any) {
@@ -244,7 +246,10 @@ export class VmFormComponent {
   
           if (errors) {
             config.hasErrors = true;
-            config.warnings = helptext.vcpus_warning + ` ${self.maxVCPUs}.`;;
+            config.hasErrors = true;
+            self.translate.get(helptext.vcpus_warning).subscribe(warning => {
+              config.warnings = warning + ` ${self.maxVCPUs}.`;
+            })
           } else {
             config.hasErrors = false;
             config.warnings = '';
