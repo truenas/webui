@@ -110,7 +110,8 @@
     "zone.js": "0.10.3"
   },
   "resolutions": {
-    "moment": "2.24.0"
+    "moment": "2.24.0",
+    "@types/d3-array": "2.7.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "0.1000.1",
