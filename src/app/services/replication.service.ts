@@ -64,4 +64,13 @@ export class ReplicationService {
     getReplicationTasks() {
         return this.ws.call('replication.query');
     }
+
+    generateEncryptionHexKey(length) {
+        const characters = '0123456789abcdef';
+        let res = '';
+        for ( let i = 0; i < length; i++ ) {
+            res += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+        return res;
+    }
 }
