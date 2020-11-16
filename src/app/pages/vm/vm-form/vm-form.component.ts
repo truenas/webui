@@ -28,6 +28,7 @@ export class VmFormComponent {
   public vcpus: number;
   public cores: number;
   public threads: number;
+  private maxVCPUs: number;
   private productType: string = window.localStorage.getItem('product_type');
   protected queryCallOption: Array<any> = [];
 
@@ -99,7 +100,7 @@ export class VmFormComponent {
           inputType: 'number',
           placeholder : helptext.vcpus_placeholder, 
           tooltip: helptext.vcpus_tooltip,
-          validation: [Validators.required, Validators.min(1), Validators.max(16), this.cpuValidator('threads'),]
+          validation: [Validators.required, Validators.min(1), this.cpuValidator('threads'),]
         },
         { 
           type : 'input', 
@@ -107,7 +108,7 @@ export class VmFormComponent {
           inputType: 'number',
           placeholder : helptext.cores.placeholder, 
           tooltip: helptext.cores.tooltip,
-          validation: [Validators.required, Validators.min(1), Validators.max(16), this.cpuValidator('threads'),]
+          validation: [Validators.required, Validators.min(1), this.cpuValidator('threads'),]
         },
         { 
           type : 'input', 
@@ -115,7 +116,7 @@ export class VmFormComponent {
           inputType: 'number',
           placeholder : helptext.threads.placeholder, 
           tooltip: helptext.threads.tooltip,
-          validation: [Validators.required, Validators.min(1), Validators.max(16), this.cpuValidator('threads'),]
+          validation: [Validators.required, Validators.min(1), this.cpuValidator('threads'),]
         },
         {
           type: 'select',
@@ -165,6 +166,9 @@ export class VmFormComponent {
         this.queryCallOption = [opt]
         }
       })
+    this.ws.call('vm.maximum_supported_vcpus').subscribe(max => {
+      this.maxVCPUs = max;
+    })
   }
 
   afterInit(entityForm: any) {
@@ -234,13 +238,13 @@ export class VmFormComponent {
     return function validCPU(control: FormControl) {
       const config = self.fieldConfig.find(c => c.name === name);
         setTimeout(() => {
-          const errors = self.vcpus * self.cores * self.threads > 16
+          const errors = self.vcpus * self.cores * self.threads > self.maxVCPUs
           ? { validCPU : true }
           : null;
   
           if (errors) {
             config.hasErrors = true;
-            config.warnings = T(`The product of vCPUs, cores, and threads must not exceed 16.`);
+            config.warnings = helptext.vcpus_warning + ` ${self.maxVCPUs}.`;;
           } else {
             config.hasErrors = false;
             config.warnings = '';

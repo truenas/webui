@@ -63,24 +63,23 @@ vnc_bind_tooltip: T("VNC network interface IP address. The primary\
  address can be chosen."),
 
 vcpus_label: T('CPU and Memory'),
+vcpus_warning: T('The product of vCPUs, cores and threads must not exceed'),
+vcpus_warning_b: T('on this system.'),
 vcpus_placeholder: T('Virtual CPUs'),
 vcpus_validation : [ Validators.required, Validators.min(1), Validators.max(16) ],
 vcpus_tooltip: T('Number of virtual CPUs to allocate to the virtual\
- machine. The maximum is 16, or fewer if the host\
- CPU limits the maximum. The VM operating system\
- might also have operational or licensing\
+ machine. The VM operating system\
+ might have operational or licensing\
  restrictions on the number of CPUs.'),
 
 cores: {
   placeholder: T('Cores'),
-  tooltip: T('Specify the number of cores per virtual CPU socket. \
- The product of vCPUs, cores, and threads must not exceed 16.'),
+  tooltip: T('Specify the number of cores per virtual CPU socket.'),
 }, 
 
 threads: {
   placeholder: T('Threads'),
-  tooltip: T('Specify the number of threads per core. \
- The product of vCPUs, cores, and threads must not exceed 16.')
+  tooltip: T('Specify the number of threads per core.')
 },
 
 shutdown_timeout: {

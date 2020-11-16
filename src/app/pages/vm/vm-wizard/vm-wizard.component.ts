@@ -47,6 +47,7 @@ export class VMWizardComponent {
   private currentStep = 0;
   public title = helptext.formTitle;
   public hideCancel = true;
+  private maxVCPUs = 16;
 
   entityWizard: any;
   public res;
@@ -134,14 +135,20 @@ export class VMWizardComponent {
     },
     {
       label: helptext.vcpus_label,
-      fieldConfig: [{
+      fieldConfig: [
+        {
+          type: 'paragraph',
+          name: 'vcpu_limit',
+          paraText: ''
+        },
+        {
           type: 'input',
           name: 'vcpus',
           placeholder: helptext.vcpus_placeholder,
           inputType: 'number',
           min: 1,
           required: true,
-          validation : [ this.cpuValidator('threads'), Validators.required, Validators.min(1), Validators.max(16) ],
+          validation : [ this.cpuValidator('threads'), Validators.required, Validators.min(1) ],
           tooltip: helptext.vcpus_tooltip,
         },
         {
@@ -150,7 +157,7 @@ export class VMWizardComponent {
           placeholder: helptext.cores.placeholder,
           inputType: 'number',
           required: true,
-          validation : [ this.cpuValidator('threads'), Validators.required, Validators.min(1), Validators.max(16) ],
+          validation : [ this.cpuValidator('threads'), Validators.required, Validators.min(1) ],
           tooltip: helptext.cores.tooltip
         },
         {
@@ -162,8 +169,7 @@ export class VMWizardComponent {
           validation : [ 
             this.cpuValidator('threads'),
             Validators.required, 
-            Validators.min(1),
-            Validators.max(16),
+            Validators.min(1)
           ],
           tooltip: helptext.threads.tooltip,
         },
@@ -406,6 +412,11 @@ export class VMWizardComponent {
 
   preInit(entityWizard: EntityWizardComponent){
     this.entityWizard = entityWizard;
+    this.ws.call('vm.maximum_supported_vcpus').subscribe(max => {
+      this.maxVCPUs = max;
+      const vcpu_limit = _.find(this.wizardConfig[1].fieldConfig, {'name' : 'vcpu_limit'});
+      vcpu_limit.paraText = helptext.vcpus_warning + ` ${this.maxVCPUs} ` + helptext.vcpus_warning_b;
+    })
   }
 
   customNext(stepper) {
@@ -787,13 +798,13 @@ cpuValidator(name: string) {
   return function validCPU(control: FormControl) {
     const config = self.wizardConfig[1].fieldConfig.find(c => c.name === name);
       setTimeout(() => {
-        const errors = self.vcpus * self.cores * self.threads > 16
+        const errors = self.vcpus * self.cores * self.threads > self.maxVCPUs
         ? { validCPU : true }
         : null;
 
         if (errors) {
           config.hasErrors = true;
-          config.warnings = T(`The product of vCPUs, cores and threads must not exceed 16.`);
+          config.warnings = helptext.vcpus_warning + ` ${self.maxVCPUs}.`;
         } else {
           config.hasErrors = false;
           config.warnings = '';
@@ -940,6 +951,7 @@ async customSubmit(value) {
       };
       this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
         this.loader.close();
+        this.modalService.close('slide-in-form');
         this.router.navigate(['/vm']);
     },(error) => {
       this.loader.close();
