@@ -113,7 +113,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
           ],
           parent: this,
           add: function() {
-            this.parent.modalService.open('slide-in-form', this.parent.certificateAddComponent);
+            this.parent.modalService.open('slide-in-form', this.parent.certificateAddComponent, 'csr');
           },
           edit: function(row) {
             this.parent.modalService.open('slide-in-form', this.parent.certificateEditComponent, row.id);
