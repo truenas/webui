@@ -176,9 +176,9 @@ def send_a_file_to_the_share_with_nas_url_smbname_and_user_password(driver, nas_
     assert results['result'], results['output']
 
 
-@then(parsers.parse('Verify that the is on "{nas_url}" with "{user}" and "{password}"'))
-def Verify_that_the_is_on_url_with_root_and_password(driver, nas_url, user, password):
-    """Verify that the is on "{nas_url}" with "{user}" and "{password}"."""
+@then(parsers.parse('Verify that the file is on "{nas_url}" with "{user}" and "{password}"'))
+def Verify_that_the_file_is_on_url_with_root_and_password(driver, nas_url, user, password):
+    """Verify that the file is on "{nas_url}" with "{user}" and "{password}"."""
     results = post(nas_url, 'filesystem/stat/', (user, password), f'{smb_path}/testfile.txt')
     assert results.status_code == 200, results.text
 
