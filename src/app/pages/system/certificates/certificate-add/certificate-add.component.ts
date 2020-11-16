@@ -47,8 +47,8 @@ export class CertificateAddComponent {
         {
           type: 'select',
           name: 'create_type',
-          tooltip: helptext_system_certificates.add.create_type.tooltip,
-          placeholder: helptext_system_certificates.add.create_type.placeholder,
+          tooltip: helptext_system_certificates.add.cert_create_type.tooltip,
+          placeholder: helptext_system_certificates.add.cert_create_type.placeholder,
           options: [
             { label: 'Internal Certificate', value: 'CERTIFICATE_CREATE_INTERNAL' },
             { label: 'Certificate Signing Request', value: 'CERTIFICATE_CREATE_CSR' },

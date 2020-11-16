@@ -218,10 +218,14 @@ export class CertificateAddComponent {
       ]
     },
     {
+      name:'divider',
+      divider:true
+    },
+    {
       name: helptext_system_certificates.add.fieldset_certificate,
       label: true,
       class: 'certificate',
-      width: '100%',
+      width: '50%',
       config: [
         {
           type: 'select',
@@ -234,8 +238,6 @@ export class CertificateAddComponent {
           required: true,
           validation: helptext_system_certificates.add.country.validation,
           isHidden: false,
-          class: 'inline',
-          width: '50%',
         },
         {
           type: 'input',
@@ -245,8 +247,6 @@ export class CertificateAddComponent {
           required: true,
           validation: helptext_system_certificates.add.state.validation,
           isHidden: false,
-          class: 'inline',
-          width: '50%',
         },
         {
           type: 'input',
@@ -256,8 +256,6 @@ export class CertificateAddComponent {
           required: true,
           validation: helptext_system_certificates.add.city.validation,
           isHidden: false,
-          class: 'inline',
-          width: '50%',
         },
         {
           type: 'input',
@@ -267,9 +265,15 @@ export class CertificateAddComponent {
           required: true,
           validation: helptext_system_certificates.add.organization.validation,
           isHidden: false,
-          class: 'inline',
-          width: '50%',
-        },
+        }
+      ]
+    },
+    {
+    name: helptext_system_certificates.add.fieldset_certificate,
+    label: false,
+    class: 'lowerme',
+    width: '50%',
+    config: [
         {
           type: 'input',
           name: 'organizational_unit',
@@ -277,8 +281,6 @@ export class CertificateAddComponent {
           tooltip: helptext_system_certificates.add.organizational_unit.tooltip,
           required: false,
           isHidden: false,
-          class: 'inline',
-          width: '50%',
         },
         {
           type: 'input',
@@ -288,8 +290,6 @@ export class CertificateAddComponent {
           required: true,
           validation: helptext_system_certificates.add.email.validation,
           isHidden: false,
-          class: 'inline',
-          width: '50%',
         },
         {
           type: 'input',
@@ -297,8 +297,6 @@ export class CertificateAddComponent {
           placeholder: helptext_system_certificates.add.common.placeholder,
           tooltip: helptext_system_certificates.add.common.tooltip,
           isHidden: false,
-          class: 'inline',
-          width: '50%',
         },
         {
           type: 'chip',
@@ -308,77 +306,6 @@ export class CertificateAddComponent {
           required: true,
           validation: helptext_system_certificates.add.san.validation,
           isHidden: false,
-          class: 'inline',
-          width: '50%',
-        },
-        {
-          type: 'textarea',
-          name: 'certificate',
-          placeholder: helptext_system_certificates.add.certificate.placeholder,
-          tooltip: helptext_system_certificates.add.certificate.tooltip,
-          required: true,
-          validation: helptext_system_certificates.add.certificate.validation,
-          isHidden: true,
-        },
-        {
-          type: 'textarea',
-          name: 'CSR',
-          placeholder: helptext_system_certificates.add.cert_csr.placeholder,
-          tooltip: helptext_system_certificates.add.cert_csr.tooltip,
-          required: true,
-          validation: helptext_system_certificates.add.cert_csr.validation,
-          isHidden: true,
-        },
-        {
-          type: 'textarea',
-          name: 'privatekey',
-          placeholder: helptext_system_certificates.add.privatekey.placeholder,
-          tooltip: helptext_system_certificates.add.privatekey.tooltip,
-          isHidden: true,
-          relation: [
-            {
-              action: 'DISABLE',
-              when: [{
-                name: 'csronsys',
-                value: true,
-              }]
-            },
-          ]
-        },
-        {
-          type: 'input',
-          name: 'passphrase',
-          placeholder: helptext_system_certificates.add.passphrase.placeholder,
-          tooltip: helptext_system_certificates.add.passphrase.tooltip,
-          inputType: 'password',
-          validation: helptext_system_certificates.add.passphrase.validation,
-          isHidden: true,
-          togglePw: true,
-          relation: [
-            {
-              action: 'DISABLE',
-              when: [{
-                name: 'csronsys',
-                value: true,
-              }]
-            },
-          ]
-        },
-        {
-          type: 'input',
-          name: 'passphrase2',
-          inputType: 'password',
-          placeholder: helptext_system_certificates.add.passphrase2.placeholder,
-          isHidden: true,
-          relation: [
-            {
-              action: 'DISABLE',
-              when: [{
-                name: 'csronsys',
-                value: true,
-              }]
-            },
-          ]
         }
       ]
     },
@@ -611,6 +538,90 @@ export class CertificateAddComponent {
         }
       ]
     },
+    {
+      name: 'cert_textboxes',
+      label: false,
+      width: '50%',
+      config: [
+        {
+          type: 'textarea',
+          name: 'certificate',
+          placeholder: helptext_system_certificates.add.certificate.placeholder,
+          tooltip: helptext_system_certificates.add.certificate.tooltip,
+          required: true,
+          validation: helptext_system_certificates.add.certificate.validation,
+          isHidden: true,
+        },
+        {
+          type: 'textarea',
+          name: 'CSR',
+          placeholder: helptext_system_certificates.add.cert_csr.placeholder,
+          tooltip: helptext_system_certificates.add.cert_csr.tooltip,
+          required: true,
+          validation: helptext_system_certificates.add.cert_csr.validation,
+          isHidden: true,
+        },
+        {
+          type: 'textarea',
+          name: 'privatekey',
+          placeholder: helptext_system_certificates.add.privatekey.placeholder,
+          tooltip: helptext_system_certificates.add.privatekey.tooltip,
+          isHidden: true,
+          relation: [
+            {
+              action: 'DISABLE',
+              when: [{
+                name: 'csronsys',
+                value: true,
+              }]
+            },
+          ]
+        }
+      ]
+    },
+    {
+      name: 'cert_pw',
+      label: false,
+      width: '50%',
+      config: [
+        {
+          type: 'input',
+          name: 'passphrase',
+          placeholder: helptext_system_certificates.add.passphrase.placeholder,
+          tooltip: helptext_system_certificates.add.passphrase.tooltip,
+          inputType: 'password',
+          validation: helptext_system_certificates.add.passphrase.validation,
+          isHidden: true,
+          togglePw: true,
+          relation: [
+            {
+              action: 'DISABLE',
+              when: [{
+                name: 'csronsys',
+                value: true,
+              }]
+            },
+          ]
+        },
+        {
+          type: 'input',
+          name: 'passphrase2',
+          inputType: 'password',
+          placeholder: helptext_system_certificates.add.passphrase2.placeholder,
+          isHidden: true,
+          relation: [
+            {
+              action: 'DISABLE',
+              when: [{
+                name: 'csronsys',
+                value: true,
+              }]
+            },
+          ]
+        }
+      ]
+    }
+    
   ]
   private internalFields: Array<any> = [
     'signedby',
@@ -700,7 +711,7 @@ export class CertificateAddComponent {
     });
 
     this.systemGeneralService.getCertificateCountryChoices().subscribe((res) => {
-      this.country = _.find(this.fieldSets[2].config, {'name' : 'country'});
+      this.country = _.find(this.fieldSets[3].config, {'name' : 'country'});
       for (const item in res) {
         this.country.options.push(
           { label : res[item], value : item}
@@ -720,7 +731,7 @@ export class CertificateAddComponent {
       })
     });
 
-    this.usageField = _.find(this.fieldSets[5].config, {'name': 'ExtendedKeyUsage-usages'});
+    this.usageField = _.find(this.fieldSets[7].config, {'name': 'ExtendedKeyUsage-usages'});
     this.ws.call('certificate.extended_key_usage_choices').subscribe((res) => {
       Object.keys(res).forEach(key => {
         this.usageField.options.push({label: res[key], value: key})
