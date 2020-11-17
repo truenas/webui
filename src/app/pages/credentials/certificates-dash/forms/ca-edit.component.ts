@@ -289,7 +289,7 @@ export class CertificateAuthorityEditComponent {
   viewCertificate() {
     this.dialog.confirm(this.incomingData.name, this.incomingData.certificate, true, 
       helptext_system_certificates.viewDialog.download, false, '',
-    '','','', false, helptext_system_certificates.viewDialog.close,false,this.incomingData.certificate).subscribe(res => {
+    '','','', false, helptext_system_certificates.viewDialog.close,false,this.incomingData.certificate,true).subscribe(res => {
       if (res) {
         this.exportCertificate();
       }
@@ -318,7 +318,7 @@ export class CertificateAuthorityEditComponent {
   viewKey() {
     this.dialog.confirm(this.incomingData.name, this.incomingData.privatekey, true, 
       helptext_system_certificates.viewDialog.download, false, '',
-    '','','', false, helptext_system_certificates.viewDialog.close,false,this.incomingData.privatekey).subscribe(res => {
+    '','','', false, helptext_system_certificates.viewDialog.close,false,this.incomingData.privatekey,true).subscribe(res => {
       if (res) {
         this.exportKey();
       }

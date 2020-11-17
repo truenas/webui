@@ -11,6 +11,7 @@ export class CopyButtonComponent implements OnInit {
   
   @ViewChild('el', { static: false}) el: ElementRef;  
   @Input() text: string;
+  @Input() showPopup = true;
   public popupIsVisible: boolean = false;
 
   constructor() {
@@ -29,9 +30,7 @@ export class CopyButtonComponent implements OnInit {
   }
 
   copyToClipboard(){
-    this.el.nativeElement.focus();
-    this.el.nativeElement.select();
-    (<any>document).execCommand("copy");
+    navigator.clipboard.writeText(this.text)
   }
 
 

@@ -1578,5 +1578,10 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     margin-bottom: 5px;
   }
 
+  .key-textarea {
+    width: 540px;
+    height: 280px;
+    resize: none;
+  }
 
 } // end of ix theme

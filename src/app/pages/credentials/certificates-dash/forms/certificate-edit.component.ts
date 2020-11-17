@@ -306,7 +306,7 @@ export class CertificateEditComponent {
     if (this.incomingData.CSR) {
     this.dialog.confirm(this.incomingData.name, this.incomingData.CSR, true, 
       helptext_system_certificates.viewDialog.download, false, '',
-      '','','', false, helptext_system_certificates.viewDialog.close,false, this.incomingData.CSR).subscribe(res => {
+      '','','', false, helptext_system_certificates.viewDialog.close,false, this.incomingData.CSR,true).subscribe(res => {
         if (res) {
           this.exportCertificate();
         }
@@ -314,7 +314,7 @@ export class CertificateEditComponent {
     } else {
       this.dialog.confirm(this.incomingData.name, this.incomingData.certificate, true, 
         helptext_system_certificates.viewDialog.download, false, '',
-      '','','', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.certificate).subscribe(res => {
+      '','','', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.certificate,true).subscribe(res => {
         if (res) {
           this.exportCertificate();
         }
@@ -325,7 +325,7 @@ export class CertificateEditComponent {
   viewKey() {
     this.dialog.confirm(this.incomingData.name, this.incomingData.privatekey, true, 
       helptext_system_certificates.viewDialog.download, false, '',
-    '','','', false, helptext_system_certificates.viewDialog.close,false,this.incomingData.privatekey).subscribe(res => {
+    '','','', false, helptext_system_certificates.viewDialog.close,false,this.incomingData.privatekey,true).subscribe(res => {
       if (res) {
         this.exportKey();
       }
