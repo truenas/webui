@@ -32,11 +32,13 @@ export class CertificateAcmeAddComponent {
   protected arrayControl: any;
   private getRow = new Subscription;
   private rowNum: any;
+  private dns_map: any;
+  private title = helptext_system_certificates.list.action_create_acme_certificate;
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
     {
       name: helptext_system_certificates.acme.fieldset_acme,
-      label: true,
+      label: false,
       class: 'acme',
       width: '100%',
       config: [
@@ -147,9 +149,9 @@ export class CertificateAcmeAddComponent {
   
   preInit() { 
     this.ws.call('acme.dns.authenticator.query').subscribe(authenticators => {
-      let dns_map = _.find(this.fieldSets[2].config[0].templateListField, {'name' : 'authenticators'});
+      this.dns_map = _.find(this.fieldSets[2].config[0].templateListField, {'name' : 'authenticators'});
       authenticators.forEach(item => {
-        dns_map.options.push({ label: item.name, value: item.id})
+        this.dns_map.options.push({ label: item.name, value: item.id})
       })
     })
   }
@@ -179,12 +181,15 @@ export class CertificateAcmeAddComponent {
 
             const controls = listFields[i];            
             const name_text_fc = _.find(controls, {name: 'name_text'});
+            const auth_fc = _.find(controls, {name: 'authenticators'});
             this.domainList.controls[i].controls['name_text'].setValue(domains[i]);
             name_text_fc.paraText = domains[i];
+            auth_fc.options = this.dns_map.options;
           }
         }
       });
     })
+
   }
 
   customSubmit(value) {
@@ -205,16 +210,19 @@ export class CertificateAcmeAddComponent {
       helptext_system_certificates.acme.job_dialog_title) }, disableClose: true});
     this.dialogRef.componentInstance.setCall(this.addCall, [payload]);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((res) => {
+    this.dialogRef.componentInstance.success.subscribe(() => {
       this.dialog.closeAll();
       this.router.navigate(new Array('/').concat(this.route_success));
     });
     this.dialogRef.componentInstance.failure.subscribe((err) => {
       this.dialog.closeAll()
       // Dialog needed b/c handleWSError doesn't open a dialog when rejection comes back from provider
+      if (err.error.includes('[EFAULT')) {
+        new EntityUtils().handleWSError(this.entityForm, err);
+      } else {
       this.dialogService.errorReport(helptext_system_certificates.acme.error_dialog.title, 
         err.exc_info.type, err.exception)
-      new EntityUtils().handleWSError(this.entityForm, err);
+      }
     });
   }
 }
