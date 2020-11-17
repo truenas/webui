@@ -20,9 +20,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T968.feature', 'Create a wheel group smb share verify only wheel group can send file')
-def test_create_a_wheel_group_smb_share_verify_only_wheel_group_can_send_file(driver):
-    """Create a wheel group smb share verify only wheel group can send file."""
+@scenario('features/NAS-T971.feature', 'Create smb share for ericbsd verify only ericbsd can access it')
+def test_create_smb_share_for_ericbsd_verify_only_ericbsd_can_access_it():
+    """Create smb share for ericbsd verify only ericbsd can access it."""
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
@@ -83,9 +83,9 @@ def click_add(driver):
     assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Basic")]')
 
 
-@then(parsers.parse('Set Path to the wheel dataset "{path}"'))
-def set_path_to_the_wheel_dataset(driver, path):
-    """Set Path to the wheel dataset "/mnt/dozer/my_wheel_dataset"."""
+@then(parsers.parse('Set Path to the ericbsd dataset "{path}"'))
+def set_path_to_the_ericbsd_dataset(driver, path):
+    """Set Path to the ericbsd dataset "/mnt/dozer/ericbsd_dataset"."""
     global smb_path
     smb_path = path
     assert wait_on_element(driver, 0.5, 7, '//input[@ix-auto="input__path"]')
@@ -94,8 +94,8 @@ def set_path_to_the_wheel_dataset(driver, path):
 
 
 @then(parsers.parse('Input "{smbname}" as name, Click to enable'))
-def input_wheelsmbshare_as_name_click_to_enable(driver, smbname):
-    """Input "wheelsmbshare" as name, Click to enable."""
+def input_ericbsdsmbshare_as_name_click_to_enable(driver, smbname):
+    """Input "ericbsdsmbshare" as name, Click to enable."""
     assert wait_on_element(driver, 0.5, 7, '//input[@ix-auto="input__Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(smbname)
@@ -123,8 +123,8 @@ def click_summit(driver):
 
 
 @then(parsers.parse('The "{smbname}" should be added'))
-def the_wheelsmbshare_should_be_added(driver, smbname):
-    """The "wheelsmbshare" should be added."""
+def the_ericbsdsmbshare_should_be_added(driver, smbname):
+    """The "ericbsdsmbshare" should be added."""
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Samba")]')
     assert wait_on_element(driver, 1, 7, f'//div[contains(.,"{smbname}")]')
 
@@ -167,7 +167,7 @@ def click_on_smb_start_automatically_checkbox(driver):
 
 @then(parsers.parse('Send a file to the share with "{nas_url}"/"{smbname}" and "{user}"%"{password}"'))
 def send_a_file_to_the_share_with_nas_url_smbshare_and_user_password(driver, nas_url, smbname, user, password):
-    """Send a file to the share with "{nas_url}"/"wheelsmbshare" and "user"%"password"."""
+    """Send a file to the share with "{nas_url}"/"ericbsdsmbshare" and "user"%"password"."""
     run_cmd('touch testfile.txt')
     results = run_cmd(f'smbclient //{nas_url}/{smbname} -U {user}%{password} -c "put testfile.txt testfile.txt"')
     time.sleep(1)
@@ -182,19 +182,9 @@ def verify_that_the_file_is_on_nas_url_with_user_and_password(driver, nas_url, u
     assert results.status_code == 200, results.text
 
 
-@then(parsers.parse('Sending a file to the share should failed with "{nas_url}"/"{smbname}" and "{user}"%"{password}"'))
-def sending_a_file_to_the_share_should_failed_with_nas_url_wheelsmbshare_and_user_password(driver, nas_url, smbname, user, password):
-    """Sending a file to the share should failed with "nas_url"/"wheelsmbshare" and "user"%"password"."""
-    run_cmd('touch testfile2.txt')
-    results = run_cmd(f'smbclient //{nas_url}/{smbname} -U {user}%{password} -c "put testfile2.txt testfile2.txt"')
+@then(parsers.parse('Verify no other user can access with "{nas_url}"/"{smbname}" and "{user}"%"{password}"'))
+def verify_no_other_use_can_access_with_tnbhyve03tnixsystemsnetericbsdsmbshare_and_user2_testing1(driver, nas_url, smbname, user, password):
+    """Verify no other use can access with "tn-bhyve03.tn.ixsystems.net"/"ericbsdsmbshare" and "user"%"testing"."""
+    results = run_cmd(f'smbclient //{nas_url}/{smbname} -U {user}%{password} -c "put ls"')
     time.sleep(1)
-    run_cmd('rm testfile2.txt')
     assert not results['result'], results['output']
-
-
-@then(parsers.parse('Verify that the file is not on "{nas_url}" with "{user}" and "{password}"'))
-def verify_that_the_file_is_not_on_nas_url_with_root_and_password(driver, nas_url, user, password):
-    """Verify that the file is not on "{nas_url}" with "user" and "password"."""
-    results = post(nas_url, 'filesystem/stat/', (user, password), f'{smb_path}/testfile2.txt')
-    assert results.status_code == 422, results.text
-    assert 'not found' in results.text, results.text
