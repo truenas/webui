@@ -20,7 +20,7 @@ export class UserService {
 
   listGroups() { return this.ws.call(this.groupQuery, {limit: 50}); };
   
-  groupQueryDSCache(search = "", hideBuiltIn = false) {
+  groupQueryDSCache(search = "", hideBuiltIn = false, offset = 0) {
     let queryArgs = [];
     search = search.trim();
     if (search.length > 0) {
@@ -29,7 +29,7 @@ export class UserService {
     if (hideBuiltIn) {
       queryArgs = queryArgs.concat([["builtin", "=", false]]);
     }
-    return this.ws.call(this.groupQuery, [queryArgs, this.queryOptions]);
+    return this.ws.call(this.groupQuery, [queryArgs, {...this.queryOptions, offset}]);
   }
   
   getGroupByGID(gid) {
@@ -40,13 +40,13 @@ export class UserService {
     return this.ws.call(this.uncachedGroupQuery, [group]);
   }
 
-  userQueryDSCache(search = "") {
+  userQueryDSCache(search = "", offset = 0) {
     let queryArgs = [];
     search = search.trim();
     if (search.length > 0) {
       queryArgs = [["username", "^", search]];
     }
-    return this.ws.call(this.userQuery, [queryArgs, this.queryOptions]);
+    return this.ws.call(this.userQuery, [queryArgs, {...this.queryOptions, offset}]);
   }
 
   getUserByUID(uid) {

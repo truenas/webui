@@ -19,8 +19,9 @@ ix-auto ix-auto-type="combobox" ix-auto-identifier="{{config.placeholder}}">
         [required]="config.required"
         (keyup)="updateSearchOptions($event.target.value)"
         [matAutocomplete]="autoComplete"
+        [(ngModel)]="searchText"
         >
-       <mat-autocomplete #autoComplete="matAutocomplete">
+       <mat-autocomplete #autoComplete="matAutocomplete" (opened)="onOpenDropdown()">
         <mat-option *ngFor="let option of config.searchOptions" [value]="option.value"
           ix-auto ix-auto-type="option" ix-auto-identifier="{{option.label}}">
           <span>{{ option.label }}</span>
@@ -28,7 +29,7 @@ ix-auto ix-auto-type="combobox" ix-auto-identifier="{{config.placeholder}}">
        </mat-autocomplete>
     </mat-form-field>
     <mat-button mat-icon-button id="{{config.name}}-select" type="button" [matMenuTriggerFor]="options"
-      ix-auto ix-auto-type="button" ix-auto-identifier="{{config.name}}">
+      ix-auto ix-auto-type="button" ix-auto-identifier="{{config.name}}" (menuOpened)="onOpenMenu()">
       <mat-icon>arrow_drop_down</mat-icon>
     </mat-button>
     <mat-menu #options [class]="'combo-box-menu'">
