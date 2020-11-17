@@ -307,9 +307,8 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     const serverTime = xmlHttp.getResponseHeader("Date");
     const seconds = new Date(serverTime).getTime();
     const secondsToTrim = 60;
-    const newResult = new Date( seconds - ( secondsToTrim * 1000) );
-    //return new Date(serverTime);
-    return newResult;
+    const trimmed = new Date( seconds - ( secondsToTrim * 1000) );
+    return trimmed;
 
   }
 

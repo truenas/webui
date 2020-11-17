@@ -30,6 +30,7 @@ export class ReportsService implements OnDestroy {
       ws.call('reporting.get_data', [[evt.data.params],evt.data.timeFrame]).subscribe((raw_res) =>{
         let res;
 
+        // If requested, we truncate trailing null values 
         if(evt.data.truncate){
           let truncated = this.truncateData(raw_res[0].data);
           res = Object.assign([], raw_res);
@@ -91,7 +92,7 @@ export class ReportsService implements OnDestroy {
         command: 'maxDecimals',
         input: 3.145679156,
         options: [3]
-      }//,
+      }
     ]
 
     this.reportsUtils.postMessage({name:'ProcessCommands', data: pipeLine, sender: 'chartID'});
@@ -101,15 +102,22 @@ export class ReportsService implements OnDestroy {
     let finished = false;
     let index = data.length - 1;
     do{
-      const isEmpty = !data[index].reduce((acc, value) => acc + value);
+    
+      //True only when all the values are null
+      const isEmpty = !data[index].reduce((acc, v) => {
+        // Treat zero as a value
+        const value = v !== null ? 1 : v;
+        return acc + value;
+      });
+    
       if(isEmpty){ 
         data.splice(index, 1);
       } else {
         finished = true;
       }
       index--
-    } while(!finished);
-
+    } while(!finished && data.length > 0);
+    
     return data;
   }
 
