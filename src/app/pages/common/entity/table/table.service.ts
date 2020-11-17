@@ -2,6 +2,8 @@ import { Inject, Injectable, Optional } from "@angular/core";
 import { TranslateService } from '@ngx-translate/core';
 
 import { DialogService, AppLoaderService } from '../../../../services';
+import { MatDialog } from '@angular/material/dialog';
+import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../utils';
 
@@ -12,11 +14,13 @@ const stateClass = {
 
 @Injectable()
 export class TableService {
+    protected dialogRef: any;
 
     constructor(
         private dialogService: DialogService,
         private loader: AppLoaderService,
-        private translateService: TranslateService) { }
+        private translateService: TranslateService,
+        private mdDialog: MatDialog) { }
 
     // get table data source
     getData(table) {
@@ -96,8 +100,10 @@ export class TableService {
 
     // excute deletion of item
     doDelete(table, item) {
-        this.loader.open();
-        table.loaderOpen = true;
+        if (table.tableConf.deleteCallIsJob) {
+            this.loader.open();
+            table.loaderOpen = true;
+        }
         const data = {};
 
         let id;
@@ -106,20 +112,39 @@ export class TableService {
         } else {
             id = item.id;
         }
+        const params = table.tableConf.getDeleteCallParams ? table.tableConf.getDeleteCallParams(item, id) : [id];
 
-        table.busy = table.ws.call(table.tableConf.deleteCall, (table.tableConf.getDeleteCallParams ? table.tableConf.getDeleteCallParams(item, id) : [id])).subscribe(
-            (resinner) => {
-                this.getData(table);
-                table.excuteDeletion = true;
-                if (table.tableConf.afterDelete) {
-                    table.tableConf.afterDelete();
+        if (!table.tableConf.deleteCallIsJob) {
+            table.busy = table.ws.call(table.tableConf.deleteCall, params).subscribe(
+                (resinner) => {
+                    this.getData(table);
+                    table.excuteDeletion = true;
+                    if (table.tableConf.afterDelete) {
+                        table.tableConf.afterDelete();
+                    }
+                },
+                (resinner) => {
+                    new EntityUtils().handleWSError(this, resinner, this.dialogService);
+                    this.loader.close();
                 }
-            },
-            (resinner) => {
-                new EntityUtils().handleWSError(this, resinner, this.dialogService);
-                this.loader.close();
-            }
-        )
+            )
+        } else {
+            this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { "title": T('Deleting...') }, disableClose: false });
+            this.dialogRef.componentInstance.setCall(table.tableConf.deleteCall, params);
+            this.dialogRef.componentInstance.submit();
+            this.dialogRef.componentInstance.success.subscribe(() => {
+              this.dialogRef.close(true);
+              this.getData(table);
+              table.excuteDeletion = true;
+              if (table.tableConf.afterDelete) {
+                  table.tableConf.afterDelete();
+              }
+  
+            });
+            this.dialogRef.componentInstance.failure.subscribe((err) => {
+              new EntityUtils().handleWSError(this, err, this.dialogService);
+            });
+        }
     }
 
     unifyState(state) {

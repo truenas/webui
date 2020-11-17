@@ -81,6 +81,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
           title: T('Certificates'),
           queryCall: 'certificate.query',
           deleteCall: 'certificate.delete',
+          deleteCallIsJob: true,
           complex: true,
           dataSourceHelper: this.certificatesDataSourceHelper,
           getActions: this.certificateActions.bind(this),
@@ -95,8 +96,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
           },
           edit: function(row) {
             this.parent.modalService.open('slide-in-form', this.parent.certificateEditComponent, row.id);
-          },
-          afterDelete: this.updateTables.bind(this)
+          }
         }
       },
       {
@@ -105,6 +105,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
           title: T('Certificate Signing Requests'),
           queryCall: 'certificate.query',
           deleteCall: 'certificate.delete',
+          deleteCallIsJob: true,
           complex: true,
           dataSourceHelper: this.csrDataSourceHelper,
           getActions: this.csrActions.bind(this),
@@ -118,8 +119,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
           },
           edit: function(row) {
             this.parent.modalService.open('slide-in-form', this.parent.certificateEditComponent, row.id);
-          },
-          afterDelete: this.updateTables.bind(this)
+          }
         }
       },
       {
@@ -175,12 +175,6 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
       }
       
     ]
-  }
-
-  updateTables() {
-    setTimeout(() => {
-      this.getCards()
-    }, 100)
   }
 
   certificatesDataSourceHelper(res) {

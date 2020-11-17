@@ -11,6 +11,7 @@ export interface InputTableConf {
   queryCall: string;
   queryCallOption?: any;
   deleteCall?: string;
+  deleteCallIsJob?: boolean,
   complex?: boolean;
   hideHeader?: boolean; // hide table header row
   deleteMsg?: {
