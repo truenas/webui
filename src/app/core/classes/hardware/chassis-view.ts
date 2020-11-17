@@ -52,13 +52,17 @@ import {
      public container:Container;
      public events: Subject<CoreEvent>;
      public model: string;
+     public driveTray:DriveTray;
      public driveTraysOffsetY: number = 0; // if drives don't start at top.
      public driveTraysOffsetX: number = 0; // if drives don't start at top.
      public driveTrays: any;
      public driveTrayObjects: DriveTray[] = [];
+
      public chassis:Sprite;
      public chassisScale: Position;
-     public driveTray:DriveTray;
+     public chassisOffsetY: number = 0; // if drives don't start at top.
+     public chassisOffsetX: number = 0; // if drives don't start at top.
+
      public chassisPath: string;
      public driveTrayBackgroundPath: string;
      public driveTrayHandlePath: string;
@@ -159,6 +163,8 @@ import {
        this.chassis = PIXI.Sprite.from(this.loader.resources[this.model + "_chassis"].texture.baseTexture);
        this.chassis.name = this.model + '_chassis';
        this.chassis.alpha = 0;
+       this.chassis.x = this.chassisOffsetX;
+       this.chassis.y = this.chassisOffsetY;
        this.chassis.scale.x = this.chassisScale && this.chassisScale.x ? this.chassisScale.x : 1;
        this.chassis.scale.y = this.chassisScale && this.chassisScale.y ? this.chassisScale.y : 1;
        this.container.addChild(this.chassis);
@@ -337,6 +343,11 @@ import {
          // If chassis has already ben rendered to stage
          this.chassis.alpha = value;
        }
+     }
+
+     degreesToRadians(degrees){
+       const pi = Math.PI; 
+       return degrees * (pi/180);
      }
 
   }

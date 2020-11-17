@@ -168,8 +168,12 @@ export class VDevLabelsSVG {
         let tray = src.getGlobalPosition();
 
         let tileClass = "tile tile_" + disk;
-        this.createVdevLabelTile(tray.x, tray.y, src.width * this.chassis.container.scale.x, src.height * this.chassis.container.scale.y, tileClass, disk);
-        this.trays[ disk ] = {x: tray.x, y: tray.y, width: src.width * this.chassis.container.scale.x, height: src.height * this.chassis.container.scale.y};
+
+        const tileWidth = src.width * this.chassis.driveTrays.scale.x * this.chassis.container.scale.x;
+        const tileHeight = src.height * this.chassis.driveTrays.scale.y * this.chassis.container.scale.y;
+
+        this.createVdevLabelTile(tray.x, tray.y, tileWidth, tileHeight, tileClass, disk);
+        this.trays[ disk ] = {x: tray.x, y: tray.y, width: tileWidth, height: tileHeight};
       } 
     });
 

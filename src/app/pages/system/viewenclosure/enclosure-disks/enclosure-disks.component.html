@@ -50,14 +50,29 @@
           <div class="content">
 
             <div *ngIf="enclosurePools.length > 0; else noPools" class="legend">
-              <div *ngFor="let pool of enclosurePools; let i=index"><div class="swatch" 
-              [style.background]="subenclosure ? theme[theme.accentColors[subenclosure.poolKeys[pool]]] : theme[theme.accentColors[selectedEnclosure.poolKeys[pool]]]">
-              </div>{{pool}} <span *ngIf="!system.pools[selectedEnclosure.poolKeys[pool]].healthy"><mat-icon fontSet="mdi-set" role="img" fontIcon="mdi-alert"></mat-icon></span></div>
+              <div *ngFor="let pool of enclosurePools; let i=index">
+                <div class="swatch" 
+                  [style.background]="subenclosure ? theme[theme.accentColors[subenclosure.poolKeys[pool]]] : theme[theme.accentColors[selectedEnclosure.poolKeys[pool]]]">
+                </div>
+                {{pool}} 
+                <span *ngIf="!system.pools[selectedEnclosure.poolKeys[pool]].healthy">
+                  <mat-icon fontSet="mdi-set" role="img" fontIcon="mdi-alert"></mat-icon>
+                </span>
+              </div>
+
+              <!-- UNASSIGNED DISKS -->
+              <div>
+                <div class="swatch" style="background:#999999;"></div>UNASSIGNED
+              </div>
             </div>
 
             <ng-template #noPools>
               <div class="legend">
-                <div>No pools on this enclosure.</div>
+                <div style="margin-bottom: 8px;">No pools on enclosure.<br></div>
+                <!-- UNASSIGNED DISKS -->
+                <div>
+                  <div class="swatch" style="background:#999999;"></div>UNASSIGNED
+                </div>
               </div>
             </ng-template>
 
