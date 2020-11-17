@@ -85,7 +85,7 @@ def click_add(driver):
 
 @then(parsers.parse('Set Path to the wheel dataset "{path}"'))
 def set_path_to_the_wheel_dataset(driver, path):
-    """Set Path to the wheel dataset "/mnt/dozer/ericbsd_dataset"."""
+    """Set Path to the wheel dataset "/mnt/dozer/my_wheel_dataset"."""
     global smb_path
     smb_path = path
     assert wait_on_element(driver, 0.5, 7, '//input[@ix-auto="input__path"]')
@@ -94,8 +94,8 @@ def set_path_to_the_wheel_dataset(driver, path):
 
 
 @then(parsers.parse('Input "{smbname}" as name, Click to enable'))
-def input_ericbsdsmbshare_as_name_click_to_enable(driver, smbname):
-    """Input "ericbsdsmbshare" as name, Click to enable."""
+def input_wheelsmbshare_as_name_click_to_enable(driver, smbname):
+    """Input "wheelsmbshare" as name, Click to enable."""
     assert wait_on_element(driver, 0.5, 7, '//input[@ix-auto="input__Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(smbname)
@@ -123,8 +123,8 @@ def click_summit(driver):
 
 
 @then(parsers.parse('The "{smbname}" should be added'))
-def the_ericbsdsmbshare_should_be_added(driver, smbname):
-    """The "ericbsdsmbshare" should be added."""
+def the_wheelsmbshare_should_be_added(driver, smbname):
+    """The "wheelsmbshare" should be added."""
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Samba")]')
     assert wait_on_element(driver, 1, 7, f'//div[contains(.,"{smbname}")]')
 
@@ -167,7 +167,7 @@ def click_on_smb_start_automatically_checkbox(driver):
 
 @then(parsers.parse('Send a file to the share with "{nas_url}"/"{smbname}" and "{user}"%"{password}"'))
 def send_a_file_to_the_share_with_nas_url_smbshare_and_user_password(driver, nas_url, smbname, user, password):
-    """Send a file to the share with "{nas_url}"/"ericbsdsmbshare" and "user"%"password"."""
+    """Send a file to the share with "{nas_url}"/"wheelsmbshare" and "user"%"password"."""
     run_cmd('touch testfile.txt')
     results = run_cmd(f'smbclient //{nas_url}/{smbname} -U {user}%{password} -c "put testfile.txt testfile.txt"')
     time.sleep(1)
@@ -183,8 +183,8 @@ def verify_that_the_file_is_on_nas_url_with_user_and_password(driver, nas_url, u
 
 
 @then(parsers.parse('Sending a file to the share should failed with "{nas_url}"/"{smbname}" and "{user}"%"{password}"'))
-def sending_a_file_to_the_share_should_failed_with_nas_url_ericbsdsmbshare_and_user_password(driver, nas_url, smbname, user, password):
-    """Sending a file to the share should failed with "nas_url"/"ericbsdsmbshare" and "user"%"password"."""
+def sending_a_file_to_the_share_should_failed_with_nas_url_wheelsmbshare_and_user_password(driver, nas_url, smbname, user, password):
+    """Sending a file to the share should failed with "nas_url"/"wheelsmbshare" and "user"%"password"."""
     run_cmd('touch testfile2.txt')
     results = run_cmd(f'smbclient //{nas_url}/{smbname} -U {user}%{password} -c "put testfile2.txt testfile2.txt"')
     time.sleep(1)
