@@ -18,12 +18,13 @@ import { EntityUtils } from '../../../common/entity/utils';
 export class DiskListComponent {
 	public title = T("Disks");
 	protected queryCall = "disk.query";
+	protected queryCallOption = [[], {"extra":{"pools": true}}];
 
 	public columns: Array<any> = [
 		{ name: T('Name'), prop: 'name', always_display: true },
 		{ name: T('Serial'), prop: 'serial' },
 		{ name: T('Disk Size'), prop: 'readable_size' },
-		{ name: T('Pool'), prop: 'pool' },
+		{ name: T('Pools'), prop: 'pools' },
 		{ name: T('Disk Type'), prop: 'type', hidden: true },
 		{ name: T('Description'), prop: 'description', hidden: true },
 		{ name: T('Model'), prop: 'model', hidden: true },
