@@ -161,6 +161,8 @@ export class SystemProfiler {
       this.parseByTopology('spare', pool, pIndex);
       this.parseByTopology('cache', pool, pIndex);
       this.parseByTopology('log', pool, pIndex);
+      this.parseByTopology('special', pool, pIndex);
+      this.parseByTopology('dedup', pool, pIndex);
 
     });
     
