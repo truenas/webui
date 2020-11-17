@@ -91,7 +91,6 @@
               <li><strong>Vdev:</strong>  &nbsp;&nbsp;&nbsp;
                 <span *ngIf="selectedVdev.type == 'DISK'">DISK</span>
                 <span *ngIf="selectedVdev.type !== 'DISK'">{{selectedVdev.type == 'None' ? 'UNASSIGNED' : selectedVdev.type}}</span>
-                <!--<span *ngIf="selectedVdev.type">{{selectedVdev.type == 'None' ? 'UNASSIGNED' : selectedVdev.type}}</span>-->
                 
                 <ng-container *ngIf="selectedVdev.topology">
                   <ng-container [ngSwitch]="selectedVdev.topology.toUpperCase()">
