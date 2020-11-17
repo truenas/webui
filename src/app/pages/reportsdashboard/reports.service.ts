@@ -27,7 +27,17 @@ export class ReportsService implements OnDestroy {
     this.reportsUtils = new Worker('./reports-utils.worker',{ type: 'module' });
 
     core.register({observerClass: this, eventName:"ReportDataRequest"}).subscribe((evt:CoreEvent) => {
-      ws.call('reporting.get_data', [[evt.data.params],evt.data.timeFrame]).subscribe((res) =>{
+      ws.call('reporting.get_data', [[evt.data.params],evt.data.timeFrame]).subscribe((raw_res) =>{
+        let res;
+
+        if(evt.data.truncate){
+          let truncated = this.truncateData(raw_res[0].data);
+          res = Object.assign([], raw_res);
+          res[0].data = truncated;
+        } else {
+          res = raw_res;
+        }
+
         let commands = [
           {
             command: 'optimizeLegend',
@@ -59,7 +69,6 @@ export class ReportsService implements OnDestroy {
     });
 
     this.reportsUtils.onmessage = ({data}) => {
-      //console.log(data);
       if(data.name == 'ReportData'){
         this.core.emit({name: "ReportData-" + data.sender, data: data.data, sender:this});
       }
@@ -75,7 +84,6 @@ export class ReportsService implements OnDestroy {
   prepReport(evt:CoreEvent){
     this.reportsUtils.onmessage = ({data}) => {
       let evt = data;
-      console.log(evt);
     }
 
     let pipeLine: Command[] = [
@@ -87,6 +95,22 @@ export class ReportsService implements OnDestroy {
     ]
 
     this.reportsUtils.postMessage({name:'ProcessCommands', data: pipeLine, sender: 'chartID'});
+  }
+
+  truncateData(data){
+    let finished = false;
+    let index = data.length - 1;
+    do{
+      const isEmpty = !data[index].reduce((acc, value) => acc + value);
+      if(isEmpty){ 
+        data.splice(index, 1);
+      } else {
+        finished = true;
+      }
+      index--
+    } while(!finished);
+
+    return data;
   }
 
 }
