@@ -54,17 +54,17 @@ export class CertificateEditComponent {
       {
         type: 'paragraph',
         name: 'country',
-        paraText: `${helptext_system_certificates.add.country.placeholder}: `
+        paraText: helptext_system_certificates.edit_view.country
       },
       {
         type: 'paragraph',
         name: 'state',
-        paraText: `${helptext_system_certificates.add.state.placeholder}: `
+        paraText: helptext_system_certificates.edit_view.state
       },
       {
         type: 'paragraph',
         name: 'city',
-        paraText: `${helptext_system_certificates.add.city.placeholder}: `
+        paraText: helptext_system_certificates.edit_view.city
       }
     ]
   },{
@@ -74,17 +74,17 @@ export class CertificateEditComponent {
       {
         type: 'paragraph',
         name: 'organization',
-        paraText: `${helptext_system_certificates.add.organization.placeholder}: `
+        paraText: helptext_system_certificates.edit_view.organization
       },
       {
         type: 'paragraph',
         name: 'organizational_unit',
-        paraText: `${helptext_system_certificates.add.organizational_unit.placeholder}: `
+        paraText: helptext_system_certificates.edit_view.organizational_unit
       },
       {
         type: 'paragraph',
         name: 'email',
-        paraText: `${helptext_system_certificates.add.email.placeholder}: `
+        paraText: helptext_system_certificates.edit_view.email
       }
     ]
   }, {
@@ -94,17 +94,17 @@ export class CertificateEditComponent {
       {
         type: 'paragraph',
         name: 'common',
-        paraText: `${helptext_system_certificates.add.common.placeholder}: `
+        paraText: helptext_system_certificates.edit_view.common
       },
       {
         type: 'paragraph',
         name: 'san',
-        paraText: `${helptext_system_certificates.add.san.placeholder}: `
+        paraText: helptext_system_certificates.edit_view.san
       },
       {
         type: 'paragraph',
         name: 'DN',
-        paraText: `${helptext_system_certificates.add.DN}: `
+        paraText: helptext_system_certificates.edit_view.DN
       }
     ]
   }, {
@@ -119,27 +119,27 @@ export class CertificateEditComponent {
       {
         type: 'paragraph',
         name: 'cert_type',
-        paraText: `${helptext_system_certificates.add.type}: `
+        paraText: helptext_system_certificates.edit_view.type
       },
       {
         type: 'paragraph',
         name: 'root_path',
-        paraText: `${helptext_system_certificates.add.path}: `
+        paraText: helptext_system_certificates.edit_view.path
       },
       {
         type: 'paragraph',
         name: 'digest_algorithm',
-        paraText: `${helptext_system_certificates.add.digest_algorithm.placeholder}: `
+        paraText: helptext_system_certificates.edit_view.digest_algorithm
       },
       {
         type: 'paragraph',
         name: 'key_length',
-        paraText: `${helptext_system_certificates.add.key_length.placeholder}: `
+        paraText: helptext_system_certificates.edit_view.key_length
       },
       {
         type: 'paragraph',
         name: 'key_type',
-        paraText: `${helptext_system_certificates.add.key_type.placeholder}: `
+        paraText: helptext_system_certificates.edit_view.key_type
       },
       {
         type: 'button',
@@ -157,27 +157,27 @@ export class CertificateEditComponent {
       {
         type: 'paragraph',
         name: 'until',
-        paraText: `${helptext_system_certificates.add.unitl}: `
+        paraText: helptext_system_certificates.edit_view.unitl
       },
       {
         type: 'paragraph',
         name: 'issuer',
-        paraText: `${helptext_system_certificates.add.issuer}: `
+        paraText: helptext_system_certificates.edit_view.issuer
       },
       {
         type: 'paragraph',
         name: 'revoked',
-        paraText: `${helptext_system_certificates.add.revoked}: `
+        paraText: helptext_system_certificates.edit_view.revoked
       },
       {
         type: 'paragraph',
         name: 'signed_by',
-        paraText: `${helptext_system_certificates.add.signed_by}: `
+        paraText: helptext_system_certificates.edit_view.signed_by
       },
       {
         type: 'paragraph',
         name: 'lifetime',
-        paraText: `${helptext_system_certificates.add.lifetime.placeholder}: `
+        paraText: helptext_system_certificates.edit_view.lifetime
       },
       {
         type: 'button',

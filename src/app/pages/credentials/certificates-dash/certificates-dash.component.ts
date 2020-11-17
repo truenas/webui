@@ -95,7 +95,8 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
           },
           edit: function(row) {
             this.parent.modalService.open('slide-in-form', this.parent.certificateEditComponent, row.id);
-          }
+          },
+          afterDelete: this.updateTables.bind(this)
         }
       },
       {
@@ -117,7 +118,8 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
           },
           edit: function(row) {
             this.parent.modalService.open('slide-in-form', this.parent.certificateEditComponent, row.id);
-          }
+          },
+          afterDelete: this.updateTables.bind(this)
         }
       },
       {
@@ -140,6 +142,14 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
           },
           edit: function(row) {
             this.parent.modalService.open('slide-in-form', this.parent.certificateAuthorityEditComponent, row.id);
+          },
+          delete: function(row, table) {
+            if (row.signed_certificates > 0) {
+              this.parent.dialogService.confirm(helptext_system_ca.delete_error.title, helptext_system_ca.delete_error.message,
+                true, helptext_system_ca.delete_error.button, false, '', '', '', '', true)
+            } else {
+              table.tableService.delete(table, row);
+            }
           }
         }
       },
@@ -160,11 +170,17 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
           },
           edit: function(row) {
             this.parent.modalService.open('slide-in-form', this.parent.acmeDNSComponent, row.id);
-          }
+          },
         }
       }
       
     ]
+  }
+
+  updateTables() {
+    setTimeout(() => {
+      this.getCards()
+    }, 100)
   }
 
   certificatesDataSourceHelper(res) {

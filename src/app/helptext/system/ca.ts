@@ -405,5 +405,12 @@ certificate still approved.'),
     sign: T('Sign')
   },
   error: T('Error'),
-  private_key: T('Private Key')
+  private_key: T('Private Key'),
+
+  delete_error: {
+    title: T('Error'),
+    message: T('This Certificate Authority is being used to sign one or more certificates. It can be deleted \
+ only after deleting these certificates.'),
+    button: T('Close')
+  }
 };

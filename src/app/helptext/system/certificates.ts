@@ -351,14 +351,7 @@ be recognized by the certificate-using system or this certificate will be reject
 identified as <i>not</i> critical can be ignored by the certificate-using system and the \
 certificate still approved.'),
       },
-    },
-    DN: T('Distinguished Name'),
-    type: T('Type'),
-    path: T('Path'),
-    unitl: T('Until'),
-    issuer: T('Issuer'),
-    revoked: T('Revoked'),
-    signed_by: T('Signed By')
+    }
   },
 
   edit: {
@@ -460,5 +453,28 @@ certificate still approved.'),
     download: T('Download'),
     close: T('Close'),
     copy: T('Copy')
-  }  
+  },
+
+  edit_view: {
+    country: T('Country: '),
+    state: T('State: '),
+    city: T('City: '),
+    organization: T('Organization: '),
+    organizational_unit: T('Organizational Unit: '),
+    email: T('Email: '),
+    common: T('Common: '),
+    san: T('SAN: '),
+    DN: T('Distinguished Name: '),
+    type: T('Type: '),
+    path: T('Path: '),
+    digest_algorithm: T('Digest Algorithm: '),
+    key_length: T('Key Length: '),
+    key_type: T('Key Type: '),
+    unitl: T('Until: '),
+    issuer: T('Issuer: '),
+    revoked: T('Revoked: '),
+    signed_by: T('Signed By: '),
+    signed_certificates: T('Signed Certificates: '),
+    lifetime: T('Lifetime: ')
+  }
 };
