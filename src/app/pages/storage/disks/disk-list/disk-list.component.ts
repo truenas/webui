@@ -24,7 +24,7 @@ export class DiskListComponent {
 		{ name: T('Name'), prop: 'name', always_display: true },
 		{ name: T('Serial'), prop: 'serial' },
 		{ name: T('Disk Size'), prop: 'readable_size' },
-		{ name: T('Pools'), prop: 'pools' },
+		{ name: T('Pool'), prop: 'pool' },
 		{ name: T('Disk Type'), prop: 'type', hidden: true },
 		{ name: T('Description'), prop: 'description', hidden: true },
 		{ name: T('Model'), prop: 'model', hidden: true },
