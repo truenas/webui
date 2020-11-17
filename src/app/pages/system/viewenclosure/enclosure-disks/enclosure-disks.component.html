@@ -105,7 +105,17 @@
                 <span *ngIf="selectedVdev.type == 'DISK'"> NONE </span>
                 <span *ngIf="selectedVdev.type !== 'DISK'">{{selectedVdev.type == 'None' ? 'UNASSIGNED' : selectedVdev.type}}</span>
               </div>
-              <div *ngIf="selectedVdev.type !== 'None'" class="title"><span class="semibold">Function:</span> <span> {{selectedVdev.topology == 'None' ? 'UNKNOWN' : selectedVdev.topology.toUpperCase()}}</span></div>
+              <div *ngIf="selectedVdev.type !== 'None'" class="title">
+                <span class="semibold">Function:</span> 
+                <!--<span> {{selectedVdev.topology == 'None' ? 'UNKNOWN' : selectedVdev.topology.toUpperCase()}}</span></div>-->
+                <ng-container *ngIf="selectedVdev.type">
+                  <ng-container [ngSwitch]="selectedVdev.type.toUpperCase">
+                    <span *ngSwitchCase="'NONE'"> {{'UNKNOWN'}}</span>
+                    <span *ngSwitchCase="'SPECIAL'"> METADATA</span>
+                    <span *ngSwitchDefault> {{selectedVdev.topology.toUpperCase()}}</span>
+                  </ng-container>
+                </ng-container>
+              </div>
             </div>
           </div>
           
