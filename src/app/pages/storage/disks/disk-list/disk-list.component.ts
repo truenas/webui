@@ -248,6 +248,11 @@ export class DiskListComponent {
 		})
 	}
 
+	resourceTransformIncomingRestData(data) {
+		data.forEach(i => i.pool = i.pool ? i.pool : 'N/A');
+		return data;
+	}
+
 	manualTest(selected) {
 		const parent = this;
 		const disks = Array.isArray(selected) ? selected.map(item => item.name) : [selected.name];
