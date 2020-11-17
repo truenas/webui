@@ -108,8 +108,8 @@
               <div *ngIf="selectedVdev.type !== 'None'" class="title">
                 <span class="semibold">Function:</span> 
                 <!--<span> {{selectedVdev.topology == 'None' ? 'UNKNOWN' : selectedVdev.topology.toUpperCase()}}</span></div>-->
-                <ng-container *ngIf="selectedVdev.type">
-                  <ng-container [ngSwitch]="selectedVdev.type.toUpperCase">
+                <ng-container *ngIf="selectedVdev.topology">
+                  <ng-container [ngSwitch]="selectedVdev.topology.toUpperCase()">
                     <span *ngSwitchCase="'NONE'"> {{'UNKNOWN'}}</span>
                     <span *ngSwitchCase="'SPECIAL'"> METADATA</span>
                     <span *ngSwitchDefault> {{selectedVdev.topology.toUpperCase()}}</span>
