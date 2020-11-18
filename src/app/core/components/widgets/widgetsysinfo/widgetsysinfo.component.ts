@@ -180,29 +180,16 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
       this.buildDate = month + " " +  day + ", " + year + " " + hours + ":" + minutes;
 
       this.memory = this.formatMemory(this.data.physmem, "GiB");
+
+      // PLATFORM INFO
       if(this.data.system_manufacturer && this.data.system_manufacturer.toLowerCase() == 'ixsystems'){
         this.manufacturer = "ixsystems";
       } else {
         this.manufacturer = "other";
       }
       
+      // PRODUCT IMAGE
       this.setProductImage(evt.data);
-      /*
-      if (this.product_type === 'CORE'){ 
-        this.systemLogo = 'logo.svg';
-        this.getFreeNASImage(evt.data.system_product);
-        this.isFN = true;
-      } else if(this.product_type.includes('ENTERPRISE') && evt.data.license !== null) {
-        this.systemLogo = 'TrueNAS_Logomark_Black.svg';
-        if (this.data.license && this.data.license.model) {
-          this.getTrueNASImage(evt.data.license.model);
-        }
-        this.isFN = false;
-      } else if(this.product_type == 'SCALE') {
-        this.systemLogo = 'TrueNAS_Logomark_Black.svg';
-        this.getFreeNASImage(evt.data.system_product);
-        this.isFN = false;
-      }*/
 
       this.parseUptime();
       this.ready = true;
@@ -286,7 +273,15 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
     } else if (sys_product.includes('Z50')) {
       this.product_image = '/servers/Z50.png';
       this.product_model = 'Z50';
-
+    } else if (sys_product.includes('R10')) {
+      this.product_image = '/servers/R10.png';
+      this.product_model = 'R10';
+    } else if (sys_product.includes('R20')) {
+      this.product_image = '/servers/R20.png';
+      this.product_model = 'R20';
+    } else if (sys_product.includes('R40')) {
+      this.product_image = '/servers/R40.png';
+      this.product_model = 'R40';
     } else if (sys_product.includes('R50')) {
       this.product_image = '/servers/R50.png';
       this.product_model = 'R50';
