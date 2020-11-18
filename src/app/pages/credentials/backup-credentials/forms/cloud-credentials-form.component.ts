@@ -1549,7 +1549,6 @@ export class CloudCredentialsFormComponent {
       }
     }
     value['attributes'] = attributes;
-    console.log(value)
 
     this.entityForm.submitFunction(value).subscribe(
       (res) => {
