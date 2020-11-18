@@ -85,7 +85,7 @@ export class R50 extends Chassis{
       this.rear.driveTrayHandlePath = "assets/images/hardware/r50/r50_rear_960w_drivetray_handle.png"
       this.rear.columns = 1;
       this.rear.rows = 3;
-      this.rear.slotRange = {start: 54, end: 56};
+      this.rear.slotRange = {start: 49, end: 51};
   
       this.rear.totalDriveTrays = 3;
 
