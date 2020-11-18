@@ -102,14 +102,22 @@ export class FormComboboxComponent implements Field {
   }
 
   loadMoreSearchOptions() {
-    this.config.loadMoreOptions && 
-    this.config.parent && 
-    this.config.loadMoreOptions(this.config.searchOptions.length, this.searchText, this.config.parent);
+    if(this.config.loadMoreOptions && this.config.parent) {
+      if (this.config.updateLocal) {
+        this.config.loadMoreOptions(this.config.searchOptions.length, this.config.parent, this.searchText, this.config);
+      } else {
+        this.config.loadMoreOptions(this.config.searchOptions.length, this.config.parent, this.searchText);
+      }
+    }
   }
 
   loadMoreOptions() {
-    this.config.loadMoreOptions && 
-    this.config.parent && 
-    this.config.loadMoreOptions(this.config.options.length, "", this.config.parent);
+    if(this.config.loadMoreOptions && this.config.parent) {
+      if (this.config.updateLocal) {
+        this.config.loadMoreOptions(this.config.options.length, this.config.parent, "", this.config);
+      } else {
+        this.config.loadMoreOptions(this.config.options.length, this.config.parent, "");
+      }
+    }
   }
 }

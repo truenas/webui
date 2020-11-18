@@ -286,7 +286,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
     });
   }
 
-  loadMoreOptions(length, searchText, parent) {
+  loadMoreOptions(length, parent, searchText) {
     parent.userService.userQueryDSCache(searchText, length).subscribe(items => {
       const users = [];
       for (let i = 0; i < items.length; i++) {
@@ -300,7 +300,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
     });
   }
 
-  loadMoreGroupOptions(length, searchText, parent) {
+  loadMoreGroupOptions(length, parent, searchText) {
     parent.userService.groupQueryDSCache(searchText, false, length).subscribe(items => {
       const groups = [];
       for (let i = 0; i < items.length; i++) {
