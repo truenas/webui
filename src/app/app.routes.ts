@@ -69,6 +69,11 @@ export const rootRouterConfig: Routes = [{
         data: { title: 'Virtual Machines', breadcrumb: 'Virtual Machines', toplevel:true }
       },
       {
+        path: 'apps',
+        loadChildren: 'app/pages/applications/applications.module#ApplicationsModule',
+        data: { title: 'Applications', breadcrumb: 'Applications', toplevel:true }
+      },
+      {
         path: 'containers',
         loadChildren: 'app/pages/containers/containers.module#ContainersModule',
         data: { title: 'Containers', breadcrumb: 'Containers' }
