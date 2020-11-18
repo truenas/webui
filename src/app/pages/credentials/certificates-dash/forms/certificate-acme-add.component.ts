@@ -32,6 +32,7 @@ export class CertificateAcmeAddComponent {
   private rowNum: any;
   private dns_map: any;
   private title = helptext_system_certificates.list.action_create_acme_certificate;
+  protected isOneColumnForm = true;
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
     {
