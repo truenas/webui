@@ -674,6 +674,22 @@ export class CloudCredentialsFormComponent {
             }
           ]
         },
+        {
+          type: 'input',
+          name: 'hostname-PCLOUD',
+          placeholder: helptext.hostname_pcloud.placeholder,
+          tooltip: helptext.hostname_pcloud.tooltip,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'PCLOUD',
+              }]
+            }
+          ]
+        },
         // sftp
         {
           type: 'input',
@@ -1214,7 +1230,9 @@ export class CloudCredentialsFormComponent {
                 if (prop != 'client_id' && prop != 'client_secret') {
                   targetProp += '-' + selectedProvider;
                 }
-                controls[targetProp].setValue(message.data.result[prop]);
+                if (controls[targetProp]) {
+                  controls[targetProp].setValue(message.data.result[prop]);
+                }
               }
             }
             if (selectedProvider === 'ONEDRIVE') {
@@ -1251,6 +1269,10 @@ export class CloudCredentialsFormComponent {
           }
         }
         value['attributes'] = attributes;
+
+        if (value.provider === 'PCLOUD') {
+          delete value.attributes.hostname;
+        }
 
         if (value.attributes.private_key && value.attributes.private_key === 'NEW') {
           this.makeNewKeyPair(value);
