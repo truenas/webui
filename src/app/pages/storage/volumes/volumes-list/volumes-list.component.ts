@@ -489,6 +489,68 @@ export class VolumesListTableConfig implements InputTableConf {
     const actions = [];
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (rowData.type === 'zpool') {
+        if (rowData.is_decrypted) {
+          actions.push({
+          id: rowData.name,
+          name: T('Pool Options'),
+          label: T('Pool Options'),
+          onClick: (row) => {
+            console.log(row);
+            //const autotrim = (row.autotrim === 'ON');
+
+            const self = this;
+            this.dialogConf = {
+              title: helptext.pool_options_dialog.dialog_title + row.name,
+              confirmCheckbox: true,
+              fieldConfig: [
+                {
+                  type: 'checkbox',
+                  name: 'autotrim',
+                  placeholder: helptext.pool_options_dialog.autotrim_placeholder,
+                  tooltip: helptext.pool_options_dialog.autotrim_tooltip,
+                  value: (row.autotrim.value === 'on'),
+                },
+              ],
+              saveButtonText: helptext.encryption_options_dialog.save_button,
+              afterInit: function(entityDialog) {
+              },
+              customSubmit: function(entityDialog) {
+                const formValue = entityDialog.formValue;
+                let method = 'pool.update';
+                const body = {};
+                const payload = [row.id];
+                body['autotrim'] = (formValue.autotrim ? 'ON': 'OFF');
+                payload.push(body);
+                const dialogRef = self.mdDialog.open(EntityJobComponent, {data: {"title":helptext.pool_options_dialog.save_pool_options}, disableClose: true});
+                dialogRef.componentInstance.setDescription(helptext.pool_options_dialog.saving_pool_options);
+                dialogRef.componentInstance.setCall(method, payload);
+                dialogRef.componentInstance.submit();
+                dialogRef.componentInstance.success.subscribe(res=>{
+                  if (res) {
+                    dialogRef.close()
+                    entityDialog.dialogRef.close();
+                    self.translate.get(helptext.pool_options_dialog.dialog_saved_message1).subscribe(msg1 => {
+                      self.translate.get(helptext.pool_options_dialog.dialog_saved_message2).subscribe(msg2 => {
+                        self.dialogService.Info(helptext.pool_options_dialog.dialog_saved_title, 
+                          msg1 + row.id + msg2);
+                        self.parentVolumesListComponent.repaintMe();
+                      })
+                    })
+                  }
+                });
+                dialogRef.componentInstance.failure.subscribe(err =>{
+                  if (err) {
+                    dialogRef.close();
+                    new EntityUtils().handleWSError(entityDialog, err, self.dialogService);
+                  }
+                });
+              }
+            }
+            this.dialogService.dialogForm(this.dialogConf).subscribe((res) => {
+            });
+          }
+        });
+      }
       actions.push({
         id: rowData.name,
         name: 'Export/Disconnect',
