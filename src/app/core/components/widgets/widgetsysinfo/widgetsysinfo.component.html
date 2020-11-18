@@ -25,7 +25,7 @@
               <mat-icon (click)="goBack()" class="back-arrow">chevron_left</mat-icon>
             </button>
 
-            <div class="platform-logo-wrapper" fxFlex="20">
+            <div class="platform-logo-wrapper {{product_type.toLowerCase()}}" fxFlex="20">
                 <ng-container *ngIf="product_image || isPassive; else textOnly">
                   <mat-icon *ngIf="retroLogo == 1" svgIcon="freenas_logo_full" class="retro" id="{{product_model}}"></mat-icon>
                   <mat-icon *ngIf="retroLogo == 0 && product_type == 'CORE'" svgIcon="truenas_core_logo_full" id="{{product_model}}"></mat-icon>
@@ -43,7 +43,7 @@
 
             <div class="content-left" [fxFlex.xs]="product_type === 'ENTERPRISE' && product_image == 'X10'? 80 : 60" fxFlex.gt-xs="60"  fxLayout="column" fxLayoutAlign="center center">
 
-              <div class="product-image {{product_type === 'ENTERPRISE' ? 'truenas' : 'freenas'}} {{product_image == 'ix-original.svg' ? 'ix-logo' : ''}}">
+              <div class="product-image {{product_enclosure}} {{product_type === 'ENTERPRISE' ? 'truenas' : 'freenas'}} {{product_image == 'ix-original.svg' ? 'ix-logo' : ''}}">
                 <img *ngIf="product_image; else generic" [src]="'assets/images/' + product_image" id="{{product_model}}">
                   <ng-template #generic>
                     <!--<mat-icon *ngIf="product_type === 'CORE' && !certified" class="generic" svgIcon="freenas_logomark"></mat-icon>-->
