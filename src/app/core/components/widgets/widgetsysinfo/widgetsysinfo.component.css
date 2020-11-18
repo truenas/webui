@@ -230,6 +230,8 @@ span.passive{
   color: var(--primary-color-txt);
 }
 
+.platform-logo-wrapper.scale,
+.platform-logo-wrapper.scale_enterprise,
 .platform-logo-wrapper.core{
   padding-top:18px;
 }
