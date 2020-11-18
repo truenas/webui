@@ -39,9 +39,7 @@ def if_login_page_appear_enter_user_and_password(driver, user, password):
         wait_on_element(driver, 0.5, 30, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
-        element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-        driver.execute_script("arguments[0].scrollIntoView();", element)
-        time.sleep(0.5)
+
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 

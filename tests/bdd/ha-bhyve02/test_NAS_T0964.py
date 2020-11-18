@@ -43,9 +43,7 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
         assert wait_on_element(driver, 0.5, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
-        element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-        driver.execute_script("arguments[0].scrollIntoView();", element)
-        time.sleep(0.5)
+
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -59,9 +57,7 @@ def you_should_see_the_dashboard_and_system_information(driver):
 def click_on_sharing_then_windows_sharessmb(driver):
     """Click on Sharing then Windows Shares(SMB)."""
     assert wait_on_element(driver, 1, 5, '//span[contains(.,"root")]')
-    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Sharing"]').click()
     assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Windows Shares (SMB)"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Windows Shares (SMB)"]').click()

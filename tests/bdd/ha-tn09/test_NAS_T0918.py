@@ -42,9 +42,7 @@ def login_appear_enter_root_and_password(driver, user, password):
         assert wait_on_element(driver, 0.5, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
-        element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-        driver.execute_script("arguments[0].scrollIntoView();", element)
-        time.sleep(0.5)
+
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -126,10 +124,7 @@ def the_service_should_be_enabled_with_no_errors(driver):
     """the service should be enabled with no errors."""
     wait_for_value = wait_for_attribute_value(driver, 1, 5, '//mat-slide-toggle[@ix-auto="slider__SSH_Running"]', 'class', 'mat-checked')
     assert wait_for_value
-    # make sure to scroll back up the mat-list-item
-    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 

@@ -37,9 +37,7 @@ def if_login_page_appear_enter_user_and_password(driver, user, password):
         assert wait_on_element(driver, 0.5, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
-        element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-        driver.execute_script("arguments[0].scrollIntoView();", element)
-        time.sleep(0.5)
+
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -52,9 +50,7 @@ def you_should_see_the_dashboard_and_system_information(driver):
 @then('Navigate to Storage click Pools')
 def navigate_to_storage_click_pools(driver):
     """Navigate to Storage click Pools."""
-    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
     assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Pools"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Pools"]').click()
@@ -120,9 +116,7 @@ def you_should_be_returned_to_list_of_pools_and_dozer_should_appear_in_it(driver
 @then('Navigate to Systems then System Dataset')
 def navigate_to_systems_then_system_dataset(driver):
     """Navigate to Systems then System Dataset."""
-    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
     assert wait_on_element(driver, 0.5, 30, '//mat-list-item[@ix-auto="option__System Dataset"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Dataset"]').click()
@@ -168,9 +162,7 @@ def Please_wait_should_appear_while_settings_are_being_applied(driver):
 @then('Navigate to dashboard')
 def navigate_to_dashboard(driver):
     """Navigate to dashboard."""
-    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 0.5, 30, '//span[contains(.,"System Information")]')
 

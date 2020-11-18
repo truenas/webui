@@ -110,10 +110,6 @@ def wait_on_element(wait, loop, xpath):
 
 
 def enable_failover():
-    # make sure to scroll back up the mat-list-item
-    element = web_driver.find_element_by_xpath('//span[contains(.,"root")]')
-    web_driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
     wait_on_element(0.5, 5, '//mat-list-item[@ix-auto="option__Failover"]')
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Failover"]').click()
@@ -128,9 +124,5 @@ def enable_failover():
         if element_exist('//button[@ix-auto="button__CLOSE"]'):
             web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     time.sleep(1)
-    # make sure to scroll back up the mat-list-item
-    element = web_driver.find_element_by_xpath('//span[contains(.,"root")]')
-    web_driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     wait_on_element(1, 90, '//mat-icon[@svgicon="ha_enabled"]')

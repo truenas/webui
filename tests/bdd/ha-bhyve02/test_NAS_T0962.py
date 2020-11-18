@@ -44,9 +44,7 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
         assert wait_on_element(driver, 1, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
-        element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-        driver.execute_script("arguments[0].scrollIntoView();", element)
-        time.sleep(1)
+
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -203,9 +201,7 @@ def verify_that_the_trust_secret_succeeded(driver):
 @then('Navigate to Dashboard')
 def navigate_to_dashboard(driver):
     """Navigate to Dashboard"""
-    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 0.5, 10, '//span[contains(.,"System Information")]')
 
@@ -246,9 +242,7 @@ def navigate_to_storage_click_pools(driver):
     """Navigate to Storage click Pools."""
     # Scroll up the mat-list-item
     assert wait_on_element(driver, 1, 5, '//span[contains(.,"root")]')
-    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
     assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Pools"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Pools"]').click()

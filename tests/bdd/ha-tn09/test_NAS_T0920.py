@@ -38,9 +38,7 @@ def login_appear_enter_user_and_password(driver, user, password):
         wait_on_element(driver, 0.5, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
-        element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-        driver.execute_script("arguments[0].scrollIntoView();", element)
-        time.sleep(0.5)
+
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -54,10 +52,7 @@ def you_should_see_the_dashboard(driver):
 @then('Navigate to System then to Failover')
 def navigate_to_system_then_to_failover(driver):
     """Navigate to System then to Failover."""
-    # make sure to scroll back up the mat-list-item
-    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
     wait_on_element(driver, 0.5, 30, '//mat-list-item[@ix-auto="option__Failover"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Failover"]').click()
@@ -300,10 +295,7 @@ def uncheck_disable_failover_and_click_save_check_confirm_on_the_warning_dialog_
 @then('Logout and log back in')
 def logout_and_log_back_in(driver):
     """Logout and log back in."""
-    # make sure to scroll back up the mat-list-item
-    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     wait_on_element(driver, 0.5, 5, '//button[@ix-auto="button__power"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__power"]').click()

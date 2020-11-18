@@ -37,9 +37,7 @@ def login_appear_enter_root_and_password(driver, password):
         assert wait_on_element(driver, 0.5, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
-        element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-        driver.execute_script("arguments[0].scrollIntoView();", element)
-        time.sleep(0.5)
+
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -200,10 +198,7 @@ def please_wait_should_appear_while_settings_are_being_applied_you_should_be_ret
 @then('Navigate to System click Failover, check disable failover, click save.')
 def navigate_to_system_click_failover_click_disable_failover_click_save(driver):
     """Navigate to System click Failover, click disable failover, click save."""
-    # make sure to scroll back up the mat-list-item
-    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
     assert wait_on_element(driver, 0.5, 30, '//mat-list-item[@ix-auto="option__Failover"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Failover"]').click()
@@ -388,10 +383,7 @@ def create_pool_should_appear_while_pool_is_being_created_you_should_be_returned
 @then('Navigate to System then Failover, uncheck disable failover, click save.')
 def navigate_to_system_then_failover_click_disable_failover_click_save(driver):
     """Navigate to System then Failover, uncheck disable failover, click save."""
-    # make sure to scroll back up the mat-list-item
-    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(1)
+
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
     assert wait_on_element(driver, 1, 5, '//mat-list-item[@ix-auto="option__Failover"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Failover"]').click()
@@ -406,9 +398,7 @@ def navigate_to_dashboard_and_verify_that_both_controllers_show(driver):
     """Navigate to dashboard, and verify that both controllers show."""
     # make sure to scroll back up the mat-list-item
     assert wait_on_element(driver, 1, 30, '//h4[contains(.,"Failover Configuration")]')
-    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(1)
+
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 0.5, 30, '//span[contains(.,"System Information")]')
     driver.find_element_by_xpath('//span[contains(.,"System Information")]')

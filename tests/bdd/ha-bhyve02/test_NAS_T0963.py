@@ -41,9 +41,7 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
         assert wait_on_element(driver, 0.5, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
-        element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-        driver.execute_script("arguments[0].scrollIntoView();", element)
-        time.sleep(0.5)
+
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -57,9 +55,7 @@ def you_should_see_the_dashboard_and_system_information(driver):
 def navigate_to_storage_click_pools(driver):
     """Navigate to Storage click Pools."""
     assert wait_on_element(driver, 1, 5, '//span[contains(.,"root")]')
-    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
     assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Pools"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Pools"]').click()
@@ -152,8 +148,6 @@ def verify_the_new_acl_item_for_user_name_still_exist(driver, user):
 @then('Navigate to Dashboard')
 def navigate_to_dashboard(driver):
     """Navigate to Dashboard."""
-    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 0.5, 10, '//span[contains(.,"System Information")]')
