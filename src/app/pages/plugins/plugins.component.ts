@@ -135,30 +135,48 @@ export class PluginsComponent {
       enable: true,
       ttpos: "above",
       onClick: (selected) => {
-        const selectedJails = this.getSelectedNames(selected);
-        this.dialogService.Info(helptext.multi_update_dialog.title, helptext.multi_update_dialog.content);
-        this.entityList.busy =
-          this.ws.job('core.bulk', ["jail.update_to_latest_patch", selectedJails]).subscribe(
-            (res) => {
-              let message = "";
-              for (let i = 0; i < res.result.length; i++) {
-                if (res.result[i].error != null) {
-                  message = message + '<li>' + selectedJails[i] + ': ' + res.result[i].error + '</li>';
-                }
-              }
-              this.updateRows(selected).then(() => {
-                if (message === "") {
-                  this.entityList.table.rowDetail.collapseAllRows();
-                  this.dialogService.Info(helptext.multi_update_dialog.title, helptext.multi_update_dialog.succeed);
-                } else {
-                  message = '<ul>' + message + '</ul>';
-                  this.dialogService.errorReport(T('Plugin Update Failed'), message);
-                }
-              });
-            },
-            (res) => {
-              new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
-            });
+        const self = this;
+        const conf: DialogFormConfiguration = {
+          title:  T('Update plugins'),
+          fieldConfig: [
+            {
+              type: 'checkbox',
+              name: 'update_jail',
+              placeholder: T('Update jails as well')
+            }
+          ],
+          confirmCheckbox: true,
+          saveButtonText: T('Update'),
+          customSubmit: function (entityDialog) {
+            entityDialog.dialogRef.close(true);
+            const selectedJails = self.getSelectedNamesWithChecks(selected, entityDialog.formValue.update_jail ? true : false);
+            self.dialogService.Info(helptext.multi_update_dialog.title, helptext.multi_update_dialog.content);
+            self.entityList.busy =
+              self.ws.job('core.bulk', ["plugin.update", selectedJails]).subscribe(
+                (res) => {
+                  let message = "";
+                  for (let i = 0; i < res.result.length; i++) {
+                    if (res.result[i].error != null) {
+                      message = message + '<li>' + selectedJails[i] + ': ' + res.result[i].error + '</li>';
+                    }
+                  }
+                  self.updateRows(selected).then(() => {
+                    if (message === "") {
+                      self.entityList.table.rowDetail.collapseAllRows();
+                      self.dialogService.Info(helptext.multi_update_dialog.title, helptext.multi_update_dialog.succeed);
+                    } else {
+                      message = '<ul>' + message + '</ul>';
+                      self.dialogService.errorReport(T('Plugin Update Failed'), message);
+                    }
+                  });
+                },
+                (res) => {
+                  new EntityUtils().handleWSError(self.entityList, res, self.dialogService);
+                });
+          }
+        }
+        this.dialogService.dialogForm(conf);
+      
       }
     },
     // {
@@ -323,6 +341,14 @@ export class PluginsComponent {
     return selected;
   }
 
+  getSelectedNamesWithChecks(selectedJails, check: boolean) {
+    const selected: any = [];
+    for (const i in selectedJails) {
+      selected.push([selectedJails[i]['name'], check]);
+    }
+    return selected;
+  }
+
   updateRows(rows: Array<any>): Promise<boolean> {
     return new Promise((resolve, reject) => {
       this.ws.call('plugin.query').subscribe(
@@ -436,15 +462,34 @@ export class PluginsComponent {
       label: T("UPDATE"),
       icon: 'update',
       onClick: (row) => {
-        const dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Updating Plugin") }, disableClose: true });
-        dialogRef.componentInstance.disableProgressValue(true);
-        dialogRef.componentInstance.setCall('jail.update_to_latest_patch', [row.name]);
-        dialogRef.componentInstance.submit();
-        dialogRef.componentInstance.success.subscribe((res) => {
-          dialogRef.close(true);
-          this.updateRows([row]);
-          this.dialogService.Info(T('Plugin Updated'), T("Plugin ") + row.name + T(" updated."));
-        });
+        const self = this;
+        const conf: DialogFormConfiguration = {
+          title: T('Update plugin'),
+          fieldConfig: [
+            {
+              type: 'checkbox',
+              name: 'update_jail',
+              placeholder: T('Update jail as well')
+            }
+          ],
+          confirmCheckbox: true,
+          saveButtonText: T('Update'),
+          customSubmit: function (entityDialog) {
+            entityDialog.dialogRef.close(true);
+            const dialogRef = self.matDialog.open(EntityJobComponent, { data: { "title": T("Updating Plugin") }, disableClose: true });
+            dialogRef.componentInstance.disableProgressValue(true);
+            
+            dialogRef.componentInstance.setCall('plugin.update', [row.id, entityDialog.formValue.update_jail ? true : false]);
+            dialogRef.componentInstance.submit();
+            dialogRef.componentInstance.success.subscribe((res) => {
+              dialogRef.close(true);
+              this.updateRows([row]);
+              this.dialogService.Info(T('Plugin Updated'), T("Plugin ") + row.name + T(" updated."));
+            });
+          }
+        }
+        this.dialogService.dialogForm(conf);
+      
       }
     },
     {
