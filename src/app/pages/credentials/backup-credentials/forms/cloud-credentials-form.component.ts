@@ -679,6 +679,22 @@ export class CloudCredentialsFormComponent {
             }
           ]
         },
+        {
+          type: 'input',
+          name: 'hostname',
+          placeholder: helptext.hostname_pcloud.placeholder,
+          tooltip: helptext.hostname_pcloud.tooltip,
+          isHidden: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'provider',
+                value: 'PCLOUD',
+              }]
+            }
+          ]
+        },
         // sftp
         {
           type: 'input',
@@ -1207,6 +1223,41 @@ export class CloudCredentialsFormComponent {
 
   public custActions: Array<any> = [
     {
+      id: 'authenticate',
+      name: T('LOGIN TO PROVIDER'),
+      function: () => {
+        window.open(this.oauthURL+ "?origin=" + encodeURIComponent(window.location.toString()), "_blank", "width=640,height=480");
+        const controls = this.entityForm.formGroup.controls;
+        const selectedProvider = this.selectedProvider;
+        const dialogService = this.dialog;
+        const getOnedriveList = this.getOnedriveList.bind(this);
+
+        window.addEventListener("message", doAuth, false);
+
+        function doAuth(message) {
+          if (message.data.oauth_portal) {
+            if (message.data.error) {
+              dialogService.errorReport(T('Error'), message.data.error);
+            } else {
+              for (const prop in message.data.result) {
+                let targetProp = prop;
+                if (prop != 'client_id' && prop != 'client_secret') {
+                  targetProp += '-' + selectedProvider;
+                }
+                if (controls[targetProp]) {
+                  controls[targetProp].setValue(message.data.result[prop]);
+                }
+              }
+            }
+            if (selectedProvider === 'ONEDRIVE') {
+              getOnedriveList(message.data);
+            }
+          }
+          window.removeEventListener("message", doAuth);
+        }
+      }
+    },
+    {
       id : 'validCredential',
       name : T('Verify Credential'),
       buttonColor: 'default',
@@ -1498,6 +1549,7 @@ export class CloudCredentialsFormComponent {
       }
     }
     value['attributes'] = attributes;
+    console.log(value)
 
     this.entityForm.submitFunction(value).subscribe(
       (res) => {
