@@ -495,7 +495,6 @@ export class VolumesListTableConfig implements InputTableConf {
           name: T('Pool Options'),
           label: T('Pool Options'),
           onClick: (row) => {
-            console.log(row);
             //const autotrim = (row.autotrim === 'ON');
 
             const self = this;
@@ -532,7 +531,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     self.translate.get(helptext.pool_options_dialog.dialog_saved_message1).subscribe(msg1 => {
                       self.translate.get(helptext.pool_options_dialog.dialog_saved_message2).subscribe(msg2 => {
                         self.dialogService.Info(helptext.pool_options_dialog.dialog_saved_title, 
-                          msg1 + row.id + msg2);
+                          msg1 + row.name + msg2);
                         self.parentVolumesListComponent.repaintMe();
                       })
                     })
