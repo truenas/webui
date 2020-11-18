@@ -110,10 +110,15 @@ def wait_on_element(wait, loop, xpath):
 
 
 def enable_failover():
-    web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
-    wait_on_element(0.5, 5, '//mat-list-item[@ix-auto="option__Failover"]')
-    web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Failover"]').click()
-    wait_on_element(0.5, 5, '//h4[contains(.,"Failover Configuration")]')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+    wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__System Settings"]')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
+    wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Misc"]')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Misc"]').click()
+    assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Miscellaneous")]')
+    assert wait_on_element(driver, 0.5, 7, '//li[contains(.,"Failover")]')
+    driver.find_element_by_xpath('//li[contains(.,"Failover")]').click()
+    assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Failover")]')
     element = web_driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]')
     class_attribute = element.get_attribute('class')
     if 'mat-checkbox-checked' in class_attribute:
@@ -125,4 +130,4 @@ def enable_failover():
             web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     time.sleep(1)
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    wait_on_element(1, 90, '//mat-icon[@svgicon="ha_enabled"]')
+    # wait_on_element(1, 90, '//mat-icon[@svgicon="ha_enabled"]')
