@@ -21,14 +21,13 @@ import { CertificateAddComponent } from './certificates-dash/forms/certificate-a
 import { CertificateAuthorityAddComponent } from './certificates-dash/forms/ca-add.component';
 import { CertificateAuthorityEditComponent } from './certificates-dash/forms/ca-edit.component';
 import { CertificateAcmeAddComponent } from './certificates-dash/forms/certificate-acme-add.component';
-import { CertificateAuthoritySignComponent } from './certificates-dash/forms/ca-sign.component';
 import { AcmednsFormComponent } from './certificates-dash/forms/acmedns-form.component'
 
 @NgModule({
   declarations: [ CredentialsComponent, BackupCredentialsComponent, SshConnectionsFormComponent, 
     CloudCredentialsFormComponent, SshKeypairsFormComponent, CertificatesDashComponent, CertificateAcmeAddComponent,
     CertificateAddComponent, CertificateAuthorityAddComponent, CertificateAuthorityEditComponent,
-    CertificateAuthoritySignComponent, CertificateAcmeAddComponent, CertificateEditComponent, AcmednsFormComponent ],
+    CertificateAcmeAddComponent, CertificateEditComponent, AcmednsFormComponent ],
   imports: [
     CommonModule,
     MatCardModule,

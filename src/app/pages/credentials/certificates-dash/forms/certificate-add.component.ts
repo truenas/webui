@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { SelectControlValueAccessor, Validators } from '@angular/forms';
+import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 

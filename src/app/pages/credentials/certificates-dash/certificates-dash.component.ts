@@ -16,7 +16,6 @@ import { CertificateAddComponent } from './forms/certificate-add.component';
 import { CertificateEditComponent } from './forms/certificate-edit.component';
 import { CertificateAuthorityAddComponent } from './forms/ca-add.component';
 import { CertificateAuthorityEditComponent } from './forms/ca-edit.component';
-import { CertificateAuthoritySignComponent } from './forms/ca-sign.component';
 import { CertificateAcmeAddComponent } from './forms/certificate-acme-add.component';
 import { AcmednsFormComponent } from './forms/acmedns-form.component';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
@@ -38,7 +37,6 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
   protected certificateEditComponent: CertificateEditComponent;
   protected certificateAuthorityAddComponent: CertificateAuthorityAddComponent;
   protected certificateAuthorityEditComponent: CertificateAuthorityEditComponent;
-  protected certificateAuthoritySignComponent: CertificateAuthoritySignComponent;
   protected acmeAddComponent: CertificateAcmeAddComponent;
   protected acmeDNSComponent: AcmednsFormComponent;
   private downloadActions: any;
@@ -208,10 +206,8 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
       this.systemGeneralService);
     this.certificateAuthorityEditComponent = new CertificateAuthorityEditComponent(this.ws,this.loader,
       this.modalService,this.storage, this.http,this.dialogService,this.systemGeneralService);
-    this.certificateAuthoritySignComponent = new CertificateAuthoritySignComponent(this.router,this.route,
-      this.ws,this.systemGeneralService);
-    this.acmeAddComponent = new CertificateAcmeAddComponent(this.router,this.route,
-      this.ws,this.loader,this.dialog,this.entityFormService,this.dialogService,this.modalService);
+    this.acmeAddComponent = new CertificateAcmeAddComponent(this.ws,this.loader,this.dialog,
+      this.entityFormService,this.dialogService,this.modalService);
     this.acmeDNSComponent = new AcmednsFormComponent(this.ws,this.loader,this.dialogService,this.modalService);
   }
 

@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -23,7 +22,6 @@ export class CertificateAcmeAddComponent {
 
   protected addCall = "certificate.create";
   protected queryCall: string = 'certificate.query';
-  protected route_success: string[] = [ 'system', 'certificates' ];
   protected isEntity: boolean = true;
   protected isNew = true;
   private csrOrg: any;
@@ -134,7 +132,6 @@ export class CertificateAcmeAddComponent {
   private domainList_fc: any;
 
   constructor(
-    protected router: Router, protected route: ActivatedRoute,
     protected ws: WebSocketService,
     protected loader: AppLoaderService, private dialog: MatDialog,
     protected entityFormService: EntityFormService, protected dialogService: DialogService,
@@ -205,14 +202,14 @@ export class CertificateAcmeAddComponent {
     payload['create_type'] = 'CERTIFICATE_CREATE_ACME';
     payload['dns_mapping'] = dns_mapping;
     delete payload['domains']
-
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": (
       helptext_system_certificates.acme.job_dialog_title) }, disableClose: true});
     this.dialogRef.componentInstance.setCall(this.addCall, [payload]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe(() => {
       this.dialog.closeAll();
-      this.router.navigate(new Array('/').concat(this.route_success));
+      this.modalService.close('slide-in-form');
+      this.modalService.refreshTable();
     });
     this.dialogRef.componentInstance.failure.subscribe((err) => {
       this.dialog.closeAll()

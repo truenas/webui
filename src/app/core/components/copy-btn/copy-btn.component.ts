@@ -30,7 +30,9 @@ export class CopyButtonComponent implements OnInit {
   }
 
   copyToClipboard(){
-    navigator.clipboard.writeText(this.text)
+    this.el.nativeElement.focus();
+    this.el.nativeElement.select();
+    (<any>document).execCommand("copy");
   }
 
 
