@@ -205,9 +205,9 @@ def the_edit_interface_should_appear(driver):
     assert wait_on_element(driver, 1, 7, '//h3[contains(.,"Edit Interface")]')
 
 
-@then(parsers.parse('uncheck DHCP, check Critical, Select 1 for Failover Group, select the Failover VHID "{vhid}", IP Address (This Controller) "{ip1}" then select /"{netmask1}", IP Address (TrueNAS Controller 2) "{ip2}" then select /"{netmask2}", Virtual IP Address "{vip}"'))
-def uncheck_dhcp_check_critical_select_1_for_failover_group_select_the_failover_vhid_ip_address_this_controller__then_select_23_ip_address_truenas_controller_2_then_select_23_virtual_ip_address(driver, vhid, ip1, netmask1, ip2, netmask2, vip):
-    """uncheck DHCP, check Critical, Select 1 for Failover Group, select the Failover VHID "{vhid}", IP Address (This Controller) "{ip1}" then select /"{netmask1}", IP Address (TrueNAS Controller 2) "{ip2}" then select /"{netmask2}", Virtual IP Address, "{vip}"."""
+@then(parsers.parse('uncheck DHCP, check Critical, Select 1 for Failover Group, input IP Address (This Controller) "{ip1}" then select /"{netmask1}", IP Address (TrueNAS Controller 2) "{ip2}", Virtual IP Address "{vip}"'))
+def uncheck_dhcp_check_critical_select_1_for_failover_group_input_ip_address_this_controller__then_select_23_ip_address_truenas_controller_2_virtual_ip_address(driver, ip1, netmask1, ip2, vip):
+    """uncheck DHCP, check Critical, Select 1 for Failover Group, input IP Address (This Controller) "{ip1}" then select /"{netmask1}", IP Address (TrueNAS Controller 2) "{ip2}", Virtual IP Address, "{vip}"."""
     assert wait_on_element(driver, 1, 7, '//mat-checkbox[@ix-auto="checkbox__DHCP"]')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__DHCP"]').click()
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Critical"]').click()
@@ -215,21 +215,12 @@ def uncheck_dhcp_check_critical_select_1_for_failover_group_select_the_failover_
     assert wait_on_element(driver, 1, 5, '//mat-option[@ix-auto="option__Failover Group_1"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Failover Group_1"]').click()
     assert wait_on_element(driver, 1, 5, '//mat-select[@ix-auto="select__Failover VHID"]')
-    # driver.find_element_by_xpath('//mat-select[@ix-auto="select__Failover VHID"]').click()
-    # assert wait_on_element(driver, 1, 5, f'//mat-option[@ix-auto="option__Failover VHID_{vhid}"]')
-    # Scroll vhid in to view
-    # element = driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Failover VHID_{vhid}"]')
-    # driver.execute_script("arguments[0].scrollIntoView();", element)
-    # time.sleep(1)
-    # driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Failover VHID_{vhid}"]').click()
     driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (This Controller)"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (This Controller)"]').send_keys(ip1)
     driver.find_element_by_xpath('//mat-select[@ix-auto="input__IP Address (This Controller)"]').click()
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__{netmask1}"]').click()
     driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (TrueNAS Controller 2)"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (TrueNAS Controller 2)"]').send_keys(ip2)
-    # driver.find_element_by_xpath('//mat-select[@ix-auto="input__Failover IP Address (TrueNAS Controller 2)"]').click()
-    # driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__{netmask2}"]').click()
     driver.find_element_by_xpath('//input[@ix-auto="input__Virtual IP Address (Failover Address)"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Virtual IP Address (Failover Address)"]').send_keys(vip)
 
