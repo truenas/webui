@@ -617,7 +617,7 @@ export class AlertServiceComponent {
           validation: [Validators.required],
         },
         {
-          type: 'input',
+          type: 'chip',
           name: 'Telegram-chat_ids',
           placeholder: helptext.Telegram_chat_ids_placeholder,
           tooltip: helptext.Telegram_chat_ids_tooltip,
@@ -725,6 +725,24 @@ export class AlertServiceComponent {
     }
   }
 
+  generateTelegramChatIdsPayload(data, i) {
+    const wrongChatIds: string[] = [];
+    // Telegram chat IDs must be an array of integer
+    const arrayChatIds: [] = data[i].map((strChatId: string) => {
+      const chatId = Number(strChatId);
+      if (isNaN(chatId)) {
+        wrongChatIds.push(strChatId);
+      }
+      return chatId;
+    });
+    if (wrongChatIds.length > 0) {
+      this.dialogService.Info(T('Failed'), T('The following Telegram chat ID(s) must be numbers!') + '\n\n' + wrongChatIds.join(', '));
+      throw new Error('Telegram-chat_ids must be an array of integer');
+    }
+    // Avoid duplicated chat IDs
+    return Array.from(new Set(arrayChatIds));
+  }
+
   generatePayload(data) {
     const payload = { attributes: {} };
 
@@ -734,11 +752,8 @@ export class AlertServiceComponent {
       } else {
         if (data[i] === '' && (i === 'SNMPTrap-v3_authprotocol' || i === 'SNMPTrap-v3_privprotocol')) {
           data[i] = null;
-        } else if(data[i] && i == 'Telegram-chat_ids') {
-          // Telegram chat IDs should be an array of integer
-          const arrayChatIds:[] = data[i].trim().split(/;|:|,| /).map((chatId: string) => Number(chatId));
-          // Avoid duplicated chat IDs
-          data[i] = Array.from(new Set(arrayChatIds));
+        } else if (data[i] && i == 'Telegram-chat_ids') {
+          data[i] = this.generateTelegramChatIdsPayload(data, i);
         }
         payload['attributes'][i.split('-')[1]] = data[i];
       }
