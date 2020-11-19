@@ -24,16 +24,14 @@ import { CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { Control } from './models/control.interface';
 import { ToolbarConfig, ControlConfig } from './models/control-config.interface';
-
-
-
+import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
 
 @Component({
   selector : 'entity-toolbar',
   templateUrl : './entity-toolbar.component.html',
   styleUrls : [ './entity-toolbar.component.css' ],
 })
-export class EntityToolbarComponent implements OnDestroy, OnChanges {
+export class EntityToolbarComponent implements OnDestroy, OnChanges, GlobalAction {
 
   @Input('conf') conf: ToolbarConfig; //ControlConfig[];
   public config;

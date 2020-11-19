@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { WebSocketService, RestService, AppLoaderService, DialogService } from "../../../../services";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslateService } from '@ngx-translate/core';
@@ -17,6 +17,12 @@ import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/volume-status';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { Subject } from 'rxjs';
+import { EntityToolbarComponent } from '../../../common/entity/entity-toolbar/entity-toolbar.component';
+import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
+import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
+
 interface poolDiskInfo {
   name: any,
   read: any,
@@ -34,7 +40,8 @@ interface poolDiskInfo {
   styleUrls: ['./volume-status.component.css']
 })
 export class VolumeStatusComponent implements OnInit {
-
+  
+  public actionEvents: Subject<CoreEvent>;
   public poolScan: any;
   public timeRemaining: any = {};
   public treeTableConfig: EntityTreeTable = {
@@ -129,6 +136,7 @@ export class VolumeStatusComponent implements OnInit {
   protected pool: any;
 
   constructor(protected aroute: ActivatedRoute,
+    protected core: CoreService,
     protected ws: WebSocketService,
     protected rest: RestService,
     protected translate: TranslateService,
@@ -136,7 +144,8 @@ export class VolumeStatusComponent implements OnInit {
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected matDialog: MatDialog,
-    protected localeService: LocaleService) {}
+    protected localeService: LocaleService) {
+  }
 
   getZfsPoolScan(poolName) {
     this.ws.subscribe('zfs.pool.scan').subscribe(
@@ -205,12 +214,45 @@ export class VolumeStatusComponent implements OnInit {
       _.find(this.extendVdevFormFields, { name: 'new_disk' }).options = availableDisksForExtend;
     })
   }
+
   ngOnInit() {
+
+    //Setup Global Actions
+    const actionId = 'refreshBtn'
+    this.actionEvents = new Subject();
+    this.actionEvents.subscribe((evt) => {
+      if(evt.data[actionId]){
+        this.refresh();
+      }
+    });
+
+    const toolbarConfig: ToolbarConfig = {
+      target: this.actionEvents,
+      controls: [
+        {
+          type: 'button',
+          name: actionId,
+          label: 'Refresh',
+          color: 'primary'
+        }
+      ]
+    };
+
+    const actionsConfig = { actionType:EntityToolbarComponent, actionConfig: toolbarConfig };
+    this.core.emit({name:"GlobalActions", data: actionsConfig, sender: this });
+
+
     this.aroute.params.subscribe(params => {
       this.pk = parseInt(params['pk'], 10);
       this.getData();
     });
+
     this.getUnusedDisk();
+  }
+
+  ngOnDestroy(){
+    this.actionEvents.complete();
+    this.core.unregister({observerClass: this});
   }
 
   refresh() {
