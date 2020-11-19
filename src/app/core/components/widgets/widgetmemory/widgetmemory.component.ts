@@ -136,7 +136,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
      * zfs_cache?
      * */
 
-    let services = data["total"] - data["free"] - data["arc_size"]; 
+    let services = data["total"] - data["free"] - data["inactive"] - data["arc_size"]; 
 
     let columns = [
       [ "Free", this.bytesToGigabytes(data["free"]).toFixed(1)],
