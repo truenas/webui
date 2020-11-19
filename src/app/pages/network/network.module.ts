@@ -5,6 +5,7 @@ import { NgxUploaderModule } from 'ngx-uploader';
 import { MaterialModule } from '../../appMaterial.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { TranslateModule } from '@ngx-translate/core';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 
 import { EntityModule } from '../common/entity/entity.module';
 import { NetworkService } from '../../services';
@@ -25,7 +26,8 @@ import { OpenvpnServerComponent } from './forms/service-openvpn-server.component
 @NgModule({
   imports: [
     EntityModule, CommonModule, FormsModule,
-    ReactiveFormsModule, NgxUploaderModule, routing, MaterialModule, FlexLayoutModule, TranslateModule
+    ReactiveFormsModule, NgxUploaderModule, routing, MaterialModule, FlexLayoutModule, 
+    TranslateModule, CommonDirectivesModule
   ],
   declarations: [
     StaticRouteFormComponent,
