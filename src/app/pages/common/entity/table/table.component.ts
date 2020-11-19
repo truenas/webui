@@ -12,6 +12,7 @@ export interface InputTableConf {
   queryCallOption?: any;
   deleteCall?: string;
   hideHeader?: boolean; // hide table header row
+  name?:string;
   deleteMsg?: {
     title: string,
     key_props: string[],

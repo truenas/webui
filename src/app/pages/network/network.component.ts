@@ -44,6 +44,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     title: T('Interfaces'),
     queryCall: 'interface.query',
     deleteCall: 'interface.delete',
+    name: 'interfaces',
     columns: [
       { name: T('Name'), prop: 'name', state: { prop: 'link_state' }},
       { name: T('IP Addresses'), prop: 'addresses', listview: true },
@@ -94,6 +95,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     title: T('Static Routes'),
     queryCall: 'staticroute.query',
     deleteCall: 'staticroute.delete',
+    name: 'staticRoutes',
     columns: [
       { name: T('Destination'), prop: 'destination', always_display: true },
       { name: T('Gateway'), prop: 'gateway' },
@@ -118,6 +120,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     parent: this,
     icon: 'router',
     showGroupTitle: true,
+    name: 'globalSettings',
     onclick: function() {
       this.parent.modalService.open('slide-in-form', this.parent.addComponent);
     },
@@ -126,6 +129,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   public openvpnTableConf = {
     title: T('OpenVPN'),
     queryCall: 'service.query',
+    name: 'openVPN',
     columns: [
       { name: T('Service'), prop: 'service_label' },
       { name: T('State'), prop: 'state' },

@@ -6,6 +6,7 @@ export interface CardWidgetConf {
     parent: any,
     icon?: string,
     showGroupTitle?: boolean;
+    name?:string,
     onclick?(),
 }
 
