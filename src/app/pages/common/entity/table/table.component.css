@@ -55,3 +55,12 @@ div.view-more-row {
 div.view-more-row:hover {
     background: rgba(0,0,0,0.1);
 }
+
+.empty-table-message {
+    position: relative;
+    left: 20px;
+    top: 15px;
+    opacity: 0.4;
+    font-size: 1rem;
+    margin-bottom: 26px;
+}

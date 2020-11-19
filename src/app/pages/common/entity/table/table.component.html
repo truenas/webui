@@ -5,6 +5,7 @@
       <button mat-button color="default" class="action-icon" *ngIf="tableConf.add" (click)="tableConf.add()">{{ 'Add' | translate }}</button>
     </div>
 </mat-toolbar-row>
+<div *ngIf="dataSource.length === 0" class="empty-table-message">{{ 'No data to display' | translate}}</div>
 <mat-card-content class="table-container">
   <div class="table-container" #table>
     <table mat-table [dataSource]="displayedDataSource" class="table-component">
