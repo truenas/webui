@@ -418,7 +418,9 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       this.reportEvent.complete();
     }
 
-    this.formEvents.complete();
+    if (this.formEvents) {
+      this.formEvents.complete();
+    }
     this.core.unregister({observerClass:this});
   }
 
