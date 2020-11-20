@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { T } from "app/translate-marker";
 
 import { WebSocketService } from '../../services/index';
 
@@ -14,6 +15,7 @@ export class ApplicationsComponent implements OnInit {
 
   ngOnInit(): void {
     this.ws.call('catalog.items', ['OFFICIAL']).subscribe(res => {
+      console.log('catalog.items OFFICIAL', res)
       for (let i in res.test) {
         let item = res.test[i];
         let versions = item.versions;
@@ -31,13 +33,21 @@ export class ApplicationsComponent implements OnInit {
           info: latestDetails.app_readme
         }
         this.catalogApps.push(catalogItem);
-        console.log(this.catalogApps)
+        // console.log(this.catalogApps)
       }
     })
-  }
 
-  doInstall(appName: string) {
-    console.log(appName)
+    this.ws.call('catalog.query').subscribe(res => {
+      console.log('catalog.query', res)
+    })
+
+    this.ws.call('chart.release.query').subscribe(res => {
+      console.log('chart.release.query', res)
+    })
+
+    this.ws.call('docker.images.query').subscribe(res => {
+      console.log('docker.images.query', res)
+    })
   }
 
 }

@@ -1,28 +1,26 @@
-<div fxLayout="row wrap" fxLayoutAlign="center center">
-    <mat-card class="catalog-item" *ngFor="let item of catalogApps">
-        <div class="content-wrapper" fxLayout="row">
-            <img class="logo" src="{{ item.icon_url}}" fxFlex="160px">
-            <div class=content>
-                <div class="catalog-title">
-                    <h3>{{ item.name }}</h3>
-                </div>
-                <div class="catalog-version">
-                    {{ item.latest_version }}
-                </div>
-                <div class="badge-area">
-                    <div class="partner-badge">
-                        {{ 'PARTNER' | translate }}
-                    </div>                    
-                </div>
-                <div class="button-row">
-                    <button mat-button (click)="doInstall(item.name)"
-                        ix-auto ix-auto-type="button" ix-auto-identifier="{{ item.name}}-install">
-                        {{ 'Install' | translate }}</button>
-                </div>
-            </div>
-        </div>
-        <div class="more-info">
-            <mat-icon matTooltip="{{ item.info }}">info</mat-icon>
-        </div>
-    </mat-card>
+<div fxLayout=row>
+    <mat-tab-group animationDuration="0ms">
+        <mat-tab label="{{ 'Catalog' | translate}}"
+            ix-auto ix-auto-type="tab" ix-auto-identifier="catalog">
+            <app-catalog [catalogApps]="catalogApps"></app-catalog>
+        </mat-tab>
+        <mat-tab label="{{ 'Charts' | translate}}"
+            ix-auto ix-auto-type="tab" ix-auto-identifier="charts">
+            <app-charts></app-charts>
+        </mat-tab>
+        <mat-tab label="{{ 'Docker Images' | translate }}"
+            ix-auto ix-auto-type="tab" ix-auto-identifier="docker">
+            <app-docker-images></app-docker-images>
+        </mat-tab>
+    </mat-tab-group>
 </div>
+<div class="form-element" id="row-filter">
+    <!-- <mat-form-field floatPlaceholder="never">
+      <span matPrefix><mat-icon>search</mat-icon></span>
+      <input matInput #filter placeholder="{{'Filter' | translate}}"
+        ix-auto
+        ix-auto-type="input"
+        ix-auto-identifier="filter">
+    </mat-form-field> -->
+  </div>
+

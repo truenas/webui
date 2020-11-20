@@ -9,6 +9,9 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { ApplicationsComponent } from './applications.component';
 import { ApplicationsRoutingModule } from './applications-routing.module';
+import { CatalogComponent } from './catalog/catalog.component';
+import { ChartsComponent } from './charts/charts.component';
+import { DockerImagesComponent } from './docker-images/docker-images.component';
 
 
 @NgModule({
@@ -21,7 +24,10 @@ import { ApplicationsRoutingModule } from './applications-routing.module';
     CommonDirectivesModule
   ],
   declarations: [
-    ApplicationsComponent
+    ApplicationsComponent,
+    CatalogComponent,
+    ChartsComponent,
+    DockerImagesComponent
   ]
 })
 export class ApplicationsModule { }
