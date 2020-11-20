@@ -39,10 +39,19 @@ export class LicenseComponent {
     this.loader.open();
     this.ws.call(this.updateCall, [form.license]).subscribe(() => {
       this.loader.close();
+      this.dialog.confirm(helptext.update_license.reload_dialog_title,
+        helptext.update_license.reload_dialog_message, true, helptext.update_license.reload_dialog_action,
+        false, '','', '','', true, '', true)
+        .subscribe((res) => {
+          if (res) {
+            document.location.reload(true);
+          }
+      });    
       this.modalService.close('slide-in-form');
     }, err => {
       this.loader.close();
       this.dialog.errorReport('Error', err.reason)
+
     })
   }
 
