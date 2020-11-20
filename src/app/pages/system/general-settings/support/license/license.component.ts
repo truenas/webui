@@ -39,6 +39,8 @@ export class LicenseComponent {
     this.loader.open();
     this.ws.call(this.updateCall, [form.license]).subscribe(() => {
       this.loader.close();
+      // To make sure EULA opens on reload; removed from local storage (in topbar) on acceptance of EULA
+      window.localStorage.setItem('upgrading_status', 'upgrading');
       this.dialog.confirm(helptext.update_license.reload_dialog_title,
         helptext.update_license.reload_dialog_message, true, helptext.update_license.reload_dialog_action,
         false, '','', '','', true, '', true)
