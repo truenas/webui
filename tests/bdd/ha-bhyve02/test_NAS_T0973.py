@@ -80,17 +80,17 @@ def click_on_the_tank_3_dots_button_select_add_zvol(driver):
 @then('The Add Zvol page should open')
 def the_add_zvol_page_should_open(driver):
     """The Add Zvol page should open."""
-    assert wait_on_element(driver, 0.5, 7, '//a[contains(.,"Add Zvol")]')
+    assert wait_on_element(driver, 1, 7, '//a[contains(.,"Add Zvol")]')
 
 
 @then(parsers.parse('Input "{zvol_name}" for Zvol Name and "{zvol_size}" for Zvol Size'))
 def input_ds1_for_zvol_name_and_1_gib_for_zvol_size(driver, zvol_name, zvol_size):
     """Input "ds1" for Zvol Name and "1 GiB" for Zvol Size."""
     assert wait_on_element(driver, 0.5, 7, '//input[@ix-auto="input__Zvol name"]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Zvol name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Zvol name"]').send_keys(zvol_name)
-    driver.find_element_by_xpath('//input[@ix-auto="input__Size for this zvol"]').clear()
+    assert wait_on_element(driver, 0.5, 7, '//input[@ix-auto="input__Size for this zvol"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Size for this zvol"]').send_keys(zvol_size)
+    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SUBMIT"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
 
 
