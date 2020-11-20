@@ -1535,10 +1535,6 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
       }
     }
 
-    .lowerme-guiform {
-      margin-top: 32px !important;
-    }
-
     app-support .links-wrapper {
       margin-bottom: 1rem;
     }
@@ -1567,5 +1563,25 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     width: 131px !important;
   }
 
+  // Special class added for certificate display forms for long SANs and DNs
+  .break-all {
+    word-break: break-all;
+  }
+
+  .lowerme {
+    margin-top: 32px !important;
+  }
+
+  .complex-table-data {
+    font-size: 85%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+
+  .key-textarea {
+    width: 540px;
+    height: 280px;
+    resize: none;
+  }
 
 } // end of ix theme

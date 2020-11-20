@@ -121,6 +121,7 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
       icon: 'save_alt',
       name: "download",
       onClick: (rowinner) => {
+        console.log(rowinner)
         const name = rowinner.name;
         for (let key_type in rowinner.attributes) {
           const key = rowinner.attributes[key_type];
