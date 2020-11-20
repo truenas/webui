@@ -52,6 +52,7 @@ export class VolumeStatusComponent implements OnInit {
       { name: T('Write'), prop: 'write', },
       { name: T('Checksum'), prop: 'checksum', },
       { name: T('Status'), prop: 'status', },
+      { name: T('Actions'), prop: 'actions', hidden: false},
     ]
   }
 
@@ -526,12 +527,12 @@ export class VolumeStatusComponent implements OnInit {
       data.name = data.type;
     }
     // use path as the device name if the device name is null
-    if (!data.device || data.device == null) {
-      data.device = data.path;
+    if (!data.disk || data.disk == null) {
+      data.disk = data.path;
     }
 
     const item: poolDiskInfo = {
-      name: data.name ? data.name : data.device,
+      name: data.name ? data.name : data.disk,
       read: stats.read_errors ? stats.read_errors : 0,
       write: stats.write_errors ? stats.write_errors : 0,
       checksum: stats.checksum_errors ? stats.checksum_errors : 0,
@@ -543,10 +544,11 @@ export class VolumeStatusComponent implements OnInit {
     // add actions
     if (category && data.type) {
       if (data.type == 'DISK') {
-        item.actions = this.getAction(data, category, vdev_type);
+        item.actions = [{title:'Disk Actions', actions: this.getAction(data, category, vdev_type)}];
       } else if (data.type === 'MIRROR') {
-        item.actions = this.extendAction(data);
+        item.actions = [{title: 'Mirror Actions', actions: this.extendAction(data)}];
       }
+      //console.log(item.actions);
     }
     return item;
   }
