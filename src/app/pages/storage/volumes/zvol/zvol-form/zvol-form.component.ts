@@ -10,7 +10,7 @@ import { AppLoaderService } from '../../../../../services/app-loader/app-loader.
 import { DialogService } from 'app/services/dialog.service';
 import { T } from '../../../../../translate-marker';
 
-import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { EntityUtils } from '../../../../common/entity/utils';
 import helptext from '../../../../../helptext/storage/volumes/zvol-form';
@@ -95,138 +95,141 @@ export class ZvolFormComponent {
     '1024K': '1048576',
     '1M':'1048576'
   };
-  public fieldConfig: FieldConfig[] = [
-    {
-      type: 'input',
-      name: 'name',
-      placeholder: helptext.zvol_name_placeholder,
-      tooltip: helptext.zvol_name_tooltip,
-      validation: [Validators.required, forbiddenValues(this.namesInUse)],
-      required: true,
-      isHidden: false
-    },
-    {
-      type: 'input',
-      name: 'comments',
-      placeholder: helptext.zvol_comments_placeholder,
-      tooltip: helptext.zvol_comments_tooltip,
-    },
-    {
-      type: 'input',
-      name: 'volsize',
-      placeholder: helptext.zvol_volsize_placeholder,
-      tooltip : helptext.zvol_volsize_tooltip,
-      required: true,
-      blurEvent:this.blurVolsize,
-      blurStatus: true,
-      parent: this,
-      validation: [
-        (control: FormControl): ValidationErrors => {
-          const config = this.fieldConfig.find(c => c.name === 'volsize');
+  public fieldSets: FieldSets = new FieldSets([{
+    name: 'Name',
+    config: [
+      {
+        type: 'input',
+        name: 'name',
+        placeholder: helptext.zvol_name_placeholder,
+        tooltip: helptext.zvol_name_tooltip,
+        validation: [Validators.required, forbiddenValues(this.namesInUse)],
+        required: true,
+        isHidden: false
+      },
+      {
+        type: 'input',
+        name: 'comments',
+        placeholder: helptext.zvol_comments_placeholder,
+        tooltip: helptext.zvol_comments_tooltip,
+      },
+      {
+        type: 'input',
+        name: 'volsize',
+        placeholder: helptext.zvol_volsize_placeholder,
+        tooltip : helptext.zvol_volsize_tooltip,
+        required: true,
+        blurEvent:this.blurVolsize,
+        blurStatus: true,
+        parent: this,
+        validation: [
+          (control: FormControl): ValidationErrors => {
+            const config = this.fieldSets.list()[0].config.find(c => c.name === 'volsize');
 
-          const size = control.value ? this.storageService.convertHumanStringToNum(control.value, true) : null;
-          const humanSize = control.value;
-          
-          let errors = control.value && isNaN(size)
-            ? { invalid_byte_string: true }
-            : null
+            const size = control.value ? this.storageService.convertHumanStringToNum(control.value, true) : null;
+            const humanSize = control.value;
+            
+            let errors = control.value && isNaN(size)
+              ? { invalid_byte_string: true }
+              : null
 
-          if (errors) {
-            config.hasErrors = true;
-            config.errors = globalHelptext.human_readable.input_error;
-          } else if (size === 0) {
-            config.hasErrors = true;
-            config.errors = helptext.zvol_volsize_zero_error;
-            errors = { invalid_byte_string: true };
-          } else if ((this.origHuman && humanSize) && 
-                     (humanSize !== this.origHuman) &&
-                     (size < this.origVolSize)){
-            config.hasErrors = true;
-            config.errors = helptext.zvol_volsize_shrink_error;
-            errors = { invalid_byte_string: true };
-          } else {
-            config.hasErrors = false;
-            config.errors = '';
+            if (errors) {
+              config.hasErrors = true;
+              config.errors = globalHelptext.human_readable.input_error;
+            } else if (size === 0) {
+              config.hasErrors = true;
+              config.errors = helptext.zvol_volsize_zero_error;
+              errors = { invalid_byte_string: true };
+            } else if ((this.origHuman && humanSize) && 
+                      (humanSize !== this.origHuman) &&
+                      (size < this.origVolSize)){
+              config.hasErrors = true;
+              config.errors = helptext.zvol_volsize_shrink_error;
+              errors = { invalid_byte_string: true };
+            } else {
+              config.hasErrors = false;
+              config.errors = '';
+            }
+
+            return errors;
           }
-
-          return errors;
-        }
-      ],
-    },
-    {
-      type: 'checkbox',
-      name : 'force_size',
-      placeholder: helptext.zvol_forcesize_placeholder,
-      tooltip : helptext.zvol_forcesize_tooltip,
-    },
-    {
-      type: 'select',
-      name: 'sync',
-      placeholder: helptext.zvol_sync_placeholder,
-      tooltip: helptext.zvol_sync_tooltip,
-      options: [
-        { label: T('Standard'), value: 'STANDARD' },
-        { label: T('Always'), value: 'ALWAYS' },
-        { label: T('Disabled'), value: 'DISABLED' }
-      ],
-    },
-    {
-      type: 'select',
-      name: 'compression',
-      placeholder: helptext.zvol_compression_placeholder,
-      tooltip: helptext.zvol_compression_tooltip,
-      options: [
-        {label : T('Off'), value : "OFF"},
-        {label : T('lz4 (recommended)'), value : "LZ4"},
-        {label : T('zstd (default level, 3)'), value : "ZSTD" },
-        {label : T('zstd-5 (slow)'), value : "ZSTD-5" },
-        {label : T('zstd-7 (very slow)'), value : "ZSTD-7" },
-        {label : T('zstd-fast (default level, 1)'), value : "ZSTD-FAST" },
-        {label : T('gzip (default level, 6)'), value : "GZIP"},
-        {label : T('gzip-1 (fastest)'), value : "GZIP-1"},
-        {label : T('gzip-9 (maximum, slow)'), value : "GZIP-9"},
-        {label : T('zle (runs of zeros)'), value : "ZLE"},
-        {label : T('lzjb (legacy, not recommended)'), value : "LZJB"},
-      ],
-      validation: helptext.zvol_compression_validation,
-      required: true,
-    },
-    {
-      type: 'select',
-      name: 'deduplication',
-      placeholder: helptext.zvol_deduplication_placeholder,
-      tooltip : helptext.zvol_deduplication_tooltip,
-      options: [
-        {label : T('On'), value : "ON"},
-        {label : T('Verify'), value : "VERIFY"},
-        {label : T('Off'), value : "OFF"},
-      ],
-      validation: helptext.zvol_deduplication_validation,
-      required: true,
-    },
-    {
-      type: 'checkbox',
-      name : 'sparse',
-      placeholder: helptext.zvol_sparse_placeholder,
-      tooltip : helptext.zvol_sparse_tooltip,
-      isHidden: false
-    },
-    {
-      type: 'select',
-      name: 'volblocksize',
-      placeholder: helptext.zvol_volblocksize_placeholder,
-      tooltip: helptext.zvol_volblocksize_tooltip,
-      options: [
-        { label: '4 KiB', value: '4K' },
-        { label: '8 KiB', value: '8K' },
-        { label: '16 KiB', value: '16K' },
-        { label: '32 KiB', value: '32K' },
-        { label: '64 KiB', value: '64K' },
-        { label: '128 KiB', value: '128K' },
-      ],
-      isHidden: false
-    },
-  ];
+        ],
+      },
+      {
+        type: 'checkbox',
+        name : 'force_size',
+        placeholder: helptext.zvol_forcesize_placeholder,
+        tooltip : helptext.zvol_forcesize_tooltip,
+      },
+      {
+        type: 'select',
+        name: 'sync',
+        placeholder: helptext.zvol_sync_placeholder,
+        tooltip: helptext.zvol_sync_tooltip,
+        options: [
+          { label: T('Standard'), value: 'STANDARD' },
+          { label: T('Always'), value: 'ALWAYS' },
+          { label: T('Disabled'), value: 'DISABLED' }
+        ],
+      },
+      {
+        type: 'select',
+        name: 'compression',
+        placeholder: helptext.zvol_compression_placeholder,
+        tooltip: helptext.zvol_compression_tooltip,
+        options: [
+          {label : T('Off'), value : "OFF"},
+          {label : T('lz4 (recommended)'), value : "LZ4"},
+          {label : T('zstd (default level, 3)'), value : "ZSTD" },
+          {label : T('zstd-5 (slow)'), value : "ZSTD-5" },
+          {label : T('zstd-7 (very slow)'), value : "ZSTD-7" },
+          {label : T('zstd-fast (default level, 1)'), value : "ZSTD-FAST" },
+          {label : T('gzip (default level, 6)'), value : "GZIP"},
+          {label : T('gzip-1 (fastest)'), value : "GZIP-1"},
+          {label : T('gzip-9 (maximum, slow)'), value : "GZIP-9"},
+          {label : T('zle (runs of zeros)'), value : "ZLE"},
+          {label : T('lzjb (legacy, not recommended)'), value : "LZJB"},
+        ],
+        validation: helptext.zvol_compression_validation,
+        required: true,
+      },
+      {
+        type: 'select',
+        name: 'deduplication',
+        placeholder: helptext.zvol_deduplication_placeholder,
+        tooltip : helptext.zvol_deduplication_tooltip,
+        options: [
+          {label : T('On'), value : "ON"},
+          {label : T('Verify'), value : "VERIFY"},
+          {label : T('Off'), value : "OFF"},
+        ],
+        validation: helptext.zvol_deduplication_validation,
+        required: true,
+      },
+      {
+        type: 'checkbox',
+        name : 'sparse',
+        placeholder: helptext.zvol_sparse_placeholder,
+        tooltip : helptext.zvol_sparse_tooltip,
+        isHidden: false
+      },
+      {
+        type: 'select',
+        name: 'volblocksize',
+        placeholder: helptext.zvol_volblocksize_placeholder,
+        tooltip: helptext.zvol_volblocksize_tooltip,
+        options: [
+          { label: '4 KiB', value: '4K' },
+          { label: '8 KiB', value: '8K' },
+          { label: '16 KiB', value: '16K' },
+          { label: '32 KiB', value: '32K' },
+          { label: '64 KiB', value: '64K' },
+          { label: '128 KiB', value: '128K' },
+        ],
+        isHidden: false
+      },
+    ]
+  }]);
 
   isCustActionVisible(actionId: string) {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {
@@ -271,16 +274,14 @@ export class ZvolFormComponent {
 
 
   async preInit(entityForm: EntityFormComponent){
-    const paramMap: any = (<any>this.aroute.params).getValue();
-    this.parent = paramMap['path']
+    if (!this.parent) return;
 
-
-    const name = _.find(this.fieldConfig, {name:'name'});
-    const sparse =   _.find(this.fieldConfig, {name:'sparse'});
-    const sync = _.find(this.fieldConfig, {name:'sync'});
-    const compression = _.find(this.fieldConfig, {name:'compression'});
-    const deduplication = _.find(this.fieldConfig, {name:'deduplication'});
-    const volblocksize = _.find(this.fieldConfig, {name:'volblocksize'});
+    const name = _.find(this.fieldSets.list()[0].config, {name:'name'});
+    const sparse =   _.find(this.fieldSets.list()[0].config, {name:'sparse'});
+    const sync = _.find(this.fieldSets.list()[0].config, {name:'sync'});
+    const compression = _.find(this.fieldSets.list()[0].config, {name:'compression'});
+    const deduplication = _.find(this.fieldSets.list()[0].config, {name:'deduplication'});
+    const volblocksize = _.find(this.fieldSets.list()[0].config, {name:'volblocksize'});
 
 
     await this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).toPromise().then((pk_dataset)=>{
@@ -322,7 +323,7 @@ export class ZvolFormComponent {
           entityForm.setDisabled('name',true);
           sparse['isHidden'] =true;
           volblocksize['isHidden'] =true;
-          _.find(this.fieldConfig, {name:'sparse'})['isHidden']=true;
+          _.find(this.fieldSets.list()[0].config, {name:'sparse'})['isHidden']=true;
           this.customFilter = [[["id", "=", this.parent]]]
           this.isNew =false;
           let sync_collection = [{label:pk_dataset[0].sync.value, value: pk_dataset[0].sync.value}];
@@ -390,16 +391,10 @@ export class ZvolFormComponent {
 
           }
           entityForm.formGroup.controls['deduplication'].setValue(pk_dataset[0].deduplication.value);
-
         })
-
       }
     })
-
     })
-
-
-
   }
 
   afterInit(entityForm: EntityFormComponent) {
@@ -413,13 +408,13 @@ export class ZvolFormComponent {
         if (res_number < recommended_size_number){
           this.translate.get(helptext.blocksize_warning.a).subscribe(blockMsgA => (
             this.translate.get(helptext.blocksize_warning.b).subscribe(blockMsgB => {
-              _.find(this.fieldConfig, {name:'volblocksize'}).warnings = 
+              _.find(this.fieldSets.list()[0].config, {name:'volblocksize'}).warnings = 
               `${blockMsgA} ${this.minimum_recommended_zvol_volblocksize}. ${blockMsgB}`
             })
           ))
 
         } else {
-          _.find(this.fieldConfig, {name:'volblocksize'}).warnings = null;
+          _.find(this.fieldSets.list()[0].config, {name:'volblocksize'}).warnings = null;
         };
       };
     });
@@ -518,5 +513,9 @@ export class ZvolFormComponent {
     } else{
       this.editSubmit(body);
     }
+  }
+
+  setParent(pool, id) {
+    this.parent = pool;
   }
 }

@@ -28,6 +28,7 @@ import { combineLatest } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ModalService } from 'app/services/modal.service';
 import { VolumesListControlsComponent } from './volumes-list-controls.component';
+import { ZvolFormComponent } from '../zvol/zvol-form';
 
 export interface ZfsPoolData {
   pool: string;
@@ -1819,6 +1820,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   public systemdatasetPool: any;
   public has_encrypted_root = {};
   public has_key_dataset = {};
+  protected addZVolComponent: ZvolFormComponent;
 
   constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
@@ -1932,10 +1934,11 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.dialogService.errorReport(T("Error getting pool data."), res.message, res.stack);
     });
 
+    this.addZVolComponent = new ZvolFormComponent(this.router, null, null, this.ws, null, this.dialogService, this.storageService, null);
   }
 
   addZVol(pool, id) {
-    console.log('---------yay', pool, id);
-    this.modalService.open('slide-in-form', EntityTableComponent);
+    this.addZVolComponent.setParent(pool, id);
+    this.modalService.open('slide-in-form', this.addZVolComponent);
   }
 }
