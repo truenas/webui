@@ -184,7 +184,7 @@ def click_Failover_check_disable_failover_click_save_and_confirm_changes(driver)
 def after_settings_are_applied_you_should_see_settings_applied(driver):
     """after settings are applied you should see "Settings applied"."""
     if 'mat-checkbox-checked' not in class_attribute:
-        assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Settings saved")]')
+        assert wait_on_element(driver, 0.5, 15, '//h1[contains(.,"Settings saved")]')
         driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
@@ -235,85 +235,86 @@ def click_apply_and_please_wait_should_appear_while_settings_are_being_applied(d
 @then('click Test Changes, check Confirm, click Test Changes again')
 def click_test_changes_check_confirm_click_test_changes_again(driver):
     """click Test Changes, check Confirm, click Test Changes again."""
-    assert wait_on_element(driver, 0.5, 7, '//button[contains(.,"TEST CHANGES")]')
-    driver.find_element_by_xpath('//button[contains(.,"TEST CHANGES")]').click()
+    assert wait_on_element(driver, 0.5, 7, '//button[contains(.,"Test Changes")]')
+    driver.find_element_by_xpath('//button[contains(.,"Test Changes")]').click()
     assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Test Changes")]')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     driver.find_element_by_xpath('//button[@ix-auto="button__TEST CHANGES"]').click()
 
 
-@then('Please wait should appear while settings are being applied')
-def please_wait_should_appear_while_settings_are_being_applied(driver):
-    """Please wait should appear while settings are being applied."""
-    assert wait_on_element(driver, 0.5, 7, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 0.5, 7, '//button[contains(.,"SAVE CHANGES")]')
-    driver.find_element_by_xpath('//button[contains(.,"SAVE CHANGES")]').click()
+@then('Please wait should appear wait for Save Changes then click Save Changes')
+def please_wait_should_appear_wait_for_save_changes_then_click_save_changes(driver):
+    """Please wait should appear wait for Save Changes then click Save Changes."""
+    assert wait_on_element(driver, 0.5, 15, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 0.5, 7, '//button[contains(.,"Save Changes")]')
+    driver.find_element_by_xpath('//button[contains(.,"Save Changes")]').click()
     assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Save Changes")]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__CLOSE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
-@then('navigate to Storage click Disks then click name several times to sort in alphabetical order')
-def navigate_to_storage_click_disks_then_click_name_several_times_to_sort_in_alphabetical_order(driver):
-    """navigate to Storage click Disks then click name several times to sort in alphabetical order."""
+@then('navigate to Storage then click the gear icon and click Disks then click Name to sort in ascending order')
+def navigate_to_storage_then_click_the_great_icon_to_disks_then_click_name_to_sort_in_ascending_order(driver):
+    """navigate to Storage then click the gear icon and click Disks then click Name to sort in ascending order."""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-    assert wait_on_element(driver, 1, 7, '//mat-list-item[@ix-auto="option__Disks"]')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Disks"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//div[contains(.,"Disks")]')
-    assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"Name")]')
+    assert wait_on_element(driver, 1, 7, '//h1[contains(.,"Storage")]')
+    assert wait_on_element(driver, 0.5, 7, '//button[contains(.,"settings")]')
+    driver.find_element_by_xpath('//button[contains(.,"settings")]').click()
+    assert wait_on_element(driver, 0.5, 7, '//button[contains(.,"Disks")]')
+    driver.find_element_by_xpath('//button[contains(.,"Disks")]').click()
+    assert wait_on_element(driver, 1, 7, '//h1[contains(.,"Disks")]')
     # sort disk
-    ada0 = ''
-    while ada0 != 'ada0':
+    disk = ''
+    while disk != 'sda':
         driver.find_element_by_xpath('//span[contains(.,"Name")]').click()
-        ada0 = driver.find_element_by_xpath('(//datatable-body-cell[2]/div/div)[1]').text
+        disk = driver.find_element_by_xpath('(//datatable-body-cell[2]/div/div)[1]').text
 
 
-@then('the list of disks should appear in alphabetical order starting with ada0 (the boot devices) and da0 to da1 the disks we will wipe in next step to create pools')
-def the_list_of_disks_should_appear_in_alphabetical_order_starting_with_ada0_the_boot_devices_and_da0_to_da15_the_disks_we_will_wipe_in_next_step_to_create_pools(driver):
-    """the list of disks should appear in alphabetical order starting with ada0 (the boot devices) and da0 to da1 the disks we will wipe in next step to create pools."""
+@then('the list of disks should appear in ascending order starting with sda')
+def the_list_of_disks_should_appear_in_ascending_order_starting_with_sda(driver):
+    """the list of disks should appear in ascending order starting with sda."""
     # Verify disk are sorted
-    disk_list = {1: 'ada0', 2: 'da0', 3: 'da1'}
+    disk_list = {1: 'sda', 2: 'sdb', 3: 'sbc'}
     for num in list(disk_list.keys()):
         disk = driver.find_element_by_xpath(f'(//datatable-body-cell[2]/div/div)[{num}]').text
         assert disk == disk_list[num]
 
 
-@then('starting with da0, click >, click wipe, check confirm, and click continue. Repeat steps for da1 using the default quick wipe setting')
-def starting_with_da0_click__click_wipe_check_confirm_and_click_continue_repeat_steps_for_da1_using_the_default_quick_wipe_setting(driver):
-    """starting with da0, click >, click wipe, check confirm, and click continue. Repeat steps for da1 using the default quick wipe setting."""
-    for num in range(2):
-        assert wait_on_element(driver, 0.5, 7, f'//a[@ix-auto="expander__da{num}"]')
-        driver.find_element_by_xpath(f'//a[@ix-auto="expander__da{num}"]').click()
-        driver.find_element_by_xpath(f'//button[@ix-auto="button__WIPE_da{num}_da{num}"]').click()
-        assert wait_on_element(driver, 0.5, 7, f'//h1[contains(.,"Wipe Disk da{num}")]')
+@then('starting with sda, click >, click wipe, check confirm, and click continue. Repeat steps for sdb')
+def starting_with_sda_click__click_wipe_check_confirm_and_click_continue_repeat_steps_for_sdb(driver):
+    """starting with sda, click >, click wipe, check confirm, and click continue. Repeat steps for sdb."""
+    disk_list = ['sda', 'sdb']
+    for disk in disk_list:
+        assert wait_on_element(driver, 0.5, 7, f'//a[@ix-auto="expander__{disk}"]')
+        driver.find_element_by_xpath(f'//a[@ix-auto="expander__{disk}"]').click()
+        assert wait_on_element(driver, 0.5, 7, f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]')
+        driver.find_element_by_xpath(f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]').click()
+        assert wait_on_element(driver, 0.5, 7, f'//h1[contains(.,"Wipe Disk {disk}")]')
         driver.find_element_by_xpath('//button[@ix-auto="button__WIPE"]').click()
-        assert wait_on_element(driver, 0.5, 7, f'//h1[contains(.,"Wipe Disk da{num}")]')
+        assert wait_on_element(driver, 0.5, 7, f'//h1[contains(.,"Wipe Disk {disk}")]')
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
         driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
         assert wait_on_element(driver, 1, 7, '//span[contains(.,"Disk Wiped successfully")]')
         driver.find_element_by_xpath('//button[contains(.,"CLOSE")]').click()
 
 
-@then('navigate to Storage click Pools, click Add, select Create new pool')
-def navigate_to_storage_click_pools_click_add_select_create_new_pool(driver):
-    """navigate to Storage click Pools, click Add, select Create new pool."""
+@then('navigate to Storage click Create')
+def navigate_to_storage_click_create(driver):
+    """navigate to Storage click Create"""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Pools"]')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Pools"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//div[contains(.,"Pools")]')
-    driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//label[contains(.,"Create a pool:")]')
-    driver.find_element_by_xpath('//mat-radio-button[@ix-auto="radio__is_new_Create new pool"]').click()
+    assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Storage")]')
+    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button___ACTIONS"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button___ACTIONS"]').click()
 
 
-@then('click create pool, enter tank for pool name, check the box next to da0, press under data vdev, click create, check confirm, click CREATE POOL')
-def click_create_pool_enter_tank_for_pool_name_check_the_box_next_to_da0_press_under_data_vdev_click_create_check_confirm_click_create_pool(driver):
-    """click create pool, enter tank for pool name, check the box next to da0, press under data vdev, click create, check confirm, click CREATE POOL."""
-    driver.find_element_by_xpath('//button[@ix-auto="button__CREATE POOL"]').click()
+@then('enter tank for pool name, check the box next to da0, click the arrow pointing to Data Vdevs, click Create, check confirm, click CREATE POOL')
+def enter_tank_for_pool_name_check_the_box_next_to_da0_press_under_data_vdev_click_create_check_confirm_click_create_pool(driver):
+    """enter tank for pool name, check the box next to da0, click the arrow pointing to Data Vdevs, click Create, check confirm, click CREATE POOL."""
+    assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Create Pool")]')
     assert wait_on_element(driver, 0.5, 7, '//div[contains(.,"Pool Manager")]')
-    driver.find_element_by_xpath('//input[@placeholder="Name"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Name"]').send_keys('tank')
+    driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').clear()
+    driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').send_keys('tank')
     driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__disks-da0"]').click()
     assert wait_on_element(driver, 0.5, 7, '//button[@id="vdev__add-button"]')
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
@@ -324,9 +325,9 @@ def click_create_pool_enter_tank_for_pool_name_check_the_box_next_to_da0_press_u
     driver.find_element_by_xpath('//button[@ix-auto="button__CREATE POOL"]').click()
 
 
-@then('create Pool should appear while pool is being created. You should be returned to list of pools and tank should appear in the list.')
-def create_pool_should_appear_while_pool_is_being_created_you_should_be_returned_to_list_of_pools_and_tank_should_appear_in_the_list(driver):
-    """create Pool should appear while pool is being created. You should be returned to list of pools and tank should appear in the list."""
+@then('Create Pool should appear while pool is being created. You should be returned to the Storage page')
+def create_pool_should_appear_while_pool_is_being_created_you_should_be_returned_to_the_storage_page(driver):
+    """Create Pool should appear while pool is being created. You should be returned to the Storage page."""
     assert wait_on_element(driver, 0.2, 7, '//h1[contains(.,"Create Pool")]')
     driver.find_element_by_xpath('//h1[contains(.,"Create Pool")]')
     assert wait_on_element_disappear(driver, 1, 30, '//h1[contains(.,"Create Pool")]')
@@ -337,14 +338,19 @@ def create_pool_should_appear_while_pool_is_being_created_you_should_be_returned
 @then('navigate to System then Failover, uncheck disable failover, click save.')
 def navigate_to_system_then_failover_click_disable_failover_click_save(driver):
     """navigate to System then Failover, uncheck disable failover, click save."""
-
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Failover"]')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Failover"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//h4[contains(.,"Failover Configuration")]')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SAVE"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 0.5, 7, '//li[contains(.,"Failover")]')
+    driver.find_element_by_xpath('//li[contains(.,"Failover")]').click()
+    assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Failover")]')
+    element = driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]')
+    global class_attribute
+    class_attribute = element.get_attribute('class')
+    if 'mat-checkbox-checked' in class_attribute:
+        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
+        assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SAVE"]')
+        driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+        assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Disable Failover")]')
+        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
+        driver.find_element_by_xpath('//button[@ix-auto="button__OK"]').click()
 
 
 @then('navigate to dashboard, and verify that both controllers show.')
