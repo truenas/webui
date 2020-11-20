@@ -1065,10 +1065,11 @@ export class VolumesListTableConfig implements InputTableConf {
           name: T('Add Zvol'),
           label: T("Add Zvol"),
           onClick: (row1) => {
-            this._router.navigate(new Array('/').concat([
-              "storage", "id", rowData.pool, "zvol", "add",
-              rowData.id
-            ]));
+            // this._router.navigate(new Array('/').concat([
+            //   "storage", "id", rowData.pool, "zvol", "add",
+            //   rowData.id
+            // ]));
+            this.parentVolumesListComponent.addZVol(rowData.pool, rowData.id);
           }
         });
       }
@@ -1931,5 +1932,10 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.dialogService.errorReport(T("Error getting pool data."), res.message, res.stack);
     });
 
+  }
+
+  addZVol(pool, id) {
+    console.log('---------yay', pool, id);
+    this.modalService.open('slide-in-form', EntityTableComponent);
   }
 }
