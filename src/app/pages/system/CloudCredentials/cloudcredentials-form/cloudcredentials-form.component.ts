@@ -287,6 +287,7 @@ export class CloudCredentialsFormComponent {
           tooltip: helptext.service_account_credentials_google_cloud_storage.tooltip,
           required: true,
           isHidden: true,
+          validation: helptext.service_account_credentials_google_cloud_storage.validation,
           relation: [
             {
               action: 'SHOW',
