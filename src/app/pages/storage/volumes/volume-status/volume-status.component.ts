@@ -548,7 +548,6 @@ export class VolumeStatusComponent implements OnInit {
       } else if (data.type === 'MIRROR') {
         item.actions = [{title: 'Mirror Actions', actions: this.extendAction(data)}];
       }
-      //console.log(item.actions);
     }
     return item;
   }
