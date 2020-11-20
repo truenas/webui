@@ -119,7 +119,7 @@ export class NavigationService {
       name: T('Apps'),
       type: 'link',
       tooltip: T('Apps'),
-      icon: 'computer',
+      icon: 'apps',
       state: 'apps',
     },
     {

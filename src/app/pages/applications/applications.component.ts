@@ -5,7 +5,7 @@ import { WebSocketService } from '../../services/index';
 @Component({
   selector: 'app-applications',
   templateUrl: './applications.component.html',
-  styleUrls: ['./applications.component.css']
+  styleUrls: ['./applications.component.scss']
 })
 export class ApplicationsComponent implements OnInit {
   public catalogApps = [];
@@ -30,10 +30,14 @@ export class ApplicationsComponent implements OnInit {
           latest_version: latest,
           info: latestDetails.app_readme
         }
-        console.log(catalogItem)
         this.catalogApps.push(catalogItem);
+        console.log(this.catalogApps)
       }
     })
+  }
+
+  doInstall(appName: string) {
+    console.log(appName)
   }
 
 }

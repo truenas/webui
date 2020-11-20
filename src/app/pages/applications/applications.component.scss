@@ -1,0 +1,42 @@
+.catalog-item {
+    height: 160px;
+    width: 350px;
+
+    .content-wrapper {
+        .logo {
+            height: 160px;
+            width: 160px;
+        }
+
+        .content {
+            text-align: center;
+            padding: 1rem;
+            position: relative;
+            left: 20px;
+
+            .badge-area {
+                height: 18px;
+                margin: 13px auto;
+
+                .partner-badge {
+                    width: 70px;
+                    background-color: var(--yellow);
+                    color: rgba($color: #000000, $alpha: 1.0);
+                }
+            }
+
+        
+            .button-row {
+                position: relative;
+                top: 8px;
+            }
+        }
+    }
+
+    .more-info {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 10px;
+    }
+}
