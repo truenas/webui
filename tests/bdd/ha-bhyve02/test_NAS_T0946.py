@@ -150,7 +150,6 @@ def please_wait_should_appear_while_settings_are_being_applied_you_should_be_ret
 @then('navigate to System then click Misc')
 def navigate_to_system_click_failover_click_disable_failover_click_save(driver):
     """navigate to System then click Misc"""
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__System Settings"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
     assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Misc"]')
