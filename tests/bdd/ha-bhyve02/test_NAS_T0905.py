@@ -91,6 +91,7 @@ def click_save_license(driver):
 @then('The following should appear "Reload the page for the license to take effect"')
 def the_following_should_appear_reload_the_page_for_the_license_to_take_effect(driver):
     """The following should appear "Reload the page for the license to take effect"."""
+    assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Reload the page")]')
 
 
@@ -100,29 +101,10 @@ def click_reload_now(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__RELOAD NOW"]').click()
 
 
-@then('We should return to login prompt')
-def we_should_return_to_login_prompt(driver):
-    """We should return to login prompt."""
-    global dont_pass
-    dont_pass = wait_on_element(driver, 0.5, 5, '//input[@placeholder="Username"]')
-
-
-@then(parsers.parse('Login as "root" with "{password}"'))
-def login_as_root_with_password(driver, password):
-    """Login as "root" with "password"."""
-    if dont_pass:
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
-        assert wait_on_element(driver, 0.5, 5, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-
-
 @then(parsers.parse('"{agreement}" should appear'))
 def end_user_license_agreement_truenas_should_appear(driver, agreement):
     """"End User License Agreement - TrueNAS" should appear."""
-    assert wait_on_element(driver, 0.5, 7, f'//h1[contains(.,"{agreement}")]')
+    assert wait_on_element(driver, 1, 10, f'//h1[contains(.,"{agreement}")]')
 
 
 @then('Click Agree')
@@ -156,20 +138,21 @@ def navigate_to_network_click_global_configuration(driver):
 def enter_hostname_hostname_truenas_controller_2_hostname_virtual_domain_nameserver1_nameserver2_ipv4_default_gateway_(driver, host1, host2, vhost, domain, nameserver1, nameserver2, gatway):
     """Enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}", Hostname (Virtual) "{vhost}", Domain "{domain}", Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}", IPv4 Default Gateway "{gatway}"."""
     assert wait_on_element(driver, 1, 7, '//a[contains(.,"Global Configuration")]')
-    driver.find_element_by_xpath('//input[@placeholder="Hostname"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Hostname"]').send_keys(host1)
-    driver.find_element_by_xpath('//input[@placeholder="Hostname (TrueNAS Controller 2)"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Hostname (TrueNAS Controller 2)"]').send_keys(host2)
-    driver.find_element_by_xpath('//input[@placeholder="Hostname (Virtual)"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Hostname (Virtual)"]').send_keys(vhost)
-    driver.find_element_by_xpath('//input[@placeholder="Domain"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Domain"]').send_keys(domain)
-    driver.find_element_by_xpath('//input[@placeholder="IPv4 Default Gateway"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="IPv4 Default Gateway"]').send_keys(gatway)
-    driver.find_element_by_xpath('//input[@placeholder="Nameserver 1"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Nameserver 1"]').send_keys(nameserver1)
-    driver.find_element_by_xpath('//input[@placeholder="Nameserver 2"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Nameserver 2"]').send_keys(nameserver2)
+    assert wait_on_element(driver, 1, 7, '//input[@ix-auto="input__Hostname"]')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').send_keys(host1)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]').send_keys(host2)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (Virtual)"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (Virtual)"]').send_keys(vhost)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').send_keys(domain)
+    driver.find_element_by_xpath('//input[@ix-auto="input__IPv4 Default Gateway"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__IPv4 Default Gateway"]').send_keys(gatway)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').send_keys(nameserver1)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 2"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 2"]').send_keys(nameserver2)
 
 
 @then('click save when finished')
@@ -182,7 +165,7 @@ def click_save_when_finished(driver):
 @then('"Please wait" should appear while settings are being applied You should be returned to the same Global Configuration screen and "Settings saved." should appear below the save button at the bottom')
 def please_wait_should_appear_while_settings_are_being_applied_you_should_be_returned_to_the_same_global_configuration_screen_and_settings_saved_should_appear_below_the_save_button_at_the_bottom(driver):
     """"Please wait" should appear while settings are being applied You should be returned to the same Global Configuration screen and "Settings saved." should appear below the save button at the bottom."""
-    assert wait_on_element(driver, 0.5, 7, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 0.5, 7, '//div[contains(.,"Settings saved.")]')
 
 
@@ -251,12 +234,12 @@ def uncheck_dhcp_check_critical_select_1_for_failover_group_select_the_failover_
     driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (This Controller)"]').send_keys(ip1)
     driver.find_element_by_xpath('//mat-select[@ix-auto="input__IP Address (This Controller)"]').click()
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__{netmask1}"]').click()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Failover IP Address (TrueNAS Controller 2)"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Failover IP Address (TrueNAS Controller 2)"]').send_keys(ip2)
-    driver.find_element_by_xpath('//mat-select[@ix-auto="input__Failover IP Address (TrueNAS Controller 2)"]').click()
+    driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (TrueNAS Controller 2)"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (TrueNAS Controller 2)"]').send_keys(ip2)
+    driver.find_element_by_xpath('//mat-select[@ix-auto="input__IP Address (TrueNAS Controller 2)"]').click()
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__{netmask2}"]').click()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Virtual IP Address"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Virtual IP Address"]').send_keys(vip)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Virtual IP Address (Failover Address)"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Virtual IP Address (Failover Address)"]').send_keys(vip)
 
 
 @then('Click Apply and "Please wait" should appear while settings are being applied.')
@@ -280,7 +263,7 @@ def click_test_changes_check_confirm_click_test_changes_again(driver):
 @then('Please wait should appear while settings are being applied')
 def please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
-    assert wait_on_element(driver, 0.5, 7, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 0.5, 7, '//button[contains(.,"SAVE CHANGES")]')
     driver.find_element_by_xpath('//button[contains(.,"SAVE CHANGES")]').click()
     assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Save Changes")]')
