@@ -7,29 +7,48 @@
       >{{ 'Add' | translate }}</button>
     </div>
 </mat-toolbar-row>
+<div *ngIf="dataSource.length === 0" class="empty-table-message">{{ 'No data to display' | translate}}</div>
 <mat-card-content class="table-container">
   <div class="table-container" #table>
     <table mat-table [dataSource]="displayedDataSource" class="table-component">
       <!-- Info Column -->
-      <ng-container [matColumnDef]="column.name" *ngFor="let column of tableConf.columns">
-        <th mat-header-cell *matHeaderCellDef> {{column.name}} </th>
-        <td mat-cell *matCellDef="let element">
-          <div class="table-cell">
-            <div *ngIf="column.state && column.state.prop && tableConf.getInOutInfo" class="state-info">
-              <mat-icon [id]="element[idProp]" class="state-info-icon" svgIcon="network-upload-download" *ngIf="unifyState(element[column.state.prop]) === 'STATE_UP'" [matTooltip]="showInOutInfo(element)" [class]="unifyState(element[column.state.prop])"></mat-icon>
-              <mat-icon class="state-info-icon" svgIcon="network-upload-download-disabled" *ngIf="unifyState(element[column.state.prop]) === 'STATE_DOWN'" [class]="unifyState(element[column.state.prop])"></mat-icon>
+      <ng-container *ngIf="!tableConf.complex; else complex">
+        <ng-container [matColumnDef]="column.name" *ngFor="let column of tableConf.columns">
+          <th mat-header-cell *matHeaderCellDef> {{column.name}} </th>
+          <td mat-cell *matCellDef="let element">
+            <div class="table-cell">
+              <div *ngIf="column.state && column.state.prop && tableConf.getInOutInfo" class="state-info">
+                <mat-icon [id]="element[idProp]" class="state-info-icon" svgIcon="network-upload-download" *ngIf="unifyState(element[column.state.prop]) === 'STATE_UP'" [matTooltip]="showInOutInfo(element)" [class]="unifyState(element[column.state.prop])"></mat-icon>
+                <mat-icon class="state-info-icon" svgIcon="network-upload-download-disabled" *ngIf="unifyState(element[column.state.prop]) === 'STATE_DOWN'" [class]="unifyState(element[column.state.prop])"></mat-icon>
+              </div>
+              <mat-icon class="state-icon" *ngIf="column.state && column.state.icon" [class]="unifyState(element[column.prop])">
+                {{column.state.icon}}</mat-icon>
+              <ul *ngIf="column.listview; else textView">
+                <li *ngFor="let item of element[column.prop]"> {{item}} </li>
+              </ul>
+              <ng-template #textView>
+                {{element[column.prop]}}
+              </ng-template>
             </div>
-            <mat-icon class="state-icon" *ngIf="column.state && column.state.icon" [class]="unifyState(element[column.prop])">
-              {{column.state.icon}}</mat-icon>
-            <ul *ngIf="column.listview; else textView">
-              <li *ngFor="let item of element[column.prop]"> {{item}} </li>
-            </ul>
-            <ng-template #textView>
-              {{element[column.prop]}}
-            </ng-template>
-          </div>
-        </td>
+          </td>
+        </ng-container>        
       </ng-container>
+      <!-- Complex Info Column -->
+      <ng-template #complex>
+        <ng-container [matColumnDef]="column.name" *ngFor="let column of tableConf.columns">
+          <th mat-header-cell *matHeaderCellDef> {{column.name}} </th>
+          <td mat-cell *matCellDef="let element">
+            <div class="table-cell">
+              <ng-container>
+                <ul class="complex-table-data">
+                  <li>{{ column.name }}: {{element[column.prop1]}}</li>
+                  <li>{{ column.name2 }}: {{element[column.prop2]}}</li>
+                </ul>
+              </ng-container>
+            </div>
+          </td>
+        </ng-container>
+      </ng-template>
 
       <!-- Action Column -->
       <ng-container matColumnDef="action">
@@ -41,7 +60,7 @@
                 <mat-spinner [diameter]='40' *ngIf="element['onChanging']; else actionButtons"></mat-spinner>
                 <ng-template #actionButtons>
                   <button mat-icon-button (click)="rowAction.onClick(element)" >
-                    <mat-icon class="table-action-button">{{rowAction.icon}}</mat-icon>
+                    <mat-icon class="table-action-button" [matTooltip]="rowAction.matTooltip">{{rowAction.icon}}</mat-icon>
                   </button>
                 </ng-template>
               </div>
@@ -53,7 +72,7 @@
         </td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns" [hidden]="hideHeader"></tr>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns" [hidden]="hideHeader || complex"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="editRow(row)"></tr>
     </table>
   </div>
