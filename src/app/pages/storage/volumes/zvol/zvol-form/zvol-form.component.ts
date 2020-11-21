@@ -16,6 +16,7 @@ import { EntityUtils } from '../../../../common/entity/utils';
 import helptext from '../../../../../helptext/storage/volumes/zvol-form';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import globalHelptext from '../../../../../helptext/global-helptext';
+import { ModalService } from 'app/services/modal.service';
 
 interface ZvolFormData {
   name: string;
@@ -57,6 +58,7 @@ export class ZvolFormComponent {
   protected entityForm: any;
   public minimum_recommended_zvol_volblocksize: string;
   public namesInUse = [];
+  public title: string;
 
   protected origVolSize;
   protected origHuman;
@@ -96,7 +98,7 @@ export class ZvolFormComponent {
     '1M':'1048576'
   };
   public fieldSets: FieldSets = new FieldSets([{
-    name: 'Name',
+    name: '',
     config: [
       {
         type: 'input',
@@ -126,7 +128,7 @@ export class ZvolFormComponent {
           (control: FormControl): ValidationErrors => {
             const config = this.fieldSets.list()[0].config.find(c => c.name === 'volsize');
 
-            const size = control.value ? this.storageService.convertHumanStringToNum(control.value, true) : null;
+            const size = control.value && typeof control.value == "string" ? this.storageService.convertHumanStringToNum(control.value, true) : null;
             const humanSize = control.value;
             
             let errors = control.value && isNaN(size)
@@ -246,10 +248,10 @@ export class ZvolFormComponent {
     data.type = "VOLUME"
 
     if( this.isNew === false ) {
-        delete data.name;
-        delete data.volblocksize;
-        delete data.type;
-        delete data.sparse;
+      delete data.name;
+      delete data.volblocksize;
+      delete data.type;
+      delete data.sparse;
     } else {
       data.name = this.parent + "/" + data.name;
     }
@@ -267,25 +269,28 @@ export class ZvolFormComponent {
 
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
-              protected rest: RestService, protected ws: WebSocketService,
-              protected loader: AppLoaderService, protected dialogService: DialogService,
-              protected storageService: StorageService, private translate: TranslateService
-              ) {}
+    protected rest: RestService, protected ws: WebSocketService,
+    protected loader: AppLoaderService, protected dialogService: DialogService,
+    protected storageService: StorageService, private translate: TranslateService,
+    protected modalService: ModalService
+  ) {}
 
 
   async preInit(entityForm: EntityFormComponent){
     if (!this.parent) return;
 
-    const name = _.find(this.fieldSets.list()[0].config, {name:'name'});
-    const sparse =   _.find(this.fieldSets.list()[0].config, {name:'sparse'});
-    const sync = _.find(this.fieldSets.list()[0].config, {name:'sync'});
-    const compression = _.find(this.fieldSets.list()[0].config, {name:'compression'});
-    const deduplication = _.find(this.fieldSets.list()[0].config, {name:'deduplication'});
-    const volblocksize = _.find(this.fieldSets.list()[0].config, {name:'volblocksize'});
+    const name = this.fieldSets.config('name');
+    const sparse = this.fieldSets.config('sparse');
+    const sync = this.fieldSets.config('sync');
+    const compression = this.fieldSets.config('compression');
+    const deduplication = this.fieldSets.config('deduplication');
+    const volblocksize = this.fieldSets.config('volblocksize');
 
+    this.isNew = true;
 
-    await this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).toPromise().then((pk_dataset)=>{
+    await this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).toPromise().then((pk_dataset) => {
       let children = (pk_dataset[0].children);
+      entityForm.setDisabled('name',false);
       if (children.length > 0) {
         for (let i in children) {
           this.namesInUse.push(/[^/]*$/.exec(children[i].name)[0]);
@@ -294,11 +299,10 @@ export class ZvolFormComponent {
       this.translate.get('Inherit').subscribe(inheritTr => {
 
       if(pk_dataset && pk_dataset[0].type ==="FILESYSTEM"){
-
-          const sync_inherit = [{label:`${inheritTr} (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT'}];
-          const compression_inherit = [{label:`${inheritTr} (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT'}];
-          const deduplication_inherit = [{label:`${inheritTr} (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT'}];
-          const volblocksize_inherit = [{label:`${inheritTr}`, value: 'INHERIT'}];
+        const sync_inherit = [{label:`${inheritTr} (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT'}];
+        const compression_inherit = [{label:`${inheritTr} (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT'}];
+        const deduplication_inherit = [{label:`${inheritTr} (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT'}];
+        const volblocksize_inherit = [{label:`${inheritTr}`, value: 'INHERIT'}];
 
         sync.options = sync_inherit.concat(sync.options);
         compression.options = compression_inherit.concat(compression.options);        
@@ -308,6 +312,9 @@ export class ZvolFormComponent {
         entityForm.formGroup.controls['sync'].setValue('INHERIT');
         entityForm.formGroup.controls['compression'].setValue('INHERIT');
         entityForm.formGroup.controls['deduplication'].setValue('INHERIT');
+
+        this.title = helptext.zvol_title_add;
+
         const root = this.parent.split("/")[0];
         this.ws.call('pool.dataset.recommended_zvol_blocksize',[root]).subscribe(res=>{
           this.entityForm.formGroup.controls['volblocksize'].setValue(res);
@@ -323,14 +330,17 @@ export class ZvolFormComponent {
           entityForm.setDisabled('name',true);
           sparse['isHidden'] =true;
           volblocksize['isHidden'] =true;
-          _.find(this.fieldSets.list()[0].config, {name:'sparse'})['isHidden']=true;
+          this.fieldSets.config('sparse')['isHidden']=true;
           this.customFilter = [[["id", "=", this.parent]]]
-          this.isNew =false;
+          
           let sync_collection = [{label:pk_dataset[0].sync.value, value: pk_dataset[0].sync.value}];
           let compression_collection = [{label:pk_dataset[0].compression.value, value: pk_dataset[0].compression.value}];
           let deduplication_collection = [{label:pk_dataset[0].deduplication.value, value: pk_dataset[0].deduplication.value}];
 
           const volumesize = pk_dataset[0].volsize.parsed;
+
+          this.isNew =false;
+          this.title = helptext.zvol_title_edit;
 
           // keep track of original volume size data so we can check to see if the user intended to change since
           // decimal has to be truncated to three decimal places
@@ -399,8 +409,6 @@ export class ZvolFormComponent {
 
   afterInit(entityForm: EntityFormComponent) {
     this.entityForm = entityForm;
-    if(!entityForm.isNew){
-    }
     this.entityForm.formGroup.controls['volblocksize'].valueChanges.subscribe((res)=>{
       const res_number = parseInt(this.reverseZvolBlockSizeMap[res],10);
       if(this.minimum_recommended_zvol_volblocksize){
@@ -408,13 +416,13 @@ export class ZvolFormComponent {
         if (res_number < recommended_size_number){
           this.translate.get(helptext.blocksize_warning.a).subscribe(blockMsgA => (
             this.translate.get(helptext.blocksize_warning.b).subscribe(blockMsgB => {
-              _.find(this.fieldSets.list()[0].config, {name:'volblocksize'}).warnings = 
+              this.fieldSets.config('volblocksize').warnings = 
               `${blockMsgA} ${this.minimum_recommended_zvol_volblocksize}. ${blockMsgB}`
             })
           ))
 
         } else {
-          _.find(this.fieldSets.list()[0].config, {name:'volblocksize'}).warnings = null;
+          this.fieldSets.config('volblocksize').warnings = null;
         };
       };
     });
@@ -442,21 +450,17 @@ export class ZvolFormComponent {
       let volblocksize_integer_value = data.volblocksize.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
       volblocksize_integer_value = parseInt(volblocksize_integer_value,10)
 
-
       if (volblocksize_integer_value === 512){
         volblocksize_integer_value = 512
       } else {
         volblocksize_integer_value = volblocksize_integer_value * 1024
       }
 
-
       data.volsize = data.volsize + (volblocksize_integer_value - data.volsize%volblocksize_integer_value)
-
 
     } else{
       delete(data.volblocksize);
     }
-
 
     return this.ws.call('pool.dataset.create', [ data ]);
   }
@@ -482,8 +486,7 @@ export class ZvolFormComponent {
       if(!this.edit_data.volsize || this.edit_data.volsize >= rounded_vol_size){
         this.ws.call('pool.dataset.update', [this.parent, this.edit_data]).subscribe((restPostResp) => {
           this.loader.close();
-          this.router.navigate(new Array('/').concat(
-            this.route_success));
+          this.modalService.close('slide-in-form');
         }, (eres) => {
           this.loader.close();
           new EntityUtils().handleWSError(this.entityForm, eres);
@@ -491,21 +494,19 @@ export class ZvolFormComponent {
       } else{
         this.loader.close();
         this.dialogService.Info(helptext.zvol_save_errDialog.title, helptext.zvol_save_errDialog.msg)
+        this.modalService.close('slide-in-form');
       }
     })
   }
 
   customSubmit(body: any) {
-
-
     this.loader.open();
 
     if(this.isNew === true){
       this.addSubmit(body).subscribe((restPostResp) => {
         this.loader.close();
-
-        this.router.navigate(new Array('/').concat(
-          this.route_success));
+        this.modalService.close('slide-in-form');
+        
       }, (res) => {
         this.loader.close();
         new EntityUtils().handleWSError(this.entityForm, res);
@@ -515,7 +516,7 @@ export class ZvolFormComponent {
     }
   }
 
-  setParent(pool, id) {
-    this.parent = pool;
+  setParent(id) {
+    this.parent = id;
   }
 }

@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, AfterViewChecked } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
@@ -1066,11 +1066,7 @@ export class VolumesListTableConfig implements InputTableConf {
           name: T('Add Zvol'),
           label: T("Add Zvol"),
           onClick: (row1) => {
-            // this._router.navigate(new Array('/').concat([
-            //   "storage", "id", rowData.pool, "zvol", "add",
-            //   rowData.id
-            // ]));
-            this.parentVolumesListComponent.addZVol(rowData.pool, rowData.id);
+            this.parentVolumesListComponent.addZvol(rowData.pool, rowData.id);
           }
         });
       }
@@ -1241,10 +1237,7 @@ export class VolumesListTableConfig implements InputTableConf {
         name: T('Edit Zvol'),
         label: T("Edit Zvol"),
         onClick: (row1) => {
-          this._router.navigate(new Array('/').concat([
-            "storage", "id", rowData.pool, "zvol", "edit",
-            rowData.id
-          ]));
+          this.parentVolumesListComponent.addZvol(rowData.pool, rowData.id);
         }
       });
 
@@ -1820,8 +1813,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   public systemdatasetPool: any;
   public has_encrypted_root = {};
   public has_key_dataset = {};
-  protected addZVolComponent: ZvolFormComponent;
-
+  protected addZvolComponent: ZvolFormComponent;
+  protected aroute: ActivatedRoute;
   constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
@@ -1934,11 +1927,12 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.dialogService.errorReport(T("Error getting pool data."), res.message, res.stack);
     });
 
-    this.addZVolComponent = new ZvolFormComponent(this.router, null, null, this.ws, null, this.dialogService, this.storageService, null);
+    this.addZvolComponent = new ZvolFormComponent(this.router, this.aroute, this.rest, this.ws, this.loader,
+      this.dialogService, this.storageService, this.translate, this.modalService);
   }
 
-  addZVol(pool, id) {
-    this.addZVolComponent.setParent(pool, id);
-    this.modalService.open('slide-in-form', this.addZVolComponent);
+  addZvol(pool, id) {
+    this.addZvolComponent.setParent(id);
+    this.modalService.open('slide-in-form', this.addZvolComponent, id);
   }
 }
