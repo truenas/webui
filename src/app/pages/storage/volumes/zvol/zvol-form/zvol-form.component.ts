@@ -17,6 +17,7 @@ import helptext from '../../../../../helptext/storage/volumes/zvol-form';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import globalHelptext from '../../../../../helptext/global-helptext';
 import { ModalService } from 'app/services/modal.service';
+import { VolumesListComponent } from '../../volumes-list';
 
 interface ZvolFormData {
   name: string;
@@ -268,7 +269,8 @@ export class ZvolFormComponent {
   }
 
 
-  constructor(protected router: Router, protected aroute: ActivatedRoute,
+  constructor(private parentVolumesListComponent: VolumesListComponent,
+    protected router: Router, protected aroute: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
     protected loader: AppLoaderService, protected dialogService: DialogService,
     protected storageService: StorageService, private translate: TranslateService,
@@ -506,7 +508,7 @@ export class ZvolFormComponent {
       this.addSubmit(body).subscribe((restPostResp) => {
         this.loader.close();
         this.modalService.close('slide-in-form');
-        
+        this.parentVolumesListComponent.repaintMe();
       }, (res) => {
         this.loader.close();
         new EntityUtils().handleWSError(this.entityForm, res);

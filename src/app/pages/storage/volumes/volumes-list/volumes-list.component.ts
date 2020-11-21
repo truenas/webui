@@ -1927,7 +1927,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.dialogService.errorReport(T("Error getting pool data."), res.message, res.stack);
     });
 
-    this.addZvolComponent = new ZvolFormComponent(this.router, this.aroute, this.rest, this.ws, this.loader,
+    this.addZvolComponent = new ZvolFormComponent(this, this.router, this.aroute, this.rest, this.ws, this.loader,
       this.dialogService, this.storageService, this.translate, this.modalService);
   }
 
