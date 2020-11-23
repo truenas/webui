@@ -1,8 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 
-import { WebSocketService, NetworkService, DialogService, StorageService, AppLoaderService, ServicesService } from '../../services';
+import { WebSocketService, NetworkService, DialogService, StorageService, 
+  AppLoaderService, ServicesService } from '../../services';
 import { T } from '../../translate-marker';
 import helptext from '../../helptext/network/interfaces/interfaces-list';
 import { CardWidgetConf } from './card-widget/card-widget.component';
@@ -36,6 +38,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   public checkin_timeout = 60;
   public checkin_timeout_pattern = /\d+/;
   public checkin_remaining = null;
+  private uniqueIPs = [];
+  private affectedServices = [];
   checkin_interval;
 
   public helptext = helptext
@@ -185,7 +189,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     private storageService: StorageService,
     private loader: AppLoaderService,
     private modalService: ModalService,
-    private servicesService: ServicesService) {
+    private servicesService: ServicesService,
+    private translate: TranslateService) {
       super();
       this.getGlobalSettings();
   }
@@ -325,37 +330,31 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   commitPendingChanges() {
-    let ipWarning, servicesWarning;
     this.ws.call('interface.services_restarted_on_sync').subscribe(res => {
-      console.log(res)
       if (res.length > 0) {
-        let services = [];
         let ips = [];
         res.forEach(item => {
           if (item['system-service']) {
-            services.push(item['system-service']);
+            this.affectedServices.push(item['system-service']);
 
           }
           if (item['service']) {
-            services.push(item['service']);
+            this.affectedServices.push(item['service']);
           }
           item.ips.forEach(ip => {
             ips.push(ip);
           })
         })
-        let uniqueIPs = [];
+
         ips.forEach(ip => {
-          if (!uniqueIPs.includes(ip)) {
-            uniqueIPs.push(ip);
+          if (!this.uniqueIPs.includes(ip)) {
+            this.uniqueIPs.push(ip);
           }
         })
-        console.log(services, uniqueIPs);
-        ipWarning = 'The following IPs are being removed: ' + uniqueIPs.join(', ');
-        servicesWarning = 'These services will be changed to listen on 0.0.0.0.' + services.join(', ');
       }
       this.dialog.confirm(
         helptext.commit_changes_title,
-        helptext.commit_changes_warning + (ipWarning ? ipWarning : '') + (servicesWarning ? servicesWarning : ''),
+        helptext.commit_changes_warning,
         false, helptext.commit_button).subscribe(confirm => {
           if (confirm) {
             this.loader.open();
@@ -377,56 +376,46 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   checkInNow() {
-    this.ws.call('interface.services_restarted_on_sync').subscribe(res => {
-      console.log(res)
-      if (res.length > 0) {
-        let services = [];
-        let ips = [];
-        res.forEach(item => {
-          services.push(item.service);
-          item.ips.forEach(ip => {
-            ips.push(ip);
-          })
-        })
-        this.dialog.confirm(helptext.services_restarted.title, helptext.services_restarted.message_a + ' ' +
-           ips.join(', ') +  ' ' + helptext.services_restarted.message_b + ' ' +
-          services.join(', '),
+    if (this.affectedServices.length > 0) {
+      this.translate.get(helptext.services_restarted.message_a).subscribe(msgA => {
+        this.translate.get(helptext.services_restarted.message_b).subscribe(msgB => {
+          this.dialog.confirm(helptext.services_restarted.title, msgA + ' ' + 
+          this.uniqueIPs.join(', ') +  ' ' + msgB + ' ' + this.affectedServices.join(', '), 
           true, helptext.services_restarted.button).subscribe(res => {
+       if (res) {
+         this.finishCheckin();
+       }
+        })
+      })
+   })
+    } else {
+      this.dialog.confirm(
+        helptext.checkin_title,
+        helptext.checkin_message,
+        true, helptext.checkin_button).subscribe(res => {
           if (res) {
             this.finishCheckin();
           }
         })
-      } else {
-        this.finishCheckin();
-      }
-    })
+    }
   }
 
   finishCheckin() {
-    this.dialog.confirm(
-
-      helptext.checkin_title,
-      helptext.checkin_message,
-      true, helptext.checkin_button).subscribe(res => {
-        if (res) {
-          this.loader.open();
-          this.ws.call('interface.checkin').subscribe((success) => {
-            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:true}, sender:this});
-            this.loader.close();
-            this.dialog.Info(
-              helptext.checkin_complete_title,
-              helptext.checkin_complete_message);
-            this.hasPendingChanges = false;
-            this.checkinWaiting = false;
-            clearInterval(this.checkin_interval);
-            this.checkin_remaining = null;
-          }, (err) => {
-            this.loader.close();
-            new EntityUtils().handleWSError(this, err, this.dialog);
-          });
-        }
-      }
-    );
+    this.loader.open();
+    this.ws.call('interface.checkin').subscribe((success) => {
+      this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:true}, sender:this});
+      this.loader.close();
+      this.dialog.Info(
+        helptext.checkin_complete_title,
+        helptext.checkin_complete_message);
+      this.hasPendingChanges = false;
+      this.checkinWaiting = false;
+      clearInterval(this.checkin_interval);
+      this.checkin_remaining = null;
+    }, (err) => {
+      this.loader.close();
+      new EntityUtils().handleWSError(this, err, this.dialog);
+    });
   }
 
   rollbackPendingChanges() {
