@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { WebSocketService, RestService, AppLoaderService, DialogService } from "../../../../services";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslateService } from '@ngx-translate/core';
@@ -17,6 +17,12 @@ import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/volume-status';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { Subject } from 'rxjs';
+import { EntityToolbarComponent } from '../../../common/entity/entity-toolbar/entity-toolbar.component';
+import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
+import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
+
 interface poolDiskInfo {
   name: any,
   read: any,
@@ -34,7 +40,8 @@ interface poolDiskInfo {
   styleUrls: ['./volume-status.component.css']
 })
 export class VolumeStatusComponent implements OnInit {
-
+  
+  public actionEvents: Subject<CoreEvent>;
   public poolScan: any;
   public timeRemaining: any = {};
   public treeTableConfig: EntityTreeTable = {
@@ -45,6 +52,7 @@ export class VolumeStatusComponent implements OnInit {
       { name: T('Write'), prop: 'write', },
       { name: T('Checksum'), prop: 'checksum', },
       { name: T('Status'), prop: 'status', },
+      { name: T('Actions'), prop: 'actions', hidden: false},
     ]
   }
 
@@ -129,6 +137,7 @@ export class VolumeStatusComponent implements OnInit {
   protected pool: any;
 
   constructor(protected aroute: ActivatedRoute,
+    protected core: CoreService,
     protected ws: WebSocketService,
     protected rest: RestService,
     protected translate: TranslateService,
@@ -136,7 +145,8 @@ export class VolumeStatusComponent implements OnInit {
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected matDialog: MatDialog,
-    protected localeService: LocaleService) {}
+    protected localeService: LocaleService) {
+  }
 
   getZfsPoolScan(poolName) {
     this.ws.subscribe('zfs.pool.scan').subscribe(
@@ -205,12 +215,45 @@ export class VolumeStatusComponent implements OnInit {
       _.find(this.extendVdevFormFields, { name: 'new_disk' }).options = availableDisksForExtend;
     })
   }
+
   ngOnInit() {
+
+    //Setup Global Actions
+    const actionId = 'refreshBtn'
+    this.actionEvents = new Subject();
+    this.actionEvents.subscribe((evt) => {
+      if(evt.data[actionId]){
+        this.refresh();
+      }
+    });
+
+    const toolbarConfig: ToolbarConfig = {
+      target: this.actionEvents,
+      controls: [
+        {
+          type: 'button',
+          name: actionId,
+          label: 'Refresh',
+          color: 'primary'
+        }
+      ]
+    };
+
+    const actionsConfig = { actionType:EntityToolbarComponent, actionConfig: toolbarConfig };
+    this.core.emit({name:"GlobalActions", data: actionsConfig, sender: this });
+
+
     this.aroute.params.subscribe(params => {
       this.pk = parseInt(params['pk'], 10);
       this.getData();
     });
+
     this.getUnusedDisk();
+  }
+
+  ngOnDestroy(){
+    this.actionEvents.complete();
+    this.core.unregister({observerClass: this});
   }
 
   refresh() {
@@ -484,12 +527,12 @@ export class VolumeStatusComponent implements OnInit {
       data.name = data.type;
     }
     // use path as the device name if the device name is null
-    if (!data.device || data.device == null) {
-      data.device = data.path;
+    if (!data.disk || data.disk == null) {
+      data.disk = data.path;
     }
 
     const item: poolDiskInfo = {
-      name: data.name ? data.name : data.device,
+      name: data.name ? data.name : data.disk,
       read: stats.read_errors ? stats.read_errors : 0,
       write: stats.write_errors ? stats.write_errors : 0,
       checksum: stats.checksum_errors ? stats.checksum_errors : 0,
@@ -501,9 +544,9 @@ export class VolumeStatusComponent implements OnInit {
     // add actions
     if (category && data.type) {
       if (data.type == 'DISK') {
-        item.actions = this.getAction(data, category, vdev_type);
+        item.actions = [{title:'Disk Actions', actions: this.getAction(data, category, vdev_type)}];
       } else if (data.type === 'MIRROR') {
-        item.actions = this.extendAction(data);
+        item.actions = [{title: 'Mirror Actions', actions: this.extendAction(data)}];
       }
     }
     return item;

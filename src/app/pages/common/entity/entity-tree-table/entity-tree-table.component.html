@@ -49,24 +49,26 @@
           <!-- Row Action Cells -->
           <td class="action-cell" mat-cell *matCellDef="let element; let ii = index">
 
-            <button mat-icon-button [matMenuTriggerFor]="rowActions" aria-label="Example icon-button with a menu">
-              <mat-icon>more_vert</mat-icon>
-            </button>
-
-            <mat-menu #rowActions="matMenu">
-              <ng-container *ngFor="let actionGroup of element.data.actions">
-                <div class="group-menu-header">
-                  <mat-divider role="separator"></mat-divider>
-                  <div class="title">
-                    <strong>{{actionGroup.title}}</strong>
+            <ng-container *ngIf="element.data.actions">
+              <button mat-icon-button [matMenuTriggerFor]="rowActions" aria-label="Example icon-button with a menu">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+  
+              <mat-menu #rowActions="matMenu">
+                <ng-container *ngFor="let actionGroup of element.data.actions">
+                  <div class="group-menu-header">
+                    <mat-divider role="separator"></mat-divider>
+                    <div class="title">
+                      <strong>{{actionGroup.title}}</strong>
+                    </div>
                   </div>
-                </div>
-                <button mat-menu-item *ngFor="let action of actionGroup.actions" (click)="action.onClick(action)">
-                  {{action.name}}
-                </button>
-              </ng-container>
-            </mat-menu>
+                  <button mat-menu-item *ngFor="let action of actionGroup.actions" (click)="action.onClick(element.data)">
+                    {{action.label}}
+                  </button>
+                </ng-container>
+              </mat-menu>
 
+            </ng-container>
           </td>
         </ng-container>
       </ng-container>

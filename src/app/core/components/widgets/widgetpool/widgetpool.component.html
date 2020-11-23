@@ -22,7 +22,7 @@
           </span>
 
             <div class="controls">
-              <button mat-icon-button class="" (click)="router.navigate(['storage/pools/status/' + poolState.id.toString()])"
+              <button mat-icon-button class="" (click)="router.navigate(['storage/status/' + poolState.id.toString()])"
                 [ix-auto]="poolState.name" ix-auto-type="button" ix-auto-identifier="poolStatus">
                 <mat-icon role="img"
                   matTooltip="{{'Pool Status' | translate}}"
