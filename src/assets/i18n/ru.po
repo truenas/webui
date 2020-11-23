@@ -188,6 +188,9 @@ msgstr "(Нет описания)"
 msgid "(Remove pool from database)"
 msgstr "(Удалить пул из базы данных)"
 
+msgid "(System Dataset Pool)"
+msgstr ""
+
 msgid "(top-right), then"
 msgstr "(вверху справа), затем"
 
@@ -618,6 +621,12 @@ msgstr ""
 "<i>Дайджест-аутентификация</i> - зашифрована."
 
 msgid ""
+"<i>Certificate Signing Request</i> is used to get a CA signature.  "
+"<i>Import Certificate Signing Request</i> allows an existing CSR  to be "
+"imported onto the system."
+msgstr ""
+
+msgid ""
 "<i>Default (Clone Jail)</i> or <i>Basejail</i>. Clone jails are clones of "
 "the specified RELEASE. They are linked to that RELEASE, even if they are "
 "upgraded. Basejails mount the specified RELEASE directories as nullfs "
@@ -660,16 +669,9 @@ msgstr ""
 
 msgid ""
 "<i>Internal Certificate</i> is used for internal or local  systems. "
-"<i>Certificate Signing Request</i> is used to get a CA signature.  "
 "<i>Import Certificate</i> allows an existing certificate to be imported "
-"onto  the system. <i>Import Certificate Signing Request</i> allows an "
-"existing CSR  to be imported onto the system."
+"onto  the system."
 msgstr ""
-"<i>Внутренний сертификат</i> используется для внутренних или локальных "
-"систем. <i>Запрос на подпись сертификата</i> используется для получения "
-"подписи CA. <i>Импортировать сертификат</i> позволяет импортировать "
-"существующий сертификат в систему. <i>Импортировать запрос на подпись "
-"сертификата</i> позволяет импортировать существующий CSR в систему."
 
 msgid ""
 "<i>PUSH</i> sends data to cloud storage. <i>PULL</i>  receives data from "
@@ -1116,6 +1118,9 @@ msgstr "Активный"
 msgid "Active Directory"
 msgstr "Active Directory"
 
+msgid "Active Directory - Primary Domain"
+msgstr ""
+
 msgid "Active Directory IDMAP change!"
 msgstr "Изменение Active Directory IDMAP!"
 
@@ -1134,9 +1139,6 @@ msgstr "Добавить"
 msgid "Add ACL Item"
 msgstr "Добавить элемент ACL"
 
-msgid "Add ACME Certificate"
-msgstr "Добавить сертификат ACME"
-
 msgid "Add API Key"
 msgstr "Добавить ключ API"
 
@@ -1146,8 +1148,20 @@ msgstr "Добавить дополнительный путь"
 msgid "Add Alert Service"
 msgstr "Добавить службу оповещений"
 
+msgid "Add CA"
+msgstr ""
+
+msgid "Add CSR"
+msgstr ""
+
+msgid "Add Certificate"
+msgstr ""
+
 msgid "Add Cloud Credential"
 msgstr "Добавить облачные полномочия"
+
+msgid "Add DNS Authenticator"
+msgstr ""
 
 msgid "Add Dataset"
 msgstr "Добавить набор данных"
@@ -1161,8 +1175,14 @@ msgstr "Добавить Idmap"
 msgid "Add Interface"
 msgstr ""
 
+msgid "Add Kerberos SPN Entry"
+msgstr ""
+
 msgid "Add Mountpoint"
 msgstr "Добавить точку монтирования"
+
+msgid "Add NFS SPN"
+msgstr ""
 
 msgid "Add Recovery Key"
 msgstr "Добавить ключ восстановления"
@@ -1253,6 +1273,9 @@ msgstr ""
 "Добавленные диски стираются, затем пул расширяется на новые диски с "
 "выбранной топологией. Существующие данные в пуле сохраняются."
 
+msgid "Adding NFS NPN requires sufficient privileges. Enter your credentials below."
+msgstr ""
+
 msgid "Adding Vdevs to an encrypted pool resets the passphrase and recovery key!"
 msgstr ""
 "Добавление Vdevs в зашифрованный пул сбрасывает ключевую фразу и ключ "
@@ -1316,6 +1339,9 @@ msgstr "Дополнительные данные VDevs для создания"
 
 msgid "Additional Domains"
 msgstr "Дополнительные домены"
+
+msgid "Additional Domains:"
+msgstr ""
 
 msgid "Additional Hardware"
 msgstr "Дополнительное оборудование"
@@ -1501,6 +1527,11 @@ msgstr "Алгоритм"
 msgid "Alias"
 msgstr "Псевдоним"
 
+msgid ""
+"Alias for the identical interface  on the other TrueNAS controller. The "
+"alias can be an IPv4 or IPv6 address."
+msgstr ""
+
 msgid "Aliases"
 msgstr "Псевдонимы"
 
@@ -1552,6 +1583,9 @@ msgstr "Выделить место для нового zvol."
 
 msgid "Allow"
 msgstr "Разрешить"
+
+msgid "Allow "
+msgstr ""
 
 msgid "Allow All"
 msgstr ""
@@ -2137,6 +2171,9 @@ msgstr "Подключить NIC"
 msgid "Attach screenshots."
 msgstr "Прикрепить скриншоты."
 
+msgid "Attention"
+msgstr ""
+
 msgid "Aug"
 msgstr "Авг"
 
@@ -2227,6 +2264,9 @@ msgstr "Авторизованные хосты и IP-адреса"
 
 msgid "Authorized Networks"
 msgstr "Авторизованные сети"
+
+msgid "Auto TRIM"
+msgstr ""
 
 msgid "Auto configure IPv6"
 msgstr "Автоматическая настройка IPv6"
@@ -2491,6 +2531,9 @@ msgstr ""
 msgid "Boot environment to be cloned."
 msgstr "Загрузочная среда для клонирования."
 
+msgid "Bot API Token"
+msgstr ""
+
 msgid ""
 "Brainpool curves can be more secure, while secp curves can be faster. See "
 "<a "
@@ -2694,6 +2737,9 @@ msgstr "ОЧИСТИТЬ СИНХР. КЛЮЧИ"
 msgid "CLOSE"
 msgstr "ЗАКРЫТЬ"
 
+msgid "CN"
+msgstr ""
+
 msgid "CN Realm"
 msgstr "CN Область"
 
@@ -2819,6 +2865,12 @@ msgstr ""
 
 msgid "Certificate Options"
 msgstr "Параметры Сертификата"
+
+msgid "Certificate Signing Request"
+msgstr ""
+
+msgid "Certificate Signing Requests"
+msgstr ""
 
 msgid "Certificate Subject"
 msgstr "Предмет сертификата"
@@ -3195,6 +3247,11 @@ msgstr ""
 "Выберите сохраненную пару ключей SSH или выберите <i>Создать новую</i>, "
 "чтобы создать новую пару ключей и использовать ее для этого подключения."
 
+msgid ""
+"Choose a temporary location for the encryption key that will decrypt "
+"replicated data."
+msgstr ""
+
 msgid "Choose a time format."
 msgstr "Выберите формат времени."
 
@@ -3264,6 +3321,11 @@ msgstr ""
 "href=\"https://www.globalsign.com/en/blog/what-is-an-intermediate-or-"
 "subordinate-certificate-authority\">Что такое подчиненные центры "
 "сертификации и почему вы хотите иметь свой собственный?</a>"
+
+msgid ""
+"Choose between a <i>Hex</i> (base 16 numeral) or <i>Passphrase</i> "
+"(alphanumeric) style encryption key."
+msgstr ""
 
 msgid ""
 "Choose how many log entries to create. Choices range from the least log "
@@ -3462,6 +3524,9 @@ msgstr ""
 msgid "Cipher"
 msgstr "Шифр"
 
+msgid "City: "
+msgstr ""
+
 msgid ""
 "Classification for each S3 object. Choose a class based on the specific use "
 "case or performance requirements. See <a "
@@ -3528,8 +3593,14 @@ msgstr ""
 msgid "Client Certificate"
 msgstr "Сертификат клиента"
 
+msgid "Client ID"
+msgstr ""
+
 msgid "Client Name"
 msgstr "Имя клиента"
+
+msgid "Client Secret"
+msgstr ""
 
 msgid "Clients"
 msgstr "Клиенты"
@@ -3664,6 +3735,9 @@ msgstr "Комментарии об этом скрипте."
 
 msgid "Common Name"
 msgstr "Общее имя"
+
+msgid "Common: "
+msgstr ""
 
 msgid "Community"
 msgstr "Сообщество"
@@ -3947,6 +4021,9 @@ msgstr "Самый холодный:"
 msgid "Copies"
 msgstr "Копии"
 
+msgid "Copy"
+msgstr ""
+
 msgid "Copy and Paste"
 msgstr "Скопировать и вставить"
 
@@ -3956,11 +4033,17 @@ msgstr "Ядер"
 msgid "Could not delete boot environment."
 msgstr "Не удалось удалить загрузочное окрудение."
 
+msgid "Could not extend Vdev."
+msgstr ""
+
 msgid "Could not find a group name for this group ID."
 msgstr "Не удалось найти имя группы для этого идентификатора группы."
 
 msgid "Could not find a user name for this user ID."
 msgstr "Не удалось найти имя пользователя для этого идентификатора пользователя."
+
+msgid "Could not replace disk."
+msgstr ""
 
 msgid "Country"
 msgstr "Страна"
@@ -3976,6 +4059,9 @@ msgstr ""
 "Код страны должен содержать действительный <a "
 "href=\"https://www.iso.org/obp/ui/#search/code/\" target=\"_blank\">ISO "
 "3166-1 alpha-2 код</a> из двух заглавных букв."
+
+msgid "Country: "
+msgstr ""
 
 msgid "Crash reporting"
 msgstr "Отчеты о сбоях"
@@ -4154,6 +4240,9 @@ msgstr "Текущий поезд:"
 msgid "Custom"
 msgstr "Пользовательский"
 
+msgid "Custom Name"
+msgstr ""
+
 msgid "Custom Path"
 msgstr "Пользовательский путь"
 
@@ -4165,6 +4254,9 @@ msgstr "Пользовательский сервер"
 
 msgid "Custom Theme Name"
 msgstr "Название пользовательской темы"
+
+msgid "Custom Value"
+msgstr ""
 
 msgid "Customer Name"
 msgstr "Имя Клиента"
@@ -4213,6 +4305,9 @@ msgstr "DHCP"
 
 msgid "DHCP Autoconfigure IPv4"
 msgstr "DHCP автонастройка IPv4"
+
+msgid "DISABLED"
+msgstr ""
 
 msgid "DNS Domain Name"
 msgstr "Доменное имя DNS"
@@ -4428,6 +4523,9 @@ msgstr "Шлюз по умолчанию"
 msgid "Default Permissions"
 msgstr "Разрешения по умолчанию"
 
+msgid "Default Route"
+msgstr ""
+
 msgid "Default Router For IPv4"
 msgstr "Маршрутизатор по умолчанию для IPv4"
 
@@ -4472,6 +4570,16 @@ msgstr ""
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smartd&manpath=FreeBSD+11.1"
 "-RELEASE+and+Ports\" target=\"_blank\">smartd</a> будет просыпается и "
 "проверять, настроены ли какие-либо тесты для запуска."
+
+msgid ""
+"Define an alias for the interface  on this TrueNAS controller. The alias "
+"can be an IPv4 or IPv6  address."
+msgstr ""
+
+msgid ""
+"Define an alias that can  connect to the interface on either TrueNAS "
+"controller. This address  remains active if a Controller failover occurs."
+msgstr ""
 
 msgid ""
 "Define other sections and their key/value pairs. Enclose each section name "
@@ -4663,6 +4771,9 @@ msgstr "Удаление интерфейсов при включенной ВД
 
 msgid "Deleting the <b>"
 msgstr "Удаление <b>"
+
+msgid "Deleting..."
+msgstr ""
 
 msgid "Deny"
 msgstr ""
@@ -4881,6 +4992,9 @@ msgstr "Разница"
 msgid "Digest Algorithm"
 msgstr "Алгоритм хеширования"
 
+msgid "Digest Algorithm: "
+msgstr ""
+
 msgid "Digital Signature"
 msgstr "Цифровая подпись"
 
@@ -5049,6 +5163,9 @@ msgstr ""
 msgid "Distinguished Name"
 msgstr "Уникальное имя"
 
+msgid "Distinguished Name: "
+msgstr ""
+
 msgid ""
 "Do <b>NOT</b> change this setting when using Windows as the initiator. Only "
 "needs to be changed in large environments where the number of systems using "
@@ -5099,6 +5216,9 @@ msgstr ""
 "Домен для пользователя <i>Имя</i>. Требуется, когда <i>SID</i> не введен. "
 "Локальные пользователи имеют имя NetBIOS сервера SMB: "
 "<code>freenas\\smbusers</code>."
+
+msgid "Domain:"
+msgstr ""
 
 msgid "Done"
 msgstr "Готово"
@@ -5178,6 +5298,9 @@ msgstr "Кривая EC"
 msgid "EDIT"
 msgstr "РЕДАКТИРОВАТЬ"
 
+msgid "ENABLED"
+msgstr ""
+
 msgid "ERROR: Not Enough Memory"
 msgstr "ОШИБКА: Недостаточно памяти"
 
@@ -5202,6 +5325,18 @@ msgstr "Редактировать ключ API"
 msgid "Edit Alert Service"
 msgstr "Изменить службу оповещения"
 
+msgid "Edit CA"
+msgstr ""
+
+msgid "Edit CSR"
+msgstr ""
+
+msgid "Edit Certificate"
+msgstr ""
+
+msgid "Edit DNS Authenticator"
+msgstr ""
+
 msgid "Edit Disk(s)"
 msgstr "Редактировать диск(и)"
 
@@ -5225,6 +5360,9 @@ msgstr "Редактировать параметры"
 
 msgid "Edit Permissions"
 msgstr "Изменить разрешения"
+
+msgid "Edit Pool Options for "
+msgstr ""
 
 msgid "Edit Share ACL"
 msgstr "Редактировать ACL ресурса"
@@ -5269,6 +5407,9 @@ msgid ""
 "entries by pressing <code>Enter</code>."
 msgstr ""
 
+msgid "Email: "
+msgstr ""
+
 msgid "Emergency"
 msgstr "Чрезвычайно"
 
@@ -5285,6 +5426,12 @@ msgstr ""
 
 msgid "Enable"
 msgstr "Включить"
+
+msgid ""
+"Enable   <a href=\"https://en.wikipedia.org/wiki/SMTP_Authentication\"   "
+"target=\"_blank\">SMTP AUTH</a> using PLAIN SASL.   Requires a valid "
+"Username and Password."
+msgstr ""
 
 msgid ""
 "Enable  <a href=\"https://zfsonlinux.org/manpages/0.8.3/man8/zfs.8.html\" "
@@ -5332,11 +5479,17 @@ msgstr "Включить FSRVP"
 msgid "Enable FXP"
 msgstr "Включить FXP"
 
+msgid "Enable GMail OAuth authentication."
+msgstr ""
+
 msgid "Enable NFSv4"
 msgstr "Включить NFSv4"
 
 msgid "Enable Netwait Feature"
 msgstr "Включить функуию Netwait"
+
+msgid "Enable Network Performance Statistics"
+msgstr ""
 
 msgid "Enable Password Toggle"
 msgstr "Разрешить просмотр пароля"
@@ -5398,14 +5551,17 @@ msgstr ""
 "Включить автоматические оповещения о поддержке в iXsystems (только "
 "поддержка Silver/Gold)"
 
+msgid ""
+"Enable for TrueNAS to periodically review data blocks and identify empty "
+"blocks of obsolete blocks that can be deleted. Unset to incorporate day "
+"block overwrites when a device write is started (default)."
+msgstr ""
+
 msgid "Enable iSCSI ALUA"
 msgstr "Включить iSCSI ALUA"
 
 msgid "Enable iXsystems Proactive Support"
 msgstr "Включить проактивную поддержку iXsystems"
-
-msgid "Enable iftop"
-msgstr ""
 
 msgid ""
 "Enable running services that require <a "
@@ -5510,17 +5666,6 @@ msgstr ""
 
 msgid "Enable when the device number is inconstant across a reboot."
 msgstr "Включите, если номер устройства непостоянен при перезагрузке."
-
-msgid ""
-"Enable/disable <a "
-"href=\"https://en.wikipedia.org/wiki/SMTP_Authentication\" "
-"target=\"_blank\">SMTP AUTH</a> using PLAIN SASL. Enter the required "
-"Username and Password if set."
-msgstr ""
-"Включить/выключить <a "
-"href=\"https://en.wikipedia.org/wiki/SMTP_Authentication\" "
-"target=\"_blank\">SMTP AUTH</a> используя PLAIN SASL. Введите требуемые имя "
-"пользователя и пароль, если включено."
 
 msgid "Enable/disable TLS Web Client Authentication."
 msgstr "Включение/отключение проверки подлинности веб-клиента TLS."
@@ -5644,6 +5789,12 @@ msgstr "Алгоритм шифрования"
 
 msgid "Encryption Key"
 msgstr "Ключ шифрования"
+
+msgid "Encryption Key Format"
+msgstr ""
+
+msgid "Encryption Key Location in Target System"
+msgstr ""
 
 msgid "Encryption Key Passphrase"
 msgstr "Кодовая фраза ключа шифрования"
@@ -5813,6 +5964,13 @@ msgid ""
 "Allow* and *Hosts Deny* list, then allow all hosts  that are on the *Hosts "
 "Allow* list. <br><br>  If there is a host not on the *Hosts Allow* and not "
 "on the *Hosts Deny* list,  then allow it."
+msgstr ""
+
+msgid ""
+"Enter a list of chat IDs separated by space, comma or semicolon.  To find "
+"your chat ID send a message to the bot, group or channel and visit  <a "
+"href=\"https://api.telegram.org/bot<BOT_TOKEN>/getUpdates\"  "
+"target=\"_blank\">https://api.telegram.org/bot<BOT_TOKEN>/getUpdates</a>."
 msgstr ""
 
 msgid ""
@@ -6079,6 +6237,11 @@ msgstr "Введите адрес IPv4. Это заменяет шлюз по у
 
 msgid "Enter an IPv6 address. This overrides the default gateway provided by DHCP."
 msgstr "Введите адрес IPv6. Это заменяет шлюз по умолчанию предоставленный DHCP."
+
+msgid ""
+"Enter an alphanumeric encryption key. Only available when <i>Passphrase</i> "
+"is the chosen key format."
+msgstr ""
 
 msgid ""
 "Enter an alphanumeric name for the certificate. Underscore (_), and dash "
@@ -6421,6 +6584,9 @@ msgstr "Введите имя хоста или IP-адрес сервера <b>
 msgid "Enter the hostname or IP address of the <b>NTP</b> server."
 msgstr "Введите имя хоста или IP-адрес сервера <b>NTP</b>."
 
+msgid "Enter the hostname to connect to."
+msgstr ""
+
 msgid "Enter the location of the organization. For example, the city."
 msgstr "Введите местоположение организации. Например, город."
 
@@ -6585,6 +6751,12 @@ msgstr "Ошибка"
 
 msgid "Error Downloading File"
 msgstr "Ошибка при загрузке файла"
+
+msgid "Error Extending Vdev"
+msgstr ""
+
+msgid "Error Replacing Disk"
+msgstr ""
 
 msgid "Error Saving Configuration Settings"
 msgstr "Ошибка при сохранении настроек конфигурации"
@@ -6751,6 +6923,9 @@ msgstr "Экспорт ключей набора данных"
 msgid "Export Dataset Keys for "
 msgstr "Экспорт ключей набора данных для "
 
+msgid "Export Key"
+msgstr ""
+
 msgid "Export Password Secret Seed"
 msgstr "Экспортировать секретное семя пароля"
 
@@ -6859,9 +7034,6 @@ msgstr "Конфигурация аварийного переключения"
 
 msgid "Failover Group"
 msgstr "Группа аварийного переключения"
-
-msgid "Failover IP Address"
-msgstr "IP-адрес аварийного переключения"
 
 msgid "Failover Settings"
 msgstr "Настройки аварийного переключения"
@@ -7173,6 +7345,9 @@ msgstr ""
 msgid "GID"
 msgstr ""
 
+msgid "GMail OAuth"
+msgstr ""
+
 msgid "GUI"
 msgstr ""
 
@@ -7205,6 +7380,9 @@ msgstr "Общие настройки ВМ"
 
 msgid "Generate Debug File"
 msgstr "Создать файл отладки"
+
+msgid "Generate Encryption Key"
+msgstr ""
 
 msgid "Generate Key"
 msgstr "Генерировать ключ"
@@ -7406,6 +7584,9 @@ msgstr "Очередь ожидания HTTP порта"
 msgid "HTTP Proxy"
 msgstr "HTTP-прокси"
 
+msgid "HTTP Proxy:"
+msgstr ""
+
 msgid "HTTP host URL."
 msgstr "URL хоста HTTP."
 
@@ -7528,6 +7709,9 @@ msgstr "Имя хоста"
 msgid "Hostname (Virtual)"
 msgstr "Имя хоста (Виртуальное)"
 
+msgid "Hostname Database:"
+msgstr ""
+
 msgid "Hostname and Domain"
 msgstr "Имя хоста и домен"
 
@@ -7567,6 +7751,9 @@ msgstr ""
 
 msgid "Hostname or IP address of the system to  receive SNMP trap notifications."
 msgstr "Имя хоста или IP-адрес системы для получения уведомлений о прерываниях SNMP."
+
+msgid "Hostname:"
+msgstr ""
 
 msgid ""
 "Hostnames or IP addresses of the  ISNS servers to be registered with the "
@@ -7749,13 +7936,6 @@ msgstr ""
 "IP-адрес, на котором прослушивает соединение <b>активная сторона</b>. По "
 "умолчанию <i>0.0.0.0</i>."
 
-msgid ""
-"IP address to use for  administrative access to the system. The netmask "
-"<i>/32</i> is  required for this value and cannot be changed."
-msgstr ""
-"IP-адрес для использования для административного доступа к системе. Маска "
-"сети <i>/32</i> требуется для этого значения и не может быть изменена."
-
 msgid "IPMI Configuration"
 msgstr "Конфигурация IPMI"
 
@@ -7779,13 +7959,6 @@ msgstr "Интерфейс IPv4"
 
 msgid "IPv4 Netmask"
 msgstr "Маска сети IPv4"
-
-msgid ""
-"IPv4 address to use for the failover  interface. Set a manual IP address "
-"here if DHCP is not used."
-msgstr ""
-"IPv4-адрес используемый для отказоустойчивого интерфейса. Установите здесь "
-"ручной IP-адрес, если DHCP не используется."
 
 msgid "IPv4 interface"
 msgstr "Интерфейс IPv4"
@@ -7953,6 +8126,11 @@ msgstr ""
 "аутентификации."
 
 msgid ""
+"If the <i>Hex key</i> type is chosen, an encryption key will be "
+"auto-generated."
+msgstr ""
+
+msgid ""
 "If the IPMI out-of-band management interface is on a different VLAN from "
 "the management network, enter the IPMI VLAN."
 msgstr ""
@@ -7982,6 +8160,12 @@ msgstr "Сразу подключиться к TrueCommand."
 
 msgid "Import"
 msgstr "Импорт"
+
+msgid "Import Certificate"
+msgstr ""
+
+msgid "Import Certificate Signing Request"
+msgstr ""
 
 msgid "Import a pool that exists but is not connected."
 msgstr "Импортировать пул, который существует, но не подключен."
@@ -8210,6 +8394,9 @@ msgstr ""
 msgid "Internal"
 msgstr "Внутренний"
 
+msgid "Internal Certificate"
+msgstr ""
+
 msgid "Internal identifier for the authenticator."
 msgstr "Внутренний идентификатор для аутентификатора."
 
@@ -8232,6 +8419,9 @@ msgstr ""
 
 msgid "Interval"
 msgstr "Интервал"
+
+msgid "Invalid Format."
+msgstr ""
 
 msgid "Invalid IP address"
 msgstr "Неверный IP-адрес"
@@ -8284,6 +8474,9 @@ msgstr "Отладка"
 
 msgid "Issuer"
 msgstr "Поставщик"
+
+msgid "Issuer: "
+msgstr ""
 
 msgid ""
 "It is not recommended to create a pool with vdevs containing different "
@@ -8437,8 +8630,14 @@ msgstr "ИД ключа"
 msgid "Key Length"
 msgstr "Длина ключа"
 
+msgid "Key Length: "
+msgstr ""
+
 msgid "Key Type"
 msgstr "Тип Ключа"
+
+msgid "Key Type: "
+msgstr ""
 
 msgid "Key Usage"
 msgstr "Использование ключа"
@@ -8465,6 +8664,9 @@ msgstr "Настройки LAGG"
 
 msgid "LDAP"
 msgstr "LDAP"
+
+msgid "LDAP - Primary Domain"
+msgstr ""
 
 msgid "LDAP Domain"
 msgstr "Домен LDAP"
@@ -8645,6 +8847,9 @@ msgstr "Лицензия"
 msgid "Lifetime"
 msgstr "Время жизни"
 
+msgid "Lifetime: "
+msgstr ""
+
 msgid "Limit replication speed to this number of  bytes per second."
 msgstr "Ограничьте скорость репликации этим количеством байтов в секунду."
 
@@ -8655,6 +8860,12 @@ msgid "Linked Service"
 msgstr "Связанная служба"
 
 msgid "Linux"
+msgstr ""
+
+msgid "List any existing dataset properties to remove from the replicated files."
+msgstr ""
+
+msgid "List of chat IDs"
 msgstr ""
 
 msgid ""
@@ -8738,6 +8949,9 @@ msgstr "Блокируется набор данных "
 
 msgid "Log"
 msgstr "Журнал"
+
+msgid "Log In to GMail"
+msgstr ""
 
 msgid "Log Level"
 msgstr "Уровень журнала"
@@ -9326,6 +9540,9 @@ msgstr "Интерфейс NAT"
 msgid "NAT Port Forwarding"
 msgstr "Перенаправление портов NAT"
 
+msgid "NETBIOS-NS"
+msgstr ""
+
 msgid "NFS"
 msgstr "NFS"
 
@@ -9472,6 +9689,9 @@ msgstr "Сервер имен 2"
 msgid "Nameserver 3"
 msgstr "Сервер имен 3"
 
+msgid "Nameservers"
+msgstr ""
+
 msgid "Naming Schema"
 msgstr "Схема именования"
 
@@ -9522,6 +9742,9 @@ msgid "Netmask"
 msgstr "Маска сети"
 
 msgid "Netwait IP List"
+msgstr ""
+
+msgid "Netwait:"
 msgstr ""
 
 msgid "Network"
@@ -9685,6 +9908,9 @@ msgid ""
 msgstr ""
 "Нет пользовательских тем. Нажмите <b>Создать новую тему</b>, чтобы создать "
 "новую пользовательскую тему."
+
+msgid "No data to display"
+msgstr ""
 
 msgid "No interfaces configured with Virtual IP."
 msgstr "Нет интерфейсов, настроенных с виртуальным IP."
@@ -9881,14 +10107,10 @@ msgid ""
 msgstr "Число попыток репликации перед остановкой и пометкой задачи как неудачной."
 
 msgid ""
-"Number of virtual CPUs to allocate to the virtual machine. The maximum is "
-"16, or fewer if the host CPU limits the maximum. The VM operating system "
-"might also have operational or licensing restrictions on the number of CPUs."
+"Number of virtual CPUs to allocate to the virtual machine. The VM operating "
+"system might have operational or licensing restrictions on the number of "
+"CPUs."
 msgstr ""
-"Количество виртуальных процессоров, выделяемых виртуальной машине. "
-"Максимальное значение - 16 или меньше, если ЦП хоста ограничивает максимум. "
-"Операционная система виртуальной машины может также иметь операционные или "
-"лицензионные ограничения на количество процессоров."
 
 msgid ""
 "Numeric start priority for the jail at boot time. Valid priorities are "
@@ -10070,6 +10292,9 @@ msgstr ""
 msgid "Open VPN Server"
 msgstr ""
 
+msgid "OpenVPN"
+msgstr ""
+
 msgid "OpenVPN "
 msgstr ""
 
@@ -10166,8 +10391,14 @@ msgstr ""
 msgid "Organization"
 msgstr "Организация"
 
+msgid "Organization: "
+msgstr ""
+
 msgid "Organizational Unit"
 msgstr "Подразделение"
+
+msgid "Organizational Unit: "
+msgstr ""
 
 msgid "Organizational unit of the entity."
 msgstr "Организационная единица юридического лица."
@@ -10185,6 +10416,9 @@ msgid "Out"
 msgstr "Выход"
 
 msgid "Outbound Network"
+msgstr ""
+
+msgid "Outbound Network:"
 msgstr ""
 
 msgid "Outgoing Mail Server"
@@ -10352,6 +10586,9 @@ msgstr ""
 "Вставьте закрытый ключ, связанный с сертификатом, если он доступен. "
 "Пожалуйста, предоставьте ключ длиной не менее 1024 бит."
 
+msgid "Paste value above or choose a file."
+msgstr ""
+
 msgid "Path"
 msgstr "Путь"
 
@@ -10371,6 +10608,9 @@ msgstr ""
 "<i>/checkip.html</i>."
 
 msgid "Path to the Extent"
+msgstr ""
+
+msgid "Path: "
 msgstr ""
 
 msgid "Paths"
@@ -10456,6 +10696,9 @@ msgstr "Физический интерфейс выбранного члена.
 msgid "PiB"
 msgstr "ПиБ"
 
+msgid "Plain (No Encryption)"
+msgstr ""
+
 msgid "Platform"
 msgstr "Платформа"
 
@@ -10530,6 +10773,12 @@ msgstr ""
 
 msgid "Pool Manager"
 msgstr "Менеджер пула"
+
+msgid "Pool Options"
+msgstr ""
+
+msgid "Pool Options Saved"
+msgstr ""
 
 msgid "Pool Status"
 msgstr "Статус пула"
@@ -10766,6 +11015,12 @@ msgstr ""
 
 msgid "Promote Dataset"
 msgstr "Продвинуть набор данных"
+
+msgid "Properties Exclude"
+msgstr ""
+
+msgid "Properties Override"
+msgstr ""
 
 msgid "Protocol"
 msgstr "Протокол"
@@ -11015,6 +11270,9 @@ msgstr ""
 msgid "Refresh"
 msgstr "Обновить"
 
+msgid "Refresh Token"
+msgstr ""
+
 msgid "Region"
 msgstr "Регион"
 
@@ -11173,6 +11431,11 @@ msgid "Replace"
 msgstr "Заменить"
 
 msgid "Replace Disk"
+msgstr ""
+
+msgid ""
+"Replace existing dataset properties with these new defined properties in "
+"the replicated files."
 msgstr ""
 
 msgid "Replacing Disk"
@@ -11416,6 +11679,9 @@ msgid ""
 "target=_blank>smb.conf</a> manual page."
 msgstr ""
 
+msgid "Retrieving Key"
+msgstr ""
+
 msgid "Retro Logo"
 msgstr ""
 
@@ -11439,6 +11705,9 @@ msgid "Revert branding back to FreeNAS"
 msgstr ""
 
 msgid "Revert interface changes? All changes that are being tested will be lost."
+msgstr ""
+
+msgid "Revoked: "
 msgstr ""
 
 msgid "Rights"
@@ -11548,6 +11817,12 @@ msgstr "Дополнительные параметры S.M.A.R.T."
 msgid "S3"
 msgstr ""
 
+msgid "SAN"
+msgstr ""
+
+msgid "SAN: "
+msgstr ""
+
 msgid "SAVE"
 msgstr ""
 
@@ -11584,11 +11859,14 @@ msgstr ""
 msgid "SMB"
 msgstr "SMB"
 
+msgid "SMB - Primary Domain"
+msgstr ""
+
 msgid "SMB Service"
 msgstr "Служба SMB"
 
-msgid "SMTP Authentication"
-msgstr "SMTP-аутентификация"
+msgid "SMTP"
+msgstr ""
 
 msgid ""
 "SMTP port number. Typically <i>25,465</i> (secure SMTP), or <i>587</i> "
@@ -11647,6 +11925,9 @@ msgstr ""
 msgid "SSL"
 msgstr "SSL"
 
+msgid "SSL (Implicit TLS)"
+msgstr ""
+
 msgid "SSSD Compat"
 msgstr ""
 
@@ -11704,6 +11985,9 @@ msgstr "Сохранить изменения сетевого интерфей�
 msgid "Save Pending Snapshots"
 msgstr ""
 
+msgid "Save Pool Options"
+msgstr ""
+
 msgid "Save Without Restarting"
 msgstr "Сохранить без перезагрузки"
 
@@ -11715,12 +11999,6 @@ msgstr "Сохранить настройки конфигурации этой 
 
 msgid "Save network interface changes?"
 msgstr ""
-
-msgid "Saving ACLs"
-msgstr "Сохранение ACL"
-
-msgid "Saving ACLs..."
-msgstr "Сохранение ACL..."
 
 msgid "Saving Debug"
 msgstr "Сохранение отладки"
@@ -11736,6 +12014,9 @@ msgstr "Сохранение разрешений"
 
 msgid "Saving Permissions..."
 msgstr "Сохранение разрешений..."
+
+msgid "Saving Pool Options..."
+msgstr ""
 
 msgid "Scan This QR Code"
 msgstr ""
@@ -12573,6 +12854,9 @@ msgstr "Учетная запись сервиса"
 msgid "Service Announcement"
 msgstr ""
 
+msgid "Service Announcement:"
+msgstr ""
+
 msgid "Service Key"
 msgstr "Ключ сервиса"
 
@@ -13328,6 +13612,9 @@ msgstr "Установите для запуска этой виртуально
 msgid "Set to start this VM when the system boots."
 msgstr "Установите для запуска этой виртуальной машины при загрузке системы."
 
+msgid "Set to store the encryption key in the TrueNAS database."
+msgstr ""
+
 msgid ""
 "Set to suppress informational messages from the                remote "
 "server."
@@ -13394,6 +13681,11 @@ msgid ""
 msgstr ""
 "Установите для использования SLAAC (автоматическую настройку адреса без "
 "сохранения состояния) для автоматической настройки IPv6 в jail."
+
+msgid ""
+"Set to use encryption when replicating data. Additional encryption options "
+"will appear."
+msgstr ""
 
 msgid ""
 "Set to use the <i>Schedule</i> in place  of the <i>Replicate Specific "
@@ -13670,11 +13962,20 @@ msgstr "Таймер отключения"
 msgid "Sidebar Controls"
 msgstr "Элементы управления боковой панели"
 
+msgid "Sign"
+msgstr ""
+
 msgid "Sign CSR"
 msgstr "Подписать CSR"
 
 msgid "Sign in"
 msgstr "Войти"
+
+msgid "Signed By: "
+msgstr ""
+
+msgid "Signed Certificates: "
+msgstr ""
 
 msgid "Signing Certificate Authority"
 msgstr "Подписание центра сертификации"
@@ -13853,14 +14154,10 @@ msgstr ""
 "Укажите сообщение, отображаемое для локальных пользователей после проверки "
 "подлинности. Не отображается для анонимных пользователей."
 
-msgid ""
-"Specify the number of cores per virtual CPU socket.  The product of vCPUs, "
-"cores, and threads must not exceed 16."
+msgid "Specify the number of cores per virtual CPU socket."
 msgstr ""
 
-msgid ""
-"Specify the number of threads per core.  The product of vCPUs, cores, and "
-"threads must not exceed 16."
+msgid "Specify the number of threads per core."
 msgstr ""
 
 msgid "Specify the size of the new zvol."
@@ -13917,6 +14214,9 @@ msgstr "Запускается задание..."
 msgid "State"
 msgstr "Состояние"
 
+msgid "State: "
+msgstr ""
+
 msgid ""
 "Static IP addresses which SMB listens on for connections.  Leaving all "
 "unselected defaults to listening on all active interfaces."
@@ -13925,14 +14225,8 @@ msgstr ""
 msgid "Static IPv4 address of the IPMI web interface."
 msgstr "Статический IPv4-адрес веб-интерфейса IPMI."
 
-msgid ""
-"Static IPv4 or IPv6 address and subnet mask.  Example: <i>10.0.0.3</i> and "
-"<i>/24</i>. Click <i>ADD</i> to add another  IP address. Clicking "
-"<i>DELETE</i> removes that IP address."
+msgid "Static Routes"
 msgstr ""
-"Статический адрес IPv4 или IPv6 и маска подсети. Пример: <i>10.0.0.3</i> и "
-"<i>/24</i>. Нажмите <i>ДОБАВИТЬ</i>, чтобы добавить другой IP-адрес. "
-"Нажатие <i>УДАЛИТЬ</i> удаляет этот IP-адрес."
 
 msgid "Stats Per Thread"
 msgstr "Статистика на тред"
@@ -14009,6 +14303,9 @@ msgid "Storage location for the original  snapshots that will be replicated."
 msgstr ""
 
 msgid "Storage location for the replicated  snapshots."
+msgstr ""
+
+msgid "Store Encryption key in Sending TrueNAS database"
 msgstr ""
 
 msgid ""
@@ -14244,6 +14541,9 @@ msgstr ""
 msgid "TLS"
 msgstr ""
 
+msgid "TLS (STARTTLS)"
+msgstr ""
+
 msgid "TLS Allow Client Renegotiations"
 msgstr "TLS Разрешить повторные согласования с клиентом"
 
@@ -14339,6 +14639,12 @@ msgstr "Задача запущена"
 
 msgid "Team Drive ID"
 msgstr "Идентификатор Team Drive"
+
+msgid ""
+"Telegram Bot API Token (<a "
+"href=\"https://core.telegram.org/bots#3-how-do-i-create-a-bot\" "
+"target=\"_blank\">How to create a Telegram Bot</a>)"
+msgstr ""
 
 msgid "Temperature"
 msgstr "Температура"
@@ -14664,6 +14970,9 @@ msgstr ""
 msgid "The filesystem "
 msgstr "Файловая система "
 
+msgid "The following Telegram chat ID(s) must be numbers!"
+msgstr ""
+
 msgid "The following datasets cannot be unlocked."
 msgstr ""
 
@@ -14735,6 +15044,9 @@ msgid ""
 "The list shows only groups cached on this system. The search box   below "
 "can locate all groups, including groups connected with Active Directory or "
 "other services."
+msgstr ""
+
+msgid "The listed services will be changed to listen on 0.0.0.0:"
 msgstr ""
 
 msgid "The maximum length of the queue of pending connections. Default is 100."
@@ -14854,10 +15166,7 @@ msgid ""
 "TLS protocol connection to the remote system log server."
 msgstr ""
 
-msgid "The product of vCPUs, cores and threads must not exceed 16."
-msgstr ""
-
-msgid "The product of vCPUs, cores, and threads must not exceed 16."
+msgid "The product of vCPUs, cores and threads must not exceed"
 msgstr ""
 
 msgid ""
@@ -15046,11 +15355,17 @@ msgstr ""
 msgid "There is an upgrade waiting to finish."
 msgstr "Обновление ожидает завершения."
 
+msgid "There was a problem submitting the SPN entry."
+msgstr ""
+
 msgid ""
 "These  <a href=\"https://support.apple.com/en-us/HT210803\" "
 "target=\"_blank\">protocol extensions</a>  can be used by macOS to improve "
 "the performance and behavioral characteristics of SMB shares.  This is "
 "required for Time Machine support."
+msgstr ""
+
+msgid "These IP Addresses were removed:"
 msgstr ""
 
 msgid ""
@@ -15116,6 +15431,11 @@ msgid ""
 msgstr ""
 "Сторонние поставщики облачных услуг. Выберите поставщика для настройки "
 "учетных данных подключения."
+
+msgid ""
+"This Certificate Authority is being used to sign one or more certificates. "
+"It can be deleted  only after deleting these certificates."
+msgstr ""
 
 msgid "This Controller"
 msgstr "Этот контроллер"
@@ -15246,6 +15566,16 @@ msgstr ""
 
 msgid "This operation might take a long time. Proceed?"
 msgstr "Эта операция может занять много времени. Продолжить?"
+
+msgid ""
+"This pool contains the system dataset that stores critical data like "
+"debugging core files, encryption keys for pools, and Samba 4 metadata such "
+"as the user/group cache and share level permissions. Exporting this pool "
+"will transfer the system dataset to another available pool. If the only "
+"available pool is encrypted, that pool will no longer be able to be locked. "
+"When no other pools exist, the system dataset transfers back to the TrueNAS "
+"operating system device."
+msgstr ""
 
 msgid "This process continues in the background after closing this dialog."
 msgstr ""
@@ -15532,6 +15862,9 @@ msgstr ""
 "Тип учетной записи Microsoft. Вход в учетную запись Microsoft автоматически "
 "выбирает правильный тип учетной записи."
 
+msgid "Type: "
+msgstr ""
+
 msgid "UDP"
 msgstr ""
 
@@ -15674,6 +16007,9 @@ msgstr ""
 msgid "Unselect All"
 msgstr "Снять все"
 
+msgid "Unset <i>Generate Encryption Key</i> to instead import a custom Hex key."
+msgstr ""
+
 msgid "Unset to add a login prompt to the system before the console menu is shown."
 msgstr ""
 "Отключите, чтобы добавить приглашение входа в систему перед отображением "
@@ -15703,6 +16039,9 @@ msgstr ""
 
 msgid "Until"
 msgstr "До"
+
+msgid "Until: "
+msgstr ""
 
 msgid "Upcoming tasks"
 msgstr "Предстоящие задачи"
@@ -15972,6 +16311,11 @@ msgstr "Использовать существующий образ диска"
 
 msgid "Use settings from a saved replication."
 msgstr "Использовать настройки из сохраненной репликации."
+
+msgid ""
+"Use the <i>Log In to GMail</i> button to obtain the credentials for this "
+"form."
+msgstr ""
 
 msgid ""
 "Use the KMIP server to manage ZFS encrypted dataset keys. The key server "
@@ -16315,14 +16659,23 @@ msgstr "Просмотр"
 msgid "View Logs"
 msgstr "Просмотр журналов"
 
+msgid "View/Download CSR"
+msgstr ""
+
+msgid "View/Download Certificate"
+msgstr ""
+
+msgid "View/Download Key"
+msgstr ""
+
 msgid "Violet"
 msgstr ""
 
 msgid "Virtual CPUs"
 msgstr "Виртуальные процессоры"
 
-msgid "Virtual IP Address"
-msgstr "Виртуальный IP-адрес"
+msgid "Virtual IP Address (Failover Address)"
+msgstr ""
 
 msgid "Virtual Interface"
 msgstr "Виртуальный интерфейс"
@@ -16375,6 +16728,9 @@ msgid ""
 msgstr ""
 
 msgid "WARNING: These unknown processes will be terminated while locking the pool."
+msgstr ""
+
+msgid "WS-DISCOVERY"
 msgstr ""
 
 msgid "WS-Discovery"
@@ -16647,6 +17003,9 @@ msgstr ""
 msgid "Workgroup"
 msgstr "Рабочая группа"
 
+msgid "Would you like to add a Service Principal Name (SPN) now?"
+msgstr ""
+
 msgid "Write"
 msgstr "Запись"
 
@@ -16688,6 +17047,9 @@ msgstr "Да, расшифровать диски"
 
 msgid "You have left the domain."
 msgstr "Вы покинули домен."
+
+msgid "You have successfully added credentials."
+msgstr ""
 
 msgid "ZFS"
 msgstr "ZFS"
@@ -17070,6 +17432,9 @@ msgstr ""
 msgid "on the first day of the month at 00:00 (12:00 AM)"
 msgstr ""
 
+msgid "on this system."
+msgstr ""
+
 msgid "openfiles"
 msgstr ""
 
@@ -17086,6 +17451,9 @@ msgid "pbkdf2iters"
 msgstr ""
 
 msgid "pcpu"
+msgstr ""
+
+msgid "pool options for "
 msgstr ""
 
 msgid "priority"
