@@ -22,14 +22,19 @@
                     </mat-card-content>
                     <mat-card-actions class="interface-pending-actions">
                         <button mat-button *ngIf="!checkinWaiting" [disabled]="ha_enabled"
+                        ix-auto ix-auto-type="button" ix-auto-identifier="testChange"
                             (click)="commitPendingChanges()">{{helptext.commit_button | translate}}</button>
                         <button mat-button *ngIf="checkinWaiting" [disabled]="ha_enabled"
+                            ix-auto ix-auto-type="button" ix-auto-identifier="keepChange"
                             (click)="checkInNow()">{{helptext.keep_button | translate}}</button>
                         <button mat-button [disabled]="ha_enabled"
+                            ix-auto ix-auto-type="button" ix-auto-identifier="revertChange"
                             (click)="rollbackPendingChanges()">{{helptext.rollback_button | translate}}</button>
                     </mat-card-actions>
                     <div class="disabled-notice" *ngIf="ha_enabled">{{helptext.ha_enabled_text | translate}} (<span
-                            class="pseudolink" (click)="goToHA()">{{helptext.go_to_ha | translate}}</span>).</div>
+                            class="pseudolink" (click)="goToHA()"
+                            ix-auto ix-auto-type="link" ix-auto-identifier="goToHA"
+                            >{{helptext.go_to_ha | translate}}</span>).</div>
                 </mat-card>
                 <app-table [conf]="interfaceTableConf" fxFlex></app-table>
                 <card-widget [conf]="globalSettingsWidget" fxFlex></card-widget>

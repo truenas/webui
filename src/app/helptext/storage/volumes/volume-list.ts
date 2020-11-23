@@ -125,6 +125,20 @@ encryption_options_dialog: {
     confirm_checkbox: T('Confirm'),
     save_button: T('Save')
 },
+pool_options_dialog: {
+    dialog_title: T('Edit Pool Options for '),
+    autotrim_placeholder:T('Auto TRIM'),
+    autotrim_tooltip: T('Enable for TrueNAS to periodically review data blocks and identify\
+ empty blocks of obsolete blocks that can be deleted. Unset to incorporate day block\
+ overwrites when a device write is started (default).'),
+    confirm_checkbox: T('Confirm'),
+    save_button: T('Save'),
+    dialog_saved_title: T('Pool Options Saved'),
+    dialog_saved_message1: T('pool options for '),
+    dialog_saved_message2: T(' successfully saved.'),
+    save_pool_options: T('Save Pool Options'),
+    saving_pool_options: T('Saving Pool Options...'),
+},
 lock_dataset_dialog: {
     dialog_title: T('Lock Dataset '),
     dialog_message: T('Lock dataset '),

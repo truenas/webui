@@ -63,9 +63,9 @@ int_options_tooltip : T('Enter additional parameters from \
  <a href="https://www.freebsd.org/cgi/man.cgi?query=ifconfig" target="_blank">ifconfig(8)</a>.'),
 
 alias_address_placeholder: T('IP Address'),
-alias_address_tooltip: T('Static IPv4 or IPv6 address and subnet mask. \
- Example: <i>10.0.0.3</i> and <i>/24</i>. Click <i>ADD</i> to add another \
- IP address. Clicking <i>DELETE</i> removes that IP address.'),
+alias_address_tooltip: T('Define an alias for the interface \
+ on this TrueNAS controller. The alias can be an IPv4 or IPv6 \
+ address.'),
 
 alias_netmaskbit_placeholder: T('Netmask'),
 alias_netmaskbit_tooltip : T('Enter a netmask.'),
@@ -106,14 +106,14 @@ failover_vhid_tooltip: T('Unique Virtual Host ID on the broadcast \
  segment of the network. Configuring multiple Virtual IP addresses \
  requires a separate VHID for each address.'),
 
-failover_alias_address_placeholder: T('Failover IP Address'),
-failover_alias_address_tooltip: T('IPv4 address to use for the failover \
- interface. Set a manual IP address here if DHCP is not used.'),
+failover_alias_address_placeholder: T('IP Address'),
+failover_alias_address_tooltip: T('Alias for the identical interface \
+ on the other TrueNAS controller. The alias can be an IPv4 or IPv6 address.'),
 
-failover_virtual_alias_address_placeholder: T('Virtual IP Address'),
-failover_virtual_alias_address_tooltip: T('IP address to use for \
- administrative access to the system. The netmask <i>/32</i> is \
- required for this value and cannot be changed.'),
+failover_virtual_alias_address_placeholder: T('Virtual IP Address (Failover Address)'),
+failover_virtual_alias_address_tooltip: T('Define an alias that can \
+ connect to the interface on either TrueNAS controller. This address \
+ remains active if a Controller failover occurs.'),
 
 failover_alias_set_error: T('An IP address must be provided for\
  each controller and the virtual interface.'),

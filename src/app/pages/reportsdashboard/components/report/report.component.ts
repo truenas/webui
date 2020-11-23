@@ -305,16 +305,16 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     xmlHttp.setRequestHeader("Content-Type", "text/html");
     xmlHttp.send('');
     const serverTime = xmlHttp.getResponseHeader("Date");
-    return new Date(serverTime);
+    const seconds = new Date(serverTime).getTime();
+    const secondsToTrim = 60;
+    const trimmed = new Date( seconds - ( secondsToTrim * 1000) );
+    return trimmed;
 
   }
 
 
   // Convert timespan to start/end options for RRDTool
-  convertTimespan(timespan, direction?: string, currentDate?:number): TimeData{
-    if(!direction){
-      direction = 'backward';
-    }
+  convertTimespan(timespan, direction: string = 'backward', currentDate?:number): TimeData{
     
     let units: string;
     let value: number;
@@ -366,7 +366,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     }
 
     // if endDate is in the future, reset with endDate to now
-    if(endDate.getTime() > now.getTime()){
+    if(endDate.getTime() >= now.getTime()){
       endDate = new Date();
       mom = moment(endDate);
       startDate = mom.subtract(value, units).toDate();
@@ -387,11 +387,12 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     let params = identifier ? { name: report.name, identifier: identifier} : { name: report.name };
 
     // Time scale options
+    const serverTime = this.getServerTime();
     const start = Math.floor(rrdOptions.start / 1000);
     const end = Math.floor(rrdOptions.end / 1000);
     let timeFrame = {"start": start, "end": end}; 
     
-    this.core.emit({name:"ReportDataRequest", data:{report: report, params: params, timeFrame: timeFrame}, sender: this});
+    this.core.emit({name:"ReportDataRequest", data:{report: report, params: params, timeFrame: timeFrame, truncate: this.stepForwardDisabled}, sender: this});
   }
 
   // Will be used for back of flip card

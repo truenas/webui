@@ -31,6 +31,6 @@ export interface FieldConfig {
   isLargeText?: boolean, paragraphIcon?: string, zeroStateMessage?: string, isDoubleConfirm?:boolean,
   maskValue?: any, hideErrMsg?: boolean, id?: string, autocomplete?: boolean,
   buttonClass?: string, buttonColor?: string, filereader?: boolean,
-  customEventMethod?(data:any), onChangeOption?(data:any), hint?:string;
+  customEventMethod?(data:any), onChangeOption?(data:any), hint?:string, loadMoreOptions?: any;
 }
 

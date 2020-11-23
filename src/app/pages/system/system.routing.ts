@@ -15,20 +15,10 @@ import { TunableListComponent } from './tunable/tunable-list/';
 import { UpdateComponent } from './update/';
 import { ManualUpdateComponent } from './update/manualupdate/';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
-import { CertificateAuthorityListComponent } from './ca/ca-list/';
-import { CertificateAuthorityAddComponent } from './ca/ca-add/';
-import { CertificateAuthorityEditComponent } from './ca/ca-edit/';
-import { CertificateAuthoritySignComponent } from './ca/ca-sign/';
-import { CertificateEditComponent } from './certificates/certificate-edit/';
-import { CertificateListComponent } from './certificates/certificate-list';
-import { CertificateAddComponent } from './certificates/certificate-add';
-import { AcmednsListComponent } from './acmedns/acmedns-list/acmedns-list.component';
-import { AcmednsFormComponent } from './acmedns/acmedns-add/acmedns-form.component';
 import { SupportComponent } from './general-settings/support/support.component';
 import { EmailComponent } from './email/';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
-import { CertificateAcmeAddComponent } from './certificates/certificate-acme-add/certificate-acme-add.component';
 import { FailoverComponent } from './failover/failover.component';
 import { ReportingComponent } from './reporting/reporting.component';
 import { EulaComponent } from './general-settings/support/eula/eula.component';
@@ -191,72 +181,6 @@ export const routes: Routes = [
         }
       ]
     },{
-      path: 'ca',
-      data: { title: T('Certificate Authorities'), breadcrumb: T('Certificate Authorities'), icon: 'card_membership' },
-      children: [{
-        path: '',
-        component: CertificateAuthorityListComponent,
-        data: { title: T('Certificate Authorities'), breadcrumb: T('Certificate Authorities') },
-      }, 
-      {
-        path: 'add',
-        component: CertificateAuthorityAddComponent,
-        data: { title: T('Add'), breadcrumb: T('Add') },
-      },
-      {
-        path: 'view/:pk',
-        component: CertificateAuthorityEditComponent,
-        data: { title: T('View'), breadcrumb: T('View') },
-      },
-      {
-        path: 'sign/:pk',
-        component: CertificateAuthoritySignComponent,
-        data: { title: T('Sign CSR'), breadcrumb: T('Sign CSR') },
-      }]
-    }, {
-      path: 'kmip',
-      component: KmipComponent,
-      data: { title: 'KMIP', breadcrumb: 'KMIP', icon: 'dns'},
-    }, {
-      path: 'certificates',
-      data: { title: T('Certificates'), breadcrumb: T('Certificates'), icon: 'turned_in' },
-      children: [{
-        path: '',
-        component: CertificateListComponent,
-        data: { title: T('Certificates'), breadcrumb: T('Certificates') },
-      }, {
-        path: 'add',
-        component: CertificateAddComponent,
-        data: { title: T('Add'), breadcrumb: T('Add') },
-      }, {
-        path: 'addacme/:pk',
-        component: CertificateAcmeAddComponent,
-        data: { title: T('Add ACME Certificate'), breadcrumb: T('Add ACME Certificate') },
-      }, {
-        path: 'view/:pk',
-        component: CertificateEditComponent,
-        data: { title: T('View'), breadcrumb: T('View') },
-      }]
-    }, {
-      path: 'acmedns',
-      data: { title: T('ACME DNS Authenticators'), breadcrumb: T('ACME DNS Authenticators'), icon: 'turned_in' },
-      children: [{
-        path: '',
-        component: AcmednsListComponent,
-        data: { title: T('ACME DNS Authenticators'), breadcrumb: T('ACME DNS Authenticators') },
-      }, 
-      {
-        path: 'add',
-        component: AcmednsFormComponent,
-        data: { title: T('Add'), breadcrumb: T('Add') },
-      }, 
-      {
-        path: 'edit/:pk',
-        component: AcmednsFormComponent,
-        data: { title: T('Edit'), breadcrumb: T('Edit') },
-      }
-    ]
-  }, {
       path: 'failover',
       component: FailoverComponent,
       data: { title: T('Failover'), breadcrumb: T('Failover'), icon: 'device_hub' }

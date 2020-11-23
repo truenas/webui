@@ -4,6 +4,7 @@ import { T } from "app/translate-marker";
 
 export const helptext_system_ca = {
   add: {
+    title: T('Add CA'),
     fieldset_basic: T('Identifier and Type'),
     fieldset_type: T('Certificate Options'),
     fieldset_certificate: T('Certificate Subject'),
@@ -340,6 +341,7 @@ certificate still approved.'),
   },
 
   edit: {
+    title: T('Edit CA'),
     fieldset_certificate: T('Certificate Authority'),
     name: {
       placeholder: T("Identifier"),
@@ -399,6 +401,16 @@ certificate still approved.'),
  alphanumeric, "_" and "-" are allowed.'
       ),
       validation: [Validators.required]
-    }
+    },
+    sign: T('Sign')
+  },
+  error: T('Error'),
+  private_key: T('Private Key'),
+
+  delete_error: {
+    title: T('Error'),
+    message: T('This Certificate Authority is being used to sign one or more certificates. It can be deleted \
+ only after deleting these certificates.'),
+    button: T('Close')
   }
 };

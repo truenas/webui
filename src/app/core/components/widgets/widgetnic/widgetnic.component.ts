@@ -217,6 +217,7 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
 
     // uppercase so we handle bits and bytes...
     switch(this.optimizeUnits(value)){
+      case 'B':
       case 'KB':
         units = T('KiB');
         result = value / 1024;
