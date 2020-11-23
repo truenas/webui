@@ -92,6 +92,32 @@ def click_save(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
+@then('The following should appear "Reload the page for the license to take effect"')
+def the_following_should_appear_reload_the_page_for_the_license_to_take_effect(driver):
+    """The following should appear "Reload the page for the license to take effect"."""
+    assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Reload the page")]')
+
+
+@then('Click reload now')
+def click_reload_now(driver):
+    """Click reload now."""
+    driver.find_element_by_xpath('//button[@ix-auto="button__RELOAD NOW"]').click()
+
+
+@then(parsers.parse('"{agreement}" should appear'))
+def end_user_license_agreement_truenas_should_appear(driver, agreement):
+    """"End User License Agreement - TrueNAS" should appear."""
+    assert wait_on_element(driver, 1, 10, f'//h1[contains(.,"{agreement}")]')
+
+
+@then('Click Agree')
+def click_agree(driver):
+    """Click Agree."""
+    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__I AGREE"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+
+
 @then('we should be returned to the General page')
 def we_should_be_returned_to_license_information(driver):
     """we should be returned to the General page."""
@@ -259,8 +285,8 @@ def navigate_to_storage_then_click_the_great_icon_to_disks_then_click_name_to_so
     """navigate to Storage then click the gear icon and click Disks then click Name to sort in ascending order."""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
     assert wait_on_element(driver, 1, 7, '//h1[contains(.,"Storage")]')
-    assert wait_on_element(driver, 0.5, 7, '//button[contains(.,"settings")]')
-    driver.find_element_by_xpath('//button[contains(.,"settings")]').click()
+    assert wait_on_element(driver, 0.5, 7, '(//button[contains(.,"settings")])[3]')
+    driver.find_element_by_xpath('(//button[contains(.,"settings")])[3]').click()
     assert wait_on_element(driver, 0.5, 7, '//button[contains(.,"Disks")]')
     driver.find_element_by_xpath('//button[contains(.,"Disks")]').click()
     assert wait_on_element(driver, 1, 7, '//h1[contains(.,"Disks")]')
@@ -275,7 +301,7 @@ def navigate_to_storage_then_click_the_great_icon_to_disks_then_click_name_to_so
 def the_list_of_disks_should_appear_in_ascending_order_starting_with_sda(driver):
     """the list of disks should appear in ascending order starting with sda."""
     # Verify disk are sorted
-    disk_list = {1: 'sda', 2: 'sdb', 3: 'sbc'}
+    disk_list = {1: 'sda', 2: 'sdb', 3: 'sdc'}
     for num in list(disk_list.keys()):
         disk = driver.find_element_by_xpath(f'(//datatable-body-cell[2]/div/div)[{num}]').text
         assert disk == disk_list[num]
