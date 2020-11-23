@@ -204,14 +204,16 @@ def click_Failover_check_disable_failover_click_save_and_confirm_changes(driver)
         assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Disable Failover")]')
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
         driver.find_element_by_xpath('//button[@ix-auto="button__OK"]').click()
+    else:
+        assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SAVE"]')
+        driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
 @then('after settings are applied you should see "Settings applied"')
 def after_settings_are_applied_you_should_see_settings_applied(driver):
     """after settings are applied you should see "Settings applied"."""
-    if 'mat-checkbox-checked' not in class_attribute:
-        assert wait_on_element(driver, 0.5, 15, '//h1[contains(.,"Settings saved")]')
-        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element(driver, 0.5, 15, '//h1[contains(.,"Settings saved")]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
 @then('navigate to Network then under Interfaces click enp0s6f0')
@@ -358,12 +360,12 @@ def create_pool_should_appear_while_pool_is_being_created_you_should_be_returned
     driver.find_element_by_xpath('//h1[contains(.,"Create Pool")]')
     assert wait_on_element_disappear(driver, 1, 30, '//h1[contains(.,"Create Pool")]')
     assert wait_on_element(driver, 1, 7, '//mat-panel-title[contains(.,"tank")]')
-    driver.find_element_by_xpath('//td[@ix-auto="value__tank_name"]')
+    driver.find_element_by_xpath('//td[contains(.,"tank")]')
 
 
-@then('navigate to System then Failover, uncheck disable failover, click save.')
-def navigate_to_system_then_failover_click_disable_failover_click_save(driver):
-    """navigate to System then Failover, uncheck disable failover, click save."""
+@then('click Failover, uncheck disable failover, click save and confirm changes')
+def click_failover_uncheck_disable_failover_click_save_and_confirm_changes(driver):
+    """click Failover, uncheck disable failover, click save and confirm changes."""
     assert wait_on_element(driver, 0.5, 7, '//li[contains(.,"Failover")]')
     driver.find_element_by_xpath('//li[contains(.,"Failover")]').click()
     assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Failover")]')
@@ -374,16 +376,15 @@ def navigate_to_system_then_failover_click_disable_failover_click_save(driver):
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
         assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SAVE"]')
         driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-        assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Disable Failover")]')
-        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
-        driver.find_element_by_xpath('//button[@ix-auto="button__OK"]').click()
+    element = driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]')
+    attribute = element.get_attribute('class')
+    assert 'mat-checkbox-checked' not in attribute, attribute
 
 
-@then('navigate to dashboard, and verify that both controllers show.')
+@then('navigate to dashboard, and verify that both controllers show')
 def navigate_to_dashboard_and_verify_that_both_controllers_show(driver):
     """navigate to dashboard, and verify that both controllers show."""
     assert wait_on_element(driver, 0.5, 7, '//h4[contains(.,"Failover Configuration")]')
-
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"System Information")]')
     # need to wait for all controller to be online.
@@ -391,7 +392,7 @@ def navigate_to_dashboard_and_verify_that_both_controllers_show(driver):
     assert wait_on_element(driver, 1, 180, '//div[contains(.,"tn-bhyve01-nodeb")]')
 
 
-@then('both controllers should show version and license on the dashboard.')
+@then('both controllers should show version and license on the dashboard')
 def both_controllers_should_show_model_and_version_on_the_dashboard(driver):
     """both controllers should show version and license on the dashboard."""
     version1 = driver.find_element_by_xpath('(//strong[contains(.,"Version:")])[1]/../div/span').text
