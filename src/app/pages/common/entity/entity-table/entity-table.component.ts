@@ -189,7 +189,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected erdService: ErdService, protected translate: TranslateService,
     public storageService: StorageService, protected job: JobService, protected prefService: PreferencesService,
-    protected matDialog: MatDialog, private modalService: ModalService) {
+    protected matDialog: MatDialog, public modalService: ModalService) {
 
       this.core.register({observerClass:this, eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
         this.multiActionsIconsOnly = evt.data.preferIconsOnly;

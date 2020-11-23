@@ -1,7 +1,7 @@
 import { Component, ElementRef, OnInit, AfterViewChecked } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
@@ -28,6 +28,7 @@ import { combineLatest } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { ModalService } from 'app/services/modal.service';
 import { VolumesListControlsComponent } from './volumes-list-controls.component';
+import { ZvolFormComponent } from '../zvol/zvol-form';
 
 export interface ZfsPoolData {
   pool: string;
@@ -407,31 +408,31 @@ export class VolumesListTableConfig implements InputTableConf {
             }
           ],
           afterInit: function(entityDialog) {
-                self.message_subscription = self.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
-                  entityDialog.formGroup.controls['key'].setValue(message);
-                });
-                // these disabled booleans are here to prevent recursion errors, disabling only needs to happen once
-                let keyDisabled = false;
-                let passphraseDisabled = false;
-                entityDialog.formGroup.controls['passphrase'].valueChanges.subscribe((passphrase) => {
-                  if (!passphraseDisabled) {
-                    if (passphrase && passphrase !== '') {
-                      keyDisabled = true;
-                      entityDialog.setDisabled('key', true, true);
-                    } else {
-                      keyDisabled = false;
-                      entityDialog.setDisabled('key', false, false);
-                    }
-                  }
-                });
-                entityDialog.formGroup.controls['key'].valueChanges.subscribe((key) => {
-                  if (!keyDisabled) {
-                    if (key && !passphraseDisabled) {
-                      passphraseDisabled = true;
-                      entityDialog.setDisabled('passphrase', true, true);
-                    }
-                  }
-                });
+            self.message_subscription = self.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
+              entityDialog.formGroup.controls['key'].setValue(message);
+            });
+            // these disabled booleans are here to prevent recursion errors, disabling only needs to happen once
+            let keyDisabled = false;
+            let passphraseDisabled = false;
+            entityDialog.formGroup.controls['passphrase'].valueChanges.subscribe((passphrase) => {
+              if (!passphraseDisabled) {
+                if (passphrase && passphrase !== '') {
+                  keyDisabled = true;
+                  entityDialog.setDisabled('key', true, true);
+                } else {
+                  keyDisabled = false;
+                  entityDialog.setDisabled('key', false, false);
+                }
+              }
+            });
+            entityDialog.formGroup.controls['key'].valueChanges.subscribe((key) => {
+              if (!keyDisabled) {
+                if (key && !passphraseDisabled) {
+                  passphraseDisabled = true;
+                  entityDialog.setDisabled('passphrase', true, true);
+                }
+              }
+            });
           },
           saveButtonText: T("Unlock"),
           customSubmit: function (entityDialog) {
@@ -1065,10 +1066,7 @@ export class VolumesListTableConfig implements InputTableConf {
           name: T('Add Zvol'),
           label: T("Add Zvol"),
           onClick: (row1) => {
-            this._router.navigate(new Array('/').concat([
-              "storage", "id", rowData.pool, "zvol", "add",
-              rowData.id
-            ]));
+            this.parentVolumesListComponent.addZvol(rowData.id);
           }
         });
       }
@@ -1239,10 +1237,7 @@ export class VolumesListTableConfig implements InputTableConf {
         name: T('Edit Zvol'),
         label: T("Edit Zvol"),
         onClick: (row1) => {
-          this._router.navigate(new Array('/').concat([
-            "storage", "id", rowData.pool, "zvol", "edit",
-            rowData.id
-          ]));
+          this.parentVolumesListComponent.addZvol(rowData.id);
         }
       });
 
@@ -1818,6 +1813,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   public systemdatasetPool: any;
   public has_encrypted_root = {};
   public has_key_dataset = {};
+  protected addZvolComponent: ZvolFormComponent;
+  protected aroute: ActivatedRoute;
+  private refreshTableSubscription: any;
 
   constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
@@ -1860,6 +1858,11 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       }
     });
 
+    if (!this.refreshTableSubscription) {
+      this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
+        this.repaintMe();
+      })
+    }
 
     combineLatest(this.ws.call('pool.query', []), this.ws.call('pool.dataset.query', [])).subscribe(async ([pools, datasets]) => {
       if (pools.length > 0) {
@@ -1931,5 +1934,12 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.dialogService.errorReport(T("Error getting pool data."), res.message, res.stack);
     });
 
+    this.addZvolComponent = new ZvolFormComponent(this.router, this.aroute, this.rest, this.ws, this.loader,
+      this.dialogService, this.storageService, this.translate, this.modalService);
+  }
+
+  addZvol(id) {
+    this.addZvolComponent.setParent(id);
+    this.modalService.open('slide-in-form', this.addZvolComponent, id);
   }
 }
