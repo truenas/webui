@@ -1,8 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 
-import { WebSocketService, NetworkService, DialogService, StorageService, AppLoaderService, ServicesService } from '../../services';
+import { WebSocketService, NetworkService, DialogService, StorageService, 
+  AppLoaderService, ServicesService } from '../../services';
 import { T } from '../../translate-marker';
 import helptext from '../../helptext/network/interfaces/interfaces-list';
 import { CardWidgetConf } from './card-widget/card-widget.component';
@@ -36,6 +38,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   public checkin_timeout = 60;
   public checkin_timeout_pattern = /\d+/;
   public checkin_remaining = null;
+  private uniqueIPs = [];
+  private affectedServices = [];
   checkin_interval;
 
   public helptext = helptext
@@ -185,7 +189,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     private storageService: StorageService,
     private loader: AppLoaderService,
     private modalService: ModalService,
-    private servicesService: ServicesService) {
+    private servicesService: ServicesService,
+    private translate: TranslateService) {
       super();
       this.getGlobalSettings();
   }
@@ -325,51 +330,92 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   commitPendingChanges() {
-    this.dialog.confirm(
-      helptext.commit_changes_title,
-      helptext.commit_changes_warning,
-      false, helptext.commit_button).subscribe(confirm => {
-        if (confirm) {
-          this.loader.open();
-          this.ws.call('interface.commit', [{checkin_timeout: this.checkin_timeout}]).subscribe(res => {
-            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:false}, sender:this});
-            this.interfaceTableConf.tableComponent.getData();
-            this.loader.close();
-            // can't decide if this is worth keeping since the checkin happens intantaneously
-            //this.dialog.Info(helptext.commit_changes_title, helptext.changes_saved_successfully, '300px', "info", true);
-            this.checkWaitingCheckin();
-          }, err => {
-            this.loader.close();
-            new EntityUtils().handleWSError(this, err, this.dialog);
-          });
-        }
-      });
+    this.ws.call('interface.services_restarted_on_sync').subscribe(res => {
+      if (res.length > 0) {
+        let ips = [];
+        res.forEach(item => {
+          if (item['system-service']) {
+            this.affectedServices.push(item['system-service']);
+
+          }
+          if (item['service']) {
+            this.affectedServices.push(item['service']);
+          }
+          item.ips.forEach(ip => {
+            ips.push(ip);
+          })
+        })
+
+        ips.forEach(ip => {
+          if (!this.uniqueIPs.includes(ip)) {
+            this.uniqueIPs.push(ip);
+          }
+        })
+      }
+      this.dialog.confirm(
+        helptext.commit_changes_title,
+        helptext.commit_changes_warning,
+        false, helptext.commit_button).subscribe(confirm => {
+          if (confirm) {
+            this.loader.open();
+            this.ws.call('interface.commit', [{checkin_timeout: this.checkin_timeout}]).subscribe(res => {
+              this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:false}, sender:this});
+              this.interfaceTableConf.tableComponent.getData();
+              this.loader.close();
+              // can't decide if this is worth keeping since the checkin happens intantaneously
+              //this.dialog.Info(helptext.commit_changes_title, helptext.changes_saved_successfully, '300px', "info", true);
+              this.checkWaitingCheckin();
+            }, err => {
+              this.loader.close();
+              new EntityUtils().handleWSError(this, err, this.dialog);
+            });
+          }
+        });
+    })
+
   }
 
   checkInNow() {
-    this.dialog.confirm(
-      helptext.checkin_title,
-      helptext.checkin_message,
-      true, helptext.checkin_button).subscribe(res => {
-        if (res) {
-          this.loader.open();
-          this.ws.call('interface.checkin').subscribe((success) => {
-            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:true}, sender:this});
-            this.loader.close();
-            this.dialog.Info(
-              helptext.checkin_complete_title,
-              helptext.checkin_complete_message);
-            this.hasPendingChanges = false;
-            this.checkinWaiting = false;
-            clearInterval(this.checkin_interval);
-            this.checkin_remaining = null;
-          }, (err) => {
-            this.loader.close();
-            new EntityUtils().handleWSError(this, err, this.dialog);
-          });
-        }
-      }
-    );
+    if (this.affectedServices.length > 0) {
+      this.translate.get(helptext.services_restarted.message_a).subscribe(msgA => {
+        this.translate.get(helptext.services_restarted.message_b).subscribe(msgB => {
+          this.dialog.confirm(helptext.services_restarted.title, msgA + ' ' + 
+          this.uniqueIPs.join(', ') +  ' ' + msgB + ' ' + this.affectedServices.join(', '), 
+          true, helptext.services_restarted.button).subscribe(res => {
+       if (res) {
+         this.finishCheckin();
+       }
+        })
+      })
+   })
+    } else {
+      this.dialog.confirm(
+        helptext.checkin_title,
+        helptext.checkin_message,
+        true, helptext.checkin_button).subscribe(res => {
+          if (res) {
+            this.finishCheckin();
+          }
+        })
+    }
+  }
+
+  finishCheckin() {
+    this.loader.open();
+    this.ws.call('interface.checkin').subscribe((success) => {
+      this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:true}, sender:this});
+      this.loader.close();
+      this.dialog.Info(
+        helptext.checkin_complete_title,
+        helptext.checkin_complete_message);
+      this.hasPendingChanges = false;
+      this.checkinWaiting = false;
+      clearInterval(this.checkin_interval);
+      this.checkin_remaining = null;
+    }, (err) => {
+      this.loader.close();
+      new EntityUtils().handleWSError(this, err, this.dialog);
+    });
   }
 
   rollbackPendingChanges() {

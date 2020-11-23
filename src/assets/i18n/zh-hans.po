@@ -171,6 +171,9 @@ msgstr "（没有描述）"
 msgid "(Remove pool from database)"
 msgstr "（从数据库中删除池）"
 
+msgid "(System Dataset Pool)"
+msgstr ""
+
 msgid "(top-right), then"
 msgstr "（右上），然后"
 
@@ -557,6 +560,12 @@ msgid ""
 msgstr "<i>基础身份验证</i>不加密。<i>摘要身份验证</i>需要加密。"
 
 msgid ""
+"<i>Certificate Signing Request</i> is used to get a CA signature.  "
+"<i>Import Certificate Signing Request</i> allows an existing CSR  to be "
+"imported onto the system."
+msgstr ""
+
+msgid ""
 "<i>Default (Clone Jail)</i> or <i>Basejail</i>. Clone jails are clones of "
 "the specified RELEASE. They are linked to that RELEASE, even if they are "
 "upgraded. Basejails mount the specified RELEASE directories as nullfs "
@@ -590,10 +599,8 @@ msgstr ""
 
 msgid ""
 "<i>Internal Certificate</i> is used for internal or local  systems. "
-"<i>Certificate Signing Request</i> is used to get a CA signature.  "
 "<i>Import Certificate</i> allows an existing certificate to be imported "
-"onto  the system. <i>Import Certificate Signing Request</i> allows an "
-"existing CSR  to be imported onto the system."
+"onto  the system."
 msgstr ""
 
 msgid ""
@@ -970,6 +977,9 @@ msgstr "活动的"
 msgid "Active Directory"
 msgstr "活动目录"
 
+msgid "Active Directory - Primary Domain"
+msgstr ""
+
 msgid "Active Directory IDMAP change!"
 msgstr "活动目录IDMAP发生变化！"
 
@@ -988,9 +998,6 @@ msgstr "添加"
 msgid "Add ACL Item"
 msgstr "添加ACL项"
 
-msgid "Add ACME Certificate"
-msgstr "添加ACME证书"
-
 msgid "Add API Key"
 msgstr "添加API密钥"
 
@@ -1000,8 +1007,20 @@ msgstr "添加额外路径"
 msgid "Add Alert Service"
 msgstr "添加警报服务"
 
+msgid "Add CA"
+msgstr ""
+
+msgid "Add CSR"
+msgstr ""
+
+msgid "Add Certificate"
+msgstr ""
+
 msgid "Add Cloud Credential"
 msgstr "添加云凭证"
+
+msgid "Add DNS Authenticator"
+msgstr ""
 
 msgid "Add Dataset"
 msgstr "添加数据集"
@@ -1015,8 +1034,14 @@ msgstr "添加Idmap"
 msgid "Add Interface"
 msgstr ""
 
+msgid "Add Kerberos SPN Entry"
+msgstr ""
+
 msgid "Add Mountpoint"
 msgstr "添加挂载点"
+
+msgid "Add NFS SPN"
+msgstr ""
 
 msgid "Add Recovery Key"
 msgstr "添加恢复密钥"
@@ -1098,6 +1123,9 @@ msgid ""
 "the chosen topology. Existing data on the pool is kept intact."
 msgstr "删除添加的磁盘，然后将池扩展到具有所选拓扑的新磁盘上。池中的现有数据保持不变。"
 
+msgid "Adding NFS NPN requires sufficient privileges. Enter your credentials below."
+msgstr ""
+
 msgid "Adding Vdevs to an encrypted pool resets the passphrase and recovery key!"
 msgstr "将Vdevs添加到加密池中会重置密码和恢复密钥！"
 
@@ -1154,6 +1182,9 @@ msgstr "要创建的附加数据VDev"
 
 msgid "Additional Domains"
 msgstr "附加域"
+
+msgid "Additional Domains:"
+msgstr ""
 
 msgid "Additional Hardware"
 msgstr "附加硬件"
@@ -1318,6 +1349,11 @@ msgstr "算法"
 msgid "Alias"
 msgstr ""
 
+msgid ""
+"Alias for the identical interface  on the other TrueNAS controller. The "
+"alias can be an IPv4 or IPv6 address."
+msgstr ""
+
 msgid "Aliases"
 msgstr "别名"
 
@@ -1362,6 +1398,9 @@ msgstr ""
 
 msgid "Allow"
 msgstr "允许"
+
+msgid "Allow "
+msgstr ""
 
 msgid "Allow All"
 msgstr ""
@@ -1878,6 +1917,9 @@ msgstr "附加网卡"
 msgid "Attach screenshots."
 msgstr "附加屏幕截图。"
 
+msgid "Attention"
+msgstr ""
+
 msgid "Aug"
 msgstr "八月"
 
@@ -1968,6 +2010,9 @@ msgstr "授权的主机和IP地址"
 
 msgid "Authorized Networks"
 msgstr "授权网络"
+
+msgid "Auto TRIM"
+msgstr ""
 
 msgid "Auto configure IPv6"
 msgstr "自动配置IPv6"
@@ -2210,6 +2255,9 @@ msgstr "引导环境名称。允许使用字母数字字符，破折号(-)，下
 msgid "Boot environment to be cloned."
 msgstr "要克隆的引导环境。"
 
+msgid "Bot API Token"
+msgstr ""
+
 msgid ""
 "Brainpool curves can be more secure, while secp curves can be faster. See "
 "<a "
@@ -2375,6 +2423,9 @@ msgstr "清除同步密钥"
 msgid "CLOSE"
 msgstr "关闭"
 
+msgid "CN"
+msgstr ""
+
 msgid "CN Realm"
 msgstr "CN Realm"
 
@@ -2489,6 +2540,12 @@ msgstr "证书颁发机构（CA）用于连接到密钥服务器。需要有效�
 
 msgid "Certificate Options"
 msgstr "证书选项"
+
+msgid "Certificate Signing Request"
+msgstr ""
+
+msgid "Certificate Signing Requests"
+msgstr ""
 
 msgid "Certificate Subject"
 msgstr "证书主题"
@@ -2802,6 +2859,11 @@ msgid ""
 "keypair and use it for this  connection."
 msgstr "选择一个已保存的SSH密钥对或选择<i>新建</i>来创建一个新的密钥对并将其用于此连接。"
 
+msgid ""
+"Choose a temporary location for the encryption key that will decrypt "
+"replicated data."
+msgstr ""
+
 msgid "Choose a time format."
 msgstr "选择时间格式。"
 
@@ -2858,6 +2920,11 @@ msgid ""
 "href=\"https://www.globalsign.com/en/blog/what-is-an-intermediate-or-"
 "subordinate-certificate-authority\">  What are Subordinate CAs and Why "
 "Would You Want Your Own?</a>"
+msgstr ""
+
+msgid ""
+"Choose between a <i>Hex</i> (base 16 numeral) or <i>Passphrase</i> "
+"(alphanumeric) style encryption key."
 msgstr ""
 
 msgid ""
@@ -3021,6 +3088,9 @@ msgstr "选择条目将加载配置为与常规权限情况匹配的预设ACL。
 msgid "Cipher"
 msgstr "密码"
 
+msgid "City: "
+msgstr ""
+
 msgid ""
 "Classification for each S3 object. Choose a class based on the specific use "
 "case or performance requirements. See <a "
@@ -3078,8 +3148,14 @@ msgstr ""
 msgid "Client Certificate"
 msgstr "客户证书"
 
+msgid "Client ID"
+msgstr ""
+
 msgid "Client Name"
 msgstr "客户端名称"
+
+msgid "Client Secret"
+msgstr ""
 
 msgid "Clients"
 msgstr "客户端"
@@ -3196,6 +3272,9 @@ msgstr "关于此脚本的注释。"
 
 msgid "Common Name"
 msgstr "通用名"
+
+msgid "Common: "
+msgstr ""
 
 msgid "Community"
 msgstr "社区"
@@ -3454,6 +3533,9 @@ msgstr "最冷："
 msgid "Copies"
 msgstr "副本"
 
+msgid "Copy"
+msgstr ""
+
 msgid "Copy and Paste"
 msgstr "复制和粘贴"
 
@@ -3463,11 +3545,17 @@ msgstr "核心数"
 msgid "Could not delete boot environment."
 msgstr "无法删除启动环境。"
 
+msgid "Could not extend Vdev."
+msgstr ""
+
 msgid "Could not find a group name for this group ID."
 msgstr "找不到该组ID的组名。"
 
 msgid "Could not find a user name for this user ID."
 msgstr "找不到该用户ID的用户名。"
+
+msgid "Could not replace disk."
+msgstr ""
 
 msgid "Country"
 msgstr "国家"
@@ -3482,6 +3570,9 @@ msgid ""
 msgstr ""
 "国家代码必须包含有效的两个大写字母<a href=\"https://www.iso.org/obp/ui/#search/code/\" "
 "target=\"_blank\">ISO 3166-1 alpha-2 代码</a>。"
+
+msgid "Country: "
+msgstr ""
 
 msgid "Crash reporting"
 msgstr "崩溃报告"
@@ -3648,6 +3739,9 @@ msgstr "当前分支："
 msgid "Custom"
 msgstr "自定义"
 
+msgid "Custom Name"
+msgstr ""
+
 msgid "Custom Path"
 msgstr "自定义路径"
 
@@ -3659,6 +3753,9 @@ msgstr "自定义服务器"
 
 msgid "Custom Theme Name"
 msgstr "自定义主题名称"
+
+msgid "Custom Value"
+msgstr ""
 
 msgid "Customer Name"
 msgstr "客户名称"
@@ -3700,6 +3797,9 @@ msgstr "DHCP"
 
 msgid "DHCP Autoconfigure IPv4"
 msgstr "DHCP自动配置IPv4"
+
+msgid "DISABLED"
+msgstr ""
 
 msgid "DNS Domain Name"
 msgstr "DNS域名"
@@ -3897,6 +3997,9 @@ msgstr "默认网关"
 msgid "Default Permissions"
 msgstr "默认权限"
 
+msgid "Default Route"
+msgstr ""
+
 msgid "Default Router For IPv4"
 msgstr "IPv4默认路由"
 
@@ -3933,6 +4036,16 @@ msgstr ""
 "为<a "
 "href=\"https://www.freebsd.org/cgi/man.cgi?query=smartd&manpath=FreeBSD+11.1"
 "-RELEASE+and+Ports\" target=\"_blank\">smartd</a>定义分钟数以唤醒并检查是否有任何测试在运行。"
+
+msgid ""
+"Define an alias for the interface  on this TrueNAS controller. The alias "
+"can be an IPv4 or IPv6  address."
+msgstr ""
+
+msgid ""
+"Define an alias that can  connect to the interface on either TrueNAS "
+"controller. This address  remains active if a Controller failover occurs."
+msgstr ""
 
 msgid ""
 "Define other sections and their key/value pairs. Enclose each section name "
@@ -4126,6 +4239,9 @@ msgstr "不允许在启用HA的情况下删除接口。"
 
 msgid "Deleting the <b>"
 msgstr "正在删除<b>"
+
+msgid "Deleting..."
+msgstr ""
 
 msgid "Deny"
 msgstr "拒绝"
@@ -4345,6 +4461,9 @@ msgstr "差异"
 msgid "Digest Algorithm"
 msgstr "摘要算法"
 
+msgid "Digest Algorithm: "
+msgstr ""
+
 msgid "Digital Signature"
 msgstr "数字签名"
 
@@ -4501,6 +4620,9 @@ msgstr "在浏览器底部实时显示控制台消息。"
 msgid "Distinguished Name"
 msgstr "专有名称"
 
+msgid "Distinguished Name: "
+msgstr ""
+
 msgid ""
 "Do <b>NOT</b> change this setting when using Windows as the initiator. Only "
 "needs to be changed in large environments where the number of systems using "
@@ -4546,6 +4668,9 @@ msgid ""
 msgstr ""
 "用户<i>名称</i>的域。如果未输入<i> SID "
 "</i>，则为必填项。本地用户具有SMB服务器的NetBIOS名称：<code>freenas\\smbusers</code>。"
+
+msgid "Domain:"
+msgstr ""
 
 msgid "Done"
 msgstr "完成"
@@ -4623,6 +4748,9 @@ msgstr "EC曲线"
 msgid "EDIT"
 msgstr "编辑"
 
+msgid "ENABLED"
+msgstr ""
+
 msgid "ERROR: Not Enough Memory"
 msgstr "错误：内存不足"
 
@@ -4647,6 +4775,18 @@ msgstr "编辑API密钥"
 msgid "Edit Alert Service"
 msgstr "编辑警告服务"
 
+msgid "Edit CA"
+msgstr ""
+
+msgid "Edit CSR"
+msgstr ""
+
+msgid "Edit Certificate"
+msgstr ""
+
+msgid "Edit DNS Authenticator"
+msgstr ""
+
 msgid "Edit Disk(s)"
 msgstr "编辑磁盘"
 
@@ -4670,6 +4810,9 @@ msgstr "编辑选项"
 
 msgid "Edit Permissions"
 msgstr "编辑权限"
+
+msgid "Edit Pool Options for "
+msgstr ""
 
 msgid "Edit Share ACL"
 msgstr "编辑共享ACL"
@@ -4714,6 +4857,9 @@ msgstr ""
 "用于接收有关此问题的iXsystems支持消息副本的电子邮件地址。使用格式<i>名称</i>@<i>domain.com</i>。通过按<code> "
 "Enter </code>分隔条目。"
 
+msgid "Email: "
+msgstr ""
+
 msgid "Emergency"
 msgstr "紧急情况"
 
@@ -4728,6 +4874,12 @@ msgstr ""
 
 msgid "Enable"
 msgstr "启用"
+
+msgid ""
+"Enable   <a href=\"https://en.wikipedia.org/wiki/SMTP_Authentication\"   "
+"target=\"_blank\">SMTP AUTH</a> using PLAIN SASL.   Requires a valid "
+"Username and Password."
+msgstr ""
 
 msgid ""
 "Enable  <a href=\"https://zfsonlinux.org/manpages/0.8.3/man8/zfs.8.html\" "
@@ -4775,11 +4927,17 @@ msgstr "启用FSRVP"
 msgid "Enable FXP"
 msgstr "启用FXP"
 
+msgid "Enable GMail OAuth authentication."
+msgstr ""
+
 msgid "Enable NFSv4"
 msgstr "启用NFSv4"
 
 msgid "Enable Netwait Feature"
 msgstr "启用Netwait功能"
+
+msgid "Enable Network Performance Statistics"
+msgstr ""
 
 msgid "Enable Password Toggle"
 msgstr "启用密码切换"
@@ -4834,14 +4992,17 @@ msgstr "启用一个VNC远程连接。需要<i>UEFI</i>引导。"
 msgid "Enable automatic support alerts to iXsystems (Silver/Gold support only)"
 msgstr "启用对iXsystems的自动支持警报（仅对银/金客户支持）"
 
+msgid ""
+"Enable for TrueNAS to periodically review data blocks and identify empty "
+"blocks of obsolete blocks that can be deleted. Unset to incorporate day "
+"block overwrites when a device write is started (default)."
+msgstr ""
+
 msgid "Enable iSCSI ALUA"
 msgstr "启用iSCSI ALUA"
 
 msgid "Enable iXsystems Proactive Support"
 msgstr "启用iXsystems主动支持"
-
-msgid "Enable iftop"
-msgstr ""
 
 msgid ""
 "Enable running services that require <a "
@@ -4932,16 +5093,6 @@ msgstr "为通过SSH访问系统启用双重身份验证。建议将此禁用设
 
 msgid "Enable when the device number is inconstant across a reboot."
 msgstr "在重新引导期间设备编号不固定时启用。"
-
-msgid ""
-"Enable/disable <a "
-"href=\"https://en.wikipedia.org/wiki/SMTP_Authentication\" "
-"target=\"_blank\">SMTP AUTH</a> using PLAIN SASL. Enter the required "
-"Username and Password if set."
-msgstr ""
-"使用PLAIN SASL来启用/禁用<a "
-"href=\"https://en.wikipedia.org/wiki/SMTP_Authentication\" "
-"target=\"_blank\">SMTP AUTH</a>。如果设置为启用，必须输入用户名和密码。"
 
 msgid "Enable/disable TLS Web Client Authentication."
 msgstr "启用/禁用TLS Web客户端身份验证。"
@@ -5060,6 +5211,12 @@ msgstr "加密算法"
 
 msgid "Encryption Key"
 msgstr "加密密钥"
+
+msgid "Encryption Key Format"
+msgstr ""
+
+msgid "Encryption Key Location in Target System"
+msgstr ""
 
 msgid "Encryption Key Passphrase"
 msgstr "加密密钥密码"
@@ -5230,6 +5387,13 @@ msgid ""
 "Allow* and *Hosts Deny* list, then allow all hosts  that are on the *Hosts "
 "Allow* list. <br><br>  If there is a host not on the *Hosts Allow* and not "
 "on the *Hosts Deny* list,  then allow it."
+msgstr ""
+
+msgid ""
+"Enter a list of chat IDs separated by space, comma or semicolon.  To find "
+"your chat ID send a message to the bot, group or channel and visit  <a "
+"href=\"https://api.telegram.org/bot<BOT_TOKEN>/getUpdates\"  "
+"target=\"_blank\">https://api.telegram.org/bot<BOT_TOKEN>/getUpdates</a>."
 msgstr ""
 
 msgid ""
@@ -5458,6 +5622,11 @@ msgstr "输入IPv4地址。这将会覆盖DHCP分配的默认网关。"
 
 msgid "Enter an IPv6 address. This overrides the default gateway provided by DHCP."
 msgstr "输入IPv6地址。这将会覆盖DHCP分配的默认网关。"
+
+msgid ""
+"Enter an alphanumeric encryption key. Only available when <i>Passphrase</i> "
+"is the chosen key format."
+msgstr ""
 
 msgid ""
 "Enter an alphanumeric name for the certificate. Underscore (_), and dash "
@@ -5768,6 +5937,9 @@ msgstr "输入<b>NTP</b>服务器的主机名或IP地址。"
 msgid "Enter the hostname or IP address of the <b>NTP</b> server."
 msgstr "输入<b>NTP</b>服务器的主机名或IP地址。"
 
+msgid "Enter the hostname to connect to."
+msgstr ""
+
 msgid "Enter the location of the organization. For example, the city."
 msgstr "输入组织的位置。例如城市。"
 
@@ -5910,6 +6082,12 @@ msgstr "错误"
 
 msgid "Error Downloading File"
 msgstr "下载文件时出错"
+
+msgid "Error Extending Vdev"
+msgstr ""
+
+msgid "Error Replacing Disk"
+msgstr ""
 
 msgid "Error Saving Configuration Settings"
 msgstr "保存配置设置时出错"
@@ -6074,6 +6252,9 @@ msgstr "导出数据集密钥"
 msgid "Export Dataset Keys for "
 msgstr "导出的数据集密钥"
 
+msgid "Export Key"
+msgstr ""
+
 msgid "Export Password Secret Seed"
 msgstr "导出密码秘密种子"
 
@@ -6178,9 +6359,6 @@ msgstr "故障转移配置"
 
 msgid "Failover Group"
 msgstr "故障转移组"
-
-msgid "Failover IP Address"
-msgstr "故障转移IP地址"
 
 msgid "Failover Settings"
 msgstr "故障转移设置"
@@ -6479,6 +6657,9 @@ msgstr "常规"
 msgid "GID"
 msgstr "GID"
 
+msgid "GMail OAuth"
+msgstr ""
+
 msgid "GUI"
 msgstr ""
 
@@ -6511,6 +6692,9 @@ msgstr "常规虚拟机设置"
 
 msgid "Generate Debug File"
 msgstr "生成调试文件"
+
+msgid "Generate Encryption Key"
+msgstr ""
 
 msgid "Generate Key"
 msgstr "生成密钥"
@@ -6700,6 +6884,9 @@ msgstr "HTTP端口侦听Backlog"
 msgid "HTTP Proxy"
 msgstr "HTTP代理"
 
+msgid "HTTP Proxy:"
+msgstr ""
+
 msgid "HTTP host URL."
 msgstr "HTTP主机地址。"
 
@@ -6809,6 +6996,9 @@ msgstr "主机名"
 msgid "Hostname (Virtual)"
 msgstr "主机名（虚拟）"
 
+msgid "Hostname Database:"
+msgstr ""
+
 msgid "Hostname and Domain"
 msgstr "主机名和域名"
 
@@ -6841,6 +7031,9 @@ msgstr "远程系统的主机名或IP地址。必须使用有效的URL方案。�
 
 msgid "Hostname or IP address of the system to  receive SNMP trap notifications."
 msgstr "接收SNMP陷阱通知的系统的主机名或IP地址。"
+
+msgid "Hostname:"
+msgstr ""
 
 msgid ""
 "Hostnames or IP addresses of the  ISNS servers to be registered with the "
@@ -6988,11 +7181,6 @@ msgid ""
 "<i>0.0.0.0</i>."
 msgstr "<b>Active Side</b>侦听连接的IP地址。默认为<i>0.0.0.0</i>。"
 
-msgid ""
-"IP address to use for  administrative access to the system. The netmask "
-"<i>/32</i> is  required for this value and cannot be changed."
-msgstr "用于管理访问系统的IP地址。网络掩码<i>/32</i>是此值所必需的，不能更改。"
-
 msgid "IPMI Configuration"
 msgstr "IPMI配置"
 
@@ -7016,11 +7204,6 @@ msgstr "IPv4 接口"
 
 msgid "IPv4 Netmask"
 msgstr "IPv4 子网掩码"
-
-msgid ""
-"IPv4 address to use for the failover  interface. Set a manual IP address "
-"here if DHCP is not used."
-msgstr "用于故障转移接口的IPv4地址。如果不使用DHCP，请在此处设置一个手动IP地址。"
 
 msgid "IPv4 interface"
 msgstr "IPv4接口"
@@ -7173,6 +7356,11 @@ msgid ""
 msgstr "如果设置，将检查用户主目录中的<b> .tlslogin </ b>文件，该文件包含一个或多个PEM编码的证书。如果未找到，则提示用户进行密码身份验证。"
 
 msgid ""
+"If the <i>Hex key</i> type is chosen, an encryption key will be "
+"auto-generated."
+msgstr ""
+
+msgid ""
 "If the IPMI out-of-band management interface is on a different VLAN from "
 "the management network, enter the IPMI VLAN."
 msgstr "如果IPMI带外管理接口与管理网络位于不同的VLAN，请输入IPMI VLAN。"
@@ -7197,6 +7385,12 @@ msgstr "立即连接到TrueCommand。"
 
 msgid "Import"
 msgstr "导入"
+
+msgid "Import Certificate"
+msgstr ""
+
+msgid "Import Certificate Signing Request"
+msgstr ""
 
 msgid "Import a pool that exists but is not connected."
 msgstr "导入存在但未连接的池。"
@@ -7401,6 +7595,9 @@ msgstr ""
 msgid "Internal"
 msgstr "内部"
 
+msgid "Internal Certificate"
+msgstr ""
+
 msgid "Internal identifier for the authenticator."
 msgstr "身份验证器的内部标识符。"
 
@@ -7419,6 +7616,9 @@ msgstr "互联网控制"
 
 msgid "Interval"
 msgstr "Interval"
+
+msgid "Invalid Format."
+msgstr ""
 
 msgid "Invalid IP address"
 msgstr "IP地址无效"
@@ -7465,6 +7665,9 @@ msgstr "调试"
 
 msgid "Issuer"
 msgstr "颁发者"
+
+msgid "Issuer: "
+msgstr ""
 
 msgid ""
 "It is not recommended to create a pool with vdevs containing different "
@@ -7610,8 +7813,14 @@ msgstr "密钥ID"
 msgid "Key Length"
 msgstr "密钥长度"
 
+msgid "Key Length: "
+msgstr ""
+
 msgid "Key Type"
 msgstr "密钥类型"
+
+msgid "Key Type: "
+msgstr ""
 
 msgid "Key Usage"
 msgstr "密钥用法"
@@ -7637,6 +7846,9 @@ msgstr "链路聚合设置"
 
 msgid "LDAP"
 msgstr "LDAP"
+
+msgid "LDAP - Primary Domain"
+msgstr ""
 
 msgid "LDAP Domain"
 msgstr "LDAP域"
@@ -7801,6 +8013,9 @@ msgstr "许可"
 msgid "Lifetime"
 msgstr "生命周期"
 
+msgid "Lifetime: "
+msgstr ""
+
 msgid "Limit replication speed to this number of  bytes per second."
 msgstr "将复制速度限制为每秒此bytes数。"
 
@@ -7811,6 +8026,12 @@ msgid "Linked Service"
 msgstr "已连接服务"
 
 msgid "Linux"
+msgstr ""
+
+msgid "List any existing dataset properties to remove from the replicated files."
+msgstr ""
+
+msgid "List of chat IDs"
 msgstr ""
 
 msgid ""
@@ -7893,6 +8114,9 @@ msgstr ""
 
 msgid "Log"
 msgstr "日志"
+
+msgid "Log In to GMail"
+msgstr ""
 
 msgid "Log Level"
 msgstr "日志级别"
@@ -8454,6 +8678,9 @@ msgstr "NAT接口"
 msgid "NAT Port Forwarding"
 msgstr "NAT端口转发"
 
+msgid "NETBIOS-NS"
+msgstr ""
+
 msgid "NFS"
 msgstr "NFS"
 
@@ -8591,6 +8818,9 @@ msgstr "域名服务器 2"
 msgid "Nameserver 3"
 msgstr "域名服务器 3"
 
+msgid "Nameservers"
+msgstr ""
+
 msgid "Naming Schema"
 msgstr "命名惯例"
 
@@ -8640,6 +8870,9 @@ msgstr "网络掩码"
 
 msgid "Netwait IP List"
 msgstr "Netwait IP列表"
+
+msgid "Netwait:"
+msgstr ""
 
 msgid "Network"
 msgstr "网络"
@@ -8791,6 +9024,9 @@ msgid ""
 "No custom themes. Click <b>Create New Theme</b> to create a new custom "
 "theme."
 msgstr "没有自定义主题。点击<b>创建新主题</b>以创建新的自定义主题。"
+
+msgid "No data to display"
+msgstr ""
 
 msgid "No interfaces configured with Virtual IP."
 msgstr "未使用虚拟IP配置接口。"
@@ -8977,10 +9213,10 @@ msgid ""
 msgstr "在停止并将任务标记为失败之前尝试复制的次数。"
 
 msgid ""
-"Number of virtual CPUs to allocate to the virtual machine. The maximum is "
-"16, or fewer if the host CPU limits the maximum. The VM operating system "
-"might also have operational or licensing restrictions on the number of CPUs."
-msgstr "分配给虚拟机的虚拟处理器数量最大是16或更少，如果主机处理器限制了最大。虚拟机操作系统可能还对CPU数量有操作或许可限制。"
+"Number of virtual CPUs to allocate to the virtual machine. The VM operating "
+"system might have operational or licensing restrictions on the number of "
+"CPUs."
+msgstr ""
 
 msgid ""
 "Numeric start priority for the jail at boot time. Valid priorities are "
@@ -9145,6 +9381,9 @@ msgstr ""
 msgid "Open VPN Server"
 msgstr ""
 
+msgid "OpenVPN"
+msgstr ""
+
 msgid "OpenVPN "
 msgstr ""
 
@@ -9240,8 +9479,14 @@ msgstr "链路聚合中所选接口的顺序。配置故障转移以将主接口
 msgid "Organization"
 msgstr "组织"
 
+msgid "Organization: "
+msgstr ""
+
 msgid "Organizational Unit"
 msgstr "组织单位"
+
+msgid "Organizational Unit: "
+msgstr ""
 
 msgid "Organizational unit of the entity."
 msgstr "实体组织单位。"
@@ -9259,6 +9504,9 @@ msgid "Out"
 msgstr "发送"
 
 msgid "Outbound Network"
+msgstr ""
+
+msgid "Outbound Network:"
 msgstr ""
 
 msgid "Outgoing Mail Server"
@@ -9408,6 +9656,9 @@ msgid ""
 "Please provide a key at least 1024 bits long."
 msgstr "粘贴与证书关联的私钥（如果可用）。请提供至少1024位长密钥。"
 
+msgid "Paste value above or choose a file."
+msgstr ""
+
 msgid "Path"
 msgstr "路径"
 
@@ -9427,6 +9678,9 @@ msgstr ""
 
 msgid "Path to the Extent"
 msgstr "区块的路径"
+
+msgid "Path: "
+msgstr ""
 
 msgid "Paths"
 msgstr "路径"
@@ -9526,6 +9780,9 @@ msgstr "选择成员的物理接口。"
 msgid "PiB"
 msgstr "PiB"
 
+msgid "Plain (No Encryption)"
+msgstr ""
+
 msgid "Platform"
 msgstr "平台"
 
@@ -9600,6 +9857,12 @@ msgstr "扩展池"
 
 msgid "Pool Manager"
 msgstr "池管理器"
+
+msgid "Pool Options"
+msgstr ""
+
+msgid "Pool Options Saved"
+msgstr ""
 
 msgid "Pool Status"
 msgstr "池状态"
@@ -9829,6 +10092,12 @@ msgstr "禁止写入此共享。"
 
 msgid "Promote Dataset"
 msgstr "升级数据集"
+
+msgid "Properties Exclude"
+msgstr ""
+
+msgid "Properties Override"
+msgstr ""
 
 msgid "Protocol"
 msgstr "协议"
@@ -10063,6 +10332,9 @@ msgstr ""
 msgid "Refresh"
 msgstr "刷新"
 
+msgid "Refresh Token"
+msgstr ""
+
 msgid "Region"
 msgstr "区域"
 
@@ -10217,6 +10489,11 @@ msgstr "更换"
 
 msgid "Replace Disk"
 msgstr "更换磁盘"
+
+msgid ""
+"Replace existing dataset properties with these new defined properties in "
+"the replicated files."
+msgstr ""
 
 msgid "Replacing Disk"
 msgstr "正在更换磁盘"
@@ -10437,6 +10714,9 @@ msgid ""
 "target=_blank>smb.conf</a> manual page."
 msgstr ""
 
+msgid "Retrieving Key"
+msgstr ""
+
 msgid "Retro Logo"
 msgstr "复古Logo"
 
@@ -10458,6 +10738,9 @@ msgid "Revert branding back to FreeNAS"
 msgstr "将品牌还原回FreeNAS"
 
 msgid "Revert interface changes? All changes that are being tested will be lost."
+msgstr ""
+
+msgid "Revoked: "
 msgstr ""
 
 msgid "Rights"
@@ -10562,6 +10845,12 @@ msgstr "S.M.A.R.T.附加选项"
 msgid "S3"
 msgstr ""
 
+msgid "SAN"
+msgstr ""
+
+msgid "SAN: "
+msgstr ""
+
 msgid "SAVE"
 msgstr "保存"
 
@@ -10598,11 +10887,14 @@ msgstr "注册"
 msgid "SMB"
 msgstr "SMB"
 
+msgid "SMB - Primary Domain"
+msgstr ""
+
 msgid "SMB Service"
 msgstr "SMB服务"
 
-msgid "SMTP Authentication"
-msgstr "SMTP认证"
+msgid "SMTP"
+msgstr ""
 
 msgid ""
 "SMTP port number. Typically <i>25,465</i> (secure SMTP), or <i>587</i> "
@@ -10656,6 +10948,9 @@ msgstr "SSH端口号。保留为空以使用默认端口<i> 22 </i>。"
 
 msgid "SSL"
 msgstr "SSL"
+
+msgid "SSL (Implicit TLS)"
+msgstr ""
 
 msgid "SSSD Compat"
 msgstr "SSSD兼容性"
@@ -10714,6 +11009,9 @@ msgstr "保存网络接口更改"
 msgid "Save Pending Snapshots"
 msgstr "保存待定快照"
 
+msgid "Save Pool Options"
+msgstr ""
+
 msgid "Save Without Restarting"
 msgstr "保存而不重新启动"
 
@@ -10725,12 +11023,6 @@ msgstr "在更新前保存此机器的配置设置？"
 
 msgid "Save network interface changes?"
 msgstr ""
-
-msgid "Saving ACLs"
-msgstr "正在保存ACLs"
-
-msgid "Saving ACLs..."
-msgstr "正在保存ACLs..."
 
 msgid "Saving Debug"
 msgstr "正在保存调试"
@@ -10746,6 +11038,9 @@ msgstr "正在保存权限"
 
 msgid "Saving Permissions..."
 msgstr "正在保存权限..."
+
+msgid "Saving Pool Options..."
+msgstr ""
 
 msgid "Scan This QR Code"
 msgstr ""
@@ -11485,6 +11780,9 @@ msgstr "服务账户"
 msgid "Service Announcement"
 msgstr "服务公告"
 
+msgid "Service Announcement:"
+msgstr ""
+
 msgid "Service Key"
 msgstr "服务密钥"
 
@@ -12095,6 +12393,9 @@ msgstr "设置为在启动时自动启动虚拟机。"
 msgid "Set to start this VM when the system boots."
 msgstr "设置为在系统启动时启动此虚拟机。"
 
+msgid "Set to store the encryption key in the TrueNAS database."
+msgstr ""
+
 msgid ""
 "Set to suppress informational messages from the                remote "
 "server."
@@ -12151,6 +12452,11 @@ msgid ""
 "Set to use SLAAC (Stateless Address Auto Configuration) to autoconfigure "
 "IPv6 in the jail."
 msgstr "设置为使用SLAAC（无状态地址自动配置）在监狱中自动配置IPv6。"
+
+msgid ""
+"Set to use encryption when replicating data. Additional encryption options "
+"will appear."
+msgstr ""
 
 msgid ""
 "Set to use the <i>Schedule</i> in place  of the <i>Replicate Specific "
@@ -12393,11 +12699,20 @@ msgstr "关机倒计时"
 msgid "Sidebar Controls"
 msgstr "侧栏控制"
 
+msgid "Sign"
+msgstr ""
+
 msgid "Sign CSR"
 msgstr "签发CSR"
 
 msgid "Sign in"
 msgstr "登录"
+
+msgid "Signed By: "
+msgstr ""
+
+msgid "Signed Certificates: "
+msgstr ""
 
 msgid "Signing Certificate Authority"
 msgstr "签名证书颁发机构"
@@ -12559,15 +12874,11 @@ msgid ""
 "Not displayed to anonymous login users."
 msgstr "指定身份验证后显示给本地登录用户的消息。对匿名登录用户不显示。"
 
-msgid ""
-"Specify the number of cores per virtual CPU socket.  The product of vCPUs, "
-"cores, and threads must not exceed 16."
-msgstr "指定每个虚拟CPU插槽的核心数。vCPU，内核和线程的乘积不得超过16。"
+msgid "Specify the number of cores per virtual CPU socket."
+msgstr ""
 
-msgid ""
-"Specify the number of threads per core.  The product of vCPUs, cores, and "
-"threads must not exceed 16."
-msgstr "指定每个核心的线程数。vCPU，内核和线程的乘积不得超过16。"
+msgid "Specify the number of threads per core."
+msgstr ""
 
 msgid "Specify the size of the new zvol."
 msgstr "指定新zvol的大小。"
@@ -12623,6 +12934,9 @@ msgstr "正在开始任务..."
 msgid "State"
 msgstr "州"
 
+msgid "State: "
+msgstr ""
+
 msgid ""
 "Static IP addresses which SMB listens on for connections.  Leaving all "
 "unselected defaults to listening on all active interfaces."
@@ -12631,13 +12945,8 @@ msgstr "SMB侦听连接的静态IP地址。将所有未选中的默认值保留�
 msgid "Static IPv4 address of the IPMI web interface."
 msgstr "IPMI Web 界面的静态 IPv4 地址。"
 
-msgid ""
-"Static IPv4 or IPv6 address and subnet mask.  Example: <i>10.0.0.3</i> and "
-"<i>/24</i>. Click <i>ADD</i> to add another  IP address. Clicking "
-"<i>DELETE</i> removes that IP address."
+msgid "Static Routes"
 msgstr ""
-"静态IPv4或IPv6地址和子网掩码。例如：<i>10.0.0.3</i>和<i>/24</i>。单击<i>ADD</i>添加另一个IP地址。单击<i>"
-"删除</ i>会删除该IP地址。"
 
 msgid "Stats Per Thread"
 msgstr "每线程统计"
@@ -12717,6 +13026,9 @@ msgstr "将要复制的原始快照的存储位置。"
 
 msgid "Storage location for the replicated  snapshots."
 msgstr "复制快照的存储位置。"
+
+msgid "Store Encryption key in Sending TrueNAS database"
+msgstr ""
 
 msgid ""
 "Store system logs on the system dataset. Unset to store system logs in "
@@ -12944,6 +13256,9 @@ msgstr ""
 msgid "TLS"
 msgstr ""
 
+msgid "TLS (STARTTLS)"
+msgstr ""
+
 msgid "TLS Allow Client Renegotiations"
 msgstr "TLS允许客户端重新协商"
 
@@ -13039,6 +13354,12 @@ msgstr "任务已开始"
 
 msgid "Team Drive ID"
 msgstr "团队驱动器ID"
+
+msgid ""
+"Telegram Bot API Token (<a "
+"href=\"https://core.telegram.org/bots#3-how-do-i-create-a-bot\" "
+"target=\"_blank\">How to create a Telegram Bot</a>)"
+msgstr ""
 
 msgid "Temperature"
 msgstr "温度"
@@ -13328,6 +13649,9 @@ msgstr ""
 msgid "The filesystem "
 msgstr "文件系统 "
 
+msgid "The following Telegram chat ID(s) must be numbers!"
+msgstr ""
+
 msgid "The following datasets cannot be unlocked."
 msgstr "以下数据集无法解锁。"
 
@@ -13393,6 +13717,9 @@ msgid ""
 "can locate all groups, including groups connected with Active Directory or "
 "other services."
 msgstr "该列表仅显示该系统上缓存的组。下面的搜索框可以找到所有组，包括与活动目录或其他服务连接的组。"
+
+msgid "The listed services will be changed to listen on 0.0.0.0:"
+msgstr ""
 
 msgid "The maximum length of the queue of pending connections. Default is 100."
 msgstr "挂起的连接队列的最大长度。默认值为100。"
@@ -13493,11 +13820,8 @@ msgid ""
 "TLS protocol connection to the remote system log server."
 msgstr ""
 
-msgid "The product of vCPUs, cores and threads must not exceed 16."
-msgstr "vCPU，内核和线程的乘积不得超过16。"
-
-msgid "The product of vCPUs, cores, and threads must not exceed 16."
-msgstr "vCPU，核心和线程的乘积不得超过16。"
+msgid "The product of vCPUs, cores and threads must not exceed"
+msgstr ""
 
 msgid ""
 "The recovery key is an additional key file that  can be used to decrypt the "
@@ -13656,6 +13980,9 @@ msgstr ""
 msgid "There is an upgrade waiting to finish."
 msgstr "有一个升级等待完成。"
 
+msgid "There was a problem submitting the SPN entry."
+msgstr ""
+
 msgid ""
 "These  <a href=\"https://support.apple.com/en-us/HT210803\" "
 "target=\"_blank\">protocol extensions</a>  can be used by macOS to improve "
@@ -13664,6 +13991,9 @@ msgid ""
 msgstr ""
 "macOS可以使用这些<a href=\"https://support.apple.com/en-us/HT210803\" "
 "target=\"_blank\">协议扩展</a>来改善SMB共享的性能和行为特征。这是时光机支持所必需的。"
+
+msgid "These IP Addresses were removed:"
+msgstr ""
 
 msgid ""
 "These arguments are passed to <a href=\"https://rclone.org/docs/\" "
@@ -13722,6 +14052,11 @@ msgid ""
 "Third-party Cloud service providers. Choose a provider  to configure "
 "connection credentials."
 msgstr "第三方云服务提供商。选择一个提供商来配置连接凭据。"
+
+msgid ""
+"This Certificate Authority is being used to sign one or more certificates. "
+"It can be deleted  only after deleting these certificates."
+msgstr ""
 
 msgid "This Controller"
 msgstr "该控制器"
@@ -13847,6 +14182,16 @@ msgstr "现有主题已使用该名称。请选择一个新名称。"
 
 msgid "This operation might take a long time. Proceed?"
 msgstr "这项操作可能会需要很长时间。继续吗？"
+
+msgid ""
+"This pool contains the system dataset that stores critical data like "
+"debugging core files, encryption keys for pools, and Samba 4 metadata such "
+"as the user/group cache and share level permissions. Exporting this pool "
+"will transfer the system dataset to another available pool. If the only "
+"available pool is encrypted, that pool will no longer be able to be locked. "
+"When no other pools exist, the system dataset transfers back to the TrueNAS "
+"operating system device."
+msgstr ""
 
 msgid "This process continues in the background after closing this dialog."
 msgstr ""
@@ -14119,6 +14464,9 @@ msgid ""
 "chooses the correct account type."
 msgstr "Microsoft帐户的类型。登录到Microsoft帐户会自动选择正确的帐户类型。"
 
+msgid "Type: "
+msgstr ""
+
 msgid "UDP"
 msgstr ""
 
@@ -14249,6 +14597,9 @@ msgstr "正在解锁的数据集"
 msgid "Unselect All"
 msgstr "取消全选"
 
+msgid "Unset <i>Generate Encryption Key</i> to instead import a custom Hex key."
+msgstr ""
+
 msgid "Unset to add a login prompt to the system before the console menu is shown."
 msgstr "在显示控制台菜单之前，取消设置为系统添加登录提示。"
 
@@ -14272,6 +14623,9 @@ msgstr "取消共享"
 
 msgid "Until"
 msgstr "直到"
+
+msgid "Until: "
+msgstr ""
 
 msgid "Upcoming tasks"
 msgstr "即将到来的任务"
@@ -14529,6 +14883,11 @@ msgstr "使用已有磁盘镜像"
 
 msgid "Use settings from a saved replication."
 msgstr "使用已保存复制中的设置。"
+
+msgid ""
+"Use the <i>Log In to GMail</i> button to obtain the credentials for this "
+"form."
+msgstr ""
 
 msgid ""
 "Use the KMIP server to manage ZFS encrypted dataset keys. The key server "
@@ -14855,14 +15214,23 @@ msgstr "查看"
 msgid "View Logs"
 msgstr "查看日志"
 
+msgid "View/Download CSR"
+msgstr ""
+
+msgid "View/Download Certificate"
+msgstr ""
+
+msgid "View/Download Key"
+msgstr ""
+
 msgid "Violet"
 msgstr "紫色"
 
 msgid "Virtual CPUs"
 msgstr "虚拟处理器"
 
-msgid "Virtual IP Address"
-msgstr "虚拟IP地址"
+msgid "Virtual IP Address (Failover Address)"
+msgstr ""
 
 msgid "Virtual Interface"
 msgstr "虚拟接口"
@@ -14911,6 +15279,9 @@ msgid ""
 msgstr "警告：这些未知进程将在导出池时终止。"
 
 msgid "WARNING: These unknown processes will be terminated while locking the pool."
+msgstr ""
+
+msgid "WS-DISCOVERY"
 msgstr ""
 
 msgid "WS-Discovery"
@@ -15169,6 +15540,9 @@ msgstr ""
 msgid "Workgroup"
 msgstr "工作组"
 
+msgid "Would you like to add a Service Principal Name (SPN) now?"
+msgstr ""
+
 msgid "Write"
 msgstr "写入"
 
@@ -15210,6 +15584,9 @@ msgstr "是的，解密磁盘"
 
 msgid "You have left the domain."
 msgstr "您已离开域。"
+
+msgid "You have successfully added credentials."
+msgstr ""
 
 msgid "ZFS"
 msgstr "ZFS"
@@ -15594,6 +15971,9 @@ msgstr "在星期日的00:00（12:00 AM）"
 msgid "on the first day of the month at 00:00 (12:00 AM)"
 msgstr "在每月的第一天00:00（12:00 AM）"
 
+msgid "on this system."
+msgstr ""
+
 msgid "openfiles"
 msgstr "打开文件"
 
@@ -15611,6 +15991,9 @@ msgstr "pbkdf2iters"
 
 msgid "pcpu"
 msgstr "PCPU"
+
+msgid "pool options for "
+msgstr ""
 
 msgid "priority"
 msgstr "优先级"
