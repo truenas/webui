@@ -188,7 +188,7 @@ export class DiskFormComponent {
   ) {
     this.aroute.params.subscribe((params)=> {
       if (params['poolId']) {
-        this.route_success = ["storage", "pools", "status", params['poolId']];
+        this.route_success = ["storage", "status", params['poolId']];
       }
     })
   }

@@ -8,6 +8,7 @@ import { ViewControllerComponent } from 'app/core/components/viewcontroller/view
 import { ViewButtonComponent } from 'app/core/components/viewbutton/viewbutton.component';
 import globalHelptext from '../../../helptext/global-helptext';
 import { EntityTableAddActionsComponent } from 'app/pages/common/entity/entity-table/entity-table-add-actions.component';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { VolumesListControlsComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list-controls.component';
 import { ReportsGlobalControlsComponent } from 'app/pages/reportsdashboard/components/reports-global-controls/reports-global-controls.component';
 
