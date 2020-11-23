@@ -467,6 +467,38 @@ export class VolumeStatusComponent implements OnInit {
         this.dialogService.dialogForm(conf);
 
       }
+    }, {
+      id: 'Remove',
+      label: helptext.actions_label.remove,
+      onClick: (row) => {
+        console.log('row', row);
+        let diskName = row.name;
+        if (!_.startsWith(row.name, '/')) {
+          const pIndex = row.name.lastIndexOf('p');
+          diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
+        }
+
+        this.dialogService.confirm(
+          helptext.remove_disk.title,
+          helptext.remove_disk.message + diskName + "?",
+          false,
+          helptext.remove_disk.buttonMsg
+        ).subscribe((res) => {
+          if (res) {
+            this.loader.open();
+            this.ws.call('pool.remove', [this.pk, {label: row.guid}]).subscribe(
+              (res) => {
+                this.getData();
+                this.loader.close();
+              },
+              (err) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this, err, this.dialogService);
+              }
+            )
+          };
+        });
+      }
     }];
   }
 
