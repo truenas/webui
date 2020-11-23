@@ -330,8 +330,8 @@ def navigate_to_storage_click_create(driver):
     """navigate to Storage click Create"""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
     assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Storage")]')
-    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button___ACTIONS"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button___ACTIONS"]').click()
+    assert wait_on_element(driver, 0.5, 7, '(//button[@ix-auto="button___ACTIONS"])[2]')
+    driver.find_element_by_xpath('(//button[@ix-auto="button___ACTIONS"])[2]').click()
 
 
 @then('enter tank for pool name, check the box next to da0, click the arrow pointing to Data Vdevs, click Create, check confirm, click CREATE POOL')
