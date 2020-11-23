@@ -1066,7 +1066,7 @@ export class VolumesListTableConfig implements InputTableConf {
           name: T('Add Zvol'),
           label: T("Add Zvol"),
           onClick: (row1) => {
-            this.parentVolumesListComponent.addZvol(rowData.pool, rowData.id);
+            this.parentVolumesListComponent.addZvol(rowData.id);
           }
         });
       }
@@ -1237,7 +1237,7 @@ export class VolumesListTableConfig implements InputTableConf {
         name: T('Edit Zvol'),
         label: T("Edit Zvol"),
         onClick: (row1) => {
-          this.parentVolumesListComponent.addZvol(rowData.pool, rowData.id);
+          this.parentVolumesListComponent.addZvol(rowData.id);
         }
       });
 
@@ -1931,7 +1931,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.dialogService, this.storageService, this.translate, this.modalService);
   }
 
-  addZvol(pool, id) {
+  addZvol(id) {
     this.addZvolComponent.setParent(id);
     this.modalService.open('slide-in-form', this.addZvolComponent, id);
   }
