@@ -28,7 +28,7 @@ changes_rolled_back: T("Interface changes reverted."),
 
 services_restarted: {
     title: T('Attention'),
-    message_a: T('The following IP Addresses were removed:'),
+    message_a: T('These IP Addresses were removed:'),
     message_b: T('Therefore, the following services will be changed to listen on 0.0.0.0:'),
     button: T('Continue')
 },
