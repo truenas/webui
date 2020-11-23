@@ -325,29 +325,60 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   commitPendingChanges() {
-    this.dialog.confirm(
-      helptext.commit_changes_title,
-      helptext.commit_changes_warning,
-      false, helptext.commit_button).subscribe(confirm => {
-        if (confirm) {
-          this.loader.open();
-          this.ws.call('interface.commit', [{checkin_timeout: this.checkin_timeout}]).subscribe(res => {
-            this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:false}, sender:this});
-            this.interfaceTableConf.tableComponent.getData();
-            this.loader.close();
-            // can't decide if this is worth keeping since the checkin happens intantaneously
-            //this.dialog.Info(helptext.commit_changes_title, helptext.changes_saved_successfully, '300px', "info", true);
-            this.checkWaitingCheckin();
-          }, err => {
-            this.loader.close();
-            new EntityUtils().handleWSError(this, err, this.dialog);
-          });
-        }
-      });
+    let ipWarning, servicesWarning;
+    this.ws.call('interface.services_restarted_on_sync').subscribe(res => {
+      console.log(res)
+      if (res.length > 0) {
+        let services = [];
+        let ips = [];
+        res.forEach(item => {
+          if (item['system-service']) {
+            services.push(item['system-service']);
+
+          }
+          if (item['service']) {
+            services.push(item['service']);
+          }
+          item.ips.forEach(ip => {
+            ips.push(ip);
+          })
+        })
+        let uniqueIPs = [];
+        ips.forEach(ip => {
+          if (!uniqueIPs.includes(ip)) {
+            uniqueIPs.push(ip);
+          }
+        })
+        console.log(services, uniqueIPs);
+        ipWarning = 'The following IPs are being removed: ' + uniqueIPs.join(', ');
+        servicesWarning = 'These services will be changed to listen on 0.0.0.0.' + services.join(', ');
+      }
+      this.dialog.confirm(
+        helptext.commit_changes_title,
+        helptext.commit_changes_warning + (ipWarning ? ipWarning : '') + (servicesWarning ? servicesWarning : ''),
+        false, helptext.commit_button).subscribe(confirm => {
+          if (confirm) {
+            this.loader.open();
+            this.ws.call('interface.commit', [{checkin_timeout: this.checkin_timeout}]).subscribe(res => {
+              this.core.emit({name: "NetworkInterfacesChanged", data: {commit:true, checkin:false}, sender:this});
+              this.interfaceTableConf.tableComponent.getData();
+              this.loader.close();
+              // can't decide if this is worth keeping since the checkin happens intantaneously
+              //this.dialog.Info(helptext.commit_changes_title, helptext.changes_saved_successfully, '300px', "info", true);
+              this.checkWaitingCheckin();
+            }, err => {
+              this.loader.close();
+              new EntityUtils().handleWSError(this, err, this.dialog);
+            });
+          }
+        });
+    })
+
   }
 
   checkInNow() {
     this.ws.call('interface.services_restarted_on_sync').subscribe(res => {
+      console.log(res)
       if (res.length > 0) {
         let services = [];
         let ips = [];
