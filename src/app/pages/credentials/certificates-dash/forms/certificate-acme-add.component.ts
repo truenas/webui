@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { MatDialog } from '@angular/material/dialog';
 import { FormArray } from '@angular/forms';
-import { RestService, WebSocketService, DialogService } from '../../../../services/';
+import { Subscription } from 'rxjs';
+import { WebSocketService, DialogService } from '../../../../services/';
+import { ModalService } from 'app/services/modal.service';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from '../../../common/entity/utils';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -21,18 +22,22 @@ export class CertificateAcmeAddComponent {
 
   protected addCall = "certificate.create";
   protected queryCall: string = 'certificate.query';
-  protected route_success: string[] = [ 'system', 'certificates' ];
   protected isEntity: boolean = true;
   protected isNew = true;
   private csrOrg: any;
   public formArray: FormArray;
   public commonName: string;
   protected arrayControl: any;
+  private getRow = new Subscription;
+  private rowNum: any;
+  private dns_map: any;
+  private title = helptext_system_certificates.list.action_create_acme_certificate;
+  protected isOneColumnForm = true;
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
     {
       name: helptext_system_certificates.acme.fieldset_acme,
-      label: true,
+      label: false,
       class: 'acme',
       width: '100%',
       config: [
@@ -121,35 +126,32 @@ export class CertificateAcmeAddComponent {
   ];
 
   protected entityForm: any;
-  private pk: any;
   protected dialogRef: any;
-  protected queryCallOption: Array<any> = [["id", "="]];
+  protected queryCallOption: Array<any>;
   protected initialCount = 1;
   private domainList: any;
   private domainList_fc: any;
 
   constructor(
-    protected router: Router, protected route: ActivatedRoute,
-    protected rest: RestService, protected ws: WebSocketService,
+    protected ws: WebSocketService,
     protected loader: AppLoaderService, private dialog: MatDialog,
-    protected entityFormService: EntityFormService, protected dialogService: DialogService
-  ) { }
-
+    protected entityFormService: EntityFormService, protected dialogService: DialogService,
+    private modalService: ModalService
+  ) { 
+    this.getRow = this.modalService.getRow$.subscribe(rowId => {
+      this.rowNum = rowId;
+      this.queryCallOption = [["id", "=", rowId]];
+      this.getRow.unsubscribe();
+    })
+  }
+  
   preInit() { 
-    this.arrayControl = _.find(this.fieldSets[0].config, {'name' : 'dns_mapping_array'});
-    this.route.params.subscribe(params => {
-      if (params['pk']) {
-        this.pk = params['pk']; 
-        this.queryCallOption[0].push(parseInt(params['pk']));
-      }
-
-      this.ws.call('acme.dns.authenticator.query').subscribe(authenticators => {
-        let dns_map = _.find(this.fieldSets[2].config[0].templateListField, {'name' : 'authenticators'});
-        authenticators.forEach(item => {
-          dns_map.options.push({ label: item.name, value: item.id})
-        })
+    this.ws.call('acme.dns.authenticator.query').subscribe(authenticators => {
+      this.dns_map = _.find(this.fieldSets[2].config[0].templateListField, {'name' : 'authenticators'});
+      authenticators.forEach(item => {
+        this.dns_map.options.push({ label: item.name, value: item.id})
       })
-    });
+    })
   }
 
   afterInit(entityEdit: any) {
@@ -164,7 +166,7 @@ export class CertificateAcmeAddComponent {
       this.commonName = res[0].common;
       this.csrOrg = res[0];
       
-      this.ws.call('certificate.get_domain_names', [this.pk]).subscribe(domains => {
+      this.ws.call('certificate.get_domain_names', [this.rowNum]).subscribe(domains => {
         if (domains && domains.length > 0) {
           for (let i = 0; i < domains.length; i++) {
             if (this.domainList.controls[i] === undefined) {
@@ -177,12 +179,15 @@ export class CertificateAcmeAddComponent {
 
             const controls = listFields[i];            
             const name_text_fc = _.find(controls, {name: 'name_text'});
+            const auth_fc = _.find(controls, {name: 'authenticators'});
             this.domainList.controls[i].controls['name_text'].setValue(domains[i]);
             name_text_fc.paraText = domains[i];
+            auth_fc.options = this.dns_map.options;
           }
         }
       });
     })
+
   }
 
   customSubmit(value) {
@@ -198,21 +203,24 @@ export class CertificateAcmeAddComponent {
     payload['create_type'] = 'CERTIFICATE_CREATE_ACME';
     payload['dns_mapping'] = dns_mapping;
     delete payload['domains']
-
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": (
       helptext_system_certificates.acme.job_dialog_title) }, disableClose: true});
     this.dialogRef.componentInstance.setCall(this.addCall, [payload]);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((res) => {
+    this.dialogRef.componentInstance.success.subscribe(() => {
       this.dialog.closeAll();
-      this.router.navigate(new Array('/').concat(this.route_success));
+      this.modalService.close('slide-in-form');
+      this.modalService.refreshTable();
     });
     this.dialogRef.componentInstance.failure.subscribe((err) => {
       this.dialog.closeAll()
       // Dialog needed b/c handleWSError doesn't open a dialog when rejection comes back from provider
+      if (err.error.includes('[EFAULT')) {
+        new EntityUtils().handleWSError(this.entityForm, err);
+      } else {
       this.dialogService.errorReport(helptext_system_certificates.acme.error_dialog.title, 
         err.exc_info.type, err.exception)
-      new EntityUtils().handleWSError(this.entityForm, err);
+      }
     });
   }
 }

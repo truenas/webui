@@ -26,22 +26,12 @@ import { TunableFormComponent } from './tunable/tunable-form/';
 import { UpdateComponent } from './update/';
 import { ManualUpdateComponent } from './update/manualupdate/';
 import { NTPServerFormComponent } from './general-settings/ntpservers/ntpserver-form';
-import { CertificateAuthorityListComponent } from './ca/ca-list/';
-import { CertificateAuthorityAddComponent } from './ca/ca-add/';
-import { CertificateAuthorityEditComponent } from './ca/ca-edit/';
-import { CertificateAuthoritySignComponent } from './ca/ca-sign/';
-import { CertificateEditComponent } from './certificates/certificate-edit/';
-import { CertificateListComponent } from './certificates/certificate-list';
-import { CertificateAddComponent } from './certificates/certificate-add';
 import { SupportComponent } from './general-settings/support/support.component';
 import { AlertServiceListComponent } from './alertservice/alertservice-list/';
 import { TranslateModule } from '@ngx-translate/core';
 import { EmailComponent } from './email';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
-import { AcmednsListComponent } from './acmedns/acmedns-list/acmedns-list.component';
-import { AcmednsFormComponent } from './acmedns/acmedns-add/acmedns-form.component';
-import { CertificateAcmeAddComponent } from './certificates/certificate-acme-add/certificate-acme-add.component';
 import { FailoverComponent } from './failover/failover.component';
 import { ReportingComponent } from './reporting/reporting.component';
 import { EnclosureModule } from './viewenclosure/enclosure.module';
@@ -81,20 +71,10 @@ import { LicenseComponent } from './general-settings/support/license/license.com
     ManualUpdateComponent,
     NTPServerFormComponent,
     AlertServiceListComponent,
-    CertificateAuthorityListComponent,
-    CertificateAuthorityAddComponent,
-    CertificateAuthorityEditComponent,
-    CertificateAuthoritySignComponent,
-    CertificateListComponent,
-    CertificateAddComponent,
-    CertificateEditComponent,
     SupportComponent,
     EmailComponent,
     AlertServiceComponent,
     AlertConfigComponent,
-    AcmednsListComponent,
-    AcmednsFormComponent,
-    CertificateAcmeAddComponent,
     FailoverComponent,
     ReportingComponent,
     EulaComponent,

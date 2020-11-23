@@ -49,6 +49,7 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
           title: 'Cloud Credentials',
           queryCall: 'cloudsync.credentials.query',
           deleteCall: 'cloudsync.credentials.delete',
+          name: 'cloudCreds',
           columns: [
             { name: T('Name'), prop: 'name' },
             { name: T('Provider'), prop: 'provider'}
@@ -68,6 +69,7 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
           title: 'SSH Connections',
           queryCall: 'keychaincredential.query',
           deleteCall: 'keychaincredential.delete',
+          name: 'sshConnections',
           dataSourceHelper: this.sshConnectionsDataSourceHelper,
           columns: [
             { name: T('Name'), prop: 'name' },
@@ -87,6 +89,7 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
           title: 'SSH Keypairs',
           queryCall: 'keychaincredential.query',
           deleteCall: 'keychaincredential.delete',
+          name: 'sshKeypairs',
           getActions: this.sshKeyPairActions.bind(this),
           dataSourceHelper: this.sshKeyPairsDataSourceHelper,
           columns: [
@@ -118,6 +121,7 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
       icon: 'save_alt',
       name: "download",
       onClick: (rowinner) => {
+        console.log(rowinner)
         const name = rowinner.name;
         for (let key_type in rowinner.attributes) {
           const key = rowinner.attributes[key_type];

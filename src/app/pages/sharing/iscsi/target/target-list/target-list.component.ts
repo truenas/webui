@@ -79,6 +79,7 @@ export class TargetListComponent implements OnInit{
               if (res[i].target.split(':')[1] == rowinner.name) {
                 warningMsg = '<font color="red">' + T('Warning: iSCSI Target is already in use.</font><br>');
                 payload.push(true); // enable force delele
+                break;
               }
             }
             deleteMsg = warningMsg + deleteMsg;

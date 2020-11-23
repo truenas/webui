@@ -40,6 +40,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   public retroLogo: number = -1;
   public product_image = '';
   public product_model = '';
+  public product_enclosure = ''; // rackmount || tower
   public certified = false;
   public failoverBtnLabel: string = "FAILOVER TO STANDBY"
   public updateAvailable:boolean = false;
@@ -179,26 +180,16 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
       this.buildDate = month + " " +  day + ", " + year + " " + hours + ":" + minutes;
 
       this.memory = this.formatMemory(this.data.physmem, "GiB");
+
+      // PLATFORM INFO
       if(this.data.system_manufacturer && this.data.system_manufacturer.toLowerCase() == 'ixsystems'){
         this.manufacturer = "ixsystems";
       } else {
         this.manufacturer = "other";
       }
-      if (this.product_type === 'CORE'){ 
-        this.systemLogo = 'logo.svg';
-        this.getFreeNASImage(evt.data.system_product);
-        this.isFN = true;
-      } else if(this.product_type.includes('ENTERPRISE') && evt.data.license !== null) {
-        this.systemLogo = 'TrueNAS_Logomark_Black.svg';
-        if (this.data.license && this.data.license.model) {
-          this.getTrueNASImage(evt.data.license.model);
-        }
-        this.isFN = false;
-      } else if(this.product_type == 'SCALE') {
-        this.systemLogo = 'TrueNAS_Logomark_Black.svg';
-        this.getFreeNASImage(evt.data.system_product);
-        this.isFN = false;
-      }
+      
+      // PRODUCT IMAGE
+      this.setProductImage(evt.data);
 
       this.parseUptime();
       this.ready = true;
@@ -243,7 +234,21 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
     return result;
   }
 
-  getTrueNASImage(sys_product) {
+  setProductImage(data){
+    if(this.manufacturer !== 'ixsystems') return;
+
+    if(data.system_product.includes('MINI')){
+      this.setMiniImage(data.system_product);
+    } else if(data.system_product.includes('CERTIFIED')){
+      this.certified = true;
+    } else {
+      this.setTrueNASImage(data.system_product);
+    }
+  }
+
+  setTrueNASImage(sys_product) {
+    this.product_enclosure = 'rackmount';
+
     if (sys_product.includes('X10')) {
       this.product_image = '/servers/X10.png';
       this.product_model = 'X10';
@@ -253,28 +258,40 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
     } else if (sys_product.includes('M40')) {
       this.product_image = '/servers/M40.png';
       this.product_model = 'M40';
+    } else if (sys_product.includes('M50')) {
+      this.product_image = '/servers/M50.png';
+      this.product_model = 'M50';
     }  else if (sys_product.includes('M60')) {
       this.product_image = '/servers/M50.png';
       this.product_model = 'M50';
     } else if (sys_product.includes('Z20')) {
       this.product_image = '/servers/Z20.png';
       this.product_model = 'Z20';
-    } else if (sys_product.includes('M50')) {
-      this.product_image = '/servers/M50.png';
-      this.product_model = 'M50';
     } else if (sys_product.includes('Z35')) {
       this.product_image = '/servers/Z35.png';
       this.product_model = 'Z35';
     } else if (sys_product.includes('Z50')) {
       this.product_image = '/servers/Z50.png';
       this.product_model = 'Z50';
-    }
-    else {
+    } else if (sys_product.includes('R10')) {
+      this.product_image = '/servers/R10.png';
+      this.product_model = 'R10';
+    } else if (sys_product.includes('R20')) {
+      this.product_image = '/servers/R20.png';
+      this.product_model = 'R20';
+    } else if (sys_product.includes('R40')) {
+      this.product_image = '/servers/R40.png';
+      this.product_model = 'R40';
+    } else if (sys_product.includes('R50')) {
+      this.product_image = '/servers/R50.png';
+      this.product_model = 'R50';
+    } else {
       this.product_image = 'ix-original.svg';
     }
   }
 
-  getFreeNASImage(sys_product) {
+  setMiniImage(sys_product) {
+    this.product_enclosure = 'tower';
 
     if (sys_product && sys_product.includes('CERTIFIED')) {
       this.product_image = '';

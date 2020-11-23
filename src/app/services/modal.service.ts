@@ -8,6 +8,7 @@ export class ModalService {
     public refreshTable$ = new Subject();
     public refreshForm$ = new Subject();
     public getRow$ = new Subject();
+    public message$ = new Subject();
 
     refreshTable() {
         this.refreshTable$.next();
@@ -15,6 +16,9 @@ export class ModalService {
 
     refreshForm() {
         this.refreshForm$.next();
+    }
+    message(message: any) {
+        this.message$.next(message)
     }
 
     add(modal: any) {

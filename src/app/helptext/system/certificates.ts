@@ -4,6 +4,8 @@ import { T } from "app/translate-marker";
 
 export const helptext_system_certificates = {
   add: {
+    title: T('Add Certificate'),
+    title_csr: T('Add CSR'),
     fieldset_basic: T('Identifier and Type'),
     fieldset_type: T('Certificate Options'),
     fieldset_certificate: T('Certificate Subject'),
@@ -19,13 +21,28 @@ export const helptext_system_certificates = {
       errors: T('Allowed characters: letters, numbers, underscore (_), and dash (-).'),
     },
 
-    create_type: {
+    cert_create_type: {
       placeholder: T("Type"),
       tooltip: T('<i>Internal Certificate</i> is used for internal or local \
- systems. <i>Certificate Signing Request</i> is used to get a CA signature. \
- <i>Import Certificate</i> allows an existing certificate to be imported onto \
- the system. <i>Import Certificate Signing Request</i> allows an existing CSR \
+ systems. <i>Import Certificate</i> allows an existing certificate to be imported onto \
+ the system.'),
+  options: [
+    { label: T('Internal Certificate'), value: 'CERTIFICATE_CREATE_INTERNAL' },
+    { label: T('Import Certificate'), value: 'CERTIFICATE_CREATE_IMPORTED' },
+  ],
+  value: 'CERTIFICATE_CREATE_INTERNAL'
+    },
+
+    csr_create_type: {
+      placeholder: T("Type"),
+      tooltip: T('<i>Certificate Signing Request</i> is used to get a CA signature. \
+ <i>Import Certificate Signing Request</i> allows an existing CSR \
  to be imported onto the system.'),
+  options: [
+    { label: T('Certificate Signing Request'), value: 'CERTIFICATE_CREATE_CSR' },
+    { label: T('Import Certificate Signing Request'), value: 'CERTIFICATE_CREATE_IMPORTED_CSR' },
+  ],
+  value: 'CERTIFICATE_CREATE_CSR'
     },
 
     profiles: {
@@ -334,10 +351,12 @@ be recognized by the certificate-using system or this certificate will be reject
 identified as <i>not</i> critical can be ignored by the certificate-using system and the \
 certificate still approved.'),
       },
-    },
+    }
   },
 
   edit: {
+    title: T('Edit Certificate'),
+    titleCSR: T('Edit CSR'),
     fieldset_certificate: T('Certificate'),
     name: {
       placeholder: T("Identifier"),
@@ -358,7 +377,11 @@ certificate still approved.'),
 
     csr: {
       placeholder: T("Signing Request")
-    }
+    },
+
+    subject: T('Subject'),
+
+    signCSR: T('Sign CSR')
   },
 
   list: {
@@ -418,5 +441,40 @@ certificate still approved.'),
       title: T('Error')
     }
     
+  },
+
+  viewButton: {
+    certificate: T('View/Download Certificate'),
+    csr: T('View/Download CSR'),
+    key: T('View/Download Key')
+  },
+
+  viewDialog: {
+    download: T('Download'),
+    close: T('Close'),
+    copy: T('Copy')
+  },
+
+  edit_view: {
+    country: T('Country: '),
+    state: T('State: '),
+    city: T('City: '),
+    organization: T('Organization: '),
+    organizational_unit: T('Organizational Unit: '),
+    email: T('Email: '),
+    common: T('Common: '),
+    san: T('SAN: '),
+    DN: T('Distinguished Name: '),
+    type: T('Type: '),
+    path: T('Path: '),
+    digest_algorithm: T('Digest Algorithm: '),
+    key_length: T('Key Length: '),
+    key_type: T('Key Type: '),
+    unitl: T('Until: '),
+    issuer: T('Issuer: '),
+    revoked: T('Revoked: '),
+    signed_by: T('Signed By: '),
+    signed_certificates: T('Signed Certificates: '),
+    lifetime: T('Lifetime: ')
   }
 };
