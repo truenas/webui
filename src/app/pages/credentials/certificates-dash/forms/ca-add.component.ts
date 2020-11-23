@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Validators } from '@angular/forms';
 
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import * as _ from 'lodash';
-import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
+import { SystemGeneralService, WebSocketService } from '../../../../services/';
+import { ModalService } from 'app/services/modal.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 
@@ -17,8 +17,8 @@ import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.int
 export class CertificateAuthorityAddComponent {
 
   protected addCall = "certificateauthority.create";
-  protected route_success: string[] = [ 'system', 'ca' ];
   protected isEntity: boolean = true;
+  private title: string;
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
     {
@@ -180,6 +180,10 @@ export class CertificateAuthorityAddComponent {
       ]
     },
     {
+      name:'divider',
+      divider:true
+    },
+    {
       name: helptext_system_ca.add.fieldset_certificate,
       label: true,
       class: 'certificate',
@@ -196,8 +200,6 @@ export class CertificateAuthorityAddComponent {
           required: true,
           validation: helptext_system_ca.add.country.validation,
           isHidden: false,
-          class: 'inline',
-          width: '50%',
         },
         {
           type: 'input',
@@ -207,8 +209,6 @@ export class CertificateAuthorityAddComponent {
           required: true,
           validation: helptext_system_ca.add.state.validation,
           isHidden: false,
-          class: 'inline',
-          width: '50%',
         },
         {
           type: 'input',
@@ -218,8 +218,6 @@ export class CertificateAuthorityAddComponent {
           required: true,
           validation: helptext_system_ca.add.city.validation,
           isHidden: false,
-          class: 'inline',
-          width: '50%',
         },
         {
           type: 'input',
@@ -229,9 +227,16 @@ export class CertificateAuthorityAddComponent {
           required: true,
           validation: helptext_system_ca.add.organization.validation,
           isHidden: false,
-          class: 'inline',
-          width: '50%',
-        },
+        }
+      ]
+    },
+    {
+      name: helptext_system_ca.add.fieldset_certificate,
+      label: false,
+      class: 'lowerme',
+      width: '100%',
+      config: [
+
         {
           type: 'input',
           name: 'organizational_unit',
@@ -239,8 +244,6 @@ export class CertificateAuthorityAddComponent {
           tooltip: helptext_system_ca.add.organizational_unit.tooltip,
           required: false,
           isHidden: false,
-          class: 'inline',
-          width: '50%',
         },
         {
           type: 'input',
@@ -250,8 +253,6 @@ export class CertificateAuthorityAddComponent {
           required: true,
           validation: helptext_system_ca.add.email.validation,
           isHidden: false,
-          class: 'inline',
-          width: '50%',
         },
         {
           type: 'input',
@@ -259,8 +260,6 @@ export class CertificateAuthorityAddComponent {
           placeholder: helptext_system_ca.add.common.placeholder,
           tooltip: helptext_system_ca.add.common.tooltip,
           isHidden: false,
-          class: 'inline',
-          width: '50%',
         },
         {
           type: 'chip',
@@ -270,43 +269,12 @@ export class CertificateAuthorityAddComponent {
           required: true,
           validation: helptext_system_ca.add.san.validation,
           isHidden: false,
-          class: 'inline',
-          width: '50%',
-        },
-        {
-          type: 'textarea',
-          name: 'certificate',
-          placeholder: helptext_system_ca.add.certificate.placeholder,
-          tooltip: helptext_system_ca.add.certificate.tooltip,
-          required: true,
-          validation: helptext_system_ca.add.certificate.validation,
-          isHidden: true,
-        },
-        {
-          type: 'textarea',
-          name: 'privatekey',
-          placeholder: helptext_system_ca.add.privatekey.placeholder,
-          tooltip: helptext_system_ca.add.privatekey.tooltip,
-          isHidden: true,
-        },
-        {
-          type: 'input',
-          name: 'passphrase',
-          placeholder: helptext_system_ca.add.passphrase.placeholder,
-          tooltip: helptext_system_ca.add.passphrase.tooltip,
-          inputType: 'password',
-          validation: helptext_system_ca.add.passphrase.validation,
-          isHidden: true,
-          togglePw: true
-        },
-        {
-          type: 'input',
-          name: 'passphrase2',
-          inputType: 'password',
-          placeholder: helptext_system_ca.add.passphrase2.placeholder,
-          isHidden: true
-        },
+        }
       ]
+    },
+    {
+      name:'divider',
+      divider:true
     },
     {
       name: helptext_system_ca.add.fieldset_basic_constraints,
@@ -537,6 +505,53 @@ export class CertificateAuthorityAddComponent {
         }
       ]
     },
+    {
+      name: 'cert_textboxes',
+      label: false,
+      width: '50%',
+      config: [
+        {
+          type: 'textarea',
+          name: 'certificate',
+          placeholder: helptext_system_ca.add.certificate.placeholder,
+          tooltip: helptext_system_ca.add.certificate.tooltip,
+          required: true,
+          validation: helptext_system_ca.add.certificate.validation,
+          isHidden: true,
+        },
+        {
+          type: 'textarea',
+          name: 'privatekey',
+          placeholder: helptext_system_ca.add.privatekey.placeholder,
+          tooltip: helptext_system_ca.add.privatekey.tooltip,
+          isHidden: true,
+        }
+      ]
+    },
+    {
+      name: 'cert_pw',
+      label: false,
+      width: '50%',
+      config: [
+        {
+          type: 'input',
+          name: 'passphrase',
+          placeholder: helptext_system_ca.add.passphrase.placeholder,
+          tooltip: helptext_system_ca.add.passphrase.tooltip,
+          inputType: 'password',
+          validation: helptext_system_ca.add.passphrase.validation,
+          isHidden: true,
+          togglePw: true
+        },
+        {
+          type: 'input',
+          name: 'passphrase2',
+          inputType: 'password',
+          placeholder: helptext_system_ca.add.passphrase2.placeholder,
+          isHidden: true
+        }
+      ]
+    }
   ];
 
   private internalcaFields: Array<any> = [
@@ -596,8 +611,7 @@ export class CertificateAuthorityAddComponent {
   private currenProfile: any;
   private entityForm: any;
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-              protected rest: RestService, protected ws: WebSocketService,
+  constructor(protected ws: WebSocketService, private modalService: ModalService,
               protected systemGeneralService: SystemGeneralService) {}
 
   preInit() {
@@ -617,7 +631,7 @@ export class CertificateAuthorityAddComponent {
     });
 
    this.systemGeneralService.getCertificateCountryChoices().subscribe((res) => {
-      this.country = _.find(this.fieldSets[2].config, {'name' : 'country'});
+      this.country = _.find(this.fieldSets[3].config, {'name' : 'country'});
       for (const item in res) {
         this.country.options.push(
           { label : res[item], value : item}
@@ -625,7 +639,7 @@ export class CertificateAuthorityAddComponent {
       };
     });
 
-    this.usageField = _.find(this.fieldSets[5].config, {'name': 'ExtendedKeyUsage-usages'});
+    this.usageField = _.find(this.fieldSets[8].config, {'name': 'ExtendedKeyUsage-usages'});
     this.ws.call('certificate.extended_key_usage_choices').subscribe((res) => {
       Object.keys(res).forEach(key => {
         this.usageField.options.push({label: res[key], value: key})
@@ -643,6 +657,7 @@ export class CertificateAuthorityAddComponent {
   afterInit(entity: any) {
     this.fieldConfig = entity.fieldConfig;
     this.entityForm = entity;
+    this.title = helptext_system_ca.add.title;
 
     for (let i in this.intermediatecaFields) {
       this.hideField(this.intermediatecaFields[i], true, entity);
@@ -828,5 +843,10 @@ export class CertificateAuthorityAddComponent {
 
       delete data['profiles'];
     }
+  }
+
+  afterSubmit() {
+    this.modalService.close('slide-in-form');
+    this.modalService.refreshTable();
   }
 }

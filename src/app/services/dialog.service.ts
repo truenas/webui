@@ -24,7 +24,8 @@ export class DialogService {
     }
 
     public confirm(title: string, message: string, hideCheckBox?: boolean, buttonMsg?: string, secondaryCheckBox?: boolean, 
-        secondaryCheckBoxMsg?: string, method?:string, data?:any, tooltip?:any, hideCancel?:boolean, cancelMsg?: string, disableClose: boolean = false): any {
+        secondaryCheckBoxMsg?: string, method?:string, data?:any, tooltip?:any, hideCancel?:boolean, cancelMsg?: string, 
+        disableClose: boolean = false, textToCopy?: string, keyTextArea?:boolean): any {
 
         let dialogRef: MatDialogRef<ConfirmDialog>;
 
@@ -51,6 +52,14 @@ export class DialogService {
         }
         if(cancelMsg) {
             dialogRef.componentInstance.cancelMsg = cancelMsg;
+        }
+
+        if(textToCopy) {
+            dialogRef.componentInstance.keyTextArea = keyTextArea;
+        }
+
+        if(keyTextArea) {
+            dialogRef.componentInstance.textToCopy = textToCopy;
         }
 
         if(secondaryCheckBox) {

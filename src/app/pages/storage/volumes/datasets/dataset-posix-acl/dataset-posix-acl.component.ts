@@ -87,6 +87,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
           searchOptions: [],
           parent: this,
           updater: this.updateUserSearchOptions,
+          loadMoreOptions: this.loadMoreOptions,
         },
         {
           type: 'checkbox',
@@ -105,6 +106,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
           searchOptions: [],
           parent: this,
           updater: this.updateGroupSearchOptions,
+          loadMoreOptions: this.loadMoreGroupOptions,
         },
         {
           type: 'checkbox',
@@ -145,6 +147,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
               options: [],
               searchOptions: [],
               updater: this.updateUserSearchOptions,
+              loadMoreOptions: this.loadMoreOptions,
               isHidden: true,
               required: true,
             },
@@ -157,6 +160,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
               options: [],
               searchOptions: [],
               updater: this.updateGroupSearchOptions,
+              loadMoreOptions: this.loadMoreGroupOptions,
               isHidden: true,
               required: true,
             },
@@ -511,8 +515,8 @@ export class DatasetPosixAclComponent implements OnDestroy {
       return;
     }
 
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Saving ACLs") }});
-    this.dialogRef.componentInstance.setDescription(T("Saving ACLs..."));
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": helptext.save_dialog.title }});
+    this.dialogRef.componentInstance.setDescription(helptext.save_dialog.message);
     let dacl = body.dacl;
 
     await this.userService.getUserByName(body.uid).toPromise().then(userObj => {
@@ -631,6 +635,34 @@ export class DatasetPosixAclComponent implements OnDestroy {
       }
     }
     this.dialogService.dialogFormWide(conf);
+  }
+
+  loadMoreOptions(length, parent, searchText, config) {
+    parent.userService.userQueryDSCache(searchText, length).subscribe(items => {
+      const users = [];
+      for (let i = 0; i < items.length; i++) {
+        users.push({ label: items[i].username, value: items[i].username });
+      }
+      if (searchText == "") {
+        config.options = config.options.concat(users);
+      } else {
+        config.searchOptions = config.searchOptions.concat(users);
+      }
+    });
+  }
+
+  loadMoreGroupOptions(length, parent, searchText, config) {
+    parent.userService.groupQueryDSCache(searchText, false, length).subscribe(items => {
+      const groups = [];
+      for (let i = 0; i < items.length; i++) {
+        groups.push({ label: items[i].group, value: items[i].group });
+      }
+      if (searchText == "") {
+        config.options = config.options.concat(groups);
+      } else {
+        config.searchOptions = config.searchOptions.concat(groups);
+      }
+    });
   }
 }
 

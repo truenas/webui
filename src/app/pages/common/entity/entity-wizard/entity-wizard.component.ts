@@ -5,6 +5,7 @@ import { AbstractControl, FormBuilder, FormGroup, FormArray, Validators } from '
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
 
+import {FieldSet} from '../../entity/entity-form/models/fieldset.interface';
 import { FieldConfig } from '../../entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from '../../entity/entity-form/services/field-relation.service';
@@ -53,6 +54,37 @@ export class EntityWizardComponent implements OnInit {
 
     let wizardformArray = this.formBuilder.array([]);
     for (let i in this.conf.wizardConfig) {
+
+    // Fallback if no fieldsets are defined
+    if(this.conf.wizardConfig[i].fieldSets){
+      let fieldConfig = [];
+      /* Temp patch to support both FieldSet approaches */
+      const fieldSets = this.conf.wizardConfig[i].fieldSets.list ? this.conf.wizardConfig[i].fieldSets.list() : this.conf.wizardConfig[i].fieldSets;
+      for(let j = 0; j < fieldSets.length; j++){
+        const fieldset = fieldSets[j];
+        if(fieldset.config){
+          fieldConfig = fieldConfig.concat(fieldset.config);
+        }
+      }
+      this.conf.wizardConfig[i].fieldConfig = fieldConfig;
+    } else {
+      // const fieldConfig = this.conf.wizardConfig[i].fieldConfig;
+      this.conf.wizardConfig[i].fieldSets = [
+        {
+          name:'FallBack',
+          class:'fallback',
+          width:'100%',
+          divider:false,
+          config: this.conf.wizardConfig[i].fieldConfig
+        },
+        {
+          name:'divider',
+          divider:true,
+          width:'100%'
+        }
+      ]
+
+    }
       wizardformArray.push(this.entityFormService.createFormGroup(this.conf.wizardConfig[i].fieldConfig));
     }
 
@@ -179,4 +211,16 @@ export class EntityWizardComponent implements OnInit {
   }
 
   originalOrder = function () {};
+
+
+  isFieldsetAvailabel(fieldset) {
+    if (fieldset.config) {
+      for (let i = 0; i < fieldset.config.length; i++) {
+        if (!fieldset.config[i].isHidden) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 }

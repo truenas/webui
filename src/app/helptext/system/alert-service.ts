@@ -171,6 +171,16 @@ export default {
  <a href="https://community.helpsystems.com/knowledge-base/intermapper/snmp/snmp-community-strings/" \
  target="_blank">What is an SNMP Community String?</a>.'),
 
+    Telegram_bot_token_placeholder: T('Bot API Token'),
+    Telegram_bot_token_tooltip: T('Telegram Bot API Token (<a href="https://core.telegram.org/bots#3-how-do-i-create-a-bot"\
+ target="_blank">How to create a Telegram Bot</a>)'),
+
+    Telegram_chat_ids_placeholder: T('List of chat IDs'),
+    Telegram_chat_ids_tooltip: T('Enter a list of chat IDs separated by space, comma or semicolon. \
+ To find your chat ID send a message to the bot, group or channel and visit \
+ <a href="https://api.telegram.org/bot<BOT_TOKEN>/getUpdates" \
+ target="_blank">https://api.telegram.org/bot<BOT_TOKEN>/getUpdates</a>.'),
+
     VictorOps_api_key_placeholder: T('API Key'),
     VictorOps_api_key_tooltip: T('Enter or paste the <a\
  href="https://help.victorops.com/knowledge-base/api/"\

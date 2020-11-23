@@ -332,10 +332,13 @@ export class VolumeStatusComponent implements OnInit {
               entityDialog.parent.dialogService.Info(helptext.replace_disk.title, helptext.replace_disk.info_dialog_content + name + ".", '', 'info', true);
             }),
             dialogRef.componentInstance.failure.subscribe((res) => {
+              dialogRef.close();
+              entityDialog.dialogRef.close();
+              let err = helptext.replace_disk.err_msg;
               if (res.error.startsWith('[EINVAL]')) {
-                dialogRef.close();
-                new EntityUtils().handleWSError(this, res.exc_info);
+                err = res.error;
               }
+              entityDialog.parent.dialogService.errorReport(helptext.replace_disk.err_title, err, res.exception);
             });
           }
         }
@@ -451,10 +454,13 @@ export class VolumeStatusComponent implements OnInit {
               entityDialog.parent.dialogService.Info(helptext.extend_disk.title, helptext.extend_disk.info_dialog_content + name + ".", '', 'info', true);
             }),
             dialogRef.componentInstance.failure.subscribe((res) => {
+              dialogRef.close();
+              entityDialog.dialogRef.close();
+              let err = helptext.extend_disk.err_msg;
               if (res.error.startsWith('[EINVAL]')) {
-                dialogRef.close();
-                new EntityUtils().handleWSError(this, res.exc_info);
+                err = res.error;
               }
+              entityDialog.parent.dialogService.errorReport(helptext.extend_disk.err_title, err, res.exception);
             });
           }
         }

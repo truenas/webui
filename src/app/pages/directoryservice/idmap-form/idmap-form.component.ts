@@ -58,18 +58,34 @@ export class IdmapFormComponent {
           options: []
         },
         {
-          type: 'input',
+          type: 'select',
           name: 'name',
           placeholder: helptext.idmap.name.placeholder,
           tooltip: helptext.idmap.name.tooltip,
           required: true,
+          options: helptext.idmap.name.options
+        },
+        {
+          type: 'input',
+          name: 'custom_name',
+          placeholder: helptext.idmap.custom_name.placeholder,
+          tooltip: helptext.idmap.custom_name.tooltip,
+          required: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'name',
+                value: 'custom',
+              }]
+            }
+          ]
         },
         {
           type:  'input' ,
           name: 'dns_domain_name',
           placeholder: helptext.idmap.dns_domain_name.placeholder,
           tooltip: helptext.idmap.dns_domain_name.tooltip,
-          value: ''
         },
         {
           type:  'input' ,
@@ -323,6 +339,15 @@ export class IdmapFormComponent {
       }
     });
 
+    entityEdit.formGroup.controls['name'].valueChanges.subscribe(value => {
+      if (value === 'DS_TYPE_DEFAULT_DOMAIN') {
+        entityEdit.formGroup.controls['idmap_backend'].setValue('TDB');
+        this.hideField('idmap_backend', true, entityEdit);
+      } else if (_.find(this.fieldConfig, { name: 'idmap_backend' }).isHidden) {
+        this.hideField('idmap_backend', false, entityEdit);
+      }
+    })
+
     this.idmapService.getBackendChoices().subscribe((res) => {
       this.backendChoices = res;
       const config = this.fieldConfig.find(c => c.name === 'idmap_backend');
@@ -347,7 +372,11 @@ export class IdmapFormComponent {
 
   beforeSubmit(data) {
     if (data.dns_domain_name === null) {
-      data.dns_domain_name = '';
+      delete data.dns_domain_name;
+    }
+    if (data.custom_name) {
+      data.name = data.custom_name;
+      delete data.custom_name;
     }
     let options = {}
     for (let item in data) {

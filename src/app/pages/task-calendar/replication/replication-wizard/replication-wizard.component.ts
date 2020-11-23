@@ -47,265 +47,412 @@ export class ReplicationWizardComponent {
     protected wizardConfig: Wizard[] = [
         {
             label: helptext.step1_label,
-            fieldConfig: [
+            fieldSets: [
                 {
-                    type: 'select',
-                    name: 'exist_replication',
-                    placeholder: helptext.exist_replication_placeholder,
-                    tooltip: helptext.exist_replication_tooltip,
-                    options: [{
-                        label: '---------',
+                  name: 'preload',
+                  label: false,
+                  class: 'preload',
+                  width: '100%',
+                  config: [
+                    {
+                        type: 'select',
+                        name: 'exist_replication',
+                        placeholder: helptext.exist_replication_placeholder,
+                        tooltip: helptext.exist_replication_tooltip,
+                        options: [{
+                            label: '---------',
+                            value: '',
+                        }],
                         value: '',
-                    }],
-                    value: '',
-                },
-                {
-                    type: 'select',
-                    name: 'source_datasets_from',
-                    placeholder: helptext.source_datasets_from_placeholder,
-                    tooltip: helptext.source_datasets_from_tooltip,
-                    options: [{
-                        label: T("On this System"),
-                        value: 'local',
-                    }, {
-                        label: T("On a Different System"),
-                        value: 'remote',
-                    }],
-                    required: true,
-                    validation: [Validators.required],
-                    class: 'inline',
-                    width: '50%',
-                },
-                {
-                    type: 'select',
-                    name: 'target_dataset_from',
-                    placeholder: helptext.target_dataset_from_placeholder,
-                    tooltip: helptext.target_dataset_from_tooltip,
-                    options: [{
-                        label: T("On this System"),
-                        value: 'local',
-                    }, {
-                        label: T("On a Different System"),
-                        value: 'remote',
-                    }],
-                    required: true,
-                    validation: [Validators.required],
-                    class: 'inline',
-                    width: '50%',
-                },
-                {
-                    type: 'select',
-                    name: 'ssh_credentials_source',
-                    placeholder: helptext.ssh_credentials_source_placeholder,
-                    tooltip: helptext.ssh_credentials_source_tooltip,
-                    options: [],
-                    class: 'inline',
-                    width: '50%',
-                    relation: [{
-                        action: 'SHOW',
-                        when: [{
-                            name: 'source_datasets_from',
-                            value: 'remote',
-                        }]
-                    }],
-                    isHidden: true,
-                    required: true,
-                    validation: [Validators.required],
-                },
-                {
-                    type: 'select',
-                    name: 'ssh_credentials_target',
-                    placeholder: helptext.ssh_credentials_target_placeholder,
-                    tooltip: helptext.ssh_credentials_target_tooltip,
-                    options: [],
-                    class: 'inline',
-                    width: '50%',
-                    relation: [{
-                        action: 'SHOW',
-                        when: [{
-                            name: 'target_dataset_from',
-                            value: 'remote',
-                        }]
-                    }],
-                    isHidden: true,
-                    required: true,
-                    validation: [Validators.required],
-                },
-                {
-                    type: 'explorer',
-                    name: 'source_datasets',
-                    placeholder: helptext.source_datasets_placeholder,
-                    tooltip: helptext.source_datasets_tooltip,
-                    initial: '',
-                    explorerType: 'directory',
-                    multiple: true,
-                    customTemplateStringOptions: {
-                        displayField: 'Path',
-                        isExpandedField: 'expanded',
-                        idField: 'uuid',
-                        getChildren: this.getSourceChildren.bind(this),
-                        nodeHeight: 23,
-                        allowDrag: false,
-                        useVirtualScroll: false,
-                        useCheckbox: true,
-                        useTriState: false,
                     },
-                    required: true,
-                    validation: [Validators.required],
-                    class: 'inline',
-                    width: '50%',
-                    relation: [{
-                        action: 'SHOW',
-                        connective: 'OR',
-                        when: [{
-                            name: 'source_datasets_from',
-                            value: 'remote',
-                        }, {
-                            name: 'source_datasets_from',
-                            value: 'local',
-                        }]
-                    }],
+                  ]
                 },
                 {
-                    type: 'explorer',
-                    name: 'target_dataset',
-                    placeholder: helptext.target_dataset_placeholder,
-                    tooltip: helptext.target_dataset_tooltip,
-                    initial: '',
-                    explorerType: 'directory',
-                    customTemplateStringOptions: {
-                        displayField: 'Path',
-                        isExpandedField: 'expanded',
-                        idField: 'uuid',
-                        getChildren: this.getTargetChildren.bind(this),
-                        nodeHeight: 23,
-                        allowDrag: false,
-                        useVirtualScroll: false,
-                    },
-                    required: true,
-                    validation: [Validators.required],
-                    class: 'inline',
-                    width: '50%',
-                    relation: [{
-                        action: 'SHOW',
-                        connective: 'OR',
-                        when: [{
-                            name: 'target_dataset_from',
-                            value: 'remote',
-                        }, {
-                            name: 'target_dataset_from',
-                            value: 'local',
-                        }]
-                    }],
-                },
-                {
-                    type: 'checkbox',
-                    name: 'recursive',
-                    placeholder: helptext.recursive_placeholder,
-                    tooltip: helptext.recursive_tooltip,
-                    value: false,
-                    relation: [{
-                        action: 'SHOW',
-                        connective: 'OR',
-                        when: [{
-                            name: 'source_datasets_from',
-                            value: 'remote',
-                        }, {
-                            name: 'source_datasets_from',
-                            value: 'local',
-                        }]
-                    }],
-                },
-                {
-                    type: 'paragraph',
-                    name: 'snapshots_count',
-                    paraText: '',
-                    relation: [{
-                        action: 'SHOW',
-                        connective: 'OR',
-                        when: [{
-                            name: 'source_datasets_from',
-                            value: 'remote',
-                        }, {
-                            name: 'source_datasets_from',
-                            value: 'local',
-                        }]
-                    }],
-                },
-                {
-                    type: 'checkbox',
-                    name: 'custom_snapshots',
-                    placeholder: helptext.custom_snapshots_placeholder,
-                    tooltip: helptext.custom_snapshots_tooltip,
-                    value: false,
-                    relation: [{
-                        action: 'SHOW',
-                        when: [{
-                            name: 'source_datasets_from',
-                            value: 'local',
-                        }]
-                    }],
-                },
-                {
-                    type: 'input',
-                    name: 'naming_schema',
-                    placeholder: helptext.naming_schema_placeholder,
-                    tooltip: helptext.naming_schema_tooltip,
-                    value: this.defaultNamingSchema,
-                    relation: [{
-                        action: 'SHOW',
-                        connective: 'OR',
-                        when: [{
-                            name: 'custom_snapshots',
-                            value: true,
-                        }, {
-                            name: 'source_datasets_from',
-                            value: 'remote',
-                        }]
-                    }],
-                    parent: this,
-                    blurStatus: true,
-                    blurEvent: (parent) => {
-                        parent.getSnapshots();
-                    }
-                },
-                {
-                    type: 'radio',
-                    name: 'transport',
-                    placeholder: helptext.encryption_placeholder,
-                    tooltip: helptext.encryption_tooltip,
-                    options: [
+                    name: 'source',
+                    label: false,
+                    class: 'source',
+                    width: '49%',
+                    config: [
                         {
-                            label: T("Encryption (more secure, but slower)"),
-                            value: 'SSH',
+                            type: 'select',
+                            name: 'source_datasets_from',
+                            placeholder: helptext.source_datasets_from_placeholder,
+                            tooltip: helptext.source_datasets_from_tooltip,
+                            options: [{
+                                label: T("On this System"),
+                                value: 'local',
+                            }, {
+                                label: T("On a Different System"),
+                                value: 'remote',
+                            }],
+                            required: true,
+                            validation: [Validators.required],
                         },
                         {
-                            label: T("No Encryption (less secure, but faster)"),
-                            value: 'SSH+NETCAT',
-                        }
-                    ],
-                    value: 'SSH',
-                    relation: [{
-                        action: 'SHOW',
-                        connective: 'OR',
-                        when: [{
-                            name: 'source_datasets_from',
-                            value: 'remote',
-                        }, {
-                            name: 'target_dataset_from',
-                            value: 'remote',
-                        }]
-                    }],
+                            type: 'select',
+                            name: 'ssh_credentials_source',
+                            placeholder: helptext.ssh_credentials_source_placeholder,
+                            tooltip: helptext.ssh_credentials_source_tooltip,
+                            options: [],
+                            relation: [{
+                                action: 'SHOW',
+                                when: [{
+                                    name: 'source_datasets_from',
+                                    value: 'remote',
+                                }]
+                            }],
+                            isHidden: true,
+                            required: true,
+                            validation: [Validators.required],
+                        },
+                        {
+                            type: 'explorer',
+                            name: 'source_datasets',
+                            placeholder: helptext.source_datasets_placeholder,
+                            tooltip: helptext.source_datasets_tooltip,
+                            initial: '',
+                            explorerType: 'directory',
+                            multiple: true,
+                            customTemplateStringOptions: {
+                                displayField: 'Path',
+                                isExpandedField: 'expanded',
+                                idField: 'uuid',
+                                getChildren: this.getSourceChildren.bind(this),
+                                nodeHeight: 23,
+                                allowDrag: false,
+                                useVirtualScroll: false,
+                                useCheckbox: true,
+                                useTriState: false,
+                            },
+                            required: true,
+                            validation: [Validators.required],
+                            relation: [{
+                                action: 'SHOW',
+                                connective: 'OR',
+                                when: [{
+                                    name: 'source_datasets_from',
+                                    value: 'remote',
+                                }, {
+                                    name: 'source_datasets_from',
+                                    value: 'local',
+                                }]
+                            }],
+                        },
+                        {
+                            type: 'checkbox',
+                            name: 'recursive',
+                            placeholder: helptext.recursive_placeholder,
+                            tooltip: helptext.recursive_tooltip,
+                            value: false,
+                            relation: [{
+                                action: 'SHOW',
+                                connective: 'OR',
+                                when: [{
+                                    name: 'source_datasets_from',
+                                    value: 'remote',
+                                }, {
+                                    name: 'source_datasets_from',
+                                    value: 'local',
+                                }]
+                            }],
+                        },
+                        {
+                            type: 'paragraph',
+                            name: 'snapshots_count',
+                            paraText: '',
+                            relation: [{
+                                action: 'SHOW',
+                                connective: 'OR',
+                                when: [{
+                                    name: 'source_datasets_from',
+                                    value: 'remote',
+                                }, {
+                                    name: 'source_datasets_from',
+                                    value: 'local',
+                                }]
+                            }],
+                        },
+                        {
+                            type: 'checkbox',
+                            name: 'custom_snapshots',
+                            placeholder: helptext.custom_snapshots_placeholder,
+                            tooltip: helptext.custom_snapshots_tooltip,
+                            value: false,
+                            relation: [{
+                                action: 'SHOW',
+                                when: [{
+                                    name: 'source_datasets_from',
+                                    value: 'local',
+                                }]
+                            }],
+                        },
+                        {
+                            type: 'input',
+                            name: 'naming_schema',
+                            placeholder: helptext.naming_schema_placeholder,
+                            tooltip: helptext.naming_schema_tooltip,
+                            value: this.defaultNamingSchema,
+                            relation: [{
+                                action: 'SHOW',
+                                connective: 'OR',
+                                when: [{
+                                    name: 'custom_snapshots',
+                                    value: true,
+                                }, {
+                                    name: 'source_datasets_from',
+                                    value: 'remote',
+                                }]
+                            }],
+                            parent: this,
+                            blurStatus: true,
+                            blurEvent: (parent) => {
+                                parent.getSnapshots();
+                            },
+                        },     
+                    ]
                 },
                 {
-                    type: 'input',
-                    name: 'name',
-                    placeholder: helptext.name_placeholder,
-                    tooltip: helptext.name_tooltip,
-                    required: true,
-                    validation: [Validators.required, forbiddenValues(this.namesInUse)],
+                    name: 'target',
+                    label: false,
+                    class: 'target',
+                    width: '49%',
+                    config: [
+                        {
+                            type: 'select',
+                            name: 'target_dataset_from',
+                            placeholder: helptext.target_dataset_from_placeholder,
+                            tooltip: helptext.target_dataset_from_tooltip,
+                            options: [{
+                                label: T("On this System"),
+                                value: 'local',
+                            }, {
+                                label: T("On a Different System"),
+                                value: 'remote',
+                            }],
+                            required: true,
+                            validation: [Validators.required],
+                        },
+                        {
+                            type: 'select',
+                            name: 'ssh_credentials_target',
+                            placeholder: helptext.ssh_credentials_target_placeholder,
+                            tooltip: helptext.ssh_credentials_target_tooltip,
+                            options: [],
+                            relation: [{
+                                action: 'SHOW',
+                                when: [{
+                                    name: 'target_dataset_from',
+                                    value: 'remote',
+                                }]
+                            }],
+                            isHidden: true,
+                            required: true,
+                            validation: [Validators.required],
+                        },
+                        {
+                            type: 'explorer',
+                            name: 'target_dataset',
+                            placeholder: helptext.target_dataset_placeholder,
+                            tooltip: helptext.target_dataset_tooltip,
+                            initial: '',
+                            explorerType: 'directory',
+                            customTemplateStringOptions: {
+                                displayField: 'Path',
+                                isExpandedField: 'expanded',
+                                idField: 'uuid',
+                                getChildren: this.getTargetChildren.bind(this),
+                                nodeHeight: 23,
+                                allowDrag: false,
+                                useVirtualScroll: false,
+                            },
+                            required: true,
+                            validation: [Validators.required],
+                            relation: [{
+                                action: 'SHOW',
+                                connective: 'OR',
+                                when: [{
+                                    name: 'target_dataset_from',
+                                    value: 'remote',
+                                }, {
+                                    name: 'target_dataset_from',
+                                    value: 'local',
+                                }]
+                            }],
+                        },
+                        {
+                            type: 'checkbox',
+                            name: 'encryption',
+                            placeholder: helptext.encryption_placeholder,
+                            tooltip: helptext.encryption_tooltip,
+                            value: false,
+                            relation: [{
+                                action: 'SHOW',
+                                connective: 'OR',
+                                when: [{
+                                    name: 'target_dataset_from',
+                                    value: 'remote',
+                                }, {
+                                    name: 'target_dataset_from',
+                                    value: 'local',
+                                }]
+                            }],
+                        },
+                        {
+                            type: 'select',
+                            name: 'encryption_key_format',
+                            placeholder: helptext.encryption_key_format_placeholder,
+                            tooltip: helptext.encryption_key_format_tooltip,
+                            options: [{
+                                label: 'HEX',
+                                value: 'HEX',
+                            }, {
+                                label: 'PASSPHRASE',
+                                value: 'PASSPHRASE',
+                            }],
+                            relation: [{
+                                action: 'SHOW',
+                                when: [{
+                                    name: 'encryption',
+                                    value: true,
+                                }]
+                            }],
+                        },
+                        {
+                            type: 'checkbox',
+                            name: 'encryption_key_generate',
+                            placeholder: helptext.encryption_key_generate_placeholder,
+                            tooltip: helptext.encryption_key_generate_tooltip,
+                            value: true,
+                            relation: [{
+                                action: 'SHOW',
+                                connective: 'AND',
+                                when: [{
+                                    name: 'encryption',
+                                    value: true,
+                                },  {
+                                    name: 'encryption_key_format',
+                                    value: 'HEX',
+                                }]
+                            }],
+                        },
+                        {
+                            type: 'input',
+                            name: 'encryption_key_hex',
+                            placeholder: helptext.encryption_key_hex_placeholder,
+                            tooltip: helptext.encryption_key_hex_tooltip,
+                            relation: [{
+                                action: 'SHOW',
+                                connective: 'AND',
+                                when: [{
+                                    name: 'encryption',
+                                    value: true,
+                                }, {
+                                    name: 'encryption_key_format',
+                                    value: 'HEX',
+                                }, {
+                                    name: 'encryption_key_generate',
+                                    value: false,
+                                }]
+                            }],
+                        },
+                        {
+                            type: 'input',
+                            inputType: 'password',
+                            togglePw: true,
+                            name: 'encryption_key_passphrase',
+                            placeholder: helptext.encryption_key_passphrase_placeholder,
+                            tooltip: helptext.encryption_key_passphrase_tooltip,
+                            relation: [{
+                                action: 'SHOW',
+                                connective: 'AND',
+                                when: [{
+                                    name: 'encryption',
+                                    value: true,
+                                }, {
+                                    name: 'encryption_key_format',
+                                    value: 'PASSPHRASE',
+                                }]
+                            }],
+                        },
+                        {
+                            type: 'checkbox',
+                            name: 'encryption_key_location_truenasdb',
+                            placeholder: helptext.encryption_key_location_truenasdb_placeholder,
+                            tooltip: helptext.encryption_key_location_truenasdb_tooltip,
+                            value: true,
+                            relation: [{
+                                action: 'SHOW',
+                                when: [{
+                                    name: 'encryption',
+                                    value: true,
+                                }]
+                            }],
+                        },
+                        {
+                            type: 'input',
+                            name: 'encryption_key_location',
+                            placeholder: helptext.encryption_key_location_placeholder,
+                            tooltip: helptext.encryption_key_location_tooltip,
+                            relation: [{
+                                action: 'SHOW',
+                                connective: 'AND',
+                                when: [{
+                                    name: 'encryption',
+                                    value: true,
+                                }, {
+                                    name: 'encryption_key_location_truenasdb',
+                                    value: false,
+                                }]
+                            }],
+                        },
+                    ]
                 },
-            ]
+                {
+                    name: 'general',
+                    label: false,
+                    class: 'general',
+                    width: '100%',
+                    config: [
+                        {
+                            type: 'radio',
+                            name: 'transport',
+                            placeholder: helptext.transport_placeholder,
+                            tooltip: helptext.transport_tooltip,
+                            options: [
+                                {
+                                    label: T("Encryption (more secure, but slower)"),
+                                    value: 'SSH',
+                                },
+                                {
+                                    label: T("No Encryption (less secure, but faster)"),
+                                    value: 'SSH+NETCAT',
+                                }
+                            ],
+                            value: 'SSH',
+                            relation: [{
+                                action: 'SHOW',
+                                connective: 'OR',
+                                when: [{
+                                    name: 'source_datasets_from',
+                                    value: 'remote',
+                                }, {
+                                    name: 'target_dataset_from',
+                                    value: 'remote',
+                                }]
+                            }],
+                        },
+                        {
+                            type: 'input',
+                            name: 'name',
+                            placeholder: helptext.name_placeholder,
+                            tooltip: helptext.name_tooltip,
+                            required: true,
+                            validation: [Validators.required, forbiddenValues(this.namesInUse)],
+                        },
+                    ]
+                },
+            ],
+            fieldConfig: []
         },
         {
             label: helptext.step2_label,
@@ -591,6 +738,9 @@ export class ReplicationWizardComponent {
     protected snapshotsCountField;
     private existSnapshotTasks = [];
     private eligibleSnapshots = 0;
+    protected preload_fieldSet;
+    protected source_fieldSet;
+    protected target_fieldSet;
 
     constructor(private router: Router, private keychainCredentialService: KeychainCredentialService,
         private loader: AppLoaderService, private dialogService: DialogService,
@@ -613,13 +763,17 @@ export class ReplicationWizardComponent {
 
     afterInit(entityWizard) {
         this.entityWizard = entityWizard;
-        this.snapshotsCountField = _.find(this.wizardConfig[0].fieldConfig, { name: 'snapshots_count' });
+        this.preload_fieldSet = _.find(this.wizardConfig[0].fieldSets, {class: 'preload'});
+        this.source_fieldSet = _.find(this.wizardConfig[0].fieldSets, {class: 'source'});
+        this.target_fieldSet = _.find(this.wizardConfig[0].fieldSets, {class: 'target'});
+
+        this.snapshotsCountField = _.find(this.source_fieldSet.config, { name: 'snapshots_count' });
         this.step0Init();
         this.step1Init();
     }
 
     step0Init() {
-        const exist_replicationField = _.find(this.wizardConfig[0].fieldConfig, { name: 'exist_replication' });
+        const exist_replicationField = _.find(this.preload_fieldSet.config, { name: 'exist_replication' });
         this.replicationService.getReplicationTasks().subscribe(
             (res) => {
                 for (const task of res) {
@@ -640,8 +794,8 @@ export class ReplicationWizardComponent {
             }
         )
 
-        const ssh_credentials_source_field = _.find(this.wizardConfig[0].fieldConfig, { 'name': 'ssh_credentials_source' });
-        const ssh_credentials_target_field = _.find(this.wizardConfig[0].fieldConfig, { 'name': 'ssh_credentials_target' });
+        const ssh_credentials_source_field = _.find(this.source_fieldSet.config, { 'name': 'ssh_credentials_source' });
+        const ssh_credentials_target_field = _.find(this.target_fieldSet.config, { 'name': 'ssh_credentials_target' });
         this.keychainCredentialService.getSSHConnections().subscribe((res) => {
             for (const i in res) {
                 ssh_credentials_source_field.options.push({ label: res[i].name, value: res[i].id });
@@ -696,7 +850,8 @@ export class ReplicationWizardComponent {
                     this.createSSHConnection(credentialName);
                     this.setDisable(datasetName, false, false, 0);
                 } else {
-                    const explorerComponent = _.find(this.wizardConfig[0].fieldConfig, { name: datasetName }).customTemplateStringOptions.explorerComponent;
+                    const fieldConfig = i === 'source' ? this.source_fieldSet.config : this.target_fieldSet.config;
+                    const explorerComponent = _.find(fieldConfig, { name: datasetName }).customTemplateStringOptions.explorerComponent;
                     if (explorerComponent) {
                         explorerComponent.nodes = [{
                             mountpoint: explorerComponent.config.initial,
@@ -711,7 +866,7 @@ export class ReplicationWizardComponent {
         }
 
         this.entityWizard.formArray.controls[0].controls['recursive'].valueChanges.subscribe((value) => {
-            const explorerComponent = _.find(this.wizardConfig[0].fieldConfig, { name: 'source_datasets' }).customTemplateStringOptions;
+            const explorerComponent = _.find(this.source_fieldSet.config, { name: 'source_datasets' }).customTemplateStringOptions;
             if (explorerComponent) {
                 explorerComponent.useTriState = value;
             }
@@ -947,6 +1102,12 @@ export class ReplicationWizardComponent {
                 transport: data['transport'] ? data['transport'] : 'LOCAL',
                 retention_policy: data['retention_policy'],
                 recursive: data['recursive'],
+                encryption: data['encryption'],
+            }
+            if (payload.encryption) {
+                payload['encryption_key_format'] = data['encryption_key_format'];
+                payload['encryption_key'] = data['encryption_key_format'] === 'PASSPHRASE' ? data['encryption_key_passphrase'] : (data['encryption_key_generate'] ? this.replicationService.generateEncryptionHexKey(64): data['encryption_key_hex']);
+                payload['encryption_key_location'] = data['encryption_key_location_truenasdb'] ? '$TrueNAS' : data['encryption_key_location'];
             }
 
             // schedule option

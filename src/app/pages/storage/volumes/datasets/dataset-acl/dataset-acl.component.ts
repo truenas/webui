@@ -90,6 +90,7 @@ export class DatasetAclComponent implements OnDestroy {
           searchOptions: [],
           parent: this,
           updater: this.updateUserSearchOptions,
+          loadMoreOptions: this.loadMoreOptions,
         },
         {
           type: 'checkbox',
@@ -108,6 +109,7 @@ export class DatasetAclComponent implements OnDestroy {
           searchOptions: [],
           parent: this,
           updater: this.updateGroupSearchOptions,
+          loadMoreOptions: this.loadMoreGroupOptions,
         },
         {
           type: 'checkbox',
@@ -148,6 +150,7 @@ export class DatasetAclComponent implements OnDestroy {
               options: [],
               searchOptions: [],
               updater: this.updateUserSearchOptions,
+              loadMoreOptions: this.loadMoreOptions,
               isHidden: true,
               required: true,
             },
@@ -160,6 +163,7 @@ export class DatasetAclComponent implements OnDestroy {
               options: [],
               searchOptions: [],
               updater: this.updateGroupSearchOptions,
+              loadMoreOptions: this.loadMoreGroupOptions,
               isHidden: true,
               required: true,
             },
@@ -861,5 +865,33 @@ export class DatasetAclComponent implements OnDestroy {
       }
     }
     this.dialogService.dialogFormWide(conf);
+  }
+  
+  loadMoreOptions(length, parent, searchText, config) {
+    parent.userService.userQueryDSCache(searchText, length).subscribe(items => {
+      const users = [];
+      for (let i = 0; i < items.length; i++) {
+        users.push({ label: items[i].username, value: items[i].username });
+      }
+      if (searchText == "") {
+        config.options = config.options.concat(users);
+      } else {
+        config.searchOptions = config.searchOptions.concat(users);
+      }
+    });
+  }
+
+  loadMoreGroupOptions(length, parent, searchText, config) {
+    parent.userService.groupQueryDSCache(searchText, false, length).subscribe(items => {
+      const groups = [];
+      for (let i = 0; i < items.length; i++) {
+        groups.push({ label: items[i].group, value: items[i].group });
+      }
+      if (searchText == "") {
+        config.options = config.options.concat(groups);
+      } else {
+        config.searchOptions = config.searchOptions.concat(groups);
+      }
+    });
   }
 }

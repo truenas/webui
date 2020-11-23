@@ -104,7 +104,7 @@ export class VMListComponent implements OnDestroy {
 
     refreshVMWizard() {
         this.addComponent = new VMWizardComponent(this.rest,this.ws,this.vmService,this.networkService, this.loader,
-            this.dialog,this.messageService,this.router,this.dialogService,this.storageService,this.prefService,
+            this.dialog,this.messageService,this.dialogService,this.storageService,this.prefService,
             this.translate,this.modalService);
       }
 

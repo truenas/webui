@@ -62,6 +62,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
           searchOptions: [],
           parent: this,
           updater: this.updateUserSearchOptions,
+          loadMoreOptions: this.loadMoreOptions,
         },
         {
           type: 'checkbox',
@@ -79,6 +80,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
           searchOptions: [],
           parent: this,
           updater: this.updateGroupSearchOptions,
+          loadMoreOptions: this.loadMoreGroupOptions,
         },
         {
           type: 'checkbox',
@@ -167,11 +169,6 @@ export class DatasetPermissionsComponent implements OnDestroy {
     protected mdDialog: MatDialog,
     protected dialog: DialogService,
     protected router: Router) { }
-
-  // Temporarily hide ACL manager in SCALE
-  isCustActionVisible(actionId: string) {
-    return this.productType.includes('SCALE') ? false : true; 
-  }
 
   preInit(entityEdit: any) {
     entityEdit.isNew = true; // remove me when we find a way to get the permissions
@@ -286,6 +283,34 @@ export class DatasetPermissionsComponent implements OnDestroy {
     });
     this.dialogRef.componentInstance.failure.subscribe((err) => {
       console.error(err)
+    });
+  }
+
+  loadMoreOptions(length, parent, searchText) {
+    parent.userService.userQueryDSCache(searchText, length).subscribe(items => {
+      const users = [];
+      for (let i = 0; i < items.length; i++) {
+        users.push({ label: items[i].username, value: items[i].username });
+      }
+      if (searchText == "") {
+        parent.userField.options = parent.userField.options.concat(users);
+      } else {
+        parent.userField.searchOptions = parent.userField.searchOptions.concat(users);
+      }
+    });
+  }
+
+  loadMoreGroupOptions(length, parent, searchText) {
+    parent.userService.groupQueryDSCache(searchText, false, length).subscribe(items => {
+      const groups = [];
+      for (let i = 0; i < items.length; i++) {
+        groups.push({ label: items[i].group, value: items[i].group });
+      }
+      if (searchText == "") {
+        parent.groupField.options = parent.groupField.options.concat(groups);
+      } else {
+        parent.groupField.searchOptions = parent.groupField.searchOptions.concat(groups);
+      }
     });
   }
 }

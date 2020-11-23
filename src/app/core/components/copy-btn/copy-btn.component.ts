@@ -11,6 +11,7 @@ export class CopyButtonComponent implements OnInit {
   
   @ViewChild('el', { static: false}) el: ElementRef;  
   @Input() text: string;
+  @Input() showPopup = true;
   public popupIsVisible: boolean = false;
 
   constructor() {

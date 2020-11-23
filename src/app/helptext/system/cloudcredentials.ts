@@ -382,6 +382,11 @@ target="_blank">OpenStack credentials file</a>.')
     )
   },
 
+  hostname_pcloud: {
+    placeholder: T('Hostname'),
+    tooltip: T('Enter the hostname to connect to.')
+  },
+
   host_sftp: {
     placeholder: T("Host"),
     tooltip: T("SSH Host to connect to.")

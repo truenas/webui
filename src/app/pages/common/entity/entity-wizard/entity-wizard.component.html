@@ -7,10 +7,16 @@
         <mat-step formGroupName="{{i}}" [stepControl]="formArray?.get([i])" *ngIf="!step.skip">
           <ng-template matStepLabel>{{step.label | translate}}</ng-template>
           <div class="form-wrap">
-            <ng-container *ngFor="let field of step.fieldConfig; let j = index">
-              <div [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" id="{{j}}" fxFlex="100%" fxFlex.gt-xs="calc({{field.width}} - 16px)">
-                <div id="dynamicField_{{field.name}}" dynamicField [config]="field" [group]="formArray?.get([i])" [fieldShow]="isShow(field.name) ? 'show' :'hide'">
-                </div>
+            <ng-container *ngFor="let fieldSet of step.fieldSets; let j = index">
+              <div [ngClass]="[fieldSet.class ? fieldSet.class : '', isFieldsetAvailabel(fieldSet) ? '' : 'empty-fieldset']" class="fieldset divider-{{fieldSet.divider}}"
+                  fxLayout="row wrap" fxLayoutAlign="start start" fxFlex="100%" fxFlex.gt-xs="calc({{fieldSet.width}} - 16px)">
+                <mat-divider *ngIf="fieldSet.divider && i > 0"></mat-divider>
+                  <h4 *ngIf="fieldSet.label && isFieldsetAvailabel(fieldSet)" class="fieldset-label">{{fieldSet.name | translate}}</h4>
+                  <div *ngFor="let field of fieldSet.config; let k = index" fxFlex="100%" fxFlex.gt-xs="calc({{field.width}} - 16px)"
+                    [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" id="{{k}}">
+                    <div id="dynamicField_{{field.name}}" dynamicField [config]="field" [group]="formArray?.get([i])" [fieldShow]="isShow(field.name) ? 'show' :'hide'">
+                    </div>
+                  </div>
               </div>
             </ng-container>
           </div>

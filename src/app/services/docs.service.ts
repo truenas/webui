@@ -33,7 +33,6 @@ export class DocsService {
                 }
             }
 
-
             const product_type = window.localStorage.getItem('product_type');
             message = message.replace(/--nas--/g, `truenas ${product_type}`);
             message = message.replace(/--NAS--/g, `TrueNAS ${product_type}`);

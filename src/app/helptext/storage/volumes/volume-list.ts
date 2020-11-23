@@ -46,6 +46,11 @@ exportError: T("Error exporting/disconnecting pool."),
 
 exportDialog:  {
     title: T("Export/disconnect pool: '"),
+    warningSysDataset: T('This pool contains the system dataset that stores critical data like debugging \
+core files, encryption keys for pools, and Samba 4 metadata such as the user/group cache and share level \
+permissions. Exporting this pool will transfer the system dataset to another available pool. If the only \
+available pool is encrypted, that pool will no longer be able to be locked. When no other pools exist, \
+the system dataset transfers back to the TrueNAS operating system device.'),
     warningA: T("WARNING: Exporting/disconnecting pool <i>"),
     warningB: T("</i>.\
  Data on the pool will not be available after export.\
@@ -119,6 +124,20 @@ encryption_options_dialog: {
     saving_encryption_options: T('Saving Encryption Options...'),
     confirm_checkbox: T('Confirm'),
     save_button: T('Save')
+},
+pool_options_dialog: {
+    dialog_title: T('Edit Pool Options for '),
+    autotrim_placeholder:T('Auto TRIM'),
+    autotrim_tooltip: T('Enable for TrueNAS to periodically review data blocks and identify\
+ empty blocks of obsolete blocks that can be deleted. Unset to incorporate day block\
+ overwrites when a device write is started (default).'),
+    confirm_checkbox: T('Confirm'),
+    save_button: T('Save'),
+    dialog_saved_title: T('Pool Options Saved'),
+    dialog_saved_message1: T('pool options for '),
+    dialog_saved_message2: T(' successfully saved.'),
+    save_pool_options: T('Save Pool Options'),
+    saving_pool_options: T('Saving Pool Options...'),
 },
 lock_dataset_dialog: {
     dialog_title: T('Lock Dataset '),

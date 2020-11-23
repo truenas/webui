@@ -53,6 +53,27 @@ export default {
  within the selected source dataset snapshots. Unset to only replicate \
  the selected dataset snapshots.'),
 
+    encryption_placeholder: T('Encryption'),
+    encryption_tooltip: T('Set to use encryption when replicating data. Additional encryption options will appear.'),
+
+    encryption_key_generate_placeholder: T('Generate Encryption Key'),
+    encryption_key_generate_tooltip: T('If the <i>Hex key</i> type is chosen, an encryption key will be auto-generated.'),
+
+    encryption_key_hex_placeholder: T('Encryption Key'),
+    encryption_key_hex_tooltip: T('Unset <i>Generate Encryption Key</i> to instead import a custom Hex key.'),
+
+    encryption_key_passphrase_placeholder: T('Passphrase'),
+    encryption_key_passphrase_tooltip: T('Enter an alphanumeric encryption key. Only available when <i>Passphrase</i> is the chosen key format.'),
+
+    encryption_key_format_placeholder: T('Encryption Key Format'),
+    encryption_key_format_tooltip: T('Choose between a <i>Hex</i> \(base 16 numeral\) or <i>Passphrase</i> \(alphanumeric\) style encryption key.'),
+
+    encryption_key_location_truenasdb_placeholder: T('Store Encryption key in Sending TrueNAS database'),
+    encryption_key_location_truenasdb_tooltip: T('Set to store the encryption key in the TrueNAS database.'),
+
+    encryption_key_location_placeholder: T('Encryption Key Location in Target System'),
+    encryption_key_location_tooltip: T('Choose a temporary location for the encryption key that will decrypt replicated data.'),
+
     custom_snapshots_placeholder: T('Replicate Custom Snapshots'),
     custom_snapshots_tooltip: T('Replicate snapshots that have not been \
  created by an automated snapshot task. Requires setting a naming schema \
@@ -67,8 +88,8 @@ export default {
  pressing <code>Enter</code>. The number of snapshots matching the \
  patterns are shown.'),
 
-    encryption_placeholder: T('SSH Transfer Security'),
-    encryption_tooltip: T('Data transfer security. The connection is \
+   transport_placeholder: T('SSH Transfer Security'),
+   transport_tooltip: T('Data transfer security. The connection is \
  authenticated with SSH. Data can be encrypted during transfer for \
  security or left unencrypted to maximize transfer speed. Encryption is \
  recommended, but can be disabled for increased speed on secure networks.'),

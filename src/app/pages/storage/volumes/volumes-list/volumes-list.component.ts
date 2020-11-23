@@ -493,6 +493,67 @@ export class VolumesListTableConfig implements InputTableConf {
     const actions = [];
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (rowData.type === 'zpool') {
+        if (rowData.is_decrypted) {
+          actions.push({
+          id: rowData.name,
+          name: T('Pool Options'),
+          label: T('Pool Options'),
+          onClick: (row) => {
+            //const autotrim = (row.autotrim === 'ON');
+
+            const self = this;
+            this.dialogConf = {
+              title: helptext.pool_options_dialog.dialog_title + row.name,
+              confirmCheckbox: true,
+              fieldConfig: [
+                {
+                  type: 'checkbox',
+                  name: 'autotrim',
+                  placeholder: helptext.pool_options_dialog.autotrim_placeholder,
+                  tooltip: helptext.pool_options_dialog.autotrim_tooltip,
+                  value: (row.autotrim.value === 'on'),
+                },
+              ],
+              saveButtonText: helptext.encryption_options_dialog.save_button,
+              afterInit: function(entityDialog) {
+              },
+              customSubmit: function(entityDialog) {
+                const formValue = entityDialog.formValue;
+                let method = 'pool.update';
+                const body = {};
+                const payload = [row.id];
+                body['autotrim'] = (formValue.autotrim ? 'ON': 'OFF');
+                payload.push(body);
+                const dialogRef = self.mdDialog.open(EntityJobComponent, {data: {"title":helptext.pool_options_dialog.save_pool_options}, disableClose: true});
+                dialogRef.componentInstance.setDescription(helptext.pool_options_dialog.saving_pool_options);
+                dialogRef.componentInstance.setCall(method, payload);
+                dialogRef.componentInstance.submit();
+                dialogRef.componentInstance.success.subscribe(res=>{
+                  if (res) {
+                    dialogRef.close()
+                    entityDialog.dialogRef.close();
+                    self.translate.get(helptext.pool_options_dialog.dialog_saved_message1).subscribe(msg1 => {
+                      self.translate.get(helptext.pool_options_dialog.dialog_saved_message2).subscribe(msg2 => {
+                        self.dialogService.Info(helptext.pool_options_dialog.dialog_saved_title, 
+                          msg1 + row.name + msg2);
+                        self.parentVolumesListComponent.repaintMe();
+                      })
+                    })
+                  }
+                });
+                dialogRef.componentInstance.failure.subscribe(err =>{
+                  if (err) {
+                    dialogRef.close();
+                    new EntityUtils().handleWSError(entityDialog, err, self.dialogService);
+                  }
+                });
+              }
+            }
+            this.dialogService.dialogForm(this.dialogConf).subscribe((res) => {
+            });
+          }
+        });
+      }
       actions.push({
         id: rowData.name,
         name: 'Export/Disconnect',
@@ -577,29 +638,38 @@ export class VolumesListTableConfig implements InputTableConf {
             doDetach();
           }
 
-          function doDetach() {
-            let title, warningA, warningB, unknownA, unknownB, encrypted;
-            self.translate.get(helptext.exportDialog.title).subscribe(t => {
-              title = t;
-              self.translate.get(helptext.exportDialog.warningA).subscribe(a => {
-                self.translate.get(helptext.exportDialog.warningB).subscribe(b => {
-                  warningA = a;
-                  warningB = b;
-                  self.translate.get(helptext.exportDialog.unknownStateA).subscribe(ua => {
-                    self.translate.get(helptext.exportDialog.unknownStateB).subscribe(ub => {
-                      self.translate.get(helptext.exportDialog.encryptWarning).subscribe(enc => {
-                        unknownA = ua;
-                        unknownB = ub;
-                        encrypted = enc;
+          async function doDetach() {
+            const sysPool = await self.ws.call('systemdataset.config').pipe(map(res => res['pool'])).toPromise();
+            let title, warningA, warningB, unknownA, unknownB, encrypted, sysPoolWarning;
+            self.translate.get(helptext.exportDialog.warningSysDataset).subscribe(sysWarn => { 
+              sysPoolWarning = sysWarn;        
+              self.translate.get(helptext.exportDialog.title).subscribe(t => {
+                title = t;
+                self.translate.get(helptext.exportDialog.warningA).subscribe(a => {
+                  self.translate.get(helptext.exportDialog.warningB).subscribe(b => {
+                    warningA = a;
+                    warningB = b;
+                    self.translate.get(helptext.exportDialog.unknownStateA).subscribe(ua => {
+                      self.translate.get(helptext.exportDialog.unknownStateB).subscribe(ub => {
+                        self.translate.get(helptext.exportDialog.encryptWarning).subscribe(enc => {
+                          unknownA = ua;
+                          unknownB = ub;
+                          encrypted = enc;
+                        })
                       })
                     })
                   })
                 })
-              })
 
+              ;
               const conf: DialogFormConfiguration = {
                 title: title + row1.name + "'",
                 fieldConfig: [{
+                  type: 'paragraph',
+                  name: 'sysdataset_warning',
+                  paraText: sysPoolWarning,
+                  isHidden: sysPool === row1.name ? false : true
+                },{
                   type: 'paragraph',
                   name: 'pool_detach_warning',
                   paraText: warningA + row1.name +
@@ -757,6 +827,7 @@ export class VolumesListTableConfig implements InputTableConf {
               }            
               self.dialogService.dialogFormWide(conf);
             })
+          })
           }
         }
     });
@@ -1025,7 +1096,7 @@ export class VolumesListTableConfig implements InputTableConf {
                       "storage", "permissions", rowData.id
                     ]));
                   } else {
-                    this.ws.call('filesystem.getacl', [row1.mountpoint]).subscribe(res => {
+                    this.ws.call('filesystem.getacl', [rowData.mountpoint]).subscribe(res => {
                       if(res.acltype === 'POSIX1E') {
                         this._router.navigate(new Array('/').concat([
                           "storage", "id", rowData.pool, "dataset",
@@ -1568,6 +1639,46 @@ export class VolumesListTableConfig implements InputTableConf {
             }
           });
         }
+        if (rowData.encrypted && rowData.key_loaded && rowData.encryption_root === rowData.name) {
+          const fileName = "dataset_" + rowData.name + "_key.txt";
+          const mimetype = 'text/plain';
+          const message = helptext.export_keys_message + rowData.name;
+          encryption_actions.push({
+            id: rowData.name,
+            name: T('Export Key'),
+            label: T('Export Key'),
+            onClick: (row) => {
+              this.dialogService.passwordConfirm(message).subscribe(export_keys => {
+                if (export_keys) {
+                  const dialogRef = this.mdDialog.open(EntityJobComponent, {data: {"title":T('Retrieving Key')}, disableClose: true});
+                  dialogRef.componentInstance.setCall('pool.dataset.export_key', [rowData.name]);
+                  dialogRef.componentInstance.submit();
+                  dialogRef.componentInstance.success.subscribe((res) => {
+                    dialogRef.close();
+                    this.dialogService.confirm(`Key for ${rowData.name}`, res.result, true, T('Download Key'), false,
+                      '','','','',false, T('Close')).subscribe(download => {
+                        if (download) {
+                          this.loader.open();
+                          this.ws.call('core.download', ['pool.dataset.export_key', [rowData.name, true], fileName]).subscribe(res => {
+                            this.loader.close();
+                            const url = res[1];
+                            this.storageService.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
+                              if(res !== null && res !== "") {
+                                this.storageService.downloadBlob(file, fileName);
+                              }
+                            });
+                          }, (e) => {
+                            this.loader.close();
+                            new EntityUtils().handleWSError(this, e, this.dialogService);
+                          });
+                        }
+                    })
+                  });  
+                }
+              })
+            }
+          });
+        }
       }
     }
     return encryption_actions;
@@ -1732,7 +1843,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   async ngOnInit(): Promise<void> {
     this.showSpinner = true;
 
-    this.systemdatasetPool = await this.ws.call('systemdataset.config').pipe(map(res => res.pool)).toPromise;
+    this.systemdatasetPool = await this.ws.call('systemdataset.config').pipe(map(res => res.pool)).toPromise();
 
     while (this.zfsPoolRows.length > 0) {
       this.zfsPoolRows.pop();
