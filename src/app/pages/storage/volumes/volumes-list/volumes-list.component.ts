@@ -408,31 +408,31 @@ export class VolumesListTableConfig implements InputTableConf {
             }
           ],
           afterInit: function(entityDialog) {
-                self.message_subscription = self.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
-                  entityDialog.formGroup.controls['key'].setValue(message);
-                });
-                // these disabled booleans are here to prevent recursion errors, disabling only needs to happen once
-                let keyDisabled = false;
-                let passphraseDisabled = false;
-                entityDialog.formGroup.controls['passphrase'].valueChanges.subscribe((passphrase) => {
-                  if (!passphraseDisabled) {
-                    if (passphrase && passphrase !== '') {
-                      keyDisabled = true;
-                      entityDialog.setDisabled('key', true, true);
-                    } else {
-                      keyDisabled = false;
-                      entityDialog.setDisabled('key', false, false);
-                    }
-                  }
-                });
-                entityDialog.formGroup.controls['key'].valueChanges.subscribe((key) => {
-                  if (!keyDisabled) {
-                    if (key && !passphraseDisabled) {
-                      passphraseDisabled = true;
-                      entityDialog.setDisabled('passphrase', true, true);
-                    }
-                  }
-                });
+            self.message_subscription = self.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
+              entityDialog.formGroup.controls['key'].setValue(message);
+            });
+            // these disabled booleans are here to prevent recursion errors, disabling only needs to happen once
+            let keyDisabled = false;
+            let passphraseDisabled = false;
+            entityDialog.formGroup.controls['passphrase'].valueChanges.subscribe((passphrase) => {
+              if (!passphraseDisabled) {
+                if (passphrase && passphrase !== '') {
+                  keyDisabled = true;
+                  entityDialog.setDisabled('key', true, true);
+                } else {
+                  keyDisabled = false;
+                  entityDialog.setDisabled('key', false, false);
+                }
+              }
+            });
+            entityDialog.formGroup.controls['key'].valueChanges.subscribe((key) => {
+              if (!keyDisabled) {
+                if (key && !passphraseDisabled) {
+                  passphraseDisabled = true;
+                  entityDialog.setDisabled('passphrase', true, true);
+                }
+              }
+            });
           },
           saveButtonText: T("Unlock"),
           customSubmit: function (entityDialog) {
@@ -1815,6 +1815,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   public has_key_dataset = {};
   protected addZvolComponent: ZvolFormComponent;
   protected aroute: ActivatedRoute;
+  private refreshTableSubscription: any;
+
   constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
@@ -1856,6 +1858,11 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       }
     });
 
+    if (!this.refreshTableSubscription) {
+      this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
+        this.repaintMe();
+      })
+    }
 
     combineLatest(this.ws.call('pool.query', []), this.ws.call('pool.dataset.query', [])).subscribe(async ([pools, datasets]) => {
       if (pools.length > 0) {
@@ -1927,7 +1934,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.dialogService.errorReport(T("Error getting pool data."), res.message, res.stack);
     });
 
-    this.addZvolComponent = new ZvolFormComponent(this, this.router, this.aroute, this.rest, this.ws, this.loader,
+    this.addZvolComponent = new ZvolFormComponent(this.router, this.aroute, this.rest, this.ws, this.loader,
       this.dialogService, this.storageService, this.translate, this.modalService);
   }
 
