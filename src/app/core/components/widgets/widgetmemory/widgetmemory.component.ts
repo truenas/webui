@@ -136,13 +136,27 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
      * zfs_cache?
      * */
 
-    let services = data["total"] - data["free"] - data["inactive"] - data["arc_size"]; 
+    let columns = [];
 
-    let columns = [
-      [ "Free", this.bytesToGigabytes(data["free"]).toFixed(1)],
-      [ "ZFS Cache", this.bytesToGigabytes(data["arc_size"]).toFixed(1)],
-      [ "Services", this.bytesToGigabytes(services).toFixed(1)]
-    ];
+    let k = 0;
+    Object.keys(data).forEach(key => {
+      if (key == 'total') return;
+      if (k > 7) return;
+      k++;
+      let label = key == 'arc_size' ? "ZFS Cache" : key.charAt(0).toUpperCase() + key.slice(1);
+      let item = [
+        label,
+        this.bytesToGigabytes(data[key]).toFixed(1)
+      ];
+      columns.push(item);
+    })
+    console.log('data------------', data);
+    console.log('column---------', columns);
+    // data.
+    //   [ "Free", this.bytesToGigabytes(data["free"]).toFixed(1)],
+    //   [ "ZFS Cache", this.bytesToGigabytes(data["arc_size"]).toFixed(1)],
+    //   [ "Services", this.bytesToGigabytes(services).toFixed(1)]
+    // ];
 
     return columns;
   }
