@@ -13,6 +13,7 @@ import { ApplicationsRoutingModule } from './applications-routing.module';
 import { CatalogComponent } from './catalog/catalog.component';
 import { ChartsComponent } from './charts/charts.component';
 import { DockerImagesComponent } from './docker-images/docker-images.component';
+import { KubernetesSettingsComponent } from './forms/kubernetes-settings/kubernetes-settings.component';
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import { DockerImagesComponent } from './docker-images/docker-images.component';
     ApplicationsComponent,
     CatalogComponent,
     ChartsComponent,
-    DockerImagesComponent
+    DockerImagesComponent,
+    KubernetesSettingsComponent
   ]
 })
 export class ApplicationsModule { }
