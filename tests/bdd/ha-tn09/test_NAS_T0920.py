@@ -265,17 +265,17 @@ def for_ip_address_this_conroller_enter_ip_select_28_for_netmask(driver, ip, net
 @then(parsers.parse('For IP Address (TrueNAS Controller 2) enter "{ip}" select /"{netmask}" netmask'))
 def for_ip_address_truenas_controller_2_enter_ip_select_28_netmask(driver, ip, netmask):
     """For IP Address (TrueNAS Controller 2) enter "{ip}" select /"{netmask}" netmask."""
-    driver.find_element_by_xpath('//input[@ix-auto="input__Failover IP Address (TrueNAS Controller 2)"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Failover IP Address (TrueNAS Controller 2)"]').send_keys(ip)
-    driver.find_element_by_xpath('//mat-select[@ix-auto="input__Failover IP Address (TrueNAS Controller 2)"]').click()
+    driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (TrueNAS Controller 2)"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (TrueNAS Controller 2)"]').send_keys(ip)
+    driver.find_element_by_xpath('//mat-select[@ix-auto="input__IP Address (TrueNAS Controller 2)"]').click()
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__{netmask}"]').click()
 
 
 @then(parsers.parse('For Virtual IP address enter "{vip}" and Press Apply'))
 def for_virtual_ip_address_enter_vip_and_press_apply(driver, vip):
     """For Virtual IP address enter "{vip}" and Press Apply."""
-    driver.find_element_by_xpath('//input[@ix-auto="input__Virtual IP Address"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Virtual IP Address"]').send_keys(vip)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Virtual IP Address (Failover Address)"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Virtual IP Address (Failover Address)"]').send_keys(vip)
     wait_on_element(driver, 0.5, 5, '//button[@ix-auto="button__APPLY"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__APPLY"]').click()
 
