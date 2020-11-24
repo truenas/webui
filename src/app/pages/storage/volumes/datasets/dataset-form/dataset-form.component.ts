@@ -18,6 +18,7 @@ import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/
 import { Validators, ValidationErrors, FormControl } from '@angular/forms';
 import { filter } from 'rxjs/operators';
 import { combineLatest } from 'rxjs';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 
 interface DatasetFormData {
   name: string;
@@ -134,7 +135,7 @@ export class DatasetFormComponent implements Formconfiguration{
   ];
 
   public fieldConfig: FieldConfig[];
-  public fieldSets: FieldSet[] = [
+  public fieldSets: FieldSets = new FieldSets([
     {
       name: helptext.dataset_form_name_section_placeholder,
       class: "name",
@@ -703,7 +704,7 @@ export class DatasetFormComponent implements Formconfiguration{
       }]
     },
     { name: "divider", divider: true },
-  ];
+  ]);
 
   public advanced_field: Array<any> = [
     'refquota',
@@ -787,9 +788,9 @@ export class DatasetFormComponent implements Formconfiguration{
     if (this.encrypted_parent && !this.inherit_encryption) {
       _.find(this.fieldConfig, {name:'encryption'}).isHidden = basic_mode;
     }
-    _.find(this.fieldSets, {class:"dataset"}).label = !basic_mode;
-    _.find(this.fieldSets, {class:"refdataset"}).label = !basic_mode;
-    _.find(this.fieldSets, {name:"quota_divider"}).divider = !basic_mode;
+    _.find(this.fieldSets.list(), {class:"dataset"}).label = !basic_mode;
+    _.find(this.fieldSets.list(), {class:"refdataset"}).label = !basic_mode;
+    _.find(this.fieldSets.list(), {name:"quota_divider"}).divider = !basic_mode;
   }
 
   convertHumanStringToNum(hstr, field) {
@@ -940,7 +941,7 @@ export class DatasetFormComponent implements Formconfiguration{
     this.dedup_fg = this.entityForm.formGroup.controls['deduplication'];
     this.dedup_field = _.find(this.fieldConfig, {name:'deduplication'});
     this.dedup_value = this.dedup_fg.value;
-    this.dedup_fg.valueChanges.subscribe(dedup=>{
+    this.dedup_fg.valueChanges.subscribe(dedup=> {
       if (dedup === 'INHERIT' || dedup === 'OFF') {
         this.dedup_field.warnings = ''
       } else {
@@ -961,7 +962,7 @@ export class DatasetFormComponent implements Formconfiguration{
       for (let i=0; i < this.encryption_fields.length; i++) {
         this.entityForm.setDisabled(this.encryption_fields[i], true, true);
       }
-      _.find(this.fieldSets, {name:"encryption_divider"}).divider = false;
+      _.find(this.fieldSets.list(), {name:"encryption_divider"}).divider = false;
       this.entityForm.setDisabled('encryption', true, true);
       this.entityForm.setDisabled('inherit_encryption', true, true);
     } else {
@@ -1043,6 +1044,7 @@ export class DatasetFormComponent implements Formconfiguration{
   preInit(entityForm: EntityFormComponent) {
 
     const paramMap: any = (<any>this.aroute.params).getValue();
+    console.log('params', paramMap );
     this.volid = paramMap['volid'];
 
     if (paramMap['pk'] !== undefined) {
@@ -1058,8 +1060,9 @@ export class DatasetFormComponent implements Formconfiguration{
       this.pk = this.parent;
       this.isNew = true;
       this.fieldSets[0].config[0].readonly = false;
-      _.find(this.fieldSets, {class:"dataset"}).label = false;
-      _.find(this.fieldSets, {class:"refdataset"}).label = false;
+      _.find(this.fieldSets.list(), {class:"dataset"}).label = false;
+      _.find(this.fieldSets.list(), {class:"refdataset"}).label = false;
+      console.log('set to false, ', _.find(this.fieldSets.list(), {class:"refdataset"}).label);
     }
     if(this.parent){
       const root = this.parent.split("/")[0];
@@ -1104,7 +1107,7 @@ export class DatasetFormComponent implements Formconfiguration{
         if (this.legacy_encryption) {
           for (let i=0; i < this.encryption_fields.length; i++) {
             this.entityForm.setDisabled(this.encryption_fields[i], true, true);
-            _.find(this.fieldSets, {name:"encryption_divider"}).divider = false;
+            _.find(this.fieldSets.list(), {name:"encryption_divider"}).divider = false;
           }
           this.entityForm.setDisabled('encryption', true, true);
           this.entityForm.setDisabled('inherit_encryption', true, true);
