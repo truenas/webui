@@ -1,6 +1,7 @@
 import { Component, ViewChild, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
 
 import { Subject } from 'rxjs';
 import { ControlConfig } from '../../models/control-config.interface';
@@ -10,7 +11,7 @@ import { Control } from '../../models/control.interface';
   selector : 'toolbar-multiselect',
   templateUrl: './toolbar-multiselect.component.html'
 })
-export class ToolbarMultiSelectComponent implements OnInit, OnChanges {
+export class ToolbarMultiSelectComponent extends iXAbstractObject implements OnInit, OnChanges {
   @ViewChild('selectTrigger') mySel;
   @Input() config?: ControlConfig; 
   @Input() controller: Subject<any>;
@@ -18,7 +19,9 @@ export class ToolbarMultiSelectComponent implements OnInit, OnChanges {
   public values: any[] = [];
   private selectStates: boolean [] = [];
 
-  constructor(public translate: TranslateService) {}
+  constructor(public translate: TranslateService) {
+    super()
+  }
 
   ngOnChanges(changes:SimpleChanges){
     if(changes.config){
