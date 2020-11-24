@@ -270,6 +270,8 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
         this.currentDiskDetails = evt.data[0];
       }
     });
+
+    this.checkVolumeHealth();
   }
 
   getAvailableSpace(){
@@ -448,6 +450,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
         this.updateVolumeHealth("Pool status is " + this.poolState.status, false, 'degraded');
         break
       case "FAULTED":
+      case "UNAVAIL":
       case "REMOVED":
         this.updateVolumeHealth("Pool status is " + this.poolState.status, true, 'faulted');
         break;
