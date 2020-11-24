@@ -96,12 +96,13 @@ def click_save(driver):
 def the_following_should_appear_reload_the_page_for_the_license_to_take_effect(driver):
     """The following should appear "Reload the page for the license to take effect"."""
     assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Reload the page")]')
+    assert wait_on_element(driver, 1, 7, '//h1[contains(.,"Reload the page")]')
 
 
 @then('Click reload now')
 def click_reload_now(driver):
     """Click reload now."""
+    assert wait_on_element(driver, 1, 7, '//button[@ix-auto="button__RELOAD NOW"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__RELOAD NOW"]').click()
 
 
@@ -114,7 +115,7 @@ def end_user_license_agreement_truenas_should_appear(driver, agreement):
 @then('Click Agree')
 def click_agree(driver):
     """Click Agree."""
-    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__I AGREE"]')
+    assert wait_on_element(driver, 1, 7, '//button[@ix-auto="button__I AGREE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
 
 
