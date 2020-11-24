@@ -4,6 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { MaterialModule } from '../../appMaterial.module';
+import { EntityModule } from '../common/entity/entity.module';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
 
@@ -21,7 +22,8 @@ import { DockerImagesComponent } from './docker-images/docker-images.component';
     MaterialModule,
     FlexLayoutModule,
     TranslateModule,
-    CommonDirectivesModule
+    CommonDirectivesModule,
+    EntityModule
   ],
   declarations: [
     ApplicationsComponent,

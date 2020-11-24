@@ -5,13 +5,20 @@ export default {
   choosePool: {
     title: T('Choose a pool for Apps'),
     placeholder: T('Pools'),
-    action: T('Confirm'),
+    action: T('Choose'),
     jobTitle: T('Configuring...'),
     success: T('Success'),
-    message: T(' is now configured for apps.')
+    message: T('Using pool ')
   },
 
   installing: T('Installing'),
+  settings: T('Settings'),
+
+  install: {
+    title: T('Ready to Install'),
+    msg1: T('Install '),
+    msg2: T(' on pool ')
+  },
 
   noPool: {
     title: T('No Pools Found'),

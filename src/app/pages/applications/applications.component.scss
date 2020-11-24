@@ -33,14 +33,21 @@
         }
     }
 
-    .more-info {
-        position: absolute;
-        top: 0;
-        right: 0;
-        margin: 10px;
-    }
+
 }
 // Temp
 p {
     color: white;
+}
+
+.more-info {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 10px;
+}
+
+.catalogTooltip {
+position: absolute !important;
+right: 20px;
 }

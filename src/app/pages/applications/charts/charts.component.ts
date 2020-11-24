@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { WebSocketService, DialogService } from '../../../services/index';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 
 @Component({
   selector: 'app-charts',
@@ -8,8 +10,10 @@ import { WebSocketService, DialogService } from '../../../services/index';
 })
 export class ChartsComponent implements OnInit {
   public chartItems = [];
+  private dialogRef: any;
 
-  constructor(private ws: WebSocketService) { }
+  constructor(private ws: WebSocketService, private mdDialog: MatDialog,
+    private dialogService: DialogService) { }
 
   ngOnInit(): void {
 
@@ -30,4 +34,26 @@ export class ChartsComponent implements OnInit {
       })
     })
   }
-}
+
+  doDelete(name: string) {
+    console.log('delete')
+    this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
+      'Deleting') }, disableClose: true});
+    this.dialogRef.componentInstance.setCall('chart.release.delete', [name]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.dialogService.closeAllDialogs();
+      // We should go to chart tab(?) and refresh
+      console.log(res);
+    });
+    this.dialogRef.componentInstance.failure.subscribe((err) => {
+      // new EntityUtils().handleWSError(this, err, this.dialogService);
+    })
+  }
+
+  getConsoleChoices(x) {
+    this.ws.call('chart.release.pod_console_choices', [x]).subscribe(res => {
+      console.log(res)
+    })
+  }
+ }
