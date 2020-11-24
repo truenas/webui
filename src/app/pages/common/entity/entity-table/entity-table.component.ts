@@ -1,5 +1,6 @@
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, ViewChild, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatTableModule, MatTable } from '@angular/material/table';
 import { Router, NavigationStart } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
@@ -105,6 +106,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public filter: ElementRef;
   //@ViewChild('filter', { static: false}) filter: ElementRef;
   @ViewChild('defaultMultiActions', { static: false}) defaultMultiActions: ElementRef;
+  @ViewChild('entitytable', { static: false}) entitytable: any;
   @ViewChild('entityTable', { static: false}) table: any;
   public tableMouseEvent: MouseEvent;
   // MdPaginator Inputs
@@ -329,7 +331,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-
+    console.log(this);
     // Setup Actions in Page Title Component
     this.core.emit({ name:"GlobalActions", data: this.actionsConfig, sender: this});
 
@@ -1127,7 +1129,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         newHeight = window.innerHeight - 233 - this.cardHeaderComponentHight;
       }
       newHeight = Math.max(newHeight, this.startingHeight);
-      document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', `height: ${newHeight}px`);
+      //document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', `height: ${newHeight}px`);
     }, 100);
   }
 
