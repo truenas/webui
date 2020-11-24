@@ -1613,4 +1613,8 @@ export class DatasetFormComponent implements Formconfiguration{
     });
   }
 
+  
+  setParent(id) {
+    this.parent = id;
+  }
 }

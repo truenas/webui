@@ -29,6 +29,7 @@ import { HttpClient } from '@angular/common/http';
 import { ModalService } from 'app/services/modal.service';
 import { VolumesListControlsComponent } from './volumes-list-controls.component';
 import { ZvolFormComponent } from '../zvol/zvol-form';
+import { DatasetFormComponent } from '../datasets/dataset-form';
 
 export interface ZfsPoolData {
   pool: string;
@@ -1055,10 +1056,12 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Add Dataset"),
           onClick: (row1) => {
             // Format: "storage/id/poolID/dataset/add/<Path>%2F<To>%2F<Dataset>"
-            this._router.navigate(new Array('/').concat([
-              "storage", "id", rowData.pool, "dataset",
-              "add", rowData.id
-            ]));
+            // this._router.navigate(new Array('/').concat([
+            //   "storage", "id", rowData.pool, "dataset",
+            //   "add", rowData.id
+            // ]));
+            
+            this.parentVolumesListComponent.addDataset(rowData.id);
           }
         });
         actions.push({
@@ -1814,6 +1817,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   public has_encrypted_root = {};
   public has_key_dataset = {};
   protected addZvolComponent: ZvolFormComponent;
+  protected addDatasetComponent: DatasetFormComponent;
   protected aroute: ActivatedRoute;
   private refreshTableSubscription: any;
 
@@ -1936,10 +1940,20 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
     this.addZvolComponent = new ZvolFormComponent(this.router, this.aroute, this.rest, this.ws, this.loader,
       this.dialogService, this.storageService, this.translate, this.modalService);
+
+    this.addDatasetComponent = new DatasetFormComponent(
+      this.router, this.aroute, this.ws, this.loader,
+      this.dialogService, this.storageService
+    )
   }
 
   addZvol(id) {
     this.addZvolComponent.setParent(id);
     this.modalService.open('slide-in-form', this.addZvolComponent, id);
+  }
+
+  addDataset(id) {
+    this.addDatasetComponent.setParent(id);
+    this.modalService.open('slide-in-form', this.addDatasetComponent, id);
   }
 }
