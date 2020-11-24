@@ -14,15 +14,16 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { MatDialog } from '@angular/material/dialog';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/volume-import-wizard';
+import { ModalService } from 'app/services/modal.service';
 
 @Component({
   selector: 'app-volumeimport-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
-  providers : [ ]
+  providers : [ ] 
 })
 export class VolumeImportWizardComponent {
 
-  public route_success: string[] = ['storage'];
+  // public route_success: string[] = ['storage'];
   public route_create: string[] = ['storage', 'manager'];
   public summary = {};
   isLinear = true;
@@ -35,7 +36,8 @@ export class VolumeImportWizardComponent {
   public entityWizard: any;
   protected productType: any;
   protected importIndex = 2;
-
+  public title: string;
+  
   protected wizardConfig: Wizard[] = [{
       label: helptext.is_new_main_label,
       fieldConfig: [
@@ -175,7 +177,7 @@ export class VolumeImportWizardComponent {
   constructor(protected rest: RestService, protected ws: WebSocketService,
     private router: Router, protected loader: AppLoaderService,
     protected dialog: MatDialog, protected dialogService: DialogService,
-    protected http: HttpClient, public messageService: MessageService) {
+    protected http: HttpClient, public messageService: MessageService, public modalService: ModalService) {
 
   }
 
@@ -312,8 +314,9 @@ export class VolumeImportWizardComponent {
       dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
       dialogRef.componentInstance.success.subscribe(res=>{
         dialogRef.close(false);
-        this.router.navigate(new Array('/').concat(
-          this.route_success));
+        // this.router.navigate(new Array('/').concat(
+        //   this.route_success));
+        this.modalService.close('slide-in-form');
       }),
       dialogRef.componentInstance.failure.subscribe((res) => {
         dialogRef.close(false);
@@ -334,24 +337,28 @@ export class VolumeImportWizardComponent {
                 found = true;
                 this.dialogService.confirm(helptext.unlock_dataset_dialog_title, helptext.unlock_dataset_dialog_message, true, helptext.unlock_dataset_dialog_button).subscribe(unlock => {
                   if (unlock) {
-                    const route_unlock = this.route_success.concat(['id', this.pool, 'dataset', 'unlock', this.pool]);
-                    this.router.navigate(new Array('/').concat(route_unlock));
+                    // const route_unlock = this.route_success.concat(['id', this.pool, 'dataset', 'unlock', this.pool]);
+                    // this.router.navigate(new Array('/').concat(route_unlock));
+                    this.modalService.close('slide-in-form');
                   } else {
-                    this.router.navigate(new Array('/').concat(this.route_success));
+                    // this.router.navigate(new Array('/').concat(this.route_success));
+                    this.modalService.close('slide-in-form');    
                   }
                 });
                 break;
               }
               if (!found) {
-                this.router.navigate(new Array('/').concat(this.route_success));
+                // this.router.navigate(new Array('/').concat(this.route_success));
+                this.modalService.close('slide-in-form');
               }
             }
           }, err => {
             new EntityUtils().handleWSError(this, err, this.dialogService);
           });
         } else { // shouldn't ever get here but who knows lol
-        this.router.navigate(new Array('/').concat(
-          this.route_success));
+          // this.router.navigate(new Array('/').concat(
+          //   this.route_success));
+          this.modalService.close('slide-in-form');
         }
       });
       dialogRef.componentInstance.failure.subscribe((res) => {
