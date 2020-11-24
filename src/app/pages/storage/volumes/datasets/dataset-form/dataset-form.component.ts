@@ -18,6 +18,7 @@ import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/
 import { Validators, ValidationErrors, FormControl } from '@angular/forms';
 import { filter } from 'rxjs/operators';
 import { combineLatest } from 'rxjs';
+import { ModalService } from 'app/services/modal.service';
 
 interface DatasetFormData {
   name: string;
@@ -911,7 +912,8 @@ export class DatasetFormComponent implements Formconfiguration{
   constructor(protected router: Router, protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
     protected loader: AppLoaderService, protected dialogService: DialogService,
-    protected storageService: StorageService ) { }
+    protected storageService: StorageService,
+    protected modalService: ModalService ) { }
 
 
 
@@ -1581,6 +1583,7 @@ export class DatasetFormComponent implements Formconfiguration{
 
     return ((this.isNew === true ) ? this.addSubmit(body) : this.editSubmit(body)).subscribe((restPostResp) => {
       this.loader.close();
+      this.modalService.close('slide-in-form');
       const parentPath = `/mnt/${this.parent}`;
       this.ws.call('filesystem.acl_is_trivial', [parentPath]).subscribe(res => {
         if (res === false) {
@@ -1608,9 +1611,11 @@ export class DatasetFormComponent implements Formconfiguration{
           this.router.navigate(new Array('/').concat(
             this.route_success));
         }
+        
       })
     }, (res) => {
       this.loader.close();
+      this.modalService.close('slide-in-form');
       new EntityUtils().handleWSError(this.entityForm, res);
     });
   }

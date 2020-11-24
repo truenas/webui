@@ -1932,7 +1932,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.addZvolComponent = new ZvolFormComponent(this.router, this.aroute, this.rest, this.ws, this.loader,
       this.dialogService, this.storageService, this.translate, this.modalService);
 
-    this.addDatasetComponent = new DatasetFormComponent(this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService);
+    this.addDatasetComponent = new DatasetFormComponent(this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService);
   }
 
   addZvol(id) {
