@@ -68,8 +68,7 @@ def click_on_localusers(driver):
 @then('The Users page should open')
 def the_users_page_should_open(driver):
     """The Users page should open."""
-    assert wait_on_element(driver, 0.5, 30, '//div[contains(.,"Users")]')
-    driver.find_element_by_xpath('//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 1, 30, '//div[contains(.,"Users")]')
 
 
 @then('On the right side of the table, click the Greater-Than-Sign for one of the users')
@@ -95,7 +94,6 @@ def click_the_edit_button_that_appears(driver):
 def the_user_edit_page_should_open(driver):
     """The User Edit Page should open."""
     assert wait_on_element(driver, 0.5, 30, '//h3[contains(.,"Edit User")]')
-    driver.find_element_by_xpath('//h3[contains(.,"Edit User")]')
 
 
 @then('Change the users shell and click save')
