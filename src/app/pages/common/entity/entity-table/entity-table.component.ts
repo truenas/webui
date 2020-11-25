@@ -1,3 +1,4 @@
+import { SelectionModel } from '@angular/cdk/collections';
 import { AfterViewInit, Component, ElementRef, Input, ViewChild, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule, MatTable } from '@angular/material/table';
@@ -106,7 +107,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public filter: ElementRef;
   //@ViewChild('filter', { static: false}) filter: ElementRef;
   @ViewChild('defaultMultiActions', { static: false}) defaultMultiActions: ElementRef;
-  @ViewChild('entitytable', { static: false}) entitytable: any;
+  @ViewChild('newEntityTable', { static: false}) entitytable: any;
   @ViewChild('entityTable', { static: false}) table: any;
   public tableMouseEvent: MouseEvent;
   // MdPaginator Inputs
@@ -116,7 +117,26 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public paginationPageEvent: any;
   public hideTopActions = false;
 
+  public selection = new SelectionModel<any>(true, []);
+  //public selected = this.selection.selected; // Alias
+  get isAllSelected() {
+    return this.selection.selected.length == this.currentRows.length;
+  }
+
   public displayedColumns: string[] = [];
+  get currentColumns(){
+    //let result = this.conf && this.conf.columns ? this.conf.columns.map((col) => col.prop) : this.displayedColumns;
+    let result = this.alwaysDisplayedCols.concat(this.conf.columns);
+    if(this.hasActions && result[result.length - 1] !== 'action'){
+      result.push({ prop: 'action'});
+    }
+    if(this.conf.config.multiSelect){
+      result.unshift({prop: 'multiselect'});
+    }
+    return result;
+    //return this.alwaysDisplayedCols.map((c) => c.prop).concat(result);
+  }
+
   public busy: Subscription;
   public columns: Array<any> = [];
   public rowHeight = 50;
@@ -166,7 +186,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   protected actionsConfig: any;
 
   protected loaderOpen = false;
-  public selected = [];
   public removeFromSelectedTotal = 0;
 
   private interval: any;
@@ -259,7 +278,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     })
     this.asyncView = this.conf.asyncView ? this.conf.asyncView : false;
 
-    this.conf.columns.forEach((column) => {
+    this.conf.columns.forEach((column, index) => {
       this.displayedColumns.push(column.prop);
       if (!column.always_display) {
         this.allColumns.push(column); // Make array of optionally-displayed cols
@@ -278,6 +297,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     this.conf.columns = this.originalConfColumns;
+    console.warn(this.conf.columns);
+    console.log(this);
 
     setTimeout(() => {
       const preferredCols = this.prefService.preferences.tableDisplayedColumns;
@@ -331,7 +352,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    console.log(this);
     // Setup Actions in Page Title Component
     this.core.emit({ name:"GlobalActions", data: this.actionsConfig, sender: this});
 
@@ -410,7 +430,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       n = 0;
     }
-    window.onresize = () => {
+    /*window.onresize = () => {
       this.oldPagesize = this.paginationPageSize;
       this.zoomLevel = Math.round(window.devicePixelRatio * 100);
       // Browser zoom of exacly 175% causes pagination anomalies; Dropping row size to 49 fixes it
@@ -427,7 +447,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.paginationPageSize = 2;
       }
       this.setPaginationInfo();
-    }
+    }*/
   }
 
   setShowSpinner() {
@@ -884,7 +904,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     // update scroll Info to make activate row scroll into the visible view if pagesize has been update
-    if (this.oldPagesize !== this.paginationPageSize && this.activatedRowIndex !== undefined && this.selected.length === 1) {
+    /*if (this.oldPagesize !== this.paginationPageSize && this.activatedRowIndex !== undefined && this.selected.length === 1) {
       let viewPortIndex = 0;
       if (this.table && this.table.bodyComponent) {
         viewPortIndex = this.table.bodyComponent.getAdjustedViewPortIndex();
@@ -902,7 +922,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       if (this.activatedRowIndex + this.paginationPageSize > this.rows.length) {
         bodyElement.scrollTop = bodyElement.scrollHeight;
       }
-    }
+    }*/
   }
 
   reorderEvent(event) {
@@ -974,7 +994,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
                   this.loader.close();
                   this.loaderOpen = false;
                   this.getData();
-                  this.selected = [];
+                  //this.selected = [];
+                  this.selection.clear();
 
                   const selectedName = this.conf.wsMultiDeleteParams(selected)[1];
                   let message = "";
@@ -1005,7 +1026,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     })
   }
 
-  onSelect({ selected }) {
+  /*onSelect({ selected }) {
     this.removeFromSelectedTotal = 0;
     let checkable = 0;
     selected.forEach((i) => {
@@ -1021,7 +1042,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.conf.updateMultiAction) {
       this.conf.updateMultiAction(this.selected);
     }
-  }
+  }*/
 
   // Next section operates the checkboxes to show/hide columns
   toggle(col) {
@@ -1170,7 +1191,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onActivate(event) {
-    if (event.type === 'checkbox' && this.selected.indexOf(event.row) > -1) {
+    if (event.type === 'checkbox' && this.selection.selected.indexOf(event.row) > -1) {
       this.activatedRowIndex = this.table.bodyComponent.getRowIndex(event.row);
     }
   }
@@ -1181,5 +1202,15 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         'entity-table-cell-error': String(value).includes('*ERR*')
       };
     }
+  }
+
+  columnsToString(cols, key){
+    return cols.map((c) => c[key]);
+  }
+
+  masterToggle(){
+    this.isAllSelected ? this.selection.clear() : 
+    this.currentRows.forEach((row) => this.selection.select(row));
+    console.log({selection: this.selection.selected, rows: this.currentRows});
   }
 }

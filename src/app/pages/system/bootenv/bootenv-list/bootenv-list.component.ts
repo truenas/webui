@@ -161,7 +161,7 @@ export class BootEnvironmentListComponent implements OnDestroy{
             () => {
               this.entityList.getData();
               this.updateBootState();
-              this.entityList.selected = [];
+              this.entityList.selection.clear();
             }
           )
       });
@@ -232,7 +232,7 @@ export class BootEnvironmentListComponent implements OnDestroy{
           (res) => {
             this.entityList.getData();
             this.loader.close();
-            this.entityList.selected = [];
+            this.entityList.selection.clear();
           },
           (res) => {
             new EntityUtils().handleWSError(this, res, this.dialog);
@@ -270,7 +270,7 @@ export class BootEnvironmentListComponent implements OnDestroy{
           this.busy = this.ws.call(this.wsKeep, [id, { "keep" : true }]).subscribe(
             (res) => { this.entityList.getData();
               this.loader.close();
-              this.entityList.selected = [];
+              this.entityList.selection.clear();
             },
             (res) => {
               new EntityUtils().handleWSError(this, res, this.dialog);
@@ -288,7 +288,7 @@ export class BootEnvironmentListComponent implements OnDestroy{
           this.busy = this.ws.call(this.wsKeep, [id, { "keep" : false }]).subscribe(
             (res) => { this.entityList.getData();
               this.loader.close();
-              this.entityList.selected = [];
+              this.entityList.selection.clear();
             },
             (res) => {
               new EntityUtils().handleWSError(this, res, this.dialog);
