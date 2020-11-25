@@ -58,12 +58,12 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   get memData() { return this._memData}
   set memData(value){
     this._memData = value;
-    if(this.legendData && typeof this.legendIndex !== "undefined"){
-      // C3 does not have a way to update tooltip when new data is loaded. 
-      // So this is the workaround
-      this.legendData[0].value = this.memData.data[0][this.legendIndex + 1];
-      this.legendData[1].value = this.memData.data[1][this.legendIndex + 1];
-    }
+    // if(this.legendData && typeof this.legendIndex !== "undefined"){
+    //   // C3 does not have a way to update tooltip when new data is loaded. 
+    //   // So this is the workaround
+    //   this.legendData[0].value = this.memData.data[0][this.legendIndex + 1];
+    //   this.legendData[1].value = this.memData.data[1][this.legendIndex + 1];
+    // }
   }
 
   public isReady: boolean = false;
@@ -77,6 +77,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   public legendData: any;
   public colorPattern:string[];
   public currentTheme;
+  public totalLegendList: any;
 
   public legendColors: string[];
   private legendIndex: number;
@@ -136,32 +137,57 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
      * zfs_cache?
      * */
 
-    let columns = [];
+    /*
+      * percent is not a bytes value
+      * available is a sum of free and inactive
+      * wired has zfs_cache within it
+    */
 
-    Object.keys(data).forEach(key => {
-      /*
-        * percent is not a bytes value
-        * available is a sum of free and inactive
-        * wired has zfs_cache within it
-      */
-     
-      if (
-        key == 'total' ||
-        key == 'percent' ||
-        key == 'free' ||
-        key == 'inactive' ||
-        key == 'arc_size'
-      ) return;
+    this.totalLegendList = [];
 
-      let label = key.charAt(0).toUpperCase() + key.slice(1);
-      let item = [
+    let keyList = ['available', 'free', 'inactive', 'used', 'active', 'buffers', 'cached', 'wired', 'arc_size'];
+
+    this.colorPattern = [];
+    this.currentTheme = this.themeService.currentTheme();
+    let colorPattern = this.processThemeColors(this.currentTheme);
+
+    let colorIndex = 0;
+
+    keyList.forEach(key => {
+      let label = key == 'arc_size' ? 'ZFS_Cache' : key.charAt(0).toUpperCase() + key.slice(1);
+      let color;
+      if (key == 'free' || key == 'arc_size') {
+        color = colorPattern[colorIndex - 1] + '99';
+      } else if (key == 'inactive') {
+        color = colorPattern[colorIndex - 1] + '44';
+      } else {
+        color = colorPattern[colorIndex++];
+      }
+
+      this.totalLegendList.push({
+        key,
         label,
-        this.bytesToGigabytes(data[key]).toFixed(1)
-      ];
-      columns.push(item);
-    })
+        color,
+        value: this.bytesToGigabytes(data[key]).toFixed(1)
+      });
+    });
 
-    return columns;
+    let legendList = this.totalLegendList.filter(x => x.key != 'free' && x.key != 'inactive' && x.key != 'arc_size');
+    let legendDetailList = this.totalLegendList.filter(x => x.key != 'available' && x.key != 'wired');
+
+    let wiredData = this.totalLegendList.find(x => x.key == 'wired');
+    let zfsData = this.totalLegendList.find(x => x.key == 'arc_size');
+
+    if (wiredData && zfsData) {
+      legendDetailList.push({
+        key: wiredData.key,
+        label: wiredData.label,
+        value: wiredData.value - zfsData.value,
+        color: wiredData.color
+      });
+    }
+
+    return { legendList, legendDetailList };
   }
 
   aggregate(data){
@@ -169,7 +195,6 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   }
 
   setMemData( data){
-
     let config: any = {}
     config.title = "Cores";
     config.orientation = 'vertical';
@@ -178,22 +203,16 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     config.data = this.parseMemData(data);
     this.memData = config;
     this.memChartInit();
-    
   }
 
   memChartInit(){
-
-    this.currentTheme = this.themeService.currentTheme();
-    this.colorPattern = this.processThemeColors(this.currentTheme);
     let startW = this.el.nativeElement.querySelector('#memory-usage-chart');
-
     this.isReady = true;
     this.renderChart();
-      
   }
 
   trustedSecurity(style) {
-     return this.sanitizer.bypassSecurityTrustStyle(style);
+    return this.sanitizer.bypassSecurityTrustStyle(style);
   }
 
   // chart.js renderer
@@ -250,25 +269,34 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
 
     let datasets = [];
 
-    let ds:DataSet = {
-      label: this.labels, 
-      data: data.map(x => { return x[1]}),
-      backgroundColor: [], 
-      borderColor: [], 
-      borderWidth: 1,
+    for (let i = 0; i < 2; i++) {
+      let list = i == 0 ? data.legendList : data.legendDetailList;
+      let ds:DataSet = {
+        label: this.labels, 
+        data: list.map(x => { return x.value}),
+        backgroundColor: [], 
+        borderColor: [], 
+        borderWidth: 1,
+      }
+  
+  
+      // Create the data...
+      list.forEach((item, index) => {
+        // const bgRGB = this.utils.hexToRGB(this.colorPattern[index]).rgb;
+        // const borderRGB = this.utils.hexToRGB(this.currentTheme.bg2).rgb;
+  
+        // ds.backgroundColor.push(this.rgbToString(bgRGB, 0.85));
+        // ds.borderColor.push(this.rgbToString(bgRGB));
+        const bgRGB = this.utils.hexToRGB(item.color).rgb;
+        const borderRGB = this.utils.hexToRGB(this.currentTheme.bg2).rgb;
+  
+        ds.backgroundColor.push(item.color);
+        ds.borderColor.push(this.rgbToString(borderRGB));
+      });
+  
+      datasets.push(ds);
     }
-
-
-    // Create the data...
-    data.forEach((item, index) => {
-      const bgRGB = this.utils.hexToRGB(this.colorPattern[index]).rgb;
-      const borderRGB = this.utils.hexToRGB(this.currentTheme.bg2).rgb;
-
-      ds.backgroundColor.push(this.rgbToString(bgRGB, 0.85));
-      ds.borderColor.push(this.rgbToString(bgRGB));
-    });
-
-    datasets.push(ds);
+    
 
     return datasets
   }

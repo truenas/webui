@@ -42,7 +42,7 @@
 }
 
 #cpu-load-cores-legend-values .legend-item{
-  padding: 2px 0px;
+  padding: 0px;
 }
 
 #cpu-load-cores-legend .legend-item{
@@ -109,7 +109,7 @@
 }
 
 h1.memory-used{
-  margin: 32px 0 0;
+  margin: 0px;
   font-weight: 400;
   font-size: 350%;
 }

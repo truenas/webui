@@ -34,7 +34,6 @@
         <div class="primary-stat-wrapper" fxFlex.gt-xs="45" fxFlex.xs="100">
           <h1 class="memory-used">
             <span *ngIf="memData">
-              <!--<span>{{memData.data[0][1]}}</span>-->
               <span>{{memData.max}}</span>
               <span class="memory-used-units">GiB</span>
             </span>
@@ -47,11 +46,11 @@
           </div>
           <!-- Legend --> 
           <div *ngIf="screenType == 'Desktop'" id="cpu-load-cores-legend">
-            <div *ngIf="memData; else noLegend" id="cpu-load-cores-legend-values">
+            <div *ngIf="totalLegendList; else noLegend" id="cpu-load-cores-legend-values">
   
               <!-- Desktop -->
-              <div fxHide.xs *ngFor="let legendItem of memData.data; let i=index"  class="legend-item">
-                <div class="legend-swatch" [style.background-color]="trustedSecurity(colorPattern[i])"></div><span class="label">{{legendItem[0]}}:</span> {{legendItem[1]}} GiB
+              <div fxHide.xs *ngFor="let legendItem of totalLegendList; let i=index"  class="legend-item">
+                <div class="legend-swatch" [style.background-color]="trustedSecurity(legendItem.color)"></div><span class="label">{{legendItem.label}}:</span> {{legendItem.value}} GiB
               </div>
   
             </div>
@@ -67,10 +66,10 @@
           <div *ngIf="screenType == 'Mobile'" fxFlex="100" id="cpu-load-cores-legend" fxLayout="row wrap">
             <!-- Mobile -->
             <div fxFlex="100" fxHide.gt-xs class="list-subheader">  <span>{{"Legend" | translate}}</span></div>
-            <mat-list *ngIf="memData; else noLegend" fxFlex="100" fxHide.gt-xs>
-              <mat-list-item *ngFor="let listItem of memData.data; let i=index"  class="legend-item">
-                <div class="legend-swatch" [style.background-color]="trustedSecurity(colorPattern[i])"></div>
-                <span class="label">{{listItem[0]}}:</span><span class="value">&nbsp;&nbsp; {{listItem[1]}} GiB</span>
+            <mat-list *ngIf="totalLegendList; else noLegend" fxFlex="100" fxHide.gt-xs>
+              <mat-list-item *ngFor="let listItem of totalLegendList; let i=index"  class="legend-item">
+                <div class="legend-swatch" [style.background-color]="trustedSecurity(legendItem.color)"></div>
+                <span class="label">{{listItem.label}}:</span><span class="value">&nbsp;&nbsp; {{listItem.value}} GiB</span>
               </mat-list-item>
             </mat-list>
           </div>
