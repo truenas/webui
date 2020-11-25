@@ -61,7 +61,7 @@ export class ChartsComponent implements OnInit {
           name: chart.name,
           catalog: chart.catalog,
           train: chart.train,
-          status: chart.info.status,
+          status: chart.status,
           first_deployed: chart.info.first_deployed, 
           version: chart.chart_metadata.version,
           description: chart.chart_metadata.description,

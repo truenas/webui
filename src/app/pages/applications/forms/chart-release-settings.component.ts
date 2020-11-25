@@ -1,11 +1,14 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import * as _ from 'lodash';
 
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import { ModalService } from 'app/services/modal.service';
-import  helptext  from '../../../helptext/apps/apps';
+import { WebSocketService, DialogService } from '../../../services/index';
 import { ApplicationsService } from '../applications.service';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import  helptext  from '../../../helptext/apps/apps';
 
 @Component({
   selector: 'app-chart-release-settings',
@@ -17,6 +20,7 @@ export class ChartReleaseSettingsComponent {
   protected editCall: string = 'chart.release.update';
   private title = helptext.chartForm.title;
   private entityEdit: any;
+  private dialogRef: any;
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
     {
@@ -67,15 +71,63 @@ export class ChartReleaseSettingsComponent {
           tooltip: helptext.chartForm.version.tooltip,
           required: true,
           value: 'latest'
-        }
+        },
+        {
+          type: 'input',
+          name: 'container_port',
+          placeholder: helptext.chartForm.container_port.placeholder,
+          tooltip: helptext.chartForm.container_port.tooltip,
+          required: true,
+        },
+        {
+          type: 'input',
+          name: 'node_port',
+          placeholder: helptext.chartForm.node_port.placeholder,
+          tooltip: helptext.chartForm.node_port.tooltip,
+          required: true,
+        },
+
       ]
     }
   ]
 
-  constructor() {}
+  constructor(private mdDialog: MatDialog, private dialogService: DialogService) {}
 
   customSubmit(data) {
     console.log(data)
+    let payload = {
+      release_name: data.release_name,
+      version: data.version,
+      train: data.train,
+      catalog: data.catalog,
+      item: data.item,
+      values: {
+        image: { repository: data.repository }, 
+        portForwardingList: [
+                {containerPort: data.container_port, nodePort: data.node_port}
+        ], 
+        volumes: [
+            {datasetName: 'transcode', mountPath: '/transcode'}, 
+            {datasetName: 'config', mountPath: '/config'}, 
+            {datasetName: 'data', mountPath: '/data'}
+          ], 
+        workloadType: 'Deployment'
+      }
+    }
+
+    console.log(payload)
+
+    this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
+      helptext.installing) }, disableClose: true});
+    this.dialogRef.componentInstance.setCall('chart.release.create', [payload]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.dialogService.closeAllDialogs();
+      // We should go to chart tab(?) and refresh
+    });
+    this.dialogRef.componentInstance.failure.subscribe((err) => {
+      // new EntityUtils().handleWSError(this, err, this.dialogService);
+    })
   }
 
 }

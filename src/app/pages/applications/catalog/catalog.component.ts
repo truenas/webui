@@ -115,7 +115,7 @@ export class CatalogComponent implements OnInit {
 
   refreshForms() {
     this.kubernetesForm = new KubernetesSettingsComponent(this.modalService, this.appService);
-    this.chartReleaseForm = new ChartReleaseSettingsComponent();
+    this.chartReleaseForm = new ChartReleaseSettingsComponent(this.mdDialog,this.dialogService);
   }
 
   checkForConfiguredPool() {
@@ -186,17 +186,7 @@ export class CatalogComponent implements OnInit {
   //             item: release_name
   //           }
         
-  //           this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
-  //             helptext.installing) }, disableClose: true});
-  //           this.dialogRef.componentInstance.setCall('chart.release.create', [payload]);
-  //           this.dialogRef.componentInstance.submit();
-  //           this.dialogRef.componentInstance.success.subscribe((res) => {
-  //             this.dialogService.closeAllDialogs();
-  //             // We should go to chart tab(?) and refresh
-  //           });
-  //           this.dialogRef.componentInstance.failure.subscribe((err) => {
-  //             // new EntityUtils().handleWSError(this, err, this.dialogService);
-  //           })
+
   //         }
     
   //       })

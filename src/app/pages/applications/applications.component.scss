@@ -1,4 +1,4 @@
-.catalog-item, .chart-item {
+.catalog-item {
     height: 160px;
     width: 350px;
 
@@ -41,32 +41,61 @@
 }
 
 .chart-item {
+  height: 160px;
   width: 500px;
 
-  .content-box {
-    height: 100px;
-    position: relative;
-    left: 100px;
-    text-align: center;
-    margin-top: 10px;
+  .content-wrapper {
+      .logo {
+          height: 160px;
+          width: 160px;
+      }
+
+      .content-box {
+        width: 340px;
+      }
+
+      .chart-name {
+        font-size: large;
+      }
+
+      .content {
+          text-align: center;
+          padding: 1rem;
+          width: 210px;     
+      }
+      .chart-button-row {
+        position: relative;
+        top: 30px;
+        right: 15px;
+      } 
   }
 
-  .chart-name {
-    font-size: large;
+  .more-info {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  } 
+
+  .status {
+    padding: 3px;
+    opacity: 0.75;
   }
 
-  // .chart-button-row {
-  //   position: relative;
-  //   left: 20px;
-  // }
+  .active {
+    border: 1px solid var(--green);
+    color: var(--green);
+  }
+
+  .other {
+    border: 1px solid var(--fg1);
+  }
 
   button {
     margin-bottom: 10px !important;
-    margin-right: 5px !important;
+    margin-left: 5px !important;
   }
+
 }
-
-
 
 .docker-item {
   height: 150px;
@@ -74,15 +103,3 @@
   text-align: center;
   padding: 15px !important;
 }
-
-// .chart-item {
-//   height: 150px;
-//   width: 450px;
-//   font-size: larger;
-//   text-align: center;
-//   padding: 15px !important;
-
-//   button {
-//     margin: 5px;
-//   }
-// }

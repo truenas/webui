@@ -127,6 +127,14 @@ export default {
     repository: {
       placeholder: T('Image repository'),
       tooltip: T('')
+    },
+    container_port: {
+      placeholder: T('Container port'),
+      tooltip: T('')
+    },
+    node_port: {
+      placeholder: T('Node port'),
+      tooltip: T('')
     }
   }
 
