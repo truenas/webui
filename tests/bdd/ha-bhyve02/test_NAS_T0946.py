@@ -288,10 +288,10 @@ def navigate_to_storage_then_click_the_great_icon_to_disks_then_click_name_to_so
     """navigate to Storage then click the gear icon and click Disks then click Name to sort in ascending order."""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
     assert wait_on_element(driver, 1, 7, '//h1[contains(.,"Storage")]')
-    assert wait_on_element(driver, 0.5, 7, '(//button[contains(.,"settings")])[3]')
-    driver.find_element_by_xpath('(//button[contains(.,"settings")])[3]').click()
-    assert wait_on_element(driver, 0.5, 7, '//button[contains(.,"Disks")]')
-    driver.find_element_by_xpath('//button[contains(.,"Disks")]').click()
+    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__STORAGE_ACTIONS"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__STORAGE_ACTIONS"]').click()
+    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__STORAGE_DISKS"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__STORAGE_DISKS"]').click()
     assert wait_on_element(driver, 1, 7, '//h1[contains(.,"Disks")]')
     # sort disk
     disk = ''
@@ -333,8 +333,8 @@ def navigate_to_storage_click_create(driver):
     """navigate to Storage click Create"""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
     assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Storage")]')
-    assert wait_on_element(driver, 0.5, 7, '(//button[@ix-auto="button___ACTIONS"])[2]')
-    driver.find_element_by_xpath('(//button[@ix-auto="button___ACTIONS"])[2]').click()
+    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button___POOL_CREATE"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button___POOL_CREATE"]').click()
 
 
 @then(parsers.parse('enter tank for pool name, check the box next to "{disk}", click the arrow pointing to Data Vdevs, click Create, check confirm, click CREATE POOL'))
