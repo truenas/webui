@@ -76,16 +76,47 @@ export class ChartsComponent implements OnInit {
 
   start(name: string) {
     console.log(name);
+    this.ws.call('chart.release.scale', [name, { replica_count: 1}]).subscribe(res => {
+      console.log(res)
+    })
   }
 
   stop(name: string) {
     console.log(name);
+    this.ws.call('chart.release.scale', [name, { replica_count: 0}]).subscribe(res => {
+      console.log(res)
+    })
   }
 
   portal(name: string) {
-    console.log(name);
+    this.ws.call('chart.release.query', [[], {"extra": {"retrieve_resources": true}}]).subscribe(res => {
+      console.log(res)
+    })
   }
 
+  fakeMethod() {
+    this.ws.call('chart.release.create',
+    {
+      "catalog": "OFFICIAL", 
+      "train": "test", 
+      "item": "ix-chart", 
+      "values": {
+        "image": { "repository": "plexinc/pms-docker" }, 
+        "portForwardingList": [
+                {"containerPort": 32400, "nodePort": 32400}
+        ], 
+        "volumes": [
+            {"datasetName": "transcode", "mountPath": "/transcode"}, 
+            {"datasetName": "config", "mountPath": "/config"}, 
+            {"datasetName": "data", "mountPath": "/data"}
+          ], 
+        "workloadType": "Deployment"
+      }, 
+      "version": "latest", 
+      "release_name": "plex"
+    }) 
+  }
+ 
   update(name: string) {
     this.translate.get(helptext.charts.update_dialog.msg).subscribe(msg => {
       this.dialogService.confirm(helptext.charts.update_dialog.title, msg + name + '?')

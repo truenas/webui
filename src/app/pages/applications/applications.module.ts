@@ -13,7 +13,8 @@ import { ApplicationsRoutingModule } from './applications-routing.module';
 import { CatalogComponent } from './catalog/catalog.component';
 import { ChartsComponent } from './charts/charts.component';
 import { DockerImagesComponent } from './docker-images/docker-images.component';
-import { KubernetesSettingsComponent } from './forms/kubernetes-settings/kubernetes-settings.component';
+import { KubernetesSettingsComponent } from './forms/kubernetes-settings.component';
+import { ChartReleaseSettingsComponent } from './forms/chart-release-settings.component';
 
 
 @NgModule({
@@ -31,7 +32,8 @@ import { KubernetesSettingsComponent } from './forms/kubernetes-settings/kuberne
     CatalogComponent,
     ChartsComponent,
     DockerImagesComponent,
-    KubernetesSettingsComponent
+    KubernetesSettingsComponent,
+    ChartReleaseSettingsComponent
   ]
 })
 export class ApplicationsModule { }

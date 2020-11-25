@@ -13,7 +13,8 @@ import { DialogService } from '../../../services/index';
 import { ModalService } from '../../../services/modal.service';
 import { ApplicationsService } from '../applications.service';
 
-import { KubernetesSettingsComponent } from '../forms/kubernetes-settings/kubernetes-settings.component';
+import { KubernetesSettingsComponent } from '../forms/kubernetes-settings.component';
+import { ChartReleaseSettingsComponent } from '../forms/chart-release-settings.component';
 import  helptext  from '../../../helptext/apps/apps';
 
 @Component({
@@ -28,6 +29,7 @@ export class CatalogComponent implements OnInit {
   private selectedPool = '';
   public settingsEvent: Subject<CoreEvent>;
   private kubernetesForm: KubernetesSettingsComponent;
+  private chartReleaseForm: ChartReleaseSettingsComponent;
   private refreshForm: Subscription;
 
   public choosePool: DialogFormConfiguration = {
@@ -112,7 +114,8 @@ export class CatalogComponent implements OnInit {
   }
 
   refreshForms() {
-    this.kubernetesForm = new KubernetesSettingsComponent(this.modalService, this.appService)
+    this.kubernetesForm = new KubernetesSettingsComponent(this.modalService, this.appService);
+    this.chartReleaseForm = new ChartReleaseSettingsComponent();
   }
 
   checkForConfiguredPool() {
@@ -169,38 +172,39 @@ export class CatalogComponent implements OnInit {
     }
   }
 
-  doInstall(release_name: string, version: string, train='test', catalog='OFFICIAL') {
-    this.translate.get(helptext.install.msg1).subscribe(msg1 => {
-      this.translate.get(helptext.install.msg2).subscribe(msg2 => {
-        this.dialogService.confirm(helptext.install.title, msg1 + release_name + msg2 + 
-          this.selectedPool).subscribe(res => {
-          if (res) {
-            let payload = {
-              release_name: release_name,
-              version: version,
-              train: train,
-              catalog: catalog,
-              item: release_name
-            }
+  // doInstall(release_name: string, version: string, train='test', catalog='OFFICIAL') {
+  //   this.translate.get(helptext.install.msg1).subscribe(msg1 => {
+  //     this.translate.get(helptext.install.msg2).subscribe(msg2 => {
+  //       this.dialogService.confirm(helptext.install.title, msg1 + release_name + msg2 + 
+  //         this.selectedPool).subscribe(res => {
+  //         if (res) {
+  //           let payload = {
+  //             release_name: release_name,
+  //             version: version,
+  //             train: train,
+  //             catalog: catalog,
+  //             item: release_name
+  //           }
         
-            this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
-              helptext.installing) }, disableClose: true});
-            this.dialogRef.componentInstance.setCall('chart.release.create', [payload]);
-            this.dialogRef.componentInstance.submit();
-            this.dialogRef.componentInstance.success.subscribe((res) => {
-              this.dialogService.closeAllDialogs();
-              // We should go to chart tab(?) and refresh
-            });
-            this.dialogRef.componentInstance.failure.subscribe((err) => {
-              // new EntityUtils().handleWSError(this, err, this.dialogService);
-            })
-          }
+  //           this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
+  //             helptext.installing) }, disableClose: true});
+  //           this.dialogRef.componentInstance.setCall('chart.release.create', [payload]);
+  //           this.dialogRef.componentInstance.submit();
+  //           this.dialogRef.componentInstance.success.subscribe((res) => {
+  //             this.dialogService.closeAllDialogs();
+  //             // We should go to chart tab(?) and refresh
+  //           });
+  //           this.dialogRef.componentInstance.failure.subscribe((err) => {
+  //             // new EntityUtils().handleWSError(this, err, this.dialogService);
+  //           })
+  //         }
     
-        })
-      })
-    })
+  //       })
+  //     })
+  //   })
+  // }
 
-
-
+  doInstall() {
+    this.modalService.open('slide-in-form', this.chartReleaseForm);
   }
 }

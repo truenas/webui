@@ -100,6 +100,34 @@ export default {
       msg: T('Roll back '),
       job: T('Rolling back...')
     }
+  },
+
+  chartForm: {
+    title: T('Chart Release'),
+    catalog: {
+      placeholder: T('Catalog'),
+      tooltip: T('')
+    },
+    item: {
+      placeholder: T('Item'),
+      tooltip: T('')
+    },
+    release_name: {
+      placeholder: T('Release Name'),
+      tooltip: T('')
+    },
+    train: {
+      placeholder: T('Train'),
+      tooltip: T('')
+    },
+    version: {
+      placeholder: T('Version'),
+      tooltip: T('')
+    },
+    repository: {
+      placeholder: T('Image repository'),
+      tooltip: T('')
+    }
   }
 
 }
