@@ -29,12 +29,12 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 def if_login_page_appear_enter_root_and_password(driver, user, password):
     """If login page appear enter "{user}" and "{password}"."""
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        wait_on_element(driver, 0.5, 5, '//input[@data-placeholder="Username"]')
+        assert wait_on_element(driver, 0.5, 5, '//input[@data-placeholder="Username"]')
         driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys(user)
         driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
         driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(password)
-        wait_on_element(driver, 0.5, 30, '//button[@name="signin_button"]')
+        assert wait_on_element(driver, 0.5, 30, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
 
@@ -82,8 +82,7 @@ def on_the_right_side_of_the_table_click_the_expand_arrow_for_one_of_the_users(d
 @then('The User Field should expand down to list further details')
 def the_user_field_should_expand_down_to_list_further_details(driver):
     """The User Field should expand down to list further details."""
-    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__EDIT_ericbsd"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]')
+    assert wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__EDIT_ericbsd"]')
 
 
 @then('Click the Edit button that appears')
@@ -95,14 +94,13 @@ def click_the_edit_button_that_appears(driver):
 @then('The User Edit Page should open')
 def the_user_edit_page_should_open(driver):
     """The User Edit Page should open."""
-    wait_on_element(driver, 0.5, 30, '//h4[contains(.,"Identification")]')
-    driver.find_element_by_xpath('//h4[contains(.,"Identification")]')
+    assert wait_on_element(driver, 0.5, 7, '//h3[contains(.,"Edit User")]')
 
 
 @then('Change the path of the users Home Directory')
 def change_the_path_of_the_users_home_directory(driver):
     """Change the path of the users Home Directory."""
-    wait_on_element(driver, 1, 30, '//h4[contains(.,"Identification")]')
+    assert wait_on_element(driver, 1, 30, '//h4[contains(.,"Identification")]')
     driver.find_element_by_xpath('//input[@ix-auto="input__home"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__home"]').send_keys('/mnt/tank/ericbsd')
 
@@ -110,9 +108,9 @@ def change_the_path_of_the_users_home_directory(driver):
 @then('Change should be saved')
 def change_should_be_saved(driver):
     """Change should be saved."""
-    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    wait_on_element_disappear(driver, 1, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 1, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 1, 5, '//div[contains(.,"Users")]')
 
 
@@ -121,7 +119,7 @@ def open_the_drop_down_details_pane_for_the_user(driver):
     """open the drop down details pane for the user."""
     assert wait_on_element(driver, 1, 5, '//a[@ix-auto="expander__ericbsd"]')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
-    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__EDIT_ericbsd"]')
+    assert wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__EDIT_ericbsd"]')
     driver.find_element_by_xpath('//h4[contains(.,"Home directory:")]')
 
 
