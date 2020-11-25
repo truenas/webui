@@ -46,52 +46,45 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
 @then('You should see the dashboard')
 def you_should_see_the_dashboard(driver):
     """You should see the dashboard."""
-    wait_on_element(driver, 0.5, 30, '//span[contains(.,"System Information")]')
-    driver.find_element_by_xpath('//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"System Information")]')
 
 
-@then('Click on the Accounts item in the left side menu')
-def click_on_the_accounts_item_in_the_left_side_menu(driver):
-    """Click on the Accounts item in the left side menu."""
-    element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
-    class_attribute = element.get_attribute('class')
-    if 'open' not in class_attribute:
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]').click()
+@then('Click on the Credentials item in the left side menu')
+def click_on_the_credentials_item_in_the_left_side_menu(driver):
+    """Click on the Credentials item in the left side menu."""
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
 
 
-@then('The Accounts menu should expand down')
-def the_accounts_menu_should_expand_down(driver):
-    """The Accounts menu should expand down."""
-    wait_on_element(driver, 0.5, 30, '//mat-list-item[@ix-auto="option__Users"]')
-    element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
-    class_attribute = element.get_attribute('class')
-    assert 'open' in class_attribute, class_attribute
+@then('The Credentials menu should expand to the right')
+def the_credentials_menu_should_expand_to_the_right(driver):
+    """The Credentials menu should expand to the right."""
+    assert wait_on_element(driver, 1, 7, '//mat-list-item[@ix-auto="option__Local Users"]')
 
 
-@then('Click on Users')
-def click_on_users(driver):
-    """Click on Users."""
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Users"]').click()
+@then('Click on Local Users')
+def click_on_localusers(driver):
+    """Click on Local Users."""
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Local Users"]').click()
 
 
 @then('The Users page should open')
 def the_users_page_should_open(driver):
     """The Users page should open."""
-    wait_on_element(driver, 0.5, 30, '//div[contains(.,"Users")]')
-    driver.find_element_by_xpath('//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Users")]')
 
 
-@then('On the right side of the table, click the Greater-Than-Sign for one of the users')
-def on_the_right_side_of_the_table_click_the_greaterthansign_for_one_of_the_users(driver):
-    """On the right side of the table, click the Greater-Than-Sign for one of the users."""
+@then('On the right side of the table, click the expand arrow for one of the users')
+def on_the_right_side_of_the_table_click_the_expand_arrow_for_one_of_the_users(driver):
+    """On the right side of the table, click the expand arrow for one of the users."""
+    assert wait_on_element(driver, 0.5, 7, '//a[@ix-auto="expander__ericbsd"]')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
 
 
 @then('The User Field should expand down to list further details')
 def the_user_field_should_expand_down_to_list_further_details(driver):
     """The User Field should expand down to list further details."""
-    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__EDIT_ericbsd"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]')
+    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__EDIT_ericbsd"]')
 
 
 @then('Click the Edit button that appears')
@@ -103,8 +96,7 @@ def click_the_edit_button_that_appears(driver):
 @then('The User Edit Page should open')
 def the_user_edit_page_should_open(driver):
     """The User Edit Page should open."""
-    wait_on_element(driver, 0.5, 30, '//h4[contains(.,"Identification")]')
-    driver.find_element_by_xpath('//h4[contains(.,"Identification")]')
+    assert wait_on_element(driver, 0.5, 7, '//h3[contains(.,"Edit User")]')
 
 
 @then('Change "Disable Password" to No and click save')
@@ -142,30 +134,19 @@ def updated_value_should_be_visible(driver):
 @then('Try login with ssh')
 def try_login_with_ssh(driver):
     """Try login with ssh."""
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Services"]').click()
-    assert wait_on_element(driver, 0.5, 10, '//services')
-    # Scroll to SSH service
-    assert wait_on_element(driver, 0.5, 10, '//button[@ix-auto="button__S3_Actions"]')
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__S3_Actions"]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(1)
-    element = driver.find_element_by_xpath('//mat-slide-toggle[@ix-auto="slider__SSH_Running"]')
-    class_attribute = element.get_attribute('class')
-    if 'mat-checked' not in class_attribute:
-        driver.find_element_by_xpath('//div[@ix-auto="overlay__SSH_Running"]').click()
-        time.sleep(4)
-    wait_on_element(driver, 0.5, 30, '//mat-list-item[@ix-auto="option__Shell"]')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
+    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Shell"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shell"]').click()
-    wait_on_element(driver, 4, 30, '//span[@class="reverse-video terminal-cursor"]')
+    assert wait_on_element(driver, 4, 7, '//span[@class="reverse-video terminal-cursor"]')
     actions = ActionChains(driver)
     actions.send_keys('ssh ericbsd@127.0.0.1', Keys.ENTER)
     actions.perform()
-    wait_on_element(driver, .5, 4, '//span[contains(.,"(yes/no)?")]')
+    wait_on_element(driver, 0.5, 3, '//span[contains(.,"(yes/no)?")]')
     if is_element_present(driver, '//span[contains(.,"(yes/no)?")]'):
         actions = ActionChains(driver)
         actions.send_keys('yes', Keys.ENTER)
         actions.perform()
-    wait_on_element(driver, .5, 4, '//span[contains(.,"password:")]')
+    wait_on_element(driver, 0.5, 3, '//span[contains(.,"password:")]')
     actions = ActionChains(driver)
     actions.send_keys('testing', Keys.ENTER)
     actions.perform()
