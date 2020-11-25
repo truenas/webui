@@ -1,6 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
 
 import { Subject } from 'rxjs';
 import { ControlConfig } from '../../models/control-config.interface';
@@ -11,10 +12,12 @@ import { Control} from '../../models/control.interface';
   styleUrls : [ 'toolbar-menu.component.scss' ],
   templateUrl: 'toolbar-menu.component.html'
 })
-export class ToolbarMenuComponent {
+export class ToolbarMenuComponent extends iXAbstractObject {
   @Input() config?: ControlConfig; 
   @Input() controller: Subject<any>;
-  constructor(public translate: TranslateService) {}
+  constructor(public translate: TranslateService) {
+    super()
+  }
 
   onClick(value){
     this.config.value = value;
