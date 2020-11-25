@@ -5,6 +5,10 @@ import { DialogService } from 'app/services/dialog.service';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { MatDialog } from '@angular/material/dialog';
+import {EntityUtils} from 'app/pages/common/entity/utils';
+
 
 @Component({
   selector: 'app-production-status',
@@ -14,6 +18,7 @@ export class ProductionStatusComponent {
   public saveSubmitText = helptext.is_production_submit;
   public entityEdit: any;
   public isProduction: boolean;
+  public dialogRef: any;
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
@@ -48,7 +53,7 @@ export class ProductionStatusComponent {
   ]
 
   constructor(public ws: WebSocketService, protected dialogService: DialogService, 
-    protected loader: AppLoaderService) { }
+    protected loader: AppLoaderService, protected dialog: MatDialog) { }
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
@@ -65,16 +70,19 @@ export class ProductionStatusComponent {
     if (!data.send_debug) {
       data.send_debug = false;
     }
-    this.loader.open();
-    this.ws.call('truenas.set_production', [data.production, data.send_debug]).subscribe(() => {
-      this.loader.close();
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": helptext.is_production_job.title }});
+    this.dialogRef.componentInstance.setDescription(helptext.is_production_job.message);
+
+    this.dialogRef.componentInstance.setCall('truenas.set_production', [data.production, data.send_debug]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.dialogRef.close();
       this.dialogService.Info(helptext.is_production_dialog.title, 
         helptext.is_production_dialog.message, '300px', 'info', true);
-    },
-    (err) => {
-      this.loader.close();
-      this.dialogService.errorReport(helptext.is_production_error_dialog.title,
-        err.error.message, err.error.traceback);
+    });
+    this.dialogRef.componentInstance.failure.subscribe((err) => {
+      this.dialogRef.close();
+      new EntityUtils().handleWSError(this.entityEdit, err, this.dialogService);
     });
 
   };

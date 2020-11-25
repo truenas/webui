@@ -172,6 +172,11 @@ export const helptext_system_support = {
     title: T('Error Updating Production Status'),
   },
 
+  is_production_job: {
+    title: T('Production Status'),
+    message: T('Updating production status...')
+  },
+
   is_production_dialog: {
     title: T('Status updated'),
     message: T('Production status successfully updated')
