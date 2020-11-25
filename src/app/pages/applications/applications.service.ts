@@ -17,4 +17,13 @@ export class ApplicationsService {
   getAllCatalogItems() {
     return this.ws.call('catalog.query', [[], {"extra": {"item_details": true}}]);
   }
+
+  getBindIPChoices() {
+    return this.ws.call('kubernetes.bindip_choices');
+  }
+
+  getDockerImages() {
+    return this.ws.call('docker.images.query');
+  }
+
  }

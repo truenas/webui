@@ -48,10 +48,11 @@ export class KubernetesSettingsComponent {
           tooltip: helptext.kubForm.cluster_dns_ip.tooltip,
         },
         {
-          type: 'input',
+          type: 'select',
           name: 'node_ip',
           placeholder: helptext.kubForm.node_ip.placeholder,
           tooltip: helptext.kubForm.node_ip.tooltip,
+          options: []
         }
       ]
     },{
@@ -90,15 +91,22 @@ export class KubernetesSettingsComponent {
 
   preInit(entityEdit: any) {
     this.entityEdit = entityEdit;
-    const pools = _.find(this.fieldSets[0].config, {'name' : 'pool'});
-    this.appService.getPoolList().subscribe(res => {
-      res.forEach(pool => {
-        pools.options.push({label: pool.name, value: pool.name})
+    const pool_control = _.find(this.fieldSets[0].config, {'name' : 'pool'});
+    this.appService.getPoolList().subscribe(pools => {
+      pools.forEach(pool => {
+        pool_control.options.push({ label: pool.name, value: pool.name })
       })
+    })
+    const node_ip_control = _.find(this.fieldSets[0].config, {'name' : 'node_ip'});
+    this.appService.getBindIPChoices().subscribe(ips => {
+      for (let ip in ips) {
+        node_ip_control.options.push({ label: ip, value: ip });
+      }
     })
   }
 
   afterInit() {
+
 
   }
  

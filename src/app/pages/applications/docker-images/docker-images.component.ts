@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ApplicationsService } from '../applications.service';
 
 @Component({
   selector: 'app-docker-images',
@@ -6,11 +7,24 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['../applications.component.scss']
 })
 export class DockerImagesComponent implements OnInit {
+  public dockerImages = [];
 
-  constructor() { }
+  constructor(private appService: ApplicationsService) { }
 
   ngOnInit(): void {
-    console.log('docker')
+    this.appService.getDockerImages().subscribe(images => {
+      console.log(images);
+      images.forEach(image => {
+        this.dockerImages.push(
+          { 
+            created: image.created.$date,
+            size: image.size,
+            update_available: image.update_available,
+            repo_tags: image.repo_tags.join(', ')
+          }
+        )
+      })
+    })
   }
 
 }

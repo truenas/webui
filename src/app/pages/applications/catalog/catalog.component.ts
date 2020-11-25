@@ -186,8 +186,9 @@ export class CatalogComponent implements OnInit {
               version: version,
               train: train,
               catalog: catalog,
-              item: 'ix-chart'
+              item: release_name
             }
+            console.log(payload)
         
             this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
               helptext.installing) }, disableClose: true});

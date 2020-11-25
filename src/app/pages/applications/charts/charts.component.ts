@@ -11,6 +11,7 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 export class ChartsComponent implements OnInit {
   public chartItems = [];
   private dialogRef: any;
+  public tempIcon = '/assets/images/ix-original.png';
 
   constructor(private ws: WebSocketService, private mdDialog: MatDialog,
     private dialogService: DialogService) { }
@@ -27,12 +28,26 @@ export class ChartsComponent implements OnInit {
           status: chart.info.status,
           first_deployed: chart.info.first_deployed, 
           version: chart.chart_metadata.version,
-          description: chart.chart_metadata.description
+          description: chart.chart_metadata.description,
+          update: chart.update_available,
+          used_ports: chart.used_ports.join(', ')
         }
         this.chartItems.push(chartObj);
         
       })
     })
+  }
+
+  doStart(name: string) {
+    console.log(name);
+  }
+
+  doStop(name: string) {
+    console.log(name);
+  }
+
+  doPortal(name: string) {
+    console.log(name);
   }
 
   doDelete(name: string) {
