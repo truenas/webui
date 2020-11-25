@@ -31,15 +31,14 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 def if_login_page_appear_enter_root_and_password(driver, user, password):
     """If login page appear enter "{user}" and "{password}"."""
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        wait_on_element(driver, 0.5, 5, '//input[@data-placeholder="Username"]')
+        assert wait_on_element(driver, 0.5, 5, '//input[@data-placeholder="Username"]')
         driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys(user)
         driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
         driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(password)
-        wait_on_element(driver, 0.5, 30, '//button[@name="signin_button"]')
+        assert wait_on_element(driver, 0.5, 30, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
-
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -103,24 +102,24 @@ def the_user_edit_page_should_open(driver):
 def change_disable_password_to_no_and_click_save(driver):
     """Change "Disable Password" to No and click save."""
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Disable Password"]').click()
-    wait_on_element(driver, 0.5, 30, '//mat-option[@ix-auto="option__Disable Password_No"]')
+    assert wait_on_element(driver, 0.5, 30, '//mat-option[@ix-auto="option__Disable Password_No"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Disable Password_No"]').click()
 
 
 @then('Change should be saved')
 def change_should_be_saved(driver):
     """Change should be saved."""
-    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    wait_on_element_disappear(driver, 1, 30, '//h6[contains(.,"Please wait")]')
-    wait_on_element(driver, 0.5, 30, '//div[contains(.,"Users")]')
+    assert wait_on_element_disappear(driver, 1, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 0.5, 30, '//div[contains(.,"Users")]')
 
 
 @then('Open the user drop down to verify the user Disable Password is false')
 def open_the_user_drop_down_to_verify_the_user_disable_password_is_false(driver):
     """Open the user drop down to verify the user Disable Password is false."""
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
-    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__EDIT_ericbsd"]')
+    assert wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__EDIT_ericbsd"]')
     driver.find_element_by_xpath('//h4[contains(.,"Password Disabled:")]')
 
 
@@ -141,12 +140,12 @@ def try_login_with_ssh(driver):
     actions = ActionChains(driver)
     actions.send_keys('ssh ericbsd@127.0.0.1', Keys.ENTER)
     actions.perform()
-    wait_on_element(driver, 0.5, 3, '//span[contains(.,"(yes/no)?")]')
+    assert wait_on_element(driver, 0.5, 3, '//span[contains(.,"(yes/no)?")]')
     if is_element_present(driver, '//span[contains(.,"(yes/no)?")]'):
         actions = ActionChains(driver)
         actions.send_keys('yes', Keys.ENTER)
         actions.perform()
-    wait_on_element(driver, 0.5, 3, '//span[contains(.,"password:")]')
+    assert wait_on_element(driver, 0.5, 3, '//span[contains(.,"password:")]')
     actions = ActionChains(driver)
     actions.send_keys('testing', Keys.ENTER)
     actions.perform()
@@ -155,5 +154,5 @@ def try_login_with_ssh(driver):
 @then('User should be able to login')
 def user_should_be_able_to_login(driver):
     """User should be able to login."""
-    wait_on_element(driver, 1, 5, '//span[contains(.,"Permission") and contains(.,"denied,")]')
+    assert wait_on_element(driver, 1, 5, '//span[contains(.,"Permission") and contains(.,"denied,")]')
     assert not is_element_present(driver, '//span[contains(.,"Permission") and contains(.,"denied,")]')
