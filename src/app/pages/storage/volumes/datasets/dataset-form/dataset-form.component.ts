@@ -60,9 +60,9 @@ interface DatasetFormData {
 })
 export class DatasetFormComponent implements Formconfiguration{
 
+  public title: string;
   public volid: string;
   public sub: Subscription;
-  public route_success: string[] = ['storage'];
   public isBasicMode = true;
   public pk: any;
   public customFilter: any[] = [];
@@ -197,7 +197,7 @@ export class DatasetFormComponent implements Formconfiguration{
         ],
       }]
     },
-    { name: "quota_divider", divider: true },
+    { name: "quota_divider", divider: true, maxWidth: true  },
     {
       name: helptext.dataset_form_refdataset_section_placeholder,
       class: "refdataset",
@@ -1603,13 +1603,11 @@ export class DatasetFormComponent implements Formconfiguration{
                 }
               })
             } else {
-              this.router.navigate(new Array('/').concat(
-                this.route_success));
+              this.modalService.close('slide-in-form');
             }
           })
         } else {
-          this.router.navigate(new Array('/').concat(
-            this.route_success));
+          this.modalService.close('slide-in-form');
         }
         
       })
@@ -1638,5 +1636,9 @@ export class DatasetFormComponent implements Formconfiguration{
       this.paramMap = {};
     }
     this.paramMap.pk = id;
+  }
+
+  setTitle(title) {
+    this.title = T(title);
   }
 }
