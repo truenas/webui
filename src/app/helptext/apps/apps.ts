@@ -66,6 +66,40 @@ export default {
       placeholder: T('Route v6 Gateway'),
       tooltip: T('')
     }
+  },
+
+  charts: {
+    delete_dialog: {
+      title: T('Delete'),
+      msg: T('Delete '),
+      job: T('Deleting...') 
+    },
+
+    update_dialog: {
+      title: T('Update'),
+      msg: T('Update '),
+      job: T('Updating...')
+    },
+
+    rollback_dialog: {
+      title: T('Roll Back'),
+      version: {
+        placeholder: T('Version'),
+        tooltip: T('Enter the version to roll back to.'),
+      },
+      snapshot: {
+        placeholder: T('Roll back snapshots'),
+        tooltip: T('Roll back snapshots of ix_volumes')
+      },
+      force: {
+        placeholder: T('Force'),
+        tooltip: T('Used for rollback of a chart release and snapshots of ix_volumes')
+      },
+      action: T('Roll back'),
+
+      msg: T('Roll back '),
+      job: T('Rolling back...')
+    }
   }
 
 }

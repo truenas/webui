@@ -52,7 +52,6 @@ export class CatalogComponent implements OnInit {
 
   ngOnInit(): void {
     this.appService.getAllCatalogItems().subscribe(res => {
-      console.log('cat query with extra', res)
       for (let i in res[0].trains.test) {  // charts, not test, is where the stable stuff will be
         let item = res[0].trains.test[i];
         let versions = item.versions;
@@ -70,7 +69,6 @@ export class CatalogComponent implements OnInit {
           info: latestDetails.app_readme
         }
         this.catalogApps.push(catalogItem);
-        console.log(this.catalogApps)
       }
     })
     
@@ -87,7 +85,6 @@ export class CatalogComponent implements OnInit {
           return this.selectPool();
         
         case 'advanced_settings':
-          console.log('Get advanced settings')
           this.modalService.open('slide-in-form', this.kubernetesForm);
           break;
       }
@@ -120,7 +117,6 @@ export class CatalogComponent implements OnInit {
 
   checkForConfiguredPool() {
     this.appService.getKubernetesConfig().subscribe(res => {
-      console.log(res)
       if (!res.pool) {
         this.selectPool();
       } else {
@@ -169,13 +165,11 @@ export class CatalogComponent implements OnInit {
       });
       self.dialogRef.componentInstance.failure.subscribe((err) => {
         new EntityUtils().handleWSError(self, err, self.dialogService);
-        console.log(err)
       })
     }
   }
 
   doInstall(release_name: string, version: string, train='test', catalog='OFFICIAL') {
-    console.log(release_name, version)
     this.translate.get(helptext.install.msg1).subscribe(msg1 => {
       this.translate.get(helptext.install.msg2).subscribe(msg2 => {
         this.dialogService.confirm(helptext.install.title, msg1 + release_name + msg2 + 
@@ -188,7 +182,6 @@ export class CatalogComponent implements OnInit {
               catalog: catalog,
               item: release_name
             }
-            console.log(payload)
         
             this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
               helptext.installing) }, disableClose: true});
@@ -197,7 +190,6 @@ export class CatalogComponent implements OnInit {
             this.dialogRef.componentInstance.success.subscribe((res) => {
               this.dialogService.closeAllDialogs();
               // We should go to chart tab(?) and refresh
-              console.log(res);
             });
             this.dialogRef.componentInstance.failure.subscribe((err) => {
               // new EntityUtils().handleWSError(this, err, this.dialogService);

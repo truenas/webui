@@ -13,7 +13,6 @@ export class DockerImagesComponent implements OnInit {
 
   ngOnInit(): void {
     this.appService.getDockerImages().subscribe(images => {
-      console.log(images);
       images.forEach(image => {
         this.dockerImages.push(
           { 
