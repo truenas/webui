@@ -41,6 +41,10 @@
   margin:16px 0 16px 16px;
 }
 
+#cpu-load-cores-legend-values .legend-item{
+  padding: 2px 0px;
+}
+
 #cpu-load-cores-legend .legend-item{
   text-align:left;
   padding-left:15%;

@@ -138,25 +138,28 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
 
     let columns = [];
 
-    let k = 0;
     Object.keys(data).forEach(key => {
-      if (key == 'total') return;
-      if (k > 7) return;
-      k++;
-      let label = key == 'arc_size' ? "ZFS Cache" : key.charAt(0).toUpperCase() + key.slice(1);
+      /*
+        * percent is not a bytes value
+        * available is a sum of free and inactive
+        * wired has zfs_cache within it
+      */
+     
+      if (
+        key == 'total' ||
+        key == 'percent' ||
+        key == 'free' ||
+        key == 'inactive' ||
+        key == 'arc_size'
+      ) return;
+
+      let label = key.charAt(0).toUpperCase() + key.slice(1);
       let item = [
         label,
         this.bytesToGigabytes(data[key]).toFixed(1)
       ];
       columns.push(item);
     })
-    console.log('data------------', data);
-    console.log('column---------', columns);
-    // data.
-    //   [ "Free", this.bytesToGigabytes(data["free"]).toFixed(1)],
-    //   [ "ZFS Cache", this.bytesToGigabytes(data["arc_size"]).toFixed(1)],
-    //   [ "Services", this.bytesToGigabytes(services).toFixed(1)]
-    // ];
 
     return columns;
   }
