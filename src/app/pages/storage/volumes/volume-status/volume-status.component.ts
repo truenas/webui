@@ -22,6 +22,8 @@ import { Subject } from 'rxjs';
 import { EntityToolbarComponent } from '../../../common/entity/entity-toolbar/entity-toolbar.component';
 import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
+import { ModalService } from 'app/services/modal.service';
+import { DiskFormComponent } from '../../disks/disk-form';
 
 interface poolDiskInfo {
   name: any,
@@ -145,8 +147,9 @@ export class VolumeStatusComponent implements OnInit {
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected matDialog: MatDialog,
-    protected localeService: LocaleService) {
-  }
+    protected localeService: LocaleService,
+    protected modalService: ModalService
+  ) {}
 
   getZfsPoolScan(poolName) {
     this.ws.subscribe('zfs.pool.scan').subscribe(
@@ -275,8 +278,9 @@ export class VolumeStatusComponent implements OnInit {
             ["devname", "=", diskName]
           ]
         ]).subscribe((res) => {
-          this.editDiskRoute.push(this.pk, "edit", res[0].identifier);
-          this.router.navigate(new Array('').concat(this.editDiskRoute));
+          // this.editDiskRoute.push(this.pk, "edit", res[0].identifier);
+          // this.router.navigate(new Array('').concat(this.editDiskRoute));
+          this.onClickEdit(this.pk, res);
         })
       },
       isHidden: false,
@@ -607,5 +611,11 @@ export class VolumeStatusComponent implements OnInit {
       return this.localeService.formatDateTime(new Date(data.$date));
     }
     return;
+  }
+
+  onClickEdit(pk, res) {
+    console.log('---pk---', pk);
+    console.log('----res-----', res);
+    this.modalService.open('slide-in-form', new DiskFormComponent(this.router, this.rest, this.ws, this.aroute));
   }
 }
