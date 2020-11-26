@@ -145,7 +145,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
 
     this.totalLegendList = [];
 
-    let keyList = ['available', 'free', 'inactive', 'used', 'active', 'buffers', 'cached', 'wired', 'arc_size'];
+    let keyList = ['available', 'free', 'inactive', 'shared', 'used', 'active', 'buffers', 'cached', 'wired', 'arc_size'];
 
     this.colorPattern = [];
     this.currentTheme = this.themeService.currentTheme();
@@ -172,7 +172,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
       });
     });
 
-    let legendList = this.totalLegendList.filter(x => x.key == 'available' ||  x.key == 'used');
+    let legendList = this.totalLegendList.filter(x => x.key == 'available' ||  x.key == 'used' || x.key == 'shared');
     let legendDetailList = this.totalLegendList.filter(x => x.key != 'available' && x.key != 'used' && x.key != 'arc_size');
 
     return { legendList, legendDetailList };
