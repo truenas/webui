@@ -469,6 +469,10 @@ export class VolumeStatusComponent implements OnInit {
       _.find(actions, { id: "detach" }).isHidden = false;
     }
 
+    if (vdev_type === "MIRROR") {
+      _.find(actions, { id: "remove" }).isHidden = true;
+    }
+
     return actions;
   }
 
