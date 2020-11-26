@@ -156,11 +156,11 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     keyList.forEach(key => {
       let label = key == 'arc_size' ? 'ZFS_Cache' : key.charAt(0).toUpperCase() + key.slice(1);
       let color;
-      if (key == 'free' || key == 'arc_size') {
+      if (key == 'free') {
         color = colorPattern[colorIndex - 1] + '99';
       } else if (key == 'inactive') {
         color = colorPattern[colorIndex - 1] + '44';
-      } else {
+      } else if (key != 'arc_size') {
         color = colorPattern[colorIndex++];
       }
 
@@ -172,20 +172,8 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
       });
     });
 
-    let legendList = this.totalLegendList.filter(x => x.key != 'free' && x.key != 'inactive' && x.key != 'arc_size');
-    let legendDetailList = this.totalLegendList.filter(x => x.key != 'available' && x.key != 'wired');
-
-    let wiredData = this.totalLegendList.find(x => x.key == 'wired');
-    let zfsData = this.totalLegendList.find(x => x.key == 'arc_size');
-
-    if (wiredData && zfsData) {
-      legendDetailList.push({
-        key: wiredData.key,
-        label: wiredData.label,
-        value: wiredData.value - zfsData.value,
-        color: wiredData.color
-      });
-    }
+    let legendList = this.totalLegendList.filter(x => x.key == 'available' ||  x.key == 'used');
+    let legendDetailList = this.totalLegendList.filter(x => x.key != 'available' && x.key != 'used' && x.key != 'arc_size');
 
     return { legendList, legendDetailList };
   }
