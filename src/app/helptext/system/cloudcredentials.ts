@@ -185,7 +185,8 @@ a new application key, log in to the Backblaze account, go to the \
  created with the \
  <a href="https://console.cloud.google.com/apis/credentials" \
  target="_blank">Google Cloud Platform Console</a>.'
-    )
+    ),
+    validation: [Validators.required],
   },
 
   token_google_drive: {
