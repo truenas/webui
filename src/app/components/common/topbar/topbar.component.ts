@@ -797,7 +797,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   openChangePasswordDialog() {
     const conf: DialogFormConfiguration = {
       title: T('Change Password'),
-      message: T('Change your password?'),
+      message: T('Change Administrator Password'),
       fieldConfig: [
         {
           type : 'input',
@@ -827,10 +827,24 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       saveButtonText: T('Save'),
       custActions: [],
       parent: this,
-      customSubmit: function (entityDialog) {
+      customSubmit: (entityDialog) => {
         delete entityDialog.formValue.password_conf;
-        console.log("dialog", entityDialog.formValue);
+        const pwChange = entityDialog.formValue;
         entityDialog.dialogRef.close();
+        this.ws.call('auth.check_user', ['root', pwChange.curr_password]).subscribe((check) => {
+          if (check) {
+            delete pwChange.curr_password;
+            this.ws.call('user.update', [1, pwChange]).subscribe((res) => {
+              this.dialogService.Info(T('Success'), T('Password updated.'), '300px', 'info', false);
+            }, (res) => {
+              this.dialogService.Info(T('Error'), res, '300px', 'warning', false);
+            });
+          } else {
+            this.dialogService.Info(T('Error'), T('Incorrect Password'), '300px', 'warning', false);
+          }
+        }, (res) => {
+          this.dialogService.Info(T('Error'), res, '300px', 'warning', false);
+        });
       }
     }
     this.dialogService.dialogForm(conf);

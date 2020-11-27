@@ -106,7 +106,7 @@ address. Please verify the email address before continuing.')
         pw_new_pw_tooltip : T('Passwords cannot contain a <b>?</b>. Passwords should\
          be at least eight characters and contain a mix of lower and\
          upper case, numbers, and special characters.'),
-         pw_new_pw_validation: [Validators.pattern('^[^?]*$')],
+         pw_new_pw_validation: [ Validators.pattern('^[^?]*$') ],
         pw_confirm_pw_placeholder : T('Confirm Password'),
         pw_confirm_pw_validation : [ matchOtherValidator('password') ],
         pw_invalid_title: T('Incorrect Password'),
