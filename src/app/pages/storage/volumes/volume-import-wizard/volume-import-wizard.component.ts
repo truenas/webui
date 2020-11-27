@@ -160,7 +160,7 @@ export class VolumeImportWizardComponent {
   private disks_decrypted = false;
   protected stepper;
 
-  protected isNew = false;
+  protected isNew = true;
   protected is_new_subscription;
   protected encrypted;
   protected devices;
@@ -173,6 +173,7 @@ export class VolumeImportWizardComponent {
   protected pool;
   protected guid_subscription;
   protected message_subscription;
+  protected hideCancel = true;
 
   constructor(protected rest: RestService, protected ws: WebSocketService,
     private router: Router, protected loader: AppLoaderService,
@@ -182,10 +183,7 @@ export class VolumeImportWizardComponent {
   }
 
   customNext(stepper) {
-    if (this.isNew) {
-      this.router.navigate(new Array('/').concat(
-        this.route_create));
-    } else if (stepper._selectedIndex === (this.importIndex - 1)) {
+    if (stepper._selectedIndex === (this.importIndex - 1)) {
       if (this.encrypted && this.encrypted.value) {
         this.decryptDisks(stepper);
       } 
@@ -258,6 +256,12 @@ export class VolumeImportWizardComponent {
       this.importIndex = 0;
       this.getImportableDisks();
     }
+
+    if (this.isNew) {
+      this.title = 'Import Pool';
+    } else {
+      this.title = 'Edit Pool';
+    }
   }
 
   afterInit(entityWizard: EntityWizardComponent) {
@@ -317,6 +321,7 @@ export class VolumeImportWizardComponent {
         // this.router.navigate(new Array('/').concat(
         //   this.route_success));
         this.modalService.close('slide-in-form');
+        this.modalService.refreshTable();
       }),
       dialogRef.componentInstance.failure.subscribe((res) => {
         dialogRef.close(false);
@@ -340,9 +345,11 @@ export class VolumeImportWizardComponent {
                     // const route_unlock = this.route_success.concat(['id', this.pool, 'dataset', 'unlock', this.pool]);
                     // this.router.navigate(new Array('/').concat(route_unlock));
                     this.modalService.close('slide-in-form');
+                    this.modalService.refreshTable();
                   } else {
                     // this.router.navigate(new Array('/').concat(this.route_success));
                     this.modalService.close('slide-in-form');    
+                    this.modalService.refreshTable();
                   }
                 });
                 break;
@@ -350,6 +357,7 @@ export class VolumeImportWizardComponent {
               if (!found) {
                 // this.router.navigate(new Array('/').concat(this.route_success));
                 this.modalService.close('slide-in-form');
+                this.modalService.refreshTable();
               }
             }
           }, err => {
@@ -359,6 +367,7 @@ export class VolumeImportWizardComponent {
           // this.router.navigate(new Array('/').concat(
           //   this.route_success));
           this.modalService.close('slide-in-form');
+          this.modalService.refreshTable();
         }
       });
       dialogRef.componentInstance.failure.subscribe((res) => {
