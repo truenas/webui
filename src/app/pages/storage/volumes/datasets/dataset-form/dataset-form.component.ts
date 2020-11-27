@@ -1609,7 +1609,7 @@ export class DatasetFormComponent implements Formconfiguration{
         } else {
           this.modalService.close('slide-in-form');
         }
-        
+        this.modalService.refreshTable();
       })
     }, (res) => {
       this.loader.close();
