@@ -82,5 +82,4 @@ export class ChangePasswordComponent {
       new EntityUtils().handleWSError(this.entityForm, res);
     });
   }
-
 }

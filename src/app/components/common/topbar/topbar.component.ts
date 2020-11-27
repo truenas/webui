@@ -793,4 +793,46 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       }
     })
   }
+
+  openChangePasswordDialog() {
+    const conf: DialogFormConfiguration = {
+      title: T('Change Password'),
+      message: T('Change your password?'),
+      fieldConfig: [
+        {
+          type : 'input',
+          name : 'curr_password',
+          placeholder : helptext.changePasswordDialog.pw_current_pw_placeholder,
+          inputType : 'password',
+          required: true,
+          togglePw: true,
+        },
+        {
+          type : 'input',
+          name : 'password',
+          placeholder : helptext.changePasswordDialog.pw_new_pw_placeholder,
+          inputType : 'password',
+          required: true,
+          tooltip: helptext.changePasswordDialog.pw_new_pw_tooltip
+        },
+        {
+          type : 'input',
+          name : 'password_conf',
+          placeholder : helptext.changePasswordDialog.pw_confirm_pw_placeholder,
+          inputType : 'password',
+          required: true,
+          validation : helptext.changePasswordDialog.pw_confirm_pw_validation
+        }
+      ],
+      saveButtonText: T('Save'),
+      custActions: [],
+      parent: this,
+      customSubmit: function (entityDialog) {
+        delete entityDialog.formValue.password_conf;
+        console.log("dialog", entityDialog.formValue);
+        entityDialog.dialogRef.close();
+      }
+    }
+    this.dialogService.dialogForm(conf);
+  }
 }
