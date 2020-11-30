@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import { WebSocketService, DialogService } from '../../../services/index';
 import { ApplicationsService } from '../applications.service';
+import { ModalService } from '../../../services/modal.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { ChartReleaseSettingsComponent } from '../forms/chart-release-settings.component';
 
 import  helptext  from '../../../helptext/apps/apps';
 
@@ -19,6 +22,9 @@ export class ChartReleasesComponent implements OnInit {
   private dialogRef: any;
   public tempIcon = '/assets/images/ix-original.png';
   private rollbackChartName: string;
+  private chartReleaseForm: ChartReleaseSettingsComponent;
+  private refreshTable: Subscription;
+  private refreshForm: Subscription;
 
   public rollBackChart: DialogFormConfiguration = {
     title: helptext.charts.rollback_dialog.title,
@@ -47,13 +53,24 @@ export class ChartReleasesComponent implements OnInit {
 
   constructor(private ws: WebSocketService, private mdDialog: MatDialog,
     private dialogService: DialogService, private translate: TranslateService,
-    private appService: ApplicationsService) { }
+    private appService: ApplicationsService, private modalService: ModalService) { }
 
   ngOnInit(): void {
     this.refreshChartReleases();
     // this.ws.call('chart.release.query', [[['name', '=', 'plex2']]]).subscribe(res => {
     //   console.log(res)
     // }) 
+    this.refreshForms();
+    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
+      this.refreshChartReleases();
+    })
+    this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
+      this.refreshForms();
+    });
+  }
+
+  refreshForms() {
+    this.chartReleaseForm = new ChartReleaseSettingsComponent(this.mdDialog,this.dialogService,this.modalService);
   }
 
   refreshChartReleases() {
@@ -64,12 +81,13 @@ export class ChartReleasesComponent implements OnInit {
         let chartObj = {
           name: chart.name,
           catalog: chart.catalog,
-          train: chart.train,
+          train: chart.catalog_train,
           status: chart.status,
           first_deployed: chart.info.first_deployed, 
           version: chart.chart_metadata.version,
           description: chart.chart_metadata.description,
-          update: chart.update_available
+          update: chart.update_available,
+          repository: chart.config.image.repository
         }
         let ports = [];
         chart.used_ports.forEach(item => {
@@ -111,34 +129,14 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   portal(name: string) {
-    this.ws.call('chart.release.query', [[], {"extra": {"retrieve_resources": true}}]).subscribe(res => {
+    // this.ws.call('chart.release.query', [[], {"extra": {"retrieve_resources": true}}]).subscribe(res => {
+    //   console.log(res)
+    // })
+    this.ws.call('chart.release.pod_console_choices', [name]).subscribe(res => {
       console.log(res)
     })
   }
 
-  fakeMethod() {
-    this.ws.call('chart.release.create',
-    {
-      "catalog": "OFFICIAL", 
-      "train": "test", 
-      "item": "ix-chart", 
-      "values": {
-        "image": { "repository": "plexinc/pms-docker" }, 
-        "portForwardingList": [
-                {"containerPort": 32400, "nodePort": 32400}
-        ], 
-        "volumes": [
-            {"datasetName": "transcode", "mountPath": "/transcode"}, 
-            {"datasetName": "config", "mountPath": "/config"}, 
-            {"datasetName": "data", "mountPath": "/data"}
-          ], 
-        "workloadType": "Deployment"
-      }, 
-      "version": "latest", 
-      "release_name": "plex"
-    }) 
-  }
- 
   update(name: string) {
     this.translate.get(helptext.charts.update_dialog.msg).subscribe(msg => {
       this.dialogService.confirm(helptext.charts.update_dialog.title, msg + name + '?')
@@ -187,6 +185,7 @@ export class ChartReleasesComponent implements OnInit {
 
   edit(name: string) {
     console.log('edit ' + name)
+    this.modalService.open('slide-in-form', this.chartReleaseForm, name);
   }
 
   delete(name: string) {
@@ -200,6 +199,7 @@ export class ChartReleasesComponent implements OnInit {
           this.dialogRef.componentInstance.submit();
           this.dialogRef.componentInstance.success.subscribe((res) => {
             this.dialogService.closeAllDialogs();
+            this.refreshChartReleases();
           });
           this.dialogRef.componentInstance.failure.subscribe((err) => {
             // new EntityUtils().handleWSError(this, err, this.dialogService);

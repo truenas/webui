@@ -1,17 +1,17 @@
 <div fxLayout=row>
-    <mat-tab-group animationDuration="0ms">
+    <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedIndex">
         <mat-tab label="{{ 'Catalog' | translate}}"
             ix-auto ix-auto-type="tab" ix-auto-identifier="catalog">
-            <app-catalog></app-catalog>
+            <app-catalog (switchTab)="newTab($event)"></app-catalog>
         </mat-tab>
         <mat-tab label="{{ 'Chart Releases' | translate}}"
             ix-auto ix-auto-type="tab" ix-auto-identifier="charts">
             <app-charts></app-charts>
         </mat-tab>
-        <mat-tab label="{{ 'Docker Images' | translate }}"
+        <!-- <mat-tab label="{{ 'Docker Images' | translate }}"
             ix-auto ix-auto-type="tab" ix-auto-identifier="docker">
             <app-docker-images></app-docker-images>
-        </mat-tab>
+        </mat-tab> -->
     </mat-tab-group>
 </div>
 <div class="form-element" id="row-filter">

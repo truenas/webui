@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
@@ -23,6 +23,8 @@ import  helptext  from '../../../helptext/apps/apps';
   styleUrls: ['../applications.component.scss']
 })
 export class CatalogComponent implements OnInit {
+  @Output() switchTab = new EventEmitter<string>();
+
   public catalogApps = [];
   private dialogRef: any;
   private poolList = [];
@@ -31,6 +33,7 @@ export class CatalogComponent implements OnInit {
   private kubernetesForm: KubernetesSettingsComponent;
   private chartReleaseForm: ChartReleaseSettingsComponent;
   private refreshForm: Subscription;
+  private refreshTable: Subscription;
 
   public choosePool: DialogFormConfiguration = {
     title: helptext.choosePool.title,
@@ -111,11 +114,15 @@ export class CatalogComponent implements OnInit {
     };
 
     this.core.emit({name:"GlobalActions", data: settingsConfig, sender: this});
+
+    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
+      this.switchTab.emit('1');
+    })
   }
 
   refreshForms() {
     this.kubernetesForm = new KubernetesSettingsComponent(this.modalService, this.appService);
-    this.chartReleaseForm = new ChartReleaseSettingsComponent(this.mdDialog,this.dialogService);
+    this.chartReleaseForm = new ChartReleaseSettingsComponent(this.mdDialog,this.dialogService,this.modalService);
   }
 
   checkForConfiguredPool() {
