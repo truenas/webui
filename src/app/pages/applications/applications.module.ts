@@ -11,7 +11,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ApplicationsComponent } from './applications.component';
 import { ApplicationsRoutingModule } from './applications-routing.module';
 import { CatalogComponent } from './catalog/catalog.component';
-import { ChartsComponent } from './charts/charts.component';
+import { ChartReleasesComponent } from './chart-releases/chart-releases.component';
 import { DockerImagesComponent } from './docker-images/docker-images.component';
 import { KubernetesSettingsComponent } from './forms/kubernetes-settings.component';
 import { ChartReleaseSettingsComponent } from './forms/chart-release-settings.component';
@@ -30,7 +30,7 @@ import { ChartReleaseSettingsComponent } from './forms/chart-release-settings.co
   declarations: [
     ApplicationsComponent,
     CatalogComponent,
-    ChartsComponent,
+    ChartReleasesComponent,
     DockerImagesComponent,
     KubernetesSettingsComponent,
     ChartReleaseSettingsComponent
