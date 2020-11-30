@@ -138,7 +138,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Actions without expansion
     if(this.hasActions && result[result.length - 1] !== 'action' && this.hasDetails() === false){
-      console.log(this.hasDetails());
       result.push({ prop: 'action'});
     }
 
