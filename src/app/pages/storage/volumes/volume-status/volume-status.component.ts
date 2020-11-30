@@ -520,7 +520,6 @@ export class VolumeStatusComponent implements OnInit {
       id: 'Remove',
       label: helptext.actions_label.remove,
       onClick: (row) => {
-        console.log('row', row);
         let diskName = row.name;
         if (!_.startsWith(row.name, '/')) {
           const pIndex = row.name.lastIndexOf('p');
