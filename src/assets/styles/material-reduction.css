@@ -650,6 +650,15 @@ tr.mat-row:hover {
   cursor: pointer;
 }
 
+.mat-table tr.details-row{
+  min-height: 0px;
+  height: 0px;
+}
+
+.mat-table tr.details-row td{
+  width: 100%;
+}
+
 /* TreeTable Specific Rules */
 .ui-treetable tr > td:nth-child(1) {
   padding-left: 16px;

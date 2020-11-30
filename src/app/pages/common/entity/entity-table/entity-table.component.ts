@@ -1,5 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { AfterViewInit, Component, ElementRef, Input, ViewChild, OnDestroy, OnInit } from '@angular/core';
+import {animate, state, style, transition, trigger} from '@angular/animations';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule, MatTable } from '@angular/material/table';
 import { Router, NavigationStart } from '@angular/router';
@@ -97,7 +98,14 @@ const DETAIL_HEIGHT = 24;
   selector: 'entity-table',
   templateUrl: './entity-table.component.html',
   styleUrls: ['./entity-table.component.scss'],
-  providers: [DialogService, StorageService]
+  providers: [DialogService, StorageService],
+  animations:[
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ]
 })
 export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -125,16 +133,26 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public displayedColumns: string[] = [];
   get currentColumns(){
-    //let result = this.conf && this.conf.columns ? this.conf.columns.map((col) => col.prop) : this.displayedColumns;
+    
     let result = this.alwaysDisplayedCols.concat(this.conf.columns);
-    if(this.hasActions && result[result.length - 1] !== 'action'){
+
+    // Actions without expansion
+    if(this.hasActions && result[result.length - 1] !== 'action' && this.hasDetails() === false){
+      console.log(this.hasDetails());
       result.push({ prop: 'action'});
     }
+
+    // Expansion
+    if(this.hasDetails() === true){
+      result.push({ prop: 'expansion-chevrons'});
+    }
+
     if(this.conf.config.multiSelect){
       result.unshift({prop: 'multiselect'});
     }
+
     return result;
-    //return this.alwaysDisplayedCols.map((c) => c.prop).concat(result);
+    
   }
 
   public busy: Subscription;
@@ -158,7 +176,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public colMaxWidths = [];
 
   public startingHeight: number;
-  public expandedRows = 0;
+  //public expandedRows = 0;
+  public expandedRows = document.querySelectorAll('.datatable-row-detail').length;
+  public expandedElement: any | null = null;
 
   public rows: any[] = [];
   public currentRows: any[] = []; // Rows applying filter
@@ -297,8 +317,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }
     this.conf.columns = this.originalConfColumns;
-    console.warn(this.conf.columns);
-    console.log(this);
 
     setTimeout(() => {
       const preferredCols = this.prefService.preferences.tableDisplayedColumns;
@@ -576,9 +594,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if ((this.expandedRows == 0 || !this.asyncView || this.excuteDeletion || this.needRefreshTable) && this.filter && this.filter.nativeElement.value === '') {
       this.excuteDeletion = false;
       this.needRefreshTable = false;
-      if (!skipActions && (this.needTableResize || (!this.needTableResize && this.expandedRows > 0))) {
-        this.updateTableHeightAfterDetailToggle();
-        }
+      
       this.needTableResize = true;
       this.currentRows = this.rows;
       this.paginationPageIndex  = 0;
@@ -1026,24 +1042,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     })
   }
 
-  /*onSelect({ selected }) {
-    this.removeFromSelectedTotal = 0;
-    let checkable = 0;
-    selected.forEach((i) => {
-      i.hideCheckbox ? this.removeFromSelectedTotal++ : checkable++;
-    });
-    if (checkable === 0) {
-      selected.length = 0;
-    };
-    this.setTableHeight();
-    this.selected.splice(0, this.selected.length);
-    this.selected.push(...selected);
-
-    if (this.conf.updateMultiAction) {
-      this.conf.updateMultiAction(this.selected);
-    }
-  }*/
-
   // Next section operates the checkboxes to show/hide columns
   toggle(col) {
     const isChecked = this.isChecked(col);
@@ -1057,7 +1055,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.conf.columns = [...this.conf.columns, col];
     }
     this.selectColumnsToShowOrHide();
-    this.updateTableHeightAfterDetailToggle();
+    
   }
 
   // Stores currently selected columns in preference service
@@ -1086,7 +1084,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!(this.conf.columns.length === this.originalConfColumns.length &&
         this.conf.columns.length === this.allColumns.length)) {
       this.conf.columns = this.originalConfColumns;
-      this.updateTableHeightAfterDetailToggle();
+      
       this.selectColumnsToShowOrHide();
     }
   }
@@ -1107,7 +1105,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.conf.columns = [];
       this.selectColumnsToShowOrHide();
     }
-    this.updateTableHeightAfterDetailToggle();
+    
     return this.conf.columns
   }
 
@@ -1121,37 +1119,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   toggleLabels(){
     this.multiActionsIconsOnly = !this.multiActionsIconsOnly;
-  }
-
-  toggleExpandRow(row) {
-    this.table.rowDetail.toggleExpandRow(row);
-    if (!this.fixedTableHight) {
-      this.updateTableHeightAfterDetailToggle();
-    }
-  }
-
-  resetTableToStartingHeight() {
-    setTimeout(() => {
-      if (!this.startingHeight) {
-        this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
-      }
-      document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', `height: ${this.startingHeight}px`);
-    }, 100);
-  }
-
-  updateTableHeightAfterDetailToggle() {
-    if (!this.startingHeight) {
-      this.resetTableToStartingHeight();
-    }
-    setTimeout(() => {
-      this.expandedRows = document.querySelectorAll('.datatable-row-detail').length;
-      let newHeight = this.expandedRows * this.getRowDetailHeight() + this.startingHeight;
-      if (newHeight > window.innerHeight - 233 - this.cardHeaderComponentHight) {
-        newHeight = window.innerHeight - 233 - this.cardHeaderComponentHight;
-      }
-      newHeight = Math.max(newHeight, this.startingHeight);
-      //document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', `height: ${newHeight}px`);
-    }, 100);
   }
 
   getButtonClass(prop) {
@@ -1213,4 +1180,5 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.currentRows.forEach((row) => this.selection.select(row));
     console.log({selection: this.selection.selected, rows: this.currentRows});
   }
+
 }

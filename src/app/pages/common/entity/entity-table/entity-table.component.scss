@@ -1,5 +1,9 @@
 @import "../../../../../assets/styles/tn-styles.scss";
 
+.details-row td {
+  overflow: hidden;
+}
+
 .padding_all {
     padding: 20px;
 }
