@@ -56,7 +56,7 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
 
   @Input() config: GaugeConfig;
 
-  constructor() { 
+  constructor() {
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -88,13 +88,13 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
     this._data = d;
   }
 
-  render(){ 
+  render(){
     let lineWidth = 10;
     this.arc = d3.arc()
         .innerRadius(this.config.diameter / 2 - lineWidth) // 80
         .outerRadius(this.config.diameter / 2) // 90
         .startAngle(0);
-    
+
     let width = this.config.diameter;
     let height = this.config.diameter;
     let svg = d3.select("#gauge-" + this.chartId).append("svg")
@@ -106,7 +106,7 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
 
     // Text Group
     let gt = svg.append("g").attr("class", "text-group")
-   
+
     // Setup value text element
     let text = gt.append("text").attr("id", "text-value");
     if(!text.node()){
@@ -133,7 +133,7 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
         .style("font-weight", 400)
         .attr("text-anchor", "middle")
         .attr("alignment-baseline", "central")
-     
+
     if(this.subtitle){
       this.updateSubtitle();
     }
@@ -145,16 +145,16 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
     let top = (height / 2) - (bbox.height / 2);
     text.attr("x", width / 2)
         .attr("y",  top + offsetY);
-   
+
     subtext.attr("x", width / 2)
         .attr("y", top + 24 + offsetY );
-    
+
     // Arc background
     let background = g.append("path")
         .datum({endAngle: this.doublePI})
         .style("fill", "var(--bg1)")
         .attr("d", this.arc);
-    
+
     // Arc foreground
     let foreground = g.append("path")
         .datum({endAngle: 0.127 * this.doublePI})
@@ -166,13 +166,15 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
   }
 
   update(value){
-    d3.transition()
+    if (document.hasFocus()) {
+      d3.transition()
         .select('#gauge-' + this.chartId + ' path.value')
         .duration(750)
         .attrTween("d", this.load(this.percentToAngle(value)));
 
-    let txt = d3.select('#gauge-' + this.chartId + ' text#text-value')
+      let txt = d3.select('#gauge-' + this.chartId + ' text#text-value')
         .text(value + this.config.units)
+    }
   }
 
   load(newAngle){
@@ -181,9 +183,9 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
     let interpolate = d3.interpolate(d.endAngle, newAngle);
 
       return (t) => {
-  
+
         d.endAngle = interpolate(t);
-  
+
         return this.arc(d);
       };
     };
