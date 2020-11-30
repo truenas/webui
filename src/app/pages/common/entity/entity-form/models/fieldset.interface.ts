@@ -6,6 +6,7 @@ export interface FieldSet {
   class?:string;
   width?:string;
   divider?:boolean;
+  maxWidth?: boolean;
   config?:FieldConfig[];
   colspan?: number;
 }

@@ -263,7 +263,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         for(let i = 0; i < this.fieldSets.length; i++){
           let fieldset = this.fieldSets[i];
           if (!fieldset.divider) {
-            fieldset.width = this.conf.columnsOnForm === 1 || fieldset.colspan === 2 ? '100%' : '50%';
+            if(fieldset.maxWidth)
+              fieldset.width = '100%';
+            else
+              fieldset.width = this.conf.columnsOnForm === 1 || fieldset.colspan === 2 ? '100%' : '50%';
           }
 
           if(fieldset.config){
