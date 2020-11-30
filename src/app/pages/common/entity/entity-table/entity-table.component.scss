@@ -1,5 +1,13 @@
 @import "../../../../../assets/styles/tn-styles.scss";
 
+tr.details-row {
+  background: var(--bg2);
+}
+
+tr.details-row:hover {
+  background: unset !important;
+}
+
 .details-row td {
   overflow: hidden;
 }
