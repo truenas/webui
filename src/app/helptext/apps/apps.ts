@@ -210,6 +210,17 @@ export default {
       args: {
         placeholder: T('Container Args'),
         tooltip: T('Specify arguments for container command. Use <i>ENTER</i> after each entry.')
+      },
+      env_vars: {
+        title: T('Container Environment Variables'),
+        key: {
+          placeholder: T('Name'),
+          tooltip: T('')
+        },
+        value: {
+          placeholder: T('Value'),
+          tooltip: T('')
+        }
       }
     },
     networking: T('Networking'),

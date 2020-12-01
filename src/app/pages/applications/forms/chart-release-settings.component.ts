@@ -10,6 +10,7 @@ import { WebSocketService, DialogService } from '../../../services/index';
 import { ApplicationsService } from '../applications.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import  helptext  from '../../../helptext/apps/apps';
+import { listLazyRoutes } from '@angular/compiler/src/aot/lazy_routes';
 
 @Component({
   selector: 'app-chart-release-settings',
@@ -47,7 +48,6 @@ export class ChartReleaseSettingsComponent {
           name: 'tag',
           placeholder: helptext.chartForm.image.tag.placeholder,
           tooltip: helptext.chartForm.image.tag.tooltip,
-          required: true
         },
         {
           type: 'select',
@@ -100,7 +100,35 @@ export class ChartReleaseSettingsComponent {
         }
       ]
     },
-        // env varialbe name and value
+    {
+      name: helptext.chartForm.container.env_vars.title,
+      label: true,
+      config: [
+        {
+          type: 'list',
+          name: 'env_vars',
+          width: '100%',
+          templateListField: [
+            {
+              type: 'input',
+              name: 'name',
+              placeholder: helptext.chartForm.container.env_vars.key.placeholder,
+              tooltip: helptext.chartForm.container.env_vars.key.tooltip,
+              required: true
+            }, 
+            {
+              type: 'input',
+              name: 'value',
+              placeholder: helptext.chartForm.container.env_vars.value.placeholder,
+              tooltip: helptext.chartForm.container.env_vars.value.tooltip,
+              required: true
+            }
+          ],
+          listFields: []
+        }
+      ],
+      colspan: 2,
+    },
     {
       name: helptext.chartForm.networking,
       label: true,
@@ -245,52 +273,93 @@ export class ChartReleaseSettingsComponent {
         }
       ]
     },
+    // {
+    //   name: helptext.chartForm.hostPathVolumes.title,
+    //   label: true,
+    //   width: '50%',
+    //   config: [
+    //     {
+    //       type: 'input',
+    //       name: 'hpv_hostpath',
+    //       placeholder: helptext.chartForm.hostPathVolumes.hostPath.placeholder,
+    //       tooltip: helptext.chartForm.hostPathVolumes.hostPath.tooltip,
+    //       required: true
+    //     }, 
+    //     {
+    //       type: 'input',
+    //       name: 'hpv_mountpath',
+    //       placeholder: helptext.chartForm.hostPathVolumes.mountPath.placeholder,
+    //       tooltip: helptext.chartForm.hostPathVolumes.mountPath.tooltip,
+    //       required: true
+    //     },
+    //     {
+    //       type: 'checkbox',
+    //       name: 'hpv_readonly',
+    //       placeholder: helptext.chartForm.hostPathVolumes.readOnly.placeholder,
+    //     }
+    //   ]
+    // },
     {
       name: helptext.chartForm.hostPathVolumes.title,
       label: true,
-      width: '50%',
       config: [
         {
-          type: 'input',
-          name: 'hpv_hostpath',
-          placeholder: helptext.chartForm.hostPathVolumes.hostPath.placeholder,
-          tooltip: helptext.chartForm.hostPathVolumes.hostPath.tooltip,
-          required: true
-        }, 
-        {
-          type: 'input',
-          name: 'hpv_mountpath',
-          placeholder: helptext.chartForm.hostPathVolumes.mountPath.placeholder,
-          tooltip: helptext.chartForm.hostPathVolumes.mountPath.tooltip,
-          required: true
-        },
-        {
-          type: 'checkbox',
-          name: 'hpv_readonly',
-          placeholder: helptext.chartForm.hostPathVolumes.readOnly.placeholder,
+          type: 'list',
+          name: 'hpv_properties',
+          width: '100%',
+          templateListField: [
+            {
+              type: 'input',
+              name: 'hpv_hostpath',
+              placeholder: helptext.chartForm.hostPathVolumes.hostPath.placeholder,
+              tooltip: helptext.chartForm.hostPathVolumes.hostPath.tooltip,
+              required: true
+            }, 
+            {
+              type: 'input',
+              name: 'hpv_mountpath',
+              placeholder: helptext.chartForm.hostPathVolumes.mountPath.placeholder,
+              tooltip: helptext.chartForm.hostPathVolumes.mountPath.tooltip,
+              required: true
+            },
+            {
+              type: 'checkbox',
+              name: 'hpv_readonly',
+              placeholder: helptext.chartForm.hostPathVolumes.readOnly.placeholder,
+            }
+          ],
+          listFields: []
         }
-      ]
+      ],
+      colspan: 2,
     },
     {
       name: helptext.chartForm.volumes.title,
       label: true,
-      width: '50%',
+      class: 'volume_fields',
       config: [
         {
-          type: 'input',
-          name: 'vol_mountpath',
-          placeholder: helptext.chartForm.volumes.mountPath.placeholder,
-          tooltip: helptext.chartForm.volumes.mountPath.tooltip,
-          required: true
-        },
-        {
-          type: 'input',
-          name: 'vol_datasetName',
-          placeholder: helptext.chartForm.volumes.datasetName.placeholder,
-          tooltip: helptext.chartForm.volumes.datasetName.tooltip,
-          required: true
+          type: 'list',
+          name: 'volume_ds_properties',
+          width: '100%',
+          templateListField: [
+            {
+              name: 'vol_datasetName',
+              placeholder: helptext.chartForm.volumes.datasetName.placeholder,
+              tooltip: helptext.chartForm.volumes.datasetName.tooltip,
+              type: 'input',
+            },
+            {
+              name: 'vol_mountPath',
+              placeholder: helptext.chartForm.volumes.mountPath.placeholder,
+              tooltip: helptext.chartForm.volumes.mountPath.tooltip,
+              type: 'input',
+            }
+          ],
+          listFields: []
         }
-      ]
+      ],
+      colspan: 2,
     },
     {
       name: helptext.chartForm.gpu.title,
@@ -376,7 +445,8 @@ export class ChartReleaseSettingsComponent {
         // },
 
       ]
-    }
+    },
+
   ]
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
@@ -402,7 +472,7 @@ export class ChartReleaseSettingsComponent {
   customSubmit(data) {
     console.log(data)
 
-    if (!this.rowNum) {
+    // if (!this.rowNum) {
       let payload = {
         release_name: data.release_name,
         version: data.version,
@@ -410,62 +480,92 @@ export class ChartReleaseSettingsComponent {
         catalog: data.catalog,
         item: data.item,
         values: {
-          image: { repository: data.repository }, 
+          containerArgs: data.containerArgs,
+          containerCommand: data.containerCommand,
+          containerEnvironmentVariables: data.containerEnvironmentVariables,
+          dnsConfig: {
+            nameservers: data.nameservers,
+            searches: data.searches
+          },
+          dnsPolicy: data.dnsPolicy,
+          externalInterfaces: [
+            {
+              hostInterface: data.hostInterface,
+              ipam: {
+                type: data.ipam,
+                staticIpConfigurations: data.list,
+                
+              }
+
+            }
+          ],
+          // gpuConfiguration: {data['gpu_property'] : data['gpu_value']}
+
+          image: { 
+            repository: data.repository,
+            pullPolicy: data.pullPolicy,
+            tag: data.tag
+          }, 
           portForwardingList: [
-                  {containerPort: data.container_port, nodePort: data.node_port}
+                  {
+                    containerPort: data.pfl_container_port, 
+                    nodePort: data.pfl_node_port, 
+                    protocol: data.pfl_protocol
+                  }
           ], 
+          restartPolicy: data.restartPolicy,
+          updateStrategy: data.updateStrategy,
           volumes: [
               {datasetName: 'transcode', mountPath: '/transcode'}, 
               {datasetName: 'config', mountPath: '/config'}, 
               {datasetName: 'data', mountPath: '/data'}
             ], 
           workloadType: 'Deployment',
-          // gpuConfiguration: {nvidia.com/gpu": 1}
         }
       }
   
-      console.log(payload)
+    //   console.log(payload)
   
-      this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
-        helptext.installing) }, disableClose: true});
-      this.dialogRef.componentInstance.setCall(this.addCall, [payload]);
-      this.dialogRef.componentInstance.submit();
-      this.dialogRef.componentInstance.success.subscribe((res) => {
-        this.dialogService.closeAllDialogs();
-        this.modalService.close('slide-in-form');
-        this.modalService.refreshTable();
-        // We should go to chart tab(?) and refresh
-      });
-      this.dialogRef.componentInstance.failure.subscribe((err) => {
-        // new EntityUtils().handleWSError(this, err, this.dialogService);
-      })
-    } else {
-      let payload = {
-        values: {
-          image: { repository: data.repository }, 
-          portForwardingList: [
-                  {containerPort: data.container_port, nodePort: data.node_port}
-          ], 
-        }
-      }
+    //   this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
+    //     helptext.installing) }, disableClose: true});
+    //   this.dialogRef.componentInstance.setCall(this.addCall, [payload]);
+    //   this.dialogRef.componentInstance.submit();
+    //   this.dialogRef.componentInstance.success.subscribe((res) => {
+    //     this.dialogService.closeAllDialogs();
+    //     this.modalService.close('slide-in-form');
+    //     this.modalService.refreshTable();
+    //     // We should go to chart tab(?) and refresh
+    //   });
+    //   this.dialogRef.componentInstance.failure.subscribe((err) => {
+    //     // new EntityUtils().handleWSError(this, err, this.dialogService);
+    //   })
+    // } else {
+    //   let payload = {
+    //     values: {
+    //       image: { repository: data.repository }, 
+    //       portForwardingList: [
+    //               {containerPort: data.container_port, nodePort: data.node_port}
+    //       ], 
+    //     }
+    //   }
   
-      console.log(payload)
+    //   console.log(payload)
   
-      this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
-        helptext.installing) }, disableClose: true});
-      this.dialogRef.componentInstance.setCall(this.editCall, [data.release_name, payload]);
-      this.dialogRef.componentInstance.submit();
-      this.dialogRef.componentInstance.success.subscribe((res) => {
-        this.dialogService.closeAllDialogs();
-        this.modalService.close('slide-in-form');
-        this.modalService.refreshTable();
-        // We should go to chart tab(?) and refresh
-      });
-      this.dialogRef.componentInstance.failure.subscribe((err) => {
-        // new EntityUtils().handleWSError(this, err, this.dialogService);
-      })
+    //   this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
+    //     helptext.installing) }, disableClose: true});
+    //   this.dialogRef.componentInstance.setCall(this.editCall, [data.release_name, payload]);
+    //   this.dialogRef.componentInstance.submit();
+    //   this.dialogRef.componentInstance.success.subscribe((res) => {
+    //     this.dialogService.closeAllDialogs();
+    //     this.modalService.close('slide-in-form');
+    //     this.modalService.refreshTable();
+    //     // We should go to chart tab(?) and refresh
+    //   });
+    //   this.dialogRef.componentInstance.failure.subscribe((err) => {
+    //     // new EntityUtils().handleWSError(this, err, this.dialogService);
+    //   })
 
-    }
+    // }
 
   }
 
