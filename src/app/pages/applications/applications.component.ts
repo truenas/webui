@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
+import { ApplicationsService } from './applications.service';
 @Component({
   selector: 'app-applications',
   templateUrl: './applications.component.html',
@@ -8,9 +8,13 @@ import { Component, OnInit } from '@angular/core';
 export class ApplicationsComponent implements OnInit {
   selectedIndex = 0;
 
-  constructor() { }
+  constructor(private appService: ApplicationsService) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.appService.getCatItems().subscribe(res => {
+      console.log(res);
+    })
+  }
 
   newTab(index: number) {
     this.selectedIndex = index;

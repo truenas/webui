@@ -134,8 +134,232 @@ export default {
     },
     node_port: {
       placeholder: T('Node port'),
-      tooltip: T('')
+      tooltip: T('The range of valid ports is 9000-65535.'),
+      validation: [Validators.min(9000), Validators.max(65535)]
+    },
+
+    image: { 
+      title: T('Image'),
+      tag: {
+        placeholder: T('Image Tag'),
+        tooltip: T('Tag to use for the specified image')
+      },
+      repo: {
+        placeholder: T('Image Repository'),
+        tooltip: T('Docker image repository')
+      },
+      pullPolicy: {
+        placeholder: T('Image Pull Policy'),
+        tooltip: T('Docker image pull policy'),
+        options: [
+          {
+            value: 'IfNotPresent',
+            label: T('Only pull image if not present on host.')
+          },
+          {
+            value: 'Always',
+            label: T('Always pull image even if present on host.')
+          },
+          {
+            value: 'Never',
+            label: T('Never pull image even if it is not present on host.')
+          }
+        ]
+      }
+    },
+    update: {
+      title: T('Restart/Update'),
+      placeholder: T('Update Strategy'),
+      tooltip: T(''),
+        options: [
+          {
+            value: 'RollingUpdate',
+            label: T('Create new pods and then kill old ones.')
+          },
+          {
+            value: 'Recreate',
+            label: T('Kill existing pods before creating new ones.')
+          }
+        ]
+    },
+    restart: {
+      placeholder: T('Restart Policy'),
+      tooltip: T(''),
+        options: [
+          {
+            value: 'Always',
+            label: T('Always restart containers in a pod if they exit.')
+          },
+          {
+            value: 'OnFailure',
+            label: T('Only restart containers if they exit with a failure.')
+          },
+          {
+            value: 'Never',
+            label: T('Never restart containers if they exit.')
+          }
+        ]
+    },
+    container: {
+      title: T('Container Entrypoint'),
+      command: {
+        placeholder: T('Container CMD'),
+        tooltip: T('Commands to execute inside container overriding image CMD default. \
+ Use <i>ENTER</i> after each entry.')
+      },
+      args: {
+        placeholder: T('Container Args'),
+        tooltip: T('Specify arguments for container command. Use <i>ENTER</i> after each entry.')
+      }
+    },
+    networking: T('Networking'),
+    externalInterfaces: {
+      title: T('Add External Interfaces'),
+      host: {
+        placeholder: T('Host Interface'),
+        tooltip: T(''),
+        options: [
+          {
+            value: 'enp0s3',
+            label: T('enp0s3 Interface')
+          },
+          {
+            value: 'enp0s8',
+            label: T('enp0s8 Interface')
+          }
+        ]
+      },
+      ipam: {
+        placeholder: T('IP Address Management'),
+        tooltip: T('Specify type for IPAM.'),
+        options: [
+          {
+            value: 'dhcp',
+            label: T('Use DHCP')
+          },
+          {
+            value: 'static',
+            label: T('Use static IP')
+          }
+        ]
+      },
+      staticConfig: {
+        placeholder: T('Static IP Configurations'),
+        tooltip: T('')
+      },
+      staticRoutes: {
+        title: T('Static Route Configuration'),
+
+        destination: {
+          placeholder: T('Destination'),
+        },
+        gateway: {
+          placeholder: T('Gateway')
+        }
+      }
+    },
+    DNSPolicy: {
+      title: T('DNS'),
+      placeholder: T('DNS Policy'),
+      tooltip: T('Default behaviour is for pod to inherit the name resolution configuration \
+ from the node that the pods run on. If <i>None</i> is specified, it allows a Pod to ignore DNS \
+ settings from the Kubernetes environment.'),
+      options: [
+        {
+          value: 'Default',
+          label: T('Use Default DNS Policy')
+        },
+        {
+          value: 'None',
+          label: T('Ignore DNS settings from the Kuberentes cluster')
+        }
+      ]
+    },
+    DNSConfig: {
+      nameservers: {
+        placeholder: T('Nameservers'),
+        tooltip: T('')
+      },
+      searches: {
+        placeholder: T('Searches'),
+        tooltip: T('')
+      }
+    },
+    hostNetwork: {
+      title: T('Hosts/Ports'),
+      placeholder: T('Host Network'),
+      tooltip: T('Provide access to node network namespace for the workload.')
+    },
+    hostPortsList: {
+      containerPort: {
+        placeholder: T('Container Port')
+      },
+      hostPort: {
+        placeholder: T('Host Port')
+      }
+    },
+    portForwardingList: {
+      containerPort: {
+        placeholder: T('Container Port')
+      },
+      nodePort: {
+        placeholder: T('Node Port'),
+        tooltip: T('The range of valid ports is 9000-65535.'),
+        validation: [Validators.min(9000), Validators.max(65535)]
+      },
+      protocol: {
+        placeholder: T('Protocol'),
+        options: [
+          {
+            value: 'TCP',
+            label: T('TCP Protocol')
+          },
+          {
+            value: 'UDP',
+            label: T('UDP Protocol')
+          }
+        ]
+      }
+    },
+    hostPathVolumes: {
+      title: T('Host Path Volumes'),
+      hostPath: {
+        placeholder: T('Host Path'),
+        tooltip: T('')
+      },
+      mountPath: {
+        placeholder: T('Mount Path'),
+        tooltip: T('Path where host path will be mounted inside the pod')
+      },
+      readOnly: {
+        placeholder: T('Read Only'),
+      }
+    },
+    volumes: {
+      title: T('Volumes'),
+      mountPath: {
+        placeholder: T('Mount Path'),
+        tooltip: T('Path where the volume path will be mounted inside the pod')
+      },
+      datasetName: {
+        placeholder: T('Dataset Name'),
+        tooltip: T('')
+      }
+    },
+    gpu: {
+      title: T('GPU Configuration'),
+      property: {
+        placeholder: T('Property'),
+        tooltip: T('')
+      },
+      value: {
+        placeholder: T('Value')
+      }
+
     }
+
+
+
   }
 
 }
