@@ -241,8 +241,6 @@ export class ZvolFormComponent {
     return true;
   }
 
-
-
   public sendAsBasicOrAdvanced(data: ZvolFormData): ZvolFormData {
     data.type = "VOLUME"
 
