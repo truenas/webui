@@ -2,6 +2,8 @@
 """High Availability (tn-bhyve03) feature tests."""
 
 import time
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
     is_element_present,
@@ -47,73 +49,118 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
 def you_should_see_the_dashboard(driver):
     """You should see the dashboard."""
     assert wait_on_element(driver, 0.5, 7, '//a[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 0.5, 20, '//span[contains(.,"System Information")]')
 
 
 @then('go to sharing click iscsi')
 def go_to_sharing_click_iscsi(driver):
     """go to sharing click iscsi."""
+    assert wait_on_element(driver, 1, 7, '//span[contains(.,"root")]')
+    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(0.5)
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Sharing"]').click()
+    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Block Shares (iSCSI)"]')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Block Shares (iSCSI)"]').click()
 
 
 @then('the iscsi page should open')
 def the_iscsi_page_should_open(driver):
     """the iscsi page should open."""
+    assert wait_on_element(driver, 1, 7, '//a[contains(.,"iSCSI")]')
 
 
 @then('click Authorized Access tab, then click Add')
 def click_authorized_access_tab_then_click_add(driver):
     """click Authorized Access tab, then click Add."""
+    driver.find_element_by_xpath('//a[@ix-auto="tab__Authorized Access"]').click()
+    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Authorized Access")]')
+    driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
+    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Group")]')
 
 
 @then(parsers.parse('input Group ID "{gid}", User "{user}", secret * "{password}",'))
-def input_group_id_1_user_user_secret__password(driver):
+def input_group_id_1_user_user_secret__password(driver, gid, user, password):
     """input Group ID "1", User "user", secret * "password",."""
+    driver.find_element_by_xpath('//input[@ix-auto="input__Group ID"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Group ID"]').send_keys(gid)
+    driver.find_element_by_xpath('//input[@ix-auto="input__User"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__User"]').send_keys(user)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Secret"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Secret"]').send_keys(password)
 
 
-@then(parsers.parse('input secret (Confirm) "{password}", Peer user "{peer_user}",'))
-def input_secret_confirm_password_peer_user_peertest(driver):
-    """input secret (Confirm) "password", Peer user "peertest",."""
+@then(parsers.parse('input secret (Confirm) "{passwordc}", Peer user "{peer_user}",'))
+def input_secret_confirm_password_peer_user_peertest(driver, passwordc, peer_user):
+    """input secret (Confirm) "passwordc", Peer user "peertest",."""
+    driver.find_element_by_xpath('//input[@ix-auto="input__Secret (Confirm)"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Secret (Confirm)"]').send_keys(passwordc)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Peer User"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Peer User"]').send_keys(peer_user)
 
 
 @then(parsers.parse('input Peer secret "{password}", Peer secret (Confirm) "{passwordc}"'))
-def input_peer_secret_password_peer_secret_confirm_passwordc(driver):
+def input_peer_secret_password_peer_secret_confirm_passwordc(driver, password, passwordc):
     """input Peer secret "password", Peer secret (Confirm) "passwordc"."""
+    driver.find_element_by_xpath('//input[@ix-auto="input__Peer Secret"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Peer Secret"]').send_keys(password)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Peer Secret (Confirm)"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Peer Secret (Confirm)"]').send_keys(passwordc)
 
 
 @then('click Summit')
 def click_summit(driver):
     """click Summit."""
+    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
 
 
 @then('then you should be retune to the Authorized Access tab')
 def then_you_should_be_retune_to_the_authorized_access_tab(driver):
     """then you should be retune to the Authorized Access tab."""
+    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Authorized Access")]')
+    assert wait_on_element(driver, 1, 7, '//span[contains(.,"usertest")]')
 
 
 @then('click Portals tab, then click Add')
 def click_portals_tab_then_click_add(driver):
     """click Portals tab, then click Add."""
+    driver.find_element_by_xpath('//a[@ix-auto="tab__Portals"]').click()
+    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Portals")]')
+    driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
+    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Basic Info")]')
 
 
 @then(parsers.parse('input Description "{description}", select Discovery Auth Method "{method}"'))
-def input_description_my_iscsi_select_discovery_auth_method_chap(driver):
+def input_description_my_iscsi_select_discovery_auth_method_chap(driver, description, method):
     """input Description "my iscsi", select Discovery Auth Method "Chap"."""
+    driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys(description)
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Discovery Authentication Method"]').click()
+    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Discovery Authentication Method_{method}"]')
+    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Discovery Authentication Method_{method}"]').click()
 
 
 @then(parsers.parse('select Discovery Auth Group "{gid}", IP address "{ip}", Port "{ports}"'))
-def select_discovery_auth_group_1_ip_address_0000_port_3260(driver):
+def select_discovery_auth_group_1_ip_address_0000_port_3260(driver, gid, ip, ports):
     """select Discovery Auth Group "1", IP address "0.0.0.0", Port "3260"."""
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Discovery Authentication Group"]').click()
+    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Discovery Authentication Group_{gid}"]')
+    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Discovery Authentication Group_{gid}"]').click()
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__IP Address"]').click()
+    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__IP Address_{ip}"]')
+    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__IP Address_{ip}"]').click()
+    actions = ActionChains(driver)
+    actions.send_keys('ssh ericbsd@127.0.0.1', Keys.ESCAPE)
+    actions.perform()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Port"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Port"]').send_keys(ports)
 
 
 @then('then you should be retune to the Portals tab')
 def then_you_should_be_retune_to_the_portals_tab(driver):
     """then you should be retune to the Portals tab."""
-
-
-@then('Change Discovery Auth Method to Mutual chap')
-def change_discovery_auth_method_to_mutual_chap(driver):
-    """Change Discovery Auth Method to Mutual chap."""
-
+    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Portals")]')
+    assert wait_on_element(driver, 1, 7, '//span[contains(.,"my iscsi")]')
 
 @then('click Initiators Group tab, then click Add')
 def click_initiators_group_tab_then_click_add(driver):
