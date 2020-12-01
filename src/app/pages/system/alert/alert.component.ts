@@ -56,6 +56,8 @@ export class AlertConfigComponent implements OnInit {
   public isReady = false;
   protected defaults = [];
 
+  public selectedIndex = 0;
+
   constructor(
     protected core:CoreService, 
     private ws: WebSocketService,
@@ -129,14 +131,7 @@ export class AlertConfigComponent implements OnInit {
       
         sets.push(fieldSet);
 
-        if(modulo == 1 && index < categories.length - 2){
-          sets.push({ name: 'divider', divider: true },);
-        }
-
       });
-
-      /* Final divider before action buttons */
-      sets.push({ name: 'divider', divider: true });
 
       this.fieldSets = new FieldSets(sets);
 
@@ -169,11 +164,16 @@ export class AlertConfigComponent implements OnInit {
   }
 
   addButtons(categories) {
+    let options = [];
+    categories.forEach((category, index) => {
+      options.push({ label: category.title, value: index });
+    });
     this.formEvents = new Subject();
     this.formEvents.subscribe((evt: CoreEvent) => {
-      switch(evt.name){
-        case 'FormSubmit':
-        break;
+      if (evt.data.event_control == 'save') {
+        this.onSubmit();
+      } else {
+        this.selectedIndex = evt.data.category.value;
       }
     });
 
@@ -184,14 +184,16 @@ export class AlertConfigComponent implements OnInit {
         target: this.formEvents,
         controls: [
           {
+            name: 'save',
+            label: 'Save',
+            type: 'button',
+            color: 'primary',
+          },
+          {
             name: 'category',
             label: 'Category',
             type: 'menu',
-            options: [
-              { label: 'Test1', value: 'save_config' }, 
-              { label: 'Test2', value: 'upload_config' }, 
-              { label: 'Test3', value: 'reset_config' } 
-            ]
+            options: options
           }
         ]
       }
