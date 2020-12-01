@@ -9,7 +9,9 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
 import * as _ from 'lodash';
 import helptext from '../../../helptext/system/alert-settings';
-
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { Subject } from 'rxjs';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 interface AlertCategory {
   id: string;
   title: string;
@@ -32,6 +34,7 @@ interface AlertCategory {
   providers: [EntityFormService],
 })
 export class AlertConfigComponent implements OnInit {
+  public formEvents: Subject<CoreEvent>;
   protected route_success = ['system', 'alertsettings'];
   protected queryCall = 'alertclasses.config';
   protected editCall = 'alertclasses.update';
@@ -54,6 +57,7 @@ export class AlertConfigComponent implements OnInit {
   protected defaults = [];
 
   constructor(
+    protected core:CoreService, 
     private ws: WebSocketService,
     private entityFormService: EntityFormService,
     protected loader: AppLoaderService,
@@ -79,6 +83,7 @@ export class AlertConfigComponent implements OnInit {
 
     const cat = this.ws.call("alert.list_categories").toPromise();
     cat.then(categories => {
+      this.addButtons(categories);
       categories.forEach((category, index) => {
         const modulo = index % 2;
 
@@ -159,6 +164,40 @@ export class AlertConfigComponent implements OnInit {
       this.loader.close();
       new EntityUtils().handleWSError(this, error, this.dialog);
     });
+
+
+  }
+
+  addButtons(categories) {
+    this.formEvents = new Subject();
+    this.formEvents.subscribe((evt: CoreEvent) => {
+      switch(evt.name){
+        case 'FormSubmit':
+        break;
+      }
+    });
+
+    // Setup Global Actions
+    const actionsConfig = {
+      actionType: EntityToolbarComponent,
+      actionConfig: {
+        target: this.formEvents,
+        controls: [
+          {
+            name: 'category',
+            label: 'Category',
+            type: 'menu',
+            options: [
+              { label: 'Test1', value: 'save_config' }, 
+              { label: 'Test2', value: 'upload_config' }, 
+              { label: 'Test3', value: 'reset_config' } 
+            ]
+          }
+        ]
+      }
+    };
+
+    this.core.emit({name:"GlobalActions", data: actionsConfig, sender: this});
   }
 
   onSubmit() {
