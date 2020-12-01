@@ -57,9 +57,6 @@ export class ChartReleasesComponent implements OnInit {
 
   ngOnInit(): void {
     this.refreshChartReleases();
-    // this.ws.call('chart.release.query', [[['name', '=', 'plex2']]]).subscribe(res => {
-    //   console.log(res)
-    // }) 
     this.refreshForms();
     this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
       this.refreshChartReleases();
@@ -75,20 +72,19 @@ export class ChartReleasesComponent implements OnInit {
 
   refreshChartReleases() {
     this.ws.call('chart.release.query').subscribe(charts => {
-      console.log(charts)
       this.chartItems = [];
+      let repos = [];
       charts.forEach(chart => {
         let chartObj = {
           name: chart.name,
           catalog: chart.catalog,
-          train: chart.catalog_train,
           status: chart.status,
-          first_deployed: chart.info.first_deployed, 
           version: chart.chart_metadata.version,
           description: chart.chart_metadata.description,
           update: chart.update_available,
           repository: chart.config.image.repository
-        }
+        };
+        repos.push(chartObj.repository);
         let ports = [];
         chart.used_ports.forEach(item => {
           ports.push(`${item.port}\\${item.protocol}`)
@@ -97,7 +93,22 @@ export class ChartReleasesComponent implements OnInit {
         this.chartItems.push(chartObj);
         
       })
-      console.log(this.chartItems)
+      const counts = Object.create(null);
+        repos.forEach(repo => {
+          counts[repo] = counts[repo] ? counts[repo] + 1 : 1;
+      });
+      for (let i in counts) {
+        if (counts[i] > 1) {
+          let counter = 1;
+          for (let j of this.chartItems) {
+            
+            if (j.repository && j.repository === i) {
+              j.count = `${counter}/${counts[i]}`;
+              counter++;
+            }
+          }
+        }
+      }
     })
   }
 
@@ -116,7 +127,6 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   start(name: string) {
-    console.log(name);
     this.ws.call('chart.release.scale', [name, { replica_count: 1}]).subscribe(res => {
       this.refreshStatus(name);
     })
@@ -129,11 +139,7 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   portal(name: string) {
-    // this.ws.call('chart.release.query', [[], {"extra": {"retrieve_resources": true}}]).subscribe(res => {
-    //   console.log(res)
-    // })
     this.ws.call('chart.release.pod_console_choices', [name]).subscribe(res => {
-      console.log(res)
     })
   }
 
@@ -184,7 +190,6 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   edit(name: string) {
-    console.log('edit ' + name)
     this.modalService.open('slide-in-form', this.chartReleaseForm, name);
   }
 
