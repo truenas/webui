@@ -829,6 +829,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       custActions: [],
       parent: this,
       customSubmit: (entityDialog) => {
+        this.loader.open();
         const pwChange = entityDialog.formValue;
         delete pwChange.password_conf;
         entityDialog.dialogRef.close();
@@ -836,14 +837,18 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           if (check) {
             delete pwChange.curr_password;
             this.ws.call('user.update', [1, pwChange]).subscribe((res) => {
+              this.loader.close();
               this.dialogService.Info(T('Success'), helptext.changePasswordDialog.pw_updated, '300px', 'info', false);
             }, (res) => {
+              this.loader.close();
               this.dialogService.Info(T('Error'), res, '300px', 'warning', false);
             });
           } else {
+            this.loader.close();
             this.dialogService.Info(helptext.changePasswordDialog.pw_invalid_title, helptext.changePasswordDialog.pw_invalid_title, '300px', 'warning', false);
           }
         }, (res) => {
+          this.loader.close();
           this.dialogService.Info(T('Error'), res, '300px', 'warning', false);
         });
       }
