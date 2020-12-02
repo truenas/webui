@@ -1,5 +1,37 @@
 @import "../../../../../assets/styles/tn-styles.scss";
 
+div.table-container,
+div.mat-card{
+  width: 100%;
+  max-width: 100%;
+}
+
+div.table-container{
+  overflow: auto;
+  padding: 0px !important;
+}
+
+table{
+  width: 100%;
+  min-width:800px;
+}
+
+/*.threedot-column {
+  max-width: 0px !important;
+  padding-right: 10px !important;
+}*/
+
+.threedot-column,
+.expansion-chevrons-column,
+.multiselect-column {
+  max-width: 0px !important;
+  padding-right: 10px !important;
+}
+
+td.mat-cell.data-column{
+  max-width: 150px !important;
+}
+
 tr.details-row {
   background: var(--bg2);
 }

@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import { EntityTableService } from 'app/pages/common/entity/entity-table/entity-table.service';
 import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -1821,9 +1822,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
     public sorter: StorageService, protected job: JobService, protected storage: StorageService, protected pref: PreferencesService, 
-      protected messageService: MessageService, protected http:HttpClient, modalService: ModalService) {
+      protected messageService: MessageService, protected http:HttpClient, modalService: ModalService, public tableService: EntityTableService) {
 
-    super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, sorter, job, pref, mdDialog, modalService);
+    super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, sorter, job, pref, mdDialog, modalService, tableService);
 
     this.actionsConfig = { actionType: VolumesListControlsComponent, actionConfig: this};
     this.core.emit({name: "GlobalActions", data: this.actionsConfig, sender: this});

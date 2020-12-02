@@ -59,77 +59,91 @@
 
   <div *ngIf="2+2==5" #entityTable></div>
 
-  <table *ngIf="conf && displayedColumns && displayedColumns.length > 0 && currentRows" multiTemplateDataRows mat-table [dataSource]="currentRows" #newEntityTable>
-    <ng-container *ngFor="let column of columnsToString(currentColumns, 'prop'); let i = index;">
-
-      <!-- Column Template -->
-      <ng-container *ngIf="column !== 'action' && column !== 'multiselect' && column !== 'expansion-chevrons'" matColumnDef="{{column}}">
-        <th mat-header-cell *matHeaderCellDef>{{currentColumns[i].name}}</th>
-        <td mat-cell *matCellDef="let element">{{element[column]}}</td>
-      </ng-container>
-
-      <!-- Expansion Chevrons -->
-      <ng-container *ngIf="column == 'expansion-chevrons'" matColumnDef="{{column}}">
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let element" style="text-align:right;">
-          <ng-container *ngIf="hasDetails() === true">
-            <ng-container *ngIf="element === expandedElement">
-              <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-chevron-up"></mat-icon>
+  <div class="table-container">
+    <table *ngIf="conf && displayedColumns && displayedColumns.length > 0 && dataSource" 
+      multiTemplateDataRows mat-table 
+      [dataSource]="dataSource" matSort
+       style="min-width: {{displayedColumns.length * 25}}px;"
+      #newEntityTable>
+      <ng-container *ngFor="let column of columnsToString(currentColumns, 'prop'); let i = index;">
+  
+        <!-- Column Template -->
+        <ng-container *ngIf="column !== 'expandedDetail' && column !== 'action' && column !== 'multiselect' && column !== 'expansion-chevrons'" 
+          matColumnDef="{{column}}"
+          class="data-column">
+          <th mat-header-cell *matHeaderCellDef>{{currentColumns[i].name}}</th>
+          <td mat-cell *matCellDef="let element">{{element[column]}}</td>
+        </ng-container>
+  
+        <!-- Expansion Chevrons -->
+        <ng-container *ngIf="column == 'expansion-chevrons'" matColumnDef="{{column}}" stickyEnd>
+          <th class="expansion-chevrons-column" mat-header-cell *matHeaderCellDef></th>
+          <td class="expansion-chevrons-column" mat-cell *matCellDef="let element" style="text-align:right;">
+            <ng-container *ngIf="hasDetails() === true">
+              <ng-container *ngIf="element === expandedElement">
+                <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-chevron-up"></mat-icon>
+              </ng-container>
+              <ng-container *ngIf="element !== expandedElement">
+                <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-chevron-down"></mat-icon>
+              </ng-container>
             </ng-container>
-            <ng-container *ngIf="element !== expandedElement">
-              <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-chevron-down"></mat-icon>
-            </ng-container>
-          </ng-container>
+          </td>
+        </ng-container>
+  
+        <!-- Threedot Actions -->
+        <ng-container *ngIf="column == 'action'" matColumnDef="{{column}}" stickyEnd>
+          <th class="threedot-column" mat-header-cell *matHeaderCellDef></th>
+          <td class="threedot-column" mat-cell *matCellDef="let element">
+            <app-entity-table-actions [entity]="this" [row]="element"></app-entity-table-actions>
+          </td>
+        </ng-container>
+  
+        <!-- Multiselect Checkboxes -->
+        <ng-container *ngIf="column == 'multiselect'" matColumnDef="{{column}}" sticky>
+          <th class="multiselect-column" mat-header-cell *matHeaderCellDef>
+            <mat-checkbox [indeterminate]="selection.hasValue() && !isAllSelected"
+              (change)="$event ? masterToggle() : null"
+              [checked]="selection.hasValue() && isAllSelected"
+              ix-auto ix-auto-type="checkbox" ix-auto-identifier="title">
+            </mat-checkbox>
+          </th>
+          <td class="multiselect-column" mat-cell *matCellDef="let element">
+            <mat-checkbox 
+              (click)="$event.stopPropagation()"
+              (change)="$event ? selection.toggle(element) : null"
+              [checked]="selection.isSelected(element)"
+              ix-auto ix-auto-type="checkbox" 
+              [ix-auto-identifier]="element[conf.rowIdentifier || 'name']">
+            </mat-checkbox>
+          </td>
+        </ng-container>
+  
+      </ng-container>
+  
+      <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+      <ng-container *ngIf="element == expandedElement" matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="currentColumns.length">
+          <div [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+            <app-entity-table-row-details [config]="element" [parent]="this"></app-entity-table-row-details>
+          </div>
         </td>
       </ng-container>
-
-      <!-- Threedot Actions -->
-      <ng-container *ngIf="column == 'action'" matColumnDef="{{column}}">
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let element">
-          <app-entity-table-actions [entity]="this" [row]="element"></app-entity-table-actions>
-        </td>
+  
+     
+      <tr mat-header-row *matHeaderRowDef="columnsToString(currentColumns, 'prop')"></tr>
+      <tr mat-row class="element-row" 
+        *matRowDef="let element; columns: columnsToString(currentColumns, 'prop');"
+        (click)="expandedElement = expandedElement === element ? null : element;">
+      </tr>
+  
+      <ng-container *ngIf="hasDetails() === true">
+        <tr mat-row class="details-row" *matRowDef="let row; columns: ['expandedDetail'];"></tr>
       </ng-container>
-
-      <!-- Multiselect Checkboxes -->
-      <ng-container *ngIf="column == 'multiselect'" matColumnDef="{{column}}">
-        <th mat-header-cell *matHeaderCellDef>
-          <mat-checkbox [indeterminate]="selection.hasValue() && !isAllSelected"
-            (change)="$event ? masterToggle() : null"
-            [checked]="selection.hasValue() && isAllSelected"
-            ix-auto ix-auto-type="checkbox" ix-auto-identifier="title">
-          </mat-checkbox>
-        </th>
-        <td mat-cell *matCellDef="let element">
-          <mat-checkbox 
-            (click)="$event.stopPropagation()"
-            (change)="$event ? selection.toggle(element) : null"
-            [checked]="selection.isSelected(element)"
-            ix-auto ix-auto-type="checkbox" 
-            [ix-auto-identifier]="element[conf.rowIdentifier || 'name']">
-          </mat-checkbox>
-        </td>
-      </ng-container>
-
-    </ng-container>
-
-    <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
-    <ng-container *ngIf="element == expandedElement" matColumnDef="expandedDetail">
-      <td mat-cell *matCellDef="let element" [attr.colspan]="currentColumns.length">
-        <div [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-          <app-entity-table-row-details [config]="element" [parent]="this"></app-entity-table-row-details>
-        </div>
-      </td>
-    </ng-container>
-
-   
-    <tr mat-header-row *matHeaderRowDef="columnsToString(currentColumns, 'prop')"></tr>
-    <tr mat-row class="element-row" 
-      *matRowDef="let element; columns: columnsToString(currentColumns, 'prop');"
-      (click)="expandedElement = expandedElement === element ? null : element;">
-    </tr>
-    <tr mat-row class="details-row" *matRowDef="let row; columns: ['expandedDetail'];"></tr>
-  </table>
+    </table>
+  </div>
  
+  <mat-card-footer style="padding: 0 !important">
+    <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+  </mat-card-footer>
 
 </div>

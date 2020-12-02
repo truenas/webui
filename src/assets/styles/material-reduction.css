@@ -585,14 +585,16 @@ button.mat-menu-trigger.menu-toggle.mat-button{
 }
 
 /* Material Tables */
+
 table.mat-table {
   width: 100%;
   background-color: var(--bg2) !important;
 }
 
+th.mat-table-sticky,
 thead.ui-treetable-thead th,
 .mat-table thead th{
-  background-color: var(--contrast-darker);
+  background-color: var(--contrast-darker) !important;
   background-color: rgba(0,0,0,0.1);
   opacity: 0.75;
   vertical-align: middle;
@@ -629,6 +631,19 @@ td.mat-footer-cell{
   color: var(--fg2) !important;
   vertical-align: middle;
   position: relative;
+}
+
+.mat-table-sticky{
+  position: sticky !important;
+}
+
+td.mat-table-sticky:hover,
+td.mat-table-sticky{
+  background: unset !important;
+}
+
+th.mat-table-sticky:hover{
+  background: var(--contrast-darker) !important;
 }
 
 td.mat-cell.tree-cell{
@@ -717,7 +732,9 @@ mat-card.mat-card .mat-list-base{
   background-color: rgba(0,0,0,0.1);
 }
 
-
+.mat-paginator-page-size{
+  margin-top: 10px !important;
+}
 
 .entity-table-controls > div{
   margin-left: 8px;
