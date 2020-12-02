@@ -150,3 +150,17 @@ span.form-message.warning {
 h4 {
 
 }
+
+:host-context(app-system-alert) {
+  .form-line:last-child {
+    margin-right: 0;
+  }
+
+  .fieldset-label {
+    padding: 8px;
+  }
+
+  .mat-card{
+    padding: 16px !important;
+  }
+}

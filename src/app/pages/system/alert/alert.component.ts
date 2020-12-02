@@ -125,7 +125,7 @@ export class AlertConfigComponent implements OnInit {
         let fieldSet = {
           name: category.title,
           label: true,
-          width: "40%",
+          width: "100%",
           config: config
         }
       
