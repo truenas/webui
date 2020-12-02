@@ -1,5 +1,67 @@
 @import "../../../../../assets/styles/tn-styles.scss";
 
+div.mat-card{
+  overflow: hidden;
+}
+
+div.table-container,
+div.mat-card{
+  width: 100%;
+  max-width: 100%;
+}
+
+div.table-container{
+  overflow: auto;
+  padding: 0px !important;
+}
+
+table{
+  width: 100%;
+  min-width:800px;
+}
+
+/*.threedot-column {
+  max-width: 0px !important;
+  padding-right: 10px !important;
+}*/
+
+//.multiselect-column,
+.threedot-column,
+.expansion-chevrons-column {
+  //max-width: 0px !important;
+  padding-right: 24px !important;
+}
+
+.multiselect-column {
+  //border-right: solid 1px var(--lines);
+  //box-shadow: 1px 0 1px rgba(0,0,0,0.5);
+}
+
+td.mat-cell.data-column{
+  max-width: 150px !important;
+}
+
+.data-column {
+  padding: 0 12px !important;
+}
+
+th.mat-header-cell.data-column,
+td.mat-cell.data-column{
+  //padding-left: 12px;
+}
+
+tr.details-row {
+  background: var(--bg2);
+}
+
+tr.details-row:hover {
+  background: unset !important;
+}
+
+.details-row td {
+  overflow: hidden;
+}
+
 .padding_all {
     padding: 20px;
 }

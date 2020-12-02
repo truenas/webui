@@ -53,6 +53,7 @@ import { DynamicComponentDirective } from './entity-table/dynamic-component.dire
 import { EntityTableActionsComponent } from './entity-table/entity-table-actions.component';
 import { EntityCardActionsComponent } from './entity-card/entity-card-actions.component';
 import { EntityTableAddActionsComponent } from './entity-table/entity-table-add-actions.component';
+import { EntityTableService } from './entity-table/entity-table.service';
 import { EntityTableComponent } from './entity-table/entity-table.component';
 import { EntityTableRowDetailsComponent } from './entity-table/entity-table-row-details/entity-table-row-details.component';
 import { EntityTreeTableComponent } from './entity-tree-table/entity-tree-table.component';
@@ -219,6 +220,7 @@ import { TableComponent } from './table/table.component';
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
+    EntityTableService,
     AppLoaderService,
     DocsService,
     JobService
