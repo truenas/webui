@@ -13,6 +13,7 @@ import { ProactiveComponent } from './proactive/proactive.component';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 
 @Component({
   selector : 'app-support',
@@ -197,11 +198,15 @@ export class SupportComponent implements OnInit {
   doProdUpdate(entityDialog: any) {
     const self = entityDialog;
     self.loader.open();
+    const dialogRef = entityDialog.mdDialog.open(EntityJobComponent, 
+      {data: {"title":helptext.is_production_job.title,"CloseOnClickOutside":false}});
+    dialogRef.componentInstance.setDescription(helptext.is_production_job.message);
+
     self.ws.call(self.conf.method_ws, [true, self.formValue.send_debug]).subscribe(() => {
       self.loader.close();
       self.dialogRef.close();
-      self.dialog.Info(helptext.is_production_dialog.title, 
-        helptext.is_production_dialog.message, '300px', 'info', true);
+      dialogRef.componentInstance.setTitle(helptext.is_production_dialog.title);
+      dialogRef.componentInstance.setDescription(helptext.is_production_dialog.message);      
     },
     (err) => {
       self.loader.close();
