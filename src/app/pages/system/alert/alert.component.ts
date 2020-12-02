@@ -9,7 +9,9 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
 import * as _ from 'lodash';
 import helptext from '../../../helptext/system/alert-settings';
-
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { Subject } from 'rxjs';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 interface AlertCategory {
   id: string;
   title: string;
@@ -32,6 +34,7 @@ interface AlertCategory {
   providers: [EntityFormService],
 })
 export class AlertConfigComponent implements OnInit {
+  public formEvents: Subject<CoreEvent>;
   protected route_success = ['system', 'alertsettings'];
   protected queryCall = 'alertclasses.config';
   protected editCall = 'alertclasses.update';
@@ -53,7 +56,10 @@ export class AlertConfigComponent implements OnInit {
   public isReady = false;
   protected defaults = [];
 
+  public selectedIndex = 0;
+
   constructor(
+    protected core:CoreService, 
     private ws: WebSocketService,
     private entityFormService: EntityFormService,
     protected loader: AppLoaderService,
@@ -79,6 +85,7 @@ export class AlertConfigComponent implements OnInit {
 
     const cat = this.ws.call("alert.list_categories").toPromise();
     cat.then(categories => {
+      this.addButtons(categories);
       categories.forEach((category, index) => {
         const modulo = index % 2;
 
@@ -118,20 +125,13 @@ export class AlertConfigComponent implements OnInit {
         let fieldSet = {
           name: category.title,
           label: true,
-          width: "40%",
+          width: "100%",
           config: config
         }
       
         sets.push(fieldSet);
 
-        if(modulo == 1 && index < categories.length - 2){
-          sets.push({ name: 'divider', divider: true },);
-        }
-
       });
-
-      /* Final divider before action buttons */
-      sets.push({ name: 'divider', divider: true });
 
       this.fieldSets = new FieldSets(sets);
 
@@ -159,6 +159,47 @@ export class AlertConfigComponent implements OnInit {
       this.loader.close();
       new EntityUtils().handleWSError(this, error, this.dialog);
     });
+
+
+  }
+
+  addButtons(categories) {
+    let options = [];
+    categories.forEach((category, index) => {
+      options.push({ label: category.title, value: index });
+    });
+    this.formEvents = new Subject();
+    this.formEvents.subscribe((evt: CoreEvent) => {
+      if (evt.data.event_control == 'save') {
+        this.onSubmit();
+      } else {
+        this.selectedIndex = evt.data.category.value;
+      }
+    });
+
+    // Setup Global Actions
+    const actionsConfig = {
+      actionType: EntityToolbarComponent,
+      actionConfig: {
+        target: this.formEvents,
+        controls: [
+          {
+            name: 'save',
+            label: 'Save',
+            type: 'button',
+            color: 'primary',
+          },
+          {
+            name: 'category',
+            label: 'Category',
+            type: 'menu',
+            options: options
+          }
+        ]
+      }
+    };
+
+    this.core.emit({name:"GlobalActions", data: actionsConfig, sender: this});
   }
 
   onSubmit() {

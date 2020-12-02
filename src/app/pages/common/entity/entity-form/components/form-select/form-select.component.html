@@ -1,6 +1,9 @@
 <div id="{{config.name}}" class="form-element dynamic-field form-select {{config.inlineLabel ? 'inline-label' : 'not'}}" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" [hidden]="config.isHidden">
 
   <div class="label-container">
+    <ng-container *ngIf="config.inlineLabel">
+      <div class="label half-width"></div>
+    </ng-container>
     <label class="label input-select">
       {{config.placeholder | translate}}
       <span *ngIf="config.required">*</span>
