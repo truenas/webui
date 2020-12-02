@@ -231,7 +231,7 @@ export class DiskFormComponent {
   }
 
   inIt(pk) {
-    this.title = 'Edit Pool Disk';
+    this.title = helptext.disk_form_title;
 
     delete this.route_success;
 
