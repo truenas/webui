@@ -1,6 +1,7 @@
 import { T } from '../../../translate-marker';
 
 export default {
+disk_form_title: T('Edit Pool Disk'),
 fieldset_disk: T('General'),
 fieldset_option: T('More Options'),
 disk_form_name_placeholder: T('Name'),

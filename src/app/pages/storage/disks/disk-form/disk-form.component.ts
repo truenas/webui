@@ -180,17 +180,16 @@ export class DiskFormComponent {
   protected disk_hddstandby: any;
   protected disk_advpowermgmt: any;
   protected disk_acousticlevel: any;
+  protected title: String;
+  
+  public rowid: any;
+
   constructor(
     private _router: Router,
     protected rest: RestService,
     protected ws: WebSocketService,
     protected aroute: ActivatedRoute
   ) {
-    this.aroute.params.subscribe((params)=> {
-      if (params['poolId']) {
-        this.route_success = ["storage", "status", params['poolId']];
-      }
-    })
   }
 
   resourceTransformIncomingRestData(data) {
@@ -200,11 +199,6 @@ export class DiskFormComponent {
 
 
   preInit() {
-    this.aroute.params.subscribe(params => {
-      if (params['pk']) {
-        this.customFilter[0][0].push(params['pk']);
-      }
-    });
   }
 
   afterInit(entityEdit: any) {
@@ -234,5 +228,16 @@ export class DiskFormComponent {
     value.critical = value.critical === '' ? null : value.critical;
     value.difference = value.difference === '' ? null : value.difference;
     value.informational = value.informational === '' ? null : value.informational;
+  }
+
+  inIt(pk) {
+    this.title = helptext.disk_form_title;
+
+    delete this.route_success;
+
+    if (pk) {
+      this.rowid = pk;
+      this.customFilter[0][0].push(pk);
+    }
   }
 }
