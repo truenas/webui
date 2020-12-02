@@ -40,37 +40,41 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
 
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
-
 @then('You should see the dashboard')
 def you_should_see_the_dashboard(driver):
     """You should see the dashboard."""
+    assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"System Information")]')
 
 
-@then('Click on the Accounts, Click on Users')
-def click_on_the_accounts_click_on_users(driver):
-    """Click on the Accounts, Click on Users."""
-    element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
-    class_attribute = element.get_attribute('class')
-    if 'open' not in class_attribute:
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Users"]')
-    element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
-    class_attribute = element.get_attribute('class')
-    assert 'open' in class_attribute, class_attribute
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Users"]').click()
+@then('Click on the Credentials item in the left side menu')
+def click_on_the_credentials_item_in_the_left_side_menu(driver):
+    """Click on the Credentials item in the left side menu."""
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
+
+
+@then('The Credentials menu should expand to the right')
+def the_credentials_menu_should_expand_to_the_right(driver):
+    """The Credentials menu should expand to the right."""
+    assert wait_on_element(driver, 1, 7, '//mat-list-item[@ix-auto="option__Local Users"]')
+
+
+@then('Click on Local Users')
+def click_on_localusers(driver):
+    """Click on Local Users."""
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Local Users"]').click()
 
 
 @then('The Users page should open')
 def the_users_page_should_open(driver):
     """The Users page should open."""
-    assert wait_on_element(driver, 0.5, 7, '//div[contains(.,"Users")]')
-    driver.find_element_by_xpath('//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Users")]')
 
 
-@then('On the right side of the table, click the Greater-Than-Sign for one of the users')
-def on_the_right_side_of_the_table_click_the_greaterthansign_for_one_of_the_users(driver):
-    """On the right side of the table, click the Greater-Than-Sign for one of the users."""
+@then('On the right side of the table, click the expand arrow for one of the users')
+def on_the_right_side_of_the_table_click_the_expand_arrow_for_one_of_the_users(driver):
+    """On the right side of the table, click the expand arrow for one of the users."""
+    assert wait_on_element(driver, 0.5, 7, '//a[@ix-auto="expander__ericbsd"]')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
 
 
@@ -89,7 +93,7 @@ def click_the_edit_button_that_appears(driver):
 @then('The User Edit Page should open')
 def the_user_edit_page_should_open(driver):
     """The User Edit Page should open."""
-    assert wait_on_element(driver, 0.5, 7, '//h4[contains(.,"Identification")]')
+    assert wait_on_element(driver, 1, 7, '//h3[contains(.,"Edit User")]')
 
 
 @then(parsers.parse('Change the users email to an invalid email i.e. "{invalid_email}" and click Save'))
