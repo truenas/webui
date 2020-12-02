@@ -114,11 +114,11 @@ def click_summit(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
 
 
-@then('then you should be retune to the Authorized Access tab')
+@then('you should be retune to the Authorized Access tab')
 def then_you_should_be_retune_to_the_authorized_access_tab(driver):
-    """then you should be retune to the Authorized Access tab."""
+    """you should be retune to the Authorized Access tab."""
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Authorized Access")]')
-    assert wait_on_element(driver, 1, 7, '//span[contains(.,"usertest")]')
+    assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"usertest")]')
 
 
 @then('click Portals tab, then click Add')
@@ -156,35 +156,51 @@ def select_discovery_auth_group_1_ip_address_0000_port_3260(driver, gid, ip, por
     driver.find_element_by_xpath('//input[@ix-auto="input__Port"]').send_keys(ports)
 
 
-@then('then you should be retune to the Portals tab')
+@then('you should be retune to the Portals tab')
 def then_you_should_be_retune_to_the_portals_tab(driver):
-    """then you should be retune to the Portals tab."""
+    """you should be retune to the Portals tab."""
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Portals")]')
-    assert wait_on_element(driver, 1, 7, '//span[contains(.,"my iscsi")]')
+    assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"my iscsi")]')
+
 
 @then('click Initiators Group tab, then click Add')
 def click_initiators_group_tab_then_click_add(driver):
     """click Initiators Group tab, then click Add."""
+    driver.find_element_by_xpath('//a[@ix-auto="tab__Initiators Groups"]').click()
+    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Initiators Groups")]')
+    driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
+    assert wait_on_element(driver, 1, 7, '//span[contains(.,"Allow All Initiators")]')
 
 
-@then(parsers.parse('input Group ID "{gid}" Initiators click + "{initiator}"'))
-def input_group_id_1_initiators_click_initiator(driver):
-    """input Group ID "1" Initiators click + "initiator"."""
+@then(parsers.parse('input "{description}" in Description input "{initiator}" in Allowed Initiators then click +'))
+def input_Group_ID_1_in_description_input_initiator_in_allowed_initiators_then_click_plus(driver, description, initiator):
+    """input "description" in Description input "initiator" in Allowed Initiators then click +."""
+    driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys(description)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Allowed Initiators (IQN)"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Allowed Initiators (IQN)"]').send_keys(initiator)
+    driver.find_element_by_xpath('(//button[contains(.,"add")])[1]').click()
 
 
-@then(parsers.parse('Authorized networks click + "{ip}"'))
-def authorized_networks_click__10110024(driver):
-    """Authorized networks click + "{ip}"."""
+@then(parsers.parse('input "{ip}" in Authorized networks then click +'))
+def input_ip_in_authorized_networks_then_click_plus(driver, ip):
+    """input "ip" in Authorized networks then click +."""
+    driver.find_element_by_xpath('//input[@ix-auto="input__Authorized Networks"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Authorized Networks"]').send_keys(ip)
+    driver.find_element_by_xpath('(//button[contains(.,"add")])[2]').click()
 
 
 @then('click Save')
 def click_save(driver):
     """click Save."""
+    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
 
 
-@then('then you should be retune to the Initiators Group tab')
+@then('you should be retune to the Initiators Group tab')
 def then_you_should_be_retune_to_the_initiators_group_tab(driver):
-    """then you should be retune to the Initiators Group tab."""
+    """you should be retune to the Initiators Group tab."""
+    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Initiators Groups")]')
+    assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"Group ID 1")]')
 
 
 @then('click Targets tab, then click Add')
@@ -202,9 +218,9 @@ def initiator_group_id_select_1_auth_method_select_mutual_chap_authentication_gr
     """Initiator Group ID select "1", Auth Method Select "Mutual Chap", Authentication Group Number Select "1"."""
 
 
-@then('then you should be retune to the Targets tab')
+@then('you should be retune to the Targets tab')
 def then_you_should_be_retune_to_the_targets_tab(driver):
-    """then you should be retune to the Targets tab."""
+    """you should be retune to the Targets tab."""
 
 
 @then('click Extents tab, then click Add')
@@ -217,9 +233,9 @@ def input_extent_name_ds1__extent_type_device_device__tankds1(driver):
     """input Extent name ds1,  Extent type device Device * tank/ds1."""
 
 
-@then('then you should be retune to the Extents tab')
+@then('you should be retune to the Extents tab')
 def then_you_should_be_retune_to_the_extents_tab(driver):
-    """then you should be retune to the Extents tab."""
+    """you should be retune to the Extents tab."""
 
 
 @then('click Associated Targets tab, then click Add')
@@ -232,6 +248,6 @@ def input_target__ds1_lun_id_1_extent_ds1(driver):
     """input Target * "ds1", LUN ID "1", Extent "ds1"."""
 
 
-@then('then you should be retune to the Associated Targets tab')
+@then('you should be retune to the Associated Targets tab')
 def then_you_should_be_retune_to_the_associated_targets_tab(driver):
-    """then you should be retune to the Associated Targets tab."""
+    """you should be retune to the Associated Targets tab."""
