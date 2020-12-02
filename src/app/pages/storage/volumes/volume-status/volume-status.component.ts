@@ -280,7 +280,7 @@ export class VolumeStatusComponent implements OnInit {
         ]).subscribe((res) => {
           // this.editDiskRoute.push(this.pk, "edit", res[0].identifier);
           // this.router.navigate(new Array('').concat(this.editDiskRoute));
-          this.onClickEdit(this.pk, res);
+          this.onClickEdit(res[0].identifier);
         })
       },
       isHidden: false,
@@ -613,9 +613,9 @@ export class VolumeStatusComponent implements OnInit {
     return;
   }
 
-  onClickEdit(pk, res) {
-    console.log('---pk---', pk);
-    console.log('----res-----', res);
-    this.modalService.open('slide-in-form', new DiskFormComponent(this.router, this.rest, this.ws, this.aroute));
+  onClickEdit(pk) {
+    let diskForm = new DiskFormComponent(this.router, this.rest, this.ws, this.aroute);
+    diskForm.inIt(pk);
+    this.modalService.open('slide-in-form', diskForm);
   }
 }
