@@ -183,16 +183,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.init();
 
-    if(this.product_type == 'ENTERPRISE'){
-      this.ws.call('failover.licensed').subscribe((res)=> {
-        if (res) {
-          this.isHA = true;
-        }
-        this.sysinfoReady = true;
-      });
-    } else {
-      this.sysinfoReady = true;
-    }
+    this.ws.call('failover.licensed').subscribe((res)=> {
+      if (res) {
+        this.isHA = true;
+      }
+    });
+    this.sysinfoReady = true;
 
   }
 
