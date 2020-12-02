@@ -25,6 +25,7 @@
       [cdkConnectedOverlayOrigin]="trigger"
       [cdkConnectedOverlayOpen]="isOpen">
       <mat-card  class="mat-card advanced-date-picker" role="dialog">
+        <button class="close-btn" mat-icon-button (click)="togglePopup()"><mat-icon>cancel</mat-icon></button>
         <div class="mat-calendar-content">
           <h4 class="preview-label">{{"Schedule Preview" | translate}}
             <div class="controls">

@@ -1,3 +1,9 @@
+button.close-btn{
+  position: absolute;
+  top: 4px;
+  right: 2px;
+}
+
 .has-tooltip mat-form-field.full-width {
   width: 100%;
 }
