@@ -14,15 +14,16 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { MatDialog } from '@angular/material/dialog';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/volume-import-wizard';
+import { ModalService } from 'app/services/modal.service';
 
 @Component({
   selector: 'app-volumeimport-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
-  providers : [ ]
+  providers : [ ] 
 })
 export class VolumeImportWizardComponent {
 
-  public route_success: string[] = ['storage'];
+  // public route_success: string[] = ['storage'];
   public route_create: string[] = ['storage', 'manager'];
   public summary = {};
   isLinear = true;
@@ -35,7 +36,8 @@ export class VolumeImportWizardComponent {
   public entityWizard: any;
   protected productType: any;
   protected importIndex = 2;
-
+  public title: string;
+  
   protected wizardConfig: Wizard[] = [{
       label: helptext.is_new_main_label,
       fieldConfig: [
@@ -158,7 +160,7 @@ export class VolumeImportWizardComponent {
   private disks_decrypted = false;
   protected stepper;
 
-  protected isNew = false;
+  protected isNew = true;
   protected is_new_subscription;
   protected encrypted;
   protected devices;
@@ -171,19 +173,17 @@ export class VolumeImportWizardComponent {
   protected pool;
   protected guid_subscription;
   protected message_subscription;
+  protected hideCancel = true;
 
   constructor(protected rest: RestService, protected ws: WebSocketService,
     private router: Router, protected loader: AppLoaderService,
     protected dialog: MatDialog, protected dialogService: DialogService,
-    protected http: HttpClient, public messageService: MessageService) {
+    protected http: HttpClient, public messageService: MessageService, public modalService: ModalService) {
 
   }
 
   customNext(stepper) {
-    if (this.isNew) {
-      this.router.navigate(new Array('/').concat(
-        this.route_create));
-    } else if (stepper._selectedIndex === (this.importIndex - 1)) {
+    if (stepper._selectedIndex === (this.importIndex - 1)) {
       if (this.encrypted && this.encrypted.value) {
         this.decryptDisks(stepper);
       } 
@@ -256,6 +256,12 @@ export class VolumeImportWizardComponent {
       this.importIndex = 0;
       this.getImportableDisks();
     }
+
+    if (this.isNew) {
+      this.title = helptext.import_title;
+    } else {
+      this.title = helptext.edit_title;
+    }
   }
 
   afterInit(entityWizard: EntityWizardComponent) {
@@ -312,8 +318,10 @@ export class VolumeImportWizardComponent {
       dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
       dialogRef.componentInstance.success.subscribe(res=>{
         dialogRef.close(false);
-        this.router.navigate(new Array('/').concat(
-          this.route_success));
+        // this.router.navigate(new Array('/').concat(
+        //   this.route_success));
+        this.modalService.close('slide-in-form');
+        this.modalService.refreshTable();
       }),
       dialogRef.componentInstance.failure.subscribe((res) => {
         dialogRef.close(false);
@@ -334,24 +342,32 @@ export class VolumeImportWizardComponent {
                 found = true;
                 this.dialogService.confirm(helptext.unlock_dataset_dialog_title, helptext.unlock_dataset_dialog_message, true, helptext.unlock_dataset_dialog_button).subscribe(unlock => {
                   if (unlock) {
-                    const route_unlock = this.route_success.concat(['id', this.pool, 'dataset', 'unlock', this.pool]);
-                    this.router.navigate(new Array('/').concat(route_unlock));
+                    // const route_unlock = this.route_success.concat(['id', this.pool, 'dataset', 'unlock', this.pool]);
+                    // this.router.navigate(new Array('/').concat(route_unlock));
+                    this.modalService.close('slide-in-form');
+                    this.modalService.refreshTable();
                   } else {
-                    this.router.navigate(new Array('/').concat(this.route_success));
+                    // this.router.navigate(new Array('/').concat(this.route_success));
+                    this.modalService.close('slide-in-form');    
+                    this.modalService.refreshTable();
                   }
                 });
                 break;
               }
               if (!found) {
-                this.router.navigate(new Array('/').concat(this.route_success));
+                // this.router.navigate(new Array('/').concat(this.route_success));
+                this.modalService.close('slide-in-form');
+                this.modalService.refreshTable();
               }
             }
           }, err => {
             new EntityUtils().handleWSError(this, err, this.dialogService);
           });
         } else { // shouldn't ever get here but who knows lol
-        this.router.navigate(new Array('/').concat(
-          this.route_success));
+          // this.router.navigate(new Array('/').concat(
+          //   this.route_success));
+          this.modalService.close('slide-in-form');
+          this.modalService.refreshTable();
         }
       });
       dialogRef.componentInstance.failure.subscribe((res) => {

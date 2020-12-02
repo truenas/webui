@@ -8,10 +8,17 @@ import { TranslateService } from '@ngx-translate/core';
 import { RestService } from '../../../../services/rest.service';
 import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { ModalService } from 'app/services/modal.service';
+import { VolumeImportWizardComponent } from '../volume-import-wizard';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { MatDialog } from '@angular/material/dialog';
+import { HttpClient } from '@angular/common/http';
+import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 
 @Component({
   selector : 'app-volumes-list-controls',
-  templateUrl: './volumes-list-controls.component.html'
+  templateUrl: './volumes-list-controls.component.html',
+  providers: [ MessageService ]
 })
 export class VolumesListControlsComponent implements GlobalAction, OnInit, AfterViewInit, OnDestroy {
   @ViewChild('filter', { static: false}) filter: ElementRef;
@@ -30,7 +37,19 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
     return this.actions.length + addAction;
   }
 
-  constructor(protected translate: TranslateService, public router: Router, public core: CoreService) { }
+  constructor(
+    protected translate: TranslateService,
+    public router: Router,
+    public core: CoreService,
+    public modalService: ModalService,
+    protected rest: RestService,
+    protected ws: WebSocketService,
+    protected loader: AppLoaderService,
+    protected dialog: MatDialog,
+    protected dialogService: DialogService,
+    protected http: HttpClient,
+    public messageService: MessageService
+  ) { }
 
   ngOnInit() { 
   }
@@ -80,4 +99,7 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
     });
   }
 
+  onClickImport() {
+    this.modalService.open('slide-in-form', new VolumeImportWizardComponent(this.rest, this.ws, this.router, this.loader, this.dialog, this.dialogService, this.http, this.messageService, this.modalService));
+  }
 }
