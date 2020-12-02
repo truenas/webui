@@ -85,14 +85,19 @@ export class CatalogComponent implements OnInit {
 
     this.settingsEvent = new Subject();
     this.settingsEvent.subscribe((evt: CoreEvent) => {
-      switch (evt.data.settings.value) {
-        case 'select_pool':
-          return this.selectPool();
-        
-        case 'advanced_settings':
-          this.modalService.open('slide-in-form', this.kubernetesForm);
-          break;
+      if (evt.data.settings) {
+        switch (evt.data.settings.value) {
+          case 'select_pool':
+            return this.selectPool();
+          
+          case 'advanced_settings':
+            this.modalService.open('slide-in-form', this.kubernetesForm);
+            break;
+        }
+      } else if (evt.data.launch) {
+        this.doInstall();
       }
+
     })
 
     const settingsConfig = {
@@ -108,6 +113,13 @@ export class CatalogComponent implements OnInit {
               { label: helptext.choose, value: 'select_pool' }, 
               { label: helptext.advanced, value: 'advanced_settings' }, 
             ]
+          },
+          {
+            name: 'launch',
+            label: helptext.launch,
+            type: 'button',
+            color: 'primary',
+            value: 'launch'
           }
         ]
       }

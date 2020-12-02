@@ -16,6 +16,8 @@ export default {
   choose: T('Choose Pool'),
   advanced: T('Advanced Settngs'),
 
+  launch: T('Launch Docker Image'),
+
   install: {
     title: T('Ready to Install'),
     msg1: T('Install '),
@@ -214,11 +216,11 @@ export default {
       env_vars: {
         title: T('Container Environment Variables'),
         key: {
-          placeholder: T('Name'),
+          placeholder: T('Environment Variable Name'),
           tooltip: T('')
         },
         value: {
-          placeholder: T('Value'),
+          placeholder: T('Environment Variable Value'),
           tooltip: T('')
         }
       }
@@ -287,6 +289,7 @@ export default {
       ]
     },
     DNSConfig: {
+      label: T('DNS Configuration'),
       nameservers: {
         placeholder: T('Nameservers'),
         tooltip: T('')
@@ -301,6 +304,7 @@ export default {
       placeholder: T('Host Network'),
       tooltip: T('Provide access to node network namespace for the workload.')
     },
+    externalLabel: T('Add External Interfaces'),
     hostPortsList: {
       containerPort: {
         placeholder: T('Container Port')

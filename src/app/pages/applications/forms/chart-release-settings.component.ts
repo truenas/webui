@@ -62,13 +62,15 @@ export class ChartReleaseSettingsComponent {
           name: 'tag',
           placeholder: helptext.chartForm.image.tag.placeholder,
           tooltip: helptext.chartForm.image.tag.tooltip,
+          value: 'latest'
         },
         {
           type: 'select',
           name: 'pullPolicy',
           placeholder: helptext.chartForm.image.pullPolicy.placeholder,
           tooltip: helptext.chartForm.image.pullPolicy.tooltip,
-          options: helptext.chartForm.image.pullPolicy.options
+          options: helptext.chartForm.image.pullPolicy.options,
+          value: helptext.chartForm.image.pullPolicy.options[0].value
         }
       ]
     },
@@ -149,6 +151,18 @@ export class ChartReleaseSettingsComponent {
       width: '50%',
       config: [
         {
+          type: 'checkbox',
+          name: 'hostNetwork',
+          placeholder: helptext.chartForm.hostNetwork.placeholder,
+          tooltip: helptext.chartForm.hostNetwork.tooltip,
+          value: false
+        },
+        {
+          type: 'paragraph',
+          name: 'add_external',
+          paraText: helptext.chartForm.externalLabel
+        },
+        {
           type: 'select',
           name: 'hostInterface',
           placeholder: helptext.chartForm.externalInterfaces.host.placeholder,
@@ -164,56 +178,6 @@ export class ChartReleaseSettingsComponent {
           options: helptext.chartForm.externalInterfaces.ipam.options,
           value: helptext.chartForm.externalInterfaces.ipam.options[0].value,
         },
-        // {
-        //   type: 'input',
-        //   name: 'staticIP',
-        //   placeholder: helptext.chartForm.externalInterfaces.staticConfig.placeholder,
-        //   required: true,
-        //   isHidden: true,
-        //   disabled: true,
-        //   relation: [
-        //     {
-        //       action: 'SHOW',
-        //       when: [{
-        //         name: 'ipam',
-        //         value: 'static',
-        //       }]
-        //     },
-        //   ]
-        // },
-        // {
-        //   type: 'input',
-        //   name: 'destination',
-        //   placeholder: helptext.chartForm.externalInterfaces.staticRoutes.destination.placeholder,
-        //   required: true,
-        //   isHidden: true,
-        //   disabled: true,
-        //   relation: [
-        //     {
-        //       action: 'SHOW',
-        //       when: [{
-        //         name: 'ipam',
-        //         value: 'static',
-        //       }]
-        //     },
-        //   ]
-        // },        {
-        //   type: 'input',
-        //   name: 'gateway',
-        //   placeholder: helptext.chartForm.externalInterfaces.staticRoutes.gateway.placeholder,
-        //   required: true,          
-        //   isHidden: true,
-        //   disabled: true,
-        //   relation: [
-        //     {
-        //       action: 'SHOW',
-        //       when: [{
-        //         name: 'ipam',
-        //         value: 'static',
-        //       }]
-        //     },
-        //   ]
-        // }
       ]
     },
     {
@@ -277,6 +241,11 @@ export class ChartReleaseSettingsComponent {
           value: helptext.chartForm.DNSPolicy.options[0].value,
         },
         {
+          type: 'paragraph',
+          name: 'dns_config',
+          paraText: helptext.chartForm.DNSConfig.label
+        },
+        {
           type: 'chip',
           name: 'nameservers',
           placeholder: helptext.chartForm.DNSConfig.nameservers.placeholder,
@@ -291,78 +260,38 @@ export class ChartReleaseSettingsComponent {
       ]
     },
     {
-      name: helptext.chartForm.hostNetwork.title,
-      label: true,
-      width: '50%',
-      config: [
-        {
-          type: 'input',
-          name: 'hpl_containerPort',
-          placeholder: helptext.chartForm.hostPortsList.containerPort.placeholder,
-          required: true,
-          isHidden: true,
-          disabled: true,
-          relation: [
-            {
-              action: 'SHOW',
-              when: [{
-                name: 'updateStrategy',
-                value: 'Recreate',
-              }]
-            },
-          ]
-        },       
-        {
-          type: 'input',
-          name: 'hpl_hostPort',
-          placeholder: helptext.chartForm.hostPortsList.hostPort.placeholder,
-          required: true,
-          isHidden: true,
-          disabled: true,
-          relation: [
-            {
-              action: 'SHOW',
-              when: [{
-                name: 'updateStrategy',
-                value: 'Recreate',
-              }]
-            },
-          ]
-        },
-        {
-          type: 'checkbox',
-          name: 'hostNetwork',
-          placeholder: helptext.chartForm.hostNetwork.placeholder,
-          tooltip: helptext.chartForm.hostNetwork.tooltip,
-          value: false
-        },
-      ]
-    },
-    {
       name: helptext.chartForm.portForwardingList.title,
       label: true,
-      width: '50%',
       config: [
         {
-          type: 'input',
-          name: 'pfl_containerPort',
-          placeholder: helptext.chartForm.portForwardingList.containerPort.placeholder,
-          required: true
-        }, 
-        {
-          type: 'input',
-          name: 'pfl_nodePort',
-          placeholder: helptext.chartForm.portForwardingList.nodePort.placeholder,
-          required: true
-        },  
-        {
-          type: 'select',
-          name: 'pfl_protocol',
-          placeholder: helptext.chartForm.portForwardingList.protocol.placeholder,
-          options: helptext.chartForm.portForwardingList.protocol.options,
-          value: helptext.chartForm.portForwardingList.protocol.options[0].value
+          type: 'list',
+          name: 'pf_list',
+          width: '100%',
+          templateListField: [
+            {
+              type: 'input',
+              name: 'pfl_containerPort',
+              placeholder: helptext.chartForm.portForwardingList.containerPort.placeholder,
+              required: true
+            }, 
+            {
+              type: 'input',
+              name: 'pfl_nodePort',
+              placeholder: helptext.chartForm.portForwardingList.nodePort.placeholder,
+              required: true
+            },  
+            {
+              type: 'select',
+              name: 'pfl_protocol',
+              placeholder: helptext.chartForm.portForwardingList.protocol.placeholder,
+              options: helptext.chartForm.portForwardingList.protocol.options,
+              value: helptext.chartForm.portForwardingList.protocol.options[0].value
+            }
+          ],
+          listFields: []
         }
-      ]
+      ],
+      colspan: 2,
     },
     {
       name: helptext.chartForm.hostPathVolumes.title,
@@ -374,8 +303,10 @@ export class ChartReleaseSettingsComponent {
           width: '100%',
           templateListField: [
             {
-              type: 'input',
+              type: 'explorer',
               name: 'hostPath',
+              initial: '/mnt',
+              explorerType: 'directory',
               placeholder: helptext.chartForm.hostPathVolumes.hostPath.placeholder,
               tooltip: helptext.chartForm.hostPathVolumes.hostPath.tooltip,
               required: true
@@ -456,13 +387,13 @@ export class ChartReleaseSettingsComponent {
   }
 
   resourceTransformIncomingRestData(data) {
-    console.log(data);
-    data['release_name'] = data.name;
-    data['repository'] = data.config.image.repository;
-    data['item'] = data.chart_metadata.name;
-    data['train'] = data.catalog_train;
-    data['container_port'] = data.config.portForwardingList[0].containerPort;
-    data['node_port'] = data.config.portForwardingList[0].nodePort;
+    // console.log(data);
+    // data['release_name'] = data.name;
+    // data['repository'] = data.config.image.repository;
+    // data['item'] = data.chart_metadata.name;
+    // data['train'] = data.catalog_train;
+    // data['container_port'] = data.config.portForwardingList[0].containerPort;
+    // data['node_port'] = data.config.portForwardingList[0].nodePort;
     return data;
   }
 
