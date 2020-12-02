@@ -28,6 +28,7 @@ import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 import { DialogFormConfiguration } from '../../../pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { TruecommandComponent } from '../dialog/truecommand/truecommand.component';
 import { ResilverProgressDialogComponent } from '../dialog/resilver-progress/resilver-progress.component';
+import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
 
 @Component({
   selector: 'topbar',
@@ -792,5 +793,66 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         )
       }
     })
+  }
+
+  openChangePasswordDialog() {
+    const conf: DialogFormConfiguration = {
+      title: T('Change Password'),
+      message: helptext.changePasswordDialog.pw_form_title_name,
+      fieldConfig: [
+        {
+          type : 'input',
+          name : 'curr_password',
+          placeholder : helptext.changePasswordDialog.pw_current_pw_placeholder,
+          inputType : 'password',
+          required: true,
+          togglePw: true,
+        },
+        {
+          type : 'input',
+          name : 'password',
+          placeholder : helptext.changePasswordDialog.pw_new_pw_placeholder,
+          inputType : 'password',
+          required: true,
+          tooltip: helptext.changePasswordDialog.pw_new_pw_tooltip
+        },
+        {
+          type : 'input',
+          name : 'password_conf',
+          placeholder : helptext.changePasswordDialog.pw_confirm_pw_placeholder,
+          inputType : 'password',
+          required: true,
+          validation : [ matchOtherValidator('password') ]
+        }
+      ],
+      saveButtonText: T('Save'),
+      custActions: [],
+      parent: this,
+      customSubmit: (entityDialog) => {
+        this.loader.open();
+        const pwChange = entityDialog.formValue;
+        delete pwChange.password_conf;
+        entityDialog.dialogRef.close();
+        this.ws.call('auth.check_user', ['root', pwChange.curr_password]).subscribe((check) => {
+          if (check) {
+            delete pwChange.curr_password;
+            this.ws.call('user.update', [1, pwChange]).subscribe((res) => {
+              this.loader.close();
+              this.dialogService.Info(T('Success'), helptext.changePasswordDialog.pw_updated, '300px', 'info', false);
+            }, (res) => {
+              this.loader.close();
+              this.dialogService.Info(T('Error'), res, '300px', 'warning', false);
+            });
+          } else {
+            this.loader.close();
+            this.dialogService.Info(helptext.changePasswordDialog.pw_invalid_title, helptext.changePasswordDialog.pw_invalid_title, '300px', 'warning', false);
+          }
+        }, (res) => {
+          this.loader.close();
+          this.dialogService.Info(T('Error'), res, '300px', 'warning', false);
+        });
+      }
+    }
+    this.dialogService.dialogForm(conf);
   }
 }
