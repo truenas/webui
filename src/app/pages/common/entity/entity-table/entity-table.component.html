@@ -7,45 +7,45 @@
 
   <!-- BATCH OPERATIONS START -->
   <div fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton fn-toolbar"
-    [ngClass]="{'icons-only': multiActionsIconsOnly}" *ngIf="conf && selected.length > 0"
-    [style.display]="selected.length > 0 ? 'block' : 'none'">
+    [ngClass]="{'icons-only': multiActionsIconsOnly}" *ngIf="conf && selection.selected.length > 0"
+    [style.display]="selection.selected.length > 0 ? 'block' : 'none'">
     <div fxFlex="100%">
       <div class="multiactions-title" *ngIf="conf.multiActions.length > 0 && !multiActionsIconsOnly">
         <strong>{{"Batch Operations" | translate}}</strong>
       </div>
       <!-- -->
-      <div *ngIf="conf.multiActions && conf.multiActions.length > 0">
+      <div *ngIf="conf.multiActions && conf.multiActions.length > 0" fxLayout="row wrap" fxLayoutGap="16px">
         <span *ngFor="let maction of conf.multiActions" ix-auto ix-auto-type="button" ix-auto-identifier="{{maction?.id}}">
           <!-- DEFAULT -->
           <ng-container *ngIf="!multiActionsIconsOnly">
-            <button id="{{ maction?.id }}" mat-button *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
-              <mat-icon>{{ maction?.icon }}</mat-icon><br><span>{{maction?.label | translate}}</span>
+            <button id="{{ maction?.id }}" mat-button *ngIf="maction.enable" (click)="maction.onClick(this.selection.selected);">
+              <mat-icon>{{ maction?.icon }}</mat-icon>&nbsp;<span>{{maction?.label | translate}}</span>
             </button>
           </ng-container>
 
           <!-- ICONS ONLY -->
           <ng-container *ngIf="multiActionsIconsOnly">
             <button id="{{ maction?.id }}" mat-button matTooltip="{{ maction?.label  | translate }}"
-              [matTooltipPosition]=maction?.ttpos *ngIf="maction.enable" (click)="maction.onClick(this.selected);">
+              [matTooltipPosition]=maction?.ttpos *ngIf="maction.enable" (click)="maction.onClick(this.selection.selected);">
               <mat-icon>{{ maction?.icon }}</mat-icon>
             </button>
           </ng-container>
 
-        </span>
+        </span> &nbsp;
       </div>
 
       <div *ngIf="!conf.multiActions || conf.multiActions.length == 0">
         <span ix-auto ix-auto-type="button" ix-auto-identifier="mdelete">
           <!-- With Labels -->
           <ng-container>
-            <button mat-button (click)="doMultiDelete(this.selected);">
+            <button mat-button (click)="doMultiDelete(this.selection.selected);">
               <mat-icon>delete</mat-icon><br><span>{{"Delete" | translate}}</span>
             </button>
           </ng-container>
 
           <!-- Without Labels -->
           <ng-container>
-            <button (click)="doMultiDelete(this.selected);" mat-button
+            <button (click)="doMultiDelete(this.selection.selected);" mat-button
               matTooltip="{{ 'Delete selections'  | translate }}" matTooltipPosition="below">
               <mat-icon>delete</mat-icon>
             </button>
@@ -57,244 +57,92 @@
   </div>
   <!-- BATCH OPERATIONS END -->
 
-  <!-- DATATABLE START -->
-  <div class="no-padding">
-    <ngx-datatable *ngIf="showDefaults" class='material expandable'
-      [rows]='currentRows'
-      [columns]="conf.columns"
-      [columnMode]="'force'"
-      [columnWidth]="'auto'"
-      [headerHeight]="'50'"
-      [footerHeight]="'50'"
-      [rowHeight]="50"
-      [reorderable]="true"
-      [limit]="paginationPageSize"
-      [externalPaging]="true"
-      [count]="currentRows.length || 1"
-      [offset]="paginationPageIndex"
-      (page)='paginationUpdate($event)'
-      [externalSorting]="true"
-      (sort)='reorderEvent($event)'
-      [selectionType]="'checkbox'"
-      [selected]='selected'
-      (activate)="onActivate($event)"
-      (select)='onSelect($event)'
-      [style.height.px]="tableHeight"
-      [scrollbarH]='true'
-      [scrollbarV]='true'
-      [sorts]="[rows.length > 1 ? { prop: sortKey, dir: 'asc' } : '']"
-      #entityTable>
+  <div *ngIf="2+2==5" #entityTable></div>
 
-      <!-- Row Detail Template -->
-      <ngx-datatable-row-detail [rowHeight]="getRowDetailHeight">
-        <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
-          <div *ngIf="conf.rowDetailComponent; else default;" dynamicComponent [component]="conf.rowDetailComponent" [config]="row" [parent]="this"></div>
-          <ng-template #default>
-            <app-entity-table-row-details [config]="row" [parent]="this"></app-entity-table-row-details>
-          </ng-template>
-        </ng-template>
-      </ngx-datatable-row-detail>
-
-      <ngx-datatable-footer>
-          <ng-template
-            ngx-datatable-footer-template
-            let-rowCount="rowCount"
-            let-selectedCount="selectedCount"
-            let-pageSize="pageSize"
-            let-curPage="curPage"
-            let-offset="offset"
-            >
-            <div id="footer">
-              <div id="footer-text" *ngIf="currentRows.length > 0">
-                {{rowCount > 0 ? offset * pageSize + 1 : 0}} -
-                {{rowCount < (pageSize * curPage) ? rowCount : (pageSize * curPage)}}
-                of {{rowCount}}
-                <span *ngIf="selectedCount > 0"> | {{selectedCount - removeFromSelectedTotal}} selected</span>
-              </div>
-            </div>
-            <datatable-pager
-                [pagerLeftArrowIcon]="'datatable-icon-left'"
-                [pagerRightArrowIcon]="'datatable-icon-right'"
-                [pagerPreviousIcon]="'datatable-icon-prev'"
-                [pagerNextIcon]="'datatable-icon-skip'"
-                [page]="curPage"
-                [size]="pageSize"
-                [count]="rowCount"
-                [hidden]="!((rowCount / pageSize) > 1)"
-                (change)="entityTable.onFooterPage($event)"
-                ix-auto
-                ix-auto-type="pager"
-                ix-auto-identifier="{{conf.title}}-table_pager">
-            </datatable-pager>
-          </ng-template>
-        </ngx-datatable-footer>
-
-      <ngx-datatable-column *ngIf="conf.config && conf.config.multiSelect" [width]="85" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
-        <ng-template ngx-datatable-header-template let-column="column" let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
-          <div class="headerCheckBox">
-            <mat-checkbox
-              [checked]="allRowsSelected"
-              (change)="selectFn(!allRowsSelected)"
-              ix-auto=""
-              ix-auto-type="checkbox"
-              [ix-auto-identifier]="title"
-              id="{{title}}_multi-checkbox-all"
-            ></mat-checkbox>
-          </div>
-        </ng-template>
-
-        <ng-template ngx-datatable-cell-template let-row="row" let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
-          <div class="fake-mat-checkbox">
-            <label>
-              <input
-                type="checkbox"
-                *ngIf="!row.hideCheckbox"
-                ix-auto=""
-                ix-auto-type="checkbox"
-                [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
-                [checked]="isSelected"
-                (click)="onclick($event)"
-                (change)="onCheckboxChangeFn(tableMouseEvent)"
-              />
-              <span class="checkmark"></span>
-            </label>
-          </div>
-        </ng-template>
-      </ngx-datatable-column>
-      <ngx-datatable-column
-          *ngFor="let col of alwaysDisplayedCols"
-          prop="{{col.prop}}"
-          name="{{col.name | translate}}"
-          [minWidth]="col.minWidth"
-          [maxWidth]="col.maxWidth"
-          [cellClass]="getCellClass">
-          <ng-template let-row="row" ngx-datatable-cell-template>
-            <mat-spinner [diameter]='40'
-              color="primary"
-              *ngIf="col.toggle && (row[col.prop]==='STOPPING' || row[col.prop]==='STARTING'
-                || row[col.prop]==='DELETING' || row[col.prop]==='RESTARTING')"
-            ></mat-spinner>
-            <div class="clickable"
-              *ngIf="col.toggle"
-              id="{{row.name}}_{{col.name}}-overlay"
-              [ix-auto]="col?.name"
-              ix-auto-type="overlay"
-              (click)="!row.disableSlider ? conf.onSliderChange(row) : null"
-              matTooltip="{{row[col.prop]}}"
-            >
-            </div>
-            <mat-slide-toggle
-              *ngIf="col.toggle"
-              [disabled]="row.disableSlider"
-              id="{{row.name}}_{{col.name}}-slidetoggle"
-              [ix-auto]="col?.name"
-              ix-auto-type="toggle"
-              [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
-              [checked]="row[col.prop]==='RUNNING'"
-            ></mat-slide-toggle>
-            <div id="{{row[conf.rowIdentifier || 'name' ]}}_{{col.name}}"
-                 *ngIf="!col.toggle"
-                 title="{{convertDisplayValue(row[col.prop])}}"
-                 [ix-auto]="col?.name"
-                 ix-auto-type="value"
-                 [ix-auto-identifier]="row[conf.rowIdentifier || 'name']">
-              <button mat-icon-button *ngIf="row[col.icon] && conf.iconAction"
-                id="{{row[conf.rowIdentifier || 'name' ]}}_{{col.name}}_icon"
-                (click)="conf.iconAction(row)">
-                <img width="20" src="{{row[col.icon]}}"/>
-              </button>
-              {{convertDisplayValue(row[col.prop])}}
-            </div>
-          </ng-template>
-      </ngx-datatable-column>
-
-      <ngx-datatable-column
-               *ngFor="let col of conf.columns"
-               prop="{{col.prop}}"
-               name="{{col.name | translate}}"
-               [minWidth]="col.minWidth"
-               [maxWidth]="col.maxWidth">
-        <ng-template let-row="row" ngx-datatable-cell-template>
-          <div
-            fxLayoutAlign="start center"
-            fxLayoutGap="4px"
-            [ix-auto]="col?.name"
-            ix-auto-type="value"
-            [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
-          >
-            <ng-container *ngIf="col?.widget?.component">
-                <mat-icon
-                  [ix-auto]="col?.name + '_widget'"
-                  [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
-                  id="{{row[conf.rowIdentifier || 'name' ]}}_{{col.name}}_widget"
-                  [matMenuTriggerFor]="widget"
-                  class="widget-icon"
-                  role="img"
-                  fontSet="mdi-set"
-                  fontIcon="mdi-{{ col.widget.icon }}"
-                ></mat-icon>
-                <mat-menu #widget="matMenu" xPosition="before" yPosition="below">
-                  <!-- column widgets need to be registered with this switch case -->
-                  <ng-container [ngSwitch]="col.widget.component">
-                    <app-task-schedule-list *ngSwitchCase="'TaskScheduleListComponent'" [value]="row[col.prop]" [config]="row" [parent]="this"></app-task-schedule-list>
-                  </ng-container>
-                </mat-menu>
+  <div class="table-container">
+    <table *ngIf="conf && displayedColumns && displayedColumns.length > 0 && dataSource" 
+      multiTemplateDataRows mat-table 
+      [dataSource]="dataSource" matSort
+       style="min-width: {{displayedColumns.length * 25}}px;"
+      #newEntityTable>
+      <ng-container *ngFor="let column of columnsToString(currentColumns, 'prop'); let i = index;">
+  
+        <!-- Column Template -->
+        <ng-container *ngIf="column !== 'expandedDetail' && column !== 'action' && column !== 'multiselect' && column !== 'expansion-chevrons'" 
+       matColumnDef="{{column}}">
+          <th class="data-column" mat-header-cell *matHeaderCellDef>{{currentColumns[i].name}}</th>
+          <td class="data-column" mat-cell *matCellDef="let element">{{element[column]}}</td>
+        </ng-container>
+  
+        <!-- Expansion Chevrons -->
+        <ng-container *ngIf="column == 'expansion-chevrons'" matColumnDef="{{column}}" stickyEnd>
+          <th class="expansion-chevrons-column" mat-header-cell *matHeaderCellDef></th>
+          <td class="expansion-chevrons-column" mat-cell *matCellDef="let element" style="text-align:right;">
+            <ng-container *ngIf="hasDetails() === true">
+              <ng-container *ngIf="element === expandedElement">
+                <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-chevron-up"></mat-icon>
+              </ng-container>
+              <ng-container *ngIf="element !== expandedElement">
+                <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-chevron-down"></mat-icon>
+              </ng-container>
             </ng-container>
-            <div id="{{row[conf.rowIdentifier || 'name']}}_{{col.name}}"
-                 title="{{convertDisplayValue(row[col.prop])}}" [ngClass]="col.icon ? 'IconCell' : ''">
-              <img *ngIf="col.icon" width="20" src="{{row[col.icon]}}"/>
-              <mat-checkbox id="{{row[conf.rowIdentifier || 'name']}}_{{col.name}}-checkbox"
-                *ngIf="col.selectable"
-                [checked]="row[col.prop]"
-                (change)="conf.onCheckboxChange(row)"
-                [ix-auto]="col?.name"
-                ix-auto-type="checkbox"
-                [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
-              ></mat-checkbox>
-              <button mat-button id="{{row[conf.rowIdentifier || 'name']}}_{{col.name}}-button"
-                [ngClass]="getButtonClass(row[col.prop])"
-                [style.width.px]="93"
-                *ngIf="col.state && stateClickable(row[col.prop], col); else colInfo"
-                [ix-auto]="col?.name"
-                ix-auto-type="button"
-                [ix-auto-identifier]="row[conf.rowIdentifier || 'name']"
-                (click)="conf.stateButton(row)">
-                  {{convertDisplayValue(row[col.prop])}}
-              </button>
-              <ng-template #colInfo>
-                <span *ngIf="!col.selectable">{{convertDisplayValue(row[col.prop])}}</span>
-              </ng-template>
-            </div>
+          </td>
+        </ng-container>
+  
+        <!-- Threedot Actions -->
+        <ng-container *ngIf="column == 'action'" matColumnDef="{{column}}" stickyEnd>
+          <th class="threedot-column" mat-header-cell *matHeaderCellDef></th>
+          <td class="threedot-column" mat-cell *matCellDef="let element">
+            <app-entity-table-actions [entity]="this" [row]="element"></app-entity-table-actions>
+          </td>
+        </ng-container>
+  
+        <!-- Multiselect Checkboxes -->
+        <ng-container *ngIf="column == 'multiselect'" matColumnDef="{{column}}" sticky>
+          <th class="multiselect-column" mat-header-cell *matHeaderCellDef>
+            <mat-checkbox [indeterminate]="selection.hasValue() && !isAllSelected"
+              (change)="$event ? masterToggle() : null"
+              [checked]="selection.hasValue() && isAllSelected"
+              ix-auto ix-auto-type="checkbox" ix-auto-identifier="title">
+            </mat-checkbox>
+          </th>
+          <td class="multiselect-column" mat-cell *matCellDef="let element">
+            <mat-checkbox 
+              (click)="$event.stopPropagation()"
+              (change)="$event ? selection.toggle(element) : null"
+              [checked]="selection.isSelected(element)"
+              ix-auto ix-auto-type="checkbox" 
+              [ix-auto-identifier]="element[conf.rowIdentifier || 'name']">
+            </mat-checkbox>
+          </td>
+        </ng-container>
+  
+      </ng-container>
+  
+      <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+      <ng-container *ngIf="element == expandedElement" matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="currentColumns.length">
+          <div [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+            <app-entity-table-row-details [config]="element" [parent]="this"></app-entity-table-row-details>
           </div>
-        </ng-template>
-      </ngx-datatable-column>
-
-      <!-- detail toggle / three-dot menu -->
-      <ngx-datatable-column
-        [width]="60"
-        [resizeable]="false"
-        [sortable]="false"
-        [draggable]="false"
-        [canAutoResize]="false"
-        *ngIf="hasActions || hasDetails()">
-        <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
-          <a
-            *ngIf="hasDetails(); else threeDot"
-            href="javascript:void(0)"
-            [class.datatable-icon-right]="!expanded"
-            [class.datatable-icon-down]="expanded"
-            title="Expand/Collapse Row"
-            (click)="toggleExpandRow(row)"
-            ix-auto=""
-            ix-auto-type="expander"
-            [ix-auto-identifier]="row[conf.rowIdentifier || 'name']">
-          </a>
-          <ng-template #threeDot>
-            <app-entity-table-actions [entity]="this" [row]="row"></app-entity-table-actions>
-          </ng-template>
-        </ng-template>
-      </ngx-datatable-column>
-    </ngx-datatable>
+        </td>
+      </ng-container>
+  
+     
+      <tr mat-header-row *matHeaderRowDef="columnsToString(currentColumns, 'prop')"></tr>
+      <tr mat-row class="element-row" 
+        *matRowDef="let element; columns: columnsToString(currentColumns, 'prop');"
+        (click)="expandedElement = expandedElement === element ? null : element;">
+      </tr>
+  
+      <ng-container *ngIf="hasDetails() === true">
+        <tr mat-row class="details-row" *matRowDef="let row; columns: ['expandedDetail'];"></tr>
+      </ng-container>
+    </table>
   </div>
+ 
+  <mat-card-footer style="padding: 0 !important">
+    <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+  </mat-card-footer>
 
 </div>

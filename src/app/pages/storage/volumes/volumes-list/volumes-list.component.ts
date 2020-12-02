@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
+import { EntityTableService } from 'app/pages/common/entity/entity-table/entity-table.service';
 import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -29,6 +30,7 @@ import { HttpClient } from '@angular/common/http';
 import { ModalService } from 'app/services/modal.service';
 import { VolumesListControlsComponent } from './volumes-list-controls.component';
 import { ZvolFormComponent } from '../zvol/zvol-form';
+import { DatasetFormComponent } from '../datasets/dataset-form';
 
 export interface ZfsPoolData {
   pool: string;
@@ -1054,11 +1056,7 @@ export class VolumesListTableConfig implements InputTableConf {
           name: T('Add Dataset'),
           label: T("Add Dataset"),
           onClick: (row1) => {
-            // Format: "storage/id/poolID/dataset/add/<Path>%2F<To>%2F<Dataset>"
-            this._router.navigate(new Array('/').concat([
-              "storage", "id", rowData.pool, "dataset",
-              "add", rowData.id
-            ]));
+            this.parentVolumesListComponent.addDataset(rowData.pool, rowData.id);
           }
         });
         actions.push({
@@ -1075,10 +1073,7 @@ export class VolumesListTableConfig implements InputTableConf {
         name: T('Edit Options'),
         label: T("Edit Options"),
         onClick: (row1) => {
-          this._router.navigate(new Array('/').concat([
-            "storage", "id", rowData.pool, "dataset",
-            "edit", rowData.id
-          ]));
+          this.parentVolumesListComponent.editDataset(rowData.pool, rowData.id);
         }
       });
       if (rowDataPathSplit[1] !== "iocage" && !rowData.locked) {
@@ -1814,6 +1809,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   public has_encrypted_root = {};
   public has_key_dataset = {};
   protected addZvolComponent: ZvolFormComponent;
+  protected addDatasetFormComponent: DatasetFormComponent;
+  protected editDatasetFormComponent: DatasetFormComponent;
   protected aroute: ActivatedRoute;
   private refreshTableSubscription: any;
 
@@ -1821,9 +1818,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
     public sorter: StorageService, protected job: JobService, protected storage: StorageService, protected pref: PreferencesService, 
-      protected messageService: MessageService, protected http:HttpClient, modalService: ModalService) {
+      protected messageService: MessageService, protected http:HttpClient, modalService: ModalService, public tableService: EntityTableService) {
 
-    super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, sorter, job, pref, mdDialog, modalService);
+    super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, sorter, job, pref, mdDialog, modalService, tableService);
 
     this.actionsConfig = { actionType: VolumesListControlsComponent, actionConfig: this};
     this.core.emit({name: "GlobalActions", data: this.actionsConfig, sender: this});
@@ -1875,7 +1872,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           /* Filter out system datasets */
           const pChild = datasets.find(set => set.name === pool.name);
           if (pChild) {
-            pChild.children = pChild.children.filter(child => child.name.indexOf(`${pool.name}/.system`) === -1);
+            pChild.children = pChild.children.filter(child => child.name.indexOf(`${pool.name}/.system`) === -1 && child.name.indexOf(`${pool.name}/.glusterfs`) === -1);
           }
           pool.children = pChild ? [pChild] : [];
 
@@ -1936,10 +1933,33 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
     this.addZvolComponent = new ZvolFormComponent(this.router, this.aroute, this.rest, this.ws, this.loader,
       this.dialogService, this.storageService, this.translate, this.modalService);
+
+    this.addDatasetFormComponent = new DatasetFormComponent(this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService);
+    
   }
 
   addZvol(id) {
     this.addZvolComponent.setParent(id);
     this.modalService.open('slide-in-form', this.addZvolComponent, id);
   }
+
+  addDataset(pool, id) {
+    this.addDatasetFormComponent.setParent(id);
+    this.addDatasetFormComponent.setVolId(pool);
+    this.addDatasetFormComponent.setTitle("Add Dataset");
+    this.modalService.open('slide-in-form', this.addDatasetFormComponent, id);
+
+  }
+
+  editDataset(pool, id) {
+
+    this.editDatasetFormComponent = new DatasetFormComponent(this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService);
+
+    this.editDatasetFormComponent.setPk(id);
+    this.editDatasetFormComponent.setVolId(pool);
+    this.editDatasetFormComponent.setTitle("Edit Dataset");
+    this.modalService.open('slide-in-form', this.editDatasetFormComponent, id);
+    
+  }
+
 }

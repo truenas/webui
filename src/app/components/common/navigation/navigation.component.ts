@@ -77,7 +77,8 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
           if(evt.data.features.enclosure){
             for(let i = 0; i < this.navService.hardwareFeatures.length; i++) {
               const targetMenu = this.navService.hardwareFeatures[i];
-              _.find(_.find(menuItem, { state: targetMenu.menu }).sub, { state : targetMenu.sub}).disabled = false;
+              let found = _.find(_.find(menuItem, { state: targetMenu.menu }).sub, { state : targetMenu.sub});
+              if(found) found.disabled = false;
             }
           }
       });
