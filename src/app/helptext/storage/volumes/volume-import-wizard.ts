@@ -2,6 +2,9 @@ import {Validators} from '@angular/forms';
 import { T } from '../../../translate-marker';
 
 export default {
+import_title: T('Import Pool'),
+edit_title: T('Edit Pool'),
+
 is_new_main_label: T('Create or Import pool'),
 is_new_placeholder: T('Create a pool:'),
 is_new_option1_label: T('Create new pool'),

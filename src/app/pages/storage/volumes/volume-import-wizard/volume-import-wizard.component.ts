@@ -258,9 +258,9 @@ export class VolumeImportWizardComponent {
     }
 
     if (this.isNew) {
-      this.title = 'Import Pool';
+      this.title = helptext.import_title;
     } else {
-      this.title = 'Edit Pool';
+      this.title = helptext.edit_title;
     }
   }
 
