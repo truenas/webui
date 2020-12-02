@@ -1,9 +1,8 @@
 import {Component, Input} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
 
-//import {FieldConfig} from '../../models/field-config.interface';
-//import {Field} from '../../models/field.interface';
 import { Control } from '../../models/control.interface';
 import { ControlConfig } from '../../models/control-config.interface';
 import { Subject } from 'rxjs/Subject';
@@ -15,6 +14,7 @@ import { Subject } from 'rxjs/Subject';
     <div 
       class="toolbar-button">
       <button
+        ix-auto ix-auto-type="button" [ix-auto-identifier]="id + '_entity_toolbar_' + config.label"
         (click)="onClick(true)"
         [color]="config.color ? config.color : 'default'"
         mat-button
@@ -24,10 +24,12 @@ import { Subject } from 'rxjs/Subject';
     </div>
   `
 })
-export class ToolbarButtonComponent {
+export class ToolbarButtonComponent extends iXAbstractObject {
   @Input() config?: any;
   @Input() controller: Subject<any>;
-  constructor(public translate: TranslateService) {}
+  constructor(public translate: TranslateService) {
+    super()
+  }
 
   onClick(value){
     this.config.value = value;

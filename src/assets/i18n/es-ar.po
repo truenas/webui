@@ -190,7 +190,7 @@ msgid "(Remove pool from database)"
 msgstr "(Eliminar grupo de la base de datos)"
 
 msgid "(System Dataset Pool)"
-msgstr ""
+msgstr "(Grupo de conjuntos de datos del sistema)"
 
 msgid "(top-right), then"
 msgstr "(arriba a la derecha), a continuación"
@@ -671,6 +671,9 @@ msgid ""
 "<i>Import Certificate Signing Request</i> allows an existing CSR  to be "
 "imported onto the system."
 msgstr ""
+"<i>Solicitud de firma de certificado</i> se utiliza para obtener una firma "
+"de CA. <i>Importar solicitud de firma de certificado</i> permite importar "
+"una CSR existente al sistema."
 
 msgid ""
 "<i>Default (Clone Jail)</i> or <i>Basejail</i>. Clone jails are clones of "
@@ -718,6 +721,9 @@ msgid ""
 "<i>Import Certificate</i> allows an existing certificate to be imported "
 "onto  the system."
 msgstr ""
+"<i>Certificado interno</i> se utiliza para sistemas internos o locales. "
+"<i>Importar certificado</i> permite importar un certificado existente al "
+"sistema."
 
 msgid ""
 "<i>PUSH</i> sends data to cloud storage. <i>PULL</i>  receives data from "
@@ -1169,7 +1175,7 @@ msgid "Active Directory"
 msgstr "Directorio activo"
 
 msgid "Active Directory - Primary Domain"
-msgstr ""
+msgstr "Directorio Activo: Dominio Principal"
 
 msgid "Active Directory IDMAP change!"
 msgstr "¡Cambio de Active Directory IDMAP!"
@@ -1199,19 +1205,19 @@ msgid "Add Alert Service"
 msgstr "Añadir alerta de servicio"
 
 msgid "Add CA"
-msgstr ""
+msgstr "Añadir CA"
 
 msgid "Add CSR"
-msgstr ""
+msgstr "Añadir CSR"
 
 msgid "Add Certificate"
-msgstr ""
+msgstr "Añadir certificado"
 
 msgid "Add Cloud Credential"
 msgstr "Agregar credencial de nube"
 
 msgid "Add DNS Authenticator"
-msgstr ""
+msgstr "Agregar autenticador de DNS"
 
 msgid "Add Dataset"
 msgstr "Agregar conjunto de datos"
@@ -1226,13 +1232,13 @@ msgid "Add Interface"
 msgstr "Añadir interfaz"
 
 msgid "Add Kerberos SPN Entry"
-msgstr ""
+msgstr "Agregar entrada de SPN de Kerberos"
 
 msgid "Add Mountpoint"
 msgstr "Agregar punto de montaje"
 
 msgid "Add NFS SPN"
-msgstr ""
+msgstr "Agregar NFS SPN"
 
 msgid "Add Recovery Key"
 msgstr "Agregar clave de recuperación"
@@ -1328,6 +1334,8 @@ msgstr ""
 
 msgid "Adding NFS NPN requires sufficient privileges. Enter your credentials below."
 msgstr ""
+"Agregar NFS NPN requiere suficientes privilegios. Ingrese sus credenciales "
+"a continuación."
 
 msgid "Adding Vdevs to an encrypted pool resets the passphrase and recovery key!"
 msgstr ""
@@ -1393,7 +1401,7 @@ msgid "Additional Domains"
 msgstr "Dominios Adicionales"
 
 msgid "Additional Domains:"
-msgstr ""
+msgstr "Dominios adicionales:"
 
 msgid "Additional Hardware"
 msgstr "Hardware adicional"
@@ -1583,6 +1591,8 @@ msgid ""
 "Alias for the identical interface  on the other TrueNAS controller. The "
 "alias can be an IPv4 or IPv6 address."
 msgstr ""
+"Alias para la interfaz idéntica en el otro controlador TrueNAS. El alias "
+"puede ser una dirección IPv4 o IPv6."
 
 msgid "Aliases"
 msgstr "Alias"
@@ -1638,7 +1648,7 @@ msgid "Allow"
 msgstr "Permitir"
 
 msgid "Allow "
-msgstr ""
+msgstr "Permitir "
 
 msgid "Allow All"
 msgstr "Permitir todos"
@@ -2260,7 +2270,7 @@ msgid "Attach screenshots."
 msgstr "Adjuntar capturas de pantalla."
 
 msgid "Attention"
-msgstr ""
+msgstr "Atención"
 
 msgid "Aug"
 msgstr "Agosto"
@@ -2357,7 +2367,7 @@ msgid "Authorized Networks"
 msgstr "Redes autorizadas"
 
 msgid "Auto TRIM"
-msgstr ""
+msgstr "Auto TRIM"
 
 msgid "Auto configure IPv6"
 msgstr "Auto configurar IPv6"
@@ -2625,7 +2635,7 @@ msgid "Boot environment to be cloned."
 msgstr "Entorno de arranque para ser clonado."
 
 msgid "Bot API Token"
-msgstr ""
+msgstr "Token de API de bot"
 
 msgid ""
 "Brainpool curves can be more secure, while secp curves can be faster. See "
@@ -2833,7 +2843,7 @@ msgid "CLOSE"
 msgstr "CERRAR"
 
 msgid "CN"
-msgstr ""
+msgstr "CN"
 
 msgid "CN Realm"
 msgstr "Reino CN"
@@ -2965,10 +2975,10 @@ msgid "Certificate Options"
 msgstr "Opciones de certificado"
 
 msgid "Certificate Signing Request"
-msgstr ""
+msgstr "Solicitud de firma de certificado"
 
 msgid "Certificate Signing Requests"
-msgstr ""
+msgstr "Solicitudes de firma de certificado"
 
 msgid "Certificate Subject"
 msgstr "Asunto del certificado"
@@ -3348,6 +3358,8 @@ msgid ""
 "Choose a temporary location for the encryption key that will decrypt "
 "replicated data."
 msgstr ""
+"Elija una ubicación temporal para la clave de cifrado que descifrará los "
+"datos replicados."
 
 msgid "Choose a time format."
 msgstr "Elige un formato de hora."
@@ -3423,6 +3435,8 @@ msgid ""
 "Choose between a <i>Hex</i> (base 16 numeral) or <i>Passphrase</i> "
 "(alphanumeric) style encryption key."
 msgstr ""
+"Elija entre una clave de cifrado de estilo <i>Hex</i> (número de base 16) o "
+"<i>Frase de contraseña</i> (alfanumérica)."
 
 msgid ""
 "Choose how many log entries to create. Choices range from the least log "
@@ -3624,7 +3638,7 @@ msgid "Cipher"
 msgstr "Cifrado"
 
 msgid "City: "
-msgstr ""
+msgstr "Ciudad: "
 
 msgid ""
 "Classification for each S3 object. Choose a class based on the specific use "
@@ -3697,13 +3711,13 @@ msgid "Client Certificate"
 msgstr "Certificado del cliente"
 
 msgid "Client ID"
-msgstr ""
+msgstr "ID de cliente"
 
 msgid "Client Name"
 msgstr "Nombre del cliente"
 
 msgid "Client Secret"
-msgstr ""
+msgstr "Secreto de cliente"
 
 msgid "Clients"
 msgstr "Clientes"
@@ -3845,7 +3859,7 @@ msgid "Common Name"
 msgstr "Nombre común"
 
 msgid "Common: "
-msgstr ""
+msgstr "Común: "
 
 msgid "Community"
 msgstr "Comunidad"
@@ -4129,7 +4143,7 @@ msgid "Copies"
 msgstr "Copias"
 
 msgid "Copy"
-msgstr ""
+msgstr "Copiar"
 
 msgid "Copy and Paste"
 msgstr "Copiar y pegar"
@@ -4141,7 +4155,7 @@ msgid "Could not delete boot environment."
 msgstr "No se pudo eliminar el entorno de arranque."
 
 msgid "Could not extend Vdev."
-msgstr ""
+msgstr "No se pudo extender Vdev."
 
 msgid "Could not find a group name for this group ID."
 msgstr "No se pudo encontrar un nombre de grupo para esta ID de grupo."
@@ -4150,7 +4164,7 @@ msgid "Could not find a user name for this user ID."
 msgstr "No se pudo encontrar un nombre de usuario para esta ID de usuario."
 
 msgid "Could not replace disk."
-msgstr ""
+msgstr "No se pudo reemplazar el disco."
 
 msgid "Country"
 msgstr "País"
@@ -4168,7 +4182,7 @@ msgstr ""
 "ISO 3166-1 alpha-2</a> válido de Dos letras mayúsculas."
 
 msgid "Country: "
-msgstr ""
+msgstr "País: "
 
 msgid "Crash reporting"
 msgstr "Informe de bloqueo"
@@ -4348,7 +4362,7 @@ msgid "Custom"
 msgstr "Personalizado"
 
 msgid "Custom Name"
-msgstr ""
+msgstr "Nombre personalizado"
 
 msgid "Custom Path"
 msgstr "Ruta personalizada"
@@ -4363,7 +4377,7 @@ msgid "Custom Theme Name"
 msgstr "Nombre de tema personalizado"
 
 msgid "Custom Value"
-msgstr ""
+msgstr "Valor personalizado"
 
 msgid "Customer Name"
 msgstr "Nombre personalizado"
@@ -4414,7 +4428,7 @@ msgid "DHCP Autoconfigure IPv4"
 msgstr "Autoconfigurar DHCP IPv4"
 
 msgid "DISABLED"
-msgstr ""
+msgstr "DESHABILITADO"
 
 msgid "DNS Domain Name"
 msgstr "Nombre de dominio DNS"
@@ -4633,7 +4647,7 @@ msgid "Default Permissions"
 msgstr "Permisos predeterminados"
 
 msgid "Default Route"
-msgstr ""
+msgstr "Ruta por defecto"
 
 msgid "Default Router For IPv4"
 msgstr "Ruta predeterminada para IPv4"
@@ -4685,11 +4699,16 @@ msgid ""
 "Define an alias for the interface  on this TrueNAS controller. The alias "
 "can be an IPv4 or IPv6  address."
 msgstr ""
+"Defina un alias para la interfaz en este controlador TrueNAS. El alias "
+"puede ser una dirección IPv4 o IPv6."
 
 msgid ""
 "Define an alias that can  connect to the interface on either TrueNAS "
 "controller. This address  remains active if a Controller failover occurs."
 msgstr ""
+"Defina un alias que pueda conectarse a la interfaz en cualquiera de los "
+"controladores TrueNAS. Esta dirección permanece activa si se produce una "
+"conmutación por error del controlador."
 
 msgid ""
 "Define other sections and their key/value pairs. Enclose each section name "
@@ -4919,7 +4938,7 @@ msgid "Deleting the <b>"
 msgstr "Eliminando el <b>"
 
 msgid "Deleting..."
-msgstr ""
+msgstr "Eliminando..."
 
 msgid "Deny"
 msgstr "Denegar"
@@ -5175,7 +5194,7 @@ msgid "Digest Algorithm"
 msgstr "Algoritmo Digerido"
 
 msgid "Digest Algorithm: "
-msgstr ""
+msgstr "Algoritmo de resumen: "
 
 msgid "Digital Signature"
 msgstr "Firma digital"
@@ -5350,7 +5369,7 @@ msgid "Distinguished Name"
 msgstr "Nombre distinguido"
 
 msgid "Distinguished Name: "
-msgstr ""
+msgstr "Nombre distinguido: "
 
 msgid ""
 "Do <b>NOT</b> change this setting when using Windows as the initiator. Only "
@@ -5402,7 +5421,7 @@ msgstr ""
 "SMB: <code>freenas\\smbusers</code>."
 
 msgid "Domain:"
-msgstr ""
+msgstr "Dominio:"
 
 msgid "Done"
 msgstr "Listo"
@@ -5485,7 +5504,7 @@ msgid "EDIT"
 msgstr "EDITAR"
 
 msgid "ENABLED"
-msgstr ""
+msgstr "HABILITADO"
 
 msgid "ERROR: Not Enough Memory"
 msgstr "ERROR: Memoria insuficiente"
@@ -5512,16 +5531,16 @@ msgid "Edit Alert Service"
 msgstr "Editar servicio de alerta"
 
 msgid "Edit CA"
-msgstr ""
+msgstr "Editar CA"
 
 msgid "Edit CSR"
-msgstr ""
+msgstr "Editar CSR"
 
 msgid "Edit Certificate"
-msgstr ""
+msgstr "Editar certificado"
 
 msgid "Edit DNS Authenticator"
-msgstr ""
+msgstr "Editar el autenticador de DNS"
 
 msgid "Edit Disk(s)"
 msgstr "Editar disco(s)"
@@ -5548,7 +5567,7 @@ msgid "Edit Permissions"
 msgstr "Editar permisos"
 
 msgid "Edit Pool Options for "
-msgstr ""
+msgstr "Editar opciones de grupo para "
 
 msgid "Edit Share ACL"
 msgstr "Editar Compartir ACL"
@@ -5601,7 +5620,7 @@ msgstr ""
 "<code>Enter</code>."
 
 msgid "Email: "
-msgstr ""
+msgstr "Email: "
 
 msgid "Emergency"
 msgstr "Emergencia"
@@ -5625,6 +5644,9 @@ msgid ""
 "target=\"_blank\">SMTP AUTH</a> using PLAIN SASL.   Requires a valid "
 "Username and Password."
 msgstr ""
+"Habilite <a href=\"https://en.wikipedia.org/wiki/SMTP_Authentication\" "
+"target=\"_blank\">SMTP AUTH</a> mediante PLAIN SASL. Requiere un nombre de "
+"usuario y una contraseña válidos."
 
 msgid ""
 "Enable  <a href=\"https://zfsonlinux.org/manpages/0.8.3/man8/zfs.8.html\" "
@@ -5677,7 +5699,7 @@ msgid "Enable FXP"
 msgstr "Habilitar FXP"
 
 msgid "Enable GMail OAuth authentication."
-msgstr ""
+msgstr "Habilite la autenticación de GMail OAuth."
 
 msgid "Enable NFSv4"
 msgstr "Habilitar"
@@ -5686,7 +5708,7 @@ msgid "Enable Netwait Feature"
 msgstr "Habilitar la función Netwait"
 
 msgid "Enable Network Performance Statistics"
-msgstr ""
+msgstr "Habilitar estadísticas de rendimiento de la red"
 
 msgid "Enable Password Toggle"
 msgstr "Habilitar alternar contraseña"
@@ -5753,6 +5775,10 @@ msgid ""
 "blocks of obsolete blocks that can be deleted. Unset to incorporate day "
 "block overwrites when a device write is started (default)."
 msgstr ""
+"Habilite para que TrueNAS revise periódicamente bloques de datos e "
+"identifique bloques vacíos de bloques obsoletos que se pueden eliminar. No "
+"está configurado para incorporar sobrescrituras de bloques de días cuando "
+"se inicia la escritura de un dispositivo (predeterminado)."
 
 msgid "Enable iSCSI ALUA"
 msgstr "Habilitar iSCSI ALUA"
@@ -6033,10 +6059,10 @@ msgid "Encryption Key"
 msgstr "Clave de encriptación"
 
 msgid "Encryption Key Format"
-msgstr ""
+msgstr "Formato de clave de cifrado"
 
 msgid "Encryption Key Location in Target System"
-msgstr ""
+msgstr "Ubicación de la clave de cifrado en el sistema de destino"
 
 msgid "Encryption Key Passphrase"
 msgstr "Contraseña de clave de cifrado"
@@ -6243,6 +6269,10 @@ msgid ""
 "href=\"https://api.telegram.org/bot<BOT_TOKEN>/getUpdates\"  "
 "target=\"_blank\">https://api.telegram.org/bot<BOT_TOKEN>/getUpdates</a>."
 msgstr ""
+"Ingrese una lista de ID de chat separados por espacio, coma o punto y coma. "
+"Para encontrar tu ID de chat envía un mensaje al bot, grupo o canal y "
+"visita <a href=\"https://api.telegram.org/bot<BOT_TOKEN>/getUpdates\" "
+"target=\"_blank\">https://api.telegram.org/bot<BOT_TOKEN>/getUpdates</a>."
 
 msgid ""
 "Enter a list of denied hostnames or IP addresses. Separate entries by "
@@ -6545,6 +6575,8 @@ msgid ""
 "Enter an alphanumeric encryption key. Only available when <i>Passphrase</i> "
 "is the chosen key format."
 msgstr ""
+"Ingrese una clave de cifrado alfanumérica. Solo disponible cuando <i>Frase "
+"de contraseña</i> es el formato de clave elegido."
 
 msgid ""
 "Enter an alphanumeric name for the certificate. Underscore (_), and dash "
@@ -6910,7 +6942,7 @@ msgid "Enter the hostname or IP address of the <b>NTP</b> server."
 msgstr "Ingrese el nombre de host o la dirección IP del servidor <b> NTP </b>."
 
 msgid "Enter the hostname to connect to."
-msgstr ""
+msgstr "Ingrese el nombre de host al que conectarse."
 
 msgid "Enter the location of the organization. For example, the city."
 msgstr "Ingrese la ubicación de la organización. Por ejemplo, la ciudad."
@@ -7084,10 +7116,10 @@ msgid "Error Downloading File"
 msgstr "Error al descargar el archivo"
 
 msgid "Error Extending Vdev"
-msgstr ""
+msgstr "Error al extender Vdev"
 
 msgid "Error Replacing Disk"
-msgstr ""
+msgstr "Error al reemplazar el disco"
 
 msgid "Error Saving Configuration Settings"
 msgstr "Error al guardar la configuración"
@@ -7263,7 +7295,7 @@ msgid "Export Dataset Keys for "
 msgstr "Exportar claves de conjunto de datos para "
 
 msgid "Export Key"
-msgstr ""
+msgstr "Exportar clave"
 
 msgid "Export Password Secret Seed"
 msgstr "Exportar semilla secreta de contraseña"
@@ -7711,7 +7743,7 @@ msgid "GID"
 msgstr "GID"
 
 msgid "GMail OAuth"
-msgstr ""
+msgstr "GMail OAuth"
 
 msgid "GUI"
 msgstr "GUI"
@@ -7747,7 +7779,7 @@ msgid "Generate Debug File"
 msgstr "Generar archivo de depuración"
 
 msgid "Generate Encryption Key"
-msgstr ""
+msgstr "Generar clave de cifrado"
 
 msgid "Generate Key"
 msgstr "Generar clave"
@@ -7956,7 +7988,7 @@ msgid "HTTP Proxy"
 msgstr "Proxy HTTP"
 
 msgid "HTTP Proxy:"
-msgstr ""
+msgstr "Proxy HTTP:"
 
 msgid "HTTP host URL."
 msgstr "URL de host HTTP."
@@ -8081,7 +8113,7 @@ msgid "Hostname (Virtual)"
 msgstr "Nombre del Host (Virtual)"
 
 msgid "Hostname Database:"
-msgstr ""
+msgstr "Base de datos de nombre de host:"
 
 msgid "Hostname and Domain"
 msgstr "Nombre del Host y Dominio"
@@ -8126,7 +8158,7 @@ msgstr ""
 "captura SNMP."
 
 msgid "Hostname:"
-msgstr ""
+msgstr "Nombre de host:"
 
 msgid ""
 "Hostnames or IP addresses of the  ISNS servers to be registered with the "
@@ -8510,6 +8542,8 @@ msgid ""
 "If the <i>Hex key</i> type is chosen, an encryption key will be "
 "auto-generated."
 msgstr ""
+"Si se elige el tipo <i>clave hexadecimal</i>, se generará automáticamente "
+"una clave de cifrado."
 
 msgid ""
 "If the IPMI out-of-band management interface is on a different VLAN from "
@@ -8543,10 +8577,10 @@ msgid "Import"
 msgstr "Importar"
 
 msgid "Import Certificate"
-msgstr ""
+msgstr "Importar certificado"
 
 msgid "Import Certificate Signing Request"
-msgstr ""
+msgstr "Importar solicitud de firma de certificado"
 
 msgid "Import a pool that exists but is not connected."
 msgstr "Importe un grupo que existe pero que no está conectado."
@@ -8780,7 +8814,7 @@ msgid "Internal"
 msgstr "Interno"
 
 msgid "Internal Certificate"
-msgstr ""
+msgstr "Certificado interno"
 
 msgid "Internal identifier for the authenticator."
 msgstr "Identificador interno para el autenticador."
@@ -8806,7 +8840,7 @@ msgid "Interval"
 msgstr "Intervalo"
 
 msgid "Invalid Format."
-msgstr ""
+msgstr "Formato inválido."
 
 msgid "Invalid IP address"
 msgstr "Dirección IP inválida"
@@ -8862,7 +8896,7 @@ msgid "Issuer"
 msgstr "Editor"
 
 msgid "Issuer: "
-msgstr ""
+msgstr "Editor: "
 
 msgid ""
 "It is not recommended to create a pool with vdevs containing different "
@@ -9017,13 +9051,13 @@ msgid "Key Length"
 msgstr "Longitud de la clave"
 
 msgid "Key Length: "
-msgstr ""
+msgstr "Longitud de clave: "
 
 msgid "Key Type"
 msgstr "Tipo de clave"
 
 msgid "Key Type: "
-msgstr ""
+msgstr "Tipo de clave: "
 
 msgid "Key Usage"
 msgstr "Uso de clave"
@@ -9052,7 +9086,7 @@ msgid "LDAP"
 msgstr "LDAP"
 
 msgid "LDAP - Primary Domain"
-msgstr ""
+msgstr "LDAP: Dominio Primario"
 
 msgid "LDAP Domain"
 msgstr "Dominio LDAP"
@@ -9236,7 +9270,7 @@ msgid "Lifetime"
 msgstr "Toda la vida"
 
 msgid "Lifetime: "
-msgstr ""
+msgstr "Toda la vida: "
 
 msgid "Limit replication speed to this number of  bytes per second."
 msgstr "Limite la velocidad de replicación a este número de bytes por segundo."
@@ -9252,9 +9286,11 @@ msgstr "Linux"
 
 msgid "List any existing dataset properties to remove from the replicated files."
 msgstr ""
+"Enumere las propiedades del conjunto de datos existentes para eliminar de "
+"los archivos replicados."
 
 msgid "List of chat IDs"
-msgstr ""
+msgstr "Lista de ID de chat"
 
 msgid ""
 "List of files and directories to exclude from sync.<br>  Separate entries "
@@ -9343,7 +9379,7 @@ msgid "Log"
 msgstr "Registro"
 
 msgid "Log In to GMail"
-msgstr ""
+msgstr "Iniciar sesión en GMail"
 
 msgid "Log Level"
 msgstr "Nivel de registro"
@@ -9971,7 +10007,7 @@ msgid "NAT Port Forwarding"
 msgstr "Reenvío de puertos NAT"
 
 msgid "NETBIOS-NS"
-msgstr ""
+msgstr "NETBIOS-NS"
 
 msgid "NFS"
 msgstr "NFS"
@@ -10123,7 +10159,7 @@ msgid "Nameserver 3"
 msgstr "Nombre de servidor 3"
 
 msgid "Nameservers"
-msgstr ""
+msgstr "Servidores de nombres"
 
 msgid "Naming Schema"
 msgstr "Esquema de nomenclatura"
@@ -10178,7 +10214,7 @@ msgid "Netwait IP List"
 msgstr "Lista de IP de Netwait"
 
 msgid "Netwait:"
-msgstr ""
+msgstr "Netwait:"
 
 msgid "Network"
 msgstr "Red"
@@ -10353,7 +10389,7 @@ msgstr ""
 "crear un nuevo tema personalizado."
 
 msgid "No data to display"
-msgstr ""
+msgstr "No hay información para mostrar"
 
 msgid "No interfaces configured with Virtual IP."
 msgstr "No hay interfaces configuradas con IP virtual."
@@ -10571,6 +10607,9 @@ msgid ""
 "system might have operational or licensing restrictions on the number of "
 "CPUs."
 msgstr ""
+"Número de CPU virtuales para asignar a la máquina virtual. El sistema "
+"operativo de la máquina virtual puede tener restricciones operativas o de "
+"licencia sobre la cantidad de CPU."
 
 msgid ""
 "Numeric start priority for the jail at boot time. Valid priorities are "
@@ -10770,7 +10809,7 @@ msgid "Open VPN Server"
 msgstr "Servidor OpenVPN"
 
 msgid "OpenVPN"
-msgstr ""
+msgstr "OpenVPN"
 
 msgid "OpenVPN "
 msgstr "OpenVPN "
@@ -10878,13 +10917,13 @@ msgid "Organization"
 msgstr "Organización"
 
 msgid "Organization: "
-msgstr ""
+msgstr "Organización: "
 
 msgid "Organizational Unit"
 msgstr "Unidad organizacional"
 
 msgid "Organizational Unit: "
-msgstr ""
+msgstr "Unidad organizacional: "
 
 msgid "Organizational unit of the entity."
 msgstr "Unidad organizativa de la entidad."
@@ -10905,7 +10944,7 @@ msgid "Outbound Network"
 msgstr "Red saliente"
 
 msgid "Outbound Network:"
-msgstr ""
+msgstr "Red saliente:"
 
 msgid "Outgoing Mail Server"
 msgstr "Servidor de correo saliente"
@@ -11086,7 +11125,7 @@ msgstr ""
 "Proporcione una clave de al menos 1024 bits de longitud."
 
 msgid "Paste value above or choose a file."
-msgstr ""
+msgstr "Pegue el valor arriba o elija un archivo."
 
 msgid "Path"
 msgstr "Ruta"
@@ -11110,7 +11149,7 @@ msgid "Path to the Extent"
 msgstr "Ruta a la extensión"
 
 msgid "Path: "
-msgstr ""
+msgstr "RUta: "
 
 msgid "Paths"
 msgstr "Rutas"
@@ -11218,7 +11257,7 @@ msgid "PiB"
 msgstr "PiB"
 
 msgid "Plain (No Encryption)"
-msgstr ""
+msgstr "Sencillo (sin cifrado)"
 
 msgid "Platform"
 msgstr "Plataforma"
@@ -11296,10 +11335,10 @@ msgid "Pool Manager"
 msgstr "Administrador de Pool"
 
 msgid "Pool Options"
-msgstr ""
+msgstr "Opciones de grupo"
 
 msgid "Pool Options Saved"
-msgstr ""
+msgstr "Opciones de pool guardadas"
 
 msgid "Pool Status"
 msgstr "Estado de Pool"
@@ -11560,10 +11599,10 @@ msgid "Promote Dataset"
 msgstr "Promover conjunto de datos"
 
 msgid "Properties Exclude"
-msgstr ""
+msgstr "Propiedades excluidas"
 
 msgid "Properties Override"
-msgstr ""
+msgstr "Anulación de propiedades"
 
 msgid "Protocol"
 msgstr "Protocolo"
@@ -11833,7 +11872,7 @@ msgid "Refresh"
 msgstr "Refrezcar"
 
 msgid "Refresh Token"
-msgstr ""
+msgstr "Actualizar Token"
 
 msgid "Region"
 msgstr "Región"
@@ -12016,6 +12055,8 @@ msgid ""
 "Replace existing dataset properties with these new defined properties in "
 "the replicated files."
 msgstr ""
+"Reemplace las propiedades del conjunto de datos existente con estas nuevas "
+"propiedades definidas en los archivos replicados."
 
 msgid "Replacing Disk"
 msgstr "Reemplazando disco"
@@ -12270,7 +12311,7 @@ msgstr ""
 "target=_blank>smb.conf</a>."
 
 msgid "Retrieving Key"
-msgstr ""
+msgstr "Recuperando clave"
 
 msgid "Retro Logo"
 msgstr "Logotipo retro"
@@ -12301,7 +12342,7 @@ msgstr ""
 "se perderán."
 
 msgid "Revoked: "
-msgstr ""
+msgstr "Revocado: "
 
 msgid "Rights"
 msgstr "Derechos"
@@ -12412,10 +12453,10 @@ msgid "S3"
 msgstr "S3"
 
 msgid "SAN"
-msgstr ""
+msgstr "SAN"
 
 msgid "SAN: "
-msgstr ""
+msgstr "SAN: "
 
 msgid "SAVE"
 msgstr "GUARDAR"
@@ -12454,13 +12495,13 @@ msgid "SMB"
 msgstr "SMB"
 
 msgid "SMB - Primary Domain"
-msgstr ""
+msgstr "SMB: Dominio Primario"
 
 msgid "SMB Service"
 msgstr "Servicio SMB"
 
 msgid "SMTP"
-msgstr ""
+msgstr "SMTP"
 
 msgid ""
 "SMTP port number. Typically <i>25,465</i> (secure SMTP), or <i>587</i> "
@@ -12520,7 +12561,7 @@ msgid "SSL"
 msgstr "SSL"
 
 msgid "SSL (Implicit TLS)"
-msgstr ""
+msgstr "SSL (TLS implícito)"
 
 msgid "SSSD Compat"
 msgstr "SSSD compatible"
@@ -12580,7 +12621,7 @@ msgid "Save Pending Snapshots"
 msgstr "Guardar instantáneas pendientes"
 
 msgid "Save Pool Options"
-msgstr ""
+msgstr "Guardar opciones de grupo"
 
 msgid "Save Without Restarting"
 msgstr "Guardar sin reiniciar"
@@ -12610,7 +12651,7 @@ msgid "Saving Permissions..."
 msgstr "Guardando permisos..."
 
 msgid "Saving Pool Options..."
-msgstr ""
+msgstr "Guardar opciones de grupo..."
 
 msgid "Scan This QR Code"
 msgstr "Escanee este código QR"
@@ -13512,7 +13553,7 @@ msgid "Service Announcement"
 msgstr "Anuncio del servicio"
 
 msgid "Service Announcement:"
-msgstr ""
+msgstr "Anuncio de servicio:"
 
 msgid "Service Key"
 msgstr "Clave del servicio"
@@ -14314,7 +14355,7 @@ msgid "Set to start this VM when the system boots."
 msgstr "Configure para iniciar esta VM cuando se inicie el sistema."
 
 msgid "Set to store the encryption key in the TrueNAS database."
-msgstr ""
+msgstr "Establecer para almacenar la clave de cifrado en la base de datos TrueNAS."
 
 msgid ""
 "Set to suppress informational messages from the                remote "
@@ -14394,6 +14435,8 @@ msgid ""
 "Set to use encryption when replicating data. Additional encryption options "
 "will appear."
 msgstr ""
+"Configúrelo para usar cifrado al replicar datos. Aparecerán opciones de "
+"cifrado adicionales."
 
 msgid ""
 "Set to use the <i>Schedule</i> in place  of the <i>Replicate Specific "
@@ -14694,7 +14737,7 @@ msgid "Sidebar Controls"
 msgstr "Controles de barra lateral"
 
 msgid "Sign"
-msgstr ""
+msgstr "Firmar"
 
 msgid "Sign CSR"
 msgstr "Firma CSR"
@@ -14703,10 +14746,10 @@ msgid "Sign in"
 msgstr "Iniciar sesión"
 
 msgid "Signed By: "
-msgstr ""
+msgstr "Firmado por: "
 
 msgid "Signed Certificates: "
-msgstr ""
+msgstr "Certificados firmados: "
 
 msgid "Signing Certificate Authority"
 msgstr "Autoridad de certificación de firma"
@@ -14912,10 +14955,10 @@ msgstr ""
 "sesión anónimos."
 
 msgid "Specify the number of cores per virtual CPU socket."
-msgstr ""
+msgstr "Especifique el número de núcleos por socket de CPU virtual."
 
 msgid "Specify the number of threads per core."
-msgstr ""
+msgstr "Especifique el número de subprocesos por núcleo."
 
 msgid "Specify the size of the new zvol."
 msgstr "Especifique el tamaño del nuevo zvol."
@@ -14975,7 +15018,7 @@ msgid "State"
 msgstr "Estado"
 
 msgid "State: "
-msgstr ""
+msgstr "Estado: "
 
 msgid ""
 "Static IP addresses which SMB listens on for connections.  Leaving all "
@@ -14989,7 +15032,7 @@ msgid "Static IPv4 address of the IPMI web interface."
 msgstr "Dirección IPv4 estática de la interfaz web IPMI."
 
 msgid "Static Routes"
-msgstr ""
+msgstr "Static Routes"
 
 msgid "Stats Per Thread"
 msgstr "Estadísticas por hilo"
@@ -15080,7 +15123,7 @@ msgid "Storage location for the replicated  snapshots."
 msgstr "Ubicación de almacenamiento para las instantáneas replicadas."
 
 msgid "Store Encryption key in Sending TrueNAS database"
-msgstr ""
+msgstr "Almacenar la clave de cifrado en la base de datos de envío de TrueNAS"
 
 msgid ""
 "Store system logs on the system dataset. Unset to store system logs in "
@@ -15323,7 +15366,7 @@ msgid "TLS"
 msgstr "TLS"
 
 msgid "TLS (STARTTLS)"
-msgstr ""
+msgstr "TLS (STARTTLS)"
 
 msgid "TLS Allow Client Renegotiations"
 msgstr "Permitir renegociaciones de clientes TLS"
@@ -15426,6 +15469,9 @@ msgid ""
 "href=\"https://core.telegram.org/bots#3-how-do-i-create-a-bot\" "
 "target=\"_blank\">How to create a Telegram Bot</a>)"
 msgstr ""
+"Token de API del Bot de Telegram (<a "
+"href=\"https://core.telegram.org/bots#3-how-do-i-create-a-bot\" "
+"target=\"_blank\">Cómo crear un Telegram Bot</a>)"
 
 msgid "Temperature"
 msgstr "Temperatura"
@@ -15798,7 +15844,7 @@ msgid "The filesystem "
 msgstr "El sistema de archivos "
 
 msgid "The following Telegram chat ID(s) must be numbers!"
-msgstr ""
+msgstr "Las siguientes ID de chat de Telegram deben ser números."
 
 msgid "The following datasets cannot be unlocked."
 msgstr "Los siguientes conjuntos de datos no se pueden desbloquear."
@@ -15898,7 +15944,7 @@ msgstr ""
 "los grupos conectados con Active Directory u otros servicios."
 
 msgid "The listed services will be changed to listen on 0.0.0.0:"
-msgstr ""
+msgstr "Los servicios enumerados se cambiarán para escuchar en 0.0.0.0:"
 
 msgid "The maximum length of the queue of pending connections. Default is 100."
 msgstr ""
@@ -16030,7 +16076,7 @@ msgstr ""
 "conexión del protocolo TLS al servidor de registro del sistema remoto."
 
 msgid "The product of vCPUs, cores and threads must not exceed"
-msgstr ""
+msgstr "El producto de vCPU, núcleos e hilos no debe exceder"
 
 msgid ""
 "The recovery key is an additional key file that  can be used to decrypt the "
@@ -16254,7 +16300,7 @@ msgid "There is an upgrade waiting to finish."
 msgstr "Hay una actualización esperando a terminar."
 
 msgid "There was a problem submitting the SPN entry."
-msgstr ""
+msgstr "Hubo un problema al enviar la entrada SPN."
 
 msgid ""
 "These  <a href=\"https://support.apple.com/en-us/HT210803\" "
@@ -16269,7 +16315,7 @@ msgstr ""
 "Esto es necesario para el soporte de Time Machine."
 
 msgid "These IP Addresses were removed:"
-msgstr ""
+msgstr "Se eliminaron estas direcciones IP:"
 
 msgid ""
 "These arguments are passed to <a href=\"https://rclone.org/docs/\" "
@@ -16346,6 +16392,8 @@ msgid ""
 "This Certificate Authority is being used to sign one or more certificates. "
 "It can be deleted  only after deleting these certificates."
 msgstr ""
+"Esta autoridad de certificación se utiliza para firmar uno o más "
+"certificados. Solo se puede eliminar después de eliminar estos certificados."
 
 msgid "This Controller"
 msgstr "Este Controlador"
@@ -16524,6 +16572,14 @@ msgid ""
 "When no other pools exist, the system dataset transfers back to the TrueNAS "
 "operating system device."
 msgstr ""
+"Este grupo contiene el conjunto de datos del sistema que almacena datos "
+"críticos, como depurar archivos centrales, claves de cifrado para grupos y "
+"metadatos de Samba 4, como el caché de usuario / grupo y los permisos de "
+"nivel compartido. La exportación de este grupo transferirá el conjunto de "
+"datos del sistema a otro grupo disponible. Si el único grupo disponible "
+"está cifrado, ese grupo ya no podrá bloquearse. Cuando no existen otros "
+"grupos, el conjunto de datos del sistema se transfiere de nuevo al "
+"dispositivo del sistema operativo TrueNAS."
 
 msgid "This process continues in the background after closing this dialog."
 msgstr ""
@@ -16845,7 +16901,7 @@ msgstr ""
 "elige automáticamente el tipo de cuenta correcto."
 
 msgid "Type: "
-msgstr ""
+msgstr "Tipo: "
 
 msgid "UDP"
 msgstr "UDP"
@@ -16998,6 +17054,8 @@ msgstr "Deseleccionar todo"
 
 msgid "Unset <i>Generate Encryption Key</i> to instead import a custom Hex key."
 msgstr ""
+"Desactive <i>Generar clave de cifrado</i> para importar una clave "
+"hexadecimal personalizada."
 
 msgid "Unset to add a login prompt to the system before the console menu is shown."
 msgstr ""
@@ -17029,7 +17087,7 @@ msgid "Until"
 msgstr "Hasta"
 
 msgid "Until: "
-msgstr ""
+msgstr "Hasta: "
 
 msgid "Upcoming tasks"
 msgstr "Próximas tareas"
@@ -17323,6 +17381,8 @@ msgid ""
 "Use the <i>Log In to GMail</i> button to obtain the credentials for this "
 "form."
 msgstr ""
+"Utilice el botón <i>Iniciar sesión en GMail</i> para obtener las "
+"credenciales para este formulario."
 
 msgid ""
 "Use the KMIP server to manage ZFS encrypted dataset keys. The key server "
@@ -17696,13 +17756,13 @@ msgid "View Logs"
 msgstr "Ver registros"
 
 msgid "View/Download CSR"
-msgstr ""
+msgstr "Ver/Descargar CSR"
 
 msgid "View/Download Certificate"
-msgstr ""
+msgstr "Ver/Descargar certificado"
 
 msgid "View/Download Key"
-msgstr ""
+msgstr "Ver/Descargar clave"
 
 msgid "Violet"
 msgstr "Violeta"
@@ -17711,7 +17771,7 @@ msgid "Virtual CPUs"
 msgstr "CPUs virtuales"
 
 msgid "Virtual IP Address (Failover Address)"
-msgstr ""
+msgstr "Dirección IP virtual (dirección de conmutación por error)"
 
 msgid "Virtual Interface"
 msgstr "Interfaz virtual"
@@ -17773,7 +17833,7 @@ msgstr ""
 "grupo."
 
 msgid "WS-DISCOVERY"
-msgstr ""
+msgstr "WS-DISCOVERY"
 
 msgid "WS-Discovery"
 msgstr "WS-Discovery"
@@ -18075,7 +18135,7 @@ msgid "Workgroup"
 msgstr "Grupo de trabajo"
 
 msgid "Would you like to add a Service Principal Name (SPN) now?"
-msgstr ""
+msgstr "¿Desea agregar un nombre principal de servicio (SPN) ahora?"
 
 msgid "Write"
 msgstr "Escribir"
@@ -18120,7 +18180,7 @@ msgid "You have left the domain."
 msgstr "Has dejado el dominio."
 
 msgid "You have successfully added credentials."
-msgstr ""
+msgstr "Ha agregado credenciales con éxito."
 
 msgid "ZFS"
 msgstr "ZFS"
@@ -18519,7 +18579,7 @@ msgid "on the first day of the month at 00:00 (12:00 AM)"
 msgstr "cada primer día del mes a las 00:00 (12:00 AM)"
 
 msgid "on this system."
-msgstr ""
+msgstr "en este sistema."
 
 msgid "openfiles"
 msgstr "openfiles"
@@ -18540,7 +18600,7 @@ msgid "pcpu"
 msgstr "pcpu"
 
 msgid "pool options for "
-msgstr ""
+msgstr "opciones de grupo para "
 
 msgid "priority"
 msgstr "prioridad"

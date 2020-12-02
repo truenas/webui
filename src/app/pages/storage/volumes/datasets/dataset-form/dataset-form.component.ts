@@ -18,6 +18,7 @@ import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/
 import { Validators, ValidationErrors, FormControl } from '@angular/forms';
 import { filter } from 'rxjs/operators';
 import { combineLatest } from 'rxjs';
+import { ModalService } from 'app/services/modal.service';
 
 interface DatasetFormData {
   name: string;
@@ -59,9 +60,9 @@ interface DatasetFormData {
 })
 export class DatasetFormComponent implements Formconfiguration{
 
+  public title: string;
   public volid: string;
   public sub: Subscription;
-  public route_success: string[] = ['storage'];
   public isBasicMode = true;
   public pk: any;
   public customFilter: any[] = [];
@@ -196,7 +197,7 @@ export class DatasetFormComponent implements Formconfiguration{
         ],
       }]
     },
-    { name: "quota_divider", divider: true },
+    { name: "quota_divider", divider: true, maxWidth: true  },
     {
       name: helptext.dataset_form_refdataset_section_placeholder,
       class: "refdataset",
@@ -911,7 +912,8 @@ export class DatasetFormComponent implements Formconfiguration{
   constructor(protected router: Router, protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
     protected loader: AppLoaderService, protected dialogService: DialogService,
-    protected storageService: StorageService ) { }
+    protected storageService: StorageService,
+    protected modalService: ModalService ) { }
 
 
 
@@ -1040,21 +1042,23 @@ export class DatasetFormComponent implements Formconfiguration{
     this.setBasicMode(this.isBasicMode);
   }
 
+  paramMap: any;
   preInit(entityForm: EntityFormComponent) {
 
-    const paramMap: any = (<any>this.aroute.params).getValue();
-    this.volid = paramMap['volid'];
+    // this.paramMap = (<any>this.aroute.params).getValue();
 
-    if (paramMap['pk'] !== undefined) {
-      this.pk = paramMap['pk'];
+    this.volid = this.paramMap['volid'];
 
-      const pk_parent = paramMap['pk'].split('/');
+    if (this.paramMap['pk'] !== undefined) {
+      this.pk = this.paramMap['pk'];
+
+      const pk_parent = this.paramMap['pk'].split('/');
       this.parent = pk_parent.splice(0, pk_parent.length - 1).join('/');
       this.customFilter = [[['id', '=', this.pk]]];
     }
     // add new dataset
-    if (paramMap['parent'] || paramMap['pk'] === undefined) {
-      this.parent = paramMap['parent'];
+    if (this.paramMap['parent'] || this.paramMap['pk'] === undefined) {
+      this.parent = this.paramMap['parent'];
       this.pk = this.parent;
       this.isNew = true;
       this.fieldSets[0].config[0].readonly = false;
@@ -1579,6 +1583,7 @@ export class DatasetFormComponent implements Formconfiguration{
 
     return ((this.isNew === true ) ? this.addSubmit(body) : this.editSubmit(body)).subscribe((restPostResp) => {
       this.loader.close();
+      this.modalService.close('slide-in-form');
       const parentPath = `/mnt/${this.parent}`;
       this.ws.call('filesystem.acl_is_trivial', [parentPath]).subscribe(res => {
         if (res === false) {
@@ -1598,19 +1603,42 @@ export class DatasetFormComponent implements Formconfiguration{
                 }
               })
             } else {
-              this.router.navigate(new Array('/').concat(
-                this.route_success));
+              this.modalService.close('slide-in-form');
             }
           })
         } else {
-          this.router.navigate(new Array('/').concat(
-            this.route_success));
+          this.modalService.close('slide-in-form');
         }
+        this.modalService.refreshTable();
       })
     }, (res) => {
       this.loader.close();
+      this.modalService.close('slide-in-form');
       new EntityUtils().handleWSError(this.entityForm, res);
     });
   }
+  
+  setParent(id) {
+    if(!this.paramMap) {
+      this.paramMap = {};
+    }
+    this.paramMap.parent = id;
+  }
 
+  setVolId(pool) {
+    if(!this.paramMap) {
+      this.paramMap = {};
+    }
+    this.paramMap.volid = pool;
+  }
+  setPk(id) {
+    if(!this.paramMap) {
+      this.paramMap = {};
+    }
+    this.paramMap.pk = id;
+  }
+
+  setTitle(title) {
+    this.title = T(title);
+  }
 }

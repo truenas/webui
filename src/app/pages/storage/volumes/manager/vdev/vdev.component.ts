@@ -50,7 +50,6 @@ export class VdevComponent implements OnInit {
     public sorter: StorageService) {}
 
   ngOnInit() {
-    this.estimateSize();
     if (this.group === 'data') {
       this.vdev_type_disabled = !this.manager.isNew;
       if (!this.vdev_type_disabled) {
@@ -69,6 +68,7 @@ export class VdevComponent implements OnInit {
     if (this.initial_values['type']) {
       this.type = this.initial_values['type'];
     }
+    this.estimateSize();
   }
 
   getType() {

@@ -190,7 +190,7 @@ msgid "(Remove pool from database)"
 msgstr "(Retirer le volume de la base de données)"
 
 msgid "(System Dataset Pool)"
-msgstr ""
+msgstr "(Volume dataset système)"
 
 msgid "(top-right), then"
 msgstr "(en haut à droite), puis"
@@ -674,6 +674,9 @@ msgid ""
 "<i>Import Certificate Signing Request</i> allows an existing CSR  to be "
 "imported onto the system."
 msgstr ""
+"La <i>Demande de signature de certificat </i> est utilisée pour obtenir une "
+"signature AC. La <i> Demande de signature de certificat d’importation </i> permet "
+"d’importer un CSR existant dans le système."
 
 msgid ""
 "<i>Default (Clone Jail)</i> or <i>Basejail</i>. Clone jails are clones of "
@@ -722,6 +725,9 @@ msgid ""
 "<i>Import Certificate</i> allows an existing certificate to be imported "
 "onto  the system."
 msgstr ""
+"<i>Le certificat interne</i> est utilisé pour les systèmes internes ou locaux. "
+"<Importer Certificat</i> permet l’importation d’un certificat existant sur le "
+"système."
 
 msgid ""
 "<i>PUSH</i> sends data to cloud storage. <i>PULL</i>  receives data from "
@@ -1170,7 +1176,7 @@ msgid "Active Directory"
 msgstr "Active Directory"
 
 msgid "Active Directory - Primary Domain"
-msgstr ""
+msgstr "Active Directory - Domaine principal"
 
 msgid "Active Directory IDMAP change!"
 msgstr "Changement IDMAP Active Directory !"
@@ -1200,19 +1206,19 @@ msgid "Add Alert Service"
 msgstr "Ajouter un service d'alerte"
 
 msgid "Add CA"
-msgstr ""
+msgstr "Ajouter AC"
 
 msgid "Add CSR"
-msgstr ""
+msgstr "Ajouter CSR"
 
 msgid "Add Certificate"
-msgstr ""
+msgstr "Ajouter Certificat"
 
 msgid "Add Cloud Credential"
 msgstr "Ajouter des informations d'identification Cloud"
 
 msgid "Add DNS Authenticator"
-msgstr ""
+msgstr "Ajouter DNS Authenticator"
 
 msgid "Add Dataset"
 msgstr "Ajouter un dataset"
@@ -1227,13 +1233,13 @@ msgid "Add Interface"
 msgstr "Ajouter une interface"
 
 msgid "Add Kerberos SPN Entry"
-msgstr ""
+msgstr "Ajouter Kerberos SPN Entry"
 
 msgid "Add Mountpoint"
 msgstr "Ajouter un point de montage"
 
 msgid "Add NFS SPN"
-msgstr ""
+msgstr "Ajouter NFS SPN"
 
 msgid "Add Recovery Key"
 msgstr "Ajouter une clé de récupération"
@@ -1328,6 +1334,8 @@ msgstr ""
 
 msgid "Adding NFS NPN requires sufficient privileges. Enter your credentials below."
 msgstr ""
+"L’ajout de NFS NPN nécessite suffisamment de privilèges. Entrez vos informations "
+"d’identification ci-dessous."
 
 msgid "Adding Vdevs to an encrypted pool resets the passphrase and recovery key!"
 msgstr ""
@@ -1392,7 +1400,7 @@ msgid "Additional Domains"
 msgstr "Domaines supplémentaires"
 
 msgid "Additional Domains:"
-msgstr ""
+msgstr "Domaines supplémentaires:"
 
 msgid "Additional Hardware"
 msgstr "Matériel supplémentaire"
@@ -1583,6 +1591,8 @@ msgid ""
 "Alias for the identical interface  on the other TrueNAS controller. The "
 "alias can be an IPv4 or IPv6 address."
 msgstr ""
+"Alias pour l’interface identique sur l’autre contrôleur TrueNAS. L’alias peut être "
+"une adresse IPv4 ou IPv6."
 
 msgid "Aliases"
 msgstr "Alias"
@@ -2270,7 +2280,7 @@ msgid "Attach screenshots."
 msgstr "Joindre des captures d'écran."
 
 msgid "Attention"
-msgstr ""
+msgstr "Attention"
 
 msgid "Aug"
 msgstr "Aoû"
@@ -2854,7 +2864,7 @@ msgid "CLOSE"
 msgstr "FERMER"
 
 msgid "CN"
-msgstr ""
+msgstr "CN"
 
 msgid "CN Realm"
 msgstr "CN Realm"
@@ -2986,10 +2996,10 @@ msgid "Certificate Options"
 msgstr "Options de certificat"
 
 msgid "Certificate Signing Request"
-msgstr ""
+msgstr "Demande de signature de certificat"
 
 msgid "Certificate Signing Requests"
-msgstr ""
+msgstr "Demandes de signature de certificat"
 
 msgid "Certificate Subject"
 msgstr "Objet du certificat"
@@ -3379,6 +3389,8 @@ msgid ""
 "Choose a temporary location for the encryption key that will decrypt "
 "replicated data."
 msgstr ""
+"Choisissez un emplacement temporaire pour la clé de chiffrement qui déchiffre les "
+"données répliquées."
 
 msgid "Choose a time format."
 msgstr "Choisissez un format de temps."
@@ -3456,6 +3468,8 @@ msgid ""
 "Choose between a <i>Hex</i> (base 16 numeral) or <i>Passphrase</i> "
 "(alphanumeric) style encryption key."
 msgstr ""
+"Choisissez entre une clé de chiffrement du style <i>Hex</i> (base 16 chiffres) ou "
+"<i>Passphrase</i> (alphanumérique)."
 
 msgid ""
 "Choose how many log entries to create. Choices range from the least log "
@@ -3662,7 +3676,7 @@ msgid "Cipher"
 msgstr "Cipher"
 
 msgid "City: "
-msgstr ""
+msgstr "Ville: "
 
 msgid ""
 "Classification for each S3 object. Choose a class based on the specific use "
@@ -3735,7 +3749,7 @@ msgid "Client Certificate"
 msgstr "Certificat du client"
 
 msgid "Client ID"
-msgstr ""
+msgstr "ID Client"
 
 msgid "Client Name"
 msgstr "Nom du client"
@@ -3886,7 +3900,7 @@ msgid "Common Name"
 msgstr "Nom commun"
 
 msgid "Common: "
-msgstr ""
+msgstr "Commun: "
 
 msgid "Community"
 msgstr "Communauté"
@@ -4172,7 +4186,7 @@ msgid "Copies"
 msgstr "Exemplaires"
 
 msgid "Copy"
-msgstr ""
+msgstr "Copier"
 
 msgid "Copy and Paste"
 msgstr "Copier et coller"
@@ -4184,7 +4198,7 @@ msgid "Could not delete boot environment."
 msgstr "Impossible de supprimer l'environnement de démarrage."
 
 msgid "Could not extend Vdev."
-msgstr ""
+msgstr "Ne peut pas étendre Vdev."
 
 msgid "Could not find a group name for this group ID."
 msgstr "Impossible de trouver un nom de groupe pour cet ID de groupe."
@@ -4193,7 +4207,7 @@ msgid "Could not find a user name for this user ID."
 msgstr "Impossible de trouver un nom d'utilisateur pour cet ID utilisateur."
 
 msgid "Could not replace disk."
-msgstr ""
+msgstr "Ne peut pas remplacer le disque."
 
 msgid "Country"
 msgstr "Pays"
@@ -4211,7 +4225,7 @@ msgstr ""
 "ISO 3166-1 alpha-2</a> valide de deux lettres majuscules."
 
 msgid "Country: "
-msgstr ""
+msgstr "Pays : "
 
 msgid "Crash reporting"
 msgstr "Rapport d'incident"
@@ -4390,7 +4404,7 @@ msgid "Custom"
 msgstr "Personnalisé"
 
 msgid "Custom Name"
-msgstr ""
+msgstr "Nom personnalisé"
 
 msgid "Custom Path"
 msgstr "Chemin personnalisé"
@@ -4405,7 +4419,7 @@ msgid "Custom Theme Name"
 msgstr "Nom du thème personnalisé"
 
 msgid "Custom Value"
-msgstr ""
+msgstr "Valeur personnalisée"
 
 msgid "Customer Name"
 msgstr "Nom du client"
@@ -4456,7 +4470,7 @@ msgid "DHCP Autoconfigure IPv4"
 msgstr "DHCP Autoconfigure IPv4"
 
 msgid "DISABLED"
-msgstr ""
+msgstr "DÉSACTIVÉ"
 
 msgid "DNS Domain Name"
 msgstr "Nom de domaine DNS"
@@ -4572,7 +4586,7 @@ msgid "Dataset Key"
 msgstr "Clé dataset"
 
 msgid "Dataset Names"
-msgstr ""
+msgstr "Noms du dataset"
 
 msgid "Dataset Passphrase"
 msgstr "Passphrase dataset"
@@ -4675,7 +4689,7 @@ msgid "Default Permissions"
 msgstr "Permissions par défaut"
 
 msgid "Default Route"
-msgstr ""
+msgstr "Route par défaut"
 
 msgid "Default Router For IPv4"
 msgstr "Routeur par défaut pour IPv4"
@@ -4727,11 +4741,15 @@ msgid ""
 "Define an alias for the interface  on this TrueNAS controller. The alias "
 "can be an IPv4 or IPv6  address."
 msgstr ""
+"Définissez un alias pour l’interface sur ce contrôleur TrueNAS. L’alias peut être "
+"une adresse IPv4 ou IPv6."
 
 msgid ""
 "Define an alias that can  connect to the interface on either TrueNAS "
 "controller. This address  remains active if a Controller failover occurs."
 msgstr ""
+"Définissez un alias qui peut se connecter à l’interface sur l’un ou l’autre "
+"contrôleur TrueNAS. Cette adresse reste active en cas d’échec du contrôleur."
 
 msgid ""
 "Define other sections and their key/value pairs. Enclose each section name "
@@ -4846,6 +4864,8 @@ msgid ""
 "Define the system services that are allowed to communicate externally. All "
 "other external traffic is restricted."
 msgstr ""
+"Définissez les services système autorisés à communiquer à l’extérieur. Tout autre "
+"trafic externe est restreint."
 
 msgid "Define the target as *iSCSI*, *Fibre Channel*, or *Both*."
 msgstr "Définissez la cible comme *iSCSI*, *Fibre Channel* ou *Both*."
@@ -4964,7 +4984,7 @@ msgid "Deleting the <b>"
 msgstr "Supprimer le <b>"
 
 msgid "Deleting..."
-msgstr ""
+msgstr "Suppression..."
 
 msgid "Deny"
 msgstr "Refuser"
@@ -5223,7 +5243,7 @@ msgid "Digest Algorithm"
 msgstr "Algorithme Digest"
 
 msgid "Digest Algorithm: "
-msgstr ""
+msgstr "Algorithme Digest: "
 
 msgid "Digital Signature"
 msgstr "Signature numérique"
@@ -5398,7 +5418,7 @@ msgid "Distinguished Name"
 msgstr "Nom distinctif"
 
 msgid "Distinguished Name: "
-msgstr ""
+msgstr "Nom distinctif: "
 
 msgid ""
 "Do <b>NOT</b> change this setting when using Windows as the initiator. Only "
@@ -5452,7 +5472,7 @@ msgstr ""
 "<code>freenas\\smbusers</code>."
 
 msgid "Domain:"
-msgstr ""
+msgstr "Domaine :"
 
 msgid "Done"
 msgstr "Terminé"
@@ -5535,7 +5555,7 @@ msgid "EDIT"
 msgstr "EDITER"
 
 msgid "ENABLED"
-msgstr ""
+msgstr "ACTIVÉ"
 
 msgid "ERROR: Not Enough Memory"
 msgstr "ERREUR : Pas assez de mémoire"
@@ -5562,16 +5582,16 @@ msgid "Edit Alert Service"
 msgstr "Éditer le service d'alerte"
 
 msgid "Edit CA"
-msgstr ""
+msgstr "Modifier AC"
 
 msgid "Edit CSR"
-msgstr ""
+msgstr "Modifier CSR"
 
 msgid "Edit Certificate"
-msgstr ""
+msgstr "Modifier Certificat"
 
 msgid "Edit DNS Authenticator"
-msgstr ""
+msgstr "Modifier DNS Authenticator"
 
 msgid "Edit Disk(s)"
 msgstr "Modifier le(s) disque(s)"
@@ -5598,7 +5618,7 @@ msgid "Edit Permissions"
 msgstr "Modifier les autorisations"
 
 msgid "Edit Pool Options for "
-msgstr ""
+msgstr "Modifier les options de volume pour "
 
 msgid "Edit Share ACL"
 msgstr "Modifier l'ACL du partage"
