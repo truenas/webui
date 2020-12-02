@@ -278,8 +278,6 @@ export class VolumeStatusComponent implements OnInit {
             ["devname", "=", diskName]
           ]
         ]).subscribe((res) => {
-          // this.editDiskRoute.push(this.pk, "edit", res[0].identifier);
-          // this.router.navigate(new Array('').concat(this.editDiskRoute));
           this.onClickEdit(res[0].identifier);
         })
       },
