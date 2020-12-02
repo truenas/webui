@@ -1035,7 +1035,9 @@ export class DatasetFormComponent implements Formconfiguration{
 
     // this.paramMap = (<any>this.aroute.params).getValue();
 
+
     this.volid = this.paramMap['volid'];
+
 
     if (this.paramMap['pk'] !== undefined) {
       this.pk = this.paramMap['pk'];
@@ -1059,6 +1061,7 @@ export class DatasetFormComponent implements Formconfiguration{
         compression.options.push({label: key, value: res[key]});
       }
     });
+    
     if(this.parent){
       const root = this.parent.split("/")[0];
       this.ws.call('pool.dataset.recommended_zvol_blocksize',[root]).subscribe(res=>{
