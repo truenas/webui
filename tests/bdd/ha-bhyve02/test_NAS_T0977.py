@@ -206,21 +206,43 @@ def then_you_should_be_retune_to_the_initiators_group_tab(driver):
 @then('click Targets tab, then click Add')
 def click_targets_tab_then_click_add(driver):
     """click Targets tab, then click Add."""
+    driver.find_element_by_xpath('//a[@ix-auto="tab__Targets"]').click()
+    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Targets")]')
+    driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
+    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Basic Info")]')
 
 
-@then(parsers.parse('input Target name "{target_name}", Target alias "{target_alias}", Portal Group ID select "{gid}"'))
-def input_target_name_ds1_target_alias_ds1_portal_group_id_select_1(driver):
+@then(parsers.parse('input Target name "{target_name}", Target alias "{target_alias}", Portal Group ID select "{group}"'))
+def input_target_name_ds1_target_alias_ds1_portal_group_id_select_1(driver, target_name, target_alias, group):
     """input Target name "ds1", Target alias "ds1", Portal Group ID select "1"."""
+    driver.find_element_by_xpath('//input[@ix-auto="input__Target Name"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Target Name"]').send_keys(target_name)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Target Alias"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Target Alias"]').send_keys(target_alias)
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Portal Group ID"]').click()
+    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Portal Group ID_{group}"]')
+    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Portal Group ID_{group}"]').click()
 
 
-@then(parsers.parse('Initiator Group ID select "{gid}", Auth Method Select "{method}", Authentication Group Number Select "{g_number}"'))
-def initiator_group_id_select_1_auth_method_select_mutual_chap_authentication_group_number_select_1(driver):
+@then(parsers.parse('Initiator Group ID select "{initiator_group}", Auth Method Select "{method}", Authentication Group Number Select "{gid}"'))
+def initiator_group_id_select_1_auth_method_select_mutual_chap_authentication_group_number_select_1(driver, initiator_group, method, gid):
     """Initiator Group ID select "1", Auth Method Select "Mutual Chap", Authentication Group Number Select "1"."""
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Initiator Group ID"]').click()
+    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Initiator Group ID_{initiator_group}"]')
+    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Initiator Group ID_{initiator_group}"]').click()
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Authentication Method"]').click()
+    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Authentication Method_{method}"]')
+    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Authentication Method_{method}"]').click()
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Authentication Group Number"]').click()
+    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Authentication Group Number_{gid}"]')
+    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Authentication Group Number_{gid}"]').click()
 
 
 @then('you should be retune to the Targets tab')
 def then_you_should_be_retune_to_the_targets_tab(driver):
     """you should be retune to the Targets tab."""
+    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Targets")]')
+    assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"ds1")]')
 
 
 @then('click Extents tab, then click Add')
@@ -228,9 +250,9 @@ def click_extents_tab_then_click_add(driver):
     """click Extents tab, then click Add."""
 
 
-@then(parsers.parse('input Extent name "{extent_name}",  Extent type device Device * "{device}"'))
+@then(parsers.parse('input Extent name "{extent_name}", Extent type device Device * "{device}"'))
 def input_extent_name_ds1__extent_type_device_device__tankds1(driver):
-    """input Extent name ds1,  Extent type device Device * tank/ds1."""
+    """input Extent name ds1, Extent type device Device * tank/ds1."""
 
 
 @then('you should be retune to the Extents tab')
