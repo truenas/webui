@@ -297,7 +297,7 @@ export default {
       }
     },
     hostNetwork: {
-      title: T('Hosts/Ports'),
+      title: T('Host Network/Host Ports'),
       placeholder: T('Host Network'),
       tooltip: T('Provide access to node network namespace for the workload.')
     },
@@ -310,6 +310,7 @@ export default {
       }
     },
     portForwardingList: {
+      title: T('Port Forwarding List'),
       containerPort: {
         placeholder: T('Container Port')
       },

@@ -187,7 +187,8 @@ export class ChartReleaseSettingsComponent {
           type: 'input',
           name: 'gateway',
           placeholder: helptext.chartForm.externalInterfaces.staticRoutes.gateway.placeholder,
-          required: true,          isHidden: true,
+          required: true,          
+          isHidden: true,
           disabled: true,
           relation: [
             {
@@ -234,24 +235,53 @@ export class ChartReleaseSettingsComponent {
       width: '50%',
       config: [
         {
+          type: 'input',
+          name: 'hpl_containerPort',
+          placeholder: helptext.chartForm.hostPortsList.containerPort.placeholder,
+          required: true,
+          isHidden: true,
+          disabled: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'updateStrategy',
+                value: 'Recreate',
+              }]
+            },
+          ]
+        },       
+        {
+          type: 'input',
+          name: 'hpl_hostPort',
+          placeholder: helptext.chartForm.hostPortsList.hostPort.placeholder,
+          required: true,
+          isHidden: true,
+          disabled: true,
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'updateStrategy',
+                value: 'Recreate',
+              }]
+            },
+          ]
+        },
+        {
           type: 'checkbox',
           name: 'hostNetwork',
           placeholder: helptext.chartForm.hostNetwork.placeholder,
           tooltip: helptext.chartForm.hostNetwork.tooltip,
           value: false
         },
-        {
-          type: 'input',
-          name: 'hpl_containerPort',
-          placeholder: helptext.chartForm.hostPortsList.containerPort.placeholder,
-          required: true
-        },       
-        {
-          type: 'input',
-          name: 'hpl_hostPort',
-          placeholder: helptext.chartForm.hostPortsList.hostPort.placeholder,
-          required: true
-        },
+      ]
+    },
+    {
+      name: helptext.chartForm.portForwardingList.title,
+      label: true,
+      width: '50%',
+      config: [
         {
           type: 'input',
           name: 'pfl_containerPort',
@@ -494,7 +524,14 @@ export class ChartReleaseSettingsComponent {
               ipam: {
                 type: data.ipam,
                 staticIpConfigurations: data.list,
-                
+
+                // staticRoutes: [
+                //   staticRouteConfiguration: {
+                //     destination: ipwithcidr,
+                //     gateway: ipnocidr
+                //   }
+                // ]
+
               }
 
             }
