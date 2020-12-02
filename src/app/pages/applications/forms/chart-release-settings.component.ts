@@ -32,6 +32,20 @@ export class ChartReleaseSettingsComponent {
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
     {
+      name: 'Name',
+      width: '100%',
+      config: [
+        {
+          type: 'input',
+          name: 'release_name',
+          placeholder: helptext.chartForm.release_name.placeholder,
+          tooltip: helptext.chartForm.release_name.tooltip,
+          required: true
+        }
+      ],
+      colspan: 2
+    },
+    {
       name: helptext.chartForm.image.title,
       label: true,
       width: '50%',
@@ -150,57 +164,104 @@ export class ChartReleaseSettingsComponent {
           options: helptext.chartForm.externalInterfaces.ipam.options,
           value: helptext.chartForm.externalInterfaces.ipam.options[0].value,
         },
-        {
-          type: 'input',
-          name: 'staticIP',
-          placeholder: helptext.chartForm.externalInterfaces.staticConfig.placeholder,
-          required: true,
-          isHidden: true,
-          disabled: true,
-          relation: [
-            {
-              action: 'SHOW',
-              when: [{
-                name: 'ipam',
-                value: 'static',
-              }]
-            },
-          ]
-        },
-        {
-          type: 'input',
-          name: 'destination',
-          placeholder: helptext.chartForm.externalInterfaces.staticRoutes.destination.placeholder,
-          required: true,
-          isHidden: true,
-          disabled: true,
-          relation: [
-            {
-              action: 'SHOW',
-              when: [{
-                name: 'ipam',
-                value: 'static',
-              }]
-            },
-          ]
-        },        {
-          type: 'input',
-          name: 'gateway',
-          placeholder: helptext.chartForm.externalInterfaces.staticRoutes.gateway.placeholder,
-          required: true,          
-          isHidden: true,
-          disabled: true,
-          relation: [
-            {
-              action: 'SHOW',
-              when: [{
-                name: 'ipam',
-                value: 'static',
-              }]
-            },
-          ]
-        }
+        // {
+        //   type: 'input',
+        //   name: 'staticIP',
+        //   placeholder: helptext.chartForm.externalInterfaces.staticConfig.placeholder,
+        //   required: true,
+        //   isHidden: true,
+        //   disabled: true,
+        //   relation: [
+        //     {
+        //       action: 'SHOW',
+        //       when: [{
+        //         name: 'ipam',
+        //         value: 'static',
+        //       }]
+        //     },
+        //   ]
+        // },
+        // {
+        //   type: 'input',
+        //   name: 'destination',
+        //   placeholder: helptext.chartForm.externalInterfaces.staticRoutes.destination.placeholder,
+        //   required: true,
+        //   isHidden: true,
+        //   disabled: true,
+        //   relation: [
+        //     {
+        //       action: 'SHOW',
+        //       when: [{
+        //         name: 'ipam',
+        //         value: 'static',
+        //       }]
+        //     },
+        //   ]
+        // },        {
+        //   type: 'input',
+        //   name: 'gateway',
+        //   placeholder: helptext.chartForm.externalInterfaces.staticRoutes.gateway.placeholder,
+        //   required: true,          
+        //   isHidden: true,
+        //   disabled: true,
+        //   relation: [
+        //     {
+        //       action: 'SHOW',
+        //       when: [{
+        //         name: 'ipam',
+        //         value: 'static',
+        //       }]
+        //     },
+        //   ]
+        // }
       ]
+    },
+    {
+      name: helptext.chartForm.externalInterfaces.staticConfig.placeholder,
+      label: true,
+      config: [
+        {
+          type: 'list',
+          name: 'staticIPConfigurations',
+          width: '100%',
+          isHidden: true,
+          templateListField: [
+            {
+              type: 'ipwithnetmask',
+              name: 'staticIP',
+              placeholder: helptext.chartForm.externalInterfaces.staticConfig.placeholder,
+            }, 
+          ],
+          listFields: []
+        }
+      ],
+      colspan: 2,
+    },
+    {
+      name: helptext.chartForm.externalInterfaces.staticRoutes.title,
+      label: true,
+      config: [
+        {
+          type: 'list',
+          name: 'staticRoutes',
+          width: '100%',
+          isHidden: true,
+          templateListField: [
+            {
+              type: 'ipwithnetmask',
+              name: 'destination',
+              placeholder: helptext.chartForm.externalInterfaces.staticRoutes.destination.placeholder,
+            }, 
+            {
+              type: 'input',
+              name: 'gateway',
+              placeholder: helptext.chartForm.externalInterfaces.staticRoutes.gateway.placeholder,
+            }
+          ],
+          listFields: []
+        }
+      ],
+      colspan: 2,
     },
     {
       name: helptext.chartForm.DNSPolicy.title,
@@ -303,58 +364,32 @@ export class ChartReleaseSettingsComponent {
         }
       ]
     },
-    // {
-    //   name: helptext.chartForm.hostPathVolumes.title,
-    //   label: true,
-    //   width: '50%',
-    //   config: [
-    //     {
-    //       type: 'input',
-    //       name: 'hpv_hostpath',
-    //       placeholder: helptext.chartForm.hostPathVolumes.hostPath.placeholder,
-    //       tooltip: helptext.chartForm.hostPathVolumes.hostPath.tooltip,
-    //       required: true
-    //     }, 
-    //     {
-    //       type: 'input',
-    //       name: 'hpv_mountpath',
-    //       placeholder: helptext.chartForm.hostPathVolumes.mountPath.placeholder,
-    //       tooltip: helptext.chartForm.hostPathVolumes.mountPath.tooltip,
-    //       required: true
-    //     },
-    //     {
-    //       type: 'checkbox',
-    //       name: 'hpv_readonly',
-    //       placeholder: helptext.chartForm.hostPathVolumes.readOnly.placeholder,
-    //     }
-    //   ]
-    // },
     {
       name: helptext.chartForm.hostPathVolumes.title,
       label: true,
       config: [
         {
           type: 'list',
-          name: 'hpv_properties',
+          name: 'hostPathVolumes',
           width: '100%',
           templateListField: [
             {
               type: 'input',
-              name: 'hpv_hostpath',
+              name: 'hostPath',
               placeholder: helptext.chartForm.hostPathVolumes.hostPath.placeholder,
               tooltip: helptext.chartForm.hostPathVolumes.hostPath.tooltip,
               required: true
             }, 
             {
               type: 'input',
-              name: 'hpv_mountpath',
+              name: 'mountPath',
               placeholder: helptext.chartForm.hostPathVolumes.mountPath.placeholder,
               tooltip: helptext.chartForm.hostPathVolumes.mountPath.tooltip,
               required: true
             },
             {
               type: 'checkbox',
-              name: 'hpv_readonly',
+              name: 'readOnly',
               placeholder: helptext.chartForm.hostPathVolumes.readOnly.placeholder,
             }
           ],
@@ -370,17 +405,17 @@ export class ChartReleaseSettingsComponent {
       config: [
         {
           type: 'list',
-          name: 'volume_ds_properties',
+          name: 'volumes',
           width: '100%',
           templateListField: [
             {
-              name: 'vol_datasetName',
+              name: 'datasetName',
               placeholder: helptext.chartForm.volumes.datasetName.placeholder,
               tooltip: helptext.chartForm.volumes.datasetName.tooltip,
               type: 'input',
             },
             {
-              name: 'vol_mountPath',
+              name: 'mountPath',
               placeholder: helptext.chartForm.volumes.mountPath.placeholder,
               tooltip: helptext.chartForm.volumes.mountPath.tooltip,
               type: 'input',
@@ -406,77 +441,9 @@ export class ChartReleaseSettingsComponent {
           type: 'input',
           name: 'gpu_value',
           placeholder: helptext.chartForm.gpu.value.placeholder,
-        },
-
-
-
-        /////////////////
-
-        // {
-        //   type: 'input',
-        //   name: 'release_name',
-        //   placeholder: helptext.chartForm.release_name.placeholder,
-        //   tooltip: helptext.chartForm.release_name.tooltip,
-        //   required: true
-        // },
-        // {
-        //   type: 'input',
-        //   name: 'repository',
-        //   placeholder: helptext.chartForm.repository.placeholder,
-        //   tooltip: helptext.chartForm.repository.tooltip,
-        //   required: true
-        // },
-        // {
-        //   type: 'input',
-        //   name: 'catalog',
-        //   placeholder: helptext.chartForm.catalog.placeholder,
-        //   tooltip: helptext.chartForm.catalog.tooltip,
-        //   required: true,
-        //   value: 'OFFICIAL'
-        // },
-        // {
-        //   type: 'input',
-        //   name: 'item',
-        //   placeholder: helptext.chartForm.item.placeholder,
-        //   tooltip: helptext.chartForm.item.tooltip,
-        //   required: true,
-        //   value: 'ix-chart'
-        // },
-        // {
-        //   type: 'input',
-        //   name: 'train',
-        //   placeholder: helptext.chartForm.train.placeholder,
-        //   tooltip: helptext.chartForm.train.tooltip,
-        //   required: true,
-        //   value: 'test'
-        // },
-        // {
-        //   type: 'input',
-        //   name: 'version',
-        //   placeholder: helptext.chartForm.version.placeholder,
-        //   tooltip: helptext.chartForm.version.tooltip,
-        //   required: true,
-        //   value: 'latest'
-        // },
-        // {
-        //   type: 'input',
-        //   name: 'container_port',
-        //   placeholder: helptext.chartForm.container_port.placeholder,
-        //   tooltip: helptext.chartForm.container_port.tooltip,
-        //   required: true
-        // },
-        // {
-        //   type: 'input',
-        //   name: 'node_port',
-        //   placeholder: helptext.chartForm.node_port.placeholder,
-        //   tooltip: helptext.chartForm.node_port.tooltip,
-        //   required: true,
-        //   validation: helptext.chartForm.node_port.validation
-        // },
-
+        }
       ]
-    },
-
+    }
   ]
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
@@ -499,20 +466,47 @@ export class ChartReleaseSettingsComponent {
     return data;
   }
 
+  afterInit(entityEdit: any) {
+    entityEdit.formGroup.controls['ipam'].valueChanges.subscribe(value => {
+      console.log(value)
+      if (value === 'static') {
+        this.hideField('staticIPConfigurations', false, entityEdit);
+        this.hideField('staticRoutes', false, entityEdit);
+      } else {
+        this.hideField('staticIPConfigurations', true, entityEdit);
+        this.hideField('staticRoutes', true, entityEdit);
+      }
+    })
+  }
+
+  hideField(fieldName: any, show: boolean, entity: any) {
+    let target = _.find(this.fieldConfig, {'name' : fieldName});
+    target['isHidden'] = show;
+    entity.setDisabled(fieldName, show, show);
+  }
+
   customSubmit(data) {
     console.log(data)
+    let ipList = [];
+    if (data.staticIPConfigurations && data.staticIPConfigurations.length > 0) {
+      data.staticIPConfigurations.forEach(item => {
+        ipList.push(item.staticIP);
+      })
+      console.log(ipList)
+    }
 
     // if (!this.rowNum) {
       let payload = {
+        catalog: 'OFFICIAL',
+        item: 'ix-chart',
         release_name: data.release_name,
-        version: data.version,
-        train: data.train,
-        catalog: data.catalog,
-        item: data.item,
+        version: 'latest',
+        train: 'test',
+
         values: {
           containerArgs: data.containerArgs,
           containerCommand: data.containerCommand,
-          containerEnvironmentVariables: data.containerEnvironmentVariables,
+          containerEnvironmentVariables: data.env_vars,
           dnsConfig: {
             nameservers: data.nameservers,
             searches: data.searches
@@ -523,21 +517,19 @@ export class ChartReleaseSettingsComponent {
               hostInterface: data.hostInterface,
               ipam: {
                 type: data.ipam,
-                staticIpConfigurations: data.list,
-
-                // staticRoutes: [
-                //   staticRouteConfiguration: {
-                //     destination: ipwithcidr,
-                //     gateway: ipnocidr
-                //   }
-                // ]
-
+                staticIpConfigurations: ipList,
+                staticRoutes: data.staticRoutes
               }
 
             }
           ],
           // gpuConfiguration: {data['gpu_property'] : data['gpu_value']}
-
+          hostPathVolumes: data.hostPathVolumes,
+          hostNetwork: data.hostNetwork,
+          hostPortsList: {
+            containerPort: data.hpl_containerPort,
+            hostPort: data.hpl_hostPort,
+          },
           image: { 
             repository: data.repository,
             pullPolicy: data.pullPolicy,
@@ -545,23 +537,19 @@ export class ChartReleaseSettingsComponent {
           }, 
           portForwardingList: [
                   {
-                    containerPort: data.pfl_container_port, 
-                    nodePort: data.pfl_node_port, 
+                    containerPort: data.pfl_containerPort, 
+                    nodePort: data.pfl_nodePort, 
                     protocol: data.pfl_protocol
                   }
           ], 
           restartPolicy: data.restartPolicy,
           updateStrategy: data.updateStrategy,
-          volumes: [
-              {datasetName: 'transcode', mountPath: '/transcode'}, 
-              {datasetName: 'config', mountPath: '/config'}, 
-              {datasetName: 'data', mountPath: '/data'}
-            ], 
+          volumes: data.volumes, 
           workloadType: 'Deployment',
         }
       }
   
-    //   console.log(payload)
+      console.log(payload)
   
     //   this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
     //     helptext.installing) }, disableClose: true});
