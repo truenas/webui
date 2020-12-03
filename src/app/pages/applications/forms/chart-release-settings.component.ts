@@ -185,6 +185,21 @@ export class ChartReleaseSettingsComponent {
               value: helptext.chartForm.externalInterfaces.ipam.options[0].value,
             },
             {
+              name: 'whatevs',
+              type: 'input',
+              placeholder: 'Whatevs',
+              isHidden: true,
+              relation: [
+                {
+                  action: 'SHOW',
+                  when: [{
+                    name: 'ipam',
+                    value: 'static',
+                  }]
+                },
+              ],
+            },
+            {
               type: 'list',
               name: 'staticIPConfigurations',
               width: '100%',
@@ -195,15 +210,15 @@ export class ChartReleaseSettingsComponent {
                   name: 'staticIP',
                   placeholder: helptext.chartForm.externalInterfaces.staticConfig.placeholder,
                   // isHidden: true,
-                  // relation: [
-                  //   {
-                  //     action: 'ENABLE',
-                  //     when: [{
-                  //       name: 'ipam',
-                  //       value: 'static',
-                  //     }]
-                  //   },
-                  // ],
+                  relation: [
+                    {
+                      action: 'ENABLE',
+                      when: [{
+                        name: 'ipam',
+                        value: 'static',
+                      }]
+                    },
+                  ],
                 }, 
               ],
               listFields: []
@@ -234,53 +249,6 @@ export class ChartReleaseSettingsComponent {
       ],
       colspan: 2,
     },
-    // {
-    //   name: helptext.chartForm.externalInterfaces.staticConfig.placeholder,
-    //   label: true,
-    //   config: [
-    //     {
-    //       type: 'list',
-    //       name: 'staticIPConfigurations',
-    //       width: '100%',
-    //       isHidden: true,
-    //       templateListField: [
-    //         {
-    //           type: 'ipwithnetmask',
-    //           name: 'staticIP',
-    //           placeholder: helptext.chartForm.externalInterfaces.staticConfig.placeholder,
-    //         }, 
-    //       ],
-    //       listFields: []
-    //     }
-    //   ],
-    //   colspan: 2,
-    // },
-    // {
-    //   name: helptext.chartForm.externalInterfaces.staticRoutes.title,
-    //   label: true,
-    //   config: [
-    //     {
-    //       type: 'list',
-    //       name: 'staticRoutes',
-    //       width: '100%',
-    //       isHidden: true,
-    //       templateListField: [
-    //         {
-    //           type: 'ipwithnetmask',
-    //           name: 'destination',
-    //           placeholder: helptext.chartForm.externalInterfaces.staticRoutes.destination.placeholder,
-    //         }, 
-    //         {
-    //           type: 'input',
-    //           name: 'gateway',
-    //           placeholder: helptext.chartForm.externalInterfaces.staticRoutes.gateway.placeholder,
-    //         }
-    //       ],
-    //       listFields: []
-    //     }
-    //   ],
-    //   colspan: 2,
-    // },
     {
       name: helptext.chartForm.DNSPolicy.title,
       label: true,
@@ -441,15 +409,16 @@ export class ChartReleaseSettingsComponent {
   }
 
   resourceTransformIncomingRestData(data) {
-    console.log(data)
-    // console.log(data);
-    // data['release_name'] = data.name;
-    // data['repository'] = data.config.image.repository;
-    // data['item'] = data.chart_metadata.name;
-    // data['train'] = data.catalog_train;
-    // data['container_port'] = data.config.portForwardingList[0].containerPort;
-    // data['node_port'] = data.config.portForwardingList[0].nodePort;
-    return data;
+    data.config.release_name = data.name;
+    data.config.repository = data.config.image.repository;
+    data.config.tag = data.config.image.tag;
+    data.config.pullPolicy = data.config.image.pullPolicy;
+    data.config.nameservers = data.config.dnsConfig.nameservers;
+    data.config.searches = data.config.dnsConfig.searches;
+    data.config.externalInterfaces.forEach(i => {
+      i.ipam = i.ipam.type;
+    })
+    return data.config;
   }
 
   afterInit(entityEdit: any) {
@@ -476,17 +445,13 @@ export class ChartReleaseSettingsComponent {
     let ext_interfaces = [];
     if (data.externalInterfaces && data.externalInterfaces.length > 0) {
       data.externalInterfaces.forEach(i => {
-        console.log(i)
         if (i.ipam !== 'static') {
-          // delete i.staticIPConfigurations;
-          // delete i.staticRoutes;
           ext_interfaces.push(
             {
               hostInterface: i.hostInterface,
               ipam: {
                 type: i.ipam,
               }
-  
             }
           );            
         } else {
@@ -510,9 +475,7 @@ export class ChartReleaseSettingsComponent {
       })
     }
 
-    console.log(data)
-
-    let payload = {
+    let payload = [{
       catalog: 'OFFICIAL',
       item: 'ix-chart',
       release_name: data.release_name,
@@ -542,19 +505,29 @@ export class ChartReleaseSettingsComponent {
         volumes: data.volumes, 
         workloadType: 'Deployment',
       }
-    }
+    }]
 
-    console.log(payload)
-  
+    let submitMethod;
+    if (this.rowNum) {
+      delete payload[0].catalog;
+      delete payload[0].item;
+      delete payload[0].release_name;
+      delete payload[0].train;
+      delete payload[0].version;
+      submitMethod = this.editCall;
+      payload.unshift(data.release_name);
+    } else {
+      submitMethod = this.addCall;
+    }
+ 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
       helptext.installing) }, disableClose: true});
-    this.dialogRef.componentInstance.setCall(this.addCall, [payload]);
+    this.dialogRef.componentInstance.setCall(submitMethod, payload);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.dialogService.closeAllDialogs();
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
-      // We should go to chart tab(?) and refresh
     });
     this.dialogRef.componentInstance.failure.subscribe((err) => {
       // new EntityUtils().handleWSError(this, err, this.dialogService);
