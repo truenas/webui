@@ -1069,4 +1069,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.currentRows.forEach((row) => this.selection.select(row));
   }
 
+  getFirstKey(obj){
+    return this.conf.config.multiSelect ? this.currentColumns[1].prop : this.currentColumns[0].prop;
+  }
+
 }
