@@ -15,9 +15,8 @@ export default {
  This can include copying SSH keys and modifying the <i>root</i> user \
  account on that system.<br><br> \
  <i>Semi-automatic</i> only works when configuring an SSH connection \
- with a remote FreeNAS or TrueNAS system. This method uses the URL and \
- login credentials of the remote system to connect and exchange SSH \
- keys.'),
+ with a remote TrueNAS system. This method uses the URL and login \
+ credentials of the remote system to connect and exchange SSH keys.'),
 
     host_placeholder: T('Host'),
     host_tooltip: T('Hostname or IP address of the remote system.'),
