@@ -130,8 +130,9 @@
   
      
       <tr mat-header-row *matHeaderRowDef="columnsToString(currentColumns, 'prop')"></tr>
-      <tr mat-row class="element-row" 
-        *matRowDef="let element; columns: columnsToString(currentColumns, 'prop');"
+      <tr mat-row class="element-row" id="{{i}}" 
+        ix-auto ix-auto-type="expander" ix-auto-identifier="expander-row-{{paginator.pageIndex}}-{{i}}"
+        *matRowDef="let element; columns: columnsToString(currentColumns, 'prop'); let i = dataIndex;"
         (click)="expandedElement = expandedElement === element ? null : element;">
       </tr>
   
