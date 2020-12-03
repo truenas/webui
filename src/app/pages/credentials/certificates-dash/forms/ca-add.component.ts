@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormGroup, Validators } from '@angular/forms';
 
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import * as _ from 'lodash';
@@ -7,6 +7,10 @@ import { SystemGeneralService, WebSocketService } from '../../../../services/';
 import { ModalService } from 'app/services/modal.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
+
+import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
+import { EntityWizardComponent } from '../../../common/entity/entity-wizard/entity-wizard.component';
+
 
 @Component({
   selector : 'system-ca-add',
@@ -19,14 +23,16 @@ export class CertificateAuthorityAddComponent {
   protected addCall = "certificateauthority.create";
   protected isEntity: boolean = true;
   private title: string;
-  protected fieldConfig: FieldConfig[];
-  public fieldSets: FieldSet[] = [
+  
+  public hideCancel = true;
+
+  entityWizard: any;
+  private currentStep = 0;
+
+  public wizardConfig: Wizard[] = [
     {
-      name: helptext_system_ca.add.fieldset_basic,
-      label: true,
-      class: 'basic',
-      width: '50%',
-      config: [
+      label: helptext_system_ca.add.fieldset_basic,
+      fieldConfig: [
         {
           type: 'input',
           name: 'name',
@@ -73,11 +79,8 @@ export class CertificateAuthorityAddComponent {
       ]
     },
     {
-      name: helptext_system_ca.add.fieldset_type,
-      label: true,
-      class: 'type',
-      width: '50%',
-      config: [
+      label: helptext_system_ca.add.fieldset_type,
+      fieldConfig: [
         {
           type: 'select',
           name: 'signedby',
@@ -180,15 +183,8 @@ export class CertificateAuthorityAddComponent {
       ]
     },
     {
-      name:'divider',
-      divider:true
-    },
-    {
-      name: helptext_system_ca.add.fieldset_certificate,
-      label: true,
-      class: 'certificate',
-      width: '100%',
-      config: [
+      label: helptext_system_ca.add.fieldset_certificate,
+      fieldConfig: [
         {
           type: 'select',
           name: 'country',
@@ -231,11 +227,8 @@ export class CertificateAuthorityAddComponent {
       ]
     },
     {
-      name: helptext_system_ca.add.fieldset_certificate,
-      label: false,
-      class: 'lowerme',
-      width: '100%',
-      config: [
+      label: helptext_system_ca.add.fieldset_certificate,
+      fieldConfig: [
 
         {
           type: 'input',
@@ -273,15 +266,8 @@ export class CertificateAuthorityAddComponent {
       ]
     },
     {
-      name:'divider',
-      divider:true
-    },
-    {
-      name: helptext_system_ca.add.fieldset_basic_constraints,
-      label: true,
-      class: 'basic_constraints',
-      width: '50%',
-      config: [
+      label: helptext_system_ca.add.fieldset_basic_constraints,
+      fieldConfig: [
         {
           type: 'checkbox',
           name: 'BasicConstraints-enabled',
@@ -335,11 +321,8 @@ export class CertificateAuthorityAddComponent {
       ]
     },
     {
-      name: helptext_system_ca.add.fieldset_authority_key_identifier,
-      label: true,
-      class: 'authority_key_identifier',
-      width: '50%',
-      config: [
+      label: helptext_system_ca.add.fieldset_authority_key_identifier,
+      fieldConfig: [
         {
           type: 'checkbox',
           name: 'AuthorityKeyIdentifier-enabled',
@@ -377,11 +360,8 @@ export class CertificateAuthorityAddComponent {
       ]
     },
     {
-      name: helptext_system_ca.add.fieldset_extended_key_usage,
-      label: true,
-      class: 'extended_key_usage',
-      width: '50%',
-      config: [
+      label: helptext_system_ca.add.fieldset_extended_key_usage,
+      fieldConfig: [
         {
           type: 'checkbox',
           name: 'ExtendedKeyUsage-enabled',
@@ -424,11 +404,8 @@ export class CertificateAuthorityAddComponent {
       ]
     },
     {
-      name: helptext_system_ca.add.fieldset_key_usage,
-      label: true,
-      class: 'key_usage',
-      width: '50%',
-      config: [
+      label: helptext_system_ca.add.fieldset_key_usage,
+      fieldConfig: [
         {
           type: 'checkbox',
           name: 'KeyUsage-enabled',
@@ -502,14 +479,7 @@ export class CertificateAuthorityAddComponent {
               }]
             },
           ]
-        }
-      ]
-    },
-    {
-      name: 'cert_textboxes',
-      label: false,
-      width: '50%',
-      config: [
+        },
         {
           type: 'textarea',
           name: 'certificate',
@@ -525,14 +495,7 @@ export class CertificateAuthorityAddComponent {
           placeholder: helptext_system_ca.add.privatekey.placeholder,
           tooltip: helptext_system_ca.add.privatekey.tooltip,
           isHidden: true,
-        }
-      ]
-    },
-    {
-      name: 'cert_pw',
-      label: false,
-      width: '50%',
-      config: [
+        },
         {
           type: 'input',
           name: 'passphrase',
@@ -614,9 +577,10 @@ export class CertificateAuthorityAddComponent {
   constructor(protected ws: WebSocketService, private modalService: ModalService,
               protected systemGeneralService: SystemGeneralService) {}
 
-  preInit() {
+  preInit(entityWizard: EntityWizardComponent) {
+    this.entityWizard = entityWizard;
     this.systemGeneralService.getUnsignedCAs().subscribe((res) => {
-      this.signedby = _.find(this.fieldSets[1].config, {'name' : 'signedby'});
+      this.signedby = this.getTarget('signedby');
       res.forEach((item) => {
         this.signedby.options.push(
             {label : item.name, value : item.id});
@@ -624,14 +588,14 @@ export class CertificateAuthorityAddComponent {
     });
 
     this.ws.call('certificate.ec_curve_choices').subscribe((res) => {
-      const ec_curves_field = _.find(this.fieldSets.find(set => set.name === helptext_system_ca.add.fieldset_type).config, { 'name': 'ec_curve' });
+      const ec_curves_field = this.getTarget('ec_curve')
       for(const key in res) {
         ec_curves_field.options.push({label: res[key], value: key});
       }
     });
 
    this.systemGeneralService.getCertificateCountryChoices().subscribe((res) => {
-      this.country = _.find(this.fieldSets[3].config, {'name' : 'country'});
+      this.country = this.getTarget('country');
       for (const item in res) {
         this.country.options.push(
           { label : res[item], value : item}
@@ -639,14 +603,14 @@ export class CertificateAuthorityAddComponent {
       };
     });
 
-    this.usageField = _.find(this.fieldSets[8].config, {'name': 'ExtendedKeyUsage-usages'});
+    this.usageField = this.getTarget('ExtendedKeyUsage-usages');
     this.ws.call('certificate.extended_key_usage_choices').subscribe((res) => {
       Object.keys(res).forEach(key => {
         this.usageField.options.push({label: res[key], value: key})
       });
     });
 
-    const profilesField = _.find(this.fieldSets[0].config, {'name': 'profiles'});
+    const profilesField = this.getTarget('profiles');
     this.ws.call('certificateauthority.profiles').subscribe((res) => {
       Object.keys(res).forEach(item => {
         profilesField.options.push({label: item, value: res[item]});
@@ -654,8 +618,12 @@ export class CertificateAuthorityAddComponent {
     });
   }
 
+  customNext(stepper) {
+    stepper.next();
+    this.currentStep = stepper._selectedIndex;    
+  }
+
   afterInit(entity: any) {
-    this.fieldConfig = entity.fieldConfig;
     this.entityForm = entity;
     this.title = helptext_system_ca.add.title;
 
@@ -670,7 +638,7 @@ export class CertificateAuthorityAddComponent {
     }
     this.hideField(this.internalcaFields[1], true, entity)
 
-    entity.formGroup.controls['create_type'].valueChanges.subscribe((res) => {
+    this.getField('create_type').valueChanges.subscribe((res) => {
       if (res == 'CA_CREATE_INTERNAL') {
         for (let i in this.intermediatecaFields) {
           this.hideField(this.intermediatecaFields[i], true, entity);
@@ -685,9 +653,9 @@ export class CertificateAuthorityAddComponent {
           this.hideField(this.extensionFields[i], false, entity);
         }
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
-        if (entity.formGroup.controls['key_type'].value === 'RSA') {
+        if (this.getField('key_type').value === 'RSA') {
           this.hideField('ec_curve', true, entity);
-        } else if (entity.formGroup.controls['key_type'].value === 'EC') {
+        } else if (this.getField('key_type').value === 'EC') {
           this.hideField('key_length', true, entity);
         }
 
@@ -704,9 +672,9 @@ export class CertificateAuthorityAddComponent {
         for (let i in this.extensionFields) {
           this.hideField(this.extensionFields[i], false, entity);
         }
-        if (entity.formGroup.controls['key_type'].value === 'RSA') {
+        if (this.getField('key_type').value === 'RSA') {
           this.hideField('ec_curve', true, entity);
-        } else if (entity.formGroup.controls['key_type'].value === 'EC') {
+        } else if (this.getField('key_type').value === 'EC') {
           this.hideField('key_length', true, entity);
         }
 
@@ -726,30 +694,30 @@ export class CertificateAuthorityAddComponent {
       }
     })
 
-    entity.formGroup.controls['name'].valueChanges.subscribe((res) => {
+    this.getField('name').valueChanges.subscribe((res) => {
       this.identifier = res;
     })
 
-    entity.formGroup.controls['name'].statusChanges.subscribe((res) => {
+    this.getField('name').statusChanges.subscribe((res) => {
       if (this.identifier && res === 'INVALID') {
-        _.find(this.fieldConfig)['hasErrors'] = true;
+        this.getTarget('name')['hasErrors'] = true;
       } else {
-        _.find(this.fieldConfig)['hasErrors'] = false;
+        this.getTarget('name')['hasErrors'] = false;
       }
     })
 
-    entity.formGroup.controls['ExtendedKeyUsage-enabled'].valueChanges.subscribe((res) => {
+    this.getField('ExtendedKeyUsage-enabled').valueChanges.subscribe((res) => {
       const usagesRequired = res !== undefined ? res : false;
       this.usageField.required = usagesRequired;
       if (usagesRequired) {
-        entity.formGroup.controls['ExtendedKeyUsage-usages'].setValidators([Validators.required]);
+        this.getField('ExtendedKeyUsage-usages').setValidators([Validators.required]);
       } else {
-        entity.formGroup.controls['ExtendedKeyUsage-usages'].clearValidators();
+        this.getField('ExtendedKeyUsage-usages').clearValidators();
       }
-      entity.formGroup.controls['ExtendedKeyUsage-usages'].updateValueAndValidity();
+      this.getField('ExtendedKeyUsage-usages').updateValueAndValidity();
     })
 
-    entity.formGroup.controls['profiles'].valueChanges.subscribe((res) => {
+    this.getField('profiles').valueChanges.subscribe((res) => {
       // undo revious profile settings
       this.loadProfiels(this.currenProfile, true);
       // load selected profile settings
@@ -764,7 +732,7 @@ export class CertificateAuthorityAddComponent {
         if (item === 'cert_extensions') {
           Object.keys(value['cert_extensions']).forEach(type => {
             Object.keys(value['cert_extensions'][type]).forEach(prop => {
-              let ctrl = this.entityForm.formGroup.controls[`${type}-${prop}`];
+              let ctrl = this.getField(`${type}-${prop}`);
               if (ctrl) {
                 if (reset && ctrl.value === value['cert_extensions'][type][prop]) {
                   ctrl.setValue(undefined);
@@ -772,7 +740,7 @@ export class CertificateAuthorityAddComponent {
                   ctrl.setValue(value['cert_extensions'][type][prop]);
                 }
               } else {
-                ctrl = this.entityForm.formGroup.controls[type];
+                ctrl = this.getField(type);
                 const config = ctrl.value || [];
                 const optionIndex = config.indexOf(prop);
                 if (reset && value['cert_extensions'][type][prop] === true && optionIndex > -1) {
@@ -800,10 +768,52 @@ export class CertificateAuthorityAddComponent {
     }
   }
 
+  getStep(fieldName: any) {
+    
+    const stepNumber = this.wizardConfig.findIndex((step) => {
+      const index = step.fieldConfig.findIndex(field => {
+        return fieldName == field.name;
+      });
+      return index > -1;
+    });
+
+    return stepNumber;
+  }
+
+  getField(fieldName: any) {
+    
+    const stepNumber = this.getStep(fieldName);
+    if (stepNumber > -1) {
+      const target = ( < FormGroup > this.entityWizard.formArray.get([stepNumber])).controls[fieldName];
+      return target;
+    } else {
+      return null;
+    }    
+  }
+
+  getTarget(fieldName: any) {
+    
+    const stepNumber = this.getStep(fieldName);
+    if (stepNumber > -1) {
+      const target = _.find(this.wizardConfig[stepNumber].fieldConfig, {'name': fieldName});
+      return target;
+    } else {
+      return null;
+    }    
+  }
+
   hideField(fieldName: any, show: boolean, entity: any) {
-    let target = _.find(this.fieldConfig, {'name' : fieldName});
-    target['isHidden'] = show;
-    entity.setDisabled(fieldName, show, show);
+    this.getTarget(fieldName).isHidden = show;
+    this.setDisabled(fieldName, show);
+  }
+
+  setDisabled(fieldName: any, disable: boolean) {    
+    const target = this.getField(fieldName);    
+    if (disable) {
+      target.disable();
+    } else {
+      target.enable();
+    }
   }
 
   beforeSubmit(data: any) {
@@ -843,6 +853,8 @@ export class CertificateAuthorityAddComponent {
 
       delete data['profiles'];
     }
+
+    return data;
   }
 
   afterSubmit() {
