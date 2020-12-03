@@ -270,20 +270,34 @@ def input_extent_name_ds1__extent_type_device_device__tankds1(driver, name, exte
 @then('you should be retune to the Extents tab')
 def then_you_should_be_retune_to_the_extents_tab(driver):
     """you should be retune to the Extents tab."""
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Associated Targets")]')
+    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Extents")]')
     assert wait_on_element(driver, 0.5, 7, '//div[contains(.,"ds1")]')
 
 
 @then('click Associated Targets tab, then click Add')
 def click_associated_targets_tab_then_click_add(driver):
     """click Associated Targets tab, then click Add."""
+    driver.find_element_by_xpath('//a[@ix-auto="tab__Associated Targets"]').click()
+    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Associated Targets")]')
+    driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
+    assert wait_on_element(driver, 0.5, 7, '//h4[contains(.,"Associated Target")]')
 
 
-@then(parsers.parse('input Target * "{target}", LUN ID "{lun_id}", Extent "{extent}"'))
-def input_target__ds1_lun_id_1_extent_ds1(driver):
-    """input Target * "ds1", LUN ID "1", Extent "ds1"."""
+@then(parsers.parse('select "{target}" for Target, input "{lun_id}" for LUN ID, select "{extent}" for Extent'))
+def select_ds1_Target_input_1_for_lun_id_select_ds1_extent(driver, target, lun_id, extent):
+    """select "ds1" for Target, input "1" for LUN ID, select "ds1" for Extent."""
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Target"]').click()
+    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Target_{target}"]')
+    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Target_{target}"]').click()
+    driver.find_element_by_xpath('//input[@ix-auto="input__LUN ID"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__LUN ID"]').send_keys(lun_id)
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Extent"]').click()
+    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Extent_{extent}"]')
+    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Extent_{extent}"]').click()
 
 
 @then('you should be retune to the Associated Targets tab')
 def then_you_should_be_retune_to_the_associated_targets_tab(driver):
     """you should be retune to the Associated Targets tab."""
+    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Associated Targets")]')
+    assert wait_on_element(driver, 0.5, 7, '//div[contains(.,"ds1")]')
