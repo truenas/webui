@@ -35,7 +35,7 @@ export const helptext_system_support = {
     tooltip: T(
       'Enter a valid username for the <a\
  href="https://jira.ixsystems.com/projects/NAS/issues/"\
- target="_blank">FreeNAS bug tracking system</a>'
+ target="_blank">TrueNAS bug tracking system</a>'
     ),
     validation: [Validators.required]
   },
