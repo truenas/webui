@@ -37,6 +37,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   public currentTheme: string = "";
   public retroLogo: boolean = false;
   public isOpen = false;
+  public notificPanelClosed = false;
   menuName: string;
   subs:any[];
   public copyrightYear = globalHelptext.copyright_year;
@@ -180,6 +181,11 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     this.cd.detectChanges();
   }
 
+  closeNotificPanel(e) {
+    console.log("closing panel");
+    this.notificPanelClosed = false;
+    this.notificPanelClosed = true;
+  }
   getSidenavWidth(): string{
     let iconified =  domHelper.hasClass(document.body, 'collapsed-menu')
     if(this.isSidenavOpen && iconified && this.sidenavMode == 'side'){

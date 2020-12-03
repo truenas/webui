@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { NotificationsService, NotificationAlert } from 'app/services/notifications.service';
 import { LocaleService } from 'app/services/locale.service';
 import { Subscription } from 'rxjs';
@@ -12,6 +12,7 @@ import * as _ from 'lodash';
 export class NotificationsComponent implements OnInit, OnDestroy {
 
   @Input() notificPanel;
+  @Output() closed: EventEmitter<any> = new EventEmitter();
 
   notifications: Array<NotificationAlert> = [];
   dismissedNotifications: Array<NotificationAlert> = []
@@ -83,5 +84,9 @@ export class NotificationsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.dateFormatSubscription.unsubscribe();
+  }
+
+  closeClicked() {
+    this.closed.emit();
   }
 }

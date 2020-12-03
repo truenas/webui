@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -35,10 +35,11 @@ import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validat
   styleUrls: ['./topbar.component.css'],
   templateUrl: './topbar.template.html'
 })
-export class TopbarComponent extends ViewControllerComponent implements OnInit, OnDestroy {
+export class TopbarComponent extends ViewControllerComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() sidenav;
   @Input() notificPanel;
+  @Input() closeNotificPanel;
 
   notifications: NotificationAlert[] = [];
   @Output() onLangChange = new EventEmitter<any>();
@@ -248,6 +249,18 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.webSocketOnClose = this.ws.onCloseSubject.subscribe(res => {
       this.modalService.close('slide-in-form');
     })
+
+    if(this.closeNotificPanel)
+      this.notificPanel.close();
+    else
+      this.notificPanel.open();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+        
+    console.log("Changes detected", changes);
+    if(changes.closeNotificPanel)
+      this.notificPanel.close();
   }
 
   preferencesHandler(evt:CoreEvent){
