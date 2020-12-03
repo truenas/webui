@@ -11,9 +11,7 @@ export class ApplicationsComponent implements OnInit {
   constructor(private appService: ApplicationsService) { }
 
   ngOnInit(): void {
-    this.appService.getCatItems().subscribe(res => {
-      console.log(res);
-    })
+
   }
 
   newTab(index: number) {

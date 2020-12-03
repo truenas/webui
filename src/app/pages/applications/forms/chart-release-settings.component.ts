@@ -122,7 +122,7 @@ export class ChartReleaseSettingsComponent {
       config: [
         {
           type: 'list',
-          name: 'env_vars',
+          name: 'containerEnvironmentVariables',
           width: '100%',
           templateListField: [
             {
@@ -159,7 +159,7 @@ export class ChartReleaseSettingsComponent {
         },
         {
           type: 'paragraph',
-          name: 'add_external',
+          name: 'paragraph_add_external',
           paraText: helptext.chartForm.externalLabel
         },
         {
@@ -242,7 +242,7 @@ export class ChartReleaseSettingsComponent {
         },
         {
           type: 'paragraph',
-          name: 'dns_config',
+          name: 'paragraph_dns_config',
           paraText: helptext.chartForm.DNSConfig.label
         },
         {
@@ -265,24 +265,24 @@ export class ChartReleaseSettingsComponent {
       config: [
         {
           type: 'list',
-          name: 'pf_list',
+          name: 'portForwardingList',
           width: '100%',
           templateListField: [
             {
               type: 'input',
-              name: 'pfl_containerPort',
+              name: 'containerPort',
               placeholder: helptext.chartForm.portForwardingList.containerPort.placeholder,
               required: true
             }, 
             {
               type: 'input',
-              name: 'pfl_nodePort',
+              name: 'nodePort',
               placeholder: helptext.chartForm.portForwardingList.nodePort.placeholder,
               required: true
             },  
             {
               type: 'select',
-              name: 'pfl_protocol',
+              name: 'protocol',
               placeholder: helptext.chartForm.portForwardingList.protocol.placeholder,
               options: helptext.chartForm.portForwardingList.protocol.options,
               value: helptext.chartForm.portForwardingList.protocol.options[0].value
@@ -417,112 +417,72 @@ export class ChartReleaseSettingsComponent {
   }
 
   customSubmit(data) {
-    console.log(data)
     let ipList = [];
     if (data.staticIPConfigurations && data.staticIPConfigurations.length > 0) {
       data.staticIPConfigurations.forEach(item => {
         ipList.push(item.staticIP);
       })
-      console.log(ipList)
     }
 
-    // if (!this.rowNum) {
-      let payload = {
-        catalog: 'OFFICIAL',
-        item: 'ix-chart',
-        release_name: data.release_name,
-        version: 'latest',
-        train: 'test',
+    console.log(data)
 
-        values: {
-          containerArgs: data.containerArgs,
-          containerCommand: data.containerCommand,
-          containerEnvironmentVariables: data.env_vars,
-          dnsConfig: {
-            nameservers: data.nameservers,
-            searches: data.searches
-          },
-          dnsPolicy: data.dnsPolicy,
-          externalInterfaces: [
-            {
-              hostInterface: data.hostInterface,
-              ipam: {
-                type: data.ipam,
-                staticIpConfigurations: ipList,
-                staticRoutes: data.staticRoutes
-              }
-
+    let payload = {
+      catalog: 'OFFICIAL',
+      item: 'ix-chart',
+      release_name: data.release_name,
+      train: 'test',
+      version: 'latest',
+      values: {
+        containerArgs: data.containerArgs,
+        containerCommand: data.containerCommand,
+        containerEnvironmentVariables: data.containerEnvironmentVariables,
+        dnsConfig: {
+          nameservers: data.nameservers,
+          searches: data.searches
+        },
+        dnsPolicy: data.dnsPolicy,
+        externalInterfaces: [
+          {
+            hostInterface: data.hostInterface,
+            ipam: {
+              type: data.ipam,
+              staticIPConfigurations: ipList,
+              staticRoutes: data.staticRoutes
             }
-          ],
-          // gpuConfiguration: {data['gpu_property'] : data['gpu_value']}
-          hostPathVolumes: data.hostPathVolumes,
-          hostNetwork: data.hostNetwork,
-          hostPortsList: {
-            containerPort: data.hpl_containerPort,
-            hostPort: data.hpl_hostPort,
-          },
-          image: { 
-            repository: data.repository,
-            pullPolicy: data.pullPolicy,
-            tag: data.tag
-          }, 
-          portForwardingList: [
-                  {
-                    containerPort: data.pfl_containerPort, 
-                    nodePort: data.pfl_nodePort, 
-                    protocol: data.pfl_protocol
-                  }
-          ], 
-          restartPolicy: data.restartPolicy,
-          updateStrategy: data.updateStrategy,
-          volumes: data.volumes, 
-          workloadType: 'Deployment',
-        }
+
+          }
+        ],
+        // gpuConfiguration: {data['gpu_property'] : data['gpu_value']}
+        hostPathVolumes: data.hostPathVolumes,
+        hostNetwork: data.hostNetwork,
+        image: { 
+          repository: data.repository,
+          pullPolicy: data.pullPolicy,
+          tag: data.tag
+        }, 
+        portForwardingList: data.portForwardingList, 
+        restartPolicy: data.restartPolicy,
+        updateStrategy: data.updateStrategy,
+        volumes: data.volumes, 
+        workloadType: 'Deployment',
       }
-  
-      console.log(payload)
-  
-    //   this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
-    //     helptext.installing) }, disableClose: true});
-    //   this.dialogRef.componentInstance.setCall(this.addCall, [payload]);
-    //   this.dialogRef.componentInstance.submit();
-    //   this.dialogRef.componentInstance.success.subscribe((res) => {
-    //     this.dialogService.closeAllDialogs();
-    //     this.modalService.close('slide-in-form');
-    //     this.modalService.refreshTable();
-    //     // We should go to chart tab(?) and refresh
-    //   });
-    //   this.dialogRef.componentInstance.failure.subscribe((err) => {
-    //     // new EntityUtils().handleWSError(this, err, this.dialogService);
-    //   })
-    // } else {
-    //   let payload = {
-    //     values: {
-    //       image: { repository: data.repository }, 
-    //       portForwardingList: [
-    //               {containerPort: data.container_port, nodePort: data.node_port}
-    //       ], 
-    //     }
-    //   }
-  
-    //   console.log(payload)
-  
-    //   this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
-    //     helptext.installing) }, disableClose: true});
-    //   this.dialogRef.componentInstance.setCall(this.editCall, [data.release_name, payload]);
-    //   this.dialogRef.componentInstance.submit();
-    //   this.dialogRef.componentInstance.success.subscribe((res) => {
-    //     this.dialogService.closeAllDialogs();
-    //     this.modalService.close('slide-in-form');
-    //     this.modalService.refreshTable();
-    //     // We should go to chart tab(?) and refresh
-    //   });
-    //   this.dialogRef.componentInstance.failure.subscribe((err) => {
-    //     // new EntityUtils().handleWSError(this, err, this.dialogService);
-    //   })
+    }
 
-    // }
-
+    console.log(payload)
+  
+    // this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
+    //   helptext.installing) }, disableClose: true});
+    // this.dialogRef.componentInstance.setCall(this.addCall, [payload]);
+    // this.dialogRef.componentInstance.submit();
+    // this.dialogRef.componentInstance.success.subscribe((res) => {
+    //   this.dialogService.closeAllDialogs();
+    //   this.modalService.close('slide-in-form');
+    //   this.modalService.refreshTable();
+    //   // We should go to chart tab(?) and refresh
+    // });
+    // this.dialogRef.componentInstance.failure.subscribe((err) => {
+    //   // new EntityUtils().handleWSError(this, err, this.dialogService);
+    // })
   }
 
 }
