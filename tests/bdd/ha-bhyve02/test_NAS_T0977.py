@@ -76,7 +76,7 @@ def click_authorized_access_tab_then_click_add(driver):
     driver.find_element_by_xpath('//a[@ix-auto="tab__Authorized Access"]').click()
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Authorized Access")]')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
-    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Group")]')
+    assert wait_on_element(driver, 0.5, 7, '//h4[contains(.,"Group")]')
 
 
 @then(parsers.parse('input Group ID "{gid}", User "{user}", secret * "{password}",'))
@@ -127,7 +127,7 @@ def click_portals_tab_then_click_add(driver):
     driver.find_element_by_xpath('//a[@ix-auto="tab__Portals"]').click()
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Portals")]')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
-    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Basic Info")]')
+    assert wait_on_element(driver, 0.5, 7, '//h4[contains(.,"Basic Info")]')
 
 
 @then(parsers.parse('input Description "{description}", select Discovery Auth Method "{method}"'))
@@ -169,7 +169,7 @@ def click_initiators_group_tab_then_click_add(driver):
     driver.find_element_by_xpath('//a[@ix-auto="tab__Initiators Groups"]').click()
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Initiators Groups")]')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
-    assert wait_on_element(driver, 1, 7, '//span[contains(.,"Allow All Initiators")]')
+    assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"Allow All Initiators")]')
 
 
 @then(parsers.parse('input "{description}" in Description input "{initiator}" in Allowed Initiators then click +'))
@@ -209,7 +209,7 @@ def click_targets_tab_then_click_add(driver):
     driver.find_element_by_xpath('//a[@ix-auto="tab__Targets"]').click()
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Targets")]')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
-    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Basic Info")]')
+    assert wait_on_element(driver, 0.5, 7, '//h4[contains(.,"Basic Info")]')
 
 
 @then(parsers.parse('input Target name "{target_name}", Target alias "{target_alias}", Portal Group ID select "{group}"'))
@@ -248,16 +248,30 @@ def then_you_should_be_retune_to_the_targets_tab(driver):
 @then('click Extents tab, then click Add')
 def click_extents_tab_then_click_add(driver):
     """click Extents tab, then click Add."""
+    driver.find_element_by_xpath('//a[@ix-auto="tab__Extents"]').click()
+    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Extents")]')
+    driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
+    assert wait_on_element(driver, 0.5, 7, '//h4[contains(.,"Basic Info")]')
 
 
-@then(parsers.parse('input Extent name "{extent_name}", Extent type device Device * "{device}"'))
-def input_extent_name_ds1__extent_type_device_device__tankds1(driver):
-    """input Extent name ds1, Extent type device Device * tank/ds1."""
+@then(parsers.parse('input Extent name "{name}", select "{extent_type}" for Extent Type, select "{device}" for Device'))
+def input_extent_name_ds1__extent_type_device_device__tankds1(driver, name, extent_type, device):
+    """input Extent name "ds1", select "Device" for Extent Type select "tank/ds1 (1.00G)" for Device."""
+    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(name)
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Extent Type"]').click()
+    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Extent Type_{extent_type}"]')
+    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Extent Type_{extent_type}"]').click()
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Device"]').click()
+    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Device_{device}"]')
+    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Device_{device}"]').click()
 
 
 @then('you should be retune to the Extents tab')
 def then_you_should_be_retune_to_the_extents_tab(driver):
     """you should be retune to the Extents tab."""
+    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Associated Targets")]')
+    assert wait_on_element(driver, 0.5, 7, '//div[contains(.,"ds1")]')
 
 
 @then('click Associated Targets tab, then click Add')
