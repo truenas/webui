@@ -293,20 +293,20 @@ def navigate_to_storage_then_click_the_great_icon_to_disks_then_click_name_to_so
     assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__STORAGE_DISKS"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__STORAGE_DISKS"]').click()
     assert wait_on_element(driver, 1, 7, '//h1[contains(.,"Disks")]')
-    # sort disk
-    disk = ''
-    while disk != 'sda':
-        driver.find_element_by_xpath('//span[contains(.,"Name")]').click()
-        disk = driver.find_element_by_xpath('(//datatable-body-cell[2]/div/div)[1]').text
+    # sort disk was removed, probably need to rewrite the step
+    # disk = ''
+    # while disk != 'sda':
+    #     driver.find_element_by_xpath('//span[contains(.,"Name")]').click()
+    #     disk = driver.find_element_by_xpath('(//datatable-body-cell[2]/div/div)[1]').text
 
 
 @then('the list of disks should appear in ascending order starting with sda')
 def the_list_of_disks_should_appear_in_ascending_order_starting_with_sda(driver):
     """the list of disks should appear in ascending order starting with sda."""
     # Verify disk are sorted
-    disk_list = {1: 'sda', 2: 'sdb', 3: 'sdc'}
+    disk_list = {1: 'sda', 3: 'sdb', 5: 'sdc'}
     for num in list(disk_list.keys()):
-        disk = driver.find_element_by_xpath(f'(//datatable-body-cell[2]/div/div)[{num}]').text
+        disk = driver.find_element_by_xpath(f'//table/tbody/tr[{num}]/td[2]').text
         assert disk == disk_list[num]
 
 
@@ -315,8 +315,8 @@ def starting_with_sda_click__click_wipe_check_confirm_and_click_continue_repeat_
     """starting with sda, click >, click wipe, check confirm, and click continue. Repeat steps for sdb."""
     disk_list = ['sda', 'sdb']
     for disk in disk_list:
-        assert wait_on_element(driver, 0.5, 7, f'//a[@ix-auto="expander__{disk}"]')
-        driver.find_element_by_xpath(f'//a[@ix-auto="expander__{disk}"]').click()
+        assert wait_on_element(driver, 0.5, 7, f'//td[contains(.,"{disk}")]')
+        driver.find_element_by_xpath(f'//td[contains(.,"{disk}")]').click()
         assert wait_on_element(driver, 0.5, 7, f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]')
         driver.find_element_by_xpath(f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]').click()
         assert wait_on_element(driver, 0.5, 7, f'//h1[contains(.,"Wipe Disk {disk}")]')
@@ -326,6 +326,9 @@ def starting_with_sda_click__click_wipe_check_confirm_and_click_continue_repeat_
         driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
         assert wait_on_element(driver, 1, 7, '//span[contains(.,"Disk Wiped successfully")]')
         driver.find_element_by_xpath('//button[contains(.,"CLOSE")]').click()
+        time.sleep(1)
+        driver.refresh()
+        assert wait_on_element(driver, 1, 10, '//h1[contains(.,"Disks")]')
 
 
 @then('navigate to Storage click Create')

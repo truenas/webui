@@ -105,4 +105,4 @@ def user_should_be_created_and_added_to_the_user_list(driver):
     """User should be created and added to the user list."""
     assert wait_on_element_disappear(driver, 1, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 0.5, 30, '//h1[contains(.,"Users")]')
-    driver.find_element_by_xpath('//div[@ix-auto="value__ericbsd_Username"]')
+    driver.find_element_by_xpath('//td[contains(.,"ericbsd")]')
