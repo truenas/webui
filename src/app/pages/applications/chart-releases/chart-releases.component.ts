@@ -72,6 +72,7 @@ export class ChartReleasesComponent implements OnInit {
 
   refreshChartReleases() {
     this.ws.call('chart.release.query').subscribe(charts => {
+      console.log(charts)
       this.chartItems = [];
       let repos = [];
       charts.forEach(chart => {
