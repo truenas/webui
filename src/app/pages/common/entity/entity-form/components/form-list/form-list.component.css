@@ -5,3 +5,9 @@ button.listBtn {
 
 .list-action {
 }
+
+.top-right {
+  position: absolute;
+  top: 1px;
+  right: 5px;
+}

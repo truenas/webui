@@ -1584,4 +1584,16 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     resize: none;
   }
 
+  entity-form-list { 
+    #externalInterfaces {
+      .form-list-item {
+        right: 1px;
+        margin-bottom: 15px;
+        background: black;
+        // padding-left: 10px;
+        padding: 15px;
+      }
+    }
+  }
+
 } // end of ix theme

@@ -137,6 +137,8 @@ export class ChartReleaseAddComponent implements OnDestroy {
         {
           type: 'list',
           name: 'externalInterfaces',
+          label: 'Add External Interface',
+          box: true,
           width: '100%',
           templateListField: [
             {
@@ -171,27 +173,33 @@ export class ChartReleaseAddComponent implements OnDestroy {
               ],
             },
             {
-              type: 'list',
+              type: 'chip',
               name: 'staticIPConfigurations',
-              width: '100%',
-              templateListField: [
-                {
-                  type: 'ipwithnetmask',
-                  name: 'staticIP',
-                  placeholder: helptext.chartForm.externalInterfaces.staticConfig.placeholder,
-                  relation: [
-                    {
-                      action: 'ENABLE',
-                      when: [{
-                        name: 'ipam',
-                        value: 'static',
-                      }]
-                    },
-                  ],
-                }, 
-              ],
-              listFields: []
+              placeholder: helptext.chartForm.externalInterfaces.staticConfig.placeholder,
+              tooltip: helptext.chartForm.DNSConfig.nameservers.tooltip,
             },
+            // {
+            //   type: 'list',
+            //   name: 'staticIPConfigurations',
+            //   width: '100%',
+            //   templateListField: [
+            //     {
+            //       type: 'ipwithnetmask',
+            //       name: 'staticIP',
+            //       placeholder: helptext.chartForm.externalInterfaces.staticConfig.placeholder,
+            //       relation: [
+            //         {
+            //           action: 'ENABLE',
+            //           when: [{
+            //             name: 'ipam',
+            //             value: 'static',
+            //           }]
+            //         },
+            //       ],
+            //     }, 
+            //   ],
+            //   listFields: []
+            // },
             {
               type: 'list',
               name: 'staticRoutes',
@@ -489,7 +497,6 @@ export class ChartReleaseAddComponent implements OnDestroy {
   }
 
   ngOnDestroy(){
-    console.log('boom')
     this.destroy$.next();
     this.destroy$.complete(); 
   }
