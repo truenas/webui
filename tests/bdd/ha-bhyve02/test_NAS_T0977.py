@@ -76,7 +76,7 @@ def click_authorized_access_tab_then_click_add(driver):
     driver.find_element_by_xpath('//a[@ix-auto="tab__Authorized Access"]').click()
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Authorized Access")]')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//h4[contains(.,"Group")]')
+    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Group")]')
 
 
 @then(parsers.parse('input Group ID "{gid}", User "{user}", secret * "{password}",'))
@@ -127,7 +127,7 @@ def click_portals_tab_then_click_add(driver):
     driver.find_element_by_xpath('//a[@ix-auto="tab__Portals"]').click()
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Portals")]')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//h4[contains(.,"Basic Info")]')
+    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Basic Info")]')
 
 
 @then(parsers.parse('input Description "{description}", select Discovery Auth Method "{method}"'))
@@ -169,7 +169,7 @@ def click_initiators_group_tab_then_click_add(driver):
     driver.find_element_by_xpath('//a[@ix-auto="tab__Initiators Groups"]').click()
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Initiators Groups")]')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"Allow All Initiators")]')
+    assert wait_on_element(driver, 1, 7, '//span[contains(.,"Allow All Initiators")]')
 
 
 @then(parsers.parse('input "{description}" in Description input "{initiator}" in Allowed Initiators then click +'))
@@ -209,7 +209,7 @@ def click_targets_tab_then_click_add(driver):
     driver.find_element_by_xpath('//a[@ix-auto="tab__Targets"]').click()
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Targets")]')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//h4[contains(.,"Basic Info")]')
+    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Basic Info")]')
 
 
 @then(parsers.parse('input Target name "{target_name}", Target alias "{target_alias}", Portal Group ID select "{group}"'))
@@ -219,6 +219,7 @@ def input_target_name_ds1_target_alias_ds1_portal_group_id_select_1(driver, targ
     driver.find_element_by_xpath('//input[@ix-auto="input__Target Name"]').send_keys(target_name)
     driver.find_element_by_xpath('//input[@ix-auto="input__Target Alias"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Target Alias"]').send_keys(target_alias)
+    assert wait_on_element(driver, 0.5, 7, '//mat-select[@ix-auto="select__Portal Group ID"]')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Portal Group ID"]').click()
     assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Portal Group ID_{group}"]')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Portal Group ID_{group}"]').click()
@@ -251,7 +252,7 @@ def click_extents_tab_then_click_add(driver):
     driver.find_element_by_xpath('//a[@ix-auto="tab__Extents"]').click()
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Extents")]')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//h4[contains(.,"Basic Info")]')
+    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Basic Info")]')
 
 
 @then(parsers.parse('input Extent name "{name}", select "{extent_type}" for Extent Type, select "{device}" for Device'))
@@ -280,7 +281,7 @@ def click_associated_targets_tab_then_click_add(driver):
     driver.find_element_by_xpath('//a[@ix-auto="tab__Associated Targets"]').click()
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Associated Targets")]')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//h4[contains(.,"Associated Target")]')
+    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Associated Target")]')
 
 
 @then(parsers.parse('select "{target}" for Target, input "{lun_id}" for LUN ID, select "{extent}" for Extent'))
