@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
 
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
@@ -21,10 +20,8 @@ export class ChartReleaseEditComponent {
   protected isEntity: boolean = true;
 
   private title= helptext.chartForm.editTitle;
+  private name: string;
   private dialogRef: any;
-  private getRow = new Subscription;
-
-  private rowNum: any;
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
     {
@@ -381,15 +378,10 @@ export class ChartReleaseEditComponent {
   ]
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
-    private modalService: ModalService) {
-      this.getRow = this.modalService.getRow$.subscribe(rowId => {
-        this.rowNum = rowId;
-        this.queryCallOption = [['name', '=', rowId]];
-        this.getRow.unsubscribe();
-    })
-  }
+    private modalService: ModalService) { }
 
   resourceTransformIncomingRestData(data) {
+    this.name = data.name;
     data.config.release_name = data.name;
     data.config.repository = data.config.image.repository;
     data.config.tag = data.config.image.tag;
@@ -456,7 +448,7 @@ export class ChartReleaseEditComponent {
       })
     }
 
-    let payload = [data.release_name, {
+    let payload = [this.name, {
       values: {
         containerArgs: data.containerArgs,
         containerCommand: data.containerCommand,

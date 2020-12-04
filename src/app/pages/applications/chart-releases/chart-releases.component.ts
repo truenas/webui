@@ -114,12 +114,10 @@ export class ChartReleasesComponent implements OnInit {
 
   refreshStatus(name: string) {
     this.appService.getChartReleases(name).subscribe(res => {
-      console.log(res);
       let item = this.chartItems.find(o => o.name === name);
       item.status = res[0].status;
       if (item.status === 'DEPLOYING') {
         setTimeout(() => {
-          console.log('yo')
           this.refreshStatus(name);
         }, 3000);
       }

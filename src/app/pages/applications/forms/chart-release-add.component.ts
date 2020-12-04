@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
+import { FormGroup } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { takeUntil, debounceTime } from 'rxjs/operators';
 
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
@@ -16,7 +18,7 @@ import  helptext  from '../../../helptext/apps/apps';
   template: `<entity-wizard [conf]="this"></entity-wizard>`
 
 })
-export class ChartReleaseAddComponent {
+export class ChartReleaseAddComponent implements OnDestroy {
   protected queryCall: string = 'chart.release.query';
   protected queryCallOption: Array<any>;
   protected addCall: string = 'chart.release.create';
@@ -24,15 +26,14 @@ export class ChartReleaseAddComponent {
 
   private title = helptext.chartForm.title;
   private dialogRef: any;
-  private getRow = new Subscription;
   public hideCancel = true;
+  public summary = {};
+  summary_title = 'Chart Release Summary';
+  private entityWizard: any;
+  private destroy$ = new Subject();
   // private isLinear = true;
 
-
-  private rowNum: any;
   protected fieldConfig: FieldConfig[];
-  // protected isOneColumnForm = true;
-
   public wizardConfig: Wizard[] = [
     {
       label: helptext.wizardLabels.image,
@@ -173,13 +174,11 @@ export class ChartReleaseAddComponent {
               type: 'list',
               name: 'staticIPConfigurations',
               width: '100%',
-              // isHidden: true,
               templateListField: [
                 {
                   type: 'ipwithnetmask',
                   name: 'staticIP',
                   placeholder: helptext.chartForm.externalInterfaces.staticConfig.placeholder,
-                  // isHidden: true,
                   relation: [
                     {
                       action: 'ENABLE',
@@ -197,7 +196,6 @@ export class ChartReleaseAddComponent {
               type: 'list',
               name: 'staticRoutes',
               width: '100%',
-              // isHidden: true,
               templateListField: [
                 {
                   type: 'ipwithnetmask',
@@ -245,7 +243,6 @@ export class ChartReleaseAddComponent {
     },
     {
       label: helptext.chartForm.portForwardingList.title,
-      // label: true,
       fieldConfig: [
         {
           type: 'list',
@@ -275,11 +272,9 @@ export class ChartReleaseAddComponent {
           listFields: []
         }
       ],
-      // colspan: 2,
     },
     {
       label: helptext.chartForm.hostPathVolumes.title,
-      // label: true,
       fieldConfig: [
         {
           type: 'list',
@@ -311,12 +306,9 @@ export class ChartReleaseAddComponent {
           listFields: []
         }
       ],
-      // colspan: 2,
     },
     {
       label: helptext.chartForm.volumes.title,
-      // label: true,
-      // class: 'volume_fields',
       fieldConfig: [
         {
           type: 'list',
@@ -339,12 +331,9 @@ export class ChartReleaseAddComponent {
           listFields: []
         }
       ],
-      // colspan: 2,
     },
     {
       label: helptext.chartForm.gpu.title,
-      // label: true,
-      // width: '50%',
       fieldConfig: [
         {
           type: 'input',
@@ -361,14 +350,15 @@ export class ChartReleaseAddComponent {
     }
   ]
 
+  private summaryItems = [
+    { step: 0, fieldName:'release_name', label: helptext.chartForm.release_name.placeholder},
+    { step: 0, fieldName:'repository', label: helptext.chartForm.image.repo.placeholder},
+    { step: 0, fieldName:'tag', label: helptext.chartForm.image.tag.placeholder},
+    { step: 1, fieldName:'containerCommand', label: helptext.chartForm.container.command.placeholder}
+  ]
+
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
-    private modalService: ModalService) {
-      this.getRow = this.modalService.getRow$.subscribe(rowId => {
-        this.rowNum = rowId;
-        this.queryCallOption = [['name', '=', rowId]];
-        this.getRow.unsubscribe();
-    })
-  }
+    private modalService: ModalService) { }
 
   resourceTransformIncomingRestData(data) {
     data.config.release_name = data.name;
@@ -383,7 +373,12 @@ export class ChartReleaseAddComponent {
     return data.config;
   }
 
-  afterInit(entityEdit: any) {
+  afterInit(entityWizard: EntityWizardComponent) {
+    this.entityWizard = entityWizard;
+    this.summaryItems.forEach(item => {
+      this.makeSummary(item.step, item.fieldName, item.label);
+    })
+
     // console.log(entityEdit.formGroup.controls)
     // entityEdit.formGroup.controls['externalInterfaces'].valueChanges.subscribe(value => {
     //   console.log(value, value[0].ipam)
@@ -395,6 +390,16 @@ export class ChartReleaseAddComponent {
     //     this.hideField('staticRoutes', true, entityEdit);
     //   }
     // })
+  }
+
+  makeSummary(step: string | number, fieldName: string | number, label: string | number) {
+    ( < FormGroup > this.entityWizard.formArray.get([step]).get(fieldName)).valueChanges
+    .pipe(
+      takeUntil(this.destroy$)
+    )
+    .subscribe((res) => {
+      this.summary[(label)] = res;
+    })
   }
 
   hideField(fieldName: any, show: boolean, entity: any) {
@@ -481,6 +486,12 @@ export class ChartReleaseAddComponent {
     this.dialogRef.componentInstance.failure.subscribe((err) => {
       // new EntityUtils().handleWSError(this, err, this.dialogService);
     })
+  }
+
+  ngOnDestroy(){
+    console.log('boom')
+    this.destroy$.next();
+    this.destroy$.complete(); 
   }
 
 }
