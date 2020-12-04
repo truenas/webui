@@ -100,12 +100,13 @@ def click_the_edit_button_that_appears(driver):
 @then('The User Edit Page should open')
 def the_user_edit_page_should_open(driver):
     """The User Edit Page should open."""
-    assert wait_on_element(driver, 0.5, 7, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element(driver, 1, 7, '//h3[contains(.,"Edit User")]')
 
 
 @then('Change "Disable Password" to Yes and click save')
 def change_disable_password_to_no_and_click_save(driver):
     """Change "Disable Password" to No and click save."""
+    assert wait_on_element(driver, 0.5, 7, '//mat-select[@ix-auto="select__Disable Password"]')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Disable Password"]').click()
     assert wait_on_element(driver, 0.5, 7, '//mat-option[@ix-auto="option__Disable Password_Yes"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Disable Password_Yes"]').click()

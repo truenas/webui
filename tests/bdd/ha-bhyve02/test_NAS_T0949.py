@@ -101,7 +101,7 @@ def click_the_edit_button_that_appears(driver):
 @then('The User Edit Page should open')
 def the_user_edit_page_should_open(driver):
     """The User Edit Page should open."""
-    assert wait_on_element(driver, 0.5, 7, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element(driver, 1, 7, '//h3[contains(.,"Edit User")]')
 
 
 @then('Enable Permit Sudo and click save')

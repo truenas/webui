@@ -117,7 +117,7 @@ def add_user_to_additional_groups_like_wheel_and_save_change(driver):
 def change_should_be_saved(driver):
     """Change should be saved."""
     assert wait_on_element_disappear(driver, 1, 30, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 0.5, 30, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 1, 30, '//div[contains(.,"Users")]')
 
 
 @then('reopen the user edit page and ensure that the additional group was saved')
