@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { WebSocketService, DialogService } from '../../../services/index';
+import { DialogService } from '../../../services/index';
 import { ApplicationsService } from '../applications.service';
 import { ModalService } from '../../../services/modal.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { ChartReleaseSettingsComponent } from '../forms/chart-release-settings.component';
+import { ChartReleaseEditComponent } from '../forms/chart-release-edit.component';
 
 import  helptext  from '../../../helptext/apps/apps';
 
@@ -22,7 +22,7 @@ export class ChartReleasesComponent implements OnInit {
   private dialogRef: any;
   public tempIcon = '/assets/images/ix-original.png';
   private rollbackChartName: string;
-  private chartReleaseForm: ChartReleaseSettingsComponent;
+  private chartReleaseForm: ChartReleaseEditComponent;
   private refreshTable: Subscription;
   private refreshForm: Subscription;
 
@@ -51,7 +51,7 @@ export class ChartReleasesComponent implements OnInit {
     parent: this,
   }
 
-  constructor(private ws: WebSocketService, private mdDialog: MatDialog,
+  constructor(private mdDialog: MatDialog,
     private dialogService: DialogService, private translate: TranslateService,
     private appService: ApplicationsService, private modalService: ModalService) { }
 
@@ -67,12 +67,11 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   refreshForms() {
-    this.chartReleaseForm = new ChartReleaseSettingsComponent(this.mdDialog,this.dialogService,this.modalService);
+    this.chartReleaseForm = new ChartReleaseEditComponent(this.mdDialog,this.dialogService,this.modalService);
   }
 
   refreshChartReleases() {
-    this.ws.call('chart.release.query').subscribe(charts => {
-      console.log(charts)
+    this.appService.getChartReleases().subscribe(charts => {
       this.chartItems = [];
       let repos = [];
       charts.forEach(chart => {
@@ -114,7 +113,7 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   refreshStatus(name: string) {
-    this.ws.call('chart.release.query', [[['name', '=', name]]]).subscribe(res => {
+    this.appService.getChartReleases(name).subscribe(res => {
       console.log(res);
       let item = this.chartItems.find(o => o.name === name);
       item.status = res[0].status;
@@ -128,19 +127,19 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   start(name: string) {
-    this.ws.call('chart.release.scale', [name, { replica_count: 1}]).subscribe(res => {
+    this.appService.setReplicaCount(name, 1).subscribe(() => {
       this.refreshStatus(name);
     })
   }
 
   stop(name: string) {
-    this.ws.call('chart.release.scale', [name, { replica_count: 0}]).subscribe(res => {
+    this.appService.setReplicaCount(name, 0).subscribe(() => {
       this.refreshStatus(name);
     })
   }
 
   portal(name: string) {
-    this.ws.call('chart.release.pod_console_choices', [name]).subscribe(res => {
+    this.appService.getPodConsoleChoices(name).subscribe(res => {
     })
   }
 
@@ -212,12 +211,6 @@ export class ChartReleasesComponent implements OnInit {
           })
         }
       })
-    })
-  }
-
-  getConsoleChoices(x) {
-    this.ws.call('chart.release.pod_console_choices', [x]).subscribe(res => {
-      console.log(res)
     })
   }
  }

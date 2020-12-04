@@ -6,28 +6,23 @@ import { Subscription } from 'rxjs';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import { ModalService } from 'app/services/modal.service';
-import { WebSocketService, DialogService } from '../../../services/index';
-import { ApplicationsService } from '../applications.service';
+import { DialogService } from '../../../services/index';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import  helptext  from '../../../helptext/apps/apps';
-import { listLazyRoutes } from '@angular/compiler/src/aot/lazy_routes';
 
 @Component({
-  selector: 'app-chart-release-settings',
+  selector: 'app-chart-release-add',
   template: `<entity-wizard [conf]="this"></entity-wizard>`
 
 })
-export class ChartReleaseSettingsComponent {
+export class ChartReleaseAddComponent {
   protected queryCall: string = 'chart.release.query';
   protected queryCallOption: Array<any>;
   protected addCall: string = 'chart.release.create';
-  protected editCall: string = 'chart.release.update';
   protected isEntity: boolean = true;
 
   private title = helptext.chartForm.title;
-  private entityEdit: any;
   private dialogRef: any;
   private getRow = new Subscription;
   public hideCancel = true;
@@ -39,8 +34,6 @@ export class ChartReleaseSettingsComponent {
   // protected isOneColumnForm = true;
 
   public wizardConfig: Wizard[] = [
-
-    
     {
       label: helptext.wizardLabels.image,
       fieldConfig: [
@@ -476,24 +469,11 @@ export class ChartReleaseSettingsComponent {
       }
     }]
 
-    let submitMethod;
-    if (this.rowNum) {
-      delete payload[0].catalog;
-      delete payload[0].item;
-      delete payload[0].release_name;
-      delete payload[0].train;
-      delete payload[0].version;
-      submitMethod = this.editCall;
-      payload.unshift(data.release_name);
-    } else {
-      submitMethod = this.addCall;
-    }
- 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
       helptext.installing) }, disableClose: true});
-    this.dialogRef.componentInstance.setCall(submitMethod, payload);
+    this.dialogRef.componentInstance.setCall(this.addCall, payload);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((res) => {
+    this.dialogRef.componentInstance.success.subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();

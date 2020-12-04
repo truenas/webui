@@ -14,7 +14,7 @@ import { ModalService } from '../../../services/modal.service';
 import { ApplicationsService } from '../applications.service';
 
 import { KubernetesSettingsComponent } from '../forms/kubernetes-settings.component';
-import { ChartReleaseSettingsComponent } from '../forms/chart-release-settings.component';
+import { ChartReleaseAddComponent } from '../forms/chart-release-add.component';
 import  helptext  from '../../../helptext/apps/apps';
 
 @Component({
@@ -31,7 +31,7 @@ export class CatalogComponent implements OnInit {
   private selectedPool = '';
   public settingsEvent: Subject<CoreEvent>;
   private kubernetesForm: KubernetesSettingsComponent;
-  private chartReleaseForm: ChartReleaseSettingsComponent;
+  private chartReleaseForm: ChartReleaseAddComponent;
   private refreshForm: Subscription;
   private refreshTable: Subscription;
 
@@ -136,7 +136,7 @@ export class CatalogComponent implements OnInit {
 
   refreshForms() {
     this.kubernetesForm = new KubernetesSettingsComponent(this.modalService, this.appService);
-    this.chartReleaseForm = new ChartReleaseSettingsComponent(this.mdDialog,this.dialogService,this.modalService);
+    this.chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog,this.dialogService,this.modalService);
   }
 
   checkForConfiguredPool() {

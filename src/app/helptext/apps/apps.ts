@@ -105,7 +105,8 @@ export default {
   },
 
   chartForm: {
-    title: T('Chart Release'),
+    title: T('New Chart Release'),
+    editTitle: T('Edit Chart Release'),
     catalog: {
       placeholder: T('Catalog'),
       tooltip: T('')

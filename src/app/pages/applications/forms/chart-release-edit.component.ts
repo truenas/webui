@@ -6,25 +6,21 @@ import { Subscription } from 'rxjs';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import { ModalService } from '../../../services/modal.service';
-import { WebSocketService, DialogService } from '../../../services/index';
-import { ApplicationsService } from '../applications.service';
+import { DialogService } from '../../../services/index';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import  helptext  from '../../../helptext/apps/apps';
-import { listLazyRoutes } from '@angular/compiler/src/aot/lazy_routes';
 
 @Component({
-  selector: 'app-chart-release-settings',
+  selector: 'app-chart-release-edit',
   template: `<entity-form [conf]="this"></entity-form>`
 })
-export class ChartReleaseSettingsComponent {
+export class ChartReleaseEditComponent {
   protected queryCall: string = 'chart.release.query';
   protected queryCallOption: Array<any>;
-  protected addCall: string = 'chart.release.create';
   protected editCall: string = 'chart.release.update';
   protected isEntity: boolean = true;
 
-  private title = helptext.chartForm.title;
-  private entityEdit: any;
+  private title= helptext.chartForm.editTitle;
   private dialogRef: any;
   private getRow = new Subscription;
 
@@ -40,7 +36,7 @@ export class ChartReleaseSettingsComponent {
           name: 'release_name',
           placeholder: helptext.chartForm.release_name.placeholder,
           tooltip: helptext.chartForm.release_name.tooltip,
-          required: true
+          disabled: true
         }
       ],
       colspan: 2
@@ -183,21 +179,6 @@ export class ChartReleaseSettingsComponent {
               tooltip: helptext.chartForm.externalInterfaces.ipam.tooltip,
               options: helptext.chartForm.externalInterfaces.ipam.options,
               value: helptext.chartForm.externalInterfaces.ipam.options[0].value,
-            },
-            {
-              name: 'whatevs',
-              type: 'input',
-              placeholder: 'Whatevs',
-              isHidden: true,
-              relation: [
-                {
-                  action: 'SHOW',
-                  when: [{
-                    name: 'ipam',
-                    value: 'static',
-                  }]
-                },
-              ],
             },
             {
               type: 'list',
@@ -475,12 +456,7 @@ export class ChartReleaseSettingsComponent {
       })
     }
 
-    let payload = [{
-      catalog: 'OFFICIAL',
-      item: 'ix-chart',
-      release_name: data.release_name,
-      train: 'test',
-      version: 'latest',
+    let payload = [data.release_name, {
       values: {
         containerArgs: data.containerArgs,
         containerCommand: data.containerCommand,
@@ -506,25 +482,12 @@ export class ChartReleaseSettingsComponent {
         workloadType: 'Deployment',
       }
     }]
-
-    let submitMethod;
-    if (this.rowNum) {
-      delete payload[0].catalog;
-      delete payload[0].item;
-      delete payload[0].release_name;
-      delete payload[0].train;
-      delete payload[0].version;
-      submitMethod = this.editCall;
-      payload.unshift(data.release_name);
-    } else {
-      submitMethod = this.addCall;
-    }
  
     this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
       helptext.installing) }, disableClose: true});
-    this.dialogRef.componentInstance.setCall(submitMethod, payload);
+    this.dialogRef.componentInstance.setCall(this.editCall, payload);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((res) => {
+    this.dialogRef.componentInstance.success.subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();

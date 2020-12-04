@@ -14,7 +14,8 @@ import { CatalogComponent } from './catalog/catalog.component';
 import { ChartReleasesComponent } from './chart-releases/chart-releases.component';
 import { DockerImagesComponent } from './docker-images/docker-images.component';
 import { KubernetesSettingsComponent } from './forms/kubernetes-settings.component';
-import { ChartReleaseSettingsComponent } from './forms/chart-release-settings.component';
+import { ChartReleaseAddComponent } from './forms/chart-release-add.component';
+import { ChartReleaseEditComponent } from './forms/chart-release-edit.component';
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import { ChartReleaseSettingsComponent } from './forms/chart-release-settings.co
     ChartReleasesComponent,
     DockerImagesComponent,
     KubernetesSettingsComponent,
-    ChartReleaseSettingsComponent
+    ChartReleaseAddComponent,
+    ChartReleaseEditComponent
   ]
 })
 export class ApplicationsModule { }
