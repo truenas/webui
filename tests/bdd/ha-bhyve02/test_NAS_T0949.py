@@ -1,10 +1,14 @@
 # coding=utf-8
 """High Availability (tn-bhyve01) feature tests."""
 
-from function import wait_on_element, is_element_present, wait_on_element_disappear
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 import time
+from function import (
+    wait_on_element,
+    is_element_present,
+    wait_on_element_disappear
+)
 from pytest_bdd import (
     given,
     scenario,
@@ -36,7 +40,7 @@ def if_login_page_appear_enter_user_and_password(driver, user, password):
         driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys(user)
         driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
         driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(password)
-        assert wait_on_element(driver, 0.5, 30, '//button[@name="signin_button"]')
+        assert wait_on_element(driver, 0.5, 7, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
 
@@ -77,8 +81,8 @@ def the_users_page_should_open(driver):
 @then('On the right side of the table, click the Greater-Than-Sign for one of the users.')
 def on_the_right_side_of_the_table_click_the_greaterthansign_for_one_of_the_users(driver):
     """On the right side of the table, click the Greater-Than-Sign for one of the users.."""
-    assert wait_on_element(driver, 0.5, 7, '//a[@ix-auto="expander__ericbsd"]')
-    driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
+    assert wait_on_element(driver, 0.5, 7, '//tr[@ix-auto="expander__ericbsd"]/td')
+    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
 
 
 @then('The User Field should expand down to list further details.')
@@ -115,13 +119,13 @@ def enable_permit_sudo_and_click_save(driver):
 def change_should_be_saved(driver):
     """Change should be saved."""
     assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 0.5, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Users")]')
 
 
 @then('Open the user drop down to verify the value has been changed')
 def open_the_user_drop_down_to_verify_the_value_has_been_changed(driver):
     """Open the user drop down to verify the value has been changed."""
-    driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
+    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
     assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__EDIT_ericbsd"]')
     driver.find_element_by_xpath('//h4[contains(.,"Permit Sudo:")]')
 

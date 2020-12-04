@@ -1,10 +1,15 @@
 # coding=utf-8
 """High Availability (tn-bhyve01) feature tests."""
 
-import time
-from function import wait_on_element, is_element_present, wait_on_element_disappear
+
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
+import time
+from function import (
+    wait_on_element,
+    is_element_present,
+    wait_on_element_disappear
+)
 from pytest_bdd import (
     given,
     scenario,
@@ -76,8 +81,8 @@ def the_users_page_should_open(driver):
 @then('On the right side of the table, click the expand arrow for one of the users')
 def on_the_right_side_of_the_table_click_the_expand_arrow_for_one_of_the_users(driver):
     """On the right side of the table, click the expand arrow for one of the users."""
-    assert wait_on_element(driver, 0.5, 7, '//a[@ix-auto="expander__ericbsd"]')
-    driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
+    assert wait_on_element(driver, 0.5, 7, '//tr[@ix-auto="expander__ericbsd"]/td')
+    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
 
 
 @then('The User Field should expand down to list further details')
@@ -112,13 +117,13 @@ def change_should_be_saved(driver):
     assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 1, 7, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 0.5, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Users")]')
 
 
 @then('Open the user drop down to verify the user Disable Password is true')
 def open_the_user_drop_down_to_verify_the_user_disable_password_is_true(driver):
     """Open the user drop down to verify the user Disable Password is true."""
-    driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
+    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
     assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__EDIT_ericbsd"]')
     driver.find_element_by_xpath('//h4[contains(.,"Password Disabled:")]')
 

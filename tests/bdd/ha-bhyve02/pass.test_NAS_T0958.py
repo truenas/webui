@@ -71,8 +71,8 @@ def the_users_page_should_open(driver):
 @then('On the right side of the table, click the Greater-Than-Sign for one of the users')
 def on_the_right_side_of_the_table_click_the_greaterthansign_for_one_of_the_users(driver):
     """On the right side of the table, click the Greater-Than-Sign for one of the users."""
-    assert wait_on_element(driver, 0.5, 5, '//a[@ix-auto="expander__ericbsd"]')
-    driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
+    assert wait_on_element(driver, 0.5, 5, '//tr[@ix-auto="expander__ericbsd"]/td')
+    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
 
 
 @then('The User Field should expand down to list further details')
@@ -114,8 +114,8 @@ def change_should_be_saved(driver):
 @then('Reopen the user edit page and ensure that the additional Aux Group was saved')
 def reopen_the_user_edit_page_and_ensure_that_the_additional_aux_group_was_saved(driver):
     """Reopen the user edit page and ensure that the additional Aux Group was saved."""
-    assert wait_on_element(driver, 0.5, 5, '//a[@ix-auto="expander__ericbsd"]')
-    driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
+    assert wait_on_element(driver, 0.5, 5, '//tr[@ix-auto="expander__ericbsd"]/td')
+    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
     assert wait_on_element(driver, 0.5, 5, '//button[@ix-auto="button__EDIT_ericbsd"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
     assert wait_on_element(driver, 0.5, 5, '//h4[contains(.,"Identification")]')
