@@ -315,8 +315,8 @@ def starting_with_sda_click__click_wipe_check_confirm_and_click_continue_repeat_
     """starting with sda, click >, click wipe, check confirm, and click continue. Repeat steps for sdb."""
     disk_list = ['sda', 'sdb']
     for disk in disk_list:
-        assert wait_on_element(driver, 0.5, 7, f'//td[contains(.,"{disk}")]')
-        driver.find_element_by_xpath(f'//td[contains(.,"{disk}")]').click()
+        assert wait_on_element(driver, 0.5, 7, f'//tr[@ix-auto="expander__{disk}"]/td[2]')
+        driver.find_element_by_xpath(f'//tr[@ix-auto="expander__{disk}"]/td[2]').click()
         assert wait_on_element(driver, 0.5, 7, f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]')
         driver.find_element_by_xpath(f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]').click()
         assert wait_on_element(driver, 0.5, 7, f'//h1[contains(.,"Wipe Disk {disk}")]')
