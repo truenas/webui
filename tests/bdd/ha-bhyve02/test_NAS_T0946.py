@@ -47,7 +47,7 @@ def login_appear_enter_root_and_password(driver, password):
 @then(parsers.parse('you should see the dashboard and "{information}"'))
 def you_should_see_the_dashboard_and_information(driver, information):
     """you should see the dashboard and "information"."""
-    assert wait_on_element(driver, 0.5, 7, f'//span[contains(.,"{information}")]')
+    assert wait_on_element(driver, 1, 10, f'//span[contains(.,"{information}")]')
 
 
 @then('navigate to System Settings and click General')
@@ -335,7 +335,7 @@ def starting_with_sda_click__click_wipe_check_confirm_and_click_continue_repeat_
 def navigate_to_storage_click_create(driver):
     """navigate to Storage click Create"""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Storage")]')
+    assert wait_on_element(driver, 1, 7, '//h1[contains(.,"Storage")]')
     assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button___POOL_CREATE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button___POOL_CREATE"]').click()
 
@@ -343,7 +343,7 @@ def navigate_to_storage_click_create(driver):
 @then(parsers.parse('enter tank for pool name, check the box next to "{disk}", click the arrow pointing to Data Vdevs, click Create, check confirm, click CREATE POOL'))
 def enter_tank_for_pool_name_check_the_box_next_to_sda_press_under_data_vdev_click_create_check_confirm_click_create_pool(driver, disk):
     """enter tank for pool name, check the box next to sda, click the arrow pointing to Data Vdevs, click Create, check confirm, click CREATE POOL."""
-    assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Create Pool")]')
+    assert wait_on_element(driver, 1, 7, '//h1[contains(.,"Create Pool")]')
     assert wait_on_element(driver, 0.5, 7, '//div[contains(.,"Pool Manager")]')
     driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').clear()
     driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').send_keys('tank')
@@ -388,9 +388,9 @@ def click_failover_uncheck_disable_failover_click_save_and_confirm_changes(drive
 @then('navigate to dashboard, and verify that both controllers show')
 def navigate_to_dashboard_and_verify_that_both_controllers_show(driver):
     """navigate to dashboard, and verify that both controllers show."""
-    assert wait_on_element(driver, 0.5, 7, '//h4[contains(.,"Failover Configuration")]')
+    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Failover Configuration")]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 1, 10, '//span[contains(.,"System Information")]')
     # need to wait for all controller to be online.
     assert wait_on_element(driver, 1, 60, '//div[contains(.,"tn-bhyve01-nodea")]')
     assert wait_on_element(driver, 1, 180, '//div[contains(.,"tn-bhyve01-nodeb")]')

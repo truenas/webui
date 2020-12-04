@@ -50,8 +50,8 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
 @then('You should see the dashboard')
 def you_should_see_the_dashboard(driver):
     """You should see the dashboard."""
-    assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 1, 10, '//h1[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 1, 10, '//span[contains(.,"System Information")]')
 
 
 @then('Click on the Credentials item in the left side menu')
