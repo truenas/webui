@@ -1,10 +1,5 @@
 <div fxLayout="column" id="entity-table-component" class="material mat-card mat-card-table">
 
-  <!-- INSERT DYNAMIC CARDHEADER HERE -->
-  <!--<div class="invisible" id="cardHeaderContainer" *ngIf="conf.cardHeaderComponent">
-    <ng-template dynamicComponent [component]="conf.cardHeaderComponent" [config]="" [parent]="this"></ng-template>
-    </div>-->
-
   <!-- BATCH OPERATIONS START -->
   <div fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton fn-toolbar"
     [ngClass]="{'icons-only': multiActionsIconsOnly}" *ngIf="conf && selection.selected.length > 0"
@@ -56,8 +51,6 @@
     </div>
   </div>
   <!-- BATCH OPERATIONS END -->
-
-  <div *ngIf="2+2==5" #entityTable></div>
 
   <div class="table-container">
     <table *ngIf="conf && currentColumns && currentColumns.length > 0 && dataSource" 
