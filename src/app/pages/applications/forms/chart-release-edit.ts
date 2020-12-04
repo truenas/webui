@@ -3,11 +3,9 @@ import { MatDialog } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 
-import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
-import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-wizard.component';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
-import { ModalService } from 'app/services/modal.service';
+import { ModalService } from '../../../services/modal.service';
 import { WebSocketService, DialogService } from '../../../services/index';
 import { ApplicationsService } from '../applications.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
@@ -16,8 +14,7 @@ import { listLazyRoutes } from '@angular/compiler/src/aot/lazy_routes';
 
 @Component({
   selector: 'app-chart-release-settings',
-  template: `<entity-wizard [conf]="this"></entity-wizard>`
-
+  template: `<entity-form [conf]="this"></entity-form>`
 })
 export class ChartReleaseSettingsComponent {
   protected queryCall: string = 'chart.release.query';
@@ -30,27 +27,29 @@ export class ChartReleaseSettingsComponent {
   private entityEdit: any;
   private dialogRef: any;
   private getRow = new Subscription;
-  public hideCancel = true;
-  // private isLinear = true;
-
 
   private rowNum: any;
   protected fieldConfig: FieldConfig[];
-  // protected isOneColumnForm = true;
-
-  public wizardConfig: Wizard[] = [
-
-    
+  public fieldSets: FieldSet[] = [
     {
-      label: helptext.wizardLabels.image,
-      fieldConfig: [
+      name: 'Name',
+      width: '100%',
+      config: [
         {
           type: 'input',
           name: 'release_name',
           placeholder: helptext.chartForm.release_name.placeholder,
           tooltip: helptext.chartForm.release_name.tooltip,
           required: true
-        },
+        }
+      ],
+      colspan: 2
+    },
+    {
+      name: helptext.chartForm.image.title,
+      label: true,
+      width: '50%',
+      config: [
         {
           type: 'input',
           name: 'repository',
@@ -72,7 +71,14 @@ export class ChartReleaseSettingsComponent {
           tooltip: helptext.chartForm.image.pullPolicy.tooltip,
           options: helptext.chartForm.image.pullPolicy.options,
           value: helptext.chartForm.image.pullPolicy.options[0].value
-        },
+        }
+      ]
+    },
+    {
+      name: helptext.chartForm.update.title,
+      label: true,
+      width: '50%',
+      config: [
         {
           type: 'select',
           name: 'updateStrategy',
@@ -92,8 +98,10 @@ export class ChartReleaseSettingsComponent {
       ]
     },
     {
-      label: helptext.wizardLabels.container,
-      fieldConfig: [
+      name: helptext.chartForm.container.title,
+      label: true,
+      width: '50%',
+      config: [
         {
           type: 'chip',
           name: 'containerCommand',
@@ -105,7 +113,13 @@ export class ChartReleaseSettingsComponent {
           name: 'containerArgs',
           placeholder: helptext.chartForm.container.args.placeholder,
           tooltip: helptext.chartForm.container.args.tooltip
-        },
+        }
+      ]
+    },
+    {
+      name: helptext.chartForm.container.env_vars.title,
+      label: true,
+      config: [
         {
           type: 'list',
           name: 'containerEnvironmentVariables',
@@ -129,17 +143,26 @@ export class ChartReleaseSettingsComponent {
           listFields: []
         }
       ],
+      colspan: 2,
     },
     {
-      label: helptext.chartForm.networking,
-      fieldConfig: [
+      name: helptext.chartForm.networking,
+      label: true,
+      width: '50%',
+      config: [
         {
           type: 'checkbox',
           name: 'hostNetwork',
           placeholder: helptext.chartForm.hostNetwork.placeholder,
           tooltip: helptext.chartForm.hostNetwork.tooltip,
           value: false
-        },
+        }
+      ]
+    },
+    {
+      name: helptext.chartForm.externalLabel,
+      label: true,
+      config: [
         {
           type: 'list',
           name: 'externalInterfaces',
@@ -222,7 +245,15 @@ export class ChartReleaseSettingsComponent {
             
           ],
           listFields: []
-        },
+        }
+      ],
+      colspan: 2,
+    },
+    {
+      name: helptext.chartForm.DNSPolicy.title,
+      label: true,
+      width: '50%',
+      config: [
         {
           type: 'select',
           name: 'dnsPolicy',
@@ -251,9 +282,9 @@ export class ChartReleaseSettingsComponent {
       ]
     },
     {
-      label: helptext.chartForm.portForwardingList.title,
-      // label: true,
-      fieldConfig: [
+      name: helptext.chartForm.portForwardingList.title,
+      label: true,
+      config: [
         {
           type: 'list',
           name: 'portForwardingList',
@@ -282,12 +313,12 @@ export class ChartReleaseSettingsComponent {
           listFields: []
         }
       ],
-      // colspan: 2,
+      colspan: 2,
     },
     {
-      label: helptext.chartForm.hostPathVolumes.title,
-      // label: true,
-      fieldConfig: [
+      name: helptext.chartForm.hostPathVolumes.title,
+      label: true,
+      config: [
         {
           type: 'list',
           name: 'hostPathVolumes',
@@ -318,13 +349,13 @@ export class ChartReleaseSettingsComponent {
           listFields: []
         }
       ],
-      // colspan: 2,
+      colspan: 2,
     },
     {
-      label: helptext.chartForm.volumes.title,
-      // label: true,
-      // class: 'volume_fields',
-      fieldConfig: [
+      name: helptext.chartForm.volumes.title,
+      label: true,
+      class: 'volume_fields',
+      config: [
         {
           type: 'list',
           name: 'volumes',
@@ -346,13 +377,13 @@ export class ChartReleaseSettingsComponent {
           listFields: []
         }
       ],
-      // colspan: 2,
+      colspan: 2,
     },
     {
-      label: helptext.chartForm.gpu.title,
-      // label: true,
-      // width: '50%',
-      fieldConfig: [
+      name: helptext.chartForm.gpu.title,
+      label: true,
+      width: '50%',
+      config: [
         {
           type: 'input',
           name: 'gpu_property',

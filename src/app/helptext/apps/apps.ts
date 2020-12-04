@@ -376,6 +376,10 @@ export default {
 
 
 
+  },
+  wizardLabels: {
+    image: T('Image and Policies'),
+    container: T('Container Settings')
   }
 
 }
