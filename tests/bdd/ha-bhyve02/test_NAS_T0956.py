@@ -117,3 +117,4 @@ def you_should_not_be_able_to_save_the_changes(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element(driver, 0.5, 30, '//h3[contains(.,"Edit User")]')
     assert wait_on_element(driver, 0.5, 30, '//mat-error[contains(.,"The passwords do not match.")]')
+    driver.find_element_by_xpath('//mat-icon[contains(.,"cancel")]').click()
