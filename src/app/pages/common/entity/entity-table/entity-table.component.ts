@@ -127,7 +127,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public filter: ElementRef;
   @ViewChild('defaultMultiActions', { static: false}) defaultMultiActions: ElementRef;
   @ViewChild('newEntityTable', { static: false}) entitytable: any;
-  @ViewChild('entityTable', { static: false}) table: any;
+  
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -504,6 +504,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   handleData(res, skipActions=false): any {
+    this.expandedElement = null;
 
     if( typeof(res) === "undefined" || typeof(res.data) === "undefined" ) {
       res = {
@@ -1040,16 +1041,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       dialogRef.componentInstance.failure.subscribe((err) => {
         dialogRef.close();
       });
-  }
-
-  onclick($event) {
-    this.tableMouseEvent = $event;
-  }
-
-  onActivate(event) {
-    if (event.type === 'checkbox' && this.selection.selected.indexOf(event.row) > -1) {
-      this.activatedRowIndex = this.table.bodyComponent.getRowIndex(event.row);
-    }
   }
 
   getCellClass({ row, column, value }): any {
