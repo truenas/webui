@@ -12,16 +12,16 @@
     </button>
     <mat-menu #alertSettingsMenu="matMenu">
       <button name="settings-alert" mat-menu-item ix-auto
-        ix-auto-type="option" [routerLink]="['/system', 'alertsettings']" ix-auto-identifier="Change Password">
+        ix-auto-type="option" (click)="goToAlertSettings()" ix-auto-identifier="Change Password">
         <span>Alert Settings</span>
       </button>
-      <button name="services-alert" mat-menu-item ix-auto ix-auto-type="option" [routerLink]="['/system', 'alertservice']"
+      <button name="services-alert" mat-menu-item ix-auto ix-auto-type="option" (click)="goToAlertServices()"
         ix-auto-identifier="Preferences">
         <span>Alert Services</span>
       </button>
     </mat-menu>
     <button name="close-alerts-panel" mat-icon-button ix-auto
-      ix-auto-type="button" (click)="closeClicked()" ix-auto-identifier="settings">
+      ix-auto-type="button" (click)="closeNotificationsPanel()" ix-auto-identifier="settings">
       <mat-icon>clear</mat-icon>
     </button>
   </div>

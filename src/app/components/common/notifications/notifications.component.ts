@@ -3,6 +3,7 @@ import { NotificationsService, NotificationAlert } from 'app/services/notificati
 import { LocaleService } from 'app/services/locale.service';
 import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-notifications',
@@ -12,14 +13,13 @@ import * as _ from 'lodash';
 export class NotificationsComponent implements OnInit, OnDestroy {
 
   @Input() notificPanel;
-  @Output() closed: EventEmitter<any> = new EventEmitter();
 
   notifications: Array<NotificationAlert> = [];
   dismissedNotifications: Array<NotificationAlert> = []
   ngDateFormat = 'yyyy-MM-dd HH:mm:ss';
   dateFormatSubscription: Subscription;
 
-  constructor(private notificationsService: NotificationsService, protected localeService: LocaleService) {
+  constructor(private router: Router, private notificationsService: NotificationsService, protected localeService: LocaleService) {
   }
 
   ngOnInit() {
@@ -86,7 +86,17 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     this.dateFormatSubscription.unsubscribe();
   }
 
-  closeClicked() {
-    this.closed.emit();
+  closeNotificationsPanel() {
+    this.notificPanel.close();
+  }
+
+  goToAlertSettings() {
+    this.notificPanel.close();
+    this.router.navigate(['/system', 'alertsettings']);
+  }
+
+  goToAlertServices() {
+    this.notificPanel.close();
+    this.router.navigate(['/system', 'alertservice']);
   }
 }
