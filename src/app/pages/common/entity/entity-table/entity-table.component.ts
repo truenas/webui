@@ -504,6 +504,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   handleData(res, skipActions=false): any {
+    this.expandedElement = null;
 
     if( typeof(res) === "undefined" || typeof(res.data) === "undefined" ) {
       res = {

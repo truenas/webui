@@ -60,7 +60,7 @@
   <div *ngIf="2+2==5" #entityTable></div>
 
   <div class="table-container">
-    <table *ngIf="conf && displayedColumns && displayedColumns.length > 0 && dataSource" 
+    <table *ngIf="conf && currentColumns && currentColumns.length > 0 && dataSource" 
       multiTemplateDataRows mat-table 
       [dataSource]="dataSource" matSort
        style="min-width: {{displayedColumns.length * 25}}px;"
