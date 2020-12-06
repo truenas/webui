@@ -5361,6 +5361,12 @@ msgstr "Редактировать параметры"
 msgid "Edit Permissions"
 msgstr "Изменить разрешения"
 
+msgid "Edit Pool"
+msgstr ""
+
+msgid "Edit Pool Disk"
+msgstr ""
+
 msgid "Edit Pool Options for "
 msgstr ""
 
@@ -8165,6 +8171,9 @@ msgid "Import Certificate"
 msgstr ""
 
 msgid "Import Certificate Signing Request"
+msgstr ""
+
+msgid "Import Pool"
 msgstr ""
 
 msgid "Import a pool that exists but is not connected."
@@ -10999,6 +11008,9 @@ msgid ""
 msgstr ""
 
 msgid "Product:"
+msgstr ""
+
+msgid "Production Status"
 msgstr ""
 
 msgid "Production status successfully updated"
@@ -16119,6 +16131,9 @@ msgstr "Обновление плагина"
 
 msgid "Updating group members"
 msgstr "Обновление членов группы"
+
+msgid "Updating production status..."
+msgstr ""
 
 msgid "Updating selected plugins."
 msgstr "Обновление выбранных плагинов."
