@@ -1,16 +1,16 @@
 import { Component } from '@angular/core';
 import { helptext } from 'app/helptext/system/reporting';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { DialogService, RestService, WebSocketService } from '../../../services/';
-import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
-import { EntityUtils } from '../../common/entity/utils';
+import { DialogService, RestService, WebSocketService } from '../../../../services';
+import { AppLoaderService } from "../../../../services/app-loader/app-loader.service";
+import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
-  selector: 'app-system-reporting',
-  templateUrl: 'reporting.component.html',
-  styleUrls: ['reporting.component.css'],
+  selector: 'app-reports-config',
+  templateUrl: 'reports-config.component.html',
+  styleUrls: ['reports-config.component.css'],
 })
-export class ReportingComponent {
+export class ReportsConfigComponent {
   public job: any = {};
   protected queryCall = 'reporting.config';
   public entityForm: any;
@@ -96,11 +96,11 @@ export class ReportingComponent {
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
   }
-  
+
   public customSubmit(body) {
-    if (body.graph_age !== this.graphAge || body.graph_points !== this.graphPoints || 
+    if (body.graph_age !== this.graphAge || body.graph_points !== this.graphPoints ||
       body.cpu_in_percentage !== this.isCpuCheckboxChecked) {
-      this.dialog.confirm(helptext.dialog.title, helptext.dialog.message, false, 
+      this.dialog.confirm(helptext.dialog.title, helptext.dialog.message, false,
         helptext.dialog.action).subscribe((res) => {
         if (res) {
           body.confirm_rrd_destroy = true;

@@ -1,10 +1,12 @@
 import {ModuleWithProviders} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
+import { T } from 'app/translate-marker';
+import { ReportsConfigComponent } from './components/reports-config/reports-config.component';
 
 import {ReportsDashboardComponent} from './reportsdashboard.component';
 
 // noinspection TypeScriptValidateTypes
-export const routes: Routes = [ 
+export const routes: Routes = [
   {
     path : '',
     pathMatch : 'full',
@@ -70,6 +72,12 @@ export const routes: Routes = [
     pathMatch : 'full',
     data:{title:'ZFS', breadcrumb:'ZFS'},
     component : ReportsDashboardComponent,
+  },
+  {
+    path: 'configure',
+    pathMatch: 'full',
+    data: { title: T('Configure'), breadcrumb: T('Configure') },
+    component: ReportsConfigComponent,
   },
   //{ path: '**', redirectTo: 'cpu', pathMatch: 'full' },
 ];

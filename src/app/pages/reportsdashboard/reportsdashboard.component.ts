@@ -196,7 +196,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
 
   generateTabs(){
-      let labels = [T('CPU'), T('Disk'), T('Memory'), T('Network'), T('NFS'), T('Partition'), T('System'), T('Target'), T('ZFS')];
+      let labels = [T('CPU'), T('Disk'), T('Memory'), T('Network'), T('NFS'), T('Partition'), T('System'), T('Target'), T('ZFS'), T('Configure')];
       let UPS = this.otherReports.find((report) => {
         return report.title.startsWith('UPS');
       });
@@ -297,6 +297,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
           break;
         case 'ZFS':
           condition = report.name.startsWith('arc');
+          break;
+        case 'Configure':
+          condition = (report.name === 'configure');
           break;
       default:
         condition = true;
