@@ -257,12 +257,14 @@ export class ChartReleaseAddComponent implements OnDestroy {
               type: 'input',
               name: 'containerPort',
               placeholder: helptext.chartForm.portForwardingList.containerPort.placeholder,
-              required: true
+              required: true,
+              validation: helptext.chartForm.portForwardingList.containerPort.validation
             }, 
             {
               type: 'input',
               name: 'nodePort',
               placeholder: helptext.chartForm.portForwardingList.nodePort.placeholder,
+              validation: helptext.chartForm.portForwardingList.nodePort.validation,   
               required: true
             },  
             {

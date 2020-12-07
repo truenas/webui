@@ -3,7 +3,7 @@
     <ng-container *ngIf="listsFromArray?.controls">
         <div *ngFor="let liControl of listsFromArray.controls; let i = index" [fxLayout]="config.width == '100%' ? 'row wrap' : (default)"
                                 ix-auto ix-auto-type="list-item" ix-auto-identifier="{{i}}" class="form-list-item {{config.listFields[0][0].type}}">
-                                <ng-container *ngIf="config.label"><h3>{{config.label}}</h3></ng-container>
+            <ng-container *ngIf="config.label && config.box"><h3>{{config.label}}</h3></ng-container>
             <ng-container *ngFor="let field of config.listFields[i]; let ii = index" >
               <div *ngIf="!field.isHidden" fxFlex="{{config.deleteButtonOnFirst ? '100%' : 'calc(100% - 100px)'}}"
                 [ngClass]="{'form-inline': field.class == 'inline', 'form-line': field.class !== 'inline', 'list-action-block-wrapper' : config.deleteButtonOnFirst}"

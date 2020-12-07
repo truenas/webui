@@ -188,6 +188,7 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   edit(name: string) {
+    console.log(name)
     this.modalService.open('slide-in-form', this.chartReleaseForm, name);
   }
 

@@ -308,21 +308,30 @@ export default {
     externalLabel: T('Add External Interfaces'),
     hostPortsList: {
       containerPort: {
-        placeholder: T('Container Port')
+        placeholder: T('Container Port'),
+        validation: [
+          Validators.pattern("^[0-9]*$"),
+        ]
       },
       hostPort: {
-        placeholder: T('Host Port')
+        placeholder: T('Host Port'),
+        
       }
     },
     portForwardingList: {
       title: T('Port Forwarding List'),
       containerPort: {
-        placeholder: T('Container Port')
+        placeholder: T('Container Port'),
+        validation: [
+          Validators.pattern("^[0-9]*$"),
+        ]
       },
       nodePort: {
         placeholder: T('Node Port'),
         tooltip: T('The range of valid ports is 9000-65535.'),
-        validation: [Validators.min(9000), Validators.max(65535)]
+        validation: [
+          Validators.pattern("^[0-9]*$"),
+          Validators.min(9000), Validators.max(65535)]
       },
       protocol: {
         placeholder: T('Protocol'),

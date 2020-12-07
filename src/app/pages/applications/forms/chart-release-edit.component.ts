@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import * as _ from 'lodash';
+import { Subscription } from 'rxjs';
 
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
@@ -21,6 +22,8 @@ export class ChartReleaseEditComponent {
 
   private title= helptext.chartForm.editTitle;
   private name: string;
+  private getRow = new Subscription;
+  private rowName: string;
   private dialogRef: any;
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
@@ -275,12 +278,14 @@ export class ChartReleaseEditComponent {
               type: 'input',
               name: 'containerPort',
               placeholder: helptext.chartForm.portForwardingList.containerPort.placeholder,
+              validation: helptext.chartForm.portForwardingList.containerPort.validation,
               required: true
             }, 
             {
               type: 'input',
               name: 'nodePort',
               placeholder: helptext.chartForm.portForwardingList.nodePort.placeholder,
+              validation: helptext.chartForm.portForwardingList.nodePort.validation,
               required: true
             },  
             {
@@ -383,7 +388,13 @@ export class ChartReleaseEditComponent {
   ]
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
-    private modalService: ModalService) { }
+    private modalService: ModalService) {
+      this.getRow = this.modalService.getRow$.subscribe((rowName: string) => {
+        this.rowName = rowName;
+        this.queryCallOption = [["id", "=", rowName]];
+        this.getRow.unsubscribe();
+    })
+     }
 
   resourceTransformIncomingRestData(data) {
     this.name = data.name;
