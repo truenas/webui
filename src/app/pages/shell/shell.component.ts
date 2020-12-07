@@ -29,6 +29,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
 
   clearLine = "\u001b[2K\r"
   public shellConnected: boolean = false;
+  public connectionId: string;
 
   ngOnInit() {
     this.getAuthToken().subscribe((res) => {
@@ -52,6 +53,10 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onResize(event) {
+    this.resizeTerm();
+  }
+
+  onFontSizeChanged(event) {
     this.resizeTerm();
   }
 
@@ -79,22 +84,13 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
 
   initializeTerminal() {
     
-    let colNum = this.calculateColumns();
-    let rowNum = this.calculateRows();
-
-    if (colNum < 80) {
-      colNum = 80;
-    }
-    
-    if (rowNum < 10) {
-      rowNum = 10;
-    }
+    const size = this.getSize();
 
     const setting = {
       'cursorBlink': false,
       'tabStopWidth': 8,
-      'cols': colNum,
-      'rows': rowNum,
+      'cols': size.cols,
+      'rows': size.rows,
       'focus': true
     };
 
@@ -104,53 +100,45 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     this.xterm._initialized = true;
   }
 
-  calculateColumns() {
+  getSize() {
     const domWidth = this.container.nativeElement.offsetWidth;
+    const domHeight = this.container.nativeElement.offsetHeight;
     var span = document.createElement('span');
-    document.body.appendChild(span);
+    this.container.nativeElement.appendChild(span);
+    span.className = "terminal xterm";
     span.style.whiteSpace = 'nowrap';
-    // define the style
-    span.style.fontFamily = 'courier-new';
     span.style.fontSize = this.font_size + 'px';
 
-    let column = 0;
+    let cols = 0;
     
     while(span.offsetWidth < domWidth) {
       span.innerHTML += 'a';
-      column++;
+      cols++;
     }
 
-    return column;    
-  }
-
-  calculateRows() {
-    const domHeight = this.container.nativeElement.offsetHeight;
-    var span = document.createElement('span');
-    document.body.appendChild(span);
-    span.style.whiteSpace = 'nowrap';
-    // define the style
-    span.style.fontFamily = 'courier-new';
-    span.style.fontSize = this.font_size + 'px';
-
-    span.innerHTML += 'a';
-
     let rows = Math.ceil(domHeight / span.offsetHeight);
+    span.remove();
+    if (cols < 80) {
+      cols = 80;
+    }
+    
+    if (rows < 10) {
+      rows = 10;
+    }
 
-    return rows;    
+    return {
+      rows: rows,
+      cols: cols
+    }
   }
 
   resizeTerm(){
-    let colNum = this.calculateColumns();
-    let rowNum = this.calculateRows();
-
-    if (colNum < 80) {
-      colNum = 80;
-    }
-    
-    if (rowNum < 10) {
-      rowNum = 10;
-    }
-    this.xterm.resize(colNum,rowNum);
+    const size = this.getSize();
+    console.log(size);
+    this.xterm.fit();
+    // this.xterm.resize(size.cols, size.rows);
+    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res)=> {
+    });
     return true;
   }
 
@@ -159,7 +147,9 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     this.ss.connect();
 
     this.ss.shellConnected.subscribe((res)=> {
-      this.shellConnected = res;
+      this.shellConnected = res.connected;
+      this.connectionId = res.id;
+      this.resizeTerm();
     })
   }
 
