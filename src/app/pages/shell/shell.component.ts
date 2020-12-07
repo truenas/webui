@@ -53,15 +53,16 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onResize(event) {
-    this.resizeTerm();
+    // this.resizeTerm();
   }
 
   onFontSizeChanged(event) {
-    this.resizeTerm();
+    // this.resizeTerm();
   }
 
   resetDefault() {
     this.font_size = 14;
+    // this.resizeTerm();
   }
 
   ngOnChanges(changes: {
@@ -108,10 +109,10 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     span.className = "terminal xterm";
     span.style.whiteSpace = 'nowrap';
     span.style.fontSize = this.font_size + 'px';
+    span.innerHTML = 'a';
 
     let cols = 0;
-    
-    while(span.offsetWidth < domWidth) {
+    while(span.offsetWidth < domWidth) {      
       span.innerHTML += 'a';
       cols++;
     }
@@ -134,9 +135,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
 
   resizeTerm(){
     const size = this.getSize();
-    console.log(size);
-    this.xterm.fit();
-    // this.xterm.resize(size.cols, size.rows);
+    this.xterm.resize(size.cols, size.rows);
     this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res)=> {
     });
     return true;
