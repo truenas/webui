@@ -52,7 +52,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onResize(event) {
-    // this.resizeTerm();
+    this.resizeTerm();
   }
 
   resetDefault() {
@@ -78,37 +78,75 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   initializeTerminal() {
-    const domHeight = document.body.offsetHeight;
-    const domWidth = document.body.offsetWidth;
-    let colNum = (domWidth * 0.75 - 104) / 10;
+    
+    let colNum = this.calculateColumns();
+    let rowNum = this.calculateRows();
+
     if (colNum < 80) {
       colNum = 80;
     }
-    let rowNum = (domHeight * 0.75 - 104) / 21;
+    
     if (rowNum < 10) {
       rowNum = 10;
     }
 
-    this.xterm = new (<any>window).Terminal({
+    const setting = {
       'cursorBlink': false,
       'tabStopWidth': 8,
-      // 'cols': parseInt(colNum.toFixed(),10),
-      // 'rows': parseInt(rowNum.toFixed(),10),
+      'cols': colNum,
+      'rows': rowNum,
       'focus': true
-    });
+    };
+
+    this.xterm = new (<any>window).Terminal(setting);
     this.xterm.open(this.container.nativeElement, true);
     this.xterm.attach(this.ss);
     this.xterm._initialized = true;
   }
 
+  calculateColumns() {
+    const domWidth = this.container.nativeElement.offsetWidth;
+    var span = document.createElement('span');
+    document.body.appendChild(span);
+    span.style.whiteSpace = 'nowrap';
+    // define the style
+    span.style.fontFamily = 'courier-new';
+    span.style.fontSize = this.font_size + 'px';
+
+    let column = 0;
+    
+    while(span.offsetWidth < domWidth) {
+      span.innerHTML += 'a';
+      column++;
+    }
+
+    return column;    
+  }
+
+  calculateRows() {
+    const domHeight = this.container.nativeElement.offsetHeight;
+    var span = document.createElement('span');
+    document.body.appendChild(span);
+    span.style.whiteSpace = 'nowrap';
+    // define the style
+    span.style.fontFamily = 'courier-new';
+    span.style.fontSize = this.font_size + 'px';
+
+    span.innerHTML += 'a';
+
+    let rows = Math.ceil(domHeight / span.offsetHeight);
+
+    return rows;    
+  }
+
   resizeTerm(){
-    const domHeight = document.body.offsetHeight;
-    const domWidth = document.body.offsetWidth;
-    let colNum = (domWidth * 0.75 - 104) / 10;
+    let colNum = this.calculateColumns();
+    let rowNum = this.calculateRows();
+
     if (colNum < 80) {
       colNum = 80;
     }
-    let rowNum = (domHeight * 0.75 - 104) / 21;
+    
     if (rowNum < 10) {
       rowNum = 10;
     }
