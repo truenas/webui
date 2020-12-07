@@ -1,4 +1,4 @@
-<div id="{{config.name}}" class="dynamic-field form-list" [formGroup]="group" [ngClass]="fieldShow" *ngIf="!config['isHidden']"
+<div id="{{config.name}}" class="dynamic-field form-list" [formGroup]="group" [ngClass]="fieldShow" [ngClass]="{'box': config.box, 'sub-box': !config.box }" *ngIf="!config['isHidden']"
     ix-auto ix-auto-type="list" ix-auto-identifier="{{config.placeholder}}">
     <ng-container *ngIf="listsFromArray?.controls">
         <div *ngFor="let liControl of listsFromArray.controls; let i = index" [fxLayout]="config.width == '100%' ? 'row wrap' : (default)"
@@ -19,7 +19,7 @@
               [style.padding-bottom]="config.width == '100%' ? '10px' : '0'">
             <ng-container *ngIf="config.deleteButtonOnFirst; else defaultButtons">
               <div>
-                    <button *ngIf="i === listsFromArray.controls.length-1" mat-button color="primary" 
+                    <button *ngIf="i === listsFromArray.controls.length-1" mat-button color="primary" class="listBtn"
                         id="{{config.name+i}}" type="button" style="margin-right:5px"
                         (click)="add()" [disabled]="listsFromArray.controls[i].disabled"
                           ix-auto ix-auto-type="button" ix-auto-identifier="{{config.addBtnMessage | uppercase}}">
@@ -49,13 +49,13 @@
               </div>
             </ng-template>
             <div *ngIf="config.box">
-              <button *ngIf="i === 0; else deleteIconButton" mat-icon-button id="add-box" class="top-right"
-                ix-auto ix-auto-type="button" ix-auto-identifier="add" (click)="add()">
+              <button *ngIf="i === 0; else deleteIconButton" mat-icon-button id="add-box" class="top-right" type="button"
+                ix-auto ix-auto-type="icon-button" ix-auto-identifier="add" (click)="add()">
                 <mat-icon>add</mat-icon>
               </button>
               <ng-template #deleteIconButton>
                 <button mat-icon-button id="delete-box" class="top-right"
-                  ix-auto ix-auto-type="button" ix-auto-identifier="delete" (click)="(delete(i))">
+                  ix-auto ix-auto-type="icon-button" ix-auto-identifier="delete" (click)="(delete(i))">
                   <mat-icon>clear</mat-icon>
                 </button>
               </ng-template>

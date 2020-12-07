@@ -117,6 +117,7 @@ export class ChartReleaseEditComponent {
           type: 'list',
           name: 'containerEnvironmentVariables',
           width: '100%',
+          box: true,
           templateListField: [
             {
               type: 'input',
@@ -160,6 +161,7 @@ export class ChartReleaseEditComponent {
           type: 'list',
           name: 'externalInterfaces',
           width: '100%',
+          box: true,
           templateListField: [
             {
               type: 'select',
@@ -267,6 +269,7 @@ export class ChartReleaseEditComponent {
           type: 'list',
           name: 'portForwardingList',
           width: '100%',
+          box: true,
           templateListField: [
             {
               type: 'input',
@@ -301,6 +304,7 @@ export class ChartReleaseEditComponent {
           type: 'list',
           name: 'hostPathVolumes',
           width: '100%',
+          box: true,
           templateListField: [
             {
               type: 'explorer',
@@ -338,6 +342,7 @@ export class ChartReleaseEditComponent {
           type: 'list',
           name: 'volumes',
           width: '100%',
+          box: true,
           templateListField: [
             {
               name: 'datasetName',

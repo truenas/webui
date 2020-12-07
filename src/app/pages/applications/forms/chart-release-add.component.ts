@@ -104,6 +104,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
           type: 'list',
           name: 'containerEnvironmentVariables',
           width: '100%',
+          box: true,
           templateListField: [
             {
               type: 'input',
@@ -173,33 +174,27 @@ export class ChartReleaseAddComponent implements OnDestroy {
               ],
             },
             {
-              type: 'chip',
+              type: 'list',
               name: 'staticIPConfigurations',
-              placeholder: helptext.chartForm.externalInterfaces.staticConfig.placeholder,
-              tooltip: helptext.chartForm.DNSConfig.nameservers.tooltip,
+              width: '100%',
+              templateListField: [
+                {
+                  type: 'ipwithnetmask',
+                  name: 'staticIP',
+                  placeholder: helptext.chartForm.externalInterfaces.staticConfig.placeholder,
+                  relation: [
+                    {
+                      action: 'ENABLE',
+                      when: [{
+                        name: 'ipam',
+                        value: 'static',
+                      }]
+                    },
+                  ],
+                }, 
+              ],
+              listFields: []
             },
-            // {
-            //   type: 'list',
-            //   name: 'staticIPConfigurations',
-            //   width: '100%',
-            //   templateListField: [
-            //     {
-            //       type: 'ipwithnetmask',
-            //       name: 'staticIP',
-            //       placeholder: helptext.chartForm.externalInterfaces.staticConfig.placeholder,
-            //       relation: [
-            //         {
-            //           action: 'ENABLE',
-            //           when: [{
-            //             name: 'ipam',
-            //             value: 'static',
-            //           }]
-            //         },
-            //       ],
-            //     }, 
-            //   ],
-            //   listFields: []
-            // },
             {
               type: 'list',
               name: 'staticRoutes',
@@ -255,6 +250,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
         {
           type: 'list',
           name: 'portForwardingList',
+          box: true,
           width: '100%',
           templateListField: [
             {
@@ -288,6 +284,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
           type: 'list',
           name: 'hostPathVolumes',
           width: '100%',
+          box: true,
           templateListField: [
             {
               type: 'explorer',
@@ -322,6 +319,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
           type: 'list',
           name: 'volumes',
           width: '100%',
+          box: true,
           templateListField: [
             {
               name: 'datasetName',
