@@ -258,15 +258,15 @@ def click_apply_and_please_wait_should_appear_while_settings_are_being_applied(d
     """click Apply and "Please wait" should appear while settings are being applied."""
     assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__APPLY"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__APPLY"]').click()
-    wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
 
 
 @then('click Test Changes, check Confirm, click Test Changes again')
 def click_test_changes_check_confirm_click_test_changes_again(driver):
     """click Test Changes, check Confirm, click Test Changes again."""
-    assert wait_on_element(driver, 0.5, 7, '//button[contains(.,"Test Changes")]')
+    assert wait_on_element(driver, 1, 7, '//button[contains(.,"Test Changes")]')
     driver.find_element_by_xpath('//button[contains(.,"Test Changes")]').click()
-    assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Test Changes")]')
+    assert wait_on_element(driver, 1, 7, '//h1[contains(.,"Test Changes")]')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     driver.find_element_by_xpath('//button[@ix-auto="button__TEST CHANGES"]').click()
 
@@ -274,8 +274,8 @@ def click_test_changes_check_confirm_click_test_changes_again(driver):
 @then('Please wait should appear wait for Save Changes then click Save Changes')
 def please_wait_should_appear_wait_for_save_changes_then_click_save_changes(driver):
     """Please wait should appear wait for Save Changes then click Save Changes."""
-    assert wait_on_element(driver, 0.5, 15, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 0.5, 7, '//button[contains(.,"Save Changes")]')
+    assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 1, 7, '//button[contains(.,"Save Changes")]')
     driver.find_element_by_xpath('//button[contains(.,"Save Changes")]').click()
     assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Save Changes")]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
