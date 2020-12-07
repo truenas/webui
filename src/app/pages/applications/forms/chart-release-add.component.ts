@@ -384,18 +384,6 @@ export class ChartReleaseAddComponent implements OnDestroy {
     this.summaryItems.forEach(item => {
       this.makeSummary(item.step, item.fieldName, item.label);
     })
-
-    // console.log(entityEdit.formGroup.controls)
-    // entityEdit.formGroup.controls['externalInterfaces'].valueChanges.subscribe(value => {
-    //   console.log(value, value[0].ipam)
-    //   if (value[0].ipam === 'static') {
-    //     this.hideField('staticIPConfigurations', false, entityEdit);
-    //     this.hideField('staticRoutes', false, entityEdit);
-    //   } else {
-    //     this.hideField('staticIPConfigurations', true, entityEdit);
-    //     this.hideField('staticRoutes', true, entityEdit);
-    //   }
-    // })
   }
 
   makeSummary(step: string | number, fieldName: string | number, label: string | number) {
