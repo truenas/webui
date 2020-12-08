@@ -72,6 +72,7 @@ export class ChartReleasesComponent implements OnInit {
 
   refreshChartReleases() {
     this.appService.getChartReleases().subscribe(charts => {
+      console.log(charts)
       this.chartItems = [];
       let repos = [];
       charts.forEach(chart => {
@@ -82,8 +83,10 @@ export class ChartReleasesComponent implements OnInit {
           version: chart.chart_metadata.version,
           description: chart.chart_metadata.description,
           update: chart.update_available,
-          repository: chart.config.image.repository
+          repository: chart.config.image.repository,
+          portal: chart.portals && chart.portals.web_portal ? chart.portals.web_portal[0] : ''
         };
+        console.log(chartObj)
         repos.push(chartObj.repository);
         let ports = [];
         chart.used_ports.forEach(item => {
@@ -136,9 +139,8 @@ export class ChartReleasesComponent implements OnInit {
     })
   }
 
-  portal(name: string) {
-    this.appService.getPodConsoleChoices(name).subscribe(res => {
-    })
+  portal(portal: string) {
+    window.open(portal);
   }
 
   update(name: string) {

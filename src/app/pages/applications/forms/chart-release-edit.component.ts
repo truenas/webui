@@ -411,23 +411,19 @@ export class ChartReleaseEditComponent {
   }
 
   afterInit(entityEdit: any) {
-    // console.log(entityEdit.formGroup.controls)
-    // entityEdit.formGroup.controls['externalInterfaces'].valueChanges.subscribe(value => {
-    //   console.log(value, value[0].ipam)
-    //   if (value[0].ipam === 'static') {
-    //     this.hideField('staticIPConfigurations', false, entityEdit);
-    //     this.hideField('staticRoutes', false, entityEdit);
-    //   } else {
-    //     this.hideField('staticIPConfigurations', true, entityEdit);
-    //     this.hideField('staticRoutes', true, entityEdit);
-    //   }
-    // })
-  }
-
-  hideField(fieldName: any, show: boolean, entity: any) {
-    let target = _.find(this.fieldConfig, {'name' : fieldName});
-    target['isHidden'] = show;
-    entity.setDisabled(fieldName, show, show);
+    // Not working: This sets the isHidden property as expected, but doesn't update the display in the lists within a list
+    let extIntfg = _.find(this.fieldConfig, {'name': 'externalInterfaces'});
+    let staticRoutesfg = _.find(extIntfg.templateListField, {'name': 'staticRoutes'});
+    let staticIPfg = _.find(extIntfg.templateListField, {'name': 'staticIPConfigurations'});
+    entityEdit.formGroup.controls['externalInterfaces'].valueChanges.subscribe(value => {
+      if (value[0].ipam === 'static') {
+        staticIPfg.isHidden = false;
+        staticRoutesfg.isHidden = false;
+      } else {
+        staticIPfg.isHidden = true;
+        staticRoutesfg.isHidden = true;
+      }
+    })
   }
 
   customSubmit(data) {
@@ -475,7 +471,7 @@ export class ChartReleaseEditComponent {
         },
         dnsPolicy: data.dnsPolicy,
         externalInterfaces: ext_interfaces,
-        // gpuConfiguration: {data['gpu_property'] : data['gpu_value']}
+        // gpuConfiguration: {data.gpu_property : data['gpu_value']},
         hostPathVolumes: data.hostPathVolumes,
         hostNetwork: data.hostNetwork,
         image: { 

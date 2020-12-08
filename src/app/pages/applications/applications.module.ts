@@ -16,6 +16,7 @@ import { DockerImagesComponent } from './docker-images/docker-images.component';
 import { KubernetesSettingsComponent } from './forms/kubernetes-settings.component';
 import { ChartReleaseAddComponent } from './forms/chart-release-add.component';
 import { ChartReleaseEditComponent } from './forms/chart-release-edit.component';
+import { PlexFormComponent } from './forms/plex-form.component';
 
 
 @NgModule({
@@ -35,7 +36,8 @@ import { ChartReleaseEditComponent } from './forms/chart-release-edit.component'
     DockerImagesComponent,
     KubernetesSettingsComponent,
     ChartReleaseAddComponent,
-    ChartReleaseEditComponent
+    ChartReleaseEditComponent,
+    PlexFormComponent
   ]
 })
 export class ApplicationsModule { }

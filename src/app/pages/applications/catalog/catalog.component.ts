@@ -15,6 +15,7 @@ import { ApplicationsService } from '../applications.service';
 
 import { KubernetesSettingsComponent } from '../forms/kubernetes-settings.component';
 import { ChartReleaseAddComponent } from '../forms/chart-release-add.component';
+import { PlexFormComponent } from '../forms/plex-form.component';
 import  helptext  from '../../../helptext/apps/apps';
 
 @Component({
@@ -32,6 +33,7 @@ export class CatalogComponent implements OnInit {
   public settingsEvent: Subject<CoreEvent>;
   private kubernetesForm: KubernetesSettingsComponent;
   private chartReleaseForm: ChartReleaseAddComponent;
+  private plexForm: PlexFormComponent;
   private refreshForm: Subscription;
   private refreshTable: Subscription;
 
@@ -57,24 +59,26 @@ export class CatalogComponent implements OnInit {
 
   ngOnInit(): void {
     this.appService.getAllCatalogItems().subscribe(res => {
-      if (Object.keys(res[0].trains.charts).length > 0) {
-        for (let i in res[0].trains.charts) {  // may eventually add the test train too
-          let item = res[0].trains.charts[i];
-          let versions = item.versions;
-          let latest, latestDetails;
-  
-          for (let j in versions) {
-            latest = (Object.keys(versions)[0]);
-            latestDetails = versions[Object.keys(versions)[0]];
+      if (Object.keys(res[0].trains.test).length > 0) {
+        for (let i in res[0].trains.test) {  // wil eventually add the charts train too
+          if (i !== 'ix-chart') {
+            let item = res[0].trains.test[i];
+            let versions = item.versions;
+            let latest, latestDetails;
+    
+            for (let j in versions) {
+              latest = (Object.keys(versions)[0]);
+              latestDetails = versions[Object.keys(versions)[0]];
+            }
+    
+            let catalogItem = {
+              name: item.name,
+              icon_url: item.icon_url? item.icon_url : '/assets/images/ix-original.png',
+              latest_version: latest,
+              info: latestDetails.app_readme
+            }
+            this.catalogApps.push(catalogItem);            
           }
-  
-          let catalogItem = {
-            name: item.name,
-            icon_url: item.icon_url? item.icon_url : '/assets/images/ix-original.png',
-            latest_version: latest,
-            info: latestDetails.app_readme
-          }
-          this.catalogApps.push(catalogItem);
         }
       }
     })
@@ -97,7 +101,7 @@ export class CatalogComponent implements OnInit {
             break;
         }
       } else if (evt.data.launch) {
-        this.doInstall();
+        this.doInstall('ix-chart');
       }
 
     })
@@ -137,6 +141,7 @@ export class CatalogComponent implements OnInit {
   refreshForms() {
     this.kubernetesForm = new KubernetesSettingsComponent(this.modalService, this.appService);
     this.chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog,this.dialogService,this.modalService);
+    this.plexForm = new PlexFormComponent(this.mdDialog,this.dialogService,this.modalService);
   }
 
   checkForConfiguredPool() {
@@ -193,29 +198,15 @@ export class CatalogComponent implements OnInit {
     }
   }
 
-  // doInstall(release_name: string, version: string, train='test', catalog='OFFICIAL') {
-  //   this.translate.get(helptext.install.msg1).subscribe(msg1 => {
-  //     this.translate.get(helptext.install.msg2).subscribe(msg2 => {
-  //       this.dialogService.confirm(helptext.install.title, msg1 + release_name + msg2 + 
-  //         this.selectedPool).subscribe(res => {
-  //         if (res) {
-  //           let payload = {
-  //             release_name: release_name,
-  //             version: version,
-  //             train: train,
-  //             catalog: catalog,
-  //             item: release_name
-  //           }
-        
-
-  //         }
-    
-  //       })
-  //     })
-  //   })
-  // }
-
-  doInstall() {
-    this.modalService.open('slide-in-form', this.chartReleaseForm);
+  doInstall(name: string) {
+    switch (name) {
+      case 'ix-chart':
+        this.modalService.open('slide-in-form', this.chartReleaseForm);
+        break;
+      
+      case 'plex':
+        this.modalService.open('slide-in-form', this.plexForm);
+        break;
+    }
   }
 }

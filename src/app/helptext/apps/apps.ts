@@ -258,17 +258,17 @@ export default {
         ]
       },
       staticConfig: {
-        placeholder: T('Static IP Configurations'),
+        placeholder: T('Static IP'),
         tooltip: T('')
       },
       staticRoutes: {
         title: T('Static Route Configuration'),
 
         destination: {
-          placeholder: T('Destination'),
+          placeholder: T('Static Route: Destination'),
         },
         gateway: {
-          placeholder: T('Gateway')
+          placeholder: T('Static Route: Gateway')
         }
       }
     },
@@ -293,11 +293,11 @@ export default {
       label: T('DNS Configuration'),
       nameservers: {
         placeholder: T('Nameservers'),
-        tooltip: T('')
+        tooltip: T('Use <i>ENTER</i> after each entry.')
       },
       searches: {
         placeholder: T('Searches'),
-        tooltip: T('')
+        tooltip: T('Use <i>ENTER</i> after each entry.')
       }
     },
     hostNetwork: {
