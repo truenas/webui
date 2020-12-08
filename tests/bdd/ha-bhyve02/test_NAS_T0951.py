@@ -104,6 +104,7 @@ def the_user_edit_page_should_open(driver):
 @then('Add user to additional groups, like wheel and save change')
 def add_user_to_additional_groups_like_wheel_and_save_change(driver):
     """Add user to additional groups, like wheel and save change."""
+    assert wait_on_element(driver, 1, 7, '//mat-select[@ix-auto="select__Auxiliary Groups"]')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]').click()
     assert wait_on_element(driver, 0.5, 7, '//mat-option[@ix-auto="option__Auxiliary Groups_root"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').click()
