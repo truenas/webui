@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { DialogService, WebSocketService } from '../../../services/index';
+import { DialogService } from '../../../services/index';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { map } from 'rxjs/operators';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
@@ -19,6 +19,7 @@ import  helptext  from '../../../helptext/apps/apps';
 export class PlexFormComponent {
   protected queryCall: string = 'chart.release.query';
   protected queryCallOption: Array<any>;
+  protected addCall: string = 'chart.release.create';
   protected editCall: string = 'chart.release.update';
   protected isEntity: boolean = true;
 
@@ -35,10 +36,9 @@ export class PlexFormComponent {
       config: [
         {
           type: 'input',
-          name: 'name',
+          name: 'release_name',
           placeholder: helptext.chartForm.release_name.placeholder,
           tooltip: helptext.chartForm.release_name.tooltip,
-          disabled: true
         }
       ],
       colspan: 2
@@ -73,20 +73,25 @@ export class PlexFormComponent {
       ]
     },
     {
-      name: 'Misc.',
+      name: 'Settings',
       label: true,
       width: '50%',
       config: [
         {
           type: 'input',
           name: 'claimToken',
-          placeholder: 'Claim Token',
+          placeholder: 'Plex Claim Token',
+        },
+        {
+          type: 'input',
+          name: 'advertiseIp',
+          placeholder: 'Plex Advertise IP',
         },
         {
           type: 'combobox',
           name: 'timezone',
           placeholder: 'Timezone',
-          options: [{ label: "---", value: null }],
+          options: [],
         },
         {
           type: 'checkbox',
@@ -128,19 +133,10 @@ export class PlexFormComponent {
       label: true,
       config: [
         {
-          type: 'list',
-          name: 'portForwardingList',
-          width: '100%',
-          box: true,
-          templateListField: [
-            {
-              type: 'input',
-              name: 'plexServiceTCP',
-              placeholder: 'Plexservice TCP',
-              validation: helptext.chartForm.portForwardingList.containerPort.validation,
-            }
-          ],
-          listFields: []
+          type: 'input',
+          name: 'port',
+          placeholder: 'Plexservice TCP',
+          validation: helptext.chartForm.portForwardingList.containerPort.validation,
         }
       ],
       colspan: 2,
@@ -156,9 +152,11 @@ export class PlexFormComponent {
           placeholder: 'Transcode Hostpath Enabled',
         },
         {
-          type: 'input',
+          type: 'explorer',
           name: 'transcodeHostPath',
           placeholder: 'Transcode Hostpath',
+          initial: '/mnt',
+          explorerType: 'directory',
           isHidden: true,
           relation: [
             {
@@ -176,15 +174,17 @@ export class PlexFormComponent {
           placeholder: 'Data Hostpath Enabled',
         },
         {
-          type: 'input',
+          type: 'explorer',
           name: 'dataHostPath',
           placeholder: 'Data Hostpath',
+          initial: '/mnt',
+          explorerType: 'directory',
           isHidden: true,
           relation: [
             {
               action: 'SHOW',
               when: [{
-                name: 'dataPathEnabled',
+                name: 'dataHostPathEnabled',
                 value: true,
               }]
             },
@@ -196,15 +196,17 @@ export class PlexFormComponent {
           placeholder: 'Config Hostpath Enabled',
         },
         {
-          type: 'input',
+          type: 'explorer',
           name: 'configHostPath',
           placeholder: 'Config Hostpath',
+          initial: '/mnt',
+          explorerType: 'directory',
           isHidden: true,
           relation: [
             {
               action: 'SHOW',
               when: [{
-                name: 'configPathEnabled',
+                name: 'configHostPathEnabled',
                 value: true,
               }]
             },
@@ -234,7 +236,7 @@ export class PlexFormComponent {
   ]
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
-    private modalService: ModalService, private ws: WebSocketService) {
+    private modalService: ModalService, private sysGeneralService: SystemGeneralService) {
       this.getRow = this.modalService.getRow$.subscribe((rowName: string) => {
         this.rowName = rowName;
         this.queryCallOption = [["id", "=", rowName]];
@@ -248,111 +250,75 @@ export class PlexFormComponent {
     data.config.repository = data.config.image.repository;
     data.config.tag = data.config.image.tag;
     data.config.pullPolicy = data.config.image.pullPolicy;
-    data.config.nameservers = data.config.dnsConfig.nameservers;
-    data.config.searches = data.config.dnsConfig.searches;
-    data.config.externalInterfaces.forEach(i => {
-      i.ipam = i.ipam.type;
-    })
     return data.config;
   }
 
   afterInit(entityEdit: any) {
-    // Not working: This sets the isHidden property as expected, but doesn't update the display in the lists within a list
-    // let extIntfg = _.find(this.fieldConfig, {'name': 'externalInterfaces'});
-    // let staticRoutesfg = _.find(extIntfg.templateListField, {'name': 'staticRoutes'});
-    // let staticIPfg = _.find(extIntfg.templateListField, {'name': 'staticIPConfigurations'});
-    // entityEdit.formGroup.controls['externalInterfaces'].valueChanges.subscribe(value => {
-    //   if (value[0].ipam === 'static') {
-    //     staticIPfg.isHidden = false;
-    //     staticRoutesfg.isHidden = false;
-    //   } else {
-    //     staticIPfg.isHidden = true;
-    //     staticRoutesfg.isHidden = true;
-    //   }
-    // })
+    if (this.rowName) {
+      entityEdit.setDisabled('release_name', true, false);
+    }
 
-    let tzs = this.ws.call("system.general.timezone_choices", []).pipe(
-      map(response =>
-        Object.keys(response || {}).map(key => ({
-          label: response[key],
-          value: key
-        }))
-      )
-    );
-    console.log(tzs)
-    // this.ws.call().subscribe(tzChoices => {
-    //   tzChoices = _.sortBy(tzChoices, [function(o) { return o.label.toLowerCase(); }]);
-    //   this.fieldSets
-    //     .find(set => set.name === 'Misc.')
-    //     .config.find(config => config.name === 'timezone').options = tzChoices;
-    //     // entityEdit.formGroup.controls['timezone'].setValue(this.configData.timezone);
-    // });
+    this.sysGeneralService.timezoneChoices().subscribe(tzChoices => {
+      tzChoices = _.sortBy(tzChoices, [function(o) { return o.label.toLowerCase(); }]);
+      this.fieldSets
+        .find(set => set.name === 'Settings')
+        .config.find(config => config.name === 'timezone').options = tzChoices;
+        // this.entityForm.formGroup.controls['timezone'].setValue(this.configData.timezone);
+    });
   }
 
   customSubmit(data) {
-    let ext_interfaces = [];
-    if (data.externalInterfaces && data.externalInterfaces.length > 0) {
-      data.externalInterfaces.forEach(i => {
-        if (i.ipam !== 'static') {
-          ext_interfaces.push(
-            {
-              hostInterface: i.hostInterface,
-              ipam: {
-                type: i.ipam,
-              }
-            }
-          );            
-        } else {
-          let ipList = [];
-          if (i.staticIPConfigurations && i.staticIPConfigurations.length > 0) {
-            i.staticIPConfigurations.forEach(item => {
-              ipList.push(item.staticIP);
-            })
-          }
-          ext_interfaces.push(
-            {
-              hostInterface: i.hostInterface,
-              ipam: {
-                type: i.ipam,
-                staticIPConfigurations: ipList,
-                staticRoutes: i.staticRoutes
-              }
-            }
-          );
-        }
-      })
-    }
+    let apiCall = this.addCall;
+    let envObj = {};
+    data.extraEnv.forEach(item => {
+      let key = envObj[name]
+      envObj[item.name] = item.value;
+    })
 
-    let payload = [this.name, {
+    let GPUObj = {};
+    GPUObj[data.gpu_property] = data.gpu_value;
+
+    let payload = [];
+    payload.push({
+      catalog: 'OFFICIAL',
+      item: 'plex',
+      release_name: data.release_name,
+      train: 'test',
+      version: 'latest',
       values: {
-        containerArgs: data.containerArgs,
-        containerCommand: data.containerCommand,
-        containerEnvironmentVariables: data.containerEnvironmentVariables,
-        dnsConfig: {
-          nameservers: data.nameservers,
-          searches: data.searches
-        },
-        dnsPolicy: data.dnsPolicy,
-        externalInterfaces: ext_interfaces,
-        // gpuConfiguration: {data.gpu_property : data['gpu_value']},
-        hostPathVolumes: data.hostPathVolumes,
+        advertiseIp: data.advertiseIp,
+        claimToken: data.claimToken,
+        extraEnv: envObj,
         hostNetwork: data.hostNetwork,
+        plexServiceTCP: { port: data.port },
+        gpuConfiguration: GPUObj,
         image: { 
           repository: data.repository,
           pullPolicy: data.pullPolicy,
           tag: data.tag
-        }, 
-        portForwardingList: data.portForwardingList, 
-        restartPolicy: data.restartPolicy,
-        updateStrategy: data.updateStrategy,
-        volumes: data.volumes, 
-        workloadType: 'Deployment',
+        },
+        configHostPathEnabled: data.configHostPathEnabled,
+        dataHostPathEnabled: data.dataHostPathEnabled,
+        transcodeHostPathEnabled: data.transcodeHostPathEnabled,
+        configHostPath: data.configHostPath,
+        dataHostPath: data.dataHostPath,
+        transcodeHostPath: data.transcodeHostPath,
+        timezone: data.timezone
       }
-    }]
- 
+    });
+
+    if (this.rowName) {
+      delete payload[0].catalog;
+      delete payload[0].item;
+      delete payload[0].release_name;
+      delete payload[0].train;
+      delete payload[0].version;
+      payload.unshift(this.name);
+      apiCall = this.editCall;
+    }
     this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
       helptext.installing) }, disableClose: true});
-    this.dialogRef.componentInstance.setCall(this.editCall, payload);
+    this.dialogRef.componentInstance.setCall(apiCall, payload);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe(() => {
       this.dialogService.closeAllDialogs();

@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { DialogService } from '../../../services/index';
+import { DialogService, SystemGeneralService } from '../../../services/index';
 import { ApplicationsService } from '../applications.service';
 import { ModalService } from '../../../services/modal.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { ChartReleaseEditComponent } from '../forms/chart-release-edit.component';
+import { PlexFormComponent } from '../forms/plex-form.component';
 
 import  helptext  from '../../../helptext/apps/apps';
 
@@ -21,8 +22,10 @@ export class ChartReleasesComponent implements OnInit {
   public chartItems = [];
   private dialogRef: any;
   public tempIcon = '/assets/images/ix-original.png';
+  public plexIcon = 'https://www.plex.tv/wp-content/uploads/2018/01/pmp-icon-1.png';
   private rollbackChartName: string;
   private chartReleaseForm: ChartReleaseEditComponent;
+  private plexForm: PlexFormComponent;
   private refreshTable: Subscription;
   private refreshForm: Subscription;
 
@@ -53,7 +56,8 @@ export class ChartReleasesComponent implements OnInit {
 
   constructor(private mdDialog: MatDialog,
     private dialogService: DialogService, private translate: TranslateService,
-    private appService: ApplicationsService, private modalService: ModalService) { }
+    private appService: ApplicationsService, private modalService: ModalService,
+    private sysGeneralService: SystemGeneralService) { }
 
   ngOnInit(): void {
     this.refreshChartReleases();
@@ -68,11 +72,11 @@ export class ChartReleasesComponent implements OnInit {
 
   refreshForms() {
     this.chartReleaseForm = new ChartReleaseEditComponent(this.mdDialog,this.dialogService,this.modalService);
+    this.plexForm = new PlexFormComponent(this.mdDialog,this.dialogService,this.modalService,this.sysGeneralService);
   }
 
   refreshChartReleases() {
     this.appService.getChartReleases().subscribe(charts => {
-      console.log(charts)
       this.chartItems = [];
       let repos = [];
       charts.forEach(chart => {
@@ -84,9 +88,10 @@ export class ChartReleasesComponent implements OnInit {
           description: chart.chart_metadata.description,
           update: chart.update_available,
           repository: chart.config.image.repository,
-          portal: chart.portals && chart.portals.web_portal ? chart.portals.web_portal[0] : ''
+          portal: chart.portals && chart.portals.web_portal ? chart.portals.web_portal[0] : '',
+          id: chart.chart_metadata.name,
+          icon: chart.chart_metadata.name === 'plex' ? this.plexIcon : this.tempIcon
         };
-        console.log(chartObj)
         repos.push(chartObj.repository);
         let ports = [];
         chart.used_ports.forEach(item => {
@@ -189,9 +194,16 @@ export class ChartReleasesComponent implements OnInit {
 
   }
 
-  edit(name: string) {
-    console.log(name)
-    this.modalService.open('slide-in-form', this.chartReleaseForm, name);
+  edit(name: string, id: string) {
+    switch (id) {
+      case 'ix-chart':
+        this.modalService.open('slide-in-form', this.chartReleaseForm, name);
+        break;
+      
+      case 'plex':
+        this.modalService.open('slide-in-form', this.plexForm, name);
+        break;
+    }
   }
 
   delete(name: string) {

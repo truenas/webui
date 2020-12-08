@@ -437,6 +437,8 @@ export class ChartReleaseAddComponent implements OnDestroy {
         }
       })
     }
+    let GPUObj = {};
+    GPUObj[data.gpu_property] = data.gpu_value;
 
     let payload = [{
       catalog: 'OFFICIAL',
@@ -454,7 +456,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
         },
         dnsPolicy: data.dnsPolicy,
         externalInterfaces: ext_interfaces,
-        // gpuConfiguration: {data['gpu_property'] : data['gpu_value']}
+        gpuConfiguration: GPUObj,
         hostPathVolumes: data.hostPathVolumes,
         hostNetwork: data.hostNetwork,
         image: { 

@@ -9,7 +9,7 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { DialogService } from '../../../services/index';
+import { DialogService, SystemGeneralService } from '../../../services/index';
 import { ModalService } from '../../../services/modal.service';
 import { ApplicationsService } from '../applications.service';
 
@@ -55,7 +55,7 @@ export class CatalogComponent implements OnInit {
   constructor(private dialogService: DialogService,
     private mdDialog: MatDialog, private translate: TranslateService,
     private router: Router, private core: CoreService, private modalService: ModalService,
-    private appService: ApplicationsService) { }
+    private appService: ApplicationsService, private sysGeneralService: SystemGeneralService) { }
 
   ngOnInit(): void {
     this.appService.getAllCatalogItems().subscribe(res => {
@@ -141,7 +141,7 @@ export class CatalogComponent implements OnInit {
   refreshForms() {
     this.kubernetesForm = new KubernetesSettingsComponent(this.modalService, this.appService);
     this.chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog,this.dialogService,this.modalService);
-    this.plexForm = new PlexFormComponent(this.mdDialog,this.dialogService,this.modalService);
+    this.plexForm = new PlexFormComponent(this.mdDialog,this.dialogService,this.modalService,this.sysGeneralService);
   }
 
   checkForConfiguredPool() {

@@ -2,7 +2,7 @@
   <mat-card class="chart-item" *ngFor="let item of chartItems">
       <div class="content-wrapper" fxLayout="row">
         <!-- <img class="logo" src="{{ item.icon_url}}" fxFlex="160px"> -->
-        <img class="logo" src="{{ tempIcon}}">
+        <img class="logo" src="{{ item.icon }}">
         <div class=content-box>
           <div class="content">
             <strong class="chart-name">{{ item.name }}</strong><span class="version"> {{ item.version}}</span>
@@ -31,7 +31,7 @@
         </div>
       </div>
 
-      <div class="ports">
+      <div class="ports" textLimiter>
         {{ item.used_ports }}
       </div>
 
@@ -56,7 +56,7 @@
               <mat-icon>replay</mat-icon>
               <span>{{'Roll Back' | translate}}</span>
             </button>
-            <button name="edit" mat-menu-item (click)="edit(item.name)"
+            <button name="edit" mat-menu-item (click)="edit(item.name, item.id)"
               ix-auto ix-auto-type="option" ix-auto-identifier="edit">
               <mat-icon>edit</mat-icon>
               <span>{{'Edit' | translate}}</span>
