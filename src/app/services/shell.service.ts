@@ -12,7 +12,7 @@ export class ShellService {
   onOpenSubject: Subject < any > ;
   pendingCalls: any;
   pendingMessages: any[] = [];
-  socket: WebSocket;
+  public socket: WebSocket;
   connected = false;
   loggedIn = false;
   @LocalStorage() username;

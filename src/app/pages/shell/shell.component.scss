@@ -1,0 +1,22 @@
+@import 'xterm/css/xterm.css';
+
+app-shell {
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+#terminal {
+  flex: 1;
+}
+
+.fontbar {
+  color: var(--fg1);
+  font-size: 14px;
+  padding-top: 15px;
+}
+
+.shellTooltip {
+  position: absolute !important;
+  right: 20px;
+}

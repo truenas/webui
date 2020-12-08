@@ -1,15 +1,19 @@
-import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild } from "@angular/core";
+import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild, ViewEncapsulation } from "@angular/core";
 import { TranslateService } from "@ngx-translate/core";
 import { MatDialog } from '@angular/material/dialog';
 import { ShellService, WebSocketService } from "../../services/";
 import helptext from "./../../helptext/shell/shell";
 import { CopyPasteMessageComponent } from "./copy-paste-message.component";
+import { Terminal } from 'xterm';
+import { AttachAddon } from 'xterm-addon-attach';
+import { FitAddon } from 'xterm-addon-fit';
 
 @Component({
   selector: 'app-shell',
   templateUrl: './shell.component.html',
-  styleUrls: ['./shell.component.css'],
+  styleUrls: ['./shell.component.scss'],
   providers: [ShellService],
+  encapsulation: ViewEncapsulation.None,
 })
 export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   // sets the shell prompt
@@ -35,9 +39,6 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     this.getAuthToken().subscribe((res) => {
       this.initializeWebShell(res);
       this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
-        if (value !== undefined) {
-          this.xterm.write(value);
-        }
       });
       this.initializeTerminal();
     });
@@ -73,7 +74,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
       const changedProp = changes[propName];
       // reprint prompt
       if (propName === 'prompt' && this.xterm != null) {
-        this.xterm.write(this.clearLine + this.prompt)
+        // this.xterm.write(this.clearLine + this.prompt)
       }
     }
   }
@@ -88,16 +89,22 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     const size = this.getSize();
 
     const setting = {
-      'cursorBlink': false,
-      'tabStopWidth': 8,
-      'cols': size.cols,
-      'rows': size.rows,
-      'focus': true
+      cursorBlink: false,
+      tabStopWidth: 8,
+      cols: size.cols,
+      rows: size.rows,
+      focus: true,
+      fontSize: this.font_size,
+      // fontFamily: 'Inconsolata',
     };
 
-    this.xterm = new (<any>window).Terminal(setting);
+    this.xterm = new Terminal(setting);
+    const attachAddon = new AttachAddon(this.ss.socket);
+    this.xterm.loadAddon(attachAddon);
+    const fitAddon = new FitAddon();
+    this.xterm.loadAddon(fitAddon);
     this.xterm.open(this.container.nativeElement, true);
-    this.xterm.attach(this.ss);
+    fitAddon.fit();
     this.xterm._initialized = true;
   }
 
@@ -135,7 +142,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
 
   resizeTerm(){
     const size = this.getSize();
-    this.xterm.resize(size.cols, size.rows);
+    // this.xterm.resize(size.cols, size.rows);
     this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res)=> {
     });
     return true;
