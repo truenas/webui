@@ -18,6 +18,7 @@ import { ChartReleaseAddComponent } from './forms/chart-release-add.component';
 import { ChartReleaseEditComponent } from './forms/chart-release-edit.component';
 import { PlexFormComponent } from './forms/plex-form.component';
 import { NextCloudFormComponent } from './forms/nextcloud-form.component';
+import { CoreComponents } from 'app/core/components/corecomponents.module';
 
 
 @NgModule({
@@ -28,7 +29,10 @@ import { NextCloudFormComponent } from './forms/nextcloud-form.component';
     FlexLayoutModule,
     TranslateModule,
     CommonDirectivesModule,
-    EntityModule
+    EntityModule,
+    CoreComponents
+  ],
+  exports: [
   ],
   declarations: [
     ApplicationsComponent,
