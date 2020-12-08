@@ -113,7 +113,7 @@ def change_the_users_email_and_click_save(driver, email):
 @then('Change should be saved')
 def change_should_be_saved(driver):
     """Change should be saved."""
-    assert wait_on_element_disappear(driver, 1, 7, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Users")]')
 
 

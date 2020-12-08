@@ -107,7 +107,7 @@ def change_the_users_shell_and_click_save(driver):
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Shell"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-option[@ix-auto="option__Shell_zsh"]')
+    assert wait_on_element(driver, 0.5, 7, '//mat-option[@ix-auto="option__Shell_sh"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Shell_zsh"]').click()
     assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
@@ -116,7 +116,7 @@ def change_the_users_shell_and_click_save(driver):
 @then('Change should be saved')
 def change_should_be_saved(driver):
     """Change should be saved."""
-    assert wait_on_element_disappear(driver, 1, 7, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Users")]')
 
 
@@ -131,4 +131,4 @@ def open_the_user_drop_down_to_verify_the_shell_was_changed(driver):
 @then('Updated value should be visible')
 def updated_value_should_be_visible(driver):
     """Updated value should be visible."""
-    driver.find_element_by_xpath('//p[contains(.,"/bin/zsh")]')
+    driver.find_element_by_xpath('//p[contains(.,"/bin/sh")]')
