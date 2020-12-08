@@ -17,6 +17,7 @@ import { KubernetesSettingsComponent } from './forms/kubernetes-settings.compone
 import { ChartReleaseAddComponent } from './forms/chart-release-add.component';
 import { ChartReleaseEditComponent } from './forms/chart-release-edit.component';
 import { PlexFormComponent } from './forms/plex-form.component';
+import { CoreComponents } from 'app/core/components/corecomponents.module';
 
 
 @NgModule({
@@ -27,7 +28,10 @@ import { PlexFormComponent } from './forms/plex-form.component';
     FlexLayoutModule,
     TranslateModule,
     CommonDirectivesModule,
-    EntityModule
+    EntityModule,
+    CoreComponents
+  ],
+  exports: [
   ],
   declarations: [
     ApplicationsComponent,
