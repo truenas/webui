@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, OnDestroy, AfterViewInit, EventEmitter, 
 import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import * as _ from 'lodash';
-import { Subject, BehaviorSubject, Subscription } from 'rxjs'; 
+import { Subject, BehaviorSubject, Subscription } from 'rxjs';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
@@ -15,13 +15,16 @@ import { ReportsService } from './reports.service';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 
 import { ErdService } from 'app/services/erd.service';
+import { DialogService } from 'app/services/dialog.service';
+import { ModalService } from 'app/services/modal.service';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../translate-marker';
 import {
-  RestService,
   SystemGeneralService,
   WebSocketService,
 } from '../../services/';
+
+import { ReportsConfigComponent } from './components/reports-config/reports-config.component';
 
 interface Tab {
   label: string;
@@ -78,10 +81,13 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   public diskReportConfigReady: boolean = false;
   private getAdvancedConfig: Subscription;
   public actionsConfig;
+  public formComponent: ReportsConfigComponent;
 
-  constructor(private erdService: ErdService, 
-    public translate: TranslateService, 
-    private router:Router, 
+  constructor(private erdService: ErdService,
+    public translate: TranslateService,
+    public modalService: ModalService,
+    public dialogService: DialogService,
+    private router:Router,
     private core:CoreService,
     private rs: ReportsService,
     protected ws: WebSocketService, private sysGeneralService: SystemGeneralService) {
@@ -90,7 +96,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
     //this.viewport.scrollToIndex(5);
   }
 
-  ngOnInit() { 
+  ngOnInit() {
 
     this.scrollContainer = document.querySelector('.rightside-content-hold ');//this.container.nativeElement;
     this.scrollContainer.style.overflow = 'hidden';
@@ -100,7 +106,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
         this.isFooterConsoleOpen = res.consolemsg;
       }
     });
- 
+
     this.core.register({observerClass: this, eventName:"UserPreferencesReady"}).subscribe((evt:CoreEvent) => {
       this.retroLogo = evt.data.retroLogo ? "1" : "0";
     });
@@ -108,14 +114,14 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
     this.core.register({observerClass: this, eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
       this.retroLogo = evt.data.retroLogo ? "1" : "0";
     });
- 
+
     this.core.register({observerClass: this, eventName:"UserPreferences"}).subscribe((evt:CoreEvent) => {
       this.retroLogo = evt.data.retroLogo ? "1" : "0";
     });
 
     this.core.emit({name:"UserPreferencesRequest"});
- 
-    this.core.register({observerClass: this, eventName:"ReportingGraphs"}).subscribe((evt:CoreEvent) => { 
+
+    this.core.register({observerClass: this, eventName:"ReportingGraphs"}).subscribe((evt:CoreEvent) => {
       if (evt.data) {
         let allReports = evt.data.map((report) => {
           let list = [];
@@ -135,7 +141,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
         this.otherReports = allReports.filter((report) => !report.name.startsWith('disk'));
 
         this.generateTabs();
-       
+
         this.activateTabFromUrl();
       }
     });
@@ -169,8 +175,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   }
 
   ngAfterViewInit(): void {
-    this.erdService.attachResizeEventToElement("dashboardcontainerdiv"); 
-    
+    this.erdService.attachResizeEventToElement("dashboardcontainerdiv");
+
     this.setupSubscriptions();
 
     this.actionsConfig = { actionType: ReportsGlobalControlsComponent, actionConfig: this };
@@ -196,7 +202,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
 
   generateTabs(){
-      let labels = [T('CPU'), T('Disk'), T('Memory'), T('Network'), T('NFS'), T('Partition'), T('System'), T('Target'), T('ZFS'), T('Configure')];
+      let labels = [T('CPU'), T('Disk'), T('Memory'), T('Network'), T('NFS'), T('Partition'), T('System'), T('Target'), T('ZFS')];
       let UPS = this.otherReports.find((report) => {
         return report.title.startsWith('UPS');
       });
@@ -211,8 +217,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   }
 
 
-  activateTabFromUrl (){ 
-    let subpath = this.router.url.split("/reportsdashboard/"); 
+  activateTabFromUrl (){
+    let subpath = this.router.url.split("/reportsdashboard/");
     let tabFound = this.allTabs.find((tab) =>{
       return tab.value === subpath[1];
     });
@@ -221,7 +227,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
   isActiveTab(str:string){
     let test: boolean;
-    if(!this.activeTab){ 
+    if(!this.activeTab){
       test = ('/reportsdashboard/' + str.toLowerCase()) == this.router.url;
     } else {
       test = (this.activeTab == str.toLowerCase());
@@ -230,9 +236,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   }
 
   updateActiveTab(tab:Tab){
-    
+
     // Change the URL without reloading page/component
-    // the old fashioned way 
+    // the old fashioned way
     window.history.replaceState({}, '','/reportsdashboard/' + tab.value);
 
     let pseudoRouteEvent = [
@@ -243,16 +249,16 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
         disabled:true
       },
       {
-        url: "", 
+        url: "",
         title: tab.label,
         breadcrumb: tab.label,
         disabled:true
       }
     ]
-    
+
     this.core.emit({name: "PseudoRouteChange", data: pseudoRouteEvent});
 
-    this.activateTab(tab.label); 
+    this.activateTab(tab.label);
 
     if(tab.label == 'Disk'){ this.diskReportBuilderSetup() }
   }
@@ -298,9 +304,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
         case 'ZFS':
           condition = report.name.startsWith('arc');
           break;
-        case 'Configure':
-          condition = (report.name === 'configure');
-          break;
       default:
         condition = true;
       }
@@ -309,7 +312,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
     });
 
     this.activeReports = this.flattenReports(reportCategories);
-    
+
     if(name !== 'Disk'){
       const keys = Object.keys(this.activeReports);
       this.visibleReports = keys.map((v) => parseInt(v));
@@ -321,7 +324,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
     let result = [];
     list.forEach((report) => {
       // Without identifiers
-    
+
       // With identifiers
       if(report.identifiers){
         report.identifiers.forEach((item,index) => {
@@ -340,7 +343,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
         result.push(r);
       }
     });
-   
+
     return result;
   }
 
@@ -349,7 +352,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 diskReportBuilderSetup(){
 
     this.generateValues();
-    
+
     // Entity-Toolbar Config
     this.toolbarConfig = {
       target: this.target,
@@ -462,8 +465,8 @@ diskReportBuilderSetup(){
     } else {
       device = device.map((v) => v.value);
     }
-    
-    if(typeof metric == "string"){ 
+
+    if(typeof metric == "string"){
       metric = [metric];
     } else {
       metric = metric.map((v) => v.value);
@@ -512,4 +515,19 @@ diskReportBuilderSetup(){
 
   }
 
+  showConfigForm() {
+    if (this.formComponent) {
+      delete this.formComponent
+    }
+    this.generateFormComponent()
+    this.modalService.open('slide-in-form', this.formComponent)
+  }
+
+  generateFormComponent() {
+    this.formComponent = new ReportsConfigComponent(this.ws, this.dialogService)
+    this.formComponent.title = T('Reports Configuration');
+    this.formComponent.afterModalFormSaved = () => {
+      this.modalService.close('slide-in-form')
+    }
+  }
 }

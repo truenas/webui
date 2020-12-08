@@ -73,12 +73,6 @@ export const routes: Routes = [
     data:{title:'ZFS', breadcrumb:'ZFS'},
     component : ReportsDashboardComponent,
   },
-  {
-    path: 'configure',
-    pathMatch: 'full',
-    data: { title: T('Configure'), breadcrumb: T('Configure') },
-    component: ReportsConfigComponent,
-  },
   //{ path: '**', redirectTo: 'cpu', pathMatch: 'full' },
 ];
 

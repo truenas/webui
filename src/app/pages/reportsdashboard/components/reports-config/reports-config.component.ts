@@ -1,18 +1,18 @@
 import { Component } from '@angular/core';
 import { helptext } from 'app/helptext/system/reporting';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { DialogService, RestService, WebSocketService } from '../../../../services';
-import { AppLoaderService } from "../../../../services/app-loader/app-loader.service";
+import { DialogService, WebSocketService } from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector: 'app-reports-config',
-  templateUrl: 'reports-config.component.html',
+  template: `<entity-form [conf]="this"></entity-form>`,
   styleUrls: ['reports-config.component.css'],
 })
 export class ReportsConfigComponent {
   public job: any = {};
   protected queryCall = 'reporting.config';
+  public title: string;
   public entityForm: any;
   public isCpuCheckboxChecked: boolean;
   public graphPoints: any;
@@ -79,10 +79,11 @@ export class ReportsConfigComponent {
     { name: 'divider', divider: true }
   ]);
 
-  constructor(private rest: RestService,
-    private load: AppLoaderService,
+  public afterModalFormSaved?();
+
+  constructor(
     private ws: WebSocketService,
-    protected dialog: DialogService
+    protected dialog: DialogService,
   ) {}
 
   resourceTransformIncomingRestData(data) {
@@ -117,13 +118,11 @@ export class ReportsConfigComponent {
     this.graphAge = body.graph_age;
     this.graphPoints = body.graph_points;
     this.isCpuCheckboxChecked = body.cpu_in_percentage;
-    this.load.open();
     return this.ws.call('reporting.update', [body]).subscribe((res) => {
-      this.load.close();
       this.entityForm.success = true;
       this.entityForm.formGroup.markAsPristine();
+      this.afterModalFormSaved();
     }, (err) => {
-      this.load.close();
       new EntityUtils().handleWSError(this.entityForm, err);
     });
   }
