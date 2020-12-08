@@ -172,19 +172,7 @@ export class DatasetFormComponent implements Formconfiguration{
         name: 'compression',
         placeholder: helptext.dataset_form_compression_placeholder,
         tooltip: helptext.dataset_form_compression_tooltip,
-        options: [
-          { label: 'off', value: 'OFF' },
-          { label: 'lz4 (recommended)', value: 'LZ4' ,},
-          { label: 'zstd (default level, 3)', value: 'ZSTD' },
-          { label: 'zstd-5 (slow)', value: 'ZSTD-5' },
-          { label: 'zstd-7 (very slow)', value: 'ZSTD-7' },
-          { label: 'zstd-fast (default level, 1)', value: 'ZSTD-FAST' },
-          { label: 'gzip-1 (fastest)', value: 'GZIP-1' },
-          { label: 'gzip (default level, 6)', value: 'GZIP' },
-          { label: 'gzip-9 (maximum, slow)', value: 'GZIP-9' },
-          { label: 'zle (runs of zeros)', value: 'ZLE' },
-          { label: 'lzjb (legacy, not recommended)', value: 'LZJB' }
-        ],
+        options: [],
       },
       {
         type: 'select',
@@ -1047,7 +1035,9 @@ export class DatasetFormComponent implements Formconfiguration{
 
     // this.paramMap = (<any>this.aroute.params).getValue();
 
+
     this.volid = this.paramMap['volid'];
+
 
     if (this.paramMap['pk'] !== undefined) {
       this.pk = this.paramMap['pk'];
@@ -1065,6 +1055,13 @@ export class DatasetFormComponent implements Formconfiguration{
       _.find(this.fieldSets, {class:"dataset"}).label = false;
       _.find(this.fieldSets, {class:"refdataset"}).label = false;
     }
+    this.ws.call('pool.dataset.compression_choices').subscribe(res=>{
+      const compression = _.find(this.fieldConfig, {name:'compression'});
+      for(let key in res) {
+        compression.options.push({label: key, value: res[key]});
+      }
+    });
+    
     if(this.parent){
       const root = this.parent.split("/")[0];
       this.ws.call('pool.dataset.recommended_zvol_blocksize',[root]).subscribe(res=>{
