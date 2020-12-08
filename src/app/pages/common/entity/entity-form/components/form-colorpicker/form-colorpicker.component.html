@@ -18,6 +18,6 @@
                         [cpPositionRelativeToArrow]="true"
                         [formControlName]="config.name">
                 </mat-form-field>
-	<tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
+	<tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip" [position]="config.tooltipPosition ? config.tooltipPosition : null"></tooltip>
 	<mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
 </div>
