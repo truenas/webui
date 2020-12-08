@@ -24,10 +24,12 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   cols: string;
   rows: string;
   font_size = 14;
+  font_name = 'Courier New';
   public token: any;
   public xterm: any;
   public resize_terminal = true;
   private shellSubscription: any;
+  private fitAddon: any;
 
   public usage_tooltip = helptext.usage_tooltip;
 
@@ -54,16 +56,16 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   onResize(event) {
-    // this.resizeTerm();
+    this.resizeTerm();
   }
 
   onFontSizeChanged(event) {
-    // this.resizeTerm();
+    this.resizeTerm();
   }
 
   resetDefault() {
     this.font_size = 14;
-    // this.resizeTerm();
+    this.resizeTerm();
   }
 
   ngOnChanges(changes: {
@@ -95,16 +97,16 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
       rows: size.rows,
       focus: true,
       fontSize: this.font_size,
-      // fontFamily: 'Inconsolata',
+      fontFamily: this.font_name,
     };
 
     this.xterm = new Terminal(setting);
     const attachAddon = new AttachAddon(this.ss.socket);
     this.xterm.loadAddon(attachAddon);
-    const fitAddon = new FitAddon();
-    this.xterm.loadAddon(fitAddon);
+    this.fitAddon = new FitAddon();
+    this.xterm.loadAddon(this.fitAddon);
     this.xterm.open(this.container.nativeElement, true);
-    fitAddon.fit();
+    this.fitAddon.fit();
     this.xterm._initialized = true;
   }
 
@@ -113,8 +115,8 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     const domHeight = this.container.nativeElement.offsetHeight;
     var span = document.createElement('span');
     this.container.nativeElement.appendChild(span);
-    span.className = "terminal xterm";
     span.style.whiteSpace = 'nowrap';
+    span.style.fontFamily = this.font_name;
     span.style.fontSize = this.font_size + 'px';
     span.innerHTML = 'a';
 
@@ -142,7 +144,8 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
 
   resizeTerm(){
     const size = this.getSize();
-    // this.xterm.resize(size.cols, size.rows);
+    this.xterm.setOption('fontSize', this.font_size);
+    this.fitAddon.fit();
     this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res)=> {
     });
     return true;

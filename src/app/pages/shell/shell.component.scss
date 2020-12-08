@@ -1,13 +1,7 @@
 @import 'xterm/css/xterm.css';
 
-app-shell {
-  min-height: 400px;
-  display: flex;
-  flex-direction: column;
-}
-
 #terminal {
-  flex: 1;
+  min-height: 400px;
 }
 
 .fontbar {
