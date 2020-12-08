@@ -526,6 +526,7 @@ diskReportBuilderSetup(){
   generateFormComponent() {
     this.formComponent = new ReportsConfigComponent(this.ws, this.dialogService)
     this.formComponent.title = T('Reports Configuration');
+    this.formComponent.isOneColumnForm = true;
     this.formComponent.afterModalFormSaved = () => {
       this.modalService.close('slide-in-form')
     }

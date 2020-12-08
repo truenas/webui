@@ -13,6 +13,7 @@ export class ReportsConfigComponent {
   public job: any = {};
   protected queryCall = 'reporting.config';
   public title: string;
+  public isOneColumnForm: boolean;
   public entityForm: any;
   public isCpuCheckboxChecked: boolean;
   public graphPoints: any;
