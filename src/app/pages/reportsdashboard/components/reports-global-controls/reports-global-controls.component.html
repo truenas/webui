@@ -22,8 +22,17 @@
     </div>
 
     <div>
-      <button mat-icon-button (click)="config.showConfigForm()" style="margin-left: 8px;">
-        <mat-icon>settings</mat-icon>
+      <button
+        mat-icon-button
+        ix-auto
+        ix-auto-type="button"
+        (click)="config.showConfigForm()" style="margin-left: 8px;"
+      >
+        <mat-icon
+          role="img"
+          matTooltip="{{'Reports Configuration' | translate}}"
+          matTooltipPosition="below"
+        >settings</mat-icon>
       </button>
     </div>
 
