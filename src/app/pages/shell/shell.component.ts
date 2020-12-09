@@ -7,7 +7,7 @@ import { CopyPasteMessageComponent } from "./copy-paste-message.component";
 import { Terminal } from 'xterm';
 import { AttachAddon } from 'xterm-addon-attach';
 import { FitAddon } from 'xterm-addon-fit';
-
+import * as FontFaceObserver from 'fontfaceobserver';
 @Component({
   selector: 'app-shell',
   templateUrl: './shell.component.html',
@@ -24,7 +24,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   cols: string;
   rows: string;
   font_size = 14;
-  font_name = 'Courier New';
+  font_name = 'Inconsolata';
   public token: any;
   public xterm: any;
   public resize_terminal = true;
@@ -101,13 +101,23 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     };
 
     this.xterm = new Terminal(setting);
+    
     const attachAddon = new AttachAddon(this.ss.socket);
     this.xterm.loadAddon(attachAddon);
+
     this.fitAddon = new FitAddon();
     this.xterm.loadAddon(this.fitAddon);
-    this.xterm.open(this.container.nativeElement, true);
-    this.fitAddon.fit();
-    this.xterm._initialized = true;
+
+    var font = new FontFaceObserver(this.font_name);
+    
+    font.load().then((e) => {
+      this.xterm.open(this.container.nativeElement);
+      this.fitAddon.fit();
+      this.xterm._initialized = true;
+    }, function (e) {
+      console.log('Font is not available', e);
+    });    
+    
   }
 
   getSize() {
