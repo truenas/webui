@@ -24,6 +24,7 @@ export class ChartReleasesComponent implements OnInit {
   private dialogRef: any;
   public tempIcon = '/assets/images/ix-original.png';
   public plexIcon = 'https://www.plex.tv/wp-content/uploads/2018/01/pmp-icon-1.png';
+  nextcloudIcon = 'https://cdn.rawgit.com/docker-library/docs/defa5ffc7123177acd60ddef6e16bddf694cc35f/nextcloud/logo.svg';
   private rollbackChartName: string;
   private chartReleaseForm: ChartReleaseEditComponent;
   private plexForm: PlexFormComponent;
@@ -82,7 +83,16 @@ export class ChartReleasesComponent implements OnInit {
     this.appService.getChartReleases().subscribe(charts => {
       this.chartItems = [];
       let repos = [];
+      let iconPath = this.tempIcon;
       charts.forEach(chart => {
+        switch(chart.chart_metadata.name) {
+          case 'plex':
+            iconPath = this.plexIcon;
+            break;
+          case 'nextcloud':
+            iconPath = this.nextcloudIcon;
+            break;
+        }
         let chartObj = {
           name: chart.name,
           catalog: chart.catalog,
@@ -93,7 +103,7 @@ export class ChartReleasesComponent implements OnInit {
           repository: chart.config.image.repository,
           portal: chart.portals && chart.portals.web_portal ? chart.portals.web_portal[0] : '',
           id: chart.chart_metadata.name,
-          icon: chart.chart_metadata.name === 'plex' ? this.plexIcon : this.tempIcon
+          icon: iconPath
         };
         repos.push(chartObj.repository);
         let ports = [];

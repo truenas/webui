@@ -65,7 +65,6 @@ export class CatalogComponent implements OnInit {
         for (let i in res[0].trains.test) {  // wil eventually add the charts train too
           if (i !== 'ix-chart') {
             let item = res[0].trains.test[i];
-            console.log(item)
             let versions = item.versions;
             let latest, latestDetails;
     
@@ -203,7 +202,6 @@ export class CatalogComponent implements OnInit {
   }
 
   doInstall(name: string) {
-    console.log(name)
     switch (name) {
       case 'ix-chart':
         this.modalService.open('slide-in-form', this.chartReleaseForm);

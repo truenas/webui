@@ -411,6 +411,44 @@ export default {
     nextcloudPath: T('Data Hostpath Enabled'),
     nextCloudHP: T('Data Hostpath')
 
+  },
+
+  plexForm: {
+    title: T('Plex'),
+    release: {
+      name: T('Name'),
+    },
+    settings: {
+      label: T('Settings'),
+      claimToken: {
+        placeholder: T('Plex Claim Token')
+      },
+      advertiseIp: {
+        placeholder: T('Advertise IP')
+      },
+      timezone: {
+        placeholder: T('Timezone')
+      },
+      hostNetwork: {
+        placeholder: T('Host Network')
+      },
+      extraEnvVars: {
+        label: T('Extra Environment Variables')
+      }
+    },
+    plexTCP: T('Plexservice TCP'),
+    transcode: {
+      hostpathEnabled: T('Transcode Hostpath Enabled'),
+      hostPath: T('Transcode Hostpath')
+    },
+    data: {
+      hostpathEnabled: T('Data Hostpath Enabled'),
+      hostPath: T('Data Hostpath')
+    },
+    config: {
+      hostpathEnabled: T('Config Hostpath Enabled'),
+      hostPath: T('Config Hostpath')
+    },
   }
 
 }

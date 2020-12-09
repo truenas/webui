@@ -4,7 +4,6 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { DialogService } from '../../../services/index';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { map } from 'rxjs/operators';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import { ModalService } from '../../../services/modal.service';
@@ -14,7 +13,6 @@ import  helptext  from '../../../helptext/apps/apps';
 @Component({
   selector: 'app-chart-release-edit',
   template: `<entity-form [conf]="this"></entity-form>`,
-  // providers: [SystemGeneralService]
 })
 export class PlexFormComponent {
   protected queryCall: string = 'chart.release.query';
@@ -23,7 +21,7 @@ export class PlexFormComponent {
   protected editCall: string = 'chart.release.update';
   protected isEntity: boolean = true;
 
-  private title= 'Plex';
+  private title= helptext.plexForm.title;
   private name: string;
   private getRow = new Subscription;
   private rowName: string;
@@ -31,7 +29,7 @@ export class PlexFormComponent {
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
     {
-      name: 'Name',
+      name: helptext.plexForm.release.name,
       width: '100%',
       config: [
         {
@@ -73,35 +71,35 @@ export class PlexFormComponent {
       ]
     },
     {
-      name: 'Settings',
+      name: helptext.plexForm.settings.label,
       label: true,
       width: '50%',
       config: [
         {
           type: 'input',
           name: 'claimToken',
-          placeholder: 'Plex Claim Token',
+          placeholder: helptext.plexForm.settings.claimToken.placeholder,
         },
         {
           type: 'input',
           name: 'advertiseIp',
-          placeholder: 'Plex Advertise IP',
+          placeholder: helptext.plexForm.settings.advertiseIp.placeholder,
         },
         {
           type: 'combobox',
           name: 'timezone',
-          placeholder: 'Timezone',
+          placeholder: helptext.plexForm.settings.timezone.placeholder,
           options: [],
         },
         {
           type: 'checkbox',
           name: 'hostNetwork',
-          placeholder: 'Host Network',
+          placeholder: helptext.plexForm.settings.hostNetwork.placeholder,
         },
       ]
     },
     {
-      name: 'Extra Environment Variables',
+      name: helptext.plexForm.settings.extraEnvVars.label,
       label: true,
       config: [
         {
@@ -129,13 +127,13 @@ export class PlexFormComponent {
       colspan: 2,
     },
     {
-      name: 'Plexservice TCP',
+      name: helptext.plexForm.plexTCP,
       label: true,
       config: [
         {
           type: 'input',
           name: 'port',
-          placeholder: 'Plexservice TCP',
+          placeholder: helptext.plexForm.plexTCP,
           validation: helptext.chartForm.portForwardingList.containerPort.validation,
         }
       ],
@@ -149,12 +147,12 @@ export class PlexFormComponent {
         {
           type: 'checkbox',
           name: 'transcodeHostPathEnabled',
-          placeholder: 'Transcode Hostpath Enabled',
+          placeholder: helptext.plexForm.transcode.hostpathEnabled,
         },
         {
           type: 'explorer',
           name: 'transcodeHostPath',
-          placeholder: 'Transcode Hostpath',
+          placeholder: helptext.plexForm.transcode.hostPath,
           initial: '/mnt',
           explorerType: 'directory',
           isHidden: true,
@@ -171,12 +169,12 @@ export class PlexFormComponent {
         {
           type: 'checkbox',
           name: 'dataHostPathEnabled',
-          placeholder: 'Data Hostpath Enabled',
+          placeholder: helptext.plexForm.data.hostpathEnabled,
         },
         {
           type: 'explorer',
           name: 'dataHostPath',
-          placeholder: 'Data Hostpath',
+          placeholder: helptext.plexForm.data.hostPath,
           initial: '/mnt',
           explorerType: 'directory',
           isHidden: true,
@@ -193,12 +191,12 @@ export class PlexFormComponent {
         {
           type: 'checkbox',
           name: 'configHostPathEnabled',
-          placeholder: 'Config Hostpath Enabled',
+          placeholder: helptext.plexForm.config.hostpathEnabled,
         },
         {
           type: 'explorer',
           name: 'configHostPath',
-          placeholder: 'Config Hostpath',
+          placeholder: helptext.plexForm.config.hostPath,
           initial: '/mnt',
           explorerType: 'directory',
           isHidden: true,
@@ -263,7 +261,6 @@ export class PlexFormComponent {
       this.fieldSets
         .find(set => set.name === 'Settings')
         .config.find(config => config.name === 'timezone').options = tzChoices;
-        // this.entityForm.formGroup.controls['timezone'].setValue(this.configData.timezone);
     });
   }
 
