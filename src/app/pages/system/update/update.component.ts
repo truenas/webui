@@ -163,7 +163,11 @@ export class UpdateComponent implements OnInit, OnDestroy {
             this.currentTrainDescription = res.trains[this.selectedTrain].description.toLowerCase();
           }
         } else { 
+          if(Object.keys(res.trains).length == 0 && res.current.toLowerCase().includes('stable')) {
+            this.currentTrainDescription = '[release]';
+          } else {
             this.currentTrainDescription = '';
+          }
         }
         // To remember train descrip if user switches away and then switches back
         this.trainDescriptionOnPageLoad = this.currentTrainDescription;
