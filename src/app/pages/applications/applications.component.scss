@@ -54,10 +54,19 @@
   width: 500px;
 
   .content-wrapper {
-      .logo {
-          height: 160px;
-          width: 160px;
-      }
+    .logo-container {
+      height: 160px;
+      width: 160px;
+      // background-color: var(--contrast-lighter);
+    }
+    .logo {
+      width: calc(100% - 32px);
+      height: 100%;
+      background-position: center;
+      background-size: contain;
+      background-repeat: no-repeat;
+      margin-left: 16px;
+    }
 
       .content-box {
         width: 340px;

@@ -63,7 +63,6 @@ export class CatalogComponent implements OnInit {
 
   ngOnInit(): void {
     this.appService.getAllCatalogItems().subscribe(res => {
-      console.log(res)
       if (Object.keys(res[0].trains.test).length > 0) {
         for (let i in res[0].trains.test) {  // will eventually add the charts train too
           if (i !== 'ix-chart') {

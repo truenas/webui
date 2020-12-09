@@ -85,7 +85,6 @@ export class ChartReleasesComponent implements OnInit {
 
   refreshChartReleases() {
     this.appService.getChartReleases().subscribe(charts => {
-      console.log(charts)
       this.chartItems = [];
       let repos = [];
       let iconPath = this.tempIcon;
