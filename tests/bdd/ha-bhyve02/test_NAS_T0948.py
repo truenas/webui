@@ -108,7 +108,7 @@ def change_the_users_shell_and_click_save(driver):
     time.sleep(0.5)
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Shell"]').click()
     assert wait_on_element(driver, 0.5, 7, '//mat-option[@ix-auto="option__Shell_sh"]')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Shell_zsh"]').click()
+    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Shell_sh"]').click()
     assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
