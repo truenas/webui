@@ -53,7 +53,8 @@ export class NextCloudFormComponent {
           placeholder: helptext.chartForm.image.repo.placeholder,
           tooltip: helptext.chartForm.image.repo.tooltip,
           required: true,
-          value: 'nextcloud'
+          value: 'nextcloud',
+          readonly: true
         },
         {
           type: 'input',

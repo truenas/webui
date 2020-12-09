@@ -52,7 +52,8 @@ export class MinioFormComponent {
           placeholder: helptext.chartForm.image.repo.placeholder,
           tooltip: helptext.chartForm.image.repo.tooltip,
           required: true,
-          value: 'minio/minio'
+          value: 'minio/minio',
+          readonly: true
         },
         {
           type: 'input',

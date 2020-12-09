@@ -53,7 +53,8 @@ export class PlexFormComponent {
           placeholder: helptext.chartForm.image.repo.placeholder,
           tooltip: helptext.chartForm.image.repo.tooltip,
           required: true,
-          value: 'plexinc/pms-docker'
+          value: 'plexinc/pms-docker',
+          readonly: true
         },
         {
           type: 'input',
@@ -139,8 +140,7 @@ export class PlexFormComponent {
           name: 'port',
           placeholder: helptext.plexForm.plexTCP,
           validation: helptext.chartForm.portForwardingList.containerPort.validation,
-          value: 32400,
-          readonly: true
+          value: 32400
         }
       ],
       colspan: 2,

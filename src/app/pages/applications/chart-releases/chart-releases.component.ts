@@ -23,7 +23,7 @@ import  helptext  from '../../../helptext/apps/apps';
 export class ChartReleasesComponent implements OnInit {
   public chartItems = [];
   private dialogRef: any;
-  public tempIcon = '/assets/images/ix-original.png';
+  public tempIcon = 'assets/images/ix-original.png';
   public plexIcon = 'https://www.plex.tv/wp-content/uploads/2018/01/pmp-icon-1.png';
   public nextcloudIcon = 'https://cdn.rawgit.com/docker-library/docs/defa5ffc7123177acd60ddef6e16bddf694cc35f/nextcloud/logo.svg';
   public minioIcon = 'https://min.io/resources/img/logo/MINIO_wordmark.png';
