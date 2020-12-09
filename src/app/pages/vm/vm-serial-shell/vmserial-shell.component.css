@@ -1,3 +1,4 @@
+@import 'xterm/css/xterm.css';
 .shellTooltip {
   position: absolute !important;
   right: 20px;
