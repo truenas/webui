@@ -111,14 +111,12 @@ export class ChartReleaseAddComponent implements OnDestroy {
               name: 'name',
               placeholder: helptext.chartForm.container.env_vars.key.placeholder,
               tooltip: helptext.chartForm.container.env_vars.key.tooltip,
-              required: true
             }, 
             {
               type: 'input',
               name: 'value',
               placeholder: helptext.chartForm.container.env_vars.value.placeholder,
               tooltip: helptext.chartForm.container.env_vars.value.tooltip,
-              required: true
             }
           ],
           listFields: []
@@ -148,7 +146,6 @@ export class ChartReleaseAddComponent implements OnDestroy {
               placeholder: helptext.chartForm.externalInterfaces.host.placeholder,
               tooltip: helptext.chartForm.externalInterfaces.host.tooltip,
               options: helptext.chartForm.externalInterfaces.host.options,
-              value: helptext.chartForm.externalInterfaces.host.options[0].value,
             },
             {
               type: 'select',
@@ -156,22 +153,6 @@ export class ChartReleaseAddComponent implements OnDestroy {
               placeholder: helptext.chartForm.externalInterfaces.ipam.placeholder,
               tooltip: helptext.chartForm.externalInterfaces.ipam.tooltip,
               options: helptext.chartForm.externalInterfaces.ipam.options,
-              value: helptext.chartForm.externalInterfaces.ipam.options[0].value,
-            },
-            {
-              name: 'whatevs',
-              type: 'input',
-              placeholder: 'Whatevs',
-              isHidden: true,
-              relation: [
-                {
-                  action: 'SHOW',
-                  when: [{
-                    name: 'ipam',
-                    value: 'static',
-                  }]
-                },
-              ],
             },
             {
               type: 'list',
@@ -235,12 +216,14 @@ export class ChartReleaseAddComponent implements OnDestroy {
           name: 'nameservers',
           placeholder: helptext.chartForm.DNSConfig.nameservers.placeholder,
           tooltip: helptext.chartForm.DNSConfig.nameservers.tooltip,
+          value: []
         },
         {
           type: 'chip',
           name: 'searches',
           placeholder: helptext.chartForm.DNSConfig.searches.placeholder,
           tooltip: helptext.chartForm.DNSConfig.searches.tooltip,
+          value: []
         }
       ]
     },
@@ -257,7 +240,6 @@ export class ChartReleaseAddComponent implements OnDestroy {
               type: 'input',
               name: 'containerPort',
               placeholder: helptext.chartForm.portForwardingList.containerPort.placeholder,
-              required: true,
               validation: helptext.chartForm.portForwardingList.containerPort.validation
             }, 
             {
@@ -265,7 +247,6 @@ export class ChartReleaseAddComponent implements OnDestroy {
               name: 'nodePort',
               placeholder: helptext.chartForm.portForwardingList.nodePort.placeholder,
               validation: helptext.chartForm.portForwardingList.nodePort.validation,   
-              required: true
             },  
             {
               type: 'select',
@@ -295,19 +276,19 @@ export class ChartReleaseAddComponent implements OnDestroy {
               explorerType: 'directory',
               placeholder: helptext.chartForm.hostPathVolumes.hostPath.placeholder,
               tooltip: helptext.chartForm.hostPathVolumes.hostPath.tooltip,
-              required: true
             }, 
             {
               type: 'input',
               name: 'mountPath',
               placeholder: helptext.chartForm.hostPathVolumes.mountPath.placeholder,
               tooltip: helptext.chartForm.hostPathVolumes.mountPath.tooltip,
-              required: true
             },
             {
               type: 'checkbox',
               name: 'readOnly',
               placeholder: helptext.chartForm.hostPathVolumes.readOnly.placeholder,
+              value: false,
+
             }
           ],
           listFields: []
@@ -405,8 +386,28 @@ export class ChartReleaseAddComponent implements OnDestroy {
   }
 
   customSubmit(data) {
+    let envVars = [];
+    if (data.containerEnvironmentVariables[0].name) {
+      envVars = data.containerEnvironmentVariables;
+    }
+
+    let pfList = [];
+    if (data.portForwardingList[0].containerPort) {
+      pfList = data.portForwardingList;
+    }
+
+    let hpVolumes = [];
+    if (data.hostPathVolumes[0].hostPort) {
+      hpVolumes = data.hostPathVolumes;
+    }
+
+    let volList = [];
+    if (data.volumes[0].datasetName) {
+      volList = data.volumes;
+    }
+
     let ext_interfaces = [];
-    if (data.externalInterfaces && data.externalInterfaces.length > 0) {
+    if (data.externalInterfaces[0].hostInterface) {
       data.externalInterfaces.forEach(i => {
         if (i.ipam !== 'static') {
           ext_interfaces.push(
@@ -449,7 +450,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
       values: {
         containerArgs: data.containerArgs,
         containerCommand: data.containerCommand,
-        containerEnvironmentVariables: data.containerEnvironmentVariables,
+        containerEnvironmentVariables: envVars,
         dnsConfig: {
           nameservers: data.nameservers,
           searches: data.searches
@@ -457,17 +458,17 @@ export class ChartReleaseAddComponent implements OnDestroy {
         dnsPolicy: data.dnsPolicy,
         externalInterfaces: ext_interfaces,
         gpuConfiguration: GPUObj,
-        hostPathVolumes: data.hostPathVolumes,
+        hostPathVolumes: hpVolumes,
         hostNetwork: data.hostNetwork,
         image: { 
           repository: data.repository,
           pullPolicy: data.pullPolicy,
           tag: data.tag
         }, 
-        portForwardingList: data.portForwardingList, 
+        portForwardingList: pfList, 
         restartPolicy: data.restartPolicy,
         updateStrategy: data.updateStrategy,
-        volumes: data.volumes, 
+        volumes: volList, 
         workloadType: 'Deployment',
       }
     }]

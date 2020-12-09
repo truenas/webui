@@ -11,6 +11,7 @@ import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialo
 import { ChartReleaseEditComponent } from '../forms/chart-release-edit.component';
 import { PlexFormComponent } from '../forms/plex-form.component';
 import { NextCloudFormComponent } from '../forms/nextcloud-form.component';
+import { MinioFormComponent } from '../forms/minio-form.component';
 
 import  helptext  from '../../../helptext/apps/apps';
 
@@ -24,11 +25,13 @@ export class ChartReleasesComponent implements OnInit {
   private dialogRef: any;
   public tempIcon = '/assets/images/ix-original.png';
   public plexIcon = 'https://www.plex.tv/wp-content/uploads/2018/01/pmp-icon-1.png';
-  nextcloudIcon = 'https://cdn.rawgit.com/docker-library/docs/defa5ffc7123177acd60ddef6e16bddf694cc35f/nextcloud/logo.svg';
+  public nextcloudIcon = 'https://cdn.rawgit.com/docker-library/docs/defa5ffc7123177acd60ddef6e16bddf694cc35f/nextcloud/logo.svg';
+  public minioIcon = 'https://min.io/resources/img/logo/MINIO_wordmark.png';
   private rollbackChartName: string;
   private chartReleaseForm: ChartReleaseEditComponent;
   private plexForm: PlexFormComponent;
   private nextCloudForm: NextCloudFormComponent;
+  private minioForm: MinioFormComponent;
   private refreshTable: Subscription;
   private refreshForm: Subscription;
 
@@ -76,7 +79,8 @@ export class ChartReleasesComponent implements OnInit {
   refreshForms() {
     this.chartReleaseForm = new ChartReleaseEditComponent(this.mdDialog,this.dialogService,this.modalService);
     this.plexForm = new PlexFormComponent(this.mdDialog,this.dialogService,this.modalService,this.sysGeneralService);
-    this.nextCloudForm = new NextCloudFormComponent(this.mdDialog,this.dialogService,this.modalService,this.sysGeneralService);
+    this.nextCloudForm = new NextCloudFormComponent(this.mdDialog,this.dialogService,this.modalService);
+    this.minioForm = new MinioFormComponent(this.mdDialog,this.dialogService,this.modalService);
   }
 
   refreshChartReleases() {
@@ -92,6 +96,12 @@ export class ChartReleasesComponent implements OnInit {
           case 'nextcloud':
             iconPath = this.nextcloudIcon;
             break;
+          case 'minio':
+            iconPath = this.minioIcon;
+            break;
+          
+          default:
+            iconPath = this.tempIcon;
         }
         let chartObj = {
           name: chart.name,
@@ -209,8 +219,8 @@ export class ChartReleasesComponent implements OnInit {
 
   edit(name: string, id: string) {
     switch (id) {
-      case 'ix-chart':
-        this.modalService.open('slide-in-form', this.chartReleaseForm, name);
+      case 'minio':
+        this.modalService.open('slide-in-form', this.minioForm, name);
         break;
       
       case 'plex':
@@ -220,6 +230,9 @@ export class ChartReleasesComponent implements OnInit {
       case 'nextcloud':
         this.modalService.open('slide-in-form', this.nextCloudForm, name);
         break;
+
+      default:
+        this.modalService.open('slide-in-form', this.chartReleaseForm, name);
     }
   }
 

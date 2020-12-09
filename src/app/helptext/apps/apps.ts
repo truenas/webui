@@ -449,6 +449,37 @@ export default {
       hostpathEnabled: T('Config Hostpath Enabled'),
       hostPath: T('Config Hostpath')
     },
-  }
+  },
+  minioForm: {
+    title: T('Minio'),
+    accessLabel: T('Access'),
+    accessKey: {
+      placeholder: T('Access Key')
+    },
+    secretKey: {
+      placeholder: T('Secret Key')
+    },
+    environment: {
+      label: T('Minio Image Environment'),
+      name: T('Name'),
+      value: T('Value')
+    },
+    nodePort: {
+      label: T('Node Port'),
+      placeholder: T('Node Port'),
+      tooltip: T('Node Port to use for Minio')
+    },
+    hostPathEnabled: T('Minio HostPath Enabled'),
+    hostPath: {
+      placeholder: T('Host Path'),
+      tooltip: T('Specify HostPath for Minio data')
+    }
+  },
+
+
+  minioInfo: T('Minio: Kubernetes native, high performance object storage'),
+  plexInfo: T('Plex: Media player, streaming service'),
+  nextcloudInfo: T('Nextcloud:  a file sharing server that puts the control \
+ and security of your own data back into your hands.'),
 
 }

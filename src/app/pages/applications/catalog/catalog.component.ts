@@ -17,6 +17,7 @@ import { KubernetesSettingsComponent } from '../forms/kubernetes-settings.compon
 import { ChartReleaseAddComponent } from '../forms/chart-release-add.component';
 import { PlexFormComponent } from '../forms/plex-form.component';
 import { NextCloudFormComponent } from '../forms/nextcloud-form.component';
+import { MinioFormComponent } from '../forms/minio-form.component';
 import  helptext  from '../../../helptext/apps/apps';
 
 @Component({
@@ -36,6 +37,7 @@ export class CatalogComponent implements OnInit {
   private chartReleaseForm: ChartReleaseAddComponent;
   private plexForm: PlexFormComponent;
   private nextCloudForm: NextCloudFormComponent;
+  private minioForm: MinioFormComponent;
   private refreshForm: Subscription;
   private refreshTable: Subscription;
 
@@ -62,7 +64,7 @@ export class CatalogComponent implements OnInit {
   ngOnInit(): void {
     this.appService.getAllCatalogItems().subscribe(res => {
       if (Object.keys(res[0].trains.test).length > 0) {
-        for (let i in res[0].trains.test) {  // wil eventually add the charts train too
+        for (let i in res[0].trains.test) {  // will eventually add the charts train too
           if (i !== 'ix-chart') {
             let item = res[0].trains.test[i];
             let versions = item.versions;
@@ -72,12 +74,29 @@ export class CatalogComponent implements OnInit {
               latest = (Object.keys(versions)[0]);
               latestDetails = versions[Object.keys(versions)[0]];
             }
+
+            switch (item.name) {
+              case 'minio':
+                item.info = helptext.minioInfo;
+                break;
+              
+              case 'plex':
+                item.info = helptext.plexInfo;
+                break;
+        
+              case 'nextcloud':
+                item.info = helptext.nextcloudInfo;
+                break;
+              
+              default:
+                this.modalService.open('slide-in-form', this.chartReleaseForm);
+            }
     
             let catalogItem = {
               name: item.name,
               icon_url: item.icon_url? item.icon_url : '/assets/images/ix-original.png',
               latest_version: latest,
-              info: latestDetails.app_readme
+              info: item.info
             }
             this.catalogApps.push(catalogItem);            
           }
@@ -144,7 +163,8 @@ export class CatalogComponent implements OnInit {
     this.kubernetesForm = new KubernetesSettingsComponent(this.modalService, this.appService);
     this.chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog,this.dialogService,this.modalService);
     this.plexForm = new PlexFormComponent(this.mdDialog,this.dialogService,this.modalService,this.sysGeneralService);
-    this.nextCloudForm = new NextCloudFormComponent(this.mdDialog,this.dialogService,this.modalService,this.sysGeneralService);
+    this.nextCloudForm = new NextCloudFormComponent(this.mdDialog,this.dialogService,this.modalService);
+    this.minioForm = new MinioFormComponent(this.mdDialog,this.dialogService,this.modalService);
   }
 
   checkForConfiguredPool() {
@@ -203,8 +223,8 @@ export class CatalogComponent implements OnInit {
 
   doInstall(name: string) {
     switch (name) {
-      case 'ix-chart':
-        this.modalService.open('slide-in-form', this.chartReleaseForm);
+      case 'minio':
+        this.modalService.open('slide-in-form', this.minioForm);
         break;
       
       case 'plex':
@@ -214,6 +234,9 @@ export class CatalogComponent implements OnInit {
       case 'nextcloud':
         this.modalService.open('slide-in-form', this.nextCloudForm);
         break;
+      
+      default:
+        this.modalService.open('slide-in-form', this.chartReleaseForm);
     }
   }
 }

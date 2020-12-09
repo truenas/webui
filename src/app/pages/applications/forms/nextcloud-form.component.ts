@@ -3,8 +3,6 @@ import { MatDialog } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { DialogService } from '../../../services/index';
-import { SystemGeneralService } from 'app/services/system-general.service';
-import { map } from 'rxjs/operators';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import { ModalService } from '../../../services/modal.service';
@@ -14,7 +12,6 @@ import  helptext  from '../../../helptext/apps/apps';
 @Component({
   selector: 'app-chart-release-edit',
   template: `<entity-form [conf]="this"></entity-form>`,
-  // providers: [SystemGeneralService]
 })
 export class NextCloudFormComponent {
   protected queryCall: string = 'chart.release.query';
@@ -53,7 +50,8 @@ export class NextCloudFormComponent {
           name: 'repository',
           placeholder: helptext.chartForm.image.repo.placeholder,
           tooltip: helptext.chartForm.image.repo.tooltip,
-          required: true
+          required: true,
+          value: 'nextcloud'
         },
         {
           type: 'input',
@@ -98,7 +96,8 @@ export class NextCloudFormComponent {
           type: 'input',
           name: 'nodePort',
           placeholder: helptext.nextCloudForm.config.nodeport.placeholder,
-          tooltip: helptext.nextCloudForm.config.nodeport.tooltip
+          tooltip: helptext.nextCloudForm.config.nodeport.tooltip,
+          value: 9000
         },
       ]
     },
@@ -111,6 +110,7 @@ export class NextCloudFormComponent {
           type: 'checkbox',
           name: 'nextcloudDataHostPathEnabled',
           placeholder: helptext.nextCloudForm.nextcloudPath,
+          value: false
         },
         {
           type: 'explorer',
@@ -134,7 +134,7 @@ export class NextCloudFormComponent {
   ]
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
-    private modalService: ModalService, private sysGeneralService: SystemGeneralService) {
+    private modalService: ModalService) {
       this.getRow = this.modalService.getRow$.subscribe((rowName: string) => {
         this.rowName = rowName;
         this.queryCallOption = [["id", "=", rowName]];

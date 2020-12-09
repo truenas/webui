@@ -3,7 +3,6 @@ import { MatDialog } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { DialogService } from '../../../services/index';
-import { SystemGeneralService } from 'app/services/system-general.service';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import { ModalService } from '../../../services/modal.service';
@@ -14,14 +13,14 @@ import  helptext  from '../../../helptext/apps/apps';
   selector: 'app-chart-release-edit',
   template: `<entity-form [conf]="this"></entity-form>`,
 })
-export class PlexFormComponent {
+export class MinioFormComponent {
   protected queryCall: string = 'chart.release.query';
   protected queryCallOption: Array<any>;
   protected addCall: string = 'chart.release.create';
   protected editCall: string = 'chart.release.update';
   protected isEntity: boolean = true;
 
-  private title= helptext.plexForm.title;
+  private title = helptext.minioForm.title;
   private name: string;
   private getRow = new Subscription;
   private rowName: string;
@@ -29,7 +28,7 @@ export class PlexFormComponent {
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
     {
-      name: helptext.plexForm.release.name,
+      name: helptext.nextCloudForm.release_name.name,
       width: '100%',
       config: [
         {
@@ -52,14 +51,14 @@ export class PlexFormComponent {
           placeholder: helptext.chartForm.image.repo.placeholder,
           tooltip: helptext.chartForm.image.repo.tooltip,
           required: true,
-          value: 'plexinc/pms-docker'
+          value: 'minio/minio'
         },
         {
           type: 'input',
           name: 'tag',
           placeholder: helptext.chartForm.image.tag.placeholder,
           tooltip: helptext.chartForm.image.tag.tooltip,
-          value: '1.20.2.3402-0fec14d92'
+          value: 'RELEASE.2020-11-19T23-48-16Z'
         },
         {
           type: 'select',
@@ -72,56 +71,45 @@ export class PlexFormComponent {
       ]
     },
     {
-      name: helptext.plexForm.settings.label,
+      name: helptext.minioForm.accessLabel,
       label: true,
       width: '50%',
       config: [
         {
           type: 'input',
-          name: 'claimToken',
-          placeholder: helptext.plexForm.settings.claimToken.placeholder,
-          value: ''
+          name: 'accessKey',
+          togglePw: true,
+          placeholder: helptext.minioForm.accessKey.placeholder,
+          required: true
         },
         {
           type: 'input',
-          name: 'advertiseIp',
-          placeholder: helptext.plexForm.settings.advertiseIp.placeholder,
-        },
-        {
-          type: 'combobox',
-          name: 'timezone',
-          placeholder: helptext.plexForm.settings.timezone.placeholder,
-          options: [],
-        },
-        {
-          type: 'checkbox',
-          name: 'hostNetwork',
-          placeholder: helptext.plexForm.settings.hostNetwork.placeholder,
-          value: false
+          name: 'secretKey',
+          togglePw: true,
+          placeholder: helptext.minioForm.secretKey.placeholder,
+          required: true
         },
       ]
     },
     {
-      name: helptext.plexForm.settings.extraEnvVars.label,
+      name: helptext.minioForm.environment.label,
       label: true,
       config: [
         {
           type: 'list',
-          name: 'extraEnv',
+          name: 'environment',
           width: '100%',
           box: true,
           templateListField: [
             {
               type: 'input',
               name: 'name',
-              placeholder: helptext.chartForm.container.env_vars.key.placeholder,
-              tooltip: helptext.chartForm.container.env_vars.key.tooltip,
+              placeholder: helptext.minioForm.environment.name,
             }, 
             {
               type: 'input',
               name: 'value',
-              placeholder: helptext.chartForm.container.env_vars.value.placeholder,
-              tooltip: helptext.chartForm.container.env_vars.value.tooltip,
+              placeholder: helptext.minioForm.environment.value,
             }
           ],
           listFields: []
@@ -130,34 +118,33 @@ export class PlexFormComponent {
       colspan: 2,
     },
     {
-      name: helptext.plexForm.plexTCP,
-      label: true,
+      name: helptext.minioForm.nodePort.label,
       config: [
         {
           type: 'input',
-          name: 'port',
-          placeholder: helptext.plexForm.plexTCP,
+          name: 'nodePort',
+          placeholder: helptext.minioForm.nodePort.placeholder,
+          tooltip: helptext.minioForm.nodePort.tooltip,
           validation: helptext.chartForm.portForwardingList.containerPort.validation,
-          value: 32400
+          value: 9000
         }
       ],
       colspan: 2,
     },
     {
-      name: helptext.chartForm.container.title,
-      // label: true,
+      name: 'hostpath',
       width: '50%',
       config: [
         {
           type: 'checkbox',
-          name: 'transcodeHostPathEnabled',
-          placeholder: helptext.plexForm.transcode.hostpathEnabled,
-          value: false
+          name: 'minioHostPathEnabled',
+          placeholder: helptext.minioForm.hostPathEnabled,
         },
         {
           type: 'explorer',
-          name: 'transcodeHostPath',
-          placeholder: helptext.plexForm.transcode.hostPath,
+          name: 'minioHostPath',
+          placeholder: helptext.minioForm.hostPath.placeholder,
+          tooltip: helptext.minioForm.hostPath.tooltip,
           initial: '/mnt',
           explorerType: 'directory',
           isHidden: true,
@@ -165,96 +152,36 @@ export class PlexFormComponent {
             {
               action: 'SHOW',
               when: [{
-                name: 'transcodeHostPathEnabled',
+                name: 'minioHostPathEnabled',
                 value: true,
               }]
             },
           ],
-        },
-        {
-          type: 'checkbox',
-          name: 'dataHostPathEnabled',
-          placeholder: helptext.plexForm.data.hostpathEnabled,
-          value: false
-        },
-        {
-          type: 'explorer',
-          name: 'dataHostPath',
-          placeholder: helptext.plexForm.data.hostPath,
-          initial: '/mnt',
-          explorerType: 'directory',
-          isHidden: true,
-          relation: [
-            {
-              action: 'SHOW',
-              when: [{
-                name: 'dataHostPathEnabled',
-                value: true,
-              }]
-            },
-          ],
-        },
-        {
-          type: 'checkbox',
-          name: 'configHostPathEnabled',
-          placeholder: helptext.plexForm.config.hostpathEnabled,
-          value: false
-        },
-        {
-          type: 'explorer',
-          name: 'configHostPath',
-          placeholder: helptext.plexForm.config.hostPath,
-          initial: '/mnt',
-          explorerType: 'directory',
-          isHidden: true,
-          relation: [
-            {
-              action: 'SHOW',
-              when: [{
-                name: 'configHostPathEnabled',
-                value: true,
-              }]
-            },
-          ],
-        },
-
-      ]
-    },
-    {
-      name: helptext.chartForm.gpu.title,
-      label: true,
-      width: '50%',
-      config: [
-        {
-          type: 'input',
-          name: 'gpu_property',
-          placeholder: helptext.chartForm.gpu.property.placeholder,
-          tooltip: helptext.chartForm.gpu.property.tooltip,
-        },
-        {
-          type: 'input',
-          name: 'gpu_value',
-          placeholder: helptext.chartForm.gpu.value.placeholder,
         }
       ]
     }
   ]
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
-    private modalService: ModalService, private sysGeneralService: SystemGeneralService) {
+    private modalService: ModalService) {
       this.getRow = this.modalService.getRow$.subscribe((rowName: string) => {
         this.rowName = rowName;
         this.queryCallOption = [["id", "=", rowName]];
         this.getRow.unsubscribe();
     })
-     }
+  }
 
   resourceTransformIncomingRestData(data) {
+    console.log(data)
     this.name = data.name;
     data.config.release_name = data.name;
+    // data.config.username = data.config.nextcloud.username;
+    // data.config.password = data.config.nextcloud.password;
+    // data.config.host = data.config.nextcloud.host;
     data.config.repository = data.config.image.repository;
     data.config.tag = data.config.image.tag;
     data.config.pullPolicy = data.config.image.pullPolicy;
+    data.config.nodePort = data.config.service.nodePort;
     return data.config;
   }
 
@@ -262,57 +189,40 @@ export class PlexFormComponent {
     if (this.rowName) {
       entityEdit.setDisabled('release_name', true, false);
     }
-
-    this.sysGeneralService.timezoneChoices().subscribe(tzChoices => {
-      tzChoices = _.sortBy(tzChoices, [function(o) { return o.label.toLowerCase(); }]);
-      this.fieldSets
-        .find(set => set.name === 'Settings')
-        .config.find(config => config.name === 'timezone').options = tzChoices;
-        if (!this.rowName) {
-          entityEdit.formGroup.controls['timezone'].setValue('Etc/UTC');
-        }
-    });
   }
 
   customSubmit(data) {
-    let apiCall = this.addCall;
+    console.log(data)
     let envObj = {};
-    data.extraEnv.forEach(item => {
+    data.environment.forEach(item => {
       let key = envObj[name]
       envObj[item.name] = item.value;
     })
-
-    let GPUObj = {};
-    GPUObj[data.gpu_property] = data.gpu_value;
-
+    let apiCall = this.addCall;
     let payload = [];
     payload.push({
       catalog: 'OFFICIAL',
-      item: 'plex',
+      item: 'minio',
       release_name: data.release_name,
       train: 'test',
       version: 'latest',
       values: {
-        advertiseIp: data.advertiseIp,
-        claimToken: data.claimToken,
-        extraEnv: envObj,
-        hostNetwork: data.hostNetwork,
-        plexServiceTCP: { port: data.port },
-        gpuConfiguration: GPUObj,
+        accessKey: data.accessKey,
+        secretKey: data.secretKey,
+        environment: envObj,
         image: { 
           repository: data.repository,
           pullPolicy: data.pullPolicy,
           tag: data.tag
         },
-        configHostPathEnabled: data.configHostPathEnabled,
-        dataHostPathEnabled: data.dataHostPathEnabled,
-        transcodeHostPathEnabled: data.transcodeHostPathEnabled,
-        configHostPath: data.configHostPath,
-        dataHostPath: data.dataHostPath,
-        transcodeHostPath: data.transcodeHostPath,
-        timezone: data.timezone
+        service: {
+          nodePort: data.nodePort
+        },
+        minioHostPathEnabled: data.minioHostPathEnabled,
+        minioHostPath: data.minioHostPath
       }
     });
+    console.log(payload)
 
     if (this.rowName) {
       delete payload[0].catalog;
