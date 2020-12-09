@@ -478,8 +478,6 @@ export class ChartReleaseEditComponent {
         }
       })
     }
-    let GPUObj = {};
-    GPUObj[data.gpu_property] = data.gpu_value;
 
     let payload = [this.name, {
       values: {
@@ -492,7 +490,6 @@ export class ChartReleaseEditComponent {
         },
         dnsPolicy: data.dnsPolicy,
         externalInterfaces: ext_interfaces,
-        gpuConfiguration: GPUObj,
         hostPathVolumes: hpVolumes,
         hostNetwork: data.hostNetwork,
         image: { 

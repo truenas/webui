@@ -221,24 +221,6 @@ export class PlexFormComponent {
         },
 
       ]
-    },
-    {
-      name: helptext.chartForm.gpu.title,
-      label: true,
-      width: '50%',
-      config: [
-        {
-          type: 'input',
-          name: 'gpu_property',
-          placeholder: helptext.chartForm.gpu.property.placeholder,
-          tooltip: helptext.chartForm.gpu.property.tooltip,
-        },
-        {
-          type: 'input',
-          name: 'gpu_value',
-          placeholder: helptext.chartForm.gpu.value.placeholder,
-        }
-      ]
     }
   ]
 
@@ -289,9 +271,6 @@ export class PlexFormComponent {
       envObj[item.name] = item.value;
     })
 
-    let GPUObj = {};
-    GPUObj[data.gpu_property] = data.gpu_value;
-
     let payload = [];
     payload.push({
       catalog: 'OFFICIAL',
@@ -305,7 +284,6 @@ export class PlexFormComponent {
         extraEnv: envObj,
         hostNetwork: data.hostNetwork,
         plexServiceTCP: { port: data.port },
-        gpuConfiguration: GPUObj,
         image: { 
           repository: data.repository,
           pullPolicy: data.pullPolicy,

@@ -321,22 +321,6 @@ export class ChartReleaseAddComponent implements OnDestroy {
           ],
           listFields: []
         }
-      ],
-    },
-    {
-      label: helptext.chartForm.gpu.title,
-      fieldConfig: [
-        {
-          type: 'input',
-          name: 'gpu_property',
-          placeholder: helptext.chartForm.gpu.property.placeholder,
-          tooltip: helptext.chartForm.gpu.property.tooltip,
-        },
-        {
-          type: 'input',
-          name: 'gpu_value',
-          placeholder: helptext.chartForm.gpu.value.placeholder,
-        }
       ]
     }
   ]
@@ -357,19 +341,6 @@ export class ChartReleaseAddComponent implements OnDestroy {
       })
 
      }
-
-  resourceTransformIncomingRestData(data) {
-    data.config.release_name = data.name;
-    data.config.repository = data.config.image.repository;
-    data.config.tag = data.config.image.tag;
-    data.config.pullPolicy = data.config.image.pullPolicy;
-    data.config.nameservers = data.config.dnsConfig.nameservers;
-    data.config.searches = data.config.dnsConfig.searches;
-    data.config.externalInterfaces.forEach(i => {
-      i.ipam = i.ipam.type;
-    })
-    return data.config;
-  }
 
   afterInit(entityWizard: EntityWizardComponent) {
     this.entityWizard = entityWizard;
@@ -447,8 +418,6 @@ export class ChartReleaseAddComponent implements OnDestroy {
         }
       })
     }
-    let GPUObj = {};
-    GPUObj[data.gpu_property] = data.gpu_value;
 
     let payload = [{
       catalog: 'OFFICIAL',
@@ -466,7 +435,6 @@ export class ChartReleaseAddComponent implements OnDestroy {
         },
         dnsPolicy: data.dnsPolicy,
         externalInterfaces: ext_interfaces,
-        gpuConfiguration: GPUObj,
         hostPathVolumes: hpVolumes,
         hostNetwork: data.hostNetwork,
         image: { 
