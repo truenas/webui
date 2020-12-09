@@ -139,7 +139,8 @@ export class PlexFormComponent {
           name: 'port',
           placeholder: helptext.plexForm.plexTCP,
           validation: helptext.chartForm.portForwardingList.containerPort.validation,
-          value: 32400
+          value: 32400,
+          readonly: true
         }
       ],
       colspan: 2,
@@ -251,6 +252,11 @@ export class PlexFormComponent {
      }
 
   resourceTransformIncomingRestData(data) {
+    let newEnv = [];
+    for (let i in data.config.extraEnv) {
+      newEnv.push({ name: i, value: data.config.extraEnv[i]})
+    }
+    data.config.extraEnv = newEnv;
     this.name = data.name;
     data.config.release_name = data.name;
     data.config.repository = data.config.image.repository;

@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { DialogService } from '../../../services/index';
+import { ApplicationsService } from '../applications.service';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import { ModalService } from '../../../services/modal.service';
@@ -135,7 +136,7 @@ export class NextCloudFormComponent {
   ]
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
-    private modalService: ModalService) {
+    private modalService: ModalService, private appService: ApplicationsService) {
       this.getRow = this.modalService.getRow$.subscribe((rowName: string) => {
         this.rowName = rowName;
         this.queryCallOption = [["id", "=", rowName]];

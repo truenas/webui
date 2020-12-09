@@ -177,12 +177,13 @@ export class MinioFormComponent {
   }
 
   resourceTransformIncomingRestData(data) {
-    console.log(data)
+    let newEnv = [];
+    for (let i in data.config.environment) {
+      newEnv.push({ name: i, value: data.config.environment[i]})
+    }
+    data.config.environment = newEnv;
     this.name = data.name;
     data.config.release_name = data.name;
-    // data.config.username = data.config.nextcloud.username;
-    // data.config.password = data.config.nextcloud.password;
-    // data.config.host = data.config.nextcloud.host;
     data.config.repository = data.config.image.repository;
     data.config.tag = data.config.image.tag;
     data.config.pullPolicy = data.config.image.pullPolicy;
@@ -197,7 +198,6 @@ export class MinioFormComponent {
   }
 
   customSubmit(data) {
-    console.log(data)
     let envObj = {};
     data.environment.forEach(item => {
       let key = envObj[name]
@@ -227,7 +227,6 @@ export class MinioFormComponent {
         minioHostPath: data.minioHostPath
       }
     });
-    console.log(payload)
 
     if (this.rowName) {
       delete payload[0].catalog;
