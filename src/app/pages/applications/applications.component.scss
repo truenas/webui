@@ -3,9 +3,18 @@
     width: 350px;
 
     .content-wrapper {
+        .logo-container {
+          height: 160px;
+          width: 160px;
+          background-color: var(--contrast-lighter);
+        }
         .logo {
-            height: 160px;
-            width: 160px;
+          width: calc(100% - 32px);
+          height: 100%;
+          background-position: center;
+          background-size: contain;
+          background-repeat: no-repeat;
+          margin-left: 16px;
         }
 
         .content {
