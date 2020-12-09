@@ -31,7 +31,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
   summary_title = 'Chart Release Summary';
   private entityWizard: any;
   private destroy$ = new Subject();
-  // private isLinear = true;
+  private isLinear = true;
 
   protected fieldConfig: FieldConfig[];
   public wizardConfig: Wizard[] = [
