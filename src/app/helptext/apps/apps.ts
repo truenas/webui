@@ -232,16 +232,6 @@ export default {
       host: {
         placeholder: T('Host Interface'),
         tooltip: T(''),
-        options: [
-          {
-            value: 'enp0s3',
-            label: T('enp0s3 Interface')
-          },
-          {
-            value: 'enp0s8',
-            label: T('enp0s8 Interface')
-          }
-        ]
       },
       ipam: {
         placeholder: T('IP Address Management'),
@@ -454,10 +444,14 @@ export default {
     title: T('Minio'),
     accessLabel: T('Access'),
     accessKey: {
-      placeholder: T('Access Key')
+      placeholder: T('Access Key'),
+      tooltip: T('Minimum length: 5 characters. Maximum length: 20 characters'),
+      validation: [Validators.min(5), Validators.max(20)]
     },
     secretKey: {
-      placeholder: T('Secret Key')
+      placeholder: T('Secret Key'),
+      tooltip: T('Minimum length: 8 characters. Maximum length: 40 characters'),
+      validation: [Validators.min(8), Validators.max(40)]
     },
     environment: {
       label: T('Minio Image Environment'),

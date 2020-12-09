@@ -1,7 +1,9 @@
 <div fxLayout="row wrap" fxLayoutAlign="center center">
   <mat-card class="chart-item" *ngFor="let item of chartItems">
       <div class="content-wrapper" fxLayout="row">
-        <img class="logo" src="{{ item.icon }}">
+        <div>
+          <img class="logo" src="{{ item.icon }}">
+        </div>
         <div class=content-box>
           <div class="content">
             <strong class="chart-name">{{ item.name }}</strong><span class="version"> {{ item.version}}</span>

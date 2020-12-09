@@ -36,6 +36,7 @@ export class MinioFormComponent {
           name: 'release_name',
           placeholder: helptext.chartForm.release_name.placeholder,
           tooltip: helptext.chartForm.release_name.tooltip,
+          required: true
         }
       ],
       colspan: 2
@@ -80,6 +81,8 @@ export class MinioFormComponent {
           name: 'accessKey',
           togglePw: true,
           placeholder: helptext.minioForm.accessKey.placeholder,
+          tooltip: helptext.minioForm.accessKey.tooltip,
+          // validation: helptext.minioForm.accessKey.validation,
           required: true
         },
         {
@@ -87,6 +90,8 @@ export class MinioFormComponent {
           name: 'secretKey',
           togglePw: true,
           placeholder: helptext.minioForm.secretKey.placeholder,
+          tooltip: helptext.minioForm.secretKey.tooltip,
+          // validation: helptext.minioForm.secretKey.validation,
           required: true
         },
       ]

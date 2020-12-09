@@ -45,4 +45,8 @@ export class ApplicationsService {
     return this.ws.call('chart.release.pod_console_choices', [name]);
   }
 
+  getInterfaces() {
+    return this.ws.call('interface.query');
+  }
+
  }

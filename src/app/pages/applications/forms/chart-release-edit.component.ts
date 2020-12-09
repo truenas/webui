@@ -8,6 +8,7 @@ import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interf
 import { ModalService } from '../../../services/modal.service';
 import { DialogService } from '../../../services/index';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { ApplicationsService } from '../applications.service';
 import  helptext  from '../../../helptext/apps/apps';
 
 @Component({
@@ -24,6 +25,7 @@ export class ChartReleaseEditComponent {
   private name: string;
   private getRow = new Subscription;
   private rowName: string;
+  private interfaceList = [];
   private dialogRef: any;
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
@@ -169,7 +171,7 @@ export class ChartReleaseEditComponent {
               name: 'hostInterface',
               placeholder: helptext.chartForm.externalInterfaces.host.placeholder,
               tooltip: helptext.chartForm.externalInterfaces.host.tooltip,
-              options: helptext.chartForm.externalInterfaces.host.options,
+              options: this.interfaceList
             },
             {
               type: 'select',
@@ -380,7 +382,12 @@ export class ChartReleaseEditComponent {
   ]
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
-    private modalService: ModalService) {
+    private modalService: ModalService, private appService: ApplicationsService) {
+      this.appService.getInterfaces().subscribe(res => {
+        res.forEach(item => {
+          this.interfaceList.push({ label: item.id, value: item.name})
+        })
+      }) 
       this.getRow = this.modalService.getRow$.subscribe((rowName: string) => {
         this.rowName = rowName;
         this.queryCallOption = [["id", "=", rowName]];
@@ -430,7 +437,7 @@ export class ChartReleaseEditComponent {
     }
 
     let hpVolumes = [];
-    if (data.hostPathVolumes[0].hostPort) {
+    if (data.hostPathVolumes[0].hostPath) {
       hpVolumes = data.hostPathVolumes;
     }
 

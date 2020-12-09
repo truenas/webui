@@ -37,6 +37,7 @@ export class PlexFormComponent {
           name: 'release_name',
           placeholder: helptext.chartForm.release_name.placeholder,
           tooltip: helptext.chartForm.release_name.tooltip,
+          required: true
         }
       ],
       colspan: 2

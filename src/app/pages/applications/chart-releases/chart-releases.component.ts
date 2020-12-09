@@ -77,7 +77,7 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   refreshForms() {
-    this.chartReleaseForm = new ChartReleaseEditComponent(this.mdDialog,this.dialogService,this.modalService);
+    this.chartReleaseForm = new ChartReleaseEditComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
     this.plexForm = new PlexFormComponent(this.mdDialog,this.dialogService,this.modalService,this.sysGeneralService);
     this.nextCloudForm = new NextCloudFormComponent(this.mdDialog,this.dialogService,this.modalService);
     this.minioForm = new MinioFormComponent(this.mdDialog,this.dialogService,this.modalService);
@@ -85,6 +85,7 @@ export class ChartReleasesComponent implements OnInit {
 
   refreshChartReleases() {
     this.appService.getChartReleases().subscribe(charts => {
+      console.log(charts)
       this.chartItems = [];
       let repos = [];
       let iconPath = this.tempIcon;

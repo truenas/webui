@@ -10,6 +10,7 @@ import { EntityWizardComponent } from '../../common/entity/entity-wizard/entity-
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { ModalService } from 'app/services/modal.service';
 import { DialogService } from '../../../services/index';
+import { ApplicationsService } from '../applications.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import  helptext  from '../../../helptext/apps/apps';
 
@@ -31,7 +32,8 @@ export class ChartReleaseAddComponent implements OnDestroy {
   summary_title = 'Chart Release Summary';
   private entityWizard: any;
   private destroy$ = new Subject();
-  private isLinear = true;
+  // private isLinear = true;
+  private interfaceList = [];
 
   protected fieldConfig: FieldConfig[];
   public wizardConfig: Wizard[] = [
@@ -145,7 +147,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
               name: 'hostInterface',
               placeholder: helptext.chartForm.externalInterfaces.host.placeholder,
               tooltip: helptext.chartForm.externalInterfaces.host.tooltip,
-              options: helptext.chartForm.externalInterfaces.host.options,
+              options: this.interfaceList,
             },
             {
               type: 'select',
@@ -347,7 +349,14 @@ export class ChartReleaseAddComponent implements OnDestroy {
   ]
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
-    private modalService: ModalService) { }
+    private modalService: ModalService, private appService: ApplicationsService) {
+      this.appService.getInterfaces().subscribe(res => {
+        res.forEach(item => {
+          this.interfaceList.push({ label: item.id, value: item.name})
+        })
+      })
+
+     }
 
   resourceTransformIncomingRestData(data) {
     data.config.release_name = data.name;
@@ -397,7 +406,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
     }
 
     let hpVolumes = [];
-    if (data.hostPathVolumes[0].hostPort) {
+    if (data.hostPathVolumes[0].hostPath) {
       hpVolumes = data.hostPathVolumes;
     }
 
