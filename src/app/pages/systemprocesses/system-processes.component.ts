@@ -5,10 +5,12 @@ import { CopyPasteMessageComponent } from '../shell/copy-paste-message.component
 import { Terminal } from 'xterm';
 import { AttachAddon } from 'xterm-addon-attach';
 import { FitAddon } from 'xterm-addon-fit';
+import * as FontFaceObserver from 'fontfaceobserver';
 
 @Component({
   selector: 'app-system-processes',
   templateUrl: './system-processes.component.html',
+  styleUrls: ['./system-processes.component.scss'],
   providers: [ShellService],
   encapsulation: ViewEncapsulation.None,
 })
@@ -27,7 +29,7 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
   public connectionId: string;
   clearLine = "\u001b[2K\r"
   font_size = 14;
-  font_name = 'Courier New';
+  font_name = 'Inconsolata';
 
   ngOnInit() {
     const self = this;
@@ -108,9 +110,16 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     this.xterm.loadAddon(attachAddon);
     this.fitAddon = new FitAddon();
     this.xterm.loadAddon(this.fitAddon);
-    this.xterm.open(this.container.nativeElement, true);
-    this.fitAddon.fit();
-    this.xterm._initialized = true;
+    
+    var font = new FontFaceObserver(this.font_name);
+    
+    font.load().then((e) => {
+      this.xterm.open(this.container.nativeElement);
+      this.fitAddon.fit();
+      this.xterm._initialized = true;
+    }, function (e) {
+      console.log('Font is not available', e);
+    });    
   }
 
   resizeTerm(){
@@ -136,11 +145,24 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     return this.ws.call('auth.generate_token');
   }
 
-  onShellRightClick(): false {
+  onRightClick(): false {
     this.dialog.open(CopyPasteMessageComponent);
     return false;
   }
 
+  onResize(event) {
+    this.resizeTerm();
+  }
+
+  onFontSizeChanged(event) {
+    this.resizeTerm();
+  }
+
+  resetDefault() {
+    this.font_size = 14;
+    this.resizeTerm();
+  }
+  
   constructor(private ws: WebSocketService, public ss: ShellService, private dialog: MatDialog) {
   }
 }

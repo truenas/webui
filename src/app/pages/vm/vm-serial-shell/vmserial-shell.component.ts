@@ -8,6 +8,7 @@ import { ShellService, WebSocketService } from '../../../services';
 import { Terminal } from 'xterm';
 import { AttachAddon } from 'xterm-addon-attach';
 import { FitAddon } from 'xterm-addon-fit';
+import * as FontFaceObserver from 'fontfaceobserver';
 
 @Component({
   selector: 'app-vmserial-shell',
@@ -23,13 +24,14 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
   cols: string;
   rows: string;
   font_size: number;
-  font_name = 'Courier New';
+  font_name = 'Inconsolata';
   public connectionId: string;
   public token: any;
   public xterm: any;
   private shellSubscription: any;
   public shell_tooltip = helptext.serial_shell_tooltip;
   private fitAddon: any;
+  
   clearLine = "\u001b[2K\r"
   protected pk: string;
 
@@ -67,8 +69,17 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     }
   };
 
+  onResize(event) {
+    this.resizeTerm();
+  }
+
+  onFontSizeChanged(event) {
+    this.resizeTerm();
+  }
+
   resetDefault() {
     this.font_size = 14;
+    this.resizeTerm();
   }
 
   ngOnChanges(changes: {
@@ -130,9 +141,16 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     this.xterm.loadAddon(attachAddon);
     this.fitAddon = new FitAddon();
     this.xterm.loadAddon(this.fitAddon);
-    this.xterm.open(this.container.nativeElement, true);
-    this.fitAddon.fit();
-    this.xterm._initialized = true;
+
+    var font = new FontFaceObserver(this.font_name);
+    
+    font.load().then((e) => {
+      this.xterm.open(this.container.nativeElement);
+      this.fitAddon.fit();
+      this.xterm._initialized = true;
+    }, function (e) {
+      console.log('Font is not available', e);
+    });    
   }
 
   resizeTerm(){
@@ -159,8 +177,9 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     return this.ws.call('auth.generate_token');
   }
 
-  onShellRightClick(): false {
+  onRightClick(): false {
     this.dialog.open(CopyPasteMessageComponent);
     return false;
   }
+  
 }

@@ -9,6 +9,7 @@ import helptext from "./../../../helptext/shell/shell";
 import { Terminal } from 'xterm';
 import { AttachAddon } from 'xterm-addon-attach';
 import { FitAddon } from 'xterm-addon-fit';
+import * as FontFaceObserver from 'fontfaceobserver';
 
 @Component({
   selector: 'app-jail-shell',
@@ -27,7 +28,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
   cols: string;
   rows: string;
   font_size: number;
-  font_name = 'Courier New';
+  font_name = 'Inconsolata';
   public connectionId: string;
   public token: any;
   public xterm: any;
@@ -76,8 +77,22 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     }
   };
 
+  onRightClick(): false {
+    this.dialog.open(CopyPasteMessageComponent);
+    return false;
+  }
+  
+  onResize(event) {
+    this.resizeTerm();
+  }
+
+  onFontSizeChanged(event) {
+    this.resizeTerm();
+  }
+
   resetDefault() {
     this.font_size = 14;
+    this.resizeTerm();
   }
 
   ngOnChanges(changes: {
@@ -143,9 +158,16 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     this.xterm.loadAddon(attachAddon);
     this.fitAddon = new FitAddon();
     this.xterm.loadAddon(this.fitAddon);
-    this.xterm.open(this.container.nativeElement, true);
-    this.fitAddon.fit();
-    this.xterm._initialized = true;
+    
+    var font = new FontFaceObserver(this.font_name);
+    
+    font.load().then((e) => {
+      this.xterm.open(this.container.nativeElement);
+      this.fitAddon.fit();
+      this.xterm._initialized = true;
+    }, function (e) {
+      console.log('Font is not available', e);
+    });    
   }
 
   resizeTerm(){
