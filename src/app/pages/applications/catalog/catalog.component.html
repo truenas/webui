@@ -1,7 +1,9 @@
 <div fxLayout="row wrap" fxLayoutAlign="center center">
     <mat-card class="catalog-item" *ngFor="let item of catalogApps">
         <div class="content-wrapper" fxLayout="row">
-            <img class="logo" src="{{ item.icon_url}}">
+          <div class="logo-container">
+            <div class="logo" style="background-image: url('{{ item.icon_url}}');"></div>
+          </div>
             <div class=content>
                 <div class="catalog-title">
                     <h3>{{ item.name }}</h3>
