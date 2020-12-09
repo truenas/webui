@@ -23,7 +23,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild('terminal', { static: true}) container: ElementRef;
   cols: string;
   rows: string;
-  font_size: number;
+  font_size = 14;
   font_name = 'Inconsolata';
   public connectionId: string;
   public token: any;

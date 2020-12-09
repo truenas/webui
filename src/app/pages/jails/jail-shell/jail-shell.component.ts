@@ -27,7 +27,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
   // xterm variables
   cols: string;
   rows: string;
-  font_size: number;
+  font_size = 14;
   font_name = 'Inconsolata';
   public connectionId: string;
   public token: any;
