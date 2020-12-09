@@ -10,6 +10,7 @@ import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { ChartReleaseEditComponent } from '../forms/chart-release-edit.component';
 import { PlexFormComponent } from '../forms/plex-form.component';
+import { NextCloudFormComponent } from '../forms/nextcloud-form.component';
 
 import  helptext  from '../../../helptext/apps/apps';
 
@@ -26,6 +27,7 @@ export class ChartReleasesComponent implements OnInit {
   private rollbackChartName: string;
   private chartReleaseForm: ChartReleaseEditComponent;
   private plexForm: PlexFormComponent;
+  private nextCloudForm: NextCloudFormComponent;
   private refreshTable: Subscription;
   private refreshForm: Subscription;
 
@@ -73,6 +75,7 @@ export class ChartReleasesComponent implements OnInit {
   refreshForms() {
     this.chartReleaseForm = new ChartReleaseEditComponent(this.mdDialog,this.dialogService,this.modalService);
     this.plexForm = new PlexFormComponent(this.mdDialog,this.dialogService,this.modalService,this.sysGeneralService);
+    this.nextCloudForm = new NextCloudFormComponent(this.mdDialog,this.dialogService,this.modalService,this.sysGeneralService);
   }
 
   refreshChartReleases() {
@@ -202,6 +205,10 @@ export class ChartReleasesComponent implements OnInit {
       
       case 'plex':
         this.modalService.open('slide-in-form', this.plexForm, name);
+        break;
+
+      case 'nextcloud':
+        this.modalService.open('slide-in-form', this.nextCloudForm, name);
         break;
     }
   }

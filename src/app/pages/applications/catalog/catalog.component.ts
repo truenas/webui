@@ -16,6 +16,7 @@ import { ApplicationsService } from '../applications.service';
 import { KubernetesSettingsComponent } from '../forms/kubernetes-settings.component';
 import { ChartReleaseAddComponent } from '../forms/chart-release-add.component';
 import { PlexFormComponent } from '../forms/plex-form.component';
+import { NextCloudFormComponent } from '../forms/nextcloud-form.component';
 import  helptext  from '../../../helptext/apps/apps';
 
 @Component({
@@ -34,6 +35,7 @@ export class CatalogComponent implements OnInit {
   private kubernetesForm: KubernetesSettingsComponent;
   private chartReleaseForm: ChartReleaseAddComponent;
   private plexForm: PlexFormComponent;
+  private nextCloudForm: NextCloudFormComponent;
   private refreshForm: Subscription;
   private refreshTable: Subscription;
 
@@ -63,6 +65,7 @@ export class CatalogComponent implements OnInit {
         for (let i in res[0].trains.test) {  // wil eventually add the charts train too
           if (i !== 'ix-chart') {
             let item = res[0].trains.test[i];
+            console.log(item)
             let versions = item.versions;
             let latest, latestDetails;
     
@@ -142,6 +145,7 @@ export class CatalogComponent implements OnInit {
     this.kubernetesForm = new KubernetesSettingsComponent(this.modalService, this.appService);
     this.chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog,this.dialogService,this.modalService);
     this.plexForm = new PlexFormComponent(this.mdDialog,this.dialogService,this.modalService,this.sysGeneralService);
+    this.nextCloudForm = new NextCloudFormComponent(this.mdDialog,this.dialogService,this.modalService,this.sysGeneralService);
   }
 
   checkForConfiguredPool() {
@@ -199,6 +203,7 @@ export class CatalogComponent implements OnInit {
   }
 
   doInstall(name: string) {
+    console.log(name)
     switch (name) {
       case 'ix-chart':
         this.modalService.open('slide-in-form', this.chartReleaseForm);
@@ -206,6 +211,10 @@ export class CatalogComponent implements OnInit {
       
       case 'plex':
         this.modalService.open('slide-in-form', this.plexForm);
+        break;
+
+      case 'nextcloud':
+        this.modalService.open('slide-in-form', this.nextCloudForm);
         break;
     }
   }

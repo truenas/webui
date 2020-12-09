@@ -17,6 +17,7 @@ import { KubernetesSettingsComponent } from './forms/kubernetes-settings.compone
 import { ChartReleaseAddComponent } from './forms/chart-release-add.component';
 import { ChartReleaseEditComponent } from './forms/chart-release-edit.component';
 import { PlexFormComponent } from './forms/plex-form.component';
+import { NextCloudFormComponent } from './forms/nextcloud-form.component';
 
 
 @NgModule({
@@ -37,7 +38,8 @@ import { PlexFormComponent } from './forms/plex-form.component';
     KubernetesSettingsComponent,
     ChartReleaseAddComponent,
     ChartReleaseEditComponent,
-    PlexFormComponent
+    PlexFormComponent,
+    NextCloudFormComponent
   ]
 })
 export class ApplicationsModule { }
