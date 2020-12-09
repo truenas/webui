@@ -23,7 +23,7 @@ export class NextCloudFormComponent {
   protected editCall: string = 'chart.release.update';
   protected isEntity: boolean = true;
 
-  private title= 'Nextcloud';
+  private title = helptext.nextCloudForm.title;
   private name: string;
   private getRow = new Subscription;
   private rowName: string;
@@ -31,7 +31,7 @@ export class NextCloudFormComponent {
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
     {
-      name: 'Name',
+      name: helptext.nextCloudForm.release_name.name,
       width: '100%',
       config: [
         {
@@ -73,33 +73,32 @@ export class NextCloudFormComponent {
       ]
     },
     {
-      name: 'Configuration',
+      name: helptext.nextCloudForm.config.label,
       label: true,
       width: '50%',
       config: [
         {
           type: 'input',
           name: 'host',
-          placeholder: 'Nextcloud Host',
-          tooltip: 'Nextcloud host to create application URLs',
+          placeholder: helptext.nextCloudForm.config.host.placeholder,
+          tooltip: helptext.nextCloudForm.config.host.tooltip,
         },
         {
           type: 'input',
           name: 'username',
-          placeholder: 'Nextcloud Username',
+          placeholder: helptext.nextCloudForm.config.username,
         },
         {
           type: 'input',
           name: 'password',
           togglePw: true,
-          placeholder: 'Nextcloud Password',
-          options: [],
+          placeholder: helptext.nextCloudForm.config.password,
         },
         {
           type: 'input',
           name: 'nodePort',
-          placeholder: 'Nodeport',
-          tooltip: 'Node Port to use for Nextcloud'
+          placeholder: helptext.nextCloudForm.config.nodeport.placeholder,
+          tooltip: helptext.nextCloudForm.config.nodeport.tooltip
         },
       ]
     },
@@ -111,12 +110,12 @@ export class NextCloudFormComponent {
         {
           type: 'checkbox',
           name: 'nextcloudDataHostPathEnabled',
-          placeholder: 'Data Hostpath Enabled',
+          placeholder: helptext.nextCloudForm.nextcloudPath,
         },
         {
           type: 'explorer',
           name: 'nextcloudHostPath',
-          placeholder: 'Data Hostpath',
+          placeholder: helptext.nextCloudForm.nextcloudPath,
           initial: '/mnt',
           explorerType: 'directory',
           isHidden: true,
@@ -144,7 +143,6 @@ export class NextCloudFormComponent {
   }
 
   resourceTransformIncomingRestData(data) {
-    console.log(data)
     this.name = data.name;
     data.config.release_name = data.name;
     data.config.username = data.config.nextcloud.username;
@@ -164,7 +162,6 @@ export class NextCloudFormComponent {
   }
 
   customSubmit(data) {
-    console.log(data)
     let apiCall = this.addCall;
     let payload = [];
     payload.push({

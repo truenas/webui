@@ -384,12 +384,33 @@ export default {
 
     }
 
-
-
   },
   wizardLabels: {
     image: T('Image and Policies'),
     container: T('Container Settings')
+  },
+
+  nextCloudForm: {
+    title: T('Nextcloud'),
+    release_name: {
+      name: T('Name'),
+    },
+    config: {
+      label: T('Configuration'),
+      host: {
+        placeholder: T('Nextcloud Host'),
+        tooltip: T('Nextcloud host to create application URLs'),
+      },
+      username: T('Nextcloud Username'),
+      password: T('Password'),
+      nodeport: {
+        placeholder: T('Nodeport'),
+        tooltip: T('Node Port to use for Nextcloud')
+      }
+    },
+    nextcloudPath: T('Data Hostpath Enabled'),
+    nextCloudHP: T('Data Hostpath')
+
   }
 
 }
