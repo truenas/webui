@@ -62,6 +62,12 @@
               <mat-icon>replay</mat-icon>
               <span>{{'Roll Back' | translate}}</span>
             </button>
+            <button name="update-image" mat-menu-item (click)="updateImage(item.repository, item.tag)" 
+              *ngIf="item.chart_name==='ix-chart'"
+              ix-auto ix-auto-type="option" ix-auto-identifier="update-image">
+              <mat-icon>update</mat-icon>
+              <span>{{'Update Image' | translate}}</span>
+            </button>
             <button name="edit" mat-menu-item (click)="edit(item.name, item.id)"
               ix-auto ix-auto-type="option" ix-auto-identifier="edit">
               <mat-icon>edit</mat-icon>

@@ -248,4 +248,26 @@ export class ChartReleasesComponent implements OnInit {
       })
     })
   }
- }
+
+  updateImage(image: string, tag: string) {
+    this.translate.get(helptext.updateImageDialog.message).subscribe(msg => {
+      this.dialogService.confirm(helptext.updateImageDialog.title, msg + image + '?', true).subscribe(res => {
+        if (res) {
+          this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
+            helptext.charts.update_dialog.job) }, disableClose: true});
+          this.dialogRef.componentInstance.setCall('container.image.pull', [{from_image: image,tag:tag}]);
+          this.dialogRef.componentInstance.submit();
+          this.dialogRef.componentInstance.success.subscribe(() => {
+            this.dialogService.closeAllDialogs();
+            this.dialogService.Info(helptext.updateImageDialog.success, helptext.updateImageDialog.successMsg,
+               '300px', 'info', true);
+            this.refreshChartReleases();
+          });
+          this.dialogRef.componentInstance.failure.subscribe((err) => {
+            // new EntityUtils().handleWSError(this, err, this.dialogService);
+          })
+        }
+      })
+    })
+  }
+}

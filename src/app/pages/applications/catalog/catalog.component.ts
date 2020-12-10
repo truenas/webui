@@ -199,26 +199,21 @@ export class CatalogComponent implements OnInit {
   doPoolSelect(entityDialog: any) {
     const self = entityDialog.parent;
     const pool = entityDialog.formGroup.controls['pools'].value;
-
-    if (!self.selectedPool) {
-      self.selectPool();
-    } else { 
-      self.dialogRef = self.mdDialog.open(EntityJobComponent, { data: { 'title': (
-        helptext.choosePool.jobTitle) }, disableClose: true});
-      self.dialogRef.componentInstance.setCall('kubernetes.update', [{pool: pool}]);
-      self.dialogRef.componentInstance.submit();
-      self.dialogRef.componentInstance.success.subscribe((res) => {
-        self.selectedPool = pool;
-        self.dialogService.closeAllDialogs();
-        self.translate.get(helptext.choosePool.message).subscribe(msg => {
-          self.dialogService.Info(helptext.choosePool.success, msg + res.result.pool,
-            '500px', 'info', true);
-        })
-      });
-      self.dialogRef.componentInstance.failure.subscribe((err) => {
-        new EntityUtils().handleWSError(self, err, self.dialogService);
+    self.dialogRef = self.mdDialog.open(EntityJobComponent, { data: { 'title': (
+      helptext.choosePool.jobTitle) }, disableClose: true});
+    self.dialogRef.componentInstance.setCall('kubernetes.update', [{pool: pool}]);
+    self.dialogRef.componentInstance.submit();
+    self.dialogRef.componentInstance.success.subscribe((res) => {
+      self.selectedPool = pool;
+      self.dialogService.closeAllDialogs();
+      self.translate.get(helptext.choosePool.message).subscribe(msg => {
+        self.dialogService.Info(helptext.choosePool.success, msg + res.result.pool,
+          '500px', 'info', true);
       })
-    }
+    });
+    self.dialogRef.componentInstance.failure.subscribe((err) => {
+      new EntityUtils().handleWSError(self, err, self.dialogService);
+    })
   }
 
   doInstall(name: string) {

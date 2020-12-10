@@ -476,4 +476,11 @@ export default {
   nextcloudInfo: T('Nextcloud:  a file sharing server that puts the control \
  and security of your own data back into your hands.'),
 
+ updateImageDialog: {
+   title: T('Update Image'),
+   message: T('Update the image for '),
+   success: T('Success'),
+   successMsg: T('The image was updated.')
+ }
+
 }
