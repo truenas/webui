@@ -153,6 +153,9 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     const size = this.getSize();
 
     const setting = {
+      theme: {
+        background: 'transparent'
+      },
       cursorBlink: false,
       tabStopWidth: 8,
       cols: size.cols,
@@ -160,6 +163,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
       focus: true,
       fontSize: this.font_size,
       fontFamily: this.font_name,
+      allowTransparency: true
     };
 
     this.xterm = new Terminal(setting);
@@ -228,7 +232,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     this.ss.connect();
 
     this.refreshToolbarButtons();  
-    
+
     this.ss.shellConnected.subscribe((res)=> {
       this.shellConnected = res.connected;
       this.connectionId = res.id;
