@@ -8,6 +8,11 @@ import { Terminal } from 'xterm';
 import { AttachAddon } from 'xterm-addon-attach';
 import { FitAddon } from 'xterm-addon-fit';
 import * as FontFaceObserver from 'fontfaceobserver';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { Subject } from 'rxjs';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { T } from 'app/translate-marker';
+
 @Component({
   selector: 'app-shell',
   templateUrl: './shell.component.html',
@@ -30,6 +35,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   public resize_terminal = true;
   private shellSubscription: any;
   private fitAddon: any;
+  public formEvents: Subject<CoreEvent>;
 
   public usage_tooltip = helptext.usage_tooltip;
 
@@ -53,6 +59,62 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     if(this.shellSubscription){
       this.shellSubscription.unsubscribe();
     }
+  }
+  
+  refreshToolbarButtons() {
+    this.formEvents = new Subject();
+    this.formEvents.subscribe((evt: CoreEvent) => {
+      if (evt.data.event_control == 'restore') {
+        this.resetDefault();
+        this.refreshToolbarButtons();
+      } else if (evt.data.event_control == 'reconnect') {
+        this.reconnect();
+        this.refreshToolbarButtons();
+      } else if (evt.data.event_control == 'fontsize') {
+        this.font_size = evt.data.fontsize;
+        this.resizeTerm();
+      }
+    });
+
+    let controls = [];
+    if (this.shellConnected) {
+      controls = [
+        {
+          name: 'fontsize',
+          label: 'Set font size',
+          type: 'slider',
+          min: 10,
+          max: 20, 
+          step: 1,
+          value: this.font_size,
+        },
+        {
+          name: 'restore',
+          label: 'Restore default',
+          type: 'button',
+          color: 'primary',
+        },
+      ];
+    } else {
+      controls = [
+        {
+          name: 'reconnect',
+          label: 'Reconnect',
+          type: 'button',
+          color: 'primary',
+        },
+      ];
+    }
+    // Setup Global Actions
+    const actionsConfig = {
+      actionType: EntityToolbarComponent,
+      actionConfig: {
+        target: this.formEvents,
+        controls: controls,
+      }
+    };
+
+    this.core.emit({name:"GlobalActions", data: actionsConfig, sender: this});
   }
 
   onResize(event) {
@@ -165,9 +227,13 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     this.ss.token = res;
     this.ss.connect();
 
+    this.refreshToolbarButtons();  
+    
     this.ss.shellConnected.subscribe((res)=> {
       this.shellConnected = res.connected;
       this.connectionId = res.id;
+      
+      this.refreshToolbarButtons();      
       this.resizeTerm();
     })
   }
@@ -180,6 +246,6 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     this.ss.connect();
   }
 
-  constructor(private ws: WebSocketService, public ss: ShellService, public translate: TranslateService, private dialog: MatDialog) {
+  constructor(protected core:CoreService, private ws: WebSocketService, public ss: ShellService, public translate: TranslateService, private dialog: MatDialog) {
   }
 }
