@@ -135,15 +135,15 @@ def the_service_should_be_enabled_with_no_errors(driver):
     time.sleep(5)
 
 
-@then(parsers.parse('verify ssh root@"{host}" beadm list with the NAS root password "{password}"'))
-def verify_ssh_root_hostname_beadm_list_with_the_nas_root_password(driver, host, password):
-    """verify ssh root@"{host}" beadm list with the NAS root password "{password}"."""
+@then(parsers.parse('run ssh root@"{host}" with root password "{password}"'))
+def run_ssh_root_host_with_root_password(driver, host, password):
+    """run ssh root@"{host}" with root password "{password}"."""
     global ssh_result
-    ssh_result = ssh_cmd('beadm list', 'root', password, host)
+    ssh_result = ssh_cmd('ls -la', 'root', password, host)
 
 
-@then('SSH connection should be successful and the boot environments of should be listed')
-def ssh_connection_should_be_successful_and_the_boot_environments_of_should_be_listed(driver):
-    """SSH connection should be successful and the boot environments of should be listed."""
+@then('the root user should be able to login with ssh')
+def the_root_user_should_be_able_to_login_with_ssh(driver):
+    """the root user should be able to login with ssh."""
     assert ssh_result['result'], ssh_result['output']
-    assert 'default' in ssh_result['output'], ssh_result['output']
+    assert '..' in ssh_result['output'], ssh_result['output']
