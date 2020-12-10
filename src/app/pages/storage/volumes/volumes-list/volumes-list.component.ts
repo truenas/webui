@@ -76,8 +76,8 @@ export class VolumesListTableConfig implements InputTableConf {
   public columns: Array < any > = [
     { name: T('Name'), prop: 'name', always_display: true  },
     { name: T('Type'), prop: 'type', },
-    { name: T('Used'), prop: 'used_parsed', filesizePipe: false},
-    { name: T('Available'), prop: 'available_parsed', filesizePipe: false},
+    { name: T('Used'), prop: 'used_parsed', filesizePipe: true},
+    { name: T('Available'), prop: 'available_parsed', filesizePipe: true},
     { name: T('Compression'), prop: 'compression', hidden: true },
     { name: T('Compression Ratio'), prop: 'compressratio', hidden: true },
     { name: T('Readonly'), prop: 'readonly', },
@@ -1755,8 +1755,8 @@ export class VolumesListTableConfig implements InputTableConf {
         }
         // add name, available and used into the data object
         dataObj.name = dataObj.name.split('/').pop();
-        dataObj.available_parsed = this.storageService.convertBytestoHumanReadable(dataObj.available.parsed || 0);
-        dataObj.used_parsed = this.storageService.convertBytestoHumanReadable(dataObj.used.parsed || 0);
+        dataObj.available_parsed = dataObj.available.parsed;
+        dataObj.used_parsed = dataObj.used.parsed;
         dataObj.is_encrypted_root = (dataObj.id === dataObj.encryption_root);
         if (dataObj.is_encrypted_root) {
           this.parentVolumesListComponent.has_encrypted_root[parent.pool] = true;
@@ -1863,8 +1863,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
               if (pool.children[0].is_encrypted_root) {
                 this.has_encrypted_root[pool.name] = true;
               }
-              pool.children[0].available_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].available.parsed || 0);
-              pool.children[0].used_parsed = this.storage.convertBytestoHumanReadable(pool.children[0].used.parsed || 0);
+              pool.children[0].available_parsed = pool.children[0].available.parsed;
+              pool.children[0].used_parsed = pool.children[0].used.parsed;
               pool.availStr = (<any>window).filesize(pool.children[0].available.parsed, { standard: "iec" });
               pool.children[0].has_encrypted_children = false;
               for (let i = 0; i < datasets.length; i++) {
@@ -1876,8 +1876,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
               }
             } catch (error) {
               pool.availStr = "" + pool.children[0].available.parsed;
-              pool.children[0].available_parsed = "Unknown";
-              pool.children[0].used_parsed = "Unknown";
+              pool.children[0].available_parsed = 0;
+              pool.children[0].used_parsed = 0;
             }
 
             try {
