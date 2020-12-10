@@ -52,6 +52,7 @@ export class DiskListComponent {
 	public acousticLevel: Array<any> = [];
 	public diskToggle: boolean;
 	public SMARToptions: Array<any> = [];
+	private SMARTdiskChoices: any = {};
 
 	public multiActions: Array<any> = [{
 		id: "medit",
@@ -120,9 +121,11 @@ export class DiskListComponent {
 		this.ws.call('disk.get_unused', []).subscribe((unused_res) => {
 			this.unused = unused_res;
 		});
+		this.ws.call('smart.test.disk_choices').subscribe(res => this.SMARTdiskChoices = res)
 	}
 
 	getActions(parentRow) {
+		
 		const actions = [{
 			id: parentRow.name,
 			icon: 'edit',
@@ -141,17 +144,23 @@ export class DiskListComponent {
 			onClick: (row) => {
 				this.manualTest(row);
 			}
-		}, {
-			id: parentRow.name,
-			icon: 'format_list_bulleted',
-			name: 'smartresults',
-			label: T("S.M.A.R.T Test Results"),
-			onClick: (row) => {
-				this.router.navigate(new Array('/').concat([
-					"storage", "disks", "smartresults", row.name
-				]));
-			}
 		}];
+		
+		for(let key in this.SMARTdiskChoices) {
+			if(key === parentRow.identifier) {
+				actions.push({
+					id: parentRow.name,
+					icon: 'format_list_bulleted',
+					name: 'smartresults',
+					label: T("S.M.A.R.T Test Results"),
+					onClick: (row) => {
+						this.router.navigate(new Array('/').concat([
+							"storage", "disks", "smartresults", row.name
+						]));
+					}
+				});
+			}
+		}
 		if (_.find(this.unused, { "name": parentRow.name })) {
 			actions.push({
 				id: parentRow.name,
