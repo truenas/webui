@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { TaskService, StorageService } from '../../../../services/';
+import { TaskService, StorageService, WebSocketService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import helptext from '../../../../helptext/task-calendar/smart/smart';
 
@@ -102,16 +102,19 @@ export class SmartFormComponent {
   protected pk: any;
 
   constructor(protected router: Router,
+              protected ws: WebSocketService,
               protected taskService: TaskService,
               protected storageService: StorageService,
               protected entityFormService: EntityFormService,
               protected aroute: ActivatedRoute) {
     this.disk_field = _.find(this.fieldSets[0].config, { 'name': 'disks' });
-    this.storageService.listDisks().subscribe((res) => {
-      for (const i in res) {
-        this.disk_field.options.push({ label: res[i].name, value: res[i].identifier })
+    this.ws.call('smart.test.disk_choices').subscribe(
+      (res) => {
+        for (const key in res) {
+          this.disk_field.options.push({ label: res[key], value: key })
+        }
       }
-    });
+    )
   }
 
   resourceTransformIncomingRestData(data) {
