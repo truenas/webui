@@ -326,9 +326,6 @@ def starting_with_sda_click__click_wipe_check_confirm_and_click_continue_repeat_
         driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
         assert wait_on_element(driver, 1, 7, '//span[contains(.,"Disk Wiped successfully")]')
         driver.find_element_by_xpath('//button[contains(.,"CLOSE")]').click()
-        time.sleep(1)
-        driver.refresh()
-        assert wait_on_element(driver, 1, 10, '//h1[contains(.,"Disks")]')
 
 
 @then('navigate to Storage click Create')
