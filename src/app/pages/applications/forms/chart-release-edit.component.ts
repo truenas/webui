@@ -387,9 +387,16 @@ export class ChartReleaseEditComponent {
     data.config.searches = data.config.dnsConfig.searches;
     if (data.config.externalInterfaces) {
       data.config.externalInterfaces.forEach(i => {
+        let tempArr = [];
+          i.ipam.staticIPConfigurations.forEach(j => {
+              tempArr.push({staticIP: j})
+          })
+          i.staticIPConfigurations = tempArr;
+        i.staticRoutes = i.ipam.staticRoutes;
         i.ipam = i.ipam.type;
       })
     }
+    console.log(data)
     return data.config;
   }
 
@@ -410,6 +417,7 @@ export class ChartReleaseEditComponent {
   }
 
   customSubmit(data) {
+    console.log(data)
     let envVars = [];
     if (data.containerEnvironmentVariables[0].name) {
       envVars = data.containerEnvironmentVariables;
