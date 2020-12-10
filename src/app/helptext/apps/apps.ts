@@ -426,7 +426,7 @@ export default {
         label: T('Extra Environment Variables')
       }
     },
-    plexTCP: T('Plexservice TCP'),
+    plexTCP: T('Plex Node Port'),
     transcode: {
       hostpathEnabled: T('Transcode Hostpath Enabled'),
       hostPath: T('Transcode Hostpath')

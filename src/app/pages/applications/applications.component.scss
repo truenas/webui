@@ -21,10 +21,12 @@
             text-align: center;
             padding: 1rem;
             position: relative;
-            left: 20px;
+            left: 15px;
+            width: 140px;
 
             .badge-area {
                 height: 18px;
+                width: 70px;
                 margin: 13px auto;
 
                 .partner-badge {
@@ -57,7 +59,7 @@
     .logo-container {
       height: 160px;
       width: 160px;
-      // background-color: var(--contrast-lighter);
+      background-color: var(--contrast-lighter);
     }
     .logo {
       width: calc(100% - 32px);
@@ -70,6 +72,7 @@
 
       .content-box {
         width: 340px;
+        height: 130px;
       }
 
       .chart-name {
@@ -79,11 +82,11 @@
       .content {
           text-align: center;
           padding: 1rem;
-          width: 210px;     
+          width: 210px;    
       }
       .chart-button-row {
-        position: relative;
-        top: 30px;
+        position: absolute;
+        bottom: 5px;
         right: 15px;
       } 
   }
@@ -91,8 +94,13 @@
   .more-info {
     position: absolute;
     top: 10px;
-    right: 10px;
+    right: 0;
   } 
+
+  .docker-info {
+    font-size: smaller;
+    opacity: .7;
+  }
 
   .status {
     padding: 3px;
@@ -115,8 +123,8 @@
 
   .ports {
     position: absolute;
-    bottom: 15px;
-    left: 150px;
+    bottom: 20px;
+    left: 170px;
   }
 
 }

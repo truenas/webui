@@ -12,6 +12,10 @@
                 {{ 'Update available' | translate}}: {{ '???' }}
             </div>
             <ng-template #elseBlock><div>{{ 'Up to date' | translate }}</div></ng-template>
+            <ng-container *ngIf="item.chart_name==='ix-chart'">
+              <div class="repository docker-info">{{ 'Image' | translate }}: {{ item.repository }}</div>
+              <div class="tag docker-info">{{'Tag' | translate }}: {{ item.tag }}</div>
+            </ng-container>
           </div>
 
           <div class="chart-button-row" fxLayout="row" fxLayoutAlign="end end">
@@ -32,13 +36,13 @@
         </div>
       </div>
 
-      <div class="ports" textLimiter threshold="30">
+      <div class="ports" textLimiter threshold="28">
         {{ item.used_ports }}
       </div>
 
       <div class="more-info">
           <span class="status" [ngClass]="item.status==='ACTIVE' ? 'active' : 'other'">{{item.status}}
-            <ng-container *ngIf="item.count">{{ item.count }}</ng-container>
+            <ng-container *ngIf="item.desired > 1">{{ item.count }}</ng-container>
 
           </span>
           <button name="chart-actions" mat-icon-button [matMenuTriggerFor]="actionsMenu"

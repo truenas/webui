@@ -360,24 +360,6 @@ export class ChartReleaseEditComponent {
         }
       ],
       colspan: 2,
-    },
-    {
-      name: helptext.chartForm.gpu.title,
-      label: true,
-      width: '50%',
-      config: [
-        {
-          type: 'input',
-          name: 'gpu_property',
-          placeholder: helptext.chartForm.gpu.property.placeholder,
-          tooltip: helptext.chartForm.gpu.property.tooltip,
-        },
-        {
-          type: 'input',
-          name: 'gpu_value',
-          placeholder: helptext.chartForm.gpu.value.placeholder,
-        }
-      ]
     }
   ]
 
@@ -403,9 +385,11 @@ export class ChartReleaseEditComponent {
     data.config.pullPolicy = data.config.image.pullPolicy;
     data.config.nameservers = data.config.dnsConfig.nameservers;
     data.config.searches = data.config.dnsConfig.searches;
-    data.config.externalInterfaces.forEach(i => {
-      i.ipam = i.ipam.type;
-    })
+    if (data.config.externalInterfaces) {
+      data.config.externalInterfaces.forEach(i => {
+        i.ipam = i.ipam.type;
+      })
+    }
     return data.config;
   }
 

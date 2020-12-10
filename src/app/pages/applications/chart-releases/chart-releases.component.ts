@@ -110,36 +110,26 @@ export class ChartReleasesComponent implements OnInit {
           version: chart.chart_metadata.version,
           description: chart.chart_metadata.description,
           update: chart.update_available,
+          chart_name: chart.chart_metadata.name,
           repository: chart.config.image.repository,
+          tag: chart.config.image.tag,
           portal: chart.portals && chart.portals.web_portal ? chart.portals.web_portal[0] : '',
           id: chart.chart_metadata.name,
-          icon: iconPath
+          icon: iconPath,
+          count: `${chart.pod_status.available}/${chart.pod_status.desired}`,
+          desired: chart.pod_status.desired,
+
         };
         repos.push(chartObj.repository);
         let ports = [];
-        chart.used_ports.forEach(item => {
-          ports.push(`${item.port}\\${item.protocol}`)
-        })
-        chartObj['used_ports'] = ports.join(', ');
-        this.chartItems.push(chartObj);
-        
+        if (chart.used_ports) {
+          chart.used_ports.forEach(item => {
+            ports.push(`${item.port}\\${item.protocol}`)
+          })
+          chartObj['used_ports'] = ports.join(', ');
+          this.chartItems.push(chartObj);
+        }       
       })
-      const counts = Object.create(null);
-        repos.forEach(repo => {
-          counts[repo] = counts[repo] ? counts[repo] + 1 : 1;
-      });
-      for (let i in counts) {
-        if (counts[i] > 1) {
-          let counter = 1;
-          for (let j of this.chartItems) {
-            
-            if (j.repository && j.repository === i) {
-              j.count = `${counter}/${counts[i]}`;
-              counter++;
-            }
-          }
-        }
-      }
     })
   }
 

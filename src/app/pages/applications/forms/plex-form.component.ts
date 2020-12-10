@@ -94,13 +94,7 @@ export class PlexFormComponent {
           name: 'timezone',
           placeholder: helptext.plexForm.settings.timezone.placeholder,
           options: [],
-        },
-        {
-          type: 'checkbox',
-          name: 'hostNetwork',
-          placeholder: helptext.plexForm.settings.hostNetwork.placeholder,
-          value: false
-        },
+        }
       ]
     },
     {
@@ -132,8 +126,8 @@ export class PlexFormComponent {
       colspan: 2,
     },
     {
-      name: helptext.plexForm.plexTCP,
-      label: true,
+      name: 'plexTCP',
+      width: '50%',
       config: [
         {
           type: 'input',
@@ -142,8 +136,20 @@ export class PlexFormComponent {
           validation: helptext.chartForm.portForwardingList.containerPort.validation,
           value: 32400
         }
-      ],
-      colspan: 2,
+      ]
+    },
+    {
+      name: 'hostNetwork',
+      width: '50%',
+      class: 'lowerme',
+      config: [
+        {
+          type: 'checkbox',
+          name: 'hostNetwork',
+          placeholder: helptext.plexForm.settings.hostNetwork.placeholder,
+          value: false
+        }
+      ]
     },
     {
       name: helptext.chartForm.container.title,
