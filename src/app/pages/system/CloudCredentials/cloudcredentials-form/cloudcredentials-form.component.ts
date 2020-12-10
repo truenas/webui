@@ -1271,10 +1271,6 @@ export class CloudCredentialsFormComponent {
         }
         value['attributes'] = attributes;
 
-        if (value.provider === 'PCLOUD') {
-          delete value.attributes.hostname;
-        }
-
         if (value.attributes.private_key && value.attributes.private_key === 'NEW') {
           this.makeNewKeyPair(value);
         } else {
