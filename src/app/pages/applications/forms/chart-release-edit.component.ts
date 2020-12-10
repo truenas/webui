@@ -395,18 +395,18 @@ export class ChartReleaseEditComponent {
 
   afterInit(entityEdit: any) {
     // Not working: This sets the isHidden property as expected, but doesn't update the display in the lists within a list
-    let extIntfg = _.find(this.fieldConfig, {'name': 'externalInterfaces'});
-    let staticRoutesfg = _.find(extIntfg.templateListField, {'name': 'staticRoutes'});
-    let staticIPfg = _.find(extIntfg.templateListField, {'name': 'staticIPConfigurations'});
-    entityEdit.formGroup.controls['externalInterfaces'].valueChanges.subscribe(value => {
-      if (value[0].ipam === 'static') {
-        staticIPfg.isHidden = false;
-        staticRoutesfg.isHidden = false;
-      } else {
-        staticIPfg.isHidden = true;
-        staticRoutesfg.isHidden = true;
-      }
-    })
+    // let extIntfg = _.find(this.fieldConfig, {'name': 'externalInterfaces'});
+    // let staticRoutesfg = _.find(extIntfg.templateListField, {'name': 'staticRoutes'});
+    // let staticIPfg = _.find(extIntfg.templateListField, {'name': 'staticIPConfigurations'});
+    // entityEdit.formGroup.controls['externalInterfaces'].valueChanges.subscribe(value => {
+    //   if (value[0].ipam === 'static') {
+    //     staticIPfg.isHidden = false;
+    //     staticRoutesfg.isHidden = false;
+    //   } else {
+    //     staticIPfg.isHidden = true;
+    //     staticRoutesfg.isHidden = true;
+    //   }
+    // })
   }
 
   customSubmit(data) {
