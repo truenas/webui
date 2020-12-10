@@ -128,7 +128,8 @@ def reopen_the_user_edit_page_and_ensure_that_the_additional_aux_group_was_saved
     driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
     assert wait_on_element(driver, 0.5, 5, '//button[@ix-auto="button__EDIT_ericbsd"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
-    assert wait_on_element(driver, 0.5, 5, '//h4[contains(.,"Identification")]')
+    assert wait_on_element(driver, 1, 5, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element(driver, 1, 5, '//h4[contains(.,"Identification")]')
 
 
 @then('The changed permissions should be what they were changed to')
