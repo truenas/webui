@@ -30,6 +30,7 @@ export class ProductionStatusComponent {
           name: 'production',
           placeholder: helptext.is_production_checkbox.placeholder,
           tooltip: helptext.is_production_checkbox.tooltip,
+          tooltipPosition: 'above',
           value: false
         },
         {
@@ -37,6 +38,7 @@ export class ProductionStatusComponent {
           name: 'send_debug',
           placeholder: helptext.is_production_debug.placeholder,
           tooltip: helptext.is_production_debug.tooltip,
+          tooltipPosition: 'above',
           value: false,
           relation : [
             {

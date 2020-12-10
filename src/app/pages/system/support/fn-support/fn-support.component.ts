@@ -108,6 +108,7 @@ export class FnSupportComponent {
           name : 'attach_debug',
           placeholder : helptext.attach_debug.placeholder,
           tooltip : helptext.attach_debug.tooltip,
+          tooltipPosition: 'left',
           value: false
         },
         {
@@ -132,6 +133,7 @@ export class FnSupportComponent {
           name: 'screenshot',
           placeholder: helptext.screenshot.placeholder,
           tooltip: helptext.screenshot.tooltip,
+          tooltipPosition: 'left',
           fileLocation: '',
           updater: this.updater,
           parent: this,

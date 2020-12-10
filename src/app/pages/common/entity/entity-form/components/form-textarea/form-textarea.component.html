@@ -13,7 +13,7 @@
       (input)="onInput()">
     </textarea>
   </mat-form-field>
-  <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
+  <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip" [position]="config.tooltipPosition ? config.tooltipPosition : null"></tooltip>
   <div *ngIf="config.filereader" class="textarea-filereader">
     <span [style.margin-right.px]="10">{{'Paste value above or choose a file.' | translate}}</span>
     <input type="file" id="fileInput" (change)="changeListener($event)"/>

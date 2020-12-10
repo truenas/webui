@@ -127,6 +127,7 @@ export class TnSupportComponent implements OnInit {
           name : 'attach_debug',
           placeholder : helptext.attach_debug.placeholder,
           tooltip : helptext.attach_debug.tooltip,
+          tooltipPosition: 'left',
         },
         {
           type : 'input',
@@ -150,6 +151,7 @@ export class TnSupportComponent implements OnInit {
           name: 'screenshot',
           placeholder: helptext.screenshot.placeholder,
           tooltip: helptext.screenshot.tooltip,
+          tooltipPosition: 'left',
           fileLocation: '',
           updater: this.updater,
           parent: this,
