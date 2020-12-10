@@ -34,7 +34,7 @@ export class ApplicationsService {
     if (name) {
       return this.ws.call('chart.release.query', [[['name', '=', name]]]);  
     }
-    return this.ws.call('chart.release.query');
+    return this.ws.call('chart.release.query', [[], {"extra": {"history": true}}]);
   }
 
   setReplicaCount(name: string, count: number) {
@@ -46,7 +46,7 @@ export class ApplicationsService {
   }
 
   getInterfaces() {
-    return this.ws.call('interface.query');
+    return this.ws.call('chart.release.nic_choices');
   }
 
  }

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import * as _ from 'lodash';
+
 import { DialogService, SystemGeneralService } from '../../../services/index';
 import { ApplicationsService } from '../applications.service';
 import { ModalService } from '../../../services/modal.service';
@@ -24,9 +26,9 @@ export class ChartReleasesComponent implements OnInit {
   public chartItems = [];
   private dialogRef: any;
   public tempIcon = 'assets/images/ix-original.png';
-  public plexIcon = 'https://www.plex.tv/wp-content/uploads/2018/01/pmp-icon-1.png';
-  public nextcloudIcon = 'https://cdn.rawgit.com/docker-library/docs/defa5ffc7123177acd60ddef6e16bddf694cc35f/nextcloud/logo.svg';
-  public minioIcon = 'https://min.io/resources/img/logo/MINIO_wordmark.png';
+  private plexIcon = 'https://www.plex.tv/wp-content/uploads/2018/01/pmp-icon-1.png';
+  private nextcloudIcon = 'https://cdn.rawgit.com/docker-library/docs/defa5ffc7123177acd60ddef6e16bddf694cc35f/nextcloud/logo.svg';
+  private minioIcon = 'https://min.io/resources/img/logo/MINIO_wordmark.png';
   private rollbackChartName: string;
   private chartReleaseForm: ChartReleaseEditComponent;
   private plexForm: PlexFormComponent;
@@ -118,7 +120,7 @@ export class ChartReleasesComponent implements OnInit {
           icon: iconPath,
           count: `${chart.pod_status.available}/${chart.pod_status.desired}`,
           desired: chart.pod_status.desired,
-
+          history: !(_.isEmpty(chart.history))
         };
         repos.push(chartObj.repository);
         let ports = [];
@@ -128,7 +130,7 @@ export class ChartReleasesComponent implements OnInit {
           })
           chartObj['used_ports'] = ports.join(', ');
           this.chartItems.push(chartObj);
-        }       
+        }  
       })
     })
   }

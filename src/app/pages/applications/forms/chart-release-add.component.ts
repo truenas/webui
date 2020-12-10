@@ -335,11 +335,10 @@ export class ChartReleaseAddComponent implements OnDestroy {
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
     private modalService: ModalService, private appService: ApplicationsService) {
       this.appService.getInterfaces().subscribe(res => {
-        res.forEach(item => {
-          this.interfaceList.push({ label: item.id, value: item.name})
-        })
+        for (let item in res) {
+          this.interfaceList.push({ label: item, value: item})
+        }
       })
-
      }
 
   afterInit(entityWizard: EntityWizardComponent) {

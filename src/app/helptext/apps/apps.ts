@@ -105,8 +105,8 @@ export default {
   },
 
   chartForm: {
-    title: T('New Chart Release'),
-    editTitle: T('Edit Chart Release'),
+    title: T('Install Application'),
+    editTitle: T('Edit Application Settings'),
     catalog: {
       placeholder: T('Catalog'),
       tooltip: T('')
@@ -116,7 +116,7 @@ export default {
       tooltip: T('')
     },
     release_name: {
-      placeholder: T('Release Name'),
+      placeholder: T('Application Name'),
       tooltip: T('')
     },
     train: {
