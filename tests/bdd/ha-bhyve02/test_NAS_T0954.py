@@ -1,13 +1,12 @@
 # coding=utf-8
 """High Availability (tn-bhyve01) feature tests."""
 
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
 import time
 from function import (
     wait_on_element,
     is_element_present,
-    wait_on_element_disappear
+    wait_on_element_disappear,
+    ssh_cmd
 )
 from pytest_bdd import (
     given,
@@ -26,6 +25,8 @@ def test_edit_user_enable_password(driver):
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """The browser is open navigate to "{nas_user}"."""
+    global host
+    host = nas_url
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/sessions/signin")
         time.sleep(3)
@@ -137,26 +138,12 @@ def updated_value_should_be_visible(driver):
 @then('Try login with ssh')
 def try_login_with_ssh(driver):
     """Try login with ssh."""
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Shell"]')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shell"]').click()
-    assert wait_on_element(driver, 4, 7, '//span[@class="reverse-video terminal-cursor"]')
-    actions = ActionChains(driver)
-    actions.send_keys('ssh ericbsd@127.0.0.1', Keys.ENTER)
-    actions.perform()
-    time.sleep(1)
-    if is_element_present(driver, '//span[contains(.,"(yes/no)?")]'):
-        actions = ActionChains(driver)
-        actions.send_keys('yes', Keys.ENTER)
-        actions.perform()
-    assert wait_on_element(driver, 0.5, 3, '//span[contains(.,"password:")]')
-    actions = ActionChains(driver)
-    actions.send_keys('testing', Keys.ENTER)
-    actions.perform()
+    global ssh_result
+    ssh_result = ssh_cmd('ls -la', 'ericbsd', 'testing', host)
 
 
 @then('User should be able to login')
 def user_should_be_able_to_login(driver):
     """User should be able to login."""
-    assert wait_on_element(driver, 1, 5, '//span[contains(.,"Permission") and contains(.,"denied,")]')
-    assert not is_element_present(driver, '//span[contains(.,"Permission") and contains(.,"denied,")]')
+    assert ssh_result['result'], ssh_result['output']
+    assert '..' in ssh_result['output'], ssh_result['output']
