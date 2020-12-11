@@ -43,7 +43,7 @@ export class KubernetesSettingsComponent {
         },
         {
           type: 'input',
-          name: 'dns_ip',
+          name: 'cluster_dns_ip',
           placeholder: helptext.kubForm.cluster_dns_ip.placeholder,
           tooltip: helptext.kubForm.cluster_dns_ip.tooltip,
         },
@@ -116,9 +116,14 @@ export class KubernetesSettingsComponent {
 
   }
 
-  afterInit() {
-
-
+  beforeSubmit(data) {
+    if (data.route_v4_gateway === '') {
+      data.route_v4_gateway = null;
+      console.log('yo', data.route_v4_gateway)
+    }
+    if (data.route_v6_gateway === '') {
+      data.route_v6_gateway = null;
+    }
   }
  
 }

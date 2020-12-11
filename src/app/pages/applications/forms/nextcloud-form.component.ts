@@ -100,7 +100,7 @@ export class NextCloudFormComponent {
           name: 'nodePort',
           placeholder: helptext.nextCloudForm.config.nodeport.placeholder,
           tooltip: helptext.nextCloudForm.config.nodeport.tooltip,
-          value: 9000
+          value: 9001
         },
       ]
     },
@@ -162,6 +162,15 @@ export class NextCloudFormComponent {
     if (this.rowName) {
       entityEdit.setDisabled('release_name', true, false);
     }
+
+    this.appService.getAllCatalogItems().subscribe(res => {
+      let ncValues = (res[0].trains.test.nextcloud.versions[Object.keys(res[0].trains
+        .test.nextcloud.versions)[0]].values);
+
+      entityEdit.formGroup.controls['username'].setValue(ncValues.nextcloud.username);
+      entityEdit.formGroup.controls['password'].setValue(ncValues.nextcloud.password);
+      entityEdit.formGroup.controls['nodeport'].setValue(ncValues.service.nodePort);
+    })
   }
 
   customSubmit(data) {

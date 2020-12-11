@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { DialogService } from '../../../services/index';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { ApplicationsService } from '../applications.service';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import { ModalService } from '../../../services/modal.service';
@@ -231,7 +232,8 @@ export class PlexFormComponent {
   ]
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
-    private modalService: ModalService, private sysGeneralService: SystemGeneralService) {
+    private modalService: ModalService, private sysGeneralService: SystemGeneralService,
+    private appService: ApplicationsService) {
       this.getRow = this.modalService.getRow$.subscribe((rowName: string) => {
         this.rowName = rowName;
         this.queryCallOption = [["id", "=", rowName]];
