@@ -165,6 +165,14 @@ export class NextCloudFormComponent {
 
     this.appService.getAllCatalogItems().subscribe(res => {
       let ncValues = (res[0].trains.test.nextcloud.versions[Object.keys(res[0].trains.test.nextcloud.versions)[0]].values);
+      let questions = (res[0].trains.test.nextcloud.versions[Object.keys(res[0].trains.test.nextcloud.versions)[0]].schema.questions);
+      console.log('questions', questions)
+      let nc = questions.find(o => o.variable === 'nextcloud');
+      let attrs = nc.schema.attrs;
+      let host = attrs.find(o => o.variable === 'host');
+      console.log(host)
+      
+
 
         console.log((res[0].trains.test.nextcloud.versions[Object.keys(res[0].trains.test.nextcloud.versions)[0]]))
         console.log(res[0].trains.test.nextcloud)
@@ -172,7 +180,9 @@ export class NextCloudFormComponent {
       entityEdit.formGroup.controls['username'].setValue(ncValues.nextcloud.username);
       entityEdit.formGroup.controls['password'].setValue(ncValues.nextcloud.password);
       entityEdit.formGroup.controls['nodePort'].setValue(ncValues.service.nodePort);
-      entityEdit.formGroup.controls['host'].setValue(ncValues.nextcloud.host);
+      if (!this.rowName) {
+        entityEdit.formGroup.controls['host'].setValue(host.schema.default);
+      };
     })
   }
 

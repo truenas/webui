@@ -83,6 +83,12 @@ export default {
       job: T('Updating...')
     },
 
+    upgrade_dialog: {
+      title: T('Upgrade'),
+      msg: T('Upgrade '),
+      job: T('Upgradomg...')
+    },
+
     rollback_dialog: {
       title: T('Roll Back'),
       version: {

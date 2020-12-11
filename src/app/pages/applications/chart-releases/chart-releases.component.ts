@@ -93,8 +93,9 @@ export class ChartReleasesComponent implements OnInit {
           catalog: chart.catalog,
           status: chart.status,
           version: chart.chart_metadata.version,
+          latest_version: chart.chart_metadata.latest_chart_version,
           description: chart.chart_metadata.description,
-          update: chart.update_available,
+          update: true,/////
           chart_name: chart.chart_metadata.name,
           repository: chart.config.image.repository,
           tag: chart.config.image.tag,
@@ -147,12 +148,12 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   update(name: string) {
-    this.translate.get(helptext.charts.update_dialog.msg).subscribe(msg => {
-      this.dialogService.confirm(helptext.charts.update_dialog.title, msg + name + '?')
+    this.translate.get(helptext.charts.upgrade_dialog.msg).subscribe(msg => {
+      this.dialogService.confirm(helptext.charts.upgrade_dialog.title, msg + name + '?')
       .subscribe(res => {
         if (res) {
           this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
-            helptext.charts.update_dialog.job) }, disableClose: true});
+            helptext.charts.upgrade_dialog.job) }, disableClose: true});
           this.dialogRef.componentInstance.setCall('chart.release.upgrade', [name]);
           this.dialogRef.componentInstance.submit();
           this.dialogRef.componentInstance.success.subscribe((res) => {
