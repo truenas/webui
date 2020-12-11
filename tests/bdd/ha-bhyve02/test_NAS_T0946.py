@@ -141,23 +141,13 @@ def navigate_to_network_and_on_the_network_page_click_on_global_configuration_se
     assert wait_on_element(driver, 1, 7, '//h3[contains(.,"Global Configuration")]')
 
 
-@then(parsers.parse('enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}", Hostname (Virtual) "{vhost}", Domain "{domain}", Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}", IPv4 Default Gateway "{gatway}"'))
-def enter_hostname_hostname_truenas_controller_2_hostname_virtual_domain_nameserver1_nameserver2_ipv4_default_gateway_(driver, host1, host2, vhost, domain, nameserver1, nameserver2, gatway):
-    """enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}", Hostname (Virtual) "{vhost}", Domain "{domain}", Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}", IPv4 Default Gateway "{gatway}"."""
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').send_keys(host1)
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]').send_keys(host2)
+@then(parsers.parse('enter Hostname (Virtual) "{vhost}", IPv4 Default Gateway "{gatway}"'))
+def enter_hostname_Virtual_ipv4_default_gateway_(driver, vhost, gatway):
+    """enter Hostname (Virtual) "vhost", IPv4 Default Gateway "{gatway}"."""
     driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (Virtual)"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (Virtual)"]').send_keys(vhost)
-    driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').send_keys(domain)
     driver.find_element_by_xpath('//input[@ix-auto="input__IPv4 Default Gateway"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__IPv4 Default Gateway"]').send_keys(gatway)
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').send_keys(nameserver1)
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 2"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 2"]').send_keys(nameserver2)
 
 
 @then('click save when finished')
@@ -380,12 +370,29 @@ def click_failover_uncheck_disable_failover_click_save_and_confirm_changes(drive
     element = driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]')
     attribute = element.get_attribute('class')
     assert 'mat-checkbox-checked' not in attribute, attribute
+    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Failover Configuration")]')
+
+
+@then(parsers.parse('enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}", Hostname (Virtual) "{vhost}", Domain "{domain}", Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}"'))
+def enter_hostname_hostname_truenas_controller_2_hostname_virtual_domain_nameserver1_nameserver2(driver, host1, host2, vhost, domain, nameserver1, nameserver2):
+    """enter Hostname "{host1}", Hostname (TrueNAS Controller 2) "{host2}", Hostname (Virtual) "{vhost}", Domain "{domain}", Nameserver1 "{nameserver1}", Nameserver2 "{nameserver2}"."""
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname"]').send_keys(host1)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (TrueNAS Controller 2)"]').send_keys(host2)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (Virtual)"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Hostname (Virtual)"]').send_keys(vhost)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Domain"]').send_keys(domain)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 1"]').send_keys(nameserver1)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 2"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Nameserver 2"]').send_keys(nameserver2)
 
 
 @then('navigate to dashboard, and verify that both controllers show')
 def navigate_to_dashboard_and_verify_that_both_controllers_show(driver):
     """navigate to dashboard, and verify that both controllers show."""
-    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Failover Configuration")]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 1, 10, '//span[contains(.,"System Information")]')
     # need to wait for all controller to be online.
