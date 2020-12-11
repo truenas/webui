@@ -164,8 +164,10 @@ export class NextCloudFormComponent {
     }
 
     this.appService.getAllCatalogItems().subscribe(res => {
-      let ncValues = (res[0].trains.test.nextcloud.versions[Object.keys(res[0].trains
-        .test.nextcloud.versions)[0]].values);
+      let ncValues = (res[0].trains.test.nextcloud.versions[Object.keys(res[0].trains.test.nextcloud.versions)[0]].values);
+
+        console.log((res[0].trains.test.nextcloud.versions[Object.keys(res[0].trains.test.nextcloud.versions)[0]]))
+        console.log(res[0].trains.test.nextcloud)
 
       entityEdit.formGroup.controls['username'].setValue(ncValues.nextcloud.username);
       entityEdit.formGroup.controls['password'].setValue(ncValues.nextcloud.password);

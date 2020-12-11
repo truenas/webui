@@ -87,6 +87,7 @@ export class ChartReleasesComponent implements OnInit {
       this.chartItems = [];
       let repos = [];
       charts.forEach(chart => {
+        console.log(chart)
         let chartObj = {
           name: chart.name,
           catalog: chart.catalog,
