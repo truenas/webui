@@ -159,6 +159,7 @@ export class DiskListComponent {
 						]));
 					}
 				});
+				break;
 			}
 		}
 		if (_.find(this.unused, { "name": parentRow.name })) {
