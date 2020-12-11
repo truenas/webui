@@ -280,7 +280,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.core.unregister({observerClass:this});
 
     this.getProductType.unsubscribe();
-    this.getAdvancedConfig.unsubscribe();
+
+    if(this.getAdvancedConfig){
+      this.getAdvancedConfig.unsubscribe();
+    }
     this.webSocketOnClose.unsubscribe();
   }
 
