@@ -388,13 +388,14 @@ export class ChartReleaseEditComponent {
     if (data.config.externalInterfaces) {
       data.config.externalInterfaces.forEach(i => {
         let tempArr = [];
-        if (i.ipam.staticIPConfigurations) {
+        if (i.ipam.staticIPConfigurations && i.ipam.staticIPConfigurations.length > 0) {
           i.ipam.staticIPConfigurations.forEach(j => {
             tempArr.push({staticIP: j})
           })
+          i.staticIPConfigurations = tempArr;
+          i.staticRoutes = i.ipam.staticRoutes;
         }
-        i.staticIPConfigurations = tempArr;
-        i.staticRoutes = i.ipam.staticRoutes;
+
         i.ipam = i.ipam.type;
       })
     }
