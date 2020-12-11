@@ -365,7 +365,7 @@ export class ChartReleaseEditComponent {
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
     private modalService: ModalService, private appService: ApplicationsService) {
-      this.appService.getInterfaces().subscribe(res => {
+      this.appService.getNICChoices().subscribe(res => {
         for (let item in res) {
           this.interfaceList.push({ label: item, value: item})
         }
@@ -374,7 +374,7 @@ export class ChartReleaseEditComponent {
         this.rowName = rowName;
         this.queryCallOption = [["id", "=", rowName]];
         this.getRow.unsubscribe();
-    })
+      })
      }
 
   resourceTransformIncomingRestData(data) {
@@ -388,15 +388,16 @@ export class ChartReleaseEditComponent {
     if (data.config.externalInterfaces) {
       data.config.externalInterfaces.forEach(i => {
         let tempArr = [];
+        if (i.ipam.staticIPConfigurations) {
           i.ipam.staticIPConfigurations.forEach(j => {
-              tempArr.push({staticIP: j})
+            tempArr.push({staticIP: j})
           })
-          i.staticIPConfigurations = tempArr;
+        }
+        i.staticIPConfigurations = tempArr;
         i.staticRoutes = i.ipam.staticRoutes;
         i.ipam = i.ipam.type;
       })
     }
-    console.log(data)
     return data.config;
   }
 
@@ -417,7 +418,6 @@ export class ChartReleaseEditComponent {
   }
 
   customSubmit(data) {
-    console.log(data)
     let envVars = [];
     if (data.containerEnvironmentVariables[0].name) {
       envVars = data.containerEnvironmentVariables;

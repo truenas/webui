@@ -25,10 +25,7 @@ import  helptext  from '../../../helptext/apps/apps';
 export class ChartReleasesComponent implements OnInit {
   public chartItems = [];
   private dialogRef: any;
-  public tempIcon = 'assets/images/ix-original.png';
-  private plexIcon = 'https://www.plex.tv/wp-content/uploads/2018/01/pmp-icon-1.png';
-  private nextcloudIcon = 'https://cdn.rawgit.com/docker-library/docs/defa5ffc7123177acd60ddef6e16bddf694cc35f/nextcloud/logo.svg';
-  private minioIcon = 'https://min.io/resources/img/logo/MINIO_wordmark.png';
+  public ixIcon = 'assets/images/ix-original.png';
   private rollbackChartName: string;
   private chartReleaseForm: ChartReleaseEditComponent;
   private plexForm: PlexFormComponent;
@@ -89,22 +86,7 @@ export class ChartReleasesComponent implements OnInit {
     this.appService.getChartReleases().subscribe(charts => {
       this.chartItems = [];
       let repos = [];
-      let iconPath = this.tempIcon;
       charts.forEach(chart => {
-        switch(chart.chart_metadata.name) {
-          case 'plex':
-            iconPath = this.plexIcon;
-            break;
-          case 'nextcloud':
-            iconPath = this.nextcloudIcon;
-            break;
-          case 'minio':
-            iconPath = this.minioIcon;
-            break;
-          
-          default:
-            iconPath = this.tempIcon;
-        }
         let chartObj = {
           name: chart.name,
           catalog: chart.catalog,
@@ -117,7 +99,7 @@ export class ChartReleasesComponent implements OnInit {
           tag: chart.config.image.tag,
           portal: chart.portals && chart.portals.web_portal ? chart.portals.web_portal[0] : '',
           id: chart.chart_metadata.name,
-          icon: iconPath,
+          icon: chart.chart_metadata.icon ? chart.chart_metadata.icon : this.ixIcon,
           count: `${chart.pod_status.available}/${chart.pod_status.desired}`,
           desired: chart.pod_status.desired,
           history: !(_.isEmpty(chart.history))

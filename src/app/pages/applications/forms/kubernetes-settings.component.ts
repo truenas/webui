@@ -60,10 +60,11 @@ export class KubernetesSettingsComponent {
       width: '50%',
       config: [
         {
-          type: 'input',
+          type: 'select',
           name: 'route_v4_interface',
           placeholder: helptext.kubForm.route_v4_interface.placeholder,
           tooltip: helptext.kubForm.route_v4_interface.tooltip,
+          options: []
         },
         {
           type: 'input',
@@ -72,10 +73,11 @@ export class KubernetesSettingsComponent {
           tooltip: helptext.kubForm.route_v4_gateway.tooltip,
         },
         {
-          type: 'input',
+          type: 'select',
           name: 'route_v6_interface',
           placeholder: helptext.kubForm.route_v6_interface.placeholder,
           tooltip: helptext.kubForm.route_v6_interface.tooltip,
+          options: []
         },
         {
           type: 'input',
@@ -103,6 +105,15 @@ export class KubernetesSettingsComponent {
         node_ip_control.options.push({ label: ip, value: ip });
       }
     })
+    const v4_interface_control = _.find(this.fieldSets[1].config, {'name' : 'route_v4_interface'});
+    const v6_interface_control = _.find(this.fieldSets[1].config, {'name' : 'route_v6_interface'});
+    this.appService.getInterfaces().subscribe(interfaces => {
+      interfaces.forEach(i => {
+        v4_interface_control.options.push({ label: i.name, value: i.name });
+        v6_interface_control.options.push({ label: i.name, value: i.name });
+      })
+    })
+
   }
 
   afterInit() {

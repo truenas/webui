@@ -334,7 +334,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
     private modalService: ModalService, private appService: ApplicationsService) {
-      this.appService.getInterfaces().subscribe(res => {
+      this.appService.getNICChoices().subscribe(res => {
         for (let item in res) {
           this.interfaceList.push({ label: item, value: item})
         }

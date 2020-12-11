@@ -45,8 +45,12 @@ export class ApplicationsService {
     return this.ws.call('chart.release.pod_console_choices', [name]);
   }
 
-  getInterfaces() {
+  getNICChoices() {
     return this.ws.call('chart.release.nic_choices');
+  }
+
+  getInterfaces() {
+    return this.ws.call('interface.query');
   }
 
  }
