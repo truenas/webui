@@ -87,7 +87,6 @@ export class ChartReleasesComponent implements OnInit {
       this.chartItems = [];
       let repos = [];
       charts.forEach(chart => {
-        console.log(chart)
         let chartObj = {
           name: chart.name,
           catalog: chart.catalog,
@@ -95,7 +94,7 @@ export class ChartReleasesComponent implements OnInit {
           version: chart.chart_metadata.version,
           latest_version: chart.chart_metadata.latest_chart_version,
           description: chart.chart_metadata.description,
-          update: true,/////
+          update: chart.update_available,
           chart_name: chart.chart_metadata.name,
           repository: chart.config.image.repository,
           tag: chart.config.image.tag,
