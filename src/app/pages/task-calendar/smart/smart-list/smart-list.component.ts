@@ -1,5 +1,7 @@
+import { StorageService } from './../../../../services/storage.service';
 import { Component } from '@angular/core';
 import helptext from './../../../../helptext/task-calendar/smart/smart';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'app-smart-list',
@@ -14,6 +16,7 @@ export class SmartListComponent {
   protected wsDelete = "smart.test.delete";
 
   public columns: Array<any> = [
+    { name: helptext.smartlist_column_disks, prop: 'disks', always_display: true },
     { name: helptext.smartlist_column_type, prop: 'type', always_display: true },
     { name: helptext.smartlist_column_description, prop: 'desc' },
     { name: helptext.smartlist_column_schedule, prop: 'schedule' }
@@ -27,11 +30,27 @@ export class SmartListComponent {
       key_props: ['type', 'desc']
     },
   };
+  public listDisks = [];
+
+  constructor(protected storageService: StorageService) {
+    this.storageService.listDisks().subscribe((res) => {
+      this.listDisks = res;
+    });
+  }
 
   resourceTransformIncomingRestData(data: any) {
-    for (const test of data) {
+    return data.map(test => {
       test.schedule = `${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
-    }
-    return data;
+      if (test.all_disks) {
+        test.disks = [T('All Disks')]
+      } else if (test.disks.length) {
+        const disksReadableName = [];
+        test.disks.map(disk => {
+          disksReadableName.push(`${this.listDisks.find(item => item.identifier === disk).devname}`)
+        })
+        test.disks = disksReadableName;
+      }
+      return test;
+    });
   }
 }
