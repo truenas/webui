@@ -153,9 +153,6 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     const size = this.getSize();
 
     const setting = {
-      theme: {
-        background: 'transparent'
-      },
       cursorBlink: false,
       tabStopWidth: 8,
       cols: size.cols,
