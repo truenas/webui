@@ -64,7 +64,7 @@ export class KubernetesSettingsComponent {
           name: 'route_v4_interface',
           placeholder: helptext.kubForm.route_v4_interface.placeholder,
           tooltip: helptext.kubForm.route_v4_interface.tooltip,
-          options: []
+          options: [{ label: '---', value: null}]
         },
         {
           type: 'input',
@@ -77,7 +77,7 @@ export class KubernetesSettingsComponent {
           name: 'route_v6_interface',
           placeholder: helptext.kubForm.route_v6_interface.placeholder,
           tooltip: helptext.kubForm.route_v6_interface.tooltip,
-          options: []
+          options: [{ label: '---', value: null}]
         },
         {
           type: 'input',

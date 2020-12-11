@@ -169,7 +169,8 @@ export class NextCloudFormComponent {
 
       entityEdit.formGroup.controls['username'].setValue(ncValues.nextcloud.username);
       entityEdit.formGroup.controls['password'].setValue(ncValues.nextcloud.password);
-      entityEdit.formGroup.controls['nodeport'].setValue(ncValues.service.nodePort);
+      entityEdit.formGroup.controls['nodePort'].setValue(ncValues.service.nodePort);
+      entityEdit.formGroup.controls['host'].setValue(ncValues.nextcloud.host);
     })
   }
 
