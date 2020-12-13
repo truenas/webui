@@ -4563,6 +4563,12 @@ msgstr ""
 msgid "Edit Permissions"
 msgstr ""
 
+msgid "Edit Pool"
+msgstr ""
+
+msgid "Edit Pool Disk"
+msgstr ""
+
 msgid "Edit Pool Options for "
 msgstr ""
 
@@ -5267,10 +5273,8 @@ msgstr "このシステムからアラートを受信するには、有効な電
 msgid ""
 "Enter a valid username for the <a "
 "href=\"https://jira.ixsystems.com/projects/NAS/issues/\" "
-"target=\"_blank\">FreeNAS bug tracking system</a>"
+"target=\"_blank\">TrueNAS bug tracking system</a>"
 msgstr ""
-"<a href=\"https://jira.ixsystems.com/projects/NAS/issues/\" "
-"target=\"_blank\">FreeNAS bug tracking system</a>の有効なユーザー名を入力してください"
 
 msgid ""
 "Enter a value in seconds for the the UPS to wait before initiating "
@@ -6782,14 +6786,9 @@ msgid ""
 "configuring authentication on the remote system.  This can include copying "
 "SSH keys and modifying the <i>root</i> user  account on that "
 "system.<br><br>  <i>Semi-automatic</i> only works when configuring an SSH "
-"connection  with a remote FreeNAS or TrueNAS system. This method uses the "
-"URL and  login credentials of the remote system to connect and exchange SSH "
-" keys."
+"connection  with a remote TrueNAS system. This method uses the URL and "
+"login  credentials of the remote system to connect and exchange SSH keys."
 msgstr ""
-"接続の構成方法：<br> <br> <i>手動</i>では、リモートシステムで認証を構成する必要があります。 "
-"これには、SSHキーのコピーとそのシステムの<i>root</i>ユーザーアカウントの変更が含まれます。<br> <br> "
-"<i>半自動</i>は、リモートFreeNASまたはTrueNASシステムとのSSH接続を設定する場合にのみ機能します 。 "
-"この方法では、リモートシステムのURLとログイン資格情報を使用して、接続およびSSHキーを交換します。"
 
 msgid "I Agree"
 msgstr ""
@@ -7020,6 +7019,9 @@ msgid "Import Certificate"
 msgstr ""
 
 msgid "Import Certificate Signing Request"
+msgstr ""
+
+msgid "Import Pool"
 msgstr ""
 
 msgid "Import a pool that exists but is not connected."
@@ -9588,6 +9590,9 @@ msgid ""
 msgstr ""
 
 msgid "Product:"
+msgstr ""
+
+msgid "Production Status"
 msgstr ""
 
 msgid "Production status successfully updated"
@@ -14084,6 +14089,9 @@ msgid "Updating Plugin"
 msgstr ""
 
 msgid "Updating group members"
+msgstr ""
+
+msgid "Updating production status..."
 msgstr ""
 
 msgid "Updating selected plugins."

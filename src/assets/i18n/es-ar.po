@@ -5566,6 +5566,12 @@ msgstr "Editar opciones"
 msgid "Edit Permissions"
 msgstr "Editar permisos"
 
+msgid "Edit Pool"
+msgstr ""
+
+msgid "Edit Pool Disk"
+msgstr ""
+
 msgid "Edit Pool Options for "
 msgstr "Editar opciones de grupo para "
 
@@ -6493,11 +6499,8 @@ msgstr ""
 msgid ""
 "Enter a valid username for the <a "
 "href=\"https://jira.ixsystems.com/projects/NAS/issues/\" "
-"target=\"_blank\">FreeNAS bug tracking system</a>"
+"target=\"_blank\">TrueNAS bug tracking system</a>"
 msgstr ""
-"Ingrese un nombre de usuario válido para el <a "
-"href=\"https://jira.ixsystems.com/projects/NAS/issues/\" "
-"target=\"_blank\">sistema de seguimiento de errores FreeNAS</a>"
 
 msgid ""
 "Enter a value in seconds for the the UPS to wait before initiating "
@@ -8293,17 +8296,9 @@ msgid ""
 "configuring authentication on the remote system.  This can include copying "
 "SSH keys and modifying the <i>root</i> user  account on that "
 "system.<br><br>  <i>Semi-automatic</i> only works when configuring an SSH "
-"connection  with a remote FreeNAS or TrueNAS system. This method uses the "
-"URL and  login credentials of the remote system to connect and exchange SSH "
-" keys."
+"connection  with a remote TrueNAS system. This method uses the URL and "
+"login  credentials of the remote system to connect and exchange SSH keys."
 msgstr ""
-"Cómo configurar la conexión: <br> <br> <i>Manual</i> requiere configurar la "
-"autenticación en el sistema remoto. Esto puede incluir copiar claves SSH y "
-"modificar la cuenta de usuario <i>root</i> en ese sistema. <br> <br> "
-"<i>Semiautomático</i> solo funciona cuando se configura una conexión SSH "
-"con un FreeNAS remoto o sistema TrueNAS. Este método utiliza la URL y las "
-"credenciales de inicio de sesión del sistema remoto para conectarse e "
-"intercambiar claves SSH."
 
 msgid "I Agree"
 msgstr "Acepto"
@@ -8581,6 +8576,9 @@ msgstr "Importar certificado"
 
 msgid "Import Certificate Signing Request"
 msgstr "Importar solicitud de firma de certificado"
+
+msgid "Import Pool"
+msgstr ""
 
 msgid "Import a pool that exists but is not connected."
 msgstr "Importe un grupo que existe pero que no está conectado."
@@ -11582,6 +11580,9 @@ msgstr ""
 
 msgid "Product:"
 msgstr "Producto:"
+
+msgid "Production Status"
+msgstr ""
 
 msgid "Production status successfully updated"
 msgstr "Estado de producción actualizado con éxito"
@@ -17165,6 +17166,9 @@ msgstr "Actualizando complemento"
 
 msgid "Updating group members"
 msgstr "Actualización de miembros del grupo"
+
+msgid "Updating production status..."
+msgstr ""
 
 msgid "Updating selected plugins."
 msgstr "Actualización de complementos seleccionados."
