@@ -100,15 +100,6 @@ export class CronListComponent {
 
       resourceTransformIncomingRestData(data: any): any {
         for (const job of data){
-
-          // Avoid 'N/A' when value should be presented as false
-          const keys = Object.keys(job);
-          keys.forEach((key, index) => {
-            if(job[key].toString() == 'false'){
-              job[key] = job[key].toString();
-            }
-          });
-
           job.cron_schedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
 
           /* Weird type assertions are due to a type definition error in the cron-parser library */
