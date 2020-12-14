@@ -8,6 +8,7 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import { ModalService } from '../../../services/modal.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { CommonUtils } from 'app/core/classes/common-utils';
 import  helptext  from '../../../helptext/apps/apps';
 
 @Component({
@@ -20,6 +21,7 @@ export class NextCloudFormComponent {
   protected addCall: string = 'chart.release.create';
   protected editCall: string = 'chart.release.update';
   protected isEntity: boolean = true;
+  protected utils: CommonUtils;
 
   private title = helptext.nextCloudForm.title;
   private name: string;
@@ -143,6 +145,7 @@ export class NextCloudFormComponent {
         this.queryCallOption = [["id", "=", rowName]];
         this.getRow.unsubscribe();
     })
+    this.utils = new CommonUtils();
   }
 
   resourceTransformIncomingRestData(data) {
@@ -164,19 +167,16 @@ export class NextCloudFormComponent {
     }
 
     this.appService.getAllCatalogItems().subscribe(res => {
-      let ncValues = (res[0].trains.test.nextcloud.versions[Object.keys(res[0].trains.test.nextcloud.versions)[0]].values);
-      let questions = (res[0].trains.test.nextcloud.versions[Object.keys(res[0].trains.test.nextcloud.versions)[0]].schema.questions);
+      let versions = res[0].trains.charts.nextcloud.versions;
+      let sorted_version_labels = Object.keys(versions);
+      sorted_version_labels.sort(this.utils.versionCompare);
+
+      let ncValues = res[0].trains.charts.nextcloud.versions[sorted_version_labels[0]].values;
+      let questions = res[0].trains.charts.nextcloud.versions[sorted_version_labels[0]].schema.questions;
       console.log('questions', questions)
       let nc = questions.find(o => o.variable === 'nextcloud');
       let attrs = nc.schema.attrs;
       let host = attrs.find(o => o.variable === 'host');
-      console.log(host)
-      
-
-
-        console.log((res[0].trains.test.nextcloud.versions[Object.keys(res[0].trains.test.nextcloud.versions)[0]]))
-        console.log(res[0].trains.test.nextcloud)
-
       entityEdit.formGroup.controls['username'].setValue(ncValues.nextcloud.username);
       entityEdit.formGroup.controls['password'].setValue(ncValues.nextcloud.password);
       entityEdit.formGroup.controls['nodePort'].setValue(ncValues.service.nodePort);

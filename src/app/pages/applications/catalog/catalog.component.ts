@@ -18,6 +18,7 @@ import { ChartReleaseAddComponent } from '../forms/chart-release-add.component';
 import { PlexFormComponent } from '../forms/plex-form.component';
 import { NextCloudFormComponent } from '../forms/nextcloud-form.component';
 import { MinioFormComponent } from '../forms/minio-form.component';
+import { CommonUtils } from 'app/core/classes/common-utils';
 import  helptext  from '../../../helptext/apps/apps';
 
 @Component({
@@ -40,6 +41,7 @@ export class CatalogComponent implements OnInit {
   private minioForm: MinioFormComponent;
   private refreshForm: Subscription;
   private refreshTable: Subscription;
+  protected utils: CommonUtils;
 
   public choosePool: DialogFormConfiguration = {
     title: helptext.choosePool.title,
@@ -59,21 +61,24 @@ export class CatalogComponent implements OnInit {
   constructor(private dialogService: DialogService,
     private mdDialog: MatDialog, private translate: TranslateService,
     private router: Router, private core: CoreService, private modalService: ModalService,
-    private appService: ApplicationsService, private sysGeneralService: SystemGeneralService) { }
+    private appService: ApplicationsService, private sysGeneralService: SystemGeneralService) {
+      this.utils = new CommonUtils();
+    }
 
   ngOnInit(): void {
     this.appService.getAllCatalogItems().subscribe(res => {
-      if (Object.keys(res[0].trains.test).length > 0) {
-        for (let i in res[0].trains.test) {  // will eventually add the charts train too
+      if (Object.keys(res[0].trains.charts).length > 0) {
+        for (let i in res[0].trains.charts) {  // will eventually add the charts train too
           if (i !== 'ix-chart') {
-            let item = res[0].trains.test[i];
+            let item = res[0].trains.charts[i];
             let versions = item.versions;
             let latest, latestDetails;
-    
-            for (let j in versions) {
-              latest = (Object.keys(versions)[0]);
-              latestDetails = versions[Object.keys(versions)[0]];
-            }
+
+            let sorted_version_labels = Object.keys(versions);
+            sorted_version_labels.sort(this.utils.versionCompare);
+
+            latest = sorted_version_labels[0];
+            latestDetails = versions[latest];
 
             switch (item.name) {
               case 'minio':
@@ -235,4 +240,6 @@ export class CatalogComponent implements OnInit {
         this.modalService.open('slide-in-form', this.chartReleaseForm);
     }
   }
+
+  
 }
