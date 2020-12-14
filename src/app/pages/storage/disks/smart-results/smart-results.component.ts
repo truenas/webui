@@ -38,7 +38,7 @@ export class SmartResultsComponent {
                     this.title = res + this.disk;
                 }
             );
-            this.queryCallOption = [[["disk", "=", this.disk]]];
+            this.queryCallOption = [[["disk", "=", this.disk]], {get: true}];
         });
     }
 
