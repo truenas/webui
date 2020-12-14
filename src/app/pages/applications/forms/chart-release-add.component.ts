@@ -422,7 +422,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
       catalog: 'OFFICIAL',
       item: 'ix-chart',
       release_name: data.release_name,
-      train: 'test',
+      train: 'charts',
       version: 'latest',
       values: {
         containerArgs: data.containerArgs,
