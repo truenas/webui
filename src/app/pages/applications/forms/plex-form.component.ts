@@ -284,7 +284,7 @@ export class PlexFormComponent {
       catalog: 'OFFICIAL',
       item: 'plex',
       release_name: data.release_name,
-      train: 'test',
+      train: 'charts',
       version: 'latest',
       values: {
         advertiseIp: data.advertiseIp,

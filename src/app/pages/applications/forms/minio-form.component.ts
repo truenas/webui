@@ -210,7 +210,7 @@ export class MinioFormComponent {
       catalog: 'OFFICIAL',
       item: 'minio',
       release_name: data.release_name,
-      train: 'test',
+      train: 'charts',
       version: 'latest',
       values: {
         accessKey: data.accessKey,

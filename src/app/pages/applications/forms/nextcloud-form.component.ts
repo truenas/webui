@@ -193,7 +193,7 @@ export class NextCloudFormComponent {
       catalog: 'OFFICIAL',
       item: 'nextcloud',
       release_name: data.release_name,
-      train: 'test',
+      train: 'charts',
       version: 'latest',
       values: {
         nextcloud: {
