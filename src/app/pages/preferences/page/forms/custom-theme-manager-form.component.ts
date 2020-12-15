@@ -56,14 +56,6 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges, OnDes
       }
     ]
 
-    /*custActions: any[] = [
-      {
-        id: 'create-theme-link',
-        name: T('Create New Theme'),
-        eventName:"CreateTheme"
-      }
-    ]*/
-
     constructor(
       protected router: Router,
       protected rest: RestService,
@@ -121,9 +113,6 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges, OnDes
           }
           this.core.emit({name:"ChangeCustomThemesPreference",data:submission});
           break;
-        /*case "CreateTheme":
-          this.router.navigate(new Array('').concat(['ui-preferences', 'create-theme']));
-          break;*/
         }
       });
     }
