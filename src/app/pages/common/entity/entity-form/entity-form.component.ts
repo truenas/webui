@@ -704,19 +704,24 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       const templateListField = _.cloneDeep(_.find(this.conf.fieldConfig, {'name': fieldName}).templateListField);
       if (formArray.controls[i] == undefined) {
 
+        const newfg =  this.entityFormService.createFormGroup(templateListField);
+        newfg.setParent(formArray);
+        formArray.controls.push(newfg);
+
         for (const [key, value] of Object.entries(listValue[i])) {
           const fieldConfig = _.find(templateListField, {'name': key});
           if (fieldConfig.type == "list") {
             const subTemplateListField = _.cloneDeep(fieldConfig.templateListField);
+            
             for(let j=0; j < value.length; j++) {
+              const subNewfg =  this.entityFormService.createFormGroup(subTemplateListField);
+              subNewfg.setParent(newfg);
+              (<FormArray>newfg.controls[key]).push(subNewfg);
               _.find(templateListField, {'name': key}).listFields.push(subTemplateListField);
             }            
           }
         }
 
-        const newfg =  this.entityFormService.createFormGroup(templateListField);
-        newfg.setParent(formArray);
-        formArray.controls.push(newfg);
         _.find(this.conf.fieldConfig, {'name': fieldName}).listFields.push(templateListField);
       }
 
