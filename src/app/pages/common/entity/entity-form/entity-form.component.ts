@@ -701,8 +701,19 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   setObjectListValue(listValue: object[], formArray: FormArray, fieldName: string) {
     for (let i = 0; i < listValue.length; i++) {
+      const templateListField = _.cloneDeep(_.find(this.conf.fieldConfig, {'name': fieldName}).templateListField);
       if (formArray.controls[i] == undefined) {
-        const templateListField = _.cloneDeep(_.find(this.conf.fieldConfig, {'name': fieldName}).templateListField);
+
+        for (const [key, value] of Object.entries(listValue[i])) {
+          const fieldConfig = _.find(templateListField, {'name': key});
+          if (fieldConfig.type == "list") {
+            const subTemplateListField = _.cloneDeep(fieldConfig.templateListField);
+            for(let j=0; j < value.length; j++) {
+              _.find(templateListField, {'name': key}).listFields.push(subTemplateListField);
+            }            
+          }
+        }
+
         const newfg =  this.entityFormService.createFormGroup(templateListField);
         newfg.setParent(formArray);
         formArray.controls.push(newfg);
@@ -710,9 +721,23 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       }
 
       for (const [key, value] of Object.entries(listValue[i])) {
-        if ((<FormGroup>formArray.controls[i]).controls[key]) {
-          (<FormGroup>formArray.controls[i]).controls[key].setValue(value);
-        }
+        const control = <FormArray>(<FormGroup>formArray.controls[i]).controls[key];
+        if (control) {
+          const fieldConfig = _.find(templateListField, {'name': key});
+          if (fieldConfig.type == "list") {
+            // for (let j = 0; j < value.length; j++) {
+            //   const subList = value[j];
+              
+            //   for (const [subKey, subValue] of Object.entries(subList)) {
+            //     const subControl = control[j].controls[subKey];
+            //     subControl.setValue(subValue);
+            //   }
+            // }
+
+          } else {
+            control.setValue(value);
+          }
+        }        
       }
     }
     formArray.markAllAsTouched();
