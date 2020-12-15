@@ -3,11 +3,20 @@
 import pytest
 import os
 import time
-from configparser import ConfigParser
 from platform import system
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.common.exceptions import NoSuchElementException
+
+
+@pytest.fixture
+def nas_ip():
+    return os.environ.get("nas_ip")
+
+
+@pytest.fixture
+def root_password():
+    return os.environ.get("nas_password")
 
 
 def browser():
@@ -33,23 +42,6 @@ web_driver = browser()
 @pytest.fixture
 def driver():
     return web_driver
-
-
-if os.path.exists('config.cfg'):
-    configs = ConfigParser()
-    configs.read('config.cfg')
-    ip = configs['NAS_CONFIG']['ip']
-    password = configs['NAS_CONFIG']['password']
-
-    @pytest.fixture
-    def ui_url():
-        global url
-        url = f"http://{ip}"
-        return url
-
-    @pytest.fixture
-    def root_password():
-        return password
 
 
 @pytest.mark.hookwrapper
