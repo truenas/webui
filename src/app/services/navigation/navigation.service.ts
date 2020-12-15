@@ -116,6 +116,13 @@ export class NavigationService {
       state: 'vm',
     },
     {
+      name: T('Apps'),
+      type: 'link',
+      tooltip: T('Apps'),
+      icon: 'apps',
+      state: 'apps',
+    },
+    {
       name: T('Reporting'),
       type: 'link',
       tooltip: T('Reports'),

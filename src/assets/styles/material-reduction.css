@@ -188,6 +188,7 @@ entity-table .mat-toolbar.mat-card-toolbar{
 .form-element .label-container {
   margin-bottom: 4px;
   padding: 4px 0;
+  height: 24px;
 }
 
 /* Bring back the native placeholder */
