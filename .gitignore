@@ -55,6 +55,7 @@ config.py
 auto_config.py
 geckodriver.log
 vm_config
+tests/config.cfg
 tests/bdd/config.cfg
 *.feature
 
