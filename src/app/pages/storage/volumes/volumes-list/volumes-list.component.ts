@@ -1064,6 +1064,7 @@ export class VolumesListTableConfig implements InputTableConf {
           name: T('Add Zvol'),
           label: T("Add Zvol"),
           onClick: (row1) => {
+            console.log('addZvol', rowData.id);
             this.parentVolumesListComponent.addZvol(rowData.id);
           }
         });
