@@ -49,16 +49,20 @@ src/environments/environment.ts
 
 # automation framework
 *.iso
-_pycache_
-*.xml
-*.pyc
-.cache
+__pycache__
 .pytest_cache
-tests/debugtest/*.py
 config.py
 auto_config.py
 geckodriver.log
 vm_config
+tests/bdd/config.cfg
+*.feature
+
+# Junit results for Jenkins
+tests/bdd/results/junit/*.xml
+# Json Cucumber results for Jira
+tests/bdd/results/cucumber/*.json
+
 
 # generated json files
 /src/assets/i18n/*.mo
@@ -70,6 +74,10 @@ vm_config
 licenses.txt
 
 # generated screenshot files
+tests/bdd/screenshot/ha-bhyve02/*.txt
+tests/bdd/screenshot/ha-tn09/*.txt
+tests/bdd/screenshot/ha-bhyve02/*.png
+tests/bdd/screenshot/ha-tn09/*.png
 tests/screenshot/*.png
 .vs/slnx.sqlite
 
