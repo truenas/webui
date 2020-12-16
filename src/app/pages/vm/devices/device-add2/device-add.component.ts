@@ -6,11 +6,13 @@ import { EntityFormService } from '../../../../pages/common/entity/entity-form/s
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
 
-import { RestService, WebSocketService, SystemGeneralService, NetworkService, VmService } from '../../../../services/';
+import { RestService, WebSocketService, SystemGeneralService, NetworkService, VmService, StorageService } from '../../../../services/';
 import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../services/dialog.service';
 import helptext from '../../../../helptext/vm/devices/device-add-edit';
+import { ModalService } from 'app/services/modal.service';
+import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard';
 
 @Component({
   selector : 'app-device-add2',
@@ -40,6 +42,9 @@ export class DeviceAddComponent implements OnInit {
   public custActions: any[];
   public error: string;
   private productType: string = window.localStorage.getItem('product_type');
+
+  protected addZvolComponent: ZvolWizardComponent;
+
 
   public fieldConfig: FieldConfig[] = [
     {
@@ -99,10 +104,11 @@ export class DeviceAddComponent implements OnInit {
       name : 'path',
       placeholder : helptext.zvol_path_placeholder,
       tooltip : helptext.zvol_path_tooltip,
-      type: 'select',
+      type: 'combobox',
       required: true,
       validation : helptext.zvol_path_validation,
-      options:[]
+      options:[],
+      searchOptions: []
     },
     {
       name : 'type',
@@ -318,7 +324,9 @@ export class DeviceAddComponent implements OnInit {
               protected systemGeneralService: SystemGeneralService,
               protected dialogService: DialogService,
               protected networkService: NetworkService,
-              protected vmService: VmService) {}
+              protected vmService: VmService,
+              private modalService: ModalService,
+              private storageService: StorageService) {}
 
 
   preInit() {
@@ -389,6 +397,12 @@ export class DeviceAddComponent implements OnInit {
     this.vncFormGroup = this.entityFormService.createFormGroup(this.vncFieldConfig);
 
     this.activeFormGroup = this.cdromFormGroup;
+    this.diskFormGroup.controls['path'].valueChanges.subscribe((res) => {
+      if(res === 'new') {
+        console.log('add new zvol');
+        this.addZvol();
+      }
+    });
     this.formGroup.controls['dtype'].valueChanges.subscribe((res) => {
       this.selectedType = res;
       if (res === 'CDROM') {
@@ -422,6 +436,8 @@ export class DeviceAddComponent implements OnInit {
       _.find(this.vncFieldConfig, {name:'wait'}).isHidden = false;
       _.find(this.vncFieldConfig, {name:'vnc_resolution'}).isHidden = false;
     }
+    this.addZvolComponent = new ZvolWizardComponent(this.router, this.aroute, this.rest, this.ws, this.loader,
+      this.dialogService, this.storageService, this.translate, this.modalService);
 
     this.afterInit();
   }
@@ -437,7 +453,7 @@ export class DeviceAddComponent implements OnInit {
         );   
       });
       _.find(this.diskFieldConfig, {name:'path'}).options.push({
-        lavel: 'Add New', value: 'new'
+        label: 'Add New', value: 'new'
       })
     });
     // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing VNC device, hide VNC option.
@@ -517,5 +533,9 @@ export class DeviceAddComponent implements OnInit {
         }
       );
     });
+  }
+  
+  addZvol() {
+    this.modalService.open('slide-in-form', this.addZvolComponent);
   }
 }

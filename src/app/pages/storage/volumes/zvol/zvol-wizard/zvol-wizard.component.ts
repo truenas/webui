@@ -305,7 +305,7 @@ export class ZvolWizardComponent {
       protected storageService: StorageService, private translate: TranslateService,
       protected modalService: ModalService
     ) {}
-  
+
     preInit(entityWizard: EntityWizardComponent) {
       this.entityWizard = entityWizard;
     }
