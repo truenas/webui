@@ -125,5 +125,4 @@ export class KubernetesSettingsComponent {
       data.route_v6_gateway = null;
     }
   }
- 
 }

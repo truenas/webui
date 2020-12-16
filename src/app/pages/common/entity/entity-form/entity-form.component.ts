@@ -45,6 +45,7 @@ export interface Formconfiguration {
   isEntity?;
   addCall?;
   editCall?;
+  editCallJob?;
   queryCall?;
   queryCallOption?;
   queryKey?;  // use this to define your id for websocket call
@@ -227,7 +228,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         }
         
         if (this.pk && !this.conf.isNew) {
-          if (this.conf.editCall) {
+          if (this.conf.editCall || this.conf.editCallJob) {
             this.submitFunction = this.editCall;  // this is strange so I AM NOTING it...  this.editCall internally calls this.conf.editCall with some fluff.
                                                   // But to my eyes it almost looks like a bug when I first saw it. FYI
           } else {
@@ -463,7 +464,12 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if (this.pk) {
       payload.unshift(this.pk);
     }
-    return this.ws.call(this.conf.editCall, payload);
+
+    if (this.conf.editCallJob) {
+      return this.ws.job(this.conf.editCallJob, payload);
+    } else {
+      return this.ws.call(this.conf.editCall, payload);
+    }
   }
 
   addSubmit(body: any) {
@@ -533,6 +539,12 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                         (res) => {
                           this.loader.close();
                           this.loaderOpen = false;
+
+                          if (res.error) {
+                            this.dialog.errorReport(res.error, res.reason, res.exception);
+                            return;
+                          }
+
                           if (this.conf.afterSave) {
                             this.conf.afterSave(this);
                           } else { 
