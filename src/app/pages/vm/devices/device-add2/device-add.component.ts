@@ -436,6 +436,9 @@ export class DeviceAddComponent implements OnInit {
           }
         );   
       });
+      _.find(this.diskFieldConfig, {name:'path'}).options.push({
+        lavel: 'Add New', value: 'new'
+      })
     });
     // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing VNC device, hide VNC option.
     await this.ws.call('vm.query', [[['id', '=', parseInt(this.vmid,10)]]]).subscribe((vm)=>{
