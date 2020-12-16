@@ -1,5 +1,12 @@
 .info-panel {
     max-height: 115px !important;
+
+    span {
+      display: block;
+      unicode-bidi: embed;
+      font-family: monospace;
+      white-space: pre;
+    }
 }
 
 .ip-overflow-auto {
