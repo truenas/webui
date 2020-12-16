@@ -61,6 +61,8 @@ export class ZvolWizardComponent {
     public namesInUse = [];
     public title: string;
     public isLinear = true;
+    public summary = {};
+    summary_title = "Zvol Summary";
 
     protected origVolSize;
     protected origHuman;
@@ -254,15 +256,16 @@ export class ZvolWizardComponent {
                     { label: '128 KiB', value: '128K' },
                 ],
                 isHidden: false
-                },
-            ]
+                }
+            ],
+            
         }
     ];
 
-    isCustActionVisible(actionId: string, stepperIndex: number) {
-        if(stepperIndex == 0) {
-            return false;
-        }
+    isCustActionVisible(actionId, stepperIndex) {
+      if(!(stepperIndex == 1)) {
+        return false;
+      }
       if (actionId === 'advanced_mode' && this.isBasicMode === false) {
         return false;
       } else if (actionId === 'basic_mode' && this.isBasicMode === true) {
@@ -303,22 +306,27 @@ export class ZvolWizardComponent {
       protected modalService: ModalService
     ) {}
   
-  
-    async preInit(entityWizard: EntityWizardComponent){
+    preInit(entityWizard: EntityWizardComponent) {
       this.entityWizard = entityWizard;
+    }
+  
+    async preInitZvolForm(entityWizard: EntityWizardComponent){
+      console.log('preinit called');
       const zvolEntityForm = ( < FormGroup > entityWizard.formArray.get([1]));
       if (!this.parent) return;
   
-      const name = this.wizardConfig[1].fieldConfig.find(c => c.name === 'name').value;
-      const sparse = this.wizardConfig[1].fieldConfig.find(c => c.name === 'sparse').value;
-      const sync = this.wizardConfig[1].fieldConfig.find(c => c.name === 'sync').value;
-      const compression = this.wizardConfig[1].fieldConfig.find(c => c.name === 'compression').value;
-      const deduplication = this.wizardConfig[1].fieldConfig.find(c => c.name === 'deduplication').value;
-      const volblocksize = this.wizardConfig[1].fieldConfig.find(c => c.name === 'volblocksize').value;
+      const name = this.wizardConfig[1].fieldConfig.find(c => c.name === 'name');
+      const sparse = this.wizardConfig[1].fieldConfig.find(c => c.name === 'sparse');
+      const sync = this.wizardConfig[1].fieldConfig.find(c => c.name === 'sync');
+      console.log('name', name, 'sync', sync, 'sparse', sparse);
+      const compression = this.wizardConfig[1].fieldConfig.find(c => c.name === 'compression');
+      const deduplication = this.wizardConfig[1].fieldConfig.find(c => c.name === 'deduplication');
+      const volblocksize = this.wizardConfig[1].fieldConfig.find(c => c.name === 'volblocksize');
   
       this.isNew = true;
   
       await this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).toPromise().then((pk_dataset) => {
+        console.log(`line 323: 'pool.dataset.query', [[["id", "=", this.parent]]]`, pk_dataset);
         let children = (pk_dataset[0].children);
         entityWizard.setDisabled('name',false, 1);
         if (children.length > 0) {
@@ -334,6 +342,7 @@ export class ZvolWizardComponent {
           const deduplication_inherit = [{label:`${inheritTr} (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT'}];
           const volblocksize_inherit = [{label:`${inheritTr}`, value: 'INHERIT'}];
   
+          console.log('sync', sync);
           sync.options = sync_inherit.concat(sync.options);
           compression.options = compression_inherit.concat(compression.options);        
           deduplication.options = deduplication_inherit.concat(deduplication.options);
@@ -347,6 +356,7 @@ export class ZvolWizardComponent {
   
           const root = this.parent.split("/")[0];
           this.ws.call('pool.dataset.recommended_zvol_blocksize',[root]).subscribe(res=>{
+            console.log(`line 350: 'pool.dataset.recommended_zvol_blocksize',[root]`, res);
             zvolEntityForm.controls['volblocksize'].setValue(res);
             this.minimum_recommended_zvol_volblocksize = res;
           })
@@ -356,6 +366,7 @@ export class ZvolWizardComponent {
           parent_dataset = parent_dataset.join('/')
   
           this.ws.call('pool.dataset.query', [[["id","=",parent_dataset]]]).subscribe((parent_dataset_res)=>{
+            console.log('line 360: pool.dataset.query, [[["id","=",parent_dataset]]]', parent_dataset_res);
             this.custActions = null;
             this.entityWizard.setDisabled('name',true, 1);
             sparse['isHidden'] =true;
@@ -436,12 +447,13 @@ export class ZvolWizardComponent {
       })
       })
     }
-
+    
     afterInit(entityWizard: EntityWizardComponent) {
-        console.log('after init wiz', entityWizard);
+        console.log('after init', entityWizard);
 
       const zvolEntityForm = ( < FormGroup > this.entityWizard.formArray.get([1]));
       ( < FormGroup > entityWizard.formArray.get([0])).get('path').valueChanges.subscribe((pool) => {
+        console.log('value changed');
             const split = pool.split('/');
             this.parent = '';
             for(let i=2;i<split.length; i++) {
@@ -450,7 +462,7 @@ export class ZvolWizardComponent {
                     this.parent += '/';
                 }
             }      
-
+            this.summary[T('Dataset Path')] = this.parent;
       }); 
       zvolEntityForm.controls['volblocksize'].valueChanges.subscribe((res)=>{
         const res_number = parseInt(this.reverseZvolBlockSizeMap[res],10);
@@ -478,6 +490,7 @@ export class ZvolWizardComponent {
     }
 
     addSubmit(body: any) {
+      delete body.path;
       const data: any = this.sendAsBasicOrAdvanced(body);
   
       if (data.sync === 'INHERIT') {
@@ -510,6 +523,13 @@ export class ZvolWizardComponent {
       return this.ws.call('pool.dataset.create', [ data ]);
     }
 
+    async customNext(stepper) {
+      if(this.parent) {
+        await this.preInitZvolForm(this.entityWizard);
+      }
+      stepper.next();
+    }
+
     customSubmit(body: any) {
       this.loader.open();
   
@@ -528,5 +548,6 @@ export class ZvolWizardComponent {
     setParent(id) {
       this.parent = id;
     }
+
 }
   
