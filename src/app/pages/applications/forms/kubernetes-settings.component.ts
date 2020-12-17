@@ -58,7 +58,7 @@ export class KubernetesSettingsComponent {
           placeholder: helptext.kubForm.node_ip.placeholder,
           tooltip: helptext.kubForm.node_ip.tooltip,
           options: [],
-          // isHidden: true,
+          isHidden: true,
         }
       ]
     },{
@@ -109,5 +109,6 @@ export class KubernetesSettingsComponent {
   }
 
   beforeSubmit(data) {
+    data.node_ip = '0.0.0.0';
   }
 }
