@@ -13,7 +13,8 @@ import { ApplicationsService } from '../applications.service';
 })
 export class KubernetesSettingsComponent {
   protected queryCall: string = 'kubernetes.config';
-  protected editCallJob: string = 'kubernetes.update';
+  protected editCall: string = 'kubernetes.update';
+  protected isEditJob: Boolean = true;
   private title = helptext.kubForm.title;
   private entityEdit: any;
   protected fieldConfig: FieldConfig[];
