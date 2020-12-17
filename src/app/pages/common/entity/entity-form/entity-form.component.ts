@@ -541,33 +541,36 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                           this.loaderOpen = false;
 
                           if (res.error) {
-                            this.dialog.errorReport(res.error, res.reason, res.exception);
-                            return;
-                          }
-
-                          if (this.conf.afterSave) {
-                            this.conf.afterSave(this);
-                          } else { 
-                            if (this.conf.route_success) {
-                              this.router.navigate(new Array('/').concat(
-                                  this.conf.route_success));
+                            if (res.exc_info && res.exc_info.extra) {
+                              new EntityUtils().handleWSError(this, res); 
                             } else {
-                              this.success = true;
-                              this.formGroup.markAsPristine();
+                              this.dialog.errorReport('Error', res.error, res.exception);
                             }
-
-                            if (this.conf.afterSubmit) {
-                              this.conf.afterSubmit(value);
+                          } else {
+                            if (this.conf.afterSave) {
+                              this.conf.afterSave(this);
+                            } else { 
+                              if (this.conf.route_success) {
+                                this.router.navigate(new Array('/').concat(
+                                    this.conf.route_success));
+                              } else {
+                                this.success = true;
+                                this.formGroup.markAsPristine();
+                              }
+  
+                              if (this.conf.afterSubmit) {
+                                this.conf.afterSubmit(value);
+                              }
+                              if (this.conf.responseOnSubmit) {
+                                this.conf.responseOnSubmit(res);
+                              }
                             }
-                            if (this.conf.responseOnSubmit) {
-                              this.conf.responseOnSubmit(res);
-                            }
+                            this.modalService.close('slide-in-form').then(closed => {
+                              if (closed && this.conf.afterModalFormClosed) {
+                                this.conf.afterModalFormClosed();
+                              }
+                            });
                           }
-                          this.modalService.close('slide-in-form').then(closed => {
-                            if (closed && this.conf.afterModalFormClosed) {
-                              this.conf.afterModalFormClosed();
-                            }
-                          });
                         },
                         (res) => {
                           this.loader.close();
