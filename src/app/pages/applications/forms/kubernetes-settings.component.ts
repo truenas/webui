@@ -71,14 +71,12 @@ export class KubernetesSettingsComponent {
           placeholder: helptext.kubForm.route_v4_interface.placeholder,
           tooltip: helptext.kubForm.route_v4_interface.tooltip,
           options: [{ label: '---', value: null}],
-          required: true,
         },
         {
           type: 'input',
           name: 'route_v4_gateway',
           placeholder: helptext.kubForm.route_v4_gateway.placeholder,
           tooltip: helptext.kubForm.route_v4_gateway.tooltip,
-          required: true,
         }
       ]
     },
