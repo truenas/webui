@@ -101,14 +101,15 @@ export class DeviceAddComponent implements OnInit {
   //disk 
   public diskFieldConfig: FieldConfig[] = [
     {
-      name : 'path',
-      placeholder : helptext.zvol_path_placeholder,
-      tooltip : helptext.zvol_path_tooltip,
       type: 'combobox',
-      required: true,
-      validation : helptext.zvol_path_validation,
-      options:[],
-      searchOptions: []
+      name: 'path',
+      placeholder: helptext.zvol_path_placeholder,
+      tooltip: helptext.zvol_path_tooltip,
+      options: [],
+      value: '',
+      searchOptions: [],
+      parent: this,
+      updater: this.updateZvolSearchOptions,
     },
     {
       name : 'type',
@@ -399,7 +400,6 @@ export class DeviceAddComponent implements OnInit {
     this.activeFormGroup = this.cdromFormGroup;
     this.diskFormGroup.controls['path'].valueChanges.subscribe((res) => {
       if(res === 'new') {
-        console.log('add new zvol');
         this.addZvol();
       }
     });
@@ -537,5 +537,22 @@ export class DeviceAddComponent implements OnInit {
   
   addZvol() {
     this.modalService.open('slide-in-form', this.addZvolComponent);
+  }
+
+  updateZvolSearchOptions(value = "", parent) {
+    parent.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"],["id", "^", value]]]).subscribe((zvols)=>{
+      const searchedZvols = [];
+      zvols.forEach(zvol => {
+        searchedZvols.push(
+          {
+            label : zvol.id, value : '/dev/zvol/' + zvol.id
+          }
+        );  
+      });
+      searchedZvols.push({
+        label: 'Add New', value: 'new'
+      });
+      _.find(parent.diskFieldConfig, {name:'path'}).searchOptions = searchedZvols;
+    });
   }
 }
