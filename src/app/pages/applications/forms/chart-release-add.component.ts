@@ -13,6 +13,7 @@ import { DialogService } from '../../../services/index';
 import { ApplicationsService } from '../applications.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import  helptext  from '../../../helptext/apps/apps';
+import { FormListComponent } from '../../common/entity/entity-form/components/form-list/form-list.component';
 
 @Component({
   selector: 'app-chart-release-add',
@@ -141,6 +142,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
           label: 'Add External Interface',
           box: true,
           width: '100%',
+          customEventMethod: this.onChangeExternalInterfaces,
           templateListField: [
             {
               type: 'select',
@@ -346,6 +348,24 @@ export class ChartReleaseAddComponent implements OnDestroy {
     this.summaryItems.forEach(item => {
       this.makeSummary(item.step, item.fieldName, item.label);
     })
+  }
+
+  onChangeExternalInterfaces(listComponent: FormListComponent) {
+    
+    listComponent.listsFromArray.controls.forEach((externalInterface, index) => {
+      const staticRoutesFC = _.find(listComponent.config.listFields[index], {'name': 'staticRoutes'});
+      const staticIPConfigurationsFC = _.find(listComponent.config.listFields[index], {'name': 'staticIPConfigurations'});
+  
+      (<FormGroup>externalInterface).controls['ipam'].valueChanges.subscribe(value => {
+        if (value === 'static') {
+          staticIPConfigurationsFC.isHidden = false;
+          staticRoutesFC.isHidden = false;
+        } else {
+          staticIPConfigurationsFC.isHidden = true;
+          staticRoutesFC.isHidden = true;
+        }
+      })
+    });
   }
 
   makeSummary(step: string | number, fieldName: string | number, label: string | number) {
