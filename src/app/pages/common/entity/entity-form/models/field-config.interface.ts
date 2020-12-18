@@ -32,5 +32,6 @@ export interface FieldConfig {
   maskValue?: any, hideErrMsg?: boolean, id?: string, autocomplete?: boolean,
   buttonClass?: string, buttonColor?: string, filereader?: boolean, box?: boolean,
   customEventMethod?(data:any), onChangeOption?(data:any), hint?:string, loadMoreOptions?: any;
+  enableTextWrapForOptions?: boolean;
 }
 

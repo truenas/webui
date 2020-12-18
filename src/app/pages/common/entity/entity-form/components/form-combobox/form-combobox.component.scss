@@ -1,0 +1,17 @@
+mat-option.text-wrap,
+.mat-menu-item.text-wrap {
+  white-space: normal !important;
+  text-overflow: initial !important;
+  line-height: inherit !important;
+  height: unset !important;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+mat-option.text-wrap {
+  min-height: 48px;
+}
+
+.mat-menu-item.text-wrap {
+  min-height: 36px;
+}
