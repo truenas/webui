@@ -14,6 +14,7 @@ import { ApplicationsService } from '../applications.service';
 export class KubernetesSettingsComponent {
   protected queryCall: string = 'kubernetes.config';
   protected editCall: string = 'kubernetes.update';
+  protected isEditJob: Boolean = true;
   private title = helptext.kubForm.title;
   private entityEdit: any;
   protected fieldConfig: FieldConfig[];
@@ -27,32 +28,36 @@ export class KubernetesSettingsComponent {
           name: 'pool',
           placeholder: helptext.kubForm.pool.placeholder,
           tooltip: helptext.kubForm.pool.tooltip,
-          options: []
+          options: [],
+          required: true,
         },
         {
           type: 'input',
           name: 'cluster_cidr',
           placeholder: helptext.kubForm.cluster_cidr.placeholder,
           tooltip: helptext.kubForm.cluster_cidr.tooltip,
+          required: true,
         },
         {
           type: 'input',
           name: 'service_cidr',
           placeholder: helptext.kubForm.service_cidr.placeholder,
           tooltip: helptext.kubForm.service_cidr.tooltip,
+          required: true,
         },
         {
           type: 'input',
           name: 'cluster_dns_ip',
           placeholder: helptext.kubForm.cluster_dns_ip.placeholder,
           tooltip: helptext.kubForm.cluster_dns_ip.tooltip,
+          required: true,
         },
         {
           type: 'select',
           name: 'node_ip',
           placeholder: helptext.kubForm.node_ip.placeholder,
           tooltip: helptext.kubForm.node_ip.tooltip,
-          options: []
+          options: [],
         }
       ]
     },{
@@ -64,26 +69,13 @@ export class KubernetesSettingsComponent {
           name: 'route_v4_interface',
           placeholder: helptext.kubForm.route_v4_interface.placeholder,
           tooltip: helptext.kubForm.route_v4_interface.tooltip,
-          options: [{ label: '---', value: null}]
+          options: [{ label: '---', value: null}],
         },
         {
           type: 'input',
           name: 'route_v4_gateway',
           placeholder: helptext.kubForm.route_v4_gateway.placeholder,
           tooltip: helptext.kubForm.route_v4_gateway.tooltip,
-        },
-        {
-          type: 'select',
-          name: 'route_v6_interface',
-          placeholder: helptext.kubForm.route_v6_interface.placeholder,
-          tooltip: helptext.kubForm.route_v6_interface.tooltip,
-          options: [{ label: '---', value: null}]
-        },
-        {
-          type: 'input',
-          name: 'route_v6_gateway',
-          placeholder: helptext.kubForm.route_v6_gateway.placeholder,
-          tooltip: helptext.kubForm.route_v6_gateway.tooltip,
         }
       ]
     },
@@ -106,24 +98,19 @@ export class KubernetesSettingsComponent {
       }
     })
     const v4_interface_control = _.find(this.fieldSets[1].config, {'name' : 'route_v4_interface'});
-    const v6_interface_control = _.find(this.fieldSets[1].config, {'name' : 'route_v6_interface'});
     this.appService.getInterfaces().subscribe(interfaces => {
       interfaces.forEach(i => {
         v4_interface_control.options.push({ label: i.name, value: i.name });
-        v6_interface_control.options.push({ label: i.name, value: i.name });
       })
     })
-
   }
 
   beforeSubmit(data) {
     if (data.route_v4_gateway === '') {
       data.route_v4_gateway = null;
-      console.log('yo', data.route_v4_gateway)
     }
     if (data.route_v6_gateway === '') {
       data.route_v6_gateway = null;
     }
   }
- 
 }

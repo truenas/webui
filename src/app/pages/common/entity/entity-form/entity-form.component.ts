@@ -45,6 +45,7 @@ export interface Formconfiguration {
   isEntity?;
   addCall?;
   editCall?;
+  isEditJob?;
   queryCall?;
   queryCallOption?;
   queryKey?;  // use this to define your id for websocket call
@@ -463,7 +464,12 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if (this.pk) {
       payload.unshift(this.pk);
     }
-    return this.ws.call(this.conf.editCall, payload);
+
+    if (this.conf.isEditJob) {
+      return this.ws.job(this.conf.editCall, payload);
+    } else {
+      return this.ws.call(this.conf.editCall, payload);
+    }
   }
 
   addSubmit(body: any) {
@@ -533,29 +539,38 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                         (res) => {
                           this.loader.close();
                           this.loaderOpen = false;
-                          if (this.conf.afterSave) {
-                            this.conf.afterSave(this);
-                          } else { 
-                            if (this.conf.route_success) {
-                              this.router.navigate(new Array('/').concat(
-                                  this.conf.route_success));
-                            } else {
-                              this.success = true;
-                              this.formGroup.markAsPristine();
-                            }
 
-                            if (this.conf.afterSubmit) {
-                              this.conf.afterSubmit(value);
+                          if (this.conf.isEditJob && res.error) {
+                            if (res.exc_info && res.exc_info.extra) {
+                              new EntityUtils().handleWSError(this, res); 
+                            } else {
+                              this.dialog.errorReport('Error', res.error, res.exception);
                             }
-                            if (this.conf.responseOnSubmit) {
-                              this.conf.responseOnSubmit(res);
+                          } else {
+                            if (this.conf.afterSave) {
+                              this.conf.afterSave(this);
+                            } else { 
+                              if (this.conf.route_success) {
+                                this.router.navigate(new Array('/').concat(
+                                    this.conf.route_success));
+                              } else {
+                                this.success = true;
+                                this.formGroup.markAsPristine();
+                              }
+  
+                              if (this.conf.afterSubmit) {
+                                this.conf.afterSubmit(value);
+                              }
+                              if (this.conf.responseOnSubmit) {
+                                this.conf.responseOnSubmit(res);
+                              }
                             }
+                            this.modalService.close('slide-in-form').then(closed => {
+                              if (closed && this.conf.afterModalFormClosed) {
+                                this.conf.afterModalFormClosed();
+                              }
+                            });
                           }
-                          this.modalService.close('slide-in-form').then(closed => {
-                            if (closed && this.conf.afterModalFormClosed) {
-                              this.conf.afterModalFormClosed();
-                            }
-                          });
                         },
                         (res) => {
                           this.loader.close();
