@@ -137,7 +137,6 @@ export class NavigationService {
       state: 'system',
       sub: [
         { name: T('Update'), state: 'update' },
-        { name: T('Alerts'), state: 'alertservice' },
         { name: T('General'), state: 'general' },
         { name: T('Advanced'), state: 'advanced' },
         { name: T('Boot'), state: 'boot' },
