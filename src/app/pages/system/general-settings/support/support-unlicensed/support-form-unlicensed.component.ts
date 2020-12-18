@@ -42,7 +42,8 @@ export class SupportFormUnlicensedComponent {
           type : 'input',
           name : 'username',
           placeholder : helptext.username.placeholder,
-          tooltip : helptext.username.tooltip,
+          tooltip :helptext.username.tooltip,
+          tooltipPosition: 'below',
           required: true,
           validation : helptext.username.validation,
           blurStatus : true,
@@ -56,6 +57,7 @@ export class SupportFormUnlicensedComponent {
           inputType : 'password',
           placeholder : helptext.password.placeholder,
           tooltip : helptext.password.tooltip,
+          tooltipPosition: 'above',
           required: true,
           validation : helptext.password.validation,
           blurStatus : true,
@@ -69,6 +71,7 @@ export class SupportFormUnlicensedComponent {
           name : 'type',
           placeholder : helptext.type.placeholder,
           tooltip : helptext.type.tooltip,
+          tooltipPosition: 'above',
           options:[
             {label: T('Bug'), value: 'BUG'},
             {label: T('Feature'), value: 'FEATURE'}
@@ -80,6 +83,7 @@ export class SupportFormUnlicensedComponent {
           name : 'category',
           placeholder : helptext.category.placeholder,
           tooltip : helptext.category.tooltip,
+          tooltipPosition: 'above',
           required: true,
           validation : helptext.category.validation,
           options:[],
@@ -91,6 +95,7 @@ export class SupportFormUnlicensedComponent {
           name : 'attach_debug',
           placeholder : helptext.attach_debug.placeholder,
           tooltip : helptext.attach_debug.tooltip,
+          tooltipPosition: 'above',
           value: false
         },
         {
@@ -98,6 +103,7 @@ export class SupportFormUnlicensedComponent {
           name : 'title',
           placeholder : helptext.title.placeholder,
           tooltip : helptext.title.tooltip,
+          tooltipPosition: 'above',
           required: true,
           validation : helptext.title.validation
         },
@@ -106,6 +112,7 @@ export class SupportFormUnlicensedComponent {
           name : 'body',
           placeholder : helptext.body.placeholder,
           tooltip : helptext.body.tooltip,
+          tooltipPosition: 'above',
           required: true,
           validation : helptext.body.validation,
           textAreaRows: 8
@@ -115,6 +122,7 @@ export class SupportFormUnlicensedComponent {
           name: 'screenshot',
           placeholder: helptext.screenshot.placeholder,
           tooltip: helptext.screenshot.tooltip,
+          tooltipPosition: 'above',
           fileLocation: '',
           updater: this.updater,
           parent: this,
