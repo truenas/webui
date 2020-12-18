@@ -106,5 +106,11 @@ export class KubernetesSettingsComponent {
   }
 
   beforeSubmit(data) {
+    if (data.route_v4_gateway === '') {
+      data.route_v4_gateway = null;
+    }
+    if (data.route_v6_gateway === '') {
+      data.route_v6_gateway = null;
+    }
   }
 }
