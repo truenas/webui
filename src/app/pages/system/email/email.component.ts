@@ -72,7 +72,7 @@ export class EmailComponent implements OnDestroy {
       const dialogService = this.dialogservice;
       const controls = this.entityEdit.formGroup.controls;
 
-      window.open("https://freenas.org/oauth/gmail?origin=" + 
+      window.open("https://freenas.org/oauth/gmail?origin=" +
         encodeURIComponent(window.location.toString()), "_blank", "width=640,height=480");
       window.addEventListener("message", doAuth, false);
 
@@ -113,15 +113,15 @@ export class EmailComponent implements OnDestroy {
         {
           type: 'radio',
           name: 'smtp',
-          placeholder: helptext_system_email.auth.section_label,
+          placeholder: helptext_system_email.send_mail_method.placeholder,
           options: [
-            {label: helptext_system_email.auth.smtp.placeholder,
+            {label: helptext_system_email.send_mail_method.smtp.placeholder,
              name: 'smtp',
-             tooltip: helptext_system_email.auth.smtp.tooltip,
+             tooltip: helptext_system_email.send_mail_method.smtp.tooltip,
              value: true},
-            {label: helptext_system_email.auth.gmail.placeholder,
+            {label: helptext_system_email.send_mail_method.gmail.placeholder,
              name: 'gmail',
-             tooltip: helptext_system_email.auth.gmail.tooltip,
+             tooltip: helptext_system_email.send_mail_method.gmail.tooltip,
              value: false},
           ],
           value: true
@@ -180,38 +180,78 @@ export class EmailComponent implements OnDestroy {
           ],
         },
         {
-          type : 'input',
-          name : 'user',
-          placeholder : helptext_system_email.user.placeholder,
-          tooltip : helptext_system_email.user.tooltip,
-          relation : [
+          type: 'checkbox',
+          name: 'auth_smtp',
+          placeholder: helptext_system_email.auth.smtp.placeholder,
+          tooltip: helptext_system_email.auth.smtp.tooltip,
+          relation: [
             {
-              action : 'HIDE',
-              when : [ {
-                name : 'smtp',
-                value : false,
-              } ]
+              action: 'HIDE',
+              when: [
+                {
+                  name: 'smtp',
+                  value: false,
+                },
+              ],
             },
           ],
-          required: true,
-          validation : helptext_system_email.user.validation
+          value: false,
         },
         {
-          type : 'input',
-          name : 'pass',
-          placeholder : helptext_system_email.pass.placeholder,
-          tooltip : helptext_system_email.pass.tooltip,
-          inputType : 'password',
-          relation : [
+          type: 'input',
+          name: 'user',
+          placeholder: helptext_system_email.user.placeholder,
+          tooltip: helptext_system_email.user.tooltip,
+          relation: [
             {
-              action : 'HIDE',
-              when : [ {
-                name : 'smtp',
-                value : false,
-              } ]
+              action: 'HIDE',
+              connective: 'OR',
+              when: [{
+                name: 'smtp',
+                value: false,
+              },{
+                name: 'auth_smtp',
+                value: false,
+              }],
             },
+            {
+              action: 'DISABLE',
+              when: [{
+                name: 'auth_smtp',
+                value: false,
+              }]
+            }
           ],
-          togglePw : true, 
+          required: true,
+          validation: helptext_system_email.user.validation,
+        },
+        {
+          type: 'input',
+          name: 'pass',
+          placeholder: helptext_system_email.pass.placeholder,
+          tooltip: helptext_system_email.pass.tooltip,
+          inputType: 'password',
+          relation: [
+            {
+              action: 'HIDE',
+              connective: 'OR',
+              when: [{
+                name: 'smtp',
+                value: false,
+              },{
+                name: 'auth_smtp',
+                value: false,
+              }],
+            },
+            {
+              action: 'DISABLE',
+              when: [{
+                name: 'auth_smtp',
+                value: false,
+              }]
+            }
+          ],
+          togglePw: true,
           validation: helptext_system_email.pass.validation,
         },
         {
@@ -316,6 +356,10 @@ export class EmailComponent implements OnDestroy {
 
     if (emailConfig.oauth_not_applied) {
       delete emailConfig.oauth_not_applied
+    }
+
+    if (emailConfig.hasOwnProperty('auth_smtp')) {
+      delete emailConfig.auth_smtp;
     }
 
     this.ws
