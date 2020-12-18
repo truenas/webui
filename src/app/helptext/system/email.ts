@@ -67,20 +67,27 @@ export const helptext_system_email = {
     validation: [regexValidator(/^[ -~]+$/)]
   },
 
-  auth: {
-    section_label: T('Send Mail Method'),
+  send_mail_method: {
+    placeholder: T('Send Mail Method'),
     smtp: {
-      placeholder: T("SMTP"),
+      placeholder: T('SMTP'),
+      tooltip: T('Enable SMTP configuration')
+    },
+    gmail: {
+      placeholder: T('GMail OAuth'),
+      tooltip: T('Enable GMail OAuth authentication.')
+    },
+  },
+
+  auth: {
+    smtp: {
+      placeholder: T('SMTP Authentication'),
       tooltip: T(
         'Enable\
    <a href="https://en.wikipedia.org/wiki/SMTP_Authentication"\
    target="_blank">SMTP AUTH</a> using PLAIN SASL.\
    Requires a valid Username and Password.'
       )
-    },
-    gmail: {
-      placeholder: T('GMail OAuth'),
-      tooltip: T('Enable GMail OAuth authentication.')
     },
     client_id: {
       placeholder: T('Client ID'),
