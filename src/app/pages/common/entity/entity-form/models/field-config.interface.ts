@@ -16,7 +16,7 @@ export interface FieldConfig {
   errors?: string, hasErrors?: boolean, placeholder?: string, type: string,
   inputType?: string, inputUnit?: InputUnitConfig, validation?: any[] | ValidatorFn | ValidatorFn[],
   asyncValidation?: AsyncValidatorFn | AsyncValidatorFn[],
-  value?: any, multiple?: boolean, tristate?: boolean, tooltip?: string,
+  value?: any, multiple?: boolean, tristate?: boolean, tooltip?: string, tooltipPosition?:string,
   relation?: RelationGroup[], isHidden?: boolean, formarray?: any,
   initialCount?: number, readonly?: boolean, initial?: string, rootSelectable?: boolean,
   min?: number, max?: number, tabs?: any[], tabName?: string, class?: string,
