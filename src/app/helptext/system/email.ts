@@ -68,7 +68,7 @@ export const helptext_system_email = {
   },
 
   auth: {
-    section_label: T('Authentication'),
+    section_label: T('Send Mail Method'),
     smtp: {
       placeholder: T("SMTP"),
       tooltip: T(
