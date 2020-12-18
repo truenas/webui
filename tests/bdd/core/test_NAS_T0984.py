@@ -1,5 +1,6 @@
 # coding=utf-8
 """Core UI feature tests."""
+
 import time
 from function import (
     wait_on_element,
@@ -23,8 +24,6 @@ def test_setting_interface_from_dhcp_to_a_static_ip(driver):
 @given('the browser is open, the FreeNAS URL and logged in')
 def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
     """the browser is open, the FreeNAS URL and logged in."""
-    print(driver.current_url)
-    print(nas_ip)
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 0.5, 10, '//input[@placeholder="Username"]')
