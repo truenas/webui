@@ -95,7 +95,6 @@ export class EmailComponent implements OnDestroy {
     {
       name: helptext_system_email.fieldsets.general,
       label: true,
-      width: '49%',
       config: [
         {
           type : 'input',
@@ -127,14 +126,6 @@ export class EmailComponent implements OnDestroy {
           ],
           value: true
         },
-      ]
-    },
-    { name: 'spacer', label: false, width: '2%' },
-    {
-      name: helptext_system_email.fieldsets.access,
-      label: true,
-      width: '49%',
-      config: [
         {
           type : 'input',
           name : 'outgoingserver',
