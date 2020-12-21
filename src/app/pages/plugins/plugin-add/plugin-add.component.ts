@@ -327,11 +327,13 @@ export class PluginAddComponent implements OnInit {
     this.ip6_interfaceField = _.find(this.fieldConfig, {'name': 'ip6_interface'});
     this.ip6_prefixField = _.find(this.fieldConfig, {'name': 'ip6_prefix'});
     // get interface options
-    this.jailService.getInterfaceChoice().subscribe(
+    this.jailService.getDefaultConfiguration().subscribe(
       (res)=>{
-        for (let i in res) {
-          this.ip4_interfaceField.options.push({ label: res[i], value: i});
-          this.ip6_interfaceField.options.push({ label: res[i], value: i});
+        const ventInterfaces = res['interfaces'].split(',');
+        for (const item of ventInterfaces) {
+          const vent = item.split(':');
+          this.ip4_interfaceField.options.push({ label: vent[0], value: vent[0] });
+          this.ip6_interfaceField.options.push({ label: vent[0], value: vent[0] });
         }
       },
       (res)=>{
@@ -411,13 +413,21 @@ export class PluginAddComponent implements OnInit {
     let value = _.cloneDeep(this.formGroup.value);
 
     if (value['ip4_addr'] != undefined) {
-      value['ip4_addr'] = value['ip4_interface'] + '|' + value['ip4_addr'] + '/' + value['ip4_netmask'];
+      let ip4_interface = '';
+      if(value['ip4_interface']) {
+        ip4_interface = value['ip4_interface'] + '|';
+      }
+      value['ip4_addr'] = ip4_interface + value['ip4_addr'] + '/' + value['ip4_netmask'];
       delete value['ip4_interface'];
       delete value['ip4_netmask'];
     }
 
     if (value['ip6_addr'] != undefined) {
-      value['ip6_addr'] = value['ip6_interface'] + '|' + value['ip6_addr'] + '/' + value['ip6_prefix'];
+      let ip6_interface = '';
+      if(value['ip6_interface']) {
+        ip6_interface = value['ip6_interface'] + '|';
+      }
+      value['ip6_addr'] = ip6_interface + value['ip6_addr'] + '/' + value['ip6_prefix'];
       delete value['ip6_interface'];
       delete value['ip6_prefix'];
     }
