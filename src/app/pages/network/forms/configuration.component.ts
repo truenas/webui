@@ -232,7 +232,7 @@ export class ConfigurationComponent {
   }
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
-    if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
+    if (['ENTERPRISE', 'SCALE_ENTERPRISE'].includes(window.localStorage.getItem('product_type'))) {
       this.ws.call('failover.licensed').subscribe((is_ha) => { //fixme, stupid race condition makes me need to call this again
         for (let i = 0; i < this.failover_fields.length; i++) {
           entityEdit.setDisabled(this.failover_fields[i], !is_ha, !is_ha);

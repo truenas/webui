@@ -120,6 +120,7 @@ import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.compo
     WidgetNicComponent,
     WidgetCpuComponent,
     WidgetMemoryComponent,
+    TextLimiterDirective,
     TextLimiterTooltipComponent,
     WidgetPoolComponent,
     WidgetControllerComponent,

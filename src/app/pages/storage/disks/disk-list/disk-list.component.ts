@@ -326,7 +326,7 @@ export class DiskListComponent {
 				success_note += `<b>${res[i].disk}</b>: ${this.localeService.formatDateTime(res[i].expected_result_time.$date)}<br>`
 			} else if (res[i].error) {
 				hasFailNote = true;
-				fail_note += `<b>${res[i].disk}</b><br> ${res[i].error}<br>`;
+				fail_note += `<b>${res[i].disk}</b><br>${res[i].error}<br>`;
 			}
 		}
 		this.dialogService.Info(

@@ -20,7 +20,6 @@ import { EmailComponent } from './email/';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
 import { FailoverComponent } from './failover/failover.component';
-import { ReportingComponent } from './reporting/reporting.component';
 import { EulaComponent } from './general-settings/support/eula/eula.component';
 import { KmipComponent} from './kmip/kmip.component';
 import { T } from '../../translate-marker';
@@ -48,10 +47,6 @@ export const routes: Routes = [
       component: AdvancedComponent,
       data: { title: T('Advanced'), breadcrumb: T('Advanced'), icon: 'settings' },
 
-    }, {
-      path: 'reporting',
-      component: ReportingComponent,
-      data: { title: T('Reporting'), breadcrumb: T('Reporting') },
     }, {
       path: 'dataset',
       component: DatasetComponent,

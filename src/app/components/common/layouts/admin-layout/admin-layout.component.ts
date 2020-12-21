@@ -37,6 +37,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   public currentTheme: string = "";
   public retroLogo: boolean = false;
   public isOpen = false;
+  public notificPanelClosed = false;
   menuName: string;
   subs:any[];
   public copyrightYear = globalHelptext.copyright_year;
