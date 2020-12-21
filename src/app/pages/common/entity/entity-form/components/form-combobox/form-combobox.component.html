@@ -23,7 +23,7 @@ ix-auto ix-auto-type="combobox" ix-auto-identifier="{{config.placeholder}}">
         >
        <mat-autocomplete #autoComplete="matAutocomplete" (opened)="onOpenDropdown()">
         <mat-option *ngFor="let option of config.searchOptions" [value]="option.value"
-          ix-auto ix-auto-type="option" ix-auto-identifier="{{option.label}}">
+          ix-auto ix-auto-type="option" ix-auto-identifier="{{option.label}}" [class.text-wrap]="config.enableTextWrapForOptions">
           <span>{{ option.label }}</span>
          </mat-option>
        </mat-autocomplete>
@@ -35,7 +35,7 @@ ix-auto ix-auto-type="combobox" ix-auto-identifier="{{config.placeholder}}">
     <mat-menu #options [class]="'combo-box-menu'">
       <ng-container *ngFor="let option of config.options">
         <button mat-menu-item (click)="onChangeOption(option.value)"
-          ix-auto ix-auto-type="option" ix-auto-identifier="{{option.label}}">
+          ix-auto ix-auto-type="option" ix-auto-identifier="{{option.label}}" [class.text-wrap]="config.enableTextWrapForOptions">
           <span>{{ option.label }}</span>
         </button>
       </ng-container>

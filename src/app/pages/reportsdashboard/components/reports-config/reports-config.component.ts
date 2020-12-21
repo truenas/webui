@@ -1,18 +1,19 @@
 import { Component } from '@angular/core';
 import { helptext } from 'app/helptext/system/reporting';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { DialogService, RestService, WebSocketService } from '../../../services/';
-import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
-import { EntityUtils } from '../../common/entity/utils';
+import { DialogService, WebSocketService } from '../../../../services';
+import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
-  selector: 'app-system-reporting',
-  templateUrl: 'reporting.component.html',
-  styleUrls: ['reporting.component.css'],
+  selector: 'app-reports-config',
+  template: `<entity-form [conf]="this"></entity-form>`,
+  styleUrls: ['reports-config.component.css'],
 })
-export class ReportingComponent {
+export class ReportsConfigComponent {
   public job: any = {};
   protected queryCall = 'reporting.config';
+  public title: string;
+  public isOneColumnForm: boolean;
   public entityForm: any;
   public isCpuCheckboxChecked: boolean;
   public graphPoints: any;
@@ -79,10 +80,11 @@ export class ReportingComponent {
     { name: 'divider', divider: true }
   ]);
 
-  constructor(private rest: RestService,
-    private load: AppLoaderService,
+  public afterModalFormSaved?();
+
+  constructor(
     private ws: WebSocketService,
-    protected dialog: DialogService
+    protected dialog: DialogService,
   ) {}
 
   resourceTransformIncomingRestData(data) {
@@ -96,11 +98,11 @@ export class ReportingComponent {
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
   }
-  
+
   public customSubmit(body) {
-    if (body.graph_age !== this.graphAge || body.graph_points !== this.graphPoints || 
+    if (body.graph_age !== this.graphAge || body.graph_points !== this.graphPoints ||
       body.cpu_in_percentage !== this.isCpuCheckboxChecked) {
-      this.dialog.confirm(helptext.dialog.title, helptext.dialog.message, false, 
+      this.dialog.confirm(helptext.dialog.title, helptext.dialog.message, false,
         helptext.dialog.action).subscribe((res) => {
         if (res) {
           body.confirm_rrd_destroy = true;
@@ -117,13 +119,11 @@ export class ReportingComponent {
     this.graphAge = body.graph_age;
     this.graphPoints = body.graph_points;
     this.isCpuCheckboxChecked = body.cpu_in_percentage;
-    this.load.open();
     return this.ws.call('reporting.update', [body]).subscribe((res) => {
-      this.load.close();
       this.entityForm.success = true;
       this.entityForm.formGroup.markAsPristine();
+      this.afterModalFormSaved();
     }, (err) => {
-      this.load.close();
       new EntityUtils().handleWSError(this.entityForm, err);
     });
   }
