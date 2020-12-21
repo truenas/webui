@@ -32,6 +32,7 @@ export class CertificateAddComponent {
   private getType = new Subscription;
   private type: any;
   public hideCancel = true;
+  private isLinear = true;
 
   entityWizard: any;
   private currentStep = 0;

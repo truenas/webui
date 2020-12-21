@@ -23,7 +23,7 @@ export class CertificateAuthorityAddComponent {
   protected addCall = "certificateauthority.create";
   protected isEntity: boolean = true;
   private title: string;
-  
+  private isLinear = true;
   public hideCancel = true;
 
   entityWizard: any;
