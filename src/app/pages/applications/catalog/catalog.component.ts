@@ -117,7 +117,8 @@ export class CatalogComponent implements OnInit {
 
     this.settingsEvent = new Subject();
     this.settingsEvent.subscribe((evt: CoreEvent) => {
-      if (evt.data.settings) {
+      console.log("-------", evt.data)
+      if (evt.data.event_control == 'settings' && evt.data.settings) {
         switch (evt.data.settings.value) {
           case 'select_pool':
             return this.selectPool();
@@ -126,10 +127,9 @@ export class CatalogComponent implements OnInit {
             this.modalService.open('slide-in-form', this.kubernetesForm);
             break;
         }
-      } else if (evt.data.launch) {
+      } else if (evt.data.event_control == 'launch' && evt.data.launch) {
         this.doInstall('ix-chart');
       }
-
     })
 
     const settingsConfig = {
