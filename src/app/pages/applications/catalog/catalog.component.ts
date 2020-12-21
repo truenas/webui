@@ -117,7 +117,6 @@ export class CatalogComponent implements OnInit {
 
     this.settingsEvent = new Subject();
     this.settingsEvent.subscribe((evt: CoreEvent) => {
-      console.log("-------", evt.data)
       if (evt.data.event_control == 'settings' && evt.data.settings) {
         switch (evt.data.settings.value) {
           case 'select_pool':
