@@ -223,13 +223,7 @@ export class CertificateAuthorityAddComponent {
           required: true,
           validation: helptext_system_ca.add.organization.validation,
           isHidden: false,
-        }
-      ]
-    },
-    {
-      label: helptext_system_ca.add.fieldset_certificate,
-      fieldConfig: [
-
+        },
         {
           type: 'input',
           name: 'organizational_unit',
@@ -266,7 +260,7 @@ export class CertificateAuthorityAddComponent {
       ]
     },
     {
-      label: helptext_system_ca.add.fieldset_basic_constraints,
+      label: helptext_system_ca.add.fieldset_extra,
       fieldConfig: [
         {
           type: 'checkbox',
@@ -318,11 +312,6 @@ export class CertificateAuthorityAddComponent {
             },
           ]
         },
-      ]
-    },
-    {
-      label: helptext_system_ca.add.fieldset_authority_key_identifier,
-      fieldConfig: [
         {
           type: 'checkbox',
           name: 'AuthorityKeyIdentifier-enabled',
@@ -356,12 +345,7 @@ export class CertificateAuthorityAddComponent {
               }]
             },
           ]
-        }
-      ]
-    },
-    {
-      label: helptext_system_ca.add.fieldset_extended_key_usage,
-      fieldConfig: [
+        },
         {
           type: 'checkbox',
           name: 'ExtendedKeyUsage-enabled',
@@ -401,11 +385,6 @@ export class CertificateAuthorityAddComponent {
             },
           ]
         },
-      ]
-    },
-    {
-      label: helptext_system_ca.add.fieldset_key_usage,
-      fieldConfig: [
         {
           type: 'checkbox',
           name: 'KeyUsage-enabled',

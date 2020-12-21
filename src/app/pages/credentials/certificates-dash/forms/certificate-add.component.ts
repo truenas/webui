@@ -295,7 +295,7 @@ export class CertificateAddComponent {
       ]
     },
     {
-      label: helptext_system_certificates.add.fieldset_basic_constraints,
+      label: helptext_system_certificates.add.fieldset_extra,
       fieldConfig: [
         {
           type: 'checkbox',
@@ -347,11 +347,6 @@ export class CertificateAddComponent {
             },
           ]
         },
-      ]
-    },
-    {
-      label: helptext_system_certificates.add.fieldset_authority_key_identifier,
-      fieldConfig: [
         {
           type: 'checkbox',
           name: 'AuthorityKeyIdentifier-enabled',
@@ -385,12 +380,7 @@ export class CertificateAddComponent {
               }]
             },
           ]
-        }
-      ]
-    },
-    {
-      label: helptext_system_certificates.add.fieldset_extended_key_usage,
-      fieldConfig: [
+        },
         {
           type: 'checkbox',
           name: 'ExtendedKeyUsage-enabled',
@@ -430,11 +420,6 @@ export class CertificateAddComponent {
             },
           ]
         },
-      ]
-    },
-    {
-      label: helptext_system_certificates.add.fieldset_key_usage,
-      fieldConfig: [
         {
           type: 'checkbox',
           name: 'KeyUsage-enabled',
@@ -579,8 +564,8 @@ export class CertificateAddComponent {
           ]
         }
       ]
-    }
-    
+    },
+   
   ]
   private internalFields: Array<any> = [
     'signedby',
