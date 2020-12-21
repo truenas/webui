@@ -3,7 +3,7 @@
 
     <div class="label-container">
       <label>{{config.placeholder | translate}}</label>
-      <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
+      <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip" [position]="config.tooltipPosition ? config.tooltipPosition : null"></tooltip>
     </div>
 
     <mat-form-field class="full-width">
