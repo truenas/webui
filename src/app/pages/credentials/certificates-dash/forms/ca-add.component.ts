@@ -620,6 +620,9 @@ export class CertificateAuthorityAddComponent {
     this.hideField(this.internalcaFields[1], true, entity)
 
     this.getField('create_type').valueChanges.subscribe((res) => {
+      this.wizardConfig[1].skip = false;
+      this.wizardConfig[2].skip = false;
+      
       if (res == 'CA_CREATE_INTERNAL') {
         for (let i in this.intermediatecaFields) {
           this.hideField(this.intermediatecaFields[i], true, entity);
@@ -672,11 +675,15 @@ export class CertificateAuthorityAddComponent {
         for (let i in this.extensionFields) {
           this.hideField(this.extensionFields[i], true, entity);
         }
+
+        this.wizardConfig[1].skip = true;
+        this.wizardConfig[2].skip = true;
       }
     })
 
     this.getField('name').valueChanges.subscribe((res) => {
       this.identifier = res;
+      this.summary[this.getTarget('name').placeholder] = res;
     })
 
     this.getField('name').statusChanges.subscribe((res) => {
@@ -690,6 +697,7 @@ export class CertificateAuthorityAddComponent {
     this.getField('ExtendedKeyUsage-enabled').valueChanges.subscribe((res) => {
       const usagesRequired = res !== undefined ? res : false;
       this.usageField.required = usagesRequired;
+      this.summary[this.getTarget('ExtendedKeyUsage-enabled').placeholder] = usagesRequired;
       if (usagesRequired) {
         this.getField('ExtendedKeyUsage-usages').setValidators([Validators.required]);
       } else {

@@ -716,6 +716,9 @@ export class CertificateAddComponent {
     this.hideField(this.internalFields[2], true, entity);
 
     this.getField('create_type').valueChanges.subscribe((res) => {
+      this.wizardConfig[1].skip = false;
+      this.wizardConfig[2].skip = false;
+
       if (res == 'CERTIFICATE_CREATE_INTERNAL') {
         for (let i in this.csrFields) {
           this.hideField(this.csrFields[i], true, entity);
@@ -787,6 +790,9 @@ export class CertificateAddComponent {
           this.setDisabled('passphrase2', true);
         }
 
+        this.wizardConfig[1].skip = true;
+        this.wizardConfig[2].skip = true;
+
       } else if (res == 'CERTIFICATE_CREATE_IMPORTED_CSR') {
         for (let i in this.internalFields) {
           this.hideField(this.internalFields[i], true, entity);
@@ -803,6 +809,9 @@ export class CertificateAddComponent {
         for (let i in this.extensionFields) {
           this.hideField(this.extensionFields[i], true, entity);
         }
+
+        this.wizardConfig[1].skip = true;
+        this.wizardConfig[2].skip = true;
       }
 
     });
