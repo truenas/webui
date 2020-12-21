@@ -33,6 +33,7 @@ export class CertificateAddComponent {
   private type: any;
   public hideCancel = true;
   private isLinear = true;
+  private summary = {};  
 
   entityWizard: any;
   private currentStep = 0;
