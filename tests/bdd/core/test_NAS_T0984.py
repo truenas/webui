@@ -114,7 +114,7 @@ def click_test_changes_check_confirm_click_test_changes_again(driver):
 @then('"Please wait" should appear will Test Changes is happening')
 def please_wait_should_appear_will_test_changes_is_happening(driver):
     """"Please wait" should appear will Test Changes is happening."""
-    assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 1, 30, '//h6[contains(.,"Please wait")]')
 
 
 @then('There are unapplied network interface changes should appear click "Save Changes"')
