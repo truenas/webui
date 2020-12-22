@@ -104,9 +104,9 @@ def when_the_Interfaces_page_appears_verify_vnet0_DHCP_is_no(driver):
 @then('click Test Changes, check Confirm, click Test Changes again')
 def click_test_changes_check_confirm_click_test_changes_again(driver):
     """click Test Changes, check Confirm, click Test Changes again."""
-    assert wait_on_element(driver, 0.5, 7, '//button[contains(.,"TEST CHANGES")]')
+    assert wait_on_element(driver, 1, 7, '//button[contains(.,"TEST CHANGES")]')
     driver.find_element_by_xpath('//button[contains(.,"TEST CHANGES")]').click()
-    assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Test Changes")]')
+    assert wait_on_element(driver, 1, 7, '//h1[contains(.,"Test Changes")]')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     driver.find_element_by_xpath('//button[@ix-auto="button__TEST CHANGES"]').click()
 
@@ -114,7 +114,7 @@ def click_test_changes_check_confirm_click_test_changes_again(driver):
 @then('"Please wait" should appear will Test Changes is happening')
 def please_wait_should_appear_will_test_changes_is_happening(driver):
     """"Please wait" should appear will Test Changes is happening."""
-    assert wait_on_element_disappear(driver, 1, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 1, 60, '//h6[contains(.,"Please wait")]')
 
 
 @then('There are unapplied network interface changes should appear click "Save Changes"')
