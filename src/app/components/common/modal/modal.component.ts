@@ -1,4 +1,4 @@
-﻿import { Component, ElementRef, Input, OnInit, OnDestroy } from '@angular/core';
+﻿import { Component, ElementRef, Input, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
 
 import { ModalService } from '../../../services/modal.service';
 
@@ -30,6 +30,7 @@ import { ModalService } from '../../../services/modal.service';
 })
 export class ModalComponent implements OnInit, OnDestroy {
     @Input() id: string;
+    onClose: (data: any) => any;
     private element: any;
     public conf: any;
     public formOpen = false;
@@ -74,10 +75,14 @@ export class ModalComponent implements OnInit, OnDestroy {
     }
 
     // open modal
-    open(conf:any): void {
+    open(conf:any, onClose: (data: any) => any = null): void {
         this.conf = conf;
         this.conf.isModalForm = true;
         this.conf.closeModalForm = this.close.bind(this);
+
+        if(onClose) {
+            this.onClose = onClose;
+        }
 
         // Takes a bit for title to be set dynamically in the form
         const checkTitle = setInterval(() => {
@@ -106,7 +111,7 @@ export class ModalComponent implements OnInit, OnDestroy {
     }
 
     // close modal
-    close(): Promise<boolean> {
+    close(data?: any): Promise<boolean> {
         return new Promise((resolve, reject) => {
             this.modal.classList.remove('open');
             this.background.classList.remove('open');
@@ -116,6 +121,7 @@ export class ModalComponent implements OnInit, OnDestroy {
             this.modalService.refreshForm();
             this.wizard = false;
             this.title = '';
+            this.onClose(data);
             resolve(true);
         });
     }

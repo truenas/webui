@@ -557,7 +557,7 @@ export class ZvolWizardComponent {
       if(this.isNew === true){
         this.addSubmit(body).subscribe((restPostResp) => {
           this.loader.close();
-          this.modalService.close('slide-in-form');
+          this.modalService.close('slide-in-form', restPostResp);
           this.modalService.refreshTable();
         }, (res) => {
           this.loader.close();
