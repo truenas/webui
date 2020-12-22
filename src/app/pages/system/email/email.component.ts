@@ -29,7 +29,6 @@ export class EmailComponent implements OnDestroy {
   updateCall = 'mail.update';
   public entityEdit: any;
   public rootEmail: string;
-  private credentialsOauth = false;
   private oauthCreds: BehaviorSubject<OAuthData> = new BehaviorSubject({});
   customSubmit = this.saveConfigSubmit;
   public custActions: Array < any > = [{
@@ -69,31 +68,6 @@ export class EmailComponent implements OnDestroy {
       }
       else{
         this.dialogservice.Info(T("email"), T("Configure the root user email address."));
-      }
-    }
-  },
-  {
-    id: 'authenticate',
-    name: helptext_system_email.auth.login_button,
-    function: () => {
-      const self = this;
-      const dialogService = this.dialogservice;
-      const controls = this.entityEdit.formGroup.controls;
-
-      window.open("https://freenas.org/oauth/gmail?origin=" +
-        encodeURIComponent(window.location.toString()), "_blank", "width=640,height=480");
-      window.addEventListener("message", doAuth, false);
-
-      function doAuth(message) {
-        if (message.data.oauth_portal) {
-          if (message.data.error) {
-            dialogService.errorReport(T('Error'), message.data.error);
-          } else {
-            self.oauthCreds.next(message.data.result);
-            self.checkForOauthCreds();
-          }
-        }
-        window.removeEventListener("message", doAuth);
       }
     }
   }
@@ -279,6 +253,33 @@ export class EmailComponent implements OnDestroy {
           validation: helptext_system_email.user.validation,
           isHidden: true
         },
+        {
+          type: 'button',
+          name: 'login-gmail',
+          inputType: 'button',
+          label: helptext_system_email.auth.login_button,
+          isHidden: true,
+          customEventMethod: () => {
+            const self = this;
+            const dialogService = this.dialogservice;
+
+            window.open("https://freenas.org/oauth/gmail?origin=" +
+              encodeURIComponent(window.location.toString()), "_blank", "width=640,height=480");
+            window.addEventListener("message", doAuth, false);
+
+            function doAuth(message) {
+              if (message.data.oauth_portal) {
+                if (message.data.error) {
+                  dialogService.errorReport(T('Error'), message.data.error);
+                } else {
+                  self.oauthCreds.next(message.data.result);
+                  self.checkForOauthCreds();
+                }
+              }
+              window.removeEventListener("message", doAuth);
+            }
+          }
+        }
       ]
     },
     { name: 'divider', divider: true }
@@ -289,6 +290,7 @@ export class EmailComponent implements OnDestroy {
   private sendMailMethod: FormControl;
   private sendMailMethodSubscription: Subscription;
   private smtp: FormControl;
+  private gmailButton: FieldConfig;
   private pass: FieldConfig;
 
   constructor(protected router: Router, protected rest: RestService,
@@ -303,13 +305,6 @@ export class EmailComponent implements OnDestroy {
     return data;
   }
 
-  isCustActionVisible(actionname: string) {
-    if (actionname === 'authenticate' && this.credentialsOauth === false) {
-      return false;
-    }
-    return true;
-  }
-
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     const payload = [];
@@ -322,15 +317,16 @@ export class EmailComponent implements OnDestroy {
     this.pass = this.fieldSets.config('pass');
     this.smtp = entityEdit.formGroup.controls['smtp'];
     this.sendMailMethod = entityEdit.formGroup.controls['send_mail_method'];
+    this.gmailButton = this.fieldSets.config('login-gmail');
 
     this.oauthCreds.subscribe(value => {
       this.sendMailMethod.setValue(!value.client_id);
-      this.credentialsOauth = !!value.client_id;
-    })
+      this.gmailButton.isHidden = this.sendMailMethod.value || !!value.client_id;
+    });
 
     this.sendMailMethodSubscription = this.sendMailMethod.valueChanges.subscribe((value) => {
       this.pass.hideButton = !value;
-      this.credentialsOauth = !value;
+      this.gmailButton.isHidden = value || !!this.oauthCreds.getValue().client_id;
 
       if (!value) {
         this.checkForOauthCreds();
