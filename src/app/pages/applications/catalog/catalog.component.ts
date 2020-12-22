@@ -18,6 +18,7 @@ import { ChartReleaseAddComponent } from '../forms/chart-release-add.component';
 import { PlexFormComponent } from '../forms/plex-form.component';
 import { NextCloudFormComponent } from '../forms/nextcloud-form.component';
 import { MinioFormComponent } from '../forms/minio-form.component';
+import { ChartFormComponent } from '../forms/chart-form.component';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import  helptext  from '../../../helptext/apps/apps';
 
@@ -101,7 +102,8 @@ export class CatalogComponent implements OnInit {
               name: item.name,
               icon_url: item.icon_url? item.icon_url : '/assets/images/ix-original.png',
               latest_version: latest,
-              info: item.info
+              info: item.info,
+              schema: item.versions[latest].schema,
             }
             this.catalogApps.push(catalogItem);            
           }
@@ -223,23 +225,9 @@ export class CatalogComponent implements OnInit {
   }
 
   doInstall(name: string) {
-    switch (name) {
-      case 'minio':
-        this.modalService.open('slide-in-form', this.minioForm);
-        break;
-      
-      case 'plex':
-        this.modalService.open('slide-in-form', this.plexForm);
-        break;
-
-      case 'nextcloud':
-        this.modalService.open('slide-in-form', this.nextCloudForm);
-        break;
-      
-      default:
-        this.modalService.open('slide-in-form', this.chartReleaseForm);
-    }
+    const catalogApp = this.catalogApps.find(app => app.name==name)
+    const chartFormComponent = new ChartFormComponent(this.mdDialog,this.dialogService,this.modalService,this.appService, catalogApp);
+    this.modalService.open('slide-in-form', chartFormComponent);
   }
-
   
 }

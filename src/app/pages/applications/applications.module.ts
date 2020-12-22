@@ -20,7 +20,7 @@ import { PlexFormComponent } from './forms/plex-form.component';
 import { NextCloudFormComponent } from './forms/nextcloud-form.component';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { MinioFormComponent } from './forms/minio-form.component';
-
+import { ChartFormComponent } from './forms/chart-form.component';
 
 @NgModule({
   imports: [
@@ -45,7 +45,8 @@ import { MinioFormComponent } from './forms/minio-form.component';
     ChartReleaseEditComponent,
     PlexFormComponent,
     NextCloudFormComponent,
-    MinioFormComponent
+    MinioFormComponent,
+    ChartFormComponent,
   ]
 })
 export class ApplicationsModule { }
