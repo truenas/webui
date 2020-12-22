@@ -7,6 +7,9 @@ import { SystemGeneralService, WebSocketService } from '../../../../services/';
 import { ModalService } from 'app/services/modal.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { DialogService } from '../../../../services/dialog.service';
+import { T } from '../../../../translate-marker';
 
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../../common/entity/entity-wizard/entity-wizard.component';
@@ -20,7 +23,7 @@ import { EntityWizardComponent } from '../../../common/entity/entity-wizard/enti
 
 export class CertificateAuthorityAddComponent {
 
-  protected addCall = "certificateauthority.create";
+  protected addWsCall = "certificateauthority.create";
   protected isEntity: boolean = true;
   private title: string;
   public hideCancel = true;
@@ -548,6 +551,15 @@ export class CertificateAuthorityAddComponent {
     'KeyUsage',
   ];
 
+  private relationFields: Array<any> = [
+    'create_type',
+    'key_type',
+    'BasicConstraints-enabled',
+    'AuthorityKeyIdentifier-enabled',
+    'ExtendedKeyUsage-enabled',
+    'KeyUsage-enabled',
+  ];
+
   private country: any;
   private signedby: any;
   public identifier: any;
@@ -556,6 +568,7 @@ export class CertificateAuthorityAddComponent {
   private entityForm: any;
 
   constructor(protected ws: WebSocketService, private modalService: ModalService,
+              protected loader: AppLoaderService, private dialogService: DialogService, 
               protected systemGeneralService: SystemGeneralService) {}
 
   preInit(entityWizard: EntityWizardComponent) {
@@ -602,6 +615,33 @@ export class CertificateAuthorityAddComponent {
   customNext(stepper) {
     stepper.next();
     this.currentStep = stepper._selectedIndex;    
+  }
+
+  addToSummary(fieldName) {
+    const fieldConfig = this.getTarget(fieldName);
+    if (!fieldConfig.isHidden) {
+      const fieldName = fieldConfig.name;
+      if (fieldConfig.value !== undefined) {
+        this.summary[fieldConfig.placeholder] = fieldConfig.value;
+      }        
+      this.getField(fieldName).valueChanges.subscribe((res) => {
+        this.summary[fieldConfig.placeholder] = res;
+      })
+    }
+  }
+
+  removeFromSummary(fieldName) {
+    const fieldConfig = this.getTarget(fieldName);
+    delete this.summary[fieldConfig.placeholder];
+  }
+
+  setSummary() {
+    this.summary = {};
+    this.wizardConfig.forEach((stepConfig) => {
+      stepConfig.fieldConfig.forEach((fieldConfig) => {
+        this.addToSummary(fieldConfig.name);
+      });
+    });
   }
 
   afterInit(entity: any) {
@@ -679,11 +719,13 @@ export class CertificateAuthorityAddComponent {
         this.wizardConfig[1].skip = true;
         this.wizardConfig[2].skip = true;
       }
+      this.setSummary();
     })
 
     this.getField('name').valueChanges.subscribe((res) => {
       this.identifier = res;
       this.summary[this.getTarget('name').placeholder] = res;
+      this.setSummary();
     })
 
     this.getField('name').statusChanges.subscribe((res) => {
@@ -692,6 +734,7 @@ export class CertificateAuthorityAddComponent {
       } else {
         this.getTarget('name')['hasErrors'] = false;
       }
+      this.setSummary();
     })
 
     this.getField('ExtendedKeyUsage-enabled').valueChanges.subscribe((res) => {
@@ -704,6 +747,7 @@ export class CertificateAuthorityAddComponent {
         this.getField('ExtendedKeyUsage-usages').clearValidators();
       }
       this.getField('ExtendedKeyUsage-usages').updateValueAndValidity();
+      this.setSummary();
     })
 
     this.getField('profiles').valueChanges.subscribe((res) => {
@@ -712,7 +756,17 @@ export class CertificateAuthorityAddComponent {
       // load selected profile settings
       this.loadProfiels(res);
       this.currenProfile = res;
+      this.setSummary();
     });
+
+    for (let i in this.relationFields) {
+      this.getField(this.relationFields[i]).valueChanges.subscribe((res) => {
+        this.setSummary();
+      })
+    }
+
+    this.setSummary();
+
   }
 
   loadProfiels(value, reset?) {
@@ -846,8 +900,16 @@ export class CertificateAuthorityAddComponent {
     return data;
   }
 
-  afterSubmit() {
-    this.modalService.close('slide-in-form');
-    this.modalService.refreshTable();
+  customSubmit(data) {
+    this.loader.open();
+    this.ws.call(this.addWsCall, [data]).subscribe(vm_res => {
+      this.loader.close();
+      this.modalService.refreshTable();
+      this.modalService.close('slide-in-form');
+    },(error) => {
+      this.loader.close();
+      this.dialogService.errorReport(T("Error creating CA."), error.reason, error.trace.formatted);
+    });
   }
+
 }

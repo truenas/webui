@@ -16,6 +16,10 @@ import { helptext_system_ca } from 'app/helptext/system/ca';
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../../common/entity/entity-wizard/entity-wizard.component';
 
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { DialogService } from '../../../../services/dialog.service';
+import { T } from '../../../../translate-marker';
+
 @Component({
   selector : 'system-certificate-add',
   template : `<entity-form [conf]="this"></entity-form>`,
@@ -24,7 +28,7 @@ import { EntityWizardComponent } from '../../../common/entity/entity-wizard/enti
 
 export class CertificateAddComponent {
 
-  protected addCall = "certificate.create";
+  protected addWsCall = "certificate.create";
   protected dialogRef: any;
   private entityForm: any;
   private CSRList = [];
@@ -634,7 +638,8 @@ export class CertificateAddComponent {
   private currenProfile: any;
 
   constructor(protected ws: WebSocketService, protected dialog: MatDialog,
-              protected systemGeneralService: SystemGeneralService, private modalService: ModalService) {
+              protected systemGeneralService: SystemGeneralService, private modalService: ModalService,
+              protected loader: AppLoaderService, private dialogService: DialogService) {
                 this.getType = this.modalService.getRow$.subscribe(rowId => {
                   this.type = rowId;
                 })
@@ -696,6 +701,34 @@ export class CertificateAddComponent {
   customNext(stepper) {
     stepper.next();
     this.currentStep = stepper._selectedIndex;    
+  }
+
+  addToSummary(fieldName) {
+    const fieldConfig = this.getTarget(fieldName);
+    if (!fieldConfig.isHidden) {
+      const fieldName = fieldConfig.name;
+      if (fieldConfig.value !== undefined) {
+        this.summary[fieldConfig.placeholder] = fieldConfig.value;
+      }        
+      this.getField(fieldName).valueChanges.subscribe((res) => {
+        this.identifier = res;
+        this.summary[fieldConfig.placeholder] = res;
+      })
+    }
+  }
+
+  removeFromSummary(fieldName) {
+    const fieldConfig = this.getTarget(fieldName);
+    delete this.summary[fieldConfig.placeholder];
+  }
+
+  setSummary() {
+    this.summary = {};
+    this.wizardConfig.forEach((stepConfig) => {
+      stepConfig.fieldConfig.forEach((fieldConfig) => {
+        this.addToSummary(fieldConfig.name);
+      });
+    });
   }
 
   afterInit(entity: EntityWizardComponent) {
@@ -811,10 +844,12 @@ export class CertificateAddComponent {
         this.wizardConfig[2].skip = true;
       }
 
+      this.setSummary();
     });
 
     this.getField('name').valueChanges.subscribe((res) => {
       this.identifier = res;
+      this.setSummary();
     })
   
     this.getField('name').statusChanges.subscribe((res) => {
@@ -823,6 +858,7 @@ export class CertificateAddComponent {
       } else {
         this.getTarget('name')['hasErrors'] = false;
       }
+      this.setSummary();
     })
 
     this.getField('ExtendedKeyUsage-enabled').valueChanges.subscribe((res) => {
@@ -834,6 +870,7 @@ export class CertificateAddComponent {
         this.getField('ExtendedKeyUsage-usages').clearValidators();
       }
       this.getField('ExtendedKeyUsage-usages').updateValueAndValidity();
+      this.setSummary();
     });
 
     this.getField('profiles').valueChanges.subscribe((res) => {
@@ -842,6 +879,7 @@ export class CertificateAddComponent {
       // load selected profile settings
       this.loadProfiels(res);
       this.currenProfile = res;
+      this.setSummary();
     });
 
     if (this.type && this.type === 'csr') {
@@ -852,6 +890,8 @@ export class CertificateAddComponent {
       certType.tooltip = helptext_system_certificates.add.csr_create_type.tooltip;
       this.title = helptext_system_certificates.add.title_csr;
     }
+
+    this.setSummary();
   }
 
   loadProfiels(value, reset?) {
@@ -999,20 +1039,15 @@ export class CertificateAddComponent {
     }    
   }
 
-  customSubmit(payload){
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "" }});
-    this.dialogRef.componentInstance.setDescription(("Working..."));
-    this.dialogRef.componentInstance.setCall(this.addCall, [payload]);
-    this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((res) => {
-      this.dialog.closeAll();
-      this.modalService.close('slide-in-form');
+  customSubmit(data){
+    this.loader.open();
+    this.ws.call(this.addWsCall, [data]).subscribe(vm_res => {
+      this.loader.close();
       this.modalService.refreshTable();
+      this.modalService.close('slide-in-form');
+    },(error) => {
+      this.loader.close();
+      this.dialogService.errorReport(T("Error creating CA."), error.reason, error.trace.formatted);
     });
-    this.dialogRef.componentInstance.failure.subscribe((res) => {
-      this.dialogRef.close();
-      new EntityUtils().handleWSError(this.entityForm, res);
-    });
-
   }
 }
