@@ -9,6 +9,14 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { FormControl } from '@angular/forms';
+
+interface OAuthData {
+  client_id?: string
+  client_secret?: string
+  refresh_token?: string
+}
 
 @Component({
   selector : 'app-email',
@@ -22,7 +30,7 @@ export class EmailComponent implements OnDestroy {
   public entityEdit: any;
   public rootEmail: string;
   private credentialsOauth = false;
-  private oauthCreds: any;
+  private oauthCreds: BehaviorSubject<OAuthData> = new BehaviorSubject({});
   customSubmit = this.saveConfigSubmit;
   public custActions: Array < any > = [{
     id: 'send_mail',
@@ -81,7 +89,7 @@ export class EmailComponent implements OnDestroy {
           if (message.data.error) {
             dialogService.errorReport(T('Error'), message.data.error);
           } else {
-            self.oauthCreds = message.data.result;
+            self.oauthCreds.next(message.data.result);
             self.checkForOauthCreds();
           }
         }
@@ -112,7 +120,7 @@ export class EmailComponent implements OnDestroy {
         },
         {
           type: 'radio',
-          name: 'smtp',
+          name: 'send_mail_method',
           placeholder: helptext_system_email.send_mail_method.placeholder,
           options: [
             {label: helptext_system_email.send_mail_method.smtp.placeholder,
@@ -135,7 +143,7 @@ export class EmailComponent implements OnDestroy {
             {
               action : 'HIDE',
               when : [ {
-                name : 'smtp',
+                name : 'send_mail_method',
                 value : false,
               } ]
             },
@@ -153,7 +161,7 @@ export class EmailComponent implements OnDestroy {
             {
               action : 'HIDE',
               when : [ {
-                name : 'smtp',
+                name : 'send_mail_method',
                 value : false,
               } ]
             },
@@ -173,7 +181,7 @@ export class EmailComponent implements OnDestroy {
             {
               action : 'HIDE',
               when : [ {
-                name : 'smtp',
+                name : 'send_mail_method',
                 value : false,
               } ]
             },
@@ -181,18 +189,16 @@ export class EmailComponent implements OnDestroy {
         },
         {
           type: 'checkbox',
-          name: 'auth_smtp',
+          name: 'smtp',
           placeholder: helptext_system_email.auth.smtp.placeholder,
           tooltip: helptext_system_email.auth.smtp.tooltip,
           relation: [
             {
               action: 'HIDE',
-              when: [
-                {
-                  name: 'smtp',
-                  value: false,
-                },
-              ],
+              when: [{
+                name: 'send_mail_method',
+                value: false,
+              }],
             },
           ],
           value: false,
@@ -207,17 +213,17 @@ export class EmailComponent implements OnDestroy {
               action: 'HIDE',
               connective: 'OR',
               when: [{
-                name: 'smtp',
+                name: 'send_mail_method',
                 value: false,
               },{
-                name: 'auth_smtp',
+                name: 'smtp',
                 value: false,
               }],
             },
             {
               action: 'DISABLE',
               when: [{
-                name: 'auth_smtp',
+                name: 'smtp',
                 value: false,
               }]
             }
@@ -236,17 +242,17 @@ export class EmailComponent implements OnDestroy {
               action: 'HIDE',
               connective: 'OR',
               when: [{
-                name: 'smtp',
+                name: 'send_mail_method',
                 value: false,
               },{
-                name: 'auth_smtp',
+                name: 'smtp',
                 value: false,
               }],
             },
             {
               action: 'DISABLE',
               when: [{
-                name: 'auth_smtp',
+                name: 'smtp',
                 value: false,
               }]
             }
@@ -258,12 +264,19 @@ export class EmailComponent implements OnDestroy {
           type: 'paragraph',
           name: 'oauth_applied',
           paraText: 'Oauth credentials have been applied.',
+          isLargeText: true,
+          paragraphIcon: 'check_circle',
+          paragraphIconSize: '24px',
           isHidden: true
         },
         {
           type: 'paragraph',
           name: 'oauth_not_applied',
           paraText: 'Log in to Gmail to set up Oauth credentials.',
+          paragraphIcon: 'info',
+          paragraphIconSize: '24px',
+          isLargeText: true,
+          validation: helptext_system_email.user.validation,
           isHidden: true
         },
       ]
@@ -273,8 +286,9 @@ export class EmailComponent implements OnDestroy {
 
   protected dialogRef: any;
 
-  private smtp;
-  private smtp_subscription;
+  private sendMailMethod: FormControl;
+  private sendMailMethodSubscription: Subscription;
+  private smtp: FormControl;
   private pass: FieldConfig;
 
   constructor(protected router: Router, protected rest: RestService,
@@ -284,7 +298,7 @@ export class EmailComponent implements OnDestroy {
             ) {}
 
   resourceTransformIncomingRestData(data): void {
-    this.oauthCreds = data.oauth;
+    this.oauthCreds.next(data.oauth);
     delete data.pass;
     return data;
   }
@@ -307,10 +321,17 @@ export class EmailComponent implements OnDestroy {
     });
     this.pass = this.fieldSets.config('pass');
     this.smtp = entityEdit.formGroup.controls['smtp'];
+    this.sendMailMethod = entityEdit.formGroup.controls['send_mail_method'];
 
-    this.smtp_subscription = this.smtp.valueChanges.subscribe((value) => {
+    this.oauthCreds.subscribe(value => {
+      this.sendMailMethod.setValue(!value.client_id);
+      this.credentialsOauth = !!value.client_id;
+    })
+
+    this.sendMailMethodSubscription = this.sendMailMethod.valueChanges.subscribe((value) => {
       this.pass.hideButton = !value;
       this.credentialsOauth = !value;
+
       if (!value) {
         this.checkForOauthCreds();
       } else {
@@ -321,7 +342,7 @@ export class EmailComponent implements OnDestroy {
   }
 
   checkForOauthCreds() {
-    if (this.oauthCreds.client_id) {
+    if (this.oauthCreds.getValue().client_id) {
       this.entityEdit.setDisabled('oauth_applied', false, false);
       this.entityEdit.setDisabled('oauth_not_applied', true, true);
     } else {
@@ -331,24 +352,39 @@ export class EmailComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    this.smtp_subscription.unsubscribe();
+    this.sendMailMethodSubscription.unsubscribe();
   }
 
   saveConfigSubmit(emailConfig): void {
     this.loader.open();
+    const is_smtp_method = this.sendMailMethod.value;
+
     if (emailConfig.pass && typeof emailConfig.pass === 'string' && emailConfig.pass.trim() === '') {
       delete emailConfig.pass;
     }
-    if (this.oauthCreds.client_id) {
+    if (this.oauthCreds.getValue().client_id) {
       let oauth = {
-        client_id: this.oauthCreds.client_id,
-        client_secret: this.oauthCreds.client_secret,
-        refresh_token: this.oauthCreds.refresh_token,
+        client_id: this.oauthCreds.getValue().client_id,
+        client_secret: this.oauthCreds.getValue().client_secret,
+        refresh_token: this.oauthCreds.getValue().refresh_token,
       };
       emailConfig.oauth = oauth;
+
+      if (!is_smtp_method) {
+        // switches from SMTP to Gmail Oauth method and disable smtp
+        emailConfig.smtp = false;
+        this.smtp.setValue(false);
+      }
     } else {
       emailConfig.oauth = null;
     }
+
+    if (is_smtp_method) {
+      // switches from Gmail Oauth to SMTP method and remove oauth data
+      emailConfig.oauth = null;
+      this.oauthCreds.next({});
+    }
+
 
     if (emailConfig.oauth_applied) {
       delete emailConfig.oauth_applied
@@ -358,8 +394,8 @@ export class EmailComponent implements OnDestroy {
       delete emailConfig.oauth_not_applied
     }
 
-    if (emailConfig.hasOwnProperty('auth_smtp')) {
-      delete emailConfig.auth_smtp;
+    if (emailConfig.hasOwnProperty('send_mail_method')) {
+      delete emailConfig.send_mail_method;
     }
 
     this.ws
