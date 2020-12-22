@@ -134,9 +134,10 @@ export const helptext_system_general = {
   save_config_form: {
     title: T('Save Configuration'),
     message: T(
-      "<b>WARNING:</b> This configuration file contains system\
- passwords and other sensitive data.<br /><br /><b>WARNING:</b> SSH keys \
- in <samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation.<br />"
+      "<b>WARNING:</b> The configuration file contains\
+ sensitive data like system passwords. However, SSH keys that are stored\
+ in <samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation.\
+ Additional sensitive information can be included in the configuration file.<br />"
     ),
     button_text: T("Save"),
     warning: T(
@@ -167,8 +168,8 @@ export const helptext_system_general = {
   },
 
   actions: {
-    config_button: T('Manage Settings'),
-    save_config: T("Save to File"),
+    config_button: T('Manage Configuration'),
+    save_config: T("Download File"),
     upload_config: T("Upload File"),
     reset_config: T("Reset to Defaults")
   },
