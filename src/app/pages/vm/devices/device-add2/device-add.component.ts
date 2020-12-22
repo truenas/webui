@@ -400,7 +400,6 @@ export class DeviceAddComponent implements OnInit {
     this.activeFormGroup = this.cdromFormGroup;
     this.diskFormGroup.controls['path'].valueChanges.subscribe((res) => {
       if(res === 'new') {
-        this.diskFormGroup.controls['path'] = '';
         this.addZvol();
       }
     });
@@ -535,10 +534,9 @@ export class DeviceAddComponent implements OnInit {
       );
     });
   }
+  
   addZvol() {
-    this.modalService.open('slide-in-form', this.addZvolComponent, null, (data: any) => {
-      console.log('closed, heres your data', data);
-    });
+    this.modalService.open('slide-in-form', this.addZvolComponent);
   }
 
   updateZvolSearchOptions(value = "", parent) {

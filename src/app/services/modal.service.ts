@@ -31,19 +31,19 @@ export class ModalService {
         this.modals = this.modals.filter(x => x.id !== id);
     }
 
-    open(id: string, conf: any,  rowid?: any, onClose?: (data: any) => any,) {
+    open(id: string, conf: any, rowid?: any) {
         if (rowid) {
             conf.rowid = rowid;
             this.getRow$.next(rowid);
         }
         // open modal specified by id
         let modal: any = this.modals.filter(x => x.id === id)[0];
-        modal.open(conf, onClose);
+        modal.open(conf);
     }
 
-    close(id: string, data?: any): Promise<boolean> {
+    close(id: string): Promise<boolean> {
         // close modal specified by id
         let modal: any = this.modals.filter(x => x.id === id)[0];
-        return modal.close(data);
+        return modal.close();
     }
 }
