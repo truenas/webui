@@ -17,6 +17,7 @@ import { T } from "app/translate-marker";
 import { Subscription } from "rxjs";
 import { Wizard } from "app/pages/common/entity/entity-form/models/wizard.interface";
 import { EntityWizardComponent } from "app/pages/common/entity/entity-wizard/entity-wizard.component";
+import { CoreService } from "app/core/services/core.service";
 
 
 interface ZvolFormData {
@@ -299,6 +300,7 @@ export class ZvolWizardComponent {
   
   
     constructor(
+      protected core: CoreService,
       protected router: Router, protected aroute: ActivatedRoute,
       protected rest: RestService, protected ws: WebSocketService,
       protected loader: AppLoaderService, protected dialogService: DialogService,
@@ -558,6 +560,7 @@ export class ZvolWizardComponent {
         this.addSubmit(body).subscribe((restPostResp) => {
           this.loader.close();
           this.modalService.close('slide-in-form');
+          this.core.emit({name: 'zvolCreated', sender: this, data: restPostResp});
           this.modalService.refreshTable();
         }, (res) => {
           this.loader.close();

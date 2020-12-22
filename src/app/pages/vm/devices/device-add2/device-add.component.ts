@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
@@ -13,13 +13,14 @@ import { DialogService } from '../../../../services/dialog.service';
 import helptext from '../../../../helptext/vm/devices/device-add-edit';
 import { ModalService } from 'app/services/modal.service';
 import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard';
+import { CoreEvent, CoreService } from 'app/core/services/core.service';
 
 @Component({
   selector : 'app-device-add2',
   templateUrl: './device-add.component.html',
   styleUrls: ['../../../common/entity/entity-form/entity-form.component.scss'],
 })
-export class DeviceAddComponent implements OnInit {
+export class DeviceAddComponent implements OnInit, OnDestroy {
 
   protected addCall = 'vm.device.create';
   protected route_success: string[];
@@ -316,6 +317,7 @@ export class DeviceAddComponent implements OnInit {
 
 
   constructor(protected router: Router,
+              protected core: CoreService,
               protected aroute: ActivatedRoute,
               protected rest: RestService,
               protected ws: WebSocketService,
@@ -341,6 +343,15 @@ export class DeviceAddComponent implements OnInit {
       };
     });
 
+    this.core.register({observerClass: this, eventName: 'zvolCreated'}).subscribe((evt: CoreEvent) => {
+      const newZvol = {
+        label : evt.data.id, value : '/dev/zvol/' + evt.data.id
+      };
+      const pathField =_.find(this.diskFieldConfig, {name:'path'});
+      pathField.options.splice(pathField.options.findIndex(o => o.value === 'new'), 0, newZvol);
+      
+      this.diskFormGroup.controls['path'].setValue(newZvol.value);
+    });
     // nic
     this.networkService.getVmNicChoices().subscribe((res) => {
       this.nic_attach = _.find(this.nicFieldConfig, { 'name': 'nic_attach' });
@@ -400,6 +411,7 @@ export class DeviceAddComponent implements OnInit {
     this.activeFormGroup = this.cdromFormGroup;
     this.diskFormGroup.controls['path'].valueChanges.subscribe((res) => {
       if(res === 'new') {
+        this.diskFormGroup.controls['path'].setValue('');
         this.addZvol();
       }
     });
@@ -436,7 +448,7 @@ export class DeviceAddComponent implements OnInit {
       _.find(this.vncFieldConfig, {name:'wait'}).isHidden = false;
       _.find(this.vncFieldConfig, {name:'vnc_resolution'}).isHidden = false;
     }
-    this.addZvolComponent = new ZvolWizardComponent(this.router, this.aroute, this.rest, this.ws, this.loader,
+    this.addZvolComponent = new ZvolWizardComponent(this.core, this.router, this.aroute, this.rest, this.ws, this.loader,
       this.dialogService, this.storageService, this.translate, this.modalService);
 
     this.afterInit();
@@ -554,5 +566,9 @@ export class DeviceAddComponent implements OnInit {
       });
       _.find(parent.diskFieldConfig, {name:'path'}).searchOptions = searchedZvols;
     });
+  }
+
+  ngOnDestroy() {
+    this.core.unregister({observerClass: this});
   }
 }
