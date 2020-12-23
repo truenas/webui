@@ -5,7 +5,8 @@ import time
 from function import (
     wait_on_element,
     is_element_present,
-    wait_on_element_disappear
+    wait_on_element_disappear,
+    ssh_cmd
 )
 from pytest_bdd import (
     given,
@@ -15,9 +16,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T991.feature', 'Add a home directory to a user')
-def test_add_a_home_directory_to_a_user(driver):
-    """Add a home directory to a user."""
+@scenario('features/NAS-T993.feature', 'Enable Password for a user')
+def test_enable_password_for_a_user(driver):
+    """Enable Password for a user."""
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
@@ -85,33 +86,48 @@ def the_user_edit_page_should_open(driver):
     assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Identification")]')
 
 
-@then('change the path of the users Home Directory')
-def change_the_path_of_the_users_home_directory(driver):
-    """change the path of the users Home Directory."""
-    assert wait_on_element(driver, 0.5, 7, '//input[@ix-auto="input__home"]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__home"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__home"]').send_keys('/mnt/tank/ericbsd')
-
-
-@then('click save and changes should be saved')
-def click_save_and_changes_should_be_saved(driver):
-    """click save and changes should be saved."""
+@then('change "Disable Password" to No and click save')
+def change_disable_password_to_no_and_click_save(driver):
+    """change "Disable Password" to No and click save."""
+    assert wait_on_element(driver, 0.5, 7, '//mat-select[@ix-auto="select__Disable Password"]')
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Disable Password"]').click()
+    assert wait_on_element(driver, 0.5, 7, '//mat-option[@ix-auto="option__Disable Password_No"]')
+    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Disable Password_No"]').click()
     assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 1, 5, '//div[contains(.,"Users")]')
 
 
-@then('open the drop-down details pane')
-def open_the_dropdown_details_pane(driver):
-    """open the drop-down details pane."""
-    assert wait_on_element(driver, 1, 5, '//a[@ix-auto="expander__ericbsd"]')
+@then('change should be saved')
+def change_should_be_saved(driver):
+    """change should be saved."""
+    assert wait_on_element_disappear(driver, 1, 7, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 0.5, 7, '//div[contains(.,"Users")]')
+
+
+@then('open the user dropdown')
+def open_the_user_dropdown(driver):
+    """open the user dropdown."""
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
     assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__EDIT_ericbsd"]')
-    driver.find_element_by_xpath('//h4[contains(.,"Home directory:")]')
 
 
-@then('verify that the home directory has changed')
-def verify_that_the_home_directory_has_changed(driver):
-    """verify that the home directory has changed."""
-    driver.find_element_by_xpath('//p[contains(.,"/mnt/tank/ericbsd")]')
+@then('verify the user Disable Password is false')
+def verify_the_user_disable_password_is_false(driver):
+    """verify the user Disable Password is false."""
+    assert wait_on_element(driver, 0.5, 7, '//h4[contains(.,"Password Disabled:")]/../div/p')
+    element_text = driver.find_element_by_xpath('//h4[contains(.,"Password Disabled:")]/../div/p').text
+    assert element_text == 'false'
+
+
+@then('try login with ssh')
+def try_login_with_ssh(driver, nas_ip):
+    """try login with ssh."""
+    global ssh_result
+    ssh_result = ssh_cmd('beadm list', 'ericbsd', 'testing', nas_ip)
+
+
+@then('the user should be able to login')
+def the_user_should_be_able_to_login(driver):
+    """the user should be able to login."""
+    assert ssh_result['result'], ssh_result['output']
+    assert 'default' in ssh_result['output'], ssh_result['output']
