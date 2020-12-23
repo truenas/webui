@@ -1,0 +1,16 @@
+@import 'xterm/css/xterm.css';
+
+#terminal {
+  height: calc(100% - 140px);  
+}
+
+.bottom-bar {
+  width: 100%;
+  color: var(--fg1);
+  padding-top: 5px;
+  font-size: 14px;
+}
+.shellTooltip {
+  position: absolute !important;
+  right: 20px;
+}

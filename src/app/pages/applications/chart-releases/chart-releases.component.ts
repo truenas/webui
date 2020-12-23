@@ -253,4 +253,8 @@ export class ChartReleasesComponent implements OnInit {
       })
     })
   }
+
+  openShell(name: string) {
+    console.log('------------', name);
+  }
 }

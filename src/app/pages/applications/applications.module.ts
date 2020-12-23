@@ -20,6 +20,8 @@ import { PlexFormComponent } from './forms/plex-form.component';
 import { NextCloudFormComponent } from './forms/nextcloud-form.component';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { MinioFormComponent } from './forms/minio-form.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PodShellComponent } from './pod-shell/pod-shell.component';
 
 
 @NgModule({
@@ -31,7 +33,9 @@ import { MinioFormComponent } from './forms/minio-form.component';
     TranslateModule,
     CommonDirectivesModule,
     EntityModule,
-    CoreComponents
+    CoreComponents,
+    FormsModule,
+    ReactiveFormsModule
   ],
   exports: [
   ],
@@ -45,7 +49,8 @@ import { MinioFormComponent } from './forms/minio-form.component';
     ChartReleaseEditComponent,
     PlexFormComponent,
     NextCloudFormComponent,
-    MinioFormComponent
+    MinioFormComponent,
+    PodShellComponent
   ]
 })
 export class ApplicationsModule { }

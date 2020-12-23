@@ -21,6 +21,7 @@ export class ShellService {
   public token: string;
   public jailId: string;
   public vmId: number;
+  public podId: string;
 
   //input and output and eventEmmitter
   private shellCmdOutput: any;

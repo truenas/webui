@@ -73,6 +73,11 @@
               <mat-icon>edit</mat-icon>
               <span>{{'Edit' | translate}}</span>
             </button>
+            <button name="shell" mat-menu-item (click)="openShell(item.name)"
+            ix-auto ix-auto-type="option" ix-auto-identifier="shell">
+            <mat-icon>web_asset</mat-icon>
+            <span>{{'Shell' | translate}}</span>
+          </button>
             <button name="delete" mat-menu-item (click)="delete(item.name)"
               ix-auto ix-auto-type="option" ix-auto-identifier="delete">
               <mat-icon>delete</mat-icon>
