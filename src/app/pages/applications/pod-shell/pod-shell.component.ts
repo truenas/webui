@@ -10,6 +10,9 @@ import { Terminal } from 'xterm';
 import { AttachAddon } from 'xterm-addon-attach';
 import { FitAddon } from 'xterm-addon-fit';
 import * as FontFaceObserver from 'fontfaceobserver';
+import { CoreEvent, CoreService } from 'app/core/services/core.service';
+import { Subject } from 'rxjs';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 
 @Component({
   selector: 'app-pod-shell',
@@ -29,23 +32,29 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
   rows: string;
   font_size = 14;
   font_name = 'Inconsolata';
-  public connectionId: string;
   public token: any;
   public xterm: any;
+  public resize_terminal = true;
   private shellSubscription: any;
   private fitAddon: any;
-  public shell_tooltip = helptext.usage_tooltip;
+  public formEvents: Subject<CoreEvent>;
+
+  public usage_tooltip = helptext.usage_tooltip;
 
   clearLine = "\u001b[2K\r"
+  public shellConnected: boolean = false;
+  public connectionId: string;
   protected pk: string;
-  protected route_success: string[] = ['pod'];
-  constructor(private ws: WebSocketService,
-              public ss: ShellService,
-              protected aroute: ActivatedRoute,
-              public translate: TranslateService,
-              protected router: Router,
-              private dialog: MatDialog) {
-              }
+  protected route_success: string[] = ['apps'];
+
+  constructor(protected core:CoreService,
+    private ws: WebSocketService,
+    public ss: ShellService,
+    public translate: TranslateService,
+    protected aroute: ActivatedRoute,
+    protected router: Router,
+    private dialog: MatDialog) {
+  }
 
   ngOnInit() {
     this.aroute.params.subscribe(params => {
@@ -66,22 +75,79 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
       });
     });
 
+    // this.getAuthToken().subscribe((res) => {
+    //   this.initializeWebShell(res);
+    //   this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
+    //   });
+    //   this.initializeTerminal();
+    // });
   }
 
   ngOnDestroy() {
-    if (this.shellSubscription) {
-      this.shellSubscription.unsubscribe();
-    }
     if (this.ss.connected){
       this.ss.socket.close();
     }
-  };
-
-  onRightClick(): false {
-    this.dialog.open(CopyPasteMessageComponent);
-    return false;
+    if(this.shellSubscription){
+      this.shellSubscription.unsubscribe();
+    }
   }
   
+  refreshToolbarButtons() {
+    this.formEvents = new Subject();
+    this.formEvents.subscribe((evt: CoreEvent) => {
+      if (evt.data.event_control == 'restore') {
+        this.resetDefault();
+        this.refreshToolbarButtons();
+      } else if (evt.data.event_control == 'reconnect') {
+        this.reconnect();
+        this.refreshToolbarButtons();
+      } else if (evt.data.event_control == 'fontsize') {
+        this.font_size = evt.data.fontsize;
+        this.resizeTerm();
+      }
+    });
+
+    let controls = [];
+    if (this.shellConnected) {
+      controls = [
+        {
+          name: 'fontsize',
+          label: 'Set font size',
+          type: 'slider',
+          min: 10,
+          max: 20, 
+          step: 1,
+          value: this.font_size,
+        },
+        {
+          name: 'restore',
+          label: 'Restore default',
+          type: 'button',
+          color: 'primary',
+        },
+      ];
+    } else {
+      controls = [
+        {
+          name: 'reconnect',
+          label: 'Reconnect',
+          type: 'button',
+          color: 'primary',
+        },
+      ];
+    }
+    // Setup Global Actions
+    const actionsConfig = {
+      actionType: EntityToolbarComponent,
+      actionConfig: {
+        target: this.formEvents,
+        controls: controls,
+      }
+    };
+
+    this.core.emit({name:"GlobalActions", data: actionsConfig, sender: this});
+  }
+
   onResize(event) {
     this.resizeTerm();
   }
@@ -103,9 +169,49 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
       const changedProp = changes[propName];
       // reprint prompt
       if (propName === 'prompt' && this.xterm != null) {
-        this.xterm.write(this.clearLine + this.prompt)
+        // this.xterm.write(this.clearLine + this.prompt)
       }
     }
+  }
+
+  onRightClick(): false {
+    this.dialog.open(CopyPasteMessageComponent);
+    return false;
+  }
+
+  initializeTerminal() {
+    
+    const size = this.getSize();
+
+    const setting = {
+      cursorBlink: false,
+      tabStopWidth: 8,
+      cols: size.cols,
+      rows: size.rows,
+      focus: true,
+      fontSize: this.font_size,
+      fontFamily: this.font_name,
+      allowTransparency: true
+    };
+
+    this.xterm = new Terminal(setting);
+    
+    const attachAddon = new AttachAddon(this.ss.socket);
+    this.xterm.loadAddon(attachAddon);
+
+    this.fitAddon = new FitAddon();
+    this.xterm.loadAddon(this.fitAddon);
+
+    var font = new FontFaceObserver(this.font_name);
+    
+    font.load().then((e) => {
+      this.xterm.open(this.container.nativeElement);
+      this.fitAddon.fit();
+      this.xterm._initialized = true;
+    }, function (e) {
+      console.log('Font is not available', e);
+    });    
+    
   }
 
   getSize() {
@@ -140,36 +246,6 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  initializeTerminal() {
-    const size = this.getSize();
-
-    const setting = {
-      cursorBlink: false,
-      tabStopWidth: 8,
-      cols: size.cols,
-      rows: size.rows,
-      focus: true,
-      fontSize: this.font_size,
-      fontFamily: this.font_name,
-    };
-
-    this.xterm = new Terminal(setting);
-    const attachAddon = new AttachAddon(this.ss.socket);
-    this.xterm.loadAddon(attachAddon);
-    this.fitAddon = new FitAddon();
-    this.xterm.loadAddon(this.fitAddon);
-    
-    var font = new FontFaceObserver(this.font_name);
-    
-    font.load().then((e) => {
-      this.xterm.open(this.container.nativeElement);
-      this.fitAddon.fit();
-      this.xterm._initialized = true;
-    }, function (e) {
-      console.log('Font is not available', e);
-    });    
-  }
-
   resizeTerm(){
     const size = this.getSize();
     this.xterm.setOption('fontSize', this.font_size);
@@ -181,22 +257,24 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
 
   initializeWebShell(res: string) {
     this.ss.token = res;
-    this.ss.podId = this.pk;
     this.ss.connect();
 
+    this.refreshToolbarButtons();  
+
     this.ss.shellConnected.subscribe((res)=> {
+      this.shellConnected = res.connected;
       this.connectionId = res.id;
+      
+      this.refreshToolbarButtons();      
       this.resizeTerm();
     })
-
   }
 
   getAuthToken() {
     return this.ws.call('auth.generate_token');
   }
 
-  onShellRightClick(): false {
-    this.dialog.open(CopyPasteMessageComponent);
-    return false;
+  reconnect() {
+    this.ss.connect();
   }
 }

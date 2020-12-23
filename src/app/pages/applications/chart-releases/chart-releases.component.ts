@@ -16,6 +16,7 @@ import { NextCloudFormComponent } from '../forms/nextcloud-form.component';
 import { MinioFormComponent } from '../forms/minio-form.component';
 
 import  helptext  from '../../../helptext/apps/apps';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-charts',
@@ -62,7 +63,7 @@ export class ChartReleasesComponent implements OnInit {
   constructor(private mdDialog: MatDialog,
     private dialogService: DialogService, private translate: TranslateService,
     private appService: ApplicationsService, private modalService: ModalService,
-    private sysGeneralService: SystemGeneralService) { }
+    private sysGeneralService: SystemGeneralService, private router: Router) { }
 
   ngOnInit(): void {
     this.refreshChartReleases();
@@ -255,6 +256,7 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   openShell(name: string) {
-    console.log('------------', name);
+    this.router.navigate(new Array("/apps/shell/").concat(
+      ["rnam", "pnam", "cname"]));
   }
 }
