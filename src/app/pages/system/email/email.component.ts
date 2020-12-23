@@ -258,7 +258,15 @@ export class EmailComponent implements OnDestroy {
           name: 'login-gmail',
           inputType: 'button',
           label: helptext_system_email.auth.login_button,
-          isHidden: true,
+          relation: [
+            {
+              action: 'HIDE',
+              when: [{
+                name: 'send_mail_method',
+                value: true,
+              }],
+            },
+          ],
           customEventMethod: () => {
             const self = this;
             const dialogService = this.dialogservice;
@@ -290,7 +298,6 @@ export class EmailComponent implements OnDestroy {
   private sendMailMethod: FormControl;
   private sendMailMethodSubscription: Subscription;
   private smtp: FormControl;
-  private gmailButton: FieldConfig;
   private pass: FieldConfig;
 
   constructor(protected router: Router, protected rest: RestService,
@@ -317,16 +324,13 @@ export class EmailComponent implements OnDestroy {
     this.pass = this.fieldSets.config('pass');
     this.smtp = entityEdit.formGroup.controls['smtp'];
     this.sendMailMethod = entityEdit.formGroup.controls['send_mail_method'];
-    this.gmailButton = this.fieldSets.config('login-gmail');
 
     this.oauthCreds.subscribe(value => {
       this.sendMailMethod.setValue(!value.client_id);
-      this.gmailButton.isHidden = this.sendMailMethod.value || !!value.client_id;
     });
 
     this.sendMailMethodSubscription = this.sendMailMethod.valueChanges.subscribe((value) => {
       this.pass.hideButton = !value;
-      this.gmailButton.isHidden = value || !!this.oauthCreds.getValue().client_id;
 
       if (!value) {
         this.checkForOauthCreds();
