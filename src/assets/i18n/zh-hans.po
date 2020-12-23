@@ -4811,6 +4811,12 @@ msgstr "编辑选项"
 msgid "Edit Permissions"
 msgstr "编辑权限"
 
+msgid "Edit Pool"
+msgstr ""
+
+msgid "Edit Pool Disk"
+msgstr ""
+
 msgid "Edit Pool Options for "
 msgstr ""
 
@@ -7390,6 +7396,9 @@ msgid "Import Certificate"
 msgstr ""
 
 msgid "Import Certificate Signing Request"
+msgstr ""
+
+msgid "Import Pool"
 msgstr ""
 
 msgid "Import a pool that exists but is not connected."
@@ -10076,6 +10085,9 @@ msgid ""
 msgstr "继续升级池？警告：升级池是一种单向操作，它可能会使池的某些功能与较旧的TrueNAS版本不兼容："
 
 msgid "Product:"
+msgstr ""
+
+msgid "Production Status"
 msgstr ""
 
 msgid "Production status successfully updated"
@@ -14701,6 +14713,9 @@ msgstr "更新插件"
 
 msgid "Updating group members"
 msgstr "正在更新群组成员"
+
+msgid "Updating production status..."
+msgstr ""
 
 msgid "Updating selected plugins."
 msgstr "正在更新选定的插件。"

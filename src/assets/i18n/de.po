@@ -4667,6 +4667,12 @@ msgstr "Optionen bearbeiten"
 msgid "Edit Permissions"
 msgstr "Berechtigungen bearbeiten"
 
+msgid "Edit Pool"
+msgstr ""
+
+msgid "Edit Pool Disk"
+msgstr ""
+
 msgid "Edit Pool Options for "
 msgstr ""
 
@@ -7192,6 +7198,9 @@ msgid "Import Certificate"
 msgstr ""
 
 msgid "Import Certificate Signing Request"
+msgstr ""
+
+msgid "Import Pool"
 msgstr ""
 
 msgid "Import a pool that exists but is not connected."
@@ -9790,6 +9799,9 @@ msgstr ""
 "möglicherweise nicht mit älteren Versionen von TrueNAS kompatibel sind: "
 
 msgid "Product:"
+msgstr ""
+
+msgid "Production Status"
 msgstr ""
 
 msgid "Production status successfully updated"
@@ -14854,6 +14866,9 @@ msgstr "Aktualisiere Plugin"
 
 msgid "Updating group members"
 msgstr "Aktualisiere Mitglieder der Gruppe"
+
+msgid "Updating production status..."
+msgstr ""
 
 msgid "Updating selected plugins."
 msgstr "Aktualisiere ausgewählte Plugins."
