@@ -144,7 +144,8 @@ export class ChartFormComponent {
 
   parseSchema(catalogApp) {
     this.catalogApp = catalogApp;
-    
+    this.title = this.catalogApp.name; 
+
     this.fieldSets = [
       {
         name: helptext.nextCloudForm.release_name.name,
@@ -182,6 +183,7 @@ export class ChartFormComponent {
       }
     });
 
+    this.fieldSets = this.fieldSets.filter(fieldSet => fieldSet.config.length > 0);
     console.log(this.fieldSets);
   }
 
