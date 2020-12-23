@@ -56,6 +56,9 @@ export class ChartFormComponent {
       case 'boolean':
         type = 'checkbox';
         break;
+      case 'list':
+        type = 'list';
+        break;
       case 'hostpath':
         type = 'explorer';
         break;
@@ -105,6 +108,13 @@ export class ChartFormComponent {
       fieldConfig['initial'] = '/mnt';
     }
 
+    if (fieldConfig.type == 'list') {
+      const listFields = this.getTemplateListField(config, parent);
+      fieldConfig['templateListField'] = listFields;
+      fieldConfig['box'] = true;
+      fieldConfig['listFields'] = [];
+    }
+
     fieldConfigs.push(fieldConfig);
 
     if (config.schema.subquestions) {
@@ -142,6 +152,15 @@ export class ChartFormComponent {
     return fieldConfigs;
   }
 
+  getTemplateListField(config, parent) {
+    let listFields = [];
+    config.schema.items.forEach(item => {
+      const fields = this.getFieldConfigs(item, parent);
+      listFields = listFields.concat(fields);
+    });
+    return listFields;
+  }
+
   parseSchema(catalogApp) {
     this.catalogApp = catalogApp;
     this.title = this.catalogApp.name; 
@@ -160,7 +179,7 @@ export class ChartFormComponent {
           }
         ],
         colspan: 2
-      }
+      },
     ];
     this.catalogApp.schema.groups.forEach(group => {
       this.fieldSets.push({
@@ -204,18 +223,19 @@ export class ChartFormComponent {
 
   }
 
-  customSubmit(data) {
-    let apiCall = this.addCall;
-    let values = {};
+  setObjectValues(data, result) {
     Object.keys(data).forEach(key => {
       const key_list = key.split('_');
       const value = data[key];
-      if (key == "release_name") {
+      if (key == "release_name" || value == "" || value == undefined) {
         return;
-      } 
+      } else if (Array.isArray(value)) {
+        this.setArrayValues(value, result);
+        return;
+      }
       
       if (key_list.length > 1) {
-        let parent = values;
+        let parent = result;
         for(let i=0; i<key_list.length; i++) {
           const temp_key = key_list[i];
           if (i == key_list.length - 1) {
@@ -228,9 +248,21 @@ export class ChartFormComponent {
           }
         }        
       } else {
-        values[key] = value;
+        result[key] = value;
       }
     });
+  }
+
+  setArrayValues(data, result) {
+    data.forEach(item => {
+      this.setObjectValues(item, result);
+    });    
+  }
+
+  customSubmit(data) {
+    let apiCall = this.addCall;
+    let values = {};
+    this.setObjectValues(data, values);
 
     let payload = [];
     payload.push({
@@ -251,7 +283,7 @@ export class ChartFormComponent {
       payload.unshift(this.name);
       apiCall = this.editCall;
     }
-
+console.log(payload);
     this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
       helptext.installing) }, disableClose: true});
     this.dialogRef.componentInstance.setCall(apiCall, payload);
