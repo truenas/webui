@@ -77,7 +77,8 @@ export class ChartFormComponent {
     return options;
   }
 
-  getFieldConfig(config, parent=null) {
+  getFieldConfigs(config, parent=null) {
+    let fieldConfigs = [];
     let name = config.variable;
     if (parent) {
       name = `${parent.variable}_${name}`;
@@ -98,7 +99,47 @@ export class ChartFormComponent {
     if (config.schema.private) {
       fieldConfig['togglePw'] = true;
     }
-    return fieldConfig;
+
+    if (fieldConfig.type == 'explorer') {
+      fieldConfig['explorerType'] = 'directory';
+      fieldConfig['initial'] = '/mnt';
+    }
+
+    fieldConfigs.push(fieldConfig);
+
+    if (config.schema.subquestions) {
+      config.schema.subquestions.forEach(subquestion => {
+        let sbu_name = subquestion.variable;
+        if (parent) {
+          sbu_name = `${parent.variable}_${sbu_name}`;
+        }
+        const subFieldConfig = {
+          type: this.getType(subquestion.schema),
+          name: sbu_name,
+          placeholder: config.label,
+        }
+
+        if (config.schema.show_subquestions_if) {
+          subFieldConfig['isHidden'] = true;
+          subFieldConfig['relation'] = [{
+            action: 'SHOW',
+              when: [{
+                name: name,
+                value: true,
+              }]
+          }];
+        }
+
+        if (subFieldConfig.type == 'explorer') {
+          subFieldConfig['explorerType'] = 'directory';
+          subFieldConfig['initial'] = '/mnt';
+        }
+
+        fieldConfigs.push(subFieldConfig);
+      });
+    }
+
+    return fieldConfigs;
   }
 
   parseSchema(catalogApp) {
@@ -133,10 +174,10 @@ export class ChartFormComponent {
       if (fieldSet) {
         if (question.schema.attrs) {
           question.schema.attrs.forEach(config => {
-            fieldSet.config.push(this.getFieldConfig(config, question));
+            fieldSet.config = fieldSet.config.concat(this.getFieldConfigs(config, question));
           });
         } else {
-          fieldSet.config.push(this.getFieldConfig(question));
+          fieldSet.config = fieldSet.config.concat(this.getFieldConfigs(question));
         }
       }
     });
