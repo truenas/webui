@@ -92,9 +92,6 @@ msgstr " дисков, новый vdev имеет "
 msgid " is "
 msgstr " - "
 
-msgid " is a required field."
-msgstr " обязательное поле."
-
 msgid " is required."
 msgstr " требуется."
 
@@ -122,6 +119,9 @@ msgstr " минут"
 
 msgid " official plugins"
 msgstr "официальные плагины"
+
+msgid " on pool "
+msgstr ""
 
 msgid " seconds"
 msgstr " секунд"
@@ -972,9 +972,6 @@ msgstr "О продукте"
 msgid "About."
 msgstr "О продукте."
 
-msgid "Accent"
-msgstr ""
-
 msgid "Access"
 msgstr "Доступ"
 
@@ -1165,6 +1162,9 @@ msgstr ""
 
 msgid "Add Dataset"
 msgstr "Добавить набор данных"
+
+msgid "Add External Interfaces"
+msgstr ""
 
 msgid "Add Group"
 msgstr "Добавить группу"
@@ -1497,6 +1497,12 @@ msgstr "Расширенное создание репликации"
 
 msgid "Advanced Settings"
 msgstr "Расширенные настройки"
+
+msgid "Advanced Settngs"
+msgstr ""
+
+msgid "Advertise IP"
+msgstr ""
 
 msgid ""
 "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click "
@@ -1888,18 +1894,6 @@ msgstr ""
 "Также разблокировать любой зашифрованный набор данных, хранящийся в этом "
 "наборе данных."
 
-msgid "Alt Background 1"
-msgstr ""
-
-msgid "Alt Background 2"
-msgstr ""
-
-msgid "Alt Foreground 1"
-msgstr ""
-
-msgid "Alt Foreground 2"
-msgstr ""
-
 msgid ""
 "Alternative names that SMB clients can use when connecting to this NAS. Can "
 "be no greater than 15 characters."
@@ -1915,6 +1909,12 @@ msgstr "Всегда chroot"
 
 msgid "Always On"
 msgstr "Всегда включен"
+
+msgid "Always pull image even if present on host."
+msgstr ""
+
+msgid "Always restart containers in a pod if they exit."
+msgstr ""
 
 msgid ""
 "Amazon Web Services Key ID. This is found on  <a "
@@ -1986,9 +1986,6 @@ msgstr "Полоса скачивания анонимного пользова�
 msgid "Anonymous User Upload Bandwidth"
 msgstr "Полоса закачки анонимного пользователя"
 
-msgid "Another theme is using this label. Please enter a new label."
-msgstr "Другая тема использует этот ярлык. Пожалуйста, введите новый ярлык."
-
 msgid "Any notes about initiators."
 msgstr "Любые заметки об инициаторах."
 
@@ -2028,6 +2025,9 @@ msgstr ""
 
 msgid "Application Key"
 msgstr "Ключ приложения"
+
+msgid "Application Name"
+msgstr ""
 
 msgid "Applications"
 msgstr "Приложения"
@@ -2100,6 +2100,9 @@ msgstr ""
 msgid "Apply updates and reboot system after downloading."
 msgstr "Применить обновления и перезагрузить систему после загрузки."
 
+msgid "Apps"
+msgstr ""
+
 msgid "Apr"
 msgstr "Апр"
 
@@ -2158,6 +2161,9 @@ msgstr ""
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" "
 "target=\"_blank\">rsyncd.conf(5)</a> сервера rsync или в <b>Rsync "
 "Modules</b> другой системы."
+
+msgid "At least one pool must be available to use apps"
+msgstr ""
 
 msgid "Attach"
 msgstr "Присоединить"
@@ -2389,12 +2395,6 @@ msgstr ""
 msgid "Background (lowest)"
 msgstr "Фон (самый низкий)"
 
-msgid "Background 1"
-msgstr ""
-
-msgid "Background 2"
-msgstr ""
-
 msgid "Backup Credentials"
 msgstr ""
 
@@ -2418,9 +2418,6 @@ msgstr "Базовый jail"
 
 msgid "Basic"
 msgstr ""
-
-msgid "Basic Buttons"
-msgstr "Основные кнопки"
 
 msgid "Basic Constraints"
 msgstr "Основные ограничения"
@@ -2496,9 +2493,6 @@ msgstr "Размер блока"
 
 msgid "Block size"
 msgstr "Размер блока"
-
-msgid "Blue"
-msgstr "Голубой"
 
 msgid "Boot"
 msgstr "Загрузка"
@@ -2743,9 +2737,6 @@ msgstr ""
 msgid "CN Realm"
 msgstr "CN Область"
 
-msgid "COLORS"
-msgstr "ЦВЕТА"
-
 msgid "CONNECT"
 msgstr "ПОДКЛЮЧИТЬСЯ"
 
@@ -2829,6 +2820,9 @@ msgstr "Емкость"
 
 msgid "Case Sensitivity"
 msgstr "Чувствительность к регистру"
+
+msgid "Catalog"
+msgstr ""
 
 msgid "Category"
 msgstr "Категория"
@@ -3008,9 +3002,6 @@ msgstr "Проверить обновления"
 msgid "Check for Updates Daily and Download if Available"
 msgstr "Ежедневно проверять наличие обновлений и загружать, если доступны"
 
-msgid "Check me!"
-msgstr "Проверь меня!"
-
 msgid ""
 "Check the <i>hostid</i> property of the jail. If not the same as the host, "
 "do not start the jail."
@@ -3109,10 +3100,10 @@ msgstr ""
 "чтении файлов. Это может привести к значительному увеличению "
 "производительности."
 
-msgid "Choose Accent"
-msgstr "Выберите акцент"
-
 msgid "Choose File"
+msgstr ""
+
+msgid "Choose Pool"
 msgstr ""
 
 msgid "Choose Pool for Plugin and Jail Manager"
@@ -3121,14 +3112,8 @@ msgstr "Выберите пул для менеджера плагинов и ja
 msgid "Choose Pool for Plugin and Jail Storage"
 msgstr "Выберите пул для хранения плагинов и jail"
 
-msgid "Choose Primary"
-msgstr ""
-
 msgid "Choose Theme"
 msgstr "Выберите тему"
-
-msgid "Choose Topbar"
-msgstr ""
 
 msgid "Choose a DNS provider and configure any required authenticator attributes."
 msgstr ""
@@ -3155,9 +3140,6 @@ msgid "Choose a connection that has been saved in  <b>System > SSH Connections</
 msgstr ""
 "Выберите соединение, которое было сохранено в <b>Система > Соединения "
 "SSH</b>."
-
-msgid "Choose a date"
-msgstr "Выберите дату"
 
 msgid "Choose a date format."
 msgstr "Выберите формат даты."
@@ -3197,8 +3179,14 @@ msgstr ""
 "к домашнему каталогу пользователя отображается здесь при редактировании "
 "пользователя."
 
+msgid "Choose a pool for Apps"
+msgstr ""
+
 msgid "Choose a pool for plugin and jail storage."
 msgstr "Выберите пул для хранения плагинов и jailов."
+
+msgid "Choose a pool for the Apps"
+msgstr ""
 
 msgid "Choose a pool to scrub."
 msgstr "Выберите пул для проверки."
@@ -3255,9 +3243,6 @@ msgstr ""
 msgid "Choose a time format."
 msgstr "Выберите формат времени."
 
-msgid "Choose a topbar color."
-msgstr "Выберите цвет верхней панели."
-
 msgid ""
 "Choose a valid client certificate which exists on this system and hasn't "
 "been revoked. Find more about generating certificates and CAs for OpenVPN "
@@ -3293,9 +3278,6 @@ msgstr "Выберите метод аутентификации."
 
 msgid "Choose an encryption mode to use with LDAP."
 msgstr "Выберите режим шифрования для использования с LDAP."
-
-msgid "Choose an option"
-msgstr "Выберите опцию"
 
 msgid ""
 "Choose between <i>Internal CA</i>, <i>Intermediate CA</i>, and  <i>Import "
@@ -3362,20 +3344,12 @@ msgstr "Выберите разрешения для этого модуля rsy
 msgid "Choose the VM operating system type."
 msgstr "Выберите тип операционной системы VM."
 
-msgid "Choose the accent color for the theme."
-msgstr "Выберите цвет акцента для темы."
-
 msgid ""
 "Choose the backend to map Windows security identifiers (SIDs) to UNIX UIDs "
 "and GIDs. Click Edit to configure that backend."
 msgstr ""
 "Выберите бэкэнд для сопоставления идентификаторов безопасности Windows "
 "(SID) с UID и GID UNIX. Нажмите Редактировать, чтобы настроить этот бэкэнд."
-
-msgid ""
-"Choose the color to display next to the Menu Label                     in "
-"the Favorites menu."
-msgstr "Выберите цвет для отображения рядом с меткой меню в меню «Избранное»."
 
 msgid ""
 "Choose the hour and minute when new resilver tasks                are not "
@@ -3395,9 +3369,6 @@ msgid ""
 msgstr ""
 "Выберите платформу, которая будет использовать эту долю. Связанные "
 "параметры применяются к этой общей папке."
-
-msgid "Choose the primary color for the theme."
-msgstr "Выберите основной цвет для темы."
 
 msgid "Choose the protocol to use when connecting with the remote system."
 msgstr ""
@@ -3571,20 +3542,6 @@ msgid "Click on alarms to select or unselect."
 msgstr "Нажмите на оповещения, чтобы выбрать или отменить выбор."
 
 msgid ""
-"Click the swatch to pick a color or enter a color                     hex "
-"value."
-msgstr ""
-"Нажмите на образец, чтобы выбрать цвет или введите шестнадцатеричное "
-"значение цвета."
-
-msgid ""
-"Click the swatch to pick a color or enter a color                    hex "
-"value."
-msgstr ""
-"Нажмите на образец, чтобы выбрать цвет или введите шестнадцатеричное "
-"значение цвета."
-
-msgid ""
 "Clicking Continue allows TrueNAS to finish the update in the background "
 "while  Abort stops the process and reverts the dataset ACL to the "
 "previously active ACL."
@@ -3625,6 +3582,12 @@ msgstr "Облачные учетные данные"
 
 msgid "Cloud sync <i>"
 msgstr "Облачная синхронизация <i>"
+
+msgid "Cluster CIDR"
+msgstr ""
+
+msgid "Cluster DNS IP"
+msgstr ""
 
 msgid "Cluster Name"
 msgstr "Имя кластера"
@@ -3688,6 +3651,11 @@ msgstr ""
 
 msgid "Command"
 msgstr "Команда"
+
+msgid ""
+"Commands to execute inside container overriding image CMD default.  Use "
+"<i>ENTER</i> after each entry."
+msgstr ""
 
 msgid ""
 "Commands to run in the jail environment before the jail is removed and "
@@ -3781,6 +3749,12 @@ msgstr "Учетная запись компьютера OU"
 msgid "Config Files"
 msgstr ""
 
+msgid "Config Hostpath"
+msgstr ""
+
+msgid "Config Hostpath Enabled"
+msgstr ""
+
 msgid "Config could not be downloaded"
 msgstr "Конфиг не может быть загружен"
 
@@ -3824,6 +3798,9 @@ msgid ""
 msgstr ""
 "Настройте топологию виртуальной адресации при работе в режиме TUN. (Режим "
 "TAP всегда использует топологию SUBNET.)"
+
+msgid "Configuring..."
+msgstr ""
 
 msgid "Confirm"
 msgstr "Подтвердить"
@@ -3954,6 +3931,27 @@ msgstr "Связаться с поддержкой"
 msgid "Container"
 msgstr "Контейнер"
 
+msgid "Container Args"
+msgstr ""
+
+msgid "Container CMD"
+msgstr ""
+
+msgid "Container Entrypoint"
+msgstr ""
+
+msgid "Container Environment Variables"
+msgstr ""
+
+msgid "Container Port"
+msgstr ""
+
+msgid "Container Settings"
+msgstr ""
+
+msgid "Container port"
+msgstr ""
+
 msgid "Content Commitment"
 msgstr ""
 
@@ -4078,9 +4076,6 @@ msgstr "Создать центр сертификации"
 msgid "Create Certificate"
 msgstr "Создать сертификат"
 
-msgid "Create New Theme"
-msgstr "Создать новую тему"
-
 msgid "Create Passphrase"
 msgstr "Задать пароль"
 
@@ -4092,9 +4087,6 @@ msgstr "Создать SSH соединение"
 
 msgid "Create Snapshot"
 msgstr "Создать снимок"
-
-msgid "Create Theme"
-msgstr "Создать тему"
 
 msgid "Create Virtual Machine"
 msgstr ""
@@ -4134,6 +4126,9 @@ msgstr "Создать новый пул"
 
 msgid "Create new disk image"
 msgstr "Создать новый образ диска"
+
+msgid "Create new pods and then kill old ones."
+msgstr ""
 
 msgid "Create new pool"
 msgstr "Создать новый пул"
@@ -4252,9 +4247,6 @@ msgstr "Пользовательские свойства"
 msgid "Custom Server"
 msgstr "Пользовательский сервер"
 
-msgid "Custom Theme Name"
-msgstr "Название пользовательской темы"
-
 msgid "Custom Value"
 msgstr ""
 
@@ -4267,9 +4259,6 @@ msgid ""
 msgstr ""
 "Настраивает важность оповещения. Каждый уровень важности имеет различную "
 "иконку и цвет, чтобы выразить уровень важности."
-
-msgid "Cyan"
-msgstr "Циан"
 
 msgid ""
 "DDNS server name. For example,  <i>members.dyndns.org</i> denotes a server "
@@ -4309,11 +4298,20 @@ msgstr "DHCP автонастройка IPv4"
 msgid "DISABLED"
 msgstr ""
 
+msgid "DNS"
+msgstr ""
+
+msgid "DNS Configuration"
+msgstr ""
+
 msgid "DNS Domain Name"
 msgstr "Доменное имя DNS"
 
 msgid "DNS Forwarder"
 msgstr "DNS пересыльщик"
+
+msgid "DNS Policy"
+msgstr ""
 
 msgid "DNS Servers"
 msgstr "Серверы DNS"
@@ -4377,6 +4375,12 @@ msgstr "Данные"
 msgid "Data Encipherment"
 msgstr "Шифрование данных"
 
+msgid "Data Hostpath"
+msgstr ""
+
+msgid "Data Hostpath Enabled"
+msgstr ""
+
 msgid "Data Protection"
 msgstr "Защита данных"
 
@@ -4420,6 +4424,9 @@ msgstr "Действия набора данных"
 
 msgid "Dataset Key"
 msgstr "Ключ набора данных"
+
+msgid "Dataset Name"
+msgstr ""
 
 msgid "Dataset Names"
 msgstr ""
@@ -4534,6 +4541,12 @@ msgstr "Маршрутизатор по умолчанию для IPv6"
 
 msgid "Default Umask"
 msgstr "Umask по умолчанию"
+
+msgid ""
+"Default behaviour is for pod to inherit the name resolution configuration  "
+"from the node that the pods run on. If <i>None</i> is specified, it allows "
+"a Pod to ignore DNS  settings from the Kubernetes environment."
+msgstr ""
 
 msgid "Default is UTF-8 which supports all characters in all languages."
 msgstr ""
@@ -5182,6 +5195,15 @@ msgstr "Не устанавливайте это, если последоват�
 msgid "Docker Host"
 msgstr "Docker Хост"
 
+msgid "Docker Images"
+msgstr ""
+
+msgid "Docker image pull policy"
+msgstr ""
+
+msgid "Docker image repository"
+msgstr ""
+
 msgid "Does the pool have GELI Encryption from FreeNAS/TrueNAS 11.3 or earlier?"
 msgstr ""
 "Имеет ли пул GELI-шифрование из FreeNAS/TrueNAS 11.3 или более ранней "
@@ -5324,6 +5346,9 @@ msgstr "Редактировать ключ API"
 
 msgid "Edit Alert Service"
 msgstr "Изменить службу оповещения"
+
+msgid "Edit Application Settings"
+msgstr ""
 
 msgid "Edit CA"
 msgstr ""
@@ -6022,9 +6047,6 @@ msgstr ""
 msgid "Enter a name for the new credential."
 msgstr "Введите имя для новых полномочий."
 
-msgid "Enter a name for the new theme."
-msgstr "Введите имя для новой темы."
-
 msgid "Enter a name for the share."
 msgstr "Введите имя для ресурса."
 
@@ -6717,6 +6739,9 @@ msgstr ""
 msgid "Enter the username if the SMTP server requires authentication."
 msgstr "Введите имя пользователя, если SMTP-сервер требует аутентификации."
 
+msgid "Enter the version to roll back to."
+msgstr ""
+
 msgid ""
 "Enter up to four interface configurations in the format "
 "<i>interface</i>:<i>bridge</i>, separated by a comma (,). The left value is "
@@ -6748,6 +6773,12 @@ msgstr "Уровень предприятия"
 
 msgid "Environment"
 msgstr "Окружение"
+
+msgid "Environment Variable Name"
+msgstr ""
+
+msgid "Environment Variable Value"
+msgstr ""
 
 msgid "Error"
 msgstr "Ошибка"
@@ -7003,6 +7034,9 @@ msgstr "Тип экстента"
 msgid "Extents"
 msgstr ""
 
+msgid "Extra Environment Variables"
+msgstr ""
+
 msgid "Extra Users"
 msgstr "Дополнительные пользователи"
 
@@ -7016,9 +7050,6 @@ msgid "FTP Port number. Leave blank to use the default port <i>21</i>."
 msgstr ""
 "Номер порта FTP. Оставьте пустым, чтобы использовать порт по умолчанию "
 "<i>21</i>."
-
-msgid "Fab Buttons"
-msgstr ""
 
 msgid "Failed"
 msgstr "Ошибка"
@@ -7254,15 +7285,6 @@ msgstr ""
 "Принудительно добавляет сервер <b>NTP</b>, даже если он в данный момент "
 "недоступен."
 
-msgid "Foreground 1"
-msgstr ""
-
-msgid "Foreground 2"
-msgstr ""
-
-msgid "Form Invalid"
-msgstr "Форма неверна"
-
 msgid "Free"
 msgstr "Свободно"
 
@@ -7342,13 +7364,13 @@ msgstr ""
 "доменов пробелом, запятой (,) или точкой с запятой (;). Пример: "
 "<i>myname.dyndns.org; myothername.dyndns.org</i>."
 
-msgid "GENERAL"
-msgstr ""
-
 msgid "GID"
 msgstr ""
 
 msgid "GMail OAuth"
+msgstr ""
+
+msgid "GPU Configuration"
 msgstr ""
 
 msgid "GUI"
@@ -7453,9 +7475,6 @@ msgstr "Глобальные вспомогательные параметры"
 msgid "Global Configuration"
 msgstr "Общие настройки"
 
-msgid "Global Preview"
-msgstr "Глобальный предварительный просмотр"
-
 msgid "Global Settings"
 msgstr "Глобальные настройки"
 
@@ -7485,9 +7504,6 @@ msgstr "Возраст графика в месяцах"
 
 msgid "Graphite Separate Instances"
 msgstr "Отдельные экземпляры Graphite"
-
-msgid "Green"
-msgstr "Зеленый"
 
 msgid "Group"
 msgstr "Группа"
@@ -7688,8 +7704,26 @@ msgstr "Разрешенные хосты"
 msgid "Host Deny"
 msgstr "Запрещенные хосты"
 
+msgid "Host Interface"
+msgstr ""
+
 msgid "Host Name Database"
 msgstr "База данных имен хостов"
+
+msgid "Host Network"
+msgstr ""
+
+msgid "Host Network/Host Ports"
+msgstr ""
+
+msgid "Host Path"
+msgstr ""
+
+msgid "Host Path Volumes"
+msgstr ""
+
+msgid "Host Port"
+msgstr ""
 
 msgid "Host Port Number"
 msgstr "Номер порта хоста"
@@ -7914,6 +7948,9 @@ msgstr "УСТАНОВИТЬ"
 msgid "IP Address"
 msgstr "IP адрес"
 
+msgid "IP Address Management"
+msgstr ""
+
 msgid "IP Addresses"
 msgstr "IP адреса"
 
@@ -8002,9 +8039,6 @@ msgstr "Место сохранения ISO"
 
 msgid "ISO upload location"
 msgstr "Место загрузки ISO"
-
-msgid "Icon Buttons"
-msgstr "Кнопки со значками"
 
 msgid "Icon URL"
 msgstr "URL значка"
@@ -8149,6 +8183,27 @@ msgstr "Игнорировать"
 
 msgid "Ignore Builtin"
 msgstr "Игнорировать BUILTIN"
+
+msgid "Ignore DNS settings from the Kuberentes cluster"
+msgstr ""
+
+msgid "Image"
+msgstr ""
+
+msgid "Image Pull Policy"
+msgstr ""
+
+msgid "Image Repository"
+msgstr ""
+
+msgid "Image Tag"
+msgstr ""
+
+msgid "Image and Policies"
+msgstr ""
+
+msgid "Image repository"
+msgstr ""
 
 msgid "Immediately connect to TrueCommand."
 msgstr "Сразу подключиться к TrueCommand."
@@ -8342,9 +8397,6 @@ msgstr ""
 "<i>Авторизованные сети</i>. Нажатие <i>Обновить</i> обновляет список "
 "<i>Подключенные инициаторы</i>."
 
-msgid "Input"
-msgstr ""
-
 msgid "Input the pre-defined S3 bucket to use."
 msgstr "Введите предопределенный S3 bucket для использования."
 
@@ -8354,11 +8406,23 @@ msgstr "Введите предварительно определенный к�
 msgid "Install"
 msgstr "Установка"
 
+msgid "Install "
+msgstr ""
+
+msgid "Install Application"
+msgstr ""
+
 msgid "Install Manual Update File"
 msgstr "Установить файл ручного обновления"
 
 msgid "Installation Media"
 msgstr "Установочный носитель"
+
+msgid "Installed Applications"
+msgstr ""
+
+msgid "Installing"
+msgstr ""
 
 msgid "Installing plugin..."
 msgstr "Установка плагина..."
@@ -8489,6 +8553,9 @@ msgid ""
 msgstr ""
 "Не рекомендуется расширять пул одним или несколькими vdevs, содержащими "
 "различное количество дисков. Продолжить?"
+
+msgid "Item"
+msgstr ""
 
 msgid "Items Delete Failed"
 msgstr "Удалить элементы не удалось"
@@ -8657,6 +8724,12 @@ msgstr ""
 msgid "KiB"
 msgstr "КиБ"
 
+msgid "Kill existing pods before creating new ones."
+msgstr ""
+
+msgid "Kubernetes Settings"
+msgstr ""
+
 msgid "LAGG Settings"
 msgstr "Настройки LAGG"
 
@@ -8752,6 +8825,9 @@ msgstr "Код языка"
 
 msgid "Last Scrub Run on"
 msgstr "Последний запуск проверки"
+
+msgid "Launch Docker Image"
+msgstr ""
 
 msgid "Leave Domain"
 msgstr "Выйти из домена"
@@ -8851,9 +8927,6 @@ msgstr ""
 msgid "Limit replication speed to this number of  bytes per second."
 msgstr "Ограничьте скорость репликации этим количеством байтов в секунду."
 
-msgid "Link"
-msgstr "Линк"
-
 msgid "Linked Service"
 msgstr "Связанная служба"
 
@@ -8890,9 +8963,6 @@ msgstr "Слушать"
 
 msgid "Load Previous Replication Task"
 msgstr "Загрузить предыдущую задачу репликации"
-
-msgid "Load colors from existing theme"
-msgstr "Загрузить цвета из существующей темы"
 
 msgid "Local"
 msgstr "Локальный"
@@ -9041,9 +9111,6 @@ msgstr ""
 
 msgid "Mac Address"
 msgstr "MAC-адрес"
-
-msgid "Magenta"
-msgstr "Пурпурный"
 
 msgid "Mail Server Port"
 msgstr "Порт почтового сервера"
@@ -9285,12 +9352,6 @@ msgstr ""
 msgid "Memory:"
 msgstr ""
 
-msgid "Menu Label"
-msgstr ""
-
-msgid "Menu Swatch"
-msgstr ""
-
 msgid "Message verbosity level in the replication  task log."
 msgstr ""
 "Метод передачи снимка: <ul><li><i>SSH</i> поддерживается большинством "
@@ -9367,20 +9428,35 @@ msgstr "Мин опрос"
 msgid "Min. Poll"
 msgstr "Мин. опрос"
 
-msgid "Mini Fab Buttons"
-msgstr ""
-
 msgid "Minimum"
 msgstr ""
 
 msgid "Minimum Passive Port"
 msgstr "Минимальный пассивный порт"
 
+msgid "Minimum length: 5 characters. Maximum length: 20 characters"
+msgstr ""
+
+msgid "Minimum length: 8 characters. Maximum length: 40 characters"
+msgstr ""
+
 msgid "Minimum size is 1 MiB"
 msgstr "Минимальный размер 1 МиБ"
 
 msgid "Minimum value is "
 msgstr "Минимальное значение "
+
+msgid "Minio"
+msgstr ""
+
+msgid "Minio HostPath Enabled"
+msgstr ""
+
+msgid "Minio Image Environment"
+msgstr ""
+
+msgid "Minio: Kubernetes native, high performance object storage"
+msgstr ""
 
 msgid "Mintues"
 msgstr ""
@@ -9457,6 +9533,9 @@ msgid "Months"
 msgstr "Месяцы"
 
 msgid "More Options"
+msgstr ""
+
+msgid "Mount Path"
 msgstr ""
 
 msgid "Mount Points of "
@@ -9833,6 +9912,9 @@ msgstr ""
 msgid "Network interfaces to include in the bridge."
 msgstr "Сетевые интерфейсы для включения в мост."
 
+msgid "Networking"
+msgstr ""
+
 msgid "Networks"
 msgstr ""
 
@@ -9841,6 +9923,12 @@ msgstr "Никогда"
 
 msgid "Never Delete"
 msgstr "Никогда не удалять"
+
+msgid "Never pull image even if it is not present on host."
+msgstr ""
+
+msgid "Never restart containers if they exit."
+msgstr ""
 
 msgid "New Disk"
 msgstr ""
@@ -9873,6 +9961,23 @@ msgstr "Следующая"
 msgid "Next Run"
 msgstr "Следующий запуск"
 
+msgid "Nextcloud"
+msgstr ""
+
+msgid "Nextcloud Host"
+msgstr ""
+
+msgid "Nextcloud Username"
+msgstr ""
+
+msgid "Nextcloud host to create application URLs"
+msgstr ""
+
+msgid ""
+"Nextcloud:  a file sharing server that puts the control  and security of "
+"your own data back into your hands."
+msgstr ""
+
 msgid "Nic to attach:"
 msgstr "Сетевой адаптер для подключения:"
 
@@ -9890,6 +9995,9 @@ msgstr "Нет журналов"
 
 msgid "No Pools"
 msgstr "Нет пулов"
+
+msgid "No Pools Found"
+msgstr ""
 
 msgid "No Repositories"
 msgstr "Нет репозиториев"
@@ -9946,6 +10054,24 @@ msgstr "Нет, продолжить импорт"
 msgid "Nobind"
 msgstr ""
 
+msgid "Node IP"
+msgstr ""
+
+msgid "Node Port"
+msgstr ""
+
+msgid "Node Port to use for Minio"
+msgstr ""
+
+msgid "Node Port to use for Nextcloud"
+msgstr ""
+
+msgid "Node port"
+msgstr ""
+
+msgid "Nodeport"
+msgstr ""
+
 msgid "Nodes CARP states do not agree."
 msgstr ""
 
@@ -9974,9 +10100,6 @@ msgstr ""
 
 msgid "Notes about this extent."
 msgstr "Заметки об этом экстенте."
-
-msgid "Notes or identifiers about the theme."
-msgstr ""
 
 msgid "Notice"
 msgstr "Уведомление"
@@ -10135,6 +10258,9 @@ msgstr "Идентификатор клиента OAuth"
 msgid "OAuth Client Secret"
 msgstr "Секрет клиента OAuth"
 
+msgid "OFFICIAL"
+msgstr ""
+
 msgid "OK"
 msgstr "OK"
 
@@ -10247,12 +10373,18 @@ msgstr ""
 "Переопределяйте значение по умолчанию, только если инициатору требуется "
 "другой размер блока."
 
+msgid "Only pull image if not present on host."
+msgstr ""
+
 msgid ""
 "Only replicate snapshots that match a  defined creation time. To specify "
 "which snapshots will be replicated,  set this checkbox and define the "
 "snapshot creation times that will be  replicated. For example, setting this "
 "time frame to <i>Hourly</i> will  only replicate snapshots that were "
 "created at the beginning of each hour."
+msgstr ""
+
+msgid "Only restart containers if they exit with a failure."
 msgstr ""
 
 msgid ""
@@ -10320,18 +10452,6 @@ msgstr "Операционная система"
 msgid "Operation"
 msgstr "Операция"
 
-msgid "Option 1"
-msgstr ""
-
-msgid "Option 2"
-msgstr ""
-
-msgid "Option 2 (disabled)"
-msgstr ""
-
-msgid "Option 3"
-msgstr ""
-
 msgid "Optional description."
 msgstr "Необязательное описание."
 
@@ -10370,9 +10490,6 @@ msgstr ""
 "<i>SSL</i> на порту <i>636</i>.</li> <li><i>START_TLS:</i> шифровать "
 "соединение LDAP с помощью <i>STARTTLS</i> на порту LDAP по умолчанию "
 "<i>389</i>.</li> </ul>"
-
-msgid "Orange"
-msgstr ""
 
 msgid "Order"
 msgstr ""
@@ -10472,9 +10589,6 @@ msgstr "ОЖИДАЕТ"
 
 msgid "POST INSTALL NOTES"
 msgstr "ЗАМЕЧАНИЯ ПОСЛЕ УСТАНОВКИ"
-
-msgid "PREVIEW"
-msgstr ""
 
 msgid "PROCEED"
 msgstr "ПРОДЛЖИТЬ"
@@ -10608,6 +10722,12 @@ msgstr ""
 msgid "Path to the Extent"
 msgstr ""
 
+msgid "Path where host path will be mounted inside the pod"
+msgstr ""
+
+msgid "Path where the volume path will be mounted inside the pod"
+msgstr ""
+
 msgid "Path: "
 msgstr ""
 
@@ -10733,6 +10853,18 @@ msgstr "Пожалуйста, выберите правильный путь"
 msgid "Please wait"
 msgstr "Пожалуйста, подождите"
 
+msgid "Plex"
+msgstr ""
+
+msgid "Plex Claim Token"
+msgstr ""
+
+msgid "Plex Node Port"
+msgstr ""
+
+msgid "Plex: Media player, streaming service"
+msgstr ""
+
 msgid "Plugin"
 msgstr "Плагин"
 
@@ -10795,6 +10927,9 @@ msgstr "Пулы и снимки"
 
 msgid "Port"
 msgstr "Порт"
+
+msgid "Port Forwarding List"
+msgstr ""
 
 msgid "Port number on the remote system to use for the SSH  connection."
 msgstr ""
@@ -10914,17 +11049,11 @@ msgid ""
 "account."
 msgstr ""
 
-msgid "Preview"
-msgstr ""
-
 msgid "Preview JSON Service Account Key"
 msgstr "Предварительный просмотр ключа учетной записи службы JSON"
 
 msgid "Previous"
 msgstr "Предыдущая"
-
-msgid "Primary"
-msgstr ""
 
 msgid "Primary Contact"
 msgstr "Первичный контакт"
@@ -11023,8 +11152,14 @@ msgstr ""
 msgid "Properties Override"
 msgstr ""
 
+msgid "Property"
+msgstr ""
+
 msgid "Protocol"
 msgstr "Протокол"
+
+msgid "Provide access to node network namespace for the workload."
+msgstr ""
 
 msgid ""
 "Provide static key for authentication/encryption of all control  channel "
@@ -11114,9 +11249,6 @@ msgstr ""
 msgid "Raid-z3"
 msgstr ""
 
-msgid "Raised Buttons"
-msgstr ""
-
 msgid ""
 "Randomly generate an encryption key for securing this dataset. Disabling "
 "requires manually      defining the encryption key.<br> WARNING: the "
@@ -11185,6 +11317,9 @@ msgstr "Доступ для чтения/записи"
 msgid "Readonly"
 msgstr ""
 
+msgid "Ready to Install"
+msgstr ""
+
 msgid "Realm"
 msgstr "Область"
 
@@ -11242,9 +11377,6 @@ msgstr "Ключ восстановления для пула "
 
 msgid "Recursive"
 msgstr "Рекурсивно"
-
-msgid "Red"
-msgstr ""
 
 msgid ""
 "Redirect <i>HTTP</i> connections to <i>HTTPS</i>. A  <i>GUI SSL "
@@ -11513,6 +11645,9 @@ msgstr "Отчёты"
 msgid "Reports"
 msgstr "Отчёты"
 
+msgid "Reports Configuration"
+msgstr ""
+
 msgid "Require IDENT Authentication"
 msgstr "Требовать IDENT аутентификации"
 
@@ -11632,6 +11767,9 @@ msgstr "Разрешение"
 msgid "Restart"
 msgstr "Перезапустить"
 
+msgid "Restart Policy"
+msgstr ""
+
 msgid "Restart SMB Service"
 msgstr "Перезапустить cлужбу SMB"
 
@@ -11649,6 +11787,9 @@ msgstr ""
 
 msgid "Restart the system?"
 msgstr "Перезапустить систему?"
+
+msgid "Restart/Update"
+msgstr ""
 
 msgid "Restarting Jail"
 msgstr "Перезапуск jail"
@@ -11714,8 +11855,26 @@ msgstr ""
 msgid "Rights"
 msgstr ""
 
+msgid "Roll Back"
+msgstr ""
+
+msgid "Roll back"
+msgstr ""
+
+msgid "Roll back "
+msgstr ""
+
+msgid "Roll back snapshots"
+msgstr ""
+
+msgid "Roll back snapshots of ix_volumes"
+msgstr ""
+
 msgid "Rollback"
 msgstr "Откатить"
+
+msgid "Rolling back..."
+msgstr ""
 
 msgid "Room"
 msgstr "Комната"
@@ -11740,6 +11899,18 @@ msgstr "Частота вращения"
 
 msgid "Rotation Rate (RPM)"
 msgstr "Частота вращения (об/мин)"
+
+msgid "Route v4 Gateway"
+msgstr ""
+
+msgid "Route v4 Interface"
+msgstr ""
+
+msgid "Route v6 Gateway"
+msgstr ""
+
+msgid "Route v6 Interface"
+msgstr ""
 
 msgid "Routing Key"
 msgstr "Ключ маршрутизации"
@@ -12091,6 +12262,9 @@ msgid ""
 "  Please visit the <a href=\"http://www.ixsystems.com/storage/\" "
 "target=\"_blank\">    iXsystems storage page</a>    for enterprise-grade "
 "storage solutions and support."
+msgstr ""
+
+msgid "Searches"
 msgstr ""
 
 msgid "Secondary Contact"
@@ -12856,6 +13030,9 @@ msgid "Service Announcement"
 msgstr ""
 
 msgid "Service Announcement:"
+msgstr ""
+
+msgid "Service CIDR"
 msgstr ""
 
 msgid "Service Key"
@@ -13869,11 +14046,6 @@ msgid "Short Description"
 msgstr "Краткое описание"
 
 msgid ""
-"Shortened theme name. Used when listing the theme                     in "
-"Preferences."
-msgstr ""
-
-msgid ""
 "Should only be used for highly accurate <b>NTP</b>   servers such as those "
 "with time monitoring hardware."
 msgstr ""
@@ -14016,9 +14188,6 @@ msgstr ""
 "Пропустить автоматическое определение региона URLконечной точки. Установите "
 "это при настройке пользовательского URL-адреса конечной точки."
 
-msgid "Slide me!"
-msgstr ""
-
 msgid "Snapshot"
 msgstr ""
 
@@ -14105,6 +14274,9 @@ msgstr ""
 msgid "Specifies the auxiliary directory service ID provider."
 msgstr ""
 
+msgid "Specify HostPath for Minio data"
+msgstr ""
+
 msgid ""
 "Specify a port for encrypted connections. The default port <i>8081</i> is "
 "recommended. Do not reuse a port."
@@ -14128,6 +14300,9 @@ msgid ""
 msgstr ""
 "Укажите любые jail, от которых зависит эта jail. Дочерние jail должны уже "
 "существовать, прежде чем родительская jail может быть создана."
+
+msgid "Specify arguments for container command. Use <i>ENTER</i> after each entry."
+msgstr ""
 
 msgid ""
 "Specify how many servers to create. Increase if NFS client responses are "
@@ -14163,6 +14338,9 @@ msgstr ""
 
 msgid "Specify the size of the new zvol."
 msgstr "Укажите размер нового zvol."
+
+msgid "Specify type for IPAM."
+msgstr ""
 
 msgid "Speeds up the initial synchronization   (seconds instead of minutes)."
 msgstr "Ускоряет начальную синхронизацию (секунды вместо минут)."
@@ -14218,6 +14396,9 @@ msgstr "Состояние"
 msgid "State: "
 msgstr ""
 
+msgid "Static IP"
+msgstr ""
+
 msgid ""
 "Static IP addresses which SMB listens on for connections.  Leaving all "
 "unselected defaults to listening on all active interfaces."
@@ -14225,6 +14406,15 @@ msgstr ""
 
 msgid "Static IPv4 address of the IPMI web interface."
 msgstr "Статический IPv4-адрес веб-интерфейса IPMI."
+
+msgid "Static Route Configuration"
+msgstr ""
+
+msgid "Static Route: Destination"
+msgstr ""
+
+msgid "Static Route: Gateway"
+msgstr ""
 
 msgid "Static Routes"
 msgstr ""
@@ -14527,6 +14717,9 @@ msgstr ""
 msgid "TCP Port"
 msgstr "Порт TCP"
 
+msgid "TCP Protocol"
+msgstr ""
+
 msgid "TCP port to use on bind to IP addresses"
 msgstr "TCP-порт для привязки к IP-адресам"
 
@@ -14591,6 +14784,9 @@ msgid "TLS Policy"
 msgstr "TLS Политика"
 
 msgid "Tag"
+msgstr ""
+
+msgid "Tag to use for the specified image"
 msgstr ""
 
 msgid "Take Snapshot"
@@ -14700,9 +14896,6 @@ msgid ""
 "chain. To test, configure the <i>Server</i> and <i>Port</i> values, select "
 "a  <i>Certificate</i> and <i>Certificate Authority</i>, enable this "
 "setting, and  click <b>SAVE</b>."
-msgstr ""
-
-msgid "Textarea"
 msgstr ""
 
 msgid "The"
@@ -15001,6 +15194,9 @@ msgstr ""
 msgid "The iSCSI"
 msgstr "iSCSI"
 
+msgid "The image was updated."
+msgstr ""
+
 msgid "The imported pool contains encrypted datasets, unlock them now?"
 msgstr ""
 
@@ -15168,6 +15364,9 @@ msgid ""
 msgstr ""
 
 msgid "The product of vCPUs, cores and threads must not exceed"
+msgstr ""
+
+msgid "The range of valid ports is 9000-65535."
 msgstr ""
 
 msgid ""
@@ -15560,11 +15759,6 @@ msgstr ""
 msgid "This job will not run again until it is enabled."
 msgstr ""
 
-msgid ""
-"This name is already being used by an existing theme. Please choose a new "
-"name."
-msgstr ""
-
 msgid "This operation might take a long time. Proceed?"
 msgstr "Эта операция может занять много времени. Продолжить?"
 
@@ -15744,6 +15938,12 @@ msgstr ""
 msgid "Train"
 msgstr "Поезд"
 
+msgid "Transcode Hostpath"
+msgstr ""
+
+msgid "Transcode Hostpath Enabled"
+msgstr ""
+
 msgid "Transfer"
 msgstr ""
 
@@ -15867,6 +16067,9 @@ msgid "Type: "
 msgstr ""
 
 msgid "UDP"
+msgstr ""
+
+msgid "UDP Protocol"
 msgstr ""
 
 msgid ""
@@ -16044,11 +16247,17 @@ msgstr "До"
 msgid "Until: "
 msgstr ""
 
+msgid "Up to date"
+msgstr ""
+
 msgid "Upcoming tasks"
 msgstr "Предстоящие задачи"
 
 msgid "Update"
 msgstr "Обновление"
+
+msgid "Update "
+msgstr ""
 
 msgid "Update File"
 msgstr "Файл обновления"
@@ -16058,6 +16267,9 @@ msgstr "Временное хранилище файла обновления"
 
 msgid "Update Frequency"
 msgstr "Частота обновления"
+
+msgid "Update Image"
+msgstr ""
 
 msgid "Update Interval"
 msgstr "Интервал обновления"
@@ -16083,7 +16295,13 @@ msgstr ""
 msgid "Update Status"
 msgstr "Статус обновления"
 
+msgid "Update Strategy"
+msgstr ""
+
 msgid "Update TrueCommand Settings"
+msgstr ""
+
+msgid "Update available"
 msgstr ""
 
 msgid "Update in Progress"
@@ -16096,6 +16314,9 @@ msgid "Update successful. Please reboot for the update to take effect. Reboot no
 msgstr ""
 "Обновление прошло успешно. Пожалуйста, перезагрузитесь, чтобы обновление "
 "вступило в силу. Перезагрузить сейчас?"
+
+msgid "Update the image for "
+msgstr ""
 
 msgid "Update the jail operating system to the latest available patch?"
 msgstr ""
@@ -16127,6 +16348,15 @@ msgstr ""
 msgid "Updating selected plugins."
 msgstr "Обновление выбранных плагинов."
 
+msgid "Updating..."
+msgstr ""
+
+msgid "Upgrade"
+msgstr ""
+
+msgid "Upgrade "
+msgstr ""
+
 msgid "Upgrade Pool"
 msgstr "Обновить пул"
 
@@ -16146,6 +16376,9 @@ msgid ""
 "Upgrades both controllers. Files are downloaded to the Active Controller "
 "and then transferred to the Standby Controller. The upgrade process starts "
 "concurrently on both TrueNAS Controllers. Continue with download?"
+msgstr ""
+
+msgid "Upgradomg..."
 msgstr ""
 
 msgid "Upload"
@@ -16241,6 +16474,9 @@ msgstr ""
 "сообщения ICMPv6 Router Solicitation через интерфейсы для обнаружения новых "
 "маршрутизаторов."
 
+msgid "Use <i>ENTER</i> after each entry."
+msgstr ""
+
 msgid ""
 "Use <i>Window</i> to extend the validity of passwords beyond the "
 "<i>Interval</i> setting. For example, a window setting of 1 means that one "
@@ -16256,8 +16492,14 @@ msgstr ""
 msgid "Use Apple-style Character Encoding"
 msgstr ""
 
+msgid "Use DHCP"
+msgstr ""
+
 msgid "Use DHCP. Unset to manually configure a static IPv4 connection."
 msgstr "Использовать DHCP. Отключите для ручной настройки статического IPv4."
+
+msgid "Use Default DNS Policy"
+msgstr ""
 
 msgid "Use Default Domain"
 msgstr "Использовать домен по умолчанию"
@@ -16316,6 +16558,9 @@ msgstr "Использовать существующий образ диска"
 msgid "Use settings from a saved replication."
 msgstr "Использовать настройки из сохраненной репликации."
 
+msgid "Use static IP"
+msgstr ""
+
 msgid ""
 "Use the <i>Log In to GMail</i> button to obtain the credentials for this "
 "form."
@@ -16363,6 +16608,9 @@ msgid ""
 msgstr ""
 "Используется клиентами в режиме PASV. Значение по умолчанию <i>0</i> "
 "означает любой порт выше 1023."
+
+msgid "Used for rollback of a chart release and snapshots of ix_volumes"
+msgstr ""
 
 msgid ""
 "Used to add additional <a href=\"https://linux.die.net/man/8/proftpd\" "
@@ -16672,9 +16920,6 @@ msgstr ""
 msgid "View/Download Key"
 msgstr ""
 
-msgid "Violet"
-msgstr ""
-
 msgid "Virtual CPUs"
 msgstr "Виртуальные процессоры"
 
@@ -16703,6 +16948,9 @@ msgstr "Тэг VLAN"
 
 msgid "Volume size cannot be zero."
 msgstr "Размер тома не может быть нулевым."
+
+msgid "Volumes"
+msgstr ""
 
 msgid "WARNING"
 msgstr "ВНИМАНИЕ"
@@ -16751,9 +16999,6 @@ msgstr "Ожидание появления активного контролл�
 
 msgid "Wallclock time in seconds."
 msgstr "Время настенных часов в секундах."
-
-msgid "Warn"
-msgstr ""
 
 msgid "Warning"
 msgstr "Внимание"
@@ -17036,9 +17281,6 @@ msgstr ""
 
 msgid "Years"
 msgstr "Годы"
-
-msgid "Yellow"
-msgstr ""
 
 msgid "Yes"
 msgstr "Да"
