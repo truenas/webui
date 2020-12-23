@@ -21,3 +21,7 @@ ul.wizard-ul li{
   z-index: 10;
   margin: 0 auto;
 }
+
+:host mat-vertical-stepper {
+  overflow: hidden;
+}
