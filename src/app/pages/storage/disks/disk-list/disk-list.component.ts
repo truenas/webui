@@ -120,12 +120,11 @@ export class DiskListComponent {
 		protected localeService: LocaleService, private dialog: MatDialog) {
 		this.ws.call('disk.get_unused', []).subscribe((unused_res) => {
 			this.unused = unused_res;
-		});
-		this.ws.call('smart.test.disk_choices').subscribe(res => this.SMARTdiskChoices = res)
+		}, err => new EntityUtils().handleWSError(this, err));
+		this.ws.call('smart.test.disk_choices').subscribe(res => this.SMARTdiskChoices = res, err => new EntityUtils().handleWSError(this, err))
 	}
 
 	getActions(parentRow) {
-		
 		const actions = [{
 			id: parentRow.name,
 			icon: 'edit',
