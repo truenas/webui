@@ -312,6 +312,7 @@ export class ChartReleaseEditComponent {
               name: 'hostPath',
               initial: '/mnt',
               explorerType: 'directory',
+              hideDirs: 'ix-applications',
               placeholder: helptext.chartForm.hostPathVolumes.hostPath.placeholder,
               tooltip: helptext.chartForm.hostPathVolumes.hostPath.tooltip,
             }, 
