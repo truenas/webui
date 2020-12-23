@@ -199,57 +199,45 @@ export class ChartFormComponent {
   }
 
   afterInit(entityEdit: any) {
-    entityEdit.formGroup.markAsDirty();
-    // if (this.rowName) {
-    //   entityEdit.setDisabled('release_name', true, false);
-    // }
 
-    // this.appService.getAllCatalogItems().subscribe(res => {
-    //   // let versions = res[0].trains.charts.nextcloud.versions;
-    //   // let sorted_version_labels = Object.keys(versions);
-    //   // sorted_version_labels.sort(this.utils.versionCompare);
-
-    //   // let ncValues = res[0].trains.charts.nextcloud.versions[sorted_version_labels[0]].values;
-    //   // let questions = res[0].trains.charts.nextcloud.versions[sorted_version_labels[0]].schema.questions;
-    //   // console.log('questions', questions)
-    //   // let nc = questions.find(o => o.variable === 'nextcloud');
-    //   // let attrs = nc.schema.attrs;
-    //   // let host = attrs.find(o => o.variable === 'host');
-    //   // entityEdit.formGroup.controls['username'].setValue(ncValues.nextcloud.username);
-    //   // entityEdit.formGroup.controls['password'].setValue(ncValues.nextcloud.password);
-    //   // entityEdit.formGroup.controls['nodePort'].setValue(ncValues.service.nodePort);
-    //   // if (!this.rowName) {
-    //   //   entityEdit.formGroup.controls['host'].setValue(host.schema.default);
-    //   // };
-    // })
   }
 
   customSubmit(data) {
     let apiCall = this.addCall;
+    let values = {};
+    Object.keys(data).forEach(key => {
+      const key_list = key.split('_');
+      const value = data[key];
+      if (key == "release_name") {
+        return;
+      } 
+      
+      if (key_list.length > 1) {
+        let parent = values;
+        for(let i=0; i<key_list.length; i++) {
+          const temp_key = key_list[i];
+          if (i == key_list.length - 1) {
+            parent[temp_key] = value;
+          } else {
+            if (!parent[temp_key]) {
+              parent[temp_key] = {};
+            }
+            parent = parent[temp_key];
+          }
+        }        
+      } else {
+        values[key] = value;
+      }
+    });
+
     let payload = [];
     payload.push({
       catalog: 'OFFICIAL',
-      item: 'nextcloud',
+      item: this.catalogApp.name,
       release_name: data.release_name,
       train: 'charts',
       version: 'latest',
-      values: {
-        nextcloud: {
-          host: data.host,
-          username: data.username,
-          password: data.password,
-        },
-        image: { 
-          repository: data.repository,
-          pullPolicy: data.pullPolicy,
-          tag: data.tag
-        },
-        service: {
-          nodePort: data.nodePort
-        },
-        nextcloudDataHostPathEnabled: data.nextcloudDataHostPathEnabled,
-        nextcloudHostPath: data.nextcloudHostPath
-      }
+      values: values
     });
 
     if (this.rowName) {
@@ -261,6 +249,7 @@ export class ChartFormComponent {
       payload.unshift(this.name);
       apiCall = this.editCall;
     }
+
     this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
       helptext.installing) }, disableClose: true});
     this.dialogRef.componentInstance.setCall(apiCall, payload);
