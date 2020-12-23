@@ -226,7 +226,8 @@ export class CatalogComponent implements OnInit {
 
   doInstall(name: string) {
     const catalogApp = this.catalogApps.find(app => app.name==name)
-    const chartFormComponent = new ChartFormComponent(this.mdDialog,this.dialogService,this.modalService,this.appService, catalogApp);
+    const chartFormComponent = new ChartFormComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
+    chartFormComponent.parseSchema(catalogApp);
     this.modalService.open('slide-in-form', chartFormComponent);
   }
   

@@ -30,10 +30,10 @@ export class ChartFormComponent {
   private dialogRef: any;
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [];
+  private catalogApp: any;
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
-    private modalService: ModalService, private appService: ApplicationsService, private catalogApp: Object) {
-      this.parseSchema();
+    private modalService: ModalService, private appService: ApplicationsService) {
 
       this.getRow = this.modalService.getRow$.subscribe((rowName: string) => {
         this.rowName = rowName;
@@ -43,7 +43,67 @@ export class ChartFormComponent {
     this.utils = new CommonUtils();
   }
 
-  parseSchema() {
+  getType(schema) {
+    let type;
+
+    switch (schema.type) {
+      case 'string':
+        type = 'input';
+        if (schema.enum) {
+          type = 'select';
+        }
+        break;
+      case 'boolean':
+        type = 'checkbox';
+        break;
+      case 'hostpath':
+        type = 'explorer';
+        break;
+      default:
+        type = 'input';
+    }
+
+    return type;
+  }
+
+  getSelectOptions(schema) {
+    const options = [];
+    schema.enum.forEach(option => {
+      options.push({
+        value: option.value,
+        label: option.description,
+      });
+    });
+    return options;
+  }
+
+  getFieldConfig(config, parent=null) {
+    let name = config.variable;
+    if (parent) {
+      name = `${parent.variable}_${name}`;
+    }
+    const fieldConfig = {
+      type: this.getType(config.schema),
+      required: config.schema.required,
+      value: config.schema.default,
+      tooltip: config.description,
+      placeholder: config.label,
+      name: name,
+    }
+
+    if (fieldConfig.type == 'select') {
+      fieldConfig['options'] = this.getSelectOptions(config.schema);
+    }
+
+    if (config.schema.private) {
+      fieldConfig['togglePw'] = true;
+    }
+    return fieldConfig;
+  }
+
+  parseSchema(catalogApp) {
+    this.catalogApp = catalogApp;
+    
     this.fieldSets = [
       {
         name: helptext.nextCloudForm.release_name.name,
@@ -58,100 +118,30 @@ export class ChartFormComponent {
           }
         ],
         colspan: 2
-      },
-      {
-        name: helptext.chartForm.image.title,
-        label: true,
-        width: '50%',
-        config: [
-          {
-            type: 'input',
-            name: 'repository',
-            placeholder: helptext.chartForm.image.repo.placeholder,
-            tooltip: helptext.chartForm.image.repo.tooltip,
-            required: true,
-            value: 'nextcloud',
-            readonly: true
-          },
-          {
-            type: 'input',
-            name: 'tag',
-            placeholder: helptext.chartForm.image.tag.placeholder,
-            tooltip: helptext.chartForm.image.tag.tooltip,
-            value: 'latest'
-          },
-          {
-            type: 'select',
-            name: 'pullPolicy',
-            placeholder: helptext.chartForm.image.pullPolicy.placeholder,
-            tooltip: helptext.chartForm.image.pullPolicy.tooltip,
-            options: helptext.chartForm.image.pullPolicy.options,
-            value: helptext.chartForm.image.pullPolicy.options[0].value
-          }
-        ]
-      },
-      {
-        name: helptext.nextCloudForm.config.label,
-        label: true,
-        width: '50%',
-        config: [
-          {
-            type: 'input',
-            name: 'host',
-            placeholder: helptext.nextCloudForm.config.host.placeholder,
-            tooltip: helptext.nextCloudForm.config.host.tooltip,
-          },
-          {
-            type: 'input',
-            name: 'username',
-            placeholder: helptext.nextCloudForm.config.username,
-          },
-          {
-            type: 'input',
-            name: 'password',
-            togglePw: true,
-            placeholder: helptext.nextCloudForm.config.password,
-          },
-          {
-            type: 'input',
-            name: 'nodePort',
-            placeholder: helptext.nextCloudForm.config.nodeport.placeholder,
-            tooltip: helptext.nextCloudForm.config.nodeport.tooltip,
-            value: 9001
-          },
-        ]
-      },
-      {
-        name: helptext.chartForm.container.title,
-        // label: true,
-        width: '50%',
-        config: [
-          {
-            type: 'checkbox',
-            name: 'nextcloudDataHostPathEnabled',
-            placeholder: helptext.nextCloudForm.nextcloudPath,
-            value: false
-          },
-          {
-            type: 'explorer',
-            name: 'nextcloudHostPath',
-            placeholder: helptext.nextCloudForm.nextcloudPath,
-            initial: '/mnt',
-            explorerType: 'directory',
-            isHidden: true,
-            relation: [
-              {
-                action: 'SHOW',
-                when: [{
-                  name: 'nextcloudDataHostPathEnabled',
-                  value: true,
-                }]
-              },
-            ],
-          }
-        ]
       }
-    ]
+    ];
+    this.catalogApp.schema.groups.forEach(group => {
+      this.fieldSets.push({
+        name: group.name,
+        width: '50%',
+        label: true,
+        config: [],
+      })
+    });
+    this.catalogApp.schema.questions.forEach(question => {
+      const fieldSet = this.fieldSets.find(fieldSet => fieldSet.name == question.group);
+      if (fieldSet) {
+        if (question.schema.attrs) {
+          question.schema.attrs.forEach(config => {
+            fieldSet.config.push(this.getFieldConfig(config, question));
+          });
+        } else {
+          fieldSet.config.push(this.getFieldConfig(question));
+        }
+      }
+    });
+
+    console.log(this.fieldSets);
   }
 
   resourceTransformIncomingRestData(data) {
