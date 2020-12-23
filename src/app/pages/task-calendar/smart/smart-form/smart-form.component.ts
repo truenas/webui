@@ -8,6 +8,7 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { TaskService, StorageService, WebSocketService } from '../../../../services/';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import helptext from '../../../../helptext/task-calendar/smart/smart';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 
 @Component({
   selector: 'smart-test-add',
@@ -113,7 +114,7 @@ export class SmartFormComponent {
         for (const key in res) {
           this.disk_field.options.push({ label: res[key], value: key })
         }
-      }
+      }, err => new EntityUtils().handleWSError(this, err)
     )
   }
 
