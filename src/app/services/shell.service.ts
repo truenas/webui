@@ -21,7 +21,7 @@ export class ShellService {
   public token: string;
   public jailId: string;
   public vmId: number;
-  public podId: string;
+  public podInfo: any;
 
   //input and output and eventEmmitter
   private shellCmdOutput: any;
@@ -51,6 +51,12 @@ export class ShellService {
       this.send(JSON.stringify({ "token": this.token, "options": {"jail": this.jailId }}));
     } else if (this.vmId) {
       this.send(JSON.stringify({ "token": this.token, "options": {"vm_id": this.vmId}}));
+    } else if (this.podInfo) {
+      this.send(JSON.stringify({ "token": this.token, "options": {
+        "chart_release_name": this.podInfo.rname,
+        "pod_name": this.podInfo.pname,
+        "container_name": this.podInfo.cname
+      }}));
     } else {
       this.send(JSON.stringify({ "token": this.token }));
     }

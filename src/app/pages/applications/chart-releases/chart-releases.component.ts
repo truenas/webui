@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
-import { DialogService, SystemGeneralService } from '../../../services/index';
+import { DialogService, SystemGeneralService, WebSocketService } from '../../../services/index';
 import { ApplicationsService } from '../applications.service';
 import { ModalService } from '../../../services/modal.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
@@ -63,7 +63,9 @@ export class ChartReleasesComponent implements OnInit {
   constructor(private mdDialog: MatDialog,
     private dialogService: DialogService, private translate: TranslateService,
     private appService: ApplicationsService, private modalService: ModalService,
-    private sysGeneralService: SystemGeneralService, private router: Router) { }
+    private sysGeneralService: SystemGeneralService, private router: Router,
+    protected ws: WebSocketService
+  ) { }
 
   ngOnInit(): void {
     this.refreshChartReleases();
@@ -256,7 +258,21 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   openShell(name: string) {
-    this.router.navigate(new Array("/apps/shell/").concat(
-      ["rnam", "pnam", "cname"]));
+    this.ws.call('chart.release.pod_console_choices', [name]).subscribe(res => {
+      console.log('---------', res)
+      let keys = Object.keys(res);
+      if (keys.length == 0) {
+        console.log('No available pod console now');
+        return;
+      }
+
+      let rname = name;
+      let pname = keys[0];
+      let cname = res[pname][0];
+
+      this.router.navigate(new Array("/apps/shell/").concat(
+        [rname, pname, cname]));
+    })
+    
   }
 }

@@ -44,7 +44,9 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
   clearLine = "\u001b[2K\r"
   public shellConnected: boolean = false;
   public connectionId: string;
-  protected pk: string;
+  protected rname: string;
+  protected pname: string;
+  protected cname: string;
   protected route_success: string[] = ['apps'];
 
   constructor(protected core:CoreService,
@@ -58,7 +60,11 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnInit() {
     this.aroute.params.subscribe(params => {
-      this.pk = params['pk'];
+      this.rname = params['rname'];
+      this.pname = params['pname'];
+      this.cname = params['cname'];
+      console.log(this.rname, this.pname, this.cname);
+
       this.getAuthToken().subscribe((res) => {
         this.initializeWebShell(res);
         this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
@@ -258,6 +264,11 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
   initializeWebShell(res: string) {
     this.ss.token = res;
     this.ss.connect();
+    this.ss.podInfo = {
+      pname: this.pname,
+      rname: this.rname,
+      cname: this.cname
+    };
 
     this.refreshToolbarButtons();  
 
