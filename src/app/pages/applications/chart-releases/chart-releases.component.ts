@@ -11,9 +11,6 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { ChartReleaseEditComponent } from '../forms/chart-release-edit.component';
-import { PlexFormComponent } from '../forms/plex-form.component';
-import { NextCloudFormComponent } from '../forms/nextcloud-form.component';
-import { MinioFormComponent } from '../forms/minio-form.component';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { ChartFormComponent } from '../forms/chart-form.component';
 
@@ -101,9 +98,6 @@ export class ChartReleasesComponent implements OnInit {
               case 'nextcloud':
                 item.info = helptext.nextcloudInfo;
                 break;
-              
-              default:
-                this.modalService.open('slide-in-form', this.chartReleaseForm);
             }
     
             let catalogItem = {

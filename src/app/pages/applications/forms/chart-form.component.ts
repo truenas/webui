@@ -203,7 +203,7 @@ export class ChartFormComponent {
     });
 
     this.fieldSets = this.fieldSets.filter(fieldSet => fieldSet.config.length > 0);
-    console.log(this.fieldSets);
+    
   }
 
   parseConfigData(configData, parentKey, result) {
@@ -222,12 +222,12 @@ export class ChartFormComponent {
   }
 
   resourceTransformIncomingRestData(data) {
-    console.log(data);
+    
     this.name = data.name;
     const configData = {};
     this.parseConfigData(data.config, null, configData);
     configData['release_name'] = data.name;
-    console.log(configData);
+    
     return configData;
   }
 
@@ -325,7 +325,7 @@ export class ChartFormComponent {
       payload.unshift(this.name);
       apiCall = this.editCall;
     }
-console.log(payload);
+
     this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
       helptext.installing) }, disableClose: true});
     this.dialogRef.componentInstance.setCall(apiCall, payload);

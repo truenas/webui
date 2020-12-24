@@ -15,9 +15,6 @@ import { ApplicationsService } from '../applications.service';
 
 import { KubernetesSettingsComponent } from '../forms/kubernetes-settings.component';
 import { ChartReleaseAddComponent } from '../forms/chart-release-add.component';
-import { PlexFormComponent } from '../forms/plex-form.component';
-import { NextCloudFormComponent } from '../forms/nextcloud-form.component';
-import { MinioFormComponent } from '../forms/minio-form.component';
 import { ChartFormComponent } from '../forms/chart-form.component';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import  helptext  from '../../../helptext/apps/apps';
@@ -37,9 +34,6 @@ export class CatalogComponent implements OnInit {
   public settingsEvent: Subject<CoreEvent>;
   private kubernetesForm: KubernetesSettingsComponent;
   private chartReleaseForm: ChartReleaseAddComponent;
-  private plexForm: PlexFormComponent;
-  private nextCloudForm: NextCloudFormComponent;
-  private minioForm: MinioFormComponent;
   private refreshForm: Subscription;
   private refreshTable: Subscription;
   protected utils: CommonUtils;
@@ -170,9 +164,6 @@ export class CatalogComponent implements OnInit {
   refreshForms() {
     this.kubernetesForm = new KubernetesSettingsComponent(this.modalService, this.appService);
     this.chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
-    this.plexForm = new PlexFormComponent(this.mdDialog,this.dialogService,this.modalService,this.sysGeneralService,this.appService);
-    this.nextCloudForm = new NextCloudFormComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
-    this.minioForm = new MinioFormComponent(this.mdDialog,this.dialogService,this.modalService);
   }
 
   checkForConfiguredPool() {
