@@ -225,10 +225,14 @@ export class CatalogComponent implements OnInit {
   }
 
   doInstall(name: string) {
-    const catalogApp = this.catalogApps.find(app => app.name==name)
-    const chartFormComponent = new ChartFormComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
-    chartFormComponent.parseSchema(catalogApp);
-    this.modalService.open('slide-in-form', chartFormComponent);
-  }
-  
+    const catalogApp = this.catalogApps.find(app => app.name==name);
+    if (catalogApp) {
+      const chartFormComponent = new ChartFormComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
+      chartFormComponent.parseSchema(catalogApp);
+      this.modalService.open('slide-in-form', chartFormComponent);
+    } else {
+      const chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
+      this.modalService.open('slide-in-form', chartReleaseForm);
+    }
+  }  
 }

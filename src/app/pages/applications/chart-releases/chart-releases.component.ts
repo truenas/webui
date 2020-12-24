@@ -29,7 +29,6 @@ export class ChartReleasesComponent implements OnInit {
   private dialogRef: any;
   public ixIcon = 'assets/images/ix-original.png';
   private rollbackChartName: string;
-  private chartReleaseForm: ChartReleaseEditComponent;
   private refreshTable: Subscription;
 
   protected utils: CommonUtils;
@@ -69,7 +68,7 @@ export class ChartReleasesComponent implements OnInit {
     this.getCatalogApps();
     this.refreshChartReleases();
     this.utils = new CommonUtils();
-    
+
     this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
       this.refreshChartReleases();
     });
@@ -232,11 +231,15 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   edit(name: string, id: string) {
-
     const catalogApp = this.catalogApps.find(app => app.name==id)
-    const chartFormComponent = new ChartFormComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
-    chartFormComponent.parseSchema(catalogApp);
-    this.modalService.open('slide-in-form', chartFormComponent, name);
+    if (catalogApp) {
+      const chartFormComponent = new ChartFormComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
+      chartFormComponent.parseSchema(catalogApp);
+      this.modalService.open('slide-in-form', chartFormComponent, name);
+    } else {
+      const chartReleaseForm = new ChartReleaseEditComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
+      this.modalService.open('slide-in-form', chartReleaseForm, name);
+    }
   }
 
   delete(name: string) {
