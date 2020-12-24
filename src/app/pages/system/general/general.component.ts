@@ -432,6 +432,12 @@ export class GeneralComponent implements OnDestroy {
         entityEdit.formGroup.controls['language'].setValue(`${this.languageList[res]}`);
       }
     });
+    
+    entityEdit.ws.call('pool.query', [[["encrypt",">=",1]]]).subscribe((legacyEncryptedPools: any[]) => {
+      if (!legacyEncryptedPools.length) {
+        _.find(this.saveConfigFieldConf, { "name": "pool_keys"}).disabled = true;
+      }
+    });
   }
 
   setTimeOptions (tz: string) {

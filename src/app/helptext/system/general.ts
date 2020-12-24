@@ -110,12 +110,12 @@ export const helptext_system_general = {
   },
 
   secretseed: {
-    placeholder: T("Export Password Secret Seed"),
-    tooltip: T('')
+    placeholder: T("Export Secret Seed"),
+    tooltip: T('All passwords, keys, secrets are encrypted and need this to be decrypted')
   },
 
   poolkeys: {
-    placeholder: T("Export Pool Encryption Keys"),
+    placeholder: T("Export Legacy Encryption (GELI) Keys"),
     tooltip: T('')
   },
 
