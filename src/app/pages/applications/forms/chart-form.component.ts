@@ -257,7 +257,10 @@ export class ChartFormComponent {
           const temp_key = key_list[i];
           if (i == key_list.length - 1) {
             if (Array.isArray(value)) {
-              parent[temp_key] = this.setArrayValues(value);
+              const arrayValues = this.setArrayValues(value);
+              if (arrayValues.length > 0) {
+                parent[temp_key] = arrayValues;
+              }
             } else {
               parent[temp_key] = value;
             }            
@@ -270,7 +273,11 @@ export class ChartFormComponent {
         }        
       } else {
         if (Array.isArray(value)) {
-          result[key] = this.setArrayValues(value);
+          const arrayValues = this.setArrayValues(value);
+          if (arrayValues.length > 0) {
+            result[key] = arrayValues;
+          }
+          
         } else {
           result[key] = value;
         }
@@ -286,7 +293,9 @@ export class ChartFormComponent {
     data.forEach(item => {
       const oneItem = {};
       this.setObjectValues(item, oneItem);
-      arrayVaules.push(oneItem);
+      if (Object.keys(oneItem).length > 0) {
+        arrayVaules.push(oneItem);
+      }      
     });
 
     return arrayVaules;
