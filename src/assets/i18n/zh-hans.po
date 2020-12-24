@@ -84,9 +84,6 @@ msgstr " 磁盘，新的vdev具有"
 msgid " is "
 msgstr " 是 "
 
-msgid " is a required field."
-msgstr " 是必填字段。"
-
 msgid " is required."
 msgstr " 是必须的。"
 
@@ -108,6 +105,9 @@ msgid " minutes"
 msgstr ""
 
 msgid " official plugins"
+msgstr ""
+
+msgid " on pool "
 msgstr ""
 
 msgid " seconds"
@@ -849,9 +849,6 @@ msgstr "关于"
 msgid "About."
 msgstr "关于。"
 
-msgid "Accent"
-msgstr "强调"
-
 msgid "Access"
 msgstr "访问"
 
@@ -1024,6 +1021,9 @@ msgstr ""
 
 msgid "Add Dataset"
 msgstr "添加数据集"
+
+msgid "Add External Interfaces"
+msgstr ""
 
 msgid "Add Group"
 msgstr "添加组"
@@ -1322,6 +1322,12 @@ msgstr ""
 
 msgid "Advanced Settings"
 msgstr "高级设置"
+
+msgid "Advanced Settngs"
+msgstr ""
+
+msgid "Advertise IP"
+msgstr ""
 
 msgid ""
 "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click "
@@ -1667,18 +1673,6 @@ msgstr "包括命名惯例"
 msgid "Also unlock any encrypted dataset stored within this dataset."
 msgstr "同时解锁该数据集中存储的所有加密数据集。"
 
-msgid "Alt Background 1"
-msgstr "Alt背景1"
-
-msgid "Alt Background 2"
-msgstr "Alt背景2"
-
-msgid "Alt Foreground 1"
-msgstr "Alt前景1"
-
-msgid "Alt Foreground 2"
-msgstr "Alt前景2"
-
 msgid ""
 "Alternative names that SMB clients can use when connecting to this NAS. Can "
 "be no greater than 15 characters."
@@ -1692,6 +1686,12 @@ msgstr "永远Chroot"
 
 msgid "Always On"
 msgstr "永远在线"
+
+msgid "Always pull image even if present on host."
+msgstr ""
+
+msgid "Always restart containers in a pod if they exit."
+msgstr ""
 
 msgid ""
 "Amazon Web Services Key ID. This is found on  <a "
@@ -1750,9 +1750,6 @@ msgstr "匿名用户下载速度"
 msgid "Anonymous User Upload Bandwidth"
 msgstr "匿名用户上传速度"
 
-msgid "Another theme is using this label. Please enter a new label."
-msgstr "另一个主题在使用此标签。请输入新标签。"
-
 msgid "Any notes about initiators."
 msgstr "关于启动器的任何注释。"
 
@@ -1790,6 +1787,9 @@ msgstr "应用程序凭证秘密"
 
 msgid "Application Key"
 msgstr "应用程序密钥"
+
+msgid "Application Name"
+msgstr ""
 
 msgid "Applications"
 msgstr ""
@@ -1852,6 +1852,9 @@ msgstr "应用与父数据集相同的配额警告设置。"
 msgid "Apply updates and reboot system after downloading."
 msgstr "下载后应用更新并重新启动系统。"
 
+msgid "Apps"
+msgstr ""
+
 msgid "Apr"
 msgstr "四月"
 
@@ -1904,6 +1907,9 @@ msgstr ""
 "必须在<a                "
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"                "
 "target=\"_blank\">rsyncd.conf(5)</a>中定义至少一个模块或另一个系统的<b>Rsync模块</b>中定义一个模块。"
+
+msgid "At least one pool must be available to use apps"
+msgstr ""
 
 msgid "Attach"
 msgstr "附加"
@@ -2120,12 +2126,6 @@ msgstr "后端用于将Windows安全标识符（SID）映射到UNIX UID和GID。
 msgid "Background (lowest)"
 msgstr "背景（最低）"
 
-msgid "Background 1"
-msgstr "背景1"
-
-msgid "Background 2"
-msgstr "背景2"
-
 msgid "Backup Credentials"
 msgstr ""
 
@@ -2149,9 +2149,6 @@ msgstr "基本监狱"
 
 msgid "Basic"
 msgstr "基本"
-
-msgid "Basic Buttons"
-msgstr "基本按钮"
 
 msgid "Basic Constraints"
 msgstr "基本约束"
@@ -2222,9 +2219,6 @@ msgstr "块大小"
 
 msgid "Block size"
 msgstr "块大小"
-
-msgid "Blue"
-msgstr "蓝色"
 
 msgid "Boot"
 msgstr "启动"
@@ -2429,9 +2423,6 @@ msgstr ""
 msgid "CN Realm"
 msgstr "CN Realm"
 
-msgid "COLORS"
-msgstr "颜色"
-
 msgid "CONNECT"
 msgstr "连接"
 
@@ -2510,6 +2501,9 @@ msgstr ""
 
 msgid "Case Sensitivity"
 msgstr "区分大小写"
+
+msgid "Catalog"
+msgstr ""
 
 msgid "Category"
 msgstr "类别"
@@ -2660,9 +2654,6 @@ msgstr "检查更新"
 msgid "Check for Updates Daily and Download if Available"
 msgstr "每天检查更新并在可用时下载"
 
-msgid "Check me!"
-msgstr "检查我！"
-
 msgid ""
 "Check the <i>hostid</i> property of the jail. If not the same as the host, "
 "do not start the jail."
@@ -2745,10 +2736,10 @@ msgid ""
 "can result in significant performance gains."
 msgstr "选择<i>ON</i>来更新读取文件时的访问时间。选择<i>Off</i>可以防止在读取文件时产生日志流量。这可以带来明显性能提升。"
 
-msgid "Choose Accent"
-msgstr "选择强调"
-
 msgid "Choose File"
+msgstr ""
+
+msgid "Choose Pool"
 msgstr ""
 
 msgid "Choose Pool for Plugin and Jail Manager"
@@ -2757,14 +2748,8 @@ msgstr "选择用于插件和监狱管理器的池"
 msgid "Choose Pool for Plugin and Jail Storage"
 msgstr "选择用于存储插件和监狱的池"
 
-msgid "Choose Primary"
-msgstr "选择主要"
-
 msgid "Choose Theme"
 msgstr "选择主题"
-
-msgid "Choose Topbar"
-msgstr "选择顶部栏"
 
 msgid "Choose a DNS provider and configure any required authenticator attributes."
 msgstr "选择DNS提供程序并配置任何必需的身份验证器属性。"
@@ -2783,9 +2768,6 @@ msgstr "选择一种压缩算法。"
 
 msgid "Choose a connection that has been saved in  <b>System > SSH Connections</b>."
 msgstr "选择已保存在<b>系统>SSH连接</b>中的连接。"
-
-msgid "Choose a date"
-msgstr "选择一个日期"
 
 msgid "Choose a date format."
 msgstr "选择日期格式。"
@@ -2818,8 +2800,14 @@ msgstr ""
 "选择用户主目录的路径。如果目录存在并且与用户名匹配，则将其设置为用户的主目录。当路径的结尾不是与用户名匹配的子目录时，将创建一个新的子目录。编辑用户时，"
 "此处显示用户主目录的完整路径。"
 
+msgid "Choose a pool for Apps"
+msgstr ""
+
 msgid "Choose a pool for plugin and jail storage."
 msgstr "选择一个用于存储插件和监狱的池。"
+
+msgid "Choose a pool for the Apps"
+msgstr ""
 
 msgid "Choose a pool to scrub."
 msgstr "选择要清理的池。"
@@ -2867,9 +2855,6 @@ msgstr ""
 msgid "Choose a time format."
 msgstr "选择时间格式。"
 
-msgid "Choose a topbar color."
-msgstr "选择顶部栏颜色。"
-
 msgid ""
 "Choose a valid client certificate which exists on this system and hasn't "
 "been revoked. Find more about generating certificates and CAs for OpenVPN "
@@ -2904,9 +2889,6 @@ msgstr "选择身份验证方法。"
 
 msgid "Choose an encryption mode to use with LDAP."
 msgstr "选择要用于LDAP的加密模式。"
-
-msgid "Choose an option"
-msgstr "选择一个选项"
 
 msgid ""
 "Choose between <i>Internal CA</i>, <i>Intermediate CA</i>, and  <i>Import "
@@ -2953,18 +2935,10 @@ msgstr "选择此rsync模块的权限。"
 msgid "Choose the VM operating system type."
 msgstr "选择虚拟机操作系统类型。"
 
-msgid "Choose the accent color for the theme."
-msgstr "选择主题的主题色。"
-
 msgid ""
 "Choose the backend to map Windows security identifiers (SIDs) to UNIX UIDs "
 "and GIDs. Click Edit to configure that backend."
 msgstr "选择后端以将 Windows 安全标识符 （SID） 映射到 UNIX UID 和 GID。单击“编辑”以配置该后端。"
-
-msgid ""
-"Choose the color to display next to the Menu Label                     in "
-"the Favorites menu."
-msgstr "选择“收藏夹”菜单中“菜单标签”旁边显示的颜色。"
 
 msgid ""
 "Choose the hour and minute when new resilver tasks                are not "
@@ -2980,9 +2954,6 @@ msgid ""
 "Choose the platform that will use this share. The associated options are "
 "applied to this share."
 msgstr "选择将使用此共享的平台。关联的选项将应用于此共享。"
-
-msgid "Choose the primary color for the theme."
-msgstr "选择主题的原色。"
 
 msgid "Choose the protocol to use when connecting with the remote system."
 msgstr "选择与远程系统连接时要使用的协议。"
@@ -3130,16 +3101,6 @@ msgid "Click on alarms to select or unselect."
 msgstr "单击警报以选择或取消选择。"
 
 msgid ""
-"Click the swatch to pick a color or enter a color                     hex "
-"value."
-msgstr "单击色标以选择一种颜色或输入一个十六进制的颜色值。"
-
-msgid ""
-"Click the swatch to pick a color or enter a color                    hex "
-"value."
-msgstr "单击色标以选择一种颜色或输入一个十六进制的颜色值。"
-
-msgid ""
 "Clicking Continue allows TrueNAS to finish the update in the background "
 "while  Abort stops the process and reverts the dataset ACL to the "
 "previously active ACL."
@@ -3180,6 +3141,12 @@ msgstr "云凭据"
 
 msgid "Cloud sync <i>"
 msgstr "云同步<i>"
+
+msgid "Cluster CIDR"
+msgstr ""
+
+msgid "Cluster DNS IP"
+msgstr ""
 
 msgid "Cluster Name"
 msgstr "集群名称"
@@ -3228,6 +3195,11 @@ msgstr "以逗号分隔仅具有读取权限的用户和/或组的列表，其�
 
 msgid "Command"
 msgstr "命令"
+
+msgid ""
+"Commands to execute inside container overriding image CMD default.  Use "
+"<i>ENTER</i> after each entry."
+msgstr ""
 
 msgid ""
 "Commands to run in the jail environment before the jail is removed and "
@@ -3315,6 +3287,12 @@ msgstr "电脑帐户OU"
 msgid "Config Files"
 msgstr ""
 
+msgid "Config Hostpath"
+msgstr ""
+
+msgid "Config Hostpath Enabled"
+msgstr ""
+
 msgid "Config could not be downloaded"
 msgstr "无法下载配置"
 
@@ -3354,6 +3332,9 @@ msgid ""
 "Configure virtual addressing topology when running in TUN mode.  (TAP mode "
 "always uses a SUBNET topology.)"
 msgstr "在TUN模式下运行时，配置虚拟寻址拓扑。（TAP模式始终使用子网拓扑）"
+
+msgid "Configuring..."
+msgstr ""
 
 msgid "Confirm"
 msgstr "确认"
@@ -3468,6 +3449,27 @@ msgstr "联系支持"
 
 msgid "Container"
 msgstr "容器"
+
+msgid "Container Args"
+msgstr ""
+
+msgid "Container CMD"
+msgstr ""
+
+msgid "Container Entrypoint"
+msgstr ""
+
+msgid "Container Environment Variables"
+msgstr ""
+
+msgid "Container Port"
+msgstr ""
+
+msgid "Container Settings"
+msgstr ""
+
+msgid "Container port"
+msgstr ""
 
 msgid "Content Commitment"
 msgstr "内容承诺"
@@ -3589,9 +3591,6 @@ msgstr "创建认证机构"
 msgid "Create Certificate"
 msgstr "创建证书"
 
-msgid "Create New Theme"
-msgstr "创建新主题"
-
 msgid "Create Passphrase"
 msgstr "创建密码"
 
@@ -3603,9 +3602,6 @@ msgstr "创建SSH连接"
 
 msgid "Create Snapshot"
 msgstr "创建快照"
-
-msgid "Create Theme"
-msgstr "创建主题"
 
 msgid "Create Virtual Machine"
 msgstr ""
@@ -3645,6 +3641,9 @@ msgstr "创建新池"
 
 msgid "Create new disk image"
 msgstr "创建新磁盘镜像"
+
+msgid "Create new pods and then kill old ones."
+msgstr ""
 
 msgid "Create new pool"
 msgstr "创建新池"
@@ -3751,9 +3750,6 @@ msgstr "自定义属性"
 msgid "Custom Server"
 msgstr "自定义服务器"
 
-msgid "Custom Theme Name"
-msgstr "自定义主题名称"
-
 msgid "Custom Value"
 msgstr ""
 
@@ -3764,9 +3760,6 @@ msgid ""
 "Customizes the importance of the alert. Each level of  importance has a "
 "different icon and color to express the level of importance."
 msgstr ""
-
-msgid "Cyan"
-msgstr "青色"
 
 msgid ""
 "DDNS server name. For example,  <i>members.dyndns.org</i> denotes a server "
@@ -3801,11 +3794,20 @@ msgstr "DHCP自动配置IPv4"
 msgid "DISABLED"
 msgstr ""
 
+msgid "DNS"
+msgstr ""
+
+msgid "DNS Configuration"
+msgstr ""
+
 msgid "DNS Domain Name"
 msgstr "DNS域名"
 
 msgid "DNS Forwarder"
 msgstr "DNS转发器"
+
+msgid "DNS Policy"
+msgstr ""
 
 msgid "DNS Servers"
 msgstr "DNS服务器"
@@ -3861,6 +3863,12 @@ msgstr "数据"
 msgid "Data Encipherment"
 msgstr "数据加密"
 
+msgid "Data Hostpath"
+msgstr ""
+
+msgid "Data Hostpath Enabled"
+msgstr ""
+
 msgid "Data Protection"
 msgstr ""
 
@@ -3902,6 +3910,9 @@ msgstr "数据集动作"
 
 msgid "Dataset Key"
 msgstr "数据集密钥"
+
+msgid "Dataset Name"
+msgstr ""
 
 msgid "Dataset Names"
 msgstr ""
@@ -4008,6 +4019,12 @@ msgstr "IPv6默认路由"
 
 msgid "Default Umask"
 msgstr "默认Umask"
+
+msgid ""
+"Default behaviour is for pod to inherit the name resolution configuration  "
+"from the node that the pods run on. If <i>None</i> is specified, it allows "
+"a Pod to ignore DNS  settings from the Kubernetes environment."
+msgstr ""
 
 msgid "Default is UTF-8 which supports all characters in all languages."
 msgstr "默认值为UTF-8，它支持所有语言的字符。"
@@ -4637,6 +4654,15 @@ msgstr "如果禁用了串行端口，请不要设置此项。"
 msgid "Docker Host"
 msgstr "Docker主机"
 
+msgid "Docker Images"
+msgstr ""
+
+msgid "Docker image pull policy"
+msgstr ""
+
+msgid "Docker image repository"
+msgstr ""
+
 msgid "Does the pool have GELI Encryption from FreeNAS/TrueNAS 11.3 or earlier?"
 msgstr "池是否具有FreeNAS/TrueNAS 11.3或更早版本的GELI加密？"
 
@@ -4775,6 +4801,9 @@ msgstr "编辑API密钥"
 msgid "Edit Alert Service"
 msgstr "编辑警告服务"
 
+msgid "Edit Application Settings"
+msgstr ""
+
 msgid "Edit CA"
 msgstr ""
 
@@ -4810,6 +4839,12 @@ msgstr "编辑选项"
 
 msgid "Edit Permissions"
 msgstr "编辑权限"
+
+msgid "Edit Pool"
+msgstr ""
+
+msgid "Edit Pool Disk"
+msgstr ""
 
 msgid "Edit Pool Options for "
 msgstr ""
@@ -5435,9 +5470,6 @@ msgstr ""
 msgid "Enter a name for the new credential."
 msgstr "输入新凭证的名称。"
 
-msgid "Enter a name for the new theme."
-msgstr "输入新主题的名称。"
-
 msgid "Enter a name for the share."
 msgstr "输入共享的名称。"
 
@@ -5563,10 +5595,8 @@ msgstr "输入有效的电子邮件地址，以接收来自此系统的警报。
 msgid ""
 "Enter a valid username for the <a "
 "href=\"https://jira.ixsystems.com/projects/NAS/issues/\" "
-"target=\"_blank\">FreeNAS bug tracking system</a>"
+"target=\"_blank\">TrueNAS bug tracking system</a>"
 msgstr ""
-"输入<a href=\"https://jira.ixsystems.com/projects/NAS/issues/\" "
-"target=\"_blank\">FreeNAS错误跟踪系统</a>的有效用户名"
 
 msgid ""
 "Enter a value in seconds for the the UPS to wait before initiating "
@@ -6051,6 +6081,9 @@ msgstr "在具有快照虚拟机权限的VMware主机上输入用户。"
 msgid "Enter the username if the SMTP server requires authentication."
 msgstr "如果SMTP服务器需要身份验证，请输入用户名。"
 
+msgid "Enter the version to roll back to."
+msgstr ""
+
 msgid ""
 "Enter up to four interface configurations in the format "
 "<i>interface</i>:<i>bridge</i>, separated by a comma (,). The left value is "
@@ -6076,6 +6109,12 @@ msgstr "企业级"
 
 msgid "Environment"
 msgstr "环境"
+
+msgid "Environment Variable Name"
+msgstr ""
+
+msgid "Environment Variable Value"
+msgstr ""
 
 msgid "Error"
 msgstr "错误"
@@ -6327,6 +6366,9 @@ msgstr "区块类型"
 msgid "Extents"
 msgstr ""
 
+msgid "Extra Environment Variables"
+msgstr ""
+
 msgid "Extra Users"
 msgstr "附加用户"
 
@@ -6338,9 +6380,6 @@ msgstr "要连接的FTP主机。例如：<i> ftp.example.com </i>。"
 
 msgid "FTP Port number. Leave blank to use the default port <i>21</i>."
 msgstr "FTP端口号。保留空白以使用默认端口<i> 21 </i>。"
-
-msgid "Fab Buttons"
-msgstr "FAB按钮"
 
 msgid "Failed"
 msgstr "失败"
@@ -6564,15 +6603,6 @@ msgid ""
 "unreachable."
 msgstr "强制添加<b>NTP</b>服务器，即使它当前无法访问。"
 
-msgid "Foreground 1"
-msgstr "前景1"
-
-msgid "Foreground 2"
-msgstr "前景2"
-
-msgid "Form Invalid"
-msgstr "表单无效"
-
 msgid "Free"
 msgstr "空闲"
 
@@ -6651,13 +6681,13 @@ msgstr ""
 "具有动态IP地址的主机的全限定域名。用空格，逗号（,）或分号（;）分隔多个域。示例：<i> myname.dyndns.org; "
 "myothername.dyndns.org </i>。"
 
-msgid "GENERAL"
-msgstr "常规"
-
 msgid "GID"
 msgstr "GID"
 
 msgid "GMail OAuth"
+msgstr ""
+
+msgid "GPU Configuration"
 msgstr ""
 
 msgid "GUI"
@@ -6754,9 +6784,6 @@ msgstr "全局辅助参数"
 msgid "Global Configuration"
 msgstr "全局配置"
 
-msgid "Global Preview"
-msgstr "全局预览"
-
 msgid "Global Settings"
 msgstr "全局设置"
 
@@ -6786,9 +6813,6 @@ msgstr "每月的图表年龄"
 
 msgid "Graphite Separate Instances"
 msgstr "Graphite独立实例"
-
-msgid "Green"
-msgstr "绿色"
 
 msgid "Group"
 msgstr "群组"
@@ -6972,8 +6996,26 @@ msgstr "允许主机"
 msgid "Host Deny"
 msgstr "禁止主机"
 
+msgid "Host Interface"
+msgstr ""
+
 msgid "Host Name Database"
 msgstr "主机名数据库"
+
+msgid "Host Network"
+msgstr ""
+
+msgid "Host Network/Host Ports"
+msgstr ""
+
+msgid "Host Path"
+msgstr ""
+
+msgid "Host Path Volumes"
+msgstr ""
+
+msgid "Host Port"
+msgstr ""
 
 msgid "Host Port Number"
 msgstr "主机端口号"
@@ -7139,13 +7181,9 @@ msgid ""
 "configuring authentication on the remote system.  This can include copying "
 "SSH keys and modifying the <i>root</i> user  account on that "
 "system.<br><br>  <i>Semi-automatic</i> only works when configuring an SSH "
-"connection  with a remote FreeNAS or TrueNAS system. This method uses the "
-"URL and  login credentials of the remote system to connect and exchange SSH "
-" keys."
+"connection  with a remote TrueNAS system. This method uses the URL and "
+"login  credentials of the remote system to connect and exchange SSH keys."
 msgstr ""
-"如何配置连接：<br> <br> <i>手册</i>需要在远程系统上配置身份验证。这可以包括复制SSH密钥和修改该系统上的<i> root "
-"</i>用户帐户。<br><br><i>半自动</i>"
-"仅在配置与远程FreeNAS或TrueNAS系统的SSH连接时起作用。此方法使用远程系统的URL和登录凭据来连接和交换SSH密钥。"
 
 msgid "I Agree"
 msgstr "我同意"
@@ -7167,6 +7205,9 @@ msgstr "安装"
 
 msgid "IP Address"
 msgstr "IP 地址"
+
+msgid "IP Address Management"
+msgstr ""
 
 msgid "IP Addresses"
 msgstr "IP地址"
@@ -7252,9 +7293,6 @@ msgstr ""
 
 msgid "ISO upload location"
 msgstr ""
-
-msgid "Icon Buttons"
-msgstr "图标按钮"
 
 msgid "Icon URL"
 msgstr "图标URL"
@@ -7380,6 +7418,27 @@ msgstr ""
 msgid "Ignore Builtin"
 msgstr "忽略内置"
 
+msgid "Ignore DNS settings from the Kuberentes cluster"
+msgstr ""
+
+msgid "Image"
+msgstr ""
+
+msgid "Image Pull Policy"
+msgstr ""
+
+msgid "Image Repository"
+msgstr ""
+
+msgid "Image Tag"
+msgstr ""
+
+msgid "Image and Policies"
+msgstr ""
+
+msgid "Image repository"
+msgstr ""
+
 msgid "Immediately connect to TrueCommand."
 msgstr "立即连接到TrueCommand。"
 
@@ -7390,6 +7449,9 @@ msgid "Import Certificate"
 msgstr ""
 
 msgid "Import Certificate Signing Request"
+msgstr ""
+
+msgid "Import Pool"
 msgstr ""
 
 msgid "Import a pool that exists but is not connected."
@@ -7547,9 +7609,6 @@ msgstr ""
 "当前连接到系统的启动器。以IQN格式显示，并带有IP地址。设置启动器，然后单击<b>-> "
 "</b>（箭头）以将启动器添加到<i>允许启动器</i>或<i>授权网络</ i>列表中。单击<i>刷新</i>更新<i>已连接的启动器</i>列表。"
 
-msgid "Input"
-msgstr "输入"
-
 msgid "Input the pre-defined S3 bucket to use."
 msgstr "输入要使用的预定义S3存储桶。"
 
@@ -7559,11 +7618,23 @@ msgstr "输入要使用的预定义容器。"
 msgid "Install"
 msgstr "安装"
 
+msgid "Install "
+msgstr ""
+
+msgid "Install Application"
+msgstr ""
+
 msgid "Install Manual Update File"
 msgstr "安装手动更新文件"
 
 msgid "Installation Media"
 msgstr "安装介质"
+
+msgid "Installed Applications"
+msgstr ""
+
+msgid "Installing"
+msgstr ""
 
 msgid "Installing plugin..."
 msgstr "正在安装插件..."
@@ -7678,6 +7749,9 @@ msgid ""
 "It is not recommended to extend a pool with one or more vdevs containing "
 "different numbers of disks. Continue?"
 msgstr "不建议使用一个或多个包含不同数量磁盘的vdev扩展池。继续吗？"
+
+msgid "Item"
+msgstr ""
 
 msgid "Items Delete Failed"
 msgstr "项目删除失败"
@@ -7841,6 +7915,12 @@ msgstr ""
 msgid "KiB"
 msgstr "KiB"
 
+msgid "Kill existing pods before creating new ones."
+msgstr ""
+
+msgid "Kubernetes Settings"
+msgstr ""
+
 msgid "LAGG Settings"
 msgstr "链路聚合设置"
 
@@ -7932,6 +8012,9 @@ msgstr "语言代码"
 msgid "Last Scrub Run on"
 msgstr "最后一次清理"
 
+msgid "Launch Docker Image"
+msgstr ""
+
 msgid "Leave Domain"
 msgstr "离开网域"
 
@@ -8019,9 +8102,6 @@ msgstr ""
 msgid "Limit replication speed to this number of  bytes per second."
 msgstr "将复制速度限制为每秒此bytes数。"
 
-msgid "Link"
-msgstr "连接"
-
 msgid "Linked Service"
 msgstr "已连接服务"
 
@@ -8057,9 +8137,6 @@ msgstr "监听"
 
 msgid "Load Previous Replication Task"
 msgstr "加载先前的复制任务"
-
-msgid "Load colors from existing theme"
-msgstr "从现有主题加载颜色"
 
 msgid "Local"
 msgstr "本地"
@@ -8200,9 +8277,6 @@ msgstr "MTU"
 
 msgid "Mac Address"
 msgstr "MAC地址"
-
-msgid "Magenta"
-msgstr "品红"
 
 msgid "Mail Server Port"
 msgstr "邮件服务器端口"
@@ -8427,12 +8501,6 @@ msgstr "内存过量使用功能允许在没有足够的可用内存来配置所
 msgid "Memory:"
 msgstr ""
 
-msgid "Menu Label"
-msgstr "菜单标签"
-
-msgid "Menu Swatch"
-msgstr "菜单色板"
-
 msgid "Message verbosity level in the replication  task log."
 msgstr "复制任务日志中的消息详细级别。"
 
@@ -8503,20 +8571,35 @@ msgstr "最小轮询"
 msgid "Min. Poll"
 msgstr "最小轮询"
 
-msgid "Mini Fab Buttons"
-msgstr "迷你Fab按钮"
-
 msgid "Minimum"
 msgstr "最小"
 
 msgid "Minimum Passive Port"
 msgstr "最小被动端口"
 
+msgid "Minimum length: 5 characters. Maximum length: 20 characters"
+msgstr ""
+
+msgid "Minimum length: 8 characters. Maximum length: 40 characters"
+msgstr ""
+
 msgid "Minimum size is 1 MiB"
 msgstr "最小大小为1 MiB"
 
 msgid "Minimum value is "
 msgstr "最小值为 "
+
+msgid "Minio"
+msgstr ""
+
+msgid "Minio HostPath Enabled"
+msgstr ""
+
+msgid "Minio Image Environment"
+msgstr ""
+
+msgid "Minio: Kubernetes native, high performance object storage"
+msgstr ""
 
 msgid "Mintues"
 msgstr "分钟"
@@ -8597,6 +8680,9 @@ msgstr "月数"
 
 msgid "More Options"
 msgstr "更多选项"
+
+msgid "Mount Path"
+msgstr ""
 
 msgid "Mount Points of "
 msgstr "的挂载点"
@@ -8955,6 +9041,9 @@ msgstr ""
 msgid "Network interfaces to include in the bridge."
 msgstr "包含在网桥中的网络接口。"
 
+msgid "Networking"
+msgstr ""
+
 msgid "Networks"
 msgstr "网络"
 
@@ -8963,6 +9052,12 @@ msgstr "从不"
 
 msgid "Never Delete"
 msgstr "永不删除"
+
+msgid "Never pull image even if it is not present on host."
+msgstr ""
+
+msgid "Never restart containers if they exit."
+msgstr ""
 
 msgid "New Disk"
 msgstr "新磁盘"
@@ -8993,6 +9088,23 @@ msgstr "下一步"
 msgid "Next Run"
 msgstr "下次运行"
 
+msgid "Nextcloud"
+msgstr ""
+
+msgid "Nextcloud Host"
+msgstr ""
+
+msgid "Nextcloud Username"
+msgstr ""
+
+msgid "Nextcloud host to create application URLs"
+msgstr ""
+
+msgid ""
+"Nextcloud:  a file sharing server that puts the control  and security of "
+"your own data back into your hands."
+msgstr ""
+
 msgid "Nic to attach:"
 msgstr "Nic附加："
 
@@ -9010,6 +9122,9 @@ msgstr "没有日志"
 
 msgid "No Pools"
 msgstr "没有池"
+
+msgid "No Pools Found"
+msgstr ""
 
 msgid "No Repositories"
 msgstr "没有资料库"
@@ -9064,6 +9179,24 @@ msgstr "否，继续导入"
 msgid "Nobind"
 msgstr "无绑定"
 
+msgid "Node IP"
+msgstr ""
+
+msgid "Node Port"
+msgstr ""
+
+msgid "Node Port to use for Minio"
+msgstr ""
+
+msgid "Node Port to use for Nextcloud"
+msgstr ""
+
+msgid "Node port"
+msgstr ""
+
+msgid "Nodeport"
+msgstr ""
+
 msgid "Nodes CARP states do not agree."
 msgstr "节点CARP状态不一致。"
 
@@ -9092,9 +9225,6 @@ msgstr "关于此磁盘的注释。"
 
 msgid "Notes about this extent."
 msgstr "有关此区块的说明。"
-
-msgid "Notes or identifiers about the theme."
-msgstr "关于主题的注释或标识符。"
 
 msgid "Notice"
 msgstr "通知"
@@ -9241,6 +9371,9 @@ msgstr "Oauth客户端ID"
 msgid "OAuth Client Secret"
 msgstr "Oauth Client 秘密"
 
+msgid "OFFICIAL"
+msgstr ""
+
 msgid "OK"
 msgstr "是"
 
@@ -9342,12 +9475,18 @@ msgstr "仅在连接到团队驱动器时需要。Team Drive的顶级文件夹�
 msgid "Only override the default if the initiator requires a different block size."
 msgstr "仅当启动器要求不同的块大小时才覆盖默认值。"
 
+msgid "Only pull image if not present on host."
+msgstr ""
+
 msgid ""
 "Only replicate snapshots that match a  defined creation time. To specify "
 "which snapshots will be replicated,  set this checkbox and define the "
 "snapshot creation times that will be  replicated. For example, setting this "
 "time frame to <i>Hourly</i> will  only replicate snapshots that were "
 "created at the beginning of each hour."
+msgstr ""
+
+msgid "Only restart containers if they exit with a failure."
 msgstr ""
 
 msgid ""
@@ -9417,18 +9556,6 @@ msgstr "操作系统"
 msgid "Operation"
 msgstr "操作"
 
-msgid "Option 1"
-msgstr "选项1"
-
-msgid "Option 2"
-msgstr "选项2"
-
-msgid "Option 2 (disabled)"
-msgstr "选项2（已禁用）"
-
-msgid "Option 3"
-msgstr "选项3"
-
 msgid "Optional description."
 msgstr "可选描述。"
 
@@ -9463,9 +9590,6 @@ msgstr ""
 "用于加密LDAP连接的选项：<ul> <li> <i>关闭：</i>不加密LDAP连接。</li><li> <i>打开：</i>使用<i> 636 "
 "</i>端口上的<i> SSL </i>加密LDAP连接。</li><li> <i> START_TLS：</i>使用默认LDAP端口<i> 389 "
 "</i>上的<i> STARTTLS </i>加密LDAP连接。</li> </ul>"
-
-msgid "Orange"
-msgstr "橙色"
 
 msgid "Order"
 msgstr ""
@@ -9559,9 +9683,6 @@ msgstr "待处理"
 
 msgid "POST INSTALL NOTES"
 msgstr "安装说明"
-
-msgid "PREVIEW"
-msgstr "预览"
 
 msgid "PROCEED"
 msgstr "继续"
@@ -9678,6 +9799,12 @@ msgstr ""
 
 msgid "Path to the Extent"
 msgstr "区块的路径"
+
+msgid "Path where host path will be mounted inside the pod"
+msgstr ""
+
+msgid "Path where the volume path will be mounted inside the pod"
+msgstr ""
 
 msgid "Path: "
 msgstr ""
@@ -9819,6 +9946,18 @@ msgstr "请选择一个有效的路径"
 msgid "Please wait"
 msgstr "请稍后"
 
+msgid "Plex"
+msgstr ""
+
+msgid "Plex Claim Token"
+msgstr ""
+
+msgid "Plex Node Port"
+msgstr ""
+
+msgid "Plex: Media player, streaming service"
+msgstr ""
+
 msgid "Plugin"
 msgstr "插件"
 
@@ -9881,6 +10020,9 @@ msgstr "池和快照"
 
 msgid "Port"
 msgstr "端口"
+
+msgid "Port Forwarding List"
+msgstr ""
 
 msgid "Port number on the remote system to use for the SSH  connection."
 msgstr "远程系统上用于SSH连接的端口号。"
@@ -9999,17 +10141,11 @@ msgstr ""
 "在未设置此选项之前，请阻止用户登录或使用基于密码的服务。仅当<b>禁用密码</ b>为<i>否</ i>并且已为该帐户创建<b>密码</ "
 "b>时，才可以锁定帐户。"
 
-msgid "Preview"
-msgstr "预览"
-
 msgid "Preview JSON Service Account Key"
 msgstr "预览JSON服务帐户密钥"
 
 msgid "Previous"
 msgstr "上一步"
-
-msgid "Primary"
-msgstr "主要"
 
 msgid "Primary Contact"
 msgstr "主要联系人"
@@ -10078,6 +10214,9 @@ msgstr "继续升级池？警告：升级池是一种单向操作，它可能会
 msgid "Product:"
 msgstr ""
 
+msgid "Production Status"
+msgstr ""
+
 msgid "Production status successfully updated"
 msgstr "生产状态已成功更新"
 
@@ -10099,8 +10238,14 @@ msgstr ""
 msgid "Properties Override"
 msgstr ""
 
+msgid "Property"
+msgstr ""
+
 msgid "Protocol"
 msgstr "协议"
+
+msgid "Provide access to node network namespace for the workload."
+msgstr ""
 
 msgid ""
 "Provide static key for authentication/encryption of all control  channel "
@@ -10183,9 +10328,6 @@ msgstr "Raid-z2"
 msgid "Raid-z3"
 msgstr "Raid-z3"
 
-msgid "Raised Buttons"
-msgstr "凸起的按钮"
-
 msgid ""
 "Randomly generate an encryption key for securing this dataset. Disabling "
 "requires manually      defining the encryption key.<br> WARNING: the "
@@ -10254,6 +10396,9 @@ msgstr "读取/写入访问"
 msgid "Readonly"
 msgstr ""
 
+msgid "Ready to Install"
+msgstr ""
+
 msgid "Realm"
 msgstr "Realm"
 
@@ -10305,9 +10450,6 @@ msgstr "池的恢复密钥 "
 
 msgid "Recursive"
 msgstr "递归的"
-
-msgid "Red"
-msgstr "红色"
 
 msgid ""
 "Redirect <i>HTTP</i> connections to <i>HTTPS</i>. A  <i>GUI SSL "
@@ -10559,6 +10701,9 @@ msgstr "报告"
 msgid "Reports"
 msgstr "报告"
 
+msgid "Reports Configuration"
+msgstr ""
+
 msgid "Require IDENT Authentication"
 msgstr "要求 IDENT 认证"
 
@@ -10666,6 +10811,9 @@ msgstr "分辨率"
 msgid "Restart"
 msgstr "重启"
 
+msgid "Restart Policy"
+msgstr ""
+
 msgid "Restart SMB Service"
 msgstr "重启SMB服务"
 
@@ -10683,6 +10831,9 @@ msgstr "重新启动附加的虚拟机，监狱和服务"
 
 msgid "Restart the system?"
 msgstr "重启系统？"
+
+msgid "Restart/Update"
+msgstr ""
 
 msgid "Restarting Jail"
 msgstr "重新启动监狱"
@@ -10746,8 +10897,26 @@ msgstr ""
 msgid "Rights"
 msgstr ""
 
+msgid "Roll Back"
+msgstr ""
+
+msgid "Roll back"
+msgstr ""
+
+msgid "Roll back "
+msgstr ""
+
+msgid "Roll back snapshots"
+msgstr ""
+
+msgid "Roll back snapshots of ix_volumes"
+msgstr ""
+
 msgid "Rollback"
 msgstr "回滚"
+
+msgid "Rolling back..."
+msgstr ""
 
 msgid "Room"
 msgstr "Room"
@@ -10772,6 +10941,18 @@ msgstr "转速"
 
 msgid "Rotation Rate (RPM)"
 msgstr "转速（RPM）"
+
+msgid "Route v4 Gateway"
+msgstr ""
+
+msgid "Route v4 Interface"
+msgstr ""
+
+msgid "Route v6 Gateway"
+msgstr ""
+
+msgid "Route v6 Interface"
+msgstr ""
 
 msgid "Routing Key"
 msgstr "路由键"
@@ -11114,6 +11295,9 @@ msgid ""
 "  Please visit the <a href=\"http://www.ixsystems.com/storage/\" "
 "target=\"_blank\">    iXsystems storage page</a>    for enterprise-grade "
 "storage solutions and support."
+msgstr ""
+
+msgid "Searches"
 msgstr ""
 
 msgid "Secondary Contact"
@@ -11781,6 +11965,9 @@ msgid "Service Announcement"
 msgstr "服务公告"
 
 msgid "Service Announcement:"
+msgstr ""
+
+msgid "Service CIDR"
 msgstr ""
 
 msgid "Service Key"
@@ -12611,11 +12798,6 @@ msgid "Short Description"
 msgstr "简述"
 
 msgid ""
-"Shortened theme name. Used when listing the theme                     in "
-"Preferences."
-msgstr "缩短主题名称。在首选项中列出主题时使用。"
-
-msgid ""
 "Should only be used for highly accurate <b>NTP</b>   servers such as those "
 "with time monitoring hardware."
 msgstr "仅应用于高度准确的<b>NTP</b>服务器，例如具有时间监控硬件的服务器。"
@@ -12748,9 +12930,6 @@ msgid ""
 "configuring a custom Endpoint URL."
 msgstr "跳过对端点URL区域的自动检测。在配置自定义端点URL时进行设置。"
 
-msgid "Slide me!"
-msgstr "滑动我！"
-
 msgid "Snapshot"
 msgstr "快照"
 
@@ -12834,6 +13013,9 @@ msgstr "特殊分配类，用于创建融合池。可选的vdev类型，用于�
 msgid "Specifies the auxiliary directory service ID provider."
 msgstr "指定辅助目录服务ID提供程序。"
 
+msgid "Specify HostPath for Minio data"
+msgstr ""
+
 msgid ""
 "Specify a port for encrypted connections. The default port <i>8081</i> is "
 "recommended. Do not reuse a port."
@@ -12851,6 +13033,9 @@ msgid ""
 "Specify any jails this jail depends on. Child jails must already exist "
 "before the parent jail can be created."
 msgstr "指定该监狱所依赖的所有监狱。在创建父监狱之前，子监狱必须已经存在。"
+
+msgid "Specify arguments for container command. Use <i>ENTER</i> after each entry."
+msgstr ""
 
 msgid ""
 "Specify how many servers to create. Increase if NFS client responses are "
@@ -12882,6 +13067,9 @@ msgstr ""
 
 msgid "Specify the size of the new zvol."
 msgstr "指定新zvol的大小。"
+
+msgid "Specify type for IPAM."
+msgstr ""
 
 msgid "Speeds up the initial synchronization   (seconds instead of minutes)."
 msgstr "加速初始同步（秒而不是分钟）。"
@@ -12937,6 +13125,9 @@ msgstr "州"
 msgid "State: "
 msgstr ""
 
+msgid "Static IP"
+msgstr ""
+
 msgid ""
 "Static IP addresses which SMB listens on for connections.  Leaving all "
 "unselected defaults to listening on all active interfaces."
@@ -12944,6 +13135,15 @@ msgstr "SMB侦听连接的静态IP地址。将所有未选中的默认值保留�
 
 msgid "Static IPv4 address of the IPMI web interface."
 msgstr "IPMI Web 界面的静态 IPv4 地址。"
+
+msgid "Static Route Configuration"
+msgstr ""
+
+msgid "Static Route: Destination"
+msgstr ""
+
+msgid "Static Route: Gateway"
+msgstr ""
 
 msgid "Static Routes"
 msgstr ""
@@ -13241,6 +13441,9 @@ msgstr ""
 msgid "TCP Port"
 msgstr "TCP端口"
 
+msgid "TCP Protocol"
+msgstr ""
+
 msgid "TCP port to use on bind to IP addresses"
 msgstr "用于绑定到IP地址的TCP端口"
 
@@ -13305,6 +13508,9 @@ msgid "TLS Policy"
 msgstr "TLS政策"
 
 msgid "Tag"
+msgstr ""
+
+msgid "Tag to use for the specified image"
 msgstr ""
 
 msgid "Take Snapshot"
@@ -13421,9 +13627,6 @@ msgid ""
 msgstr ""
 "测试服务器连接并验证选择的<b>证书</b>链。要进行测试，请配置<i>服务器</i>和<i>端口</i>值，选择<i>证书</i>和<i>"
 "证书颁发机构</i>，启用此设置，然后点击<b>保存</b>。"
-
-msgid "Textarea"
-msgstr "文本区域"
 
 msgid "The"
 msgstr "The"
@@ -13674,6 +13877,9 @@ msgstr "LDAP服务器的主机名或IP地址。通过按<code>Enter</code>分隔
 msgid "The iSCSI"
 msgstr "iSCSI"
 
+msgid "The image was updated."
+msgstr ""
+
 msgid "The imported pool contains encrypted datasets, unlock them now?"
 msgstr "导入的池包含加密的数据集，现在将其解锁吗？"
 
@@ -13821,6 +14027,9 @@ msgid ""
 msgstr ""
 
 msgid "The product of vCPUs, cores and threads must not exceed"
+msgstr ""
+
+msgid "The range of valid ports is 9000-65535."
 msgstr ""
 
 msgid ""
@@ -14175,11 +14384,6 @@ msgstr ""
 msgid "This job will not run again until it is enabled."
 msgstr "启用该任务后，它将无法再次运行。"
 
-msgid ""
-"This name is already being used by an existing theme. Please choose a new "
-"name."
-msgstr "现有主题已使用该名称。请选择一个新名称。"
-
 msgid "This operation might take a long time. Proceed?"
 msgstr "这项操作可能会需要很长时间。继续吗？"
 
@@ -14350,6 +14554,12 @@ msgstr "拓扑"
 msgid "Train"
 msgstr "分支"
 
+msgid "Transcode Hostpath"
+msgstr ""
+
+msgid "Transcode Hostpath Enabled"
+msgstr ""
+
 msgid "Transfer"
 msgstr "传输"
 
@@ -14468,6 +14678,9 @@ msgid "Type: "
 msgstr ""
 
 msgid "UDP"
+msgstr ""
+
+msgid "UDP Protocol"
 msgstr ""
 
 msgid ""
@@ -14627,11 +14840,17 @@ msgstr "直到"
 msgid "Until: "
 msgstr ""
 
+msgid "Up to date"
+msgstr ""
+
 msgid "Upcoming tasks"
 msgstr "即将到来的任务"
 
 msgid "Update"
 msgstr "更新"
+
+msgid "Update "
+msgstr ""
 
 msgid "Update File"
 msgstr "更新文件"
@@ -14641,6 +14860,9 @@ msgstr "更新文件临时存储位置"
 
 msgid "Update Frequency"
 msgstr "更新频率"
+
+msgid "Update Image"
+msgstr ""
 
 msgid "Update Interval"
 msgstr "更新Interval"
@@ -14666,8 +14888,14 @@ msgstr ""
 msgid "Update Status"
 msgstr "更新状态"
 
+msgid "Update Strategy"
+msgstr ""
+
 msgid "Update TrueCommand Settings"
 msgstr "更新TrueCommand设置"
+
+msgid "Update available"
+msgstr ""
 
 msgid "Update in Progress"
 msgstr "正在进行更新"
@@ -14677,6 +14905,9 @@ msgstr "更新完成，请重新启动系统。"
 
 msgid "Update successful. Please reboot for the update to take effect. Reboot now?"
 msgstr "更新成功。请重启以便更新生效。现在重启？"
+
+msgid "Update the image for "
+msgstr ""
 
 msgid "Update the jail operating system to the latest available patch?"
 msgstr "为监狱操作系统更新最新的可用补丁？"
@@ -14702,8 +14933,20 @@ msgstr "更新插件"
 msgid "Updating group members"
 msgstr "正在更新群组成员"
 
+msgid "Updating production status..."
+msgstr ""
+
 msgid "Updating selected plugins."
 msgstr "正在更新选定的插件。"
+
+msgid "Updating..."
+msgstr ""
+
+msgid "Upgrade"
+msgstr ""
+
+msgid "Upgrade "
+msgstr ""
 
 msgid "Upgrade Pool"
 msgstr "升级池"
@@ -14725,6 +14968,9 @@ msgid ""
 "and then transferred to the Standby Controller. The upgrade process starts "
 "concurrently on both TrueNAS Controllers. Continue with download?"
 msgstr "升级两个控制器。文件被下载到活动控制器，然后传输到备用控制器。升级过程同时在两个TrueNAS控制器上开始。继续下载吗？"
+
+msgid "Upgradomg..."
+msgstr ""
 
 msgid "Upload"
 msgstr "上传"
@@ -14809,6 +15055,9 @@ msgstr ""
 "使用<a href=\"https://www.freebsd.org/cgi/man.cgi?query=rtsold\" "
 "target=\"_blank\">rtsold（8）</a>作为IPv6自动配置的一部分"
 
+msgid "Use <i>ENTER</i> after each entry."
+msgstr ""
+
 msgid ""
 "Use <i>Window</i> to extend the validity of passwords beyond the "
 "<i>Interval</i> setting. For example, a window setting of 1 means that one "
@@ -14827,8 +15076,14 @@ msgstr ""
 msgid "Use Apple-style Character Encoding"
 msgstr "使用Apple-style的字符编码"
 
+msgid "Use DHCP"
+msgstr ""
+
 msgid "Use DHCP. Unset to manually configure a static IPv4 connection."
 msgstr "使用DHCP。未设置为手动配置静态IPv4连接。"
+
+msgid "Use Default DNS Policy"
+msgstr ""
 
 msgid "Use Default Domain"
 msgstr "使用默认域"
@@ -14884,6 +15139,9 @@ msgstr "使用已有磁盘镜像"
 msgid "Use settings from a saved replication."
 msgstr "使用已保存复制中的设置。"
 
+msgid "Use static IP"
+msgstr ""
+
 msgid ""
 "Use the <i>Log In to GMail</i> button to obtain the credentials for this "
 "form."
@@ -14929,6 +15187,9 @@ msgid ""
 "Used by clients in PASV mode. A default of <i>0</i> means any port above "
 "1023."
 msgstr "由客户端在PASV模式下使用。默认值<i> 0 </i>表示1023以上的任何端口。"
+
+msgid "Used for rollback of a chart release and snapshots of ix_volumes"
+msgstr ""
 
 msgid ""
 "Used to add additional <a href=\"https://linux.die.net/man/8/proftpd\" "
@@ -15223,9 +15484,6 @@ msgstr ""
 msgid "View/Download Key"
 msgstr ""
 
-msgid "Violet"
-msgstr "紫色"
-
 msgid "Virtual CPUs"
 msgstr "虚拟处理器"
 
@@ -15252,6 +15510,9 @@ msgstr "VLAN 标签"
 
 msgid "Volume size cannot be zero."
 msgstr "卷大小不能为零。"
+
+msgid "Volumes"
+msgstr ""
 
 msgid "WARNING"
 msgstr "警告"
@@ -15298,9 +15559,6 @@ msgstr "等待活动的TrueNAS控制器启动..."
 
 msgid "Wallclock time in seconds."
 msgstr "Wallclock时间（以秒为单位）。"
-
-msgid "Warn"
-msgstr "警告"
 
 msgid "Warning"
 msgstr "警告"
@@ -15569,9 +15827,6 @@ msgstr ""
 
 msgid "Years"
 msgstr "年份"
-
-msgid "Yellow"
-msgstr "黄色"
 
 msgid "Yes"
 msgstr "是"

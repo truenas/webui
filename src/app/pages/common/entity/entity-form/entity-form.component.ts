@@ -752,8 +752,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               const subList = value[j];
               
               for (const [subKey, subValue] of Object.entries(subList)) {
-                const subControl = (<FormGroup>control.controls[j]).controls[subKey];
-                subControl.setValue(subValue);
+                if (<FormGroup>control.controls[j]) {
+                  const subControl = (<FormGroup>control.controls[j]).controls[subKey];
+                  subControl.setValue(subValue);
+                }
               }
             }
 
