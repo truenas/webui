@@ -61,10 +61,10 @@
       <ng-container *ngFor="let column of columnsToString(currentColumns, 'prop'); let i = index;">
   
         <!-- Column Template -->
-        <ng-container *ngIf="column !== 'expandedDetail' && column !== 'action' && column !== 'multiselect' && column !== 'expansion-chevrons'" [sticky]="i == 0"
+        <ng-container *ngIf="column !== 'expandedDetail' && column !== 'action' && column !== 'multiselect' && column !== 'expansion-chevrons'" [sticky]="isLeftStickyColumnNo(i)"
        matColumnDef="{{column}}">
-          <th class="data-column" mat-header-cell *matHeaderCellDef>{{currentColumns[i].name}}</th>
-          <td class="data-column" mat-cell *matCellDef="let element">{{element[column]}}</td>
+          <th [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i)}" class="data-column" mat-header-cell *matHeaderCellDef>{{currentColumns[i].name}}</th>
+          <td [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i)}" class="data-column" mat-cell *matCellDef="let element">{{element[column]}}</td>
         </ng-container>
   
         <!-- Expansion Chevrons -->
