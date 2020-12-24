@@ -229,9 +229,6 @@ export class ChartFormComponent {
       const value = data[key];
       if (key == "release_name" || value == "" || value == undefined) {
         return;
-      } else if (Array.isArray(value)) {
-        this.setArrayValues(value, result);
-        return;
       }
       
       if (key_list.length > 1) {
@@ -239,7 +236,11 @@ export class ChartFormComponent {
         for(let i=0; i<key_list.length; i++) {
           const temp_key = key_list[i];
           if (i == key_list.length - 1) {
-            parent[temp_key] = value;
+            if (Array.isArray(value)) {
+              parent[temp_key] = this.setArrayValues(value);
+            } else {
+              parent[temp_key] = value;
+            }            
           } else {
             if (!parent[temp_key]) {
               parent[temp_key] = {};
@@ -248,15 +249,27 @@ export class ChartFormComponent {
           }
         }        
       } else {
-        result[key] = value;
+        if (Array.isArray(value)) {
+          result[key] = this.setArrayValues(value);
+        } else {
+          result[key] = value;
+        }
       }
+      
     });
+
+    return result;
   }
 
-  setArrayValues(data, result) {
+  setArrayValues(data) {
+    const arrayVaules = [];
     data.forEach(item => {
-      this.setObjectValues(item, result);
-    });    
+      const oneItem = {};
+      this.setObjectValues(item, oneItem);
+      arrayVaules.push(oneItem);
+    });
+
+    return arrayVaules;
   }
 
   customSubmit(data) {
