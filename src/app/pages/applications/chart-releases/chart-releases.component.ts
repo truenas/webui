@@ -14,6 +14,8 @@ import { ChartReleaseEditComponent } from '../forms/chart-release-edit.component
 import { PlexFormComponent } from '../forms/plex-form.component';
 import { NextCloudFormComponent } from '../forms/nextcloud-form.component';
 import { MinioFormComponent } from '../forms/minio-form.component';
+import { CommonUtils } from 'app/core/classes/common-utils';
+import { ChartFormComponent } from '../forms/chart-form.component';
 
 import  helptext  from '../../../helptext/apps/apps';
 
@@ -28,11 +30,10 @@ export class ChartReleasesComponent implements OnInit {
   public ixIcon = 'assets/images/ix-original.png';
   private rollbackChartName: string;
   private chartReleaseForm: ChartReleaseEditComponent;
-  private plexForm: PlexFormComponent;
-  private nextCloudForm: NextCloudFormComponent;
-  private minioForm: MinioFormComponent;
   private refreshTable: Subscription;
-  private refreshForm: Subscription;
+
+  protected utils: CommonUtils;
+  public catalogApps = [];
 
   public rollBackChart: DialogFormConfiguration = {
     title: helptext.charts.rollback_dialog.title,
@@ -65,21 +66,59 @@ export class ChartReleasesComponent implements OnInit {
     private sysGeneralService: SystemGeneralService) { }
 
   ngOnInit(): void {
+    this.getCatalogApps();
     this.refreshChartReleases();
-    this.refreshForms();
+    this.utils = new CommonUtils();
+    
     this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
       this.refreshChartReleases();
-    })
-    this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
-      this.refreshForms();
     });
   }
 
-  refreshForms() {
-    this.chartReleaseForm = new ChartReleaseEditComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
-    this.plexForm = new PlexFormComponent(this.mdDialog,this.dialogService,this.modalService,this.sysGeneralService,this.appService);
-    this.nextCloudForm = new NextCloudFormComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
-    this.minioForm = new MinioFormComponent(this.mdDialog,this.dialogService,this.modalService);
+  getCatalogApps() {
+    this.appService.getAllCatalogItems().subscribe(res => {
+      if (Object.keys(res[0].trains.charts).length > 0) {
+        for (let i in res[0].trains.charts) {  // will eventually add the charts train too
+          if (i !== 'ix-chart') {
+            let item = res[0].trains.charts[i];
+            let versions = item.versions;
+            let latest, latestDetails;
+
+            let sorted_version_labels = Object.keys(versions);
+            sorted_version_labels.sort(this.utils.versionCompare);
+
+            latest = sorted_version_labels[0];
+            latestDetails = versions[latest];
+
+            switch (item.name) {
+              case 'minio':
+                item.info = helptext.minioInfo;
+                break;
+              
+              case 'plex':
+                item.info = helptext.plexInfo;
+                break;
+        
+              case 'nextcloud':
+                item.info = helptext.nextcloudInfo;
+                break;
+              
+              default:
+                this.modalService.open('slide-in-form', this.chartReleaseForm);
+            }
+    
+            let catalogItem = {
+              name: item.name,
+              icon_url: item.icon_url? item.icon_url : '/assets/images/ix-original.png',
+              latest_version: latest,
+              info: item.info,
+              schema: item.versions[latest].schema,
+            }
+            this.catalogApps.push(catalogItem);            
+          }
+        }
+      }
+    })
   }
 
   refreshChartReleases() {
@@ -193,22 +232,11 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   edit(name: string, id: string) {
-    switch (id) {
-      case 'minio':
-        this.modalService.open('slide-in-form', this.minioForm, name);
-        break;
-      
-      case 'plex':
-        this.modalService.open('slide-in-form', this.plexForm, name);
-        break;
 
-      case 'nextcloud':
-        this.modalService.open('slide-in-form', this.nextCloudForm, name);
-        break;
-
-      default:
-        this.modalService.open('slide-in-form', this.chartReleaseForm, name);
-    }
+    const catalogApp = this.catalogApps.find(app => app.name==id)
+    const chartFormComponent = new ChartFormComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
+    chartFormComponent.parseSchema(catalogApp);
+    this.modalService.open('slide-in-form', chartFormComponent, name);
   }
 
   delete(name: string) {

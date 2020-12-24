@@ -206,17 +206,29 @@ export class ChartFormComponent {
     console.log(this.fieldSets);
   }
 
+  parseConfigData(configData, parentKey, result) {
+    Object.keys(configData).forEach(key => {
+      const value = configData[key];
+      let fullKey = key;
+      if (parentKey) {
+        fullKey = `${parentKey}_${key}`;
+      }
+      if (!Array.isArray(value) && typeof value === 'object') {
+        this.parseConfigData(value, fullKey, result);
+      } else {
+        result[fullKey] = value;
+      }
+    });
+  }
+
   resourceTransformIncomingRestData(data) {
+    console.log(data);
     this.name = data.name;
-    data.config.release_name = data.name;
-    data.config.username = data.config.nextcloud.username;
-    data.config.password = data.config.nextcloud.password;
-    data.config.host = data.config.nextcloud.host;
-    data.config.repository = data.config.image.repository;
-    data.config.tag = data.config.image.tag;
-    data.config.pullPolicy = data.config.image.pullPolicy;
-    data.config.nodePort = data.config.service.nodePort;
-    return data.config;
+    const configData = {};
+    this.parseConfigData(data.config, null, configData);
+    configData['release_name'] = data.name;
+    console.log(configData);
+    return configData;
   }
 
   afterInit(entityEdit: any) {
