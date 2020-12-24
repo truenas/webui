@@ -232,7 +232,15 @@ export class ChartFormComponent {
   }
 
   afterInit(entityEdit: any) {
+    if (this.rowName) {
+      entityEdit.setDisabled('release_name', true, false);
+    }
 
+    let repositoryConfig = _.find(this.fieldConfig, {'name': 'image_repository'});
+    if (repositoryConfig) {
+      repositoryConfig.readonly = true;
+    }
+    
   }
 
   setObjectValues(data, result) {
