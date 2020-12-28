@@ -23,6 +23,7 @@ import { Router } from '@angular/router';
   templateUrl: './chart-releases.component.html',
   styleUrls: ['../applications.component.scss']
 })
+
 export class ChartReleasesComponent implements OnInit {
   public chartItems = [];
   private dialogRef: any;
@@ -34,6 +35,9 @@ export class ChartReleasesComponent implements OnInit {
   private minioForm: MinioFormComponent;
   private refreshTable: Subscription;
   private refreshForm: Subscription;
+  private selectedAppName: String;
+  private podList = [];
+  private podDetails = {};
 
   public rollBackChart: DialogFormConfiguration = {
     title: helptext.charts.rollback_dialog.title,
@@ -57,6 +61,20 @@ export class ChartReleasesComponent implements OnInit {
     method_ws: 'chart.release.rollback',
     saveButtonText: helptext.charts.rollback_dialog.action,
     customSubmit: this.doRollback,
+    parent: this,
+  }
+
+  public choosePod: DialogFormConfiguration = {
+    title: helptext.podConsole.choosePod.title,
+    fieldConfig: [{
+      type: 'select',
+      name: 'pods',
+      placeholder: helptext.podConsole.choosePod.placeholder,
+      required: true,
+      options: this.podList
+    }],
+    saveButtonText: helptext.podConsole.choosePod.action,
+    customSubmit: this.doPodSelect,
     parent: this,
   }
 
@@ -258,21 +276,24 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   openShell(name: string) {
-    this.ws.call('chart.release.pod_console_choices', [name]).subscribe(res => {
-      console.log('---------', res)
-      let keys = Object.keys(res);
-      if (keys.length == 0) {
-        console.log('No available pod console now');
-        return;
+    this.podList = [];
+    this.podDetails = {};
+    this.selectedAppName = name;
+    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).subscribe(res => {
+      this.podDetails = Object.assign({}, res);
+      this.podList = Object.keys(this.podDetails);
+      if (this.podList.length == 0) {
+        this.dialogService.confirm(helptext.podConsole.nopod.title, helptext.podConsole.nopod.message, true, 'Close', false, null, null, null, null, true);
+      } else if (this.podList.length == 1) {
+        this.router.navigate(new Array("/apps/shell/").concat([this.selectedAppName, this.podList[0], this.podDetails[this.podList[0]][0]]));
+      } else if (this.podList.length > 1) {
+        this.dialogService.dialogForm(this.choosePod, true);
       }
-
-      let rname = name;
-      let pname = keys[0];
-      let cname = res[pname][0];
-
-      this.router.navigate(new Array("/apps/shell/").concat(
-        [rname, pname, cname]));
     })
-    
+  }
+
+  doPodSelect(entityDialog: any) {
+    const pod = entityDialog.formGroup.controls['pods'].value;
+    this.router.navigate(new Array("/apps/shell/").concat([this.selectedAppName, pod, this.podDetails[pod][0]]));
   }
 }

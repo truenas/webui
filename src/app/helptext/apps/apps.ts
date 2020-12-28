@@ -482,11 +482,22 @@ export default {
   nextcloudInfo: T('Nextcloud:  a file sharing server that puts the control \
  and security of your own data back into your hands.'),
 
- updateImageDialog: {
-   title: T('Update Image'),
-   message: T('Update the image for '),
-   success: T('Success'),
-   successMsg: T('The image was updated.')
- }
+  updateImageDialog: {
+    title: T('Update Image'),
+    message: T('Update the image for '),
+    success: T('Success'),
+    successMsg: T('The image was updated.')
+  },
 
+  podConsole: {
+    nopod: {
+      title: T('No Pods Found'),
+      message: T('At least one pod must be available'),
+    },
+    choosePod: {
+      title: T('Choose pod'),
+      placeholder: T('Pods'),
+      action: T('Choose')
+    }
+  }
 }
