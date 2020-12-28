@@ -93,6 +93,11 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
           label: 'Restore default',
           type: 'button',
           color: 'primary',
+          placeholder: 'Shell Commands',
+          tooltip: `<b>Copy & Paste</b> <br/>
+                    Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>
+                    <b>Kill Process</b> <br/>
+                    Kill process shortcut is <i>Crtl+C</i>.`,
         },
       ];
     } else {
