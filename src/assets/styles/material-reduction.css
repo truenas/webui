@@ -671,7 +671,6 @@ td.mat-cell .mat-icon.expansion-trigger{
 .mat-row:hover,
 tr.mat-row:hover {
   background: rgba(0,0,0,0.1) !important;
-  cursor: pointer;
 }
 
 .mat-table tr.details-row{

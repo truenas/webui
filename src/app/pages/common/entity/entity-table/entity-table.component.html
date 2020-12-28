@@ -64,13 +64,13 @@
         <ng-container *ngIf="column !== 'expandedDetail' && column !== 'action' && column !== 'multiselect' && column !== 'expansion-chevrons'" 
        matColumnDef="{{column}}">
           <th class="data-column" mat-header-cell *matHeaderCellDef>{{currentColumns[i].name}}</th>
-          <td class="data-column" mat-cell *matCellDef="let element">{{element[column]}}</td>
+          <td class="data-column" [ngStyle]="{'cursor': checkLength() ? 'auto' : 'pointer'}" mat-cell *matCellDef="let element">{{element[column]}}</td>
         </ng-container>
   
         <!-- Expansion Chevrons -->
         <ng-container *ngIf="column == 'expansion-chevrons'" matColumnDef="{{column}}" stickyEnd>
           <th class="expansion-chevrons-column" mat-header-cell *matHeaderCellDef></th>
-          <td class="expansion-chevrons-column" mat-cell *matCellDef="let element" style="text-align:right;">
+          <td class="expansion-chevrons-column" mat-cell *matCellDef="let element" style="text-align:right;cursor: pointer">
             <ng-container *ngIf="hasDetails() === true">
               <ng-container *ngIf="element === expandedElement">
                 <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-chevron-up"></mat-icon>
@@ -99,7 +99,7 @@
               ix-auto ix-auto-type="checkbox" ix-auto-identifier="title">
             </mat-checkbox>
           </th>
-          <td class="multiselect-column" mat-cell *matCellDef="let element">
+          <td class="multiselect-column" [ngStyle]="{'cursor': checkLength() ? 'auto' : 'pointer'}" mat-cell *matCellDef="let element">
             <mat-checkbox 
               (click)="$event.stopPropagation()"
               (change)="$event ? selection.toggle(element) : null"
