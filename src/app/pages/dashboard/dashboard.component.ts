@@ -262,7 +262,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.isDataReady();
     });
 
-    //this.core.emit({name:"VolumeDataRequest"});
     this.core.emit({name:"NicInfoRequest"});
     this.getDisksData();
   }
