@@ -6,10 +6,10 @@ import { CoreService, CoreEvent } from './core.service';
 import { DialogService } from '../../services';
 //import { DataService } from './data.service';
 
-interface ApiCall {
+export interface ApiCall {
   namespace: string; // namespace for ws and path for rest
   args?: any;
-  operation?: string;
+  operation?: string; // DEPRECATED - Used for REST calls only
   responseEvent ?: any;// The event name of the response this service will send
   errorResponseEvent ?: any;// The event name of the response this service will send in case it fails
 }
