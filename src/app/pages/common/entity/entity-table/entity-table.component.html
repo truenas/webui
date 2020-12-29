@@ -56,7 +56,7 @@
     <table *ngIf="conf && currentColumns && currentColumns.length > 0 && dataSource" 
       multiTemplateDataRows mat-table 
       [dataSource]="dataSource" matSort
-       style="min-width: {{displayedColumns.length * 25}}px;"
+       style="min-width: {{displayedColumns.length * 25}}px; border-collapse: separate;"
       #newEntityTable>
       <ng-container *ngFor="let column of columnsToString(currentColumns, 'prop'); let i = index;">
   
@@ -64,7 +64,7 @@
         <ng-container *ngIf="column !== 'expandedDetail' && column !== 'action' && column !== 'multiselect' && column !== 'expansion-chevrons'" [sticky]="isLeftStickyColumnNo(i)"
        matColumnDef="{{column}}">
           <th [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i)}" class="data-column" mat-header-cell *matHeaderCellDef>{{currentColumns[i].name}}</th>
-          <td [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i)}" class="data-column" mat-cell *matCellDef="let element">{{element[column]}}</td>
+          <td [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i), 'sticky-border-right': isLeftStickyColumnNo(i)}" class="data-column" mat-cell *matCellDef="let element">{{element[column]}}</td>
         </ng-container>
   
         <!-- Expansion Chevrons -->
@@ -85,7 +85,7 @@
         <!-- Threedot Actions -->
         <ng-container *ngIf="column == 'action'" matColumnDef="{{column}}" stickyEnd>
           <th class="threedot-column" mat-header-cell *matHeaderCellDef></th>
-          <td class="threedot-column" mat-cell *matCellDef="let element">
+          <td class="threedot-column"  mat-cell *matCellDef="let element">
             <app-entity-table-actions [entity]="this" [row]="element"></app-entity-table-actions>
           </td>
         </ng-container>
