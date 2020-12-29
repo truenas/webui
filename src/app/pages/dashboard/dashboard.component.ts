@@ -268,6 +268,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.isDataReady();
     });
 
+    this.core.emit({name:"VolumeDataRequest"});
     this.core.emit({name:"NicInfoRequest"});
     this.getDisksData();
   }
@@ -346,12 +347,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
       this.pools = evt.data;
-      const queryFilters = this.pools.map((pool) => {
-        return ["id", "=", pool.name];
-      });
-
-      const args = [[["OR", queryFilters]]];
-      this.core.emit({name:"VolumeDataRequest", data: args, sender: this});
       this.isDataReady();
     });
 
