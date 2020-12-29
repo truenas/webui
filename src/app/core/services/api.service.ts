@@ -86,6 +86,13 @@ export class ApiService {
         args: [],
         responseEvent: "VolumeData"
       },
+      preProcessor(def:ApiCall){
+        const queryFilters = [
+          ["name","~", "^[^\/]+$" ], // Root datasets only
+        ];
+
+        return { args: [queryFilters], ...def };
+      },
     },
     DisksRequest:{
       apiCall:{
