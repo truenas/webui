@@ -117,3 +117,57 @@ form button{
   cursor: pointer;
   margin-left: 5px;
 }
+
+@media ( max-width:600px ) {
+  .page-wrap { 
+     height: 100vh;
+     width: 100vw;
+     max-width: 100%;
+     position: absolute;
+     top: 0;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     overflow-x: hidden;
+  }
+
+  .mat-card{
+    top: 0;
+    min-height: 100vh;
+  }
+
+  .card-bottom{
+    padding: 0;
+  }
+
+  /* Not sure how to workaround browser bug. 
+  *  Apparently 100vw is actually viewport width + scrollbar width
+  *  if vertical scrollbar is present
+  */
+  .page-wrap > * { 
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .session-progress {
+    position: fixed;
+    top: 0;
+  }
+
+  .logo-wrapper {
+    padding: 20% 0;
+  }
+}
+
+
+
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active  {
+  -webkit-text-fill-color: white !important;
+  -webkit-box-shadow: 0 0 0 30px transparent inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+  caret-color: white;
+}
