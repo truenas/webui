@@ -42,6 +42,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   public tokenObservable:Subscription;
   public HAInterval;
   public isTwoFactor = false;
+  private didSetFocus = false;
 
   signinData = {
     username: '',
@@ -124,7 +125,10 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this._autofill.monitor(this.usernameInput).subscribe(e => {
-      this.usernameInput.nativeElement.focus();
+      if (!this.didSetFocus) {
+        this.didSetFocus = true;
+        this.usernameInput.nativeElement.focus();
+      }      
     });
   }
 
@@ -219,12 +223,23 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   canLogin() {
+    
     if (this.logo_ready && this.connected &&
        (this.failover_status === 'SINGLE' ||
         this.failover_status === 'MASTER' ||
         this.product_type === 'CORE' )) {
+
+          if (!this.didSetFocus && this.usernameInput) {
+            setTimeout(() => {
+              this.didSetFocus = true;
+              this.usernameInput.nativeElement.focus();            
+            }, 10);
+            
+          }
+
           return true;
     } else {
+      
       return false;
     }
   }
