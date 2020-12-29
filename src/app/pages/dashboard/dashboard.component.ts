@@ -368,9 +368,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.core.register({observerClass: this, eventName: 'RootDatasets_' + uuid}).subscribe((evt:CoreEvent) => {
       const data = evt.data.responses.map(x => x[0]); 
-      const nonBootPools = data.filter(v => v.id !== 'boot-pool');
       const clone = Object.assign({}, evt);
-      clone.data = nonBootPools;
+      clone.data = data;
       this.setVolumeData(clone);
       this.isDataReady();
     });
