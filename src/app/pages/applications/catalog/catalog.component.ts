@@ -30,6 +30,9 @@ export class CatalogComponent implements OnInit {
   @Output() switchTab = new EventEmitter<string>();
 
   public catalogApps = [];
+  public filteredCatalogApps = [];
+  public filterString = '';
+
   private dialogRef: any;
   private poolList = [];
   private selectedPool = '';
@@ -106,6 +109,8 @@ export class CatalogComponent implements OnInit {
             this.catalogApps.push(catalogItem);            
           }
         }
+
+        this.filerApps();
       }
     })
     
@@ -128,6 +133,9 @@ export class CatalogComponent implements OnInit {
         }
       } else if (evt.data.event_control == 'launch' && evt.data.launch) {
         this.doInstall('ix-chart');
+      } else if (evt.data.event_control == 'filter') {
+        this.filterString = evt.data.filter;
+        this.filerApps();
       }
     })
 
@@ -136,6 +144,11 @@ export class CatalogComponent implements OnInit {
       actionConfig: {
         target: this.settingsEvent,
         controls: [
+          {
+            name: 'filter',
+            type: 'input',
+            value: 'value',
+          },
           {
             name: 'settings',
             label: helptext.settings,
@@ -240,5 +253,12 @@ export class CatalogComponent implements OnInit {
     }
   }
 
+  filerApps() {
+    if (this.filterString) {
+      this.filteredCatalogApps = this.catalogApps.filter(app => app.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1);
+    } else {
+      this.filteredCatalogApps = this.catalogApps;
+    }
+  }
   
 }
