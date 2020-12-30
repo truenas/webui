@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
 import { DialogService, SystemGeneralService } from '../../../services/index';
@@ -16,6 +16,8 @@ import { NextCloudFormComponent } from '../forms/nextcloud-form.component';
 import { MinioFormComponent } from '../forms/minio-form.component';
 
 import  helptext  from '../../../helptext/apps/apps';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 
 @Component({
   selector: 'app-charts',
@@ -24,6 +26,9 @@ import  helptext  from '../../../helptext/apps/apps';
 })
 export class ChartReleasesComponent implements OnInit {
   public chartItems = [];
+  public filteredChartItems = [];
+  public filterString = '';
+
   private dialogRef: any;
   public ixIcon = 'assets/images/ix-original.png';
   private rollbackChartName: string;
@@ -33,6 +38,7 @@ export class ChartReleasesComponent implements OnInit {
   private minioForm: MinioFormComponent;
   private refreshTable: Subscription;
   private refreshForm: Subscription;
+  public settingsEvent: Subject<CoreEvent>;
 
   public rollBackChart: DialogFormConfiguration = {
     title: helptext.charts.rollback_dialog.title,
@@ -62,7 +68,7 @@ export class ChartReleasesComponent implements OnInit {
   constructor(private mdDialog: MatDialog,
     private dialogService: DialogService, private translate: TranslateService,
     private appService: ApplicationsService, private modalService: ModalService,
-    private sysGeneralService: SystemGeneralService) { }
+    private core: CoreService, private sysGeneralService: SystemGeneralService) { }
 
   ngOnInit(): void {
     this.refreshChartReleases();
@@ -73,8 +79,37 @@ export class ChartReleasesComponent implements OnInit {
     this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
       this.refreshForms();
     });
+
+    this.setupToolbar();
   }
 
+
+  setupToolbar() {
+    this.settingsEvent = new Subject();
+    this.settingsEvent.subscribe((evt: CoreEvent) => {
+      if (evt.data.event_control == 'filter') {
+        this.filterString = evt.data.filter;
+        this.filerChartItems();
+      }
+    })
+
+    const settingsConfig = {
+      actionType: EntityToolbarComponent,
+      actionConfig: {
+        target: this.settingsEvent,
+        controls: [
+          {
+            name: 'filter',
+            type: 'input',
+            value: 'value',
+          },
+        ]
+      }
+    };
+
+    this.core.emit({name:"GlobalActions", data: settingsConfig, sender: this});
+
+  }
   refreshForms() {
     this.chartReleaseForm = new ChartReleaseEditComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
     this.plexForm = new PlexFormComponent(this.mdDialog,this.dialogService,this.modalService,this.sysGeneralService,this.appService);
@@ -114,7 +149,9 @@ export class ChartReleasesComponent implements OnInit {
           chartObj['used_ports'] = ports.join(', ');
           this.chartItems.push(chartObj);
         }  
-      })
+      });
+
+      this.filerChartItems();
     })
   }
 
@@ -252,5 +289,13 @@ export class ChartReleasesComponent implements OnInit {
         }
       })
     })
+  }
+
+  filerChartItems() {
+    if (this.filterString) {
+      this.filteredChartItems = this.chartItems.filter(chart => chart.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1);
+    } else {
+      this.filteredChartItems = this.chartItems;
+    }
   }
 }
