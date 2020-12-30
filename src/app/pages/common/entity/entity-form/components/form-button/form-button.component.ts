@@ -9,12 +9,19 @@ import {Field} from '../../models/field.interface';
   selector : 'form-button',
   styleUrls : [ 'form-button.component.scss' ],
   template : `
-    <div 
+    <div
+      *ngIf="!config.isHidden"
       class="dynamic-field form-button"
       [formGroup]="group">
       <button
+        mat-button
+        color="accent"
         [disabled]="config.disabled"
-        type="submit">
+        [type]="config.inputType ? config.inputType : 'submit'"
+        (click)="customEventMethod($event)"
+        ix-auto
+        ix-auto-type="button"
+        ix-auto-identifier="{{config.customEventActionLabel | uppercase}}">
         {{ config.label | translate }}
       </button>
     </div>
@@ -25,4 +32,11 @@ export class FormButtonComponent implements Field {
   group: FormGroup;
   fieldShow: string;
   constructor(public translate: TranslateService) {}
+
+  customEventMethod($event) {
+    if( this.config.customEventMethod !== undefined && this.config.customEventMethod != null) {
+      this.config.customEventMethod({ event: $event });
+    }
+    $event.preventDefault();
+  }
 }
