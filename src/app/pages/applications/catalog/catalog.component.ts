@@ -6,7 +6,6 @@ import { Subject, Subscription } from 'rxjs';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { DialogService, SystemGeneralService } from '../../../services/index';
@@ -120,62 +119,30 @@ export class CatalogComponent implements OnInit {
       this.refreshForms();
     });
 
-    this.settingsEvent = new Subject();
-    this.settingsEvent.subscribe((evt: CoreEvent) => {
-      if (evt.data.event_control == 'settings' && evt.data.settings) {
-        switch (evt.data.settings.value) {
-          case 'select_pool':
-            return this.selectPool();
-          
-          case 'advanced_settings':
-            this.modalService.open('slide-in-form', this.kubernetesForm);
-            break;
-        }
-      } else if (evt.data.event_control == 'launch' && evt.data.launch) {
-        this.doInstall('ix-chart');
-      } else if (evt.data.event_control == 'filter') {
-        this.filterString = evt.data.filter;
-        this.filerApps();
-      }
-    })
-
-    const settingsConfig = {
-      actionType: EntityToolbarComponent,
-      actionConfig: {
-        target: this.settingsEvent,
-        controls: [
-          {
-            name: 'filter',
-            type: 'input',
-            value: 'value',
-          },
-          {
-            name: 'settings',
-            label: helptext.settings,
-            type: 'menu',
-            options: [
-              { label: helptext.choose, value: 'select_pool' }, 
-              { label: helptext.advanced, value: 'advanced_settings' }, 
-            ]
-          },
-          {
-            name: 'launch',
-            label: helptext.launch,
-            type: 'button',
-            color: 'primary',
-            value: 'launch'
-          }
-        ]
-      }
-    };
-
-    this.core.emit({name:"GlobalActions", data: settingsConfig, sender: this});
+    
 
     this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
       this.switchTab.emit('1');
     })
   }
 
+  onToolbarAction(evt: CoreEvent) {
+    if (evt.data.event_control == 'settings' && evt.data.settings) {
+      switch (evt.data.settings.value) {
+        case 'select_pool':
+          return this.selectPool();
+        
+        case 'advanced_settings':
+          this.modalService.open('slide-in-form', this.kubernetesForm);
+          break;
+      }
+    } else if (evt.data.event_control == 'launch' && evt.data.launch) {
+      this.doInstall('ix-chart');
+    } else if (evt.data.event_control == 'filter') {
+      this.filterString = evt.data.filter;
+      this.filerApps();
+    }
+  }
 
   refreshForms() {
     this.kubernetesForm = new KubernetesSettingsComponent(this.modalService, this.appService);

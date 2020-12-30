@@ -79,37 +79,15 @@ export class ChartReleasesComponent implements OnInit {
     this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
       this.refreshForms();
     });
-
-    this.setupToolbar();
   }
 
-
-  setupToolbar() {
-    this.settingsEvent = new Subject();
-    this.settingsEvent.subscribe((evt: CoreEvent) => {
-      if (evt.data.event_control == 'filter') {
-        this.filterString = evt.data.filter;
-        this.filerChartItems();
-      }
-    })
-
-    const settingsConfig = {
-      actionType: EntityToolbarComponent,
-      actionConfig: {
-        target: this.settingsEvent,
-        controls: [
-          {
-            name: 'filter',
-            type: 'input',
-            value: 'value',
-          },
-        ]
-      }
-    };
-
-    this.core.emit({name:"GlobalActions", data: settingsConfig, sender: this});
-
+  onToolbarAction(evt: CoreEvent) {
+    if (evt.data.event_control == 'filter') {
+      this.filterString = evt.data.filter;
+      this.filerChartItems();
+    }
   }
+  
   refreshForms() {
     this.chartReleaseForm = new ChartReleaseEditComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
     this.plexForm = new PlexFormComponent(this.mdDialog,this.dialogService,this.modalService,this.sysGeneralService,this.appService);
