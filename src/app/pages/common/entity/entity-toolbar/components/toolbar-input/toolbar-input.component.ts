@@ -11,7 +11,7 @@ import { Subject } from 'rxjs/Subject';
   selector : 'toolbar-input',
   styleUrls : [ 'toolbar-input.component.scss' ],
   template : `
-    <div class="form-element" id="row-filter">
+    <div class="toolbar-input form-element" id="row-filter">
       <mat-form-field floatPlaceholder="auto">
         <span matPrefix style="cursor: default; user-select: none;"><mat-icon>search</mat-icon></span>
         <input matInput #filter class="mat-input-element"
