@@ -48,7 +48,7 @@ import 'core-js/es/reflect';
 
 
 /** ALL Firefox browsers require the following to support `@angular/animation`. **/
-// import 'web-animations-js';  // Run `npm install --save web-animations-js`.
+//import 'web-animations-js';  // Run `npm install --save web-animations-js`.
 
 
 
@@ -62,6 +62,8 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+
+(window as any)['global'] = window;
 
 /**
  * Date, currency, decimal and percent pipes.

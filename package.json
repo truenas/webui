@@ -108,9 +108,9 @@
     "stream": "0.0.2",
     "stylefire": "7.0.2",
     "what-is-my-ip-address": "1.0.3",
-    "xterm": "^4.9.0",
-    "xterm-addon-attach": "^0.6.0",
-    "xterm-addon-fit": "^0.4.0",
+    "xterm": "4.9.0",
+    "xterm-addon-attach": "0.6.0",
+    "xterm-addon-fit": "0.4.0",
     "zone.js": "0.10.3"
   },
   "resolutions": {
