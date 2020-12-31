@@ -566,7 +566,9 @@ export class ZvolFormComponent implements Formconfiguration {
             this.entityForm.setDisabled('key', generate_key, generate_key);
           });
         }
-      }      
+      }else {
+        entityForm.setDisabled('name',true);
+      }
     
       this.translate.get('Inherit').subscribe(inheritTr => {
 
@@ -595,7 +597,7 @@ export class ZvolFormComponent implements Formconfiguration {
           this.ws.call('pool.dataset.query', [[["id","=",parent_dataset]]]).subscribe((parent_dataset_res)=>{
 
             this.custActions = null;
-            entityForm.setDisabled('name',true);
+            
             this.sparseHidden =true;
             this.volblocksizeHidden =true;
             _.find(this.fieldConfig, {name:'sparse'})['isHidden']=true;
@@ -769,11 +771,66 @@ export class ZvolFormComponent implements Formconfiguration {
       delete(data.volblocksize);
     }
 
+    // encryption values
+    if (data.inherit_encryption) {
+      delete data.encryption;
+    } else {
+      if (data.encryption) {
+        data['encryption_options'] = {}
+        if (data.encryption_type === 'key') {
+          data.encryption_options.generate_key = data.generate_key;
+          if (!data.generate_key) {
+            data.encryption_options.key = data.key;
+          }
+        } else if (data.encryption_type === 'passphrase') {
+          data.encryption_options.passphrase = data.passphrase;
+          data.encryption_options.pbkdf2iters = data.pbkdf2iters;
+        }
+        data.encryption_options.algorithm = data.algorithm;
+      }
+    }
+    delete data.key;
+    delete data.generate_key;
+    delete data.passphrase;
+    delete data.confirm_passphrase;
+    delete data.pbkdf2iters;
+    delete data.encryption_type;
+    delete data.algorithm;
+
     return this.ws.call('pool.dataset.create', [ data ]);
   }
+
   editSubmit(body: any) {
      this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((res)=>{
       this.edit_data = this.sendAsBasicOrAdvanced(body);
+      
+      if (this.edit_data.inherit_encryption) {
+        delete this.edit_data.encryption;
+      } else {
+        if (this.edit_data.encryption) {
+          this.edit_data['encryption_options'] = {}
+          if (this.edit_data.encryption_type === 'key') {
+            this.edit_data.encryption_options.generate_key = this.edit_data.generate_key;
+            if (!this.edit_data.generate_key) {
+              this.edit_data.encryption_options.key = this.edit_data.key;
+            }
+          } else if (this.edit_data.encryption_type === 'passphrase') {
+            this.edit_data.encryption_options.passphrase = this.edit_data.passphrase;
+            this.edit_data.encryption_options.pbkdf2iters = this.edit_data.pbkdf2iters;
+          }
+          this.edit_data.encryption_options.algorithm = this.edit_data.algorithm;
+        }
+      }
+
+      delete this.edit_data.inherit_encryption;
+      delete this.edit_data.key;
+      delete this.edit_data.generate_key;
+      delete this.edit_data.passphrase;
+      delete this.edit_data.confirm_passphrase;
+      delete this.edit_data.pbkdf2iters;
+      delete this.edit_data.encryption_type;
+      delete this.edit_data.algorithm;
+      
       let volblocksize_integer_value = res[0].volblocksize.value.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
       volblocksize_integer_value = parseInt(volblocksize_integer_value,10)
       if (volblocksize_integer_value === 512){
