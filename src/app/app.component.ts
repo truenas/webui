@@ -209,7 +209,7 @@ export class AppComponent {
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand-logo-mark-full-color-rgb.svg")
     );
     this.matIconRegistry.addSvgIcon(
-      "truecommand_logo_white",
+      "truecommand_logo_mono",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand-logo-mark-white-rgb.svg")
     );
 
