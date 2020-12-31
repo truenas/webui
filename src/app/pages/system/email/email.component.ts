@@ -256,8 +256,6 @@ export class EmailComponent implements OnDestroy {
         {
           type: 'button',
           name: 'login-gmail',
-          inputType: 'button',
-          label: helptext_system_email.auth.login_button,
           relation: [
             {
               action: 'HIDE',
@@ -267,6 +265,7 @@ export class EmailComponent implements OnDestroy {
               }],
             },
           ],
+          customEventActionLabel: helptext_system_email.auth.login_button,
           customEventMethod: () => {
             const self = this;
             const dialogService = this.dialogservice;
