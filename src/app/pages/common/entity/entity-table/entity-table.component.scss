@@ -31,13 +31,13 @@ table{
   //max-width: 0px !important;
 // }
 
-td.threedot-column, td.expansion-chevrons-column  {
+th.threedot-column, td.threedot-column, th.expansion-chevrons-column, td.expansion-chevrons-column  {
   border-left: 1px solid var(--lines);
   padding-right: 12px !important;
   padding-left: 12px !important;
 }
 
-td.expansion-chevrons-column {
+th.expansion-chevrons-column, td.expansion-chevrons-column {
   padding-right: 24px !important;
 }
 
@@ -310,5 +310,5 @@ div#cardHeaderContainer {
 }
 
 .sticky-border-right {
-  border-right: 1px solid var(--lines); //ccc8c8 //afa7a7
+  border-right: 1px solid var(--lines);
 }
