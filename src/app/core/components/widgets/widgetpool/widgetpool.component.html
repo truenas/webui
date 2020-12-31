@@ -144,7 +144,7 @@
                   </div>
                   <!-- END ROW -->
 
-                  <div class="disk-errors tr">
+                  <div class="disk-errors tr" *ngif="poolState.status == 'ONLINE'">
                     <div class="td label">
                       <strong>Disks with Errors:</strong> 
                     </div>
@@ -241,16 +241,23 @@
 
                   <span *ngIf="vdev.type !== 'DISK' && vdev.children.length <= 3;" class="vdev" >
                     <span *ngFor="let device of vdev.children; let child = index">
-                      <mat-icon *ngIf="trimMultipath(device.disk.name).isMultipath" class="multipath-icon" role="img" svgIcon="multipath"></mat-icon>
-                      <span>{{trimMultipath(device.disk.name).isMultipath ? device.disk.name : device.disk}}</span>
-                      {{trimMultipath(device.disk.name).name}}<span *ngIf="child < 3 - 1 && child !== vdev.children.length - 1">,</span>&nbsp;&nbsp;</span>
+                      <div *ngIf="device.disk">
+                        <mat-icon *ngIf="trimMultipath(device.disk.name).isMultipath" class="multipath-icon" role="img" svgIcon="multipath"></mat-icon>
+                        <span>{{trimMultipath(device.disk.name).isMultipath ? device.disk.name : device.disk}}</span>
+                        {{trimMultipath(device.disk.name).name}}
+                        <span *ngIf="child < 3 - 1 && child !== vdev.children.length - 1">,</span>&nbsp;&nbsp;
+                      </div>
+                    </span>
                   </span>
 
                   <span *ngIf="vdev.children.length > 3;" class="vdev">
                     <span *ngFor="let device of vdev.children; let child = index" [ngClass]="{'hidden': child >= 3}">
-                      <mat-icon *ngIf="trimMultipath(device.disk).isMultipath" class="multipath-icon" role="img" svgIcon="multipath"></mat-icon>
-                      <span>{{trimMultipath(device.disk).isMultipath ? trimMultipath(device.disk).name : device.disk}}</span>
-                      <span *ngIf="child < 3 - 1 && child !== vdev.children.length - 1">,</span>&nbsp;&nbsp;</span>
+                      <div *ngIf="device.disk">      
+                        <mat-icon *ngIf="trimMultipath(device.disk).isMultipath" class="multipath-icon" role="img" svgIcon="multipath"></mat-icon>
+                        <span>{{trimMultipath(device.disk).isMultipath ? trimMultipath(device.disk).name : device.disk}}</span>
+                        <span *ngIf="child < 3 - 1 && child !== vdev.children.length - 1">,</span>&nbsp;&nbsp;
+                      </div>
+                    </span>
                     <span>&nbsp;&nbsp; ({{vdev.children.length - 3}} more)</span>
                   </span>
 

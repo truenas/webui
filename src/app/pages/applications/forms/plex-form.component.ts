@@ -252,6 +252,7 @@ export class PlexFormComponent {
     data.config.repository = data.config.image.repository;
     data.config.tag = data.config.image.tag;
     data.config.pullPolicy = data.config.image.pullPolicy;
+    data.config.port = data.config.plexServiceTCP.port;
     return data.config;
   }
 

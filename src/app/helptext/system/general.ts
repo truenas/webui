@@ -114,11 +114,6 @@ export const helptext_system_general = {
     tooltip: T('')
   },
 
-  poolkeys: {
-    placeholder: T("Export Pool Encryption Keys"),
-    tooltip: T('')
-  },
-
   crash_reporting: {
     placeholder: T("Crash reporting"),
     tooltip: T("Send failed HTTP request data which can include client\

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-
+import {FormBuilder, FormControl, FormGroup, FormArray, Validators} from '@angular/forms';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import { ModalService } from '../../../services/modal.service';
@@ -10,6 +10,8 @@ import { DialogService } from '../../../services/index';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { ApplicationsService } from '../applications.service';
 import  helptext  from '../../../helptext/apps/apps';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FormListComponent } from '../../common/entity/entity-form/components/form-list/form-list.component';
 
 @Component({
   selector: 'app-chart-release-edit',
@@ -20,6 +22,7 @@ export class ChartReleaseEditComponent {
   protected queryCallOption: Array<any>;
   protected editCall: string = 'chart.release.update';
   protected isEntity: boolean = true;
+  protected entityForm: EntityFormComponent;
 
   private title= helptext.chartForm.editTitle;
   private name: string;
@@ -165,6 +168,7 @@ export class ChartReleaseEditComponent {
           name: 'externalInterfaces',
           width: '100%',
           box: true,
+          customEventMethod: this.onChangeExternalInterfaces,
           templateListField: [
             {
               type: 'select',
@@ -312,6 +316,7 @@ export class ChartReleaseEditComponent {
               name: 'hostPath',
               initial: '/mnt',
               explorerType: 'directory',
+              hideDirs: 'ix-applications',
               placeholder: helptext.chartForm.hostPathVolumes.hostPath.placeholder,
               tooltip: helptext.chartForm.hostPathVolumes.hostPath.tooltip,
             }, 
@@ -402,20 +407,22 @@ export class ChartReleaseEditComponent {
     return data.config;
   }
 
-  afterInit(entityEdit: any) {
-    // Not working: This sets the isHidden property as expected, but doesn't update the display in the lists within a list
-    // let extIntfg = _.find(this.fieldConfig, {'name': 'externalInterfaces'});
-    // let staticRoutesfg = _.find(extIntfg.templateListField, {'name': 'staticRoutes'});
-    // let staticIPfg = _.find(extIntfg.templateListField, {'name': 'staticIPConfigurations'});
-    // entityEdit.formGroup.controls['externalInterfaces'].valueChanges.subscribe(value => {
-    //   if (value[0].ipam === 'static') {
-    //     staticIPfg.isHidden = false;
-    //     staticRoutesfg.isHidden = false;
-    //   } else {
-    //     staticIPfg.isHidden = true;
-    //     staticRoutesfg.isHidden = true;
-    //   }
-    // })
+  onChangeExternalInterfaces(listComponent: FormListComponent) {
+    
+    listComponent.listsFromArray.controls.forEach((externalInterface, index) => {
+      const staticRoutesFC = _.find(listComponent.config.listFields[index], {'name': 'staticRoutes'});
+      const staticIPConfigurationsFC = _.find(listComponent.config.listFields[index], {'name': 'staticIPConfigurations'});
+  
+      (<FormGroup>externalInterface).controls['ipam'].valueChanges.subscribe(value => {
+        if (value === 'static') {
+          staticIPConfigurationsFC.isHidden = false;
+          staticRoutesFC.isHidden = false;
+        } else {
+          staticIPConfigurationsFC.isHidden = true;
+          staticRoutesFC.isHidden = true;
+        }
+      })
+    });
   }
 
   customSubmit(data) {

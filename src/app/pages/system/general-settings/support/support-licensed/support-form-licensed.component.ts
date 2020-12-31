@@ -37,6 +37,7 @@ export class SupportFormLicensedComponent {
           name : 'name',
           placeholder : helptext.name.placeholder,
           tooltip : helptext.name.tooltip,
+          tooltipPosition: 'below',
           required: true,
           validation : helptext.name.validation
         },
@@ -45,6 +46,7 @@ export class SupportFormLicensedComponent {
           name : 'email',
           placeholder : helptext.email.placeholder,
           tooltip : helptext.email.tooltip,
+          tooltipPosition: 'above',
           required: true,
           validation : helptext.email.validation
         },
@@ -53,6 +55,7 @@ export class SupportFormLicensedComponent {
           name : 'cc',
           placeholder : helptext.cc.placeholder,
           tooltip : helptext.cc.tooltip,
+          tooltipPosition: 'above',
           validation: [this.emailListValidator('cc')]
         },
         {
@@ -60,6 +63,7 @@ export class SupportFormLicensedComponent {
           name : 'phone',
           placeholder : helptext.phone.placeholder,
           tooltip : helptext.phone.tooltip,
+          tooltipPosition: 'above',
           required: true,
           validation : helptext.phone.validation
         },
@@ -68,6 +72,7 @@ export class SupportFormLicensedComponent {
           name : 'TNCategory',
           placeholder : helptext.type.placeholder,
           tooltip : helptext.type.tooltip,
+          tooltipPosition: 'above',
           options:[
             {label: 'Bug', value: 'BUG'},
             {label: 'Hardware', value: 'HARDWARE'},
@@ -81,6 +86,7 @@ export class SupportFormLicensedComponent {
           name : 'environment',
           placeholder : helptext.environment.placeholder,
           tooltip : helptext.environment.tooltip,
+          tooltipPosition: 'above',
           options:[
             {label: 'Production', value: 'production'},
             {label: 'Staging', value: 'staging'},
@@ -103,6 +109,7 @@ export class SupportFormLicensedComponent {
           name : 'criticality',
           placeholder : helptext.criticality.placeholder,
           tooltip : helptext.criticality.tooltip,
+          tooltipPosition: 'left',
           options:[
             {label: 'Inquiry', value: 'inquiry'},
             {label: 'Loss of Functionality', value: 'loss_functionality'},
@@ -116,6 +123,7 @@ export class SupportFormLicensedComponent {
           name : 'title',
           placeholder : helptext.title.placeholder,
           tooltip : helptext.title.tooltip,
+          tooltipPosition: 'left',
           required: true,
           validation : helptext.title.validation
         },
@@ -124,6 +132,7 @@ export class SupportFormLicensedComponent {
           name : 'body',
           placeholder : helptext.body.placeholder,
           tooltip : helptext.body.tooltip,
+          tooltipPosition: 'left',
           required: true,
           validation : helptext.body.validation,
           textAreaRows: 8
@@ -133,12 +142,14 @@ export class SupportFormLicensedComponent {
           name : 'attach_debug',
           placeholder : helptext.attach_debug.placeholder,
           tooltip : helptext.attach_debug.tooltip,
+          tooltipPosition: 'left',
         },
         {
           type: 'upload',
           name: 'screenshot',
           placeholder: helptext.screenshot.placeholder,
           tooltip: helptext.screenshot.tooltip,
+          tooltipPosition: 'left',
           fileLocation: '',
           updater: this.updater,
           parent: this,

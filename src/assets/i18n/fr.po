@@ -93,9 +93,6 @@ msgstr " disques, le nouveau vdev a "
 msgid " is "
 msgstr " est "
 
-msgid " is a required field."
-msgstr " est un champ obligatoire."
-
 msgid " is required."
 msgstr " est requis."
 
@@ -123,6 +120,9 @@ msgstr " minutes"
 
 msgid " official plugins"
 msgstr " plugins officiels"
+
+msgid " on pool "
+msgstr ""
 
 msgid " seconds"
 msgstr " secondes"
@@ -675,8 +675,8 @@ msgid ""
 "imported onto the system."
 msgstr ""
 "La <i>Demande de signature de certificat </i> est utilisée pour obtenir une "
-"signature AC. La <i> Demande de signature de certificat d’importation </i> permet "
-"d’importer un CSR existant dans le système."
+"signature AC. La <i> Demande de signature de certificat d’importation </i> "
+"permet d’importer un CSR existant dans le système."
 
 msgid ""
 "<i>Default (Clone Jail)</i> or <i>Basejail</i>. Clone jails are clones of "
@@ -725,9 +725,9 @@ msgid ""
 "<i>Import Certificate</i> allows an existing certificate to be imported "
 "onto  the system."
 msgstr ""
-"<i>Le certificat interne</i> est utilisé pour les systèmes internes ou locaux. "
-"<Importer Certificat</i> permet l’importation d’un certificat existant sur le "
-"système."
+"<i>Le certificat interne</i> est utilisé pour les systèmes internes ou "
+"locaux. <Importer Certificat</i> permet l’importation d’un certificat "
+"existant sur le système."
 
 msgid ""
 "<i>PUSH</i> sends data to cloud storage. <i>PULL</i>  receives data from "
@@ -1027,9 +1027,6 @@ msgstr "À propos"
 msgid "About."
 msgstr "À propos."
 
-msgid "Accent"
-msgstr "Accent"
-
 msgid "Access"
 msgstr "Accès"
 
@@ -1223,6 +1220,9 @@ msgstr "Ajouter DNS Authenticator"
 msgid "Add Dataset"
 msgstr "Ajouter un dataset"
 
+msgid "Add External Interfaces"
+msgstr ""
+
 msgid "Add Group"
 msgstr "Ajouter un groupe"
 
@@ -1334,8 +1334,8 @@ msgstr ""
 
 msgid "Adding NFS NPN requires sufficient privileges. Enter your credentials below."
 msgstr ""
-"L’ajout de NFS NPN nécessite suffisamment de privilèges. Entrez vos informations "
-"d’identification ci-dessous."
+"L’ajout de NFS NPN nécessite suffisamment de privilèges. Entrez vos "
+"informations d’identification ci-dessous."
 
 msgid "Adding Vdevs to an encrypted pool resets the passphrase and recovery key!"
 msgstr ""
@@ -1558,6 +1558,12 @@ msgstr "Création avancée de réplication"
 msgid "Advanced Settings"
 msgstr "Réglages avancés"
 
+msgid "Advanced Settngs"
+msgstr ""
+
+msgid "Advertise IP"
+msgstr ""
+
 msgid ""
 "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click "
 "<b>Fetch Datastores</b> and select the datastore to be synchronized."
@@ -1591,8 +1597,8 @@ msgid ""
 "Alias for the identical interface  on the other TrueNAS controller. The "
 "alias can be an IPv4 or IPv6 address."
 msgstr ""
-"Alias pour l’interface identique sur l’autre contrôleur TrueNAS. L’alias peut être "
-"une adresse IPv4 ou IPv6."
+"Alias pour l’interface identique sur l’autre contrôleur TrueNAS. L’alias "
+"peut être une adresse IPv4 ou IPv6."
 
 msgid "Aliases"
 msgstr "Alias"
@@ -1986,18 +1992,6 @@ msgstr "Inclure également le schéma de nommage"
 msgid "Also unlock any encrypted dataset stored within this dataset."
 msgstr "Déverrouillez également tout dataset chiffré stockées dans ce dataset."
 
-msgid "Alt Background 1"
-msgstr ""
-
-msgid "Alt Background 2"
-msgstr ""
-
-msgid "Alt Foreground 1"
-msgstr ""
-
-msgid "Alt Foreground 2"
-msgstr ""
-
 msgid ""
 "Alternative names that SMB clients can use when connecting to this NAS. Can "
 "be no greater than 15 characters."
@@ -2013,6 +2007,12 @@ msgstr "Toujours Chroot"
 
 msgid "Always On"
 msgstr "Toujours actif"
+
+msgid "Always pull image even if present on host."
+msgstr ""
+
+msgid "Always restart containers in a pod if they exit."
+msgstr ""
 
 msgid ""
 "Amazon Web Services Key ID. This is found on  <a "
@@ -2085,9 +2085,6 @@ msgstr "Bande passante de téléchargement des utilisateurs anonymes"
 msgid "Anonymous User Upload Bandwidth"
 msgstr "Bande passante de téléchargement des utilisateurs anonymes"
 
-msgid "Another theme is using this label. Please enter a new label."
-msgstr "Un autre thème utilise ce label. Veuillez saisir un nouveau label."
-
 msgid "Any notes about initiators."
 msgstr "Des notes sur les initiateurs."
 
@@ -2134,6 +2131,9 @@ msgstr ""
 
 msgid "Application Key"
 msgstr "Application Key"
+
+msgid "Application Name"
+msgstr ""
 
 msgid "Applications"
 msgstr "Applications"
@@ -2206,6 +2206,9 @@ msgstr ""
 msgid "Apply updates and reboot system after downloading."
 msgstr "Appliquer les mises à jour et redémarrer le système après le téléchargement."
 
+msgid "Apps"
+msgstr ""
+
 msgid "Apr"
 msgstr "Avr"
 
@@ -2266,6 +2269,9 @@ msgstr ""
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"                "
 "target=\"_blank\">rsyncd.conf(5)</a> du serveur rsync ou dans les "
 "<b>modules Rsync</b> d'un autre système."
+
+msgid "At least one pool must be available to use apps"
+msgstr ""
 
 msgid "Attach"
 msgstr "Attacher"
@@ -2503,12 +2509,6 @@ msgstr ""
 msgid "Background (lowest)"
 msgstr "Fond (plus basse)"
 
-msgid "Background 1"
-msgstr ""
-
-msgid "Background 2"
-msgstr ""
-
 msgid "Backup Credentials"
 msgstr ""
 
@@ -2532,9 +2532,6 @@ msgstr "Basejail"
 
 msgid "Basic"
 msgstr "Basique"
-
-msgid "Basic Buttons"
-msgstr "Boutons de base"
 
 msgid "Basic Constraints"
 msgstr "Contraintes de base"
@@ -2610,9 +2607,6 @@ msgstr "Taille du bloc"
 
 msgid "Block size"
 msgstr "Taille du bloc"
-
-msgid "Blue"
-msgstr "Bleu"
 
 msgid "Boot"
 msgstr "Boot"
@@ -2869,9 +2863,6 @@ msgstr "CN"
 msgid "CN Realm"
 msgstr "CN Realm"
 
-msgid "COLORS"
-msgstr "COULEURS"
-
 msgid "CONNECT"
 msgstr "CONNECTE"
 
@@ -2957,6 +2948,9 @@ msgstr "Capacité"
 
 msgid "Case Sensitivity"
 msgstr "‪Sensibilité à la casse"
+
+msgid "Catalog"
+msgstr ""
 
 msgid "Category"
 msgstr "Catégorie"
@@ -3138,9 +3132,6 @@ msgstr "Vérifier les mises à jour"
 msgid "Check for Updates Daily and Download if Available"
 msgstr "Vérifier les mises à jour quotidiennes et les télécharger si disponibles"
 
-msgid "Check me!"
-msgstr "Vérifiez-moi !"
-
 msgid ""
 "Check the <i>hostid</i> property of the jail. If not the same as the host, "
 "do not start the jail."
@@ -3242,11 +3233,11 @@ msgstr ""
 "production de logs lors de la lecture de fichiers. Cela peut se traduire "
 "par des gains de performance importants."
 
-msgid "Choose Accent"
-msgstr "Choisissez l'accent"
-
 msgid "Choose File"
 msgstr "Choisir le fichier"
+
+msgid "Choose Pool"
+msgstr ""
 
 msgid "Choose Pool for Plugin and Jail Manager"
 msgstr "Choisissez un volume pour les plugin et le manager jail"
@@ -3254,14 +3245,8 @@ msgstr "Choisissez un volume pour les plugin et le manager jail"
 msgid "Choose Pool for Plugin and Jail Storage"
 msgstr "Choisissez un volume pour les plugin et le stockage jail"
 
-msgid "Choose Primary"
-msgstr "Choisir le primaire"
-
 msgid "Choose Theme"
 msgstr "Choisir un thème"
-
-msgid "Choose Topbar"
-msgstr "Choisissez la barre supérieure"
 
 msgid "Choose a DNS provider and configure any required authenticator attributes."
 msgstr ""
@@ -3286,9 +3271,6 @@ msgid "Choose a connection that has been saved in  <b>System > SSH Connections</
 msgstr ""
 "Choisissez une connexion qui a été enregistrée dans <b>Système &gt; "
 "Connexions SSH</b>."
-
-msgid "Choose a date"
-msgstr "Choisir une date"
 
 msgid "Choose a date format."
 msgstr "Choisissez un format de date."
@@ -3331,10 +3313,16 @@ msgstr ""
 "personnel de l'utilisateur est indiqué ici lors de la modification d'un "
 "utilisateur."
 
+msgid "Choose a pool for Apps"
+msgstr ""
+
 msgid "Choose a pool for plugin and jail storage."
 msgstr ""
 "Choisissez un volume pour le stockage des plugins et de l'environnement "
 "jail."
+
+msgid "Choose a pool for the Apps"
+msgstr ""
 
 msgid "Choose a pool to scrub."
 msgstr "Choisissez un volume à nettoyer."
@@ -3389,14 +3377,11 @@ msgid ""
 "Choose a temporary location for the encryption key that will decrypt "
 "replicated data."
 msgstr ""
-"Choisissez un emplacement temporaire pour la clé de chiffrement qui déchiffre les "
-"données répliquées."
+"Choisissez un emplacement temporaire pour la clé de chiffrement qui "
+"déchiffre les données répliquées."
 
 msgid "Choose a time format."
 msgstr "Choisissez un format de temps."
-
-msgid "Choose a topbar color."
-msgstr "Choisissez une couleur pour la barre supérieure."
 
 msgid ""
 "Choose a valid client certificate which exists on this system and hasn't "
@@ -3435,9 +3420,6 @@ msgstr "Choisissez une méthode d'authentification."
 msgid "Choose an encryption mode to use with LDAP."
 msgstr "Choisissez un mode de chiffrement à utiliser avec LDAP."
 
-msgid "Choose an option"
-msgstr "Choisir une option"
-
 msgid ""
 "Choose between <i>Internal CA</i>, <i>Intermediate CA</i>, and  <i>Import "
 "CA</i>. An <i>Internal CA</i> functions like a publicly trusted CA  to sign "
@@ -3468,8 +3450,8 @@ msgid ""
 "Choose between a <i>Hex</i> (base 16 numeral) or <i>Passphrase</i> "
 "(alphanumeric) style encryption key."
 msgstr ""
-"Choisissez entre une clé de chiffrement du style <i>Hex</i> (base 16 chiffres) ou "
-"<i>Passphrase</i> (alphanumérique)."
+"Choisissez entre une clé de chiffrement du style <i>Hex</i> (base 16 "
+"chiffres) ou <i>Passphrase</i> (alphanumérique)."
 
 msgid ""
 "Choose how many log entries to create. Choices range from the least log "
@@ -3506,22 +3488,12 @@ msgstr "Choisissez les permissions pour ce module rsync."
 msgid "Choose the VM operating system type."
 msgstr "Sélectionnez le type de système d'exploitation pour la VM."
 
-msgid "Choose the accent color for the theme."
-msgstr "Choisissez la couleur d'accent pour le thème."
-
 msgid ""
 "Choose the backend to map Windows security identifiers (SIDs) to UNIX UIDs "
 "and GIDs. Click Edit to configure that backend."
 msgstr ""
 "Choisissez le backend pour mapper les identificateurs de sécurité Windows "
 "(SID) aux UID et GID UNIX. Cliquez sur Modifier pour configurer ce backend."
-
-msgid ""
-"Choose the color to display next to the Menu Label                     in "
-"the Favorites menu."
-msgstr ""
-"Choisissez la couleur à afficher à côté de l'étiquette du menu dans le menu "
-"des favoris."
 
 msgid ""
 "Choose the hour and minute when new resilver tasks                are not "
@@ -3544,9 +3516,6 @@ msgid ""
 msgstr ""
 "Choisissez la plateforme qui utilisera ce partage. Les options associées "
 "sont appliquées à ce partage."
-
-msgid "Choose the primary color for the theme."
-msgstr "Choisissez la couleur primaire du thème."
 
 msgid "Choose the protocol to use when connecting with the remote system."
 msgstr ""
@@ -3723,20 +3692,6 @@ msgid "Click on alarms to select or unselect."
 msgstr "Cliquez sur les alarmes pour sélectionner ou désélectionner."
 
 msgid ""
-"Click the swatch to pick a color or enter a color                     hex "
-"value."
-msgstr ""
-"Cliquez sur l'échantillon pour choisir une couleur ou entrez une valeur "
-"hexagonale de la couleur."
-
-msgid ""
-"Click the swatch to pick a color or enter a color                    hex "
-"value."
-msgstr ""
-"Cliquez sur l'échantillon pour choisir une couleur ou entrez une valeur "
-"hexadécimal de la couleur."
-
-msgid ""
 "Clicking Continue allows TrueNAS to finish the update in the background "
 "while  Abort stops the process and reverts the dataset ACL to the "
 "previously active ACL."
@@ -3780,6 +3735,12 @@ msgstr "Identifiants Cloud"
 
 msgid "Cloud sync <i>"
 msgstr "Synchronisation cloud <i>"
+
+msgid "Cluster CIDR"
+msgstr ""
+
+msgid "Cluster DNS IP"
+msgstr ""
 
 msgid "Cluster Name"
 msgstr "Nom du cluster"
@@ -3844,6 +3805,11 @@ msgstr ""
 
 msgid "Command"
 msgstr "Commande"
+
+msgid ""
+"Commands to execute inside container overriding image CMD default.  Use "
+"<i>ENTER</i> after each entry."
+msgstr ""
 
 msgid ""
 "Commands to run in the jail environment before the jail is removed and "
@@ -3943,6 +3909,12 @@ msgstr "Compte d'ordinateur OU"
 msgid "Config Files"
 msgstr "Fichiers de config"
 
+msgid "Config Hostpath"
+msgstr ""
+
+msgid "Config Hostpath Enabled"
+msgstr ""
+
 msgid "Config could not be downloaded"
 msgstr "La configuration n'a pas pu être téléchargée"
 
@@ -3987,6 +3959,9 @@ msgid ""
 msgstr ""
 "Configurer la topologie d'adressage virtuel en mode TUN.  (Le mode TAP "
 "utilise toujours une topologie SUBNET)"
+
+msgid "Configuring..."
+msgstr ""
 
 msgid "Confirm"
 msgstr "Confirmer"
@@ -4118,6 +4093,27 @@ msgstr "Contacter le support"
 msgid "Container"
 msgstr "Conteneur"
 
+msgid "Container Args"
+msgstr ""
+
+msgid "Container CMD"
+msgstr ""
+
+msgid "Container Entrypoint"
+msgstr ""
+
+msgid "Container Environment Variables"
+msgstr ""
+
+msgid "Container Port"
+msgstr ""
+
+msgid "Container Settings"
+msgstr ""
+
+msgid "Container port"
+msgstr ""
+
 msgid "Content Commitment"
 msgstr "Engagement de contenu"
 
@@ -4242,9 +4238,6 @@ msgstr "Créer CA"
 msgid "Create Certificate"
 msgstr "Créer un certificat"
 
-msgid "Create New Theme"
-msgstr "Créer un nouveau thème"
-
 msgid "Create Passphrase"
 msgstr "Créer une passphrase"
 
@@ -4256,9 +4249,6 @@ msgstr "Créer une connexion SSH"
 
 msgid "Create Snapshot"
 msgstr "Créer un instantané"
-
-msgid "Create Theme"
-msgstr "Créer le thème"
 
 msgid "Create Virtual Machine"
 msgstr "Créer une machine virtuelle"
@@ -4298,6 +4288,9 @@ msgstr "Créer un nouveau volume"
 
 msgid "Create new disk image"
 msgstr "Créer une nouvelle image disque"
+
+msgid "Create new pods and then kill old ones."
+msgstr ""
 
 msgid "Create new pool"
 msgstr "Créer un nouveau volume"
@@ -4415,9 +4408,6 @@ msgstr "Propriétés personnalisées"
 msgid "Custom Server"
 msgstr "Serveur personnalisé"
 
-msgid "Custom Theme Name"
-msgstr "Nom du thème personnalisé"
-
 msgid "Custom Value"
 msgstr "Valeur personnalisée"
 
@@ -4430,9 +4420,6 @@ msgid ""
 msgstr ""
 "Personnalise l'importance de l'alerte. Chaque niveau d'importance a une "
 "icône et une couleur différentes pour exprimer le niveau d'importance."
-
-msgid "Cyan"
-msgstr "Cyan"
 
 msgid ""
 "DDNS server name. For example,  <i>members.dyndns.org</i> denotes a server "
@@ -4472,11 +4459,20 @@ msgstr "DHCP Autoconfigure IPv4"
 msgid "DISABLED"
 msgstr "DÉSACTIVÉ"
 
+msgid "DNS"
+msgstr ""
+
+msgid "DNS Configuration"
+msgstr ""
+
 msgid "DNS Domain Name"
 msgstr "Nom de domaine DNS"
 
 msgid "DNS Forwarder"
 msgstr "DNS Forwarder"
+
+msgid "DNS Policy"
+msgstr ""
 
 msgid "DNS Servers"
 msgstr "Serveurs DNS"
@@ -4540,6 +4536,12 @@ msgstr "Données"
 msgid "Data Encipherment"
 msgstr "Chiffrement des données"
 
+msgid "Data Hostpath"
+msgstr ""
+
+msgid "Data Hostpath Enabled"
+msgstr ""
+
 msgid "Data Protection"
 msgstr "Protection des données"
 
@@ -4584,6 +4586,9 @@ msgstr "Actions dataset"
 
 msgid "Dataset Key"
 msgstr "Clé dataset"
+
+msgid "Dataset Name"
+msgstr ""
 
 msgid "Dataset Names"
 msgstr "Noms du dataset"
@@ -4700,6 +4705,12 @@ msgstr "Routeur par défaut pour IPv6"
 msgid "Default Umask"
 msgstr "Umask par défaut"
 
+msgid ""
+"Default behaviour is for pod to inherit the name resolution configuration  "
+"from the node that the pods run on. If <i>None</i> is specified, it allows "
+"a Pod to ignore DNS  settings from the Kubernetes environment."
+msgstr ""
+
 msgid "Default is UTF-8 which supports all characters in all languages."
 msgstr ""
 "La valeur par défaut est UTF-8, qui prend en charge tous les caractères "
@@ -4741,8 +4752,8 @@ msgid ""
 "Define an alias for the interface  on this TrueNAS controller. The alias "
 "can be an IPv4 or IPv6  address."
 msgstr ""
-"Définissez un alias pour l’interface sur ce contrôleur TrueNAS. L’alias peut être "
-"une adresse IPv4 ou IPv6."
+"Définissez un alias pour l’interface sur ce contrôleur TrueNAS. L’alias "
+"peut être une adresse IPv4 ou IPv6."
 
 msgid ""
 "Define an alias that can  connect to the interface on either TrueNAS "
@@ -4864,8 +4875,8 @@ msgid ""
 "Define the system services that are allowed to communicate externally. All "
 "other external traffic is restricted."
 msgstr ""
-"Définissez les services système autorisés à communiquer à l’extérieur. Tout autre "
-"trafic externe est restreint."
+"Définissez les services système autorisés à communiquer à l’extérieur. Tout "
+"autre trafic externe est restreint."
 
 msgid "Define the target as *iSCSI*, *Fibre Channel*, or *Both*."
 msgstr "Définissez la cible comme *iSCSI*, *Fibre Channel* ou *Both*."
@@ -5436,6 +5447,15 @@ msgstr "Ne réglez pas ce paramètre si le port série est désactivé."
 msgid "Docker Host"
 msgstr "Docker Hôte"
 
+msgid "Docker Images"
+msgstr ""
+
+msgid "Docker image pull policy"
+msgstr ""
+
+msgid "Docker image repository"
+msgstr ""
+
 msgid "Does the pool have GELI Encryption from FreeNAS/TrueNAS 11.3 or earlier?"
 msgstr ""
 "Le volume dispose-t-il du chiffrement GELI de FreeNAS/TrueNAS 11.3 ou d'une "
@@ -5581,6 +5601,9 @@ msgstr "Modifier la clé API"
 msgid "Edit Alert Service"
 msgstr "Éditer le service d'alerte"
 
+msgid "Edit Application Settings"
+msgstr ""
+
 msgid "Edit CA"
 msgstr "Modifier AC"
 
@@ -5616,6 +5639,12 @@ msgstr "Modifier les options"
 
 msgid "Edit Permissions"
 msgstr "Modifier les autorisations"
+
+msgid "Edit Pool"
+msgstr ""
+
+msgid "Edit Pool Disk"
+msgstr ""
 
 msgid "Edit Pool Options for "
 msgstr "Modifier les options de volume pour "
@@ -5695,6 +5724,9 @@ msgid ""
 "target=\"_blank\">SMTP AUTH</a> using PLAIN SASL.   Requires a valid "
 "Username and Password."
 msgstr ""
+"Activer   <a href=\"https://en.wikipedia.org/wiki/SMTP_Authentication\"   target="
+"\"_blank\">SMTP AUTH à l’aide</a> de PLAIN SASL.   Nécessite un nom d’utilisateur "
+"et un mot de passe valides."
 
 msgid ""
 "Enable  <a href=\"https://zfsonlinux.org/manpages/0.8.3/man8/zfs.8.html\" "
@@ -5747,7 +5779,7 @@ msgid "Enable FXP"
 msgstr "Activer FXP"
 
 msgid "Enable GMail OAuth authentication."
-msgstr ""
+msgstr "Activer l’authentification GMail OAuth."
 
 msgid "Enable NFSv4"
 msgstr "Activer NFSv4"
@@ -5756,7 +5788,7 @@ msgid "Enable Netwait Feature"
 msgstr "Activer la fonction Netwait"
 
 msgid "Enable Network Performance Statistics"
-msgstr ""
+msgstr "Activer les statistiques de performance réseau"
 
 msgid "Enable Password Toggle"
 msgstr "Activer la visualisation du mot de passe"
@@ -5823,6 +5855,10 @@ msgid ""
 "blocks of obsolete blocks that can be deleted. Unset to incorporate day "
 "block overwrites when a device write is started (default)."
 msgstr ""
+"Activez pour TrueNAS pour examiner périodiquement les blocs de données et "
+"identifier les blocs vides de blocs obsolètes qui peuvent être supprimés. "
+"Désactivé pour incorporer les écrasements de bloc de jour lorsqu'une écriture de "
+"périphérique est lancée (par défaut)."
 
 msgid "Enable iSCSI ALUA"
 msgstr "Activer iSCSI ALUA"
@@ -6099,10 +6135,10 @@ msgid "Encryption Key"
 msgstr "Clé de chiffrement"
 
 msgid "Encryption Key Format"
-msgstr ""
+msgstr "Format de clé de chiffrement"
 
 msgid "Encryption Key Location in Target System"
-msgstr ""
+msgstr "Emplacement de la clé de chiffrement dans le système cible"
 
 msgid "Encryption Key Passphrase"
 msgstr "Passphrase de la clé de chiffrement"
@@ -6308,6 +6344,11 @@ msgid ""
 "href=\"https://api.telegram.org/bot<BOT_TOKEN>/getUpdates\"  "
 "target=\"_blank\">https://api.telegram.org/bot<BOT_TOKEN>/getUpdates</a>."
 msgstr ""
+"Entrez une liste d'identifiants de discussion séparés par un espace, une virgule "
+"ou un point-virgule.  Pour trouver votre identifiant de chat, envoyez un message "
+"au bot, groupe ou canal et visitez  <a href=\"https://api.telegram.org/"
+"bot<BOT_TOKEN>/getUpdates\"  target=\"_blank\">https://api.telegram.org/"
+"bot<BOT_TOKEN>/getUpdates</a>."
 
 msgid ""
 "Enter a list of denied hostnames or IP addresses. Separate entries by "
@@ -6363,9 +6404,6 @@ msgstr ""
 
 msgid "Enter a name for the new credential."
 msgstr "Entrez un nom pour le nouvel identifiant."
-
-msgid "Enter a name for the new theme."
-msgstr "Entrez un nom pour le nouveau thème."
 
 msgid "Enter a name for the share."
 msgstr "Entrez un nom pour le partage."
@@ -6531,11 +6569,8 @@ msgstr ""
 msgid ""
 "Enter a valid username for the <a "
 "href=\"https://jira.ixsystems.com/projects/NAS/issues/\" "
-"target=\"_blank\">FreeNAS bug tracking system</a>"
+"target=\"_blank\">TrueNAS bug tracking system</a>"
 msgstr ""
-"Entrez un nom d'utilisateur valide pour le <a "
-"href=\"https://jira.ixsystems.com/projects/NAS/issues/\" "
-"target=\"_blank\">système de suivi des bugs FreeNAS</a>"
 
 msgid ""
 "Enter a value in seconds for the the UPS to wait before initiating "
@@ -6611,6 +6646,8 @@ msgid ""
 "Enter an alphanumeric encryption key. Only available when <i>Passphrase</i> "
 "is the chosen key format."
 msgstr ""
+"Entrez une clé de chiffrement alphanumérique. Uniquement disponible lorsque "
+"<i>Passphrase</i> est le format clé choisi."
 
 msgid ""
 "Enter an alphanumeric name for the certificate. Underscore (_), and dash "
@@ -7107,6 +7144,9 @@ msgstr ""
 "Entrez le nom d'utilisateur si le serveur SMTP nécessite une "
 "authentification."
 
+msgid "Enter the version to roll back to."
+msgstr ""
+
 msgid ""
 "Enter up to four interface configurations in the format "
 "<i>interface</i>:<i>bridge</i>, separated by a comma (,). The left value is "
@@ -7138,6 +7178,12 @@ msgstr "Niveau entreprise"
 
 msgid "Environment"
 msgstr "Environnement"
+
+msgid "Environment Variable Name"
+msgstr ""
+
+msgid "Environment Variable Value"
+msgstr ""
 
 msgid "Error"
 msgstr "Erreur"
@@ -7405,6 +7451,9 @@ msgstr "Type d'étendue"
 msgid "Extents"
 msgstr ""
 
+msgid "Extra Environment Variables"
+msgstr ""
+
 msgid "Extra Users"
 msgstr "Utilisateurs supplémentaires"
 
@@ -7418,9 +7467,6 @@ msgid "FTP Port number. Leave blank to use the default port <i>21</i>."
 msgstr ""
 "Numéro de port FTP. Laissez le champ vide pour utiliser le port par défaut "
 "<i>21</i>."
-
-msgid "Fab Buttons"
-msgstr ""
 
 msgid "Failed"
 msgstr "Échec"
@@ -7670,15 +7716,6 @@ msgstr ""
 "Force l'ajout du serveur <b>NTP</b> , même s'il est actuellement "
 "inaccessible."
 
-msgid "Foreground 1"
-msgstr ""
-
-msgid "Foreground 2"
-msgstr ""
-
-msgid "Form Invalid"
-msgstr "Formulaire invalide"
-
 msgid "Free"
 msgstr "Libre"
 
@@ -7768,13 +7805,13 @@ msgstr ""
 "point-virgule ( ;). Exemple : <i>myname.dyndns.org ; "
 "myothername.dyndns.org</i>."
 
-msgid "GENERAL"
-msgstr "GÉNÉRAL"
-
 msgid "GID"
 msgstr "GID"
 
 msgid "GMail OAuth"
+msgstr ""
+
+msgid "GPU Configuration"
 msgstr ""
 
 msgid "GUI"
@@ -7885,9 +7922,6 @@ msgstr "Paramètres des auxiliaires globaux"
 msgid "Global Configuration"
 msgstr "Configuration globale"
 
-msgid "Global Preview"
-msgstr "Aperçu global"
-
 msgid "Global Settings"
 msgstr "Paramètres globaux"
 
@@ -7917,9 +7951,6 @@ msgstr "Graph Âge en mois"
 
 msgid "Graphite Separate Instances"
 msgstr "Instances distinctes pour Graphite"
-
-msgid "Green"
-msgstr "Vert"
 
 msgid "Group"
 msgstr "Groupe"
@@ -8120,8 +8151,26 @@ msgstr "Autoriser l'hôte"
 msgid "Host Deny"
 msgstr "Refuser l'hôte"
 
+msgid "Host Interface"
+msgstr ""
+
 msgid "Host Name Database"
 msgstr "Base de données des noms d'hôtes"
+
+msgid "Host Network"
+msgstr ""
+
+msgid "Host Network/Host Ports"
+msgstr ""
+
+msgid "Host Path"
+msgstr ""
+
+msgid "Host Path Volumes"
+msgstr ""
+
+msgid "Host Port"
+msgstr ""
 
 msgid "Host Port Number"
 msgstr "Numéro de port hôte"
@@ -8325,17 +8374,9 @@ msgid ""
 "configuring authentication on the remote system.  This can include copying "
 "SSH keys and modifying the <i>root</i> user  account on that "
 "system.<br><br>  <i>Semi-automatic</i> only works when configuring an SSH "
-"connection  with a remote FreeNAS or TrueNAS system. This method uses the "
-"URL and  login credentials of the remote system to connect and exchange SSH "
-" keys."
+"connection  with a remote TrueNAS system. This method uses the URL and "
+"login  credentials of the remote system to connect and exchange SSH keys."
 msgstr ""
-"Comment configurer la connexion :<br><br> <i>Manual</i> nécessite la "
-"configuration de l'authentification sur le système distant.  Cela peut "
-"inclure la copie des clés SSH et la modification du compte de l'utilisateur "
-"<i>root</i> sur ce système.<br><br> <i>Semi-automatic</i> ne fonctionne que "
-"lors de la configuration d'une connexion SSH avec un système FreeNAS ou "
-"TrueNAS distant. Cette méthode utilise l'URL et les identifiants de "
-"connexion du système distant pour se connecter et échanger les clés SSH."
 
 msgid "I Agree"
 msgstr "J’accepte"
@@ -8357,6 +8398,9 @@ msgstr "INSTALLER"
 
 msgid "IP Address"
 msgstr "Adresse IP"
+
+msgid "IP Address Management"
+msgstr ""
 
 msgid "IP Addresses"
 msgstr "Adresses IP"
@@ -8446,9 +8490,6 @@ msgstr "Emplacement d'enregistrement ISO"
 
 msgid "ISO upload location"
 msgstr "Emplacement d'upload ISO"
-
-msgid "Icon Buttons"
-msgstr "Boutons d'icônes"
 
 msgid "Icon URL"
 msgstr "URL de l'icône"
@@ -8597,6 +8638,27 @@ msgstr "Ignorer"
 msgid "Ignore Builtin"
 msgstr "Ignorer Builtin"
 
+msgid "Ignore DNS settings from the Kuberentes cluster"
+msgstr ""
+
+msgid "Image"
+msgstr ""
+
+msgid "Image Pull Policy"
+msgstr ""
+
+msgid "Image Repository"
+msgstr ""
+
+msgid "Image Tag"
+msgstr ""
+
+msgid "Image and Policies"
+msgstr ""
+
+msgid "Image repository"
+msgstr ""
+
 msgid "Immediately connect to TrueCommand."
 msgstr "Connectez-vous immédiatement à TrueCommand."
 
@@ -8607,6 +8669,9 @@ msgid "Import Certificate"
 msgstr ""
 
 msgid "Import Certificate Signing Request"
+msgstr ""
+
+msgid "Import Pool"
 msgstr ""
 
 msgid "Import a pool that exists but is not connected."
@@ -8789,9 +8854,6 @@ msgstr ""
 "autorisés</i> ou <i>Réseaux autorisés</i>. Cliquez sur <i>Rafraîchir</i> "
 "pour mettre à jour la liste des <i>initiateurs connectés</i>."
 
-msgid "Input"
-msgstr "Entrée"
-
 msgid "Input the pre-defined S3 bucket to use."
 msgstr "Entrer le bucket S3 prédéfini à utiliser."
 
@@ -8801,11 +8863,23 @@ msgstr "Entrez le conteneur prédéfini à utiliser."
 msgid "Install"
 msgstr "Installer"
 
+msgid "Install "
+msgstr ""
+
+msgid "Install Application"
+msgstr ""
+
 msgid "Install Manual Update File"
 msgstr "Installer le fichier de mise à jour manuelle"
 
 msgid "Installation Media"
 msgstr "Supports d'installation"
+
+msgid "Installed Applications"
+msgstr ""
+
+msgid "Installing"
+msgstr ""
 
 msgid "Installing plugin..."
 msgstr "Installer le plugin...."
@@ -8938,6 +9012,9 @@ msgid ""
 msgstr ""
 "Il n'est pas recommandé d'étendre un volume  avec un ou plusieurs vdevs "
 "contenant différents nombres de disques. Continuer ?"
+
+msgid "Item"
+msgstr ""
 
 msgid "Items Delete Failed"
 msgstr "La suppression des éléments a échouée"
@@ -9107,6 +9184,12 @@ msgstr ""
 msgid "KiB"
 msgstr "KiB"
 
+msgid "Kill existing pods before creating new ones."
+msgstr ""
+
+msgid "Kubernetes Settings"
+msgstr ""
+
 msgid "LAGG Settings"
 msgstr "Paramètres LAGG"
 
@@ -9203,6 +9286,9 @@ msgstr "Code de la langue"
 
 msgid "Last Scrub Run on"
 msgstr "Le dernier scrub a été exécuté à"
+
+msgid "Launch Docker Image"
+msgstr ""
 
 msgid "Leave Domain"
 msgstr "Quitter le domaine"
@@ -9303,9 +9389,6 @@ msgstr ""
 msgid "Limit replication speed to this number of  bytes per second."
 msgstr "État du lien."
 
-msgid "Link"
-msgstr "Lien"
-
 msgid "Linked Service"
 msgstr "Service lié"
 
@@ -9344,9 +9427,6 @@ msgstr "Ecouter"
 
 msgid "Load Previous Replication Task"
 msgstr "Charger la tâche de réplication précédente"
-
-msgid "Load colors from existing theme"
-msgstr "Charger les couleurs d'un thème existant"
 
 msgid "Local"
 msgstr "Charger la tâche de réplication précédente"
@@ -9497,9 +9577,6 @@ msgstr "MTU"
 
 msgid "Mac Address"
 msgstr "Adresse Mac"
-
-msgid "Magenta"
-msgstr "Magenta"
 
 msgid "Mail Server Port"
 msgstr "Port du serveur de messagerie"
@@ -9756,12 +9833,6 @@ msgstr ""
 msgid "Memory:"
 msgstr "Mémoire:"
 
-msgid "Menu Label"
-msgstr "Menu Label"
-
-msgid "Menu Swatch"
-msgstr "Menu Swatch"
-
 msgid "Message verbosity level in the replication  task log."
 msgstr "Niveau de verbosité des messages dans le log des tâches de réplication."
 
@@ -9838,20 +9909,35 @@ msgstr "Poll Min"
 msgid "Min. Poll"
 msgstr "Poll Min"
 
-msgid "Mini Fab Buttons"
-msgstr "Boutons Mini Fab"
-
 msgid "Minimum"
 msgstr "Minimum"
 
 msgid "Minimum Passive Port"
 msgstr "Port passif minimum"
 
+msgid "Minimum length: 5 characters. Maximum length: 20 characters"
+msgstr ""
+
+msgid "Minimum length: 8 characters. Maximum length: 40 characters"
+msgstr ""
+
 msgid "Minimum size is 1 MiB"
 msgstr "La taille minimale est de 1 MiB"
 
 msgid "Minimum value is "
 msgstr "La valeur minimale est "
+
+msgid "Minio"
+msgstr ""
+
+msgid "Minio HostPath Enabled"
+msgstr ""
+
+msgid "Minio Image Environment"
+msgstr ""
+
+msgid "Minio: Kubernetes native, high performance object storage"
+msgstr ""
 
 msgid "Mintues"
 msgstr "Mintues"
@@ -9936,6 +10022,9 @@ msgstr "Mois"
 
 msgid "More Options"
 msgstr "Plus d’options"
+
+msgid "Mount Path"
+msgstr ""
 
 msgid "Mount Points of "
 msgstr "Points de montage de "
@@ -10339,6 +10428,9 @@ msgstr ""
 msgid "Network interfaces to include in the bridge."
 msgstr "Interfaces réseau à inclure dans la passerelle."
 
+msgid "Networking"
+msgstr ""
+
 msgid "Networks"
 msgstr "Réseaux"
 
@@ -10347,6 +10439,12 @@ msgstr "Jamais"
 
 msgid "Never Delete"
 msgstr "Jamais effacé"
+
+msgid "Never pull image even if it is not present on host."
+msgstr ""
+
+msgid "Never restart containers if they exit."
+msgstr ""
 
 msgid "New Disk"
 msgstr "Nouveau disque"
@@ -10379,6 +10477,23 @@ msgstr "Suivant"
 msgid "Next Run"
 msgstr "Prochaine exécution"
 
+msgid "Nextcloud"
+msgstr ""
+
+msgid "Nextcloud Host"
+msgstr ""
+
+msgid "Nextcloud Username"
+msgstr ""
+
+msgid "Nextcloud host to create application URLs"
+msgstr ""
+
+msgid ""
+"Nextcloud:  a file sharing server that puts the control  and security of "
+"your own data back into your hands."
+msgstr ""
+
 msgid "Nic to attach:"
 msgstr "Nic à attacher :"
 
@@ -10396,6 +10511,9 @@ msgstr "Aucun log"
 
 msgid "No Pools"
 msgstr "Aucun volume"
+
+msgid "No Pools Found"
+msgstr ""
 
 msgid "No Repositories"
 msgstr "Pas de repositories"
@@ -10454,6 +10572,24 @@ msgstr "Non, continuer avec l'importation"
 msgid "Nobind"
 msgstr "Nobind"
 
+msgid "Node IP"
+msgstr ""
+
+msgid "Node Port"
+msgstr ""
+
+msgid "Node Port to use for Minio"
+msgstr ""
+
+msgid "Node Port to use for Nextcloud"
+msgstr ""
+
+msgid "Node port"
+msgstr ""
+
+msgid "Nodeport"
+msgstr ""
+
 msgid "Nodes CARP states do not agree."
 msgstr "Les états des nœuds CARP ne sont pas d'accord."
 
@@ -10484,9 +10620,6 @@ msgstr "Notes sur ce disque."
 
 msgid "Notes about this extent."
 msgstr "Notes sur cette étendue."
-
-msgid "Notes or identifiers about the theme."
-msgstr "Notes ou identificateurs sur le thème."
 
 msgid "Notice"
 msgstr "Remarque"
@@ -10662,6 +10795,9 @@ msgstr "ID du client OAuth"
 msgid "OAuth Client Secret"
 msgstr "OAuth Client Secret"
 
+msgid "OFFICIAL"
+msgstr ""
+
 msgid "OK"
 msgstr "OK"
 
@@ -10776,6 +10912,9 @@ msgstr ""
 "Ne remplacez la valeur par défaut que si l'initiateur a besoin d'une taille "
 "de bloc différente."
 
+msgid "Only pull image if not present on host."
+msgstr ""
+
 msgid ""
 "Only replicate snapshots that match a  defined creation time. To specify "
 "which snapshots will be replicated,  set this checkbox and define the "
@@ -10788,6 +10927,9 @@ msgstr ""
 "case et définissez les heures de création des instantanés qui seront "
 "répliqués. Par exemple, en définissant ce délai comme étant <i>horaire</i>, "
 "seuls les instantanés créés au début de chaque heure seront répliqués."
+
+msgid "Only restart containers if they exit with a failure."
+msgstr ""
 
 msgid ""
 "Only set LDAP authentication for SMB shares is required and the LDAP server "
@@ -10869,18 +11011,6 @@ msgstr "Système d'exploitation"
 msgid "Operation"
 msgstr "Opération"
 
-msgid "Option 1"
-msgstr "Option 1"
-
-msgid "Option 2"
-msgstr "Option 2"
-
-msgid "Option 2 (disabled)"
-msgstr "Option 2 (désactivée)"
-
-msgid "Option 3"
-msgstr "Option 3"
-
 msgid "Optional description."
 msgstr "Description facultative."
 
@@ -10919,9 +11049,6 @@ msgstr ""
 "LDAP avec <i>SSL</i> sur le port <i>636</i>.</li>  <li><i>START_TLS :</i> "
 "chiffre la connexion LDAP avec <i>STARTTLS</i> sur le port LDAP par défaut "
 "<i>389</i>.</li>  </ul>"
-
-msgid "Orange"
-msgstr "Orange"
 
 msgid "Order"
 msgstr ""
@@ -11028,9 +11155,6 @@ msgstr "EN ATTENTE"
 
 msgid "POST INSTALL NOTES"
 msgstr "NOTES POST-INSTALLATION"
-
-msgid "PREVIEW"
-msgstr "APERÇU"
 
 msgid "PROCEED"
 msgstr "PROCÉDER"
@@ -11169,6 +11293,12 @@ msgstr ""
 
 msgid "Path to the Extent"
 msgstr "Le chemin vers l'étendue"
+
+msgid "Path where host path will be mounted inside the pod"
+msgstr ""
+
+msgid "Path where the volume path will be mounted inside the pod"
+msgstr ""
 
 msgid "Path: "
 msgstr ""
@@ -11321,6 +11451,18 @@ msgstr "Veuillez sélectionner un chemin d'accès valide"
 msgid "Please wait"
 msgstr "Veuillez patienter"
 
+msgid "Plex"
+msgstr ""
+
+msgid "Plex Claim Token"
+msgstr ""
+
+msgid "Plex Node Port"
+msgstr ""
+
+msgid "Plex: Media player, streaming service"
+msgstr ""
+
 msgid "Plugin"
 msgstr "Plugin"
 
@@ -11383,6 +11525,9 @@ msgstr "Volumes et instantanés"
 
 msgid "Port"
 msgstr "Port"
+
+msgid "Port Forwarding List"
+msgstr ""
 
 msgid "Port number on the remote system to use for the SSH  connection."
 msgstr "Numéro de port sur le système distant à utiliser pour la connexion SSH."
@@ -11521,17 +11666,11 @@ msgstr ""
 "mot de passe</b>\" est désactivée et qu'un <b>mot de passe</b> a été créé "
 "pour le compte."
 
-msgid "Preview"
-msgstr "Aperçu"
-
 msgid "Preview JSON Service Account Key"
 msgstr "Prévisualiser la clé du compte de service JSON"
 
 msgid "Previous"
 msgstr "Précédent"
-
-msgid "Primary"
-msgstr "Primaire"
 
 msgid "Primary Contact"
 msgstr "Contact Primaire"
@@ -11611,6 +11750,9 @@ msgstr ""
 msgid "Product:"
 msgstr ""
 
+msgid "Production Status"
+msgstr ""
+
 msgid "Production status successfully updated"
 msgstr "Statut de production mis à jour avec succès"
 
@@ -11632,8 +11774,14 @@ msgstr ""
 msgid "Properties Override"
 msgstr ""
 
+msgid "Property"
+msgstr ""
+
 msgid "Protocol"
 msgstr "Protocole"
+
+msgid "Provide access to node network namespace for the workload."
+msgstr ""
 
 msgid ""
 "Provide static key for authentication/encryption of all control  channel "
@@ -11727,9 +11875,6 @@ msgstr "Raid-z2"
 msgid "Raid-z3"
 msgstr "Raid-z3"
 
-msgid "Raised Buttons"
-msgstr "Boutons surélevés"
-
 msgid ""
 "Randomly generate an encryption key for securing this dataset. Disabling "
 "requires manually      defining the encryption key.<br> WARNING: the "
@@ -11803,6 +11948,9 @@ msgstr "Accès en lecture/écriture"
 msgid "Readonly"
 msgstr ""
 
+msgid "Ready to Install"
+msgstr ""
+
 msgid "Realm"
 msgstr "Realm"
 
@@ -11866,9 +12014,6 @@ msgstr "Clé de récupération pour le volume "
 
 msgid "Recursive"
 msgstr "Récursif"
-
-msgid "Red"
-msgstr "Rouge"
 
 msgid ""
 "Redirect <i>HTTP</i> connections to <i>HTTPS</i>. A  <i>GUI SSL "
@@ -12148,6 +12293,9 @@ msgstr "Rapports"
 msgid "Reports"
 msgstr "Rapports"
 
+msgid "Reports Configuration"
+msgstr ""
+
 msgid "Require IDENT Authentication"
 msgstr "Nécessite l'authentification IDENT"
 
@@ -12269,6 +12417,9 @@ msgstr "Résolution"
 msgid "Restart"
 msgstr "Redémarrer"
 
+msgid "Restart Policy"
+msgstr ""
+
 msgid "Restart SMB Service"
 msgstr "Redémarrer le service SMB"
 
@@ -12286,6 +12437,9 @@ msgstr "Redémarrer les VM, les jails et les services rattachés"
 
 msgid "Restart the system?"
 msgstr "Redémarrer le système ?"
+
+msgid "Restart/Update"
+msgstr ""
 
 msgid "Restarting Jail"
 msgstr "Redémarrage du jail"
@@ -12357,8 +12511,26 @@ msgstr ""
 msgid "Rights"
 msgstr ""
 
+msgid "Roll Back"
+msgstr ""
+
+msgid "Roll back"
+msgstr ""
+
+msgid "Roll back "
+msgstr ""
+
+msgid "Roll back snapshots"
+msgstr ""
+
+msgid "Roll back snapshots of ix_volumes"
+msgstr ""
+
 msgid "Rollback"
 msgstr "Retour arrière"
+
+msgid "Rolling back..."
+msgstr ""
 
 msgid "Room"
 msgstr "Pièce"
@@ -12383,6 +12555,18 @@ msgstr "Vitesse de rotation"
 
 msgid "Rotation Rate (RPM)"
 msgstr "Vitesse de rotation (RPM)"
+
+msgid "Route v4 Gateway"
+msgstr ""
+
+msgid "Route v4 Interface"
+msgstr ""
+
+msgid "Route v6 Gateway"
+msgstr ""
+
+msgid "Route v6 Interface"
+msgstr ""
 
 msgid "Routing Key"
 msgstr "Clé de routage"
@@ -12741,6 +12925,9 @@ msgid ""
 "  Please visit the <a href=\"http://www.ixsystems.com/storage/\" "
 "target=\"_blank\">    iXsystems storage page</a>    for enterprise-grade "
 "storage solutions and support."
+msgstr ""
+
+msgid "Searches"
 msgstr ""
 
 msgid "Secondary Contact"
@@ -13563,6 +13750,9 @@ msgid "Service Announcement"
 msgstr "Annonce de service"
 
 msgid "Service Announcement:"
+msgstr ""
+
+msgid "Service CIDR"
 msgstr ""
 
 msgid "Service Key"
@@ -14634,13 +14824,6 @@ msgid "Short Description"
 msgstr "Description courte"
 
 msgid ""
-"Shortened theme name. Used when listing the theme                     in "
-"Preferences."
-msgstr ""
-"Nom du thème abrégé. Utilisé lors de l'inscription du thème dans les "
-"Préférences."
-
-msgid ""
 "Should only be used for highly accurate <b>NTP</b>   servers such as those "
 "with time monitoring hardware."
 msgstr ""
@@ -14797,9 +14980,6 @@ msgstr ""
 "(Endpoint URL). Définissez ceci lors de la configuration d'une URL de point "
 "d'extrémité personnalisée."
 
-msgid "Slide me!"
-msgstr ""
-
 msgid "Snapshot"
 msgstr "Instantané"
 
@@ -14896,6 +15076,9 @@ msgstr ""
 msgid "Specifies the auxiliary directory service ID provider."
 msgstr "Précise le fournisseur d'identification du service d'annuaire auxiliaire."
 
+msgid "Specify HostPath for Minio data"
+msgstr ""
+
 msgid ""
 "Specify a port for encrypted connections. The default port <i>8081</i> is "
 "recommended. Do not reuse a port."
@@ -14919,6 +15102,9 @@ msgid ""
 msgstr ""
 "Spécifiez les jails dont dépend ce jail. Les jails enfants doivent déjà "
 "exister avant que le jail mère puisse être créée."
+
+msgid "Specify arguments for container command. Use <i>ENTER</i> after each entry."
+msgstr ""
 
 msgid ""
 "Specify how many servers to create. Increase if NFS client responses are "
@@ -14958,6 +15144,9 @@ msgstr ""
 
 msgid "Specify the size of the new zvol."
 msgstr "Spécifiez la taille du nouveau zvol."
+
+msgid "Specify type for IPAM."
+msgstr ""
 
 msgid "Speeds up the initial synchronization   (seconds instead of minutes)."
 msgstr "Accélère la synchronisation initiale (secondes au lieu de minutes)."
@@ -15017,6 +15206,9 @@ msgstr "État"
 msgid "State: "
 msgstr ""
 
+msgid "Static IP"
+msgstr ""
+
 msgid ""
 "Static IP addresses which SMB listens on for connections.  Leaving all "
 "unselected defaults to listening on all active interfaces."
@@ -15027,6 +15219,15 @@ msgstr ""
 
 msgid "Static IPv4 address of the IPMI web interface."
 msgstr "Adresse IPv4 statique de l'interface web IPMI."
+
+msgid "Static Route Configuration"
+msgstr ""
+
+msgid "Static Route: Destination"
+msgstr ""
+
+msgid "Static Route: Gateway"
+msgstr ""
 
 msgid "Static Routes"
 msgstr ""
@@ -15346,6 +15547,9 @@ msgstr ""
 msgid "TCP Port"
 msgstr "Port TCP"
 
+msgid "TCP Protocol"
+msgstr ""
+
 msgid "TCP port to use on bind to IP addresses"
 msgstr "Port TCP à utiliser pour lier aux adresses IP"
 
@@ -15412,6 +15616,9 @@ msgid "TLS Policy"
 msgstr "Politique TLS"
 
 msgid "Tag"
+msgstr ""
+
+msgid "Tag to use for the specified image"
 msgstr ""
 
 msgid "Take Snapshot"
@@ -15528,9 +15735,6 @@ msgstr ""
 "choisie. Pour tester, configurez les valeurs de <i>serveur</i> et de "
 "<i>port</i>, sélectionnez un <i>certificat</i> et une <i>autorité de "
 "certification</i>, activez ce paramètre et cliquez sur <b>ENREGISTRER</b>."
-
-msgid "Textarea"
-msgstr "Zone de texte"
 
 msgid "The"
 msgstr "Le"
@@ -15847,6 +16051,9 @@ msgstr ""
 msgid "The iSCSI"
 msgstr "L'iSCSI"
 
+msgid "The image was updated."
+msgstr ""
+
 msgid "The imported pool contains encrypted datasets, unlock them now?"
 msgstr ""
 "Le volume importé contient des datasets chiffrés, les déverrouiller "
@@ -16036,6 +16243,9 @@ msgid ""
 msgstr ""
 
 msgid "The product of vCPUs, cores and threads must not exceed"
+msgstr ""
+
+msgid "The range of valid ports is 9000-65535."
 msgstr ""
 
 msgid ""
@@ -16502,13 +16712,6 @@ msgstr ""
 msgid "This job will not run again until it is enabled."
 msgstr "Cette tâche ne sera pas relancée tant qu'il n'aura pas été activé."
 
-msgid ""
-"This name is already being used by an existing theme. Please choose a new "
-"name."
-msgstr ""
-"Ce nom est déjà utilisé par un thème existant. Veuillez choisir un nouveau "
-"nom."
-
 msgid "This operation might take a long time. Proceed?"
 msgstr "Cette opération peut prendre du temps. Poursuivre ?"
 
@@ -16695,6 +16898,12 @@ msgstr "Topologie"
 msgid "Train"
 msgstr "Canal"
 
+msgid "Transcode Hostpath"
+msgstr ""
+
+msgid "Transcode Hostpath Enabled"
+msgstr ""
+
 msgid "Transfer"
 msgstr "Transfert"
 
@@ -16825,6 +17034,9 @@ msgid "Type: "
 msgstr ""
 
 msgid "UDP"
+msgstr ""
+
+msgid "UDP Protocol"
 msgstr ""
 
 msgid ""
@@ -17011,11 +17223,17 @@ msgstr "Jusqu'à"
 msgid "Until: "
 msgstr ""
 
+msgid "Up to date"
+msgstr ""
+
 msgid "Upcoming tasks"
 msgstr "Tâches à venir"
 
 msgid "Update"
 msgstr "Mettre à jour"
+
+msgid "Update "
+msgstr ""
 
 msgid "Update File"
 msgstr "Mettre à jour le fichier"
@@ -17025,6 +17243,9 @@ msgstr "Mettre à jour l'emplacement de stockage temporaire des fichiers"
 
 msgid "Update Frequency"
 msgstr "Fréquence des mises à jour"
+
+msgid "Update Image"
+msgstr ""
 
 msgid "Update Interval"
 msgstr "Intervalle de mise à jour"
@@ -17050,8 +17271,14 @@ msgstr ""
 msgid "Update Status"
 msgstr "Mettre à jour le statut"
 
+msgid "Update Strategy"
+msgstr ""
+
 msgid "Update TrueCommand Settings"
 msgstr "Mettre à jour les paramètres de TrueCommand"
+
+msgid "Update available"
+msgstr ""
 
 msgid "Update in Progress"
 msgstr "Mise-à-jour en cours"
@@ -17063,6 +17290,9 @@ msgid "Update successful. Please reboot for the update to take effect. Reboot no
 msgstr ""
 "Mise à jour réussie. Veuillez redémarrer pour que la mise à jour prenne "
 "effet. Redémarrer maintenant ?"
+
+msgid "Update the image for "
+msgstr ""
 
 msgid "Update the jail operating system to the latest available patch?"
 msgstr ""
@@ -17090,8 +17320,20 @@ msgstr "Mise à Jour du plugin"
 msgid "Updating group members"
 msgstr "Mise à jour des membres du groupe"
 
+msgid "Updating production status..."
+msgstr ""
+
 msgid "Updating selected plugins."
 msgstr "Mise à jour des plugins sélectionnés."
+
+msgid "Updating..."
+msgstr ""
+
+msgid "Upgrade"
+msgstr ""
+
+msgid "Upgrade "
+msgstr ""
 
 msgid "Upgrade Pool"
 msgstr "Mettre à niveau le volume"
@@ -17121,6 +17363,9 @@ msgstr ""
 "contrôleur actif, puis transférés vers le contrôleur en attente. Le "
 "processus de mise à niveau démarre simultanément sur les deux contrôleurs "
 "TrueNAS. Poursuivre le téléchargement ?"
+
+msgid "Upgradomg..."
+msgstr ""
 
 msgid "Upload"
 msgstr "Envoyer"
@@ -17218,6 +17463,9 @@ msgstr ""
 "Envoyez des messages de sollicitation de routeur ICMPv6 aux interfaces pour "
 "découvrir de nouveaux routeurs."
 
+msgid "Use <i>ENTER</i> after each entry."
+msgstr ""
+
 msgid ""
 "Use <i>Window</i> to extend the validity of passwords beyond the "
 "<i>Interval</i> setting. For example, a window setting of 1 means that one "
@@ -17240,10 +17488,16 @@ msgstr ""
 msgid "Use Apple-style Character Encoding"
 msgstr "Utiliser l'encodage de caractères de style Apple"
 
+msgid "Use DHCP"
+msgstr ""
+
 msgid "Use DHCP. Unset to manually configure a static IPv4 connection."
 msgstr ""
 "Utilisez DHCP. Désactiver la configuration manuelle d'une connexion IPv4 "
 "statique."
+
+msgid "Use Default DNS Policy"
+msgstr ""
 
 msgid "Use Default Domain"
 msgstr "Utiliser le domaine par défaut"
@@ -17307,6 +17561,9 @@ msgstr "Utiliser l'image disque existante"
 msgid "Use settings from a saved replication."
 msgstr "Utilisez les paramètres d'une réplication enregistrée."
 
+msgid "Use static IP"
+msgstr ""
+
 msgid ""
 "Use the <i>Log In to GMail</i> button to obtain the credentials for this "
 "form."
@@ -17364,6 +17621,9 @@ msgid ""
 msgstr ""
 "Utilisé par les clients en mode PASV. La valeur de <i>0</i> par défaut "
 "signifie tout port supérieur à 1023."
+
+msgid "Used for rollback of a chart release and snapshots of ix_volumes"
+msgstr ""
 
 msgid ""
 "Used to add additional <a href=\"https://linux.die.net/man/8/proftpd\" "
@@ -17693,9 +17953,6 @@ msgstr ""
 msgid "View/Download Key"
 msgstr ""
 
-msgid "Violet"
-msgstr "Violet"
-
 msgid "Virtual CPUs"
 msgstr "CPUs virtuels"
 
@@ -17724,6 +17981,9 @@ msgstr "Tag VLAN"
 
 msgid "Volume size cannot be zero."
 msgstr "La taille du volume ne peut pas être nulle."
+
+msgid "Volumes"
+msgstr ""
 
 msgid "WARNING"
 msgstr "ATTENTION"
@@ -17778,9 +18038,6 @@ msgstr "En attendant que le contrôleur TrueNAS actif apparaisse....."
 
 msgid "Wallclock time in seconds."
 msgstr "Durée de l'horloge murale en secondes."
-
-msgid "Warn"
-msgstr "Avertir"
 
 msgid "Warning"
 msgstr "Attention"
@@ -18096,9 +18353,6 @@ msgstr ""
 
 msgid "Years"
 msgstr "Années"
-
-msgid "Yellow"
-msgstr "Jaune"
 
 msgid "Yes"
 msgstr "Oui"
