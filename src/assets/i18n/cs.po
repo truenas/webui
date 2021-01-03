@@ -5762,6 +5762,9 @@ msgstr "Chyba převádění fondu na novější verzi"
 msgid "Error checking for updates."
 msgstr "Chyba při zjišťování aktualizací."
 
+msgid "Error creating CA."
+msgstr ""
+
 msgid "Error creating VM."
 msgstr "Chyba při vytváření virt. stroje"
 
@@ -5906,9 +5909,6 @@ msgstr ""
 msgid "Export Password Secret Seed"
 msgstr ""
 
-msgid "Export Pool Encryption Keys"
-msgstr ""
-
 msgid "Export Private Key"
 msgstr "Exportovat soukromý klíč"
 
@@ -5970,6 +5970,9 @@ msgid "Extent Type"
 msgstr ""
 
 msgid "Extents"
+msgstr ""
+
+msgid "Extra Constraints"
 msgstr ""
 
 msgid "Extra Environment Variables"
@@ -9841,9 +9844,6 @@ msgid ""
 "NTP servers or those under direct control. <b>Do not</b> enable when using "
 "public NTP servers."
 msgstr ""
-
-msgid "Reconnect"
-msgstr "Připojit znovu"
 
 msgid ""
 "Record AFP service messages up to the specified log level in the system "

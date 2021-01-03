@@ -5980,6 +5980,9 @@ msgstr "Fehler beim Aktualisieren des Pools "
 msgid "Error checking for updates."
 msgstr "Fehler beim Überprüfen auf Updates."
 
+msgid "Error creating CA."
+msgstr ""
+
 msgid "Error creating VM."
 msgstr "Fehler beim Erstellen der VM."
 
@@ -6124,9 +6127,6 @@ msgstr ""
 msgid "Export Password Secret Seed"
 msgstr "Password Secret Seed exportieren"
 
-msgid "Export Pool Encryption Keys"
-msgstr "Exportieren Sie Poolverschlüsselungsschlüssel"
-
 msgid "Export Private Key"
 msgstr "Privaten Schlüssel exportieren"
 
@@ -6188,6 +6188,9 @@ msgid "Extent Type"
 msgstr ""
 
 msgid "Extents"
+msgstr ""
+
+msgid "Extra Constraints"
 msgstr ""
 
 msgid "Extra Environment Variables"
@@ -10170,9 +10173,6 @@ msgstr ""
 "Empfohlen bei <i>Max. Umfrage</i> größer als 10 ist. Nur auf persönlichen "
 "NTP-Servern oder solchen unter direkter Kontrolle verwenden. <b>Aktivieren "
 "Sie nicht</b> wenn Sie öffentliche NTP-Server verwenden."
-
-msgid "Reconnect"
-msgstr "Neu-verbinden"
 
 msgid ""
 "Record AFP service messages up to the specified log level in the system "

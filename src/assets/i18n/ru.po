@@ -6810,6 +6810,9 @@ msgstr "Ошибка обновления пула"
 msgid "Error checking for updates."
 msgstr "Ошибка проверки обновлений."
 
+msgid "Error creating CA."
+msgstr ""
+
 msgid "Error creating VM."
 msgstr "Ошибка создания ВМ."
 
@@ -6963,9 +6966,6 @@ msgstr ""
 msgid "Export Password Secret Seed"
 msgstr "Экспортировать секретное семя пароля"
 
-msgid "Export Pool Encryption Keys"
-msgstr "Экспортировать ключи шифрования пула"
-
 msgid "Export Private Key"
 msgstr "Экспортировать закрытый ключ"
 
@@ -7032,6 +7032,9 @@ msgid "Extent Type"
 msgstr "Тип экстента"
 
 msgid "Extents"
+msgstr ""
+
+msgid "Extra Constraints"
 msgstr ""
 
 msgid "Extra Environment Variables"
@@ -11352,9 +11355,6 @@ msgstr ""
 "Рекомендуется, когда <i>Макс. Опрос</i> больше 10. Используйте только на "
 "личных NTP-серверах или серверах, находящихся под прямым контролем. "
 "<b>Не</b> включать при использовании общедоступных NTP-серверов."
-
-msgid "Reconnect"
-msgstr "Переподключить"
 
 msgid ""
 "Record AFP service messages up to the specified log level in the system "

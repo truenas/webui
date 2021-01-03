@@ -5694,6 +5694,9 @@ msgstr "升級儲存集區時發生錯誤"
 msgid "Error checking for updates."
 msgstr ""
 
+msgid "Error creating CA."
+msgstr ""
+
 msgid "Error creating VM."
 msgstr "建立 VM 時發生錯誤"
 
@@ -5838,9 +5841,6 @@ msgstr ""
 msgid "Export Password Secret Seed"
 msgstr ""
 
-msgid "Export Pool Encryption Keys"
-msgstr ""
-
 msgid "Export Private Key"
 msgstr "匯出私鑰"
 
@@ -5902,6 +5902,9 @@ msgid "Extent Type"
 msgstr ""
 
 msgid "Extents"
+msgstr ""
+
+msgid "Extra Constraints"
 msgstr ""
 
 msgid "Extra Environment Variables"
@@ -9765,9 +9768,6 @@ msgid ""
 "NTP servers or those under direct control. <b>Do not</b> enable when using "
 "public NTP servers."
 msgstr ""
-
-msgid "Reconnect"
-msgstr "重新連線"
 
 msgid ""
 "Record AFP service messages up to the specified log level in the system "

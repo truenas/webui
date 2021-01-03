@@ -6146,6 +6146,9 @@ msgstr "升级池时出错 "
 msgid "Error checking for updates."
 msgstr "检查更新时出错。"
 
+msgid "Error creating CA."
+msgstr ""
+
 msgid "Error creating VM."
 msgstr "创建虚拟机时出错。"
 
@@ -6297,9 +6300,6 @@ msgstr ""
 msgid "Export Password Secret Seed"
 msgstr "导出密码秘密种子"
 
-msgid "Export Pool Encryption Keys"
-msgstr "导出池加密密钥"
-
 msgid "Export Private Key"
 msgstr "导出私钥"
 
@@ -6364,6 +6364,9 @@ msgid "Extent Type"
 msgstr "区块类型"
 
 msgid "Extents"
+msgstr ""
+
+msgid "Extra Constraints"
 msgstr ""
 
 msgid "Extra Environment Variables"
@@ -10425,9 +10428,6 @@ msgid ""
 "NTP servers or those under direct control. <b>Do not</b> enable when using "
 "public NTP servers."
 msgstr "当<i> 最大轮询 </i>大于10时推荐使用。仅在个人NTP服务器或直接控制的服务器上使用。<b>请勿</b>在使用公共NTP服务器时启用。"
-
-msgid "Reconnect"
-msgstr "重新连接"
 
 msgid ""
 "Record AFP service messages up to the specified log level in the system "

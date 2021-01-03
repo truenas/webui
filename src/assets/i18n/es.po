@@ -5681,6 +5681,9 @@ msgstr ""
 msgid "Error checking for updates."
 msgstr ""
 
+msgid "Error creating CA."
+msgstr ""
+
 msgid "Error creating VM."
 msgstr ""
 
@@ -5825,9 +5828,6 @@ msgstr ""
 msgid "Export Password Secret Seed"
 msgstr ""
 
-msgid "Export Pool Encryption Keys"
-msgstr ""
-
 msgid "Export Private Key"
 msgstr ""
 
@@ -5889,6 +5889,9 @@ msgid "Extent Type"
 msgstr ""
 
 msgid "Extents"
+msgstr ""
+
+msgid "Extra Constraints"
 msgstr ""
 
 msgid "Extra Environment Variables"
@@ -9751,9 +9754,6 @@ msgid ""
 "Recommended when <i>Max. Poll</i> is greater than 10. Only use on personal "
 "NTP servers or those under direct control. <b>Do not</b> enable when using "
 "public NTP servers."
-msgstr ""
-
-msgid "Reconnect"
 msgstr ""
 
 msgid ""

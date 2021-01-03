@@ -5810,6 +5810,9 @@ msgstr ""
 msgid "Error checking for updates."
 msgstr ""
 
+msgid "Error creating CA."
+msgstr ""
+
 msgid "Error creating VM."
 msgstr ""
 
@@ -5954,9 +5957,6 @@ msgstr ""
 msgid "Export Password Secret Seed"
 msgstr ""
 
-msgid "Export Pool Encryption Keys"
-msgstr ""
-
 msgid "Export Private Key"
 msgstr ""
 
@@ -6021,6 +6021,9 @@ msgid "Extent Type"
 msgstr ""
 
 msgid "Extents"
+msgstr ""
+
+msgid "Extra Constraints"
 msgstr ""
 
 msgid "Extra Environment Variables"
@@ -9936,9 +9939,6 @@ msgid ""
 msgstr ""
 "<i>Max. Poll</i>が10より大きい場合に推奨。個人のNTPサーバーまたは直接制御されているNTPサーバーでのみ使用します。 "
 "パブリックNTPサーバーを使用する場合は、<b>有効にしないで</b>ください。"
-
-msgid "Reconnect"
-msgstr ""
 
 msgid ""
 "Record AFP service messages up to the specified log level in the system "
