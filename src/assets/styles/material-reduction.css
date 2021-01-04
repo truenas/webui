@@ -647,12 +647,25 @@ td.mat-table-sticky{
   background: unset !important;
 }
 
-td.mat-cell{
+/*td.mat-cell.mat-table-sticky.hover::before,*/
+td.mat-cell.mat-table-sticky{
   background-color: var(--bg2) !important;
+  overflow: hidden;
 }
 
-td.mat-table-sticky:hover{
-  background: var(--bg2) !important;
+td.mat-cell.mat-table-sticky::before{
+  display:block;
+  content: "";
+  height: 1000px;
+  width: 1000px;
+  max-width: inherit;
+  max-height: inherit;
+  display: block;
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  /*background-color: red;*/
 }
 
 td.mat-cell.tree-cell{
@@ -667,6 +680,8 @@ td.mat-cell .mat-icon.expansion-trigger{
   font-size: 24px;
 }
 
+td.mat-cell.mat-table-sticky.hover::before,
+td.mat-cell.mat-table-sticky .hover,
 .ui-treetable tr:hover,
 .mat-row:hover,
 tr.mat-row:hover {

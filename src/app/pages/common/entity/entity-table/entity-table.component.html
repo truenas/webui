@@ -64,7 +64,7 @@
         <ng-container *ngIf="column !== 'expandedDetail' && column !== 'action' && column !== 'multiselect' && column !== 'expansion-chevrons'" [sticky]="isLeftStickyColumnNo(i)"
        matColumnDef="{{column}}">
           <th [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i), 'sticky-border-right': isLeftStickyColumnNo(i) && isTableOverflow()}" class="data-column" mat-header-cell *matHeaderCellDef>{{currentColumns[i].name}}</th>
-          <td [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i), 'sticky-border-right': isLeftStickyColumnNo(i) && isTableOverflow()}" [ngStyle]="{'cursor': checkLength() ? 'auto' : 'pointer'}" class="data-column" mat-cell *matCellDef="let element">{{element[column]}}</td>
+          <td [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i), 'sticky-border-right': isLeftStickyColumnNo(i) && isTableOverflow()}" [ngStyle]="{'cursor': checkLength() ? 'auto' : 'pointer'}" class="data-column" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)" mat-cell *matCellDef="let element">{{element[column]}}</td>
         </ng-container>
   
         <!-- Expansion Chevrons -->
@@ -85,8 +85,10 @@
         <!-- Threedot Actions -->
         <ng-container *ngIf="column == 'action'" matColumnDef="{{column}}" stickyEnd>
           <th class="threedot-column" [ngClass]="{'sticky-border-left': isTableOverflow()}" mat-header-cell *matHeaderCellDef></th>
-          <td class="threedot-column" [ngClass]="{'sticky-border-left': isTableOverflow()}" mat-cell *matCellDef="let element">
-            <app-entity-table-actions [entity]="this" [row]="element"></app-entity-table-actions>
+          <td class="threedot-column" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)"
+            [ngClass]="{'sticky-border-left': isTableOverflow()}" mat-cell *matCellDef="let element">
+            <app-entity-table-actions [entity]="this" [row]="element" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)">
+            </app-entity-table-actions>
           </td>
         </ng-container>
   
@@ -99,7 +101,7 @@
               ix-auto ix-auto-type="checkbox" ix-auto-identifier="title">
             </mat-checkbox>
           </th>
-          <td class="multiselect-column" [ngStyle]="{'cursor': checkLength() ? 'auto' : 'pointer'}" mat-cell *matCellDef="let element">
+          <td class="multiselect-column" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)"  [ngStyle]="{'cursor': checkLength() ? 'auto' : 'pointer'}" mat-cell *matCellDef="let element">
             <mat-checkbox 
               (click)="$event.stopPropagation()"
               (change)="$event ? selection.toggle(element) : null"
