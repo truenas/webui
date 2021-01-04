@@ -7,7 +7,7 @@
     <ng-container *ngFor="let column of conf.columns; let i = index;">
 
       <!-- NonActions Columns -->
-      <ng-container *ngIf="column.prop !== 'actions'" matColumnDef="{{column.prop}}">
+      <ng-container *ngIf="column.prop !== 'actions'" matColumnDef="{{column.prop}}" [sticky]="i == 0">
         <th mat-header-cell *matHeaderCellDef> {{column.name}} </th>
         <ng-container>
           <!-- Tree and Data Cells -->

@@ -565,6 +565,22 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
+  isLeftStickyColumnNo(i) {
+    return i === (this.currentColumns[0].prop === 'multiselect' ? 1 : 0);
+  }
+
+  shouldApplyStickyOffset(i) {
+    return this.currentColumns[0].prop === 'multiselect' && i === 1;
+  }
+
+  isTableOverflow() {
+    let hasHorizontalScrollbar = false;
+    if(this.entitytable) {
+      hasHorizontalScrollbar = this.entitytable._elementRef.nativeElement.parentNode.scrollWidth > this.entitytable._elementRef.nativeElement.parentNode.clientWidth;
+    }
+    return hasHorizontalScrollbar;
+  }
+
   generateRows(res): Array<any> {
     let rows: any[] = [];
     if (this.loaderOpen) {
