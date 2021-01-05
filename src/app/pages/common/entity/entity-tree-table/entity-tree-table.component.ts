@@ -104,4 +104,31 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
       this.table.renderRows();
     }
 
+    onHover(evt, over = true){
+      const row = this.findRow(evt);
+      const cells = row.children;
+
+      for(let i = 0; i < cells.length; i++){
+        const cell = cells[i];
+
+        if(cell.classList.contains('mat-table-sticky') || cell.classList.contains('threedot-column')){
+          if(over){
+            cell.classList.add('hover');
+          } else {
+            cell.classList.remove('hover');
+          }
+        }
+      }
+
+    }
+
+    findRow(el){
+      let target = el.target;
+
+      do {
+        target =target.parentElement;
+      } while(target.tagName.toLowerCase() !== 'tr')
+      return target;
+    }
+
 }
