@@ -60,6 +60,13 @@ export class ApplicationsComponent implements OnInit {
             type: 'button',
             color: 'primary',
             value: 'launch'
+          },
+          {
+            name: 'bulk',
+            label: 'Bulk Options',
+            type: 'button',
+            color: 'primary',
+            value: 'bulk'
           }
         ]
       }

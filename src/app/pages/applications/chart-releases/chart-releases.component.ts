@@ -18,6 +18,7 @@ import { MinioFormComponent } from '../forms/minio-form.component';
 import  helptext  from '../../../helptext/apps/apps';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { BulkOptionsComponent } from '../forms/bulk-options.component';
 
 @Component({
   selector: 'app-charts',
@@ -85,6 +86,8 @@ export class ChartReleasesComponent implements OnInit {
     if (evt.data.event_control == 'filter') {
       this.filterString = evt.data.filter;
       this.filerChartItems();
+    } else if (evt.data.event_control == 'bulk') {
+      this.bulkOptions();
     }
   }
   
@@ -224,6 +227,18 @@ export class ChartReleasesComponent implements OnInit {
       default:
         this.modalService.open('slide-in-form', this.chartReleaseForm, name);
     }
+  }
+
+  onBulkAction(checkedItems: any[], actionName: string) {
+
+  }
+
+  bulkOptions() {
+    const bulkOptionsForm = new BulkOptionsComponent(this.modalService, this.appService);
+    bulkOptionsForm.setOptions(this.filteredChartItems);
+    bulkOptionsForm.setOnBulkAction(this.onBulkAction);
+
+    this.modalService.open('slide-in-form', bulkOptionsForm, "Bulk Options");
   }
 
   delete(name: string) {
