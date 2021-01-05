@@ -72,6 +72,11 @@ export class ChartReleasesComponent implements OnInit {
       placeholder: helptext.podConsole.choosePod.placeholder,
       required: true,
       options: this.podList
+    },{
+      type: 'input',
+      name: 'command',
+      placeholder: helptext.podConsole.chooseCommand.placeholder,
+      value: '/bin/bash'
     }],
     saveButtonText: helptext.podConsole.choosePod.action,
     customSubmit: this.doPodSelect,
@@ -284,9 +289,13 @@ export class ChartReleasesComponent implements OnInit {
       this.podList = Object.keys(this.podDetails);
       if (this.podList.length == 0) {
         this.dialogService.confirm(helptext.podConsole.nopod.title, helptext.podConsole.nopod.message, true, 'Close', false, null, null, null, null, true);
-      } else if (this.podList.length == 1) {
-        this.router.navigate(new Array("/apps/shell/").concat([this.selectedAppName, this.podList[0], this.podDetails[this.podList[0]][0]]));
-      } else if (this.podList.length > 1) {
+      } else {
+        this.choosePod.fieldConfig[0].options = this.podList.map(item => {
+          return {
+            label: item,
+            value: item,
+          }
+        });
         this.dialogService.dialogForm(this.choosePod, true);
       }
     })

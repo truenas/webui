@@ -498,6 +498,9 @@ export default {
       title: T('Choose pod'),
       placeholder: T('Pods'),
       action: T('Choose')
+    },
+    chooseCommand: {
+      placeholder: T('Commands'),
     }
   }
 }
