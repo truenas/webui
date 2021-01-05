@@ -647,7 +647,10 @@ td.mat-table-sticky{
   background: unset !important;
 }
 
-/*td.mat-cell.mat-table-sticky.hover::before,*/
+td.mat-cell.mat-table-sticky.hover::before{
+  max-width: unset;
+}
+
 td.mat-cell.mat-table-sticky{
   background-color: var(--bg2) !important;
   overflow: hidden;
