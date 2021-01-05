@@ -26,9 +26,21 @@ table{
 }*/
 
 //.multiselect-column,
-.threedot-column,
-.expansion-chevrons-column {
+// .threedot-column,
+// .expansion-chevrons-column {
   //max-width: 0px !important;
+// }
+
+th.threedot-column, td.threedot-column, th.expansion-chevrons-column, td.expansion-chevrons-column  {
+  padding-right: 12px !important;
+  padding-left: 12px !important;
+}
+
+th.sticky-border-left, td.sticky-border-left  {
+  border-left: 1px solid var(--lines);
+}
+
+th.expansion-chevrons-column, td.expansion-chevrons-column {
   padding-right: 24px !important;
 }
 
@@ -294,4 +306,12 @@ div#cardHeaderContainer {
 
 #entity-table-component {
   margin-top: 15px;
+}
+
+.sticky-left-offset {
+  left: 48px !important;
+}
+
+.sticky-border-right {
+  border-right: 1px solid var(--lines);
 }

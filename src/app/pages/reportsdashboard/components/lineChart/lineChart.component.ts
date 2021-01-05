@@ -204,7 +204,14 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
           for(let i = 0; i < rd.data.length; i++){ 
             let item = Object.assign([], rd.data[i]);
             let dateStr = moment.tz(new Date(rd.start * 1000 + i * rd.step * 1000), this.timezone).format();
-            let date = new Date(dateStr.substring(0, dateStr.length-9));
+            //UTC: 2020-12-17T16:33:10Z
+            //Los Angeles: 2020-12-17T08:36:30-08:00
+            //Change dateStr from '2020-12-17T08:36:30-08:00' to '2020-12-17T08:36'
+            let list = dateStr.split(':');
+            list.splice(2);
+            dateStr = list.join(':');
+            let date = new Date(dateStr);            
+            
             item.unshift(date);
             rows.push(item);
           }
