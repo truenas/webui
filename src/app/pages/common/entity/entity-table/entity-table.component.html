@@ -70,13 +70,13 @@
         <!-- Expansion Chevrons -->
         <ng-container *ngIf="column == 'expansion-chevrons'" matColumnDef="{{column}}" stickyEnd>
           <th class="expansion-chevrons-column" [ngClass]="{'sticky-border-left': isTableOverflow()}" mat-header-cell *matHeaderCellDef></th>
-          <td class="expansion-chevrons-column" [ngClass]="{'sticky-border-left': isTableOverflow()}" mat-cell *matCellDef="let element" style="text-align:right;cursor: pointer">
+          <td class="expansion-chevrons-column" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)" [ngClass]="{'sticky-border-left': isTableOverflow()}" mat-cell *matCellDef="let element" style="text-align:right;cursor: pointer">
             <ng-container *ngIf="hasDetails() === true">
               <ng-container *ngIf="element === expandedElement">
-                <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-chevron-up"></mat-icon>
+                <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-chevron-up" (mouseover)="onHover($event,true)" (mouseout)="onHover($event,false)"></mat-icon>
               </ng-container>
               <ng-container *ngIf="element !== expandedElement">
-                <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-chevron-down"></mat-icon>
+                <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-chevron-down" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)"></mat-icon>
               </ng-container>
             </ng-container>
           </td>
