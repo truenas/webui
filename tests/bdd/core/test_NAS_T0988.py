@@ -109,7 +109,7 @@ def the_changes_should_be_saved(driver):
 def open_the_user_dropdown(driver):
     """open the user dropdown."""
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
-    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__EDIT_ericbsd"]')
+    wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__EDIT_ericbsd"]')
     driver.find_element_by_xpath('//h4[contains(.,"Permit Sudo:")]')
 
 
@@ -124,9 +124,9 @@ def updated_value_should_be_visible(driver):
 @then('open a shell and run su user to become that user')
 def open_a_shell_and_run_su_user_to_become_that_user(driver):
     """open a shell and run su user to become that user."""
-    wait_on_element(driver, 0.5, 30, '//mat-list-item[@ix-auto="option__Shell"]')
+    wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Shell"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shell"]').click()
-    wait_on_element(driver, 4, 30, '//span[@class="reverse-video terminal-cursor"]')
+    wait_on_element(driver, 4, 7, '//span[@class="reverse-video terminal-cursor"]')
     actions = ActionChains(driver)
     actions.send_keys('su ericbsd', Keys.ENTER)
     actions.perform()
@@ -138,8 +138,8 @@ def the_user_should_be_able_to_use_sudo(driver):
     actions = ActionChains(driver)
     actions.send_keys('sudo ls /var/db/sudo', Keys.ENTER)
     actions.perform()
-    wait_on_element(driver, 1, 30, '//span[contains(.,"Password:")]')
+    wait_on_element(driver, 1, 7, '//span[contains(.,"Password:")]')
     actions.send_keys('testing', Keys.ENTER)
     actions.perform()
-    wait_on_element(driver, 1, 30, '//span[contains(.,"lectured")]')
+    wait_on_element(driver, 1, 7, '//span[contains(.,"lectured")]')
     driver.find_element_by_xpath('//span[contains(.,"lectured")]')
