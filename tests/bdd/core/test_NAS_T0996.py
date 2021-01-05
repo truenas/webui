@@ -2,24 +2,22 @@
 """Core UI feature tests."""
 
 import time
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
-    is_element_present,
-    wait_on_element_disappear
+    is_element_present
 )
 from pytest_bdd import (
     given,
     scenario,
     then,
     when,
+    parsers
 )
 
 
-@scenario('features/NAS-T988.feature', 'Enable user Permit Sudo')
-def test_enable_user_permit_sudo(driver):
-    """Enable user Permit Sudo."""
+@scenario('features/NAS-T996.feature', 'Verify that users cannot same an invalid email')
+def test_verify_that_users_cannot_same_an_invalid_email(driver):
+    """Verify that users cannot same an invalid email."""
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
@@ -87,58 +85,17 @@ def the_user_edit_page_should_open(driver):
     assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Identification")]')
 
 
-@then('click Enable Permit Sudo checkbox and click save')
-def click_enable_permit_sudo_checkbox_and_click_save(driver):
-    """click Enable Permit Sudo checkbox and click save."""
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Permit Sudo"]').click()
-    wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__SAVE"]')
+@then(parsers.parse('change the mail with an invalid email "{email}"'))
+def change_the_mail_with_an_invalid_email(driver, email):
+    """change the mail with an invalid email."""
+    assert wait_on_element(driver, 1, 7, '//input[@ix-auto="input__Email"]')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').send_keys(email)
+    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
-@then('the changes should be saved')
-def the_changes_should_be_saved(driver):
-    """the changes should be saved."""
-    wait_on_element_disappear(driver, 1, 30, '//h6[contains(.,"Please wait")]')
-    wait_on_element(driver, 0.5, 7, '//div[contains(.,"Users")]')
-
-
-@then('open the user dropdown')
-def open_the_user_dropdown(driver):
-    """open the user dropdown."""
-    driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
-    wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__EDIT_ericbsd"]')
-    driver.find_element_by_xpath('//h4[contains(.,"Permit Sudo:")]')
-
-
-@then('updated value should be visible')
-def updated_value_should_be_visible(driver):
-    """updated value should be visible."""
-    assert wait_on_element(driver, 1, 5, '//h4[contains(.,"Permit Sudo:")]/../div/p')
-    element_text = driver.find_element_by_xpath('//h4[contains(.,"Permit Sudo:")]/../div/p').text
-    assert element_text == 'true'
-
-
-@then('open a shell and run su user to become that user')
-def open_a_shell_and_run_su_user_to_become_that_user(driver):
-    """open a shell and run su user to become that user."""
-    assert wait_on_element(driver, 1, 7, '//mat-list-item[@ix-auto="option__Shell"]')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shell"]').click()
-    assert wait_on_element(driver, 4, 7, '//span[@class="reverse-video terminal-cursor"]')
-    actions = ActionChains(driver)
-    actions.send_keys('su ericbsd', Keys.ENTER)
-    actions.perform()
-
-
-@then('the user should be able to use Sudo')
-def the_user_should_be_able_to_use_sudo(driver):
-    """the user should be able to use Sudo."""
-    actions = ActionChains(driver)
-    actions.send_keys('sudo ls /var/db/sudo', Keys.ENTER)
-    actions.perform()
-    assert wait_on_element(driver, 1, 7, '//span[contains(.,"Password:")]')
-    actions.send_keys('testing', Keys.ENTER)
-    actions.perform()
-    assert wait_on_element(driver, 1, 7, '//span[contains(.,"lectured")]')
+@then('click Save, you should not be allowed to save the invalid email')
+def click_save_you_should_not_be_allowed_to_save_the_invalid_email(driver):
+    """click Save, you should not be allowed to save the invalid email."""
+    assert wait_on_element(driver, 0.5, 7, '//div[contains(.,"Not a valid E-Mail address")]')
