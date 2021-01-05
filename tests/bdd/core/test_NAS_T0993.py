@@ -16,7 +16,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T993.feature', 'Enable Password for a user')
+@scenario('features/NAS-T993.feature', 'Enable password for a user')
 def test_enable_password_for_a_user(driver):
     """Enable Password for a user."""
 

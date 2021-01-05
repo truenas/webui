@@ -15,7 +15,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T995.feature', 'Change the password of a user')
+@scenario('features/NAS-T994.feature', 'Change the password of a user')
 def test_change_the_password_of_a_user(driver):
     """Change the password of a user."""
 

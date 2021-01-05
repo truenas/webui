@@ -16,7 +16,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T992.feature', 'Disable Password for a user')
+@scenario('features/NAS-T992.feature', 'Disable password for a user')
 def test_disable_password_for_a_user():
     """Disable Password for a user."""
 
