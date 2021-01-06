@@ -83,8 +83,8 @@ function  convertKMGT(input: number, units: string, fixed?: number){
   }
 
   if(units == 'bits'){
-    shortName = shortName.replace(/i/, '');
-    shortName = shortName.toLowerCase();
+    shortName = shortName.replace(/i/, '').trim();
+    shortName = ` ${shortName.charAt(0).toUpperCase()}${shortName.substr(1).toLowerCase()}`;
   }
  
   //if(fixed && fixed !== -1){
