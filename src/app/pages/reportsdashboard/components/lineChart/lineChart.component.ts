@@ -109,6 +109,8 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
 
     let fg2RGB = this.utils.convertToRGB(this.themeService.currentTheme().fg2);
     let gridLineColor = 'rgba(' + fg2RGB.rgb[0] + ', ' + fg2RGB.rgb[1]+ ', ' + fg2RGB.rgb[2]+ ', 0.25)'
+    
+    let yLabelSuffix = this.labelY === 'Bits/s' ? this.labelY.toLowerCase() : this.labelY
 
     let options = {
        drawPoints:false,// Must be disabled for smoothPlotter
@@ -117,7 +119,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
        strokeWidth:1,
        colors: this.colorPattern,
        labels: labels,// time axis
-       ylabel: this.yLabelPrefix + this.labelY,
+       ylabel: this.yLabelPrefix + yLabelSuffix,
        gridLineColor: gridLineColor,
        showLabelsOnHighlight: false,
        labelsSeparateLines: true,
@@ -353,8 +355,8 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     }
 
     if(units == 'bits'){
-      shortName = shortName.replace(/i/, '');
-      shortName = shortName.toLowerCase();
+      shortName = shortName.replace(/i/, '').trim();
+      shortName = ` ${shortName.charAt(0).toUpperCase()}${shortName.substr(1).toLowerCase()}`; // Kb, Mb, Gb, Tb
     }
 
     return { value: output, prefix: prefix, shortName: shortName };
