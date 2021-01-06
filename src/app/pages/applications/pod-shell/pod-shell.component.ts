@@ -284,13 +284,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
 
   initializeWebShell(res: string) {
     this.ss.token = res;
-    this.ss.connect();
-    this.ss.podInfo = {
-      chart_release_name: this.chart_release_name,
-      pod_name: this.pod_name,
-      container_name: this.selectedContainerName,
-      command: this.command,
-    };
+    this.reconnect();
 
     this.refreshToolbarButtons();  
 
