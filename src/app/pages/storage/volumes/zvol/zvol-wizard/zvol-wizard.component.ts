@@ -114,7 +114,7 @@ export class ZvolWizardComponent {
                     initial: '/mnt/',
                     explorerType: 'directory',
                     name: 'path',
-                    placeholder: T('Zvol Directory'),
+                    placeholder: T('ZFS Volume'),
                     value: '/nonexistent',
                     tooltip : T('Choose a path to the user\'s\
  home directory. If the directory exists and matches the username,\
@@ -447,7 +447,8 @@ export class ZvolWizardComponent {
     afterInit(entityWizard: EntityWizardComponent) {
 
       const zvolEntityForm = ( < FormGroup > this.entityWizard.formArray.get([1]));
-      ( < FormGroup > entityWizard.formArray.get([0])).get('path').valueChanges.subscribe((pool) => {
+      ( < FormGroup > entityWizard.formArray.get([0])).get('path').valueChanges.subscribe((pool: String) => {
+          if(pool.includes("mnt")) {
             const split = pool.split('/');
             this.parent = '';
             for(let i=2;i<split.length; i++) {
@@ -457,6 +458,8 @@ export class ZvolWizardComponent {
                 }
             }      
             this.summary[T('Dataset Path')] = this.parent;
+            ( < FormGroup > entityWizard.formArray.get([0])).controls['path'].setValue(this.parent);
+          }
       }); 
       zvolEntityForm.controls['name'].valueChanges.subscribe((name) => {
           this.summary[T('Zvol Name')] = name;
@@ -544,7 +547,7 @@ export class ZvolWizardComponent {
     async customNext(stepper) {
       if(stepper._selectedIndex == 0) {
         if(!this.parent) {
-          this.wizardConfig[0].fieldConfig.find(c => c.name === 'path').warnings = `Please select a path first.`;
+          this.wizardConfig[0].fieldConfig.find(c => c.name === 'path').warnings = `Please select a ZFS Volume first`;
           return;
         } else {
           await this.preInitZvolForm(this.entityWizard);
