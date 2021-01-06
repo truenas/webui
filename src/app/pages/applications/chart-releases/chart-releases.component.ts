@@ -290,6 +290,7 @@ export class ChartReleasesComponent implements OnInit {
       if (this.podList.length == 0) {
         this.dialogService.confirm(helptext.podConsole.nopod.title, helptext.podConsole.nopod.message, true, 'Close', false, null, null, null, null, true);
       } else {
+        this.choosePod.fieldConfig[0].value = this.podList[0];
         this.choosePod.fieldConfig[0].options = this.podList.map(item => {
           return {
             label: item,
