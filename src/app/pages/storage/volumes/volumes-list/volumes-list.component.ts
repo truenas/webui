@@ -1,3 +1,4 @@
+import { ValidationService } from './../../../../services/validation.service';
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -119,6 +120,7 @@ export class VolumesListTableConfig implements InputTableConf {
     protected volumeData: Object,
     protected messageService: MessageService,
     protected http: HttpClient,
+    protected validationService: ValidationService,
   ) {
     if (typeof (this._classId) !== "undefined" && this._classId !== "" && volumeData && volumeData['children']) {
       this.tableData = [];
@@ -1427,7 +1429,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   inputType : 'password',
                   required: true,
                   togglePw: true,
-                  validation : dataset_helptext.dataset_form_encryption.confirm_passphrase_validation,
+                  validation : this.validationService.matchOtherValidator('passphrase'),
                   disabled: is_key,
                   isHidden: is_key,
                 },
@@ -1779,7 +1781,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   title = T("Pools");
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", [], this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http);
+  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", [], this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http, this.validationService);
 
   actionComponent = {
     getActions: (row) => {
@@ -1796,7 +1798,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         }
       ];
     },
-    conf: new VolumesListTableConfig(this, this.router, "", [], this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http)
+    conf: new VolumesListTableConfig(this, this.router, "", [], this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http, this.validationService)
   };
 
   expanded = false;
@@ -1808,7 +1810,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
-    public sorter: StorageService, protected job: JobService, protected storage: StorageService, protected pref: PreferencesService, protected messageService: MessageService, protected http:HttpClient) {
+    public sorter: StorageService, protected job: JobService, protected storage: StorageService, protected pref: PreferencesService, protected messageService: MessageService, protected http:HttpClient, protected validationService: ValidationService) {
     super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, sorter, job, pref, mdDialog);
   }
 
@@ -1854,7 +1856,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           }
           pool.children = pChild ? [pChild] : [];
 
-          pool.volumesListTableConfig = new VolumesListTableConfig(this, this.router, pool.id, datasets, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, pool, this.messageService, this.http);
+          pool.volumesListTableConfig = new VolumesListTableConfig(this, this.router, pool.id, datasets, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, pool, this.messageService, this.http, this.validationService);
           pool.type = 'zpool';
 
           if (pool.children && pool.children[0]) {
