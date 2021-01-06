@@ -53,9 +53,10 @@ export class ShellService {
       this.send(JSON.stringify({ "token": this.token, "options": {"vm_id": this.vmId}}));
     } else if (this.podInfo) {
       this.send(JSON.stringify({ "token": this.token, "options": {
-        "chart_release_name": this.podInfo.rname,
-        "pod_name": this.podInfo.pname,
-        "container_name": this.podInfo.cname
+        "chart_release_name": this.podInfo.chart_release_name,
+        "pod_name": this.podInfo.pod_name,
+        "container_name": this.podInfo.container_name,
+        "command": this.podInfo.command
       }}));
     } else {
       this.send(JSON.stringify({ "token": this.token }));

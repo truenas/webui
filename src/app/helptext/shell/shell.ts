@@ -21,5 +21,12 @@ export default {
     <i>Shift+Insert</i> to paste."
   ),
 
-  action_dismiss: T("Dismiss")
+  action_dismiss: T("Dismiss"),
+
+  podConsole: {
+    nopod: {
+      title: T('No Pods Found'),
+      message: T('Invalid Pod name'),
+    },
+  }
 };

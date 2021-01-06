@@ -305,7 +305,7 @@ export class ChartReleasesComponent implements OnInit {
     const self = entityDialog.parent;
     const pod = entityDialog.formGroup.controls['pods'].value;
     const command = entityDialog.formGroup.controls['command'].value;
-    self.router.navigate(new Array("/apps/shell/").concat([self.selectedAppName, pod, self.podDetails[pod][0]]));
+    self.router.navigate(new Array("/apps/shell/").concat([self.selectedAppName, pod, command]));
     self.dialogService.closeAllDialogs();
   }
 }

@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import * as _ from 'lodash';
-import { ShellService, WebSocketService } from '../../../services';
+import { DialogService, ShellService, WebSocketService } from '../../../services';
 import helptext from "./../../../helptext/shell/shell";
 import { Terminal } from 'xterm';
 import { AttachAddon } from 'xterm-addon-attach';
@@ -44,14 +44,18 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
   clearLine = "\u001b[2K\r"
   public shellConnected: boolean = false;
   public connectionId: string;
-  protected rname: string;
-  protected pname: string;
-  protected cname: string;
+  protected chart_release_name: string;
+  protected pod_name: string;
+  protected command: string;
+  protected selectedContainerName: string;
+  protected podDetail: any;
+
   protected route_success: string[] = ['apps'];
 
   constructor(protected core:CoreService,
     private ws: WebSocketService,
     public ss: ShellService,
+    private dialogService: DialogService, 
     public translate: TranslateService,
     protected aroute: ActivatedRoute,
     protected router: Router,
@@ -60,33 +64,35 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnInit() {
     this.aroute.params.subscribe(params => {
-      this.rname = params['rname'];
-      this.pname = params['pname'];
-      this.cname = params['cname'];
-      console.log(this.rname, this.pname, this.cname);
+      this.chart_release_name = params['rname'];
+      this.pod_name = params['pname'];
+      this.command = params['cname'];
+      console.log(params);
 
-      this.getAuthToken().subscribe((res) => {
-        this.initializeWebShell(res);
-        this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
-          if (value !== undefined) {
-            // this.xterm.write(value);
+      this.ws.call('chart.release.pod_console_choices', [this.chart_release_name]).subscribe(res => {
+        this.podDetail = res[this.pod_name];
+        if (!this.podDetail) {
+          this.dialogService.confirm(helptext.podConsole.nopod.title, helptext.podConsole.nopod.message, true, 'Close', false, null, null, null, null, true);
+        } else {
+          this.selectedContainerName = this.podDetail[0];
 
-            if (_.trim(value) == "logout") {
-              this.xterm.destroy();
-              this.router.navigate(new Array('/').concat(this.route_success));
-            }
-          }
-        });
-        this.initializeTerminal();
-      });
+          this.getAuthToken().subscribe((res) => {
+            this.initializeWebShell(res);
+            this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
+              if (value !== undefined) {
+                // this.xterm.write(value);
+    
+                if (_.trim(value) == "logout") {
+                  this.xterm.destroy();
+                  this.router.navigate(new Array('/').concat(this.route_success));
+                }
+              }
+            });
+            this.initializeTerminal();
+          });
+        }
+      })
     });
-
-    // this.getAuthToken().subscribe((res) => {
-    //   this.initializeWebShell(res);
-    //   this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
-    //   });
-    //   this.initializeTerminal();
-    // });
   }
 
   ngOnDestroy() {
@@ -116,6 +122,17 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     let controls = [];
     if (this.shellConnected) {
       controls = [
+        {
+          type: 'menu',
+          label: 'Container',
+          name: 'container',
+          options: this.podDetail.map(item => {
+            return {
+              label: item,
+              value: item,
+            }
+          })
+        },
         {
           name: 'fontsize',
           label: 'Set font size',
@@ -265,9 +282,10 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     this.ss.token = res;
     this.ss.connect();
     this.ss.podInfo = {
-      pname: this.pname,
-      rname: this.rname,
-      cname: this.cname
+      chart_release_name: this.chart_release_name,
+      pod_name: this.pod_name,
+      container_name: this.selectedContainerName,
+      command: this.command,
     };
 
     this.refreshToolbarButtons();  
