@@ -16,6 +16,7 @@ import { EntityFormConfigurationComponent } from 'app/pages/common/entity/entity
 import { EntityFormEmbeddedComponent } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import {UUID} from 'angular2-uuid';
 
 @Component({
   selector: 'dashboard',
@@ -344,16 +345,31 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getDisksData(){
+    const uuid = UUID.UUID();
 
     this.core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
       this.pools = evt.data;
+
+      const queue = this.pools.map((pool) => {
+        return {
+          namespace: "pool.dataset.query",
+          args: [[["id", "=", pool.name]]]
+        };
+      });
+
+      this.core.emit({
+        name:"MultiCall", 
+        data: { responseEvent: 'RootDatasets_' + uuid, queue: queue }, 
+        sender: this
+      });
+
       this.isDataReady();
     });
 
-    this.core.register({observerClass: this, eventName: 'VolumeData'}).subscribe((evt:CoreEvent) => {
-      const nonBootPools = evt.data.filter(v => v.id !== 'boot-pool');
+    this.core.register({observerClass: this, eventName: 'RootDatasets_' + uuid}).subscribe((evt:CoreEvent) => {
+      const data = evt.data.responses.map(x => x[0]); 
       const clone = Object.assign({}, evt);
-      clone.data = nonBootPools;
+      clone.data = data;
       this.setVolumeData(clone);
       this.isDataReady();
     });
