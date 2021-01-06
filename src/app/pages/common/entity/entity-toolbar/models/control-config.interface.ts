@@ -6,6 +6,7 @@ export interface ControlConfig {
   label:string;
   labelIcon?:string;
   labelIconType?:string;
+  color?: string;
   type:string;
   disabled:boolean;
   value?:any;
