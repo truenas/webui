@@ -80,6 +80,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
 import { EntityToolbarComponent } from './entity-toolbar/entity-toolbar.component';
 import { ToolbarButtonComponent } from './entity-toolbar/components/toolbar-button/toolbar-button.component';
 import { ToolbarSliderComponent } from './entity-toolbar/components/toolbar-slider/toolbar-slider.component';
+import { ToolbarSelectComponent } from './entity-toolbar/components/toolbar-select/toolbar-select.component';
 import { ToolbarMenuComponent } from './entity-toolbar/components/toolbar-menu/toolbar-menu.component';
 import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
 import { ToolbarMultiSelectComponent } from './entity-toolbar/components/toolbar-multiselect/toolbar-multiselect.component';
@@ -150,6 +151,7 @@ import { TableComponent } from './table/table.component';
     EntityToolbarComponent,
     ToolbarButtonComponent,
     ToolbarSliderComponent,
+    ToolbarSelectComponent,
     ToolbarMenuComponent,
     ToolbarMultimenuComponent,
     ToolbarMultiSelectComponent,
@@ -183,6 +185,7 @@ import { TableComponent } from './table/table.component';
     EntityToolbarComponent,
     ToolbarButtonComponent,
     ToolbarSliderComponent,
+    ToolbarSelectComponent,
     ToolbarMenuComponent,
     ToolbarMultimenuComponent,
     ToolbarMultiSelectComponent,

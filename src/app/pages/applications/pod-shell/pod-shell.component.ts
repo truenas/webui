@@ -116,6 +116,9 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
       } else if (evt.data.event_control == 'fontsize') {
         this.font_size = evt.data.fontsize;
         this.resizeTerm();
+      } else if (evt.data.event_control == 'container') {
+        this.selectedContainerName = evt.data.container;
+        this.reconnect();
       }
     });
 
@@ -123,9 +126,10 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     if (this.shellConnected) {
       controls = [
         {
-          type: 'menu',
+          type: 'select',
           label: 'Container',
           name: 'container',
+          selectedValue: this.selectedContainerName,
           options: this.podDetail.map(item => {
             return {
               label: item,
@@ -293,7 +297,6 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     this.ss.shellConnected.subscribe((res)=> {
       this.shellConnected = res.connected;
       this.connectionId = res.id;
-      
       this.refreshToolbarButtons();      
       this.resizeTerm();
     })
@@ -304,6 +307,12 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   reconnect() {
+    this.ss.podInfo = {
+      chart_release_name: this.chart_release_name,
+      pod_name: this.pod_name,
+      container_name: this.selectedContainerName,
+      command: this.command,
+    };
     this.ss.connect();
   }
 }
