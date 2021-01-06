@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy, ElementRef, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatButton } from '@angular/material/button';
@@ -11,21 +11,22 @@ import globalHelptext from '../../../helptext/global-helptext';
 import productText from '../../../helptext/product';
 import helptext from '../../../helptext/topbar';
 import { Observable, Subscription } from 'rxjs';
-
+import { SystemGeneralService } from '../../../services';
 import { T } from '../../../translate-marker';
 import {WebSocketService} from '../../../services/ws.service';
 import { DialogService } from '../../../services/dialog.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ApiService } from 'app/core/services/api.service';
-
+import {AutofillMonitor} from '@angular/cdk/text-field';
 @Component({
   selector: 'app-signin',
   templateUrl: './signin.component.html',
   styleUrls: ['./signin.component.scss']
 })
-export class SigninComponent implements OnInit, OnDestroy {
+export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatProgressBar, { static: false}) progressBar: MatProgressBar;
   @ViewChild(MatButton, { static: false}) submitButton: MatButton;
+  @ViewChild('username', {read: ElementRef}) usernameInput: ElementRef<HTMLElement>;
 
   private failed: Boolean = false;
   public product_type: string;
@@ -40,6 +41,7 @@ export class SigninComponent implements OnInit, OnDestroy {
   public tokenObservable:Subscription;
   public HAInterval;
   public isTwoFactor = false;
+  private didSetFocus = false;
 
   signinData = {
     username: '',
@@ -72,7 +74,8 @@ export class SigninComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private core: CoreService,
     private api:ApiService,
-    private http:HttpClient) {
+    private _autofill: AutofillMonitor,
+    private http:HttpClient, private sysGeneralService: SystemGeneralService) {
     this.ws = ws;
     const ha_status = window.sessionStorage.getItem('ha_status');
     if (ha_status && ha_status === 'true') {
@@ -116,6 +119,15 @@ export class SigninComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  ngAfterViewInit() {
+    this._autofill.monitor(this.usernameInput).subscribe(e => {
+      if (!this.didSetFocus) {
+        this.didSetFocus = true;
+        this.usernameInput.nativeElement.focus();
+      }      
+    });
   }
 
   ngOnInit() {
@@ -208,12 +220,23 @@ export class SigninComponent implements OnInit, OnDestroy {
   }
 
   canLogin() {
+    
     if (this.logo_ready && this.connected &&
        (this.failover_status === 'SINGLE' ||
         this.failover_status === 'MASTER' ||
         this.product_type === 'CORE' )) {
+
+          if (!this.didSetFocus && this.usernameInput) {
+            setTimeout(() => {
+              this.didSetFocus = true;
+              this.usernameInput.nativeElement.focus();            
+            }, 10);
+            
+          }
+
           return true;
     } else {
+      
       return false;
     }
   }
