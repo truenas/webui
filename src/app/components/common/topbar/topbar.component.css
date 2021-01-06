@@ -1,3 +1,15 @@
+.truecommand.mat-icon{
+  color: #fff;
+}
+
+.truecommand.mat-icon.failed{
+  color: var(--red);
+}
+
+.truecommand.mat-icon.disabled{
+  opacity: 0.5;
+}
+
 .fa-spin {
   -webkit-animation: fa-spin 2s infinite linear;
   animation: fa-spin 2s infinite linear;

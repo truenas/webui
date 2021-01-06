@@ -1695,11 +1695,11 @@ export class VolumesListTableConfig implements InputTableConf {
     this.getMoreDatasetInfo(data, parent);
     node.data.group_actions = true;
     let actions_title = helptext.dataset_actions;
-    if (data.type === 'zvol') {
+    if (data.type === 'VOLUME') {
       actions_title = helptext.zvol_actions;
     }
     const actions = [{title: actions_title, actions: this.getActions(data)}];
-    if (data.type === 'FILESYSTEM') {
+    if (data.type === 'FILESYSTEM' || data.type === 'VOLUME') {
       const encryption_actions = this.getEncryptedDatasetActions(data);
       if (encryption_actions.length > 0) {
         actions.push({title: helptext.encryption_actions_title, actions: encryption_actions});
