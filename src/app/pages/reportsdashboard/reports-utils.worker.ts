@@ -179,6 +179,10 @@ function optimizeLegend(input){
       output.legend = output.legend.map((label) => label.replace(/nfsstat-/, ''))
       output.legend = output.legend.map((label) => label.replace(/_value/, ''))
       break;
+    case 'nfsstatbytes':
+      output.legend = output.legend.map((label) => label.replace(/nfsstat-/, ''))
+      output.legend = output.legend.map((label) => label.replace(/_bytes_value/, ''))
+      break;
     case 'df':
       output.legend = output.legend.map((label) => label.replace(/df_complex-/, ''))
       output.legend = output.legend.map((label) => label.replace(/_value/, ''))
