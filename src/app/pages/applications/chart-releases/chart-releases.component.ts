@@ -302,7 +302,10 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   doPodSelect(entityDialog: any) {
+    const self = entityDialog.parent;
     const pod = entityDialog.formGroup.controls['pods'].value;
-    this.router.navigate(new Array("/apps/shell/").concat([this.selectedAppName, pod, this.podDetails[pod][0]]));
+    const command = entityDialog.formGroup.controls['command'].value;
+    self.router.navigate(new Array("/apps/shell/").concat([self.selectedAppName, pod, self.podDetails[pod][0]]));
+    self.dialogService.closeAllDialogs();
   }
 }
