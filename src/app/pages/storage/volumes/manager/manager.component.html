@@ -371,10 +371,10 @@
         </div>
       </div>
       <div class="sizeMessage">{{ sizeMessage | translate}}: {{ size }}</div>
-      <div *ngIf="disknumError" [style.color]="'red'" [innerHTML]="disknumError"></div>
-      <div *ngIf="vdevtypeError" [style.color]="'red'" [innerHTML]="vdevtypeError"></div>
-      <div *ngIf="specialVdevTypeError" class="sizeMessage" [style.color]="'orange'" [innerHTML]="specialVdevTypeError"></div>
-      <div *ngIf="error" [style.color]="'red'" [innerHTML]="error"></div>
+      <div *ngIf="disknumError" class="sizeMessage" [style.color]="'red'" [innerHTML]="disknumError"></div>
+      <div *ngIf="vdevtypeError" class="sizeMessage" [style.color]="'red'" [innerHTML]="vdevtypeError"></div>
+      <div *ngIf="specialVdevTypeError" class="sizeMessage" [style.color]="'red'" [innerHTML]="specialVdevTypeError"></div>
+      <div *ngIf="error" class="sizeMessage" [style.color]="'red'" [innerHTML]="error"></div>
       <div class="forceCreateCheckbox" *ngIf="has_savable_errors">
         <mat-checkbox id="pool-manager__force-submit-checkbox" [(ngModel)]="force" (click)="forceCheckboxChecked()">{{'Force' | translate}}</mat-checkbox>
       </div>
