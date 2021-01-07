@@ -230,9 +230,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  getSpecialVdevTypeErrorMsg(type) {
+  getSpecialVdevTypeErrorMsg() {
     this.translate.get(this.specialVdevTypeErrorMessage).subscribe((errorMessage) => {
-      this.specialVdevTypeError = errorMessage + T(' First data vdev is a ') + this.first_data_vdev_type + T(', new Metadata vdev is a ') + type + '.';
+      this.specialVdevTypeError = errorMessage;
     });
   }
 
@@ -460,9 +460,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
         this.vdevdisksSizeError = true;
         this.has_savable_errors = true;
       }
-      if (vdev.group === 'special') {
-        if (vdev.type !== this.first_data_vdev_type) {
-          this.getSpecialVdevTypeErrorMsg(vdev.type);
+      if (vdev.group === 'special' || vdev.group === 'data') {
+        if (vdev.disks.length >= 1 && vdev.type.toLowerCase() === 'stripe') {
+          this.getSpecialVdevTypeErrorMsg();
           this.has_savable_errors = true;
         }
       }
