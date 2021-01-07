@@ -99,7 +99,7 @@ export class VdevComponent implements OnInit {
   }
 
   guessVdevType() {
-    if ((this.group === "data" || this.group === 'special') && !this.vdev_type_disabled) {
+    if (this.group === "data" && !this.vdev_type_disabled) {
       if (this.disks.length === 2) {
         this.type = "mirror";
       } else if (this.disks.length === 3) {
@@ -108,6 +108,13 @@ export class VdevComponent implements OnInit {
         this.type = "raidz2";
       } else if (this.disks.length >= 9) {
         this.type = "raidz3";
+      } else {
+        this.type = "stripe";
+      }
+    }
+    if (this.group === "special" && !this.vdev_type_disabled) {
+      if (this.disks.length >= 2) {
+        this.type = "mirror";
       } else {
         this.type = "stripe";
       }
