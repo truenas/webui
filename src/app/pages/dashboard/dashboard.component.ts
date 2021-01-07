@@ -315,12 +315,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   stopListeners(){
     // unsubscribe from middleware
-    if(!this.statsEvents){ 
+    if(this.statsEvents){ 
       this.statsEvents.complete();
     }
 
     // unsubsribe from global actions
-    if(!this.formEvents){ 
+    if(this.formEvents){ 
       this.formEvents.complete();
     }
   }
