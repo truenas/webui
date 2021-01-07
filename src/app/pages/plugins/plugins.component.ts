@@ -616,7 +616,25 @@ export class PluginsComponent {
   onCheckboxChange(row) {
     this.loader.open();
     row.boot = !row.boot;
-    this.ws.call('plugin.update', [row.id, {'boot': row.boot ? 'on' : 'off'}] )
+
+    // const dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Updating Plugin") }, disableClose: false });
+    // // dialogRef.componentInstance.disableProgressValue(false);
+    
+    // dialogRef.componentInstance.setCall('plugin.update', [row.id, {'boot': row.boot ? 'on' : 'off'}]);
+    // dialogRef.componentInstance.success.subscribe((res) => {
+    //   console.log("In case of success");
+    //   dialogRef.close(true);
+    //   this.updateRows([row]);
+    //   this.dialogService.Info(T('Plugin Updated'), T("Plugin ") + row.name + T(" updated."));
+    // });
+    // dialogRef.componentInstance.failure.subscribe((err) => {
+    //   console.log("In case of failure");
+    //   new EntityUtils().handleWSError(this, err, this.dialogService);
+    // })
+    // dialogRef.componentInstance.submit();
+
+
+    this.ws.job('plugin.update', [row.id, {'boot': row.boot ? 'on' : 'off'}] )
     .subscribe(
       (res) => {
         if (!res) {
