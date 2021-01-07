@@ -15,9 +15,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T996.feature', 'Verify that users cannot same an invalid email')
-def test_verify_that_users_cannot_same_an_invalid_email(driver):
-    """Verify that users cannot same an invalid email."""
+@scenario('features/NAS-T996.feature', 'Verify that users cannot save an invalid email')
+def test_verify_that_users_cannot_save_an_invalid_email(driver):
+    """Verify that users cannot save an invalid email."""
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
