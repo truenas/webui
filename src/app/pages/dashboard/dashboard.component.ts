@@ -399,13 +399,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isDataReady(){
     const isReady = this.statsDataEvents && typeof this.pools !== undefined && this.volumeData && this.nics ? true : false;
-    console.log({ 
-      ready:isReady, 
-      pools: this.pools, 
-      events: this.statsDataEvents,
-      volumeData: this.volumeData,
-      test: typeof this.pools !== undefined
-    });
 
     if(isReady){
       this.availableWidgets = this.generateDefaultConfig();
