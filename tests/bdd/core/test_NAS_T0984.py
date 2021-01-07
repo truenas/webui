@@ -96,7 +96,6 @@ def when_the_Interfaces_page_appears_verify_vnet0_DHCP_is_no(driver):
     """when the Interfaces page appears verify vnet0 DHCP is "no"."""
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Interfaces")]')
     assert wait_on_element(driver, 0.5, 7, '//div[@id="vtnet0_Name"]')
-    # <div id="vtnet0_DHCP" title="no">
     dhcp = driver.find_element_by_xpath('//div[@id="vtnet0_DHCP"]').text
     assert dhcp == "no"
 
@@ -115,6 +114,12 @@ def click_test_changes_check_confirm_click_test_changes_again(driver):
 def please_wait_should_appear_will_test_changes_is_happening(driver):
     """"Please wait" should appear will Test Changes is happening."""
     assert wait_on_element_disappear(driver, 1, 65, '//h6[contains(.,"Please wait")]')
+    if is_element_present(driver, '//button[contains(.,"TEST CHANGES")]'):
+        driver.find_element_by_xpath('//button[contains(.,"TEST CHANGES")]').click()
+        assert wait_on_element(driver, 1, 7, '//h1[contains(.,"Test Changes")]')
+        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
+        driver.find_element_by_xpath('//button[@ix-auto="button__TEST CHANGES"]').click()
+        assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
 
 
 @then('There are unapplied network interface changes should appear click "Save Changes"')
@@ -143,6 +148,5 @@ def on_the_interfaces_page_vnet0_dhcp_is_no(driver):
     """on the Interfaces page vnet0 DHCP is "no"."""
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Interfaces")]')
     assert wait_on_element(driver, 0.5, 7, '//div[@id="vtnet0_Name"]')
-    # <div id="vtnet0_DHCP" title="no">
     dhcp = driver.find_element_by_xpath('//div[@id="vtnet0_DHCP"]').text
     assert dhcp == "no"
