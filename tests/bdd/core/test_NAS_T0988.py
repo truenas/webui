@@ -124,6 +124,9 @@ def updated_value_should_be_visible(driver):
 @then('open a shell and run su user to become that user')
 def open_a_shell_and_run_su_user_to_become_that_user(driver):
     """open a shell and run su user to become that user."""
+    element = driver.find_element_by_xpath('//span[contains(.,"Guide")]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(0.5)
     assert wait_on_element(driver, 1, 7, '//mat-list-item[@ix-auto="option__Shell"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shell"]').click()
     assert wait_on_element(driver, 4, 7, '//span[@class="reverse-video terminal-cursor"]')
