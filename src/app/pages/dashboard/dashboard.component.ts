@@ -354,18 +354,25 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
       this.pools = evt.data;
 
-      const queue = this.pools.map((pool) => {
-        return {
-          namespace: "pool.dataset.query",
-          args: [[["id", "=", pool.name]]]
-        };
-      });
+      if(this.pools.length > 0){
+        const queue = this.pools.map((pool) => {
+          return {
+            namespace: "pool.dataset.query",
+            args: [[["id", "=", pool.name]]]
+          };
+        });
 
-      this.core.emit({
-        name:"MultiCall", 
-        data: { responseEvent: 'RootDatasets_' + uuid, queue: queue }, 
-        sender: this
-      });
+        this.core.emit({
+          name:"MultiCall", 
+          data: { responseEvent: 'RootDatasets_' + uuid, queue: queue }, 
+          sender: this
+        });
+      } else {
+        const clone = Object.assign({}, evt);
+        clone.data = [];
+        this.setVolumeData(clone);
+        this.isDataReady();
+      }
 
       this.isDataReady();
     });
@@ -381,7 +388,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
       if(typeof this.systemInformation == 'undefined'){
         this.systemInformation = evt.data;
-        this.core.emit({name: 'PoolDataRequest', sender: this});
+        if(!this.pools || this.pools.length == 0){
+          this.core.emit({name: 'PoolDataRequest', sender: this});
+        }
       }
     });
 
@@ -389,7 +398,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isDataReady(){
-    const isReady = this.statsDataEvents && this.pools && this.volumeData && this.nics ? true : false;
+    const isReady = this.statsDataEvents && typeof this.pools !== undefined && this.volumeData && this.nics ? true : false;
+    console.log({ 
+      ready:isReady, 
+      pools: this.pools, 
+      events: this.statsDataEvents,
+      volumeData: this.volumeData,
+      test: typeof this.pools !== undefined
+    });
+
     if(isReady){
       this.availableWidgets = this.generateDefaultConfig();
       if(!this.dashState){

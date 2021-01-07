@@ -32,7 +32,8 @@ export class DataService implements OnDestroy {
     protected core: CoreService,
     protected ws: WebSocketService
   ) {
-    core.register({ observerClass: this, eventName: "MultiCall"}).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: "MultiCall"}).subscribe((evt: CoreEvent) => {
+      console.log(evt);
       this.fetch(evt.data);
     });
   }
