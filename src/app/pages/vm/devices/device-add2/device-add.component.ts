@@ -465,7 +465,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
         );   
       });
       _.find(this.diskFieldConfig, {name:'path'}).options.push({
-        label: 'Add New', value: 'new'
+        label: 'Add New', value: 'new', sticky: 'bottom'
       })
     });
     // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing VNC device, hide VNC option.
@@ -562,7 +562,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
         );  
       });
       searchedZvols.push({
-        label: 'Add New', value: 'new'
+        label: 'Add New', value: 'new', sticky: 'bottom'
       });
       _.find(parent.diskFieldConfig, {name:'path'}).searchOptions = searchedZvols;
     });

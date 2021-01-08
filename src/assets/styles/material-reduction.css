@@ -87,6 +87,20 @@ span.code{
   height:36px !important;
 }
 
+.mat-menu-item.sticky-bottom{
+  position: sticky;
+  bottom: 0;
+  background: var(--bg2);
+  border-top: solid 1px var(--lines);
+}
+
+.mat-menu-item.sticky-top{
+  position: sticky;
+  top: 0;
+  background: var(--bg2);
+  border-bottom: solid 1px var(--lines);
+}
+
 
 /* Cards */
 
