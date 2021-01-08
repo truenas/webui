@@ -209,7 +209,7 @@ export const helptext_system_support = {
  TrueNAS Licensing</a> - Learn more about enterprise-grade support.'),
 
   updateTxt: T('Update License'),
-  enterTxt: T('Enter License'),
+  enterTxt: T('Add License'),
   ticket: T('File Ticket'),
 
   updateProd: {

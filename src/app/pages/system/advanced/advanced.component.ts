@@ -67,7 +67,7 @@ export class AdvancedComponent implements OnDestroy {
                   if (this.dialogRef) {
                     this.dialogRef.close();
                   }
-                  this.dialog.errorReport(helptext_system_advanced.debug_download_failed_title, helptext_system_advanced.debug_download_failed_message, err);
+                  this.dialog.errorReport(helptext_system_advanced.debug_download_failed_title, helptext_system_advanced.debug_download_failed_message, err.message);
                 });
                 if (!failed) {
                   let reported = false; // prevent error from popping up multiple times

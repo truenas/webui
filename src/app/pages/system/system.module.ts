@@ -33,7 +33,6 @@ import { EmailComponent } from './email';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
 import { FailoverComponent } from './failover/failover.component';
-import { ReportingComponent } from './reporting/reporting.component';
 import { EnclosureModule } from './viewenclosure/enclosure.module';
 import { EulaComponent } from './general-settings/support/eula/eula.component';
 import { ProactiveComponent } from './general-settings/support/proactive/proactive.component';
@@ -76,7 +75,6 @@ import { LicenseComponent } from './general-settings/support/license/license.com
     AlertServiceComponent,
     AlertConfigComponent,
     FailoverComponent,
-    ReportingComponent,
     EulaComponent,
     ProactiveComponent,
     SupportFormLicensedComponent,

@@ -36,7 +36,7 @@
               <mat-spinner [diameter]="40" style="margin: 0 auto;"></mat-spinner>
             </ng-template>
 
-            <div *ngIf="screenType == 'Desktop'" fxFlex="53" fxFlex.xs="100" id="cpu-load-cores">
+            <div *ngIf="screenType == 'Desktop'" fxFlex="53" fxFlex.xs="100" id="cpu-load-cores" class="no-flicker">
                 <mat-list>
                   <mat-list-item>
                     <span class="label"><strong>{{"Threads" | translate}}:</strong></span> &nbsp;&nbsp;{{coreCount}} {{"threads" | translate}}
@@ -68,7 +68,7 @@
           </div>
 
 
-        <div *ngIf="screenType == 'Mobile'" fxLayout="column" class="mobile" >
+        <div *ngIf="screenType == 'Mobile'" fxLayout="column" class="mobile no-flicker">
           <div fxFlex="65" class="bottom">
             <div class="list-subheader">  <span class="capitalize">{{"CPU Details" | translate}}</span></div>
             <mat-list>
@@ -79,7 +79,7 @@
         </div>
 
 
-        <div *ngIf="screenType == 'Mobile'" fxLayout="column" class="mobile" >
+        <div *ngIf="screenType == 'Mobile'" fxLayout="column" class="mobile no-flicker">
           <div fxFlex="65" class="bottom">
             <div class="list-subheader">  <span class="capitalize">{{"Stats Per Thread" | translate}}</span></div>
             <mat-list>

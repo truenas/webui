@@ -10,6 +10,7 @@ export const helptext_system_certificates = {
     fieldset_type: T('Certificate Options'),
     fieldset_certificate: T('Certificate Subject'),
     fieldset_basic_constraints: T('Basic Constraints'),
+    fieldset_extra: T('Extra Constraints'),
     fieldset_authority_key_identifier: T('Authority Key Identifier'),
     fieldset_extended_key_usage: T('Extended Key Usage'),
     fieldset_key_usage: T('Key Usage'),
@@ -208,7 +209,7 @@ matches your certificate usage scenario.'),
         tooltip: T('Identify this certificate as a Certificate Authority (CA).'),
       },
       enabled: {
-        placeholder: T('Enabled'),
+        placeholder: T('Basic Constraints'),
         tooltip: T('Activate this certificate extension.'),
       },
       path_length: {
@@ -245,7 +246,7 @@ certificate still approved.'),
 key used to sign this certificate.'),
       },
       enabled: {
-        placeholder: T('Enabled'),
+        placeholder: T('Authority Key Identifier'),
         tooltip: T('Activate this certificate extension.'),
       },
       extension_critical: {
@@ -269,7 +270,7 @@ requires that the purpose of the certificate is consistent with both extensions.
 for more details.'),
       },
       enabled: {
-        placeholder: T('Enabled'),
+        placeholder: T('Extended Key Usage'),
         tooltip: T('Activate this certificate extension.'),
       },
       extension_critical: {
@@ -296,7 +297,7 @@ certificate still approved.'),
  for more information.'),
       },
       enabled: {
-        placeholder: T('Enabled'),
+        placeholder: T('Key Usage'),
         tooltip: T('Activate this certificate extension.'),
       },
       digital_signature: {

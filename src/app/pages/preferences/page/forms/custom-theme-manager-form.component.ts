@@ -14,7 +14,11 @@ import { T } from '../../../../translate-marker';
 
 @Component({
   selector : 'custom-theme-manager-form',
-  template:`<entity-form-embedded fxFlex="100" fxFlex.gt-xs="450px" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>`
+  template:`
+    <ng-container *ngIf="themeService && themeService.customThemes && themeService.customThemes.length > 0">
+      <entity-form-embedded fxFlex="100" fxFlex.gt-xs="450px" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>
+    </ng-container>
+  `
 })
 export class CustomThemeManagerFormComponent implements OnInit, OnChanges, OnDestroy {
 
@@ -49,14 +53,6 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges, OnDes
         width:'100%',
         label:true,
         config:this.customThemeFields
-      }
-    ]
-
-    custActions: any[] = [
-      {
-        id: 'create-theme-link',
-        name: T('Create New Theme'),
-        eventName:"CreateTheme"
       }
     ]
 
@@ -116,9 +112,6 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges, OnDes
             }
           }
           this.core.emit({name:"ChangeCustomThemesPreference",data:submission});
-          break;
-        case "CreateTheme":
-          this.router.navigate(new Array('').concat(['ui-preferences', 'create-theme']));
           break;
         }
       });

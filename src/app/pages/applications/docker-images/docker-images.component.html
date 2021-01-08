@@ -1,0 +1,21 @@
+<div fxLayout="row wrap" fxLayoutAlign="center center">
+  <mat-card class="docker-item" *ngFor="let item of dockerImages">
+      <div class="content-wrapper">
+          <!-- <img class="logo" src="{{ item.icon_url}}" fxFlex="160px"> -->
+          <div class=content>
+              <div class="catalog-title">
+                  <strong>Repo Tags: {{ item.repo_tags  }}</strong>
+              </div>
+              <div class="catalog-version">
+                  Created: {{ item.created }}
+              </div>
+               <div class="catalog-version">
+                Size: {{ item.size }}
+              </div>
+              <div class="catalog-version">
+                Update Available: {{ item.update_available }}
+              </div>
+          </div>
+      </div>
+  </mat-card>
+</div>

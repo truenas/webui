@@ -520,6 +520,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     }
 
     data.aliases = aliases;
+    if (data.type === 'BRIDGE' && data.bridge_members === undefined) {
+      data.bridge_members = [];
+    }
     if (failover_aliases.length > 0) {
       data.failover_aliases = failover_aliases;
     }

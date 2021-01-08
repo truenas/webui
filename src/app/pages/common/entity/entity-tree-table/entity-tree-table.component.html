@@ -7,11 +7,11 @@
     <ng-container *ngFor="let column of conf.columns; let i = index;">
 
       <!-- NonActions Columns -->
-      <ng-container *ngIf="column.prop !== 'actions'" matColumnDef="{{column.prop}}">
+      <ng-container *ngIf="column.prop !== 'actions'" matColumnDef="{{column.prop}}" [sticky]="i == 0">
         <th mat-header-cell *matHeaderCellDef> {{column.name}} </th>
         <ng-container>
           <!-- Tree and Data Cells -->
-          <td mat-cell *matCellDef="let element; let ii = index" [ngClass]="{ 'tree-cell': i == 0 }">
+          <td mat-cell *matCellDef="let element; let ii = index" [ngClass]="{ 'tree-cell': i == 0 }" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)">
             <div fxLayout="row" fxLayoutAlign="start center">
               <ng-container *ngIf="i == 0">
                 <div [style.margin-left]="((element.indexPath.length - 1) * 16).toString() + 'px'" [ngClass]="{ 'invisible': element.children.length == 0 }">

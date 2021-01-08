@@ -1,0 +1,137 @@
+.catalog-item {
+    height: 160px;
+    width: 350px;
+
+    .content-wrapper {
+        .logo-container {
+          height: 160px;
+          width: 160px;
+          background-color: var(--contrast-lighter);
+        }
+        .logo {
+          width: calc(100% - 32px);
+          height: 100%;
+          background-position: center;
+          background-size: contain;
+          background-repeat: no-repeat;
+          margin-left: 16px;
+        }
+
+        .content {
+            text-align: center;
+            padding: 1rem;
+            position: relative;
+            left: 15px;
+            width: 140px;
+
+            .badge-area {
+                height: 18px;
+                width: 70px;
+                margin: 13px auto;
+
+                .partner-badge {
+                    width: 70px;
+                    background-color: var(--yellow);
+                    color: rgba($color: #000000, $alpha: 1.0);
+                }
+            }
+            .button-row {
+              position: relative;
+              top: 8px;
+            }      
+        }
+    }
+
+    .more-info {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 10px;
+    } 
+
+}
+
+.chart-item {
+  height: 160px;
+  width: 500px;
+
+  .content-wrapper {
+    .logo-container {
+      height: 160px;
+      width: 160px;
+      background-color: var(--contrast-lighter);
+    }
+    .logo {
+      width: calc(100% - 32px);
+      height: 100%;
+      background-position: center;
+      background-size: contain;
+      background-repeat: no-repeat;
+      margin-left: 16px;
+    }
+
+      .content-box {
+        width: 340px;
+        height: 130px;
+      }
+
+      .chart-name {
+        font-size: large;
+      }
+
+      .content {
+          text-align: center;
+          padding: 1rem;
+          width: 210px;    
+      }
+      .chart-button-row {
+        position: absolute;
+        bottom: 5px;
+        right: 15px;
+      } 
+  }
+
+  .more-info {
+    position: absolute;
+    top: 10px;
+    right: 0;
+  } 
+
+  .docker-info {
+    font-size: smaller;
+    opacity: .7;
+  }
+
+  .status {
+    padding: 3px;
+    opacity: 0.75;
+  }
+
+  .active {
+    border: 1px solid var(--green);
+    color: var(--green);
+  }
+
+  .other {
+    border: 1px solid var(--fg1);
+  }
+
+  button {
+    margin-bottom: 10px !important;
+    margin-left: 5px !important;
+  }
+
+  .ports {
+    position: absolute;
+    bottom: 20px;
+    left: 170px;
+  }
+
+}
+
+.docker-item {
+  height: 150px;
+  width: 300px;
+  text-align: center;
+  padding: 15px !important;
+}

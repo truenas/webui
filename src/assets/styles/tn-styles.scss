@@ -904,13 +904,13 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   }
 
   // Bring theme colors to rollover effect for standard primary buttons
-  .mat-button.mat-primary:hover .mat-button-focus-overlay {
+  .mat-button.mat-primary .mat-button-focus-overlay {
     @include variable(background-color, --primary, $primary);
     opacity: .12;
   }
 
   // Bring theme colors to rollover effect for standard accent buttons
-  .mat-button.mat-accent:hover .mat-button-focus-overlay {
+  .mat-button.mat-accent .mat-button-focus-overlay {
     @include variable(background-color, --accent, $accent);
     opacity: .12;
   }

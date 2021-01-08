@@ -12,7 +12,7 @@ export class ShellService {
   onOpenSubject: Subject < any > ;
   pendingCalls: any;
   pendingMessages: any[] = [];
-  socket: WebSocket;
+  public socket: WebSocket;
   connected = false;
   loggedIn = false;
   @LocalStorage() username;
@@ -68,7 +68,9 @@ export class ShellService {
   onclose(event) {
     this.connected = false;
     this.onCloseSubject.next(true);
-    this.shellConnected.emit(this.connected);
+    this.shellConnected.emit({
+      connected: this.connected,
+    });
   }
 
 
@@ -84,7 +86,10 @@ export class ShellService {
     if (data.msg === "connected") {
       this.connected = true;
       this.onconnect();
-      this.shellConnected.emit(this.connected);
+      this.shellConnected.emit({
+        connected: this.connected,
+        id: data.id
+      });
       return;
     }
 

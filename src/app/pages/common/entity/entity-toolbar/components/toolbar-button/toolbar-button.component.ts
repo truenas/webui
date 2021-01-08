@@ -12,7 +12,7 @@ import { Subject } from 'rxjs/Subject';
   styleUrls : [ 'toolbar-button.component.scss' ],
   template : `
     <div 
-      class="toolbar-button">
+      class="toolbar-button" [class.has-tooltip]="config.tooltip">
       <button
         ix-auto ix-auto-type="button" [ix-auto-identifier]="id + '_entity_toolbar_' + config.label"
         (click)="onClick(true)"
@@ -21,6 +21,7 @@ import { Subject } from 'rxjs/Subject';
         [disabled]="config.disabled">
         {{ config.label | translate }}
       </button>
+      <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip" [position]="config.tooltipPosition ? config.tooltipPosition : left"></tooltip>
     </div>
   `
 })

@@ -116,6 +116,13 @@ export class NavigationService {
       state: 'vm',
     },
     {
+      name: T('Apps'),
+      type: 'link',
+      tooltip: T('Apps'),
+      icon: 'apps',
+      state: 'apps',
+    },
+    {
       name: T('Reporting'),
       type: 'link',
       tooltip: T('Reports'),
@@ -130,7 +137,6 @@ export class NavigationService {
       state: 'system',
       sub: [
         { name: T('Update'), state: 'update' },
-        { name: T('Alerts'), state: 'alertservice' },
         { name: T('General'), state: 'general' },
         { name: T('Advanced'), state: 'advanced' },
         { name: T('Boot'), state: 'boot' },

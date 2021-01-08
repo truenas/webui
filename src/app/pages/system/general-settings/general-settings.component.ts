@@ -50,12 +50,6 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
       name: 'secretseed',
       placeholder: helptext.secretseed.placeholder,
       tooltip: helptext.secretseed.tooltip
-    },
-    {
-      type: 'checkbox',
-      name: 'pool_keys',
-      placeholder: helptext.poolkeys.placeholder,
-      tooltip: helptext.poolkeys.tooltip
     }
   ];
 
@@ -154,6 +148,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
             name: 'configFiles',
             label: helptext.actions.config_button,
             type: 'menu',
+            color: 'primary',
             options: [
               { label: helptext.actions.save_config, value: 'save_config' }, 
               { label: helptext.actions.upload_config, value: 'upload_config' }, 
@@ -262,7 +257,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
         let hostname = res.hostname.split('.')[0];
         let date = entityDialog.datePipe.transform(new Date(),"yyyyMMddHHmmss");
         fileName = hostname + '-' + res.version + '-' + date;
-        if (entityDialog.formValue['secretseed'] || entityDialog.formValue['pool_keys']) {
+        if (entityDialog.formValue['secretseed']) {
           mimetype = 'application/x-tar';
           fileName += '.tar';
         } else {
@@ -271,9 +266,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
         }
       }
 
-      entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'],
-                                                               'pool_keys': entityDialog.formValue['pool_keys'] }],
-                                                               fileName])
+      entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
         .subscribe(
           (download) => {
             const url = download[1];

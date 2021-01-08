@@ -223,4 +223,11 @@ export class EntityWizardComponent implements OnInit {
     }
     return false;
   }
+
+  handleNext(currentStep) {
+    currentStep.stepControl.markAllAsTouched();
+    if (this.conf.customNext !== undefined) {
+      this.conf.customNext(this.stepper);
+    }
+  }
 }

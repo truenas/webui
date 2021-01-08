@@ -12,6 +12,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 
 import { ScrollingModule } from '@angular/cdk/scrolling'; 
 import { ReportComponent } from './components/report/report.component';
+import { ReportsConfigComponent } from './components/reports-config/reports-config.component'
 import { ReportsGlobalControlsComponent } from './components/reports-global-controls/reports-global-controls.component';
 
 import { ReportsDashboardComponent } from './reportsdashboard.component';
@@ -29,13 +30,15 @@ import { LineChartComponent } from './components/lineChart/lineChart.component';
     TranslateModule,
     EntityModule,
     FlexLayoutModule,
-    CommonDirectivesModule
+    CommonDirectivesModule,
+    EntityModule
   ],
   declarations : [
     ReportsDashboardComponent,
     ReportsGlobalControlsComponent,
+    ReportsConfigComponent,
     ReportComponent,
-    LineChartComponent
+    LineChartComponent,
   ],
   providers : [
     
