@@ -112,6 +112,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     const fg2Type = this.utils.getValueType(fg2);
     let fg2RGB = fg2Type == 'hex' ? this.utils.hexToRGB(this.themeService.currentTheme().fg2).rgb : this.utils.rgbToArray(fg2);
     let gridLineColor = 'rgba(' + fg2RGB[0] + ', ' + fg2RGB[1]+ ', ' + fg2RGB[2]+ ', 0.25)'
+    let yLabelSuffix = this.labelY === 'Bits/s' ? this.labelY.toLowerCase() : this.labelY
 
     let options = {
        drawPoints:false,// Must be disabled for smoothPlotter
@@ -120,7 +121,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
        strokeWidth:1,
        colors: this.colorPattern,
        labels: labels,// time axis
-       ylabel: this.yLabelPrefix + this.labelY,
+       ylabel: this.yLabelPrefix + yLabelSuffix,
        gridLineColor: gridLineColor,
        showLabelsOnHighlight: false,
        labelsSeparateLines: true,
@@ -204,7 +205,14 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
           for(let i = 0; i < rd.data.length; i++){ 
             let item = Object.assign([], rd.data[i]);
             let dateStr = moment.tz(new Date(rd.start * 1000 + i * rd.step * 1000), this.timezone).format();
-            let date = new Date(dateStr.substring(0, dateStr.length-9));
+            //UTC: 2020-12-17T16:33:10Z
+            //Los Angeles: 2020-12-17T08:36:30-08:00
+            //Change dateStr from '2020-12-17T08:36:30-08:00' to '2020-12-17T08:36'
+            let list = dateStr.split(':');
+            list.splice(2);
+            dateStr = list.join(':');
+            let date = new Date(dateStr);            
+            
             item.unshift(date);
             rows.push(item);
           }
@@ -349,8 +357,8 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     }
 
     if(units == 'bits'){
-      shortName = shortName.replace(/i/, '');
-      shortName = shortName.toLowerCase();
+      shortName = shortName.replace(/i/, '').trim();
+      shortName = ` ${shortName.charAt(0).toUpperCase()}${shortName.substr(1).toLowerCase()}`; // Kb, Mb, Gb, Tb
     }
 
     return { value: output, prefix: prefix, shortName: shortName };

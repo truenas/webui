@@ -16,7 +16,7 @@ export interface FieldConfig {
   errors?: string, hasErrors?: boolean, placeholder?: string, type: string,
   inputType?: string, inputUnit?: InputUnitConfig, validation?: any[] | ValidatorFn | ValidatorFn[],
   asyncValidation?: AsyncValidatorFn | AsyncValidatorFn[],
-  value?: any, multiple?: boolean, tristate?: boolean, tooltip?: string,
+  value?: any, multiple?: boolean, tristate?: boolean, tooltip?: string, tooltipPosition?:string,
   relation?: RelationGroup[], isHidden?: boolean, formarray?: any,
   initialCount?: number, readonly?: boolean, initial?: string, rootSelectable?: boolean,
   min?: number, max?: number, tabs?: any[], tabName?: string, class?: string,
@@ -28,9 +28,10 @@ export interface FieldConfig {
   warnings?: string, hideButton?:boolean, searchOptions?: any[], hideDirs?: any,
   listFields?: Array<FieldConfig>[], templateListField?: FieldConfig[],
   updateLocal?: boolean, isLoading?: boolean, textAreaRows?: number, netmaskPreset?: number,
-  isLargeText?: boolean, paragraphIcon?: string, zeroStateMessage?: string, isDoubleConfirm?:boolean,
+  isLargeText?: boolean, paragraphIcon?: string, paragraphIconSize?: string, zeroStateMessage?: string, isDoubleConfirm?:boolean,
   maskValue?: any, hideErrMsg?: boolean, id?: string, autocomplete?: boolean,
-  buttonClass?: string, buttonColor?: string, filereader?: boolean,
+  buttonClass?: string, buttonColor?: string, filereader?: boolean, box?: boolean,
   customEventMethod?(data:any), onChangeOption?(data:any), hint?:string, loadMoreOptions?: any;
+  enableTextWrapForOptions?: boolean;
 }
 

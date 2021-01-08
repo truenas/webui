@@ -8,7 +8,6 @@ import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { PreferencesPage } from './page/preferences.component';
-import { CustomThemeComponent } from './page/forms/customtheme/customtheme.component';
 import { CustomThemeManagerFormComponent } from './page/forms/custom-theme-manager-form.component';
 import { GeneralPreferencesFormComponent } from './page/forms/general-preferences-form.component';
 import { TranslateModule } from '@ngx-translate/core';
@@ -27,13 +26,10 @@ import { TranslateModule } from '@ngx-translate/core';
   ],
   declarations: [
     PreferencesPage,
-    CustomThemeComponent,
     CustomThemeManagerFormComponent,
     GeneralPreferencesFormComponent
   ],
   providers:[EntityFormService],
-  entryComponents:[
-    //CardComponent
-    ],
+  entryComponents:[],
 })
 export class PreferencesModule { }

@@ -3,7 +3,7 @@
     <mat-progress-bar mode="determinate" value="0" class="session-progress"></mat-progress-bar>
     <mat-card>
       <mat-card-content>
-        <div *ngIf="connected() && logo_ready;else notconnected">
+        <div [hidden]="!(connected() && logo_ready)">
           <div class="text-center logo-wrapper" *ngIf="logo_ready">
             <img class="logo-bg" alt="Logo image background of stars and sky at night" src="assets/images/stars-sky-1200w.jpg" srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
             <mat-icon svgIcon="truenas_core_logo_full" *ngIf="product_type === 'CORE'; else isTruenas" class="logo" alt="TrueNAS CORE logo"></mat-icon>
@@ -14,8 +14,8 @@
           </div>
 
           <div class="card-bottom">
-            <div class="form-container" *ngIf="canLogin()">
-              <form #signinForm="ngForm" (ngSubmit)="signin()" *ngIf="has_root_password; else setPassword">
+            <div class="form-container" [hidden]="!canLogin()">
+              <form #signinForm="ngForm" (ngSubmit)="signin()" [hidden]="!has_root_password">
                 <div class="form-element username">
                   <div class="label-container">
                     <label class="label input-text">Username</label>
@@ -68,7 +68,7 @@
                 </div>
                 <button name="signin_button" mat-button color="primary" class="fn-theme-primary full-width mb-1" id="signin_button" [disabled]="username.errors || password.errors">{{"Log in" | translate}}</button>
               </form>
-              <ng-template #setPassword>
+              <div [hidden]="has_root_password">
                 <form (ngSubmit)="setpassword()" [formGroup]="setPasswordFormGroup" #setPasswordForm="ngForm">
                   <div>
                     <span>{{"Set new root account password:" | translate}}</span>
@@ -97,7 +97,7 @@
                   </div>
                   <button name="signin_button2" mat-button color="primary" class="mat-accent full-width mb-1" type="submit" [disabled]="!setPasswordForm.form.valid">{{"Sign in" | translate}}</button>
                 </form>
-              </ng-template>
+              </div>
   
               <div id="legacy-btn-wrapper" *ngIf='exposeLegacyUI'>
                 <button mat-button color="default" class="mb-1 full-width" style="text-transform:capitalize !important;" (click)="onGoToLegacy()">{{"LEGACY WEB INTERFACE" | translate}}</button>
@@ -130,7 +130,7 @@
             </div>
           </div>
         </div>
-        <ng-template #notconnected>
+        <div [hidden]="connected() && logo_ready">
           <div class="disconnected" *ngIf="product">
             <div class="fake-icon">?</div>
             <p *ngIf="!ha_status">
@@ -142,7 +142,7 @@
               {{"Waiting for Active TrueNAS controller to come up..." | translate}}
             </p>
           </div>
-        </ng-template>
+        </div>
       </mat-card-content>
     </mat-card>
   </div>

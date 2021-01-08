@@ -478,7 +478,7 @@ export class UserFormComponent {
         entityForm.home.length - entityForm.username.length
       );
       if(entityForm.home !=='/nonexistent'){
-        if(entityForm.username !== home_user){
+        if(entityForm.username.toLowerCase() !== home_user.toLowerCase()){
           entityForm.home = entityForm.home+'/'+ entityForm.username;
         }
       }

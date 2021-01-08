@@ -26,6 +26,7 @@ export default {
  to open the advanced scheduler.'),
     smarttest_picker_validation: [ Validators.required ],
 
+    smartlist_column_disks: T('Disks'),
     smartlist_column_type: T('Type'),
     smartlist_column_description: T('Description'),
     smartlist_column_schedule: T('Schedule'),

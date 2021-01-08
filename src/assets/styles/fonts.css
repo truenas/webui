@@ -110,3 +110,11 @@
     font-family: 'Droid Sans Mono';
     src: url('assets/fonts/Droid-Sans-Mono/DroidSansMono.ttf') forman('truetype');
   }
+  @font-face {
+    font-family: 'Inconsolata';
+    font-style: normal;
+    font-weight: normal;
+    font-display: swap;
+    src: local('Inconsolata'), 
+      url('assets/fonts/Inconsolata/Inconsolata-VariableFont_wdth_wght.ttf') format('truetype');
+  }

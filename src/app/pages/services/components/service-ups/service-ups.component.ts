@@ -89,6 +89,7 @@ export class ServiceUPSComponent {
           options: [],
           validation : helptext.ups_driver_validation,
           isHidden: false,
+          enableTextWrapForOptions: true,
           relation: [
             {
               action : 'DISABLE',

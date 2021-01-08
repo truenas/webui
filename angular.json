@@ -52,7 +52,6 @@
             },
             "styles": [
               "src/assets/styles/reset.css",
-              "node_modules/xterm/dist/xterm.css",
               "node_modules/quill/dist/quill.core.css",
               "node_modules/quill/dist/quill.snow.css",
               "node_modules/dragula/dist/dragula.css",
@@ -79,9 +78,6 @@
               "node_modules/quill/dist/quill.min.js",
               "node_modules/element-resize-detector/dist/element-resize-detector.min.js",
               "node_modules/filesize/lib/filesize.js",
-              "node_modules/xterm/dist/xterm.js",
-              "node_modules/xterm/dist/addons/attach/attach.js",
-              "node_modules/xterm/dist/addons/fit/fit.js",
               "node_modules/pixi.js/dist/pixi.min.js",
               "node_modules/pixi-filters/dist/pixi-filters.js",
               "node_modules/pixi-projection/dist/pixi-projection.js"
@@ -140,12 +136,8 @@
               "node_modules/quill/dist/quill.min.js",
               "node_modules/element-resize-detector/dist/element-resize-detector.min.js",
               "node_modules/filesize/lib/filesize.js",
-              "node_modules/xterm/dist/xterm.js",
-              "node_modules/xterm/dist/addons/attach/attach.js",
-              "node_modules/xterm/dist/addons/fit/fit.js"
             ],
             "styles": [
-              "node_modules/xterm/dist/xterm.css",
               "node_modules/quill/dist/quill.core.css",
               "node_modules/quill/dist/quill.snow.css",
               "node_modules/dragula/dist/dragula.css",
