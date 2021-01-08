@@ -71,6 +71,11 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         table.tableService.delete(table, row, deleteAction);
       }
     },
+    afterGetData: function(res) {
+      if(this.parent.aroute.snapshot.queryParams['edit-interface']) {
+        this.parent.modalService.open('slide-in-form', this.parent.interfaceComponent, this.parent.aroute.snapshot.queryParams['edit-interface']);
+      }
+    },
     afterDelete: this.afterDelete.bind(this),
     deleteMsg: {
       title: 'interfaces',
