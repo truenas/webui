@@ -11,8 +11,8 @@ import { Subject } from 'rxjs/Subject';
   selector : 'toolbar-checkbox',
   styleUrls : [ 'toolbar-checkbox.component.scss' ],
   template : `
-    <div class="toolbar-checkbox form-element" id="row-filter">
-      <mat-checkbox color="primary" [formControlName]="config.name" (change)="onChange($event)" ix-auto ix-auto-type="checkbox">
+    <div class="toolbar-checkbox form-element {{ config.class}}" id="row-filter">
+      <mat-checkbox color="primary" (change)="onChange($event)" ix-auto ix-auto-type="checkbox">
         {{ config.placeholder | translate }}
       </mat-checkbox>
     </div>

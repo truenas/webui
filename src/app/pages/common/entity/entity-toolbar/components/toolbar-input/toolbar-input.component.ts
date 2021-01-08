@@ -14,7 +14,7 @@ import { Subject } from 'rxjs/Subject';
     <div class="toolbar-input form-element" id="row-filter">
       <mat-form-field floatPlaceholder="auto">
         <span matPrefix style="cursor: default; user-select: none;"><mat-icon>search</mat-icon></span>
-        <input matInput #filter class="mat-input-element"
+        <input matInput #filter class="mat-input-element" [value]="config.value" 
           ix-auto (change)="onChange()" (input)="onChange()" 
           ix-auto-type="input">
         <span [ngClass]="{'invisible': !filterValue || filterValue.length == 0}" matSuffix style="cursor: pointer; user-select: none;">

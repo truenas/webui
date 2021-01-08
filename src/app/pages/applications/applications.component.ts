@@ -20,6 +20,7 @@ export class ApplicationsComponent implements OnInit {
 
   selectedIndex = 0;
   public settingsEvent: Subject<CoreEvent>;
+  public filterString = '';
 
   constructor(private appService: ApplicationsService, private core: CoreService, 
     private modalService: ModalService) { }
@@ -31,44 +32,54 @@ export class ApplicationsComponent implements OnInit {
   setupToolbar() {
     this.settingsEvent = new Subject();
     this.settingsEvent.subscribe((evt: CoreEvent) => {
+      if (evt.data.event_control == 'filter') {
+        this.filterString = evt.data.filter;
+      }
+
       this.catalogTab.onToolbarAction(evt);
       this.chartTab.onToolbarAction(evt);    
     })
+
+    let controls: any[] = [
+      {
+        name: 'settings',
+        label: helptext.settings,
+        type: 'menu',
+        options: [
+          { label: helptext.choose, value: 'select_pool' }, 
+          { label: helptext.advanced, value: 'advanced_settings' }, 
+        ]
+      },
+      {
+        name: 'filter',
+        type: 'input',
+        value: this.filterString,
+      },
+    ];
+
+    if (this.selectedIndex == 1) {
+      controls.push({
+        name: 'bulk',
+        label: 'Bulk Options',
+        type: 'button',
+        color: 'secondary',
+        value: 'bulk'
+      });
+    }
+    
+    controls.push({
+      name: 'launch',
+      label: helptext.launch,
+      type: 'button',
+      color: 'primary',
+      value: 'launch'
+    });
 
     const settingsConfig = {
       actionType: EntityToolbarComponent,
       actionConfig: {
         target: this.settingsEvent,
-        controls: [
-          {
-            name: 'filter',
-            type: 'input',
-            value: 'value',
-          },
-          {
-            name: 'settings',
-            label: helptext.settings,
-            type: 'menu',
-            options: [
-              { label: helptext.choose, value: 'select_pool' }, 
-              { label: helptext.advanced, value: 'advanced_settings' }, 
-            ]
-          },
-          {
-            name: 'launch',
-            label: helptext.launch,
-            type: 'button',
-            color: 'primary',
-            value: 'launch'
-          },
-          {
-            name: 'bulk',
-            label: 'Bulk Options',
-            type: 'button',
-            color: 'primary',
-            value: 'bulk'
-          }
-        ]
+        controls: controls,
       }
     };
 
@@ -80,7 +91,9 @@ export class ApplicationsComponent implements OnInit {
   }
 
   refresh(e) {
-    if (e.index === 1) {
+    this.selectedIndex = e.index;
+    this.setupToolbar();
+    if (this.selectedIndex === 1) {
       this.modalService.refreshTable();
     }
   }

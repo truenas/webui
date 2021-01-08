@@ -230,13 +230,24 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   onBulkAction(checkedItems: any[], actionName: string) {
-
+    checkedItems.forEach(name => {
+      switch (actionName) {
+        case 'start':
+          this.start(name);
+          break;
+        case 'stop':
+          this.stop(name);
+          break;
+        case 'delete':
+          this.delete(name);
+          break;
+      }
+    })    
   }
 
   bulkOptions() {
     const bulkOptionsForm = new BulkOptionsComponent(this.modalService, this.appService);
-    bulkOptionsForm.setOptions(this.filteredChartItems);
-    bulkOptionsForm.setOnBulkAction(this.onBulkAction);
+    bulkOptionsForm.setParent(this);
 
     this.modalService.open('slide-in-form', bulkOptionsForm, "Bulk Options");
   }

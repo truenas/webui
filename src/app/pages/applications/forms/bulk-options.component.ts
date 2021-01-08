@@ -14,52 +14,43 @@ import { Control } from 'app/pages/common/entity/entity-toolbar/models/control.i
   template: `<entity-form [conf]="this"></entity-form>`
 })
 export class BulkOptionsComponent {
-  protected queryCall: string = 'kubernetes.config';
-  protected editCall: string = 'kubernetes.update';
-  protected isEditJob: Boolean = true;
-  private title = "Bulk Options";
-  private entityEdit: any;
   protected fieldConfig: FieldConfig[];
   private bulkAction;
   public hideSaveBtn = true;
   public titleBarControls;
   public controller: Subject<Control>;
-
+  public entityForm: any;
   public allItems: any[];
   public selectedItems: any[];
-
+  public parent: any;
   public fieldSets: FieldSet[] = [
     {
       name: 'chart_names',
-      // label: false,
-      config: [
-        {
-          type: 'checkbox',
-          name: 'pool',
-          placeholder: "Name 1",
-        },        
-      ]
+      config: []
     },
-  ]
-
+  ];
 
   constructor(private modalService: ModalService, private appService: ApplicationsService) { 
     this.controller = new Subject();
     this.controller.subscribe((evt:Control) => {
-      console.log(evt);
       if (evt.name == 'check_all') {
-        if (evt.value) {
-          this.selectedItems = [...this.allItems];
-        } else {
-          this.selectedItems = [];
-        }
-        this.updateSelection();
+        this.updateSelection(evt.value);
       } else if (evt.name == 'actions') {
-        this.bulkAction(this.selectedItems, evt.value.value);
+        this.parent.onBulkAction(this.getSelectedItems(), evt.value.value);
       }
     })
 
     this.setupTitilebar();
+  }
+
+  getSelectedItems() {
+    const selectedItems = [];
+    for (let [key, value] of Object.entries(this.entityForm.formGroup.value)) {
+      if (value) {
+        selectedItems.push(key);
+      }
+    }   
+    return selectedItems;
   }
 
   setupTitilebar() {
@@ -68,6 +59,7 @@ export class BulkOptionsComponent {
         name: 'check_all',
         placeholder: 'Select All',
         type: 'checkbox',
+        class: 'bulk',
       },
       {
         name: 'actions',
@@ -82,28 +74,47 @@ export class BulkOptionsComponent {
     ];
   }
 
-  setOnBulkAction(bulkAction) {
-    this.bulkAction = bulkAction;
-  }
-
-  setOptions(filteredChartItems: any[]) {
-    this.allItems = filteredChartItems;
+  setParent(parent) {
+    this.parent = parent;
+    this.allItems = this.parent.filteredChartItems;
     this.selectedItems = [];
-    this.updateSelection();
-  }
-
-  updateSelection() {
     this.fieldSets[0].config = this.allItems.map((item) => {
       return {
         type: 'checkbox',
         name: item.name,
         placeholder: item.name,
-        value: this.selectedItems.some(selectedItem => selectedItem.name == item.name)
+        parent: this,
+        updater: () => {
+          this.selectedItems = this.allItems.filter(item => this.entityForm.formGroup.value[item.name])
+        },
       }
     });
   }
 
-  preInit(entityEdit: any) {
-    this.entityEdit = entityEdit;
+  setOptions(filteredChartItems: any[]) {
+    this.allItems = filteredChartItems;
+    this.selectedItems = [];
+    this.fieldSets[0].config = this.allItems.map((item) => {
+      return {
+        type: 'checkbox',
+        name: item.name,
+        placeholder: item.name,
+        parent: this,
+        updater: () => {
+          this.selectedItems = this.allItems.filter(item => this.entityForm.formGroup.value[item.name])
+        },
+      }
+    });
   }
+
+  afterInit(entityForm: any) {
+    this.entityForm = entityForm;
+  }
+
+  updateSelection(selected) {
+    this.allItems.forEach((item) => {
+      this.entityForm.formGroup.controls[item.name].setValue(selected);
+    });
+  }
+
 }
