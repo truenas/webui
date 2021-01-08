@@ -547,7 +547,7 @@ export class ZvolWizardComponent {
     async customNext(stepper) {
       if(stepper._selectedIndex == 0) {
         if(!this.parent) {
-          this.wizardConfig[0].fieldConfig.find(c => c.name === 'path').warnings = `Please select a ZFS Volume first`;
+          this.wizardConfig[0].fieldConfig.find(c => c.name === 'path').warnings = `Please select a ZFS Volume`;
           return;
         } else {
           await this.preInitZvolForm(this.entityWizard);
@@ -562,7 +562,13 @@ export class ZvolWizardComponent {
       if(this.isNew === true){
         this.addSubmit(body).subscribe((restPostResp) => {
           this.loader.close();
-          this.modalService.close('slide-in-form');
+          this.modalService.close('slide-in-form').then(
+            closed => {
+              if(closed) {
+                this.parent = null;
+              }
+            }
+          );
           this.core.emit({name: 'zvolCreated', sender: this, data: restPostResp});
           this.modalService.refreshTable();
         }, (res) => {
@@ -574,6 +580,16 @@ export class ZvolWizardComponent {
   
     setParent(id) {
       this.parent = id;
+    }
+
+    customCancel() {
+      this.modalService.close('slide-in-form').then(
+        closed => {
+          if(closed) {
+            this.parent = null;
+          }
+        }
+      );
     }
 
 }
