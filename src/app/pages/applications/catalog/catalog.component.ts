@@ -9,7 +9,7 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { DialogService, SystemGeneralService } from '../../../services/index';
+import { DialogService, WebSocketService, SystemGeneralService } from '../../../services/index';
 import { ModalService } from '../../../services/modal.service';
 import { ApplicationsService } from '../applications.service';
 
@@ -59,7 +59,7 @@ export class CatalogComponent implements OnInit {
   }
 
   constructor(private dialogService: DialogService,
-    private mdDialog: MatDialog, private translate: TranslateService,
+    private mdDialog: MatDialog, private translate: TranslateService, protected ws: WebSocketService,
     private router: Router, private core: CoreService, private modalService: ModalService,
     private appService: ApplicationsService, private sysGeneralService: SystemGeneralService) {
       this.utils = new CommonUtils();
@@ -125,6 +125,16 @@ export class CatalogComponent implements OnInit {
           case 'advanced_settings':
             this.modalService.open('slide-in-form', this.kubernetesForm);
             break;
+
+          case 'unset_pool':
+            this.ws.job('kubernetes.update', [{pool: null}]).subscribe(res => {
+              this.modalService.refreshTable();
+              this.translate.get(helptext.choosePool.unsetPool).subscribe(msg => {
+                this.dialogService.Info(helptext.choosePool.success, msg,
+                  '500px', 'info', true);
+              })
+            });
+            break;
         }
       } else if (evt.data.event_control == 'launch' && evt.data.launch) {
         this.doInstall('ix-chart');
@@ -143,6 +153,7 @@ export class CatalogComponent implements OnInit {
             options: [
               { label: helptext.choose, value: 'select_pool' }, 
               { label: helptext.advanced, value: 'advanced_settings' }, 
+              { label: helptext.unset_pool, value: 'unset_pool' }, 
             ]
           },
           {
