@@ -499,6 +499,10 @@ export default {
       placeholder: T('Pods'),
       action: T('Choose')
     },
+    chooseConatiner: {
+      title: T('Choose container'),
+      placeholder: T('Containers'),
+    },
     chooseCommand: {
       placeholder: T('Commands'),
     }

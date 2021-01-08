@@ -71,7 +71,11 @@ export class ChartReleasesComponent implements OnInit {
       name: 'pods',
       placeholder: helptext.podConsole.choosePod.placeholder,
       required: true,
-      options: this.podList
+    },{
+      type: 'select',
+      name: 'containers',
+      placeholder: helptext.podConsole.chooseConatiner.placeholder,
+      required: true,
     },{
       type: 'input',
       name: 'command',
@@ -80,6 +84,7 @@ export class ChartReleasesComponent implements OnInit {
     }],
     saveButtonText: helptext.podConsole.choosePod.action,
     customSubmit: this.doPodSelect,
+    afterInit: this.afterShellDialogInit,
     parent: this,
   }
 
@@ -297,6 +302,13 @@ export class ChartReleasesComponent implements OnInit {
             value: item,
           }
         });
+        this.choosePod.fieldConfig[1].value = this.podDetails[this.podList[0]][0];
+        this.choosePod.fieldConfig[1].options = this.podDetails[this.podList[0]].map(item => {
+          return {
+            label: item,
+            value: item,
+          }
+        });
         this.dialogService.dialogForm(this.choosePod, true);
       }
     })
@@ -308,5 +320,20 @@ export class ChartReleasesComponent implements OnInit {
     const command = entityDialog.formGroup.controls['command'].value;
     self.router.navigate(new Array("/apps/shell/").concat([self.selectedAppName, pod, command]));
     self.dialogService.closeAllDialogs();
+  }
+
+  afterShellDialogInit(entityDialog: any) {
+    const self = entityDialog.parent;
+    entityDialog.formGroup.controls['pods'].valueChanges.subscribe(value => {
+      const containers = self.podDetails[value];
+      const containerFC = _.find(entityDialog.fieldConfig, {'name' : 'containers'});
+      containerFC.options = containers.map(item => {
+        return {
+          label: item,
+          value: item,
+        }
+      });
+      entityDialog.formGroup.controls['containers'].setValue(containers[0]);
+    })
   }
 }

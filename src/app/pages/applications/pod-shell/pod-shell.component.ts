@@ -13,6 +13,7 @@ import * as FontFaceObserver from 'fontfaceobserver';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 
 @Component({
   selector: 'app-pod-shell',
@@ -47,10 +48,13 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
   protected chart_release_name: string;
   protected pod_name: string;
   protected command: string;
-  protected selectedContainerName: string;
-  protected podDetail: any;
+  protected conatiner_name: string;
+  protected podDetails: any;
 
   protected route_success: string[] = ['apps'];
+
+  public choosePod: DialogFormConfiguration;
+  private attachAddon: AttachAddon;
 
   constructor(protected core:CoreService,
     private ws: WebSocketService,
@@ -70,25 +74,26 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
       console.log(params);
 
       this.ws.call('chart.release.pod_console_choices', [this.chart_release_name]).subscribe(res => {
-        this.podDetail = res[this.pod_name];
-        if (!this.podDetail) {
+        this.podDetails = res;
+
+        const podDetail = res[this.pod_name];
+        if (!podDetail) {
           this.dialogService.confirm(helptext.podConsole.nopod.title, helptext.podConsole.nopod.message, true, 'Close', false, null, null, null, null, true);
         } else {
-          this.selectedContainerName = this.podDetail[0];
+          this.conatiner_name = podDetail[0];
+          this.updateChooseShellDialog();
 
           this.getAuthToken().subscribe((res) => {
             this.initializeWebShell(res);
+            
             this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
               if (value !== undefined) {
-                // this.xterm.write(value);
-    
                 if (_.trim(value) == "logout") {
                   this.xterm.destroy();
                   this.router.navigate(new Array('/').concat(this.route_success));
                 }
               }
             });
-            this.initializeTerminal();
           });
         }
       })
@@ -111,32 +116,16 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
         this.resetDefault();
         this.refreshToolbarButtons();
       } else if (evt.data.event_control == 'reconnect') {
-        this.reconnect();
-        this.refreshToolbarButtons();
+        this.showChooseShellDialog();
       } else if (evt.data.event_control == 'fontsize') {
         this.font_size = evt.data.fontsize;
         this.resizeTerm();
-      } else if (evt.data.event_control == 'container') {
-        this.selectedContainerName = evt.data.container;
-        this.reconnect();
       }
     });
 
     let controls = [];
     if (this.shellConnected) {
       controls = [
-        {
-          type: 'select',
-          label: 'Container',
-          name: 'container',
-          selectedValue: this.selectedContainerName,
-          options: this.podDetail.map(item => {
-            return {
-              label: item,
-              value: item,
-            }
-          })
-        },
         {
           name: 'fontsize',
           label: 'Set font size',
@@ -145,6 +134,12 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
           max: 20, 
           step: 1,
           value: this.font_size,
+        },
+        {
+          name: 'reconnect',
+          label: 'Reconnect',
+          type: 'button',
+          color: 'secondary',
         },
         {
           name: 'restore',
@@ -206,10 +201,8 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     return false;
   }
 
-  initializeTerminal() {
-    
+  initializeTerminal() {    
     const size = this.getSize();
-
     const setting = {
       cursorBlink: false,
       tabStopWidth: 8,
@@ -222,9 +215,6 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     };
 
     this.xterm = new Terminal(setting);
-    
-    const attachAddon = new AttachAddon(this.ss.socket);
-    this.xterm.loadAddon(attachAddon);
 
     this.fitAddon = new FitAddon();
     this.xterm.loadAddon(this.fitAddon);
@@ -239,6 +229,18 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
       console.log('Font is not available', e);
     });    
     
+  }
+
+  updateTerminal() {
+    if (this.attachAddon) {
+      this.attachAddon.dispose();
+      this.xterm.clear();
+
+    }
+
+    this.attachAddon = new AttachAddon(this.ss.socket);
+    this.xterm.loadAddon(this.attachAddon);
+
   }
 
   getSize() {
@@ -285,12 +287,13 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
   initializeWebShell(res: string) {
     this.ss.token = res;
     this.reconnect();
-
+    this.initializeTerminal();
     this.refreshToolbarButtons();  
 
     this.ss.shellConnected.subscribe((res)=> {
       this.shellConnected = res.connected;
       this.connectionId = res.id;
+      this.updateTerminal();
       this.refreshToolbarButtons();      
       this.resizeTerm();
     })
@@ -304,9 +307,80 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     this.ss.podInfo = {
       chart_release_name: this.chart_release_name,
       pod_name: this.pod_name,
-      container_name: this.selectedContainerName,
+      container_name: this.conatiner_name,
       command: this.command,
     };
     this.ss.connect();
+  }
+
+  updateChooseShellDialog() {
+    this.choosePod = {
+      title: helptext.podConsole.choosePod.title,
+      fieldConfig: [{
+        type: 'select',
+        name: 'pods',
+        placeholder: helptext.podConsole.choosePod.placeholder,
+        required: true,
+        value: this.pod_name,
+        options: Object.keys(this.podDetails).map(item => {
+          return {
+            label: item,
+            value: item,
+          }
+        })
+      },{
+        type: 'select',
+        name: 'containers',
+        placeholder: helptext.podConsole.chooseConatiner.placeholder,
+        required: true,
+        value: this.conatiner_name,
+        options: this.podDetails[this.pod_name].map(item => {
+          return {
+            label: item,
+            value: item,
+          }
+        })
+      },{
+        type: 'input',
+        name: 'command',
+        placeholder: helptext.podConsole.chooseCommand.placeholder,
+        value: this.command
+      }],
+      saveButtonText: helptext.podConsole.choosePod.action,
+      customSubmit: this.onChooseShell,
+      afterInit: this.afterShellDialogInit,
+      parent: this,
+    }
+  }
+
+  showChooseShellDialog() {
+    this.updateChooseShellDialog();
+    this.dialogService.dialogForm(this.choosePod, true);
+  }
+
+  onChooseShell(entityDialog: any) {
+    const self = entityDialog.parent;
+    self.pod_name = entityDialog.formGroup.controls['pods'].value;
+    self.conatiner_name = entityDialog.formGroup.controls['containers'].value;
+    self.command = entityDialog.formGroup.controls['command'].value;
+    
+    self.reconnect();
+    self.dialogService.closeAllDialogs();
+  }
+
+  afterShellDialogInit(entityDialog: any) {
+    const self = entityDialog.parent;
+
+    entityDialog.formGroup.controls['pods'].valueChanges.subscribe(value => {
+      const containers = self.podDetails[value];
+      const containerFC = _.find(entityDialog.fieldConfig, {'name' : 'containers'});
+      containerFC.options = containers.map(item => {
+        return {
+          label: item,
+          value: item,
+        }
+      });
+      entityDialog.formGroup.controls['containers'].setValue(containers[0]);
+    })
   }
 }
