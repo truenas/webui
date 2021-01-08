@@ -24,7 +24,7 @@
 
             <div class="controls">
 
-              <button mat-icon-button class="" (click)="configureNetworkInterface()"
+              <button mat-icon-button class="" (click)="router.navigate(['network/interfaces/edit/'+nicState.name])"
                 [ix-auto]="nicState.name" ix-auto-type="button" ix-auto-identifier="configure">
                 <mat-icon role="img"
                           matTooltip="{{'Configure' | translate}} {{nicState.name}}"

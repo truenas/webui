@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit,OnDestroy, Input, ViewChild, Renderer2, ElementRef, OnChanges, SimpleChanges } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MaterialModule } from 'app/appMaterial.module';
 
@@ -33,9 +33,6 @@ import {
   //transformMap,
   //clamp
   } from 'popmotion';
-import { InterfacesFormComponent } from 'app/pages/network/forms/interfaces-form.component';
-import { DialogService, NetworkService, WebSocketService } from 'app/services';
-import { ModalService } from 'app/services/modal.service';
 
 interface NetIfInfo {
   name:string;
@@ -74,11 +71,6 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
   @ViewChild('carouselparent', {static:false}) carouselParent:ElementRef;
   public traffic: NetTraffic;
   public currentSlide:string = "0";
-  public hasPendingChanges = false;
-  public checkin_remaining = null;
-  checkin_interval;
-  public checkinWaiting = false;
-  protected interfaceComponent: InterfacesFormComponent;
   
   get currentSlideName(){
     return this.path[parseInt(this.currentSlide)].name;
@@ -123,10 +115,7 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     return this.nicState.link_state.replace(/_/g, ' ');
   }
 
-    constructor(private ws: WebSocketService,public router: Router, public translate: TranslateService, private aroute: ActivatedRoute,
-    private modalService: ModalService,
-    private networkService: NetworkService,
-      private dialog: DialogService){
+  constructor(public router: Router, public translate: TranslateService){
     super(translate);
     this.configurable = false;
   }
@@ -144,18 +133,6 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
   }
 
   ngOnInit(){
-    this.checkInterfacePendingChanges();
-    this.core.register({observerClass: this, eventName:"NetworkInterfacesChanged"}).subscribe((evt:CoreEvent) => {
-      if (evt && evt.data.checkin) {
-        this.checkin_remaining = null;
-        this.checkinWaiting = false;
-        if (this.checkin_interval) {
-          clearInterval(this.checkin_interval);
-        }
-        this.hasPendingChanges = false;
-      }
-    });
-
   }
 
   ngAfterViewInit(){
@@ -284,51 +261,4 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     return units;
   }
 
-  checkInterfacePendingChanges() {
-    this.checkPendingChanges();
-    this.checkWaitingCheckin();
-  }
-
-  checkPendingChanges() {
-    this.ws.call('interface.has_pending_changes').subscribe(res => {
-      this.hasPendingChanges = res;
-    });
-  }
-
-  configureNetworkInterface() {
-    this.modalService.open('slide-in-form', this.interfaceComponent);
-  }
-
-  checkWaitingCheckin() {
-    this.ws.call('interface.checkin_waiting').subscribe(res => {
-      if (res != null) {
-        const seconds = res.toFixed(0);
-        if (seconds > 0 && this.checkin_remaining == null) {
-          this.checkin_remaining = seconds;
-          this.checkin_interval = setInterval(() => {
-            if (this.checkin_remaining > 0) {
-              this.checkin_remaining -= 1;
-            } else {
-              this.checkin_remaining = null;
-              this.checkinWaiting = false;
-              clearInterval(this.checkin_interval);
-              window.location.reload(); // should just refresh after the timer goes off
-            }
-          }, 1000);
-        }
-        this.checkinWaiting = true;
-      } else {
-        this.checkinWaiting = false;
-        this.checkin_remaining = null;
-        if (this.checkin_interval) {
-          clearInterval(this.checkin_interval);
-        }
-      }
-    });
-  }
-  
-  refreshNetworkForms() {
-    this.interfaceComponent = new InterfacesFormComponent(this.router, this.aroute, this.networkService, this.dialog, this.ws);
-    this.interfaceComponent.afterModalFormClosed = this.checkInterfacePendingChanges.bind(this);
-  }
 }
