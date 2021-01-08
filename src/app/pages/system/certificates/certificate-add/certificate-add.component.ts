@@ -335,6 +335,7 @@ export class CertificateAddComponent {
           type: 'textarea',
           name: 'privatekey',
           placeholder: helptext_system_certificates.add.privatekey.placeholder,
+          required: true,
           tooltip: helptext_system_certificates.add.privatekey.tooltip,
           isHidden: true,
           relation: [
