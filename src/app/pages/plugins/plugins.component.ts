@@ -479,7 +479,7 @@ export class PluginsComponent {
             const dialogRef = self.matDialog.open(EntityJobComponent, { data: { "title": T("Updating Plugin") }, disableClose: true });
             dialogRef.componentInstance.disableProgressValue(true);
             
-            dialogRef.componentInstance.setCall('plugin.update', [row.id, entityDialog.formValue.update_jail ? true : false]);
+            dialogRef.componentInstance.setCall('plugin.update_plugin', [row.id, entityDialog.formValue.update_jail ? true : false]);
             dialogRef.componentInstance.submit();
             dialogRef.componentInstance.success.subscribe((res) => {
               dialogRef.close(true);
@@ -614,38 +614,22 @@ export class PluginsComponent {
   }
 
   onCheckboxChange(row) {
-    this.loader.open();
     row.boot = !row.boot;
 
-    // const dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Updating Plugin") }, disableClose: false });
-    // // dialogRef.componentInstance.disableProgressValue(false);
-    
-    // dialogRef.componentInstance.setCall('plugin.update', [row.id, {'boot': row.boot ? 'on' : 'off'}]);
-    // dialogRef.componentInstance.success.subscribe((res) => {
-    //   console.log("In case of success");
-    //   dialogRef.close(true);
-    //   this.updateRows([row]);
-    //   this.dialogService.Info(T('Plugin Updated'), T("Plugin ") + row.name + T(" updated."));
-    // });
-    // dialogRef.componentInstance.failure.subscribe((err) => {
-    //   console.log("In case of failure");
-    //   new EntityUtils().handleWSError(this, err, this.dialogService);
-    // })
-    // dialogRef.componentInstance.submit();
+    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Update Plugin") }, disableClose: true });
+    dialogRef.componentInstance.setCall('plugin.update', [row.id, {'boot': row.boot ? 'on' : 'off'}]);
+    dialogRef.componentInstance.disableProgressValue(true);
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.subscribe((success) => {
+      dialogRef.close(true);
+      this.dialogService.Info(T('Plugin Updated'), T("Plugin ") + row.name + T(" updated."));
+    });
+    dialogRef.componentInstance.failure.subscribe((failure) => {
+      dialogRef.close(true);
+      this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+      row.boot = !row.boot;
+    });
 
-
-    this.ws.job('plugin.update', [row.id, {'boot': row.boot ? 'on' : 'off'}] )
-    .subscribe(
-      (res) => {
-        if (!res) {
-          row.boot = !row.boot;
-        }
-        this.loader.close();
-      },
-      (err) => {
-        this.loader.close();
-        new EntityUtils().handleWSError(this, err, this.dialogService);
-      });
   }
 
   gotoAdminPortal(row) {
