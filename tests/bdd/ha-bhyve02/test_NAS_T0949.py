@@ -143,7 +143,7 @@ def open_shell_and_run_su_user(driver):
     """Open shell and run su user to become that user."""
     global sudo_results
     cmd = 'sudo ls /var/lib/sudo'
-    sudo_results = ssh_sudo(cmd, host, 'ericbsd', 'testing1')
+    sudo_results = ssh_sudo(cmd, host, 'ericbsd', 'testing')
 
 
 @then('User should be able to use Sudo')
