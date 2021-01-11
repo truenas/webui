@@ -23,7 +23,7 @@ export class ChartFormComponent {
   protected isEntity: boolean = true;
   protected utils: CommonUtils;
 
-  private title = helptext.nextCloudForm.title;
+  private title;
   private name: string;
   private getRow = new Subscription;
   private rowName: string;
@@ -167,7 +167,7 @@ export class ChartFormComponent {
 
     this.fieldSets = [
       {
-        name: helptext.nextCloudForm.release_name.name,
+        name: helptext.chartForm.release_name.name,
         width: '100%',
         config: [
           {
