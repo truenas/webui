@@ -86,25 +86,10 @@ export class ChartReleasesComponent implements OnInit {
             latest = sorted_version_labels[0];
             latestDetails = versions[latest];
 
-            switch (item.name) {
-              case 'minio':
-                item.info = helptext.minioInfo;
-                break;
-              
-              case 'plex':
-                item.info = helptext.plexInfo;
-                break;
-        
-              case 'nextcloud':
-                item.info = helptext.nextcloudInfo;
-                break;
-            }
-    
             let catalogItem = {
               name: item.name,
               icon_url: item.icon_url? item.icon_url : '/assets/images/ix-original.png',
               latest_version: latest,
-              info: item.info,
               schema: item.versions[latest].schema,
             }
             this.catalogApps.push(catalogItem);            
