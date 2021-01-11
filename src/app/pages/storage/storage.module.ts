@@ -32,6 +32,7 @@ import { VolumeStatusComponent } from './volumes/volume-status';
 import { MultipathsComponent } from './multipaths/multipaths.component';
 import { routing } from './storage.routing';
 import { ZvolFormComponent } from './volumes/zvol/zvol-form'
+import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard';
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
 import { VMwareSnapshotListComponent } from './VMware-snapshot/VMware-snapshot-list';
 import { DiskListComponent } from './disks/disk-list/';
@@ -72,6 +73,7 @@ import { DatasetPosixAclComponent } from './volumes/datasets/dataset-posix-acl/'
     VolumeCreatekeyFormComponent,
     VolumeChangekeyFormComponent,
     ZvolFormComponent,
+    ZvolWizardComponent,
     VolumeImportWizardComponent,
     SnapshotListComponent,
     SnapshotDetailsComponent,
