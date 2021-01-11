@@ -2,12 +2,11 @@
 """Core UI feature tests."""
 
 import time
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
     is_element_present,
-    wait_on_element_disappear
+    wait_on_element_disappear,
+    ssh_sudo
 )
 from pytest_bdd import (
     given,
@@ -122,26 +121,14 @@ def updated_value_should_be_visible(driver):
 
 
 @then('open a shell and run su user to become that user')
-def open_a_shell_and_run_su_user_to_become_that_user(driver):
+def open_a_shell_and_run_su_user_to_become_that_user(driver, nas_ip):
     """open a shell and run su user to become that user."""
-    element = driver.find_element_by_xpath('//span[contains(.,"Guide")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
-    assert wait_on_element(driver, 1, 7, '//mat-list-item[@ix-auto="option__Shell"]')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shell"]').click()
-    assert wait_on_element(driver, 4, 7, '//span[@class="reverse-video terminal-cursor"]')
-    actions = ActionChains(driver)
-    actions.send_keys('su ericbsd', Keys.ENTER)
-    actions.perform()
+    global sudo_results
+    cmd = 'ls /var/db/sudo'
+    sudo_results = ssh_sudo(cmd, nas_ip, 'ericbsd', 'testing')
 
 
 @then('the user should be able to use Sudo')
 def the_user_should_be_able_to_use_sudo(driver):
     """the user should be able to use Sudo."""
-    actions = ActionChains(driver)
-    actions.send_keys('sudo ls /var/db/sudo', Keys.ENTER)
-    actions.perform()
-    assert wait_on_element(driver, 1, 7, '//span[contains(.,"Password:")]')
-    actions.send_keys('testing', Keys.ENTER)
-    actions.perform()
-    assert wait_on_element(driver, 1, 7, '//span[contains(.,"lectured")]')
+    assert "lectured" in sudo_results, str(sudo_results)
