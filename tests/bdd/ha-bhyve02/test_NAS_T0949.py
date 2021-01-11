@@ -1,13 +1,12 @@
 # coding=utf-8
 """High Availability (tn-bhyve01) feature tests."""
 
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
 import time
 from function import (
     wait_on_element,
     is_element_present,
-    wait_on_element_disappear
+    wait_on_element_disappear,
+    ssh_sudo
 )
 from pytest_bdd import (
     given,
@@ -26,6 +25,8 @@ def test_edit_user_enable_permit_sudo(driver):
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """The browser is open navigate to "{nas_url}"."""
+    global host
+    host = nas_url
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/sessions/signin")
         time.sleep(3)
@@ -140,24 +141,12 @@ def updated_value_should_be_visible(driver):
 @then('Open shell and run su user to become that user')
 def open_shell_and_run_su_user(driver):
     """Open shell and run su user to become that user."""
-    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__System Settings"]')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Shell"]')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shell"]').click()
-    assert wait_on_element(driver, 4, 7, '//span[@class="reverse-video terminal-cursor"]')
-    actions = ActionChains(driver)
-    actions.send_keys('su ericbsd', Keys.ENTER)
-    actions.perform()
+    global sudo_results
+    cmd = 'sudo ls /var/lib/sudo'
+    sudo_results = ssh_sudo(cmd, host, 'ericbsd', 'testing1')
 
 
 @then('User should be able to use Sudo')
 def user_should_be_able_to_use_sudo(driver):
     """User should be able to use Sudo."""
-    actions = ActionChains(driver)
-    actions.send_keys('sudo ls /var/lib/sudo', Keys.ENTER)
-    actions.perform()
-    assert wait_on_element(driver, 1, 7, '//span[contains(.,"password")]')
-    actions = ActionChains(driver)
-    actions.send_keys('testing', Keys.ENTER)
-    actions.perform()
-    assert wait_on_element(driver, 1, 7, '//span[contains(.,"lectured")]')
+    assert "lectured" in sudo_results, str(sudo_results)

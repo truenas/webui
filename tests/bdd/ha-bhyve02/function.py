@@ -176,11 +176,11 @@ def delete(url, api_path, auth, payload=None):
 
 
 def ssh_sudo(cmd, host, user, password):
-    options = "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ' \
-        '-o VerifyHostKeyDNS=no"
+    options = "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null " \
+        "-o VerifyHostKeyDNS=no"
     command = f'ssh {options} {user}@{host} "sudo -S {cmd}"'
     child = pexpect.spawn(command, encoding='utf-8')
-    child.logfile = sys.stdout
+    # child.logfile = sys.stdout
     child.expect('ssword:')
     child.sendline(password)
     child.expect(f'ssword for {user}:')
@@ -190,11 +190,11 @@ def ssh_sudo(cmd, host, user, password):
 
 
 def interactive_ssh(cmd, host, user, password):
-    options = "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ' \
-        '-o VerifyHostKeyDNS=no"
+    options = "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null " \
+        "-o VerifyHostKeyDNS=no"
     command = f'ssh {options} {user}@{host} "{cmd}"'
     child = pexpect.spawn(command, encoding='utf-8')
-    child.logfile = sys.stdout
+    # child.logfile = sys.stdout
     child.expect('ssword:')
     child.sendline(password)
     return child
