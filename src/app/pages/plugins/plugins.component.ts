@@ -152,7 +152,7 @@ export class PluginsComponent {
             const selectedJails = self.getSelectedNamesWithChecks(selected, entityDialog.formValue.update_jail ? true : false);
             self.dialogService.Info(helptext.multi_update_dialog.title, helptext.multi_update_dialog.content);
             self.entityList.busy =
-              self.ws.job('core.bulk', ["plugin.update", selectedJails]).subscribe(
+              self.ws.job('core.bulk', ["plugin.update_plugin", selectedJails]).subscribe(
                 (res) => {
                   let message = "";
                   for (let i = 0; i < res.result.length; i++) {
@@ -479,7 +479,7 @@ export class PluginsComponent {
             const dialogRef = self.matDialog.open(EntityJobComponent, { data: { "title": T("Updating Plugin") }, disableClose: true });
             dialogRef.componentInstance.disableProgressValue(true);
             
-            dialogRef.componentInstance.setCall('plugin.update', [row.id, entityDialog.formValue.update_jail ? true : false]);
+            dialogRef.componentInstance.setCall('plugin.update_plugin', [row.id, entityDialog.formValue.update_jail ? true : false]);
             dialogRef.componentInstance.submit();
             dialogRef.componentInstance.success.subscribe((res) => {
               dialogRef.close(true);
@@ -626,6 +626,7 @@ export class PluginsComponent {
       },
       (err) => {
         this.loader.close();
+        row.boot = !row.boot;
         new EntityUtils().handleWSError(this, err, this.dialogService);
       });
   }
