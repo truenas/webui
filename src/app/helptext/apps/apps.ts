@@ -113,6 +113,10 @@ export default {
   chartForm: {
     title: T('Install Application'),
     editTitle: T('Edit Application Settings'),
+    parseError: {
+      title: T('Error'),
+      message: T('Error detected reading App'),
+    },
     catalog: {
       placeholder: T('Catalog'),
       tooltip: T('')

@@ -162,48 +162,51 @@ export class ChartFormComponent {
   }
 
   parseSchema(catalogApp) {
-    this.catalogApp = catalogApp;
-    this.title = this.catalogApp.name; 
-
-    this.fieldSets = [
-      {
-        name: helptext.chartForm.release_name.name,
-        width: '100%',
-        config: [
-          {
-            type: 'input',
-            name: 'release_name',
-            placeholder: helptext.chartForm.release_name.placeholder,
-            tooltip: helptext.chartForm.release_name.tooltip,
-            required: true
+    try {
+      this.catalogApp = catalogApp;
+      this.title = this.catalogApp.name; 
+  
+      this.fieldSets = [
+        {
+          name: helptext.chartForm.release_name.name,
+          width: '100%',
+          config: [
+            {
+              type: 'input',
+              name: 'release_name',
+              placeholder: helptext.chartForm.release_name.placeholder,
+              tooltip: helptext.chartForm.release_name.tooltip,
+              required: true
+            }
+          ],
+          colspan: 2
+        },
+      ];
+      this.catalogApp.schema.groups.forEach(group => {
+        this.fieldSets.push({
+          name: group.name,
+          width: '50%',
+          label: true,
+          config: [],
+        })
+      });
+      this.catalogApp.schema.questions.forEach(question => {
+        const fieldSet = this.fieldSets.find(fieldSet => fieldSet.name == question.group);
+        if (fieldSet) {
+          if (question.schema.attrs) {
+            question.schema.attrs.forEach(config => {
+              fieldSet.config = fieldSet.config.concat(this.getFieldConfigs(config, question));
+            });
+          } else {
+            fieldSet.config = fieldSet.config.concat(this.getFieldConfigs(question));
           }
-        ],
-        colspan: 2
-      },
-    ];
-    this.catalogApp.schema.groups.forEach(group => {
-      this.fieldSets.push({
-        name: group.name,
-        width: '50%',
-        label: true,
-        config: [],
-      })
-    });
-    this.catalogApp.schema.questions.forEach(question => {
-      const fieldSet = this.fieldSets.find(fieldSet => fieldSet.name == question.group);
-      if (fieldSet) {
-        if (question.schema.attrs) {
-          question.schema.attrs.forEach(config => {
-            fieldSet.config = fieldSet.config.concat(this.getFieldConfigs(config, question));
-          });
-        } else {
-          fieldSet.config = fieldSet.config.concat(this.getFieldConfigs(question));
         }
-      }
-    });
-
-    this.fieldSets = this.fieldSets.filter(fieldSet => fieldSet.config.length > 0);
-    
+      });
+  
+      this.fieldSets = this.fieldSets.filter(fieldSet => fieldSet.config.length > 0);
+    } catch(error) {
+      return this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
+    }
   }
 
   parseConfigData(configData, parentKey, result) {
