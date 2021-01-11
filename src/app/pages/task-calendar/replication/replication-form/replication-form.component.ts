@@ -1002,13 +1002,6 @@ export class ReplicationFormComponent {
             }
         )
 
-        entityForm.formGroup.controls['periodic_snapshot_tasks'].valueChanges.subscribe(
-            (res) => {
-                const toDisable = (res && res.length === 0) ? false : true;
-                entityForm.setDisabled('schedule', toDisable, toDisable);
-            }
-        )
-
         entityForm.formGroup.controls['schedule'].valueChanges.subscribe((res) => {
             entityForm.setDisabled('schedule_picker', !res, !res);
             entityForm.setDisabled('schedule_begin', !res, !res);
