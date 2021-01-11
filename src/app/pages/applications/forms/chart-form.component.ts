@@ -311,7 +311,7 @@ export class ChartFormComponent {
 
     let payload = [];
     payload.push({
-      catalog: 'OFFICIAL',
+      catalog: this.catalogApp.catalog.id,
       item: this.catalogApp.name,
       release_name: data.release_name,
       train: 'charts',
