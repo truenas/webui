@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
-import time
+import json
 import os
+import pexpect
 import re
 import requests
-import json
+import sys
+import time
 from selenium.common.exceptions import NoSuchElementException
 from subprocess import run, PIPE
 
@@ -171,3 +173,28 @@ def delete(url, api_path, auth, payload=None):
         data=json.dumps(payload) if payload else None
     )
     return delete_it
+
+
+def ssh_sudo(cmd, host, user, password):
+    options = "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ' \
+        '-o VerifyHostKeyDNS=no"
+    command = f'ssh {options} {user}@{host} "sudo -S {cmd}"'
+    child = pexpect.spawn(command, encoding='utf-8')
+    child.logfile = sys.stdout
+    child.expect('ssword:')
+    child.sendline(password)
+    child.expect(f'ssword for {user}:')
+    child.sendline(password)
+    child.expect(pexpect.EOF)
+    return child.before
+
+
+def interactive_ssh(cmd, host, user, password):
+    options = "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null ' \
+        '-o VerifyHostKeyDNS=no"
+    command = f'ssh {options} {user}@{host} "{cmd}"'
+    child = pexpect.spawn(command, encoding='utf-8')
+    child.logfile = sys.stdout
+    child.expect('ssword:')
+    child.sendline(password)
+    return child
