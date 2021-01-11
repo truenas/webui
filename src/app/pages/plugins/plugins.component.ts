@@ -479,7 +479,7 @@ export class PluginsComponent {
             const dialogRef = self.matDialog.open(EntityJobComponent, { data: { "title": T("Updating Plugin") }, disableClose: true });
             dialogRef.componentInstance.disableProgressValue(true);
             
-            dialogRef.componentInstance.setCall('plugin.update_plugin', [row.id, entityDialog.formValue.update_jail ? true : false]);
+            dialogRef.componentInstance.setCall('plugin.update', [row.id, entityDialog.formValue.update_jail ? true : false]);
             dialogRef.componentInstance.submit();
             dialogRef.componentInstance.success.subscribe((res) => {
               dialogRef.close(true);
@@ -614,6 +614,7 @@ export class PluginsComponent {
   }
 
   onCheckboxChange(row) {
+    this.loader.open();
     row.boot = !row.boot;
     this.ws.call('plugin.update', [row.id, {'boot': row.boot ? 'on' : 'off'}] )
     .subscribe(
