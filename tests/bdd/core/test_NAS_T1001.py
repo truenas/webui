@@ -56,9 +56,9 @@ def click_storage_on_the_side_menu_and_click_disks(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Disks"]').click()
 
 
-@then('when the Pools page appears, click name to sort in alphabetical order')
-def when_the_pools_page_appears_click_name_to_sort_in_alphabetical_order(driver):
-    """when the Pools page appears, click name to sort in alphabetical order."""
+@then('when the Disks page appears, click name to sort in alphabetical order')
+def when_the_disks_page_appears_click_name_to_sort_in_alphabetical_order(driver):
+    """when the Disks page appears, click name to sort in alphabetical order."""
     assert wait_on_element(driver, 0.5, 7, '//div[contains(.,"Disks")]')
     assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"Name")]')
     ada0 = ''
