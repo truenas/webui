@@ -1,4 +1,4 @@
-<table *ngIf="displayedColumns && tableDataSource" mat-table [dataSource]="tableDataSource" #tt>
+<table *ngIf="displayedColumns && tableDataSource" mat-table [dataSource]="tableDataSource" #tt style="border-collapse: separate;">
 
   <!--- Note that these columns can be defined in any order.
     The actual rendered columns are set as a property on the row definition" -->
@@ -8,10 +8,10 @@
 
       <!-- NonActions Columns -->
       <ng-container *ngIf="column.prop !== 'actions'" matColumnDef="{{column.prop}}" [sticky]="i == 0">
-        <th mat-header-cell *matHeaderCellDef> {{column.name}} </th>
+        <th mat-header-cell *matHeaderCellDef [ngClass]="{'sticky-border-right': i == 0 && isTableOverflow()}"> {{column.name}} </th>
         <ng-container>
           <!-- Tree and Data Cells -->
-          <td mat-cell *matCellDef="let element; let ii = index" [ngClass]="{ 'tree-cell': i == 0 }" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)">
+          <td mat-cell *matCellDef="let element; let ii = index" [ngClass]="{ 'tree-cell': i == 0, 'sticky-border-right': i == 0 && isTableOverflow() }" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)">
             <div fxLayout="row" fxLayoutAlign="start center">
               <ng-container *ngIf="i == 0">
                 <div [style.margin-left]="((element.indexPath.length - 1) * 16).toString() + 'px'" [ngClass]="{ 'invisible': element.children.length == 0 }">
@@ -42,12 +42,12 @@
 
       <!-- Actions Column -->
       <ng-container *ngIf="column.prop == 'actions'" matColumnDef="{{column.prop}}">
-        <th class="action-cell" mat-header-cell *matHeaderCellDef> 
+        <th class="action-cell" [ngClass]="{'sticky-border-left': isTableOverflow()}" mat-header-cell *matHeaderCellDef> 
 
         </th>
         <ng-container>
           <!-- Row Action Cells -->
-          <td class="action-cell" mat-cell *matCellDef="let element; let ii = index">
+          <td class="action-cell" [ngClass]="{'sticky-border-left': isTableOverflow()}" mat-cell *matCellDef="let element; let ii = index">
 
             <ng-container *ngIf="element.data.actions">
               <button mat-icon-button [matMenuTriggerFor]="rowActions" aria-label="Example icon-button with a menu">

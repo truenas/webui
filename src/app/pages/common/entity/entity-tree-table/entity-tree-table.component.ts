@@ -19,7 +19,7 @@ interface FilterValue {
   providers: [EntityTreeTableService]
 })
 export class EntityTreeTableComponent implements OnInit, AfterViewInit {
-  @ViewChild(MatTable,{static: false}) table: MatTable<any>;
+  @ViewChild(MatTable,{static: false}) table: any;
   @Input() conf: EntityTreeTable;
   @Input() expandRootNodes = false;
   @Input() parentId?: string;
@@ -131,4 +131,11 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
       return target;
     }
 
+    isTableOverflow() {
+      let hasHorizontalScrollbar = false;
+      if(this.table) {
+        hasHorizontalScrollbar = this.table._elementRef.nativeElement.parentNode.parentNode.scrollWidth > this.table._elementRef.nativeElement.parentNode.parentNode.clientWidth;
+      }
+      return hasHorizontalScrollbar;
+    }
 }
