@@ -820,13 +820,6 @@ export class ReplicationFormComponent {
                     name: 'schedule',
                     placeholder: helptext.schedule_placeholder,
                     tooltip: helptext.schedule_tooltip,
-                    relation: [{
-                        action: 'HIDE',
-                        when: [{
-                            name: 'auto',
-                            value: false,
-                        }]
-                    }]
                 }, {
                     type: 'scheduler',
                     name: 'schedule_picker',
