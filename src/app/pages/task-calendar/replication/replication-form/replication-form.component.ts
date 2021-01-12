@@ -803,13 +803,6 @@ export class ReplicationFormComponent {
                     name: 'schedule',
                     placeholder: helptext.schedule_placeholder,
                     tooltip: helptext.schedule_tooltip,
-                    relation: [{
-                        action: 'HIDE',
-                        when: [{
-                            name: 'auto',
-                            value: false,
-                        }]
-                    }]
                 }, {
                     type: 'scheduler',
                     name: 'schedule_picker',
@@ -999,13 +992,6 @@ export class ReplicationFormComponent {
                     entityForm.setDisabled('target_dataset_PUSH', true, true);
                     entityForm.setDisabled('target_dataset_PULL', false, false);
                 }
-            }
-        )
-
-        entityForm.formGroup.controls['periodic_snapshot_tasks'].valueChanges.subscribe(
-            (res) => {
-                const toDisable = (res && res.length === 0) ? false : true;
-                entityForm.setDisabled('schedule', toDisable, toDisable);
             }
         )
 
