@@ -86,7 +86,7 @@ export class VolumesListTableConfig implements InputTableConf {
     { name: T('Compression'), prop: 'compression' },
     { name: T('Compression Ratio'), prop: 'compressratio'},
     { name: T('Readonly'), prop: 'readonly', hidden: false},
-    { name: T('Dedup'), prop: 'deduplication'},
+    { name: T('Dedup'), prop: 'dedup'},
     { name: T('Comments'), prop: 'comments'},
     { name: T('Actions'), prop: 'actions', hidden: false }
   ];
