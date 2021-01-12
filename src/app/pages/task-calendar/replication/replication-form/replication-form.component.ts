@@ -823,6 +823,7 @@ export class ReplicationFormComponent {
                 }, {
                     type: 'scheduler',
                     name: 'schedule_picker',
+                    placeholder: helptext.schedule_picker_placeholder,
                     tooltip: helptext.schedule_picker_tooltip,
                     options: ['schedule_begin', 'schedule_end'],
                     value: "0 0 * * *",
