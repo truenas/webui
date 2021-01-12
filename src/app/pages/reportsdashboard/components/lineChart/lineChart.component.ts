@@ -207,7 +207,6 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
             //Los Angeles: 2020-12-17T08:36:30-08:00
             //Change dateStr from '2020-12-17T08:36:30-08:00' to '2020-12-17T08:36'
             let list = dateStr.split(':');
-            list.splice(2);
             dateStr = list.join(':');
             let date = new Date(dateStr);            
             
