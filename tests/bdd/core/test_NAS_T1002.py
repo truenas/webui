@@ -88,6 +88,11 @@ def click_the_checkbox_next_to_ada3_and_press_the_right_arrow_under_data_vdev_cl
     driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__disks-ada3"]').click()
     assert wait_on_element(driver, 0.5, 7, '//button[@id="vdev__add-button"]')
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
+    assert wait_on_element(driver, 0.5, 7, '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]')
+    driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__force-submit-checkbox"]').click()
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
+    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__CONTINUE"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
     assert wait_on_element(driver, 0.5, 7, '//button[@name="create-button"]')
     driver.find_element_by_xpath('//button[@name="create-button"]').click()
 
