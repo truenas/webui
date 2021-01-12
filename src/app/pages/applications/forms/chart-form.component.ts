@@ -53,6 +53,9 @@ export class ChartFormComponent {
           type = 'select';
         }
         break;
+      case 'int':
+        type = 'input';
+        break;
       case 'boolean':
         type = 'checkbox';
         break;
@@ -63,7 +66,7 @@ export class ChartFormComponent {
         type = 'explorer';
         break;
       default:
-        type = 'input';
+        type = null;
     }
 
     return type;
@@ -80,74 +83,82 @@ export class ChartFormComponent {
     return options;
   }
 
-  getFieldConfigs(config, parent=null) {
+  getFieldConfigs(config, parent=null, inList = false) {
     let fieldConfigs = [];
     let name = config.variable;
     if (parent) {
       name = `${parent.variable}_${name}`;
     }
-    const fieldConfig = {
-      type: this.getType(config.schema),
-      required: config.schema.required,
-      value: config.schema.default,
-      tooltip: config.description,
-      placeholder: config.label,
-      name: name,
-    }
 
-    if (fieldConfig.type == 'select') {
-      fieldConfig['options'] = this.getSelectOptions(config.schema);
-    }
+    const type = this.getType(config.schema);
+    if (type && !(type == 'list' && inList)) {
+      const fieldConfig = {
+        type: type,
+        required: config.schema.required,
+        value: config.schema.default,
+        tooltip: config.description,
+        placeholder: config.label,
+        name: name,
+      }
+  
+      if (fieldConfig.type == 'select') {
+        fieldConfig['options'] = this.getSelectOptions(config.schema);
+      }
+  
+      if (config.schema.private) {
+        fieldConfig['togglePw'] = true;
+      }
 
-    if (config.schema.private) {
-      fieldConfig['togglePw'] = true;
-    }
-
-    if (fieldConfig.type == 'explorer') {
-      fieldConfig['explorerType'] = 'directory';
-      fieldConfig['initial'] = '/mnt';
-    }
-
-    if (fieldConfig.type == 'list') {
-      const listFields = this.getTemplateListField(config, parent);
-      fieldConfig['templateListField'] = listFields;
-      fieldConfig['box'] = true;
-      fieldConfig['listFields'] = [];
-    }
-
-    fieldConfigs.push(fieldConfig);
-
-    if (config.schema.subquestions) {
-      config.schema.subquestions.forEach(subquestion => {
-        let sbu_name = subquestion.variable;
-        if (parent) {
-          sbu_name = `${parent.variable}_${sbu_name}`;
-        }
-        const subFieldConfig = {
-          type: this.getType(subquestion.schema),
-          name: sbu_name,
-          placeholder: config.label,
-        }
-
-        if (config.schema.show_subquestions_if) {
-          subFieldConfig['isHidden'] = true;
-          subFieldConfig['relation'] = [{
-            action: 'SHOW',
-              when: [{
-                name: name,
-                value: true,
-              }]
-          }];
-        }
-
-        if (subFieldConfig.type == 'explorer') {
-          subFieldConfig['explorerType'] = 'directory';
-          subFieldConfig['initial'] = '/mnt';
-        }
-
-        fieldConfigs.push(subFieldConfig);
-      });
-    }
+      if (config.schema.type == 'int') {
+        fieldConfig['inputType'] = 'number';
+      }
+  
+      if (fieldConfig.type == 'explorer') {
+        fieldConfig['explorerType'] = 'directory';
+        fieldConfig['initial'] = '/mnt';
+      }
+  
+      if (fieldConfig.type == 'list') {
+        const listFields = this.getTemplateListField(config, parent);
+        fieldConfig['templateListField'] = listFields;
+        fieldConfig['box'] = true;
+        fieldConfig['listFields'] = [];
+      }
+  
+      fieldConfigs.push(fieldConfig);
+  
+      if (config.schema.subquestions) {
+        config.schema.subquestions.forEach(subquestion => {
+          let sbu_name = subquestion.variable;
+          if (parent) {
+            sbu_name = `${parent.variable}_${sbu_name}`;
+          }
+          const subFieldConfig = {
+            type: this.getType(subquestion.schema),
+            name: sbu_name,
+            placeholder: config.label,
+          }
+  
+          if (config.schema.show_subquestions_if) {
+            subFieldConfig['isHidden'] = true;
+            subFieldConfig['relation'] = [{
+              action: 'SHOW',
+                when: [{
+                  name: name,
+                  value: true,
+                }]
+            }];
+          }
+  
+          if (subFieldConfig.type == 'explorer') {
+            subFieldConfig['explorerType'] = 'directory';
+            subFieldConfig['initial'] = '/mnt';
+          }
+  
+          fieldConfigs.push(subFieldConfig);
+        });
+      }
+    }    
 
     return fieldConfigs;
   }
@@ -155,7 +166,7 @@ export class ChartFormComponent {
   getTemplateListField(config, parent) {
     let listFields = [];
     config.schema.items.forEach(item => {
-      const fields = this.getFieldConfigs(item, parent);
+      const fields = this.getFieldConfigs(item, parent, true);
       listFields = listFields.concat(fields);
     });
     return listFields;
@@ -294,11 +305,9 @@ export class ChartFormComponent {
   setArrayValues(data) {
     const arrayVaules = [];
     data.forEach(item => {
-      const oneItem = {};
-      this.setObjectValues(item, oneItem);
-      if (Object.keys(oneItem).length > 0) {
-        arrayVaules.push(oneItem);
-      }      
+      Object.keys(item).forEach(key => {
+        arrayVaules.push(item[key]);
+      });
     });
 
     return arrayVaules;
