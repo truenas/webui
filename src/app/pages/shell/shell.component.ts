@@ -64,6 +64,8 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     if(this.shellConnectedSubscription){
       this.shellConnectedSubscription.unsubscribe();
     }
+
+    this.core.unregister({observerClass: this});
   }
   
   refreshToolbarButtons() {
