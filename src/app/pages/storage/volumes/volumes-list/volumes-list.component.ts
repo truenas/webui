@@ -1065,7 +1065,7 @@ export class VolumesListTableConfig implements InputTableConf {
           name: T('Add Zvol'),
           label: T("Add Zvol"),
           onClick: (row1) => {
-            this.parentVolumesListComponent.addZvol(rowData.id);
+            this.parentVolumesListComponent.addZvol(rowData.id, true);
           }
         });
       }
@@ -1233,7 +1233,7 @@ export class VolumesListTableConfig implements InputTableConf {
         name: T('Edit Zvol'),
         label: T("Edit Zvol"),
         onClick: (row1) => {
-          this.parentVolumesListComponent.addZvol(rowData.id);
+          this.parentVolumesListComponent.addZvol(rowData.id, false);
         }
       });
 
@@ -1700,11 +1700,11 @@ export class VolumesListTableConfig implements InputTableConf {
     this.getMoreDatasetInfo(data, parent);
     node.data.group_actions = true;
     let actions_title = helptext.dataset_actions;
-    if (data.type === 'zvol') {
+    if (data.type === 'VOLUME') {
       actions_title = helptext.zvol_actions;
     }
     const actions = [{title: actions_title, actions: this.getActions(data)}];
-    if (data.type === 'FILESYSTEM') {
+    if (data.type === 'FILESYSTEM' || data.type === 'VOLUME') {
       const encryption_actions = this.getEncryptedDatasetActions(data);
       if (encryption_actions.length > 0) {
         actions.push({title: helptext.encryption_actions_title, actions: encryption_actions});
@@ -1939,8 +1939,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     
   }
 
-  addZvol(id) {
+  addZvol(id, isNew) {
     this.addZvolComponent.setParent(id);
+    this.addZvolComponent.isNew = isNew;
     this.modalService.open('slide-in-form', this.addZvolComponent, id);
   }
 
