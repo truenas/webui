@@ -241,7 +241,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   }
 
   setProductImage(data){
-    console.log(data);
     if(this.manufacturer !== 'ixsystems') return;
 
     if(data.system_product.includes('MINI')){
