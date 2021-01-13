@@ -42,6 +42,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   private affectedServices = [];
   checkin_interval;
 
+  private navigation: any;
   public helptext = helptext
 
   public interfaceTableConf = {
@@ -69,6 +70,12 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         this.parent.dialog.Info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
       } else {
         table.tableService.delete(table, row, deleteAction);
+      }
+    },
+    afterGetData: function(res) {
+      const state = this.parent.navigation.extras.state as {editInterface: string};
+      if(state && state.editInterface) {
+        this.parent.modalService.open('slide-in-form', this.parent.interfaceComponent, state.editInterface);
       }
     },
     afterDelete: this.afterDelete.bind(this),
@@ -193,6 +200,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     private translate: TranslateService) {
       super();
       this.getGlobalSettings();
+      this.navigation = this.router.getCurrentNavigation();
   }
 
   getGlobalSettings() {
