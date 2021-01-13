@@ -19,10 +19,7 @@ import { T } from '../../translate-marker';
   providers: [IscsiService]
 })
 export class Services implements OnInit {
-
   @ViewChild('filter', { static: true}) filter: ElementRef;
-  @Input() searchTerm: string = '';
-  @Input() cards = []; // Display List
   @ViewChild('viewMode', { static: true}) viewMode: MatButtonToggleGroup;
   @ViewChild('serviceStatus', { static: true}) serviceStatus: MatSlideToggle;
   focusedVM: string;
@@ -51,9 +48,7 @@ export class Services implements OnInit {
     'webdav': 'WebDAV',
   }
 
-  public cache = [];
   public showSpinner: boolean = true;
-  // public viewValue: any;
 
   constructor(protected rest: RestService, protected ws: WebSocketService, protected router: Router,
     private dialog: DialogService, private iscsiService: IscsiService) {}
@@ -73,59 +68,7 @@ export class Services implements OnInit {
     return card;
   }
 
-  ngOnInit() {
-    // window.localStorage.getItem('viewValue') ? this.viewMode.value = window.localStorage.getItem('viewValue') : this.viewMode.value = 'cards';
-    this.viewMode.value = 'table';
-    this.busy =
-      this.ws.call('service.query', [
-        [], { "order_by": ["service"] }
-      ])
-      .subscribe((res) => {
-        this.services = res;
-
-        let hidden = ['netdata'];
-        this.services.forEach((item) => {
-          if (!hidden.includes(item.service)) {
-            if (this.name_MAP[item.service]) {
-              item.label = this.name_MAP[item.service];
-            } else {
-              item.label = item.service;
-            }
-            const card = this.parseResponse(item);
-            this.cards.push(card);
-            this.cache.push(card);
-          }
-        });
-        this.cards = _.sortBy(this.cards, [function(i) {return i.label.toLowerCase()}]);
-        this.cache = _.sortBy(this.cache, [function(i) {return i.label.toLowerCase()}]);
-        this.showSpinner = false;
-      });
-  }
-
-  displayFilter(key, query ? ) {
-    if (query == '' || !query) {
-      this.displayAll();
-    } else {
-      this.cards = this.cache.filter((card) => {
-        const result = card[key].toLowerCase().replace(/[.]/g, '').replace(/[ ]/g, '')
-          .indexOf(query.toLowerCase().replace(/[.]/g, '').replace(/[ ]/g, '')) > -1;
-        return result;
-      });
-    }
-  }
-
-  displayAll() {
-    this.cards = this.cache;
-  }
-
-  // cardStyles() {
-  //   let cardStyles = {
-  //     'width': this.viewMode.value == 'slim' ? '285px' : '380px',
-  //     'height': '250px',
-  //     'margin': '25px auto'
-  //   }
-  //   return cardStyles;
-  // }
+  ngOnInit() {}
 
   toggle(service: any) {
     let rpc: string;
