@@ -23,23 +23,25 @@
 			<p>{{'Enter' | translate}} <strong>{{config.maskValue}}</strong> {{'below to confirm.' | translate}}</p>
 			<p [ngStyle]="{'position': 'relative', 'top':'15px', 'opacity': '.38'}">{{config.maskValue}}</p>
 		</div>
-		<input [type]="config.inputType ? config.inputType : 'text'"
-			[attr.value]="config.value"
-			[formControlName]="config.name"
-			[readonly]="config.readonly"
-			[required]="config.required"
-			[max]="config.max"
-			[min]="config.min"
-			(blur)="blurEvent()"
-			autocomplete="new-password"
-			ix-auto
-			ix-auto-type="input"
-			ix-auto-identifier="{{config.placeholder}}"
-			[id]="config.name"
-			(change)="valueChange()"
-			(paste)="onPaste($event)"
-			(input)="onInput()">
-
+		<mat-form-field style="width: 100%;">
+			<span matPrefix style="cursor: default; user-select: none;"><mat-icon>search</mat-icon></span>
+			<input matInput [type]="config.inputType ? config.inputType : 'text'"
+				[attr.value]="config.value"
+				[formControlName]="config.name"
+				[readonly]="config.readonly"
+				[required]="config.required"
+				[max]="config.max"
+				[min]="config.min"
+				(blur)="blurEvent()"
+				autocomplete="new-password"
+				ix-auto
+				ix-auto-type="input"
+				ix-auto-identifier="{{config.placeholder}}"
+				[id]="config.name"
+				(change)="valueChange()"
+				(paste)="onPaste($event)"
+				(input)="onInput()">
+		</mat-form-field>
   	<button mat-icon-button type="button" *ngIf="config.togglePw" class="toggle_pw" (click)="togglePW()"
   		ix-auto
   		ix-auto-type="button"
