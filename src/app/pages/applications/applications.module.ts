@@ -16,8 +16,11 @@ import { DockerImagesComponent } from './docker-images/docker-images.component';
 import { KubernetesSettingsComponent } from './forms/kubernetes-settings.component';
 import { ChartReleaseAddComponent } from './forms/chart-release-add.component';
 import { ChartReleaseEditComponent } from './forms/chart-release-edit.component';
+import { PlexFormComponent } from './forms/plex-form.component';
+import { NextCloudFormComponent } from './forms/nextcloud-form.component';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
-import { ChartFormComponent } from './forms/chart-form.component';
+import { MinioFormComponent } from './forms/minio-form.component';
+
 
 @NgModule({
   imports: [
@@ -40,7 +43,9 @@ import { ChartFormComponent } from './forms/chart-form.component';
     KubernetesSettingsComponent,
     ChartReleaseAddComponent,
     ChartReleaseEditComponent,
-    ChartFormComponent,
+    PlexFormComponent,
+    NextCloudFormComponent,
+    MinioFormComponent
   ]
 })
 export class ApplicationsModule { }
