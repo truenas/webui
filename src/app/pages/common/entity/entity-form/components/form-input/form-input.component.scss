@@ -2,7 +2,8 @@
     position: relative;
 }
 
-.input-container .searchable {
+.input-container .searchable,
+.input-container .reset-input {
     cursor: default;
     user-select: none;
     position: absolute;
@@ -17,14 +18,8 @@
 .input-container .reset-input {
     opacity: 0.5;
     cursor: pointer;
-    user-select: none;
-    position: absolute;
-    top: 0;
-    bottom: 0;
+    margin-left: 0;
     right: 0.3rem;
-    padding: 5px;
-    display: flex;
-    align-items: center;
 }
 
 .input-container mat-icon {
