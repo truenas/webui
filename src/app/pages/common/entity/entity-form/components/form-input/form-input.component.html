@@ -23,9 +23,9 @@
 			<p>{{'Enter' | translate}} <strong>{{config.maskValue}}</strong> {{'below to confirm.' | translate}}</p>
 			<p [ngStyle]="{'position': 'relative', 'top':'15px', 'opacity': '.38'}">{{config.maskValue}}</p>
 		</div>
-		<mat-form-field style="width: 100%;">
-			<span matPrefix style="cursor: default; user-select: none;"><mat-icon>search</mat-icon></span>
-			<input matInput [type]="config.inputType ? config.inputType : 'text'"
+		<div class="input-container">
+			<span *ngIf="config.searchable" class="searchable"><mat-icon>search</mat-icon></span>
+			<input [ngStyle]="{'padding-left': config.searchable ? '2rem' : '', 'padding-right': true ? '2rem': ''}" [type]="config.inputType ? config.inputType : 'text'"
 				[attr.value]="config.value"
 				[formControlName]="config.name"
 				[readonly]="config.readonly"
@@ -41,7 +41,10 @@
 				(change)="valueChange()"
 				(paste)="onPaste($event)"
 				(input)="onInput()">
-		</mat-form-field>
+				<span *ngIf="hasValue()" class="reset-input">
+					<mat-icon (click)="resetInput()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+				</span>
+		</div>
   	<button mat-icon-button type="button" *ngIf="config.togglePw" class="toggle_pw" (click)="togglePW()"
   		ix-auto
   		ix-auto-type="button"

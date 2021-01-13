@@ -256,17 +256,6 @@ input.mat-input-element::placeholder {
   color: var(--fg1);
 }
 
-.form-element .mat-form-field-wrapper {
-  padding: 5px;
-}
-.form-element .mat-form-field-wrapper .mat-form-field-prefix {
-  position: relative;
-  top: -3px;
-}
-.form-element input[type = "text"] {
-  border: none;
-}
-
 .form-element,
 #password,
 .form-element.form-combobox .mat-form-field,
