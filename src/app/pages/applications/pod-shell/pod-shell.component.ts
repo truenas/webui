@@ -236,6 +236,9 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
       this.attachAddon.dispose();
     }
 
+    if (this.shellConnected) {
+      this.xterm.clear();
+    }
     this.attachAddon = new AttachAddon(this.ss.socket);
     this.xterm.loadAddon(this.attachAddon);
 
