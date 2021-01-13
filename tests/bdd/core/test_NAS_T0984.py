@@ -13,6 +13,7 @@ from pytest_bdd import (
     scenario,
     then,
     when,
+    parsers
 )
 
 
@@ -50,9 +51,51 @@ def you_see_the_dashboard(driver):
     assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"System Information")]')
 
 
+@then('click Network on the side menu and click Global Configuration')
+def click_network_on_the_side_menu_and_click_global_configuration(driver):
+    """click Network on the side menu and click Global Configuration."""
+    assert wait_on_element(driver, 1, 5, '//mat-list-item[@ix-auto="option__Network"]')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
+    assert wait_on_element(driver, 1, 5, '//mat-list-item[@ix-auto="option__Global Configuration"]')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Global Configuration"]').click()
+
+
+@then('the Network Global Configuration page should open')
+def the_network_global_configuration_page_should_open(driver):
+    """the Network Global Configuration page should open."""
+    assert wait_on_element(driver, 1, 7, '//a[contains(.,"Global Configuration")]')
+
+
+@then(parsers.parse('input Nameserver 1 "{ad_nameserver1}" and input Nameserver 2 "{ad_nameserver2}"'))
+def input_Nameserver_1_and_input_Nameserver_2(driver, ad_nameserver1, ad_nameserver2):
+    """input Nameserver 1 "ad_nameserver1" and input Nameserver 2 "ad_nameserver2"."""
+    assert wait_on_element(driver, 1, 7, '//input[@placeholder="Nameserver 1"]')
+    driver.find_element_by_xpath('//input[@placeholder="Nameserver 1"]').clear()
+    driver.find_element_by_xpath('//input[@placeholder="Nameserver 1"]').send_keys(ad_nameserver1)
+    driver.find_element_by_xpath('//input[@placeholder="Nameserver 2"]').clear()
+    driver.find_element_by_xpath('//input[@placeholder="Nameserver 2"]').send_keys(ad_nameserver2)
+
+
+@then(parsers.parse('input Nameserver 3 "{ad_nameserver3}" and click SAVE'))
+def input_Nameserver_3_and_click_save(driver, ad_nameserver3):
+    """input Nameserver 3 "ad_nameserver3" and click SAVE."""
+    driver.find_element_by_xpath('//input[@placeholder="Nameserver 3"]').clear()
+    driver.find_element_by_xpath('//input[@placeholder="Nameserver 3"]').send_keys(ad_nameserver3)
+    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SAVE"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+
+
+@then('"Please wait" should appear and changes should be saved without errors')
+def please_wait_should_appear_and_changes_should_be_saved_without_errors(driver):
+    """"Please wait" should appear and changes should be saved without errors."""
+    assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Settings saved.")]')
+
+
 @then('click Network on the side menu and click interface')
 def click_network_on_the_side_menu_and_click_interface(driver):
     """click Network on the side menu and click interface."""
+    assert wait_on_element(driver, 1, 5, '//mat-list-item[@ix-auto="option__Network"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
     assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Interfaces"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Interfaces"]').click()
