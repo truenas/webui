@@ -62,16 +62,12 @@ export class DiskFormComponent {
           placeholder: helptext.disk_form_hddstandby_placeholder,
           tooltip : helptext.disk_form_hddstandby_tooltip,
           options: helptext.disk_form_hddstandby_options,
-          class: 'inline',
-          width: '50%',
         },
         {
           type : 'checkbox',
           name : 'hddstandby_force',
           placeholder : helptext.force_hdd_standby.placeholder,
           tooltip : helptext.force_hdd_standby.tooltip,
-          class: 'inline',
-          width: '50%',
           relation: [
             {
               action : 'DISABLE',
@@ -88,8 +84,6 @@ export class DiskFormComponent {
           placeholder: helptext.disk_form_advpowermgmt_placeholder,
           tooltip : helptext.disk_form_advpowermgmt_tooltip,
           options: helptext.disk_form_advpowermgmt_options,
-          class: 'inline',
-          width: '50%',
         },
         {
           type: 'select',
@@ -97,8 +91,6 @@ export class DiskFormComponent {
           placeholder: helptext.disk_form_acousticlevel_placeholder,
           tooltip : helptext.disk_form_acousticlevel_tooltip,
           options: helptext.disk_form_acousticlevel_options,
-          class: 'inline',
-          width: '50%',
         },
         {
           type : 'checkbox',
@@ -111,8 +103,6 @@ export class DiskFormComponent {
           name: 'smartoptions',
           placeholder: helptext.disk_form_smartoptions_placeholder,
           tooltip : helptext.disk_form_smartoptions_tooltip,
-          class: 'inline',
-          width: '50%',
         },
         {
           type: 'input',
@@ -122,8 +112,6 @@ export class DiskFormComponent {
           tooltip: helptext.disk_form_critical_tooltip,
           min: 0,
           validation: [Validators.min(0)],
-          class: 'inline',
-          width: '50%',
         },
         {
           type: 'input',
@@ -133,8 +121,6 @@ export class DiskFormComponent {
           tooltip: helptext.disk_form_difference_tooltip,
           min: 0,
           validation: [Validators.min(0)],
-          class: 'inline',
-          width: '50%',
         },
         {
           type: 'input',
@@ -144,8 +130,6 @@ export class DiskFormComponent {
           tooltip: helptext.disk_form_informational_tooltip,
           min: 0,
           validation: [Validators.min(0)],
-          class: 'inline',
-          width: '50%',
         },
         {
           type: 'input',
@@ -164,8 +148,6 @@ export class DiskFormComponent {
               }]
             }
           ],
-          class: 'inline',
-          width: '50%',
         },
         {
           type: 'checkbox',
