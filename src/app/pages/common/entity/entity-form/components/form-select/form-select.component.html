@@ -60,8 +60,8 @@
                 <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
               </span>
               {{ option.label | translate }}
-              <span *ngIf="option.alert" style="position: absolute; right: 0;top: 0;bottom: 0;">
-                <mat-icon role="img" style="font-size: 1rem; width: auto; height: auto;" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+              <span *ngIf="option.alert" class="alert-icon">
+                <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
               </span>
           </mat-option>
 
