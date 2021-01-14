@@ -187,7 +187,7 @@ export class ChartFormComponent {
       });
   
       this.fieldSets = this.fieldSets.filter(fieldSet => fieldSet.config.length > 0);
-      console.log(this.fieldSets);
+      
     } catch(error) {
       return this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
