@@ -72,104 +72,110 @@ export class ChartFormComponent {
     return type;
   }
 
-  getSelectOptions(schema) {
-    const options = [];
-    schema.enum.forEach(option => {
-      options.push({
-        value: option.value,
-        label: option.description,
-      });
-    });
-    return options;
-  }
-
-  getFieldConfigs(config, parent=null, inList = false) {
-    let fieldConfigs = [];
-    let name = config.variable;
-    if (parent) {
-      name = `${parent.variable}_${name}`;
+  parseSchemaFieldConfig(schemaConfig, parentName=null) {
+    let results = [];
+    let name = schemaConfig.variable;
+    if (parentName) {
+      name = `${parentName}_${name}`;
     }
 
-    const type = this.getType(config.schema);
-    if (type && !(type == 'list' && inList)) {
-      const fieldConfig = {
-        type: type,
-        required: config.schema.required,
-        value: config.schema.default,
-        tooltip: config.description,
-        placeholder: config.label,
-        name: name,
-      }
-  
-      if (fieldConfig.type == 'select') {
-        fieldConfig['options'] = this.getSelectOptions(config.schema);
-      }
-  
-      if (config.schema.private) {
-        fieldConfig['togglePw'] = true;
-      }
+    let fieldConfig = {
+      required: schemaConfig.schema.required,
+      value: schemaConfig.schema.default,
+      tooltip: schemaConfig.description,
+      placeholder: schemaConfig.label,
+      name: name,
+    }
 
-      if (config.schema.type == 'int') {
-        fieldConfig['inputType'] = 'number';
-      }
-  
-      if (fieldConfig.type == 'explorer') {
-        fieldConfig['explorerType'] = 'directory';
-        fieldConfig['initial'] = '/mnt';
-      }
-  
-      if (fieldConfig.type == 'list') {
-        const listFields = this.getTemplateListField(config, parent);
-        fieldConfig['templateListField'] = listFields;
-        fieldConfig['box'] = true;
-        fieldConfig['listFields'] = [];
-      }
-  
-      fieldConfigs.push(fieldConfig);
-  
-      if (config.schema.subquestions) {
-        config.schema.subquestions.forEach(subquestion => {
-          let sbu_name = subquestion.variable;
-          if (parent) {
-            sbu_name = `${parent.variable}_${sbu_name}`;
+    if (schemaConfig.schema.type == 'string') {
+      if (schemaConfig.schema.enum) {
+        fieldConfig['type'] = 'select';
+        fieldConfig['options'] = schemaConfig.schema.enum.map(option => {
+          return {
+            value: option.value,
+            label: option.description,
           }
-          const subFieldConfig = {
-            type: this.getType(subquestion.schema),
-            name: sbu_name,
-            placeholder: config.label,
-          }
-  
-          if (config.schema.show_subquestions_if) {
-            subFieldConfig['isHidden'] = true;
-            subFieldConfig['relation'] = [{
-              action: 'SHOW',
-                when: [{
-                  name: name,
-                  value: true,
-                }]
-            }];
-          }
-  
-          if (subFieldConfig.type == 'explorer') {
-            subFieldConfig['explorerType'] = 'directory';
-            subFieldConfig['initial'] = '/mnt';
-          }
-  
-          fieldConfigs.push(subFieldConfig);
         });
+      } else {
+        fieldConfig['type'] = 'input';
+        if (schemaConfig.schema.private) {
+          fieldConfig['inputType'] = 'password';
+          fieldConfig['togglePw'] = true;
+        }
+
+        if (schemaConfig.schema.min_length !== undefined) {
+          fieldConfig['min'] = schemaConfig.schema.min_length;
+        }
+
+        if (schemaConfig.schema.max_length !== undefined) {
+          fieldConfig['max'] = schemaConfig.schema.max_length;
+        }
       }
-    }    
 
-    return fieldConfigs;
-  }
+    } else if (schemaConfig.schema.type == 'int') {
+      fieldConfig['type'] = 'input';
+      fieldConfig['inputType'] = 'number';
 
-  getTemplateListField(config, parent) {
-    let listFields = [];
-    config.schema.items.forEach(item => {
-      const fields = this.getFieldConfigs(item, parent, true);
-      listFields = listFields.concat(fields);
-    });
-    return listFields;
+    } else if (schemaConfig.schema.type == 'boolean') {
+      fieldConfig['type'] = 'checkbox';
+
+    } else if (schemaConfig.schema.type == 'hostpath' || schemaConfig.schema.type == 'path') {
+      fieldConfig['type'] = 'explorer';
+      fieldConfig['initial'] = '/mnt';
+
+    } else if (schemaConfig.schema.type == 'list') {
+      fieldConfig['type'] = 'list';
+      fieldConfig['box'] = true;
+      fieldConfig['listFields'] = [];
+
+      let listFields = [];
+      schemaConfig.schema.items.forEach(item => {
+        const fields = this.parseSchemaFieldConfig(item, name);
+        listFields = listFields.concat(fields);
+      });
+
+      fieldConfig['templateListField'] = listFields;
+
+    } else if (schemaConfig.schema.type == 'dict') {
+      fieldConfig = null;
+      schemaConfig.schema.attrs.forEach(dictConfig => {
+        const subResults = this.parseSchemaFieldConfig(dictConfig, parentName);
+        results = results.concat(subResults);
+      });
+    }
+
+    if (fieldConfig) {
+
+      if (fieldConfig['type']) {
+        results.push(fieldConfig);
+  
+        if (schemaConfig.schema.subquestions) {
+          schemaConfig.schema.subquestions.forEach(subquestion => {
+    
+            const subResults = this.parseSchemaFieldConfig(subquestion, parentName);
+    
+            if (schemaConfig.schema.show_subquestions_if !== undefined) {
+              subResults.forEach(subFieldConfig => {
+                subFieldConfig['isHidden'] = true;
+                subFieldConfig['relation'] = [{
+                  action: 'SHOW',
+                    when: [{
+                      name: name,
+                      value: schemaConfig.schema.show_subquestions_if,
+                    }]
+                }];
+              });
+            }
+    
+            results = results.concat(subResults);
+          });
+        }  
+      } else {
+        console.error("Unsupported type=", schemaConfig);
+      }
+    }
+
+    return results;
   }
 
   parseSchema(catalogApp) {
@@ -204,13 +210,8 @@ export class ChartFormComponent {
       this.catalogApp.schema.questions.forEach(question => {
         const fieldSet = this.fieldSets.find(fieldSet => fieldSet.name == question.group);
         if (fieldSet) {
-          if (question.schema.attrs) {
-            question.schema.attrs.forEach(config => {
-              fieldSet.config = fieldSet.config.concat(this.getFieldConfigs(config, question));
-            });
-          } else {
-            fieldSet.config = fieldSet.config.concat(this.getFieldConfigs(question));
-          }
+          const fieldConfigs = this.parseSchemaFieldConfig(question);
+          fieldSet.config = fieldSet.config.concat(fieldConfigs);
         }
       });
   
