@@ -166,7 +166,7 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
   }
 
   update(value){
-    if (document.hasFocus()) {
+    if (!document.hidden) {
       d3.transition()
         .select('#gauge-' + this.chartId + ' path.value')
         .duration(750)
