@@ -166,9 +166,15 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
   }
 
   update(value){
-    var arcGenerator = this.arc.endAngle(this.percentToAngle(value));
-    d3.select('#gauge-' + this.chartId + ' path.value').attr('d', arcGenerator);
-    d3.select('#gauge-' + this.chartId + ' text#text-value').text(value + this.config.units);
+    if (document.hasFocus()) {
+      d3.transition()
+        .select('#gauge-' + this.chartId + ' path.value')
+        .duration(750)
+        .attrTween("d", this.load(this.percentToAngle(value)));
+
+      let txt = d3.select('#gauge-' + this.chartId + ' text#text-value')
+        .text(value + this.config.units)
+    }
   }
 
   load(newAngle){
