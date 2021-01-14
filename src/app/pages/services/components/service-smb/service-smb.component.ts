@@ -348,7 +348,7 @@ export class ServiceSMBComponent {
     entityEdit.formGroup.get('loglevel').valueChanges.subscribe(
       (value) => {
         if(value === 'FULL' || value === 'DEBUG') {
-          this.fieldConfig.find(c => c.name === 'loglevel').warnings = "Higher log levels are for debuging purposes only and should not be set on production servers. Setting a log level too high may significantly impact SMB server performance and mask errors (because the log file will roll over too quickly)."; 
+          this.fieldConfig.find(c => c.name === 'loglevel').warnings = ""; 
         } else {
           this.fieldConfig.find(c => c.name === 'loglevel').warnings = ''; 
         }
