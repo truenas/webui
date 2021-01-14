@@ -726,44 +726,55 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         newfg.setParent(formArray);
         formArray.controls.push(newfg);
 
-        for (const [key, value] of Object.entries(listValue[i])) {
-          const fieldConfig = _.find(templateListField, {'name': key});
-          if (fieldConfig.type == "list") {
-            const subTemplateListField = _.cloneDeep(fieldConfig.templateListField);
-            
-            for(let j=0; j < value.length; j++) {
-              const subNewfg =  this.entityFormService.createFormGroup(subTemplateListField);
-              subNewfg.setParent(newfg);
-              (<FormArray>newfg.controls[key]).push(subNewfg);
-              _.find(templateListField, {'name': key}).listFields.push(subTemplateListField);
-            }            
+        if (typeof listValue[i] === 'object') {
+          for (const [key, value] of Object.entries(listValue[i])) {
+            const fieldConfig = _.find(templateListField, {'name': key});
+            if (fieldConfig && fieldConfig.type == "list") {
+              const subTemplateListField = _.cloneDeep(fieldConfig.templateListField);
+              
+              for(let j=0; j < value.length; j++) {
+                const subNewfg =  this.entityFormService.createFormGroup(subTemplateListField);
+                subNewfg.setParent(newfg);
+                (<FormArray>newfg.controls[key]).push(subNewfg);
+                _.find(templateListField, {'name': key}).listFields.push(subTemplateListField);
+              }            
+            }
           }
         }
 
         _.find(this.conf.fieldConfig, {'name': fieldName}).listFields.push(templateListField);
       }
 
-      for (const [key, value] of Object.entries(listValue[i])) {
-        const control = <FormArray>(<FormGroup>formArray.controls[i]).controls[key];
-        if (control) {
-          const fieldConfig = _.find(templateListField, {'name': key});
-          if (fieldConfig.type == "list") {
-            for (let j = 0; j < value.length; j++) {
-              const subList = value[j];
-              
-              for (const [subKey, subValue] of Object.entries(subList)) {
-                if (<FormGroup>control.controls[j]) {
-                  const subControl = (<FormGroup>control.controls[j]).controls[subKey];
-                  subControl.setValue(subValue);
+      if (typeof listValue[i] === 'object') {
+        for (const [key, value] of Object.entries(listValue[i])) {
+          const control = <FormArray>(<FormGroup>formArray.controls[i]).controls[key];
+          if (control) {
+            const fieldConfig = _.find(templateListField, {'name': key});
+            if (fieldConfig.type == "list") {
+              for (let j = 0; j < value.length; j++) {
+                const subList = value[j];
+                
+                for (const [subKey, subValue] of Object.entries(subList)) {
+                  if (<FormGroup>control.controls[j]) {
+                    const subControl = (<FormGroup>control.controls[j]).controls[subKey];
+                    subControl.setValue(subValue);
+                  }
                 }
               }
+  
+            } else {
+              control.setValue(value);
             }
-
-          } else {
-            control.setValue(value);
-          }
-        }        
+          }        
+        }
+      } else {
+        const key = templateListField[0].name;
+        const control = (<FormGroup>formArray.controls[i]).controls[key];
+        if (control) {
+          control.setValue(listValue[i]);
+        }      
       }
+      
     }
     formArray.markAllAsTouched();
   }

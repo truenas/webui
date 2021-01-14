@@ -43,35 +43,6 @@ export class ChartFormComponent {
     this.utils = new CommonUtils();
   }
 
-  getType(schema) {
-    let type;
-
-    switch (schema.type) {
-      case 'string':
-        type = 'input';
-        if (schema.enum) {
-          type = 'select';
-        }
-        break;
-      case 'int':
-        type = 'input';
-        break;
-      case 'boolean':
-        type = 'checkbox';
-        break;
-      case 'list':
-        type = 'list';
-        break;
-      case 'hostpath':
-        type = 'explorer';
-        break;
-      default:
-        type = null;
-    }
-
-    return type;
-  }
-
   parseSchemaFieldConfig(schemaConfig, parentName=null) {
     let results = [];
     let name = schemaConfig.variable;
@@ -130,7 +101,7 @@ export class ChartFormComponent {
 
       let listFields = [];
       schemaConfig.schema.items.forEach(item => {
-        const fields = this.parseSchemaFieldConfig(item, name);
+        const fields = this.parseSchemaFieldConfig(item);
         listFields = listFields.concat(fields);
       });
 
@@ -139,7 +110,7 @@ export class ChartFormComponent {
     } else if (schemaConfig.schema.type == 'dict') {
       fieldConfig = null;
       schemaConfig.schema.attrs.forEach(dictConfig => {
-        const subResults = this.parseSchemaFieldConfig(dictConfig, parentName);
+        const subResults = this.parseSchemaFieldConfig(dictConfig, name);
         results = results.concat(subResults);
       });
     }
@@ -216,6 +187,7 @@ export class ChartFormComponent {
       });
   
       this.fieldSets = this.fieldSets.filter(fieldSet => fieldSet.config.length > 0);
+      console.log(this.fieldSets);
     } catch(error) {
       return this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
@@ -260,19 +232,27 @@ export class ChartFormComponent {
 
   setObjectValues(data, result) {
     Object.keys(data).forEach(key => {
-      const key_list = key.split('_');
       const value = data[key];
       if (key == "release_name" || value == "" || value == undefined) {
         return;
       }
       
+      const key_list = key.split('_');
       if (key_list.length > 1) {
         let parent = result;
         for(let i=0; i<key_list.length; i++) {
           const temp_key = key_list[i];
           if (i == key_list.length - 1) {
             if (Array.isArray(value)) {
-              const arrayValues = this.setArrayValues(value);
+              const arrayValues = value.map(item => {
+                if (Object.keys(item).length > 1) {
+                  let subValue = {};
+                  this.setObjectValues(item, subValue);
+                  return subValue;
+                } else {
+                  return item[Object.keys(item)[0]];
+                }
+              });
               if (arrayValues.length > 0) {
                 parent[temp_key] = arrayValues;
               }
@@ -288,30 +268,25 @@ export class ChartFormComponent {
         }        
       } else {
         if (Array.isArray(value)) {
-          const arrayValues = this.setArrayValues(value);
+          const arrayValues = value.map(item => {
+            if (Object.keys(item).length > 1) {
+              let subValue = {};
+              this.setObjectValues(item, subValue);
+              return subValue;
+            } else {
+              return item[Object.keys(item)[0]];
+            }
+          });
           if (arrayValues.length > 0) {
             result[key] = arrayValues;
           }
-          
         } else {
           result[key] = value;
         }
       }
-      
     });
 
     return result;
-  }
-
-  setArrayValues(data) {
-    const arrayVaules = [];
-    data.forEach(item => {
-      Object.keys(item).forEach(key => {
-        arrayVaules.push(item[key]);
-      });
-    });
-
-    return arrayVaules;
   }
 
   customSubmit(data) {
