@@ -8,6 +8,7 @@ import { Field } from '../../models/field.interface';
 import { TooltipComponent } from '../tooltip/tooltip.component';
 import { MatOptionSelectionChange } from '@angular/material/core';
 import * as _ from 'lodash';
+import { DialogService } from 'app/services';
 
 @Component({
   selector: 'form-select',
@@ -41,7 +42,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     this._formValue = result
   }
 
-  constructor(public translate: TranslateService, public cd: ChangeDetectorRef) {
+  constructor(public translate: TranslateService, private dialog: DialogService, public cd: ChangeDetectorRef) {
   }
 
   ngAfterViewInit(){
@@ -98,6 +99,9 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   }
 
   onSelect(option, index){
+    if(option.alert) {
+      this.dialog.Info("Alert", option.alert);
+    }
     this.selected = option.value;
     this.group.value[this.config.name] = this.selected;
     this.formValue = this.selected;
