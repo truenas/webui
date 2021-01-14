@@ -199,6 +199,11 @@ export class DiskFormComponent {
 
 
   preInit() {
+    this.aroute.params.subscribe(params => {
+      if (params['pk']) {
+        this.customFilter[0][0].push(params['pk']);
+      }
+    });
   }
 
   afterInit(entityEdit: any) {
