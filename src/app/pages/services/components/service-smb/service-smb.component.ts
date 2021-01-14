@@ -345,15 +345,6 @@ export class ServiceSMBComponent {
     entityEdit.submitFunction = body => {
       return this.ws.call('smb.update', [body])
     };
-    entityEdit.formGroup.get('loglevel').valueChanges.subscribe(
-      (value) => {
-        if(value === 'FULL' || value === 'DEBUG') {
-          this.fieldConfig.find(c => c.name === 'loglevel').warnings = ""; 
-        } else {
-          this.fieldConfig.find(c => c.name === 'loglevel').warnings = ''; 
-        }
-      }
-    )
   }
 
   updateGroupSearchOptions(value = "", parent) {
