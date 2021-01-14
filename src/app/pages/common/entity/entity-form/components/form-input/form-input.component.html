@@ -25,7 +25,7 @@
 		</div>
 		<div class="input-container">
 			<span *ngIf="config.searchable" class="searchable"><mat-icon>search</mat-icon></span>
-			<input [ngStyle]="{'padding-left': config.searchable ? '2rem' : '', 'padding-right': true ? '2rem': ''}" [type]="config.inputType ? config.inputType : 'text'"
+			<input [ngStyle]="{'padding-left': config.searchable ? '2rem' : '', 'padding-right': hasValue() ? '2rem': ''}" [type]="config.inputType ? config.inputType : 'text'"
 				[attr.value]="config.value"
 				[formControlName]="config.name"
 				[readonly]="config.readonly"
