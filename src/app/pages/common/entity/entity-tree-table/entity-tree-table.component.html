@@ -41,7 +41,7 @@
       </ng-container>
 
       <!-- Actions Column -->
-      <ng-container *ngIf="column.prop == 'actions'" matColumnDef="{{column.prop}}">
+      <ng-container *ngIf="column.prop == 'actions'" matColumnDef="{{column.prop}}" stickyEnd>
         <th class="action-cell" [ngClass]="{'sticky-border-left': isTableOverflow()}" mat-header-cell *matHeaderCellDef> 
 
         </th>
