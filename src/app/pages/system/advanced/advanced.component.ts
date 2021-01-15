@@ -158,7 +158,6 @@ export class AdvancedComponent implements OnDestroy {
         }
       ]
     },
-    { name: 'spacer', label: false, width: '2%' },
     {
       name: helptext_system_advanced.fieldset_storage,
       label: true,
@@ -251,7 +250,6 @@ export class AdvancedComponent implements OnDestroy {
         }
       ]
     },
-    { name: 'spacer', label: false, width: '2%' },
     {
       name: helptext_system_advanced.fieldset_kernel,
       label: true,
@@ -310,7 +308,6 @@ export class AdvancedComponent implements OnDestroy {
         }
       ]
     },
-    { name: 'spacer', label: false, width: '2%' },
     {
       name: helptext_system_advanced.fieldset_syslog,
       label: true,
