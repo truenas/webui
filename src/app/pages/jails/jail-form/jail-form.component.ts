@@ -864,6 +864,15 @@ export class JailFormComponent implements OnInit, AfterViewInit {
       (res) => {
         for (const i in res) {
           this.interfaces.vnetDisabled.push({ label: res[i], value: i });
+        }
+      },
+      (res) => {
+        new EntityUtils().handleWSError(this, res, this.dialogService);
+      }
+    );
+    this.jailService.getVnetDefaultInterfaceChoices().subscribe(
+      (res) => {
+        for (const i in res) {
           this.interfaces.vnetDefaultInterface.push({ label: res[i], value: i });
         }
       },
