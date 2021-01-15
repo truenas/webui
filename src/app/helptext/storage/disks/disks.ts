@@ -3,7 +3,9 @@ import { T } from '../../../translate-marker';
 export default {
 disk_form_title: T('Edit Pool Disk'),
 fieldset_disk: T('General'),
-fieldset_option: T('More Options'),
+fieldset_powermgmt: T('Power Management'),
+fieldset_temparature: T('Temparature Alerts'),
+fieldset_smartsed: T('S.M.A.R.T./SED'),
 disk_form_name_placeholder: T('Name'),
 disk_form_name_tooltip : T('FreeBSD disk device name.'),
 
