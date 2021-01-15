@@ -85,6 +85,7 @@ export class DiskFormComponent {
         },
       ],
     },
+    { name: 'divider', divider: true },
     {
       name: helptext.fieldset_powermgmt,
       label: true,
@@ -177,6 +178,7 @@ export class DiskFormComponent {
         },
       ],
     },
+    { name: 'divider', divider: true },
   ]
 
   protected disk_hddstandby: any;
