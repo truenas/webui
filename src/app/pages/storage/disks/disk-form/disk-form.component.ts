@@ -51,7 +51,7 @@ export class DiskFormComponent {
       ],
     },
     {
-      name: helptext.fieldset_temparature,
+      name: helptext.fieldset_temperature,
       label: true,
       class: 'general',
       width: '100%',
