@@ -47,7 +47,7 @@
         </th>
         <ng-container>
           <!-- Row Action Cells -->
-          <td class="action-cell" [ngClass]="{'sticky-border-left': isTableOverflow()}" mat-cell *matCellDef="let element; let ii = index">
+          <td class="action-cell" [ngClass]="{'sticky-border-left': isTableOverflow()}" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)" mat-cell *matCellDef="let element; let ii = index">
 
             <ng-container *ngIf="element.data.actions">
               <button mat-icon-button [matMenuTriggerFor]="rowActions" aria-label="Example icon-button with a menu">

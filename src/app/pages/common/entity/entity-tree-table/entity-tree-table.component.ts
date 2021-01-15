@@ -111,8 +111,8 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
       for(let i = 0; i < cells.length; i++){
         const cell = cells[i];
 
-        if(cell.classList.contains('mat-table-sticky') || cell.classList.contains('threedot-column')){
-          if(over){
+        if(cell.classList.contains('mat-table-sticky') || cell.classList.contains('action-cell')){
+          if(over) {
             cell.classList.add('hover');
           } else {
             cell.classList.remove('hover');
