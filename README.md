@@ -8,7 +8,7 @@ This is the project for the Angular.io WebUI for TrueNAS 12 & TrueNAS SCALE.
 
 # Testing Images
 
-You can download and test running the latest version of webui anytime using pre-built images.
+You can download and test running the latest version of the TrueNAS WebUI anytime using pre-built images.
 
 Images only require the environment variable TNIP to be set to the IP or Hostname of your local TrueNAS instance.
 
