@@ -90,9 +90,13 @@ export class ChartFormComponent {
     } else if (schemaConfig.schema.type == 'boolean') {
       fieldConfig['type'] = 'checkbox';
 
-    } else if (schemaConfig.schema.type == 'hostpath' || schemaConfig.schema.type == 'path') {
+    } else if (schemaConfig.schema.type == 'hostpath') {
       fieldConfig['type'] = 'explorer';
+      fieldConfig['explorerType'] = 'file';
       fieldConfig['initial'] = '/mnt';
+
+    } else if (schemaConfig.schema.type == 'path') {
+      fieldConfig['type'] = 'input';
 
     } else if (schemaConfig.schema.type == 'list') {
       fieldConfig['type'] = 'list';
