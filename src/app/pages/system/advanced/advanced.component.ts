@@ -102,7 +102,7 @@ export class AdvancedComponent implements OnDestroy {
       name: helptext_system_advanced.fieldset_console,
       label: true,
       class: 'console',
-      width: '49%',
+      width: '50%',
       config: [
         {
           type: 'checkbox',
@@ -162,7 +162,7 @@ export class AdvancedComponent implements OnDestroy {
       name: helptext_system_advanced.fieldset_syslog,
       label: true,
       class: 'syslog',
-      width: '49%',
+      width: '50%',
       config: [
         {
           type: 'checkbox',
@@ -213,7 +213,7 @@ export class AdvancedComponent implements OnDestroy {
       name: helptext_system_advanced.fieldset_ui,
       label: true,
       class: 'gui',
-      width: '49%',
+      width: '50%',
       config: [
         {
           type: 'checkbox',
@@ -240,7 +240,7 @@ export class AdvancedComponent implements OnDestroy {
       name: helptext_system_advanced.fieldset_kernel,
       label: true,
       class: 'kernel',
-      width: '49%',
+      width: '50%',
       config: [
 
         {
@@ -262,7 +262,7 @@ export class AdvancedComponent implements OnDestroy {
       name: helptext_system_advanced.fieldset_sed,
       label: true,
       class: 'sed',
-      width: '49%',
+      width: '50%',
       config: [
         {
           type: 'select',
@@ -298,7 +298,7 @@ export class AdvancedComponent implements OnDestroy {
       name: helptext_system_advanced.fieldset_storage,
       label: true,
       class: 'storage',
-      width: '49%',
+      width: '50%',
       config: [
         {
           type: 'input',
