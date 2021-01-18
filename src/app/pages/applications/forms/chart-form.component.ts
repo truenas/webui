@@ -113,8 +113,28 @@ export class ChartFormComponent {
 
     } else if (schemaConfig.schema.type == 'dict') {
       fieldConfig = null;
+      
       schemaConfig.schema.attrs.forEach(dictConfig => {
         const subResults = this.parseSchemaFieldConfig(dictConfig, name);
+
+        if (schemaConfig.schema.show_if) {
+          subResults.forEach(subResult => {
+            const confidion = schemaConfig.schema.show_if[0];
+            let conditionFieldName = confidion[0];
+            if (parentName) {
+              conditionFieldName = `${parentName}_${conditionFieldName}`;
+            }
+
+            subResult['relation'] = [{
+              action: (confidion[1] == '=')?'SHOW':'HIDE',
+              when: [{
+                name: conditionFieldName,
+                value: confidion[2],
+              }]
+            }];
+          });
+        }
+        console.log(subResults);
         results = results.concat(subResults);
       });
     }
@@ -134,10 +154,10 @@ export class ChartFormComponent {
                 subFieldConfig['isHidden'] = true;
                 subFieldConfig['relation'] = [{
                   action: 'SHOW',
-                    when: [{
-                      name: name,
-                      value: schemaConfig.schema.show_subquestions_if,
-                    }]
+                  when: [{
+                    name: name,
+                    value: schemaConfig.schema.show_subquestions_if,
+                  }]
                 }];
               });
             }
