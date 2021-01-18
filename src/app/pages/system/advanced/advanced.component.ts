@@ -159,67 +159,53 @@ export class AdvancedComponent implements OnDestroy {
       ]
     },
     {
-      name: helptext_system_advanced.fieldset_storage,
+      name: helptext_system_advanced.fieldset_syslog,
       label: true,
-      class: 'storage',
+      class: 'syslog',
       width: '49%',
       config: [
         {
-          type: 'input',
-          name: 'swapondrive',
-          placeholder: helptext_system_advanced.swapondrive_placeholder,
-          tooltip: helptext_system_advanced.swapondrive_tooltip,
-          validation : [
-            ...helptext_system_advanced.swapondrive_validation,
-            (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find(c => c.name === 'swapondrive');
-              const errors = control.value && isNaN(this.storage.convertHumanStringToNum(control.value, false, 'g'))
-                ? { invalid_byte_string: true }
-                : null
-
-              if (errors) {
-                config.hasErrors = true;
-                config.errors = helptext_system_advanced.overprovision.error;
-              } else {
-                config.hasErrors = false;
-                config.errors = '';
-              }
-
-              return errors;
-            }
-          ],
-          required: true,
-          blurStatus: true,
-          blurEvent: this.blurEvent,
-          parent: this
+          type: 'checkbox',
+          name: 'fqdn_syslog',
+          placeholder: helptext_system_advanced.fqdn_placeholder,
+          tooltip: helptext_system_advanced.fqdn_tooltip
+        },
+        {
+          type: 'select',
+          name: 'sysloglevel',
+          placeholder: helptext_system_advanced.sysloglevel.placeholder,
+          tooltip: helptext_system_advanced.sysloglevel.tooltip,
+          options: helptext_system_advanced.sysloglevel.options,
         },
         {
           type: 'input',
-          name: 'overprovision',
-          placeholder: helptext_system_advanced.overprovision.placeholder,
-          tooltip: helptext_system_advanced.overprovision.tooltip,
-          validation : [
-            (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find(c => c.name === 'overprovision');
-              const errors = control.value && isNaN(this.storage.convertHumanStringToNum(control.value, false, 'g'))
-                ? { invalid_byte_string: true }
-                : null
-
-              if (errors) {
-                config.hasErrors = true;
-                config.errors = helptext_system_advanced.overprovision.error;
-              } else {
-                config.hasErrors = false;
-                config.errors = '';
-              }
-
-              return errors;
-            }
-          ],
-          blurStatus: true,
-          blurEvent: this.opBlurEvent,
-          parent: this
+          name: 'syslogserver',
+          placeholder: helptext_system_advanced.syslogserver.placeholder,
+          tooltip: helptext_system_advanced.syslogserver.tooltip,
         },
+        {
+          type: 'select',
+          name: 'syslog_transport',
+          placeholder: helptext_system_advanced.syslog_transport.placeholder,
+          tooltip: helptext_system_advanced.syslog_transport.tooltip,
+          options: helptext_system_advanced.syslog_transport.options,
+        },
+        {
+          type: 'select',
+          name: 'syslog_tls_certificate',
+          placeholder: helptext_system_advanced.syslog_tls_certificate.placeholder,
+          tooltip: helptext_system_advanced.syslog_tls_certificate.tooltip,
+          options: [],
+          relation: [
+            {
+              action: "SHOW",
+              when: [{
+                name: "syslog_transport",
+                value: 'TLS'
+              }]
+            }
+          ]
+        }
       ]
     },
     { name: 'divider', divider: true },
@@ -309,53 +295,67 @@ export class AdvancedComponent implements OnDestroy {
       ]
     },
     {
-      name: helptext_system_advanced.fieldset_syslog,
+      name: helptext_system_advanced.fieldset_storage,
       label: true,
-      class: 'syslog',
+      class: 'storage',
       width: '49%',
       config: [
         {
-          type: 'checkbox',
-          name: 'fqdn_syslog',
-          placeholder: helptext_system_advanced.fqdn_placeholder,
-          tooltip: helptext_system_advanced.fqdn_tooltip
-        },
-        {
-          type: 'select',
-          name: 'sysloglevel',
-          placeholder: helptext_system_advanced.sysloglevel.placeholder,
-          tooltip: helptext_system_advanced.sysloglevel.tooltip,
-          options: helptext_system_advanced.sysloglevel.options,
+          type: 'input',
+          name: 'swapondrive',
+          placeholder: helptext_system_advanced.swapondrive_placeholder,
+          tooltip: helptext_system_advanced.swapondrive_tooltip,
+          validation : [
+            ...helptext_system_advanced.swapondrive_validation,
+            (control: FormControl): ValidationErrors => {
+              const config = this.fieldConfig.find(c => c.name === 'swapondrive');
+              const errors = control.value && isNaN(this.storage.convertHumanStringToNum(control.value, false, 'g'))
+                ? { invalid_byte_string: true }
+                : null
+
+              if (errors) {
+                config.hasErrors = true;
+                config.errors = helptext_system_advanced.overprovision.error;
+              } else {
+                config.hasErrors = false;
+                config.errors = '';
+              }
+
+              return errors;
+            }
+          ],
+          required: true,
+          blurStatus: true,
+          blurEvent: this.blurEvent,
+          parent: this
         },
         {
           type: 'input',
-          name: 'syslogserver',
-          placeholder: helptext_system_advanced.syslogserver.placeholder,
-          tooltip: helptext_system_advanced.syslogserver.tooltip,
-        },
-        {
-          type: 'select',
-          name: 'syslog_transport',
-          placeholder: helptext_system_advanced.syslog_transport.placeholder,
-          tooltip: helptext_system_advanced.syslog_transport.tooltip,
-          options: helptext_system_advanced.syslog_transport.options,
-        },
-        {
-          type: 'select',
-          name: 'syslog_tls_certificate',
-          placeholder: helptext_system_advanced.syslog_tls_certificate.placeholder,
-          tooltip: helptext_system_advanced.syslog_tls_certificate.tooltip,
-          options: [],
-          relation: [
-            {
-              action: "SHOW",
-              when: [{
-                name: "syslog_transport",
-                value: 'TLS'
-              }]
+          name: 'overprovision',
+          placeholder: helptext_system_advanced.overprovision.placeholder,
+          tooltip: helptext_system_advanced.overprovision.tooltip,
+          validation : [
+            (control: FormControl): ValidationErrors => {
+              const config = this.fieldConfig.find(c => c.name === 'overprovision');
+              const errors = control.value && isNaN(this.storage.convertHumanStringToNum(control.value, false, 'g'))
+                ? { invalid_byte_string: true }
+                : null
+
+              if (errors) {
+                config.hasErrors = true;
+                config.errors = helptext_system_advanced.overprovision.error;
+              } else {
+                config.hasErrors = false;
+                config.errors = '';
+              }
+
+              return errors;
             }
-          ]
-        }
+          ],
+          blurStatus: true,
+          blurEvent: this.opBlurEvent,
+          parent: this
+        },
       ]
     },
     { name: 'divider', divider: true }
