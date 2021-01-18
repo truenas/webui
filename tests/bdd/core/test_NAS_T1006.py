@@ -17,9 +17,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1004.feature', 'Create and Active Directory dataset on a system dataset')
-def test_create_and_active_directory_dataset_on_a_system_dataset(driver):
-    """Create and Active Directory dataset on a system dataset."""
+@scenario('features/NAS-T1006.feature', 'Create and Active Directory dataset on the tank pool')
+def test_create_and_active_directory_dataset_on_the_tank_pool(driver):
+    """Create and Active Directory dataset on the tank pool."""
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
@@ -69,13 +69,13 @@ def the_pools_page_should_appear(driver):
     assert wait_on_element(driver, 0.5, 7, '//div[contains(.,"Pools")]')
 
 
-@then('click on the system 3 dots button, and select Add Dataset')
-def click_on_the_system_3_dots_button_and_select_add_dataset(driver):
-    """click on the system 3 dots button, and select Add Dataset."""
-    assert wait_on_element(driver, 1, 7, '//mat-icon[@id="actions_menu_button__system"]')
-    driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__system"]').click()
-    assert wait_on_element(driver, 1, 7, '//button[@ix-auto="action__system_Add Dataset"]')
-    driver.find_element_by_xpath('//button[@ix-auto="action__system_Add Dataset"]').click()
+@then('click on the tank 3 dots button, and select Add Dataset')
+def click_on_the_tank_3_dots_button_and_select_add_dataset(driver):
+    """click on the tank 3 dots button, and select Add Dataset."""
+    assert wait_on_element(driver, 1, 7, '//mat-icon[@id="actions_menu_button__tank"]')
+    driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__tank"]').click()
+    assert wait_on_element(driver, 1, 7, '//button[@ix-auto="action__tank_Add Dataset"]')
+    driver.find_element_by_xpath('//button[@ix-auto="action__tank_Add Dataset"]').click()
 
 
 @then('the Add Dataset Name and Options page should open')
@@ -85,8 +85,8 @@ def the_add_dataset_name_and_options_page_should_open(driver):
 
 
 @then(parsers.parse('input dataset name "{dataset_name}" and click save'))
-def input_dataset_name_system_acl_dataset_and_click_save(driver, dataset_name):
-    """input dataset name "system_acl_dataset" and click save."""
+def input_dataset_name_tank_acl_dataset_and_click_save(driver, dataset_name):
+    """input dataset name "tank_acl_dataset" and click save."""
     assert wait_on_element(driver, 0.5, 7, '//input[@ix-auto="input__Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(dataset_name)
@@ -94,15 +94,15 @@ def input_dataset_name_system_acl_dataset_and_click_save(driver, dataset_name):
 
 
 @then(parsers.parse('"{dataset_name}" should be created'))
-def system_acl_dataset_should_be_created(driver, dataset_name):
-    """"system_acl_dataset" should be created."""
+def tank_acl_dataset_should_be_created(driver, dataset_name):
+    """"tank_acl_dataset" should be created."""
     assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 0.5, 10, f'//span[contains(.,"{dataset_name}")]')
 
 
 @then(parsers.parse('click on the "{dataset_name}" 3 dots button, select Edit Permissions'))
-def click_on_the_system_acl_dataset_3_dots_button_select_edit_permissions(driver, dataset_name):
-    """click on the "system_acl_dataset" 3 dots button, select Edit Permissions."""
+def click_on_the_tank_acl_dataset_3_dots_button_select_edit_permissions(driver, dataset_name):
+    """click on the "tank_acl_dataset" 3 dots button, select Edit Permissions."""
     assert wait_on_element(driver, 1, 7, f'//mat-icon[@id="actions_menu_button__{dataset_name}"]')
     driver.find_element_by_xpath(f'//mat-icon[@id="actions_menu_button__{dataset_name}"]').click()
     assert wait_on_element(driver, 1, 7, f'//button[@ix-auto="action__{dataset_name}_Edit Permissions"]')
@@ -155,8 +155,8 @@ def click_the_apply_group_checkbox_and_click_the_save_button(driver):
 @then('you should return to the pool page')
 def you_should_return_to_the_pool_page(driver):
     """you should return to the pool page."""
-    assert wait_on_element(driver, 1, 7, '//mat-panel-title[contains(.,"system")]')
-    driver.find_element_by_xpath('//td[@ix-auto="value__system_name"]')
+    assert wait_on_element(driver, 1, 7, '//mat-panel-title[contains(.,"tank")]')
+    driver.find_element_by_xpath('//td[@ix-auto="value__tank_name"]')
 
 
 @then(parsers.parse('Verify that the group name is "{group_name}"'))

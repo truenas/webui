@@ -156,6 +156,7 @@ def run_wbinfo_u_on_the_nas_with_ssh(driver, nas_ip, cmd):
 def verify_that_ad_object_is_in_wbinfo_u_output(driver, ad_object):
     """verify that "{ad_object}" is in wbinfo -u output."""
     assert ad_object in results['output'], results['output']
+    time.sleep(1)
 
 
 @then(parsers.parse('run "{cmd}" on the NAS with ssh'))
@@ -170,6 +171,7 @@ def run_wbinfo_g_on_the_nas_with_ssh(driver, nas_ip, cmd):
 def verify_that_ad_object_is_in_wbinfo_g_output(driver, ad_object):
     """verify that "{ad_object}" is in wbinfo -g output."""
     assert ad_object in results['output'], results['output']
+    time.sleep(1)
 
 
 @then(parsers.parse('run "{cmd}" on the NAS with ssh'))
