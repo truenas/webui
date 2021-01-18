@@ -33,6 +33,7 @@ import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/datas
 import { DatasetPosixAclComponent } from './volumes/datasets/dataset-posix-acl/';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 import { ViewEnclosureComponent } from 'app/pages/system/viewenclosure/view-enclosure.component';
+import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard';
 
 export const routes: Routes = [
   {

@@ -28,7 +28,7 @@ export interface FieldConfig {
   warnings?: string, hideButton?:boolean, searchOptions?: any[], hideDirs?: any,
   listFields?: Array<FieldConfig>[], templateListField?: FieldConfig[],
   updateLocal?: boolean, isLoading?: boolean, textAreaRows?: number, netmaskPreset?: number,
-  isLargeText?: boolean, paragraphIcon?: string, zeroStateMessage?: string, isDoubleConfirm?:boolean,
+  isLargeText?: boolean, paragraphIcon?: string, paragraphIconSize?: string, zeroStateMessage?: string, isDoubleConfirm?:boolean,
   maskValue?: any, hideErrMsg?: boolean, id?: string, autocomplete?: boolean,
   buttonClass?: string, buttonColor?: string, filereader?: boolean, box?: boolean,
   customEventMethod?(data:any), onChangeOption?(data:any), hint?:string, loadMoreOptions?: any;

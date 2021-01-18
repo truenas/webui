@@ -19,7 +19,7 @@ interface FilterValue {
   providers: [EntityTreeTableService]
 })
 export class EntityTreeTableComponent implements OnInit, AfterViewInit {
-  @ViewChild(MatTable,{static: false}) table: MatTable<any>;
+  @ViewChild(MatTable,{static: false}) table: any;
   @Input() conf: EntityTreeTable;
   @Input() expandRootNodes = false;
   @Input() parentId?: string;
@@ -104,4 +104,38 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
       this.table.renderRows();
     }
 
+    onHover(evt, over = true){
+      const row = this.findRow(evt);
+      const cells = row.children;
+
+      for(let i = 0; i < cells.length; i++){
+        const cell = cells[i];
+
+        if(cell.classList.contains('mat-table-sticky') || cell.classList.contains('action-cell')){
+          if(over) {
+            cell.classList.add('hover');
+          } else {
+            cell.classList.remove('hover');
+          }
+        }
+      }
+
+    }
+
+    findRow(el){
+      let target = el.target;
+
+      do {
+        target =target.parentElement;
+      } while(target.tagName.toLowerCase() !== 'tr')
+      return target;
+    }
+
+    isTableOverflow() {
+      let hasHorizontalScrollbar = false;
+      if(this.table) {
+        hasHorizontalScrollbar = this.table._elementRef.nativeElement.parentNode.parentNode.scrollWidth > this.table._elementRef.nativeElement.parentNode.parentNode.clientWidth;
+      }
+      return hasHorizontalScrollbar;
+    }
 }

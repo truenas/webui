@@ -111,7 +111,7 @@ export class GroupListComponent {
       icon: 'people',
       onClick : (members) => {
         this._router.navigate(new Array('/').concat(
-          [ "account", "groups", "members", members.id ]));
+          [ "credentials", "groups", "members", members.id ]));
       }
     });
     if (row.builtin === !true){

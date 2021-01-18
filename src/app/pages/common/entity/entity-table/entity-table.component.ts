@@ -565,6 +565,22 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
+  isLeftStickyColumnNo(i) {
+    return i === (this.currentColumns[0].prop === 'multiselect' ? 1 : 0);
+  }
+
+  shouldApplyStickyOffset(i) {
+    return this.currentColumns[0].prop === 'multiselect' && i === 1;
+  }
+
+  isTableOverflow() {
+    let hasHorizontalScrollbar = false;
+    if(this.entitytable) {
+      hasHorizontalScrollbar = this.entitytable._elementRef.nativeElement.parentNode.scrollWidth > this.entitytable._elementRef.nativeElement.parentNode.clientWidth;
+    }
+    return hasHorizontalScrollbar;
+  }
+
   generateRows(res): Array<any> {
     let rows: any[] = [];
     if (this.loaderOpen) {
@@ -1062,6 +1078,30 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getFirstKey(obj){
     return this.conf.config.multiSelect ? this.currentColumns[1].prop : this.currentColumns[0].prop;
+  }
+
+  onHover(evt, over = true){
+    const row = this.findRow(evt);
+    const cells = row.children;
+
+    for(let i = 0; i < cells.length; i++){
+      const cell = cells[i];
+      if(cell.classList.contains('mat-table-sticky') || cell.classList.contains('threedot-column')){
+        if(over){
+          cell.classList.add('hover');
+        } else {
+          cell.classList.remove('hover');
+        }
+      }
+    }; 
+  }
+
+  findRow(el){
+    let target = el.target;
+    do {
+      target = target.parentElement;
+    } while(target.tagName.toLowerCase() !== 'tr')
+    return target;
   }
 
 }

@@ -16,6 +16,7 @@ import { EntityFormConfigurationComponent } from 'app/pages/common/entity/entity
 import { EntityFormEmbeddedComponent } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import {UUID} from 'angular2-uuid';
 
 @Component({
   selector: 'dashboard',
@@ -313,11 +314,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   stopListeners(){
-    if(!this.statsEvents){ return; }
-
     // unsubscribe from middleware
-    this.statsEvents.complete();
-    this.formEvents.complete();
+    if(this.statsEvents){ 
+      this.statsEvents.complete();
+    }
+
+    // unsubsribe from global actions
+    if(this.formEvents){ 
+      this.formEvents.complete();
+    }
   }
 
   setVolumeData(evt:CoreEvent){
@@ -344,16 +349,38 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getDisksData(){
+    const uuid = UUID.UUID();
 
     this.core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
       this.pools = evt.data;
+
+      if(this.pools.length > 0){
+        const queue = this.pools.map((pool) => {
+          return {
+            namespace: "pool.dataset.query",
+            args: [[["id", "=", pool.name]]]
+          };
+        });
+
+        this.core.emit({
+          name:"MultiCall", 
+          data: { responseEvent: 'RootDatasets_' + uuid, queue: queue }, 
+          sender: this
+        });
+      } else {
+        const clone = Object.assign({}, evt);
+        clone.data = [];
+        this.setVolumeData(clone);
+        this.isDataReady();
+      }
+
       this.isDataReady();
     });
 
-    this.core.register({observerClass: this, eventName: 'VolumeData'}).subscribe((evt:CoreEvent) => {
-      const nonBootPools = evt.data.filter(v => v.id !== 'boot-pool');
+    this.core.register({observerClass: this, eventName: 'RootDatasets_' + uuid}).subscribe((evt:CoreEvent) => {
+      const data = evt.data.responses.map(x => x[0]); 
       const clone = Object.assign({}, evt);
-      clone.data = nonBootPools;
+      clone.data = data;
       this.setVolumeData(clone);
       this.isDataReady();
     });
@@ -361,7 +388,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {
       if(typeof this.systemInformation == 'undefined'){
         this.systemInformation = evt.data;
-        this.core.emit({name: 'PoolDataRequest', sender: this});
+        if(!this.pools || this.pools.length == 0){
+          this.core.emit({name: 'PoolDataRequest', sender: this});
+        }
       }
     });
 
@@ -369,7 +398,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isDataReady(){
-    const isReady = this.statsDataEvents && this.pools && this.volumeData && this.nics ? true : false;
+    const isReady = this.statsDataEvents && typeof this.pools !== undefined && this.volumeData && this.nics ? true : false;
+
     if(isReady){
       this.availableWidgets = this.generateDefaultConfig();
       if(!this.dashState){
