@@ -44,6 +44,7 @@ export class EmailComponent implements OnDestroy {
           value.smtp = false;
 
         }
+        delete value.send_mail_method;
 
         const product_type = window.localStorage.getItem('product_type');
         const mailObj = {
