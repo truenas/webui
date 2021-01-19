@@ -5,7 +5,7 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { Router } from '@angular/router';
 
 import { environment } from '../../../environments/environment';
-import { RestService, WebSocketService, IscsiService} from '../../services/';
+import { RestService, WebSocketService, IscsiService, SystemGeneralService} from '../../services/';
 import { DialogService } from '../../services/dialog.service';
 
 import * as _ from 'lodash';
@@ -15,23 +15,34 @@ import { T } from '../../translate-marker';
 @Component({
   selector: 'services',
   styleUrls: [ './services.component.css'],
-  templateUrl: './services.component.html',
+  template: `<entity-table [conf]="this"></entity-table>`,
   providers: [IscsiService]
 })
 export class Services implements OnInit {
-  @ViewChild('filter', { static: true}) filter: ElementRef;
-  @ViewChild('viewMode', { static: true}) viewMode: MatButtonToggleGroup;
-  @ViewChild('serviceStatus', { static: true}) serviceStatus: MatSlideToggle;
-  focusedVM: string;
-
+  public isFooterConsoleOpen: boolean;
+  private getAdvancedConfig: Subscription;
+  protected queryCall = 'service.query';
+  protected queryCallOption = [[], { "order_by": ["service"] }];
+  protected rowIdentifier = 'name';
+  
+  public columns: Array<any> = [
+    { name: 'Name', prop: 'name', always_display: true },
+    { name: 'Running', prop: 'state', toggle: true, always_display: true },
+    { name: 'Start Automatically', prop: 'enable', checkbox: true },
+  ];
+  
+  public config: any = {
+    paging: true,
+    sorting: { columns: this.columns },
+  };
   public services: any[];
   public busy: Subscription;
-  productType = window.localStorage.getItem('product_type');
 
   public name_MAP: Object = {
     'afp': 'AFP',
     'dynamicdns': 'Dynamic DNS',
     'ftp': 'FTP',
+    'glusterd': 'Gluster',
     'iscsitarget': 'iSCSI',
     'lldp': 'LLDP',
     'nfs': 'NFS',
@@ -51,24 +62,69 @@ export class Services implements OnInit {
   public showSpinner: boolean = true;
 
   constructor(protected rest: RestService, protected ws: WebSocketService, protected router: Router,
-    private dialog: DialogService, private iscsiService: IscsiService) {}
-
-  parseResponse(data) {
-    const card = {
-      id: data.id,
-      label: data.label,
-      title: data.service,
-      enable: data.enable,
-      state: data.state,
-      lazyLoaded: false,
-      template: 'none',
-      isNew: false,
-      onChanging: false,
-    }
-    return card;
+    private dialog: DialogService, private iscsiService: IscsiService, private sysGeneralService: SystemGeneralService) {}
+  
+  resourceTransformIncomingRestData(data) {
+    let hidden = ['netdata'];
+    
+    return data.map((item) => {
+      item.title = item.service;
+      if (!hidden.includes(item.service)) {
+        if (this.name_MAP[item.service]) {
+          item.name = this.name_MAP[item.service];
+        } else {
+          item.name = item.service;
+        }
+      }
+      
+      return item;
+    });
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe((res)=> {
+      if (res) {
+        this.isFooterConsoleOpen = res.consolemsg;
+        this.getAdvancedConfig.unsubscribe();
+      }
+    });
+  }
+  
+  getActions(parentRow) {
+    const actions = [{
+      actionName: 'configure',
+      name: parentRow.service,
+      icon: 'configure',
+      id: "Configure",
+      label: T("Configure"),
+      onClick: (row) => {
+        this.editService(row.service);
+      }
+    }];
+    if (parentRow.service === 'netdata' && parentRow.state === 'RUNNING') {
+      actions.push({
+        actionName: 'launch',
+        name: parentRow.service,
+        icon: 'launch',
+        id: 'Launch',
+        label: T('Launch'),
+        onClick: () => {
+          this.openNetdataPortal()
+        }
+      })
+    }
+    return actions;
+  }
+  
+  onSliderChange(service) {
+    console.log('onSliderChange', service);
+    this.toggle(service);
+  }
+  
+  onCheckboxChange(service) {
+    console.log('onCheckboxChange', service);
+    this.enableToggle(service);
+  }
 
   toggle(service: any) {
     let rpc: string;
@@ -83,8 +139,8 @@ export class Services implements OnInit {
         this.iscsiService.getGlobalSessions().subscribe(
           (res) => {
             const msg = res.length == 0 ? '' : T('<font color="red"> There are ') + res.length +
-              T(' active iSCSI connections.</font><br>Stop the ' + service.label + ' service and close these connections?');
-            this.dialog.confirm(T('Alert'),  msg == '' ? T('Stop ') + service.label + '?' : msg, true, T('Stop')).subscribe(dialogRes => {
+              T(' active iSCSI connections.</font><br>Stop the ' + service.name + ' service and close these connections?');
+            this.dialog.confirm(T('Alert'),  msg == '' ? T('Stop ') + service.name + '?' : msg, true, T('Stop')).subscribe(dialogRes => {
               if (dialogRes) {
                 this.updateService(rpc, service);
               }
@@ -92,7 +148,7 @@ export class Services implements OnInit {
           }
         )
       } else {
-        this.dialog.confirm(T('Alert'), T('Stop ') + service.label + '?', true, T('Stop')).subscribe(res => {
+        this.dialog.confirm(T('Alert'), T('Stop ') + service.name + '?', true, T('Stop')).subscribe(res => {
           if (res) {
             this.updateService(rpc, service);
           }
@@ -132,7 +188,7 @@ export class Services implements OnInit {
     });
   }
 
-  enableToggle($event: any, service: any) {
+  enableToggle(service: any) {
     this.busy = this.ws
       .call('service.update', [service.id, { enable: service.enable }])
       .subscribe((res) => {

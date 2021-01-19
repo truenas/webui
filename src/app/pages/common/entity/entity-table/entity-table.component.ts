@@ -1104,4 +1104,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     return target;
   }
 
+  isInteractive(column: string): boolean {
+    const item = this.currentColumns.find(item => item.prop === column);
+    return (item?.checkbox || item?.toggle);
+  }
 }

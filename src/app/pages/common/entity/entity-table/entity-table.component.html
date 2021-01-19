@@ -61,7 +61,7 @@
       <ng-container *ngFor="let column of columnsToString(currentColumns, 'prop'); let i = index;">
   
         <!-- Column Template -->
-        <ng-container *ngIf="column !== 'expandedDetail' && column !== 'action' && column !== 'multiselect' && column !== 'expansion-chevrons'" [sticky]="isLeftStickyColumnNo(i)"
+        <ng-container *ngIf="column !== 'expandedDetail' && column !== 'action' && column !== 'multiselect' && column !== 'expansion-chevrons' && !isInteractive(column)" [sticky]="isLeftStickyColumnNo(i)"
        matColumnDef="{{column}}">
           <th [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i), 'sticky-border-right': isLeftStickyColumnNo(i) && isTableOverflow()}" class="data-column" mat-header-cell *matHeaderCellDef>{{currentColumns[i].name}}</th>
           <td [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i), 'sticky-border-right': isLeftStickyColumnNo(i) && isTableOverflow()}" [ngStyle]="{'cursor': checkLength() ? 'auto' : 'pointer'}" class="data-column" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)" mat-cell *matCellDef="let element">{{element[column]}}</td>
@@ -109,6 +109,41 @@
               ix-auto ix-auto-type="checkbox" 
               [ix-auto-identifier]="element[conf.rowIdentifier || 'name']">
             </mat-checkbox>
+          </td>
+        </ng-container>
+        
+        <!-- Interactive Toggle Column -->
+        <ng-container *ngIf="column == 'state' && isInteractive(column)" matColumnDef="{{column}}">
+          <th class="toggle-column" mat-header-cell *matHeaderCellDef>{{currentColumns[i].name}}</th>
+          <td class="toggle-column" mat-cell *matCellDef="let element" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)">
+            <mat-spinner [diameter]='40' *ngIf="element['onChanging']; else actionButtons"></mat-spinner>
+            <ng-template #actionButtons>
+              <div class="clickable" 
+                id="overlay__{{element.name}}_Running"
+                ix-auto ix-auto-type="overlay" [ix-auto-identifier]="column + element.name"
+                (click)="$event.stopPropagation(); this.conf.onSliderChange(element)" 
+                matTooltip="{{element.state}}" matTooltipPosition="right">
+              </div>
+              <mat-slide-toggle
+                [checked]="element[column] === 'RUNNING' ? true : false"
+                id="slide-toggle__{{column}}_{{element.name}}"
+                ix-auto ix-auto-type="slider" ix-auto-identifier="{{column}}__{{element.name}}">
+              </mat-slide-toggle>
+            </ng-template>
+          </td>
+        </ng-container>
+        
+        <!-- Interactive Checkbox Column -->
+        <ng-container *ngIf="column == 'enable' || column === 'autostart' && isInteractive(column)" matColumnDef="{{column}}">
+          <th class="toggle-column" mat-header-cell *matHeaderCellDef>{{currentColumns[i].name}}</th>
+          <td class="toggle-column" mat-cell *matCellDef="let element" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)">
+            <mat-checkbox 
+              id="checkbox__{{element.name}}" 
+              class="checkbox" 
+              [(ngModel)]="element[column]" 
+              (change)="this.conf.onCheckboxChange(element)"
+              (click)="$event.stopPropagation()"
+              ix-auto ix-auto-type="checkbox" ix-auto-identifier="{{ column }}__{{ element.name}}"></mat-checkbox>         
           </td>
         </ng-container>
   
