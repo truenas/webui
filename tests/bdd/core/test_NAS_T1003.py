@@ -141,7 +141,7 @@ def active_directory_should_successfully_save_and_start_without_an_error(driver)
     assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Settings saved.")]')
     # This 5 seconds of sleep is to let the system ketchup.
-    time.sleep(5)
+    time.sleep(7)
 
 
 @then(parsers.parse('run "{cmd}" on the NAS with ssh'))
