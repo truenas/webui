@@ -30,6 +30,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   public initialValue:any;
   public selected:any;
   public allSelected: boolean;
+  private disableAlerts: boolean = false;
   public selectedValues: any[] = []; 
   public selectStates: boolean[] = []; // Collection of checkmark states
   public selectAllStateCache: boolean[] = []; // Cache the state when select all was toggled
@@ -101,6 +102,9 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   }
 
   showAlert(option) {
+    if(this.disableAlerts) {
+      return;
+    }
     if(!(option.show_again === false)) {
       const conf: DialogFormConfiguration = {
         title:  T('Alert'),
@@ -111,6 +115,11 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
             type: 'checkbox',
             name: 'dont_show_again',
             placeholder: T(`Don't show this message again`)
+          },
+          {
+            type: 'checkbox',
+            name: 'disable_alerts',
+            placeholder: T(`Disable all alerts`)
           }
         ],
         saveButtonText: T('OK'),
@@ -118,6 +127,9 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
           entityDialog.dialogRef.close(true);
           if(entityDialog.formValue.dont_show_again) {
             option.show_again = false;
+          }
+          if(entityDialog.formValue.disable_alerts) {
+            this.disableAlerts = true;
           }
         }
       }
