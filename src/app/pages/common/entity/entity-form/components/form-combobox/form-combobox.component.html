@@ -11,8 +11,8 @@ ix-auto ix-auto-type="combobox" ix-auto-identifier="{{config.placeholder}}">
 
     <mat-form-field *ngIf="config.inputType != 'file' else elseBlock">
       <div class="input-container">
-        <span class="searchable"><mat-icon>search</mat-icon></span>
-      <input style="padding-left: 2rem;" [ngStyle]="{'padding-right': hasValue() ? '2rem': ''}" matInput [type]="config.inputType ? config.inputType : 'text'"
+        <span *ngIf="config.searchable" class="searchable"><mat-icon>search</mat-icon></span>
+      <input [ngStyle]="{'padding-left': config.searchable ? '2rem' : '','padding-right': hasValue() ? '2rem': ''}" matInput [type]="config.inputType ? config.inputType : 'text'"
         list="options"
 		  	[placeholder]="config.placeholder | translate"
 		  	[attr.value]="config.value"
@@ -22,7 +22,7 @@ ix-auto ix-auto-type="combobox" ix-auto-identifier="{{config.placeholder}}">
         (keyup)="updateSearchOptions($event.target.value)"
         [matAutocomplete]="autoComplete"
         [(ngModel)]="searchText"
-        >
+      >
         <span *ngIf="hasValue()" class="reset-input">
 					<mat-icon (click)="resetInput()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
 				</span>
