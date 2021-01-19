@@ -30,3 +30,14 @@ mat-selection-list {
     padding: 8px !important;
   }
 }
+
+.alert-icon {
+  position: absolute;
+  right: 0;
+}
+
+.alert-icon mat-icon {
+  font-size: 1rem;
+  width: auto;
+  height: auto;
+}

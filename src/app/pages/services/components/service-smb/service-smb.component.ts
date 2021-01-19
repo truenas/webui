@@ -158,6 +158,10 @@ export class ServiceSMBComponent {
           placeholder: helptext.cifs_srv_loglevel_placeholder,
           tooltip: helptext.cifs_srv_loglevel_tooltip,
           options: helptext.cifs_srv_loglevel_options,
+          alert: {
+            message: "Higher log levels are for debuging purposes only and should not be set on production servers. Setting a log level too high may significantly impact SMB server performance and mask errors (because the log file will roll over too quickly).",
+            forValues: ['FULL', 'DEBUG']
+          }
         },
         {
           type: 'checkbox',
