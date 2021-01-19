@@ -45,8 +45,8 @@ cifs_srv_loglevel_options: [
   { label: T('None'), value: 'NONE' },
   { label: T('Minimum'), value: 'MINIMUM' },
   { label: T('Normal'), value: 'NORMAL' },
-  { label: T('Full'), value: 'FULL', alert: "Higher log levels are for debuging purposes only and should not be set on production servers. Setting a log level too high may significantly impact SMB server performance and mask errors (because the log file will roll over too quickly)." },
-  { label: T('Debug'), value: 'DEBUG', alert: "Higher log levels are for debuging purposes only and should not be set on production servers. Setting a log level too high may significantly impact SMB server performance and mask errors (because the log file will roll over too quickly)." },
+  { label: T('Full'), value: 'FULL' },
+  { label: T('Debug'), value: 'DEBUG' },
 ],
 
 cifs_srv_syslog_placeholder: T('Use Syslog Only'),

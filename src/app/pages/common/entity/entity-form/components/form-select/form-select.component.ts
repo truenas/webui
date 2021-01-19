@@ -30,7 +30,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   public initialValue:any;
   public selected:any;
   public allSelected: boolean;
-  private disableAlerts: boolean = false;
+  private disableAlert: boolean = false;
   public selectedValues: any[] = []; 
   public selectStates: boolean[] = []; // Collection of checkmark states
   public selectAllStateCache: boolean[] = []; // Cache the state when select all was toggled
@@ -102,43 +102,32 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   }
 
   showAlert(option) {
-    if(this.disableAlerts) {
-      return;
-    }
-    if(!(option.show_again === false)) {
-      const conf: DialogFormConfiguration = {
-        title:  T('Alert'),
-        message: option.alert,
-        hideCancel: true,
-        fieldConfig: [
-          {
-            type: 'checkbox',
-            name: 'dont_show_again',
-            placeholder: T(`Don't show this message again`)
-          },
-          {
-            type: 'checkbox',
-            name: 'disable_alerts',
-            placeholder: T(`Disable all alerts`)
-          }
-        ],
-        saveButtonText: T('OK'),
-        customSubmit: (entityDialog) => {
-          entityDialog.dialogRef.close(true);
-          if(entityDialog.formValue.dont_show_again) {
-            option.show_again = false;
-          }
-          if(entityDialog.formValue.disable_alerts) {
-            this.disableAlerts = true;
-          }
+    if(!this.shouldAlertOnOption(option) || this.disableAlert) return;
+
+    const conf: DialogFormConfiguration = {
+      title:  T('Alert'),
+      message: this.config.alert.message,
+      hideCancel: true,
+      fieldConfig: [
+        {
+          type: 'checkbox',
+          name: 'disable_alert',
+          placeholder: T(`Don't show this message again`)
+        }
+      ],
+      saveButtonText: T('OK'),
+      customSubmit: (entityDialog) => {
+        entityDialog.dialogRef.close(true);
+        if(entityDialog.formValue.disable_alert) {
+          this.disableAlert = true;
         }
       }
-      this.dialog.dialogForm(conf);
     }
+    this.dialog.dialogForm(conf);
   }
 
   onSelect(option, index){
-    if(option.alert) {
+    if(this.config.alert) {
       this.showAlert(option);
     }
     this.selected = option.value;
@@ -185,7 +174,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
       return;
     }
     
-    if(this.selectedValues.findIndex(v => v === option.value) >= 0 && option.alert) {
+    if(this.selectedValues.findIndex(v => v === option.value) >= 0 && this.config.alert) {
       this.showAlert(option);
     }
     this.group.value[this.config.name] = this.selectedValues;
@@ -204,5 +193,9 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     this.selectedValues = newValues;
     this.customTriggerValue = triggerValue;
     this.formValue = '';
+  }
+
+  shouldAlertOnOption(option) {
+   return this.config.alert ? this.config.alert.forValues.findIndex(v => v == option.value) >= 0 : false;
   }
 }

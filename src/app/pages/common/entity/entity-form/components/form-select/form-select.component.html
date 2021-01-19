@@ -60,7 +60,7 @@
                 <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
               </span>
               {{ option.label | translate }}
-              <span *ngIf="option.alert" class="alert-icon">
+              <span *ngIf="shouldAlertOnOption(option)" class="alert-icon">
                 <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
               </span>
           </mat-option>
@@ -75,7 +75,7 @@
                 <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
               </span>
               {{ option.label | translate }}
-              <span *ngIf="option.alert" class="alert-icon">
+              <span *ngIf="shouldAlertOnOption(option)" class="alert-icon">
                 <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
               </span>
               </mat-option>
