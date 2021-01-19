@@ -12,7 +12,7 @@ export interface InputUnitConfig {
 }
 
 export interface FieldConfig {
-  alert?: { message: string, forValues: any[] }, disabled?: boolean, label?: string, inlineLabel?: string, name: string, options?: any[],
+  alert?: { message: string, forValues: any[] }, searchable?: boolean, disabled?: boolean, label?: string, inlineLabel?: string, name: string, options?: any[],
   errors?: string, hasErrors?: boolean, placeholder?: string, type: string,
   inputType?: string, inputUnit?: InputUnitConfig, validation?: any[] | ValidatorFn | ValidatorFn[],
   asyncValidation?: AsyncValidatorFn | AsyncValidatorFn[],

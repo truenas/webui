@@ -1,0 +1,29 @@
+.input-container {
+    position: relative;
+}
+
+.input-container .searchable,
+.input-container .reset-input {
+    cursor: default;
+    user-select: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    padding: 5px;
+    margin-left: 0.3rem;
+    display: flex;
+    align-items: center;
+}
+
+.input-container .reset-input {
+    opacity: 0.5;
+    cursor: pointer;
+    margin-left: 0;
+    right: 0.3rem;
+}
+
+.input-container mat-icon {
+    font-size: 1rem;
+    width: auto;
+    height: auto;
+}

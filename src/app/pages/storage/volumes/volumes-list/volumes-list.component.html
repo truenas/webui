@@ -45,7 +45,7 @@
           <app-entity-table-actions [icon_name]="'settings'" [entity]="actionComponent" [row]="row" [action]="'settings'" [groups]="true"></app-entity-table-actions>
         </div>
       </div>
-      <div>
+      <div class="entity-tree-table-container">
         <entity-tree-table *ngIf="row.volumesListTableConfig.tableData?.length > 0" [conf]="row.volumesListTableConfig" [expandRootNodes]="true"></entity-tree-table>
       </div>
     </mat-expansion-panel>

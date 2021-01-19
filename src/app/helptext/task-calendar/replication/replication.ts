@@ -148,6 +148,7 @@ from the source dataset.'),
     schedule_placeholder: T('Schedule'),
     schedule_tooltip: T('Start time for the replication task.'),
 
+    schedule_picker_placeholder: T('Frequency'),
     schedule_picker_tooltip: T('Select a preset schedule or choose \
  <i>Custom</i> to use the advanced scheduler.'),
 
