@@ -33,6 +33,7 @@ export class ChartReleasesComponent implements OnInit {
   private minioForm: MinioFormComponent;
   private refreshTable: Subscription;
   private refreshForm: Subscription;
+  public message = helptext.message.loading;
 
   public rollBackChart: DialogFormConfiguration = {
     title: helptext.charts.rollback_dialog.title,
@@ -83,38 +84,57 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   refreshChartReleases() {
-    this.appService.getChartReleases().subscribe(charts => {
-      this.chartItems = [];
-      let repos = [];
-      charts.forEach(chart => {
-        let chartObj = {
-          name: chart.name,
-          catalog: chart.catalog,
-          status: chart.status,
-          version: chart.chart_metadata.version,
-          latest_version: chart.chart_metadata.latest_chart_version,
-          description: chart.chart_metadata.description,
-          update: chart.update_available,
-          chart_name: chart.chart_metadata.name,
-          repository: chart.config.image.repository,
-          tag: chart.config.image.tag,
-          portal: chart.portals && chart.portals.web_portal ? chart.portals.web_portal[0] : '',
-          id: chart.chart_metadata.name,
-          icon: chart.chart_metadata.icon ? chart.chart_metadata.icon : this.ixIcon,
-          count: `${chart.pod_status.available}/${chart.pod_status.desired}`,
-          desired: chart.pod_status.desired,
-          history: !(_.isEmpty(chart.history))
-        };
-        repos.push(chartObj.repository);
-        let ports = [];
-        if (chart.used_ports) {
-          chart.used_ports.forEach(item => {
-            ports.push(`${item.port}\\${item.protocol}`)
-          })
-          chartObj['used_ports'] = ports.join(', ');
-          this.chartItems.push(chartObj);
-        }  
-      })
+    this.message = helptext.message.loading;
+    this.appService.getKubernetesConfig().subscribe(res => {
+      if (!res.pool) {
+        this.chartItems = [];
+        this.message = helptext.message.not_configured;
+      } else {
+        this.appService.getKubernetesServiceStarted().subscribe(res => {
+          if (!res) {
+            this.chartItems = [];
+            this.message = helptext.message.not_running;
+          } else {
+            this.appService.getChartReleases().subscribe(charts => {
+              this.chartItems = [];
+              let repos = [];
+              charts.forEach(chart => {
+                let chartObj = {
+                  name: chart.name,
+                  catalog: chart.catalog,
+                  status: chart.status,
+                  version: chart.chart_metadata.version,
+                  latest_version: chart.chart_metadata.latest_chart_version,
+                  description: chart.chart_metadata.description,
+                  update: chart.update_available,
+                  chart_name: chart.chart_metadata.name,
+                  repository: chart.config.image.repository,
+                  tag: chart.config.image.tag,
+                  portal: chart.portals && chart.portals.web_portal ? chart.portals.web_portal[0] : '',
+                  id: chart.chart_metadata.name,
+                  icon: chart.chart_metadata.icon ? chart.chart_metadata.icon : this.ixIcon,
+                  count: `${chart.pod_status.available}/${chart.pod_status.desired}`,
+                  desired: chart.pod_status.desired,
+                  history: !(_.isEmpty(chart.history))
+                };
+                repos.push(chartObj.repository);
+                let ports = [];
+                if (chart.used_ports) {
+                  chart.used_ports.forEach(item => {
+                    ports.push(`${item.port}\\${item.protocol}`)
+                  })
+                  chartObj['used_ports'] = ports.join(', ');
+                  this.chartItems.push(chartObj);
+                }  
+              })
+        
+              if (this.chartItems.length == 0) {
+                this.message = helptext.message.no_installed;
+              }
+            })
+          }
+        })
+      }
     })
   }
 

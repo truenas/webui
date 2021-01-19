@@ -11,6 +11,13 @@ export default {
     message: T('Using pool ')
   },
 
+  message: {
+    loading: T('Loading...'),
+    not_configured: T('Applications not configured'),
+    not_running: T('Applications are not running'),
+    no_installed: T('There are no installed apps'),
+  },
+
   installing: T('Installing'),
   settings: T('Settings'),
   choose: T('Choose Pool'),
