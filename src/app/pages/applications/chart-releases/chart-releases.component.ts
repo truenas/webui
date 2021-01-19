@@ -14,6 +14,7 @@ import { ChartReleaseEditComponent } from '../forms/chart-release-edit.component
 import { PlexFormComponent } from '../forms/plex-form.component';
 import { NextCloudFormComponent } from '../forms/nextcloud-form.component';
 import { MinioFormComponent } from '../forms/minio-form.component';
+import { WebSocketService } from '../../../services/';
 
 import  helptext  from '../../../helptext/apps/apps';
 
@@ -33,6 +34,7 @@ export class ChartReleasesComponent implements OnInit {
   private minioForm: MinioFormComponent;
   private refreshTable: Subscription;
   private refreshForm: Subscription;
+  private chartReleaseChangedListener: any;
 
   public rollBackChart: DialogFormConfiguration = {
     title: helptext.charts.rollback_dialog.title,
@@ -62,7 +64,7 @@ export class ChartReleasesComponent implements OnInit {
   constructor(private mdDialog: MatDialog,
     private dialogService: DialogService, private translate: TranslateService,
     private appService: ApplicationsService, private modalService: ModalService,
-    private sysGeneralService: SystemGeneralService) { }
+    private sysGeneralService: SystemGeneralService, protected ws: WebSocketService) { }
 
   ngOnInit(): void {
     this.refreshChartReleases();
@@ -73,6 +75,14 @@ export class ChartReleasesComponent implements OnInit {
     this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
       this.refreshForms();
     });
+
+    this.addChartReleaseChangedEventListner();
+  }
+
+  ngOnDestroy() {
+    if (this.chartReleaseChangedListener) {
+      this.ws.unsubscribe(this.chartReleaseChangedListener);
+    }
   }
 
   refreshForms() {
@@ -80,6 +90,18 @@ export class ChartReleasesComponent implements OnInit {
     this.plexForm = new PlexFormComponent(this.mdDialog,this.dialogService,this.modalService,this.sysGeneralService,this.appService);
     this.nextCloudForm = new NextCloudFormComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
     this.minioForm = new MinioFormComponent(this.mdDialog,this.dialogService,this.modalService);
+  }
+
+  addChartReleaseChangedEventListner() {
+    this.chartReleaseChangedListener = this.ws.subscribe("chart.release.query").subscribe((evt) => {
+      this.chartItems.forEach(app => {
+        if (evt.id == app.name) {
+          app.status = evt.fields.status;
+          app.update = evt.fields.update_available;
+          app.used_ports = evt.fields.used_ports.map(used_port => `${used_port.port}\\${used_port.protocal}`).join(',');
+        }
+      });
+    });
   }
 
   refreshChartReleases() {
