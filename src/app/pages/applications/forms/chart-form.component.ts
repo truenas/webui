@@ -43,10 +43,10 @@ export class ChartFormComponent {
     this.utils = new CommonUtils();
   }
 
-  parseSchemaFieldConfig(schemaConfig, parentName=null) {
+  parseSchemaFieldConfig(schemaConfig, parentName=null, parentIsList=false) {
     let results = [];
     let name = schemaConfig.variable;
-    if (parentName) {
+    if (!parentIsList && parentName) {
       name = `${parentName}_${name}`;
     }
 
@@ -106,7 +106,7 @@ export class ChartFormComponent {
 
       let listFields = [];
       schemaConfig.schema.items.forEach(item => {
-        const fields = this.parseSchemaFieldConfig(item);
+        const fields = this.parseSchemaFieldConfig(item, null, true);
         listFields = listFields.concat(fields);
       });
 
@@ -116,7 +116,7 @@ export class ChartFormComponent {
       fieldConfig = null;
       
       schemaConfig.schema.attrs.forEach(dictConfig => {
-        const subResults = this.parseSchemaFieldConfig(dictConfig, name);
+        const subResults = this.parseSchemaFieldConfig(dictConfig, name, parentIsList);
 
         if (schemaConfig.schema.show_if) {
           subResults.forEach(subResult => {
