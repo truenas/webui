@@ -101,6 +101,7 @@ export class ChartFormComponent {
     } else if (schemaConfig.schema.type == 'list') {
       fieldConfig['type'] = 'list';
       fieldConfig['box'] = true;
+      fieldConfig['width'] = '100%';
       fieldConfig['listFields'] = [];
 
       let listFields = [];
@@ -134,7 +135,6 @@ export class ChartFormComponent {
             }];
           });
         }
-        console.log(subResults);
         results = results.concat(subResults);
       });
     }
