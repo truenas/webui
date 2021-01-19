@@ -134,7 +134,7 @@
         </ng-container>
         
         <!-- Interactive Checkbox Column -->
-        <ng-container *ngIf="column == 'enable' || column === 'autostart' && isInteractive(column)" matColumnDef="{{column}}">
+        <ng-container *ngIf="(column == 'enable' || column == 'autostart') && isInteractive(column)" matColumnDef="{{column}}">
           <th class="toggle-column" mat-header-cell *matHeaderCellDef>{{currentColumns[i].name}}</th>
           <td class="toggle-column" mat-cell *matCellDef="let element" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)">
             <mat-checkbox 
