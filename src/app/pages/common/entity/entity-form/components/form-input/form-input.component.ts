@@ -79,6 +79,10 @@ export class FormInputComponent implements Field {
     return this.group.controls[this.config.name].value && this.group.controls[this.config.name].value.toString().length;
   }
 
+  shouldShowResetInput() {
+    return this.hasValue() && !this.config.togglePw && this.config.inputType !== 'password';
+  }
+
   resetInput() {
     this.group.controls[this.config.name].setValue('');
   }
