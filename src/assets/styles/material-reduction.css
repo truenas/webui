@@ -870,3 +870,8 @@ mat-icon.truecommand-icon.FAILED > span.mat-badge-content {
   background: var(--warn);
 }
 
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
