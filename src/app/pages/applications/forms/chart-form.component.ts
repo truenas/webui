@@ -55,8 +55,11 @@ export class ChartFormComponent {
       value: schemaConfig.schema.default,
       tooltip: schemaConfig.description,
       placeholder: schemaConfig.label,
-      readonly: !schemaConfig.schema.editable,
       name: name,
+    }
+    
+    if (schemaConfig.schema.editable === false) {
+      fieldConfig['readonly'] = true;
     }
 
     if (schemaConfig.schema.type == 'string') {
