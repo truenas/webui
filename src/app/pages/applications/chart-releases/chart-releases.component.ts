@@ -97,8 +97,6 @@ export class ChartReleasesComponent implements OnInit {
       this.chartItems.forEach(app => {
         if (evt.id == app.name) {
           app.status = evt.fields.status;
-          app.update = evt.fields.update_available;
-          app.used_ports = evt.fields.used_ports.map(used_port => `${used_port.port}\\${used_port.protocal}`).join(',');
         }
       });
     });
