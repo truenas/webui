@@ -119,6 +119,14 @@ export class ChartFormComponent {
     } else if (schemaConfig.schema.type == 'dict') {
       fieldConfig = null;
       
+      if (schemaConfig.schema.attrs.length > 0) {
+        const dictLabel = {
+          label: schemaConfig.label,
+          type: 'label',
+        };
+        results = results.concat(dictLabel);
+      }
+
       schemaConfig.schema.attrs.forEach(dictConfig => {
         const subResults = this.parseSchemaFieldConfig(dictConfig, name, parentIsList);
 
