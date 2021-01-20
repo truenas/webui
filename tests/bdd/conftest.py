@@ -10,6 +10,30 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.common.exceptions import NoSuchElementException
 
 
+@pytest.fixture
+def nas_ip():
+    if os.environ.get("nas_ip"):
+        return os.environ.get("nas_ip")
+    elif os.path.exists('config.cfg'):
+        configs = ConfigParser()
+        configs.read('config.cfg')
+        return configs['NAS_CONFIG']['ip']
+    else:
+        return 'none'
+
+
+@pytest.fixture
+def root_password():
+    if os.environ.get("nas_password"):
+        return os.environ.get("nas_password")
+    elif os.path.exists('config.cfg'):
+        configs = ConfigParser()
+        configs.read('config.cfg')
+        return configs['NAS_CONFIG']['password']
+    else:
+        return 'none'
+
+
 def browser():
     profile = webdriver.FirefoxProfile()
     profile.set_preference("browser.download.folderList", 2)
@@ -33,23 +57,6 @@ web_driver = browser()
 @pytest.fixture
 def driver():
     return web_driver
-
-
-if os.path.exists('config.cfg'):
-    configs = ConfigParser()
-    configs.read('config.cfg')
-    ip = configs['NAS_CONFIG']['ip']
-    password = configs['NAS_CONFIG']['password']
-
-    @pytest.fixture
-    def ui_url():
-        global url
-        url = f"http://{ip}"
-        return url
-
-    @pytest.fixture
-    def root_password():
-        return password
 
 
 @pytest.mark.hookwrapper
