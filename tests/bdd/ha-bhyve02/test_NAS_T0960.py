@@ -165,6 +165,7 @@ def public_key_should_be_on_the_root_user_page(driver, ssh_key):
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 0.5, 10, '//td[contains(.,"root")]')
 
+
 @then('Try to ssh in with root and your sshkey')
 def try_to_ssh_in_with_root_and_your_sshkey(driver):
     """Try to ssh in with root and your sshkey."""
