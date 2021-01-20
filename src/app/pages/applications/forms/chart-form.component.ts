@@ -55,6 +55,7 @@ export class ChartFormComponent {
       value: schemaConfig.schema.default,
       tooltip: schemaConfig.description,
       placeholder: schemaConfig.label,
+      readonly: !schemaConfig.schema.editable,
       name: name,
     }
 
