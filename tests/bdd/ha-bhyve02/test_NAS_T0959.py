@@ -173,8 +173,8 @@ def try_to_ssh_in_with_your_sshkey(driver):
     assert results['result'], results['output']
 
 
-@then('You should be able to ssh the sshkey')
-def you_should_be_able_to_ssh_the_sshkey(driver):
-    """You should be able to ssh the sshkey."""
+@then('You should be able to ssh with the sshkey')
+def you_should_be_able_to_ssh_with_the_sshkey(driver):
+    """You should be able to ssh with the sshkey."""
     assert results['result'], results['output']
     assert 'ssh' in results['output'], results['output']
