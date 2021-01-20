@@ -1,5 +1,5 @@
 <div fxLayout="row wrap" fxLayoutAlign="center center">
-  <mat-card class="chart-item" *ngFor="let item of chartItems">
+  <mat-card class="chart-item" *ngFor="let item of getChartItems()">
       <div class="content-wrapper" fxLayout="row">
         <div class="logo-container">
           <div class="logo" style="background-image: url('{{ item.icon }}');"></div>

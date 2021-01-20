@@ -24,7 +24,7 @@ import  helptext  from '../../../helptext/apps/apps';
   styleUrls: ['../applications.component.scss']
 })
 export class ChartReleasesComponent implements OnInit {
-  public chartItems = [];
+  public chartItems = {};
   private dialogRef: any;
   public ixIcon = 'assets/images/ix-original.png';
   private rollbackChartName: string;
@@ -92,19 +92,22 @@ export class ChartReleasesComponent implements OnInit {
     this.minioForm = new MinioFormComponent(this.mdDialog,this.dialogService,this.modalService);
   }
 
+  getChartItems() {
+    return Object.values(this.chartItems);
+  }
+  
   addChartReleaseChangedEventListner() {
     this.chartReleaseChangedListener = this.ws.subscribe("chart.release.query").subscribe((evt) => {
-      this.chartItems.forEach(app => {
-        if (evt.id == app.name) {
-          app.status = evt.fields.status;
-        }
-      });
+      const app = this.chartItems[evt.id];
+      if (app) {
+        app.status = evt.fields.status;
+      }
     });
   }
 
   refreshChartReleases() {
     this.appService.getChartReleases().subscribe(charts => {
-      this.chartItems = [];
+      this.chartItems = {};
       let repos = [];
       charts.forEach(chart => {
         let chartObj = {
@@ -132,7 +135,7 @@ export class ChartReleasesComponent implements OnInit {
             ports.push(`${item.port}\\${item.protocol}`)
           })
           chartObj['used_ports'] = ports.join(', ');
-          this.chartItems.push(chartObj);
+          this.chartItems[chartObj.name] = chartObj;
         }  
       })
     })
@@ -140,12 +143,14 @@ export class ChartReleasesComponent implements OnInit {
 
   refreshStatus(name: string) {
     this.appService.getChartReleases(name).subscribe(res => {
-      let item = this.chartItems.find(o => o.name === name);
-      item.status = res[0].status;
-      if (item.status === 'DEPLOYING') {
-        setTimeout(() => {
-          this.refreshStatus(name);
-        }, 3000);
+      let item = this.chartItems[name];
+      if (item) {
+        item.status = res[0].status;
+        if (item.status === 'DEPLOYING') {
+          setTimeout(() => {
+            this.refreshStatus(name);
+          }, 3000);
+        }
       }
     })
   }
