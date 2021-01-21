@@ -73,10 +73,10 @@ export class ChartReleasesComponent implements OnInit {
 
   getCatalogApps() {
     this.appService.getAllCatalogItems().subscribe(res => {
-      res.forEach(temp => {
-        for (let i in temp.trains.charts) {  
+      res.forEach(catalog => {
+        for (let i in catalog.trains.charts) {  
           if (i !== 'ix-chart') {
-            let item =temp.trains.charts[i];
+            let item =catalog.trains.charts[i];
             let versions = item.versions;
             let latest, latestDetails;
 
@@ -89,8 +89,8 @@ export class ChartReleasesComponent implements OnInit {
             let catalogItem = {
               name: item.name,
               catalog: {
-                id: temp.id,
-                label: temp.label,
+                id: catalog.id,
+                label: catalog.label,
               },
               icon_url: item.icon_url? item.icon_url : '/assets/images/ix-original.png',
               latest_version: latest,

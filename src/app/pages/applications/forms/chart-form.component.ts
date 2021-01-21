@@ -103,6 +103,15 @@ export class ChartFormComponent {
       fieldConfig['type'] = 'input';
 
     } else if (schemaConfig.schema.type == 'list') {
+
+      if (schemaConfig.schema.items.length > 0) {
+        const listLabel = {
+          label: schemaConfig.label,
+          type: 'label',
+        };
+        results = results.concat(listLabel);
+      }
+
       fieldConfig['type'] = 'list';
       fieldConfig['box'] = true;
       fieldConfig['width'] = '100%';
@@ -209,9 +218,9 @@ export class ChartFormComponent {
       this.catalogApp.schema.groups.forEach(group => {
         this.fieldSets.push({
           name: group.name,
-          width: '50%',
           label: true,
           config: [],
+          colspan: 2
         })
       });
       this.catalogApp.schema.questions.forEach(question => {
