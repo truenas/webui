@@ -24,6 +24,7 @@ export class Services implements OnInit {
   protected queryCall = 'service.query';
   protected queryCallOption = [[], { "order_by": ["service"] }];
   protected rowIdentifier = 'name';
+  protected inlineActions = true;
   
   public columns: Array<any> = [
     { name: 'Name', prop: 'name', always_display: true },
@@ -94,7 +95,7 @@ export class Services implements OnInit {
     const actions = [{
       actionName: 'configure',
       name: parentRow.service,
-      icon: 'configure',
+      icon: 'edit',
       id: "Configure",
       label: T("Configure"),
       onClick: (row) => {
@@ -105,7 +106,7 @@ export class Services implements OnInit {
       actions.push({
         actionName: 'launch',
         name: parentRow.service,
-        icon: 'launch',
+        icon: 'featured_play_list',
         id: 'Launch',
         label: T('Launch'),
         onClick: () => {

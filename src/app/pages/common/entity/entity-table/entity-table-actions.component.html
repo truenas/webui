@@ -1,4 +1,5 @@
 <div class="panel_container">
+  <ng-container *ngIf="!inlineActions; else inlineActionsTemplate">
   <mat-icon
     [ix-auto]=""
     ix-auto-type="options"
@@ -55,4 +56,24 @@
       </span>
     </ng-template>
   </mat-menu>
+  </ng-container>
+  
+  <ng-template #inlineActionsTemplate>
+    <ng-container *ngFor="let action of actions">
+      <button 
+        mat-icon-button
+        id="action_button_{{ action?.name }}__{{action.id}}" 
+        *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
+        (click)="action.onClick(this.row);"
+        [disabled]="action.disabled"
+        [ix-auto]=""
+        ix-auto-type="action"
+        ix-auto-identifier="{{action.id}}_{{action.label}}"
+        [matTooltip]="action.label | translate"
+        [matTooltipPosition]="action.ttposition ? action.ttposition : 'left'"
+      >
+        <mat-icon>{{action.icon}}</mat-icon>
+      </button>
+    </ng-container>
+  </ng-template>
 </div>
