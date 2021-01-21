@@ -110,6 +110,8 @@ def the_user_edit_page_should_open(driver):
 @then(parsers.parse('Change the users email for "{email}" and click save'))
 def change_the_users_email_and_click_save(driver, email):
     """Change the users email for "{email}" and click save."""
+    global user_email
+    user_email = email
     wait_on_element(driver, 1, 7, '//input[@ix-auto="input__Email"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').send_keys(email)
@@ -135,4 +137,4 @@ def open_the_user_drop_down_to_verify_the_email_has_been_changed(driver):
 @then('Updated value should be visible')
 def updated_value_should_be_visible(driver):
     """Updated value should be visible."""
-    driver.find_element_by_xpath('//p[contains(.,"eturgeon@ixsystems.com")]')
+    driver.find_element_by_xpath(f'//p[contains(.,"{user_email}")]')

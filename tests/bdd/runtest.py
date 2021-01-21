@@ -3,8 +3,9 @@
 import sys
 import os
 import getopt
-from subprocess import call
+from configparser import ConfigParser
 from platform import system
+from subprocess import run
 major_v = sys.version_info.major
 minor_v = sys.version_info.minor
 version = f"{major_v}" if system() == "Linux" else f"{major_v}.{minor_v}"
@@ -36,7 +37,8 @@ option_list = [
 
 test_suite_list = [
     'ha-bhyve02',
-    'ha-tn09'
+    'ha-tn09',
+    'core'
 ]
 
 
@@ -103,16 +105,34 @@ for output, arg in myopts:
 
 
 def run_testing():
-    if 'ip' in globals() and 'password' in globals():
-        cfg = "[NAS_CONFIG]\n"
-        cfg += f"ip = {ip}\n"
-        cfg += f"password = {password}\n"
-        cfg_file = open("config.cfg", 'w')
-        cfg_file.write(cfg)
-        cfg_file.close()
+    # store ip and password in environment variable if test suite is core.
+    if 'ip' in globals() and 'password' in globals() and test_suite == 'core':
+        os.environ["nas_ip"] = ip
+        os.environ["nas_password"] = password
+        os.environ['test_suite'] = test_suite
+    elif os.path.exists(f'{cwd}/config.cfg') and test_suite == 'core':
+        configs = ConfigParser()
+        configs.read('config.cfg')
+        os.environ["nas_ip"] = configs['NAS_CONFIG']['ip']
+        os.environ["nas_password"] = configs['NAS_CONFIG']['password']
+        os.environ['test_suite'] = test_suite
+    elif not os.path.exists(f'{cwd}/config.cfg') and test_suite == 'core':
+        msg = 'Please use --ip and --root-password or add confing.cfg ' \
+            'in this directory'
+        print(msg)
+        print('confing.cfg example: ')
+        cfg_msg = "[NAS_CONFIG]\n"
+        cfg_msg += "ip = 0.0.0.0\n"
+        cfg_msg += "password = testing\n"
+        print(cfg_msg)
+        exit(1)
+    else:
+        os.environ["nas_ip"] = 'None'
+        os.environ["nas_password"] = 'None'
+        os.environ['test_suite'] = test_suite
 
     convert_jira_feature_file(test_suite)
-    pytestcmd = [
+    pytest_cmd = [
         f"pytest-{version}",
         "-v",
         test_suite,
@@ -120,7 +140,7 @@ def run_testing():
         "--cucumber-json=results/cucumber/webui_test.json"
     ]
 
-    call(pytestcmd)
+    run(pytest_cmd)
 
 
 if run_convert is True:
