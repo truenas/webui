@@ -117,12 +117,10 @@ export class Services implements OnInit {
   }
   
   onSliderChange(service) {
-    console.log('onSliderChange', service);
     this.toggle(service);
   }
   
   onCheckboxChange(service) {
-    console.log('onCheckboxChange', service);
     this.enableToggle(service);
   }
 
