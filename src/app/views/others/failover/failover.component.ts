@@ -15,7 +15,7 @@ import globalHelptext from '../../../helptext/global-helptext';
 export class FailoverComponent implements OnInit {
 
   public product_type: string;
-  public copyrightYear = globalHelptext.copyright_year;
+  public copyrightYear = new Date(+(localStorage.getItem('buildtime').substring(0, localStorage.getItem('buildtime').length -2)+"000")).getFullYear().toString();
 
   constructor(protected ws: WebSocketService, protected router: Router, 
     protected loader: AppLoaderService, public translate: TranslateService,
