@@ -5,12 +5,13 @@
 	.icon-div {
 		text-align: center;
 		.mat-icon {
-			height: unset;
-			width: unset;
+			height: auto;
+			width: auto;
 			font-size: 50px;
-
+			color: var(--fg2);
+			opacity:0.1;
 			&.logo {
-				width: 100px;
+				height: 40px;
 				font-size: unset;
 				margin: 10px 0;
 			}
@@ -31,13 +32,13 @@
 	&.large {
 		.icon-div {
 			.mat-icon {
-				height: unset;
-				width: unset;
+				height: auto;
+				width: auto;
 				font-size: 150px;
-				margin: -50px 0;
+				margin-top: -50px;
 
 				&.logo {
-					width: 200px;
+					height: 80px;
 					font-size: unset;
 					margin: 20px 0;
 				}
@@ -46,7 +47,7 @@
 		
 		.title {
 			margin-bottom: 20px;
-			font-size: 14px;
+			font-size: 20px;
 		}
 
 		.message {
