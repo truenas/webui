@@ -3,7 +3,9 @@
     <mat-icon *ngIf="getIcon()!='logo'" fontSet="mdi-set" fontIcon="mdi-{{getIcon()}}"></mat-icon>
     <mat-icon *ngIf="getIcon()=='logo'" svgIcon="truenas_scale_logo_full" class="logo"></mat-icon>
   </div>
-  <h3 class="title">{{ conf.title }}</h3>
-  <p *ngIf="conf.message" class="message">{{ conf.message }}</p>
-  <button *ngIf="conf.button" mat-button (click)="doAction()">{{conf.button.label | translate}}</button>
+  <div *ngIf="!isLoading()">
+    <h3 class="title">{{ conf.title }}</h3>
+    <p *ngIf="conf.message" class="message">{{ conf.message }}</p>
+    <button *ngIf="conf.button" mat-button (click)="doAction()">{{conf.button.label | translate}}</button>
+  </div>
 </div>

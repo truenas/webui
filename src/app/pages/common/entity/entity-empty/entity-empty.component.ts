@@ -45,6 +45,10 @@ export class EntityEmptyComponent {
 		}
 	}
 
+  isLoading() {
+    return this.conf.type == EmptyType.loading;
+  }
+  
 	getIcon() {
 		let icon = "logo";
 		if (this.conf.icon) {
