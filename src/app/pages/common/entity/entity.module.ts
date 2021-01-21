@@ -87,6 +87,7 @@ import { EntityRowDetailsComponent } from './entity-table/entity-row-details.com
 import { TaskScheduleListComponent } from 'app/pages/task-calendar/components/task-schedule-list/task-schedule-list.component';
 import { FormStatusComponent } from './entity-form/components/form-status/form-status.component';
 import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.component';
+import { EntityEmptyComponent } from './entity-empty/entity-empty.component';
 
 import { TableComponent } from './table/table.component';
 
@@ -157,6 +158,7 @@ import { TableComponent } from './table/table.component';
     EntityComingsoonComponent,
     TableComponent,
     EntityDashboardComponent,
+    EntityEmptyComponent,
   ],
   exports: [
     EntityTemplateDirective,
@@ -189,6 +191,7 @@ import { TableComponent } from './table/table.component';
     EntityComingsoonComponent,
     TableComponent,
     CdkTreeModule,
+    EntityEmptyComponent,
   ],
   entryComponents: [
     FormButtonComponent,
@@ -219,7 +222,7 @@ import { TableComponent } from './table/table.component';
     EntityToolbarComponent,
     EntitySnackbarComponent,
     EntityTableRowDetailsComponent,
-    TaskScheduleListComponent
+    TaskScheduleListComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [

@@ -1,0 +1,6 @@
+<div layout="row" layout-align="center center" flex class="empty-page">
+  <div><i class="material-icons">lock</i></div>
+  <h3>{{ conf.title }}</h3>
+  <div>{{ conf.message }}</div>
+  <button mat-button (click)="doAction()">{{conf.button.label | translate}}</button>
+</div>

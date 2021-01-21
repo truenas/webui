@@ -14,6 +14,7 @@ import { ChartReleaseEditComponent } from '../forms/chart-release-edit.component
 import { PlexFormComponent } from '../forms/plex-form.component';
 import { NextCloudFormComponent } from '../forms/nextcloud-form.component';
 import { MinioFormComponent } from '../forms/minio-form.component';
+import { EntityEmptyComponent } from '../../common/entity/entity-empty/entity-empty.component';
 
 import  helptext  from '../../../helptext/apps/apps';
 
@@ -33,7 +34,15 @@ export class ChartReleasesComponent implements OnInit {
   private minioForm: MinioFormComponent;
   private refreshTable: Subscription;
   private refreshForm: Subscription;
-  public message = helptext.message.loading;
+  
+  public emptyPageConf = {
+    title: helptext.message.loading,
+    message: "message",
+    button: {
+      label: "View Catalog",
+      action: this.onAction,
+    }
+  };
 
   public rollBackChart: DialogFormConfiguration = {
     title: helptext.charts.rollback_dialog.title,
@@ -83,17 +92,21 @@ export class ChartReleasesComponent implements OnInit {
     this.minioForm = new MinioFormComponent(this.mdDialog,this.dialogService,this.modalService);
   }
 
+  onAction() {
+    console.log("====");
+  }
+
   refreshChartReleases() {
-    this.message = helptext.message.loading;
+    this.emptyPageConf.title = helptext.message.loading;
     this.appService.getKubernetesConfig().subscribe(res => {
       if (!res.pool) {
         this.chartItems = [];
-        this.message = helptext.message.not_configured;
+        this.emptyPageConf.title = helptext.message.not_configured;
       } else {
         this.appService.getKubernetesServiceStarted().subscribe(res => {
           if (!res) {
             this.chartItems = [];
-            this.message = helptext.message.not_running;
+            this.emptyPageConf.title = helptext.message.not_running;
           } else {
             this.appService.getChartReleases().subscribe(charts => {
               this.chartItems = [];
@@ -124,12 +137,12 @@ export class ChartReleasesComponent implements OnInit {
                     ports.push(`${item.port}\\${item.protocol}`)
                   })
                   chartObj['used_ports'] = ports.join(', ');
-                  this.chartItems.push(chartObj);
+                  // this.chartItems.push(chartObj);
                 }  
               })
         
               if (this.chartItems.length == 0) {
-                this.message = helptext.message.no_installed;
+                this.emptyPageConf.title = helptext.message.no_installed;
               }
             })
           }

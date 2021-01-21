@@ -82,5 +82,5 @@
       </div>
 
   </mat-card>
-  <div layout="row" layout-align="center center" flex *ngIf="chartItems.length == 0" class="charts-info">{{message}}</div>
+  <entity-empty *ngIf="chartItems.length == 0" [conf]="emptyPageConf"></entity-empty>
 </div>
