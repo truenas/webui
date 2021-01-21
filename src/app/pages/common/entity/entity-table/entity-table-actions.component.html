@@ -1,4 +1,4 @@
-<div class="panel_container">
+<div class="panel_container" [style.paddingTop]="inlineActions ? 0 : '4px'">
   <ng-container *ngIf="!inlineActions; else inlineActionsTemplate">
   <mat-icon
     [ix-auto]=""
