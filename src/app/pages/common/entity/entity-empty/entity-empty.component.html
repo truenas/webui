@@ -1,6 +1,9 @@
-<div layout="row" layout-align="center center" flex class="empty-page">
-  <div><i class="material-icons">lock</i></div>
-  <h3>{{ conf.title }}</h3>
-  <div>{{ conf.message }}</div>
-  <button mat-button (click)="doAction()">{{conf.button.label | translate}}</button>
+<div layout="row" layout-align="center center" flex class="empty-page" [ngClass]="{'large': conf.large}">
+  <div layout="row" layout-align="center center" flex class="icon-div">
+    <mat-icon *ngIf="getIcon()!='logo'" fontSet="mdi-set" fontIcon="mdi-{{getIcon()}}"></mat-icon>
+    <mat-icon *ngIf="getIcon()=='logo'" svgIcon="truenas_core_logo_full" class="logo"></mat-icon>
+  </div>
+  <h3 class="title">{{ conf.title }}</h3>
+  <p *ngIf="conf.message" class="message">{{ conf.message }}</p>
+  <button *ngIf="conf.button" mat-button (click)="doAction()">{{conf.button.label | translate}}</button>
 </div>

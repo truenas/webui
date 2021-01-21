@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -14,7 +14,7 @@ import { ChartReleaseEditComponent } from '../forms/chart-release-edit.component
 import { PlexFormComponent } from '../forms/plex-form.component';
 import { NextCloudFormComponent } from '../forms/nextcloud-form.component';
 import { MinioFormComponent } from '../forms/minio-form.component';
-import { EntityEmptyComponent } from '../../common/entity/entity-empty/entity-empty.component';
+import { EmptyConfig, EmptyType } from '../../common/entity/entity-empty/entity-empty.component';
 
 import  helptext  from '../../../helptext/apps/apps';
 
@@ -24,6 +24,8 @@ import  helptext  from '../../../helptext/apps/apps';
   styleUrls: ['../applications.component.scss']
 })
 export class ChartReleasesComponent implements OnInit {
+  @Output() switchTab = new EventEmitter<string>();
+
   public chartItems = [];
   private dialogRef: any;
   public ixIcon = 'assets/images/ix-original.png';
@@ -35,12 +37,13 @@ export class ChartReleasesComponent implements OnInit {
   private refreshTable: Subscription;
   private refreshForm: Subscription;
   
-  public emptyPageConf = {
+  public emptyPageConf: EmptyConfig = {
+    type: EmptyType.loading,
+    large: true,
     title: helptext.message.loading,
-    message: "message",
     button: {
       label: "View Catalog",
-      action: this.onAction,
+      action: this.viewCatalog.bind(this),
     }
   };
 
@@ -92,21 +95,42 @@ export class ChartReleasesComponent implements OnInit {
     this.minioForm = new MinioFormComponent(this.mdDialog,this.dialogService,this.modalService);
   }
 
-  onAction() {
-    console.log("====");
+  viewCatalog() {
+    this.switchTab.emit('0');
+  }
+
+  showLoadStatus(type: EmptyType) {
+    let title = "";
+    switch (type) {
+      case EmptyType.loading:
+        title = helptext.message.loading;
+        break;
+      case EmptyType.first_use:
+        title = helptext.message.not_configured;
+        break;
+      case EmptyType.no_results:
+        title = helptext.message.no_installed;
+        break;
+      case EmptyType.errors:
+        title = helptext.message.not_running;
+        break;
+    }
+
+    this.emptyPageConf.type = type;
+    this.emptyPageConf.title = title;
   }
 
   refreshChartReleases() {
-    this.emptyPageConf.title = helptext.message.loading;
+    this.showLoadStatus(EmptyType.loading);
     this.appService.getKubernetesConfig().subscribe(res => {
       if (!res.pool) {
         this.chartItems = [];
-        this.emptyPageConf.title = helptext.message.not_configured;
+        this.showLoadStatus(EmptyType.first_use);
       } else {
         this.appService.getKubernetesServiceStarted().subscribe(res => {
           if (!res) {
             this.chartItems = [];
-            this.emptyPageConf.title = helptext.message.not_running;
+            this.showLoadStatus(EmptyType.errors);
           } else {
             this.appService.getChartReleases().subscribe(charts => {
               this.chartItems = [];
@@ -137,12 +161,12 @@ export class ChartReleasesComponent implements OnInit {
                     ports.push(`${item.port}\\${item.protocol}`)
                   })
                   chartObj['used_ports'] = ports.join(', ');
-                  // this.chartItems.push(chartObj);
+                  this.chartItems.push(chartObj);
                 }  
               })
         
               if (this.chartItems.length == 0) {
-                this.emptyPageConf.title = helptext.message.no_installed;
+                this.showLoadStatus(EmptyType.no_results);
               }
             })
           }

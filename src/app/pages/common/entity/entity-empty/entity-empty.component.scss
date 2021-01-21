@@ -1,0 +1,56 @@
+.empty-page {
+	color: white;
+	max-width: 300px;
+
+	.icon-div {
+		text-align: center;
+		.mat-icon {
+			height: unset;
+			width: unset;
+			font-size: 50px;
+
+			&.logo {
+				width: 100px;
+				font-size: unset;
+				margin: 10px 0;
+			}
+		}
+	}
+
+	.title {
+		font-size: inherit;
+		margin-bottom: 10px;
+	}
+
+	.message {
+		margin-bottom: 10px;
+		font-size: .875rem;
+	}
+
+
+	&.large {
+		.icon-div {
+			.mat-icon {
+				height: unset;
+				width: unset;
+				font-size: 150px;
+				margin: -50px 0;
+
+				&.logo {
+					width: 200px;
+					font-size: unset;
+					margin: 20px 0;
+				}
+			}
+		}
+		
+		.title {
+			margin-bottom: 20px;
+			font-size: 14px;
+		}
+
+		.message {
+			margin-bottom: 20px;
+		}
+	}
+}
