@@ -206,31 +206,23 @@ mat-chip.service-state-on,
 /* table styles */
 mat-icon.service-power-btn-on{
   color:#41bd45 !important;
- }
+}
  
- mat-icon.service-power-btn-off{
-   color: #900 !important;
- }
- 
- .checkbox {
-   position: relative !important;
-   left: 43px;
-   top: 1px;
- }
- 
- .mat-slide-toggle {
-   position: relative;
-   top: 2px;
- }
- 
- .service-toggle {
-   width: 48px;
- }
- 
- .clickable {
-   height: 28px;
-   width: 40px;
-   position: absolute;
-   background: rgba(0,0,0, .0);
-   z-index: 10;
- }
+mat-icon.service-power-btn-off{
+  color: #900 !important;
+}
+
+.checkbox {
+  position: relative !important;
+  left: 43px;
+  top: 1px;
+}
+
+.mat-slide-toggle {
+  position: relative;
+  top: 2px;
+}
+
+.service-toggle {
+  width: 48px;
+}
