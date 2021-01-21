@@ -28,7 +28,7 @@ export class Services implements OnInit {
   public columns: Array<any> = [
     { name: 'Name', prop: 'name', always_display: true },
     { name: 'Running', prop: 'state', toggle: true, always_display: true },
-    { name: 'Start Automatically', prop: 'enable', checkbox: true },
+    { name: 'Start Automatically', prop: 'enable', checkbox: true, always_display: true },
   ];
   
   public config: any = {
