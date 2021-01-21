@@ -1,41 +1,33 @@
-<div class="panel_container">
-  <mat-icon
-    [ix-auto]=""
-    ix-auto-type="options"
-    ix-auto-identifier="{{row[key_prop]}}"
-    id="{{row[entity?.conf?.rowIdentifier || 'name']}}_{{action}}_button"
-    [matMenuTriggerFor]="appMenu"
-    [style.cursor]="'pointer'"
-  >
-    {{icon_name}}
-  </mat-icon>
-  <mat-menu #appMenu="matMenu">
-    <span *ngIf="!groups;else groupMenu">
-      <span *ngFor="let action of actions"
-        [matTooltip]="action.matTooltip" 
-        [matTooltipDisabled]="!action.disabled"
-        [matTooltipPosition]="action.ttposition ? action.ttposition : 'left'">
-        <button 
-          id="action_button_{{ action?.name }}__{{action.id}}" 
-          mat-menu-item *ngIf="!entity.conf.isActionVisible || 
-            entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
-          (click)="action.onClick(this.row);"
-          [disabled]="action.disabled"
-          [ix-auto]=""
-          ix-auto-type="action"
-          ix-auto-identifier="{{action.id}}_{{action.label}}"
-          >
-				  <span>{{ action?.label | translate }}</span>
-        </button>
-      </span>
-    </span>
-    <ng-template #groupMenu>
-      <span *ngFor= "let group of actions">
-        <div class="group-menu-header" *ngIf="group.actions && group.actions.length > 0">
-          <mat-divider></mat-divider>
-          <div class="title"><strong>{{group?.title | translate}}</strong></div>
-        </div>
-        <span *ngFor="let action of group.actions"
+<div class="panel_container action-length-{{actions.length}}">
+  <ng-container *ngIf="actions.length == 1">
+    <button 
+      id="action_button_{{ action[0]?.name }}__{{action[0].id}}" 
+      mat-button *ngIf="!entity.conf.isActionVisible || 
+        entity.conf.isActionVisible.bind(entity.conf)(action[0].id, row)"
+      (click)="action[0].onClick(this.row);"
+      [disabled]="action[0].disabled"
+      [ix-auto]=""
+      ix-auto-type="action"
+      ix-auto-identifier="{{action[0].id}}_{{action[0].label}}"
+      >{{action[0].label}}
+    </button>
+  </ng-container>
+
+  <ng-container *ngIf="actions.length > 1">
+    <mat-icon
+      [ix-auto]=""
+      ix-auto-type="options"
+      ix-auto-identifier="{{row[key_prop]}}"
+      id="{{row[entity?.conf?.rowIdentifier || 'name']}}_{{action}}_button"
+      (click)="noPropogate($event)"
+      [matMenuTriggerFor]="appMenu"
+      [style.cursor]="'pointer'"
+    >
+      {{icon_name}}
+    </mat-icon>
+    <mat-menu #appMenu="matMenu">
+      <span *ngIf="!groups;else groupMenu">
+        <span *ngFor="let action of actions"
           [matTooltip]="action.matTooltip" 
           [matTooltipDisabled]="!action.disabled"
           [matTooltipPosition]="action.ttposition ? action.ttposition : 'left'">
@@ -49,10 +41,35 @@
             ix-auto-type="action"
             ix-auto-identifier="{{action.id}}_{{action.label}}"
             >
-				    <span>{{ action?.label | translate }}</span>
+  				  <span>{{ action?.label | translate }}</span>
           </button>
         </span>
       </span>
-    </ng-template>
-  </mat-menu>
+      <ng-template #groupMenu>
+        <span *ngFor= "let group of actions">
+          <div class="group-menu-header" *ngIf="group.actions && group.actions.length > 0">
+            <mat-divider></mat-divider>
+            <div class="title"><strong>{{group?.title | translate}}</strong></div>
+          </div>
+          <span *ngFor="let action of group.actions"
+            [matTooltip]="action.matTooltip" 
+            [matTooltipDisabled]="!action.disabled"
+            [matTooltipPosition]="action.ttposition ? action.ttposition : 'left'">
+            <button 
+              id="action_button_{{ action?.name }}__{{action.id}}" 
+              mat-menu-item *ngIf="!entity.conf.isActionVisible || 
+                entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
+              (click)="action.onClick(this.row);"
+              [disabled]="action.disabled"
+              [ix-auto]=""
+              ix-auto-type="action"
+              ix-auto-identifier="{{action.id}}_{{action.label}}"
+              >
+  				    <span>{{ action?.label | translate }}</span>
+            </button>
+          </span>
+        </span>
+      </ng-template>
+    </mat-menu>
+  </ng-container>
 </div>

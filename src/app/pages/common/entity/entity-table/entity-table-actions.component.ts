@@ -50,5 +50,10 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
  
   getActions() {
     this.actions = this.entity.getActions(this.row);
+    console.log(this.actions);
+  }
+
+  noPropogate(e){
+    e.stopPropagation();
   }
 }
