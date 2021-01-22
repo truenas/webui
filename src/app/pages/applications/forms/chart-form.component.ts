@@ -62,17 +62,17 @@ export class ChartFormComponent {
       fieldConfig['readonly'] = true;
     }
 
-    if (schemaConfig.schema.type == 'string') {
-      if (schemaConfig.schema.enum) {
-        fieldConfig['type'] = 'select';
-        fieldConfig['options'] = schemaConfig.schema.enum.map(option => {
-          return {
-            value: option.value,
-            label: option.description,
-          }
-        });
-      } else {
-        fieldConfig['type'] = 'input';
+    if (schemaConfig.schema.enum) {
+      fieldConfig['type'] = 'select';
+      fieldConfig['options'] = schemaConfig.schema.enum.map(option => {
+        return {
+          value: option.value,
+          label: option.description,
+        }
+      });
+
+    } else if (schemaConfig.schema.type == 'string') {
+      fieldConfig['type'] = 'input';
         if (schemaConfig.schema.private) {
           fieldConfig['inputType'] = 'password';
           fieldConfig['togglePw'] = true;
@@ -85,12 +85,11 @@ export class ChartFormComponent {
         if (schemaConfig.schema.max_length !== undefined) {
           fieldConfig['max'] = schemaConfig.schema.max_length;
         }
-      }
 
     } else if (schemaConfig.schema.type == 'int') {
       fieldConfig['type'] = 'input';
       fieldConfig['inputType'] = 'number';
-
+      
     } else if (schemaConfig.schema.type == 'boolean') {
       fieldConfig['type'] = 'checkbox';
 
