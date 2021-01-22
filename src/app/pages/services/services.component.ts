@@ -15,10 +15,11 @@ import { T } from '../../translate-marker';
 @Component({
   selector: 'services',
   styleUrls: [ './services.component.css'],
-  template: `<entity-table [conf]="this"></entity-table>`,
+  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
   providers: [IscsiService]
 })
 export class Services implements OnInit {
+  public title = "Services";
   public isFooterConsoleOpen: boolean;
   private getAdvancedConfig: Subscription;
   protected queryCall = 'service.query';
