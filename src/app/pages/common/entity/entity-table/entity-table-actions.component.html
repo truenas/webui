@@ -1,19 +1,21 @@
 <div class="panel_container action-length-{{actions.length}}">
-  <ng-container *ngIf="actions.length == 1">
-    <button 
-      id="action_button_{{ action[0]?.name }}__{{action[0].id}}" 
+  <ng-container *ngIf="actions.length == 1 && actions[0].actions.length == 1">
+    <button [color]="actions[0].actions[0].color ? actions[0].actions[0].color : 'default' "
+      id="action_button_{{ actions[0].actions[0]?.name }}__{{actions[0].actions[0].id}}" 
       mat-button *ngIf="!entity.conf.isActionVisible || 
-        entity.conf.isActionVisible.bind(entity.conf)(action[0].id, row)"
-      (click)="action[0].onClick(this.row);"
-      [disabled]="action[0].disabled"
+        entity.conf.isActionVisible.bind(entity.conf)(actions[0].actions[0].id, row)"
+      (click)="actions[0].actions[0].onClick(this.row);"
+      [disabled]="actions[0].actions[0].disabled"
       [ix-auto]=""
       ix-auto-type="action"
-      ix-auto-identifier="{{action[0].id}}_{{action[0].label}}"
-      >{{action[0].label}}
+      ix-auto-identifier="{{actions[0].actions[0].id}}_{{actions[0].actions[0].label}}"
+      >
+      <!--<mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-database-export"></mat-icon>-->
+      {{actions[0].actions[0].label}}
     </button>
   </ng-container>
 
-  <ng-container *ngIf="actions.length > 1">
+  <ng-container *ngIf="actions.length > 1 || actions[0].length > 1">
     <mat-icon
       [ix-auto]=""
       ix-auto-type="options"

@@ -497,7 +497,7 @@ export class VolumesListTableConfig implements InputTableConf {
     const actions = [];
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (rowData.type === 'zpool') {
-        if (rowData.is_decrypted) {
+        if (rowData.is_decrypted && rowData.status !== "OFFLINE") {
           actions.push({
           id: rowData.name,
           name: T('Pool Options'),
@@ -562,6 +562,7 @@ export class VolumesListTableConfig implements InputTableConf {
         id: rowData.name,
         name: 'Export/Disconnect',
         label: helptext.exportAction,
+        color: 'warn',
         onClick: (row1) => {
           let encryptedStatus = row1.encrypt,
           self = this;
@@ -836,7 +837,7 @@ export class VolumesListTableConfig implements InputTableConf {
         }
     });
 
-      if (rowData.is_decrypted) {
+      if (rowData.is_decrypted && rowData.status !== "OFFLINE") {
         actions.push({
           id: rowData.name,
           name: 'Add Vdevs',
@@ -1788,18 +1789,25 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   actionComponent = {
     getActions: (row) => {
-      return [
+      let actions = [
         {
           name: 'pool_actions',
           title: helptext.pool_actions_title,
           actions: this.conf.getActions(row),
-        },
-        {
+        }
+      ]
+
+      if(row.status !== "OFFLINE"){
+        const encryptionActions = {
           name: 'encryption_actions',
           title: helptext.encryption_actions_title,
           actions: (<VolumesListTableConfig>this.conf).getEncryptedActions(row),
         }
-      ];
+        actions.push(encryptionActions);
+      }
+
+      return actions;
+      
     },
     conf: new VolumesListTableConfig(this, this.router, "", [], this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http, this.validationService)
   };
