@@ -226,7 +226,7 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   edit(name: string, id: string) {
-    const catalogApp = this.chartItems.find(app => app.name==name)
+    const catalogApp = this.chartItems.find(app => app.name==name && app.chart_name != 'ix-chart')
     if (catalogApp) {
       const chartFormComponent = new ChartFormComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
       chartFormComponent.parseSchema(catalogApp.chart_schema);

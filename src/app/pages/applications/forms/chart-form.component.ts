@@ -278,7 +278,7 @@ export class ChartFormComponent {
   setObjectValues(data, result) {
     Object.keys(data).forEach(key => {
       const value = data[key];
-      if (key == "release_name" || value == "" || value == undefined) {
+      if (key == "release_name") {
         return;
       }
       
