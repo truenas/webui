@@ -37,14 +37,15 @@ export class EmailComponent implements OnDestroy {
     function: () => {
       if (this.rootEmail){
         const value = _.cloneDeep(this.entityEdit.formGroup.value);
-        if (value.client_id) {
-          delete value.client_id;
-          delete value.client_secret;
-          delete value.refresh_token;
+        if(!value.send_mail_method) {
+          delete value.pass;
           value.smtp = false;
-
+          value.oauth = this.oauthCreds.getValue();
+        } else {
+          delete value.oauth;
         }
         delete value.send_mail_method;
+        delete value.oauth_applied;
 
         const product_type = window.localStorage.getItem('product_type');
         const mailObj = {
