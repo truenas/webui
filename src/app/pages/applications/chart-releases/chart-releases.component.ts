@@ -104,9 +104,9 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   refreshChartReleases() {
-    this.appService.getChartReleases().subscribe(charts => {
+    this.appService.getChartReleases(null, true).subscribe(charts => {
       this.chartItems = [];
-      let repos = [];
+      
       charts.forEach(chart => {
         let chartObj = {
           name: chart.name,
@@ -124,9 +124,21 @@ export class ChartReleasesComponent implements OnInit {
           icon: chart.chart_metadata.icon ? chart.chart_metadata.icon : this.ixIcon,
           count: `${chart.pod_status.available}/${chart.pod_status.desired}`,
           desired: chart.pod_status.desired,
-          history: !(_.isEmpty(chart.history))
+          history: !(_.isEmpty(chart.history)),
+          chart_schema: chart.chart_schema,
         };
-        repos.push(chartObj.repository);
+        
+        let chartSchema = {
+          name: chart.chart_metadata.name,
+          catalog: {
+            id: null,
+            label: chart.catalog,
+          },
+          schema: chart.chart_schema.schema,
+        }
+
+        chartObj['chart_schema'] = chartSchema;
+
         let ports = [];
         if (chart.used_ports) {
           chart.used_ports.forEach(item => {
@@ -214,10 +226,10 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   edit(name: string, id: string) {
-    const catalogApp = this.catalogApps.find(app => app.name==id)
+    const catalogApp = this.chartItems.find(app => app.name==name)
     if (catalogApp) {
       const chartFormComponent = new ChartFormComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
-      chartFormComponent.parseSchema(catalogApp);
+      chartFormComponent.parseSchema(catalogApp.chart_schema);
       this.modalService.open('slide-in-form', chartFormComponent, name);
     } else {
       const chartReleaseForm = new ChartReleaseEditComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);

@@ -30,11 +30,17 @@ export class ApplicationsService {
     return this.ws.call('catalog.items', ['OFFICIAL']);
   }
 
-  getChartReleases(name?: string) {
+  getChartReleases(name?: string, includeSchema:boolean = false) {
+    let secondOption = {"extra": {"history": true}};
+
+    if (includeSchema) {
+      secondOption.extra['include_chart_schema'] = true;
+    }
+
     if (name) {
       return this.ws.call('chart.release.query', [[['name', '=', name]]]);  
     }
-    return this.ws.call('chart.release.query', [[], {"extra": {"history": true}}]);
+    return this.ws.call('chart.release.query', [[], secondOption]);
   }
 
   setReplicaCount(name: string, count: number) {
