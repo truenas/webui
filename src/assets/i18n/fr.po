@@ -16,9 +16,6 @@ msgstr " Consultez la section notifications pour plus de détails."
 msgid " Download Updates"
 msgstr " Télécharger les mises à jour"
 
-msgid " First data vdev is a "
-msgstr " Le premier vdev de données est un "
-
 msgid " First vdev has "
 msgstr " Le premier vdev a "
 
@@ -194,9 +191,6 @@ msgstr "(Volume dataset système)"
 
 msgid "(top-right), then"
 msgstr "(en haut à droite), puis"
-
-msgid ", new Metadata vdev is a "
-msgstr ", nouveau vdev de métadonnées est un "
 
 msgid ", new vdev is "
 msgstr ", le nouveau vdev est "
@@ -529,21 +523,18 @@ msgstr ""
 "souhaités n'ont pas été sauvegardés."
 
 msgid ""
+"<b>WARNING:</b> The configuration file contains sensitive data like system "
+"passwords. However, SSH keys that are stored in <samp>/root/.ssh</samp> are "
+"<b>NOT</b> backed up by this operation. Additional sensitive information "
+"can be included in the configuration file.<br />"
+msgstr ""
+
+msgid ""
 "<b>WARNING:</b> This configuration file contains system              "
 "passwords and other sensitive data.<br>"
 msgstr ""
 "<b>ATTENTION:</b> Ce fichier de configuration contient des mots de passe "
 "système et d'autres données sensibles.<br>"
-
-msgid ""
-"<b>WARNING:</b> This configuration file contains system passwords and other "
-"sensitive data.<br /><br /><b>WARNING:</b> SSH keys  in "
-"<samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation.<br />"
-msgstr ""
-"<b>AVERTISSEMENT :</b> Ce fichier de configuration contient les mots de "
-"passe système et autres données sensibles.<br /><br /><b>AVERTISSEMENT "
-":</b> Les clés SSH dans <samp>/root/.ssh</samp> ne sont <b>PAS</b> "
-"sauvegardées par cette opération.<br />"
 
 msgid "<b>rsyncd</b> listens on this port."
 msgstr "<b>rsyncd</b> écoute sur ce port."
@@ -903,6 +894,9 @@ msgstr ""
 "environnement jail compatible <b>VNET</b> après sa création. Les interfaces "
 "sont automatiquement libérées lorsque le jail est supprimé."
 
+msgid "A stripe"
+msgstr ""
+
 msgid "A swap size of 0 is STRONGLY DISCOURAGED."
 msgstr "Une taille d'échange de 0 est  FORTEMENT DÉCONSEILLÉE."
 
@@ -1235,6 +1229,9 @@ msgstr "Ajouter une interface"
 msgid "Add Kerberos SPN Entry"
 msgstr "Ajouter Kerberos SPN Entry"
 
+msgid "Add License"
+msgstr ""
+
 msgid "Add Mountpoint"
 msgstr "Ajouter un point de montage"
 
@@ -1261,6 +1258,9 @@ msgstr "Ajouter Vdev"
 
 msgid "Add Vdevs"
 msgstr "Ajouter Vdevs"
+
+msgid "Add ZVol"
+msgstr ""
 
 msgid "Add Zvol"
 msgstr "Ajouter un zvol"
@@ -3897,6 +3897,9 @@ msgstr "Compresser les connexions"
 msgid "Compression"
 msgstr "Compression"
 
+msgid "Compression Level"
+msgstr ""
+
 msgid "Compression Ratio"
 msgstr ""
 
@@ -3905,9 +3908,6 @@ msgstr "Niveau de compression"
 
 msgid "Computer Account OU"
 msgstr "Compte d'ordinateur OU"
-
-msgid "Config Files"
-msgstr "Fichiers de config"
 
 msgid "Config Hostpath"
 msgstr ""
@@ -5506,6 +5506,9 @@ msgstr "Télécharger la configuration du client"
 msgid "Download Encryption Key"
 msgstr "Télécharger la clé de chiffrement"
 
+msgid "Download File"
+msgstr ""
+
 msgid "Download Key"
 msgstr "Télécharger la clé"
 
@@ -5724,9 +5727,9 @@ msgid ""
 "target=\"_blank\">SMTP AUTH</a> using PLAIN SASL.   Requires a valid "
 "Username and Password."
 msgstr ""
-"Activer   <a href=\"https://en.wikipedia.org/wiki/SMTP_Authentication\"   target="
-"\"_blank\">SMTP AUTH à l’aide</a> de PLAIN SASL.   Nécessite un nom d’utilisateur "
-"et un mot de passe valides."
+"Activer   <a href=\"https://en.wikipedia.org/wiki/SMTP_Authentication\"   "
+"target=\"_blank\">SMTP AUTH à l’aide</a> de PLAIN SASL.   Nécessite un nom "
+"d’utilisateur et un mot de passe valides."
 
 msgid ""
 "Enable  <a href=\"https://zfsonlinux.org/manpages/0.8.3/man8/zfs.8.html\" "
@@ -5802,6 +5805,9 @@ msgstr "Activer le support SMB1"
 msgid "Enable SMB2/3 Durable Handles"
 msgstr ""
 
+msgid "Enable SMTP configuration"
+msgstr ""
+
 msgid "Enable Serial Console"
 msgstr "Activer la console série"
 
@@ -5857,8 +5863,8 @@ msgid ""
 msgstr ""
 "Activez pour TrueNAS pour examiner périodiquement les blocs de données et "
 "identifier les blocs vides de blocs obsolètes qui peuvent être supprimés. "
-"Désactivé pour incorporer les écrasements de bloc de jour lorsqu'une écriture de "
-"périphérique est lancée (par défaut)."
+"Désactivé pour incorporer les écrasements de bloc de jour lorsqu'une "
+"écriture de périphérique est lancée (par défaut)."
 
 msgid "Enable iSCSI ALUA"
 msgstr "Activer iSCSI ALUA"
@@ -6230,9 +6236,6 @@ msgstr ""
 msgid "Enter"
 msgstr "Entrer"
 
-msgid "Enter License"
-msgstr "Entrer la licence"
-
 msgid ""
 "Enter a <a href=\"https://www.freebsd.org/doc/handbook/network-nis.html\" "
 "target=\"_blank\">NIS Domain name</a> for the jail."
@@ -6344,11 +6347,11 @@ msgid ""
 "href=\"https://api.telegram.org/bot<BOT_TOKEN>/getUpdates\"  "
 "target=\"_blank\">https://api.telegram.org/bot<BOT_TOKEN>/getUpdates</a>."
 msgstr ""
-"Entrez une liste d'identifiants de discussion séparés par un espace, une virgule "
-"ou un point-virgule.  Pour trouver votre identifiant de chat, envoyez un message "
-"au bot, groupe ou canal et visitez  <a href=\"https://api.telegram.org/"
-"bot<BOT_TOKEN>/getUpdates\"  target=\"_blank\">https://api.telegram.org/"
-"bot<BOT_TOKEN>/getUpdates</a>."
+"Entrez une liste d'identifiants de discussion séparés par un espace, une "
+"virgule ou un point-virgule.  Pour trouver votre identifiant de chat, "
+"envoyez un message au bot, groupe ou canal et visitez  <a "
+"href=\"https://api.telegram.org/bot<BOT_TOKEN>/getUpdates\"  "
+"target=\"_blank\">https://api.telegram.org/bot<BOT_TOKEN>/getUpdates</a>."
 
 msgid ""
 "Enter a list of denied hostnames or IP addresses. Separate entries by "
@@ -7215,6 +7218,9 @@ msgstr "Erreur lors de la mise à niveau du volume "
 msgid "Error checking for updates."
 msgstr "Erreur lors de la vérification des mises à jour."
 
+msgid "Error creating CA."
+msgstr ""
+
 msgid "Error creating VM."
 msgstr "Erreur lors de la création de la VM."
 
@@ -7377,9 +7383,6 @@ msgstr ""
 msgid "Export Password Secret Seed"
 msgstr "Exporter la valeur secrète du mot de passe"
 
-msgid "Export Pool Encryption Keys"
-msgstr "Exporter les clés de chiffrement du volume"
-
 msgid "Export Private Key"
 msgstr "Exporter la clé privée"
 
@@ -7449,6 +7452,9 @@ msgid "Extent Type"
 msgstr "Type d'étendue"
 
 msgid "Extents"
+msgstr ""
+
+msgid "Extra Constraints"
 msgstr ""
 
 msgid "Extra Environment Variables"
@@ -7672,6 +7678,9 @@ msgstr "Forcer la Suppression ?"
 msgid "Force HDD Standby"
 msgstr "Forcer la mise en veille du HDD"
 
+msgid "Force Size"
+msgstr ""
+
 msgid "Force Stop After Timeout"
 msgstr "Arrêt forcé après un timeout"
 
@@ -7736,6 +7745,9 @@ msgstr ""
 "Version FreeBSD à utiliser comme système d’exploitation jail. Les jails "
 "peuvent exécuter les versions de FreeBSD jusqu'à la même version que le "
 "système hôte. Les nouvelles versions ne sont pas visibles."
+
+msgid "Frequency"
+msgstr ""
 
 msgid "Fri"
 msgstr "Ven"
@@ -9587,6 +9599,9 @@ msgstr "Rendre le dataset de destination en lecture seule ?"
 msgid "Manage"
 msgstr "Gérer"
 
+msgid "Manage Configuration"
+msgstr ""
+
 msgid "Manage Custom Themes"
 msgstr "Gérer les thèmes personnalisés"
 
@@ -9844,12 +9859,6 @@ msgstr "Métadonnées (spéciales) Petite taille de bloc"
 
 msgid "Metadata VDev"
 msgstr "Métadonnées VDev"
-
-msgid "Metadata vdev must be the same type as data vdevs."
-msgstr "Les métadonnées vdev doivent être du même type que les données vdevs."
-
-msgid "Metadata vdev must be the same type as the data vdevs."
-msgstr "Les métadonnées vdev doivent être du même type que les données vdevs."
 
 msgid "Method"
 msgstr "Méthode"
@@ -11984,9 +11993,6 @@ msgstr ""
 "des serveurs NTP personnels ou sous contrôle direct. <b>Ne pas</b> activer "
 "lors de l'utilisation de serveurs NTP publics."
 
-msgid "Reconnect"
-msgstr "Se reconnecter"
-
 msgid ""
 "Record AFP service messages up to the specified log level in the system "
 "log. By default, severe and warning level messages are logged."
@@ -12697,6 +12703,9 @@ msgstr "Service SMB"
 msgid "SMTP"
 msgstr ""
 
+msgid "SMTP Authentication"
+msgstr ""
+
 msgid ""
 "SMTP port number. Typically <i>25,465</i> (secure SMTP), or <i>587</i> "
 "(submission)."
@@ -12790,9 +12799,6 @@ msgstr "Enregistrer"
 
 msgid "Save Changes"
 msgstr "Enregistrer les changements"
-
-msgid "Save Config"
-msgstr "Sauvegarder la config"
 
 msgid "Save Configuration"
 msgstr "Sauvegarder la configuration"
@@ -13110,6 +13116,9 @@ msgid ""
 msgstr ""
 "Sélectionnez les adresses IP à écouter pour les requêtes NFS. Laissez vide "
 "pour que NFS puisse écouter toutes les adresses disponibles."
+
+msgid "Select Path"
+msgstr ""
 
 msgid "Select Reports"
 msgstr ""
@@ -13659,6 +13668,9 @@ msgstr "Semi-automatique (TrueNAS CORE uniquement)"
 
 msgid "Send Email Status Updates"
 msgstr "Envoyer des courriels sur les statuts des mises à jour"
+
+msgid "Send Mail Method"
+msgstr ""
 
 msgid "Send Test Mail"
 msgstr "Envoyer un courriel de test"
@@ -17376,6 +17388,9 @@ msgstr "Taille des morceau d'upload (MiB)"
 msgid "Upload Config"
 msgstr "Charger une config"
 
+msgid "Upload File"
+msgstr ""
+
 msgid "Upload Key file"
 msgstr "Téléverser le fichier clé"
 
@@ -18395,6 +18410,9 @@ msgstr ""
 "Dispositif ZFS LOG qui peut améliorer la vitesse des écritures synchrones. "
 "Cache d'écriture optionnel qui peut être supprimé."
 
+msgid "ZFS Volume"
+msgstr ""
+
 msgid "ZFS deduplication"
 msgstr "Déduplication ZFS"
 
@@ -18416,6 +18434,12 @@ msgstr "Actions Zvol"
 
 msgid "Zvol Location"
 msgstr "Emplacement zvol"
+
+msgid "Zvol Name"
+msgstr ""
+
+msgid "Zvol Size"
+msgstr ""
 
 msgid "Zvol name"
 msgstr "Nom du zvol"
@@ -18872,6 +18896,9 @@ msgstr "total disponible"
 
 msgid "users"
 msgstr "utilisateurs"
+
+msgid "vdev is highly discouraged and will result in data loss if it fails"
+msgstr ""
 
 msgid "vmemoryuse"
 msgstr "vmemoryuse"
