@@ -16,9 +16,6 @@ msgstr " Überprüfen Sie Benachrichtigungen für mehr Details."
 msgid " Download Updates"
 msgstr " Aktualisierungen herunterladen"
 
-msgid " First data vdev is a "
-msgstr ""
-
 msgid " First vdev has "
 msgstr " Das erste VDEV hat "
 
@@ -194,9 +191,6 @@ msgstr ""
 
 msgid "(top-right), then"
 msgstr ""
-
-msgid ", new Metadata vdev is a "
-msgstr ", neue Metadate vdev ist ein "
 
 msgid ", new vdev is "
 msgstr ", das neue vdev ist "
@@ -454,21 +448,18 @@ msgid ""
 msgstr ""
 
 msgid ""
+"<b>WARNING:</b> The configuration file contains sensitive data like system "
+"passwords. However, SSH keys that are stored in <samp>/root/.ssh</samp> are "
+"<b>NOT</b> backed up by this operation. Additional sensitive information "
+"can be included in the configuration file.<br />"
+msgstr ""
+
+msgid ""
 "<b>WARNING:</b> This configuration file contains system              "
 "passwords and other sensitive data.<br>"
 msgstr ""
 "<b>WARNUNG:</b> Die Konfigurationsdatei enthält Systempasswörter und andere "
 "vertrauliche Daten.<br>"
-
-msgid ""
-"<b>WARNING:</b> This configuration file contains system passwords and other "
-"sensitive data.<br /><br /><b>WARNING:</b> SSH keys  in "
-"<samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation.<br />"
-msgstr ""
-"<b>Warnung:</b> Diese Konfigurationsdatei enthält Systemkennwörter und "
-"andere sensible Daten.<br /><br /><b>Warnung:</b> SSH Schlüssel  in "
-"<samp>/root/.ssh</samp> werden <b>NICHT</b> durch diese Operation "
-"gesichert.<br />"
 
 msgid "<b>rsyncd</b> listens on this port."
 msgstr "<b>rsyncd</b> lauscht auf diesem Port."
@@ -725,6 +716,9 @@ msgid ""
 "A space-delimited list of network interfaces attached to a <b>VNET</b> "
 "enabled jail after it is created. Interfaces are automatically released "
 "when the jail is removed."
+msgstr ""
+
+msgid "A stripe"
 msgstr ""
 
 msgid "A swap size of 0 is STRONGLY DISCOURAGED."
@@ -1020,6 +1014,9 @@ msgstr ""
 msgid "Add Kerberos SPN Entry"
 msgstr ""
 
+msgid "Add License"
+msgstr ""
+
 msgid "Add Mountpoint"
 msgstr "Einbindungspunkt hinzufügen"
 
@@ -1046,6 +1043,9 @@ msgstr "Vdev hinzufügen"
 
 msgid "Add Vdevs"
 msgstr "Vdevs hinzufügen"
+
+msgid "Add ZVol"
+msgstr ""
 
 msgid "Add Zvol"
 msgstr "ZVOL hinzufügen"
@@ -3181,6 +3181,9 @@ msgstr ""
 msgid "Compression"
 msgstr "Kompression"
 
+msgid "Compression Level"
+msgstr ""
+
 msgid "Compression Ratio"
 msgstr ""
 
@@ -3188,9 +3191,6 @@ msgid "Compression level"
 msgstr "Kompressionslevel"
 
 msgid "Computer Account OU"
-msgstr ""
-
-msgid "Config Files"
 msgstr ""
 
 msgid "Config Hostpath"
@@ -4560,6 +4560,9 @@ msgstr "Client Config herunterladen"
 msgid "Download Encryption Key"
 msgstr "Encryption Key herunterladen"
 
+msgid "Download File"
+msgstr ""
+
 msgid "Download Key"
 msgstr "Key herunterladen"
 
@@ -4838,6 +4841,9 @@ msgstr "SMB1 Unterstützung aktivieren"
 
 msgid "Enable SMB2/3 Durable Handles"
 msgstr "Aktiviere SMB2/3 Durable Handles"
+
+msgid "Enable SMTP configuration"
+msgstr ""
 
 msgid "Enable Serial Console"
 msgstr "Aktivieren Sie die serielle Konsole"
@@ -5194,9 +5200,6 @@ msgid ""
 msgstr ""
 
 msgid "Enter"
-msgstr ""
-
-msgid "Enter License"
 msgstr ""
 
 msgid ""
@@ -5980,6 +5983,9 @@ msgstr "Fehler beim Aktualisieren des Pools "
 msgid "Error checking for updates."
 msgstr "Fehler beim Überprüfen auf Updates."
 
+msgid "Error creating CA."
+msgstr ""
+
 msgid "Error creating VM."
 msgstr "Fehler beim Erstellen der VM."
 
@@ -6124,9 +6130,6 @@ msgstr ""
 msgid "Export Password Secret Seed"
 msgstr "Password Secret Seed exportieren"
 
-msgid "Export Pool Encryption Keys"
-msgstr "Exportieren Sie Poolverschlüsselungsschlüssel"
-
 msgid "Export Private Key"
 msgstr "Privaten Schlüssel exportieren"
 
@@ -6188,6 +6191,9 @@ msgid "Extent Type"
 msgstr ""
 
 msgid "Extents"
+msgstr ""
+
+msgid "Extra Constraints"
 msgstr ""
 
 msgid "Extra Environment Variables"
@@ -6391,6 +6397,9 @@ msgstr "Löschen erzwingen?"
 msgid "Force HDD Standby"
 msgstr ""
 
+msgid "Force Size"
+msgstr ""
+
 msgid "Force Stop After Timeout"
 msgstr ""
 
@@ -6439,6 +6448,9 @@ msgid ""
 "FreeBSD release to use as the jail operating system.  Jails can run FreeBSD "
 "versions up to the same version as the host  system. Newer releases are not "
 "shown."
+msgstr ""
+
+msgid "Frequency"
 msgstr ""
 
 msgid "Fri"
@@ -8068,6 +8080,9 @@ msgstr "Zieldatensatz schreibgeschützt machen?"
 msgid "Manage"
 msgstr "Verwalten"
 
+msgid "Manage Configuration"
+msgstr ""
+
 msgid "Manage Custom Themes"
 msgstr "Benutzerdefinierte Themen verwalten"
 
@@ -8285,12 +8300,6 @@ msgstr ""
 
 msgid "Metadata VDev"
 msgstr "Metadaten VDev"
-
-msgid "Metadata vdev must be the same type as data vdevs."
-msgstr ""
-
-msgid "Metadata vdev must be the same type as the data vdevs."
-msgstr ""
 
 msgid "Method"
 msgstr "Methode"
@@ -10171,9 +10180,6 @@ msgstr ""
 "NTP-Servern oder solchen unter direkter Kontrolle verwenden. <b>Aktivieren "
 "Sie nicht</b> wenn Sie öffentliche NTP-Server verwenden."
 
-msgid "Reconnect"
-msgstr "Neu-verbinden"
-
 msgid ""
 "Record AFP service messages up to the specified log level in the system "
 "log. By default, severe and warning level messages are logged."
@@ -10869,6 +10875,9 @@ msgstr "SMB Dienst"
 msgid "SMTP"
 msgstr ""
 
+msgid "SMTP Authentication"
+msgstr ""
+
 msgid ""
 "SMTP port number. Typically <i>25,465</i> (secure SMTP), or <i>587</i> "
 "(submission)."
@@ -10962,9 +10971,6 @@ msgstr "Speichern"
 
 msgid "Save Changes"
 msgstr "Änderungen speichern"
-
-msgid "Save Config"
-msgstr "Konfiguration speichern"
 
 msgid "Save Configuration"
 msgstr "Konfiguration speichern"
@@ -11246,6 +11252,9 @@ msgid ""
 msgstr ""
 "Wählen Sie IP-Adressen aus, die auf NFS-Anforderungen abgehört werden "
 "sollen. Lassen Sie NFS leer, um alle verfügbaren Adressen abzuhören."
+
+msgid "Select Path"
+msgstr ""
 
 msgid "Select Reports"
 msgstr ""
@@ -11809,6 +11818,9 @@ msgstr "Halbautomatisch (nur TrueNAS CORE)"
 
 msgid "Send Email Status Updates"
 msgstr "Senden von E-Mail-Statusaktualisierungen"
+
+msgid "Send Mail Method"
+msgstr ""
 
 msgid "Send Test Mail"
 msgstr "Test-E-Mail senden"
@@ -15137,6 +15149,9 @@ msgstr "Hochladen der Stückgröße (MiB)"
 msgid "Upload Config"
 msgstr "Hochladen der Konfiguration"
 
+msgid "Upload File"
+msgstr ""
+
 msgid "Upload Key file"
 msgstr ""
 
@@ -15984,6 +15999,9 @@ msgid ""
 "write-cache that can be removed."
 msgstr ""
 
+msgid "ZFS Volume"
+msgstr ""
+
 msgid "ZFS deduplication"
 msgstr "ZFS Deduplikation"
 
@@ -16001,6 +16019,12 @@ msgstr "Zvol-Aktionen"
 
 msgid "Zvol Location"
 msgstr "ZVOL Ort"
+
+msgid "Zvol Name"
+msgstr ""
+
+msgid "Zvol Size"
+msgstr ""
 
 msgid "Zvol name"
 msgstr "ZVOL Name"
@@ -16444,6 +16468,9 @@ msgstr "insgesamt verfügbar"
 
 msgid "users"
 msgstr "Benutzer"
+
+msgid "vdev is highly discouraged and will result in data loss if it fails"
+msgstr ""
 
 msgid "vmemoryuse"
 msgstr ""

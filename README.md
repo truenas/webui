@@ -15,7 +15,7 @@ Images only require the environment variable TNIP to be set to the IP or Hostnam
 Example:
 
 ```
-# docker container run -e TNIP=192.168.0.30 -p 8080:80 ixsystems/truenas-webui:latest
+# docker container run -it -e TNIP=192.168.0.30 -p 8080:80 ixsystems/truenas-webui:latest
 ```
 This would allow you to access the running WebUI on http://localhost:8080
 
