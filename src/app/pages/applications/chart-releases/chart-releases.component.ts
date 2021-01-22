@@ -101,6 +101,8 @@ export class ChartReleasesComponent implements OnInit {
 
   showLoadStatus(type: EmptyType) {
     let title = "";
+    let message = undefined;
+
     switch (type) {
       case EmptyType.loading:
         title = helptext.message.loading;
@@ -110,6 +112,7 @@ export class ChartReleasesComponent implements OnInit {
         break;
       case EmptyType.no_page_data :
         title = helptext.message.no_installed;
+        message = helptext.message.no_installed_message;
         break;
       case EmptyType.errors:
         title = helptext.message.not_running;
@@ -118,6 +121,7 @@ export class ChartReleasesComponent implements OnInit {
 
     this.emptyPageConf.type = type;
     this.emptyPageConf.title = title;
+    this.emptyPageConf.message = message;
   }
 
   refreshChartReleases() {
@@ -170,7 +174,7 @@ export class ChartReleasesComponent implements OnInit {
                   this.chartItems.push(chartObj);
                 }  
               })
-        
+              
               if (this.chartItems.length == 0) {
                 this.showLoadStatus(EmptyType.no_page_data );
               }

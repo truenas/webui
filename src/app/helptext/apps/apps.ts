@@ -15,7 +15,8 @@ export default {
     loading: T('Loading...'),
     not_configured: T('Applications not configured'),
     not_running: T('Applications are not running'),
-    no_installed: T('Applications you install will automatically appear here. Click below and browse the TrueNAS catalog to get started.'),
+    no_installed: T('No Applications Installed'),
+    no_installed_message: T('Applications you install will automatically appear here. Click below and browse the TrueNAS catalog to get started.')
   },
 
   installing: T('Installing'),
