@@ -31,6 +31,8 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 @when(parsers.parse('the login page appears, enter "{user}" and "{password}"'))
 def the_login_page_appear_enter_root_and_password(driver, user, password):
     """the login page appears, enter "{user}" and "{password}"."""
+    global root_password
+    root_password = password
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
         assert wait_on_element(driver, 0.5, 5, '//input[@data-placeholder="Username"]')
         driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
@@ -197,6 +199,14 @@ def navigate_to_dashboard(driver):
 def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
     driver.refresh()
+    if wait_on_element(driver, 1, 5, '//input[@data-placeholder="Username"]'):
+        assert wait_on_element(driver, 1, 5, '//input[@data-placeholder="Username"]')
+        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
+        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
+        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
+        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(root_password)
+        assert wait_on_element(driver, 0.5, 5, '//button[@name="signin_button"]')
+        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     assert wait_on_element(driver, 1, 120, '//div[contains(.,"tn-bhyve01-nodeb")]')
     assert wait_on_element(driver, 1, 10, '//mat-icon[@svgicon="ha_enabled"]')
     # This 5 seconds of sleep is to let the system ketchup.
