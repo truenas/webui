@@ -870,14 +870,9 @@ mat-icon.truecommand-icon.FAILED > span.mat-badge-content {
   background: var(--warn);
 }
 
-@media only screen and (max-width: 600px) {
-  .search-field {
-    margin-bottom: 8px !important;
-  }
-}
-
 @media only screen and (max-width: 750px) {
   .viewcontroller-wrapper {
     flex-grow: 100;
+    margin-top: 8px;
   }
 }
