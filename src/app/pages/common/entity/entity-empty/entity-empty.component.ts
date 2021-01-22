@@ -7,9 +7,9 @@ import { TranslateService } from '@ngx-translate/core';
 export enum EmptyType {
 	loading = 'duration',
 	first_use = 'first_use',
-	user_cleared = 'user_cleared',
+	no_page_data = 'no_page_data',
 	errors = 'errors',
-	no_results = 'no_results',
+	no_search_results = 'no_search_results',
 };
 export interface EmptyConfig {
 	type: EmptyType, 
@@ -61,13 +61,13 @@ export class EntityEmptyComponent {
 				case EmptyType.first_use:
 					icon = "rocket";
 					break;
-				case EmptyType.user_cleared:
+				case EmptyType.no_page_data:
 					icon = "format-list-text";
 					break;
 				case EmptyType.errors:
 					icon = "alert-octagon";
 					break;
-				case EmptyType.no_results:
+				case EmptyType.no_search_results:
 					icon = "magnify-scan";
 					break;
 			}

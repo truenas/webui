@@ -108,7 +108,7 @@ export class ChartReleasesComponent implements OnInit {
       case EmptyType.first_use:
         title = helptext.message.not_configured;
         break;
-      case EmptyType.no_results:
+      case EmptyType.no_page_data :
         title = helptext.message.no_installed;
         break;
       case EmptyType.errors:
@@ -122,6 +122,12 @@ export class ChartReleasesComponent implements OnInit {
 
   refreshChartReleases() {
     this.showLoadStatus(EmptyType.loading);
+    const checkTitle = setInterval(() => {
+        this.updateChartReleases();
+    }, 1000);
+  }
+
+  updateChartReleases() {
     this.appService.getKubernetesConfig().subscribe(res => {
       if (!res.pool) {
         this.chartItems = [];
@@ -166,7 +172,7 @@ export class ChartReleasesComponent implements OnInit {
               })
         
               if (this.chartItems.length == 0) {
-                this.showLoadStatus(EmptyType.no_results);
+                this.showLoadStatus(EmptyType.no_page_data );
               }
             })
           }
