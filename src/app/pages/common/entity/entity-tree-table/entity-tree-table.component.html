@@ -4,7 +4,7 @@
     The actual rendered columns are set as a property on the row definition" -->
 
     <!-- Table Columns -->
-    <ng-container *ngFor="let column of conf.columns; let i = index;">
+    <ng-container *ngFor="let column of _conf.columns; let i = index;">
 
       <!-- NonActions Columns -->
       <ng-container *ngIf="column.prop !== 'actions'" matColumnDef="{{column.prop}}" [sticky]="i == 0">
