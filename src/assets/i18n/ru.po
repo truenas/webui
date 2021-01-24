@@ -5243,6 +5243,9 @@ msgstr ""
 msgid "Domain:"
 msgstr ""
 
+msgid "Don't show this message again"
+msgstr ""
+
 msgid "Done"
 msgstr "Готово"
 
@@ -10985,6 +10988,9 @@ msgstr ""
 msgid "Power"
 msgstr "Питание"
 
+msgid "Power Management"
+msgstr ""
+
 msgid "Power Off"
 msgstr "Отключить"
 
@@ -11992,6 +11998,9 @@ msgstr "Тест S.M.A.R.T."
 
 msgid "S.M.A.R.T. extra options"
 msgstr "Дополнительные параметры S.M.A.R.T."
+
+msgid "S.M.A.R.T./SED"
+msgstr ""
 
 msgid "S3"
 msgstr ""
@@ -14858,6 +14867,9 @@ msgstr ""
 
 msgid "Temperature"
 msgstr "Температура"
+
+msgid "Temperature Alerts"
+msgstr ""
 
 msgid "Template"
 msgstr "Шаблон"

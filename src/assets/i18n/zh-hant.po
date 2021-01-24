@@ -4365,6 +4365,9 @@ msgstr ""
 msgid "Domain:"
 msgstr ""
 
+msgid "Don't show this message again"
+msgstr ""
+
 msgid "Done"
 msgstr "完成"
 
@@ -9435,6 +9438,9 @@ msgstr ""
 msgid "Power"
 msgstr "電源"
 
+msgid "Power Management"
+msgstr ""
+
 msgid "Power Off"
 msgstr "關閉電源"
 
@@ -10355,6 +10361,9 @@ msgstr "S.M.A.R.T 測試"
 
 msgid "S.M.A.R.T. extra options"
 msgstr "S.M.A.R.T. 額外選項"
+
+msgid "S.M.A.R.T./SED"
+msgstr ""
 
 msgid "S3"
 msgstr ""
@@ -12789,6 +12798,9 @@ msgstr ""
 
 msgid "Temperature"
 msgstr "溫度"
+
+msgid "Temperature Alerts"
+msgstr ""
 
 msgid "Template"
 msgstr "範本"

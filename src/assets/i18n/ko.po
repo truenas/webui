@@ -4350,6 +4350,9 @@ msgstr ""
 msgid "Domain:"
 msgstr ""
 
+msgid "Don't show this message again"
+msgstr ""
+
 msgid "Done"
 msgstr ""
 
@@ -9420,6 +9423,9 @@ msgstr ""
 msgid "Power"
 msgstr ""
 
+msgid "Power Management"
+msgstr ""
+
 msgid "Power Off"
 msgstr ""
 
@@ -10339,6 +10345,9 @@ msgid "S.M.A.R.T. Test"
 msgstr ""
 
 msgid "S.M.A.R.T. extra options"
+msgstr ""
+
+msgid "S.M.A.R.T./SED"
 msgstr ""
 
 msgid "S3"
@@ -12773,6 +12782,9 @@ msgid ""
 msgstr ""
 
 msgid "Temperature"
+msgstr ""
+
+msgid "Temperature Alerts"
 msgstr ""
 
 msgid "Template"
