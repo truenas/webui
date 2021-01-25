@@ -864,7 +864,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     protected loader: AppLoaderService,
     protected dialog: MatDialog,
     protected dialogService: DialogService,
-    protected networkService: NetworkService) { console.log("inside jail-form.component.ts")}
+    protected networkService: NetworkService) { }
 
   getReleaseAndInterface() {
     this.jailService.getInterfaceChoice().subscribe(
