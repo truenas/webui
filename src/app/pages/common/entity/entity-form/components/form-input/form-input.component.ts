@@ -73,6 +73,11 @@ export class FormInputComponent implements Field {
         this.group.controls[this.config.name].setValue(phrasedValue);
       }
     }
+
+    if (this.config.inputType == 'number') {
+      const numberValue = this.group.controls[this.config.name].value * 1;
+      this.group.controls[this.config.name].setValue(numberValue);
+    }
   }
 
   hasValue() {
