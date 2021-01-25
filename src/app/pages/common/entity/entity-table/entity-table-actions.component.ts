@@ -25,6 +25,17 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
   public actions: any[];
   public showMenu = true;
   public key_prop: string;
+
+  get isSingleAction(){
+    if(!this.actions) return;
+    const hasGroups = (this.actions && this.actions[0].actionName);
+
+    if(hasGroups == true){
+      return (this.actions[0].actions.length == 1);
+    } else {
+      return (this.actions.length == 1);
+    }
+  }
   
   public get inlineActions(): boolean {
     return this.entity.conf.inlineActions || false;
@@ -58,5 +69,16 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
 
   noPropogate(e){
     e.stopPropagation();
+  }
+
+  get singleAction(){
+    if(this.actions[0].actions == undefined){
+      return null;
+    } else {
+      const hasGroups = (this.actions && this.actions[0].actionName);
+      const action = this.actions && this.isSingleAction && hasGroups ? this.actions[0].actions[0] : this.actions[0];
+      
+      return action;
+    }
   }
 }
