@@ -584,6 +584,13 @@ export class JailFormComponent implements OnInit, AfterViewInit {
           width: '50%',
         },
         {
+          type: 'input',
+          name: 'exec_fib',
+          placeholder: helptext.exec_fib_placeholder,
+          tooltip: helptext.exec_fib_tooltip,
+          disabled: false
+        },
+        {
           type: 'checkbox',
           name: 'ip4_saddrsel',
           placeholder: helptext.ip4_saddrsel_placeholder,
@@ -857,7 +864,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     protected loader: AppLoaderService,
     protected dialog: MatDialog,
     protected dialogService: DialogService,
-    protected networkService: NetworkService) { }
+    protected networkService: NetworkService) { console.log("inside jail-form.component.ts")}
 
   getReleaseAndInterface() {
     this.jailService.getInterfaceChoice().subscribe(
