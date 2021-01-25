@@ -46,7 +46,7 @@ export class VMListComponent implements OnDestroy {
     public columns: Array<any> = [
         { name: T('Name'), prop: 'name', always_display: true },
         { name: T('State'), prop: 'state', always_display: true, toggle: true },
-        { name: T('Autostart'), prop: 'autostart', selectable: true },
+        { name: T('Autostart'), prop: 'autostart', checkbox: true },
         { name: T("Virtual CPUs"), prop: 'vcpus', hidden: true },
         { name: T("Cores"), prop: 'cores', hidden: true },
         { name: T("Threads"), prop: 'threads', hidden: true },
