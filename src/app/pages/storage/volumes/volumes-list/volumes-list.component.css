@@ -83,8 +83,13 @@
 .mat-expansion-panel-header-description{
   position: relative;
   top: 4px;
+  max-height: 24px;
 }
 
+.mat-expansion-panel-header.offline .mat-expansion-panel-header-title,
+.mat-expansion-panel-header.offline .mat-expansion-panel-header-description{
+  top: 8px;
+}
 
 .mat-expansion-panel-body{
   padding: 0;

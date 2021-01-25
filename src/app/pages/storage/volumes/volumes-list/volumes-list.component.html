@@ -4,7 +4,7 @@
     <mat-expansion-panel class="no-padding" *ngFor="let row of zfsPoolRows; let pool = index;" id="expansionpanel_zfs_{{row.name}}"
       [expanded]="row.status === 'LOCKED' ? false : true"  [disabled]="row.status === 'OFFLINE'"
       ix-auto ix-auto-type="expansion-panel" ix-auto-identifier="{{row.name}}">
-      <mat-expansion-panel-header>
+      <mat-expansion-panel-header class="{{row.status.toLowerCase()}}">
         <mat-panel-title>
           {{row.name}} <span *ngIf="row.name === systemdatasetPool" class="ml-1"> 
             {{ '(System Dataset Pool)' | translate}}</span>

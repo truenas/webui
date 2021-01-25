@@ -1,4 +1,4 @@
-<div class="panel_container action-length-{{actions.length}}">
+<div class="panel_container action-length-{{actions.length}}" [style.paddingTop]="inlineActions ? 0 : '4px'">
   <ng-container *ngIf="actions.length == 1 && actions[0].actions.length == 1">
     <button [color]="actions[0].actions[0].color ? actions[0].actions[0].color : 'default' "
       id="action_button_{{ actions[0].actions[0]?.name }}__{{actions[0].actions[0].id}}" 
@@ -14,13 +14,12 @@
     </button>
   </ng-container>
 
-  <ng-container *ngIf="actions.length > 1 || actions[0].length > 1">
+  <ng-container *ngIf="(actions.length > 1 || actions[0].actions.length > 1) && !inlineActions; else inlineActionsTemplate">
     <mat-icon
       [ix-auto]=""
       ix-auto-type="options"
       ix-auto-identifier="{{row[key_prop]}}"
       id="{{row[entity?.conf?.rowIdentifier || 'name']}}_{{action}}_button"
-      (click)="noPropogate($event)"
       [matMenuTriggerFor]="appMenu"
       [style.cursor]="'pointer'"
     >
@@ -66,11 +65,31 @@
               ix-auto-type="action"
               ix-auto-identifier="{{action.id}}_{{action.label}}"
               >
-  				    <span>{{ action?.label | translate }}</span>
+    				  <span>{{ action?.label | translate }}</span>
             </button>
           </span>
         </span>
+  
       </ng-template>
     </mat-menu>
   </ng-container>
+  
+  <ng-template #inlineActionsTemplate>
+    <ng-container *ngFor="let action of actions">
+      <button 
+        mat-icon-button
+        id="action_button_{{ action?.name }}__{{action.id}}" 
+        *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
+        (click)="action.onClick(this.row);"
+        [disabled]="action.disabled"
+        [ix-auto]=""
+        ix-auto-type="action"
+        ix-auto-identifier="{{action.id}}_{{action.label}}"
+        [matTooltip]="action.label | translate"
+        [matTooltipPosition]="action.ttposition ? action.ttposition : 'left'"
+      >
+        <mat-icon>{{action.icon}}</mat-icon>
+      </button>
+    </ng-container>
+  </ng-template>
 </div>

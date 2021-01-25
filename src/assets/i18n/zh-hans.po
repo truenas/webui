@@ -16,9 +16,6 @@ msgstr " 检查通知以获取更多详细信息。"
 msgid " Download Updates"
 msgstr " 下载更新"
 
-msgid " First data vdev is a "
-msgstr ""
-
 msgid " First vdev has "
 msgstr " 第一个vdev拥有 "
 
@@ -176,9 +173,6 @@ msgstr ""
 
 msgid "(top-right), then"
 msgstr "（右上），然后"
-
-msgid ", new Metadata vdev is a "
-msgstr ""
 
 msgid ", new vdev is "
 msgstr "，新的vdev是"
@@ -445,17 +439,16 @@ msgstr ""
 "<b>这可能会导致永久性的数据丢失！</b>在备份所有需要的数据和快照之前，请不要回滚。"
 
 msgid ""
+"<b>WARNING:</b> The configuration file contains sensitive data like system "
+"passwords. However, SSH keys that are stored in <samp>/root/.ssh</samp> are "
+"<b>NOT</b> backed up by this operation. Additional sensitive information "
+"can be included in the configuration file.<br />"
+msgstr ""
+
+msgid ""
 "<b>WARNING:</b> This configuration file contains system              "
 "passwords and other sensitive data.<br>"
 msgstr "<b>警告：</b> 这个配置文件包含系统密码和其他的敏感信息。<br>"
-
-msgid ""
-"<b>WARNING:</b> This configuration file contains system passwords and other "
-"sensitive data.<br /><br /><b>WARNING:</b> SSH keys  in "
-"<samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation.<br />"
-msgstr ""
-"<b>警告：</b>此配置文件包含系统密码和其他敏感数据。<br /> <br /> <b>警告：</b> \n"
-"此操作<b>不会</b>备份 <samp>/root/.ssh</samp> 中的SSH密钥 。<br />"
 
 msgid "<b>rsyncd</b> listens on this port."
 msgstr "<b>rsyncd</b> 在此端口侦听。"
@@ -735,6 +728,9 @@ msgid ""
 "enabled jail after it is created. Interfaces are automatically released "
 "when the jail is removed."
 msgstr "创建连接到启用<b>VNET</b>的监狱网络接口分隔列表。删除监狱后，接口会自动释放。"
+
+msgid "A stripe"
+msgstr ""
 
 msgid "A swap size of 0 is STRONGLY DISCOURAGED."
 msgstr "强烈反对使用为0的swap大小！"
@@ -1037,6 +1033,9 @@ msgstr ""
 msgid "Add Kerberos SPN Entry"
 msgstr ""
 
+msgid "Add License"
+msgstr ""
+
 msgid "Add Mountpoint"
 msgstr "添加挂载点"
 
@@ -1063,6 +1062,9 @@ msgstr "添加Vdev"
 
 msgid "Add Vdevs"
 msgstr "添加Vdevs"
+
+msgid "Add ZVol"
+msgstr ""
 
 msgid "Add Zvol"
 msgstr "添加Zvol"
@@ -3275,6 +3277,9 @@ msgstr "压缩连接"
 msgid "Compression"
 msgstr "压缩"
 
+msgid "Compression Level"
+msgstr ""
+
 msgid "Compression Ratio"
 msgstr ""
 
@@ -3283,9 +3288,6 @@ msgstr "压缩级别"
 
 msgid "Computer Account OU"
 msgstr "电脑帐户OU"
-
-msgid "Config Files"
-msgstr ""
 
 msgid "Config Hostpath"
 msgstr ""
@@ -4710,6 +4712,9 @@ msgstr "下载客户端配置"
 msgid "Download Encryption Key"
 msgstr "下载加密密钥"
 
+msgid "Download File"
+msgstr ""
+
 msgid "Download Key"
 msgstr "下载密钥"
 
@@ -4985,6 +4990,9 @@ msgstr "启用SMB1支持"
 
 msgid "Enable SMB2/3 Durable Handles"
 msgstr "启用SMB2/3持久句柄"
+
+msgid "Enable SMTP configuration"
+msgstr ""
 
 msgid "Enable Serial Console"
 msgstr "启用串行控制台"
@@ -5338,9 +5346,6 @@ msgstr ""
 
 msgid "Enter"
 msgstr "输入"
-
-msgid "Enter License"
-msgstr ""
 
 msgid ""
 "Enter a <a href=\"https://www.freebsd.org/doc/handbook/network-nis.html\" "
@@ -6146,6 +6151,9 @@ msgstr "升级池时出错 "
 msgid "Error checking for updates."
 msgstr "检查更新时出错。"
 
+msgid "Error creating CA."
+msgstr ""
+
 msgid "Error creating VM."
 msgstr "创建虚拟机时出错。"
 
@@ -6297,9 +6305,6 @@ msgstr ""
 msgid "Export Password Secret Seed"
 msgstr "导出密码秘密种子"
 
-msgid "Export Pool Encryption Keys"
-msgstr "导出池加密密钥"
-
 msgid "Export Private Key"
 msgstr "导出私钥"
 
@@ -6364,6 +6369,9 @@ msgid "Extent Type"
 msgstr "区块类型"
 
 msgid "Extents"
+msgstr ""
+
+msgid "Extra Constraints"
 msgstr ""
 
 msgid "Extra Environment Variables"
@@ -6568,6 +6576,9 @@ msgstr "强制删除？"
 msgid "Force HDD Standby"
 msgstr "强制硬盘待机"
 
+msgid "Force Size"
+msgstr ""
+
 msgid "Force Stop After Timeout"
 msgstr "超时后强制停止"
 
@@ -6620,6 +6631,9 @@ msgid ""
 "versions up to the same version as the host  system. Newer releases are not "
 "shown."
 msgstr "用作监狱的FreeBSD发行版系统。监狱可以运行与主机系统相同版本的FreeBSD版本。没有显示较新的版本。"
+
+msgid "Frequency"
+msgstr ""
 
 msgid "Fri"
 msgstr "周五"
@@ -8287,6 +8301,9 @@ msgstr "将目标数据集设为只读？"
 msgid "Manage"
 msgstr "管理"
 
+msgid "Manage Configuration"
+msgstr ""
+
 msgid "Manage Custom Themes"
 msgstr "管理自定义主题"
 
@@ -8512,12 +8529,6 @@ msgstr ""
 
 msgid "Metadata VDev"
 msgstr "元数据VDev"
-
-msgid "Metadata vdev must be the same type as data vdevs."
-msgstr ""
-
-msgid "Metadata vdev must be the same type as the data vdevs."
-msgstr ""
 
 msgid "Method"
 msgstr "方法"
@@ -10426,9 +10437,6 @@ msgid ""
 "public NTP servers."
 msgstr "当<i> 最大轮询 </i>大于10时推荐使用。仅在个人NTP服务器或直接控制的服务器上使用。<b>请勿</b>在使用公共NTP服务器时启用。"
 
-msgid "Reconnect"
-msgstr "重新连接"
-
 msgid ""
 "Record AFP service messages up to the specified log level in the system "
 "log. By default, severe and warning level messages are logged."
@@ -11077,6 +11085,9 @@ msgstr "SMB服务"
 msgid "SMTP"
 msgstr ""
 
+msgid "SMTP Authentication"
+msgstr ""
+
 msgid ""
 "SMTP port number. Typically <i>25,465</i> (secure SMTP), or <i>587</i> "
 "(submission)."
@@ -11168,9 +11179,6 @@ msgstr "保存"
 
 msgid "Save Changes"
 msgstr ""
-
-msgid "Save Config"
-msgstr "保存设置"
 
 msgid "Save Configuration"
 msgstr "保存配置"
@@ -11449,6 +11457,9 @@ msgid ""
 "Select IP addresses to listen to for NFS requests. Leave empty for NFS to "
 "listen to all available addresses."
 msgstr "选择IP地址来监听NFS请求。NFS留空以监听所有可用地址。"
+
+msgid "Select Path"
+msgstr ""
 
 msgid "Select Reports"
 msgstr ""
@@ -11879,6 +11890,9 @@ msgstr "半自动（仅限TrueNAS CORE）"
 
 msgid "Send Email Status Updates"
 msgstr "状态更新时发送邮件"
+
+msgid "Send Mail Method"
+msgstr ""
 
 msgid "Send Test Mail"
 msgstr "发送测试邮件"
@@ -14981,6 +14995,9 @@ msgstr "上传块大小（MiB）"
 msgid "Upload Config"
 msgstr "上传配置"
 
+msgid "Upload File"
+msgstr ""
+
 msgid "Upload Key file"
 msgstr "上传密钥文件"
 
@@ -15865,6 +15882,9 @@ msgid ""
 "write-cache that can be removed."
 msgstr "可以提高同步写入速度的ZFS LOG设备。可以删除的可选写缓存。"
 
+msgid "ZFS Volume"
+msgstr ""
+
 msgid "ZFS deduplication"
 msgstr "ZFS重复数据删除"
 
@@ -15885,6 +15905,12 @@ msgstr "Zvol动作"
 
 msgid "Zvol Location"
 msgstr "Zvol位置"
+
+msgid "Zvol Name"
+msgstr ""
+
+msgid "Zvol Size"
+msgstr ""
 
 msgid "Zvol name"
 msgstr "Zvol名称"
@@ -16330,6 +16356,9 @@ msgstr "总可用"
 
 msgid "users"
 msgstr "用户"
+
+msgid "vdev is highly discouraged and will result in data loss if it fails"
+msgstr ""
 
 msgid "vmemoryuse"
 msgstr "vmemoryuse"

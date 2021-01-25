@@ -201,3 +201,28 @@ mat-chip.service-state-on,
   top: 25px;
   margin-left: 20%;
 }
+
+
+/* table styles */
+mat-icon.service-power-btn-on{
+  color:#41bd45 !important;
+}
+ 
+mat-icon.service-power-btn-off{
+  color: #900 !important;
+}
+
+.checkbox {
+  position: relative !important;
+  left: 43px;
+  top: 1px;
+}
+
+.mat-slide-toggle {
+  position: relative;
+  top: 2px;
+}
+
+.service-toggle {
+  width: 48px;
+}

@@ -25,6 +25,10 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
   public actions: any[];
   public showMenu = true;
   public key_prop: string;
+  
+  public get inlineActions(): boolean {
+    return this.entity.conf.inlineActions || false;
+  }
 
   constructor(protected translate: TranslateService) { }
 
