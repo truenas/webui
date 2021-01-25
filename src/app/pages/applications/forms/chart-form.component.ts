@@ -10,6 +10,7 @@ import { ModalService } from '../../../services/modal.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import  helptext  from '../../../helptext/apps/apps';
+import { EntityUtils } from '../../common/entity/utils';
 
 @Component({
   selector: 'chart-form',
@@ -140,17 +141,18 @@ export class ChartFormComponent {
 
         if (schemaConfig.schema.show_if) {
           subResults.forEach(subResult => {
-            const confidion = schemaConfig.schema.show_if[0];
-            let conditionFieldName = confidion[0];
+            const relation = schemaConfig.schema.show_if[0];
+            let relationFieldName = relation[0];
             if (parentName) {
-              conditionFieldName = `${parentName}_${conditionFieldName}`;
+              relationFieldName = `${parentName}_${relationFieldName}`;
             }
 
             subResult['relation'] = [{
-              action: (confidion[1] == '=')?'SHOW':'HIDE',
+              action: 'SHOW',
               when: [{
-                name: conditionFieldName,
-                value: confidion[2],
+                name: relationFieldName,
+                operator: relation[1],
+                value: relation[2],
               }]
             }];
           });
@@ -271,72 +273,12 @@ export class ChartFormComponent {
     if (repositoryConfig) {
       repositoryConfig.readonly = true;
     }
-    
-  }
-
-  setObjectValues(data, result) {
-    Object.keys(data).forEach(key => {
-      const value = data[key];
-      if (key == "release_name") {
-        return;
-      }
-      
-      const key_list = key.split('_');
-      if (key_list.length > 1) {
-        let parent = result;
-        for(let i=0; i<key_list.length; i++) {
-          const temp_key = key_list[i];
-          if (i == key_list.length - 1) {
-            if (Array.isArray(value)) {
-              const arrayValues = value.map(item => {
-                if (Object.keys(item).length > 1) {
-                  let subValue = {};
-                  this.setObjectValues(item, subValue);
-                  return subValue;
-                } else {
-                  return item[Object.keys(item)[0]];
-                }
-              });
-              if (arrayValues.length > 0) {
-                parent[temp_key] = arrayValues;
-              }
-            } else {
-              parent[temp_key] = value;
-            }            
-          } else {
-            if (!parent[temp_key]) {
-              parent[temp_key] = {};
-            }
-            parent = parent[temp_key];
-          }
-        }        
-      } else {
-        if (Array.isArray(value)) {
-          const arrayValues = value.map(item => {
-            if (Object.keys(item).length > 1) {
-              let subValue = {};
-              this.setObjectValues(item, subValue);
-              return subValue;
-            } else {
-              return item[Object.keys(item)[0]];
-            }
-          });
-          if (arrayValues.length > 0) {
-            result[key] = arrayValues;
-          }
-        } else {
-          result[key] = value;
-        }
-      }
-    });
-
-    return result;
   }
 
   customSubmit(data) {
     let apiCall = this.addCall;
     let values = {};
-    this.setObjectValues(data, values);
+    new EntityUtils().parseFormControlValues(data, values);
 
     let payload = [];
     payload.push({

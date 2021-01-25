@@ -183,4 +183,63 @@ export class EntityUtils {
     }
     return cronArray.join(' ');
   }
+
+  parseFormControlValues(data, result) {
+    Object.keys(data).forEach(key => {
+      const value = data[key];
+      if (key == "release_name") {
+        return;
+      }
+      
+      const key_list = key.split('_');
+      if (key_list.length > 1) {
+        let parent = result;
+        for(let i=0; i<key_list.length; i++) {
+          const temp_key = key_list[i];
+          if (i == key_list.length - 1) {
+            if (Array.isArray(value)) {
+              const arrayValues = value.map(item => {
+                if (Object.keys(item).length > 1) {
+                  let subValue = {};
+                  this.parseFormControlValues(item, subValue);
+                  return subValue;
+                } else {
+                  return item[Object.keys(item)[0]];
+                }
+              });
+              if (arrayValues.length > 0) {
+                parent[temp_key] = arrayValues;
+              }
+            } else {
+              parent[temp_key] = value;
+            }            
+          } else {
+            if (!parent[temp_key]) {
+              parent[temp_key] = {};
+            }
+            parent = parent[temp_key];
+          }
+        }        
+      } else {
+        if (Array.isArray(value)) {
+          const arrayValues = value.map(item => {
+            if (Object.keys(item).length > 1) {
+              let subValue = {};
+              this.parseFormControlValues(item, subValue);
+              return subValue;
+            } else {
+              return item[Object.keys(item)[0]];
+            }
+          });
+          if (arrayValues.length > 0) {
+            result[key] = arrayValues;
+          }
+        } else {
+          result[key] = value;
+        }
+      }
+    });
+
+    return result;
+  }
 }

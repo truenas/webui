@@ -12,7 +12,8 @@ import {
   FieldRelation,
   RelationGroup
 } from "../models/field-relation.interface";
-
+import * as _ from 'lodash';
+import { EntityUtils } from '../../utils';
 @Injectable()
 export class FieldRelationService {
 
@@ -44,11 +45,54 @@ export class FieldRelationService {
 
   isFormControlToBeDisabled(relGroup: RelationGroup,
                             formGroup: FormGroup): boolean {
+    return this.isFormControlToBe(relGroup, formGroup, true);
+  }
+  
+  isFormControlToBeHide(relGroup: RelationGroup,
+    formGroup: FormGroup): boolean {
+    return this.isFormControlToBe(relGroup, formGroup, false);
+  }
+
+  isFormControlToBe(relGroup: RelationGroup,
+                            formGroup: FormGroup, isDisable:boolean): boolean {
     return relGroup.when.reduce(
         (toBeDisabled: boolean, rel: FieldRelation, index: number) => {
           let control = formGroup.get(rel.name);
+          let hasControlValue = false;
+          let controlValue = null;
 
-          if (control && relGroup.action === ACTION_DISABLE) {
+          if (control) {
+            hasControlValue = true;
+            controlValue = control.value
+          } else {
+            let formGroupValue = _.cloneDeep(formGroup.value);
+            let parsedValues = {};
+            new EntityUtils().parseFormControlValues(formGroupValue, parsedValues);
+
+            const key_list = rel.name.split('_');
+            
+            key_list.forEach(key => {
+              if (parsedValues && parsedValues[key] != undefined) {
+                parsedValues = parsedValues[key];
+              } else {
+                parsedValues = null;
+              }
+            });
+
+            if (parsedValues) {
+              hasControlValue = true;
+              controlValue = parsedValues;
+            }
+          }
+
+          let disable_action = ACTION_DISABLE;
+          let enable_action = ACTION_ENABLE;
+          if (!isDisable) {
+            disable_action = ACTION_HIDE;
+            enable_action = ACTION_SHOW;
+          }
+          
+          if (hasControlValue && relGroup.action === disable_action) {
             if (index > 0 && relGroup.connective === CONNECTION_AND &&
                 !toBeDisabled) {
               return false;
@@ -57,10 +101,10 @@ export class FieldRelationService {
                 toBeDisabled) {
               return true;
             }
-            return rel.value === control.value || rel.status === control.status;
+            return this.checkValueConditionIsTrue(rel.value, controlValue, rel.operator) || this.checkStatusConditionIsTrue(rel, control);
           }
 
-          if (control && relGroup.action === ACTION_ENABLE) {
+          if (hasControlValue && relGroup.action === enable_action) {
             if (index > 0 && relGroup.connective === CONNECTION_AND &&
                 toBeDisabled) {
               return true;
@@ -69,47 +113,87 @@ export class FieldRelationService {
                 !toBeDisabled) {
               return false;
             }
-            return !(rel.value === control.value ||
-                     rel.status === control.status);
+            return !(this.checkValueConditionIsTrue(rel.value, controlValue, rel.operator) || this.checkStatusConditionIsTrue(rel, control));
           }
+
           return false;
         },
         false);
   }
 
-  isFormControlToBeHide(relGroup: RelationGroup,
-                            formGroup: FormGroup): boolean {
-    return relGroup.when.reduce(
-        (toBeHide: boolean, rel: FieldRelation, index: number) => {
-          let control = formGroup.get(rel.name);
+  checkIsIn(value, list) {
+    let result = false;
+    if (Array.isArray(list)) {
+      result = list.includes(value);
+    } else if (this.isObject(list)) {
+      if (this.isObject(value)) {
+        result = this.deepEqual(list, value);
+      } else {
+        result = Object.keys(list).includes(value);
+      }
+    } else {
+      result = `${list}`.includes(`${value}`);
+    }
 
-          if (control && relGroup.action === ACTION_HIDE) {
-            if (index > 0 && relGroup.connective === CONNECTION_AND &&
-                !toBeHide) {
-              return false;
-            }
-            if (index > 0 && relGroup.connective === CONNECTION_OR &&
-                toBeHide) {
-              return true;
-            }
-            return rel.value === control.value || rel.status === control.status;
-          }
+    return result;
+  }
 
-          if (control && relGroup.action === ACTION_SHOW) {
-            if (index > 0 && relGroup.connective === CONNECTION_AND &&
-                toBeHide) {
-              return true;
-            }
-            if (index > 0 && relGroup.connective === CONNECTION_OR &&
-                !toBeHide) {
-              return false;
-            }
-            return !(rel.value === control.value ||
-                     rel.status === control.status);
-          }
-          return false;
-        },
-        false);
+  checkValueConditionIsTrue(conditionValue:any, controlValue:any, operator:string) {
+    let result:boolean = false;
+
+    switch (operator) {
+      case '!=':
+        result = (controlValue != conditionValue);
+        break;
+      case '>':
+        result = (controlValue > conditionValue);
+        break;
+      case '>=':
+        result = (controlValue >= conditionValue);
+        break;
+      case '<':
+        result = (controlValue < conditionValue);
+        break;
+      case '<=':
+        result = (controlValue <= conditionValue);
+        break;
+      case '~':
+        result = (controlValue.match(conditionValue));
+        break;
+      case 'in':
+        result = this.checkIsIn(controlValue, conditionValue);
+        break;
+      case 'nin':
+        result = !this.checkIsIn(controlValue, conditionValue);
+        break;
+      case 'rin':
+        result = controlValue !== null && this.checkIsIn(conditionValue, controlValue);
+        break;
+      case 'rnin':
+        result = controlValue !== null && !this.checkIsIn(conditionValue, controlValue);
+        break;
+      case '^':
+        result = controlValue !== null && (controlValue.startsWith(conditionValue));
+        break;
+      case '!^':
+        result = controlValue !== null && !(controlValue.startsWith(conditionValue));
+        break;
+      case '$':
+        result = controlValue !== null && (controlValue.endsWith(conditionValue));
+        break;
+      case '!$':
+        result = controlValue !== null && !(controlValue.endsWith(conditionValue));
+        break;
+      case '=':
+      default:
+        result = (controlValue == conditionValue);
+    }
+
+    return result;
+  }
+
+  checkStatusConditionIsTrue(condition:any, control:any) {
+    return control && condition.status === control.status;
   }
 
   setRelation(config: FieldConfig, formGroup, fieldConfig) {
@@ -161,4 +245,32 @@ export class FieldRelationService {
           activations, formGroup);
     this.setDisabled(fieldConfig, formGroup, config.name, tobeDisabled, tobeHide);
   }
+
+  deepEqual(object1, object2) {
+    const keys1 = Object.keys(object1);
+    const keys2 = Object.keys(object2);
+  
+    if (keys1.length !== keys2.length) {
+      return false;
+    }
+  
+    for (const key of keys1) {
+      const val1 = object1[key];
+      const val2 = object2[key];
+      const areObjects = this.isObject(val1) && this.isObject(val2);
+      if (
+        areObjects && !this.deepEqual(val1, val2) ||
+        !areObjects && val1 !== val2
+      ) {
+        return false;
+      }
+    }
+  
+    return true;
+  }
+  
+  isObject(object) {
+    return object != null && typeof object === 'object';
+  }
+  
 }
