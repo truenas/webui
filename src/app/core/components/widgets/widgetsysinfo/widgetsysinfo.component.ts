@@ -67,7 +67,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
     private locale: LocaleService){
     super(translate);
     this.configurable = false;
-    this.sysGenService.updateRunning.subscribe((res) => { 
+    this.sysGenService.updateRunning.subscribe((res) => {
       res === 'true' ? this.isUpdateRunning = true : this.isUpdateRunning = false;
     });
 
@@ -85,7 +85,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
     this.core.register({observerClass:this,eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
       this.retroLogo = evt.data.retroLogo ? 1 : 0;
     });
-    
+
     this.ws.call('update.get_auto_download').subscribe((res) => {
       if(res == true){
         this.core.register({observerClass:this,eventName:"UpdateChecked"}).subscribe((evt:CoreEvent) => {
@@ -103,7 +103,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
             const evt = {name: 'SysInfoPassive', data:res};
             this.processSysInfo(evt);
           });
-        } 
+        }
         this.ha_status = evt.data.status;
       });
     } else {
@@ -112,11 +112,11 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
         const evt = {name: 'SysInfo', data:res};
         this.processSysInfo(evt);
       });
-      
+
       this.core.emit({name:"UpdateCheck"});
       this.core.emit({name:"UserPreferencesRequest"});
       this.core.emit({name:"HAStatusRequest"});
-      
+
     }
     if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
       this.ws.call('failover.licensed').subscribe((res) => {
@@ -143,7 +143,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
         console.error(err);
       });
   }
- 
+
   ngOnDestroy(){
     this.core.unregister({observerClass:this});
   }
@@ -166,11 +166,11 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   }
 
   processSysInfo(evt:CoreEvent){
-      
+
       this.loader = false;
       this.data = evt.data;
 
-      let build = new Date(this.data.buildtime[0]['$date']);
+      let build = new Date(this.data.buildtime['$date']);
       let year = build.getUTCFullYear();
       let months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec",]
       let month = months[build.getUTCMonth()];
@@ -187,7 +187,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
       } else {
         this.manufacturer = "other";
       }
-      
+
       // PRODUCT IMAGE
       this.setProductImage(evt.data);
 
@@ -212,16 +212,16 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
     }
 
     if (days > 0) {
-      days === 1 ? this.uptimeString += days + T(' day, ') : 
+      days === 1 ? this.uptimeString += days + T(' day, ') :
       this.uptimeString += days + T(' days, ') + `${hrs}:${pmin}`;
     } else if (hrs > 0) {
         this.uptimeString += `${hrs}:${pmin}`;
     } else {
-      min === 1 ? this.uptimeString += min + T(' minute') : 
+      min === 1 ? this.uptimeString += min + T(' minute') :
       this.uptimeString += min + T(' minutes')
     }
-    
-    this.dateTime = (this.locale.getTimeOnly(this.data.datetime.$date, false, this.data.timezone)); 
+
+    this.dateTime = (this.locale.getTimeOnly(this.data.datetime.$date, false, this.data.timezone));
   }
 
   formatMemory(physmem:number, units:string){
@@ -298,7 +298,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
       this.certified = true;
       return;
     }
-    
+
     switch(sys_product){
       case "FREENAS-MINI-2.0":
       case "FREENAS-MINI-3.0-E":
