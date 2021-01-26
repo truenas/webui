@@ -14,6 +14,10 @@ export class ApplicationsService {
     return this.ws.call('kubernetes.config');
   }
 
+  getKubernetesServiceStarted() {
+    return this.ws.call('service.started', ['kubernetes']);
+  }
+
   getAllCatalogItems() {
     return this.ws.call('catalog.query', [[], {"extra": {"item_details": true}}]);
   }

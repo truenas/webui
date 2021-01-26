@@ -85,7 +85,7 @@ export class FormInputComponent implements Field {
   }
 
   shouldShowResetInput() {
-    return this.hasValue() && !this.config.togglePw && this.config.inputType !== 'password';
+    return this.hasValue() && !this.config.readonly && !this.config.togglePw && this.config.inputType !== 'password';
   }
 
   resetInput() {
