@@ -17,9 +17,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1006.feature', 'Create and Active Directory dataset on the tank pool')
-def test_create_and_active_directory_dataset_on_the_tank_pool(driver):
-    """Create and Active Directory dataset on the tank pool."""
+@scenario('features/NAS-T1006.feature', 'Create an Active Directory dataset on the tank pool')
+def test_create_an_active_directory_dataset_on_the_tank_pool(driver):
+    """Create an Active Directory dataset on the tank pool."""
 
 
 @given('the browser is open, the FreeNAS URL and logged in')

@@ -17,9 +17,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1004.feature', 'Create and Active Directory dataset on a system dataset')
-def test_create_and_active_directory_dataset_on_a_system_dataset(driver):
-    """Create and Active Directory dataset on a system dataset."""
+@scenario('features/NAS-T1004.feature', 'Create an Active Directory dataset on a system dataset')
+def test_create_an_active_directory_dataset_on_a_system_dataset(driver):
+    """Create an Active Directory dataset on a system dataset."""
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
