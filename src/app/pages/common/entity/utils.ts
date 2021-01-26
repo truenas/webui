@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 
+export const FORM_KEY_SEPERATOR = "__";
 export class EntityUtils {
 
   handleError(entity: any, res: any) {
@@ -191,7 +192,7 @@ export class EntityUtils {
         return;
       }
       
-      const key_list = key.split('_');
+      const key_list = key.split(FORM_KEY_SEPERATOR);
       if (key_list.length > 1) {
         let parent = result;
         for(let i=0; i<key_list.length; i++) {

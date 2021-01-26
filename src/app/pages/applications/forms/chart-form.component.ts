@@ -10,7 +10,7 @@ import { ModalService } from '../../../services/modal.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import  helptext  from '../../../helptext/apps/apps';
-import { EntityUtils } from '../../common/entity/utils';
+import { EntityUtils, FORM_KEY_SEPERATOR } from '../../common/entity/utils';
 
 @Component({
   selector: 'chart-form',
@@ -48,7 +48,7 @@ export class ChartFormComponent {
     let results = [];
     let name = schemaConfig.variable;
     if (!parentIsList && parentName) {
-      name = `${parentName}_${name}`;
+      name = `${parentName}${FORM_KEY_SEPERATOR}${name}`;
     }
 
     let fieldConfig = {
@@ -144,7 +144,7 @@ export class ChartFormComponent {
             const relation = schemaConfig.schema.show_if[0];
             let relationFieldName = relation[0];
             if (parentName) {
-              relationFieldName = `${parentName}_${relationFieldName}`;
+              relationFieldName = `${parentName}${FORM_KEY_SEPERATOR}${relationFieldName}`;
             }
 
             subResult['relation'] = [{
@@ -244,7 +244,7 @@ export class ChartFormComponent {
       const value = configData[key];
       let fullKey = key;
       if (parentKey) {
-        fullKey = `${parentKey}_${key}`;
+        fullKey = `${parentKey}${FORM_KEY_SEPERATOR}${key}`;
       }
       if (!Array.isArray(value) && typeof value === 'object') {
         this.parseConfigData(value, fullKey, result);
