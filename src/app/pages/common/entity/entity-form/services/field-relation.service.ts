@@ -38,6 +38,15 @@ export class FieldRelationService {
       if (control &&
           !controls.some(controlElement => controlElement === control)) {
         controls.push(control);
+      } else {
+        const subControlKeys = Object.keys(controlGroup.controls).filter(key => key.startsWith(`${rel.name}_`));
+        subControlKeys.forEach(key => {
+          let control = <FormControl>controlGroup.get(key);
+          if (control &&
+              !controls.some(controlElement => controlElement === control)) {
+            controls.push(control);
+          }
+        });
       }
     }));
     return controls;
@@ -121,72 +130,57 @@ export class FieldRelationService {
         false);
   }
 
-  checkIsIn(value, list) {
-    let result = false;
-    if (Array.isArray(list)) {
-      result = list.includes(value);
-    } else if (this.isObject(list)) {
-      if (this.isObject(value)) {
-        result = this.deepEqual(list, value);
-      } else {
-        result = Object.keys(list).includes(value);
-      }
-    } else {
-      result = `${list}`.includes(`${value}`);
-    }
-
-    return result;
-  }
-
   checkValueConditionIsTrue(conditionValue:any, controlValue:any, operator:string) {
     let result:boolean = false;
 
     switch (operator) {
+      case '=':
+        result = this.isRelationEqual(controlValue, conditionValue);
+        break;
       case '!=':
-        result = (controlValue != conditionValue);
+        result = !this.isRelationEqual(controlValue, conditionValue);
         break;
       case '>':
-        result = (controlValue > conditionValue);
+        result = this.isRelationGreaterThan(controlValue, conditionValue);
         break;
       case '>=':
-        result = (controlValue >= conditionValue);
+        result = this.isRelationGreaterThanOrEqual(controlValue, conditionValue);
         break;
       case '<':
-        result = (controlValue < conditionValue);
+        result = this.isRelationLessThan(controlValue, conditionValue);
         break;
       case '<=':
-        result = (controlValue <= conditionValue);
+        result = this.isRelationGreaterThanOrEqual(controlValue, conditionValue);
         break;
       case '~':
-        result = (controlValue.match(conditionValue));
+        result = this.isRelationRegMatch(controlValue, conditionValue);
         break;
       case 'in':
-        result = this.checkIsIn(controlValue, conditionValue);
+        result = this.isRelationIn(controlValue, conditionValue);
         break;
       case 'nin':
-        result = !this.checkIsIn(controlValue, conditionValue);
+        result = !this.isRelationIn(controlValue, conditionValue);
         break;
       case 'rin':
-        result = controlValue !== null && this.checkIsIn(conditionValue, controlValue);
+        result = this.isRelationIn(conditionValue, controlValue);
         break;
       case 'rnin':
-        result = controlValue !== null && !this.checkIsIn(conditionValue, controlValue);
+        result = !this.isRelationIn(conditionValue, controlValue);
         break;
       case '^':
-        result = controlValue !== null && (controlValue.startsWith(conditionValue));
+        result = this.isRelationStartsWith(controlValue, conditionValue);
         break;
       case '!^':
-        result = controlValue !== null && !(controlValue.startsWith(conditionValue));
+        result = !this.isRelationStartsWith(controlValue, conditionValue);
         break;
       case '$':
-        result = controlValue !== null && (controlValue.endsWith(conditionValue));
+        result = this.isRelationEndsWith(controlValue, conditionValue);
         break;
       case '!$':
-        result = controlValue !== null && !(controlValue.endsWith(conditionValue));
+        result = !this.isRelationEndsWith(controlValue, conditionValue);
         break;
-      case '=':
       default:
-        result = (controlValue == conditionValue);
+        result = this.isRelationEqual(controlValue, conditionValue);
     }
 
     return result;
@@ -239,38 +233,311 @@ export class FieldRelationService {
   }
 
   relationUpdate(config: any, activations: any, formGroup: any, fieldConfig: FieldConfig[]) {
-    const tobeDisabled = this.isFormControlToBeDisabled(
-        activations, formGroup);
-    const tobeHide = this.isFormControlToBeHide(
-          activations, formGroup);
+    const tobeDisabled = this.isFormControlToBeDisabled(activations, formGroup);
+    const tobeHide = this.isFormControlToBeHide(activations, formGroup);
     this.setDisabled(fieldConfig, formGroup, config.name, tobeDisabled, tobeHide);
   }
 
-  deepEqual(object1, object2) {
-    const keys1 = Object.keys(object1);
-    const keys2 = Object.keys(object2);
-  
-    if (keys1.length !== keys2.length) {
+  isDeepEqual(data1, data2) {
+    if (this.getDataType(data1) != this.getDataType(data2)) {
       return false;
     }
-  
-    for (const key of keys1) {
-      const val1 = object1[key];
-      const val2 = object2[key];
-      const areObjects = this.isObject(val1) && this.isObject(val2);
-      if (
-        areObjects && !this.deepEqual(val1, val2) ||
-        !areObjects && val1 !== val2
-      ) {
-        return false;
-      }
+
+    switch (this.getDataType(data1)) {
+      case 'array':
+        if (data1.length !== data2.length) {
+          return false;
+        }
+      
+        for (let i=0; i<data2.length; i++) {
+          const val1 = data1[i];
+          const val2 = data2[i];
+          if (!this.isDeepEqual(val1, val2)) {
+            return false;
+          }
+        }
+        break;
+      case 'object':
+        const keys1 = Object.keys(data1);
+        const keys2 = Object.keys(data2);
+      
+        if (keys1.length !== keys2.length) {
+          return false;
+        }
+      
+        for (const key of keys1) {
+          const val1 = data1[key];
+          const val2 = data2[key];
+          if (!this.isDeepEqual(val1, val2)) {
+            return false;
+          }
+        }
+        break;
+      case 'basic':
+      default:
+        if (data1 != data2) {
+          return false;
+        }
     }
   
     return true;
   }
   
-  isObject(object) {
-    return object != null && typeof object === 'object';
+  getDataType(data) {
+    if (Array.isArray(data)) {
+      return 'array';
+    } else if (typeof data === 'object') {
+      return 'object';
+    } else {
+      return 'basic';
+    };
+  }
+
+  isRelationEqual(x, y) {
+    return this.isDeepEqual(x, y);
+  }
+
+  isRelationGreaterThan(x, y) {
+    let result = false;
+    switch (this.getDataType(x)) {
+      case 'array':
+        switch (this.getDataType(y)) {
+          case 'array':
+            break;
+          case 'object':
+            break;
+          case 'basic':
+          default:
+            break;
+        }
+        break;
+      case 'object':
+        switch (this.getDataType(y)) {
+          case 'array':
+            break;
+          case 'object':
+            break;
+          case 'basic':
+          default:
+            break;
+        }
+        break;
+      case 'basic':
+      default:
+        switch (this.getDataType(y)) {
+          case 'array':
+            break;
+          case 'object':
+            break;
+          case 'basic':
+          default:
+            result = (x > y);
+            break;
+        }
+        break;
+    }
+    return result;
+  }
+
+  isRelationGreaterThanOrEqual(x, y) {
+    let result = false;
+    switch (this.getDataType(x)) {
+      case 'array':
+        switch (this.getDataType(y)) {
+          case 'array':
+            break;
+          case 'object':
+            break;
+          case 'basic':
+          default:
+            break;
+        }
+        break;
+      case 'object':
+        switch (this.getDataType(y)) {
+          case 'array':
+            break;
+          case 'object':
+            break;
+          case 'basic':
+          default:
+            break;
+        }
+        break;
+      case 'basic':
+      default:
+        switch (this.getDataType(y)) {
+          case 'array':
+            break;
+          case 'object':
+            break;
+          case 'basic':
+          default:
+            result = (x >= y);
+            break;
+        }
+        break;
+    }
+    return result;
+  }
+
+  isRelationLessThan(x, y) {
+    let result = false;
+    switch (this.getDataType(x)) {
+      case 'array':
+        switch (this.getDataType(y)) {
+          case 'array':
+            break;
+          case 'object':
+            break;
+          case 'basic':
+          default:
+            break;
+        }
+        break;
+      case 'object':
+        switch (this.getDataType(y)) {
+          case 'array':
+            break;
+          case 'object':
+            break;
+          case 'basic':
+          default:
+            break;
+        }
+        break;
+      case 'basic':
+      default:
+        switch (this.getDataType(y)) {
+          case 'array':
+            break;
+          case 'object':
+            break;
+          case 'basic':
+          default:
+            result = (x < y);
+            break;
+        }
+        break;
+    }
+    return result;
+  }
+
+  isRelationLessThanOrEqual(x, y) {
+    let result = false;
+    switch (this.getDataType(x)) {
+      case 'array':
+        switch (this.getDataType(y)) {
+          case 'array':
+            break;
+          case 'object':
+            break;
+          case 'basic':
+          default:
+            break;
+        }
+        break;
+      case 'object':
+        switch (this.getDataType(y)) {
+          case 'array':
+            break;
+          case 'object':
+            break;
+          case 'basic':
+          default:
+            break;
+        }
+        break;
+      case 'basic':
+      default:
+        switch (this.getDataType(y)) {
+          case 'array':
+            break;
+          case 'object':
+            break;
+          case 'basic':
+          default:
+            result = (x <= y);
+            break;
+        }
+        break;
+    }
+    return result;
+  }
+
+  isRelationRegMatch(x, y) {
+    let result = false;
+    if (typeof x == 'string' && typeof y == 'string') {
+      result = !!x.match(y);
+    }
+
+    return result;
+  }
+
+  isRelationStartsWith(x, y) {
+    let result = false;
+    if (typeof x == 'string' && typeof y == 'string') {
+      result = x.startsWith(y);
+    }
+
+    return result;
+  }
+
+  isRelationEndsWith(x, y) {
+    let result = false;
+    if (typeof x == 'string' && typeof y == 'string') {
+      result = x.endsWith(y);
+    }
+
+    return result;
+  }
+  
+  isRelationIn(x, y) {
+    let result = false;
+
+    if (y !== null) {
+      switch (this.getDataType(y)) {
+        case 'array':
+          switch (this.getDataType(x)) {
+            case 'array':
+              break;
+            case 'object':
+              break;
+            case 'basic':
+            default:
+              result = y.includes(x);
+              break;
+          }
+          break;
+        case 'object':
+          switch (this.getDataType(x)) {
+            case 'array':
+              break;
+            case 'object':
+              break;
+            case 'basic':
+            default:
+              result = Object.keys(y).includes(x);
+              break;
+          }
+          break;
+        case 'basic':
+        default:
+          switch (this.getDataType(x)) {
+            case 'array':
+              break;
+            case 'object':
+              break;
+            case 'basic':
+            default:
+              result = `${y}`.includes(`${x}`);
+              break;
+          }
+          break;
+      }
+    }
+
+    return result;
   }
   
 }
