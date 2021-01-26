@@ -59,9 +59,7 @@ export class NTPServerFormComponent {
           placeholder : helptext.add.minpoll.placeholder,
           tooltip: helptext.add.minpoll.tooltip,
           value : 6,
-          validation: helptext.add.minpoll.validation,
-          class: 'inline',
-          width: '50%'
+          validation: helptext.add.minpoll.validation
         },
         {
           type : 'input',
@@ -73,9 +71,7 @@ export class NTPServerFormComponent {
             Validators.max(17),
             greaterThan("minpoll", [helptext.add.minpoll.placeholder]),
             Validators.required
-          ],
-          class: 'inline',
-          width: '50%'
+          ]
         },
         {
           type : 'checkbox',

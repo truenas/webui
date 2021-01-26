@@ -8,6 +8,9 @@ import { Field } from '../../models/field.interface';
 import { TooltipComponent } from '../tooltip/tooltip.component';
 import { MatOptionSelectionChange } from '@angular/material/core';
 import * as _ from 'lodash';
+import { DialogService } from 'app/services';
+import { DialogFormConfiguration } from '../../../entity-dialog/dialog-form-configuration.interface';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'form-select',
@@ -27,6 +30,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   public initialValue:any;
   public selected:any;
   public allSelected: boolean;
+  private disableAlert: boolean = false;
   public selectedValues: any[] = []; 
   public selectStates: boolean[] = []; // Collection of checkmark states
   public selectAllStateCache: boolean[] = []; // Cache the state when select all was toggled
@@ -41,7 +45,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     this._formValue = result
   }
 
-  constructor(public translate: TranslateService, public cd: ChangeDetectorRef) {
+  constructor(public translate: TranslateService, private dialog: DialogService, public cd: ChangeDetectorRef) {
   }
 
   ngAfterViewInit(){
@@ -97,7 +101,35 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     }
   }
 
+  showAlert(option) {
+    if(!this.shouldAlertOnOption(option) || this.disableAlert) return;
+
+    const conf: DialogFormConfiguration = {
+      title:  T('Alert'),
+      message: this.config.alert.message,
+      hideCancel: true,
+      fieldConfig: [
+        {
+          type: 'checkbox',
+          name: 'disable_alert',
+          placeholder: T(`Don't show this message again`)
+        }
+      ],
+      saveButtonText: T('OK'),
+      customSubmit: (entityDialog) => {
+        entityDialog.dialogRef.close(true);
+        if(entityDialog.formValue.disable_alert) {
+          this.disableAlert = true;
+        }
+      }
+    }
+    this.dialog.dialogForm(conf);
+  }
+
   onSelect(option, index){
+    if(this.config.alert) {
+      this.showAlert(option);
+    }
     this.selected = option.value;
     this.group.value[this.config.name] = this.selected;
     this.formValue = this.selected;
@@ -141,7 +173,10 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
       this.onSelect(option,index);
       return;
     }
-
+    
+    if(this.selectedValues.findIndex(v => v === option.value) >= 0 && this.config.alert) {
+      this.showAlert(option);
+    }
     this.group.value[this.config.name] = this.selectedValues;
     
   }
@@ -158,5 +193,9 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     this.selectedValues = newValues;
     this.customTriggerValue = triggerValue;
     this.formValue = '';
+  }
+
+  shouldAlertOnOption(option) {
+   return this.config.alert ? this.config.alert.forValues.findIndex(v => v == option.value) >= 0 : false;
   }
 }

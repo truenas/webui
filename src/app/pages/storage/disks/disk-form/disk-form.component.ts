@@ -23,97 +23,39 @@ export class DiskFormComponent {
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
     {
-        name: helptext.fieldset_disk,
-        label: true,
-        class: 'general',
-        width: '100%',
-        config: [
-          {
-            type: 'input',
-            name: 'name',
-            placeholder: helptext.disk_form_name_placeholder,
-            tooltip : helptext.disk_form_name_tooltip,
-            readonly: true
-          },
-          {
-            type: 'input',
-            name: 'serial',
-            placeholder: helptext.disk_form_serial_placeholder,
-            tooltip : helptext.disk_form_serial_tooltip,
-            readonly: true
-          },
-          {
-            type: 'input',
-            name: 'description',
-            placeholder: helptext.disk_form_description_placeholder,
-            tooltip : helptext.disk_form_description_tooltip,
-          },
-        ]
-    },
-    {
-      name: helptext.fieldset_option,
+      name: helptext.fieldset_disk,
       label: true,
       class: 'general',
       width: '100%',
       config: [
         {
-          type: 'select',
-          name: 'hddstandby',
-          placeholder: helptext.disk_form_hddstandby_placeholder,
-          tooltip : helptext.disk_form_hddstandby_tooltip,
-          options: helptext.disk_form_hddstandby_options,
-          class: 'inline',
-          width: '50%',
-        },
-        {
-          type : 'checkbox',
-          name : 'hddstandby_force',
-          placeholder : helptext.force_hdd_standby.placeholder,
-          tooltip : helptext.force_hdd_standby.tooltip,
-          class: 'inline',
-          width: '50%',
-          relation: [
-            {
-              action : 'DISABLE',
-              when : [{
-                name: 'hddstandby',
-                value: 'ALWAYS ON'
-              }]
-            }
-          ],
-        },
-        {
-          type: 'select',
-          name: 'advpowermgmt',
-          placeholder: helptext.disk_form_advpowermgmt_placeholder,
-          tooltip : helptext.disk_form_advpowermgmt_tooltip,
-          options: helptext.disk_form_advpowermgmt_options,
-          class: 'inline',
-          width: '50%',
-        },
-        {
-          type: 'select',
-          name: 'acousticlevel',
-          placeholder: helptext.disk_form_acousticlevel_placeholder,
-          tooltip : helptext.disk_form_acousticlevel_tooltip,
-          options: helptext.disk_form_acousticlevel_options,
-          class: 'inline',
-          width: '50%',
-        },
-        {
-          type : 'checkbox',
-          name : 'togglesmart',
-          placeholder : helptext.disk_form_togglesmart_placeholder,
-          tooltip : helptext.disk_form_togglesmart_tooltip
+          type: 'input',
+          name: 'name',
+          placeholder: helptext.disk_form_name_placeholder,
+          tooltip: helptext.disk_form_name_tooltip,
+          readonly: true,
         },
         {
           type: 'input',
-          name: 'smartoptions',
-          placeholder: helptext.disk_form_smartoptions_placeholder,
-          tooltip : helptext.disk_form_smartoptions_tooltip,
-          class: 'inline',
-          width: '50%',
+          name: 'serial',
+          placeholder: helptext.disk_form_serial_placeholder,
+          tooltip: helptext.disk_form_serial_tooltip,
+          readonly: true,
         },
+        {
+          type: 'input',
+          name: 'description',
+          placeholder: helptext.disk_form_description_placeholder,
+          tooltip: helptext.disk_form_description_tooltip,
+        },
+      ],
+    },
+    {
+      name: helptext.fieldset_temperature,
+      label: true,
+      class: 'general',
+      width: '100%',
+      config: [
         {
           type: 'input',
           inputType: 'number',
@@ -122,8 +64,6 @@ export class DiskFormComponent {
           tooltip: helptext.disk_form_critical_tooltip,
           min: 0,
           validation: [Validators.min(0)],
-          class: 'inline',
-          width: '50%',
         },
         {
           type: 'input',
@@ -133,8 +73,6 @@ export class DiskFormComponent {
           tooltip: helptext.disk_form_difference_tooltip,
           min: 0,
           validation: [Validators.min(0)],
-          class: 'inline',
-          width: '50%',
         },
         {
           type: 'input',
@@ -144,8 +82,73 @@ export class DiskFormComponent {
           tooltip: helptext.disk_form_informational_tooltip,
           min: 0,
           validation: [Validators.min(0)],
-          class: 'inline',
-          width: '50%',
+        },
+      ],
+    },
+    { name: 'divider', divider: true },
+    {
+      name: helptext.fieldset_powermgmt,
+      label: true,
+      class: 'general',
+      width: '100%',
+      config: [
+        {
+          type: 'select',
+          name: 'hddstandby',
+          placeholder: helptext.disk_form_hddstandby_placeholder,
+          tooltip: helptext.disk_form_hddstandby_tooltip,
+          options: helptext.disk_form_hddstandby_options,
+        },
+        {
+          type: 'checkbox',
+          name: 'hddstandby_force',
+          placeholder: helptext.force_hdd_standby.placeholder,
+          tooltip: helptext.force_hdd_standby.tooltip,
+          relation: [
+            {
+              action: 'DISABLE',
+              when: [
+                {
+                  name: 'hddstandby',
+                  value: 'ALWAYS ON',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: 'select',
+          name: 'advpowermgmt',
+          placeholder: helptext.disk_form_advpowermgmt_placeholder,
+          tooltip: helptext.disk_form_advpowermgmt_tooltip,
+          options: helptext.disk_form_advpowermgmt_options,
+        },
+        {
+          type: 'select',
+          name: 'acousticlevel',
+          placeholder: helptext.disk_form_acousticlevel_placeholder,
+          tooltip: helptext.disk_form_acousticlevel_tooltip,
+          options: helptext.disk_form_acousticlevel_options,
+        },
+      ],
+    },
+    {
+      name: helptext.fieldset_smartsed,
+      label: true,
+      class: 'general',
+      width: '100%',
+      config: [
+        {
+          type: 'checkbox',
+          name: 'togglesmart',
+          placeholder: helptext.disk_form_togglesmart_placeholder,
+          tooltip: helptext.disk_form_togglesmart_tooltip,
+        },
+        {
+          type: 'input',
+          name: 'smartoptions',
+          placeholder: helptext.disk_form_smartoptions_placeholder,
+          tooltip: helptext.disk_form_smartoptions_tooltip,
         },
         {
           type: 'input',
@@ -157,25 +160,26 @@ export class DiskFormComponent {
           togglePw: true,
           relation: [
             {
-              action : 'DISABLE',
-              when : [{
-                name: 'clear_pw',
-                value: true
-              }]
-            }
+              action: 'DISABLE',
+              when: [
+                {
+                  name: 'clear_pw',
+                  value: true,
+                },
+              ],
+            },
           ],
-          class: 'inline',
-          width: '50%',
         },
         {
           type: 'checkbox',
           name: 'clear_pw',
           placeholder: helptext.clear_pw.placeholder,
-          tooltip: helptext.clear_pw.tooltip
-        }
-      ]
-  }
-  ];
+          tooltip: helptext.clear_pw.tooltip,
+        },
+      ],
+    },
+    { name: 'divider', divider: true },
+  ]
 
   protected disk_hddstandby: any;
   protected disk_advpowermgmt: any;

@@ -10,7 +10,9 @@ ix-auto ix-auto-type="combobox" ix-auto-identifier="{{config.placeholder}}">
     </div>
 
     <mat-form-field *ngIf="config.inputType != 'file' else elseBlock">
-      <input matInput [type]="config.inputType ? config.inputType : 'text'"
+      <div class="input-container">
+        <span *ngIf="config.searchable" class="searchable"><mat-icon>search</mat-icon></span>
+      <input [ngStyle]="{'padding-left': config.searchable ? '2rem' : '','padding-right': hasValue() ? '2rem': ''}" matInput [type]="config.inputType ? config.inputType : 'text'"
         list="options"
 		  	[placeholder]="config.placeholder | translate"
 		  	[attr.value]="config.value"
@@ -20,7 +22,11 @@ ix-auto ix-auto-type="combobox" ix-auto-identifier="{{config.placeholder}}">
         (keyup)="updateSearchOptions($event.target.value)"
         [matAutocomplete]="autoComplete"
         [(ngModel)]="searchText"
-        >
+      >
+        <span *ngIf="hasValue() && !config.readonly" class="reset-input">
+					<mat-icon (click)="resetInput()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+				</span>
+        </div>
        <mat-autocomplete #autoComplete="matAutocomplete" (opened)="onOpenDropdown()">
         <mat-option *ngFor="let option of config.searchOptions" [value]="option.value"
           ix-auto ix-auto-type="option" ix-auto-identifier="{{option.label}}" [class.text-wrap]="config.enableTextWrapForOptions" class="{{option.sticky ? 'sticky-' + option.sticky : ''}}">

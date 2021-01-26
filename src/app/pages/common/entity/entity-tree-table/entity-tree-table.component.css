@@ -40,4 +40,22 @@ td.action-class {
   max-width: 24px;
   padding: 0 16px;
   text-align: right;
+  position: sticky;
+  right: 0;
+  background: var(--bg2);
+}
+
+th.sticky-border-right, td.sticky-border-right {
+  border-right: 1px solid var(--lines);
+  padding-right: 0.5rem;
+}
+
+th.sticky-border-left, td.sticky-border-left  {
+  border-left: 1px solid var(--lines);
+}
+
+
+th.scroll-padding, td.scroll-padding {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 }

@@ -120,4 +120,12 @@ export class FormComboboxComponent implements Field {
       }
     }
   }
+
+  hasValue() {
+    return this.group.controls[this.config.name].value && this.group.controls[this.config.name].value.toString().length;
+  }
+
+  resetInput() {
+    this.group.controls[this.config.name].setValue('');
+  }
 }
