@@ -104,7 +104,6 @@ export class SMBFormComponent implements OnDestroy {
           type: 'checkbox',
           name: 'acl',
           placeholder: helptext_sharing_smb.placeholder_acl,
-          tooltip: helptext_sharing_smb.tooltip_acl,
           isHidden: true,
         },
         {
