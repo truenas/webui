@@ -120,7 +120,7 @@ def run_testing():
         msg = 'Please use --ip and --root-password or add confing.cfg ' \
             'in this directory'
         print(msg)
-        print('confing.cfg example: ')
+        print('config.cfg example: ')
         cfg_msg = "[NAS_CONFIG]\n"
         cfg_msg += "ip = 0.0.0.0\n"
         cfg_msg += "password = testing\n"
