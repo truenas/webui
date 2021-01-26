@@ -45,17 +45,17 @@ def the_add_dataset_name_and_options_page_should_open(driver):
     """the Add Dataset Name and Options page should open."""
 
 
-@then('input dataset name {dataset_name} and click save')
+@then(parses.parse('input dataset name {dataset_name} and click save'))
 def input_dataset_name_my_ldap_dataset_and_click_save(driver, dataset_name):
     """input dataset name my_ldap_dataset and click save."""
 
 
-@then('{dataset_name}should be created')
+@then(parses.parse('{dataset_name}should be created'))
 def my_ldap_dataset_should_be_created(driver, dataset_name):
     """my_ldap_dataset should be created."""
 
 
-@then('click on the {dataset_name} three dots button, select Edit Permissions')
+@then(parses.parse('click on the {dataset_name} three dots button, select Edit Permissions'))
 def click_on_the_my_ldap_dataset_three_dots_button_select_edit_permissions(driver, dataset_name):
     """click on the my_ldap_dataset three dots button, select Edit Permissions."""
 
@@ -70,7 +70,7 @@ def select_ldap_user_for_user_click_on_the_apply_user_checkbox(driver, ldap_user
     """select ldap_user for User, click on the Apply User checkbox."""
 
 
-@then('select {ldap_user} for Group name, click on the Apply Group checkbox')
+@then(parses.parse('select {ldap_user} for Group name, click on the Apply Group checkbox'))
 def select_ldap_user_for_group_name_click_on_the_apply_group_checkbox(driver, ldap_user):
     """select ldap_user for Group name, click on the Apply Group checkbox."""
 
@@ -80,6 +80,6 @@ def click_the_save_button_should_be_returned_to_the_pool_page(driver):
     """click the Save button, should be returned to the pool page."""
 
 
-@then('verify that user and group name is {ldap_user}')
+@then(parses.parse('verify that user and group name is {ldap_user}'))
 def verify_that_user_and_group_name_is_ldap_user(driver, ldap_user):
     """verify that user and group name is ldap_user."""
