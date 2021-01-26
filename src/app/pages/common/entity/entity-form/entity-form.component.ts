@@ -645,7 +645,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       hide = false;
     }
 
-
     this.fieldConfig = this.fieldConfig.map((item) => {
       if (item.name === name) {
         item.disabled = disable;
@@ -659,8 +658,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.formGroup.controls[name][method]();
       return;
     }
-
-
   }
 
   setValue(name: string, value: any) {
@@ -780,28 +777,25 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   setRelation(config: FieldConfig) {
-    const activations =
-        this.fieldRelationService.findActivationRelation(config.relation);
+    const activations = this.fieldRelationService.findActivationRelation(config.relation);
     if (activations) {
-      const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
-          activations, this.formGroup);
-      const tobeHide = this.fieldRelationService.isFormControlToBeHide(
-          activations, this.formGroup);
+      const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(activations, this.formGroup);
+      const tobeHide = this.fieldRelationService.isFormControlToBeHide(activations, this.formGroup);
       this.setDisabled(config.name, tobeDisabled, tobeHide);
 
-      this.fieldRelationService.getRelatedFormControls(config, this.formGroup)
-          .forEach(control => {
-            control.valueChanges.subscribe(
-                () => { this.relationUpdate(config, activations); });
-          });
+      this.fieldRelationService.getRelatedFormControls(config, this.formGroup).forEach(control => {
+        control.valueChanges.subscribe((value) => { 
+          setTimeout(() => {
+            this.relationUpdate(config, activations); 
+          }, 1000);
+        });
+      });
     }
   }
 
   relationUpdate(config: FieldConfig, activations: any) {
-    const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
-        activations, this.formGroup);
-    const tobeHide = this.fieldRelationService.isFormControlToBeHide(
-          activations, this.formGroup);
+    const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(activations, this.formGroup);
+    const tobeHide = this.fieldRelationService.isFormControlToBeHide(activations, this.formGroup);
     this.setDisabled(config.name, tobeDisabled, tobeHide);
   }
 

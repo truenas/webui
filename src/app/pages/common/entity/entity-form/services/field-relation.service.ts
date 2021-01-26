@@ -77,7 +77,6 @@ export class FieldRelationService {
             let formGroupValue = _.cloneDeep(formGroup.value);
             let parsedValues = {};
             new EntityUtils().parseFormControlValues(formGroupValue, parsedValues);
-
             const key_list = rel.name.split('_');
             
             key_list.forEach(key => {
@@ -191,20 +190,17 @@ export class FieldRelationService {
   }
 
   setRelation(config: FieldConfig, formGroup, fieldConfig) {
-    const activations =
-        this.findActivationRelation(config.relation);
+    const activations = this.findActivationRelation(config.relation);
     if (activations) {
-      const tobeDisabled = this.isFormControlToBeDisabled(
-          activations, formGroup);
-      const tobeHide = this.isFormControlToBeHide(
-          activations, formGroup);
+      const tobeDisabled = this.isFormControlToBeDisabled(activations, formGroup);
+      const tobeHide = this.isFormControlToBeHide(activations, formGroup);
       this.setDisabled(fieldConfig, formGroup, config.name, tobeDisabled, tobeHide);
 
-      this.getRelatedFormControls(config, formGroup)
-          .forEach(control => {
-            control.valueChanges.subscribe(
-                () => { this.relationUpdate(config, activations, formGroup, fieldConfig); });
-          });
+      this.getRelatedFormControls(config, formGroup).forEach(control => {
+        control.valueChanges.subscribe(() => { 
+          this.relationUpdate(config, activations, formGroup, fieldConfig); 
+        });
+      });
     }
   }
 
