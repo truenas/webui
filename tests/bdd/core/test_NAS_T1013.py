@@ -77,7 +77,7 @@ def send_a_file_to_the_share_with_ip_ldapsmbshare_and_ldap_user_ldap_password(dr
 
 @then('verify that the file is on the NAS dataset')
 def verify_that_the_file_is_on_the_nas_dataset(driver):
-    """verify that the file is on on the NAS dataset."""
+    """verify that the file is on the NAS dataset."""
 
 
 @then('click on Directory Services then LDAP')
