@@ -1,6 +1,6 @@
 <!-- START OF CONTROLS SECTION -->
 <div *ngIf="entity && conf" fxFlex class="entity-table-controls" fxLayout="row wrap" fxLayoutAlignGap="16px" fxLayoutAlign="end center">
-  <div class="form-element" id="row-filter">
+  <div class="form-element search-field" id="row-filter">
     <mat-form-field floatPlaceholder="never">
       <span matPrefix><mat-icon>search</mat-icon></span>
       <input matInput #filter placeholder="{{'Filter' | translate}} {{entity.title | translate}}"
