@@ -209,7 +209,7 @@ export class EntityUtils {
                 }
               });
               if (arrayValues.length > 0) {
-                parent[temp_key] = arrayValues;
+                parent[temp_key] = arrayValues.filter(item => (item !== undefined && item !== null && item !== ''));
               }
             } else {
               parent[temp_key] = value;
@@ -233,7 +233,7 @@ export class EntityUtils {
             }
           });
           if (arrayValues.length > 0) {
-            result[key] = arrayValues;
+            result[key] = arrayValues.filter(item => (item !== undefined && item !== null && item !== ''));
           }
         } else {
           result[key] = value;
