@@ -185,6 +185,27 @@ export class EntityUtils {
     return cronArray.join(' ');
   }
 
+  filterArrayFunction(item) {
+    let result = true;
+    if (typeof item === 'object') {
+      let isAllEmpty = true;
+      Object.values(item).forEach(value => {
+        if (value !== undefined && value !== null && value !== '') {
+          isAllEmpty = false;
+        }
+      });
+
+      if (isAllEmpty) {
+        result = false;
+      }
+
+    } else if (item === undefined || item === null || item === '') {
+      result = false;
+    }
+
+    return result;
+  }
+
   parseFormControlValues(data, result) {
     Object.keys(data).forEach(key => {
       const value = data[key];
@@ -209,7 +230,7 @@ export class EntityUtils {
                 }
               });
               if (arrayValues.length > 0) {
-                parent[temp_key] = arrayValues.filter(item => (item !== undefined && item !== null && item !== ''));
+                parent[temp_key] = arrayValues.filter(this.filterArrayFunction);
               }
             } else {
               parent[temp_key] = value;
@@ -233,7 +254,7 @@ export class EntityUtils {
             }
           });
           if (arrayValues.length > 0) {
-            result[key] = arrayValues.filter(item => (item !== undefined && item !== null && item !== ''));
+            result[key] = arrayValues.filter(this.filterArrayFunction);
           }
         } else {
           result[key] = value;
