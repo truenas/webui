@@ -188,7 +188,7 @@ export class EntityUtils {
   parseFormControlValues(data, result) {
     Object.keys(data).forEach(key => {
       const value = data[key];
-      if (key == "release_name") {
+      if (key == "release_name" || key == 'undefined') {
         return;
       }
       
