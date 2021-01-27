@@ -13,7 +13,7 @@ import {
   RelationGroup
 } from "../models/field-relation.interface";
 import * as _ from 'lodash';
-import { EntityUtils } from '../../utils';
+import { EntityUtils, FORM_KEY_SEPERATOR } from '../../utils';
 @Injectable()
 export class FieldRelationService {
 
@@ -77,7 +77,7 @@ export class FieldRelationService {
             let formGroupValue = _.cloneDeep(formGroup.value);
             let parsedValues = {};
             new EntityUtils().parseFormControlValues(formGroupValue, parsedValues);
-            const key_list = rel.name.split('_');
+            const key_list = rel.name.split(FORM_KEY_SEPERATOR);
             
             key_list.forEach(key => {
               if (parsedValues && parsedValues[key] != undefined) {

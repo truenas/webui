@@ -45,6 +45,26 @@ export class ChartFormComponent {
     this.utils = new CommonUtils();
   }
 
+  createRelations(relations, parentName) {
+    const result = relations.map(relation => {
+      let relationFieldName = relation[0];
+      if (parentName) {
+        relationFieldName = `${parentName}${FORM_KEY_SEPERATOR}${relationFieldName}`;
+      }
+  
+      return {
+        action: 'SHOW',
+        when: [{
+          name: relationFieldName,
+          operator: relation[1],
+          value: relation[2],
+        }]
+      };
+    });
+
+    return result;    
+  }
+
   parseSchemaFieldConfig(schemaConfig, parentName=null, parentIsList=false) {
     let results = [];
     let name = schemaConfig.variable;
@@ -132,8 +152,14 @@ export class ChartFormComponent {
       if (schemaConfig.schema.attrs.length > 0) {
         const dictLabel = {
           label: schemaConfig.label,
+          name: name,
           type: 'label',
         };
+
+        if (schemaConfig.schema.show_if) {
+          dictLabel['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);
+        }
+
         results = results.concat(dictLabel);
       }
 
@@ -142,20 +168,7 @@ export class ChartFormComponent {
 
         if (schemaConfig.schema.show_if) {
           subResults.forEach(subResult => {
-            const relation = schemaConfig.schema.show_if[0];
-            let relationFieldName = relation[0];
-            if (parentName) {
-              relationFieldName = `${parentName}${FORM_KEY_SEPERATOR}${relationFieldName}`;
-            }
-
-            subResult['relation'] = [{
-              action: 'SHOW',
-              when: [{
-                name: relationFieldName,
-                operator: relation[1],
-                value: relation[2],
-              }]
-            }];
+            subResult['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);;
           });
         }
         results = results.concat(subResults);
