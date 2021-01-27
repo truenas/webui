@@ -74,7 +74,6 @@ export class ChartReleasesComponent implements OnInit {
     private sysGeneralService: SystemGeneralService) { }
 
   ngOnInit(): void {
-    this.refreshChartReleases();
     this.utils = new CommonUtils();
 
     this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
