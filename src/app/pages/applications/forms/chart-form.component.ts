@@ -19,6 +19,7 @@ import { EntityUtils, FORM_KEY_SEPERATOR } from '../../common/entity/utils';
 export class ChartFormComponent {
   protected queryCall: string = 'chart.release.query';
   protected queryCallOption: Array<any>;
+  protected customFilter: any[];
   protected addCall: string = 'chart.release.create';
   protected editCall: string = 'chart.release.update';
   protected isEntity: boolean = true;
@@ -38,7 +39,7 @@ export class ChartFormComponent {
 
       this.getRow = this.modalService.getRow$.subscribe((rowName: string) => {
         this.rowName = rowName;
-        this.queryCallOption = [["id", "=", rowName]];
+        this.customFilter = [[["id", "=", rowName]], {extra: {include_chart_schema: true}}];
         this.getRow.unsubscribe();
     })
     this.utils = new CommonUtils();
@@ -195,6 +196,10 @@ export class ChartFormComponent {
     return results;
   }
 
+  setTitle(title) {
+    this.title = title;
+  }
+  
   parseSchema(catalogApp) {
     try {
       this.catalogApp = catalogApp;
@@ -255,7 +260,16 @@ export class ChartFormComponent {
   }
 
   resourceTransformIncomingRestData(data) {
-    
+    const chartSchema = {
+      name: data.chart_metadata.name,
+      catalog: {
+        id: null,
+        label: data.catalog,
+      },
+      schema: data.chart_schema.schema,
+    }
+
+    this.parseSchema(chartSchema);
     this.name = data.name;
     const configData = {};
     this.parseConfigData(data.config, null, configData);

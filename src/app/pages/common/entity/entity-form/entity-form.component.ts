@@ -187,6 +187,53 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
   }
 
+  makeFormGroup() {
+    // Fallback if no fieldsets are defined
+    if(this.conf.fieldSets){
+      this.fieldConfig = [];
+      /* Temp patch to support both FieldSet approaches */
+      this.fieldSets = this.conf.fieldSets.list ? this.conf.fieldSets.list() : this.conf.fieldSets;
+      for(let i = 0; i < this.fieldSets.length; i++){
+        let fieldset = this.fieldSets[i];
+        if (!fieldset.divider) {
+          if(fieldset.maxWidth)
+            fieldset.width = '100%';
+          else
+            fieldset.width = this.conf.columnsOnForm === 1 || fieldset.colspan === 2 ? '100%' : '50%';
+        }
+
+        if(fieldset.config){
+          this.fieldConfig = this.fieldConfig.concat(fieldset.config);
+        }
+      }
+      this.conf.fieldConfig = this.fieldConfig;
+    } else {
+      this.fieldConfig = this.conf.fieldConfig;
+      this.fieldSets = [
+        {
+          name:'FallBack',
+          class:'fallback',
+          width:'100%',
+          divider:false,
+          config: this.fieldConfig
+        },
+        {
+          name:'divider',
+          divider:true,
+          width:'100%'
+        }
+      ]
+    }
+    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
+
+    for (const i in this.fieldConfig) {
+      const config = this.fieldConfig[i];
+      if (config.relation.length > 0) {
+        this.setRelation(config);
+      }
+    }
+  }
+
   async ngOnInit() {
     //get system general setting
     this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe((res)=> {
@@ -256,50 +303,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         this.fieldSetDisplay = "default";
       }
 
-      // Fallback if no fieldsets are defined
-      if(this.conf.fieldSets){
-        this.fieldConfig = [];
-        /* Temp patch to support both FieldSet approaches */
-        this.fieldSets = this.conf.fieldSets.list ? this.conf.fieldSets.list() : this.conf.fieldSets;
-        for(let i = 0; i < this.fieldSets.length; i++){
-          let fieldset = this.fieldSets[i];
-          if (!fieldset.divider) {
-            if(fieldset.maxWidth)
-              fieldset.width = '100%';
-            else
-              fieldset.width = this.conf.columnsOnForm === 1 || fieldset.colspan === 2 ? '100%' : '50%';
-          }
-
-          if(fieldset.config){
-            this.fieldConfig = this.fieldConfig.concat(fieldset.config);
-          }
-        }
-        this.conf.fieldConfig = this.fieldConfig;
-      } else {
-        this.fieldConfig = this.conf.fieldConfig;
-        this.fieldSets = [
-          {
-            name:'FallBack',
-            class:'fallback',
-            width:'100%',
-            divider:false,
-            config: this.fieldConfig
-          },
-          {
-            name:'divider',
-            divider:true,
-            width:'100%'
-          }
-        ]
-      }
-      this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-
-      for (const i in this.fieldConfig) {
-        const config = this.fieldConfig[i];
-        if (config.relation.length > 0) {
-          this.setRelation(config);
-        }
-      }
+      this.makeFormGroup();
 
       if (this.conf.queryCall === 'none') {
         this.getFunction = this.noGetFunction();
@@ -342,6 +346,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             this.data = res.data;
             if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
               this.data = this.conf.resourceTransformIncomingRestData(this.data);
+              this.makeFormGroup();
             }
             for (const i in this.data) {
               const fg = this.formGroup.controls[i];
@@ -371,6 +376,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
             if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
               this.wsResponse = this.conf.resourceTransformIncomingRestData(this.wsResponse);
+              this.makeFormGroup();
             }
             if (this.conf.dataHandler) {
               this.conf.dataHandler(this);

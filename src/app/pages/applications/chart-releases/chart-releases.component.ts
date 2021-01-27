@@ -31,7 +31,6 @@ export class ChartReleasesComponent implements OnInit {
   private refreshTable: Subscription;
 
   protected utils: CommonUtils;
-  public catalogApps = [];
   private refreshForm: Subscription;
   
   public emptyPageConf: EmptyConfig = {
@@ -75,45 +74,12 @@ export class ChartReleasesComponent implements OnInit {
     private sysGeneralService: SystemGeneralService) { }
 
   ngOnInit(): void {
-    this.getCatalogApps();
     this.refreshChartReleases();
     this.utils = new CommonUtils();
 
     this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
       this.refreshChartReleases();
     });
-  }
-
-  getCatalogApps() {
-    this.appService.getAllCatalogItems().subscribe(res => {
-      res.forEach(catalog => {
-        for (let i in catalog.trains.charts) {  
-          if (i !== 'ix-chart') {
-            let item =catalog.trains.charts[i];
-            let versions = item.versions;
-            let latest, latestDetails;
-
-            let sorted_version_labels = Object.keys(versions);
-            sorted_version_labels.sort(this.utils.versionCompare);
-
-            latest = sorted_version_labels[0];
-            latestDetails = versions[latest];
-
-            let catalogItem = {
-              name: item.name,
-              catalog: {
-                id: catalog.id,
-                label: catalog.label,
-              },
-              icon_url: item.icon_url? item.icon_url : '/assets/images/ix-original.png',
-              latest_version: latest,
-              schema: item.versions[latest].schema,
-            }
-            this.catalogApps.push(catalogItem);            
-          }
-        }
-      });
-    })
   }
 
   viewCatalog() {
@@ -163,7 +129,7 @@ export class ChartReleasesComponent implements OnInit {
             this.chartItems = [];
             this.showLoadStatus(EmptyType.errors);
           } else {
-            this.appService.getChartReleases(null, true).subscribe(charts => {
+            this.appService.getChartReleases().subscribe(charts => {
               this.chartItems = [];
               
               charts.forEach(chart => {
@@ -184,19 +150,7 @@ export class ChartReleasesComponent implements OnInit {
                   count: `${chart.pod_status.available}/${chart.pod_status.desired}`,
                   desired: chart.pod_status.desired,
                   history: !(_.isEmpty(chart.history)),
-                  chart_schema: chart.chart_schema,
                 };
-                
-                let chartSchema = {
-                  name: chart.chart_metadata.name,
-                  catalog: {
-                    id: null,
-                    label: chart.catalog,
-                  },
-                  schema: chart.chart_schema.schema,
-                }
-        
-                chartObj['chart_schema'] = chartSchema;
         
                 let ports = [];
                 if (chart.used_ports) {
@@ -296,7 +250,7 @@ export class ChartReleasesComponent implements OnInit {
     const catalogApp = this.chartItems.find(app => app.name==name && app.chart_name != 'ix-chart')
     if (catalogApp) {
       const chartFormComponent = new ChartFormComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
-      chartFormComponent.parseSchema(catalogApp.chart_schema);
+      chartFormComponent.setTitle(catalogApp.chart_name);
       this.modalService.open('slide-in-form', chartFormComponent, name);
     } else {
       const chartReleaseForm = new ChartReleaseEditComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
