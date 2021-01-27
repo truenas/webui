@@ -20,7 +20,17 @@ interface FilterValue {
 })
 export class EntityTreeTableComponent implements OnInit, AfterViewInit {
   @ViewChild(MatTable,{static: false}) table: any;
-  @Input() conf: EntityTreeTable;
+  _conf: EntityTreeTable;
+  @Input()
+  set conf(conf: EntityTreeTable) {
+    if(this._conf) {
+      this._conf = conf;
+      this.populateTable();
+    } else {
+      this._conf = conf;
+    }
+  }
+  get conf() { return this._conf; }
   @Input() expandRootNodes = false;
   @Input() parentId?: string;
   
@@ -40,16 +50,19 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     protected core: CoreService) { }
 
     ngOnInit() {
-      let cols = this.conf.columns.filter(col => !col.hidden || col.always_display == true);
+      this.populateTable();
+    }
+    populateTable() {
+      let cols = this._conf.columns.filter(col => !col.hidden || col.always_display == true);
       this.displayedColumns = cols.map(col => col.prop);
 
-      const mutated = Object.assign([], this.conf.tableData);
+      const mutated = Object.assign([], this._conf.tableData);
       
-      this.treeDataSource = this.conf.tableData;
+      this.treeDataSource = this._conf.tableData;
       let flattened = this.treeTableService.buildTable(mutated);
       this.tableDataSource = flattened;
       
-      if (this.conf.queryCall) {
+      if (this._conf.queryCall) {
         this.getData();
       }
     }
@@ -60,14 +73,14 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
         this.filterNodes(evt.data.column, value);
       });
 
-      if (this.conf.tableData && this.expandRootNodes) {
+      if (this._conf.tableData && this.expandRootNodes) {
         // Expand the root nodes by default
         this.expandNode(this.tableDataSource[0]);
       }
     }
 
     getData() {
-      this.ws.call(this.conf.queryCall).subscribe(
+      this.ws.call(this._conf.queryCall).subscribe(
         (res) => {
           let data = this.treeTableService.buildTree(res);
         },
