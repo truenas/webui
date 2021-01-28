@@ -6,6 +6,13 @@ button.listBtn {
 .list-action {
 }
 
+.add-btn {
+  margin-top: 10px;
+  margin-left: 16px;
+  border-radius: 0;
+  border: solid 1px var(--fg2);
+}
+
 .top-right {
   position: absolute;
   top: 1px;
