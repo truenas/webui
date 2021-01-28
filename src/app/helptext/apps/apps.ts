@@ -16,6 +16,10 @@ export default {
   choose: T('Choose Pool'),
   advanced: T('Advanced Settngs'),
 
+  bulkActions: {
+    finished: T('Started bulk actions'),
+  },
+
   launch: T('Launch Docker Image'),
 
   install: {

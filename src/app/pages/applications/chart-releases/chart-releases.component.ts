@@ -242,7 +242,12 @@ export class ChartReleasesComponent implements OnInit {
           this.delete(name);
           break;
       }
-    })    
+    });
+    
+    this.translate.get(helptext.bulkActions.finished).subscribe(msg => {
+      this.dialogService.Info(helptext.choosePool.success, msg,
+        '500px', 'info', true);
+    })
   }
 
   bulkOptions() {
