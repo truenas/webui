@@ -94,7 +94,7 @@ export default {
     upgrade_dialog: {
       title: T('Upgrade'),
       msg: T('Upgrade '),
-      job: T('Upgradomg...')
+      job: T('Upgrading...')
     },
 
     rollback_dialog: {
