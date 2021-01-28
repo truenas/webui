@@ -10,7 +10,7 @@ import { ModalService } from '../../../services/modal.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import  helptext  from '../../../helptext/apps/apps';
-import { EntityUtils, FORM_KEY_SEPERATOR } from '../../common/entity/utils';
+import { EntityUtils, FORM_KEY_SEPERATOR, FORM_LABEL_KEY_PREFIX } from '../../common/entity/utils';
 
 @Component({
   selector: 'chart-form',
@@ -152,8 +152,13 @@ export class ChartFormComponent {
       if (schemaConfig.schema.attrs.length > 0) {
         const dictLabel = {
           label: schemaConfig.label,
+          name: FORM_LABEL_KEY_PREFIX + name,
           type: 'label',
         };
+
+        if (schemaConfig.schema.show_if) {
+          dictLabel['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);
+        }
 
         results = results.concat(dictLabel);
       }

@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 
 export const FORM_KEY_SEPERATOR = "__";
+export const FORM_LABEL_KEY_PREFIX = "__label__";
 export class EntityUtils {
 
   handleError(entity: any, res: any) {
@@ -209,7 +210,7 @@ export class EntityUtils {
   parseFormControlValues(data, result) {
     Object.keys(data).forEach(key => {
       const value = data[key];
-      if (key == "release_name" || key == 'undefined') {
+      if (key == "release_name" || key == 'undefined' || key.startsWith(FORM_LABEL_KEY_PREFIX)) {
         return;
       }
       

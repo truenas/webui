@@ -793,7 +793,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         control.valueChanges.subscribe((value) => { 
           setTimeout(() => {
             this.relationUpdate(config, activations); 
-          }, 1000);
+          }, 100);
         });
       });
     }
