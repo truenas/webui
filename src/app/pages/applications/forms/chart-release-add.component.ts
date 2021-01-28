@@ -78,14 +78,6 @@ export class ChartReleaseAddComponent implements OnDestroy {
           options: helptext.chartForm.update.options,
           value: helptext.chartForm.update.options[0].value
         },
-        {
-          type: 'select',
-          name: 'restartPolicy',
-          placeholder: helptext.chartForm.restart.placeholder,
-          tooltip: helptext.chartForm.restart.tooltip,
-          options: helptext.chartForm.restart.options,
-          value: helptext.chartForm.restart.options[0].value,
-        }
       ]
     },
     {
@@ -463,7 +455,6 @@ export class ChartReleaseAddComponent implements OnDestroy {
           tag: data.tag
         }, 
         portForwardingList: pfList, 
-        restartPolicy: data.restartPolicy,
         updateStrategy: data.updateStrategy,
         volumes: volList, 
         workloadType: 'Deployment',

@@ -10,6 +10,7 @@ export interface FieldRelation {
   name: string;
   status?: string;
   value?: any;
+  operator?: string;
 }
 
 export interface RelationGroup {

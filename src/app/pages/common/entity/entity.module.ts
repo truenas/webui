@@ -26,6 +26,7 @@ import { FormButtonComponent } from './entity-form/components/form-button/form-b
 import { FormCheckboxComponent } from './entity-form/components/form-checkbox/form-checkbox.component';
 import { FormComboboxComponent } from './entity-form/components/form-combobox/form-combobox.component';
 import { FormInputComponent } from './entity-form/components/form-input/form-input.component';
+import { FormLabelComponent } from './entity-form/components/form-label/form-label.component';
 import { FormUploadComponent } from './entity-form/components/form-upload/form-upload.component';
 import { FormSelectComponent } from './entity-form/components/form-select/form-select.component';
 import { FormRadioComponent } from './entity-form/components/form-radio/form-radio.component';
@@ -116,6 +117,7 @@ import { TableComponent } from './table/table.component';
     EntityFormConfigurationComponent,
     FormButtonComponent,
     FormInputComponent,
+    FormLabelComponent,
     FormSelectComponent,
     FormRadioComponent,
     FormCheckboxComponent,
@@ -196,6 +198,7 @@ import { TableComponent } from './table/table.component';
   entryComponents: [
     FormButtonComponent,
     FormInputComponent,
+    FormLabelComponent,
     FormSelectComponent,
     FormCheckboxComponent,
     FormComboboxComponent,
