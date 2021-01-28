@@ -50,6 +50,8 @@ export const helptext_sharing_smb = {
  unset when creating a share on a system that already has custom ACLs configured.'),
 
     placeholder_acl: T('Enable ACL'),
+    tooltip_acl: T('Enable ACL support for the SMB share. Disabling ACL \
+ support for a share deletes that ACL.'),
 
     placeholder_ro: T('Export Read Only'),
     tooltip_ro: T('Prohibits writes to this share.'),
