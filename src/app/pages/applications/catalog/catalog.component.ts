@@ -115,6 +115,14 @@ export class CatalogComponent implements OnInit {
       this.refreshForms();
     });
 
+    this.refreshToolbarMenus();
+
+    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
+      this.switchTab.emit('1');
+    })
+  }
+
+  refreshToolbarMenus() {
     this.settingsEvent = new Subject();
     this.settingsEvent.subscribe((evt: CoreEvent) => {
       if (evt.data.event_control == 'settings' && evt.data.settings) {
@@ -127,19 +135,22 @@ export class CatalogComponent implements OnInit {
             break;
 
           case 'unset_pool':
-            this.ws.job('kubernetes.update', [{pool: null}]).subscribe(res => {
-              this.modalService.refreshTable();
-              this.translate.get(helptext.choosePool.unsetPool).subscribe(msg => {
-                this.dialogService.Info(helptext.choosePool.success, msg,
-                  '500px', 'info', true);
-              })
-            });
+            this.doUnsetPool();
             break;
         }
       } else if (evt.data.event_control == 'launch' && evt.data.launch) {
         this.doInstall('ix-chart');
       }
     })
+
+    const menuOptions = [
+      { label: helptext.choose, value: 'select_pool' }, 
+      { label: helptext.advanced, value: 'advanced_settings' }, 
+    ];
+
+    if (this.selectedPool) {
+      menuOptions.push({ label: helptext.unset_pool, value: 'unset_pool' })
+    }
 
     const settingsConfig = {
       actionType: EntityToolbarComponent,
@@ -150,11 +161,7 @@ export class CatalogComponent implements OnInit {
             name: 'settings',
             label: helptext.settings,
             type: 'menu',
-            options: [
-              { label: helptext.choose, value: 'select_pool' }, 
-              { label: helptext.advanced, value: 'advanced_settings' }, 
-              { label: helptext.unset_pool, value: 'unset_pool' }, 
-            ]
+            options: menuOptions
           },
           {
             name: 'launch',
@@ -168,12 +175,7 @@ export class CatalogComponent implements OnInit {
     };
 
     this.core.emit({name:"GlobalActions", data: settingsConfig, sender: this});
-
-    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
-      this.switchTab.emit('1');
-    })
   }
-
 
   refreshForms() {
     this.kubernetesForm = new KubernetesSettingsComponent(this.modalService, this.appService);
@@ -190,6 +192,7 @@ export class CatalogComponent implements OnInit {
       } else {
         this.selectedPool = res.pool;
       }
+      this.refreshToolbarMenus();
     })
   }
 
@@ -212,6 +215,26 @@ export class CatalogComponent implements OnInit {
     })
   }
 
+  doUnsetPool() {
+    this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
+      helptext.choosePool.jobTitle) }, disableClose: true});
+    this.dialogRef.componentInstance.setCall('kubernetes.update', [{pool: null}]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.dialogService.closeAllDialogs();
+      this.selectedPool = null;
+      this.refreshToolbarMenus();
+      this.translate.get(helptext.choosePool.unsetPool).subscribe(msg => {
+        this.dialogService.Info(helptext.choosePool.success, msg,
+          '500px', 'info', true);
+      })
+    });
+
+    this.dialogRef.componentInstance.failure.subscribe((err) => {
+      new EntityUtils().handleWSError(self, err, this.dialogService);
+    })
+  }
+
   doPoolSelect(entityDialog: any) {
     const self = entityDialog.parent;
     const pool = entityDialog.formGroup.controls['pools'].value;
@@ -221,6 +244,7 @@ export class CatalogComponent implements OnInit {
     self.dialogRef.componentInstance.submit();
     self.dialogRef.componentInstance.success.subscribe((res) => {
       self.selectedPool = pool;
+      self.refreshToolbarMenus();
       self.dialogService.closeAllDialogs();
       self.translate.get(helptext.choosePool.message).subscribe(msg => {
         self.dialogService.Info(helptext.choosePool.success, msg + res.result.pool,
