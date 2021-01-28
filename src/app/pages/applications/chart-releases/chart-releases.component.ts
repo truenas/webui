@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -14,6 +14,7 @@ import { ChartReleaseEditComponent } from '../forms/chart-release-edit.component
 import { PlexFormComponent } from '../forms/plex-form.component';
 import { NextCloudFormComponent } from '../forms/nextcloud-form.component';
 import { MinioFormComponent } from '../forms/minio-form.component';
+import { EmptyConfig, EmptyType } from '../../common/entity/entity-empty/entity-empty.component';
 
 import  helptext  from '../../../helptext/apps/apps';
 
@@ -23,6 +24,8 @@ import  helptext  from '../../../helptext/apps/apps';
   styleUrls: ['../applications.component.scss']
 })
 export class ChartReleasesComponent implements OnInit {
+  @Output() switchTab = new EventEmitter<string>();
+
   public chartItems = [];
   private dialogRef: any;
   public ixIcon = 'assets/images/ix-original.png';
@@ -33,6 +36,16 @@ export class ChartReleasesComponent implements OnInit {
   private minioForm: MinioFormComponent;
   private refreshTable: Subscription;
   private refreshForm: Subscription;
+  
+  public emptyPageConf: EmptyConfig = {
+    type: EmptyType.loading,
+    large: true,
+    title: helptext.message.loading,
+    button: {
+      label: "View Catalog",
+      action: this.viewCatalog.bind(this),
+    }
+  };
 
   public rollBackChart: DialogFormConfiguration = {
     title: helptext.charts.rollback_dialog.title,
@@ -82,39 +95,93 @@ export class ChartReleasesComponent implements OnInit {
     this.minioForm = new MinioFormComponent(this.mdDialog,this.dialogService,this.modalService);
   }
 
+  viewCatalog() {
+    this.switchTab.emit('0');
+  }
+
+  showLoadStatus(type: EmptyType) {
+    let title = "";
+    let message = undefined;
+
+    switch (type) {
+      case EmptyType.loading:
+        title = helptext.message.loading;
+        break;
+      case EmptyType.first_use:
+        title = helptext.message.not_configured;
+        break;
+      case EmptyType.no_page_data :
+        title = helptext.message.no_installed;
+        message = helptext.message.no_installed_message;
+        break;
+      case EmptyType.errors:
+        title = helptext.message.not_running;
+        break;
+    }
+
+    this.emptyPageConf.type = type;
+    this.emptyPageConf.title = title;
+    this.emptyPageConf.message = message;
+  }
+
   refreshChartReleases() {
-    this.appService.getChartReleases().subscribe(charts => {
-      this.chartItems = [];
-      let repos = [];
-      charts.forEach(chart => {
-        let chartObj = {
-          name: chart.name,
-          catalog: chart.catalog,
-          status: chart.status,
-          version: chart.chart_metadata.version,
-          latest_version: chart.chart_metadata.latest_chart_version,
-          description: chart.chart_metadata.description,
-          update: chart.update_available,
-          chart_name: chart.chart_metadata.name,
-          repository: chart.config.image.repository,
-          tag: chart.config.image.tag,
-          portal: chart.portals && chart.portals.web_portal ? chart.portals.web_portal[0] : '',
-          id: chart.chart_metadata.name,
-          icon: chart.chart_metadata.icon ? chart.chart_metadata.icon : this.ixIcon,
-          count: `${chart.pod_status.available}/${chart.pod_status.desired}`,
-          desired: chart.pod_status.desired,
-          history: !(_.isEmpty(chart.history))
-        };
-        repos.push(chartObj.repository);
-        let ports = [];
-        if (chart.used_ports) {
-          chart.used_ports.forEach(item => {
-            ports.push(`${item.port}\\${item.protocol}`)
-          })
-          chartObj['used_ports'] = ports.join(', ');
-          this.chartItems.push(chartObj);
-        }  
-      })
+    this.showLoadStatus(EmptyType.loading);
+    const checkTitle = setInterval(() => {
+        this.updateChartReleases();
+    }, 1000);
+  }
+
+  updateChartReleases() {
+    this.appService.getKubernetesConfig().subscribe(res => {
+      if (!res.pool) {
+        this.chartItems = [];
+        this.showLoadStatus(EmptyType.first_use);
+      } else {
+        this.appService.getKubernetesServiceStarted().subscribe(res => {
+          if (!res) {
+            this.chartItems = [];
+            this.showLoadStatus(EmptyType.errors);
+          } else {
+            this.appService.getChartReleases().subscribe(charts => {
+              this.chartItems = [];
+              let repos = [];
+              charts.forEach(chart => {
+                let chartObj = {
+                  name: chart.name,
+                  catalog: chart.catalog,
+                  status: chart.status,
+                  version: chart.chart_metadata.version,
+                  latest_version: chart.chart_metadata.latest_chart_version,
+                  description: chart.chart_metadata.description,
+                  update: chart.update_available,
+                  chart_name: chart.chart_metadata.name,
+                  repository: chart.config.image.repository,
+                  tag: chart.config.image.tag,
+                  portal: chart.portals && chart.portals.web_portal ? chart.portals.web_portal[0] : '',
+                  id: chart.chart_metadata.name,
+                  icon: chart.chart_metadata.icon ? chart.chart_metadata.icon : this.ixIcon,
+                  count: `${chart.pod_status.available}/${chart.pod_status.desired}`,
+                  desired: chart.pod_status.desired,
+                  history: !(_.isEmpty(chart.history))
+                };
+                repos.push(chartObj.repository);
+                let ports = [];
+                if (chart.used_ports) {
+                  chart.used_ports.forEach(item => {
+                    ports.push(`${item.port}\\${item.protocol}`)
+                  })
+                  chartObj['used_ports'] = ports.join(', ');
+                  this.chartItems.push(chartObj);
+                }  
+              })
+              
+              if (this.chartItems.length == 0) {
+                this.showLoadStatus(EmptyType.no_page_data );
+              }
+            })
+          }
+        })
+      }
     })
   }
 

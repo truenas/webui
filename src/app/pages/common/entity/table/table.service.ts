@@ -39,6 +39,9 @@ export class TableService {
             if (table.loaderOpen) {
                 this.loader.close();
             }
+            if(table.tableConf.afterGetData) {
+                table.tableConf.afterGetData(res);
+            }
         });
     }
 

@@ -19,8 +19,18 @@ interface FilterValue {
   providers: [EntityTreeTableService]
 })
 export class EntityTreeTableComponent implements OnInit, AfterViewInit {
-  @ViewChild(MatTable,{static: false}) table: MatTable<any>;
-  @Input() conf: EntityTreeTable;
+  @ViewChild(MatTable,{static: false}) table: any;
+  _conf: EntityTreeTable;
+  @Input()
+  set conf(conf: EntityTreeTable) {
+    if(this._conf) {
+      this._conf = conf;
+      this.populateTable();
+    } else {
+      this._conf = conf;
+    }
+  }
+  get conf() { return this._conf; }
   @Input() expandRootNodes = false;
   @Input() parentId?: string;
   
@@ -40,16 +50,19 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     protected core: CoreService) { }
 
     ngOnInit() {
-      let cols = this.conf.columns.filter(col => !col.hidden || col.always_display == true);
+      this.populateTable();
+    }
+    populateTable() {
+      let cols = this._conf.columns.filter(col => !col.hidden || col.always_display == true);
       this.displayedColumns = cols.map(col => col.prop);
 
-      const mutated = Object.assign([], this.conf.tableData);
+      const mutated = Object.assign([], this._conf.tableData);
       
-      this.treeDataSource = this.conf.tableData;
+      this.treeDataSource = this._conf.tableData;
       let flattened = this.treeTableService.buildTable(mutated);
       this.tableDataSource = flattened;
       
-      if (this.conf.queryCall) {
+      if (this._conf.queryCall) {
         this.getData();
       }
     }
@@ -60,14 +73,14 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
         this.filterNodes(evt.data.column, value);
       });
 
-      if (this.conf.tableData && this.expandRootNodes) {
+      if (this._conf.tableData && this.expandRootNodes) {
         // Expand the root nodes by default
         this.expandNode(this.tableDataSource[0]);
       }
     }
 
     getData() {
-      this.ws.call(this.conf.queryCall).subscribe(
+      this.ws.call(this._conf.queryCall).subscribe(
         (res) => {
           let data = this.treeTableService.buildTree(res);
         },
@@ -111,8 +124,8 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
       for(let i = 0; i < cells.length; i++){
         const cell = cells[i];
 
-        if(cell.classList.contains('mat-table-sticky') || cell.classList.contains('threedot-column')){
-          if(over){
+        if(cell.classList.contains('mat-table-sticky') || cell.classList.contains('action-cell')){
+          if(over) {
             cell.classList.add('hover');
           } else {
             cell.classList.remove('hover');
@@ -131,4 +144,11 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
       return target;
     }
 
+    isTableOverflow() {
+      let hasHorizontalScrollbar = false;
+      if(this.table) {
+        hasHorizontalScrollbar = this.table._elementRef.nativeElement.parentNode.parentNode.scrollWidth > this.table._elementRef.nativeElement.parentNode.parentNode.clientWidth;
+      }
+      return hasHorizontalScrollbar;
+    }
 }

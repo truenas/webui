@@ -4,7 +4,22 @@ FreeNAS 11 WebUI
 ![CI](https://github.com/freenas/webui/workflows/CI/badge.svg?branch=master)
 
 
-This is the project for the new angular.io WebUI for FreeNAS 11. It is meant to coexist with current FreeNAS 11 Django/Dojo WebUI.
+This is the project for the Angular.io WebUI for TrueNAS 12 & TrueNAS SCALE.
+
+# Testing Images
+
+You can download and test running the latest version of the TrueNAS WebUI anytime using pre-built docker images.
+
+Images only require the environment variable TNIP to be set to the IP or Hostname of your local TrueNAS instance.
+
+Example:
+
+```
+# docker container run -it -e TNIP=192.168.0.30 -p 8080:80 ixsystems/truenas-webui:latest
+```
+This would allow you to access the running WebUI on http://localhost:8080
+
+NOTE: Pull requests are also generated as Docker images and can be used for testing by replacing the ":latest" tag with the pull-request ID. I.E. "ixsystems/truenas-webui:5010"
 
 # Development requirements
 
