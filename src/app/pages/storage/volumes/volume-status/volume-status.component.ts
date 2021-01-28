@@ -610,7 +610,6 @@ export class VolumeStatusComponent implements OnInit {
   }
 
   dataHandler(pool: any) {
-    this.treeTableConfig.tableData = [];
     const node: TreeNode = {};
     node.data = this.parseData(pool);
     node.expanded = true;
@@ -636,7 +635,10 @@ export class VolumeStatusComponent implements OnInit {
       }
     }
     delete node.data.children;
-    this.treeTableConfig.tableData.push(node);
+    this.treeTableConfig = {
+      tableData: [node],
+      columns: [...this.treeTableConfig.columns]
+    };
   }
 
   getReadableDate(data: any) {
