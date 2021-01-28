@@ -18,7 +18,7 @@ import { TreeNode } from 'primeng/api';
 import { map, switchMap } from 'rxjs/operators';
 import helptext from '../../../../helptext/storage/volumes/volume-list';
 import dataset_helptext from '../../../../helptext/storage/volumes/datasets/dataset-form';
-import { JobService, RestService } from '../../../../services/';
+import { JobService, RestService, ValidationService } from '../../../../services/';
 import { StorageService } from '../../../../services/storage.service';
 import { T } from '../../../../translate-marker';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -83,11 +83,11 @@ export class VolumesListTableConfig implements InputTableConf {
     { name: T('Type'), prop: 'type', hidden: false},
     { name: T('Used'), prop: 'used_parsed', filesizePipe: false, hidden: false},
     { name: T('Available'), prop: 'available_parsed', hidden: false, filesizePipe: false},
-    { name: T('Compression'), prop: 'compression', hidden: true },
-    { name: T('Compression Ratio'), prop: 'compressratio', hidden: true },
+    { name: T('Compression'), prop: 'compression' },
+    { name: T('Compression Ratio'), prop: 'compressratio'},
     { name: T('Readonly'), prop: 'readonly', hidden: false},
-    { name: T('Dedup'), prop: 'deduplication', hidden: true },
-    { name: T('Comments'), prop: 'comments', hidden: true },
+    { name: T('Dedup'), prop: 'dedup'},
+    { name: T('Comments'), prop: 'comments'},
     { name: T('Actions'), prop: 'actions', hidden: false }
   ];
 
@@ -125,6 +125,7 @@ export class VolumesListTableConfig implements InputTableConf {
     protected volumeData: Object,
     protected messageService: MessageService,
     protected http: HttpClient,
+    protected validationService: ValidationService
   ) {
     if (typeof (this._classId) !== "undefined" && this._classId !== "" && volumeData && volumeData['children']) {
       this.tableData = [];
@@ -496,7 +497,7 @@ export class VolumesListTableConfig implements InputTableConf {
     const actions = [];
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (rowData.type === 'zpool') {
-        if (rowData.is_decrypted) {
+        if (rowData.is_decrypted && rowData.status !== "OFFLINE") {
           actions.push({
           id: rowData.name,
           name: T('Pool Options'),
@@ -561,6 +562,7 @@ export class VolumesListTableConfig implements InputTableConf {
         id: rowData.name,
         name: 'Export/Disconnect',
         label: helptext.exportAction,
+        color: 'warn',
         onClick: (row1) => {
           let encryptedStatus = row1.encrypt,
           self = this;
@@ -835,7 +837,7 @@ export class VolumesListTableConfig implements InputTableConf {
         }
     });
 
-      if (rowData.is_decrypted) {
+      if (rowData.is_decrypted && rowData.status !== "OFFLINE") {
         actions.push({
           id: rowData.name,
           name: 'Add Vdevs',
@@ -1064,7 +1066,7 @@ export class VolumesListTableConfig implements InputTableConf {
           name: T('Add Zvol'),
           label: T("Add Zvol"),
           onClick: (row1) => {
-            this.parentVolumesListComponent.addZvol(rowData.id);
+            this.parentVolumesListComponent.addZvol(rowData.id, true);
           }
         });
       }
@@ -1232,7 +1234,7 @@ export class VolumesListTableConfig implements InputTableConf {
         name: T('Edit Zvol'),
         label: T("Edit Zvol"),
         onClick: (row1) => {
-          this.parentVolumesListComponent.addZvol(rowData.id);
+          this.parentVolumesListComponent.addZvol(rowData.id, false);
         }
       });
 
@@ -1431,7 +1433,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   inputType : 'password',
                   required: true,
                   togglePw: true,
-                  validation : dataset_helptext.dataset_form_encryption.confirm_passphrase_validation,
+                  validation : this.validationService.matchOtherValidator('passphrase'),
                   disabled: is_key,
                   isHidden: is_key,
                 },
@@ -1699,11 +1701,11 @@ export class VolumesListTableConfig implements InputTableConf {
     this.getMoreDatasetInfo(data, parent);
     node.data.group_actions = true;
     let actions_title = helptext.dataset_actions;
-    if (data.type === 'zvol') {
+    if (data.type === 'VOLUME') {
       actions_title = helptext.zvol_actions;
     }
     const actions = [{title: actions_title, actions: this.getActions(data)}];
-    if (data.type === 'FILESYSTEM') {
+    if (data.type === 'FILESYSTEM' || data.type === 'VOLUME') {
       const encryption_actions = this.getEncryptedDatasetActions(data);
       if (encryption_actions.length > 0) {
         actions.push({title: helptext.encryption_actions_title, actions: encryption_actions});
@@ -1783,24 +1785,31 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   title = T("Pools");
   zfsPoolRows: ZfsPoolData[] = [];
-  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", [], this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http);
+  conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", [], this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http, this.validationService);
 
   actionComponent = {
     getActions: (row) => {
-      return [
+      let actions = [
         {
           name: 'pool_actions',
           title: helptext.pool_actions_title,
           actions: this.conf.getActions(row),
-        },
-        {
+        }
+      ]
+
+      if(row.status !== "OFFLINE"){
+        const encryptionActions = {
           name: 'encryption_actions',
           title: helptext.encryption_actions_title,
           actions: (<VolumesListTableConfig>this.conf).getEncryptedActions(row),
         }
-      ];
+        actions.push(encryptionActions);
+      }
+
+      return actions;
+      
     },
-    conf: new VolumesListTableConfig(this, this.router, "", [], this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http)
+    conf: new VolumesListTableConfig(this, this.router, "", [], this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http, this.validationService)
   };
 
   expanded = false;
@@ -1818,7 +1827,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
     public sorter: StorageService, protected job: JobService, protected storage: StorageService, protected pref: PreferencesService, 
-      protected messageService: MessageService, protected http:HttpClient, modalService: ModalService, public tableService: EntityTableService) {
+      protected messageService: MessageService, protected http:HttpClient, modalService: ModalService, public tableService: EntityTableService, protected validationService: ValidationService) {
 
     super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, sorter, job, pref, mdDialog, modalService, tableService);
 
@@ -1876,7 +1885,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           }
           pool.children = pChild ? [pChild] : [];
 
-          pool.volumesListTableConfig = new VolumesListTableConfig(this, this.router, pool.id, datasets, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, pool, this.messageService, this.http);
+          pool.volumesListTableConfig = new VolumesListTableConfig(this, this.router, pool.id, datasets, this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, pool, this.messageService, this.http, this.validationService);
           pool.type = 'zpool';
 
           if (pool.children && pool.children[0]) {
@@ -1938,8 +1947,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     
   }
 
-  addZvol(id) {
+  addZvol(id, isNew) {
     this.addZvolComponent.setParent(id);
+    this.addZvolComponent.isNew = isNew;
     this.modalService.open('slide-in-form', this.addZvolComponent, id);
   }
 

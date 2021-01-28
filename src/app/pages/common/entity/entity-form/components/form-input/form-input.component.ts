@@ -10,7 +10,7 @@ import globalHelptext from '../../../../../../helptext/global-helptext';
 @Component({
   selector: 'form-input',
   templateUrl: './form-input.component.html',
-  styleUrls: ['../dynamic-field/dynamic-field.css'],
+  styleUrls: ['./form-input.component.scss', '../dynamic-field/dynamic-field.css'],
 })
 export class FormInputComponent implements Field {
   @ViewChild('fileInput', { static: true}) fileInput;
@@ -75,6 +75,18 @@ export class FormInputComponent implements Field {
     }
   }
 
+  hasValue() {
+    return this.group.controls[this.config.name].value && this.group.controls[this.config.name].value.toString().length;
+  }
+
+  shouldShowResetInput() {
+    return this.hasValue() && !this.config.readonly && !this.config.togglePw && this.config.inputType !== 'password';
+  }
+
+  resetInput() {
+    this.group.controls[this.config.name].setValue('');
+  }
+  
   onPaste(event: ClipboardEvent) {
     if (!this.config.inputType || this.config.inputType !== 'password') {
       this.hasPasteEvent = true;

@@ -1,9 +1,10 @@
 
 <div *ngIf="zfsPoolRows.length > 0">
   <mat-accordion [multi]="true">
-    <mat-expansion-panel class="no-padding" *ngFor="let row of zfsPoolRows; let pool = index;" [expanded]="row.status === 'LOCKED' ? false : true" id="expansionpanel_zfs_{{row.name}}"
+    <mat-expansion-panel class="no-padding" *ngFor="let row of zfsPoolRows; let pool = index;" id="expansionpanel_zfs_{{row.name}}"
+      [expanded]="row.status === 'LOCKED' ? false : true"  [disabled]="row.status === 'OFFLINE'"
       ix-auto ix-auto-type="expansion-panel" ix-auto-identifier="{{row.name}}">
-      <mat-expansion-panel-header>
+      <mat-expansion-panel-header class="{{row.status.toLowerCase()}}">
         <mat-panel-title>
           {{row.name}} <span *ngIf="row.name === systemdatasetPool" class="ml-1"> 
             {{ '(System Dataset Pool)' | translate}}</span>
@@ -38,14 +39,15 @@
             {{row.availStr}} {{"Free" | translate}}
           </span>
         </mat-panel-description>
-      </mat-expansion-panel-header>
 
       <div fxLayoutAlign="end start" class="icon-row hidden">
         <div class="global_volume_based_action_menu pool-icon" title="Pool Operations" >
           <app-entity-table-actions [icon_name]="'settings'" [entity]="actionComponent" [row]="row" [action]="'settings'" [groups]="true"></app-entity-table-actions>
         </div>
       </div>
-      <div>
+      </mat-expansion-panel-header>
+
+      <div class="entity-tree-table-container">
         <entity-tree-table *ngIf="row.volumesListTableConfig.tableData?.length > 0" [conf]="row.volumesListTableConfig" [expandRootNodes]="true"></entity-tree-table>
       </div>
     </mat-expansion-panel>

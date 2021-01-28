@@ -120,6 +120,9 @@ export class EntityWizardComponent implements OnInit {
   }
 
   goBack() {
+    if(this.conf.customCancel) {
+      return this.conf.customCancel();
+    }
     let route = this.conf.route_cancel;
     if (!route) {
       route = this.conf.route_success;
@@ -222,5 +225,12 @@ export class EntityWizardComponent implements OnInit {
       }
     }
     return false;
+  }
+
+  handleNext(currentStep) {
+    currentStep.stepControl.markAllAsTouched();
+    if (this.conf.customNext !== undefined) {
+      this.conf.customNext(this.stepper);
+    }
   }
 }

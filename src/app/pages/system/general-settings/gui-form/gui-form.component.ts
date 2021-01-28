@@ -196,6 +196,7 @@ export class GuiFormComponent implements OnDestroy{
 
     entityEdit.ws.call('system.general.ui_certificate_choices')
       .subscribe((res) => {
+        this.ui_certificate.options = [{ label: "---", value: null }];
         for (const id in res) {
           this.ui_certificate.options.push({ label: res[id], value: id });
         }
@@ -208,6 +209,7 @@ export class GuiFormComponent implements OnDestroy{
 
     entityEdit.ws.call('system.general.ui_httpsprotocols_choices').subscribe(
       (res) => {
+        httpsprotocolsField.options = [];
         for (const key in res) {
           httpsprotocolsField.options.push({ label: res[key], value: key });
         }

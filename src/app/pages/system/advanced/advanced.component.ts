@@ -102,7 +102,7 @@ export class AdvancedComponent implements OnDestroy {
       name: helptext_system_advanced.fieldset_console,
       label: true,
       class: 'console',
-      width: '49%',
+      width: '50%',
       config: [
         {
           type: 'checkbox',
@@ -158,12 +158,147 @@ export class AdvancedComponent implements OnDestroy {
         }
       ]
     },
-    { name: 'spacer', label: false, width: '2%' },
+    {
+      name: helptext_system_advanced.fieldset_syslog,
+      label: true,
+      class: 'syslog',
+      width: '50%',
+      config: [
+        {
+          type: 'checkbox',
+          name: 'fqdn_syslog',
+          placeholder: helptext_system_advanced.fqdn_placeholder,
+          tooltip: helptext_system_advanced.fqdn_tooltip
+        },
+        {
+          type: 'select',
+          name: 'sysloglevel',
+          placeholder: helptext_system_advanced.sysloglevel.placeholder,
+          tooltip: helptext_system_advanced.sysloglevel.tooltip,
+          options: helptext_system_advanced.sysloglevel.options,
+        },
+        {
+          type: 'input',
+          name: 'syslogserver',
+          placeholder: helptext_system_advanced.syslogserver.placeholder,
+          tooltip: helptext_system_advanced.syslogserver.tooltip,
+        },
+        {
+          type: 'select',
+          name: 'syslog_transport',
+          placeholder: helptext_system_advanced.syslog_transport.placeholder,
+          tooltip: helptext_system_advanced.syslog_transport.tooltip,
+          options: helptext_system_advanced.syslog_transport.options,
+        },
+        {
+          type: 'select',
+          name: 'syslog_tls_certificate',
+          placeholder: helptext_system_advanced.syslog_tls_certificate.placeholder,
+          tooltip: helptext_system_advanced.syslog_tls_certificate.tooltip,
+          options: [],
+          relation: [
+            {
+              action: "SHOW",
+              when: [{
+                name: "syslog_transport",
+                value: 'TLS'
+              }]
+            }
+          ]
+        }
+      ]
+    },
+    { name: 'divider', divider: true },
+    {
+      name: helptext_system_advanced.fieldset_ui,
+      label: true,
+      class: 'gui',
+      width: '50%',
+      config: [
+        {
+          type: 'checkbox',
+          name: 'consolemsg',
+          placeholder: helptext_system_advanced.consolemsg_placeholder,
+          tooltip: helptext_system_advanced.consolemsg_tooltip
+        },
+        {
+          type: 'checkbox',
+          name: 'traceback',
+          placeholder: helptext_system_advanced.traceback_placeholder,
+          tooltip: helptext_system_advanced.traceback_tooltip,
+          isHidden: true
+        },
+        {
+          type: 'checkbox',
+          name: 'advancedmode',
+          placeholder: helptext_system_advanced.advancedmode_placeholder,
+          tooltip: helptext_system_advanced.advancedmode_tooltip
+        }
+      ]
+    },
+    {
+      name: helptext_system_advanced.fieldset_kernel,
+      label: true,
+      class: 'kernel',
+      width: '50%',
+      config: [
+
+        {
+          type: 'checkbox',
+          name: 'autotune',
+          placeholder: helptext_system_advanced.autotune_placeholder,
+          tooltip: helptext_system_advanced.autotune_tooltip
+        },
+        {
+          type: 'checkbox',
+          name: 'debugkernel',
+          placeholder: helptext_system_advanced.debugkernel_placeholder,
+          tooltip: helptext_system_advanced.debugkernel_tooltip
+        },
+      ]
+    },
+    { name: 'divider', divider: true },
+    {
+      name: helptext_system_advanced.fieldset_sed,
+      label: true,
+      class: 'sed',
+      width: '50%',
+      config: [
+        {
+          type: 'select',
+          name: 'sed_user',
+          placeholder: helptext_system_advanced.sed_user_placeholder,
+          tooltip: helptext_system_advanced.sed_user_tooltip,
+          options: [
+            {label:'user', value:'USER'},
+            {label:'master', value:'MASTER'}
+          ],
+          value : 'USER'
+        },
+        {
+          type: 'input',
+          name: 'sed_passwd',
+          placeholder: helptext_system_advanced.sed_passwd_placeholder,
+          tooltip: helptext_system_advanced.sed_passwd_tooltip,
+          inputType: 'password',
+          togglePw: true
+        },
+        {
+          type: 'input',
+          name: 'sed_passwd2',
+          placeholder: helptext_system_advanced.sed_passwd2_placeholder,
+          tooltip: helptext_system_advanced.sed_passwd2_tooltip,
+          inputType: 'password',
+          togglePw: true,
+          validation : this.validationService.matchOtherValidator('sed_passwd')
+        }
+      ]
+    },
     {
       name: helptext_system_advanced.fieldset_storage,
       label: true,
       class: 'storage',
-      width: '49%',
+      width: '50%',
       config: [
         {
           type: 'input',
@@ -221,144 +356,6 @@ export class AdvancedComponent implements OnDestroy {
           blurEvent: this.opBlurEvent,
           parent: this
         },
-      ]
-    },
-    { name: 'divider', divider: true },
-    {
-      name: helptext_system_advanced.fieldset_ui,
-      label: true,
-      class: 'gui',
-      width: '49%',
-      config: [
-        {
-          type: 'checkbox',
-          name: 'consolemsg',
-          placeholder: helptext_system_advanced.consolemsg_placeholder,
-          tooltip: helptext_system_advanced.consolemsg_tooltip
-        },
-        {
-          type: 'checkbox',
-          name: 'traceback',
-          placeholder: helptext_system_advanced.traceback_placeholder,
-          tooltip: helptext_system_advanced.traceback_tooltip,
-          isHidden: true
-        },
-        {
-          type: 'checkbox',
-          name: 'advancedmode',
-          placeholder: helptext_system_advanced.advancedmode_placeholder,
-          tooltip: helptext_system_advanced.advancedmode_tooltip
-        }
-      ]
-    },
-    { name: 'spacer', label: false, width: '2%' },
-    {
-      name: helptext_system_advanced.fieldset_kernel,
-      label: true,
-      class: 'kernel',
-      width: '49%',
-      config: [
-
-        {
-          type: 'checkbox',
-          name: 'autotune',
-          placeholder: helptext_system_advanced.autotune_placeholder,
-          tooltip: helptext_system_advanced.autotune_tooltip
-        },
-        {
-          type: 'checkbox',
-          name: 'debugkernel',
-          placeholder: helptext_system_advanced.debugkernel_placeholder,
-          tooltip: helptext_system_advanced.debugkernel_tooltip
-        },
-      ]
-    },
-    { name: 'divider', divider: true },
-    {
-      name: helptext_system_advanced.fieldset_sed,
-      label: true,
-      class: 'sed',
-      width: '49%',
-      config: [
-        {
-          type: 'select',
-          name: 'sed_user',
-          placeholder: helptext_system_advanced.sed_user_placeholder,
-          tooltip: helptext_system_advanced.sed_user_tooltip,
-          options: [
-            {label:'user', value:'USER'},
-            {label:'master', value:'MASTER'}
-          ],
-          value : 'USER'
-        },
-        {
-          type: 'input',
-          name: 'sed_passwd',
-          placeholder: helptext_system_advanced.sed_passwd_placeholder,
-          tooltip: helptext_system_advanced.sed_passwd_tooltip,
-          inputType: 'password',
-          togglePw: true
-        },
-        {
-          type: 'input',
-          name: 'sed_passwd2',
-          placeholder: helptext_system_advanced.sed_passwd2_placeholder,
-          tooltip: helptext_system_advanced.sed_passwd2_tooltip,
-          inputType: 'password',
-          togglePw: true,
-          validation : this.validationService.matchOtherValidator('sed_passwd')
-        }
-      ]
-    },
-    { name: 'spacer', label: false, width: '2%' },
-    {
-      name: helptext_system_advanced.fieldset_syslog,
-      label: true,
-      class: 'syslog',
-      width: '49%',
-      config: [
-        {
-          type: 'checkbox',
-          name: 'fqdn_syslog',
-          placeholder: helptext_system_advanced.fqdn_placeholder,
-          tooltip: helptext_system_advanced.fqdn_tooltip
-        },
-        {
-          type: 'select',
-          name: 'sysloglevel',
-          placeholder: helptext_system_advanced.sysloglevel.placeholder,
-          tooltip: helptext_system_advanced.sysloglevel.tooltip,
-          options: helptext_system_advanced.sysloglevel.options,
-        },
-        {
-          type: 'input',
-          name: 'syslogserver',
-          placeholder: helptext_system_advanced.syslogserver.placeholder,
-          tooltip: helptext_system_advanced.syslogserver.tooltip,
-        },
-        {
-          type: 'select',
-          name: 'syslog_transport',
-          placeholder: helptext_system_advanced.syslog_transport.placeholder,
-          tooltip: helptext_system_advanced.syslog_transport.tooltip,
-          options: helptext_system_advanced.syslog_transport.options,
-        },
-        {
-          type: 'select',
-          name: 'syslog_tls_certificate',
-          placeholder: helptext_system_advanced.syslog_tls_certificate.placeholder,
-          tooltip: helptext_system_advanced.syslog_tls_certificate.tooltip,
-          options: [],
-          relation: [
-            {
-              action: "SHOW",
-              when: [{
-                name: "syslog_transport",
-                value: 'TLS'
-              }]
-            }
-          ]
-        }
       ]
     },
     { name: 'divider', divider: true }

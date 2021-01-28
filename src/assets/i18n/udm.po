@@ -16,9 +16,6 @@ msgstr ""
 msgid " Download Updates"
 msgstr ""
 
-msgid " First data vdev is a "
-msgstr ""
-
 msgid " First vdev has "
 msgstr ""
 
@@ -175,9 +172,6 @@ msgid "(System Dataset Pool)"
 msgstr ""
 
 msgid "(top-right), then"
-msgstr ""
-
-msgid ", new Metadata vdev is a "
 msgstr ""
 
 msgid ", new vdev is "
@@ -403,14 +397,15 @@ msgid ""
 msgstr ""
 
 msgid ""
-"<b>WARNING:</b> This configuration file contains system              "
-"passwords and other sensitive data.<br>"
+"<b>WARNING:</b> The configuration file contains sensitive data like system "
+"passwords. However, SSH keys that are stored in <samp>/root/.ssh</samp> are "
+"<b>NOT</b> backed up by this operation. Additional sensitive information "
+"can be included in the configuration file.<br />"
 msgstr ""
 
 msgid ""
-"<b>WARNING:</b> This configuration file contains system passwords and other "
-"sensitive data.<br /><br /><b>WARNING:</b> SSH keys  in "
-"<samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation.<br />"
+"<b>WARNING:</b> This configuration file contains system              "
+"passwords and other sensitive data.<br>"
 msgstr ""
 
 msgid "<b>rsyncd</b> listens on this port."
@@ -635,6 +630,9 @@ msgid ""
 "A space-delimited list of network interfaces attached to a <b>VNET</b> "
 "enabled jail after it is created. Interfaces are automatically released "
 "when the jail is removed."
+msgstr ""
+
+msgid "A stripe"
 msgstr ""
 
 msgid "A swap size of 0 is STRONGLY DISCOURAGED."
@@ -922,6 +920,9 @@ msgstr ""
 msgid "Add Kerberos SPN Entry"
 msgstr ""
 
+msgid "Add License"
+msgstr ""
+
 msgid "Add Mountpoint"
 msgstr ""
 
@@ -947,6 +948,9 @@ msgid "Add Vdev"
 msgstr ""
 
 msgid "Add Vdevs"
+msgstr ""
+
+msgid "Add ZVol"
 msgstr ""
 
 msgid "Add Zvol"
@@ -3005,6 +3009,9 @@ msgstr ""
 msgid "Compression"
 msgstr ""
 
+msgid "Compression Level"
+msgstr ""
+
 msgid "Compression Ratio"
 msgstr ""
 
@@ -3012,9 +3019,6 @@ msgid "Compression level"
 msgstr ""
 
 msgid "Computer Account OU"
-msgstr ""
-
-msgid "Config Files"
 msgstr ""
 
 msgid "Config Hostpath"
@@ -4358,6 +4362,9 @@ msgstr ""
 msgid "Download Encryption Key"
 msgstr ""
 
+msgid "Download File"
+msgstr ""
+
 msgid "Download Key"
 msgstr ""
 
@@ -4626,6 +4633,9 @@ msgid "Enable SMB1 support"
 msgstr ""
 
 msgid "Enable SMB2/3 Durable Handles"
+msgstr ""
+
+msgid "Enable SMTP configuration"
 msgstr ""
 
 msgid "Enable Serial Console"
@@ -4952,9 +4962,6 @@ msgid ""
 msgstr ""
 
 msgid "Enter"
-msgstr ""
-
-msgid "Enter License"
 msgstr ""
 
 msgid ""
@@ -5679,6 +5686,9 @@ msgstr ""
 msgid "Error checking for updates."
 msgstr ""
 
+msgid "Error creating CA."
+msgstr ""
+
 msgid "Error creating VM."
 msgstr ""
 
@@ -5823,9 +5833,6 @@ msgstr ""
 msgid "Export Password Secret Seed"
 msgstr ""
 
-msgid "Export Pool Encryption Keys"
-msgstr ""
-
 msgid "Export Private Key"
 msgstr ""
 
@@ -5887,6 +5894,9 @@ msgid "Extent Type"
 msgstr ""
 
 msgid "Extents"
+msgstr ""
+
+msgid "Extra Constraints"
 msgstr ""
 
 msgid "Extra Environment Variables"
@@ -6088,6 +6098,9 @@ msgstr ""
 msgid "Force HDD Standby"
 msgstr ""
 
+msgid "Force Size"
+msgstr ""
+
 msgid "Force Stop After Timeout"
 msgstr ""
 
@@ -6136,6 +6149,9 @@ msgid ""
 "FreeBSD release to use as the jail operating system.  Jails can run FreeBSD "
 "versions up to the same version as the host  system. Newer releases are not "
 "shown."
+msgstr ""
+
+msgid "Frequency"
 msgstr ""
 
 msgid "Fri"
@@ -7734,6 +7750,9 @@ msgstr ""
 msgid "Manage"
 msgstr ""
 
+msgid "Manage Configuration"
+msgstr ""
+
 msgid "Manage Custom Themes"
 msgstr ""
 
@@ -7950,12 +7969,6 @@ msgid "Metadata (Special) Small Block Size"
 msgstr ""
 
 msgid "Metadata VDev"
-msgstr ""
-
-msgid "Metadata vdev must be the same type as data vdevs."
-msgstr ""
-
-msgid "Metadata vdev must be the same type as the data vdevs."
 msgstr ""
 
 msgid "Method"
@@ -9751,9 +9764,6 @@ msgid ""
 "public NTP servers."
 msgstr ""
 
-msgid "Reconnect"
-msgstr ""
-
 msgid ""
 "Record AFP service messages up to the specified log level in the system "
 "log. By default, severe and warning level messages are logged."
@@ -10385,6 +10395,9 @@ msgstr ""
 msgid "SMTP"
 msgstr ""
 
+msgid "SMTP Authentication"
+msgstr ""
+
 msgid ""
 "SMTP port number. Typically <i>25,465</i> (secure SMTP), or <i>587</i> "
 "(submission)."
@@ -10475,9 +10488,6 @@ msgid "Save"
 msgstr ""
 
 msgid "Save Changes"
-msgstr ""
-
-msgid "Save Config"
 msgstr ""
 
 msgid "Save Configuration"
@@ -10746,6 +10756,9 @@ msgstr ""
 msgid ""
 "Select IP addresses to listen to for NFS requests. Leave empty for NFS to "
 "listen to all available addresses."
+msgstr ""
+
+msgid "Select Path"
 msgstr ""
 
 msgid "Select Reports"
@@ -11155,6 +11168,9 @@ msgid "Semi-automatic (TrueNAS CORE only)"
 msgstr ""
 
 msgid "Send Email Status Updates"
+msgstr ""
+
+msgid "Send Mail Method"
 msgstr ""
 
 msgid "Send Test Mail"
@@ -14110,6 +14126,9 @@ msgstr ""
 msgid "Upload Config"
 msgstr ""
 
+msgid "Upload File"
+msgstr ""
+
 msgid "Upload Key file"
 msgstr ""
 
@@ -14931,6 +14950,9 @@ msgid ""
 "write-cache that can be removed."
 msgstr ""
 
+msgid "ZFS Volume"
+msgstr ""
+
 msgid "ZFS deduplication"
 msgstr ""
 
@@ -14947,6 +14969,12 @@ msgid "Zvol Actions"
 msgstr ""
 
 msgid "Zvol Location"
+msgstr ""
+
+msgid "Zvol Name"
+msgstr ""
+
+msgid "Zvol Size"
 msgstr ""
 
 msgid "Zvol name"
@@ -15390,6 +15418,9 @@ msgid "total available"
 msgstr ""
 
 msgid "users"
+msgstr ""
+
+msgid "vdev is highly discouraged and will result in data loss if it fails"
 msgstr ""
 
 msgid "vmemoryuse"

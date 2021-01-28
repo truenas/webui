@@ -342,7 +342,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         preferredCols.forEach((i) => {
           // If preferred columns have been set for THIS table...
           if (i.title === this.title) {
-            this.conf.columns = i.cols;
+            this.conf.columns = i.cols.filter(col => {
+              // Remove columns if they are already present in always displayed columns
+              return !this.alwaysDisplayedCols.find(item => item.prop == col.prop)
+            });
             // Remove columns from display and preferred cols if they don't exist in the table
             let notFound = [];
             this.conf.columns.forEach(col => {
@@ -1080,4 +1083,32 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.conf.config.multiSelect ? this.currentColumns[1].prop : this.currentColumns[0].prop;
   }
 
+  onHover(evt, over = true){
+    const row = this.findRow(evt);
+    const cells = row.children;
+
+    for(let i = 0; i < cells.length; i++){
+      const cell = cells[i];
+      if(cell.classList.contains('mat-table-sticky') || cell.classList.contains('threedot-column')){
+        if(over){
+          cell.classList.add('hover');
+        } else {
+          cell.classList.remove('hover');
+        }
+      }
+    }; 
+  }
+
+  findRow(el){
+    let target = el.target;
+    do {
+      target = target.parentElement;
+    } while(target.tagName.toLowerCase() !== 'tr')
+    return target;
+  }
+
+  isInteractive(column: string): boolean {
+    const item = this.currentColumns.find(item => item.prop === column);
+    return (item?.checkbox || item?.toggle);
+  }
 }

@@ -6,7 +6,7 @@
         </mat-tab>
         <mat-tab label="{{ 'Installed Applications' | translate}}"
             ix-auto ix-auto-type="tab" ix-auto-identifier="charts">
-            <app-charts #charts></app-charts>
+            <app-charts (switchTab)="newTab($event)" #charts></app-charts>
         </mat-tab>
         <!-- <mat-tab label="{{ 'Docker Images' | translate }}"
             ix-auto ix-auto-type="tab" ix-auto-identifier="docker">

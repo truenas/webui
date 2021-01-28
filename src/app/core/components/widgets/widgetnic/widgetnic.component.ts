@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit,OnDestroy, Input, ViewChild, Renderer2, ElementRef, OnChanges, SimpleChanges } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MaterialModule } from 'app/appMaterial.module';
 
@@ -259,6 +259,11 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     }
 
     return units;
+  }
+
+  manageInterface(_interface) {
+    const navigationExtras: NavigationExtras = {state: {editInterface: _interface.name}};
+    this.router.navigate(['network'], navigationExtras);
   }
 
 }
