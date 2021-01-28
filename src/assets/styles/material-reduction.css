@@ -876,3 +876,8 @@ mat-icon.truecommand-icon.FAILED > span.mat-badge-content {
   background: var(--warn);
 }
 
+/* Material Design Icon Set */
+.mat-icon.mdi-set{
+  font-size: 24px; /* Default Size to match other mat icons */
+  margin-top: 2px;
+}
