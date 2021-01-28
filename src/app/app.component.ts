@@ -19,6 +19,7 @@ import { WebSocketService } from './services/ws.service';
 import { DomSanitizer } from "@angular/platform-browser";
 import { MatIconRegistry } from "@angular/material/icon";
 import { ChartDataUtilsService } from 'app/core/services/chart-data-utils.service'; // <-- Use this globally so we can run as web worker
+import { customSvgIcons } from 'app/core/classes/custom-icons';
 
 import productText from './helptext/product';
 
@@ -51,186 +52,14 @@ export class AppComponent {
     public matIconRegistry: MatIconRegistry,
     public chartDataUtils: ChartDataUtilsService,
     private sysGeneralService: SystemGeneralService) {
-
-    /*
-    * MISC CUSTOM ICONS
-    * When importing SVG asset files here
-    * please prep the SVG file by removing
-    * any styling form the <style> tag or inline
-    * as it conflicts with our application CSS.
-    */
-    this.matIconRegistry.addSvgIconSetInNamespace(
-      "mdi",
+   
+    this.matIconRegistry.addSvgIconSetInNamespace("mdi",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/iconfont/mdi/mdi.svg")
     );
-    this.matIconRegistry.addSvgIcon(
-      "multipath",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/multipath.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "jail_icon",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/jail_icon.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "ha_disabled",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/ha_disabled.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "ha_enabled",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/ha_enabled.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "ix_full_logo",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/ix_full_logo.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "ix_logomark",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/ix_logomark.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "ha_reconnecting",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/ha_reconnecting.svg")
-    );
-
-    // TRUENAS ENTERPRISE
-    this.matIconRegistry.addSvgIcon(
-      "truenas_logomark_color",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logomark_rgb.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truenas_logotype_color",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logotype_rgb.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truenas_logomark", // Generic Alias
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logomark.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truenas_logotype", // Generic Alias
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logotype.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truenas_enterprise_logomark",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logomark.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truenas_enterprise_logotype",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logotype.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truenas_enterprise_logo_full",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logo_full.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truenas_enterprise_text_only",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logotype.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truenas_enterprise_logomark_color",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logomark_rgb.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truenas_enterprise_logotype_color",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_enterprise_logotype_rgb.svg")
-    );
-
-    // TRUENAS CORE
-    this.matIconRegistry.addSvgIcon(
-      "truenas_core_logomark_color",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logomark_rgb.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truenas_core_logotype_color",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logotype_rgb.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truenas_core_logomark",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logomark.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truenas_core_logotype",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logotype.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truenas_core_logo_full",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_logo_full.svg")
-    );
-    /*this.matIconRegistry.addSvgIcon(
-      "truenas_core_text_only",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_core_text_only.svg")
-    );*/
-
-    // TRUENAS SCALE
-    this.matIconRegistry.addSvgIcon(
-      "truenas_scale_logomark",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_logomark.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truenas_scale_logotype",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_logotype.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truenas_scale_logo_full",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_logo_full.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truenas_scale_logomark_color",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_logomark_rgb.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truenas_scale_logotype_color",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_logotype_rgb.svg")
-    );
-    /*this.matIconRegistry.addSvgIcon(
-      "truenas_scale_text_only",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/truenas_scale_text_only.svg")
-    );*/
-
-
-    // FREENAS
-    this.matIconRegistry.addSvgIcon(
-      "freenas_logomark",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/logo.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "freenas_certified",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/logo_certified.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "freenas_logotype",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/logo-text.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "freenas_logo_full",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/logo-full.svg")
-    );
-
-    // TRUECOMMAND
-    this.matIconRegistry.addSvgIcon(
-      "truecommand_logo_blue",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand-logo-mark-full-color-rgb.svg")
-    );
-    this.matIconRegistry.addSvgIcon(
-      "truecommand_logo_white",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/images/truecommand/truecommand-logo-mark-white-rgb.svg")
-    );
-
-    // encryption icon
-    this.matIconRegistry.addSvgIcon(
-      "anti-lock",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/anti-lock.svg")
-    )
-
-    // network upload download
-    this.matIconRegistry.addSvgIcon(
-      'network-upload-download',
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/network-upload-download.svg")
-    )
-
-    this.matIconRegistry.addSvgIcon(
-      'network-upload-download-disabled',
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/customicons/network-upload-download-disabled.svg")
-    )
+    
+    for(const [name, path] of Object.entries(customSvgIcons)) {
+      this.matIconRegistry.addSvgIcon(name, this.domSanitizer.bypassSecurityTrustResourceUrl(path));  
+    }
 
     const product = productText.product.trim();
     this.title.setTitle(product + ' - ' + window.location.hostname);

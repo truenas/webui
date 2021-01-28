@@ -535,6 +535,12 @@ button.mat-button.mat-accent{
   opacity: 1 !important;
 }
 
+button.mat-button.mat-warn{
+  background-color:var(--red) !important;
+  color:#efefef !important;
+  opacity: 1 !important;
+}
+
 /* Menus */
 
 button.mat-menu-trigger.menu-toggle.mat-button{
@@ -807,7 +813,6 @@ mat-card.mat-card .mat-list-base{
   padding-top: 4px;
 }
 
-<<<<<<< HEAD
 .mat-expansion-panel-header span.mat-expansion-indicator{
   margin-top: -4px;
   position: relative;
@@ -874,4 +879,11 @@ mat-icon.truecommand-icon.FAILED > span.mat-badge-content {
 input::-ms-reveal,
 input::-ms-clear {
   display: none;
+}
+
+@media only screen and (max-width: 750px) {
+  .viewcontroller-wrapper {
+    flex-grow: 100;
+    margin-top: 8px;
+  }
 }
