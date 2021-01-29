@@ -35,7 +35,8 @@ export class ReplicationListComponent {
         { name: 'Target Dataset', prop: 'target_dataset', hidden: true},
         { name: 'Recursive', prop: 'recursive', hidden: true},
         { name: 'Auto', prop: 'auto', hidden: true},
-        { name: 'Enabled', prop: 'enabled', selectable: true },
+        //{ name: 'Enabled', prop: 'enabled', selectable: true },
+        { name: 'Enabled', prop: 'enabled', checkbox: true },
         //{ name: 'State', prop: 'task_state', state: 'state' },
         { name: 'State', prop: 'state', button: true, state: 'state' },
         { name: 'Last Snapshot', prop: 'task_last_snapshot' }
@@ -209,6 +210,7 @@ export class ReplicationListComponent {
     }
 
     onCheckboxChange(row) {
+      console.log("CHECK!")
       row.enabled = !row.enabled;
       this.ws.call('replication.update', [row.id, {'enabled': row.enabled}] )
       .subscribe(
