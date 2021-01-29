@@ -187,6 +187,53 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
   }
 
+  makeFormGroup() {
+    // Fallback if no fieldsets are defined
+    if(this.conf.fieldSets){
+      this.fieldConfig = [];
+      /* Temp patch to support both FieldSet approaches */
+      this.fieldSets = this.conf.fieldSets.list ? this.conf.fieldSets.list() : this.conf.fieldSets;
+      for(let i = 0; i < this.fieldSets.length; i++){
+        let fieldset = this.fieldSets[i];
+        if (!fieldset.divider) {
+          if(fieldset.maxWidth)
+            fieldset.width = '100%';
+          else
+            fieldset.width = this.conf.columnsOnForm === 1 || fieldset.colspan === 2 ? '100%' : '50%';
+        }
+
+        if(fieldset.config){
+          this.fieldConfig = this.fieldConfig.concat(fieldset.config);
+        }
+      }
+      this.conf.fieldConfig = this.fieldConfig;
+    } else {
+      this.fieldConfig = this.conf.fieldConfig;
+      this.fieldSets = [
+        {
+          name:'FallBack',
+          class:'fallback',
+          width:'100%',
+          divider:false,
+          config: this.fieldConfig
+        },
+        {
+          name:'divider',
+          divider:true,
+          width:'100%'
+        }
+      ]
+    }
+    this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
+
+    for (const i in this.fieldConfig) {
+      const config = this.fieldConfig[i];
+      if (config.relation.length > 0) {
+        this.setRelation(config);
+      }
+    }
+  }
+
   async ngOnInit() {
     //get system general setting
     this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe((res)=> {
@@ -256,50 +303,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         this.fieldSetDisplay = "default";
       }
 
-      // Fallback if no fieldsets are defined
-      if(this.conf.fieldSets){
-        this.fieldConfig = [];
-        /* Temp patch to support both FieldSet approaches */
-        this.fieldSets = this.conf.fieldSets.list ? this.conf.fieldSets.list() : this.conf.fieldSets;
-        for(let i = 0; i < this.fieldSets.length; i++){
-          let fieldset = this.fieldSets[i];
-          if (!fieldset.divider) {
-            if(fieldset.maxWidth)
-              fieldset.width = '100%';
-            else
-              fieldset.width = this.conf.columnsOnForm === 1 || fieldset.colspan === 2 ? '100%' : '50%';
-          }
-
-          if(fieldset.config){
-            this.fieldConfig = this.fieldConfig.concat(fieldset.config);
-          }
-        }
-        this.conf.fieldConfig = this.fieldConfig;
-      } else {
-        this.fieldConfig = this.conf.fieldConfig;
-        this.fieldSets = [
-          {
-            name:'FallBack',
-            class:'fallback',
-            width:'100%',
-            divider:false,
-            config: this.fieldConfig
-          },
-          {
-            name:'divider',
-            divider:true,
-            width:'100%'
-          }
-        ]
-      }
-      this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-
-      for (const i in this.fieldConfig) {
-        const config = this.fieldConfig[i];
-        if (config.relation.length > 0) {
-          this.setRelation(config);
-        }
-      }
+      this.makeFormGroup();
 
       if (this.conf.queryCall === 'none') {
         this.getFunction = this.noGetFunction();
@@ -342,6 +346,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             this.data = res.data;
             if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
               this.data = this.conf.resourceTransformIncomingRestData(this.data);
+              this.makeFormGroup();
             }
             for (const i in this.data) {
               const fg = this.formGroup.controls[i];
@@ -371,6 +376,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
             if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
               this.wsResponse = this.conf.resourceTransformIncomingRestData(this.wsResponse);
+              this.makeFormGroup();
             }
             if (this.conf.dataHandler) {
               this.conf.dataHandler(this);
@@ -645,7 +651,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       hide = false;
     }
 
-
     this.fieldConfig = this.fieldConfig.map((item) => {
       if (item.name === name) {
         item.disabled = disable;
@@ -659,8 +664,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.formGroup.controls[name][method]();
       return;
     }
-
-
   }
 
   setValue(name: string, value: any) {
@@ -726,71 +729,79 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         newfg.setParent(formArray);
         formArray.controls.push(newfg);
 
-        for (const [key, value] of Object.entries(listValue[i])) {
-          const fieldConfig = _.find(templateListField, {'name': key});
-          if (fieldConfig.type == "list") {
-            const subTemplateListField = _.cloneDeep(fieldConfig.templateListField);
-            
-            for(let j=0; j < value.length; j++) {
-              const subNewfg =  this.entityFormService.createFormGroup(subTemplateListField);
-              subNewfg.setParent(newfg);
-              (<FormArray>newfg.controls[key]).push(subNewfg);
-              _.find(templateListField, {'name': key}).listFields.push(subTemplateListField);
-            }            
+        if (typeof listValue[i] === 'object') {
+          for (const [key, value] of Object.entries(listValue[i])) {
+            const fieldConfig = _.find(templateListField, {'name': key});
+            if (fieldConfig && fieldConfig.type == "list") {
+              const subTemplateListField = _.cloneDeep(fieldConfig.templateListField);
+              
+              for(let j=0; j < value.length; j++) {
+                const subNewfg =  this.entityFormService.createFormGroup(subTemplateListField);
+                subNewfg.setParent(newfg);
+                (<FormArray>newfg.controls[key]).push(subNewfg);
+                _.find(templateListField, {'name': key}).listFields.push(subTemplateListField);
+              }            
+            }
           }
         }
 
         _.find(this.conf.fieldConfig, {'name': fieldName}).listFields.push(templateListField);
       }
 
-      for (const [key, value] of Object.entries(listValue[i])) {
-        const control = <FormArray>(<FormGroup>formArray.controls[i]).controls[key];
-        if (control) {
-          const fieldConfig = _.find(templateListField, {'name': key});
-          if (fieldConfig.type == "list") {
-            for (let j = 0; j < value.length; j++) {
-              const subList = value[j];
-              
-              for (const [subKey, subValue] of Object.entries(subList)) {
-                if (<FormGroup>control.controls[j]) {
-                  const subControl = (<FormGroup>control.controls[j]).controls[subKey];
-                  subControl.setValue(subValue);
+      if (typeof listValue[i] === 'object') {
+        for (const [key, value] of Object.entries(listValue[i])) {
+          const control = <FormArray>(<FormGroup>formArray.controls[i]).controls[key];
+          if (control) {
+            const fieldConfig = _.find(templateListField, {'name': key});
+            if (fieldConfig.type == "list") {
+              for (let j = 0; j < value.length; j++) {
+                const subList = value[j];
+                
+                for (const [subKey, subValue] of Object.entries(subList)) {
+                  if (<FormGroup>control.controls[j]) {
+                    const subControl = (<FormGroup>control.controls[j]).controls[subKey];
+                    subControl.setValue(subValue);
+                  }
                 }
               }
+  
+            } else {
+              control.setValue(value);
             }
-
-          } else {
-            control.setValue(value);
-          }
-        }        
+          }        
+        }
+      } else {
+        const key = templateListField[0].name;
+        const control = (<FormGroup>formArray.controls[i]).controls[key];
+        if (control) {
+          control.setValue(listValue[i]);
+        }      
       }
+      
     }
     formArray.markAllAsTouched();
   }
 
   setRelation(config: FieldConfig) {
-    const activations =
-        this.fieldRelationService.findActivationRelation(config.relation);
+    const activations = this.fieldRelationService.findActivationRelation(config.relation);
     if (activations) {
-      const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
-          activations, this.formGroup);
-      const tobeHide = this.fieldRelationService.isFormControlToBeHide(
-          activations, this.formGroup);
+      const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(activations, this.formGroup);
+      const tobeHide = this.fieldRelationService.isFormControlToBeHide(activations, this.formGroup);
       this.setDisabled(config.name, tobeDisabled, tobeHide);
 
-      this.fieldRelationService.getRelatedFormControls(config, this.formGroup)
-          .forEach(control => {
-            control.valueChanges.subscribe(
-                () => { this.relationUpdate(config, activations); });
-          });
+      this.fieldRelationService.getRelatedFormControls(config, this.formGroup).forEach(control => {
+        control.valueChanges.subscribe((value) => { 
+          setTimeout(() => {
+            this.relationUpdate(config, activations); 
+          }, 100);
+        });
+      });
     }
   }
 
   relationUpdate(config: FieldConfig, activations: any) {
-    const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
-        activations, this.formGroup);
-    const tobeHide = this.fieldRelationService.isFormControlToBeHide(
-          activations, this.formGroup);
+    const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(activations, this.formGroup);
+    const tobeHide = this.fieldRelationService.isFormControlToBeHide(activations, this.formGroup);
     this.setDisabled(config.name, tobeDisabled, tobeHide);
   }
 
