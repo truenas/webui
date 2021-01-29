@@ -1,4 +1,4 @@
-import {Component, Input, ViewChild, ElementRef} from '@angular/core';
+import {Component, Input, ViewChild, ElementRef, ViewEncapsulation} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
@@ -22,7 +22,8 @@ import { Subject } from 'rxjs/Subject';
         </span>
       </mat-form-field>
     </div>
-  `
+  `,
+  encapsulation: ViewEncapsulation.None,
 })
 export class ToolbarInputComponent extends iXAbstractObject {
   @Input() config?: any;

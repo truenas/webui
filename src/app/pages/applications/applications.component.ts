@@ -40,7 +40,12 @@ export class ApplicationsComponent implements OnInit {
       this.chartTab.onToolbarAction(evt);    
     })
 
-    let controls: any[] = [
+    let controls: any[] = [      
+      {
+        name: 'filter',
+        type: 'input',
+        value: this.filterString,
+      },
       {
         name: 'settings',
         label: helptext.settings,
@@ -49,11 +54,6 @@ export class ApplicationsComponent implements OnInit {
           { label: helptext.choose, value: 'select_pool' }, 
           { label: helptext.advanced, value: 'advanced_settings' }, 
         ]
-      },
-      {
-        name: 'filter',
-        type: 'input',
-        value: this.filterString,
       },
     ];
 
