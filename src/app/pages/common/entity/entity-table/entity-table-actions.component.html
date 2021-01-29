@@ -15,7 +15,21 @@
   </ng-container>
 
   <ng-container *ngIf="!isSingleAction && !inlineActions; else inlineActionsTemplate">
-    <mat-icon
+    <!-- Material Design Icon Set -->
+    <mat-icon *ngIf="icon_name.startsWith('mdi-')"
+      role="image" fontSet="mdi-set" [fontIcon]="icon_name"
+      [ix-auto]=""
+      ix-auto-type="options"
+      ix-auto-identifier="{{row[key_prop]}}"
+      id="{{row[entity?.conf?.rowIdentifier || 'name']}}_{{action}}_button"
+      [matMenuTriggerFor]="appMenu"
+      [style.cursor]="'pointer'"
+      [style.font-size]="'24px'"
+      (click)="noPropogate($event)">
+    </mat-icon>
+
+    <!-- Standard Material Icon Set -->
+    <mat-icon *ngIf="!icon_name.startsWith('mdi-')"
       [ix-auto]=""
       ix-auto-type="options"
       ix-auto-identifier="{{row[key_prop]}}"
@@ -25,6 +39,7 @@
       (click)="noPropogate($event)">
       {{icon_name}}
     </mat-icon>
+
     <mat-menu #appMenu="matMenu">
       <span *ngIf="!groups;else groupMenu">
         <span *ngFor="let action of actions"

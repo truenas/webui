@@ -1,5 +1,7 @@
 import * as _ from 'lodash';
 
+export const FORM_KEY_SEPERATOR = "__";
+export const FORM_LABEL_KEY_PREFIX = "__label__";
 export class EntityUtils {
 
   handleError(entity: any, res: any) {
@@ -182,5 +184,85 @@ export class EntityUtils {
       .map(element => dowOptions[element] || element).join(',');
     }
     return cronArray.join(' ');
+  }
+
+  filterArrayFunction(item) {
+    let result = true;
+    if (typeof item === 'object') {
+      let isAllEmpty = true;
+      Object.values(item).forEach(value => {
+        if (value !== undefined && value !== null && value !== '') {
+          isAllEmpty = false;
+        }
+      });
+
+      if (isAllEmpty) {
+        result = false;
+      }
+
+    } else if (item === undefined || item === null || item === '') {
+      result = false;
+    }
+
+    return result;
+  }
+
+  parseFormControlValues(data, result) {
+    Object.keys(data).forEach(key => {
+      const value = data[key];
+      if (key == "release_name" || key == 'undefined' || key.startsWith(FORM_LABEL_KEY_PREFIX)) {
+        return;
+      }
+      
+      const key_list = key.split(FORM_KEY_SEPERATOR);
+      if (key_list.length > 1) {
+        let parent = result;
+        for(let i=0; i<key_list.length; i++) {
+          const temp_key = key_list[i];
+          if (i == key_list.length - 1) {
+            if (Array.isArray(value)) {
+              const arrayValues = value.map(item => {
+                if (Object.keys(item).length > 1) {
+                  let subValue = {};
+                  this.parseFormControlValues(item, subValue);
+                  return subValue;
+                } else {
+                  return item[Object.keys(item)[0]];
+                }
+              });
+              if (arrayValues.length > 0) {
+                parent[temp_key] = arrayValues.filter(this.filterArrayFunction);
+              }
+            } else {
+              parent[temp_key] = value;
+            }            
+          } else {
+            if (!parent[temp_key]) {
+              parent[temp_key] = {};
+            }
+            parent = parent[temp_key];
+          }
+        }        
+      } else {
+        if (Array.isArray(value)) {
+          const arrayValues = value.map(item => {
+            if (Object.keys(item).length > 1) {
+              let subValue = {};
+              this.parseFormControlValues(item, subValue);
+              return subValue;
+            } else {
+              return item[Object.keys(item)[0]];
+            }
+          });
+          if (arrayValues.length > 0) {
+            result[key] = arrayValues.filter(this.filterArrayFunction);
+          }
+        } else {
+          result[key] = value;
+        }
+      }
+    });
+
+    return result;
   }
 }
