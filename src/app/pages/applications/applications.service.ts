@@ -35,10 +35,12 @@ export class ApplicationsService {
   }
 
   getChartReleases(name?: string) {
+    let secondOption = {"extra": {"history": true}};
+
     if (name) {
       return this.ws.call('chart.release.query', [[['name', '=', name]]]);  
     }
-    return this.ws.call('chart.release.query', [[], {"extra": {"history": true}}]);
+    return this.ws.call('chart.release.query', [[], secondOption]);
   }
 
   setReplicaCount(name: string, count: number) {

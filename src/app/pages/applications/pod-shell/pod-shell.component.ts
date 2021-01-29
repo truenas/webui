@@ -71,7 +71,6 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
       this.chart_release_name = params['rname'];
       this.pod_name = params['pname'];
       this.command = params['cname'];
-      console.log(params);
 
       this.ws.call('chart.release.pod_console_choices', [this.chart_release_name]).subscribe(res => {
         this.podDetails = res;
