@@ -399,11 +399,29 @@ export default {
     container: T('Container Settings')
   },
 
- updateImageDialog: {
-   title: T('Update Image'),
-   message: T('Update the image for '),
-   success: T('Success'),
-   successMsg: T('The image was updated.')
- }
+  updateImageDialog: {
+    title: T('Update Image'),
+    message: T('Update the image for '),
+    success: T('Success'),
+    successMsg: T('The image was updated.')
+  },
 
+  podConsole: {
+    nopod: {
+      title: T('No Pods Found'),
+      message: T('At least one pod must be available'),
+    },
+    choosePod: {
+      title: T('Choose pod'),
+      placeholder: T('Pods'),
+      action: T('Choose')
+    },
+    chooseConatiner: {
+      title: T('Choose container'),
+      placeholder: T('Containers'),
+    },
+    chooseCommand: {
+      placeholder: T('Commands'),
+    }
+  }
 }

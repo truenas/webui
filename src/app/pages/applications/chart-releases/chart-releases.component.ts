@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
-import { DialogService, SystemGeneralService } from '../../../services/index';
+import { DialogService, SystemGeneralService, WebSocketService } from '../../../services/index';
 import { ApplicationsService } from '../applications.service';
 import { ModalService } from '../../../services/modal.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
@@ -15,12 +15,14 @@ import { CommonUtils } from 'app/core/classes/common-utils';
 import { ChartFormComponent } from '../forms/chart-form.component';
 import { EmptyConfig, EmptyType } from '../../common/entity/entity-empty/entity-empty.component';
 import  helptext  from '../../../helptext/apps/apps';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-charts',
   templateUrl: './chart-releases.component.html',
   styleUrls: ['../applications.component.scss']
 })
+
 export class ChartReleasesComponent implements OnInit {
   @Output() switchTab = new EventEmitter<string>();
 
@@ -32,7 +34,10 @@ export class ChartReleasesComponent implements OnInit {
 
   protected utils: CommonUtils;
   private refreshForm: Subscription;
-  
+  private selectedAppName: String;
+  private podList = [];
+  private podDetails = {};
+ 
   public emptyPageConf: EmptyConfig = {
     type: EmptyType.loading,
     large: true,
@@ -68,10 +73,36 @@ export class ChartReleasesComponent implements OnInit {
     parent: this,
   }
 
+  public choosePod: DialogFormConfiguration = {
+    title: helptext.podConsole.choosePod.title,
+    fieldConfig: [{
+      type: 'select',
+      name: 'pods',
+      placeholder: helptext.podConsole.choosePod.placeholder,
+      required: true,
+    },{
+      type: 'select',
+      name: 'containers',
+      placeholder: helptext.podConsole.chooseConatiner.placeholder,
+      required: true,
+    },{
+      type: 'input',
+      name: 'command',
+      placeholder: helptext.podConsole.chooseCommand.placeholder,
+      value: '/bin/bash'
+    }],
+    saveButtonText: helptext.podConsole.choosePod.action,
+    customSubmit: this.doPodSelect,
+    afterInit: this.afterShellDialogInit,
+    parent: this,
+  }
+
   constructor(private mdDialog: MatDialog,
     private dialogService: DialogService, private translate: TranslateService,
     private appService: ApplicationsService, private modalService: ModalService,
-    private sysGeneralService: SystemGeneralService) { }
+    private sysGeneralService: SystemGeneralService, private router: Router,
+    protected ws: WebSocketService
+  ) { }
 
   ngOnInit(): void {
     this.utils = new CommonUtils();
@@ -298,6 +329,58 @@ export class ChartReleasesComponent implements OnInit {
           })
         }
       })
+    })
+  }
+
+  openShell(name: string) {
+    this.podList = [];
+    this.podDetails = {};
+    this.selectedAppName = name;
+    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).subscribe(res => {
+      this.podDetails = Object.assign({}, res);
+      this.podList = Object.keys(this.podDetails);
+      if (this.podList.length == 0) {
+        this.dialogService.confirm(helptext.podConsole.nopod.title, helptext.podConsole.nopod.message, true, 'Close', false, null, null, null, null, true);
+      } else {
+        this.choosePod.fieldConfig[0].value = this.podList[0];
+        this.choosePod.fieldConfig[0].options = this.podList.map(item => {
+          return {
+            label: item,
+            value: item,
+          }
+        });
+        this.choosePod.fieldConfig[1].value = this.podDetails[this.podList[0]][0];
+        this.choosePod.fieldConfig[1].options = this.podDetails[this.podList[0]].map(item => {
+          return {
+            label: item,
+            value: item,
+          }
+        });
+        this.dialogService.dialogForm(this.choosePod, true);
+      }
+    })
+  }
+
+  doPodSelect(entityDialog: any) {
+    const self = entityDialog.parent;
+    const pod = entityDialog.formGroup.controls['pods'].value;
+    const command = entityDialog.formGroup.controls['command'].value;
+    self.router.navigate(new Array("/apps/shell/").concat([self.selectedAppName, pod, command]));
+    self.dialogService.closeAllDialogs();
+  }
+
+  afterShellDialogInit(entityDialog: any) {
+    const self = entityDialog.parent;
+    entityDialog.formGroup.controls['pods'].valueChanges.subscribe(value => {
+      const containers = self.podDetails[value];
+      const containerFC = _.find(entityDialog.fieldConfig, {'name' : 'containers'});
+      containerFC.options = containers.map(item => {
+        return {
+          label: item,
+          value: item,
+        }
+      });
+      entityDialog.formGroup.controls['containers'].setValue(containers[0]);
     })
   }
 }
