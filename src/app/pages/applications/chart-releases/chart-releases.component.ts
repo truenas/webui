@@ -101,6 +101,14 @@ export class ChartReleasesComponent implements OnInit {
     this.switchTab.emit('0');
   }
 
+  updateToolbar(isShowBulkOptions) {
+    if (isShowBulkOptions) {
+      this.switchTab.emit('2');
+    } else {
+      this.switchTab.emit('3');
+    }
+  }
+
   showLoadStatus(type: EmptyType) {
     let title = "";
     let message = undefined;
@@ -353,5 +361,7 @@ export class ChartReleasesComponent implements OnInit {
     } else {
       this.filteredChartItems = this.chartItems;
     }
+
+    this.updateToolbar(this.filteredChartItems.length > 0);
   }
 }

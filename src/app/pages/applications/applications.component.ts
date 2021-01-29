@@ -21,6 +21,7 @@ export class ApplicationsComponent implements OnInit {
   selectedIndex = 0;
   public settingsEvent: Subject<CoreEvent>;
   public filterString = '';
+  isShowBulkOptions = true;
 
   constructor(private appService: ApplicationsService, private core: CoreService, 
     private modalService: ModalService) { }
@@ -57,7 +58,7 @@ export class ApplicationsComponent implements OnInit {
       },
     ];
 
-    if (this.selectedIndex == 1) {
+    if (this.selectedIndex == 1 && this.isShowBulkOptions) {
       controls.push({
         name: 'bulk',
         label: 'Bulk Options',
@@ -87,7 +88,16 @@ export class ApplicationsComponent implements OnInit {
   }
 
   newTab(index: number) {
-    this.selectedIndex = index;
+    if (index < 2) {
+      this.selectedIndex = index;
+    } else if (index == 2) {
+      this.isShowBulkOptions = true;
+      this.setupToolbar();
+    } else if (index == 3) {
+      this.isShowBulkOptions = false;
+      this.setupToolbar();
+    }
+    
   }
 
   refresh(e) {
