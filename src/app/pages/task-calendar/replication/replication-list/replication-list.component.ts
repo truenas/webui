@@ -36,7 +36,8 @@ export class ReplicationListComponent {
         { name: 'Recursive', prop: 'recursive', hidden: true},
         { name: 'Auto', prop: 'auto', hidden: true},
         { name: 'Enabled', prop: 'enabled', selectable: true },
-        { name: 'State', prop: 'task_state', state: 'state' },
+        //{ name: 'State', prop: 'task_state', state: 'state' },
+        { name: 'State', prop: 'state', button: true, state: 'state' },
         { name: 'Last Snapshot', prop: 'task_last_snapshot' }
     ];
 
@@ -156,6 +157,10 @@ export class ReplicationListComponent {
                 this.entityList.doDelete(row);
             },
         }]
+    }
+
+    onButtonClick(row:any){
+      this.stateButton(row);
     }
 
     stateButton(row) {
