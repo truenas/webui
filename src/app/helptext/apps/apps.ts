@@ -8,7 +8,8 @@ export default {
     action: T('Choose'),
     jobTitle: T('Configuring...'),
     success: T('Success'),
-    message: T('Using pool ')
+    message: T('Using pool '),
+    unsetPool: T('Unset Pool')
   },
 
   message: {
@@ -23,6 +24,7 @@ export default {
   settings: T('Settings'),
   choose: T('Choose Pool'),
   advanced: T('Advanced Settngs'),
+  unset_pool: T('Unset Pool'),
 
   launch: T('Launch Docker Image'),
 
