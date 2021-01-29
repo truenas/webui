@@ -39,6 +39,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   public formEvents: Subject<CoreEvent>;
 
   public usage_tooltip = helptext.usage_tooltip;
+  private attachAddon: AttachAddon;
 
   clearLine = "\u001b[2K\r"
   public shellConnected: boolean = false;
@@ -176,9 +177,6 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     };
 
     this.xterm = new Terminal(setting);
-    
-    const attachAddon = new AttachAddon(this.ss.socket);
-    this.xterm.loadAddon(attachAddon);
 
     this.fitAddon = new FitAddon();
     this.xterm.loadAddon(this.fitAddon);
@@ -245,7 +243,14 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     this.shellConnectedSubscription = this.ss.shellConnected.subscribe((res)=> {
       this.shellConnected = res.connected;
       this.connectionId = res.id;
+          
+      if (this.attachAddon) {
+        this.attachAddon.dispose();
+      }
       
+      this.attachAddon = new AttachAddon(this.ss.socket);
+      this.xterm.loadAddon(this.attachAddon);
+
       this.refreshToolbarButtons();      
       this.resizeTerm();
     })

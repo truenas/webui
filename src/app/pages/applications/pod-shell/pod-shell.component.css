@@ -1,0 +1,13 @@
+@import 'xterm/css/xterm.css';
+.terminal-wrapper {
+  padding: 10px 0 10px 10px;
+  background: black;
+  height: calc(100% - 100px);
+  margin-left: 8px;
+  margin-right: 8px;
+}
+
+#terminal {
+  height: 100%;
+  width: 100%;
+}
