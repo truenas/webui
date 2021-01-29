@@ -73,6 +73,11 @@ export class FormInputComponent implements Field {
         this.group.controls[this.config.name].setValue(phrasedValue);
       }
     }
+
+    if (this.config.inputType == 'number') {
+      const numberValue = this.group.controls[this.config.name].value * 1;
+      this.group.controls[this.config.name].setValue(numberValue);
+    }
   }
 
   hasValue() {
@@ -80,7 +85,7 @@ export class FormInputComponent implements Field {
   }
 
   shouldShowResetInput() {
-    return this.hasValue() && !this.config.togglePw && this.config.inputType !== 'password';
+    return this.hasValue() && !this.config.readonly && !this.config.togglePw && this.config.inputType !== 'password';
   }
 
   resetInput() {

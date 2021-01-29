@@ -16,9 +16,6 @@ msgstr " Проверьте уведомления для более подро�
 msgid " Download Updates"
 msgstr " Скачать обновления"
 
-msgid " First data vdev is a "
-msgstr " Первый vdev данных - это "
-
 msgid " First vdev has "
 msgstr " Первый vdev имеет "
 
@@ -193,9 +190,6 @@ msgstr ""
 
 msgid "(top-right), then"
 msgstr "(вверху справа), затем"
-
-msgid ", new Metadata vdev is a "
-msgstr ", новый vdev метаданных - "
 
 msgid ", new vdev is "
 msgstr ", новый vdev - "
@@ -507,20 +501,18 @@ msgstr ""
 "скопированы все нужные данные и снимки."
 
 msgid ""
+"<b>WARNING:</b> The configuration file contains sensitive data like system "
+"passwords. However, SSH keys that are stored in <samp>/root/.ssh</samp> are "
+"<b>NOT</b> backed up by this operation. Additional sensitive information "
+"can be included in the configuration file.<br />"
+msgstr ""
+
+msgid ""
 "<b>WARNING:</b> This configuration file contains system              "
 "passwords and other sensitive data.<br>"
 msgstr ""
 "<b>ВНИМАНИЕ:</b> Этот файл конфигурации содержит системные пароли и другие "
 "конфиденциальные данные.<br>"
-
-msgid ""
-"<b>WARNING:</b> This configuration file contains system passwords and other "
-"sensitive data.<br /><br /><b>WARNING:</b> SSH keys  in "
-"<samp>/root/.ssh</samp> are <b>NOT</b> backed up by this operation.<br />"
-msgstr ""
-"<b>ВНИМАНИЕ:</b> Этот файл конфигурации содержит системные пароли и другие "
-"конфиденциальные данные.<br /><br /><b>ВНИМАНИЕ:</b> SSH-ключи в "
-"<samp>/root/.ssh</samp><b>НЕ</b> сохраняются этой операцией.<br/>"
 
 msgid "<b>rsyncd</b> listens on this port."
 msgstr "<b>rsyncd</b> слушает на этом порту."
@@ -843,6 +835,9 @@ msgstr ""
 "Разделенный пробелами список сетевых интерфейсов, подключаемых к jail "
 "свключенным <b>VNET</b> после ее создания. Интерфейсы автоматически "
 "освобождаются при удалении jail."
+
+msgid "A stripe"
+msgstr ""
 
 msgid "A swap size of 0 is STRONGLY DISCOURAGED."
 msgstr "Размер свопа 0 НАСТОЯТЕЛЬНО НЕ РЕКОМЕНДУЕТСЯ."
@@ -1178,6 +1173,9 @@ msgstr ""
 msgid "Add Kerberos SPN Entry"
 msgstr ""
 
+msgid "Add License"
+msgstr ""
+
 msgid "Add Mountpoint"
 msgstr "Добавить точку монтирования"
 
@@ -1204,6 +1202,9 @@ msgstr "Добавить Vdev"
 
 msgid "Add Vdevs"
 msgstr "Добавить Vdev'ы"
+
+msgid "Add ZVol"
+msgstr ""
 
 msgid "Add Zvol"
 msgstr "Добавить zvol"
@@ -3737,6 +3738,9 @@ msgstr "Сжать соединения"
 msgid "Compression"
 msgstr "Сжатие"
 
+msgid "Compression Level"
+msgstr ""
+
 msgid "Compression Ratio"
 msgstr "Коэффициент сжатия"
 
@@ -3745,9 +3749,6 @@ msgstr "Степень сжатия"
 
 msgid "Computer Account OU"
 msgstr "Учетная запись компьютера OU"
-
-msgid "Config Files"
-msgstr ""
 
 msgid "Config Hostpath"
 msgstr ""
@@ -5254,6 +5255,9 @@ msgstr "Скачать Client Config"
 msgid "Download Encryption Key"
 msgstr "Скачать ключ шифрования"
 
+msgid "Download File"
+msgstr ""
+
 msgid "Download Key"
 msgstr "Скачать ключ"
 
@@ -5533,6 +5537,9 @@ msgstr "Включить поддержку SMB1"
 
 msgid "Enable SMB2/3 Durable Handles"
 msgstr "Включить SMB2/3 Durable Handles"
+
+msgid "Enable SMTP configuration"
+msgstr ""
 
 msgid "Enable Serial Console"
 msgstr "Включить последовательную консоль"
@@ -5909,9 +5916,6 @@ msgstr ""
 
 msgid "Enter"
 msgstr "Введите"
-
-msgid "Enter License"
-msgstr ""
 
 msgid ""
 "Enter a <a href=\"https://www.freebsd.org/doc/handbook/network-nis.html\" "
@@ -6810,6 +6814,9 @@ msgstr "Ошибка обновления пула"
 msgid "Error checking for updates."
 msgstr "Ошибка проверки обновлений."
 
+msgid "Error creating CA."
+msgstr ""
+
 msgid "Error creating VM."
 msgstr "Ошибка создания ВМ."
 
@@ -6963,9 +6970,6 @@ msgstr ""
 msgid "Export Password Secret Seed"
 msgstr "Экспортировать секретное семя пароля"
 
-msgid "Export Pool Encryption Keys"
-msgstr "Экспортировать ключи шифрования пула"
-
 msgid "Export Private Key"
 msgstr "Экспортировать закрытый ключ"
 
@@ -7032,6 +7036,9 @@ msgid "Extent Type"
 msgstr "Тип экстента"
 
 msgid "Extents"
+msgstr ""
+
+msgid "Extra Constraints"
 msgstr ""
 
 msgid "Extra Environment Variables"
@@ -7241,6 +7248,9 @@ msgstr "Принудительно удалить?"
 msgid "Force HDD Standby"
 msgstr "Принудительный переход жесткого диска в режим ожидания"
 
+msgid "Force Size"
+msgstr ""
+
 msgid "Force Stop After Timeout"
 msgstr "Принудительная остановка после тайм-аута"
 
@@ -7305,6 +7315,9 @@ msgstr ""
 "Выпуск FreeBSD для использования в качестве операционной системы для jail. "
 "Jail может запускать версии FreeBSD вплоть до той же версии, что и "
 "хост-система. Более новые выпуски не показаны."
+
+msgid "Frequency"
+msgstr ""
 
 msgid "Fri"
 msgstr "Пт"
@@ -9121,6 +9134,9 @@ msgstr "Сделать целевой набор данных доступным
 msgid "Manage"
 msgstr "Управление"
 
+msgid "Manage Configuration"
+msgstr ""
+
 msgid "Manage Custom Themes"
 msgstr "Управление пользовательскими темами"
 
@@ -9374,12 +9390,6 @@ msgid "Metadata (Special) Small Block Size"
 msgstr ""
 
 msgid "Metadata VDev"
-msgstr ""
-
-msgid "Metadata vdev must be the same type as data vdevs."
-msgstr ""
-
-msgid "Metadata vdev must be the same type as the data vdevs."
 msgstr ""
 
 msgid "Method"
@@ -11353,9 +11363,6 @@ msgstr ""
 "личных NTP-серверах или серверах, находящихся под прямым контролем. "
 "<b>Не</b> включать при использовании общедоступных NTP-серверов."
 
-msgid "Reconnect"
-msgstr "Переподключить"
-
 msgid ""
 "Record AFP service messages up to the specified log level in the system "
 "log. By default, severe and warning level messages are logged."
@@ -12040,6 +12047,9 @@ msgstr "Служба SMB"
 msgid "SMTP"
 msgstr ""
 
+msgid "SMTP Authentication"
+msgstr ""
+
 msgid ""
 "SMTP port number. Typically <i>25,465</i> (secure SMTP), or <i>587</i> "
 "(submission)."
@@ -12135,9 +12145,6 @@ msgstr "Сохранить"
 
 msgid "Save Changes"
 msgstr ""
-
-msgid "Save Config"
-msgstr "Сохранить конфигурацию"
 
 msgid "Save Configuration"
 msgstr "Сохранить конфигурацию"
@@ -12443,6 +12450,9 @@ msgid ""
 msgstr ""
 "Выберите IP-адреса для прослушивания запросов NFS. Оставьте пустым, чтобы "
 "NFS прослушивал все доступные адреса."
+
+msgid "Select Path"
+msgstr ""
 
 msgid "Select Reports"
 msgstr ""
@@ -12939,6 +12949,9 @@ msgstr ""
 
 msgid "Send Email Status Updates"
 msgstr "Присылать сообщения об изменении статуса"
+
+msgid "Send Mail Method"
+msgstr ""
 
 msgid "Send Test Mail"
 msgstr "Отправить тестовое письмо"
@@ -16390,6 +16403,9 @@ msgstr "Размер куска загрузки (MiB)"
 msgid "Upload Config"
 msgstr "Загрузить конфигурацию"
 
+msgid "Upload File"
+msgstr ""
+
 msgid "Upload Key file"
 msgstr ""
 
@@ -17319,6 +17335,9 @@ msgid ""
 "write-cache that can be removed."
 msgstr ""
 
+msgid "ZFS Volume"
+msgstr ""
+
 msgid "ZFS deduplication"
 msgstr "ZFS дедупликация"
 
@@ -17336,6 +17355,12 @@ msgstr ""
 
 msgid "Zvol Location"
 msgstr "Местоположение zvol"
+
+msgid "Zvol Name"
+msgstr ""
+
+msgid "Zvol Size"
+msgstr ""
 
 msgid "Zvol name"
 msgstr "Имя zvol"
@@ -17781,6 +17806,9 @@ msgid "total available"
 msgstr ""
 
 msgid "users"
+msgstr ""
+
+msgid "vdev is highly discouraged and will result in data loss if it fails"
 msgstr ""
 
 msgid "vmemoryuse"

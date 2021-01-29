@@ -14,6 +14,10 @@ export class ApplicationsService {
     return this.ws.call('kubernetes.config');
   }
 
+  getKubernetesServiceStarted() {
+    return this.ws.call('service.started', ['kubernetes']);
+  }
+
   getAllCatalogItems() {
     return this.ws.call('catalog.query', [[], {"extra": {"item_details": true}}]);
   }
@@ -31,10 +35,12 @@ export class ApplicationsService {
   }
 
   getChartReleases(name?: string) {
+    let secondOption = {"extra": {"history": true}};
+
     if (name) {
       return this.ws.call('chart.release.query', [[['name', '=', name]]]);  
     }
-    return this.ws.call('chart.release.query', [[], {"extra": {"history": true}}]);
+    return this.ws.call('chart.release.query', [[], secondOption]);
   }
 
   setReplicaCount(name: string, count: number) {

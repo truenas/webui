@@ -43,11 +43,10 @@
 }
 
 .pool-icon {
-    margin-left: 15px;
-    position: absolute;
-    top: 8px;
-    right: 20px;
-    z-index: 123;
+  position: relative;
+  top: -6px;
+  right: 16px;
+  z-index: 123;
 }
 
 .green-icon {
@@ -70,10 +69,26 @@
     color: var(--red);
 }
 
+.mat-expansion-panel-header[aria-disabled=true]{
+  color: unset;
+}
+
 .mat-expansion-panel-header-title {
     max-width: 30%;
     width: 30%;
     min-width: 30%;
+}
+
+.mat-expansion-panel-header-title,
+.mat-expansion-panel-header-description{
+  position: relative;
+  top: 4px;
+  max-height: 24px;
+}
+
+.mat-expansion-panel-header.offline .mat-expansion-panel-header-title,
+.mat-expansion-panel-header.offline .mat-expansion-panel-header-description{
+  top: 8px;
 }
 
 .mat-expansion-panel-body{

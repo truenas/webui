@@ -35,10 +35,12 @@ import {FormSchedulerComponent} from '../form-scheduler/form-scheduler.component
 import {FormIpWithNetmaskComponent} from '../form-ipwithnetmask/form-ipwithnetmask.component';
 import { FormListComponent } from '../form-list/form-list.component';
 import { FormChipComponent } from '../form-chip/form-chip.component';
+import {FormLabelComponent} from '../form-label/form-label.component';
 
 const components: {[type: string] : Type<Field>} = {
   button : FormButtonComponent,
   input : FormInputComponent,
+  label : FormLabelComponent,
   select : FormSelectComponent,
   checkbox : FormCheckboxComponent,
   textarea : FormTextareaComponent,

@@ -80,6 +80,7 @@
             </button>
         </mat-menu>
       </div>
-
   </mat-card>
+  
+  <entity-empty *ngIf="getChartItems().length == 0" [conf]="emptyPageConf"></entity-empty>
 </div>

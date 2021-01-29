@@ -24,11 +24,10 @@
             <div class="controls">
               <button mat-icon-button class="" (click)="router.navigate(['storage/status/' + poolState.id.toString()])"
                 [ix-auto]="poolState.name" ix-auto-type="button" ix-auto-identifier="poolStatus">
-                <mat-icon role="img"
+                <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-database"
                   matTooltip="{{'Pool Status' | translate}}"
                   matTooltipPosition="above"
                   aria-label="Configure Pools">
-                    settings
                 </mat-icon>
               </button>
 
@@ -144,7 +143,7 @@
                   </div>
                   <!-- END ROW -->
 
-                  <div class="disk-errors tr" *ngif="poolState.status == 'ONLINE'">
+                  <div class="disk-errors tr" *ngIf="poolState.status == 'ONLINE'">
                     <div class="td label">
                       <strong>Disks with Errors:</strong> 
                     </div>

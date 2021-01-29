@@ -5,7 +5,7 @@ import helptext from '../../helptext/topbar';
 
 interface InfoObject {
   version: string; // "TrueNAS-12.0-MASTER-202003160424"
-  buildtime: any[]; // [{…}]
+  buildtime: any; // {$date: 1584373672000}
   hostname: string; // "truenas.local"
   physmem: number; // 8445599744
   model: string; // "Intel(R) Core(TM) i3-2100T CPU @ 2.50GHz"
@@ -38,7 +38,7 @@ export class SystemProfileService extends BaseService {
   private emulateHardware?: InfoObject;
   private mini: InfoObject = {
     version: "TrueNAS-12.0-MASTER-202003160424",
-    buildtime: [],
+    buildtime: {$date: 1584373672000},
     hostname: "truenas.local",
     physmem: 8445599744,
     model: "Intel(R) Core(TM) i3-2100T CPU @ 2.50GHz",
@@ -63,7 +63,7 @@ export class SystemProfileService extends BaseService {
     enclosure: false
   }
 
-  constructor() { 
+  constructor() {
     super();
 
     this.core.register({
@@ -84,7 +84,7 @@ export class SystemProfileService extends BaseService {
         // This is a TrueNAS box with HA support
         if(this.ha_status && this.ha_status.status.length > 0){
           this.core.emit({name: "HA_Status", data: this.ha_status , sender: this});
-        } 
+        }
       }
     });
 
@@ -98,11 +98,11 @@ export class SystemProfileService extends BaseService {
     this.authenticated = true;
   }
 
-  private dataAvailable(evt: CoreEvent){  
+  private dataAvailable(evt: CoreEvent){
     if(this.cache && this.authenticated){
       return true;
     } else if(!this.cache && this.authenticated ){
-      if(this.buffer.length == 0){ 
+      if(this.buffer.length == 0){
         this.fetchProfile();
       }
       this.buffer.push(evt);
@@ -115,11 +115,11 @@ export class SystemProfileService extends BaseService {
   fetchProfile(localOnly?: boolean){
     this.websocket.call('system.info').subscribe((res) => {
       this.cache = res;
-      if(localOnly){ 
+      if(localOnly){
         this.buffer.push({name:"SysInfoRequest", sender: this});
-        return; 
+        return;
       }
-      
+
       if(this.buffer.length > 0){
         this.clearBuffer();
       }
@@ -147,8 +147,8 @@ export class SystemProfileService extends BaseService {
 
   detectFeatures(_profile:any){
     // ENCLOSURE SUPPORT
-    let profile = Object.assign({}, _profile);  
-    
+    let profile = Object.assign({}, _profile);
+
     if(!profile.system_product){
       // Stick with defaults if value is null
       return this.features;
@@ -156,7 +156,7 @@ export class SystemProfileService extends BaseService {
 
     if(profile.system_product.includes('FREENAS-MINI-3.0') || profile.system_product.includes('TRUENAS-')){
       this.features.enclosure = true;
-    } 
+    }
 
     // HIGH AVAILABILITY SUPPORT
     if((profile.license && profile.license.system_serial_ha) || profile.system_product == "BHYVE"){

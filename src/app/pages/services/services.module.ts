@@ -26,7 +26,6 @@ import {ServiceTFTPComponent} from './components/service-tftp';
 import {ServiceUPSComponent} from './components/service-ups';
 import {ServiceWebdavComponent} from './components/service-webdav';
 import {Services} from './services.component';
-import { ServicesTableComponent } from './services-table.component';
 import {routing} from './services.routing';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -40,7 +39,7 @@ import { UserService } from '../../services/user.service';
     ServiceRSYNCComponent, CconfigureRYSNCComponent,RSYNCconfigurationListComponent, RYSNCConfigurationFormComponent,
     ServiceSMARTComponent, ServiceNFSComponent, ServiceTFTPComponent, ServiceUPSComponent,
     ServiceDDNSComponent, ServiceSMBComponent, ServiceSNMPComponent,
-    ServiceWebdavComponent, ServiceS3Component, ServicesTableComponent,
+    ServiceWebdavComponent, ServiceS3Component,
   ],
   providers : [UserService]
 })
