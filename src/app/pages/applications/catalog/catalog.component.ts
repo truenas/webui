@@ -24,7 +24,7 @@ import  helptext  from '../../../helptext/apps/apps';
   styleUrls: ['../applications.component.scss']
 })
 export class CatalogComponent implements OnInit {
-  @Output() switchTab = new EventEmitter<string>();
+  @Output() updateTab = new EventEmitter();
 
   public catalogApps = [];
   public filteredCatalogApps = [];
@@ -101,10 +101,8 @@ export class CatalogComponent implements OnInit {
       this.refreshForms();
     });
 
-    
-
     this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
-      this.switchTab.emit('1');
+      this.updateTab.emit({name: 'SwitchTab', value: '1'});
     })
   }
 

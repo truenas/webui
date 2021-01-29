@@ -112,6 +112,14 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
         this.renderActions(this.globalActionsConfig);
       }
     });
+
+    this.core.register({observerClass:this, eventName:"GlobalActionsForUpdate"}).subscribe((evt:CoreEvent) => {
+      // CONFIG OBJECT EXAMPLE: { actionType: EntityTableAddActionsComponent, actionConfig: this };
+      let isShowBulkOptions = evt.data;
+      console.log('---------------');
+      console.log(isShowBulkOptions);
+      console.log(this);
+    });
   }
 
   ngAfterViewInit(){

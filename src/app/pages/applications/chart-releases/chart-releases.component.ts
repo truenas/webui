@@ -25,7 +25,7 @@ import { BulkOptionsComponent } from '../forms/bulk-options.component';
   styleUrls: ['../applications.component.scss']
 })
 export class ChartReleasesComponent implements OnInit {
-  @Output() switchTab = new EventEmitter<string>();
+  @Output() updateTab = new EventEmitter();
 
   public chartItems = [];
   public filteredChartItems = [];
@@ -98,15 +98,7 @@ export class ChartReleasesComponent implements OnInit {
   
 
   viewCatalog() {
-    this.switchTab.emit('0');
-  }
-
-  updateToolbar(isShowBulkOptions) {
-    if (isShowBulkOptions) {
-      this.switchTab.emit('2');
-    } else {
-      this.switchTab.emit('3');
-    }
+    this.updateTab.emit({name: 'SwitchTab', value: '0'});
   }
 
   showLoadStatus(type: EmptyType) {
@@ -362,6 +354,6 @@ export class ChartReleasesComponent implements OnInit {
       this.filteredChartItems = this.chartItems;
     }
 
-    this.updateToolbar(this.filteredChartItems.length > 0);
+    this.updateTab.emit({name: 'UpdateToolbar', value: this.filteredChartItems.length > 0});
   }
 }
