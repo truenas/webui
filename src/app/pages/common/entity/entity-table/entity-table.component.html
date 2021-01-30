@@ -134,7 +134,7 @@
 
               <!-- Button -->
               <button mat-button *ngIf="currentColumns[i].button"
-                [color]="element[column]?.state && element[column].state.toUpperCase() == 'ERROR' ? 'warn' : 'default'"
+                [color]="element[column]?.state ? element[column].state.toLowerCase() : 'default'"
                 (click)="$event.stopPropagation(); this.conf.onButtonClick(element)" 
                 id="interactive-button_{{column}}_{{element.name}}"
                 ix-auto ix-auto-type="slider" ix-auto-identifier="{{column}}__{{element.name}}">
