@@ -210,11 +210,10 @@ export class ReplicationListComponent {
     }
 
     onCheckboxChange(row) {
-      console.log("CHECK!")
-      row.enabled = !row.enabled;
       this.ws.call('replication.update', [row.id, {'enabled': row.enabled}] )
       .subscribe(
         (res) => {
+          row.enabled = res.enabled;
           if (!res) {
             row.enabled = !row.enabled;
           }
