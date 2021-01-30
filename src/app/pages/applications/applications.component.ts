@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ApplicationsService } from './applications.service';
 import { ModalService } from '../../services/modal.service';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { CatalogComponent } from './catalog/catalog.component';
 import { ChartReleasesComponent } from './chart-releases/chart-releases.component';
@@ -18,9 +19,10 @@ export class ApplicationsComponent implements OnInit {
   @ViewChild(CatalogComponent, { static: false}) private catalogTab: CatalogComponent;
   @ViewChild(ChartReleasesComponent, { static: false}) private chartTab: ChartReleasesComponent;
 
-  selectedIndex = 0;
+  selectedIndex: number = 0;
   public settingsEvent: Subject<CoreEvent>;
-  public filterString = '';
+  public filterString = 'Catalog';
+  public toolbarConfig: ToolbarConfig;
 
   constructor(private appService: ApplicationsService, private core: CoreService, 
     private modalService: ModalService) { }
@@ -57,15 +59,6 @@ export class ApplicationsComponent implements OnInit {
       },
     ];
 
-    if (this.selectedIndex == 1) {
-      controls.push({
-        name: 'bulk',
-        label: 'Bulk Options',
-        type: 'button',
-        color: 'secondary',
-        value: 'bulk'
-      });
-    }
     
     controls.push({
       name: 'launch',
@@ -75,32 +68,46 @@ export class ApplicationsComponent implements OnInit {
       value: 'launch'
     });
 
+    const toolbarConfig = {
+      target: this.settingsEvent,
+      controls: controls,
+    }
     const settingsConfig = {
       actionType: EntityToolbarComponent,
-      actionConfig: {
-        target: this.settingsEvent,
-        controls: controls,
-      }
+      actionConfig: toolbarConfig
     };
 
+    this.toolbarConfig = toolbarConfig;
+
     this.core.emit({name:"GlobalActions", data: settingsConfig, sender: this});
+
   }
 
-  updateToolbar(isShowBulkOptions) {
-    this.core.emit({name:"GlobalActionsForUpdate", data: isShowBulkOptions, sender: this});
-  }
+  updateToolbar() {
+   
+    if (this.selectedIndex == 1) {
+      const bulk = {
+        name: 'bulk',
+        label: 'Bulk Options',
+        type: 'button',
+        color: 'secondary',
+        value: 'bulk'
+      };
 
-  newTab(evt) {
-    if (evt.name == 'SwitchTab') {
-      this.selectedIndex = evt.value;
-    } else if (evt.name == 'UpdateToolbar') {
-      this.updateToolbar(evt.value);
+      this.toolbarConfig.controls.splice(1,0, bulk);
+    } else {
+
+      this.toolbarConfig.controls = this.toolbarConfig.controls.filter(ctl => ctl.name !== 'bulk');
+
     }
+ 
+    this.toolbarConfig.target.next({name:"UpdateControls", data: this.toolbarConfig.controls});
   }
+
 
   refresh(e) {
     this.selectedIndex = e.index;
-    this.setupToolbar();
+    this.updateToolbar();
     if (this.selectedIndex === 1) {
       this.modalService.refreshTable();
     }
