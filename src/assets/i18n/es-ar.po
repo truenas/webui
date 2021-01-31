@@ -1561,9 +1561,6 @@ msgstr "Configuraciones avanzadas"
 msgid "Advanced Settngs"
 msgstr ""
 
-msgid "Advertise IP"
-msgstr ""
-
 msgid ""
 "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click "
 "<b>Fetch Datastores</b> and select the datastore to be synchronized."
@@ -2127,6 +2124,17 @@ msgstr ""
 msgid "Applications"
 msgstr "Aplicaciones"
 
+msgid "Applications are not running"
+msgstr ""
+
+msgid "Applications not configured"
+msgstr ""
+
+msgid ""
+"Applications you install will automatically appear here. Click below and "
+"browse the TrueNAS catalog to get started."
+msgstr ""
+
 msgid "Apply"
 msgstr "Aplicar"
 
@@ -2259,6 +2267,9 @@ msgstr ""
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" "
 "target=\"_blank\">rsyncd.conf(5)</a> de el servidor rsync o en los "
 "<b>Módulos Rsync</b> de otro sistema."
+
+msgid "At least one pod must be available"
+msgstr ""
 
 msgid "At least one pool must be available to use apps"
 msgstr ""
@@ -3420,6 +3431,9 @@ msgstr ""
 "Elija entre una clave de cifrado de estilo <i>Hex</i> (número de base 16) o "
 "<i>Frase de contraseña</i> (alfanumérica)."
 
+msgid "Choose container"
+msgstr ""
+
 msgid ""
 "Choose how many log entries to create. Choices range from the least log "
 "entries (<i>Emergency</i>) to the most (<i>Debug</i>)."
@@ -3451,6 +3465,9 @@ msgstr ""
 
 msgid "Choose permissions for this rsync module."
 msgstr "Elija permisos para este módulo rsync."
+
+msgid "Choose pod"
+msgstr ""
 
 msgid "Choose the VM operating system type."
 msgstr "Elija el tipo de sistema operativo VM."
@@ -3767,6 +3784,9 @@ msgstr ""
 msgid "Command"
 msgstr "Comando"
 
+msgid "Commands"
+msgstr ""
+
 msgid ""
 "Commands to execute inside container overriding image CMD default.  Use "
 "<i>ENTER</i> after each entry."
@@ -3868,12 +3888,6 @@ msgstr "Nivel de compresión"
 
 msgid "Computer Account OU"
 msgstr "Cuenta de computadora OU"
-
-msgid "Config Hostpath"
-msgstr ""
-
-msgid "Config Hostpath Enabled"
-msgstr ""
 
 msgid "Config could not be downloaded"
 msgstr "La configuración no se pudo descargar"
@@ -4069,6 +4083,9 @@ msgid "Container Settings"
 msgstr ""
 
 msgid "Container port"
+msgstr ""
+
+msgid "Containers"
 msgstr ""
 
 msgid "Content Commitment"
@@ -4493,12 +4510,6 @@ msgstr "Datos"
 
 msgid "Data Encipherment"
 msgstr "Cifrado de datos"
-
-msgid "Data Hostpath"
-msgstr ""
-
-msgid "Data Hostpath Enabled"
-msgstr ""
 
 msgid "Data Protection"
 msgstr "Protección de datos"
@@ -5442,6 +5453,9 @@ msgstr ""
 
 msgid "Domain:"
 msgstr "Dominio:"
+
+msgid "Don't show this message again"
+msgstr ""
 
 msgid "Done"
 msgstr "Listo"
@@ -7186,6 +7200,9 @@ msgstr "Error al desencriptar los discos"
 msgid "Error details for "
 msgstr "Detalles de error para "
 
+msgid "Error detected reading App"
+msgstr ""
+
 msgid "Error exporting the Private Key"
 msgstr "Error al exportar la clave privada"
 
@@ -7410,9 +7427,6 @@ msgid "Extents"
 msgstr "Extensiones"
 
 msgid "Extra Constraints"
-msgstr ""
-
-msgid "Extra Environment Variables"
 msgstr ""
 
 msgid "Extra Users"
@@ -8917,6 +8931,9 @@ msgstr "Formato inválido."
 msgid "Invalid IP address"
 msgstr "Dirección IP inválida"
 
+msgid "Invalid Pod name"
+msgstr ""
+
 msgid "Invalid dataset."
 msgstr "Conjunto de datos no válido."
 
@@ -9257,6 +9274,9 @@ msgstr "Código de lenguaje"
 msgid "Last Scrub Run on"
 msgstr "Última ejecución de Scrub"
 
+msgid "Launch"
+msgstr ""
+
 msgid "Launch Docker Image"
 msgstr ""
 
@@ -9401,6 +9421,9 @@ msgstr "Escucha"
 
 msgid "Load Previous Replication Task"
 msgstr "Cargar tarea de replicación anterior"
+
+msgid "Loading..."
+msgstr ""
 
 msgid "Local"
 msgstr "Local"
@@ -9884,29 +9907,11 @@ msgstr "Mínimo"
 msgid "Minimum Passive Port"
 msgstr "Puerto pasivo mínimo"
 
-msgid "Minimum length: 5 characters. Maximum length: 20 characters"
-msgstr ""
-
-msgid "Minimum length: 8 characters. Maximum length: 40 characters"
-msgstr ""
-
 msgid "Minimum size is 1 MiB"
 msgstr "El tamaño mínimo es de 1 MiB"
 
 msgid "Minimum value is "
 msgstr "Valor mínimo es "
-
-msgid "Minio"
-msgstr ""
-
-msgid "Minio HostPath Enabled"
-msgstr ""
-
-msgid "Minio Image Environment"
-msgstr ""
-
-msgid "Minio: Kubernetes native, high performance object storage"
-msgstr ""
 
 msgid "Mintues"
 msgstr "Minutos"
@@ -10447,28 +10452,14 @@ msgstr "Siguiente"
 msgid "Next Run"
 msgstr "Siguiente arranque"
 
-msgid "Nextcloud"
-msgstr ""
-
-msgid "Nextcloud Host"
-msgstr ""
-
-msgid "Nextcloud Username"
-msgstr ""
-
-msgid "Nextcloud host to create application URLs"
-msgstr ""
-
-msgid ""
-"Nextcloud:  a file sharing server that puts the control  and security of "
-"your own data back into your hands."
-msgstr ""
-
 msgid "Nic to attach:"
 msgstr "Nic para adjuntar:"
 
 msgid "No"
 msgstr "No"
+
+msgid "No Applications Installed"
+msgstr ""
 
 msgid "No Communication Warning Time"
 msgstr "Sin tiempo de advertencia de comunicación"
@@ -10478,6 +10469,9 @@ msgstr "Sin encriptación (menos seguro, pero más rápido)"
 
 msgid "No Logs"
 msgstr "Sin registros"
+
+msgid "No Pods Found"
+msgstr ""
 
 msgid "No Pools"
 msgstr "Sin Grupos (Pools)"
@@ -10546,16 +10540,7 @@ msgstr ""
 msgid "Node Port"
 msgstr ""
 
-msgid "Node Port to use for Minio"
-msgstr ""
-
-msgid "Node Port to use for Nextcloud"
-msgstr ""
-
 msgid "Node port"
-msgstr ""
-
-msgid "Nodeport"
 msgstr ""
 
 msgid "Nodes CARP states do not agree."
@@ -10765,9 +10750,6 @@ msgstr "ID de cliente de OAuth"
 
 msgid "OAuth Client Secret"
 msgstr "Secreto de cliente OAuth"
-
-msgid "OFFICIAL"
-msgstr ""
 
 msgid "OK"
 msgstr "OK"
@@ -11420,18 +11402,6 @@ msgstr "Por favor selecciones una ruta válida"
 msgid "Please wait"
 msgstr "Por favor espere"
 
-msgid "Plex"
-msgstr ""
-
-msgid "Plex Claim Token"
-msgstr ""
-
-msgid "Plex Node Port"
-msgstr ""
-
-msgid "Plex: Media player, streaming service"
-msgstr ""
-
 msgid "Plugin"
 msgstr "Complemento"
 
@@ -11452,6 +11422,12 @@ msgstr "Complementos actualizados"
 
 msgid "Plugin installed successfully"
 msgstr "Complemento instalado correctamente"
+
+msgid "Pod Shell"
+msgstr ""
+
+msgid "Pods"
+msgstr ""
 
 msgid "Pool"
 msgstr "Pool"
@@ -11539,6 +11515,9 @@ msgstr "Post-script"
 
 msgid "Power"
 msgstr "Potencia"
+
+msgid "Power Management"
+msgstr ""
 
 msgid "Power Off"
 msgstr "Apagar"
@@ -12607,9 +12586,6 @@ msgstr "Ejecutar este trabajo ahora?"
 msgid "Run this rsync now?"
 msgstr "¿Ejecutar este rsync ahora?"
 
-msgid "Running"
-msgstr "Corriendo"
-
 msgid "S.M.A.R.T Test Results"
 msgstr "Resultados de prueba S.M.A.R.T."
 
@@ -12624,6 +12600,9 @@ msgstr "Prueba S.M.A.R.T."
 
 msgid "S.M.A.R.T. extra options"
 msgstr "Opciones extra de S.M.A.R.T."
+
+msgid "S.M.A.R.T./SED"
+msgstr ""
 
 msgid "S3"
 msgstr "S3"
@@ -15079,9 +15058,6 @@ msgstr ""
 msgid "Specifies the auxiliary directory service ID provider."
 msgstr "Especifica el proveedor de ID de servicio de directorio auxiliar."
 
-msgid "Specify HostPath for Minio data"
-msgstr ""
-
 msgid ""
 "Specify a port for encrypted connections. The default port <i>8081</i> is "
 "recommended. Do not reuse a port."
@@ -15169,9 +15145,6 @@ msgstr "En espera"
 
 msgid "Start"
 msgstr "Iniciar"
-
-msgid "Start Automatically"
-msgstr "Iniciar automáticamente"
 
 msgid "Start Scrub"
 msgstr "Iniciar Scrub"
@@ -15682,6 +15655,9 @@ msgstr ""
 
 msgid "Temperature"
 msgstr "Temperatura"
+
+msgid "Temperature Alerts"
+msgstr ""
 
 msgid "Template"
 msgstr "Plantilla"
@@ -16977,12 +16953,6 @@ msgstr "Topología"
 msgid "Train"
 msgstr "Tren"
 
-msgid "Transcode Hostpath"
-msgstr ""
-
-msgid "Transcode Hostpath Enabled"
-msgstr ""
-
 msgid "Transfer"
 msgstr "Transferir"
 
@@ -17269,6 +17239,9 @@ msgstr ""
 "Desactive <i>Generar clave de cifrado</i> para importar una clave "
 "hexadecimal personalizada."
 
+msgid "Unset Pool"
+msgstr ""
+
 msgid "Unset to add a login prompt to the system before the console menu is shown."
 msgstr ""
 "Desconéctelo para agregar una solicitud de inicio de sesión al sistema "
@@ -17439,7 +17412,7 @@ msgstr ""
 "actualización comienza simultáneamente en ambos Controladores TrueNAS. "
 "¿Continuar con la descarga?"
 
-msgid "Upgradomg..."
+msgid "Upgrading..."
 msgstr ""
 
 msgid "Upload"
