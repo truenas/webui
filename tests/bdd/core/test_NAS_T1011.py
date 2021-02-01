@@ -83,7 +83,7 @@ def input_bind_dn_for_bind_dn(driver, bind_dn):
     driver.find_element_by_xpath('//input[@placeholder="Bind DN"]').send_keys(bind_dn)
 
 
-@then(parsers.parse('input {password}for Bind Password'))
+@then(parsers.parse('input {password} for Bind Password'))
 def input_password_for_bind_password(driver, password):
     """input password for Bind Password."""
     driver.find_element_by_xpath('//input[@placeholder="Bind Password"]').clear()
