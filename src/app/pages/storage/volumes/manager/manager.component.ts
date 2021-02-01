@@ -121,6 +121,8 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public has_savable_errors = false;
   public force = false;
 
+  public gelikey = false;
+
   protected mindisks = {'stripe': 1, 'mirror':2, 'raidz':3, 'raidz2':4, 'raidz3':5}
 
   constructor(
@@ -238,6 +240,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   getPoolData() {
     this.ws.call(this.queryCall, [[["id", "=", this.pk]]]).subscribe((res) => {
         if (res[0]) {
+          if (res[0].encrypt === 1) {
+            this.gelikey = true;
+          }
           this.first_data_vdev_type = res[0].topology.data[0].type.toLowerCase();
           if (this.first_data_vdev_type === 'raidz1') {
             this.first_data_vdev_type = 'raidz';
@@ -615,10 +620,14 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
             switchMap((r: any) => {
               if (this.isEncrypted) {
                 const downloadDialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
-                downloadDialogRef.componentInstance.new = true;
+                if (!this.gelikey) {
+                  downloadDialogRef.componentInstance.new = true;
+                  downloadDialogRef.componentInstance.fileName = "dataset_" + r.result.name + "_keys.json";
+                } else {
+                  downloadDialogRef.componentInstance.fileName = "dataset_" + r.result.name + "_encryption.key";
+                }
                 downloadDialogRef.componentInstance.volumeId = r.result.id;
                 downloadDialogRef.componentInstance.volumeName = r.result.name;
-                downloadDialogRef.componentInstance.fileName = "dataset_" + r.result.name + "_keys.json";
 
                 return downloadDialogRef.afterClosed();
               }
