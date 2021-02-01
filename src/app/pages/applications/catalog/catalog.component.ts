@@ -102,7 +102,6 @@ export class CatalogComponent implements OnInit {
       this.refreshForms();
     });
 
-    this.refreshToolbarMenus();
     this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
       this.updateTab.emit({name: 'SwitchTab', value: '1'});
     })
@@ -117,6 +116,10 @@ export class CatalogComponent implements OnInit {
         case 'advanced_settings':
           this.modalService.open('slide-in-form', this.kubernetesForm);
           break;
+
+        case 'unset_pool':
+          this.doUnsetPool();
+          break;
       }
     } else if (evt.data.event_control == 'launch' && evt.data.launch) {
       this.doInstall('ix-chart');
@@ -128,58 +131,7 @@ export class CatalogComponent implements OnInit {
 
 
   refreshToolbarMenus() {
-    this.settingsEvent = new Subject();
-    this.settingsEvent.subscribe((evt: CoreEvent) => {
-      if (evt.data.event_control == 'settings' && evt.data.settings) {
-        switch (evt.data.settings.value) {
-          case 'select_pool':
-            return this.selectPool();
-          
-          case 'advanced_settings':
-            this.modalService.open('slide-in-form', this.kubernetesForm);
-            break;
-
-          case 'unset_pool':
-            this.doUnsetPool();
-            break;
-        }
-      } else if (evt.data.event_control == 'launch' && evt.data.launch) {
-        this.doInstall('ix-chart');
-      }
-    })
-
-    const menuOptions = [
-      { label: helptext.choose, value: 'select_pool' }, 
-      { label: helptext.advanced, value: 'advanced_settings' }, 
-    ];
-
-    if (this.selectedPool) {
-      menuOptions.push({ label: helptext.unset_pool, value: 'unset_pool' })
-    }
-
-    const settingsConfig = {
-      actionType: EntityToolbarComponent,
-      actionConfig: {
-        target: this.settingsEvent,
-        controls: [
-          {
-            name: 'settings',
-            label: helptext.settings,
-            type: 'menu',
-            options: menuOptions
-          },
-          {
-            name: 'launch',
-            label: helptext.launch,
-            type: 'button',
-            color: 'primary',
-            value: 'launch'
-          }
-        ]
-      }
-    };
-
-    this.core.emit({name:"GlobalActions", data: settingsConfig, sender: this});
+    this.updateTab.emit({name: 'UpdateToolbarPoolOption', value: !!this.selectedPool});
   }
 
   refreshForms() {
