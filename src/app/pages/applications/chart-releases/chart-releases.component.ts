@@ -179,6 +179,7 @@ export class ChartReleasesComponent implements OnInit {
     this.chartReleaseChangedListener = this.ws.subscribe("chart.release.query").subscribe((evt) => {
       const app = this.chartItems[evt.id];
       if (app) {
+        console.log(app, evt.fields);
         app.status = evt.fields.status;
       }
     });
@@ -338,24 +339,25 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   onBulkAction(checkedItems: any[], actionName: string) {
-    checkedItems.forEach(name => {
-      switch (actionName) {
-        case 'start':
-          this.start(name);
-          break;
-        case 'stop':
-          this.stop(name);
-          break;
-        case 'delete':
-          this.delete(name);
-          break;
-      }
-    });
-
-    this.translate.get(helptext.bulkActions.finished).subscribe(msg => {
-      this.dialogService.Info(helptext.choosePool.success, msg,
-        '500px', 'info', true);
-    })
+    if (actionName === 'delete') {
+      this.bulkDelete(checkedItems);      
+    } else {
+      checkedItems.forEach(name => {
+        switch (actionName) {
+          case 'start':
+            this.start(name);
+            break;
+          case 'stop':
+            this.stop(name);
+            break;
+        }
+      });
+  
+      this.translate.get(helptext.bulkActions.finished).subscribe(msg => {
+        this.dialogService.Info(helptext.choosePool.success, msg,
+          '500px', 'info', true);
+      })
+    }    
   }
 
   bulkOptions() {
@@ -377,6 +379,42 @@ export class ChartReleasesComponent implements OnInit {
           this.dialogRef.componentInstance.success.subscribe((res) => {
             this.dialogService.closeAllDialogs();
             this.refreshChartReleases();
+          });
+          this.dialogRef.componentInstance.failure.subscribe((err) => {
+            // new EntityUtils().handleWSError(this, err, this.dialogService);
+          })
+        }
+      })
+    })
+  }
+
+  bulkDelete(names: string[]) {
+    let name = names.join(",");
+    this.translate.get(helptext.charts.delete_dialog.msg).subscribe(msg => {
+      this.dialogService.confirm(helptext.charts.delete_dialog.title, msg + name + '?')
+      .subscribe(res => {
+        if (res) {
+          this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
+            helptext.charts.delete_dialog.job) }, disableClose: true});
+          this.dialogRef.componentInstance.setCall('core.bulk', ['chart.release.delete', names.map(item => [item])]);
+          this.dialogRef.componentInstance.submit();
+          this.dialogRef.componentInstance.success.subscribe((res) => {
+
+            this.dialogService.closeAllDialogs();
+            let message = "";
+            for (let i = 0; i < res.result.length; i++) {
+              if (res.result[i].error != null) {
+                message = message + '<li>' + res.result[i].error + '</li>';
+              }
+            }
+
+            if (message !== "") {
+              message = '<ul>' + message + '</ul>';
+              this.dialogService.errorReport(helptext.bulkActions.title, message);
+            }
+            this.modalService.close('slide-in-form');
+            this.refreshChartReleases();
+
           });
           this.dialogRef.componentInstance.failure.subscribe((err) => {
             // new EntityUtils().handleWSError(this, err, this.dialogService);
