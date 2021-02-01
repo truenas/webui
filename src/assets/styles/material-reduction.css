@@ -822,7 +822,6 @@ mat-card.mat-card .mat-list-base{
   padding-top: 4px;
 }
 
-<<<<<<< HEAD
 .mat-expansion-panel-header span.mat-expansion-indicator{
   margin-top: -4px;
   position: relative;
@@ -885,6 +884,11 @@ mat-icon.truecommand-icon.FAILED > span.mat-badge-content {
   background: var(--warn);
 }
 
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
 /* Material Design Icon Set */
 .mat-icon.mdi-set{
   font-size: 24px; /* Default Size to match other mat icons */
