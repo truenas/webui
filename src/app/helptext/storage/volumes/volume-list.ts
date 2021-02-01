@@ -100,6 +100,7 @@ expand_pool_success_dialog: {
 },
 
 unlock_msg: T('Unlock the pool with either a passphrase or a recovery key.'),
+export_geli_message: T('Download encryption key for '),
 
 pool_actions_title: T('Pool Actions'),
 encryption_actions_title: T('Encryption Actions'),

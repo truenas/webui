@@ -292,6 +292,17 @@ export class VolumesListTableConfig implements InputTableConf {
               ["storage", "pools", "changekey", row1.id]));
           }
         });
+        actions.push({
+          label: T("Download Key"),
+          onClick: (row1) => {
+            const message = helptext.export_geli_message + row1.name
+            this.dialogService.passwordConfirm(message).subscribe(export_keys => {
+              const dialogRef = self.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
+              dialogRef.componentInstance.volumeId = row1.id;
+              dialogRef.componentInstance.fileName = 'pool_' + row1.name + '_encryption.key'
+            });
+          }
+        });
       }
 
     } else if (rowData.encrypt === 1 && rowData.is_decrypted ) {
@@ -303,16 +314,18 @@ export class VolumesListTableConfig implements InputTableConf {
               ["storage", "pools", "createkey", row1.id]));
           }
         });
-      } else {
-        actions.push({
-          label: T("Download Key"),
-          onClick: (row1) => {
+      } 
+      actions.push({
+        label: T("Download Key"),
+        onClick: (row1) => {
+          const message = helptext.export_geli_message + row1.name
+          this.dialogService.passwordConfirm(message).subscribe(export_keys => {
             const dialogRef = self.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
             dialogRef.componentInstance.volumeId = row1.id;
             dialogRef.componentInstance.fileName = 'pool_' + row1.name + '_encryption.key'
-          }
-        });
-      }
+          });
+        }
+      });
     }
 
     if (rowData.encrypt !== 0 && rowData.is_decrypted) {
