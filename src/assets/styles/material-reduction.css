@@ -535,8 +535,17 @@ button.mat-button.mat-accent{
   opacity: 1 !important;
 }
 
+button.mat-button.mat-error,
+button.mat-button.mat-red,
 button.mat-button.mat-warn{
   background-color:var(--red) !important;
+  color:#efefef !important;
+  opacity: 1 !important;
+}
+
+button.mat-button.mat-finished,
+button.mat-button.mat-green{
+  background-color:var(--green) !important;
   color:#efefef !important;
   opacity: 1 !important;
 }

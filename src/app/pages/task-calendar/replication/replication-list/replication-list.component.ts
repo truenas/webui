@@ -35,8 +35,8 @@ export class ReplicationListComponent {
         { name: 'Target Dataset', prop: 'target_dataset', hidden: true},
         { name: 'Recursive', prop: 'recursive', hidden: true},
         { name: 'Auto', prop: 'auto', hidden: true},
-        { name: 'Enabled', prop: 'enabled', selectable: true },
-        { name: 'State', prop: 'task_state', state: 'state' },
+        { name: 'Enabled', prop: 'enabled', checkbox: true },
+        { name: 'State', prop: 'state', button: true, state: 'state' },
         { name: 'Last Snapshot', prop: 'task_last_snapshot' }
     ];
 
@@ -158,6 +158,10 @@ export class ReplicationListComponent {
         }]
     }
 
+    onButtonClick(row:any){
+      this.stateButton(row);
+    }
+
     stateButton(row) {
         if (row.state.state === 'RUNNING') {
             this.entityList.runningStateButton(row.job.id);
@@ -204,10 +208,10 @@ export class ReplicationListComponent {
     }
 
     onCheckboxChange(row) {
-      row.enabled = !row.enabled;
       this.ws.call('replication.update', [row.id, {'enabled': row.enabled}] )
       .subscribe(
         (res) => {
+          row.enabled = res.enabled;
           if (!res) {
             row.enabled = !row.enabled;
           }
