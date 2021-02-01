@@ -83,6 +83,7 @@ import { ToolbarButtonComponent } from './entity-toolbar/components/toolbar-butt
 import { ToolbarSliderComponent } from './entity-toolbar/components/toolbar-slider/toolbar-slider.component';
 import { ToolbarInputComponent } from './entity-toolbar/components/toolbar-input/toolbar-input.component';
 import { ToolbarCheckboxComponent } from './entity-toolbar/components/toolbar-checkbox/toolbar-checkbox.component';
+import { ToolbarSelectComponent } from './entity-toolbar/components/toolbar-select/toolbar-select.component';
 import { ToolbarMenuComponent } from './entity-toolbar/components/toolbar-menu/toolbar-menu.component';
 import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
 import { ToolbarMultiSelectComponent } from './entity-toolbar/components/toolbar-multiselect/toolbar-multiselect.component';
@@ -157,6 +158,7 @@ import { TableComponent } from './table/table.component';
     ToolbarSliderComponent,
     ToolbarInputComponent,
     ToolbarCheckboxComponent,
+    ToolbarSelectComponent,
     ToolbarMenuComponent,
     ToolbarMultimenuComponent,
     ToolbarMultiSelectComponent,
@@ -193,6 +195,7 @@ import { TableComponent } from './table/table.component';
     ToolbarSliderComponent,
     ToolbarInputComponent,
     ToolbarCheckboxComponent,
+    ToolbarSelectComponent,
     ToolbarMenuComponent,
     ToolbarMultimenuComponent,
     ToolbarMultiSelectComponent,

@@ -1502,9 +1502,6 @@ msgstr "Расширенные настройки"
 msgid "Advanced Settngs"
 msgstr ""
 
-msgid "Advertise IP"
-msgstr ""
-
 msgid ""
 "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click "
 "<b>Fetch Datastores</b> and select the datastore to be synchronized."
@@ -2033,6 +2030,17 @@ msgstr ""
 msgid "Applications"
 msgstr "Приложения"
 
+msgid "Applications are not running"
+msgstr ""
+
+msgid "Applications not configured"
+msgstr ""
+
+msgid ""
+"Applications you install will automatically appear here. Click below and "
+"browse the TrueNAS catalog to get started."
+msgstr ""
+
 msgid "Apply"
 msgstr "Применить"
 
@@ -2162,6 +2170,9 @@ msgstr ""
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" "
 "target=\"_blank\">rsyncd.conf(5)</a> сервера rsync или в <b>Rsync "
 "Modules</b> другой системы."
+
+msgid "At least one pod must be available"
+msgstr ""
 
 msgid "At least one pool must be available to use apps"
 msgstr ""
@@ -3310,6 +3321,9 @@ msgid ""
 "(alphanumeric) style encryption key."
 msgstr ""
 
+msgid "Choose container"
+msgstr ""
+
 msgid ""
 "Choose how many log entries to create. Choices range from the least log "
 "entries (<i>Emergency</i>) to the most (<i>Debug</i>)."
@@ -3341,6 +3355,9 @@ msgstr ""
 
 msgid "Choose permissions for this rsync module."
 msgstr "Выберите разрешения для этого модуля rsync."
+
+msgid "Choose pod"
+msgstr ""
 
 msgid "Choose the VM operating system type."
 msgstr "Выберите тип операционной системы VM."
@@ -3653,6 +3670,9 @@ msgstr ""
 msgid "Command"
 msgstr "Команда"
 
+msgid "Commands"
+msgstr ""
+
 msgid ""
 "Commands to execute inside container overriding image CMD default.  Use "
 "<i>ENTER</i> after each entry."
@@ -3749,12 +3769,6 @@ msgstr "Степень сжатия"
 
 msgid "Computer Account OU"
 msgstr "Учетная запись компьютера OU"
-
-msgid "Config Hostpath"
-msgstr ""
-
-msgid "Config Hostpath Enabled"
-msgstr ""
 
 msgid "Config could not be downloaded"
 msgstr "Конфиг не может быть загружен"
@@ -3951,6 +3965,9 @@ msgid "Container Settings"
 msgstr ""
 
 msgid "Container port"
+msgstr ""
+
+msgid "Containers"
 msgstr ""
 
 msgid "Content Commitment"
@@ -4375,12 +4392,6 @@ msgstr "Данные"
 
 msgid "Data Encipherment"
 msgstr "Шифрование данных"
-
-msgid "Data Hostpath"
-msgstr ""
-
-msgid "Data Hostpath Enabled"
-msgstr ""
 
 msgid "Data Protection"
 msgstr "Защита данных"
@@ -5241,6 +5252,9 @@ msgstr ""
 "<code>freenas\\smbusers</code>."
 
 msgid "Domain:"
+msgstr ""
+
+msgid "Don't show this message again"
 msgstr ""
 
 msgid "Done"
@@ -6826,6 +6840,9 @@ msgstr "Ошибка расшифровки дисков"
 msgid "Error details for "
 msgstr "Сведения об ошибке для "
 
+msgid "Error detected reading App"
+msgstr ""
+
 msgid "Error exporting the Private Key"
 msgstr "Ошибка экспорта закрытого ключа"
 
@@ -7039,9 +7056,6 @@ msgid "Extents"
 msgstr ""
 
 msgid "Extra Constraints"
-msgstr ""
-
-msgid "Extra Environment Variables"
 msgstr ""
 
 msgid "Extra Users"
@@ -8501,6 +8515,9 @@ msgstr ""
 msgid "Invalid IP address"
 msgstr "Неверный IP-адрес"
 
+msgid "Invalid Pod name"
+msgstr ""
+
 msgid "Invalid dataset."
 msgstr "Неверный набор данных."
 
@@ -8839,6 +8856,9 @@ msgstr "Код языка"
 msgid "Last Scrub Run on"
 msgstr "Последний запуск проверки"
 
+msgid "Launch"
+msgstr ""
+
 msgid "Launch Docker Image"
 msgstr ""
 
@@ -8976,6 +8996,9 @@ msgstr "Слушать"
 
 msgid "Load Previous Replication Task"
 msgstr "Загрузить предыдущую задачу репликации"
+
+msgid "Loading..."
+msgstr ""
 
 msgid "Local"
 msgstr "Локальный"
@@ -9444,29 +9467,11 @@ msgstr ""
 msgid "Minimum Passive Port"
 msgstr "Минимальный пассивный порт"
 
-msgid "Minimum length: 5 characters. Maximum length: 20 characters"
-msgstr ""
-
-msgid "Minimum length: 8 characters. Maximum length: 40 characters"
-msgstr ""
-
 msgid "Minimum size is 1 MiB"
 msgstr "Минимальный размер 1 МиБ"
 
 msgid "Minimum value is "
 msgstr "Минимальное значение "
-
-msgid "Minio"
-msgstr ""
-
-msgid "Minio HostPath Enabled"
-msgstr ""
-
-msgid "Minio Image Environment"
-msgstr ""
-
-msgid "Minio: Kubernetes native, high performance object storage"
-msgstr ""
 
 msgid "Mintues"
 msgstr ""
@@ -9971,28 +9976,14 @@ msgstr "Следующая"
 msgid "Next Run"
 msgstr "Следующий запуск"
 
-msgid "Nextcloud"
-msgstr ""
-
-msgid "Nextcloud Host"
-msgstr ""
-
-msgid "Nextcloud Username"
-msgstr ""
-
-msgid "Nextcloud host to create application URLs"
-msgstr ""
-
-msgid ""
-"Nextcloud:  a file sharing server that puts the control  and security of "
-"your own data back into your hands."
-msgstr ""
-
 msgid "Nic to attach:"
 msgstr "Сетевой адаптер для подключения:"
 
 msgid "No"
 msgstr "Нет"
+
+msgid "No Applications Installed"
+msgstr ""
 
 msgid "No Communication Warning Time"
 msgstr "Время предупреждения об отсутствии связи"
@@ -10002,6 +9993,9 @@ msgstr "Без шифрования (менее безопасно, но быс�
 
 msgid "No Logs"
 msgstr "Нет журналов"
+
+msgid "No Pods Found"
+msgstr ""
 
 msgid "No Pools"
 msgstr "Нет пулов"
@@ -10070,16 +10064,7 @@ msgstr ""
 msgid "Node Port"
 msgstr ""
 
-msgid "Node Port to use for Minio"
-msgstr ""
-
-msgid "Node Port to use for Nextcloud"
-msgstr ""
-
 msgid "Node port"
-msgstr ""
-
-msgid "Nodeport"
 msgstr ""
 
 msgid "Nodes CARP states do not agree."
@@ -10267,9 +10252,6 @@ msgstr "Идентификатор клиента OAuth"
 
 msgid "OAuth Client Secret"
 msgstr "Секрет клиента OAuth"
-
-msgid "OFFICIAL"
-msgstr ""
 
 msgid "OK"
 msgstr "OK"
@@ -10863,18 +10845,6 @@ msgstr "Пожалуйста, выберите правильный путь"
 msgid "Please wait"
 msgstr "Пожалуйста, подождите"
 
-msgid "Plex"
-msgstr ""
-
-msgid "Plex Claim Token"
-msgstr ""
-
-msgid "Plex Node Port"
-msgstr ""
-
-msgid "Plex: Media player, streaming service"
-msgstr ""
-
 msgid "Plugin"
 msgstr "Плагин"
 
@@ -10895,6 +10865,12 @@ msgstr "Плагин обновлен"
 
 msgid "Plugin installed successfully"
 msgstr "Плагин успешно установлен"
+
+msgid "Pod Shell"
+msgstr ""
+
+msgid "Pods"
+msgstr ""
 
 msgid "Pool"
 msgstr "Пул"
@@ -10984,6 +10960,9 @@ msgstr ""
 
 msgid "Power"
 msgstr "Питание"
+
+msgid "Power Management"
+msgstr ""
 
 msgid "Power Off"
 msgstr "Отключить"
@@ -11975,9 +11954,6 @@ msgstr ""
 msgid "Run this rsync now?"
 msgstr "Запустить это задание rsync сейчас?"
 
-msgid "Running"
-msgstr "Запущена"
-
 msgid "S.M.A.R.T Test Results"
 msgstr ""
 
@@ -11992,6 +11968,9 @@ msgstr "Тест S.M.A.R.T."
 
 msgid "S.M.A.R.T. extra options"
 msgstr "Дополнительные параметры S.M.A.R.T."
+
+msgid "S.M.A.R.T./SED"
+msgstr ""
 
 msgid "S3"
 msgstr ""
@@ -14287,9 +14266,6 @@ msgstr ""
 msgid "Specifies the auxiliary directory service ID provider."
 msgstr ""
 
-msgid "Specify HostPath for Minio data"
-msgstr ""
-
 msgid ""
 "Specify a port for encrypted connections. The default port <i>8081</i> is "
 "recommended. Do not reuse a port."
@@ -14372,9 +14348,6 @@ msgstr "Резервный"
 
 msgid "Start"
 msgstr "Запустить"
-
-msgid "Start Automatically"
-msgstr "Запускать автоматически"
 
 msgid "Start Scrub"
 msgstr "Запустить проверку"
@@ -14858,6 +14831,9 @@ msgstr ""
 
 msgid "Temperature"
 msgstr "Температура"
+
+msgid "Temperature Alerts"
+msgstr ""
 
 msgid "Template"
 msgstr "Шаблон"
@@ -15951,12 +15927,6 @@ msgstr ""
 msgid "Train"
 msgstr "Поезд"
 
-msgid "Transcode Hostpath"
-msgstr ""
-
-msgid "Transcode Hostpath Enabled"
-msgstr ""
-
 msgid "Transfer"
 msgstr ""
 
@@ -16227,6 +16197,9 @@ msgstr "Снять все"
 msgid "Unset <i>Generate Encryption Key</i> to instead import a custom Hex key."
 msgstr ""
 
+msgid "Unset Pool"
+msgstr ""
+
 msgid "Unset to add a login prompt to the system before the console menu is shown."
 msgstr ""
 "Отключите, чтобы добавить приглашение входа в систему перед отображением "
@@ -16391,7 +16364,7 @@ msgid ""
 "concurrently on both TrueNAS Controllers. Continue with download?"
 msgstr ""
 
-msgid "Upgradomg..."
+msgid "Upgrading..."
 msgstr ""
 
 msgid "Upload"

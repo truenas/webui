@@ -73,6 +73,11 @@
               <mat-icon>edit</mat-icon>
               <span>{{'Edit' | translate}}</span>
             </button>
+            <button name="shell" mat-menu-item (click)="openShell(item.name)"
+              ix-auto ix-auto-type="option" ix-auto-identifier="shell">
+              <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-console-line" style="font-size:24px;line-height: 22px;"></mat-icon>
+              <span>{{'Shell' | translate}}</span>
+            </button>
             <button name="delete" mat-menu-item (click)="delete(item.name)"
               ix-auto ix-auto-type="option" ix-auto-identifier="delete">
               <mat-icon>delete</mat-icon>
@@ -82,5 +87,5 @@
       </div>
   </mat-card>
   
-  <entity-empty *ngIf="chartItems.length == 0" [conf]="emptyPageConf"></entity-empty>
+  <entity-empty *ngIf="getChartItems().length == 0" [conf]="emptyPageConf"></entity-empty>
 </div>

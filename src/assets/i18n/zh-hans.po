@@ -1328,9 +1328,6 @@ msgstr "高级设置"
 msgid "Advanced Settngs"
 msgstr ""
 
-msgid "Advertise IP"
-msgstr ""
-
 msgid ""
 "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click "
 "<b>Fetch Datastores</b> and select the datastore to be synchronized."
@@ -1796,6 +1793,17 @@ msgstr ""
 msgid "Applications"
 msgstr ""
 
+msgid "Applications are not running"
+msgstr ""
+
+msgid "Applications not configured"
+msgstr ""
+
+msgid ""
+"Applications you install will automatically appear here. Click below and "
+"browse the TrueNAS catalog to get started."
+msgstr ""
+
 msgid "Apply"
 msgstr "应用"
 
@@ -1909,6 +1917,9 @@ msgstr ""
 "必须在<a                "
 "href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"                "
 "target=\"_blank\">rsyncd.conf(5)</a>中定义至少一个模块或另一个系统的<b>Rsync模块</b>中定义一个模块。"
+
+msgid "At least one pod must be available"
+msgstr ""
 
 msgid "At least one pool must be available to use apps"
 msgstr ""
@@ -2911,6 +2922,9 @@ msgid ""
 "(alphanumeric) style encryption key."
 msgstr ""
 
+msgid "Choose container"
+msgstr ""
+
 msgid ""
 "Choose how many log entries to create. Choices range from the least log "
 "entries (<i>Emergency</i>) to the most (<i>Debug</i>)."
@@ -2933,6 +2947,9 @@ msgstr "选择一种预设，或选择<i>自定义</i>以打开高级计划程�
 
 msgid "Choose permissions for this rsync module."
 msgstr "选择此rsync模块的权限。"
+
+msgid "Choose pod"
+msgstr ""
 
 msgid "Choose the VM operating system type."
 msgstr "选择虚拟机操作系统类型。"
@@ -3198,6 +3215,9 @@ msgstr "以逗号分隔仅具有读取权限的用户和/或组的列表，其�
 msgid "Command"
 msgstr "命令"
 
+msgid "Commands"
+msgstr ""
+
 msgid ""
 "Commands to execute inside container overriding image CMD default.  Use "
 "<i>ENTER</i> after each entry."
@@ -3288,12 +3308,6 @@ msgstr "压缩级别"
 
 msgid "Computer Account OU"
 msgstr "电脑帐户OU"
-
-msgid "Config Hostpath"
-msgstr ""
-
-msgid "Config Hostpath Enabled"
-msgstr ""
 
 msgid "Config could not be downloaded"
 msgstr "无法下载配置"
@@ -3471,6 +3485,9 @@ msgid "Container Settings"
 msgstr ""
 
 msgid "Container port"
+msgstr ""
+
+msgid "Containers"
 msgstr ""
 
 msgid "Content Commitment"
@@ -3864,12 +3881,6 @@ msgstr "数据"
 
 msgid "Data Encipherment"
 msgstr "数据加密"
-
-msgid "Data Hostpath"
-msgstr ""
-
-msgid "Data Hostpath Enabled"
-msgstr ""
 
 msgid "Data Protection"
 msgstr ""
@@ -4698,6 +4709,9 @@ msgstr ""
 "</i>，则为必填项。本地用户具有SMB服务器的NetBIOS名称：<code>freenas\\smbusers</code>。"
 
 msgid "Domain:"
+msgstr ""
+
+msgid "Don't show this message again"
 msgstr ""
 
 msgid "Done"
@@ -6163,6 +6177,9 @@ msgstr "解密磁盘时出错"
 msgid "Error details for "
 msgstr "错误详情"
 
+msgid "Error detected reading App"
+msgstr ""
+
 msgid "Error exporting the Private Key"
 msgstr "导出私钥时出错"
 
@@ -6372,9 +6389,6 @@ msgid "Extents"
 msgstr ""
 
 msgid "Extra Constraints"
-msgstr ""
-
-msgid "Extra Environment Variables"
 msgstr ""
 
 msgid "Extra Users"
@@ -7708,6 +7722,9 @@ msgstr ""
 msgid "Invalid IP address"
 msgstr "IP地址无效"
 
+msgid "Invalid Pod name"
+msgstr ""
+
 msgid "Invalid dataset."
 msgstr "无效的数据集。"
 
@@ -8026,6 +8043,9 @@ msgstr "语言代码"
 msgid "Last Scrub Run on"
 msgstr "最后一次清理"
 
+msgid "Launch"
+msgstr ""
+
 msgid "Launch Docker Image"
 msgstr ""
 
@@ -8151,6 +8171,9 @@ msgstr "监听"
 
 msgid "Load Previous Replication Task"
 msgstr "加载先前的复制任务"
+
+msgid "Loading..."
+msgstr ""
 
 msgid "Local"
 msgstr "本地"
@@ -8588,29 +8611,11 @@ msgstr "最小"
 msgid "Minimum Passive Port"
 msgstr "最小被动端口"
 
-msgid "Minimum length: 5 characters. Maximum length: 20 characters"
-msgstr ""
-
-msgid "Minimum length: 8 characters. Maximum length: 40 characters"
-msgstr ""
-
 msgid "Minimum size is 1 MiB"
 msgstr "最小大小为1 MiB"
 
 msgid "Minimum value is "
 msgstr "最小值为 "
-
-msgid "Minio"
-msgstr ""
-
-msgid "Minio HostPath Enabled"
-msgstr ""
-
-msgid "Minio Image Environment"
-msgstr ""
-
-msgid "Minio: Kubernetes native, high performance object storage"
-msgstr ""
 
 msgid "Mintues"
 msgstr "分钟"
@@ -9099,28 +9104,14 @@ msgstr "下一步"
 msgid "Next Run"
 msgstr "下次运行"
 
-msgid "Nextcloud"
-msgstr ""
-
-msgid "Nextcloud Host"
-msgstr ""
-
-msgid "Nextcloud Username"
-msgstr ""
-
-msgid "Nextcloud host to create application URLs"
-msgstr ""
-
-msgid ""
-"Nextcloud:  a file sharing server that puts the control  and security of "
-"your own data back into your hands."
-msgstr ""
-
 msgid "Nic to attach:"
 msgstr "Nic附加："
 
 msgid "No"
 msgstr "否"
+
+msgid "No Applications Installed"
+msgstr ""
 
 msgid "No Communication Warning Time"
 msgstr "没有通讯警告时间"
@@ -9130,6 +9121,9 @@ msgstr "没有加密（安全性较低，但速度更快）"
 
 msgid "No Logs"
 msgstr "没有日志"
+
+msgid "No Pods Found"
+msgstr ""
 
 msgid "No Pools"
 msgstr "没有池"
@@ -9196,16 +9190,7 @@ msgstr ""
 msgid "Node Port"
 msgstr ""
 
-msgid "Node Port to use for Minio"
-msgstr ""
-
-msgid "Node Port to use for Nextcloud"
-msgstr ""
-
 msgid "Node port"
-msgstr ""
-
-msgid "Nodeport"
 msgstr ""
 
 msgid "Nodes CARP states do not agree."
@@ -9381,9 +9366,6 @@ msgstr "Oauth客户端ID"
 
 msgid "OAuth Client Secret"
 msgstr "Oauth Client 秘密"
-
-msgid "OFFICIAL"
-msgstr ""
 
 msgid "OK"
 msgstr "是"
@@ -9957,18 +9939,6 @@ msgstr "请选择一个有效的路径"
 msgid "Please wait"
 msgstr "请稍后"
 
-msgid "Plex"
-msgstr ""
-
-msgid "Plex Claim Token"
-msgstr ""
-
-msgid "Plex Node Port"
-msgstr ""
-
-msgid "Plex: Media player, streaming service"
-msgstr ""
-
 msgid "Plugin"
 msgstr "插件"
 
@@ -9989,6 +9959,12 @@ msgstr "插件已更新"
 
 msgid "Plugin installed successfully"
 msgstr "插件安装成功"
+
+msgid "Pod Shell"
+msgstr ""
+
+msgid "Pods"
+msgstr ""
 
 msgid "Pool"
 msgstr "池"
@@ -10074,6 +10050,9 @@ msgstr "Post-script"
 
 msgid "Power"
 msgstr "电源"
+
+msgid "Power Management"
+msgstr ""
 
 msgid "Power Off"
 msgstr "关闭电源"
@@ -11013,9 +10992,6 @@ msgstr "立即执行这个任务？"
 msgid "Run this rsync now?"
 msgstr "现在运行此Rsync任务？"
 
-msgid "Running"
-msgstr "运行中"
-
 msgid "S.M.A.R.T Test Results"
 msgstr "S.M.A.R.T测试结果"
 
@@ -11030,6 +11006,9 @@ msgstr "S.M.A.R.T.测试"
 
 msgid "S.M.A.R.T. extra options"
 msgstr "S.M.A.R.T.附加选项"
+
+msgid "S.M.A.R.T./SED"
+msgstr ""
 
 msgid "S3"
 msgstr ""
@@ -13027,9 +13006,6 @@ msgstr "特殊分配类，用于创建融合池。可选的vdev类型，用于�
 msgid "Specifies the auxiliary directory service ID provider."
 msgstr "指定辅助目录服务ID提供程序。"
 
-msgid "Specify HostPath for Minio data"
-msgstr ""
-
 msgid ""
 "Specify a port for encrypted connections. The default port <i>8081</i> is "
 "recommended. Do not reuse a port."
@@ -13102,9 +13078,6 @@ msgstr "支持"
 
 msgid "Start"
 msgstr "开始"
-
-msgid "Start Automatically"
-msgstr "自动启动"
 
 msgid "Start Scrub"
 msgstr "开始清理"
@@ -13583,6 +13556,9 @@ msgstr ""
 
 msgid "Temperature"
 msgstr "温度"
+
+msgid "Temperature Alerts"
+msgstr ""
 
 msgid "Template"
 msgstr "模板"
@@ -14568,12 +14544,6 @@ msgstr "拓扑"
 msgid "Train"
 msgstr "分支"
 
-msgid "Transcode Hostpath"
-msgstr ""
-
-msgid "Transcode Hostpath Enabled"
-msgstr ""
-
 msgid "Transfer"
 msgstr "传输"
 
@@ -14827,6 +14797,9 @@ msgstr "取消全选"
 msgid "Unset <i>Generate Encryption Key</i> to instead import a custom Hex key."
 msgstr ""
 
+msgid "Unset Pool"
+msgstr ""
+
 msgid "Unset to add a login prompt to the system before the console menu is shown."
 msgstr "在显示控制台菜单之前，取消设置为系统添加登录提示。"
 
@@ -14983,7 +14956,7 @@ msgid ""
 "concurrently on both TrueNAS Controllers. Continue with download?"
 msgstr "升级两个控制器。文件被下载到活动控制器，然后传输到备用控制器。升级过程同时在两个TrueNAS控制器上开始。继续下载吗？"
 
-msgid "Upgradomg..."
+msgid "Upgrading..."
 msgstr ""
 
 msgid "Upload"
