@@ -14,6 +14,7 @@ import { ChartReleaseEditComponent } from '../forms/chart-release-edit.component
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { ChartFormComponent } from '../forms/chart-form.component';
 import { EmptyConfig, EmptyType } from '../../common/entity/entity-empty/entity-empty.component';
+
 import  helptext  from '../../../helptext/apps/apps';
 import { Router } from '@angular/router';
 
@@ -24,9 +25,9 @@ import { Router } from '@angular/router';
 })
 
 export class ChartReleasesComponent implements OnInit {
+  public chartItems = {};
   @Output() switchTab = new EventEmitter<string>();
 
-  public chartItems = [];
   private dialogRef: any;
   public ixIcon = 'assets/images/ix-original.png';
   private rollbackChartName: string;
@@ -34,6 +35,8 @@ export class ChartReleasesComponent implements OnInit {
 
   protected utils: CommonUtils;
   private refreshForm: Subscription;
+  private chartReleaseChangedListener: any;
+  
   private selectedAppName: String;
   private podList = [];
   private podDetails = {};
@@ -110,6 +113,14 @@ export class ChartReleasesComponent implements OnInit {
     this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
       this.refreshChartReleases();
     });
+
+    this.addChartReleaseChangedEventListner();
+  }
+
+  ngOnDestroy() {
+    if (this.chartReleaseChangedListener) {
+      this.ws.unsubscribe(this.chartReleaseChangedListener);
+    }
   }
 
   viewCatalog() {
@@ -141,9 +152,22 @@ export class ChartReleasesComponent implements OnInit {
     this.emptyPageConf.message = message;
   }
 
+  getChartItems() {
+    return Object.values(this.chartItems);
+  }
+  
+  addChartReleaseChangedEventListner() {
+    this.chartReleaseChangedListener = this.ws.subscribe("chart.release.query").subscribe((evt) => {
+      const app = this.chartItems[evt.id];
+      if (app) {
+        app.status = evt.fields.status;
+      }
+    });
+  }
+
   refreshChartReleases() {
     this.showLoadStatus(EmptyType.loading);
-    this.chartItems = [];
+    this.chartItems = {};
     const checkTitle = setTimeout(() => {
         this.updateChartReleases();
     }, 1000);
@@ -152,16 +176,16 @@ export class ChartReleasesComponent implements OnInit {
   updateChartReleases() {
     this.appService.getKubernetesConfig().subscribe(res => {
       if (!res.pool) {
-        this.chartItems = [];
+        this.chartItems = {};
         this.showLoadStatus(EmptyType.first_use);
       } else {
         this.appService.getKubernetesServiceStarted().subscribe(res => {
           if (!res) {
-            this.chartItems = [];
+            this.chartItems = {};
             this.showLoadStatus(EmptyType.errors);
           } else {
             this.appService.getChartReleases().subscribe(charts => {
-              this.chartItems = [];
+              this.chartItems = {};
               
               charts.forEach(chart => {
                 let chartObj = {
@@ -189,11 +213,11 @@ export class ChartReleasesComponent implements OnInit {
                     ports.push(`${item.port}\\${item.protocol}`)
                   })
                   chartObj['used_ports'] = ports.join(', ');
-                  this.chartItems.push(chartObj);
+                  this.chartItems[chartObj.name] = chartObj;
                 }  
               })
               
-              if (this.chartItems.length == 0) {
+              if (this.getChartItems().length == 0) {
                 this.showLoadStatus(EmptyType.no_page_data );
               }
             })
@@ -205,12 +229,14 @@ export class ChartReleasesComponent implements OnInit {
 
   refreshStatus(name: string) {
     this.appService.getChartReleases(name).subscribe(res => {
-      let item = this.chartItems.find(o => o.name === name);
-      item.status = res[0].status;
-      if (item.status === 'DEPLOYING') {
-        setTimeout(() => {
-          this.refreshStatus(name);
-        }, 3000);
+      let item = this.chartItems[name];
+      if (item) {
+        item.status = res[0].status;
+        if (item.status === 'DEPLOYING') {
+          setTimeout(() => {
+            this.refreshStatus(name);
+          }, 3000);
+        }
       }
     })
   }
@@ -278,8 +304,8 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   edit(name: string, id: string) {
-    const catalogApp = this.chartItems.find(app => app.name==name && app.chart_name != 'ix-chart')
-    if (catalogApp) {
+    const catalogApp = this.chartItems[name];
+    if (catalogApp && catalogApp.chart_name != 'ix-chart') {
       const chartFormComponent = new ChartFormComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
       chartFormComponent.setTitle(catalogApp.chart_name);
       this.modalService.open('slide-in-form', chartFormComponent, name);
