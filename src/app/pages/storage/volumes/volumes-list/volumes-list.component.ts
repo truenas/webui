@@ -294,14 +294,25 @@ export class VolumesListTableConfig implements InputTableConf {
         });
       }
 
-    } else if (rowData.encrypt === 1 && rowData.is_decrypted && self.parentVolumesListComponent.systemdatasetPool != rowData.name) {
-      actions.push({
-        label: T("Encryption Key"),
-        onClick: (row1) => {
-          this._router.navigate(new Array('/').concat(
-            ["storage", "pools", "createkey", row1.id]));
-        }
-      });
+    } else if (rowData.encrypt === 1 && rowData.is_decrypted ) {
+      if (self.parentVolumesListComponent.systemdatasetPool != rowData.name) {
+        actions.push({
+          label: T("Encryption Key"),
+          onClick: (row1) => {
+            this._router.navigate(new Array('/').concat(
+              ["storage", "pools", "createkey", row1.id]));
+          }
+        });
+      } else {
+        actions.push({
+          label: T("Download Key"),
+          onClick: (row1) => {
+            const dialogRef = self.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
+            dialogRef.componentInstance.volumeId = row1.id;
+            dialogRef.componentInstance.fileName = 'pool_' + row1.name + '_encryption.key'
+          }
+        });
+      }
     }
 
     if (rowData.encrypt !== 0 && rowData.is_decrypted) {
