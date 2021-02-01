@@ -292,14 +292,38 @@ export class VolumesListTableConfig implements InputTableConf {
               ["storage", "pools", "changekey", row1.id]));
           }
         });
+        actions.push({
+          label: T("Download Key"),
+          onClick: (row1) => {
+            const message = helptext.export_geli_message + row1.name
+            this.dialogService.passwordConfirm(message).subscribe(export_keys => {
+              const dialogRef = self.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
+              dialogRef.componentInstance.volumeId = row1.id;
+              dialogRef.componentInstance.fileName = 'pool_' + row1.name + '_encryption.key'
+            });
+          }
+        });
       }
 
-    } else if (rowData.encrypt === 1 && rowData.is_decrypted) {
+    } else if (rowData.encrypt === 1 && rowData.is_decrypted ) {
+      if (self.parentVolumesListComponent.systemdatasetPool != rowData.name) {
+        actions.push({
+          label: T("Encryption Key"),
+          onClick: (row1) => {
+            this._router.navigate(new Array('/').concat(
+              ["storage", "pools", "createkey", row1.id]));
+          }
+        });
+      } 
       actions.push({
-        label: T("Encryption Key"),
+        label: T("Download Key"),
         onClick: (row1) => {
-          this._router.navigate(new Array('/').concat(
-            ["storage", "pools", "createkey", row1.id]));
+          const message = helptext.export_geli_message + row1.name
+          this.dialogService.passwordConfirm(message).subscribe(export_keys => {
+            const dialogRef = self.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
+            dialogRef.componentInstance.volumeId = row1.id;
+            dialogRef.componentInstance.fileName = 'pool_' + row1.name + '_encryption.key'
+          });
         }
       });
     }
