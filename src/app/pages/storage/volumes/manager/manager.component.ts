@@ -240,7 +240,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   getPoolData() {
     this.ws.call(this.queryCall, [[["id", "=", this.pk]]]).subscribe((res) => {
         if (res[0]) {
-          if (res[0].encrypt === 1) {
+          if (res[0].encrypt !== 0) {
             this.gelikey = true;
           }
           this.first_data_vdev_type = res[0].topology.data[0].type.toLowerCase();
