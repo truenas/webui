@@ -129,6 +129,7 @@ export class ChartReleasesComponent implements OnInit {
   refreshChartReleases() {
     this.showLoadStatus(EmptyType.loading);
     this.chartItems = [];
+    this.filerChartItems();
     const checkTitle = setTimeout(() => {
         this.updateChartReleases();
     }, 1000);
