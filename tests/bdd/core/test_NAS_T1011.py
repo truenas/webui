@@ -66,7 +66,7 @@ def the_ldap_page_should_open(driver):
     assert wait_on_element(driver, 1, 5, '//div[contains(.,"Server Credentials")]')
 
 
-@then(parsers.parse('input {hostname} for Hostname, {base_dn} Base DN'))
+@then(parsers.parse('input {hostname} for Hostname, "{base_dn}" Base DN'))
 def input_hostname_and_base_dn(driver, hostname, base_dn):
     """input hostname for Hostname, base_dn Base DN."""
     assert wait_on_element(driver, 1, 5, '//input[@placeholder="Hostname"]')
@@ -76,7 +76,7 @@ def input_hostname_and_base_dn(driver, hostname, base_dn):
     driver.find_element_by_xpath('//input[@placeholder="Base DN"]').send_keys(base_dn)
 
 
-@then(parsers.parse('input {bind_dn} for Bind DN'))
+@then(parsers.parse('input "{bind_dn}" for Bind DN'))
 def input_bind_dn_for_bind_dn(driver, bind_dn):
     """input bind_dn for Bind DN."""
     driver.find_element_by_xpath('//input[@placeholder="Bind DN"]').clear()
