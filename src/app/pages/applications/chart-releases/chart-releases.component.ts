@@ -178,8 +178,8 @@ export class ChartReleasesComponent implements OnInit {
   addChartReleaseChangedEventListner() {
     this.chartReleaseChangedListener = this.ws.subscribe("chart.release.query").subscribe((evt) => {
       const app = this.chartItems[evt.id];
-      if (app) {
-        console.log(app, evt.fields);
+      
+      if (app && evt && evt.fields) {
         app.status = evt.fields.status;
       }
     });
