@@ -292,9 +292,6 @@ export class ChartReleasesComponent implements OnInit {
           this.dialogRef.componentInstance.success.subscribe((res) => {
             this.dialogService.closeAllDialogs();
           });
-          this.dialogRef.componentInstance.failure.subscribe((err) => {
-            // new EntityUtils().handleWSError(this, err, this.dialogService);
-          })
         }
       })
     })
@@ -320,10 +317,6 @@ export class ChartReleasesComponent implements OnInit {
     self.dialogRef.componentInstance.success.subscribe((res) => {
       self.dialogService.closeAllDialogs();
     });
-    self.dialogRef.componentInstance.failure.subscribe((err) => {
-      // new EntityUtils().handleWSError(self, err, self.dialogService);
-    })
-
   }
 
   edit(name: string, id: string) {
@@ -380,9 +373,6 @@ export class ChartReleasesComponent implements OnInit {
             this.dialogService.closeAllDialogs();
             this.refreshChartReleases();
           });
-          this.dialogRef.componentInstance.failure.subscribe((err) => {
-            // new EntityUtils().handleWSError(this, err, this.dialogService);
-          })
         }
       })
     })
@@ -416,9 +406,6 @@ export class ChartReleasesComponent implements OnInit {
             this.refreshChartReleases();
 
           });
-          this.dialogRef.componentInstance.failure.subscribe((err) => {
-            // new EntityUtils().handleWSError(this, err, this.dialogService);
-          })
         }
       })
     })
@@ -438,9 +425,6 @@ export class ChartReleasesComponent implements OnInit {
                '300px', 'info', true);
             this.refreshChartReleases();
           });
-          this.dialogRef.componentInstance.failure.subscribe((err) => {
-            // new EntityUtils().handleWSError(this, err, this.dialogService);
-          })
         }
       })
     })
