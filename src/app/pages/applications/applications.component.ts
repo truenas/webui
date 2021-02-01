@@ -20,6 +20,8 @@ export class ApplicationsComponent implements OnInit {
   @ViewChild(ChartReleasesComponent, { static: false}) private chartTab: ChartReleasesComponent;
 
   selectedIndex: number = 0;
+  isShowBulkOptions = false;
+  isSelectedPool = false;
   public settingsEvent: Subject<CoreEvent>;
   public filterString = '';
   public toolbarConfig: ToolbarConfig;
@@ -83,9 +85,9 @@ export class ApplicationsComponent implements OnInit {
 
   }
 
-  updateToolbar(isShowBulkOptions?) {
+  updateToolbar() {
    
-    if (this.selectedIndex == 1 && isShowBulkOptions) {
+    if (this.selectedIndex == 1 && this.isShowBulkOptions) {
       if (!this.toolbarConfig.controls.some(ctl => ctl.name === 'bulk')) {
         const bulk = {
           name: 'bulk',
@@ -98,9 +100,23 @@ export class ApplicationsComponent implements OnInit {
         this.toolbarConfig.controls.splice(1,0, bulk);
       }
     } else {
-
       this.toolbarConfig.controls = this.toolbarConfig.controls.filter(ctl => ctl.name !== 'bulk');
+    }
 
+    const settingControl = this.toolbarConfig.controls.find(control => control.name=="settings");
+
+    if (this.isSelectedPool) {
+      if (settingControl.options.length == 2) {
+        const unsetOption = {
+          label: helptext.unset_pool, 
+          value: 'unset_pool'
+        };
+        settingControl.options.push(unsetOption);
+      }
+    } else {
+      if (settingControl.options.length == 3) {
+        settingControl.options = settingControl.options.filter(ctl => ctl.label !== helptext.unset_pool);
+      }
     }
  
     this.toolbarConfig.target.next({name:"UpdateControls", data: this.toolbarConfig.controls});
@@ -110,7 +126,11 @@ export class ApplicationsComponent implements OnInit {
     if (evt.name == 'SwitchTab') {
       this.selectedIndex = evt.value;
     } else if (evt.name == 'UpdateToolbar') {
-      this.updateToolbar(evt.value);
+      this.isShowBulkOptions = evt.value;
+      this.updateToolbar();
+    } else if (evt.name == 'UpdateToolbarPoolOption') {
+      this.isSelectedPool = evt.value;
+      this.updateToolbar();
     }
   }
 

@@ -19,6 +19,8 @@ import { ChartReleaseEditComponent } from './forms/chart-release-edit.component'
 import { CoreComponents } from 'app/core/components/corecomponents.module';
 import { BulkOptionsComponent } from './forms/bulk-options.component';
 
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PodShellComponent } from './pod-shell/pod-shell.component';
 import { ChartFormComponent } from './forms/chart-form.component';
 
 @NgModule({
@@ -30,7 +32,9 @@ import { ChartFormComponent } from './forms/chart-form.component';
     TranslateModule,
     CommonDirectivesModule,
     EntityModule,
-    CoreComponents
+    CoreComponents,
+    FormsModule,
+    ReactiveFormsModule
   ],
   exports: [
   ],
@@ -43,7 +47,8 @@ import { ChartFormComponent } from './forms/chart-form.component';
     ChartReleaseAddComponent,
     ChartReleaseEditComponent,
     BulkOptionsComponent,
-    ChartFormComponent,
+	ChartFormComponent,
+    PodShellComponent
   ]
 })
 export class ApplicationsModule { }
