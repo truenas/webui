@@ -9,15 +9,13 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { DialogService, SystemGeneralService } from '../../../services/index';
+import { DialogService, WebSocketService, SystemGeneralService } from '../../../services/index';
 import { ModalService } from '../../../services/modal.service';
 import { ApplicationsService } from '../applications.service';
 
 import { KubernetesSettingsComponent } from '../forms/kubernetes-settings.component';
 import { ChartReleaseAddComponent } from '../forms/chart-release-add.component';
-import { PlexFormComponent } from '../forms/plex-form.component';
-import { NextCloudFormComponent } from '../forms/nextcloud-form.component';
-import { MinioFormComponent } from '../forms/minio-form.component';
+import { ChartFormComponent } from '../forms/chart-form.component';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import  helptext  from '../../../helptext/apps/apps';
 
@@ -36,9 +34,6 @@ export class CatalogComponent implements OnInit {
   public settingsEvent: Subject<CoreEvent>;
   private kubernetesForm: KubernetesSettingsComponent;
   private chartReleaseForm: ChartReleaseAddComponent;
-  private plexForm: PlexFormComponent;
-  private nextCloudForm: NextCloudFormComponent;
-  private minioForm: MinioFormComponent;
   private refreshForm: Subscription;
   private refreshTable: Subscription;
   protected utils: CommonUtils;
@@ -59,7 +54,7 @@ export class CatalogComponent implements OnInit {
   }
 
   constructor(private dialogService: DialogService,
-    private mdDialog: MatDialog, private translate: TranslateService,
+    private mdDialog: MatDialog, private translate: TranslateService, protected ws: WebSocketService,
     private router: Router, private core: CoreService, private modalService: ModalService,
     private appService: ApplicationsService, private sysGeneralService: SystemGeneralService) {
       this.utils = new CommonUtils();
@@ -67,10 +62,10 @@ export class CatalogComponent implements OnInit {
 
   ngOnInit(): void {
     this.appService.getAllCatalogItems().subscribe(res => {
-      if (Object.keys(res[0].trains.charts).length > 0) {
-        for (let i in res[0].trains.charts) {  // will eventually add the charts train too
+      res.forEach(catalog => {
+        for (let i in catalog.trains.charts) {  
           if (i !== 'ix-chart') {
-            let item = res[0].trains.charts[i];
+            let item = catalog.trains.charts[i];
             let versions = item.versions;
             let latest, latestDetails;
 
@@ -80,33 +75,21 @@ export class CatalogComponent implements OnInit {
             latest = sorted_version_labels[0];
             latestDetails = versions[latest];
 
-            switch (item.name) {
-              case 'minio':
-                item.info = helptext.minioInfo;
-                break;
-              
-              case 'plex':
-                item.info = helptext.plexInfo;
-                break;
-        
-              case 'nextcloud':
-                item.info = helptext.nextcloudInfo;
-                break;
-              
-              default:
-                this.modalService.open('slide-in-form', this.chartReleaseForm);
-            }
-    
             let catalogItem = {
               name: item.name,
+              catalog: {
+                id: catalog.id,
+                label: catalog.label,
+              },
               icon_url: item.icon_url? item.icon_url : '/assets/images/ix-original.png',
               latest_version: latest,
-              info: item.info
+              info: latestDetails.app_readme,
+              schema: item.versions[latest].schema,
             }
             this.catalogApps.push(catalogItem);            
           }
         }
-      }
+      });
     })
     
     this.checkForConfiguredPool();
@@ -115,6 +98,14 @@ export class CatalogComponent implements OnInit {
       this.refreshForms();
     });
 
+    this.refreshToolbarMenus();
+
+    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
+      this.switchTab.emit('1');
+    })
+  }
+
+  refreshToolbarMenus() {
     this.settingsEvent = new Subject();
     this.settingsEvent.subscribe((evt: CoreEvent) => {
       if (evt.data.event_control == 'settings' && evt.data.settings) {
@@ -125,11 +116,24 @@ export class CatalogComponent implements OnInit {
           case 'advanced_settings':
             this.modalService.open('slide-in-form', this.kubernetesForm);
             break;
+
+          case 'unset_pool':
+            this.doUnsetPool();
+            break;
         }
       } else if (evt.data.event_control == 'launch' && evt.data.launch) {
         this.doInstall('ix-chart');
       }
     })
+
+    const menuOptions = [
+      { label: helptext.choose, value: 'select_pool' }, 
+      { label: helptext.advanced, value: 'advanced_settings' }, 
+    ];
+
+    if (this.selectedPool) {
+      menuOptions.push({ label: helptext.unset_pool, value: 'unset_pool' })
+    }
 
     const settingsConfig = {
       actionType: EntityToolbarComponent,
@@ -140,10 +144,7 @@ export class CatalogComponent implements OnInit {
             name: 'settings',
             label: helptext.settings,
             type: 'menu',
-            options: [
-              { label: helptext.choose, value: 'select_pool' }, 
-              { label: helptext.advanced, value: 'advanced_settings' }, 
-            ]
+            options: menuOptions
           },
           {
             name: 'launch',
@@ -157,19 +158,11 @@ export class CatalogComponent implements OnInit {
     };
 
     this.core.emit({name:"GlobalActions", data: settingsConfig, sender: this});
-
-    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
-      this.switchTab.emit('1');
-    })
   }
-
 
   refreshForms() {
     this.kubernetesForm = new KubernetesSettingsComponent(this.modalService, this.appService);
     this.chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
-    this.plexForm = new PlexFormComponent(this.mdDialog,this.dialogService,this.modalService,this.sysGeneralService,this.appService);
-    this.nextCloudForm = new NextCloudFormComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
-    this.minioForm = new MinioFormComponent(this.mdDialog,this.dialogService,this.modalService);
   }
 
   checkForConfiguredPool() {
@@ -179,6 +172,7 @@ export class CatalogComponent implements OnInit {
       } else {
         this.selectedPool = res.pool;
       }
+      this.refreshToolbarMenus();
     })
   }
 
@@ -201,6 +195,26 @@ export class CatalogComponent implements OnInit {
     })
   }
 
+  doUnsetPool() {
+    this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
+      helptext.choosePool.jobTitle) }, disableClose: true});
+    this.dialogRef.componentInstance.setCall('kubernetes.update', [{pool: null}]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.dialogService.closeAllDialogs();
+      this.selectedPool = null;
+      this.refreshToolbarMenus();
+      this.translate.get(helptext.choosePool.unsetPool).subscribe(msg => {
+        this.dialogService.Info(helptext.choosePool.success, msg,
+          '500px', 'info', true);
+      })
+    });
+
+    this.dialogRef.componentInstance.failure.subscribe((err) => {
+      new EntityUtils().handleWSError(self, err, this.dialogService);
+    })
+  }
+
   doPoolSelect(entityDialog: any) {
     const self = entityDialog.parent;
     const pool = entityDialog.formGroup.controls['pools'].value;
@@ -210,6 +224,7 @@ export class CatalogComponent implements OnInit {
     self.dialogRef.componentInstance.submit();
     self.dialogRef.componentInstance.success.subscribe((res) => {
       self.selectedPool = pool;
+      self.refreshToolbarMenus();
       self.dialogService.closeAllDialogs();
       self.translate.get(helptext.choosePool.message).subscribe(msg => {
         self.dialogService.Info(helptext.choosePool.success, msg + res.result.pool,
@@ -222,23 +237,14 @@ export class CatalogComponent implements OnInit {
   }
 
   doInstall(name: string) {
-    switch (name) {
-      case 'minio':
-        this.modalService.open('slide-in-form', this.minioForm);
-        break;
-      
-      case 'plex':
-        this.modalService.open('slide-in-form', this.plexForm);
-        break;
-
-      case 'nextcloud':
-        this.modalService.open('slide-in-form', this.nextCloudForm);
-        break;
-      
-      default:
-        this.modalService.open('slide-in-form', this.chartReleaseForm);
+    const catalogApp = this.catalogApps.find(app => app.name==name);
+    if (catalogApp) {
+      const chartFormComponent = new ChartFormComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
+      chartFormComponent.parseSchema(catalogApp);
+      this.modalService.open('slide-in-form', chartFormComponent);
+    } else {
+      const chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
+      this.modalService.open('slide-in-form', chartReleaseForm);
     }
-  }
-
-  
+  }  
 }

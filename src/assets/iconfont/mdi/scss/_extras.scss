@@ -1,4 +1,4 @@
-$mdi-sizes: 18 24 36 48;
+$mdi-sizes: 18 24 36 48 !default;
 @each $mdi-size in $mdi-sizes {
     .#{$mdi-css-prefix}-#{$mdi-size}px {
         &.#{$mdi-css-prefix}-set,
@@ -25,7 +25,7 @@ $mdi-sizes: 18 24 36 48;
     }
 }
 
-$mdi-degrees: 45 90 135 180 225 270 315;
+$mdi-degrees: 45 90 135 180 225 270 315 !default;
 @each $mdi-degree in $mdi-degrees {
     .#{$mdi-css-prefix}-rotate-#{$mdi-degree}{
         &:before {

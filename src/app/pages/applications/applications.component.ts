@@ -22,6 +22,7 @@ export class ApplicationsComponent implements OnInit {
   }
 
   refresh(e) {
+    this.selectedIndex = e.index;
     if (e.index === 1) {
       this.modalService.refreshTable();
     }

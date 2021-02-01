@@ -4,25 +4,25 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
-import { DialogService, SystemGeneralService } from '../../../services/index';
+import { DialogService, SystemGeneralService, WebSocketService } from '../../../services/index';
 import { ApplicationsService } from '../applications.service';
 import { ModalService } from '../../../services/modal.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { ChartReleaseEditComponent } from '../forms/chart-release-edit.component';
-import { PlexFormComponent } from '../forms/plex-form.component';
-import { NextCloudFormComponent } from '../forms/nextcloud-form.component';
-import { MinioFormComponent } from '../forms/minio-form.component';
+import { CommonUtils } from 'app/core/classes/common-utils';
+import { ChartFormComponent } from '../forms/chart-form.component';
 import { EmptyConfig, EmptyType } from '../../common/entity/entity-empty/entity-empty.component';
-
 import  helptext  from '../../../helptext/apps/apps';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-charts',
   templateUrl: './chart-releases.component.html',
   styleUrls: ['../applications.component.scss']
 })
+
 export class ChartReleasesComponent implements OnInit {
   @Output() switchTab = new EventEmitter<string>();
 
@@ -30,13 +30,14 @@ export class ChartReleasesComponent implements OnInit {
   private dialogRef: any;
   public ixIcon = 'assets/images/ix-original.png';
   private rollbackChartName: string;
-  private chartReleaseForm: ChartReleaseEditComponent;
-  private plexForm: PlexFormComponent;
-  private nextCloudForm: NextCloudFormComponent;
-  private minioForm: MinioFormComponent;
   private refreshTable: Subscription;
+
+  protected utils: CommonUtils;
   private refreshForm: Subscription;
-  
+  private selectedAppName: String;
+  private podList = [];
+  private podDetails = {};
+ 
   public emptyPageConf: EmptyConfig = {
     type: EmptyType.loading,
     large: true,
@@ -72,27 +73,43 @@ export class ChartReleasesComponent implements OnInit {
     parent: this,
   }
 
+  public choosePod: DialogFormConfiguration = {
+    title: helptext.podConsole.choosePod.title,
+    fieldConfig: [{
+      type: 'select',
+      name: 'pods',
+      placeholder: helptext.podConsole.choosePod.placeholder,
+      required: true,
+    },{
+      type: 'select',
+      name: 'containers',
+      placeholder: helptext.podConsole.chooseConatiner.placeholder,
+      required: true,
+    },{
+      type: 'input',
+      name: 'command',
+      placeholder: helptext.podConsole.chooseCommand.placeholder,
+      value: '/bin/bash'
+    }],
+    saveButtonText: helptext.podConsole.choosePod.action,
+    customSubmit: this.doPodSelect,
+    afterInit: this.afterShellDialogInit,
+    parent: this,
+  }
+
   constructor(private mdDialog: MatDialog,
     private dialogService: DialogService, private translate: TranslateService,
     private appService: ApplicationsService, private modalService: ModalService,
-    private sysGeneralService: SystemGeneralService) { }
+    private sysGeneralService: SystemGeneralService, private router: Router,
+    protected ws: WebSocketService
+  ) { }
 
   ngOnInit(): void {
-    this.refreshChartReleases();
-    this.refreshForms();
+    this.utils = new CommonUtils();
+
     this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
       this.refreshChartReleases();
-    })
-    this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
-      this.refreshForms();
     });
-  }
-
-  refreshForms() {
-    this.chartReleaseForm = new ChartReleaseEditComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
-    this.plexForm = new PlexFormComponent(this.mdDialog,this.dialogService,this.modalService,this.sysGeneralService,this.appService);
-    this.nextCloudForm = new NextCloudFormComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
-    this.minioForm = new MinioFormComponent(this.mdDialog,this.dialogService,this.modalService);
   }
 
   viewCatalog() {
@@ -126,7 +143,8 @@ export class ChartReleasesComponent implements OnInit {
 
   refreshChartReleases() {
     this.showLoadStatus(EmptyType.loading);
-    const checkTitle = setInterval(() => {
+    this.chartItems = [];
+    const checkTitle = setTimeout(() => {
         this.updateChartReleases();
     }, 1000);
   }
@@ -144,7 +162,7 @@ export class ChartReleasesComponent implements OnInit {
           } else {
             this.appService.getChartReleases().subscribe(charts => {
               this.chartItems = [];
-              let repos = [];
+              
               charts.forEach(chart => {
                 let chartObj = {
                   name: chart.name,
@@ -162,9 +180,9 @@ export class ChartReleasesComponent implements OnInit {
                   icon: chart.chart_metadata.icon ? chart.chart_metadata.icon : this.ixIcon,
                   count: `${chart.pod_status.available}/${chart.pod_status.desired}`,
                   desired: chart.pod_status.desired,
-                  history: !(_.isEmpty(chart.history))
+                  history: !(_.isEmpty(chart.history)),
                 };
-                repos.push(chartObj.repository);
+        
                 let ports = [];
                 if (chart.used_ports) {
                   chart.used_ports.forEach(item => {
@@ -260,21 +278,14 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   edit(name: string, id: string) {
-    switch (id) {
-      case 'minio':
-        this.modalService.open('slide-in-form', this.minioForm, name);
-        break;
-      
-      case 'plex':
-        this.modalService.open('slide-in-form', this.plexForm, name);
-        break;
-
-      case 'nextcloud':
-        this.modalService.open('slide-in-form', this.nextCloudForm, name);
-        break;
-
-      default:
-        this.modalService.open('slide-in-form', this.chartReleaseForm, name);
+    const catalogApp = this.chartItems.find(app => app.name==name && app.chart_name != 'ix-chart')
+    if (catalogApp) {
+      const chartFormComponent = new ChartFormComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
+      chartFormComponent.setTitle(catalogApp.chart_name);
+      this.modalService.open('slide-in-form', chartFormComponent, name);
+    } else {
+      const chartReleaseForm = new ChartReleaseEditComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
+      this.modalService.open('slide-in-form', chartReleaseForm, name);
     }
   }
 
@@ -318,6 +329,58 @@ export class ChartReleasesComponent implements OnInit {
           })
         }
       })
+    })
+  }
+
+  openShell(name: string) {
+    this.podList = [];
+    this.podDetails = {};
+    this.selectedAppName = name;
+    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).subscribe(res => {
+      this.podDetails = Object.assign({}, res);
+      this.podList = Object.keys(this.podDetails);
+      if (this.podList.length == 0) {
+        this.dialogService.confirm(helptext.podConsole.nopod.title, helptext.podConsole.nopod.message, true, 'Close', false, null, null, null, null, true);
+      } else {
+        this.choosePod.fieldConfig[0].value = this.podList[0];
+        this.choosePod.fieldConfig[0].options = this.podList.map(item => {
+          return {
+            label: item,
+            value: item,
+          }
+        });
+        this.choosePod.fieldConfig[1].value = this.podDetails[this.podList[0]][0];
+        this.choosePod.fieldConfig[1].options = this.podDetails[this.podList[0]].map(item => {
+          return {
+            label: item,
+            value: item,
+          }
+        });
+        this.dialogService.dialogForm(this.choosePod, true);
+      }
+    })
+  }
+
+  doPodSelect(entityDialog: any) {
+    const self = entityDialog.parent;
+    const pod = entityDialog.formGroup.controls['pods'].value;
+    const command = entityDialog.formGroup.controls['command'].value;
+    self.router.navigate(new Array("/apps/shell/").concat([self.selectedAppName, pod, command]));
+    self.dialogService.closeAllDialogs();
+  }
+
+  afterShellDialogInit(entityDialog: any) {
+    const self = entityDialog.parent;
+    entityDialog.formGroup.controls['pods'].valueChanges.subscribe(value => {
+      const containers = self.podDetails[value];
+      const containerFC = _.find(entityDialog.fieldConfig, {'name' : 'containers'});
+      containerFC.options = containers.map(item => {
+        return {
+          label: item,
+          value: item,
+        }
+      });
+      entityDialog.formGroup.controls['containers'].setValue(containers[0]);
     })
   }
 }

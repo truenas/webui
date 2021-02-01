@@ -26,6 +26,7 @@ import { FormButtonComponent } from './entity-form/components/form-button/form-b
 import { FormCheckboxComponent } from './entity-form/components/form-checkbox/form-checkbox.component';
 import { FormComboboxComponent } from './entity-form/components/form-combobox/form-combobox.component';
 import { FormInputComponent } from './entity-form/components/form-input/form-input.component';
+import { FormLabelComponent } from './entity-form/components/form-label/form-label.component';
 import { FormUploadComponent } from './entity-form/components/form-upload/form-upload.component';
 import { FormSelectComponent } from './entity-form/components/form-select/form-select.component';
 import { FormRadioComponent } from './entity-form/components/form-radio/form-radio.component';
@@ -80,6 +81,7 @@ import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponen
 import { EntityToolbarComponent } from './entity-toolbar/entity-toolbar.component';
 import { ToolbarButtonComponent } from './entity-toolbar/components/toolbar-button/toolbar-button.component';
 import { ToolbarSliderComponent } from './entity-toolbar/components/toolbar-slider/toolbar-slider.component';
+import { ToolbarSelectComponent } from './entity-toolbar/components/toolbar-select/toolbar-select.component';
 import { ToolbarMenuComponent } from './entity-toolbar/components/toolbar-menu/toolbar-menu.component';
 import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
 import { ToolbarMultiSelectComponent } from './entity-toolbar/components/toolbar-multiselect/toolbar-multiselect.component';
@@ -116,6 +118,7 @@ import { TableComponent } from './table/table.component';
     EntityFormConfigurationComponent,
     FormButtonComponent,
     FormInputComponent,
+    FormLabelComponent,
     FormSelectComponent,
     FormRadioComponent,
     FormCheckboxComponent,
@@ -151,6 +154,7 @@ import { TableComponent } from './table/table.component';
     EntityToolbarComponent,
     ToolbarButtonComponent,
     ToolbarSliderComponent,
+    ToolbarSelectComponent,
     ToolbarMenuComponent,
     ToolbarMultimenuComponent,
     ToolbarMultiSelectComponent,
@@ -185,6 +189,7 @@ import { TableComponent } from './table/table.component';
     EntityToolbarComponent,
     ToolbarButtonComponent,
     ToolbarSliderComponent,
+    ToolbarSelectComponent,
     ToolbarMenuComponent,
     ToolbarMultimenuComponent,
     ToolbarMultiSelectComponent,
@@ -196,6 +201,7 @@ import { TableComponent } from './table/table.component';
   entryComponents: [
     FormButtonComponent,
     FormInputComponent,
+    FormLabelComponent,
     FormSelectComponent,
     FormCheckboxComponent,
     FormComboboxComponent,

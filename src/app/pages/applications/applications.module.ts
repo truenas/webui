@@ -16,11 +16,10 @@ import { DockerImagesComponent } from './docker-images/docker-images.component';
 import { KubernetesSettingsComponent } from './forms/kubernetes-settings.component';
 import { ChartReleaseAddComponent } from './forms/chart-release-add.component';
 import { ChartReleaseEditComponent } from './forms/chart-release-edit.component';
-import { PlexFormComponent } from './forms/plex-form.component';
-import { NextCloudFormComponent } from './forms/nextcloud-form.component';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
-import { MinioFormComponent } from './forms/minio-form.component';
-
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PodShellComponent } from './pod-shell/pod-shell.component';
+import { ChartFormComponent } from './forms/chart-form.component';
 
 @NgModule({
   imports: [
@@ -31,7 +30,9 @@ import { MinioFormComponent } from './forms/minio-form.component';
     TranslateModule,
     CommonDirectivesModule,
     EntityModule,
-    CoreComponents
+    CoreComponents,
+    FormsModule,
+    ReactiveFormsModule
   ],
   exports: [
   ],
@@ -43,9 +44,8 @@ import { MinioFormComponent } from './forms/minio-form.component';
     KubernetesSettingsComponent,
     ChartReleaseAddComponent,
     ChartReleaseEditComponent,
-    PlexFormComponent,
-    NextCloudFormComponent,
-    MinioFormComponent
+	ChartFormComponent,
+    PodShellComponent
   ]
 })
 export class ApplicationsModule { }

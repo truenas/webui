@@ -8,7 +8,8 @@ export default {
     action: T('Choose'),
     jobTitle: T('Configuring...'),
     success: T('Success'),
-    message: T('Using pool ')
+    message: T('Using pool '),
+    unsetPool: T('Unset Pool')
   },
 
   message: {
@@ -23,6 +24,7 @@ export default {
   settings: T('Settings'),
   choose: T('Choose Pool'),
   advanced: T('Advanced Settngs'),
+  unset_pool: T('Unset Pool'),
 
   launch: T('Launch Docker Image'),
 
@@ -94,7 +96,7 @@ export default {
     upgrade_dialog: {
       title: T('Upgrade'),
       msg: T('Upgrade '),
-      job: T('Upgradomg...')
+      job: T('Upgrading...')
     },
 
     rollback_dialog: {
@@ -121,6 +123,10 @@ export default {
   chartForm: {
     title: T('Install Application'),
     editTitle: T('Edit Application Settings'),
+    parseError: {
+      title: T('Error'),
+      message: T('Error detected reading App'),
+    },
     catalog: {
       placeholder: T('Catalog'),
       tooltip: T('')
@@ -130,6 +136,7 @@ export default {
       tooltip: T('')
     },
     release_name: {
+      name: T('Name'),
       placeholder: T('Application Name'),
       tooltip: T('')
     },
@@ -394,107 +401,29 @@ export default {
     container: T('Container Settings')
   },
 
-  nextCloudForm: {
-    title: T('Nextcloud'),
-    release_name: {
-      name: T('Name'),
-    },
-    config: {
-      label: T('Configuration'),
-      host: {
-        placeholder: T('Nextcloud Host'),
-        tooltip: T('Nextcloud host to create application URLs'),
-      },
-      username: T('Nextcloud Username'),
-      password: T('Password'),
-      nodeport: {
-        placeholder: T('Nodeport'),
-        tooltip: T('Node Port to use for Nextcloud')
-      }
-    },
-    nextcloudPath: T('Data Hostpath Enabled'),
-    nextCloudHP: T('Data Hostpath')
-
+  updateImageDialog: {
+    title: T('Update Image'),
+    message: T('Update the image for '),
+    success: T('Success'),
+    successMsg: T('The image was updated.')
   },
 
-  plexForm: {
-    title: T('Plex'),
-    release: {
-      name: T('Name'),
+  podConsole: {
+    nopod: {
+      title: T('No Pods Found'),
+      message: T('At least one pod must be available'),
     },
-    settings: {
-      label: T('Settings'),
-      claimToken: {
-        placeholder: T('Plex Claim Token')
-      },
-      advertiseIp: {
-        placeholder: T('Advertise IP')
-      },
-      timezone: {
-        placeholder: T('Timezone')
-      },
-      hostNetwork: {
-        placeholder: T('Host Network')
-      },
-      extraEnvVars: {
-        label: T('Extra Environment Variables')
-      }
+    choosePod: {
+      title: T('Choose pod'),
+      placeholder: T('Pods'),
+      action: T('Choose')
     },
-    plexTCP: T('Plex Node Port'),
-    transcode: {
-      hostpathEnabled: T('Transcode Hostpath Enabled'),
-      hostPath: T('Transcode Hostpath')
+    chooseConatiner: {
+      title: T('Choose container'),
+      placeholder: T('Containers'),
     },
-    data: {
-      hostpathEnabled: T('Data Hostpath Enabled'),
-      hostPath: T('Data Hostpath')
-    },
-    config: {
-      hostpathEnabled: T('Config Hostpath Enabled'),
-      hostPath: T('Config Hostpath')
-    },
-  },
-  minioForm: {
-    title: T('Minio'),
-    accessLabel: T('Access'),
-    accessKey: {
-      placeholder: T('Access Key'),
-      tooltip: T('Minimum length: 5 characters. Maximum length: 20 characters'),
-      validation: [Validators.min(5), Validators.max(20)]
-    },
-    secretKey: {
-      placeholder: T('Secret Key'),
-      tooltip: T('Minimum length: 8 characters. Maximum length: 40 characters'),
-      validation: [Validators.min(8), Validators.max(40)]
-    },
-    environment: {
-      label: T('Minio Image Environment'),
-      name: T('Name'),
-      value: T('Value')
-    },
-    nodePort: {
-      label: T('Node Port'),
-      placeholder: T('Node Port'),
-      tooltip: T('Node Port to use for Minio')
-    },
-    hostPathEnabled: T('Minio HostPath Enabled'),
-    hostPath: {
-      placeholder: T('Host Path'),
-      tooltip: T('Specify HostPath for Minio data')
+    chooseCommand: {
+      placeholder: T('Commands'),
     }
-  },
-
-
-  minioInfo: T('Minio: Kubernetes native, high performance object storage'),
-  plexInfo: T('Plex: Media player, streaming service'),
-  nextcloudInfo: T('Nextcloud:  a file sharing server that puts the control \
- and security of your own data back into your hands.'),
-
- updateImageDialog: {
-   title: T('Update Image'),
-   message: T('Update the image for '),
-   success: T('Success'),
-   successMsg: T('The image was updated.')
- }
-
+  }
 }
