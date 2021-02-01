@@ -963,6 +963,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
      display:none;
    }
 
+  .mat-tab-nav-bar, .mat-tab-header {
+    border-bottom: 1px solid var(--lines);
+  }
 
   app-entity-dialog .has-pwtoggle  {
     padding: 0 0 10px 0 !important;

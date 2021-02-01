@@ -1,7 +1,7 @@
 import { Component, Output, EventEmitter, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
 import { DialogService, SystemGeneralService, WebSocketService } from '../../../services/index';
@@ -16,6 +16,9 @@ import { ChartFormComponent } from '../forms/chart-form.component';
 import { EmptyConfig, EmptyType } from '../../common/entity/entity-empty/entity-empty.component';
 
 import  helptext  from '../../../helptext/apps/apps';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { BulkOptionsComponent } from '../forms/bulk-options.component';
 import { Router } from '@angular/router';
 
 @Component({
@@ -25,6 +28,11 @@ import { Router } from '@angular/router';
 })
 
 export class ChartReleasesComponent implements OnInit {
+  @Output() updateTab = new EventEmitter();
+
+  public filteredChartItems = [];
+  public filterString = '';
+
   public chartItems = {};
   @Output() switchTab = new EventEmitter<string>();
 
@@ -35,6 +43,7 @@ export class ChartReleasesComponent implements OnInit {
 
   protected utils: CommonUtils;
   private refreshForm: Subscription;
+  public settingsEvent: Subject<CoreEvent>;
   private chartReleaseChangedListener: any;
   
   private selectedAppName: String;
@@ -104,7 +113,7 @@ export class ChartReleasesComponent implements OnInit {
     private dialogService: DialogService, private translate: TranslateService,
     private appService: ApplicationsService, private modalService: ModalService,
     private sysGeneralService: SystemGeneralService, private router: Router,
-    protected ws: WebSocketService
+    private core: CoreService, protected ws: WebSocketService
   ) { }
 
   ngOnInit(): void {
@@ -123,8 +132,18 @@ export class ChartReleasesComponent implements OnInit {
     }
   }
 
+  onToolbarAction(evt: CoreEvent) {
+    if (evt.data.event_control == 'filter') {
+      this.filterString = evt.data.filter;
+      this.filerChartItems();
+    } else if (evt.data.event_control == 'bulk') {
+      this.bulkOptions();
+    }
+  }
+  
+
   viewCatalog() {
-    this.switchTab.emit('0');
+    this.updateTab.emit({name: 'SwitchTab', value: '0'});
   }
 
   showLoadStatus(type: EmptyType) {
@@ -159,7 +178,8 @@ export class ChartReleasesComponent implements OnInit {
   addChartReleaseChangedEventListner() {
     this.chartReleaseChangedListener = this.ws.subscribe("chart.release.query").subscribe((evt) => {
       const app = this.chartItems[evt.id];
-      if (app) {
+      
+      if (app && evt && evt.fields) {
         app.status = evt.fields.status;
       }
     });
@@ -168,6 +188,7 @@ export class ChartReleasesComponent implements OnInit {
   refreshChartReleases() {
     this.showLoadStatus(EmptyType.loading);
     this.chartItems = {};
+    this.filerChartItems();
     const checkTitle = setTimeout(() => {
         this.updateChartReleases();
     }, 1000);
@@ -220,6 +241,8 @@ export class ChartReleasesComponent implements OnInit {
               if (this.getChartItems().length == 0) {
                 this.showLoadStatus(EmptyType.no_page_data );
               }
+
+              this.filerChartItems();
             })
           }
         })
@@ -269,9 +292,6 @@ export class ChartReleasesComponent implements OnInit {
           this.dialogRef.componentInstance.success.subscribe((res) => {
             this.dialogService.closeAllDialogs();
           });
-          this.dialogRef.componentInstance.failure.subscribe((err) => {
-            // new EntityUtils().handleWSError(this, err, this.dialogService);
-          })
         }
       })
     })
@@ -297,10 +317,6 @@ export class ChartReleasesComponent implements OnInit {
     self.dialogRef.componentInstance.success.subscribe((res) => {
       self.dialogService.closeAllDialogs();
     });
-    self.dialogRef.componentInstance.failure.subscribe((err) => {
-      // new EntityUtils().handleWSError(self, err, self.dialogService);
-    })
-
   }
 
   edit(name: string, id: string) {
@@ -313,6 +329,35 @@ export class ChartReleasesComponent implements OnInit {
       const chartReleaseForm = new ChartReleaseEditComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
       this.modalService.open('slide-in-form', chartReleaseForm, name);
     }
+  }
+
+  onBulkAction(checkedItems: any[], actionName: string) {
+    if (actionName === 'delete') {
+      this.bulkDelete(checkedItems);      
+    } else {
+      checkedItems.forEach(name => {
+        switch (actionName) {
+          case 'start':
+            this.start(name);
+            break;
+          case 'stop':
+            this.stop(name);
+            break;
+        }
+      });
+  
+      this.translate.get(helptext.bulkActions.finished).subscribe(msg => {
+        this.dialogService.Info(helptext.choosePool.success, msg,
+          '500px', 'info', true);
+      })
+    }    
+  }
+
+  bulkOptions() {
+    const bulkOptionsForm = new BulkOptionsComponent(this.modalService, this.appService);
+    bulkOptionsForm.setParent(this);
+
+    this.modalService.open('slide-in-form', bulkOptionsForm, "Bulk Options");
   }
 
   delete(name: string) {
@@ -328,9 +373,39 @@ export class ChartReleasesComponent implements OnInit {
             this.dialogService.closeAllDialogs();
             this.refreshChartReleases();
           });
-          this.dialogRef.componentInstance.failure.subscribe((err) => {
-            // new EntityUtils().handleWSError(this, err, this.dialogService);
-          })
+        }
+      })
+    })
+  }
+
+  bulkDelete(names: string[]) {
+    let name = names.join(",");
+    this.translate.get(helptext.charts.delete_dialog.msg).subscribe(msg => {
+      this.dialogService.confirm(helptext.charts.delete_dialog.title, msg + name + '?')
+      .subscribe(res => {
+        if (res) {
+          this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
+            helptext.charts.delete_dialog.job) }, disableClose: true});
+          this.dialogRef.componentInstance.setCall('core.bulk', ['chart.release.delete', names.map(item => [item])]);
+          this.dialogRef.componentInstance.submit();
+          this.dialogRef.componentInstance.success.subscribe((res) => {
+
+            this.dialogService.closeAllDialogs();
+            let message = "";
+            for (let i = 0; i < res.result.length; i++) {
+              if (res.result[i].error != null) {
+                message = message + '<li>' + res.result[i].error + '</li>';
+              }
+            }
+
+            if (message !== "") {
+              message = '<ul>' + message + '</ul>';
+              this.dialogService.errorReport(helptext.bulkActions.title, message);
+            }
+            this.modalService.close('slide-in-form');
+            this.refreshChartReleases();
+
+          });
         }
       })
     })
@@ -350,12 +425,19 @@ export class ChartReleasesComponent implements OnInit {
                '300px', 'info', true);
             this.refreshChartReleases();
           });
-          this.dialogRef.componentInstance.failure.subscribe((err) => {
-            // new EntityUtils().handleWSError(this, err, this.dialogService);
-          })
         }
       })
     })
+  }
+
+  filerChartItems() {
+    if (this.filterString) {
+      this.filteredChartItems = this.getChartItems().filter((chart:any) => chart.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1);
+    } else {
+      this.filteredChartItems = this.getChartItems();
+    }
+
+    this.updateTab.emit({name: 'UpdateToolbar', value: this.filteredChartItems.length > 0});
   }
 
   openShell(name: string) {

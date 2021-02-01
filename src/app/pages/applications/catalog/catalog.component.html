@@ -1,5 +1,5 @@
 <div fxLayout="row wrap" fxLayoutAlign="center center">
-    <mat-card class="catalog-item" *ngFor="let item of catalogApps">
+    <mat-card class="catalog-item" *ngFor="let item of filteredCatalogApps">
         <div class="content-wrapper" fxLayout="row">
           <div class="logo-container">
             <div class="logo" style="background-image: url('{{ item.icon_url}}');"></div>

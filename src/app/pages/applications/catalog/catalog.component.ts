@@ -25,9 +25,12 @@ import  helptext  from '../../../helptext/apps/apps';
   styleUrls: ['../applications.component.scss']
 })
 export class CatalogComponent implements OnInit {
-  @Output() switchTab = new EventEmitter<string>();
+  @Output() updateTab = new EventEmitter();
 
   public catalogApps = [];
+  public filteredCatalogApps = [];
+  public filterString = '';
+
   private dialogRef: any;
   private poolList = [];
   private selectedPool = '';
@@ -90,6 +93,7 @@ export class CatalogComponent implements OnInit {
           }
         }
       });
+      this.filerApps();
     })
     
     this.checkForConfiguredPool();
@@ -98,66 +102,36 @@ export class CatalogComponent implements OnInit {
       this.refreshForms();
     });
 
-    this.refreshToolbarMenus();
-
     this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
-      this.switchTab.emit('1');
+      this.updateTab.emit({name: 'SwitchTab', value: '1'});
     })
   }
 
-  refreshToolbarMenus() {
-    this.settingsEvent = new Subject();
-    this.settingsEvent.subscribe((evt: CoreEvent) => {
-      if (evt.data.event_control == 'settings' && evt.data.settings) {
-        switch (evt.data.settings.value) {
-          case 'select_pool':
-            return this.selectPool();
-          
-          case 'advanced_settings':
-            this.modalService.open('slide-in-form', this.kubernetesForm);
-            break;
+  onToolbarAction(evt: CoreEvent) {
+    if (evt.data.event_control == 'settings' && evt.data.settings) {
+      switch (evt.data.settings.value) {
+        case 'select_pool':
+          return this.selectPool();
+        
+        case 'advanced_settings':
+          this.modalService.open('slide-in-form', this.kubernetesForm);
+          break;
 
-          case 'unset_pool':
-            this.doUnsetPool();
-            break;
-        }
-      } else if (evt.data.event_control == 'launch' && evt.data.launch) {
-        this.doInstall('ix-chart');
+        case 'unset_pool':
+          this.doUnsetPool();
+          break;
       }
-    })
-
-    const menuOptions = [
-      { label: helptext.choose, value: 'select_pool' }, 
-      { label: helptext.advanced, value: 'advanced_settings' }, 
-    ];
-
-    if (this.selectedPool) {
-      menuOptions.push({ label: helptext.unset_pool, value: 'unset_pool' })
+    } else if (evt.data.event_control == 'launch' && evt.data.launch) {
+      this.doInstall('ix-chart');
+    } else if (evt.data.event_control == 'filter') {
+      this.filterString = evt.data.filter;
+      this.filerApps();
     }
+  }
 
-    const settingsConfig = {
-      actionType: EntityToolbarComponent,
-      actionConfig: {
-        target: this.settingsEvent,
-        controls: [
-          {
-            name: 'settings',
-            label: helptext.settings,
-            type: 'menu',
-            options: menuOptions
-          },
-          {
-            name: 'launch',
-            label: helptext.launch,
-            type: 'button',
-            color: 'primary',
-            value: 'launch'
-          }
-        ]
-      }
-    };
 
-    this.core.emit({name:"GlobalActions", data: settingsConfig, sender: this});
+  refreshToolbarMenus() {
+    this.updateTab.emit({name: 'UpdateToolbarPoolOption', value: !!this.selectedPool});
   }
 
   refreshForms() {
@@ -246,5 +220,14 @@ export class CatalogComponent implements OnInit {
       const chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
       this.modalService.open('slide-in-form', chartReleaseForm);
     }
-  }  
+  }
+
+  filerApps() {
+    if (this.filterString) {
+      this.filteredCatalogApps = this.catalogApps.filter(app => app.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1);
+    } else {
+      this.filteredCatalogApps = this.catalogApps;
+    }
+  }
+  
 }

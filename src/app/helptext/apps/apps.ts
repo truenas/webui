@@ -26,6 +26,12 @@ export default {
   advanced: T('Advanced Settngs'),
   unset_pool: T('Unset Pool'),
 
+  bulkActions: {
+    title: T('Bulk actions'),
+    finished: T('Started bulk actions'),
+    failed: T('Failed to do bulk actions'),
+  },
+
   launch: T('Launch Docker Image'),
 
   install: {
