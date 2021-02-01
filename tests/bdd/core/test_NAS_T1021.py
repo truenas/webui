@@ -16,9 +16,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1022.feature', 'Create dataset name iscsi for isqsi file test cases')
-def test_create_dataset_name_iscsi_for_isqsi_file_test_cases():
-    """Create dataset name iscsi for isqsi file test cases."""
+@scenario('features/NAS-T1021.feature', 'Create dataset name iscsi for iscsi file test cases')
+def test_create_dataset_name_iscsi_for_iscsi_file_test_cases():
+    """Create dataset name iscsi for iscsi file test cases."""
 
 
 @given('the browser is open on the TrueNAS URL and logged in')
