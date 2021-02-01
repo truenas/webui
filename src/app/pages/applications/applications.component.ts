@@ -21,7 +21,7 @@ export class ApplicationsComponent implements OnInit {
 
   selectedIndex: number = 0;
   public settingsEvent: Subject<CoreEvent>;
-  public filterString = 'Catalog';
+  public filterString = '';
   public toolbarConfig: ToolbarConfig;
 
   constructor(private appService: ApplicationsService, private core: CoreService, 
@@ -83,18 +83,20 @@ export class ApplicationsComponent implements OnInit {
 
   }
 
-  updateToolbar() {
+  updateToolbar(isShowBulkOptions?) {
    
-    if (this.selectedIndex == 1) {
-      const bulk = {
-        name: 'bulk',
-        label: 'Bulk Options',
-        type: 'button',
-        color: 'secondary',
-        value: 'bulk'
-      };
-
-      this.toolbarConfig.controls.splice(1,0, bulk);
+    if (this.selectedIndex == 1 && isShowBulkOptions) {
+      if (!this.toolbarConfig.controls.some(ctl => ctl.name === 'bulk')) {
+        const bulk = {
+          name: 'bulk',
+          label: 'Bulk Options',
+          type: 'button',
+          color: 'secondary',
+          value: 'bulk'
+        };
+  
+        this.toolbarConfig.controls.splice(1,0, bulk);
+      }
     } else {
 
       this.toolbarConfig.controls = this.toolbarConfig.controls.filter(ctl => ctl.name !== 'bulk');
@@ -104,6 +106,13 @@ export class ApplicationsComponent implements OnInit {
     this.toolbarConfig.target.next({name:"UpdateControls", data: this.toolbarConfig.controls});
   }
 
+  updateTab(evt) {
+    if (evt.name == 'SwitchTab') {
+      this.selectedIndex = evt.value;
+    } else if (evt.name == 'UpdateToolbar') {
+      this.updateToolbar(evt.value);
+    }
+  }
 
   refresh(e) {
     this.selectedIndex = e.index;
