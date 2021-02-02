@@ -1654,7 +1654,7 @@ export class VolumesListTableConfig implements InputTableConf {
         if (rowData.encrypted && rowData.key_loaded && rowData.encryption_root === rowData.id) {
           const fileName = "dataset_" + rowData.name + "_key.txt";
           const mimetype = 'text/plain';
-          const message = helptext.export_keys_message + rowData.name;
+          const message = helptext.export_keys_message + rowData.id;
           encryption_actions.push({
             id: rowData.id,
             name: T('Export Key'),
