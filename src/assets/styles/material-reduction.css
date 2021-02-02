@@ -535,8 +535,17 @@ button.mat-button.mat-accent{
   opacity: 1 !important;
 }
 
+button.mat-button.mat-error,
+button.mat-button.mat-red,
 button.mat-button.mat-warn{
   background-color:var(--red) !important;
+  color:#efefef !important;
+  opacity: 1 !important;
+}
+
+button.mat-button.mat-finished,
+button.mat-button.mat-green{
+  background-color:var(--green) !important;
   color:#efefef !important;
   opacity: 1 !important;
 }
@@ -813,7 +822,6 @@ mat-card.mat-card .mat-list-base{
   padding-top: 4px;
 }
 
-<<<<<<< HEAD
 .mat-expansion-panel-header span.mat-expansion-indicator{
   margin-top: -4px;
   position: relative;
@@ -876,6 +884,11 @@ mat-icon.truecommand-icon.FAILED > span.mat-badge-content {
   background: var(--warn);
 }
 
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
 /* Material Design Icon Set */
 .mat-icon.mdi-set{
   font-size: 24px; /* Default Size to match other mat icons */

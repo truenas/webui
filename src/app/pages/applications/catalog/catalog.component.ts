@@ -9,7 +9,7 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { DialogService, SystemGeneralService } from '../../../services/index';
+import { DialogService, WebSocketService, SystemGeneralService } from '../../../services/index';
 import { ModalService } from '../../../services/modal.service';
 import { ApplicationsService } from '../applications.service';
 
@@ -25,9 +25,12 @@ import  helptext  from '../../../helptext/apps/apps';
   styleUrls: ['../applications.component.scss']
 })
 export class CatalogComponent implements OnInit {
-  @Output() switchTab = new EventEmitter<string>();
+  @Output() updateTab = new EventEmitter();
 
   public catalogApps = [];
+  public filteredCatalogApps = [];
+  public filterString = '';
+
   private dialogRef: any;
   private poolList = [];
   private selectedPool = '';
@@ -54,7 +57,7 @@ export class CatalogComponent implements OnInit {
   }
 
   constructor(private dialogService: DialogService,
-    private mdDialog: MatDialog, private translate: TranslateService,
+    private mdDialog: MatDialog, private translate: TranslateService, protected ws: WebSocketService,
     private router: Router, private core: CoreService, private modalService: ModalService,
     private appService: ApplicationsService, private sysGeneralService: SystemGeneralService) {
       this.utils = new CommonUtils();
@@ -90,6 +93,7 @@ export class CatalogComponent implements OnInit {
           }
         }
       });
+      this.filerApps();
     })
     
     this.checkForConfiguredPool();
@@ -98,54 +102,37 @@ export class CatalogComponent implements OnInit {
       this.refreshForms();
     });
 
-    this.settingsEvent = new Subject();
-    this.settingsEvent.subscribe((evt: CoreEvent) => {
-      if (evt.data.event_control == 'settings' && evt.data.settings) {
-        switch (evt.data.settings.value) {
-          case 'select_pool':
-            return this.selectPool();
-          
-          case 'advanced_settings':
-            this.modalService.open('slide-in-form', this.kubernetesForm);
-            break;
-        }
-      } else if (evt.data.event_control == 'launch' && evt.data.launch) {
-        this.doInstall('ix-chart');
-      }
-    })
-
-    const settingsConfig = {
-      actionType: EntityToolbarComponent,
-      actionConfig: {
-        target: this.settingsEvent,
-        controls: [
-          {
-            name: 'settings',
-            label: helptext.settings,
-            type: 'menu',
-            options: [
-              { label: helptext.choose, value: 'select_pool' }, 
-              { label: helptext.advanced, value: 'advanced_settings' }, 
-            ]
-          },
-          {
-            name: 'launch',
-            label: helptext.launch,
-            type: 'button',
-            color: 'primary',
-            value: 'launch'
-          }
-        ]
-      }
-    };
-
-    this.core.emit({name:"GlobalActions", data: settingsConfig, sender: this});
-
     this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
-      this.switchTab.emit('1');
+      this.updateTab.emit({name: 'SwitchTab', value: '1'});
     })
   }
 
+  onToolbarAction(evt: CoreEvent) {
+    if (evt.data.event_control == 'settings' && evt.data.settings) {
+      switch (evt.data.settings.value) {
+        case 'select_pool':
+          return this.selectPool();
+        
+        case 'advanced_settings':
+          this.modalService.open('slide-in-form', this.kubernetesForm);
+          break;
+
+        case 'unset_pool':
+          this.doUnsetPool();
+          break;
+      }
+    } else if (evt.data.event_control == 'launch' && evt.data.launch) {
+      this.doInstall('ix-chart');
+    } else if (evt.data.event_control == 'filter') {
+      this.filterString = evt.data.filter;
+      this.filerApps();
+    }
+  }
+
+
+  refreshToolbarMenus() {
+    this.updateTab.emit({name: 'UpdateToolbarPoolOption', value: !!this.selectedPool});
+  }
 
   refreshForms() {
     this.kubernetesForm = new KubernetesSettingsComponent(this.modalService, this.appService);
@@ -159,6 +146,7 @@ export class CatalogComponent implements OnInit {
       } else {
         this.selectedPool = res.pool;
       }
+      this.refreshToolbarMenus();
     })
   }
 
@@ -181,6 +169,26 @@ export class CatalogComponent implements OnInit {
     })
   }
 
+  doUnsetPool() {
+    this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
+      helptext.choosePool.jobTitle) }, disableClose: true});
+    this.dialogRef.componentInstance.setCall('kubernetes.update', [{pool: null}]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.dialogService.closeAllDialogs();
+      this.selectedPool = null;
+      this.refreshToolbarMenus();
+      this.translate.get(helptext.choosePool.unsetPool).subscribe(msg => {
+        this.dialogService.Info(helptext.choosePool.success, msg,
+          '500px', 'info', true);
+      })
+    });
+
+    this.dialogRef.componentInstance.failure.subscribe((err) => {
+      new EntityUtils().handleWSError(self, err, this.dialogService);
+    })
+  }
+
   doPoolSelect(entityDialog: any) {
     const self = entityDialog.parent;
     const pool = entityDialog.formGroup.controls['pools'].value;
@@ -190,6 +198,7 @@ export class CatalogComponent implements OnInit {
     self.dialogRef.componentInstance.submit();
     self.dialogRef.componentInstance.success.subscribe((res) => {
       self.selectedPool = pool;
+      self.refreshToolbarMenus();
       self.dialogService.closeAllDialogs();
       self.translate.get(helptext.choosePool.message).subscribe(msg => {
         self.dialogService.Info(helptext.choosePool.success, msg + res.result.pool,
@@ -211,5 +220,14 @@ export class CatalogComponent implements OnInit {
       const chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
       this.modalService.open('slide-in-form', chartReleaseForm);
     }
-  }  
+  }
+
+  filerApps() {
+    if (this.filterString) {
+      this.filteredCatalogApps = this.catalogApps.filter(app => app.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1);
+    } else {
+      this.filteredCatalogApps = this.catalogApps;
+    }
+  }
+  
 }

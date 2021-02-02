@@ -8,7 +8,18 @@ import { ModalService } from '../../../services/modal.service';
         `<div class={{id}} [ngClass]="id!=='slide-in-form' ? 'jw-modal' : ''">
             <div class="jw-modal-body">
                 <div class="slidein-title-bar" fxLayout="row" >
-                    <h3 fxFlex="90%" class="formtitle">{{title | translate}}</h3>
+                    <div fxFlex="90%" fxLayout="row" fxLayoutAlign="start center">
+                        <h3 class="formtitle">{{title | translate}}</h3>
+                        <div style="color:var(--fg2);" *ngIf="conf && conf.titleBarControls" class="control-group" fxLayout="row" fxLayoutAlign="start center">
+                            <div *ngFor="let control of conf.titleBarControls" style="margin: 0 8px;">
+                                <toolbar-button *ngIf="control.type == 'button'" [config]="control" [controller]="conf.controller" ></toolbar-button>
+                                <toolbar-slider *ngIf="control.type == 'slider'" [config]="control" [controller]="conf.controller" ></toolbar-slider>
+                                <toolbar-input *ngIf="control.type == 'input'" [config]="control" [controller]="conf.controller" ></toolbar-input>
+                                <toolbar-menu *ngIf="control.type == 'menu'" [config]="control" [controller]="conf.controller" style="max-height:36px;"></toolbar-menu>
+                                <toolbar-checkbox *ngIf="control.type == 'checkbox'" [config]="control" [controller]="conf.controller"></toolbar-checkbox>
+                            </div>
+                        </div>
+                    </div>                    
                     <mat-icon fxFlex="10%" id="close-icon" (click)="close()">cancel</mat-icon>      
                 </div>
                 <ng-container *ngIf="!wizard; else wizardBlock">

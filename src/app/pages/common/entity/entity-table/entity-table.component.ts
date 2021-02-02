@@ -192,8 +192,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public colMaxWidths = [];
 
   public startingHeight: number;
-  //public expandedRows = 0;
-  public expandedRows = document.querySelectorAll('.datatable-row-detail').length;
+  public expandedRows = document.querySelectorAll('.expanded-row').length;
   public expandedElement: any | null = null;
 
   public dataSource: MatTableDataSource<any>;
@@ -507,7 +506,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   handleData(res, skipActions=false): any {
-    this.expandedElement = null;
+    this.expandedRows = document.querySelectorAll('.expanded-row').length;
+    const cache = this.expandedElement;
+    this.expandedElement = this.expandedRows > 0 ? cache : null;
 
     if( typeof(res) === "undefined" || typeof(res.data) === "undefined" ) {
       res = {
@@ -1109,6 +1110,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isInteractive(column: string): boolean {
     const item = this.currentColumns.find(item => item.prop === column);
-    return (item?.checkbox || item?.toggle);
+    return (item?.checkbox || item?.toggle || item?.button);
   }
+
 }

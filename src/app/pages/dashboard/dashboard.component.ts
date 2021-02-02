@@ -355,17 +355,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.pools = evt.data;
 
       if(this.pools.length > 0){
-        const queue = this.pools.map((pool) => {
-          return {
-            namespace: "pool.dataset.query",
-            args: [[["id", "=", pool.name]]]
-          };
-        });
-
-        this.core.emit({
-          name:"MultiCall", 
-          data: { responseEvent: 'RootDatasets_' + uuid, queue: queue }, 
-          sender: this
+        this.ws.call('pool.dataset.query', [[], {"extra": {"retrieve_children": false}}] ).subscribe((res) => {
+          const data = res.filter( pool => pool.id !== 'boot-pool');
+          this.setVolumeData({
+            name: "RootDatasets",
+            data: data
+          });
+          this.isDataReady();
         });
       } else {
         const clone = Object.assign({}, evt);
@@ -373,16 +369,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.setVolumeData(clone);
         this.isDataReady();
       }
-
-      this.isDataReady();
-    });
-
-    this.core.register({observerClass: this, eventName: 'RootDatasets_' + uuid}).subscribe((evt:CoreEvent) => {
-      const data = evt.data.responses.map(x => x[0]); 
-      const clone = Object.assign({}, evt);
-      clone.data = data;
-      this.setVolumeData(clone);
-      this.isDataReady();
     });
 
     this.core.register({observerClass: this, eventName: 'SysInfo'}).subscribe((evt:CoreEvent) => {

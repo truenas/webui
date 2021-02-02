@@ -8,7 +8,8 @@ export default {
     action: T('Choose'),
     jobTitle: T('Configuring...'),
     success: T('Success'),
-    message: T('Using pool ')
+    message: T('Using pool '),
+    unsetPool: T('Unset Pool')
   },
 
   message: {
@@ -23,6 +24,13 @@ export default {
   settings: T('Settings'),
   choose: T('Choose Pool'),
   advanced: T('Advanced Settngs'),
+  unset_pool: T('Unset Pool'),
+
+  bulkActions: {
+    title: T('Bulk actions'),
+    finished: T('Started bulk actions'),
+    failed: T('Failed to do bulk actions'),
+  },
 
   launch: T('Launch Docker Image'),
 
@@ -399,11 +407,29 @@ export default {
     container: T('Container Settings')
   },
 
- updateImageDialog: {
-   title: T('Update Image'),
-   message: T('Update the image for '),
-   success: T('Success'),
-   successMsg: T('The image was updated.')
- }
+  updateImageDialog: {
+    title: T('Update Image'),
+    message: T('Update the image for '),
+    success: T('Success'),
+    successMsg: T('The image was updated.')
+  },
 
+  podConsole: {
+    nopod: {
+      title: T('No Pods Found'),
+      message: T('At least one pod must be available'),
+    },
+    choosePod: {
+      title: T('Choose pod'),
+      placeholder: T('Pods'),
+      action: T('Choose')
+    },
+    chooseConatiner: {
+      title: T('Choose container'),
+      placeholder: T('Containers'),
+    },
+    chooseCommand: {
+      placeholder: T('Commands'),
+    }
+  }
 }

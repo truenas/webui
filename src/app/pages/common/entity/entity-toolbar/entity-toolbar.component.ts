@@ -60,6 +60,9 @@ export class EntityToolbarComponent implements OnDestroy, OnChanges, GlobalActio
           // Useful for getting initial values
           this.config.target.next({name:"ToolbarChanged", data:this.values});
         break;
+        case "UpdateControls":
+          this.config.controls = evt.data;
+        break;
       }
     });
 
