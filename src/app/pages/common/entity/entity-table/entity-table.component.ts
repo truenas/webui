@@ -382,7 +382,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
       if(this.firstUse) this.selectColumnsToShowOrHide();
-      if(!this.firstUse) this.selectColumnsToShowOrHide(true);
     }, this.prefService.preferences.tableDisplayedColumns.length === 0 ? 200 : 0)
 
     this.displayedColumns.push("action");
@@ -593,7 +592,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.paginationPageIndex  = 0;
     }
 
-    this.currentRows = []
     if(this.currentRows && this.currentRows.length > 0) {
       this.isTableEmpty = false;
     } else {
@@ -1031,7 +1029,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // Stores currently selected columns in preference service
-  selectColumnsToShowOrHide(empty = false) {
+  selectColumnsToShowOrHide() {
     let obj = {};
     obj['title'] = this.title;
     obj['cols'] = this.conf.columns;
@@ -1045,9 +1043,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     }
     preferredCols.push(obj);
-    if(empty) {
-      this.prefService.preferences.tableDisplayedColumns = []
-    }
     this.prefService.savePreferences(this.prefService.preferences);
     if (this.title === 'Users') {
       this.conf.columns = this.dropLastMaxWidth();
