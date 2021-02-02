@@ -29,6 +29,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public formComponent: EntityFormConfigurationComponent;
   public formEvents: Subject<CoreEvent>;
+  public actionsConfig;
 
   public screenType: string = 'Desktop'; // Desktop || Mobile
   public optimalDesktopWidth: string = '100%';
@@ -38,8 +39,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   public dashState: DashConfigItem[]; // Saved State
   public activeMobileWidget: DashConfigItem[] = [];
   public availableWidgets: DashConfigItem[] = [];
-  public renderedWidgets: number[] = [];
-  public hiddenWidgets: number[] = []; 
+
+  get renderedWidgets(){
+        return this.dashState.filter((widget) => widget.rendered);
+  }
 
   public large: string = "lg";
   public medium: string = "md";
@@ -440,6 +443,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           ]
         }
       };
+
+      this.actionsConfig = actionsConfig;
 
       this.core.emit({name:"GlobalActions", data: actionsConfig, sender: this});
       this.core.emit({name:"UserAttributesRequest"}); // Fetch saved dashboard state

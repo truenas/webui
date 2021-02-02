@@ -3,6 +3,7 @@ import { MaterialModule } from '../../appMaterial.module';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PortalModule } from '@angular/cdk/portal';
 import { CommonModule } from '@angular/common';
+import { EntityModule } from 'app/pages/common/entity/entity.module';
 
 import { PageComponent } from 'app/core/components/page/page.component';
 import { ViewComponent } from 'app/core/components/view/view.component';
@@ -60,7 +61,8 @@ import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.compo
     FlexLayoutModule,
     FormsModule,
     TranslateModule,
-    CommonDirectivesModule
+    CommonDirectivesModule,
+    EntityModule
   ],
   declarations: [
     ContextMenuComponent,
