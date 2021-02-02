@@ -1,5 +1,7 @@
 <div fxLayout="column" id="entity-table-component" class="material mat-card mat-card-table">
 
+  <ng-container *ngIf="!isTableEmpty">
+
   <!-- BATCH OPERATIONS START -->
   <div fxLayout="row wrap" fxLayoutAlign="start center" class="multiActionsButton fn-toolbar"
     [ngClass]="{'icons-only': multiActionsIconsOnly}" *ngIf="conf && selection.selected.length > 0"
@@ -175,5 +177,8 @@
   <mat-card-footer style="padding: 0 !important">
     <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
   </mat-card-footer>
-
+  </ng-container>
+  <ng-container *ngIf="isTableEmpty">
+    <entity-empty [conf]="emptyTableConf"></entity-empty>
+  </ng-container>
 </div>

@@ -28,6 +28,7 @@ import { EntityTableAddActionsComponent } from './entity-table-add-actions.compo
 import { EntityJobComponent } from '../entity-job/entity-job.component';
 
 import { CdkVirtualScrollViewport} from '@angular/cdk/scrolling';
+import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
 
 export interface InputTableConf {
   prerequisite?: any;
@@ -127,7 +128,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public filter: ElementRef;
   @ViewChild('defaultMultiActions', { static: false}) defaultMultiActions: ElementRef;
   @ViewChild('newEntityTable', { static: false}) entitytable: any;
-  
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -143,6 +144,15 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public paginationPageEvent: any;
   public hideTopActions = false;
 
+  first_use: boolean = true;
+  emptyTableConf: EmptyConfig = {
+    type: EmptyType.loading,
+    large: true,
+    title: this.title,
+  };
+
+  isTableEmpty = false;
+
   public selection = new SelectionModel<any>(true, []);
   get isAllSelected() {
     return this.selection.selected.length == this.currentRows.length;
@@ -150,8 +160,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public displayedColumns: string[] = [];
   get currentColumns(){
-    
-    let result = this.alwaysDisplayedCols.concat(this.conf.columns);
+
+  let result = this.alwaysDisplayedCols.concat(this.conf.columns);
 
     // Actions without expansion
     if(this.hasActions && result[result.length - 1] !== 'action' && (this.hasDetails() === false || !this.hasDetails)){
@@ -338,6 +348,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       const preferredCols = this.prefService.preferences.tableDisplayedColumns;
       // Turn off preferred cols for snapshots to allow for two diffferent column sets to be displayed
+      console.log("Checking prefered columns", preferredCols);
       if (preferredCols.length > 0 && this.title !== 'Snapshots') {
         preferredCols.forEach((i) => {
           // If preferred columns have been set for THIS table...
@@ -492,6 +503,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.handleData(res, skipActions);
       },
       (res) => {
+        this.isTableEmpty = true;
+        this.emptyTableConf = {
+          title: "Something went wrong",
+          message: `The system returned the following error - ${res}`,
+          large: true,
+          type: EmptyType.errors
+        }
         if (this.loaderOpen) {
           this.loader.close();
           this.loaderOpen = false;
@@ -559,6 +577,51 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.currentRows = this.rows;
       this.paginationPageIndex  = 0;
     }
+
+    const preferredCols = this.prefService.preferences.tableDisplayedColumns;
+    console.log("checking with current rows", preferredCols);
+    this.first_use = true;
+    if (preferredCols.length) {
+      for(let ind = 0; ind < preferredCols.length; ind++) {
+        if(preferredCols[ind].title === this.title) {
+          this.first_use = false;
+          ind = preferredCols.length
+        }
+      }
+    }
+    console.log("first use: ", this.first_use);
+
+    console.log("current rows", this.currentRows);
+    if(this.currentRows && this.currentRows.length > 0) {
+      this.isTableEmpty = false;
+    } else {
+      this.isTableEmpty = true;
+      if(this.first_use) {
+        this.emptyTableConf = {
+          type: EmptyType.first_use,
+          large: true,
+          title: "No "+this.title,
+          message: `It seems you haven't setup any ${this.title} yet. Please click the button below to add ${this.title}`,
+          button: {
+            label: "Add New",
+            action: this.doAdd.bind(this),
+          }
+        };
+      } else {
+        this.emptyTableConf = {
+          type: EmptyType.no_page_data,
+          large: true,
+          title: "No "+this.title,
+          message: `The system could not retrieve any ${this.title} from the database. Please click the button below to add ${this.title}`,
+          button: {
+            label: "Add New",
+            action: this.doAdd.bind(this),
+          }
+        };
+      }
+    }
+
+    console.log("isTableEmpty", this.isTableEmpty);
 
     this.dataSource = new MatTableDataSource(this.currentRows);
     this.dataSource.paginator = this.paginator;
@@ -710,9 +773,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   doAdd() {
+    console.log('adding', this);
     if (this.conf.doAdd) {
       this.conf.doAdd();
     } else {
+      console.log(new Array('/').concat(this.conf.route_add))
       this.router.navigate(new Array('/').concat(this.conf.route_add));
     }
     // this.modalService.open('slide-in-form', this.conf.addComponent);
