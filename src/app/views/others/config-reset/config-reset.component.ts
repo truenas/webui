@@ -19,7 +19,7 @@ import { T } from '../../../translate-marker';
 export class ConfigResetComponent implements OnInit {
 
   public product_type: string;
-  public copyrightYear = globalHelptext.copyright_year;
+  public copyrightYear = new Date(+(localStorage.getItem('buildtime').substring(0, localStorage.getItem('buildtime').length -2)+"000")).getFullYear().toString();
   public dialogRef: any;
   private getProdType: Subscription;
 

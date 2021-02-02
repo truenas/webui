@@ -21,7 +21,7 @@ export interface DialogData {
   templateUrl: './about-dialog.component.html'
 })
 export class AboutModalDialog {
-  public copyrightYear = globalHelptext.copyright_year;
+  public copyrightYear = new Date(+(localStorage.getItem('buildtime').substring(0, localStorage.getItem('buildtime').length -2)+"000")).getFullYear().toString();
   public product_type: string;
   public extraMsg: boolean;
   public systemType: string;
