@@ -621,14 +621,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.dataSource = new MatTableDataSource(this.currentRows);
-    // this.dataSource.filterPredicate = (data: any, filter: string) => {
-    //   for(let key in data) {
-    //     if(data[key] && data[key].toString().trim().toLowerCase().includes(filter.trim().toLowerCase())) {
-    //       return true;
-    //     }
-    //   }
-    //   return false;
-    // }
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
 
