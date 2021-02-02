@@ -11,7 +11,7 @@
         ix-auto ix-auto-type="array" 
         ix-auto-identifier="{{config.placeholder}}">
 
-        <div class="label-container" fxFlex="100" fxLayoutAlign="start center" style="max-height:27px; margin:0;">
+        <div class="label-container" fxFlex="100" fxLayoutAlign="start center" style="max-height:27px;">
           <label class="label input-text">{{config.placeholder | translate}}</label>
           <span *ngIf="config.required">*</span>
 	  <tooltip fxFlex="48px" *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip" [position]="config.tooltipPosition ? config.tooltipPosition : null"></tooltip>

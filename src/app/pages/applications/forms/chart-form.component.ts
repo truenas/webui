@@ -125,15 +125,8 @@ export class ChartFormComponent {
 
     } else if (schemaConfig.schema.type == 'list') {
 
-      if (schemaConfig.schema.items.length > 0) {
-        const listLabel = {
-          label: schemaConfig.label,
-          type: 'label',
-        };
-        results = results.concat(listLabel);
-      }
-
       fieldConfig['type'] = 'list';
+      fieldConfig['label'] = `${helptext.add} ${schemaConfig.label}`;
       fieldConfig['box'] = true;
       fieldConfig['width'] = '100%';
       fieldConfig['listFields'] = [];
