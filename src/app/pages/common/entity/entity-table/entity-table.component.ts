@@ -57,6 +57,7 @@ export interface InputTableConf {
   cardHeaderComponent?: any;
   asyncView?: boolean;
   wsDelete?: string;
+  noAdd?: boolean;
   wsDeleteParams?(row, id): any;
   addRows?(entity: EntityTableComponent);
   changeEvent?(entity: EntityTableComponent);
@@ -381,6 +382,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       }
       if(this.firstUse) this.selectColumnsToShowOrHide();
+      if(!this.firstUse) this.selectColumnsToShowOrHide(true);
     }, this.prefService.preferences.tableDisplayedColumns.length === 0 ? 200 : 0)
 
     this.displayedColumns.push("action");
@@ -591,6 +593,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.paginationPageIndex  = 0;
     }
 
+    this.currentRows = []
     if(this.currentRows && this.currentRows.length > 0) {
       this.isTableEmpty = false;
     } else {
@@ -600,22 +603,22 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           type: EmptyType.first_use,
           large: true,
           title: "No "+this.title,
-          message: `It seems you haven't setup any ${this.title} yet. Please click the button below to add ${this.title}`,
-          button: {
-            label: "Add "+this.title,
-            action: this.doAdd.bind(this),
-          }
+          message: `It seems you haven't setup any ${this.title} yet.`
         };
+        
       } else {
         this.emptyTableConf = {
           type: EmptyType.no_page_data,
           large: true,
           title: "No "+this.title,
-          message: `The system could not retrieve any ${this.title} from the database. Please click the button below to add ${this.title}`,
-          button: {
-            label: "Add "+this.title,
-            action: this.doAdd.bind(this),
-          }
+          message: `The system could not retrieve any ${this.title} from the database.`
+        };
+      }
+      if(!this.conf.noAdd) {
+        this.emptyTableConf['message'] += ` Please click the button below to add ${this.title}`;
+        this.emptyTableConf['button'] = {
+          label: "Add "+this.title,
+          action: this.doAdd.bind(this),
         };
       }
     }
@@ -1028,7 +1031,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // Stores currently selected columns in preference service
-  selectColumnsToShowOrHide() {
+  selectColumnsToShowOrHide(empty = false) {
     let obj = {};
     obj['title'] = this.title;
     obj['cols'] = this.conf.columns;
@@ -1042,6 +1045,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     }
     preferredCols.push(obj);
+    if(empty) {
+      this.prefService.preferences.tableDisplayedColumns = []
+    }
     this.prefService.savePreferences(this.prefService.preferences);
     if (this.title === 'Users') {
       this.conf.columns = this.dropLastMaxWidth();
