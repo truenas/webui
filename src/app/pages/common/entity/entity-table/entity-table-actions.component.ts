@@ -75,7 +75,7 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
     if(this.actions[0].actions == undefined){
       return null;
     } else {
-      const hasGroups = (this.actions && this.actions[0].actionName);
+      const hasGroups = (this.actions);
       const action = this.actions && this.isSingleAction && hasGroups ? this.actions[0].actions[0] : this.actions[0];
       
       return action;
