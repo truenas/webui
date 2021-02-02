@@ -426,8 +426,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           this.emptyTableConf = {
             type: EmptyType.no_search_results,
             large: true,
-            title: "No Search Results.",
-            message: `Your query didn't return any results. Please try again.`
+            title: T("No Search Results."),
+            message: T(`Your query didn't return any results. Please try again.`)
           };
         }
 
@@ -519,8 +519,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       (res) => {
         this.isTableEmpty = true;
         this.emptyTableConf = {
-          title: "Something went wrong",
-          message: `The system returned the following error - ${res}`,
+          title: T("Something went wrong"),
+          message: T(`The system returned the following error - `)+res,
           large: true,
           type: EmptyType.errors
         }
@@ -600,22 +600,22 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         this.emptyTableConf = {
           type: EmptyType.first_use,
           large: true,
-          title: "No "+this.title,
-          message: `It seems you haven't setup any ${this.title} yet.`
+          title: T("No ")+this.title,
+          message: T(`It seems you haven't setup any `) + this.title + T(` yet.`)
         };
         
       } else {
         this.emptyTableConf = {
           type: EmptyType.no_page_data,
           large: true,
-          title: "No "+this.title,
-          message: `The system could not retrieve any ${this.title} from the database.`
+          title: T("No ")+this.title,
+          message: T(`The system could not retrieve any `) + this.title + T(` from the database.`)
         };
       }
       if(!this.conf.noAdd) {
-        this.emptyTableConf['message'] += ` Please click the button below to add ${this.title}`;
+        this.emptyTableConf['message'] += T(` Please click the button below to add `) + this.title + T(`.`);
         this.emptyTableConf['button'] = {
-          label: "Add "+this.title,
+          label: T("Add ")+this.title,
           action: this.doAdd.bind(this),
         };
       }
