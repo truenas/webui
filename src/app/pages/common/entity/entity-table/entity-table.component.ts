@@ -144,14 +144,14 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public paginationPageEvent: any;
   public hideTopActions = false;
 
-  first_use: boolean = true;
+  firstUse: boolean = true;
   emptyTableConf: EmptyConfig = {
     type: EmptyType.loading,
     large: true,
     title: this.title,
   };
 
-  isTableEmpty = false;
+  isTableEmpty = true;
 
   public selection = new SelectionModel<any>(true, []);
   get isAllSelected() {
@@ -348,11 +348,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => {
       const preferredCols = this.prefService.preferences.tableDisplayedColumns;
       // Turn off preferred cols for snapshots to allow for two diffferent column sets to be displayed
-      console.log("Checking prefered columns", preferredCols);
       if (preferredCols.length > 0 && this.title !== 'Snapshots') {
         preferredCols.forEach((i) => {
           // If preferred columns have been set for THIS table...
           if (i.title === this.title) {
+            this.firstUse = false;
             this.conf.columns = i.cols.filter(col => {
               // Remove columns if they are already present in always displayed columns
               return !this.alwaysDisplayedCols.find(item => item.prop == col.prop)
@@ -380,6 +380,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           this.conf.columns = this.dropLastMaxWidth();
         }
       }
+      if(this.firstUse) this.selectColumnsToShowOrHide();
     }, this.prefService.preferences.tableDisplayedColumns.length === 0 ? 200 : 0)
 
     this.displayedColumns.push("action");
@@ -415,6 +416,18 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           this.dataSource.filter = filterValue;
         } else {
           this.dataSource.filter = '';
+        }
+
+        if(this.dataSource.filteredData && this.dataSource.filteredData.length) {
+          this.isTableEmpty = false;
+        } else {
+          this.isTableEmpty = true;
+          this.emptyTableConf = {
+            type: EmptyType.no_search_results,
+            large: true,
+            title: "No Search Results.",
+            message: `Your query didn't return any results. Please try again.`
+          };
         }
 
         if (this.dataSource.paginator) {
@@ -578,32 +591,18 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.paginationPageIndex  = 0;
     }
 
-    const preferredCols = this.prefService.preferences.tableDisplayedColumns;
-    console.log("checking with current rows", preferredCols);
-    this.first_use = true;
-    if (preferredCols.length) {
-      for(let ind = 0; ind < preferredCols.length; ind++) {
-        if(preferredCols[ind].title === this.title) {
-          this.first_use = false;
-          ind = preferredCols.length
-        }
-      }
-    }
-    console.log("first use: ", this.first_use);
-
-    console.log("current rows", this.currentRows);
     if(this.currentRows && this.currentRows.length > 0) {
       this.isTableEmpty = false;
     } else {
       this.isTableEmpty = true;
-      if(this.first_use) {
+      if(this.firstUse) {
         this.emptyTableConf = {
           type: EmptyType.first_use,
           large: true,
           title: "No "+this.title,
           message: `It seems you haven't setup any ${this.title} yet. Please click the button below to add ${this.title}`,
           button: {
-            label: "Add New",
+            label: "Add "+this.title,
             action: this.doAdd.bind(this),
           }
         };
@@ -614,16 +613,22 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           title: "No "+this.title,
           message: `The system could not retrieve any ${this.title} from the database. Please click the button below to add ${this.title}`,
           button: {
-            label: "Add New",
+            label: "Add "+this.title,
             action: this.doAdd.bind(this),
           }
         };
       }
     }
 
-    console.log("isTableEmpty", this.isTableEmpty);
-
     this.dataSource = new MatTableDataSource(this.currentRows);
+    // this.dataSource.filterPredicate = (data: any, filter: string) => {
+    //   for(let key in data) {
+    //     if(data[key] && data[key].toString().trim().toLowerCase().includes(filter.trim().toLowerCase())) {
+    //       return true;
+    //     }
+    //   }
+    //   return false;
+    // }
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
 
@@ -773,11 +778,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   doAdd() {
-    console.log('adding', this);
     if (this.conf.doAdd) {
       this.conf.doAdd();
     } else {
-      console.log(new Array('/').concat(this.conf.route_add))
       this.router.navigate(new Array('/').concat(this.conf.route_add));
     }
     // this.modalService.open('slide-in-form', this.conf.addComponent);
