@@ -280,6 +280,7 @@ export class ChartFormComponent {
     const configData = {};
     this.parseConfigData(data.config, null, configData);
     configData['release_name'] = data.name;
+    configData['changed_schema'] = true;
     
     return configData;
   }
