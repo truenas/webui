@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from '../../../services/dialog.service';
 import { MatDialog } from '@angular/material/dialog';
 import globalHelptext from '../../../helptext/global-helptext';
+import { LocaleService } from 'app/services/locale.service';
 
 @Component({
   selector: 'system-failover',
@@ -15,11 +16,11 @@ import globalHelptext from '../../../helptext/global-helptext';
 export class FailoverComponent implements OnInit {
 
   public product_type: string;
-  public copyrightYear = globalHelptext.copyright_year;
+  public copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
 
   constructor(protected ws: WebSocketService, protected router: Router, 
     protected loader: AppLoaderService, public translate: TranslateService,
-    protected dialogService: DialogService, protected dialog: MatDialog) {
+    protected dialogService: DialogService, protected dialog: MatDialog, private localeService: LocaleService) {
       this.ws = ws;
       this.ws.call('system.product_type').subscribe((res)=>{
         this.product_type = res;
