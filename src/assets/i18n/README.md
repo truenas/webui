@@ -16,3 +16,4 @@ As you update a target language, please make changes to this file, indicating it
 |[Polish](pl.po "Polish")|Incomplete|02/19/2020|
 |[Russian](ru.po "Russian")|Incomplete|07/03/2020|
 |[Spanish](es.po "Spanish")|Incomplete|04/25/2020|
+|[Brazilian Portuguese](pt-br.po "Brazilian Portuguese")|Incomplete|02/03/2021|
