@@ -11,7 +11,7 @@ import globalHelptext from '../../../helptext/global-helptext';
 })
 export class BreadcrumbComponent implements OnInit {
   @Input() product_type;
-  public copyrightYear = new Date(+(localStorage.getItem('buildtime').substring(0, localStorage.getItem('buildtime').length -2)+"000")).getFullYear().toString();
+  public copyrightYear = globalHelptext.copyright_year;
 
   routeParts:any[];
   public isEnabled: boolean = true;
