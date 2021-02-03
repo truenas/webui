@@ -36,7 +36,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   public showPassword = false;
   public ha_info_ready = false;
   public checking_status = false;
-  public copyrightYear = new Date(+(localStorage.getItem('buildtime').substring(0, localStorage.getItem('buildtime').length -2)+"000")).getFullYear().toString();
+  public copyrightYear = globalHelptext.copyright_year;
   private interval: any;
   public exposeLegacyUI = false;
   public tokenObservable:Subscription;

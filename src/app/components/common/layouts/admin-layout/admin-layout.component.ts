@@ -40,7 +40,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   public notificPanelClosed = false;
   menuName: string;
   subs:any[];
-  public copyrightYear = new Date(+(localStorage.getItem('buildtime').substring(0, localStorage.getItem('buildtime').length -2)+"000")).getFullYear().toString();
+  public copyrightYear = globalHelptext.copyright_year;
   // we will just have to add to this list as more languages are added
 
   @ViewChild(MatSidenav, { static: false}) private sideNave: MatSidenav;

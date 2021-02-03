@@ -27,7 +27,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() breadcrumbs: boolean;
   @Input() product_type;
   public titleText: string;
-  public copyrightYear = new Date(+(localStorage.getItem('buildtime').substring(0, localStorage.getItem('buildtime').length -2)+"000")).getFullYear().toString();
+  public copyrightYear = globalHelptext.copyright_year;
   private hasInitialized: boolean = false;
   private globalActionsConfig;
   private globalActions;
