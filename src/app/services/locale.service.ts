@@ -156,4 +156,7 @@ export class LocaleService {
         return dateStr;
     }
 
+    getCopyrightYearFromBuildTime(): string {
+        return new Date(+(localStorage.getItem('buildtime').substring(0, localStorage.getItem('buildtime').length -2)+"000")).getFullYear().toString();
+    }
 }
