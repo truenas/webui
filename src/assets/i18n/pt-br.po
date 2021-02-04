@@ -56,7 +56,7 @@ msgstr " endereços. Quando escolhida esta opção, endereços adicionais não p
 "selecionados."
 
 msgid " and "
-msgstr "e
+msgstr "e"
 
 msgid " and will be disrupted if the pool is detached:"
 msgstr " e será interrompido se a piscina não estiver conectada:"
