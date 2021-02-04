@@ -389,18 +389,6 @@ export default {
         tooltip: T('')
       }
     },
-    gpu: {
-      title: T('GPU Configuration'),
-      property: {
-        placeholder: T('Property'),
-        tooltip: T('')
-      },
-      value: {
-        placeholder: T('Value')
-      }
-
-    }
-
   },
   wizardLabels: {
     image: T('Image and Policies'),

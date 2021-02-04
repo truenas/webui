@@ -12,6 +12,7 @@ import { ApplicationsService } from '../applications.service';
 import  helptext  from '../../../helptext/apps/apps';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormListComponent } from '../../common/entity/entity-form/components/form-list/form-list.component';
+import { EntityUtils } from '../../common/entity/utils';
 
 @Component({
   selector: 'app-chart-release-edit',
@@ -20,9 +21,11 @@ import { FormListComponent } from '../../common/entity/entity-form/components/fo
 export class ChartReleaseEditComponent {
   protected queryCall: string = 'chart.release.query';
   protected queryCallOption: Array<any>;
+  protected customFilter: any[];
   protected editCall: string = 'chart.release.update';
   protected isEntity: boolean = true;
   protected entityForm: EntityFormComponent;
+  private entityUtils = new EntityUtils();
 
   private title= helptext.chartForm.editTitle;
   private name: string;
@@ -369,10 +372,36 @@ export class ChartReleaseEditComponent {
       })
       this.getRow = this.modalService.getRow$.subscribe((rowName: string) => {
         this.rowName = rowName;
-        this.queryCallOption = [["id", "=", rowName]];
+        this.customFilter = [[["id", "=", rowName]], {extra: {include_chart_schema: true}}];
         this.getRow.unsubscribe();
       })
      }
+
+  parseSchema(schema) {
+    let hasGpuConfig = false;
+    try {
+
+      const gpuConfiguration = schema.questions.find(question => question.variable=='gpuConfiguration');
+  
+      if (gpuConfiguration && gpuConfiguration.schema.attrs.length > 0) {
+        const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(gpuConfiguration);
+        const gpuFieldSet = {
+          name: gpuConfiguration.group,
+          label: true,
+          config: fieldConfigs
+        };
+
+        this.fieldSets.push(gpuFieldSet);
+
+        hasGpuConfig = true;
+      }
+      
+    } catch(error) {
+      return this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
+    }
+
+    return hasGpuConfig;
+  }
 
   resourceTransformIncomingRestData(data) {
     this.name = data.name;
@@ -396,6 +425,13 @@ export class ChartReleaseEditComponent {
         i.ipam = i.ipam.type;
       })
     }
+
+    if (data.gpuConfiguration) {
+      this.entityUtils.parseConfigData(data.gpuConfiguration, 'gpuConfiguration', data.config);
+    }
+
+    this.parseSchema(data.chart_schema.schema);
+
     return data.config;
   }
 
@@ -418,28 +454,32 @@ export class ChartReleaseEditComponent {
   }
 
   customSubmit(data) {
+
+    let parsedData = {};
+    this.entityUtils.parseFormControlValues(data, parsedData);
+
     let envVars = [];
-    if (data.containerEnvironmentVariables[0].name) {
+    if (data.containerEnvironmentVariables && data.containerEnvironmentVariables.length > 0 && data.containerEnvironmentVariables[0].name) {
       envVars = data.containerEnvironmentVariables;
     }
     
     let pfList = [];
-    if (data.portForwardingList[0].containerPort) {
+    if (data.portForwardingList && data.portForwardingList.length > 0 && data.portForwardingList[0].containerPort) {
       pfList = data.portForwardingList;
     }
 
     let hpVolumes = [];
-    if (data.hostPathVolumes[0].hostPath) {
+    if (data.hostPathVolumes && data.hostPathVolumes.length > 0 && data.hostPathVolumes[0].hostPath) {
       hpVolumes = data.hostPathVolumes;
     }
 
     let volList = [];
-    if (data.volumes[0].datasetName) {
+    if (data.volumes && data.volumes.length > 0 && data.volumes[0].datasetName) {
       volList = data.volumes;
     }
 
     let ext_interfaces = [];
-    if (data.externalInterfaces[0].hostInterface) {
+    if (data.externalInterfaces && data.externalInterfaces.length > 0 && data.externalInterfaces[0].hostInterface) {
       data.externalInterfaces.forEach(i => {
         if (i.ipam !== 'static') {
           ext_interfaces.push(
@@ -496,6 +536,10 @@ export class ChartReleaseEditComponent {
       }
     }]
  
+    if (parsedData['gpuConfiguration']) {
+      payload[1]['values']['gpuConfiguration'] = parsedData['gpuConfiguration'];
+    }
+
     this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
       helptext.installing) }, disableClose: true});
     this.dialogRef.componentInstance.setCall(this.editCall, payload);
