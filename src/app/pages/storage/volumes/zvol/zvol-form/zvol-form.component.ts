@@ -421,7 +421,7 @@ export class ZvolFormComponent implements Formconfiguration{
     const paramMap: any = (<any>this.aroute.params).getValue();
     this.parent = paramMap['path'];
 
-    if (paramMap['path'] !== paramMap['pk']) {
+    if (paramMap['path'] === undefined) {
       this.isNew = false;
     }
 
@@ -452,7 +452,7 @@ export class ZvolFormComponent implements Formconfiguration{
       _.find(this.fieldConfig, {name:'inherit_encryption'}).placeholder = inherit_encrypt_placeholder;
         
 
-      if (this.isNew) {
+      if (this.isNew && this.legacy_encryption) {
         if (this.legacy_encryption) {
           for (let i=0; i < this.encryption_fields.length; i++) {
             this.entityForm.setDisabled(this.encryption_fields[i], true, true);
