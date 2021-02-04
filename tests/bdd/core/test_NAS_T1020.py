@@ -234,8 +234,8 @@ def select_1_my_no_peer_iscsi_share_in_portal_group_id(driver, portal_group):
 
 
 @then(parsers.parse('select "{initiator_group}" in Initiator Group ID'))
-def select_1_iqn199801comvmwareiscsiname1_in_initiator_group_id(driver, initiator_group):
-    """select "1 (iqn.1998-01.com.vmware.iscsi:name1)" in Initiator Group ID."""
+def select_1_all_initiators_allowed_in_initiator_group_id(driver, initiator_group):
+    """select "1 (ALL Initiators Allowed)" in Initiator Group ID."""
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Initiator Group ID"]').click()
     assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Initiator Group ID_{initiator_group}"]')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Initiator Group ID_{initiator_group}"]').click()
