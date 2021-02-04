@@ -130,6 +130,11 @@
         <mat-icon>laptop</mat-icon>
         <span>{{'API Keys' | translate}}</span>
       </button>
+      <button name="settings-guide" mat-menu-item (click)="navExternal('https://www.truenas.com/docs/')" ix-auto ix-auto-type="option"
+        ix-auto-identifier="Guide">
+        <mat-icon>library_books</mat-icon>
+        <span>{{'Guide' | translate}}</span>
+      </button>
       <button name="settings-about" mat-menu-item (click)="onShowAbout()" ix-auto ix-auto-type="option"
         ix-auto-identifier="About">
         <mat-icon>info_outline</mat-icon>
