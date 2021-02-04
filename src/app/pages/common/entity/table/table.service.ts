@@ -122,6 +122,8 @@ export class TableService {
                 (resinner) => {
                     this.getData(table);
                     table.excuteDeletion = true;
+                    this.loader.close();
+                    table.loaderOpen = false;
                     if (table.tableConf.afterDelete) {
                         table.tableConf.afterDelete();
                     }
@@ -129,6 +131,7 @@ export class TableService {
                 (resinner) => {
                     new EntityUtils().handleWSError(this, resinner, this.dialogService);
                     this.loader.close();
+                    table.loaderOpen = false;
                 }
             )
         } else {
@@ -139,13 +142,17 @@ export class TableService {
               this.dialogRef.close(true);
               this.getData(table);
               table.excuteDeletion = true;
+              this.loader.close();
+              table.loaderOpen = false;
               if (table.tableConf.afterDelete) {
                   table.tableConf.afterDelete();
               }
   
             });
             this.dialogRef.componentInstance.failure.subscribe((err) => {
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+                this.loader.close();
+                table.loaderOpen = false;
+                new EntityUtils().handleWSError(this, err, this.dialogService);
             });
         }
     }
