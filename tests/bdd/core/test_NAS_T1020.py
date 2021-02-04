@@ -241,11 +241,11 @@ def select_1_all_initiators_allowed_in_initiator_group_id(driver, initiator_grou
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Initiator Group ID_{initiator_group}"]').click()
 
 
-@then(parsers.parse('select {method} in Auth Method'))
+@then(parsers.parse('select "{method}" in Auth Method'))
 def select_mutual_chap_in_auth_method(driver, method):
-    """select Mutual CHAP in Auth Method."""
+    """select "Mutual CHAP" in Auth Method."""
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Authentication Method"]').click()
-    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Authentication Method_{method}"]')
+    assert wait_on_element(driver, 1, 7, f'//mat-option[@ix-auto="option__Authentication Method_{method}"]')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Authentication Method_{method}"]').click()
 
 
