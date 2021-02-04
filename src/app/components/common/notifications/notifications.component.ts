@@ -99,4 +99,9 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     this.notificPanel.close();
     this.router.navigate(['/system', 'alertservice']);
   }
+  
+  goToEmailConfig() {
+    this.notificPanel.close();
+    this.router.navigate(['/system', 'email']);
+  }
 }
