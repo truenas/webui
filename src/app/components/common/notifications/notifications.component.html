@@ -12,14 +12,14 @@
     </button>
     <mat-menu #alertSettingsMenu="matMenu">
       <button name="settings-alert" mat-menu-item ix-auto
-        ix-auto-type="option" (click)="goToAlertSettings()" ix-auto-identifier="Change Password">
+        ix-auto-type="option" (click)="navigateTo(['/system', 'alertsettings'])" ix-auto-identifier="Change Password">
         <span>Alert Settings</span>
       </button>
-      <button name="services-alert" mat-menu-item ix-auto ix-auto-type="option" (click)="goToAlertServices()"
+      <button name="services-alert" mat-menu-item ix-auto ix-auto-type="option" (click)="navigateTo(['/system', 'alertservice'])"
         ix-auto-identifier="Preferences">
         <span>Alert Services</span>
       </button>
-      <button name="services-email" mat-menu-item ix-auto ix-auto-type="option" (click)="goToEmailConfig()"
+      <button name="services-email" mat-menu-item ix-auto ix-auto-type="option" (click)="navigateTo(['/system', 'email'])"
         ix-auto-identifier="Email">
         <span>Email</span>
       </button>
