@@ -139,7 +139,7 @@ def select_open_for_default_acl_option_select_group_name_for_group_name(driver, 
     assert wait_on_element(driver, 1, 7, '//input[@placeholder="Group"]')
     driver.find_element_by_xpath('//input[@placeholder="Group"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Group"]').send_keys(group_name)
-    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__{group_name}"]')
+    assert wait_on_element(driver, 1, 7, f'//mat-option[@ix-auto="option__{group_name}"]')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__{group_name}"]').click()
 
 
