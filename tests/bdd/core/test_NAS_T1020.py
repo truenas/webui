@@ -145,7 +145,7 @@ def select_1_in_discovery_auth_group(driver, group_id):
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Discovery Authentication Group_{group_id}"]').click()
 
 
-@then(parsers.parse('select {ip} in IP address input {ports} in Port'))
+@then(parsers.parse('select {ip} in IP address input {port} in Port'))
 def select_0_0_0_0_in_ip_address_input_3260_in_port(driver, ip, port):
     """select 0.0.0.0 in IP address input 3260 in Port."""
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__IP Address"]').click()
