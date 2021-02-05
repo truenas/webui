@@ -18,6 +18,10 @@ import { ViewChartGaugeComponent } from 'app/core/components/viewchartgauge/view
 import { ViewChartBarComponent } from 'app/core/components/viewchartbar/viewchartbar.component';
 import { TranslateService } from '@ngx-translate/core';
 
+import { EmptyType, EmptyConfig, EntityEmptyComponent } from 'app/pages/common/entity/entity-empty/entity-empty.component';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
+
 import { T } from '../../../../translate-marker';
 
 export interface DashConfigItem {
@@ -36,8 +40,10 @@ export interface DashConfigItem {
 export class WidgetControllerComponent extends WidgetComponent implements AfterViewInit {
 
   @Input() dashState: DashConfigItem[] = [];
-  @Input()renderedWidgets?: number[] = [];
-  @Input()hiddenWidgets?: number[] = [];
+  @Input() renderedWidgets?: number[] = [];
+  @Input() hiddenWidgets?: number[] = [];
+  @Input() emptyConfig: EmptyConfig;
+  @Input() actionsConfig: ToolbarConfig;
 
   @Output() launcher = new EventEmitter()
 
@@ -57,13 +63,13 @@ export class WidgetControllerComponent extends WidgetComponent implements AfterV
     });
   }
 
-  ngOnChanges(changes:SimpleChanges){
+  /*ngOnChanges(changes:SimpleChanges){
     if(changes.renderedWidgets){
       console.log(changes.renderedWidgets);
     } else if(changes.hiddenWidgets){
       console.log(changes.hiddenWidgets);
     } 
-  }
+  }*/
 
   ngOnDestroy(){
     this.core.unregister({observerClass:this});
@@ -94,5 +100,8 @@ export class WidgetControllerComponent extends WidgetComponent implements AfterV
     this.launcher.emit(widget);
   }
 
+  triggerConfigure(){
+    this.actionsConfig.target.next({name: 'ToolbarChanged'});
+  }
 
 }
