@@ -33,7 +33,7 @@ export default {
   },
 
   launch: T('Launch Docker Image'),
-  add: T('Add'),
+  configure: T('Configure'),
   
   install: {
     title: T('Ready to Install'),

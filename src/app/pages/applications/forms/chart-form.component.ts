@@ -126,8 +126,7 @@ export class ChartFormComponent {
     } else if (schemaConfig.schema.type == 'list') {
 
       fieldConfig['type'] = 'list';
-      fieldConfig['label'] = `${helptext.add} ${schemaConfig.label}`;
-      fieldConfig['box'] = true;
+      fieldConfig['label'] = `${helptext.configure} ${schemaConfig.label}`;
       fieldConfig['width'] = '100%';
       fieldConfig['listFields'] = [];
 
