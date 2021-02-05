@@ -1,13 +1,18 @@
 <div class="widgets-wrapper-container" (window:resize)="onMobileResize($event)">  
   
+  <div class="widgets-wrapper" *ngIf="screenType == 'Desktop' && dashStateReady && empty" fxLayout="column" fxLayoutAlign="center center">
+    <entity-empty fxFlex="'320px'" fxFlex.xs="100" [conf]="emptyDashConf"></entity-empty>
+  </div>
+
   <div class="widgets-wrapper"
-       *ngIf="dashStateReady"
+       *ngIf="dashStateReady && !empty"
        [style.width]="optimalDesktopWidth"
        fxLayout="row wrap"
        fxLayoutGap="grid 4px">
 
+
     <!-- SORTABLE WIDGETS -->
-    <ng-container  *ngIf="screenType == 'Desktop' && statsDataEvents && pools && nics && volumeData && sysinfoReady">
+    <ng-container  *ngIf="!empty && screenType == 'Desktop' && statsDataEvents && pools && nics && volumeData && sysinfoReady">
       <ng-container  *ngIf="dashState">
         <ng-container  *ngFor="let widget of dashState">
           <ng-container  *ngIf="widget.rendered">
@@ -32,7 +37,6 @@
     </ng-container>
 
 
-    <!--<widget-notes-collection fxFlex="98" [widgetSize]="medium" [widgetFlex]="noteFlex" [collectionLayout]="'row'"></widget-notes-collection>-->
 
 
   </div>
@@ -46,7 +50,14 @@
     <!-- MOBILE WIDGETS -->
     <div class="mobile-viewport" [ngClass]="{'hidden': screenType == 'Desktop'}">
       <div class="carousel">
-        <widget-controller (launcher)="onMobileLaunch($event)" *ngIf="screenType == 'Mobile' && dashState && dashState.length > 0;"  [rendered]="true" [dashState]="dashState" [widgetSize]="medium"   configurable="false"></widget-controller>
+        <widget-controller (launcher)="onMobileLaunch($event)" *ngIf="screenType == 'Mobile' && dashState && dashState.length > 0;"  
+          [renderedWidgets]="renderedWidgets" 
+          [dashState]="dashState" 
+          [actionsConfig]="actionsConfig.actionConfig"
+          [emptyConfig]="emptyDashConf"
+          [widgetSize]="medium"   
+          configurable="false">
+        </widget-controller>
   
         <div class="mobile-widget-container">
           <ng-container  *ngIf="screenType == 'Mobile' && statsDataEvents && pools && nics && volumeData && sysinfoReady">
