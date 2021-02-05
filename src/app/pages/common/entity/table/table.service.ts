@@ -122,8 +122,6 @@ export class TableService {
                 (resinner) => {
                     this.getData(table);
                     table.excuteDeletion = true;
-                    this.loader.close();
-                    table.loaderOpen = false;
                     if (table.tableConf.afterDelete) {
                         table.tableConf.afterDelete();
                     }
@@ -142,8 +140,6 @@ export class TableService {
               this.dialogRef.close(true);
               this.getData(table);
               table.excuteDeletion = true;
-              this.loader.close();
-              table.loaderOpen = false;
               if (table.tableConf.afterDelete) {
                   table.tableConf.afterDelete();
               }
