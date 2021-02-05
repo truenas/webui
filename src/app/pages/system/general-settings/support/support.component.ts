@@ -84,15 +84,16 @@ export class SupportComponent implements OnInit {
   };
 
   parseLicenseInfo() {
-    this.licenseInfo.features.length === 0 ? this.licenseInfo.featuresString = 'NONE' : 
+    this.licenseInfo.features.length === 0 ? this.licenseInfo.featuresString = 'NONE' :
       this.licenseInfo.featuresString = this.licenseInfo.features.join(', ');
     let expDateConverted = new Date(this.licenseInfo.contract_end.$value);
     this.licenseInfo.expiration_date = this.licenseInfo.contract_end.$value;
     this.systemInfo.system_serial_ha ?
         this.systemInfo.serial = this.systemInfo.system_serial + ' / ' + this.systemInfo.system_serial_ha :
         this.systemInfo.serial = this.systemInfo.system_serial;
-    this.licenseInfo.addhw.length === 0 ? this.licenseInfo.add_hardware = 'NONE' : 
-      this.licenseInfo.add_hardware = this.licenseInfo.addhw.join(', ');
+    this.licenseInfo.addhw_detail.length === 0 ?
+        this.licenseInfo.add_hardware = 'NONE' :
+        this.licenseInfo.add_hardware = this.licenseInfo.addhw_detail.join(', ');
     const now = new Date(this.systemInfo.datetime.$date);
     const then = expDateConverted;
     this.licenseInfo.daysLeftinContract = this.daysTillExpiration(now, then);
@@ -110,7 +111,7 @@ export class SupportComponent implements OnInit {
         imagePath = `/servers/${model}.png`;
       }
     })
-    if (imagePath){ 
+    if (imagePath){
       this.isProductImageRack = true;
       this.product_image = imagePath;
     } else {
@@ -167,7 +168,7 @@ export class SupportComponent implements OnInit {
       this.dialog.dialogForm(this.updateProdStatusConf);
     } else {
       this.ws.call('truenas.set_production', [false, false]).subscribe(() => {
-        this.dialog.Info(helptext.is_production_dialog.title, 
+        this.dialog.Info(helptext.is_production_dialog.title,
           helptext.is_production_dialog.message, '300px', 'info', true);
       },     (err) => {
         this.loader.close();
@@ -198,7 +199,7 @@ export class SupportComponent implements OnInit {
   doProdUpdate(entityDialog: any) {
     const self = entityDialog;
     self.loader.open();
-    const dialogRef = entityDialog.mdDialog.open(EntityJobComponent, 
+    const dialogRef = entityDialog.mdDialog.open(EntityJobComponent,
       {data: {"title":helptext.is_production_job.title,"CloseOnClickOutside":false}});
     dialogRef.componentInstance.setDescription(helptext.is_production_job.message);
 
@@ -206,7 +207,7 @@ export class SupportComponent implements OnInit {
       self.loader.close();
       self.dialogRef.close();
       dialogRef.componentInstance.setTitle(helptext.is_production_dialog.title);
-      dialogRef.componentInstance.setDescription(helptext.is_production_dialog.message);      
+      dialogRef.componentInstance.setDescription(helptext.is_production_dialog.message);
     },
     (err) => {
       self.loader.close();
