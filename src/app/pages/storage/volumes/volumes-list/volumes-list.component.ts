@@ -1076,18 +1076,19 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Add Dataset"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat([
-              "storage", "pools", "id", row1.id.split('/')[0], "dataset",
+              "storage", "pools", "id", row1.id, "dataset",
               "add", row1.id
             ]));
           }
         });
+        
         actions.push({
           id: rowData.name,
           name: T('Add Zvol'),
           label: T("Add Zvol"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat([
-              "storage", "pools", "id", row1.id.split('/')[0], "zvol", "add",
+              "storage", "pools", "id", row1.id, "zvol", "add",
               row1.id
             ]));
           }
@@ -1098,8 +1099,10 @@ export class VolumesListTableConfig implements InputTableConf {
         name: T('Edit Options'),
         label: T("Edit Options"),
         onClick: (row1) => {
+          let datasetParent = row1.id.split('/');
+          datasetParent.pop();
           this._router.navigate(new Array('/').concat([
-            "storage", "pools", "id", row1.id.split('/')[0], "dataset",
+            "storage", "pools", "id", datasetParent.join('/'), "dataset",
             "edit", row1.id
           ]));
         }
@@ -1251,8 +1254,10 @@ export class VolumesListTableConfig implements InputTableConf {
         name: T('Edit Zvol'),
         label: T("Edit Zvol"),
         onClick: (row1) => {
+          let zvolParent = row1.id.split('/');
+          zvolParent.pop();
           this._router.navigate(new Array('/').concat([
-            "storage", "pools", "id", row1.id.split('/')[0], "zvol", "edit",
+            "storage", "pools", "id", zvolParent.join('/'), "zvol", "edit",
             row1.id
           ]));
         }
