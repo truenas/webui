@@ -470,13 +470,13 @@ export class DeviceEditComponent implements OnInit {
 
   afterInit() {
 
-    this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
+    this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]], {"extra": {"properties": ["id"]}}]).subscribe((zvols)=>{
       zvols.forEach(zvol => {
         _.find(this.diskFieldConfig, {name:'path'}).options.push(
           {
             label : zvol.id, value : '/dev/zvol/' + zvol.id
           }
-        );   
+        );
       });
     });
 
