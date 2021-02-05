@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs/Subscription';
 
 import {FieldConfig} from '../../models/field-config.interface';
 import {Field} from '../../models/field.interface';
@@ -16,6 +17,21 @@ export class FormRadioComponent implements Field {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
+  radioValue: any;
+  valueChangesSubscription: Subscription;
 
   constructor(public translate: TranslateService) {}
+  ngOnInit() {
+    this.valueChangesSubscription = this.group.controls[this.config.name].valueChanges.subscribe(res => this.radioValue = res)
+  }
+
+  ngOnDestroy() {
+    this.valueChangesSubscription.unsubscribe();
+  }
+
+  onChangeRadio($event) {
+    if (this.config.onChangeRadio !== undefined && this.config.onChangeRadio != null) {
+      this.config.onChangeRadio({ event: $event });
+    }
+  }
 }

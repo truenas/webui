@@ -25,4 +25,10 @@ export class FormCheckboxComponent implements Field {
       return;
     }
   }
+
+  onChangeCheckbox($event) {
+    if (this.config.onChangeCheckbox !== undefined && this.config.onChangeCheckbox != null) {
+      this.config.onChangeCheckbox({ event: $event });
+    }
+  }
 }
