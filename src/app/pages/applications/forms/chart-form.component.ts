@@ -213,7 +213,7 @@ export class ChartFormComponent {
     this.title = title;
   }
   
-  parseSchema(catalogApp) {
+  parseSchema(catalogApp, isEdit=false) {
     try {
       this.catalogApp = catalogApp;
       this.title = this.catalogApp.name; 
@@ -228,7 +228,8 @@ export class ChartFormComponent {
               name: 'release_name',
               placeholder: helptext.chartForm.release_name.placeholder,
               tooltip: helptext.chartForm.release_name.tooltip,
-              required: true
+              required: true,
+              readonly: isEdit,
             }
           ],
           colspan: 2
@@ -282,7 +283,7 @@ export class ChartFormComponent {
       schema: data.chart_schema.schema,
     }
 
-    this.parseSchema(chartSchema);
+    this.parseSchema(chartSchema, true);
     this.name = data.name;
     const configData = {};
     this.parseConfigData(data.config, null, configData);
