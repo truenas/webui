@@ -67,6 +67,11 @@ export class ChartFormComponent {
 
   parseSchemaFieldConfig(schemaConfig, parentName=null, parentIsList=false) {
     let results = [];
+
+    if (schemaConfig.schema.hidden) {
+      return results;
+    }
+
     let name = schemaConfig.variable;
     if (!parentIsList && parentName) {
       name = `${parentName}${FORM_KEY_SEPERATOR}${name}`;
