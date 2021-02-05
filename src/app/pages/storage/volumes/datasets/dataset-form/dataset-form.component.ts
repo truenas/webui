@@ -1033,6 +1033,7 @@ export class DatasetFormComponent implements Formconfiguration{
     const paramMap: any = (<any>this.aroute.params).getValue();
     this.volid = paramMap['volid'];
 
+    // pk should represent the path to the parent of the dataset
     if (paramMap['pk'] !== undefined) {
       this.pk = paramMap['pk'];
 

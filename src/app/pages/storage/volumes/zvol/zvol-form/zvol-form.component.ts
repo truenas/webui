@@ -421,6 +421,7 @@ export class ZvolFormComponent implements Formconfiguration{
     const paramMap: any = (<any>this.aroute.params).getValue();
     this.parent = paramMap['path'];
     
+    // pk should be the path to the parent of the zvol
     if (paramMap['path'] !== paramMap['pk']) {
       this.isNew = false;
     }
