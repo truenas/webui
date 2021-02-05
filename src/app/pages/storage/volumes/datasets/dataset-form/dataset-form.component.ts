@@ -1308,7 +1308,8 @@ export class DatasetFormComponent implements Formconfiguration{
             edit_recordsize_collection = [{label:`Inherit (${formattedLabel})`, value: 'INHERIT'}];
             edit_recordsize.options = edit_recordsize_collection.concat(edit_recordsize.options);
             let sync_value = pk_dataset[0].sync.value;
-            if (pk_dataset[0].sync.source === 'DEFAULT') {
+            
+            if (pk_dataset[0].sync.source === 'INHERITED' || pk_dataset[0].sync.source === 'DEFAULT') {
               sync_value = 'INHERIT';
             }
             entityForm.formGroup.controls['sync'].setValue(sync_value);
