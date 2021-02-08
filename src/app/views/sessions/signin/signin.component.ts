@@ -36,7 +36,12 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   public showPassword = false;
   public ha_info_ready = false;
   public checking_status = false;
-  public copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
+
+  public _copyrightYear:string = '';
+  get copyrightYear() {
+    return window.localStorage && window.localStorage.buildtime ? this.localeService.getCopyrightYearFromBuildTime() : '';
+  }
+  
   private interval: any;
   public exposeLegacyUI = false;
   public tokenObservable:Subscription;
@@ -216,6 +221,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       const previous_buildtime = window.localStorage.getItem('buildtime');
       if (buildtime !== previous_buildtime) {
         window.localStorage.setItem('buildtime', buildtime);
+        this._copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
         window.location.reload(true);
       }
     });
