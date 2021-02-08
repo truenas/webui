@@ -56,7 +56,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   
   public emptyPageConf: EmptyConfig = {
     type: EmptyType.no_page_data,
-    title: T('No tunables configured'),
+    title: T('No sysctls configured'),
     large: false,
     message: T('To configure sysctls, click the "Add" button.')
   };
