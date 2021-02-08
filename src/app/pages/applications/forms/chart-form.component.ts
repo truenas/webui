@@ -125,16 +125,8 @@ export class ChartFormComponent {
 
     } else if (schemaConfig.schema.type == 'list') {
 
-      if (schemaConfig.schema.items.length > 0) {
-        const listLabel = {
-          label: schemaConfig.label,
-          type: 'label',
-        };
-        results = results.concat(listLabel);
-      }
-
       fieldConfig['type'] = 'list';
-      fieldConfig['box'] = true;
+      fieldConfig['label'] = `${helptext.configure} ${schemaConfig.label}`;
       fieldConfig['width'] = '100%';
       fieldConfig['listFields'] = [];
 
@@ -287,6 +279,7 @@ export class ChartFormComponent {
     const configData = {};
     this.parseConfigData(data.config, null, configData);
     configData['release_name'] = data.name;
+    configData['changed_schema'] = true;
     
     return configData;
   }

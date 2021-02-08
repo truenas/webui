@@ -1,67 +1,33 @@
-<div id="{{config.name}}" class="dynamic-field form-list" [formGroup]="group" [ngClass]="fieldShow" [ngClass]="{'box': config.box, 'sub-box': !config.box }" *ngIf="!config['isHidden']"
+<div id="{{config.name}}" fxLayout="column" class="dynamic-field form-list" [formGroup]="group" [ngClass]="fieldShow" [ngClass]="{'box': config.box, 'sub-box': !config.box }" *ngIf="!config['isHidden']"
     ix-auto ix-auto-type="list" ix-auto-identifier="{{config.placeholder}}">
+    <div fxLayout="row" fxFlex="100%" fxLayoutAlign="space-between center" class="list-top-bar">
+      <label class="list-label">{{ config.label?config.label : 'Add ' + config.name }}</label>
+      <button mat-button class="addBtn" type="button" *ngIf="!config.hideButton" 
+        ix-auto ix-auto-type="button" ix-auto-identifier="add-box_{{ config.name }}" (click)="add()">
+        {{"Add" | translate}}
+      </button>
+    </div>
+    
     <ng-container *ngIf="listsFromArray?.controls">
-        <div *ngFor="let liControl of listsFromArray.controls; let i = index" [fxLayout]="config.width == '100%' ? 'row wrap' : (default)"
-                                ix-auto ix-auto-type="list-item" ix-auto-identifier="{{i}}" class="form-list-item {{config.listFields[0][0].type}}">
-            <ng-container *ngIf="config.label && config.box"><h3>{{config.label}}</h3></ng-container>
-            <ng-container *ngFor="let field of config.listFields[i]; let ii = index" >
-              <div *ngIf="!field.isHidden" fxFlex="{{config.deleteButtonOnFirst ? '100%' : 'calc(100% - 100px)'}}"
-                [ngClass]="{'form-inline': field.class == 'inline', 'form-line': field.class !== 'inline', 'list-action-block-wrapper' : config.deleteButtonOnFirst}"
-                fxFlex.gt-xs="calc({{field.width}} - 100px - 32px)">
-                
-                <div dynamicField [config]="field" [group]="listsFromArray.controls[i]"></div>
-
-              </div>
-            </ng-container>
-            <div *ngIf="!config.hideButton" class="list-action" 
-              [ngClass]="{'list-action-inline': !config.deleteButtonOnFirst, 'list-action-block' : config.deleteButtonOnFirst}"
-              fxFlex="{{ config.deleteButtonOnFirst ? '100' : '100px'}}" 
-              [style.padding-bottom]="config.width == '100%' ? '10px' : '0'">
-            <ng-container *ngIf="config.deleteButtonOnFirst; else defaultButtons">
-              <div>
-                    <button *ngIf="i === listsFromArray.controls.length-1" mat-button color="primary" class="listBtn"
-                        id="{{config.name+i}}" type="button" style="margin-right:5px"
-                        (click)="add()" [disabled]="listsFromArray.controls[i].disabled"
-                          ix-auto ix-auto-type="button" ix-auto-identifier="{{config.addBtnMessage | uppercase}}">
-                        {{config.addBtnMessage | translate}}
-                    </button>
-                    <button mat-button color="default" class="listBtn" type="button"
-                        (click)="delete(i)" [disabled]="listsFromArray.controls[i].disabled || listsFromArray.length === 1"
-                            ix-auto ix-auto-type="button" ix-auto-identifier="delete_{{ config.name+i }}">
-                        {{"Delete" | translate}}
-                    </button>
-              </div>
-            </ng-container>
-            <ng-template #defaultButtons>
-              <div>
-                <button *ngIf="i === 0; else deleteButton" mat-button color="default" class="listBtn" type="button"
-                (click)="add()" [disabled]="listsFromArray.controls[i].disabled"
-                    ix-auto ix-auto-type="button" ix-auto-identifier="add_{{ config.name+i }}">
-                {{"Add" | translate}}
-                </button>
-                <ng-template #deleteButton>
-                    <button mat-button color="default" class="listBtn" type="button" 
-                    (click)="delete(i)" [disabled]="listsFromArray.controls[i].disabled"
-                        ix-auto ix-auto-type="button" ix-auto-identifier="delete_{{ config.name+i }}">
-                    {{"Delete" | translate}}
-                </button>
-                </ng-template>
-              </div>
-            </ng-template>
-            <div *ngIf="config.box">
-              <button *ngIf="i === 0; else deleteIconButton" mat-icon-button id="add-box_{{ config.name+i }}" class="top-right" type="button"
-                ix-auto ix-auto-type="icon-button" ix-auto-identifier="add-box_{{ config.name+i }}" (click)="add()">
-                <mat-icon>add</mat-icon>
+      <div *ngFor="let liControl of listsFromArray.controls; let i = index" [fxLayout]="config.width == '100%' ? 'row wrap' : (default)"
+          ix-auto ix-auto-type="list-item" ix-auto-identifier="{{i}}" class="form-list-item">
+        <ng-container *ngFor="let field of config.listFields[i]; let ii = index" >
+          <div *ngIf="!field.isHidden" fxFlex="calc(100% - 100px)"
+            [ngClass]="{'form-inline': field.class == 'inline', 'form-line': field.class !== 'inline'}"
+            fxFlex.gt-xs="calc({{field.width}} - 100px - 32px)">
+            <div dynamicField [config]="field" [group]="listsFromArray.controls[i]"></div>
+          </div>
+        </ng-container>
+        <div *ngIf="!config.hideButton" class="list-action list-action-inline" fxFlex="100" 
+          [style.padding-bottom]="config.width == '100%' ? '10px' : '0'">
+          <div>
+            <button mat-icon-button id="delete-box_{{ config.name+i }}" class="top-right"
+                ix-auto ix-auto-type="icon-button" ix-auto-identifier="delete-box_{{ config.name+i }}" (click)="(delete(i))">
+                <mat-icon>clear</mat-icon>
               </button>
-              <ng-template #deleteIconButton>
-                <button mat-icon-button id="delete-box_{{ config.name+i }}" class="top-right"
-                  ix-auto ix-auto-type="icon-button" ix-auto-identifier="delete-box_{{ config.name+i }}" (click)="(delete(i))">
-                  <mat-icon>clear</mat-icon>
-                </button>
-              </ng-template>
-            </div>
-            </div>
+          </div>
         </div>
+      </div>
     </ng-container>
     <form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>
     <mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
