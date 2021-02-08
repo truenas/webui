@@ -135,7 +135,7 @@ export class CatalogComponent implements OnInit {
   }
 
   refreshForms() {
-    this.kubernetesForm = new KubernetesSettingsComponent(this.modalService, this.appService);
+    this.kubernetesForm = new KubernetesSettingsComponent(this.mdDialog,this.dialogService,this.modalService, this.appService);
     this.chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
   }
 

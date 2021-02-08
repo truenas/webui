@@ -83,6 +83,10 @@ export default {
     route_v6_gateway: {
       placeholder: T('Route v6 Gateway'),
       tooltip: T('')
+    },
+    enable_container_image_update: {
+      placeholder: T('Enable Container Image Updates'),
+      tooltip: T('')
     }
   },
 
