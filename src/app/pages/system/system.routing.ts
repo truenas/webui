@@ -1,6 +1,6 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AdvancedComponent } from './advanced/';
+import { AdvancedComponent, AdvancedSettingsComponent } from './advanced/';
 import { ViewEnclosureComponent } from './viewenclosure/';
 import { DatasetComponent } from './dataset/';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
@@ -44,9 +44,8 @@ export const routes: Routes = [
       }]
     }, {
       path: 'advanced',
-      component: AdvancedComponent,
+      component: AdvancedSettingsComponent,
       data: { title: T('Advanced'), breadcrumb: T('Advanced'), icon: 'settings' },
-
     }, {
       path: 'dataset',
       component: DatasetComponent,
