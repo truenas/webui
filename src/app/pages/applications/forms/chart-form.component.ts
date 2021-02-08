@@ -160,7 +160,7 @@ export class ChartFormComponent {
 
         if (schemaConfig.schema.show_if) {
           subResults.forEach(subResult => {
-            subResult['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);;
+            subResult['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);
           });
         }
         results = results.concat(subResults);
@@ -170,6 +170,11 @@ export class ChartFormComponent {
     if (fieldConfig) {
 
       if (fieldConfig['type']) {
+
+        if (schemaConfig.schema.show_if) {
+          fieldConfig['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);
+        }
+
         results.push(fieldConfig);
   
         if (schemaConfig.schema.subquestions) {
