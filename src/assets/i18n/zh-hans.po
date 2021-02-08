@@ -2376,6 +2376,9 @@ msgstr "存储桶"
 msgid "Bug"
 msgstr ""
 
+msgid "Bulk actions"
+msgstr ""
+
 msgid "Burst"
 msgstr "突发"
 
@@ -3876,6 +3879,9 @@ msgstr "要复制的特定定期快照的每日时间范围，以15分钟为增�
 msgid "Dashboard"
 msgstr "仪表板"
 
+msgid "Dashboard is Empty!"
+msgstr ""
+
 msgid "Data"
 msgstr "数据"
 
@@ -4949,10 +4955,8 @@ msgstr "启用（需要密码或Kerberos主体）"
 msgid "Enable ACL"
 msgstr "启用ACL"
 
-msgid ""
-"Enable ACL support for the SMB share. Disabling ACL  support for a share "
-"deletes that ACL."
-msgstr "为SMB共享启用ACL支持。禁用共享的ACL支持会删除该ACL。"
+msgid "Enable ACL support for the SMB share."
+msgstr ""
 
 msgid "Enable Active Directory"
 msgstr "启用活动目录"
@@ -6408,6 +6412,9 @@ msgstr "失败"
 
 msgid "Failed sending test alert!"
 msgstr "发送测试警报失败！"
+
+msgid "Failed to do bulk actions"
+msgstr ""
 
 msgid "Failed to generate debug file."
 msgstr "无法生成调试文件。"
@@ -13100,6 +13107,9 @@ msgstr "立即开始清理吗？"
 msgid "Start time for the replication task."
 msgstr "复制任务的开始时间。"
 
+msgid "Started bulk actions"
+msgstr ""
+
 msgid "Starting Jail"
 msgstr "正在启动监狱"
 
@@ -15826,6 +15836,11 @@ msgstr "是的，我了解风险"
 
 msgid "Yes, decrypt the disks"
 msgstr "是的，解密磁盘"
+
+msgid ""
+"You have hidden all of your available widgets. Use the dashboard "
+"configuration form to add widgets."
+msgstr ""
 
 msgid "You have left the domain."
 msgstr "您已离开域。"

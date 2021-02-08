@@ -2678,6 +2678,9 @@ msgstr ""
 msgid "Bug"
 msgstr ""
 
+msgid "Bulk actions"
+msgstr ""
+
 msgid "Burst"
 msgstr ""
 
@@ -4387,6 +4390,9 @@ msgstr ""
 msgid "Dashboard"
 msgstr "Панель приборов"
 
+msgid "Dashboard is Empty!"
+msgstr ""
+
 msgid "Data"
 msgstr "Данные"
 
@@ -5494,12 +5500,8 @@ msgstr "Включить (требуется пароль или принцип�
 msgid "Enable ACL"
 msgstr "Включить ACL"
 
-msgid ""
-"Enable ACL support for the SMB share. Disabling ACL  support for a share "
-"deletes that ACL."
+msgid "Enable ACL support for the SMB share."
 msgstr ""
-"Включить поддержку ACL для общего ресурса SMB. Отключение поддержки ACL для "
-"общего ресурса удаляет этот ACL."
 
 msgid "Enable Active Directory"
 msgstr "Включить Active Directory"
@@ -7077,6 +7079,9 @@ msgstr "Ошибка"
 
 msgid "Failed sending test alert!"
 msgstr "Не удалось отправить тестовое оповещение!"
+
+msgid "Failed to do bulk actions"
+msgstr ""
 
 msgid "Failed to generate debug file."
 msgstr "Не удалось создать файл отладки."
@@ -14370,6 +14375,9 @@ msgstr "Начать проверку сейчас?"
 msgid "Start time for the replication task."
 msgstr "Время начала задачи репликации."
 
+msgid "Started bulk actions"
+msgstr ""
+
 msgid "Starting Jail"
 msgstr "Запускается jail"
 
@@ -17279,6 +17287,11 @@ msgstr "Да я понимаю риски"
 
 msgid "Yes, decrypt the disks"
 msgstr "Да, расшифровать диски"
+
+msgid ""
+"You have hidden all of your available widgets. Use the dashboard "
+"configuration form to add widgets."
+msgstr ""
 
 msgid "You have left the domain."
 msgstr "Вы покинули домен."
