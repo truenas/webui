@@ -12,7 +12,7 @@ import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialo
 import { DialogService, WebSocketService, SystemGeneralService } from '../../../services/index';
 import { ModalService } from '../../../services/modal.service';
 import { ApplicationsService } from '../applications.service';
-
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { KubernetesSettingsComponent } from '../forms/kubernetes-settings.component';
 import { ChartReleaseAddComponent } from '../forms/chart-release-add.component';
 import { ChartFormComponent } from '../forms/chart-form.component';
@@ -56,7 +56,7 @@ export class CatalogComponent implements OnInit {
     parent: this,
   }
 
-  constructor(private dialogService: DialogService,
+  constructor(private dialogService: DialogService, private appLoaderService: AppLoaderService,
     private mdDialog: MatDialog, private translate: TranslateService, protected ws: WebSocketService,
     private router: Router, private core: CoreService, private modalService: ModalService,
     private appService: ApplicationsService, private sysGeneralService: SystemGeneralService) {
@@ -135,7 +135,7 @@ export class CatalogComponent implements OnInit {
   }
 
   refreshForms() {
-    this.kubernetesForm = new KubernetesSettingsComponent(this.mdDialog,this.dialogService,this.modalService, this.appService);
+    this.kubernetesForm = new KubernetesSettingsComponent(this.ws, this.appLoaderService, this.dialogService,this.modalService, this.appService);
     this.chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
   }
 

@@ -9,6 +9,9 @@ import { ApplicationsService } from '../applications.service';
 import { MatDialog } from '@angular/material/dialog';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { DialogService } from '../../../services/index';
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { WebSocketService } from '../../../services/';
+import { EntityUtils } from '../../common/entity/utils';
 @Component({
   selector: 'app-kubernetes-settings',
   template: `<entity-form [conf]="this"></entity-form>`
@@ -92,8 +95,9 @@ export class KubernetesSettingsComponent {
     },
   ]
 
-  constructor(private mdDialog: MatDialog, private dialogService: DialogService, 
-    private modalService: ModalService, private appService: ApplicationsService) { }
+  constructor(protected ws: WebSocketService, private loader: AppLoaderService, 
+    private dialogService: DialogService, private modalService: ModalService, 
+    private appService: ApplicationsService) { }
 
   preInit(entityEdit: any) {
     this.entityEdit = entityEdit;
@@ -138,16 +142,19 @@ export class KubernetesSettingsComponent {
   }
 
   customSubmit(data) {
-    this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
-      helptext.kubForm.title) }, disableClose: true});
-    this.dialogRef.componentInstance.setCall(this.editCall, [data]);
-    this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe(() => {
-      this.appService.updateContainerConfig(this.newEnableContainerImageUpdate).subscribe(res => {
-        this.dialogService.closeAllDialogs();
-        this.modalService.close('slide-in-form');
-        this.modalService.refreshTable();
-      });
+    this.loader.open();
+
+    const promises = [];
+    promises.push(this.ws.job(this.editCall, [data]).toPromise());
+    promises.push(this.appService.updateContainerConfig(this.newEnableContainerImageUpdate).toPromise());
+    
+    Promise.all(promises).then((res) => {
+      this.loader.close();
+      this.modalService.close('slide-in-form');
+      this.modalService.refreshTable();
+    }, (err) => {
+      this.loader.close();
+      new EntityUtils().handleWSError(this, err, this.dialogService);      
     });
   }
 }
