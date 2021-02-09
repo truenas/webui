@@ -130,8 +130,8 @@
             </div>
           </div>
         </div>
-        <div [hidden]="connected() && logo_ready">
-          <div class="disconnected" *ngIf="product">
+        <div class="disconnected" [hidden]="connected() && logo_ready">
+          <div *ngIf="product">
             <div class="fake-icon">?</div>
             <p *ngIf="!ha_status">
               {{"Connecting to " | translate}} {{product}}

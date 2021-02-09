@@ -1,0 +1,128 @@
+<div
+  class="wrapper"
+  gdGap="8px"
+  gdRows="fit-content(30vh)"
+  gdColumns="50% 50%"
+  gdColumns.lt-lg="50% 50%"
+  gdColumns.lt-md="auto"
+  gdAreas="data-card1 data-card2 | sysctl-card data-card3"
+  gdAreas.lt-lg="data-card1 data-card2 | sysctl-card data-card3"
+  gdAreas.lt-md="data-card1 | data-card2 | sysctl-card | data-card3"
+>
+  <mat-card
+    class="data-card{{ i + 1 }}"
+    gdArea="data-card{{ i + 1 }}"
+    *ngFor="let card of dataCards; index as i"
+  >
+    <mat-toolbar-row>
+      <h3>{{ card.title | translate }}</h3>
+      <div class="actions action-icon">
+        <button mat-button color="default" (click)="doAdd(card.id)">
+          {{ 'Settings' | translate }}
+        </button>
+      </div>
+    </mat-toolbar-row>
+
+    <mat-card-content>
+      <mat-list>
+        <mat-list-item *ngFor="let item of card.items" class="card-list-item">
+          <span class="label">{{ item.label | translate }}:</span>
+          <span class="value">{{ item.value | translate }}</span>
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="sysctl-card" gdArea="sysctl-card">
+    <mat-toolbar-row>
+      <h3 class="title">{{ sysctlTitle }}</h3>
+      <div class="actions">
+        <button
+          mat-button
+          color="default"
+          class="action-icon"
+          (click)="doAdd('sysctl')"
+        >
+          {{ 'Add' | translate }}
+        </button>
+      </div>
+    </mat-toolbar-row>
+
+    <mat-card-content>
+      <table
+        *ngIf="dataSource.length && displayedColumns"
+        mat-table
+        [dataSource]="dataSource"
+        class="sysctl-table"
+      >
+        <ng-container matColumnDef="var">
+          <th mat-header-cell *matHeaderCellDef>
+            {{ 'Variable' | translate }}
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let variable"
+            (click)="doAdd('sysctl', variable.id)"
+          >
+            {{ variable.var }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="value">
+          <th mat-header-cell *matHeaderCellDef>{{ 'Value' | translate }}</th>
+          <td
+            mat-cell
+            *matCellDef="let variable"
+            (click)="doAdd('sysctl', variable.id)"
+          >
+            {{ variable.value }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="enabled">
+          <th mat-header-cell *matHeaderCellDef>{{ 'Status' | translate }}</th>
+          <td
+            mat-cell
+            *matCellDef="let variable"
+            (click)="doAdd('sysctl', variable.id)"
+          >
+            {{ (variable.enabled ? 'Enabled' : 'Disabled') | translate }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="comment">
+          <th mat-header-cell *matHeaderCellDef>
+            {{ 'Description' | translate }}
+          </th>
+          <td
+            mat-cell
+            *matCellDef="let variable"
+            (click)="doAdd('sysctl', variable.id)"
+          >
+            {{ variable.comment }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td
+            mat-cell
+            *matCellDef="let variable"
+          >
+            <div fxLayoutAlign="end">
+              <button mat-icon-button (click)="doSysctlEdit(variable)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button (click)="doSysctlDelete(variable)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          class="table-row"
+        ></tr>
+      </table>
+      <entity-empty *ngIf="dataSource.length === 0" [conf]="emptyPageConf" fxFlex fxLayoutAlign="center"></entity-empty>
+    </mat-card-content>
+  </mat-card>
+</div>

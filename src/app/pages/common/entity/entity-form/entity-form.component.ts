@@ -346,7 +346,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             this.data = res.data;
             if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
               this.data = this.conf.resourceTransformIncomingRestData(this.data);
-              this.makeFormGroup();
+              if (this.data['changed_schema']) {
+                this.makeFormGroup();
+                delete this.data['changed_schema'];
+              }
             }
             for (const i in this.data) {
               const fg = this.formGroup.controls[i];
@@ -376,7 +379,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
             if( typeof(this.conf.resourceTransformIncomingRestData) !== "undefined" ) {
               this.wsResponse = this.conf.resourceTransformIncomingRestData(this.wsResponse);
-              this.makeFormGroup();
+              if (this.wsResponse['changed_schema']) {
+                this.makeFormGroup();
+                delete this.wsResponse['changed_schema'];
+              }
             }
             if (this.conf.dataHandler) {
               this.conf.dataHandler(this);
