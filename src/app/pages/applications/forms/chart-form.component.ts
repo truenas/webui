@@ -267,7 +267,7 @@ export class ChartFormComponent {
       if (parentKey) {
         fullKey = `${parentKey}${FORM_KEY_SEPERATOR}${key}`;
       }
-      if (!Array.isArray(value) && typeof value === 'object') {
+      if (!Array.isArray(value) && (value != null && typeof value === 'object')) {
         this.parseConfigData(value, fullKey, result);
       } else {
         result[fullKey] = value;
