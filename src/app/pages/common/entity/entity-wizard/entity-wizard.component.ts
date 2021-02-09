@@ -233,4 +233,47 @@ export class EntityWizardComponent implements OnInit {
       this.conf.customNext(this.stepper);
     }
   }
+
+  selectionChange(event) {
+    if (this.conf.isAutoSummary) {
+      if (event.selectedIndex == this.conf.wizardConfig.length) {
+        this.conf.summary = [];
+        for(let step=0; step<this.conf.wizardConfig.length; step++){
+          const wizard = this.conf.wizardConfig[step];
+          wizard.fieldConfig.forEach(fieldConfig => {
+            const formControl = ( < FormGroup > this.formArray.get([step]).get(fieldConfig.name));
+            if (formControl) {
+              let summaryName = fieldConfig.placeholder;
+              if (!summaryName) {
+                summaryName = fieldConfig.name;
+              }
+              this.conf.summary[summaryName] = this.getSummaryValue(fieldConfig, formControl);
+            }
+          });
+        }
+      }
+    }
+  }
+
+  getSummaryValue(fieldConfig, formControl) {
+    let result = formControl.value;
+
+    if (fieldConfig.type === 'select') {
+      const selectedOption = fieldConfig.options.find(option => option.value == formControl.value);
+        if (selectedOption) {
+          result = selectedOption.label;
+        }
+    } else if (Array.isArray(formControl.value)) {
+      let arrayValueCount = 0;
+      formControl.value.forEach(item => {
+        const isNotEmptyArray = new EntityUtils().filterArrayFunction(item);
+        if (isNotEmptyArray) {
+          arrayValueCount++;
+        }
+      });
+      result = arrayValueCount;
+    }
+
+    return result;
+  }
 }

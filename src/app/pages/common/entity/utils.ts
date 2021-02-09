@@ -188,20 +188,28 @@ export class EntityUtils {
 
   filterArrayFunction(item) {
     let result = true;
-    if (typeof item === 'object') {
+    
+    if (item === undefined || item === null || item === '') {
+      result = false;
+    } else if (typeof item === 'object') {
       let isAllEmpty = true;
       Object.values(item).forEach(value => {
         if (value !== undefined && value !== null && value !== '') {
-          isAllEmpty = false;
+          if (Array.isArray(value)) {
+            value.forEach(subValue => {
+              if (this.filterArrayFunction(subValue)) {
+                isAllEmpty = false;
+              }
+            });
+          } else {
+            isAllEmpty = false;
+          }
         }
       });
 
       if (isAllEmpty) {
         result = false;
       }
-
-    } else if (item === undefined || item === null || item === '') {
-      result = false;
     }
 
     return result;
