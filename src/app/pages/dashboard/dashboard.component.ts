@@ -15,8 +15,10 @@ import { tween, styler } from 'popmotion';
 import { EntityFormConfigurationComponent } from 'app/pages/common/entity/entity-form/entity-form-configuration.component';
 import { EntityFormEmbeddedComponent } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { EntityEmptyComponent, EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import {UUID} from 'angular2-uuid';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'dashboard',
@@ -27,6 +29,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public formComponent: EntityFormConfigurationComponent;
   public formEvents: Subject<CoreEvent>;
+  public actionsConfig;
 
   public screenType: string = 'Desktop'; // Desktop || Mobile
   public optimalDesktopWidth: string = '100%';
@@ -36,8 +39,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   public dashState: DashConfigItem[]; // Saved State
   public activeMobileWidget: DashConfigItem[] = [];
   public availableWidgets: DashConfigItem[] = [];
-  public renderedWidgets: number[] = [];
-  public hiddenWidgets: number[] = []; 
+
+  get renderedWidgets(){
+        return this.dashState.filter((widget) => widget.rendered);
+  }
 
   public large: string = "lg";
   public medium: string = "md";
@@ -48,6 +53,24 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   public statsDataEvents:Subject<CoreEvent>;
   private statsEvents: any;
   public tcStats: any;
+
+  // For empty state
+  get empty () {
+        const rendered = this.dashState.filter((widget) => widget.rendered);
+        return rendered.length == 0;
+      }
+  public emptyDashConf: EmptyConfig = {
+    type: EmptyType.no_page_data,
+    large: true,
+    title: T('Dashboard is Empty!'),
+    message: T('You have hidden all of your available widgets. Use the dashboard configuration form to add widgets.'),
+    button: {
+      label: 'Configure Dashboard',
+      action: () => {
+        this.showConfigForm();
+      }
+    }
+  }
 
   // For widgetsysinfo
   public isHA: boolean; // = false;
@@ -420,6 +443,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           ]
         }
       };
+
+      this.actionsConfig = actionsConfig;
 
       this.core.emit({name:"GlobalActions", data: actionsConfig, sender: this});
       this.core.emit({name:"UserAttributesRequest"}); // Fetch saved dashboard state

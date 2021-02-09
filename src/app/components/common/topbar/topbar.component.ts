@@ -858,4 +858,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     }
     this.dialogService.dialogForm(conf);
   }
+  
+  navExternal(link) {
+    return window.open(link);
+  }
 }

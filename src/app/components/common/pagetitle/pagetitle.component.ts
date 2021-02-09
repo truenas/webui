@@ -11,6 +11,7 @@ import { EntityTableAddActionsComponent } from 'app/pages/common/entity/entity-t
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { VolumesListControlsComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list-controls.component';
 import { ReportsGlobalControlsComponent } from 'app/pages/reportsdashboard/components/reports-global-controls/reports-global-controls.component';
+import { LocaleService } from 'app/services/locale.service';
 
 export interface GlobalAction {
   applyConfig(config:any);
@@ -27,7 +28,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() breadcrumbs: boolean;
   @Input() product_type;
   public titleText: string;
-  public copyrightYear = globalHelptext.copyright_year;
+  public copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
   private hasInitialized: boolean = false;
   private globalActionsConfig;
   private globalActions;
@@ -37,7 +38,8 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(private router: Router,
   private routePartsService: RoutePartsService, 
   private activeRoute: ActivatedRoute,
-  private core: CoreService) { 
+  private core: CoreService,
+  private localeService: LocaleService) { 
   }
 
   ngOnInit() {

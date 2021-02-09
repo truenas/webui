@@ -2236,6 +2236,9 @@ msgstr ""
 msgid "Bug"
 msgstr ""
 
+msgid "Bulk actions"
+msgstr ""
+
 msgid "Burst"
 msgstr "Dávka"
 
@@ -3649,6 +3652,9 @@ msgstr ""
 msgid "Dashboard"
 msgstr "Přehled"
 
+msgid "Dashboard is Empty!"
+msgstr ""
+
 msgid "Data"
 msgstr ""
 
@@ -4661,9 +4667,7 @@ msgstr ""
 msgid "Enable ACL"
 msgstr ""
 
-msgid ""
-"Enable ACL support for the SMB share. Disabling ACL  support for a share "
-"deletes that ACL."
+msgid "Enable ACL support for the SMB share."
 msgstr ""
 
 msgid "Enable Active Directory"
@@ -6015,6 +6019,9 @@ msgid "Failed"
 msgstr "Nezdařilo se"
 
 msgid "Failed sending test alert!"
+msgstr ""
+
+msgid "Failed to do bulk actions"
 msgstr ""
 
 msgid "Failed to generate debug file."
@@ -12386,6 +12393,9 @@ msgstr ""
 msgid "Start time for the replication task."
 msgstr ""
 
+msgid "Started bulk actions"
+msgstr ""
+
 msgid "Starting Jail"
 msgstr ""
 
@@ -14988,6 +14998,11 @@ msgstr "Ano, chápu riziko"
 
 msgid "Yes, decrypt the disks"
 msgstr "Ano, dešifrovat disky"
+
+msgid ""
+"You have hidden all of your available widgets. Use the dashboard "
+"configuration form to add widgets."
+msgstr ""
 
 msgid "You have left the domain."
 msgstr ""

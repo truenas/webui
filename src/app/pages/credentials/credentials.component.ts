@@ -32,9 +32,4 @@ export class CredentialsComponent implements OnInit {
   nav(link) {
     this.router.navigate([link]);
   }
-
-  navExternal(link) {
-    return window.open(link);
-  }
- 
 }

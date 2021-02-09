@@ -2223,6 +2223,9 @@ msgstr ""
 msgid "Bug"
 msgstr "バグ"
 
+msgid "Bulk actions"
+msgstr ""
+
 msgid "Burst"
 msgstr ""
 
@@ -3677,6 +3680,9 @@ msgstr ""
 msgid "Dashboard"
 msgstr "ダッシュボード"
 
+msgid "Dashboard is Empty!"
+msgstr ""
+
 msgid "Data"
 msgstr "データ"
 
@@ -4697,9 +4703,7 @@ msgstr ""
 msgid "Enable ACL"
 msgstr ""
 
-msgid ""
-"Enable ACL support for the SMB share. Disabling ACL  support for a share "
-"deletes that ACL."
+msgid "Enable ACL support for the SMB share."
 msgstr ""
 
 msgid "Enable Active Directory"
@@ -6066,6 +6070,9 @@ msgid "Failed"
 msgstr ""
 
 msgid "Failed sending test alert!"
+msgstr ""
+
+msgid "Failed to do bulk actions"
 msgstr ""
 
 msgid "Failed to generate debug file."
@@ -12528,6 +12535,9 @@ msgstr ""
 msgid "Start time for the replication task."
 msgstr ""
 
+msgid "Started bulk actions"
+msgstr ""
+
 msgid "Starting Jail"
 msgstr ""
 
@@ -15155,6 +15165,11 @@ msgid "Yes I understand the risks"
 msgstr ""
 
 msgid "Yes, decrypt the disks"
+msgstr ""
+
+msgid ""
+"You have hidden all of your available widgets. Use the dashboard "
+"configuration form to add widgets."
 msgstr ""
 
 msgid "You have left the domain."

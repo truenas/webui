@@ -1222,30 +1222,15 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     .disabled-select .mat-select-arrow {
       opacity: 0.38;
     }
-    entity-form-list .form-list > div  {
-      padding: 15px;
-      background-color: var(--contrast-darker);
-      margin: 16px;
-      min-width: 100%;
-    }
 
     entity-form-list .form-list .form-list-item > div.form-line  {
       display: block;
-    }
-
-    entity-form-list .form-list .form-list-item.ipwithnetmask .list-action,
-    entity-form-list .form-list .form-list-item.input .list-action{
-      padding-top: 12px;
     }
 
     #failover_address, #failover_virtual_address {
       width: 85%;
     }
 
-    entity-form-list form-ipwithnetmask .form-element,
-    entity-form-list form-input .form-element{
-      margin-top: 0;
-    }
   }
 
   app-interfaces-form {

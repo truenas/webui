@@ -9,6 +9,7 @@ import { AppLoaderService } from '../../../../services/';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/about';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { LocaleService } from 'app/services/locale.service';
 
 export interface DialogData {
   extraMsg: boolean;
@@ -21,7 +22,7 @@ export interface DialogData {
   templateUrl: './about-dialog.component.html'
 })
 export class AboutModalDialog {
-  public copyrightYear = globalHelptext.copyright_year;
+  public copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
   public product_type: string;
   public extraMsg: boolean;
   public systemType: string;
@@ -34,7 +35,8 @@ export class AboutModalDialog {
     protected http: HttpClient, protected dialogService: DialogService, 
     protected translate: TranslateService,
     protected core: CoreService,
-    private prefServices: PreferencesService) { 
+    private prefServices: PreferencesService,
+    private localeService: LocaleService) { 
       this.extraMsg = data.extraMsg;
       this.systemType = data.systemType;
     }

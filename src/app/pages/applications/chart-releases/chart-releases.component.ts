@@ -181,6 +181,7 @@ export class ChartReleasesComponent implements OnInit {
       
       if (app && evt && evt.fields) {
         app.status = evt.fields.status;
+        app.count = `${evt.fields.pod_status.available}/${evt.fields.pod_status.desired}`;
       }
     });
   }

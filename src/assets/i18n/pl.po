@@ -5,10 +5,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid " Built-in Groups"
-msgstr ""
+msgstr "Grupy wbudowane"
 
 msgid " Builtin Users"
-msgstr ""
+msgstr "Użytkownicy wbudowani"
 
 msgid " Check Notifications for more details."
 msgstr "Sprawdź powiadomienia aby uzyskac więcej informacji"
@@ -23,13 +23,13 @@ msgid " First vdev is a "
 msgstr " Pierwszy vdev to"
 
 msgid " KiB."
-msgstr ""
+msgstr "KB"
 
 msgid " Plugin"
-msgstr "Wtyczki"
+msgstr "Wtyczka"
 
 msgid " Service"
-msgstr "Usługi"
+msgstr "Usługa"
 
 msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
@@ -67,10 +67,10 @@ msgid " but datastore "
 msgstr " magazyn danych"
 
 msgid " day, "
-msgstr ""
+msgstr "dzień"
 
 msgid " days, "
-msgstr ""
+msgstr "dni"
 
 msgid " disks"
 msgstr "dyski"
@@ -96,13 +96,13 @@ msgid ""
 msgstr ""
 
 msgid " minute"
-msgstr ""
+msgstr "minuta"
 
 msgid " minutes"
-msgstr ""
+msgstr "minut"
 
 msgid " official plugins"
-msgstr ""
+msgstr "Oficjalne pluginy"
 
 msgid " on pool "
 msgstr ""
@@ -123,7 +123,7 @@ msgid " should be no more than "
 msgstr ""
 
 msgid " successfully saved."
-msgstr ""
+msgstr "zapisano pomyślnie"
 
 msgid " successfully unlocked"
 msgstr ""
@@ -2174,6 +2174,9 @@ msgstr ""
 msgid "Bug"
 msgstr ""
 
+msgid "Bulk actions"
+msgstr ""
+
 msgid "Burst"
 msgstr ""
 
@@ -3346,7 +3349,7 @@ msgid "Create Snapshot"
 msgstr ""
 
 msgid "Create Virtual Machine"
-msgstr ""
+msgstr "Utwórz Maszynę Wirtualną"
 
 msgid "Create a custom ACL"
 msgstr ""
@@ -3403,7 +3406,7 @@ msgid "Created"
 msgstr ""
 
 msgid "Created Date"
-msgstr ""
+msgstr "Data utworzenia"
 
 msgid ""
 "Creates dataset snapshots even when there  have been no changes to the "
@@ -3585,6 +3588,9 @@ msgid ""
 msgstr ""
 
 msgid "Dashboard"
+msgstr "Kokpit"
+
+msgid "Dashboard is Empty!"
 msgstr ""
 
 msgid "Data"
@@ -3619,7 +3625,7 @@ msgid ""
 msgstr ""
 
 msgid "Database"
-msgstr ""
+msgstr "Baza danych"
 
 msgid "Database Path"
 msgstr ""
@@ -3664,7 +3670,7 @@ msgid "Day of Week"
 msgstr ""
 
 msgid "Days"
-msgstr ""
+msgstr "Dni"
 
 msgid ""
 "Days before a completed scrub is allowed  to run again. This controls the "
@@ -4365,7 +4371,7 @@ msgid ""
 msgstr ""
 
 msgid "Domain:"
-msgstr ""
+msgstr "Domena:"
 
 msgid "Don't show this message again"
 msgstr ""
@@ -4599,9 +4605,7 @@ msgstr ""
 msgid "Enable ACL"
 msgstr ""
 
-msgid ""
-"Enable ACL support for the SMB share. Disabling ACL  support for a share "
-"deletes that ACL."
+msgid "Enable ACL support for the SMB share."
 msgstr ""
 
 msgid "Enable Active Directory"
@@ -5940,6 +5944,9 @@ msgstr ""
 msgid "Failed sending test alert!"
 msgstr ""
 
+msgid "Failed to do bulk actions"
+msgstr ""
+
 msgid "Failed to generate debug file."
 msgstr ""
 
@@ -6571,7 +6578,7 @@ msgid "Host name or IP address of the central key server."
 msgstr ""
 
 msgid "HostName"
-msgstr ""
+msgstr "Nazwa Hosta"
 
 msgid "Hostname"
 msgstr ""
@@ -8483,10 +8490,10 @@ msgid "Never restart containers if they exit."
 msgstr ""
 
 msgid "New Disk"
-msgstr ""
+msgstr "Nowy dysk"
 
 msgid "New Password"
-msgstr ""
+msgstr "Nowe hasło"
 
 msgid "New Primary Group"
 msgstr ""
@@ -8515,7 +8522,7 @@ msgid "Nic to attach:"
 msgstr ""
 
 msgid "No"
-msgstr ""
+msgstr "Nie"
 
 msgid "No Applications Installed"
 msgstr ""
@@ -9908,7 +9915,7 @@ msgid ""
 msgstr ""
 
 msgid "Rename"
-msgstr ""
+msgstr "Zmień nazwę"
 
 msgid "Renew"
 msgstr ""
@@ -11232,7 +11239,7 @@ msgid "Server Side Encryption"
 msgstr ""
 
 msgid "Service"
-msgstr ""
+msgstr "Usługa"
 
 msgid "Service Account"
 msgstr ""
@@ -11256,7 +11263,7 @@ msgid "Service failed to stop"
 msgstr ""
 
 msgid "Services"
-msgstr ""
+msgstr "Usługi"
 
 msgid "Set ACL for this dataset"
 msgstr ""
@@ -12299,6 +12306,9 @@ msgid "Start the scrub now?"
 msgstr ""
 
 msgid "Start time for the replication task."
+msgstr ""
+
+msgid "Started bulk actions"
 msgstr ""
 
 msgid "Starting Jail"
@@ -14441,7 +14451,7 @@ msgid "Users"
 msgstr ""
 
 msgid "Users & Groups"
-msgstr ""
+msgstr "Użytkownicy i Grupy"
 
 msgid ""
 "Uses the SMB Service <i>NetBIOS Name</i> to advertise  the server to "
@@ -14851,13 +14861,13 @@ msgid "Windows Shares (SMB)"
 msgstr ""
 
 msgid "Wipe"
-msgstr ""
+msgstr "Wyczyść"
 
 msgid "Wipe Disk "
-msgstr ""
+msgstr "Wyczyść dysk"
 
 msgid "Wipe this disk?"
-msgstr ""
+msgstr "Czy wyczyścić ten dysk?"
 
 msgid "Wiping disk..."
 msgstr ""
@@ -14899,6 +14909,11 @@ msgid "Yes I understand the risks"
 msgstr ""
 
 msgid "Yes, decrypt the disks"
+msgstr ""
+
+msgid ""
+"You have hidden all of your available widgets. Use the dashboard "
+"configuration form to add widgets."
 msgstr ""
 
 msgid "You have left the domain."
@@ -15397,7 +15412,7 @@ msgid "total available"
 msgstr ""
 
 msgid "users"
-msgstr ""
+msgstr "użytkownicy"
 
 msgid "vdev is highly discouraged and will result in data loss if it fails"
 msgstr ""
