@@ -235,6 +235,10 @@ export class EntityWizardComponent implements OnInit {
   }
 
   selectionChange(event) {
+    /**
+     * This function is for update summary data whenever step changes
+     * We use isAutoSummary flag to generate summary automatically
+     */
     if (this.conf.isAutoSummary) {
       if (event.selectedIndex == this.conf.wizardConfig.length) {
         this.conf.summary = [];

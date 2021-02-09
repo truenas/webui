@@ -187,6 +187,10 @@ export class EntityUtils {
   }
 
   filterArrayFunction(item) {
+    /**
+     * This function is for validation.
+     * If the value of a control is invaild, we ignore it during sending payload
+     */
     let result = true;
     
     if (item === undefined || item === null || item === '') {
