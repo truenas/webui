@@ -186,7 +186,7 @@ export class EntityUtils {
     return cronArray.join(' ');
   }
 
-  filterArrayFunction(item) {
+  filterArrayFunction(item: any) {
     let result = true;
     if (typeof item === 'object') {
       let isAllEmpty = true;
@@ -207,7 +207,7 @@ export class EntityUtils {
     return result;
   }
 
-  parseFormControlValues(data, result) {
+  parseFormControlValues(data:object, result:object) {
     Object.keys(data).forEach(key => {
       const value = data[key];
       if (key == "release_name" || key == 'undefined' || key.startsWith(FORM_LABEL_KEY_PREFIX)) {
@@ -266,7 +266,7 @@ export class EntityUtils {
     return result;
   }
 
-  createRelations(relations, parentName) {
+  createRelations(relations:object[], parentName:string) {
     const result = relations.map(relation => {
       let relationFieldName = relation[0];
       if (parentName) {
@@ -286,7 +286,7 @@ export class EntityUtils {
     return result;    
   }
 
-  parseSchemaFieldConfig(schemaConfig, parentName=null, parentIsList=false) {
+  parseSchemaFieldConfig(schemaConfig:any, parentName:string = null, parentIsList:boolean = false) {
     let results = [];
     let name = schemaConfig.variable;
     if (!parentIsList && parentName) {
@@ -430,7 +430,7 @@ export class EntityUtils {
     return results;
   }
 
-  parseConfigData(configData, parentKey, result) {
+  parseConfigData(configData:object, parentKey:string, result:object) {
     Object.keys(configData).forEach(key => {
       const value = configData[key];
       let fullKey = key;
