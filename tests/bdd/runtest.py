@@ -17,7 +17,7 @@ Options:
 
 --help                           - Show all options.
 --ip <0.0.0.0>                   - IP of the targeted TrueNAS server/
---root-password <password>       - need root password for login.
+--nas-password <password>       - need root password for login.
 --convert-feature                - This convert Jira feature files
                                    for pytest-bdd.
 --test-suite                     - To specify the test suite to run ha-bhyve02
@@ -30,7 +30,7 @@ Options:
 option_list = [
     "help",
     "ip=",
-    'root-password=',
+    'nas-password=',
     'convert-feature',
     'test-suite='
 ]
@@ -87,8 +87,10 @@ run_convert = False
 for output, arg in myopts:
     if output == '--ip':
         ip = arg
-    elif output == '--root-password':
+    elif output == '--nas-password':
         password = arg
+    elif output == '--sudo-password':
+        sudo_password = arg
     elif output == '--test-suite':
         test_suite = arg
         if test_suite not in test_suite_list:
@@ -117,7 +119,7 @@ def run_testing():
         os.environ["nas_password"] = configs['NAS_CONFIG']['password']
         os.environ['test_suite'] = test_suite
     elif not os.path.exists(f'{cwd}/config.cfg') and test_suite == 'core':
-        msg = 'Please use --ip and --root-password or add confing.cfg ' \
+        msg = 'Please use --ip and --nas-password or add confing.cfg ' \
             'in this directory'
         print(msg)
         print('config.cfg example: ')
@@ -139,7 +141,6 @@ def run_testing():
         "--junitxml=results/junit/webui_test.xml",
         "--cucumber-json=results/cucumber/webui_test.json"
     ]
-
     run(pytest_cmd)
 
 

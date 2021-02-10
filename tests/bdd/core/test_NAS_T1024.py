@@ -1,0 +1,145 @@
+# coding=utf-8
+"""Core UI feature tests."""
+
+import time
+from function import (
+    wait_on_element,
+    is_element_present,
+    attribute_value_exist,
+    ssh_cmd
+)
+from pytest_bdd import (
+    given,
+    scenario,
+    then,
+    when,
+    parsers
+)
+
+
+@scenario('features/NAS-T1024.feature', 'Start iscsi services and connect to iscsi zvol and file with CHAP',
+          example_converters=dict(type=str, target=str, system=str, host=str, password=str))
+def test_start_iscsi_services_and_test_iscsi_zvol_connection_with_chap(driver):
+    """Start iscsi services and test iscsi zvol connection with CHAP."""
+
+
+@given('the browser is open on the TrueNAS URL and logged in')
+def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_password):
+    """the browser is open on the TrueNAS URL and logged in."""
+    if nas_ip not in driver.current_url:
+        driver.get(f"http://{nas_ip}")
+        assert wait_on_element(driver, 0.5, 10, '//input[@placeholder="Username"]')
+        time.sleep(1)
+    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
+        assert wait_on_element(driver, 1, 10, '//input[@placeholder="Username"]')
+        driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
+        driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
+        driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
+        driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(root_password)
+        assert wait_on_element(driver, 0.5, 4, '//button[@name="signin_button"]')
+        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+    else:
+        element = driver.find_element_by_xpath('//span[contains(.,"root")]')
+        driver.execute_script("arguments[0].scrollIntoView();", element)
+        time.sleep(0.5)
+        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+
+
+@when('you should be on the dashboard')
+def you_should_be_on_the_dashboard(driver):
+    """you should be on the dashboard."""
+    assert wait_on_element(driver, 1, 7, '//a[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"System Information")]')
+
+
+@then('click on Services on the side menu')
+def click_on_services_on_the_side_menu(driver):
+    """click on Services on the side menu."""
+    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Services"]')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Services"]').click()
+
+
+@then('the Services page should open')
+def the_services_page_should_open(driver):
+    """the Services page should open."""
+    assert wait_on_element(driver, 1, 7, '//services')
+
+
+@then('if the SCSI service is not started, start the service')
+def if_the_scsi_service_is_not_started_start_the_service(driver):
+    """if the SCSI service is not started, start the service."""
+    assert wait_on_element(driver, 1, 7, '//div[@ix-auto="value__iSCSI"]')
+    value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__iSCSI_Running"]', 'class', 'mat-checked')
+    if not value_exist:
+        driver.find_element_by_xpath('//div[@ix-auto="overlay__iSCSI_Running"]').click()
+    time.sleep(2)
+
+
+@then('ssh on <host> with <password> to test <type>')
+def if_system_is_linux_ssh_on_host_with_password(driver, host, password):
+    """ssh on <host> with <password> to test <type>."""
+    global hst, passwd
+    hst = host
+    passwd = password
+
+
+@then(parsers.parse('if <system> is linux set node session and discovery {method}, {user}, {secret} and in iscsid.conf'))
+def set_node_session_and_discovery_chap_nopeer_secret_and_in_iscsidconf(driver, system, method, user, secret  ):
+    """if <system> is linux set node session and discovery CHAP, nopeer, secret and in iscsid.conf."""
+    if system == 'linux':
+        cmd = f'echo "node.session.auth.authmethod = {method}" >> /etc/iscsi/iscsid.conf'
+        ssh_cmd(cmd, 'root', passwd, hst)
+        cmd = f'echo "node.session.auth.username = {user}" >> /etc/iscsi/iscsid.conf'
+        ssh_cmd(cmd, 'root', passwd, hst)
+        cmd = f'echo "node.session.auth.password = {secret}" >> /etc/iscsi/iscsid.conf'
+        ssh_cmd(cmd, 'root', passwd, hst)
+        cmd = f'echo "discovery.sendtargets.auth.authmethod = {method}" >> /etc/iscsi/iscsid.conf'
+        ssh_cmd(cmd, 'root', passwd, hst)
+        cmd = f'echo "discovery.sendtargets.auth.username = {user}" >> /etc/iscsi/iscsid.conf'
+        ssh_cmd(cmd, 'root', passwd, hst)
+        cmd = f'echo "discovery.sendtargets.auth.password = {secret}" >> /etc/iscsi/iscsid.conf'
+        ssh_cmd(cmd, 'root', passwd, hst)
+
+
+@then('if <system> is linux run iscsiadm to discover portal NAS IP and login with <target>')
+def run_iscsiadm_to_discover_portal_nas_ip_and_login_with_nopeer1_target(driver, nas_ip, target):
+    """if <system> is linux run iscsiadm to discover portal NAS IP and login with <target>."""
+
+
+@then(parsers.parse('if <system> is bsd run iscsictl with NAS IP, <target>, {user} and {secret}'))
+def run_iscsictl_with_NAS_IP_nopeer1_target_nopeer_and_secret(driver):
+    """if <system> is BSD run run iscsictl with NAS IP, <target>, nopeer and secret."""
+
+
+@then('find the iscsi device and format the device')
+def find_the_iscsi_device_and_format_the_device(driver):
+    """find the iscsi device and format the device."""
+
+
+@then('create a mount point, then mount the device to it')
+def created_a_mount_point_then_mount_the_device_to_it(driver):
+    """create a mount point, then mount the device to it."""
+
+
+@then('should be able to send a file to the mount point')
+def should_be_able_to_send_a_file_to_the_mount_point(driver):
+    """should be able to send a file to the mount point."""
+
+
+@then('when you unmount, the file should not be in the mount point')
+def when_you_unmount_the_file_should_not_be_in_the_mount_point(driver):
+    """when you unmount, the file should not be in the mount point."""
+
+
+@then('when remount, the file should be in the mount point')
+def when_remount_the_file_should_be_in_the_mount_point(driver):
+    """when remount, the file should be in the mount point."""
+
+
+@then('unmount and remove the mount point, disconnect and if the <system> is linux clean iscsi.conf')
+def unmount_and_remove_the_mount_point_and_the_system_is_linux_clean_iscsiconf(driver, system):
+    """unmount and remove the mount point, disconnect and if the <system> is linux clean iscsi.conf."""
+    if system == 'linux':
+        for num in list(range(6)):
+            cmd = "sed -i '$ d' /etc/iscsi/iscsid.conf"
+            ssh_cmd(cmd, 'root', passwd, hst)
