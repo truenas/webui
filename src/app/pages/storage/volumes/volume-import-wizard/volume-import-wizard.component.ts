@@ -318,8 +318,6 @@ export class VolumeImportWizardComponent {
       dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
       dialogRef.componentInstance.success.subscribe(res=>{
         dialogRef.close(false);
-        // this.router.navigate(new Array('/').concat(
-        //   this.route_success));
         this.modalService.close('slide-in-form');
         this.modalService.refreshTable();
       }),
