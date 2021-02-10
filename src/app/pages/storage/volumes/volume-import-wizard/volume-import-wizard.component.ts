@@ -342,30 +342,22 @@ export class VolumeImportWizardComponent {
                 found = true;
                 this.dialogService.confirm(helptext.unlock_dataset_dialog_title, helptext.unlock_dataset_dialog_message, true, helptext.unlock_dataset_dialog_button).subscribe(unlock => {
                   if (unlock) {
-                    // const route_unlock = this.route_success.concat(['id', this.pool, 'dataset', 'unlock', this.pool]);
-                    // this.router.navigate(new Array('/').concat(route_unlock));
                     this.modalService.close('slide-in-form');
-                    this.modalService.refreshTable();
                   } else {
-                    // this.router.navigate(new Array('/').concat(this.route_success));
                     this.modalService.close('slide-in-form');    
-                    this.modalService.refreshTable();
                   }
                 });
                 break;
               }
               if (!found) {
-                // this.router.navigate(new Array('/').concat(this.route_success));
                 this.modalService.close('slide-in-form');
-                this.modalService.refreshTable();
               }
             }
+            this.modalService.refreshTable();
           }, err => {
             new EntityUtils().handleWSError(this, err, this.dialogService);
           });
         } else { // shouldn't ever get here but who knows lol
-          // this.router.navigate(new Array('/').concat(
-          //   this.route_success));
           this.modalService.close('slide-in-form');
           this.modalService.refreshTable();
         }
