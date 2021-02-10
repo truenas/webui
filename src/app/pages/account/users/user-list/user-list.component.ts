@@ -106,7 +106,6 @@ export class UserListComponent {
     }, 2000)
 
     this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
-      this.entityList.expandedElement = null;
       this.entityList.getData();
     })
   }
