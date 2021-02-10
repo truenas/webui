@@ -17,10 +17,10 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1024.feature', 'Start iscsi services and connect to iscsi zvol and file with CHAP',
+@scenario('features/NAS-T1024.feature', 'Start iscsi services and connect to iscsi zvol and file share with CHAP',
           example_converters=dict(type=str, target=str, system=str, host=str, password=str))
-def test_start_iscsi_services_and_test_iscsi_zvol_connection_with_chap(driver):
-    """Start iscsi services and test iscsi zvol connection with CHAP."""
+def test_start_iscsi_services_and_connect_to_iscsi_zvol_and_file_share_with_chap(driver):
+    """Start iscsi services and connect to iscsi zvol and file share with CHAP."""
 
 
 @given('the browser is open on the TrueNAS URL and logged in')
