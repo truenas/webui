@@ -282,7 +282,7 @@ export class FieldRelationService {
   getDataType(data) {
     if (Array.isArray(data)) {
       return 'array';
-    } else if (typeof data === 'object') {
+    } else if (data != null && typeof data === 'object') {
       return 'object';
     } else {
       return 'basic';
