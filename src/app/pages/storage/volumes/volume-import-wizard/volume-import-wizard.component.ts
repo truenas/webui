@@ -318,8 +318,6 @@ export class VolumeImportWizardComponent {
       dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
       dialogRef.componentInstance.success.subscribe(res=>{
         dialogRef.close(false);
-        // this.router.navigate(new Array('/').concat(
-        //   this.route_success));
         this.modalService.close('slide-in-form');
         this.modalService.refreshTable();
       }),
@@ -335,40 +333,12 @@ export class VolumeImportWizardComponent {
       dialogRef.componentInstance.success.subscribe((res) => {
         dialogRef.close(false);
         if (this.pool) {
-          this.ws.call('pool.dataset.query', [[['pool','=',this.pool]]]).subscribe(datasets => {
-            let found = false;
-            for (let i=0; i < datasets.length; i++) {
-              if (datasets[i].encrypted && datasets[i].locked) {
-                found = true;
-                this.dialogService.confirm(helptext.unlock_dataset_dialog_title, helptext.unlock_dataset_dialog_message, true, helptext.unlock_dataset_dialog_button).subscribe(unlock => {
-                  if (unlock) {
-                    // const route_unlock = this.route_success.concat(['id', this.pool, 'dataset', 'unlock', this.pool]);
-                    // this.router.navigate(new Array('/').concat(route_unlock));
-                    this.modalService.close('slide-in-form');
-                    this.modalService.refreshTable();
-                  } else {
-                    // this.router.navigate(new Array('/').concat(this.route_success));
-                    this.modalService.close('slide-in-form');    
-                    this.modalService.refreshTable();
-                  }
-                });
-                break;
-              }
-              if (!found) {
-                // this.router.navigate(new Array('/').concat(this.route_success));
-                this.modalService.close('slide-in-form');
-                this.modalService.refreshTable();
-              }
-            }
-          }, err => {
-            new EntityUtils().handleWSError(this, err, this.dialogService);
-          });
-        } else { // shouldn't ever get here but who knows lol
-          // this.router.navigate(new Array('/').concat(
-          //   this.route_success));
           this.modalService.close('slide-in-form');
           this.modalService.refreshTable();
+        } else {
+          console.error("Something went wrong. No pool found!");
         }
+        
       });
       dialogRef.componentInstance.failure.subscribe((res) => {
         dialogRef.close(false);
