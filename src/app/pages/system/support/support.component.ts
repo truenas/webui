@@ -68,7 +68,9 @@ export class SupportComponent implements OnInit {
       res.license.system_serial_ha ?
           this.sys_serial = res.license.system_serial + ' / ' + res.license.system_serial_ha :
           this.sys_serial = res.license.system_serial;
-      res.license.addhw.length === 0 ? this.add_hardware = 'NONE' : this.add_hardware = res.license.addhw.join(', ');
+      res.license.addhw_detail.length === 0 ?
+          this.add_hardware = 'NONE' :
+          this.add_hardware = res.license.addhw_detail.join(', ');
       const now = new Date(res.datetime.$date);
       const then = expDateConverted;
       this.daysLeftinContract = this.daysTillExpiration(now, then);
