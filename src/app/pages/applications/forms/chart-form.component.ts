@@ -33,7 +33,6 @@ export class ChartFormComponent {
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [];
   private catalogApp: any;
-  private entityUtils = new EntityUtils();
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
     private modalService: ModalService, private appService: ApplicationsService) {
@@ -249,7 +248,7 @@ export class ChartFormComponent {
       this.catalogApp.schema.questions.forEach(question => {
         const fieldSet = this.fieldSets.find(fieldSet => fieldSet.name == question.group);
         if (fieldSet) {
-          const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(question);
+          const fieldConfigs = this.parseSchemaFieldConfig(question);
           fieldSet.config = fieldSet.config.concat(fieldConfigs);
         }
       });
@@ -289,7 +288,7 @@ export class ChartFormComponent {
     this.parseSchema(chartSchema, true);
     this.name = data.name;
     const configData = {};
-    this.entityUtils.parseConfigData(data.config, null, configData);
+    this.parseConfigData(data.config, null, configData);
     configData['release_name'] = data.name;
     configData['changed_schema'] = true;
     
@@ -310,7 +309,7 @@ export class ChartFormComponent {
   customSubmit(data) {
     let apiCall = this.addCall;
     let values = {};
-    this.entityUtils.parseFormControlValues(data, values);
+    new EntityUtils().parseFormControlValues(data, values);
 
     let payload = [];
     payload.push({
@@ -341,6 +340,9 @@ export class ChartFormComponent {
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
     });
+    this.dialogRef.componentInstance.failure.subscribe((err) => {
+      // new EntityUtils().handleWSError(this, err, this.dialogService);
+    })
   }
 
 }
