@@ -1,4 +1,3 @@
-import { ModalService } from './../../../../services/modal.service';
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_system_tunable as helptext } from 'app/helptext/system/tunable';
@@ -6,9 +5,10 @@ import { SystemGeneralService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
+import { T } from 'app/translate-marker';
 
 @Component({
-  selector: 'system-tunable-edit',
+  selector: 'app-system-tunable-edit',
   template: `<entity-form [conf]="this"></entity-form>`
 })
 export class TunableFormComponent {
@@ -22,6 +22,7 @@ export class TunableFormComponent {
             
   protected route_success: string[] = ['system', 'advanced'];
   protected isEntity: boolean = true;
+  protected showFirstTimeWarning = false;
 
   protected product_type: any;
   protected type_fc: any;
@@ -104,6 +105,9 @@ export class TunableFormComponent {
 
   afterInit(entityForm: any) {
     entityForm.formGroup.controls['enabled'].setValue(true);
+    if (this.showFirstTimeWarning) {
+      entityForm.dialog.Info(T('Warning'), T('Changing Advanced settings can be dangerous when done incorrectly. Please use caution before saving.'));
+    }
   }
   
   afterSubmit(value) {
