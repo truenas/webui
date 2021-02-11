@@ -137,7 +137,6 @@ export class EntityJobComponent implements OnInit {
     this.ws.job(this.method, this.args)
       .subscribe(
         (res) => {
-          console.log("JOB", res);
           this.job = res;
           if (this.showRealtimeLogs && this.job.logs_path && !this.realtimeLogsSubscribed) {
             this.getRealtimeLogs();
