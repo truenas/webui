@@ -2,6 +2,10 @@
 """Core UI feature tests."""
 
 import time
+import os
+import re
+import random
+import string
 from function import (
     wait_on_element,
     is_element_present,
@@ -15,6 +19,9 @@ from pytest_bdd import (
     when,
     parsers
 )
+
+user = os.environ.get('USER')
+mount_point = '/tmp/iscsi_'.join(random.choices(string.digits, k=2))
 
 
 @scenario('features/NAS-T1024.feature', 'Start iscsi services and connect to iscsi zvol and file share with CHAP',
@@ -84,9 +91,16 @@ def if_system_is_linux_ssh_on_host_with_password(driver, host, password):
 
 
 @then(parsers.parse('if <system> is linux set node session and discovery {method}, {user}, {secret} and in iscsid.conf'))
-def set_node_session_and_discovery_chap_nopeer_secret_and_in_iscsidconf(driver, system, method, user, secret  ):
+def set_node_session_and_discovery_chap_nopeer_secret_and_in_iscsidconf(driver, system, method, user, secret):
     """if <system> is linux set node session and discovery CHAP, nopeer, secret and in iscsid.conf."""
+    global methods, users, secrets
+    methods = method
+    users = user
+    secrets = secret
     if system == 'linux':
+        if user == 'ixuser':
+            global hst
+            hst = '127.0.0.1'
         cmd = f'echo "node.session.auth.authmethod = {method}" >> /etc/iscsi/iscsid.conf'
         ssh_cmd(cmd, 'root', passwd, hst)
         cmd = f'echo "node.session.auth.username = {user}" >> /etc/iscsi/iscsid.conf'
@@ -102,44 +116,144 @@ def set_node_session_and_discovery_chap_nopeer_secret_and_in_iscsidconf(driver, 
 
 
 @then('if <system> is linux run iscsiadm to discover portal NAS IP and login with <target>')
-def run_iscsiadm_to_discover_portal_nas_ip_and_login_with_nopeer1_target(driver, nas_ip, target):
+def run_iscsiadm_to_discover_portal_nas_ip_and_login_with_nopeer1_target(driver, nas_ip, system, target):
     """if <system> is linux run iscsiadm to discover portal NAS IP and login with <target>."""
+    global targets
+    targets = target
+    if system == 'linux':
+        cmd = f"iscsiadm --mode discovery --type sendtargets --portal {nas_ip}"
+        discovery_results = ssh_cmd(cmd, 'root', passwd, hst)
+        assert discovery_results['result'], str(discovery_results)
+        discovery_text = discovery_results['output']
+        global iqn
+        target_list = re.findall(f'.*{target}$', discovery_text, re.MULTILINE)[0].split()
+        iqn = target_list[1]
+        cmd = f"iscsiadm --mode node --targetname {iqn} --portal {nas_ip}:3260 --login"
+        login_results = ssh_cmd(cmd, 'root', passwd, hst)
+        assert login_results['result'], str(login_results)
+        assert target in login_results['output'], str(login_results)
+        cmd = "iscsiadm -m session"
+        session_results = ssh_cmd(cmd, 'root', passwd, hst)
+        assert session_results['result'], str(session_results)
+        assert target in session_results['output'], str(session_results)
 
 
 @then(parsers.parse('if <system> is bsd run iscsictl with NAS IP, <target>, {user} and {secret}'))
-def run_iscsictl_with_NAS_IP_nopeer1_target_nopeer_and_secret(driver):
+def run_iscsictl_with_NAS_IP_nopeer1_target_nopeer_and_secret(driver, nas_ip, system, target, user, secret):
     """if <system> is BSD run run iscsictl with NAS IP, <target>, nopeer and secret."""
+    global os_system
+    os_system = system
+    if system == 'bsd':
+        cmd = f'iscsictl -A -p {nas_ip}:3260 -t iqn.2005-10.org.freenas.ctl:{target} -u {user} -s {secret}'
+        login_results = ssh_cmd(cmd, 'root', passwd, hst)
+        assert login_results['result'], str(login_results)
 
 
 @then('find the iscsi device and format the device')
-def find_the_iscsi_device_and_format_the_device(driver):
+def find_the_iscsi_device_and_format_the_device(driver, nas_ip):
     """find the iscsi device and format the device."""
+    global device
+    if os_system == 'linux':
+        cmd = "fdisk -l | grep -B 1 'iSCSI Disk' | grep -v 'iSCSI Disk'"
+        fdisk_results = ssh_cmd(cmd, 'root', passwd, hst)
+        assert fdisk_results['result'], str(fdisk_results)
+        device = fdisk_results['output'].replace('Disk ', '').split(':')[0]
+        cmd = f"mkfs {device}"
+        format_results = ssh_cmd(cmd, 'root', passwd, hst)
+        assert format_results['result'], str(format_results)
+    else:
+        for num in list(range(15)):
+            cmd = f'iscsictl -L | grep {nas_ip}:3260'
+            iscsictl_results = ssh_cmd(cmd, 'root', passwd, hst)
+            print(iscsictl_results)
+            assert iscsictl_results['result'], str(iscsictl_results)
+            iscsictl_list = iscsictl_results['output'].strip().split()
+            if iscsictl_list[2] == "Connected:":
+                device = f"/dev/{iscsictl_list[3]}"
+                assert True
+                break
+            time.sleep(3)
+        else:
+            assert False
+        cmd = f'newfs {device}'
+        format_results = ssh_cmd(cmd, 'root', passwd, hst)
+        assert format_results['result'], str(format_results)
 
 
 @then('create a mount point, then mount the device to it')
 def created_a_mount_point_then_mount_the_device_to_it(driver):
     """create a mount point, then mount the device to it."""
+    cmd = f"mkdir -p {mount_point}"
+    mkdir_results = ssh_cmd(cmd, 'root', passwd, hst)
+    assert mkdir_results['result'], str(mkdir_results)
+    cmd = f"mount {device} {mount_point}"
+    mount_results = ssh_cmd(cmd, 'root', passwd, hst)
+    assert mount_results['result'], str(mount_results)
 
 
 @then('should be able to send a file to the mount point')
 def should_be_able_to_send_a_file_to_the_mount_point(driver):
     """should be able to send a file to the mount point."""
+    cmd = f"touch {mount_point}/test.text"
+    touch_results = ssh_cmd(cmd, 'root', passwd, hst)
+    assert touch_results['result'], str(touch_results)
+    cmd = f"test -f {mount_point}/test.text"
+    touch_results = ssh_cmd(cmd, 'root', passwd, hst)
+    assert touch_results['result'], str(touch_results)
 
 
 @then('when you unmount, the file should not be in the mount point')
 def when_you_unmount_the_file_should_not_be_in_the_mount_point(driver):
     """when you unmount, the file should not be in the mount point."""
+    cmd = f"umount {mount_point}"
+    mount_results = ssh_cmd(cmd, 'root', passwd, hst)
+    assert mount_results['result'], str(mount_results)
+    cmd = f"test -f {mount_point}/test.text"
+    touch_results = ssh_cmd(cmd, 'root', passwd, hst)
+    assert not touch_results['result'], str(touch_results)
 
 
 @then('when remount, the file should be in the mount point')
 def when_remount_the_file_should_be_in_the_mount_point(driver):
     """when remount, the file should be in the mount point."""
+    cmd = f"mount {device} {mount_point}"
+    mount_results = ssh_cmd(cmd, 'root', passwd, hst)
+    assert mount_results['result'], str(mount_results)
+    cmd = f"test -f {mount_point}/test.text"
+    touch_results = ssh_cmd(cmd, 'root', passwd, hst)
+    assert touch_results['result'], str(touch_results)
 
 
 @then('unmount and remove the mount point, disconnect and if the <system> is linux clean iscsi.conf')
-def unmount_and_remove_the_mount_point_and_the_system_is_linux_clean_iscsiconf(driver, system):
+def unmount_and_remove_the_mount_point_and_the_system_is_linux_clean_iscsiconf(driver, nas_ip, system):
     """unmount and remove the mount point, disconnect and if the <system> is linux clean iscsi.conf."""
+    cmd = f"umount {mount_point}"
+    mount_results = ssh_cmd(cmd, 'root', passwd, hst)
+    assert mount_results['result'], str(mount_results)
+    cmd = f"rm -rf {mount_point}"
+    mount_results = ssh_cmd(cmd, 'root', passwd, hst)
+    assert mount_results['result'], str(mount_results)
     if system == 'linux':
-        for num in list(range(6)):
-            cmd = "sed -i '$ d' /etc/iscsi/iscsid.conf"
-            ssh_cmd(cmd, 'root', passwd, hst)
+        cmd = f"iscsiadm -m node -T {iqn} -p {nas_ip}:3260 -u"
+        logout_results = ssh_cmd(cmd, 'root', passwd, hst)
+        assert logout_results['result'], str(logout_results)
+        cmd = f"iscsiadm -m node -o delete -T {iqn}"
+        delete_results = ssh_cmd(cmd, 'root', passwd, hst)
+        assert delete_results['result'], str(delete_results)
+        cmd = "iscsiadm -m session"
+        session_results = ssh_cmd(cmd, 'root', passwd, hst)
+        assert not session_results['result'], str(session_results)
+        assert targets not in session_results['output'], str(session_results)
+        cmd = f"iscsiadm -m discoverydb -t sendtargets -p {nas_ip}:3260 -o delete"
+        session_results = ssh_cmd(cmd, 'root', passwd, hst)
+        assert session_results['result'], str(session_results)
+        cmd = f"sed -i '/= {methods}/d' /etc/iscsi/iscsid.conf"
+        ssh_cmd(cmd, 'root', passwd, hst)
+        cmd = f"sed -i '/= {users}/d' /etc/iscsi/iscsid.conf"
+        ssh_cmd(cmd, 'root', passwd, hst)
+        cmd = f"sed -i '/= {secrets}/d' /etc/iscsi/iscsid.conf"
+        ssh_cmd(cmd, 'root', passwd, hst)
+    else:
+        cmd = f"iscsictl -R -t iqn.2005-10.org.freenas.ctl:{targets}"
+        remove_results = ssh_cmd(cmd, 'root', passwd, hst)
+        assert remove_results['result'], str(remove_results)
