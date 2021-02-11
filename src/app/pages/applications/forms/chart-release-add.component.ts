@@ -14,7 +14,6 @@ import { ApplicationsService } from '../applications.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import  helptext  from '../../../helptext/apps/apps';
 import { FormListComponent } from '../../common/entity/entity-form/components/form-list/form-list.component';
-import { EntityUtils } from '../../common/entity/utils';
 
 @Component({
   selector: 'app-chart-release-add',
@@ -36,7 +35,6 @@ export class ChartReleaseAddComponent implements OnDestroy {
   private destroy$ = new Subject();
   // private isLinear = true;
   private interfaceList = [];
-  private entityUtils = new EntityUtils();
 
   protected fieldConfig: FieldConfig[];
   public wizardConfig: Wizard[] = [
@@ -345,26 +343,6 @@ export class ChartReleaseAddComponent implements OnDestroy {
     })
   }
 
-  parseSchema(catalogApp) {
-    try {
-
-      const gpuConfiguration = catalogApp.schema.questions.find(question => question.variable=='gpuConfiguration');
-  
-      if (gpuConfiguration && gpuConfiguration.schema.attrs.length > 0) {
-        const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(gpuConfiguration);
-        const gpuWizardConfig = {
-          label: gpuConfiguration.group,
-          fieldConfig: fieldConfigs
-        };
-
-        this.wizardConfig.push(gpuWizardConfig);
-      }
-      
-    } catch(error) {
-      return this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
-    }
-  }
-
   onChangeExternalInterfaces(listComponent: FormListComponent) {
     
     listComponent.listsFromArray.controls.forEach((externalInterface, index) => {
@@ -400,10 +378,6 @@ export class ChartReleaseAddComponent implements OnDestroy {
   }
 
   customSubmit(data) {
-
-    let parsedData = {};
-    this.entityUtils.parseFormControlValues(data, parsedData);
-
     let envVars = [];
     if (data.containerEnvironmentVariables[0].name) {
       envVars = data.containerEnvironmentVariables;
@@ -485,11 +459,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
         volumes: volList, 
         workloadType: 'Deployment',
       }
-    }];
-
-    if (parsedData['gpuConfiguration']) {
-      payload[0].values['gpuConfiguration'] = parsedData['gpuConfiguration'];
-    }
+    }]
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
       helptext.installing) }, disableClose: true});
@@ -500,6 +470,9 @@ export class ChartReleaseAddComponent implements OnDestroy {
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
     });
+    this.dialogRef.componentInstance.failure.subscribe((err) => {
+      // new EntityUtils().handleWSError(this, err, this.dialogService);
+    })
   }
 
   ngOnDestroy(){

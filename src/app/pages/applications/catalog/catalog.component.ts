@@ -67,29 +67,30 @@ export class CatalogComponent implements OnInit {
     this.appService.getAllCatalogItems().subscribe(res => {
       res.forEach(catalog => {
         for (let i in catalog.trains.charts) {  
-          let item = catalog.trains.charts[i];
-          let versions = item.versions;
-          let latest, latestDetails;
+          if (i !== 'ix-chart') {
+            let item = catalog.trains.charts[i];
+            let versions = item.versions;
+            let latest, latestDetails;
 
-          let sorted_version_labels = Object.keys(versions);
-          sorted_version_labels.sort(this.utils.versionCompare);
+            let sorted_version_labels = Object.keys(versions);
+            sorted_version_labels.sort(this.utils.versionCompare);
 
-          latest = sorted_version_labels[0];
-          latestDetails = versions[latest];
+            latest = sorted_version_labels[0];
+            latestDetails = versions[latest];
 
-          let catalogItem = {
-            name: item.name,
-            catalog: {
-              id: catalog.id,
-              label: catalog.label,
-            },
-            icon_url: item.icon_url? item.icon_url : '/assets/images/ix-original.png',
-            latest_version: latest,
-            info: latestDetails.app_readme,
-            schema: item.versions[latest].schema,
+            let catalogItem = {
+              name: item.name,
+              catalog: {
+                id: catalog.id,
+                label: catalog.label,
+              },
+              icon_url: item.icon_url? item.icon_url : '/assets/images/ix-original.png',
+              latest_version: latest,
+              info: latestDetails.app_readme,
+              schema: item.versions[latest].schema,
+            }
+            this.catalogApps.push(catalogItem);            
           }
-          
-          this.catalogApps.push(catalogItem);
         }
       });
       this.filerApps();
@@ -211,13 +212,12 @@ export class CatalogComponent implements OnInit {
 
   doInstall(name: string) {
     const catalogApp = this.catalogApps.find(app => app.name==name);
-    if (catalogApp && catalogApp.name != 'ix-chart') {
+    if (catalogApp) {
       const chartFormComponent = new ChartFormComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
       chartFormComponent.parseSchema(catalogApp);
       this.modalService.open('slide-in-form', chartFormComponent);
     } else {
       const chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
-      chartReleaseForm.parseSchema(catalogApp);
       this.modalService.open('slide-in-form', chartReleaseForm);
     }
   }
@@ -228,8 +228,6 @@ export class CatalogComponent implements OnInit {
     } else {
       this.filteredCatalogApps = this.catalogApps;
     }
-
-    this.filteredCatalogApps = this.filteredCatalogApps.filter(app => app.name !== 'ix-chart');
   }
   
 }
