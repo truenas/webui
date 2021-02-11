@@ -192,6 +192,20 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
         }
       ];
     });
+    this.dialogRef.componentInstance.aborted.subscribe((job) => {
+      this.dialogRef.close();
+      this.entityForm.success = false;
+      this.job.showLogs(job, T('Disk Import Aborted: Log Summary'), T('Close'));
+      this.custActions = [
+        {
+          id: 'view_import_log',
+          name: 'View Import Log',
+          function: () => {
+            this.job.showLogs(job, T('Logs'), T('Close'));
+          }
+        }
+      ];
+    });
     this.dialogRef.componentInstance.failure.subscribe((err) => {
       new EntityUtils().handleWSError(this.entityForm, err);
     });
