@@ -13,6 +13,7 @@ import { ThemeService } from '../../../../services/theme/theme.service';
 import { ModalService } from '../../../../services/modal.service';
 import { ConsolePanelModalDialog } from '../../dialog/consolepanel/consolepanel-dialog.component';
 import globalHelptext from '../../../../helptext/global-helptext';
+import { LocaleService } from 'app/services/locale.service';
 
 @Component({
   selector: 'app-admin-layout',
@@ -40,7 +41,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   public notificPanelClosed = false;
   menuName: string;
   subs:any[];
-  public copyrightYear = globalHelptext.copyright_year;
+  public copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
   // we will just have to add to this list as more languages are added
 
   @ViewChild(MatSidenav, { static: false}) private sideNave: MatSidenav;
@@ -60,7 +61,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     protected ws: WebSocketService,
     public language: LanguageService,
     public modalService: ModalService,
-    public dialog: MatDialog, private sysGeneralService: SystemGeneralService) {
+    public dialog: MatDialog, private sysGeneralService: SystemGeneralService,
+    private localeService: LocaleService) {
     // detect server type
     sysGeneralService.getProductType.subscribe((res)=>{
       this.product_type = res;

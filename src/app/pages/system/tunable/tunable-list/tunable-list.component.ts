@@ -23,7 +23,7 @@ export class TunableListComponent {
   protected route_add_tooltip = T("Add Tunable");
 
   protected route_edit_scale: string[] = ['system', 'sysctl', 'edit'];
-  protected route_success_scale: string[] = [ 'system', 'sysctl' ];
+  protected route_success_scale: string[] = [ 'system', 'advanced' ];
   protected route_add_scale: string[] = ["system", "sysctl", "add"];
   protected route_add_tooltip_scale = T("Add Sysctl");
 

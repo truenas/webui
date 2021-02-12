@@ -11,7 +11,7 @@
         ix-auto-type="input"
         ix-auto-identifier="Filter {{entity.conf.title}}">
       <span [ngClass]="{'hidden': !filterValue || filterValue.length == 0}" matSuffix style="opacity: 0.5; cursor: pointer; user-select: none;">
-        <mat-icon (click)="resetDatasetFilter()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+        <mat-icon (click)="resetDatasetFilter()" role="img" style="font-size: 150%;" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
       </span>
     </mat-form-field>
   </div>

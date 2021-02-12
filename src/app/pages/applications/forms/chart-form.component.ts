@@ -67,6 +67,11 @@ export class ChartFormComponent {
 
   parseSchemaFieldConfig(schemaConfig, parentName=null, parentIsList=false) {
     let results = [];
+
+    if (schemaConfig.schema.hidden) {
+      return results;
+    }
+
     let name = schemaConfig.variable;
     if (!parentIsList && parentName) {
       name = `${parentName}${FORM_KEY_SEPERATOR}${name}`;
@@ -125,16 +130,8 @@ export class ChartFormComponent {
 
     } else if (schemaConfig.schema.type == 'list') {
 
-      if (schemaConfig.schema.items.length > 0) {
-        const listLabel = {
-          label: schemaConfig.label,
-          type: 'label',
-        };
-        results = results.concat(listLabel);
-      }
-
       fieldConfig['type'] = 'list';
-      fieldConfig['box'] = true;
+      fieldConfig['label'] = `${helptext.configure} ${schemaConfig.label}`;
       fieldConfig['width'] = '100%';
       fieldConfig['listFields'] = [];
 
@@ -168,7 +165,7 @@ export class ChartFormComponent {
 
         if (schemaConfig.schema.show_if) {
           subResults.forEach(subResult => {
-            subResult['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);;
+            subResult['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);
           });
         }
         results = results.concat(subResults);
@@ -178,6 +175,11 @@ export class ChartFormComponent {
     if (fieldConfig) {
 
       if (fieldConfig['type']) {
+
+        if (schemaConfig.schema.show_if) {
+          fieldConfig['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);
+        }
+
         results.push(fieldConfig);
   
         if (schemaConfig.schema.subquestions) {
@@ -213,7 +215,7 @@ export class ChartFormComponent {
     this.title = title;
   }
   
-  parseSchema(catalogApp) {
+  parseSchema(catalogApp, isEdit=false) {
     try {
       this.catalogApp = catalogApp;
       this.title = this.catalogApp.name; 
@@ -228,7 +230,8 @@ export class ChartFormComponent {
               name: 'release_name',
               placeholder: helptext.chartForm.release_name.placeholder,
               tooltip: helptext.chartForm.release_name.tooltip,
-              required: true
+              required: true,
+              readonly: isEdit,
             }
           ],
           colspan: 2
@@ -264,7 +267,7 @@ export class ChartFormComponent {
       if (parentKey) {
         fullKey = `${parentKey}${FORM_KEY_SEPERATOR}${key}`;
       }
-      if (!Array.isArray(value) && typeof value === 'object') {
+      if (!Array.isArray(value) && (value != null && typeof value === 'object')) {
         this.parseConfigData(value, fullKey, result);
       } else {
         result[fullKey] = value;
@@ -282,11 +285,12 @@ export class ChartFormComponent {
       schema: data.chart_schema.schema,
     }
 
-    this.parseSchema(chartSchema);
+    this.parseSchema(chartSchema, true);
     this.name = data.name;
     const configData = {};
     this.parseConfigData(data.config, null, configData);
     configData['release_name'] = data.name;
+    configData['changed_schema'] = true;
     
     return configData;
   }

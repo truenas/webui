@@ -10,10 +10,21 @@ export const helptext_system_advanced = {
   fieldset_sed: T('Self-Encrypting Drive'),
   fieldset_kernel: T('Kernel'),
   fieldset_syslog: T('Syslog'),
+  fieldset_sysctl: T('Sysctl'),
 
   dialog_generate_debug_title: T("Generate Debug File"),
   dialog_generate_debug_message: T("This operation might take a long time. Proceed?"),
   dialog_button_ok: T('Proceed'),
+  
+  system_dataset_placeholder: T("Use System Dataset"),
+  system_dataset_tooltip: T('Store system logs on the system dataset. Unset to store system logs in <i>/var/</i> on the operating system device.'),
+  
+  variable: T('Variable'),
+  
+  deleteVariable: {
+    title: T('Variable'),
+    message: T('Delete'),
+  },
 
   debug_dialog: {
     failure_msg: T("Failed to generate debug file."),
@@ -151,5 +162,5 @@ export const helptext_system_advanced = {
     placeholder: T("Syslog TLS Certificate"),
     tooltip: T('The preconfigured system <i>Certificate</i> to use for authenticating\
  the TLS protocol connection to the remote system log server.'),
-  }
+  },
 };

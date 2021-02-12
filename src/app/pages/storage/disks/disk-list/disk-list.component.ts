@@ -19,6 +19,7 @@ export class DiskListComponent {
 	public title = T("Disks");
 	protected queryCall = "disk.query";
 	protected queryCallOption = [[], {"extra":{"pools": true}}];
+	noAdd = true;
 
 	public columns: Array<any> = [
 		{ name: T('Name'), prop: 'name', always_display: true },

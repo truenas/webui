@@ -358,7 +358,7 @@ entity-form-list .list-action-block-wrapper .form-element select{
 
 .form-list .list-action-inline {
   display: flex;
-  align-items: center;
+  align-items: start;
   justify-content: center;
 }
 

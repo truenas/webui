@@ -90,13 +90,8 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     this.notificPanel.close();
   }
 
-  goToAlertSettings() {
+  navigateTo(link: string[]) {
     this.notificPanel.close();
-    this.router.navigate(['/system', 'alertsettings']);
-  }
-
-  goToAlertServices() {
-    this.notificPanel.close();
-    this.router.navigate(['/system', 'alertservice']);
+    this.router.navigate(link);
   }
 }

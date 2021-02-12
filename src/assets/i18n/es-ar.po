@@ -2780,6 +2780,9 @@ msgstr "Cubo"
 msgid "Bug"
 msgstr "Error"
 
+msgid "Bulk actions"
+msgstr ""
+
 msgid "Burst"
 msgstr "Estallar"
 
@@ -4505,6 +4508,9 @@ msgstr ""
 msgid "Dashboard"
 msgstr "Tablero"
 
+msgid "Dashboard is Empty!"
+msgstr ""
+
 msgid "Data"
 msgstr "Datos"
 
@@ -5709,13 +5715,8 @@ msgstr "Habilitar (requiere contraseña o principal Kerberos)"
 msgid "Enable ACL"
 msgstr "Habilitar ACL"
 
-msgid ""
-"Enable ACL support for the SMB share. Disabling ACL  support for a share "
-"deletes that ACL."
+msgid "Enable ACL support for the SMB share."
 msgstr ""
-"Habilite la compatibilidad con ACL para el recurso compartido SMB. "
-"Deshabilitar la compatibilidad con ACL para un recurso compartido elimina "
-"esa ACL."
 
 msgid "Enable Active Directory"
 msgstr "Habilitar directorio activo"
@@ -7448,6 +7449,9 @@ msgstr "Fallido"
 
 msgid "Failed sending test alert!"
 msgstr "¡Error al enviar alerta de prueba!"
+
+msgid "Failed to do bulk actions"
+msgstr ""
 
 msgid "Failed to generate debug file."
 msgstr "Fallo al generar el archivo de depuración."
@@ -15170,6 +15174,9 @@ msgstr "¿Iniciar el scrub ahora?"
 msgid "Start time for the replication task."
 msgstr "Hora de inicio de la tarea de replicación."
 
+msgid "Started bulk actions"
+msgstr ""
+
 msgid "Starting Jail"
 msgstr "Iniciando Jaula"
 
@@ -18405,6 +18412,11 @@ msgstr "Si, entiendo los riesgos"
 
 msgid "Yes, decrypt the disks"
 msgstr "Sí, descifrar los discos"
+
+msgid ""
+"You have hidden all of your available widgets. Use the dashboard "
+"configuration form to add widgets."
+msgstr ""
 
 msgid "You have left the domain."
 msgstr "Has dejado el dominio."

@@ -181,6 +181,24 @@ export class ChartReleasesComponent implements OnInit {
       
       if (app && evt && evt.fields) {
         app.status = evt.fields.status;
+        app.version = evt.fields.chart_metadata.version;
+        app.count = `${evt.fields.pod_status.available}/${evt.fields.pod_status.desired}`;
+        app.desired = evt.fields.pod_status.desired;
+        app.catalog = evt.fields.catalog;
+        app.update = evt.fields.update_available;
+        app.latest_version = evt.fields.chart_metadata.latest_chart_version;
+        app.repository = evt.fields.config.image.repository;
+        app.tag = evt.fields.config.image.tag;
+        app.portal = evt.fields.portals && evt.fields.portals.web_portal ? evt.fields.portals.web_portal[0] : '';
+        app.history = !(_.isEmpty(evt.fields.history));
+
+        let ports = [];
+        if (evt.fields.used_ports) {
+          evt.fields.used_ports.forEach(item => {
+            ports.push(`${item.port}\\${item.protocol}`)
+          })
+          app['used_ports'] = ports.join(', ');
+        }
       }
     });
   }
