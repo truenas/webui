@@ -130,10 +130,10 @@ def the_user_edit_page_should_open(driver):
 @then('In the SSH public Key field, paste a public key and save the change')
 def in_the_ssh_public_key_field_paste_a_public_key_and_save_the_change(driver, ssh_key):
     """In the SSH public Key field, paste a public key and save the change."""
-    assert wait_on_element(driver, 0.5, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea')
+    assert wait_on_element(driver, 1, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea')
     driver.find_element_by_xpath('//div[@ix-auto="textarea__SSH Public Key"]/div/textarea').clear()
     driver.find_element_by_xpath('//div[@ix-auto="textarea__SSH Public Key"]/div/textarea').send_keys(ssh_key)
-    assert wait_on_element(driver, 0.5, 5, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 1, 5, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
@@ -142,15 +142,15 @@ def change_should_be_saved(driver):
     """Change should be saved."""
     assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 0.5, 10, '//td[contains(.,"ericbsd")]')
+    assert wait_on_element(driver, 1, 10, '//td[contains(.,"ericbsd")]')
 
 
 @then('Reopen the user edit page and ensure that the key was saved')
 def reopen_the_user_edit_page_and_ensure_that_the_key_was_saved(driver):
     """Reopen the user edit page and ensure that the key was saved."""
-    assert wait_on_element(driver, 0.5, 7, '//tr[@ix-auto="expander__ericbsd"]/td')
+    assert wait_on_element(driver, 1, 7, '//tr[@ix-auto="expander__ericbsd"]/td')
     driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
-    assert wait_on_element(driver, 0.5, 5, '//button[@ix-auto="button__EDIT_ericbsd"]')
+    assert wait_on_element(driver, 1, 5, '//button[@ix-auto="button__EDIT_ericbsd"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
     assert wait_on_element(driver, 1, 5, '//h3[contains(.,"Edit User")]')
     assert wait_on_element(driver, 1, 5, '//h4[contains(.,"Identification")]')
@@ -159,11 +159,11 @@ def reopen_the_user_edit_page_and_ensure_that_the_key_was_saved(driver):
 @then('Public key should be on the user page')
 def public_key_should_be_on_user_page(driver, ssh_key):
     """Public key should be on the user page."""
-    assert wait_on_element(driver, 0.5, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea')
+    assert wait_on_element(driver, 1, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea')
     assert attribute_value_exist(driver, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'value', ssh_key)
     driver.find_element_by_xpath('//mat-icon[contains(.,"cancel")]').click()
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 0.5, 10, '//td[contains(.,"ericbsd")]')
+    assert wait_on_element(driver, 1, 10, '//td[contains(.,"ericbsd")]')
 
 
 @then('Try to ssh in with your sshkey')
