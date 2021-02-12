@@ -20,6 +20,7 @@ import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/e
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { BulkOptionsComponent } from '../forms/bulk-options.component';
 import { Router } from '@angular/router';
+import { ChartEventsDialog } from '../dialogs/chart-events/chart-events-dialog.component';
 
 @Component({
   selector: 'app-charts',
@@ -491,5 +492,17 @@ export class ChartReleasesComponent implements OnInit {
       });
       entityDialog.formGroup.controls['containers'].setValue(containers[0]);
     })
+  }
+
+  showChartEvents(name: string) {
+    const catalogApp = this.chartItems[name];
+    if (catalogApp) {
+      let dialogRef = this.mdDialog.open(ChartEventsDialog, {
+        width: '686px',
+        maxWidth: '686px',
+        data: catalogApp,
+        disableClose: false,
+      });
+    }
   }
 }

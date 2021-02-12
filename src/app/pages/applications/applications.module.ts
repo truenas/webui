@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
@@ -22,10 +21,12 @@ import { BulkOptionsComponent } from './forms/bulk-options.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PodShellComponent } from './pod-shell/pod-shell.component';
 import { ChartFormComponent } from './forms/chart-form.component';
+import { ChartEventsDialog } from './dialogs/chart-events/chart-events-dialog.component';
+import { AppCommonModule } from '../../components/common/app-common.module';
 
 @NgModule({
   imports: [
-    CommonModule,
+    AppCommonModule,
     ApplicationsRoutingModule,
     MaterialModule,
     FlexLayoutModule,
@@ -34,7 +35,7 @@ import { ChartFormComponent } from './forms/chart-form.component';
     EntityModule,
     CoreComponents,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   exports: [
   ],
@@ -47,8 +48,9 @@ import { ChartFormComponent } from './forms/chart-form.component';
     ChartReleaseAddComponent,
     ChartReleaseEditComponent,
     BulkOptionsComponent,
-	ChartFormComponent,
-    PodShellComponent
+    ChartFormComponent,
+    PodShellComponent,
+    ChartEventsDialog,
   ]
 })
 export class ApplicationsModule { }

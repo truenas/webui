@@ -432,5 +432,9 @@ export default {
     chooseCommand: {
       placeholder: T('Commands'),
     }
-  }
+  },
+
+  actionBtnText: {
+    close: T('Close')
+  },
 }

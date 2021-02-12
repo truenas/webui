@@ -5,7 +5,7 @@
           <div class="logo" style="background-image: url('{{ item.icon }}');"></div>
         </div>
         <div class=content-box>
-          <div class="content">
+          <div class="content" (click)="showChartEvents(item.name)">
             <strong class="chart-name">{{ item.name }}</strong><span class="version"> {{ item.version}}</span>
          
             <div *ngIf="item.update; else elseBlock">

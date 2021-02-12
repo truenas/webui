@@ -1,0 +1,60 @@
+<div mat-dialog-content fxLayout="column wrap" fxLayoutAlign="center start" >
+    <div class="logo-container" fxLayout="row" fxLayoutAlign="center center">
+        <div class="logo" style="background-image: url('{{ catalogApp.icon }}');"></div>
+        <div>
+            <strong class="chart-name">{{ catalogApp.name }}</strong><span class="version"> {{ catalogApp.version}}</span>
+        </div>
+    </div>
+    <div class="ports">
+        <span>Used Ports:</span><span class="value">{{ catalogApp.used_ports }}</span>
+    </div>
+    <div class="resource" fxLayout="row" fxLayoutAlign="space-between center">
+        <div>
+            <span>Status:</span><span class="value">{{ catalogApp.status }}</span>
+        </div>
+        <div>
+            <span>Pods:</span><span class="value">{{ pods.length}}</span>
+        </div>
+        <div>
+            <span>Deployments:</span><span class="value">{{ deployments.length }}</span>
+        </div>
+        <div>
+            <span>Statefulsets:</span><span class="value">{{ statefulsets.length }}</span>
+        </div>
+    </div>
+    <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+                Container Images
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="expansion-content">
+            <div *ngFor="let containerImage of containerImages; let i = index" class="detail-row" [ngClass]="{'row-dark': i%2==0}">
+                <div>{{ containerImage }}</div>
+            </div>
+          </div>
+        </mat-expansion-panel>
+        
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    Application Events
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="expansion-content">
+                <div fxLayout="row" fxLayoutAlign="start start" *ngFor="let event of chartEvents; let i = index" class="detail-row" [ngClass]="{'row-dark': i%2==0}">
+                    <div class="event-time">{{ event.first_timestamp?.$date | date: 'yyyy-MM-dd H:mm:ss' }}</div>
+                    <div class="event-message">{{ event.message }}</div>
+                </div>
+            </div>
+        </mat-expansion-panel>
+    </mat-accordion>
+</div>
+
+<div class="button-bar" mat-dialog-actions align="end">
+    <button mat-button class="mat-button mat-secondary" (click)="dialogRef.close(false)"
+        ix-auto ix-auto-type="button" ix-auto-identifier="CLOSE">
+            {{ helptext.actionBtnText.close  }}
+    </button>
+</div>
