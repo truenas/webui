@@ -97,7 +97,7 @@ export class EmailComponent implements OnDestroy {
         {
           type: 'radio',
           name: 'send_mail_method',
-          onChangeRadio: data => {
+          onChange: data => {
             this.sendMailMethod.setValue(data.event.value);
           },
           placeholder: helptext_system_email.send_mail_method.placeholder,
@@ -142,7 +142,7 @@ export class EmailComponent implements OnDestroy {
         {
           type: 'checkbox',
           name: 'smtp',
-          onChangeCheckbox: (data: any) => {
+          onChange: (data: any) => {
             this.smtp.setValue(data.event.checked);
           },
           placeholder: helptext_system_email.auth.smtp.placeholder,

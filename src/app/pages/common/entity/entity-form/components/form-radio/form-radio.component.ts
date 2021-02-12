@@ -30,8 +30,8 @@ export class FormRadioComponent implements Field {
   }
 
   onChangeRadio($event) {
-    if (this.config.onChangeRadio !== undefined && this.config.onChangeRadio != null) {
-      this.config.onChangeRadio({ event: $event });
+    if (this.config.onChange !== undefined && this.config.onChange != null) {
+      this.config.onChange({ event: $event });
     }
   }
 }

@@ -12,7 +12,7 @@ export interface InputUnitConfig {
 }
 
 export interface FieldConfig {
-  onChangeCheckbox?(data: any), onChangeRadio?(data: any), alert?: { message: string, forValues: any[] }, searchable?: boolean, disabled?: boolean, label?: string, inlineLabel?: string, name: string, options?: any[],
+  onChange?(data: any), alert?: { message: string, forValues: any[] }, searchable?: boolean, disabled?: boolean, label?: string, inlineLabel?: string, name: string, options?: any[],
   errors?: string, hasErrors?: boolean, placeholder?: string, type: string,
   inputType?: string, inputUnit?: InputUnitConfig, validation?: any[] | ValidatorFn | ValidatorFn[],
   asyncValidation?: AsyncValidatorFn | AsyncValidatorFn[],
