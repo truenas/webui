@@ -182,7 +182,7 @@ def the_miscellaneous_page_should_open(driver):
 @then('click Failover, check disable failover, click save and confirm changes')
 def click_Failover_check_disable_failover_click_save_and_confirm_changes(driver):
     """click Failover, check disable failover, click save and confirm changes."""
-    assert wait_on_element(driver, 0.5, 7, '//li[contains(.,"Failover")]')
+    assert wait_on_element(driver, 1, 7, '//li[contains(.,"Failover")]')
     driver.find_element_by_xpath('//li[contains(.,"Failover")]').click()
     assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Failover")]')
     element = driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]')
@@ -192,9 +192,9 @@ def click_Failover_check_disable_failover_click_save_and_confirm_changes(driver)
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
         assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SAVE"]')
         driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-        # assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Disable Failover")]')
-        # driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
-        # driver.find_element_by_xpath('//button[@ix-auto="button__OK"]').click()
+        assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Disable Failover")]')
+        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
+        driver.find_element_by_xpath('//button[@ix-auto="button__OK"]').click()
     else:
         assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SAVE"]')
         driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
