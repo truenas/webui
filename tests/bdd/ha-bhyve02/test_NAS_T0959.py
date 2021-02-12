@@ -161,6 +161,7 @@ def public_key_should_be_on_user_page(driver, ssh_key):
     """Public key should be on the user page."""
     assert wait_on_element(driver, 1, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea')
     assert attribute_value_exist(driver, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'value', ssh_key)
+    assert wait_on_element(driver, 1, 5, '//mat-icon[contains(.,"cancel")]')
     driver.find_element_by_xpath('//mat-icon[contains(.,"cancel")]').click()
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 1, 10, '//td[contains(.,"ericbsd")]')
