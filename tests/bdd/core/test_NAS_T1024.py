@@ -165,7 +165,6 @@ def find_the_iscsi_device_and_format_the_device(driver, nas_ip):
         for num in list(range(15)):
             cmd = f'iscsictl -L | grep {nas_ip}:3260'
             iscsictl_results = ssh_cmd(cmd, 'root', passwd, hst)
-            print(iscsictl_results)
             assert iscsictl_results['result'], str(iscsictl_results)
             iscsictl_list = iscsictl_results['output'].strip().split()
             if iscsictl_list[2] == "Connected:":
