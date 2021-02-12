@@ -7,7 +7,7 @@ div.entity-dialog-form-message {
 }
 
 .entity-dialog-form-content {
-    overflow-y: scroll !important;
+    overflow-y: auto !important;
 }
 .entity-dialog-form-title, .entity-dialog-form-message {
     overflow-wrap: break-word;
