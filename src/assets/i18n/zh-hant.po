@@ -25,6 +25,9 @@ msgstr ""
 msgid " KiB."
 msgstr " KiB"
 
+msgid " Please click the button below to add "
+msgstr ""
+
 msgid " Plugin"
 msgstr " 附加元件"
 
@@ -76,6 +79,9 @@ msgid " disks"
 msgstr " 磁碟"
 
 msgid " disks, new vdev has "
+msgstr ""
+
+msgid " from the database."
 msgstr ""
 
 msgid " is "
@@ -140,6 +146,9 @@ msgstr " 的更新已完成"
 msgid " updated."
 msgstr " 已更新。"
 
+msgid " yet."
+msgstr ""
+
 msgid "% of all cores"
 msgstr "% 於所有核心"
 
@@ -176,6 +185,9 @@ msgstr ""
 
 msgid ", new vdev is "
 msgstr ", 新的 vdev 為"
+
+msgid "."
+msgstr ""
 
 msgid ". At least one is required."
 msgstr ""
@@ -881,6 +893,9 @@ msgid "Adapter Type:"
 msgstr "介面卡類型："
 
 msgid "Add"
+msgstr ""
+
+msgid "Add "
 msgstr ""
 
 msgid "Add ACL Item"
@@ -3429,6 +3444,9 @@ msgid ""
 msgstr ""
 
 msgid "Creating"
+msgstr ""
+
+msgid "Creating Certificate"
 msgstr ""
 
 msgid "Creating Jail"
@@ -6426,6 +6444,9 @@ msgstr "來賓帳號"
 msgid "Guest Operating System"
 msgstr "Guest 作業系統"
 
+msgid "Guide"
+msgstr ""
+
 msgid "HA Disabled"
 msgstr "HA 已停用"
 
@@ -7269,6 +7290,9 @@ msgstr ""
 msgid ""
 "It is not recommended to extend a pool with one or more vdevs containing "
 "different numbers of disks. Continue?"
+msgstr ""
+
+msgid "It seems you haven't setup any "
 msgstr ""
 
 msgid "Item"
@@ -8533,6 +8557,9 @@ msgstr "要附加的網路介面卡："
 msgid "No"
 msgstr "否"
 
+msgid "No "
+msgstr ""
+
 msgid "No Applications Installed"
 msgstr ""
 
@@ -8558,6 +8585,9 @@ msgid "No Repositories"
 msgstr ""
 
 msgid "No Safety Check (CAUTION)"
+msgstr ""
+
+msgid "No Search Results."
 msgstr ""
 
 msgid "No Stat"
@@ -8593,6 +8623,9 @@ msgid "No repositories is found."
 msgstr ""
 
 msgid "No snapshots sent yet"
+msgstr ""
+
+msgid "No sysctls configured"
 msgstr ""
 
 msgid "No update found."
@@ -12183,6 +12216,9 @@ msgid ""
 "intervals."
 msgstr ""
 
+msgid "Something went wrong"
+msgstr ""
+
 msgid "Sort languages by:"
 msgstr ""
 
@@ -12993,7 +13029,7 @@ msgid ""
 "be changed if the organization requires a different algorithm."
 msgstr ""
 
-msgid "The current pool layout is not recommended.Override the following errors?"
+msgid "The current pool layout is not recommended. Override the following errors?"
 msgstr ""
 
 msgid ""
@@ -13257,6 +13293,9 @@ msgid ""
 "process,  failover to the standby controller."
 msgstr ""
 
+msgid "The system could not retrieve any "
+msgstr ""
+
 msgid ""
 "The system dataset will be updated and the SMB service restarted. This will "
 "cause a temporary disruption of any active SMB connections."
@@ -13265,6 +13304,9 @@ msgstr ""
 msgid ""
 "The system restricts creating a zvol that brings the pool to over 80% "
 "capacity. Set to force creation of the zvol (<b>NOT Recommended</b>)."
+msgstr ""
+
+msgid "The system returned the following error - "
 msgstr ""
 
 msgid ""
@@ -13645,6 +13687,9 @@ msgstr ""
 msgid ""
 "To activate this periodic snapshot schedule, set  this option. To disable "
 "this task without deleting it, unset this  option."
+msgstr ""
+
+msgid "To configure sysctls, click the \"Add\" button."
 msgstr ""
 
 msgid ""
@@ -14234,6 +14279,9 @@ msgid "Use Signature Version 2"
 msgstr ""
 
 msgid "Use Syslog Only"
+msgstr ""
+
+msgid "Use System Dataset"
 msgstr ""
 
 msgid "Use all disk space"
@@ -14929,6 +14977,9 @@ msgid "You have left the domain."
 msgstr ""
 
 msgid "You have successfully added credentials."
+msgstr ""
+
+msgid "Your query didn't return any results. Please try again."
 msgstr ""
 
 msgid "ZFS"

@@ -25,6 +25,9 @@ msgstr " Le premier vdev est un "
 msgid " KiB."
 msgstr " KiB."
 
+msgid " Please click the button below to add "
+msgstr ""
+
 msgid " Plugin"
 msgstr " Plugin"
 
@@ -86,6 +89,9 @@ msgstr " disques"
 
 msgid " disks, new vdev has "
 msgstr " disques, le nouveau vdev a "
+
+msgid " from the database."
+msgstr ""
 
 msgid " is "
 msgstr " est "
@@ -154,6 +160,9 @@ msgstr " mise à jour réussie"
 msgid " updated."
 msgstr " à jour."
 
+msgid " yet."
+msgstr ""
+
 msgid "% of all cores"
 msgstr "% de tous les cores"
 
@@ -194,6 +203,9 @@ msgstr "(en haut à droite), puis"
 
 msgid ", new vdev is "
 msgstr ", le nouveau vdev est "
+
+msgid "."
+msgstr ""
 
 msgid ". At least one is required."
 msgstr ". Au moins un est requis."
@@ -1183,6 +1195,9 @@ msgstr "Type d'adaptateur:"
 
 msgid "Add"
 msgstr "Ajouter"
+
+msgid "Add "
+msgstr ""
 
 msgid "Add ACL Item"
 msgstr "Ajouter un élément ACL"
@@ -4352,6 +4367,9 @@ msgstr ""
 
 msgid "Creating"
 msgstr "Création de"
+
+msgid "Creating Certificate"
+msgstr ""
 
 msgid "Creating Jail"
 msgstr "Création d'un jail"
@@ -8042,6 +8060,9 @@ msgstr "Compte invité"
 msgid "Guest Operating System"
 msgstr "Système d'exploitation invité"
 
+msgid "Guide"
+msgstr ""
+
 msgid "HA Disabled"
 msgstr "HA désactivé"
 
@@ -9046,6 +9067,9 @@ msgid ""
 msgstr ""
 "Il n'est pas recommandé d'étendre un volume  avec un ou plusieurs vdevs "
 "contenant différents nombres de disques. Continuer ?"
+
+msgid "It seems you haven't setup any "
+msgstr ""
 
 msgid "Item"
 msgstr ""
@@ -10502,6 +10526,9 @@ msgstr "Nic à attacher :"
 msgid "No"
 msgstr "Non"
 
+msgid "No "
+msgstr ""
+
 msgid "No Applications Installed"
 msgstr ""
 
@@ -10528,6 +10555,9 @@ msgstr "Pas de repositories"
 
 msgid "No Safety Check (CAUTION)"
 msgstr "Pas de contrôle de sécurité (ATTENTION)"
+
+msgid "No Search Results."
+msgstr ""
 
 msgid "No Stat"
 msgstr "Aucune stat"
@@ -10567,6 +10597,9 @@ msgstr "Aucun repositories n'a été trouvé."
 
 msgid "No snapshots sent yet"
 msgstr "Pas encore d'instantanés envoyés"
+
+msgid "No sysctls configured"
+msgstr ""
 
 msgid "No update found."
 msgstr "Aucune mise à jour trouvée."
@@ -15021,6 +15054,9 @@ msgid ""
 "intervals."
 msgstr ""
 
+msgid "Something went wrong"
+msgstr ""
+
 msgid "Sort languages by:"
 msgstr "Trier les langues par :"
 
@@ -15954,8 +15990,8 @@ msgstr ""
 "L'algorithme cryptographique à utiliser. Le <i>SHA256</i> par défaut ne "
 "doit être modifié que si l'organisation a besoin d'un algorithme différent."
 
-msgid "The current pool layout is not recommended.Override the following errors?"
-msgstr "La configuration actuelle du volume n'est pas recommandée ?"
+msgid "The current pool layout is not recommended. Override the following errors?"
+msgstr ""
 
 msgid ""
 "The default host to use for TFTP transfers. Enter an IP address. Example: "
@@ -16320,6 +16356,9 @@ msgstr ""
 "terminer le processus de mise à jour, basculez (failover) sur le contrôleur "
 "de secours."
 
+msgid "The system could not retrieve any "
+msgstr ""
+
 msgid ""
 "The system dataset will be updated and the SMB service restarted. This will "
 "cause a temporary disruption of any active SMB connections."
@@ -16333,6 +16372,9 @@ msgid ""
 msgstr ""
 "Le système limite la création d'un zvol qui porte la capacité du volume à "
 "plus de 80%. Réglé pour forcer la création du zvol<b> (NON recommandé</b>)."
+
+msgid "The system returned the following error - "
+msgstr ""
 
 msgid ""
 "The system uses a self-signed certificate  to enable encrypted web "
@@ -16823,6 +16865,9 @@ msgstr ""
 "Pour activer ce programme d'instantanés périodiques, choisissez cette "
 "option. Pour désactiver cette tâche sans la supprimer, désactivez cette "
 "option."
+
+msgid "To configure sysctls, click the \"Add\" button."
+msgstr ""
 
 msgid ""
 "To define a custom shortcut for the <i>Path</i>,  enter a memorable name. "
@@ -17517,6 +17562,9 @@ msgstr "Utiliser Signature Version 2"
 
 msgid "Use Syslog Only"
 msgstr "Utiliser uniquement Syslog"
+
+msgid "Use System Dataset"
+msgstr ""
 
 msgid "Use all disk space"
 msgstr "Utiliser tout l'espace disque"
@@ -18368,6 +18416,9 @@ msgid "You have left the domain."
 msgstr "Vous avez quitté le domaine."
 
 msgid "You have successfully added credentials."
+msgstr ""
+
+msgid "Your query didn't return any results. Please try again."
 msgstr ""
 
 msgid "ZFS"
