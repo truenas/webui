@@ -22,7 +22,6 @@ export class TunableFormComponent {
             
   protected route_success: string[] = ['system', 'advanced'];
   protected isEntity: boolean = true;
-  protected showFirstTimeWarning = false;
 
   protected product_type: any;
   protected type_fc: any;
@@ -105,9 +104,6 @@ export class TunableFormComponent {
 
   afterInit(entityForm: any) {
     entityForm.formGroup.controls['enabled'].setValue(true);
-    if (this.showFirstTimeWarning) {
-      entityForm.dialog.Info(T('Warning'), T('Changing Advanced settings can be dangerous when done incorrectly. Please use caution before saving.'));
-    }
   }
   
   afterSubmit(value) {

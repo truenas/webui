@@ -211,9 +211,6 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
         addComponent = id
           ? this.tunableFormComponent
           : new TunableFormComponent(this.router, this.route, this.ws, this.injector, this.appRef, this.sysGeneralService)
-        if (!id) {
-          addComponent.showFirstTimeWarning = this.isFirstTime
-        }
         break
       case 'kernel':
         addComponent = this.kernelFormComponent
@@ -222,10 +219,19 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
         addComponent = this.syslogFormComponent
         break
       default:
+        break
     }
-    this.sysGeneralService.sendConfigData(this.configData)
-    this.modalService.open('slide-in-form', addComponent, id)
-    this.isFirstTime = false
+    
+    if (this.isFirstTime) {
+      this.dialog.Info(T('Warning'), T('Changing Advanced settings can be dangerous when done incorrectly. Please use caution before saving.')).subscribe(() => {
+        this.sysGeneralService.sendConfigData(this.configData)
+        this.modalService.open('slide-in-form', addComponent, id)
+        this.isFirstTime = false
+      });
+    } else {
+      this.sysGeneralService.sendConfigData(this.configData)
+      this.modalService.open('slide-in-form', addComponent, id)
+    }
   }
 
   doSysctlEdit(variable: any) {
