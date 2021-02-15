@@ -6,7 +6,7 @@
         </div>
     </div>
     <div class="ports">
-        <span>Used Ports:</span><span class="value">{{ catalogApp.used_ports }}</span>
+        <span>Used Ports:</span><span class="value" textLimiter threshold="70">{{ catalogApp.used_ports }}</span>
     </div>
     <div class="resource" fxLayout="row" fxLayoutAlign="space-between center">
         <div>
@@ -20,6 +20,17 @@
         </div>
         <div>
             <span>Statefulsets:</span><span class="value">{{ statefulsets.length }}</span>
+        </div>
+    </div>
+    <div class="resource" fxLayout="row" fxLayoutAlign="space-between center">
+        <div>
+            <span>Catalog:</span><span class="value" textLimiter threshold="14">{{ catalogApp.catalog }}</span>
+        </div>
+        <div>
+            <span>Catalog Train:</span><span class="value" textLimiter threshold="14">{{ catalogApp.catalog_train }}</span>
+        </div>
+        <div>
+            <span>Chart Metadata Name:</span><span class="value" textLimiter threshold="14">{{ catalogApp.chart_name }}</span>
         </div>
     </div>
     <mat-accordion>
@@ -43,10 +54,17 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <div class="expansion-content">
-                <div fxLayout="row" fxLayoutAlign="start start" *ngFor="let event of chartEvents; let i = index" class="detail-row" [ngClass]="{'row-dark': i%2==0}">
-                    <div class="event-time">{{ event.first_timestamp?.$date | date: 'yyyy-MM-dd H:mm:ss' }}</div>
-                    <div class="event-message">{{ event.message }}</div>
-                </div>
+                <div *ngIf="chartEvents.length > 0;else no_event">
+                    <div fxLayout="row" fxLayoutAlign="start start" *ngFor="let event of chartEvents; let i = index" class="detail-row" [ngClass]="{'row-dark': i%2==0}">
+                        <div class="event-time">{{ event.first_timestamp?.$date | date: 'yyyy-MM-dd H:mm:ss' }}</div>
+                        <div class="event-message">{{ event.message }}</div>
+                    </div>
+                </div>                
+                <ng-template #no_event>
+                    <div fxLayout="row" fxLayoutAlign="start start" class="detail-row row-dark">
+                        No Recent Events
+                    </div>                    
+                </ng-template>
             </div>
         </mat-expansion-panel>
     </mat-accordion>

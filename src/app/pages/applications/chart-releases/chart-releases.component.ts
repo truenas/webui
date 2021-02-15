@@ -214,6 +214,7 @@ export class ChartReleasesComponent implements OnInit {
                 let chartObj = {
                   name: chart.name,
                   catalog: chart.catalog,
+                  catalog_train: chart.catalog_train,
                   status: chart.status,
                   version: chart.chart_metadata.version,
                   latest_version: chart.chart_metadata.latest_chart_version,

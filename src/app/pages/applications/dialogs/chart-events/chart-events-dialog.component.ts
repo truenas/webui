@@ -7,7 +7,7 @@ import { LocaleService } from 'app/services/locale.service';
 
 @Component({
   selector: 'chart-events-dialog',
-  styleUrls: ['./chart-events-dialog.component.css'],
+  styleUrls: ['./chart-events-dialog.component.scss'],
   templateUrl: './chart-events-dialog.component.html',
   encapsulation: ViewEncapsulation.None,
 })
