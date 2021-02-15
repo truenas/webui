@@ -623,8 +623,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.dataSource = new MatTableDataSource(this.currentRows);
-    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+
+    //On first load, paginator is not rendered because table is empty, so we force render here so that we can get valid paginator instance
+    setTimeout(() => {
+      this.dataSource.paginator = this.paginator;
+    }, 0);
 
     return res;
 
