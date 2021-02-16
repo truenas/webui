@@ -148,4 +148,9 @@ export class LocaleService {
         return dateStr;
     }
 
+    getCopyrightYearFromBuildTime(): string {
+        const buildTime = localStorage.getItem('buildtime').trim();
+        const buildTimeInMillis = parseInt(buildTime) * 1000;
+        return new Date(buildTimeInMillis).getFullYear().toString();
+    }
 }
