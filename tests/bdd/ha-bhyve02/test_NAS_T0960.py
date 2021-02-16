@@ -133,7 +133,7 @@ def in_the_ssh_public_key_field_paste_a_public_key_and_save_the_change(driver, s
     assert wait_on_element(driver, 1, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea')
     driver.find_element_by_xpath('//div[@ix-auto="textarea__SSH Public Key"]/div/textarea').clear()
     driver.find_element_by_xpath('//div[@ix-auto="textarea__SSH Public Key"]/div/textarea').send_keys(ssh_key)
-    assert wait_on_element(driver, 1, 5, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 2, 5, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
@@ -141,6 +141,7 @@ def in_the_ssh_public_key_field_paste_a_public_key_and_save_the_change(driver, s
 def change_should_be_saved(driver):
     """Change should be saved."""
     assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
+    assert not wait_on_element(driver, 1, 7, '//h3[contains(.,"Edit User")]')
     assert wait_on_element(driver, 1, 7, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 1, 10, '//td[contains(.,"root")]')
 
