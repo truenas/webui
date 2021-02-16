@@ -1,4 +1,3 @@
-import { ModalService } from './../../../../services/modal.service';
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_system_tunable as helptext } from 'app/helptext/system/tunable';
@@ -6,9 +5,10 @@ import { SystemGeneralService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
+import { T } from 'app/translate-marker';
 
 @Component({
-  selector: 'system-tunable-edit',
+  selector: 'app-system-tunable-edit',
   template: `<entity-form [conf]="this"></entity-form>`
 })
 export class TunableFormComponent {

@@ -52,6 +52,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   getDatasetConfig: Subscription
   syslog: boolean
   entityForm: any
+  isFirstTime = true
 
   // Components included in this dashboard
   protected tunableFormComponent = new TunableFormComponent(this.router, this.route, this.ws, this.injector, this.appRef, this.sysGeneralService)
@@ -252,14 +253,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
       case 'sysctl':
         addComponent = id
           ? this.tunableFormComponent
-          : new TunableFormComponent(
-              this.router,
-              this.route,
-              this.ws,
-              this.injector,
-              this.appRef,
-              this.sysGeneralService
-            )
+          : new TunableFormComponent(this.router, this.route, this.ws, this.injector, this.appRef, this.sysGeneralService)
         break
       case 'kernel':
         addComponent = this.kernelFormComponent
@@ -268,9 +262,19 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
         addComponent = this.syslogFormComponent
         break
       default:
+        break
     }
-    this.sysGeneralService.sendConfigData(this.configData)
-    this.modalService.open('slide-in-form', addComponent, id)
+    
+    if (this.isFirstTime) {
+      this.dialog.Info(T('Warning'), T('Changing Advanced settings can be dangerous when done incorrectly. Please use caution before saving.')).subscribe(() => {
+        this.sysGeneralService.sendConfigData(this.configData)
+        this.modalService.open('slide-in-form', addComponent, id)
+        this.isFirstTime = false
+      });
+    } else {
+      this.sysGeneralService.sendConfigData(this.configData)
+      this.modalService.open('slide-in-form', addComponent, id)
+    }
   }
 
   doSysctlEdit(variable: any) {
@@ -284,7 +288,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
         if (res) {
           this.loader.open()
           this.ws.call('tunable.delete', [variable.id]).subscribe(
-            (res) => {
+            () => {
               this.loader.close()
               this.getSysctlData()
             },
