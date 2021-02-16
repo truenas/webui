@@ -40,4 +40,8 @@ export class JailService {
   getDefaultConfiguration() {
     return this.ws.call('jail.default_configuration');
   }
+
+  getVnetDefaultInterfaceChoices() {
+    return this.ws.call('jail.vnet_default_interface_choices');
+  }
 }
