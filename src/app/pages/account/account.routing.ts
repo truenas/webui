@@ -10,7 +10,6 @@ import { UserFormComponent } from './users/user-form/';
 import { ChangePasswordComponent } from "./users/change-password/change-password.component";
 import { TwoFactorComponent } from '../system/two-factor/two-factor.component';
 import { DirectoryservicesComponent } from '../directoryservice/directoryservices/directoryservices.component';
-import { CredentialsComponent } from './../credentials/credentials.component';
 import { BackupCredentialsComponent } from '../credentials/backup-credentials/backup-credentials.component';
 
 import { T } from '../../translate-marker';
@@ -76,12 +75,6 @@ export const routes: Routes = [{
     path: 'directory-services',
     component: DirectoryservicesComponent,
     data: { title: ('Directory Services') },
-  },
- 
-  {
-    path: 'temp-misc',
-    component: CredentialsComponent,
-    data: { title: ('Miscellaneous'), breadcrumb: T('Miscellaneous') }
   },
   {
     path: 'backup-credentials',
