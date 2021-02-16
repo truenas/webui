@@ -33,8 +33,12 @@ export class TableService {
             }
             table.dataSource = res;
             if (table.limitRows) {
-                table.displayedDataSource = table.dataSource.slice(0, table.limitRows - 1);
-                table.showViewMore = table.dataSource.length !== table.displayedDataSource.length;
+                if (table.enableViewMore) {
+                    table.displayedDataSource = table.dataSource.slice(0, table.dataSource.length);
+                } else {
+                    table.displayedDataSource = table.dataSource.slice(0, table.limitRows - 1);
+                    table.showViewMore = table.dataSource.length !== table.displayedDataSource.length;
+                }
             }
             if (table.loaderOpen) {
                 this.loader.close();
