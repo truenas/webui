@@ -78,6 +78,18 @@
     min-width: 30%;
 }
 
+.mat-expansion-panel-header-title,
+.mat-expansion-panel-header-description{
+    position: relative;
+    top: 4px;
+    max-height: 24px;
+}
+
+.mat-expansion-panel-header.offline .mat-expansion-panel-header-title,
+.mat-expansion-panel-header.offline .mat-expansion-panel-header-description{
+    top: 12px;
+}
+
 .icons {
     font-size: 24px; 
 }
