@@ -64,6 +64,12 @@ mat-tab-group {
       height: 160px;
       width: 160px;
       background-color: var(--contrast-lighter);
+
+      .bulk-checkbox {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+      }
     }
     .logo {
       width: calc(100% - 32px);
@@ -74,25 +80,25 @@ mat-tab-group {
       margin-left: 16px;
     }
 
-      .content-box {
-        width: 340px;
-        height: 130px;
-      }
+    .content-box {
+      width: 340px;
+      height: 130px;
+    }
 
-      .chart-name {
-        font-size: large;
-      }
+    .chart-name {
+      font-size: large;
+    }
 
-      .content {
-          text-align: center;
-          padding: 1rem;
-          width: 210px;    
-      }
-      .chart-button-row {
-        position: absolute;
-        bottom: 5px;
-        right: 15px;
-      } 
+    .content {
+        text-align: center;
+        padding: 1rem;
+        width: 210px;    
+    }
+    .chart-button-row {
+      position: absolute;
+      bottom: 5px;
+      right: 15px;
+    } 
   }
 
   .more-info {
