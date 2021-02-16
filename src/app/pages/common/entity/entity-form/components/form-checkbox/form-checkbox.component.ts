@@ -25,4 +25,9 @@ export class FormCheckboxComponent implements Field {
       return;
     }
   }
+  
+  preventClick($event) {
+    $event.preventDefault();
+    return true;
+  }
 }
