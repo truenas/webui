@@ -51,6 +51,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   public system: any;
   public system_product: string = "Generic";
   public pools: any[]; // = [];
+  public bootPool: string;
   public volumeData:any; //= {};
 
   public nics: any[]; // = [];
@@ -62,6 +63,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(protected core:CoreService, protected ws: WebSocketService, 
     public mediaObserver: MediaObserver, private el: ElementRef){
+
+    ws.call('boot.pool_name').subscribe((res) => {
+      this.bootPool = res;
+    });
 
     core.register({observerClass: this, eventName: "SidenavStatus"}).subscribe((evt: CoreEvent) => {
       setTimeout(() => {
@@ -336,11 +341,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.pools = evt.data;
 
       if(this.pools.length > 0){
-        this.ws.call('pool.dataset.query', [[], {"extra": {"retrieve_children": false}}] ).subscribe((res) => {
-          const data = res.filter( pool => pool.id !== 'boot-pool');
+        this.ws.call('pool.dataset.query', [[['id','!^', this.bootPool]], {"extra": {"retrieve_children": false}}] ).subscribe((res) => {
           this.setVolumeData({
             name: "RootDatasets",
-            data:data
+            data: res
           });
           this.isDataReady();
         });
