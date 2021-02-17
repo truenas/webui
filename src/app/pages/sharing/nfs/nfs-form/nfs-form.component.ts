@@ -245,10 +245,10 @@ export class NFSFormComponent {
     }
   ];
 
-  private nfs_maproot_user: any;
-  private nfs_maproot_group: any;
-  private nfs_mapall_user: any;
-  private nfs_mapall_group: any;
+  private maproot_user: any;
+  private maproot_group: any;
+  private mapall_user: any;
+  private mapall_group: any;
 
   constructor(protected router: Router,
               protected entityFormService: EntityFormService,
@@ -281,10 +281,10 @@ export class NFSFormComponent {
       for (let i = 0; i < items.length; i++) {
         users.push({label: items[i].username, value: items[i].username});
       }
-      this.nfs_mapall_user = this.fieldSets.config('mapall_user');
-      this.nfs_mapall_user.options = users;
-      this.nfs_maproot_user = this.fieldSets.config('maproot_user');
-      this.nfs_maproot_user.options = users;
+      this.mapall_user = this.fieldSets.config('mapall_user');
+      this.mapall_user.options = users;
+      this.maproot_user = this.fieldSets.config('maproot_user');
+      this.maproot_user.options = users;
     });
 
     this.userService.groupQueryDSCache().subscribe(items => {
@@ -295,10 +295,10 @@ export class NFSFormComponent {
       for (let i = 0; i < items.length; i++) {
         groups.push({label: items[i].group, value: items[i].group});
       }
-      this.nfs_mapall_group = this.fieldSets.config('mapall_group');
-      this.nfs_mapall_group.options = groups;
-      this.nfs_maproot_group = this.fieldSets.config('maproot_group');
-      this.nfs_maproot_group.options = groups;
+      this.mapall_group = this.fieldSets.config('mapall_group');
+      this.mapall_group.options = groups;
+      this.maproot_group = this.fieldSets.config('maproot_group');
+      this.maproot_group.options = groups;
     });
 
     if (this.productType === 'SCALE') {

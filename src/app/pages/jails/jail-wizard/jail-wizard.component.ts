@@ -57,16 +57,7 @@ export class JailWizardComponent {
         value: '',
       }
     ],
-    vnetDefaultInterface: [
-      {
-          label: 'none',
-          value: 'none',
-      },
-      {
-          label: 'auto',
-          value: 'auto',
-      }
-    ]
+    vnetDefaultInterface: []
   }
 
   protected wizardConfig: Wizard[] = [{
@@ -367,6 +358,15 @@ export class JailWizardComponent {
       (res)=>{
         for (const i in res) {
           this.interfaces.vnetDisabled.push({ label: res[i], value: i});
+        }
+      },
+      (res)=>{
+        new EntityUtils().handleError(this, res);
+      }
+    );
+    this.jailService.getVnetDefaultInterfaceChoices().subscribe(
+      (res)=>{
+        for (const i in res) {
           this.interfaces.vnetDefaultInterface.push({ label: res[i], value: i });
         }
       },
@@ -374,7 +374,6 @@ export class JailWizardComponent {
         new EntityUtils().handleError(this, res);
       }
     );
-
     this.jailService.getDefaultConfiguration().subscribe(
       (res) => {
         const ventInterfaces = res['interfaces'].split(',');

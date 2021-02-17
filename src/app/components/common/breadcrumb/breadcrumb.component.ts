@@ -3,6 +3,7 @@ import { Router, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot } from '@
 import { RoutePartsService } from '../../../services/route-parts/route-parts.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import globalHelptext from '../../../helptext/global-helptext';
+import { LocaleService } from 'app/services/locale.service';
 
 @Component({
   selector: 'app-breadcrumb',
@@ -11,14 +12,15 @@ import globalHelptext from '../../../helptext/global-helptext';
 })
 export class BreadcrumbComponent implements OnInit {
   @Input() product_type;
-  public copyrightYear = globalHelptext.copyright_year;
+  public copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
 
   routeParts:any[];
   public isEnabled: boolean = true;
   constructor(private router: Router,
   private routePartsService: RoutePartsService, 
   private activeRoute: ActivatedRoute,
-  private core: CoreService) { }
+  private core: CoreService,
+  private localeService: LocaleService) { }
 
   ngOnInit() {
   // must be running once to get breadcrumbs

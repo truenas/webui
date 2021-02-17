@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import globalHelptext from '../../../helptext/global-helptext';
 import { EntityJobComponent } from '../../../../app/pages/common/entity/entity-job/entity-job.component';
 import { T } from '../../../translate-marker';
+import { LocaleService } from 'app/services/locale.service';
 
 @Component({
   selector: 'app-config-reset',
@@ -18,12 +19,12 @@ import { T } from '../../../translate-marker';
 export class ConfigResetComponent implements OnInit {
 
   public product_type: string;
-  public copyrightYear = globalHelptext.copyright_year;
+  public copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
   public dialogRef: any;
 
   constructor(protected ws: WebSocketService, protected router: Router,
     protected loader: AppLoaderService, public translate: TranslateService,
-    protected dialogService: DialogService, protected dialog: MatDialog) {
+    protected dialogService: DialogService, protected dialog: MatDialog, private localeService: LocaleService) {
       this.ws = ws;
       this.ws.call('system.product_type').subscribe((res)=>{
         this.product_type = res;

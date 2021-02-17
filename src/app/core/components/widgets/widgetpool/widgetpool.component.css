@@ -74,6 +74,10 @@
   display:none;
 }
 
+.vdev div{
+  display: inline;
+}
+
 .slide .left,
 .slide .right{
   height:100%;

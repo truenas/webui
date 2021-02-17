@@ -32,6 +32,7 @@ export class EntityJobComponent implements OnInit {
   public realtimeLogs = '';
   @Output() progress = new EventEmitter();
   @Output() success = new EventEmitter();
+  @Output() aborted = new EventEmitter();
   @Output() failure = new EventEmitter();
   @Output() prefailure = new EventEmitter();
   constructor(public dialogRef: MatDialogRef < EntityJobComponent > ,
@@ -144,7 +145,7 @@ export class EntityJobComponent implements OnInit {
             this.progress.emit(res.progress);
           }
           if (this.job.state === 'ABORTED') {
-            this.success.emit(this.job);
+            this.aborted.emit(this.job);
           }
         },
         () => {},

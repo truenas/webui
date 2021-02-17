@@ -4,7 +4,6 @@
 
 
 .panel_container {
-    padding-top: 4px;
     text-align: center;
 }
 
@@ -30,4 +29,10 @@
 .group-menu-header mat-divider {
   background-color: var(--fg2);
   opacity: 0.35;
+}
+
+
+.action-length-1 button{
+  position: relative;
+  right: 16px;
 }

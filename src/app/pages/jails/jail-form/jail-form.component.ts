@@ -584,6 +584,13 @@ export class JailFormComponent implements OnInit, AfterViewInit {
           width: '50%',
         },
         {
+          type: 'input',
+          name: 'exec_fib',
+          placeholder: helptext.exec_fib_placeholder,
+          tooltip: helptext.exec_fib_tooltip,
+          disabled: false
+        },
+        {
           type: 'checkbox',
           name: 'ip4_saddrsel',
           placeholder: helptext.ip4_saddrsel_placeholder,
@@ -864,6 +871,15 @@ export class JailFormComponent implements OnInit, AfterViewInit {
       (res) => {
         for (const i in res) {
           this.interfaces.vnetDisabled.push({ label: res[i], value: i });
+        }
+      },
+      (res) => {
+        new EntityUtils().handleWSError(this, res, this.dialogService);
+      }
+    );
+    this.jailService.getVnetDefaultInterfaceChoices().subscribe(
+      (res) => {
+        for (const i in res) {
           this.interfaces.vnetDefaultInterface.push({ label: res[i], value: i });
         }
       },

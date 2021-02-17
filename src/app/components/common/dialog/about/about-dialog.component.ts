@@ -9,6 +9,7 @@ import { AppLoaderService } from '../../../../services/';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/about';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { LocaleService } from 'app/services/locale.service';
 
 export interface DialogData {
   extraMsg: boolean;
@@ -21,13 +22,14 @@ export interface DialogData {
   templateUrl: './about-dialog.component.html'
 })
 export class AboutModalDialog {
-  public copyrightYear = globalHelptext.copyright_year;
+  public copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
   public product_type: string;
   public extraMsg: boolean;
   public systemType: string;
   helptext = helptext;
 
   constructor(
+    private localeService: LocaleService,
     public dialogRef: MatDialogRef<AboutModalDialog>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     protected loader: AppLoaderService,

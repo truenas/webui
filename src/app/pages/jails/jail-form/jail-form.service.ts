@@ -23,16 +23,7 @@ export class JailFormService {
                 value: '',
             }
         ],
-        vnetDefaultInterface: [
-            {
-                label: 'none',
-                value: 'none',
-            },
-            {
-                label: 'auto',
-                value: 'auto',
-            }
-        ]
+        vnetDefaultInterface: []
     }
 
     // fields only accepted by ws with value 0/1

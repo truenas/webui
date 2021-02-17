@@ -515,7 +515,7 @@ export class VolumesListTableConfig implements InputTableConf {
     const actions = [];
     //workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (rowData.type === 'zpool') {
-        if (rowData.is_decrypted) {
+        if (rowData.is_decrypted && rowData.status !== "OFFLINE") {
           actions.push({
           id: rowData.name,
           name: T('Pool Options'),
@@ -580,6 +580,7 @@ export class VolumesListTableConfig implements InputTableConf {
         id: rowData.name,
         name: 'Export/Disconnect',
         label: helptext.exportAction,
+        color: 'warn',
         onClick: (row1) => {
           let encryptedStatus = row1.encrypt,
           self = this;
@@ -854,7 +855,7 @@ export class VolumesListTableConfig implements InputTableConf {
         }
     });
 
-      if (rowData.is_decrypted) {
+      if (rowData.is_decrypted && rowData.status !== "OFFLINE") {
         actions.push({
           id: rowData.name,
           name: 'Add Vdevs',
@@ -1076,18 +1077,19 @@ export class VolumesListTableConfig implements InputTableConf {
           label: T("Add Dataset"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat([
-              "storage", "pools", "id", row1.id.split('/')[0], "dataset",
+              "storage", "pools", "id", row1.id, "dataset",
               "add", row1.id
             ]));
           }
         });
+        
         actions.push({
           id: rowData.name,
           name: T('Add Zvol'),
           label: T("Add Zvol"),
           onClick: (row1) => {
             this._router.navigate(new Array('/').concat([
-              "storage", "pools", "id", row1.id.split('/')[0], "zvol", "add",
+              "storage", "pools", "id", row1.id, "zvol", "add",
               row1.id
             ]));
           }
@@ -1098,8 +1100,10 @@ export class VolumesListTableConfig implements InputTableConf {
         name: T('Edit Options'),
         label: T("Edit Options"),
         onClick: (row1) => {
+          let datasetParent = row1.id.split('/');
+          datasetParent.pop();
           this._router.navigate(new Array('/').concat([
-            "storage", "pools", "id", row1.id.split('/')[0], "dataset",
+            "storage", "pools", "id", datasetParent.join('/'), "dataset",
             "edit", row1.id
           ]));
         }
@@ -1251,8 +1255,10 @@ export class VolumesListTableConfig implements InputTableConf {
         name: T('Edit Zvol'),
         label: T("Edit Zvol"),
         onClick: (row1) => {
+          let zvolParent = row1.id.split('/');
+          zvolParent.pop();
           this._router.navigate(new Array('/').concat([
-            "storage", "pools", "id", row1.id.split('/')[0], "zvol", "edit",
+            "storage", "pools", "id", zvolParent.join('/'), "zvol", "edit",
             row1.id
           ]));
         }
@@ -1651,27 +1657,27 @@ export class VolumesListTableConfig implements InputTableConf {
             }
           });
         }
-        if (rowData.encrypted && rowData.key_loaded && rowData.encryption_root === rowData.name) {
+        if (rowData.encrypted && rowData.key_loaded && rowData.encryption_root === rowData.id) {
           const fileName = "dataset_" + rowData.name + "_key.txt";
           const mimetype = 'text/plain';
-          const message = helptext.export_keys_message + rowData.name;
+          const message = helptext.export_keys_message + rowData.id;
           encryption_actions.push({
-            id: rowData.name,
+            id: rowData.id,
             name: T('Export Key'),
             label: T('Export Key'),
             onClick: (row) => {
               this.dialogService.passwordConfirm(message).subscribe(export_keys => {
                 if (export_keys) {
                   const dialogRef = this.mdDialog.open(EntityJobComponent, {data: {"title":T('Retrieving Key')}, disableClose: true});
-                  dialogRef.componentInstance.setCall('pool.dataset.export_key', [rowData.name]);
+                  dialogRef.componentInstance.setCall('pool.dataset.export_key', [rowData.id]);
                   dialogRef.componentInstance.submit();
                   dialogRef.componentInstance.success.subscribe((res) => {
                     dialogRef.close();
-                    this.dialogService.confirm(`Key for ${rowData.name}`, res.result, true, T('Download Key'), false,
+                    this.dialogService.confirm(`Key for ${rowData.id}`, res.result, true, T('Download Key'), false,
                       '','','','',false, T('Close')).subscribe(download => {
                         if (download) {
                           this.loader.open();
-                          this.ws.call('core.download', ['pool.dataset.export_key', [rowData.name, true], fileName]).subscribe(res => {
+                          this.ws.call('core.download', ['pool.dataset.export_key', [rowData.id, true], fileName]).subscribe(res => {
                             this.loader.close();
                             const url = res[1];
                             this.storageService.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
@@ -1809,18 +1815,24 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   actionComponent = {
     getActions: (row) => {
-      return [
+      let actions = [
         {
           name: 'pool_actions',
           title: helptext.pool_actions_title,
           actions: this.conf.getActions(row),
-        },
-        {
+        }
+      ]
+
+      if(row.status !== "OFFLINE"){
+        const encryptionActions = {
           name: 'encryption_actions',
           title: helptext.encryption_actions_title,
           actions: (<VolumesListTableConfig>this.conf).getEncryptedActions(row),
         }
-      ];
+        actions.push(encryptionActions);
+      }
+
+      return actions;
     },
     conf: new VolumesListTableConfig(this, this.router, "", [], this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http, this.validationService)
   };
