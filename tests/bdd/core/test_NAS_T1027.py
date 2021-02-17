@@ -16,9 +16,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1026.feature', 'Create an iSCSI share without Authorized Access with a zvol')
-def test_create_an_iscsi_share_without_authorized_access_with_a_zvol(driver):
-    """Create an iSCSI share without Authorized Access with a zvol."""
+@scenario('features/NAS-T1027.feature', 'Create an iSCSI share without Authorized Access with a file')
+def test_create_an_iscsi_share_without_authorized_access_with_a_file():
+    """Create an iSCSI share without Authorized Access with a file."""
 
 
 @given('the browser is open on the TrueNAS URL and logged in')
@@ -117,8 +117,8 @@ def click_on_the_targets_tab_then_click_add(driver):
 
 
 @then(parsers.parse('input {name} in Target name, input {alias} in Target alias'))
-def input_noauth1_in_target_name_input_noauth1_in_target_alias(driver, name, alias):
-    """input noauth1 in Target name, input noauth1 in Target alias."""
+def input_noauth2_in_target_name_input_noauth2_in_target_alias(driver, name, alias):
+    """input noauth2 in Target name, input noauth2 in Target alias."""
     global target_name
     target_name = name
     driver.find_element_by_xpath('//input[@ix-auto="input__Target Name"]').clear()
@@ -128,8 +128,8 @@ def input_noauth1_in_target_name_input_noauth1_in_target_alias(driver, name, ali
 
 
 @then(parsers.parse('select "{portal_group}" in Portal Group ID'))
-def select_1_my_no_peer_iscsi_share_in_portal_group_id(driver, portal_group):
-    """select "1 (my no peer iscsi share)" in Portal Group ID."""
+def select_1_my_no_Authorized_Access_portal_in_portal_group_id(driver, portal_group):
+    """select "1 (my no Authorized Access portal)" in Portal Group ID."""
     assert wait_on_element(driver, 0.5, 7, '//mat-select[@ix-auto="select__Portal Group ID"]')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Portal Group ID"]').click()
     assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Portal Group ID_{portal_group}"]')
@@ -184,8 +184,8 @@ def click_on_the_extents_tab_then_click_add(driver):
 
 
 @then(parsers.parse('input {name} in Extent name, select {extent_type} in Extent Type'))
-def input_noauth1_in_extent_name_select_file_in_extent_type(driver, name, extent_type):
-    """input noauth1 in Extent name, select File in Extent Type."""
+def input_noauth2_in_extent_name_select_file_in_extent_type(driver, name, extent_type):
+    """input noauth2 in Extent name, select File in Extent Type."""
     global extent_name
     extent_name = name
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
@@ -195,12 +195,18 @@ def input_noauth1_in_extent_name_select_file_in_extent_type(driver, name, extent
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Extent Type_{extent_type}"]').click()
 
 
-@then(parsers.parse('select "{device}" in Device'))
-def select_tanknopeer1_100g_in_device(driver, device):
-    """select "tank/nopeer1 (1.00G)" in Device."""
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Device"]').click()
-    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Device_{device}"]')
-    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Device_{device}"]').click()
+@then(parsers.parse('input "{extent_path}" in Extent path'))
+def input_mnttankiscsinoauth2_in_extent_path(driver, extent_path):
+    """input "/mnt/tank/iscsi/noauth2" in Extent path."""
+    driver.find_element_by_xpath('//input[@ix-auto="input__path"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__path"]').send_keys(extent_path)
+
+
+@then(parsers.parse('input "{file_size}" in File size'))
+def input_1_gib_in_file_size(driver, file_size):
+    """input "1 GiB" in File size."""
+    driver.find_element_by_xpath('//input[@ix-auto="input__Filesize"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Filesize"]').send_keys(file_size)
 
 
 @then('click Submit, you should be returned to the Extents tab')
@@ -227,8 +233,8 @@ def click_on_the_associated_targets_tab_then_click_add(driver):
 
 
 @then(parsers.parse('select {target} in Target, input {lun_id} in LUN ID, select {extent} in Extent'))
-def select_nopeer1_in_target_input_1_in_lun_id_select_nopeer1_in_extent(driver, target, lun_id, extent):
-    """select nopeer1 in Target, input 1 in LUN ID, select nopeer1 in Extent."""
+def select_noauth2_in_target_input_1_in_lun_id_select_noauth2_in_extent(driver, target, lun_id, extent):
+    """select noauth2 in Target, input 1 in LUN ID, select noauth2 in Extent."""
     global target_name
     target_name = target
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Target"]').click()
