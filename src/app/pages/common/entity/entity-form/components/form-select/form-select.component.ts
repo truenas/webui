@@ -12,6 +12,8 @@ import { DialogService } from 'app/services';
 import { DialogFormConfiguration } from '../../../entity-dialog/dialog-form-configuration.interface';
 import { T } from 'app/translate-marker';
 
+const NULL_VALUE = 'null_value';
+
 @Component({
   selector: 'form-select',
   styleUrls: ['form-select.component.scss', '../dynamic-field/dynamic-field.css'],
@@ -49,10 +51,24 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   }
 
   ngAfterViewInit(){
+    this.config.options = this.config.options.map(option => {
+      option.value = this.changeNull2String(option.value);
+      return option;
+    });
     this.selectStates = this.config.options.map(item => false);
     //let testOptions = this.matSelect.options._results;
     
     this.control = this.group.controls[this.config.name];
+
+    // if (this.control.value === null) {
+    //   this.control.value = NULL_VALUE;
+    //   setTimeout(() => {
+    //     console.log(this.group.value);
+    //     this.group.value[this.config.name] = null;
+    //     console.log(this.group.value);
+    //   }, 3500);
+    // }
+
     // if control has a value on init
     if(this.control.value && this.control.value.length > 0){
         this.selectedValues = this.control.value;
@@ -131,7 +147,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
       this.showAlert(option);
     }
     this.selected = option.value;
-    this.group.value[this.config.name] = this.selected;
+    this.group.value[this.config.name] = this.changeNullString2Null(this.selected);
     this.formValue = this.selected;
   }
 
@@ -177,7 +193,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     if(this.selectedValues.findIndex(v => v === option.value) >= 0 && this.config.alert) {
       this.showAlert(option);
     }
-    this.group.value[this.config.name] = this.selectedValues;
+    this.group.value[this.config.name] = this.changeNullString2Null(this.selectedValues);
     
   }
 
@@ -197,5 +213,31 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
 
   shouldAlertOnOption(option) {
    return this.config.alert ? this.config.alert.forValues.findIndex(v => v == option.value) >= 0 : false;
+  }
+
+  changeNull2String(value) {
+    let result = value;
+    if (value === null) {
+      result = NULL_VALUE;
+    }
+
+    return result;
+  }
+
+  changeNullString2Null(value) {
+    let result = value;
+    if (value === NULL_VALUE) {
+      result = null;
+    } else if (Array.isArray(value)) {
+      result = value.map(v => {
+        if (v === NULL_VALUE) {
+          return null;
+        } else {
+          return v;
+        }
+      })
+    }
+
+    return result;
   }
 }
