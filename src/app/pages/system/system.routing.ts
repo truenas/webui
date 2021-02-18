@@ -1,6 +1,6 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AdvancedComponent } from './advanced/';
+import { AdvancedComponent, AdvancedSettingsComponent } from './advanced/';
 import { ViewEnclosureComponent } from './viewenclosure/';
 import { DatasetComponent } from './dataset/';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
@@ -24,7 +24,6 @@ import { EulaComponent } from './general-settings/support/eula/eula.component';
 import { KmipComponent} from './kmip/kmip.component';
 import { T } from '../../translate-marker';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
-import { CredentialsComponent } from './../credentials/credentials.component';
 import { GeneralSettingsComponent } from './general-settings/general-settings.component';
 import { Services } from '../services/services.component';
 import { ShellComponent } from '../shell/shell.component';
@@ -44,9 +43,8 @@ export const routes: Routes = [
       }]
     }, {
       path: 'advanced',
-      component: AdvancedComponent,
+      component: AdvancedSettingsComponent,
       data: { title: T('Advanced'), breadcrumb: T('Advanced'), icon: 'settings' },
-
     }, {
       path: 'dataset',
       component: DatasetComponent,
@@ -200,11 +198,6 @@ export const routes: Routes = [
       path: 'two-factor',
       component: TwoFactorComponent,
       data: { title: T('Two-Factor Auth'), breadcrumb: T('Two-Factor Auth') },
-    },
-    {
-      path: 'temp-misc',
-      component: CredentialsComponent,
-      data: { title: ('Miscellaneous'), breadcrumb: T('Miscellaneous') }
     },
     {
       path: 'services',

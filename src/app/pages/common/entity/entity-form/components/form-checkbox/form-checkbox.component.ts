@@ -31,4 +31,9 @@ export class FormCheckboxComponent implements Field {
       this.config.onChange({ event: $event });
     }
   }
+  
+  preventClick($event) {
+    $event.preventDefault();
+    return true;
+  }
 }

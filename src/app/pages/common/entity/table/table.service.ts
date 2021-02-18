@@ -129,6 +129,7 @@ export class TableService {
                 (resinner) => {
                     new EntityUtils().handleWSError(this, resinner, this.dialogService);
                     this.loader.close();
+                    table.loaderOpen = false;
                 }
             )
         } else {
@@ -145,7 +146,9 @@ export class TableService {
   
             });
             this.dialogRef.componentInstance.failure.subscribe((err) => {
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+                this.loader.close();
+                table.loaderOpen = false;
+                new EntityUtils().handleWSError(this, err, this.dialogService);
             });
         }
     }

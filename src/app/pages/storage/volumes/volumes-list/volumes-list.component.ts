@@ -1822,6 +1822,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   protected editDatasetFormComponent: DatasetFormComponent;
   protected aroute: ActivatedRoute;
   private refreshTableSubscription: any;
+  private datasetQuery = 'pool.dataset.query';
+  private datasetQueryOptions = [[], {"extra": {"properties": ["type", "used", "available", "compression", "readonly", "dedup", "org.freenas:description", "compressratio"]}}]
 
   constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
@@ -1869,8 +1871,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         this.repaintMe();
       })
     }
-
-    combineLatest(this.ws.call('pool.query', []), this.ws.call('pool.dataset.query', [])).subscribe(async ([pools, datasets]) => {
+    
+    combineLatest([this.ws.call('pool.query', []), this.ws.call(this.datasetQuery, this.datasetQueryOptions)]).subscribe(async ([pools, datasets]) => {
       if (pools.length > 0) {
         for (const pool of pools) {
           pool.is_upgraded = await this.ws.call('pool.is_upgraded', [pool.id]).toPromise();

@@ -40,9 +40,22 @@ export interface InputTableConf {
   providers: [TableService]
 })
 export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
-  @Input('conf') tableConf: InputTableConf;
+  public _tableConf: InputTableConf;
+  @Input('conf')
+  set tableConf(conf: InputTableConf) {
+    if(!this._tableConf) {
+      this._tableConf = conf;
+    } else {
+      this._tableConf = conf;
+      this.populateTable();
+    }
+  }
   @ViewChild('apptable') apptable;
   @ViewChild('table') table;
+
+  get tableConf () {
+    return this._tableConf;
+  }
 
   public title = '';
   public dataSource;
@@ -71,7 +84,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
       if (this.enableViewMore) {
         return;
       }
-      this.limitRows = Math.floor((this.tableHeight - (this.tableConf.hideHeader ? 0 : this.TABLE_HEADER_HEIGHT)) / this.TABLE_ROW_HEIGHT);
+      this.limitRows = Math.floor((this.tableHeight - (this._tableConf.hideHeader ? 0 : this.TABLE_HEADER_HEIGHT)) / this.TABLE_ROW_HEIGHT);
       this.limitRows = Math.max(this.limitRows, this.TABLE_MIN_ROWS);
 
       if (this.dataSource) {
@@ -94,20 +107,24 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
   }
   ngOnInit() {
-    this.title = this.tableConf.title || '';
-    if (this.tableConf.hideHeader) {
-      this.hideHeader = this.tableConf.hideHeader;
-    }
-    this.displayedColumns = this.tableConf.columns.map(col => col.name);
+    this.populateTable();
+  }
 
-    if (this.tableConf.getActions || this.tableConf.deleteCall) {
+  populateTable() {
+    this.title = this._tableConf.title || '';
+    if (this._tableConf.hideHeader) {
+      this.hideHeader = this._tableConf.hideHeader;
+    }
+    this.displayedColumns = this._tableConf.columns.map(col => col.name);
+
+    if (this._tableConf.getActions || this._tableConf.deleteCall) {
       this.displayedColumns.push('action'); // add action column to table
-      this.actions = this.tableConf.getActions ? this.tableConf.getActions() : []; // get all row actions
+      this.actions = this._tableConf.getActions ? this._tableConf.getActions() : []; // get all row actions
     }
     this.getData();
 
-    this.idProp = this.tableConf.deleteMsg === undefined ? 'id' : this.tableConf.deleteMsg.id_prop || 'id' ;
-    this.tableConf.tableComponent = this;
+    this.idProp = this._tableConf.deleteMsg === undefined ? 'id' : this._tableConf.deleteMsg.id_prop || 'id' ;
+    this._tableConf.tableComponent = this;
   }
 
   getData() {
@@ -119,14 +136,14 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   // }
 
   editRow(row) {
-    if (this.tableConf.edit) {
-      this.tableConf.edit(row);
+    if (this._tableConf.edit) {
+      this._tableConf.edit(row);
     }
   }
 
   deleteRow(row) {
-    if (this.tableConf.delete) {
-      this.tableConf.delete(row, this);
+    if (this._tableConf.delete) {
+      this._tableConf.delete(row, this);
     } else {
       this.tableService.delete(this, row);
     }

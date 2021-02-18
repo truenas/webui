@@ -901,6 +901,10 @@ export class CertificateAddComponent {
       certType.tooltip = helptext_system_certificates.add.csr_create_type.tooltip;
       this.title = helptext_system_certificates.add.title_csr;
     }
+    this.getField('KeyUsage-enabled').setValue(undefined);
+    this.getField('ExtendedKeyUsage-enabled').setValue(undefined);
+    this.getField('AuthorityKeyIdentifier-enabled').setValue(undefined);
+    this.getField('BasicConstraints-enabled').setValue(undefined);
 
     this.setSummary();
   }
@@ -1051,14 +1055,23 @@ export class CertificateAddComponent {
   }
 
   customSubmit(data){
-    this.loader.open();
-    this.ws.call(this.addWsCall, [data]).subscribe(vm_res => {
-      this.loader.close();
-      this.modalService.refreshTable();
+    const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Creating Certificate") }, disableClose: true });
+    dialogRef.componentInstance.setCall(this.addWsCall, [data]);
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.subscribe((res) => {
+      this.dialog.closeAll();
       this.modalService.close('slide-in-form');
-    },(error) => {
-      this.loader.close();
-      this.dialogService.errorReport(T("Error creating CA."), error.reason, error.trace.formatted);
+      this.modalService.refreshTable();
+    });
+    dialogRef.componentInstance.failure.subscribe((err) => {
+      this.dialog.closeAll()
+      // Dialog needed b/c handleWSError doesn't open a dialog when rejection comes back from provider
+      if (err.error.includes('[EFAULT')) {
+        new EntityUtils().handleWSError(this.entityForm, err);
+      } else {
+      this.dialogService.errorReport(helptext_system_certificates.acme.error_dialog.title, 
+        err.exc_info.type, err.exception)
+      }
     });
   }
 }

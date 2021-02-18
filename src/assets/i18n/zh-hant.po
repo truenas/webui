@@ -2183,6 +2183,9 @@ msgstr "儲存區"
 msgid "Bug"
 msgstr ""
 
+msgid "Bulk actions"
+msgstr ""
+
 msgid "Burst"
 msgstr "併發"
 
@@ -3596,6 +3599,9 @@ msgstr ""
 msgid "Dashboard"
 msgstr "資訊看板"
 
+msgid "Dashboard is Empty!"
+msgstr ""
+
 msgid "Data"
 msgstr ""
 
@@ -4608,9 +4614,7 @@ msgstr ""
 msgid "Enable ACL"
 msgstr "啟用 ACL"
 
-msgid ""
-"Enable ACL support for the SMB share. Disabling ACL  support for a share "
-"deletes that ACL."
+msgid "Enable ACL support for the SMB share."
 msgstr ""
 
 msgid "Enable Active Directory"
@@ -5947,6 +5951,9 @@ msgid "Failed"
 msgstr "失敗"
 
 msgid "Failed sending test alert!"
+msgstr ""
+
+msgid "Failed to do bulk actions"
 msgstr ""
 
 msgid "Failed to generate debug file."
@@ -12310,6 +12317,9 @@ msgstr "現在開始 Scrub？"
 msgid "Start time for the replication task."
 msgstr ""
 
+msgid "Started bulk actions"
+msgstr ""
+
 msgid "Starting Jail"
 msgstr "正在啟動 Jail"
 
@@ -14909,6 +14919,11 @@ msgstr ""
 
 msgid "Yes, decrypt the disks"
 msgstr "是的，解密這個磁碟"
+
+msgid ""
+"You have hidden all of your available widgets. Use the dashboard "
+"configuration form to add widgets."
+msgstr ""
 
 msgid "You have left the domain."
 msgstr ""

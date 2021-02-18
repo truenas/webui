@@ -19,6 +19,7 @@ import { DialogService } from '../../../services/dialog.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ApiService } from 'app/core/services/api.service';
 import {AutofillMonitor} from '@angular/cdk/text-field';
+import { LocaleService } from 'app/services/locale.service';
 @Component({
   selector: 'app-signin',
   templateUrl: './signin.component.html',
@@ -36,7 +37,12 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   public showPassword = false;
   public ha_info_ready = false;
   public checking_status = false;
-  public copyrightYear = globalHelptext.copyright_year;
+
+  public _copyrightYear:string = '';
+  get copyrightYear() {
+    return window.localStorage && window.localStorage.buildtime ? this.localeService.getCopyrightYearFromBuildTime() : '';
+  }
+
   private interval: any;
   public exposeLegacyUI = false;
   public tokenObservable:Subscription;
@@ -77,7 +83,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     private core: CoreService,
     private api:ApiService,
     private _autofill: AutofillMonitor,
-    private http:HttpClient, private sysGeneralService: SystemGeneralService) {
+    private http:HttpClient, private sysGeneralService: SystemGeneralService, private localeService: LocaleService) {
     this.ws = ws;
     const ha_status = window.sessionStorage.getItem('ha_status');
     if (ha_status && ha_status === 'true') {
@@ -217,6 +223,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       const previous_buildtime = window.localStorage.getItem('buildtime');
       if (buildtime !== previous_buildtime) {
         window.localStorage.setItem('buildtime', buildtime);
+        this._copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
         window.location.reload(true);
       }
     });
