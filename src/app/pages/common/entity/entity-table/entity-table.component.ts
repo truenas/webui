@@ -139,10 +139,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public tableMouseEvent: MouseEvent;
   // MdPaginator Inputs
-  public paginationPageSize: number = 8;
-  public paginationPageSizeOptions = [5, 10, 20, 100, 1000];
+  public paginationPageSize = 10;
+  public paginationPageSizeOptions = [5, 10, 25, 100];
   public paginationPageIndex = 0;
-  public paginationPageEvent: any;
+  public paginationShowFirstLastButtons = true;
   public hideTopActions = false;
 
   firstUse: boolean = true;
@@ -270,7 +270,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           this.cleanup();
         }
       });
-
   }
 
   ngOnDestroy(){
@@ -291,7 +290,13 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.actionsConfig = { actionType: EntityTableAddActionsComponent, actionConfig: this };
     this.cardHeaderReady = this.conf.cardHeaderComponent ? false : true;
     this.hasActions = this.conf.noActions === true ? false : true;
-
+    if (this.conf.config?.pagingOptions?.pageSize) {
+      this.paginationPageSize = this.conf.config.pagingOptions.pageSize;
+    }
+    if (this.conf.config?.pagingOptions?.pageSizeOptions) {
+      this.paginationPageSizeOptions = this.conf.config.pagingOptions.pageSizeOptions;
+    }
+    
     this.sortKey = (this.conf.config.deleteMsg && this.conf.config.deleteMsg.key_props) ? this.conf.config.deleteMsg.key_props[0] : this.conf.columns[0].prop;
     setTimeout(async() => {
       if (this.conf.prerequisite) {
@@ -430,10 +435,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           };
         }
 
-        if (this.dataSource.paginator) {
+        if (this.dataSource.paginator && this.conf.config.paging) {
           this.dataSource.paginator.firstPage();
         }
-         
       });
     }
 
@@ -625,10 +629,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dataSource = new MatTableDataSource(this.currentRows);
     this.dataSource.sort = this.sort;
 
-    //On first load, paginator is not rendered because table is empty, so we force render here so that we can get valid paginator instance
-    setTimeout(() => {
-      this.dataSource.paginator = this.paginator;
-    }, 0);
+    if (this.conf.config.paging) {
+      //On first load, paginator is not rendered because table is empty, so we force render here so that we can get valid paginator instance
+      setTimeout(() => {
+        this.dataSource.paginator = this.paginator;
+      }, 0);
+    }
 
     return res;
 
