@@ -2,6 +2,8 @@
 """Core UI feature tests."""
 
 import time
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
     is_element_present,
@@ -119,7 +121,7 @@ def select_root_for_user_click_on_the_apply_user_checkbox(driver, user):
     driver.find_element_by_xpath('//input[@placeholder="User"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="User"]').send_keys(user)
     assert wait_on_element(driver, 1, 7, f'//mat-option[@ix-auto="option__{user}"]')
-    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__{user}"]').click()
+    ActionChains(driver).send_keys(Keys.ESCAPE).perform()
     assert wait_on_element(driver, 0.5, 7, '//mat-checkbox[@ix-auto="checkbox__Apply User"]/label/div')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply User"]/label/div').click()
 
@@ -131,7 +133,7 @@ def select_wheel_for_group_name_click_on_the_apply_group_checkbox(driver, group)
     driver.find_element_by_xpath('//input[@placeholder="Group"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Group"]').send_keys(group)
     assert wait_on_element(driver, 1, 7, f'//mat-option[@ix-auto="option__{group}"]')
-    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__{group}"]').click()
+    ActionChains(driver).send_keys(Keys.ESCAPE).perform()
     assert wait_on_element(driver, 0.5, 7, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div').click()
 
