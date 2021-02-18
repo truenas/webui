@@ -2,42 +2,42 @@
     <div class="logo-container" fxLayout="row" fxLayoutAlign="center center">
         <div class="logo" style="background-image: url('{{ catalogApp.icon }}');"></div>
         <div>
-            <strong class="chart-name">{{ catalogApp.name }}</strong><span class="version"> {{ catalogApp.version}}</span>
+            <strong class="chart-name">{{ catalogApp.name }}</strong><span class="version"> {{ catalogApp.version }}</span>
         </div>
     </div>
     <div class="ports">
-        <span>Used Ports:</span><span class="value" textLimiter threshold="70">{{ catalogApp.used_ports }}</span>
+        <span>{{ 'Used Ports' | translate }}:</span><span class="value" textLimiter threshold="70">{{ catalogApp.used_ports }}</span>
     </div>
     <div class="resource" fxLayout="row" fxLayoutAlign="space-between center">
         <div>
-            <span>Status:</span><span class="value">{{ catalogApp.status }}</span>
+            <span>{{ 'Status' | translate }}:</span><span class="value">{{ catalogApp.status | translate }}</span>
         </div>
         <div>
-            <span>Pods:</span><span class="value">{{ pods.length}}</span>
+            <span>{{ 'Pods' | translate }}:</span><span class="value">{{ pods.length}}</span>
         </div>
         <div>
-            <span>Deployments:</span><span class="value">{{ deployments.length }}</span>
+            <span>{{ 'Deployments' | translate }}:</span><span class="value">{{ deployments.length }}</span>
         </div>
         <div>
-            <span>Statefulsets:</span><span class="value">{{ statefulsets.length }}</span>
+            <span>{{ 'Statefulsets' | translate }}:</span><span class="value">{{ statefulsets.length }}</span>
         </div>
     </div>
     <div class="resource" fxLayout="row" fxLayoutAlign="space-between center">
         <div>
-            <span>Catalog:</span><span class="value" textLimiter threshold="14">{{ catalogApp.catalog }}</span>
+            <span>{{ 'Catalog' | translate }}:</span><span class="value" textLimiter threshold="14">{{ catalogApp.catalog }}</span>
         </div>
         <div>
-            <span>Catalog Train:</span><span class="value" textLimiter threshold="14">{{ catalogApp.catalog_train }}</span>
+            <span>{{ 'Catalog Train' | translate }}:</span><span class="value" textLimiter threshold="14">{{ catalogApp.catalog_train }}</span>
         </div>
         <div>
-            <span>Chart Metadata Name:</span><span class="value" textLimiter threshold="14">{{ catalogApp.chart_name }}</span>
+            <span>{{ 'Chart Metadata Name' | translate }}:</span><span class="value" textLimiter threshold="14">{{ catalogApp.chart_name }}</span>
         </div>
     </div>
     <mat-accordion>
         <mat-expansion-panel>
           <mat-expansion-panel-header>
             <mat-panel-title>
-                Container Images
+                {{ 'Container Images' | translate }}
             </mat-panel-title>
           </mat-expansion-panel-header>
           <div class="expansion-content">
@@ -50,7 +50,7 @@
         <mat-expansion-panel>
             <mat-expansion-panel-header>
                 <mat-panel-title>
-                    Application Events
+                    {{ 'Application Events' | translate }}
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <div class="expansion-content">
@@ -62,7 +62,7 @@
                 </div>                
                 <ng-template #no_event>
                     <div fxLayout="row" fxLayoutAlign="start start" class="detail-row row-dark">
-                        No Recent Events
+                        {{ 'No Recent Events' | translate }}
                     </div>                    
                 </ng-template>
             </div>
@@ -73,6 +73,6 @@
 <div class="button-bar" mat-dialog-actions align="end">
     <button mat-button class="mat-button mat-secondary" (click)="dialogRef.close(false)"
         ix-auto ix-auto-type="button" ix-auto-identifier="CLOSE">
-            {{ helptext.actionBtnText.close  }}
+            {{ helptext.actionBtnText.close | translate }}
     </button>
 </div>
