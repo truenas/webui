@@ -151,8 +151,8 @@ def select_none_in_auth_method(driver, method):
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Authentication Method"]').click()
     assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Authentication Method_{method}"]')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Authentication Method_{method}"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-select[@ix-auto="select__Authentication Group Number"]')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Authentication Group Number"]').click()
+    assert wait_on_element(driver, 0.5, 7, '//mat-select[@ix-auto="select__Discovery Authentication Group"]')
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Discovery Authentication Group"]').click()
     assert wait_on_element(driver, 0.5, 7, '//mat-option[@ix-auto="option__Discovery Authentication Group_---"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Discovery Authentication Group_---"]').click()
 
