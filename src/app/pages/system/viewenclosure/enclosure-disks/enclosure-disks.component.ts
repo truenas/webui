@@ -232,6 +232,13 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
             this.pendingDialog.dialogRef.close();
           }
           break;
+        case "PoolsChanged":
+        //case "DisksChanged":
+          console.log(evt);
+          this.setDisksEnabledState();
+          //this.loadEnclosure(this.selectedEnclosure);
+          this.setCurrentView(this.defaultView);
+          break;
       }
     });
 
@@ -293,6 +300,14 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   ngOnChanges(changes:SimpleChanges){
+    if(changes.system){
+      if(changes.system.firstChange){
+        console.log(changes.system.currentValue);
+      } else {
+        console.warn(changes.system.currentValue);
+      }
+    }
+
     if(changes.selectedEnclosure){
       this.loadEnclosure(changes.selectedEnclosure.currentValue, 'front');
     }
@@ -306,7 +321,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     //this.mediaObs.unsubscribe();
   }
 
-  loadEnclosure(enclosure, view?:string){
+  loadEnclosure(enclosure, view?:string, update?:boolean){
       this.destroyEnclosure();
 
       if(view){
@@ -332,8 +347,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         } else if (this.exitingView == 'expanders'){
           this.exit('full-stage');
         } 
-          
-        this.createEnclosure(enclosure); 
+         
+        if(update){
+          this.createEnclosure(enclosure); 
+        }
       }
   }
 
