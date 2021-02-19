@@ -12,8 +12,6 @@ import { WebSocketService, DialogService, CloudCredentialService, AppLoaderServi
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/task-calendar/cloudsync/cloudsync-form';
 import { EntityUtils } from '../../../common/entity/utils';
-import { isNull } from 'lodash';
-import { isNullOrUndefined } from '@swimlane/ngx-datatable';
 
 @Component({
   selector: 'app-cloudsync-add',
@@ -600,7 +598,7 @@ export class CloudsyncFormComponent {
 
     this.folder_field = _.find(entityForm.fieldConfig, { "name": "folder"}); 
     this.formGroup.controls['credentials'].valueChanges.subscribe((res)=>{
-      if(isNullOrUndefined(res)) {
+      if(_.isNil(res)) {
         this.setDisabled('bucket', true, true);
         this.setDisabled('bucket_input', true, true);
       }
