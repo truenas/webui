@@ -11,6 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../pages/common/entity/utils';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
@@ -57,6 +58,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   public singleDescription: string;
   public updateType: string;
   public sysInfo: any;
+  public isHA: boolean;
   sysUpdateMessage = T('A system update is in progress. ');
   public sysUpdateMsgPt2 = helptext.sysUpdateMessage;
   public updatecheck_tooltip = T('Check the update server daily for \
@@ -94,7 +96,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected ws: WebSocketService, protected dialog: MatDialog, public sysGenService: SystemGeneralService,
     protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService,
-    protected storage: StorageService, protected http: HttpClient) {
+    protected storage: StorageService, protected http: HttpClient, public core: CoreService) {
       this.sysGenService.updateRunning.subscribe((res) => { 
         res === 'true' ? this.isUpdateRunning = true : this.isUpdateRunning = false });
   }
@@ -126,9 +128,13 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.product_type = window.localStorage.getItem('product_type');
-    this.ws.call('system.info', []).subscribe((res) => {
-      this.sysInfo = res;
-    })
+
+    // Get system info from global cache
+    this.core.register({ observerClass: this, eventName: "SysInfo"}).subscribe((evt: CoreEvent) => {
+      this.sysInfo = evt.data;
+      this.isHA = evt.data.license.system_serial_ha.length > 0;
+    });
+    this.core.emit({ name: "SysInfoRequest", sender: this });;
 
     this.busy = this.ws.call('update.get_auto_download').subscribe((res) => {
       this.autoCheck = res;
@@ -618,8 +624,9 @@ export class UpdateComponent implements OnInit, OnDestroy {
           this.router.navigate([this.router.url +'/manualupdate']);
           break;
         case 'applyPending':
+          let message = this.isHA ? "The standby controller will be automatically restarted to finalize the update. Apply updates and restart the standby controller" : "The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?";
           this.dialogService.confirm(
-            T("Apply Pending Updates"), T("The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?")
+            T("Apply Pending Updates"), T(message)
           ).subscribe((res)=>{
             if(res){
               this.update();
