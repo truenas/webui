@@ -12,6 +12,8 @@ import { WebSocketService, DialogService, CloudCredentialService, AppLoaderServi
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/task-calendar/cloudsync/cloudsync-form';
 import { EntityUtils } from '../../../common/entity/utils';
+import { isNull } from 'lodash';
+import { isNullOrUndefined } from '@swimlane/ngx-datatable';
 
 @Component({
   selector: 'app-cloudsync-add',
@@ -118,15 +120,7 @@ export class CloudsyncFormComponent {
           value: '',
           isHidden: true,
           disabled: true,
-          relation: [
-            {
-              action: 'HIDE',
-              when: [{
-                name: 'credentials',
-                value: null,
-              }]
-            }
-          ],
+          
           required: true,
           validation : helptext.bucket_validation
         }, {
@@ -593,7 +587,8 @@ export class CloudsyncFormComponent {
     this.credentials = _.find(entityForm.fieldConfig, { 'name': 'credentials' });
     this.bucket_field = _.find(entityForm.fieldConfig, {'name': 'bucket'});
     this.bucket_input_field = _.find(entityForm.fieldConfig, {'name': 'bucket_input'});
-
+    this.setDisabled('bucket', true, true);
+    this.setDisabled('bucket_input', true, true);
     this.cloudcredentialService.getCloudsyncCredentials().then(
       (res) => {
         res.forEach((item) => {
@@ -605,6 +600,10 @@ export class CloudsyncFormComponent {
 
     this.folder_field = _.find(entityForm.fieldConfig, { "name": "folder"}); 
     this.formGroup.controls['credentials'].valueChanges.subscribe((res)=>{
+      if(isNullOrUndefined(res)) {
+        this.setDisabled('bucket', true, true);
+        this.setDisabled('bucket_input', true, true);
+      }
       // reset folder tree view
       if (!this.folder_field.disabled) {
         if (this.folder_field.customTemplateStringOptions.explorer) {
