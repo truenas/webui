@@ -624,7 +624,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
           this.router.navigate([this.router.url +'/manualupdate']);
           break;
         case 'applyPending':
-          let message = this.isHA ? "The standby controller will be automatically restarted to finalize the update. Apply updates and restart the standby controller" : "The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?";
+          let message = this.isHA ? "The standby controller will be automatically restarted to finalize the update. Apply updates and restart the standby controller." : "The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?";
           this.dialogService.confirm(
             T("Apply Pending Updates"), T(message)
           ).subscribe((res)=>{
