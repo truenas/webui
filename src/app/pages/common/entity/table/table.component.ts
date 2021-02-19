@@ -4,6 +4,8 @@ import { WebSocketService } from 'app/services';
 import { TableService } from './table.service';
 
 import * as _ from 'lodash';
+import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
+import { T } from 'app/translate-marker';
 
 export interface InputTableConf {
   title?: string;
@@ -22,6 +24,7 @@ export interface InputTableConf {
     doubleConfirm?(item),
   }; //
   tableComponent?: TableComponent;
+  emptyEntityLarge?: boolean,
 
   add?(); // add action function
   edit?(any); // edit row
@@ -65,6 +68,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   public actions;
   private tableHeight;
   private limitRows;
+  private entityEmptyLarge = false;
   public showViewMore = false;
   private enableViewMore = false;
   public showCollapse = false;
@@ -74,6 +78,8 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   private TABLE_MIN_ROWS = 5;
 
   protected idProp = 'id' ;
+
+  public emptyConf: EmptyConfig;
 
   constructor(private ws: WebSocketService,
     private tableService: TableService) { }
@@ -109,9 +115,16 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   ngOnInit() {
     this.populateTable();
   }
-
+  
   populateTable() {
     this.title = this._tableConf.title || '';
+    this.entityEmptyLarge = this._tableConf.emptyEntityLarge;
+    this.emptyConf = {
+      type: EmptyType.loading,
+      title: this.title,
+      large: this.entityEmptyLarge,
+    };
+
     if (this._tableConf.hideHeader) {
       this.hideHeader = this._tableConf.hideHeader;
     }
