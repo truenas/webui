@@ -2,6 +2,8 @@ import * as _ from 'lodash';
 
 export const FORM_KEY_SEPERATOR = "__";
 export const FORM_LABEL_KEY_PREFIX = "__label__";
+export const NULL_VALUE = 'null_value';
+
 export class EntityUtils {
 
   handleError(entity: any, res: any) {
@@ -260,6 +262,38 @@ export class EntityUtils {
         } else {
           result[key] = value;
         }
+      }
+    });
+
+    return result;
+  }
+
+  changeNull2String(value) {
+    let result = value;
+    if (value === null) {
+      result = NULL_VALUE;
+    }
+
+    return result;
+  }
+
+  changeNullString2Null(data) {
+    let result = {};
+    Object.keys(data).forEach(key => {
+      const value = data[key];
+      if (value === undefined || value === null || value === '') {
+        result[key] = value;
+      } else if (Array.isArray(value)) {
+        const arrayValues = value.map(item => {
+          return this.changeNullString2Null(item);
+        });
+        result[key] = arrayValues;
+      } else if (typeof value === 'object') {
+        result[key] = this.changeNullString2Null(value);
+      } else if (value === NULL_VALUE) {
+        result[key] = null;
+      } else {
+        result[key] = value;
       }
     });
 

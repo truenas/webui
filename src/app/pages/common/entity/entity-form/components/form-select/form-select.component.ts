@@ -11,8 +11,7 @@ import * as _ from 'lodash';
 import { DialogService } from 'app/services';
 import { DialogFormConfiguration } from '../../../entity-dialog/dialog-form-configuration.interface';
 import { T } from 'app/translate-marker';
-
-const NULL_VALUE = 'null_value';
+import { EntityUtils, NULL_VALUE } from '../../../utils';
 
 @Component({
   selector: 'form-select',
@@ -39,6 +38,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   public selectAllValueCache: boolean[] = []; // Cache the state when select all was toggled
   public customTriggerValue:any;
   private _formValue:any;
+  private entityUtils = new EntityUtils();
   get formValue(){
     return this._formValue;
   }
@@ -51,8 +51,9 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   }
 
   ngAfterViewInit(){
+    //Change the value of null to 'null_value' string
     this.config.options = this.config.options.map(option => {
-      option.value = this.changeNull2String(option.value);
+      option.value = this.entityUtils.changeNull2String(option.value);
       return option;
     });
     this.selectStates = this.config.options.map(item => false);
@@ -60,14 +61,10 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     
     this.control = this.group.controls[this.config.name];
 
-    // if (this.control.value === null) {
-    //   this.control.value = NULL_VALUE;
-    //   setTimeout(() => {
-    //     console.log(this.group.value);
-    //     this.group.value[this.config.name] = null;
-    //     console.log(this.group.value);
-    //   }, 3500);
-    // }
+    //When the default value is null, Change it to 'null_value' string
+    if (this.control.value === null) {
+      this.control.value = NULL_VALUE;
+    }
 
     // if control has a value on init
     if(this.control.value && this.control.value.length > 0){
@@ -82,9 +79,20 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
         }
     }
     this.control.valueChanges.subscribe((evt) => {
+      //When set the value to null, Change it to 'null_value' string
+      if (this.control.value === null) {
+        this.control.value = NULL_VALUE;
+      }
+
       if(evt) {
         if(this.config.multiple && Array.isArray(evt)) {
-          this.selectedValues = evt;
+          this.selectedValues = evt.map(item => {
+            //When set the value to null, Change it to 'null_value' string
+            if (item === null) {
+              item = NULL_VALUE;
+            }
+            return item;
+          });
           const newStates = this.config.options.map(item => this.selectedValues.indexOf(item.value) !== -1);
           const triggerValue = [];
           for (let i = 0; i < this.config.options.length; i++) {
@@ -147,7 +155,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
       this.showAlert(option);
     }
     this.selected = option.value;
-    this.group.value[this.config.name] = this.changeNullString2Null(this.selected);
+    this.group.value[this.config.name] = this.selected;
     this.formValue = this.selected;
   }
 
@@ -193,7 +201,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     if(this.selectedValues.findIndex(v => v === option.value) >= 0 && this.config.alert) {
       this.showAlert(option);
     }
-    this.group.value[this.config.name] = this.changeNullString2Null(this.selectedValues);
+    this.group.value[this.config.name] = this.selectedValues;
     
   }
 
@@ -213,31 +221,5 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
 
   shouldAlertOnOption(option) {
    return this.config.alert ? this.config.alert.forValues.findIndex(v => v == option.value) >= 0 : false;
-  }
-
-  changeNull2String(value) {
-    let result = value;
-    if (value === null) {
-      result = NULL_VALUE;
-    }
-
-    return result;
-  }
-
-  changeNullString2Null(value) {
-    let result = value;
-    if (value === NULL_VALUE) {
-      result = null;
-    } else if (Array.isArray(value)) {
-      result = value.map(v => {
-        if (v === NULL_VALUE) {
-          return null;
-        } else {
-          return v;
-        }
-      })
-    }
-
-    return result;
   }
 }

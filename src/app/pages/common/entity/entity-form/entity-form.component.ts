@@ -534,6 +534,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       value = this.conf.clean.bind(this.conf)(value);
     }
 
+    value = new EntityUtils().changeNullString2Null(value);
+
     if (this.conf.beforeSubmit) {
       this.conf.beforeSubmit(value);
     }
