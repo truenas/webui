@@ -34,7 +34,7 @@ interface HAStatus {
 export class SystemProfileService extends BaseService {
 
   public cache: any;
-  private buffer: CoreEvent[] = [];
+  private buffer: string[] = [];
   private emulateHardware?: InfoObject;
   private mini: InfoObject = {
     version: "TrueNAS-12.0-MASTER-202003160424",
@@ -57,11 +57,14 @@ export class SystemProfileService extends BaseService {
   }
 
   private ha_status: HAStatus;
+  private queueListeners: boolean = true;
 
   public features= {
     HA: false,
     enclosure: false
   }
+
+  public bootPool: string;
 
   constructor() {
     super();
@@ -70,9 +73,19 @@ export class SystemProfileService extends BaseService {
       observerClass: this,
       eventName: "SysInfoRequest"
     }).subscribe((evt:CoreEvent) => {
-      const ready = this.dataAvailable(evt);
+      const ready = this.dataAvailable(evt);  
       if(ready){
-        this.respond({name:"SysInfoRequest", sender: this});
+        this.respond(evt);
+      }
+    });
+
+    this.core.register({
+      observerClass: this,
+      eventName: "BootPoolRequest"
+    }).subscribe((evt:CoreEvent) => {
+      const ready = this.dataAvailable(evt); 
+      if(ready){
+        this.respond(evt);
       }
     });
 
@@ -96,40 +109,42 @@ export class SystemProfileService extends BaseService {
 
   protected onAuthenticated(evt: CoreEvent){
     this.authenticated = true;
+    this.fetchProfile();
+    this.fetchBootPool();
   }
 
-  private dataAvailable(evt: CoreEvent){
-    if(this.cache && this.authenticated){
-      return true;
-    } else if(!this.cache && this.authenticated ){
-      if(this.buffer.length == 0){
-        this.fetchProfile();
-      }
-      this.buffer.push(evt);
-      return false;
-    } else if(!this.authenticated){
-      return false;
+  private dataAvailable(evt?: CoreEvent){
+    if(evt && !this.buffer.includes(evt.name)){
+      this.buffer.push(evt.name);
     }
+
+    return this.bootPool && this.cache && this.authenticated ? true : false;;
   }
 
-  fetchProfile(localOnly?: boolean){
+  fetchProfile(){
     this.websocket.call('system.info').subscribe((res) => {
       this.cache = res;
-      if(localOnly){
-        this.buffer.push({name:"SysInfoRequest", sender: this});
-        return;
+      this.cache.features = this.detectFeatures(res);
+      if(this.dataAvailable()){
+        this.clearBuffer();
       }
+    });
+  }
 
-      if(this.buffer.length > 0){
+  fetchBootPool(){
+    this.websocket.call('boot.pool_name').subscribe((res) => {
+      this.bootPool = res;
+      if(this.dataAvailable()){
         this.clearBuffer();
       }
     });
   }
 
   clearBuffer(){
-    this.buffer.forEach((evt) => {
-      this.respond(evt);
+    this.buffer.forEach((eventName) => {
+      this.respond({ name:eventName, sender: this});
     });
+    this.buffer = [];
   }
 
   respond(evt: CoreEvent){
@@ -140,8 +155,12 @@ export class SystemProfileService extends BaseService {
         data = this.cache;
         responseEvent = 'SysInfo';
         break;
+      case 'BootPoolRequest':
+        data = this.bootPool;
+        responseEvent = 'BootPool';
+        break;
     }
-    data.features = this.detectFeatures(data);
+
     this.core.emit({name:responseEvent, data: data, sender: this});
   }
 

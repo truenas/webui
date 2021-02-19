@@ -64,9 +64,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(protected core:CoreService, protected ws: WebSocketService, 
     public mediaObserver: MediaObserver, private el: ElementRef){
 
-    ws.call('boot.pool_name').subscribe((res) => {
-      this.bootPool = res;
+    core.register({observerClass: this, eventName: "BootPool"}).subscribe((evt: CoreEvent) => {
+      this.bootPool = evt.data;
     });
+
+    core.emit({name: "BootPoolRequest", sender: this});
 
     core.register({observerClass: this, eventName: "SidenavStatus"}).subscribe((evt: CoreEvent) => {
       setTimeout(() => {
