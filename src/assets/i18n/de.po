@@ -25,6 +25,9 @@ msgstr " Das erste VDEV ist ein "
 msgid " KiB."
 msgstr " KiB."
 
+msgid " Please click the button below to add "
+msgstr ""
+
 msgid " Plugin"
 msgstr " Plugin"
 
@@ -86,6 +89,9 @@ msgstr " Datenträger"
 
 msgid " disks, new vdev has "
 msgstr " Datenträger, neue vdev hat "
+
+msgid " from the database."
+msgstr ""
 
 msgid " is "
 msgstr " ist "
@@ -154,6 +160,9 @@ msgstr " Aktualisierung erfolgreich"
 msgid " updated."
 msgstr " aktualisiert."
 
+msgid " yet."
+msgstr ""
+
 msgid "% of all cores"
 msgstr "% aller Kerne"
 
@@ -194,6 +203,9 @@ msgstr ""
 
 msgid ", new vdev is "
 msgstr ", das neue vdev ist "
+
+msgid "."
+msgstr ""
 
 msgid ". At least one is required."
 msgstr ". Mindestens einer wird benötigt."
@@ -968,6 +980,9 @@ msgstr "Adapter Typ:"
 
 msgid "Add"
 msgstr "Hinzufügen"
+
+msgid "Add "
+msgstr ""
 
 msgid "Add ACL Item"
 msgstr "ACL Item hinzufügen"
@@ -2572,6 +2587,11 @@ msgid "Changing"
 msgstr ""
 
 msgid ""
+"Changing Advanced settings can be dangerous when done incorrectly. Please "
+"use caution before saving."
+msgstr ""
+
+msgid ""
 "Changing dataset permission mode can severely affect existing permissions, "
 "particularly when going from Windows to Unix permissions."
 msgstr ""
@@ -3597,6 +3617,9 @@ msgstr ""
 
 msgid "Creating"
 msgstr "Erstelle"
+
+msgid "Creating Certificate"
+msgstr ""
 
 msgid "Creating Jail"
 msgstr "Erstelle Jail"
@@ -6713,6 +6736,9 @@ msgstr "Gastkonto"
 msgid "Guest Operating System"
 msgstr "Gastbetriebssystem"
 
+msgid "Guide"
+msgstr ""
+
 msgid "HA Disabled"
 msgstr "HA deaktiviert"
 
@@ -7569,6 +7595,9 @@ msgid ""
 "different numbers of disks. Continue?"
 msgstr ""
 
+msgid "It seems you haven't setup any "
+msgstr ""
+
 msgid "Item"
 msgstr ""
 
@@ -8405,12 +8434,6 @@ msgstr ""
 msgid "Mirror"
 msgstr "Spiegel"
 
-msgid "Misc"
-msgstr ""
-
-msgid "Miscellaneous"
-msgstr ""
-
 msgid "Mixing disks of different sizes in a vdev is not allowed."
 msgstr ""
 
@@ -8852,6 +8875,9 @@ msgstr ""
 msgid "No"
 msgstr "Nein"
 
+msgid "No "
+msgstr ""
+
 msgid "No Applications Installed"
 msgstr ""
 
@@ -8877,6 +8903,9 @@ msgid "No Repositories"
 msgstr "Keine Repositories"
 
 msgid "No Safety Check (CAUTION)"
+msgstr ""
+
+msgid "No Search Results."
 msgstr ""
 
 msgid "No Stat"
@@ -8913,6 +8942,9 @@ msgstr "Es wurden keine Repositorys gefunden."
 
 msgid "No snapshots sent yet"
 msgstr "Es wurden noch keine Schnappschüsse gesendet"
+
+msgid "No sysctls configured"
+msgstr ""
 
 msgid "No update found."
 msgstr "Kein Update gefunden."
@@ -13055,6 +13087,9 @@ msgid ""
 "intervals."
 msgstr ""
 
+msgid "Something went wrong"
+msgstr ""
+
 msgid "Sort languages by:"
 msgstr "Sprachen sortieren nach:"
 
@@ -13882,10 +13917,8 @@ msgid ""
 "be changed if the organization requires a different algorithm."
 msgstr ""
 
-msgid "The current pool layout is not recommended.Override the following errors?"
+msgid "The current pool layout is not recommended. Override the following errors?"
 msgstr ""
-"Das aktuelle Pool-Layout wird nicht empfohlen. Überschreiben Sie die "
-"folgenden Fehler?"
 
 msgid ""
 "The default host to use for TFTP transfers. Enter an IP address. Example: "
@@ -14204,6 +14237,9 @@ msgid ""
 "process,  failover to the standby controller."
 msgstr ""
 
+msgid "The system could not retrieve any "
+msgstr ""
+
 msgid ""
 "The system dataset will be updated and the SMB service restarted. This will "
 "cause a temporary disruption of any active SMB connections."
@@ -14212,6 +14248,9 @@ msgstr ""
 msgid ""
 "The system restricts creating a zvol that brings the pool to over 80% "
 "capacity. Set to force creation of the zvol (<b>NOT Recommended</b>)."
+msgstr ""
+
+msgid "The system returned the following error - "
 msgstr ""
 
 msgid ""
@@ -14618,6 +14657,9 @@ msgstr "Titel "
 msgid ""
 "To activate this periodic snapshot schedule, set  this option. To disable "
 "this task without deleting it, unset this  option."
+msgstr ""
+
+msgid "To configure sysctls, click the \"Add\" button."
 msgstr ""
 
 msgid ""
@@ -15245,6 +15287,9 @@ msgid "Use Signature Version 2"
 msgstr "Verwende Signaturen der Version 2"
 
 msgid "Use Syslog Only"
+msgstr ""
+
+msgid "Use System Dataset"
 msgstr ""
 
 msgid "Use all disk space"
@@ -15960,6 +16005,9 @@ msgid "You have left the domain."
 msgstr "Sie haben die Domäne verlassen."
 
 msgid "You have successfully added credentials."
+msgstr ""
+
+msgid "Your query didn't return any results. Please try again."
 msgstr ""
 
 msgid "ZFS"

@@ -25,6 +25,9 @@ msgstr " El primer vdev es un "
 msgid " KiB."
 msgstr " KiB."
 
+msgid " Please click the button below to add "
+msgstr ""
+
 msgid " Plugin"
 msgstr " Complemento"
 
@@ -86,6 +89,9 @@ msgstr " discos"
 
 msgid " disks, new vdev has "
 msgstr " discos, nuevo vdev tiene "
+
+msgid " from the database."
+msgstr ""
 
 msgid " is "
 msgstr " es "
@@ -154,6 +160,9 @@ msgstr " actualización exitosa"
 msgid " updated."
 msgstr " actualizado."
 
+msgid " yet."
+msgstr ""
+
 msgid "% of all cores"
 msgstr "% de todos los núcleos"
 
@@ -194,6 +203,9 @@ msgstr "(arriba a la derecha), a continuación"
 
 msgid ", new vdev is "
 msgstr ", nuevo vdev es "
+
+msgid "."
+msgstr ""
 
 msgid ". At least one is required."
 msgstr ". Se requiere al menos uno."
@@ -1182,6 +1194,9 @@ msgstr "Tipo de adaptador:"
 
 msgid "Add"
 msgstr "Añadir"
+
+msgid "Add "
+msgstr ""
 
 msgid "Add ACL Item"
 msgstr "Añadir elemento ACL"
@@ -3088,6 +3103,11 @@ msgid "Changing"
 msgstr "Cambiando"
 
 msgid ""
+"Changing Advanced settings can be dangerous when done incorrectly. Please "
+"use caution before saving."
+msgstr ""
+
+msgid ""
 "Changing dataset permission mode can severely affect existing permissions, "
 "particularly when going from Windows to Unix permissions."
 msgstr ""
@@ -4311,6 +4331,9 @@ msgstr ""
 
 msgid "Creating"
 msgstr "Creando"
+
+msgid "Creating Certificate"
+msgstr ""
 
 msgid "Creating Jail"
 msgstr "Creando Jaula"
@@ -7995,6 +8018,9 @@ msgstr "Cuenta de invitado"
 msgid "Guest Operating System"
 msgstr "Sistema operativo invitado"
 
+msgid "Guide"
+msgstr ""
+
 msgid "HA Disabled"
 msgstr "HA deshabilitado"
 
@@ -9005,6 +9031,9 @@ msgstr ""
 "No se recomienda extender un Pool con uno o más vdevs que contengan "
 "diferentes números de discos. ¿Continuar?"
 
+msgid "It seems you haven't setup any "
+msgstr ""
+
 msgid "Item"
 msgstr ""
 
@@ -9946,12 +9975,6 @@ msgstr "Minutos cuando se ejecutará esta tarea."
 msgid "Mirror"
 msgstr "Espejo"
 
-msgid "Misc"
-msgstr "Misc"
-
-msgid "Miscellaneous"
-msgstr "Misceláneos"
-
 msgid "Mixing disks of different sizes in a vdev is not allowed."
 msgstr "No se permite mezclar discos de diferentes tamaños en un vdev."
 
@@ -10462,6 +10485,9 @@ msgstr "Nic para adjuntar:"
 msgid "No"
 msgstr "No"
 
+msgid "No "
+msgstr ""
+
 msgid "No Applications Installed"
 msgstr ""
 
@@ -10488,6 +10514,9 @@ msgstr "Sin Repositorios"
 
 msgid "No Safety Check (CAUTION)"
 msgstr "Sin verificación de seguridad (PRECAUCIÓN)"
+
+msgid "No Search Results."
+msgstr ""
 
 msgid "No Stat"
 msgstr "Sin estadísticas"
@@ -10525,6 +10554,9 @@ msgstr "No se encontraron repositorios."
 
 msgid "No snapshots sent yet"
 msgstr "Aún no se han enviado instantáneas"
+
+msgid "No sysctls configured"
+msgstr ""
 
 msgid "No update found."
 msgstr "No se encontraron actualizaciones."
@@ -15012,6 +15044,9 @@ msgstr ""
 "Algunas herramientas de autenticación tienen un valor predeterminado de 30 "
 "segundos y no admiten intervalos personalizados."
 
+msgid "Something went wrong"
+msgstr ""
+
 msgid "Sort languages by:"
 msgstr "Ordenar idiomas por:"
 
@@ -15971,8 +16006,8 @@ msgstr ""
 "El algoritmo criptográfico a usar. El <i> SHA256 </i> predeterminado solo "
 "necesita cambiarse si la organización requiere un algoritmo diferente."
 
-msgid "The current pool layout is not recommended.Override the following errors?"
-msgstr "No se recomienda el diseño actual del pool. ¿Anular los siguientes errores?"
+msgid "The current pool layout is not recommended. Override the following errors?"
+msgstr ""
 
 msgid ""
 "The default host to use for TFTP transfers. Enter an IP address. Example: "
@@ -16346,6 +16381,9 @@ msgstr ""
 "El controlador en espera ha finalizado la actualización. Para completar el "
 "proceso de actualización, conmutación por error al controlador en espera."
 
+msgid "The system could not retrieve any "
+msgstr ""
+
 msgid ""
 "The system dataset will be updated and the SMB service restarted. This will "
 "cause a temporary disruption of any active SMB connections."
@@ -16361,6 +16399,9 @@ msgstr ""
 "El sistema restringe la creación de un zvol que lleva al grupo a más del "
 "80% de su capacidad. Establezca para forzar la creación de zvol (<b> NO "
 "recomendado </b>)."
+
+msgid "The system returned the following error - "
+msgstr ""
 
 msgid ""
 "The system uses a self-signed certificate  to enable encrypted web "
@@ -16885,6 +16926,9 @@ msgid ""
 msgstr ""
 "Para activar esta programación periódica de instantáneas, configure esta "
 "opción. Para deshabilitar esta tarea sin eliminarla, desactive esta opción."
+
+msgid "To configure sysctls, click the \"Add\" button."
+msgstr ""
 
 msgid ""
 "To define a custom shortcut for the <i>Path</i>,  enter a memorable name. "
@@ -17574,6 +17618,9 @@ msgstr "Usar Signature Version 2"
 
 msgid "Use Syslog Only"
 msgstr "Usar solo Syslog"
+
+msgid "Use System Dataset"
+msgstr ""
 
 msgid "Use all disk space"
 msgstr "Usa todo el espacio en disco"
@@ -18423,6 +18470,9 @@ msgstr "Has dejado el dominio."
 
 msgid "You have successfully added credentials."
 msgstr "Ha agregado credenciales con éxito."
+
+msgid "Your query didn't return any results. Please try again."
+msgstr ""
 
 msgid "ZFS"
 msgstr "ZFS"

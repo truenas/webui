@@ -25,6 +25,9 @@ msgstr " Первый vdev - "
 msgid " KiB."
 msgstr " КиБ."
 
+msgid " Please click the button below to add "
+msgstr ""
+
 msgid " Plugin"
 msgstr " Плагин"
 
@@ -85,6 +88,9 @@ msgstr " дисков"
 
 msgid " disks, new vdev has "
 msgstr " дисков, новый vdev имеет "
+
+msgid " from the database."
+msgstr ""
 
 msgid " is "
 msgstr " - "
@@ -153,6 +159,9 @@ msgstr " обновление успешно"
 msgid " updated."
 msgstr " обновлен."
 
+msgid " yet."
+msgstr ""
+
 msgid "% of all cores"
 msgstr "% от всех ядер"
 
@@ -193,6 +202,9 @@ msgstr "(вверху справа), затем"
 
 msgid ", new vdev is "
 msgstr ", новый vdev - "
+
+msgid "."
+msgstr ""
 
 msgid ". At least one is required."
 msgstr ". Требуетмя по крайней мере один."
@@ -1127,6 +1139,9 @@ msgstr "Тип адаптера:"
 
 msgid "Add"
 msgstr "Добавить"
+
+msgid "Add "
+msgstr ""
 
 msgid "Add ACL Item"
 msgstr "Добавить элемент ACL"
@@ -2981,6 +2996,11 @@ msgid "Changing"
 msgstr "Изменение"
 
 msgid ""
+"Changing Advanced settings can be dangerous when done incorrectly. Please "
+"use caution before saving."
+msgstr ""
+
+msgid ""
 "Changing dataset permission mode can severely affect existing permissions, "
 "particularly when going from Windows to Unix permissions."
 msgstr ""
@@ -4192,6 +4212,9 @@ msgstr ""
 
 msgid "Creating"
 msgstr "Создание"
+
+msgid "Creating Certificate"
+msgstr ""
 
 msgid "Creating Jail"
 msgstr "Создать jail"
@@ -7596,6 +7619,9 @@ msgstr "Гостевая учетная запись"
 msgid "Guest Operating System"
 msgstr "Гостевая операционная система"
 
+msgid "Guide"
+msgstr ""
+
 msgid "HA Disabled"
 msgstr "ВД отключена"
 
@@ -8589,6 +8615,9 @@ msgstr ""
 "Не рекомендуется расширять пул одним или несколькими vdevs, содержащими "
 "различное количество дисков. Продолжить?"
 
+msgid "It seems you haven't setup any "
+msgstr ""
+
 msgid "Item"
 msgstr ""
 
@@ -9501,12 +9530,6 @@ msgstr ""
 msgid "Mirror"
 msgstr "Зеркало"
 
-msgid "Misc"
-msgstr ""
-
-msgid "Miscellaneous"
-msgstr ""
-
 msgid "Mixing disks of different sizes in a vdev is not allowed."
 msgstr ""
 
@@ -9987,6 +10010,9 @@ msgstr "Сетевой адаптер для подключения:"
 msgid "No"
 msgstr "Нет"
 
+msgid "No "
+msgstr ""
+
 msgid "No Applications Installed"
 msgstr ""
 
@@ -10012,6 +10038,9 @@ msgid "No Repositories"
 msgstr "Нет репозиториев"
 
 msgid "No Safety Check (CAUTION)"
+msgstr ""
+
+msgid "No Search Results."
 msgstr ""
 
 msgid "No Stat"
@@ -10050,6 +10079,9 @@ msgstr "Репозитории не найдены."
 
 msgid "No snapshots sent yet"
 msgstr "Снимки еще не отправлены"
+
+msgid "No sysctls configured"
+msgstr ""
 
 msgid "No update found."
 msgstr "Обновление не найдено."
@@ -14224,6 +14256,9 @@ msgid ""
 "intervals."
 msgstr ""
 
+msgid "Something went wrong"
+msgstr ""
+
 msgid "Sort languages by:"
 msgstr "Сортировать языки по:"
 
@@ -15102,7 +15137,7 @@ msgstr ""
 "необходимо изменить только в том случае, если организации требуется другой "
 "алгоритм."
 
-msgid "The current pool layout is not recommended.Override the following errors?"
+msgid "The current pool layout is not recommended. Override the following errors?"
 msgstr ""
 
 msgid ""
@@ -15428,6 +15463,9 @@ msgstr ""
 "Резервный контроллер завершил обновление. Чтобы завершить процесс "
 "обновления, переключитесь на резервный контроллер."
 
+msgid "The system could not retrieve any "
+msgstr ""
+
 msgid ""
 "The system dataset will be updated and the SMB service restarted. This will "
 "cause a temporary disruption of any active SMB connections."
@@ -15442,6 +15480,9 @@ msgstr ""
 "Система ограничивает создание zvol, которое доводит использование пула "
 "сверх 80%. Установите для принудительного создания zvol (<b>НЕ "
 "рекомендуется</b>)."
+
+msgid "The system returned the following error - "
+msgstr ""
 
 msgid ""
 "The system uses a self-signed certificate  to enable encrypted web "
@@ -15867,6 +15908,9 @@ msgstr "Заглавие "
 msgid ""
 "To activate this periodic snapshot schedule, set  this option. To disable "
 "this task without deleting it, unset this  option."
+msgstr ""
+
+msgid "To configure sysctls, click the \"Add\" button."
 msgstr ""
 
 msgid ""
@@ -16517,6 +16561,9 @@ msgid "Use Signature Version 2"
 msgstr "Использовать подпись версии 2"
 
 msgid "Use Syslog Only"
+msgstr ""
+
+msgid "Use System Dataset"
 msgstr ""
 
 msgid "Use all disk space"
@@ -17297,6 +17344,9 @@ msgid "You have left the domain."
 msgstr "Вы покинули домен."
 
 msgid "You have successfully added credentials."
+msgstr ""
+
+msgid "Your query didn't return any results. Please try again."
 msgstr ""
 
 msgid "ZFS"
