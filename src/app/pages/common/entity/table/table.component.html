@@ -7,10 +7,10 @@
       >{{ 'Add' | translate }}</button>
     </div>
 </mat-toolbar-row>
-<div *ngIf="dataSource && dataSource.length === 0" class="empty-table-message">{{ 'No data to display' | translate}}</div>
+
 <mat-card-content class="table-container">
   <div class="table-container" #table>
-    <table mat-table [dataSource]="displayedDataSource" class="table-component">
+    <table *ngIf="dataSource && dataSource.length > 0" mat-table [dataSource]="displayedDataSource" class="table-component">
       <!-- Info Column -->
       <ng-container *ngIf="!_tableConf.complex; else complex">
         <ng-container [matColumnDef]="column.name" *ngFor="let column of _tableConf.columns">
@@ -75,6 +75,7 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns" [hidden]="hideHeader || complex"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="editRow(row)"></tr>
     </table>
+    <entity-empty *ngIf="dataSource && dataSource.length === 0" [conf]="emptyConf" fxFlex fxLayoutAlign="center"></entity-empty>
   </div>
   <div class="view-more-row" *ngIf="showViewMore" (click)="openViewMore()">View More</div>
   <div class="view-more-row" *ngIf="showCollapse" (click)="collapse()">Collapse</div>
