@@ -31,7 +31,7 @@ export class GuiFormComponent implements OnDestroy{
     {
       name: helptext.stg_fieldset_gui,
       width: "100%",
-      label: false,
+      label: true,
       config: [
         {
           type: "select",

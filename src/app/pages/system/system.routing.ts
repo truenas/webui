@@ -1,7 +1,6 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AdvancedComponent, AdvancedSettingsComponent } from './advanced/';
-import { ViewEnclosureComponent } from './viewenclosure/';
+import { AdvancedSettingsComponent } from './advanced/';
 import { DatasetComponent } from './dataset/';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
 import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename/';
@@ -21,16 +20,13 @@ import { AlertServiceComponent } from './alertservice/alert-service/alert-servic
 import { AlertConfigComponent } from './alert/alert.component';
 import { FailoverComponent } from './failover/failover.component';
 import { EulaComponent } from './general-settings/support/eula/eula.component';
-import { KmipComponent} from './kmip/kmip.component';
 import { T } from '../../translate-marker';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
-import { CredentialsComponent } from './../credentials/credentials.component';
 import { GeneralSettingsComponent } from './general-settings/general-settings.component';
 import { Services } from '../services/services.component';
 import { ShellComponent } from '../shell/shell.component';
 
 export const routes: Routes = [
-  // {path : '', component : AdvancedComponent }
   {
     path: '',
     data: { title: T('System') },
@@ -199,11 +195,6 @@ export const routes: Routes = [
       path: 'two-factor',
       component: TwoFactorComponent,
       data: { title: T('Two-Factor Auth'), breadcrumb: T('Two-Factor Auth') },
-    },
-    {
-      path: 'temp-misc',
-      component: CredentialsComponent,
-      data: { title: ('Miscellaneous'), breadcrumb: T('Miscellaneous') }
     },
     {
       path: 'services',

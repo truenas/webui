@@ -901,6 +901,10 @@ export class CertificateAddComponent {
       certType.tooltip = helptext_system_certificates.add.csr_create_type.tooltip;
       this.title = helptext_system_certificates.add.title_csr;
     }
+    this.getField('KeyUsage-enabled').setValue(undefined);
+    this.getField('ExtendedKeyUsage-enabled').setValue(undefined);
+    this.getField('AuthorityKeyIdentifier-enabled').setValue(undefined);
+    this.getField('BasicConstraints-enabled').setValue(undefined);
 
     this.setSummary();
   }
