@@ -168,8 +168,7 @@ export class AdvancedComponent implements OnDestroy {
           type: 'checkbox',
           name: 'fqdn_syslog',
           placeholder: helptext_system_advanced.fqdn_placeholder,
-          tooltip: helptext_system_advanced.fqdn_tooltip,
-          expandedHeight: true
+          tooltip: helptext_system_advanced.fqdn_tooltip
         },
         {
           type: 'select',
