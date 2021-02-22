@@ -14,5 +14,11 @@ input {
 }
 
 .form-checkbox {
-  margin-bottom: 13px;
+  &.form-element {
+    min-height: 24px;
+    margin: 1px 0 22px;
+  }
+  &.expanded-height {
+    margin: 48px 0 22px;
+  }
 }
