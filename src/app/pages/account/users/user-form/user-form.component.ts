@@ -146,7 +146,8 @@ export class UserFormComponent {
           placeholder : helptext.user_form_group_create_placeholder,
           tooltip : helptext.user_form_group_create_tooltip,
           value : true,
-          isHidden: false
+          isHidden: false,
+          expandedHeight: true
         }
       ]
     },

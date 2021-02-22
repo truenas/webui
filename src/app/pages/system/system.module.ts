@@ -15,7 +15,7 @@ import { routing } from './system.routing';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
 
-import { AdvancedComponent, AdvancedSettingsComponent } from './advanced/';
+import { AdvancedSettingsComponent } from './advanced/';
 import { DatasetComponent } from './dataset/';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
 import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename/';
@@ -58,7 +58,6 @@ import { LicenseComponent } from './general-settings/support/license/license.com
     EnclosureModule, CommonDirectivesModule, QRCodeModule
   ],
   declarations: [
-    AdvancedComponent,
     AdvancedSettingsComponent,
     DatasetComponent,
     BootEnvironmentListComponent,
