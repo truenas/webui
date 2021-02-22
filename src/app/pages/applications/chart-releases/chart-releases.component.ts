@@ -109,6 +109,25 @@ export class ChartReleasesComponent implements OnInit {
     parent: this,
   }
 
+  public choosePodForLogs: DialogFormConfiguration = {
+    title: helptext.podConsole.choosePod.title,
+    fieldConfig: [{
+      type: 'select',
+      name: 'pods',
+      placeholder: helptext.podConsole.choosePod.placeholder,
+      required: true,
+    },{
+      type: 'select',
+      name: 'containers',
+      placeholder: helptext.podConsole.chooseConatiner.placeholder,
+      required: true,
+    }],
+    saveButtonText: helptext.podConsole.choosePod.action,
+    customSubmit: this.doPodSelectForLogs,
+    afterInit: this.afterLogsDialogInit,
+    parent: this,
+  }
+
   constructor(private mdDialog: MatDialog,
     private dialogService: DialogService, private translate: TranslateService,
     private appService: ApplicationsService, private modalService: ModalService,
@@ -487,6 +506,35 @@ export class ChartReleasesComponent implements OnInit {
     })
   }
 
+  openLogs(name: string) {
+    this.podList = [];
+    this.podDetails = {};
+    this.selectedAppName = name;
+    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).subscribe(res => {
+      this.podDetails = Object.assign({}, res);
+      this.podList = Object.keys(this.podDetails);
+      if (this.podList.length == 0) {
+        this.dialogService.confirm(helptext.podConsole.nopod.title, helptext.podConsole.nopod.message, true, 'Close', false, null, null, null, null, true);
+      } else {
+        this.choosePodForLogs.fieldConfig[0].value = this.podList[0];
+        this.choosePodForLogs.fieldConfig[0].options = this.podList.map(item => {
+          return {
+            label: item,
+            value: item,
+          }
+        });
+        this.choosePodForLogs.fieldConfig[1].value = this.podDetails[this.podList[0]][0];
+        this.choosePodForLogs.fieldConfig[1].options = this.podDetails[this.podList[0]].map(item => {
+          return {
+            label: item,
+            value: item,
+          }
+        });
+        this.dialogService.dialogForm(this.choosePodForLogs, true);
+      }
+    })
+  }
+
   doPodSelect(entityDialog: any) {
     const self = entityDialog.parent;
     const pod = entityDialog.formGroup.controls['pods'].value;
@@ -495,7 +543,30 @@ export class ChartReleasesComponent implements OnInit {
     self.dialogService.closeAllDialogs();
   }
 
+  doPodSelectForLogs(entityDialog: any) {
+    const self = entityDialog.parent;
+    const pod = entityDialog.formGroup.controls['pods'].value;
+    const container = entityDialog.formGroup.controls['containers'].value;
+    self.router.navigate(new Array("/apps/logs/").concat([self.selectedAppName, pod, container]));
+    self.dialogService.closeAllDialogs();
+  }
+
   afterShellDialogInit(entityDialog: any) {
+    const self = entityDialog.parent;
+    entityDialog.formGroup.controls['pods'].valueChanges.subscribe(value => {
+      const containers = self.podDetails[value];
+      const containerFC = _.find(entityDialog.fieldConfig, {'name' : 'containers'});
+      containerFC.options = containers.map(item => {
+        return {
+          label: item,
+          value: item,
+        }
+      });
+      entityDialog.formGroup.controls['containers'].setValue(containers[0]);
+    })
+  }
+
+  afterLogsDialogInit(entityDialog: any) {
     const self = entityDialog.parent;
     entityDialog.formGroup.controls['pods'].valueChanges.subscribe(value => {
       const containers = self.podDetails[value];

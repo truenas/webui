@@ -22,6 +22,7 @@ import { BulkOptionsComponent } from './forms/bulk-options.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PodShellComponent } from './pod-shell/pod-shell.component';
 import { ChartFormComponent } from './forms/chart-form.component';
+import { PodLogsComponent } from './pod-logs/pod-logs.component';
 
 @NgModule({
   imports: [
@@ -47,8 +48,8 @@ import { ChartFormComponent } from './forms/chart-form.component';
     ChartReleaseAddComponent,
     ChartReleaseEditComponent,
     BulkOptionsComponent,
-	ChartFormComponent,
-    PodShellComponent
+    PodShellComponent,
+    PodLogsComponent,
   ]
 })
 export class ApplicationsModule { }
