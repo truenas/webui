@@ -27,6 +27,9 @@ export class ChartEventsDialog implements OnInit {
     protected localeService: LocaleService,
     private appService: ApplicationsService) { 
     this.catalogApp = data;
+    if (!this.catalogApp.used_ports) {
+      this.catalogApp.used_ports = helptext.chartEventDialog.noPorts;
+    }
   }
 
   ngOnInit() {

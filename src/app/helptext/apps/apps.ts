@@ -437,4 +437,8 @@ export default {
   actionBtnText: {
     close: T('Close')
   },
+
+  chartEventDialog: {
+    noPorts: T('No ports are being used.'),
+  }
 }
