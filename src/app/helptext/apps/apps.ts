@@ -403,6 +403,13 @@ export default {
     }
 
   },
+
+  chartWizard: {
+    nameGroup: {
+      label: 'Application Name',
+    }
+  },
+
   wizardLabels: {
     image: T('Image and Policies'),
     container: T('Container Settings')

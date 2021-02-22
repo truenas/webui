@@ -29,7 +29,7 @@ export class ChartWizardComponent implements OnDestroy {
   protected utils: CommonUtils;
   public summary = {};
   public isAutoSummary: boolean = true;
-
+  public hideCancel = true;
   private title;
   private dialogRef: any;
   protected fieldConfig: FieldConfig[];
@@ -218,19 +218,22 @@ export class ChartWizardComponent implements OnDestroy {
       this.catalogApp = catalogApp;
       this.title = this.catalogApp.name; 
   
+      this.wizardConfig.push({
+        label: helptext.chartWizard.nameGroup.label,
+        fieldConfig: [{
+          type: 'input',
+          name: 'release_name',
+          placeholder: helptext.chartForm.release_name.placeholder,
+          tooltip: helptext.chartForm.release_name.tooltip,
+          required: true,
+        }],
+      })
+      
       this.catalogApp.schema.groups.forEach(group => {
         this.wizardConfig.push({
           label: group.name,
           fieldConfig: [],
         })
-      });
-
-      this.wizardConfig[0].fieldConfig.push({
-        type: 'input',
-        name: 'release_name',
-        placeholder: helptext.chartForm.release_name.placeholder,
-        tooltip: helptext.chartForm.release_name.tooltip,
-        required: true,
       });
 
       this.catalogApp.schema.questions.forEach(question => {
