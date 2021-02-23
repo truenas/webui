@@ -27,6 +27,7 @@ export class ChartWizardComponent implements OnDestroy {
   protected addCall: string = 'chart.release.create';
   protected isEntity: boolean = true;
   protected utils: CommonUtils;
+  private isLinear = true;
   public summary = {};
   public isAutoSummary: boolean = true;
   public hideCancel = true;
@@ -43,7 +44,7 @@ export class ChartWizardComponent implements OnDestroy {
     this.utils = new CommonUtils();
   }
 
-  createRelations(relations, parentName) {
+  createRelations(relations: any[], parentName: string) {
     const result = relations.map(relation => {
       let relationFieldName = relation[0];
       if (parentName) {
@@ -63,7 +64,7 @@ export class ChartWizardComponent implements OnDestroy {
     return result;    
   }
 
-  parseSchemaFieldConfig(schemaConfig, parentName=null, parentIsList=false) {
+  parseSchemaFieldConfig(schemaConfig: any, parentName: string=null, parentIsList: boolean=false) {
     let results = [];
 
     if (schemaConfig.schema.hidden) {
@@ -209,11 +210,11 @@ export class ChartWizardComponent implements OnDestroy {
     return results;
   }
 
-  setTitle(title) {
+  setTitle(title: string) {
     this.title = title;
   }
   
-  parseSchema(catalogApp, isEdit=false) {
+  parseSchema(catalogApp: any, isEdit: boolean=false) {
     try {
       this.catalogApp = catalogApp;
       this.title = this.catalogApp.name; 
@@ -251,7 +252,7 @@ export class ChartWizardComponent implements OnDestroy {
     }
   }
 
-  parseConfigData(configData, parentKey, result) {
+  parseConfigData(configData: any, parentKey: string, result: any) {
     Object.keys(configData).forEach(key => {
       const value = configData[key];
       let fullKey = key;
@@ -266,7 +267,7 @@ export class ChartWizardComponent implements OnDestroy {
     });
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     const chartSchema = {
       name: data.chart_metadata.name,
       catalog: {
@@ -294,7 +295,7 @@ export class ChartWizardComponent implements OnDestroy {
     }
   }
 
-  customSubmit(data) {
+  customSubmit(data: any) {
     let apiCall = this.addCall;
     let values = {};
     new EntityUtils().parseFormControlValues(data, values);

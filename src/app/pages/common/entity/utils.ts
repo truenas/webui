@@ -186,7 +186,7 @@ export class EntityUtils {
     return cronArray.join(' ');
   }
 
-  filterArrayFunction(item) {
+  filterArrayFunction(item: any) {
     /**
      * This function is for validation.
      * If the value of a control is invaild, we ignore it during sending payload
@@ -219,7 +219,7 @@ export class EntityUtils {
     return result;
   }
 
-  parseFormControlValues(data, result) {
+  parseFormControlValues(data: any, result: any) {
     Object.keys(data).forEach(key => {
       const value = data[key];
       if (key == "release_name" || key == 'undefined' || key.startsWith(FORM_LABEL_KEY_PREFIX)) {

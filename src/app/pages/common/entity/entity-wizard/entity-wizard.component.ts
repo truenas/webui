@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RestService, WebSocketService } from '../../../../services';
-import { AbstractControl, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
 
@@ -234,7 +234,7 @@ export class EntityWizardComponent implements OnInit {
     }
   }
 
-  selectionChange(event) {
+  selectionChange(event: any) {
     /**
      * This function is for update summary data whenever step changes
      * We use isAutoSummary flag to generate summary automatically
@@ -259,7 +259,7 @@ export class EntityWizardComponent implements OnInit {
     }
   }
 
-  getSummaryValue(fieldConfig, formControl) {
+  getSummaryValue(fieldConfig: FieldConfig, formControl: any) {
     let result = formControl.value;
 
     if (fieldConfig.type === 'select') {
