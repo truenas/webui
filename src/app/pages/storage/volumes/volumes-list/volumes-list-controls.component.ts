@@ -14,6 +14,7 @@ import { AppLoaderService, DialogService, WebSocketService } from 'app/services'
 import { MatDialog } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
+import { DatasetComponent } from 'app/pages/storage/volumes/dataset/dataset.component';
 
 @Component({
   selector : 'app-volumes-list-controls',
@@ -101,5 +102,9 @@ export class VolumesListControlsComponent implements GlobalAction, OnInit, After
 
   onClickImport() {
     this.modalService.open('slide-in-form', new VolumeImportWizardComponent(this.rest, this.ws, this.router, this.loader, this.dialog, this.dialogService, this.http, this.messageService, this.modalService));
+  }
+  
+  onChoosePool() {
+    this.modalService.open('slide-in-form', new DatasetComponent(this.ws, this.loader, this.dialogService))
   }
 }

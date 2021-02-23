@@ -1,7 +1,7 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdvancedSettingsComponent } from './advanced/';
-import { DatasetComponent } from './dataset/';
+import { DatasetComponent } from '../storage/volumes/dataset';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
 import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename/';
 import { BootEnvironmentCreateComponent } from './bootenv/bootenv-create';
@@ -42,10 +42,6 @@ export const routes: Routes = [
       path: 'advanced',
       component: AdvancedSettingsComponent,
       data: { title: T('Advanced'), breadcrumb: T('Advanced'), icon: 'settings' },
-    }, {
-      path: 'dataset',
-      component: DatasetComponent,
-      data: { title: T('System Dataset'), breadcrumb: T('System Dataset'), icon: 'storage' },
     }, {
       path: 'boot',
       data: { title: T('Boot'), breadcrumb: T('Boot'), icon: 'replay' },
