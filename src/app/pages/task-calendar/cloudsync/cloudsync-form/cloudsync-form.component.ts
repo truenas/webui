@@ -2,16 +2,17 @@ import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { filter } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 
 import * as _ from 'lodash';
 import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService, DialogService, CloudCredentialService, AppLoaderService, JobService} from '../../../../services/';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/task-calendar/cloudsync/cloudsync-form';
 import { EntityUtils } from '../../../common/entity/utils';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { ModalService } from 'app/services/modal.service';
 
 @Component({
   selector: 'app-cloudsync-add',
@@ -22,19 +23,18 @@ export class CloudsyncFormComponent {
 
   protected addCall = 'cloudsync.create';
   protected editCall = 'cloudsync.update';
-  public route_success: string[] = ['tasks', 'cloudsync'];
   protected entityForm: EntityFormComponent;
   protected isEntity = true;
   protected queryCall = 'cloudsync.query';
   protected queryPayload = [];
-  protected customFilter;
+  protected customFilter: any[] = [];
+  protected title: string;
 
-  public fieldSets: FieldSet[] = [
+  public fieldSets: FieldSets = new FieldSets([
     {
       name: helptext.fieldset_transfer,
       label: true,
-      class: '',
-      width: '49%',
+      width: '50%',
       config: [
         {
           type: 'input',
@@ -89,12 +89,10 @@ export class CloudsyncFormComponent {
         },
       ]
     },
-    { name: 'spacer', label: false, width: '2%' },
     {
       name: helptext.fieldset_remote,
       label: true,
-      class: '',
-      width: '49%',
+      width: '50%',
       config: [
         {
           type: 'select',
@@ -118,7 +116,6 @@ export class CloudsyncFormComponent {
           value: '',
           isHidden: true,
           disabled: true,
-          
           required: true,
           validation : helptext.bucket_validation
         }, {
@@ -162,12 +159,9 @@ export class CloudsyncFormComponent {
         }
       ]
     },
-    { name: 'divider', divider: true },
     {
       name: helptext.fieldset_control,
       label: true,
-      class: '',
-      width: '100%',
       config: [
         {
           type: 'scheduler',
@@ -176,8 +170,6 @@ export class CloudsyncFormComponent {
           tooltip: helptext.cloudsync_picker_tooltip,
           required: true,
           value: "0 0 * * *",
-          class: 'inline',
-          width: "50%"
         },
         {
           type: 'checkbox',
@@ -188,12 +180,9 @@ export class CloudsyncFormComponent {
         }
       ]
     },
-    { name: 'divider', divider: true },
     {
       name: helptext.fieldset_advanced_options,
       label: true,
-      class: '',
-      width: '100%',
       config: [
         {
           type: 'checkbox',
@@ -229,8 +218,6 @@ export class CloudsyncFormComponent {
           placeholder: helptext.pre_script_placeholder,
           tooltip: helptext.pre_script_tooltip,
           value: '',
-          class: 'inline',
-          width: "50%"
         },
         {
           type: 'textarea',
@@ -238,16 +225,12 @@ export class CloudsyncFormComponent {
           placeholder: helptext.post_script_placeholder,
           tooltip: helptext.post_script_tooltip,
           value: '',
-          class: 'inline',
-          width: "50%"
         },
         {
           type: 'chip',
           name: 'exclude',
           placeholder: helptext.exclude_placeholder,
           tooltip: helptext.exclude_tooltip,
-          class: 'inline',
-          width: "50%"
         },
         {
           type: 'paragraph',
@@ -265,8 +248,6 @@ export class CloudsyncFormComponent {
           ],
           value: "",
           isHidden: true,
-          class: 'inline',
-          width: "50%"
         }, {
           type: 'select',
           name: 'storage_class',
@@ -283,8 +264,6 @@ export class CloudsyncFormComponent {
           ],
           value: '',
           isHidden: true,
-          class: 'inline',
-          width: "50%"
         }, {
           type: 'input',
           inputType: 'number',
@@ -295,8 +274,6 @@ export class CloudsyncFormComponent {
           value: 96,
           min: 5,
           validation: [Validators.min(5)],
-          class: 'inline',
-          width: "50%"
         }, {
           type: 'checkbox',
           name: 'fast_list',
@@ -343,8 +320,6 @@ export class CloudsyncFormComponent {
               }]
             }
           ],
-          class: 'inline',
-          width: "50%"
         },
         {
           type: 'input',
@@ -361,8 +336,6 @@ export class CloudsyncFormComponent {
               }]
             }
           ],
-          class: 'inline',
-          width: "50%"
         },
         {
           type: 'input',
@@ -371,20 +344,17 @@ export class CloudsyncFormComponent {
           placeholder: helptext.transfers_placeholder,
           tooltip: helptext.transfers_tooltip,
           value: null,
-          class: 'inline',
-          width: "50%"
         },
         {
           type: 'chip',
           name: 'bwlimit',
           placeholder: helptext.bwlimit_placeholder,
           tooltip: helptext.bwlimit_tooltip,
-          class: 'inline',
-          width: "50%"
         }
       ]
-    }
-  ];
+    },
+    { name: 'divider', divider: true },
+  ]);
   public fieldConfig = [];
 
   protected month_field: any;
@@ -438,10 +408,14 @@ export class CloudsyncFormComponent {
     protected matDialog: MatDialog,
     protected ws: WebSocketService,
     protected cloudcredentialService: CloudCredentialService,
-    protected job: JobService) {
+    protected job: JobService,
+    protected modalService: ModalService) {
     this.cloudcredentialService.getProviders().subscribe((res) => {
       this.providers = res;
     });
+    this.modalService.getRow$.pipe(take(1)).subscribe((id: string) => {
+      this.customFilter = [[["id", "=", id]]];
+    })
   }
 
   getBuckets(credential) {
@@ -540,15 +514,6 @@ export class CloudsyncFormComponent {
     }
   }
 
-  preInit() {
-    this.aroute.params.subscribe(params => {
-        this.pk = params['pk'];
-        if (this.pk) {
-          this.customFilter = [[["id", "=", parseInt(params['pk'], 10)]]]
-        }
-    });
-  }
-
   dataHandler(entityForm) {
     const data = entityForm.wsResponse;
     for (const i in data) {
@@ -581,10 +546,12 @@ export class CloudsyncFormComponent {
   async afterInit(entityForm) {
     this.entityForm = entityForm;
     this.formGroup = entityForm.formGroup;
+    this.pk = entityForm.pk;
 
-    this.credentials = _.find(entityForm.fieldConfig, { 'name': 'credentials' });
-    this.bucket_field = _.find(entityForm.fieldConfig, {'name': 'bucket'});
-    this.bucket_input_field = _.find(entityForm.fieldConfig, {'name': 'bucket_input'});
+    this.title = entityForm.isNew ? helptext.cloudsync_task_add : helptext.cloudsync_task_edit;
+    this.credentials = this.fieldSets.config('credentials');
+    this.bucket_field = this.fieldSets.config('bucket');
+    this.bucket_input_field = this.fieldSets.config('bucket_input');
     this.setDisabled('bucket', true, true);
     this.setDisabled('bucket_input', true, true);
     this.cloudcredentialService.getCloudsyncCredentials().then(
@@ -596,7 +563,7 @@ export class CloudsyncFormComponent {
       }
     )
 
-    this.folder_field = _.find(entityForm.fieldConfig, { "name": "folder"}); 
+    this.folder_field = this.fieldSets.config('folder');
     this.formGroup.controls['credentials'].valueChanges.subscribe((res)=>{
       if(_.isNil(res)) {
         this.setDisabled('bucket', true, true);
@@ -860,7 +827,7 @@ export class CloudsyncFormComponent {
       this.loader.open();
       this.ws.call(this.addCall, [value]).subscribe((res)=>{
         this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
+        // this.router.navigate(new Array('/').concat(this.route_success));
       }, (err) => {
         this.loader.close();
         new EntityUtils().handleWSError(this, err);
@@ -870,7 +837,7 @@ export class CloudsyncFormComponent {
       this.ws.call(this.editCall, [parseInt(this.pk, 10), value]).subscribe(
         (res)=>{
           this.loader.close();
-          this.router.navigate(new Array('/').concat(this.route_success));
+          // this.router.navigate(new Array('/').concat(this.route_success));
         },
         (err)=>{
         this.loader.close();
@@ -882,5 +849,9 @@ export class CloudsyncFormComponent {
 
   isCustActionDisabled(id) {
     return !this.entityForm.valid;
+  }
+
+  afterSubmit() {
+    this.modalService.refreshTable();
   }
 }

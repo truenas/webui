@@ -1,3 +1,4 @@
+import { TaskScheduleDashboardComponent } from './components/task-schedule-dashboard/task-schedule-dashboard.component';
 import { Routes } from '@angular/router';
 
 import { CronFormComponent } from './cron/cron-form/cron-form.component';
@@ -17,21 +18,15 @@ import { ScrubListComponent } from './scrub/scrub-list/scrub-list.component';
 import { ScrubFormComponent } from './scrub/scrub-form/scrub-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
-import { ResilverComponent } from './resilver/resilver.component';
 import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 
 export const TaskCalendarRoutes: Routes = [{
   path: '',
   data: { title: 'Calendar' },
   children: [
-  // {
-  //   path: 'calendar',
-  //   component: TaskCalendarComponent,
-  //   data: { title: 'Calendar', breadcrumb: 'Calendar' }
-  // }, 
   {
     path: '',
-    component: EntityDashboardComponent,
+    component: TaskScheduleDashboardComponent,
   },
   {
     path: 'cloudsync',
@@ -39,7 +34,7 @@ export const TaskCalendarRoutes: Routes = [{
     children: [{
       path: '',
       component: CloudsyncListComponent,
-      data: { title: 'Cloud Sync Tasks', breadcrumb: 'Cloud Sync Tasks'} 
+      data: { title: 'Cloud Sync Tasks', breadcrumb: 'Cloud Sync Tasks'}
     }, {
       path: 'add',
       component: CloudsyncFormComponent,
@@ -167,9 +162,5 @@ export const TaskCalendarRoutes: Routes = [{
       component: ScrubFormComponent,
       data: { title: 'Edit', breadcrumb: 'Edit' }
     }]
-  }, {
-    path: 'resilver',
-    data: { title: 'Resilver Priority', breadcrumb: 'Resilver Priority', icon: 'event_note'},
-    component: ResilverComponent,
   }]
 }];

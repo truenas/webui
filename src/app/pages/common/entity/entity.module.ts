@@ -1,5 +1,5 @@
 
-
+import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -95,9 +95,10 @@ import { EntityEmptyComponent } from './entity-empty/entity-empty.component';
 
 import { TableComponent } from './table/table.component';
 
+
 @NgModule({
   imports: [
-    CommonModule, FormsModule, ReactiveFormsModule, DragDropModule,
+    CommonModule, FormsModule, ReactiveFormsModule, DragDropModule, RouterModule,
     MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule.forRoot(),
     NgxUploaderModule, FlexLayoutModule, TranslateModule, CdkTreeModule,
     OverlayModule, A11yModule, TreeTableModule, NgxFilesizeModule, CommonDirectivesModule

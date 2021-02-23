@@ -31,5 +31,8 @@ export default {
     smartlist_column_description: T('Description'),
     smartlist_column_schedule: T('Schedule'),
     smartlist_column_next_run: T('Next Run'),
-    smartlist_column_delete_title: T('S.M.A.R.T. Test')
+    smartlist_column_delete_title: T('S.M.A.R.T. Test'),
+    
+    smart_test_add: T('Add S.M.A.R.T. Test'),
+    smart_test_edit: T('Edit S.M.A.R.T. Test'),
 }

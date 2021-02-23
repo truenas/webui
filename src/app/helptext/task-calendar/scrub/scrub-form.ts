@@ -6,6 +6,8 @@ export default {
     scrub_volume_placeholder: T('Pool'),
     scrub_volume_tooltip : T('Choose a pool to scrub.'),
     scrub_volume_validation : [ Validators.required ],
+    scrub_task_add: T('Add Scrub Task'),
+    scrub_task_edit: T('Edit Scrub Task'),
 
     scrub_threshold_placeholder: T('Threshold days'),
     scrub_threshold_tooltip: T('Days before a completed scrub is allowed \

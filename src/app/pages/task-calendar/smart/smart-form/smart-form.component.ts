@@ -1,43 +1,38 @@
 import { Component } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
 
 import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../common/entity/entity-form';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { TaskService, StorageService, WebSocketService } from '../../../../services/';
-import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
+import { WebSocketService } from '../../../../services/';
+import { ModalService } from '../../../../services/modal.service';
+import { FieldSets } from '../../../common/entity/entity-form/classes/field-sets';
 import helptext from '../../../../helptext/task-calendar/smart/smart';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { take } from 'rxjs/operators';
 
 @Component({
-  selector: 'smart-test-add',
+  selector: 'app-smart-test-add',
   template: `<entity-form [conf]="this"></entity-form>`,
-  providers: [TaskService, StorageService, EntityFormService]
 })
 export class SmartFormComponent {
-
-  public queryCall = "smart.test.query";
+  protected queryCall = "smart.test.query";
   protected addCall = 'smart.test.create';
   protected editCall = 'smart.test.update';
-  protected customFilter: Array<any> = [[["id", "="]]];
-  protected route_success: string[] = ['tasks', 'smart'];
+  protected customFilter: Array<any> = [];
+  // protected route_success: string[] = ['tasks', 'smart'];
   protected entityForm: EntityFormComponent;
   protected isEntity: boolean = true;
+  protected isNew: boolean = false;
+  protected disk_field: any;
+  protected pk: number;
+  protected title: string;
+  protected isOneColumnForm: boolean = true
 
-  public fieldSets: FieldSet[] = [
+  public fieldSets: FieldSets = new FieldSets([
     {
       name: 'S.M.A.R.T. Test',
-      class: 'add-cron',
       label: true,
-      width: '300px',
       config: [
-        {
-          type: 'checkbox',
-          name: 'all_disks',
-          placeholder: helptext.smarttest_all_disks_placeholder,
-          tooltip: helptext.smarttest_all_disks_tooltip,
-        },
         {
           type: 'select',
           name: 'disks',
@@ -54,7 +49,12 @@ export class SmartFormComponent {
               value: true,
             }]
           }],
-        }, {
+        },{
+          type: 'checkbox',
+          name: 'all_disks',
+          placeholder: helptext.smarttest_all_disks_placeholder,
+          tooltip: helptext.smarttest_all_disks_tooltip,
+        },{
           type: 'select',
           name: 'type',
           placeholder: helptext.smarttest_type_placeholder,
@@ -96,19 +96,13 @@ export class SmartFormComponent {
           noMinutes: true
         }
       ]
-    }
-  ];
+    },
+    { name: 'divider', divider: true },
+  ]);
 
-  protected disk_field: any;
-  protected pk: any;
 
-  constructor(protected router: Router,
-              protected ws: WebSocketService,
-              protected taskService: TaskService,
-              protected storageService: StorageService,
-              protected entityFormService: EntityFormService,
-              protected aroute: ActivatedRoute) {
-    this.disk_field = _.find(this.fieldSets[0].config, { 'name': 'disks' });
+  constructor(protected ws: WebSocketService, protected modalService: ModalService) {
+    this.disk_field = this.fieldSets.config('disks');
     this.ws.call('smart.test.disk_choices').subscribe(
       (res) => {
         for (const key in res) {
@@ -116,24 +110,21 @@ export class SmartFormComponent {
         }
       }, err => new EntityUtils().handleWSError(this, err)
     )
+    this.modalService.getRow$.pipe(take(1)).subscribe((id: string) => {
+      this.customFilter = [[["id", "=", id]]];
+    })
   }
 
   resourceTransformIncomingRestData(data) {
-    data['smarttest_picker'] = "0" + " " +
-      data.schedule.hour + " " +
-      data.schedule.dom + " " +
-      data.schedule.month + " " +
-      data.schedule.dow;
+    data['smarttest_picker'] = `0 ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`
     return data;
   }
 
-  preInit() {
-    this.aroute.params.subscribe(params => {
-      if (params['pk']) {
-        this.pk = params['pk'];
-        this.customFilter[0][0].push(parseInt(params['pk']));
-      }
-    });
+  async afterInit(entityForm: EntityFormComponent) {
+    this.entityForm = entityForm;
+    this.pk = entityForm.pk;
+    this.isNew = entityForm.isNew;
+    this.title = !!entityForm.isNew ? helptext.smart_test_add : helptext.smart_test_edit;
   }
 
   beforeSubmit(value) {
@@ -150,5 +141,9 @@ export class SmartFormComponent {
     if (value.all_disks) {
       value.disks = [];
     }
+  }
+
+  afterSubmit() {
+    this.modalService.refreshTable();
   }
 }

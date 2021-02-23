@@ -120,6 +120,8 @@ export default {
 
     rsync_enabled_placeholder: T('Enabled'),
     rsync_enabled_tooltip: T('Enable this rsync task. Unset to disable this\
-                rsync task without deleting it.')
+                rsync task without deleting it.'),
 
+    rsync_task_add: T('Add Rsync Task'),
+    rsync_task_edit: T('Edit Rsync Task'),
 }

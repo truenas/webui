@@ -37,4 +37,7 @@ export default {
     cron_enabled_placeholder: T('Enabled'),
     cron_enabled_tooltip: T('Enable this cron job. When unset, disable the\
                 cron job without deleting it.'),
+
+    cron_job_add: T('Add Cron Job'),
+    cron_job_edit: T('Edit Cron Job'),
 }

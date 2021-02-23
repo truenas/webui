@@ -69,4 +69,7 @@ export default {
     enabled_tooltip: T('To activate this periodic snapshot schedule, set \
  this option. To disable this task without deleting it, unset this \
  option.'),
+
+ snapshot_task_add: T('Add Periodic Snapshot Task'),
+ snapshot_task_edit: T('Edit Periodic Snapshot Task'),
 }

@@ -44,6 +44,7 @@ export class ModalService {
     close(id: string): Promise<boolean> {
         // close modal specified by id
         let modal: any = this.modals.filter(x => x.id === id)[0];
+        this.refreshForm();
         return modal.close();
     }
 }

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../../appMaterial.module';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
@@ -27,7 +27,7 @@ import { ScrubListComponent } from './scrub/scrub-list/scrub-list.component';
 import { ScrubFormComponent } from './scrub/scrub-form/scrub-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
-import { ResilverComponent } from './resilver/resilver.component';
+import { TaskScheduleDashboardComponent } from './components/task-schedule-dashboard/task-schedule-dashboard.component';
 
 @NgModule({
   imports: [
@@ -62,7 +62,7 @@ import { ResilverComponent } from './resilver/resilver.component';
     ScrubFormComponent,
     CloudsyncListComponent,
     CloudsyncFormComponent,
-    ResilverComponent
+    TaskScheduleDashboardComponent
   ]
 })
 export class TaskCalendarModule {}

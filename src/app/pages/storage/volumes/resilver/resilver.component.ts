@@ -2,10 +2,10 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 import * as _ from 'lodash';
-import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
-import { TaskService } from '../../../services/';
-import helptext from '../../../helptext/task-calendar/resilver/resilver';
+import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { TaskService } from '../../../../services';
+import helptext from '../../../../helptext/task-calendar/resilver/resilver';
 
 @Component({
   selector: 'resilver-priority',
@@ -13,16 +13,15 @@ import helptext from '../../../helptext/task-calendar/resilver/resilver';
   providers: [TaskService]
 })
 export class ResilverComponent {
-
-  protected queryCall = 'pool.resilver.config';
-  protected editCall = 'pool.resilver.update';
+  protected queryCall: string = 'pool.resilver.config';
+  protected editCall: string = 'pool.resilver.update';
+  protected route_success: string[] = ['storage'];
 
   public fieldSets: FieldSet[] = [
     {
       name: helptext.fieldset_resilver,
       class: 'resilver',
       label: true,
-      width: '50%',
       config: [
         {
           type: 'checkbox',

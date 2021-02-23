@@ -58,5 +58,10 @@ export const helptext_system_tunable = {
       "Enable this tunable. Unset to disable this tunable\
  without deleting it."
     )
+  },
+
+  tunable: {
+    add: T('Add Tunable'),
+    edit: T('Edit Tunable'),
   }
 };

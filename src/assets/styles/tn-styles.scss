@@ -857,15 +857,43 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(font-family, --font-family-body, $font-family-body, !important);
     background: var(--btn-default-bg);
   }
+  
+  .mat-stroked-button {
+    border-radius: 25px;
+    background-color: transparent !important;
+    border: 1px solid currentColor !important;
+    
+    &.fn-theme-primary{
+      @include variable(color, --primary, $primary);
+    }
+    &.fn-theme-red{
+      @include variable(color, --red, $red);
+    }
+    &.fn-theme-blue{
+      @include variable(color, --blue, $blue);
+    }
+    &.fn-theme-green{
+      @include variable(color, --green, $green);
+    }
+    &.fn-theme-cyan{
+      @include variable(color, --cyan, $cyan);
+    }
+    &.fn-theme-orange{
+      @include variable(color, --orange, $orange);
+    }
+    &.fn-theme-magenta{
+      @include variable(color, --magenta, $magenta);
+    }
+    &.fn-theme-violet{
+      @include variable(color, --violet, $violet);
+    }
+    &.fn-theme-yellow{
+      @include variable(color, --yellow, $yellow);
+    }
+  }
 
   .mat-button[color="default"]{
     @include variable(color, --fg2, $fg2, !important);
-  }
-
- .mat-button.mat-basic, .mat-button.mat-primary {
-  }
-
-  .mat-button.mat-accent {
   }
 
   // Gets checkboxes in SMART tests to pick up theme color

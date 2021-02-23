@@ -1,51 +1,51 @@
+import { Subscription } from 'rxjs';
+import { ModalService } from 'app/services/modal.service';
 import { Component } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
 
 import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { TaskService, UserService } from '../../../../services/';
-import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
+import { TaskService } from '../../../../services/';
 
 import helptext from '../../../../helptext/task-calendar/scrub/scrub-form';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 
 @Component({
-  selector: 'scrub-task-add',
+  selector: 'app-scrub-task-add',
   template: `<entity-form [conf]="this"></entity-form>`,
-  providers: [TaskService, UserService, EntityFormService]
+  providers: [TaskService],
 })
 export class ScrubFormComponent {
-
   protected queryCall: string = 'pool.scrub.query';
   protected queryKey = 'id';
-  protected pk;
+  protected pk: number;
   protected editCall = 'pool.scrub.update';
   protected addCall = 'pool.scrub.create';
-  protected route_success: string[] = ['tasks', 'scrub'];
   protected entityForm: EntityFormComponent;
   protected isEntity: boolean = true;
-
   protected preTaskName: string = 'scrub';
+  protected isOneColumnForm: boolean = true;
+  public title: string;
+  public isNew: boolean = false;
   public fieldConfig: FieldConfig[] = [];
-  public fieldSets: FieldSet[] = [
+  public fieldSets: FieldSets = new FieldSets([
     {
-      name:helptext.scrub_fieldsets[0],
-      class:'add-scrub',
-      label:true,
-      width:'300px',
+      name: helptext.scrub_fieldsets[0],
+      class: 'add-scrub',
+      label: true,
       config: [
         {
           type: 'select',
           name: 'pool',
           placeholder: helptext.scrub_volume_placeholder,
-          tooltip : helptext.scrub_volume_tooltip,
+          tooltip: helptext.scrub_volume_tooltip,
           options: [],
           required: true,
-          validation : helptext.scrub_volume_validation,
+          validation: helptext.scrub_volume_validation,
           value: '',
-        }, {
+        },
+        {
           type: 'input',
           inputType: 'number',
           name: 'threshold',
@@ -54,32 +54,35 @@ export class ScrubFormComponent {
           value: 35,
           min: 0,
           required: true,
-          validation: helptext.scrub_threshold_validation
-        }, {
+          validation: helptext.scrub_threshold_validation,
+        },
+        {
           type: 'input',
           name: 'description',
           placeholder: helptext.scrub_description_placeholder,
-          tooltip : helptext.scrub_description_tooltip,
-        }, {
+          tooltip: helptext.scrub_description_tooltip,
+        },
+        {
           type: 'scheduler',
           name: 'scrub_picker',
           placeholder: helptext.scrub_picker_placeholder,
           tooltip: helptext.scrub_picker_tooltip,
           required: true,
-        }, {
+        },
+        {
           type: 'checkbox',
           name: 'enabled',
           placeholder: helptext.scrub_enabled_placeholder,
-          tooltip : helptext.scrub_enabled_tooltip,
+          tooltip: helptext.scrub_enabled_tooltip,
           value: true,
-        }
-      ]
+        },
+      ],
     },
     {
-      name:'divider',
-      divider:true
+      name: 'divider',
+      divider: true,
     },
-  ]
+  ]);
 
   protected volume_field: any;
   protected month_field: any;
@@ -88,26 +91,17 @@ export class ScrubFormComponent {
   protected hour_field: any;
   protected daymonth_field: any;
 
-  constructor(protected router: Router, protected taskService: TaskService, protected userService: UserService, protected entityFormService: EntityFormService,protected aroute: ActivatedRoute,) {
-  }
+  constructor(protected taskService: TaskService, protected modalService: ModalService) {}
 
-  preInit(entityForm) {
+  async afterInit(entityForm: EntityFormComponent) {
     this.entityForm = entityForm;
+    this.pk = entityForm.pk;
+    this.isNew = entityForm.isNew;
+    this.title = entityForm.isNew ? helptext.scrub_task_add : helptext.scrub_task_edit;
 
-    this.aroute.params.subscribe(params => {
-      if (params.pk) {
-        this.pk = params.pk;
-      }
-    });
-
-  }
-
-
-  afterInit(entityForm) {
-
-    this.volume_field = _.find(this.fieldConfig, { 'name': 'pool' });
+    this.volume_field = this.fieldSets.config('pool');
     this.taskService.getVolumeList().subscribe((res) => {
-      res.forEach (item=>  {
+      res.forEach((item) => {
         this.volume_field.options.push({ label: item.name, value: item.id });
       });
     });
@@ -115,19 +109,18 @@ export class ScrubFormComponent {
     entityForm.formGroup.controls['pool'].valueChanges.subscribe((res) => {
       if (!Number.isInteger(res)) {
         this.taskService.getVolumeList().subscribe((list) => {
-          for (let i in list.data) {
-            if (list.data[i].vol_name == res) {
+          for (const i in list.data) {
+            if (list.data[i].vol_name === res) {
               entityForm.formGroup.controls['pool'].setValue(list.data[i].id);
             }
           }
         });
       }
     });
-
   }
 
-  beforeSubmit(value){
-    let spl = value.scrub_picker.split(" ");
+  beforeSubmit(value) {
+    const spl = value.scrub_picker.split(' ');
     value.schedule = {};
     value.schedule['minute'] = spl[0];
     value.schedule['hour'] = spl[1];
@@ -137,17 +130,20 @@ export class ScrubFormComponent {
     delete value.scrub_picker;
   }
 
+  afterSubmit() {
+    this.modalService.refreshTable();
+  }
+
   resourceTransformIncomingRestData(data) {
     this.entityForm.formGroup.controls['threshold'].setValue(data.threshold);
     this.entityForm.formGroup.controls['enabled'].setValue(data.enabled);
     this.entityForm.formGroup.controls['description'].setValue(data.description);
     this.entityForm.formGroup.controls['pool'].setValue(data.id);
 
-    data['scrub_picker'] = data.schedule.minute + " " +
-                          data.schedule.hour + " " +
-                          data.schedule.dom + " " +
-                          data.schedule.month + " " +
-                          data.schedule.dow;
+    data[
+      'scrub_picker'
+    ] = `${data.schedule.minute} ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
+
     return data;
   }
 }

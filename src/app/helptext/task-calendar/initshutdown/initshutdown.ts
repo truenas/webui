@@ -35,5 +35,7 @@ export default {
     ini_description_placeholder: T('Description'),
     ini_description_tooltip: T('Comments about this script.'),
 
-    ini_title: T('Init/Shutdown Script')
+    ini_title: T('Init/Shutdown Script'),
+    ini_add: T('Add Init/Shutdown Script'),
+    ini_edit: T('Edit Init/Shutdown Script'),
 }

@@ -288,5 +288,8 @@ from the source dataset.'),
     replication_restore_dialog: {
        title: T('Restore Replication Task'),
        saveButton: T('Restore'),
-    }
+    },
+
+    replication_task_add: T('Add Replication Task'),
+    replication_task_edit: T('Edit Replication Task'),
 }
