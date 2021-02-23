@@ -16,7 +16,7 @@ const routes: Routes = [
     component: PodShellComponent,
     data: { title: T('Pod Shell'), breadcrumb: T('Pod Shell') },
   }, {
-    path: 'logs/:rname/:pname/:cname',
+    path: 'logs/:rname/:pname/:cname/:tail_lines',
     component: PodLogsComponent,
     data: { title: T('Pod Logs'), breadcrumb: T('Pod Logs') },
   }

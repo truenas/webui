@@ -48,6 +48,7 @@ import { PodLogsComponent } from './pod-logs/pod-logs.component';
     ChartReleaseAddComponent,
     ChartReleaseEditComponent,
     BulkOptionsComponent,
+    ChartFormComponent,
     PodShellComponent,
     PodLogsComponent,
   ]

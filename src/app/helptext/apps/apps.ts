@@ -432,5 +432,26 @@ export default {
     chooseCommand: {
       placeholder: T('Commands'),
     }
+  },
+
+  podLogs: {
+    title: T('Choose log'),
+    action: T('Choose'),
+    nopod: {
+      title: T('No Pods Found'),
+      message: T('Invalid Pod name'),
+    },
+    chooseApp: {
+      placeholder: T('Apps'),
+    },
+    choosePod: {
+      placeholder: T('Pods'),
+    },
+    chooseConatiner: {
+      placeholder: T('Containers'),
+    },
+    tailLines: {
+      placeholder: T('Tail Lines'),
+    },
   }
 }

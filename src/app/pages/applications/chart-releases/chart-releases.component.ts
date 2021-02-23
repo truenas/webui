@@ -110,16 +110,22 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   public choosePodForLogs: DialogFormConfiguration = {
-    title: helptext.podConsole.choosePod.title,
+    title: helptext.podLogs.title,
     fieldConfig: [{
       type: 'select',
       name: 'pods',
-      placeholder: helptext.podConsole.choosePod.placeholder,
+      placeholder: helptext.podLogs.choosePod.placeholder,
       required: true,
     },{
       type: 'select',
       name: 'containers',
-      placeholder: helptext.podConsole.chooseConatiner.placeholder,
+      placeholder: helptext.podLogs.chooseConatiner.placeholder,
+      required: true,
+    },{
+      type: 'input',
+      name: 'tail_lines',
+      placeholder: helptext.podLogs.tailLines.placeholder,
+      value: 500,
       required: true,
     }],
     saveButtonText: helptext.podConsole.choosePod.action,
@@ -547,7 +553,8 @@ export class ChartReleasesComponent implements OnInit {
     const self = entityDialog.parent;
     const pod = entityDialog.formGroup.controls['pods'].value;
     const container = entityDialog.formGroup.controls['containers'].value;
-    self.router.navigate(new Array("/apps/logs/").concat([self.selectedAppName, pod, container]));
+    const tailLines = entityDialog.formGroup.controls['tail_lines'].value;
+    self.router.navigate(new Array("/apps/logs/").concat([self.selectedAppName, pod, container, tailLines]));
     self.dialogService.closeAllDialogs();
   }
 

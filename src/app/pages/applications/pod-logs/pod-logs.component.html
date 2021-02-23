@@ -1,3 +1,5 @@
-<div class="terminal-wrapper">
-	
+<div class="pod-logs" [ngStyle]="{'font-size' : font_size+'px'}" #logContainer>
+    <span *ngFor="let podLog of podLogs" class="log-row">
+        {{ podLog }}
+    </span>
 </div>

@@ -4,12 +4,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { DialogService, ShellService, WebSocketService } from '../../../services';
-import helptext from "./../../../helptext/shell/shell";
+import helptext from "./../../../helptext/apps/apps";
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { ApplicationsService } from '../applications.service';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { EntityUtils } from '../../common/entity/utils';
+import { StorageService } from 'app/services/storage.service';
+import { HttpClient } from '@angular/common/http';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 
 @Component({
   selector: 'app-pod-logs',
@@ -20,35 +25,30 @@ import { ApplicationsService } from '../applications.service';
 })
 
 export class PodLogsComponent implements OnInit {
-  // sets the shell prompt
-  @Input() prompt = '';
-  //xter container
-  @ViewChild('terminal', { static: true}) container: ElementRef;
-  // xterm variables
-  cols: string;
-  rows: string;
-  font_size = 14;
-  font_name = 'Inconsolata';
-
+  @ViewChild('logContainer', { static: true}) logContainer: ElementRef;
+  public font_size: number = 14;
   public formEvents: Subject<CoreEvent>;
-
-  public usage_tooltip = helptext.usage_tooltip;
-
   protected chart_release_name: string;
   protected pod_name: string;
+  protected tail_lines: number = 500;
   protected conatiner_name: string;
-  protected podDetails: any;
+  protected podDetails: object;
   protected apps: string[] = [];
   protected route_success: string[] = ['apps'];
 
   public choosePod: DialogFormConfiguration;
-
+  private podLogsChangedListener: any;
+  public podLogs: string[];
+  
   constructor(protected core:CoreService,
     private ws: WebSocketService,
     private appService: ApplicationsService, 
     private dialogService: DialogService, 
     public translate: TranslateService,
     protected aroute: ActivatedRoute,
+    protected loader: AppLoaderService,
+    protected storageService: StorageService,
+    protected http: HttpClient,
     protected router: Router,
     private dialog: MatDialog) {
   }
@@ -58,13 +58,16 @@ export class PodLogsComponent implements OnInit {
       this.chart_release_name = params['rname'];
       this.pod_name = params['pname'];
       this.conatiner_name = params['cname'];
+      this.tail_lines = params['tail_lines'];
 
+      //Get app list
       this.appService.getChartReleaseNames().subscribe(charts => {        
         charts.forEach(chart => {
           this.apps.push(chart.name);
         });
       });
 
+      //Get pod list for the selected app
       this.ws.call('chart.release.pod_logs_choices', [this.chart_release_name]).subscribe(res => {
         this.podDetails = res;
   
@@ -79,19 +82,62 @@ export class PodLogsComponent implements OnInit {
     });
   }
 
+  ngOnDestroy() {
+    if (this.podLogsChangedListener) {
+      this.podLogsChangedListener.complete();
+    }
+  }
+
+  //subscribe pod log for selected app, pod and container.
   reconnect() {
-    this.ws.job('chart.release.pod_logs', [this.chart_release_name, {pod_name: this.pod_name, container_name: this.conatiner_name}]).subscribe(res => {
-      console.log(res);
-    }, (err) => {
-      console.log(err);
+    this.podLogs = [];
+    if (this.podLogsChangedListener) {
+      this.podLogsChangedListener.complete();
+    }
+
+    let subName = `kubernetes.pod_log_follow:{"release_name":"${this.chart_release_name}", "pod_name":"${this.pod_name}", "container_name":"${this.conatiner_name}", "tail_lines": ${this.tail_lines}}`;
+
+    this.podLogsChangedListener = this.ws.sub(subName).subscribe((res) => {
+      if(res && res.data && typeof res.data === 'string'){
+        this.podLogs.push(res.data);
+        this.scrollToBottom();
+      }
     });
   }
-  
+
+  //scroll to bottom, show last log.
+  scrollToBottom(): void {
+    try {
+        this.logContainer.nativeElement.scrollTop = this.logContainer.nativeElement.scrollHeight;
+    } catch(err) { 
+
+    }                 
+  }
+
+  //download log
+  download() {
+    this.loader.open();
+    const fileName = "pods.log";
+    const mimetype = 'application/octet-stream';
+    this.ws.call('core.download', ['chart.release.pod_logs', [this.chart_release_name, {pod_name: this.pod_name, container_name: this.conatiner_name, tail_lines: this.tail_lines}], fileName]).subscribe(res => {
+      this.loader.close();
+      const url = res[1];
+      this.storageService.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
+        if(res !== null && res !== "") {
+          this.storageService.downloadBlob(file, fileName);
+        }
+      });
+    }, (e) => {
+      this.loader.close();
+      new EntityUtils().handleWSError(this, e, this.dialogService);
+    });
+  }
+
   setupToolbarButtons() {
     this.formEvents = new Subject();
     this.formEvents.subscribe((evt: CoreEvent) => {
-      if (evt.data.event_control == 'restore') {
-        this.resetDefault();
+      if (evt.data.event_control == 'download') {
+        this.download();
       } else if (evt.data.event_control == 'reconnect') {
         this.showChooseLogsDialog();
       } else if (evt.data.event_control == 'fontsize') {
@@ -117,8 +163,8 @@ export class PodLogsComponent implements OnInit {
         color: 'secondary',
       },
       {
-        name: 'restore',
-        label: 'Restore default',
+        name: 'download',
+        label: 'Download',
         type: 'button',
         color: 'primary',
       },
@@ -133,10 +179,6 @@ export class PodLogsComponent implements OnInit {
     };
 
     this.core.emit({name:"GlobalActions", data: actionsConfig, sender: this});
-  }
-
-  resetDefault() {
-    this.font_size = 14;
   }
 
   updateChooseLogsDialog() {
@@ -185,10 +227,16 @@ export class PodLogsComponent implements OnInit {
         required: true,
         value: this.conatiner_name,
         options: containerOptions,
+      },{
+        type: 'input',
+        name: 'tail_lines',
+        placeholder: helptext.podLogs.tailLines.placeholder,
+        value: this.tail_lines,
+        required: true,
       }],
       saveButtonText: helptext.podLogs.action,
       customSubmit: this.onChooseLogs,
-      afterInit: this.afterShellDialogInit,
+      afterInit: this.afterLogsDialogInit,
       parent: this,
     }
   }
@@ -198,22 +246,24 @@ export class PodLogsComponent implements OnInit {
     this.dialogService.dialogForm(this.choosePod, true);
   }
 
-  onChooseLogs(entityDialog: any) {
+  onChooseLogs(entityDialog: EntityDialogComponent) {
     const self = entityDialog.parent;
     self.chart_release_name = entityDialog.formGroup.controls['apps'].value;
     self.pod_name = entityDialog.formGroup.controls['pods'].value;
     self.conatiner_name = entityDialog.formGroup.controls['containers'].value;
+    self.tail_lines = entityDialog.formGroup.controls['tail_lines'].value;
     
     self.reconnect();
     self.dialogService.closeAllDialogs();
   }
 
-  afterShellDialogInit(entityDialog: any) {
+  afterLogsDialogInit(entityDialog: EntityDialogComponent) {
     const self = entityDialog.parent;
 
     const podFC = _.find(entityDialog.fieldConfig, {'name' : 'pods'});
     const containerFC = _.find(entityDialog.fieldConfig, {'name' : 'containers'});
 
+    //when app selection changed
     entityDialog.formGroup.controls['apps'].valueChanges.subscribe(value => {
       podFC.options = [];
       containerFC.options = [];
@@ -237,6 +287,7 @@ export class PodLogsComponent implements OnInit {
       })
     });
     
+    //when pod selection changed
     entityDialog.formGroup.controls['pods'].valueChanges.subscribe(value => {
       if (value) {
         const containers = self.podDetails[value];

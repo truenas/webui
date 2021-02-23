@@ -1,13 +1,11 @@
-@import 'xterm/css/xterm.css';
-.terminal-wrapper {
-  padding: 10px 0 10px 10px;
+.pod-logs {
   background: black;
+  width: calc(100% - 16px);
   height: calc(100% - 100px);
   margin-left: 8px;
   margin-right: 8px;
-}
-
-#terminal {
-  height: 100%;
-  width: 100%;
+  overflow: auto;
+  color: white;
+  white-space: pre-wrap;
+  font-family: 'Inconsolata';
 }
