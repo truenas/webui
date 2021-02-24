@@ -186,8 +186,13 @@
     </table>
   </div>
  
-  <mat-card-footer style="padding: 0 !important">
-    <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+  <mat-card-footer style="padding: 0 !important" *ngIf="conf.config.paging">
+    <mat-paginator 
+      [pageIndex]="paginationPageIndex" 
+      [pageSize]="paginationPageSize" 
+      [pageSizeOptions]="paginationPageSizeOptions"
+      [showFirstLastButtons]="paginationShowFirstLastButtons"
+    ></mat-paginator>
   </mat-card-footer>
   </ng-container>
   <ng-container *ngIf="isTableEmpty">
