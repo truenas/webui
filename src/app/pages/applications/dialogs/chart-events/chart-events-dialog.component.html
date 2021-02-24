@@ -41,8 +41,14 @@
             </mat-panel-title>
           </mat-expansion-panel-header>
           <div class="expansion-content">
-            <div *ngFor="let containerImage of containerImages; let i = index" class="detail-row" [ngClass]="{'row-dark': i%2==0}">
-                <div>{{ containerImage }}</div>
+            <div *ngFor="let containerImage of containerImages | keyvalue; let i = index" class="detail-row" [ngClass]="{'row-dark': i%2==0}">
+                <div>
+                    {{ containerImage.key }}
+                    <span class="value" *ngIf="containerImage.value.update_available; else elseBlock">
+                        {{ 'Update available' | translate}}
+                    </span>
+                    <ng-template #elseBlock><span class="value">{{ 'Up to date' | translate }}</span></ng-template>
+                </div>
             </div>
           </div>
         </mat-expansion-panel>
