@@ -162,7 +162,9 @@ export class DiskListComponent {
         break;
       }
     }
-    if (_.find(this.unused, { "name": parentRow.name })) {
+
+    const devMatch = this.unused.filter((dev) => dev.name == parentRow.name);
+    if (devMatch.length > 0) {
       actions.push({
         id: parentRow.name,
         icon: 'delete_sweep',
