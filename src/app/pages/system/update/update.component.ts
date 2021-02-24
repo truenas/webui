@@ -132,7 +132,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
     // Get system info from global cache
     this.core.register({ observerClass: this, eventName: "SysInfo"}).subscribe((evt: CoreEvent) => {
       this.sysInfo = evt.data;
-      this.isHA = evt.data.license && evt.data.license.system_serial_ha.length > 0;
+      this.isHA = evt.data.license && evt.data.license.system_serial_ha.length > 0 ? true : false;
     });
     this.core.emit({ name: "SysInfoRequest", sender: this });;
 
