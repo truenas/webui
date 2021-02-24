@@ -436,7 +436,8 @@ export default {
 
   podLogs: {
     title: T('Choose log'),
-    action: T('Choose'),
+    chooseBtn: T('Choose'),
+    downloadBtn: T('Download Logs'),
     nopod: {
       title: T('No Pods Found'),
       message: T('Invalid Pod name'),
