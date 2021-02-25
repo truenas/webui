@@ -194,6 +194,7 @@ export class VolumesListControlsComponent
     self.dialogRef.componentInstance.submit()
     self.dialogRef.componentInstance.success.subscribe((res) => {
       self.poolValue = pool
+      self.entity.systemdatasetPool = pool
       self.dialogService.closeAllDialogs()
       self.translate.get(helptext.choosePool.message).subscribe((msg) => {
         self.dialogService.Info(
