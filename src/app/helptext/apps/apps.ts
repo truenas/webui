@@ -27,9 +27,34 @@ export default {
   unset_pool: T('Unset Pool'),
 
   bulkActions: {
+    success: T('Success'),
+    error: T('Error'),
+    no_selected: T('Please select the applications'),
     title: T('Bulk actions'),
     finished: T('Started bulk actions'),
     failed: T('Failed to do bulk actions'),
+    options: [
+      {
+        value: 'select_all',
+        label: T('Select All'),
+        icon: 'check_circle',
+      },
+      {
+        value: 'start',
+        label: T('Start'),
+        icon: 'play_arrow',
+      },
+      {
+        value: 'stop',
+        label: T('Stop'),
+        icon: 'stop',
+      },
+      {
+        value: 'delete',
+        label: T('Delete'),
+        icon: 'delete',
+      }
+    ]
   },
 
   launch: T('Launch Docker Image'),
