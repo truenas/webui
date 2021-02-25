@@ -440,5 +440,10 @@ export default {
 
   chartEventDialog: {
     noPorts: T('No ports are being used.'),
+    statusUpToDate: T('Up to date'),
+    statusUpdateAvailable: T('Update available'),
+    statusUpdateAvailableTo: T('Update available to '),
+    containerImageStatusUpdateAvailableTo: T('Container Images are available to update'),
+    tooltipHeader: T('Conainter Images'),
   }
 }

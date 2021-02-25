@@ -2,11 +2,16 @@
     <div class="logo-container" fxLayout="row" fxLayoutAlign="center center">
         <div class="logo" style="background-image: url('{{ catalogApp.icon }}');"></div>
         <div>
-            <strong class="chart-name">{{ catalogApp.name }}</strong><span class="version"> {{ catalogApp.version }}</span>
+            <strong class="chart-name">{{ catalogApp.name }}</strong><span class="version"> {{ catalogApp.human_version }}</span>
         </div>
     </div>
     <div class="ports">
         <span>{{ 'Used Ports' | translate }}:</span><span class="value" textLimiter threshold="70">{{ catalogApp.used_ports | translate }}</span>
+    </div>
+    <div class="ports">
+        <span>{{ 'Update available' | translate }}:</span><span class="value">{{ appStatus() | translate }}</span>
+        <span class="value" textLimiter threshold="5">{{ getUpdateAvailableImages() }}</span>
+        <tooltip *ngIf="catalogApp.container_images_update_available" [header]="helptext.chartEventDialog.tooltipHeader" [message]="getUpdateAvailableImages()"></tooltip>
     </div>
     <div class="resource" fxLayout="row" fxLayoutAlign="space-between center">
         <div>
@@ -42,12 +47,9 @@
           </mat-expansion-panel-header>
           <div class="expansion-content">
             <div *ngFor="let containerImage of containerImages | keyvalue; let i = index" class="detail-row" [ngClass]="{'row-dark': i%2==0}">
-                <div>
-                    {{ containerImage.key }}
-                    <span class="value" *ngIf="containerImage.value.update_available; else elseBlock">
-                        {{ 'Update available' | translate}}
-                    </span>
-                    <ng-template #elseBlock><span class="value">{{ 'Up to date' | translate }}</span></ng-template>
+                <div fxLayout="row" fxLayoutAlign="center start">
+                    <span fxFlex="70%" class="">{{ containerImage.key }}</span>
+                    <span fxFlex="30%" class="value" >{{ containerImageStatus(containerImage) | translate}}</span>
                 </div>
             </div>
           </div>

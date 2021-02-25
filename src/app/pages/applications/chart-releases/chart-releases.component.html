@@ -8,7 +8,7 @@
           <div class="content" (click)="showChartEvents(item.name)">
             <strong class="chart-name">{{ item.name }}</strong><span class="version"> {{ item.version}}</span>
          
-            <div *ngIf="item.update; else elseBlock">
+            <div *ngIf="item.update_available; else elseBlock">
                 {{ 'Update available' | translate}}: {{ item.latest_version }}
             </div>
             <ng-template #elseBlock><div>{{ 'Up to date' | translate }}</div></ng-template>
@@ -51,7 +51,7 @@
           </button>
           <mat-menu #actionsMenu="matMenu">
             <button name="update" mat-menu-item (click)="update(item.name)" 
-              [disabled]="!item.update"
+              [disabled]="!item.update_available"
               ix-auto ix-auto-type="option" ix-auto-identifier="rollback">
               <mat-icon>call_made</mat-icon>
               <span>{{'Upgrade' | translate}}</span>
