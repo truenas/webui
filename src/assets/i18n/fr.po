@@ -91,7 +91,7 @@ msgid " disks, new vdev has "
 msgstr " disques, le nouveau vdev a "
 
 msgid " from the database."
-msgstr ""
+msgstr " de la base de données."
 
 msgid " is "
 msgstr " est "
@@ -125,7 +125,7 @@ msgid " official plugins"
 msgstr " plugins officiels"
 
 msgid " on pool "
-msgstr ""
+msgstr " sur le volume "
 
 msgid " seconds"
 msgstr " secondes"
@@ -161,7 +161,7 @@ msgid " updated."
 msgstr " à jour."
 
 msgid " yet."
-msgstr ""
+msgstr " encore."
 
 msgid "% of all cores"
 msgstr "% de tous les cores"
@@ -205,7 +205,7 @@ msgid ", new vdev is "
 msgstr ", le nouveau vdev est "
 
 msgid "."
-msgstr ""
+msgstr "."
 
 msgid ". At least one is required."
 msgstr ". Au moins un est requis."
@@ -540,6 +540,11 @@ msgid ""
 "<b>NOT</b> backed up by this operation. Additional sensitive information "
 "can be included in the configuration file.<br />"
 msgstr ""
+"<b>AVERTISSEMENT:</b> Le fichier de configuration contient des données sensibles "
+"comme les mots de passe système. Toutefois, les clés SSH stockées dans <samp>/"
+"root/.ssh</samp> ne sont <b>PAS sauvegardées</b> par cette opération. Des "
+"informations sensibles supplémentaires peuvent être incluses dans le fichier de "
+"configuration.<br />"
 
 msgid ""
 "<b>WARNING:</b> This configuration file contains system              "
@@ -1197,7 +1202,7 @@ msgid "Add"
 msgstr "Ajouter"
 
 msgid "Add "
-msgstr ""
+msgstr "Ajouter "
 
 msgid "Add ACL Item"
 msgstr "Ajouter un élément ACL"
@@ -1230,7 +1235,7 @@ msgid "Add Dataset"
 msgstr "Ajouter un dataset"
 
 msgid "Add External Interfaces"
-msgstr ""
+msgstr "Ajouter des interfaces externes"
 
 msgid "Add Group"
 msgstr "Ajouter un groupe"
@@ -1245,7 +1250,7 @@ msgid "Add Kerberos SPN Entry"
 msgstr "Ajouter Kerberos SPN Entry"
 
 msgid "Add License"
-msgstr ""
+msgstr "Ajouter la licence"
 
 msgid "Add Mountpoint"
 msgstr "Ajouter un point de montage"
@@ -1263,7 +1268,7 @@ msgid "Add Sysctl"
 msgstr "Ajouter Sysctl"
 
 msgid "Add Tunable"
-msgstr ""
+msgstr "Ajouter réglages"
 
 msgid "Add User"
 msgstr "Ajouter un utilisateur"
@@ -1275,7 +1280,7 @@ msgid "Add Vdevs"
 msgstr "Ajouter Vdevs"
 
 msgid "Add ZVol"
-msgstr ""
+msgstr "Ajouter un zvol"
 
 msgid "Add Zvol"
 msgstr "Ajouter un zvol"
@@ -2021,7 +2026,7 @@ msgid "Always On"
 msgstr "Toujours actif"
 
 msgid "Always pull image even if present on host."
-msgstr ""
+msgstr "Toujours récupérer l’image même si elle est présente sur l’hôte."
 
 msgid "Always restart containers in a pod if they exit."
 msgstr ""
@@ -2145,21 +2150,23 @@ msgid "Application Key"
 msgstr "Application Key"
 
 msgid "Application Name"
-msgstr ""
+msgstr "Nom de l’application"
 
 msgid "Applications"
 msgstr "Applications"
 
 msgid "Applications are not running"
-msgstr ""
+msgstr "Les applications ne sont pas en cours d’exécution"
 
 msgid "Applications not configured"
-msgstr ""
+msgstr "Applications non configurées"
 
 msgid ""
 "Applications you install will automatically appear here. Click below and "
 "browse the TrueNAS catalog to get started."
 msgstr ""
+"Les applications que vous installez s’afficheront automatiquement ici. Cliquez ci-"
+"dessous et parcourez le catalogue TrueNAS pour commencer."
 
 msgid "Apply"
 msgstr "Appliquer"
@@ -2230,7 +2237,7 @@ msgid "Apply updates and reboot system after downloading."
 msgstr "Appliquer les mises à jour et redémarrer le système après le téléchargement."
 
 msgid "Apps"
-msgstr ""
+msgstr "Apps"
 
 msgid "Apr"
 msgstr "Avr"
@@ -2908,7 +2915,7 @@ msgid "CPU Mode"
 msgstr ""
 
 msgid "CPU Model"
-msgstr ""
+msgstr "Modèle CPU"
 
 msgid "CPU Usage"
 msgstr "Utilisation du CPU"
@@ -2979,7 +2986,7 @@ msgid "Case Sensitivity"
 msgstr "‪Sensibilité à la casse"
 
 msgid "Catalog"
-msgstr ""
+msgstr "Catalogue"
 
 msgid "Category"
 msgstr "Catégorie"
@@ -3266,7 +3273,7 @@ msgid "Choose File"
 msgstr "Choisir le fichier"
 
 msgid "Choose Pool"
-msgstr ""
+msgstr "Choisissez le volume"
 
 msgid "Choose Pool for Plugin and Jail Manager"
 msgstr "Choisissez un volume pour les plugin et le manager jail"
@@ -3343,7 +3350,7 @@ msgstr ""
 "utilisateur."
 
 msgid "Choose a pool for Apps"
-msgstr ""
+msgstr "Choisissez un volume pour les applications"
 
 msgid "Choose a pool for plugin and jail storage."
 msgstr ""
@@ -3351,7 +3358,7 @@ msgstr ""
 "jail."
 
 msgid "Choose a pool for the Apps"
-msgstr ""
+msgstr "Choisissez un volume pour les applications"
 
 msgid "Choose a pool to scrub."
 msgstr "Choisissez un volume à nettoyer."
@@ -3483,7 +3490,7 @@ msgstr ""
 "chiffres) ou <i>Passphrase</i> (alphanumérique)."
 
 msgid "Choose container"
-msgstr ""
+msgstr "Choisissez le conteneur"
 
 msgid ""
 "Choose how many log entries to create. Choices range from the least log "
@@ -3518,7 +3525,7 @@ msgid "Choose permissions for this rsync module."
 msgstr "Choisissez les permissions pour ce module rsync."
 
 msgid "Choose pod"
-msgstr ""
+msgstr "Choisissez un pod"
 
 msgid "Choose the VM operating system type."
 msgstr "Sélectionnez le type de système d'exploitation pour la VM."
@@ -3842,12 +3849,14 @@ msgid "Command"
 msgstr "Commande"
 
 msgid "Commands"
-msgstr ""
+msgstr "Commandes"
 
 msgid ""
 "Commands to execute inside container overriding image CMD default.  Use "
 "<i>ENTER</i> after each entry."
 msgstr ""
+"Commandes d’exécution à l’intérieur du conteneur dominant l’image CMD par défaut.  "
+"Utilisez <i>ENTRER</i> après chaque entrée."
 
 msgid ""
 "Commands to run in the jail environment before the jail is removed and "
@@ -3936,10 +3945,10 @@ msgid "Compression"
 msgstr "Compression"
 
 msgid "Compression Level"
-msgstr ""
+msgstr "Niveau de compression"
 
 msgid "Compression Ratio"
-msgstr ""
+msgstr "Compression Ratio"
 
 msgid "Compression level"
 msgstr "Niveau de compression"
@@ -3993,7 +4002,7 @@ msgstr ""
 "utilise toujours une topologie SUBNET)"
 
 msgid "Configuring..."
-msgstr ""
+msgstr "Configuration..."
 
 msgid "Confirm"
 msgstr "Confirmer"
@@ -4126,28 +4135,28 @@ msgid "Container"
 msgstr "Conteneur"
 
 msgid "Container Args"
-msgstr ""
+msgstr "Conteneur args"
 
 msgid "Container CMD"
-msgstr ""
+msgstr "Conteneur CMD"
 
 msgid "Container Entrypoint"
-msgstr ""
+msgstr "Point d’entrée du conteneur"
 
 msgid "Container Environment Variables"
-msgstr ""
+msgstr "Variables de l’environnement des conteneurs"
 
 msgid "Container Port"
-msgstr ""
+msgstr "Port du conteneur"
 
 msgid "Container Settings"
-msgstr ""
+msgstr "Paramètres du conteneur"
 
 msgid "Container port"
-msgstr ""
+msgstr "Port du conteneur"
 
 msgid "Containers"
-msgstr ""
+msgstr "Conteneurs"
 
 msgid "Content Commitment"
 msgstr "Engagement de contenu"
@@ -4325,7 +4334,7 @@ msgid "Create new disk image"
 msgstr "Créer une nouvelle image disque"
 
 msgid "Create new pods and then kill old ones."
-msgstr ""
+msgstr "Créez de nouveaux pods, puis tuez les anciens."
 
 msgid "Create new pool"
 msgstr "Créer un nouveau volume"
@@ -4501,7 +4510,7 @@ msgid "DNS"
 msgstr ""
 
 msgid "DNS Configuration"
-msgstr ""
+msgstr "Configuration DNS"
 
 msgid "DNS Domain Name"
 msgstr "Nom de domaine DNS"
@@ -4510,7 +4519,7 @@ msgid "DNS Forwarder"
 msgstr "DNS Forwarder"
 
 msgid "DNS Policy"
-msgstr ""
+msgstr "Politique DNS"
 
 msgid "DNS Servers"
 msgstr "Serveurs DNS"
@@ -4569,7 +4578,7 @@ msgid "Dashboard"
 msgstr "Tableau de bord"
 
 msgid "Dashboard is Empty!"
-msgstr ""
+msgstr "Le tableau de bord est vide !"
 
 msgid "Data"
 msgstr "Données"
