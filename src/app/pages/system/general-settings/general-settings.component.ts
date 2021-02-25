@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { WebSocketService, SystemGeneralService, DialogService, LanguageService, StorageService } 
+import { WebSocketService, SystemGeneralService, DialogService, LanguageService, StorageService }
   from '../../../services/';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { LocaleService } from '../../../services/locale.service';
@@ -18,6 +18,7 @@ import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialo
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { AdminLayoutComponent } from '../../../components/common/layouts/admin-layout/admin-layout.component';
 
 @Component({
   selector: 'app-general-settings',
@@ -40,7 +41,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   protected localizationComponent = new LocalizationFormComponent(this.language,this.ws,this.dialog,this.loader,
     this.sysGeneralService,this.localeService,this.modalService);
   protected guiComponent = new GuiFormComponent(this.router,this.language,this.ws,this.dialog,this.loader,
-    this.http,this.storage,this.sysGeneralService,this.modalService);
+    this.http,this.storage,this.sysGeneralService,this.modalService, this.adminLayout);
   protected NTPServerFormComponent = new NTPServerFormComponent(this.modalService);
 
   // Dialog forms and info for saving, uploading, resetting config
@@ -110,7 +111,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     private sysGeneralService: SystemGeneralService, private modalService: ModalService,
     private language: LanguageService, private dialog: DialogService, private loader: AppLoaderService,
     private router: Router, private http: HttpClient, private storage: StorageService,
-    public mdDialog: MatDialog, private core: CoreService) { }
+    public mdDialog: MatDialog, private core: CoreService, private adminLayout: AdminLayoutComponent) { }
 
   ngOnInit(): void {
     this.getDataCardData();
@@ -128,7 +129,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
         case 'save_config':
           this.dialog.dialogForm(this.saveConfigFormConf);
           break;
-        
+
         case 'upload_config':
           this.dialog.dialogForm(this.uploadConfigFormConf);
           break;
@@ -150,9 +151,9 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
             type: 'menu',
             color: 'primary',
             options: [
-              { label: helptext.actions.save_config, value: 'save_config' }, 
-              { label: helptext.actions.upload_config, value: 'upload_config' }, 
-              { label: helptext.actions.reset_config, value: 'reset_config' } 
+              { label: helptext.actions.save_config, value: 'save_config' },
+              { label: helptext.actions.upload_config, value: 'upload_config' },
+              { label: helptext.actions.reset_config, value: 'reset_config' }
             ]
           }
         ]
@@ -165,7 +166,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   getDataCardData() {
     this.getGenConfig = this.sysGeneralService.getGeneralConfig.subscribe(res => {
       this.configData = res;
-      this.dataCards = [ 
+      this.dataCards = [
         {
           title: helptext.guiTitle,
           id: 'gui',
@@ -186,11 +187,11 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
           ]
         }
       ];
-     
+
       this.sysGeneralService.languageChoices().subscribe(languages => {
         this.sysGeneralService.kbdMapChoices().subscribe(mapchoices => {
           const keyboardMap = mapchoices.find(x => x.value === this.configData.kbdmap);
-          this.localeData = 
+          this.localeData =
           {
             title: helptext.localeTitle,
             id: 'localization',
@@ -207,7 +208,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
       })
     });
   }
-  
+
   doAdd(name: string, id?: number) {
     let addComponent;
     switch (name) {
@@ -225,7 +226,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   }
 
   doNTPDelete(server: any) {
-    this.dialog.confirm(helptext.deleteServer.title, `${helptext.deleteServer.message} ${server.address}?`, 
+    this.dialog.confirm(helptext.deleteServer.title, `${helptext.deleteServer.message} ${server.address}?`,
       false, helptext.deleteServer.message).subscribe(res => {
       if (res) {
         this.loader.open();
@@ -277,7 +278,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
             }, err => {
               entityDialog.loader.close();
               entityDialog.dialogRef.close();
-              entityDialog.parent.dialog.errorReport(helptext.config_download.failed_title, 
+              entityDialog.parent.dialog.errorReport(helptext.config_download.failed_title,
                 helptext.config_download.failed_message, err.message);
             });
           },
@@ -306,7 +307,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     const parent = entityDialog.conf.fieldConfig[0].parent;
     const formData: FormData = new FormData();
 
-    const dialogRef = parent.mdDialog.open(EntityJobComponent, 
+    const dialogRef = parent.mdDialog.open(EntityJobComponent,
       {data: {"title":helptext.config_upload.title,"CloseOnClickOutside":false}});
         dialogRef.componentInstance.setDescription(helptext.config_upload.message);
         formData.append('data', JSON.stringify({

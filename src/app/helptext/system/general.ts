@@ -218,5 +218,8 @@ export const helptext_system_general = {
   deleteServer: {
     title: T('Delete Server'),
     message: T('Delete')
-  }
+  },
+  
+  consolemsg_placeholder: T('Show Console Messages'),
+  consolemsg_tooltip: T('Display console messages in real time at the bottom of the browser.'),
 };

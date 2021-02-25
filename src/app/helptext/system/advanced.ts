@@ -77,10 +77,6 @@ export const helptext_system_advanced = {
   debugkernel_tooltip: T('Set to boot a debug kernel after the next system\
   reboot.'),
 
-  consolemsg_placeholder: T('Show Console Messages'),
-  consolemsg_tooltip: T('Display console messages in real time\
- at the bottom of the browser.'),
-
   motd_placeholder: T('MOTD Banner'),
   motd_tooltip: T('The message to show when a user logs in with SSH.'),
 
