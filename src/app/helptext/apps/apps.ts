@@ -23,7 +23,7 @@ export default {
   installing: T('Installing'),
   settings: T('Settings'),
   choose: T('Choose Pool'),
-  advanced: T('Advanced Settngs'),
+  advanced: T('Advanced Settings'),
   unset_pool: T('Unset Pool'),
 
   bulkActions: {
