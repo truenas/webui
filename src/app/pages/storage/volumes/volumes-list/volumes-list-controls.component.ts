@@ -25,6 +25,8 @@ import helptext from 'app/helptext/storage/volumes/volume-list'
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface'
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job'
 import { EntityUtils } from 'app/pages/common/entity/utils'
+import { T } from 'app/translate-marker'
+import _ from 'lodash'
 
 @Component({
   selector: 'app-volumes-list-controls',
@@ -49,6 +51,7 @@ export class VolumesListControlsComponent
   private dialogRef: any
   private filterSubscription: Subscription
   private poolChoicesSubscription: Subscription
+  private poolConfigSubscription: Subscription
 
   get totalActions(): number {
     const addAction = this.entity.conf.route_add ? 1 : 0
@@ -79,6 +82,9 @@ export class VolumesListControlsComponent
     }
     if (this.poolChoicesSubscription) {
       this.poolChoicesSubscription.unsubscribe()
+    }
+    if (this.poolConfigSubscription) {
+      this.poolConfigSubscription.unsubscribe()
     }
   }
 
@@ -151,7 +157,10 @@ export class VolumesListControlsComponent
         Object.keys(res).forEach((pool) => {
           this.poolList.push({ label: res[pool], value: pool })
         })
-        this.dialogService.dialogForm(this.getSystemDatasetPoolDialogConfiguration(), true)
+        this.dialogService.dialogForm(
+          this.getSystemDatasetPoolDialogConfiguration(),
+          true
+        )
       })
   }
 
@@ -170,15 +179,44 @@ export class VolumesListControlsComponent
       ],
       method_ws: 'systemdataset.update',
       saveButtonText: helptext.choosePool.action,
-      customSubmit: this.updateSystemDatasetPool,
+      customSubmit: this.customSubmitSystemDatasetPool,
       parent: this,
     }
   }
 
   getSystemDatasetPool() {
-    this.ws.call('systemdataset.config').subscribe((res) => {
-      this.poolValue = res.pool
+    this.poolConfigSubscription = this.ws
+      .call('systemdataset.config')
+      .subscribe((res) => {
+        this.poolValue = res.pool
+      })
+  }
+  
+  customSubmitSystemDatasetPool(entityDialog: any) {
+    const self = entityDialog.parent
+    self.loader.open()
+    self.ws.call('service.query').subscribe((services) => {
+      const smbShare = _.find(services, { service: 'cifs' })
+      if (smbShare.state === 'RUNNING') {
+        self.loader.close()
+        self.dialogService
+          .confirm(
+            T('Restart SMB Service'),
+            T('The system dataset will be updated and the SMB service restarted. This will cause a temporary disruption of any active SMB connections.'),
+            false,
+            T('Continue')
+          )
+          .subscribe((confirmed) => {
+            if (confirmed) {
+              self.updateSystemDatasetPool(entityDialog)
+            }
+          })
+      } else {
+        self.loader.close()
+        self.updateSystemDatasetPool(entityDialog)
+      }
     })
+
   }
 
   updateSystemDatasetPool(entityDialog: any) {
@@ -193,18 +231,26 @@ export class VolumesListControlsComponent
     ])
     self.dialogRef.componentInstance.submit()
     self.dialogRef.componentInstance.success.subscribe((res) => {
-      self.poolValue = pool
-      self.entity.systemdatasetPool = pool
-      self.dialogService.closeAllDialogs()
-      self.translate.get(helptext.choosePool.message).subscribe((msg) => {
-        self.dialogService.Info(
-          helptext.choosePool.success,
-          msg + res.result.pool,
-          '500px',
-          'info',
-          true
-        )
-      })
+      if (res.error) {
+        if (res.exc_info && res.exc_info.extra) {
+          res.extra = res.exc_info.extra
+        }
+        new EntityUtils().handleWSError(this, res)
+      }
+      if (res.state === 'SUCCESS') {
+        self.poolValue = pool
+        self.entity.systemdatasetPool = pool
+        self.dialogService.closeAllDialogs()
+        self.translate.get(helptext.choosePool.message).subscribe((msg) => {
+          self.dialogService.Info(
+            helptext.choosePool.success,
+            msg + res.result.pool,
+            '500px',
+            'info',
+            true
+          )
+        })
+      }
     })
     self.dialogRef.componentInstance.failure.subscribe((err) => {
       new EntityUtils().handleWSError(self, err, self.dialogService)
