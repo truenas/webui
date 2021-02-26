@@ -284,7 +284,9 @@ export class PodLogsComponent implements OnInit {
       podFC.options = [];
       containerFC.options = [];
 
+      self.loader.open();
       self.ws.call('chart.release.pod_logs_choices', [value]).subscribe(res => {
+        self.loader.close();
         self.tempPodDetails = res;
         let pod_name;
         if (Object.keys(self.tempPodDetails).length > 0) {
