@@ -11,6 +11,7 @@
     <div >
       <button mat-menu-item *ngFor="let option of config.options" 
         ix-auto ix-auto-type="option" [ix-auto-identifier]="id + '_' + option.label" (click)="onClick(option);">
+        <mat-icon *ngIf="option.icon">{{option.icon}}</mat-icon>
         <span>{{option.label}}</span>
       </button>
     </div>
