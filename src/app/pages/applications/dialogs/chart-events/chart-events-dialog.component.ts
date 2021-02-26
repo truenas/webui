@@ -70,17 +70,23 @@ export class ChartEventsDialog implements OnInit {
     let label: string;
     if (!this.catalogApp.update_available && !this.catalogApp.container_images_update_available) {
       label = helptext.chartEventDialog.statusUpToDate;
-    } else if ( this.catalogApp.update_available ) {
-      label = helptext.chartEventDialog.statusUpdateAvailableTo + this.catalogApp.human_latest_version;
-    } else if (this.catalogApp.container_images_update_available) {      
-      label = helptext.chartEventDialog.containerImageStatusUpdateAvailableTo;
+    } else if ( this.catalogApp.update_available || this.catalogApp.container_images_update_available) {
+      label = helptext.chartEventDialog.statusUpdateAvailable;
     }
     return label;
   }
 
-  //return the container image names available to update
-  getUpdateAvailableImages() {
-    const updateAvailableImages = Object.keys(this.containerImages).filter(imageName=>this.containerImages[imageName].update_available);
-    return updateAvailableImages.join(",");
+  //return the tooltip string for the version availabe to update
+  getUpdateVersionTooltip() {
+    let label: string;
+    if ( this.catalogApp.update_available ) {
+      label = helptext.chartEventDialog.statusUpdateAvailableTo + this.catalogApp.human_latest_version;
+    } else if (this.catalogApp.container_images_update_available) {      
+      label = helptext.chartEventDialog.containerImageStatusUpdateAvailableTo;
+      const updateAvailableImages = Object.keys(this.containerImages).filter(imageName=>this.containerImages[imageName].update_available);
+      label += updateAvailableImages.join(",");
+    }
+    
+    return label;
   }
 }

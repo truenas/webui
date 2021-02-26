@@ -471,8 +471,8 @@ export default {
     noPorts: T('No ports are being used.'),
     statusUpToDate: T('Up to date'),
     statusUpdateAvailable: T('Update available'),
-    statusUpdateAvailableTo: T('Update available to '),
-    containerImageStatusUpdateAvailableTo: T('Container Images are available to update'),
+    containerImageStatusUpdateAvailableTo: T('Following container images are available to update:\n'),
+    statusUpdateAvailableTo: T('Available version:\n'),
     tooltipHeader: T('Conainter Images'),
   }
 }
