@@ -17,7 +17,6 @@ import { KubernetesSettingsComponent } from './forms/kubernetes-settings.compone
 import { ChartReleaseAddComponent } from './forms/chart-release-add.component';
 import { ChartReleaseEditComponent } from './forms/chart-release-edit.component';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
-import { BulkOptionsComponent } from './forms/bulk-options.component';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PodShellComponent } from './pod-shell/pod-shell.component';
@@ -47,7 +46,6 @@ import { PodLogsComponent } from './pod-logs/pod-logs.component';
     KubernetesSettingsComponent,
     ChartReleaseAddComponent,
     ChartReleaseEditComponent,
-    BulkOptionsComponent,
     ChartFormComponent,
     PodShellComponent,
     PodLogsComponent,

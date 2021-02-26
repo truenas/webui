@@ -105,10 +105,9 @@ export class ApplicationsComponent implements OnInit {
       if (!this.toolbarConfig.controls.some(ctl => ctl.name === 'bulk')) {
         const bulk = {
           name: 'bulk',
-          label: 'Bulk Options',
-          type: 'button',
-          color: 'secondary',
-          value: 'bulk'
+          label: helptext.bulkActions.title,
+          type: 'menu',
+          options: helptext.bulkActions.options,
         };
   
         this.toolbarConfig.controls.splice(1,0, bulk);

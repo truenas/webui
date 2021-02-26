@@ -63,4 +63,12 @@ export class ApplicationsService {
     return this.ws.call('interface.query');
   }
 
+  getContainerConfig() {
+    return this.ws.call('container.config');
+  }
+
+  updateContainerConfig(enable_image_updates: boolean) {
+    return this.ws.call('container.update', [{enable_image_updates: enable_image_updates}]);
+  }
+
  }

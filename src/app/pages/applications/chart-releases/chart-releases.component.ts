@@ -8,7 +8,6 @@ import { DialogService, SystemGeneralService, WebSocketService } from '../../../
 import { ApplicationsService } from '../applications.service';
 import { ModalService } from '../../../services/modal.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { ChartReleaseEditComponent } from '../forms/chart-release-edit.component';
 import { CommonUtils } from 'app/core/classes/common-utils';
@@ -16,9 +15,7 @@ import { ChartFormComponent } from '../forms/chart-form.component';
 import { EmptyConfig, EmptyType } from '../../common/entity/entity-empty/entity-empty.component';
 
 import  helptext  from '../../../helptext/apps/apps';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { BulkOptionsComponent } from '../forms/bulk-options.component';
 import { Router } from '@angular/router';
 
 @Component({
@@ -161,11 +158,11 @@ export class ChartReleasesComponent implements OnInit {
     if (evt.data.event_control == 'filter') {
       this.filterString = evt.data.filter;
       this.filerChartItems();
+
     } else if (evt.data.event_control == 'bulk') {
-      this.bulkOptions();
+      this.onBulkAction(evt.data.bulk.value);
     }
-  }
-  
+  }  
 
   viewCatalog() {
     this.updateTab.emit({name: 'SwitchTab', value: '0'});
@@ -269,6 +266,7 @@ export class ChartReleasesComponent implements OnInit {
                   count: `${chart.pod_status.available}/${chart.pod_status.desired}`,
                   desired: chart.pod_status.desired,
                   history: !(_.isEmpty(chart.history)),
+                  selected: false,
                 };
         
                 let ports = [];
@@ -374,33 +372,59 @@ export class ChartReleasesComponent implements OnInit {
     }
   }
 
-  onBulkAction(checkedItems: any[], actionName: string) {
-    if (actionName === 'delete') {
-      this.bulkDelete(checkedItems);      
-    } else {
-      checkedItems.forEach(name => {
-        switch (actionName) {
-          case 'start':
-            this.start(name);
-            break;
-          case 'stop':
-            this.stop(name);
-            break;
-        }
-      });
+  getSelectedItems() {
+    const selectedItems = [];
+    this.filteredChartItems.forEach(element => {
+      if (element.selected) {
+        selectedItems.push(element.name);
+      }
+    });   
+    return selectedItems;
+  }
   
-      this.translate.get(helptext.bulkActions.finished).subscribe(msg => {
-        this.dialogService.Info(helptext.choosePool.success, msg,
-          '500px', 'info', true);
-      })
-    }    
+  checkAll(checkedItems) {
+    let selectAll = true;
+    if (checkedItems.length == this.filteredChartItems.length) {
+      selectAll = false;
+    }
+
+    this.filteredChartItems.forEach(item => {
+      item.selected = selectAll;
+    });
   }
 
-  bulkOptions() {
-    const bulkOptionsForm = new BulkOptionsComponent(this.modalService, this.appService);
-    bulkOptionsForm.setParent(this);
-
-    this.modalService.open('slide-in-form', bulkOptionsForm, "Bulk Options");
+  onBulkAction(actionName: string) {
+    const checkedItems = this.getSelectedItems();
+    
+    if (actionName === 'select_all') {
+      this.checkAll(checkedItems);
+    } else {
+      if (checkedItems.length > 0) {
+        if (actionName === 'delete') {
+          this.bulkDelete(checkedItems);      
+        } else {
+          checkedItems.forEach(name => {
+            switch (actionName) {
+              case 'start':
+                this.start(name);
+                break;
+              case 'stop':
+                this.stop(name);
+                break;
+            }
+          });
+    
+          this.translate.get(helptext.bulkActions.finished).subscribe(msg => {
+            this.dialogService.Info(helptext.bulkActions.success, msg,
+              '500px', 'info', true);
+          });
+        }
+      } else {
+        this.translate.get(helptext.bulkActions.no_selected).subscribe(msg => {
+          this.dialogService.errorReport(helptext.bulkActions.error, msg);
+        });
+      }
+    } 
   }
 
   delete(name: string) {
