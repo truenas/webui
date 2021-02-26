@@ -185,7 +185,10 @@ export class ChartReleasesComponent implements OnInit {
         app.count = `${evt.fields.pod_status.available}/${evt.fields.pod_status.desired}`;
         app.desired = evt.fields.pod_status.desired;
         app.catalog = evt.fields.catalog;
-        app.update = evt.fields.update_available;
+        app.update_available = evt.fields.update_available,
+        app.container_images_update_available = evt.fields.container_images_update_available,
+        app.human_version = evt.fields.human_version,
+        app.human_latest_version = evt.fields.human_latest_version,
         app.latest_version = evt.fields.chart_metadata.latest_chart_version;
         app.repository = evt.fields.config.image.repository;
         app.tag = evt.fields.config.image.tag;
@@ -234,7 +237,10 @@ export class ChartReleasesComponent implements OnInit {
                   version: chart.chart_metadata.version,
                   latest_version: chart.chart_metadata.latest_chart_version,
                   description: chart.chart_metadata.description,
-                  update: chart.update_available,
+                  update_available: chart.update_available,
+                  container_images_update_available: chart.container_images_update_available,
+                  human_version: chart.human_version,
+                  human_latest_version: chart.human_latest_version,
                   chart_name: chart.chart_metadata.name,
                   repository: chart.config.image.repository,
                   tag: chart.config.image.tag,
@@ -429,24 +435,6 @@ export class ChartReleasesComponent implements OnInit {
     })
   }
 
-  updateImage(image: string, tag: string) {
-    this.translate.get(helptext.updateImageDialog.message).subscribe(msg => {
-      this.dialogService.confirm(helptext.updateImageDialog.title, msg + image + '?', true).subscribe(res => {
-        if (res) {
-          this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
-            helptext.charts.update_dialog.job) }, disableClose: true});
-          this.dialogRef.componentInstance.setCall('container.image.pull', [{from_image: image,tag:tag}]);
-          this.dialogRef.componentInstance.submit();
-          this.dialogRef.componentInstance.success.subscribe(() => {
-            this.dialogService.closeAllDialogs();
-            this.dialogService.Info(helptext.updateImageDialog.success, helptext.updateImageDialog.successMsg,
-               '300px', 'info', true);
-            this.refreshChartReleases();
-          });
-        }
-      })
-    })
-  }
 
   filerChartItems() {
     if (this.filterString) {

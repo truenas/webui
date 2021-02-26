@@ -85,7 +85,7 @@ export class CatalogComponent implements OnInit {
                 label: catalog.label,
               },
               icon_url: item.icon_url? item.icon_url : '/assets/images/ix-original.png',
-              latest_version: latest,
+              latest_version: item.versions[latest].human_version,
               info: latestDetails.app_readme,
               schema: item.versions[latest].schema,
             }
