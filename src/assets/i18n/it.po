@@ -71,6 +71,9 @@ msgstr ""
 msgid " but datastore "
 msgstr ""
 
+msgid " configured"
+msgstr ""
+
 msgid " day, "
 msgstr ""
 
@@ -308,8 +311,9 @@ msgstr ""
 
 msgid ""
 "<a href=\"https://jira.ixsystems.com/secure/Signup!default.jspa\" "
-"target=\"_blank\">   Create a Jira account</a> to file an issue. Use a "
-"valid    email address when registering to receive issue status updates."
+"target=\"_blank\" class=\"native-link\">   Create a Jira account</a> to "
+"file an issue. Use a valid    email address when registering to receive "
+"issue status updates."
 msgstr ""
 
 msgid "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> account  password."
@@ -1228,9 +1232,6 @@ msgstr ""
 
 msgid "Advanced Settings"
 msgstr "Impostazioni Avanzate"
-
-msgid "Advanced Settngs"
-msgstr ""
 
 msgid ""
 "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click "
@@ -2500,6 +2501,11 @@ msgid ""
 msgstr ""
 
 msgid "Changing"
+msgstr ""
+
+msgid ""
+"Changing Advanced settings can be dangerous when done incorrectly. Please "
+"use caution before saving."
 msgstr ""
 
 msgid ""
@@ -4751,6 +4757,9 @@ msgstr ""
 
 msgid "Enable Browser"
 msgstr "Abilitare Browser"
+
+msgid "Enable Container Image Updates"
+msgstr ""
 
 msgid "Enable Debug Kernel"
 msgstr ""
@@ -8228,12 +8237,6 @@ msgstr ""
 msgid "Mirror"
 msgstr ""
 
-msgid "Misc"
-msgstr ""
-
-msgid "Miscellaneous"
-msgstr ""
-
 msgid "Mixing disks of different sizes in a vdev is not allowed."
 msgstr ""
 
@@ -8707,9 +8710,6 @@ msgstr ""
 msgid ""
 "No custom themes. Click <b>Create New Theme</b> to create a new custom "
 "theme."
-msgstr ""
-
-msgid "No data to display"
 msgstr ""
 
 msgid "No interfaces configured with Virtual IP."
@@ -9449,6 +9449,9 @@ msgid "Please select a valid SSH Connection"
 msgstr ""
 
 msgid "Please select a valid path"
+msgstr ""
+
+msgid "Please select the applications"
 msgstr ""
 
 msgid "Please wait"
@@ -13798,6 +13801,9 @@ msgstr ""
 msgid ""
 "To activate this periodic snapshot schedule, set  this option. To disable "
 "this task without deleting it, unset this  option."
+msgstr ""
+
+msgid "To configure "
 msgstr ""
 
 msgid "To configure sysctls, click the \"Add\" button."
