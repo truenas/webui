@@ -419,7 +419,7 @@ msgid ""
 msgstr ""
 "Type de<a "
 "href=\"https://www.fastmail.com/help/technical/ssltlsstarttls.html\" "
-"target=\"_blank\"> chiffrement des emails</a>. Les choix sont <i>Plain "
+"target=\"_blank\"> chiffrement des e-mails</a>. Les choix sont <i>Plain "
 "(Pas de chiffrement)</i>, <i>SSL (TLS implicite)</i> ou <i>TLS "
 "(STARTTLS)</i>."
 
@@ -5755,7 +5755,7 @@ msgstr ""
 "touche <code>Entrée</code>."
 
 msgid "Email: "
-msgstr "Email: "
+msgstr "E-mail: "
 
 msgid "Emergency"
 msgstr "Urgence"
