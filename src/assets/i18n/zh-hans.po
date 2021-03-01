@@ -69,6 +69,9 @@ msgstr " 内置用户（默认设置为<i>隐藏</i>）。"
 msgid " but datastore "
 msgstr " 但数据存储 "
 
+msgid " configured"
+msgstr ""
+
 msgid " day, "
 msgstr ""
 
@@ -321,11 +324,10 @@ msgstr ""
 
 msgid ""
 "<a href=\"https://jira.ixsystems.com/secure/Signup!default.jspa\" "
-"target=\"_blank\">   Create a Jira account</a> to file an issue. Use a "
-"valid    email address when registering to receive issue status updates."
+"target=\"_blank\" class=\"native-link\">   Create a Jira account</a> to "
+"file an issue. Use a valid    email address when registering to receive "
+"issue status updates."
 msgstr ""
-"<a href=\"https://jira.ixsystems.com/secure/Signup!default.jspa\" "
-"target=\"_blank\">创建一个Jira帐户</a>来提交问题。注册时使用有效的电子邮件地址以接收问题状态更新。"
 
 msgid "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> account  password."
 msgstr "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> 帐户的密码。"
@@ -1339,9 +1341,6 @@ msgstr ""
 
 msgid "Advanced Settings"
 msgstr "高级设置"
-
-msgid "Advanced Settngs"
-msgstr ""
 
 msgid ""
 "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click "
@@ -2653,6 +2652,11 @@ msgstr ""
 
 msgid "Changing"
 msgstr "更改中"
+
+msgid ""
+"Changing Advanced settings can be dangerous when done incorrectly. Please "
+"use caution before saving."
+msgstr ""
 
 msgid ""
 "Changing dataset permission mode can severely affect existing permissions, "
@@ -4993,6 +4997,9 @@ msgstr "启用自动调节"
 
 msgid "Enable Browser"
 msgstr "启用浏览器"
+
+msgid "Enable Container Image Updates"
+msgstr ""
 
 msgid "Enable Debug Kernel"
 msgstr "启用调试内核"
@@ -8675,12 +8682,6 @@ msgstr "此任务将在哪分钟运行。"
 msgid "Mirror"
 msgstr "镜像"
 
-msgid "Misc"
-msgstr ""
-
-msgid "Miscellaneous"
-msgstr ""
-
 msgid "Mixing disks of different sizes in a vdev is not allowed."
 msgstr "不允许在vdev中混合不同大小的磁盘。"
 
@@ -9181,9 +9182,6 @@ msgid ""
 "No custom themes. Click <b>Create New Theme</b> to create a new custom "
 "theme."
 msgstr "没有自定义主题。点击<b>创建新主题</b>以创建新的自定义主题。"
-
-msgid "No data to display"
-msgstr ""
 
 msgid "No interfaces configured with Virtual IP."
 msgstr "未使用虚拟IP配置接口。"
@@ -9975,6 +9973,9 @@ msgstr "请选择一个有效的SSH连接"
 
 msgid "Please select a valid path"
 msgstr "请选择一个有效的路径"
+
+msgid "Please select the applications"
+msgstr ""
 
 msgid "Please wait"
 msgstr "请稍后"
@@ -14533,6 +14534,9 @@ msgid ""
 "To activate this periodic snapshot schedule, set  this option. To disable "
 "this task without deleting it, unset this  option."
 msgstr "要激活此定期快照计划，请设置此选项。要禁用此任务而不删除它，请取消设置此选项。"
+
+msgid "To configure "
+msgstr ""
 
 msgid "To configure sysctls, click the \"Add\" button."
 msgstr ""
