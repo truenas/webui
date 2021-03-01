@@ -63,6 +63,15 @@ export class ApplicationsService {
     return this.ws.call('interface.query');
   }
 
+  getChartReleaseWithResources(name: string) {
+    let secondOption = {"extra": {"retrieve_resources": true}};
+    return this.ws.call('chart.release.query', [[['name', '=', name]], secondOption]);
+  }
+
+  getChartReleaseEvents(name: string) {
+    return this.ws.call('chart.release.events', [name]);
+  }
+  
   getContainerConfig() {
     return this.ws.call('container.config');
   }

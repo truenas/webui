@@ -78,6 +78,9 @@ msgstr " usuarios incorporados (la configuración predeterminada es <i>oculta</i
 msgid " but datastore "
 msgstr " pero el almacén de datos "
 
+msgid " configured"
+msgstr ""
+
 msgid " day, "
 msgstr " día, "
 
@@ -362,13 +365,10 @@ msgstr ""
 
 msgid ""
 "<a href=\"https://jira.ixsystems.com/secure/Signup!default.jspa\" "
-"target=\"_blank\">   Create a Jira account</a> to file an issue. Use a "
-"valid    email address when registering to receive issue status updates."
+"target=\"_blank\" class=\"native-link\">   Create a Jira account</a> to "
+"file an issue. Use a valid    email address when registering to receive "
+"issue status updates."
 msgstr ""
-"<a href=\"https://jira.ixsystems.com/secure/Signup!default.jspa\" "
-"target=\"_blank\">Cree una cuenta Jira</a> para presentar un problema. Use "
-"una dirección de correo electrónico válida cuando se registre para recibir "
-"actualizaciones del estado del problema."
 
 msgid "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> account  password."
 msgstr ""
@@ -1572,9 +1572,6 @@ msgstr "Creación avanzada de replicación"
 
 msgid "Advanced Settings"
 msgstr "Configuraciones avanzadas"
-
-msgid "Advanced Settngs"
-msgstr ""
 
 msgid ""
 "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click "
@@ -3101,6 +3098,11 @@ msgstr ""
 
 msgid "Changing"
 msgstr "Cambiando"
+
+msgid ""
+"Changing Advanced settings can be dangerous when done incorrectly. Please "
+"use caution before saving."
+msgstr ""
 
 msgid ""
 "Changing dataset permission mode can severely affect existing permissions, "
@@ -5753,6 +5755,9 @@ msgstr "Habilitar Autotune"
 
 msgid "Enable Browser"
 msgstr "Habilitar Navegador"
+
+msgid "Enable Container Image Updates"
+msgstr ""
 
 msgid "Enable Debug Kernel"
 msgstr "Habilitar núcleo de depuración"
@@ -9970,12 +9975,6 @@ msgstr "Minutos cuando se ejecutará esta tarea."
 msgid "Mirror"
 msgstr "Espejo"
 
-msgid "Misc"
-msgstr "Misc"
-
-msgid "Miscellaneous"
-msgstr "Misceláneos"
-
 msgid "Mixing disks of different sizes in a vdev is not allowed."
 msgstr "No se permite mezclar discos de diferentes tamaños en un vdev."
 
@@ -10528,9 +10527,6 @@ msgid ""
 msgstr ""
 "No hay temas personalizados. Haga clic en <b>Crear nuevo tema</b> para "
 "crear un nuevo tema personalizado."
-
-msgid "No data to display"
-msgstr "No hay información para mostrar"
 
 msgid "No interfaces configured with Virtual IP."
 msgstr "No hay interfaces configuradas con IP virtual."
@@ -11435,6 +11431,9 @@ msgstr "Por favor selecciones una conexión SSH válida"
 
 msgid "Please select a valid path"
 msgstr "Por favor selecciones una ruta válida"
+
+msgid "Please select the applications"
+msgstr ""
 
 msgid "Please wait"
 msgstr "Por favor espere"
@@ -16927,6 +16926,9 @@ msgid ""
 msgstr ""
 "Para activar esta programación periódica de instantáneas, configure esta "
 "opción. Para deshabilitar esta tarea sin eliminarla, desactive esta opción."
+
+msgid "To configure "
+msgstr ""
 
 msgid "To configure sysctls, click the \"Add\" button."
 msgstr ""

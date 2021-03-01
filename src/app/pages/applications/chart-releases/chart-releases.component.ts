@@ -17,6 +17,7 @@ import { EmptyConfig, EmptyType } from '../../common/entity/entity-empty/entity-
 import  helptext  from '../../../helptext/apps/apps';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Router } from '@angular/router';
+import { ChartEventsDialog } from '../dialogs/chart-events/chart-events-dialog.component';
 
 @Component({
   selector: 'app-charts',
@@ -252,11 +253,15 @@ export class ChartReleasesComponent implements OnInit {
                 let chartObj = {
                   name: chart.name,
                   catalog: chart.catalog,
+                  catalog_train: chart.catalog_train,
                   status: chart.status,
                   version: chart.chart_metadata.version,
+                  human_version: chart.human_version,
+                  human_latest_version: chart.human_latest_version,
+                  container_images_update_available: chart.container_images_update_available,
                   latest_version: chart.chart_metadata.latest_chart_version,
                   description: chart.chart_metadata.description,
-                  update: chart.update_available,
+                  update_available: chart.update_available,
                   chart_name: chart.chart_metadata.name,
                   repository: chart.config.image.repository,
                   tag: chart.config.image.tag,
@@ -610,5 +615,17 @@ export class ChartReleasesComponent implements OnInit {
       });
       entityDialog.formGroup.controls['containers'].setValue(containers[0]);
     })
+  }
+  
+  showChartEvents(name: string) {
+    const catalogApp = this.chartItems[name];
+    if (catalogApp) {
+      let dialogRef = this.mdDialog.open(ChartEventsDialog, {
+        width: '686px',
+        maxWidth: '686px',
+        data: catalogApp,
+        disableClose: false,
+      });
+    }
   }
 }

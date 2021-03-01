@@ -92,7 +92,10 @@ mat-tab-group {
     .content {
         text-align: center;
         padding: 1rem;
-        width: 210px;    
+        width: 210px;
+    }
+    .content:hover {
+      cursor: pointer;
     }
     .chart-button-row {
       position: absolute;

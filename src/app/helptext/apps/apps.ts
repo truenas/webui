@@ -419,18 +419,6 @@ export default {
         tooltip: T('')
       }
     },
-    gpu: {
-      title: T('GPU Configuration'),
-      property: {
-        placeholder: T('Property'),
-        tooltip: T('')
-      },
-      value: {
-        placeholder: T('Value')
-      }
-
-    }
-
   },
   wizardLabels: {
     image: T('Image and Policies'),
@@ -483,5 +471,18 @@ export default {
     tailLines: {
       placeholder: T('Tail Lines'),
     },
+  },
+  
+  actionBtnText: {
+    close: T('Close')
+  },
+
+  chartEventDialog: {
+    noPorts: T('No ports are being used.'),
+    statusUpToDate: T('Up to date'),
+    statusUpdateAvailable: T('Update available'),
+    containerImageStatusUpdateAvailableTo: T('Following container images are available to update:\n'),
+    statusUpdateAvailableTo: T('Available version:\n'),
+    tooltipHeader: T('Conainter Images'),
   }
 }
