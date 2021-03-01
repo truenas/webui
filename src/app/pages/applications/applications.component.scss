@@ -42,7 +42,7 @@ mat-tab-group {
             .button-row {
               position: relative;
               top: 8px;
-            }      
+            }
         }
     }
 
@@ -74,25 +74,35 @@ mat-tab-group {
       margin-left: 16px;
     }
 
-      .content-box {
-        width: 340px;
-        height: 130px;
-      }
+    .content-box {
+      width: 340px;
+      height: 130px;
+    }
 
-      .chart-name {
-        font-size: large;
-      }
+    .chart-name {
+      font-size: large;
+    }
 
-      .content {
-          text-align: center;
-          padding: 1rem;
-          width: 210px;    
+    .content {
+      text-align: center;
+      padding: 1rem;
+      width: 210px;
+      
+      .update-label {
+        color: rgba(255, 255, 255);
+        white-space: nowrap;
       }
-      .chart-button-row {
-        position: absolute;
-        bottom: 5px;
-        right: 15px;
-      } 
+      .version-value {
+        color: rgba(255, 255, 255, 0.5);
+        word-break: break-all;
+        padding-left: 5px;
+      }
+    }
+    .chart-button-row {
+      position: absolute;
+      bottom: 5px;
+      right: 15px;
+    } 
   }
 
   .more-info {
