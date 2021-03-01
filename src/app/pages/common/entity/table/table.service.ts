@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../utils';
+import { EmptyType } from "../entity-empty/entity-empty.component";
 
 const stateClass = {
     UP: 'STATE_UP',
@@ -32,9 +33,23 @@ export class TableService {
                 table.tableConf.getInOutInfo(res);
             }
             table.dataSource = res;
+            if(!(table.dataSource?.length > 0)) {
+                table.emptyConf = {
+                    type: EmptyType.no_page_data,
+                    large: table.entityEmptyLarge,
+                    title: T('No ')+table.title+T(' configured')
+                };
+                if(table.tableConf.add) {
+                    table.emptyConf.message = T('To configure ')+table.title+(', click the "Add" button.')
+                }
+            }
             if (table.limitRows) {
-                table.displayedDataSource = table.dataSource.slice(0, table.limitRows - 1);
-                table.showViewMore = table.dataSource.length !== table.displayedDataSource.length;
+                if (table.enableViewMore) {
+                    table.displayedDataSource = table.dataSource.slice(0, table.dataSource.length);
+                } else {
+                    table.displayedDataSource = table.dataSource.slice(0, table.limitRows - 1);
+                    table.showViewMore = table.dataSource.length !== table.displayedDataSource.length;
+                }
             }
             if (table.loaderOpen) {
                 this.loader.close();

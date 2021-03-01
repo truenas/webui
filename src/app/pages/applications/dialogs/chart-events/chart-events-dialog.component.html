@@ -1,0 +1,84 @@
+<div mat-dialog-content fxLayout="column wrap" fxLayoutAlign="center start" >
+    <div class="logo-container" fxLayout="row" fxLayoutAlign="center center">
+        <div class="logo" style="background-image: url('{{ catalogApp.icon }}');"></div>
+        <div fxLayout="row" fxLayoutAlign="start center">
+            <strong class="chart-name">{{ catalogApp.name }}</strong>
+            <span class="version"> {{ catalogApp.human_version }}</span>
+            <span class="value">{{ appStatus() | translate }}</span>
+            <mat-icon *ngIf="getUpdateVersionTooltip()" class="version-tooltip" matTooltip="{{ getUpdateVersionTooltip() }}">info</mat-icon>
+        </div>
+    </div>
+    <div class="ports">
+        <span>{{ 'Used Ports' | translate }}:</span><span class="value" textLimiter threshold="70">{{ catalogApp.used_ports | translate }}</span>
+    </div>
+    <div class="resource" fxLayout="row" fxLayoutAlign="space-between center">
+        <div>
+            <span>{{ 'Status' | translate }}:</span><span class="value">{{ catalogApp.status | translate }}</span>
+        </div>
+        <div>
+            <span>{{ 'Pods' | translate }}:</span><span class="value">{{ pods.length}}</span>
+        </div>
+        <div>
+            <span>{{ 'Deployments' | translate }}:</span><span class="value">{{ deployments.length }}</span>
+        </div>
+        <div>
+            <span>{{ 'Statefulsets' | translate }}:</span><span class="value">{{ statefulsets.length }}</span>
+        </div>
+    </div>
+    <div class="resource" fxLayout="row" fxLayoutAlign="space-between center">
+        <div>
+            <span>{{ 'Catalog' | translate }}:</span><span class="value" textLimiter threshold="14">{{ catalogApp.catalog }}</span>
+        </div>
+        <div>
+            <span>{{ 'Train' | translate }}:</span><span class="value" textLimiter threshold="14">{{ catalogApp.catalog_train }}</span>
+        </div>
+        <div>
+            <span>{{ 'Item Name' | translate }}:</span><span class="value" textLimiter threshold="14">{{ catalogApp.chart_name }}</span>
+        </div>
+    </div>
+    <mat-accordion>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+                {{ 'Container Images' | translate }}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="expansion-content">
+            <div *ngFor="let containerImage of containerImages | keyvalue; let i = index" class="detail-row" [ngClass]="{'row-dark': i%2==0}">
+                <div fxLayout="row" fxLayoutAlign="center start">
+                    <span fxFlex="70%" class="">{{ containerImage.key }}</span>
+                    <span fxFlex="30%" class="value" >{{ containerImageStatus(containerImage) | translate}}</span>
+                </div>
+            </div>
+          </div>
+        </mat-expansion-panel>
+        
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    {{ 'Application Events' | translate }}
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="expansion-content">
+                <div *ngIf="chartEvents.length > 0;else no_event">
+                    <div fxLayout="row" fxLayoutAlign="start start" *ngFor="let event of chartEvents; let i = index" class="detail-row" [ngClass]="{'row-dark': i%2==0}">
+                        <div class="event-time">{{ event.first_timestamp?.$date | date: 'yyyy-MM-dd H:mm:ss' }}</div>
+                        <div class="event-message">{{ event.message }}</div>
+                    </div>
+                </div>                
+                <ng-template #no_event>
+                    <div fxLayout="row" fxLayoutAlign="start start" class="detail-row row-dark">
+                        {{ 'No Recent Events' | translate }}
+                    </div>                    
+                </ng-template>
+            </div>
+        </mat-expansion-panel>
+    </mat-accordion>
+</div>
+
+<div class="button-bar" mat-dialog-actions align="end">
+    <button mat-button class="mat-button mat-secondary" (click)="dialogRef.close(false)"
+        ix-auto ix-auto-type="button" ix-auto-identifier="CLOSE">
+            {{ helptext.actionBtnText.close | translate }}
+    </button>
+</div>
