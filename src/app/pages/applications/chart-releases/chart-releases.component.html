@@ -9,7 +9,7 @@
           <div class="content" (click)="showChartEvents(item.name)">
             <strong class="chart-name">{{ item.name }}</strong><span class="version"> {{ item.human_version}}</span>
          
-            <div *ngIf="item.update_available; else elseBlock">
+            <div *ngIf="item.update_available || item.container_images_update_available; else elseBlock">
               <span class="update-label">{{ 'Update available' | translate}}:</span> 
               <span class="version-value">{{ item.human_latest_version }}</span>
             </div>
