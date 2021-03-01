@@ -25,6 +25,9 @@ msgstr " 第一个vdev是一个 "
 msgid " KiB."
 msgstr ""
 
+msgid " Please click the button below to add "
+msgstr ""
+
 msgid " Plugin"
 msgstr " 插件"
 
@@ -77,6 +80,9 @@ msgstr " 磁盘"
 
 msgid " disks, new vdev has "
 msgstr " 磁盘，新的vdev具有"
+
+msgid " from the database."
+msgstr ""
 
 msgid " is "
 msgstr " 是 "
@@ -140,6 +146,9 @@ msgstr " 更新成功"
 msgid " updated."
 msgstr " 已更新。"
 
+msgid " yet."
+msgstr ""
+
 msgid "% of all cores"
 msgstr "%所有核心"
 
@@ -176,6 +185,9 @@ msgstr "（右上），然后"
 
 msgid ", new vdev is "
 msgstr "，新的vdev是"
+
+msgid "."
+msgstr ""
 
 msgid ". At least one is required."
 msgstr ". 至少需要一个。"
@@ -987,6 +999,9 @@ msgstr "适配器类型："
 
 msgid "Add"
 msgstr "添加"
+
+msgid "Add "
+msgstr ""
 
 msgid "Add ACL Item"
 msgstr "添加ACL项"
@@ -3701,6 +3716,9 @@ msgstr ""
 
 msgid "Creating"
 msgstr "创建中"
+
+msgid "Creating Certificate"
+msgstr ""
 
 msgid "Creating Jail"
 msgstr "创建监狱"
@@ -6904,6 +6922,9 @@ msgstr "来宾账户"
 msgid "Guest Operating System"
 msgstr "来宾操作系统"
 
+msgid "Guide"
+msgstr ""
+
 msgid "HA Disabled"
 msgstr "HA已禁用"
 
@@ -7787,6 +7808,9 @@ msgid ""
 "It is not recommended to extend a pool with one or more vdevs containing "
 "different numbers of disks. Continue?"
 msgstr "不建议使用一个或多个包含不同数量磁盘的vdev扩展池。继续吗？"
+
+msgid "It seems you haven't setup any "
+msgstr ""
 
 msgid "Item"
 msgstr ""
@@ -9117,6 +9141,9 @@ msgstr "Nic附加："
 msgid "No"
 msgstr "否"
 
+msgid "No "
+msgstr ""
+
 msgid "No Applications Installed"
 msgstr ""
 
@@ -9143,6 +9170,9 @@ msgstr "没有资料库"
 
 msgid "No Safety Check (CAUTION)"
 msgstr "没有安全检查（注意）"
+
+msgid "No Search Results."
+msgstr ""
 
 msgid "No Stat"
 msgstr "无状态"
@@ -9178,6 +9208,9 @@ msgstr "找不到存储库。"
 
 msgid "No snapshots sent yet"
 msgstr "尚未发送快照"
+
+msgid "No sysctls configured"
+msgstr ""
 
 msgid "No update found."
 msgstr "没有找到更新。"
@@ -12971,6 +13004,9 @@ msgid ""
 "intervals."
 msgstr ""
 
+msgid "Something went wrong"
+msgstr ""
+
 msgid "Sort languages by:"
 msgstr "语言排序方式："
 
@@ -13806,8 +13842,8 @@ msgid ""
 "be changed if the organization requires a different algorithm."
 msgstr "要使用的加密算法。仅当组织需要其他算法时才需要更改默认的<i> SHA256 </ i>。"
 
-msgid "The current pool layout is not recommended.Override the following errors?"
-msgstr "不建议使用当前的池布局。是否覆盖以下错误？"
+msgid "The current pool layout is not recommended. Override the following errors?"
+msgstr ""
 
 msgid ""
 "The default host to use for TFTP transfers. Enter an IP address. Example: "
@@ -14082,6 +14118,9 @@ msgid ""
 "process,  failover to the standby controller."
 msgstr "备用控制器已完成升级。要完成更新过程，请故障转移到备用控制器。"
 
+msgid "The system could not retrieve any "
+msgstr ""
+
 msgid ""
 "The system dataset will be updated and the SMB service restarted. This will "
 "cause a temporary disruption of any active SMB connections."
@@ -14091,6 +14130,9 @@ msgid ""
 "The system restricts creating a zvol that brings the pool to over 80% "
 "capacity. Set to force creation of the zvol (<b>NOT Recommended</b>)."
 msgstr "系统限制创建zvol以使池达到80％以上的容量。设置为强制创建zvol（<b>不推荐</b>）。"
+
+msgid "The system returned the following error - "
+msgstr ""
 
 msgid ""
 "The system uses a self-signed certificate  to enable encrypted web "
@@ -14491,6 +14533,9 @@ msgid ""
 "To activate this periodic snapshot schedule, set  this option. To disable "
 "this task without deleting it, unset this  option."
 msgstr "要激活此定期快照计划，请设置此选项。要禁用此任务而不删除它，请取消设置此选项。"
+
+msgid "To configure sysctls, click the \"Add\" button."
+msgstr ""
 
 msgid ""
 "To define a custom shortcut for the <i>Path</i>,  enter a memorable name. "
@@ -15105,6 +15150,9 @@ msgstr "使用签名版本2"
 
 msgid "Use Syslog Only"
 msgstr "仅使用系统日志"
+
+msgid "Use System Dataset"
+msgstr ""
 
 msgid "Use all disk space"
 msgstr "使用所有的磁盘空间"
@@ -15846,6 +15894,9 @@ msgid "You have left the domain."
 msgstr "您已离开域。"
 
 msgid "You have successfully added credentials."
+msgstr ""
+
+msgid "Your query didn't return any results. Please try again."
 msgstr ""
 
 msgid "ZFS"

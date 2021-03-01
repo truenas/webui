@@ -12,7 +12,7 @@ import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialo
 import { DialogService, WebSocketService, SystemGeneralService } from '../../../services/index';
 import { ModalService } from '../../../services/modal.service';
 import { ApplicationsService } from '../applications.service';
-
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { KubernetesSettingsComponent } from '../forms/kubernetes-settings.component';
 import { ChartReleaseAddComponent } from '../forms/chart-release-add.component';
 import { ChartFormComponent } from '../forms/chart-form.component';
@@ -57,7 +57,7 @@ export class CatalogComponent implements OnInit {
     parent: this,
   }
 
-  constructor(private dialogService: DialogService,
+  constructor(private dialogService: DialogService, private appLoaderService: AppLoaderService,
     private mdDialog: MatDialog, private translate: TranslateService, protected ws: WebSocketService,
     private router: Router, private core: CoreService, private modalService: ModalService,
     private appService: ApplicationsService, private sysGeneralService: SystemGeneralService) {
@@ -68,30 +68,28 @@ export class CatalogComponent implements OnInit {
     this.appService.getAllCatalogItems().subscribe(res => {
       res.forEach(catalog => {
         for (let i in catalog.trains.charts) {  
-          if (i !== 'ix-chart') {
-            let item = catalog.trains.charts[i];
-            let versions = item.versions;
-            let latest, latestDetails;
+          let item = catalog.trains.charts[i];
+          let versions = item.versions;
+          let latest, latestDetails;
 
-            let sorted_version_labels = Object.keys(versions);
-            sorted_version_labels.sort(this.utils.versionCompare);
+          let sorted_version_labels = Object.keys(versions);
+          sorted_version_labels.sort(this.utils.versionCompare);
 
-            latest = sorted_version_labels[0];
-            latestDetails = versions[latest];
+          latest = sorted_version_labels[0];
+          latestDetails = versions[latest];
 
-            let catalogItem = {
-              name: item.name,
-              catalog: {
-                id: catalog.id,
-                label: catalog.label,
-              },
-              icon_url: item.icon_url? item.icon_url : '/assets/images/ix-original.png',
-              latest_version: latest,
-              info: latestDetails.app_readme,
-              schema: item.versions[latest].schema,
-            }
-            this.catalogApps.push(catalogItem);            
+          let catalogItem = {
+            name: item.name,
+            catalog: {
+              id: catalog.id,
+              label: catalog.label,
+            },
+            icon_url: item.icon_url? item.icon_url : '/assets/images/ix-original.png',
+            latest_version: latest,
+            info: latestDetails.app_readme,
+            schema: item.versions[latest].schema,
           }
+          this.catalogApps.push(catalogItem);
         }
       });
       this.filerApps();
@@ -136,7 +134,7 @@ export class CatalogComponent implements OnInit {
   }
 
   refreshForms() {
-    this.kubernetesForm = new KubernetesSettingsComponent(this.modalService, this.appService);
+    this.kubernetesForm = new KubernetesSettingsComponent(this.ws, this.appLoaderService, this.dialogService,this.modalService, this.appService);
     this.chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
   }
 
@@ -213,12 +211,13 @@ export class CatalogComponent implements OnInit {
 
   doInstall(name: string) {
     const catalogApp = this.catalogApps.find(app => app.name==name);
-    if (catalogApp) {
+    if (catalogApp && catalogApp.name != 'ix-chart') {
       const chartWizardComponent = new ChartWizardComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
       chartWizardComponent.parseSchema(catalogApp);
       this.modalService.open('slide-in-form', chartWizardComponent);
     } else {
       const chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
+      chartReleaseForm.parseSchema(catalogApp);
       this.modalService.open('slide-in-form', chartReleaseForm);
     }
   }
@@ -229,6 +228,8 @@ export class CatalogComponent implements OnInit {
     } else {
       this.filteredCatalogApps = this.catalogApps;
     }
+
+    this.filteredCatalogApps = this.filteredCatalogApps.filter(app => app.name !== 'ix-chart');
   }
   
 }

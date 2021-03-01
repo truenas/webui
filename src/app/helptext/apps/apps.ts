@@ -23,13 +23,38 @@ export default {
   installing: T('Installing'),
   settings: T('Settings'),
   choose: T('Choose Pool'),
-  advanced: T('Advanced Settngs'),
+  advanced: T('Advanced Settings'),
   unset_pool: T('Unset Pool'),
 
   bulkActions: {
+    success: T('Success'),
+    error: T('Error'),
+    no_selected: T('Please select the applications'),
     title: T('Bulk actions'),
     finished: T('Started bulk actions'),
     failed: T('Failed to do bulk actions'),
+    options: [
+      {
+        value: 'select_all',
+        label: T('Select All'),
+        icon: 'check_circle',
+      },
+      {
+        value: 'start',
+        label: T('Start'),
+        icon: 'play_arrow',
+      },
+      {
+        value: 'stop',
+        label: T('Stop'),
+        icon: 'stop',
+      },
+      {
+        value: 'delete',
+        label: T('Delete'),
+        icon: 'delete',
+      }
+    ]
   },
 
   launch: T('Launch Docker Image'),
@@ -83,6 +108,10 @@ export default {
     },
     route_v6_gateway: {
       placeholder: T('Route v6 Gateway'),
+      tooltip: T('')
+    },
+    enable_container_image_update: {
+      placeholder: T('Enable Container Image Updates'),
       tooltip: T('')
     }
   },
@@ -390,18 +419,6 @@ export default {
         tooltip: T('')
       }
     },
-    gpu: {
-      title: T('GPU Configuration'),
-      property: {
-        placeholder: T('Property'),
-        tooltip: T('')
-      },
-      value: {
-        placeholder: T('Value')
-      }
-
-    }
-
   },
 
   chartWizard: {
@@ -439,5 +456,18 @@ export default {
     chooseCommand: {
       placeholder: T('Commands'),
     }
+  },
+
+  actionBtnText: {
+    close: T('Close')
+  },
+
+  chartEventDialog: {
+    noPorts: T('No ports are being used.'),
+    statusUpToDate: T('Up to date'),
+    statusUpdateAvailable: T('Update available'),
+    containerImageStatusUpdateAvailableTo: T('Following container images are available to update:\n'),
+    statusUpdateAvailableTo: T('Available version:\n'),
+    tooltipHeader: T('Conainter Images'),
   }
 }

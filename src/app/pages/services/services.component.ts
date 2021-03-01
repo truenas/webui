@@ -34,7 +34,7 @@ export class Services implements OnInit {
   ];
   
   public config: any = {
-    paging: true,
+    paging: false,
     sorting: { columns: this.columns },
   };
   public services: any[];

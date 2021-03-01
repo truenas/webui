@@ -1,0 +1,101 @@
+.ix-blue .mat-dialog-content {
+    max-width: unset;
+}
+
+chart-events-dialog {
+    font-size: 14px !important;
+
+    .logo-container {
+        height: 100px;
+    }
+    
+    .logo {
+        width: 100px;
+        height: 100%;
+        background-position: center;
+        background-size: contain;
+        background-repeat: no-repeat;
+        margin-right: 30px;
+    }
+    
+    .ports, 
+    .resource {
+        width: 100%;
+        padding: 5px 0;
+        white-space: nowrap;
+    }
+    
+    .chart-name {
+        font-size: 20px;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+    
+    .version {
+        font-size: 14px;
+    }
+    
+    .version-tooltip {
+        margin-left: 10px;
+    }
+
+    .value {
+        margin-left: 12px;
+        opacity: 0.5;
+    }
+    
+    mat-accordion {
+        width: 100%;
+        max-height: 300px;
+        font-size: 14px !important;
+    }
+    
+    mat-expansion-panel {
+        border: none !important;
+        box-shadow: none !important;
+    }
+    
+    .mat-expansion-panel-header,
+    .mat-expansion-panel-header.mat-expanded {
+        padding: 5px 0px !important;
+        height: 25px;
+        font-size: 14px !important;
+    }
+    
+    .mat-expansion-panel-body {
+        padding: 0 !important;
+        margin-left: 5px;
+        max-height: 150px;
+        overflow-y: auto;
+    }
+    
+    .mat-expansion-panel-spacing {
+        margin: 5px 0 !important;
+    }
+    
+    
+    .event-time {
+        width: 130px;
+        margin-right: 10px;
+    }
+    
+    .event-message {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .row-dark {
+        background: rgba(0, 0, 0, 0.1);
+    }
+    
+    .detail-row {
+        padding: 5px;
+    }
+    
+    .button-bar {
+        margin-bottom: -8px;
+    }
+}
+
+
