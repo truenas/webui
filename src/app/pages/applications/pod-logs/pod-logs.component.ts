@@ -230,6 +230,7 @@ export class PodLogsComponent implements OnInit {
   }
 
   showChooseLogsDialog(isDownload:boolean = false) {
+    this.tempPodDetails = this.podDetails;
     this.updateChooseLogsDialog(isDownload);
     this.dialogService.dialogForm(this.choosePod, true);
   }
