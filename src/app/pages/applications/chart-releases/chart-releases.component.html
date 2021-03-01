@@ -3,9 +3,10 @@
       <div class="content-wrapper" fxLayout="row">
         <div class="logo-container">
           <div class="logo" style="background-image: url('{{ item.icon }}');"></div>
+          <mat-checkbox color="primary" class="bulk-checkbox" [(ngModel)]="item.selected"></mat-checkbox>
         </div>
         <div class=content-box>
-          <div class="content">
+          <div class="content" (click)="showChartEvents(item.name)">
             <strong class="chart-name">{{ item.name }}</strong><span class="version"> {{ item.human_version}}</span>
          
             <div *ngIf="item.update_available; else elseBlock">

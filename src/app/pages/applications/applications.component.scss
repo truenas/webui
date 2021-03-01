@@ -64,6 +64,12 @@ mat-tab-group {
       height: 160px;
       width: 160px;
       background-color: var(--contrast-lighter);
+
+      .bulk-checkbox {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+      }
     }
     .logo {
       width: calc(100% - 32px);
@@ -97,6 +103,9 @@ mat-tab-group {
         word-break: break-all;
         padding-left: 5px;
       }
+    }
+    .content:hover {
+      cursor: pointer;
     }
     .chart-button-row {
       position: absolute;
