@@ -1,3 +1,4 @@
+import { EmptyConfig, EmptyType } from './../../../common/entity/entity-empty/entity-empty.component';
 import { Component, ElementRef, OnInit, AfterViewChecked } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -1817,6 +1818,16 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   public systemdatasetPool: any;
   public has_encrypted_root = {};
   public has_key_dataset = {};
+  public entityEmptyConf: EmptyConfig = {
+    type: EmptyType.first_use,
+    large: true,
+    title: T('No Pools'),
+    message: `${T(`It seems you haven't configured pools yet.`)} ${T('Please click the button below to create a pool.')}`,
+    button: {
+      label: T('Create pool'),
+      action: this.createPool.bind(this)
+    }
+  }
   protected addZvolComponent: ZvolFormComponent;
   protected addDatasetFormComponent: DatasetFormComponent;
   protected editDatasetFormComponent: DatasetFormComponent;
@@ -1972,6 +1983,10 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.editDatasetFormComponent.setTitle("Edit Dataset");
     this.modalService.open('slide-in-form', this.editDatasetFormComponent, id);
     
+  }
+  
+  createPool() {
+    this.router.navigate(['/storage/manager'])
   }
 
 }
