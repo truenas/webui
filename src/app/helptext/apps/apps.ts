@@ -449,5 +449,18 @@ export default {
     chooseCommand: {
       placeholder: T('Commands'),
     }
+  },
+
+  actionBtnText: {
+    close: T('Close')
+  },
+
+  chartEventDialog: {
+    noPorts: T('No ports are being used.'),
+    statusUpToDate: T('Up to date'),
+    statusUpdateAvailable: T('Update available'),
+    containerImageStatusUpdateAvailableTo: T('Following container images are available to update:\n'),
+    statusUpdateAvailableTo: T('Available version:\n'),
+    tooltipHeader: T('Conainter Images'),
   }
 }
