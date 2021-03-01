@@ -20,6 +20,9 @@ export class SystemGeneralService {
   // Prevent repetitive api calls in a short time when data is already available
   public generalConfigInfo: any;
   public getGeneralConfig = new Observable<any>(observer => {
+    if(!this.ws.loggedIn) {
+      return observer.next({});
+    }
     if((!this.generalConfigInfo || _.isEmpty(this.generalConfigInfo))) {
       // Since the api call can be made many times before the first response comes back, 
       // set waiting to true to make if condition false after the first call
