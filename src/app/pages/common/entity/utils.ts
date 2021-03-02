@@ -278,7 +278,7 @@ export class EntityUtils {
     return result;
   }
   
-  createRelations(relations:object[], parentName:string) {
+  createRelations(relations: any[], parentName: string) {
     const result = relations.map(relation => {
       let relationFieldName = relation[0];
       if (parentName) {
@@ -298,8 +298,13 @@ export class EntityUtils {
     return result;    
   }
 
-  parseSchemaFieldConfig(schemaConfig:any, parentName:string = null, parentIsList:boolean = false) {
+  parseSchemaFieldConfig(schemaConfig: any, parentName: string=null, parentIsList: boolean=false) {
     let results = [];
+
+    if (schemaConfig.schema.hidden) {
+      return results;
+    }
+
     let name = schemaConfig.variable;
     if (!parentIsList && parentName) {
       name = `${parentName}${FORM_KEY_SEPERATOR}${name}`;
@@ -358,16 +363,8 @@ export class EntityUtils {
 
     } else if (schemaConfig.schema.type == 'list') {
 
-      if (schemaConfig.schema.items.length > 0) {
-        const listLabel = {
-          label: schemaConfig.label,
-          type: 'label',
-        };
-        results = results.concat(listLabel);
-      }
-
       fieldConfig['type'] = 'list';
-      fieldConfig['box'] = true;
+      fieldConfig['label'] = `Configure ${schemaConfig.label}`;
       fieldConfig['width'] = '100%';
       fieldConfig['listFields'] = [];
 
@@ -401,7 +398,7 @@ export class EntityUtils {
 
         if (schemaConfig.schema.show_if) {
           subResults.forEach(subResult => {
-            subResult['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);;
+            subResult['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);
           });
         }
         results = results.concat(subResults);
@@ -411,6 +408,11 @@ export class EntityUtils {
     if (fieldConfig) {
 
       if (fieldConfig['type']) {
+
+        if (schemaConfig.schema.show_if) {
+          fieldConfig['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);
+        }
+
         results.push(fieldConfig);
   
         if (schemaConfig.schema.subquestions) {
@@ -443,17 +445,20 @@ export class EntityUtils {
   }
 
   parseConfigData(configData:object, parentKey:string, result:object) {
-    Object.keys(configData).forEach(key => {
-      const value = configData[key];
-      let fullKey = key;
-      if (parentKey) {
-        fullKey = `${parentKey}${FORM_KEY_SEPERATOR}${key}`;
-      }
-      if (!Array.isArray(value) && typeof value === 'object') {
-        this.parseConfigData(value, fullKey, result);
-      } else {
-        result[fullKey] = value;
-      }
-    });
+    if (configData !== undefined && configData !== null) {
+      Object.keys(configData).forEach(key => {
+        const value = configData[key];
+        let fullKey = key;
+        if (parentKey) {
+          fullKey = `${parentKey}${FORM_KEY_SEPERATOR}${key}`;
+        }
+        if (!Array.isArray(value) && typeof value === 'object') {
+          this.parseConfigData(value, fullKey, result);
+        } else {
+          result[fullKey] = value;
+        }
+      });
+    }
+    
   }
 }
