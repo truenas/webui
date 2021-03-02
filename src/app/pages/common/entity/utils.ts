@@ -389,6 +389,7 @@ export class EntityUtils {
       }
 
       fieldConfig['type'] = 'list';
+      fieldConfig['label'] = `Configure ${schemaConfig.label}`;
       fieldConfig['box'] = true;
       fieldConfig['width'] = '100%';
       fieldConfig['listFields'] = [];
