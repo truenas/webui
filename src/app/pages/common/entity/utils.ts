@@ -350,18 +350,18 @@ export class EntityUtils {
 
     } else if (schemaConfig.schema.type == 'string') {
       fieldConfig['type'] = 'input';
-        if (schemaConfig.schema.private) {
-          fieldConfig['inputType'] = 'password';
-          fieldConfig['togglePw'] = true;
-        }
+      if (schemaConfig.schema.private) {
+        fieldConfig['inputType'] = 'password';
+        fieldConfig['togglePw'] = true;
+      }
 
-        if (schemaConfig.schema.min_length !== undefined) {
-          fieldConfig['min'] = schemaConfig.schema.min_length;
-        }
+      if (schemaConfig.schema.min_length !== undefined) {
+        fieldConfig['min'] = schemaConfig.schema.min_length;
+      }
 
-        if (schemaConfig.schema.max_length !== undefined) {
-          fieldConfig['max'] = schemaConfig.schema.max_length;
-        }
+      if (schemaConfig.schema.max_length !== undefined) {
+        fieldConfig['max'] = schemaConfig.schema.max_length;
+      }
 
     } else if (schemaConfig.schema.type == 'int') {
       fieldConfig['type'] = 'input';
@@ -399,6 +399,8 @@ export class EntityUtils {
         listFields = listFields.concat(fields);
       });
 
+      const hasReuiredUndefinedField = listFields.find(field => field.required && field.value === undefined);
+      fieldConfig['addInitialList'] = !hasReuiredUndefinedField;
       fieldConfig['templateListField'] = listFields;
 
     } else if (schemaConfig.schema.type == 'dict') {
