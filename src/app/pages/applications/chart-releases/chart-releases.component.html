@@ -54,7 +54,7 @@
           <mat-menu #actionsMenu="matMenu">
             <button name="update" mat-menu-item (click)="update(item.name)" 
               [disabled]="!item.update_available && !item.container_images_update_available"
-              ix-auto ix-auto-type="option" ix-auto-identifier="rollback">
+              ix-auto ix-auto-type="option" ix-auto-identifier="update">
               <mat-icon>call_made</mat-icon>
               <span>{{'Upgrade' | translate}}</span>
             </button>
