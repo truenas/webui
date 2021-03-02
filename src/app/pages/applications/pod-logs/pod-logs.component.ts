@@ -246,7 +246,7 @@ export class PodLogsComponent implements OnInit {
     self.dialogService.closeAllDialogs();
 
     self.loader.open();
-    const fileName = "pods.log";
+    const fileName = `${chart_release_name}_${pod_name}_${container_name}.log`;
     const mimetype = 'application/octet-stream';
     self.ws.call('core.download', ['chart.release.pod_logs', [chart_release_name, {pod_name: pod_name, container_name: container_name, tail_lines: tail_lines}], fileName]).subscribe(res => {
       self.loader.close();
