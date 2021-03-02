@@ -7,12 +7,13 @@
         </div>
         <div class=content-box>
           <div class="content" (click)="showChartEvents(item.name)">
-            <strong class="chart-name">{{ item.name }}</strong><span class="version"> {{ item.version}}</span>
+            <strong class="chart-name">{{ item.name }}</strong><span class="version"> {{ item.human_version}}</span>
          
-            <div *ngIf="item.update_available; else elseBlock">
-                {{ 'Update available' | translate}}: {{ item.latest_version }}
+            <div *ngIf="item.update_available || item.container_images_update_available; else elseBlock">
+              <span class="update-label">{{ 'Update available' | translate}}:</span> 
+              <span class="version-value">{{ item.human_latest_version }}</span>
             </div>
-            <ng-template #elseBlock><div>{{ 'Up to date' | translate }}</div></ng-template>
+            <ng-template #elseBlock><div class="update-label">{{ 'Up to date' | translate }}</div></ng-template>
             <ng-container *ngIf="item.chart_name==='ix-chart'">
               <div class="repository docker-info">{{ 'Image' | translate }}: {{ item.repository }}</div>
               <div class="tag docker-info">{{'Tag' | translate }}: {{ item.tag }}</div>
@@ -52,8 +53,8 @@
           </button>
           <mat-menu #actionsMenu="matMenu">
             <button name="update" mat-menu-item (click)="update(item.name)" 
-              [disabled]="!item.update_available"
-              ix-auto ix-auto-type="option" ix-auto-identifier="rollback">
+              [disabled]="!item.update_available && !item.container_images_update_available"
+              ix-auto ix-auto-type="option" ix-auto-identifier="update">
               <mat-icon>call_made</mat-icon>
               <span>{{'Upgrade' | translate}}</span>
             </button>
@@ -62,12 +63,6 @@
               ix-auto ix-auto-type="option" ix-auto-identifier="rollback">
               <mat-icon>replay</mat-icon>
               <span>{{'Roll Back' | translate}}</span>
-            </button>
-            <button name="update-image" mat-menu-item (click)="updateImage(item.repository, item.tag)" 
-              *ngIf="item.chart_name==='ix-chart'"
-              ix-auto ix-auto-type="option" ix-auto-identifier="update-image">
-              <mat-icon>update</mat-icon>
-              <span>{{'Update Image' | translate}}</span>
             </button>
             <button name="edit" mat-menu-item (click)="edit(item.name, item.id)"
               ix-auto ix-auto-type="option" ix-auto-identifier="edit">
