@@ -24,6 +24,9 @@ export class DiskStateService extends BaseService {
     this.ws.subscribe("disk.query").subscribe((res) =>{
       console.log(res);
       this.core.emit({name:"DisksChanged", data: res, sender: this});
+      if(res && res.cleared){
+        this.core.emit({name:"DiskRemoved", data: res, sender: this});
+      }
     });
   }
 
