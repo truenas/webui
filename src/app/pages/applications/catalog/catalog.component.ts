@@ -19,6 +19,11 @@ import { ChartFormComponent } from '../forms/chart-form.component';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import  helptext  from '../../../helptext/apps/apps';
 
+interface SelectOption {
+	label: string, 
+	value: string, 
+}
+
 @Component({
   selector: 'app-catalog',
   templateUrl: './catalog.component.html',
@@ -32,8 +37,8 @@ export class CatalogComponent implements OnInit {
   public filterString = '';
 
   private dialogRef: any;
-  private poolList = [];
-  private selectedPool = '';
+  private poolList: SelectOption[] = [];
+  private selectedPool: string = '';
   public settingsEvent: Subject<CoreEvent>;
   private kubernetesForm: KubernetesSettingsComponent;
   private chartReleaseForm: ChartReleaseAddComponent;
