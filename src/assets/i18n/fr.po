@@ -5821,7 +5821,7 @@ msgid "Enable Browser"
 msgstr "Activer le navigateur"
 
 msgid "Enable Container Image Updates"
-msgstr ""
+msgstr "Activer les mises à jour de l’image du conteneur"
 
 msgid "Enable Debug Kernel"
 msgstr "Activer Kernel Debug"
@@ -7241,7 +7241,7 @@ msgid "Environment Variable Name"
 msgstr "Nom variable de l’environnement"
 
 msgid "Environment Variable Value"
-msgstr ""
+msgstr "Valeur variable de l’environnement"
 
 msgid "Error"
 msgstr "Erreur"
@@ -7250,10 +7250,10 @@ msgid "Error Downloading File"
 msgstr "Erreur de téléchargement de fichier"
 
 msgid "Error Extending Vdev"
-msgstr ""
+msgstr "Erreur d'extension de Vdev"
 
 msgid "Error Replacing Disk"
-msgstr ""
+msgstr "Erreur de remplacement de disque"
 
 msgid "Error Saving Configuration Settings"
 msgstr "Erreur pendant l'Enregistrement des Paramètres de Configuration"
@@ -7274,7 +7274,7 @@ msgid "Error checking for updates."
 msgstr "Erreur lors de la vérification des mises à jour."
 
 msgid "Error creating CA."
-msgstr ""
+msgstr "Erreur de création de l'AC."
 
 msgid "Error creating VM."
 msgstr "Erreur lors de la création de la VM."
@@ -7286,7 +7286,7 @@ msgid "Error details for "
 msgstr "Détails de l'erreur pour "
 
 msgid "Error detected reading App"
-msgstr ""
+msgstr "Erreur de lecture détectée sur l'application"
 
 msgid "Error exporting the Private Key"
 msgstr "Erreur lors de l'exportation de la clé privée"
@@ -7513,13 +7513,13 @@ msgid "Extents"
 msgstr ""
 
 msgid "Extra Constraints"
-msgstr ""
+msgstr "Contraintes supplémentaires"
 
 msgid "Extra Users"
 msgstr "Utilisateurs supplémentaires"
 
 msgid "FTP"
-msgstr ""
+msgstr "FTP"
 
 msgid "FTP Host to connect to. Example: <i>ftp.example.com</i>."
 msgstr "Hôte FTP auquel se connecter. Exemple: <i>ftp.exemple.com</i> ."
@@ -7805,7 +7805,7 @@ msgstr ""
 "système hôte. Les nouvelles versions ne sont pas visibles."
 
 msgid "Frequency"
-msgstr ""
+msgstr "Fréquence"
 
 msgid "Fri"
 msgstr "Ven"
@@ -7918,7 +7918,7 @@ msgid "Generate Debug File"
 msgstr "Générer un fichier de débugage"
 
 msgid "Generate Encryption Key"
-msgstr ""
+msgstr "Générer la clé de chiffrement"
 
 msgid "Generate Key"
 msgstr "Générer une clé"
@@ -8082,7 +8082,7 @@ msgid "Guest Operating System"
 msgstr "Système d'exploitation invité"
 
 msgid "Guide"
-msgstr ""
+msgstr "Guide"
 
 msgid "HA Disabled"
 msgstr "HA désactivé"
@@ -8124,7 +8124,7 @@ msgid "HTTP Proxy"
 msgstr "Proxy HTTP"
 
 msgid "HTTP Proxy:"
-msgstr ""
+msgstr "Proxy HTTP:"
 
 msgid "HTTP host URL."
 msgstr "URL de l'hôte HTTP."
@@ -8225,25 +8225,25 @@ msgid "Host Deny"
 msgstr "Refuser l'hôte"
 
 msgid "Host Interface"
-msgstr ""
+msgstr "Interface hôte"
 
 msgid "Host Name Database"
 msgstr "Base de données des noms d'hôtes"
 
 msgid "Host Network"
-msgstr ""
+msgstr "Réseau hôte"
 
 msgid "Host Network/Host Ports"
-msgstr ""
+msgstr "Réseau hôte/ports hôte"
 
 msgid "Host Path"
-msgstr ""
+msgstr "Chemin de l'hôte"
 
 msgid "Host Path Volumes"
-msgstr ""
+msgstr "Chemin du volume de l'hôte"
 
 msgid "Host Port"
-msgstr ""
+msgstr "Port hôte"
 
 msgid "Host Port Number"
 msgstr "Numéro de port hôte"
@@ -8267,7 +8267,7 @@ msgid "Hostname (Virtual)"
 msgstr "Nom d'hôte (virtuel)"
 
 msgid "Hostname Database:"
-msgstr ""
+msgstr "Base de données de nom d’hôte :"
 
 msgid "Hostname and Domain"
 msgstr "Nom de Domaine et Domaine"
@@ -8311,7 +8311,7 @@ msgstr ""
 "trap."
 
 msgid "Hostname:"
-msgstr ""
+msgstr "Nom d'hôte:"
 
 msgid ""
 "Hostnames or IP addresses of the  ISNS servers to be registered with the "
@@ -8450,6 +8450,13 @@ msgid ""
 "connection  with a remote TrueNAS system. This method uses the URL and "
 "login  credentials of the remote system to connect and exchange SSH keys."
 msgstr ""
+"Comment configurer la connexion :<br><br>  <i>Manual</i>nécessite la configuration "
+"de l’authentification sur le système distant.  Cela peut inclure la copie des clés "
+"SSH et la modification du <i>compte utilisateur</i> root sur ce système.<br><br>  "
+"<i>Semi-automatic</i> ne fonctionne que lors de la configuration d’une connexion "
+"SSH avec un système TrueNAS distant. Cette méthode utilise l’URL et les "
+"informations d’identification de connexion du système distant pour connecter et "
+"échanger les clés SSH."
 
 msgid "I Agree"
 msgstr "J’accepte"
@@ -8473,7 +8480,7 @@ msgid "IP Address"
 msgstr "Adresse IP"
 
 msgid "IP Address Management"
-msgstr ""
+msgstr "Gestion des adresses IP"
 
 msgid "IP Addresses"
 msgstr "Adresses IP"
@@ -8684,6 +8691,8 @@ msgid ""
 "If the <i>Hex key</i> type is chosen, an encryption key will be "
 "auto-generated."
 msgstr ""
+"Si le type <i>Hex key</i> est choisi, une clé de chiffrement sera générée "
+"automatiquement."
 
 msgid ""
 "If the IPMI out-of-band management interface is on a different VLAN from "
