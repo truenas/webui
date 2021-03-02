@@ -4,7 +4,7 @@ import { RestService, WebSocketService } from '../../../../services';
 import { AbstractControl, FormControl, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
-
+import {StepperSelectionEvent} from '@angular/cdk/stepper';
 import {FieldSet} from '../../entity/entity-form/models/fieldset.interface';
 import { FieldConfig } from '../../entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../entity/entity-form/services/entity-form.service';
@@ -55,36 +55,36 @@ export class EntityWizardComponent implements OnInit {
     let wizardformArray = this.formBuilder.array([]);
     for (let i in this.conf.wizardConfig) {
 
-    // Fallback if no fieldsets are defined
-    if(this.conf.wizardConfig[i].fieldSets){
-      let fieldConfig = [];
-      /* Temp patch to support both FieldSet approaches */
-      const fieldSets = this.conf.wizardConfig[i].fieldSets.list ? this.conf.wizardConfig[i].fieldSets.list() : this.conf.wizardConfig[i].fieldSets;
-      for(let j = 0; j < fieldSets.length; j++){
-        const fieldset = fieldSets[j];
-        if(fieldset.config){
-          fieldConfig = fieldConfig.concat(fieldset.config);
+      // Fallback if no fieldsets are defined
+      if(this.conf.wizardConfig[i].fieldSets){
+        let fieldConfig = [];
+        /* Temp patch to support both FieldSet approaches */
+        const fieldSets = this.conf.wizardConfig[i].fieldSets.list ? this.conf.wizardConfig[i].fieldSets.list() : this.conf.wizardConfig[i].fieldSets;
+        for(let j = 0; j < fieldSets.length; j++){
+          const fieldset = fieldSets[j];
+          if(fieldset.config){
+            fieldConfig = fieldConfig.concat(fieldset.config);
+          }
         }
-      }
-      this.conf.wizardConfig[i].fieldConfig = fieldConfig;
-    } else {
-      // const fieldConfig = this.conf.wizardConfig[i].fieldConfig;
-      this.conf.wizardConfig[i].fieldSets = [
-        {
-          name:'FallBack',
-          class:'fallback',
-          width:'100%',
-          divider:false,
-          config: this.conf.wizardConfig[i].fieldConfig
-        },
-        {
-          name:'divider',
-          divider:true,
-          width:'100%'
-        }
-      ]
+        this.conf.wizardConfig[i].fieldConfig = fieldConfig;
+      } else {
+        // const fieldConfig = this.conf.wizardConfig[i].fieldConfig;
+        this.conf.wizardConfig[i].fieldSets = [
+          {
+            name:'FallBack',
+            class:'fallback',
+            width:'100%',
+            divider:false,
+            config: this.conf.wizardConfig[i].fieldConfig
+          },
+          {
+            name:'divider',
+            divider:true,
+            width:'100%'
+          }
+        ]
 
-    }
+      }
       wizardformArray.push(this.entityFormService.createFormGroup(this.conf.wizardConfig[i].fieldConfig));
     }
 
@@ -234,7 +234,7 @@ export class EntityWizardComponent implements OnInit {
     }
   }
 
-  selectionChange(event: any) {
+  selectionChange(event: StepperSelectionEvent) {
     /**
      * This function is for update summary data whenever step changes
      * We use isAutoSummary flag to generate summary automatically
@@ -259,7 +259,7 @@ export class EntityWizardComponent implements OnInit {
     }
   }
 
-  getSummaryValue(fieldConfig: FieldConfig, formControl: any) {
+  getSummaryValue(fieldConfig: FieldConfig, formControl: AbstractControl) {
     let result = formControl.value;
 
     if (fieldConfig.type === 'select') {
