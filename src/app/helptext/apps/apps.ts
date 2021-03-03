@@ -33,6 +33,8 @@ export default {
     title: T('Bulk actions'),
     finished: T('Started bulk actions'),
     failed: T('Failed to do bulk actions'),
+    unSelectAll: T('Unselect All'),
+    selectAll: T('Select All'),
     options: [
       {
         value: 'select_all',
