@@ -400,7 +400,7 @@ export class EntityUtils {
         listFields = listFields.concat(fields);
       });
 
-      const hasReuiredUndefinedField = listFields.find(field => field.required && field.value === undefined);
+      const hasReuiredUndefinedField = listFields.find(field => field.required === true && field.value === undefined);
       fieldConfig['addInitialList'] = !hasReuiredUndefinedField;
       fieldConfig['templateListField'] = listFields;
 
