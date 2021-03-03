@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Validators, FormControl } from '@angular/forms';
 import { DatePipe } from '@angular/common';
-
+import helptext_repl from '../../../../helptext/task-calendar/replication/replication';
 import * as _ from 'lodash';
 
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
@@ -16,6 +16,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { T } from '../../../../translate-marker';
 import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
+import { combineLatest } from 'rxjs';
 
 @Component({
     selector: 'app-replication-wizard',
@@ -1224,9 +1225,31 @@ export class ReplicationWizardComponent {
 
         this.loader.close();
         if (!toStop) {
+            console.log("Value: ", value);
+            let enc_datasets = [];
+            if(value.source_datasets_from === 'local') {
+                console.log("zettarepl.datasets_have_encryption", [value.source_datasets, true /* recursive */, "LOCAL"])
+                combineLatest([this.ws.call("zettarepl.datasets_have_encryption", [value.source_datasets, true /* recursive */, "LOCAL"]), this.ws.call('pool.dataset.query', [])]).subscribe(
+                    ([enc_datasets, datasets]) => {
+                        console.log("GOT RESPONSE: ", enc_datasets);
+                        console.log("DATASETS: ", (datasets));
+                    }
+                )
+
+            } else {
+                this.ws.call("zettarepl.datasets_have_encryption", [[value.source_datasets, true /* recursive */, "SSH"], {"hostname": "192.168.0.100"}]).subscribe(
+                    (res) => {
+                        console.log("GOT SSH Response: ", res);
+                    }
+                )
+            }
+            // this.dialogService.Info(helptext_repl.replication_encrypted_dialog.title, helptext.replication_encrypted_dialog.message1 + enc_datasets.toString() + helptext.replication_encrypted_dialog.message2).subscribe(res => {
+            //     this.router.navigate(new Array('/').concat(this.route_success));
+            // });
             this.router.navigate(new Array('/').concat(this.route_success));
         }
     }
+
 
 
     async rollBack(items) {

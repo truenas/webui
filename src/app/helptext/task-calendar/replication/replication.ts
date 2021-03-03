@@ -283,5 +283,11 @@ from the source dataset.'),
     replication_restore_dialog: {
        title: T('Restore Replication Task'),
        saveButton: T('Restore'),
-    }
+    },
+    replication_encrypted_dialog: {
+      title: T('WARNING'),
+      message1: T("You are replicating the following encrypted datasets: '"),
+      message2: T("' with properties. Destination datasets will be locked \
+and can be unlocked with source datasets' encryption key")
+   }
 }

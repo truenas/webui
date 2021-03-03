@@ -135,4 +135,11 @@ export default {
     clearSnapshotDialog_content: T('Destination dataset does not contain any snapshots that can be used as a basis for the incremental\
  changes in the snapshots being sent. The snapshots in the destination dataset will be deleted and the\
  replication will begin with a complete initial copy.'),
+
+ replication_encrypted_dialog: {
+   title: T('WARNING'),
+   message1: T("You are replicating the following encrypted datasets: '"),
+   message2: T("'. Destination datasets will be locked \
+and can be unlocked with source datasets' encryption key")
+}
 }
