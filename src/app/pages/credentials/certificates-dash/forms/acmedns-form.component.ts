@@ -37,6 +37,15 @@ export class AcmednsFormComponent {
         this.getRow.unsubscribe();
       })
       this.ws.call('acme.dns.authenticator.authenticator_schemas', []).subscribe((schemas) => {
+        const authenticatorConfig: FieldConfig = {
+          type : 'select',
+          name : 'authenticator',
+          placeholder : helptext.authenticator_provider_placeholder,
+          tooltip : helptext.authenticator_provider_tooltip,
+          options : [
+          ],
+          parent: this
+        };
         const fieldSet: any = [
           {
             name: 'Add DNS Authenticator',
@@ -51,19 +60,11 @@ export class AcmednsFormComponent {
                 validation : helptext.authenticator_name_validation,
                 parent: this
               },
-              {
-                type : 'select',
-                name : 'authenticator',
-                placeholder : helptext.authenticator_provider_placeholder,
-                tooltip : helptext.authenticator_provider_tooltip,
-                options : [
-                ],
-                parent: this
-              }
+              authenticatorConfig 
             ]
           }]
         for(let schema of schemas) {
-          fieldSet[0].config[1].options.push({label: schema.key, value: schema.key});
+          authenticatorConfig.options.push({label: schema.key, value: schema.key});
           for(let input of schema.schema) {
             const conf = {
               name: input['_name_'],
@@ -84,7 +85,7 @@ export class AcmednsFormComponent {
             fieldSet[0].config.push(conf);
           }
         }
-        fieldSet[0].config[1].value = schemas[0].key;
+        authenticatorConfig.value = schemas[0].key;
         this.fieldSets = fieldSet;
       });
   }
