@@ -4,6 +4,8 @@ import { DialogService } from 'app/services/dialog.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'app-fn-sys-info',
@@ -32,29 +34,41 @@ export class FnSysInfoComponent {
         {
           type: 'textarea',
           name: 'license',
-          placeholder: helptext.update_license.license_placeholder
+          placeholder: helptext.update_license.license_placeholder,
+          required: true
         }
       ],
       saveButtonText: helptext.update_license.save_button,
       customSubmit: function (entityDialog) {
-        const value = entityDialog.formValue.license;
+        const value = entityDialog.formValue.license ? entityDialog.formValue.license.trim() : null;
         self.loader.open();
-        self.ws.call('system.license_update', [value]).subscribe(() => {
+        entityDialog.error = null;
+        entityDialog.formGroup.controls['license'].valueChanges.subscribe((res) => {
+          if (res.length === 0) {
+            // Reset input error state on clear
+            entityDialog.formGroup.controls['license'].setErrors();
+            entityDialog.formGroup.controls['license'].markAsUntouched();
+            entityDialog.error = null;
+          }
+        })
+        self.ws.call('system.license_update', [value]).subscribe((res) => {
           entityDialog.dialogRef.close(true);
           self.loader.close();
           window.localStorage.setItem('upgrading_status', 'upgrading');
           self.dialogService.confirm(helptext.update_license.reload_dialog_title,
             helptext.update_license.reload_dialog_message, true, helptext.update_license.reload_dialog_action,
             false, '','', '','', true, '', true)
-            .subscribe((res) => {
-              if (res) {
+            .subscribe((confirm) => {
+              if (confirm) {
                 document.location.reload(true);
               }
           });
         },
         (err) => {
           self.loader.close();
-          self.dialogService.errorReport((helptext.update_license.error_dialog_title), err.reason, err.trace.formatted);
+          const errorText = err.reason ? err.reason.replace('[EFAULT]', '') : T('Something went wrong. Please try again.')
+          entityDialog.formGroup.controls['license'].setErrors({'invalid': true})
+          entityDialog.error = errorText;
         });
       }
 
