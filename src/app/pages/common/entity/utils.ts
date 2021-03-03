@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { Relation } from '../entity/entity-form/models/field-relation.interface';
 
 export const FORM_KEY_SEPERATOR = "__";
 export const FORM_LABEL_KEY_PREFIX = "__label__";
@@ -278,9 +279,9 @@ export class EntityUtils {
     return result;
   }
   
-  createRelations(relations: any[], parentName: string) {
+  createRelations(relations:Relation[], parentName:string) {
     const result = relations.map(relation => {
-      let relationFieldName = relation[0];
+      let relationFieldName = relation.fieldName;
       if (parentName) {
         relationFieldName = `${parentName}${FORM_KEY_SEPERATOR}${relationFieldName}`;
       }
@@ -289,8 +290,8 @@ export class EntityUtils {
         action: 'SHOW',
         when: [{
           name: relationFieldName,
-          operator: relation[1],
-          value: relation[2],
+          operator: relation.operatorName,
+          value: relation.operatorValue,
         }]
       };
     });
@@ -379,6 +380,17 @@ export class EntityUtils {
     } else if (schemaConfig.schema.type == 'dict') {
       fieldConfig = null;
       
+      let relations: Relation[] = null;
+      if (schemaConfig.schema.show_if) {
+        relations = schemaConfig.schema.show_if.map(item => {
+          return {
+            fieldName: item[0],
+            operatorName: item[1],
+            operatorValue: item[2],
+          };         
+        })
+      }
+      
       if (schemaConfig.schema.attrs.length > 0) {
         const dictLabel = {
           label: schemaConfig.label,
@@ -386,8 +398,8 @@ export class EntityUtils {
           type: 'label',
         };
 
-        if (schemaConfig.schema.show_if) {
-          dictLabel['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);
+        if (relations) {
+          dictLabel['relation'] = this.createRelations(relations, parentName);
         }
 
         results = results.concat(dictLabel);
@@ -396,9 +408,9 @@ export class EntityUtils {
       schemaConfig.schema.attrs.forEach(dictConfig => {
         const subResults = this.parseSchemaFieldConfig(dictConfig, name, parentIsList);
 
-        if (schemaConfig.schema.show_if) {
+        if (relations) {
           subResults.forEach(subResult => {
-            subResult['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);
+            subResult['relation'] = this.createRelations(relations, parentName);
           });
         }
         results = results.concat(subResults);
