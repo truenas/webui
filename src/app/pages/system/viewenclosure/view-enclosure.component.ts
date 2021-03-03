@@ -124,10 +124,6 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
       this.system.sensorData = evt.data;
     });
 
-    core.register({observerClass: this, eventName: 'DisksRemoved'}).subscribe((evt:CoreEvent) => {
-      // Bring to users attention
-    });
-
     core.register({observerClass: this, eventName: 'DisksChanged'}).subscribe((evt:CoreEvent) => {
       if(evt.data.cleared){
         // Extra actions if disk is removed
