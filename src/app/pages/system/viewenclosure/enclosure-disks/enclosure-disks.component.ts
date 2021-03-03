@@ -297,14 +297,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   ngOnChanges(changes:SimpleChanges){
-    if(changes.system){
-      if(changes.system.firstChange){
-        console.log(changes.system.currentValue);
-      } else {
-        console.warn(changes.system.currentValue);
-      }
-    }
-
     if(changes.selectedEnclosure){
       this.loadEnclosure(changes.selectedEnclosure.currentValue, 'front');
     }
@@ -315,7 +307,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.destroyAllEnclosures();
     this.app.stage.destroy(true);
     this.app.destroy(true, true); 
-    //this.mediaObs.unsubscribe();
   }
 
   loadEnclosure(enclosure, view?:string, update?:boolean){
