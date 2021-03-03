@@ -233,10 +233,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           }
           break;
         case "PoolsChanged":
-        //case "DisksChanged":
-          console.log(evt);
           this.setDisksEnabledState();
-          //this.loadEnclosure(this.selectedEnclosure);
           this.setCurrentView(this.defaultView);
           break;
       }
