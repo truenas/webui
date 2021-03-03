@@ -1,0 +1,13 @@
+<div class="pod-logs-wrapper">
+    <div class="meta-data">
+        <label>{{ 'Application Name' | translate }}:</label> <span class="name">{{ chart_release_name }}</span>
+        <label>{{ 'Pod Name' | translate }}:</label> <span class="name">{{ pod_name }}</span>
+        <label>{{ 'Container Name' | translate }}:</label> <span class="name">{{ container_name }}</span>
+    </div>
+    <div class="pod-logs" [ngStyle]="{'font-size' : font_size+'px'}" #logContainer>
+        <div *ngFor="let podLog of podLogs" class="log-row">
+            <span class="timestamp">{{ podLog.timestamp }}</span>
+            <span class="log-data">{{ podLog.data }}</span>
+        </div>
+    </div>
+</div>
