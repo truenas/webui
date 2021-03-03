@@ -30,8 +30,7 @@ export class SystemProfiler {
   }
   set diskData(obj){
     this._diskData = null;
-    console.log(obj);
-    this._diskData = this._diskData;
+    this._diskData = obj;
     this.parseDiskData(obj);
     this.parseEnclosures(this._enclosures);
   }
@@ -323,6 +322,10 @@ export class SystemProfiler {
   
   getEnclosureLabel(key){
     return this.enclosures[key].label == this.enclosures[key].name ? this.enclosures[key].label : this.enclosures[key].model;
+  }
+
+  public getDiskByID(id: string){
+    return this.diskData ? this.diskData.find((disk) => disk.identifier == id) : null;
   }
 
 }

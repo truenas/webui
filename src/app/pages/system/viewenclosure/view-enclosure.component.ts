@@ -115,7 +115,6 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
 
     core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
       this.system.pools = evt.data;
-      console.log(this.system);
       this.events.next({name: 'PoolsChanged', sender: this});
       this.addViews();
     });
@@ -125,8 +124,18 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
       this.system.sensorData = evt.data;
     });
 
+    core.register({observerClass: this, eventName: 'DisksRemoved'}).subscribe((evt:CoreEvent) => {
+      // Bring to users attention
+    });
+
     core.register({observerClass: this, eventName: 'DisksChanged'}).subscribe((evt:CoreEvent) => {
+      if(evt.data.cleared){
+        // Extra actions if disk is removed
+        const removedDiskFields = this.system.getDiskByID(evt.data.id); 
+      } 
+
       this.fetchData();
+      
     });
 
     core.register({observerClass: this, eventName: 'DisksData'}).subscribe((evt:CoreEvent) => {

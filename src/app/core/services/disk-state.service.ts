@@ -22,11 +22,17 @@ export class DiskStateService extends BaseService {
   protected onAuthenticated(evt: CoreEvent){
     this.authenticated = true;
     this.ws.subscribe("disk.query").subscribe((res) =>{
-      console.log(res);
+
+      // A couple of notes about what to expect in the response.
+      // Cleared:boolean is a property in the response that seems to indicate removal
+      // If a device has been added, there will be a fields property containing disk details
+
       this.core.emit({name:"DisksChanged", data: res, sender: this});
+
       if(res && res.cleared){
         this.core.emit({name:"DiskRemoved", data: res, sender: this});
       }
+
     });
   }
 
