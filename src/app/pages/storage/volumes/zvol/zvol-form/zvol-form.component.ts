@@ -632,11 +632,21 @@ export class ZvolFormComponent implements Formconfiguration{
               entityForm.formGroup.controls['sync'].setValue(pk_dataset[0].sync.value);
             }
 
-            if (pk_dataset[0].compression.source === "INHERITED" || pk_dataset[0].compression.source === "DEFAULT" ){
+            if (pk_dataset[0].compression.source === "DEFAULT" ){
               this.compression_collection = [{label:`${inheritTr} (${parent_dataset_res[0].compression.rawvalue})`, value: parent_dataset_res[0].compression.value}];
 
             } else {
               this.compression_collection = [{label:`${inheritTr} (${parent_dataset_res[0].compression.rawvalue})`, value: 'INHERIT'}];
+            }
+
+            const compression = _.find(this.fieldConfig, {name:'compression'});
+            if(compression && this.compression_collection) {
+                compression.options = this.compression_collection.concat(compression.options);
+            }
+
+            if (pk_dataset[0].compression.source === "INHERITED") {
+              entityForm.formGroup.controls['compression'].setValue('INHERIT');
+            } else {
               entityForm.formGroup.controls['compression'].setValue(pk_dataset[0].compression.value);
             }
 
@@ -651,10 +661,6 @@ export class ZvolFormComponent implements Formconfiguration{
             entityForm.formGroup.controls['sync'].setValue(pk_dataset[0].sync.value);
             if (pk_dataset[0].compression.value === 'GZIP') {
               entityForm.formGroup.controls['compression'].setValue(pk_dataset[0].compression.value+'-6');
-            }
-            else{
-              entityForm.formGroup.controls['compression'].setValue(pk_dataset[0].compression.value);
-
             }
             entityForm.formGroup.controls['deduplication'].setValue(pk_dataset[0].deduplication.value);
 
