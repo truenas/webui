@@ -400,8 +400,9 @@ export class EntityUtils {
         listFields = listFields.concat(fields);
       });
 
+      const hasValueField = listFields.find(field => field.value !== undefined);
       const hasReuiredUndefinedField = listFields.find(field => field.required === true && field.value === undefined);
-      fieldConfig['addInitialList'] = !hasReuiredUndefinedField;
+      fieldConfig['addInitialList'] = !hasReuiredUndefinedField && hasValueField;
       fieldConfig['templateListField'] = listFields;
 
     } else if (schemaConfig.schema.type == 'dict') {
