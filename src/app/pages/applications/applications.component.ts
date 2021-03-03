@@ -8,6 +8,8 @@ import { CatalogComponent } from './catalog/catalog.component';
 import { ChartReleasesComponent } from './chart-releases/chart-releases.component';
 import { Subject, Subscription } from 'rxjs';
 import  helptext  from '../../helptext/apps/apps';
+import { ActivatedRoute, Router } from '@angular/router';
+
 @Component({
   selector: 'app-applications',
   templateUrl: './applications.component.html',
@@ -27,11 +29,23 @@ export class ApplicationsComponent implements OnInit {
   public filterString = '';
   public toolbarConfig: ToolbarConfig;
 
-  constructor(private appService: ApplicationsService, private core: CoreService, 
+  constructor(private appService: ApplicationsService, 
+    private core: CoreService, 
+    protected aroute: ActivatedRoute,
     private modalService: ModalService) { }
 
-  ngOnInit(): void {
+  ngOnInit(): void {    
     this.setupToolbar();
+  }
+
+  ngAfterViewInit() {
+    //If the route parameter "tabIndex" is 1, switch tab to "Installed applications".
+    this.aroute.params.subscribe(params => {
+      if (params['tabIndex'] == 1) {
+        this.selectedIndex = 1;
+        this.refresh({index: 1});
+      }
+    });
   }
 
   setupToolbar() {
