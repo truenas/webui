@@ -68,7 +68,7 @@ export class SupportComponent implements OnInit {
       res.license.system_serial_ha ?
           this.sys_serial = res.license.system_serial + ' / ' + res.license.system_serial_ha :
           this.sys_serial = res.license.system_serial;
-      res.license.addhw_detail.length === 0 ?
+      !res.license.addhw_detail || res.license.addhw_detail.length === 0 ?
           this.add_hardware = 'NONE' :
           this.add_hardware = res.license.addhw_detail.join(', ');
       const now = new Date(res.datetime.$date);
