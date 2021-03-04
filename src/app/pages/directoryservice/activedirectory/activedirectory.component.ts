@@ -338,9 +338,6 @@ export class ActiveDirectoryComponent {
               protected dialogservice: DialogService) {}
 
   resourceTransformIncomingRestData(data) {
-    if (data['kerberos_realm'] && data['kerberos_realm'] !== null) {
-      data['kerberos_realm'] = data['kerberos_realm'].id;
-    }
     data['netbiosalias'] = data['netbiosalias'].join(" ");
     delete data['bindpw'];
     return data;
