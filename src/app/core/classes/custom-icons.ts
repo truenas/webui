@@ -40,6 +40,7 @@ export const customSvgIcons = {
   'freenas_logo_full': 'assets/customicons/logo-full.svg',
   'truecommand_logo_blue': 'assets/images/truecommand/truecommand-logo-mark-full-color-rgb.svg',
   'truecommand_logo_white': 'assets/images/truecommand/truecommand-logo-mark-white-rgb.svg',
+  'truecommand_logo_mono': 'assets/images/truecommand/truecommand-logo-mark-white-rgb.svg',
   'anti-lock': 'assets/customicons/anti-lock.svg',
   'network-upload-download': 'assets/customicons/network-upload-download.svg',
   'network-upload-download-disabled': 'assets/customicons/network-upload-download-disabled.svg'
