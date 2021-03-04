@@ -32,8 +32,7 @@ export class ReplicationFormComponent {
         type: 'notice',
         content: '',
     };
-    private sshCredentials = [];
-    private sshCredsID = null;
+    private encDatasets= [];
     protected retentionPolicyChoice = [{
         label: 'Same as Source',
         value: 'SOURCE',
@@ -413,6 +412,13 @@ export class ReplicationFormComponent {
                             value: true,
                         }]
                     }],
+                },
+                {
+                    type: 'paragraph',
+                    name: 'enc_datasets_warning',
+                    disabled: true,
+                    isHidden: true,
+                    class: 'warning-text rehan'
                 },
                 {
                     type: 'checkbox',
@@ -878,7 +884,6 @@ export class ReplicationFormComponent {
         const sshCredentialsField = _.find(transportFieldsets.config, { name: 'ssh_credentials' });
         this.keychainCredentialService.getSSHConnections().subscribe(
             (res) => {
-                this.sshCredentials = res;
                 for (const i in res) {
                     sshCredentialsField.options.push({ label: res[i].name, value: res[i].id });
                 }
@@ -1029,7 +1034,6 @@ export class ReplicationFormComponent {
 
         entityForm.formGroup.controls['ssh_credentials'].valueChanges.subscribe(
             (res) => {
-                this.sshCredsID = res;
                 for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
                     const explorerComponent = _.find(this.fieldConfig, { name: item }).customTemplateStringOptions.explorerComponent;
                     if (explorerComponent) {
@@ -1056,36 +1060,79 @@ export class ReplicationFormComponent {
 
         entityForm.formGroup.controls['auto'].setValue(entityForm.formGroup.controls['auto'].value);
         
+        entityForm.formGroup.controls['properties'].valueChanges.subscribe(value => {
+            if(value) {
+                if(this.encDatasets && this.encDatasets.length) {
+                    this.entityForm.setDisabled('enc_datasets_warning', false, false);
+                    _.find(this.fieldConfig, {name: 'enc_datasets_warning'}).paraText = helptext.replication_encrypted_dialog.message1+this.encDatasets.map(ds => "'"+ds+"'").join(", ")+helptext.replication_encrypted_dialog.message2;
+                } else {
+                    this.entityForm.setDisabled('enc_datasets_warning', true, true);
+                }
+            } else {
+                this.entityForm.setDisabled('enc_datasets_warning', true, true);
+            }
+        });
+
         entityForm.formGroup.controls['source_datasets_PULL'].valueChanges.subscribe(value => {
-            if(!value || !this.entityForm.formGroup.controls['properties'].value) return;
+            if(!(value && value.length)) {
+                this.entityForm.setDisabled('enc_datasets_warning', true, true);
+                return this.encDatasets = [];
+            } 
             if(this.entityForm.formGroup.controls['transport'].value == 'LOCAL') {
                 this.ws.call("zettarepl.datasets_have_encryption", [value, true /* recursive */, "LOCAL"]).subscribe(res => {
-                    if(res && res.length) {
-                        console.log(helptext.replication_encrypted_dialog.message1+res.map(ds => "'"+ds+"'").join(", ")+helptext.replication_encrypted_dialog.message2);
+                    this.encDatasets = res;
+                    if(this.entityForm.formGroup.controls['properties'].value){
+                        if(this.encDatasets && this.encDatasets.length) {
+                            this.entityForm.setDisabled('enc_datasets_warning', false, false);
+                            _.find(this.fieldConfig, {name: 'enc_datasets_warning'}).paraText = helptext.replication_encrypted_dialog.message1+this.encDatasets.map(ds => "'"+ds+"'").join(", ")+helptext.replication_encrypted_dialog.message2;
+                        } else {
+                            this.entityForm.setDisabled('enc_datasets_warning', true, true);
+                        }
                     }
                 });
             } else {
                 this.ws.call("zettarepl.datasets_have_encryption", [value, true /* recursive */, "SSH", this.entityForm.formGroup.controls['ssh_credentials'].value]).subscribe(res => {
-                    if(res && res.length) {
-                        console.log(helptext.replication_encrypted_dialog.message1+res.map(ds => "'"+ds+"'").join(", ")+helptext.replication_encrypted_dialog.message2);
+                    this.encDatasets = res;
+                    if(this.entityForm.formGroup.controls['properties'].value) {
+                        if(this.encDatasets && this.encDatasets.length) {
+                            this.entityForm.setDisabled('enc_datasets_warning', false, false);
+                            _.find(this.fieldConfig, {name: 'enc_datasets_warning'}).paraText = helptext.replication_encrypted_dialog.message1+this.encDatasets.map(ds => "'"+ds+"'").join(", ")+helptext.replication_encrypted_dialog.message2;
+                        } else {
+                            this.entityForm.setDisabled('enc_datasets_warning', true, true);
+                        }
                     }
                 });
             }
         });
 
         entityForm.formGroup.controls['source_datasets_PUSH'].valueChanges.subscribe(value => {
-            if(!value || !this.entityForm.formGroup.controls['properties'].value) return;
+            if(!(value && value.length)) {
+                this.entityForm.setDisabled('enc_datasets_warning', true, true);
+                return this.encDatasets = [];
+            } 
             if(this.entityForm.formGroup.controls['transport'].value == 'LOCAL') {
                 this.ws.call("zettarepl.datasets_have_encryption", [value, true /* recursive */, "LOCAL"]).subscribe(res => {
-                    if(res && res.length) {
-                        console.log(helptext.replication_encrypted_dialog.message1+res.map(ds => "'"+ds+"'").join(", ")+helptext.replication_encrypted_dialog.message2);
+                    this.encDatasets = res;
+                    if(this.entityForm.formGroup.controls['properties'].value) {
+                        if(this.encDatasets && this.encDatasets.length) {
+                            this.entityForm.setDisabled('enc_datasets_warning', false, false);
+                            _.find(this.fieldConfig, {name: 'enc_datasets_warning'}).paraText = helptext.replication_encrypted_dialog.message1+this.encDatasets.map(ds => "'"+ds+"'").join(", ")+helptext.replication_encrypted_dialog.message2;
+                        } else {
+                            this.entityForm.setDisabled('enc_datasets_warning', true, true);
+                        }
                     }
                 });
             } else {
                 if(this.entityForm.formGroup.controls['ssh_credentials'].value) {
                     this.ws.call("zettarepl.datasets_have_encryption", [value, true /* recursive */, "SSH", this.entityForm.formGroup.controls['ssh_credentials'].value]).subscribe(res => {
-                        if(res && res.length) {
-                            console.log(helptext.replication_encrypted_dialog.message1+res.map(ds => "'"+ds+"'").join(", ")+helptext.replication_encrypted_dialog.message2);
+                        this.encDatasets = res;
+                        if(this.entityForm.formGroup.controls['properties'].value) {
+                            if(this.encDatasets && this.encDatasets.length) {
+                                this.entityForm.setDisabled('enc_datasets_warning', false, false);
+                                _.find(this.fieldConfig, {name: 'enc_datasets_warning'}).paraText = helptext.replication_encrypted_dialog.message1+this.encDatasets.map(ds => "'"+ds+"'").join(", ")+helptext.replication_encrypted_dialog.message2;
+                            } else {
+                                this.entityForm.setDisabled('enc_datasets_warning', true, true);
+                            }
                         }
                     });
                 }
@@ -1169,6 +1216,9 @@ export class ReplicationFormComponent {
     }
 
     beforeSubmit(data) {
+        if(data['enc_datasets_warning']) {
+            delete data['enc_datasets_warning']
+        }
         if (data['replicate']) {
             data['recursive'] = true;
             data['properties'] = true;
