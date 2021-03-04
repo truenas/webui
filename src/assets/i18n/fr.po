@@ -17041,7 +17041,7 @@ msgid "Tue"
 msgstr "Mar"
 
 msgid "Tunable"
-msgstr "Réglabe"
+msgstr "Réglable"
 
 msgid "Tunables"
 msgstr "Réglables"
