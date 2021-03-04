@@ -286,8 +286,7 @@ from the source dataset.'),
     },
     replication_encrypted_dialog: {
       title: T('WARNING'),
-      message1: T("You are replicating the following encrypted datasets: '"),
-      message2: T("' with properties. Destination datasets will be locked \
-and can be unlocked with source datasets' encryption key")
+      message1: T("You are replicating encrypted datasets "),
+      message2: T(" with properties. Destination dataset will be locked and can be unlocked with source dataset's encryption key.")
    }
 }

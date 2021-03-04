@@ -10,6 +10,7 @@ import * as _ from 'lodash';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 @Component({
     selector: 'app-replication-list',
@@ -31,7 +32,8 @@ export class ReplicationFormComponent {
         type: 'notice',
         content: '',
     };
-
+    private sshCredentials = [];
+    private sshCredsID = null;
     protected retentionPolicyChoice = [{
         label: 'Same as Source',
         value: 'SOURCE',
@@ -876,6 +878,7 @@ export class ReplicationFormComponent {
         const sshCredentialsField = _.find(transportFieldsets.config, { name: 'ssh_credentials' });
         this.keychainCredentialService.getSSHConnections().subscribe(
             (res) => {
+                this.sshCredentials = res;
                 for (const i in res) {
                     sshCredentialsField.options.push({ label: res[i].name, value: res[i].id });
                 }
@@ -1026,6 +1029,7 @@ export class ReplicationFormComponent {
 
         entityForm.formGroup.controls['ssh_credentials'].valueChanges.subscribe(
             (res) => {
+                this.sshCredsID = res;
                 for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
                     const explorerComponent = _.find(this.fieldConfig, { name: item }).customTemplateStringOptions.explorerComponent;
                     if (explorerComponent) {
@@ -1051,7 +1055,44 @@ export class ReplicationFormComponent {
         });
 
         entityForm.formGroup.controls['auto'].setValue(entityForm.formGroup.controls['auto'].value);
+        
+        entityForm.formGroup.controls['source_datasets_PULL'].valueChanges.subscribe(value => {
+            if(!value || !this.entityForm.formGroup.controls['properties'].value) return;
+            if(this.entityForm.formGroup.controls['transport'].value == 'LOCAL') {
+                this.ws.call("zettarepl.datasets_have_encryption", [value, true /* recursive */, "LOCAL"]).subscribe(res => {
+                    if(res && res.length) {
+                        console.log(helptext.replication_encrypted_dialog.message1+res.map(ds => "'"+ds+"'").join(", ")+helptext.replication_encrypted_dialog.message2);
+                    }
+                });
+            } else {
+                this.ws.call("zettarepl.datasets_have_encryption", [value, true /* recursive */, "SSH", this.entityForm.formGroup.controls['ssh_credentials'].value]).subscribe(res => {
+                    if(res && res.length) {
+                        console.log(helptext.replication_encrypted_dialog.message1+res.map(ds => "'"+ds+"'").join(", ")+helptext.replication_encrypted_dialog.message2);
+                    }
+                });
+            }
+        });
+
+        entityForm.formGroup.controls['source_datasets_PUSH'].valueChanges.subscribe(value => {
+            if(!value || !this.entityForm.formGroup.controls['properties'].value) return;
+            if(this.entityForm.formGroup.controls['transport'].value == 'LOCAL') {
+                this.ws.call("zettarepl.datasets_have_encryption", [value, true /* recursive */, "LOCAL"]).subscribe(res => {
+                    if(res && res.length) {
+                        console.log(helptext.replication_encrypted_dialog.message1+res.map(ds => "'"+ds+"'").join(", ")+helptext.replication_encrypted_dialog.message2);
+                    }
+                });
+            } else {
+                if(this.entityForm.formGroup.controls['ssh_credentials'].value) {
+                    this.ws.call("zettarepl.datasets_have_encryption", [value, true /* recursive */, "SSH", this.entityForm.formGroup.controls['ssh_credentials'].value]).subscribe(res => {
+                        if(res && res.length) {
+                            console.log(helptext.replication_encrypted_dialog.message1+res.map(ds => "'"+ds+"'").join(", ")+helptext.replication_encrypted_dialog.message2);
+                        }
+                    });
+                }
+            }
+        });
     }
+    
 
     resourceTransformIncomingRestData(wsResponse) {
         this.queryRes = _.cloneDeep(wsResponse);
