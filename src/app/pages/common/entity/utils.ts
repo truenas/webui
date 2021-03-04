@@ -433,6 +433,10 @@ export class EntityUtils {
     if (fieldConfig) {
 
       if (fieldConfig['type']) {
+        if (schemaConfig.schema.show_if) {
+          fieldConfig['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);;
+        }
+
         results.push(fieldConfig);
   
         if (schemaConfig.schema.subquestions) {
@@ -455,7 +459,7 @@ export class EntityUtils {
     
             results = results.concat(subResults);
           });
-        }  
+        }
       } else {
         console.error("Unsupported type=", schemaConfig);
       }
