@@ -623,8 +623,8 @@ export class ChartReleasesComponent implements OnInit {
 
   //Refresh Toolbar menus
   refreshToolbarMenus() {
-    const isShowBulkOptions: boolean = this.getSelectedItems().length > 0;
+    const isSelectedOneMore: boolean = this.getSelectedItems().length > 0;
     const isSelectedAll: boolean = !this.filteredChartItems.find(item => !item.selected);
-    this.updateTab.emit({name: 'UpdateToolbar', value: isShowBulkOptions, isSelectedAll: isSelectedAll});
+    this.updateTab.emit({name: 'UpdateToolbar', value: isSelectedOneMore, isSelectedAll: isSelectedAll});
   }
 }

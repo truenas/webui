@@ -40,21 +40,25 @@ export default {
         value: 'select_all',
         label: T('Select All'),
         icon: 'check_circle',
+        disabled: false,
       },
       {
         value: 'start',
         label: T('Start'),
         icon: 'play_arrow',
+        disabled: false,
       },
       {
         value: 'stop',
         label: T('Stop'),
         icon: 'stop',
+        disabled: false,
       },
       {
         value: 'delete',
         label: T('Delete'),
         icon: 'delete',
+        disabled: false,
       }
     ]
   },
