@@ -138,8 +138,8 @@ export default {
 
  replication_encrypted_dialog: {
    title: T('WARNING'),
-   message1: T("You are replicating the following encrypted datasets: '"),
-   message2: T("'. Destination datasets will be locked \
+   message1: T("You are replicating the following encrypted datasets: "),
+   message2: T(". Destination datasets will be locked \
 and can be unlocked with source datasets' encryption key")
 }
 }
