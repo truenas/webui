@@ -418,7 +418,7 @@ export class ReplicationFormComponent {
                     name: 'enc_datasets_warning',
                     disabled: true,
                     isHidden: true,
-                    class: 'warning-text rehan'
+                    class: 'warning-text'
                 },
                 {
                     type: 'checkbox',

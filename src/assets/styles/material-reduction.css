@@ -114,6 +114,6 @@ entity-table .mat-toolbar.mat-card-toolbar{
 }
 
 
-.warning-text, .enc_datasets_wrapper p {
+.warning-text{
   color:var(--yellow);
 }

@@ -1229,7 +1229,7 @@ export class ReplicationWizardComponent {
                 this.ws.call("zettarepl.datasets_have_encryption", [value.source_datasets, true /* recursive */, "LOCAL"]).subscribe(res => {
                     if(res && res.length) {
                         const message = helptext.replication_encrypted_dialog.message1+res.map(ds => "'"+ds+"'").join(", ")+helptext.replication_encrypted_dialog.message2;
-                        this.dialogService.Info(T("Warning"), message).subscribe(res => {
+                        this.dialogService.Info(helptext.replication_encrypted_dialog.title, message).subscribe(res => {
                             this.router.navigate(new Array('/').concat(this.route_success));
                         });
                     } else {
@@ -1240,7 +1240,7 @@ export class ReplicationWizardComponent {
                 this.ws.call("zettarepl.datasets_have_encryption", [value.source_datasets, true /* recursive */, "SSH", this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value]).subscribe(res => {
                     if(res && res.length) {
                         const message = helptext.replication_encrypted_dialog.message1+res.map(ds => "'"+ds+"'").join(", ")+helptext.replication_encrypted_dialog.message2;
-                        this.dialogService.Info(T("Warning"), message).subscribe(res => {
+                        this.dialogService.Info(helptext.replication_encrypted_dialog.title, message).subscribe(res => {
                             this.router.navigate(new Array('/').concat(this.route_success));
                         });
                     } else {
