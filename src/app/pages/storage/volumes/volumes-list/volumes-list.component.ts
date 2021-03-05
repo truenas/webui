@@ -1657,7 +1657,7 @@ export class VolumesListTableConfig implements InputTableConf {
             }
           });
         }
-        if (rowData.encrypted && rowData.key_loaded && rowData.encryption_root === rowData.id) {
+        if (rowData.encrypted && rowData.key_loaded && rowData.encryption_root === rowData.id && !rowData.is_passphrase) {
           const fileName = "dataset_" + rowData.name + "_key.txt";
           const mimetype = 'text/plain';
           const message = helptext.export_keys_message + rowData.id;
