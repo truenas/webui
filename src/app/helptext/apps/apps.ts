@@ -31,7 +31,7 @@ export default {
     error: T('Error'),
     no_selected: T('Please select the applications'),
     title: T('Bulk actions'),
-    finished: T('Started bulk actions'),
+    finished: T('Requested action performed for selected Applications'),
     failed: T('Failed to do bulk actions'),
     unSelectAll: T('Unselect All'),
     selectAll: T('Select All'),
