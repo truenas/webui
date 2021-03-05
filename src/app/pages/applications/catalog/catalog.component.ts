@@ -16,6 +16,7 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { KubernetesSettingsComponent } from '../forms/kubernetes-settings.component';
 import { ChartReleaseAddComponent } from '../forms/chart-release-add.component';
 import { ChartFormComponent } from '../forms/chart-form.component';
+import { ChartWizardComponent } from '../forms/chart-wizard.component';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import  helptext  from '../../../helptext/apps/apps';
 
@@ -216,9 +217,9 @@ export class CatalogComponent implements OnInit {
   doInstall(name: string) {
     const catalogApp = this.catalogApps.find(app => app.name==name);
     if (catalogApp && catalogApp.name != 'ix-chart') {
-      const chartFormComponent = new ChartFormComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
-      chartFormComponent.parseSchema(catalogApp);
-      this.modalService.open('slide-in-form', chartFormComponent);
+      const chartWizardComponent = new ChartWizardComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
+      chartWizardComponent.parseSchema(catalogApp);
+      this.modalService.open('slide-in-form', chartWizardComponent);
     } else {
       const chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
       chartReleaseForm.parseSchema(catalogApp);

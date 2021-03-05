@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { Relation } from '../entity/entity-form/models/field-relation.interface';
 
 export const FORM_KEY_SEPERATOR = "__";
 export const FORM_LABEL_KEY_PREFIX = "__label__";
@@ -188,28 +189,40 @@ export class EntityUtils {
     return cronArray.join(' ');
   }
 
-  filterArrayFunction(item) {
+  filterArrayFunction(item: any) {
+    /**
+     * This function is for validation.
+     * If the value of a control is invaild, we ignore it during sending payload
+     */
     let result = true;
-    if (typeof item === 'object') {
+    
+    if (item === undefined || item === null || item === '') {
+      result = false;
+    } else if (typeof item === 'object') {
       let isAllEmpty = true;
       Object.values(item).forEach(value => {
         if (value !== undefined && value !== null && value !== '') {
-          isAllEmpty = false;
+          if (Array.isArray(value)) {
+            value.forEach(subValue => {
+              if (this.filterArrayFunction(subValue)) {
+                isAllEmpty = false;
+              }
+            });
+          } else {
+            isAllEmpty = false;
+          }
         }
       });
 
       if (isAllEmpty) {
         result = false;
       }
-
-    } else if (item === undefined || item === null || item === '') {
-      result = false;
     }
 
     return result;
   }
 
-  parseFormControlValues(data, result) {
+  parseFormControlValues(data: any, result: any) {
     Object.keys(data).forEach(key => {
       const value = data[key];
       if (key == "release_name" || key == 'undefined' || key.startsWith(FORM_LABEL_KEY_PREFIX)) {
@@ -300,9 +313,9 @@ export class EntityUtils {
     return result;
   }
   
-  createRelations(relations:object[], parentName:string) {
+  createRelations(relations:Relation[], parentName:string) {
     const result = relations.map(relation => {
-      let relationFieldName = relation[0];
+      let relationFieldName = relation.fieldName;
       if (parentName) {
         relationFieldName = `${parentName}${FORM_KEY_SEPERATOR}${relationFieldName}`;
       }
@@ -311,8 +324,8 @@ export class EntityUtils {
         action: 'SHOW',
         when: [{
           name: relationFieldName,
-          operator: relation[1],
-          value: relation[2],
+          operator: relation.operatorName,
+          value: relation.operatorValue,
         }]
       };
     });
@@ -320,8 +333,13 @@ export class EntityUtils {
     return result;    
   }
 
-  parseSchemaFieldConfig(schemaConfig:any, parentName:string = null, parentIsList:boolean = false) {
+  parseSchemaFieldConfig(schemaConfig: any, parentName: string=null, parentIsList: boolean=false) {
     let results = [];
+
+    if (schemaConfig.schema.hidden) {
+      return results;
+    }
+
     let name = schemaConfig.variable;
     if (!parentIsList && parentName) {
       name = `${parentName}${FORM_KEY_SEPERATOR}${name}`;
@@ -380,16 +398,8 @@ export class EntityUtils {
 
     } else if (schemaConfig.schema.type == 'list') {
 
-      if (schemaConfig.schema.items.length > 0) {
-        const listLabel = {
-          label: schemaConfig.label,
-          type: 'label',
-        };
-        results = results.concat(listLabel);
-      }
-
       fieldConfig['type'] = 'list';
-      fieldConfig['box'] = true;
+      fieldConfig['label'] = `Configure ${schemaConfig.label}`;
       fieldConfig['width'] = '100%';
       fieldConfig['listFields'] = [];
 
@@ -404,6 +414,17 @@ export class EntityUtils {
     } else if (schemaConfig.schema.type == 'dict') {
       fieldConfig = null;
       
+      let relations: Relation[] = null;
+      if (schemaConfig.schema.show_if) {
+        relations = schemaConfig.schema.show_if.map(item => {
+          return {
+            fieldName: item[0],
+            operatorName: item[1],
+            operatorValue: item[2],
+          };         
+        })
+      }
+      
       if (schemaConfig.schema.attrs.length > 0) {
         const dictLabel = {
           label: schemaConfig.label,
@@ -411,8 +432,8 @@ export class EntityUtils {
           type: 'label',
         };
 
-        if (schemaConfig.schema.show_if) {
-          dictLabel['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);
+        if (relations) {
+          dictLabel['relation'] = this.createRelations(relations, parentName);
         }
 
         results = results.concat(dictLabel);
@@ -421,9 +442,9 @@ export class EntityUtils {
       schemaConfig.schema.attrs.forEach(dictConfig => {
         const subResults = this.parseSchemaFieldConfig(dictConfig, name, parentIsList);
 
-        if (schemaConfig.schema.show_if) {
+        if (relations) {
           subResults.forEach(subResult => {
-            subResult['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);;
+            subResult['relation'] = this.createRelations(relations, parentName);
           });
         }
         results = results.concat(subResults);
@@ -433,6 +454,11 @@ export class EntityUtils {
     if (fieldConfig) {
 
       if (fieldConfig['type']) {
+
+        if (schemaConfig.schema.show_if) {
+          fieldConfig['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);
+        }
+
         results.push(fieldConfig);
   
         if (schemaConfig.schema.subquestions) {
@@ -465,17 +491,20 @@ export class EntityUtils {
   }
 
   parseConfigData(configData:object, parentKey:string, result:object) {
-    Object.keys(configData).forEach(key => {
-      const value = configData[key];
-      let fullKey = key;
-      if (parentKey) {
-        fullKey = `${parentKey}${FORM_KEY_SEPERATOR}${key}`;
-      }
-      if (!Array.isArray(value) && typeof value === 'object') {
-        this.parseConfigData(value, fullKey, result);
-      } else {
-        result[fullKey] = value;
-      }
-    });
+    if (configData !== undefined && configData !== null) {
+      Object.keys(configData).forEach(key => {
+        const value = configData[key];
+        let fullKey = key;
+        if (parentKey) {
+          fullKey = `${parentKey}${FORM_KEY_SEPERATOR}${key}`;
+        }
+        if (!Array.isArray(value) && typeof value === 'object') {
+          this.parseConfigData(value, fullKey, result);
+        } else {
+          result[fullKey] = value;
+        }
+      });
+    }
+    
   }
 }
