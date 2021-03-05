@@ -1,0 +1,43 @@
+.pod-logs-wrapper {
+  width: calc(100% - 16px);
+  height: calc(100% - 100px);
+  margin-left: 8px;
+  margin-right: 8px;
+  color: white;
+}
+
+.pod-logs {
+  width: 100%;
+  height: calc(100% - 30px);
+  background: black;
+  overflow: auto;  
+  font-family: 'Inconsolata';
+  padding: 5px;
+}
+
+.meta-data {
+  font-size: 14px;
+  padding: 5px 0;
+}
+
+.meta-data label {
+  font-weight: bold;
+}
+
+.meta-data .name {
+  margin: 0 10px 0 5px;
+  opacity: 0.5;
+}
+
+.timestamp {
+  display: inline-block;
+  opacity: 0.5;
+  min-width: 155px;
+  margin-right: 10px;
+}
+
+.log-data {
+  color: rgb(0, 208, 214);
+  white-space: pre-wrap;
+  word-break: break-all;
+}

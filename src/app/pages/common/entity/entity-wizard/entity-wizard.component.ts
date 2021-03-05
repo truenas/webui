@@ -183,6 +183,8 @@ export class EntityWizardComponent implements OnInit {
       value = _.merge(value, _.cloneDeep(this.formGroup.value.formArray[i]));
     }
 
+    value = new EntityUtils().changeNullString2Null(value);
+
     if (this.conf.beforeSubmit) {
       value = this.conf.beforeSubmit(value);
     }

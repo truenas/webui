@@ -4,6 +4,7 @@ import { AdminLayoutComponent } from './components/common/layouts/admin-layout/a
 import { AuthLayoutComponent } from './components/common/layouts/auth-layout/auth-layout.component';
 
 import { AuthService } from './services/auth/auth.service';
+import { ApplicationsComponent } from 'app/pages/applications//applications.component';
 
 export const rootRouterConfig: Routes = [{
     path: '',
@@ -70,6 +71,11 @@ export const rootRouterConfig: Routes = [{
       },
       {
         path: 'apps',
+        component : ApplicationsComponent,
+        data: { title: 'Applications', breadcrumb: 'Applications', toplevel:true }
+      },
+      {
+        path: 'apps/:tabIndex',
         loadChildren: 'app/pages/applications/applications.module#ApplicationsModule',
         data: { title: 'Applications', breadcrumb: 'Applications', toplevel:true }
       },

@@ -458,6 +458,28 @@ export default {
     }
   },
 
+  podLogs: {
+    title: T('Choose log'),
+    chooseBtn: T('Choose'),
+    downloadBtn: T('Download Logs'),
+    nopod: {
+      title: T('No Pods Found'),
+      message: T('Invalid Pod name'),
+    },
+    chooseApp: {
+      placeholder: T('Apps'),
+    },
+    choosePod: {
+      placeholder: T('Pods'),
+    },
+    chooseConatiner: {
+      placeholder: T('Containers'),
+    },
+    tailLines: {
+      placeholder: T('Tail Lines'),
+    },
+  },
+  
   actionBtnText: {
     close: T('Close')
   },

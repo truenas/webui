@@ -31,7 +31,7 @@ mat-tab-group {
             .badge-area {
                 height: 18px;
                 width: 70px;
-                margin: 13px auto;
+                margin: 5px auto;
 
                 .partner-badge {
                     width: 70px;
@@ -42,7 +42,7 @@ mat-tab-group {
             .button-row {
               position: relative;
               top: 8px;
-            }      
+            }
         }
     }
 
@@ -90,9 +90,19 @@ mat-tab-group {
     }
 
     .content {
-        text-align: center;
-        padding: 1rem;
-        width: 210px;
+      text-align: center;
+      padding: 1rem;
+      width: 210px;
+      
+      .update-label {
+        color: rgba(255, 255, 255);
+        white-space: nowrap;
+      }
+      .version-value {
+        color: rgba(255, 255, 255, 0.5);
+        word-break: break-all;
+        padding-left: 5px;
+      }
     }
     .content:hover {
       cursor: pointer;

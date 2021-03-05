@@ -20,6 +20,11 @@ import { ChartWizardComponent } from '../forms/chart-wizard.component';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import  helptext  from '../../../helptext/apps/apps';
 
+interface SelectOption {
+	label: string, 
+	value: string, 
+}
+
 @Component({
   selector: 'app-catalog',
   templateUrl: './catalog.component.html',
@@ -33,8 +38,8 @@ export class CatalogComponent implements OnInit {
   public filterString = '';
 
   private dialogRef: any;
-  private poolList = [];
-  private selectedPool = '';
+  private poolList: SelectOption[] = [];
+  private selectedPool: string = '';
   public settingsEvent: Subject<CoreEvent>;
   private kubernetesForm: KubernetesSettingsComponent;
   private chartReleaseForm: ChartReleaseAddComponent;
@@ -85,7 +90,7 @@ export class CatalogComponent implements OnInit {
               label: catalog.label,
             },
             icon_url: item.icon_url? item.icon_url : '/assets/images/ix-original.png',
-            latest_version: latest,
+            latest_version: item.versions[latest].human_version,
             info: latestDetails.app_readme,
             schema: item.versions[latest].schema,
           }

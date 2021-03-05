@@ -21,6 +21,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PodShellComponent } from './pod-shell/pod-shell.component';
 import { ChartFormComponent } from './forms/chart-form.component';
 import { ChartWizardComponent } from './forms/chart-wizard.component';
+import { PodLogsComponent } from './pod-logs/pod-logs.component';
 import { ChartEventsDialog } from './dialogs/chart-events/chart-events-dialog.component';
 import { AppCommonModule } from '../../components/common/app-common.module';
 
@@ -50,6 +51,7 @@ import { AppCommonModule } from '../../components/common/app-common.module';
     ChartFormComponent,
     ChartWizardComponent,
     PodShellComponent,
+    PodLogsComponent,
     ChartEventsDialog,
   ]
 })
