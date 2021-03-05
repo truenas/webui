@@ -423,7 +423,7 @@ export class EntityUtils {
 
         if (schemaConfig.schema.show_if) {
           subResults.forEach(subResult => {
-            subResult['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);;
+            subResult['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);
           });
         }
         results = results.concat(subResults);
@@ -434,7 +434,7 @@ export class EntityUtils {
 
       if (fieldConfig['type']) {
         if (schemaConfig.schema.show_if) {
-          fieldConfig['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);;
+          fieldConfig['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);
         }
 
         results.push(fieldConfig);
