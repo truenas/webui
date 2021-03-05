@@ -42,7 +42,3 @@ To use, add 'box: true' to a form-list element in entity form */
 .list-top-bar {
   margin: 10px 0;
 }
-
-.empty-list {
-  color: rgba(0, 0, 0, 0.1);
-}
