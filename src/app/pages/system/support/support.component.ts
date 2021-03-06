@@ -41,11 +41,16 @@ export class SupportComponent implements OnInit {
     this.ws.call('system.info').subscribe((res) => {
       if (this.product_type === 'CORE') {
         this.getFNSysInfo(res);
-        this.getFreeNASImage(res.system_product)
       } else {
         this.getTNSysInfo(res);
-        this.getTrueNASImage(res.system_product);
       };
+
+      // Always try to show product image for iX Systems hardware regardless of platform or license
+      if(res.system_manufacturer.toLowerCase() == 'ixsystems' && res.system_product.includes('MINI')){
+        this.getFreeNASImage(res.system_product)
+      } else {
+        this.getTrueNASImage(res.system_product);
+      }
     });
   };
 
