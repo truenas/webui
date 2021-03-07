@@ -1866,6 +1866,9 @@ msgstr ""
 msgid "Application Credential Secret"
 msgstr ""
 
+msgid "Application Events"
+msgstr ""
+
 msgid "Application Key"
 msgstr ""
 
@@ -2171,6 +2174,9 @@ msgid "Available Space Threshold (%)"
 msgstr ""
 
 msgid "Available Themes"
+msgstr ""
+
+msgid "Available version:\n"
 msgstr ""
 
 msgid "Awesome! Now let's explore FreeNAS's cool features."
@@ -2977,6 +2983,9 @@ msgid ""
 "on this dataset."
 msgstr ""
 
+msgid "Choose log"
+msgstr ""
+
 msgid ""
 "Choose one of the presets  or choose <i>Custom</i> to use the advanced "
 "scheduler."
@@ -3321,6 +3330,9 @@ msgstr ""
 msgid "Computer Account OU"
 msgstr ""
 
+msgid "Conainter Images"
+msgstr ""
+
 msgid "Config could not be downloaded"
 msgstr ""
 
@@ -3485,6 +3497,12 @@ msgid "Container Entrypoint"
 msgstr ""
 
 msgid "Container Environment Variables"
+msgstr ""
+
+msgid "Container Images"
+msgstr ""
+
+msgid "Container Name"
 msgstr ""
 
 msgid "Container Port"
@@ -4262,6 +4280,9 @@ msgid ""
 "on the *Deny Hosts* list,   then allow it."
 msgstr ""
 
+msgid "Deployments"
+msgstr ""
+
 msgid "Deregister"
 msgstr ""
 
@@ -4540,6 +4561,9 @@ msgid "Disk"
 msgstr ""
 
 msgid "Disk Details"
+msgstr ""
+
+msgid "Disk Import Aborted: Log Summary"
 msgstr ""
 
 msgid "Disk Imported: Log Summary"
@@ -6387,6 +6411,9 @@ msgstr ""
 msgid "Follow symlinks and copy the items to which they link."
 msgstr ""
 
+msgid "Following container images are available to update:\n"
+msgstr ""
+
 msgid "Force"
 msgstr ""
 
@@ -6514,9 +6541,6 @@ msgid "GID"
 msgstr ""
 
 msgid "GMail OAuth"
-msgstr ""
-
-msgid "GPU Configuration"
 msgstr ""
 
 msgid "GUI"
@@ -7546,6 +7570,9 @@ msgid "It seems you haven't setup any "
 msgstr ""
 
 msgid "Item"
+msgstr ""
+
+msgid "Item Name"
 msgstr ""
 
 msgid "Items Delete Failed"
@@ -8825,6 +8852,9 @@ msgstr ""
 msgid "No Pools Found"
 msgstr ""
 
+msgid "No Recent Events"
+msgstr ""
+
 msgid "No Repositories"
 msgstr ""
 
@@ -8858,6 +8888,9 @@ msgid "No pools"
 msgstr ""
 
 msgid "No pools are configured."
+msgstr ""
+
+msgid "No ports are being used."
 msgstr ""
 
 msgid "No repositories is found."
@@ -9608,6 +9641,12 @@ msgstr ""
 msgid "Plugin installed successfully"
 msgstr ""
 
+msgid "Pod Logs"
+msgstr ""
+
+msgid "Pod Name"
+msgstr ""
+
 msgid "Pod Shell"
 msgstr ""
 
@@ -9856,9 +9895,6 @@ msgid "Properties Exclude"
 msgstr ""
 
 msgid "Properties Override"
-msgstr ""
-
-msgid "Property"
 msgstr ""
 
 msgid "Protocol"
@@ -12612,6 +12648,9 @@ msgstr ""
 msgid "State: "
 msgstr ""
 
+msgid "Statefulsets"
+msgstr ""
+
 msgid "Static IP"
 msgstr ""
 
@@ -12994,6 +13033,9 @@ msgid "Tag"
 msgstr ""
 
 msgid "Tag to use for the specified image"
+msgstr ""
+
+msgid "Tail Lines"
 msgstr ""
 
 msgid "Take Snapshot"
@@ -14599,6 +14641,9 @@ msgid "Use unencrypted connection."
 msgstr ""
 
 msgid "Used"
+msgstr ""
+
+msgid "Used Ports"
 msgstr ""
 
 msgid ""

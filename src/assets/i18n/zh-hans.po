@@ -1798,6 +1798,9 @@ msgstr "应用程序凭证名称"
 msgid "Application Credential Secret"
 msgstr "应用程序凭证秘密"
 
+msgid "Application Events"
+msgstr ""
+
 msgid "Application Key"
 msgstr "应用程序密钥"
 
@@ -2119,6 +2122,9 @@ msgstr "可用空间阈值（％）"
 
 msgid "Available Themes"
 msgstr "可用主题"
+
+msgid "Available version:\n"
+msgstr ""
 
 msgid "Awesome! Now let's explore FreeNAS's cool features."
 msgstr "太棒了！ 现在让我们一起来探索FreeNAS的出色功能吧。"
@@ -2957,6 +2963,9 @@ msgid ""
 "on this dataset."
 msgstr "选择此数据集上的 .zfs 快照目录是<i>可见</i>还是<i>不可见</i>。"
 
+msgid "Choose log"
+msgstr ""
+
 msgid ""
 "Choose one of the presets  or choose <i>Custom</i> to use the advanced "
 "scheduler."
@@ -3331,6 +3340,9 @@ msgstr "压缩级别"
 msgid "Computer Account OU"
 msgstr "电脑帐户OU"
 
+msgid "Conainter Images"
+msgstr ""
+
 msgid "Config could not be downloaded"
 msgstr "无法下载配置"
 
@@ -3498,6 +3510,12 @@ msgid "Container Entrypoint"
 msgstr ""
 
 msgid "Container Environment Variables"
+msgstr ""
+
+msgid "Container Images"
+msgstr ""
+
+msgid "Container Name"
 msgstr ""
 
 msgid "Container Port"
@@ -4326,6 +4344,9 @@ msgid ""
 "on the *Deny Hosts* list,   then allow it."
 msgstr ""
 
+msgid "Deployments"
+msgstr ""
+
 msgid "Deregister"
 msgstr ""
 
@@ -4629,6 +4650,9 @@ msgstr "磁盘"
 
 msgid "Disk Details"
 msgstr "磁盘详细信息"
+
+msgid "Disk Import Aborted: Log Summary"
+msgstr ""
 
 msgid "Disk Imported: Log Summary"
 msgstr "磁盘已导入：日志摘要"
@@ -6607,6 +6631,9 @@ msgstr "遵循符号链接"
 msgid "Follow symlinks and copy the items to which they link."
 msgstr "遵循符号链接并复制它们链接的项目。"
 
+msgid "Following container images are available to update:\n"
+msgstr ""
+
 msgid "Force"
 msgstr "强制"
 
@@ -6745,9 +6772,6 @@ msgid "GID"
 msgstr "GID"
 
 msgid "GMail OAuth"
-msgstr ""
-
-msgid "GPU Configuration"
 msgstr ""
 
 msgid "GUI"
@@ -7820,6 +7844,9 @@ msgid "It seems you haven't setup any "
 msgstr ""
 
 msgid "Item"
+msgstr ""
+
+msgid "Item Name"
 msgstr ""
 
 msgid "Items Delete Failed"
@@ -9166,6 +9193,9 @@ msgstr "没有池"
 msgid "No Pools Found"
 msgstr ""
 
+msgid "No Recent Events"
+msgstr ""
+
 msgid "No Repositories"
 msgstr "没有资料库"
 
@@ -9200,6 +9230,9 @@ msgstr "没有池"
 
 msgid "No pools are configured."
 msgstr "没有配置池。"
+
+msgid "No ports are being used."
+msgstr ""
 
 msgid "No repositories is found."
 msgstr "找不到存储库。"
@@ -10001,6 +10034,12 @@ msgstr "插件已更新"
 msgid "Plugin installed successfully"
 msgstr "插件安装成功"
 
+msgid "Pod Logs"
+msgstr ""
+
+msgid "Pod Name"
+msgstr ""
+
 msgid "Pod Shell"
 msgstr ""
 
@@ -10267,9 +10306,6 @@ msgid "Properties Exclude"
 msgstr ""
 
 msgid "Properties Override"
-msgstr ""
-
-msgid "Property"
 msgstr ""
 
 msgid "Protocol"
@@ -13159,6 +13195,9 @@ msgstr "州"
 msgid "State: "
 msgstr ""
 
+msgid "Statefulsets"
+msgstr ""
+
 msgid "Static IP"
 msgstr ""
 
@@ -13545,6 +13584,9 @@ msgid "Tag"
 msgstr ""
 
 msgid "Tag to use for the specified image"
+msgstr ""
+
+msgid "Tail Lines"
 msgstr ""
 
 msgid "Take Snapshot"
@@ -15234,6 +15276,9 @@ msgstr "使用未加密的连接。"
 
 msgid "Used"
 msgstr "已使用"
+
+msgid "Used Ports"
+msgstr ""
 
 msgid ""
 "Used by clients in PASV mode. A default of <i>0</i> means any port above "

@@ -2033,6 +2033,9 @@ msgstr ""
 msgid "Application Credential Secret"
 msgstr ""
 
+msgid "Application Events"
+msgstr ""
+
 msgid "Application Key"
 msgstr "Ключ приложения"
 
@@ -2374,6 +2377,9 @@ msgstr "Порог доступного пространства (%)"
 
 msgid "Available Themes"
 msgstr "Доступные темы"
+
+msgid "Available version:\n"
+msgstr ""
 
 msgid "Awesome! Now let's explore FreeNAS's cool features."
 msgstr "Потрясающие! Теперь давайте рассмотрим интересные возможности FreeNAS."
@@ -3359,6 +3365,9 @@ msgstr ""
 "Выберите, если каталог снимков .zfs <i>Видимый</i> или <i>Невидимый</i> в "
 "этом наборе данных."
 
+msgid "Choose log"
+msgstr ""
+
 msgid ""
 "Choose one of the presets  or choose <i>Custom</i> to use the advanced "
 "scheduler."
@@ -3790,6 +3799,9 @@ msgstr "Степень сжатия"
 msgid "Computer Account OU"
 msgstr "Учетная запись компьютера OU"
 
+msgid "Conainter Images"
+msgstr ""
+
 msgid "Config could not be downloaded"
 msgstr "Конфиг не может быть загружен"
 
@@ -3976,6 +3988,12 @@ msgid "Container Entrypoint"
 msgstr ""
 
 msgid "Container Environment Variables"
+msgstr ""
+
+msgid "Container Images"
+msgstr ""
+
+msgid "Container Name"
 msgstr ""
 
 msgid "Container Port"
@@ -4851,6 +4869,9 @@ msgid ""
 "on the *Deny Hosts* list,   then allow it."
 msgstr ""
 
+msgid "Deployments"
+msgstr ""
+
 msgid "Deregister"
 msgstr "Отменить регистрацию"
 
@@ -5163,6 +5184,9 @@ msgstr "Диск"
 
 msgid "Disk Details"
 msgstr "Детали диска"
+
+msgid "Disk Import Aborted: Log Summary"
+msgstr ""
 
 msgid "Disk Imported: Log Summary"
 msgstr "Диск импортирован: Сводка журнала"
@@ -7275,6 +7299,9 @@ msgstr ""
 "Следовать символическим ссылкам и копируйте элементы, на которые они "
 "ссылаются."
 
+msgid "Following container images are available to update:\n"
+msgstr ""
+
 msgid "Force"
 msgstr "Принудить"
 
@@ -7423,9 +7450,6 @@ msgid "GID"
 msgstr ""
 
 msgid "GMail OAuth"
-msgstr ""
-
-msgid "GPU Configuration"
 msgstr ""
 
 msgid "GUI"
@@ -8619,6 +8643,9 @@ msgid "It seems you haven't setup any "
 msgstr ""
 
 msgid "Item"
+msgstr ""
+
+msgid "Item Name"
 msgstr ""
 
 msgid "Items Delete Failed"
@@ -10034,6 +10061,9 @@ msgstr "Нет пулов"
 msgid "No Pools Found"
 msgstr ""
 
+msgid "No Recent Events"
+msgstr ""
+
 msgid "No Repositories"
 msgstr "Нет репозиториев"
 
@@ -10070,6 +10100,9 @@ msgstr "Нет пулов"
 
 msgid "No pools are configured."
 msgstr "Пулы не настроены."
+
+msgid "No ports are being used."
+msgstr ""
 
 msgid "No repositories is found."
 msgstr "Репозитории не найдены."
@@ -10903,6 +10936,12 @@ msgstr "Плагин обновлен"
 msgid "Plugin installed successfully"
 msgstr "Плагин успешно установлен"
 
+msgid "Pod Logs"
+msgstr ""
+
+msgid "Pod Name"
+msgstr ""
+
 msgid "Pod Shell"
 msgstr ""
 
@@ -11176,9 +11215,6 @@ msgid "Properties Exclude"
 msgstr ""
 
 msgid "Properties Override"
-msgstr ""
-
-msgid "Property"
 msgstr ""
 
 msgid "Protocol"
@@ -14425,6 +14461,9 @@ msgstr "Состояние"
 msgid "State: "
 msgstr ""
 
+msgid "Statefulsets"
+msgstr ""
+
 msgid "Static IP"
 msgstr ""
 
@@ -14816,6 +14855,9 @@ msgid "Tag"
 msgstr ""
 
 msgid "Tag to use for the specified image"
+msgstr ""
+
+msgid "Tail Lines"
 msgstr ""
 
 msgid "Take Snapshot"
@@ -16648,6 +16690,9 @@ msgstr "Использовать незашифрованное соединен
 
 msgid "Used"
 msgstr "Занято"
+
+msgid "Used Ports"
+msgstr ""
 
 msgid ""
 "Used by clients in PASV mode. A default of <i>0</i> means any port above "

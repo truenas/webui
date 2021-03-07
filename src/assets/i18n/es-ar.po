@@ -2127,6 +2127,9 @@ msgstr "Nombre de credencial de la aplicación"
 msgid "Application Credential Secret"
 msgstr "Credencial secreta de la aplicación"
 
+msgid "Application Events"
+msgstr ""
+
 msgid "Application Key"
 msgstr "Clave de la aplicación"
 
@@ -2477,6 +2480,9 @@ msgstr "Umbral de espacio disponible (%)"
 
 msgid "Available Themes"
 msgstr "Temas disponibles"
+
+msgid "Available version:\n"
+msgstr ""
 
 msgid "Awesome! Now let's explore FreeNAS's cool features."
 msgstr "¡Increíble! Ahora exploremos las características geniales de FreeNAS."
@@ -3469,6 +3475,9 @@ msgstr ""
 "Elija si el directorio de instantáneas .zfs es <i>Visible</i> o "
 "<i>Invisible</i> en este conjunto de datos."
 
+msgid "Choose log"
+msgstr ""
+
 msgid ""
 "Choose one of the presets  or choose <i>Custom</i> to use the advanced "
 "scheduler."
@@ -3909,6 +3918,9 @@ msgstr "Nivel de compresión"
 msgid "Computer Account OU"
 msgstr "Cuenta de computadora OU"
 
+msgid "Conainter Images"
+msgstr ""
+
 msgid "Config could not be downloaded"
 msgstr "La configuración no se pudo descargar"
 
@@ -4094,6 +4106,12 @@ msgid "Container Entrypoint"
 msgstr ""
 
 msgid "Container Environment Variables"
+msgstr ""
+
+msgid "Container Images"
+msgstr ""
+
+msgid "Container Name"
 msgstr ""
 
 msgid "Container Port"
@@ -5025,6 +5043,9 @@ msgstr ""
 "un host que no está en * Permitir hosts * y no en la lista * Deny Hosts *, "
 "entonces permítelo."
 
+msgid "Deployments"
+msgstr ""
+
 msgid "Deregister"
 msgstr "Darse de baja"
 
@@ -5365,6 +5386,9 @@ msgstr "Disco"
 
 msgid "Disk Details"
 msgstr "Detalles del disco"
+
+msgid "Disk Import Aborted: Log Summary"
+msgstr ""
 
 msgid "Disk Imported: Log Summary"
 msgstr "Disco importado: resumen de registro"
@@ -7660,6 +7684,9 @@ msgstr "Seguir enlaces simbólicos"
 msgid "Follow symlinks and copy the items to which they link."
 msgstr "Siga los enlaces simbólicos y copie los elementos a los que se vinculan."
 
+msgid "Following container images are available to update:\n"
+msgstr ""
+
 msgid "Force"
 msgstr "Forzar"
 
@@ -7817,9 +7844,6 @@ msgstr "GID"
 
 msgid "GMail OAuth"
 msgstr "GMail OAuth"
-
-msgid "GPU Configuration"
-msgstr ""
 
 msgid "GUI"
 msgstr "GUI"
@@ -9035,6 +9059,9 @@ msgid "It seems you haven't setup any "
 msgstr ""
 
 msgid "Item"
+msgstr ""
+
+msgid "Item Name"
 msgstr ""
 
 msgid "Items Delete Failed"
@@ -10509,6 +10536,9 @@ msgstr "Sin Grupos (Pools)"
 msgid "No Pools Found"
 msgstr ""
 
+msgid "No Recent Events"
+msgstr ""
+
 msgid "No Repositories"
 msgstr "Sin Repositorios"
 
@@ -10545,6 +10575,9 @@ msgstr "Sin Grupos (Pools)"
 
 msgid "No pools are configured."
 msgstr "No hay grupos configurados."
+
+msgid "No ports are being used."
+msgstr ""
 
 msgid "No repositories is found."
 msgstr "No se encontraron repositorios."
@@ -11459,6 +11492,12 @@ msgstr "Complementos actualizados"
 msgid "Plugin installed successfully"
 msgstr "Complemento instalado correctamente"
 
+msgid "Pod Logs"
+msgstr ""
+
+msgid "Pod Name"
+msgstr ""
+
 msgid "Pod Shell"
 msgstr ""
 
@@ -11755,9 +11794,6 @@ msgstr "Propiedades excluidas"
 
 msgid "Properties Override"
 msgstr "Anulación de propiedades"
-
-msgid "Property"
-msgstr ""
 
 msgid "Protocol"
 msgstr "Protocolo"
@@ -15224,6 +15260,9 @@ msgstr "Estado"
 msgid "State: "
 msgstr "Estado: "
 
+msgid "Statefulsets"
+msgstr ""
+
 msgid "Static IP"
 msgstr ""
 
@@ -15636,6 +15675,9 @@ msgid "Tag"
 msgstr "Etiqueta"
 
 msgid "Tag to use for the specified image"
+msgstr ""
+
+msgid "Tail Lines"
 msgstr ""
 
 msgid "Take Snapshot"
@@ -17719,6 +17761,9 @@ msgstr "Use una conexión sin encriptar."
 
 msgid "Used"
 msgstr "Usado"
+
+msgid "Used Ports"
+msgstr ""
 
 msgid ""
 "Used by clients in PASV mode. A default of <i>0</i> means any port above "

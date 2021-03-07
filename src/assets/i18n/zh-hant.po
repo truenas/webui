@@ -1625,6 +1625,9 @@ msgstr ""
 msgid "Application Credential Secret"
 msgstr ""
 
+msgid "Application Events"
+msgstr ""
+
 msgid "Application Key"
 msgstr ""
 
@@ -1931,6 +1934,9 @@ msgstr ""
 
 msgid "Available Themes"
 msgstr "可用佈景主題"
+
+msgid "Available version:\n"
+msgstr ""
 
 msgid "Awesome! Now let's explore FreeNAS's cool features."
 msgstr "非常好! 現在開始探索 FreeNAS 的酷炫新功能."
@@ -2736,6 +2742,9 @@ msgid ""
 "on this dataset."
 msgstr ""
 
+msgid "Choose log"
+msgstr ""
+
 msgid ""
 "Choose one of the presets  or choose <i>Custom</i> to use the advanced "
 "scheduler."
@@ -3080,6 +3089,9 @@ msgstr "壓縮層級"
 msgid "Computer Account OU"
 msgstr ""
 
+msgid "Conainter Images"
+msgstr ""
+
 msgid "Config could not be downloaded"
 msgstr ""
 
@@ -3244,6 +3256,12 @@ msgid "Container Entrypoint"
 msgstr ""
 
 msgid "Container Environment Variables"
+msgstr ""
+
+msgid "Container Images"
+msgstr ""
+
+msgid "Container Name"
 msgstr ""
 
 msgid "Container Port"
@@ -4021,6 +4039,9 @@ msgid ""
 "on the *Deny Hosts* list,   then allow it."
 msgstr ""
 
+msgid "Deployments"
+msgstr ""
+
 msgid "Deregister"
 msgstr ""
 
@@ -4299,6 +4320,9 @@ msgid "Disk"
 msgstr "磁碟"
 
 msgid "Disk Details"
+msgstr ""
+
+msgid "Disk Import Aborted: Log Summary"
 msgstr ""
 
 msgid "Disk Imported: Log Summary"
@@ -6146,6 +6170,9 @@ msgstr "依循符號連結"
 msgid "Follow symlinks and copy the items to which they link."
 msgstr ""
 
+msgid "Following container images are available to update:\n"
+msgstr ""
+
 msgid "Force"
 msgstr "強制"
 
@@ -6273,9 +6300,6 @@ msgid "GID"
 msgstr ""
 
 msgid "GMail OAuth"
-msgstr ""
-
-msgid "GPU Configuration"
 msgstr ""
 
 msgid "GUI"
@@ -7305,6 +7329,9 @@ msgid "It seems you haven't setup any "
 msgstr ""
 
 msgid "Item"
+msgstr ""
+
+msgid "Item Name"
 msgstr ""
 
 msgid "Items Delete Failed"
@@ -8584,6 +8611,9 @@ msgstr ""
 msgid "No Pools Found"
 msgstr ""
 
+msgid "No Recent Events"
+msgstr ""
+
 msgid "No Repositories"
 msgstr ""
 
@@ -8617,6 +8647,9 @@ msgid "No pools"
 msgstr "沒有儲存集區"
 
 msgid "No pools are configured."
+msgstr ""
+
+msgid "No ports are being used."
 msgstr ""
 
 msgid "No repositories is found."
@@ -9367,6 +9400,12 @@ msgstr "外掛已更新"
 msgid "Plugin installed successfully"
 msgstr "外掛已經安裝成功"
 
+msgid "Pod Logs"
+msgstr ""
+
+msgid "Pod Name"
+msgstr ""
+
 msgid "Pod Shell"
 msgstr ""
 
@@ -9615,9 +9654,6 @@ msgid "Properties Exclude"
 msgstr ""
 
 msgid "Properties Override"
-msgstr ""
-
-msgid "Property"
 msgstr ""
 
 msgid "Protocol"
@@ -12371,6 +12407,9 @@ msgstr "狀態"
 msgid "State: "
 msgstr ""
 
+msgid "Statefulsets"
+msgstr ""
+
 msgid "Static IP"
 msgstr ""
 
@@ -12753,6 +12792,9 @@ msgid "Tag"
 msgstr ""
 
 msgid "Tag to use for the specified image"
+msgstr ""
+
+msgid "Tail Lines"
 msgstr ""
 
 msgid "Take Snapshot"
@@ -14359,6 +14401,9 @@ msgstr ""
 
 msgid "Used"
 msgstr "已使用"
+
+msgid "Used Ports"
+msgstr ""
 
 msgid ""
 "Used by clients in PASV mode. A default of <i>0</i> means any port above "
