@@ -60,13 +60,17 @@ export class R50 extends Chassis{
         let nextPositionX =  (displayObject.width + gapX) * currentColumn;
         let nextPositionY = mod * (displayObject.height + gapY);
     
-        if(currentColumn % 2 == 0){
-          const altOffset = 12; // Altenating offset applies to every other column
-          nextPositionY += altOffset;
+        const odd: boolean = currentColumn % 2 == 1;
+        const altOffset = 12 * currentColumn % 2; // Alternating offset
+        nextPositionY += altOffset;
+      
+        if(odd){
+          displayObject.children.forEach((child) => {
+            child.rotation = this.front.degreesToRadians(180);
+            child.anchor.set(1, 1);
+          });
         } else {
-          displayObject.rotation = this.front.degreesToRadians(180);
-          nextPositionX += displayObject.width;
-          nextPositionY += displayObject.height;
+          nextPositionY += 12;
         }
 
         return {x: nextPositionX + offsetX + iomGapX, y: nextPositionY + offsetY + iomGapY};
