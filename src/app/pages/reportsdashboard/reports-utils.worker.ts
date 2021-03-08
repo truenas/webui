@@ -157,6 +157,12 @@ function optimizeLegend(input){
   let output = input;
   // Do stuff
   switch(input.name){
+    case 'upsbatterycharge':
+      output.legend = ["Percent Charge"];
+      break;
+    case 'upsremainingbattery':
+      output.legend = ["Time remaining (Minutes)"];
+      break;
     case 'load':
       output.legend = output.legend.map((label) => label.replace(/load_/, ''))
       break;
