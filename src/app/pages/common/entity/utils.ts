@@ -291,24 +291,25 @@ export class EntityUtils {
   }
 
   changeNullString2Null(data) {
-    let result = {};
-    Object.keys(data).forEach(key => {
-      const value = data[key];
-      if (value === undefined || value === null || value === '') {
+    let result;
+    if (data === undefined || data === null || data === '') {
+      result = data;
+    } else if (Array.isArray(data)) {
+      const arrayValues = data.map(item => {
+        return this.changeNullString2Null(item);
+      });
+      result = arrayValues;
+    } else if (typeof data === 'object') {
+      result = {};
+      Object.keys(data).forEach(key => {
+        const value = this.changeNullString2Null(data[key]);
         result[key] = value;
-      } else if (Array.isArray(value)) {
-        const arrayValues = value.map(item => {
-          return this.changeNullString2Null(item);
-        });
-        result[key] = arrayValues;
-      } else if (typeof value === 'object') {
-        result[key] = this.changeNullString2Null(value);
-      } else if (value === NULL_VALUE) {
-        result[key] = null;
-      } else {
-        result[key] = value;
-      }
-    });
+      });
+    } else if (data === NULL_VALUE) {
+      result = null;
+    } else {
+      result = data;
+    }
 
     return result;
   }
