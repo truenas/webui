@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Validators, FormControl } from '@angular/forms';
 import { DatePipe } from '@angular/common';
-
+import helptext_repl from '../../../../helptext/task-calendar/replication/replication';
 import * as _ from 'lodash';
 
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
@@ -16,6 +16,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { T } from '../../../../translate-marker';
 import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
+import { combineLatest } from 'rxjs';
 
 @Component({
     selector: 'app-replication-wizard',
@@ -1224,9 +1225,32 @@ export class ReplicationWizardComponent {
 
         this.loader.close();
         if (!toStop) {
-            this.router.navigate(new Array('/').concat(this.route_success));
+            if(value.source_datasets_from === 'local') {
+                this.ws.call("zettarepl.datasets_have_encryption", [value.source_datasets, true /* recursive */, "LOCAL"]).subscribe(res => {
+                    if(res && res.length) {
+                        const message = helptext.replication_encrypted_dialog.message1+res.map(ds => "'"+ds+"'").join(", ")+helptext.replication_encrypted_dialog.message2;
+                        this.dialogService.Info(helptext.replication_encrypted_dialog.title, message).subscribe(res => {
+                            this.router.navigate(new Array('/').concat(this.route_success));
+                        });
+                    } else {
+                        this.router.navigate(new Array('/').concat(this.route_success));
+                    }
+                });
+            } else {
+                this.ws.call("zettarepl.datasets_have_encryption", [value.source_datasets, true /* recursive */, "SSH", this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value]).subscribe(res => {
+                    if(res && res.length) {
+                        const message = helptext.replication_encrypted_dialog.message1+res.map(ds => "'"+ds+"'").join(", ")+helptext.replication_encrypted_dialog.message2;
+                        this.dialogService.Info(helptext.replication_encrypted_dialog.title, message).subscribe(res => {
+                            this.router.navigate(new Array('/').concat(this.route_success));
+                        });
+                    } else {
+                        this.router.navigate(new Array('/').concat(this.route_success));
+                    }
+                });
+            }
         }
     }
+
 
 
     async rollBack(items) {

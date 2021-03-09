@@ -112,3 +112,8 @@ entity-table .mat-toolbar.mat-card-toolbar{
 entity-table .mat-toolbar.mat-card-toolbar{
   box-shadow:var(--fn-dropshadow);
 }
+
+
+.warning-text{
+  color:var(--yellow);
+}
