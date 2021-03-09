@@ -78,19 +78,6 @@ export class BreadcrumbComponent implements OnInit {
         return item;
       });
     });
-
-    // Listen for system information changes
-    this.core.register({
-      observerClass:this, 
-      eventName:"SysInfo", 
-    }).subscribe((evt:CoreEvent)=>{
-      const buildtime = evt.data.buildtime.$date;
-      const previous_buildtime = window.localStorage.getItem('buildtime');
-      if (buildtime != previous_buildtime) {
-        window.localStorage.setItem('buildtime', buildtime);
-      }
-      this.copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
-    });
   }
 
 }
