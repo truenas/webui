@@ -215,7 +215,14 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   checkBuildtime() {
-    
+    this.ws.call('system.build_time').subscribe((res) => {
+      const buildtime = res.$date;
+      const previous_buildtime = window.localStorage.getItem('buildtime');
+      if (buildtime !== previous_buildtime) {
+        window.localStorage.setItem('buildtime', buildtime);
+        this._copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
+      }
+    });
   }
 
   canLogin() {
