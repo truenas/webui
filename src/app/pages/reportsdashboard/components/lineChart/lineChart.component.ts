@@ -42,6 +42,8 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
   @Input() report: Report;
   @Input() title: string;
   @Input() timezone: string;
+  @Input() stacked: boolean = false;
+  @Input() stackedShowTotal: boolean = false;
 
   @Input() legends?: string[]; 
   @Input() type: string = 'line';
@@ -168,7 +170,8 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
          } else {
           console.warn("axes not found");
          }
-       }
+       },
+       stackedGraph: this.stacked
      }
 
      if(option == 'update'){

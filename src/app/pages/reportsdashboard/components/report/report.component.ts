@@ -50,6 +50,8 @@ export interface Report {
   vertical_label: string;
   identifiers?: string[];
   isRendered?: boolean[];
+  stacked: boolean;
+  stackedShowTotal: boolean;
 }
 
 export interface ReportData {
