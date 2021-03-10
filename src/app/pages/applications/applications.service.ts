@@ -43,6 +43,10 @@ export class ApplicationsService {
     return this.ws.call('chart.release.query', [[], secondOption]);
   }
 
+  getChartReleaseNames() {
+    return this.ws.call('chart.release.query', [[], {select: ['name']}]);
+  }
+
   setReplicaCount(name: string, count: number) {
     return this.ws.call('chart.release.scale', [name, { replica_count: count}]);
   }

@@ -40,5 +40,5 @@ export default {
     chooseCommand: {
       placeholder: T('Commands'),
     }
-  }
+  },
 };

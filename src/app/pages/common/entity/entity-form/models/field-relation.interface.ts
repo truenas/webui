@@ -6,6 +6,12 @@ export const ACTION_HIDE = "HIDE";
 export const CONNECTION_AND = "AND";
 export const CONNECTION_OR = "OR";
 
+export interface Relation {
+  fieldName: string;
+  operatorName: string;
+  operatorValue: any;
+}
+
 export interface FieldRelation {
   name: string;
   status?: string;
