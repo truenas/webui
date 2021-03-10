@@ -286,11 +286,13 @@ export class EntityUtils {
     if (value === null) {
       result = NULL_VALUE;
     }
-
     return result;
   }
 
   changeNullString2Null(data) {
+    // Safety: Don't operate on anything other than an actual null string!
+    if(data !== NULL_VALUE) return data;
+
     let result = {};
     Object.keys(data).forEach(key => {
       const value = data[key];
@@ -309,7 +311,6 @@ export class EntityUtils {
         result[key] = value;
       }
     });
-
     return result;
   }
   
