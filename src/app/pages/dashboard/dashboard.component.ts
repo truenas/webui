@@ -379,10 +379,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
       if(this.pools.length > 0){
         this.ws.call('pool.dataset.query', [[], {"extra": {"retrieve_children": false}}] ).subscribe((res) => {
-          const data = res.filter( pool => pool.id !== 'boot-pool');
           this.setVolumeData({
             name: "RootDatasets",
-            data: data
+            data: res
           });
           this.isDataReady();
         });

@@ -1000,6 +1000,13 @@ export class CertificateAddComponent {
   }
 
   beforeSubmit(data: any) {
+    for(let i = 0;i<data.san.length;i++) {
+      let sanValue = '';
+      for(let key in data.san[i]) {
+        sanValue+= data.san[i][key];
+      }
+      data.san[i] = sanValue;
+    }
     if (data.csronsys) {
       this.CSRList.forEach((item) => {
         if (item.id === data.csrlist) {
