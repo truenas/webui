@@ -955,6 +955,7 @@ async customSubmit(value) {
       this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
         this.loader.close();
         this.modalService.close('slide-in-form');
+        this.modalService.refreshTable();
     },(error) => {
       this.loader.close();
       this.dialogService.errorReport(T("Error creating VM."), error.reason, error.trace.formatted);
@@ -978,6 +979,7 @@ async customSubmit(value) {
       this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
         this.loader.close();
         this.modalService.close('slide-in-form');
+        this.modalService.refreshTable();
       },(error) => {
         this.loader.close();
         this.dialogService.errorReport(T("Error creating VM."), error.reason, error.trace.formatted);

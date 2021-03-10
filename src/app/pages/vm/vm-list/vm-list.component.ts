@@ -19,6 +19,7 @@ import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/d
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { VMWizardComponent } from '../vm-wizard/vm-wizard.component';
+import { CoreService } from 'app/core/services/core.service';
 
 @Component({
     selector: 'vm-list',
@@ -41,6 +42,7 @@ export class VMListComponent implements OnDestroy {
     private eventSubscription: Subscription;
     private productType: string = window.localStorage.getItem('product_type');
     protected addComponent: VMWizardComponent;
+    public tableOwner = this.constructor.name;
 
     public entityList: any;
     public columns: Array<any> = [
@@ -81,6 +83,7 @@ export class VMListComponent implements OnDestroy {
     public memWarning = wizardHelptext.memory_warning;
 
     constructor(
+        private core: CoreService,
         private ws: WebSocketService,
         private storageService: StorageService,
         private loader: AppLoaderService,
@@ -99,7 +102,10 @@ export class VMListComponent implements OnDestroy {
         this.refreshVMWizard();
         this.modalService.refreshForm$.subscribe(() => {
             this.refreshVMWizard();
-          })
+        })
+        this.modalService.refreshTable$.subscribe((res) => {
+            this.core.emit({name: 'refreshEntityTable', sender: this.constructor.name});
+        })
     }
 
     refreshVMWizard() {

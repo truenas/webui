@@ -37,6 +37,7 @@ export interface InputTableConf {
   columnFilter?: boolean;
   hideTopActions?: boolean;
   queryCall?: string;
+  tableOwner?: string;
   queryCallOption?: any;
   queryCallJob?: any;
   resource_name?: string;
@@ -253,6 +254,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.core.register({observerClass:this, eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
         this.multiActionsIconsOnly = evt.data.preferIconsOnly;
       });
+      this.core.register({observerClass: this, eventName: 'refreshEntityTable'}).subscribe((evt: CoreEvent) => {
+        if(this.conf.tableOwner && this.conf.tableOwner === evt.sender)
+          this.populateTable();
+      });
       this.core.emit({name:"UserPreferencesRequest", sender:this});
       // watch for navigation events as ngOnDestroy doesn't always trigger on these
       this.routeSub = this.router.events.subscribe((event) => {
@@ -277,6 +282,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.populateTable();
+  }
+  populateTable() {
     this.actionsConfig = { actionType: EntityTableAddActionsComponent, actionConfig: this };
     this.cardHeaderReady = this.conf.cardHeaderComponent ? false : true;
     this.hasActions = this.conf.noActions === true ? false : true;
