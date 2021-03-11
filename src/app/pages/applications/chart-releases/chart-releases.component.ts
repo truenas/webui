@@ -399,6 +399,8 @@ export class ChartReleasesComponent implements OnInit {
     this.filteredChartItems.forEach(item => {
       item.selected = selectAll;
     });
+
+    this.refreshToolbarMenus();
   }
 
   onBulkAction(actionName: string) {
@@ -494,7 +496,7 @@ export class ChartReleasesComponent implements OnInit {
       this.filteredChartItems = this.getChartItems();
     }
 
-    this.updateTab.emit({name: 'UpdateToolbar', value: this.filteredChartItems.length > 0});
+    this.refreshToolbarMenus();
   }
 
   openShell(name: string) {
@@ -612,5 +614,17 @@ export class ChartReleasesComponent implements OnInit {
         disableClose: false,
       });
     }
+  }
+
+  //On click checkbox
+  onChangeCheck() {
+    this.refreshToolbarMenus();
+  }
+
+  //Refresh Toolbar menus
+  refreshToolbarMenus() {
+    const isSelectedOneMore: boolean = this.getSelectedItems().length > 0;
+    const isSelectedAll: boolean = !this.filteredChartItems.find(item => !item.selected);
+    this.updateTab.emit({name: 'UpdateToolbar', value: isSelectedOneMore, isSelectedAll: isSelectedAll});
   }
 }
