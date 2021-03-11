@@ -2,6 +2,8 @@
 """Core UI feature tests."""
 
 import time
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
     is_element_present,
@@ -17,9 +19,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1006.feature', 'Create and Active Directory dataset on the tank pool')
-def test_create_and_active_directory_dataset_on_the_tank_pool(driver):
-    """Create and Active Directory dataset on the tank pool."""
+@scenario('features/NAS-T1006.feature', 'Create an Active Directory dataset on the tank pool')
+def test_create_an_active_directory_dataset_on_the_tank_pool(driver):
+    """Create an Active Directory dataset on the tank pool."""
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
@@ -139,8 +141,8 @@ def select_open_for_default_acl_option_select_group_name_for_group_name(driver, 
     assert wait_on_element(driver, 1, 7, '//input[@placeholder="Group"]')
     driver.find_element_by_xpath('//input[@placeholder="Group"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Group"]').send_keys(group_name)
-    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__{group_name}"]')
-    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__{group_name}"]').click()
+    assert wait_on_element(driver, 1, 7, f'//mat-option[@ix-auto="option__{group_name}"]')
+    ActionChains(driver).send_keys(Keys.ESCAPE).perform()
 
 
 @then('click the Apply Group checkbox and click the Save button')

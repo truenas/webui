@@ -578,51 +578,6 @@ export class CloudCredentialsFormComponent {
             }
           ]
         },
-        // {
-        //   type: 'input',
-        //   name: 'application_credential_id-OPENSTACK_SWIFT',
-        //   placeholder: helptext.application_credential_id_openstack_swift.placeholder,
-        //   tooltip: helptext.application_credential_id_openstack_swift.tooltip,
-        //   relation: [
-        //     {
-        //       action: 'SHOW',
-        //       when: [{
-        //         name: 'provider',
-        //         value: 'OPENSTACK_SWIFT',
-        //        }]
-        //     }
-        //   ]
-        // },
-        // {
-        //   type: 'input',
-        //   name: 'application_credential_name-OPENSTACK_SWIFT',
-        //   placeholder: helptext.application_credential_name_openstack_swift.placeholder,
-        //   tooltip: helptext.application_credential_name_openstack_swift.tooltip,
-        //   relation: [
-        //     {
-        //       action: 'SHOW',
-        //       when: [{
-        //         name: 'provider',
-        //         value: 'OPENSTACK_SWIFT',
-        //        }]
-        //     }
-        //   ]
-        // },
-        // {
-        //   type: 'input',
-        //   name: 'application_credential_secret-OPENSTACK_SWIFT',
-        //   placeholder: helptext.application_credential_secret_openstack_swift.placeholder,
-        //   tooltip: helptext.application_credential_secret_openstack_swift.tooltip,
-        //   relation: [
-        //     {
-        //       action: 'SHOW',
-        //       when: [{
-        //         name: 'provider',
-        //         value: 'OPENSTACK_SWIFT',
-        //        }]
-        //     }
-        //   ]
-        // },
         {
           type: 'select',
           name: 'auth_version-OPENSTACK_SWIFT',
@@ -631,19 +586,19 @@ export class CloudCredentialsFormComponent {
           options: [
             {
               label: 'Auto(vX)',
-              value: '0',
+              value: 0,
             },
             {
               label: 'v1',
-              value: '1'
+              value: 1
             },
             {
               label: 'v2',
-              value: '2'
+              value: 2
             },
             {
               label: 'v3',
-              value: '3'
+              value: 3
             }
           ],
           value: '0',

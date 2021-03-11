@@ -150,7 +150,7 @@ def select_discovery_auth_group_1_ip_address_0000_port_3260(driver, gid, ip, por
     assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__IP Address_{ip}"]')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__IP Address_{ip}"]').click()
     actions = ActionChains(driver)
-    actions.send_keys('ssh ericbsd@127.0.0.1', Keys.ESCAPE)
+    actions.send_keys(Keys.ESCAPE)
     actions.perform()
     driver.find_element_by_xpath('//input[@ix-auto="input__Port"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Port"]').send_keys(ports)

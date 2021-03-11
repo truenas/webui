@@ -71,7 +71,7 @@ export class SnapshotListComponent {
     multiSelect: true,
     deleteMsg: {
       title: 'Snapshot',
-      key_props: ['dataset']
+      key_props: ['dataset', 'snapshot']
     },
   };
 
