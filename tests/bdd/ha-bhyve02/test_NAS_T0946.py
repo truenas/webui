@@ -129,6 +129,7 @@ def we_should_be_returned_to_license_information(driver):
 def both_serials_should_show_under_system_serial_serial1_and_serial2(driver, serial1, serial2):
     """both serials should show under System Serial "serial1" and "serial2"."""
     # driver.find_element_by_xpath(f'//span[contains(.,"{serial1} / {serial2}")]')
+    pass
 
 
 @then('navigate to Network and on the Network page click on Global Configuration Settings')
@@ -164,27 +165,25 @@ def please_wait_should_appear_while_settings_are_being_applied_you_should_be_ret
     assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Network")]')
 
 
-@then('navigate to System then click Misc')
-def navigate_to_system_click_failover_click_disable_failover_click_save(driver):
-    """navigate to System then click Misc"""
+@then('navigate to System then click Failover')
+def navigate_to_system_then_click_failover(driver):
+    """navigate to System then click Failover"""
     assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__System Settings"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Misc"]')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Misc"]').click()
+    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Failover"]')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Failover"]').click()
 
 
-@then('the Miscellaneous page should open')
-def the_miscellaneous_page_should_open(driver):
-    """the Miscellaneous page should open."""
-    assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Miscellaneous")]')
+@then('the Failover page should open')
+def the_failover_page_should_open(driver):
+    """the Failover page should open."""
+    assert wait_on_element(driver, 1, 7, '//h1[contains(.,"Failover")]')
 
 
-@then('click Failover, check disable failover, click save and confirm changes')
-def click_Failover_check_disable_failover_click_save_and_confirm_changes(driver):
-    """click Failover, check disable failover, click save and confirm changes."""
-    assert wait_on_element(driver, 1, 7, '//li[contains(.,"Failover")]')
-    driver.find_element_by_xpath('//li[contains(.,"Failover")]').click()
-    assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Failover")]')
+@then('click the disable failover checkbox, click save and confirm changes')
+def click_the_disable_failover_checkbox_click_save_and_confirm_changes(driver):
+    """click the disable failover checkbox, click save and confirm changes."""
+    assert wait_on_element(driver, 0.5, 7, '//mat-checkbox[@ix-auto="checkbox__Disable Failover"]')
     element = driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]')
     global class_attribute
     class_attribute = element.get_attribute('class')
@@ -360,12 +359,10 @@ def create_pool_should_appear_while_pool_is_being_created_you_should_be_returned
     driver.find_element_by_xpath('//td[contains(.,"tank")]')
 
 
-@then('click Failover, uncheck disable failover, click save and confirm changes')
-def click_failover_uncheck_disable_failover_click_save_and_confirm_changes(driver):
-    """click Failover, uncheck disable failover, click save and confirm changes."""
-    assert wait_on_element(driver, 0.5, 7, '//li[contains(.,"Failover")]')
-    driver.find_element_by_xpath('//li[contains(.,"Failover")]').click()
-    assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Failover")]')
+@then('click disable failover to uncheck it, click save and confirm changes')
+def click_disable_failover_to_uncheck_it_click_save_and_confirm_changes(driver):
+    """click disable failover to uncheck it, click save and confirm changes."""
+    assert wait_on_element(driver, 0.5, 7, '//mat-checkbox[@ix-auto="checkbox__Disable Failover"]')
     element = driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]')
     global class_attribute
     class_attribute = element.get_attribute('class')
