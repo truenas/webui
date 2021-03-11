@@ -114,6 +114,8 @@
     <div>
       <div class="multiactions-title" *ngIf="conf.multiActions.length > 0 && !multiActionsIconsOnly">
         <strong>{{"Batch Operations" | translate}}</strong>
+        <!--<span *ngIf="selectedCount > 0"> ({{selectedCount - removeFromSelectedTotal}} selected)</span>-->
+        <span style="font-size: 85%;"> ({{selected.length}} selected)</span>
       </div>
       <!-- -->
       <div *ngIf="conf.multiActions && conf.multiActions.length > 0">
