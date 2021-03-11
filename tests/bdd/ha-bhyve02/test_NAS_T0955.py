@@ -20,6 +20,7 @@ from pytest_bdd import (
 @scenario('features/NAS-T955.feature', 'Edit User Change Password')
 def test_edit_user_change_password(driver):
     """Edit User Change Password."""
+    pass
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))

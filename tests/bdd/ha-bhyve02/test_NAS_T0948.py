@@ -19,6 +19,7 @@ from pytest_bdd import (
 @scenario('features/NAS-T948.feature', 'Edit User Shell')
 def test_edit_user_shell(driver):
     """Edit User Shell."""
+    pass
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))

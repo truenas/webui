@@ -15,6 +15,7 @@ from pytest_bdd import (
 @scenario('features/NAS-T961.feature', 'Creating new pool and set it as System Dataset')
 def test_creating_new_pool_and_set_it_as_system_dataset(driver):
     """Creating new pool and set it as System Dataset."""
+    pass
 
 
 @given(parsers.parse('the browser is open, navigate to "{nas_url}"'))

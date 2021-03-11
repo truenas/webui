@@ -19,6 +19,7 @@ from pytest_bdd import (
 @scenario('features/NAS-T952.feature', 'Edit user home directory')
 def test_edit_user_home_directory(driver):
     """Edit user home directory."""
+    pass
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))

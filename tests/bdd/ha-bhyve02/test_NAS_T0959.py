@@ -43,6 +43,7 @@ def ssh_key():
 @scenario('features/NAS-T959.feature', 'Adding sshkey to a user and verify it works')
 def test_adding_sshkey_to_a_user_and_verify_it_works(driver):
     """Adding sshkey to a user and verify it works."""
+    pass
 
 
 @given(parsers.parse('The browser is open, navigate to "{nas_url}"'))

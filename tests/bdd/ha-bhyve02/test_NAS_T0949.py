@@ -20,6 +20,7 @@ from pytest_bdd import (
 @scenario('features/NAS-T949.feature', 'Edit user enable Permit Sudo')
 def test_edit_user_enable_permit_sudo(driver):
     """Edit user enable Permit Sudo."""
+    pass
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
