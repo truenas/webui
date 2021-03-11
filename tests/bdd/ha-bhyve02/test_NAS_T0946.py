@@ -353,8 +353,7 @@ def enter_tank_for_pool_name_check_the_box_next_to_sda_press_under_data_vdev_cli
 def create_pool_should_appear_while_pool_is_being_created_you_should_be_returned_to_the_storage_page(driver):
     """Create Pool should appear while pool is being created. You should be returned to the Storage page."""
     assert wait_on_element(driver, 0.2, 7, '//h1[contains(.,"Create Pool")]')
-    driver.find_element_by_xpath('//h1[contains(.,"Create Pool")]')
-    assert wait_on_element_disappear(driver, 1, 30, '//h1[contains(.,"Create Pool")]')
+    assert wait_on_element_disappear(driver, 1, 60, '//h1[contains(.,"Create Pool")]')
     assert wait_on_element(driver, 1, 7, '//mat-panel-title[contains(.,"tank")]')
     driver.find_element_by_xpath('//td[contains(.,"tank")]')
 
