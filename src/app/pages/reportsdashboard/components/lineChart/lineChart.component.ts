@@ -107,6 +107,29 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
 
   // dygraph renderer
   public renderGraph(option){
+    
+    if(this.data.name=="cpu") {
+      this.data.legend = this.data.legend.reverse();
+      for(let i = 0;i<this.data.data.length; i++) {
+        const newRow = []
+        while(this.data.data[i].length) {
+          newRow.push(this.data.data[i].pop())
+        }
+        this.data.data[i] = newRow;
+      }
+    }
+    if(this.stackedShowTotal) {
+      if(!(this.data.legend.findIndex(l => l==="total")>=0)) {
+        this.data.legend.unshift("total");
+        this.data.aggregations.max.unshift(' ')
+        this.data.aggregations.min.unshift(' ')
+        this.data.aggregations.mean.unshift(' ')
+        for(let i = 0;i<this.data.data.length; i++) {
+          const total = this.data.data[i].reduce((accumulator, currentValue) => accumulator + currentValue);
+          this.data.data[i].unshift(total);
+        }
+      }
+    }
     let data = this.makeTimeAxis(this.data);
     let labels = data.shift();
 
@@ -119,6 +142,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     let options = {
        drawPoints:false,// Must be disabled for smoothPlotter
        pointSize:1,
+       includeZero: true,
        highlightCircleSize:4,
        strokeWidth:1,
        colors: this.colorPattern,
@@ -150,14 +174,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
          this.core.emit({name: "LegendEvent-" + this.chartId,data:clone, sender: this})
          return "";
        },
-       series: () => {
-         let s = {};
-         this.data.legend.forEach((item, index) => {
-           s[item] = {plotter: smoothPlotter};
-         });
-
-         return s;
-       },
+       series: { total: { strokeWidth: 0, highlightCircleSize: 0 , fillGraph : false} },
        drawCallback: (dygraph, is_initial) =>{
          if(dygraph.axes_){
           let numero = dygraph.axes_[0].maxyval;
