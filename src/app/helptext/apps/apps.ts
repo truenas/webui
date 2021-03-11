@@ -31,28 +31,34 @@ export default {
     error: T('Error'),
     no_selected: T('Please select the applications'),
     title: T('Bulk actions'),
-    finished: T('Started bulk actions'),
+    finished: T('Requested action performed for selected Applications'),
     failed: T('Failed to do bulk actions'),
+    unSelectAll: T('Unselect All'),
+    selectAll: T('Select All'),
     options: [
       {
         value: 'select_all',
         label: T('Select All'),
         icon: 'check_circle',
+        disabled: false,
       },
       {
         value: 'start',
         label: T('Start'),
         icon: 'play_arrow',
+        disabled: false,
       },
       {
         value: 'stop',
         label: T('Stop'),
         icon: 'stop',
+        disabled: false,
       },
       {
         value: 'delete',
         label: T('Delete'),
         icon: 'delete',
+        disabled: false,
       }
     ]
   },
