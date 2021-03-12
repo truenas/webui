@@ -10,6 +10,7 @@ import * as _ from 'lodash';
 import { EntityUtils } from '../../../common/entity/utils';
 import { T } from '../../../../translate-marker';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 
 @Component({
     selector: 'app-replication-list',
@@ -43,12 +44,12 @@ export class ReplicationFormComponent {
         value: 'NONE',
     }];
 
-    public fieldSets: FieldSet[] = [
+    public fieldSets: FieldSets = new FieldSets([
         {
             name: helptext.fieldset_general,
             label: true,
             class: 'general',
-            width: '49%',
+            width: '50%',
             config: [
                 {
                     type: 'input',
@@ -140,12 +141,11 @@ export class ReplicationFormComponent {
                 },
             ]
         },
-        { name: 'spacer', label: false, width: '2%' },
         {
             name: helptext.fieldset_transport,
             label: true,
             class: 'transport',
-            width: '49%',
+            width: '50%',
             config: [
                 {
                     type: 'select',
@@ -310,12 +310,11 @@ export class ReplicationFormComponent {
                 },
             ]
         },
-        { name: 'divider', divider: true },
         {
             name: helptext.fieldset_source,
             label: true,
             class: 'source',
-            width: '49%',
+            width: '50%',
             config: [
                 {
                     type: 'explorer',
@@ -337,7 +336,7 @@ export class ReplicationFormComponent {
                             value: 'PUSH',
                         }]
                     }],
-                }, 
+                },
                 {
                     type: 'explorer',
                     name: 'source_datasets_PULL',
@@ -367,13 +366,14 @@ export class ReplicationFormComponent {
                             value: 'PULL',
                         }]
                     }],
-                }, 
+                },
                 {
                     type: 'checkbox',
                     name: 'recursive',
                     placeholder: helptext.recursive_placeholder,
                     tooltip: helptext.recursive_tooltip,
                     value: false,
+                    expandedHeight: true,
                     relation: [{
                         action: 'HIDE',
                         when: [{
@@ -552,12 +552,11 @@ export class ReplicationFormComponent {
                 },
             ]
         },
-        { name: 'spacer', label: false, width: '2%' },
         {
             name: helptext.fieldset_destination,
             label: true,
             class: 'destination',
-            width: '49%',
+            width: '50%',
             config: [
                 {
                     type: 'explorer',
@@ -745,7 +744,7 @@ export class ReplicationFormComponent {
                     name: 'allow_from_scratch',
                     placeholder: helptext.allow_from_scratch_placeholder,
                     tooltip: helptext.allow_from_scratch_tooltip,
-                },  
+                },
                 {
                     type: 'select',
                     name: 'retention_policy',
@@ -802,7 +801,6 @@ export class ReplicationFormComponent {
                 },
             ]
         },
-        { name: 'divider', divider: true },
         {
             name: helptext.fieldset_schedule,
             label: true,
@@ -878,8 +876,9 @@ export class ReplicationFormComponent {
                     }],
                 },
             ]
-        }
-    ]
+        },
+        { name: 'divider', divider: true },
+    ])
     protected fieldConfig;
 
     constructor(
@@ -890,8 +889,7 @@ export class ReplicationFormComponent {
         private keychainCredentialService: KeychainCredentialService,
         private replicationService: ReplicationService,
         private dialogService: DialogService) {
-        const transportFieldsets = _.find(this.fieldSets, {class: 'transport'});
-        const sshCredentialsField = _.find(transportFieldsets.config, { name: 'ssh_credentials' });
+        const sshCredentialsField = this.fieldSets.config('ssh_credentials');
         this.keychainCredentialService.getSSHConnections().subscribe(
             (res) => {
                 for (const i in res) {
@@ -899,8 +897,7 @@ export class ReplicationFormComponent {
                 }
             }
         )
-        const sourceFieldsets = _.find(this.fieldSets, {class: 'source'});
-        const periodicSnapshotTasksField = _.find(sourceFieldsets.config, { name: 'periodic_snapshot_tasks' });
+        const periodicSnapshotTasksField = this.fieldSets.config('periodic_snapshot_tasks');
         this.ws.call('pool.snapshottask.query').subscribe(
             (res) => {
                 for (const i in res) {
@@ -909,11 +906,10 @@ export class ReplicationFormComponent {
                 }
             }
         )
-        const scheduleFieldsets = _.find(this.fieldSets, {class: 'schedule'});
-        const scheduleBeginField = _.find(scheduleFieldsets.config, { 'name': 'schedule_begin' });
-        const restrictScheduleBeginField = _.find(sourceFieldsets.config, { 'name': 'restrict_schedule_begin' });
-        const scheduleEndField = _.find(scheduleFieldsets.config, { 'name': 'schedule_end' });
-        const restrictScheduleEndField = _.find(sourceFieldsets.config, { 'name': 'restrict_schedule_end' });
+        const scheduleBeginField = this.fieldSets.config('schedule_begin');
+        const restrictScheduleBeginField = this.fieldSets.config('restrict_schedule_begin');
+        const scheduleEndField = this.fieldSets.config('schedule_end');
+        const restrictScheduleEndField = this.fieldSets.config('restrict_schedule_end');
 
         const time_options = this.taskService.getTimeOptions();
         for (let i = 0; i < time_options.length; i++) {
@@ -992,7 +988,7 @@ export class ReplicationFormComponent {
             }
         );
 
-        const retentionPolicyField = _.find(this.fieldConfig, { name: 'retention_policy' });
+        const retentionPolicyField = this.fieldSets.config('retention_policy');
         entityForm.formGroup.controls['transport'].valueChanges.subscribe(
             (res) => {
                 if (res !== 'LOCAL' && entityForm.formGroup.controls['direction'].value === 'PUSH' && entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined) {
@@ -1009,6 +1005,7 @@ export class ReplicationFormComponent {
                     entityForm.formGroup.controls['direction'].setValue('PUSH');
                     entityForm.setDisabled('target_dataset_PUSH', true, true);
                     entityForm.setDisabled('target_dataset_PULL', false, false);
+                    entityForm.setDisabled('ssh_credentials', true, true)
                 }
             }
         )
@@ -1045,7 +1042,7 @@ export class ReplicationFormComponent {
         entityForm.formGroup.controls['ssh_credentials'].valueChanges.subscribe(
             (res) => {
                 for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
-                    const explorerComponent = _.find(this.fieldConfig, { name: item }).customTemplateStringOptions.explorerComponent;
+                    const explorerComponent = this.fieldSets.config(item).customTemplateStringOptions.explorerComponent;
                     if (explorerComponent) {
                         explorerComponent.nodes = [{
                             mountpoint: explorerComponent.config.initial,
@@ -1058,7 +1055,7 @@ export class ReplicationFormComponent {
         )
 
         entityForm.formGroup.controls['speed_limit'].valueChanges.subscribe((value) => {
-            const speedLimitField = _.find(this.fieldConfig, { name: "speed_limit" });
+            const speedLimitField = this.fieldSets.config('speed_limit');
             const filteredValue = value ? this.storageService.convertHumanStringToNum(value) : undefined;
             speedLimitField['hasErrors'] = false;
             speedLimitField['errors'] = '';
@@ -1165,6 +1162,8 @@ export class ReplicationFormComponent {
     }
 
     beforeSubmit(data) {
+        const targetDatasetPush = _.cloneDeep(data['target_dataset_PUSH']);
+
         if (data['replicate']) {
             data['recursive'] = true;
             data['properties'] = true;
@@ -1193,13 +1192,14 @@ export class ReplicationFormComponent {
                     data['source_datasets_PUSH'][i] = data['source_datasets_PUSH'][i].substring(5);
                 }
             }
-            data['source_datasets'] = _.filter(Array.isArray(data['source_datasets_PUSH']) ? _.cloneDeep(data['source_datasets_PUSH']) : _.cloneDeep(data['source_datasets_PUSH']).split(',').map(_.trim));
-            data['target_dataset'] = typeof data['target_dataset_PUSH'] === 'string' ? _.cloneDeep(data['target_dataset_PUSH']) : _.cloneDeep(data['target_dataset_PUSH']).toString();
+            data['source_datasets'] = Array.isArray(data['source_datasets_PUSH']) ? _.cloneDeep(data['source_datasets_PUSH']) : _.cloneDeep(data['source_datasets_PUSH']).split(',').map(_.trim);
+            data['target_dataset'] = typeof targetDatasetPush === 'string' ? targetDatasetPush : targetDatasetPush.toString()
+
 
             delete data['source_datasets_PUSH'];
             delete data['target_dataset_PUSH'];
         } else {
-            data['source_datasets'] = _.filter(Array.isArray(data['source_datasets_PULL']) ? _.cloneDeep(data['source_datasets_PULL']) : _.cloneDeep(data['source_datasets_PULL']).split(',').map(_.trim));
+            data['source_datasets'] = Array.isArray(data['source_datasets_PULL']) ? _.cloneDeep(data['source_datasets_PULL']) : _.cloneDeep(data['source_datasets_PULL']).split(',').map(_.trim);
             data['target_dataset'] = typeof data['target_dataset_PULL'] === 'string' ? _.cloneDeep(data['target_dataset_PULL']) : _.cloneDeep(data['target_dataset_PULL']).toString();
             if (_.startsWith(data['target_dataset'], '/mnt/')) {
                 data['target_dataset'] = data['target_dataset'].substring(5);
@@ -1275,15 +1275,15 @@ export class ReplicationFormComponent {
 
     getChildren(node) {
         for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
-            _.find(this.fieldConfig, { name: 'target_dataset_PUSH' }).hasErrors = false;
+            this.fieldSets.config(item).hasErrors = false;
         }
 
         const transport = this.entityForm.formGroup.controls['transport'].value;
         const sshCredentials = this.entityForm.formGroup.controls['ssh_credentials'].value;
-        if (sshCredentials == undefined || sshCredentials == '') {
+        if ((sshCredentials == undefined || sshCredentials == '') && transport !== 'LOCAL') {
             for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
-                _.find(this.fieldConfig, { name: item }).hasErrors = true;
-                _.find(this.fieldConfig, { name: item }).errors = T('Please select a valid SSH Connection');
+                this.fieldSets.config(item).hasErrors = true;
+                this.fieldSets.config(item).errors = T('Please select a valid SSH Connection');
             }
             return;
         }
