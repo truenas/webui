@@ -448,8 +448,6 @@ export class VMWizardComponent {
   }
 
   afterInit(entityWizard: EntityWizardComponent) {
-    console.log(entityWizard)
-    console.log(< FormGroup > entityWizard.formArray.get([0]))
     this.ws.call('vm.query').subscribe((res) => {
       res.forEach(i => this.namesInUse.push(i.name));
     })
@@ -955,6 +953,7 @@ async customSubmit(value) {
       this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
         this.loader.close();
         this.modalService.close('slide-in-form');
+        this.modalService.refreshTable();
     },(error) => {
       this.loader.close();
       this.dialogService.errorReport(T("Error creating VM."), error.reason, error.trace.formatted);
@@ -978,6 +977,7 @@ async customSubmit(value) {
       this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
         this.loader.close();
         this.modalService.close('slide-in-form');
+        this.modalService.refreshTable();
       },(error) => {
         this.loader.close();
         this.dialogService.errorReport(T("Error creating VM."), error.reason, error.trace.formatted);

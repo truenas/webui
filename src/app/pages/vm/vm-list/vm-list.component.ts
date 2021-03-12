@@ -100,6 +100,10 @@ export class VMListComponent implements OnDestroy {
         this.modalService.refreshForm$.subscribe(() => {
             this.refreshVMWizard();
           })
+
+        this.modalService.refreshTable$.subscribe((res) => {
+            this.entityList.getData();
+        })
     }
 
     refreshVMWizard() {
