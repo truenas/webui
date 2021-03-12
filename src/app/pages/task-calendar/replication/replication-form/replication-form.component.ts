@@ -1189,7 +1189,6 @@ export class ReplicationFormComponent {
         if (data['direction'] == 'PUSH') {
             for (let i = 0; i < data['source_datasets_PUSH'].length; i++) {
                 if (_.startsWith(data['source_datasets_PUSH'][i], '/mnt/')) {
-                    console.log("data['source_datasets_PUSH'][i]", data['source_datasets_PUSH'][i], data['source_datasets_PUSH'][i].substring(5))
                     data['source_datasets_PUSH'][i] = data['source_datasets_PUSH'][i].substring(5);
                 }
             }
@@ -1272,7 +1271,6 @@ export class ReplicationFormComponent {
                 }
             }
         }
-        console.log('beforeSubmit', data)
     }
 
     getChildren(node) {
