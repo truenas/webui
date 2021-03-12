@@ -259,8 +259,8 @@ export class DeviceEditComponent implements OnInit {
   public vncFieldConfig: FieldConfig[]  = [
     {
       name : 'vnc_port',
-      placeholder : helptext.vnc_port_placeholder,
-      tooltip : helptext.vnc_port_tooltip,
+      placeholder : helptext.port_placeholder,
+      tooltip : helptext.port_tooltip,
       type : 'input',
       inputType: 'number',
       required: true,
