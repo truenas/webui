@@ -19,6 +19,9 @@ import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/d
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { VMWizardComponent } from '../vm-wizard/vm-wizard.component';
+import { ThrowStmt } from '@angular/compiler/public_api';
+import { withLatestFrom } from 'rxjs/operators';
+import { Validators } from '@angular/forms';
 
 @Component({
     selector: 'vm-list',
@@ -445,15 +448,64 @@ export class VMListComponent implements OnDestroy {
             icon: "settings_ethernet",
             label: T("Display"),
             onClick: display_vm => {
-                const display = display_vm.devices.find(o => o.dtype === 'DISPLAY');
-                let bind = display.attributes.bind;
-                if (bind === '0.0.0.0' || bind === '::') {
-                    bind = window.location.hostname;
-                }
-                this.ws.call("vm.get_vnc_web", [display_vm.id, bind]).subscribe(res => {
-                    for (const vnc_port in res) {
-                        window.open(res[vnc_port]);
-                    }
+                this.loader.open();
+                this.ws.call("vm.get_display_devices", [display_vm.id]).subscribe((res) => {
+                    this.loader.close();
+                    const conf: DialogFormConfiguration = {
+                        title: T("Pick a display device to open"),
+                        fieldConfig: [{
+                            type: 'radio',
+                            name: 'display_device',
+                            placeholder: T("Display Device"),
+                            options: res.map((d) => {return {label: d.attributes.type, value: d.id};}),
+                            validation: [Validators.required],
+                          }],
+                        saveButtonText: "Open",
+                        parent: this,
+                        customSubmit: (entityDialog) => {
+                            const display_device = _.find(res, {id: entityDialog.formValue.display_device});
+                            if(display_device.attributes.password_configured) {
+                                const pass_conf: DialogFormConfiguration = {
+                                    title: T("Enter password"),
+                                    message: T("Enter password to unlock this display device"),
+                                    fieldConfig: [{
+                                        type: 'input',
+                                        name: 'password',
+                                        inputType: 'password',
+                                        placeholder: T('Password'),
+                                        validation: [Validators.required]
+                                    }],
+                                    saveButtonText: T("Open"),
+                                    parent: this,
+                                    customSubmit: (passDialog) => {
+                                        this.loader.open();
+                                        this.ws.call("vm.get_display_web_uri", [display_device.id, passDialog.formValue.password]).subscribe((res) => {
+                                            this.loader.close();
+                                            window.open(res[0], "_blank")
+                                        }, err => {
+                                            this.loader.close();
+                                            new EntityUtils().handleError(this, err);
+                                        })
+                                    }
+                                }
+                                this.dialogService.dialogForm(pass_conf);
+                            } else {
+                                this.loader.open();
+                                this.ws.call("vm.get_display_web_uri", [display_device.id]).subscribe((res) => {
+                                    this.loader.close();
+                                    window.open(res[0], "_blank")
+                                }, err => {
+                                    this.loader.close();
+                                    new EntityUtils().handleError(this, err);
+                                })
+                            }
+                            entityDialog.dialogRef.close();
+                        }
+                      }
+                      this.dialogService.dialogForm(conf);
+                }, err => {
+                    this.loader.close();
+                    new EntityUtils().handleError(this, err);
                 });
             }
         },
@@ -492,7 +544,7 @@ export class VMListComponent implements OnDestroy {
 
     isActionVisible(actionId: string, row: any) {
         if (actionId === 'DISPLAY' && (row["status"]["state"] !== "RUNNING" || !this.checkDisplay(row))) {
-            return true;
+            return false;
         } else if ((actionId === 'POWER_OFF' || actionId === 'STOP' || actionId === 'RESTART' || 
             actionId === 'SERIAL') && row["status"]["state"] !== "RUNNING") {
             return false;
