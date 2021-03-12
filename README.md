@@ -1,5 +1,5 @@
 
-FreeNAS 11 WebUI
+FreeNAS 12 WebUI
 ================
 ![CI](https://github.com/freenas/webui/workflows/CI/badge.svg?branch=master)
 
