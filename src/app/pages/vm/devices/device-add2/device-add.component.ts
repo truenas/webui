@@ -256,7 +256,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   ];
   protected pptdev: any;
 
-  //vnc
+  // Display
   public displayFieldConfig: FieldConfig[]  = [
     {
       name : 'port',
@@ -277,9 +277,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       placeholder : helptext.resolution_placeholder,
       tooltip : helptext.resolution_tooltip,
       type: 'select',
-      options : [],//helptext.resolution_options,
-      // value: '1024x768',
-      // isHidden: true
+      options : []
     },
     {
       name : 'bind',
@@ -343,7 +341,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
 
 
   preInit() {
-    // vnc
+    // Display
     this.ws.call('vm.device.bind_choices').subscribe((res) => {
       if(res && Object.keys(res).length > 0) {
         this.ipAddress = _.find(this.displayFieldConfig, {'name' : 'bind'});
@@ -486,13 +484,22 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
         label: 'Add New', value: 'new', sticky: 'bottom'
       })
     });
-    // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing VNC device, hide VNC option.
+    // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing Display device, hide Display option.
     await this.ws.call('vm.query', [[['id', '=', parseInt(this.vmid,10)]]]).subscribe((vm)=>{
       const dtypeField = _.find(this.fieldConfig, {name: "dtype"});
-      if (vm[0].bootloader === 'GRUB' || vm[0].bootloader === "UEFI_CSM" || _.find(vm[0].devices, {dtype:'DISPLAY'})){
-        for (const i in dtypeField.options) {
-          if (dtypeField.options[i].label === 'DISPLAY') {
-            // _.pull(dtypeField.options, dtypeField.options[i]);
+      const vmDisplayDevices = _.filter(vm[0].devices, {dtype:'DISPLAY'});
+      if (vm[0].bootloader === 'GRUB' || vm[0].bootloader === "UEFI_CSM" || vmDisplayDevices){
+        if(vmDisplayDevices.length){
+          if(vmDisplayDevices.length > 1) {
+            for (const i in dtypeField.options) {
+              if (dtypeField.options[i].label === 'DISPLAY') {
+                _.pull(dtypeField.options, dtypeField.options[i]);
+              }
+            }
+          } else {
+            const typee = _.find(this.displayFieldConfig, {'name' : 'type'});
+            _.pull(typee.options, _.find(typee.options, {value: vmDisplayDevices[0].attributes.type}));
+            this.displayFormGroup.controls['type'].setValue(typee.options[0].value);
           }
         }
       } 
