@@ -216,25 +216,16 @@ export class SnapshotListComponent {
   }
 
   callGetFunction(entityList) {
-    this.ws.call('systemdataset.config').subscribe((res) => {
+    this.ws.call('systemdataset.config').toPromise().then((res) => {
       if (res && res.basename && res.basename !== '') {
         this.queryCallOption[0][2] = (["name", "!^", res.basename]);
       }
       this.ws.call(this.queryCall, this.queryCallOption).subscribe((res1) => {
         entityList.handleData(res1, true);
-      }, (res) => {
-        new EntityUtils().handleWSError(this, res, entityList.dialogService);
-        if(entityList.loaderOpen) {
-          this.entityList.loaderOpen = false;
-          this.entityList.loader.close();
-        }
+      },
+      (err) => {
+          new EntityUtils().handleWSError(this, res, entityList.dialogService);
       });
-    }, (res) => {
-      new EntityUtils().handleWSError(this, res, entityList.dialogService);
-      if(entityList.loaderOpen) {
-        this.entityList.loaderOpen = false;
-        this.entityList.loader.close();
-      }
     });
   }
 
