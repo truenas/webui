@@ -269,7 +269,6 @@ export class SnapshotListComponent {
             this.entityList.getData() 
           },
           (res) => {
-            console.warn(res);
             new EntityUtils().handleWSError(this, res, this.entityList.dialogService);
             this.entityList.loaderOpen = false;
             this.entityList.loader.close();
