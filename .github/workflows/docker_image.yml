@@ -4,6 +4,7 @@ on:
   pull_request:
     types:
       - 'synchronize'
+      - 'opened'
 
 env:
   PR_NUMBER: ${{ github.event.pull_request.number }}
