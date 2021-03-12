@@ -912,3 +912,11 @@ input::-ms-clear {
   }
 }
 
+/* Generic styling for nested lists*/
+ul.nested-list{
+  list-style: circle;
+}
+
+ul.nested-list li{
+  margin-left: 24px;
+}
