@@ -13,6 +13,7 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import {  DialogService } from '../../../services/';
 import helptext from '../../../helptext/directoryservice/ldap';
 import global_helptext from '../../../helptext/global-helptext';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector : 'app-ldap',
@@ -36,8 +37,8 @@ export class LdapComponent {
     {
       id : helptext.ldap_custactions_basic_id,
       name : global_helptext.basic_options,
-      function : () => { 
-        this.isBasicMode = !this.isBasicMode; 
+      function : () => {
+        this.isBasicMode = !this.isBasicMode;
         this.fieldSets.find(set => set.name === helptext.ldap_advanced).label = false;
         this.fieldSets.find(set => set.name === 'divider').divider = false;
       }
@@ -45,8 +46,8 @@ export class LdapComponent {
     {
       id : helptext.ldap_custactions_advanced_id,
       name : global_helptext.advanced_options,
-      function : () => { 
-        this.isBasicMode = !this.isBasicMode; 
+      function : () => {
+        this.isBasicMode = !this.isBasicMode;
         this.fieldSets.find(set => set.name === 'Advanced Settings').label = true;
         this.fieldSets.find(set => set.name === 'divider').divider = true;
       }
@@ -73,7 +74,7 @@ export class LdapComponent {
 
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
-    {      
+    {
       name: helptext.ldap_server_creds,
       class: 'section_header',
       label:true,
@@ -120,16 +121,16 @@ export class LdapComponent {
         }
       ]
     },
-    {      
+    {
       name:'divider',
       divider:false
     },
-    {      
+    {
       name: helptext.ldap_advanced,
       class: 'section',
       label:false,
       config:[]},
-    {      
+    {
       name: 'section_two',
       class: 'section_header',
       label:false,
@@ -183,13 +184,13 @@ export class LdapComponent {
         }
       ]
     },
-    {      
+    {
     name: 'section_2.5',
     class: 'section',
     label:false,
     width: '4%',
     config:[]},
-    {      
+    {
       name: 'section_three',
       class: 'section_header',
       label:false,
@@ -254,7 +255,7 @@ export class LdapComponent {
     this.ldap_hostname = data['hostname'];
     return data;
   }
-  
+
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
 
@@ -262,7 +263,7 @@ export class LdapComponent {
       this.ldap_kerberos_realm = _.find(this.fieldConfig, {name : 'kerberos_realm'});
       res.forEach((item) => {
         this.ldap_kerberos_realm.options.push(
-          {label : item.realm, value : item.id});        
+          {label : item.realm, value : item.id});
       })
     })
 
@@ -316,7 +317,7 @@ export class LdapComponent {
       else{
         this.entityForm.formGroup.controls['hostname'].setValue(this.entityForm.formGroup.controls['hostname_noreq'].value);
       }
-      
+
     })
     entityEdit.submitFunction = this.submitFunction;
     setTimeout(() => {
@@ -335,6 +336,14 @@ export class LdapComponent {
 
   submitFunction(body: any) {
     return this.ws.call('ldap.update', [body]);
+  }
+
+  errorReport(res: any) {
+    let errorText = res.reason ? res.reason.replace('[EFAULT]', '') : null;
+    if (res.reason && res.reason.includes('Invalid credentials')) {
+      errorText = T('Invalid credentials. Please try again.')
+    }
+    this.entityForm.error = errorText;
   }
 
 }
