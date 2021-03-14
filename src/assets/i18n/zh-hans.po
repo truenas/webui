@@ -1798,6 +1798,9 @@ msgstr "应用程序凭证名称"
 msgid "Application Credential Secret"
 msgstr "应用程序凭证秘密"
 
+msgid "Application Events"
+msgstr ""
+
 msgid "Application Key"
 msgstr "应用程序密钥"
 
@@ -2119,6 +2122,9 @@ msgstr "可用空间阈值（％）"
 
 msgid "Available Themes"
 msgstr "可用主题"
+
+msgid "Available version:\n"
+msgstr ""
 
 msgid "Awesome! Now let's explore FreeNAS's cool features."
 msgstr "太棒了！ 现在让我们一起来探索FreeNAS的出色功能吧。"
@@ -2957,6 +2963,9 @@ msgid ""
 "on this dataset."
 msgstr "选择此数据集上的 .zfs 快照目录是<i>可见</i>还是<i>不可见</i>。"
 
+msgid "Choose log"
+msgstr ""
+
 msgid ""
 "Choose one of the presets  or choose <i>Custom</i> to use the advanced "
 "scheduler."
@@ -3331,6 +3340,9 @@ msgstr "压缩级别"
 msgid "Computer Account OU"
 msgstr "电脑帐户OU"
 
+msgid "Conainter Images"
+msgstr ""
+
 msgid "Config could not be downloaded"
 msgstr "无法下载配置"
 
@@ -3498,6 +3510,12 @@ msgid "Container Entrypoint"
 msgstr ""
 
 msgid "Container Environment Variables"
+msgstr ""
+
+msgid "Container Images"
+msgstr ""
+
+msgid "Container Name"
 msgstr ""
 
 msgid "Container Port"
@@ -3697,6 +3715,9 @@ msgstr "创建或导入池"
 
 msgid "Create or Import pool"
 msgstr "创建或导入池"
+
+msgid "Create pool"
+msgstr ""
 
 msgid "Created"
 msgstr ""
@@ -4326,6 +4347,9 @@ msgid ""
 "on the *Deny Hosts* list,   then allow it."
 msgstr ""
 
+msgid "Deployments"
+msgstr ""
+
 msgid "Deregister"
 msgstr ""
 
@@ -4629,6 +4653,9 @@ msgstr "磁盘"
 
 msgid "Disk Details"
 msgstr "磁盘详细信息"
+
+msgid "Disk Import Aborted: Log Summary"
+msgstr ""
 
 msgid "Disk Imported: Log Summary"
 msgstr "磁盘已导入：日志摘要"
@@ -6607,6 +6634,9 @@ msgstr "遵循符号链接"
 msgid "Follow symlinks and copy the items to which they link."
 msgstr "遵循符号链接并复制它们链接的项目。"
 
+msgid "Following container images are available to update:\n"
+msgstr ""
+
 msgid "Force"
 msgstr "强制"
 
@@ -6745,9 +6775,6 @@ msgid "GID"
 msgstr "GID"
 
 msgid "GMail OAuth"
-msgstr ""
-
-msgid "GPU Configuration"
 msgstr ""
 
 msgid "GUI"
@@ -7514,6 +7541,9 @@ msgstr ""
 msgid "Import Certificate Signing Request"
 msgstr ""
 
+msgid "Import Disk"
+msgstr ""
+
 msgid "Import Pool"
 msgstr ""
 
@@ -7760,6 +7790,9 @@ msgstr "IP地址无效"
 msgid "Invalid Pod name"
 msgstr ""
 
+msgid "Invalid credentials. Please try again."
+msgstr ""
+
 msgid "Invalid dataset."
 msgstr "无效的数据集。"
 
@@ -7816,10 +7849,16 @@ msgid ""
 "different numbers of disks. Continue?"
 msgstr "不建议使用一个或多个包含不同数量磁盘的vdev扩展池。继续吗？"
 
+msgid "It seems you haven't configured pools yet."
+msgstr ""
+
 msgid "It seems you haven't setup any "
 msgstr ""
 
 msgid "Item"
+msgstr ""
+
+msgid "Item Name"
 msgstr ""
 
 msgid "Items Delete Failed"
@@ -9166,6 +9205,9 @@ msgstr "没有池"
 msgid "No Pools Found"
 msgstr ""
 
+msgid "No Recent Events"
+msgstr ""
+
 msgid "No Repositories"
 msgstr "没有资料库"
 
@@ -9186,6 +9228,9 @@ msgstr "没有自定义主题。点击<b>创建新主题</b>以创建新的自�
 msgid "No interfaces configured with Virtual IP."
 msgstr "未使用虚拟IP配置接口。"
 
+msgid "No items have been added yet."
+msgstr ""
+
 msgid "No logs are available for this task."
 msgstr "没有日志可用于此任务。"
 
@@ -9195,11 +9240,11 @@ msgstr "不再保留此引导环境？"
 msgid "No network interfaces are marked critical for failover."
 msgstr "没有网络接口被标记为故障转移的关键接口。"
 
-msgid "No pools"
-msgstr "没有池"
-
 msgid "No pools are configured."
 msgstr "没有配置池。"
+
+msgid "No ports are being used."
+msgstr ""
 
 msgid "No repositories is found."
 msgstr "找不到存储库。"
@@ -9950,6 +9995,9 @@ msgstr "请"
 msgid "Please accept the terms of service for the given ACME Server."
 msgstr "请接受给定ACME服务器的服务条款。"
 
+msgid "Please click the button below to create a pool."
+msgstr ""
+
 msgid "Please enter your 2FA code"
 msgstr "请输入2FA码"
 
@@ -10000,6 +10048,12 @@ msgstr "插件已更新"
 
 msgid "Plugin installed successfully"
 msgstr "插件安装成功"
+
+msgid "Pod Logs"
+msgstr ""
+
+msgid "Pod Name"
+msgstr ""
 
 msgid "Pod Shell"
 msgstr ""
@@ -10267,9 +10321,6 @@ msgid "Properties Exclude"
 msgstr ""
 
 msgid "Properties Override"
-msgstr ""
-
-msgid "Property"
 msgstr ""
 
 msgid "Protocol"
@@ -10730,6 +10781,9 @@ msgid "Reports"
 msgstr "报告"
 
 msgid "Reports Configuration"
+msgstr ""
+
+msgid "Requested action performed for selected Applications"
 msgstr ""
 
 msgid "Require IDENT Authentication"
@@ -13000,6 +13054,9 @@ msgstr ""
 msgid "Snapshot successfully taken."
 msgstr "快照已成功拍摄。"
 
+msgid "Snapshots"
+msgstr ""
+
 msgid ""
 "Some authentication tools default to 30 seconds and do not support custom "
 "intervals."
@@ -13144,9 +13201,6 @@ msgstr "立即开始清理吗？"
 msgid "Start time for the replication task."
 msgstr "复制任务的开始时间。"
 
-msgid "Started bulk actions"
-msgstr ""
-
 msgid "Starting Jail"
 msgstr "正在启动监狱"
 
@@ -13157,6 +13211,9 @@ msgid "State"
 msgstr "州"
 
 msgid "State: "
+msgstr ""
+
+msgid "Statefulsets"
 msgstr ""
 
 msgid "Static IP"
@@ -13412,9 +13469,6 @@ msgstr "系统"
 msgid "System Clock"
 msgstr "系统时钟"
 
-msgid "System Dataset"
-msgstr "系统数据集"
-
 msgid "System Dataset Pool"
 msgstr "系统数据集池"
 
@@ -13545,6 +13599,9 @@ msgid "Tag"
 msgstr ""
 
 msgid "Tag to use for the specified image"
+msgstr ""
+
+msgid "Tail Lines"
 msgstr ""
 
 msgid "Take Snapshot"
@@ -15235,6 +15292,9 @@ msgstr "使用未加密的连接。"
 msgid "Used"
 msgstr "已使用"
 
+msgid "Used Ports"
+msgstr ""
+
 msgid ""
 "Used by clients in PASV mode. A default of <i>0</i> means any port above "
 "1023."
@@ -15446,6 +15506,9 @@ msgstr "虚拟机同步"
 
 msgid "VMware Sync"
 msgstr "虚拟机同步"
+
+msgid "VMware-Snapshots"
+msgstr ""
 
 msgid "VNC"
 msgstr "VNC"

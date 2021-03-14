@@ -1727,6 +1727,9 @@ msgstr ""
 msgid "Application Credential Secret"
 msgstr ""
 
+msgid "Application Events"
+msgstr ""
+
 msgid "Application Key"
 msgstr "Anwendungsschlüssel"
 
@@ -2043,6 +2046,9 @@ msgstr "Schwelle für verfügbaren Speicherplatz (%)"
 
 msgid "Available Themes"
 msgstr "Verfügbare Themen"
+
+msgid "Available version:\n"
+msgstr ""
 
 msgid "Awesome! Now let's explore FreeNAS's cool features."
 msgstr "Genial! Lassen Sie uns nun die coolen Funktionen von FreeNAS erkunden."
@@ -2889,6 +2895,9 @@ msgid ""
 "on this dataset."
 msgstr ""
 
+msgid "Choose log"
+msgstr ""
+
 msgid ""
 "Choose one of the presets  or choose <i>Custom</i> to use the advanced "
 "scheduler."
@@ -3233,6 +3242,9 @@ msgstr "Kompressionslevel"
 msgid "Computer Account OU"
 msgstr ""
 
+msgid "Conainter Images"
+msgstr ""
+
 msgid "Config could not be downloaded"
 msgstr "Die Konfiguration konnte nicht heruntergeladen werden"
 
@@ -3407,6 +3419,12 @@ msgid "Container Entrypoint"
 msgstr ""
 
 msgid "Container Environment Variables"
+msgstr ""
+
+msgid "Container Images"
+msgstr ""
+
+msgid "Container Name"
 msgstr ""
 
 msgid "Container Port"
@@ -3594,6 +3612,9 @@ msgstr "Pool erstellen oder importieren"
 
 msgid "Create or Import pool"
 msgstr "Erstellen oder Importieren eines Pools"
+
+msgid "Create pool"
+msgstr ""
 
 msgid "Created"
 msgstr ""
@@ -4188,6 +4209,9 @@ msgid ""
 "on the *Deny Hosts* list,   then allow it."
 msgstr ""
 
+msgid "Deployments"
+msgstr ""
+
 msgid "Deregister"
 msgstr "Abmelden"
 
@@ -4479,6 +4503,9 @@ msgstr "Datenträger"
 
 msgid "Disk Details"
 msgstr "Datenträgerdetails"
+
+msgid "Disk Import Aborted: Log Summary"
+msgstr ""
 
 msgid "Disk Imported: Log Summary"
 msgstr "Datenträger importiert: Protokollzusammenfassung"
@@ -6423,6 +6450,9 @@ msgstr ""
 "Folgen Sie den Symlinks und kopieren Sie die Elemente, mit denen sie "
 "verknüpft sind."
 
+msgid "Following container images are available to update:\n"
+msgstr ""
+
 msgid "Force"
 msgstr ""
 
@@ -6550,9 +6580,6 @@ msgid "GID"
 msgstr "GID"
 
 msgid "GMail OAuth"
-msgstr ""
-
-msgid "GPU Configuration"
 msgstr ""
 
 msgid "GUI"
@@ -7312,6 +7339,9 @@ msgstr ""
 msgid "Import Certificate Signing Request"
 msgstr ""
 
+msgid "Import Disk"
+msgstr ""
+
 msgid "Import Pool"
 msgstr ""
 
@@ -7543,6 +7573,9 @@ msgstr "Ungültige IP-Adresse"
 msgid "Invalid Pod name"
 msgstr ""
 
+msgid "Invalid credentials. Please try again."
+msgstr ""
+
 msgid "Invalid dataset."
 msgstr "Ungültiger Datensatz."
 
@@ -7595,10 +7628,16 @@ msgid ""
 "different numbers of disks. Continue?"
 msgstr ""
 
+msgid "It seems you haven't configured pools yet."
+msgstr ""
+
 msgid "It seems you haven't setup any "
 msgstr ""
 
 msgid "Item"
+msgstr ""
+
+msgid "Item Name"
 msgstr ""
 
 msgid "Items Delete Failed"
@@ -8899,6 +8938,9 @@ msgstr "Keine Pools"
 msgid "No Pools Found"
 msgstr ""
 
+msgid "No Recent Events"
+msgstr ""
+
 msgid "No Repositories"
 msgstr "Keine Repositories"
 
@@ -8919,6 +8961,9 @@ msgstr ""
 msgid "No interfaces configured with Virtual IP."
 msgstr "Keine mit Virtual IP konfigurierten Schnittstellen."
 
+msgid "No items have been added yet."
+msgstr ""
+
 msgid "No logs are available for this task."
 msgstr "Für diese Aufgabe sind keine Protokolle verfügbar."
 
@@ -8928,11 +8973,11 @@ msgstr "Behalten Sie diese Boot-Umgebung nicht mehr bei?"
 msgid "No network interfaces are marked critical for failover."
 msgstr "Keine Netzwerkschnittstellen sind für ein Failover als kritisch markiert."
 
-msgid "No pools"
-msgstr "Keine pools"
-
 msgid "No pools are configured."
 msgstr "Es sind keine Pools konfiguriert."
+
+msgid "No ports are being used."
+msgstr ""
 
 msgid "No repositories is found."
 msgstr "Es wurden keine Repositorys gefunden."
@@ -9631,6 +9676,9 @@ msgstr ""
 msgid "Please accept the terms of service for the given ACME Server."
 msgstr ""
 
+msgid "Please click the button below to create a pool."
+msgstr ""
+
 msgid "Please enter your 2FA code"
 msgstr "Geben sie ihren 2FA Authentifizierungscode ein"
 
@@ -9681,6 +9729,12 @@ msgstr "Plugin aktualisiert"
 
 msgid "Plugin installed successfully"
 msgstr "Plugin erfolgreich installiert"
+
+msgid "Pod Logs"
+msgstr ""
+
+msgid "Pod Name"
+msgstr ""
 
 msgid "Pod Shell"
 msgstr ""
@@ -9977,9 +10031,6 @@ msgid "Properties Exclude"
 msgstr ""
 
 msgid "Properties Override"
-msgstr ""
-
-msgid "Property"
 msgstr ""
 
 msgid "Protocol"
@@ -10498,6 +10549,9 @@ msgid "Reports"
 msgstr "Berichte"
 
 msgid "Reports Configuration"
+msgstr ""
+
+msgid "Requested action performed for selected Applications"
 msgstr ""
 
 msgid "Require IDENT Authentication"
@@ -13082,6 +13136,9 @@ msgstr ""
 msgid "Snapshot successfully taken."
 msgstr ""
 
+msgid "Snapshots"
+msgstr ""
+
 msgid ""
 "Some authentication tools default to 30 seconds and do not support custom "
 "intervals."
@@ -13224,9 +13281,6 @@ msgstr "Scrub jetzt starten?"
 msgid "Start time for the replication task."
 msgstr "Startzeit für die Replikationsaufgabe."
 
-msgid "Started bulk actions"
-msgstr ""
-
 msgid "Starting Jail"
 msgstr "Starte Jail"
 
@@ -13237,6 +13291,9 @@ msgid "State"
 msgstr "Zustand"
 
 msgid "State: "
+msgstr ""
+
+msgid "Statefulsets"
 msgstr ""
 
 msgid "Static IP"
@@ -13490,9 +13547,6 @@ msgstr "System"
 msgid "System Clock"
 msgstr "System Uhr"
 
-msgid "System Dataset"
-msgstr "System Datensatz"
-
 msgid "System Dataset Pool"
 msgstr "System Datensatz Pool"
 
@@ -13621,6 +13675,9 @@ msgid "Tag"
 msgstr ""
 
 msgid "Tag to use for the specified image"
+msgstr ""
+
+msgid "Tail Lines"
 msgstr ""
 
 msgid "Take Snapshot"
@@ -15365,6 +15422,9 @@ msgstr "Unverschlüsselte Verbindung verwenden."
 msgid "Used"
 msgstr "Verwendet"
 
+msgid "Used Ports"
+msgstr ""
+
 msgid ""
 "Used by clients in PASV mode. A default of <i>0</i> means any port above "
 "1023."
@@ -15565,6 +15625,9 @@ msgstr "VMWare Sync"
 
 msgid "VMware Sync"
 msgstr "VMware Sync"
+
+msgid "VMware-Snapshots"
+msgstr ""
 
 msgid "VNC"
 msgstr "VNC"
