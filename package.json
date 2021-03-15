@@ -35,7 +35,7 @@
     "url": "https://github.com/truenas/webui.git"
   },
   "bugs": {
-    "url": "https://bugs.freenas.org"
+    "url": "https://jira.ixsystems.com"
   },
   "private": true,
   "dependencies": {
