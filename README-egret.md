@@ -4,13 +4,13 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 ## Angular / Material Design
 
-The FreeNAS WebUI is built with official Angular Material Design components and features: 
+The TrueNAS WebUI is built with official Angular Material Design components and features: 
 
 * Lazy loading
 * AOT compilation
 * Color Scheme / Theme Picker
 * Translations
-* Websockets / REST calls to the FreeNAS 11 API
+* Websockets / REST calls to the TrueNAS API
 
 ## Development server
 
@@ -44,7 +44,7 @@ These examples use angular-cli to generate code in specific locations
 
 `ng generate component pages/dashboard/linechart`
 
-**If you follow these examples when extending the FreeNAS WebUI you'll have good karma for the rest of the day.**
+**If you follow these examples when extending the TrueNAS WebUI you'll have good karma for the rest of the day.**
 
 ## Build
 
