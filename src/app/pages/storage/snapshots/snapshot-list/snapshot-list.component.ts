@@ -289,8 +289,8 @@ export class SnapshotListComponent {
       this.entityList.getData();
       this.entityList.selected = [];
 
-      let infoMessage: string = T('Deleted ') + params[1].length;
-      infoMessage += params[1].length > 1 ? T(' snapshots') : T(' snapshot');
+      let infoMessage: string = T('Deleted') + ' ' + params[1].length + ' ';
+      infoMessage += params[1].length > 1 ? T('snapshots') : T('snapshot');
       this.dialogService.Info(infoMessage, '', '320px', 'info', true );
     });
 
