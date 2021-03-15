@@ -899,6 +899,7 @@ export class CertificateAddComponent {
       certType.options = helptext_system_certificates.add.csr_create_type.options;
       certType.placeholder = helptext_system_certificates.add.csr_create_type.placeholder;
       certType.tooltip = helptext_system_certificates.add.csr_create_type.tooltip;
+      certType.value = helptext_system_certificates.add.csr_create_type.value;
       this.title = helptext_system_certificates.add.title_csr;
     }
     this.getField('KeyUsage-enabled').setValue(undefined);
