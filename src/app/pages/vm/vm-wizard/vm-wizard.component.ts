@@ -37,7 +37,7 @@ export class VMWizardComponent {
   summary_title = T("VM Summary");
   public namesInUse = [];
   public statSize: any;
-  public vncPort: number;
+  public displayPort: number;
   public vcpus: number = 1;
   public cores: number = 1;
   public threads: number = 1;
@@ -108,9 +108,9 @@ export class VMWizardComponent {
         value: true
       },
       { type: 'checkbox',
-        name : 'enable_vnc',
-        placeholder : helptext.enable_vnc_placeholder,
-        tooltip : helptext.enable_vnc_tooltip,
+        name : 'enable_display',
+        placeholder : helptext.enable_display_placeholder,
+        tooltip : helptext.enable_display_tooltip,
         value: true,
         isHidden: false
       },
@@ -123,9 +123,9 @@ export class VMWizardComponent {
       },
       {
         type: 'select',
-        name : 'vnc_bind',
-        placeholder : helptext.vnc_bind_placeholder,
-        tooltip : helptext.vnc_bind_tooltip,
+        name : 'display_bind',
+        placeholder : helptext.display_bind_placeholder,
+        tooltip : helptext.display_bind_tooltip,
         options: [],
         required: true,
         validation: [Validators.required],
@@ -454,13 +454,13 @@ export class VMWizardComponent {
       res.forEach(i => this.namesInUse.push(i.name));
     })
 
-    this.ws.call('vm.device.vnc_bind_choices').subscribe((res) => {
+    this.ws.call('vm.device.display_bind_choices').subscribe((res) => {
         if(res && Object.keys(res).length > 0) {
-        const vnc_bind = _.find(this.wizardConfig[0].fieldConfig, {'name' : 'vnc_bind'});
+        const display_bind = _.find(this.wizardConfig[0].fieldConfig, {'name' : 'display_bind'});
         Object.keys(res).forEach((address) => {
-          vnc_bind.options.push({label : address, value : address});
+          display_bind.options.push({label : address, value : address});
         });
-        ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).setValue(res['0.0.0.0']);
+        ( < FormGroup > entityWizard.formArray.get([0]).get('display_bind')).setValue(res['0.0.0.0']);
       }
     });
 
@@ -500,35 +500,35 @@ export class VMWizardComponent {
 
     ( < FormGroup > entityWizard.formArray.get([0]).get('bootloader')).valueChanges.subscribe((bootloader) => {
       if(!this.productType.includes('SCALE') && bootloader !== 'UEFI'){
-        _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_vnc'})['isHidden'] = true;
+        _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_display'})['isHidden'] = true;
         _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'})['isHidden'] = true;
-      _.find(this.wizardConfig[0].fieldConfig, {name : 'vnc_bind'}).isHidden = true;
+      _.find(this.wizardConfig[0].fieldConfig, {name : 'display_bind'}).isHidden = true;
 
       } else {
-        _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_vnc'})['isHidden'] = false;
-        _.find(this.wizardConfig[0].fieldConfig, {name : 'vnc_bind'}).isHidden = false;
+        _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_display'})['isHidden'] = false;
+        _.find(this.wizardConfig[0].fieldConfig, {name : 'display_bind'}).isHidden = false;
         if (!this.productType.includes('SCALE')) {
           _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'})['isHidden'] = false;
         }
       }
     });
 
-    ( < FormGroup > entityWizard.formArray.get([0]).get('enable_vnc')).valueChanges.subscribe((res) => {
+    ( < FormGroup > entityWizard.formArray.get([0]).get('enable_display')).valueChanges.subscribe((res) => {
       if (!this.productType.includes('SCALE')) {
         _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'}).isHidden = !res;   
       }
-      _.find(this.wizardConfig[0].fieldConfig, {name : 'vnc_bind'}).isHidden = !res;
+      _.find(this.wizardConfig[0].fieldConfig, {name : 'display_bind'}).isHidden = !res;
       if (res) {
-        this.ws.call('vm.vnc_port_wizard').subscribe(({vnc_port}) => {
-          this.vncPort = vnc_port;
+        this.ws.call('vm.port_wizard').subscribe(({display_port}) => {
+          this.displayPort = display_port;
         })
         if (!this.productType.includes('SCALE')) {
           ( < FormGroup > entityWizard.formArray.get([0]).get('wait')).enable();
         }
-        ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).enable()
+        ( < FormGroup > entityWizard.formArray.get([0]).get('display_bind')).enable()
       } else {
         ( < FormGroup > entityWizard.formArray.get([0]).get('wait')).disable();
-        ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).disable();
+        ( < FormGroup > entityWizard.formArray.get([0]).get('display_bind')).disable();
       }
     });
 
@@ -921,25 +921,25 @@ async customSubmit(value) {
       ]
     }
 
-    if (value.enable_vnc) {
+    if (value.enable_display) {
       if (this.productType.includes('SCALE')) {
         vm_payload["devices"].push({
-          "dtype": "VNC", "attributes": {
-            "vnc_port": this.vncPort,
-            "vnc_bind": value.vnc_bind,
-            "vnc_password": "",
-            "vnc_web": true
+          "dtype": "DISPLAY", "attributes": {
+            "port": this.displayPort,
+            "display_bind": value.display_bind,
+            "password": "",
+            "web": true
           }
         });
       } else if (value.bootloader === 'UEFI') {
         vm_payload["devices"].push({
-          "dtype": "VNC", "attributes": {
+          "dtype": "DISPLAY", "attributes": {
             "wait": value.wait,
-            "vnc_port": this.vncPort,
-            "vnc_resolution": "1024x768",
-            "vnc_bind": value.vnc_bind,
-            "vnc_password": "",
-            "vnc_web": true
+            "port": this.displayPort,
+            "resolution": "1024x768",
+            "display_bind": value.display_bind,
+            "password": "",
+            "web": true
           }
         });
       }
