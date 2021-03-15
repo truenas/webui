@@ -636,7 +636,7 @@ export class CertificateAddComponent {
   private csrlist: any;
   public identifier: any;
   public usageField: any;
-  private currenProfile: any;
+  private currentProfile: any;
 
   constructor(protected ws: WebSocketService, protected dialog: MatDialog,
               protected systemGeneralService: SystemGeneralService, private modalService: ModalService,
@@ -886,10 +886,10 @@ export class CertificateAddComponent {
 
     this.getField('profiles').valueChanges.subscribe((res) => {
       // undo revious profile settings
-      this.loadProfiels(this.currenProfile, true);
+      this.loadProfiles(this.currentProfile, true);
       // load selected profile settings
-      this.loadProfiels(res);
-      this.currenProfile = res;
+      this.loadProfiles(res);
+      this.currentProfile = res;
       this.setSummary();
     });
 
@@ -910,7 +910,7 @@ export class CertificateAddComponent {
     this.setSummary();
   }
 
-  loadProfiels(value, reset?) {
+  loadProfiles(value, reset?) {
     if (value) {
       Object.keys(value).forEach(item => {
         if (item === 'cert_extensions') {
