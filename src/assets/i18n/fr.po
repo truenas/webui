@@ -2143,6 +2143,9 @@ msgstr ""
 msgid "Application Credential Secret"
 msgstr ""
 
+msgid "Application Events"
+msgstr ""
+
 msgid "Application Key"
 msgstr "Application Key"
 
@@ -2494,6 +2497,9 @@ msgstr "Seuil d'espace disponible (%)"
 
 msgid "Available Themes"
 msgstr "Thèmes disponibles"
+
+msgid "Available version:\n"
+msgstr ""
 
 msgid "Awesome! Now let's explore FreeNAS's cool features."
 msgstr "Génial ! Maintenant, explorons les fonctionnalités de FreeNAS."
@@ -3509,6 +3515,9 @@ msgstr ""
 "Choisissez si le répertoire d'instantanés .zfs est <i>Visible</i> ou "
 "<i>Invisible</i> sur ce dataset."
 
+msgid "Choose log"
+msgstr ""
+
 msgid ""
 "Choose one of the presets  or choose <i>Custom</i> to use the advanced "
 "scheduler."
@@ -3958,6 +3967,9 @@ msgstr "Niveau de compression"
 msgid "Computer Account OU"
 msgstr "Compte d'ordinateur OU"
 
+msgid "Conainter Images"
+msgstr ""
+
 msgid "Config could not be downloaded"
 msgstr "La configuration n'a pas pu être téléchargée"
 
@@ -4147,6 +4159,12 @@ msgstr "Point d’entrée du conteneur"
 
 msgid "Container Environment Variables"
 msgstr "Variables de l’environnement des conteneurs"
+
+msgid "Container Images"
+msgstr ""
+
+msgid "Container Name"
+msgstr ""
 
 msgid "Container Port"
 msgstr "Port du conteneur"
@@ -4349,6 +4367,9 @@ msgstr "Créer ou importer un volume"
 
 msgid "Create or Import pool"
 msgstr "Créer ou importer un volume"
+
+msgid "Create pool"
+msgstr ""
 
 msgid "Created"
 msgstr "Créé"
@@ -4756,9 +4777,10 @@ msgid ""
 "from the node that the pods run on. If <i>None</i> is specified, it allows "
 "a Pod to ignore DNS  settings from the Kubernetes environment."
 msgstr ""
-"Le comportement par défaut est que le Pod hérite de la configuration de résolution "
-"de nom du nœud sur quoi les Pods  s’exécutent. Si <i>aucun n’est</i> spécifié, il "
-"permet à un Pod d’ignorer les paramètres DNS de l’environnement Kubernetes."
+"Le comportement par défaut est que le Pod hérite de la configuration de "
+"résolution de nom du nœud sur quoi les Pods  s’exécutent. Si <i>aucun "
+"n’est</i> spécifié, il permet à un Pod d’ignorer les paramètres DNS de "
+"l’environnement Kubernetes."
 
 msgid "Default is UTF-8 which supports all characters in all languages."
 msgstr ""
@@ -5083,6 +5105,9 @@ msgstr ""
 "liste *Autoriser les hôtes* <br><br>  S'il y a un hôte qui ne figure pas "
 "dans la liste *Autoriser les hôtes* et pas dans la liste *Interdire les "
 "hôtes*, alors autorisez-le."
+
+msgid "Deployments"
+msgstr ""
 
 msgid "Deregister"
 msgstr "Désinscription"
@@ -5428,6 +5453,9 @@ msgstr "Disque"
 
 msgid "Disk Details"
 msgstr "Détails du disque"
+
+msgid "Disk Import Aborted: Log Summary"
+msgstr ""
 
 msgid "Disk Imported: Log Summary"
 msgstr "Disque importé : Résumé du log"
@@ -6616,17 +6644,16 @@ msgstr ""
 "<i>E4F4C6</i>"
 
 msgid "Enter a valid email address to receive alerts from this system."
-msgstr ""
-"Entrez une adresse e-mail valide pour recevoir les alertes de ce "
-"système."
+msgstr "Entrez une adresse e-mail valide pour recevoir les alertes de ce système."
 
 msgid ""
 "Enter a valid username for the <a "
 "href=\"https://jira.ixsystems.com/projects/NAS/issues/\" "
 "target=\"_blank\">TrueNAS bug tracking system</a>"
 msgstr ""
-"Entrez un nom d’utilisateur valide pour le <a href=\"https://jira.ixsystems.com/"
-"projects/NAS/issues/\" target=\"_blank\">système de suivi des bogues TrueNAS</a>"
+"Entrez un nom d’utilisateur valide pour le <a "
+"href=\"https://jira.ixsystems.com/projects/NAS/issues/\" "
+"target=\"_blank\">système de suivi des bogues TrueNAS</a>"
 
 msgid ""
 "Enter a value in seconds for the the UPS to wait before initiating "
@@ -6874,8 +6901,8 @@ msgstr ""
 
 msgid "Enter or select the cloud storage location to use for this task."
 msgstr ""
-"Entrez ou sélectionnez l’emplacement de stockage dans le cloud à utiliser pour "
-"cette tâche."
+"Entrez ou sélectionnez l’emplacement de stockage dans le cloud à utiliser "
+"pour cette tâche."
 
 msgid "Enter passphrase to lock pool "
 msgstr "Entrez la passphrase pour verrouiller le volume "
@@ -7045,8 +7072,8 @@ msgstr "Entrez l'adresse électronique du nouvel utilisateur."
 
 msgid "Enter the email address of the person responsible for the CA."
 msgstr ""
-"Entrez l'e-mail de la personne responsable de l'autorité de "
-"certification (CA)."
+"Entrez l'e-mail de la personne responsable de l'autorité de certification "
+"(CA)."
 
 msgid ""
 "Enter the email of the contact person. Use the format "
@@ -7721,6 +7748,9 @@ msgstr "Suivez les liens symboliques"
 msgid "Follow symlinks and copy the items to which they link."
 msgstr "Suivez les liens symboliques et copiez les éléments auxquels ils sont liés."
 
+msgid "Following container images are available to update:\n"
+msgstr ""
+
 msgid "Force"
 msgstr "Forcer"
 
@@ -7880,9 +7910,6 @@ msgstr "GID"
 
 msgid "GMail OAuth"
 msgstr "GMail OAuth"
-
-msgid "GPU Configuration"
-msgstr "Configuration GPU "
 
 msgid "GUI"
 msgstr "IU"
@@ -8450,13 +8477,14 @@ msgid ""
 "connection  with a remote TrueNAS system. This method uses the URL and "
 "login  credentials of the remote system to connect and exchange SSH keys."
 msgstr ""
-"Comment configurer la connexion :<br><br>  <i>Manual</i>nécessite la configuration "
-"de l’authentification sur le système distant.  Cela peut inclure la copie des clés "
-"SSH et la modification du <i>compte utilisateur</i> root sur ce système.<br><br>  "
-"<i>Semi-automatic</i> ne fonctionne que lors de la configuration d’une connexion "
-"SSH avec un système TrueNAS distant. Cette méthode utilise l’URL et les "
-"informations d’identification de connexion du système distant pour connecter et "
-"échanger les clés SSH."
+"Comment configurer la connexion :<br><br>  <i>Manual</i>nécessite la "
+"configuration de l’authentification sur le système distant.  Cela peut "
+"inclure la copie des clés SSH et la modification du <i>compte "
+"utilisateur</i> root sur ce système.<br><br>  <i>Semi-automatic</i> ne "
+"fonctionne que lors de la configuration d’une connexion SSH avec un système "
+"TrueNAS distant. Cette méthode utilise l’URL et les informations "
+"d’identification de connexion du système distant pour connecter et échanger "
+"les clés SSH."
 
 msgid "I Agree"
 msgstr "J’accepte"
@@ -8753,6 +8781,9 @@ msgstr ""
 msgid "Import Certificate Signing Request"
 msgstr ""
 
+msgid "Import Disk"
+msgstr ""
+
 msgid "Import Pool"
 msgstr ""
 
@@ -9031,6 +9062,9 @@ msgstr "Adresse IP non valide"
 msgid "Invalid Pod name"
 msgstr ""
 
+msgid "Invalid credentials. Please try again."
+msgstr ""
+
 msgid "Invalid dataset."
 msgstr "Dataset invalide."
 
@@ -9098,10 +9132,16 @@ msgstr ""
 "Il n'est pas recommandé d'étendre un volume  avec un ou plusieurs vdevs "
 "contenant différents nombres de disques. Continuer ?"
 
+msgid "It seems you haven't configured pools yet."
+msgstr ""
+
 msgid "It seems you haven't setup any "
 msgstr ""
 
 msgid "Item"
+msgstr ""
+
+msgid "Item Name"
 msgstr ""
 
 msgid "Items Delete Failed"
@@ -10574,6 +10614,9 @@ msgstr "Aucun volume"
 msgid "No Pools Found"
 msgstr ""
 
+msgid "No Recent Events"
+msgstr ""
+
 msgid "No Repositories"
 msgstr "Pas de repositories"
 
@@ -10596,6 +10639,9 @@ msgstr ""
 msgid "No interfaces configured with Virtual IP."
 msgstr "Aucune interface configurée avec Virtual IP."
 
+msgid "No items have been added yet."
+msgstr ""
+
 msgid "No logs are available for this task."
 msgstr "Aucun log n'est disponible pour cette tâche."
 
@@ -10607,11 +10653,11 @@ msgstr ""
 "Aucune interface réseau n'est considérée comme critique pour le basculement "
 "(failover)."
 
-msgid "No pools"
-msgstr "Aucun volume"
-
 msgid "No pools are configured."
 msgstr "Aucun volume n'est configuré."
+
+msgid "No ports are being used."
+msgstr ""
 
 msgid "No repositories is found."
 msgstr "Aucun repositories n'a été trouvé."
@@ -11474,6 +11520,9 @@ msgstr "S'il vous plaît"
 msgid "Please accept the terms of service for the given ACME Server."
 msgstr "Veuillez accepter les conditions d'utilisation du serveur ACME donné."
 
+msgid "Please click the button below to create a pool."
+msgstr ""
+
 msgid "Please enter your 2FA code"
 msgstr "Veuillez entrer votre code 2FA"
 
@@ -11524,6 +11573,12 @@ msgstr "Plugin mis à jour"
 
 msgid "Plugin installed successfully"
 msgstr "Plugin installé avec succès"
+
+msgid "Pod Logs"
+msgstr ""
+
+msgid "Pod Name"
+msgstr ""
 
 msgid "Pod Shell"
 msgstr ""
@@ -11822,9 +11877,6 @@ msgid "Properties Exclude"
 msgstr ""
 
 msgid "Properties Override"
-msgstr ""
-
-msgid "Property"
 msgstr ""
 
 msgid "Protocol"
@@ -12341,6 +12393,9 @@ msgid "Reports"
 msgstr "Rapports"
 
 msgid "Reports Configuration"
+msgstr ""
+
+msgid "Requested action performed for selected Applications"
 msgstr ""
 
 msgid "Require IDENT Authentication"
@@ -15073,6 +15128,9 @@ msgstr ""
 msgid "Snapshot successfully taken."
 msgstr "Instantané pris avec succès."
 
+msgid "Snapshots"
+msgstr ""
+
 msgid ""
 "Some authentication tools default to 30 seconds and do not support custom "
 "intervals."
@@ -15244,9 +15302,6 @@ msgstr "Commencez le nettoyage maintenant ?"
 msgid "Start time for the replication task."
 msgstr "Heure de début de la tâche de réplication."
 
-msgid "Started bulk actions"
-msgstr ""
-
 msgid "Starting Jail"
 msgstr "Démarrage du jail"
 
@@ -15257,6 +15312,9 @@ msgid "State"
 msgstr "État"
 
 msgid "State: "
+msgstr ""
+
+msgid "Statefulsets"
 msgstr ""
 
 msgid "Static IP"
@@ -15529,9 +15587,6 @@ msgstr "Système"
 msgid "System Clock"
 msgstr "Horloge système"
 
-msgid "System Dataset"
-msgstr "Dataset système"
-
 msgid "System Dataset Pool"
 msgstr "Volume du dataset système"
 
@@ -15672,6 +15727,9 @@ msgid "Tag"
 msgstr ""
 
 msgid "Tag to use for the specified image"
+msgstr ""
+
+msgid "Tail Lines"
 msgstr ""
 
 msgid "Take Snapshot"
@@ -16084,8 +16142,8 @@ msgid ""
 "The friendly name to show in front of the sending email  address. Example: "
 "<i>Storage System 01</i>&ltit@example.com&gt"
 msgstr ""
-"Le nom friendly à afficher en face de l'adresse e-mail d'envoi. "
-"Exemple : <i>Storage System 01</i>&ltit@example.com&gt"
+"Le nom friendly à afficher en face de l'adresse e-mail d'envoi. Exemple : "
+"<i>Storage System 01</i>&ltit@example.com&gt"
 
 msgid ""
 "The group which controls the dataset. This group has the same permissions "
@@ -16474,8 +16532,8 @@ msgid ""
 "Edit</b> must be configured first."
 msgstr ""
 "<i>Adresse électronique</i> du compte utilisateur à utiliser pour le champs "
-"<i>De</i> . Le champs <i>E-mail</i> du compte utilisateur dans "
-"<b>Comptes > Utilisateurs > Modifier</b> doit d'abord être configuré."
+"<i>De</i> . Le champs <i>E-mail</i> du compte utilisateur dans <b>Comptes > "
+"Utilisateurs > Modifier</b> doit d'abord être configuré."
 
 msgid "The user-defined string that can unlock this dataset."
 msgstr "Chaîne définie par l'utilisateur qui peut déverrouiller ce dataset."
@@ -17686,6 +17744,9 @@ msgstr "Utilisez une connexion non chiffrée."
 msgid "Used"
 msgstr "Utilisé"
 
+msgid "Used Ports"
+msgstr ""
+
 msgid ""
 "Used by clients in PASV mode. A default of <i>0</i> means any port above "
 "1023."
@@ -17931,6 +17992,9 @@ msgstr "VMWare Sync"
 
 msgid "VMware Sync"
 msgstr "VMWare Sync"
+
+msgid "VMware-Snapshots"
+msgstr ""
 
 msgid "VNC"
 msgstr "VNC"

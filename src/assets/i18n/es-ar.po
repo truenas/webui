@@ -2127,6 +2127,9 @@ msgstr "Nombre de credencial de la aplicación"
 msgid "Application Credential Secret"
 msgstr "Credencial secreta de la aplicación"
 
+msgid "Application Events"
+msgstr ""
+
 msgid "Application Key"
 msgstr "Clave de la aplicación"
 
@@ -2477,6 +2480,9 @@ msgstr "Umbral de espacio disponible (%)"
 
 msgid "Available Themes"
 msgstr "Temas disponibles"
+
+msgid "Available version:\n"
+msgstr ""
 
 msgid "Awesome! Now let's explore FreeNAS's cool features."
 msgstr "¡Increíble! Ahora exploremos las características geniales de FreeNAS."
@@ -3469,6 +3475,9 @@ msgstr ""
 "Elija si el directorio de instantáneas .zfs es <i>Visible</i> o "
 "<i>Invisible</i> en este conjunto de datos."
 
+msgid "Choose log"
+msgstr ""
+
 msgid ""
 "Choose one of the presets  or choose <i>Custom</i> to use the advanced "
 "scheduler."
@@ -3909,6 +3918,9 @@ msgstr "Nivel de compresión"
 msgid "Computer Account OU"
 msgstr "Cuenta de computadora OU"
 
+msgid "Conainter Images"
+msgstr ""
+
 msgid "Config could not be downloaded"
 msgstr "La configuración no se pudo descargar"
 
@@ -4094,6 +4106,12 @@ msgid "Container Entrypoint"
 msgstr ""
 
 msgid "Container Environment Variables"
+msgstr ""
+
+msgid "Container Images"
+msgstr ""
+
+msgid "Container Name"
 msgstr ""
 
 msgid "Container Port"
@@ -4299,6 +4317,9 @@ msgstr "Crear o Importar Pool"
 
 msgid "Create or Import pool"
 msgstr "Crear o Importar Pool"
+
+msgid "Create pool"
+msgstr ""
 
 msgid "Created"
 msgstr "Creado"
@@ -5025,6 +5046,9 @@ msgstr ""
 "un host que no está en * Permitir hosts * y no en la lista * Deny Hosts *, "
 "entonces permítelo."
 
+msgid "Deployments"
+msgstr ""
+
 msgid "Deregister"
 msgstr "Darse de baja"
 
@@ -5365,6 +5389,9 @@ msgstr "Disco"
 
 msgid "Disk Details"
 msgstr "Detalles del disco"
+
+msgid "Disk Import Aborted: Log Summary"
+msgstr ""
 
 msgid "Disk Imported: Log Summary"
 msgstr "Disco importado: resumen de registro"
@@ -7660,6 +7687,9 @@ msgstr "Seguir enlaces simbólicos"
 msgid "Follow symlinks and copy the items to which they link."
 msgstr "Siga los enlaces simbólicos y copie los elementos a los que se vinculan."
 
+msgid "Following container images are available to update:\n"
+msgstr ""
+
 msgid "Force"
 msgstr "Forzar"
 
@@ -7817,9 +7847,6 @@ msgstr "GID"
 
 msgid "GMail OAuth"
 msgstr "GMail OAuth"
-
-msgid "GPU Configuration"
-msgstr ""
 
 msgid "GUI"
 msgstr "GUI"
@@ -8686,6 +8713,9 @@ msgstr "Importar certificado"
 msgid "Import Certificate Signing Request"
 msgstr "Importar solicitud de firma de certificado"
 
+msgid "Import Disk"
+msgstr ""
+
 msgid "Import Pool"
 msgstr ""
 
@@ -8964,6 +8994,9 @@ msgstr "Dirección IP inválida"
 msgid "Invalid Pod name"
 msgstr ""
 
+msgid "Invalid credentials. Please try again."
+msgstr ""
+
 msgid "Invalid dataset."
 msgstr "Conjunto de datos no válido."
 
@@ -9031,10 +9064,16 @@ msgstr ""
 "No se recomienda extender un Pool con uno o más vdevs que contengan "
 "diferentes números de discos. ¿Continuar?"
 
+msgid "It seems you haven't configured pools yet."
+msgstr ""
+
 msgid "It seems you haven't setup any "
 msgstr ""
 
 msgid "Item"
+msgstr ""
+
+msgid "Item Name"
 msgstr ""
 
 msgid "Items Delete Failed"
@@ -10509,6 +10548,9 @@ msgstr "Sin Grupos (Pools)"
 msgid "No Pools Found"
 msgstr ""
 
+msgid "No Recent Events"
+msgstr ""
+
 msgid "No Repositories"
 msgstr "Sin Repositorios"
 
@@ -10531,6 +10573,9 @@ msgstr ""
 msgid "No interfaces configured with Virtual IP."
 msgstr "No hay interfaces configuradas con IP virtual."
 
+msgid "No items have been added yet."
+msgstr ""
+
 msgid "No logs are available for this task."
 msgstr "No hay registros disponibles para esta tarea."
 
@@ -10540,11 +10585,11 @@ msgstr "¿Ya no conserva este entorno de arranque?"
 msgid "No network interfaces are marked critical for failover."
 msgstr "Ninguna interfaz de red se considera crítica para la conmutación por error."
 
-msgid "No pools"
-msgstr "Sin Grupos (Pools)"
-
 msgid "No pools are configured."
 msgstr "No hay grupos configurados."
+
+msgid "No ports are being used."
+msgstr ""
 
 msgid "No repositories is found."
 msgstr "No se encontraron repositorios."
@@ -11408,6 +11453,9 @@ msgstr "Por favor"
 msgid "Please accept the terms of service for the given ACME Server."
 msgstr "Acepte los términos de servicio para el servidor ACME dado."
 
+msgid "Please click the button below to create a pool."
+msgstr ""
+
 msgid "Please enter your 2FA code"
 msgstr "Por favor ingrese su código de 2FA"
 
@@ -11458,6 +11506,12 @@ msgstr "Complementos actualizados"
 
 msgid "Plugin installed successfully"
 msgstr "Complemento instalado correctamente"
+
+msgid "Pod Logs"
+msgstr ""
+
+msgid "Pod Name"
+msgstr ""
 
 msgid "Pod Shell"
 msgstr ""
@@ -11755,9 +11809,6 @@ msgstr "Propiedades excluidas"
 
 msgid "Properties Override"
 msgstr "Anulación de propiedades"
-
-msgid "Property"
-msgstr ""
 
 msgid "Protocol"
 msgstr "Protocolo"
@@ -12287,6 +12338,9 @@ msgid "Reports"
 msgstr "Informes"
 
 msgid "Reports Configuration"
+msgstr ""
+
+msgid "Requested action performed for selected Applications"
 msgstr ""
 
 msgid "Require IDENT Authentication"
@@ -15037,6 +15091,9 @@ msgstr ""
 msgid "Snapshot successfully taken."
 msgstr "Instantánea tomada con éxito."
 
+msgid "Snapshots"
+msgstr ""
+
 msgid ""
 "Some authentication tools default to 30 seconds and do not support custom "
 "intervals."
@@ -15209,9 +15266,6 @@ msgstr "¿Iniciar el scrub ahora?"
 msgid "Start time for the replication task."
 msgstr "Hora de inicio de la tarea de replicación."
 
-msgid "Started bulk actions"
-msgstr ""
-
 msgid "Starting Jail"
 msgstr "Iniciando Jaula"
 
@@ -15223,6 +15277,9 @@ msgstr "Estado"
 
 msgid "State: "
 msgstr "Estado: "
+
+msgid "Statefulsets"
+msgstr ""
 
 msgid "Static IP"
 msgstr ""
@@ -15494,9 +15551,6 @@ msgstr "Sistema"
 msgid "System Clock"
 msgstr "Reloj del sistema"
 
-msgid "System Dataset"
-msgstr "Conjunto de datos del sistema"
-
 msgid "System Dataset Pool"
 msgstr "Pool de conjuntos de datos del sistema"
 
@@ -15636,6 +15690,9 @@ msgid "Tag"
 msgstr "Etiqueta"
 
 msgid "Tag to use for the specified image"
+msgstr ""
+
+msgid "Tail Lines"
 msgstr ""
 
 msgid "Take Snapshot"
@@ -17720,6 +17777,9 @@ msgstr "Use una conexión sin encriptar."
 msgid "Used"
 msgstr "Usado"
 
+msgid "Used Ports"
+msgstr ""
+
 msgid ""
 "Used by clients in PASV mode. A default of <i>0</i> means any port above "
 "1023."
@@ -17964,6 +18024,9 @@ msgstr "Sincronización VMWare"
 
 msgid "VMware Sync"
 msgstr "Sincronización VMware"
+
+msgid "VMware-Snapshots"
+msgstr ""
 
 msgid "VNC"
 msgstr "VNC"
