@@ -57,8 +57,8 @@ enable_display_placeholder : T('Enable VNC'),
 enable_display_tooltip : T('Enable a VNC (Virtual Network Computing) remote\
  connection. Requires <i>UEFI</i> booting.'),
 
-display_bind_placeholder: T("Bind"),
-display_bind_tooltip: T("VNC network interface IP address. The primary\
+bind_placeholder: T("Bind"),
+bind_tooltip: T("VNC network interface IP address. The primary\
  interface IP address is the default. A different interface IP\
  address can be chosen."),
 

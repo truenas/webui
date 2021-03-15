@@ -123,9 +123,9 @@ export class VMWizardComponent {
       },
       {
         type: 'select',
-        name : 'display_bind',
-        placeholder : helptext.display_bind_placeholder,
-        tooltip : helptext.display_bind_tooltip,
+        name : 'bind',
+        placeholder : helptext.bind_placeholder,
+        tooltip : helptext.bind_tooltip,
         options: [],
         required: true,
         validation: [Validators.required],
@@ -454,13 +454,13 @@ export class VMWizardComponent {
       res.forEach(i => this.namesInUse.push(i.name));
     })
 
-    this.ws.call('vm.device.display_bind_choices').subscribe((res) => {
+    this.ws.call('vm.device.bind_choices').subscribe((res) => {
         if(res && Object.keys(res).length > 0) {
-        const display_bind = _.find(this.wizardConfig[0].fieldConfig, {'name' : 'display_bind'});
+        const bind = _.find(this.wizardConfig[0].fieldConfig, {'name' : 'bind'});
         Object.keys(res).forEach((address) => {
-          display_bind.options.push({label : address, value : address});
+          bind.options.push({label : address, value : address});
         });
-        ( < FormGroup > entityWizard.formArray.get([0]).get('display_bind')).setValue(res['0.0.0.0']);
+        ( < FormGroup > entityWizard.formArray.get([0]).get('bind')).setValue(res['0.0.0.0']);
       }
     });
 
@@ -502,11 +502,11 @@ export class VMWizardComponent {
       if(!this.productType.includes('SCALE') && bootloader !== 'UEFI'){
         _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_display'})['isHidden'] = true;
         _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'})['isHidden'] = true;
-      _.find(this.wizardConfig[0].fieldConfig, {name : 'display_bind'}).isHidden = true;
+      _.find(this.wizardConfig[0].fieldConfig, {name : 'bind'}).isHidden = true;
 
       } else {
         _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_display'})['isHidden'] = false;
-        _.find(this.wizardConfig[0].fieldConfig, {name : 'display_bind'}).isHidden = false;
+        _.find(this.wizardConfig[0].fieldConfig, {name : 'bind'}).isHidden = false;
         if (!this.productType.includes('SCALE')) {
           _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'})['isHidden'] = false;
         }
@@ -517,7 +517,7 @@ export class VMWizardComponent {
       if (!this.productType.includes('SCALE')) {
         _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'}).isHidden = !res;   
       }
-      _.find(this.wizardConfig[0].fieldConfig, {name : 'display_bind'}).isHidden = !res;
+      _.find(this.wizardConfig[0].fieldConfig, {name : 'bind'}).isHidden = !res;
       if (res) {
         this.ws.call('vm.port_wizard').subscribe(({display_port}) => {
           this.displayPort = display_port;
@@ -525,10 +525,10 @@ export class VMWizardComponent {
         if (!this.productType.includes('SCALE')) {
           ( < FormGroup > entityWizard.formArray.get([0]).get('wait')).enable();
         }
-        ( < FormGroup > entityWizard.formArray.get([0]).get('display_bind')).enable()
+        ( < FormGroup > entityWizard.formArray.get([0]).get('bind')).enable()
       } else {
         ( < FormGroup > entityWizard.formArray.get([0]).get('wait')).disable();
-        ( < FormGroup > entityWizard.formArray.get([0]).get('display_bind')).disable();
+        ( < FormGroup > entityWizard.formArray.get([0]).get('bind')).disable();
       }
     });
 
@@ -926,7 +926,7 @@ async customSubmit(value) {
         vm_payload["devices"].push({
           "dtype": "DISPLAY", "attributes": {
             "port": this.displayPort,
-            "display_bind": value.display_bind,
+            "bind": value.bind,
             "password": "",
             "web": true
           }
@@ -937,7 +937,7 @@ async customSubmit(value) {
             "wait": value.wait,
             "port": this.displayPort,
             "resolution": "1024x768",
-            "display_bind": value.display_bind,
+            "bind": value.bind,
             "password": "",
             "web": true
           }
