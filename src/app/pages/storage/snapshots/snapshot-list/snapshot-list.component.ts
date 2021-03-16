@@ -6,9 +6,11 @@ import { Subscription } from 'rxjs';
 import { LocaleService } from 'app/services/locale.service';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../../../common/entity/utils';
+import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { SnapshotDetailsComponent } from './components/snapshot-details.component';
 import helptext from './../../../../helptext/storage/snapshots/snapshots';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
+import { MatDialog } from '@angular/material/dialog';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface'
 
 @Component({
@@ -71,7 +73,7 @@ export class SnapshotListComponent {
     multiSelect: true,
     deleteMsg: {
       title: 'Snapshot',
-      key_props: ['dataset', 'snapshot']
+      key_props: ['dataset', 'snapshot'],
     },
   };
 
@@ -84,7 +86,7 @@ export class SnapshotListComponent {
       enable: true,
       ttpos: "above",
       onClick: (selected) => {
-        this.entityList.doMultiDelete(selected);
+        this.doMultiDelete(selected);
       }
     }
   ];
@@ -136,7 +138,7 @@ export class SnapshotListComponent {
     protected ws: WebSocketService, protected localeService: LocaleService,
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected storageService: StorageService, protected dialogService: DialogService,
-    protected prefService: PreferencesService) {
+    protected prefService: PreferencesService, protected dialog:MatDialog) {
       if (window.localStorage.getItem('snapshotXtraCols') === 'true') {
         this.queryCallOption = this.queryCallOptionShow;
         this.rowDetailComponent = null;
@@ -243,6 +245,7 @@ export class SnapshotListComponent {
      selectedId.push([selected[i].name]);
     }
     params.push(selectedId);
+    params.push("{0}");
     return params;
   }
 
@@ -253,13 +256,47 @@ export class SnapshotListComponent {
         this.entityList.loader.open();
         this.entityList.loaderOpen = true;
         this.ws.call(this.wsDelete, [item.name]).subscribe(
-          (res) => { this.entityList.getData() },
+          (res) => { 
+            this.entityList.getData() 
+          },
           (res) => {
             new EntityUtils().handleWSError(this, res, this.entityList.dialogService);
             this.entityList.loaderOpen = false;
             this.entityList.loader.close();
         });
       }
+    });
+  }
+
+  doMultiDelete(selected){
+    let multiDeleteMsg = this.entityList.getMultiDeleteMessage(selected);
+    this.dialogService.confirm('Delete', multiDeleteMsg, false, T('Delete') ).subscribe((res) => {
+      if(res){
+        this.startMultiDeleteProgress(selected);
+      }
+    });
+  }
+
+  startMultiDeleteProgress(selected){
+    const params = this.wsMultiDeleteParams(selected);
+    let dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T("Deleting Snapshots")}, disableClose: true });
+    dialogRef.componentInstance.setCall(this.wsMultiDelete, params);
+    dialogRef.componentInstance.progressNumberType = 'nopercent';
+    dialogRef.componentInstance.submit();
+
+    dialogRef.componentInstance.success.subscribe((job_res) => {
+      dialogRef.close();
+      this.entityList.getData();
+      this.entityList.selected = [];
+
+      let infoMessage: string = T('Deleted') + ' ' + params[1].length + ' ';
+      infoMessage += params[1].length > 1 ? T('snapshots') : T('snapshot');
+      this.dialogService.Info(infoMessage, '', '320px', 'info', true );
+    });
+
+    dialogRef.componentInstance.failure.subscribe((err) => {
+      new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
+      dialogRef.close();
     });
   }
 
