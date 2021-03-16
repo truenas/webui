@@ -204,8 +204,7 @@ export class DiskFormComponent {
 
   preInit() {
     this.aroute.params.subscribe(params => {
-      /* If the form is in a slide out panel,
-       * we pull in the pk of the parent page.
+      /* 
        * Make sure the route is "storage/disks" before
        * using the pk value 
        * */
