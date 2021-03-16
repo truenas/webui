@@ -281,7 +281,6 @@ export class SnapshotListComponent {
     const params = this.wsMultiDeleteParams(selected);
     let dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T("Deleting Snapshots")}, disableClose: true });
     dialogRef.componentInstance.setCall(this.wsMultiDelete, params);
-    dialogRef.componentInstance.progressNumberType = 'nopercent';
     dialogRef.componentInstance.submit();
 
     dialogRef.componentInstance.success.subscribe((job_res) => {
