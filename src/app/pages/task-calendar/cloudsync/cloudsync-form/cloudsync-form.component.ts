@@ -598,7 +598,7 @@ export class CloudsyncFormComponent {
 
     this.folder_field = _.find(entityForm.fieldConfig, { "name": "folder"}); 
     this.formGroup.controls['credentials'].valueChanges.subscribe((res)=>{
-      if(_.isNil(res)) {
+      if(_.isNil(res) || res === 'null_value') {
         this.setDisabled('bucket', true, true);
         this.setDisabled('bucket_input', true, true);
       }
