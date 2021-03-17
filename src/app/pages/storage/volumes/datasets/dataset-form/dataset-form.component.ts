@@ -198,14 +198,14 @@ export class DatasetFormComponent implements Formconfiguration{
         placeholder: helptext.dataset_form_refquota_placeholder,
         tooltip: helptext.dataset_form_refquota_tooltip,
         class: 'inline',
-        width: '70%',
+        width: '100%',
         blurEvent:this.blurEventRefQuota,
         blurStatus: true,
         parent: this,
         validation: [
           (control: FormControl): ValidationErrors => {
             const config = this.fieldConfig.find(c => c.name === 'refquota');
-            
+
             const size = this.convertHumanStringToNum(control.value, 'refquota');
             const errors = control.value && isNaN(size)
               ? { invalid_byte_string: true }
@@ -259,6 +259,7 @@ export class DatasetFormComponent implements Formconfiguration{
         width: '20%',
         value: true,
         tooltip: helptext.dataset_form_refquota_warning_tooltip,
+        expandedHeight: true,
       },
       {
         type: 'input',
@@ -287,6 +288,7 @@ export class DatasetFormComponent implements Formconfiguration{
         width: '20%',
         value: true,
         tooltip: helptext.dataset_form_refquota_critical_tooltip,
+        expandedHeight: true,
       },
       {
         type: 'input',
@@ -294,14 +296,14 @@ export class DatasetFormComponent implements Formconfiguration{
         placeholder: helptext.dataset_form_refreservation_placeholder,
         tooltip: helptext.dataset_form_refreservation_tooltip,
         class: 'inline',
-        width: '70%',
+        width: '100%',
         blurEvent: this.blurEventRefReservation,
         blurStatus: true,
         parent: this,
         validation: [
           (control: FormControl): ValidationErrors => {
             const config = this.fieldConfig.find(c => c.name === 'refreservation');
-            
+
             const errors = control.value && isNaN(this.convertHumanStringToNum(control.value, 'refreservation'))
               ? { invalid_byte_string: true }
               : null
@@ -331,14 +333,14 @@ export class DatasetFormComponent implements Formconfiguration{
         placeholder: helptext.dataset_form_quota_placeholder,
         tooltip: helptext.dataset_form_quota_tooltip,
         class: 'inline',
-        width: '70%',
+        width: '100%',
         blurEvent: this.blurEventQuota,
         blurStatus: true,
         parent: this,
         validation: [
           (control: FormControl): ValidationErrors => {
             const config = this.fieldConfig.find(c => c.name === 'quota');
-            
+
             const size = this.convertHumanStringToNum(control.value, 'quota');
             const errors = control.value && isNaN(size)
               ? { invalid_byte_string: true }
@@ -392,6 +394,7 @@ export class DatasetFormComponent implements Formconfiguration{
         width: '20%',
         value: true,
         tooltip: helptext.dataset_form_quota_warning_tooltip,
+        expandedHeight: true,
       },
       {
         type: 'input',
@@ -420,6 +423,7 @@ export class DatasetFormComponent implements Formconfiguration{
         width: '20%',
         value: true,
         tooltip: helptext.dataset_form_quota_critical_tooltip,
+        expandedHeight: true,
       },
       {
         type: 'input',
@@ -427,14 +431,14 @@ export class DatasetFormComponent implements Formconfiguration{
         placeholder: helptext.dataset_form_reservation_placeholder,
         tooltip: helptext.dataset_form_reservation_tooltip,
         class: 'inline',
-        width: '70%',
+        width: '100%',
         blurEvent: this.blurEventReservation,
         blurStatus: true,
         parent: this,
         validation: [
           (control: FormControl): ValidationErrors => {
             const config = this.fieldConfig.find(c => c.name === 'reservation');
-            
+
             const errors = control.value && isNaN(this.convertHumanStringToNum(control.value, 'reservation'))
               ? { invalid_byte_string: true }
               : null
