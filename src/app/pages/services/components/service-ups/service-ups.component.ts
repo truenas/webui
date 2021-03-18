@@ -11,7 +11,7 @@ import { RestService, WebSocketService } from '../../../../services/';
 })
 export class ServiceUPSComponent {
   protected ups_driver: any;
-  private ups_drivers_list: any;
+  private ups_drivers_list: any[] = [];
   private ups_driver_key: any;
   protected ups_port: any;
   protected entityForm: any;
@@ -276,17 +276,15 @@ export class ServiceUPSComponent {
     this.ws.call('ups.port_choices', []).subscribe((res) => {
       for (let i=0; i < res.length; i++) {
         this.ups_port.options.push({label: res[i], value: res[i]});
-      } 
+      }
     });
 
-    setTimeout(() => {
-      entityForm.formGroup.controls['driver'].valueChanges.subscribe((res) => {;
-        this.ups_driver_key = this.getKeyByValue(this.ups_drivers_list, res);
-        if (this.ups_drivers_list[res]) {
-          entityForm.formGroup.controls['driver'].setValue(this.ups_drivers_list[res]);
-        }
-      });
-    }, 100)
+    entityForm.formGroup.controls['driver'].valueChanges.subscribe((res) => {
+      this.ups_driver_key = this.getKeyByValue(this.ups_drivers_list, res);
+      if (this.ups_drivers_list[res]) {
+        entityForm.formGroup.controls['driver'].setValue(this.ups_drivers_list[res]);
+      }
+    });
 
     entityForm.formGroup.controls['mode'].valueChanges.subscribe((res) => {
         generalSet.config.find(conf => conf.name === 'remotehost').isHidden = res === 'MASTER';
