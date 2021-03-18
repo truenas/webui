@@ -146,7 +146,6 @@ export class ServiceFTPComponent implements OnInit {
           name: "filemask",
           placeholder: helptext.filemask_placeholder,
           tooltip: helptext.filemask_tooltip,
-          noexec: true
         },
         {
           type: "permissions",
@@ -459,7 +458,7 @@ export class ServiceFTPComponent implements OnInit {
     }
 
     let fileperm = parseInt(data['filemask'], 8);
-    let filemask = (~fileperm & 0o666).toString(8);
+    let filemask = (~fileperm & 0o777).toString(8);
     while (filemask.length < 3) {
       filemask = '0' + filemask;
     }
@@ -480,7 +479,7 @@ export class ServiceFTPComponent implements OnInit {
       data[field] = this.storageService.convertHumanStringToNum(data[field])/1024);
 
     let fileperm = parseInt(data['filemask'], 8);
-    let filemask = (~fileperm & 0o666).toString(8);
+    let filemask = (~fileperm & 0o777).toString(8);
     while (filemask.length < 3) {
       filemask = '0' + filemask;
     }
