@@ -82,7 +82,7 @@ export class VolumesListTableConfig implements InputTableConf {
   public columns: Array < any > = [
     { name: T('Name'), prop: 'name', always_display: true  },
     { name: T('Type'), prop: 'type', hidden: false},
-    { name: T('Used'), prop: 'used_parsed', filesizePipe: false, hidden: false},
+    { name: T('Used'), prop: 'used_parsed', sortBy: 'used.parsed', filesizePipe: false, hidden: false},
     { name: T('Available'), prop: 'available_parsed', hidden: false, filesizePipe: false},
     { name: T('Compression'), prop: 'compression' },
     { name: T('Compression Ratio'), prop: 'compressratio'},
