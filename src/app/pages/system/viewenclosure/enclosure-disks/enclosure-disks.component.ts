@@ -307,6 +307,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   loadEnclosure(enclosure, view?:string){
+      if(this.selectedDisk){
+        this.selectedDisk = null;
+        this.clearDisk();
+      }
+
       this.destroyEnclosure();
 
       if(view){
@@ -1047,6 +1052,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   enclosureOverride(view: string){
     if(view !== this.view){
+      this.selectedDisk = null;
+      this.clearDisk();
       this.loadEnclosure(this.selectedEnclosure, view);
     }
   }
