@@ -169,14 +169,7 @@ export class SshConnectionsFormComponent {
                     value: '',
                     customEventMethod: () => {
                         this.getRemoteHostKey();
-                    },
-                    relation: [{
-                        action: 'SHOW',
-                        when: [{
-                            name: 'setup_method',
-                            value: 'manual',
-                        }]
-                    }],
+                    }
                 }
             ]
         },
@@ -271,10 +264,12 @@ export class SshConnectionsFormComponent {
     afterInit(entityForm) {
         this.entityForm = entityForm;
         this.fieldConfig = entityForm.fieldConfig;
+        this.updateDiscoverButtonDisabled();
         if (this.entityForm.isNew) {
             this.addCall = this.sshCalls[this.entityForm.formGroup.controls['setup_method'].value];
             this.entityForm.formGroup.controls['setup_method'].valueChanges.subscribe((res) => {
                 this.addCall = this.sshCalls[res];
+                this.updateDiscoverButtonDisabled();
             });
         } else {
             this.entityForm.formGroup.controls['setup_method'].setValue('manual');
@@ -291,7 +286,45 @@ export class SshConnectionsFormComponent {
                 nameCtrl.updateValueAndValidity();
             }
             preValue = res;
+            this.updateDiscoverButtonDisabled();
         });
+
+        this.entityForm.formGroup.controls['host'].valueChanges.subscribe((res) => {
+            this.updateDiscoverButtonDisabled();
+        });
+
+        this.entityForm.formGroup.controls['username'].valueChanges.subscribe((res) => {
+            this.updateDiscoverButtonDisabled();
+        });
+    }
+
+    updateDiscoverButtonDisabled() {
+        if(this.entityForm.formGroup.controls['setup_method'].value === 'manual') {
+            this.setDisabled(this.fieldSets[1].config,'remote_host_key_button', !this.isManualAuthFormValid(), false);
+        } else {
+            this.setDisabled(this.fieldSets[1].config, 'remote_host_key_button', true, true);
+        }
+    }
+
+    isManualAuthFormValid() {
+        return this.entityForm.formGroup.controls['host'].valid && this.entityForm.formGroup.controls['private_key'].valid && this.entityForm.formGroup.controls['username'].valid;
+    }
+
+    setDisabled(fieldConfig: any, fieldName: string, disable: boolean, hide: boolean = false) {
+        if (hide) {
+          disable = hide;
+        }
+
+        const field = _.find(fieldConfig, {name : fieldName});
+        
+        field.disabled = disable;
+        field['isHidden'] = hide;
+        
+        if (this.entityForm.formGroup.controls[fieldName]) {
+          const method = disable ? 'disable' : 'enable';
+          this.entityForm.formGroup.controls[fieldName][method]();
+          return;
+        }
     }
 
     getRemoteHostKey() {
