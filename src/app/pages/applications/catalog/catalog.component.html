@@ -3,6 +3,14 @@
         <div class="content-wrapper" fxLayout="row">
           <div class="logo-container">
             <div class="logo" style="background-image: url('{{ item.icon_url}}');"></div>
+            <div class="badge-area">
+                <div class="partner-badge">
+                    {{ item.catalog.label }}
+                </div>                    
+                <div class="train-badge">
+                    {{ item.catalog.train }}
+                </div>                    
+            </div>
           </div>
             <div class="content" fxLayout="column" fxLayoutAlign="center center">
                 <div class="catalog-title">
@@ -10,11 +18,6 @@
                 </div>
                 <div class="catalog-version" textLimiter threshold="32" fxFlex="100%">
                     {{ item.latest_version }}
-                </div>
-                <div class="badge-area">
-                    <div class="partner-badge">
-                        {{ item.catalog.label }}
-                    </div>                    
                 </div>
                 <div class="button-row">
                     <button mat-button (click)="doInstall(item.name)"

@@ -72,30 +72,34 @@ export class CatalogComponent implements OnInit {
   ngOnInit(): void {
     this.appService.getAllCatalogItems().subscribe(res => {
       res.forEach(catalog => {
-        for (let i in catalog.trains.charts) {  
-          let item = catalog.trains.charts[i];
-          let versions = item.versions;
-          let latest, latestDetails;
-
-          let sorted_version_labels = Object.keys(versions);
-          sorted_version_labels.sort(this.utils.versionCompare);
-
-          latest = sorted_version_labels[0];
-          latestDetails = versions[latest];
-
-          let catalogItem = {
-            name: item.name,
-            catalog: {
-              id: catalog.id,
-              label: catalog.label,
-            },
-            icon_url: item.icon_url? item.icon_url : '/assets/images/ix-original.png',
-            latest_version: item.versions[latest].human_version,
-            info: latestDetails.app_readme,
-            schema: item.versions[latest].schema,
+        catalog.preferred_trains.forEach(train => {
+          for (let i in catalog.trains[train]) {  
+            let item = catalog.trains.charts[i];
+            let versions = item.versions;
+            let latest, latestDetails;
+  
+            let sorted_version_labels = Object.keys(versions);
+            sorted_version_labels.sort(this.utils.versionCompare);
+  
+            latest = sorted_version_labels[0];
+            latestDetails = versions[latest];
+  
+            let catalogItem = {
+              name: item.name,
+              catalog: {
+                id: catalog.id,
+                label: catalog.label,
+                train: train,
+              },
+              icon_url: item.icon_url? item.icon_url : '/assets/images/ix-original.png',
+              latest_version: item.versions[latest].human_version,
+              info: latestDetails.app_readme,
+              schema: item.versions[latest].schema,
+            }
+            this.catalogApps.push(catalogItem);
           }
-          this.catalogApps.push(catalogItem);
-        }
+        });
+        
       });
       this.filerApps();
     })
