@@ -24,6 +24,7 @@ import { ChartWizardComponent } from './forms/chart-wizard.component';
 import { PodLogsComponent } from './pod-logs/pod-logs.component';
 import { ChartEventsDialog } from './dialogs/chart-events/chart-events-dialog.component';
 import { AppCommonModule } from '../../components/common/app-common.module';
+import { CatalogSummaryDialog } from './dialogs/catalog-summary/catalog-summary-dialog.component';
 
 @NgModule({
   imports: [
@@ -53,6 +54,7 @@ import { AppCommonModule } from '../../components/common/app-common.module';
     PodShellComponent,
     PodLogsComponent,
     ChartEventsDialog,
+    CatalogSummaryDialog,
   ]
 })
 export class ApplicationsModule { }

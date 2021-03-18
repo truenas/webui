@@ -19,6 +19,7 @@ import { ChartFormComponent } from '../forms/chart-form.component';
 import { ChartWizardComponent } from '../forms/chart-wizard.component';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import  helptext  from '../../../helptext/apps/apps';
+import { CatalogSummaryDialog } from '../dialogs/catalog-summary/catalog-summary-dialog.component';
 
 interface SelectOption {
 	label: string, 
@@ -94,6 +95,7 @@ export class CatalogComponent implements OnInit {
               icon_url: item.icon_url? item.icon_url : '/assets/images/ix-original.png',
               latest_version: item.versions[latest].human_version,
               info: latestDetails.app_readme,
+              versions: item.versions,
               schema: item.versions[latest].schema,
             }
             this.catalogApps.push(catalogItem);
@@ -239,6 +241,18 @@ export class CatalogComponent implements OnInit {
     }
 
     this.filteredCatalogApps = this.filteredCatalogApps.filter(app => app.name !== 'ix-chart');
+  }
+
+  showSummaryDialog(name: string) {
+    const catalogApp = this.catalogApps.find(app => app.name==name);
+    if (catalogApp) {
+      let dialogRef = this.mdDialog.open(CatalogSummaryDialog, {
+        width: '686px',
+        maxWidth: '686px',
+        data: catalogApp,
+        disableClose: false,
+      });
+    }
   }
   
 }
