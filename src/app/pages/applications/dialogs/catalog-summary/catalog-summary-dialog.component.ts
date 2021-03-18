@@ -16,7 +16,9 @@ export class CatalogSummaryDialog implements OnInit {
   public catalogApp: any;
   public statusOptions: string[] = ['All', 'Healthy', 'Unhealthy'];
   helptext = helptext;
-
+  public selectedStatus: string = this.statusOptions[0];
+  public filteredVersions: object;
+  
   constructor(
     public dialogRef: MatDialogRef<CatalogSummaryDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -27,10 +29,33 @@ export class CatalogSummaryDialog implements OnInit {
   }
 
   ngOnInit() {
-
+    this.filteredVersions = this.catalogApp.versions;
   }
 
-  onStatusOptionChanged($event) {
+  onStatusOptionChanged() {
+    this.filteredVersions = {};
+    Object.keys(this.catalogApp.versions).forEach(key => {
+      const version = this.catalogApp.versions[key];
+      if (this.selectedStatus == this.statusOptions[0] || this.selectedStatus == this.statusOptions[1] && version.healthy || this.selectedStatus == this.statusOptions[2] && !version.healthy) {
+        this.filteredVersions[key] = version;
+      }
+    });
+  }
 
+  hasFilterResult() {
+    return Object.keys(this.filteredVersions).length > 0;
+  }
+
+  versionLabel(version) {
+    let label = version.key;
+    if (this.selectedStatus == this.statusOptions[0]) {
+      if (version.value.healthy) {
+        label += "(Healthy)";
+      } else {
+        label += "(Unhealthy)";
+      }
+    }
+
+    return label;
   }
 }

@@ -95,6 +95,8 @@ export class CatalogComponent implements OnInit {
               icon_url: item.icon_url? item.icon_url : '/assets/images/ix-original.png',
               latest_version: item.versions[latest].human_version,
               info: latestDetails.app_readme,
+              categories: item.categories,
+              healthy: item.healthy,
               versions: item.versions,
               schema: item.versions[latest].schema,
             }
@@ -247,8 +249,8 @@ export class CatalogComponent implements OnInit {
     const catalogApp = this.catalogApps.find(app => app.name==name);
     if (catalogApp) {
       let dialogRef = this.mdDialog.open(CatalogSummaryDialog, {
-        width: '686px',
-        maxWidth: '686px',
+        width: '470px',
+        maxHeight: '425px',
         data: catalogApp,
         disableClose: false,
       });

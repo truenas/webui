@@ -1,13 +1,13 @@
-<div mat-dialog-content fxLayout="column wrap" fxLayoutAlign="center start" >
-    <div fxLayout="row" fxLayoutAlign="start center">
-        <strong class="catalog-name">{{ catalogApp.name }}</strong>
-        <span class="status">{{ 'Active' | translate }}</span>
+<div mat-dialog-content>
+    <div class="title-div" fxLayout="row" fxLayoutAlign="space-between center">
+        <strong class="catalog-name">{{ catalogApp.name }} {{ 'Application Summary' | translate }}</strong>
+        <span class="status active" *ngIf="catalogApp.healthy">{{ 'Active' | translate }}</span>
+        <span class="status other" *ngIf="!catalogApp.healthy">{{ 'Not Active' | translate }}</span>
     </div>
-    <div class="description">
-        Lorem ipsum
+    <div class="description" [innerHTML]="catalogApp.info">
     </div>
     <div class="categories">
-        <span>{{ 'Categories' | translate }}:</span><span class="value">{{ catalogApp.status | translate }}</span>
+        <span>{{ 'Categories' | translate }}:</span><span class="value">{{ catalogApp.categories.join(', ') }}</span>
     </div>
     <div class="resource" fxLayout="row" fxLayoutAlign="space-between center">
         <div>
@@ -15,20 +15,38 @@
         </div>
         <div>
             <span>{{ 'Status' | translate }}:</span>
-            <mat-select (selectionChange)="onStatusOptionChanged($event)">
-                <mat-option *ngFor="let option of statusOptions" value="{{ option }}">
-                  {{ option }}
-                </mat-option>
-            </mat-select>
+            <mat-form-field class="">
+                <mat-select class="" [(ngModel)]="selectedStatus"  (ngModelChange)="onStatusOptionChanged()"
+                    ix-auto ix-auto-type="select" ix-auto-identifier="status-select">
+                    <mat-option *ngFor="let option of statusOptions" value="{{ option }}">
+                      {{ option }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            
         </div>
     </div>
-    <div class="expansion-content">
-        <div *ngFor="let version of catalogApp.versions | keyvalue; let i = index" class="detail-row" [ngClass]="{'row-dark': i%2==0}">
-            <div fxLayout="row" fxLayoutAlign="center start">
-                <span fxFlex="70%" class="">{{ version.key }}</span>
-                <span fxFlex="30%" class="value" >{{ version.key }}</span>
+    <div class="version-list">
+        <div fxLayout="row" fxLayoutAlign="center start">
+            <span fxFlex="70%" class="">{{'Version' | translate }}</span>
+            <span fxFlex="30%" class="text-center" >{{'Version Info' | translate }}</span>
+        </div>
+        <div *ngIf="hasFilterResult();else noVersions">
+            <div *ngFor="let version of filteredVersions | keyvalue; let i = index" class="detail-row" [ngClass]="{'row-dark': i%2==0}">
+                <div fxLayout="row" fxLayoutAlign="center start">
+                    <span fxFlex="70%" class="version-number">{{ versionLabel(version) }}</span>
+                    <span fxFlex="30%" class="text-center" >
+                        <mat-icon class="version-tooltip" matTooltip="{{ version.value.app_readme }}">info</mat-icon>
+                    </span>
+                </div>
             </div>
         </div>
+        <ng-template #noVersions>
+            <div fxLayout="row" fxLayoutAlign="start start" class="detail-row row-dark">
+                {{ 'No Version' | translate }}
+            </div> 
+        </ng-template>
+
       </div>
 </div>
 
