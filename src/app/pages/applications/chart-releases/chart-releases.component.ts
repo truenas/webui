@@ -166,7 +166,7 @@ export class ChartReleasesComponent implements OnInit {
   }  
 
   viewCatalog() {
-    this.updateTab.emit({name: 'SwitchTab', value: '0'});
+    this.updateTab.emit({name: 'SwitchTab', value: 0});
   }
 
   showLoadStatus(type: EmptyType) {

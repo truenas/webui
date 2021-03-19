@@ -35,9 +35,9 @@ export class CatalogComponent implements OnInit {
   @Output() updateTab = new EventEmitter();
 
   public catalogApps = [];
+  public catalogNames: string[] = [];
   public filteredCatalogApps = [];
   public filterString = '';
-
   private dialogRef: any;
   private poolList: SelectOption[] = [];
   private selectedPool: string = '';
@@ -71,8 +71,23 @@ export class CatalogComponent implements OnInit {
     }
 
   ngOnInit(): void {
+    this.loadCatalogs();
+    this.checkForConfiguredPool();
+    this.refreshForms();
+    this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
+      this.refreshForms();
+    });
+
+    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
+      this.updateTab.emit({name: 'SwitchTab', value: 1});
+    })
+  }
+
+  loadCatalogs() {
     this.appService.getAllCatalogItems().subscribe(res => {
+      this.catalogNames = [];
       res.forEach(catalog => {
+        this.catalogNames.push(catalog.label);
         catalog.preferred_trains.forEach(train => {
           for (let i in catalog.trains[train]) {  
             let item = catalog.trains.charts[i];
@@ -105,17 +120,8 @@ export class CatalogComponent implements OnInit {
         });
         
       });
+      this.refreshToolbarMenus();
       this.filerApps();
-    })
-    
-    this.checkForConfiguredPool();
-    this.refreshForms();
-    this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
-      this.refreshForms();
-    });
-
-    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
-      this.updateTab.emit({name: 'SwitchTab', value: '1'});
     })
   }
 
@@ -143,7 +149,7 @@ export class CatalogComponent implements OnInit {
 
 
   refreshToolbarMenus() {
-    this.updateTab.emit({name: 'UpdateToolbarPoolOption', value: !!this.selectedPool});
+    this.updateTab.emit({name: 'catalogToolbarChanged', value: !!this.selectedPool, catalogNames: this.catalogNames});
   }
 
   refreshForms() {
