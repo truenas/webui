@@ -12,10 +12,11 @@ import { Subject } from 'rxjs/Subject';
   styleUrls : [ 'toolbar-input.component.scss' ],
   template : `
     <div class="toolbar-input form-element" id="row-filter">
-      <mat-form-field floatPlaceholder="auto">
+      <mat-form-field>
         <span matPrefix style="cursor: default; user-select: none;"><mat-icon>search</mat-icon></span>
+        <mat-label>{{config.placeholder}}</mat-label>
         <input matInput #filter class="mat-input-element" [value]="config.value" 
-          ix-auto (change)="onChange()" (input)="onChange()" 
+          ix-auto (change)="onChange()" (input)="onChange()" [placeholder]="config.placeholder"
           ix-auto-type="input">
         <span [ngClass]="{'invisible': !filterValue || filterValue.length == 0}" matSuffix style="cursor: pointer; user-select: none;">
           <mat-icon (click)="reset()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>

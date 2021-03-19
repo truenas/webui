@@ -85,9 +85,11 @@ export class ApplicationsComponent implements OnInit {
 
   updateToolbar() {
     this.toolbarConfig.controls.splice(1);
+    const search = this.toolbarConfig.controls[0];
     
     switch (this.selectedIndex) {
       case 0:
+        search.placeholder = helptext.availablePlaceholder;
         this.toolbarConfig.controls.push({
           name: 'refresh_all',
           label: helptext.refresh,
@@ -112,6 +114,7 @@ export class ApplicationsComponent implements OnInit {
         });
         break;
       case 1:
+        search.placeholder = helptext.installedPlaceholder;
         const bulk = {
           name: 'bulk',
           label: helptext.bulkActions.title,
@@ -131,6 +134,7 @@ export class ApplicationsComponent implements OnInit {
         this.toolbarConfig.controls.push(bulk);
         break;
       case 2:
+        search.placeholder = helptext.catalogPlaceholder;
         this.toolbarConfig.controls.push({
           name: 'refresh_catalogs',
           label: helptext.refresh,
@@ -147,6 +151,7 @@ export class ApplicationsComponent implements OnInit {
         });
         break;
       case 3:
+        search.placeholder = helptext.dockerPlaceholder;
         this.toolbarConfig.controls.push({
           name: 'pull_image',
           label: helptext.pullImage,
