@@ -121,8 +121,11 @@ mat-tab-group {
     .content {
       text-align: center;
       padding: 1rem;
-      width: 210px;
-      
+      margin-right: 50px;
+      .version {
+        opacity: 0.5;
+      }
+
       .update-label {
         color: rgba(255, 255, 255);
         white-space: nowrap;
