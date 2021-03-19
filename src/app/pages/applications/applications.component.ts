@@ -89,11 +89,17 @@ export class ApplicationsComponent implements OnInit {
     switch (this.selectedIndex) {
       case 0:
         this.toolbarConfig.controls.push({
-          name: 'refresh',
+          name: 'refresh_all',
           label: helptext.refresh,
           type: 'button',
           color: 'secondary',
-          value: 'refresh'
+          value: 'refresh_all'
+        });
+        const catalogOptions = this.catalogNames.map((catalogName) => {
+          return {
+            label: catalogName,
+            value: catalogName,
+          };
         });
         this.toolbarConfig.controls.push({
           type: 'multiselect',
@@ -101,7 +107,7 @@ export class ApplicationsComponent implements OnInit {
           label: helptext.catalogs,
           disabled:false,
           multiple: true,
-          options: [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
+          options: catalogOptions,
           customTriggerValue: helptext.catalogs,
         });
         break;
@@ -126,11 +132,11 @@ export class ApplicationsComponent implements OnInit {
         break;
       case 2:
         this.toolbarConfig.controls.push({
-          name: 'refresh',
+          name: 'refresh_catalogs',
           label: helptext.refresh,
           type: 'button',
           color: 'secondary',
-          value: 'refresh'
+          value: 'refresh_catalogs'
         });
         this.toolbarConfig.controls.push({
           name: 'add_catalog',

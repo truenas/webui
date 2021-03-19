@@ -36,6 +36,7 @@ export class CatalogComponent implements OnInit {
 
   public catalogApps = [];
   public catalogNames: string[] = [];
+  public filteredCatalogNames: string[] = [];
   public filteredCatalogApps = [];
   public filterString = '';
   private dialogRef: any;
@@ -86,6 +87,7 @@ export class CatalogComponent implements OnInit {
   loadCatalogs() {
     this.appService.getAllCatalogItems().subscribe(res => {
       this.catalogNames = [];
+      this.catalogApps = [];
       res.forEach(catalog => {
         this.catalogNames.push(catalog.label);
         catalog.preferred_trains.forEach(train => {
@@ -143,6 +145,11 @@ export class CatalogComponent implements OnInit {
       this.doInstall('ix-chart');
     } else if (evt.data.event_control == 'filter') {
       this.filterString = evt.data.filter;
+      this.filerApps();
+    } else if (evt.data.event_control == 'refresh_all') {
+      this.syncAll();
+    } else if (evt.data.event_control == 'catalogs') {
+      this.filteredCatalogNames = evt.data.catalogs.map(catalog => catalog.value);
       this.filerApps();
     }
   }
@@ -248,6 +255,10 @@ export class CatalogComponent implements OnInit {
       this.filteredCatalogApps = this.catalogApps;
     }
 
+    if (this.filteredCatalogNames.length > 0) {
+      this.filteredCatalogApps = this.filteredCatalogApps.filter(app => this.filteredCatalogNames.includes(app.catalog.label));
+    }
+
     this.filteredCatalogApps = this.filteredCatalogApps.filter(app => app.name !== 'ix-chart');
   }
 
@@ -260,6 +271,17 @@ export class CatalogComponent implements OnInit {
         disableClose: false,
       });
     }
+  }
+
+  syncAll() {
+    this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
+      helptext.installing) }, disableClose: true});
+    this.dialogRef.componentInstance.setCall("catalog.sync_all");
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe(() => {
+      this.dialogService.closeAllDialogs();
+      this.loadCatalogs();
+    });
   }
   
 }
