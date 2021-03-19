@@ -250,7 +250,6 @@ export class CatalogComponent implements OnInit {
     if (catalogApp) {
       let dialogRef = this.mdDialog.open(CatalogSummaryDialog, {
         width: '470px',
-        maxHeight: '425px',
         data: catalogApp,
         disableClose: false,
       });

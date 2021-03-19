@@ -46,8 +46,8 @@ export class CatalogSummaryDialog implements OnInit {
     return Object.keys(this.filteredVersions).length > 0;
   }
 
-  versionLabel(version) {
-    let label = version.key;
+  versionStatusLabel(version) {
+    let label = '';
     if (this.selectedStatus == this.statusOptions[0]) {
       if (version.value.healthy) {
         label += "(Healthy)";
