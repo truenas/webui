@@ -87,11 +87,14 @@ This should bring the yarn environment back to a useable state.
 
 # Translating Text to Other Languages
 
+All PO files for translating TrueNAS's web interface are included in this repository under [src/assets/i18n](https://github.com/truenas/webui/tree/master/src/assets/i18n).
+These can be edited with any offline PO editor, such as [POEdit](https://poedit.net/), or via the GitHub Web based code editing system.
+
 To extract all of the strings from the project to be translated run:
 ```yarn run extract```
 
-This will update all of the PO files located in the directory src/assets/i18n.
-These can be edited with any PO editor.
+This will update all of the PO files located in the [src/assets/i18n](https://github.com/truenas/webui/tree/master/src/assets/i18n) directory.
+
 
 
 Stock images used on the dashboard UI are courtesy of Pixabay.com and are subject to the Simplified Pixabay License. 
