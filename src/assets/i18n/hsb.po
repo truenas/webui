@@ -703,7 +703,7 @@ msgstr ""
 msgid "ACME Certificate"
 msgstr ""
 
-msgid "ACME DNS Authenticators"
+msgid "ACME DNS-Authenticators"
 msgstr ""
 
 msgid "ACME Server Directory URI"
@@ -3991,6 +3991,12 @@ msgid "Delete this path."
 msgstr ""
 
 msgid "Delete user primary group "
+msgstr ""
+
+msgid "Deleted"
+msgstr ""
+
+msgid "Deleting Snapshots"
 msgstr ""
 
 msgid "Deleting interfaces while HA is enabled is not allowed."
@@ -15487,6 +15493,12 @@ msgid "service failed to stop."
 msgstr ""
 
 msgid "shmsize"
+msgstr ""
+
+msgid "snapshot"
+msgstr ""
+
+msgid "snapshots"
 msgstr ""
 
 msgid "software, which is provided as-is with no warranty."

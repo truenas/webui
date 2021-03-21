@@ -922,7 +922,7 @@ msgstr ""
 msgid "ACME Certificate"
 msgstr "Сертификат ACME"
 
-msgid "ACME DNS Authenticators"
+msgid "ACME DNS-Authenticators"
 msgstr ""
 
 msgid "ACME Server Directory URI"
@@ -4837,6 +4837,12 @@ msgstr "Удалить этот путь."
 
 msgid "Delete user primary group "
 msgstr "Удалить основную группу пользователя "
+
+msgid "Deleted"
+msgstr ""
+
+msgid "Deleting Snapshots"
+msgstr ""
 
 msgid "Deleting interfaces while HA is enabled is not allowed."
 msgstr "Удаление интерфейсов при включенной ВД запрещено."
@@ -17869,6 +17875,12 @@ msgid "service failed to stop."
 msgstr "служба не остановилась."
 
 msgid "shmsize"
+msgstr ""
+
+msgid "snapshot"
+msgstr ""
+
+msgid "snapshots"
 msgstr ""
 
 msgid "software, which is provided as-is with no warranty."
