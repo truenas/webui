@@ -63,7 +63,7 @@ export interface ReportData {
   legend: string[];
   name: string;
   step: number;
-  data: any;
+  data: number[];
 }
 
 @Component({
