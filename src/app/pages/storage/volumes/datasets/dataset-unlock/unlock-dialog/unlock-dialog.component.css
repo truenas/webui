@@ -29,6 +29,5 @@ div.message-content {
 }
 
 mat-divider {
-    padding-top: 4px;
-    padding-bottom: 4px;
+    margin: 8px 0;
 }
