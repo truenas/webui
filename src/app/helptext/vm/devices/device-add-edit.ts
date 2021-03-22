@@ -86,7 +86,7 @@ boot_placeholder : T('boot'),
 boot_tooltip : '',
 
 port_placeholder : T('Port'),
-port_tooltip : T('Can be set to <i>0</i>, left empty for FreeNAS to\
+port_tooltip : T('Can be set to <i>0</i>, left empty for TrueNAS to\
  assign a port when the VM is started, or set to a\
  fixed, preferred port number.'),
 
