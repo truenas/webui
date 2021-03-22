@@ -975,8 +975,8 @@ msgstr ""
 msgid "ACME Certificate"
 msgstr "Certificado ACME"
 
-msgid "ACME DNS Authenticators"
-msgstr "Autenticadores DNS ACME"
+msgid "ACME DNS-Authenticators"
+msgstr ""
 
 msgid "ACME Server Directory URI"
 msgstr "URI del directorio del servidor ACME"
@@ -4999,6 +4999,12 @@ msgstr "Eliminar esta ruta."
 
 msgid "Delete user primary group "
 msgstr "Eliminar grupo primario de usuarios "
+
+msgid "Deleted"
+msgstr ""
+
+msgid "Deleting Snapshots"
+msgstr ""
 
 msgid "Deleting interfaces while HA is enabled is not allowed."
 msgstr "No se permite eliminar interfaces mientras HA está habilitado."
@@ -19010,6 +19016,12 @@ msgstr "el servicio no pudo detenerse."
 
 msgid "shmsize"
 msgstr "shmsize"
+
+msgid "snapshot"
+msgstr ""
+
+msgid "snapshots"
+msgstr ""
 
 msgid "software, which is provided as-is with no warranty."
 msgstr "software, que se proporciona tal cual sin garantía."

@@ -981,8 +981,8 @@ msgstr ""
 msgid "ACME Certificate"
 msgstr "Certificat ACME"
 
-msgid "ACME DNS Authenticators"
-msgstr "Authentificateurs DNS ACME"
+msgid "ACME DNS-Authenticators"
+msgstr ""
 
 msgid "ACME Server Directory URI"
 msgstr "URI du Serveur d'annuaire ACME"
@@ -5058,6 +5058,12 @@ msgstr "Supprimer ce chemin."
 
 msgid "Delete user primary group "
 msgstr "Supprimer le groupe principal de l'utilisateur "
+
+msgid "Deleted"
+msgstr ""
+
+msgid "Deleting Snapshots"
+msgstr ""
 
 msgid "Deleting interfaces while HA is enabled is not allowed."
 msgstr "La suppression d'interfaces lorsque HA est activé n'est pas autorisée."
@@ -17309,8 +17315,8 @@ msgstr "Tout déselectionner"
 
 msgid "Unset <i>Generate Encryption Key</i> to instead import a custom Hex key."
 msgstr ""
-"Désélectionnez <i> Générer la clé de chiffrement </i> pour importer à la place une "
-"clé personnalisée."
+"Désélectionnez <i> Générer la clé de chiffrement </i> pour importer à la "
+"place une clé personnalisée."
 
 msgid "Unset Pool"
 msgstr "Volume non défini"
@@ -17760,8 +17766,8 @@ msgstr ""
 
 msgid "Used for rollback of a chart release and snapshots of ix_volumes"
 msgstr ""
-"Utilisé pour la restauration d'une version de graphique et des instantanés de "
-"volumes"
+"Utilisé pour la restauration d'une version de graphique et des instantanés "
+"de volumes"
 
 msgid ""
 "Used to add additional <a href=\"https://linux.die.net/man/8/proftpd\" "
@@ -18994,6 +19000,12 @@ msgstr "le service n'a pas réussi à s'arrêter."
 msgid "shmsize"
 msgstr "shmsize"
 
+msgid "snapshot"
+msgstr ""
+
+msgid "snapshots"
+msgstr ""
+
 msgid "software, which is provided as-is with no warranty."
 msgstr "logiciel, qui est fourni tel quel sans garantie."
 
@@ -19035,7 +19047,8 @@ msgstr "utilisateurs"
 
 msgid "vdev is highly discouraged and will result in data loss if it fails"
 msgstr ""
-"vdev est fortement découragé et entraînera une perte de données en cas d’échec"
+"vdev est fortement découragé et entraînera une perte de données en cas "
+"d’échec"
 
 msgid "vmemoryuse"
 msgstr "vmemoryuse"
