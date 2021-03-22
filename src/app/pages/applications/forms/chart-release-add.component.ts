@@ -405,22 +405,22 @@ export class ChartReleaseAddComponent implements OnDestroy {
     this.entityUtils.parseFormControlValues(data, parsedData);
 
     let envVars = [];
-    if (data.containerEnvironmentVariables[0].name) {
+    if (data.containerEnvironmentVariables && data.containerEnvironmentVariables.length > 0 && data.containerEnvironmentVariables[0].name) {
       envVars = data.containerEnvironmentVariables;
     }
 
     let pfList = [];
-    if (data.portForwardingList[0].containerPort) {
+    if (data.portForwardingList && data.portForwardingList.length > 0 && data.portForwardingList[0].containerPort) {
       pfList = data.portForwardingList;
     }
 
     let hpVolumes = [];
-    if (data.hostPathVolumes[0].hostPath) {
+    if (data.hostPathVolumes && data.hostPathVolumes.length > 0 && data.hostPathVolumes[0].hostPath) {
       hpVolumes = data.hostPathVolumes;
     }
 
     let volList = [];
-    if (data.volumes[0].datasetName) {
+    if (data.volumes && data.volumes.length > 0 && data.volumes[0].datasetName) {
       volList = data.volumes;
     }
 
