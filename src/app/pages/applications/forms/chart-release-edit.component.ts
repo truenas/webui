@@ -430,7 +430,8 @@ export class ChartReleaseEditComponent {
       this.entityUtils.parseConfigData(data.gpuConfiguration, 'gpuConfiguration', data.config);
     }
 
-    this.parseSchema(data.chart_schema.schema);
+    const hasGpuConfig = this.parseSchema(data.chart_schema.schema);
+    data.config['changed_schema'] = hasGpuConfig;
 
     return data.config;
   }

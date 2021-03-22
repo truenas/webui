@@ -291,24 +291,25 @@ export class EntityUtils {
   }
 
   changeNullString2Null(data) {
-    let result = {};
-    Object.keys(data).forEach(key => {
-      const value = data[key];
-      if (value === undefined || value === null || value === '') {
+    let result;
+    if (data === undefined || data === null || data === '') {
+      result = data;
+    } else if (Array.isArray(data)) {
+      const arrayValues = data.map(item => {
+        return this.changeNullString2Null(item);
+      });
+      result = arrayValues;
+    } else if (typeof data === 'object') {
+      result = {};
+      Object.keys(data).forEach(key => {
+        const value = this.changeNullString2Null(data[key]);
         result[key] = value;
-      } else if (Array.isArray(value)) {
-        const arrayValues = value.map(item => {
-          return this.changeNullString2Null(item);
-        });
-        result[key] = arrayValues;
-      } else if (typeof value === 'object') {
-        result[key] = this.changeNullString2Null(value);
-      } else if (value === NULL_VALUE) {
-        result[key] = null;
-      } else {
-        result[key] = value;
-      }
-    });
+      });
+    } else if (data === NULL_VALUE) {
+      result = null;
+    } else {
+      result = data;
+    }
 
     return result;
   }
@@ -352,6 +353,17 @@ export class EntityUtils {
       placeholder: schemaConfig.label,
       name: name,
     }
+
+    let relations: Relation[] = null;
+    if (schemaConfig.schema.show_if) {
+      relations = schemaConfig.schema.show_if.map(item => {
+        return {
+          fieldName: item[0],
+          operatorName: item[1],
+          operatorValue: item[2],
+        };         
+      })
+    }
     
     if (schemaConfig.schema.editable === false) {
       fieldConfig['readonly'] = true;
@@ -368,18 +380,18 @@ export class EntityUtils {
 
     } else if (schemaConfig.schema.type == 'string') {
       fieldConfig['type'] = 'input';
-        if (schemaConfig.schema.private) {
-          fieldConfig['inputType'] = 'password';
-          fieldConfig['togglePw'] = true;
-        }
+      if (schemaConfig.schema.private) {
+        fieldConfig['inputType'] = 'password';
+        fieldConfig['togglePw'] = true;
+      }
 
-        if (schemaConfig.schema.min_length !== undefined) {
-          fieldConfig['min'] = schemaConfig.schema.min_length;
-        }
+      if (schemaConfig.schema.min_length !== undefined) {
+        fieldConfig['min'] = schemaConfig.schema.min_length;
+      }
 
-        if (schemaConfig.schema.max_length !== undefined) {
-          fieldConfig['max'] = schemaConfig.schema.max_length;
-        }
+      if (schemaConfig.schema.max_length !== undefined) {
+        fieldConfig['max'] = schemaConfig.schema.max_length;
+      }
 
     } else if (schemaConfig.schema.type == 'int') {
       fieldConfig['type'] = 'input';
@@ -414,17 +426,6 @@ export class EntityUtils {
     } else if (schemaConfig.schema.type == 'dict') {
       fieldConfig = null;
       
-      let relations: Relation[] = null;
-      if (schemaConfig.schema.show_if) {
-        relations = schemaConfig.schema.show_if.map(item => {
-          return {
-            fieldName: item[0],
-            operatorName: item[1],
-            operatorValue: item[2],
-          };         
-        })
-      }
-      
       if (schemaConfig.schema.attrs.length > 0) {
         const dictLabel = {
           label: schemaConfig.label,
@@ -454,9 +455,8 @@ export class EntityUtils {
     if (fieldConfig) {
 
       if (fieldConfig['type']) {
-
-        if (schemaConfig.schema.show_if) {
-          fieldConfig['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);
+        if (relations) {
+          fieldConfig['relation'] = this.createRelations(relations, parentName);
         }
 
         results.push(fieldConfig);
@@ -481,7 +481,7 @@ export class EntityUtils {
     
             results = results.concat(subResults);
           });
-        }  
+        }
       } else {
         console.error("Unsupported type=", schemaConfig);
       }

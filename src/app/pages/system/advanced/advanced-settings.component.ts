@@ -20,7 +20,7 @@ import { LocaleService } from '../../../services/locale.service'
 import { ModalService } from '../../../services/modal.service'
 import { MatDialog } from '@angular/material/dialog'
 import { Router, ActivatedRoute } from '@angular/router'
-import { HttpClient } from '@angular/common/http'
+import { HttpClient, HttpErrorResponse } from '@angular/common/http'
 import { helptext_system_general as helptext } from 'app/helptext/system/general'
 import { helptext_system_advanced } from 'app/helptext/system/advanced'
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service'
@@ -335,7 +335,11 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
                 if (this.dialogRef) {
                   this.dialogRef.close();
                 }
-                this.dialog.errorReport(helptext_system_advanced.debug_download_failed_title, helptext_system_advanced.debug_download_failed_message, err.message);
+                if(err instanceof HttpErrorResponse) {
+                  this.dialog.errorReport(helptext_system_advanced.debug_download_failed_title, helptext_system_advanced.debug_download_failed_message, err.message);
+                } else {
+                  this.dialog.errorReport(helptext_system_advanced.debug_download_failed_title, helptext_system_advanced.debug_download_failed_message, err);
+                }
               });
               if (!failed) {
                 let reported = false; // prevent error from popping up multiple times

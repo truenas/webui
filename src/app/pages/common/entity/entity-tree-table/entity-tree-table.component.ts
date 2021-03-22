@@ -6,6 +6,8 @@ import { EntityTreeTable } from './entity-tree-table.model';
 import { EntityTreeTableService } from './entity-tree-table.service';
 import { TranslateService } from '@ngx-translate/core';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
+import { Sort } from '@angular/material/sort';
+import { TreeNode } from 'primeng/api'
 
 interface FilterValue {
   column: string;
@@ -52,7 +54,15 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     ngOnInit() {
       this.populateTable();
     }
+
     populateTable() {
+      this.fillTable();
+      if (this._conf.queryCall) {
+        this.getData();
+      }
+    }
+
+    fillTable() {
       let cols = this._conf.columns.filter(col => !col.hidden || col.always_display == true);
       this.displayedColumns = cols.map(col => col.prop);
 
@@ -61,12 +71,52 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
       this.treeDataSource = this._conf.tableData;
       let flattened = this.treeTableService.buildTable(mutated);
       this.tableDataSource = flattened;
-      
-      if (this._conf.queryCall) {
-        this.getData();
-      }
     }
 
+    sortTable(sort: Sort) {
+      if (!sort.active || sort.direction === '') {
+        return;
+      }
+      const col = this._conf.columns[this._conf.columns.findIndex(c => c.prop === sort.active)];
+      this._conf.tableData = this.sortData({...sort, sortBy: col.sortBy ?  col.sortBy : col.prop}, this._conf.tableData);
+      this.fillTable();
+    }
+
+    sortData(sort: {active: string, direction: string, sortBy: string}, nodes: TreeNode[]): TreeNode[] {
+      for(let node of nodes) {
+        if(node.children && node.children.length) {
+          node.children = this.sortData(sort, node.children);
+        }
+      }
+
+      return nodes.sort((data1, data2) => {
+        const isAsc = sort.direction === 'asc';
+        
+        let value1 = this.resolve(sort.sortBy, data1.data);
+        let value2 = this.resolve(sort.sortBy, data2.data);
+
+        let result = null;
+  
+        if (value1 == null && value2 != null)
+          result = -1;
+        else if (value1 != null && value2 == null)
+          result = 1;
+        else if (value1 == null && value2 == null)
+          result = 0;
+        else if (typeof value1 === 'string' && typeof value2 === 'string')
+          result = value1.localeCompare(value2);
+        else
+          result = (value1 < value2) ? -1 : (value1 > value2) ? 1 : 0;
+  
+        return ((isAsc ? 1 : -1) * result);
+      });
+    }
+
+    resolve(path, obj) {
+      return path.split('.').reduce(function(prev, curr) {
+          return prev ? prev[curr] : null
+      }, obj || self)
+    }
     ngAfterViewInit(){
       this.core.register({ observerClass: this, eventName: "TreeTableGlobalFilter" }).subscribe((evt: CoreEvent) => {
         const value = evt.data.value ? evt.data.value : '';

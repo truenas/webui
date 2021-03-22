@@ -22,7 +22,8 @@ export class ApplicationsComponent implements OnInit {
   @ViewChild(ChartReleasesComponent, { static: false}) private chartTab: ChartReleasesComponent;
 
   selectedIndex: number = 0;
-  isShowBulkOptions = false;
+  isSelectedOneMore = false;
+  isSelectedAll = false;
   isSelectedPool = false;
   public settingsEvent: Subject<CoreEvent>;
   public filterString = '';
@@ -101,16 +102,41 @@ export class ApplicationsComponent implements OnInit {
 
   updateToolbar() {
    
-    if (this.selectedIndex == 1 && this.isShowBulkOptions) {
-      if (!this.toolbarConfig.controls.some(ctl => ctl.name === 'bulk')) {
+    if (this.selectedIndex == 1) {
+      const bulkControl = this.toolbarConfig.controls.find(control => control.name=="bulk");
+      if (!bulkControl) {
         const bulk = {
           name: 'bulk',
           label: helptext.bulkActions.title,
           type: 'menu',
           options: helptext.bulkActions.options,
         };
-  
+
+        if (this.isSelectedAll) {
+          bulk.options[0].label = helptext.bulkActions.unSelectAll;
+        } else {
+          bulk.options[0].label = helptext.bulkActions.selectAll;
+        }
+
+        bulk.options.forEach(option => {
+          if (option.value != 'select_all') {
+            option.disabled = !this.isSelectedOneMore;
+          } 
+        });
+
         this.toolbarConfig.controls.splice(1,0, bulk);
+      } else {
+        if (this.isSelectedAll) {
+          bulkControl.options[0].label = helptext.bulkActions.unSelectAll;
+        } else {
+          bulkControl.options[0].label = helptext.bulkActions.selectAll;
+        }
+
+        bulkControl.options.forEach(option => {
+          if (option.value != 'select_all') {
+            option.disabled = !this.isSelectedOneMore;
+          } 
+        });
       }
     } else {
       this.toolbarConfig.controls = this.toolbarConfig.controls.filter(ctl => ctl.name !== 'bulk');
@@ -139,7 +165,8 @@ export class ApplicationsComponent implements OnInit {
     if (evt.name == 'SwitchTab') {
       this.selectedIndex = evt.value;
     } else if (evt.name == 'UpdateToolbar') {
-      this.isShowBulkOptions = evt.value;
+      this.isSelectedOneMore = evt.value;
+      this.isSelectedAll = evt.isSelectedAll;
       this.updateToolbar();
     } else if (evt.name == 'UpdateToolbarPoolOption') {
       this.isSelectedPool = evt.value;

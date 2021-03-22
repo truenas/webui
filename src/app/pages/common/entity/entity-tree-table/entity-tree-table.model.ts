@@ -5,7 +5,8 @@ export class EntityTreeTableColumn {
     prop: string;
     filesizePipe?: boolean;
     hidden?: boolean;
-    always_display?: boolean
+    always_display?: boolean;
+    sortBy?: string; // can use dot notation for nested properties e.g., obj.property.sub
 }
 
 export class EntityTreeTable {

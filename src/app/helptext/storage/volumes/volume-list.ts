@@ -152,5 +152,14 @@ encryptMsgB: T(' and will be disrupted if the pool is locked:'),
 runningMsg: T('These running services are using'),
 unknownMsg: T('These unknown processes are using this pool:'),
 terminatedMsg: T('WARNING: These unknown processes will be terminated while locking the pool.'),
-dataErrMsg: T('Error gathering data on pool.')
+dataErrMsg: T('Error gathering data on pool.'),
+
+choosePool: {
+    title: T('Choose Pool'),
+    placeholder: T('System Dataset Pool'),
+    action: T('Save'),
+    jobTitle: T('Configuring...'),
+    success: T('Success'),
+    message: T('Using pool ')
+},
 }

@@ -23,7 +23,11 @@ export class ReplicationService {
     }
 
     getRemoteDataset(transport, sshCredentials, parentComponent) {
-        return this.ws.call('replication.list_datasets', [transport, sshCredentials]).toPromise().then(
+        const queryParams = [transport];
+        if (transport !== 'LOCAL') {
+            queryParams.push(sshCredentials)
+        }
+        return this.ws.call('replication.list_datasets', queryParams).toPromise().then(
             (res) => {
                 const nodes = [];
                 for (let i = 0; i < res.length; i++) {

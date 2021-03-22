@@ -24,7 +24,7 @@ export interface FieldConfig {
   required?: boolean, deleteButtonOnFirst?: boolean, addBtnMessage?: string,
   acceptedFiles?: string, fileLocation?: string, fileType?: string,width?:string,
   message?: any, updater?:any, parent?:any,togglePw?:boolean, paraText?: any,
-  noexec?: boolean, blurStatus?:boolean,blurEvent?:any,noMinutes?:boolean,
+  hideOthersPermissions?: boolean, blurStatus?:boolean,blurEvent?:any,noMinutes?:boolean,
   warnings?: string, hideButton?:boolean, searchOptions?: any[], hideDirs?: any,
   listFields?: Array<FieldConfig>[], templateListField?: FieldConfig[],
   updateLocal?: boolean, isLoading?: boolean, textAreaRows?: number, netmaskPreset?: number,
@@ -32,6 +32,6 @@ export interface FieldConfig {
   maskValue?: any, hideErrMsg?: boolean, id?: string, autocomplete?: boolean,
   buttonClass?: string, buttonColor?: string, filereader?: boolean, box?: boolean,
   customEventMethod?(data:any), onChangeOption?(data:any), hint?:string, loadMoreOptions?: any,
-  enableTextWrapForOptions?: boolean, expandedHeight?: boolean
+  enableTextWrapForOptions?: boolean, expandedHeight?: boolean, addInitialList?: boolean, 
 }
 

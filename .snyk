@@ -1,0 +1,17 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.19.0
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  SNYK-JS-ANGULARCORE-1070902:
+    - '@angular/core':
+        reason: backwards compatibility
+        expires: '2021-04-03T12:40:22.380Z'
+  SNYK-JS-MARKED-1070800:
+    - ngx-markdown > marked:
+        reason: It is recommended to use ngx-markdown 9 if you are using Angular 9.
+        expires: '2021-04-03T12:40:22.380Z'
+  SNYK-JS-NODEFETCH-674311:
+    - what-is-my-ip-address > isomorphic-fetch > node-fetch:
+        reason: no new versions available
+        expires: '2021-04-03T12:40:22.380Z'
+patch: {}

@@ -56,7 +56,8 @@ export class IdmapListComponent {
         let obj = data.find(o => o.name === 'DS_TYPE_DEFAULT_DOMAIN');
         obj.disableEdit = true;
       }
-      item.name = helptext.idmap.name.options.find(o => o.value === item.name).label;
+      const index = helptext.idmap.name.options.findIndex(o => o.value === item.name);
+      if(index >= 0) item.name = helptext.idmap.name.options[index].label;
     })
     return data;
   }
