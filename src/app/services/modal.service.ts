@@ -42,10 +42,12 @@ export class ModalService {
         modal.open(conf);
     }
 
-    close(id: string, response?: any, error?: any): Promise<boolean> {
+    close(id: string, error?: any, response?: any): Promise<boolean> {
         // close modal specified by id
         let modal: any = this.modals.filter(x => x.id === id)[0];
-        this.onClose$.next({res: response, error: error});
+        if(error) this.onClose$.error(error);
+        else if (response) this.onClose$.next(response);
+        else this.onClose$.next(true);
         return modal.close();
     }
 }
