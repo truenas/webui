@@ -6,9 +6,6 @@ div.entity-dialog-form-message {
     margin: 0 0 13px;
 }
 
-.entity-dialog-form-content {
-    overflow-y: auto !important;
-}
 .entity-dialog-form-title, .entity-dialog-form-message {
     overflow-wrap: break-word;
 }

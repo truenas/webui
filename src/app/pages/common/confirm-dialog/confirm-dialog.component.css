@@ -16,5 +16,4 @@ h1 {
 
 div.message-content {
     max-height: 300px;
-    overflow: auto;
 }
