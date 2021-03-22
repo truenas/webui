@@ -25,6 +25,7 @@ import { PodLogsComponent } from './pod-logs/pod-logs.component';
 import { ChartEventsDialog } from './dialogs/chart-events/chart-events-dialog.component';
 import { AppCommonModule } from '../../components/common/app-common.module';
 import { CatalogSummaryDialog } from './dialogs/catalog-summary/catalog-summary-dialog.component';
+import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.component';
 
 @NgModule({
   imports: [
@@ -55,6 +56,7 @@ import { CatalogSummaryDialog } from './dialogs/catalog-summary/catalog-summary-
     PodLogsComponent,
     ChartEventsDialog,
     CatalogSummaryDialog,
+    ManageCatalogsComponent,
   ]
 })
 export class ApplicationsModule { }

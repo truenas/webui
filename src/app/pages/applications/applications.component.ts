@@ -6,6 +6,7 @@ import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/con
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { CatalogComponent } from './catalog/catalog.component';
 import { ChartReleasesComponent } from './chart-releases/chart-releases.component';
+import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.component';
 import { Subject, Subscription } from 'rxjs';
 import  helptext  from '../../helptext/apps/apps';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -20,6 +21,7 @@ export class ApplicationsComponent implements OnInit {
 
   @ViewChild(CatalogComponent, { static: false}) private catalogTab: CatalogComponent;
   @ViewChild(ChartReleasesComponent, { static: false}) private chartTab: ChartReleasesComponent;
+  @ViewChild(ManageCatalogsComponent, { static: false}) private manageCatalogTab: ManageCatalogsComponent;
 
   selectedIndex: number = 0;
   isSelectedOneMore = false;
@@ -57,7 +59,8 @@ export class ApplicationsComponent implements OnInit {
       }
 
       this.catalogTab.onToolbarAction(evt);
-      this.chartTab.onToolbarAction(evt);    
+      this.chartTab.onToolbarAction(evt);
+      this.manageCatalogTab.onToolbarAction(evt);    
     })
 
     let controls: any[] = [      

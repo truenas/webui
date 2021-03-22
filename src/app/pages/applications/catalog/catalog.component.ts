@@ -149,11 +149,14 @@ export class CatalogComponent implements OnInit {
     } else if (evt.data.event_control == 'refresh_all') {
       this.syncAll();
     } else if (evt.data.event_control == 'catalogs') {
-      this.filteredCatalogNames = evt.data.catalogs.map(catalog => catalog.value);
+      evt.data.catalogs.forEach(catalog => {
+        if (catalog) {
+          this.filteredCatalogNames.push(catalog.value);
+        }
+      });
       this.filerApps();
     }
   }
-
 
   refreshToolbarMenus() {
     this.updateTab.emit({name: 'catalogToolbarChanged', value: !!this.selectedPool, catalogNames: this.catalogNames});

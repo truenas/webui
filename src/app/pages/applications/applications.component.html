@@ -2,25 +2,16 @@
     <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedIndex" (selectedTabChange)="refresh($event)">
         <mat-tab label="{{ 'Catalog' | translate}}"
             ix-auto ix-auto-type="tab" ix-auto-identifier="catalog">
-            <app-catalog (updateTab)="updateTab($event)" #catalog></app-catalog>
+            <app-catalog (updateTab)="updateTab($event)"></app-catalog>
         </mat-tab>
         <mat-tab label="{{ 'Installed Applications' | translate}}"
             ix-auto ix-auto-type="tab" ix-auto-identifier="charts">
-            <app-charts (updateTab)="updateTab($event)" #charts></app-charts>
+            <app-charts (updateTab)="updateTab($event)"></app-charts>
         </mat-tab>
-        <!-- <mat-tab label="{{ 'Docker Images' | translate }}"
-            ix-auto ix-auto-type="tab" ix-auto-identifier="docker">
-            <app-docker-images></app-docker-images>
-        </mat-tab> -->
+        <mat-tab label="{{ 'Manage Catalogs' | translate}}"
+            ix-auto ix-auto-type="tab" ix-auto-identifier="manage-catalog">
+            <app-manage-catalogs (updateTab)="updateTab($event)"></app-manage-catalogs>
+        </mat-tab>
     </mat-tab-group>
 </div>
-<div class="form-element" id="row-filter">
-    <!-- <mat-form-field floatPlaceholder="never">
-      <span matPrefix><mat-icon>search</mat-icon></span>
-      <input matInput #filter placeholder="{{'Filter' | translate}}"
-        ix-auto
-        ix-auto-type="input"
-        ix-auto-identifier="filter">
-    </mat-form-field> -->
-  </div>
 
