@@ -19,6 +19,9 @@ import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/d
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { VMWizardComponent } from '../vm-wizard/vm-wizard.component';
+import { ThrowStmt } from '@angular/compiler/public_api';
+import { withLatestFrom } from 'rxjs/operators';
+import { Validators } from '@angular/forms';
 
 @Component({
     selector: 'vm-list',
@@ -53,7 +56,7 @@ export class VMListComponent implements OnDestroy {
         { name: T("Memory Size"), prop: 'memory', hidden: true },
         { name: T("Boot Loader Type"), prop: 'bootloader', hidden: true },
         { name: T('System Clock'), prop: 'time', hidden: true },
-        { name: T("VNC Port"), prop: 'port', hidden: true },
+        { name: T("Display Port"), prop: 'port', hidden: true },
         { name: T("Description"), prop: 'description', hidden: true },
         { name: T("Shutdown Timeout"), prop: 'shutdown_timeout', hidden: true }
     ];
@@ -136,8 +139,8 @@ export class VMListComponent implements OnDestroy {
             vms[vm_index]['state'] = vms[vm_index]['status']['state'];
             vms[vm_index]['com_port'] = `/dev/nmdm${vms[vm_index]['id']}B`;
             vms[vm_index]['shutdown_timeout'] += T(' seconds') 
-            if (this.checkVnc(vms[vm_index])) {
-                vms[vm_index]['port'] = this.vncPort(vms[vm_index]);
+            if (this.checkDisplay(vms[vm_index])) {
+                vms[vm_index]['port'] = this.displayPort(vms[vm_index]);
             } else {
                 vms[vm_index]['port'] = 'N/A';
                 if (vms[vm_index]['vm_type'] === "Container Provider") {
@@ -149,7 +152,7 @@ export class VMListComponent implements OnDestroy {
         return vms;
     }
 
-    checkVnc(vm) {
+    checkDisplay(vm) {
         const devices = vm.devices
         if (!devices || devices.length === 0) {
             return false;
@@ -158,13 +161,13 @@ export class VMListComponent implements OnDestroy {
             return false;
         };
         for (let i = 0; i < devices.length; i++) {
-            if (devices && devices[i].dtype === "VNC") {
+            if (devices && devices[i].dtype === "DISPLAY") {
                 return true;
             }
         }
     }
 
-    vncPort(vm) {
+    displayPort(vm) {
         const devices = vm.devices
         if (!devices || devices.length === 0) {
             return false;
@@ -173,8 +176,8 @@ export class VMListComponent implements OnDestroy {
             return false;
         };
         for (let i = 0; i < devices.length; i++) {
-            if (devices && devices[i].dtype === "VNC") {
-                return devices[i].attributes.vnc_port;
+            if (devices && devices[i].dtype === "DISPLAY") {
+                return devices[i].attributes.port;
             }
         }
     }
@@ -447,19 +450,68 @@ export class VMListComponent implements OnDestroy {
             }
         },
         {
-            id: 'VNC',
+            id: 'DISPLAY',
             icon: "settings_ethernet",
-            label: T("VNC"),
-            onClick: vnc_vm => {
-                const vnc = vnc_vm.devices.find(o => o.dtype === 'VNC');
-                let bind = vnc.attributes.vnc_bind;
-                if (bind === '0.0.0.0' || bind === '::') {
-                    bind = window.location.hostname;
-                }
-                this.ws.call("vm.get_vnc_web", [vnc_vm.id, bind]).subscribe(res => {
-                    for (const vnc_port in res) {
-                        window.open(res[vnc_port]);
-                    }
+            label: T("Display"),
+            onClick: display_vm => {
+                this.loader.open();
+                this.ws.call("vm.get_display_devices", [display_vm.id]).subscribe((res) => {
+                    this.loader.close();
+                    const conf: DialogFormConfiguration = {
+                        title: T("Pick a display device to open"),
+                        fieldConfig: [{
+                            type: 'radio',
+                            name: 'display_device',
+                            placeholder: T("Display Device"),
+                            options: res.map((d) => {return {label: d.attributes.type, value: d.id};}),
+                            validation: [Validators.required],
+                          }],
+                        saveButtonText: "Open",
+                        parent: this,
+                        customSubmit: (entityDialog) => {
+                            const display_device = _.find(res, {id: entityDialog.formValue.display_device});
+                            if(display_device.attributes.password_configured) {
+                                const pass_conf: DialogFormConfiguration = {
+                                    title: T("Enter password"),
+                                    message: T("Enter password to unlock this display device"),
+                                    fieldConfig: [{
+                                        type: 'input',
+                                        name: 'password',
+                                        inputType: 'password',
+                                        placeholder: T('Password'),
+                                        validation: [Validators.required]
+                                    }],
+                                    saveButtonText: T("Open"),
+                                    parent: this,
+                                    customSubmit: (passDialog) => {
+                                        this.loader.open();
+                                        this.ws.call("vm.get_display_web_uri", [display_device.id, passDialog.formValue.password]).subscribe((res) => {
+                                            this.loader.close();
+                                            window.open(res[0], "_blank")
+                                        }, err => {
+                                            this.loader.close();
+                                            new EntityUtils().handleError(this, err);
+                                        })
+                                    }
+                                }
+                                this.dialogService.dialogForm(pass_conf);
+                            } else {
+                                this.loader.open();
+                                this.ws.call("vm.get_display_web_uri", [display_device.id]).subscribe((res) => {
+                                    this.loader.close();
+                                    window.open(res[0], "_blank")
+                                }, err => {
+                                    this.loader.close();
+                                    new EntityUtils().handleError(this, err);
+                                })
+                            }
+                            entityDialog.dialogRef.close();
+                        }
+                      }
+                      this.dialogService.dialogForm(conf);
+                }, err => {
+                    this.loader.close();
+                    new EntityUtils().handleError(this, err);
                 });
             }
         },
@@ -497,7 +549,7 @@ export class VMListComponent implements OnDestroy {
     }
 
     isActionVisible(actionId: string, row: any) {
-        if (actionId === 'VNC' && (row["status"]["state"] !== "RUNNING" || !this.checkVnc(row))) {
+        if (actionId === 'DISPLAY' && (row["status"]["state"] !== "RUNNING" || !this.checkDisplay(row))) {
             return false;
         } else if ((actionId === 'POWER_OFF' || actionId === 'STOP' || actionId === 'RESTART' || 
             actionId === 'SERIAL') && row["status"]["state"] !== "RUNNING") {

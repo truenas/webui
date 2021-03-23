@@ -85,17 +85,17 @@ rootpwd_tooltip : T('Enter a password for the <i>rancher</i> user. This\
 boot_placeholder : T('boot'),
 boot_tooltip : '',
 
-vnc_port_placeholder : T('Port'),
-vnc_port_tooltip : T('Can be set to <i>0</i>, left empty for FreeNAS to\
+port_placeholder : T('Port'),
+port_tooltip : T('Can be set to <i>0</i>, left empty for TrueNAS to\
  assign a port when the VM is started, or set to a\
  fixed, preferred port number.'),
 
 wait_placeholder : T('Delay VM Boot Until VNC Connects'),
 wait_tooltip : T('Wait to start VM until VNC client connects.'),
 
-vnc_resolution_placeholder : T('Resolution'),
-vnc_resolution_tooltip : T('Select a screen resolution to use for VNC sessions.'),
-vnc_resolution_options : [
+resolution_placeholder : T('Resolution'),
+resolution_tooltip : T('Select a screen resolution to use for VNC sessions.'),
+resolution_options : [
   {label : '1920x1200', value : "1920x1200"},
   {label : '1920x1080', value : "1920x1080"},
   {label : '1600x1200', value : "1600x1200"},
@@ -108,15 +108,17 @@ vnc_resolution_options : [
   {label : '640x480', value : '640x480'}
 ],
 
-vnc_bind_placeholder : T('Bind'),
-vnc_bind_tooltip : T('Select an IP address to use for VNC sessions.'),
+bind_placeholder : T('Bind'),
+bind_tooltip : T('Select an IP address to use for VNC sessions.'),
 
-vnc_password_placeholder : T('Password'),
-vnc_password_tooltip : T('Enter a VNC password to automatically pass to the\
+type_placeholder: T('Type'),
+
+password_placeholder : T('Password'),
+password_tooltip : T('Enter a VNC password to automatically pass to the\
  VNC session. Passwords cannot be longer than 8\
  characters.'),
-vnc_password_validation: [Validators.maxLength(8)],
+password_validation: [Validators.maxLength(8)],
 
-vnc_web_placeholder : T('Web Interface'),
-vnc_web_tooltip : T('Set to enable connecting to the VNC web interface.'),
+web_placeholder : T('Web Interface'),
+web_tooltip : T('Set to enable connecting to the VNC web interface.'),
 }
