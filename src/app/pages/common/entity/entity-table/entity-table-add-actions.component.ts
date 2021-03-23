@@ -1,11 +1,10 @@
 import { Component, ElementRef, Input, ViewChild, OnInit, AfterViewInit, OnDestroy, OnChanges, SimpleChanges} from '@angular/core';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { fromEvent as observableFromEvent } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 
-import {RestService} from '../../../../services/rest.service';
-
 import {EntityTableComponent} from './entity-table.component';
+
 
 @Component({
   selector : 'app-entity-table-add-actions',
@@ -13,7 +12,7 @@ import {EntityTableComponent} from './entity-table.component';
 })
 export class EntityTableAddActionsComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   @ViewChild('filter', { static: false}) filter: ElementRef;
-  @Input('entity') entity: any;
+  @Input('entity') entity: EntityTableComponent;
   public conf;
 
   public actions: any[];
@@ -37,10 +36,7 @@ export class EntityTableAddActionsComponent implements OnInit, AfterViewInit, On
   }
 
   ngAfterViewInit(){
-    if (this.filter && this.entity && !this.entity.filter) {
-      this.entity.filter = this.filter;
-      this.entity.filterInit();
-    }
+    this.filterInit();
   }
 
   ngOnChanges(changes:SimpleChanges){
@@ -50,7 +46,19 @@ export class EntityTableAddActionsComponent implements OnInit, AfterViewInit, On
   applyConfig(entity){
     this.entity = entity;
     this.conf = entity.conf;
-    this.entity.filterInit();
+    this.filterInit();
+  }
+
+  //Set the filter event handler.
+  filterInit(){
+    if (this.filter && this.entity) {
+      observableFromEvent(this.filter.nativeElement, 'keyup').pipe(
+        debounceTime(150),
+        distinctUntilChanged(),)
+        .subscribe((evt) => {
+          this.entity.filter(this.filter.nativeElement.value);
+        });
+    }
   }
 
 }
