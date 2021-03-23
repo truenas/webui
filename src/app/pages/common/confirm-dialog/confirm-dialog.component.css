@@ -16,4 +16,7 @@ h1 {
 
 div.message-content {
     max-height: 300px;
+    overflow-y: auto;
+    overflow-x: unset;
+    word-wrap: break-word;
 }
