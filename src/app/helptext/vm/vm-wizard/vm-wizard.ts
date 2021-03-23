@@ -53,12 +53,12 @@ bootloader_tooltip : T('Select <i>UEFI</i> for newer operating systems or\
 autostart_placeholder : T('Start on Boot'),
 autostart_tooltip : T('Set to start this VM when the system boots.'),
 
-enable_display_placeholder : T('Enable VNC'),
-enable_display_tooltip : T('Enable a VNC (Virtual Network Computing) remote\
+enable_vnc_placeholder : T('Enable VNC'),
+enable_vnc_tooltip : T('Enable a VNC (Virtual Network Computing) remote\
  connection. Requires <i>UEFI</i> booting.'),
 
-bind_placeholder: T("Bind"),
-bind_tooltip: T("VNC network interface IP address. The primary\
+vnc_bind_placeholder: T("Bind"),
+vnc_bind_tooltip: T("VNC network interface IP address. The primary\
  interface IP address is the default. A different interface IP\
  address can be chosen."),
 
