@@ -23,7 +23,7 @@ export class FormListComponent implements Field, OnInit {
   ngOnInit() {
     setTimeout(() => {
       this.listsFromArray = this.group.controls[this.config.name] as FormArray;
-      if (this.listsFromArray.length === 0) {
+      if (this.config.addInitialList && this.listsFromArray.length === 0) {
         this.add();
       }
     }, 0);

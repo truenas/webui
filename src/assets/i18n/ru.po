@@ -922,7 +922,7 @@ msgstr ""
 msgid "ACME Certificate"
 msgstr "Сертификат ACME"
 
-msgid "ACME DNS Authenticators"
+msgid "ACME DNS-Authenticators"
 msgstr ""
 
 msgid "ACME Server Directory URI"
@@ -2033,6 +2033,9 @@ msgstr ""
 msgid "Application Credential Secret"
 msgstr ""
 
+msgid "Application Events"
+msgstr ""
+
 msgid "Application Key"
 msgstr "Ключ приложения"
 
@@ -2374,6 +2377,9 @@ msgstr "Порог доступного пространства (%)"
 
 msgid "Available Themes"
 msgstr "Доступные темы"
+
+msgid "Available version:\n"
+msgstr ""
 
 msgid "Awesome! Now let's explore FreeNAS's cool features."
 msgstr "Потрясающие! Теперь давайте рассмотрим интересные возможности FreeNAS."
@@ -3359,6 +3365,9 @@ msgstr ""
 "Выберите, если каталог снимков .zfs <i>Видимый</i> или <i>Невидимый</i> в "
 "этом наборе данных."
 
+msgid "Choose log"
+msgstr ""
+
 msgid ""
 "Choose one of the presets  or choose <i>Custom</i> to use the advanced "
 "scheduler."
@@ -3790,6 +3799,9 @@ msgstr "Степень сжатия"
 msgid "Computer Account OU"
 msgstr "Учетная запись компьютера OU"
 
+msgid "Conainter Images"
+msgstr ""
+
 msgid "Config could not be downloaded"
 msgstr "Конфиг не может быть загружен"
 
@@ -3976,6 +3988,12 @@ msgid "Container Entrypoint"
 msgstr ""
 
 msgid "Container Environment Variables"
+msgstr ""
+
+msgid "Container Images"
+msgstr ""
+
+msgid "Container Name"
 msgstr ""
 
 msgid "Container Port"
@@ -4179,6 +4197,9 @@ msgstr "Создать или импортировать пул"
 
 msgid "Create or Import pool"
 msgstr "Создать или импортировать пул"
+
+msgid "Create pool"
+msgstr ""
 
 msgid "Created"
 msgstr "Создан"
@@ -4817,6 +4838,12 @@ msgstr "Удалить этот путь."
 msgid "Delete user primary group "
 msgstr "Удалить основную группу пользователя "
 
+msgid "Deleted"
+msgstr ""
+
+msgid "Deleting Snapshots"
+msgstr ""
+
 msgid "Deleting interfaces while HA is enabled is not allowed."
 msgstr "Удаление интерфейсов при включенной ВД запрещено."
 
@@ -4849,6 +4876,9 @@ msgid ""
 "Hosts* and *Deny Hosts* list, then allow all hosts   that are on the *Allow "
 "Hosts* list. <br><br>   If there is a host not on the *Allow Hosts* and not "
 "on the *Deny Hosts* list,   then allow it."
+msgstr ""
+
+msgid "Deployments"
 msgstr ""
 
 msgid "Deregister"
@@ -5163,6 +5193,9 @@ msgstr "Диск"
 
 msgid "Disk Details"
 msgstr "Детали диска"
+
+msgid "Disk Import Aborted: Log Summary"
+msgstr ""
 
 msgid "Disk Imported: Log Summary"
 msgstr "Диск импортирован: Сводка журнала"
@@ -7275,6 +7308,9 @@ msgstr ""
 "Следовать символическим ссылкам и копируйте элементы, на которые они "
 "ссылаются."
 
+msgid "Following container images are available to update:\n"
+msgstr ""
+
 msgid "Force"
 msgstr "Принудить"
 
@@ -7423,9 +7459,6 @@ msgid "GID"
 msgstr ""
 
 msgid "GMail OAuth"
-msgstr ""
-
-msgid "GPU Configuration"
 msgstr ""
 
 msgid "GUI"
@@ -8275,6 +8308,9 @@ msgstr ""
 msgid "Import Certificate Signing Request"
 msgstr ""
 
+msgid "Import Disk"
+msgstr ""
+
 msgid "Import Pool"
 msgstr ""
 
@@ -8549,6 +8585,9 @@ msgstr "Неверный IP-адрес"
 msgid "Invalid Pod name"
 msgstr ""
 
+msgid "Invalid credentials. Please try again."
+msgstr ""
+
 msgid "Invalid dataset."
 msgstr "Неверный набор данных."
 
@@ -8615,10 +8654,16 @@ msgstr ""
 "Не рекомендуется расширять пул одним или несколькими vdevs, содержащими "
 "различное количество дисков. Продолжить?"
 
+msgid "It seems you haven't configured pools yet."
+msgstr ""
+
 msgid "It seems you haven't setup any "
 msgstr ""
 
 msgid "Item"
+msgstr ""
+
+msgid "Item Name"
 msgstr ""
 
 msgid "Items Delete Failed"
@@ -10034,6 +10079,9 @@ msgstr "Нет пулов"
 msgid "No Pools Found"
 msgstr ""
 
+msgid "No Recent Events"
+msgstr ""
+
 msgid "No Repositories"
 msgstr "Нет репозиториев"
 
@@ -10056,6 +10104,9 @@ msgstr ""
 msgid "No interfaces configured with Virtual IP."
 msgstr "Нет интерфейсов, настроенных с виртуальным IP."
 
+msgid "No items have been added yet."
+msgstr ""
+
 msgid "No logs are available for this task."
 msgstr "Нет журналов для этой задачи."
 
@@ -10065,11 +10116,11 @@ msgstr "Больше не хранить эту загрузочную сред�
 msgid "No network interfaces are marked critical for failover."
 msgstr ""
 
-msgid "No pools"
-msgstr "Нет пулов"
-
 msgid "No pools are configured."
 msgstr "Пулы не настроены."
+
+msgid "No ports are being used."
+msgstr ""
 
 msgid "No repositories is found."
 msgstr "Репозитории не найдены."
@@ -10852,6 +10903,9 @@ msgstr ""
 msgid "Please accept the terms of service for the given ACME Server."
 msgstr "Пожалуйста, примите условия обслуживания для данного Сервера ACME."
 
+msgid "Please click the button below to create a pool."
+msgstr ""
+
 msgid "Please enter your 2FA code"
 msgstr ""
 
@@ -10902,6 +10956,12 @@ msgstr "Плагин обновлен"
 
 msgid "Plugin installed successfully"
 msgstr "Плагин успешно установлен"
+
+msgid "Pod Logs"
+msgstr ""
+
+msgid "Pod Name"
+msgstr ""
 
 msgid "Pod Shell"
 msgstr ""
@@ -11176,9 +11236,6 @@ msgid "Properties Exclude"
 msgstr ""
 
 msgid "Properties Override"
-msgstr ""
-
-msgid "Property"
 msgstr ""
 
 msgid "Protocol"
@@ -11669,6 +11726,9 @@ msgid "Reports"
 msgstr "Отчёты"
 
 msgid "Reports Configuration"
+msgstr ""
+
+msgid "Requested action performed for selected Applications"
 msgstr ""
 
 msgid "Require IDENT Authentication"
@@ -14251,6 +14311,9 @@ msgstr ""
 msgid "Snapshot successfully taken."
 msgstr "Снимок успешно создан."
 
+msgid "Snapshots"
+msgstr ""
+
 msgid ""
 "Some authentication tools default to 30 seconds and do not support custom "
 "intervals."
@@ -14410,9 +14473,6 @@ msgstr "Начать проверку сейчас?"
 msgid "Start time for the replication task."
 msgstr "Время начала задачи репликации."
 
-msgid "Started bulk actions"
-msgstr ""
-
 msgid "Starting Jail"
 msgstr "Запускается jail"
 
@@ -14423,6 +14483,9 @@ msgid "State"
 msgstr "Состояние"
 
 msgid "State: "
+msgstr ""
+
+msgid "Statefulsets"
 msgstr ""
 
 msgid "Static IP"
@@ -14681,9 +14744,6 @@ msgstr "Система"
 msgid "System Clock"
 msgstr "Системные часы"
 
-msgid "System Dataset"
-msgstr "Системный набор данных"
-
 msgid "System Dataset Pool"
 msgstr "Пул системного набора данных"
 
@@ -14816,6 +14876,9 @@ msgid "Tag"
 msgstr ""
 
 msgid "Tag to use for the specified image"
+msgstr ""
+
+msgid "Tail Lines"
 msgstr ""
 
 msgid "Take Snapshot"
@@ -16649,6 +16712,9 @@ msgstr "Использовать незашифрованное соединен
 msgid "Used"
 msgstr "Занято"
 
+msgid "Used Ports"
+msgstr ""
+
 msgid ""
 "Used by clients in PASV mode. A default of <i>0</i> means any port above "
 "1023."
@@ -16875,6 +16941,9 @@ msgstr "Синхронизация VMWare"
 
 msgid "VMware Sync"
 msgstr "Синхронизация VMware"
+
+msgid "VMware-Snapshots"
+msgstr ""
 
 msgid "VNC"
 msgstr "VNC"
@@ -17806,6 +17875,12 @@ msgid "service failed to stop."
 msgstr "служба не остановилась."
 
 msgid "shmsize"
+msgstr ""
+
+msgid "snapshot"
+msgstr ""
+
+msgid "snapshots"
 msgstr ""
 
 msgid "software, which is provided as-is with no warranty."

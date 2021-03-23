@@ -16,7 +16,6 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
 
 import { AdvancedSettingsComponent } from './advanced/';
-import { DatasetComponent } from './dataset/';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
 import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename/';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
@@ -59,7 +58,6 @@ import { LicenseComponent } from './general-settings/support/license/license.com
   ],
   declarations: [
     AdvancedSettingsComponent,
-    DatasetComponent,
     BootEnvironmentListComponent,
     BootEnvironmentCloneComponent,
     BootEnvironmentRenameComponent,

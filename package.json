@@ -1,9 +1,9 @@
 {
-  "name": "freenas-webui",
+  "name": "truenas-webui",
   "version": "1.2.0",
   "license": "BSD",
-  "description": "FreeNAS Angular 4 WebUI",
-  "homepage": "https://github.com/freenas/webui/",
+  "description": "TrueNAS Angular WebUI",
+  "homepage": "https://github.com/truenas/webui/",
   "scripts": {
     "ie-support": "webpack-cli src/ie-polyfills.js -o src/assets/scripts/ie-support/ie-polyfills.min.js -c webpack-polyfill.config.js",
     "ng": "ng",
@@ -32,10 +32,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/freenas/webui.git"
+    "url": "https://github.com/truenas/webui.git"
   },
   "bugs": {
-    "url": "https://bugs.freenas.org"
+    "url": "https://jira.ixsystems.com"
   },
   "private": true,
   "dependencies": {

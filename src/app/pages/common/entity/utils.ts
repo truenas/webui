@@ -353,6 +353,17 @@ export class EntityUtils {
       placeholder: schemaConfig.label,
       name: name,
     }
+
+    let relations: Relation[] = null;
+    if (schemaConfig.schema.show_if) {
+      relations = schemaConfig.schema.show_if.map(item => {
+        return {
+          fieldName: item[0],
+          operatorName: item[1],
+          operatorValue: item[2],
+        };         
+      })
+    }
     
     if (schemaConfig.schema.editable === false) {
       fieldConfig['readonly'] = true;
@@ -369,18 +380,18 @@ export class EntityUtils {
 
     } else if (schemaConfig.schema.type == 'string') {
       fieldConfig['type'] = 'input';
-        if (schemaConfig.schema.private) {
-          fieldConfig['inputType'] = 'password';
-          fieldConfig['togglePw'] = true;
-        }
+      if (schemaConfig.schema.private) {
+        fieldConfig['inputType'] = 'password';
+        fieldConfig['togglePw'] = true;
+      }
 
-        if (schemaConfig.schema.min_length !== undefined) {
-          fieldConfig['min'] = schemaConfig.schema.min_length;
-        }
+      if (schemaConfig.schema.min_length !== undefined) {
+        fieldConfig['min'] = schemaConfig.schema.min_length;
+      }
 
-        if (schemaConfig.schema.max_length !== undefined) {
-          fieldConfig['max'] = schemaConfig.schema.max_length;
-        }
+      if (schemaConfig.schema.max_length !== undefined) {
+        fieldConfig['max'] = schemaConfig.schema.max_length;
+      }
 
     } else if (schemaConfig.schema.type == 'int') {
       fieldConfig['type'] = 'input';
@@ -415,17 +426,6 @@ export class EntityUtils {
     } else if (schemaConfig.schema.type == 'dict') {
       fieldConfig = null;
       
-      let relations: Relation[] = null;
-      if (schemaConfig.schema.show_if) {
-        relations = schemaConfig.schema.show_if.map(item => {
-          return {
-            fieldName: item[0],
-            operatorName: item[1],
-            operatorValue: item[2],
-          };         
-        })
-      }
-      
       if (schemaConfig.schema.attrs.length > 0) {
         const dictLabel = {
           label: schemaConfig.label,
@@ -455,9 +455,8 @@ export class EntityUtils {
     if (fieldConfig) {
 
       if (fieldConfig['type']) {
-
-        if (schemaConfig.schema.show_if) {
-          fieldConfig['relation'] = this.createRelations(schemaConfig.schema.show_if, parentName);
+        if (relations) {
+          fieldConfig['relation'] = this.createRelations(relations, parentName);
         }
 
         results.push(fieldConfig);
@@ -482,7 +481,7 @@ export class EntityUtils {
     
             results = results.concat(subResults);
           });
-        }  
+        }
       } else {
         console.error("Unsupported type=", schemaConfig);
       }

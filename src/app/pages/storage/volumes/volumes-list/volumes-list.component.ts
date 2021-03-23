@@ -82,7 +82,7 @@ export class VolumesListTableConfig implements InputTableConf {
   public columns: Array < any > = [
     { name: T('Name'), prop: 'name', always_display: true  },
     { name: T('Type'), prop: 'type', hidden: false},
-    { name: T('Used'), prop: 'used_parsed', filesizePipe: false, hidden: false},
+    { name: T('Used'), prop: 'used_parsed', sortBy: 'used.parsed', filesizePipe: false, hidden: false},
     { name: T('Available'), prop: 'available_parsed', hidden: false, filesizePipe: false},
     { name: T('Compression'), prop: 'compression' },
     { name: T('Compression Ratio'), prop: 'compressratio'},
@@ -1834,7 +1834,28 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   protected aroute: ActivatedRoute;
   private refreshTableSubscription: any;
   private datasetQuery = 'pool.dataset.query';
-  private datasetQueryOptions = [[], {"extra": {"properties": ["type", "used", "available", "compression", "readonly", "dedup", "org.freenas:description", "compressratio"]}}]
+  /* 
+   * Please note that extra options are special in that they are passed directly to ZFS. 
+   * This is why 'encryptionroot' is included in order to get 'encryption_root' in the response 
+   * */
+  private datasetQueryOptions = [[], {
+    "extra": {
+      "properties": [
+        "type", 
+        "used", 
+        "available", 
+        "compression", 
+        "readonly", 
+        "dedup", 
+        "org.freenas:description", 
+        "compressratio", 
+        "encryption",
+        "encryptionroot",
+        "keystatus",
+        "keyformat"
+      ]
+    }
+  }]
 
   constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,

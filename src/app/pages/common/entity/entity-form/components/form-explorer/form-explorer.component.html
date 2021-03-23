@@ -22,7 +22,14 @@
 
         <div id="box2" class="td">
             <mat-form-field class="full-width" id="formexinput">
-                <textarea matInput *ngIf="config.multiple; else textInput" [placeholder]="config.placeholder | translate" [formControlName]="config.name" [required]="config.required"></textarea>
+                <textarea matInput *ngIf="config.multiple; else textInput"
+                [placeholder]="config.placeholder | translate"
+                [formControlName]="config.name"
+                [required]="config.required"
+                cdkTextareaAutosize
+                #autosize="cdkTextareaAutosize"
+                cdkAutosizeMinRows="1"
+                cdkAutosizeMaxRows="4"></textarea>
                 <ng-template #textInput>
                     <input matInput [type]="'text'" [placeholder]="config.placeholder | translate" [formControlName]="config.name" [required]="config.required"
                         ix-auto
@@ -45,7 +52,7 @@
                 <mat-icon *ngIf="node.data.hasChildren || node.data.children; else fileIcon">folder</mat-icon>
                 <ng-template #fileIcon><mat-icon>insert_drive_file</mat-icon></ng-template>
                 <span title="{{node.data.name}}">{{ node.data.subTitle }}
-                        <div class="dataset-subtitle" 
+                        <div class="dataset-subtitle"
                         matTooltip="{{'An ACL is present in this path' | translate}}" matTooltipPosition="right"
                         *ngIf="node.data['acl']">ACL
                     </div>
