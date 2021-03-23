@@ -1,5 +1,8 @@
 mat-tab-group {
   width: 100%;
+  .mat-tab-body-wrapper {
+    padding: 16px 16px 16px;
+  }
 }
 
 .catalog-item {
@@ -193,4 +196,12 @@ mat-tab-group {
   width: 300px;
   text-align: center;
   padding: 15px !important;
+}
+
+app-manage-catalogs {
+  entity-table {
+    #entity-table-component.mat-card {
+      margin: 0;
+    }
+  }
 }

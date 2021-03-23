@@ -505,5 +505,14 @@ export default {
     containerImageStatusUpdateAvailableTo: T('Following container images are available to update:\n'),
     statusUpdateAvailableTo: T('Available version:\n'),
     tooltipHeader: T('Conainter Images'),
+  },
+
+  manageCatalogs: {
+    menu: {
+      edit: T('Edit'),
+      refresh: T('Refresh'),
+      delete: T('Delete'),
+      summary: T('Summary'),
+    }
   }
 }

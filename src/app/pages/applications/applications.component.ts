@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ApplicationsService } from './applications.service';
 import { ModalService } from '../../services/modal.service';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
@@ -14,7 +14,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 @Component({
   selector: 'app-applications',
   templateUrl: './applications.component.html',
-  styleUrls: ['./applications.component.scss']
+  styleUrls: ['./applications.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class ApplicationsComponent implements OnInit {
@@ -218,8 +219,12 @@ export class ApplicationsComponent implements OnInit {
   refresh(e) {
     this.selectedIndex = e.index;
     this.updateToolbar();
-    if (this.selectedIndex === 1) {
-      this.modalService.refreshTable();
+    if (this.selectedIndex == 0) {
+      this.catalogTab.loadCatalogs();
+    } else if (this.selectedIndex == 1) {
+      this.chartTab.refreshChartReleases();
+    } else if (this.selectedIndex == 2) {
+      this.manageCatalogTab.refresh();
     }
   }
 }
