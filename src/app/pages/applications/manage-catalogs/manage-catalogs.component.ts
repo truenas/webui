@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-import { T } from '../../../translate-marker';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogService, StorageService, ValidationService } from 'app/services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../services/ws.service';
@@ -10,10 +8,10 @@ import { ModalService } from '../../../services/modal.service';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import * as _ from 'lodash';
 import  helptext  from '../../../helptext/apps/apps';
-import { EntityUtils } from 'app/pages/common/entity/utils';
 import { UserFormComponent } from '../../account/users/user-form/user-form.component';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { EmptyConfig, EmptyType } from '../../common/entity/entity-empty/entity-empty.component';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { ManageCatalogSummaryDialog } from '../dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 
 @Component({
   selector: 'app-manage-catalogs',
@@ -31,7 +29,7 @@ export class ManageCatalogsComponent {
   protected queryCall = 'catalog.query';
   protected wsDelete = 'catalog.delete';
   protected disableActionsConfig = true;
-
+  private dialogRef: any;
   protected addComponent: UserFormComponent;
   private refreshTableSubscription: any;
 
@@ -53,12 +51,10 @@ export class ManageCatalogsComponent {
   };
 
   public filterString: string = '';
-  constructor(private router: Router,
+  constructor(private mdDialog: MatDialog, 
               protected dialogService: DialogService, protected loader: AppLoaderService,
               protected ws: WebSocketService, protected prefService: PreferencesService,
-              private translate: TranslateService, private modalService: ModalService,
-              private storageService: StorageService,
-              private validationService: ValidationService) {
+              private modalService: ModalService) {
   }
 
   ngOnInit() {
@@ -143,13 +139,32 @@ export class ManageCatalogsComponent {
   }
 
   showSummary(row) {
-    console.log("show summary", row);
+    let dialogRef = this.mdDialog.open(ManageCatalogSummaryDialog, {
+      width: '534px',
+      data: row,
+      disableClose: false,
+    });
   }
 
   onToolbarAction(evt: CoreEvent) {
     if (evt.data.event_control == 'filter') {
       this.filterString = evt.data.filter;
       this.entityList.filter(this.filterString);
+    } else if (evt.data.event_control == 'refresh_catalogs') {
+      this.syncAll();
+    } else if (evt.data.event_control == 'add_catalog') {
+      this.doAdd();
     }
+  }
+
+  syncAll() {
+    this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
+      helptext.installing) }, disableClose: true});
+    this.dialogRef.componentInstance.setCall("catalog.sync_all");
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe(() => {
+      this.dialogService.closeAllDialogs();
+      this.refresh();
+    });
   }
 }

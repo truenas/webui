@@ -30,8 +30,8 @@ export class ApplicationsService {
     return this.ws.call('docker.images.query');
   }
 
-  getCatItems() {
-    return this.ws.call('catalog.items', ['OFFICIAL']);
+  getCatItems(label) {
+    return this.ws.call('catalog.items', [label]);
   }
 
   getChartReleases(name?: string) {

@@ -26,6 +26,7 @@ import { ChartEventsDialog } from './dialogs/chart-events/chart-events-dialog.co
 import { AppCommonModule } from '../../components/common/app-common.module';
 import { CatalogSummaryDialog } from './dialogs/catalog-summary/catalog-summary-dialog.component';
 import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.component';
+import { ManageCatalogSummaryDialog } from './dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 
 @NgModule({
   imports: [
@@ -57,6 +58,7 @@ import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.compo
     ChartEventsDialog,
     CatalogSummaryDialog,
     ManageCatalogsComponent,
+    ManageCatalogSummaryDialog,
   ]
 })
 export class ApplicationsModule { }

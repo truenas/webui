@@ -1,0 +1,63 @@
+.ix-blue .mat-dialog-container, .ix-blue .mat-dialog-content {
+    overflow: auto !important;
+}
+
+manage-catalog-summary-dialog {
+    font-size: 14px;
+
+    .status-filter {
+        display: flex;
+        align-items: center;
+
+        
+        .mat-form-field {
+            width: unset!important;
+            margin: 0 0 0 10px;
+
+            .mat-form-field-infix {
+                width: 80px;
+            }
+        }
+    }
+
+    .title-div {
+        width: 100%;
+        margin: 10px 0;
+    }
+    
+    .version-list {
+        width: 100%;
+        margin-top: 10px;
+        overflow-y: auto;
+        height: 200px;
+    }
+
+    .row-dark {
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    .row-light {
+        background: rgba(0, 0, 0, 0.1);
+    }
+    
+    .detail-row {
+        padding: 5px 10px;
+        div {
+            align-items: center;
+        }
+
+        .info-col {
+            height: 20px;
+        }        
+    }
+    
+    .value-row {
+        opacity: 0.5;
+    }
+
+    .button-bar {
+        margin-bottom: -8px;
+    }
+}
+
+
