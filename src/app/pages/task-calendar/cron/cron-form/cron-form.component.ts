@@ -153,8 +153,4 @@ export class CronFormComponent {
     schedule['dow'] = spl[4];
     value['schedule'] = schedule;
   }
-
-  afterSubmit() {
-    this.modalService.refreshTable();
-  }
 }

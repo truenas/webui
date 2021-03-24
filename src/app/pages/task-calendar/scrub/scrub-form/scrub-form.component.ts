@@ -130,10 +130,6 @@ export class ScrubFormComponent {
     delete value.scrub_picker;
   }
 
-  afterSubmit() {
-    this.modalService.refreshTable();
-  }
-
   resourceTransformIncomingRestData(data) {
     this.entityForm.formGroup.controls['threshold'].setValue(data.threshold);
     this.entityForm.formGroup.controls['enabled'].setValue(data.enabled);

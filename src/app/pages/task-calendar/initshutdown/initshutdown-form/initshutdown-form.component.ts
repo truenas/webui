@@ -143,8 +143,4 @@ export class InitshutdownFormComponent {
     this.entityForm.setDisabled('script', isCommand, isCommand);
     this.entityForm.setDisabled('command', !isCommand, !isCommand);
   }
-
-  afterSubmit() {
-    this.modalService.refreshTable();
-  }
 }

@@ -62,6 +62,7 @@ export class TaskScheduleDashboardComponent implements OnInit, OnDestroy {
   public entityForm: any;
   public refreshForm: Subscription;
   public refreshTable: Subscription;
+  public refreshOnClose: Subscription;
   public diskSubscription: Subscription;
   public disks: any[] = [];
   public parent: any;
@@ -106,6 +107,9 @@ export class TaskScheduleDashboardComponent implements OnInit, OnDestroy {
 
     this.refreshTables();
     this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
+      this.refreshTables();
+    });
+    this.refreshOnClose = this.modalService.onClose$.subscribe(() => {
       this.refreshTables();
     });
 
@@ -845,6 +849,9 @@ export class TaskScheduleDashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.refreshForm.unsubscribe();
+    this.refreshTable.unsubscribe();
     this.diskSubscription.unsubscribe();
+    this.refreshOnClose.unsubscribe();
   }
 }

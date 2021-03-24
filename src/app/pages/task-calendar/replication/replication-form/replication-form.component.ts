@@ -1561,8 +1561,4 @@ export class ReplicationFormComponent {
       parent.form_message.content = '';
     }
   }
-
-  afterSubmit() {
-    this.modalService.refreshTable();
-  }
 }

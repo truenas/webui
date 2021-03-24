@@ -315,10 +315,6 @@ export class RsyncFormComponent implements OnDestroy {
     }
   }
 
-  afterSubmit() {
-    this.modalService.refreshTable();
-  }
-
   ngOnDestroy() {
     this.mode_subscription.unsubscribe();
   }

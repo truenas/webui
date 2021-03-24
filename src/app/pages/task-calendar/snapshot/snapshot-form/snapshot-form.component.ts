@@ -225,8 +225,4 @@ export class SnapshotFormComponent implements OnDestroy {
     delete value['begin'];
     delete value['end'];
   }
-
-  afterSubmit() {
-    this.modalService.refreshTable();
-  }
 }

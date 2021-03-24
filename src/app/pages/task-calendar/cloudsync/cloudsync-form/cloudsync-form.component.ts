@@ -848,8 +848,4 @@ export class CloudsyncFormComponent {
   isCustActionDisabled(id) {
     return !this.entityForm.valid;
   }
-
-  afterSubmit() {
-    this.modalService.refreshTable();
-  }
 }

@@ -142,8 +142,4 @@ export class SmartFormComponent {
       value.disks = [];
     }
   }
-
-  afterSubmit() {
-    this.modalService.refreshTable();
-  }
 }

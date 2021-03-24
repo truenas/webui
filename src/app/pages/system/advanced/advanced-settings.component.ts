@@ -46,6 +46,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   refreshCardData: Subscription;
   refreshTable: Subscription;
   refreshForm: Subscription;
+  refreshOnClose: Subscription;
   getAdvancedConfig: Subscription;
   getDatasetConfig: Subscription;
   syslog: boolean;
@@ -174,6 +175,10 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     });
 
     this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
+      this.refreshTables();
+    });
+
+    this.refreshOnClose = this.modalService.onClose$.subscribe(() => {
       this.refreshTables();
     });
 
@@ -523,6 +528,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     this.refreshCardData.unsubscribe();
     this.refreshTable.unsubscribe();
     this.refreshForm.unsubscribe();
+    this.refreshOnClose.unsubscribe();
     this.getDatasetConfig.unsubscribe();
     this.getAdvancedConfig.unsubscribe();
   }
