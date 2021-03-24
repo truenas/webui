@@ -8,10 +8,11 @@ import { ModalService } from '../../../services/modal.service';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import * as _ from 'lodash';
 import  helptext  from '../../../helptext/apps/apps';
-import { UserFormComponent } from '../../account/users/user-form/user-form.component';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { ManageCatalogSummaryDialog } from '../dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
+import {CatalogAddFormComponent} from '../forms/catalog-add-form.component';
+import {CatalogEditFormComponent} from '../forms/catalog-edit-form.component';
 
 @Component({
   selector: 'app-manage-catalogs',
@@ -30,7 +31,8 @@ export class ManageCatalogsComponent {
   protected wsDelete = 'catalog.delete';
   protected disableActionsConfig = true;
   private dialogRef: any;
-  protected addComponent: UserFormComponent;
+  protected addComponent: CatalogAddFormComponent;
+  protected editComponent: CatalogEditFormComponent;
   private refreshTableSubscription: any;
 
   public columns: Array < any > = [
@@ -59,13 +61,19 @@ export class ManageCatalogsComponent {
 
   ngOnInit() {
     this.refreshUserForm();
+    
+    this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
+      this.refresh();
+    })
+
     this.modalService.refreshForm$.subscribe(() => {
       this.refreshUserForm();
     });
   }
   
   refreshUserForm() {
-
+    this.addComponent = new CatalogAddFormComponent(this.mdDialog,this.dialogService, this.modalService);
+    this.editComponent = new CatalogEditFormComponent(this.mdDialog,this.dialogService, this.modalService);
   }
 
   refresh() {
@@ -131,7 +139,7 @@ export class ManageCatalogsComponent {
   }
 
   edit(row) {
-    this.modalService.open('slide-in-form', this.addComponent, row.id)
+    this.modalService.open('slide-in-form', this.editComponent, row.label)
   }
 
   refreshRow(row) {

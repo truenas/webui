@@ -27,6 +27,8 @@ import { AppCommonModule } from '../../components/common/app-common.module';
 import { CatalogSummaryDialog } from './dialogs/catalog-summary/catalog-summary-dialog.component';
 import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.component';
 import { ManageCatalogSummaryDialog } from './dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
+import { CatalogAddFormComponent } from './forms/catalog-add-form.component';
+import { CatalogEditFormComponent } from './forms/catalog-edit-form.component';
 
 @NgModule({
   imports: [
@@ -59,6 +61,8 @@ import { ManageCatalogSummaryDialog } from './dialogs/manage-catalog-summary/man
     CatalogSummaryDialog,
     ManageCatalogsComponent,
     ManageCatalogSummaryDialog,
+    CatalogAddFormComponent,
+    CatalogEditFormComponent,
   ]
 })
 export class ApplicationsModule { }
