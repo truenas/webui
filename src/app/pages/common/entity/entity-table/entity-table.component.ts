@@ -82,6 +82,7 @@ export interface InputTableConf {
   afterDelete?();
   addComponent?();
   editComponent?();
+  onRowClick?(row): any;
 }
 
 export interface EntityTableAction {

@@ -167,4 +167,8 @@ export class ManageCatalogsComponent {
       this.refresh();
     });
   }
+
+  onRowClick(row) {
+    this.showSummary(row);
+  }
 }
