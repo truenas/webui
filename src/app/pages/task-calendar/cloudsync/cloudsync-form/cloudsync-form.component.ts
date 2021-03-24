@@ -825,7 +825,7 @@ export class CloudsyncFormComponent {
       this.loader.open();
       this.ws.call(this.addCall, [value]).subscribe((res)=>{
         this.loader.close();
-        // this.router.navigate(new Array('/').concat(this.route_success));
+        this.modalService.close('slide-in-form');
       }, (err) => {
         this.loader.close();
         new EntityUtils().handleWSError(this, err);
@@ -835,7 +835,7 @@ export class CloudsyncFormComponent {
       this.ws.call(this.editCall, [parseInt(this.pk, 10), value]).subscribe(
         (res)=>{
           this.loader.close();
-          // this.router.navigate(new Array('/').concat(this.route_success));
+          this.modalService.close('slide-in-form');
         },
         (err)=>{
         this.loader.close();
