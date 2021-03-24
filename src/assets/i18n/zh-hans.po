@@ -802,8 +802,8 @@ msgstr "当“源”是池的顶级数据集时，无法更改ACL。"
 msgid "ACME Certificate"
 msgstr "ACME证书"
 
-msgid "ACME DNS Authenticators"
-msgstr "ACME DNS验证器"
+msgid "ACME DNS-Authenticators"
+msgstr ""
 
 msgid "ACME Server Directory URI"
 msgstr "ACME服务器目录URI"
@@ -4311,6 +4311,12 @@ msgid "Delete this path."
 msgstr "删除此路径。"
 
 msgid "Delete user primary group "
+msgstr ""
+
+msgid "Deleted"
+msgstr ""
+
+msgid "Deleting Snapshots"
 msgstr ""
 
 msgid "Deleting interfaces while HA is enabled is not allowed."
@@ -16423,6 +16429,12 @@ msgstr "服务停止失败。"
 
 msgid "shmsize"
 msgstr "shmsize"
+
+msgid "snapshot"
+msgstr ""
+
+msgid "snapshots"
+msgstr ""
 
 msgid "software, which is provided as-is with no warranty."
 msgstr "软件按原样提供，不提供任何保修。"

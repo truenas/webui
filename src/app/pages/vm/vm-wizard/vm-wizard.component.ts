@@ -448,8 +448,6 @@ export class VMWizardComponent {
   }
 
   afterInit(entityWizard: EntityWizardComponent) {
-    console.log(entityWizard)
-    console.log(< FormGroup > entityWizard.formArray.get([0]))
     this.ws.call('vm.query').subscribe((res) => {
       res.forEach(i => this.namesInUse.push(i.name));
     })

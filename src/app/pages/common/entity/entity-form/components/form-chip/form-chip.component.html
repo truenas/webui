@@ -2,7 +2,7 @@
     [class.has-pwtoggle]="config.togglePw" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
 
     <div class="label-container">
-      <label>{{config.placeholder | translate}}</label>
+      <label class="label">{{config.placeholder | translate}} <span *ngIf="config.required">*</span></label>
       <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip" [position]="config.tooltipPosition ? config.tooltipPosition : null"></tooltip>
     </div>
 

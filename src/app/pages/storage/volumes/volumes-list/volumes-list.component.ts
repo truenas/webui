@@ -1838,7 +1838,24 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
    * Please note that extra options are special in that they are passed directly to ZFS. 
    * This is why 'encryptionroot' is included in order to get 'encryption_root' in the response 
    * */
-  private datasetQueryOptions = [[], {"extra": {"properties": ["type", "used", "available", "compression", "readonly", "dedup", "org.freenas:description", "compressratio", "encryption","encryptionroot"]}}]
+  private datasetQueryOptions = [[], {
+    "extra": {
+      "properties": [
+        "type", 
+        "used", 
+        "available", 
+        "compression", 
+        "readonly", 
+        "dedup", 
+        "org.freenas:description", 
+        "compressratio", 
+        "encryption",
+        "encryptionroot",
+        "keystatus",
+        "keyformat"
+      ]
+    }
+  }]
 
   constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
