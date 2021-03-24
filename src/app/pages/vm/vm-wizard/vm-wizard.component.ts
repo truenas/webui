@@ -20,7 +20,7 @@ import { catchError, filter, map } from 'rxjs/operators';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import globalHelptext from './../../../helptext/global-helptext';
-import { forkJoin, Observable } from 'rxjs';
+import { combineLatest, forkJoin, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-vm-wizard',
@@ -111,8 +111,8 @@ export class VMWizardComponent {
       {
         type: 'checkbox',
         name : 'enable_display',
-        placeholder : helptext.enable_vnc_placeholder,
-        tooltip : helptext.enable_vnc_tooltip,
+        placeholder : helptext.enable_display_placeholder,
+        tooltip : helptext.enable_display_tooltip,
         value: true,
         isHidden: false
       },
@@ -135,8 +135,8 @@ export class VMWizardComponent {
       {
         type: 'select',
         name : 'bind',
-        placeholder : helptext.vnc_bind_placeholder,
-        tooltip : helptext.vnc_bind_tooltip,
+        placeholder : helptext.display_bind_placeholder,
+        tooltip : helptext.display_bind_tooltip,
         options: [],
         required: true,
         validation: [Validators.required],
@@ -981,23 +981,25 @@ async customSubmit(value) {
               throw err;
             })));
         }
-        forkJoin(observables).subscribe(
+        combineLatest(observables).subscribe(
           responses_array => {
             this.loader.close();
             this.modalService.close('slide-in-form');
           },
           error => {
-            this.ws.call('vm.delete', [vm_res.id, {zvols: false, force: false}]).subscribe(
-              (res) => {
-                this.loader.close();
-                this.dialogService.errorReport(T("Error creating VM."), T("We ran into an error while trying to create the ")+error.device.dtype+" device.\n"+error.reason, error.trace.formatted);
-              },
-              (err) => {
-                this.loader.close();
-                this.dialogService.errorReport(T("Error creating VM."), T("We ran into an error while trying to create the ")+error.device.dtype+" device.\n"+error.reason, error.trace.formatted);
-                new EntityUtils().handleWSError(this, err, this.dialogService);
-              }
-            )
+            setTimeout(() => {
+              this.ws.call('vm.delete', [vm_res.id, {zvols: false, force: false}]).subscribe(
+                (res) => {
+                  this.loader.close();
+                  this.dialogService.errorReport(T("Error creating VM."), T("We ran into an error while trying to create the ")+error.device.dtype+" device.\n"+error.reason, error.trace.formatted);
+                },
+                (err) => {
+                  this.loader.close();
+                  this.dialogService.errorReport(T("Error creating VM."), T("We ran into an error while trying to create the ")+error.device.dtype+" device.\n"+error.reason, error.trace.formatted);
+                  new EntityUtils().handleWSError(this, err, this.dialogService);
+                }
+              )
+          }, 1000);
           }
         )
     },(error) => {
@@ -1034,23 +1036,25 @@ async customSubmit(value) {
               throw err;
             })));
         }
-        forkJoin(observables).subscribe(
+        combineLatest(observables).subscribe(
           responses_array => {
             this.loader.close();
             this.modalService.close('slide-in-form');
           },
           error => {
-            this.ws.call('vm.delete', [vm_res.id, {zvols: false, force: false}]).subscribe(
-              (res) => {
-                this.loader.close();
-                this.dialogService.errorReport(T("Error creating VM."), T("Error while creating the ")+error.device.dtype+" device.\n"+error.reason, error.trace.formatted);
-              },
-              (err) => {
-                this.loader.close();
-                this.dialogService.errorReport(T("Error creating VM."), T("Error while creating the ")+error.device.dtype+" device.\n"+error.reason, error.trace.formatted);
-                new EntityUtils().handleWSError(this, err, this.dialogService);
-              }
-            )
+            setTimeout(() => {
+                this.ws.call('vm.delete', [vm_res.id, {zvols: false, force: false}]).subscribe(
+                (res) => {
+                  this.loader.close();
+                  this.dialogService.errorReport(T("Error creating VM."), T("Error while creating the ")+error.device.dtype+" device.\n"+error.reason, error.trace.formatted);
+                },
+                (err) => {
+                  this.loader.close();
+                  this.dialogService.errorReport(T("Error creating VM."), T("Error while creating the ")+error.device.dtype+" device.\n"+error.reason, error.trace.formatted);
+                  new EntityUtils().handleWSError(this, err, this.dialogService);
+                }
+              )
+            }, 1000);
           }
         )
     },(error) => {
