@@ -66,7 +66,7 @@ export class ServiceTFTPComponent {
         {
           type : 'permissions',
           name : 'umask',
-          noexec: true,
+          hideOthersPermissions: true,
           placeholder : helptext.tftp_umask_placeholder,
           tooltip : helptext.tftp_umask_tooltip,
         },

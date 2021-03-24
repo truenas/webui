@@ -565,10 +565,8 @@ export class CloudsyncFormComponent {
 
     this.folder_field = this.fieldSets.config('folder');
     this.formGroup.controls['credentials'].valueChanges.subscribe((res)=>{
-      if(_.isNil(res)) {
-        this.setDisabled('bucket', true, true);
-        this.setDisabled('bucket_input', true, true);
-      }
+      this.setDisabled('bucket', true, true);
+      this.setDisabled('bucket_input', true, true);
       // reset folder tree view
       if (!this.folder_field.disabled) {
         if (this.folder_field.customTemplateStringOptions.explorer) {
