@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { StorageService } from 'app/services/storage.service';
-import helptext from 'app/helptext/task-calendar/smart/smart';
+import helptext from 'app/helptext/data-protection/smart/smart';
 import { T } from 'app/translate-marker';
 import { SmartFormComponent } from '../smart-form/smart-form.component';
 import { ModalService } from 'app/services/modal.service';

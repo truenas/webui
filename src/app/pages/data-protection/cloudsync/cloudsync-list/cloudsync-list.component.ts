@@ -17,7 +17,7 @@ import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/di
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../../../common/entity/utils';
 import globalHelptext from '../../../../helptext/global-helptext';
-import helptext from '../../../../helptext/task-calendar/cloudsync/cloudsync-form';
+import helptext from '../../../../helptext/data-protection/cloudsync/cloudsync-form';
 import { CloudsyncFormComponent } from '../cloudsync-form/cloudsync-form.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalService } from 'app/services/modal.service';

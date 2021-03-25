@@ -6,7 +6,7 @@ import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { UserService } from '../../../../../services';
-import helptext from '../../../../../helptext/task-calendar/cron/cron-form';
+import helptext from '../../../../../helptext/system/cron-form';
 import { ModalService } from '../../../../../services/modal.service';
 
 @Component({

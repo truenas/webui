@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { TaskService } from '../../../../services';
-import helptext from '../../../../helptext/task-calendar/resilver/resilver';
+import helptext from '../../../../helptext/storage/resilver/resilver';
 
 @Component({
   selector: 'resilver-priority',

@@ -6,7 +6,7 @@ import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import * as _ from 'lodash';
-import helptext from '../../../../helptext/task-calendar/snapshot/snapshot-form';
+import helptext from '../../../../helptext/data-protection/snapshot/snapshot-form';
 import { DialogService, StorageService, TaskService } from '../../../../services';
 import { FieldConfig, UnitType } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';

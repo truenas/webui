@@ -11,10 +11,10 @@ import { T } from 'app/translate-marker';
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
 import { Subscription } from 'rxjs';
-import helptext_cloudsync from '../../../../helptext/task-calendar/cloudsync/cloudsync-form';
-import helptext_replication from '../../../../helptext/task-calendar/replication/replication';
-import helptext_smart from '../../../../helptext/task-calendar/smart/smart';
-import helptext from '../../../../helptext/task-calendar/task-schedule-dashboard/task-schedule-dashboard';
+import helptext_cloudsync from '../../../../helptext/data-protection/cloudsync/cloudsync-form';
+import helptext_replication from '../../../../helptext/data-protection/replication/replication';
+import helptext_smart from '../../../../helptext/data-protection/smart/smart';
+import helptext from '../../../../helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
 import {
   DialogService,
   ReplicationService,

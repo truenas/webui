@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
-import helptext from '../../../../helptext/task-calendar/replication/replication';
-import repwizardhelptext from '../../../../helptext/task-calendar/replication/replication-wizard';
+import helptext from '../../../../helptext/data-protection/replication/replication';
+import repwizardhelptext from '../../../../helptext/data-protection/replication/replication-wizard';
 import {
   WebSocketService,
   TaskService,

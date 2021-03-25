@@ -6,7 +6,7 @@ import { DatePipe } from '@angular/common';
 import * as _ from 'lodash';
 
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
-import helptext from '../../../../helptext/task-calendar/replication/replication-wizard';
+import helptext from '../../../../helptext/data-protection/replication/replication-wizard';
 import sshConnectionsHelptex from '../../../../helptext/system/ssh-connections';
 
 import { DialogService, KeychainCredentialService, WebSocketService, ReplicationService, TaskService, StorageService } from '../../../../services';
@@ -208,7 +208,7 @@ export class ReplicationWizardComponent {
                             blurEvent: (parent) => {
                                 parent.getSnapshots();
                             },
-                        },     
+                        },
                     ]
                 },
                 {
@@ -1136,7 +1136,7 @@ export class ReplicationWizardComponent {
             if (payload['transport'] === 'SSH+NETCAT') {
                 payload['netcat_active_side'] = 'REMOTE'; // default?
             }
-            
+
             payload['readonly'] = data['schedule_method'] === 'cron' || data['readonly'] ? 'SET' : 'IGNORE';
 
             return this.ws.call('replication.target_unmatched_snapshots', [

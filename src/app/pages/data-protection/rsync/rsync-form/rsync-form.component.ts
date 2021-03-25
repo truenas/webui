@@ -8,7 +8,7 @@ import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { TaskService, UserService } from '../../../../services';
 import { ModalService } from '../../../../services/modal.service';
-import helptext from '../../../../helptext/task-calendar/resync/resync-form';
+import helptext from '../../../../helptext/data-protection/resync/resync-form';
 import { FieldSets } from '../../../common/entity/entity-form/classes/field-sets';
 
 @Component({

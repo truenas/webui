@@ -8,7 +8,7 @@ import { T } from 'app/translate-marker';
 import { DialogService, JobService, WebSocketService, StorageService } from '../../../../services';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import globalHelptext from '../../../../helptext/global-helptext';
-import helptext from '../../../../helptext/task-calendar/replication/replication';
+import helptext from '../../../../helptext/data-protection/replication/replication';
 
 @Component({
   selector: 'app-replication-list',

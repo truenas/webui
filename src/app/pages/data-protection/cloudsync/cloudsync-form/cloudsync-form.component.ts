@@ -9,7 +9,7 @@ import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { WebSocketService, DialogService, CloudCredentialService, AppLoaderService, JobService} from '../../../../services';
 import { T } from '../../../../translate-marker';
-import helptext from '../../../../helptext/task-calendar/cloudsync/cloudsync-form';
+import helptext from '../../../../helptext/data-protection/cloudsync/cloudsync-form';
 import { EntityUtils } from '../../../common/entity/utils';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { ModalService } from 'app/services/modal.service';
