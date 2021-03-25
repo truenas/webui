@@ -368,6 +368,10 @@ msgid ""
 "file an issue. Use a valid    email address when registering to receive "
 "issue status updates."
 msgstr ""
+"<a href=\"https://jira.ixsystems.com/secure/Signup!default.jspa\" target=\"_blank"
+"\" class=\"native-link\">   Créez un compte Jira</a> pour déposer un problème. "
+"Utilisez une adresse e-mail valide lors de l’inscription pour recevoir les mises à "
+"jour de l’état du problème."
 
 msgid "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> account  password."
 msgstr ""
@@ -2301,10 +2305,10 @@ msgstr ""
 "<b>modules Rsync</b> d'un autre système."
 
 msgid "At least one pod must be available"
-msgstr ""
+msgstr "Au moins un pod doit être disponible"
 
 msgid "At least one pool must be available to use apps"
-msgstr ""
+msgstr "Au moins un volume doit être disponible pour utiliser des applications"
 
 msgid "Attach"
 msgstr "Attacher"
@@ -2499,7 +2503,7 @@ msgid "Available Themes"
 msgstr "Thèmes disponibles"
 
 msgid "Available version:\n"
-msgstr ""
+msgstr "Version disponible:\n"
 
 msgid "Awesome! Now let's explore FreeNAS's cool features."
 msgstr "Génial ! Maintenant, explorons les fonctionnalités de FreeNAS."
@@ -3137,6 +3141,8 @@ msgid ""
 "Changing Advanced settings can be dangerous when done incorrectly. Please "
 "use caution before saving."
 msgstr ""
+"La modification des paramètres avancés peut être dangereuse si elle n'est pas "
+"effectuée correctement. Veuillez faire preuve de prudence avant de sauvegarder."
 
 msgid ""
 "Changing dataset permission mode can severely affect existing permissions, "
@@ -3516,7 +3522,7 @@ msgstr ""
 "<i>Invisible</i> sur ce dataset."
 
 msgid "Choose log"
-msgstr ""
+msgstr "Choisissez le log"
 
 msgid ""
 "Choose one of the presets  or choose <i>Custom</i> to use the advanced "
@@ -4401,7 +4407,7 @@ msgid "Creating"
 msgstr "Création de"
 
 msgid "Creating Certificate"
-msgstr ""
+msgstr "Création d’un certificat"
 
 msgid "Creating Jail"
 msgstr "Création d'un jail"
@@ -5060,10 +5066,10 @@ msgid "Delete user primary group "
 msgstr "Supprimer le groupe principal de l'utilisateur "
 
 msgid "Deleted"
-msgstr ""
+msgstr "Supprimé"
 
 msgid "Deleting Snapshots"
-msgstr ""
+msgstr "Suppression des instantanés"
 
 msgid "Deleting interfaces while HA is enabled is not allowed."
 msgstr "La suppression d'interfaces lorsque HA est activé n'est pas autorisée."
@@ -5113,7 +5119,7 @@ msgstr ""
 "hôtes*, alors autorisez-le."
 
 msgid "Deployments"
-msgstr ""
+msgstr "Déploiements"
 
 msgid "Deregister"
 msgstr "Désinscription"
@@ -5461,7 +5467,7 @@ msgid "Disk Details"
 msgstr "Détails du disque"
 
 msgid "Disk Import Aborted: Log Summary"
-msgstr ""
+msgstr "Importation de disque interrompue : Résumé du journal"
 
 msgid "Disk Imported: Log Summary"
 msgstr "Disque importé : Résumé du log"
@@ -7569,7 +7575,7 @@ msgid "Failed sending test alert!"
 msgstr "Echec de l'envoi du test d'alerte !"
 
 msgid "Failed to do bulk actions"
-msgstr ""
+msgstr "Échec des actions de masse"
 
 msgid "Failed to generate debug file."
 msgstr "Échec de la génération du fichier de débug."
@@ -7755,7 +7761,7 @@ msgid "Follow symlinks and copy the items to which they link."
 msgstr "Suivez les liens symboliques et copiez les éléments auxquels ils sont liés."
 
 msgid "Following container images are available to update:\n"
-msgstr ""
+msgstr "Les images de conteneur suivantes sont disponibles pour la mise à jour :\n"
 
 msgid "Force"
 msgstr "Forcer"
@@ -7823,7 +7829,7 @@ msgid "Free"
 msgstr "Libre"
 
 msgid "FreeBSD"
-msgstr ""
+msgstr "FreeBSD"
 
 msgid "FreeBSD device names of each disk being edited."
 msgstr "Nom FreeBSD de périphérique de chaque disque en cours d'édition."
@@ -8764,16 +8770,16 @@ msgid "Image Pull Policy"
 msgstr ""
 
 msgid "Image Repository"
-msgstr ""
+msgstr "Référentiel de l'image"
 
 msgid "Image Tag"
-msgstr ""
+msgstr "Tag de l'image"
 
 msgid "Image and Policies"
-msgstr ""
+msgstr "Image et politiques"
 
 msgid "Image repository"
-msgstr ""
+msgstr "Référentiel de l'image"
 
 msgid "Immediately connect to TrueCommand."
 msgstr "Connectez-vous immédiatement à TrueCommand."
@@ -8782,13 +8788,13 @@ msgid "Import"
 msgstr "Importer"
 
 msgid "Import Certificate"
-msgstr ""
+msgstr "Importer certificat"
 
 msgid "Import Certificate Signing Request"
-msgstr ""
+msgstr "Importer une demande de signature de certificat"
 
 msgid "Import Disk"
-msgstr ""
+msgstr "Importer un disque"
 
 msgid "Import Pool"
 msgstr "Importer un volume"
@@ -9069,7 +9075,7 @@ msgid "Invalid Pod name"
 msgstr "Nom de pod invalide"
 
 msgid "Invalid credentials. Please try again."
-msgstr ""
+msgstr "Informations d’identification non valides. S’ll vous plaît, réessayiez."
 
 msgid "Invalid dataset."
 msgstr "Dataset invalide."
@@ -15135,7 +15141,7 @@ msgid "Snapshot successfully taken."
 msgstr "Instantané pris avec succès."
 
 msgid "Snapshots"
-msgstr ""
+msgstr "instantanés"
 
 msgid ""
 "Some authentication tools default to 30 seconds and do not support custom "
