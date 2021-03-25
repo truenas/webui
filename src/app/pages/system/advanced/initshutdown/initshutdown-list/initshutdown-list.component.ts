@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { T } from '../../../../translate-marker';
+import { T } from '../../../../../translate-marker';
 
 @Component({
   selector: 'app-initshutdown-list',
