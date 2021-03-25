@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { TaskService } from '../../../../services/';
+import { TaskService } from '../../../../services';
 
 import helptext from '../../../../helptext/task-calendar/scrub/scrub-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';

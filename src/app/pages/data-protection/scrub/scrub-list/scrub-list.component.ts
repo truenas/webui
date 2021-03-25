@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import { UserService, WebSocketService } from '../../../../services';
-import { TaskService } from '../../../../services/';
+import { TaskService } from '../../../../services';
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';

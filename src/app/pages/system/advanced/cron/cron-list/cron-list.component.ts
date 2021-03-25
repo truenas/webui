@@ -8,7 +8,7 @@ import { filter, switchMap } from 'rxjs/operators';
 import { DialogService } from '../../../../../services';
 import { TaskService, WebSocketService } from '../../../../../services';
 import { T } from '../../../../../translate-marker';
-import { TaskScheduleListComponent } from '../../../../task-calendar/components/task-schedule-list/task-schedule-list.component';
+import { TaskScheduleListComponent } from '../../../../data-protection/components/task-schedule-list/task-schedule-list.component';
 
 @Component({
   selector: 'app-cron-list',

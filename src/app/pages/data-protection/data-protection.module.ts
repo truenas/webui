@@ -6,7 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
-import { TaskCalendarRoutes } from "./task-calendar.routing";
+import { DataProtectionRoutes } from "./data-protection.routing";
 import { EntityModule } from '../common/entity/entity.module';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -23,7 +23,7 @@ import { ScrubListComponent } from './scrub/scrub-list/scrub-list.component';
 import { ScrubFormComponent } from './scrub/scrub-form/scrub-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
-import { TaskScheduleDashboardComponent } from './components/task-schedule-dashboard/task-schedule-dashboard.component';
+import { DataProtectionDashboardComponent } from './components/data-protection-dashboard/data-protection-dashboard.component';
 
 @NgModule({
   imports: [
@@ -34,7 +34,7 @@ import { TaskScheduleDashboardComponent } from './components/task-schedule-dashb
       provide: DateAdapter,
       useFactory: adapterFactory
     }),
-    RouterModule.forChild(TaskCalendarRoutes),
+    RouterModule.forChild(DataProtectionRoutes),
     EntityModule,
     FormsModule,
     ReactiveFormsModule,
@@ -54,7 +54,7 @@ import { TaskScheduleDashboardComponent } from './components/task-schedule-dashb
     ScrubFormComponent,
     CloudsyncListComponent,
     CloudsyncFormComponent,
-    TaskScheduleDashboardComponent
+    DataProtectionDashboardComponent
   ]
 })
-export class TaskCalendarModule {}
+export class DataProtectionModule {}

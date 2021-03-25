@@ -43,8 +43,8 @@ export interface TaskCard {
 }
 
 @Component({
-  selector: 'app-task-schedule-dashboard',
-  templateUrl: './task-schedule-dashboard.component.html',
+  selector: 'app-data-protection-dashboard',
+  templateUrl: './data-protection-dashboard.component.html',
   providers: [
     DatePipe,
     TaskService,
@@ -56,7 +56,7 @@ export interface TaskCard {
     ReplicationService,
   ],
 })
-export class TaskScheduleDashboardComponent implements OnInit, OnDestroy {
+export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
   public dataCards: TaskCard[] = [];
   public configData: any;
   public entityForm: any;

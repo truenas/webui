@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-import { TaskScheduleDashboardComponent } from './components/task-schedule-dashboard/task-schedule-dashboard.component';
+import { DataProtectionDashboardComponent } from './components/data-protection-dashboard/data-protection-dashboard.component';
 import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.component';
 import { SnapshotFormComponent } from './snapshot/snapshot-form/snapshot-form.component';
 import { RsyncListComponent } from './rsync/rsync-list/rsync-list.component';
@@ -15,13 +15,13 @@ import { ScrubFormComponent } from './scrub/scrub-form/scrub-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
 
-export const TaskCalendarRoutes: Routes = [{
+export const DataProtectionRoutes: Routes = [{
   path: '',
   data: { title: 'Calendar' },
   children: [
   {
     path: '',
-    component: TaskScheduleDashboardComponent,
+    component: DataProtectionDashboardComponent,
   },
   {
     path: 'cloudsync',

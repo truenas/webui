@@ -7,7 +7,7 @@ import { filter, take } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-import { WebSocketService, DialogService, CloudCredentialService, AppLoaderService, JobService} from '../../../../services/';
+import { WebSocketService, DialogService, CloudCredentialService, AppLoaderService, JobService} from '../../../../services';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/task-calendar/cloudsync/cloudsync-form';
 import { EntityUtils } from '../../../common/entity/utils';

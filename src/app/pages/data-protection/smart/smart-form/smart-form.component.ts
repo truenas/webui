@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../common/entity/entity-form';
-import { WebSocketService } from '../../../../services/';
+import { WebSocketService } from '../../../../services';
 import { ModalService } from '../../../../services/modal.service';
 import { FieldSets } from '../../../common/entity/entity-form/classes/field-sets';
 import helptext from '../../../../helptext/task-calendar/smart/smart';
