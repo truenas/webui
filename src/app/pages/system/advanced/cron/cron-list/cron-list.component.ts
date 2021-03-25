@@ -5,10 +5,10 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
 import { filter, switchMap } from 'rxjs/operators';
-import { DialogService } from '../../../../services';
-import { TaskService, WebSocketService } from '../../../../services/';
-import { T } from '../../../../translate-marker';
-import { TaskScheduleListComponent } from '../../components/task-schedule-list/task-schedule-list.component';
+import { DialogService } from '../../../../../services';
+import { TaskService, WebSocketService } from '../../../../../services';
+import { T } from '../../../../../translate-marker';
+import { TaskScheduleListComponent } from '../../../../task-calendar/components/task-schedule-list/task-schedule-list.component';
 
 @Component({
   selector: 'app-cron-list',

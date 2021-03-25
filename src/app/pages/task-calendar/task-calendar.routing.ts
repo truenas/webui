@@ -1,10 +1,6 @@
-import { TaskScheduleDashboardComponent } from './components/task-schedule-dashboard/task-schedule-dashboard.component';
 import { Routes } from '@angular/router';
 
-import { CronFormComponent } from './cron/cron-form/cron-form.component';
-import { CronListComponent } from './cron/cron-list/cron-list.component';
-import { InitshutdownListComponent } from './initshutdown/initshutdown-list/initshutdown-list.component';
-import { InitshutdownFormComponent } from './initshutdown/initshutdown-form/initshutdown-form.component';
+import { TaskScheduleDashboardComponent } from './components/task-schedule-dashboard/task-schedule-dashboard.component';
 import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.component';
 import { SnapshotFormComponent } from './snapshot/snapshot-form/snapshot-form.component';
 import { RsyncListComponent } from './rsync/rsync-list/rsync-list.component';
@@ -18,7 +14,6 @@ import { ScrubListComponent } from './scrub/scrub-list/scrub-list.component';
 import { ScrubFormComponent } from './scrub/scrub-form/scrub-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
-import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 
 export const TaskCalendarRoutes: Routes = [{
   path: '',
@@ -42,39 +37,6 @@ export const TaskCalendarRoutes: Routes = [{
     }, {
       path: 'edit/:pk',
       component: CloudsyncFormComponent,
-      data: { title: 'Edit', breadcrumb: 'Edit' }
-    }]
-  },
-  {
-    path: 'cron',
-    data: { title: 'Cron Jobs', breadcrumb: 'Cron Jobs', icon: 'event_note' },
-    children: [{
-      path: '',
-      component: CronListComponent,
-      data: { title: 'Cron Jobs', breadcrumb: 'Cron Jobs' },
-    }, {
-      path: 'add',
-      component: CronFormComponent,
-      data: { title: 'Add', breadcrumb: 'Add' }
-    }, {
-      path: 'edit/:pk',
-      component: CronFormComponent,
-      data: { title: 'Edit', breadcrumb: 'Edit' }
-    }]
-  }, {
-    path: 'initshutdown',
-    data: { title: 'Init/Shutdown Scripts', breadcrumb: 'Init/Shutdown Scripts', icon: 'event_note' },
-    children: [{
-      path: '',
-      component: InitshutdownListComponent,
-      data: { title: 'Init/Shutdown Scripts', breadcrumb: 'Init/Shutdown Scripts' },
-    }, {
-      path: 'add',
-      component: InitshutdownFormComponent,
-      data: { title: 'Add', breadcrumb: 'Add' }
-    }, {
-      path: 'edit/:pk',
-      component: InitshutdownFormComponent,
       data: { title: 'Edit', breadcrumb: 'Edit' }
     }]
   }, {

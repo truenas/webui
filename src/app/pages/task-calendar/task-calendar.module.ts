@@ -10,10 +10,6 @@ import { TaskCalendarRoutes } from "./task-calendar.routing";
 import { EntityModule } from '../common/entity/entity.module';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { CronFormComponent } from './cron/cron-form/cron-form.component';
-import { CronListComponent } from './cron/cron-list/cron-list.component';
-import { InitshutdownListComponent } from './initshutdown/initshutdown-list/initshutdown-list.component';
-import { InitshutdownFormComponent } from './initshutdown/initshutdown-form/initshutdown-form.component';
 import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.component';
 import { SnapshotFormComponent } from './snapshot/snapshot-form/snapshot-form.component';
 import { RsyncListComponent } from './rsync/rsync-list/rsync-list.component';
@@ -45,10 +41,6 @@ import { TaskScheduleDashboardComponent } from './components/task-schedule-dashb
     TranslateModule
   ],
   declarations: [
-    CronFormComponent,
-    CronListComponent,
-    InitshutdownListComponent,
-    InitshutdownFormComponent,
     SnapshotListComponent,
     SnapshotFormComponent,
     RsyncListComponent,

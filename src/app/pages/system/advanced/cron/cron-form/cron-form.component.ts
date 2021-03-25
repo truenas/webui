@@ -2,12 +2,12 @@ import { Component, ViewChild } from '@angular/core';
 
 import * as _ from 'lodash';
 
-import { EntityFormComponent } from '../../../common/entity/entity-form';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { EntityFormComponent } from '../../../../common/entity/entity-form';
+import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { UserService } from '../../../../services/';
-import helptext from '../../../../helptext/task-calendar/cron/cron-form';
-import { ModalService } from '../../../../services/modal.service';
+import { UserService } from '../../../../../services';
+import helptext from '../../../../../helptext/task-calendar/cron/cron-form';
+import { ModalService } from '../../../../../services/modal.service';
 
 @Component({
   selector: 'app-cron-job-add',

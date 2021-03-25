@@ -28,7 +28,7 @@ import { EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.com
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { CronFormComponent } from 'app/pages/task-calendar/cron/cron-form/cron-form.component';
+import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { InitshutdownFormComponent } from 'app/pages/task-calendar/initshutdown/initshutdown-form/initshutdown-form.component';
 import { InputTableConf } from 'app/pages/common/entity/table/table.component';
 import { EmptyConfig } from '../../common/entity/entity-empty/entity-empty.component';
