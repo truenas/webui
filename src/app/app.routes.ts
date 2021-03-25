@@ -140,7 +140,7 @@ export const rootRouterConfig: Routes = [{
       },
       {
         path : 'data-protection',
-        loadChildren: './pages/task-calendar/task-calendar.module#TaskCalendarModule',
+        loadChildren: './pages/data-protection/data-protection.module#DataProtectionModule',
         data: { title: 'Data Protection', breadcrumb: 'Data Protection'}
       },
       {
