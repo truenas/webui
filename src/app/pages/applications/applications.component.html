@@ -1,6 +1,6 @@
 <div fxLayout=row>
     <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedIndex" (selectedTabChange)="refresh($event)">
-        <mat-tab label="{{ 'Catalog' | translate}}"
+        <mat-tab label="{{ 'Available Applications' | translate}}"
             ix-auto ix-auto-type="tab" ix-auto-identifier="catalog">
             <app-catalog (updateTab)="updateTab($event)"></app-catalog>
         </mat-tab>

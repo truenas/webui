@@ -4,10 +4,10 @@
         <div class="logo-container">
           <div class="logo" style="background-image: url('{{ item.icon }}');"></div>
           <div class="badge-area">
-            <div class="partner-badge">
+            <div class="partner-badge capitalized-text">
                 {{ item.catalog }}
             </div>                    
-            <div class="train-badge">
+            <div class="train-badge capitalized-text">
                 {{ item.catalog_train }}
             </div>                    
           </div>
@@ -18,7 +18,7 @@
             <strong class="chart-name" textLimiter threshold="20">{{ item.name }}</strong>
             <div><span class="version" textLimiter threshold="50"> {{ item.human_version}}</span></div>
             <div *ngIf="item.update_available || item.container_images_update_available; else elseBlock">
-              <span class="update-label">{{ 'Update available' | translate}}:</span> 
+              <span class="update-label">{{ 'Update available' | translate}}</span> 
             </div>
             <ng-template #elseBlock><div class="update-label">{{ 'Up to date' | translate }}</div></ng-template>
           </div>

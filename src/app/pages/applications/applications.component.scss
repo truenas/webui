@@ -5,6 +5,18 @@ mat-tab-group {
   }
 }
 
+.inline-block {
+  display: inline-block;
+}
+
+.capitalized-text {
+  text-transform: lowercase;
+
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}
+
 .catalog-item {
     height: 160px;
     width: 350px;
@@ -202,6 +214,13 @@ app-manage-catalogs {
   entity-table {
     #entity-table-component.mat-card {
       margin: 0;
+    }
+  }
+  .mat-column-label {
+    text-transform: lowercase;
+
+    &::first-letter {
+      text-transform: uppercase;
     }
   }
 }

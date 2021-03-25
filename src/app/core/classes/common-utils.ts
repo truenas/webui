@@ -39,5 +39,9 @@ export class CommonUtils {
 		return 0;
 	}
   
+	capitalizeFirstLetter(text:string) {
+		text = text.toLowerCase();
+		return text.charAt(0).toUpperCase() + text.slice(1);
+	}
 }
   

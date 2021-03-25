@@ -10,6 +10,7 @@ import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.compo
 import { Subject, Subscription } from 'rxjs';
 import  helptext  from '../../helptext/apps/apps';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CommonUtils } from 'app/core/classes/common-utils';
 
 @Component({
   selector: 'app-applications',
@@ -32,11 +33,15 @@ export class ApplicationsComponent implements OnInit {
   public filterString = '';
   public toolbarConfig: ToolbarConfig;
   public catalogNames: string[] = [];
+  protected utils: CommonUtils;
 
   constructor(private appService: ApplicationsService, 
     private core: CoreService, 
     protected aroute: ActivatedRoute,
-    private modalService: ModalService) { }
+    private modalService: ModalService) 
+  { 
+    this.utils = new CommonUtils();
+  }
 
   ngOnInit(): void {    
     this.setupToolbar();
@@ -103,7 +108,7 @@ export class ApplicationsComponent implements OnInit {
         });
         const catalogOptions = this.catalogNames.map((catalogName) => {
           return {
-            label: catalogName,
+            label: this.utils.capitalizeFirstLetter(catalogName),
             value: catalogName,
           };
         });
