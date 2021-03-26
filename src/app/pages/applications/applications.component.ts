@@ -32,7 +32,8 @@ export class ApplicationsComponent implements OnInit {
   public settingsEvent: Subject<CoreEvent>;
   public filterString = '';
   public toolbarConfig: ToolbarConfig;
-  public catalogNames: string[] = [];
+  public catalogOptions: any[] = [];
+  public selectedCatalogOptions: any[] = [];
   protected utils: CommonUtils;
 
   constructor(private appService: ApplicationsService, 
@@ -62,6 +63,10 @@ export class ApplicationsComponent implements OnInit {
     this.settingsEvent.subscribe((evt: CoreEvent) => {
       if (evt.data.event_control == 'filter') {
         this.filterString = evt.data.filter;
+      }
+
+      if (evt.data.event_control == 'catalogs') {
+        this.selectedCatalogOptions = evt.data.catalogs;
       }
 
       this.catalogTab.onToolbarAction(evt);
@@ -106,19 +111,15 @@ export class ApplicationsComponent implements OnInit {
           color: 'secondary',
           value: 'refresh_all'
         });
-        const catalogOptions = this.catalogNames.map((catalogName) => {
-          return {
-            label: this.utils.capitalizeFirstLetter(catalogName),
-            value: catalogName,
-          };
-        });
+
         this.toolbarConfig.controls.push({
-          type: 'multiselect',
+          type: 'multimenu',
           name: 'catalogs',
           label: helptext.catalogs,
           disabled:false,
           multiple: true,
-          options: catalogOptions,
+          options: this.catalogOptions,
+          value:  this.selectedCatalogOptions,
           customTriggerValue: helptext.catalogs,
         });
         break;
@@ -216,7 +217,14 @@ export class ApplicationsComponent implements OnInit {
       this.updateToolbar();
     } else if (evt.name == 'catalogToolbarChanged') {
       this.isSelectedPool = evt.value;
-      this.catalogNames = evt.catalogNames;
+      this.catalogOptions = evt.catalogNames.map((catalogName) => {
+        return {
+          label: this.utils.capitalizeFirstLetter(catalogName),
+          value: catalogName,
+        };
+      });
+      this.selectedCatalogOptions = this.catalogOptions;
+
       this.updateToolbar();
     }
   }
