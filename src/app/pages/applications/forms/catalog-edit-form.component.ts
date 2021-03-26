@@ -17,11 +17,10 @@ import { EntityUtils } from '../../common/entity/utils';
 })
 export class CatalogEditFormComponent {
   protected queryCall: string = 'catalog.query';
-  protected queryCallOption: Array<any>;
-  protected customFilter: any[];
-  protected addCall: string = 'catalog.create';
   protected editCall: string = 'catalog.update';
+  protected customFilter: any[];
   protected isEntity: boolean = true;
+  protected isEditJob: boolean = false;
   protected entityForm: EntityFormComponent;
   private title= helptext.catalogForm.editTitle;
   public fieldSets: FieldSets = new FieldSets([

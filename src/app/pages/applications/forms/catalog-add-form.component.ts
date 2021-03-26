@@ -14,10 +14,8 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 })
 export class CatalogAddFormComponent {
   protected queryCall: string = 'catalog.query';
-  protected queryCallOption: Array<any>;
   protected customFilter: any[];
   protected addCall: string = 'catalog.create';
-  protected editCall: string = 'catalog.update';
   protected isEntity: boolean = true;
   protected entityForm: EntityFormComponent;
   private title= helptext.catalogForm.title;

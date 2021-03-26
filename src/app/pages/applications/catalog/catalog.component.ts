@@ -78,10 +78,6 @@ export class CatalogComponent implements OnInit {
     this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
       this.refreshForms();
     });
-
-    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
-      this.updateTab.emit({name: 'SwitchTab', value: 1});
-    })
   }
 
   loadCatalogs() {

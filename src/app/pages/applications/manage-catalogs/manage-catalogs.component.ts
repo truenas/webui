@@ -61,10 +61,6 @@ export class ManageCatalogsComponent {
 
   ngOnInit() {
     this.refreshUserForm();
-    
-    this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
-      this.refresh();
-    })
 
     this.modalService.refreshForm$.subscribe(() => {
       this.refreshUserForm();
@@ -83,10 +79,6 @@ export class ManageCatalogsComponent {
 
   afterInit(entityList: any) { 
     this.entityList = entityList; 
-    
-    this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
-      this.refresh();
-    })
   }
 
   getActions(row) {
@@ -143,7 +135,7 @@ export class ManageCatalogsComponent {
   }
 
   refreshRow(row) {
-    console.log("refreshRow", row);
+    this.syncRow(row);
   }
 
   showSummary(row) {
@@ -167,13 +159,17 @@ export class ManageCatalogsComponent {
 
   syncAll() {
     this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
-      helptext.installing) }, disableClose: true});
+      helptext.refreshing) }, disableClose: true});
     this.dialogRef.componentInstance.setCall("catalog.sync_all");
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.refresh();
     });
+  }
+
+  syncRow(row) {
+    this.syncAll();
   }
 
   onRowClick(row) {

@@ -21,6 +21,7 @@ export default {
   },
 
   installing: T('Installing'),
+  refreshing: T('Refreshing'),
   settings: T('Settings'),
   choose: T('Choose Pool'),
   advanced: T('Advanced Settings'),

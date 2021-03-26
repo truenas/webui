@@ -141,11 +141,6 @@ export class ChartReleasesComponent implements OnInit {
 
   ngOnInit(): void {
     this.utils = new CommonUtils();
-
-    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
-      this.refreshChartReleases();
-    });
-
     this.addChartReleaseChangedEventListner();
   }
 

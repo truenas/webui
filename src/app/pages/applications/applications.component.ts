@@ -35,6 +35,7 @@ export class ApplicationsComponent implements OnInit {
   public catalogOptions: any[] = [];
   public selectedCatalogOptions: any[] = [];
   protected utils: CommonUtils;
+  private refreshTable: Subscription;
 
   constructor(private appService: ApplicationsService, 
     private core: CoreService, 
@@ -46,6 +47,10 @@ export class ApplicationsComponent implements OnInit {
 
   ngOnInit(): void {    
     this.setupToolbar();
+
+    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
+      this.refresh({index: this.selectedIndex});
+    });
   }
 
   ngAfterViewInit() {
@@ -232,9 +237,8 @@ export class ApplicationsComponent implements OnInit {
   refresh(e) {
     this.selectedIndex = e.index;
     this.updateToolbar();
-    if (this.selectedIndex == 0) {
-      this.catalogTab.loadCatalogs();
-    } else if (this.selectedIndex == 1) {
+    if (this.selectedIndex == 0 || this.selectedIndex == 1) {
+      this.selectedIndex = 1;
       this.chartTab.refreshChartReleases();
     } else if (this.selectedIndex == 2) {
       this.manageCatalogTab.refresh();
