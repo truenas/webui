@@ -38,6 +38,7 @@ export class ChartWizardComponent implements OnDestroy {
   private catalogApp: any;
   private entityWizard: any;
   private destroy$ = new Subject();
+  private selectedVersionKey: string;
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
     private modalService: ModalService, private appService: ApplicationsService) {
@@ -48,11 +49,25 @@ export class ChartWizardComponent implements OnDestroy {
     this.title = title;
   }
   
-  parseSchema(catalogApp: any, isEdit: boolean=false) {
+  setCatalogApp(catalogApp: any) {
+    this.catalogApp = catalogApp;
+    this.parseSchema();
+  }
+
+  parseSchema() {
     try {
-      this.catalogApp = catalogApp;
       this.title = this.catalogApp.name; 
-  
+      const versionKeys = Object.keys(this.catalogApp.versions);
+      const versionOptions = versionKeys.map(version => {
+        return {
+          value: version,
+          label: version,
+        }
+      });
+
+      this.selectedVersionKey = versionKeys[0];
+      const selectedVersion = this.catalogApp.versions[this.selectedVersionKey];
+
       this.wizardConfig.push({
         label: helptext.chartWizard.nameGroup.label,
         fieldConfig: [{
@@ -61,17 +76,25 @@ export class ChartWizardComponent implements OnDestroy {
           placeholder: helptext.chartForm.release_name.placeholder,
           tooltip: helptext.chartForm.release_name.tooltip,
           required: true,
+        },
+        {
+          type: 'select',
+          name: 'version',
+          placeholder: helptext.chartWizard.nameGroup.version,
+          options: versionOptions,
+          value: this.selectedVersionKey,
+          required: true,
         }],
-      })
+      });
       
-      this.catalogApp.schema.groups.forEach(group => {
+      selectedVersion.schema.groups.forEach(group => {
         this.wizardConfig.push({
           label: group.name,
           fieldConfig: [],
         })
       });
 
-      this.catalogApp.schema.questions.forEach(question => {
+      selectedVersion.schema.questions.forEach(question => {
         const wizard = this.wizardConfig.find(wizard => wizard.label == question.group);
         if (wizard) {
           const wizardFieldConfigs = new EntityUtils().parseSchemaFieldConfig(question);
@@ -86,36 +109,23 @@ export class ChartWizardComponent implements OnDestroy {
     }
   }
 
-  resourceTransformIncomingRestData(data: any) {
-    const chartSchema = {
-      name: data.chart_metadata.name,
-      catalog: {
-        id: null,
-        label: data.catalog,
-      },
-      schema: data.chart_schema.schema,
-    }
-
-    this.parseSchema(chartSchema, true);
-    
-    const configData = {};
-    new EntityUtils().parseConfigData(data.config, null, configData);
-    configData['release_name'] = data.name;
-    configData['changed_schema'] = true;
-    
-    return configData;
-  }
-
   afterInit(entityWizard: EntityWizardComponent) {
     this.entityWizard = entityWizard;
     let repositoryConfig = _.find(this.fieldConfig, {'name': 'image_repository'});
     if (repositoryConfig) {
       repositoryConfig.readonly = true;
     }
+
+    entityWizard.formGroup.controls['version'].valueChanges.subscribe(value => {
+      this.selectedVersionKey = value;
+      this.parseSchema();
+    })
   }
 
   customSubmit(data: any) {
     let apiCall = this.addCall;
+    delete data.version;
+
     let values = {};
     new EntityUtils().parseFormControlValues(data, values);
 

@@ -439,6 +439,7 @@ export default {
   chartWizard: {
     nameGroup: {
       label: 'Application Name',
+      version: 'Version',
     }
   },
 

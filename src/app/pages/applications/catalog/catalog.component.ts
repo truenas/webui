@@ -240,7 +240,7 @@ export class CatalogComponent implements OnInit {
     const catalogApp = this.catalogApps.find(app => app.name==name);
     if (catalogApp && catalogApp.name != 'ix-chart') {
       const chartWizardComponent = new ChartWizardComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
-      chartWizardComponent.parseSchema(catalogApp);
+      chartWizardComponent.setCatalogApp(catalogApp);
       this.modalService.open('slide-in-form', chartWizardComponent);
     } else {
       const chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
