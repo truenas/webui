@@ -18,7 +18,7 @@
             <strong class="chart-name" textLimiter threshold="20">{{ item.name }}</strong>
             <div><span class="version" textLimiter threshold="50"> {{ item.human_version}}</span></div>
             <div *ngIf="item.update_available || item.container_images_update_available; else elseBlock">
-              <span class="update-label">{{ 'Update available' | translate}}</span> 
+              <span class="update-label" matTooltip="Available version: {{ item.human_latest_version }}">{{ 'Update available' | translate}}</span> 
             </div>
             <ng-template #elseBlock><div class="update-label">{{ 'Up to date' | translate }}</div></ng-template>
           </div>

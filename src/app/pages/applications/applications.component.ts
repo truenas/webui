@@ -11,6 +11,7 @@ import { Subject, Subscription } from 'rxjs';
 import  helptext  from '../../helptext/apps/apps';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonUtils } from 'app/core/classes/common-utils';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-applications',
@@ -49,7 +50,7 @@ export class ApplicationsComponent implements OnInit {
     this.setupToolbar();
 
     this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
-      this.refresh({index: this.selectedIndex});
+      this.refreshTab(true);
     });
   }
 
@@ -58,7 +59,7 @@ export class ApplicationsComponent implements OnInit {
     this.aroute.params.subscribe(params => {
       if (params['tabIndex'] == 1) {
         this.selectedIndex = 1;
-        this.refresh({index: 1});
+        this.refreshTab();
       }
     });
   }
@@ -234,14 +235,24 @@ export class ApplicationsComponent implements OnInit {
     }
   }
 
-  refresh(e) {
-    this.selectedIndex = e.index;
+  refreshTab(switchToAppTab:boolean = false) {
     this.updateToolbar();
-    if (this.selectedIndex == 0 || this.selectedIndex == 1) {
-      this.selectedIndex = 1;
+    if (this.selectedIndex == 0) {
+      if (switchToAppTab) {
+        this.selectedIndex = 1;
+        this.chartTab.refreshChartReleases();
+      } else {
+        this.catalogTab.loadCatalogs();
+      }      
+    } else if (this.selectedIndex == 1) {
       this.chartTab.refreshChartReleases();
     } else if (this.selectedIndex == 2) {
       this.manageCatalogTab.refresh();
     }
+  }
+
+  refresh(e: MatTabChangeEvent) {
+    this.selectedIndex = e.index;
+    this.refreshTab();
   }
 }
