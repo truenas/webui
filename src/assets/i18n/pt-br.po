@@ -2551,7 +2551,7 @@ msgid "Caches"
 msgstr ""
 
 msgid ""
-"Can be set to <i>0</i>, left empty for FreeNAS to assign a port when the VM "
+"Can be set to <i>0</i>, left empty for TrueNAS to assign a port when the VM "
 "is started, or set to a fixed, preferred port number."
 msgstr ""
 
@@ -4611,10 +4611,19 @@ msgstr ""
 msgid "Dismiss All Alerts"
 msgstr ""
 
+msgid "Display"
+msgstr ""
+
+msgid "Display Device"
+msgstr ""
+
 msgid "Display Login"
 msgstr ""
 
 msgid "Display Note"
+msgstr ""
+
+msgid "Display Port"
 msgstr ""
 
 msgid "Display console messages in real time at the bottom of the browser."
@@ -5704,6 +5713,12 @@ msgid "Enter or select the cloud storage location to use for this task."
 msgstr ""
 
 msgid "Enter passphrase to lock pool "
+msgstr ""
+
+msgid "Enter password"
+msgstr ""
+
+msgid "Enter password to unlock this display device"
 msgstr ""
 
 msgid "Enter password."
@@ -7549,6 +7564,12 @@ msgstr ""
 msgid "Invalid value. Missing numerical value or invalid numerical value/unit."
 msgstr ""
 
+msgid "Invalid value. Must be greater than or equal to "
+msgstr ""
+
+msgid "Invalid value. Must be less than or equal to "
+msgstr ""
+
 msgid ""
 "Invalid value. Valid values are numbers followed by optional unit letters  "
 "for GiB, like <code>256g</code> or <code>1 G</code> or <code>2 GiB</code>."
@@ -9231,6 +9252,9 @@ msgid ""
 "selected permissions."
 msgstr ""
 
+msgid "Open"
+msgstr ""
+
 msgid "Open Source"
 msgstr ""
 
@@ -9594,6 +9618,9 @@ msgid "Physical interface of the selected member."
 msgstr ""
 
 msgid "PiB"
+msgstr ""
+
+msgid "Pick a display device to open"
 msgstr ""
 
 msgid "Plain (No Encryption)"
@@ -14863,12 +14890,6 @@ msgid "VMware Sync"
 msgstr ""
 
 msgid "VMware-Snapshots"
-msgstr ""
-
-msgid "VNC"
-msgstr ""
-
-msgid "VNC Port"
 msgstr ""
 
 msgid ""
