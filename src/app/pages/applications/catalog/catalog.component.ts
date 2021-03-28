@@ -88,7 +88,7 @@ export class CatalogComponent implements OnInit {
         this.catalogNames.push(catalog.label);
         catalog.preferred_trains.forEach(train => {
           for (let i in catalog.trains[train]) {  
-            let item = catalog.trains.charts[i];
+            let item = catalog.trains[train][i];
             let versions = item.versions;
             let latest, latestDetails;
   
@@ -236,8 +236,8 @@ export class CatalogComponent implements OnInit {
     })
   }
 
-  doInstall(name: string) {
-    const catalogApp = this.catalogApps.find(app => app.name==name);
+  doInstall(name: string, catalog: string = "OFFICIAL", train: string = "charts") {
+    const catalogApp = this.catalogApps.find(app => app.name==name && app.catalog.id==catalog && app.catalog.train==train);
     if (catalogApp && catalogApp.name != 'ix-chart') {
       const chartWizardComponent = new ChartWizardComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
       chartWizardComponent.setCatalogApp(catalogApp);
@@ -263,8 +263,8 @@ export class CatalogComponent implements OnInit {
     this.filteredCatalogApps = this.filteredCatalogApps.filter(app => app.name !== 'ix-chart');
   }
 
-  showSummaryDialog(name: string) {
-    const catalogApp = this.catalogApps.find(app => app.name==name);
+  showSummaryDialog(name: string, catalog: string = "OFFICIAL", train: string = "charts") {
+    const catalogApp = this.catalogApps.find(app => app.name==name && app.catalog.id==catalog && app.catalog.train==train);
     if (catalogApp) {
       let dialogRef = this.mdDialog.open(CatalogSummaryDialog, {
         width: '470px',
