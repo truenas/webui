@@ -131,7 +131,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     queryCall: 'tunable.query',
     deleteCall: 'tunable.delete',
     deleteMsg: {
-      title: T('Tunable'),
+      title: helptext_system_advanced.fieldset_sysctl,
       key_props: ['var'],
     },
     parent: this,

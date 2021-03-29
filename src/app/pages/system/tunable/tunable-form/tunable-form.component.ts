@@ -5,6 +5,7 @@ import { SystemGeneralService, WebSocketService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'app-system-tunable-edit',
@@ -94,7 +95,7 @@ export class TunableFormComponent {
   }
 
   async afterInit(entityForm: EntityFormComponent) {
-    this.title = entityForm.isNew ? helptext.tunable.add : helptext.tunable.edit;
+    this.title = `${entityForm.isNew ? T('Add') : T('Edit')} ${this.fieldSets[0].name}`;
     entityForm.formGroup.controls['enabled'].setValue(true);
   }
 

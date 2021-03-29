@@ -59,9 +59,4 @@ export const helptext_system_tunable = {
  without deleting it."
     )
   },
-
-  tunable: {
-    add: T('Add Tunable'),
-    edit: T('Edit Tunable'),
-  }
 };
