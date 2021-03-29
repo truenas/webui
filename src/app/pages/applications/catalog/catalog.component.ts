@@ -88,7 +88,7 @@ export class CatalogComponent implements OnInit {
         this.catalogNames.push(catalog.label);
         catalog.preferred_trains.forEach(train => {
           for (let i in catalog.trains[train]) {  
-            let item = catalog.trains.charts[i];
+            let item = catalog.trains[train][i];
             let versions = item.versions;
             let latest, latestDetails;
   
