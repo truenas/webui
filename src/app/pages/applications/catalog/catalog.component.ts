@@ -236,8 +236,8 @@ export class CatalogComponent implements OnInit {
     })
   }
 
-  doInstall(name: string) {
-    const catalogApp = this.catalogApps.find(app => app.name==name);
+  doInstall(name: string, catalog: string = "OFFICIAL", train: string = "charts") {
+    const catalogApp = this.catalogApps.find(app => app.name==name && app.catalog.id==catalog && app.catalog.train==train);
     if (catalogApp && catalogApp.name != 'ix-chart') {
       const chartWizardComponent = new ChartWizardComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
       chartWizardComponent.setCatalogApp(catalogApp);
