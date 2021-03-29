@@ -65,9 +65,13 @@ export class ChartWizardComponent implements OnDestroy {
         }
       });
 
-      this.selectedVersionKey = versionKeys[0];
+      if (!this.selectedVersionKey) {
+        this.selectedVersionKey = versionKeys[0];
+      }
+      
       const selectedVersion = this.catalogApp.versions[this.selectedVersionKey];
 
+      this.wizardConfig = [];
       this.wizardConfig.push({
         label: helptext.chartWizard.nameGroup.label,
         fieldConfig: [{
@@ -103,7 +107,13 @@ export class ChartWizardComponent implements OnDestroy {
       });
   
       this.wizardConfig = this.wizardConfig.filter(wizard => wizard.fieldConfig.length > 0);
-      
+      if (this.entityWizard) {
+        this.entityWizard.resetFields();
+        this.entityWizard.formArray.get([0]).get('version').valueChanges.subscribe(value => {
+          this.selectedVersionKey = value;
+          this.parseSchema();
+        });
+      }
     } catch(error) {
       return this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
@@ -116,10 +126,10 @@ export class ChartWizardComponent implements OnDestroy {
       repositoryConfig.readonly = true;
     }
 
-    entityWizard.formGroup.controls['version'].valueChanges.subscribe(value => {
+    entityWizard.formArray.get([0]).get('version').valueChanges.subscribe(value => {
       this.selectedVersionKey = value;
       this.parseSchema();
-    })
+    });
   }
 
   customSubmit(data: any) {

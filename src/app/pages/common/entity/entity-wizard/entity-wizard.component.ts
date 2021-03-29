@@ -52,6 +52,18 @@ export class EntityWizardComponent implements OnInit {
       this.conf.preInit(this);
     }
 
+    this.resetFields();
+
+    if (this.conf.saveSubmitText) {
+      this.saveSubmitText = this.conf.saveSubmitText;
+    }
+
+    if (this.conf.afterInit) {
+      this.conf.afterInit(this);
+    }
+  }
+
+  resetFields() {
     let wizardformArray = this.formBuilder.array([]);
     for (let i in this.conf.wizardConfig) {
 
@@ -99,14 +111,6 @@ export class EntityWizardComponent implements OnInit {
           this.setRelation(config, i);
         }
       }
-    }
-
-    if (this.conf.saveSubmitText) {
-      this.saveSubmitText = this.conf.saveSubmitText;
-    }
-
-    if (this.conf.afterInit) {
-      this.conf.afterInit(this);
     }
   }
 
