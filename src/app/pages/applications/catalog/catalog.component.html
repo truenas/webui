@@ -1,6 +1,6 @@
 <div fxLayout="row wrap" fxLayoutAlign="center center">
     <mat-card class="catalog-item" *ngFor="let item of filteredCatalogApps">
-        <div class="content-wrapper" fxLayout="row">
+        <div class="content-wrapper" fxLayout="row" (click)="showSummaryDialog(item.name, item.catalog.id, item.catalog.train)">
           <div class="logo-container">
             <div class="logo" style="background-image: url('{{ item.icon_url}}');"></div>
             <div class="badge-area">
@@ -13,13 +13,13 @@
             </div>
           </div>
             <div class="content" fxLayout="column" fxLayoutAlign="center center">
-                <div class="catalog-title" (click)="showSummaryDialog(item.name, item.catalog.id, item.catalog.train)">
+                <div class="catalog-title">
                     <h3 textLimiter threshold="15">{{ item.name }}</h3>
                 </div>
                 <div class="catalog-version" textLimiter threshold="32" fxFlex="100%">
                     {{ item.latest_version }}
                 </div>
-                <div class="button-row">
+                <div class="button-row" (click)="$event.stopPropagation()">
                     <button mat-button (click)="doInstall(item.name, item.catalog.id, item.catalog.train); event.stopPropagation;"
                         ix-auto ix-auto-type="button" ix-auto-identifier="{{ item.name}}-install">
                         {{ 'Install' | translate }}</button>

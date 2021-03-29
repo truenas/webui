@@ -1,6 +1,6 @@
 <div fxLayout="row wrap" fxLayoutAlign="center center">
   <mat-card class="chart-item" *ngFor="let item of filteredChartItems">
-      <div class="content-wrapper" fxLayout="row">
+      <div class="content-wrapper" fxLayout="row" (click)="showChartEvents(item.name)">
         <div class="logo-container">
           <div class="logo" style="background-image: url('{{ item.icon }}');"></div>
           <div class="badge-area">
@@ -13,8 +13,8 @@
           </div>
           <mat-checkbox color="primary" class="bulk-checkbox" [(ngModel)]="item.selected" (change)="onChangeCheck()"></mat-checkbox>
         </div>
-        <div class=content-box>
-          <div class="content" (click)="showChartEvents(item.name)">
+        <div class="content-box">
+          <div class="content">
             <strong class="chart-name" textLimiter threshold="20">{{ item.name }}</strong>
             <div><span class="version" textLimiter threshold="50"> {{ item.human_version}}</span></div>
             <div *ngIf="item.update_available || item.container_images_update_available; else elseBlock">
@@ -23,7 +23,7 @@
             <ng-template #elseBlock><div class="update-label">{{ 'Up to date' | translate }}</div></ng-template>
           </div>
 
-          <div class="chart-button-row" fxLayout="row" fxLayoutAlign="end end">
+          <div class="chart-button-row" fxLayout="row" fxLayoutAlign="end end" (click)="$event.stopPropagation()">
             <button mat-button (click)="portal(item.portal)" *ngIf="item.status === 'ACTIVE' && item.portal"
               ix-auto ix-auto-type="button" ix-auto-identifier="{{ item.name}}-portal">
               {{ 'Portal' | translate }}
