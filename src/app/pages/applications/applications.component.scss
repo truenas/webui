@@ -64,12 +64,14 @@ mat-tab-group {
             .button-row {
               position: relative;
             }
-            
-            .catalog-title:hover {
-              cursor: pointer;
-            }
         }
     }
+
+    .content-wrapper:hover {
+        cursor: pointer;
+        background-color: var(--contrast-lighter);
+    }
+
 
     .more-info {
       position: absolute;
@@ -151,14 +153,16 @@ mat-tab-group {
         padding-left: 5px;
       }
     }
-    .content:hover {
-      cursor: pointer;
-    }
     .chart-button-row {
       position: absolute;
       bottom: 5px;
       right: 15px;
     } 
+  }
+
+  .content-wrapper:hover {
+      cursor: pointer;
+      background-color: var(--contrast-lighter);
   }
 
   .more-info {

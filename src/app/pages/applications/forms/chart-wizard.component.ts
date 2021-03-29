@@ -134,8 +134,8 @@ export class ChartWizardComponent implements OnDestroy {
       catalog: this.catalogApp.catalog.id,
       item: this.catalogApp.name,
       release_name: data.release_name,
-      train: 'charts',
-      version: 'latest',
+      train: this.catalogApp.catalog.train,
+      version: this.selectedVersionKey,
       values: values
     });
 
