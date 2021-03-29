@@ -515,7 +515,20 @@ export default {
       refresh: T('Refresh'),
       delete: T('Delete'),
       summary: T('Summary'),
-    }
+    },
+  },
+
+  dockerImages: {
+    menu: {
+      update: T('Update Image'),
+      delete: T('Delete'),
+    },
+    columns: {
+      id: T('Image ID'),
+      tags: T('Tags'),
+      state: '',
+    },
+    updateAvailable: T('Update Available'),
   },
 
   catalogForm: {
@@ -540,6 +553,27 @@ export default {
     branch: {
       placeholder: T('Branch'),
       tooltip: T('Please specify branch of git repository to use for the catalog.'),
+    },
+  },
+
+  pullImageForm: {
+    title: T('Pull Image'),
+    label: T('Docker Registry Authentication'),
+    username: {
+      placeholder: T('User Name'),
+      tooltip: T('Please input user name.'),
+    },
+    password: {
+      placeholder: T('Password'),
+      tooltip: T('Please input password.'),
+    },
+    imageName: {
+      placeholder: T('Image Name'),
+      tooltip: T('Please input image name.'),
+    },
+    imageTags: {
+      placeholder: T('Image Tag'),
+      tooltip: T('Please input image tag'),
     },
   },
 }

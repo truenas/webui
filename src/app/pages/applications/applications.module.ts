@@ -29,6 +29,7 @@ import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.compo
 import { ManageCatalogSummaryDialog } from './dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import { CatalogAddFormComponent } from './forms/catalog-add-form.component';
 import { CatalogEditFormComponent } from './forms/catalog-edit-form.component';
+import { PullImageFormComponent } from './forms/pull-image-form.component';
 
 @NgModule({
   imports: [
@@ -63,6 +64,7 @@ import { CatalogEditFormComponent } from './forms/catalog-edit-form.component';
     ManageCatalogSummaryDialog,
     CatalogAddFormComponent,
     CatalogEditFormComponent,
+    PullImageFormComponent,
   ]
 })
 export class ApplicationsModule { }

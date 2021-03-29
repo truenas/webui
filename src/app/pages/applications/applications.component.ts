@@ -12,6 +12,7 @@ import  helptext  from '../../helptext/apps/apps';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { DockerImagesComponent } from './docker-images/docker-images.component';
 
 @Component({
   selector: 'app-applications',
@@ -25,7 +26,7 @@ export class ApplicationsComponent implements OnInit {
   @ViewChild(CatalogComponent, { static: false}) private catalogTab: CatalogComponent;
   @ViewChild(ChartReleasesComponent, { static: false}) private chartTab: ChartReleasesComponent;
   @ViewChild(ManageCatalogsComponent, { static: false}) private manageCatalogTab: ManageCatalogsComponent;
-
+  @ViewChild(DockerImagesComponent, { static: false}) private dockeImagesTab: DockerImagesComponent;
   selectedIndex: number = 0;
   isSelectedOneMore = false;
   isSelectedAll = false;
@@ -77,7 +78,8 @@ export class ApplicationsComponent implements OnInit {
 
       this.catalogTab.onToolbarAction(evt);
       this.chartTab.onToolbarAction(evt);
-      this.manageCatalogTab.onToolbarAction(evt);    
+      this.manageCatalogTab.onToolbarAction(evt);
+      this.dockeImagesTab.onToolbarAction(evt);
     })
 
     let controls: any[] = [      

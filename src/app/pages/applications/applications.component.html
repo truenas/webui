@@ -12,6 +12,10 @@
             ix-auto ix-auto-type="tab" ix-auto-identifier="manage-catalog">
             <app-manage-catalogs (updateTab)="updateTab($event)"></app-manage-catalogs>
         </mat-tab>
+        <mat-tab label="{{ 'Manage Docker Images' | translate}}"
+            ix-auto ix-auto-type="tab" ix-auto-identifier="manage-docker-images">
+            <app-docker-images (updateTab)="updateTab($event)"></app-docker-images>
+        </mat-tab>
     </mat-tab-group>
 </div>
 
