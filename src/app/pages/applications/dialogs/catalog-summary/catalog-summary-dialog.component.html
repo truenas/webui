@@ -1,8 +1,8 @@
 <div mat-dialog-content>
     <div class="title-div" fxLayout="row" fxLayoutAlign="space-between center">
         <strong class="catalog-name" textLimiter threshold="40">{{ catalogApp.name }} {{ 'Application Summary' | translate }}</strong>
-        <span class="status active" *ngIf="catalogApp.healthy">{{ 'Active' | translate }}</span>
-        <span class="status other" *ngIf="!catalogApp.healthy">{{ 'Not Active' | translate }}</span>
+        <span class="status active" *ngIf="catalogApp.healthy">{{ 'Healthy' | translate }}</span>
+        <span class="status other" *ngIf="!catalogApp.healthy">{{ 'Unhealthy' | translate }}</span>
     </div>
     <div class="description" [innerHTML]="catalogApp.info">
     </div>
@@ -39,7 +39,7 @@
                         <span>{{ versionStatusLabel(version) }}</span>
                     </div>
                     <span fxFlex="30%" class="text-center info-col" >
-                        <mat-icon class="version-tooltip" matTooltip="{{ version.value.app_readme }}">info</mat-icon>
+                        <mat-icon class="version-tooltip" matTooltip="{{ version.value.healthy?version.value.app_readme:version.value.healthy_error }}">info</mat-icon>
                     </span>
                 </div>
             </div>
