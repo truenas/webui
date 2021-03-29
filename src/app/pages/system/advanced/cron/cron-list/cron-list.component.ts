@@ -9,11 +9,14 @@ import { DialogService } from '../../../../../services';
 import { TaskService, WebSocketService } from '../../../../../services';
 import { T } from '../../../../../translate-marker';
 import { TaskScheduleListComponent } from '../../../../data-protection/components/task-schedule-list/task-schedule-list.component';
+import { ModalService } from 'app/services/modal.service';
+import { CronFormComponent } from '../cron-form/cron-form.component';
+import { UserService } from '../../../../../services/user.service';
 
 @Component({
   selector: 'app-cron-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
-  providers: [TaskService],
+  providers: [TaskService, UserService],
 })
 export class CronListComponent {
   public title = 'Cron Jobs';
@@ -60,10 +63,26 @@ export class CronListComponent {
     public translate: TranslateService,
     protected taskService: TaskService,
     public dialog: DialogService,
+    public modalService: ModalService,
+    public userService: UserService
   ) {}
 
   afterInit(entityList: any) {
     this.entityList = entityList;
+
+    this.modalService.onClose$.subscribe(() => {
+      this.entityList.loaderOpen = true;
+      this.entityList.needRefreshTable = true;
+      this.entityList.getData();
+    });
+  }
+
+  doAdd(id?: number) {
+    this.modalService.open('slide-in-form', new CronFormComponent(this.userService, this.modalService), id);
+  }
+
+  doEdit(id: number) {
+    this.doAdd(id);
   }
 
   getActions(tableRow) {

@@ -1,4 +1,6 @@
+import { InitshutdownFormComponent } from './../initshutdown-form/initshutdown-form.component';
 import { Component } from '@angular/core';
+import { ModalService } from 'app/services/modal.service';
 import { T } from '../../../../../translate-marker';
 
 @Component({
@@ -34,5 +36,24 @@ export class InitshutdownListComponent {
     },
   };
 
-  constructor() { }
+  constructor(public modalService: ModalService) {}
+
+
+  afterInit(entityList) {
+    this.entityList = entityList;
+
+    this.modalService.onClose$.subscribe(() => {
+      this.entityList.loaderOpen = true;
+      this.entityList.needRefreshTable = true;
+      this.entityList.getData();
+    });
+  }
+
+  doAdd(id?: number) {
+    this.modalService.open('slide-in-form', new InitshutdownFormComponent(this.modalService), id);
+  }
+
+  doEdit(id: number) {
+    this.doAdd(id);
+  }
 }

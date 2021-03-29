@@ -74,6 +74,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
 
   public cronTableConf: InputTableConf = {
     title: helptext_system_advanced.fieldset_cron,
+    titleHref: '/system/cron',
     queryCall: 'cronjob.query',
     deleteCall: 'cronjob.delete',
     deleteMsg: {
@@ -101,6 +102,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
 
   public initShutdownTableConf: InputTableConf = {
     title: helptext_system_advanced.fieldset_initshutdown,
+    titleHref: '/system/initshutdown',
     queryCall: 'initshutdownscript.query',
     deleteCall: 'initshutdownscript.delete',
     deleteMsg: {
