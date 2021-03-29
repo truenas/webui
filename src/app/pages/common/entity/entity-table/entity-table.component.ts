@@ -1101,9 +1101,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.multiActionsIconsOnly = !this.multiActionsIconsOnly;
   }
 
-  getButtonClass(prop) {
-    switch(prop) {
+  getButtonClass(state) {
+    switch(state) {
+      case 'PENDING' : return 'fn-theme-orange';
       case 'RUNNING' : return 'fn-theme-orange';
+      case 'ABORTED' : return 'fn-theme-orange';
       case 'FINISHED' : return 'fn-theme-green';
       case 'SUCCESS' : return 'fn-theme-green';
       case 'ERROR' : return 'fn-theme-red';
