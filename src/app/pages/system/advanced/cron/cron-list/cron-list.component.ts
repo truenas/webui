@@ -121,7 +121,7 @@ export class CronListComponent {
         label: T('Edit'),
         icon: 'edit',
         id: 'edit',
-        onClick: (row) => this.router.navigate(new Array('/').concat(['tasks', 'cron', 'edit', row.id])),
+        onClick: (row) => this.doEdit(row.id),
       },
       {
         id: tableRow.id,
