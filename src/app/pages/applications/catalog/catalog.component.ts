@@ -263,8 +263,8 @@ export class CatalogComponent implements OnInit {
     this.filteredCatalogApps = this.filteredCatalogApps.filter(app => app.name !== 'ix-chart');
   }
 
-  showSummaryDialog(name: string) {
-    const catalogApp = this.catalogApps.find(app => app.name==name);
+  showSummaryDialog(name: string, catalog: string = "OFFICIAL", train: string = "charts") {
+    const catalogApp = this.catalogApps.find(app => app.name==name && app.catalog.id==catalog && app.catalog.train==train);
     if (catalogApp) {
       let dialogRef = this.mdDialog.open(CatalogSummaryDialog, {
         width: '470px',
