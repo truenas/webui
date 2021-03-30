@@ -116,7 +116,7 @@ export class DiskListComponent {
     }
   }]
 
-  protected unused: any;
+  protected unused: any[] = [];
   constructor(protected ws: WebSocketService, protected router: Router, public diskbucket: StorageService, protected dialogService: DialogService,
     protected localeService: LocaleService, private dialog: MatDialog) {
     this.ws.call('disk.get_unused', []).subscribe((unused_res) => {

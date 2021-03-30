@@ -16,10 +16,11 @@ import { T } from '../../../translate-marker';
 import { DialogService } from '../../../services/dialog.service';
 import helptext from '../../../helptext/vm/vm-wizard/vm-wizard';
 import add_edit_helptext from '../../../helptext/vm/devices/device-add-edit';
-import { filter, map } from 'rxjs/operators';
+import { catchError, filter, map } from 'rxjs/operators';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import globalHelptext from './../../../helptext/global-helptext';
+import { combineLatest, forkJoin, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-vm-wizard',
@@ -37,7 +38,7 @@ export class VMWizardComponent {
   summary_title = T("VM Summary");
   public namesInUse = [];
   public statSize: any;
-  public vncPort: number;
+  public displayPort: number;
   public vcpus: number = 1;
   public cores: number = 1;
   public threads: number = 1;
@@ -107,10 +108,11 @@ export class VMWizardComponent {
         tooltip : helptext.autostart_tooltip,
         value: true
       },
-      { type: 'checkbox',
-        name : 'enable_vnc',
-        placeholder : helptext.enable_vnc_placeholder,
-        tooltip : helptext.enable_vnc_tooltip,
+      {
+        type: 'checkbox',
+        name : 'enable_display',
+        placeholder : helptext.enable_display_placeholder,
+        tooltip : helptext.enable_display_tooltip,
         value: true,
         isHidden: false
       },
@@ -123,9 +125,18 @@ export class VMWizardComponent {
       },
       {
         type: 'select',
-        name : 'vnc_bind',
-        placeholder : helptext.vnc_bind_placeholder,
-        tooltip : helptext.vnc_bind_tooltip,
+        name : 'display_type',
+        placeholder : T("Display Type"),
+        options: [{label: 'VNC', value: 'VNC'}, {label: 'SPICE', value: 'SPICE'}],
+        required: true,
+        value: "VNC",
+        validation: [Validators.required],
+      },
+      {
+        type: 'select',
+        name : 'bind',
+        placeholder : helptext.display_bind_placeholder,
+        tooltip : helptext.display_bind_tooltip,
         options: [],
         required: true,
         validation: [Validators.required],
@@ -452,13 +463,13 @@ export class VMWizardComponent {
       res.forEach(i => this.namesInUse.push(i.name));
     })
 
-    this.ws.call('vm.device.vnc_bind_choices').subscribe((res) => {
+    this.ws.call('vm.device.bind_choices').subscribe((res) => {
         if(res && Object.keys(res).length > 0) {
-        const vnc_bind = _.find(this.wizardConfig[0].fieldConfig, {'name' : 'vnc_bind'});
+        const bind = _.find(this.wizardConfig[0].fieldConfig, {'name' : 'bind'});
         Object.keys(res).forEach((address) => {
-          vnc_bind.options.push({label : address, value : address});
+          bind.options.push({label : address, value : address});
         });
-        ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).setValue(res['0.0.0.0']);
+        ( < FormGroup > entityWizard.formArray.get([0]).get('bind')).setValue(res['0.0.0.0']);
       }
     });
 
@@ -498,35 +509,39 @@ export class VMWizardComponent {
 
     ( < FormGroup > entityWizard.formArray.get([0]).get('bootloader')).valueChanges.subscribe((bootloader) => {
       if(!this.productType.includes('SCALE') && bootloader !== 'UEFI'){
-        _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_vnc'})['isHidden'] = true;
+        _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_display'})['isHidden'] = true;
         _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'})['isHidden'] = true;
-      _.find(this.wizardConfig[0].fieldConfig, {name : 'vnc_bind'}).isHidden = true;
-
+        _.find(this.wizardConfig[0].fieldConfig, {name : 'bind'}).isHidden = true;
+        _.find(this.wizardConfig[0].fieldConfig, {name : 'display_type'}).isHidden = true;
       } else {
-        _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_vnc'})['isHidden'] = false;
-        _.find(this.wizardConfig[0].fieldConfig, {name : 'vnc_bind'}).isHidden = false;
+        _.find(this.wizardConfig[0].fieldConfig, {name : 'enable_display'})['isHidden'] = false;
+        _.find(this.wizardConfig[0].fieldConfig, {name : 'bind'}).isHidden = false;
+        _.find(this.wizardConfig[0].fieldConfig, {name : 'display_type'}).isHidden = false;
         if (!this.productType.includes('SCALE')) {
           _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'})['isHidden'] = false;
         }
-      }
+      } 
     });
 
-    ( < FormGroup > entityWizard.formArray.get([0]).get('enable_vnc')).valueChanges.subscribe((res) => {
+    ( < FormGroup > entityWizard.formArray.get([0]).get('enable_display')).valueChanges.subscribe((res) => {
       if (!this.productType.includes('SCALE')) {
         _.find(this.wizardConfig[0].fieldConfig, {name : 'wait'}).isHidden = !res;   
       }
-      _.find(this.wizardConfig[0].fieldConfig, {name : 'vnc_bind'}).isHidden = !res;
+      _.find(this.wizardConfig[0].fieldConfig, {name : 'display_type'}).isHidden = !res;
+      _.find(this.wizardConfig[0].fieldConfig, {name : 'bind'}).isHidden = !res;
       if (res) {
-        this.ws.call('vm.vnc_port_wizard').subscribe(({vnc_port}) => {
-          this.vncPort = vnc_port;
+        this.ws.call('vm.port_wizard').subscribe(({port}) => {
+          this.displayPort = port;
         })
         if (!this.productType.includes('SCALE')) {
           ( < FormGroup > entityWizard.formArray.get([0]).get('wait')).enable();
         }
-        ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).enable()
+        ( < FormGroup > entityWizard.formArray.get([0]).get('bind')).enable();
+        ( < FormGroup > entityWizard.formArray.get([0]).get('display_type')).enable();
       } else {
         ( < FormGroup > entityWizard.formArray.get([0]).get('wait')).disable();
-        ( < FormGroup > entityWizard.formArray.get([0]).get('vnc_bind')).disable();
+        ( < FormGroup > entityWizard.formArray.get([0]).get('display_type')).disable();
+        ( < FormGroup > entityWizard.formArray.get([0]).get('bind')).disable();
       }
     });
 
@@ -919,25 +934,27 @@ async customSubmit(value) {
       ]
     }
 
-    if (value.enable_vnc) {
+    if (value.enable_display) {
       if (this.productType.includes('SCALE')) {
         vm_payload["devices"].push({
-          "dtype": "VNC", "attributes": {
-            "vnc_port": this.vncPort,
-            "vnc_bind": value.vnc_bind,
-            "vnc_password": "",
-            "vnc_web": true
+          "dtype": "DISPLAY", "attributes": {
+            "port": this.displayPort,
+            "bind": value.bind,
+            "password": "",
+            "web": true,
+            "type":  value.display_type
           }
         });
       } else if (value.bootloader === 'UEFI') {
         vm_payload["devices"].push({
-          "dtype": "VNC", "attributes": {
+          "dtype": "DISPLAY", "attributes": {
             "wait": value.wait,
-            "vnc_port": this.vncPort,
-            "vnc_resolution": "1024x768",
-            "vnc_bind": value.vnc_bind,
-            "vnc_password": "",
-            "vnc_web": true
+            "port": this.displayPort,
+            "resolution": "1024x768",
+            "bind": value.bind,
+            "password": "",
+            "web": true,
+            "type": value.display_type
           }
         });
       }
@@ -950,9 +967,41 @@ async customSubmit(value) {
           device.attributes.path = '/dev/zvol/'+ value.hdd_path;
         };
       };
+      
+      const devices = [...vm_payload["devices"]]
+      delete vm_payload['devices'];
       this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
-        this.loader.close();
-        this.modalService.close('slide-in-form');
+        const observables: Observable<any>[] = [];
+        for(const device of devices) {
+          device.vm = vm_res.id;
+          observables.push(this.ws.call('vm.device.create', [device]).pipe(
+            map((res) => res),
+            catchError(err => {
+              err.device = {...device};
+              throw err;
+            })));
+        }
+        combineLatest(observables).subscribe(
+          responses_array => {
+            this.loader.close();
+            this.modalService.close('slide-in-form');
+          },
+          error => {
+            setTimeout(() => {
+              this.ws.call('vm.delete', [vm_res.id, {zvols: false, force: false}]).subscribe(
+                (res) => {
+                  this.loader.close();
+                  this.dialogService.errorReport(T("Error creating VM."), T("We ran into an error while trying to create the ")+error.device.dtype+" device.\n"+error.reason, error.trace.formatted);
+                },
+                (err) => {
+                  this.loader.close();
+                  this.dialogService.errorReport(T("Error creating VM."), T("We ran into an error while trying to create the ")+error.device.dtype+" device.\n"+error.reason, error.trace.formatted);
+                  new EntityUtils().handleWSError(this, err, this.dialogService);
+                }
+              )
+          }, 1000);
+          }
+        )
     },(error) => {
       this.loader.close();
       this.dialogService.errorReport(T("Error creating VM."), error.reason, error.trace.formatted);
@@ -973,10 +1022,42 @@ async customSubmit(value) {
           device.attributes.zvol_volsize = zvol_volsize
         };
       };
+      
+      const devices = [...vm_payload["devices"]]
+      delete vm_payload['devices'];
       this.ws.call('vm.create', [vm_payload]).subscribe(vm_res => {
-        this.loader.close();
-        this.modalService.close('slide-in-form');
-      },(error) => {
+        const observables: Observable<any>[] = [];
+        for(const device of devices) {
+          device.vm = vm_res.id;
+          observables.push(this.ws.call('vm.device.create', [device]).pipe(
+            map((res) => res),
+            catchError(err => {
+              err.device = {...device};
+              throw err;
+            })));
+        }
+        combineLatest(observables).subscribe(
+          responses_array => {
+            this.loader.close();
+            this.modalService.close('slide-in-form');
+          },
+          error => {
+            setTimeout(() => {
+                this.ws.call('vm.delete', [vm_res.id, {zvols: false, force: false}]).subscribe(
+                (res) => {
+                  this.loader.close();
+                  this.dialogService.errorReport(T("Error creating VM."), T("Error while creating the ")+error.device.dtype+" device.\n"+error.reason, error.trace.formatted);
+                },
+                (err) => {
+                  this.loader.close();
+                  this.dialogService.errorReport(T("Error creating VM."), T("Error while creating the ")+error.device.dtype+" device.\n"+error.reason, error.trace.formatted);
+                  new EntityUtils().handleWSError(this, err, this.dialogService);
+                }
+              )
+            }, 1000);
+          }
+        )
+    },(error) => {
         this.loader.close();
         this.dialogService.errorReport(T("Error creating VM."), error.reason, error.trace.formatted);
       });

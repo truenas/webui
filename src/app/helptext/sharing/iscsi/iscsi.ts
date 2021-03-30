@@ -170,7 +170,7 @@ export const helptext_sharing_iscsi = {
   extent_placeholder_disk: T("Device"),
   extent_tooltip_disk: T(
     "Only appears if <i>Device</i> is selected. Select the\
- unformatted disk, controller, or zvol snapshot."
+ unused zvol or zvol snapshot."
   ),
   extent_validators_disk: [Validators.required],
 
@@ -332,7 +332,7 @@ export const helptext_sharing_iscsi = {
   name_tooltip: T("Keep the name short. Using a name longer than 63 characters can prevent accessing the block device."),
 
   disk_placeholder: T("Device"),
-  disk_tooltip: T("Select the unformatted disk, controller, zvol, or zvol snapshot. Select\
+  disk_tooltip: T("Select the unused zvol or zvol snapshot. Select\
  <i>Create New</i> to create a new zvol."),
 
   dataset_placeholder: T("Pool/Dataset"),

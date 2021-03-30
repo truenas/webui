@@ -1,5 +1,5 @@
 
-
+import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -88,16 +88,17 @@ import { ToolbarMenuComponent } from './entity-toolbar/components/toolbar-menu/t
 import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
 import { ToolbarMultiSelectComponent } from './entity-toolbar/components/toolbar-multiselect/toolbar-multiselect.component';
 import { EntityRowDetailsComponent } from './entity-table/entity-row-details.component';
-import { TaskScheduleListComponent } from 'app/pages/task-calendar/components/task-schedule-list/task-schedule-list.component';
+import { TaskScheduleListComponent } from 'app/pages/data-protection/components/task-schedule-list/task-schedule-list.component';
 import { FormStatusComponent } from './entity-form/components/form-status/form-status.component';
 import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.component';
 import { EntityEmptyComponent } from './entity-empty/entity-empty.component';
 
 import { TableComponent } from './table/table.component';
 
+
 @NgModule({
   imports: [
-    CommonModule, FormsModule, ReactiveFormsModule, DragDropModule,
+    CommonModule, FormsModule, ReactiveFormsModule, DragDropModule, RouterModule,
     MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule.forRoot(),
     NgxUploaderModule, FlexLayoutModule, TranslateModule, CdkTreeModule,
     OverlayModule, A11yModule, TreeTableModule, NgxFilesizeModule, CommonDirectivesModule
@@ -180,7 +181,7 @@ import { TableComponent } from './table/table.component';
     EntityCardComponent,
     EntityCardActionsComponent,
     EntityTableAddActionsComponent,
-    EntityTableActionsComponent,    
+    EntityTableActionsComponent,
     DynamicFieldDirective,
     SmdFabSpeedDialTrigger,
     SmdFabSpeedDialActions,
