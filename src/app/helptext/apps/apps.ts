@@ -569,11 +569,11 @@ export default {
     },
     imageName: {
       placeholder: T('Image Name'),
-      tooltip: T('Please input image name.'),
+      tooltip: T('Please specify the name of the image to pull. Format for the name is "registry/repo/image"'),
     },
     imageTags: {
       placeholder: T('Image Tag'),
-      tooltip: T('Please input image tag'),
+      tooltip: T('Please specifies tag of the image'),
     },
   },
 }

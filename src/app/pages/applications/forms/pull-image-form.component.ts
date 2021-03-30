@@ -13,9 +13,9 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
   template: `<entity-form [conf]="this"></entity-form>`
 })
 export class PullImageFormComponent {
-  protected queryCall: string = 'docker.images.query';
+  protected queryCall: string = 'container.image.query';
   protected customFilter: any[];
-  protected addCall: string = 'docker.images.create';
+  protected addCall: string = 'container.image.pull';
   protected isEntity: boolean = true;
   protected entityForm: EntityFormComponent;
   private title= helptext.pullImageForm.title;
@@ -36,6 +36,7 @@ export class PullImageFormComponent {
         {
           type: 'input',
           name: 'password',
+          inputType: 'password',
           placeholder: helptext.pullImageForm.password.placeholder,
           tooltip: helptext.pullImageForm.password.tooltip,
         },
@@ -51,14 +52,14 @@ export class PullImageFormComponent {
       config: [
         {
           type: 'input',
-          name: 'image_name',
+          name: 'from_image',
           placeholder: helptext.pullImageForm.imageName.placeholder,
           tooltip: helptext.pullImageForm.imageName.tooltip,
           required: true
         },
         {
           type: 'input',
-          name: 'image_tags',
+          name: 'tag',
           placeholder: helptext.pullImageForm.imageTags.placeholder,
           tooltip: helptext.pullImageForm.imageTags.tooltip,
         },
@@ -68,6 +69,17 @@ export class PullImageFormComponent {
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
     private modalService: ModalService) {
+  }
+
+  beforeSubmit(value) {
+    value['docker_authentication'] = {
+      docker_authentication: {
+        username: value.username,
+        password: value.password
+      }
+    }
+    delete value.username;
+    delete value.password;
   }
 
   afterModalFormClosed() {

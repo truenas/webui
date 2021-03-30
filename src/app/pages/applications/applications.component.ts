@@ -250,6 +250,8 @@ export class ApplicationsComponent implements OnInit {
       this.chartTab.refreshChartReleases();
     } else if (this.selectedIndex == 2) {
       this.manageCatalogTab.refresh();
+    } else if (this.selectedIndex == 3) {
+      this.dockeImagesTab.refresh();
     }
   }
 

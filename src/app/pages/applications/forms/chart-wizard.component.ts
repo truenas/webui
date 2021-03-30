@@ -57,7 +57,13 @@ export class ChartWizardComponent implements OnDestroy {
   parseSchema() {
     try {
       this.title = this.catalogApp.name; 
-      const versionKeys = Object.keys(this.catalogApp.versions);
+      const versionKeys = [];
+      Object.keys(this.catalogApp.versions).forEach(versionKey => {
+        if (this.catalogApp.versions[versionKey].healthy) {
+          versionKeys.push(versionKey);
+        }
+      });
+
       const versionOptions = versionKeys.map(version => {
         return {
           value: version,

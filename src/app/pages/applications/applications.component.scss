@@ -228,3 +228,11 @@ app-manage-catalogs {
     }
   }
 }
+
+app-docker-images {
+  entity-table {
+    #entity-table-component.mat-card {
+      margin: 0;
+    }
+  }
+}
