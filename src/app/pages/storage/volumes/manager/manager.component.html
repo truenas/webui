@@ -36,7 +36,7 @@
                   id="encryption_algorithm_option_{{option.label}}">
                     {{ option.label }}
                 </mat-option>
-  
+
               </mat-select>
             </div>
           </div>
@@ -104,7 +104,7 @@
                   </div>
                 </div>
               </button>
-              
+
               <button class="tbl vdev-option" id="pool-manager__add-special-button" [disabled]="vdevs.special.length > 0" (click)="addVdev('special')" mat-menu-item>
                 <div class="tr">
                   <div class="td icon">
@@ -198,7 +198,7 @@
                   </div>
                 </div>
               </button>
-              
+
               <button class="tbl vdev-option" id="pool-manager__add-special-button" [disabled]="vdevs.special.length > 0" (click)="addVdev('special')" mat-menu-item>
                 <div class="tr">
                   <div class="td icon">
@@ -357,7 +357,7 @@
       <div class="sizeMessage">{{ sizeMessage | translate}}: {{ size }}</div>
       <div *ngIf="disknumError" class="sizeMessage" [style.color]="'red'" [innerHTML]="disknumError"></div>
       <div *ngIf="vdevtypeError" class="sizeMessage" [style.color]="'red'" [innerHTML]="vdevtypeError"></div>
-      <div *ngIf="stripeVdevTypeError" class="sizeMessage" [style.color]="'red'" [innerHTML]="stripeVdevTypeError"></div>
+      <div *ngIf="stripeVdevTypeError" class="sizeMessage" [style.color]="'orange'" [innerHTML]="stripeVdevTypeError"></div>
       <div *ngIf="error" class="sizeMessage" [style.color]="'red'" [innerHTML]="error"></div>
       <div class="forceCreateCheckbox" *ngIf="has_savable_errors">
         <mat-checkbox id="pool-manager__force-submit-checkbox" [(ngModel)]="force" (click)="forceCheckboxChecked()">{{'Force' | translate}}</mat-checkbox>
