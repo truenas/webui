@@ -1,7 +1,7 @@
-<div id="{{config.name}}" class="dynamic-field form-select form-element" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']" 
+<div id="{{config.name}}" class="dynamic-field form-select form-element" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
   ix-auto ix-auto-type="scheduler" ix-auto-identifier="{{config.placeholder}}">
     <div class="label-container">
-      <mat-label class="label input-text">{{config.placeholder}}</mat-label>
+      <mat-label class="label input-text">{{config.placeholder}} <span *ngIf="config.required">*</span></mat-label>
       <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
     </div>
     <mat-form-field class="full-width" matTooltipPosition="above" [ngClass]="{'overlay-opened': isOpen}">
