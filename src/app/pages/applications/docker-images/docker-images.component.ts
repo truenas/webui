@@ -11,6 +11,7 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import {PullImageFormComponent} from '../forms/pull-image-form.component';
 import { EntityUtils } from '../../common/entity/utils';
+import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 @Component({
   selector: 'app-docker-images',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
@@ -27,7 +28,7 @@ export class DockerImagesComponent implements OnInit {
   private dialogRef: any;
   private refreshTableSubscription: any;
   protected addComponent: PullImageFormComponent;
-  
+
   public columns: Array < any > = [
     { name: helptext.dockerImages.columns.id, prop: 'id', always_display: true},
     { name: helptext.dockerImages.columns.tags, prop: 'repo_tags', always_display: true},
@@ -45,10 +46,23 @@ export class DockerImagesComponent implements OnInit {
   };
 
   public filterString: string = '';
-  constructor(private mdDialog: MatDialog, 
+  constructor(private mdDialog: MatDialog,
               protected dialogService: DialogService, protected loader: AppLoaderService,
               protected ws: WebSocketService, protected prefService: PreferencesService,
               private modalService: ModalService) {
+  }
+
+  public chooseTag: DialogFormConfiguration = {
+    title: helptext.dockerImages.chooseTag.title,
+    fieldConfig: [{
+      type: 'select',
+      name: 'tag',
+      placeholder: helptext.dockerImages.chooseTag.selectTag.placeholder,
+      required: true,
+    }],
+    saveButtonText: helptext.dockerImages.chooseTag.action,
+    customSubmit: this.updateImage,
+    parent: this,
   }
 
   ngOnInit() {
@@ -58,18 +72,18 @@ export class DockerImagesComponent implements OnInit {
       this.refreshUserForm();
     });
   }
-  
+
   refreshUserForm() {
     this.addComponent = new PullImageFormComponent(this.mdDialog,this.dialogService, this.modalService);
   }
-  
+
   refresh() {
     this.entityList.getData();
     this.entityList.filter(this.filterString);
   }
 
-  afterInit(entityList: any) { 
-    this.entityList = entityList; 
+  afterInit(entityList: any) {
+    this.entityList = entityList;
   }
 
   getActions(row) {
@@ -81,7 +95,7 @@ export class DockerImagesComponent implements OnInit {
         label : helptext.dockerImages.menu.update,
         name: 'update',
         onClick : (row) => {
-          this.updateImage(row);
+          this.onClickUpdateImage(row);
         }
       });
     };
@@ -101,7 +115,6 @@ export class DockerImagesComponent implements OnInit {
 
   resourceTransformIncomingRestData(d) {
     const data = [];
-
     d.forEach(row => {
       if (!row.system_image) {
         row.state = row.update_available?helptext.dockerImages.updateAvailable:'';
@@ -125,25 +138,36 @@ export class DockerImagesComponent implements OnInit {
     }
   }
 
-  updateImage(row) {
+  onClickUpdateImage(row) {
     if (row.repo_tags.length > 0) {
-      const params = row.repo_tags[0].split(":");
-      const payload = {
-        from_image: params[0],
-        tag: params.length>1?params[1]:'latest'
-      };
-      this.loader.open();
-      this.ws.job(this.queryCall, [payload]).subscribe(
-        (res) => {
-          this.loader.close();
-          this.refresh();
-        },
-        (res) => {
-          this.loader.close();
-          new EntityUtils().handleWSError(this, res, this.dialogService);
+      this.chooseTag.fieldConfig[0].options = row.repo_tags.map(item => {
+        return {
+          label: item,
+          value: item,
         }
-      );
+      });
+      this.chooseTag.fieldConfig[0].value = row.repo_tags[0];
+      this.dialogService.dialogForm(this.chooseTag, true);
     }
+  }
+
+  updateImage(entityDialog: any) {
+    const self = entityDialog.parent;
+    const tag = entityDialog.formGroup.controls['tag'].value;
+    const params = tag.split(":");
+    const payload = [{
+      from_image: params[0],
+      tag: params.length>1?params[1]:'latest'
+    }];
+
+    self.dialogRef = self.mdDialog.open(EntityJobComponent, { data: { 'title': (
+      helptext.dockerImages.pulling) }, disableClose: true});
+    self.dialogRef.componentInstance.setCall("container.image.pull", payload);
+    self.dialogRef.componentInstance.submit();
+    self.dialogRef.componentInstance.success.subscribe(() => {
+      self.dialogService.closeAllDialogs();
+      self.modalService.refreshTable();
+    });
   }
 }
 

@@ -7,7 +7,10 @@ import { ModalService } from '../../../services/modal.service';
 import { DialogService } from '../../../services/index';
 import  helptext  from '../../../helptext/apps/apps';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { WebSocketService } from '../../../services/ws.service';
+import { EntityUtils } from '../../common/entity/utils';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 @Component({
   selector: 'app-pull-image-form',
   template: `<entity-form [conf]="this"></entity-form>`
@@ -82,7 +85,36 @@ export class PullImageFormComponent {
     delete value.password;
   }
 
-  afterModalFormClosed() {
-    this.modalService.refreshTable();
+  customSubmit(data) {
+    const params = {
+      from_image: data.from_image
+    };
+
+    if (data.tag) {
+      params['tag'] = data.tag;
+    }
+    if (data.username || data.password) {
+      params['tag'] = data.tag;
+      params['docker_authentication'] = {};
+      if (data.username) {
+        params['docker_authentication']['username'] = data.username;
+      }
+      if (data.password) {
+        params['docker_authentication']['password'] = data.password;
+      }
+    }
+
+    let payload = [];
+    payload.push(params);
+
+    this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
+      helptext.dockerImages.pulling) }, disableClose: true});
+    this.dialogRef.componentInstance.setCall("container.image.pull", payload);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe(() => {
+      this.dialogService.closeAllDialogs();
+      this.modalService.close('slide-in-form');
+      this.modalService.refreshTable();
+    });
   }
 }

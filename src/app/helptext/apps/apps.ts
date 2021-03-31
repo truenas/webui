@@ -135,7 +135,7 @@ export default {
     delete_dialog: {
       title: T('Delete'),
       msg: T('Delete '),
-      job: T('Deleting...') 
+      job: T('Deleting...')
     },
 
     update_dialog: {
@@ -213,7 +213,7 @@ export default {
       validation: [Validators.min(9000), Validators.max(65535)]
     },
 
-    image: { 
+    image: {
       title: T('Image'),
       tag: {
         placeholder: T('Image Tag'),
@@ -377,7 +377,7 @@ export default {
       },
       hostPort: {
         placeholder: T('Host Port'),
-        
+
       }
     },
     portForwardingList: {
@@ -495,7 +495,7 @@ export default {
       placeholder: T('Tail Lines'),
     },
   },
-  
+
   actionBtnText: {
     close: T('Close')
   },
@@ -529,6 +529,14 @@ export default {
       state: '',
     },
     updateAvailable: T('Update Available'),
+    chooseTag: {
+      title: T("Choose a Tag"),
+      selectTag: {
+        placeholder: T('Please select a tag'),
+      },
+      action: T('Choose'),
+    },
+    pulling: T('Pulling...'),
   },
 
   catalogForm: {
