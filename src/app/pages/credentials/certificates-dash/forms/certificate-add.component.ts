@@ -758,7 +758,9 @@ export class CertificateAddComponent {
       this.hideField(this.internalFields[i], false, entity);
     }
     this.hideField(this.internalFields[2], true, entity);
-
+    this.getField('csronsys').valueChanges.subscribe(res => {
+        this.hideField('csrlist', !res, entity);
+    })
     this.getField('create_type').valueChanges.subscribe((res) => {
       this.wizardConfig[2].skip = false;
 
@@ -826,7 +828,7 @@ export class CertificateAddComponent {
         }
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
         if (!this.getField('csronsys').value) {
-          this.setDisabled('csrlist', true);
+          this.hideField('csrlist', true, entity);
         } else {
           this.setDisabled('privatekey', true);
           this.setDisabled('passphrase', true);
@@ -1001,12 +1003,14 @@ export class CertificateAddComponent {
   }
 
   beforeSubmit(data: any) {
-    for(let i = 0;i<data.san.length;i++) {
-      let sanValue = '';
-      for(let key in data.san[i]) {
-        sanValue+= data.san[i][key];
+    if(data.san) {
+      for(let i = 0;i<data.san.length;i++) {
+        let sanValue = '';
+        for(let key in data.san[i]) {
+          sanValue+= data.san[i][key];
+        }
+        data.san[i] = sanValue;
       }
-      data.san[i] = sanValue;
     }
     if (data.csronsys) {
       this.CSRList.forEach((item) => {
@@ -1057,9 +1061,8 @@ export class CertificateAddComponent {
       data['cert_extensions'] = cert_extensions;
 
       delete data['profiles'];
-
-      return data;
     }
+    return data;
   }
 
   customSubmit(data){
