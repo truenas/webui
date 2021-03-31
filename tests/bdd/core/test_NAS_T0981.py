@@ -26,30 +26,30 @@ def test_verify_ssh_access_with_root_works(driver):
 def the_browser_is_open_navigate_to_the_freenas_url(driver, nas_ip):
     """the browser is open, navigate to the FreeNAS URL."""
     driver.get(f"http://{nas_ip}/ui/sessions/signin")
-    assert wait_on_element(driver, 0.5, 10, '//input[@placeholder="Username"]')
+    assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
     time.sleep(1)
 
 
 @when('login appears, enter the root user and is password')
 def login_appears_enter_the_root_user_and_is_password(driver, root_password):
     """login appears, enter the root user and is password."""
-    assert wait_on_element(driver, 1, 10, '//input[@placeholder="Username"]')
+    assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
     driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
     driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(root_password)
-    assert wait_on_element(driver, 0.5, 4, '//button[@name="signin_button"]')
+    assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
     driver.find_element_by_xpath('//button[@name="signin_button"]').click()
 
 
 @then('you should see the dashboard')
 def you_should_see_the_dashboard(driver):
     """you should see the dashboard."""
-    assert wait_on_element(driver, 1, 5, '//a[contains(.,"Dashboard")]')
-    if wait_on_element(driver, 0.5, 1, '//div[contains(.,"Looking for help?")]'):
-        assert wait_on_element(driver, 0.5, 10, '//button[@ix-auto="button__CLOSE"]')
+    assert wait_on_element(driver, 5, '//a[contains(.,"Dashboard")]')
+    if wait_on_element(driver, 5, '//div[contains(.,"Looking for help?")]'):
+        assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]')
         driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-    assert wait_on_element(driver, 0.5, 5, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 5, '//span[contains(.,"System Information")]')
 
 
 @then('click on the Services side tab')
@@ -61,13 +61,13 @@ def click_on_the_services_side_tab(driver):
 @then('the service page should open')
 def the_service_page_should_open(driver):
     """the service page should open."""
-    assert wait_on_element(driver, 1, 5, '//a[contains(.,"Services")]')
+    assert wait_on_element(driver, 5, '//li[contains(.,"Services")]')
 
 
 @then('press on configure(pencil) SSH')
 def press_on_configure_pencil_ssh(driver):
     """press on configure(pencil) SSH."""
-    assert wait_on_element(driver, 0.5, 5, '//button[@ix-auto="button__S3_Actions"]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__S3_Actions"]')
     # Scroll to SSH service
     element = driver.find_element_by_xpath('//button[@ix-auto="button__S3_Actions"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
@@ -78,7 +78,7 @@ def press_on_configure_pencil_ssh(driver):
 @then('the SSH General Options page should open')
 def the_ssh_general_options_page_should_open(driver):
     """the SSH General Options page should open."""
-    assert wait_on_element(driver, 1, 5, '//h4[contains(text(),General) and contains(text(),Options)]')
+    assert wait_on_element(driver, 5, '//h4[contains(text(),"General Options")]')
 
 
 @then('click the checkbox "Log in as root with password"')
@@ -92,18 +92,18 @@ def click_the_checkbox_log_in_as_root_with_password(driver):
 @then('verify the checkbox works and click Save')
 def verify_the_checkbox_works_and_click_save(driver):
     """verify the checkbox works and click Save."""
-    wait_for_value = wait_for_attribute_value(driver, 0.5, 5, '//mat-checkbox[@ix-auto="checkbox__Log in as Root with Password"]', 'class', 'mat-checkbox-checked')
+    wait_for_value = wait_for_attribute_value(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Log in as Root with Password"]', 'class', 'mat-checkbox-checked')
     assert wait_for_value
-    assert wait_on_element(driver, 0.5, 5, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    wait_on_element_disappear(driver, 1, 10, '//h6[contains(.,"Please wait")]')
+    wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
 
 
 @then('click the Start Automatically SSH checkbox and enable the SSH service')
 def click_the_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
     """click the Start Automatically SSH checkbox and enable the SSH service."""
-    assert wait_on_element(driver, 1, 5, '//a[contains(.,"Services")]')
-    assert wait_on_element(driver, 1, 5, '//button[@ix-auto="button__S3_Actions"]')
+    assert wait_on_element(driver, 5, '//li[contains(.,"Services")]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__S3_Actions"]')
     # Scroll to SSH service
     element = driver.find_element_by_xpath('//button[@ix-auto="button__S3_Actions"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
@@ -121,7 +121,7 @@ def click_the_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver
 @then('the service should be enabled with no errors')
 def the_service_should_be_enabled_with_no_errors(driver):
     """the service should be enabled with no errors."""
-    wait_for_value = wait_for_attribute_value(driver, 1, 5, '//mat-slide-toggle[@ix-auto="slider__SSH_Running"]', 'class', 'mat-checked')
+    wait_for_value = wait_for_attribute_value(driver, 5, '//mat-slide-toggle[@ix-auto="slider__SSH_Running"]', 'class', 'mat-checked')
     assert wait_for_value
     # scroll back up the mat-list-item
     element = driver.find_element_by_xpath('//span[contains(.,"root")]')

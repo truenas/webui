@@ -24,15 +24,15 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
     """the browser is open, the FreeNAS URL and logged in."""
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 0.5, 10, '//input[@placeholder="Username"]')
+        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
         time.sleep(1)
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 1, 10, '//input[@placeholder="Username"]')
+        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
         driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
         driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(root_password)
-        assert wait_on_element(driver, 0.5, 4, '//button[@name="signin_button"]')
+        assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
@@ -44,23 +44,23 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
 @when('you see the dashboard')
 def you_see_the_dashboard(driver):
     """you see the dashboard."""
-    assert wait_on_element(driver, 1, 7, '//a[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 7, '//a[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
 
 
 @then('click Storage on the side menu and click Disks')
 def click_storage_on_the_side_menu_and_click_disks(driver):
     """click Storage on the side menu and click Disks."""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-    assert wait_on_element(driver, 1, 7, '//mat-list-item[@ix-auto="option__Disks"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Disks"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Disks"]').click()
 
 
 @then('when the Disks page appears, click name to sort in alphabetical order')
 def when_the_disks_page_appears_click_name_to_sort_in_alphabetical_order(driver):
     """when the Disks page appears, click name to sort in alphabetical order."""
-    assert wait_on_element(driver, 0.5, 7, '//div[contains(.,"Disks")]')
-    assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"Name")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Disks")]')
+    assert wait_on_element(driver, 7, '//span[contains(.,"Name")]')
     ada0 = ''
     while ada0 != 'ada0':
         driver.find_element_by_xpath('//span[contains(.,"Name")]').click()
@@ -75,29 +75,29 @@ def when_all_disks_appear_in_alphabetical_order_click_on_the_ada3_disk_arrow(dri
     for num in list(disk_list.keys()):
         disk = driver.find_element_by_xpath(f'(//datatable-body-cell[2]/div/div)[{num}]').text
         assert disk == disk_list[num]
-    assert wait_on_element(driver, 0.5, 7, '//a[@ix-auto="expander__ada3"]')
+    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ada3"]')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ada3"]').click()
 
 
 @then('click the WIPE button')
 def click_the_wipe_button(driver):
     """click the WIPE button."""
-    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__WIPE_ada3_ada3"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__WIPE_ada3_ada3"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__WIPE_ada3_ada3"]').click()
 
 
 @then('The Wipe Disk ada3 widget should appear')
 def the_wipe_disk_ada3_widget_should_appear(driver):
     """The Wipe Disk ada3 widget should appear."""
-    assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Wipe Disk ada3")]')
+    assert wait_on_element(driver, 7, '//h1[contains(.,"Wipe Disk ada3")]')
 
 
 @then('select the Quick Method and click WIPE')
 def select_the_quick_method_and_click_wipe(driver):
     """select the Quick Method and click WIPE."""
-    assert wait_on_element(driver, 0.5, 7, '//mat-select[@ix-auto="select__Method"]')
+    assert wait_on_element(driver, 7, '//mat-select[@ix-auto="select__Method"]')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Method"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-option[@ix-auto="option__Method_Quick"]')
+    assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Method_Quick"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Method_Quick"]').click()
     driver.find_element_by_xpath('//button[@ix-auto="button__WIPE"]').click()
 
@@ -105,7 +105,7 @@ def select_the_quick_method_and_click_wipe(driver):
 @then('check to confirm, and click continue')
 def check_to_confirm_and_click_continue(driver):
     """check to confirm, and click continue."""
-    assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Wipe Disk ada3")]')
+    assert wait_on_element(driver, 7, '//h1[contains(.,"Wipe Disk ada3")]')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
 
@@ -113,7 +113,7 @@ def check_to_confirm_and_click_continue(driver):
 @then('Disk Wiped successfully should appear')
 def disk_wiped_successfully_should_appear(driver):
     """Disk Wiped successfully should appear."""
-    assert wait_on_element(driver, 1, 10, '//span[contains(.,"Disk Wiped successfully")]')
+    assert wait_on_element(driver, 10, '//span[contains(.,"Disk Wiped successfully")]')
 
 
 @then('click close')

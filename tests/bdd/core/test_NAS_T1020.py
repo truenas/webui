@@ -28,15 +28,15 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
     """the browser is open on the TrueNAS URL and logged in."""
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 0.5, 10, '//input[@placeholder="Username"]')
+        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
         time.sleep(1)
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 1, 10, '//input[@placeholder="Username"]')
+        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
         driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
         driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(root_password)
-        assert wait_on_element(driver, 0.5, 4, '//button[@name="signin_button"]')
+        assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
@@ -48,33 +48,33 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
 @when('you should be on the dashboard')
 def you_should_be_on_the_dashboard(driver):
     """you should be on the dashboard."""
-    assert wait_on_element(driver, 1, 7, '//a[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 7, '//a[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
 
 
 @then('click on Sharing on the side menu and click Block Shares')
 def click_on_sharing_on_the_side_menu_and_click_block_shares(driver):
     """click on Sharing on the side menu and click Block Shares."""
-    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Sharing"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Sharing"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Sharing"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Block Shares (iSCSI)"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Block Shares (iSCSI)"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Block Shares (iSCSI)"]').click()
 
 
 @then('the iSCSI page appear at the Target Global Configuration tab')
 def the_iscsi_page_appear_at_the_target_global_configuration_tab(driver):
     """the iSCSI page appear at the Target Global Configuration tab."""
-    assert wait_on_element(driver, 1, 7, '//a[contains(.,"iSCSI")]')
-    assert wait_on_element(driver, 0.5, 7, '//h4[contains(.,"Global Configuration")]')
+    assert wait_on_element(driver, 7, '//a[contains(.,"iSCSI")]')
+    assert wait_on_element(driver, 7, '//h4[contains(.,"Global Configuration")]')
 
 
 @then('click on the Authorized Access tab, then click Add')
 def click_on_the_authorized_access_tab_then_click_add(driver):
     """click on the Authorized Access tab, then click Add."""
     driver.find_element_by_xpath('//a[@ix-auto="tab__Authorized Access"]').click()
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Authorized Access")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Authorized Access")]')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
-    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Group")]')
+    assert wait_on_element(driver, 7, '//h4[contains(.,"Group")]')
 
 
 @then(parsers.parse('input {group_id} in Group ID, input {user} in User'))
@@ -101,23 +101,23 @@ def input_secret_in_secret_input_secret_confirm_in_secret_confirm(driver, secret
 def click_submit_you_should_be_returned_to_the_authorized_access_tab(driver):
     """click Submit, you should be returned to the Authorized Access tab."""
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
-    assert wait_on_element_disappear(driver, 1, 10, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Authorized Access")]')
+    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Authorized Access")]')
 
 
 @then('the new authorized access should be on the Authorized Access list')
 def the_new_authorized_access_should_be_on_the_authorized_access_list(driver):
     """the new authorized access should be on the Authorized Access list."""
-    assert wait_on_element(driver, 0.5, 7, f'//span[contains(.,"{username}")]')
+    assert wait_on_element(driver, 7, f'//span[contains(.,"{username}")]')
 
 
 @then('click on the Portals tab, then click Add')
 def click_on_the_portals_tab_then_click_add(driver):
     """click on the Portals tab, then click Add."""
     driver.find_element_by_xpath('//a[@ix-auto="tab__Portals"]').click()
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Portals")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Portals")]')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
-    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Basic Info")]')
+    assert wait_on_element(driver, 7, '//h4[contains(.,"Basic Info")]')
 
 
 @then(parsers.parse('input "{description}" in Description'))
@@ -133,7 +133,7 @@ def input_my_no_peer_iscsi_share_in_description(driver, description):
 def select_mutual_chap_in_discovery_auth_method(driver, method):
     """select "CHAP" in Discovery Auth Method."""
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Discovery Authentication Method"]').click()
-    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Discovery Authentication Method_{method}"]')
+    assert wait_on_element(driver, 7, f'//mat-option[@ix-auto="option__Discovery Authentication Method_{method}"]')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Discovery Authentication Method_{method}"]').click()
 
 
@@ -141,7 +141,7 @@ def select_mutual_chap_in_discovery_auth_method(driver, method):
 def select_1_in_discovery_auth_group(driver, group_id):
     """select 1 in Discovery Auth Group."""
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Discovery Authentication Group"]').click()
-    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Discovery Authentication Group_{group_id}"]')
+    assert wait_on_element(driver, 7, f'//mat-option[@ix-auto="option__Discovery Authentication Group_{group_id}"]')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Discovery Authentication Group_{group_id}"]').click()
 
 
@@ -149,7 +149,7 @@ def select_1_in_discovery_auth_group(driver, group_id):
 def select_0_0_0_0_in_ip_address_input_3260_in_port(driver, ip, port):
     """select 0.0.0.0 in IP address input 3260 in Port."""
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__IP Address"]').click()
-    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__IP Address_{ip}"]')
+    assert wait_on_element(driver, 7, f'//mat-option[@ix-auto="option__IP Address_{ip}"]')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__IP Address_{ip}"]').click()
     actions = ActionChains(driver)
     actions.send_keys(Keys.ESCAPE)
@@ -162,23 +162,23 @@ def select_0_0_0_0_in_ip_address_input_3260_in_port(driver, ip, port):
 def click_submit_you_should_be_returned_to_the_portals_tab(driver):
     """click Submit, you should be returned to the Portals tab."""
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
-    assert wait_on_element_disappear(driver, 1, 10, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Portals")]')
+    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Portals")]')
 
 
 @then('the new portal should be on the Portals list')
 def the_new_portal_should_be_on_the_portals_list(driver):
     """the new portal should be on the Portals list."""
-    assert wait_on_element(driver, 0.5, 7, f'//span[contains(.,"{portal_desc}")]')
+    assert wait_on_element(driver, 7, f'//span[contains(.,"{portal_desc}")]')
 
 
 @then('click on the Initiators Group tab, then click Add')
 def click_on_the_initiators_group_tab_then_click_add(driver):
     """click on the Initiators Group tab, then click Add."""
     driver.find_element_by_xpath('//a[@ix-auto="tab__Initiators Groups"]').click()
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Initiators Groups")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Initiators Groups")]')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
-    assert wait_on_element(driver, 1, 7, '//span[contains(.,"Allow All Initiators")]')
+    assert wait_on_element(driver, 7, '//span[contains(.,"Allow All Initiators")]')
 
 
 @then(parsers.parse('click on the Allow All Initiators checkbox, input "{description}" in the Description'))
@@ -194,23 +194,23 @@ def click_on_the_allow_all_initiators_checkbox_input_no_pear_group_1_in_the_desc
 def click_save_you_should_be_returned_to_the_initiators_group_tab(driver):
     """click Save, you should be returned to the Initiators Group tab."""
     driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
-    assert wait_on_element_disappear(driver, 1, 10, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Initiators Groups")]')
+    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Initiators Groups")]')
 
 
 @then('the new initiator should be on the Initiators Group list')
 def the_new_initiator_should_be_on_the_initiators_group_list(driver):
     """the new initiator should be on the Initiators Group list."""
-    assert wait_on_element(driver, 0.5, 7, f'//span[contains(.,"{initiator_desc}")]')
+    assert wait_on_element(driver, 7, f'//span[contains(.,"{initiator_desc}")]')
 
 
 @then('click on the Targets tab, then click Add')
 def click_on_the_targets_tab_then_click_add(driver):
     """click on the Targets tab, then click Add."""
     driver.find_element_by_xpath('//a[@ix-auto="tab__Targets"]').click()
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Targets")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Targets")]')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
-    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Basic Info")]')
+    assert wait_on_element(driver, 7, '//h4[contains(.,"Basic Info")]')
 
 
 @then(parsers.parse('input {name} in Target name, input {alias} in Target alias'))
@@ -227,9 +227,9 @@ def input_nopeer1_in_target_name_input_nopeer1_in_target_alias(driver, name, ali
 @then(parsers.parse('select "{portal_group}" in Portal Group ID'))
 def select_1_my_no_peer_iscsi_share_in_portal_group_id(driver, portal_group):
     """select "1 (my no peer iscsi share)" in Portal Group ID."""
-    assert wait_on_element(driver, 0.5, 7, '//mat-select[@ix-auto="select__Portal Group ID"]')
+    assert wait_on_element(driver, 7, '//mat-select[@ix-auto="select__Portal Group ID"]')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Portal Group ID"]').click()
-    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Portal Group ID_{portal_group}"]')
+    assert wait_on_element(driver, 7, f'//mat-option[@ix-auto="option__Portal Group ID_{portal_group}"]')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Portal Group ID_{portal_group}"]').click()
 
 
@@ -237,7 +237,7 @@ def select_1_my_no_peer_iscsi_share_in_portal_group_id(driver, portal_group):
 def select_1_all_initiators_allowed_in_initiator_group_id(driver, initiator_group):
     """select "1 (ALL Initiators Allowed)" in Initiator Group ID."""
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Initiator Group ID"]').click()
-    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Initiator Group ID_{initiator_group}"]')
+    assert wait_on_element(driver, 7, f'//mat-option[@ix-auto="option__Initiator Group ID_{initiator_group}"]')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Initiator Group ID_{initiator_group}"]').click()
 
 
@@ -245,7 +245,7 @@ def select_1_all_initiators_allowed_in_initiator_group_id(driver, initiator_grou
 def select_mutual_chap_in_auth_method(driver, method):
     """select "CHAP" in Auth Method."""
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Authentication Method"]').click()
-    assert wait_on_element(driver, 1, 7, f'//mat-option[@ix-auto="option__Authentication Method_{method}"]')
+    assert wait_on_element(driver, 7, f'//mat-option[@ix-auto="option__Authentication Method_{method}"]')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Authentication Method_{method}"]').click()
 
 
@@ -253,7 +253,7 @@ def select_mutual_chap_in_auth_method(driver, method):
 def select_1_in_authentication_group_number(driver, group_id):
     """select 1 in Authentication Group Number."""
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Authentication Group Number"]').click()
-    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Authentication Group Number_{group_id}"]')
+    assert wait_on_element(driver, 7, f'//mat-option[@ix-auto="option__Authentication Group Number_{group_id}"]')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Authentication Group Number_{group_id}"]').click()
 
 
@@ -261,23 +261,23 @@ def select_1_in_authentication_group_number(driver, group_id):
 def click_submit_you_should_be_returned_to_the_targets_tab(driver):
     """click Submit, you should be returned to the Targets tab."""
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
-    assert wait_on_element_disappear(driver, 1, 10, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Targets")]')
+    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Targets")]')
 
 
 @then('the new target should be on the Targets list')
 def the_new_target_should_be_on_the_targets_list(driver):
     """the new target should be on the Targets list."""
-    assert wait_on_element(driver, 0.5, 7, f'//span[contains(.,"{target_name}")]')
+    assert wait_on_element(driver, 7, f'//span[contains(.,"{target_name}")]')
 
 
 @then('click on the Extents tab, then click Add')
 def click_on_the_extents_tab_then_click_add(driver):
     """click on the Extents tab, then click Add."""
     driver.find_element_by_xpath('//a[@ix-auto="tab__Extents"]').click()
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Extents")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Extents")]')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
-    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Basic Info")]')
+    assert wait_on_element(driver, 7, '//h4[contains(.,"Basic Info")]')
 
 
 @then(parsers.parse('input {name} in Extent name, select {extent_type} in Extent Type'))
@@ -288,7 +288,7 @@ def input_nopeer1_in_extent_name_select_device_in_extent_type(driver, name, exte
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(name)
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Extent Type"]').click()
-    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Extent Type_{extent_type}"]')
+    assert wait_on_element(driver, 7, f'//mat-option[@ix-auto="option__Extent Type_{extent_type}"]')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Extent Type_{extent_type}"]').click()
 
 
@@ -296,7 +296,7 @@ def input_nopeer1_in_extent_name_select_device_in_extent_type(driver, name, exte
 def select_tanknopeer1_100g_in_device(driver, device):
     """select "tank/nopeer1 (1.00G)" in Device."""
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Device"]').click()
-    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Device_{device}"]')
+    assert wait_on_element(driver, 7, f'//mat-option[@ix-auto="option__Device_{device}"]')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Device_{device}"]').click()
 
 
@@ -304,23 +304,23 @@ def select_tanknopeer1_100g_in_device(driver, device):
 def click_submit_you_should_be_returned_to_the_extents_tab(driver):
     """click Submit, you should be returned to the Extents tab."""
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
-    assert wait_on_element_disappear(driver, 1, 10, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Extents")]')
+    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Extents")]')
 
 
 @then('the new extent should be on the Extents list')
 def the_new_extent_should_be_on_the_extents_list(driver):
     """the new extent should be on the Extents list."""
-    assert wait_on_element(driver, 0.5, 7, f'//div[contains(.,"{extent_name}")]')
+    assert wait_on_element(driver, 7, f'//div[contains(.,"{extent_name}")]')
 
 
 @then('click on the Associated Targets tab, then click Add')
 def click_on_the_associated_targets_tab_then_click_add(driver):
     """click on the Associated Targets tab, then click Add."""
     driver.find_element_by_xpath('//a[@ix-auto="tab__Associated Targets"]').click()
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Associated Targets")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Associated Targets")]')
     driver.find_element_by_xpath('//button[@ix-auto="button___ADD"]').click()
-    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Associated Target")]')
+    assert wait_on_element(driver, 7, '//h4[contains(.,"Associated Target")]')
 
 
 @then(parsers.parse('select {target} in Target, input {lun_id} in LUN ID, select {extent} in Extent'))
@@ -329,12 +329,12 @@ def select_nopeer1_in_target_input_1_in_lun_id_select_nopeer1_in_extent(driver, 
     global target_name
     target_name = target
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Target"]').click()
-    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Target_{target}"]')
+    assert wait_on_element(driver, 7, f'//mat-option[@ix-auto="option__Target_{target}"]')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Target_{target}"]').click()
     driver.find_element_by_xpath('//input[@ix-auto="input__LUN ID"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__LUN ID"]').send_keys(lun_id)
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Extent"]').click()
-    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__Extent_{extent}"]')
+    assert wait_on_element(driver, 7, f'//mat-option[@ix-auto="option__Extent_{extent}"]')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Extent_{extent}"]').click()
 
 
@@ -342,11 +342,11 @@ def select_nopeer1_in_target_input_1_in_lun_id_select_nopeer1_in_extent(driver, 
 def click_submit_you_should_be_returned_to_the_associated_targets_tab(driver):
     """click Submit, you should be returned to the Associated Targets tab."""
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
-    assert wait_on_element_disappear(driver, 1, 10, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Associated Targets")]')
+    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Associated Targets")]')
 
 
 @then('the new associated target should be on the Associated Targets list')
 def the_new_associated_target_should_be_on_the_associated_targets_list(driver):
     """the new associated target should be on the Associated Targets list."""
-    assert wait_on_element(driver, 0.5, 7, f'//div[contains(.,"{target_name}")]')
+    assert wait_on_element(driver, 7, f'//div[contains(.,"{target_name}")]')

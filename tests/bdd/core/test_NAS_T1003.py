@@ -27,15 +27,15 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
     """the browser is open, the FreeNAS URL and logged in."""
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 0.5, 10, '//input[@placeholder="Username"]')
+        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
         time.sleep(1)
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 1, 10, '//input[@placeholder="Username"]')
+        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
         driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
         driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(root_password)
-        assert wait_on_element(driver, 0.5, 4, '//button[@name="signin_button"]')
+        assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
@@ -47,32 +47,32 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
 @when('you see the dashboard')
 def you_see_the_dashboard(driver):
     """you see the dashboard."""
-    assert wait_on_element(driver, 1, 7, '//a[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 7, '//a[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
 
 
 @then('click Network on the side menu and click Global Configuration')
 def click_network_on_the_side_menu_and_click_global_configuration(driver):
     """click Network on the side menu and click Global Configuration."""
-    assert wait_on_element(driver, 1, 5, '//mat-list-item[@ix-auto="option__Network"]')
+    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Network"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
-    assert wait_on_element(driver, 1, 5, '//mat-list-item[@ix-auto="option__Global Configuration"]')
+    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Global Configuration"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Global Configuration"]').click()
 
 
 @then('the Network Global Configuration page should open')
 def the_network_global_configuration_page_should_open(driver):
     """the Network Global Configuration page should open."""
-    assert wait_on_element(driver, 1, 7, '//a[contains(.,"Global Configuration")]')
+    assert wait_on_element(driver, 7, '//a[contains(.,"Global Configuration")]')
 
 
 @then(parsers.parse('change the first nameserver to "{ad_nameserver}" and Domain to "{ad_domain}"'))
 def change_the_first_nameserver_and_domain(driver, ad_nameserver, ad_domain):
     """change the first nameserver to "ad_nameserver" and Domain to "ad_domain"."""
-    assert wait_on_element(driver, 1, 5, '//input[@placeholder="Nameserver 1"]')
+    assert wait_on_element(driver, 5, '//input[@placeholder="Nameserver 1"]')
     driver.find_element_by_xpath('//input[@placeholder="Nameserver 1"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Nameserver 1"]').send_keys(ad_nameserver)
-    assert wait_on_element(driver, 1, 5, '//input[@placeholder="Domain"]')
+    assert wait_on_element(driver, 5, '//input[@placeholder="Domain"]')
     driver.find_element_by_xpath('//input[@placeholder="Domain"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Domain"]').send_keys(ad_domain)
 
@@ -80,36 +80,36 @@ def change_the_first_nameserver_and_domain(driver, ad_nameserver, ad_domain):
 @then('click SAVE and "Please wait" should appear')
 def click_save_and_please_wait_should_appear(driver):
     """click SAVE and "Please wait" should appear."""
-    assert wait_on_element(driver, 1, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
 
 @then('Network Global Configuration changes should be saved without errors')
 def network_global_configuration_changes_should_be_saved_without_errors(driver):
     """Network Global Configuration changes should be saved without errors."""
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Settings saved.")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')
 
 
 @then('click Directory Services on the side menu and click Active Directory')
 def click_directory_services_on_the_side_menu_and_click_active_directory(driver):
     """click Directory Services on the side menu and click Active Directory."""
-    assert wait_on_element(driver, 1, 7, '//mat-list-item[@ix-auto="option__Directory Services"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Directory Services"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Directory Services"]').click()
-    assert wait_on_element(driver, 1, 7, '//mat-list-item[@ix-auto="option__Active Directory"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Active Directory"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Active Directory"]').click()
 
 
 @then('the Domain Credentials page should open')
 def the_domain_credentials_page_should_open(driver):
     """the Domain Credentials page should open."""
-    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Domain Credentials")]')
+    assert wait_on_element(driver, 7, '//h4[contains(.,"Domain Credentials")]')
 
 
 @then(parsers.parse('input Domain name "{ad_domain}", Account name "{ad_user}", Password "{ad_password}"'))
 def input_domain_name_account_name_password(driver, ad_domain, ad_user, ad_password):
     """input Domain name "ad_domain", Account name "ad_user", Password "ad_password"."""
-    assert wait_on_element(driver, 1, 7, '//input[@ix-auto="input__Domain Name"]')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Domain Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Domain Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Domain Name"]').send_keys(ad_domain)
     driver.find_element_by_xpath('//input[@ix-auto="input__Domain Account Name"]').clear()
@@ -131,15 +131,15 @@ def click_advanced_and_input_truenas_servers_to_computer_account_ou(driver, ca_o
 def click_the_enable_checkbox_and_click_save(driver):
     """click the Enable checkbox and click SAVE."""
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]').click()
-    assert wait_on_element(driver, 1, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
 @then('Active Directory should successfully save and start without an error')
 def active_directory_should_successfully_save_and_start_without_an_error(driver):
     """Active Directory should successfully save and start without an error."""
-    assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Settings saved.")]')
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')
     # This 5 seconds of sleep is to let the system ketchup.
     element = driver.find_element_by_xpath('//span[contains(.,"root")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)

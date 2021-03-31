@@ -31,15 +31,15 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
     """the browser is open on the TrueNAS URL and logged in."""
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 0.5, 10, '//input[@placeholder="Username"]')
+        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
         time.sleep(1)
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 1, 10, '//input[@placeholder="Username"]')
+        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
         driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
         driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(root_password)
-        assert wait_on_element(driver, 0.5, 4, '//button[@name="signin_button"]')
+        assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
@@ -51,78 +51,78 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
 @when('you are on the dashboard')
 def you_are_on_the_dashboard(driver):
     """you are on the dashboard."""
-    assert wait_on_element(driver, 1, 7, '//a[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 7, '//a[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
 
 
 @then('click on Storage on the side menu, click on Pools')
 def click_on_storage_on_the_side_menu_click_on_pools(driver):
     """click on Storage on the side menu, click on Pools."""
-    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Storage"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Storage"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Pools"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Pools"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Pools"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//div[contains(.,"Pools")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Pools")]')
 
 
 @then('click on the tank pool three dots button, select Add Dataset')
 def click_on_the_tank_pool_three_dots_button_select_add_dataset(driver):
     """click on the tank pool three dots button, select Add Dataset."""
-    assert wait_on_element(driver, 1, 7, '//mat-icon[@id="actions_menu_button__tank"]')
+    assert wait_on_element(driver, 7, '//mat-icon[@id="actions_menu_button__tank"]')
     driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__tank"]').click()
-    assert wait_on_element(driver, 1, 7, '//button[@ix-auto="action__tank_Add Dataset"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="action__tank_Add Dataset"]')
     driver.find_element_by_xpath('//button[@ix-auto="action__tank_Add Dataset"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//h4[contains(.,"Name and Options")]')
+    assert wait_on_element(driver, 7, '//h4[contains(.,"Name and Options")]')
 
 
 @then('input dataset name home select SMB as Share Type and click save')
 def input_dataset_name_home_select_smb_as_share_type_and_click_save(driver):
     """input dataset name home select SMB as Share Type and click save."""
-    assert wait_on_element(driver, 0.5, 7, '//input[@ix-auto="input__Name"]')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys('home')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Share Type"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-option[@ix-auto="option__Share Type_SMB"]')
+    assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Share Type_SMB"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_SMB"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SUBMIT"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
 
 
 @then('the dataset should be created without error')
 def the_dataset_should_be_created_without_error(driver):
     """the dataset should be created without error."""
-    assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 0.5, 10, '//span[contains(.,"home")]')
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 10, '//span[contains(.,"home")]')
 
 
 @then('click on Sharing on the side menu, click on Windows Shares')
 def click_on_sharing_on_the_side_menu_click_on_windows_shares(driver):
     """click on Sharing on the side menu, click on Windows Shares."""
-    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Sharing"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Sharing"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Sharing"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Windows Shares (SMB)"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Windows Shares (SMB)"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Windows Shares (SMB)"]').click()
 
 
 @then('on the Windows Shares, click Add')
 def on_the_windows_shares_click_add(driver):
     """on the Windows Shares, click Add."""
-    assert wait_on_element(driver, 1, 7, '//div[contains(.,"Samba")]')
-    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__Samba_ADD"]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Samba")]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__Samba_ADD"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__Samba_ADD"]').click()
-    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Basic")]')
+    assert wait_on_element(driver, 7, '//h4[contains(.,"Basic")]')
 
 
 @then('input home for the Name, input the home path for the SMB dataset')
 def input_home_for_the_name_input_the_home_path_for_the_smb_dataset(driver):
     """input home for the Name, input the home path for the SMB dataset."""
-    assert wait_on_element(driver, 0.5, 7, '//input[@ix-auto="input__path"]')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__path"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__path"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__path"]').send_keys('/mnt/tank/home')
-    assert wait_on_element(driver, 0.5, 7, '//input[@ix-auto="input__Name"]')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys('home')
-    assert wait_on_element(driver, 0.5, 7, '//input[@ix-auto="input__Description"]')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Description"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys('home user Samba share')
     checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
@@ -137,12 +137,12 @@ def select_no_preset_for_purpose_click_advanced_options(driver):
     # ix-auto="select__Purpose"
     # ix-auto="option__Purpose_No presets"
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Purpose"]').click()
-    assert wait_on_element(driver, 1, 7, '//mat-option[@ix-auto="option__Purpose_No presets"]')
+    assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Purpose_No presets"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Purpose_No presets"]').click()
     # ix-auto="button__ADVANCED OPTIONS"
     if is_element_present(driver, '//button[@ix-auto="button__ADVANCED OPTIONS"]'):
         driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-checkbox[@ix-auto="checkbox__Use as Home Share"]')
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Use as Home Share"]')
 
 
 @then('click to enable Use as home share, then click Save')
@@ -151,55 +151,55 @@ def click_to_enable_use_as_home_share_then_click_save(driver):
     checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Use as Home Share"]', 'class', 'mat-checkbox-checked')
     if not checkbox_checked:
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Use as Home Share"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SUBMIT"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
 
 
 @then('the new share should be created without error')
 def the_new_share_should_be_created_without_error(driver):
     """the new share should be created without error."""
-    assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 1, 7, '//a[contains(.,"Edit ACL")]')
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 7, '//a[contains(.,"Edit ACL")]')
 
 
 @then('on the Edit ACL page, click on SELECT AN ACL PRESET')
 def on_the_edit_acl_page_click_on_select_an_acl_preset(driver):
     """on the Edit ACL page, click on SELECT AN ACL PRESET."""
-    assert wait_on_element(driver, 0.5, 7, '//h4[contains(.,"File Information")]')
+    assert wait_on_element(driver, 7, '//h4[contains(.,"File Information")]')
 
 
 @then('select HOME, click continue, set Group to builtin_users')
 def select_home_click_continue_set_group_to_builtin_users(driver):
     """select HOME, click continue, set Group to builtin_users."""
-    assert wait_on_element(driver, 0.5, 7, '//input[@placeholder="Group"]')
+    assert wait_on_element(driver, 7, '//input[@placeholder="Group"]')
     driver.find_element_by_xpath('//input[@placeholder="Group"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Group"]').send_keys('wheel')
-    assert wait_on_element(driver, 1, 7, '//mat-option[@ix-auto="option__wheel"]')
+    assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__wheel"]')
     ActionChains(driver).send_keys(Keys.ESCAPE).perform()
-    assert wait_on_element(driver, 0.5, 7, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div')
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div').click()
 
 
 @then('click Save, the permissions should save without error')
 def click_save_the_permissions_should_save_without_error(driver):
     """click Save, the permissions should save without error."""
-    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 0.5, 10, '//span[contains(.,"home")]')
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 10, '//span[contains(.,"home")]')
 
 
 @then('on Windows Shares page verify the home share exist')
 def on_windows_shares_page_verify_the_smbuser_share_exist(driver):
     """on Windows Shares page verify the home share exist."""
-    assert wait_on_element(driver, 0.5, 10, '//span[contains(.,"home")]')
+    assert wait_on_element(driver, 10, '//span[contains(.,"home")]')
 
 
 @then('click on Accounts on the side menu, click on Users')
 def click_on_accounts_on_the_side_menu_click_on_users(driver):
     """click on Accounts on the side menu, click on Users."""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Users"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Users"]')
     element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
     class_attribute = element.get_attribute('class')
     assert 'open' in class_attribute, class_attribute
@@ -209,15 +209,15 @@ def click_on_accounts_on_the_side_menu_click_on_users(driver):
 @then('on the Users page click Add')
 def on_the_users_page_click_add(driver):
     """on the Users page click Add."""
-    assert wait_on_element(driver, 0.5, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
     driver.find_element_by_xpath('//button[@ix-auto="button__Users_ADD"]').click()
 
 
 @then('input smbuser for the user name and input password')
 def input_smbuser_for_the_user_name_and_input_password(driver):
     """input smbuser for the user name and input password."""
-    assert wait_on_element(driver, 1, 7, '//h4[contains(.,"Identification")]')
-    assert wait_on_element(driver, 0.5, 7, '//input[@ix-auto="input__Full Name"]')
+    assert wait_on_element(driver, 7, '//h4[contains(.,"Identification")]')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Full Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').send_keys('SMB User')
     driver.find_element_by_xpath('//input[@ix-auto="input__Username"]').clear()
@@ -237,24 +237,24 @@ def verify_that_the_home_directory_is_autogenerated(driver):
 @then('click Submit, the user should be created without error')
 def click_submit_the_user_should_be_created_without_error(driver):
     """click Submit, the user should be created without error."""
-    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SUBMIT"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
-    assert wait_on_element_disappear(driver, 1, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 0.5, 7, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 0.5, 7, '//div[@ix-auto="value__smbuser_Username"]')
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 7, '//div[@ix-auto="value__smbuser_Username"]')
 
 
 @then('click on service on the side menu, the Service page should open')
 def click_on_service_on_the_side_menu_the_service_page_should_open(driver):
     """click on service on the side menu, the Service page should open."""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Services"]').click()
-    assert wait_on_element(driver, 1, 7, '//services')
+    assert wait_on_element(driver, 7, '//services')
 
 
 @then('if the SMB service is not started, start the service')
 def if_the_smb_service_is_not_started_start_the_service(driver):
     """if the SMB service is not started, start the service."""
-    assert wait_on_element(driver, 1, 7, '//button[@ix-auto="button__S3_Actions"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__S3_Actions"]')
     # Scroll to SMB service
     element = driver.find_element_by_xpath('//button[@ix-auto="button__S3_Actions"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)

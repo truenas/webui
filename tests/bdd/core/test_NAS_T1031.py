@@ -28,15 +28,15 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
     """the browser is open on the TrueNAS URL and logged in."""
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 0.5, 10, '//input[@placeholder="Username"]')
+        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
         time.sleep(1)
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 1, 10, '//input[@placeholder="Username"]')
+        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
         driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
         driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(root_password)
-        assert wait_on_element(driver, 0.5, 4, '//button[@name="signin_button"]')
+        assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
@@ -48,31 +48,31 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
 @when('you should be on the dashboard')
 def you_should_be_on_the_dashboard(driver):
     """you should be on the dashboard."""
-    assert wait_on_element(driver, 1, 7, '//a[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 0.5, 7, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 7, '//a[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
 
 
 @then('click on Sharing on the side menu and click Block Shares')
 def click_on_sharing_on_the_side_menu_and_click_block_shares(driver):
     """click on Sharing on the side menu and click Block Shares."""
-    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Sharing"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Sharing"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Sharing"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-list-item[@ix-auto="option__Block Shares (iSCSI)"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Block Shares (iSCSI)"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Block Shares (iSCSI)"]').click()
 
 
 @then('the iSCSI page appear at the Target Global Configuration tab')
 def the_iscsi_page_appear_at_the_target_global_configuration_tab(driver):
     """the iSCSI page appear at the Target Global Configuration tab."""
-    assert wait_on_element(driver, 1, 7, '//a[contains(.,"iSCSI")]')
-    assert wait_on_element(driver, 0.5, 7, '//h4[contains(.,"Global Configuration")]')
+    assert wait_on_element(driver, 7, '//a[contains(.,"iSCSI")]')
+    assert wait_on_element(driver, 7, '//h4[contains(.,"Global Configuration")]')
 
 
 @then('click on Wizard, the Wizard should appear')
 def click_on_wizard_the_wizard_should_appear(driver):
     """click on Wizard, the Wizard should appear."""
     driver.find_element_by_xpath('//button[@id="iscsi_wizard_action_button"]').click()
-    assert wait_on_element(driver, 1, 7, '//a[contains(.,"Wizard")]')
+    assert wait_on_element(driver, 7, '//a[contains(.,"Wizard")]')
 
 
 @then('give the <share> a name and select Device as the Extent Type')
@@ -81,16 +81,16 @@ def give_the_share_a_name_and_select_device_as_the_extent_type(driver, share):
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(share)
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Extent Type"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-option[@ix-auto="option__Extent Type_Device"]')
+    assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Extent Type_Device"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Extent Type_Device"]').click()
 
 
 @then('in the Device drop-down, select Create New')
 def in_the_device_dropdown_select_create_new(driver):
     """in the Device drop-down, select Create New."""
-    assert wait_on_element(driver, 0.5, 7, '//mat-select[@ix-auto="select__Device"]')
+    assert wait_on_element(driver, 7, '//mat-select[@ix-auto="select__Device"]')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Device"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-option[@ix-auto="option__Device_Create New"]')
+    assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Device_Create New"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Device_Create New"]').click()
 
 
@@ -98,50 +98,50 @@ def in_the_device_dropdown_select_create_new(driver):
 def select_a_dataset_set_the_size_to_50_mib(driver):
     """select a dataset, set the size to 50 MiB."""
     driver.find_element_by_xpath('//span[@class="toggle-children"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//span[@title="tank"]')
+    assert wait_on_element(driver, 7, '//span[@title="tank"]')
     driver.find_element_by_xpath('//span[@title="tank"]').click()
     # driver.find_element_by_xpath('//input[@ix-auto="input__dataset"]').send_keys('tank')
     driver.find_element_by_xpath('//input[@ix-auto="input__Size"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Size"]').send_keys('50')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-option[@ix-auto="option___MiB"]')
+    assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option___MiB"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option___MiB"]').click()
 
 
 @then('select a platform from the Sharing Platform drop-down, then click NEXT.')
 def select_a_platform_from_the_sharing_platform_dropdown_then_click_next(driver):
     """select a platform from the Sharing Platform drop-down, then click NEXT.."""
-    assert wait_on_element(driver, 0.5, 7, '//mat-select[@ix-auto="select__Sharing Platform"]')
+    assert wait_on_element(driver, 7, '//mat-select[@ix-auto="select__Sharing Platform"]')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Sharing Platform"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-option[@ix-auto="option__Sharing Platform_Modern OS: Extent block size 4k, TPC enabled, no Xen compat mode, SSD speed"]')
+    assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Sharing Platform_Modern OS: Extent block size 4k, TPC enabled, no Xen compat mode, SSD speed"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Sharing Platform_Modern OS: Extent block size 4k, TPC enabled, no Xen compat mode, SSD speed"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__NEXT_Create or Choose Block Device"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Create or Choose Block Device"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Create or Choose Block Device"]').click()
 
 
 @then(parsers.parse('In the Portal drop-down, select Create New and set the IP Address to {ip}.'))
 def in_the_portal_dropdown_select_create_new_and_set_the_ip_address_to_0000(driver, ip):
     """In the Portal drop-down, select Create New and set the IP Address to 0.0.0.0."""
-    assert wait_on_element(driver, 0.5, 7, '//mat-select[@ix-auto="select__Portal"]')
+    assert wait_on_element(driver, 7, '//mat-select[@ix-auto="select__Portal"]')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Portal"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//mat-option[@ix-auto="option__Portal_Create New"]')
+    assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Portal_Create New"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Portal_Create New"]').click()
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__IP Address"]').click()
-    assert wait_on_element(driver, 0.5, 7, f'//mat-option[@ix-auto="option__IP Address_{ip}"]')
+    assert wait_on_element(driver, 7, f'//mat-option[@ix-auto="option__IP Address_{ip}"]')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__IP Address_{ip}"]').click()
 
 
 @then('Click NEXT twice, then click Submit. Enable the service if prompted')
 def click_next_twice_then_click_submit_enable_the_service_if_prompted(driver):
     """Click NEXT twice, then click Submit. Enable the service if prompted."""
-    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__NEXT_Portal"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Portal"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Portal"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__NEXT_Initiator"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Initiator"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Initiator"]').click()
-    assert wait_on_element(driver, 0.5, 7, '//button[@ix-auto="button__SUBMIT"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
-    assert wait_on_element_disappear(driver, 1, 10, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 0.5, 7, '//h4[contains(.,"Global Configuration")]')
+    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 7, '//h4[contains(.,"Global Configuration")]')
 
 
 @then('ssh to <host> with <password> and enter iscsictl -A -t <basename>:<share> -p NAS IP')
