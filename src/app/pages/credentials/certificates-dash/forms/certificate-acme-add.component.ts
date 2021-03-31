@@ -95,18 +95,13 @@ export class CertificateAcmeAddComponent {
           name: 'domains',
           placeholder: '',
           hideButton: true,
+          width: '100%',
           templateListField: [
-            {
-              type: 'paragraph',
-              name: 'vert_spacer',
-              paraText: '',
-              width: '5%'
-            },
             {
               type: 'paragraph',
               name: 'name_text',
               paraText: '',
-              width: '25%',
+              width: '100%',
             },
             {
               type: 'select',
@@ -188,7 +183,7 @@ export class CertificateAcmeAddComponent {
             const name_text_fc = _.find(controls, {name: 'name_text'});
             const auth_fc = _.find(controls, {name: 'authenticators'});
             this.domainList.controls[i].controls['name_text'].setValue(domains[i]);
-            name_text_fc.paraText = domains[i];
+            name_text_fc.paraText = "<b>"+domains[i]+"</b>";
             auth_fc.options = this.dns_map.options;
           }
         }
