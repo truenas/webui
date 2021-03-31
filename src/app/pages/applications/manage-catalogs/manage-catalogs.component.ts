@@ -13,6 +13,7 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 import { ManageCatalogSummaryDialog } from '../dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import {CatalogAddFormComponent} from '../forms/catalog-add-form.component';
 import {CatalogEditFormComponent} from '../forms/catalog-edit-form.component';
+import { EntityUtils } from '../../common/entity/utils';
 
 @Component({
   selector: 'app-manage-catalogs',
@@ -169,7 +170,18 @@ export class ManageCatalogsComponent {
   }
 
   syncRow(row) {
-    this.syncAll();
+    const payload = [row.label];
+    this.loader.open();
+    this.ws.call("catalog.sync", payload).subscribe(
+      (res) => {
+        this.loader.close();
+        this.refresh();
+      },
+      (res) => {
+        this.loader.close();
+        new EntityUtils().handleWSError(this, res, this.dialogService);
+      }
+    );
   }
 
   onRowClick(row) {
