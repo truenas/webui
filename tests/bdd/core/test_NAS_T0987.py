@@ -69,6 +69,7 @@ def the_users_page_should_open(driver):
 @then('click the Greater-Than-Sign right of the users')
 def click_the_greaterthansign_right_of_the_users(driver):
     """click the Greater-Than-Sign right of the users."""
+    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
 
 
@@ -92,9 +93,9 @@ def change_the_user_shell_and_click_save(driver):
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Shell"]').click()
-    wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Shell_tcsh"]')
+    assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Shell_tcsh"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Shell_tcsh"]').click()
-    wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
@@ -102,14 +103,15 @@ def change_the_user_shell_and_click_save(driver):
 def the_changes_should_be_saved(driver):
     """the changes should be saved."""
     wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
-    wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
 
 
 @then('open the user dropdown')
 def open_the_user_dropdown(driver):
     """open the user dropdown."""
+    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
-    wait_on_element(driver, 30, '//button[@ix-auto="button__EDIT_ericbsd"]')
+    assert wait_on_element(driver, 30, '//button[@ix-auto="button__EDIT_ericbsd"]')
     driver.find_element_by_xpath('//h4[contains(.,"Shell:")]')
 
 

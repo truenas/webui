@@ -70,6 +70,7 @@ def the_users_page_should_open(driver):
 @then('click the Greater-Than-Sign right of the users')
 def click_the_greaterthansign_right_of_the_users(driver):
     """click the Greater-Than-Sign right of the users."""
+    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
 
 
@@ -93,7 +94,7 @@ def change_the_password_in_both_fields_and_click_save(driver):
     driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing1234')
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing1234')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 

@@ -22,20 +22,17 @@ from pytest_bdd import (
 )
 
 
-localHome = os.path.expanduser('~')
-dotsshPath = localHome + '/.ssh'
-keyPath = localHome + '/.ssh/ui_test_id_rsa'
-
-setup_ssh_agent()
-if os.path.isdir(dotsshPath) is False:
-    os.makedirs(dotsshPath)
-if os.path.exists(keyPath) is False:
-    create_key(keyPath)
-add_ssh_key(keyPath)
-
-
 @pytest.fixture(scope='module')
 def ssh_key():
+    localHome = os.path.expanduser('~')
+    dotsshPath = localHome + '/.ssh'
+    keyPath = localHome + '/.ssh/ui_test_id_rsa'
+    setup_ssh_agent()
+    if os.path.isdir(dotsshPath) is False:
+        os.makedirs(dotsshPath)
+    if os.path.exists(keyPath) is False:
+        create_key(keyPath)
+    add_ssh_key(keyPath)
     ssh_key_file = open(f'{keyPath}.pub', 'r')
     return ssh_key_file.read().strip()
 
@@ -116,7 +113,7 @@ def input_the_public_key_in_the_ssh_public_key_field_then_click_save(driver, ssh
     assert wait_on_element(driver, 5, '//textarea[@placeholder="SSH Public Key"]')
     driver.find_element_by_xpath('//textarea[@placeholder="SSH Public Key"]').clear()
     driver.find_element_by_xpath('//textarea[@placeholder="SSH Public Key"]').send_keys(ssh_key)
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 

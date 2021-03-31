@@ -6,7 +6,8 @@ from function import (
     wait_on_element,
     is_element_present,
     wait_on_element_disappear,
-    attribute_value_exist
+    attribute_value_exist,
+    wait_for_attribute_value
 )
 from pytest_bdd import (
     given,
@@ -70,6 +71,7 @@ def the_users_page_should_open(driver):
 @then('click the Greater-Than-Sign right of the users')
 def click_the_greaterthansign_right_of_the_users(driver):
     """click the Greater-Than-Sign right of the users."""
+    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
 
 
@@ -84,17 +86,21 @@ def the_user_field_should_expand_down_then_click_the_edit_button(driver):
 def the_user_edit_page_should_open(driver):
     """the User Edit Page should open."""
     assert wait_on_element(driver, 7, '//h4[contains(.,"Identification")]')
+    time.sleep(1)
 
 
 @then('change some permissions for the Home Directory and click save')
 def change_some_permissions_for_the_home_directory_and_click_save(driver):
     """change some permissions for the Home Directory and click save."""
-    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__home_mode_groupWrite"]')
+    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__home_mode_groupWrite"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__home_mode_groupWrite"]').click()
+    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__home_mode_groupExec"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__home_mode_groupExec"]').click()
+    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__home_mode_otherWrite"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__home_mode_otherWrite"]').click()
+    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__home_mode_otherExec"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__home_mode_otherExec"]').click()
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
@@ -109,6 +115,7 @@ def changes_should_be_saved_without_an_error(driver):
 def reopen_the_user_edit_page(driver):
     """reopen the user edit page."""
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__ericbsd"]')
+    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__EDIT_ericbsd"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
@@ -118,7 +125,8 @@ def reopen_the_user_edit_page(driver):
 @then('verify all permissions are save properly')
 def verify_all_permissions_are_save_properly(driver):
     """verify all permissions are save properly."""
-    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__home_mode_groupWrite"]')
+    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__home_mode_ownerWrite"]', 'clickable')
+    assert wait_for_attribute_value(driver, 5, '//mat-checkbox[@ix-auto="checkbox__home_mode_ownerWrite"]', 'class', 'mat-checkbox-checked')
     assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__home_mode_ownerWrite"]', 'class', 'mat-checkbox-checked')
     assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__home_mode_ownerRead"]', 'class', 'mat-checkbox-checked')
     assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__home_mode_ownerExec"]', 'class', 'mat-checkbox-checked')
@@ -134,12 +142,15 @@ def verify_all_permissions_are_save_properly(driver):
 def revert_your_changes_and_click_save(driver):
     """revert your changes and click save."""
     # setting back the original permission for future test
-    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__home_mode_groupWrite"]')
+    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__home_mode_groupWrite"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__home_mode_groupWrite"]').click()
+    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__home_mode_groupExec"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__home_mode_groupExec"]').click()
+    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__home_mode_otherWrite"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__home_mode_otherWrite"]').click()
+    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__home_mode_otherExec"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__home_mode_otherExec"]').click()
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element(driver, 5, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 5, '//div[@ix-auto="value__ericbsd_Username"]')

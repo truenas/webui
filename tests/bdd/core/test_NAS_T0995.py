@@ -68,6 +68,7 @@ def the_users_page_should_open(driver):
 @then('click the Greater-Than-Sign right of the users')
 def click_the_greaterthansign_right_of_the_users(driver):
     """click the Greater-Than-Sign right of the users."""
+    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
 
 
@@ -96,7 +97,7 @@ def change_the_password_with_mismatched_passwords(driver):
 @then('you should not be able to save the changes')
 def you_should_not_be_able_to_save_the_changes(driver):
     """you should not be able to save the changes."""
-    wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
     element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
     class_attribute = element.get_attribute('disabled')
     assert class_attribute == 'true'

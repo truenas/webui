@@ -110,7 +110,7 @@ def click_enable_checkbox_then_samba_schema_and_select_on_for_encryption_mode(dr
 @then('click SAVE Please wait should appear while settings are applied')
 def click_save_please_wait_should_appear_while_settings_are_applied(driver):
     """click SAVE Please wait should appear while settings are applied."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 

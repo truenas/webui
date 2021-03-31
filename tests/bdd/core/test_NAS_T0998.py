@@ -8,7 +8,7 @@ from function import (
     wait_on_element,
     is_element_present,
     wait_on_element_disappear,
-    attribute_value_exist,
+    wait_for_attribute_value,
     setup_ssh_agent,
     create_key,
     add_ssh_key,
@@ -22,20 +22,17 @@ from pytest_bdd import (
 )
 
 
-localHome = os.path.expanduser('~')
-dotsshPath = localHome + '/.ssh'
-keyPath = localHome + '/.ssh/ui_test_id_rsa'
-
-setup_ssh_agent()
-if os.path.isdir(dotsshPath) is False:
-    os.makedirs(dotsshPath)
-if os.path.exists(keyPath) is False:
-    create_key(keyPath)
-add_ssh_key(keyPath)
-
-
 @pytest.fixture(scope='module')
 def ssh_key():
+    localHome = os.path.expanduser('~')
+    dotsshPath = localHome + '/.ssh'
+    keyPath = localHome + '/.ssh/ui_test_id_rsa'
+    setup_ssh_agent()
+    if os.path.isdir(dotsshPath) is False:
+        os.makedirs(dotsshPath)
+    if os.path.exists(keyPath) is False:
+        create_key(keyPath)
+    add_ssh_key(keyPath)
     ssh_key_file = open(f'{keyPath}.pub', 'r')
     return ssh_key_file.read().strip()
 
@@ -94,6 +91,7 @@ def the_users_page_should_open(driver):
 @then('click the Greater-Than-Sign right of the users')
 def click_the_greaterthansign_right_of_the_users(driver):
     """click the Greater-Than-Sign right of the users."""
+    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
 
 
@@ -116,7 +114,7 @@ def input_the_public_key_in_the_ssh_public_key_field_then_click_save(driver, ssh
     assert wait_on_element(driver, 5, '//textarea[@placeholder="SSH Public Key"]')
     driver.find_element_by_xpath('//textarea[@placeholder="SSH Public Key"]').clear()
     driver.find_element_by_xpath('//textarea[@placeholder="SSH Public Key"]').send_keys(ssh_key)
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
@@ -131,6 +129,7 @@ def changes_should_be_saved_without_an_error(driver):
 def reopen_the_user_edit_page(driver):
     """reopen the user edit page."""
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__ericbsd"]')
+    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__EDIT_ericbsd"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
@@ -140,9 +139,8 @@ def reopen_the_user_edit_page(driver):
 @then('verify the public key save properly')
 def verify_the_public_key_save_properly(driver, ssh_key):
     """verify the public key save properly."""
-    assert wait_on_element(driver, 5, '//h4[contains(.,"Identification")]')
     assert wait_on_element(driver, 5, '//textarea[@placeholder="SSH Public Key"]')
-    assert attribute_value_exist(driver, '//textarea[@placeholder="SSH Public Key"]', 'value', ssh_key)
+    assert wait_for_attribute_value(driver, 5, '//textarea[@placeholder="SSH Public Key"]', 'value', ssh_key)
 
 
 @then('try to ssh in with the ssh-key')

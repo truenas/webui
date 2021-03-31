@@ -69,6 +69,7 @@ def the_users_page_should_open(driver):
 @then('click the Greater-Than-Sign right of the users')
 def click_the_greaterthansign_right_of_the_users(driver):
     """click the Greater-Than-Sign right of the users."""
+    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
 
 
@@ -91,7 +92,7 @@ def change_the_mail_with_an_invalid_email(driver, email):
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Email"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').send_keys(email)
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 

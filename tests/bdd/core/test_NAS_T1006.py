@@ -8,7 +8,7 @@ from function import (
     wait_on_element,
     is_element_present,
     wait_on_element_disappear,
-    attribute_value_exist
+    wait_for_attribute_value
 )
 from pytest_bdd import (
     given,
@@ -150,7 +150,7 @@ def click_the_apply_group_checkbox_and_click_the_save_button(driver):
     """click the Apply Group checkbox and click the Save button."""
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div').click()
-    wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
@@ -165,4 +165,4 @@ def you_should_return_to_the_pool_page(driver):
 def verify_that_the_group_name_is_ad01administrator(driver, group_name):
     """Verify that the group name is "group_name"."""
     assert wait_on_element(driver, 7, '//input[@placeholder="Group"]')
-    assert attribute_value_exist(driver, '//input[@placeholder="Group"]', 'value', group_name)
+    assert wait_for_attribute_value(driver, 5, '//input[@placeholder="Group"]', 'value', group_name)

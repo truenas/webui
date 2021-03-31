@@ -149,7 +149,7 @@ def select_system_and_click_save(driver):
     """select system, and click Save."""
     assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__System Dataset Pool_system"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__System Dataset Pool_system"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 

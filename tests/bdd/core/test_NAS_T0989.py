@@ -70,6 +70,7 @@ def the_users_page_should_open(driver):
 @then('click the Greater-Than-Sign right of the users')
 def click_the_greaterthansign_right_of_the_users(driver):
     """click the Greater-Than-Sign right of the users."""
+    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
 
 
@@ -91,10 +92,10 @@ def change_the_users_email_for_user_email_and_click_save(driver, email):
     """change the user email for "email" and click save."""
     global user_email
     user_email = email
-    wait_on_element(driver, 7, '//input[@ix-auto="input__Email"]')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Email"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').send_keys(email)
-    wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
@@ -102,14 +103,15 @@ def change_the_users_email_for_user_email_and_click_save(driver, email):
 def change_should_be_saved(driver):
     """change should be saved."""
     wait_on_element_disappear(driver, 7, '//h6[contains(.,"Please wait")]')
-    wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
 
 
 @then('open the user dropdown')
 def open_the_user_drop_down(driver):
     """open the user dropdown."""
+    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
-    wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]')
     driver.find_element_by_xpath('//h4[contains(.,"Email:")]')
 
 

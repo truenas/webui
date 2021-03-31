@@ -80,7 +80,7 @@ def change_the_first_nameserver_and_domain(driver, ad_nameserver, ad_domain):
 @then('click SAVE and "Please wait" should appear')
 def click_save_and_please_wait_should_appear(driver):
     """click SAVE and "Please wait" should appear."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
@@ -131,7 +131,7 @@ def click_advanced_and_input_truenas_servers_to_computer_account_ou(driver, ca_o
 def click_the_enable_checkbox_and_click_save(driver):
     """click the Enable checkbox and click SAVE."""
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 

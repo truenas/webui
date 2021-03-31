@@ -81,7 +81,7 @@ def input_Nameserver_3_and_click_save(driver, ad_nameserver3):
     """input Nameserver 3 "ad_nameserver3" and click SAVE."""
     driver.find_element_by_xpath('//input[@placeholder="Nameserver 3"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Nameserver 3"]').send_keys(ad_nameserver3)
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 

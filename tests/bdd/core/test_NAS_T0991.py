@@ -69,6 +69,7 @@ def the_users_page_should_open(driver):
 @then('click the Greater-Than-Sign right of the users')
 def click_the_greaterthansign_right_of_the_users(driver):
     """click the Greater-Than-Sign right of the users."""
+    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
 
 
@@ -96,7 +97,7 @@ def change_the_path_of_the_users_home_directory(driver):
 @then('click save and changes should be saved')
 def click_save_and_changes_should_be_saved(driver):
     """click save and changes should be saved."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"Users")]')
@@ -106,6 +107,7 @@ def click_save_and_changes_should_be_saved(driver):
 def open_the_dropdown_details_pane(driver):
     """open the drop-down details pane."""
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__ericbsd"]')
+    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]')
     driver.find_element_by_xpath('//h4[contains(.,"Home directory:")]')

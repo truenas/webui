@@ -92,7 +92,7 @@ def input_password_confirm_password_and_click_save(driver):
     driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing')
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').send_keys('testing')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
 
 

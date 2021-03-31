@@ -70,6 +70,7 @@ def the_users_page_should_open(driver):
 @then('click the Greater-Than-Sign right of the users')
 def click_the_greaterthansign_right_of_the_users(driver):
     """click the Greater-Than-Sign right of the users."""
+    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
 
 
@@ -93,7 +94,7 @@ def change_disable_password_to_no_and_click_save(driver):
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Disable Password"]').click()
     assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Disable Password_No"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Disable Password_No"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
@@ -107,6 +108,7 @@ def change_should_be_saved(driver):
 @then('open the user dropdown')
 def open_the_user_dropdown(driver):
     """open the user dropdown."""
+    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]')
 

@@ -84,7 +84,10 @@ def the_edit_acl_page_should_open(driver):
 @then('click on Add ACL Item')
 def click_on_add_acl_item(driver):
     """click on Add ACL Item."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__ADD ACL ITEM"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__ADD ACL ITEM"]', 'clickable')
+    element = driver.find_element_by_xpath('//button[@ix-auto="button__ADD ACL ITEM"]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(0.5)
     driver.find_element_by_xpath('//button[@ix-auto="button__ADD ACL ITEM"]').click()
 
 
@@ -119,7 +122,7 @@ def in_user_input_enter_eric_and_select_ericbsd(driver, user_input, user):
 @then('click the Save button, should be returned to the Pools page')
 def click_the_save_button_should_be_returned_to_the_pools_page(driver):
     """click the Save button, should be returned to the Pools page."""
-    wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//mat-panel-title[contains(.,"tank")]')

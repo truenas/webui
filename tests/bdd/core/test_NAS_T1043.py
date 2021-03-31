@@ -66,6 +66,7 @@ def click_on_the_accounts_on_the_side_menu_click_on_users(driver):
 def on_the_users_page_click_the_foo_user_right_arrow(driver):
     """on the Users page, click the foo user right arrow."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__foo"]')
     driver.find_element_by_xpath('//a[@ix-auto="expander__foo"]').click()
 
 
@@ -88,7 +89,7 @@ def on_the_user_edit_page_change_the_user_name_to_too_foo(driver, name):
 @then('click save change should save without error')
 def click_save_change_should_save_without_error(driver):
     """click save change should save without error."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 7, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
@@ -97,7 +98,8 @@ def click_save_change_should_save_without_error(driver):
 @then('open the foo user dropdown')
 def open_the_foo_user_dropdown(driver):
     """open the foo user dropdown."""
-    driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
+    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__foo"]', 'clickable')
+    driver.find_element_by_xpath('//a[@ix-auto="expander__foo"]').click()
 
 
 @then(parsers.parse('verify the full name changed to {name}'))

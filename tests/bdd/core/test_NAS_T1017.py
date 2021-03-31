@@ -148,7 +148,7 @@ def uncheck_on_other_read_access_and_uncheck_other_execute(driver):
 @then('click the Save button, should be returned to the pool list page')
 def click_the_save_button_should_be_returned_to_the_pool_list_page(driver):
     """click the Save button, should be returned to the pool list page."""
-    wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element(driver, 7, '//mat-panel-title[contains(.,"tank")]')
     driver.find_element_by_xpath('//td[@ix-auto="value__tank_name"]')

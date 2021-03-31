@@ -85,7 +85,7 @@ def input_guest_for_name_select_smb_as_share_type_and_click_submit(driver):
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Share Type"]').click()
     assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Share Type_SMB"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_SMB"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
 
 
@@ -145,7 +145,7 @@ def click_advanced_options_and_check_the_allow_guest_access_box(driver):
 @then('click Submit, the new share should be created without error')
 def click_submit_the_new_share_should_be_created_without_error(driver):
     """click Submit, the new share should be created without error."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"guest_share")]')
@@ -164,7 +164,7 @@ def click_on_the_guest_dataset_3_dots_button_select_edit_permissions(driver):
 def on_the_edit_acl_page_set_the_user_to_nobody_and_the_group_to_nogroup(driver):
     """on the Edit ACL page, set the user to nobody and the Group to nogroup."""
     assert wait_on_element(driver, 7, '//h4[contains(.,"File Information")]')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SELECT AN ACL PRESET"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SELECT AN ACL PRESET"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SELECT AN ACL PRESET"]').click()
     assert wait_on_element(driver, 7, '//mat-select[@ix-auto="select__Default ACL Options"]')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Default ACL Options"]').click()
@@ -191,7 +191,7 @@ def on_the_edit_acl_page_set_the_user_to_nobody_and_the_group_to_nogroup(driver)
 @then('click Save, the permissions should save without error')
 def click_save_the_permissions_should_save_without_error(driver):
     """click Save, the permissions should save without error."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//span[contains(.,"guest")]')

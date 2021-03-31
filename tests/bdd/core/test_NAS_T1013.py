@@ -101,7 +101,7 @@ def input_my_ldap_smb_test_share_as_the_description_click_summit(driver, descrip
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Description"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys(description)
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Configure ACL")]')
     ActionChains(driver).send_keys(Keys.ESCAPE).perform()
@@ -175,7 +175,7 @@ def click_the_enable_checkbox_and_click_save(driver):
     """click the Enable checkbox and click SAVE."""
     assert wait_on_element(driver, 5, '//div[contains(.,"Server Credentials")]')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable"]').click()
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"Settings saved.")]')

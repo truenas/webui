@@ -70,6 +70,7 @@ def the_users_page_should_open(driver):
 @then('click the Greater-Than-Sign right of the users')
 def click_the_greaterthansign_right_of_the_users(driver):
     """click the Greater-Than-Sign right of the users."""
+    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
 
 
@@ -93,7 +94,7 @@ def add_additional_groups_wheel_and_click_save(driver):
     assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Auxiliary Groups_wheel"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_wheel"]').click()
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_wheel"]').send_keys(Keys.TAB)
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
@@ -107,6 +108,7 @@ def change_should_be_saved(driver):
 @then('reopen the user edit page')
 def reopen_the_user_edit_page(driver):
     """reopen the user edit page."""
+    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
