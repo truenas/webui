@@ -88,19 +88,16 @@ export class DockerImagesComponent implements OnInit {
 
   getActions(row) {
     const actions = [];
-    if (row.update_available) {
-      actions.push({
-        id: row.id,
-        icon: 'edit',
-        label : helptext.dockerImages.menu.update,
-        name: 'update',
-        onClick : (row) => {
-          this.onClickUpdateImage(row);
-        }
-      });
-    };
-
     actions.push({
+      id: row.id,
+      icon: 'edit',
+      label : helptext.dockerImages.menu.update,
+      name: 'update',
+      disabled: !row.update_available,
+      onClick : (row) => {
+        this.onClickUpdateImage(row);
+      }
+    }, {
       id: row.id,
       icon: 'delete',
       label : helptext.dockerImages.menu.delete,
