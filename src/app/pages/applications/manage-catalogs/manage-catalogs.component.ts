@@ -105,6 +105,7 @@ export class ManageCatalogsComponent {
       icon: 'delete',
       label : helptext.manageCatalogs.menu.delete,
       name: 'delete',
+      disabled: row.builtin,
       onClick : (row) => {
         this.entityList.doDelete(row);
       }
