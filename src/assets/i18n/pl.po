@@ -5,16 +5,16 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 msgid " Built-in Groups"
-msgstr "Grupy wbudowane"
+msgstr " Grupy wbudowane"
 
 msgid " Builtin Users"
-msgstr "Użytkownicy wbudowani"
+msgstr " Użytkownicy wbudowani"
 
 msgid " Check Notifications for more details."
-msgstr "Sprawdź powiadomienia aby uzyskac więcej informacji"
+msgstr " Sprawdź powiadomienia aby uzyskac więcej informacji"
 
 msgid " Download Updates"
-msgstr "Pobierz Aktualziacje"
+msgstr " Pobierz Aktualziacje"
 
 msgid " First vdev has "
 msgstr " Pierwszy vdev ma "
@@ -23,16 +23,16 @@ msgid " First vdev is a "
 msgstr " Pierwszy vdev to"
 
 msgid " KiB."
-msgstr "KB"
+msgstr " KB"
 
 msgid " Please click the button below to add "
-msgstr ""
+msgstr " Aby dodać, kliknij poniższy przycisk "
 
 msgid " Plugin"
-msgstr "Wtyczka"
+msgstr " Wtyczka"
 
 msgid " Service"
-msgstr "Usługa"
+msgstr " Usługa"
 
 msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
@@ -52,43 +52,43 @@ msgid ""
 msgstr ""
 
 msgid " and "
-msgstr "i"
+msgstr " i"
 
 msgid " and will be disrupted if the pool is detached:"
-msgstr ""
+msgstr " i zostanie przerwany, jeśli pula zostanie odłączona:"
 
 msgid " and will be disrupted if the pool is locked:"
 msgstr " i zostanie przerwany jeśli pula zostanie zablokowana:"
 
 msgid " built-in groups (default setting is <i>hidden</i>)."
-msgstr ""
+msgstr " wbudowane grupy (ustawienie domyślne to <i> ukryte </i>)."
 
 msgid " builtin users (default setting is <i>hidden</i>)."
-msgstr ""
+msgstr " wbudowani użytkownicy (ustawienie domyślne to <i> ukryte </i>). "
 
 msgid " but datastore "
 msgstr " magazyn danych"
 
 msgid " configured"
-msgstr ""
+msgstr " skonfigurowany"
 
 msgid " day, "
-msgstr "dzień"
+msgstr " dzień"
 
 msgid " days, "
-msgstr "dni"
+msgstr " dni"
 
 msgid " disks"
-msgstr "dyski"
+msgstr " dyski"
 
 msgid " disks, new vdev has "
 msgstr " dyski, nowy vdev ma "
 
 msgid " from the database."
-msgstr ""
+msgstr " z bazy danych."
 
 msgid " is "
-msgstr "jest"
+msgstr " jest"
 
 msgid " is required."
 msgstr "jest wymagane"
@@ -105,37 +105,37 @@ msgid ""
 msgstr ""
 
 msgid " minute"
-msgstr "minuta"
+msgstr " minuta"
 
 msgid " minutes"
-msgstr "minut"
+msgstr " minut"
 
 msgid " official plugins"
-msgstr "Oficjalne pluginy"
+msgstr " oficjalne pluginy"
 
 msgid " on pool "
 msgstr ""
 
 msgid " seconds"
-msgstr ""
+msgstr " sekund"
 
 msgid " seconds."
-msgstr ""
+msgstr " sekund"
 
 msgid " service has been enabled."
 msgstr "usługa została wyłączona"
 
 msgid " should be at least "
-msgstr ""
+msgstr " powinna wynosić co najmniej "
 
 msgid " should be no more than "
-msgstr ""
+msgstr " nie powinna być większa niż "
 
 msgid " successfully saved."
 msgstr "zapisano pomyślnie"
 
 msgid " successfully unlocked"
-msgstr ""
+msgstr " pomyślnie odblokowany"
 
 msgid " system is powered on and connected to the network."
 msgstr " system jest włączony i podłączony do sieci."
@@ -150,7 +150,7 @@ msgid " updated."
 msgstr "zaktualizowane"
 
 msgid " yet."
-msgstr ""
+msgstr " jeszcze."
 
 msgid "% of all cores"
 msgstr "% użycia wszytskich rdzeni"
@@ -169,7 +169,7 @@ msgid "(24 Hours)"
 msgstr "(24 Godziny)"
 
 msgid "(Examples: 500 KiB, 500M, 2 TB)"
-msgstr ""
+msgstr "(Przykłady: 500 KiB, 500 MB, 2 TB)"
 
 msgid "(Legacy Encryption)"
 msgstr ""
@@ -2106,7 +2106,7 @@ msgid "Browsable to Network Clients"
 msgstr ""
 
 msgid "Browse a Collection"
-msgstr ""
+msgstr "Przeglądaj kolekcje"
 
 msgid "Browse to a CD-ROM file present on the system storage."
 msgstr ""
@@ -3394,19 +3394,19 @@ msgid "Create a custom ACL"
 msgstr ""
 
 msgid "Create a new Pool."
-msgstr ""
+msgstr "Utwórz nową pulę"
 
 msgid "Create a new Target or choose an existing target for this share."
-msgstr ""
+msgstr "Utwórz nową pulę"
 
 msgid "Create a new pool."
-msgstr ""
+msgstr "Utwórz nową pulę"
 
 msgid "Create a new, empty pool."
-msgstr ""
+msgstr "Utwórz nową pustą pulę"
 
 msgid "Create a pool:"
-msgstr ""
+msgstr "Utwórz pulę"
 
 msgid "Create a recommended formation of vdevs in a pool."
 msgstr ""
@@ -3424,7 +3424,7 @@ msgid "Create new Pool"
 msgstr ""
 
 msgid "Create new disk image"
-msgstr ""
+msgstr "Utwórz nowy obraz dysku"
 
 msgid "Create new pods and then kill old ones."
 msgstr ""
