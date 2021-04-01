@@ -40,6 +40,7 @@ export class PullImageFormComponent {
           type: 'input',
           name: 'password',
           inputType: 'password',
+          togglePw: true,
           placeholder: helptext.pullImageForm.password.placeholder,
           tooltip: helptext.pullImageForm.password.tooltip,
         },
