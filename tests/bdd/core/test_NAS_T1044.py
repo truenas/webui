@@ -1,5 +1,5 @@
 # coding=utf-8
-"""Core feature tests."""
+"""CORE feature tests."""
 
 import time
 from function import (
@@ -11,14 +11,13 @@ from pytest_bdd import (
     given,
     scenario,
     then,
-    when,
-    parsers
+    when
 )
 
 
-@scenario('features/NAS-T1043.feature', 'Edit User Full Name')
-def test_edit_user_full_name(driver):
-    """Edit User Full Name."""
+@scenario('features/NAS-T1044.feature', 'Verify you can Delete a user')
+def test_verify_you_can_delete_a_user(driver):
+    """Verify you can Delete a user."""
     pass
 
 
@@ -70,40 +69,27 @@ def on_the_users_page_click_the_foo_user_right_arrow(driver):
     driver.find_element_by_xpath('//a[@ix-auto="expander__foo"]').click()
 
 
-@then('when the user field expand down, click the Edit button')
-def when_the_user_field_expand_down_click_the_edit_button(driver):
-    """when the user field expand down, click the Edit button."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_foo"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_foo"]').click()
+@then('when the user field expand down, click the Delete button')
+def when_the_user_field_expand_down_click_the_delete_button(driver):
+    """when the user field expand down, click the Delete button."""
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__DELETE_foo"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__DELETE_foo"]').click()
 
 
-@then(parsers.parse('on the User Edit Page, change the user Name to {name}'))
-def on_the_user_edit_page_change_the_user_name_to_too_foo(driver, name):
-    """on the User Edit Page, change the user Name to Too Foo."""
-    assert wait_on_element(driver, 7, '//a[contains(.,"Edit")]')
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Full Name"]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').send_keys(name)
+@then('on the dialog box, Confirm deletion and click Delete')
+def on_the_dialog_box_confirm_deletion_and_click_delete(driver):
+    """on the dialog box, Confirm deletion and click Delete."""
+    assert wait_on_element(driver, 7, '//h1[contains(.,"Delete User")]')
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Delete user primary group foo"]', 'clickable')
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Delete user primary group foo"]').click()
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__DELETE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__DELETE"]').click()
 
 
-@then('click save change should save without error')
-def click_save_change_should_save_without_error(driver):
-    """click save change should save without error."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 7, '//h6[contains(.,"Please wait")]')
+@then('the foo user should be removed from the user account list')
+def the_foo_user_should_be_removed_from_the_user_account_list(driver):
+    """the foo user should be removed from the user account list."""
+    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
-
-
-@then('open the foo user dropdown')
-def open_the_foo_user_dropdown(driver):
-    """open the foo user dropdown."""
-    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__foo"]', 'clickable')
-    driver.find_element_by_xpath('//a[@ix-auto="expander__foo"]').click()
-
-
-@then(parsers.parse('verify the full name changed to {name}'))
-def verify_the_full_name_changed_to_too_foo(driver, name):
-    """verify the full name changed to Too Foo."""
-    assert wait_on_element(driver, 7, '//h4[contains(.,"Email:")]')
-    assert wait_on_element(driver, 7, f'//span[contains(.,"{name}")]')
+    assert is_element_present(driver, '//div[@ix-auto="value__foo_Username"]') is False
