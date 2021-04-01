@@ -84,6 +84,7 @@ def the_user_field_should_expand_down_then_click_the_edit_button(driver):
 def the_user_edit_page_should_open(driver):
     """the User Edit Page should open."""
     assert wait_on_element(driver, 7, '//h4[contains(.,"Identification")]')
+    time.sleep(0.5)
 
 
 @then(parsers.parse('change the mail with an invalid email "{email}"'))

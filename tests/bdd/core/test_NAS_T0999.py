@@ -132,12 +132,12 @@ def reopen_the_user_edit_page(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__EDIT_root"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_root"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Identification")]')
+    time.sleep(0.5)
 
 
 @then('verify the public key save properly')
 def verify_the_public_key_save_properly(driver, ssh_key):
     """verify the public key save properly."""
-    assert wait_on_element(driver, 5, '//h4[contains(.,"Identification")]')
     assert wait_on_element(driver, 5, '//textarea[@placeholder="SSH Public Key"]')
     assert attribute_value_exist(driver, '//textarea[@placeholder="SSH Public Key"]', 'value', ssh_key)
 

@@ -49,10 +49,12 @@ def wait_on_element(driver, wait, xpath, condition=None):
 
 
 def wait_on_element_disappear(driver, wait, xpath):
-    for _ in range(wait):
-        time.sleep(1)
+    timeout = time.time() + wait
+    while time.time() <= timeout:
         if not is_element_present(driver, xpath):
             return True
+        # this just to slow down the loop
+        time.sleep(0.1)
     else:
         return False
 
@@ -67,10 +69,12 @@ def attribute_value_exist(driver, xpath, attribute, value):
 
 
 def wait_for_attribute_value(driver, wait, xpath, attribute, value):
-    for _ in range(wait):
-        time.sleep(1)
+    timeout = time.time() + wait
+    while time.time() <= timeout:
         if attribute_value_exist(driver, xpath, attribute, value):
             return True
+        # this just to slow down the loop
+        time.sleep(0.1)
     else:
         return False
 
