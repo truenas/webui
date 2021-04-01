@@ -38,7 +38,7 @@ export class CatalogAddFormComponent {
           name: 'force',
           placeholder: helptext.catalogForm.forceCreate.placeholder,
           tooltip: helptext.catalogForm.forceCreate.tooltip,
-          value: true,
+          value: false,
         },
         {
           type: 'input',
