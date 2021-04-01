@@ -21,7 +21,8 @@ manager_disknumExtendConfirmMessage : T("It is not recommended to extend a pool 
 
 manager_vdevtypeErrorMessage : T("Adding data vdevs of different types is not supported."),
 
-manager_stripeVdevTypeErrorMessage : T("vdev may result in data loss if it fails combined with a power outage."),
+manager_stripeVdevTypeErrorMessage : T("vdev is highly discouraged and will result in data loss if it fails"),
+manager_logVdevWarningMessage: T("A stripe log vdev may result in data loss if it fails combined with a power outage."),
 
 manager_diskAddWarning : T("The contents of all added disks will be erased."),
 
