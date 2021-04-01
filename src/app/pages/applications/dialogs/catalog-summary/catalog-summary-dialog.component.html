@@ -6,6 +6,10 @@
     </div>
     <div class="description" [innerHTML]="catalogApp.info">
     </div>
+    <div class="categories" fxLayout="row" fxLayoutAlign="space-between center">
+        <div><span>{{ 'Catalog' | translate }}:</span><div class="value capitalized-text" textLimiter threshold="20">{{ catalogApp.catalog.label }}</div></div>
+        <div><span>{{ 'Train' | translate }}:</span><div class="value capitalized-text" textLimiter threshold="20">{{ catalogApp.catalog.train }}</div></div>
+    </div>
     <div class="categories">
         <span>{{ 'Categories' | translate }}:</span><span class="value" textLimiter threshold="35">{{ catalogApp.categories.join(', ') }}</span>
     </div>

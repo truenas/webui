@@ -51,7 +51,7 @@ catalog-summary-dialog {
     }
 
     .categories {
-        margin-top: 13px;
+        margin-top: 5px;
     }
 
     .version-number{
@@ -61,6 +61,7 @@ catalog-summary-dialog {
     .value {
         margin-left: 12px;
         opacity: 0.5;
+        display: inline-block;
     }
 
     .resource {

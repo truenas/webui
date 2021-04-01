@@ -92,8 +92,14 @@ export class CatalogComponent implements OnInit {
             let versions = item.versions;
             let latest, latestDetails;
   
-            let sorted_version_labels = Object.keys(versions);
-            sorted_version_labels.sort(this.utils.versionCompare);
+            const versionKeys = [];
+            Object.keys(versions).forEach(versionKey => {
+              if (versions[versionKey].healthy) {
+                versionKeys.push(versionKey);
+              }
+            });
+
+            let sorted_version_labels = versionKeys.sort(this.utils.versionCompare);
   
             latest = sorted_version_labels[0];
             latestDetails = versions[latest];
@@ -109,9 +115,9 @@ export class CatalogComponent implements OnInit {
               latest_version: item.versions[latest].human_version,
               info: latestDetails.app_readme,
               categories: item.categories,
-              healthy: item.healthy,
+              healthy: latestDetails.healthy,
               versions: item.versions,
-              schema: item.versions[latest].schema,
+              schema: latestDetails.schema,
             }
             this.catalogApps.push(catalogItem);
           }
