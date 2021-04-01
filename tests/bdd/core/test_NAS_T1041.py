@@ -248,7 +248,7 @@ def click_submit_the_user_should_be_created_without_error(driver):
 def click_on_service_on_the_side_menu_the_service_page_should_open(driver):
     """click on service on the side menu, the Service page should open."""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Services"]').click()
-    assert wait_on_element(driver, 7, '//services')
+    assert wait_on_element(driver, 5, '//li[contains(.,"Services")]')
 
 
 @then('if the SMB service is not started, start the service')
