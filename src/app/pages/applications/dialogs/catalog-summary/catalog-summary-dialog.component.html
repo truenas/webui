@@ -43,7 +43,7 @@
                         <span>{{ versionStatusLabel(version) }}</span>
                     </div>
                     <span fxFlex="30%" class="text-center info-col" >
-                        <mat-icon class="version-tooltip" matTooltip="{{ version.value.healthy?version.value.app_readme:version.value.healthy_error }}">info</mat-icon>
+                        <mat-icon class="version-tooltip" htmlTooltip="{{ version.value.healthy?version.value.app_readme:version.value.healthy_error }}">info</mat-icon>
                     </span>
                 </div>
             </div>
