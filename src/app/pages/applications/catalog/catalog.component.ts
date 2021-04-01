@@ -112,10 +112,10 @@ export class CatalogComponent implements OnInit {
                 train: train,
               },
               icon_url: item.icon_url? item.icon_url : '/assets/images/ix-original.png',
-              latest_version: item.versions[latest].human_version,
+              latest_version: latestDetails.human_version,
               info: latestDetails.app_readme,
               categories: item.categories,
-              healthy: latestDetails.healthy,
+              healthy: item.healthy,
               versions: item.versions,
               schema: latestDetails.schema,
             }
