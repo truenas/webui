@@ -74,17 +74,6 @@ export class PullImageFormComponent {
     private modalService: ModalService) {
   }
 
-  beforeSubmit(value) {
-    value['docker_authentication'] = {
-      docker_authentication: {
-        username: value.username,
-        password: value.password
-      }
-    }
-    delete value.username;
-    delete value.password;
-  }
-
   customSubmit(data) {
     const params = {
       from_image: data.from_image
@@ -94,7 +83,6 @@ export class PullImageFormComponent {
       params['tag'] = data.tag;
     }
     if (data.username || data.password) {
-      params['tag'] = data.tag;
       params['docker_authentication'] = {};
       if (data.username) {
         params['docker_authentication']['username'] = data.username;
