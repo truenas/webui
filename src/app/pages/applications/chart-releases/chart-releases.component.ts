@@ -141,11 +141,6 @@ export class ChartReleasesComponent implements OnInit {
 
   ngOnInit(): void {
     this.utils = new CommonUtils();
-
-    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
-      this.refreshChartReleases();
-    });
-
     this.addChartReleaseChangedEventListner();
   }
 
@@ -166,7 +161,7 @@ export class ChartReleasesComponent implements OnInit {
   }  
 
   viewCatalog() {
-    this.updateTab.emit({name: 'SwitchTab', value: '0'});
+    this.updateTab.emit({name: 'SwitchTab', value: 0});
   }
 
   showLoadStatus(type: EmptyType) {
