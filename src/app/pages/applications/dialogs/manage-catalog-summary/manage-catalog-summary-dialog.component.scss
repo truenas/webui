@@ -5,6 +5,20 @@
 manage-catalog-summary-dialog {
     font-size: 14px;
 
+    .status {
+        padding: 3px;
+        opacity: 0.75;
+    }
+
+    .other {
+        border: 1px solid var(--fg1);
+    }
+
+    .active {
+        border: 1px solid var(--green);
+        color: var(--green);
+    }
+    
     .status-filter {
         display: flex;
         align-items: center;

@@ -1,6 +1,8 @@
 <div mat-dialog-content>
     <div class="title-div" fxLayout="row" fxLayoutAlign="space-between center">
         <strong class="catalog-name" textLimiter threshold="40">{{ catalog.label }} {{ 'Catalog Summary' | translate }}</strong>
+        <span class="status active" *ngIf="catalog.healthy">{{ 'Healthy' | translate }}</span>
+        <span class="status other" *ngIf="!catalog.healthy">{{ 'Unhealthy' | translate }}</span>
     </div>
     <div class="resource" fxLayout="row" fxLayoutAlign="space-between center">
         <div class="status-filter">

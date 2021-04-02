@@ -22,14 +22,11 @@ import { EntityUtils } from '../../common/entity/utils';
 export class ManageCatalogsComponent {
 
   public title = "Catalogs";
-  protected route_add: string[] = ['account', 'users', 'add'];
-  protected route_add_tooltip = "Add User";
-  protected route_edit: string[] = ['account', 'users', 'edit'];
-
   protected entityList: any;
   protected loaderOpen = false;
   protected queryCall = 'catalog.query';
   protected wsDelete = 'catalog.delete';
+  protected queryCallOption = [[], {"extra": {"item_details": true}}];
   protected disableActionsConfig = true;
   private dialogRef: any;
   protected addComponent: CatalogAddFormComponent;
