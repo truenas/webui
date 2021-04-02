@@ -1183,4 +1183,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     return (item?.checkbox || item?.toggle || item?.button);
   }
 
+  doRowClick(element) {
+    if (this.conf.onRowClick) {
+      this.conf.onRowClick(element);
+    } else {
+      this.expandedElement = this.expandedElement === element ? null : element;
+    }
+  }
 }

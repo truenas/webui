@@ -176,7 +176,7 @@
       <tr mat-row class="element-row" id="{{element[getFirstKey(element)]}}" 
         ix-auto ix-auto-type="expander" ix-auto-identifier="{{element[getFirstKey(element)]}}"
         *matRowDef="let element; columns: columnsToString(currentColumns, 'prop'); let i = dataIndex;"
-        (click)="conf.onRowClick?conf.onRowClick(element):(expandedElement = expandedElement === element ? null : element);"
+        (click)="doRowClick(element)"
         [ngClass]="{'expanded-row': expandedElement === element}">
       </tr>
   
