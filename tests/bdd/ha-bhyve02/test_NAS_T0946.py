@@ -213,8 +213,10 @@ def navigate_to_network_then_under_interfacesclick_enp0s6f0(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
     assert wait_on_element(driver, 0.5, 7, '//h1[contains(.,"Network")]')
     assert wait_on_element(driver, 0.5, 7, '//h3[contains(.,"Interfaces")]')
-    assert wait_on_element(driver, 0.5, 7, '//td[contains(.,"enp0s6f0")]')
-    driver.find_element_by_xpath('//td[contains(.,"enp0s6f0")]').click()
+    #assert wait_on_element(driver, 0.5, 7, '//td[contains(.,"enp0s6f0")]')
+    #driver.find_element_by_xpath('//td[contains(.,"enp0s6f0")]').click()
+    assert wait_on_element(driver, 0.5, 7, '//mat-icon[@id="enp0s6f0"]')
+    driver.find_element_by_xpath('//mat-icon[@id="enp0s6f0"]').click()
 
 
 @then('the Edit Interface should appear')
@@ -232,7 +234,8 @@ def uncheck_dhcp_check_critical_select_1_for_failover_group_input_ip_address_thi
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Failover Group"]').click()
     assert wait_on_element(driver, 1, 5, '//mat-option[@ix-auto="option__Failover Group_1"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Failover Group_1"]').click()
-    assert wait_on_element(driver, 1, 5, '//mat-select[@ix-auto="select__Failover VHID"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__add-box_aliases"]').click()
+    assert wait_on_element(driver, 0.5, 5, '//input[@ix-auto="input__IP Address (This Controller)"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (This Controller)"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__IP Address (This Controller)"]').send_keys(ip1)
     driver.find_element_by_xpath('//mat-select[@ix-auto="input__IP Address (This Controller)"]').click()
