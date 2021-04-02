@@ -26,7 +26,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
   protected queryCallOption: Array<any>;
   protected addCall: string = 'chart.release.create';
   protected isEntity: boolean = true;
-
+  protected isLinear: boolean = true;
   private title = helptext.chartForm.title;
   private dialogRef: any;
   public hideCancel = true;
@@ -425,7 +425,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
     }
 
     let ext_interfaces = [];
-    if (data.externalInterfaces[0].hostInterface) {
+    if (data.externalInterfaces && data.externalInterfaces.length > 0 && data.externalInterfaces[0].hostInterface) {
       data.externalInterfaces.forEach(i => {
         if (i.ipam !== 'static') {
           ext_interfaces.push(
