@@ -936,11 +936,20 @@ msgstr ""
 msgid "Add CSR"
 msgstr ""
 
+msgid "Add Catalog"
+msgstr ""
+
 msgid "Add Certificate"
 msgstr ""
 
 msgid "Add Cloud Credential"
 msgstr "クラウド資格情報の追加"
+
+msgid "Add Cloud Sync Task"
+msgstr ""
+
+msgid "Add Cron Job"
+msgstr ""
 
 msgid "Add DNS Authenticator"
 msgstr ""
@@ -955,6 +964,9 @@ msgid "Add Group"
 msgstr ""
 
 msgid "Add Idmap"
+msgstr ""
+
+msgid "Add Init/Shutdown Script"
 msgstr ""
 
 msgid "Add Interface"
@@ -972,8 +984,23 @@ msgstr ""
 msgid "Add NFS SPN"
 msgstr ""
 
+msgid "Add Periodic Snapshot Task"
+msgstr ""
+
 msgid "Add Recovery Key"
 msgstr "リカバリーキーを追加"
+
+msgid "Add Replication Task"
+msgstr ""
+
+msgid "Add Rsync Task"
+msgstr ""
+
+msgid "Add S.M.A.R.T. Test"
+msgstr ""
+
+msgid "Add Scrub Task"
+msgstr ""
 
 msgid "Add Static Route"
 msgstr ""
@@ -1017,6 +1044,9 @@ msgstr ""
 
 msgid "Add any notes about this zvol."
 msgstr "このzvolに関する補足を追加します。"
+
+msgid "Add catalog to system even if some trains are unhealthy."
+msgstr ""
 
 msgid ""
 "Add lines to the jail <i>resolv.conf</i>. <b>Example:</b> <i>nameserver "
@@ -1622,6 +1652,9 @@ msgstr "イニシエーターに関するメモ。"
 msgid "Any system service can communicate externally."
 msgstr ""
 
+msgid "App"
+msgstr ""
+
 msgid "Appdefaults Auxiliary Parameters"
 msgstr "Appdefaults補助パラメーター"
 
@@ -1658,6 +1691,9 @@ msgid "Application Key"
 msgstr ""
 
 msgid "Application Name"
+msgstr ""
+
+msgid "Application Summary"
 msgstr ""
 
 msgid "Applications"
@@ -1946,6 +1982,9 @@ msgstr "追加パラメーター"
 msgid "Available"
 msgstr "利用可能"
 
+msgid "Available Applications"
+msgstr ""
+
 msgid "Available Disks"
 msgstr "利用可能なディスク"
 
@@ -2138,6 +2177,9 @@ msgstr ""
 "脳プール曲線はより安全であり、secp曲線はより高速です。 詳しくは<a "
 "href=\"https://tls.mbed.org/kb/cryptography/elliptic-curve-performance-nist-"
 "vs-brainpool\" target=\"blank\">楕円曲線のパフォーマンス：NISTとBrainpool </a>をご覧ください。"
+
+msgid "Branch"
+msgstr ""
 
 msgid "Bridge Members"
 msgstr ""
@@ -2387,6 +2429,18 @@ msgid "Case Sensitivity"
 msgstr "大文字・小文字の区別"
 
 msgid "Catalog"
+msgstr ""
+
+msgid "Catalog Name"
+msgstr ""
+
+msgid "Catalog Summary"
+msgstr ""
+
+msgid "Catalogs"
+msgstr ""
+
+msgid "Categories"
 msgstr ""
 
 msgid "Category"
@@ -2645,6 +2699,9 @@ msgstr "DNSプロバイダーを選択し、必要な認証属性を構成しま
 
 msgid "Choose a Device"
 msgstr "デバイスの選択"
+
+msgid "Choose a Tag"
+msgstr ""
 
 msgid "Choose a cipher algorithm to encrypt data channel packets."
 msgstr ""
@@ -3016,6 +3073,9 @@ msgstr ""
 
 msgid "Cloud Credentials"
 msgstr "クラウド認証情報"
+
+msgid "Cloud Sync Tasks"
+msgstr ""
 
 msgid "Cloud sync <i>"
 msgstr ""
@@ -3593,6 +3653,9 @@ msgstr ""
 
 msgid "Cron Job"
 msgstr "Cron ジョブ"
+
+msgid "Cron Jobs"
+msgstr ""
 
 msgid ""
 "Cryptographic protocols for securing client/server connections. Select "
@@ -4474,8 +4537,16 @@ msgstr ""
 msgid "Display Port"
 msgstr ""
 
+msgid "Display Type"
+msgstr ""
+
 msgid "Display console messages in real time at the bottom of the browser."
 msgstr "ブラウザの下部にコンソールメッセージをリアルタイムで表示します。"
+
+msgid ""
+"Display network interface IP address. The primary interface IP address is "
+"the default. A different interface IP address can be chosen."
+msgstr ""
 
 msgid "Distinguished Name"
 msgstr "識別名"
@@ -4495,7 +4566,7 @@ msgstr "シリアルポートが無効になっている場合は、これを設
 msgid "Docker Host"
 msgstr ""
 
-msgid "Docker Images"
+msgid "Docker Registry Authentication"
 msgstr ""
 
 msgid "Docker image pull policy"
@@ -4655,7 +4726,16 @@ msgstr ""
 msgid "Edit CSR"
 msgstr ""
 
+msgid "Edit Catalog"
+msgstr ""
+
 msgid "Edit Certificate"
+msgstr ""
+
+msgid "Edit Cloud Sync Task"
+msgstr ""
+
+msgid "Edit Cron Job"
 msgstr ""
 
 msgid "Edit DNS Authenticator"
@@ -4676,10 +4756,16 @@ msgstr ""
 msgid "Edit Idmap"
 msgstr ""
 
+msgid "Edit Init/Shutdown Script"
+msgstr ""
+
 msgid "Edit Interface"
 msgstr ""
 
 msgid "Edit Options"
+msgstr ""
+
+msgid "Edit Periodic Snapshot Task"
 msgstr ""
 
 msgid "Edit Permissions"
@@ -4692,6 +4778,18 @@ msgid "Edit Pool Disk"
 msgstr ""
 
 msgid "Edit Pool Options for "
+msgstr ""
+
+msgid "Edit Replication Task"
+msgstr ""
+
+msgid "Edit Rsync Task"
+msgstr ""
+
+msgid "Edit S.M.A.R.T. Test"
+msgstr ""
+
+msgid "Edit Scrub Task"
 msgstr ""
 
 msgid "Edit Share ACL"
@@ -4796,6 +4894,9 @@ msgstr ""
 msgid "Enable Debug Kernel"
 msgstr "デバッグカーネルを有効にします"
 
+msgid "Enable Display"
+msgstr ""
+
 msgid "Enable FSRVP"
 msgstr ""
 
@@ -4859,13 +4960,10 @@ msgid ""
 "support this feature."
 msgstr ""
 
-msgid "Enable VNC"
-msgstr ""
-
 msgid ""
-"Enable a VNC (Virtual Network Computing) remote connection. Requires "
+"Enable a Display (Virtual Network Computing) remote connection. Requires "
 "<i>UEFI</i> booting."
-msgstr "VNC（仮想ネットワークコンピューティング）リモート接続を有効にします。 <i>UEFI</i>での起動が必要です。"
+msgstr ""
 
 msgid "Enable automatic support alerts to iXsystems (Silver/Gold support only)"
 msgstr ""
@@ -5973,6 +6071,9 @@ msgstr ""
 msgid "Error updating disks"
 msgstr ""
 
+msgid "Error while creating the "
+msgstr ""
+
 msgid "Error:"
 msgstr ""
 
@@ -6320,6 +6421,9 @@ msgid "Force"
 msgstr ""
 
 msgid "Force Clear"
+msgstr ""
+
+msgid "Force Create"
 msgstr ""
 
 msgid "Force Delete"
@@ -6676,6 +6780,9 @@ msgid "HTTPS Port"
 msgstr ""
 
 msgid "HTTPS Protocols"
+msgstr ""
+
+msgid "Healthy"
 msgstr ""
 
 msgid "Help"
@@ -7168,6 +7275,12 @@ msgstr ""
 msgid "Image"
 msgstr ""
 
+msgid "Image ID"
+msgstr ""
+
+msgid "Image Name"
+msgstr ""
+
 msgid "Image Pull Policy"
 msgstr ""
 
@@ -7294,6 +7407,9 @@ msgid "Inherits"
 msgstr ""
 
 msgid "Init/Shutdown Script"
+msgstr ""
+
+msgid "Init/Shutdown Scripts"
 msgstr ""
 
 msgid ""
@@ -7585,6 +7701,9 @@ msgstr ""
 msgid "Keep"
 msgstr "保持"
 
+msgid "Keep for"
+msgstr ""
+
 msgid "Keep snapshot for"
 msgstr ""
 
@@ -7755,6 +7874,9 @@ msgid "Language code"
 msgstr "言語コード"
 
 msgid "Last Scrub Run on"
+msgstr ""
+
+msgid "Last Snapshot"
 msgstr ""
 
 msgid "Launch"
@@ -8032,11 +8154,17 @@ msgstr ""
 msgid "Manage"
 msgstr ""
 
+msgid "Manage Catalogs"
+msgstr ""
+
 msgid "Manage Configuration"
 msgstr ""
 
 msgid "Manage Custom Themes"
 msgstr "カスタムテーマの管理"
+
+msgid "Manage Docker Images"
+msgstr ""
 
 msgid "Manage Recovery Key"
 msgstr ""
@@ -8780,6 +8908,9 @@ msgstr ""
 msgid "No Encryption (less secure, but faster)"
 msgstr ""
 
+msgid "No Item"
+msgstr ""
+
 msgid "No Logs"
 msgstr ""
 
@@ -8805,6 +8936,9 @@ msgid "No Search Results."
 msgstr ""
 
 msgid "No Stat"
+msgstr ""
+
+msgid "No Version"
 msgstr ""
 
 msgid ""
@@ -9107,8 +9241,8 @@ msgid "Only Replicate Snapshots Matching Schedule"
 msgstr ""
 
 msgid ""
-"Only appears if <i>Device</i> is selected. Select the unformatted disk, "
-"controller, or zvol snapshot."
+"Only appears if <i>Device</i> is selected. Select the unused zvol or zvol "
+"snapshot."
 msgstr ""
 
 msgid ""
@@ -9571,6 +9705,15 @@ msgstr ""
 msgid "Please enter your username again"
 msgstr ""
 
+msgid "Please input password."
+msgstr ""
+
+msgid "Please input user name."
+msgstr ""
+
+msgid "Please select a tag"
+msgstr ""
+
 msgid "Please select a valid SSH Connection"
 msgstr ""
 
@@ -9578,6 +9721,28 @@ msgid "Please select a valid path"
 msgstr ""
 
 msgid "Please select the applications"
+msgstr ""
+
+msgid "Please specifies tag of the image"
+msgstr ""
+
+msgid "Please specify a valid git repository uri."
+msgstr ""
+
+msgid "Please specify branch of git repository to use for the catalog."
+msgstr ""
+
+msgid "Please specify name to be used to lookup catalog."
+msgstr ""
+
+msgid ""
+"Please specify the name of the image to pull. Format for the name is "
+"\"registry/repo/image\""
+msgstr ""
+
+msgid ""
+"Please specify trains from which UI should retrieve available applications "
+"for the catalog."
 msgstr ""
 
 msgid "Please wait"
@@ -9743,6 +9908,9 @@ msgstr "アイコンのみのボタンを優先する"
 msgid "Preferences"
 msgstr "設定"
 
+msgid "Preferred Trains"
+msgstr ""
+
 msgid "Preserve"
 msgstr ""
 
@@ -9903,6 +10071,12 @@ msgid ""
 msgstr ""
 
 msgid "Public Key"
+msgstr ""
+
+msgid "Pull Image"
+msgstr ""
+
+msgid "Pulling..."
 msgstr ""
 
 msgid "Purpose"
@@ -10102,7 +10276,13 @@ msgstr ""
 msgid "Refresh"
 msgstr ""
 
+msgid "Refresh All"
+msgstr ""
+
 msgid "Refresh Token"
+msgstr ""
+
+msgid "Refreshing"
 msgstr ""
 
 msgid "Region"
@@ -10301,6 +10481,9 @@ msgstr ""
 msgid "Replication Schedule"
 msgstr ""
 
+msgid "Replication Tasks"
+msgstr ""
+
 msgid "Report CPU Usage in Percentage"
 msgstr ""
 
@@ -10329,6 +10512,9 @@ msgid "Reports"
 msgstr ""
 
 msgid "Reports Configuration"
+msgstr ""
+
+msgid "Repository"
 msgstr ""
 
 msgid "Requested action performed for selected Applications"
@@ -10593,6 +10779,9 @@ msgstr ""
 msgid "Rsync Module"
 msgstr ""
 
+msgid "Rsync Tasks"
+msgstr ""
+
 msgid "Run As User"
 msgstr ""
 
@@ -10640,6 +10829,9 @@ msgid "S.M.A.R.T."
 msgstr ""
 
 msgid "S.M.A.R.T. Test"
+msgstr ""
+
+msgid "S.M.A.R.T. Tests"
 msgstr ""
 
 msgid "S.M.A.R.T. extra options"
@@ -10893,13 +11085,28 @@ msgstr ""
 msgid "Scrub Task"
 msgstr ""
 
+msgid "Scrub Tasks"
+msgstr ""
+
 msgid "Scrub interval (in days)"
 msgstr "スクラブ間隔（日数）"
+
+msgid "Search Available Applications"
+msgstr ""
+
+msgid "Search Catalogs"
+msgstr ""
+
+msgid "Search Docker Images"
+msgstr ""
 
 msgid "Search For Connected Groups"
 msgstr ""
 
 msgid "Search For Connected Users"
+msgstr ""
+
+msgid "Search Installed Applications"
 msgstr ""
 
 msgid ""
@@ -11425,8 +11632,8 @@ msgid "Select the type that matches the type of client accessing the dataset."
 msgstr ""
 
 msgid ""
-"Select the unformatted disk, controller, zvol, or zvol snapshot. Select "
-"<i>Create New</i> to create a new zvol."
+"Select the unused zvol or zvol snapshot. Select <i>Create New</i> to create "
+"a new zvol."
 msgstr ""
 
 msgid ""
@@ -12861,6 +13068,9 @@ msgstr ""
 msgid "Suggest Layout"
 msgstr "レイアウトを提案する"
 
+msgid "Summary"
+msgstr ""
+
 msgid "Sun"
 msgstr ""
 
@@ -13058,6 +13268,9 @@ msgid "Tag"
 msgstr ""
 
 msgid "Tag to use for the specified image"
+msgstr ""
+
+msgid "Tags"
 msgstr ""
 
 msgid "Tail Lines"
@@ -14257,6 +14470,9 @@ msgstr ""
 msgid "Unencrypted pools can be imported directly."
 msgstr ""
 
+msgid "Unhealthy"
+msgstr ""
+
 msgid "Unique LUN ID. The default is generated from the MAC address of the system."
 msgstr ""
 
@@ -14373,6 +14589,9 @@ msgid "Update"
 msgstr "アップデート"
 
 msgid "Update "
+msgstr ""
+
+msgid "Update Available"
 msgstr ""
 
 msgid "Update File"
@@ -14896,13 +15115,6 @@ msgstr ""
 msgid "VMware-Snapshots"
 msgstr ""
 
-msgid ""
-"VNC network interface IP address. The primary interface IP address is the "
-"default. A different interface IP address can be chosen."
-msgstr ""
-"VNCネットワークインターフェイスのIPアドレス。 プライマリインターフェイスのIPアドレスがデフォルトです。 "
-"別のインターフェイスIPアドレスを選択できます。"
-
 msgid "VNET"
 msgstr ""
 
@@ -14928,6 +15140,9 @@ msgid "Value"
 msgstr ""
 
 msgid "Value must be greater than "
+msgstr ""
+
+msgid "Var"
 msgstr ""
 
 msgid "Variable"
@@ -14959,6 +15174,12 @@ msgstr ""
 
 msgid "Version"
 msgstr "バージョン"
+
+msgid "Version Info"
+msgstr ""
+
+msgid "Versions"
+msgstr ""
 
 msgid "Video, < 100ms latency"
 msgstr ""
@@ -15061,6 +15282,9 @@ msgid "Warning"
 msgstr ""
 
 msgid "Warning: iSCSI Target is already in use.</font><br>"
+msgstr ""
+
+msgid "We ran into an error while trying to create the "
 msgstr ""
 
 msgid "Weak Ciphers"
