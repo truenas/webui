@@ -249,7 +249,7 @@ def click_on_service_on_the_side_menu_the_service_page_should_open(driver):
     """click on service on the side menu, the Service page should open."""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Services"]').click()
     assert wait_on_element(driver, 5, '//li[contains(.,"Services")]')
-    time.sleep(0.5)
+    time.sleep(1)
 
 
 @then('if the SMB service is not started, start the service')
