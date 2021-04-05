@@ -118,18 +118,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
         this.data.data[i] = newRow;
       }
     }
-    if(this.stackedShowTotal) {
-      if(!(this.data.legend.findIndex(l => l==="total")>=0)) {
-        this.data.legend.unshift("total");
-        this.data.aggregations.max.unshift(' ')
-        this.data.aggregations.min.unshift(' ')
-        this.data.aggregations.mean.unshift(' ')
-        for(let i = 0;i<this.data.data.length; i++) {
-          const total = this.data.data[i].reduce((accumulator, currentValue) => accumulator + currentValue);
-          this.data.data[i].unshift(total);
-        }
-      }
-    }
+       
     let data = this.makeTimeAxis(this.data);
     let labels = data.shift();
 

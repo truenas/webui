@@ -51,7 +51,7 @@ export interface Report {
   identifiers?: string[];
   isRendered?: boolean[];
   stacked: boolean;
-  stackedShowTotal: boolean;
+  stacked_show_total: boolean;
 }
 
 export interface ReportData {
@@ -96,6 +96,15 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
       return trimmed; 
     } else {
       return this.identifier ? trimmed.replace(/{identifier}/, this.identifier) : this.report.title;
+    }
+  }
+
+  getTotal(legendData) {
+    const total =  legendData.series.reduce((a,b) => a.y+b.y);
+    if(this.report.vertical_label.toLocaleLowerCase().includes("bytes")) {
+      return (<any>window).filesize(total, {standard: "iec"});
+    } else if(this.report.vertical_label.toLocaleLowerCase().includes('%')) {
+      return total+' %';
     }
   }
 
