@@ -6,7 +6,6 @@ import { CoreEvent } from 'app/core/services/core.service';
 import { DocsService } from "../../../services/docs.service";
 import {Router} from "@angular/router";
 import * as _ from 'lodash';
-import * as Ps from 'perfect-scrollbar';
 import { filter } from 'rxjs/operators';
 
 @Component({
@@ -61,12 +60,12 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
 
           if (window.localStorage.getItem('product_type') !== 'CORE') {
             // hide jail and plugins section if product type is SCALE or ENTERPRISE with jail unregistered
-            if ((evt.data.license && evt.data.license.features.indexOf('JAILS') === -1) || 
+            if ((evt.data.license && evt.data.license.features.indexOf('JAILS') === -1) ||
               window.localStorage.getItem('product_type').includes('SCALE')){
                 _.find(menuItem, {state : "plugins"}).disabled = true;
                 // _.find(_.find(menuItem, {state : "virtualization"}).sub, { state : 'jails' }).disabled = true; TEMPORARILY disabled
                 // while there is no virtualization menu
-              }                        
+              }
           }
 
           // set the guide url -- temporarily(?) disabled for menuing project
@@ -93,14 +92,6 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
       this.hasIconTypeMenuItem = !!this.menuItems.filter(item => item.type === 'icon').length;
 
     });
-  }
-
-  // Workaround to keep scrollbar displaying as needed
-  updateScroll() {
-    let navigationHold = document.getElementById('scroll-area');
-    setTimeout(() => {
-      Ps.update(navigationHold);
-    }, 500);
   }
 
   toggleMenu(state, sub) {

@@ -4,7 +4,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { NavigationEnd, Router } from '@angular/router';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
-import * as Ps from 'perfect-scrollbar';
 import { Subscription } from "rxjs";
 import * as domHelper from '../../../../helpers/dom.helper';
 import { RestService, WebSocketService, SystemGeneralService } from '../../../../services';
@@ -87,8 +86,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
     // Subscribe to Theme Changes
     core.register({
-      observerClass:this, 
-      eventName:"ThemeChanged", 
+      observerClass:this,
+      eventName:"ThemeChanged",
       sender:themeService
     }).subscribe((evt:CoreEvent)=>{
       let theme = evt.data;
@@ -98,30 +97,30 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
     // Subscribe to Preference Changes
     core.register({
-      observerClass:this, 
-      eventName:"UserPreferencesChanged", 
+      observerClass:this,
+      eventName:"UserPreferencesChanged",
     }).subscribe((evt:CoreEvent)=>{
       this.retroLogo = evt.data.retroLogo ? evt.data.retroLogo : false;
     });
 
     // Listen for system information changes
     core.register({
-      observerClass:this, 
-      eventName:"SysInfo", 
+      observerClass:this,
+      eventName:"SysInfo",
     }).subscribe((evt:CoreEvent)=>{
       this.hostname = evt.data.hostname;
     });
 
     core.register({
-      observerClass:this, 
-      eventName:"ForceSidenav", 
+      observerClass:this,
+      eventName:"ForceSidenav",
     }).subscribe((evt:CoreEvent)=>{
       this.updateSidenav(evt.data);
     });
 
     core.register({
-      observerClass:this, 
-      eventName:"SidenavStatus", 
+      observerClass:this,
+      eventName:"SidenavStatus",
     }).subscribe((evt:CoreEvent)=>{
       this.isSidenavOpen = evt.data.isOpen;
       this.sidenavMode = evt.data.mode;
@@ -132,15 +131,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   ngOnInit() {
     this.freenasThemes = this.themeService.allThemes;
     this.currentTheme = this.themeService.currentTheme().name;
-    // Initialize Perfect scrollbar for sidenav
     let navigationHold = document.getElementById('scroll-area');
-
-    // Delay needed to fix a init err with navbar vert scroll
-      setTimeout(() => {
-        Ps.initialize(navigationHold, {
-          suppressScrollX: true
-        });
-      }, 500);
 
     // Allows for one-page-at-a-time scrolling in sidenav on Windows
     if (window.navigator.platform.toLowerCase() === 'win32') {
@@ -151,7 +142,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
         }
       })
     }
-    
+
     if (this.media.isActive('xs') || this.media.isActive('sm')) {
       this.isSidenavOpen = false;
     }
@@ -170,7 +161,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       this.isSidenotOpen = force == 'open' ? false : true;
       if (force == 'close') {
         domHelper.removeClass(document.body, 'collapsed-menu');
-      } 
+      }
       return;
     }
 
@@ -243,7 +234,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   onShowConsoleFooterBar(data) {
     if(data && this.consoleMsg == "") {
-      this.getLogConsoleMsg();      
+      this.getLogConsoleMsg();
     }
 
     this.isShowFooterConsole = data;
@@ -292,7 +283,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   closeModal(id: string) {
     this.modalService.close(id);
   }
-  
+
   // For the slide-in menu
   toggleMenu(menuInfo?) {
     if (this.isOpen && !menuInfo || this.isOpen && menuInfo[0] === this.menuName) {
