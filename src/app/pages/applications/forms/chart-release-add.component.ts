@@ -319,7 +319,18 @@ export class ChartReleaseAddComponent implements OnDestroy {
           listFields: []
         }
       ]
-    }
+    },
+    {
+      label: helptext.chartForm.security.title,
+      fieldConfig: [
+        {
+          type: 'checkbox',
+          name: 'privileged',
+          placeholder: helptext.chartForm.security.privileged.placeholder,
+          value: false,
+        }
+      ],
+    },
   ]
 
   private summaryItems = [
@@ -425,7 +436,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
     }
 
     let ext_interfaces = [];
-    if (data.externalInterfaces[0].hostInterface) {
+    if (data.externalInterfaces && data.externalInterfaces.length > 0 && data.externalInterfaces[0].hostInterface) {
       data.externalInterfaces.forEach(i => {
         if (i.ipam !== 'static') {
           ext_interfaces.push(
@@ -484,6 +495,9 @@ export class ChartReleaseAddComponent implements OnDestroy {
         updateStrategy: data.updateStrategy,
         volumes: volList, 
         workloadType: 'Deployment',
+        securityContext: {
+          privileged: data.privileged,
+        }
       }
     }];
 

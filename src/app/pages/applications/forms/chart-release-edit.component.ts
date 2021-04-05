@@ -360,7 +360,20 @@ export class ChartReleaseEditComponent {
         }
       ],
       colspan: 2,
-    }
+    },
+    {
+      name: helptext.chartForm.security.title,
+      label: true,
+      config: [
+        {
+          type: 'checkbox',
+          name: 'privileged',
+          placeholder: helptext.chartForm.security.privileged.placeholder,
+          value: false,
+        }
+      ],
+      colspan: 2,
+    },
   ]
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
@@ -411,6 +424,9 @@ export class ChartReleaseEditComponent {
     data.config.pullPolicy = data.config.image.pullPolicy;
     data.config.nameservers = data.config.dnsConfig.nameservers;
     data.config.searches = data.config.dnsConfig.searches;
+    if (data.config.securityContext && data.config.securityContext) {
+      data.config.privileged = data.config.securityContext.privileged;
+    }
     if (data.config.externalInterfaces) {
       data.config.externalInterfaces.forEach(i => {
         let tempArr = [];
@@ -534,6 +550,9 @@ export class ChartReleaseEditComponent {
         updateStrategy: data.updateStrategy,
         volumes: volList, 
         workloadType: 'Deployment',
+        securityContext: {
+          privileged: data.privileged,
+        }
       }
     }]
  
