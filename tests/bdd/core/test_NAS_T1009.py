@@ -79,7 +79,7 @@ def click_on_the_tank_acl_dataset_3_dots_button_select_edit_permissions(driver, 
 def the_edit_acl_page_should_open(driver):
     """the Edit ACL page should open."""
     assert wait_on_element(driver, 7, '//h4[contains(.,"File Information")]')
-    time.sleep(0.5)
+    time.sleep(1)
 
 
 @then('click on Add ACL Item')

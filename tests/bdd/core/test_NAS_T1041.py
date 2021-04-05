@@ -249,18 +249,18 @@ def click_on_service_on_the_side_menu_the_service_page_should_open(driver):
     """click on service on the side menu, the Service page should open."""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Services"]').click()
     assert wait_on_element(driver, 5, '//li[contains(.,"Services")]')
-    time.sleep(1)
+    time.sleep(1.5)
 
 
 @then('if the SMB service is not started, start the service')
 def if_the_smb_service_is_not_started_start_the_service(driver):
     """if the SMB service is not started, start the service."""
-    assert wait_on_element(driver, 7, '//div[@ix-auto="overlay__S3_Running"]')
     if is_element_present(driver, '//li[@aria-label="page 4"]'):
         assert wait_on_element(driver, 7, '//li[@aria-label="page 3"]', 'clickable')
         driver.find_element_by_xpath('//li[@aria-label="page 3"]').click()
     else:
         # Scroll to SMB service
+        assert wait_on_element(driver, 7, '//div[@ix-auto="overlay__S3_Running"]')
         element = driver.find_element_by_xpath('//button[@ix-auto="button__S3_Actions"]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
         time.sleep(0.5)
