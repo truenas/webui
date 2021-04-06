@@ -43,7 +43,6 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
   @Input() title: string;
   @Input() timezone: string;
   @Input() stacked: boolean = false;
-  @Input() stackedShowTotal: boolean = false;
 
   @Input() legends?: string[]; 
   @Input() type: string = 'line';
@@ -170,7 +169,14 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
          this.core.emit({name: "LegendEvent-" + this.chartId,data:clone, sender: this})
          return "";
        },
-       series: { total: { strokeWidth: 0, highlightCircleSize: 0 , fillGraph : false} },
+       series: () => {
+          let s = {};
+          this.data.legend.forEach((item, index) => {
+            s[item] = {plotter: smoothPlotter};
+          });
+
+          return s;
+        },
        drawCallback: (dygraph, is_initial) =>{
          if(dygraph.axes_){
           let numero = dygraph.axes_[0].maxyval;
