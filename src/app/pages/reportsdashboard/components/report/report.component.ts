@@ -99,15 +99,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     }
   }
 
-  getTotal(legendData) {
-    const total =  legendData.series.reduce((a,b) => a.y+b.y);
-    if(this.report.vertical_label.toLocaleLowerCase().includes("bytes")) {
-      return (<any>window).filesize(total, {standard: "iec"});
-    } else if(this.report.vertical_label.toLocaleLowerCase().includes('%')) {
-      return total+' %';
-    }
-  }
-
   get aggregationKeys (){
     return Object.keys(this.data.aggregations);
   }
