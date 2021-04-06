@@ -151,16 +151,18 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
        },
        legendFormatter: (data) => {
          let clone = Object.assign({}, data);
-         clone.stackedTotal = 0;
          clone.series.forEach((item, index) => {
            if(!item.y){ return; }
            let converted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), 1, true);
            let suffix = converted.shortName !== undefined ? converted.shortName : (converted.suffix !== undefined ?  converted.suffix : '');
            clone.series[index].yHTML = this.limitDecimals(converted.value).toString() + suffix;
+           if(!clone.stackedTotal) {
+             clone.stackedTotal = 0;
+           }
            clone.stackedTotal += item.y;
          });
 
-         if(clone.stackedTotal>0) {
+         if(clone.stackedTotal) {
            let converted = this.formatLabelValue(clone.stackedTotal, this.inferUnits(this.labelY), 1, true);
            let suffix = converted.shortName !== undefined ? converted.shortName : (converted.suffix !== undefined ?  converted.suffix : '');
            clone.stackedTotalHTML = this.limitDecimals(converted.value).toString() + suffix;
