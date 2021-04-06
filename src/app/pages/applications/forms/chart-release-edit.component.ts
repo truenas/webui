@@ -424,7 +424,7 @@ export class ChartReleaseEditComponent {
     data.config.pullPolicy = data.config.image.pullPolicy;
     data.config.nameservers = data.config.dnsConfig.nameservers;
     data.config.searches = data.config.dnsConfig.searches;
-    if (data.config.securityContext && data.config.securityContext) {
+    if (data.config.securityContext) {
       data.config.privileged = data.config.securityContext.privileged;
     }
     if (data.config.externalInterfaces) {
