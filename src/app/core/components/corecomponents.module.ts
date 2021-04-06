@@ -43,7 +43,7 @@ import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limi
 import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcontroller.component';
 import { ConvertPipe } from './pipes/convert.pipe';
 import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
-
+import { HtmlTooltipDirective } from './directives/html-tooltip/html-tooltip.directive';
 /*
  *
  * This is the Core Module. By importing this module you'll 
@@ -88,6 +88,7 @@ import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.compo
     WidgetMemoryComponent,
     WidgetPoolComponent,
     TextLimiterDirective,
+    HtmlTooltipDirective,
     TextLimiterTooltipComponent,
     WidgetControllerComponent,
     SimpleFailoverBtnComponent,
@@ -123,6 +124,7 @@ import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.compo
     WidgetCpuComponent,
     WidgetMemoryComponent,
     TextLimiterDirective,
+    HtmlTooltipDirective,
     TextLimiterTooltipComponent,
     WidgetPoolComponent,
     WidgetControllerComponent,
