@@ -27,7 +27,6 @@
               "chartist",
               "moment-timezone",
               "marked",
-              "perfect-scrollbar",
               "calendar-utils/date-adapters/date-fns",
               "what-is-my-ip-address"
             ],
@@ -57,7 +56,6 @@
               "node_modules/dragula/dist/dragula.css",
               "node_modules/angular-calendar/css/angular-calendar.css",
               "node_modules/hopscotch/dist/css/hopscotch.min.css",
-              "node_modules/perfect-scrollbar/dist/css/perfect-scrollbar.css",
               "node_modules/chartist/dist/chartist.min.css",
               "node_modules/@swimlane/ngx-datatable/assets/icons.css",
               "node_modules/angular-tree-component/dist/angular-tree-component.css",
@@ -71,7 +69,6 @@
               "src/assets/styles/material-reduction.css"
             ],
             "scripts": [
-              "node_modules/perfect-scrollbar/dist/js/perfect-scrollbar.js",
               "node_modules/hopscotch/dist/js/hopscotch.min.js",
               "node_modules/hammerjs/hammer.js",
               "src/vendor/Chart.min.js",
@@ -129,13 +126,12 @@
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.spec.json",
             "scripts": [
-              "node_modules/perfect-scrollbar/dist/js/perfect-scrollbar.js",
               "node_modules/hopscotch/dist/js/hopscotch.min.js",
               "node_modules/hammerjs/hammer.js",
               "src/vendor/Chart.min.js",
               "node_modules/quill/dist/quill.min.js",
               "node_modules/element-resize-detector/dist/element-resize-detector.min.js",
-              "node_modules/filesize/lib/filesize.js",
+              "node_modules/filesize/lib/filesize.js"
             ],
             "styles": [
               "node_modules/quill/dist/quill.core.css",
@@ -143,7 +139,6 @@
               "node_modules/dragula/dist/dragula.css",
               "node_modules/angular-calendar/css/angular-calendar.css",
               "node_modules/hopscotch/dist/css/hopscotch.min.css",
-              "node_modules/perfect-scrollbar/dist/css/perfect-scrollbar.css",
               "node_modules/chartist/dist/chartist.min.css",
               "node_modules/@swimlane/ngx-datatable/assets/icons.css",
               "node_modules/angular-tree-component/dist/angular-tree-component.css",

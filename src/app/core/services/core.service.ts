@@ -5,8 +5,8 @@ import { Subject } from 'rxjs';
 
 /*
  * Heavily influenced by Objective C's NSNotificationCenter
- * Methodology has been altered to incorporate RxJS Subjects 
- * to leverage built in functionality of Angular. 
+ * Methodology has been altered to incorporate RxJS Subjects
+ * to leverage built in functionality of Angular.
  *
  * ObjectiveC uses a "selector" a.k.a. callback that NSNotificationCenter
  * would call directly. This CoreService instead returns an RxJS Observable that
@@ -18,7 +18,7 @@ import { Subject } from 'rxjs';
  * NSNotification = CoreEvent
  * addObserver() = register()
  * postNotification() = emit()
- * 
+ *
  *
  * */
 
@@ -119,11 +119,9 @@ export class CoreService {
       console.log("*******************************************************");
       console.log("CORESERVICE: Emitting " + evt.name);
       console.log(evt);
-    } 
-       
-      
+    }
 
-    if(this.debug && this.debug_show_emit_logs){ 
+    if(this.debug && this.debug_show_emit_logs){
       if(this.debug_show_dispatch_table){
         console.log("CORESERVICE: dispatchTable...");
         console.log(this.dispatchTable.length + " Observers in table.");
@@ -187,7 +185,7 @@ export class CoreService {
         //DEBUG: console.log("No match found");
       }
     }
-    if(this.debug && this.debug_show_emit_logs){ 
+    if(this.debug && this.debug_show_emit_logs){
       console.log("*******************************************************");
     }
     return this;
