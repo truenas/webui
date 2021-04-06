@@ -38,7 +38,8 @@ def browser():
     profile = webdriver.FirefoxProfile()
     profile.set_preference("browser.download.folderList", 2)
     profile.set_preference("browser.download.dir", "/tmp")
-    profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "text/json")
+    # this is the place to add file type to autosave
+    profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-tar;application/x-gzip")
     profile.set_preference("browser.download.manager.showWhenStarting", False)
     profile.set_preference("browser.link.open_newwindow", 3)
     binary = '/usr/bin/firefox' if system() == "Linux" else '/usr/local/bin/firefox'
