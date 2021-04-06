@@ -13067,7 +13067,7 @@ msgid ""
 msgstr ""
 
 msgid "Searches"
-msgstr ""
+msgstr "Recherches"
 
 msgid "Secondary Contact"
 msgstr "Contact secondaire"
@@ -14954,7 +14954,7 @@ msgid "Share Type"
 msgstr "Type de partage"
 
 msgid "Shares"
-msgstr ""
+msgstr "Partages"
 
 msgid "Sharing Controls"
 msgstr ""
@@ -15147,6 +15147,13 @@ msgid ""
 "<i>pool1</i> with a Naming Schema of  <i>customsnap-%Y%m%d.%H%M</i> have "
 "names like  <i>pool1@customsnap-20190315.0527</i>."
 msgstr ""
+"Chaîne de format de nom d'instantané. La valeur par défaut est <code>auto-%Y-%m-%d_"
+"%H-%M</code> . Doit inclure les chaînes <i>%Y</i>,  <i>%m</i>, <i>%d</i>, <i>%H</"
+"i>, et <i>%M</i>, qui sont remplacées par l’année à quatre chiffres, mois, jour du "
+"mois, heure et minute tel que défini <a href=\"https://www.freebsd.org/cgi/man.cgi?"
+"query=strftime\" target=\"_blank\">strftime(3)</a>.<br><br>.  Par exemple, les "
+"instantanés <i>de pool1</i> avec un schéma nommant  <i>customsnap-%Y%m%d.%H%M</i> "
+"ont des noms comme  <i>pool1@customsnap-20190315.0527</i>."
 
 msgid ""
 "Snapshot schedule for this  replication task. Choose from previously "
@@ -15172,6 +15179,8 @@ msgid ""
 "Some authentication tools default to 30 seconds and do not support custom "
 "intervals."
 msgstr ""
+"Certains outils d’authentification par défaut à 30 secondes et ne supportent pas "
+"les intervalles personnalisés."
 
 msgid "Something went wrong"
 msgstr "Quelque chose s'est mal passé"
@@ -15253,6 +15262,8 @@ msgstr ""
 
 msgid "Specify arguments for container command. Use <i>ENTER</i> after each entry."
 msgstr ""
+"Spécifiez les arguments de la commande de conteneur. Utilisez <i>ENTER</i> après "
+"chaque entrée."
 
 msgid ""
 "Specify how many servers to create. Increase if NFS client responses are "
@@ -15285,16 +15296,16 @@ msgstr ""
 "l'authentification. Ne s'affiche pas aux utilisateurs de connexion anonymes."
 
 msgid "Specify the number of cores per virtual CPU socket."
-msgstr ""
+msgstr "Spécifiez le nombre de cœurs par socket CPU virtuelle."
 
 msgid "Specify the number of threads per core."
-msgstr ""
+msgstr "Spécifiez le nombre de threads par cœur."
 
 msgid "Specify the size of the new zvol."
 msgstr "Spécifiez la taille du nouveau zvol."
 
 msgid "Specify type for IPAM."
-msgstr ""
+msgstr "Spécifiez le type d’IPAM."
 
 msgid "Speeds up the initial synchronization   (seconds instead of minutes)."
 msgstr "Accélère la synchronisation initiale (secondes au lieu de minutes)."
@@ -15303,7 +15314,7 @@ msgid "Speeds up the initial synchronization (seconds instead of minutes)."
 msgstr "Accélère la synchronisation initiale (secondes au lieu de minutes)."
 
 msgid "Standard"
-msgstr ""
+msgstr "Standard"
 
 msgid "Standard (Secure)"
 msgstr "Standard (Sécurisé)"
@@ -15349,7 +15360,7 @@ msgid "State"
 msgstr "État"
 
 msgid "State: "
-msgstr ""
+msgstr "État: "
 
 msgid "Statefulsets"
 msgstr ""
@@ -19113,10 +19124,10 @@ msgid "shmsize"
 msgstr "shmsize"
 
 msgid "snapshot"
-msgstr ""
+msgstr "instantané"
 
 msgid "snapshots"
-msgstr ""
+msgstr "instantanés"
 
 msgid "software, which is provided as-is with no warranty."
 msgstr "logiciel, qui est fourni tel quel sans garantie."
