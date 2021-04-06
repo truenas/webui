@@ -157,6 +157,12 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         this.parent.modalService.open('slide-in-form', this.parent.openvpnServerComponent, row.id);
       }
     },
+    afterGetData: function(res) {
+      const state = this.parent.navigation.extras.state as {configureOpenVPN: string};
+      if(state && state.configureOpenVPN) {
+        state.configureOpenVPN === 'client' ? this.parent.modalService.open('slide-in-form', this.parent.openvpnClientComponent) : this.parent.modalService.open('slide-in-form', this.parent.openvpnServerComponent);
+      }
+    }
   }
 
   public ipmiTableConf = {

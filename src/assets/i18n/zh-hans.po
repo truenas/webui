@@ -802,8 +802,8 @@ msgstr "当“源”是池的顶级数据集时，无法更改ACL。"
 msgid "ACME Certificate"
 msgstr "ACME证书"
 
-msgid "ACME DNS Authenticators"
-msgstr "ACME DNS验证器"
+msgid "ACME DNS-Authenticators"
+msgstr ""
 
 msgid "ACME Server Directory URI"
 msgstr "ACME服务器目录URI"
@@ -2505,9 +2505,9 @@ msgid "Caches"
 msgstr "缓存"
 
 msgid ""
-"Can be set to <i>0</i>, left empty for FreeNAS to assign a port when the VM "
+"Can be set to <i>0</i>, left empty for TrueNAS to assign a port when the VM "
 "is started, or set to a fixed, preferred port number."
-msgstr "可以被设置为<i>0</i>，留空FreeNas将会在虚拟机启动时自动分配端口，输入一个端口以使用推荐的固定端口。"
+msgstr ""
 
 msgid "Cancel"
 msgstr "取消"
@@ -4313,6 +4313,12 @@ msgstr "删除此路径。"
 msgid "Delete user primary group "
 msgstr ""
 
+msgid "Deleted"
+msgstr ""
+
+msgid "Deleting Snapshots"
+msgstr ""
+
 msgid "Deleting interfaces while HA is enabled is not allowed."
 msgstr "不允许在启用HA的情况下删除接口。"
 
@@ -4693,11 +4699,20 @@ msgstr "解散"
 msgid "Dismiss All Alerts"
 msgstr ""
 
+msgid "Display"
+msgstr ""
+
+msgid "Display Device"
+msgstr ""
+
 msgid "Display Login"
 msgstr "显示登录"
 
 msgid "Display Note"
 msgstr "显示备注"
+
+msgid "Display Port"
+msgstr ""
 
 msgid "Display console messages in real time at the bottom of the browser."
 msgstr "在浏览器底部实时显示控制台消息。"
@@ -5880,6 +5895,12 @@ msgstr ""
 
 msgid "Enter passphrase to lock pool "
 msgstr "输入密码以锁定池 "
+
+msgid "Enter password"
+msgstr ""
+
+msgid "Enter password to unlock this display device"
+msgstr ""
 
 msgid "Enter password."
 msgstr "输入密码。"
@@ -7813,6 +7834,12 @@ msgstr "无效的正则表达式过滤器"
 msgid "Invalid value. Missing numerical value or invalid numerical value/unit."
 msgstr "无效值。缺少数值或无效的数值/单位。"
 
+msgid "Invalid value. Must be greater than or equal to "
+msgstr ""
+
+msgid "Invalid value. Must be less than or equal to "
+msgstr ""
+
 msgid ""
 "Invalid value. Valid values are numbers followed by optional unit letters  "
 "for GiB, like <code>256g</code> or <code>1 G</code> or <code>2 GiB</code>."
@@ -9584,6 +9611,9 @@ msgid ""
 "selected permissions."
 msgstr "仅适用于Unix ACLs。在共享上创建的新文件将使用选定的权限进行设置。"
 
+msgid "Open"
+msgstr ""
+
 msgid "Open Source"
 msgstr "开源"
 
@@ -9982,6 +10012,9 @@ msgstr "选择成员的物理接口。"
 
 msgid "PiB"
 msgstr "PiB"
+
+msgid "Pick a display device to open"
+msgstr ""
 
 msgid "Plain (No Encryption)"
 msgstr ""
@@ -15510,12 +15543,6 @@ msgstr "虚拟机同步"
 msgid "VMware-Snapshots"
 msgstr ""
 
-msgid "VNC"
-msgstr "VNC"
-
-msgid "VNC Port"
-msgstr "VNC端口"
-
 msgid ""
 "VNC network interface IP address. The primary interface IP address is the "
 "default. A different interface IP address can be chosen."
@@ -16423,6 +16450,12 @@ msgstr "服务停止失败。"
 
 msgid "shmsize"
 msgstr "shmsize"
+
+msgid "snapshot"
+msgstr ""
+
+msgid "snapshots"
+msgstr ""
 
 msgid "software, which is provided as-is with no warranty."
 msgstr "软件按原样提供，不提供任何保修。"

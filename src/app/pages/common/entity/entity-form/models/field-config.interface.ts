@@ -24,7 +24,7 @@ export interface FieldConfig {
   required?: boolean, deleteButtonOnFirst?: boolean, addBtnMessage?: string,
   acceptedFiles?: string, fileLocation?: string, fileType?: string,width?:string,
   message?: any, updater?:any, parent?:any,togglePw?:boolean, paraText?: any,
-  noexec?: boolean, blurStatus?:boolean,blurEvent?:any,noMinutes?:boolean,
+  hideOthersPermissions?: boolean, blurStatus?:boolean,blurEvent?:any,noMinutes?:boolean,
   warnings?: string, hideButton?:boolean, searchOptions?: any[], hideDirs?: any,
   listFields?: Array<FieldConfig>[], templateListField?: FieldConfig[],
   updateLocal?: boolean, isLoading?: boolean, textAreaRows?: number, netmaskPreset?: number,

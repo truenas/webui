@@ -11,16 +11,18 @@ export const helptext_system_advanced = {
   fieldset_kernel: T('Kernel'),
   fieldset_syslog: T('Syslog'),
   fieldset_sysctl: T('Sysctl'),
+  fieldset_cron: T('Cron Jobs'),
+  fieldset_initshutdown: T('Init/Shutdown Scripts'),
 
   dialog_generate_debug_title: T("Generate Debug File"),
   dialog_generate_debug_message: T("This operation might take a long time. Proceed?"),
   dialog_button_ok: T('Proceed'),
-  
+
   system_dataset_placeholder: T("Use System Dataset"),
   system_dataset_tooltip: T('Store system logs on the system dataset. Unset to store system logs in <i>/var/</i> on the operating system device.'),
-  
+
   variable: T('Variable'),
-  
+
   deleteVariable: {
     title: T('Variable'),
     message: T('Delete'),
@@ -66,7 +68,7 @@ export const helptext_system_advanced = {
     error: T('Invalid value. Valid values are numbers followed by optional unit letters \
  for GiB, like <code>256g</code> or <code>1 G</code> or <code>2 GiB</code>.'),
   },
-  
+
   autotune_placeholder: T('Enable Autotune'),
   autotune_tooltip: T('Activates a tuning script which attempts to optimize \
  the system depending on the installed hardware. <b>Warning:</b> Autotuning \
@@ -76,10 +78,6 @@ export const helptext_system_advanced = {
   debugkernel_placeholder: T('Enable Debug Kernel'),
   debugkernel_tooltip: T('Set to boot a debug kernel after the next system\
   reboot.'),
-
-  consolemsg_placeholder: T('Show Console Messages'),
-  consolemsg_tooltip: T('Display console messages in real time\
- at the bottom of the browser.'),
 
   motd_placeholder: T('MOTD Banner'),
   motd_tooltip: T('The message to show when a user logs in with SSH.'),
@@ -163,4 +161,9 @@ export const helptext_system_advanced = {
     tooltip: T('The preconfigured system <i>Certificate</i> to use for authenticating\
  the TLS protocol connection to the remote system log server.'),
   },
+
+  first_time: {
+    title: T('Warning'),
+    message: T('Changing Advanced settings can be dangerous when done incorrectly. Please use caution before saving.')
+  }
 };

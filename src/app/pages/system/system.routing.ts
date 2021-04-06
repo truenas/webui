@@ -24,6 +24,10 @@ import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { GeneralSettingsComponent } from './general-settings/general-settings.component';
 import { Services } from '../services/services.component';
 import { ShellComponent } from '../shell/shell.component';
+import { CronFormComponent } from './advanced/cron/cron-form/cron-form.component';
+import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
+import { InitshutdownFormComponent } from './advanced/initshutdown/initshutdown-form/initshutdown-form.component';
+import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-list/initshutdown-list.component';
 
 export const routes: Routes = [
   {
@@ -139,7 +143,7 @@ export const routes: Routes = [
       ]
     },
     {
-      path : 'email', 
+      path : 'email',
       component : EmailComponent,
       data: { title: T('Email'), breadcrumb: T('Email'), icon: 'email' },
     },
@@ -169,7 +173,7 @@ export const routes: Routes = [
       path: 'failover',
       component: FailoverComponent,
       data: { title: T('Failover'), breadcrumb: T('Failover'), icon: 'device_hub' }
-    }, 
+    },
     {
       path: 'support',
       data: { title: T('Support'), breadcrumb: T('Support'), icon: 'perm_phone_msg' },
@@ -200,6 +204,39 @@ export const routes: Routes = [
       path: 'shell',
       component: ShellComponent,
       data: { title: T('Shell'), breadcrumb: T('Shell') },
+    },
+    {
+      path: 'cron',
+      data: { title: 'Cron Jobs', breadcrumb: 'Cron Jobs', icon: 'event_note' },
+      children: [{
+        path: '',
+        component: CronListComponent,
+        data: { title: 'Cron Jobs', breadcrumb: 'Cron Jobs' },
+      }, {
+        path: 'add',
+        component: CronFormComponent,
+        data: { title: 'Add', breadcrumb: 'Add' }
+      }, {
+        path: 'edit/:pk',
+        component: CronFormComponent,
+        data: { title: 'Edit', breadcrumb: 'Edit' }
+      }]
+    }, {
+      path: 'initshutdown',
+      data: { title: 'Init/Shutdown Scripts', breadcrumb: 'Init/Shutdown Scripts', icon: 'event_note' },
+      children: [{
+        path: '',
+        component: InitshutdownListComponent,
+        data: { title: 'Init/Shutdown Scripts', breadcrumb: 'Init/Shutdown Scripts' },
+      }, {
+        path: 'add',
+        component: InitshutdownFormComponent,
+        data: { title: 'Add', breadcrumb: 'Add' }
+      }, {
+        path: 'edit/:pk',
+        component: InitshutdownFormComponent,
+        data: { title: 'Edit', breadcrumb: 'Edit' }
+      }]
     }
     ]
   }

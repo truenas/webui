@@ -922,7 +922,7 @@ msgstr ""
 msgid "ACME Certificate"
 msgstr "Сертификат ACME"
 
-msgid "ACME DNS Authenticators"
+msgid "ACME DNS-Authenticators"
 msgstr ""
 
 msgid "ACME Server Directory URI"
@@ -2816,12 +2816,9 @@ msgid "Caches"
 msgstr "Кэши"
 
 msgid ""
-"Can be set to <i>0</i>, left empty for FreeNAS to assign a port when the VM "
+"Can be set to <i>0</i>, left empty for TrueNAS to assign a port when the VM "
 "is started, or set to a fixed, preferred port number."
 msgstr ""
-"Может быть установлен в <i>0</i>, оставьте пустым чтобы FreeNAS назначил "
-"порт при запуске виртуальной машины, или установите в фиксированный "
-"предпочтительный номер порта."
 
 msgid "Cancel"
 msgstr "Отмена"
@@ -4838,6 +4835,12 @@ msgstr "Удалить этот путь."
 msgid "Delete user primary group "
 msgstr "Удалить основную группу пользователя "
 
+msgid "Deleted"
+msgstr ""
+
+msgid "Deleting Snapshots"
+msgstr ""
+
 msgid "Deleting interfaces while HA is enabled is not allowed."
 msgstr "Удаление интерфейсов при включенной ВД запрещено."
 
@@ -5227,11 +5230,20 @@ msgstr "Отклонить"
 msgid "Dismiss All Alerts"
 msgstr "Отклонить все оповещения"
 
+msgid "Display"
+msgstr ""
+
+msgid "Display Device"
+msgstr ""
+
 msgid "Display Login"
 msgstr "Сообщение при входе"
 
 msgid "Display Note"
 msgstr "Показать примечание"
+
+msgid "Display Port"
+msgstr ""
 
 msgid "Display console messages in real time at the bottom of the browser."
 msgstr ""
@@ -6503,6 +6515,12 @@ msgstr ""
 
 msgid "Enter passphrase to lock pool "
 msgstr "Введите пароль для блокировки пула "
+
+msgid "Enter password"
+msgstr ""
+
+msgid "Enter password to unlock this display device"
+msgstr ""
 
 msgid "Enter password."
 msgstr "Введите пароль."
@@ -8606,6 +8624,12 @@ msgstr ""
 "Неверное значение. Отсутствует числовое значение или неверное числовое "
 "значение/единица."
 
+msgid "Invalid value. Must be greater than or equal to "
+msgstr ""
+
+msgid "Invalid value. Must be less than or equal to "
+msgstr ""
+
 msgid ""
 "Invalid value. Valid values are numbers followed by optional unit letters  "
 "for GiB, like <code>256g</code> or <code>1 G</code> or <code>2 GiB</code>."
@@ -10481,6 +10505,9 @@ msgstr ""
 "Работает только с Unix ACL. Новые файлы, созданные на общем ресурсе, "
 "создаются с выбранными разрешениями."
 
+msgid "Open"
+msgstr ""
+
 msgid "Open Source"
 msgstr ""
 
@@ -10884,6 +10911,9 @@ msgstr "Физический интерфейс выбранного члена.
 
 msgid "PiB"
 msgstr "ПиБ"
+
+msgid "Pick a display device to open"
+msgstr ""
 
 msgid "Plain (No Encryption)"
 msgstr ""
@@ -16939,12 +16969,6 @@ msgstr "Синхронизация VMware"
 msgid "VMware-Snapshots"
 msgstr ""
 
-msgid "VNC"
-msgstr "VNC"
-
-msgid "VNC Port"
-msgstr "Порт VNC"
-
 msgid ""
 "VNC network interface IP address. The primary interface IP address is the "
 "default. A different interface IP address can be chosen."
@@ -17869,6 +17893,12 @@ msgid "service failed to stop."
 msgstr "служба не остановилась."
 
 msgid "shmsize"
+msgstr ""
+
+msgid "snapshot"
+msgstr ""
+
+msgid "snapshots"
 msgstr ""
 
 msgid "software, which is provided as-is with no warranty."

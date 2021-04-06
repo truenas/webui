@@ -193,7 +193,9 @@ export class BootStatusListComponent implements OnInit {
       }
 
       delete node.data.children;
-      this.treeTableConfig.tableData.push(node);
+      const config = {...this.treeTableConfig};
+      config.tableData = [node];
+      this.treeTableConfig = config;
     }
 
     getReadableDate(data: any) {

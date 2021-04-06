@@ -24,6 +24,12 @@ import { ChartWizardComponent } from './forms/chart-wizard.component';
 import { PodLogsComponent } from './pod-logs/pod-logs.component';
 import { ChartEventsDialog } from './dialogs/chart-events/chart-events-dialog.component';
 import { AppCommonModule } from '../../components/common/app-common.module';
+import { CatalogSummaryDialog } from './dialogs/catalog-summary/catalog-summary-dialog.component';
+import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.component';
+import { ManageCatalogSummaryDialog } from './dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
+import { CatalogAddFormComponent } from './forms/catalog-add-form.component';
+import { CatalogEditFormComponent } from './forms/catalog-edit-form.component';
+import { PullImageFormComponent } from './forms/pull-image-form.component';
 
 @NgModule({
   imports: [
@@ -53,6 +59,12 @@ import { AppCommonModule } from '../../components/common/app-common.module';
     PodShellComponent,
     PodLogsComponent,
     ChartEventsDialog,
+    CatalogSummaryDialog,
+    ManageCatalogsComponent,
+    ManageCatalogSummaryDialog,
+    CatalogAddFormComponent,
+    CatalogEditFormComponent,
+    PullImageFormComponent,
   ]
 })
 export class ApplicationsModule { }

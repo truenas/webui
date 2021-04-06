@@ -1,26 +1,29 @@
 <div fxLayout="row wrap" fxLayoutAlign="center center">
   <mat-card class="chart-item" *ngFor="let item of filteredChartItems">
-      <div class="content-wrapper" fxLayout="row">
+      <div class="content-wrapper" fxLayout="row" (click)="showChartEvents(item.name)">
         <div class="logo-container">
           <div class="logo" style="background-image: url('{{ item.icon }}');"></div>
+          <div class="badge-area">
+            <div class="partner-badge capitalized-text">
+                {{ item.catalog }}
+            </div>                    
+            <div class="train-badge capitalized-text">
+                {{ item.catalog_train }}
+            </div>                    
+          </div>
           <mat-checkbox color="primary" class="bulk-checkbox" [(ngModel)]="item.selected" (change)="onChangeCheck()"></mat-checkbox>
         </div>
-        <div class=content-box>
-          <div class="content" (click)="showChartEvents(item.name)">
-            <strong class="chart-name">{{ item.name }}</strong><span class="version"> {{ item.human_version}}</span>
-         
+        <div class="content-box">
+          <div class="content">
+            <strong class="chart-name" textLimiter threshold="20">{{ item.name }}</strong>
+            <div><span class="version" textLimiter threshold="50"> {{ item.human_version}}</span></div>
             <div *ngIf="item.update_available || item.container_images_update_available; else elseBlock">
-              <span class="update-label">{{ 'Update available' | translate}}:</span> 
-              <span class="version-value">{{ item.human_latest_version }}</span>
+              <span class="update-label" matTooltip="Available version: {{ item.human_latest_version }}">{{ 'Update available' | translate}}</span> 
             </div>
             <ng-template #elseBlock><div class="update-label">{{ 'Up to date' | translate }}</div></ng-template>
-            <ng-container *ngIf="item.chart_name==='ix-chart'">
-              <div class="repository docker-info">{{ 'Image' | translate }}: {{ item.repository }}</div>
-              <div class="tag docker-info">{{'Tag' | translate }}: {{ item.tag }}</div>
-            </ng-container>
           </div>
 
-          <div class="chart-button-row" fxLayout="row" fxLayoutAlign="end end">
+          <div class="chart-button-row" fxLayout="row" fxLayoutAlign="end end" (click)="$event.stopPropagation()">
             <button mat-button (click)="portal(item.portal)" *ngIf="item.status === 'ACTIVE' && item.portal"
               ix-auto ix-auto-type="button" ix-auto-identifier="{{ item.name}}-portal">
               {{ 'Portal' | translate }}

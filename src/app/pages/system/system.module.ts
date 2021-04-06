@@ -1,6 +1,3 @@
-import { SyslogFormComponent } from './advanced/syslog-form/syslog-form.component';
-import { KernelFormComponent } from './advanced/kernel-form/kernel-form.component';
-import { ConsoleFormComponent } from './advanced/console-form/console-form.component';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -48,6 +45,13 @@ import { GeneralSettingsComponent } from './general-settings/general-settings.co
 import { LocalizationFormComponent } from './general-settings/localization-form/localization-form.component';
 import { GuiFormComponent } from './general-settings/gui-form/gui-form.component';
 import { LicenseComponent } from './general-settings/support/license/license.component';
+import { SyslogFormComponent } from './advanced/syslog-form/syslog-form.component';
+import { KernelFormComponent } from './advanced/kernel-form/kernel-form.component';
+import { ConsoleFormComponent } from './advanced/console-form/console-form.component';
+import { CronFormComponent } from './advanced/cron/cron-form/cron-form.component';
+import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
+import { InitshutdownFormComponent } from './advanced/initshutdown/initshutdown-form/initshutdown-form.component';
+import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-list/initshutdown-list.component';
 
 @NgModule({
   imports: [
@@ -90,7 +94,11 @@ import { LicenseComponent } from './general-settings/support/license/license.com
     LicenseComponent,
     ConsoleFormComponent,
     KernelFormComponent,
-    SyslogFormComponent
+    SyslogFormComponent,
+    InitshutdownFormComponent,
+    InitshutdownListComponent,
+    CronFormComponent,
+    CronListComponent
   ],
   entryComponents: [QRDialog],
   providers: []

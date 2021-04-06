@@ -6,6 +6,7 @@ export class ModalService {
     private modals: any[] = [];
 
     public refreshTable$ = new Subject();
+    public onClose$ = new Subject();
     public refreshForm$ = new Subject();
     public getRow$ = new Subject();
     public message$ = new Subject();
@@ -41,9 +42,12 @@ export class ModalService {
         modal.open(conf);
     }
 
-    close(id: string): Promise<boolean> {
+    close(id: string, error?: any, response?: any): Promise<boolean> {
         // close modal specified by id
         let modal: any = this.modals.filter(x => x.id === id)[0];
+        if(error) this.onClose$.error(error);
+        else if (response) this.onClose$.next(response);
+        else this.onClose$.next(true);
         return modal.close();
     }
 }

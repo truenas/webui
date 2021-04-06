@@ -59,6 +59,7 @@ export interface InputTableConf {
   wsDelete?: string;
   noAdd?: boolean;
   actionsConfig?: { actionType: any, actionConfig: any };
+  disableActionsConfig?: boolean;
   wsDeleteParams?(row, id): any;
   addRows?(entity: EntityTableComponent);
   changeEvent?(entity: EntityTableComponent);
@@ -81,6 +82,7 @@ export interface InputTableConf {
   afterDelete?();
   addComponent?();
   editComponent?();
+  onRowClick?(row): any;
 }
 
 export interface EntityTableAction {
@@ -131,7 +133,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(CdkVirtualScrollViewport, { static: false}) viewport: CdkVirtualScrollViewport;
   
-  public filter: ElementRef;
   public scrollContainer: HTMLElement;
   public scrolledIndex: number = 0;
   public tableMouseEvent: MouseEvent;
@@ -192,7 +193,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public removeFromSelectedTotal = 0;
   public hasActions = true;
   public sortKey: string;
-  
+  public filterValue: string = ''; //the filter string filled in search input.
   // Global Actions in Page Title 
   protected actionsConfig: any;
   protected loaderOpen = false;
@@ -397,44 +398,39 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    // Setup Actions in Page Title Component
-    this.core.emit({ name:"GlobalActions", data: this.actionsConfig, sender: this});
+    //If actionsConfig was disabled, don't show the default toolbar. like the Table is in a Tab.
+    if (!this.conf.disableActionsConfig) {
+      // Setup Actions in Page Title Component
+      this.core.emit({ name:"GlobalActions", data: this.actionsConfig, sender: this});
+    }
   }
 
-  filterInit(){
-    if (this.filter) {
-    observableFromEvent(this.filter.nativeElement, 'keyup').pipe(
-      debounceTime(150),
-      distinctUntilChanged(),)
-      .subscribe((evt) => {
-        const filterValue: string = this.filter.nativeElement.value;
-
-        if (filterValue.length > 0) {
-          this.dataSource.filter = filterValue;
-        } else {
-          this.dataSource.filter = '';
-        }
-
-        if(this.dataSource.filteredData && this.dataSource.filteredData.length) {
-          this.isTableEmpty = false;
-        } else {
-          this.isTableEmpty = true;
-          this.emptyTableConf = {
-            type: EmptyType.no_search_results,
-            large: true,
-            title: T("No Search Results."),
-            message: T(`Your query didn't return any results. Please try again.`)
-          };
-        }
-
-        if (this.dataSource.paginator && this.conf.config.paging) {
-          this.dataSource.paginator.firstPage();
-        }
-      });
+  //Filter the table by the filter string.
+  filter(filterValue: string){
+    this.filterValue = filterValue;
+    if (filterValue.length > 0) {
+      this.dataSource.filter = filterValue;
+    } else {
+      this.dataSource.filter = '';
     }
 
-  }
+    if(this.dataSource.filteredData && this.dataSource.filteredData.length) {
+      this.isTableEmpty = false;
+    } else {
+      this.isTableEmpty = true;
+      this.emptyTableConf = {
+        type: EmptyType.no_search_results,
+        large: true,
+        title: T("No Search Results."),
+        message: T(`Your query didn't return any results. Please try again.`)
+      };
+    }
 
+    if (this.dataSource.paginator && this.conf.config.paging) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+  
   dropLastMaxWidth() {
     // Reset all column maxWidths
     this.conf.columns.forEach((column) => {
@@ -576,11 +572,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.conf.addRows(this);
     }
     if (!this.showDefaults) {
-      this.currentRows = this.filter && this.filter.nativeElement.value === '' ? this.rows : this.currentRows;
+      this.currentRows = this.filterValue === '' ? this.rows : this.currentRows;
       this.paginationPageIndex  = 0;
       this.showDefaults = true;
     }
-    if ((this.expandedRows === 0 || !this.asyncView || this.excuteDeletion || this.needRefreshTable) && this.filter && this.filter.nativeElement.value === '') {
+    if ((this.expandedRows === 0 || !this.asyncView || this.excuteDeletion || this.needRefreshTable) && this.filterValue === '') {
       this.excuteDeletion = false;
       this.needRefreshTable = false;
       
@@ -621,6 +617,8 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dataSource = new MatTableDataSource(this.currentRows);
     this.dataSource.sort = this.sort;
 
+    this.filter(this.filterValue);
+    
     if (this.conf.config.paging) {
       //On first load, paginator is not rendered because table is empty, so we force render here so that we can get valid paginator instance
       setTimeout(() => {
@@ -1101,9 +1099,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.multiActionsIconsOnly = !this.multiActionsIconsOnly;
   }
 
-  getButtonClass(prop) {
-    switch(prop) {
+  getButtonClass(state) {
+    switch(state) {
+      case 'PENDING' : return 'fn-theme-orange';
       case 'RUNNING' : return 'fn-theme-orange';
+      case 'ABORTED' : return 'fn-theme-orange';
       case 'FINISHED' : return 'fn-theme-green';
       case 'SUCCESS' : return 'fn-theme-green';
       case 'ERROR' : return 'fn-theme-red';
@@ -1183,4 +1183,11 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     return (item?.checkbox || item?.toggle || item?.button);
   }
 
+  doRowClick(element) {
+    if (this.conf.onRowClick) {
+      this.conf.onRowClick(element);
+    } else {
+      this.expandedElement = this.expandedElement === element ? null : element;
+    }
+  }
 }

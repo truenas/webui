@@ -1,5 +1,20 @@
 mat-tab-group {
   width: 100%;
+  .mat-tab-body-wrapper {
+    padding: 16px 16px 16px;
+  }
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.capitalized-text {
+  text-transform: lowercase;
+
+  &::first-letter {
+    text-transform: uppercase;
+  }
 }
 
 .catalog-item {
@@ -11,14 +26,32 @@ mat-tab-group {
           height: 160px;
           width: 160px;
           background-color: var(--contrast-lighter);
-        }
-        .logo {
-          width: calc(100% - 32px);
-          height: 100%;
-          background-position: center;
-          background-size: contain;
-          background-repeat: no-repeat;
-          margin-left: 16px;
+          display: flex;
+          flex-direction: column;
+
+          .logo {
+            width: calc(100% - 32px);
+            flex: 1;
+            background-position: center;
+            background-size: contain;
+            background-repeat: no-repeat;
+            margin-left: 16px;
+          }
+  
+          .badge-area {
+            margin: 0 16px 16px;
+            text-align: center;
+            color: rgba($color: #000000, $alpha: 1.0);
+            background-color: var(--yellow);              
+            
+            .partner-badge {
+              background-color: var(--yellow);              
+            }
+
+            .train-badge {
+              background-color: #00000052;
+            }
+          }
         }
 
         .content {
@@ -28,23 +61,17 @@ mat-tab-group {
             left: 15px;
             width: 140px;
 
-            .badge-area {
-                height: 18px;
-                width: 70px;
-                margin: 5px auto;
-
-                .partner-badge {
-                    width: 70px;
-                    background-color: var(--yellow);
-                    color: rgba($color: #000000, $alpha: 1.0);
-                }
-            }
             .button-row {
               position: relative;
-              top: 8px;
             }
         }
     }
+
+    .content-wrapper:hover {
+        cursor: pointer;
+        background-color: var(--contrast-lighter);
+    }
+
 
     .more-info {
       position: absolute;
@@ -64,6 +91,32 @@ mat-tab-group {
       height: 160px;
       width: 160px;
       background-color: var(--contrast-lighter);
+      display: flex;
+      flex-direction: column;
+
+      .logo {
+        width: calc(100% - 32px);
+        flex: 1;
+        background-position: center;
+        background-size: contain;
+        background-repeat: no-repeat;
+        margin-left: 16px;
+      }
+
+      .badge-area {
+        margin: 0 16px 16px;
+        text-align: center;
+        color: rgba($color: #000000, $alpha: 1.0);
+        background-color: var(--yellow);              
+        
+        .partner-badge {
+          background-color: var(--yellow);              
+        }
+
+        .train-badge {
+          background-color: #00000052;
+        }
+      }
 
       .bulk-checkbox {
         position: absolute;
@@ -71,14 +124,7 @@ mat-tab-group {
         left: 2px;
       }
     }
-    .logo {
-      width: calc(100% - 32px);
-      height: 100%;
-      background-position: center;
-      background-size: contain;
-      background-repeat: no-repeat;
-      margin-left: 16px;
-    }
+
 
     .content-box {
       width: 340px;
@@ -92,8 +138,11 @@ mat-tab-group {
     .content {
       text-align: center;
       padding: 1rem;
-      width: 210px;
-      
+      margin-right: 50px;
+      .version {
+        opacity: 0.5;
+      }
+
       .update-label {
         color: rgba(255, 255, 255);
         white-space: nowrap;
@@ -104,14 +153,16 @@ mat-tab-group {
         padding-left: 5px;
       }
     }
-    .content:hover {
-      cursor: pointer;
-    }
     .chart-button-row {
       position: absolute;
       bottom: 5px;
       right: 15px;
     } 
+  }
+
+  .content-wrapper:hover {
+      cursor: pointer;
+      background-color: var(--contrast-lighter);
   }
 
   .more-info {
@@ -161,4 +212,27 @@ mat-tab-group {
   width: 300px;
   text-align: center;
   padding: 15px !important;
+}
+
+app-manage-catalogs {
+  entity-table {
+    #entity-table-component.mat-card {
+      margin: 0;
+    }
+  }
+  .mat-column-label {
+    text-transform: lowercase;
+
+    &::first-letter {
+      text-transform: uppercase;
+    }
+  }
+}
+
+app-docker-images {
+  entity-table {
+    #entity-table-component.mat-card {
+      margin: 0;
+    }
+  }
 }

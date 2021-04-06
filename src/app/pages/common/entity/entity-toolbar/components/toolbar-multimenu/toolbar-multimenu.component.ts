@@ -30,8 +30,24 @@ export class ToolbarMultimenuComponent extends iXAbstractObject implements OnIni
   ngOnInit(){
     this.selectStates.length = this.config.options.length;
     this.selectStates.fill(false);
-    this.values.push(this.config.options[0]);
-    this.selectStates[0] = true;
+    if (this.config.value) {
+      for(let i=0; i< this.config.value.length; i++) {
+        const option = this.config.value[i];
+        if (option) {
+          this.values.push(option);
+          for(let j=0; j<this.selectStates.length; j++) {
+            if (this.config.options[j].value == option.value) {
+              this.selectStates[j] = true;
+              break;
+            }
+          }    
+        }
+      }
+    } else {
+      this.values.push(this.config.options[0]);
+      this.selectStates[0] = true;
+    }
+    
     this.updateController();
   }
 

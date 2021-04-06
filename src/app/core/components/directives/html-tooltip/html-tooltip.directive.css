@@ -1,0 +1,13 @@
+div.html-tooltip{
+  background-color: var(--bg2);
+  color: var(--fg2);
+  border-radius:4px;
+  padding: 6px 16px;
+}
+
+.tooltip-container{
+  filter: drop-shadow(0 4px 4px rgba(0,0,0, 0.75));
+  max-width: 400px;
+  opacity: 0.9;
+}
+

@@ -21,6 +21,7 @@ export default {
   },
 
   installing: T('Installing'),
+  refreshing: T('Refreshing'),
   settings: T('Settings'),
   choose: T('Choose Pool'),
   advanced: T('Advanced Settings'),
@@ -65,7 +66,15 @@ export default {
 
   launch: T('Launch Docker Image'),
   configure: T('Configure'),
-  
+  refresh: T('Refresh All'),
+  catalogs: T('Catalogs'),
+  addCatalog: T('Add Catalog'),
+  pullImage: T('Pull Image'),
+  availablePlaceholder: T('Search Available Applications'),
+  installedPlaceholder: T('Search Installed Applications'),
+  catalogPlaceholder: T('Search Catalogs'),
+  dockerPlaceholder: T('Search Docker Images'),
+
   install: {
     title: T('Ready to Install'),
     msg1: T('Install '),
@@ -126,7 +135,7 @@ export default {
     delete_dialog: {
       title: T('Delete'),
       msg: T('Delete '),
-      job: T('Deleting...') 
+      job: T('Deleting...')
     },
 
     update_dialog: {
@@ -204,7 +213,7 @@ export default {
       validation: [Validators.min(9000), Validators.max(65535)]
     },
 
-    image: { 
+    image: {
       title: T('Image'),
       tag: {
         placeholder: T('Image Tag'),
@@ -368,7 +377,7 @@ export default {
       },
       hostPort: {
         placeholder: T('Host Port'),
-        
+
       }
     },
     portForwardingList: {
@@ -430,6 +439,7 @@ export default {
   chartWizard: {
     nameGroup: {
       label: 'Application Name',
+      version: 'Version',
     }
   },
 
@@ -485,7 +495,7 @@ export default {
       placeholder: T('Tail Lines'),
     },
   },
-  
+
   actionBtnText: {
     close: T('Close')
   },
@@ -497,5 +507,81 @@ export default {
     containerImageStatusUpdateAvailableTo: T('Following container images are available to update:\n'),
     statusUpdateAvailableTo: T('Available version:\n'),
     tooltipHeader: T('Conainter Images'),
-  }
+  },
+
+  manageCatalogs: {
+    menu: {
+      edit: T('Edit'),
+      refresh: T('Refresh'),
+      delete: T('Delete'),
+      summary: T('Summary'),
+    },
+  },
+
+  dockerImages: {
+    menu: {
+      update: T('Update Image'),
+      delete: T('Delete'),
+    },
+    columns: {
+      id: T('Image ID'),
+      tags: T('Tags'),
+      state: '',
+    },
+    updateAvailable: T('Update Available'),
+    chooseTag: {
+      title: T("Choose a Tag"),
+      selectTag: {
+        placeholder: T('Please select a tag'),
+      },
+      action: T('Choose'),
+    },
+    pulling: T('Pulling...'),
+  },
+
+  catalogForm: {
+    title: T('Add Catalog'),
+    editTitle: T('Edit Catalog'),
+    name: {
+      placeholder: T('Catalog Name'),
+      tooltip: T('Please specify name to be used to lookup catalog.'),
+    },
+    forceCreate: {
+      placeholder: T('Force Create'),
+      tooltip: T('Add catalog to system even if some trains are unhealthy.'),
+    },
+    repository: {
+      placeholder: T('Repository'),
+      tooltip: T('Please specify a valid git repository uri.'),
+    },
+    preferredTrains: {
+      placeholder: T('Preferred Trains'),
+      tooltip: T('Please specify trains from which UI should retrieve available applications for the catalog.'),
+    },
+    branch: {
+      placeholder: T('Branch'),
+      tooltip: T('Please specify branch of git repository to use for the catalog.'),
+    },
+  },
+
+  pullImageForm: {
+    title: T('Pull Image'),
+    label: T('Docker Registry Authentication'),
+    username: {
+      placeholder: T('User Name'),
+      tooltip: T('Please input user name.'),
+    },
+    password: {
+      placeholder: T('Password'),
+      tooltip: T('Please input password.'),
+    },
+    imageName: {
+      placeholder: T('Image Name'),
+      tooltip: T('Please specify the name of the image to pull. Format for the name is "registry/repo/image"'),
+    },
+    imageTags: {
+      placeholder: T('Image Tag'),
+      tooltip: T('Please specifies tag of the image'),
+    },
+  },
 }

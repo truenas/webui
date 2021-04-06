@@ -975,8 +975,8 @@ msgstr ""
 msgid "ACME Certificate"
 msgstr "Certificado ACME"
 
-msgid "ACME DNS Authenticators"
-msgstr "Autenticadores DNS ACME"
+msgid "ACME DNS-Authenticators"
+msgstr ""
 
 msgid "ACME Server Directory URI"
 msgstr "URI del directorio del servidor ACME"
@@ -2920,12 +2920,9 @@ msgid "Caches"
 msgstr "Cachés"
 
 msgid ""
-"Can be set to <i>0</i>, left empty for FreeNAS to assign a port when the VM "
+"Can be set to <i>0</i>, left empty for TrueNAS to assign a port when the VM "
 "is started, or set to a fixed, preferred port number."
 msgstr ""
-"Se puede establecer en <i>0</i>, dejar en blanco para que FreeNAS asigne un "
-"puerto cuando se inicia la VM, o establecer un número de puerto fijo y "
-"preferido."
 
 msgid "Cancel"
 msgstr "Cancelar"
@@ -5000,6 +4997,12 @@ msgstr "Eliminar esta ruta."
 msgid "Delete user primary group "
 msgstr "Eliminar grupo primario de usuarios "
 
+msgid "Deleted"
+msgstr ""
+
+msgid "Deleting Snapshots"
+msgstr ""
+
 msgid "Deleting interfaces while HA is enabled is not allowed."
 msgstr "No se permite eliminar interfaces mientras HA está habilitado."
 
@@ -5429,11 +5432,20 @@ msgstr "Descartar"
 msgid "Dismiss All Alerts"
 msgstr "Descartar todas las alertas"
 
+msgid "Display"
+msgstr ""
+
+msgid "Display Device"
+msgstr ""
+
 msgid "Display Login"
 msgstr "Mostrar inicio de sesión"
 
 msgid "Display Note"
 msgstr "Mostrar nota"
+
+msgid "Display Port"
+msgstr ""
 
 msgid "Display console messages in real time at the bottom of the browser."
 msgstr ""
@@ -6844,6 +6856,12 @@ msgstr ""
 
 msgid "Enter passphrase to lock pool "
 msgstr "Ingrese la contraseña para bloquear el pool "
+
+msgid "Enter password"
+msgstr ""
+
+msgid "Enter password to unlock this display device"
+msgstr ""
 
 msgid "Enter password."
 msgstr "Ingresar contraseña."
@@ -9022,6 +9040,12 @@ msgstr ""
 "Valor no válido. Falta un valor numérico o un valor numérico/unidad no "
 "válido."
 
+msgid "Invalid value. Must be greater than or equal to "
+msgstr ""
+
+msgid "Invalid value. Must be less than or equal to "
+msgstr ""
+
 msgid ""
 "Invalid value. Valid values are numbers followed by optional unit letters  "
 "for GiB, like <code>256g</code> or <code>1 G</code> or <code>2 GiB</code>."
@@ -10993,6 +11017,9 @@ msgstr ""
 "Solo funciona con ACL de Unix. Los nuevos archivos creados en el recurso "
 "compartido se configuran con los permisos seleccionados."
 
+msgid "Open"
+msgstr ""
+
 msgid "Open Source"
 msgstr "Código abierto"
 
@@ -11440,6 +11467,9 @@ msgstr "Interfaz física del miembro seleccionado."
 
 msgid "PiB"
 msgstr "PiB"
+
+msgid "Pick a display device to open"
+msgstr ""
 
 msgid "Plain (No Encryption)"
 msgstr "Sencillo (sin cifrado)"
@@ -18028,12 +18058,6 @@ msgstr "Sincronización VMware"
 msgid "VMware-Snapshots"
 msgstr ""
 
-msgid "VNC"
-msgstr "VNC"
-
-msgid "VNC Port"
-msgstr "Puerto VNC"
-
 msgid ""
 "VNC network interface IP address. The primary interface IP address is the "
 "default. A different interface IP address can be chosen."
@@ -19010,6 +19034,12 @@ msgstr "el servicio no pudo detenerse."
 
 msgid "shmsize"
 msgstr "shmsize"
+
+msgid "snapshot"
+msgstr ""
+
+msgid "snapshots"
+msgstr ""
 
 msgid "software, which is provided as-is with no warranty."
 msgstr "software, que se proporciona tal cual sin garantía."

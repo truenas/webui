@@ -396,7 +396,13 @@ export class EntityUtils {
     } else if (schemaConfig.schema.type == 'int') {
       fieldConfig['type'] = 'input';
       fieldConfig['inputType'] = 'number';
-      
+      if (schemaConfig.schema.min !== undefined) {
+        fieldConfig['min'] = schemaConfig.schema.min;
+      }
+
+      if (schemaConfig.schema.max !== undefined) {
+        fieldConfig['max'] = schemaConfig.schema.max;
+      }
     } else if (schemaConfig.schema.type == 'boolean') {
       fieldConfig['type'] = 'checkbox';
 
