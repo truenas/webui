@@ -26,7 +26,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
   protected queryCallOption: Array<any>;
   protected addCall: string = 'chart.release.create';
   protected isEntity: boolean = true;
-  protected isLinear: boolean = true;
+
   private title = helptext.chartForm.title;
   private dialogRef: any;
   public hideCancel = true;
