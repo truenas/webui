@@ -22,6 +22,17 @@ export class SMBListComponent {
   protected route_delete: string[] = [ 'sharing', 'smb', 'delete' ];
   private entityList: EntityTableComponent;
   productType = window.localStorage.getItem('product_type');
+  protected emptyTableConfigMessages = {
+    first_use: {
+      title: T("No SMB Shares"),
+      message: T(`It seems you haven't setup any SMB Shares yet. Please click the button below to add an SMB Share.`)
+    },
+    no_page_data: {
+      title: T("No SMB Shares"),
+      message: T(`The system could not retrieve any SMB Shares from the database. Please click the button below to add an SMB Share.`)
+    },
+    buttonText: "Add SMB Share"
+  }
 
   public columns: any[] = [
     {name: helptext_sharing_smb.column_name, prop: 'name', always_display: true },

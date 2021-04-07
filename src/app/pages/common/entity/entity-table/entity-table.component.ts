@@ -58,12 +58,13 @@ export interface InputTableConf {
   asyncView?: boolean;
   wsDelete?: string;
   noAdd?: boolean;
-  emptyConfigMessages?: {
+  emptyTableConfigMessages?: {
     errors?: {title: string, message: string},
     first_use?: {title: string, message: string},
     loading?: {title: string, message: string};
     no_page_data?: {title: string, message: string};
     no_search_results?: {title: string, message: string};
+    buttonText?: string;
   };
   actionsConfig?: { actionType: any, actionConfig: any };
   disableActionsConfig?: boolean;
@@ -425,7 +426,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.isTableEmpty = false;
     } else {
       this.isTableEmpty = true;
-      this.configureEmptyTable(this.dataSource.filter ? EmptyType.no_search_results : EmptyType.no_page_data);
+      this.configureEmptyTable(this.dataSource.filter ? EmptyType.no_search_results : this.firstUse ? EmptyType.first_use : EmptyType.no_page_data);
     }
 
     if (this.dataSource.paginator && this.conf.config.paging) {
@@ -434,6 +435,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   configureEmptyTable(emptyType: EmptyType, error: any = null) {
+    console.log("emptytype", emptyType)
     if(emptyType && emptyType === EmptyType.loading) {
       this.emptyTableConf = {
         type: EmptyType.loading,
@@ -443,9 +445,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     } else if(emptyType && emptyType === EmptyType.no_search_results) {
       let title = T("No Search Results.")
       let message = T(`Your query didn't return any results. Please try again.`);
-      if(this.conf.emptyConfigMessages && this.conf.emptyConfigMessages.no_search_results) {
-        title = this.conf.emptyConfigMessages.no_search_results.title;
-        message = this.conf.emptyConfigMessages.no_search_results.message;
+      if(this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.no_search_results) {
+        title = this.conf.emptyTableConfigMessages.no_search_results.title;
+        message = this.conf.emptyTableConfigMessages.no_search_results.message;
       }
       this.emptyTableConf = {
         type: EmptyType.no_search_results,
@@ -456,9 +458,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     } else if(emptyType && emptyType === EmptyType.errors) {
       let title = T("Something went wrong");
       let message = T(`The system returned the following error - `);
-      if(this.conf.emptyConfigMessages && this.conf.emptyConfigMessages.errors) {
-        title = this.conf.emptyConfigMessages.errors.title;
-        message = this.conf.emptyConfigMessages.errors.message;
+      if(this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.errors) {
+        title = this.conf.emptyTableConfigMessages.errors.title;
+        message = this.conf.emptyTableConfigMessages.errors.message;
       }
       this.emptyTableConf = {
         title: title,
@@ -470,9 +472,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       let messagePreset = false;
       let title = T("No ")+this.title;
       let message = T(`It seems you haven't setup any `) + this.title + T(` yet.`);
-      if(this.conf.emptyConfigMessages && this.conf.emptyConfigMessages.first_use) {
-        title = this.conf.emptyConfigMessages.first_use.title;
-        message = this.conf.emptyConfigMessages.first_use.message;
+      if(this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.first_use) {
+        title = this.conf.emptyTableConfigMessages.first_use.title;
+        message = this.conf.emptyTableConfigMessages.first_use.message;
         messagePreset = true;
       }
       this.emptyTableConf = {
@@ -485,8 +487,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         if(!messagePreset) {
           this.emptyTableConf['message'] += T(` Please click the button below to add `) + this.title + T(`.`);
         }
+        let buttonText = T("Add ")+this.title;
+        if(this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.buttonText) {
+          buttonText = this.conf.emptyTableConfigMessages.buttonText;
+        }
         this.emptyTableConf['button'] = {
-          label: T("Add ")+this.title,
+          label: buttonText,
           action: this.doAdd.bind(this),
         };
       }
@@ -494,9 +500,9 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       let messagePreset = false;
       let title = T("No ")+this.title;
       let message = T(`The system could not retrieve any `) + this.title + T(` from the database.`);
-      if(this.conf.emptyConfigMessages && this.conf.emptyConfigMessages.no_page_data) {
-        title = this.conf.emptyConfigMessages.no_page_data.title;
-        message = this.conf.emptyConfigMessages.no_page_data.message;
+      if(this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.no_page_data) {
+        title = this.conf.emptyTableConfigMessages.no_page_data.title;
+        message = this.conf.emptyTableConfigMessages.no_page_data.message;
         messagePreset = true;
       }
       this.emptyTableConf = {
@@ -509,8 +515,12 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
         if(!messagePreset) {
           this.emptyTableConf['message'] += T(` Please click the button below to add `) + this.title + T(`.`);
         }
+        let buttonText = T("Add ")+this.title;
+        if(this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.buttonText) {
+          buttonText = this.conf.emptyTableConfigMessages.buttonText;
+        }
         this.emptyTableConf['button'] = {
-          label: T("Add ")+this.title,
+          label: buttonText,
           action: this.doAdd.bind(this),
         };
       }
