@@ -193,9 +193,6 @@ def set_the_file_click_upload(driver):
     driver.find_element_by_xpath('//input[@type="file"]').send_keys(backup_file)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__UPLOAD"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__UPLOAD"]').click()
-    # h1 Upload Config
-    # input type="file"
-    # ix-auto="button__UPLOAD"
 
 
 @then('the system will reboot, wait for the login')
