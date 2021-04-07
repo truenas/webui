@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogService, StorageService, ValidationService } from 'app/services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
@@ -19,7 +19,7 @@ import { EntityUtils } from '../../common/entity/utils';
   selector: 'app-manage-catalogs',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
 })
-export class ManageCatalogsComponent {
+export class ManageCatalogsComponent implements OnDestroy {
 
   public title = "Catalogs";
   protected entityList: any;
@@ -63,6 +63,12 @@ export class ManageCatalogsComponent {
     this.modalService.refreshForm$.subscribe(() => {
       this.refreshUserForm();
     });
+  }
+
+  ngOnDestroy(){
+    if(this.refreshTableSubscription){
+      this.refreshTableSubscription.unsubscribe();
+    }
   }
   
   refreshUserForm() {

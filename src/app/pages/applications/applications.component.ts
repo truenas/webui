@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { ApplicationsService } from './applications.service';
 import { ModalService } from '../../services/modal.service';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
@@ -21,7 +21,7 @@ import { DockerImagesComponent } from './docker-images/docker-images.component';
   encapsulation: ViewEncapsulation.None,
 })
 
-export class ApplicationsComponent implements OnInit {
+export class ApplicationsComponent implements OnInit, OnDestroy {
 
   @ViewChild(CatalogComponent, { static: false}) private catalogTab: CatalogComponent;
   @ViewChild(ChartReleasesComponent, { static: false}) private chartTab: ChartReleasesComponent;
@@ -63,6 +63,12 @@ export class ApplicationsComponent implements OnInit {
         this.refreshTab();
       }
     });
+  }
+
+  ngOnDestroy(){
+    if(this.refreshTable){
+      this.refreshTable.unsubscribe();
+    }
   }
 
   setupToolbar() {

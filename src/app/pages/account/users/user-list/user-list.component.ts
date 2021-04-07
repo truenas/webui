@@ -94,7 +94,7 @@ export class UserListComponent implements OnDestroy {
 
   ngOnDestroy(){
     if(this.refreshTableSubscription){
-      this.refreshTableSubscription.complete(); 
+      this.refreshTableSubscription.unsubscribe(); 
     }
   }
   

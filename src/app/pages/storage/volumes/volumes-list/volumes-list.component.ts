@@ -1877,7 +1877,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   ngOnDestroy(){ 
     if (this.refreshTableSubscription) {
-      this.refreshTableSubscription.complete();
+      this.refreshTableSubscription.unsubscribe();
     }
   }
 
