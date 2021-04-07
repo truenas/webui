@@ -128,7 +128,7 @@ mat-tab-group {
 
     .content-box {
       width: 340px;
-      height: 130px;
+      height: 160px;
     }
 
     .chart-name {
@@ -160,7 +160,7 @@ mat-tab-group {
     } 
   }
 
-  .content-wrapper:hover {
+  .content-box:hover {
       cursor: pointer;
       background-color: var(--contrast-lighter);
   }

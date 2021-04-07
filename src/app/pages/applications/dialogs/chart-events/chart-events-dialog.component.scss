@@ -1,8 +1,10 @@
-.ix-blue .mat-dialog-content {
+.ix-blue chart-events-dialog div.mat-dialog-content {
+    overflow: auto !important;
     max-width: unset;
 }
 
 chart-events-dialog {
+
     font-size: 14px !important;
 
     .logo-container {
