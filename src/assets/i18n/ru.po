@@ -1161,11 +1161,20 @@ msgstr ""
 msgid "Add CSR"
 msgstr ""
 
+msgid "Add Catalog"
+msgstr ""
+
 msgid "Add Certificate"
 msgstr ""
 
 msgid "Add Cloud Credential"
 msgstr "Добавить облачные полномочия"
+
+msgid "Add Cloud Sync Task"
+msgstr ""
+
+msgid "Add Cron Job"
+msgstr ""
 
 msgid "Add DNS Authenticator"
 msgstr ""
@@ -1182,6 +1191,9 @@ msgstr "Добавить группу"
 msgid "Add Idmap"
 msgstr "Добавить Idmap"
 
+msgid "Add Init/Shutdown Script"
+msgstr ""
+
 msgid "Add Interface"
 msgstr ""
 
@@ -1197,8 +1209,23 @@ msgstr "Добавить точку монтирования"
 msgid "Add NFS SPN"
 msgstr ""
 
+msgid "Add Periodic Snapshot Task"
+msgstr ""
+
 msgid "Add Recovery Key"
 msgstr "Добавить ключ восстановления"
+
+msgid "Add Replication Task"
+msgstr ""
+
+msgid "Add Rsync Task"
+msgstr ""
+
+msgid "Add S.M.A.R.T. Test"
+msgstr ""
+
+msgid "Add Scrub Task"
+msgstr ""
 
 msgid "Add Static Route"
 msgstr ""
@@ -1249,6 +1276,9 @@ msgstr ""
 
 msgid "Add any notes about this zvol."
 msgstr "Добавьте любые заметки об этом zvol."
+
+msgid "Add catalog to system even if some trains are unhealthy."
+msgstr ""
 
 msgid ""
 "Add lines to the jail <i>resolv.conf</i>. <b>Example:</b> <i>nameserver "
@@ -2002,6 +2032,9 @@ msgstr "Любые заметки об инициаторах."
 msgid "Any system service can communicate externally."
 msgstr ""
 
+msgid "App"
+msgstr ""
+
 msgid "Appdefaults Auxiliary Parameters"
 msgstr "Вспомогательный параметры Appdefaults"
 
@@ -2040,6 +2073,9 @@ msgid "Application Key"
 msgstr "Ключ приложения"
 
 msgid "Application Name"
+msgstr ""
+
+msgid "Application Summary"
 msgstr ""
 
 msgid "Applications"
@@ -2360,6 +2396,9 @@ msgstr "Вспомогательные параметры"
 msgid "Available"
 msgstr "Доступно"
 
+msgid "Available Applications"
+msgstr ""
+
 msgid "Available Disks"
 msgstr "Доступные диски"
 
@@ -2570,6 +2609,9 @@ msgstr ""
 "href=\"https://tls.mbed.org/kb/cryptography/elliptic-curve-performance-nist-"
 "vs-brainpool\" target=\"blank\"> Elliptic Curve performance: NIST vs "
 "Brainpool </a> для получения дополнительной информации."
+
+msgid "Branch"
+msgstr ""
 
 msgid "Bridge Members"
 msgstr "Компоненты моста"
@@ -2852,6 +2894,18 @@ msgid "Case Sensitivity"
 msgstr "Чувствительность к регистру"
 
 msgid "Catalog"
+msgstr ""
+
+msgid "Catalog Name"
+msgstr ""
+
+msgid "Catalog Summary"
+msgstr ""
+
+msgid "Catalogs"
+msgstr ""
+
+msgid "Categories"
 msgstr ""
 
 msgid "Category"
@@ -3161,6 +3215,9 @@ msgstr ""
 
 msgid "Choose a Device"
 msgstr "Выберите устройство"
+
+msgid "Choose a Tag"
+msgstr ""
 
 msgid "Choose a cipher algorithm to encrypt data channel packets."
 msgstr "Выберите алгоритм шифрования для шифрования пакетов канала данных."
@@ -3623,6 +3680,9 @@ msgstr "Закрыть (вернуться в список ВМ"
 
 msgid "Cloud Credentials"
 msgstr "Облачные учетные данные"
+
+msgid "Cloud Sync Tasks"
+msgstr ""
 
 msgid "Cloud sync <i>"
 msgstr "Облачная синхронизация <i>"
@@ -4272,6 +4332,9 @@ msgstr "Критичность"
 
 msgid "Cron Job"
 msgstr "Задание Cron"
+
+msgid "Cron Jobs"
+msgstr ""
 
 msgid ""
 "Cryptographic protocols for securing client/server connections. Select "
@@ -5245,10 +5308,18 @@ msgstr "Показать примечание"
 msgid "Display Port"
 msgstr ""
 
+msgid "Display Type"
+msgstr ""
+
 msgid "Display console messages in real time at the bottom of the browser."
 msgstr ""
 "Отображать консольные сообщения в режиме реального времени в нижней части "
 "браузера."
+
+msgid ""
+"Display network interface IP address. The primary interface IP address is "
+"the default. A different interface IP address can be chosen."
+msgstr ""
 
 msgid "Distinguished Name"
 msgstr "Уникальное имя"
@@ -5272,7 +5343,7 @@ msgstr "Не устанавливайте это, если последоват�
 msgid "Docker Host"
 msgstr "Docker Хост"
 
-msgid "Docker Images"
+msgid "Docker Registry Authentication"
 msgstr ""
 
 msgid "Docker image pull policy"
@@ -5439,7 +5510,16 @@ msgstr ""
 msgid "Edit CSR"
 msgstr ""
 
+msgid "Edit Catalog"
+msgstr ""
+
 msgid "Edit Certificate"
+msgstr ""
+
+msgid "Edit Cloud Sync Task"
+msgstr ""
+
+msgid "Edit Cron Job"
 msgstr ""
 
 msgid "Edit DNS Authenticator"
@@ -5460,11 +5540,17 @@ msgstr "Редактировать группу"
 msgid "Edit Idmap"
 msgstr "Редактировать Idmap"
 
+msgid "Edit Init/Shutdown Script"
+msgstr ""
+
 msgid "Edit Interface"
 msgstr ""
 
 msgid "Edit Options"
 msgstr "Редактировать параметры"
+
+msgid "Edit Periodic Snapshot Task"
+msgstr ""
 
 msgid "Edit Permissions"
 msgstr "Изменить разрешения"
@@ -5476,6 +5562,18 @@ msgid "Edit Pool Disk"
 msgstr ""
 
 msgid "Edit Pool Options for "
+msgstr ""
+
+msgid "Edit Replication Task"
+msgstr ""
+
+msgid "Edit Rsync Task"
+msgstr ""
+
+msgid "Edit S.M.A.R.T. Test"
+msgstr ""
+
+msgid "Edit Scrub Task"
 msgstr ""
 
 msgid "Edit Share ACL"
@@ -5586,6 +5684,9 @@ msgstr ""
 msgid "Enable Debug Kernel"
 msgstr "Включить отладочное ядро"
 
+msgid "Enable Display"
+msgstr ""
+
 msgid "Enable FSRVP"
 msgstr "Включить FSRVP"
 
@@ -5652,15 +5753,10 @@ msgstr ""
 "если сеть содержит клиенты Mac OSX 10.4 или ниже, так как они не "
 "поддерживают эту функцию."
 
-msgid "Enable VNC"
-msgstr "Включить VNC"
-
 msgid ""
-"Enable a VNC (Virtual Network Computing) remote connection. Requires "
+"Enable a Display (Virtual Network Computing) remote connection. Requires "
 "<i>UEFI</i> booting."
 msgstr ""
-"Включите удаленное соединение VNC (Virtual Network Computing). Требуется "
-"загрузка <i>UEFI</i>."
 
 msgid "Enable automatic support alerts to iXsystems (Silver/Gold support only)"
 msgstr ""
@@ -6961,6 +7057,9 @@ msgstr "Ошибка при отправке файла"
 msgid "Error updating disks"
 msgstr "Ошибка обновления дисков"
 
+msgid "Error while creating the "
+msgstr ""
+
 msgid "Error:"
 msgstr ""
 "Исключить снимки определенных дочерних наборов данных из репликации. "
@@ -7328,6 +7427,9 @@ msgstr "Принудить"
 
 msgid "Force Clear"
 msgstr "Принудительно очистить"
+
+msgid "Force Create"
+msgstr ""
 
 msgid "Force Delete"
 msgstr "Принудительно удалить"
@@ -7716,6 +7818,9 @@ msgid "HTTPS Port"
 msgstr "HTTPS порт"
 
 msgid "HTTPS Protocols"
+msgstr ""
+
+msgid "Healthy"
 msgstr ""
 
 msgid "Help"
@@ -8293,6 +8398,12 @@ msgstr ""
 msgid "Image"
 msgstr ""
 
+msgid "Image ID"
+msgstr ""
+
+msgid "Image Name"
+msgstr ""
+
 msgid "Image Pull Policy"
 msgstr ""
 
@@ -8434,6 +8545,9 @@ msgstr "Наследует"
 
 msgid "Init/Shutdown Script"
 msgstr "Скрипт инициализации/выключения"
+
+msgid "Init/Shutdown Scripts"
+msgstr ""
 
 msgid ""
 "Initial secret authentication key.  When an authentication key is not set, "
@@ -8769,6 +8883,9 @@ msgstr "KMIP Сервер"
 msgid "Keep"
 msgstr "Хранить"
 
+msgid "Keep for"
+msgstr ""
+
 msgid "Keep snapshot for"
 msgstr "Хранить снимок"
 
@@ -8952,6 +9069,9 @@ msgstr "Код языка"
 
 msgid "Last Scrub Run on"
 msgstr "Последний запуск проверки"
+
+msgid "Last Snapshot"
+msgstr ""
 
 msgid "Launch"
 msgstr ""
@@ -9254,11 +9374,17 @@ msgstr "Сделать целевой набор данных доступным
 msgid "Manage"
 msgstr "Управление"
 
+msgid "Manage Catalogs"
+msgstr ""
+
 msgid "Manage Configuration"
 msgstr ""
 
 msgid "Manage Custom Themes"
 msgstr "Управление пользовательскими темами"
+
+msgid "Manage Docker Images"
+msgstr ""
 
 msgid "Manage Recovery Key"
 msgstr "Управление ключа восстановления"
@@ -10085,6 +10211,9 @@ msgstr "Время предупреждения об отсутствии свя
 msgid "No Encryption (less secure, but faster)"
 msgstr "Без шифрования (менее безопасно, но быстрее)"
 
+msgid "No Item"
+msgstr ""
+
 msgid "No Logs"
 msgstr "Нет журналов"
 
@@ -10111,6 +10240,9 @@ msgstr ""
 
 msgid "No Stat"
 msgstr "Не проверять"
+
+msgid "No Version"
+msgstr ""
 
 msgid ""
 "No custom themes. Click <b>Create New Theme</b> to create a new custom "
@@ -10438,11 +10570,9 @@ msgid "Only Replicate Snapshots Matching Schedule"
 msgstr "Реплицировать только снимки соответствующие расписанию"
 
 msgid ""
-"Only appears if <i>Device</i> is selected. Select the unformatted disk, "
-"controller, or zvol snapshot."
+"Only appears if <i>Device</i> is selected. Select the unused zvol or zvol "
+"snapshot."
 msgstr ""
-"Отображается только если выбрано <i>Устройство</i>. Выберите "
-"неформатированный диск, контроллер, снимок zvol."
 
 msgid ""
 "Only appears if a <i>File</i> or  zvol is selected. When the specified "
@@ -10948,6 +11078,15 @@ msgstr "Пожалуйста, введите имя пользователя"
 msgid "Please enter your username again"
 msgstr "Пожалуйста, введите имя пользователя еще раз"
 
+msgid "Please input password."
+msgstr ""
+
+msgid "Please input user name."
+msgstr ""
+
+msgid "Please select a tag"
+msgstr ""
+
 msgid "Please select a valid SSH Connection"
 msgstr ""
 
@@ -10955,6 +11094,28 @@ msgid "Please select a valid path"
 msgstr "Пожалуйста, выберите правильный путь"
 
 msgid "Please select the applications"
+msgstr ""
+
+msgid "Please specifies tag of the image"
+msgstr ""
+
+msgid "Please specify a valid git repository uri."
+msgstr ""
+
+msgid "Please specify branch of git repository to use for the catalog."
+msgstr ""
+
+msgid "Please specify name to be used to lookup catalog."
+msgstr ""
+
+msgid ""
+"Please specify the name of the image to pull. Format for the name is "
+"\"registry/repo/image\""
+msgstr ""
+
+msgid ""
+"Please specify trains from which UI should retrieve available applications "
+"for the catalog."
 msgstr ""
 
 msgid "Please wait"
@@ -11128,6 +11289,9 @@ msgstr "Предпочитать кнопки только с иконками"
 msgid "Preferences"
 msgstr "Предпочтения"
 
+msgid "Preferred Trains"
+msgstr ""
+
 msgid "Preserve"
 msgstr ""
 
@@ -11299,6 +11463,12 @@ msgstr ""
 
 msgid "Public Key"
 msgstr "Открытый ключ"
+
+msgid "Pull Image"
+msgstr ""
+
+msgid "Pulling..."
+msgstr ""
 
 msgid "Purpose"
 msgstr ""
@@ -11507,7 +11677,13 @@ msgstr ""
 msgid "Refresh"
 msgstr "Обновить"
 
+msgid "Refresh All"
+msgstr ""
+
 msgid "Refresh Token"
+msgstr ""
+
+msgid "Refreshing"
 msgstr ""
 
 msgid "Region"
@@ -11716,6 +11892,9 @@ msgstr "Репликация <i>"
 msgid "Replication Schedule"
 msgstr "Расписание репликации"
 
+msgid "Replication Tasks"
+msgstr ""
+
 msgid "Report CPU Usage in Percentage"
 msgstr ""
 
@@ -11750,6 +11929,9 @@ msgid "Reports"
 msgstr "Отчёты"
 
 msgid "Reports Configuration"
+msgstr ""
+
+msgid "Repository"
 msgstr ""
 
 msgid "Requested action performed for selected Applications"
@@ -12031,6 +12213,9 @@ msgstr ""
 msgid "Rsync Module"
 msgstr ""
 
+msgid "Rsync Tasks"
+msgstr ""
+
 msgid "Run As User"
 msgstr "Запуск от имени пользователя"
 
@@ -12086,6 +12271,9 @@ msgstr ""
 
 msgid "S.M.A.R.T. Test"
 msgstr "Тест S.M.A.R.T."
+
+msgid "S.M.A.R.T. Tests"
+msgstr ""
 
 msgid "S.M.A.R.T. extra options"
 msgstr "Дополнительные параметры S.M.A.R.T."
@@ -12342,13 +12530,28 @@ msgstr "Проверка начата"
 msgid "Scrub Task"
 msgstr ""
 
+msgid "Scrub Tasks"
+msgstr ""
+
 msgid "Scrub interval (in days)"
 msgstr "Интервал проверки (в днях)"
+
+msgid "Search Available Applications"
+msgstr ""
+
+msgid "Search Catalogs"
+msgstr ""
+
+msgid "Search Docker Images"
+msgstr ""
 
 msgid "Search For Connected Groups"
 msgstr ""
 
 msgid "Search For Connected Users"
+msgstr ""
+
+msgid "Search Installed Applications"
 msgstr ""
 
 msgid ""
@@ -12972,8 +13175,8 @@ msgid "Select the type that matches the type of client accessing the dataset."
 msgstr "Выберите тип, соответствующий типу клиента, обращающегося к набору данных."
 
 msgid ""
-"Select the unformatted disk, controller, zvol, or zvol snapshot. Select "
-"<i>Create New</i> to create a new zvol."
+"Select the unused zvol or zvol snapshot. Select <i>Create New</i> to create "
+"a new zvol."
 msgstr ""
 
 msgid ""
@@ -14699,6 +14902,9 @@ msgstr "Успешно обновлено."
 msgid "Suggest Layout"
 msgstr "Предложить макет"
 
+msgid "Summary"
+msgstr ""
+
 msgid "Sun"
 msgstr "Вс"
 
@@ -14900,6 +15106,9 @@ msgid "Tag"
 msgstr ""
 
 msgid "Tag to use for the specified image"
+msgstr ""
+
+msgid "Tags"
 msgstr ""
 
 msgid "Tail Lines"
@@ -16255,6 +16464,9 @@ msgstr ""
 msgid "Unencrypted pools can be imported directly."
 msgstr "Незашифрованные пулы могут быть импортированы напрямую."
 
+msgid "Unhealthy"
+msgstr ""
+
 msgid "Unique LUN ID. The default is generated from the MAC address of the system."
 msgstr "Уникальный LUN ID. Значение по умолчанию генерируется из MAC-адреса системы."
 
@@ -16385,6 +16597,9 @@ msgid "Update"
 msgstr "Обновление"
 
 msgid "Update "
+msgstr ""
+
+msgid "Update Available"
 msgstr ""
 
 msgid "Update File"
@@ -16969,13 +17184,6 @@ msgstr "Синхронизация VMware"
 msgid "VMware-Snapshots"
 msgstr ""
 
-msgid ""
-"VNC network interface IP address. The primary interface IP address is the "
-"default. A different interface IP address can be chosen."
-msgstr ""
-"IP-адрес сетевого интерфейса VNC. IP-адрес основного интерфейса является "
-"значением по умолчанию. Можно выбрать другой IP-адрес интерфейса."
-
 msgid "VNET"
 msgstr "VNET"
 
@@ -17002,6 +17210,9 @@ msgstr "Значение"
 
 msgid "Value must be greater than "
 msgstr "Значение должно быть больше чем "
+
+msgid "Var"
+msgstr ""
 
 msgid "Variable"
 msgstr "Переменная"
@@ -17032,6 +17243,12 @@ msgstr ""
 
 msgid "Version"
 msgstr "Версия"
+
+msgid "Version Info"
+msgstr ""
+
+msgid "Versions"
+msgstr ""
 
 msgid "Video, < 100ms latency"
 msgstr ""
@@ -17139,6 +17356,9 @@ msgstr "Внимание"
 
 msgid "Warning: iSCSI Target is already in use.</font><br>"
 msgstr "Предупреждение: iSCSI Target уже используется.</font><br>"
+
+msgid "We ran into an error while trying to create the "
+msgstr ""
 
 msgid "Weak Ciphers"
 msgstr ""
