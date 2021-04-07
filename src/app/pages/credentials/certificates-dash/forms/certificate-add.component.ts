@@ -37,11 +37,11 @@ export class CertificateAddComponent {
   private type: any;
   public hideCancel = true;
   private isLinear = true;
-  private summary = {};  
+  private summary = {};
 
   entityWizard: any;
   private currentStep = 0;
-  
+
   public wizardConfig: Wizard[] = [
     {
       label: helptext_system_certificates.add.fieldset_basic,
@@ -572,7 +572,7 @@ export class CertificateAddComponent {
         }
       ]
     },
-   
+
   ]
   private internalFields: Array<any> = [
     'signedby',
@@ -636,7 +636,7 @@ export class CertificateAddComponent {
   private csrlist: any;
   public identifier: any;
   public usageField: any;
-  private currenProfile: any;
+  private currentProfile: any;
 
   constructor(protected ws: WebSocketService, protected dialog: MatDialog,
               protected systemGeneralService: SystemGeneralService, private modalService: ModalService,
@@ -701,7 +701,7 @@ export class CertificateAddComponent {
 
   customNext(stepper) {
     stepper.next();
-    this.currentStep = stepper._selectedIndex;    
+    this.currentStep = stepper._selectedIndex;
   }
 
   getSummaryValueLabel(fieldConfig, value) {
@@ -721,7 +721,7 @@ export class CertificateAddComponent {
       const fieldName = fieldConfig.name;
       if (fieldConfig.value !== undefined) {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, fieldConfig.value);
-      }        
+      }
       this.getField(fieldName).valueChanges.subscribe((res) => {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, res);
       })
@@ -758,7 +758,9 @@ export class CertificateAddComponent {
       this.hideField(this.internalFields[i], false, entity);
     }
     this.hideField(this.internalFields[2], true, entity);
-
+    this.getField('csronsys').valueChanges.subscribe(res => {
+        this.hideField('csrlist', !res, entity);
+    })
     this.getField('create_type').valueChanges.subscribe((res) => {
       this.wizardConfig[2].skip = false;
 
@@ -783,7 +785,7 @@ export class CertificateAddComponent {
           this.setDisabled('ec_curve', true);
         } else if (this.getField('key_type').value === 'EC') {
           this.setDisabled('key_length', true);
-        } 
+        }
 
       } else if (res == 'CERTIFICATE_CREATE_CSR') {
         for (let i in this.internalFields) {
@@ -826,7 +828,7 @@ export class CertificateAddComponent {
         }
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
         if (!this.getField('csronsys').value) {
-          this.setDisabled('csrlist', true);
+          this.hideField('csrlist', true, entity);
         } else {
           this.setDisabled('privatekey', true);
           this.setDisabled('passphrase', true);
@@ -862,7 +864,7 @@ export class CertificateAddComponent {
       this.identifier = res;
       this.setSummary();
     })
-  
+
     this.getField('name').statusChanges.subscribe((res) => {
       if (this.identifier && res === 'INVALID') {
         this.getTarget('name')['hasErrors'] = true;
@@ -886,10 +888,10 @@ export class CertificateAddComponent {
 
     this.getField('profiles').valueChanges.subscribe((res) => {
       // undo revious profile settings
-      this.loadProfiels(this.currenProfile, true);
+      this.loadProfiles(this.currentProfile, true);
       // load selected profile settings
-      this.loadProfiels(res);
-      this.currenProfile = res;
+      this.loadProfiles(res);
+      this.currentProfile = res;
       this.setSummary();
     });
 
@@ -899,6 +901,7 @@ export class CertificateAddComponent {
       certType.options = helptext_system_certificates.add.csr_create_type.options;
       certType.placeholder = helptext_system_certificates.add.csr_create_type.placeholder;
       certType.tooltip = helptext_system_certificates.add.csr_create_type.tooltip;
+      certType.value = helptext_system_certificates.add.csr_create_type.value;
       this.title = helptext_system_certificates.add.title_csr;
     }
     this.getField('KeyUsage-enabled').setValue(undefined);
@@ -909,7 +912,7 @@ export class CertificateAddComponent {
     this.setSummary();
   }
 
-  loadProfiels(value, reset?) {
+  loadProfiles(value, reset?) {
     if (value) {
       Object.keys(value).forEach(item => {
         if (item === 'cert_extensions') {
@@ -952,7 +955,7 @@ export class CertificateAddComponent {
   }
 
   getStep(fieldName: any) {
-    
+
     const stepNumber = this.wizardConfig.findIndex((step) => {
       const index = step.fieldConfig.findIndex(field => {
         return fieldName == field.name;
@@ -964,25 +967,25 @@ export class CertificateAddComponent {
   }
 
   getField(fieldName: any) {
-    
+
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
       const target = ( < FormGroup > this.entityWizard.formArray.get([stepNumber])).controls[fieldName];
       return target;
     } else {
       return null;
-    }    
+    }
   }
 
   getTarget(fieldName: any) {
-    
+
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
       const target = _.find(this.wizardConfig[stepNumber].fieldConfig, {'name': fieldName});
       return target;
     } else {
       return null;
-    }    
+    }
   }
 
   hideField(fieldName: any, show: boolean, entity: any) {
@@ -990,8 +993,8 @@ export class CertificateAddComponent {
     this.setDisabled(fieldName, show);
   }
 
-  setDisabled(fieldName: any, disable: boolean) {    
-    const target = this.getField(fieldName);    
+  setDisabled(fieldName: any, disable: boolean) {
+    const target = this.getField(fieldName);
     if (disable) {
       target.disable();
     } else {
@@ -1000,6 +1003,15 @@ export class CertificateAddComponent {
   }
 
   beforeSubmit(data: any) {
+    if(data.san) {
+      for(let i = 0;i<data.san.length;i++) {
+        let sanValue = '';
+        for(let key in data.san[i]) {
+          sanValue+= data.san[i][key];
+        }
+        data.san[i] = sanValue;
+      }
+    }
     if (data.csronsys) {
       this.CSRList.forEach((item) => {
         if (item.id === data.csrlist) {
@@ -1049,9 +1061,8 @@ export class CertificateAddComponent {
       data['cert_extensions'] = cert_extensions;
 
       delete data['profiles'];
-
-      return data;
-    }    
+    }
+    return data;
   }
 
   customSubmit(data){
@@ -1069,7 +1080,7 @@ export class CertificateAddComponent {
       if (err.error.includes('[EFAULT')) {
         new EntityUtils().handleWSError(this.entityForm, err);
       } else {
-      this.dialogService.errorReport(helptext_system_certificates.acme.error_dialog.title, 
+      this.dialogService.errorReport(helptext_system_certificates.acme.error_dialog.title,
         err.exc_info.type, err.exception)
       }
     });

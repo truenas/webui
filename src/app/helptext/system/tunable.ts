@@ -58,5 +58,5 @@ export const helptext_system_tunable = {
       "Enable this tunable. Unset to disable this tunable\
  without deleting it."
     )
-  }
+  },
 };

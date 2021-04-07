@@ -9,7 +9,6 @@ import { SnapshotCloneComponent } from './snapshots/snapshot-clone/';
 import { SnapshotListComponent } from './snapshots/snapshot-list/';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form/';
 import { ManagerComponent } from './volumes/manager/';
-// import { VolumesEditComponent } from './volumes-edit/index';
 import { VolumesListComponent } from './volumes/volumes-list/';
 import { ZvolFormComponent } from './volumes/zvol/zvol-form/';
 import { VMwareSnapshotFormComponent } from './VMware-snapshot/VMware-snapshot';
@@ -31,9 +30,8 @@ import { DatasetQuotasGrouplistComponent } from 'app/pages/storage/volumes/datas
 import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
 import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 import { DatasetPosixAclComponent } from './volumes/datasets/dataset-posix-acl/';
-import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
 import { ViewEnclosureComponent } from 'app/pages/system/viewenclosure/view-enclosure.component';
-import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard';
+import { ResilverComponent } from './volumes/resilver/resilver.component';
 
 export const routes: Routes = [
   {
@@ -207,6 +205,11 @@ export const routes: Routes = [
         component: ViewEnclosureComponent,
         data: { title: 'View Enclosure', breadcrumb: 'View Enclosure', icon: 'settings' },
       },
+      {
+        path: 'resilver',
+        data: { title: 'Resilver Priority', breadcrumb: 'Resilver Priority', icon: 'event_note'},
+        component: ResilverComponent,
+      }
     ]
   }
 ];

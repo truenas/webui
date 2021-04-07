@@ -34,7 +34,7 @@ export class DeviceEditComponent implements OnInit {
   public nicFormGroup: any;
   public rawfileFormGroup: any;
   public pciFormGroup: any;
-  public vncFormGroup: any;
+  public displayFormGroup: any;
   public rootpwd: any;
   public vminfo: any;
   public boot: any;
@@ -65,8 +65,8 @@ export class DeviceEditComponent implements OnInit {
         label: 'PCI Passthru Device',
         value: 'PCI',
         }, {
-        label: 'VNC',
-        value: 'VNC',
+        label: 'Display',
+        value: 'DISPLAY',
         }
       ], 
       value: helptext.dtype_value,
@@ -255,12 +255,12 @@ export class DeviceEditComponent implements OnInit {
   ];
   protected pptdev: any;
 
-  //vnc
-  public vncFieldConfig: FieldConfig[]  = [
+  //Display
+  public displayFieldConfig: FieldConfig[]  = [
     {
-      name : 'vnc_port',
-      placeholder : helptext.vnc_port_placeholder,
-      tooltip : helptext.vnc_port_tooltip,
+      name : 'port',
+      placeholder : helptext.port_placeholder,
+      tooltip : helptext.port_tooltip,
       type : 'input',
       inputType: 'number',
       required: true,
@@ -274,32 +274,32 @@ export class DeviceEditComponent implements OnInit {
       isHidden: true
     },
     {
-      name : 'vnc_resolution',
-      placeholder : helptext.vnc_resolution_placeholder,
-      tooltip : helptext.vnc_resolution_tooltip,
+      name : 'resolution',
+      placeholder : helptext.resolution_placeholder,
+      tooltip : helptext.resolution_tooltip,
       type: 'select',
-      options : helptext.vnc_resolution_options,
+      options : helptext.resolution_options,
       isHidden: true
     },
     {
-      name : 'vnc_bind',
-      placeholder : helptext.vnc_bind_placeholder,
-      tooltip : helptext.vnc_bind_tooltip,
+      name : 'bind',
+      placeholder : helptext.bind_placeholder,
+      tooltip : helptext.bind_tooltip,
       type: 'select',
       options : [],
     },
     {
-      name : 'vnc_password',
-      placeholder : helptext.vnc_password_placeholder,
-      tooltip : helptext.vnc_password_tooltip,
+      name : 'password',
+      placeholder : helptext.password_placeholder,
+      tooltip : helptext.password_tooltip,
       type : 'input',
       inputType : 'password',
-      validation: helptext.vnc_password_validation
+      validation: helptext.password_validation
     },
     {
-      name : 'vnc_web',
-      placeholder : helptext.vnc_web_placeholder,
-      tooltip : helptext.vnc_web_tooltip,
+      name : 'web',
+      placeholder : helptext.web_placeholder,
+      tooltip : helptext.web_tooltip,
       type: 'checkbox'
     },
     {
@@ -327,10 +327,10 @@ export class DeviceEditComponent implements OnInit {
 
 
   preInit() {
-    // vnc
-    this.ws.call('vm.device.vnc_bind_choices').subscribe((res) => {
+    // Display
+    this.ws.call('vm.device.bind_choices').subscribe((res) => {
       if(res && Object.keys(res).length > 0) {
-        this.ipAddress = _.find(this.vncFieldConfig, {'name' : 'vnc_bind'});
+        this.ipAddress = _.find(this.displayFieldConfig, {'name' : 'bind'});
         Object.keys(res).forEach((address) => {
           this.ipAddress.options.push({label : address, value : address});
         });
@@ -396,7 +396,7 @@ export class DeviceEditComponent implements OnInit {
         nicFieldConfig: this.nicFieldConfig,
         rawfileFieldConfig: this.rawfileFieldConfig,
         pciFieldConfig: this.pciFieldConfig,
-        vncFieldConfig: this.vncFieldConfig,
+        displayFieldConfig: this.displayFieldConfig,
       },
       {
         name:'divider',
@@ -412,7 +412,7 @@ export class DeviceEditComponent implements OnInit {
     this.nicFormGroup = this.entityFormService.createFormGroup(this.nicFieldConfig);
     this.rawfileFormGroup = this.entityFormService.createFormGroup(this.rawfileFieldConfig);
     this.pciFormGroup = this.entityFormService.createFormGroup(this.pciFieldConfig);
-    this.vncFormGroup = this.entityFormService.createFormGroup(this.vncFieldConfig);
+    this.displayFormGroup = this.entityFormService.createFormGroup(this.displayFieldConfig);
 
 
     this.activeFormGroup = this.cdromFormGroup;
@@ -446,8 +446,8 @@ export class DeviceEditComponent implements OnInit {
       } else if (res === 'PCI') {
         this.activeFormGroup = this.pciFormGroup;
         this.isCustActionVisible = false;
-      } else if (res === 'VNC') {
-        this.activeFormGroup = this.vncFormGroup;
+      } else if (res === 'DISPLAY') {
+        this.activeFormGroup = this.displayFormGroup;
         this.isCustActionVisible = false;
       }
       this.setgetValues(this.activeFormGroup,deviceInformation);
@@ -461,8 +461,8 @@ export class DeviceEditComponent implements OnInit {
     });
 
     if (!this.productType.includes('SCALE')) {
-      _.find(this.vncFieldConfig, {name:'wait'}).isHidden = false;
-      _.find(this.vncFieldConfig, {name:'vnc_resolution'}).isHidden = false;
+      _.find(this.displayFieldConfig, {name:'wait'}).isHidden = false;
+      _.find(this.displayFieldConfig, {name:'resolution'}).isHidden = false;
     }
 
     this.afterInit();

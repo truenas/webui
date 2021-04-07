@@ -212,7 +212,7 @@ export class CertificateEditComponent {
 
   resourceTransformIncomingRestData(data) {
     this.incomingData = data;
-    if (data.CSR != null) {
+    if (data.cert_type_CSR) {
       this.isCSR = true;
       this.title =  helptext_system_certificates.edit.titleCSR;
       this.viewButtonText = helptext_system_certificates.viewButton.csr;

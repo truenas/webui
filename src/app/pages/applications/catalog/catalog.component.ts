@@ -12,12 +12,19 @@ import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialo
 import { DialogService, WebSocketService, SystemGeneralService } from '../../../services/index';
 import { ModalService } from '../../../services/modal.service';
 import { ApplicationsService } from '../applications.service';
-
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { KubernetesSettingsComponent } from '../forms/kubernetes-settings.component';
 import { ChartReleaseAddComponent } from '../forms/chart-release-add.component';
 import { ChartFormComponent } from '../forms/chart-form.component';
+import { ChartWizardComponent } from '../forms/chart-wizard.component';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import  helptext  from '../../../helptext/apps/apps';
+import { CatalogSummaryDialog } from '../dialogs/catalog-summary/catalog-summary-dialog.component';
+
+interface SelectOption {
+	label: string, 
+	value: string, 
+}
 
 @Component({
   selector: 'app-catalog',
@@ -28,12 +35,13 @@ export class CatalogComponent implements OnInit {
   @Output() updateTab = new EventEmitter();
 
   public catalogApps = [];
+  public catalogNames: string[] = [];
+  public filteredCatalogNames: string[] = [];
   public filteredCatalogApps = [];
   public filterString = '';
-
   private dialogRef: any;
-  private poolList = [];
-  private selectedPool = '';
+  private poolList: SelectOption[] = [];
+  private selectedPool: string = '';
   public settingsEvent: Subject<CoreEvent>;
   private kubernetesForm: KubernetesSettingsComponent;
   private chartReleaseForm: ChartReleaseAddComponent;
@@ -56,7 +64,7 @@ export class CatalogComponent implements OnInit {
     parent: this,
   }
 
-  constructor(private dialogService: DialogService,
+  constructor(private dialogService: DialogService, private appLoaderService: AppLoaderService,
     private mdDialog: MatDialog, private translate: TranslateService, protected ws: WebSocketService,
     private router: Router, private core: CoreService, private modalService: ModalService,
     private appService: ApplicationsService, private sysGeneralService: SystemGeneralService) {
@@ -64,46 +72,60 @@ export class CatalogComponent implements OnInit {
     }
 
   ngOnInit(): void {
-    this.appService.getAllCatalogItems().subscribe(res => {
-      res.forEach(catalog => {
-        for (let i in catalog.trains.charts) {  
-          if (i !== 'ix-chart') {
-            let item = catalog.trains.charts[i];
-            let versions = item.versions;
-            let latest, latestDetails;
-
-            let sorted_version_labels = Object.keys(versions);
-            sorted_version_labels.sort(this.utils.versionCompare);
-
-            latest = sorted_version_labels[0];
-            latestDetails = versions[latest];
-
-            let catalogItem = {
-              name: item.name,
-              catalog: {
-                id: catalog.id,
-                label: catalog.label,
-              },
-              icon_url: item.icon_url? item.icon_url : '/assets/images/ix-original.png',
-              latest_version: latest,
-              info: latestDetails.app_readme,
-              schema: item.versions[latest].schema,
-            }
-            this.catalogApps.push(catalogItem);            
-          }
-        }
-      });
-      this.filerApps();
-    })
-    
+    this.loadCatalogs();
     this.checkForConfiguredPool();
     this.refreshForms();
     this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
       this.refreshForms();
     });
+  }
 
-    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
-      this.updateTab.emit({name: 'SwitchTab', value: '1'});
+  loadCatalogs() {
+    this.appService.getAllCatalogItems().subscribe(res => {
+      this.catalogNames = [];
+      this.catalogApps = [];
+      res.forEach(catalog => {
+        this.catalogNames.push(catalog.label);
+        catalog.preferred_trains.forEach(train => {
+          for (let i in catalog.trains[train]) {  
+            let item = catalog.trains[train][i];
+            let versions = item.versions;
+            let latest, latestDetails;
+  
+            const versionKeys = [];
+            Object.keys(versions).forEach(versionKey => {
+              if (versions[versionKey].healthy) {
+                versionKeys.push(versionKey);
+              }
+            });
+
+            let sorted_version_labels = versionKeys.sort(this.utils.versionCompare);
+  
+            latest = sorted_version_labels[0];
+            latestDetails = versions[latest];
+  
+            let catalogItem = {
+              name: item.name,
+              catalog: {
+                id: catalog.id,
+                label: catalog.label,
+                train: train,
+              },
+              icon_url: item.icon_url? item.icon_url : '/assets/images/ix-original.png',
+              latest_version: latestDetails.human_version,
+              info: latestDetails.app_readme,
+              categories: item.categories,
+              healthy: item.healthy,
+              versions: item.versions,
+              schema: latestDetails.schema,
+            }
+            this.catalogApps.push(catalogItem);
+          }
+        });
+        
+      });
+      this.refreshToolbarMenus();
+      this.filerApps();
     })
   }
 
@@ -126,16 +148,26 @@ export class CatalogComponent implements OnInit {
     } else if (evt.data.event_control == 'filter') {
       this.filterString = evt.data.filter;
       this.filerApps();
+    } else if (evt.data.event_control == 'refresh_all') {
+      this.syncAll();
+    } else if (evt.data.event_control == 'catalogs') {
+      this.filteredCatalogNames = [];
+      evt.data.catalogs.forEach(catalog => {
+        if (catalog) {
+          this.filteredCatalogNames.push(catalog.value);
+        }
+      });
+
+      this.filerApps();
     }
   }
 
-
   refreshToolbarMenus() {
-    this.updateTab.emit({name: 'UpdateToolbarPoolOption', value: !!this.selectedPool});
+    this.updateTab.emit({name: 'catalogToolbarChanged', value: !!this.selectedPool, catalogNames: this.catalogNames});
   }
 
   refreshForms() {
-    this.kubernetesForm = new KubernetesSettingsComponent(this.modalService, this.appService);
+    this.kubernetesForm = new KubernetesSettingsComponent(this.ws, this.appLoaderService, this.dialogService,this.modalService, this.appService);
     this.chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
   }
 
@@ -210,14 +242,15 @@ export class CatalogComponent implements OnInit {
     })
   }
 
-  doInstall(name: string) {
-    const catalogApp = this.catalogApps.find(app => app.name==name);
-    if (catalogApp) {
-      const chartFormComponent = new ChartFormComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
-      chartFormComponent.parseSchema(catalogApp);
-      this.modalService.open('slide-in-form', chartFormComponent);
+  doInstall(name: string, catalog: string = "OFFICIAL", train: string = "charts") {
+    const catalogApp = this.catalogApps.find(app => app.name==name && app.catalog.id==catalog && app.catalog.train==train);
+    if (catalogApp && catalogApp.name != 'ix-chart') {
+      const chartWizardComponent = new ChartWizardComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
+      chartWizardComponent.setCatalogApp(catalogApp);
+      this.modalService.open('slide-in-form', chartWizardComponent);
     } else {
       const chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
+      chartReleaseForm.parseSchema(catalogApp);
       this.modalService.open('slide-in-form', chartReleaseForm);
     }
   }
@@ -228,6 +261,34 @@ export class CatalogComponent implements OnInit {
     } else {
       this.filteredCatalogApps = this.catalogApps;
     }
+
+    if (this.filteredCatalogNames.length > 0) {
+      this.filteredCatalogApps = this.filteredCatalogApps.filter(app => this.filteredCatalogNames.includes(app.catalog.label));
+    }
+
+    this.filteredCatalogApps = this.filteredCatalogApps.filter(app => app.name !== 'ix-chart');
+  }
+
+  showSummaryDialog(name: string, catalog: string = "OFFICIAL", train: string = "charts") {
+    const catalogApp = this.catalogApps.find(app => app.name==name && app.catalog.id==catalog && app.catalog.train==train);
+    if (catalogApp) {
+      let dialogRef = this.mdDialog.open(CatalogSummaryDialog, {
+        width: '470px',
+        data: catalogApp,
+        disableClose: false,
+      });
+    }
+  }
+
+  syncAll() {
+    this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
+      helptext.installing) }, disableClose: true});
+    this.dialogRef.componentInstance.setCall("catalog.sync_all");
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.subscribe(() => {
+      this.dialogService.closeAllDialogs();
+      this.loadCatalogs();
+    });
   }
   
 }

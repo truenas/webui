@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { MatButtonToggleGroup }  from '@angular/material/button-toggle';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 
 import { environment } from '../../../environments/environment';
 import { RestService, WebSocketService, IscsiService, SystemGeneralService} from '../../services/';
@@ -34,7 +34,7 @@ export class Services implements OnInit {
   ];
   
   public config: any = {
-    paging: true,
+    paging: false,
     sorting: { columns: this.columns },
   };
   public services: any[];
@@ -100,7 +100,12 @@ export class Services implements OnInit {
       id: "Configure",
       label: T("Configure"),
       onClick: (row) => {
-        this.editService(row.service);
+        if(row.service === 'openvpn_client' || row.service === 'openvpn_server') {
+          const navigationExtras: NavigationExtras = {state: {configureOpenVPN: row.service.replace('openvpn_', '')}};
+          this.router.navigate(['network'], navigationExtras);
+        } else {
+          this.editService(row.service);
+        }
       }
     }];
     if (parentRow.service === 'netdata' && parentRow.state === 'RUNNING') {

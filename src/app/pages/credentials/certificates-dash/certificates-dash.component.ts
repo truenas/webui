@@ -154,7 +154,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
       {
         name: 'acme-dns',
         tableConf: {
-          title: T('ACME DNS Authenticators'),
+          title: T('ACME DNS-Authenticators'),
           queryCall: 'acme.dns.authenticator.query',
           deleteCall: 'acme.dns.authenticator.delete',
           complex: false,

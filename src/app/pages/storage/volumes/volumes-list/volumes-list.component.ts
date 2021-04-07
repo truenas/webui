@@ -1,3 +1,4 @@
+import { EmptyConfig, EmptyType } from './../../../common/entity/entity-empty/entity-empty.component';
 import { Component, ElementRef, OnInit, AfterViewChecked } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -81,7 +82,7 @@ export class VolumesListTableConfig implements InputTableConf {
   public columns: Array < any > = [
     { name: T('Name'), prop: 'name', always_display: true  },
     { name: T('Type'), prop: 'type', hidden: false},
-    { name: T('Used'), prop: 'used_parsed', filesizePipe: false, hidden: false},
+    { name: T('Used'), prop: 'used_parsed', sortBy: 'used.parsed', filesizePipe: false, hidden: false},
     { name: T('Available'), prop: 'available_parsed', hidden: false, filesizePipe: false},
     { name: T('Compression'), prop: 'compression' },
     { name: T('Compression Ratio'), prop: 'compressratio'},
@@ -1631,7 +1632,7 @@ export class VolumesListTableConfig implements InputTableConf {
             }
           });
         }
-        if (rowData.encrypted && rowData.key_loaded && rowData.encryption_root === rowData.id) {
+        if (rowData.encrypted && rowData.key_loaded && rowData.encryption_root === rowData.id && !rowData.is_passphrase) {
           const fileName = "dataset_" + rowData.name + "_key.txt";
           const mimetype = 'text/plain';
           const message = helptext.export_keys_message + rowData.id;
@@ -1817,13 +1818,44 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   public systemdatasetPool: any;
   public has_encrypted_root = {};
   public has_key_dataset = {};
+  public entityEmptyConf: EmptyConfig = {
+    type: EmptyType.first_use,
+    large: true,
+    title: T('No Pools'),
+    message: `${T(`It seems you haven't configured pools yet.`)} ${T('Please click the button below to create a pool.')}`,
+    button: {
+      label: T('Create pool'),
+      action: this.createPool.bind(this)
+    }
+  }
   protected addZvolComponent: ZvolFormComponent;
   protected addDatasetFormComponent: DatasetFormComponent;
   protected editDatasetFormComponent: DatasetFormComponent;
   protected aroute: ActivatedRoute;
   private refreshTableSubscription: any;
   private datasetQuery = 'pool.dataset.query';
-  private datasetQueryOptions = [[], {"extra": {"properties": ["type", "used", "available", "compression", "readonly", "dedup", "org.freenas:description", "compressratio"]}}]
+  /* 
+   * Please note that extra options are special in that they are passed directly to ZFS. 
+   * This is why 'encryptionroot' is included in order to get 'encryption_root' in the response 
+   * */
+  private datasetQueryOptions = [[], {
+    "extra": {
+      "properties": [
+        "type", 
+        "used", 
+        "available", 
+        "compression", 
+        "readonly", 
+        "dedup", 
+        "org.freenas:description", 
+        "compressratio", 
+        "encryption",
+        "encryptionroot",
+        "keystatus",
+        "keyformat"
+      ]
+    }
+  }]
 
   constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
@@ -1972,6 +2004,10 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.editDatasetFormComponent.setTitle("Edit Dataset");
     this.modalService.open('slide-in-form', this.editDatasetFormComponent, id);
     
+  }
+  
+  createPool() {
+    this.router.navigate(['/storage/manager'])
   }
 
 }

@@ -4,79 +4,90 @@ import { WebSocketService } from 'app/services';
 import { TableService } from './table.service';
 
 import * as _ from 'lodash';
+import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
+import { T } from 'app/translate-marker';
+import { EntityJobComponent } from '../entity-job';
+import { MatDialog } from '@angular/material/dialog';
 
 export interface InputTableConf {
   title?: string;
+  titleHref?: string;
   columns: any[];
   queryCall: string;
   queryCallOption?: any;
   deleteCall?: string;
-  deleteCallIsJob?: boolean,
+  deleteCallIsJob?: boolean;
   complex?: boolean;
   hideHeader?: boolean; // hide table header row
-  name?:string;
+  name?: string;
   deleteMsg?: {
-    title: string,
-    key_props: string[],
-    id_prop?: string,
-    doubleConfirm?(item),
+    title: string;
+    key_props: string[];
+    id_prop?: string;
+    doubleConfirm?(item);
   }; //
   tableComponent?: TableComponent;
+  emptyEntityLarge?: boolean;
+  parent: any;
 
   add?(); // add action function
   edit?(any); // edit row
   delete?(item, table); // customize delete row method
-  dataSourceHelper?(any); // customise handle/modify dataSource 
+  dataSourceHelper?(any); // customise handle/modify dataSource
   getInOutInfo?(any); // get in out info if has state column
   getActions?(); // actions for each row
-  isActionVisible?(): boolean; // determine if action is visible
+  isActionVisible?(actionId: string, entity: any): boolean; // determine if action is visible
   getDeleteCallParams?(row, id): any; // get delete Params
+  onButtonClick?(row);
 }
 
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.css'],
-  providers: [TableService]
+  providers: [TableService],
 })
 export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
+  @ViewChild('apptable') apptable;
+  @ViewChild('table') table;
+
   public _tableConf: InputTableConf;
-  @Input('conf')
-  set tableConf(conf: InputTableConf) {
-    if(!this._tableConf) {
+  public title = '';
+  public titleHref: string;
+  public dataSource;
+  public displayedDataSource;
+  public displayedColumns;
+  public hideHeader = false;
+  public actions;
+  public emptyConf: EmptyConfig;
+  public showViewMore = false;
+  public showCollapse = false;
+
+  protected idProp = 'id';
+
+  private TABLE_HEADER_HEIGHT = 48;
+  private TABLE_ROW_HEIGHT = 48;
+  private TABLE_MIN_ROWS = 5;
+
+  private tableHeight;
+  private limitRows;
+  private entityEmptyLarge = false;
+  private enableViewMore = false;
+
+  get tableConf() {
+    return this._tableConf;
+  }
+
+  @Input('conf') set tableConf(conf: InputTableConf) {
+    if (!this._tableConf) {
       this._tableConf = conf;
     } else {
       this._tableConf = conf;
       this.populateTable();
     }
   }
-  @ViewChild('apptable') apptable;
-  @ViewChild('table') table;
 
-  get tableConf () {
-    return this._tableConf;
-  }
-
-  public title = '';
-  public dataSource;
-  public displayedDataSource;
-  public displayedColumns;
-  public hideHeader = false;
-  public actions;
-  private tableHeight;
-  private limitRows;
-  public showViewMore = false;
-  private enableViewMore = false;
-  public showCollapse = false;
-
-  private TABLE_HEADER_HEIGHT = 48;
-  private TABLE_ROW_HEIGHT = 48;
-  private TABLE_MIN_ROWS = 5;
-
-  protected idProp = 'id' ;
-
-  constructor(private ws: WebSocketService,
-    private tableService: TableService) { }
+  constructor(private ws: WebSocketService, private tableService: TableService, private matDialog: MatDialog) {}
 
   calculateLimitRows() {
     if (this.table) {
@@ -84,7 +95,9 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
       if (this.enableViewMore) {
         return;
       }
-      this.limitRows = Math.floor((this.tableHeight - (this._tableConf.hideHeader ? 0 : this.TABLE_HEADER_HEIGHT)) / this.TABLE_ROW_HEIGHT);
+      this.limitRows = Math.floor(
+        (this.tableHeight - (this._tableConf.hideHeader ? 0 : this.TABLE_HEADER_HEIGHT)) / this.TABLE_ROW_HEIGHT,
+      );
       this.limitRows = Math.max(this.limitRows, this.TABLE_MIN_ROWS);
 
       if (this.dataSource) {
@@ -112,10 +125,21 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   populateTable() {
     this.title = this._tableConf.title || '';
+    if (this._tableConf.titleHref) {
+      this.titleHref = this._tableConf.titleHref;
+    }
+
+    this.entityEmptyLarge = this._tableConf.emptyEntityLarge;
+    this.emptyConf = {
+      type: EmptyType.loading,
+      title: this.title,
+      large: this.entityEmptyLarge,
+    };
+
     if (this._tableConf.hideHeader) {
       this.hideHeader = this._tableConf.hideHeader;
     }
-    this.displayedColumns = this._tableConf.columns.map(col => col.name);
+    this.displayedColumns = this._tableConf.columns.map((col) => col.name);
 
     if (this._tableConf.getActions || this._tableConf.deleteCall) {
       this.displayedColumns.push('action'); // add action column to table
@@ -123,7 +147,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
     this.getData();
 
-    this.idProp = this._tableConf.deleteMsg === undefined ? 'id' : this._tableConf.deleteMsg.id_prop || 'id' ;
+    this.idProp = this._tableConf.deleteMsg === undefined ? 'id' : this._tableConf.deleteMsg.id_prop || 'id';
     this._tableConf.tableComponent = this;
   }
 
@@ -131,13 +155,15 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     this.tableService.getData(this);
   }
 
-  // getProp(data, prop) {
-  //   return _.get(data, prop);
-  // }
-
   editRow(row) {
     if (this._tableConf.edit) {
       this._tableConf.edit(row);
+    }
+  }
+
+  onButtonClick(row) {
+    if (this._tableConf.onButtonClick) {
+      this._tableConf.onButtonClick(row);
     }
   }
 
@@ -185,5 +211,43 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     this.displayedDataSource = this.dataSource.slice(0, this.limitRows);
     this.showViewMore = true;
     this.showCollapse = false;
+  }
+
+  getButtonClass(state) {
+    switch (state) {
+      case 'PENDING':
+      case 'RUNNING':
+      case 'ABORTED':
+        return 'fn-theme-orange';
+      case 'FINISHED':
+      case 'SUCCESS':
+        return 'fn-theme-green';
+      case 'ERROR':
+      case 'FAILED':
+        return 'fn-theme-red';
+      case 'HOLD':
+        return 'fn-theme-yellow';
+      default:
+        return 'fn-theme-primary';
+    }
+  }
+
+  determineColumnType(column) {
+    if (column.listview) {
+      return 'listview';
+    }
+
+    if (column.state && column.state.prop && this._tableConf.getInOutInfo) {
+      return 'state-info';
+    }
+    if (column.state && column.state.icon) {
+      return 'state-icon';
+    }
+
+    if (column.prop === 'state' && column['button'] === true) {
+      return 'state-button';
+    }
+
+    return 'textview';
   }
 }

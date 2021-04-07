@@ -25,6 +25,9 @@ msgstr ""
 msgid " KiB."
 msgstr " KiB"
 
+msgid " Please click the button below to add "
+msgstr ""
+
 msgid " Plugin"
 msgstr " 附加元件"
 
@@ -66,6 +69,9 @@ msgstr ""
 msgid " but datastore "
 msgstr ""
 
+msgid " configured"
+msgstr ""
+
 msgid " day, "
 msgstr ""
 
@@ -76,6 +82,9 @@ msgid " disks"
 msgstr " 磁碟"
 
 msgid " disks, new vdev has "
+msgstr ""
+
+msgid " from the database."
 msgstr ""
 
 msgid " is "
@@ -140,6 +149,9 @@ msgstr " 的更新已完成"
 msgid " updated."
 msgstr " 已更新。"
 
+msgid " yet."
+msgstr ""
+
 msgid "% of all cores"
 msgstr "% 於所有核心"
 
@@ -176,6 +188,9 @@ msgstr ""
 
 msgid ", new vdev is "
 msgstr ", 新的 vdev 為"
+
+msgid "."
+msgstr ""
 
 msgid ". At least one is required."
 msgstr ""
@@ -289,8 +304,9 @@ msgstr ""
 
 msgid ""
 "<a href=\"https://jira.ixsystems.com/secure/Signup!default.jspa\" "
-"target=\"_blank\">   Create a Jira account</a> to file an issue. Use a "
-"valid    email address when registering to receive issue status updates."
+"target=\"_blank\" class=\"native-link\">   Create a Jira account</a> to "
+"file an issue. Use a valid    email address when registering to receive "
+"issue status updates."
 msgstr ""
 
 msgid "<a href=\"https://mega.nz/\" target=\"_blank\">MEGA</a> account  password."
@@ -693,7 +709,7 @@ msgstr ""
 msgid "ACME Certificate"
 msgstr ""
 
-msgid "ACME DNS Authenticators"
+msgid "ACME DNS-Authenticators"
 msgstr ""
 
 msgid "ACME Server Directory URI"
@@ -883,6 +899,9 @@ msgstr "介面卡類型："
 msgid "Add"
 msgstr ""
 
+msgid "Add "
+msgstr ""
+
 msgid "Add ACL Item"
 msgstr ""
 
@@ -901,11 +920,20 @@ msgstr ""
 msgid "Add CSR"
 msgstr ""
 
+msgid "Add Catalog"
+msgstr ""
+
 msgid "Add Certificate"
 msgstr ""
 
 msgid "Add Cloud Credential"
 msgstr "加入雲端認證"
+
+msgid "Add Cloud Sync Task"
+msgstr ""
+
+msgid "Add Cron Job"
+msgstr ""
 
 msgid "Add DNS Authenticator"
 msgstr ""
@@ -920,6 +948,9 @@ msgid "Add Group"
 msgstr ""
 
 msgid "Add Idmap"
+msgstr ""
+
+msgid "Add Init/Shutdown Script"
 msgstr ""
 
 msgid "Add Interface"
@@ -937,8 +968,23 @@ msgstr ""
 msgid "Add NFS SPN"
 msgstr ""
 
+msgid "Add Periodic Snapshot Task"
+msgstr ""
+
 msgid "Add Recovery Key"
 msgstr "新增回復密鑰"
+
+msgid "Add Replication Task"
+msgstr ""
+
+msgid "Add Rsync Task"
+msgstr ""
+
+msgid "Add S.M.A.R.T. Test"
+msgstr ""
+
+msgid "Add Scrub Task"
+msgstr ""
 
 msgid "Add Static Route"
 msgstr ""
@@ -982,6 +1028,9 @@ msgstr ""
 
 msgid "Add any notes about this zvol."
 msgstr "新增此 Zvol 的註解."
+
+msgid "Add catalog to system even if some trains are unhealthy."
+msgstr ""
 
 msgid ""
 "Add lines to the jail <i>resolv.conf</i>. <b>Example:</b> <i>nameserver "
@@ -1190,9 +1239,6 @@ msgstr ""
 
 msgid "Advanced Settings"
 msgstr "進階設定"
-
-msgid "Advanced Settngs"
-msgstr ""
 
 msgid ""
 "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click "
@@ -1580,6 +1626,9 @@ msgstr ""
 msgid "Any system service can communicate externally."
 msgstr ""
 
+msgid "App"
+msgstr ""
+
 msgid "Appdefaults Auxiliary Parameters"
 msgstr ""
 
@@ -1609,10 +1658,16 @@ msgstr ""
 msgid "Application Credential Secret"
 msgstr ""
 
+msgid "Application Events"
+msgstr ""
+
 msgid "Application Key"
 msgstr ""
 
 msgid "Application Name"
+msgstr ""
+
+msgid "Application Summary"
 msgstr ""
 
 msgid "Applications"
@@ -1898,6 +1953,9 @@ msgstr "附屬參數"
 msgid "Available"
 msgstr ""
 
+msgid "Available Applications"
+msgstr ""
+
 msgid "Available Disks"
 msgstr "可用磁碟"
 
@@ -1915,6 +1973,9 @@ msgstr ""
 
 msgid "Available Themes"
 msgstr "可用佈景主題"
+
+msgid "Available version:\n"
+msgstr ""
 
 msgid "Awesome! Now let's explore FreeNAS's cool features."
 msgstr "非常好! 現在開始探索 FreeNAS 的酷炫新功能."
@@ -2081,6 +2142,9 @@ msgid ""
 "href=\"https://tls.mbed.org/kb/cryptography/elliptic-curve-performance-nist-"
 "vs-brainpool\" target=\"blank\"> Elliptic Curve performance: NIST vs "
 "Brainpool </a> for more information."
+msgstr ""
+
+msgid "Branch"
 msgstr ""
 
 msgid "Bridge Members"
@@ -2288,7 +2352,7 @@ msgid "Caches"
 msgstr "快取"
 
 msgid ""
-"Can be set to <i>0</i>, left empty for FreeNAS to assign a port when the VM "
+"Can be set to <i>0</i>, left empty for TrueNAS to assign a port when the VM "
 "is started, or set to a fixed, preferred port number."
 msgstr ""
 
@@ -2322,6 +2386,18 @@ msgid "Case Sensitivity"
 msgstr "區分大小寫"
 
 msgid "Catalog"
+msgstr ""
+
+msgid "Catalog Name"
+msgstr ""
+
+msgid "Catalog Summary"
+msgstr ""
+
+msgid "Catalogs"
+msgstr ""
+
+msgid "Categories"
 msgstr ""
 
 msgid "Category"
@@ -2436,6 +2512,11 @@ msgid ""
 msgstr ""
 
 msgid "Changing"
+msgstr ""
+
+msgid ""
+"Changing Advanced settings can be dangerous when done incorrectly. Please "
+"use caution before saving."
 msgstr ""
 
 msgid ""
@@ -2563,6 +2644,9 @@ msgstr ""
 
 msgid "Choose a Device"
 msgstr "選擇裝置"
+
+msgid "Choose a Tag"
+msgstr ""
 
 msgid "Choose a cipher algorithm to encrypt data channel packets."
 msgstr ""
@@ -2713,6 +2797,9 @@ msgstr ""
 msgid ""
 "Choose if the .zfs snapshot directory is <i>Visible</i> or <i>Invisible</i> "
 "on this dataset."
+msgstr ""
+
+msgid "Choose log"
 msgstr ""
 
 msgid ""
@@ -2915,6 +3002,9 @@ msgstr ""
 msgid "Cloud Credentials"
 msgstr "雲端憑證"
 
+msgid "Cloud Sync Tasks"
+msgstr ""
+
 msgid "Cloud sync <i>"
 msgstr ""
 
@@ -3057,6 +3147,9 @@ msgid "Compression level"
 msgstr "壓縮層級"
 
 msgid "Computer Account OU"
+msgstr ""
+
+msgid "Conainter Images"
 msgstr ""
 
 msgid "Config could not be downloaded"
@@ -3223,6 +3316,12 @@ msgid "Container Entrypoint"
 msgstr ""
 
 msgid "Container Environment Variables"
+msgstr ""
+
+msgid "Container Images"
+msgstr ""
+
+msgid "Container Name"
 msgstr ""
 
 msgid "Container Port"
@@ -3411,6 +3510,9 @@ msgstr "建立或匯入儲存集區"
 msgid "Create or Import pool"
 msgstr "建立或匯入儲存集區"
 
+msgid "Create pool"
+msgstr ""
+
 msgid "Created"
 msgstr ""
 
@@ -3429,6 +3531,9 @@ msgid ""
 msgstr ""
 
 msgid "Creating"
+msgstr ""
+
+msgid "Creating Certificate"
 msgstr ""
 
 msgid "Creating Jail"
@@ -3466,6 +3571,9 @@ msgid "Criticality"
 msgstr ""
 
 msgid "Cron Job"
+msgstr ""
+
+msgid "Cron Jobs"
 msgstr ""
 
 msgid ""
@@ -3963,6 +4071,12 @@ msgstr "刪除這個路徑。"
 msgid "Delete user primary group "
 msgstr ""
 
+msgid "Deleted"
+msgstr ""
+
+msgid "Deleting Snapshots"
+msgstr ""
+
 msgid "Deleting interfaces while HA is enabled is not allowed."
 msgstr ""
 
@@ -3995,6 +4109,9 @@ msgid ""
 "Hosts* and *Deny Hosts* list, then allow all hosts   that are on the *Allow "
 "Hosts* list. <br><br>   If there is a host not on the *Allow Hosts* and not "
 "on the *Deny Hosts* list,   then allow it."
+msgstr ""
+
+msgid "Deployments"
 msgstr ""
 
 msgid "Deregister"
@@ -4277,6 +4394,9 @@ msgstr "磁碟"
 msgid "Disk Details"
 msgstr ""
 
+msgid "Disk Import Aborted: Log Summary"
+msgstr ""
+
 msgid "Disk Imported: Log Summary"
 msgstr ""
 
@@ -4313,13 +4433,30 @@ msgstr "解除"
 msgid "Dismiss All Alerts"
 msgstr ""
 
+msgid "Display"
+msgstr ""
+
+msgid "Display Device"
+msgstr ""
+
 msgid "Display Login"
 msgstr "顯示登入畫面"
 
 msgid "Display Note"
 msgstr ""
 
+msgid "Display Port"
+msgstr ""
+
+msgid "Display Type"
+msgstr ""
+
 msgid "Display console messages in real time at the bottom of the browser."
+msgstr ""
+
+msgid ""
+"Display network interface IP address. The primary interface IP address is "
+"the default. A different interface IP address can be chosen."
 msgstr ""
 
 msgid "Distinguished Name"
@@ -4340,7 +4477,7 @@ msgstr ""
 msgid "Docker Host"
 msgstr "Docker 主機"
 
-msgid "Docker Images"
+msgid "Docker Registry Authentication"
 msgstr ""
 
 msgid "Docker image pull policy"
@@ -4500,7 +4637,16 @@ msgstr ""
 msgid "Edit CSR"
 msgstr ""
 
+msgid "Edit Catalog"
+msgstr ""
+
 msgid "Edit Certificate"
+msgstr ""
+
+msgid "Edit Cloud Sync Task"
+msgstr ""
+
+msgid "Edit Cron Job"
 msgstr ""
 
 msgid "Edit DNS Authenticator"
@@ -4521,11 +4667,17 @@ msgstr ""
 msgid "Edit Idmap"
 msgstr "編輯 Idmap"
 
+msgid "Edit Init/Shutdown Script"
+msgstr ""
+
 msgid "Edit Interface"
 msgstr ""
 
 msgid "Edit Options"
 msgstr "編輯選項"
+
+msgid "Edit Periodic Snapshot Task"
+msgstr ""
 
 msgid "Edit Permissions"
 msgstr "編輯權限"
@@ -4537,6 +4689,18 @@ msgid "Edit Pool Disk"
 msgstr ""
 
 msgid "Edit Pool Options for "
+msgstr ""
+
+msgid "Edit Replication Task"
+msgstr ""
+
+msgid "Edit Rsync Task"
+msgstr ""
+
+msgid "Edit S.M.A.R.T. Test"
+msgstr ""
+
+msgid "Edit Scrub Task"
 msgstr ""
 
 msgid "Edit Share ACL"
@@ -4635,8 +4799,14 @@ msgstr ""
 msgid "Enable Browser"
 msgstr "啟用 Browser"
 
+msgid "Enable Container Image Updates"
+msgstr ""
+
 msgid "Enable Debug Kernel"
 msgstr "啟用偵錯核心"
+
+msgid "Enable Display"
+msgstr ""
 
 msgid "Enable FSRVP"
 msgstr "啟用 FSRVP"
@@ -4701,11 +4871,8 @@ msgid ""
 "support this feature."
 msgstr ""
 
-msgid "Enable VNC"
-msgstr "啟用 VNC"
-
 msgid ""
-"Enable a VNC (Virtual Network Computing) remote connection. Requires "
+"Enable a Display (Virtual Network Computing) remote connection. Requires "
 "<i>UEFI</i> booting."
 msgstr ""
 
@@ -5405,6 +5572,12 @@ msgstr ""
 msgid "Enter passphrase to lock pool "
 msgstr ""
 
+msgid "Enter password"
+msgstr ""
+
+msgid "Enter password to unlock this display device"
+msgstr ""
+
 msgid "Enter password."
 msgstr ""
 
@@ -5782,6 +5955,9 @@ msgstr ""
 msgid "Error updating disks"
 msgstr ""
 
+msgid "Error while creating the "
+msgstr ""
+
 msgid "Error:"
 msgstr "錯誤："
 
@@ -6119,10 +6295,16 @@ msgstr "依循符號連結"
 msgid "Follow symlinks and copy the items to which they link."
 msgstr ""
 
+msgid "Following container images are available to update:\n"
+msgstr ""
+
 msgid "Force"
 msgstr "強制"
 
 msgid "Force Clear"
+msgstr ""
+
+msgid "Force Create"
 msgstr ""
 
 msgid "Force Delete"
@@ -6246,9 +6428,6 @@ msgid "GID"
 msgstr ""
 
 msgid "GMail OAuth"
-msgstr ""
-
-msgid "GPU Configuration"
 msgstr ""
 
 msgid "GUI"
@@ -6426,6 +6605,9 @@ msgstr "來賓帳號"
 msgid "Guest Operating System"
 msgstr "Guest 作業系統"
 
+msgid "Guide"
+msgstr ""
+
 msgid "HA Disabled"
 msgstr "HA 已停用"
 
@@ -6475,6 +6657,9 @@ msgid "HTTPS Port"
 msgstr "HTTPS 連接埠"
 
 msgid "HTTPS Protocols"
+msgstr ""
+
+msgid "Healthy"
 msgstr ""
 
 msgid "Help"
@@ -6961,6 +7146,12 @@ msgstr ""
 msgid "Image"
 msgstr ""
 
+msgid "Image ID"
+msgstr ""
+
+msgid "Image Name"
+msgstr ""
+
 msgid "Image Pull Policy"
 msgstr ""
 
@@ -6986,6 +7177,9 @@ msgid "Import Certificate"
 msgstr ""
 
 msgid "Import Certificate Signing Request"
+msgstr ""
+
+msgid "Import Disk"
 msgstr ""
 
 msgid "Import Pool"
@@ -7084,6 +7278,9 @@ msgid "Inherits"
 msgstr "繼程"
 
 msgid "Init/Shutdown Script"
+msgstr ""
+
+msgid "Init/Shutdown Scripts"
 msgstr ""
 
 msgid ""
@@ -7219,6 +7416,9 @@ msgstr "無效的 IP 位址"
 msgid "Invalid Pod name"
 msgstr ""
 
+msgid "Invalid credentials. Please try again."
+msgstr ""
+
 msgid "Invalid dataset."
 msgstr "無效的資料集。"
 
@@ -7237,6 +7437,12 @@ msgid "Invalid regex filter"
 msgstr ""
 
 msgid "Invalid value. Missing numerical value or invalid numerical value/unit."
+msgstr ""
+
+msgid "Invalid value. Must be greater than or equal to "
+msgstr ""
+
+msgid "Invalid value. Must be less than or equal to "
 msgstr ""
 
 msgid ""
@@ -7271,7 +7477,16 @@ msgid ""
 "different numbers of disks. Continue?"
 msgstr ""
 
+msgid "It seems you haven't configured pools yet."
+msgstr ""
+
+msgid "It seems you haven't setup any "
+msgstr ""
+
 msgid "Item"
+msgstr ""
+
+msgid "Item Name"
 msgstr ""
 
 msgid "Items Delete Failed"
@@ -7356,6 +7571,9 @@ msgstr ""
 
 msgid "Keep"
 msgstr "保留"
+
+msgid "Keep for"
+msgstr ""
 
 msgid "Keep snapshot for"
 msgstr ""
@@ -7523,6 +7741,9 @@ msgstr "語言碼"
 
 msgid "Last Scrub Run on"
 msgstr "上一次 Scrub 執行於"
+
+msgid "Last Snapshot"
+msgstr ""
 
 msgid "Launch"
 msgstr ""
@@ -7795,11 +8016,17 @@ msgstr ""
 msgid "Manage"
 msgstr "管理"
 
+msgid "Manage Catalogs"
+msgstr ""
+
 msgid "Manage Configuration"
 msgstr ""
 
 msgid "Manage Custom Themes"
 msgstr "管理自訂佈景主題"
+
+msgid "Manage Docker Images"
+msgstr ""
 
 msgid "Manage Recovery Key"
 msgstr ""
@@ -8091,12 +8318,6 @@ msgid "Minutes when this task will run."
 msgstr ""
 
 msgid "Mirror"
-msgstr ""
-
-msgid "Misc"
-msgstr ""
-
-msgid "Miscellaneous"
 msgstr ""
 
 msgid "Mixing disks of different sizes in a vdev is not allowed."
@@ -8533,6 +8754,9 @@ msgstr "要附加的網路介面卡："
 msgid "No"
 msgstr "否"
 
+msgid "No "
+msgstr ""
+
 msgid "No Applications Installed"
 msgstr ""
 
@@ -8540,6 +8764,9 @@ msgid "No Communication Warning Time"
 msgstr ""
 
 msgid "No Encryption (less secure, but faster)"
+msgstr ""
+
+msgid "No Item"
 msgstr ""
 
 msgid "No Logs"
@@ -8554,13 +8781,22 @@ msgstr ""
 msgid "No Pools Found"
 msgstr ""
 
+msgid "No Recent Events"
+msgstr ""
+
 msgid "No Repositories"
 msgstr ""
 
 msgid "No Safety Check (CAUTION)"
 msgstr ""
 
+msgid "No Search Results."
+msgstr ""
+
 msgid "No Stat"
+msgstr ""
+
+msgid "No Version"
 msgstr ""
 
 msgid ""
@@ -8568,10 +8804,10 @@ msgid ""
 "theme."
 msgstr ""
 
-msgid "No data to display"
+msgid "No interfaces configured with Virtual IP."
 msgstr ""
 
-msgid "No interfaces configured with Virtual IP."
+msgid "No items have been added yet."
 msgstr ""
 
 msgid "No logs are available for this task."
@@ -8583,16 +8819,19 @@ msgstr ""
 msgid "No network interfaces are marked critical for failover."
 msgstr ""
 
-msgid "No pools"
-msgstr "沒有儲存集區"
-
 msgid "No pools are configured."
+msgstr ""
+
+msgid "No ports are being used."
 msgstr ""
 
 msgid "No repositories is found."
 msgstr ""
 
 msgid "No snapshots sent yet"
+msgstr ""
+
+msgid "No sysctls configured"
 msgstr ""
 
 msgid "No update found."
@@ -8851,8 +9090,8 @@ msgid "Only Replicate Snapshots Matching Schedule"
 msgstr ""
 
 msgid ""
-"Only appears if <i>Device</i> is selected. Select the unformatted disk, "
-"controller, or zvol snapshot."
+"Only appears if <i>Device</i> is selected. Select the unused zvol or zvol "
+"snapshot."
 msgstr ""
 
 msgid ""
@@ -8904,6 +9143,9 @@ msgstr ""
 msgid ""
 "Only works with Unix ACLs. New files created on the share are set with the "
 "selected permissions."
+msgstr ""
+
+msgid "Open"
 msgstr ""
 
 msgid "Open Source"
@@ -9271,6 +9513,9 @@ msgstr ""
 msgid "PiB"
 msgstr ""
 
+msgid "Pick a display device to open"
+msgstr ""
+
 msgid "Plain (No Encryption)"
 msgstr ""
 
@@ -9282,6 +9527,9 @@ msgstr ""
 
 msgid "Please accept the terms of service for the given ACME Server."
 msgstr "請同意 ACME 的服務條款"
+
+msgid "Please click the button below to create a pool."
+msgstr ""
 
 msgid "Please enter your 2FA code"
 msgstr ""
@@ -9301,10 +9549,44 @@ msgstr "請輸入您的使用者名稱"
 msgid "Please enter your username again"
 msgstr "請再次輸入您的使用者名稱"
 
+msgid "Please input password."
+msgstr ""
+
+msgid "Please input user name."
+msgstr ""
+
+msgid "Please select a tag"
+msgstr ""
+
 msgid "Please select a valid SSH Connection"
 msgstr ""
 
 msgid "Please select a valid path"
+msgstr ""
+
+msgid "Please select the applications"
+msgstr ""
+
+msgid "Please specifies tag of the image"
+msgstr ""
+
+msgid "Please specify a valid git repository uri."
+msgstr ""
+
+msgid "Please specify branch of git repository to use for the catalog."
+msgstr ""
+
+msgid "Please specify name to be used to lookup catalog."
+msgstr ""
+
+msgid ""
+"Please specify the name of the image to pull. Format for the name is "
+"\"registry/repo/image\""
+msgstr ""
+
+msgid ""
+"Please specify trains from which UI should retrieve available applications "
+"for the catalog."
 msgstr ""
 
 msgid "Please wait"
@@ -9330,6 +9612,12 @@ msgstr "外掛已更新"
 
 msgid "Plugin installed successfully"
 msgstr "外掛已經安裝成功"
+
+msgid "Pod Logs"
+msgstr ""
+
+msgid "Pod Name"
+msgstr ""
 
 msgid "Pod Shell"
 msgstr ""
@@ -9464,6 +9752,9 @@ msgstr ""
 msgid "Preferences"
 msgstr "喜好設定"
 
+msgid "Preferred Trains"
+msgstr ""
+
 msgid "Preserve"
 msgstr ""
 
@@ -9581,9 +9872,6 @@ msgstr ""
 msgid "Properties Override"
 msgstr ""
 
-msgid "Property"
-msgstr ""
-
 msgid "Protocol"
 msgstr "協定"
 
@@ -9617,6 +9905,12 @@ msgstr ""
 
 msgid "Public Key"
 msgstr "公鑰"
+
+msgid "Pull Image"
+msgstr ""
+
+msgid "Pulling..."
+msgstr ""
 
 msgid "Purpose"
 msgstr "用途"
@@ -9804,7 +10098,13 @@ msgstr ""
 msgid "Refresh"
 msgstr "重新整理"
 
+msgid "Refresh All"
+msgstr ""
+
 msgid "Refresh Token"
+msgstr ""
+
+msgid "Refreshing"
 msgstr ""
 
 msgid "Region"
@@ -10000,6 +10300,9 @@ msgstr "複寫 <i>"
 msgid "Replication Schedule"
 msgstr ""
 
+msgid "Replication Tasks"
+msgstr ""
+
 msgid "Report CPU Usage in Percentage"
 msgstr ""
 
@@ -10028,6 +10331,12 @@ msgid "Reports"
 msgstr "報表"
 
 msgid "Reports Configuration"
+msgstr ""
+
+msgid "Repository"
+msgstr ""
+
+msgid "Requested action performed for selected Applications"
 msgstr ""
 
 msgid "Require IDENT Authentication"
@@ -10287,6 +10596,9 @@ msgstr ""
 msgid "Rsync Module"
 msgstr ""
 
+msgid "Rsync Tasks"
+msgstr ""
+
 msgid "Run As User"
 msgstr ""
 
@@ -10335,6 +10647,9 @@ msgstr ""
 
 msgid "S.M.A.R.T. Test"
 msgstr "S.M.A.R.T 測試"
+
+msgid "S.M.A.R.T. Tests"
+msgstr ""
 
 msgid "S.M.A.R.T. extra options"
 msgstr "S.M.A.R.T. 額外選項"
@@ -10587,13 +10902,28 @@ msgstr ""
 msgid "Scrub Task"
 msgstr ""
 
+msgid "Scrub Tasks"
+msgstr ""
+
 msgid "Scrub interval (in days)"
+msgstr ""
+
+msgid "Search Available Applications"
+msgstr ""
+
+msgid "Search Catalogs"
+msgstr ""
+
+msgid "Search Docker Images"
 msgstr ""
 
 msgid "Search For Connected Groups"
 msgstr ""
 
 msgid "Search For Connected Users"
+msgstr ""
+
+msgid "Search Installed Applications"
 msgstr ""
 
 msgid ""
@@ -11106,8 +11436,8 @@ msgid "Select the type that matches the type of client accessing the dataset."
 msgstr ""
 
 msgid ""
-"Select the unformatted disk, controller, zvol, or zvol snapshot. Select "
-"<i>Create New</i> to create a new zvol."
+"Select the unused zvol or zvol snapshot. Select <i>Create New</i> to create "
+"a new zvol."
 msgstr ""
 
 msgid ""
@@ -12178,9 +12508,15 @@ msgstr ""
 msgid "Snapshot successfully taken."
 msgstr ""
 
+msgid "Snapshots"
+msgstr ""
+
 msgid ""
 "Some authentication tools default to 30 seconds and do not support custom "
 "intervals."
+msgstr ""
+
+msgid "Something went wrong"
 msgstr ""
 
 msgid "Sort languages by:"
@@ -12317,9 +12653,6 @@ msgstr "現在開始 Scrub？"
 msgid "Start time for the replication task."
 msgstr ""
 
-msgid "Started bulk actions"
-msgstr ""
-
 msgid "Starting Jail"
 msgstr "正在啟動 Jail"
 
@@ -12330,6 +12663,9 @@ msgid "State"
 msgstr "狀態"
 
 msgid "State: "
+msgstr ""
+
+msgid "Statefulsets"
 msgstr ""
 
 msgid "Static IP"
@@ -12514,6 +12850,9 @@ msgstr "已成功更新。"
 msgid "Suggest Layout"
 msgstr "建議配置"
 
+msgid "Summary"
+msgstr ""
+
 msgid "Sun"
 msgstr ""
 
@@ -12582,9 +12921,6 @@ msgstr "系統"
 
 msgid "System Clock"
 msgstr "系統時鐘"
-
-msgid "System Dataset"
-msgstr "系統資料集"
 
 msgid "System Dataset Pool"
 msgstr "系統資料集儲存集區"
@@ -12714,6 +13050,12 @@ msgid "Tag"
 msgstr ""
 
 msgid "Tag to use for the specified image"
+msgstr ""
+
+msgid "Tags"
+msgstr ""
+
+msgid "Tail Lines"
 msgstr ""
 
 msgid "Take Snapshot"
@@ -12993,7 +13335,7 @@ msgid ""
 "be changed if the organization requires a different algorithm."
 msgstr ""
 
-msgid "The current pool layout is not recommended.Override the following errors?"
+msgid "The current pool layout is not recommended. Override the following errors?"
 msgstr ""
 
 msgid ""
@@ -13257,6 +13599,9 @@ msgid ""
 "process,  failover to the standby controller."
 msgstr ""
 
+msgid "The system could not retrieve any "
+msgstr ""
+
 msgid ""
 "The system dataset will be updated and the SMB service restarted. This will "
 "cause a temporary disruption of any active SMB connections."
@@ -13265,6 +13610,9 @@ msgstr ""
 msgid ""
 "The system restricts creating a zvol that brings the pool to over 80% "
 "capacity. Set to force creation of the zvol (<b>NOT Recommended</b>)."
+msgstr ""
+
+msgid "The system returned the following error - "
 msgstr ""
 
 msgid ""
@@ -13647,6 +13995,12 @@ msgid ""
 "this task without deleting it, unset this  option."
 msgstr ""
 
+msgid "To configure "
+msgstr ""
+
+msgid "To configure sysctls, click the \"Add\" button."
+msgstr ""
+
 msgid ""
 "To define a custom shortcut for the <i>Path</i>,  enter a memorable name. "
 "Example: <i>/nfsshare</i>. NFS clients  can connect using the <i>Alias</i> "
@@ -13877,6 +14231,9 @@ msgstr ""
 msgid "Unencrypted pools can be imported directly."
 msgstr ""
 
+msgid "Unhealthy"
+msgstr ""
+
 msgid "Unique LUN ID. The default is generated from the MAC address of the system."
 msgstr ""
 
@@ -13993,6 +14350,9 @@ msgid "Update"
 msgstr "更新"
 
 msgid "Update "
+msgstr ""
+
+msgid "Update Available"
 msgstr ""
 
 msgid "Update File"
@@ -14236,6 +14596,9 @@ msgstr ""
 msgid "Use Syslog Only"
 msgstr ""
 
+msgid "Use System Dataset"
+msgstr ""
+
 msgid "Use all disk space"
 msgstr "使用全部磁碟空間"
 
@@ -14305,6 +14668,9 @@ msgstr ""
 
 msgid "Used"
 msgstr "已使用"
+
+msgid "Used Ports"
+msgstr ""
 
 msgid ""
 "Used by clients in PASV mode. A default of <i>0</i> means any port above "
@@ -14501,15 +14867,7 @@ msgstr "VMWare 同步"
 msgid "VMware Sync"
 msgstr ""
 
-msgid "VNC"
-msgstr ""
-
-msgid "VNC Port"
-msgstr "VNC 連接埠"
-
-msgid ""
-"VNC network interface IP address. The primary interface IP address is the "
-"default. A different interface IP address can be chosen."
+msgid "VMware-Snapshots"
 msgstr ""
 
 msgid "VNET"
@@ -14537,6 +14895,9 @@ msgid "Value"
 msgstr "數值"
 
 msgid "Value must be greater than "
+msgstr ""
+
+msgid "Var"
 msgstr ""
 
 msgid "Variable"
@@ -14568,6 +14929,12 @@ msgstr ""
 
 msgid "Version"
 msgstr "版本"
+
+msgid "Version Info"
+msgstr ""
+
+msgid "Versions"
+msgstr ""
 
 msgid "Video, < 100ms latency"
 msgstr ""
@@ -14670,6 +15037,9 @@ msgid "Warning"
 msgstr "警告"
 
 msgid "Warning: iSCSI Target is already in use.</font><br>"
+msgstr ""
+
+msgid "We ran into an error while trying to create the "
 msgstr ""
 
 msgid "Weak Ciphers"
@@ -14929,6 +15299,9 @@ msgid "You have left the domain."
 msgstr ""
 
 msgid "You have successfully added credentials."
+msgstr ""
+
+msgid "Your query didn't return any results. Please try again."
 msgstr ""
 
 msgid "ZFS"
@@ -15382,6 +15755,12 @@ msgid "service failed to stop."
 msgstr "服務停止失敗。"
 
 msgid "shmsize"
+msgstr ""
+
+msgid "snapshot"
+msgstr ""
+
+msgid "snapshots"
 msgstr ""
 
 msgid "software, which is provided as-is with no warranty."

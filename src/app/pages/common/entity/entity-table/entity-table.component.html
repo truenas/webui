@@ -66,7 +66,7 @@
         <ng-container *ngIf="column !== 'expandedDetail' && column !== 'action' && column !== 'multiselect' && column !== 'expansion-chevrons' && !isInteractive(column)" [sticky]="isLeftStickyColumnNo(i)"
        matColumnDef="{{column}}">
           <th [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i), 'sticky-border-right': isLeftStickyColumnNo(i) && isTableOverflow()}" class="data-column" mat-header-cell *matHeaderCellDef>{{currentColumns[i].name}}</th>
-          <td [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i), 'sticky-border-right': isLeftStickyColumnNo(i) && isTableOverflow()}" [ngStyle]="{'cursor': checkLength() ? 'auto' : 'pointer'}" class="data-column" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)" mat-cell *matCellDef="let element">
+          <td [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i), 'sticky-border-right': isLeftStickyColumnNo(i) && isTableOverflow()}" [ngStyle]="{'cursor': (checkLength() && !conf.onRowClick) ? 'auto' : 'pointer'}" class="data-column" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)" mat-cell *matCellDef="let element">
             <div class="text-overflow-ellipsis">{{element[column]}}</div>
           </td>
         </ng-container>
@@ -137,9 +137,9 @@
               </mat-slide-toggle>
 
               <!-- Button -->
-              <button mat-button *ngIf="currentColumns[i].button"
-                [color]="element[column]?.state ? element[column].state.toLowerCase() : 'default'"
-                (click)="$event.stopPropagation(); this.conf.onButtonClick(element)" 
+              <button mat-stroked-button *ngIf="currentColumns[i].button"
+                [ngClass]="getButtonClass(element[column].state)"
+                (click)="$event.stopPropagation(); this.conf.onButtonClick(element)"
                 id="interactive-button_{{column}}_{{element.name}}"
                 ix-auto ix-auto-type="slider" ix-auto-identifier="{{column}}__{{element.name}}">
                 {{element[column].state}}
@@ -178,7 +178,7 @@
       <tr mat-row class="element-row" id="{{element[getFirstKey(element)]}}" 
         ix-auto ix-auto-type="expander" ix-auto-identifier="{{element[getFirstKey(element)]}}"
         *matRowDef="let element; columns: columnsToString(currentColumns, 'prop'); let i = dataIndex;"
-        (click)="expandedElement = expandedElement === element ? null : element;"
+        (click)="doRowClick(element)"
         [ngClass]="{'expanded-row': expandedElement === element}">
       </tr>
   
@@ -188,8 +188,13 @@
     </table>
   </div>
  
-  <mat-card-footer style="padding: 0 !important">
-    <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+  <mat-card-footer style="padding: 0 !important" *ngIf="conf.config.paging">
+    <mat-paginator 
+      [pageIndex]="paginationPageIndex" 
+      [pageSize]="paginationPageSize" 
+      [pageSizeOptions]="paginationPageSizeOptions"
+      [showFirstLastButtons]="paginationShowFirstLastButtons"
+    ></mat-paginator>
   </mat-card-footer>
   </ng-container>
   <ng-container *ngIf="isTableEmpty">

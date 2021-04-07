@@ -7,8 +7,7 @@
         {{"Add" | translate}}
       </button>
     </div>
-    
-    <ng-container *ngIf="listsFromArray?.controls">
+    <ng-container *ngIf="listsFromArray?.controls.length > 0;else empty">
       <div *ngFor="let liControl of listsFromArray.controls; let i = index" [fxLayout]="config.width == '100%' ? 'row wrap' : (default)"
           ix-auto ix-auto-type="list-item" ix-auto-identifier="{{i}}" class="form-list-item">
         <ng-container *ngFor="let field of config.listFields[i]; let ii = index" >
@@ -29,6 +28,9 @@
         </div>
       </div>
     </ng-container>
+    <ng-template #empty>
+      <span class="form-list-item">{{ "No items have been added yet." | translate }}</span>
+    </ng-template>
     <form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>
     <mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
 </div>

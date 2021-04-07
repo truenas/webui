@@ -1,8 +1,6 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AdvancedComponent, AdvancedSettingsComponent } from './advanced/';
-import { ViewEnclosureComponent } from './viewenclosure/';
-import { DatasetComponent } from './dataset/';
+import { AdvancedSettingsComponent } from './advanced/';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
 import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename/';
 import { BootEnvironmentCreateComponent } from './bootenv/bootenv-create';
@@ -21,15 +19,17 @@ import { AlertServiceComponent } from './alertservice/alert-service/alert-servic
 import { AlertConfigComponent } from './alert/alert.component';
 import { FailoverComponent } from './failover/failover.component';
 import { EulaComponent } from './general-settings/support/eula/eula.component';
-import { KmipComponent} from './kmip/kmip.component';
 import { T } from '../../translate-marker';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { GeneralSettingsComponent } from './general-settings/general-settings.component';
 import { Services } from '../services/services.component';
 import { ShellComponent } from '../shell/shell.component';
+import { CronFormComponent } from './advanced/cron/cron-form/cron-form.component';
+import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
+import { InitshutdownFormComponent } from './advanced/initshutdown/initshutdown-form/initshutdown-form.component';
+import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-list/initshutdown-list.component';
 
 export const routes: Routes = [
-  // {path : '', component : AdvancedComponent }
   {
     path: '',
     data: { title: T('System') },
@@ -45,10 +45,6 @@ export const routes: Routes = [
       path: 'advanced',
       component: AdvancedSettingsComponent,
       data: { title: T('Advanced'), breadcrumb: T('Advanced'), icon: 'settings' },
-    }, {
-      path: 'dataset',
-      component: DatasetComponent,
-      data: { title: T('System Dataset'), breadcrumb: T('System Dataset'), icon: 'storage' },
     }, {
       path: 'boot',
       data: { title: T('Boot'), breadcrumb: T('Boot'), icon: 'replay' },
@@ -147,7 +143,7 @@ export const routes: Routes = [
       ]
     },
     {
-      path : 'email', 
+      path : 'email',
       component : EmailComponent,
       data: { title: T('Email'), breadcrumb: T('Email'), icon: 'email' },
     },
@@ -177,7 +173,7 @@ export const routes: Routes = [
       path: 'failover',
       component: FailoverComponent,
       data: { title: T('Failover'), breadcrumb: T('Failover'), icon: 'device_hub' }
-    }, 
+    },
     {
       path: 'support',
       data: { title: T('Support'), breadcrumb: T('Support'), icon: 'perm_phone_msg' },
@@ -208,6 +204,39 @@ export const routes: Routes = [
       path: 'shell',
       component: ShellComponent,
       data: { title: T('Shell'), breadcrumb: T('Shell') },
+    },
+    {
+      path: 'cron',
+      data: { title: 'Cron Jobs', breadcrumb: 'Cron Jobs', icon: 'event_note' },
+      children: [{
+        path: '',
+        component: CronListComponent,
+        data: { title: 'Cron Jobs', breadcrumb: 'Cron Jobs' },
+      }, {
+        path: 'add',
+        component: CronFormComponent,
+        data: { title: 'Add', breadcrumb: 'Add' }
+      }, {
+        path: 'edit/:pk',
+        component: CronFormComponent,
+        data: { title: 'Edit', breadcrumb: 'Edit' }
+      }]
+    }, {
+      path: 'initshutdown',
+      data: { title: 'Init/Shutdown Scripts', breadcrumb: 'Init/Shutdown Scripts', icon: 'event_note' },
+      children: [{
+        path: '',
+        component: InitshutdownListComponent,
+        data: { title: 'Init/Shutdown Scripts', breadcrumb: 'Init/Shutdown Scripts' },
+      }, {
+        path: 'add',
+        component: InitshutdownFormComponent,
+        data: { title: 'Add', breadcrumb: 'Add' }
+      }, {
+        path: 'edit/:pk',
+        component: InitshutdownFormComponent,
+        data: { title: 'Edit', breadcrumb: 'Edit' }
+      }]
     }
     ]
   }

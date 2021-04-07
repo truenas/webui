@@ -36,7 +36,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   public nicFormGroup: any;
   public rawfileFormGroup: any;
   public pciFormGroup: any;
-  public vncFormGroup: any;
+  public displayFormGroup: any;
   public rootpwd: any;
   public vminfo: any;
   public boot: any;
@@ -69,8 +69,8 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
         label: T('PCI Passthru Device'),
         value: 'PCI',
         }, {
-        label: T('VNC'),
-        value: 'VNC',
+        label: T('Display'),
+        value: 'DISPLAY',
         }
       ],
       value: helptext.dtype_value,
@@ -256,12 +256,12 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   ];
   protected pptdev: any;
 
-  //vnc
-  public vncFieldConfig: FieldConfig[]  = [
+  // Display
+  public displayFieldConfig: FieldConfig[]  = [
     {
-      name : 'vnc_port',
-      placeholder : helptext.vnc_port_placeholder,
-      tooltip : helptext.vnc_port_tooltip,
+      name : 'port',
+      placeholder : helptext.port_placeholder,
+      tooltip : helptext.port_tooltip,
       type : 'input',
       inputType: 'number'
     },
@@ -273,33 +273,41 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       isHidden: true
     },
     {
-      name : 'vnc_resolution',
-      placeholder : helptext.vnc_resolution_placeholder,
-      tooltip : helptext.vnc_resolution_tooltip,
+      name : 'resolution',
+      placeholder : helptext.resolution_placeholder,
+      tooltip : helptext.resolution_tooltip,
       type: 'select',
-      options : helptext.vnc_resolution_options,
-      value: '1024x768',
-      isHidden: true
+      options : []
     },
     {
-      name : 'vnc_bind',
-      placeholder : helptext.vnc_bind_placeholder,
-      tooltip : helptext.vnc_bind_tooltip,
+      name : 'bind',
+      placeholder : helptext.bind_placeholder,
+      tooltip : helptext.bind_tooltip,
       type: 'select',
       options : [],
     },
     {
-      name : 'vnc_password',
-      placeholder : helptext.vnc_password_placeholder,
-      tooltip : helptext.vnc_password_tooltip,
+      name : 'password',
+      placeholder : helptext.password_placeholder,
+      tooltip : helptext.password_tooltip,
       type : 'input',
       inputType : 'password',
-      validation: helptext.vnc_password_validation
+      validation: helptext.password_validation
     },
     {
-      name : 'vnc_web',
-      placeholder : helptext.vnc_web_placeholder,
-      tooltip : helptext.vnc_web_tooltip,
+      name : 'type',
+      placeholder : helptext.type_placeholder,
+      type: 'select',
+      options : [
+        {label: 'VNC', value: "VNC"},
+        {label: "SPICE", value:"SPICE"}
+      ],
+      value: "VNC"
+    },
+    {
+      name : 'web',
+      placeholder : helptext.web_placeholder,
+      tooltip : helptext.web_tooltip,
       type: 'checkbox'
     },
     {
@@ -333,15 +341,23 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
 
 
   preInit() {
-    // vnc
-    this.ws.call('vm.device.vnc_bind_choices').subscribe((res) => {
+    // Display
+    this.ws.call('vm.device.bind_choices').subscribe((res) => {
       if(res && Object.keys(res).length > 0) {
-        this.ipAddress = _.find(this.vncFieldConfig, {'name' : 'vnc_bind'});
+        this.ipAddress = _.find(this.displayFieldConfig, {'name' : 'bind'});
         Object.keys(res).forEach((address) => {
           this.ipAddress.options.push({label : address, value : address});
         });
       };
     });
+
+    this.ws.call('vm.resolution_choices').subscribe((res) => {
+      const resolution = _.find(this.displayFieldConfig, {'name' : 'resolution'});
+      for(let key in res) {
+        resolution.options.push({label: key, value: res[key]});
+      }
+      this.displayFormGroup.controls['resolution'].setValue(res[Object.keys(res)[0]]);
+    })
 
     this.core.register({observerClass: this, eventName: 'zvolCreated'}).subscribe((evt: CoreEvent) => {
       const newZvol = {
@@ -391,7 +407,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
         nicFieldConfig: this.nicFieldConfig,
         rawfileFieldConfig: this.rawfileFieldConfig,
         pciFieldConfig: this.pciFieldConfig,
-        vncFieldConfig: this.vncFieldConfig,
+        displayFieldConfig: this.displayFieldConfig,
       },
       {
         name:'divider',
@@ -406,7 +422,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     this.nicFormGroup = this.entityFormService.createFormGroup(this.nicFieldConfig);
     this.rawfileFormGroup = this.entityFormService.createFormGroup(this.rawfileFieldConfig);
     this.pciFormGroup = this.entityFormService.createFormGroup(this.pciFieldConfig);
-    this.vncFormGroup = this.entityFormService.createFormGroup(this.vncFieldConfig);
+    this.displayFormGroup = this.entityFormService.createFormGroup(this.displayFieldConfig);
 
     this.activeFormGroup = this.cdromFormGroup;
     this.diskFormGroup.controls['path'].valueChanges.subscribe((res) => {
@@ -432,8 +448,8 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       } else if (res === 'PCI') {
         this.activeFormGroup = this.pciFormGroup;
         this.isCustActionVisible = false;
-      } else if (res === 'VNC') {
-        this.activeFormGroup = this.vncFormGroup;
+      } else if (res === 'DISPLAY') {
+        this.activeFormGroup = this.displayFormGroup;
         this.isCustActionVisible = false;
       }
     });
@@ -445,8 +461,8 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     });
 
     if (!this.productType.includes('SCALE')) {
-      _.find(this.vncFieldConfig, {name:'wait'}).isHidden = false;
-      _.find(this.vncFieldConfig, {name:'vnc_resolution'}).isHidden = false;
+      _.find(this.displayFieldConfig, {name:'wait'}).isHidden = false;
+      _.find(this.displayFieldConfig, {name:'resolution'}).isHidden = false;
     }
     this.addZvolComponent = new ZvolWizardComponent(this.core, this.router, this.aroute, this.rest, this.ws, this.loader,
       this.dialogService, this.storageService, this.translate, this.modalService);
@@ -468,13 +484,22 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
         label: 'Add New', value: 'new', sticky: 'bottom'
       })
     });
-    // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing VNC device, hide VNC option.
+    // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing Display device, hide Display option.
     await this.ws.call('vm.query', [[['id', '=', parseInt(this.vmid,10)]]]).subscribe((vm)=>{
       const dtypeField = _.find(this.fieldConfig, {name: "dtype"});
-      if (vm[0].bootloader === 'GRUB' || vm[0].bootloader === "UEFI_CSM" || _.find(vm[0].devices, {dtype:'VNC'})){
-        for (const i in dtypeField.options) {
-          if (dtypeField.options[i].label === 'VNC') {
-            _.pull(dtypeField.options, dtypeField.options[i]);
+      const vmDisplayDevices = _.filter(vm[0].devices, {dtype:'DISPLAY'});
+      if (vm[0].bootloader === 'GRUB' || vm[0].bootloader === "UEFI_CSM" || vmDisplayDevices){
+        if(vmDisplayDevices.length){
+          if(vmDisplayDevices.length > 1) {
+            for (const i in dtypeField.options) {
+              if (dtypeField.options[i].label === 'DISPLAY') {
+                _.pull(dtypeField.options, dtypeField.options[i]);
+              }
+            }
+          } else {
+            const typee = _.find(this.displayFieldConfig, {'name' : 'type'});
+            _.pull(typee.options, _.find(typee.options, {value: vmDisplayDevices[0].attributes.type}));
+            this.displayFormGroup.controls['type'].setValue(typee.options[0].value);
           }
         }
       } 
@@ -507,7 +532,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
         }
       }
     ];
-    this.vncFormGroup.controls['vnc_bind'].setValue('0.0.0.0');
+    this.displayFormGroup.controls['bind'].setValue('0.0.0.0');
   }
 
   goBack() {

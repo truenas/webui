@@ -12,6 +12,7 @@ import { FieldConfig } from '../../../common/entity/entity-form/models/field-con
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 @Component({
   selector: 'app-certificate-acme-add',
@@ -75,10 +76,7 @@ export class CertificateAcmeAddComponent {
           tooltip: helptext_system_certificates.acme.dir_uri.tooltip,
           required: true,
           options: [
-            { label: 'https://acme-staging-v02.api.letsencrypt.org/directory', value: 'https://acme-staging-v02.api.letsencrypt.org/directory' },
-            { label: 'https://acme-v02.api.letsencrypt.org/directory', value: 'https://acme-v02.api.letsencrypt.org/directory' }
-          ],
-          value: 'https://acme-staging-v02.api.letsencrypt.org/directory'
+          ]
         }
       ]
     },
@@ -97,18 +95,13 @@ export class CertificateAcmeAddComponent {
           name: 'domains',
           placeholder: '',
           hideButton: true,
+          width: '100%',
           templateListField: [
-            {
-              type: 'paragraph',
-              name: 'vert_spacer',
-              paraText: '',
-              width: '5%'
-            },
             {
               type: 'paragraph',
               name: 'name_text',
               paraText: '',
-              width: '25%',
+              width: '100%',
             },
             {
               type: 'select',
@@ -145,13 +138,22 @@ export class CertificateAcmeAddComponent {
     })
   }
   
-  preInit() { 
+  preInit(entityForm: EntityFormComponent) { 
     this.ws.call('acme.dns.authenticator.query').subscribe(authenticators => {
       this.dns_map = _.find(this.fieldSets[2].config[0].templateListField, {'name' : 'authenticators'});
       authenticators.forEach(item => {
         this.dns_map.options.push({ label: item.name, value: item.id})
       })
     })
+
+    this.ws.call('certificate.acme_server_choices').subscribe(choices => {
+      const acme_directory_uri = _.find(this.fieldSets[0].config, {'name' : 'acme_directory_uri'});
+      for(let key in choices) {
+        acme_directory_uri.options.push({label: choices[key], value: key});
+      }
+      entityForm.formGroup.controls['acme_directory_uri'].setValue(Object.keys(choices)[0])
+    })
+    
   }
 
   afterInit(entityEdit: any) {
@@ -181,7 +183,7 @@ export class CertificateAcmeAddComponent {
             const name_text_fc = _.find(controls, {name: 'name_text'});
             const auth_fc = _.find(controls, {name: 'authenticators'});
             this.domainList.controls[i].controls['name_text'].setValue(domains[i]);
-            name_text_fc.paraText = domains[i];
+            name_text_fc.paraText = "<b>"+domains[i]+"</b>";
             auth_fc.options = this.dns_map.options;
           }
         }

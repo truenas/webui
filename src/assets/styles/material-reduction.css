@@ -190,7 +190,7 @@ entity-table .mat-toolbar.mat-card-toolbar{
 /*********************************************************************/
 /* Dematerialize Form Fields :) */
 .form-element{
-  margin: 16px 0;
+  margin: 16px 0 17px;
   text-align:left;
 }
 .form-element .label{
@@ -403,6 +403,17 @@ entity-form-list .list-action-block-wrapper .form-element select{
   top: -16px;
 }
 
+.login-form .form-element input[type = "password"],
+.login-form .form-element .has_toggle_pw input {
+  top: -6px;
+}
+
+.login-form .form-element button.toggle_pw {
+  position: absolute;
+  bottom: 2px;
+  right: 4px;
+}
+
 .form-element .mat-form-field-suffix{
   top: -2px;
 }
@@ -416,15 +427,14 @@ entity-form-list .list-action-block-wrapper .form-element select{
 .form-element input[type = "password"],
 .form-element .has_toggle_pw input {
   position: relative;
-  top: -6px;
   height: inherit;
   display: inline;
 }
 
 .form-element button.toggle_pw {
   position: absolute;
-  bottom: 2px;
-  right: 4px;
+  bottom: -2px;
+  right: 0;
 }
 
 .form-element button.toggle_pw i{
@@ -902,3 +912,11 @@ input::-ms-clear {
   }
 }
 
+/* Generic styling for nested lists*/
+ul.nested-list{
+  list-style: circle;
+}
+
+ul.nested-list li{
+  margin-left: 24px;
+}

@@ -6,12 +6,13 @@ import { helptext_system_general as helptext } from 'app/helptext/system/general
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { DialogService, LanguageService, StorageService, 
+import { DialogService, LanguageService, StorageService,
   SystemGeneralService, WebSocketService } from '../../../../services/';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { ModalService } from '../../../../services/modal.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';
+import { AdminLayoutComponent } from 'app/components/common/layouts/admin-layout/admin-layout.component';
 
 @Component({
   selector: 'app-gui-form',
@@ -23,7 +24,7 @@ export class GuiFormComponent implements OnDestroy{
   protected updateCall = 'system.general.update';
   public sortLanguagesByName = true;
   public languageList: { label: string; value: string }[] = [];
-  public languageKey: string;  
+  public languageKey: string;
   private getDataFromDash: Subscription;
   public fieldConfig: FieldConfig[] = []
 
@@ -31,7 +32,7 @@ export class GuiFormComponent implements OnDestroy{
     {
       name: helptext.stg_fieldset_gui,
       width: "100%",
-      label: false,
+      label: true,
       config: [
         {
           type: "select",
@@ -110,6 +111,12 @@ export class GuiFormComponent implements OnDestroy{
           placeholder: helptext.usage_collection.placeholder,
           tooltip: helptext.usage_collection.tooltip
         },
+        {
+          type: "checkbox",
+          name: "ui_consolemsg",
+          placeholder: helptext.consolemsg_placeholder,
+          tooltip: helptext.consolemsg_tooltip
+        }
       ]
     },
   ];
@@ -134,7 +141,8 @@ export class GuiFormComponent implements OnDestroy{
     public http: HttpClient,
     protected storage: StorageService,
     private sysGeneralService: SystemGeneralService,
-    private modalService: ModalService
+    private modalService: ModalService,
+    private adminLayout: AdminLayoutComponent,
   ) {
     this.getDataFromDash = this.sysGeneralService.sendConfigData$.subscribe(res => {
       this.configData = res;
@@ -146,11 +154,11 @@ export class GuiFormComponent implements OnDestroy{
     return function validIPs(control: FormControl) {
       const config =
         self.fieldSets.find(set => set.name === helptext.stg_fieldset_gui).config.find(c => c.name === name);
-      
+
       const errors = control.value && control.value.length > 1 && _.indexOf(control.value, wildcard) !== -1
         ? { validIPs : true }
         : null;
-    
+
         if (errors) {
           config.hasErrors = true;
           config.errors = helptext.validation_errors[name];
@@ -239,6 +247,7 @@ export class GuiFormComponent implements OnDestroy{
     entityEdit.formGroup.controls['ui_httpsredirect'].setValue(this.configData.ui_httpsredirect);
     entityEdit.formGroup.controls['crash_reporting'].setValue(this.configData.crash_reporting);
     entityEdit.formGroup.controls['usage_collection'].setValue(this.configData.usage_collection);
+    entityEdit.formGroup.controls['ui_consolemsg'].setValue(this.configData.ui_consolemsg);
 
   }
 
@@ -294,9 +303,10 @@ export class GuiFormComponent implements OnDestroy{
         });
     }
     this.language.setLang(value.language);
+    this.modalService.refreshTable();
   }
 
-   public customSubmit(body) {
+  public customSubmit(body) {
     this.loader.open();
     return this.ws.call('system.general.update', [body]).subscribe(() => {
       this.loader.close();
@@ -304,6 +314,7 @@ export class GuiFormComponent implements OnDestroy{
       this.sysGeneralService.refreshSysGeneral();
       this.entityForm.success = true;
       this.entityForm.formGroup.markAsPristine();
+      this.adminLayout.onShowConsoleFooterBar(body['ui_consolemsg']);
       this.afterSubmit(body);
     }, (res) => {
       this.loader.close();

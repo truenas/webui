@@ -8,7 +8,6 @@ import { DialogService, SystemGeneralService, WebSocketService } from '../../../
 import { ApplicationsService } from '../applications.service';
 import { ModalService } from '../../../services/modal.service';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
-import { EntityUtils } from '../../common/entity/utils';
 import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { ChartReleaseEditComponent } from '../forms/chart-release-edit.component';
 import { CommonUtils } from 'app/core/classes/common-utils';
@@ -16,10 +15,9 @@ import { ChartFormComponent } from '../forms/chart-form.component';
 import { EmptyConfig, EmptyType } from '../../common/entity/entity-empty/entity-empty.component';
 
 import  helptext  from '../../../helptext/apps/apps';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { BulkOptionsComponent } from '../forms/bulk-options.component';
 import { Router } from '@angular/router';
+import { ChartEventsDialog } from '../dialogs/chart-events/chart-events-dialog.component';
 
 @Component({
   selector: 'app-charts',
@@ -109,6 +107,31 @@ export class ChartReleasesComponent implements OnInit {
     parent: this,
   }
 
+  public choosePodForLogs: DialogFormConfiguration = {
+    title: helptext.podLogs.title,
+    fieldConfig: [{
+      type: 'select',
+      name: 'pods',
+      placeholder: helptext.podLogs.choosePod.placeholder,
+      required: true,
+    },{
+      type: 'select',
+      name: 'containers',
+      placeholder: helptext.podLogs.chooseConatiner.placeholder,
+      required: true,
+    },{
+      type: 'input',
+      name: 'tail_lines',
+      placeholder: helptext.podLogs.tailLines.placeholder,
+      value: 500,
+      required: true,
+    }],
+    saveButtonText: helptext.podConsole.choosePod.action,
+    customSubmit: this.doPodSelectForLogs,
+    afterInit: this.afterLogsDialogInit,
+    parent: this,
+  }
+
   constructor(private mdDialog: MatDialog,
     private dialogService: DialogService, private translate: TranslateService,
     private appService: ApplicationsService, private modalService: ModalService,
@@ -118,11 +141,6 @@ export class ChartReleasesComponent implements OnInit {
 
   ngOnInit(): void {
     this.utils = new CommonUtils();
-
-    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
-      this.refreshChartReleases();
-    });
-
     this.addChartReleaseChangedEventListner();
   }
 
@@ -136,14 +154,14 @@ export class ChartReleasesComponent implements OnInit {
     if (evt.data.event_control == 'filter') {
       this.filterString = evt.data.filter;
       this.filerChartItems();
+
     } else if (evt.data.event_control == 'bulk') {
-      this.bulkOptions();
+      this.onBulkAction(evt.data.bulk.value);
     }
-  }
-  
+  }  
 
   viewCatalog() {
-    this.updateTab.emit({name: 'SwitchTab', value: '0'});
+    this.updateTab.emit({name: 'SwitchTab', value: 0});
   }
 
   showLoadStatus(type: EmptyType) {
@@ -185,7 +203,10 @@ export class ChartReleasesComponent implements OnInit {
         app.count = `${evt.fields.pod_status.available}/${evt.fields.pod_status.desired}`;
         app.desired = evt.fields.pod_status.desired;
         app.catalog = evt.fields.catalog;
-        app.update = evt.fields.update_available;
+        app.update_available = evt.fields.update_available,
+        app.container_images_update_available = evt.fields.container_images_update_available,
+        app.human_version = evt.fields.human_version,
+        app.human_latest_version = evt.fields.human_latest_version,
         app.latest_version = evt.fields.chart_metadata.latest_chart_version;
         app.repository = evt.fields.config.image.repository;
         app.tag = evt.fields.config.image.tag;
@@ -230,11 +251,15 @@ export class ChartReleasesComponent implements OnInit {
                 let chartObj = {
                   name: chart.name,
                   catalog: chart.catalog,
+                  catalog_train: chart.catalog_train,
                   status: chart.status,
                   version: chart.chart_metadata.version,
+                  human_version: chart.human_version,
+                  human_latest_version: chart.human_latest_version,
+                  container_images_update_available: chart.container_images_update_available,
                   latest_version: chart.chart_metadata.latest_chart_version,
                   description: chart.chart_metadata.description,
-                  update: chart.update_available,
+                  update_available: chart.update_available,
                   chart_name: chart.chart_metadata.name,
                   repository: chart.config.image.repository,
                   tag: chart.config.image.tag,
@@ -244,6 +269,7 @@ export class ChartReleasesComponent implements OnInit {
                   count: `${chart.pod_status.available}/${chart.pod_status.desired}`,
                   desired: chart.pod_status.desired,
                   history: !(_.isEmpty(chart.history)),
+                  selected: false,
                 };
         
                 let ports = [];
@@ -349,33 +375,61 @@ export class ChartReleasesComponent implements OnInit {
     }
   }
 
-  onBulkAction(checkedItems: any[], actionName: string) {
-    if (actionName === 'delete') {
-      this.bulkDelete(checkedItems);      
-    } else {
-      checkedItems.forEach(name => {
-        switch (actionName) {
-          case 'start':
-            this.start(name);
-            break;
-          case 'stop':
-            this.stop(name);
-            break;
-        }
-      });
+  getSelectedItems() {
+    const selectedItems = [];
+    this.filteredChartItems.forEach(element => {
+      if (element.selected) {
+        selectedItems.push(element.name);
+      }
+    });   
+    return selectedItems;
+  }
   
-      this.translate.get(helptext.bulkActions.finished).subscribe(msg => {
-        this.dialogService.Info(helptext.choosePool.success, msg,
-          '500px', 'info', true);
-      })
-    }    
+  checkAll(checkedItems) {
+    let selectAll = true;
+    if (checkedItems.length == this.filteredChartItems.length) {
+      selectAll = false;
+    }
+
+    this.filteredChartItems.forEach(item => {
+      item.selected = selectAll;
+    });
+
+    this.refreshToolbarMenus();
   }
 
-  bulkOptions() {
-    const bulkOptionsForm = new BulkOptionsComponent(this.modalService, this.appService);
-    bulkOptionsForm.setParent(this);
-
-    this.modalService.open('slide-in-form', bulkOptionsForm, "Bulk Options");
+  onBulkAction(actionName: string) {
+    const checkedItems = this.getSelectedItems();
+    
+    if (actionName === 'select_all') {
+      this.checkAll(checkedItems);
+    } else {
+      if (checkedItems.length > 0) {
+        if (actionName === 'delete') {
+          this.bulkDelete(checkedItems);      
+        } else {
+          checkedItems.forEach(name => {
+            switch (actionName) {
+              case 'start':
+                this.start(name);
+                break;
+              case 'stop':
+                this.stop(name);
+                break;
+            }
+          });
+    
+          this.translate.get(helptext.bulkActions.finished).subscribe(msg => {
+            this.dialogService.Info(helptext.bulkActions.success, msg,
+              '500px', 'info', true);
+          });
+        }
+      } else {
+        this.translate.get(helptext.bulkActions.no_selected).subscribe(msg => {
+          this.dialogService.errorReport(helptext.bulkActions.error, msg);
+        });
+      }
+    } 
   }
 
   delete(name: string) {
@@ -429,24 +483,6 @@ export class ChartReleasesComponent implements OnInit {
     })
   }
 
-  updateImage(image: string, tag: string) {
-    this.translate.get(helptext.updateImageDialog.message).subscribe(msg => {
-      this.dialogService.confirm(helptext.updateImageDialog.title, msg + image + '?', true).subscribe(res => {
-        if (res) {
-          this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
-            helptext.charts.update_dialog.job) }, disableClose: true});
-          this.dialogRef.componentInstance.setCall('container.image.pull', [{from_image: image,tag:tag}]);
-          this.dialogRef.componentInstance.submit();
-          this.dialogRef.componentInstance.success.subscribe(() => {
-            this.dialogService.closeAllDialogs();
-            this.dialogService.Info(helptext.updateImageDialog.success, helptext.updateImageDialog.successMsg,
-               '300px', 'info', true);
-            this.refreshChartReleases();
-          });
-        }
-      })
-    })
-  }
 
   filerChartItems() {
     if (this.filterString) {
@@ -455,7 +491,7 @@ export class ChartReleasesComponent implements OnInit {
       this.filteredChartItems = this.getChartItems();
     }
 
-    this.updateTab.emit({name: 'UpdateToolbar', value: this.filteredChartItems.length > 0});
+    this.refreshToolbarMenus();
   }
 
   openShell(name: string) {
@@ -487,11 +523,49 @@ export class ChartReleasesComponent implements OnInit {
     })
   }
 
+  openLogs(name: string) {
+    this.podList = [];
+    this.podDetails = {};
+    this.selectedAppName = name;
+    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).subscribe(res => {
+      this.podDetails = Object.assign({}, res);
+      this.podList = Object.keys(this.podDetails);
+      if (this.podList.length == 0) {
+        this.dialogService.confirm(helptext.podConsole.nopod.title, helptext.podConsole.nopod.message, true, 'Close', false, null, null, null, null, true);
+      } else {
+        this.choosePodForLogs.fieldConfig[0].value = this.podList[0];
+        this.choosePodForLogs.fieldConfig[0].options = this.podList.map(item => {
+          return {
+            label: item,
+            value: item,
+          }
+        });
+        this.choosePodForLogs.fieldConfig[1].value = this.podDetails[this.podList[0]][0];
+        this.choosePodForLogs.fieldConfig[1].options = this.podDetails[this.podList[0]].map(item => {
+          return {
+            label: item,
+            value: item,
+          }
+        });
+        this.dialogService.dialogForm(this.choosePodForLogs, true);
+      }
+    })
+  }
+
   doPodSelect(entityDialog: any) {
     const self = entityDialog.parent;
     const pod = entityDialog.formGroup.controls['pods'].value;
     const command = entityDialog.formGroup.controls['command'].value;
-    self.router.navigate(new Array("/apps/shell/").concat([self.selectedAppName, pod, command]));
+    self.router.navigate(new Array("/apps/1/shell/").concat([self.selectedAppName, pod, command]));
+    self.dialogService.closeAllDialogs();
+  }
+
+  doPodSelectForLogs(entityDialog: any) {
+    const self = entityDialog.parent;
+    const pod = entityDialog.formGroup.controls['pods'].value;
+    const container = entityDialog.formGroup.controls['containers'].value;
+    const tailLines = entityDialog.formGroup.controls['tail_lines'].value;
+    self.router.navigate(new Array("/apps/1/logs/").concat([self.selectedAppName, pod, container, tailLines]));
     self.dialogService.closeAllDialogs();
   }
 
@@ -508,5 +582,44 @@ export class ChartReleasesComponent implements OnInit {
       });
       entityDialog.formGroup.controls['containers'].setValue(containers[0]);
     })
+  }
+
+  afterLogsDialogInit(entityDialog: any) {
+    const self = entityDialog.parent;
+    entityDialog.formGroup.controls['pods'].valueChanges.subscribe(value => {
+      const containers = self.podDetails[value];
+      const containerFC = _.find(entityDialog.fieldConfig, {'name' : 'containers'});
+      containerFC.options = containers.map(item => {
+        return {
+          label: item,
+          value: item,
+        }
+      });
+      entityDialog.formGroup.controls['containers'].setValue(containers[0]);
+    })
+  }
+  
+  showChartEvents(name: string) {
+    const catalogApp = this.chartItems[name];
+    if (catalogApp) {
+      let dialogRef = this.mdDialog.open(ChartEventsDialog, {
+        width: '686px',
+        maxWidth: '686px',
+        data: catalogApp,
+        disableClose: false,
+      });
+    }
+  }
+
+  //On click checkbox
+  onChangeCheck() {
+    this.refreshToolbarMenus();
+  }
+
+  //Refresh Toolbar menus
+  refreshToolbarMenus() {
+    const isSelectedOneMore: boolean = this.getSelectedItems().length > 0;
+    const isSelectedAll: boolean = !this.filteredChartItems.find(item => !item.selected);
+    this.updateTab.emit({name: 'UpdateToolbar', value: isSelectedOneMore, isSelectedAll: isSelectedAll});
   }
 }

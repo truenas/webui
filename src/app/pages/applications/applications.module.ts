@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
@@ -17,15 +16,24 @@ import { KubernetesSettingsComponent } from './forms/kubernetes-settings.compone
 import { ChartReleaseAddComponent } from './forms/chart-release-add.component';
 import { ChartReleaseEditComponent } from './forms/chart-release-edit.component';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
-import { BulkOptionsComponent } from './forms/bulk-options.component';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PodShellComponent } from './pod-shell/pod-shell.component';
 import { ChartFormComponent } from './forms/chart-form.component';
+import { ChartWizardComponent } from './forms/chart-wizard.component';
+import { PodLogsComponent } from './pod-logs/pod-logs.component';
+import { ChartEventsDialog } from './dialogs/chart-events/chart-events-dialog.component';
+import { AppCommonModule } from '../../components/common/app-common.module';
+import { CatalogSummaryDialog } from './dialogs/catalog-summary/catalog-summary-dialog.component';
+import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.component';
+import { ManageCatalogSummaryDialog } from './dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
+import { CatalogAddFormComponent } from './forms/catalog-add-form.component';
+import { CatalogEditFormComponent } from './forms/catalog-edit-form.component';
+import { PullImageFormComponent } from './forms/pull-image-form.component';
 
 @NgModule({
   imports: [
-    CommonModule,
+    AppCommonModule,
     ApplicationsRoutingModule,
     MaterialModule,
     FlexLayoutModule,
@@ -34,7 +42,7 @@ import { ChartFormComponent } from './forms/chart-form.component';
     EntityModule,
     CoreComponents,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   exports: [
   ],
@@ -46,9 +54,17 @@ import { ChartFormComponent } from './forms/chart-form.component';
     KubernetesSettingsComponent,
     ChartReleaseAddComponent,
     ChartReleaseEditComponent,
-    BulkOptionsComponent,
-	ChartFormComponent,
-    PodShellComponent
+    ChartFormComponent,
+    ChartWizardComponent,
+    PodShellComponent,
+    PodLogsComponent,
+    ChartEventsDialog,
+    CatalogSummaryDialog,
+    ManageCatalogsComponent,
+    ManageCatalogSummaryDialog,
+    CatalogAddFormComponent,
+    CatalogEditFormComponent,
+    PullImageFormComponent,
   ]
 })
 export class ApplicationsModule { }

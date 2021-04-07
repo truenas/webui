@@ -57,7 +57,7 @@
 <div *ngIf="zfsPoolRows.length < 1 && showDefaults">
   <mat-card class="mat-card-padded">
     <mat-card-content name="no_pools">
-      {{"No pools" | translate}}
+      <entity-empty [conf]="entityEmptyConf"></entity-empty>
     </mat-card-content>
   </mat-card>
-</div> 
+</div>

@@ -191,7 +191,7 @@ export const helptext_system_support = {
    iXsystems storage page</a> \
    for enterprise-grade storage solutions and support.'),
 
-  FN_Jira_message: T('<a href="https://jira.ixsystems.com/secure/Signup!default.jspa" target="_blank">\
+  FN_Jira_message: T('<a href="https://jira.ixsystems.com/secure/Signup!default.jspa" target="_blank" class="native-link">\
    Create a Jira account</a> to file an issue. Use a valid \
    email address when registering to receive issue status updates.'),
 

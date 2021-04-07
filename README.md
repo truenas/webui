@@ -1,10 +1,10 @@
 
-FreeNAS 11 WebUI
+TrueNAS WebUI
 ================
-![CI](https://github.com/freenas/webui/workflows/CI/badge.svg?branch=master)
+![CI](https://github.com/truenas/webui/workflows/CI/badge.svg?branch=master)
 
 
-This is the project for the Angular.io WebUI for TrueNAS 12 & TrueNAS SCALE.
+This is the project for the Angular.io WebUI for TrueNAS CORE & TrueNAS SCALE.
 
 # Testing Images
 
@@ -25,7 +25,7 @@ NOTE: Pull requests are also generated as Docker images and can be used for test
 
   - yarn >= 1.12
   - Node.js >= 8.9
-  - Running FreeNAS 11 Nightly Machine (VM is fine)
+  - Running TrueNAS CORE or TrueNAS SCALE Nightly Machine (VM is fine)
 
 
 # Getting started
@@ -36,10 +36,10 @@ Install the development requirements (FreeBSD 11 or later):
 # pkg install yarn
 ```
 
-Checkout FreeNAS git repository:
+Checkout TrueNAS git repository:
 
 ```sh
-$ git clone https://github.com/freenas/webui.git
+$ git clone https://github.com/truenas/webui.git
 $ cd webui
 ```
 
@@ -53,7 +53,7 @@ Run the environment configuration script
 (if your ip address changes later you may repeat this step)
 
 ```sh
-$ ./setup_env.js -i <ip address or FQDN of the server where FreeNAS is running>
+$ ./setup_env.js -i <ip address or FQDN of the server where TrueNAS is running>
 ```
 
 To start run
@@ -87,11 +87,14 @@ This should bring the yarn environment back to a useable state.
 
 # Translating Text to Other Languages
 
+All PO files for translating TrueNAS's web interface are included in this repository under [src/assets/i18n](https://github.com/truenas/webui/tree/master/src/assets/i18n).
+These can be edited with any offline PO editor, such as [Poedit](https://poedit.net/), or via the GitHub Web based code editing system.
+
 To extract all of the strings from the project to be translated run:
 ```yarn run extract```
 
-This will update all of the PO files located in the directory src/assets/i18n.
-These can be edited with any PO editor.
+This will update all of the PO files located in the [src/assets/i18n](https://github.com/truenas/webui/tree/master/src/assets/i18n) directory.
+
 
 
 Stock images used on the dashboard UI are courtesy of Pixabay.com and are subject to the Simplified Pixabay License. 

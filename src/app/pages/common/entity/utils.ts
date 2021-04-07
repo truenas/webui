@@ -1,7 +1,10 @@
 import * as _ from 'lodash';
+import { Relation } from '../entity/entity-form/models/field-relation.interface';
 
 export const FORM_KEY_SEPERATOR = "__";
 export const FORM_LABEL_KEY_PREFIX = "__label__";
+export const NULL_VALUE = 'null_value';
+
 export class EntityUtils {
 
   handleError(entity: any, res: any) {
@@ -186,28 +189,40 @@ export class EntityUtils {
     return cronArray.join(' ');
   }
 
-  filterArrayFunction(item) {
+  filterArrayFunction(item: any) {
+    /**
+     * This function is for validation.
+     * If the value of a control is invaild, we ignore it during sending payload
+     */
     let result = true;
-    if (typeof item === 'object') {
+    
+    if (item === undefined || item === null || item === '') {
+      result = false;
+    } else if (typeof item === 'object') {
       let isAllEmpty = true;
       Object.values(item).forEach(value => {
         if (value !== undefined && value !== null && value !== '') {
-          isAllEmpty = false;
+          if (Array.isArray(value)) {
+            value.forEach(subValue => {
+              if (this.filterArrayFunction(subValue)) {
+                isAllEmpty = false;
+              }
+            });
+          } else {
+            isAllEmpty = false;
+          }
         }
       });
 
       if (isAllEmpty) {
         result = false;
       }
-
-    } else if (item === undefined || item === null || item === '') {
-      result = false;
     }
 
     return result;
   }
 
-  parseFormControlValues(data, result) {
+  parseFormControlValues(data: any, result: any) {
     Object.keys(data).forEach(key => {
       const value = data[key];
       if (key == "release_name" || key == 'undefined' || key.startsWith(FORM_LABEL_KEY_PREFIX)) {
@@ -264,5 +279,238 @@ export class EntityUtils {
     });
 
     return result;
+  }
+
+  changeNull2String(value) {
+    let result = value;
+    if (value === null) {
+      result = NULL_VALUE;
+    }
+
+    return result;
+  }
+
+  changeNullString2Null(data) {
+    let result;
+    if (data === undefined || data === null || data === '') {
+      result = data;
+    } else if (Array.isArray(data)) {
+      const arrayValues = data.map(item => {
+        return this.changeNullString2Null(item);
+      });
+      result = arrayValues;
+    } else if (typeof data === 'object') {
+      result = {};
+      Object.keys(data).forEach(key => {
+        const value = this.changeNullString2Null(data[key]);
+        result[key] = value;
+      });
+    } else if (data === NULL_VALUE) {
+      result = null;
+    } else {
+      result = data;
+    }
+
+    return result;
+  }
+  
+  createRelations(relations:Relation[], parentName:string) {
+    const result = relations.map(relation => {
+      let relationFieldName = relation.fieldName;
+      if (parentName) {
+        relationFieldName = `${parentName}${FORM_KEY_SEPERATOR}${relationFieldName}`;
+      }
+  
+      return {
+        action: 'SHOW',
+        when: [{
+          name: relationFieldName,
+          operator: relation.operatorName,
+          value: relation.operatorValue,
+        }]
+      };
+    });
+
+    return result;    
+  }
+
+  parseSchemaFieldConfig(schemaConfig: any, parentName: string=null, parentIsList: boolean=false) {
+    let results = [];
+
+    if (schemaConfig.schema.hidden) {
+      return results;
+    }
+
+    let name = schemaConfig.variable;
+    if (!parentIsList && parentName) {
+      name = `${parentName}${FORM_KEY_SEPERATOR}${name}`;
+    }
+
+    let fieldConfig = {
+      required: schemaConfig.schema.required,
+      value: schemaConfig.schema.default,
+      tooltip: schemaConfig.description,
+      placeholder: schemaConfig.label,
+      name: name,
+    }
+
+    let relations: Relation[] = null;
+    if (schemaConfig.schema.show_if) {
+      relations = schemaConfig.schema.show_if.map(item => {
+        return {
+          fieldName: item[0],
+          operatorName: item[1],
+          operatorValue: item[2],
+        };         
+      })
+    }
+    
+    if (schemaConfig.schema.editable === false) {
+      fieldConfig['readonly'] = true;
+    }
+
+    if (schemaConfig.schema.enum) {
+      fieldConfig['type'] = 'select';
+      fieldConfig['options'] = schemaConfig.schema.enum.map(option => {
+        return {
+          value: option.value,
+          label: option.description,
+        }
+      });
+
+    } else if (schemaConfig.schema.type == 'string') {
+      fieldConfig['type'] = 'input';
+      if (schemaConfig.schema.private) {
+        fieldConfig['inputType'] = 'password';
+        fieldConfig['togglePw'] = true;
+      }
+
+      if (schemaConfig.schema.min_length !== undefined) {
+        fieldConfig['min'] = schemaConfig.schema.min_length;
+      }
+
+      if (schemaConfig.schema.max_length !== undefined) {
+        fieldConfig['max'] = schemaConfig.schema.max_length;
+      }
+
+    } else if (schemaConfig.schema.type == 'int') {
+      fieldConfig['type'] = 'input';
+      fieldConfig['inputType'] = 'number';
+      if (schemaConfig.schema.min !== undefined) {
+        fieldConfig['min'] = schemaConfig.schema.min;
+      }
+
+      if (schemaConfig.schema.max !== undefined) {
+        fieldConfig['max'] = schemaConfig.schema.max;
+      }
+    } else if (schemaConfig.schema.type == 'boolean') {
+      fieldConfig['type'] = 'checkbox';
+
+    } else if (schemaConfig.schema.type == 'hostpath') {
+      fieldConfig['type'] = 'explorer';
+      fieldConfig['explorerType'] = 'file';
+      fieldConfig['initial'] = '/mnt';
+
+    } else if (schemaConfig.schema.type == 'path') {
+      fieldConfig['type'] = 'input';
+
+    } else if (schemaConfig.schema.type == 'list') {
+
+      fieldConfig['type'] = 'list';
+      fieldConfig['label'] = `Configure ${schemaConfig.label}`;
+      fieldConfig['width'] = '100%';
+      fieldConfig['listFields'] = [];
+
+      let listFields = [];
+      schemaConfig.schema.items.forEach(item => {
+        const fields = this.parseSchemaFieldConfig(item, null, true);
+        listFields = listFields.concat(fields);
+      });
+
+      fieldConfig['templateListField'] = listFields;
+
+    } else if (schemaConfig.schema.type == 'dict') {
+      fieldConfig = null;
+      
+      if (schemaConfig.schema.attrs.length > 0) {
+        const dictLabel = {
+          label: schemaConfig.label,
+          name: FORM_LABEL_KEY_PREFIX + name,
+          type: 'label',
+        };
+
+        if (relations) {
+          dictLabel['relation'] = this.createRelations(relations, parentName);
+        }
+
+        results = results.concat(dictLabel);
+      }
+
+      schemaConfig.schema.attrs.forEach(dictConfig => {
+        const subResults = this.parseSchemaFieldConfig(dictConfig, name, parentIsList);
+
+        if (relations) {
+          subResults.forEach(subResult => {
+            subResult['relation'] = this.createRelations(relations, parentName);
+          });
+        }
+        results = results.concat(subResults);
+      });
+    }
+
+    if (fieldConfig) {
+
+      if (fieldConfig['type']) {
+        if (relations) {
+          fieldConfig['relation'] = this.createRelations(relations, parentName);
+        }
+
+        results.push(fieldConfig);
+  
+        if (schemaConfig.schema.subquestions) {
+          schemaConfig.schema.subquestions.forEach(subquestion => {
+    
+            const subResults = this.parseSchemaFieldConfig(subquestion, parentName);
+    
+            if (schemaConfig.schema.show_subquestions_if !== undefined) {
+              subResults.forEach(subFieldConfig => {
+                subFieldConfig['isHidden'] = true;
+                subFieldConfig['relation'] = [{
+                  action: 'SHOW',
+                  when: [{
+                    name: name,
+                    value: schemaConfig.schema.show_subquestions_if,
+                  }]
+                }];
+              });
+            }
+    
+            results = results.concat(subResults);
+          });
+        }
+      } else {
+        console.error("Unsupported type=", schemaConfig);
+      }
+    }
+
+    return results;
+  }
+
+  parseConfigData(configData:object, parentKey:string, result:object) {
+    if (configData !== undefined && configData !== null) {
+      Object.keys(configData).forEach(key => {
+        const value = configData[key];
+        let fullKey = key;
+        if (parentKey) {
+          fullKey = `${parentKey}${FORM_KEY_SEPERATOR}${key}`;
+        }
+        if (!Array.isArray(value) && typeof value === 'object') {
+          this.parseConfigData(value, fullKey, result);
+        } else {
+          result[fullKey] = value;
+        }
+      });
+    }
+    
   }
 }

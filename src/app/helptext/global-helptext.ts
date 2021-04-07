@@ -67,6 +67,8 @@ basic_options: T('Basic Options'),
 advanced_options: T('Advanced Options'),
 
 invalidInputValueWithUnit: T('Invalid value. Missing numerical value or invalid numerical value/unit.'),
+invalidInputValueWithMin: T('Invalid value. Must be greater than or equal to '),
+invalidInputValueWithMax: T('Invalid value. Must be less than or equal to '),
 
 pasteValueStartsWithSpace: T('The pasted string starts with a space'),
 pasteValueEndsWithSpace: T('The pasted string ends with a space'),
