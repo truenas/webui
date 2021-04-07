@@ -22,7 +22,9 @@ Options:
                                    for pytest-bdd.
 --test-suite                     - To specify the test suite to run ha-bhyve02
                                    is use by default.
-                                   test-suite options: ha-bhyve02, ha-tn09
+                                   test-suite options: ha-bhyve02, ha-tn09, core
+--iso-version <name-version>     - The iso name and version
+                                   Example: TrueNAS-12.0-INTERNAL-168
 """
 
 
@@ -33,6 +35,7 @@ option_list = [
     'nas-password=',
     'convert-feature',
     'test-suite='
+    'iso-version='
 ]
 
 test_suite_list = [
@@ -99,6 +102,8 @@ for output, arg in myopts:
             for suite in test_suite_list:
                 print(f'    --test-suite {suite}')
             exit(1)
+    elif output == '--iso-version':
+        version = arg
     elif output == "--convert-feature":
         run_convert = True
     elif output == "--help":
@@ -108,15 +113,17 @@ for output, arg in myopts:
 
 def run_testing():
     # store ip and password in environment variable if test suite is core.
-    if 'ip' in globals() and 'password' in globals() and test_suite == 'core':
+    if 'ip' in globals() and 'password' in globals() and 'version' in globals() and test_suite == 'core':
         os.environ["nas_ip"] = ip
         os.environ["nas_password"] = password
+        os.environ["nas_version"] = version
         os.environ['test_suite'] = test_suite
     elif os.path.exists(f'{cwd}/config.cfg') and test_suite == 'core':
         configs = ConfigParser()
         configs.read('config.cfg')
         os.environ["nas_ip"] = configs['NAS_CONFIG']['ip']
         os.environ["nas_password"] = configs['NAS_CONFIG']['password']
+        os.environ["nas_version"] = configs['NAS_CONFIG']['version']
         os.environ['test_suite'] = test_suite
     elif not os.path.exists(f'{cwd}/config.cfg') and test_suite == 'core':
         msg = 'Please use --ip and --nas-password or add confing.cfg ' \
@@ -126,11 +133,13 @@ def run_testing():
         cfg_msg = "[NAS_CONFIG]\n"
         cfg_msg += "ip = 0.0.0.0\n"
         cfg_msg += "password = testing\n"
+        cfg_msg += "version = TrueNAS-12.0-U2\n"
         print(cfg_msg)
         exit(1)
     else:
         os.environ["nas_ip"] = 'None'
         os.environ["nas_password"] = 'None'
+        os.environ["nas_version"] = 'None'
         os.environ['test_suite'] = test_suite
 
     convert_jira_feature_file(test_suite)

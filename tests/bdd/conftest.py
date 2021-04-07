@@ -34,6 +34,18 @@ def root_password():
         return 'none'
 
 
+@pytest.fixture
+def iso_version():
+    if os.environ.get("nas_version"):
+        return os.environ.get("nas_version")
+    elif os.path.exists('config.cfg'):
+        configs = ConfigParser()
+        configs.read('config.cfg')
+        return configs['NAS_CONFIG']['version']
+    else:
+        return 'none'
+
+
 def browser():
     profile = webdriver.FirefoxProfile()
     profile.set_preference("browser.download.folderList", 2)
