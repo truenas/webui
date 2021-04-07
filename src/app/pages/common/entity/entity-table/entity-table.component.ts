@@ -58,6 +58,13 @@ export interface InputTableConf {
   asyncView?: boolean;
   wsDelete?: string;
   noAdd?: boolean;
+  emptyConfigMessages?: {
+    errors?: {title: string, message: string},
+    first_use?: {title: string, message: string},
+    loading?: {title: string, message: string};
+    no_page_data?: {title: string, message: string};
+    no_search_results?: {title: string, message: string};
+  };
   actionsConfig?: { actionType: any, actionConfig: any };
   disableActionsConfig?: boolean;
   wsDeleteParams?(row, id): any;
@@ -418,16 +425,95 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.isTableEmpty = false;
     } else {
       this.isTableEmpty = true;
-      this.emptyTableConf = {
-        type: EmptyType.no_search_results,
-        large: true,
-        title: T("No Search Results."),
-        message: T(`Your query didn't return any results. Please try again.`)
-      };
+      this.configureEmptyTable(this.dataSource.filter ? EmptyType.no_search_results : EmptyType.no_page_data);
     }
 
     if (this.dataSource.paginator && this.conf.config.paging) {
       this.dataSource.paginator.firstPage();
+    }
+  }
+
+  configureEmptyTable(emptyType: EmptyType, error: any = null) {
+    if(emptyType && emptyType === EmptyType.no_search_results) {
+      this.emptyTableConf = {
+        type: EmptyType.no_search_results,
+        large: true,
+        title: this.title,
+      }
+    } else if(emptyType && emptyType === EmptyType.no_search_results) {
+      let title = T("No Search Results.")
+      let message = T(`Your query didn't return any results. Please try again.`);
+      if(this.conf.emptyConfigMessages && this.conf.emptyConfigMessages.no_search_results) {
+        title = this.conf.emptyConfigMessages.no_search_results.title;
+        message = this.conf.emptyConfigMessages.no_search_results.message;
+      }
+      this.emptyTableConf = {
+        type: EmptyType.no_search_results,
+        large: true,
+        title: title,
+        message: message
+      };
+    } else if(emptyType && emptyType === EmptyType.errors) {
+      let title = T("Something went wrong");
+      let message = T(`The system returned the following error - `);
+      if(this.conf.emptyConfigMessages && this.conf.emptyConfigMessages.errors) {
+        title = this.conf.emptyConfigMessages.errors.title;
+        message = this.conf.emptyConfigMessages.errors.message;
+      }
+      this.emptyTableConf = {
+        title: title,
+        message: message+error,
+        large: true,
+        type: EmptyType.errors
+      }
+    } else if(emptyType && emptyType === EmptyType.first_use) {
+      let messagePreset = false;
+      let title = T("No ")+this.title;
+      let message = T(`It seems you haven't setup any `) + this.title + T(` yet.`);
+      if(this.conf.emptyConfigMessages && this.conf.emptyConfigMessages.first_use) {
+        title = this.conf.emptyConfigMessages.first_use.title;
+        message = this.conf.emptyConfigMessages.first_use.message;
+        messagePreset = true;
+      }
+      this.emptyTableConf = {
+        type: EmptyType.first_use,
+        large: true,
+        title: title,
+        message: message
+      };
+      if(!this.conf.noAdd) {
+        if(!messagePreset) {
+          this.emptyTableConf['message'] += T(` Please click the button below to add `) + this.title + T(`.`);
+        }
+        this.emptyTableConf['button'] = {
+          label: T("Add ")+this.title,
+          action: this.doAdd.bind(this),
+        };
+      }
+    } else {
+      let messagePreset = false;
+      let title = T("No ")+this.title;
+      let message = T(`The system could not retrieve any `) + this.title + T(` from the database.`);
+      if(this.conf.emptyConfigMessages && this.conf.emptyConfigMessages.no_page_data) {
+        title = this.conf.emptyConfigMessages.no_page_data.title;
+        message = this.conf.emptyConfigMessages.no_page_data.message;
+        messagePreset = true;
+      }
+      this.emptyTableConf = {
+        type: EmptyType.no_page_data,
+        large: true,
+        title: title,
+        message: message
+      };
+      if(!this.conf.noAdd) {
+        if(!messagePreset) {
+          this.emptyTableConf['message'] += T(` Please click the button below to add `) + this.title + T(`.`);
+        }
+        this.emptyTableConf['button'] = {
+          label: T("Add ")+this.title,
+          action: this.doAdd.bind(this),
+        };
+      }
     }
   }
   
@@ -509,12 +595,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       (res) => {
         this.isTableEmpty = true;
-        this.emptyTableConf = {
-          title: T("Something went wrong"),
-          message: T(`The system returned the following error - `)+res,
-          large: true,
-          type: EmptyType.errors
-        }
+        this.configureEmptyTable(EmptyType.errors, res);
         if (this.loaderOpen) {
           this.loader.close();
           this.loaderOpen = false;
@@ -589,29 +670,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.isTableEmpty = false;
     } else {
       this.isTableEmpty = true;
-      if(this.firstUse) {
-        this.emptyTableConf = {
-          type: EmptyType.first_use,
-          large: true,
-          title: T("No ")+this.title,
-          message: T(`It seems you haven't setup any `) + this.title + T(` yet.`)
-        };
-        
-      } else {
-        this.emptyTableConf = {
-          type: EmptyType.no_page_data,
-          large: true,
-          title: T("No ")+this.title,
-          message: T(`The system could not retrieve any `) + this.title + T(` from the database.`)
-        };
-      }
-      if(!this.conf.noAdd) {
-        this.emptyTableConf['message'] += T(` Please click the button below to add `) + this.title + T(`.`);
-        this.emptyTableConf['button'] = {
-          label: T("Add ")+this.title,
-          action: this.doAdd.bind(this),
-        };
-      }
+      this.configureEmptyTable(this.firstUse ? EmptyType.first_use : EmptyType.no_page_data);
     }
 
     this.dataSource = new MatTableDataSource(this.currentRows);
