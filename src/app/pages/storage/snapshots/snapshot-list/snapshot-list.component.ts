@@ -240,12 +240,11 @@ export class SnapshotListComponent {
 
   wsMultiDeleteParams(selected: any) {
     let params: Array<any> = ['zfs.snapshot.delete'];
-    let selectedId = [];
-    for (const i in selected) {
-     selectedId.push([selected[i].name]);
-    }
-    params.push(selectedId);
+
+    const snapshots = selected.map(item => [item.dataset + '@' + item.snapshot]);
+    params.push(snapshots);
     params.push("{0}");
+
     return params;
   }
 
@@ -284,13 +283,36 @@ export class SnapshotListComponent {
     dialogRef.componentInstance.submit();
 
     dialogRef.componentInstance.success.subscribe((job_res) => {
+      let jobErrors: string[] = [];
+      let jobSuccess: any[] = [];
+
+      job_res.result.forEach((item) => {
+        if(item.error){
+          jobErrors.push(item.error);
+        } else {
+          jobSuccess.push(item.result);
+        }
+      });
+
       dialogRef.close();
       this.entityList.getData();
       this.entityList.selected = [];
 
-      let infoMessage: string = T('Deleted') + ' ' + params[1].length + ' ';
-      infoMessage += params[1].length > 1 ? T('snapshots') : T('snapshot');
-      this.dialogService.Info(infoMessage, '', '320px', 'info', true );
+      
+      if(jobErrors.length > 0){
+        const errorTitle = T('Warning') + ', ' + jobErrors.length + ' of ' + params[1].length + ' ' + T('snapshots could not be deleted.');
+
+        let errorMessage = jobErrors.map( err => err + '\n').toString();
+        errorMessage = errorMessage.split(',').join('');
+        errorMessage = errorMessage.split('[').join('\n *** [');
+        errorMessage = errorMessage.split(']').join(']\n');
+        
+        this.dialogService.errorReport(errorTitle, '', errorMessage);
+      } else {
+        let infoTitle: string = T('Deleted') + ' ' + jobSuccess.length + ' ';
+        infoTitle += jobSuccess.length > 1 ? T('snapshots') : T('snapshot');
+        this.dialogService.Info(infoTitle, '', '320px', 'info', true );
+      }
     });
 
     dialogRef.componentInstance.failure.subscribe((err) => {
