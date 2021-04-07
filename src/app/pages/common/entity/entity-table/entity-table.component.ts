@@ -435,7 +435,6 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   configureEmptyTable(emptyType: EmptyType, error: any = null) {
-    console.log("emptytype", emptyType)
     if(emptyType && emptyType === EmptyType.loading) {
       this.emptyTableConf = {
         type: EmptyType.loading,
