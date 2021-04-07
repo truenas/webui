@@ -9,7 +9,7 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import {  DialogService } from '../../../services/';
 import helptext from '../../../helptext/directoryservice/activedirectory';
 import global_helptext from '../../../helptext/global-helptext';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 
 @Component({
@@ -28,7 +28,7 @@ export class ActiveDirectoryComponent {
   protected nss_info: any;
   public adStatus = false;
   entityEdit: any;
-  protected dialogRef: any;
+  protected dialogRef: MatDialogRef<EntityJobComponent, void>;
   public custActions: Array<any> = [
     {
       'id' : helptext.activedirectory_custactions_basic_id,
