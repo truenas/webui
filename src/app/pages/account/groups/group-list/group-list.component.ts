@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnDestroy} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from 'app/services';
@@ -16,7 +16,7 @@ import { GroupFormComponent } from '../group-form/group-form.component';
   selector : 'app-group-list',
   template : `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
-export class GroupListComponent {
+export class GroupListComponent implements OnDestroy {
   public title = "Groups";
   protected queryCall = 'group.query';
   protected wsDelete = 'group.delete';
@@ -62,6 +62,12 @@ export class GroupListComponent {
     this.modalService.refreshForm$.subscribe(() => {
       this.refreshGroupForm();
     })
+  }
+
+  ngOnDestroy(){
+    if(this.refreshTableSubscription){
+      this.refreshTableSubscription.unsubscribe();
+    }
   }
   
   refreshGroupForm() {
