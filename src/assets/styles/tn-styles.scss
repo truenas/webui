@@ -898,7 +898,9 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   // Gets checkboxes in SMART tests to pick up theme color
   .mat-checkbox-checked .mat-checkbox-background,
-  .mat-primary .mat-pseudo-checkbox-checked, .mat-primary .mat-pseudo-checkbox-indeterminate {
+  .mat-primary .mat-pseudo-checkbox-checked,
+  .mat-primary .mat-pseudo-checkbox-indeterminate,
+  .mat-primary.mat-checkbox-indeterminate .mat-checkbox-background {
     @include variable(background, --primary, $primary, !important);
     border: none;
   }
