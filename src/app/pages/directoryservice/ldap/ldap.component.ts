@@ -21,6 +21,7 @@ import { T } from 'app/translate-marker';
 })
 
 export class LdapComponent {
+  protected title: string = helptext.title;
   protected isEntity = false;
   protected queryCall: string = 'ldap.config';
   protected upodateCall: string = 'ldap.update';
@@ -244,9 +245,8 @@ export class LdapComponent {
     return true;
   }
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
+  constructor(protected router: Router, 
               protected ws: WebSocketService, private dialogservice: DialogService,
-              protected _injector: Injector, protected _appRef: ApplicationRef,
               protected systemGeneralService: SystemGeneralService) {}
 
   resourceTransformIncomingRestData(data) {

@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { T } from '../../../translate-marker';
-import { IdmapService } from 'app/services/idmap.service';
+import { IdmapService, ValidationService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-
+import { IdmapFormComponent } from '../idmap-form/idmap-form.component';
 import helptext from '../../../helptext/directoryservice/idmap';
-
+import { ModalService } from '../../../services/modal.service';
+import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'app-idmap-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
@@ -19,6 +20,7 @@ export class IdmapListComponent {
   protected route_edit: string[] = [ 'directoryservice', 'idmap', 'edit' ];
   protected route_delete: string[] = [ 'idmap', 'delete' ];
   protected entityList: any;
+  protected idmapFormComponent: IdmapFormComponent;
   protected requiredDomains = [
     'DS_TYPE_ACTIVEDIRECTORY',
     'DS_TYPE_DEFAULT_DOMAIN',
@@ -44,8 +46,15 @@ export class IdmapListComponent {
     },
   };
 
-  constructor(protected idmapService: IdmapService, protected router: Router,
-    protected dialogService: DialogService) { }
+  constructor(
+    protected idmapService: IdmapService, 
+    protected validationService: ValidationService,
+    private modalService: ModalService,
+    private dialog: DialogService,
+    protected router: Router,
+    public mdDialog: MatDialog,
+    protected dialogService: DialogService
+  ) { }
 
   resourceTransformIncomingRestData(data) {
     data.forEach((item) => {
@@ -72,7 +81,7 @@ export class IdmapListComponent {
       onClick: () => {
         this.idmapService.getADStatus().subscribe((res) => {
           if (res.enable) {
-            this.router.navigate(['directoryservice', 'idmap', 'add'])
+            this.doAdd();
           } else {
             this.dialogService.confirm(helptext.idmap.enable_ad_dialog.title, helptext.idmap.enable_ad_dialog.message, 
               true, helptext.idmap.enable_ad_dialog.button).subscribe((res) => {
@@ -93,7 +102,7 @@ export class IdmapListComponent {
       label: T('Edit'),
       disabled: row.disableEdit,
       onClick: (row) => {
-        this.router.navigate(new Array('').concat(['directoryservice', 'idmap', 'edit', row.id]))
+        this.doAdd(row.id);
       }
     });
     if(!this.requiredDomains.includes(row.name)) {
@@ -115,6 +124,18 @@ export class IdmapListComponent {
       })
     } 
     return actions;
+  }
+
+  doAdd(id?: number) {
+    const idmapFormComponent = new IdmapFormComponent(
+      this.idmapService,
+      this.validationService,
+      this.modalService,
+      this.dialog,
+      this.mdDialog,
+    );
+
+    this.modalService.open('slide-in-form', idmapFormComponent, id);
   }
 
 }

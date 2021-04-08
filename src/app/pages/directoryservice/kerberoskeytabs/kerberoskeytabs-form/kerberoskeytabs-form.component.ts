@@ -11,6 +11,7 @@ import helptext from '../../../../helptext/directoryservice/kerberoskeytabs-form
   template: `<entity-form [conf]="this"></entity-form>`
 })
 export class KerberosKeytabsFormComponent {
+  protected title: string;
   protected addCall = 'kerberos.keytab.create';
   protected editCall = 'kerberos.keytab.update';
   protected queryCall = 'kerberos.keytab.query';
@@ -49,7 +50,7 @@ export class KerberosKeytabsFormComponent {
     }
   ];
 
-  constructor(private router: Router, protected aroute: ActivatedRoute) {}
+  constructor(protected aroute: ActivatedRoute) {}
 
   preInit() {
     this.aroute.params.subscribe(params => {
@@ -58,5 +59,9 @@ export class KerberosKeytabsFormComponent {
         this.isNew = false;
       }
     })
+  }
+
+  afterInit(entityEdit: any) {
+    this.title = entityEdit.isNew ? helptext.title_add : helptext.title_edit;
   }
 }

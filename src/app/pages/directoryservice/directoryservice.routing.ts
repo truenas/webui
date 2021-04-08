@@ -1,17 +1,17 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { ActiveDirectoryComponent } from './activedirectory/';
-import { LdapComponent } from './ldap/';
+import { ActiveDirectoryComponent } from './activedirectory/activedirectory.component';
+import { LdapComponent } from './ldap/ldap.component';
 import { NISComponent } from './nis/';
-import { KerberosRealmsListComponent } from './kerberosrealms/kerberosrealms-list';
-import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-form';
-import { KerberosSettingsComponent } from './kerberossettings';
-import { KerberosKeytabsListComponent } from './kerberoskeytabs/kerberoskeytabs-list';
-import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-form';
-import { IdmapListComponent } from './idmap-list';
-import { IdmapFormComponent } from './idmap-form';
-import { EntityDashboardComponent } from '../common/entity/entity-dashboard/entity-dashboard.component';
+import { KerberosRealmsListComponent } from './kerberosrealms/kerberosrealms-list/kerberosrealms-list.component';
+import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-form/kerberosrealms-form.component';
+import { KerberosSettingsComponent } from './kerberossettings/kerberossettings.component';
+import { KerberosKeytabsListComponent } from './kerberoskeytabs/kerberoskeytabs-list/kerberoskeytabs-list.component';
+import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-form/kerberoskeytabs-form.component';
+import { IdmapListComponent } from './idmap-list/idmap-list.component';
+import { IdmapFormComponent } from './idmap-form/idmap-form.component';
+import { DirectoryservicesComponent } from './directoryservices.component';
 
 export const routes: Routes = [{
   path: '',
@@ -19,7 +19,7 @@ export const routes: Routes = [{
   children: [
     {
       path: '',
-      component: EntityDashboardComponent,
+      component: DirectoryservicesComponent,
     },
   {
     path: 'ldap',

@@ -8,20 +8,21 @@ import { ValidationService, IdmapService, DialogService } from '../../../service
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../../pages/common/entity/utils';
 import helptext from '../../../helptext/directoryservice/idmap';
-
+import { ModalService } from '../../../services/modal.service';
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-idmap-form',
   template: `<entity-form [conf]="this"></entity-form>`
 })
 export class IdmapFormComponent {
-
-  protected route_success: string[] = ['directoryservice', 'idmap'];
+  protected title: string;
   protected isEntity: boolean = true;
   protected namesInUse = [];
   protected queryCall = 'idmap.query';
   protected addCall = 'idmap.create';
   protected editCall = 'idmap.update';
   protected queryCallOption: Array<any> = [["id", "="]];
+  private getRow = new Subscription;
   public rangeLowValidation = [
     ...helptext.idmap.required_validator, 
     this.validationService.rangeValidator(1000, 2147483647)
@@ -47,8 +48,9 @@ export class IdmapFormComponent {
     {
       name: helptext.idmap.settings_label,
       class: 'idmap-configuration-form',
+      colspan: 2,
       label:true,
-      width: '48%',
+      width: '100%',
       config: [
         {
           type: 'select',
@@ -116,17 +118,12 @@ export class IdmapFormComponent {
 
       ]
     },
-    {      
-      name: 'vert-spacer',
-      class: 'vert-spacer',
-      label:false,
-      width: '4%',
-      config:[]},
     {
       name: helptext.idmap.options_label,
       class: 'idmap-configuration-form',
       label:true,
-      width: '48%',
+      colspan: 2,
+      width: '100%',
       config: [
         {
           type: 'select',
@@ -282,7 +279,14 @@ export class IdmapFormComponent {
   ]
 
   constructor(protected idmapService: IdmapService, protected validationService: ValidationService,
-    protected route: ActivatedRoute, protected dialogService: DialogService, protected dialog: MatDialog) { }
+    private modalService: ModalService, 
+    protected dialogService: DialogService, protected dialog: MatDialog) 
+  { 
+    this.getRow = this.modalService.getRow$.subscribe(rowId => {
+      this.queryCallOption = [["id", "=", rowId]];
+      this.getRow.unsubscribe();
+    });
+  }
 
   resourceTransformIncomingRestData(data) {
     for (let item in data.options) {
@@ -295,15 +299,8 @@ export class IdmapFormComponent {
     return data;
   }
 
-  preInit() {
-    this.route.params.subscribe(params => {
-      if (params['pk']) {
-        this.queryCallOption[0].push(parseInt(params['pk']));
-      }
-    });
-  }
-
   afterInit(entityEdit: any) {
+    this.title = entityEdit.isNew ? helptext.title_add : helptext.title_edit;
     this.entityForm = entityEdit;
     this.optionsFields.forEach((option) => {
       this.hideField(option, true, entityEdit);

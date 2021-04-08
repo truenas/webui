@@ -12,7 +12,7 @@ import global_helptext from '../../../../helptext/global-helptext';
   template: `<entity-form [conf]="this"></entity-form>`
 })
 export class KerberosRealmsFormComponent {
-
+  protected title: string;
   protected route_success: string[] = ['directoryservice', 'kerberosrealms'];
   protected addCall = 'kerberos.realm.create';
   protected editCall = 'kerberos.realm.update';
@@ -74,7 +74,7 @@ export class KerberosRealmsFormComponent {
     }
   ];
 
-  constructor(private router: Router, protected aroute: ActivatedRoute) {}
+  constructor(protected aroute: ActivatedRoute) {}
 
   preInit() {
     this.aroute.params.subscribe(params => {
@@ -85,6 +85,10 @@ export class KerberosRealmsFormComponent {
     })
   }
 
+  afterInit(entityEdit: any) {
+    this.title = entityEdit.isNew ? helptext.title_add : helptext.title_edit;
+  }
+  
   isCustActionVisible(actionId: string) {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {
       return false;

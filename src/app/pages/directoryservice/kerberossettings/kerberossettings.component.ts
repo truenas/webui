@@ -9,7 +9,7 @@ import helptext from '../../../helptext/directoryservice/kerberossettings';
 })
 
 export class KerberosSettingsComponent {
-
+  protected title: string = helptext.ks_label;
   protected queryCall = 'kerberos.config';
   protected addCall = 'kerberos.update';
   protected editCall = 'kerberos.update';

@@ -16,6 +16,7 @@ import global_helptext from '../../../helptext/global-helptext';
 })
 
 export class ActiveDirectoryComponent {
+  protected title: string = helptext.title;
   protected queryCall: string = 'activedirectory.config';
   protected updateCall: string = 'activedirectory.update';
   public isEntity = false;
@@ -331,9 +332,8 @@ export class ActiveDirectoryComponent {
     return true;
   }
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
+  constructor(protected router: Router, 
               protected ws: WebSocketService,
-              protected _injector: Injector, protected _appRef: ApplicationRef,
               protected systemGeneralService: SystemGeneralService,
               protected dialogservice: DialogService) {}
 
