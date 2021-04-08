@@ -5,8 +5,7 @@ import time
 import datetime
 from function import (
     wait_on_element,
-    is_element_present,
-    wait_on_element_disappear
+    is_element_present
 )
 from pytest_bdd import (
     given,

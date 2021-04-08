@@ -34,7 +34,7 @@ option_list = [
     "ip=",
     'nas-password=',
     'convert-feature',
-    'test-suite='
+    'test-suite=',
     'iso-version='
 ]
 
