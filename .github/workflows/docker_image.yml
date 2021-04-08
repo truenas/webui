@@ -11,6 +11,7 @@ env:
 
 jobs:
   docker:
+    environment: CIENV
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
