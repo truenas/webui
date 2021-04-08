@@ -425,7 +425,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
     }
 
     let ext_interfaces = [];
-    if (data.externalInterfaces[0].hostInterface) {
+    if (data.externalInterfaces && data.externalInterfaces.length > 0 && data.externalInterfaces[0].hostInterface) {
       data.externalInterfaces.forEach(i => {
         if (i.ipam !== 'static') {
           ext_interfaces.push(
