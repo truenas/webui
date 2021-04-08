@@ -1,5 +1,5 @@
 # coding=utf-8
-"""Core: Verify the version number, ixsystems link, and copyright year feature tests."""
+"""Verify the version number, ixsystems link, and copyright year feature tests."""
 
 import time
 import datetime
@@ -15,9 +15,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1049.feature', 'Core: Verify the version number, ixsystems link, and copyright year')
-def test_core_verify_the_version_number_ixsystems_link_and_copyright_year(driver):
-    """Core: Verify the version number, ixsystems link, and copyright year."""
+@scenario('features/NAS-T1049.feature', 'Verify the version number, ixsystems link, and copyright year')
+def test_verify_the_version_number_ixsystems_link_and_copyright_year(driver):
+    """Verify the version number, ixsystems link, and copyright year."""
 
 
 @given('the browser is open on the TrueNAS URL and logged in')
