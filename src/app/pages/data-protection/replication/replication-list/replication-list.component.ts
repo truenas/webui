@@ -81,7 +81,7 @@ export class ReplicationListComponent {
             if (res) {
               row.state = 'RUNNING';
               this.ws.call('replication.run', [row.id]).subscribe(
-                (ws_res) => {
+                (res) => {
                   this.dialog.Info(
                     T('Task started'),
                     T('Replication <i>') + row.name + T('</i> has started.'),
@@ -89,6 +89,10 @@ export class ReplicationListComponent {
                     'info',
                     true,
                   );
+                  this.job.getJobStatus(res).subscribe((task) => {
+                    row.state = task.state;
+                    row.job = task;
+                  });
                 },
                 (err) => {
                   new EntityUtils().handleWSError(this.entityList, err);

@@ -145,7 +145,7 @@ export class CloudsyncListComponent implements InputTableConf {
                     true,
                   );
                   this.job.getJobStatus(res).subscribe((task) => {
-                    row.state = task.state;
+                    row.state = { state: task.state };
                     row.job = task;
                   });
                 },
@@ -201,7 +201,7 @@ export class CloudsyncListComponent implements InputTableConf {
                     true,
                   );
                   this.job.getJobStatus(res).subscribe((task) => {
-                    row.state = task.state;
+                    row.state = { state: task.state };
                     row.job = task;
                   });
                 },
