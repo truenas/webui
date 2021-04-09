@@ -9,7 +9,7 @@ import { Control} from '../../models/control.interface';
 
 @Component({
   selector : 'toolbar-menu',
-  styleUrls : [ 'toolbar-menu.component.scss' ],
+  styleUrls : [],
   templateUrl: 'toolbar-menu.component.html'
 })
 export class ToolbarMenuComponent extends iXAbstractObject {

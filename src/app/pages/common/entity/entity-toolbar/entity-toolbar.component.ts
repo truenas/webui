@@ -29,7 +29,7 @@ import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.componen
 @Component({
   selector : 'entity-toolbar',
   templateUrl : './entity-toolbar.component.html',
-  styleUrls : [ './entity-toolbar.component.css' ],
+  styleUrls : [ './entity-toolbar.component.scss' ],
 })
 export class EntityToolbarComponent implements OnDestroy, OnChanges, GlobalAction {
 
