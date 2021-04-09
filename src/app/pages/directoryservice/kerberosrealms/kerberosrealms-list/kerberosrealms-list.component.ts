@@ -1,22 +1,22 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnDestroy } from '@angular/core';
 
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/directoryservice/kerberosrealms-form-list';
-
+import { KerberosRealmsFormComponent } from '../kerberosrealms-form/kerberosrealms-form.component';
+import { ModalService } from '../../../../services/modal.service';
+import { Subject, Subscription } from 'rxjs';
 @Component({
   selector: 'app-user-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
 })
-export class KerberosRealmsListComponent {
+export class KerberosRealmsListComponent implements OnDestroy {
 
   public title = "Kerberos Realms";
   protected queryCall = 'kerberos.realm.query';
   protected wsDelete = 'kerberos.realm.delete';
-  protected route_add: string[] = ['directoryservice', 'kerberosrealms', 'add'];
-  protected route_add_tooltip: string = "Add Kerberos Realm";
-  protected route_edit: string[] = ['directoryservice', 'kerberosrealms', 'edit'];
   public keyList = ['admin_server', 'kdc', 'kpasswd_server'];
+  protected entityList: any;
+  private refreshTableSubscription: Subscription;
 
   public columns: Array < any > = [
     { name: T('Realm'), prop: 'realm', always_display: true },
@@ -34,7 +34,7 @@ export class KerberosRealmsListComponent {
     },
   };
 
-  constructor(private router: Router){}
+  constructor(private modalService: ModalService){}
 
   resourceTransformIncomingRestData(data) {
     data.forEach((row) => {
@@ -46,5 +46,52 @@ export class KerberosRealmsListComponent {
       
     })
     return data;
+  }
+
+  afterInit(entityList: any) { 
+    this.entityList = entityList; 
+    this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
+      this.entityList.getData();
+    })
+  }
+
+  ngOnDestroy(){
+    if(this.refreshTableSubscription){
+      this.refreshTableSubscription.unsubscribe(); 
+    }
+  }
+
+  getAddActions() {
+    return [{
+      label: T('Add'),
+      onClick: () => {
+        this.doAdd();    
+      }
+    }];
+  }
+
+  getActions(row) {
+    const actions = [];
+    actions.push({
+      id: 'edit',
+      label: T('Edit'),
+      disabled: row.disableEdit,
+      onClick: (row) => {
+        this.doAdd(row.id);
+      }
+    },{
+      id: 'delete',
+      label: T('Delete'),
+      onClick: (row) => {
+        this.entityList.doDelete(row);
+      }
+    });
+
+    return actions;
+  }
+
+  doAdd(id?: number) {
+    const formComponent = new KerberosRealmsFormComponent(this.modalService);
+    this.modalService.open('slide-in-form', formComponent, id);
   }
 }

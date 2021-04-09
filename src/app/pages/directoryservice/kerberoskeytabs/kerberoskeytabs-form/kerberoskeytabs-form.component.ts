@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash';
 
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/directoryservice/kerberoskeytabs-form-list';
-
+import { Subscription } from 'rxjs';
+import { ModalService } from '../../../../services/modal.service';
 @Component({
   selector: 'app-kerberos-keytbas-form',
   template: `<entity-form [conf]="this"></entity-form>`
@@ -16,10 +16,9 @@ export class KerberosKeytabsFormComponent {
   protected editCall = 'kerberos.keytab.update';
   protected queryCall = 'kerberos.keytab.query';
   protected pk: any;
-  protected isNew = true;
   protected queryKey = 'id';
-  protected route_success: string[] = ['directoryservice', 'kerberoskeytabs'];
   protected isEntity =  true;
+  private getRow = new Subscription;
 
   protected fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
@@ -50,18 +49,19 @@ export class KerberosKeytabsFormComponent {
     }
   ];
 
-  constructor(protected aroute: ActivatedRoute) {}
-
-  preInit() {
-    this.aroute.params.subscribe(params => {
-      if (params.pk) {
-        this.pk = parseInt(params.pk);
-        this.isNew = false;
-      }
-    })
+  constructor(private modalService: ModalService) 
+  {
+    this.getRow = this.modalService.getRow$.subscribe(rowId => {
+      this.pk = rowId;
+      this.getRow.unsubscribe();
+    });
   }
 
   afterInit(entityEdit: any) {
     this.title = entityEdit.isNew ? helptext.title_add : helptext.title_edit;
+  }
+
+  afterSubmit() {
+    this.modalService.refreshTable();
   }
 }

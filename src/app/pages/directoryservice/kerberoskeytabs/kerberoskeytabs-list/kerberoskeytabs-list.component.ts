@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ModalService } from '../../../../services/modal.service';
 import helptext from '../../../../helptext/directoryservice/kerberoskeytabs-form-list';
-
+import { T } from '../../../../translate-marker';
+import { Subject, Subscription } from 'rxjs';
+import { KerberosKeytabsFormComponent } from '../kerberoskeytabs-form/kerberoskeytabs-form.component';
 @Component({
   selector: 'app-kerberos-keytabs-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
@@ -11,10 +13,8 @@ export class KerberosKeytabsListComponent {
   public title = "Kerberos Keytabs";
   protected queryCall = 'kerberos.keytab.query';
   protected wsDelete = 'kerberos.keytab.delete';
-  protected route_add: string[] = ['directoryservice', 'kerberoskeytabs', 'add'];
-  protected route_add_tooltip: string = "Add Kerberos Keytab";
-  protected route_edit: string[] = ['directoryservice', 'kerberoskeytabs', 'edit'];
   protected entityList: any;
+  private refreshTableSubscription: Subscription;
 
   public columns: Array < any > = [
     { name: 'Name', prop: 'name', always_display: true },
@@ -29,10 +29,53 @@ export class KerberosKeytabsListComponent {
     },
   };
 
-  constructor(private router: Router) {}
+  constructor(private modalService: ModalService) {}
 
-  afterInit(entityList: any) {
-    this.entityList = entityList;
+  afterInit(entityList: any) { 
+    this.entityList = entityList; 
+    this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
+      this.entityList.getData();
+    })
+  }
+
+  ngOnDestroy(){
+    if(this.refreshTableSubscription){
+      this.refreshTableSubscription.unsubscribe(); 
+    }
+  }
+
+  getAddActions() {
+    return [{
+      label: T('Add'),
+      onClick: () => {
+        this.doAdd();    
+      }
+    }];
+  }
+
+  getActions(row) {
+    const actions = [];
+    actions.push({
+      id: 'edit',
+      label: T('Edit'),
+      disabled: row.disableEdit,
+      onClick: (row) => {
+        this.doAdd(row.id);
+      }
+    },{
+      id: 'delete',
+      label: T('Delete'),
+      onClick: (row) => {
+        this.entityList.doDelete(row);
+      }
+    });
+
+    return actions;
+  }
+
+  doAdd(id?: number) {
+    const formComponent = new KerberosKeytabsFormComponent(this.modalService);
+    this.modalService.open('slide-in-form', formComponent, id);
   }
 
 }

@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject, Subscription } from 'rxjs';
@@ -19,9 +18,6 @@ import helptext from '../../helptext/directoryservice/dashboard';
 import { AppLoaderService } from '../../services/app-loader/app-loader.service';
 import { T } from 'app/translate-marker';
 import { EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
 import { InputTableConf } from 'app/pages/common/entity/table/table.component';
 import { EmptyConfig } from '../common/entity/entity-empty/entity-empty.component';
 import { LdapComponent } from './ldap/ldap.component';
@@ -40,9 +36,6 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
   dataCards = [];
   tableCards = [];
   configData: any;
-  refreshCardData: Subscription;
-  refreshTable: Subscription;
-  refreshForm: Subscription;
   refreshOnClose: Subscription;
   
   syslog: boolean;
@@ -178,22 +171,11 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     ];
 
     this.getDataCardData();
-    this.refreshCardData = this.sysGeneralService.refreshSysGeneral$.subscribe(() => {
-      this.getDataCardData();
-    });
-
-    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
-      this.refreshTables();
-    });
-
     this.refreshOnClose = this.modalService.onClose$.subscribe(() => {
       this.refreshTables();
     });
 
     this.refreshForms();
-    this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
-      this.refreshForms();
-    });
   }
 
   afterInit(entityEdit: any) {
@@ -323,7 +305,8 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
 
 
   refreshTables() {
-    this.dataCards.forEach((card) => {
+    this.getDataCardData();
+    this.tableCards.forEach((card) => {
       if (card.tableConf?.tableComponent) {
         card.tableConf.tableComponent.getData();
       }
@@ -354,14 +337,11 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     );
 
     this.kerberosSettingFormComponent = new KerberosSettingsComponent();
-    this.kerberosRealmsFormComponent = new KerberosRealmsFormComponent(this.route);
-    this.kerberosKeytabsFormComponent = new KerberosKeytabsFormComponent(this.route);
+    this.kerberosRealmsFormComponent = new KerberosRealmsFormComponent(this.modalService);
+    this.kerberosKeytabsFormComponent = new KerberosKeytabsFormComponent(this.modalService);
   }
 
   ngOnDestroy() {
-    this.refreshCardData.unsubscribe();
-    this.refreshTable.unsubscribe();
-    this.refreshForm.unsubscribe();
     this.refreshOnClose.unsubscribe();
   }
 }

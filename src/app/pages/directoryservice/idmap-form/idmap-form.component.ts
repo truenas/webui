@@ -21,7 +21,8 @@ export class IdmapFormComponent {
   protected queryCall = 'idmap.query';
   protected addCall = 'idmap.create';
   protected editCall = 'idmap.update';
-  protected queryCallOption: Array<any> = [["id", "="]];
+  protected pk: any;
+  protected queryKey = 'id';
   private getRow = new Subscription;
   public rangeLowValidation = [
     ...helptext.idmap.required_validator, 
@@ -283,7 +284,7 @@ export class IdmapFormComponent {
     protected dialogService: DialogService, protected dialog: MatDialog) 
   { 
     this.getRow = this.modalService.getRow$.subscribe(rowId => {
-      this.queryCallOption = [["id", "=", rowId]];
+      this.pk = rowId;
       this.getRow.unsubscribe();
     });
   }
@@ -388,6 +389,7 @@ export class IdmapFormComponent {
   }
 
   afterSubmit(value) {
+    this.modalService.refreshTable();
     this.dialogService.confirm(helptext.idmap.clear_cache_dialog.title, helptext.idmap.clear_cache_dialog.message,
       true)
       .subscribe((res) => {
@@ -408,4 +410,5 @@ export class IdmapFormComponent {
         }
       })
     }
+
 }
