@@ -466,10 +466,6 @@ entity-form-list .list-action-block-wrapper .form-element select{
   position: static !important;
 }
 
-.mat-checkbox-frame{
-  border-color: var(--fg2) !important;
-}
-
 .mat-checkbox{
   opacity: 0.75;
 }
