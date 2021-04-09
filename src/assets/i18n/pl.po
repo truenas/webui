@@ -2148,7 +2148,7 @@ msgid "Browsable to Network Clients"
 msgstr ""
 
 msgid "Browse a Collection"
-msgstr ""
+msgstr "Przeglądaj kolekcje"
 
 msgid "Browse to a CD-ROM file present on the system storage."
 msgstr ""
@@ -3454,19 +3454,19 @@ msgid "Create a custom ACL"
 msgstr ""
 
 msgid "Create a new Pool."
-msgstr ""
+msgstr "Utwórz nową pulę"
 
 msgid "Create a new Target or choose an existing target for this share."
-msgstr ""
+msgstr "Utwórz nową pulę"
 
 msgid "Create a new pool."
-msgstr ""
+msgstr "Utwórz nową pulę"
 
 msgid "Create a new, empty pool."
-msgstr ""
+msgstr "Utwórz nową pustą pulę"
 
 msgid "Create a pool:"
-msgstr ""
+msgstr "Utwórz pulę"
 
 msgid "Create a recommended formation of vdevs in a pool."
 msgstr ""
@@ -3484,7 +3484,7 @@ msgid "Create new Pool"
 msgstr ""
 
 msgid "Create new disk image"
-msgstr ""
+msgstr "Utwórz nowy obraz dysku"
 
 msgid "Create new pods and then kill old ones."
 msgstr ""

@@ -434,6 +434,13 @@ export default {
         tooltip: T('')
       }
     },
+    security: {
+      title: T('Security Settings'),
+      privileged: {
+        placeholder: T('Privileged'),
+        tooltip: T('')
+      },
+    },
   },
 
   chartWizard: {
