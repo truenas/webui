@@ -10457,6 +10457,9 @@ msgstr "私钥"
 msgid "Private Key ID"
 msgstr "私钥ID"
 
+msgid "Privileged"
+msgstr ""
+
 msgid ""
 "Privileges are the same as the guest account.  Guest access is disabled by "
 "default in Windows 10 version 1709 and  Windows Server version 1903. "
@@ -11668,6 +11671,9 @@ msgstr "保护此数据集中的数据。直到使用加密密钥或密码将其
 
 msgid "Security"
 msgstr "安全"
+
+msgid "Security Settings"
+msgstr ""
 
 msgid ""
 "See <a "
@@ -16681,6 +16687,9 @@ msgid "snapshot"
 msgstr ""
 
 msgid "snapshots"
+msgstr ""
+
+msgid "snapshots could not be deleted."
 msgstr ""
 
 msgid "software, which is provided as-is with no warranty."

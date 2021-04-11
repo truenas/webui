@@ -9884,6 +9884,9 @@ msgstr "Soukromá část klíče"
 msgid "Private Key ID"
 msgstr "Identifikátor soukromého klíče"
 
+msgid "Privileged"
+msgstr ""
+
 msgid ""
 "Privileges are the same as the guest account.  Guest access is disabled by "
 "default in Windows 10 version 1709 and  Windows Server version 1903. "
@@ -11067,6 +11070,9 @@ msgstr ""
 
 msgid "Security"
 msgstr "Zabezpečení"
+
+msgid "Security Settings"
+msgstr ""
 
 msgid ""
 "See <a "
@@ -15836,6 +15842,9 @@ msgid "snapshot"
 msgstr ""
 
 msgid "snapshots"
+msgstr ""
+
+msgid "snapshots could not be deleted."
 msgstr ""
 
 msgid "software, which is provided as-is with no warranty."
