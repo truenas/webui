@@ -140,6 +140,14 @@ export class DatasetAclComponent implements OnDestroy {
               required: true,
             },
             {
+                type: 'paragraph',
+                name: 'no_acls_warning',
+                disabled: true,
+                isHidden: true,
+                paraText: "No ACLs available. Please add an ACL.",
+                class: 'warning-text'
+            },
+            {
               type: 'combobox',
               name: 'user',
               placeholder: helptext.dataset_acl_user_placeholder,
@@ -485,9 +493,9 @@ export class DatasetAclComponent implements OnDestroy {
 
   resourceTransformIncomingRestData(data) {
     if (data.acl.length === 0) {
-      setTimeout(() => {
-        this.handleEmptyACL();
-      }, 1000)
+      _.find(this.aces_fc.templateListField, {name: "no_acls_warning"}).disabled = false;
+      _.find(this.aces_fc.templateListField, {name: "no_acls_warning"}).isHidden = false;
+      this.loader.close()
     } else {
       if (this.homeShare) {
         this.ws.call('filesystem.get_default_acl', ['HOME']).subscribe(res => {
