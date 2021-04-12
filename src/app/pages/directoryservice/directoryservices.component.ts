@@ -15,6 +15,7 @@ import {
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
 import { ModalService } from '../../services/modal.service';
 import helptext from '../../helptext/directoryservice/dashboard';
+import idmapHelptext from '../../helptext/directoryservice/idmap';
 import { AppLoaderService } from '../../services/app-loader/app-loader.service';
 import { T } from 'app/translate-marker';
 import { EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
@@ -22,10 +23,10 @@ import { InputTableConf } from 'app/pages/common/entity/table/table.component';
 import { EmptyConfig } from '../common/entity/entity-empty/entity-empty.component';
 import { LdapComponent } from './ldap/ldap.component';
 import { ActiveDirectoryComponent } from './activedirectory/activedirectory.component';
-import { IdmapFormComponent } from './idmap-form/idmap-form.component';
+import { IdmapFormComponent } from './idmap/idmap-form.component';
 import { KerberosSettingsComponent } from './kerberossettings/kerberossettings.component';
-import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-form/kerberosrealms-form.component';
-import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-form/kerberoskeytabs-form.component';
+import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-form.component';
+import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-form.component';
 
 @Component({
   selector: 'directoryservices',
@@ -35,12 +36,8 @@ import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-
 export class DirectoryservicesComponent implements OnInit, OnDestroy {
   dataCards = [];
   tableCards = [];
-  configData: any;
+
   refreshOnClose: Subscription;
-  
-  syslog: boolean;
-  entityForm: any;
-  isFirstTime = true;
 
   // Components included in this dashboard
   protected ldapFormComponent: LdapComponent;
@@ -73,12 +70,12 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     emptyEntityLarge: false,
     parent: this,
     columns: [
-      {name : T('Name'), prop : 'name', always_display: true, minWidth: 250},
-      {name : T('Backend'), prop : 'idmap_backend', maxWidth: 100},
-      {name : T('DNS Domain Name'), prop : 'dns_domain_name'},
-      {name : T('Range Low'), prop : 'range_low'},
-      {name : T('Range High'), prop : 'range_high'},
-      {name : T('Certificate'), prop : 'cert_name'},
+      { name: T('Name'), prop: 'name', always_display: true, minWidth: 250 },
+      { name: T('Backend'), prop: 'idmap_backend', maxWidth: 100 },
+      { name: T('DNS Domain Name'), prop: 'dns_domain_name' },
+      { name: T('Range Low'), prop: 'range_low' },
+      { name: T('Range High'), prop: 'range_high' },
+      { name: T('Certificate'), prop: 'cert_name' },
     ],
     add: function () {
       this.parent.doAdd('idmap');
@@ -138,7 +135,7 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
 
   constructor(
     private ws: WebSocketService,
-    protected idmapService: IdmapService, 
+    protected idmapService: IdmapService,
     protected validationService: ValidationService,
     protected route: ActivatedRoute,
     private sysGeneralService: SystemGeneralService,
@@ -149,7 +146,7 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     public mdDialog: MatDialog,
     public datePipe: DatePipe,
     protected userService: UserService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.tableCards = [
@@ -178,17 +175,8 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     this.refreshForms();
   }
 
-  afterInit(entityEdit: any) {
-    this.entityForm = entityEdit;
-    console.log('afterInit::entityEdit', entityEdit);
-
-    this.ws.call('failover.licensed').subscribe((is_ha) => {
-      this.is_ha = is_ha;
-    });
-  }
-
   getDataCardData() {
-    
+
     const activeDirectoryPromise = this.ws.call('activedirectory.config').toPromise();
     const ldapPromise = this.ws.call('ldap.config').toPromise();
     const kerberosSettingsPromise = this.ws.call('kerberos.config').toPromise();
@@ -269,7 +257,7 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
                 value: kerberosSettingsLibdefaults,
               },
             ],
-          },          
+          },
         ];
       }
     );
@@ -300,7 +288,23 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
         break;
     }
 
-    this.modalService.open('slide-in-form', addComponent, id);
+    if (name == 'idmap' && !id) {
+      this.idmapService.getADStatus().subscribe((res) => {
+        if (res.enable) {
+          this.modalService.open('slide-in-form', addComponent, id);
+        } else {
+          this.dialog.confirm(idmapHelptext.idmap.enable_ad_dialog.title, idmapHelptext.idmap.enable_ad_dialog.message,
+            true, idmapHelptext.idmap.enable_ad_dialog.button).subscribe((res) => {
+              if (res) {
+                addComponent = this.activeDirectoryFormComponent;
+                this.modalService.open('slide-in-form', addComponent, id);
+              }
+            })
+        }
+      })
+    } else {
+      this.modalService.open('slide-in-form', addComponent, id);
+    }
   }
 
 
@@ -313,10 +317,12 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     });
   }
 
+  
   refreshForms() {
     this.activeDirectoryFormComponent = new ActiveDirectoryComponent(
       this.router,
       this.ws,
+      this.modalService,
       this.sysGeneralService,
       this.dialog,
     );
@@ -324,6 +330,7 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     this.ldapFormComponent = new LdapComponent(
       this.router,
       this.ws,
+      this.modalService,
       this.dialog,
       this.sysGeneralService,
     );

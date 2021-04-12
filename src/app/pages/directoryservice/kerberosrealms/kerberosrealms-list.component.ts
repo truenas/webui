@@ -1,10 +1,10 @@
 import { Component, OnDestroy } from '@angular/core';
 
-import { T } from '../../../../translate-marker';
-import helptext from '../../../../helptext/directoryservice/kerberosrealms-form-list';
-import { KerberosRealmsFormComponent } from '../kerberosrealms-form/kerberosrealms-form.component';
-import { ModalService } from '../../../../services/modal.service';
-import { Subject, Subscription } from 'rxjs';
+import { T } from '../../../translate-marker';
+import helptext from '../../../helptext/directoryservice/kerberosrealms-form-list';
+import { KerberosRealmsFormComponent } from './kerberosrealms-form.component';
+import { ModalService } from '../../../services/modal.service';
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-user-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
@@ -18,7 +18,7 @@ export class KerberosRealmsListComponent implements OnDestroy {
   protected entityList: any;
   private refreshTableSubscription: Subscription;
 
-  public columns: Array < any > = [
+  public columns: Array<any> = [
     { name: T('Realm'), prop: 'realm', always_display: true },
     { name: T('KDC'), prop: 'kdc' },
     { name: T('Admin Server'), prop: 'admin_server' },
@@ -34,7 +34,7 @@ export class KerberosRealmsListComponent implements OnDestroy {
     },
   };
 
-  constructor(private modalService: ModalService){}
+  constructor(private modalService: ModalService) { }
 
   resourceTransformIncomingRestData(data) {
     data.forEach((row) => {
@@ -43,21 +43,21 @@ export class KerberosRealmsListComponent implements OnDestroy {
           row[key] = (row[key].join(' '));
         }
       })
-      
+
     })
     return data;
   }
 
-  afterInit(entityList: any) { 
-    this.entityList = entityList; 
+  afterInit(entityList: any) {
+    this.entityList = entityList;
     this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
       this.entityList.getData();
     })
   }
 
-  ngOnDestroy(){
-    if(this.refreshTableSubscription){
-      this.refreshTableSubscription.unsubscribe(); 
+  ngOnDestroy() {
+    if (this.refreshTableSubscription) {
+      this.refreshTableSubscription.unsubscribe();
     }
   }
 
@@ -65,7 +65,7 @@ export class KerberosRealmsListComponent implements OnDestroy {
     return [{
       label: T('Add'),
       onClick: () => {
-        this.doAdd();    
+        this.doAdd();
       }
     }];
   }
@@ -79,7 +79,7 @@ export class KerberosRealmsListComponent implements OnDestroy {
       onClick: (row) => {
         this.doAdd(row.id);
       }
-    },{
+    }, {
       id: 'delete',
       label: T('Delete'),
       onClick: (row) => {

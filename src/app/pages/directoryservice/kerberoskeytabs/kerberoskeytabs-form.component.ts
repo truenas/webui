@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import * as _ from 'lodash';
 
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import helptext from '../../../../helptext/directoryservice/kerberoskeytabs-form-list';
+import helptext from '../../../helptext/directoryservice/kerberoskeytabs-form-list';
 import { Subscription } from 'rxjs';
-import { ModalService } from '../../../../services/modal.service';
+import { ModalService } from '../../../services/modal.service';
 @Component({
   selector: 'app-kerberos-keytbas-form',
   template: `<entity-form [conf]="this"></entity-form>`
@@ -17,7 +17,7 @@ export class KerberosKeytabsFormComponent {
   protected queryCall = 'kerberos.keytab.query';
   protected pk: any;
   protected queryKey = 'id';
-  protected isEntity =  true;
+  protected isEntity = true;
   private getRow = new Subscription;
 
   protected fieldConfig: FieldConfig[] = [];
@@ -25,15 +25,15 @@ export class KerberosKeytabsFormComponent {
     {
       name: helptext.kkt_heading,
       class: 'heading',
-      label:true,
-      config:[
+      label: false,
+      config: [
         {
           type: 'input',
           name: helptext.kkt_ktname_name,
           placeholder: helptext.kkt_ktname_placeholder,
           tooltip: helptext.kkt_ktname_tooltip,
           required: true,
-          validation : helptext.kkt_ktname_validation
+          validation: helptext.kkt_ktname_validation
         },
         {
           type: 'input',
@@ -43,14 +43,13 @@ export class KerberosKeytabsFormComponent {
           tooltip: helptext.kkt_ktfile_tooltip,
           fileType: 'binary',
           required: true,
-          validation : helptext.kkt_ktfile_validation
+          validation: helptext.kkt_ktfile_validation
         }
       ]
     }
   ];
 
-  constructor(private modalService: ModalService) 
-  {
+  constructor(private modalService: ModalService) {
     this.getRow = this.modalService.getRow$.subscribe(rowId => {
       this.pk = rowId;
       this.getRow.unsubscribe();

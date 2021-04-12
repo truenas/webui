@@ -19,8 +19,8 @@ export class KerberosSettingsComponent {
     {
       name: helptext.ks_label,
       class: 'heading',
-      label:true,
-      config:[
+      label: false,
+      config: [
         {
           type: 'textarea',
           name: helptext.ks_appdefaults_name,
@@ -36,7 +36,7 @@ export class KerberosSettingsComponent {
       ]
     }
   ];
-  
+
   resourceTransformIncomingRestData(data) {
     return data;
   }

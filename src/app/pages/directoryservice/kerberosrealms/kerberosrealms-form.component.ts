@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
 import * as _ from 'lodash';
 
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import helptext from '../../../../helptext/directoryservice/kerberosrealms-form-list';
-import global_helptext from '../../../../helptext/global-helptext';
+import helptext from '../../../helptext/directoryservice/kerberosrealms-form-list';
 import { Subscription } from 'rxjs';
-import { ModalService } from '../../../../services/modal.service';
+import { ModalService } from '../../../services/modal.service';
 @Component({
   selector: 'app-group-form',
   template: `<entity-form [conf]="this"></entity-form>`
@@ -26,15 +25,15 @@ export class KerberosRealmsFormComponent {
     {
       name: helptext.kerb_form_heading,
       class: 'heading',
-      label:true,
-      config:[
+      label: false,
+      config: [
         {
           type: 'input',
           name: helptext.krbrealm_form_realm_name,
           placeholder: helptext.krbrealm_form_realm_placeholder,
           tooltip: helptext.krbrealm_form_realm_tooltip,
           required: true,
-          validation : helptext.krbrealm_form_realm_validation
+          validation: helptext.krbrealm_form_realm_validation
         },
         {
           type: 'chip',
@@ -58,8 +57,7 @@ export class KerberosRealmsFormComponent {
     }
   ];
 
-  constructor(private modalService: ModalService) 
-  {
+  constructor(private modalService: ModalService) {
     this.getRow = this.modalService.getRow$.subscribe(rowId => {
       this.pk = rowId;
       this.getRow.unsubscribe();

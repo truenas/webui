@@ -4,13 +4,10 @@ import { RouterModule, Routes } from '@angular/router';
 import { ActiveDirectoryComponent } from './activedirectory/activedirectory.component';
 import { LdapComponent } from './ldap/ldap.component';
 import { NISComponent } from './nis/';
-import { KerberosRealmsListComponent } from './kerberosrealms/kerberosrealms-list/kerberosrealms-list.component';
-import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-form/kerberosrealms-form.component';
+import { KerberosRealmsListComponent } from './kerberosrealms/kerberosrealms-list.component';
 import { KerberosSettingsComponent } from './kerberossettings/kerberossettings.component';
-import { KerberosKeytabsListComponent } from './kerberoskeytabs/kerberoskeytabs-list/kerberoskeytabs-list.component';
-import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-form/kerberoskeytabs-form.component';
-import { IdmapListComponent } from './idmap-list/idmap-list.component';
-import { IdmapFormComponent } from './idmap-form/idmap-form.component';
+import { KerberosKeytabsListComponent } from './kerberoskeytabs/kerberoskeytabs-list.component';
+import { IdmapListComponent } from './idmap/idmap-list.component';
 import { DirectoryservicesComponent } from './directoryservices.component';
 
 export const routes: Routes = [{
@@ -20,74 +17,34 @@ export const routes: Routes = [{
     {
       path: '',
       component: DirectoryservicesComponent,
-    },
-  {
-    path: 'ldap',
-    component: LdapComponent,
-    data: { title: 'LDAP', breadcrumb: 'LDAP', icon: 'device_hub' }
-  }, {
-    path: 'activedirectory',
-    component: ActiveDirectoryComponent,
-    data: { title: 'Active Directory', breadcrumb: 'Active Directory', icon: 'apps' }
-  }, {
-    path: 'nis',
-    component: NISComponent,
-    data: { title: 'NIS', breadcrumb: 'NIS', icon: 'library_books' }
-  }, {
-    path: 'idmap',
-    data: { title: 'Idmap', breadcrumb: 'Idmap' },
-    children: [{
-      path: '',
+    }, {
+      path: 'ldap',
+      component: LdapComponent,
+      data: { title: 'LDAP', breadcrumb: 'LDAP', icon: 'device_hub' }
+    }, {
+      path: 'activedirectory',
+      component: ActiveDirectoryComponent,
+      data: { title: 'Active Directory', breadcrumb: 'Active Directory', icon: 'apps' }
+    }, {
+      path: 'nis',
+      component: NISComponent,
+      data: { title: 'NIS', breadcrumb: 'NIS', icon: 'library_books' }
+    }, {
+      path: 'idmap',
       component: IdmapListComponent,
-      data: { title: 'Idmap', breadcrumb: 'Idmap'}
-    },
-    {
-      path: 'add',
-      component: IdmapFormComponent,
-      data: { title: 'Idmap Add', breadcrumb: 'Idmap Add'}
-    },
-    {
-      path: 'edit/:pk',
-      component: IdmapFormComponent,
-      data: { title: 'Idmap Edit', breadcrumb: 'Idmap Edit' },
-    }  
-    ]
-  }, {
-    path: 'kerberosrealms',
-    data: { title: 'Kerberos Realms', breadcrumb: 'Kerberos Realms', icon: 'apps' },
-    children: [{
-      path: '',
+      data: { title: 'Idmap', breadcrumb: 'Idmap' },
+    }, {
+      path: 'kerberosrealms',
       component: KerberosRealmsListComponent,
-      data: { title: 'Kerberos Realms', breadcrumb: 'Kerberos Realms' }
+      data: { title: 'Kerberos Realms', breadcrumb: 'Kerberos Realms', icon: 'apps' },
     }, {
-      path: 'add',
-      component: KerberosRealmsFormComponent,
-      data: { title: 'Add', breadcrumb: 'Add'},
+      path: 'kerberossettings',
+      data: { title: 'Kerberos Settings', breadcrumb: 'Kerberos Settings', icon: 'settings' },
+      component: KerberosSettingsComponent,
     }, {
-      path: 'edit/:pk',
-      component: KerberosRealmsFormComponent,
-      data: { title: 'Edit', breadcrumb: 'Edit'},
-    }]
-  }, {
-    path: 'kerberossettings',
-    data : { title: 'Kerberos Settings', breadcrumb: 'Kerberos Settings', icon: 'settings'},
-    component: KerberosSettingsComponent,
-  }, {
-    path: 'kerberoskeytabs',
-    data: { title: 'Kerberos Keytab', breadcrumb: 'Kerberos Keytab', icon: 'apps' },
-    children: [{
-      path: '',
+      path: 'kerberoskeytabs',
       component: KerberosKeytabsListComponent,
-      data: { title: 'Kerberos Keytab', breadcrumb: 'Kerberos Keytab' }
-    }, {
-      path: 'add',
-      component: KerberosKeytabsFormComponent,
-      data: { title: 'Add', breadcrumb: 'Add'},
-    }, {
-      path: 'edit/:pk',
-      component: KerberosKeytabsFormComponent,
-      data: { title: 'Edit', breadcrumb: 'Edit'},
+      data: { title: 'Kerberos Keytab', breadcrumb: 'Kerberos Keytab', icon: 'apps' },
     }]
-  }]
 }];
 export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);

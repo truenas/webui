@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { ModalService } from '../../../../services/modal.service';
-import helptext from '../../../../helptext/directoryservice/kerberoskeytabs-form-list';
-import { T } from '../../../../translate-marker';
-import { Subject, Subscription } from 'rxjs';
-import { KerberosKeytabsFormComponent } from '../kerberoskeytabs-form/kerberoskeytabs-form.component';
+import { ModalService } from '../../../services/modal.service';
+import helptext from '../../../helptext/directoryservice/kerberoskeytabs-form-list';
+import { T } from '../../../translate-marker';
+import { Subscription } from 'rxjs';
+import { KerberosKeytabsFormComponent } from './kerberoskeytabs-form.component';
 @Component({
   selector: 'app-kerberos-keytabs-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`
@@ -16,7 +16,7 @@ export class KerberosKeytabsListComponent {
   protected entityList: any;
   private refreshTableSubscription: Subscription;
 
-  public columns: Array < any > = [
+  public columns: Array<any> = [
     { name: 'Name', prop: 'name', always_display: true },
   ];
   public rowIdentifier = 'name';
@@ -29,18 +29,18 @@ export class KerberosKeytabsListComponent {
     },
   };
 
-  constructor(private modalService: ModalService) {}
+  constructor(private modalService: ModalService) { }
 
-  afterInit(entityList: any) { 
-    this.entityList = entityList; 
+  afterInit(entityList: any) {
+    this.entityList = entityList;
     this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
       this.entityList.getData();
     })
   }
 
-  ngOnDestroy(){
-    if(this.refreshTableSubscription){
-      this.refreshTableSubscription.unsubscribe(); 
+  ngOnDestroy() {
+    if (this.refreshTableSubscription) {
+      this.refreshTableSubscription.unsubscribe();
     }
   }
 
@@ -48,7 +48,7 @@ export class KerberosKeytabsListComponent {
     return [{
       label: T('Add'),
       onClick: () => {
-        this.doAdd();    
+        this.doAdd();
       }
     }];
   }
@@ -62,7 +62,7 @@ export class KerberosKeytabsListComponent {
       onClick: (row) => {
         this.doAdd(row.id);
       }
-    },{
+    }, {
       id: 'delete',
       label: T('Delete'),
       onClick: (row) => {
