@@ -9,11 +9,10 @@ import { Control} from '../../models/control.interface';
 
 @Component({
   selector : 'toolbar-menu',
-  styleUrls : [],
   templateUrl: 'toolbar-menu.component.html'
 })
 export class ToolbarMenuComponent extends iXAbstractObject {
-  @Input() config?: ControlConfig; 
+  @Input() config?: ControlConfig;
   @Input() controller: Subject<any>;
   constructor(public translate: TranslateService) {
     super()
