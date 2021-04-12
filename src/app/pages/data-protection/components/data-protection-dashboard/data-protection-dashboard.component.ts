@@ -36,6 +36,7 @@ import { RsyncFormComponent } from '../../rsync/rsync-form/rsync-form.component'
 import { ScrubFormComponent } from '../../scrub/scrub-form/scrub-form.component';
 import { SmartFormComponent } from '../../smart/smart-form/smart-form.component';
 import { SnapshotFormComponent } from '../../snapshot/snapshot-form/snapshot-form.component';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
 
 export interface TaskCard {
   name: string;
@@ -473,7 +474,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
       task.cron = `${task.minute} ${task.hour} ${task.dom} ${task.month} ${task.dow}`;
 
       if (task.job == null) {
-        task.state = T('PENDING');
+        task.state = 'PENDING';
       } else {
         task.state = task.job.state;
         this.parent.job.getJobStatus(task.job.id).subscribe((t) => {
@@ -795,9 +796,21 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     return true;
   }
 
+  runningStateButton(jobid) {
+    const dialogRef = this.mdDialog.open(EntityJobComponent, { data: { "title": T("Task is running") }, disableClose: false });
+    dialogRef.componentInstance.jobId = jobid;
+    dialogRef.componentInstance.wsshow();
+    dialogRef.componentInstance.success.subscribe((res) => {
+      dialogRef.close();
+    });
+    dialogRef.componentInstance.failure.subscribe((err) => {
+      dialogRef.close();
+    });
+  }
+
   stateButton(row) {
     if (row.state === 'RUNNING') {
-      // this.runningStateButton(row.job.id)
+      this.runningStateButton(row.job.id);
     } else if (row.state === 'HOLD') {
       this.dialog.Info(T('Task is on hold'), row.state.reason, '500px', 'info', true);
     } else {

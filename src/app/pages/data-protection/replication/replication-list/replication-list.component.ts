@@ -79,7 +79,7 @@ export class ReplicationListComponent {
         onClick: (row) => {
           this.dialog.confirm(T('Run Now'), T('Replicate <i>') + row.name + T('</i> now?'), true).subscribe((res) => {
             if (res) {
-              row.state = 'RUNNING';
+              row.state = { state: 'RUNNING' };
               this.ws.call('replication.run', [row.id]).subscribe(
                 (res) => {
                   this.dialog.Info(
@@ -89,9 +89,9 @@ export class ReplicationListComponent {
                     'info',
                     true,
                   );
-                  this.job.getJobStatus(res).subscribe((task) => {
-                    row.state = task.state;
-                    row.job = task;
+                  this.job.getJobStatus(res).subscribe((job) => {
+                    row.state = { state: job.state };
+                    row.job = job;
                   });
                 },
                 (err) => {

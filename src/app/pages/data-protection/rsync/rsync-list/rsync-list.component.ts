@@ -85,7 +85,7 @@ export class RsyncListComponent {
       onClick: (members) => {
         this.dialog.confirm(T('Run Now'), T('Run this rsync now?'), true).subscribe((run) => {
           if (run) {
-            row.state = 'RUNNING';
+            row.state = { state: 'RUNNING' };
             this.ws.call('rsynctask.run', [row.id]).subscribe(
               (res) => {
                 this.dialog.Info(
@@ -95,9 +95,9 @@ export class RsyncListComponent {
                   'info',
                   true,
                 );
-                this.job.getJobStatus(res).subscribe((task) => {
-                  row.state = { state: task.state };
-                  row.job = task;
+                this.job.getJobStatus(res).subscribe((job) => {
+                  row.state = { state: job.state };
+                  row.job = job;
                 });
               },
               (err) => {
@@ -141,11 +141,12 @@ export class RsyncListComponent {
       task.cron = `${task.minute} ${task.hour} ${task.dom} ${task.month} ${task.dow}`;
 
       if (task.job == null) {
-        task.state = { state: T('PENDING') };
+        task.state = { state: 'PENDING' };
       } else {
         task.state = { state: task.job.state };
-        this.job.getJobStatus(task.job.id).subscribe((t) => {
-          task.state = t.job ? { state: t.job.state } : null;
+        this.job.getJobStatus(task.job.id).subscribe((job) => {
+          task.state = { state: job.state };
+          task.job = job;
         });
       }
       return task;

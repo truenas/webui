@@ -134,9 +134,9 @@ export class CloudsyncListComponent implements InputTableConf {
         onClick: (row) => {
           this.dialog.confirm(T('Run Now'), T('Run this cloud sync now?'), true).subscribe((res) => {
             if (res) {
-              row.state = 'RUNNING';
+              row.state = { state: 'RUNNING' };
               this.ws.call('cloudsync.sync', [row.id]).subscribe(
-                (res) => {
+                (jobId) => {
                   this.dialog.Info(
                     T('Task Started'),
                     T('Cloud sync <i>') + row.description + T('</i> has started.'),
@@ -144,9 +144,9 @@ export class CloudsyncListComponent implements InputTableConf {
                     'info',
                     true,
                   );
-                  this.job.getJobStatus(res).subscribe((task) => {
-                    row.state = { state: task.state };
-                    row.job = task;
+                  this.job.getJobStatus(jobId).subscribe((job) => {
+                    row.state = { state: job.state };
+                    row.job = job;
                   });
                 },
                 (err) => {
