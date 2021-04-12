@@ -53,10 +53,6 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     large: false,
     message: T('To configure sysctls, click the "Add" button.'),
   };
-  public is_ha = false;
-  public formEvents: Subject<CoreEvent>;
-  public actionsConfig;
-  protected dialogRef: any;
 
   public idmapTableConf: InputTableConf = {
     title: helptext.idmap.title,
