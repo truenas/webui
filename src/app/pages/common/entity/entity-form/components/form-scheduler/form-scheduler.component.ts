@@ -44,7 +44,6 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   public ngDateFormat: string;
   public helptext = globalHelptext;
   public timezone: string;
-  public offset: string;
 
   @ViewChild('calendar', { static: false, read:ElementRef}) calendar: ElementRef;
   @ViewChild('calendar', { static: false}) calendarComp:MatMonthView<any>;
