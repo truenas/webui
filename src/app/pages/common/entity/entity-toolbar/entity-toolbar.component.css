@@ -1,9 +1,0 @@
-.control-group {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.control-group > *{
-  display:inline-block;
-  max-height:36px;
-}

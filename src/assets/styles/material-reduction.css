@@ -155,12 +155,6 @@ entity-table .mat-card > *{
 
 /* FreeNAS Specific */
 
-button.menu-toggle .mat-icon{
-  position:relative;
-  top:6px;
-  right:-10px;
-}
-
 /* This element is part of entity-table.
  * It currently uses css to do artificially 
  * put itselt inside the title bar.
