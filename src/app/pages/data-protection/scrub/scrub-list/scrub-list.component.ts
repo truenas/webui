@@ -10,6 +10,7 @@ import { Moment } from 'moment';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { ScrubFormComponent } from '../scrub-form/scrub-form.component';
 import { ModalService } from '../../../../services/modal.service';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'app-scrub-list',
@@ -26,19 +27,19 @@ export class ScrubListComponent {
   protected entityList: any;
 
   public columns: Array<any> = [
-    { name: 'Pool', prop: 'pool_name', always_display: true },
-    { name: 'Threshold days', prop: 'threshold' },
-    { name: 'Description', prop: 'description' },
+    { name: T('Pool'), prop: 'pool_name', always_display: true },
+    { name: T('Threshold days'), prop: 'threshold' },
+    { name: T('Description'), prop: 'description' },
     {
-      name: 'Schedule',
+      name: T('Schedule'),
       prop: 'schedule',
       widget: {
         icon: 'calendar-range',
         component: 'TaskScheduleListComponent',
       },
     },
-    { name: 'Next Run', prop: 'scrub_next_run' },
-    { name: 'Enabled', prop: 'enabled' },
+    { name: T('Next Run'), prop: 'scrub_next_run' },
+    { name: T('Enabled'), prop: 'enabled' },
   ];
   public rowIdentifier = 'id';
   public config: any = {

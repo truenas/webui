@@ -26,17 +26,17 @@ export class ReplicationListComponent {
   protected asyncView = true;
 
   public columns: Array<any> = [
-    { name: 'Name', prop: 'name', always_display: true },
-    { name: 'Direction', prop: 'direction' },
-    { name: 'Transport', prop: 'transport', hidden: true },
-    { name: 'SSH Connection', prop: 'ssh_connection', hidden: true },
-    { name: 'Source Dataset', prop: 'source_datasets', hidden: true },
-    { name: 'Target Dataset', prop: 'target_dataset', hidden: true },
-    { name: 'Recursive', prop: 'recursive', hidden: true },
-    { name: 'Auto', prop: 'auto', hidden: true },
-    { name: 'Enabled', prop: 'enabled', checkbox: true },
-    { name: 'State', prop: 'state', button: true, state: 'state' },
-    { name: 'Last Snapshot', prop: 'task_last_snapshot' },
+    { name: T('Name'), prop: 'name', always_display: true },
+    { name: T('Direction'), prop: 'direction' },
+    { name: T('Transport'), prop: 'transport', hidden: true },
+    { name: T('SSH Connection'), prop: 'ssh_connection', hidden: true },
+    { name: T('Source Dataset'), prop: 'source_datasets', hidden: true },
+    { name: T('Target Dataset'), prop: 'target_dataset', hidden: true },
+    { name: T('Recursive'), prop: 'recursive', hidden: true },
+    { name: T('Auto'), prop: 'auto', hidden: true },
+    { name: T('Enabled'), prop: 'enabled', checkbox: true },
+    { name: T('State'), prop: 'state', button: true, state: 'state' },
+    { name: T('Last Snapshot'), prop: 'task_last_snapshot' },
   ];
 
   public config: any = {
