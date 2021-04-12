@@ -17,11 +17,11 @@ dataset_acl_tag_tooltip: T('Access Control Entry (ACE) user or group.\
  or <i>everyone@</i> to apply this entry to all users and groups. See\
  <a href="https://www.freebsd.org/cgi/man.cgi?query=setfacl" target="_blank">setfacl(1) NFSv4 ACL ENTRIES</a>.'),
 dataset_acl_tag_options: [
-                           {label:'User', value: 'USER'},
-                           {label:'Group', value: 'GROUP'},
-                           {label:'owner@', value: 'owner@'},
-                           {label:'group@', value: 'group@'},
-                           {label:'everyone@', value: 'everyone@'}
+                           {label: T('User'), value: 'USER'},
+                           {label: T('Group'), value: 'GROUP'},
+                           {label: T('owner@'), value: 'owner@'},
+                           {label: T('group@'), value: 'group@'},
+                           {label: T('everyone@'), value: 'everyone@'}
                          ],
 
 dataset_acl_type_placeholder: T('ACL Type'),
@@ -29,8 +29,8 @@ dataset_acl_type_tooltip: T('How the <i>Permissions</i> are applied to\
  the chosen <i>Who</>. Choose <i>Allow</i> to grant the specified\
  permissions and <i>Deny</i> to restrict the specified permissions.'),
 dataset_acl_type_options: [
-                           {label: 'Allow', value: 'ALLOW'},
-                           {label: 'Deny', value: 'DENY'}
+                           {label: T('Allow'), value: 'ALLOW'},
+                           {label: T('Deny'), value: 'DENY'}
                          ],
 
 dataset_acl_perms_type_placeholder: T('Permissions Type'),
@@ -38,8 +38,8 @@ dataset_acl_perms_type_tooltip: T('Choose the type of permissions.\
  <i>Basic</i> shows general permissions. <i>Advanced</i> shows each\
  specific type of permission for finer control.'),
 dataset_acl_perms_type_options: [
-                            {label:'Basic', value: 'BASIC'},
-                            {label:'Advanced', value: 'ADVANCED'}
+                            {label: T('Basic'), value: 'BASIC'},
+                            {label: T('Advanced'), value: 'ADVANCED'}
                           ],
 
 dataset_acl_user_placeholder: T('User'),
@@ -77,29 +77,29 @@ dataset_acl_perms_placeholder: T('Permissions'),
 dataset_acl_perms_tooltip: T('Select permissions to apply to the chosen\
  <i>Who</i>. Choices change depending on the <i>Permissions Type</i>.'),
 dataset_acl_basic_perms_options: [
-                                  {label:'Read', value: 'READ'},
-                                  {label:'Modify', value: 'MODIFY'},
-                                  {label:'Traverse', value: 'TRAVERSE'},
-                                  {label:'Full Control', value: 'FULL_CONTROL'},
-                                  {label:'Other (Too complicated to be displayed)',
+                                  {label: T('Read'), value: 'READ'},
+                                  {label: T('Modify'), value: 'MODIFY'},
+                                  {label: T('Traverse'), value: 'TRAVERSE'},
+                                  {label: T('Full Control'), value: 'FULL_CONTROL'},
+                                  {label: T('Other (Too complicated to be displayed)'),
                                    value: 'OTHER', disable: true, hiddenFromDisplay: true}
                                  ],
 dataset_acl_basic_perms_other_warning: T('These permissions are too complicated to be displayed and cannot be saved unless changed.'),
 dataset_acl_advanced_perms_options: [
-                                     {label:'Read Data', value:'READ_DATA'},
-                                     {label:'Write Data', value:'WRITE_DATA'},
-                                     {label:'Append Data', value:'APPEND_DATA'},
-                                     {label:'Read Named Attributes', value:'READ_NAMED_ATTRS'},
-                                     {label:'Write Named Attributes', value:'WRITE_NAMED_ATTRS'},
-                                     {label:'Execute', value:'EXECUTE'},
-                                     {label:'Delete Children', value:'DELETE_CHILD'},
-                                     {label:'Read Attributes', value:'READ_ATTRIBUTES'},
-                                     {label:'Write Attributes', value:'WRITE_ATTRIBUTES'},
-                                     {label:'Delete', value:'DELETE'},
-                                     {label:'Read ACL', value:'READ_ACL'},
-                                     {label:'Write ACL', value:'WRITE_ACL'},
-                                     {label:'Write Owner', value:'WRITE_OWNER'},
-                                     {label:'Synchronize', value:'SYNCHRONIZE'},
+                                     {label: T('Read Data'), value:'READ_DATA'},
+                                     {label: T('Write Data'), value:'WRITE_DATA'},
+                                     {label: T('Append Data'), value:'APPEND_DATA'},
+                                     {label: T('Read Named Attributes'), value:'READ_NAMED_ATTRS'},
+                                     {label: T('Write Named Attributes'), value:'WRITE_NAMED_ATTRS'},
+                                     {label: T('Execute'), value:'EXECUTE'},
+                                     {label: T('Delete Children'), value:'DELETE_CHILD'},
+                                     {label: T('Read Attributes'), value:'READ_ATTRIBUTES'},
+                                     {label: T('Write Attributes'), value:'WRITE_ATTRIBUTES'},
+                                     {label: T('Delete'), value:'DELETE'},
+                                     {label: T('Read ACL'), value:'READ_ACL'},
+                                     {label: T('Write ACL'), value:'WRITE_ACL'},
+                                     {label: T('Write Owner'), value:'WRITE_OWNER'},
+                                     {label: T('Synchronize'), value:'SYNCHRONIZE'},
                                     ],
 
 dataset_acl_flags_type_placeholder: T('Flags Type'),
@@ -108,8 +108,8 @@ dataset_acl_flags_type_tooltip: T('Select the set of ACE inheritance\
  options. <i>Advanced</i> shows specific inheritance settings for finer\
  control.'),
 dataset_acl_flags_type_options: [
-                                  {label:'Basic', value: 'BASIC'},
-                                  {label:'Advanced', value: 'ADVANCED'}
+                                  {label: T('Basic'), value: 'BASIC'},
+                                  {label: T('Advanced'), value: 'ADVANCED'}
                                 ],
 
 dataset_acl_flags_placeholder: T('Flags'),
@@ -117,17 +117,17 @@ dataset_acl_flags_tooltip: T('How this ACE is applied to newly created\
  directories and files within the dataset. Basic flags enable or disable\
  ACE inheritance. Advanced flags allow further control of how the ACE\
  is applied to files and directories in the dataset.'),
-dataset_acl_basic_flags_options: [{label: 'Inherit', value: 'INHERIT'},
-                                  {label: 'No Inherit', value: 'NOINHERIT'},
-                                  {label: 'Other (Too complicated to be displayed)',
+dataset_acl_basic_flags_options: [{label: T('Inherit'), value: 'INHERIT'},
+                                  {label: T('No Inherit'), value: 'NOINHERIT'},
+                                  {label: T('Other (Too complicated to be displayed)'),
                                    value: 'OTHER', disable:true, hiddenFromDisplay: true}
                                  ],
 dataset_acl_advanced_flags_options: [
-                                     {label:'File Inherit', value:'FILE_INHERIT'},
-                                     {label:'Directory Inherit', value:'DIRECTORY_INHERIT'},
-                                     {label:'No Propagate Inherit', value:'NO_PROPAGATE_INHERIT'},
-                                     {label:'Inherit Only', value:'INHERIT_ONLY'},
-                                     {label:'Inherited', value:'INHERITED'},
+                                     {label: T('File Inherit'), value:'FILE_INHERIT'},
+                                     {label: T('Directory Inherit'), value:'DIRECTORY_INHERIT'},
+                                     {label: T('No Propagate Inherit'), value:'NO_PROPAGATE_INHERIT'},
+                                     {label: T('Inherit Only'), value:'INHERIT_ONLY'},
+                                     {label: T('Inherited'), value:'INHERITED'},
                                     ],
 
 dataset_acl_recursive_placeholder: T('Apply permissions recursively'),
@@ -196,7 +196,7 @@ posix_perms: {
 posix_tag: {
   placeholder: T('Who'),
   tooltip: T('Tag'),
-  options: 
+  options:
   [
     {label: T('User'), value: 'USER'},
     {label: T('Group'), value: 'GROUP'},
@@ -238,7 +238,7 @@ save_dialog: {
   title: T('Updating Dataset ACL'),
   message: T('This process continues in the background after closing this dialog.'),
   abort_message: T('Clicking Continue allows TrueNAS to finish the update in the background while \
- Abort stops the process and reverts the dataset ACL to the previously active ACL.') 
-} 
+ Abort stops the process and reverts the dataset ACL to the previously active ACL.')
+}
 
 }
