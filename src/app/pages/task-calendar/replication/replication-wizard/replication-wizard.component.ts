@@ -209,7 +209,7 @@ export class ReplicationWizardComponent {
                             blurEvent: (parent) => {
                                 parent.getSnapshots();
                             },
-                        },     
+                        },
                     ]
                 },
                 {
@@ -1137,7 +1137,7 @@ export class ReplicationWizardComponent {
             if (payload['transport'] === 'SSH+NETCAT') {
                 payload['netcat_active_side'] = 'REMOTE'; // default?
             }
-            
+
             payload['readonly'] = data['schedule_method'] === 'cron' || data['readonly'] ? 'SET' : 'IGNORE';
 
             return this.ws.call('replication.target_unmatched_snapshots', [
@@ -1226,7 +1226,7 @@ export class ReplicationWizardComponent {
         this.loader.close();
         if (!toStop) {
             if(value.source_datasets_from === 'local') {
-                this.ws.call("zettarepl.datasets_have_encryption", [value.source_datasets, true /* recursive */, "LOCAL"]).subscribe(res => {
+                this.ws.call("zettarepl.datasets_have_encryption", [value.source_datasets, value.recursive, "LOCAL"]).subscribe(res => {
                     if(res && res.length) {
                         const message = helptext.replication_encrypted_dialog.message1+res.map(ds => "'"+ds+"'").join(", ")+helptext.replication_encrypted_dialog.message2;
                         this.dialogService.Info(helptext.replication_encrypted_dialog.title, message).subscribe(res => {
@@ -1237,7 +1237,7 @@ export class ReplicationWizardComponent {
                     }
                 });
             } else {
-                this.ws.call("zettarepl.datasets_have_encryption", [value.source_datasets, true /* recursive */, "SSH", this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value]).subscribe(res => {
+                this.ws.call("zettarepl.datasets_have_encryption", [value.source_datasets, value.recursive, "SSH", this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value]).subscribe(res => {
                     if(res && res.length) {
                         const message = helptext.replication_encrypted_dialog.message1+res.map(ds => "'"+ds+"'").join(", ")+helptext.replication_encrypted_dialog.message2;
                         this.dialogService.Info(helptext.replication_encrypted_dialog.title, message).subscribe(res => {

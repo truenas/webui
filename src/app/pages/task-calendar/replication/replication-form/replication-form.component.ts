@@ -338,7 +338,7 @@ export class ReplicationFormComponent {
                             value: 'PUSH',
                         }]
                     }],
-                }, 
+                },
                 {
                     type: 'explorer',
                     name: 'source_datasets_PULL',
@@ -368,7 +368,7 @@ export class ReplicationFormComponent {
                             value: 'PULL',
                         }]
                     }],
-                }, 
+                },
                 {
                     type: 'checkbox',
                     name: 'recursive',
@@ -736,7 +736,7 @@ export class ReplicationFormComponent {
                     name: 'allow_from_scratch',
                     placeholder: helptext.allow_from_scratch_placeholder,
                     tooltip: helptext.allow_from_scratch_tooltip,
-                },  
+                },
                 {
                     type: 'select',
                     name: 'retention_policy',
@@ -871,6 +871,7 @@ export class ReplicationFormComponent {
         }
     ]
     protected fieldConfig;
+    private isRecursive = false;
 
     constructor(
         private ws: WebSocketService,
@@ -1059,7 +1060,7 @@ export class ReplicationFormComponent {
         });
 
         entityForm.formGroup.controls['auto'].setValue(entityForm.formGroup.controls['auto'].value);
-        
+
         entityForm.formGroup.controls['properties'].valueChanges.subscribe(value => {
             if(value) {
                 if(this.encDatasets && this.encDatasets.length) {
@@ -1077,9 +1078,9 @@ export class ReplicationFormComponent {
             if(!(value && value.length)) {
                 this.entityForm.setDisabled('enc_datasets_warning', true, true);
                 return this.encDatasets = [];
-            } 
+            }
             if(this.entityForm.formGroup.controls['transport'].value == 'LOCAL') {
-                this.ws.call("zettarepl.datasets_have_encryption", [value, true /* recursive */, "LOCAL"]).subscribe(res => {
+                this.ws.call("zettarepl.datasets_have_encryption", [value, this.isRecursive, "LOCAL"]).subscribe(res => {
                     this.encDatasets = res;
                     if(this.entityForm.formGroup.controls['properties'].value){
                         if(this.encDatasets && this.encDatasets.length) {
@@ -1091,7 +1092,7 @@ export class ReplicationFormComponent {
                     }
                 });
             } else {
-                this.ws.call("zettarepl.datasets_have_encryption", [value, true /* recursive */, "SSH", this.entityForm.formGroup.controls['ssh_credentials'].value]).subscribe(res => {
+                this.ws.call("zettarepl.datasets_have_encryption", [value, this.isRecursive, "SSH", this.entityForm.formGroup.controls['ssh_credentials'].value]).subscribe(res => {
                     this.encDatasets = res;
                     if(this.entityForm.formGroup.controls['properties'].value) {
                         if(this.encDatasets && this.encDatasets.length) {
@@ -1109,9 +1110,9 @@ export class ReplicationFormComponent {
             if(!(value && value.length)) {
                 this.entityForm.setDisabled('enc_datasets_warning', true, true);
                 return this.encDatasets = [];
-            } 
+            }
             if(this.entityForm.formGroup.controls['transport'].value == 'LOCAL') {
-                this.ws.call("zettarepl.datasets_have_encryption", [value, true /* recursive */, "LOCAL"]).subscribe(res => {
+                this.ws.call("zettarepl.datasets_have_encryption", [value, this.isRecursive, "LOCAL"]).subscribe(res => {
                     this.encDatasets = res;
                     if(this.entityForm.formGroup.controls['properties'].value) {
                         if(this.encDatasets && this.encDatasets.length) {
@@ -1124,7 +1125,7 @@ export class ReplicationFormComponent {
                 });
             } else {
                 if(this.entityForm.formGroup.controls['ssh_credentials'].value) {
-                    this.ws.call("zettarepl.datasets_have_encryption", [value, true /* recursive */, "SSH", this.entityForm.formGroup.controls['ssh_credentials'].value]).subscribe(res => {
+                    this.ws.call("zettarepl.datasets_have_encryption", [value, this.isRecursive, "SSH", this.entityForm.formGroup.controls['ssh_credentials'].value]).subscribe(res => {
                         this.encDatasets = res;
                         if(this.entityForm.formGroup.controls['properties'].value) {
                             if(this.encDatasets && this.encDatasets.length) {
@@ -1138,8 +1139,12 @@ export class ReplicationFormComponent {
                 }
             }
         });
+
+        entityForm.formGroup.controls['recursive'].valueChanges.subscribe(value => {
+          this.isRecursive = value;
+        })
     }
-    
+
 
     resourceTransformIncomingRestData(wsResponse) {
         this.queryRes = _.cloneDeep(wsResponse);
