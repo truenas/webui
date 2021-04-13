@@ -48,52 +48,47 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   @ViewChild('cores',{static: true}) cpuCores: ViewChartBarComponent;
   @Input() data: Subject<CoreEvent>;
   @Input() cpuModel: string;
-  public chart: any;// Chart.js instance with per core data
-  public ctx: any; // canvas context for chart.js
+  chart: any;// Chart.js instance with per core data
+  ctx: any; // canvas context for chart.js
   private _cpuData: any;
   get cpuData() { return this._cpuData}
   set cpuData(value){
     this._cpuData = value;
-    /*if(this.legendData && typeof this.legendIndex !== "undefined"){
-      // C3 does not have a way to update tooltip when new data is loaded. 
-      // So this is the workaround
-      this.legendData[0].value = this.cpuData.data[0][this.legendIndex + 1];
-      this.legendData[1].value = this.cpuData.data[1][this.legendIndex + 1];
-    }*/
   }
 
-  public cpuAvg: any;
-  public title:string = T("CPU");
-  public subtitle:string = T("% of all cores");
-  public widgetColorCssVar = "var(--accent)";
-  public configurable = false;
-  public chartId = UUID.UUID();
-  public coreCount: number;
-  public threadCount: number;
-  public hyperthread: boolean;
-  public legendData: any;
-  public screenType: string = 'Desktop'; // Desktop || Mobile
+  cpuAvg: any;
+  title:string = T("CPU");
+  subtitle:string = T("% of all cores");
+  widgetColorCssVar = "var(--accent)";
+  configurable = false;
+  chartId = UUID.UUID();
+  coreCount: number;
+  threadCount: number;
+  hyperthread: boolean;
+  legendData: any;
+  screenType: string = 'Desktop'; // Desktop || Mobile
 
   // Mobile Stats
-  public tempAvailable: string = 'false';
-  public tempMax: number;
-  public tempMaxThreads: number[] = [];
-  public tempMin: number;
-  public tempMinThreads: number[] = [];
-  public usageMax: number;
-  public usageMaxThreads: number[] = [];
-  public usageMin: number;
-  public usageMinThreads: number[] = [];
+  tempAvailable: string = 'false';
+  tempMax: number;
+  tempMaxThreads: number[] = [];
+  tempMin: number;
+  tempMinThreads: number[] = [];
 
-  public legendColors: string[];
+  usageMax: number;
+  usageMaxThreads: number[] = [];
+  usageMin: number;
+  usageMinThreads: number[] = [];
+
+  legendColors: string[];
   private legendIndex: number;
 
-  public labels: string[] = [];
+  labels: string[] = [];
   protected currentTheme: any;
   private utils: ThemeUtils;
 
 
-  constructor(public router: Router, public translate: TranslateService, public mediaObserver: MediaObserver, private el: ElementRef){
+  constructor(router: Router, public translate: TranslateService, public mediaObserver: MediaObserver, private el: ElementRef){
     super(translate);
 
     this.utils = new ThemeUtils();
@@ -163,7 +158,11 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       let temperatureIndex = this.hyperthread ? Math.floor(i/2 - mod) : i;
 
       if(data.temperature && data.temperature[temperatureIndex]){
-        temperatureValues.push(parseInt(((data.temperature[temperatureIndex] / 10) - 273.05).toFixed(1)));
+        temperatureValues.push(
+          parseInt(
+            (data.temperature[temperatureIndex] / 10 - 273.05).toFixed(1)
+          )
+        );
       }
     }
     
