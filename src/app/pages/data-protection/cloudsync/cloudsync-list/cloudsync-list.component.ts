@@ -29,7 +29,7 @@ import { EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.in
   providers: [JobService, TaskService, CloudCredentialService],
 })
 export class CloudsyncListComponent implements InputTableConf {
-  public title = 'Cloud Sync Tasks';
+  public title = T('Cloud Sync Tasks');
   public queryCall = 'cloudsync.query';
   public route_add: string[] = ['tasks', 'cloudsync', 'add'];
   public route_add_tooltip = 'Add Cloud Sync Task';
@@ -67,7 +67,7 @@ export class CloudsyncListComponent implements InputTableConf {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'Cloud Sync Task',
+      title: T('Cloud Sync Task'),
       key_props: ['description'],
     },
   };

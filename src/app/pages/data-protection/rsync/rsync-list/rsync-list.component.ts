@@ -18,7 +18,7 @@ import { EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.in
   providers: [TaskService, JobService, UserService, EntityFormService],
 })
 export class RsyncListComponent {
-  public title = 'Rsync Tasks';
+  public title = T('Rsync Tasks');
   protected queryCall = 'rsynctask.query';
   protected wsDelete = 'rsynctask.delete';
   protected route_add: string[] = ['tasks', 'rsync', 'add'];
@@ -54,7 +54,7 @@ export class RsyncListComponent {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'Rsync Task',
+      title: T('Rsync Task'),
       key_props: ['remotehost', 'remotemodule'],
     },
   };

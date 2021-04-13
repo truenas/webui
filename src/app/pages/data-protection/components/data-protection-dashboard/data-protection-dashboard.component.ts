@@ -159,7 +159,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           queryCall: 'pool.snapshottask.query',
           deleteCall: 'pool.snapshottask.delete',
           deleteMsg: {
-            title: 'Periodic Snapshot Task',
+            title: T('Periodic Snapshot Task'),
             key_props: ['dataset', 'naming_schema', 'keepfor'],
           },
           columns: [
@@ -191,7 +191,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           queryCall: 'replication.query',
           deleteCall: 'replication.delete',
           deleteMsg: {
-            title: 'Replication Task',
+            title: T('Replication Task'),
             key_props: ['name'],
           },
           dataSourceHelper: this.replicationDataSourceHelper,
@@ -223,7 +223,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           queryCall: 'cloudsync.query',
           deleteCall: 'cloudsync.delete',
           deleteMsg: {
-            title: 'Cloud Sync Task',
+            title: T('Cloud Sync Task'),
             key_props: ['description'],
           },
           dataSourceHelper: this.cloudsyncDataSourceHelper,
@@ -255,7 +255,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           queryCall: 'rsynctask.query',
           deleteCall: 'rsynctask.delete',
           deleteMsg: {
-            title: 'Rsync Task',
+            title: T('Rsync Task'),
             key_props: ['remotehost', 'remotemodule'],
           },
           columns: [
@@ -287,7 +287,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           queryCall: 'smart.test.query',
           deleteCall: 'smart.test.delete',
           deleteMsg: {
-            title: 'S.M.A.R.T. Test',
+            title: T('S.M.A.R.T. Test'),
             key_props: ['type', 'desc'],
           },
           dataSourceHelper: this.smartTestsDataSourceHelper,
@@ -400,8 +400,9 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         task.state = EntityJobState.pending;
       } else {
         task.state = task.job.state;
-        this.parent.job.getJobStatus(task.job.id).subscribe((t) => {
-          task.state = t.job ? t.job.state : null;
+        this.parent.job.getJobStatus(task.job.id).subscribe((job) => {
+          task.state = job.state;
+          task.job = job;
         });
       }
 

@@ -18,7 +18,7 @@ import { EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.in
   providers: [JobService, StorageService, TaskService, KeychainCredentialService, ReplicationService],
 })
 export class ReplicationListComponent {
-  public title = 'Replication Tasks';
+  public title = T('Replication Tasks');
   protected queryCall = 'replication.query';
   protected wsDelete = 'replication.delete';
   protected route_add: string[] = ['tasks', 'replication', 'wizard'];
@@ -45,7 +45,7 @@ export class ReplicationListComponent {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'Replication Task',
+      title: T('Replication Task'),
       key_props: ['name'],
     },
   };

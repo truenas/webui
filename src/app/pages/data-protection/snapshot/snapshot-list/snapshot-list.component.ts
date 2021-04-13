@@ -14,7 +14,7 @@ import { EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.in
   providers: [TaskService, StorageService],
 })
 export class SnapshotListComponent {
-  public title = 'Periodic Snapshot Tasks';
+  public title = T('Periodic Snapshot Tasks');
   protected queryCall = 'pool.snapshottask.query';
   protected wsDelete = 'pool.snapshottask.delete';
   protected route_add: string[] = ['tasks', 'snapshot', 'add'];
@@ -37,7 +37,7 @@ export class SnapshotListComponent {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'Periodic Snapshot Task',
+      title: T('Periodic Snapshot Task'),
       key_props: ['dataset', 'naming_schema', 'keepfor'],
     },
   };
