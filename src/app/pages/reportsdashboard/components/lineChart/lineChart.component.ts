@@ -162,7 +162,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
            clone.stackedTotal += item.y;
          });
 
-         if(clone.stackedTotal) {
+         if(clone.stackedTotal >= 0) {
            let converted = this.formatLabelValue(clone.stackedTotal, this.inferUnits(this.labelY), 1, true);
            let suffix = converted.shortName !== undefined ? converted.shortName : (converted.suffix !== undefined ?  converted.suffix : '');
            clone.stackedTotalHTML = this.limitDecimals(converted.value).toString() + suffix;
@@ -214,45 +214,39 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     return result;
   }
 
-  protected makeTimeAxis(rd:ReportData, data?: number[]):any[]{
-    if(!data){ data = rd.data; }
+  protected makeTimeAxis(rd:ReportData):any[]{
+    const structure = this.library == 'chart.js' ? 'columns' : 'rows';
+    if(structure == 'rows'){
+      // Push dates to row based data...
+      let rows = [];
+      // Add legend with axis to beginning of array
+      let legend = Object.assign([],rd.legend);
+      legend.unshift('x');
+      rows.push(legend);
 
-      const structure = this.library == 'chart.js' ? 'columns' : 'rows'
-        if(structure == 'rows'){
-          // Push dates to row based data...
-          let rows = [];
-          // Add legend with axis to beginning of array
-          let legend = Object.assign([],rd.legend);
-          legend.unshift('x');
-          rows.push(legend);
+      for(let i = 0; i < rd.data.length; i++){ 
+        let item = Object.assign([], rd.data[i]);
+        let dateStr = moment.tz(new Date(rd.start * 1000 + i * rd.step * 1000), this.timezone).format();
+        //UTC: 2020-12-17T16:33:10Z
+        //Los Angeles: 2020-12-17T08:36:30-08:00
+        //Change dateStr from '2020-12-17T08:36:30-08:00' to '2020-12-17T08:36'
+        let list = dateStr.split(':');
+        dateStr = list.join(':');
+        let date = new Date(dateStr);            
+        
+        item.unshift(date);
+        rows.push(item);
+      }
+      return rows;
+    } else if(structure == 'columns'){
+      let columns = [];
+      for(let i = 0; i < rd.data.length; i++){ 
+        let date = new Date(rd.start * 1000 + i * rd.step * 1000);
+        columns.push(date);
+      }
 
-          for(let i = 0; i < rd.data.length; i++){ 
-            let item = Object.assign([], rd.data[i]);
-            let dateStr = moment.tz(new Date(rd.start * 1000 + i * rd.step * 1000), this.timezone).format();
-            //UTC: 2020-12-17T16:33:10Z
-            //Los Angeles: 2020-12-17T08:36:30-08:00
-            //Change dateStr from '2020-12-17T08:36:30-08:00' to '2020-12-17T08:36'
-            let list = dateStr.split(':');
-            dateStr = list.join(':');
-            let date = new Date(dateStr);            
-            
-            item.unshift(date);
-            rows.push(item);
-          }
-
-          return rows;
-        } else if(structure == 'columns'){
-
-          let columns = [];
-
-          for(let i = 0; i < rd.data.length; i++){ 
-            let date = new Date(rd.start * 1000 + i * rd.step * 1000);
-            columns.push(date);
-          }
-
-          return columns;
-        }
-
+      return columns;
+    }
   }
 
   private processThemeColors(theme):string[]{

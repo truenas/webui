@@ -154,20 +154,15 @@
             </table>
 
             </div>
-            <ng-container *ngIf="report.stacked_show_total">
-
-              <div *ngIf="report && data && data.legend" class="legend-timestamp" fxFlex="32px">
-                <div >
-                  <span *ngIf="legendData?.stackedTotalHTML">
-                    <h4>
-                      <strong>Total:</strong> 
-                      <span>
-                        &nbsp;&nbsp;
-                        {{legendData.stackedTotalHTML}}
-                      </span>
-                    </h4>
+            <ng-container *ngIf="report?.stacked_show_total && legendData?.stackedTotalHTML">
+              <div class="legend-timestamp" fxFlex="32px">
+                <h4>
+                  <strong>Total:</strong> 
+                  <span>
+                    &nbsp;&nbsp;
+                    {{legendData.stackedTotalHTML}}
                   </span>
-                </div>
+                </h4>
               </div>
             </ng-container>
           </section>
