@@ -435,94 +435,111 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   configureEmptyTable(emptyType: EmptyType, error: any = null) {
-    if(emptyType && emptyType === EmptyType.loading) {
-      this.emptyTableConf = {
-        type: EmptyType.loading,
-        large: true,
-        title: this.title,
-      }
-    } else if(emptyType && emptyType === EmptyType.no_search_results) {
-      let title = T("No Search Results.")
-      let message = T(`Your query didn't return any results. Please try again.`);
-      if(this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.no_search_results) {
-        title = this.conf.emptyTableConfigMessages.no_search_results.title;
-        message = this.conf.emptyTableConfigMessages.no_search_results.message;
-      }
-      this.emptyTableConf = {
-        type: EmptyType.no_search_results,
-        large: true,
-        title: title,
-        message: message
-      };
-    } else if(emptyType && emptyType === EmptyType.errors) {
-      let title = T("Something went wrong");
-      let message = T(`The system returned the following error - `);
-      if(this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.errors) {
-        title = this.conf.emptyTableConfigMessages.errors.title;
-        message = this.conf.emptyTableConfigMessages.errors.message;
-      }
-      this.emptyTableConf = {
-        title: title,
-        message: message+error,
-        large: true,
-        type: EmptyType.errors
-      }
-    } else if(emptyType && emptyType === EmptyType.first_use) {
-      let messagePreset = false;
-      let title = T("No ")+this.title;
-      let message = T(`It seems you haven't setup any `) + this.title + T(` yet.`);
-      if(this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.first_use) {
-        title = this.conf.emptyTableConfigMessages.first_use.title;
-        message = this.conf.emptyTableConfigMessages.first_use.message;
-        messagePreset = true;
-      }
-      this.emptyTableConf = {
-        type: EmptyType.first_use,
-        large: true,
-        title: title,
-        message: message
-      };
-      if(!this.conf.noAdd) {
-        if(!messagePreset) {
-          this.emptyTableConf['message'] += T(` Please click the button below to add `) + this.title + T(`.`);
+    if(!emptyType) {
+      return;
+    }
+    let title = '';
+    let message = ''
+    let messagePreset = false;
+    switch (emptyType) {
+      case EmptyType.loading:
+        this.emptyTableConf = {
+          type: EmptyType.loading,
+          large: true,
+          title: this.title,
         }
-        let buttonText = T("Add ")+this.title;
-        if(this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.buttonText) {
-          buttonText = this.conf.emptyTableConfigMessages.buttonText;
+        break;
+
+      case EmptyType.no_search_results:
+        title = T("No Search Results.")
+        message = T(`Your query didn't return any results. Please try again.`);
+        if(this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.no_search_results) {
+          title = this.conf.emptyTableConfigMessages.no_search_results.title;
+          message = this.conf.emptyTableConfigMessages.no_search_results.message;
         }
-        this.emptyTableConf['button'] = {
-          label: buttonText,
-          action: this.doAdd.bind(this),
+        this.emptyTableConf = {
+          type: EmptyType.no_search_results,
+          large: true,
+          title: title,
+          message: message
         };
-      }
-    } else {
-      let messagePreset = false;
-      let title = T("No ")+this.title;
-      let message = T(`The system could not retrieve any `) + this.title + T(` from the database.`);
-      if(this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.no_page_data) {
-        title = this.conf.emptyTableConfigMessages.no_page_data.title;
-        message = this.conf.emptyTableConfigMessages.no_page_data.message;
-        messagePreset = true;
-      }
-      this.emptyTableConf = {
-        type: EmptyType.no_page_data,
-        large: true,
-        title: title,
-        message: message
-      };
-      if(!this.conf.noAdd) {
-        if(!messagePreset) {
-          this.emptyTableConf['message'] += T(` Please click the button below to add `) + this.title + T(`.`);
+        break;
+
+      case EmptyType.errors:
+        title = T("Something went wrong");
+        message = T(`The system returned the following error - `);
+        if(this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.errors) {
+          title = this.conf.emptyTableConfigMessages.errors.title;
+          message = this.conf.emptyTableConfigMessages.errors.message;
         }
-        let buttonText = T("Add ")+this.title;
-        if(this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.buttonText) {
-          buttonText = this.conf.emptyTableConfigMessages.buttonText;
+        this.emptyTableConf = {
+          title: title,
+          message: message+error,
+          large: true,
+          type: EmptyType.errors
         }
-        this.emptyTableConf['button'] = {
-          label: buttonText,
-          action: this.doAdd.bind(this),
+        break;
+
+      case EmptyType.first_use:
+        messagePreset = false;
+        title = T("No ")+this.title;
+        message = T(`It seems you haven't setup any `) + this.title + T(` yet.`);
+        if(this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.first_use) {
+          title = this.conf.emptyTableConfigMessages.first_use.title;
+          message = this.conf.emptyTableConfigMessages.first_use.message;
+          messagePreset = true;
+        }
+        this.emptyTableConf = {
+          type: EmptyType.first_use,
+          large: true,
+          title: title,
+          message: message
         };
-      }
+        if(!this.conf.noAdd) {
+          if(!messagePreset) {
+            this.emptyTableConf['message'] += T(` Please click the button below to add `) + this.title + T(`.`);
+          }
+          let buttonText = T("Add ")+this.title;
+          if(this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.buttonText) {
+            buttonText = this.conf.emptyTableConfigMessages.buttonText;
+          }
+          this.emptyTableConf['button'] = {
+            label: buttonText,
+            action: this.doAdd.bind(this),
+          };
+        }
+        break;
+      
+      case EmptyType.no_page_data:
+      default:
+        messagePreset = false;
+        title = T("No ")+this.title;
+        message = T(`The system could not retrieve any `) + this.title + T(` from the database.`);
+        if(this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.no_page_data) {
+          title = this.conf.emptyTableConfigMessages.no_page_data.title;
+          message = this.conf.emptyTableConfigMessages.no_page_data.message;
+          messagePreset = true;
+        }
+        this.emptyTableConf = {
+          type: EmptyType.no_page_data,
+          large: true,
+          title: title,
+          message: message
+        };
+        if(!this.conf.noAdd) {
+          if(!messagePreset) {
+            this.emptyTableConf['message'] += T(` Please click the button below to add `) + this.title + T(`.`);
+          }
+          let buttonText = T("Add ")+this.title;
+          if(this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.buttonText) {
+            buttonText = this.conf.emptyTableConfigMessages.buttonText;
+          }
+          this.emptyTableConf['button'] = {
+            label: buttonText,
+            action: this.doAdd.bind(this),
+          };
+        }
+        break;
     }
   }
   
