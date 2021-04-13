@@ -412,9 +412,17 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
 
   replicationDataSourceHelper(data: any) {
     return data.map((task) => {
-      task.state = task.state.state;
       task.ssh_connection = task.ssh_credentials ? task.ssh_credentials.name : '-';
       task.task_last_snapshot = task.state.last_snapshot ? task.state.last_snapshot : T('No snapshots sent yet');
+      if (task.job == null) {
+        task.state = task.state.state;
+      } else {
+        task.state = task.job.state;
+        this.parent.job.getJobStatus(task.job.id).subscribe((job) => {
+          task.state = job.state;
+          task.job = job;
+        });
+      }
       return task;
     });
   }
@@ -795,57 +803,14 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
   }
 
   stateButton(row) {
-    if (row.state === EntityJobState.running) {
-      this.runningStateButton(row.job.id);
-    } else if (row.state === EntityJobState.hold) {
-      this.dialog.Info(T('Task is on hold'), row.state.reason, '500px', 'info', true);
-    } else {
-      const error = row.job && row.state === EntityJobState.error ? row.job.error : null;
-      const log = row.job && row.job.logs_excerpt ? row.job.logs_excerpt : null;
-      if (error === null && log === null) {
-        this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message, '500px', 'info', true);
+    if (row.job) {
+      if (row.state === EntityJobState.running) {
+        this.runningStateButton(row.job.id);
+      } else {
+        this.job.showLogs(row.job);
       }
-
-      this.job.showLogs(row.job);
-
-      // const dialog_title = T('Task State');
-      // const dialog_content =
-      //   (error ? `<h5>${T('Error')}</h5> <pre>${error}</pre>` : '') +
-      //   (log ? `<h5>${T('Logs')}</h5> <pre>${log}</pre>` : '');
-
-      // if (log) {
-      //   this.dialog
-      //     .confirm(
-      //       dialog_title,
-      //       dialog_content,
-      //       true,
-      //       T('Download Logs'),
-      //       false,
-      //       '',
-      //       '',
-      //       '',
-      //       '',
-      //       false,
-      //       T('Cancel'),
-      //       true,
-      //     )
-      //     .subscribe((dialog_res) => {
-      //       if (dialog_res) {
-      //         const filename = `${row.job.id}.log`;
-      //         this.ws.call('core.download', ['filesystem.get', [row.job.logs_path], filename]).subscribe(
-      //           (res) => {
-      //             const url = res[1];
-      //             const mimetype = 'text/plain';
-      //             this.storage.streamDownloadFile(this.http, url, filename, mimetype).subscribe(
-      //               (blob) => this.storage.downloadBlob(blob, filename),
-      //               (err) => new EntityUtils().handleWSError(this, err),
-      //             );
-      //           },
-      //           (err) => new EntityUtils().handleWSError(this, err),
-      //         );
-      //       }
-      //     });
-      // }
+    } else {
+      this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
     }
   }
 

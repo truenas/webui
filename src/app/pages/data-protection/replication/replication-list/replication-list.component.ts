@@ -182,64 +182,16 @@ export class ReplicationListComponent {
   }
 
   stateButton(row) {
-    if (row.state.state === EntityJobState.running) {
-      this.entityList.runningStateButton(row.job.id);
-    } else if (row.state.state === EntityJobState.hold) {
-      this.dialog.Info(T('Task is on hold'), row.state.reason, '500px', 'info', true);
-    } else {
-      const error = row.state.state === EntityJobState.error ? row.state.error : null;
-      const log = row.job && row.job.logs_excerpt ? row.job.logs_excerpt : null;
-      if (error === null && log === null) {
-        this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
-      }
-
-      const dialog_title = T('Task State');
-      const dialog_content =
-        (error ? `<h5>${T('Error')}</h5> <pre>${error}</pre>` : '') +
-        (log ? `<h5>${T('Logs')}</h5> <pre>${log}</pre>` : '');
-
-      if (log) {
-        this.dialog
-          .confirm(
-            dialog_title,
-            dialog_content,
-            true,
-            T('Download Logs'),
-            false,
-            '',
-            '',
-            '',
-            '',
-            false,
-            T('Cancel'),
-            true,
-          )
-          .subscribe((dialog_res) => {
-            if (dialog_res) {
-              this.ws.call('core.download', ['filesystem.get', [row.job.logs_path], row.job.id + '.log']).subscribe(
-                (snack_res) => {
-                  const url = snack_res[1];
-                  const mimetype = 'text/plain';
-                  let failed = false;
-                  this.storage.streamDownloadFile(this.http, url, row.job.id + '.log', mimetype).subscribe(
-                    (file) => {
-                      this.storage.downloadBlob(file, row.job.id + '.log');
-                    },
-                    (err) => {
-                      failed = true;
-                      new EntityUtils().handleWSError(this, err);
-                    },
-                  );
-                },
-                (snack_res) => {
-                  new EntityUtils().handleWSError(this, snack_res);
-                },
-              );
-            }
-          });
+    if (row.job) {
+      if (row.state.state === EntityJobState.running) {
+        this.entityList.runningStateButton(row.job.id);
+      } else if (row.state.state === EntityJobState.hold) {
+        this.dialog.Info(T('Task is on hold'), row.state.reason, '500px', 'info', true);
       } else {
-        this.dialog.errorReport(row.state.state, row.state.error);
+        this.job.showLogs(row.job);
       }
+    } else {
+      this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
     }
   }
 

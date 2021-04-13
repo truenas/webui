@@ -45,11 +45,13 @@ export class JobService {
         this.dialog.errorReport(T('Error'), job.error, job.exception);
       }
     } else {
-      if (job.logs_excerpt === '') {
+      const log = job && job.logs_excerpt ? job.logs_excerpt : null;
+
+      if (!log) {
         this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
       } else {
         const target_job = job;
-        this.dialog.confirm(dialog_title, `<pre>${job.logs_excerpt}</pre>`, true, T('Download Logs'),
+        this.dialog.confirm(dialog_title, `<pre>${log}</pre>`, true, T('Download Logs'),
           false, '', '', '', '', false, cancelButtonMsg, true).subscribe(
           (dialog_res) => {
             if (dialog_res) {
@@ -58,12 +60,15 @@ export class JobService {
                   const url = snack_res[1];
                   const mimetype = 'text/plain';
                   let failed = false;
-                  this.storage.streamDownloadFile(this.http, url, target_job.id + '.log', mimetype).subscribe(file => {
-                    this.storage.downloadBlob(file, target_job.id + '.log');
-                  }, err => {
-                    failed = true;
-                    new EntityUtils().handleWSError(this, err);
-                  });
+                  this.storage.streamDownloadFile(this.http, url, target_job.id + '.log', mimetype).subscribe(
+                    (file) => {
+                      this.storage.downloadBlob(file, target_job.id + '.log');
+                    },
+                    (err) => {
+                      failed = true;
+                      new EntityUtils().handleWSError(this, err);
+                    }
+                  );
                 },
                 (snack_res) => {
                   new EntityUtils().handleWSError(this, snack_res);
