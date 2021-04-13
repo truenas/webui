@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ApplicationsService } from '../applications.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogService, StorageService, ValidationService } from 'app/services';
@@ -17,7 +17,7 @@ import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialo
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
 })
 
-export class DockerImagesComponent implements OnInit {
+export class DockerImagesComponent implements OnInit, OnDestroy {
   public title = "Docker Images";
 
   protected entityList: any;
@@ -71,6 +71,12 @@ export class DockerImagesComponent implements OnInit {
     this.modalService.refreshForm$.subscribe(() => {
       this.refreshUserForm();
     });
+  }
+
+  ngOnDestroy(){
+    if(this.refreshTableSubscription){
+      this.refreshTableSubscription.unsubscribe();
+    }
   }
 
   refreshUserForm() {

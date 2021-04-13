@@ -1,6 +1,6 @@
 <div fxLayout="row wrap" fxLayoutAlign="center center">
   <mat-card class="chart-item" *ngFor="let item of filteredChartItems">
-      <div class="content-wrapper" fxLayout="row" (click)="showChartEvents(item.name)">
+      <div class="content-wrapper" fxLayout="row">
         <div class="logo-container">
           <div class="logo" style="background-image: url('{{ item.icon }}');"></div>
           <div class="badge-area">
@@ -13,7 +13,7 @@
           </div>
           <mat-checkbox color="primary" class="bulk-checkbox" [(ngModel)]="item.selected" (change)="onChangeCheck()"></mat-checkbox>
         </div>
-        <div class="content-box">
+        <div class="content-box"  (click)="showChartEvents(item.name)">
           <div class="content">
             <strong class="chart-name" textLimiter threshold="20">{{ item.name }}</strong>
             <div><span class="version" textLimiter threshold="50"> {{ item.human_version}}</span></div>

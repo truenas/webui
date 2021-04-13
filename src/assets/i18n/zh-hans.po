@@ -1023,11 +1023,20 @@ msgstr ""
 msgid "Add CSR"
 msgstr ""
 
+msgid "Add Catalog"
+msgstr ""
+
 msgid "Add Certificate"
 msgstr ""
 
 msgid "Add Cloud Credential"
 msgstr "添加云凭证"
+
+msgid "Add Cloud Sync Task"
+msgstr ""
+
+msgid "Add Cron Job"
+msgstr ""
 
 msgid "Add DNS Authenticator"
 msgstr ""
@@ -1044,6 +1053,9 @@ msgstr "添加组"
 msgid "Add Idmap"
 msgstr "添加Idmap"
 
+msgid "Add Init/Shutdown Script"
+msgstr ""
+
 msgid "Add Interface"
 msgstr ""
 
@@ -1059,8 +1071,23 @@ msgstr "添加挂载点"
 msgid "Add NFS SPN"
 msgstr ""
 
+msgid "Add Periodic Snapshot Task"
+msgstr ""
+
 msgid "Add Recovery Key"
 msgstr "添加恢复密钥"
+
+msgid "Add Replication Task"
+msgstr ""
+
+msgid "Add Rsync Task"
+msgstr ""
+
+msgid "Add S.M.A.R.T. Test"
+msgstr ""
+
+msgid "Add Scrub Task"
+msgstr ""
 
 msgid "Add Static Route"
 msgstr ""
@@ -1106,6 +1133,9 @@ msgstr ""
 
 msgid "Add any notes about this zvol."
 msgstr "输入这个zvol的备注。"
+
+msgid "Add catalog to system even if some trains are unhealthy."
+msgstr ""
 
 msgid ""
 "Add lines to the jail <i>resolv.conf</i>. <b>Example:</b> <i>nameserver "
@@ -1769,6 +1799,9 @@ msgstr "关于启动器的任何注释。"
 msgid "Any system service can communicate externally."
 msgstr ""
 
+msgid "App"
+msgstr ""
+
 msgid "Appdefaults Auxiliary Parameters"
 msgstr "应用默认值辅助参数"
 
@@ -1805,6 +1838,9 @@ msgid "Application Key"
 msgstr "应用程序密钥"
 
 msgid "Application Name"
+msgstr ""
+
+msgid "Application Summary"
 msgstr ""
 
 msgid "Applications"
@@ -2105,6 +2141,9 @@ msgstr "附加参数"
 msgid "Available"
 msgstr ""
 
+msgid "Available Applications"
+msgstr ""
+
 msgid "Available Disks"
 msgstr "可用磁盘"
 
@@ -2295,6 +2334,9 @@ msgstr ""
 "Brainpool曲线可以更安全，而secp曲线可以更快。参见<a "
 "href=\"https://tls.mbed.org/kb/cryptography/elliptic-curve-performance-nist-"
 "vs-brainpool\" target=\"blank\">椭圆曲线性能：NIST与Brainpool</a>了解更多信息。"
+
+msgid "Branch"
+msgstr ""
 
 msgid "Bridge Members"
 msgstr "桥接成员"
@@ -2539,6 +2581,18 @@ msgid "Case Sensitivity"
 msgstr "区分大小写"
 
 msgid "Catalog"
+msgstr ""
+
+msgid "Catalog Name"
+msgstr ""
+
+msgid "Catalog Summary"
+msgstr ""
+
+msgid "Catalogs"
+msgstr ""
+
+msgid "Categories"
 msgstr ""
 
 msgid "Category"
@@ -2797,6 +2851,9 @@ msgstr "选择DNS提供程序并配置任何必需的身份验证器属性。"
 
 msgid "Choose a Device"
 msgstr "选择设备"
+
+msgid "Choose a Tag"
+msgstr ""
 
 msgid "Choose a cipher algorithm to encrypt data channel packets."
 msgstr "选择一种加密算法来加密数据通道数据包。"
@@ -3188,6 +3245,9 @@ msgstr ""
 
 msgid "Cloud Credentials"
 msgstr "云凭据"
+
+msgid "Cloud Sync Tasks"
+msgstr ""
 
 msgid "Cloud sync <i>"
 msgstr "云同步<i>"
@@ -3783,6 +3843,9 @@ msgstr "关键性"
 
 msgid "Cron Job"
 msgstr "计划任务"
+
+msgid "Cron Jobs"
+msgstr ""
 
 msgid ""
 "Cryptographic protocols for securing client/server connections. Select "
@@ -4714,8 +4777,16 @@ msgstr "显示备注"
 msgid "Display Port"
 msgstr ""
 
+msgid "Display Type"
+msgstr ""
+
 msgid "Display console messages in real time at the bottom of the browser."
 msgstr "在浏览器底部实时显示控制台消息。"
+
+msgid ""
+"Display network interface IP address. The primary interface IP address is "
+"the default. A different interface IP address can be chosen."
+msgstr ""
 
 msgid "Distinguished Name"
 msgstr "专有名称"
@@ -4737,7 +4808,7 @@ msgstr "如果禁用了串行端口，请不要设置此项。"
 msgid "Docker Host"
 msgstr "Docker主机"
 
-msgid "Docker Images"
+msgid "Docker Registry Authentication"
 msgstr ""
 
 msgid "Docker image pull policy"
@@ -4899,7 +4970,16 @@ msgstr ""
 msgid "Edit CSR"
 msgstr ""
 
+msgid "Edit Catalog"
+msgstr ""
+
 msgid "Edit Certificate"
+msgstr ""
+
+msgid "Edit Cloud Sync Task"
+msgstr ""
+
+msgid "Edit Cron Job"
 msgstr ""
 
 msgid "Edit DNS Authenticator"
@@ -4920,11 +5000,17 @@ msgstr "编辑组"
 msgid "Edit Idmap"
 msgstr "编辑Idmap"
 
+msgid "Edit Init/Shutdown Script"
+msgstr ""
+
 msgid "Edit Interface"
 msgstr ""
 
 msgid "Edit Options"
 msgstr "编辑选项"
+
+msgid "Edit Periodic Snapshot Task"
+msgstr ""
 
 msgid "Edit Permissions"
 msgstr "编辑权限"
@@ -4936,6 +5022,18 @@ msgid "Edit Pool Disk"
 msgstr ""
 
 msgid "Edit Pool Options for "
+msgstr ""
+
+msgid "Edit Replication Task"
+msgstr ""
+
+msgid "Edit Rsync Task"
+msgstr ""
+
+msgid "Edit S.M.A.R.T. Test"
+msgstr ""
+
+msgid "Edit Scrub Task"
 msgstr ""
 
 msgid "Edit Share ACL"
@@ -5046,6 +5144,9 @@ msgstr ""
 msgid "Enable Debug Kernel"
 msgstr "启用调试内核"
 
+msgid "Enable Display"
+msgstr ""
+
 msgid "Enable FSRVP"
 msgstr "启用FSRVP"
 
@@ -5109,13 +5210,10 @@ msgid ""
 "support this feature."
 msgstr "启用Unix 权限支持被 OSX 10.5和更高版本支持。如果网络包含Mac OSX 10.4或更低版本的客户端，因为它们不支持此功能，请不要启用它。"
 
-msgid "Enable VNC"
-msgstr "启用VNC"
-
 msgid ""
-"Enable a VNC (Virtual Network Computing) remote connection. Requires "
+"Enable a Display (Virtual Network Computing) remote connection. Requires "
 "<i>UEFI</i> booting."
-msgstr "启用一个VNC远程连接。需要<i>UEFI</i>引导。"
+msgstr ""
 
 msgid "Enable automatic support alerts to iXsystems (Silver/Gold support only)"
 msgstr "启用对iXsystems的自动支持警报（仅对银/金客户支持）"
@@ -6305,6 +6403,9 @@ msgstr "提交文件时出错"
 msgid "Error updating disks"
 msgstr "更新磁盘时出错"
 
+msgid "Error while creating the "
+msgstr ""
+
 msgid "Error:"
 msgstr "错误："
 
@@ -6662,6 +6763,9 @@ msgid "Force"
 msgstr "强制"
 
 msgid "Force Clear"
+msgstr ""
+
+msgid "Force Create"
 msgstr ""
 
 msgid "Force Delete"
@@ -7030,6 +7134,9 @@ msgstr "HTTPS端口"
 
 msgid "HTTPS Protocols"
 msgstr "HTTPS协议"
+
+msgid "Healthy"
+msgstr ""
 
 msgid "Help"
 msgstr "帮助"
@@ -7535,6 +7642,12 @@ msgstr ""
 msgid "Image"
 msgstr ""
 
+msgid "Image ID"
+msgstr ""
+
+msgid "Image Name"
+msgstr ""
+
 msgid "Image Pull Policy"
 msgstr ""
 
@@ -7664,6 +7777,9 @@ msgstr "继承"
 
 msgid "Init/Shutdown Script"
 msgstr "初始化/关闭脚本"
+
+msgid "Init/Shutdown Scripts"
+msgstr ""
 
 msgid ""
 "Initial secret authentication key.  When an authentication key is not set, "
@@ -7973,6 +8089,9 @@ msgstr "KMIP服务器"
 msgid "Keep"
 msgstr "保持"
 
+msgid "Keep for"
+msgstr ""
+
 msgid "Keep snapshot for"
 msgstr "保留快照"
 
@@ -8146,6 +8265,9 @@ msgstr "语言代码"
 
 msgid "Last Scrub Run on"
 msgstr "最后一次清理"
+
+msgid "Last Snapshot"
+msgstr ""
 
 msgid "Launch"
 msgstr ""
@@ -8428,11 +8550,17 @@ msgstr "将目标数据集设为只读？"
 msgid "Manage"
 msgstr "管理"
 
+msgid "Manage Catalogs"
+msgstr ""
+
 msgid "Manage Configuration"
 msgstr ""
 
 msgid "Manage Custom Themes"
 msgstr "管理自定义主题"
+
+msgid "Manage Docker Images"
+msgstr ""
 
 msgid "Manage Recovery Key"
 msgstr "管理恢复密钥"
@@ -9220,6 +9348,9 @@ msgstr "没有通讯警告时间"
 msgid "No Encryption (less secure, but faster)"
 msgstr "没有加密（安全性较低，但速度更快）"
 
+msgid "No Item"
+msgstr ""
+
 msgid "No Logs"
 msgstr "没有日志"
 
@@ -9246,6 +9377,9 @@ msgstr ""
 
 msgid "No Stat"
 msgstr "无状态"
+
+msgid "No Version"
+msgstr ""
 
 msgid ""
 "No custom themes. Click <b>Create New Theme</b> to create a new custom "
@@ -9556,9 +9690,9 @@ msgid "Only Replicate Snapshots Matching Schedule"
 msgstr "仅复制快照匹配计划"
 
 msgid ""
-"Only appears if <i>Device</i> is selected. Select the unformatted disk, "
-"controller, or zvol snapshot."
-msgstr "仅在选择<i>设备</i>时显示。选择未格式化的磁盘，控制器或zvol快照。"
+"Only appears if <i>Device</i> is selected. Select the unused zvol or zvol "
+"snapshot."
+msgstr ""
 
 msgid ""
 "Only appears if a <i>File</i> or  zvol is selected. When the specified "
@@ -10049,6 +10183,15 @@ msgstr "请输入您的用户名"
 msgid "Please enter your username again"
 msgstr "请再次输入您的用户名"
 
+msgid "Please input password."
+msgstr ""
+
+msgid "Please input user name."
+msgstr ""
+
+msgid "Please select a tag"
+msgstr ""
+
 msgid "Please select a valid SSH Connection"
 msgstr "请选择一个有效的SSH连接"
 
@@ -10056,6 +10199,28 @@ msgid "Please select a valid path"
 msgstr "请选择一个有效的路径"
 
 msgid "Please select the applications"
+msgstr ""
+
+msgid "Please specifies tag of the image"
+msgstr ""
+
+msgid "Please specify a valid git repository uri."
+msgstr ""
+
+msgid "Please specify branch of git repository to use for the catalog."
+msgstr ""
+
+msgid "Please specify name to be used to lookup catalog."
+msgstr ""
+
+msgid ""
+"Please specify the name of the image to pull. Format for the name is "
+"\"registry/repo/image\""
+msgstr ""
+
+msgid ""
+"Please specify trains from which UI should retrieve available applications "
+"for the catalog."
 msgstr ""
 
 msgid "Please wait"
@@ -10230,6 +10395,9 @@ msgstr "只带有图标的按钮"
 msgid "Preferences"
 msgstr "首选项"
 
+msgid "Preferred Trains"
+msgstr ""
+
 msgid "Preserve"
 msgstr ""
 
@@ -10389,6 +10557,12 @@ msgstr "公网IP地址或域名。设置FTP客户端是否无法通过NAT设备�
 
 msgid "Public Key"
 msgstr "公钥"
+
+msgid "Pull Image"
+msgstr ""
+
+msgid "Pulling..."
+msgstr ""
 
 msgid "Purpose"
 msgstr "目的"
@@ -10586,7 +10760,13 @@ msgstr ""
 msgid "Refresh"
 msgstr "刷新"
 
+msgid "Refresh All"
+msgstr ""
+
 msgid "Refresh Token"
+msgstr ""
+
+msgid "Refreshing"
 msgstr ""
 
 msgid "Region"
@@ -10786,6 +10966,9 @@ msgstr "复制 <i>"
 msgid "Replication Schedule"
 msgstr "复制计划"
 
+msgid "Replication Tasks"
+msgstr ""
+
 msgid "Report CPU Usage in Percentage"
 msgstr "报告CPU使用率（百分比）"
 
@@ -10814,6 +10997,9 @@ msgid "Reports"
 msgstr "报告"
 
 msgid "Reports Configuration"
+msgstr ""
+
+msgid "Repository"
 msgstr ""
 
 msgid "Requested action performed for selected Applications"
@@ -11081,6 +11267,9 @@ msgstr "Rsync模式"
 msgid "Rsync Module"
 msgstr ""
 
+msgid "Rsync Tasks"
+msgstr ""
+
 msgid "Run As User"
 msgstr "以用户身份运行"
 
@@ -11131,6 +11320,9 @@ msgstr ""
 
 msgid "S.M.A.R.T. Test"
 msgstr "S.M.A.R.T.测试"
+
+msgid "S.M.A.R.T. Tests"
+msgstr ""
 
 msgid "S.M.A.R.T. extra options"
 msgstr "S.M.A.R.T.附加选项"
@@ -11383,14 +11575,29 @@ msgstr "开始清理"
 msgid "Scrub Task"
 msgstr "清理任务"
 
+msgid "Scrub Tasks"
+msgstr ""
+
 msgid "Scrub interval (in days)"
 msgstr "清理间隔（天）"
+
+msgid "Search Available Applications"
+msgstr ""
+
+msgid "Search Catalogs"
+msgstr ""
+
+msgid "Search Docker Images"
+msgstr ""
 
 msgid "Search For Connected Groups"
 msgstr "搜索连接的组"
 
 msgid "Search For Connected Users"
 msgstr "搜索连接的用户"
+
+msgid "Search Installed Applications"
+msgstr ""
 
 msgid ""
 "Search for all connected groups.  Type a group name and press <i>ENTER</i>. "
@@ -11924,9 +12131,9 @@ msgid "Select the type that matches the type of client accessing the dataset."
 msgstr "选择与访问数据集的客户端类型匹配的类型。"
 
 msgid ""
-"Select the unformatted disk, controller, zvol, or zvol snapshot. Select "
-"<i>Create New</i> to create a new zvol."
-msgstr "选择未格式化的磁盘，控制器，zvol或zvol快照。选择<i>新建</ i>创建一个新的zvol。"
+"Select the unused zvol or zvol snapshot. Select <i>Create New</i> to create "
+"a new zvol."
+msgstr ""
 
 msgid ""
 "Select the user to control the dataset. Users created manually or imported "
@@ -13433,6 +13640,9 @@ msgstr "更新成功。"
 msgid "Suggest Layout"
 msgstr "推荐布局"
 
+msgid "Summary"
+msgstr ""
+
 msgid "Sun"
 msgstr "周日"
 
@@ -13632,6 +13842,9 @@ msgid "Tag"
 msgstr ""
 
 msgid "Tag to use for the specified image"
+msgstr ""
+
+msgid "Tags"
 msgstr ""
 
 msgid "Tail Lines"
@@ -14870,6 +15083,9 @@ msgstr "无法终止正在使用此池的进程："
 msgid "Unencrypted pools can be imported directly."
 msgstr "可以直接导入未加密的池。"
 
+msgid "Unhealthy"
+msgstr ""
+
 msgid "Unique LUN ID. The default is generated from the MAC address of the system."
 msgstr "唯一的逻辑单元 ID。默认值是从系统的MAC地址生成的。"
 
@@ -14986,6 +15202,9 @@ msgid "Update"
 msgstr "更新"
 
 msgid "Update "
+msgstr ""
+
+msgid "Update Available"
 msgstr ""
 
 msgid "Update File"
@@ -15543,11 +15762,6 @@ msgstr "虚拟机同步"
 msgid "VMware-Snapshots"
 msgstr ""
 
-msgid ""
-"VNC network interface IP address. The primary interface IP address is the "
-"default. A different interface IP address can be chosen."
-msgstr "VNC网络接口IP地址。主接口IP地址是默认值。可以选择其他接口IP地址。"
-
 msgid "VNET"
 msgstr "VNET"
 
@@ -15574,6 +15788,9 @@ msgstr "值"
 
 msgid "Value must be greater than "
 msgstr "值必须大于 "
+
+msgid "Var"
+msgstr ""
 
 msgid "Variable"
 msgstr "变量"
@@ -15604,6 +15821,12 @@ msgstr "验证池加密密码。"
 
 msgid "Version"
 msgstr "版本"
+
+msgid "Version Info"
+msgstr ""
+
+msgid "Versions"
+msgstr ""
 
 msgid "Video, < 100ms latency"
 msgstr "视频，延迟小于100毫秒"
@@ -15707,6 +15930,9 @@ msgstr "警告"
 
 msgid "Warning: iSCSI Target is already in use.</font><br>"
 msgstr "警告：iSCSI目标已在使用中。</font><br>"
+
+msgid "We ran into an error while trying to create the "
+msgstr ""
 
 msgid "Weak Ciphers"
 msgstr "弱密码"

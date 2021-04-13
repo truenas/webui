@@ -1,5 +1,5 @@
 import { EmptyConfig, EmptyType } from './../../../common/entity/entity-empty/entity-empty.component';
-import { Component, ElementRef, OnInit, AfterViewChecked } from '@angular/core';
+import { Component, ElementRef, OnInit, AfterViewChecked, OnDestroy } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -1782,7 +1782,7 @@ export class VolumesListTableConfig implements InputTableConf {
   templateUrl: './volumes-list.component.html',
   providers: []
 })
-export class VolumesListComponent extends EntityTableComponent implements OnInit, AfterViewChecked {
+export class VolumesListComponent extends EntityTableComponent implements OnInit, AfterViewChecked, OnDestroy {
 
   title = T("Pools");
   zfsPoolRows: ZfsPoolData[] = [];
@@ -1873,6 +1873,12 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.showDefaults = false;
     this.paintMe = false;
     this.ngOnInit();
+  }
+
+  ngOnDestroy(){ 
+    if (this.refreshTableSubscription) {
+      this.refreshTableSubscription.unsubscribe();
+    }
   }
 
   ngAfterViewChecked(){

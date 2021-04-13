@@ -4,7 +4,7 @@
   <!-- TRIGGER -->
   <button mat-button [matMenuTriggerFor]="menu" color="default" 
     ix-auto ix-auto-type="button" [ix-auto-identifier]="id + '_' + config.label" class="menu-toggle">
-    <span>{{config.label}} <mat-icon class="menu-caret">arrow_drop_down</mat-icon> </span>
+    {{config.label}} <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
   </button>
   <mat-menu #menu="matMenu" multiple overlapTrigger="false">
   

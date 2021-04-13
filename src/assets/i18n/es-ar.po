@@ -1216,11 +1216,20 @@ msgstr "Añadir CA"
 msgid "Add CSR"
 msgstr "Añadir CSR"
 
+msgid "Add Catalog"
+msgstr ""
+
 msgid "Add Certificate"
 msgstr "Añadir certificado"
 
 msgid "Add Cloud Credential"
 msgstr "Agregar credencial de nube"
+
+msgid "Add Cloud Sync Task"
+msgstr ""
+
+msgid "Add Cron Job"
+msgstr ""
 
 msgid "Add DNS Authenticator"
 msgstr "Agregar autenticador de DNS"
@@ -1237,6 +1246,9 @@ msgstr "Añadir grupo"
 msgid "Add Idmap"
 msgstr "Añadir Idmap"
 
+msgid "Add Init/Shutdown Script"
+msgstr ""
+
 msgid "Add Interface"
 msgstr "Añadir interfaz"
 
@@ -1252,8 +1264,23 @@ msgstr "Agregar punto de montaje"
 msgid "Add NFS SPN"
 msgstr "Agregar NFS SPN"
 
+msgid "Add Periodic Snapshot Task"
+msgstr ""
+
 msgid "Add Recovery Key"
 msgstr "Agregar clave de recuperación"
+
+msgid "Add Replication Task"
+msgstr ""
+
+msgid "Add Rsync Task"
+msgstr ""
+
+msgid "Add S.M.A.R.T. Test"
+msgstr ""
+
+msgid "Add Scrub Task"
+msgstr ""
 
 msgid "Add Static Route"
 msgstr "Añadir ruta estática"
@@ -1305,6 +1332,9 @@ msgstr ""
 
 msgid "Add any notes about this zvol."
 msgstr "Agregue cualquier nota sobre este zvol."
+
+msgid "Add catalog to system even if some trains are unhealthy."
+msgstr ""
 
 msgid ""
 "Add lines to the jail <i>resolv.conf</i>. <b>Example:</b> <i>nameserver "
@@ -2089,6 +2119,9 @@ msgstr "Cualquier nota sobre iniciadores."
 msgid "Any system service can communicate externally."
 msgstr "Cualquier servicio del sistema puede comunicarse externamente."
 
+msgid "App"
+msgstr ""
+
 msgid "Appdefaults Auxiliary Parameters"
 msgstr "Parámetros auxiliares de Appdefaults"
 
@@ -2134,6 +2167,9 @@ msgid "Application Key"
 msgstr "Clave de la aplicación"
 
 msgid "Application Name"
+msgstr ""
+
+msgid "Application Summary"
 msgstr ""
 
 msgid "Applications"
@@ -2463,6 +2499,9 @@ msgstr "Parámetros auxiliares"
 msgid "Available"
 msgstr "Disponible"
 
+msgid "Available Applications"
+msgstr ""
+
 msgid "Available Disks"
 msgstr "Discos disponibles"
 
@@ -2672,6 +2711,9 @@ msgstr ""
 "href=\"https://tls.mbed.org/kb/cryptography/elliptic-curve-performance-nist-"
 "vs-brainpool\" target=\"blank\">Rendimiento de la curva elíptica: NIST vs "
 "Brainpool</a> para más información."
+
+msgid "Branch"
+msgstr ""
 
 msgid "Bridge Members"
 msgstr "Miembros del puente"
@@ -2958,6 +3000,18 @@ msgid "Case Sensitivity"
 msgstr "Sensibilidad del caso"
 
 msgid "Catalog"
+msgstr ""
+
+msgid "Catalog Name"
+msgstr ""
+
+msgid "Catalog Summary"
+msgstr ""
+
+msgid "Catalogs"
+msgstr ""
+
+msgid "Categories"
 msgstr ""
 
 msgid "Category"
@@ -3268,6 +3322,9 @@ msgstr ""
 
 msgid "Choose a Device"
 msgstr "Elija un dispositivo"
+
+msgid "Choose a Tag"
+msgstr ""
 
 msgid "Choose a cipher algorithm to encrypt data channel packets."
 msgstr "Elija un algoritmo de cifrado para cifrar paquetes de canales de datos."
@@ -3737,6 +3794,9 @@ msgstr "Cerrar (volver a la lista de VM"
 
 msgid "Cloud Credentials"
 msgstr "Credenciales en la nube"
+
+msgid "Cloud Sync Tasks"
+msgstr ""
 
 msgid "Cloud sync <i>"
 msgstr "Sincronización en la nube <i>"
@@ -4390,6 +4450,9 @@ msgstr "Critica"
 
 msgid "Cron Job"
 msgstr "Cron Job"
+
+msgid "Cron Jobs"
+msgstr ""
 
 msgid ""
 "Cryptographic protocols for securing client/server connections. Select "
@@ -5447,10 +5510,18 @@ msgstr "Mostrar nota"
 msgid "Display Port"
 msgstr ""
 
+msgid "Display Type"
+msgstr ""
+
 msgid "Display console messages in real time at the bottom of the browser."
 msgstr ""
 "Mostrar mensajes de la consola en tiempo real en la parte inferior del "
 "navegador."
+
+msgid ""
+"Display network interface IP address. The primary interface IP address is "
+"the default. A different interface IP address can be chosen."
+msgstr ""
 
 msgid "Distinguished Name"
 msgstr "Nombre distinguido"
@@ -5474,7 +5545,7 @@ msgstr "No configure esto si el puerto serie está deshabilitado."
 msgid "Docker Host"
 msgstr "Host de Docker"
 
-msgid "Docker Images"
+msgid "Docker Registry Authentication"
 msgstr ""
 
 msgid "Docker image pull policy"
@@ -5641,8 +5712,17 @@ msgstr "Editar CA"
 msgid "Edit CSR"
 msgstr "Editar CSR"
 
+msgid "Edit Catalog"
+msgstr ""
+
 msgid "Edit Certificate"
 msgstr "Editar certificado"
+
+msgid "Edit Cloud Sync Task"
+msgstr ""
+
+msgid "Edit Cron Job"
+msgstr ""
 
 msgid "Edit DNS Authenticator"
 msgstr "Editar el autenticador de DNS"
@@ -5662,11 +5742,17 @@ msgstr "Editar grupo"
 msgid "Edit Idmap"
 msgstr "Editar Idmap"
 
+msgid "Edit Init/Shutdown Script"
+msgstr ""
+
 msgid "Edit Interface"
 msgstr "Editar interfaz"
 
 msgid "Edit Options"
 msgstr "Editar opciones"
+
+msgid "Edit Periodic Snapshot Task"
+msgstr ""
 
 msgid "Edit Permissions"
 msgstr "Editar permisos"
@@ -5679,6 +5765,18 @@ msgstr ""
 
 msgid "Edit Pool Options for "
 msgstr "Editar opciones de grupo para "
+
+msgid "Edit Replication Task"
+msgstr ""
+
+msgid "Edit Rsync Task"
+msgstr ""
+
+msgid "Edit S.M.A.R.T. Test"
+msgstr ""
+
+msgid "Edit Scrub Task"
+msgstr ""
 
 msgid "Edit Share ACL"
 msgstr "Editar Compartir ACL"
@@ -5801,6 +5899,9 @@ msgstr ""
 msgid "Enable Debug Kernel"
 msgstr "Habilitar núcleo de depuración"
 
+msgid "Enable Display"
+msgstr ""
+
 msgid "Enable FSRVP"
 msgstr "Habilitar FSRVP"
 
@@ -5867,15 +5968,10 @@ msgstr ""
 "habilite esto si la red contiene clientes Mac OSX 10.4 o inferior, ya que "
 "no son compatibles con esta función."
 
-msgid "Enable VNC"
-msgstr "Habilitar VNC"
-
 msgid ""
-"Enable a VNC (Virtual Network Computing) remote connection. Requires "
+"Enable a Display (Virtual Network Computing) remote connection. Requires "
 "<i>UEFI</i> booting."
 msgstr ""
-"Habilite una conexión remota VNC (Virtual Network Computing). Requiere el "
-"arranque <i>UEFI</i>."
 
 msgid "Enable automatic support alerts to iXsystems (Silver/Gold support only)"
 msgstr ""
@@ -7320,6 +7416,9 @@ msgstr "Error al enviar el archivo"
 msgid "Error updating disks"
 msgstr "Error al actualizar los discos"
 
+msgid "Error while creating the "
+msgstr ""
+
 msgid "Error:"
 msgstr "Error:"
 
@@ -7713,6 +7812,9 @@ msgstr "Forzar"
 
 msgid "Force Clear"
 msgstr "Forzar limpieza"
+
+msgid "Force Create"
+msgstr ""
 
 msgid "Force Delete"
 msgstr "Forzar eliminación"
@@ -8116,6 +8218,9 @@ msgstr "Puerto HTTPS"
 
 msgid "HTTPS Protocols"
 msgstr "Protocolos HTTPS"
+
+msgid "Healthy"
+msgstr ""
 
 msgid "Help"
 msgstr "Ayuda"
@@ -8704,6 +8809,12 @@ msgstr ""
 msgid "Image"
 msgstr ""
 
+msgid "Image ID"
+msgstr ""
+
+msgid "Image Name"
+msgstr ""
+
 msgid "Image Pull Policy"
 msgstr ""
 
@@ -8847,6 +8958,9 @@ msgstr "Hereda"
 
 msgid "Init/Shutdown Script"
 msgstr "Script de inicio/apagado"
+
+msgid "Init/Shutdown Scripts"
+msgstr ""
 
 msgid ""
 "Initial secret authentication key.  When an authentication key is not set, "
@@ -9185,6 +9299,9 @@ msgstr "Servidor KMIP"
 msgid "Keep"
 msgstr "Mantener"
 
+msgid "Keep for"
+msgstr ""
+
 msgid "Keep snapshot for"
 msgstr "Mantener instantánea para"
 
@@ -9369,6 +9486,9 @@ msgstr "Código de lenguaje"
 
 msgid "Last Scrub Run on"
 msgstr "Última ejecución de Scrub"
+
+msgid "Last Snapshot"
+msgstr ""
 
 msgid "Launch"
 msgstr ""
@@ -9680,11 +9800,17 @@ msgstr "¿Hacer que el conjunto de datos de destino sea de solo lectura?"
 msgid "Manage"
 msgstr "Gestionar"
 
+msgid "Manage Catalogs"
+msgstr ""
+
 msgid "Manage Configuration"
 msgstr ""
 
 msgid "Manage Custom Themes"
 msgstr "Administrar temas personalizados"
+
+msgid "Manage Docker Images"
+msgstr ""
 
 msgid "Manage Recovery Key"
 msgstr "Administrar clave de recuperación"
@@ -10560,6 +10686,9 @@ msgstr "Sin tiempo de advertencia de comunicación"
 msgid "No Encryption (less secure, but faster)"
 msgstr "Sin encriptación (menos seguro, pero más rápido)"
 
+msgid "No Item"
+msgstr ""
+
 msgid "No Logs"
 msgstr "Sin registros"
 
@@ -10586,6 +10715,9 @@ msgstr ""
 
 msgid "No Stat"
 msgstr "Sin estadísticas"
+
+msgid "No Version"
+msgstr ""
 
 msgid ""
 "No custom themes. Click <b>Create New Theme</b> to create a new custom "
@@ -10935,11 +11067,9 @@ msgid "Only Replicate Snapshots Matching Schedule"
 msgstr "Solo replicar calendario de coincidencias de instantáneas"
 
 msgid ""
-"Only appears if <i>Device</i> is selected. Select the unformatted disk, "
-"controller, or zvol snapshot."
+"Only appears if <i>Device</i> is selected. Select the unused zvol or zvol "
+"snapshot."
 msgstr ""
-"Solo aparece si se selecciona <i>Dispositivo</i>. Seleccione el disco sin "
-"formato, el controlador o la instantánea zvol."
 
 msgid ""
 "Only appears if a <i>File</i> or  zvol is selected. When the specified "
@@ -11504,6 +11634,15 @@ msgstr "Por favor ingrese su nombre de usuario"
 msgid "Please enter your username again"
 msgstr "Por favor vuelva a ingresar su nombre de usuario"
 
+msgid "Please input password."
+msgstr ""
+
+msgid "Please input user name."
+msgstr ""
+
+msgid "Please select a tag"
+msgstr ""
+
 msgid "Please select a valid SSH Connection"
 msgstr "Por favor selecciones una conexión SSH válida"
 
@@ -11511,6 +11650,28 @@ msgid "Please select a valid path"
 msgstr "Por favor selecciones una ruta válida"
 
 msgid "Please select the applications"
+msgstr ""
+
+msgid "Please specifies tag of the image"
+msgstr ""
+
+msgid "Please specify a valid git repository uri."
+msgstr ""
+
+msgid "Please specify branch of git repository to use for the catalog."
+msgstr ""
+
+msgid "Please specify name to be used to lookup catalog."
+msgstr ""
+
+msgid ""
+"Please specify the name of the image to pull. Format for the name is "
+"\"registry/repo/image\""
+msgstr ""
+
+msgid ""
+"Please specify trains from which UI should retrieve available applications "
+"for the catalog."
 msgstr ""
 
 msgid "Please wait"
@@ -11695,6 +11856,9 @@ msgstr "Preferir sólo botones con íconos"
 
 msgid "Preferences"
 msgstr "Preferencias"
+
+msgid "Preferred Trains"
+msgstr ""
 
 msgid "Preserve"
 msgstr "Preservar"
@@ -11883,6 +12047,12 @@ msgstr ""
 
 msgid "Public Key"
 msgstr "Clave pública"
+
+msgid "Pull Image"
+msgstr ""
+
+msgid "Pulling..."
+msgstr ""
 
 msgid "Purpose"
 msgstr "Propósito"
@@ -12104,8 +12274,14 @@ msgstr "Reingrese la contraseña"
 msgid "Refresh"
 msgstr "Refrezcar"
 
+msgid "Refresh All"
+msgstr ""
+
 msgid "Refresh Token"
 msgstr "Actualizar Token"
+
+msgid "Refreshing"
+msgstr ""
 
 msgid "Region"
 msgstr "Región"
@@ -12334,6 +12510,9 @@ msgstr "Replicación <i>"
 msgid "Replication Schedule"
 msgstr "Horario de replicación"
 
+msgid "Replication Tasks"
+msgstr ""
+
 msgid "Report CPU Usage in Percentage"
 msgstr "Informar uso de CPU en porcentaje"
 
@@ -12368,6 +12547,9 @@ msgid "Reports"
 msgstr "Informes"
 
 msgid "Reports Configuration"
+msgstr ""
+
+msgid "Repository"
 msgstr ""
 
 msgid "Requested action performed for selected Applications"
@@ -12661,6 +12843,9 @@ msgstr "Modo Rsync"
 msgid "Rsync Module"
 msgstr "Módulo Rsync"
 
+msgid "Rsync Tasks"
+msgstr ""
+
 msgid "Run As User"
 msgstr "Ejecutar como usuario"
 
@@ -12717,6 +12902,9 @@ msgstr "S.M.A.R.T."
 
 msgid "S.M.A.R.T. Test"
 msgstr "Prueba S.M.A.R.T."
+
+msgid "S.M.A.R.T. Tests"
+msgstr ""
 
 msgid "S.M.A.R.T. extra options"
 msgstr "Opciones extra de S.M.A.R.T."
@@ -12973,14 +13161,29 @@ msgstr "Scrub Iniciado"
 msgid "Scrub Task"
 msgstr "Tarea Scrub"
 
+msgid "Scrub Tasks"
+msgstr ""
+
 msgid "Scrub interval (in days)"
 msgstr "Intervalo de Scrub (en días)"
+
+msgid "Search Available Applications"
+msgstr ""
+
+msgid "Search Catalogs"
+msgstr ""
+
+msgid "Search Docker Images"
+msgstr ""
 
 msgid "Search For Connected Groups"
 msgstr "Buscar grupos conectados"
 
 msgid "Search For Connected Users"
 msgstr "Buscar usuarios conectados"
+
+msgid "Search Installed Applications"
+msgstr ""
 
 msgid ""
 "Search for all connected groups.  Type a group name and press <i>ENTER</i>. "
@@ -13651,11 +13854,9 @@ msgstr ""
 "conjunto de datos."
 
 msgid ""
-"Select the unformatted disk, controller, zvol, or zvol snapshot. Select "
-"<i>Create New</i> to create a new zvol."
+"Select the unused zvol or zvol snapshot. Select <i>Create New</i> to create "
+"a new zvol."
 msgstr ""
-"Seleccione el disco sin formato, el controlador, la instantánea zvol o "
-"zvol. Seleccione <i>Crear nuevo</i> para crear un nuevo zvol."
 
 msgid ""
 "Select the user to control the dataset. Users created manually or imported "
@@ -15512,6 +15713,9 @@ msgstr "Actualizado exitosamente."
 msgid "Suggest Layout"
 msgstr "Sugerir diseño"
 
+msgid "Summary"
+msgstr ""
+
 msgid "Sun"
 msgstr "Domingo"
 
@@ -15720,6 +15924,9 @@ msgid "Tag"
 msgstr "Etiqueta"
 
 msgid "Tag to use for the specified image"
+msgstr ""
+
+msgid "Tags"
 msgstr ""
 
 msgid "Tail Lines"
@@ -17289,6 +17496,9 @@ msgstr "No se pueden finalizar los procesos que utilizan este grupo: "
 msgid "Unencrypted pools can be imported directly."
 msgstr "Los grupos sin cifrar se pueden importar directamente."
 
+msgid "Unhealthy"
+msgstr ""
+
 msgid "Unique LUN ID. The default is generated from the MAC address of the system."
 msgstr ""
 "ID de LUN único. El valor predeterminado se genera a partir de la dirección "
@@ -17425,6 +17635,9 @@ msgid "Update"
 msgstr "Actualizaciones"
 
 msgid "Update "
+msgstr ""
+
+msgid "Update Available"
 msgstr ""
 
 msgid "Update File"
@@ -18058,14 +18271,6 @@ msgstr "Sincronización VMware"
 msgid "VMware-Snapshots"
 msgstr ""
 
-msgid ""
-"VNC network interface IP address. The primary interface IP address is the "
-"default. A different interface IP address can be chosen."
-msgstr ""
-"Dirección IP de la interfaz de red VNC. La dirección IP de la interfaz "
-"principal es la predeterminada. Se puede elegir una dirección IP de "
-"interfaz diferente."
-
 msgid "VNET"
 msgstr "VNET"
 
@@ -18092,6 +18297,9 @@ msgstr "Valor"
 
 msgid "Value must be greater than "
 msgstr "El valor debe ser mayor que "
+
+msgid "Var"
+msgstr ""
 
 msgid "Variable"
 msgstr "Variable"
@@ -18122,6 +18330,12 @@ msgstr "Verifique la contraseña de encriptación del pool."
 
 msgid "Version"
 msgstr "Versión"
+
+msgid "Version Info"
+msgstr ""
+
+msgid "Versions"
+msgstr ""
 
 msgid "Video, < 100ms latency"
 msgstr "Video, <100 ms de latencia"
@@ -18235,6 +18449,9 @@ msgstr "Advertencia"
 
 msgid "Warning: iSCSI Target is already in use.</font><br>"
 msgstr "Advertencia: Objetivo iSCSI ya está en uso.</font><br>"
+
+msgid "We ran into an error while trying to create the "
+msgstr ""
 
 msgid "Weak Ciphers"
 msgstr "Cifrados débiles"

@@ -976,10 +976,19 @@ msgstr ""
 msgid "Add CSR"
 msgstr ""
 
+msgid "Add Catalog"
+msgstr ""
+
 msgid "Add Certificate"
 msgstr ""
 
 msgid "Add Cloud Credential"
+msgstr ""
+
+msgid "Add Cloud Sync Task"
+msgstr ""
+
+msgid "Add Cron Job"
 msgstr ""
 
 msgid "Add DNS Authenticator"
@@ -997,6 +1006,9 @@ msgstr ""
 msgid "Add Idmap"
 msgstr ""
 
+msgid "Add Init/Shutdown Script"
+msgstr ""
+
 msgid "Add Interface"
 msgstr ""
 
@@ -1012,8 +1024,23 @@ msgstr ""
 msgid "Add NFS SPN"
 msgstr ""
 
+msgid "Add Periodic Snapshot Task"
+msgstr ""
+
 msgid "Add Recovery Key"
 msgstr "Přidat obnovovací klíč"
+
+msgid "Add Replication Task"
+msgstr ""
+
+msgid "Add Rsync Task"
+msgstr ""
+
+msgid "Add S.M.A.R.T. Test"
+msgstr ""
+
+msgid "Add Scrub Task"
+msgstr ""
 
 msgid "Add Static Route"
 msgstr ""
@@ -1057,6 +1084,9 @@ msgstr ""
 
 msgid "Add any notes about this zvol."
 msgstr "Přidejte jakékoli poznámky o tomto ZFS svazku."
+
+msgid "Add catalog to system even if some trains are unhealthy."
+msgstr ""
 
 msgid ""
 "Add lines to the jail <i>resolv.conf</i>. <b>Example:</b> <i>nameserver "
@@ -1645,6 +1675,9 @@ msgstr ""
 msgid "Any system service can communicate externally."
 msgstr ""
 
+msgid "App"
+msgstr ""
+
 msgid "Appdefaults Auxiliary Parameters"
 msgstr ""
 
@@ -1681,6 +1714,9 @@ msgid "Application Key"
 msgstr ""
 
 msgid "Application Name"
+msgstr ""
+
+msgid "Application Summary"
 msgstr ""
 
 msgid "Applications"
@@ -1966,6 +2002,9 @@ msgstr "Pomocné parametry"
 msgid "Available"
 msgstr ""
 
+msgid "Available Applications"
+msgstr ""
+
 msgid "Available Disks"
 msgstr "Disky k dispozici"
 
@@ -2152,6 +2191,9 @@ msgid ""
 "href=\"https://tls.mbed.org/kb/cryptography/elliptic-curve-performance-nist-"
 "vs-brainpool\" target=\"blank\"> Elliptic Curve performance: NIST vs "
 "Brainpool </a> for more information."
+msgstr ""
+
+msgid "Branch"
 msgstr ""
 
 msgid "Bridge Members"
@@ -2393,6 +2435,18 @@ msgid "Case Sensitivity"
 msgstr "Rozlišování velká/malá písmena"
 
 msgid "Catalog"
+msgstr ""
+
+msgid "Catalog Name"
+msgstr ""
+
+msgid "Catalog Summary"
+msgstr ""
+
+msgid "Catalogs"
+msgstr ""
+
+msgid "Categories"
 msgstr ""
 
 msgid "Category"
@@ -2638,6 +2692,9 @@ msgid "Choose a DNS provider and configure any required authenticator attributes
 msgstr ""
 
 msgid "Choose a Device"
+msgstr ""
+
+msgid "Choose a Tag"
 msgstr ""
 
 msgid "Choose a cipher algorithm to encrypt data channel packets."
@@ -2993,6 +3050,9 @@ msgstr ""
 
 msgid "Cloud Credentials"
 msgstr "Přihlašovací údaje ke cloudu"
+
+msgid "Cloud Sync Tasks"
+msgstr ""
 
 msgid "Cloud sync <i>"
 msgstr ""
@@ -3560,6 +3620,9 @@ msgid "Criticality"
 msgstr ""
 
 msgid "Cron Job"
+msgstr ""
+
+msgid "Cron Jobs"
 msgstr ""
 
 msgid ""
@@ -4434,7 +4497,15 @@ msgstr ""
 msgid "Display Port"
 msgstr ""
 
+msgid "Display Type"
+msgstr ""
+
 msgid "Display console messages in real time at the bottom of the browser."
+msgstr ""
+
+msgid ""
+"Display network interface IP address. The primary interface IP address is "
+"the default. A different interface IP address can be chosen."
 msgstr ""
 
 msgid "Distinguished Name"
@@ -4455,7 +4526,7 @@ msgstr ""
 msgid "Docker Host"
 msgstr "Hostitel pro Docker"
 
-msgid "Docker Images"
+msgid "Docker Registry Authentication"
 msgstr ""
 
 msgid "Docker image pull policy"
@@ -4615,7 +4686,16 @@ msgstr ""
 msgid "Edit CSR"
 msgstr ""
 
+msgid "Edit Catalog"
+msgstr ""
+
 msgid "Edit Certificate"
+msgstr ""
+
+msgid "Edit Cloud Sync Task"
+msgstr ""
+
+msgid "Edit Cron Job"
 msgstr ""
 
 msgid "Edit DNS Authenticator"
@@ -4636,11 +4716,17 @@ msgstr ""
 msgid "Edit Idmap"
 msgstr "Upravit Idmap"
 
+msgid "Edit Init/Shutdown Script"
+msgstr ""
+
 msgid "Edit Interface"
 msgstr ""
 
 msgid "Edit Options"
 msgstr "Volby úprav"
+
+msgid "Edit Periodic Snapshot Task"
+msgstr ""
 
 msgid "Edit Permissions"
 msgstr "Upravit přístupová práva"
@@ -4652,6 +4738,18 @@ msgid "Edit Pool Disk"
 msgstr ""
 
 msgid "Edit Pool Options for "
+msgstr ""
+
+msgid "Edit Replication Task"
+msgstr ""
+
+msgid "Edit Rsync Task"
+msgstr ""
+
+msgid "Edit S.M.A.R.T. Test"
+msgstr ""
+
+msgid "Edit Scrub Task"
 msgstr ""
 
 msgid "Edit Share ACL"
@@ -4756,6 +4854,9 @@ msgstr ""
 msgid "Enable Debug Kernel"
 msgstr "Použít jádro se zapnutým ladícím výstupem"
 
+msgid "Enable Display"
+msgstr ""
+
 msgid "Enable FSRVP"
 msgstr ""
 
@@ -4819,11 +4920,8 @@ msgid ""
 "support this feature."
 msgstr ""
 
-msgid "Enable VNC"
-msgstr "Zpřístupnit VNC"
-
 msgid ""
-"Enable a VNC (Virtual Network Computing) remote connection. Requires "
+"Enable a Display (Virtual Network Computing) remote connection. Requires "
 "<i>UEFI</i> booting."
 msgstr ""
 
@@ -5921,6 +6019,9 @@ msgstr "Chyba při odesílání souboru"
 msgid "Error updating disks"
 msgstr ""
 
+msgid "Error while creating the "
+msgstr ""
+
 msgid "Error:"
 msgstr ""
 
@@ -6265,6 +6366,9 @@ msgid "Force"
 msgstr "Vynutit"
 
 msgid "Force Clear"
+msgstr ""
+
+msgid "Force Create"
 msgstr ""
 
 msgid "Force Delete"
@@ -6617,6 +6721,9 @@ msgid "HTTPS Port"
 msgstr "HTTPS port"
 
 msgid "HTTPS Protocols"
+msgstr ""
+
+msgid "Healthy"
 msgstr ""
 
 msgid "Help"
@@ -7107,6 +7214,12 @@ msgstr ""
 msgid "Image"
 msgstr ""
 
+msgid "Image ID"
+msgstr ""
+
+msgid "Image Name"
+msgstr ""
+
 msgid "Image Pull Policy"
 msgstr ""
 
@@ -7233,6 +7346,9 @@ msgid "Inherits"
 msgstr ""
 
 msgid "Init/Shutdown Script"
+msgstr ""
+
+msgid "Init/Shutdown Scripts"
 msgstr ""
 
 msgid ""
@@ -7526,6 +7642,9 @@ msgstr ""
 msgid "Keep"
 msgstr ""
 
+msgid "Keep for"
+msgstr ""
+
 msgid "Keep snapshot for"
 msgstr ""
 
@@ -7693,6 +7812,9 @@ msgid "Language code"
 msgstr ""
 
 msgid "Last Scrub Run on"
+msgstr ""
+
+msgid "Last Snapshot"
 msgstr ""
 
 msgid "Launch"
@@ -7966,10 +8088,16 @@ msgstr ""
 msgid "Manage"
 msgstr ""
 
+msgid "Manage Catalogs"
+msgstr ""
+
 msgid "Manage Configuration"
 msgstr ""
 
 msgid "Manage Custom Themes"
+msgstr ""
+
+msgid "Manage Docker Images"
 msgstr ""
 
 msgid "Manage Recovery Key"
@@ -8710,6 +8838,9 @@ msgstr ""
 msgid "No Encryption (less secure, but faster)"
 msgstr ""
 
+msgid "No Item"
+msgstr ""
+
 msgid "No Logs"
 msgstr ""
 
@@ -8735,6 +8866,9 @@ msgid "No Search Results."
 msgstr ""
 
 msgid "No Stat"
+msgstr ""
+
+msgid "No Version"
 msgstr ""
 
 msgid ""
@@ -9028,8 +9162,8 @@ msgid "Only Replicate Snapshots Matching Schedule"
 msgstr ""
 
 msgid ""
-"Only appears if <i>Device</i> is selected. Select the unformatted disk, "
-"controller, or zvol snapshot."
+"Only appears if <i>Device</i> is selected. Select the unused zvol or zvol "
+"snapshot."
 msgstr ""
 
 msgid ""
@@ -9487,6 +9621,15 @@ msgstr "Zadejte uživatelské jméno"
 msgid "Please enter your username again"
 msgstr "Zopakujte zadání uživatelského jména"
 
+msgid "Please input password."
+msgstr ""
+
+msgid "Please input user name."
+msgstr ""
+
+msgid "Please select a tag"
+msgstr ""
+
 msgid "Please select a valid SSH Connection"
 msgstr ""
 
@@ -9494,6 +9637,28 @@ msgid "Please select a valid path"
 msgstr ""
 
 msgid "Please select the applications"
+msgstr ""
+
+msgid "Please specifies tag of the image"
+msgstr ""
+
+msgid "Please specify a valid git repository uri."
+msgstr ""
+
+msgid "Please specify branch of git repository to use for the catalog."
+msgstr ""
+
+msgid "Please specify name to be used to lookup catalog."
+msgstr ""
+
+msgid ""
+"Please specify the name of the image to pull. Format for the name is "
+"\"registry/repo/image\""
+msgstr ""
+
+msgid ""
+"Please specify trains from which UI should retrieve available applications "
+"for the catalog."
 msgstr ""
 
 msgid "Please wait"
@@ -9659,6 +9824,9 @@ msgstr ""
 msgid "Preferences"
 msgstr "Předvolby"
 
+msgid "Preferred Trains"
+msgstr ""
+
 msgid "Preserve"
 msgstr ""
 
@@ -9809,6 +9977,12 @@ msgstr ""
 
 msgid "Public Key"
 msgstr "Veřejný klíč"
+
+msgid "Pull Image"
+msgstr ""
+
+msgid "Pulling..."
+msgstr ""
 
 msgid "Purpose"
 msgstr ""
@@ -9996,7 +10170,13 @@ msgstr ""
 msgid "Refresh"
 msgstr ""
 
+msgid "Refresh All"
+msgstr ""
+
 msgid "Refresh Token"
+msgstr ""
+
+msgid "Refreshing"
 msgstr ""
 
 msgid "Region"
@@ -10192,6 +10372,9 @@ msgstr "Replikace <i>"
 msgid "Replication Schedule"
 msgstr ""
 
+msgid "Replication Tasks"
+msgstr ""
+
 msgid "Report CPU Usage in Percentage"
 msgstr ""
 
@@ -10220,6 +10403,9 @@ msgid "Reports"
 msgstr "Výkazy"
 
 msgid "Reports Configuration"
+msgstr ""
+
+msgid "Repository"
 msgstr ""
 
 msgid "Requested action performed for selected Applications"
@@ -10482,6 +10668,9 @@ msgstr ""
 msgid "Rsync Module"
 msgstr ""
 
+msgid "Rsync Tasks"
+msgstr ""
+
 msgid "Run As User"
 msgstr "Spustit jako uživatel"
 
@@ -10529,6 +10718,9 @@ msgid "S.M.A.R.T."
 msgstr ""
 
 msgid "S.M.A.R.T. Test"
+msgstr ""
+
+msgid "S.M.A.R.T. Tests"
 msgstr ""
 
 msgid "S.M.A.R.T. extra options"
@@ -10782,13 +10974,28 @@ msgstr ""
 msgid "Scrub Task"
 msgstr ""
 
+msgid "Scrub Tasks"
+msgstr ""
+
 msgid "Scrub interval (in days)"
+msgstr ""
+
+msgid "Search Available Applications"
+msgstr ""
+
+msgid "Search Catalogs"
+msgstr ""
+
+msgid "Search Docker Images"
 msgstr ""
 
 msgid "Search For Connected Groups"
 msgstr ""
 
 msgid "Search For Connected Users"
+msgstr ""
+
+msgid "Search Installed Applications"
 msgstr ""
 
 msgid ""
@@ -11301,8 +11508,8 @@ msgid "Select the type that matches the type of client accessing the dataset."
 msgstr ""
 
 msgid ""
-"Select the unformatted disk, controller, zvol, or zvol snapshot. Select "
-"<i>Create New</i> to create a new zvol."
+"Select the unused zvol or zvol snapshot. Select <i>Create New</i> to create "
+"a new zvol."
 msgstr ""
 
 msgid ""
@@ -12715,6 +12922,9 @@ msgstr "Úspěšně zaktualizováno."
 msgid "Suggest Layout"
 msgstr "Doporučit rozvržení"
 
+msgid "Summary"
+msgstr ""
+
 msgid "Sun"
 msgstr ""
 
@@ -12912,6 +13122,9 @@ msgid "Tag"
 msgstr ""
 
 msgid "Tag to use for the specified image"
+msgstr ""
+
+msgid "Tags"
 msgstr ""
 
 msgid "Tail Lines"
@@ -14090,6 +14303,9 @@ msgstr ""
 msgid "Unencrypted pools can be imported directly."
 msgstr ""
 
+msgid "Unhealthy"
+msgstr ""
+
 msgid "Unique LUN ID. The default is generated from the MAC address of the system."
 msgstr ""
 
@@ -14206,6 +14422,9 @@ msgid "Update"
 msgstr "Aktualizovat"
 
 msgid "Update "
+msgstr ""
+
+msgid "Update Available"
 msgstr ""
 
 msgid "Update File"
@@ -14723,11 +14942,6 @@ msgstr ""
 msgid "VMware-Snapshots"
 msgstr ""
 
-msgid ""
-"VNC network interface IP address. The primary interface IP address is the "
-"default. A different interface IP address can be chosen."
-msgstr ""
-
 msgid "VNET"
 msgstr ""
 
@@ -14753,6 +14967,9 @@ msgid "Value"
 msgstr "Hodnota"
 
 msgid "Value must be greater than "
+msgstr ""
+
+msgid "Var"
 msgstr ""
 
 msgid "Variable"
@@ -14783,6 +15000,12 @@ msgid "Verify the pool encryption passphrase."
 msgstr ""
 
 msgid "Version"
+msgstr ""
+
+msgid "Version Info"
+msgstr ""
+
+msgid "Versions"
 msgstr ""
 
 msgid "Video, < 100ms latency"
@@ -14886,6 +15109,9 @@ msgid "Warning"
 msgstr "Varování"
 
 msgid "Warning: iSCSI Target is already in use.</font><br>"
+msgstr ""
+
+msgid "We ran into an error while trying to create the "
 msgstr ""
 
 msgid "Weak Ciphers"

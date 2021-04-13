@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
@@ -18,7 +18,7 @@ import { UserFormComponent } from '../user-form/user-form.component';
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
   providers: [UserService]
 })
-export class UserListComponent {
+export class UserListComponent implements OnDestroy {
 
   public title = "Users";
   protected route_add: string[] = ['account', 'users', 'add'];
@@ -90,6 +90,12 @@ export class UserListComponent {
     this.modalService.refreshForm$.subscribe(() => {
       this.refreshUserForm();
     })
+  }
+
+  ngOnDestroy(){
+    if(this.refreshTableSubscription){
+      this.refreshTableSubscription.unsubscribe(); 
+    }
   }
   
   refreshUserForm() {
