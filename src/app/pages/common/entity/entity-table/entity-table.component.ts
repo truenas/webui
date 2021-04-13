@@ -1117,7 +1117,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (colConfig.infoStates) {
       return _.indexOf(colConfig.infoStates, value) < 0;
     } else {
-      return value !== EntityJobState.running;
+      return value !== EntityJobState.pending;
     }
   }
 
