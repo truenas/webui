@@ -14,7 +14,7 @@ from selenium.common.exceptions import (
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
-from subprocess import run, PIPE
+from subprocess import run, PIPE, TimeoutExpired
 
 header = {'Content-Type': 'application/json', 'Vary': 'accept'}
 
@@ -92,12 +92,15 @@ def ssh_cmd(command, username, password, host):
         f"{username}@{host}",
         command
     ]
-    process = run(cmd, stdout=PIPE, universal_newlines=True)
-    output = process.stdout
-    if process.returncode != 0:
-        return {'result': False, 'output': output}
-    else:
-        return {'result': True, 'output': output}
+    try:
+        process = run(cmd, stdout=PIPE, universal_newlines=True, timeout=5)
+        output = process.stdout
+        if process.returncode != 0:
+            return {'result': False, 'output': output}
+        else:
+            return {'result': True, 'output': output}
+    except TimeoutExpired:
+        return {'result': False, 'output': 'Timeout'}
 
 
 def start_ssh_agent():
