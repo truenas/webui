@@ -1,12 +1,13 @@
-import { EntityJobState } from './../entity-job/entity-job.interface';
 import { Component, OnInit, Input, ViewChild, AfterViewInit, AfterViewChecked } from '@angular/core';
-import { WebSocketService } from 'app/services';
-
-import { TableService } from './table.service';
+import { MatDialog } from '@angular/material/dialog';
 
 import * as _ from 'lodash';
+
+import { WebSocketService } from 'app/services';
 import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
-import { MatDialog } from '@angular/material/dialog';
+import { EntityJobState } from '../entity-job/entity-job.interface';
+import { TableService } from './table.service';
+
 
 export interface InputTableConf {
   title?: string;
