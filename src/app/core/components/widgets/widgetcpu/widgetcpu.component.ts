@@ -69,6 +69,8 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   public configurable = false;
   public chartId = UUID.UUID();
   public coreCount: number;
+  public threadCount: number;
+  public hyperthread: boolean;
   public legendData: any;
   public screenType: string = 'Desktop'; // Desktop || Mobile
 
@@ -144,17 +146,28 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
     // Calculate number of cores...
     let keys = Object.keys(data);
+    const threads = keys.filter((n) => !isNaN(parseFloat(n)));
+    let temperatureValues = [];
+
+    this.hyperthread = threads.length !== Object.keys(data.temperature).length;
 
     if(!this.coreCount){
-      this.coreCount = data.temperature ? keys.length - 2 : keys.length - 1;
+      this.threadCount = threads.length;
+      this.coreCount = this.hyperthread ? threads.length / 2 : threads.length;
     }
     
-    for(let i = 0; i < this.coreCount; i++){
+    for(let i = 0; i < this.threadCount; i++){
       usageColumn.push( parseInt(data[i.toString()].usage.toFixed(1)) );
-      if(data.temperature && data.temperature[i]){
-        temperatureColumn.push(parseInt(((data.temperature[i] / 10) - 273.05).toFixed(1)));
+
+      const mod = threads.length % 2;
+      let temperatureIndex = this.hyperthread ? Math.floor(i/2 - mod) : i;
+
+      if(data.temperature && data.temperature[temperatureIndex]){
+        temperatureValues.push(parseInt(((data.temperature[temperatureIndex] / 10) - 273.05).toFixed(1)));
       }
     }
+    
+    temperatureColumn = temperatureColumn.concat(temperatureValues);
     
     this.setMobileStats(Object.assign([],usageColumn), Object.assign([],temperatureColumn) ); 
 
@@ -344,7 +357,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   protected makeDatasets(data:any): DataSet[]{
     let datasets = [];
     let labels = [];
-    for(let i = 0; i < this.coreCount; i++){
+    for(let i = 0; i < this.threadCount; i++){
       labels.push((i).toString());
     }
     this.labels = labels;
