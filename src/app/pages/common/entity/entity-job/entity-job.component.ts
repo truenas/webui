@@ -127,9 +127,9 @@ export class EntityJobComponent implements OnInit {
     if (job.progress) {
       this.progress.emit(job.progress);
     }
-    if (job.state === EntityJobState.success) {
+    if (job.state === EntityJobState.Success) {
       this.success.emit(this.job);
-    } else if (job.state === EntityJobState.failed) {
+    } else if (job.state === EntityJobState.Failed) {
       this.failure.emit(this.job);
     }
   }
@@ -145,15 +145,15 @@ export class EntityJobComponent implements OnInit {
           if (res.progress && !this.showRealtimeLogs) {
             this.progress.emit(res.progress);
           }
-          if (this.job.state === EntityJobState.aborted) {
+          if (this.job.state === EntityJobState.Aborted) {
             this.aborted.emit(this.job);
           }
         },
         () => {},
         () => {
-          if (this.job.state === EntityJobState.success) {
+          if (this.job.state === EntityJobState.Success) {
             this.success.emit(this.job);
-          } else if (this.job.state === EntityJobState.failed) {
+          } else if (this.job.state === EntityJobState.Failed) {
             this.failure.emit(this.job);
           }
           if (this.realtimeLogsSubscribed) {
@@ -204,19 +204,19 @@ export class EntityJobComponent implements OnInit {
       this.progress.emit(job.progress);
     }
     if (job.fields) {
-      if (job.fields.state === EntityJobState.running) {
+      if (job.fields.state === EntityJobState.Running) {
         this.progress.emit(this.job.fields.progress);
       }
-      else if(job.fields.state === EntityJobState.success){
+      else if(job.fields.state === EntityJobState.Success){
         this.success.emit(this.job.fields);
       }
-      else if ((job.fields.state === EntityJobState.failed) || job.fields.error) {
+      else if ((job.fields.state === EntityJobState.Failed) || job.fields.error) {
         this.failure.emit(this.job.fields);
       }
     } else {
-      if (job.state === EntityJobState.success) {
+      if (job.state === EntityJobState.Success) {
         this.success.emit(this.job);
-      } else if (job.state === EntityJobState.failed) {
+      } else if (job.state === EntityJobState.Failed) {
         this.failure.emit(this.job);
       }
     }

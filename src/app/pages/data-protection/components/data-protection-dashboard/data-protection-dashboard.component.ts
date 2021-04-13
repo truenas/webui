@@ -397,7 +397,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
       }).value._date.fromNow();
 
       if (task.job == null) {
-        task.state = EntityJobState.pending;
+        task.state = EntityJobState.Pending;
       } else {
         task.state = task.job.state;
         this.parent.job.getJobStatus(task.job.id).subscribe((job) => {
@@ -467,7 +467,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
       task.cron = `${task.minute} ${task.hour} ${task.dom} ${task.month} ${task.dow}`;
 
       if (task.job == null) {
-        task.state = EntityJobState.pending;
+        task.state = EntityJobState.Pending;
       } else {
         task.state = task.job.state;
         this.parent.job.getJobStatus(task.job.id).subscribe((job) => {
@@ -491,7 +491,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         onClick: (row) => {
           this.dialog.confirm(T('Run Now'), T('Replicate <i>') + row.name + T('</i> now?'), true).subscribe((res) => {
             if (res) {
-              row.state = EntityJobState.running;
+              row.state = EntityJobState.Running;
               this.ws.call('replication.run', [row.id]).subscribe(
                 (jobId) => {
                   this.dialog.Info(
@@ -576,7 +576,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         onClick: (row) => {
           this.dialog.confirm(T('Run Now'), T('Run this cloud sync now?'), true).subscribe((res) => {
             if (res) {
-              row.state = EntityJobState.running;
+              row.state = EntityJobState.Running;
               this.ws.call('cloudsync.sync', [row.id]).subscribe(
                 (jobId) => {
                   this.dialog.Info(
@@ -755,7 +755,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         onClick: (row) => {
           this.dialog.confirm(T('Run Now'), T('Run this rsync now?'), true).subscribe((run) => {
             if (run) {
-              row.state = EntityJobState.running;
+              row.state = EntityJobState.Running;
               this.ws.call('rsynctask.run', [row.id]).subscribe(
                 (jobId) => {
                   this.dialog.Info(
@@ -782,9 +782,9 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
   }
 
   isActionVisible(name: string, row: any) {
-    if (name === 'run' && row.job && row.state === EntityJobState.running) {
+    if (name === 'run' && row.job && row.state === EntityJobState.Running) {
       return false;
-    } else if (name === 'stop' && (row.job ? row.job && row.state !== EntityJobState.running : true)) {
+    } else if (name === 'stop' && (row.job ? row.job && row.state !== EntityJobState.Running : true)) {
       return false;
     }
     return true;
@@ -804,7 +804,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
 
   stateButton(row) {
     if (row.job) {
-      if (row.state === EntityJobState.running) {
+      if (row.state === EntityJobState.Running) {
         this.runningStateButton(row.job.id);
       } else {
         this.job.showLogs(row.job);

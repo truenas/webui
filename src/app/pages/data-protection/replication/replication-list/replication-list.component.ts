@@ -84,7 +84,7 @@ export class ReplicationListComponent {
         onClick: (row) => {
           this.dialog.confirm(T('Run Now'), T('Replicate <i>') + row.name + T('</i> now?'), true).subscribe((res) => {
             if (res) {
-              row.state = { state: EntityJobState.running };
+              row.state = { state: EntityJobState.Running };
               this.ws.call('replication.run', [row.id]).subscribe(
                 (res) => {
                   this.dialog.Info(
@@ -183,9 +183,9 @@ export class ReplicationListComponent {
 
   stateButton(row) {
     if (row.job) {
-      if (row.state.state === EntityJobState.running) {
+      if (row.state.state === EntityJobState.Running) {
         this.entityList.runningStateButton(row.job.id);
-      } else if (row.state.state === EntityJobState.hold) {
+      } else if (row.state.state === EntityJobState.Hold) {
         this.dialog.Info(T('Task is on hold'), row.state.reason, '500px', 'info', true);
       } else {
         this.job.showLogs(row.job);

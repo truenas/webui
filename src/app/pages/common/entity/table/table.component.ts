@@ -215,14 +215,14 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   getButtonClass(state: EntityJobState): string {
     switch(state) {
-      case EntityJobState.pending: return 'fn-theme-orange';
-      case EntityJobState.running: return 'fn-theme-orange';
-      case EntityJobState.aborted: return 'fn-theme-orange';
-      case EntityJobState.finished: return 'fn-theme-green';
-      case EntityJobState.success: return 'fn-theme-green';
-      case EntityJobState.error: return 'fn-theme-red';
-      case EntityJobState.failed: return 'fn-theme-red';
-      case EntityJobState.hold: return 'fn-theme-yellow';
+      case EntityJobState.Pending: return 'fn-theme-orange';
+      case EntityJobState.Running: return 'fn-theme-orange';
+      case EntityJobState.Aborted: return 'fn-theme-orange';
+      case EntityJobState.Finished: return 'fn-theme-green';
+      case EntityJobState.Success: return 'fn-theme-green';
+      case EntityJobState.Error: return 'fn-theme-red';
+      case EntityJobState.Failed: return 'fn-theme-red';
+      case EntityJobState.Hold: return 'fn-theme-yellow';
       default: return 'fn-theme-primary';
     }
   }

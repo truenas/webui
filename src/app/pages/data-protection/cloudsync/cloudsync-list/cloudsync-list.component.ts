@@ -106,7 +106,7 @@ export class CloudsyncListComponent implements InputTableConf {
       }).value._date.fromNow();
 
       if (task.job == null) {
-        task.state = { state: EntityJobState.pending };
+        task.state = { state: EntityJobState.Pending };
       } else {
         task.state = { state: task.job.state };
         this.job.getJobStatus(task.job.id).subscribe((job) => {
@@ -130,7 +130,7 @@ export class CloudsyncListComponent implements InputTableConf {
         onClick: (row) => {
           this.dialog.confirm(T('Run Now'), T('Run this cloud sync now?'), true).subscribe((res) => {
             if (res) {
-              row.state = { state: EntityJobState.running };
+              row.state = { state: EntityJobState.Running };
               this.ws.call('cloudsync.sync', [row.id]).subscribe(
                 (jobId) => {
                   this.dialog.Info(
@@ -313,9 +313,9 @@ export class CloudsyncListComponent implements InputTableConf {
   }
 
   isActionVisible(actionId: string, row: any) {
-    if (actionId === 'run_now' && row.job && row.job.state === EntityJobState.running) {
+    if (actionId === 'run_now' && row.job && row.job.state === EntityJobState.Running) {
       return false;
-    } else if (actionId === 'stop' && (row.job ? row.job && row.job.state !== EntityJobState.running : true)) {
+    } else if (actionId === 'stop' && (row.job ? row.job && row.job.state !== EntityJobState.Running : true)) {
       return false;
     }
     return true;
@@ -327,7 +327,7 @@ export class CloudsyncListComponent implements InputTableConf {
 
   stateButton(row) {
     if (row.job) {
-      if (row.state.state === EntityJobState.running) {
+      if (row.state.state === EntityJobState.Running) {
         this.entityList.runningStateButton(row.job.id);
       } else {
         this.job.showLogs(row.job);

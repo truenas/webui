@@ -62,7 +62,7 @@ export class SnapshotListComponent {
   }
 
   stateButton(row) {
-    if (row.state.state === EntityJobState.error) {
+    if (row.state.state === EntityJobState.Error) {
       this.dialogService.errorReport(row.state.state, row.state.error);
     }
   }

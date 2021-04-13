@@ -24,7 +24,7 @@ export class JobService {
       this.ws.subscribe("core.get_jobs").subscribe((res) => {
         if (res.id == job_id) {
           observer.next(res.fields);
-          if (res.fields.state === EntityJobState.success || res.fields.state === EntityJobState.failed) {
+          if (res.fields.state === EntityJobState.Success || res.fields.state === EntityJobState.Failed) {
             observer.complete();
           }
         }
