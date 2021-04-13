@@ -1,10 +1,10 @@
-import { OnInit, Component, EventEmitter, Input, Output, HostListener, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { DecimalPipe } from '@angular/common';
+import { OnInit, Component, EventEmitter, Output, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { WebSocketService, RestService } from '../../../../services/';
 import { TranslateService } from '@ngx-translate/core';
 import { HttpClient } from '@angular/common/http';
 import * as _ from 'lodash';
+import { EntityJobState } from './entity-job.interface';
 
 @Component({
   selector: 'entity-job',
@@ -27,6 +27,7 @@ export class EntityJobComponent implements OnInit {
   public hideProgressValue = false;
   public altMessage: string;
   public showRealtimeLogs = false;
+  public EntityJobState = EntityJobState;
 
   private realtimeLogsSubscribed = false;
   public realtimeLogs = '';
@@ -71,7 +72,7 @@ export class EntityJobComponent implements OnInit {
     this.failure.subscribe(job => {
       job.error = _.replace(job.error, '<', '< ');
       job.error = _.replace(job.error, '>', ' >');
-  
+
       this.description = '<b>Error:</b> ' + job.error;
     })
   }
@@ -126,9 +127,9 @@ export class EntityJobComponent implements OnInit {
     if (job.progress) {
       this.progress.emit(job.progress);
     }
-    if (job.state === 'SUCCESS') {
+    if (job.state === EntityJobState.success) {
       this.success.emit(this.job);
-    } else if (job.state === 'FAILED') {
+    } else if (job.state === EntityJobState.failed) {
       this.failure.emit(this.job);
     }
   }
@@ -144,15 +145,15 @@ export class EntityJobComponent implements OnInit {
           if (res.progress && !this.showRealtimeLogs) {
             this.progress.emit(res.progress);
           }
-          if (this.job.state === 'ABORTED') {
+          if (this.job.state === EntityJobState.aborted) {
             this.aborted.emit(this.job);
           }
         },
         () => {},
         () => {
-          if (this.job.state === 'SUCCESS') {
+          if (this.job.state === EntityJobState.success) {
             this.success.emit(this.job);
-          } else if (this.job.state === 'FAILED') {
+          } else if (this.job.state === EntityJobState.failed) {
             this.failure.emit(this.job);
           }
           if (this.realtimeLogsSubscribed) {
@@ -161,21 +162,6 @@ export class EntityJobComponent implements OnInit {
         });
   }
 
-  /*public post(path, options) {
-    this.rest.post(path, options).subscribe(
-        (res) => {
-          this.job = res;
-          if (this.job.code === 202) {
-            this.setDescription(this.job.data);
-            this.success.emit(this.job);
-          } else {
-            this.progress.emit(this.job);
-          }
-        },
-        () => {},
-        () => {
-        });
-  }*/
   public wspost(path, options) {
     this.http.post(path, options).subscribe(
         (res) => {
@@ -218,19 +204,19 @@ export class EntityJobComponent implements OnInit {
       this.progress.emit(job.progress);
     }
     if (job.fields) {
-      if (job.fields.state === 'RUNNING') {
+      if (job.fields.state === EntityJobState.running) {
         this.progress.emit(this.job.fields.progress);
       }
-      else if(job.fields.state === 'SUCCESS'){
+      else if(job.fields.state === EntityJobState.success){
         this.success.emit(this.job.fields);
       }
-      else if ((job.fields.state === 'FAILED') || job.fields.error) {
+      else if ((job.fields.state === EntityJobState.failed) || job.fields.error) {
         this.failure.emit(this.job.fields);
       }
     } else {
-      if (job.state === 'SUCCESS') {
+      if (job.state === EntityJobState.success) {
         this.success.emit(this.job);
-      } else if (job.state === 'FAILED') {
+      } else if (job.state === EntityJobState.failed) {
         this.failure.emit(this.job);
       }
     }

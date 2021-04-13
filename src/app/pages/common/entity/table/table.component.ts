@@ -1,3 +1,4 @@
+import { EntityJobState } from './../entity-job/entity-job.interface';
 import { Component, OnInit, Input, ViewChild, AfterViewInit, AfterViewChecked } from '@angular/core';
 import { WebSocketService } from 'app/services';
 
@@ -5,8 +6,6 @@ import { TableService } from './table.service';
 
 import * as _ from 'lodash';
 import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
-import { T } from 'app/translate-marker';
-import { EntityJobComponent } from '../entity-job';
 import { MatDialog } from '@angular/material/dialog';
 
 export interface InputTableConf {
@@ -213,22 +212,17 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     this.showCollapse = false;
   }
 
-  getButtonClass(state) {
-    switch (state) {
-      case 'PENDING':
-      case 'RUNNING':
-      case 'ABORTED':
-        return 'fn-theme-orange';
-      case 'FINISHED':
-      case 'SUCCESS':
-        return 'fn-theme-green';
-      case 'ERROR':
-      case 'FAILED':
-        return 'fn-theme-red';
-      case 'HOLD':
-        return 'fn-theme-yellow';
-      default:
-        return 'fn-theme-primary';
+  getButtonClass(state: EntityJobState): string {
+    switch(state) {
+      case EntityJobState.pending: return 'fn-theme-orange';
+      case EntityJobState.running: return 'fn-theme-orange';
+      case EntityJobState.aborted: return 'fn-theme-orange';
+      case EntityJobState.finished: return 'fn-theme-green';
+      case EntityJobState.success: return 'fn-theme-green';
+      case EntityJobState.error: return 'fn-theme-red';
+      case EntityJobState.failed: return 'fn-theme-red';
+      case EntityJobState.hold: return 'fn-theme-yellow';
+      default: return 'fn-theme-primary';
     }
   }
 

@@ -1,19 +1,21 @@
+import { ModalService } from 'app/services/modal.service';
+import { ReplicationFormComponent } from './../replication-form/replication-form.component';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Validators } from '@angular/forms';
 
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
-import { DialogService, JobService, WebSocketService, StorageService } from '../../../../services';
+import { DialogService, JobService, WebSocketService, StorageService, TaskService, KeychainCredentialService, ReplicationService } from '../../../../services';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import globalHelptext from '../../../../helptext/global-helptext';
 import helptext from '../../../../helptext/data-protection/replication/replication';
+import { EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.interface';
 
 @Component({
   selector: 'app-replication-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
-  providers: [JobService, StorageService],
+  providers: [JobService, StorageService, TaskService, KeychainCredentialService, ReplicationService],
 })
 export class ReplicationListComponent {
   public title = 'Replication Tasks';
@@ -49,12 +51,15 @@ export class ReplicationListComponent {
   };
 
   constructor(
-    private router: Router,
     private ws: WebSocketService,
     private dialog: DialogService,
     protected job: JobService,
     protected storage: StorageService,
     protected http: HttpClient,
+    protected modalService: ModalService,
+    protected taskService: TaskService,
+    protected keychainCredentialService: KeychainCredentialService,
+    protected replicationService: ReplicationService,
   ) {}
 
   afterInit(entityList: any) {
@@ -79,7 +84,7 @@ export class ReplicationListComponent {
         onClick: (row) => {
           this.dialog.confirm(T('Run Now'), T('Replicate <i>') + row.name + T('</i> now?'), true).subscribe((res) => {
             if (res) {
-              row.state = { state: 'RUNNING' };
+              row.state = { state: EntityJobState.running };
               this.ws.call('replication.run', [row.id]).subscribe(
                 (res) => {
                   this.dialog.Info(
@@ -157,8 +162,7 @@ export class ReplicationListComponent {
         name: 'edit',
         label: T('Edit'),
         onClick: (row) => {
-          this.route_edit.push(row.id);
-          this.router.navigate(this.route_edit);
+          this.doEdit(row.id);
         },
       },
       {
@@ -178,12 +182,12 @@ export class ReplicationListComponent {
   }
 
   stateButton(row) {
-    if (row.state.state === 'RUNNING') {
+    if (row.state.state === EntityJobState.running) {
       this.entityList.runningStateButton(row.job.id);
-    } else if (row.state.state === 'HOLD') {
+    } else if (row.state.state === EntityJobState.hold) {
       this.dialog.Info(T('Task is on hold'), row.state.reason, '500px', 'info', true);
     } else {
-      const error = row.state.state === 'ERROR' ? row.state.error : null;
+      const error = row.state.state === EntityJobState.error ? row.state.error : null;
       const log = row.job && row.job.logs_excerpt ? row.job.logs_excerpt : null;
       if (error === null && log === null) {
         this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
@@ -252,5 +256,13 @@ export class ReplicationListComponent {
         new EntityUtils().handleWSError(this, err, this.dialog);
       },
     );
+  }
+
+  doAdd(id?: number) {
+    this.modalService.open('slide-in-form', new ReplicationFormComponent(this.ws, this.taskService, this.storage, this.keychainCredentialService, this.replicationService, this.modalService), id);
+  }
+
+  doEdit(id: number) {
+    this.doAdd(id);
   }
 }

@@ -37,6 +37,7 @@ import { ScrubFormComponent } from '../../scrub/scrub-form/scrub-form.component'
 import { SmartFormComponent } from '../../smart/smart-form/smart-form.component';
 import { SnapshotFormComponent } from '../../snapshot/snapshot-form/snapshot-form.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
+import { EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.interface';
 
 export interface TaskCard {
   name: string;
@@ -166,12 +167,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             { name: T('Recursive'), prop: 'recursive' },
             { name: T('Keep for'), prop: 'keepfor' },
             { name: T('Enabled'), prop: 'enabled', selectable: true },
-            {
-              name: T('State'),
-              prop: 'state',
-              state: 'state',
-              button: true,
-            },
+            { name: T('State'), prop: 'state', state: 'state', button: true },
           ],
           dataSourceHelper: this.snapshotDataSourceHelper,
           isActionVisible: this.isActionVisible,
@@ -205,12 +201,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             { name: T('Name'), prop: 'name' },
             { name: T('Enabled'), prop: 'enabled', checkbox: true },
             { name: T('Last Snapshot'), prop: 'task_last_snapshot' },
-            {
-              name: T('State'),
-              prop: 'state',
-              button: true,
-              state: 'state',
-            },
+            { name: T('State'), prop: 'state', button: true, state: 'state' },
           ],
           parent: this,
           add: function () {
@@ -239,20 +230,10 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           getActions: this.getCloudsyncActions.bind(this),
           isActionVisible: this.isActionVisible,
           columns: [
-            {
-              name: T('Description'),
-              prop: 'description',
-              always_display: true,
-            },
+            { name: T('Description'), prop: 'description' },
             { name: T('Next Run'), prop: 'next_run', hidden: true },
             { name: T('Enabled'), prop: 'enabled' },
-            {
-              name: T('State'),
-              prop: 'state',
-              state: 'state',
-              infoStates: ['NOT RUN SINCE LAST BOOT'],
-              button: true,
-            },
+            { name: T('State'), prop: 'state', state: 'state', button: true },
           ],
           parent: this,
           add: function () {
@@ -416,9 +397,12 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
       }).value._date.fromNow();
 
       if (task.job == null) {
-        task.state = T('NOT RUN SINCE LAST BOOT');
+        task.state = EntityJobState.pending;
       } else {
         task.state = task.job.state;
+        this.parent.job.getJobStatus(task.job.id).subscribe((t) => {
+          task.state = t.job ? t.job.state : null;
+        });
       }
 
       return task;
@@ -474,11 +458,12 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
       task.cron = `${task.minute} ${task.hour} ${task.dom} ${task.month} ${task.dow}`;
 
       if (task.job == null) {
-        task.state = 'PENDING';
+        task.state = EntityJobState.pending;
       } else {
         task.state = task.job.state;
-        this.parent.job.getJobStatus(task.job.id).subscribe((t) => {
-          task.state = t.job ? t.job.state : null;
+        this.parent.job.getJobStatus(task.job.id).subscribe((job) => {
+          task.state = job.state;
+          task.job = job;
         });
       }
 
@@ -497,7 +482,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         onClick: (row) => {
           this.dialog.confirm(T('Run Now'), T('Replicate <i>') + row.name + T('</i> now?'), true).subscribe((res) => {
             if (res) {
-              row.state = 'RUNNING';
+              row.state = EntityJobState.running;
               this.ws.call('replication.run', [row.id]).subscribe(
                 (jobId) => {
                   this.dialog.Info(
@@ -507,9 +492,9 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
                     'info',
                     true,
                   );
-                  this.job.getJobStatus(jobId).subscribe((task) => {
-                    row.state = task.state;
-                    row.job = task;
+                  this.job.getJobStatus(jobId).subscribe((job) => {
+                    row.state = job.state;
+                    row.job = job;
                   });
                 },
                 (err) => {
@@ -582,9 +567,9 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         onClick: (row) => {
           this.dialog.confirm(T('Run Now'), T('Run this cloud sync now?'), true).subscribe((res) => {
             if (res) {
-              row.state = 'RUNNING';
+              row.state = EntityJobState.running;
               this.ws.call('cloudsync.sync', [row.id]).subscribe(
-                (res) => {
+                (jobId) => {
                   this.dialog.Info(
                     T('Task Started'),
                     T('Cloud sync <i>') + row.description + T('</i> has started.'),
@@ -592,9 +577,9 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
                     'info',
                     true,
                   );
-                  this.job.getJobStatus(res).subscribe((task) => {
-                    row.state = task.state;
-                    row.job = task;
+                  this.job.getJobStatus(jobId).subscribe((job) => {
+                    row.state = job.state;
+                    row.job = job;
                   });
                 },
                 (err) => {
@@ -644,7 +629,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             .subscribe((dialog_res) => {
               if (dialog_res) {
                 this.ws.call('cloudsync.sync', [row.id, { dry_run: true }]).subscribe(
-                  (res) => {
+                  (jobId) => {
                     this.dialog.Info(
                       T('Task Started'),
                       T('Cloud sync <i>') + row.description + T('</i> has started.'),
@@ -652,9 +637,9 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
                       'info',
                       true,
                     );
-                    this.job.getJobStatus(res).subscribe((task) => {
-                      row.state = task.state;
-                      row.job = task;
+                    this.job.getJobStatus(jobId).subscribe((job) => {
+                      row.state = job.state;
+                      row.job = job;
                     });
                   },
                   (err) => {
@@ -761,9 +746,9 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         onClick: (row) => {
           this.dialog.confirm(T('Run Now'), T('Run this rsync now?'), true).subscribe((run) => {
             if (run) {
-              row.state = 'RUNNING';
+              row.state = EntityJobState.running;
               this.ws.call('rsynctask.run', [row.id]).subscribe(
-                (res) => {
+                (jobId) => {
                   this.dialog.Info(
                     T('Task Started'),
                     'Rsync task <i>' + row.remotehost + ' - ' + row.remotemodule + '</i> started.',
@@ -771,9 +756,9 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
                     'info',
                     true,
                   );
-                  this.job.getJobStatus(res).subscribe((task) => {
-                    row.state = task.state;
-                    row.job = task;
+                  this.job.getJobStatus(jobId).subscribe((job) => {
+                    row.state = job.state;
+                    row.job = job;
                   });
                 },
                 (err) => {
@@ -788,9 +773,9 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
   }
 
   isActionVisible(name: string, row: any) {
-    if (name === 'run' && row.job && row.state === 'RUNNING') {
+    if (name === 'run' && row.job && row.state === EntityJobState.running) {
       return false;
-    } else if (name === 'stop' && (row.job ? row.job && row.state !== 'RUNNING' : true)) {
+    } else if (name === 'stop' && (row.job ? row.job && row.state !== EntityJobState.running : true)) {
       return false;
     }
     return true;
@@ -809,55 +794,57 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
   }
 
   stateButton(row) {
-    if (row.state === 'RUNNING') {
+    if (row.state === EntityJobState.running) {
       this.runningStateButton(row.job.id);
-    } else if (row.state === 'HOLD') {
+    } else if (row.state === EntityJobState.hold) {
       this.dialog.Info(T('Task is on hold'), row.state.reason, '500px', 'info', true);
     } else {
-      const error = row.job && row.state === 'ERROR' ? row.job.error : null;
+      const error = row.job && row.state === EntityJobState.error ? row.job.error : null;
       const log = row.job && row.job.logs_excerpt ? row.job.logs_excerpt : null;
       if (error === null && log === null) {
         this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message, '500px', 'info', true);
       }
 
-      const dialog_title = T('Task State');
-      const dialog_content =
-        (error ? `<h5>${T('Error')}</h5> <pre>${error}</pre>` : '') +
-        (log ? `<h5>${T('Logs')}</h5> <pre>${log}</pre>` : '');
+      this.job.showLogs(row.job);
 
-      if (log) {
-        this.dialog
-          .confirm(
-            dialog_title,
-            dialog_content,
-            true,
-            T('Download Logs'),
-            false,
-            '',
-            '',
-            '',
-            '',
-            false,
-            T('Cancel'),
-            true,
-          )
-          .subscribe((dialog_res) => {
-            if (dialog_res) {
-              const filename = `${row.job.id}.log`;
-              this.ws.call('core.download', ['filesystem.get', [row.job.logs_path], filename]).subscribe(
-                (res) => {
-                  const url = res[1];
-                  const mimetype = 'text/plain';
-                  this.storage.streamDownloadFile(this.http, url, filename, mimetype).subscribe(
-                    (blob) => this.storage.downloadBlob(blob, filename),
-                    (err) => new EntityUtils().handleWSError(this, err),
-                  );
-                },
-                (err) => new EntityUtils().handleWSError(this, err),
-              );
-            }
-          });
-      }
+      // const dialog_title = T('Task State');
+      // const dialog_content =
+      //   (error ? `<h5>${T('Error')}</h5> <pre>${error}</pre>` : '') +
+      //   (log ? `<h5>${T('Logs')}</h5> <pre>${log}</pre>` : '');
+
+      // if (log) {
+      //   this.dialog
+      //     .confirm(
+      //       dialog_title,
+      //       dialog_content,
+      //       true,
+      //       T('Download Logs'),
+      //       false,
+      //       '',
+      //       '',
+      //       '',
+      //       '',
+      //       false,
+      //       T('Cancel'),
+      //       true,
+      //     )
+      //     .subscribe((dialog_res) => {
+      //       if (dialog_res) {
+      //         const filename = `${row.job.id}.log`;
+      //         this.ws.call('core.download', ['filesystem.get', [row.job.logs_path], filename]).subscribe(
+      //           (res) => {
+      //             const url = res[1];
+      //             const mimetype = 'text/plain';
+      //             this.storage.streamDownloadFile(this.http, url, filename, mimetype).subscribe(
+      //               (blob) => this.storage.downloadBlob(blob, filename),
+      //               (err) => new EntityUtils().handleWSError(this, err),
+      //             );
+      //           },
+      //           (err) => new EntityUtils().handleWSError(this, err),
+      //         );
+      //       }
+      //     });
+      // }
     }
   }
 

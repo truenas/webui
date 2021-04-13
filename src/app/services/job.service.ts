@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 import { EntityUtils } from '../pages/common/entity/utils'
@@ -8,6 +8,7 @@ import { DialogService } from './dialog.service';
 import { StorageService } from './storage.service';
 import { T } from '../translate-marker';
 import globalHelptext from '../helptext/global-helptext';
+import { EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.interface';
 
 @Injectable()
 export class JobService {
@@ -23,7 +24,7 @@ export class JobService {
       this.ws.subscribe("core.get_jobs").subscribe((res) => {
         if (res.id == job_id) {
           observer.next(res.fields);
-          if (res.fields.state == 'SUCCESS' || res.fields.state == 'FAILED') {
+          if (res.fields.state === EntityJobState.success || res.fields.state === EntityJobState.failed) {
             observer.complete();
           }
         }
