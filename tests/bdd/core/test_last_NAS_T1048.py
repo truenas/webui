@@ -82,7 +82,7 @@ def click_on_the_three_dots_of_the_initial_be_click_the_activate_button(driver):
 @then('verify that the initial BE show "Reboot" in the Active column')
 def verify_that_the_initial_be_show_reboot_in_the_active_column(driver):
     """verify that the initial BE show "Reboot" in the Active column."""
-    # div ix-auto="value__Initial-Install_Active" /div/span
+    assert wait_on_element(driver, 7, '//div[@ix-auto="value__Initial-Install_Active"]')
     element = driver.find_element_by_xpath('//div[@ix-auto="value__Initial-Install_Active"]')
     assert element.text == 'Reboot', element.text
 
@@ -90,7 +90,7 @@ def verify_that_the_initial_be_show_reboot_in_the_active_column(driver):
 @then('verify that the default BE has the "Now" in the Active column')
 def verify_that_the_default_be_has_the_now_in_the_active_column(driver):
     """verify that the default BE has the "Now" in the Active column."""
-    # div ix-auto="value__default_Active" /div/span
+    assert wait_on_element(driver, 7, '//div[@ix-auto="value__default_Active"]')
     element = driver.find_element_by_xpath('//div[@ix-auto="value__default_Active"]')
     assert element.text == 'Now', element.text
 
@@ -135,7 +135,6 @@ def on_the_dashboard_click_on_system_on_the_side_menu_click_on_boot(driver):
 @then('verify that the initial BE has "Now/Reboot" in the Active column')
 def verify_that_the_initial_be_has_reboot_now_in_the_active_column(driver):
     """verify that the initial BE has "Now/Reboot" in the Active column."""
-    # div ix-auto="value__Initial-Install_Active" /div/span
     assert wait_on_element(driver, 7, '//div[contains(.,"Boot Environments")]')
     assert wait_on_element(driver, 7, '//div[@ix-auto="value__Initial-Install_Active"]')
     element = driver.find_element_by_xpath('//div[@ix-auto="value__Initial-Install_Active"]')
@@ -161,7 +160,7 @@ def click_on_the_three_dots_of_the_default_be_click_the_activate_button(driver):
 @then('verify that the default BE show "Reboot" in the Active column')
 def verify_that_the_default_be_show_reboot_in_the_active_column(driver):
     """verify that the default BE show "Reboot" in the Active column."""
-    # div ix-auto="value__default_Active" /div/span
+    assert wait_on_element(driver, 7, '//div[@ix-auto="value__default_Active"]')
     element = driver.find_element_by_xpath('//div[@ix-auto="value__default_Active"]')
     assert element.text == 'Reboot', element.text
 
@@ -169,7 +168,7 @@ def verify_that_the_default_be_show_reboot_in_the_active_column(driver):
 @then('verify that the initial BE has the "Now" in the Active column')
 def verify_that_the_initial_be_has_the_now_in_the_active_column(driver):
     """verify that the initial BE has the "Now" in the Active column."""
-    # div ix-auto="value__Initial-Install_Active" /div/span
+    assert wait_on_element(driver, 7, '//div[@ix-auto="value__Initial-Install_Active"]')
     element = driver.find_element_by_xpath('//div[@ix-auto="value__Initial-Install_Active"]')
     assert element.text == 'Now', element.text
 
@@ -177,6 +176,6 @@ def verify_that_the_initial_be_has_the_now_in_the_active_column(driver):
 @then('verify that the default BE has "Now/Reboot" in the Active column')
 def verify_that_the_default_be_has_reboot_now_in_the_active_column(driver):
     """verify that the default BE has "Now/Reboot" in the Active column."""
-    # div ix-auto="value__default_Active" /div/span
+    assert wait_on_element(driver, 7, '//div[@ix-auto="value__default_Active"]')
     element = driver.find_element_by_xpath('//div[@ix-auto="value__default_Active"]')
     assert element.text == 'Now/Reboot', element.text
