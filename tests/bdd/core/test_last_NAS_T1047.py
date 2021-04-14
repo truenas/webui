@@ -189,7 +189,7 @@ def on_the_general_page_click_the_upload_config_file(driver):
 def set_the_file_click_upload(driver):
     """set the file click Upload."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Upload Config")]')
-    assert wait_on_element(driver, 7, '//input[@type="file"]')
+    assert wait_on_element(driver, 7, '//input[@type="file"]', 'clickable')
     driver.find_element_by_xpath('//input[@type="file"]').send_keys(backup_file)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__UPLOAD"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__UPLOAD"]').click()

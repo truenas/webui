@@ -66,7 +66,7 @@ def click_on_system_on_the_side_menu_click_on_boot(driver):
 def click_on_the_three_dots_of_the_initial_be_click_the_activate_button(driver):
     """click on the three dots of the initial BE, click the Activate button."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Boot Environments")]')
-    assert wait_on_element(driver, 7, '//mat-icon[@ix-auto="options__Initial-Install"]', 'clickable')
+    assert wait_on_element(driver, 10, '//mat-icon[@ix-auto="options__Initial-Install"]', 'clickable')
     driver.find_element_by_xpath('//mat-icon[@ix-auto="options__Initial-Install"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="action__activate_Activate"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="action__activate_Activate"]').click()
