@@ -112,3 +112,17 @@ entity-table .mat-toolbar.mat-card-toolbar{
 entity-table .mat-toolbar.mat-card-toolbar{
   box-shadow:var(--fn-dropshadow);
 }
+
+
+.warning-text{
+  color:var(--yellow);
+}
+
+/* Generic styling for nested lists*/
+ul.nested-list{
+  list-style: circle;
+}
+
+ul.nested-list li{
+  margin-left: 24px;
+}

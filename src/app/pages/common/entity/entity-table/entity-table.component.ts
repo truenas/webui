@@ -916,14 +916,21 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       deleteMsg = "Delete selected " + this.conf.config.deleteMsg.title + "(s)?";
       let msg_content = "<ul>";
       for (let j = 0; j < items.length; j++) {
-        let sub_msg_content = '<li>' + items[j][this.conf.config.deleteMsg.key_props[0]];
+        let sub_msg_content;
         if (this.conf.config.deleteMsg.key_props.length > 1) {
+          sub_msg_content = '<li><strong>' + items[j][this.conf.config.deleteMsg.key_props[0]] + '</strong>';
+          sub_msg_content += '<ul class="nested-list">';
+
           for (let i = 1; i < this.conf.config.deleteMsg.key_props.length; i++) {
             if (items[j][this.conf.config.deleteMsg.key_props[i]] != '') {
-              msg_content = msg_content + ' - ' + items[j][this.conf.config.deleteMsg.key_props[i]];
+              sub_msg_content += '<li>' + items[j][this.conf.config.deleteMsg.key_props[i]] + '</li>';
             }
           }
+          sub_msg_content += '</ul>';
+        } else {
+          sub_msg_content = '<li>' + items[j][this.conf.config.deleteMsg.key_props[0]];
         }
+
         sub_msg_content += "</li>";
         msg_content += sub_msg_content;
       }

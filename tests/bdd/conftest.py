@@ -95,7 +95,7 @@ def save_screenshot(name):
 
 def save_traceback(name):
     traceback_file = open(name, 'w')
-    traceback_file.writelines(web_driver.find_element_by_xpath('//textarea').text)
+    traceback_file.writelines(web_driver.find_element_by_xpath('//textarea[@id="err-bt-text"]').text)
     traceback_file.close()
 
 

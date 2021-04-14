@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnDestroy } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { Validators, ValidationErrors, FormControl } from '@angular/forms';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
@@ -65,7 +65,11 @@ export class AdvancedComponent implements OnDestroy {
                   if (this.dialogRef) {
                     this.dialogRef.close();
                   }
-                  this.dialog.errorReport(helptext_system_advanced.debug_download_failed_title, helptext_system_advanced.debug_download_failed_message, err);
+                  if(err instanceof HttpErrorResponse) {
+                    this.dialog.errorReport(helptext_system_advanced.debug_download_failed_title, helptext_system_advanced.debug_download_failed_message, err.message);
+                  } else {
+                    this.dialog.errorReport(helptext_system_advanced.debug_download_failed_title, helptext_system_advanced.debug_download_failed_message, err);
+                  }
                 });
                 if (!failed) {
                   let reported = false; // prevent error from popping up multiple times
