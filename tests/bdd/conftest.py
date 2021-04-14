@@ -73,6 +73,11 @@ def driver():
     return web_driver
 
 
+# Close firefox after all tests are completed
+def pytest_sessionfinish(session, exitstatus):
+    web_driver.quit()
+
+
 @pytest.mark.hookwrapper
 def pytest_runtest_makereport(item):
     """
