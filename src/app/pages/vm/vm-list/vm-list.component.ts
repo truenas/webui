@@ -457,8 +457,7 @@ export class VMListComponent implements OnDestroy {
                 this.loader.open();
                 this.ws.call("vm.get_display_devices", [display_vm.id]).subscribe((res) => {
                     if(res.length === 1 && !res[0].attributes.password_configured) {
-                        const display_device = res[0]
-                        this.ws.call("vm.get_display_web_uri", [display_device.id]).subscribe((res) => {
+                        this.ws.call("vm.get_display_web_uri", [display_vm.id]).subscribe((res) => {
                             this.loader.close();
                             window.open(res[0], "_blank")
                         }, err => {
@@ -496,19 +495,20 @@ export class VMListComponent implements OnDestroy {
                                         parent: this,
                                         customSubmit: (passDialog) => {
                                             this.loader.open();
-                                            this.ws.call("vm.get_display_web_uri", [display_device.id, passDialog.formValue.password]).subscribe((res) => {
+                                            this.ws.call("vm.get_display_web_uri", [display_vm.id, "192.168.18.147", {"devices_passwords": [{"device_id": display_device.id, "password": passDialog.formValue.password}]}]).subscribe((pass_res) => {
                                                 this.loader.close();
-                                                window.open(res[0], "_blank")
+                                                window.open(pass_res[0], "_blank")
                                             }, err => {
                                                 this.loader.close();
                                                 new EntityUtils().handleError(this, err);
                                             })
+                                            passDialog.dialogRef.close();
                                         }
                                     }
                                     this.dialogService.dialogForm(pass_conf);
                                 } else {
                                     this.loader.open();
-                                    this.ws.call("vm.get_display_web_uri", [display_device.id]).subscribe((res) => {
+                                    this.ws.call("vm.get_display_web_uri", [display_vm.id]).subscribe((res) => {
                                         this.loader.close();
                                         window.open(res[0], "_blank")
                                     }, err => {
