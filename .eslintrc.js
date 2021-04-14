@@ -21,6 +21,12 @@ module.exports = {
       "rules": {
         "no-new-wrappers": "error",
       }
+    },
+    {
+      "files": ["*.html"],
+      "parser": "@angular-eslint/template-parser",
+      "plugins": ["@angular-eslint/template"],
+      "rules": {}
     }
   ]
 }
