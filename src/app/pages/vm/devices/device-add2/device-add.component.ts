@@ -308,7 +308,8 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       name : 'web',
       placeholder : helptext.web_placeholder,
       tooltip : helptext.web_tooltip,
-      type: 'checkbox'
+      type: 'checkbox',
+      value: true
     },
     {
       name : 'order',

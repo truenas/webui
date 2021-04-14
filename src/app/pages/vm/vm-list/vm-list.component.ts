@@ -456,59 +456,71 @@ export class VMListComponent implements OnDestroy {
             onClick: display_vm => {
                 this.loader.open();
                 this.ws.call("vm.get_display_devices", [display_vm.id]).subscribe((res) => {
-                    this.loader.close();
-                    const conf: DialogFormConfiguration = {
-                        title: T("Pick a display device to open"),
-                        fieldConfig: [{
-                            type: 'radio',
-                            name: 'display_device',
-                            placeholder: T("Display Device"),
-                            options: res.map((d) => {return {label: d.attributes.type, value: d.id};}),
-                            validation: [Validators.required],
-                          }],
-                        saveButtonText: "Open",
-                        parent: this,
-                        customSubmit: (entityDialog) => {
-                            const display_device = _.find(res, {id: entityDialog.formValue.display_device});
-                            if(display_device.attributes.password_configured) {
-                                const pass_conf: DialogFormConfiguration = {
-                                    title: T("Enter password"),
-                                    message: T("Enter password to unlock this display device"),
-                                    fieldConfig: [{
-                                        type: 'input',
-                                        name: 'password',
-                                        inputType: 'password',
-                                        placeholder: T('Password'),
-                                        validation: [Validators.required]
-                                    }],
-                                    saveButtonText: T("Open"),
-                                    parent: this,
-                                    customSubmit: (passDialog) => {
-                                        this.loader.open();
-                                        this.ws.call("vm.get_display_web_uri", [display_device.id, passDialog.formValue.password]).subscribe((res) => {
-                                            this.loader.close();
-                                            window.open(res[0], "_blank")
-                                        }, err => {
-                                            this.loader.close();
-                                            new EntityUtils().handleError(this, err);
-                                        })
+                    if(res.length === 1 && !res[0].attributes.password_configured) {
+                        const display_device = res[0]
+                        this.ws.call("vm.get_display_web_uri", [display_device.id]).subscribe((res) => {
+                            this.loader.close();
+                            window.open(res[0], "_blank")
+                        }, err => {
+                            this.loader.close();
+                            new EntityUtils().handleError(this, err);
+                        })
+                    } else {
+                        this.loader.close();
+                        const conf: DialogFormConfiguration = {
+                            title: T("Display Device"),
+                            message: T("Pick a display device to open"),
+                            fieldConfig: [{
+                                type: 'radio',
+                                name: 'display_device',
+                                placeholder: T("Display Device"),
+                                options: res.map((d) => {return {label: d.attributes.type, value: d.id};}),
+                                validation: [Validators.required],
+                            }],
+                            saveButtonText: "Open",
+                            parent: this,
+                            customSubmit: (entityDialog) => {
+                                const display_device = _.find(res, {id: entityDialog.formValue.display_device});
+                                if(display_device.attributes.password_configured) {
+                                    const pass_conf: DialogFormConfiguration = {
+                                        title: T("Enter password"),
+                                        message: T("Enter password to unlock this display device"),
+                                        fieldConfig: [{
+                                            type: 'input',
+                                            name: 'password',
+                                            inputType: 'password',
+                                            placeholder: T('Password'),
+                                            validation: [Validators.required]
+                                        }],
+                                        saveButtonText: T("Open"),
+                                        parent: this,
+                                        customSubmit: (passDialog) => {
+                                            this.loader.open();
+                                            this.ws.call("vm.get_display_web_uri", [display_device.id, passDialog.formValue.password]).subscribe((res) => {
+                                                this.loader.close();
+                                                window.open(res[0], "_blank")
+                                            }, err => {
+                                                this.loader.close();
+                                                new EntityUtils().handleError(this, err);
+                                            })
+                                        }
                                     }
+                                    this.dialogService.dialogForm(pass_conf);
+                                } else {
+                                    this.loader.open();
+                                    this.ws.call("vm.get_display_web_uri", [display_device.id]).subscribe((res) => {
+                                        this.loader.close();
+                                        window.open(res[0], "_blank")
+                                    }, err => {
+                                        this.loader.close();
+                                        new EntityUtils().handleError(this, err);
+                                    })
                                 }
-                                this.dialogService.dialogForm(pass_conf);
-                            } else {
-                                this.loader.open();
-                                this.ws.call("vm.get_display_web_uri", [display_device.id]).subscribe((res) => {
-                                    this.loader.close();
-                                    window.open(res[0], "_blank")
-                                }, err => {
-                                    this.loader.close();
-                                    new EntityUtils().handleError(this, err);
-                                })
+                                entityDialog.dialogRef.close();
                             }
-                            entityDialog.dialogRef.close();
                         }
-                      }
-                      this.dialogService.dialogForm(conf);
+                        this.dialogService.dialogForm(conf);
+                    }
                 }, err => {
                     this.loader.close();
                     new EntityUtils().handleError(this, err);

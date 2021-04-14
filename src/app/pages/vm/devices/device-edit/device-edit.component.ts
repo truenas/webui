@@ -278,8 +278,7 @@ export class DeviceEditComponent implements OnInit {
       placeholder : helptext.resolution_placeholder,
       tooltip : helptext.resolution_tooltip,
       type: 'select',
-      options : helptext.resolution_options,
-      isHidden: true
+      options : [],
     },
     {
       name : 'bind',
@@ -337,6 +336,13 @@ export class DeviceEditComponent implements OnInit {
       };
     });
 
+    this.ws.call('vm.resolution_choices').subscribe((res) => {
+      const resolution = _.find(this.displayFieldConfig, {'name' : 'resolution'});
+      for(let key in res) {
+        resolution.options.push({label: key, value: res[key]});
+      }
+    })
+
     // nic
     this.networkService.getVmNicChoices().subscribe((res) => {
       this.nic_attach = _.find(this.nicFieldConfig, { 'name': 'nic_attach' });
@@ -367,11 +373,6 @@ export class DeviceEditComponent implements OnInit {
       if (typeof fg !== "undefined") {
         fg.setValue(deviceInformation[value]);
       }
-      else {
-        console.log(deviceInformation,value,activeformgroup)
-      }
-      
-
     }
   }
   async ngOnInit() {
@@ -462,7 +463,6 @@ export class DeviceEditComponent implements OnInit {
 
     if (!this.productType.includes('SCALE')) {
       _.find(this.displayFieldConfig, {name:'wait'}).isHidden = false;
-      _.find(this.displayFieldConfig, {name:'resolution'}).isHidden = false;
     }
 
     this.afterInit();
