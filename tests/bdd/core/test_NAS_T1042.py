@@ -164,6 +164,7 @@ def click_on_the_guest_dataset_3_dots_button_select_edit_permissions(driver):
 def on_the_edit_acl_page_set_the_user_to_nobody_and_the_group_to_nogroup(driver):
     """on the Edit ACL page, set the user to nobody and the Group to nogroup."""
     assert wait_on_element(driver, 7, '//h4[contains(.,"File Information")]')
+    time.sleep(1)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SELECT AN ACL PRESET"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SELECT AN ACL PRESET"]').click()
     assert wait_on_element(driver, 7, '//mat-select[@ix-auto="select__Default ACL Options"]')
