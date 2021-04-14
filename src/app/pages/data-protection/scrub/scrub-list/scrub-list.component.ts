@@ -18,7 +18,7 @@ import { T } from 'app/translate-marker';
   providers: [TaskService, UserService, EntityFormService],
 })
 export class ScrubListComponent {
-  public title = 'Scrub Tasks';
+  public title = T('Scrub Tasks');
   public queryCall: string = 'pool.scrub.query';
   protected wsDelete: string = 'pool.scrub.delete';
   protected route_add: string[] = ['tasks', 'scrub', 'add'];
@@ -46,7 +46,7 @@ export class ScrubListComponent {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'Scrub Task',
+      title: T('Scrub Task'),
       key_props: ['pool_name'],
     },
   };

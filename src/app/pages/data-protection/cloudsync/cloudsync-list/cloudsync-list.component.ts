@@ -21,6 +21,7 @@ import helptext from '../../../../helptext/data-protection/cloudsync/cloudsync-f
 import { CloudsyncFormComponent } from '../cloudsync-form/cloudsync-form.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalService } from 'app/services/modal.service';
+import { EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.interface';
 
 @Component({
   selector: 'app-cloudsync-list',
@@ -28,7 +29,7 @@ import { ModalService } from 'app/services/modal.service';
   providers: [JobService, TaskService, CloudCredentialService],
 })
 export class CloudsyncListComponent implements InputTableConf {
-  public title = 'Cloud Sync Tasks';
+  public title = T('Cloud Sync Tasks');
   public queryCall = 'cloudsync.query';
   public route_add: string[] = ['tasks', 'cloudsync', 'add'];
   public route_add_tooltip = 'Add Cloud Sync Task';
@@ -58,13 +59,7 @@ export class CloudsyncListComponent implements InputTableConf {
     { name: T('Day of Month'), prop: 'dom', hidden: true },
     { name: T('Month'), prop: 'month', hidden: true },
     { name: T('Day of Week'), prop: 'dow', hidden: true },
-    {
-      name: T('Status'),
-      prop: 'state',
-      state: 'state',
-      infoStates: ['NOT RUN SINCE LAST BOOT'],
-      button: true,
-    },
+    { name: T('Status'), prop: 'state', state: 'state', button: true },
     { name: T('Enabled'), prop: 'enabled' },
   ];
   public rowIdentifier = 'description';
@@ -72,7 +67,7 @@ export class CloudsyncListComponent implements InputTableConf {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'Cloud Sync Task',
+      title: T('Cloud Sync Task'),
       key_props: ['description'],
     },
   };
@@ -111,11 +106,12 @@ export class CloudsyncListComponent implements InputTableConf {
       }).value._date.fromNow();
 
       if (task.job == null) {
-        task.state = { state: T('NOT RUN SINCE LAST BOOT') };
+        task.state = { state: EntityJobState.Pending };
       } else {
         task.state = { state: task.job.state };
-        this.job.getJobStatus(task.job.id).subscribe((t) => {
-          task.state = t.job ? { state: t.job.state } : null;
+        this.job.getJobStatus(task.job.id).subscribe((job) => {
+          task.state = { state: job.state };
+          task.job = job;
         });
       }
 
@@ -134,7 +130,7 @@ export class CloudsyncListComponent implements InputTableConf {
         onClick: (row) => {
           this.dialog.confirm(T('Run Now'), T('Run this cloud sync now?'), true).subscribe((res) => {
             if (res) {
-              row.state = { state: 'RUNNING' };
+              row.state = { state: EntityJobState.Running };
               this.ws.call('cloudsync.sync', [row.id]).subscribe(
                 (jobId) => {
                   this.dialog.Info(
@@ -200,9 +196,9 @@ export class CloudsyncListComponent implements InputTableConf {
                     'info',
                     true,
                   );
-                  this.job.getJobStatus(res).subscribe((task) => {
-                    row.state = { state: task.state };
-                    row.job = task;
+                  this.job.getJobStatus(res).subscribe((job) => {
+                    row.state = { state: job.state };
+                    row.job = job;
                   });
                 },
                 (err) => {
@@ -317,9 +313,9 @@ export class CloudsyncListComponent implements InputTableConf {
   }
 
   isActionVisible(actionId: string, row: any) {
-    if (actionId === 'run_now' && row.job && row.job.state === 'RUNNING') {
+    if (actionId === 'run_now' && row.job && row.job.state === EntityJobState.Running) {
       return false;
-    } else if (actionId === 'stop' && (row.job ? row.job && row.job.state !== 'RUNNING' : true)) {
+    } else if (actionId === 'stop' && (row.job ? row.job && row.job.state !== EntityJobState.Running : true)) {
       return false;
     }
     return true;
@@ -331,7 +327,7 @@ export class CloudsyncListComponent implements InputTableConf {
 
   stateButton(row) {
     if (row.job) {
-      if (row.state.state === 'RUNNING') {
+      if (row.state.state === EntityJobState.Running) {
         this.entityList.runningStateButton(row.job.id);
       } else {
         this.job.showLogs(row.job);

@@ -3,10 +3,10 @@ import { Component } from '@angular/core';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, StorageService, WebSocketService } from '../../../../services';
 import { T } from '../../../../translate-marker';
-import { ActivatedRoute, Router } from '@angular/router';
 import { ModalService } from 'app/services/modal.service';
 import { TaskService } from '../../../../services/task.service';
 import { SnapshotFormComponent } from '../snapshot-form/snapshot-form.component';
+import { EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.interface';
 
 @Component({
   selector: 'app-snapshot-task-list',
@@ -14,7 +14,7 @@ import { SnapshotFormComponent } from '../snapshot-form/snapshot-form.component'
   providers: [TaskService, StorageService],
 })
 export class SnapshotListComponent {
-  public title = 'Periodic Snapshot Tasks';
+  public title = T('Periodic Snapshot Tasks');
   protected queryCall = 'pool.snapshottask.query';
   protected wsDelete = 'pool.snapshottask.delete';
   protected route_add: string[] = ['tasks', 'snapshot', 'add'];
@@ -37,7 +37,7 @@ export class SnapshotListComponent {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'Periodic Snapshot Task',
+      title: T('Periodic Snapshot Task'),
       key_props: ['dataset', 'naming_schema', 'keepfor'],
     },
   };
@@ -45,8 +45,6 @@ export class SnapshotListComponent {
   constructor(
     private dialogService: DialogService,
     private ws: WebSocketService,
-    private router: Router,
-    private aroute: ActivatedRoute,
     private taskService: TaskService,
     private modalService: ModalService,
     private storageService: StorageService,
@@ -64,7 +62,7 @@ export class SnapshotListComponent {
   }
 
   stateButton(row) {
-    if (row.state.state === 'ERROR') {
+    if (row.state.state === EntityJobState.Error) {
       this.dialogService.errorReport(row.state.state, row.state.error);
     }
   }

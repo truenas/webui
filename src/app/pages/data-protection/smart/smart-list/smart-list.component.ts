@@ -16,7 +16,7 @@ import { WebSocketService } from '../../../../services/ws.service';
   providers: [TaskService, EntityFormService],
 })
 export class SmartListComponent implements OnDestroy {
-  public title = 'S.M.A.R.T. Tests';
+  public title = T('S.M.A.R.T. Tests');
   public queryCall = 'smart.test.query';
   protected route_add: string[] = ['tasks', 'smart', 'add'];
   protected route_add_tooltip = 'Add S.M.A.R.T. Test';
@@ -43,7 +43,7 @@ export class SmartListComponent implements OnDestroy {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'S.M.A.R.T. Test',
+      title: T('S.M.A.R.T. Test'),
       key_props: ['type', 'desc'],
     },
   };
