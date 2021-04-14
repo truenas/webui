@@ -1443,6 +1443,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
   .sidebar-panel.mat-sidenav .sidebar-list-item {
     border-left: 6px solid rgba(0, 0, 0, .0);
     border-bottom: 1px solid var(--lines);
+    width: calc(100% - 6px);
   }
 
   .sidebar-panel.mat-sidenav .sidebar-list-item:hover {
