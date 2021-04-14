@@ -140,12 +140,12 @@ export class DatasetAclComponent implements OnDestroy {
               required: true,
             },
             {
-                type: 'paragraph',
-                name: 'no_acls_warning',
-                disabled: true,
-                isHidden: true,
-                paraText: "No ACLs available. Please add an ACL.",
-                class: 'warning-text'
+              type: 'paragraph',
+              name: 'no_acls_warning',
+              disabled: true,
+              isHidden: true,
+              paraText: T("No inheritable ACLs available. At least one inheritable ACL entry must be selected."),
+              class: 'warning-text'
             },
             {
               type: 'combobox',
