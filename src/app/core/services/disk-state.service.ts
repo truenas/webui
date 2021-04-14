@@ -21,7 +21,7 @@ export class DiskStateService extends BaseService {
 
   protected onAuthenticated(evt: CoreEvent){
     this.authenticated = true;
-    this.ws.subscribe("disk.query").subscribe((res) =>{
+    this.ws.sub("disk.query").subscribe((res) =>{
 
       // A couple of notes about what to expect in the response.
       // Cleared:boolean is a property in the response that seems to indicate removal

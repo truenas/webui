@@ -156,9 +156,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   ){
     
     this.themeUtils = new ThemeUtils();
-    core.register({observerClass: this, eventName: 'DisksChanged'}).subscribe((evt:CoreEvent) => {
-      // REACT TO EVENT PROVIDED BY DISK.QUERY
-    });
 
     core.register({observerClass: this, eventName: 'MediaChange'}).subscribe((evt:CoreEvent) => {
       this.mqAlias = evt.data.mqAlias;
