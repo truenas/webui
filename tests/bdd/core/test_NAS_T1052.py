@@ -16,14 +16,14 @@ from pytest_bdd import (
     then,
     when
 )
-# random mount point to avoid the same test do break if it ever run in the same time
+# random mount point to avoid the same test to break if it ever run in the same time
 digit = ''.join(random.choices(string.digits, k=2))
 mountpoint = f'/mnt/nfs_host{digit}'
 
 
-@scenario('features/NAS-T1051.feature', 'Verify authorized networks for NFS share')
-def test_verify_authorized_networks_for_nfs_share(driver):
-    """Verify authorized networks for NFS share."""
+@scenario('features/NAS-T1052.feature', 'Verify authorized IP address works for NFS share')
+def test_verify_authorized_ip_address_works_for_nfs_share(driver):
+    """Verify authorized IP address works for NFS share."""
 
 
 @given('the browser is open on the TrueNAS URL and logged in')
@@ -69,15 +69,27 @@ def on_the_nfs_page_click_on_the_threedot_of_any_share_and_select_edit(driver):
     driver.find_element_by_xpath('//button[@ix-auto="action__edit_Edit"]').click()
 
 
-@then('on the Edit page, click Advanced Mode and input 0.0.0.0/0 in Authorized Network')
-def on_the_edit_page_click_advanced_mode_and_input_00000_in_authorized_network(driver):
-    """on the Edit page, click Advanced Mode and input 0.0.0.0/0 in Authorized Network."""
+@then('on the Edit page, click Advanced Mode')
+def on_the_edit_page_click_advanced_mode(driver):
+    """on the Edit page, click Advanced Mode."""
     assert wait_on_element(driver, 7, '//li[contains(.,"Edit")]')
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__ADVANCED OPTIONS"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
+
+
+@then('make sure Authorized Network is empty')
+def make_sure_authorized_network_is_empty(driver):
+    """make sure Authorized Network is empty."""
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Authorized Networks"]', 'clickable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Authorized Networks"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Authorized Networks"]').send_keys('0.0.0.0/0')
+
+
+@then('input <client2> in Authorized IP')
+def input_client2_in_authorized_ip(driver, client2):
+    """input <client2> in Authorized IP."""
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Authorized Hosts and IP addresses"]', 'clickable')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Authorized Hosts and IP addresses"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Authorized Hosts and IP addresses"]').send_keys(client2)
 
 
 @then('click Save, the nfs share should save without errors')
@@ -86,11 +98,6 @@ def click_save_the_nfs_share_should_save_without_errors(driver):
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    if wait_on_element(driver, 3, '//h1[contains(.,"Enable service")]'):
-        assert wait_on_element(driver, 7, '//button[@ix-auto="button__ENABLE SERVICE"]', 'clickable')
-        driver.find_element_by_xpath('//button[@ix-auto="button__ENABLE SERVICE"]').click()
-        assert wait_on_element(driver, 7, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
 @then('try to mount the nfs share on from <client1> with <password1>')
@@ -106,13 +113,13 @@ def try_to_mount_the_nfs_share_on_from_client1_with_password1(driver, nas_ip, cl
     mount_results1 = ssh_cmd(cmd, 'root', passwd1, host1)
 
 
-@then('the share should mount without errors on the client1 and unmount')
-def the_share_should_mount_without_errors_on_the_client1_and_unmount(driver):
-    """the share should mount without errors on the client1 and unmount."""
-    assert mount_results1['result'], str(mount_results1)
-    cmd = f'umount {mountpoint} && rm -rf {mountpoint}'
-    login_results = ssh_cmd(cmd, 'root', passwd1, host1)
-    assert login_results['result'], str(login_results)
+@then('the share should mount with an error on client1')
+def the_share_should_mount_with_an_error_on_client1(driver):
+    """the share should mount with an error on client1."""
+    assert mount_results1['result'] is False, str(mount_results1)
+    cmd = f'rm -rf {mountpoint}'
+    results = ssh_cmd(cmd, 'root', passwd1, host1)
+    assert results['result'], str(results)
 
 
 @then('try to mount the nfs share from <client2> with <password2>')
@@ -134,34 +141,4 @@ def the_share_should_mount_without_errors_on_the_client2_and_unmount(driver):
     assert mount_results2['result'], str(mount_results2)
     cmd = f'umount {mountpoint} && rm -rf {mountpoint}'
     results = ssh_cmd(cmd, 'root', passwd2, host2)
-    assert results['result'], str(results)
-
-
-@then('on the NFS page, click on the three-dot of the same share and select Edit')
-def on_the_nfs_page_click_on_the_threedot_of_the_same_share_and_select_edit(driver):
-    """on the NFS page, click on the three-dot of the same share and select Edit."""
-    assert wait_on_element(driver, 7, '//div[contains(.,"NFS")]')
-    assert wait_on_element(driver, 7, '//mat-icon[@ix-auto="options__/mnt/tank/nfs"]', 'clickable')
-    driver.find_element_by_xpath('//mat-icon[@ix-auto="options__/mnt/tank/nfs"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="action__edit_Edit"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="action__edit_Edit"]').click()
-
-
-@then('on the Edit page, click Advanced Mode and input <client2>/24 in Authorized Network')
-def on_the_edit_page_click_advanced_mode_and_input_client2_24_in_authorized_network(driver, client2):
-    """on the Edit page, click Advanced Mode and input <client2>/24 in Authorized Network."""
-    assert wait_on_element(driver, 7, '//li[contains(.,"Edit")]')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__ADVANCED OPTIONS"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Authorized Networks"]', 'clickable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Authorized Networks"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Authorized Networks"]').send_keys(f'{client2}/24')
-
-
-@then('the share should mount with an error on client1')
-def the_share_should_mount_with_an_error_on_client1(driver):
-    """the share should mount with an error on client1."""
-    assert mount_results1['result'] is False, str(mount_results1)
-    cmd = f'rm -rf {mountpoint}'
-    results = ssh_cmd(cmd, 'root', passwd1, host1)
     assert results['result'], str(results)
