@@ -17,15 +17,15 @@ export default {
         bindDN: T('Bind DN'),
     },
     kerberosSettings: {
-        title: T('Kerboros Settings'),
+        title: T('Kerberos Settings'),
         appdefaults: T('Appdefaults Auxiliary Parameters'),
         libdefaults: T('Libdefaults Auxiliary Parameters'),
     },
-    kerboerosRealms: {
-        title: T('Kerboeros Realms'),
+    kerberosRealms: {
+        title: T('Kerberos Realms'),
     },
-    kerboerosKeytab: {
-        title: T('Kerboeros Keytab'),
+    kerberosKeytab: {
+        title: T('Kerberos Keytab'),
     },
     button: {
         settings: T('Settings'),

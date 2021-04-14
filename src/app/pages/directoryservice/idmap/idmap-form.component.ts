@@ -42,7 +42,7 @@ export class IdmapFormComponent {
   ];
   protected readOnly = false;
   protected fieldConfig: FieldConfig[] = [];
-
+  protected isOneColumnForm = true;
   public fieldSetDisplay = 'default';
   protected fieldSets: FieldSet[] = [
     {

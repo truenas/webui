@@ -19,7 +19,7 @@ export class KerberosKeytabsFormComponent {
   protected queryKey = 'id';
   protected isEntity = true;
   private getRow = new Subscription;
-
+  protected isOneColumnForm = true;
   protected fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
     {

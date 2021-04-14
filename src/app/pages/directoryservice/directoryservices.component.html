@@ -24,7 +24,7 @@
         <mat-list>
           <mat-list-item *ngFor="let item of card.items" class="card-list-item">
             <span class="label">{{ item.label | translate }}:</span>
-            <span class="value">{{ item.value | translate }}</span>
+            <span class="value">{{ item.value || ('None' | translate) }}</span>
           </mat-list-item>
         </mat-list>
       </mat-card-content>

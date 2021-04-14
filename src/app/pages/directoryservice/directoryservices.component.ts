@@ -82,12 +82,12 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
   };
 
   public kerberosRealmsTableConf: InputTableConf = {
-    title: helptext.kerboerosRealms.title,
+    title: helptext.kerberosRealms.title,
     titleHref: '/directoryservice/kerberosrealms',
     queryCall: 'kerberos.realm.query',
     deleteCall: 'kerberos.realm.delete',
     deleteMsg: {
-      title: helptext.kerboerosRealms.title,
+      title: helptext.kerberosRealms.title,
       key_props: ['realm'],
     },
     emptyEntityLarge: false,
@@ -107,12 +107,12 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
   };
 
   public kerberosKeytabTableConf: InputTableConf = {
-    title: helptext.kerboerosKeytab.title,
+    title: helptext.kerberosKeytab.title,
     titleHref: '/directoryservice/kerberoskeytabs',
     queryCall: 'kerberos.keytab.query',
     deleteCall: 'kerberos.keytab.delete',
     deleteMsg: {
-      title: helptext.kerboerosKeytab.title,
+      title: helptext.kerberosKeytab.title,
       key_props: ['name'],
     },
     emptyEntityLarge: false,
@@ -153,12 +153,12 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
       },
       {
         id: 'kerberos_realms',
-        title: helptext.kerboerosRealms.title,
+        title: helptext.kerberosRealms.title,
         tableConf: this.kerberosRealmsTableConf,
       },
       {
         id: 'kerberos_keytab',
-        title: helptext.kerboerosKeytab.title,
+        title: helptext.kerberosKeytab.title,
         tableConf: this.kerberosKeytabTableConf,
       },
     ];
@@ -313,7 +313,7 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     });
   }
 
-  
+
   refreshForms() {
     this.activeDirectoryFormComponent = new ActiveDirectoryComponent(
       this.router,

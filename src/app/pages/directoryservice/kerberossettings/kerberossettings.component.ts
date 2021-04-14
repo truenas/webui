@@ -13,7 +13,7 @@ export class KerberosSettingsComponent {
   protected queryCall = 'kerberos.config';
   protected addCall = 'kerberos.update';
   protected editCall = 'kerberos.update';
-
+  protected isOneColumnForm = true;
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
