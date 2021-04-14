@@ -360,6 +360,14 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       this.displayFormGroup.controls['resolution'].setValue(res[Object.keys(res)[0]]);
     })
 
+    this.ws.call("vm.get_display_devices", [this.vmid]).subscribe((devices) => {
+      if(devices.length > 1) {
+        this.fieldConfig[0].options.splice(this.fieldConfig[0].options.findIndex(o => o.value === 'DISPLAY'))
+      }
+    }, err => {
+      new EntityUtils().handleWSError(this, err, this.dialogService);
+    });
+
     this.core.register({observerClass: this, eventName: 'zvolCreated'}).subscribe((evt: CoreEvent) => {
       const newZvol = {
         label : evt.data.id, value : '/dev/zvol/' + evt.data.id
@@ -394,6 +402,12 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.aroute.params.subscribe(params => {
+      this.vmid = params['pk'];
+      this.vmname = params['name'];
+      this.route_success = ['vm', this.vmid, 'devices', this.vmname];
+    });
+
     this.preInit();
 
     this.fieldSets = [
@@ -453,12 +467,6 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
         this.activeFormGroup = this.displayFormGroup;
         this.isCustActionVisible = false;
       }
-    });
-
-    this.aroute.params.subscribe(params => {
-      this.vmid = params['pk'];
-      this.vmname = params['name'];
-      this.route_success = ['vm', this.vmid, 'devices', this.vmname];
     });
 
     if (!this.productType.includes('SCALE')) {

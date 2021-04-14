@@ -12,6 +12,25 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import helptext from '../../../../helptext/vm/devices/device-add-edit';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { DialogService } from '../../../../services/dialog.service';
+
+interface DisplayDeviceAttributes {
+  bind: string;
+  password: string;
+  port: number;
+  resolution: string;
+  type: string;
+  wait: boolean;
+  web: boolean;
+}
+
+interface Device {
+  attributes: DisplayDeviceAttributes;
+  dtype: string;
+  id: number;
+  order: number;
+  vm: number;
+}
+
 @Component({
   selector : 'app-device-edit',
   templateUrl : './device-edit.component.html',
@@ -37,6 +56,7 @@ export class DeviceEditComponent implements OnInit {
   public displayFormGroup: any;
   public rootpwd: any;
   public vminfo: any;
+  public vmId: number;
   public boot: any;
   public error: string;
   private productType: string = window.localStorage.getItem('product_type');
@@ -296,6 +316,15 @@ export class DeviceEditComponent implements OnInit {
       validation: helptext.password_validation
     },
     {
+      name : 'type',
+      placeholder : helptext.type_placeholder,
+      type: 'select',
+      options : [
+        {label: 'VNC', value: "VNC"},
+        {label: "SPICE", value:"SPICE"}
+      ],
+    },
+    {
       name : 'web',
       placeholder : helptext.web_placeholder,
       tooltip : helptext.web_tooltip,
@@ -380,6 +409,7 @@ export class DeviceEditComponent implements OnInit {
     this.aroute.params.subscribe(params => {
       this.deviceid = parseInt(params['pk'],10);
       this.vmname = params['name'];
+      this.vmId = params['vmid']
       this.route_success = ['vm', params['vmid'], 'devices', this.vmname];
     });
 
@@ -450,6 +480,14 @@ export class DeviceEditComponent implements OnInit {
       } else if (res === 'DISPLAY') {
         this.activeFormGroup = this.displayFormGroup;
         this.isCustActionVisible = false;
+        this.ws.call("vm.get_display_devices", [this.vmId]).subscribe((devices: Device[]) => {
+          if(devices.length > 1) {
+            _.find(this.displayFieldConfig, {name: "type"}).isHidden = true;
+          }
+        }, err => {
+          new EntityUtils().handleWSError(this, err, this.dialogService);
+        });
+
       }
       this.setgetValues(this.activeFormGroup,deviceInformation);
     });
