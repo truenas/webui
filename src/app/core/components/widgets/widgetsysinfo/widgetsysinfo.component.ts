@@ -37,6 +37,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   // HA
   @Input('isHA') isHA: boolean = false
   @Input('passive') isPassive: boolean = false
+  @Input('enclosure') enclosureSupport: boolean = false;
 
   public title: string = T("System Info");
   public data: any;
@@ -326,5 +327,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
     }
   }
 
+  goToEnclosure(){
+    if(this.enclosureSupport) this.router.navigate(['/system/viewenclosure']);
+  }
 
 }

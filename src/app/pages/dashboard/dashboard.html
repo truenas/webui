@@ -12,8 +12,24 @@
           <ng-container  *ngIf="widget.rendered">
             <ng-container [ngSwitch]="widget.name.toLowerCase()">
               
-              <widget-sysinfo *ngSwitchCase="'system information'" id="active" fxFlex="{{widgetWidth}}px" fxFlex.xs="100" [isHA]="isHA" [passive]="false" [widgetSize]="medium"></widget-sysinfo>
-              <widget-sysinfo *ngSwitchCase="'system information(standby)'" id="passive" fxFlex="{{widgetWidth}}px" fxFlex.xs="100" [isHA]="isHA" [passive]="true" [widgetSize]="medium"></widget-sysinfo>
+              <widget-sysinfo *ngSwitchCase="'system information'" 
+                id="active" fxFlex="{{widgetWidth}}px" 
+                fxFlex.xs="100" 
+                [enclosure]="systemInformation.features.enclosure" 
+                [isHA]="isHA" 
+                [passive]="false" 
+                [widgetSize]="medium">
+              </widget-sysinfo>
+              
+              <widget-sysinfo *ngSwitchCase="'system information(standby)'" 
+                id="passive" 
+                fxFlex="{{widgetWidth}}px" 
+                fxFlex.xs="100" 
+                [enclosure]="systemInformation.features.enclosure" 
+                [isHA]="isHA" 
+                [passive]="true" 
+                [widgetSize]="medium">
+              </widget-sysinfo>
               
 
               <widget-cpu *ngSwitchCase="'cpu'" fxFlex="{{widgetWidth}}px" fxFlex.xs="100" [data]="dataFromConfig(widget)" [cpuModel]="systemInformation.model" [widgetSize]="medium"   configurable="false"></widget-cpu>
