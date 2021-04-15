@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 
 export class EntityUtils {
-
   handleError(entity: any, res: any) {
     if (res.code === 409) {
       this.handleObjError(entity, res);
@@ -19,7 +18,7 @@ export class EntityUtils {
       }
     } else {
       entity.error = 'Fatal error! Check logs.';
-      console.log("Unknown error code", res.code);
+      console.log('Unknown error code', res.code);
     }
   }
 
@@ -29,17 +28,17 @@ export class EntityUtils {
     for (const i in res.error) {
       if (res.error.hasOwnProperty(i)) {
         const field = res.error[i];
-        const fc = _.find(entity.fieldConfig, {'name' : i});
+        const fc = _.find(entity.fieldConfig, { name: i });
         if (fc) {
           const element = document.getElementById(i);
           if (element) {
-            if (entity.conf && entity.conf.advanced_field && 
-              _.indexOf(entity.conf.advanced_field, i) > -1 &&
-              entity.conf.isBasicMode) {
-                entity.conf.isBasicMode = false;
-              }
+            if (entity.conf && entity.conf.advanced_field
+              && _.indexOf(entity.conf.advanced_field, i) > -1
+              && entity.conf.isBasicMode) {
+              entity.conf.isBasicMode = false;
+            }
             if (!scroll) {
-              element.scrollIntoView({behavior: "auto", block: "end", inline: "nearest"});
+              element.scrollIntoView({ behavior: 'auto', block: 'end', inline: 'nearest' });
               scroll = true;
             }
           }
@@ -47,12 +46,10 @@ export class EntityUtils {
           field.forEach((item, j) => { errors += item + ' '; });
           fc['hasErrors'] = true;
           fc['errors'] = errors;
+        } else if (typeof field === 'string') {
+          entity.error = field;
         } else {
-          if (typeof field === 'string') {
-            entity.error = field;
-          } else {
-            field.forEach((item, j) => { entity.error += item + '<br />'; });
-          }
+          field.forEach((item, j) => { entity.error += item + '<br />'; });
         }
       }
     }
@@ -62,10 +59,8 @@ export class EntityUtils {
     let dialog;
     if (dialogService) {
       dialog = dialogService;
-    } else {
-      if (entity) {
-        dialog = entity.dialog;
-      }
+    } else if (entity) {
+      dialog = entity.dialog;
     }
     if (res.exc_info && res.exc_info.extra) {
       res.extra = res.exc_info.extra;
@@ -81,29 +76,29 @@ export class EntityUtils {
         const error = res.extra[i][1];
 
         field = field[1];
-        let fc = _.find(entity.fieldConfig, {'name' : field}) || (entity.getErrorField ? entity.getErrorField(field) : undefined);
+        let fc = _.find(entity.fieldConfig, { name: field }) || (entity.getErrorField ? entity.getErrorField(field) : undefined);
         let stepIndex;
         if (entity.wizardConfig) {
-            _.find(entity.wizardConfig, function(step, index) {
-              stepIndex = index;
-              fc = _.find(step.fieldConfig, {'name' : field});
-              return fc;
-            });
+          _.find(entity.wizardConfig, (step, index) => {
+            stepIndex = index;
+            fc = _.find(step.fieldConfig, { name: field });
+            return fc;
+          });
         }
         if (targetFieldConfig) {
-          fc = _.find(targetFieldConfig, {'name' : field}) || (entity.getErrorField ? entity.getErrorField(field) : undefined);
+          fc = _.find(targetFieldConfig, { name: field }) || (entity.getErrorField ? entity.getErrorField(field) : undefined);
         }
 
         if (fc && !fc['isHidden']) {
           const element = document.getElementById(field);
           if (element) {
-            if (entity.conf && entity.conf.advanced_field && 
-              _.indexOf(entity.conf.advanced_field, field) > -1 &&
-              entity.conf.isBasicMode) {
-                entity.conf.isBasicMode = false;
-              }
+            if (entity.conf && entity.conf.advanced_field
+              && _.indexOf(entity.conf.advanced_field, field) > -1
+              && entity.conf.isBasicMode) {
+              entity.conf.isBasicMode = false;
+            }
             if (!scroll) {
-              element.scrollIntoView({behavior: "auto", block: "end", inline: "nearest"});
+              element.scrollIntoView({ behavior: 'auto', block: 'end', inline: 'nearest' });
               scroll = true;
             }
           }
@@ -112,12 +107,10 @@ export class EntityUtils {
           if (entity.wizardConfig && entity.entityWizard) {
             entity.entityWizard.stepper.selectedIndex = stepIndex;
           }
+        } else if (entity.error) {
+          entity.error = error;
         } else {
-          if (entity.error) {
-            entity.error = error;
-          } else {
-            this.errorReport(res, dialog);
-          }
+          this.errorReport(res, dialog);
         }
       }
     } else {
@@ -136,14 +129,14 @@ export class EntityUtils {
     }
   }
 
-  isObject = function(a) {
+  isObject = function (a) {
     return (!!a) && (a.constructor === Object);
   };
 
   flattenData(data, level = 0, parent?: any) {
     let ndata = [];
-    if (this.isObject(data)){
-      data = [data]
+    if (this.isObject(data)) {
+      data = [data];
     }
     data.forEach((item) => {
       item._level = level;
@@ -160,26 +153,26 @@ export class EntityUtils {
   }
 
   bool(v) {
-    return v === "false" || v === "null" || v === "NaN" || v === "undefined" ||
-                   v === "0"
-               ? false
-               : !!v;
+    return v === 'false' || v === 'null' || v === 'NaN' || v === 'undefined'
+                   || v === '0'
+      ? false
+      : !!v;
   }
 
-  array1DToLabelValuePair(arr: any[]): { label: string, value: any }[] {
-    return arr.map(value => ({ label: value.toString(), value }))
+  array1DToLabelValuePair(arr: any[]): { label: string; value: any }[] {
+    return arr.map((value) => ({ label: value.toString(), value }));
   }
 
-   /**
+  /**
    * make cron time dow consistence
    */
   parseDOW(cron) {
-    const dowOptions = ["sun","mon","tue","wed","thu","fri","sat","sun"];
+    const dowOptions = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
     const cronArray = cron.replace(/00/g, '0').split(' ');
     if (cronArray[cronArray.length - 1] !== '*') {
       cronArray[cronArray.length - 1] = cronArray[cronArray.length - 1]
-      .split(',')
-      .map(element => dowOptions[element] || element).join(',');
+        .split(',')
+        .map((element) => dowOptions[element] || element).join(',');
     }
     return cronArray.join(' ');
   }

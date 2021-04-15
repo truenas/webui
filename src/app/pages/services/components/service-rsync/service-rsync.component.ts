@@ -8,25 +8,23 @@ import * as _ from 'lodash';
   templateUrl: './service-rsync.component.html',
 })
 export class ServiceRSYNCComponent implements OnInit {
+  @ViewChild('tabGroup', { static: true }) tabGroup;
 
-  @ViewChild('tabGroup', { static: true}) tabGroup;
-
-  public activedTab = 'configure';
-  public navLinks: Array < any > = [{
-      label: 'Configure',
-      path: '/services/rsync/configure',
-    },
-    {
-      label: 'Rsync Module',
-      path: '/services/rsync/rsync-module',
-    },
+  activedTab = 'configure';
+  navLinks: any[] = [{
+    label: 'Configure',
+    path: '/services/rsync/configure',
+  },
+  {
+    label: 'Rsync Module',
+    path: '/services/rsync/rsync-module',
+  },
   ];
-  constructor(protected router: Router, protected aroute: ActivatedRoute, ) {}
+  constructor(protected router: Router, protected aroute: ActivatedRoute) {}
 
   ngOnInit() {
-    this.aroute.params.subscribe(params => {
+    this.aroute.params.subscribe((params) => {
       this.activedTab = params['pk'];
     });
   }
-
 }

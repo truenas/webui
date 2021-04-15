@@ -1,5 +1,9 @@
-import { Directive, ElementRef, Input, Output, HostBinding, HostListener, EventEmitter, OnInit } from '@angular/core';
-import { Router, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
+import {
+  Directive, ElementRef, Input, Output, HostBinding, HostListener, EventEmitter, OnInit,
+} from '@angular/core';
+import {
+  Router, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot,
+} from '@angular/router';
 import * as domHelper from '../../helpers/dom.helper';
 
 @Directive({ selector: '[appAccordion]' })
@@ -9,13 +13,13 @@ export class AppAccordionDirective implements OnInit {
   constructor(private el: ElementRef) { }
   ngOnInit() {
     setTimeout(() => {
-      this.el.nativeElement.className += 'accordion-handle'
+      this.el.nativeElement.className += 'accordion-handle';
       if (domHelper.hasClass(this.el.nativeElement, 'app-accordion')) {
         this.parentLi = this.el.nativeElement;
       } else {
         this.parentLi = domHelper.findClosest(this.el.nativeElement, 'app-accordion');
       }
-    })
+    });
   }
 
   @HostListener('click', ['$event'])
@@ -32,5 +36,4 @@ export class AppAccordionDirective implements OnInit {
       domHelper.addClass(this.parentLi, 'open');
     }
   }
-
 }

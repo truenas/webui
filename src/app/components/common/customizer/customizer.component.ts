@@ -1,10 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { NavigationService } from "../../../services/navigation/navigation.service";
+import { NavigationService } from '../../../services/navigation/navigation.service';
 
 @Component({
   selector: 'app-customizer',
   templateUrl: './customizer.component.html',
-  styleUrls: ['./customizer.component.css']
+  styleUrls: ['./customizer.component.css'],
 })
 export class CustomizerComponent implements OnInit {
   isCustomizerOpen = false;
@@ -12,19 +12,19 @@ export class CustomizerComponent implements OnInit {
   @Input() breadcrumb;
   sidenavTypes = [{
     name: 'Default Menu',
-    value: 'default-menu'
+    value: 'default-menu',
   }, {
     name: 'Separator Menu',
-    value: 'separator-menu'
+    value: 'separator-menu',
   }, {
     name: 'Icon Menu',
-    value: 'icon-menu'
-  }]
+    value: 'icon-menu',
+  }];
   constructor(private navService: NavigationService) { }
 
   ngOnInit() {}
   changeSidenav(data) {
-    this.navService.publishNavigationChange(data.value)
+    this.navService.publishNavigationChange(data.value);
   }
   toggleBreadcrumb(data) {
     this.breadcrumb.isEnabled = data.checked;

@@ -8,9 +8,9 @@ describe('ViewControllerComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ViewControllerComponent ]
+      declarations: [ViewControllerComponent],
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

@@ -2,24 +2,23 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import * as _ from 'lodash';
-import { RestService, SystemGeneralService, WebSocketService } from '../../../../services/';
+import { RestService, SystemGeneralService, WebSocketService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 
 @Component({
-  selector : 'system-ca-add',
-  template : `<entity-form [conf]="this"></entity-form>`,
-  providers: [SystemGeneralService]
+  selector: 'system-ca-add',
+  template: '<entity-form [conf]="this"></entity-form>',
+  providers: [SystemGeneralService],
 })
 
 export class CertificateAuthoritySignComponent {
-
-  protected addCall = "certificateauthority.ca_sign_csr";
-  protected route_success: string[] = [ 'system', 'ca' ];
-  protected isEntity: boolean = true;
-  protected isNew: boolean = true;
+  protected addCall = 'certificateauthority.ca_sign_csr';
+  protected route_success: string[] = ['system', 'ca'];
+  protected isEntity = true;
+  protected isNew = true;
   protected fieldConfig: FieldConfig[];
-  public fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext_system_ca.sign.fieldset_certificate,
       label: true,
@@ -42,7 +41,7 @@ export class CertificateAuthoritySignComponent {
           ],
           value: '',
           required: true,
-          validation: helptext_system_ca.sign.csr_cert_id.validation
+          validation: helptext_system_ca.sign.csr_cert_id.validation,
         },
         {
           type: 'input',
@@ -50,29 +49,29 @@ export class CertificateAuthoritySignComponent {
           placeholder: helptext_system_ca.sign.name.placeholder,
           tooltip: helptext_system_ca.sign.name.tooltip,
           required: true,
-          validation: helptext_system_ca.sign.name.validation
-        }
-      ]
-    }
+          validation: helptext_system_ca.sign.name.validation,
+        },
+      ],
+    },
   ];
 
   private unsignedCAs: any;
   private pk: any;
 
   constructor(protected router: Router, protected aroute: ActivatedRoute,
-              protected rest: RestService, protected ws: WebSocketService,
-              protected systemService: SystemGeneralService) {}
+    protected rest: RestService, protected ws: WebSocketService,
+    protected systemService: SystemGeneralService) {}
 
   preInit() {
-    this.systemService.getUnsignedCertificates().subscribe( (res) => {
-      this.unsignedCAs = _.find(this.fieldSets[0].config, {'name' : 'csr_cert_id'});
+    this.systemService.getUnsignedCertificates().subscribe((res) => {
+      this.unsignedCAs = _.find(this.fieldSets[0].config, { name: 'csr_cert_id' });
       res.forEach((item) => {
         this.unsignedCAs.options.push(
-          { label : item.name, value : parseInt(item.id)}
+          { label: item.name, value: parseInt(item.id) },
         );
       });
     });
-    this.aroute.params.subscribe(params => {
+    this.aroute.params.subscribe((params) => {
       this.pk = params['pk'];
     });
   }

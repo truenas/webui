@@ -11,10 +11,10 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { AppBlankComponent } from './app-blank/app-blank.component';
-import { OthersRoutes } from "./others.routing";
-import { FailoverComponent } from "./failover/failover.component";
-import { RebootComponent } from "./reboot/reboot.component";
-import { ShutdownComponent } from "./shutdown/shutdown.component";
+import { OthersRoutes } from './others.routing';
+import { FailoverComponent } from './failover/failover.component';
+import { RebootComponent } from './reboot/reboot.component';
+import { ShutdownComponent } from './shutdown/shutdown.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConfigResetComponent } from './config-reset/config-reset.component';
 
@@ -31,8 +31,8 @@ import { ConfigResetComponent } from './config-reset/config-reset.component';
     MatGridListModule,
     FlexLayoutModule,
     TranslateModule,
-    RouterModule.forChild(OthersRoutes)
+    RouterModule.forChild(OthersRoutes),
   ],
-  declarations: [AppBlankComponent, RebootComponent, FailoverComponent, ShutdownComponent, ConfigResetComponent]
+  declarations: [AppBlankComponent, RebootComponent, FailoverComponent, ShutdownComponent, ConfigResetComponent],
 })
 export class OthersModule { }

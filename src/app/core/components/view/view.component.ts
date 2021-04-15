@@ -11,22 +11,21 @@ import { View } from 'app/core/classes/view';
 export const ViewComponentMetadata = {
   selector: 'view',
   templateUrl: './view.component.html',
-  styleUrls: ['./view.component.css']
-}
+  styleUrls: ['./view.component.css'],
+};
 
 @Component({
   selector: 'view',
   templateUrl: './view.component.html',
-  styleUrls: ['./view.component.css']
+  styleUrls: ['./view.component.css'],
 })
 export class ViewComponent extends View {
-
   readonly componentName = ViewComponent;
   protected _data: any;
-  public viewController: Subject<CoreEvent>;
+  viewController: Subject<CoreEvent>;
   protected themeService: ThemeService;
 
-  constructor(){
+  constructor() {
     super();
     this.themeService = CoreServiceInjector.get(ThemeService);
   }
@@ -34,19 +33,19 @@ export class ViewComponent extends View {
   ngOnInit() {
 
   }
-  
-  set data(data:any){
+
+  set data(data: any) {
     this._data = data;
   }
 
-  get data(){
+  get data() {
     return this._data;
   }
 
-  colorsFromTheme(){
-    let theme = this.themeService.currentTheme();
-    let accentColors: string[] = []; //[theme.magenta, theme.cyan, theme.red, theme.blue, theme.green, theme.orange, theme.yellow, theme.violet]
-    for(let i = 0; i < theme.accentColors.length; i++){
+  colorsFromTheme() {
+    const theme = this.themeService.currentTheme();
+    const accentColors: string[] = []; // [theme.magenta, theme.cyan, theme.red, theme.blue, theme.green, theme.orange, theme.yellow, theme.violet]
+    for (let i = 0; i < theme.accentColors.length; i++) {
       accentColors.push(theme[theme.accentColors[i]]);
     }
     return accentColors;

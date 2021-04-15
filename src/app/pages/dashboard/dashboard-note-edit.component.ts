@@ -1,4 +1,6 @@
-import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef, TemplateRef } from '@angular/core';
+import {
+  ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef, TemplateRef,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup } from '@angular/forms';
 import * as _ from 'lodash';
@@ -6,7 +8,7 @@ import { FieldConfig } from '../common/entity/entity-form/models/field-config.in
 import { FieldSet } from '../common/entity/entity-form/models/fieldset.interface';
 import { EntityFormService } from '../common/entity/entity-form/services/entity-form.service';
 
-import { RestService, WebSocketService } from '../../services/';
+import { RestService, WebSocketService } from '../../services';
 import { AppLoaderService } from '../../services/app-loader/app-loader.service';
 import { Subscription } from 'rxjs';
 import { EntityUtils } from '../common/entity/utils';
@@ -14,62 +16,62 @@ import { EntityUtils } from '../common/entity/utils';
 @Component({
   selector: 'dashboard-note-edit',
   templateUrl: './dashboard-note-edit.component.html',
-  //template: `<entity-form-embedded [args]="machineId" [conf]="this"></entity-form-embedded>`,
-  providers: [EntityFormService]
+  // template: `<entity-form-embedded [args]="machineId" [conf]="this"></entity-form-embedded>`,
+  providers: [EntityFormService],
 })
 export class DashboardNoteEditComponent implements OnInit {
-
-  @Input() machineId: string = '';
-  @Output() cancel: EventEmitter < any > = new EventEmitter < any > ();
-  @Output() saved: EventEmitter < any > = new EventEmitter < any > ();
-  @Input() isNew: boolean = false;
+  @Input() machineId = '';
+  @Output() cancel: EventEmitter < any > = new EventEmitter < any >();
+  @Output() saved: EventEmitter < any > = new EventEmitter < any >();
+  @Input() isNew = false;
   @Input() cardNote: any = {};
 
   templateTop: TemplateRef<any>;
   protected resource_name: string = 'vm/vm/' + this.machineId;
-  protected isEntity: boolean = true;
+  protected isEntity = true;
 
-  public fieldConfig: FieldConfig[] = [];
+  fieldConfig: FieldConfig[] = [];
 
-  public fieldSetDisplay: string = 'default'; //default | carousel | stepper
-  public fieldSets: FieldSet[] = [{
+  fieldSetDisplay = 'default'; // default | carousel | stepper
+  fieldSets: FieldSet[] = [{
     name: 'Config',
     class: 'config',
     config: [
-      { type: 'input', name: 'title', placeholder: 'Title', readonly: false },
+      {
+        type: 'input', name: 'title', placeholder: 'Title', readonly: false,
+      },
       { type: 'textarea', name: 'content', placeholder: 'Content' },
-    ]
+    ],
   }];
   private bootloader: any;
-  public bootloader_type: any[];
+  bootloader_type: any[];
 
-  public error: any;
-  public success: any;
+  error: any;
+  success: any;
   protected formGroup: FormGroup;
-  public busy: Subscription;
+  busy: Subscription;
 
-  public notes: Array < any > ;
+  notes: any[] ;
   protected targetNoteIndex: number;
 
   constructor(protected router: Router, protected rest: RestService,
     protected ws: WebSocketService,
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected loader: AppLoaderService,
-    protected entityFormService: EntityFormService,
-  ) {}
+    protected entityFormService: EntityFormService) {}
 
   ngOnInit() {
     this.generateFieldConfig();
     if (!this.isNew) {
-      _.find(this.fieldConfig, {name: 'title'}).readonly = true;
+      _.find(this.fieldConfig, { name: 'title' }).readonly = true;
     }
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
     if (!this.isNew) {
-      for (let i in this.cardNote) {
-        let fg = this.formGroup.controls[i];
+      for (const i in this.cardNote) {
+        const fg = this.formGroup.controls[i];
         if (fg) {
-          let current_field = this.fieldConfig.find((control) => control.name === i);
+          const current_field = this.fieldConfig.find((control) => control.name === i);
           fg.setValue(this.cardNote[i]);
         }
       }
@@ -77,20 +79,20 @@ export class DashboardNoteEditComponent implements OnInit {
   }
 
   generateFieldConfig() {
-    for (let i in this.fieldSets) {
-      for (let ii in this.fieldSets[i].config) {
+    for (const i in this.fieldSets) {
+      for (const ii in this.fieldSets[i].config) {
         this.fieldConfig.push(this.fieldSets[i].config[ii]);
       }
     }
   }
 
   goBack() {
-    let result: { flipState: boolean; } = { flipState: false }
+    const result: { flipState: boolean } = { flipState: false };
     this.cancel.emit(result); // <-- bool = isFlipped State
   }
 
-  onSuccess(message ? : any) {
-    let result: { flipState: boolean;id ? : any } = { flipState: false, id: message };
+  onSuccess(message?: any) {
+    const result: { flipState: boolean;id?: any } = { flipState: false, id: message };
     if (message.data) {
       result.id = message.data.id;
     } else {
@@ -114,7 +116,7 @@ export class DashboardNoteEditComponent implements OnInit {
     this.error = null;
     this.success = false;
     this.clearErrors();
-    let value = _.cloneDeep(this.formGroup.value);
+    const value = _.cloneDeep(this.formGroup.value);
     let attribute_key = '';
     if (this.isNew) {
       attribute_key = 'note_' + value['title'];
@@ -132,8 +134,7 @@ export class DashboardNoteEditComponent implements OnInit {
         (res) => {
           this.loader.close();
           new EntityUtils().handleError(this, res);
-        }
+        },
       );
   }
-
 }

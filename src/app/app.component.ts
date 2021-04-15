@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
+import {
+  Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot,
+} from '@angular/router';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { ThemeService } from 'app/services/theme/theme.service';
-import { RoutePartsService } from "./services/route-parts/route-parts.service";
+import { RoutePartsService } from './services/route-parts/route-parts.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import * as hopscotch from 'hopscotch';
 import { RestService } from './services/rest.service';
@@ -15,8 +17,8 @@ import { DataService } from 'app/core/services/data.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { WebSocketService } from './services/ws.service';
-import { DomSanitizer } from "@angular/platform-browser";
-import { MatIconRegistry } from "@angular/material/icon";
+import { DomSanitizer } from '@angular/platform-browser';
+import { MatIconRegistry } from '@angular/material/icon';
 import { ChartDataUtilsService } from 'app/core/services/chart-data-utils.service'; // <-- Use this globally so we can run as web worker
 import { customSvgIcons } from 'app/core/classes/custom-icons';
 
@@ -29,9 +31,9 @@ import productText from './helptext/product';
 })
 export class AppComponent {
   appTitle = 'TrueNAS';
-  protected accountUserResource: string = 'account/users/1';
+  protected accountUserResource = 'account/users/1';
   protected user: any;
-  public product_type: string = '';
+  product_type = '';
 
   constructor(public title: Title,
     private router: Router,
@@ -50,93 +52,90 @@ export class AppComponent {
     public domSanitizer: DomSanitizer,
     public matIconRegistry: MatIconRegistry,
     public chartDataUtils: ChartDataUtilsService) {
-   
-    this.matIconRegistry.addSvgIconSetInNamespace("mdi",
-      this.domSanitizer.bypassSecurityTrustResourceUrl("assets/iconfont/mdi/mdi.svg")
-    );
-    
-    for(const [name, path] of Object.entries(customSvgIcons)) {
-      this.matIconRegistry.addSvgIcon(name, this.domSanitizer.bypassSecurityTrustResourceUrl(path));  
+    this.matIconRegistry.addSvgIconSetInNamespace('mdi',
+      this.domSanitizer.bypassSecurityTrustResourceUrl('assets/iconfont/mdi/mdi.svg'));
+
+    for (const [name, path] of Object.entries(customSvgIcons)) {
+      this.matIconRegistry.addSvgIcon(name, this.domSanitizer.bypassSecurityTrustResourceUrl(path));
     }
 
     const product = productText.product.trim();
     this.title.setTitle(product + ' - ' + window.location.hostname);
-    if(window.localStorage.product_type){
-      let cachedType = window.localStorage['product_type'].toLowerCase();
-      let path = "assets/images/truenas_" + cachedType + "_favicon.png";
+    if (window.localStorage.product_type) {
+      const cachedType = window.localStorage['product_type'].toLowerCase();
+      const path = 'assets/images/truenas_' + cachedType + '_favicon.png';
       this.setFavicon(path);
     } else {
       ws.call('system.product_type').subscribe((res) => {
-        let path = "assets/images/truenas_" + res.toLowerCase() + "_favicon.png";
+        const path = 'assets/images/truenas_' + res.toLowerCase() + '_favicon.png';
         this.setFavicon(path);
       });
     }
 
-    if (this.detectBrowser("Safari")) {
-      document.body.className += " safari-platform";
+    if (this.detectBrowser('Safari')) {
+      document.body.className += ' safari-platform';
     }
 
-    router.events.subscribe(s => {
+    router.events.subscribe((s) => {
       // save currenturl
       if (s instanceof NavigationEnd) {
-        if (this.ws.loggedIn && s.url != '/sessions/signin'){
+        if (this.ws.loggedIn && s.url != '/sessions/signin') {
           sessionStorage.currentUrl = s.url;
         }
       }
 
-      if(this.themeservice.globalPreview){
+      if (this.themeservice.globalPreview) {
         // Only for globally applied theme preview
         this.globalPreviewControl();
       }
       if (s instanceof NavigationCancel) {
-        let params = new URLSearchParams(s.url.split('#')[1]);
-        let isEmbedded = params.get('embedded');
+        const params = new URLSearchParams(s.url.split('#')[1]);
+        const isEmbedded = params.get('embedded');
 
-        if(isEmbedded) {
-          document.body.className += " embedding-active";
+        if (isEmbedded) {
+          document.body.className += ' embedding-active';
         }
       }
     });
 
-    this.router.errorHandler = function (err:any) {
+    this.router.errorHandler = function (err: any) {
       const chunkFailedMessage = /Loading chunk [\d]+ failed/;
 
       if (chunkFailedMessage.test(err.message)) {
         window.location.reload(true);
       }
       console.error(err);
-    }
+    };
   }
 
   private setFavicon(str) {
-    const link = document.querySelector("link[rel*='icon']") || document.createElement("link")
-      link['rel'] = "icon";
-      link['type'] = "image/png";
-      // link.sizes = "16x16";
-      link['href'] = str;
-      document.getElementsByTagName('head')[0].appendChild(link);
+    const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+    link['rel'] = 'icon';
+    link['type'] = 'image/png';
+    // link.sizes = "16x16";
+    link['href'] = str;
+    document.getElementsByTagName('head')[0].appendChild(link);
   }
 
-  private detectBrowser(name){
-    let N = navigator.appName;
-    let UA = navigator.userAgent;
+  private detectBrowser(name) {
+    const N = navigator.appName;
+    const UA = navigator.userAgent;
     let temp;
-    let browserVersion = UA.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
-    if(browserVersion && (temp = UA.match(/version\/([\.\d]+)/i))!= null)
-      browserVersion[2]= temp[1];
-    let browserName = browserVersion? browserVersion[1]: N;
+    const browserVersion = UA.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
+    if (browserVersion && (temp = UA.match(/version\/([\.\d]+)/i)) != null) browserVersion[2] = temp[1];
+    const browserName = browserVersion ? browserVersion[1] : N;
 
-    if(name == browserName) return true;
-    else return false;
+    if (name == browserName) return true;
+    return false;
   }
 
-  private globalPreviewControl(){
-    let snackBarRef = this.snackBar.open('Custom theme Global Preview engaged','Back to form');
-    snackBarRef.onAction().subscribe(()=> {
-      this.router.navigate(['ui-preferences','create-theme']);
+  private globalPreviewControl() {
+    const snackBarRef = this.snackBar.open('Custom theme Global Preview engaged', 'Back to form');
+    snackBarRef.onAction().subscribe(() => {
+      this.router.navigate(['ui-preferences', 'create-theme']);
     });
 
-    if(this.router.url === '/ui-preferences/create-theme' || this.router.url === '/ui-preferences/edit-theme'){
+    if (this.router.url === '/ui-preferences/create-theme' || this.router.url === '/ui-preferences/edit-theme') {
       snackBarRef.dismiss();
     }
   }

@@ -139,6 +139,7 @@
     "commander": "4.1.1",
     "enhanced-resolve": "4.1.1",
     "eslint": "^7.24.0",
+    "eslint-plugin-import": "^2.22.1",
     "eslint-config-airbnb-typescript": "^12.3.1",
     "husky": "^6.0.0",
     "jasmine-core": "3.5.0",

@@ -23,17 +23,17 @@ import { TranslateModule } from '@ngx-translate/core';
     CommonDirectivesModule,
     CoreComponents,
     TranslateModule,
-    routing
+    routing,
   ],
   declarations: [
     PreferencesPage,
     CustomThemeComponent,
     CustomThemeManagerFormComponent,
-    GeneralPreferencesFormComponent
+    GeneralPreferencesFormComponent,
   ],
-  providers:[EntityFormService],
-  entryComponents:[
-    //CardComponent
-    ],
+  providers: [EntityFormService],
+  entryComponents: [
+    // CardComponent
+  ],
 })
 export class PreferencesModule { }

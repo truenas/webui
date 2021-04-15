@@ -2,11 +2,11 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../../appMaterial.module';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
-import { TaskCalendarRoutes } from "./task-calendar.routing";
+import { TaskCalendarRoutes } from './task-calendar.routing';
 import { EntityModule } from '../common/entity/entity.module';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -36,13 +36,13 @@ import { ResilverComponent } from './resilver/resilver.component';
     FlexLayoutModule,
     CalendarModule.forRoot({
       provide: DateAdapter,
-      useFactory: adapterFactory
+      useFactory: adapterFactory,
     }),
     RouterModule.forChild(TaskCalendarRoutes),
     EntityModule,
     FormsModule,
     ReactiveFormsModule,
-    TranslateModule
+    TranslateModule,
   ],
   declarations: [
     CronFormComponent,
@@ -62,7 +62,7 @@ import { ResilverComponent } from './resilver/resilver.component';
     ScrubFormComponent,
     CloudsyncListComponent,
     CloudsyncFormComponent,
-    ResilverComponent
-  ]
+    ResilverComponent,
+  ],
 })
 export class TaskCalendarModule {}

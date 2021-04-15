@@ -1,55 +1,55 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { T } from 'app/translate-marker';
-import { IscsiService } from '../../../../../services/';
+import { IscsiService } from '../../../../../services';
 
 @Component({
-  selector : 'app-iscsi-portal-list',
-  template : `
+  selector: 'app-iscsi-portal-list',
+  template: `
     <entity-table [conf]="this" [title]="tableTitle"></entity-table>
-  `
+  `,
 })
 export class PortalListComponent {
-  public tableTitle = 'Portals';
+  tableTitle = 'Portals';
   protected queryCall = 'iscsi.portal.query';
   protected wsDelete = 'iscsi.portal.delete';
-  protected route_add: string[] = [ 'sharing', 'iscsi', 'portals', 'add' ];
-  protected route_add_tooltip: string = "Add Portal";
-  protected route_edit: string[] = [ 'sharing', 'iscsi', 'portals', 'edit' ];
+  protected route_add: string[] = ['sharing', 'iscsi', 'portals', 'add'];
+  protected route_add_tooltip = 'Add Portal';
+  protected route_edit: string[] = ['sharing', 'iscsi', 'portals', 'edit'];
 
-  public columns: Array<any> = [
+  columns: any[] = [
     {
-      name : T('Portal Group ID'),
-      prop : 'tag',
-      always_display: true
+      name: T('Portal Group ID'),
+      prop: 'tag',
+      always_display: true,
     },
     {
-      name : T('Listen'),
-      prop : 'listen',
+      name: T('Listen'),
+      prop: 'listen',
     },
     {
-      name : T('Description'),
-      prop : 'comment',
+      name: T('Description'),
+      prop: 'comment',
     },
     {
-      name : T('Discovery Auth Method'),
-      prop : 'discovery_authmethod',
+      name: T('Discovery Auth Method'),
+      prop: 'discovery_authmethod',
     },
     {
-      name : T('Discovery Auth Group'),
-      prop : 'discovery_authgroup',
+      name: T('Discovery Auth Group'),
+      prop: 'discovery_authgroup',
     },
   ];
-  public rowIdentifier = 'tag';
-  public config: any = {
-    paging : true,
-    sorting : {columns : this.columns},
+  rowIdentifier = 'tag';
+  config: any = {
+    paging: true,
+    sorting: { columns: this.columns },
     deleteMsg: {
       title: 'Portal',
-      key_props: ['tag']
+      key_props: ['tag'],
     },
   };
-  public ipChoicies;
+  ipChoicies;
   constructor(protected router: Router, protected iscsiService: IscsiService) {}
 
   prerequisite(): Promise<boolean> {
@@ -61,8 +61,9 @@ export class PortalListComponent {
         },
         (err) => {
           resolve(true);
-        });
-      });
+        },
+      );
+    });
   }
 
   dataHandler(data) {
