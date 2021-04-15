@@ -27,19 +27,19 @@ import { ES24F } from 'app/core/classes/hardware/es24f';
 import { E60 } from 'app/core/classes/hardware/e60';
 import { ES60 } from 'app/core/classes/hardware/es60';
 import { ES102 } from 'app/core/classes/hardware/es102';
+import { DiskComponent } from './components/disk.component';
+import { TabContentComponent } from './components/tab-content/tab-content.component';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
 import { ErrorMessage } from 'app/core/classes/ix-interfaces';
 import {
   tween, easing, styler, value, keyframes,
 } from 'popmotion';
 import { Subject } from 'rxjs';
+import { ExampleData } from './example-data';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Temperature } from 'app/core/services/disk-temperature.service';
 import { DialogService } from 'app/services/dialog.service';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { ExampleData } from './example-data';
-import { TabContentComponent } from './components/tab-content/tab-content.component';
-import { DiskComponent } from './components/disk.component';
 import { T } from '../../../../translate-marker';
 
 export interface DiskFailure {
@@ -155,9 +155,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     public dialogService: DialogService,
   ) {
     this.themeUtils = new ThemeUtils();
-    core.register({ observerClass: this, eventName: 'DisksChanged' }).subscribe((evt: CoreEvent) => {
-      // REACT TO EVENT PROVIDED BY DISK.QUERY
-    });
 
     core.register({ observerClass: this, eventName: 'MediaChange' }).subscribe((evt: CoreEvent) => {
       this.mqAlias = evt.data.mqAlias;
@@ -225,6 +222,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
             this.pendingDialog.loader.close();
             this.pendingDialog.dialogRef.close();
           }
+          break;
+        case 'PoolsChanged':
+          this.setDisksEnabledState();
+          this.setCurrentView(this.defaultView);
           break;
       }
     });
@@ -294,10 +295,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.destroyAllEnclosures();
     this.app.stage.destroy(true);
     this.app.destroy(true, true);
-    // this.mediaObs.unsubscribe();
   }
 
-  loadEnclosure(enclosure, view?: string) {
+  loadEnclosure(enclosure, view?: string, update?: boolean) {
     if (this.selectedDisk) {
       this.selectedDisk = null;
       this.clearDisk();
@@ -328,7 +328,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.exit('full-stage');
       }
 
-      this.createEnclosure(enclosure);
+      if (update) {
+        this.createEnclosure(enclosure);
+      }
     }
   }
 
@@ -830,7 +832,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   getUnhealthyPools() {
     const sickPools = [];
     const pools = this.system.pools.forEach((pool, index) => {
-      const { healthy } = pool;
+      const healthy = pool.healthy;
       const inCurrentEnclosure = index == this.selectedEnclosure.poolKeys[pool.name];
       if (!healthy && inCurrentEnclosure) {
         sickPools.push(pool);
@@ -972,7 +974,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   toggleSlotStatus(kill?: boolean) {
     const selectedEnclosure = this.getSelectedEnclosure();
     const enclosure_id = this.system.enclosures[selectedEnclosure.enclosureKey].id;
-    const { slot } = this.selectedDisk.enclosure;
+    const slot = this.selectedDisk.enclosure.slot;
     const status = !this.identifyBtnRef && !kill ? 'IDENTIFY' : 'CLEAR';
     const args = [enclosure_id, slot, status];
 

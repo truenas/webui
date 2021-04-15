@@ -4,8 +4,8 @@ import { UUID } from 'angular2-uuid';
 import { LocalStorage } from 'ngx-webstorage';
 import { Observable, Subject } from 'rxjs/Rx';
 
-import { filter, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
+import { filter, map } from 'rxjs/operators';
 
 @Injectable()
 export class WebSocketService {
@@ -124,7 +124,7 @@ export class WebSocketService {
       this.onconnect();
     } else if (data.msg == 'nosub') {
       console.warn(data);
-    } else if (data.msg == 'added') {
+    } else if (data.msg == 'added' || data.collection == 'disk.query') {
       const nom = data.collection.replace('.', '_');
       if (this.pendingSubs[nom] && this.pendingSubs[nom].observers) {
         for (const uuid in this.pendingSubs[nom].observers) {
@@ -133,8 +133,10 @@ export class WebSocketService {
             console.log('Error: ', data.error);
             subObserver.error(data.error);
           }
-          if (subObserver) {
+          if (subObserver && data.fields) {
             subObserver.next(data.fields);
+          } else if (subObserver && !data.fields) {
+            subObserver.next(data);
           }
         }
       }

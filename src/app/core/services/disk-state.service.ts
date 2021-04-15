@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { WebSocketService } from 'app/services/ws.service';
 import { BaseService } from './base.service';
 import { CoreEvent } from './core.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 export interface Temperature {
   keys: string[];
@@ -21,7 +21,15 @@ export class DiskStateService extends BaseService {
   protected onAuthenticated(evt: CoreEvent) {
     this.authenticated = true;
     this.ws.sub('disk.query').subscribe((res) => {
+      // A couple of notes about what to expect in the response.
+      // Cleared:boolean is a property in the response that seems to indicate removal
+      // If a device has been added, there will be a fields property containing disk details
+
       this.core.emit({ name: 'DisksChanged', data: res, sender: this });
+
+      if (res && res.cleared) {
+        this.core.emit({ name: 'DiskRemoved', data: res, sender: this });
+      }
     });
   }
 }
