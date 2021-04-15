@@ -156,7 +156,6 @@
     "protractor": "5.4.3",
     "snyk": "^1.467.0",
     "ts-node": "8.6.2",
-    "tslint": "~6.1.0",
     "typescript": "3.9.6",
     "webpack-cli": "3.3.11"
   },
