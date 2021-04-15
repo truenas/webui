@@ -121,6 +121,8 @@ def the_system_will_reboot_wait_the_login_to_come_back(driver):
     assert wait_on_element_disappear(driver, 120, '//h1[contains(.,"Resetting. Please wait")]')
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 120, '//input[@formcontrolname="password"]')
+    # this sleep give a little to get ready for more load
+    time.sleep(1)
 
 
 @then('when the system login shows up, input testing1 as the new password')
@@ -151,6 +153,8 @@ def reboot_the_system_and_try_to_login_using_the_previous_password_testing(drive
     driver.find_element_by_xpath('//button[@ix-auto="button__RESTART"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 120, '//input[@placeholder="Username"]', 'clickable')
+    # this sleep give a little to get ready for more load
+    time.sleep(1)
     driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
     driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
@@ -189,6 +193,7 @@ def on_the_general_page_click_the_upload_config_file(driver):
 def set_the_file_click_upload(driver):
     """set the file click Upload."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Upload Config")]')
+    time.sleep(0.5)
     assert wait_on_element(driver, 7, '//input[@type="file"]', 'clickable')
     driver.find_element_by_xpath('//input[@type="file"]').send_keys(backup_file)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__UPLOAD"]', 'clickable')
@@ -200,6 +205,8 @@ def the_system_will_reboot_wait_for_the_login(driver):
     """the system will reboot, wait for the login."""
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 120, '//input[@placeholder="Username"]')
+    # this sleep give a little to get ready for more load
+    time.sleep(1)
 
 
 @then('try to login using the new password testing1')

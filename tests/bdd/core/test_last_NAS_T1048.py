@@ -38,7 +38,7 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
     else:
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
-        time.sleep(0.5)
+        time.sleep(1)
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -46,7 +46,7 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
 def you_are_on_the_dashboard(driver):
     """you are on the Dashboard."""
     assert wait_on_element(driver, 7, '//a[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
 
 
 @then('click on System on the side menu, click on Boot')
@@ -109,6 +109,8 @@ def reboot_the_system_wait_for_login_and_login(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__RESTART"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 180, '//input[@placeholder="Username"]', 'clickable')
+    # this sleep give a little to get ready for more load
+    time.sleep(1)
     driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
     driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
@@ -121,7 +123,7 @@ def reboot_the_system_wait_for_login_and_login(driver):
 def on_the_dashboard_click_on_system_on_the_side_menu_click_on_boot(driver):
     """on the Dashboard, click on System on the side menu, click on Boot."""
     assert wait_on_element(driver, 7, '//a[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__System"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Boot"]')
