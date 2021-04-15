@@ -18,6 +18,7 @@ import { EntityUtils } from '../../common/entity/utils';
 import { Formconfiguration } from '../../common/entity/entity-form/entity-form.component';
 import { T } from '../../../translate-marker';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 
 @Component({
   selector : 'app-import-disk',
@@ -94,7 +95,7 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
   constructor(protected router: Router, protected rest: RestService,
               protected ws: WebSocketService, protected dialog: MatDialog,
               protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService,
-              protected job: JobService
+              protected job: JobService, protected core: CoreService
               ) {}
 
   preInit(entityForm: any) {
@@ -139,11 +140,10 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
 
     this.makeList();
 
-    this.ws.subscribe('disk.query').subscribe((res) => {
-		  if (res) {
-			this.makeList();
-		  }
-	  })
+    // Listen for disks being added/removed
+    this.core.register({ observerClass: this, eventName: "DisksChanged" }).subscribe((evt:CoreEvent) => {
+      this.makeList();
+    });
 
   }
 
@@ -213,6 +213,7 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
   }
 
   ngOnDestroy() {
+    this.core.unregister({observerClass: this});
     this.fs_type_subscription.unsubscribe();
   }
 
