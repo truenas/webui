@@ -140,7 +140,6 @@ export class ServiceTFTPComponent {
  */
 function invertUMask(data: { umask: string }): { umask: string } {
   const perm = parseInt(data['umask'], 8);
-  // tslint:disable-next-line: no-bitwise
   let mask = (~perm & 0o666).toString(8);
   while (mask.length < 3) {
     mask = '0' + mask;
