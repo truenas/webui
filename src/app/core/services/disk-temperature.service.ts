@@ -40,7 +40,7 @@ export class DiskTemperatureService extends BaseService {
     this.authenticated = true;
    
     const queryOptions = {"select":["name", "type"]};
-    this.websocket.call('disk.query',[ [], queryOptions]).subscribe((res) =>{
+    this.websocket.call('disk.query',[ [], queryOptions ]).subscribe((res) => {
       this.disks = res;
       if(this.subscribers > 0) this.start();
     });
@@ -50,7 +50,7 @@ export class DiskTemperatureService extends BaseService {
       eventName: "DisksChanged" 
     }).subscribe((evt: CoreEvent) => {
       this.stop();
-      this.websocket.call('disk.query',[ [], queryOptions]).subscribe((res) =>{
+      this.websocket.call('disk.query',[ [], queryOptions ]).subscribe((res) => {
         this.disks = res;
         if(this.subscribers > 0) this.start();
       });
