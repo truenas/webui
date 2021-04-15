@@ -14,7 +14,7 @@ import helptext from '../../../../helptext/task-calendar/replication/replication
 
 @Component({
   selector: 'app-replication-list',
-  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
+  template: '<entity-table [title]=\'title\' [conf]=\'this\'></entity-table>',
   providers: [JobService, StorageService],
 })
 export class ReplicationListComponent {
@@ -202,7 +202,7 @@ export class ReplicationListComponent {
           },
         );
       } else {
-        this.dialog.errorReport(row.state.state, row.state.error);
+        this.dialog.errorReport(row.state.state, `<pre>${row.state.error}</pre>`);
       }
     }
   }
