@@ -24,7 +24,7 @@ import { CoreService, CoreEvent } from 'app/core/services/core.service';
   selector : 'app-import-disk',
   template: `
   <div *ngIf="initialized">
-    <entity-form [conf]="this"></entity-form>
+  <entity-form [conf]="this"></entity-form>
   </div>`
 })
 export class ImportDiskComponent implements OnDestroy, Formconfiguration {
@@ -33,53 +33,53 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
   public fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
     {
-        name: helptext.fieldset_disk,
-        label: true,
-        class: 'general',
-        width: '49%',
-        config: [
-          {
-            type : 'select',
-            name : 'volume',
-            placeholder : helptext.import_disk_volume_placeholder,
-            tooltip: helptext.import_disk_volume_tooltip,
-            options: [],
-            required: true,
-            validation : helptext.import_disk_volume_validation
-          },
-          {
-            type : 'radio',
-            name : 'fs_type',
-            placeholder : helptext.import_disk_fs_type_placeholder,
-            tooltip: helptext.import_disk_fs_type_tooltip,
-            options: [
-                          {value:'ufs', label:'UFS'},
-                          {value:'ntfs', label:'NTFS'},
-                          {value:'msdosfs', label:'MSDOSFS'},
-                          {value: 'ext2fs', label:'EXT2FS'}
-                        ],
-            required: true,
-            validation : helptext.import_disk_fs_type_validation
-          },
-          {
-            type: 'select',
-            name: 'msdosfs_locale',
-            placeholder: helptext.import_disk_msdosfs_locale_placeholder,
-            tooltip: helptext.import_disk_msdosfs_locale_tooltip,
-            options: [],
-            isHidden: true,
-          },
-          {
-            type : 'explorer',
-            name : 'dst_path',
-            placeholder : helptext.import_disk_dst_path_placeholder,
-            tooltip: helptext.import_disk_dst_path_tooltip,
-            explorerType: 'directory',
-            initial: '/mnt',
-            required: true,
-            validation : helptext.import_disk_dst_path_validation
-          },
-        ]
+      name: helptext.fieldset_disk,
+      label: true,
+      class: 'general',
+      width: '49%',
+      config: [
+        {
+          type : 'select',
+          name : 'volume',
+          placeholder : helptext.import_disk_volume_placeholder,
+          tooltip: helptext.import_disk_volume_tooltip,
+          options: [],
+          required: true,
+          validation : helptext.import_disk_volume_validation
+        },
+        {
+          type : 'radio',
+          name : 'fs_type',
+          placeholder : helptext.import_disk_fs_type_placeholder,
+          tooltip: helptext.import_disk_fs_type_tooltip,
+          options: [
+            {value:'ufs', label:'UFS'},
+            {value:'ntfs', label:'NTFS'},
+            {value:'msdosfs', label:'MSDOSFS'},
+            {value: 'ext2fs', label:'EXT2FS'}
+          ],
+          required: true,
+          validation : helptext.import_disk_fs_type_validation
+        },
+        {
+          type: 'select',
+          name: 'msdosfs_locale',
+          placeholder: helptext.import_disk_msdosfs_locale_placeholder,
+          tooltip: helptext.import_disk_msdosfs_locale_tooltip,
+          options: [],
+          isHidden: true,
+        },
+        {
+          type : 'explorer',
+          name : 'dst_path',
+          placeholder : helptext.import_disk_dst_path_placeholder,
+          tooltip: helptext.import_disk_dst_path_tooltip,
+          explorerType: 'directory',
+          initial: '/mnt',
+          required: true,
+          validation : helptext.import_disk_dst_path_validation
+        },
+      ]
     }
   ];
 
@@ -93,10 +93,10 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
   public custActions: any[];
 
   constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService, protected dialog: MatDialog,
-              protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService,
-              protected job: JobService, protected core: CoreService
-              ) {}
+    protected ws: WebSocketService, protected dialog: MatDialog,
+    protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService,
+    protected job: JobService, protected core: CoreService
+  ) {}
 
   preInit(entityForm: any) {
     this.entityForm = entityForm;
@@ -115,8 +115,8 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
         this.msdosfs_locale.options.push({label : res[i], value : res[i]});
       }
     }, (res) => {
-        this.dialogService.errorReport(T("Error getting locales"), res.message, res.stack);
-        this.initialized = true;
+      this.dialogService.errorReport(T("Error getting locales"), res.message, res.stack);
+      this.initialized = true;
     });
 
     this.fs_type_subscription = this.fs_type.valueChanges.subscribe((value) => {
@@ -149,32 +149,32 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
 
   makeList() {
     this.volume.options = []
-    this.ws.call("disk.get_unused", [true]).subscribe((data)=>{
+      this.ws.call("disk.get_unused", [true]).subscribe((data)=>{
 
-      for (let i = 0; i < data.length; i++) {
-        if(data[i].partitions) {
-          for (let p = 0; p < data[i].partitions.length; p++) {
-            this.volume.options.push(
-              {label : data[i].partitions[p].path,
-               value : data[i].partitions[p].path});
+        for (let i = 0; i < data.length; i++) {
+          if(data[i].partitions) {
+            for (let p = 0; p < data[i].partitions.length; p++) {
+              this.volume.options.push(
+                {label : data[i].partitions[p].path,
+                  value : data[i].partitions[p].path});
+            }
           }
         }
-      }
-      this.initialized = true;
+        this.initialized = true;
 
-    }, (res) => {
-      this.dialogService.errorReport(T("Error getting disk data"), res.message, res.stack);
-      this.initialized = true;
-    });
+      }, (res) => {
+        this.dialogService.errorReport(T("Error getting disk data"), res.message, res.stack);
+        this.initialized = true;
+      });
   }
 
   customSubmit(payload){
     this.custActions = [];
     const fs_options = {}
-    if (payload.fs_type === "msdosfs" && payload.msdosfs_locale) {
-      fs_options["locale"] = payload.msdosfs_locale;
-    }
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Importing Disk") }});
+      if (payload.fs_type === "msdosfs" && payload.msdosfs_locale) {
+        fs_options["locale"] = payload.msdosfs_locale;
+      }
+      this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Importing Disk") }});
     this.dialogRef.componentInstance.setDescription(T("Importing Disk..."));
     this.dialogRef.componentInstance.setCall('pool.import_disk', [payload.volume, payload.fs_type, fs_options ,payload.dst_path]);
     this.dialogRef.componentInstance.submit();
