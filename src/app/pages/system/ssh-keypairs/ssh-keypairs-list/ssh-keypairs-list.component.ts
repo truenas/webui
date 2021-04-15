@@ -6,7 +6,7 @@ import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector: 'app-ssh-keypairs-list',
-  template: '<entity-table [title]=\'title\' [conf]=\'this\'></entity-table>',
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class SshKeypairsListComponent {
   title = 'SSH Keypairs';

@@ -14,7 +14,7 @@ import helptext from '../../../../helptext/task-calendar/replication/replication
 
 @Component({
   selector: 'app-replication-list',
-  template: '<entity-table [title]=\'title\' [conf]=\'this\'></entity-table>',
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [JobService, StorageService],
 })
 export class ReplicationListComponent {

@@ -16,7 +16,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 @Component({
   selector: 'app-replication-list',
-  template: '<entity-form [conf]=\'this\'></entity-form>',
+  template: '<entity-form [conf]="this"></entity-form>',
   providers: [TaskService, KeychainCredentialService, ReplicationService, StorageService],
 })
 export class ReplicationFormComponent {

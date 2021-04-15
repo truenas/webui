@@ -12,7 +12,7 @@ import { atLeastOne } from 'app/pages/common/entity/entity-form/validators/at-le
 
 @Component({
   selector: 'app-ssh-keypairs-form',
-  template: '<entity-form [conf]=\'this\'></entity-form>',
+  template: '<entity-form [conf]="this"></entity-form>',
 })
 export class SshKeypairsFormComponent {
   protected queryCall = 'keychaincredential.query';

@@ -17,7 +17,7 @@ import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector: 'app-cloudsync-add',
-  template: '<entity-form [conf]=\'this\'></entity-form>',
+  template: '<entity-form [conf]="this"></entity-form>',
   providers: [CloudCredentialService, JobService],
 })
 export class CloudsyncFormComponent {
