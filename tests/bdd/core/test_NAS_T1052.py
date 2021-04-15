@@ -20,9 +20,9 @@ from pytest_bdd import (
 mountpoint = f'/mnt/nfs_host{"".join(random.choices(string.digits, k=2))}'
 
 
-@scenario('features/NAS-T1052.feature', 'Verify authorized IP address works for NFS share')
-def test_verify_authorized_ip_address_works_for_nfs_share(driver):
-    """Verify authorized IP address works for NFS share."""
+@scenario('features/NAS-T1052.feature', 'Verify authorized host works for NFS share')
+def test_verify_authorized_host_works_for_nfs_share():
+    """Verify authorized host works for NFS share."""
     pass
 
 
@@ -84,9 +84,9 @@ def make_sure_authorized_network_is_empty(driver):
     driver.find_element_by_xpath('//input[@ix-auto="input__Authorized Networks"]').clear()
 
 
-@then('input <client2> in Authorized IP')
-def input_client2_in_authorized_ip(driver, client2):
-    """input <client2> in Authorized IP."""
+@then('input <client2> in Authorized Hosts and IP')
+def input_client2_in_authorized_hosts_and_ip(driver, client2):
+    """input <client2> in Authorized Hosts and IP."""
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Authorized Hosts and IP addresses"]', 'clickable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Authorized Hosts and IP addresses"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Authorized Hosts and IP addresses"]').send_keys(client2)
@@ -113,9 +113,9 @@ def try_to_mount_the_nfs_share_on_from_client1_with_password1(driver, nas_ip, cl
     mount_results1 = ssh_cmd(cmd, 'root', passwd1, host1)
 
 
-@then('the share should mount with an error on client1')
-def the_share_should_mount_with_an_error_on_client1(driver):
-    """the share should mount with an error on client1."""
+@then('the mount should generate an error Permission denied')
+def the_mount_should_generate_an_error_permission_denied(driver):
+    """the mount should generate an error Permission denied."""
     assert mount_results1['result'] is False, str(mount_results1)
     cmd = f'rm -rf {mountpoint}'
     results = ssh_cmd(cmd, 'root', passwd1, host1)
