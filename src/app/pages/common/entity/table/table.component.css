@@ -1,66 +1,58 @@
-/* table component css */
-mat-card.app-table {
-    height: calc(100% - 8px);
+:host {
+  display: block;
+  max-width: 100%;
 }
 
-div.table-container {
-    padding: 0px;
+mat-card.app-table {
+  height: calc(100% - 8px);
+  max-width: 100%;
 }
 
 mat-card-content.table-container{
-    height: inherit;
+  height: inherit;
+  max-width: 100%;
 }
 
 div.table-container {
-    height: calc(100% - 41px);
+  padding: 0px;
+  height: calc(100% - 41px);
+  max-width: 100%;
 }
 
-div.table-cell {
-    display: flex;
-    align-items: center;
+.text-overflow-ellipsis {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.table-component {
+  max-width: 100%;
+  table-layout: fixed;
 }
 
 div.table-row-action {
-    justify-content: flex-end;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
-
-/* mat-icon.state-icon {
-    font-size: 19px;
-    height: auto;
-    width: auto;
-    margin-right: 4px;
-}
-
-mat-icon.state-icon.STATE_UP {
-    color: var(--green);
-} */
 
 mat-icon.state-icon,
 mat-icon.state-info-icon,
 mat-icon.table-action-button {
-    position: inherit;
+  position: inherit;
 }
 
 div.state-info {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 div.view-more-row {
-    padding: 9px;
-    text-align: center;
-    cursor: pointer;
+  padding: 9px;
+  text-align: center;
+  cursor: pointer;
 }
 
 div.view-more-row:hover {
-    background: rgba(0,0,0,0.1);
-}
-
-.empty-table-message {
-    position: relative;
-    left: 20px;
-    top: 15px;
-    opacity: 0.4;
-    font-size: 1rem;
-    margin-bottom: 26px;
+  background: rgba(0,0,0,0.1);
 }
