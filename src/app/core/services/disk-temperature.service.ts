@@ -39,7 +39,6 @@ export class DiskTemperatureService extends BaseService {
   protected onAuthenticated(evt: CoreEvent){
     this.authenticated = true;
    
-    // TODO: use disk.query to detect drive change events
     const queryOptions = {"select":["name", "type"]};
     this.websocket.call('disk.query',[ [], queryOptions]).subscribe((res) =>{
       this.disks = res;
