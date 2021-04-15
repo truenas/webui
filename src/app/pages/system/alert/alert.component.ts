@@ -3,11 +3,11 @@ import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-set
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
-import { DialogService, WebSocketService } from '../../../services/';
+import * as _ from 'lodash';
+import { DialogService, WebSocketService } from '../../../services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
-import * as _ from 'lodash';
 import helptext from '../../../helptext/system/alert-settings';
 
 interface AlertCategory {
@@ -18,7 +18,7 @@ interface AlertCategory {
     title: string;
     level: string;
   }[];
-} 
+}
 
 /**
  * This form is unlike other forms in the app which make use of EntityForm.
@@ -36,28 +36,28 @@ export class AlertConfigComponent implements OnInit {
   protected queryCall = 'alertclasses.config';
   protected editCall = 'alertclasses.update';
   protected isEntity = true;
-  public fieldSets: FieldSets;
-  public fieldConfig: FieldConfig[] = [];
+  fieldSets: FieldSets;
+  fieldConfig: FieldConfig[] = [];
   protected settingOptions: any = [];
   protected warningOptions: any = [
-    {label: "INFO", value: "INFO"},
-    {label: "NOTICE", value: "NOTICE"},
-    {label: "WARNING", value: "WARNING"},
-    {label: "ERROR", value: "ERROR"},
-    {label: "CRITICAL", value: "CRITICAL"},
-    {label: "ALERT", value: "ALERT"},
-    {label: "EMERGENCY", value: "EMERGENCY"},
+    { label: 'INFO', value: 'INFO' },
+    { label: 'NOTICE', value: 'NOTICE' },
+    { label: 'WARNING', value: 'WARNING' },
+    { label: 'ERROR', value: 'ERROR' },
+    { label: 'CRITICAL', value: 'CRITICAL' },
+    { label: 'ALERT', value: 'ALERT' },
+    { label: 'EMERGENCY', value: 'EMERGENCY' },
   ];
-  public formGroup: any;
-  public settingFormGroup: any;
-  public isReady = false;
+  formGroup: any;
+  settingFormGroup: any;
+  isReady = false;
   protected defaults = [];
 
   constructor(
     private ws: WebSocketService,
     private entityFormService: EntityFormService,
     protected loader: AppLoaderService,
-    public dialog: DialogService
+    public dialog: DialogService,
   ) {}
 
   async ngOnInit() {
@@ -65,69 +65,68 @@ export class AlertConfigComponent implements OnInit {
     this.ws.call('alert.list_policies', []).subscribe((res) => {
       for (let i = 0; i < res.length; i++) {
         let label = res[i];
-        if (res[i] === "IMMEDIATELY") {
-          label = res[i] + ' (Default)';
+        if (res[i] === 'IMMEDIATELY') {
+          label = `${res[i]} (Default)`;
         }
-        this.settingOptions.push({ label: label, value: res[i] });
+        this.settingOptions.push({ label, value: res[i] });
       }
-    }, error => {
+    }, (error) => {
       this.loader.close();
       new EntityUtils().handleWSError(this, error, this.dialog);
     });
-  
+
     const sets: FieldSet[] = [];
 
-    const cat = this.ws.call("alert.list_categories").toPromise();
-    cat.then(categories => {
+    const cat = this.ws.call('alert.list_categories').toPromise();
+    cat.then((categories) => {
       categories.forEach((category, index) => {
         const modulo = index % 2;
 
-        let config = [];
+        const config = [];
         for (let i = 0; i < category.classes.length; i++) {
           const c = category.classes[i];
           const warningOptions = [];
           for (let j = 0; j < this.warningOptions.length; j++) {
-            const option  = JSON.parse(JSON.stringify( this.warningOptions[j] )); // apparently this is the proper way to clone an object
+            const option = JSON.parse(JSON.stringify(this.warningOptions[j])); // apparently this is the proper way to clone an object
             if (option.value === c.level) {
-              option.label = option.label + " (Default)";
+              option.label += ' (Default)';
             }
             warningOptions.push(option);
           }
           config.push({
-            type: "select",
-            name: c.id + '_level',
+            type: 'select',
+            name: `${c.id}_level`,
             inlineLabel: c.title,
-            placeholder: T("Set Warning Level"),
+            placeholder: T('Set Warning Level'),
             tooltip: helptext.level_tooltip,
             options: warningOptions,
-            value: c.level
+            value: c.level,
           },
           {
-            type: "select",
-            name: c.id + '_policy',
-            inlineLabel: " ",
-            placeholder: T("Set Frequency"),
+            type: 'select',
+            name: `${c.id}_policy`,
+            inlineLabel: ' ',
+            placeholder: T('Set Frequency'),
             tooltip: helptext.policy_tooltip,
             options: this.settingOptions,
-            value: "IMMEDIATELY"
+            value: 'IMMEDIATELY',
           });
 
-          this.defaults.push({id: c.id, level: c.level, policy: 'IMMEDIATELY'});
+          this.defaults.push({ id: c.id, level: c.level, policy: 'IMMEDIATELY' });
         }
 
-        let fieldSet = {
+        const fieldSet = {
           name: category.title,
           label: true,
-          width: "40%",
-          config: config
-        }
-      
+          width: '40%',
+          config,
+        };
+
         sets.push(fieldSet);
 
-        if(modulo == 1 && index < categories.length - 2){
-          sets.push({ name: 'divider', divider: true },);
+        if (modulo == 1 && index < categories.length - 2) {
+          sets.push({ name: 'divider', divider: true });
         }
-
       });
 
       /* Final divider before action buttons */
@@ -142,20 +141,20 @@ export class AlertConfigComponent implements OnInit {
         this.loader.close();
         for (const k in res.classes) {
           for (const j in res.classes[k]) {
-            const prop = k + '_' + j;
+            const prop = `${k}_${j}`;
             if (this.formGroup.controls[prop]) {
               this.formGroup.controls[prop].setValue(res.classes[k][j]);
             } else {
-              console.log("Missing prop: " + prop); // some properties don't exist between both calls?
+              console.log(`Missing prop: ${prop}`); // some properties don't exist between both calls?
             }
           }
         }
       },
       (err) => {
         this.loader.close();
-        new EntityUtils().handleWSError(this, err, this.dialog)
+        new EntityUtils().handleWSError(this, err, this.dialog);
       });
-    }).catch(error => {
+    }).catch((error) => {
       this.loader.close();
       new EntityUtils().handleWSError(this, error, this.dialog);
     });
@@ -168,9 +167,9 @@ export class AlertConfigComponent implements OnInit {
       const key_values = key.split('_');
       const alert_class = key_values[0];
       const class_key = key_values[1];
-      const def = _.find(this.defaults, {id: alert_class});
+      const def = _.find(this.defaults, { id: alert_class });
       if (def[class_key].toUpperCase() !== this.formGroup.value[key].toUpperCase()) { // do not submit defaults in the payload
-        if(!payload.classes[alert_class]) {
+        if (!payload.classes[alert_class]) {
           payload.classes[alert_class] = {};
         }
         payload.classes[alert_class][class_key] = this.formGroup.value[key];
@@ -181,8 +180,8 @@ export class AlertConfigComponent implements OnInit {
 
     this.ws.call(this.editCall, [payload])
       .subscribe(
-        () => this.dialog.Info(T("Settings saved"), '', '300px', 'info', true),
-        error => new EntityUtils().handleWSError(this, error, this.dialog)
+        () => this.dialog.Info(T('Settings saved'), '', '300px', 'info', true),
+        (error) => new EntityUtils().handleWSError(this, error, this.dialog),
       )
       .add(() => this.loader.close());
   }

@@ -1,18 +1,17 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
-import { BootEnvService, RestService, WebSocketService } from '../../../../services/';
+import { BootEnvService, RestService, WebSocketService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { regexValidator } from '../../../common/entity/entity-form/validators/regex-validation';
 
 @Component({
-  selector : 'app-bootenv-create',
-  template : `<entity-form [conf]="this"></entity-form>`,
-  providers: [BootEnvService]
+  selector: 'app-bootenv-create',
+  template: '<entity-form [conf]="this"></entity-form>',
+  providers: [BootEnvService],
 })
 export class BootEnvironmentCreateComponent {
-
-  protected route_success: string[] = [ 'system', 'boot' ];
+  protected route_success: string[] = ['system', 'boot'];
   protected addCall = 'bootenv.create';
   protected pk: any;
   protected isNew = false;
@@ -22,10 +21,10 @@ export class BootEnvironmentCreateComponent {
   protected fieldConfig: FieldConfig[];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-              protected rest: RestService, protected ws: WebSocketService, protected bootEnvService: BootEnvService) {}
+    protected rest: RestService, protected ws: WebSocketService, protected bootEnvService: BootEnvService) {}
 
   preInit(entityForm: any) {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       this.pk = params['pk'];
       this.fieldConfig = [
         {
@@ -33,8 +32,8 @@ export class BootEnvironmentCreateComponent {
           name: 'name',
           placeholder: helptext_system_bootenv.create_name_placeholder,
           tooltip: helptext_system_bootenv.create_name_tooltip,
-          validation : [ regexValidator(this.bootEnvService.bootenv_name_regex)],
-          required: true
+          validation: [regexValidator(this.bootEnvService.bootenv_name_regex)],
+          required: true,
         },
       ];
     });
@@ -43,7 +42,7 @@ export class BootEnvironmentCreateComponent {
   afterInit(entityForm: any) {
     entityForm.submitFunction = this.submitFunction;
   }
-  submitFunction(entityForm){
+  submitFunction(entityForm) {
     const payload = {};
     payload['name'] = entityForm.name;
     return this.ws.call('bootenv.create', [payload]);

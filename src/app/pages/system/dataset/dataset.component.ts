@@ -2,27 +2,26 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 import * as _ from 'lodash';
-import { WebSocketService, DialogService } from '../../../services/';
-import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { helptext_system_dataset } from 'app/helptext/system/dataset';
+import { WebSocketService, DialogService } from '../../../services';
+import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../common/entity/utils';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { T } from '../../../translate-marker';
 
 @Component({
   selector: 'app-system-dataset',
-  template : `<entity-form [conf]="this"></entity-form>`,
-  providers: []
+  template: '<entity-form [conf]="this"></entity-form>',
+  providers: [],
 })
 export class DatasetComponent {
+  protected queryCall = 'systemdataset.config';
+  protected updateCall = 'systemdataset.update';
+  isEntity = false;
 
-  protected queryCall: string = 'systemdataset.config';
-  protected updateCall: string = 'systemdataset.update';
-  public isEntity = false;
-
-  public formGroup: FormGroup;
-  public entityForm: any;
+  formGroup: FormGroup;
+  entityForm: any;
 
   protected syslog_subscription: any;
   protected syslog_warned = false;
@@ -34,73 +33,72 @@ export class DatasetComponent {
   protected pool_fg: any;
   protected pool_value: any;
 
-  public fieldConfig: FieldConfig[] = [];
-  public fieldSets: FieldSet[] = [
+  fieldConfig: FieldConfig[] = [];
+  fieldSets: FieldSet[] = [
     {
       name: helptext_system_dataset.metadata.fieldsets[0],
-      class:'edit-system-dataset',
-      label:true,
-      width:'300px',
-      config:[
+      class: 'edit-system-dataset',
+      label: true,
+      width: '300px',
+      config: [
         {
           type: 'select',
           name: 'pool',
           placeholder: helptext_system_dataset.pool.placeholder,
           tooltip: helptext_system_dataset.pool.tooltip,
           options: [
-            {label: '---', value: null},
-          ]
+            { label: '---', value: null },
+          ],
         },
         {
           type: 'checkbox',
           name: 'syslog',
           placeholder: helptext_system_dataset.syslog.placeholder,
-          tooltip : helptext_system_dataset.syslog.tooltip
-        }
-      ]
+          tooltip: helptext_system_dataset.syslog.tooltip,
+        },
+      ],
     },
     {
-      name:'divider',
-      divider:true
+      name: 'divider',
+      divider: true,
     },
-  ]
+  ];
 
   private pool: any;
   private syslog: any;
   constructor(private ws: WebSocketService,
-    private loader: AppLoaderService, 
+    private loader: AppLoaderService,
     private dialogService: DialogService) {}
 
   preInit(EntityForm) {
-    
-    this.ws.call('boot.pool_name').subscribe( res => {
-      this.pool = _.find(this.fieldConfig, {'name': 'pool'});
-      this.pool.options.push({ label: res, value: res});
+    this.ws.call('boot.pool_name').subscribe((res) => {
+      this.pool = _.find(this.fieldConfig, { name: 'pool' });
+      this.pool.options.push({ label: res, value: res });
     });
-    
-    this.ws.call('pool.query').subscribe( res => {
-       if (res) {
-         this.pool = _.find(this.fieldConfig, {'name': 'pool'});
-         res.forEach( x => {
-           this.pool.options.push({ label: x.name, value: x.name});
-         });
-       }
+
+    this.ws.call('pool.query').subscribe((res) => {
+      if (res) {
+        this.pool = _.find(this.fieldConfig, { name: 'pool' });
+        res.forEach((x) => {
+          this.pool.options.push({ label: x.name, value: x.name });
+        });
+      }
     });
   }
 
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
-    /*this.ws.call('systemdataset.config').subscribe(res => {
+    /* this.ws.call('systemdataset.config').subscribe(res => {
       entityForm.formGroup.controls['pool'].setValue(res.pool);
       entityForm.formGroup.controls['syslog'].setValue(res.syslog);
-    });*/
+    }); */
     this.syslog_fg = this.entityForm.formGroup.controls['syslog'];
-    this.pool_fg = this.entityForm.formGroup.controls['pool']
+    this.pool_fg = this.entityForm.formGroup.controls['pool'];
     this.ws.call('failover.licensed').subscribe((is_ha) => {
       if (is_ha) {
-        this.syslog_subscription = this.syslog_fg.valueChanges.subscribe(res => {
+        this.syslog_subscription = this.syslog_fg.valueChanges.subscribe((res) => {
           if (!this.syslog_warned && res !== this.syslog_value) {
-            this.dialogService.confirm(helptext_system_dataset.syslog_warning.title, helptext_system_dataset.syslog_warning.message).subscribe(confirm => {
+            this.dialogService.confirm(helptext_system_dataset.syslog_warning.title, helptext_system_dataset.syslog_warning.message).subscribe((confirm) => {
               if (confirm) {
                 this.syslog_warned = true;
               } else {
@@ -109,9 +107,9 @@ export class DatasetComponent {
             });
           }
         });
-        this.pool_subscription = this.pool_fg.valueChanges.subscribe(res => {
+        this.pool_subscription = this.pool_fg.valueChanges.subscribe((res) => {
           if (!this.pool_warned && res !== this.pool_value) {
-            this.dialogService.confirm(helptext_system_dataset.pool_warning.title, helptext_system_dataset.pool_warning.message).subscribe(confirm => {
+            this.dialogService.confirm(helptext_system_dataset.pool_warning.title, helptext_system_dataset.pool_warning.message).subscribe((confirm) => {
               if (confirm) {
                 this.pool_warned = true;
               } else {
@@ -128,20 +126,20 @@ export class DatasetComponent {
     this.syslog_value = data['syslog'];
     this.pool_value = data['pool'];
     return data;
-  };
+  }
 
   customSubmit(value) {
     this.loader.open();
-    this.ws.call("service.query").subscribe(
+    this.ws.call('service.query').subscribe(
       (services) => {
-        const smbShare = _.find(services, {'service': "cifs"});
+        const smbShare = _.find(services, { service: 'cifs' });
         if (smbShare.state === 'RUNNING') {
           this.loader.close();
           this.dialogService.confirm(
             T('Restart SMB Service'),
             T('The system dataset will be updated and the SMB service restarted. This will cause a temporary disruption of any active SMB connections.'),
             false,
-            T('Continue')
+            T('Continue'),
           ).subscribe((confirmed) => {
             if (confirmed) {
               this.loader.open();
@@ -151,7 +149,7 @@ export class DatasetComponent {
         } else {
           this.doUpdate(value);
         }
-      }
+      },
     );
   }
 
@@ -174,7 +172,7 @@ export class DatasetComponent {
       (err) => {
         this.loader.close();
         new EntityUtils().handleWSError(this, err);
-      }
+      },
     );
   }
 }

@@ -4,31 +4,33 @@ import * as _ from 'lodash';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { DialogService, StorageService, WebSocketService, AppLoaderService, UserService } from 'app/services';
+import {
+  DialogService, StorageService, WebSocketService, AppLoaderService, UserService,
+} from 'app/services';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 
 @Component({
   selector: 'app-user-quota-form',
-  template: `<entity-form [conf]="this"></entity-form>`
+  template: '<entity-form [conf]="this"></entity-form>',
 })
 export class UserQuotaFormComponent {
-  public isEntity = true;
-  public entityForm: any;
-  public pk: string;
+  isEntity = true;
+  entityForm: any;
+  pk: string;
   protected route_success: string[];
-  public searchedEntries = [];
-  public entryField;
+  searchedEntries = [];
+  entryField;
   private isNew = true;
   private dq: string;
   private oq: string;
-  private selectedEntriesField: any
+  private selectedEntriesField: any;
   private selectedEntriesValue: any;
   private entryErrs: any;
   private entryErrBool = false;
-  public save_button_enabled = false;
+  save_button_enabled = false;
   private differ: any;
-  public fieldConfig: FieldConfig[] = []
-  public fieldSets: FieldSet[] = [
+  fieldConfig: FieldConfig[] = [];
+  fieldSets: FieldSet[] = [
     {
       name: helptext.users.quota_title,
       label: true,
@@ -48,14 +50,14 @@ export class UserQuotaFormComponent {
           name: 'obj_quota',
           placeholder: helptext.users.obj_quota.placeholder,
           tooltip: helptext.users.obj_quota.tooltip,
-        }
-      ]
+        },
+      ],
     },
     {
       name: 'vertical_divider',
       label: false,
       width: '2%',
-      config: []
+      config: [],
     },
     {
       name: helptext.users.user_title,
@@ -80,25 +82,25 @@ export class UserQuotaFormComponent {
           autocomplete: true,
           searchOptions: [],
           parent: this,
-          updater: this.updateSearchOptions
-        }
-      ]
+          updater: this.updateSearchOptions,
+        },
+      ],
     },
     {
       name: 'divider',
-      divider: true
-    }
+      divider: true,
+    },
   ];
 
   constructor(protected ws: WebSocketService, protected storageService: StorageService,
     protected aroute: ActivatedRoute, protected loader: AppLoaderService,
     protected router: Router, protected userService: UserService, private dialog: DialogService,
     protected differs: IterableDiffers) {
-      this.differ = differs.find([]).create(null);
+    this.differ = differs.find([]).create(null);
   }
 
   preInit(entityForm: EntityFormComponent) {
-    const paramMap: any = (<any>this.aroute.params).getValue();
+    const paramMap: any = (<any> this.aroute.params).getValue();
     this.pk = paramMap.pk;
   }
 
@@ -106,18 +108,18 @@ export class UserQuotaFormComponent {
     const validEntry = await this.userService.getUserObject(value);
     const chips = document.getElementsByTagName('mat-chip');
     if (!validEntry) {
-      chips.item(chips.length-1).classList.add('chip-warn');
+      chips.item(chips.length - 1).classList.add('chip-warn');
     }
     this.entryErrs = document.getElementsByClassName('chip-warn');
-    this.entryErrBool = this.entryErrs.length === 0 ? false : true;
+    this.entryErrBool = this.entryErrs.length !== 0;
     this.allowSubmit();
   }
 
   allowSubmit() {
-    if ((this.dq || this.oq) &&
-        (this.selectedEntriesValue.value && this.selectedEntriesValue.value.length > 0 ||
-        this.searchedEntries && this.searchedEntries.length > 0) &&
-        this.entryErrBool === false) {
+    if ((this.dq || this.oq)
+        && (this.selectedEntriesValue.value && this.selectedEntriesValue.value.length > 0
+        || this.searchedEntries && this.searchedEntries.length > 0)
+        && this.entryErrBool === false) {
       this.save_button_enabled = true;
     } else {
       this.save_button_enabled = false;
@@ -129,43 +131,43 @@ export class UserQuotaFormComponent {
   ngDoCheck() {
     this.differ.diff(this.searchedEntries);
     if (this.searchedEntries.length > 0) {
-      this.allowSubmit()
+      this.allowSubmit();
     }
   }
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
     this.route_success = ['storage', 'pools', 'user-quotas', this.pk];
-    this.selectedEntriesField = _.find(this.fieldConfig, {name: "system_entries"});
+    this.selectedEntriesField = _.find(this.fieldConfig, { name: 'system_entries' });
     this.selectedEntriesValue = this.entityForm.formGroup.controls['system_entries'];
-    this.entryField = _.find(this.fieldSets.find(set => set.name === helptext.users.user_title).config,
-      { 'name': 'searched_entries' });
+    this.entryField = _.find(this.fieldSets.find((set) => set.name === helptext.users.user_title).config,
+      { name: 'searched_entries' });
 
-    this.ws.call('user.query').subscribe(res => {
-      res.map(entry => {
-        this.selectedEntriesField.options.push({label: entry.username, value: entry.uid})
+    this.ws.call('user.query').subscribe((res) => {
+      res.map((entry) => {
+        this.selectedEntriesField.options.push({ label: entry.username, value: entry.uid });
       });
     });
 
     this.entityForm.formGroup.controls['data_quota'].valueChanges.subscribe((res) => {
       this.dq = res;
       this.allowSubmit();
-    })
+    });
 
     this.entityForm.formGroup.controls['obj_quota'].valueChanges.subscribe((res) => {
       this.oq = res;
       this.allowSubmit();
-    })
+    });
 
     this.entityForm.formGroup.controls['system_entries'].valueChanges.subscribe(() => {
       this.allowSubmit();
-    })
+    });
 
-    this.entityForm.formGroup.controls['searched_entries'].valueChanges.subscribe(value => {
+    this.entityForm.formGroup.controls['searched_entries'].valueChanges.subscribe((value) => {
       if (value) {
-        this.validateEntry(value[value.length - 1])
+        this.validateEntry(value[value.length - 1]);
       }
-    })
+    });
 
     entityEdit.formGroup.controls['data_quota'].valueChanges.subscribe((value) => {
       const formField = _.find(this.fieldConfig, { name: 'data_quota' });
@@ -175,8 +177,8 @@ export class UserQuotaFormComponent {
       if (filteredValue !== undefined && isNaN(filteredValue)) {
         formField['hasErrors'] = true;
         formField['errors'] = helptext.shared.input_error;
-      };
-    })
+      }
+    });
   }
 
   blurEvent(parent) {
@@ -190,8 +192,8 @@ export class UserQuotaFormComponent {
     parent.storageService.humanReadable = '';
   }
 
-  updateSearchOptions(value = "", parent) {
-    parent.userService.userQueryDSCache(value).subscribe(items => {
+  updateSearchOptions(value = '', parent) {
+    parent.userService.userQueryDSCache(value).subscribe((items) => {
       const entries = [];
       for (let i = 0; i < items.length; i++) {
         entries.push({ label: items[i].username, value: items[i].username });
@@ -206,11 +208,11 @@ export class UserQuotaFormComponent {
       data.system_entries = [];
     }
     if (data.searched_entries.length > 0) {
-      data.searched_entries.forEach(entry => {
+      data.searched_entries.forEach((entry) => {
         if (!data.system_entries.includes(entry)) {
-          data.system_entries.push(entry)
+          data.system_entries.push(entry);
         }
-      })
+      });
     }
 
     if (data.system_entries) {
@@ -221,27 +223,27 @@ export class UserQuotaFormComponent {
             payload.push({
               quota_type: 'USER',
               id: entry.toString(),
-              quota_value: this.storageService.convertHumanStringToNum(data.data_quota)
-            })
+              quota_value: this.storageService.convertHumanStringToNum(data.data_quota),
+            });
           }
-        };
+        }
         if (data.obj_quota && data.obj_quota >= 0) {
           payload.push({
             quota_type: 'USEROBJ',
             id: entry.toString(),
-            quota_value: parseInt(data.obj_quota, 10)
-          })
-        };
-      })
+            quota_value: parseInt(data.obj_quota, 10),
+          });
+        }
+      });
     }
 
     this.loader.open();
-    this.ws.call('pool.dataset.set_quota', [this.pk, payload]).subscribe(res => {
+    this.ws.call('pool.dataset.set_quota', [this.pk, payload]).subscribe((res) => {
       this.loader.close();
       this.router.navigate(new Array('/').concat(this.route_success));
-    }, err => {
+    }, (err) => {
       this.loader.close();
-      this.dialog.errorReport('Error', err.reason, err.trace.formatted)
-    })
+      this.dialog.errorReport('Error', err.reason, err.trace.formatted);
+    });
   }
 }

@@ -16,7 +16,7 @@ export class FormListComponent implements Field, OnInit {
   group: FormGroup;
   fieldShow: string;
 
-  public listsFromArray: FormArray;
+  listsFromArray: FormArray;
 
   constructor(private entityFormService: EntityFormService, private formBuilder: FormBuilder) {}
 

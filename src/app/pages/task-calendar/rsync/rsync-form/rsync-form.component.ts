@@ -3,21 +3,20 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 import * as _ from 'lodash';
 
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { TaskService, UserService } from '../../../../services/';
+import { TaskService, UserService } from '../../../../services';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import helptext from '../../../../helptext/task-calendar/resync/resync-form';
 
 @Component({
   selector: 'rsync-task-add',
-  template: `<entity-form [conf]="this"></entity-form>`,
-  providers: [TaskService, UserService, EntityFormService]
+  template: '<entity-form [conf]="this"></entity-form>',
+  providers: [TaskService, UserService, EntityFormService],
 })
 export class RsyncFormComponent implements OnDestroy {
-
-  //protected resource_name: string = 'tasks/rsync';
+  // protected resource_name: string = 'tasks/rsync';
   protected addCall = 'rsynctask.create';
   protected editCall = 'rsynctask.update';
   protected queryCall = 'rsynctask.query';
@@ -25,11 +24,11 @@ export class RsyncFormComponent implements OnDestroy {
   protected route_success: string[] = ['tasks', 'rsync'];
   protected entityForm: EntityFormComponent;
   protected pk: any;
-  protected isEntity: boolean = true;
+  protected isEntity = true;
 
-  protected preTaskName: string = 'rsync';
-  public fieldConfig: FieldConfig[] = []
-  public fieldSets: FieldSet[] = [
+  protected preTaskName = 'rsync';
+  fieldConfig: FieldConfig[] = [];
+  fieldSets: FieldSet[] = [
     {
       name: helptext.fieldset_source,
       class: 'source',
@@ -44,7 +43,7 @@ export class RsyncFormComponent implements OnDestroy {
           placeholder: helptext.rsync_path_placeholder,
           tooltip: helptext.rsync_path_tooltip,
           required: true,
-          validation: helptext.rsync_path_validation
+          validation: helptext.rsync_path_validation,
         },
         {
           type: 'combobox',
@@ -64,15 +63,15 @@ export class RsyncFormComponent implements OnDestroy {
           placeholder: helptext.rsync_direction_placeholder,
           tooltip: helptext.rsync_direction_tooltip,
           options: [{ label: 'Push', value: 'PUSH' },
-          { label: 'Pull', value: 'PULL' }],
+            { label: 'Pull', value: 'PULL' }],
           required: true,
-          validation: helptext.rsync_direction_validation
+          validation: helptext.rsync_direction_validation,
         },
         {
           type: 'input',
           name: 'desc',
           placeholder: helptext.rsync_description_placeholder,
-          tooltip: helptext.rsync_description_tooltip
+          tooltip: helptext.rsync_description_tooltip,
         },
       ],
     },
@@ -88,7 +87,7 @@ export class RsyncFormComponent implements OnDestroy {
           placeholder: helptext.rsync_remotehost_placeholder,
           required: true,
           validation: helptext.rsync_remotehost_validation,
-          tooltip: helptext.rsync_remotehost_tooltip
+          tooltip: helptext.rsync_remotehost_tooltip,
         },
         {
           type: 'select',
@@ -96,8 +95,8 @@ export class RsyncFormComponent implements OnDestroy {
           placeholder: helptext.rsync_mode_placeholder,
           tooltip: helptext.rsync_mode_tooltip,
           options: [{ label: 'Module', value: 'MODULE' },
-          { label: 'SSH', value: 'SSH' }],
-          value: 'MODULE'
+            { label: 'SSH', value: 'SSH' }],
+          value: 'MODULE',
         },
         {
           type: 'input',
@@ -106,7 +105,7 @@ export class RsyncFormComponent implements OnDestroy {
           value: 22,
           required: true,
           tooltip: helptext.rsync_remoteport_tooltip,
-          validation: helptext.rsync_remoteport_validation
+          validation: helptext.rsync_remoteport_validation,
         },
         {
           type: 'input',
@@ -114,7 +113,7 @@ export class RsyncFormComponent implements OnDestroy {
           placeholder: helptext.rsync_remotemodule_placeholder,
           tooltip: helptext.rsync_remotemodule_tooltip,
           required: true,
-          validation: helptext.rsync_remotemodule_validation
+          validation: helptext.rsync_remotemodule_validation,
         },
         {
           type: 'explorer',
@@ -122,7 +121,7 @@ export class RsyncFormComponent implements OnDestroy {
           name: 'remotepath',
           explorerType: 'directory',
           placeholder: helptext.rsync_remotepath_placeholder,
-          tooltip: helptext.rsync_remotepath_tooltip
+          tooltip: helptext.rsync_remotepath_tooltip,
         },
         {
           type: 'checkbox',
@@ -130,7 +129,7 @@ export class RsyncFormComponent implements OnDestroy {
           placeholder: helptext.rsync_validate_rpath_placeholder,
           tooltip: helptext.rsync_validate_rpath_tooltip,
           value: true,
-        }
+        },
       ],
     },
     {
@@ -144,7 +143,7 @@ export class RsyncFormComponent implements OnDestroy {
           name: 'rsync_picker',
           placeholder: helptext.rsync_picker_placeholder,
           tooltip: helptext.rsync_picker_tooltip,
-          required: true
+          required: true,
         },
         {
           type: 'checkbox',
@@ -152,8 +151,8 @@ export class RsyncFormComponent implements OnDestroy {
           placeholder: helptext.rsync_recursive_placeholder,
           tooltip: helptext.rsync_recursive_tooltip,
           value: true,
-        }
-      ]
+        },
+      ],
     },
     {
       name: helptext.fieldset_options,
@@ -179,31 +178,31 @@ export class RsyncFormComponent implements OnDestroy {
           type: 'checkbox',
           name: 'archive',
           placeholder: helptext.rsync_archive_placeholder,
-          tooltip: helptext.rsync_archive_tooltip
+          tooltip: helptext.rsync_archive_tooltip,
         },
         {
           type: 'checkbox',
           name: 'delete',
           placeholder: helptext.rsync_delete_placeholder,
-          tooltip: helptext.rsync_delete_tooltip
+          tooltip: helptext.rsync_delete_tooltip,
         },
         {
           type: 'checkbox',
           name: 'quiet',
           placeholder: helptext.rsync_quiet_placeholder,
-          tooltip: helptext.rsync_quiet_tooltip
+          tooltip: helptext.rsync_quiet_tooltip,
         },
         {
           type: 'checkbox',
           name: 'preserveperm',
           placeholder: helptext.rsync_preserveperm_placeholder,
-          tooltip: helptext.rsync_preserveperm_tooltip
+          tooltip: helptext.rsync_preserveperm_tooltip,
         },
         {
           type: 'checkbox',
           name: 'preserveattr',
           placeholder: helptext.rsync_preserveattr_placeholder,
-          tooltip: helptext.rsync_preserveattr_tooltip
+          tooltip: helptext.rsync_preserveattr_tooltip,
         },
         {
           type: 'checkbox',
@@ -216,7 +215,7 @@ export class RsyncFormComponent implements OnDestroy {
           type: 'chip',
           name: 'extra',
           placeholder: helptext.rsync_extra_placeholder,
-          tooltip: helptext.rsync_extra_tooltip
+          tooltip: helptext.rsync_extra_tooltip,
         },
         {
           type: 'checkbox',
@@ -224,15 +223,15 @@ export class RsyncFormComponent implements OnDestroy {
           placeholder: helptext.rsync_enabled_placeholder,
           tooltip: helptext.rsync_enabled_tooltip,
           value: true,
-        }
-      ]
+        },
+      ],
     },
   ];
 
-  protected rsync_module_field: Array<any> = [
+  protected rsync_module_field: any[] = [
     'remotemodule',
   ];
-  protected rsync_ssh_field: Array<any> = [
+  protected rsync_ssh_field: any[] = [
     'remoteport',
     'remotepath',
     'validate_rpath',
@@ -247,30 +246,30 @@ export class RsyncFormComponent implements OnDestroy {
     protected entityFormService: EntityFormService) {}
 
   preInit() {
-    this.aroute.params.subscribe(params => {
+    this.aroute.params.subscribe((params) => {
       this.pk = parseInt(params['pk'], 10);
     });
-    this.user_field = _.find(this.fieldSets[0].config, { 'name': 'user' });
-    
+    this.user_field = _.find(this.fieldSets[0].config, { name: 'user' });
+
     this.userService.userQueryDSCache().subscribe((items) => {
       for (let i = 0; i < items.length; i++) {
-         this.user_field.options.push({label: items[i].username, value: items[i].username});
-       }
+        this.user_field.options.push({ label: items[i].username, value: items[i].username });
+      }
     });
   }
 
   afterInit(entityForm) {
-    this.entityForm = entityForm
+    this.entityForm = entityForm;
     this.hideFields(entityForm.formGroup.controls['mode'].value);
     this.mode_subscription = entityForm.formGroup.controls['mode'].valueChanges.subscribe((res) => {
       this.hideFields(res);
     });
   }
 
-  beforeSubmit(value){
-    let spl = value.rsync_picker.split(" ");
+  beforeSubmit(value) {
+    const spl = value.rsync_picker.split(' ');
     delete value.rsync_picker;
-    const schedule = {}
+    const schedule = {};
     schedule['minute'] = spl[0];
     schedule['hour'] = spl[1];
     schedule['dom'] = spl[2];
@@ -280,19 +279,19 @@ export class RsyncFormComponent implements OnDestroy {
   }
 
   resourceTransformIncomingRestData(data) {
-    data['rsync_picker'] = data.schedule.minute + " " +
-                          data.schedule.hour + " " +
-                          data.schedule.dom + " " +
-                          data.schedule.month + " " +
-                          data.schedule.dow;
+    data['rsync_picker'] = `${data.schedule.minute} ${
+      data.schedule.hour} ${
+      data.schedule.dom} ${
+      data.schedule.month} ${
+      data.schedule.dow}`;
     return data;
   }
 
-  updateUserSearchOptions(value = "", parent) {
-    parent.userService.userQueryDSCache(value).subscribe(items => {
+  updateUserSearchOptions(value = '', parent) {
+    parent.userService.userQueryDSCache(value).subscribe((items) => {
       const users = [];
       for (let i = 0; i < items.length; i++) {
-        users.push({label: items[i].username, value: items[i].username});
+        users.push({ label: items[i].username, value: items[i].username });
       }
       parent.user_field.searchOptions = users;
     });
@@ -301,11 +300,10 @@ export class RsyncFormComponent implements OnDestroy {
   hideFields(mode) {
     let hide_fields;
     let show_fields;
-    if( mode === "SSH" ){
+    if (mode === 'SSH') {
       hide_fields = this.rsync_module_field;
       show_fields = this.rsync_ssh_field;
-    }
-    else {
+    } else {
       hide_fields = this.rsync_ssh_field;
       show_fields = this.rsync_module_field;
     }

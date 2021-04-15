@@ -5,34 +5,35 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_system_cloudcredentials as helptext } from 'app/helptext/system/cloudcredentials';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import * as _ from 'lodash';
-import { CloudCredentialService, DialogService, WebSocketService, ReplicationService } from '../../../../services/';
+import {
+  CloudCredentialService, DialogService, WebSocketService, ReplicationService,
+} from '../../../../services';
 import { T } from '../../../../translate-marker';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 
 @Component({
   selector: 'app-cloudcredentials-form',
-  template: `<entity-form [conf]="this"></entity-form>`,
-  providers: [ CloudCredentialService, ReplicationService ],
+  template: '<entity-form [conf]="this"></entity-form>',
+  providers: [CloudCredentialService, ReplicationService],
 })
 export class CloudCredentialsFormComponent {
-
   protected isEntity = true;
   protected addCall = 'cloudsync.credentials.create';
   protected queryCall = 'cloudsync.credentials.query';
   protected editCall = 'cloudsync.credentials.update';
-  protected queryCallOption: Array<any> = [['id', '=']];
+  protected queryCallOption: any[] = [['id', '=']];
   protected route_success: string[] = ['system', 'cloudcredentials'];
   protected formGroup: FormGroup;
   protected id: any;
   protected pk: any;
   protected keyID: number;
 
-  protected selectedProvider: string = 'S3';
+  protected selectedProvider = 'S3';
   protected credentialsOauth = false;
   protected oauthURL: any;
 
-  public fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext.fieldset_basic,
       label: true,
@@ -57,7 +58,7 @@ export class CloudCredentialsFormComponent {
           required: true,
           validation: helptext.provider.validation,
         },
-      ]
+      ],
     },
     { name: 'spacer', label: false, width: '2%' },
     {
@@ -80,9 +81,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'S3',
-               }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -92,17 +93,17 @@ export class CloudCredentialsFormComponent {
           required: true,
           isHidden: true,
           inputType: 'password',
-    
+
           relation: [
             {
               action: 'SHOW',
               when: [{
                 name: 'provider',
                 value: 'S3',
-               }]
-            }
+              }],
+            },
           ],
-          togglePw: true
+          togglePw: true,
         },
         {
           type: 'input',
@@ -117,9 +118,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'S3',
-               }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         // backblaze b2
         {
@@ -135,9 +136,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'B2',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -152,9 +153,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'B2',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         // box
         {
@@ -170,9 +171,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'BOX',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         // dropbox
         {
@@ -188,9 +189,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'DROPBOX',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         // ftp
         {
@@ -206,9 +207,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'FTP',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -222,9 +223,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'FTP',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -239,9 +240,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'FTP',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -258,15 +259,15 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'FTP',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         // google cloud storage
         {
-          type : 'textarea',
-          name : 'preview-GOOGLE_CLOUD_STORAGE',
-          placeholder : helptext.preview_google_cloud_storage.placeholder,
+          type: 'textarea',
+          name: 'preview-GOOGLE_CLOUD_STORAGE',
+          placeholder: helptext.preview_google_cloud_storage.placeholder,
           tooltip: helptext.preview_google_cloud_storage.tooltip,
           readonly: true,
           isHidden: true,
@@ -276,9 +277,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'GOOGLE_CLOUD_STORAGE',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'readfile',
@@ -294,9 +295,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'GOOGLE_CLOUD_STORAGE',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         // google drive
         {
@@ -312,9 +313,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'GOOGLE_DRIVE',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -329,9 +330,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'GOOGLE_DRIVE',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         // http
         {
@@ -347,9 +348,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'HTTP',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         // hubic
         {
@@ -365,9 +366,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'HUBIC',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         // mega
         {
@@ -383,9 +384,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'MEGA',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -395,16 +396,16 @@ export class CloudCredentialsFormComponent {
           required: true,
           isHidden: true,
           inputType: 'password',
-          togglePw : true,
+          togglePw: true,
           relation: [
             {
               action: 'SHOW',
               when: [{
                 name: 'provider',
                 value: 'MEGA',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         // microsoft azure
         {
@@ -420,9 +421,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'AZUREBLOB',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -437,9 +438,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'AZUREBLOB',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         // microsoft onedrive
         {
@@ -455,9 +456,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'ONEDRIVE',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'select',
@@ -476,9 +477,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'ONEDRIVE',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'select',
@@ -497,7 +498,7 @@ export class CloudCredentialsFormComponent {
             {
               label: 'DOCUMENT_LIBRARY',
               value: 'DOCUMENT_LIBRARY',
-            }
+            },
           ],
           value: 'PERSONAL',
           required: true,
@@ -508,9 +509,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'ONEDRIVE',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -525,9 +526,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'ONEDRIVE',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         // openstack swift
         {
@@ -542,9 +543,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
-               }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -558,9 +559,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
-               }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -574,9 +575,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
-               }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'select',
@@ -590,16 +591,16 @@ export class CloudCredentialsFormComponent {
             },
             {
               label: 'v1',
-              value: 1
+              value: 1,
             },
             {
               label: 'v2',
-              value: 2
+              value: 2,
             },
             {
               label: 'v3',
-              value: 3
-            }
+              value: 3,
+            },
           ],
           value: '0',
           relation: [
@@ -608,9 +609,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
-               }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         // pcloud
         {
@@ -626,9 +627,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'PCLOUD',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -642,9 +643,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'PCLOUD',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         // sftp
         {
@@ -660,9 +661,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'SFTP',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -677,9 +678,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'SFTP',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -694,9 +695,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'SFTP',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -713,9 +714,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'SFTP',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'select',
@@ -730,7 +731,7 @@ export class CloudCredentialsFormComponent {
             {
               label: 'Generate New',
               value: 'NEW',
-            }
+            },
           ],
           value: '',
           required: true,
@@ -741,9 +742,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'SFTP',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         // webdav
         {
@@ -759,9 +760,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'WEBDAV',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'select',
@@ -784,7 +785,7 @@ export class CloudCredentialsFormComponent {
             {
               label: 'OTHER',
               value: 'OTHER',
-            }
+            },
           ],
           value: 'NEXTCLOUD',
           required: true,
@@ -795,9 +796,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'WEBDAV',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -812,9 +813,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'WEBDAV',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -831,9 +832,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'WEBDAV',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         // yandex
         {
@@ -849,11 +850,11 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'YANDEX',
-              }]
-            }
-          ]
-        }
-      ]
+              }],
+            },
+          ],
+        },
+      ],
     },
     { name: 'divider', divider: true },
     {
@@ -874,9 +875,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'S3',
-               }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -890,12 +891,12 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
-               }, {
+              }, {
                 name: 'auth_version-OPENSTACK_SWIFT',
                 value: '3',
-               }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -909,12 +910,12 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
-               }, {
+              }, {
                 name: 'auth_version-OPENSTACK_SWIFT',
                 value: '3',
-               }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -928,9 +929,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
-               }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -944,9 +945,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
-               }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -960,12 +961,12 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
-               }, {
+              }, {
                 name: 'auth_version-OPENSTACK_SWIFT',
                 value: '3',
-               }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -978,11 +979,11 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
-               }]
-            }
-          ]
+              }],
+            },
+          ],
         },
-      ]
+      ],
     },
     { name: 'spacer', label: false, width: '2%' },
     {
@@ -1004,12 +1005,12 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'S3',
-               }, {
+              }, {
                 name: 'advanced-S3',
                 value: true,
-               }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -1024,12 +1025,12 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'S3',
-               }, {
+              }, {
                 name: 'advanced-S3',
                 value: true,
-               }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'checkbox',
@@ -1044,12 +1045,12 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'S3',
-               }, {
+              }, {
                 name: 'advanced-S3',
                 value: true,
-               }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'checkbox',
@@ -1064,12 +1065,12 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'S3',
-               }, {
+              }, {
                 name: 'advanced-S3',
                 value: true,
-               }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -1082,9 +1083,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
-               }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -1097,9 +1098,9 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
-               }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'select',
@@ -1109,16 +1110,16 @@ export class CloudCredentialsFormComponent {
           options: [
             {
               label: 'Public',
-              value: 'public'
+              value: 'public',
             },
             {
               label: 'Internal',
-              value: 'internal'
+              value: 'internal',
             },
             {
               label: 'Admin',
-              value: 'admin'
-            }
+              value: 'admin',
+            },
           ],
           relation: [
             {
@@ -1126,11 +1127,11 @@ export class CloudCredentialsFormComponent {
               when: [{
                 name: 'provider',
                 value: 'OPENSTACK_SWIFT',
-               }]
-            }
-          ]
+              }],
+            },
+          ],
         },
-      ]
+      ],
     },
     // show if provider support oauth
     {
@@ -1152,29 +1153,29 @@ export class CloudCredentialsFormComponent {
           placeholder: helptext.client_secret.placeholder,
           tooltip: helptext.client_secret.tooltip,
           isHidden: true,
-        }
-      ]
+        },
+      ],
     },
-  ]
+  ];
 
   protected fieldConfig: FieldConfig[];
 
-  protected providers: Array<any>;
+  protected providers: any[];
   protected providerField: any;
   protected entityForm: any;
 
-  public custActions: Array<any> = [
+  custActions: any[] = [
     {
       id: 'authenticate',
       name: T('LOGIN TO PROVIDER'),
       function: () => {
-        window.open(this.oauthURL+ "?origin=" + encodeURIComponent(window.location.toString()), "_blank", "width=640,height=480");
-        const controls = this.entityForm.formGroup.controls;
-        const selectedProvider = this.selectedProvider;
+        window.open(`${this.oauthURL}?origin=${encodeURIComponent(window.location.toString())}`, '_blank', 'width=640,height=480');
+        const { controls } = this.entityForm.formGroup;
+        const { selectedProvider } = this;
         const dialogService = this.dialog;
         const getOnedriveList = this.getOnedriveList.bind(this);
 
-        window.addEventListener("message", doAuth, false);
+        window.addEventListener('message', doAuth, false);
 
         function doAuth(message) {
           if (message.data.oauth_portal) {
@@ -1184,7 +1185,7 @@ export class CloudCredentialsFormComponent {
               for (const prop in message.data.result) {
                 let targetProp = prop;
                 if (prop != 'client_id' && prop != 'client_secret') {
-                  targetProp += '-' + selectedProvider;
+                  targetProp += `-${selectedProvider}`;
                 }
                 if (controls[targetProp]) {
                   controls[targetProp].setValue(message.data.result[prop]);
@@ -1195,14 +1196,14 @@ export class CloudCredentialsFormComponent {
               getOnedriveList(message.data);
             }
           }
-          window.removeEventListener("message", doAuth);
+          window.removeEventListener('message', doAuth);
         }
-      }
+      },
     },
     {
-      id : 'validCredential',
-      name : T('Verify Credential'),
-      function : () => {
+      id: 'validCredential',
+      name: T('Verify Credential'),
+      function: () => {
         this.entityForm.loader.open();
         this.entityForm.error = '';
         const attributes = {};
@@ -1216,7 +1217,7 @@ export class CloudCredentialsFormComponent {
               this.entityForm.formGroup.controls[item].markAsTouched();
             }
             if (item !== 'preview-GOOGLE_CLOUD_STORAGE' && item !== 'advanced-S3' && item !== 'drives-ONEDRIVE') {
-              attr_name = item.split("-")[0];
+              attr_name = item.split('-')[0];
               if (value[item] != '' && value[item] != undefined) {
                 attributes[attr_name] = value[item];
               }
@@ -1229,20 +1230,20 @@ export class CloudCredentialsFormComponent {
         if (value.attributes.private_key && value.attributes.private_key === 'NEW') {
           this.makeNewKeyPair(value);
         } else {
-        this.verifyCredentials(value);
+          this.verifyCredentials(value);
         }
-      }
-    }
+      },
+    },
   ];
 
   constructor(protected router: Router,
-              protected aroute: ActivatedRoute,
-              protected ws: WebSocketService,
-              protected cloudcredentialService: CloudCredentialService,
-              protected dialog: DialogService,
-              protected replicationService: ReplicationService) {
-    const basicFieldset = _.find(this.fieldSets, {'class': 'basic'});
-    this.providerField = _.find(basicFieldset.config, {'name': 'provider'});
+    protected aroute: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected cloudcredentialService: CloudCredentialService,
+    protected dialog: DialogService,
+    protected replicationService: ReplicationService) {
+    const basicFieldset = _.find(this.fieldSets, { class: 'basic' });
+    this.providerField = _.find(basicFieldset.config, { name: 'provider' });
     this.cloudcredentialService.getProviders().subscribe(
       (res) => {
         this.providers = res;
@@ -1251,20 +1252,20 @@ export class CloudCredentialsFormComponent {
             {
               label: res[i].title,
               value: res[i].name,
-            }
+            },
           );
         }
-      }
+      },
     );
-    const authenticationFieldset = _.find(this.fieldSets, {'class': 'authentication'});
-    const privateKeySFTPField = _.find(authenticationFieldset.config, {'name': 'private_key-SFTP'});
-    this.ws.call('keychaincredential.query', [[["type", "=", "SSH_KEY_PAIR"]]]).subscribe(
+    const authenticationFieldset = _.find(this.fieldSets, { class: 'authentication' });
+    const privateKeySFTPField = _.find(authenticationFieldset.config, { name: 'private_key-SFTP' });
+    this.ws.call('keychaincredential.query', [[['type', '=', 'SSH_KEY_PAIR']]]).subscribe(
       (res) => {
         for (let i = 0; i < res.length; i++) {
-          privateKeySFTPField.options.push({ label: res[i].name, value: res[i].id});
+          privateKeySFTPField.options.push({ label: res[i].name, value: res[i].id });
         }
-      }
-    )
+      },
+    );
   }
 
   isCustActionVisible(actionname: string) {
@@ -1282,7 +1283,7 @@ export class CloudCredentialsFormComponent {
   }
 
   preInit() {
-    this.aroute.params.subscribe(params => {
+    this.aroute.params.subscribe((params) => {
       if (params['pk']) {
         this.queryCallOption[0].push(params['pk']);
         this.id = params['pk'];
@@ -1291,12 +1292,12 @@ export class CloudCredentialsFormComponent {
   }
 
   setFieldRequired(name: string, required: boolean, entityform: any) {
-    const field = _.find(this.fieldConfig, {"name": name});
+    const field = _.find(this.fieldConfig, { name });
     const controller = entityform.formGroup.controls[name];
     if (field.required !== required) {
       field.required = required;
       if (required) {
-        controller.setValidators([Validators.required])
+        controller.setValidators([Validators.required]);
       } else {
         controller.clearValidators();
       }
@@ -1316,25 +1317,25 @@ export class CloudCredentialsFormComponent {
 
       this.selectedProvider = res;
 
-      this.oauthURL = _.find(this.providers, {'name': res}).credentials_oauth;
-      this.credentialsOauth = this.oauthURL == null ? false : true;
-      entityForm.setDisabled('client_id', !this.credentialsOauth, !this.credentialsOauth)
-      entityForm.setDisabled('client_secret', !this.credentialsOauth, !this.credentialsOauth)
+      this.oauthURL = _.find(this.providers, { name: res }).credentials_oauth;
+      this.credentialsOauth = this.oauthURL != null;
+      entityForm.setDisabled('client_id', !this.credentialsOauth, !this.credentialsOauth);
+      entityForm.setDisabled('client_secret', !this.credentialsOauth, !this.credentialsOauth);
     });
     // preview service_account_credentials
-    entityForm.formGroup.controls['service_account_credentials-GOOGLE_CLOUD_STORAGE'].valueChanges.subscribe((value)=>{
+    entityForm.formGroup.controls['service_account_credentials-GOOGLE_CLOUD_STORAGE'].valueChanges.subscribe((value) => {
       entityForm.formGroup.controls['preview-GOOGLE_CLOUD_STORAGE'].setValue(value);
     });
     // Allow blank values for pass and key_file fields (but at least one should be non-blank)
     entityForm.formGroup.controls['pass-SFTP'].valueChanges.subscribe((res) => {
       if (res !== undefined) {
-        const required = res === '' ? true : false;
+        const required = res === '';
         this.setFieldRequired('private_key-SFTP', required, entityForm);
       }
     });
     entityForm.formGroup.controls['private_key-SFTP'].valueChanges.subscribe((res) => {
       if (res !== undefined) {
-        const required = res === '' ? true : false;
+        const required = res === '';
         this.setFieldRequired('pass-SFTP', required, entityForm);
       }
     });
@@ -1359,30 +1360,28 @@ export class CloudCredentialsFormComponent {
         if (res === '1') {
           this.setFieldRequired('tenant-OPENSTACK_SWIFT', false, entityForm);
           this.setFieldRequired('tenant_id-OPENSTACK_SWIFT', false, entityForm);
-        } else {
-          if ((tenantCtrl.value === undefined || tenantCtrl.value === '') &&
-          (tenantIdCtrl.value === undefined || tenantIdCtrl.value === '')) {
-            this.setFieldRequired('tenant-OPENSTACK_SWIFT', true, entityForm);
-            this.setFieldRequired('tenant_id-OPENSTACK_SWIFT', true, entityForm);
-          }
+        } else if ((tenantCtrl.value === undefined || tenantCtrl.value === '')
+          && (tenantIdCtrl.value === undefined || tenantIdCtrl.value === '')) {
+          this.setFieldRequired('tenant-OPENSTACK_SWIFT', true, entityForm);
+          this.setFieldRequired('tenant_id-OPENSTACK_SWIFT', true, entityForm);
         }
-      }
-    )
+      },
+    );
 
     entityForm.formGroup.controls['tenant-OPENSTACK_SWIFT'].valueChanges.subscribe(
       (res) => {
         if (authCtrl.value !== '1') {
           this.setFieldRequired('tenant_id-OPENSTACK_SWIFT', res === '' || res === undefined, entityForm);
         }
-      }
-    )
+      },
+    );
     entityForm.formGroup.controls['tenant_id-OPENSTACK_SWIFT'].valueChanges.subscribe(
       (res) => {
         if (authCtrl.value !== '1') {
           this.setFieldRequired('tenant-OPENSTACK_SWIFT', res === '' || res === undefined, entityForm);
         }
-      }
-    )
+      },
+    );
   }
 
   verifyCredentials(value) {
@@ -1399,28 +1398,28 @@ export class CloudCredentialsFormComponent {
       (err) => {
         this.entityForm.loader.close();
         new EntityUtils().handleWSError(this.entityForm, err, this.dialog);
-      })
+      },
+    );
   }
 
   async makeNewKeyPair(value, submitting?: boolean) {
     await this.replicationService.genSSHKeypair().then(
       async (res) => {
         const payload = {
-          name: value['name'] + ' Key',
+          name: `${value['name']} Key`,
           type: 'SSH_KEY_PAIR',
           attributes: res,
         };
         await this.ws.call('keychaincredential.create', [payload]).toPromise().then(
           (sshKey) => {
-            
             this.keyID = sshKey.id;
-            const privateKeySFTPField = _.find(this.fieldConfig, {'name': 'private_key-SFTP'});
-            privateKeySFTPField.options.push({ label: payload.name, value: this.keyID});
+            const privateKeySFTPField = _.find(this.fieldConfig, { name: 'private_key-SFTP' });
+            privateKeySFTPField.options.push({ label: payload.name, value: this.keyID });
             this.entityForm.formGroup.controls['private_key-SFTP'].setValue(this.keyID);
             if (submitting) {
               value['private_key-SFTP'] = sshKey.id;
-              this.finishSubmit(value)
-            } else  {
+              this.finishSubmit(value);
+            } else {
               value.attributes.private_key = this.keyID;
               this.verifyCredentials(value);
             }
@@ -1428,12 +1427,14 @@ export class CloudCredentialsFormComponent {
           (sshKey_err) => {
             this.entityForm.loader.close();
             new EntityUtils().handleWSError(this, sshKey_err, this.dialog);
-          });
+          },
+        );
       },
       (err) => {
         this.entityForm.loader.close();
         new EntityUtils().handleWSError(this, err, this.dialog);
-      });
+      },
+    );
   }
 
   finishSubmit(value) {
@@ -1443,7 +1444,7 @@ export class CloudCredentialsFormComponent {
     for (const item in value) {
       if (item != 'name' && item != 'provider') {
         if (item != 'preview-GOOGLE_CLOUD_STORAGE' && item != 'advanced-S3' && item !== 'drives-ONEDRIVE' && value[item] != '') {
-          attr_name = item.split("-")[0];
+          attr_name = item.split('-')[0];
           attributes[attr_name] = attr_name === 'auth_version' ? parseInt(value[item], 10) : value[item];
         }
         delete value[item];
@@ -1453,17 +1454,18 @@ export class CloudCredentialsFormComponent {
 
     this.entityForm.submitFunction(value).subscribe(
       (res) => {
-          this.entityForm.loader.close();
-          this.entityForm.router.navigate(new Array('/').concat(this.route_success));
+        this.entityForm.loader.close();
+        this.entityForm.router.navigate(new Array('/').concat(this.route_success));
       },
       (err) => {
-          this.entityForm.loader.close();
-          if (err.hasOwnProperty("reason") && (err.hasOwnProperty("trace"))) {
-              new EntityUtils().handleWSError(this, err, this.dialog);
-          } else {
-              new EntityUtils().handleError(this, err);
-          }
-      });
+        this.entityForm.loader.close();
+        if (err.hasOwnProperty('reason') && (err.hasOwnProperty('trace'))) {
+          new EntityUtils().handleWSError(this, err, this.dialog);
+        } else {
+          new EntityUtils().handleError(this, err);
+        }
+      },
+    );
   }
 
   beforeSubmit(value) {
@@ -1483,15 +1485,15 @@ export class CloudCredentialsFormComponent {
 
   dataAttributeHandler(entityForm: any) {
     const provider = entityForm.formGroup.controls['provider'].value;
-    if (provider == 'S3' &&
-    (entityForm.wsResponseIdx['endpoint'] || entityForm.wsResponseIdx['skip_region'] || entityForm.wsResponseIdx['signatures_v2'])) {
+    if (provider == 'S3'
+    && (entityForm.wsResponseIdx['endpoint'] || entityForm.wsResponseIdx['skip_region'] || entityForm.wsResponseIdx['signatures_v2'])) {
       entityForm.formGroup.controls['advanced-S3'].setValue(true);
     }
 
-    for (let i in entityForm.wsResponseIdx) {
+    for (const i in entityForm.wsResponseIdx) {
       let field_name = i;
       if (field_name != 'client_id' && field_name != 'client_secret') {
-        field_name += '-' + provider;
+        field_name += `-${provider}`;
       }
       if (entityForm.formGroup.controls[field_name]) {
         entityForm.formGroup.controls[field_name].setValue(field_name == 'auth_version-OPENSTACK_SWIFT' ? entityForm.wsResponseIdx[i].toString() : entityForm.wsResponseIdx[i]);
@@ -1505,7 +1507,7 @@ export class CloudCredentialsFormComponent {
       return;
     }
     data = data.result;
-    const drivesConfig = _.find(this.fieldConfig, {name: 'drives-ONEDRIVE'});
+    const drivesConfig = _.find(this.fieldConfig, { name: 'drives-ONEDRIVE' });
     this.entityForm.setDisabled('drives-ONEDRIVE', false, false);
     this.ws.call('cloudsync.onedrive_list_drives', [{
       client_id: data.client_id,
@@ -1514,11 +1516,12 @@ export class CloudCredentialsFormComponent {
     }]).subscribe(
       (drives) => {
         for (let i = 0; i < drives.length; i++) {
-          drivesConfig.options.push({label: drives[i].drive_type + ' - ' + drives[i].drive_id, value: drives[i]});
+          drivesConfig.options.push({ label: `${drives[i].drive_type} - ${drives[i].drive_id}`, value: drives[i] });
         }
       },
       (err) => {
         new EntityUtils().handleWSError(this, err, this.dialog);
-      })
+      },
+    );
   }
 }

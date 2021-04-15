@@ -1,11 +1,7 @@
+import { throwError as observableThrowError, Observable } from 'rxjs';
 
-import {throwError as observableThrowError,  Observable } from 'rxjs';
-
-import {catchError, map} from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import 'rxjs/Rx';
-
-
-
 
 import { Injectable } from '@angular/core';
 
@@ -15,25 +11,24 @@ import { WebSocketService } from './ws.service';
 
 @Injectable()
 export class RestService {
-
   name: string;
   // needs to be more dynamic this should be changed later to use http or https
   // depending on if it is available
-  private baseUrl = "/api/v1.0/";
-  public openapi: Observable<Object>;
+  private baseUrl = '/api/v1.0/';
+  openapi: Observable<Object>;
 
   constructor(private http: HttpClient, private ws: WebSocketService) {
     const self = this;
     this.http = http;
-    this.openapi = Observable.create(function (observer) {
-/*      self.get('swagger.json', {}).subscribe((res) => {
+    this.openapi = Observable.create((observer) => {
+      /*      self.get('swagger.json', {}).subscribe((res) => {
         observer.next(res.data);
-      });*/
+      }); */
     });
   }
 
   handleResponse(res: Response) {
-    let range = res.headers.get("CONTENT-RANGE");
+    const range = res.headers.get('CONTENT-RANGE');
     let total = null;
     let data = null;
 
@@ -50,9 +45,9 @@ export class RestService {
     }
 
     return {
-      data: data,
+      data,
       code: res.status,
-      total: total,
+      total,
     };
   }
 
@@ -66,54 +61,57 @@ export class RestService {
   request(method: HttpClient, path: string, options: Object, useBaseUrl?: boolean) {
     const headers = new Headers({
       'Content-Type': 'application/json',
-      'Authorization': 'Token ' + this.ws.token
+      Authorization: `Token ${this.ws.token}`,
     });
-    if (path){
+    if (path) {
       if (!path.match(/\/$/) && !path.match(/\?/)) {
-        path = path + '/';
+        path += '/';
       }
-  }
+    }
 
-    const requestUrl: string = (typeof (useBaseUrl) !== "undefined" && useBaseUrl === false)
+    const requestUrl: string = (typeof (useBaseUrl) !== 'undefined' && useBaseUrl === false)
       ? path : this.baseUrl + path;
 
-    const requestOptions: Object = Object.assign(
-      { method: method, url: requestUrl, headers: headers },
-      options);
-    return /*this.http.request(new Request(new RequestOptions(requestOptions))).pipe(
+    const requestOptions: Object = {
+      method,
+      url: requestUrl,
+      headers,
+      ...options,
+    };
+    /* this.http.request(new Request(new RequestOptions(requestOptions))).pipe(
       map(this.handleResponse),
       catchError(this.handleError),); */
   }
 
   buildOptions(options) {
-    let result: Object = new Object();
-    let search: Array<String> = [];
-    for (let i in options) {
+    const result: Object = new Object();
+    const search: String[] = [];
+    for (const i in options) {
       if (i == 'offset') {
-        search.push("offset(" + options[i] + ")=");
+        search.push(`offset(${options[i]})=`);
       } else if (i == 'sort') {
-        search.push("sort(" + options[i] + ")=");
+        search.push(`sort(${options[i]})=`);
       } else {
-        search.push(i + "=" + options[i]);
+        search.push(`${i}=${options[i]}`);
       }
     }
-    result['search'] = search.join("&");
+    result['search'] = search.join('&');
     return result;
   }
 
   get(path: string, options: Object, useBaseUrl?: boolean) {
-    return /* this.request(RequestMethod.Get, path, this.buildOptions(options), useBaseUrl); */
+    /* this.request(RequestMethod.Get, path, this.buildOptions(options), useBaseUrl); */
   }
 
   post(path: string, options: Object, useBaseUrl?: boolean) {
-    return /* this.request(RequestMethod.Post, path, options, useBaseUrl); */
+    /* this.request(RequestMethod.Post, path, options, useBaseUrl); */
   }
 
   put(path: string, options: Object, useBaseUrl?: boolean) {
-    return /* this.request(RequestMethod.Put, path, options, useBaseUrl); */
+    /* this.request(RequestMethod.Put, path, options, useBaseUrl); */
   }
 
   delete(path: string, options: Object, useBaseUrl?: boolean) {
-    return /* this.request(RequestMethod.Delete, path, options, useBaseUrl); */
+    /* this.request(RequestMethod.Delete, path, options, useBaseUrl); */
   }
 }

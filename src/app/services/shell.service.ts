@@ -1,4 +1,6 @@
-import { Injectable, EventEmitter, Output, Input } from '@angular/core';
+import {
+  Injectable, EventEmitter, Output, Input,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
 import { LocalStorage } from 'ngx-webstorage';
@@ -7,7 +9,6 @@ import { environment } from '../../environments/environment';
 
 @Injectable()
 export class ShellService {
-
   onCloseSubject: Subject < any > ;
   onOpenSubject: Subject < any > ;
   pendingCalls: any;
@@ -18,16 +19,16 @@ export class ShellService {
   @LocalStorage() username;
   @LocalStorage() password;
   redirectUrl = '';
-  public token: string;
-  public jailId: string;
-  public vmId: number;
+  token: string;
+  jailId: string;
+  vmId: number;
 
-  //input and output and eventEmmitter
+  // input and output and eventEmmitter
   private shellCmdOutput: any;
-  @Output() shellOutput = new EventEmitter < any > ();
-  @Output() shellConnected = new EventEmitter < any > ();
+  @Output() shellOutput = new EventEmitter < any >();
+  @Output() shellConnected = new EventEmitter < any >();
 
-  public subscriptions: Map < string, Array < any >> = new Map < string, Array < any >> ();
+  subscriptions: Map < string, any[]> = new Map < string, any[]>();
 
   constructor(private _router: Router) {
     this.onOpenSubject = new Subject();
@@ -37,8 +38,9 @@ export class ShellService {
 
   connect() {
     this.socket = new WebSocket(
-      (window.location.protocol === 'https:' ? 'wss://' : 'ws://') +
-      environment.remote + '/websocket/shell/');
+      `${(window.location.protocol === 'https:' ? 'wss://' : 'ws://')
+      + environment.remote}/websocket/shell/`,
+    );
     this.socket.onmessage = this.onmessage.bind(this);
     this.socket.onopen = this.onopen.bind(this);
     this.socket.onclose = this.onclose.bind(this);
@@ -47,11 +49,11 @@ export class ShellService {
   onopen(event) {
     this.onOpenSubject.next(true);
     if (this.jailId) {
-      this.send(JSON.stringify({ "token": this.token, "options": {"jail": this.jailId }}));
+      this.send(JSON.stringify({ token: this.token, options: { jail: this.jailId } }));
     } else if (this.vmId) {
-      this.send(JSON.stringify({ "token": this.token, "options": {"vm_id": this.vmId}}));
+      this.send(JSON.stringify({ token: this.token, options: { vm_id: this.vmId } }));
     } else {
-      this.send(JSON.stringify({ "token": this.token }));
+      this.send(JSON.stringify({ token: this.token }));
     }
   }
 
@@ -62,7 +64,7 @@ export class ShellService {
     }
   }
 
-  //empty eventListener for attach socket
+  // empty eventListener for attach socket
   addEventListener() {}
 
   onclose(event) {
@@ -71,17 +73,16 @@ export class ShellService {
     this.shellConnected.emit(this.connected);
   }
 
-
   onmessage(msg) {
     let data: any;
 
     try {
       data = JSON.parse(msg.data);
     } catch (e) {
-      data = { 'msg': 'please discard this' };
+      data = { msg: 'please discard this' };
     }
 
-    if (data.msg === "connected") {
+    if (data.msg === 'connected') {
       this.connected = true;
       this.onconnect();
       this.shellConnected.emit(this.connected);
@@ -91,7 +92,7 @@ export class ShellService {
     if (!this.connected) {
       return;
     }
-    if (data.msg === "ping") {} else {
+    if (data.msg === 'ping') {} else {
       this.shellCmdOutput = msg.data;
       this.shellOutput.emit(this.shellCmdOutput);
     }
@@ -126,5 +127,4 @@ export class ShellService {
       });
     });
   }
-
 }

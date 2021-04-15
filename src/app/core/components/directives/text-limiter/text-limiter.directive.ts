@@ -1,24 +1,24 @@
-import { Directive, Input, AfterViewInit, ElementRef, HostListener, ComponentRef } from '@angular/core';
+import {
+  Directive, Input, AfterViewInit, ElementRef, HostListener, ComponentRef,
+} from '@angular/core';
 import { Overlay, OverlayRef, OverlayPositionBuilder } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { TextLimiterTooltipComponent } from './text-limiter-tooltip/text-limiter-tooltip.component';
 
 @Directive({
-  selector: '[textLimiter]'
+  selector: '[textLimiter]',
 })
 export class TextLimiterDirective implements AfterViewInit {
- 
   @Input() threshold: number;
   private defaultThreshold = 10;
   private overlayRef: OverlayRef;
 
-  private rawText: string = '';
-  private text: string = '';
+  private rawText = '';
+  private text = '';
 
   @HostListener('mouseenter')
   show() {
-    if(this.text !== this.rawText){
-
+    if (this.text !== this.rawText) {
       // Create tooltip portal
       const tooltipPortal = new ComponentPortal(TextLimiterTooltipComponent);
 
@@ -37,7 +37,7 @@ export class TextLimiterDirective implements AfterViewInit {
 
   constructor(private el: ElementRef, private overlayPositionBuilder: OverlayPositionBuilder, private overlay: Overlay) {
   }
-  
+
   ngAfterViewInit() {
     this.rawText = this.el.nativeElement.innerText;
     this.text = this.truncate(this.rawText);
@@ -48,7 +48,7 @@ export class TextLimiterDirective implements AfterViewInit {
       // Create position attached to the elementRef
       .flexibleConnectedTo(this.el)
       // Describe how to connect overlay to the elementRef
-      // Means, attach overlay's center bottom point to the         
+      // Means, attach overlay's center bottom point to the
       // top center point of the elementRef.
       .withPositions([{
         originX: 'center',
@@ -57,18 +57,15 @@ export class TextLimiterDirective implements AfterViewInit {
         overlayY: 'bottom',
       }]);
 
-      // Connect position strategy
-      this.overlayRef = this.overlay.create({ positionStrategy });
+    // Connect position strategy
+    this.overlayRef = this.overlay.create({ positionStrategy });
   }
 
-  truncate(str: string){
-    if(str.length > this.threshold){
+  truncate(str: string) {
+    if (str.length > this.threshold) {
       const truncated = str.substring(0, this.threshold - 3);
-      return truncated + '...';
-    } else {
-      return str;
+      return `${truncated}...`;
     }
+    return str;
   }
-
-
 }

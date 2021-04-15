@@ -3,27 +3,27 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 import * as _ from 'lodash';
 
-import { EntityFormComponent } from '../../../common/entity/entity-form';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { TaskService, UserService, RestService } from '../../../../services/';
-import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { FormGroup } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
+import { EntityFormComponent } from '../entity-form';
+import { FieldConfig } from '../entity-form/models/field-config.interface';
+import { TaskService, UserService, RestService } from '../../../../services';
+import { EntityFormService } from '../entity-form/services/entity-form.service';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
-import { TranslateService } from '@ngx-translate/core';
 import { EntityUtils } from '../utils';
 
 @Component({
   selector: 'entity-task',
   templateUrl: './entity-task.component.html',
   styleUrls: ['entity-task.component.css'],
-  providers: [TaskService, UserService, EntityFormService]
+  providers: [TaskService, UserService, EntityFormService],
 })
 export class EntityTaskComponent implements OnInit {
   @Input('conf') conf: any;
 
   protected entityForm: EntityFormComponent;
-  protected isEntity: boolean = true;
+  protected isEntity = true;
 
   protected user_field: any;
   protected month_field: any;
@@ -32,14 +32,14 @@ export class EntityTaskComponent implements OnInit {
   protected hour_field: any;
   protected daymonth_field: any;
 
-  public formGroup: any;
-  public error: string;
+  formGroup: any;
+  error: string;
   protected pk: any;
-  public isNew: boolean = false;
+  isNew = false;
   protected data: any;
-  public showDefaults: boolean = false;
+  showDefaults = false;
 
-  protected preTaskName: string = '';
+  protected preTaskName = '';
 
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
@@ -56,16 +56,16 @@ export class EntityTaskComponent implements OnInit {
 
     this.preTaskName = this.conf.preTaskName;
 
-    let date = new Date();
-    this.month_field = _.find(this.conf.fieldConfig, { 'name': this.preTaskName + '_month' });
-    this.day_field = _.find(this.conf.fieldConfig, { 'name': this.preTaskName + '_dayweek' });
-    this.daymonth_field = _.find(this.conf.fieldConfig, { 'name': this.preTaskName + '_daymonth' });
-    this.hour_field = _.find(this.conf.fieldConfig, { 'name': this.preTaskName + '_hour' });
-    this.mintue_field = _.find(this.conf.fieldConfig, { 'name': this.preTaskName + '_minute' });
+    const date = new Date();
+    this.month_field = _.find(this.conf.fieldConfig, { name: `${this.preTaskName}_month` });
+    this.day_field = _.find(this.conf.fieldConfig, { name: `${this.preTaskName}_dayweek` });
+    this.daymonth_field = _.find(this.conf.fieldConfig, { name: `${this.preTaskName}_daymonth` });
+    this.hour_field = _.find(this.conf.fieldConfig, { name: `${this.preTaskName}_hour` });
+    this.mintue_field = _.find(this.conf.fieldConfig, { name: `${this.preTaskName}_minute` });
 
-    this.aroute.params.subscribe(params => {
+    this.aroute.params.subscribe((params) => {
       if (this.conf.resource_name && !this.conf.resource_name.endsWith('/')) {
-        this.conf.resource_name = this.conf.resource_name + '/';
+        this.conf.resource_name = `${this.conf.resource_name}/`;
       }
       if (this.isEntity) {
         this.pk = params['pk'];
@@ -76,7 +76,7 @@ export class EntityTaskComponent implements OnInit {
         }
       }
       this.formGroup = this.entityFormService.createFormGroup(this.conf.fieldConfig);
-      this.formGroup.controls[this.preTaskName + '_repeat'].valueChanges.subscribe((res) => {
+      this.formGroup.controls[`${this.preTaskName}_repeat`].valueChanges.subscribe((res) => {
         if (res == 'none') {
           this.month_field['isHidden'] = false;
           this.day_field['isHidden'] = false;
@@ -87,12 +87,12 @@ export class EntityTaskComponent implements OnInit {
           }
 
           if (this.isNew) {
-            this.formGroup.controls[this.preTaskName + '_month'].setValue([date.getMonth().toString()]);
-            this.formGroup.controls[this.preTaskName + '_dayweek'].setValue([date.getDay().toString()]);
-            this.formGroup.controls[this.preTaskName + '_daymonth'].setValue(date.getDate().toString());
-            this.formGroup.controls[this.preTaskName + '_hour'].setValue(date.getHours().toString());
+            this.formGroup.controls[`${this.preTaskName}_month`].setValue([date.getMonth().toString()]);
+            this.formGroup.controls[`${this.preTaskName}_dayweek`].setValue([date.getDay().toString()]);
+            this.formGroup.controls[`${this.preTaskName}_daymonth`].setValue(date.getDate().toString());
+            this.formGroup.controls[`${this.preTaskName}_hour`].setValue(date.getHours().toString());
             if (this.mintue_field) {
-              this.formGroup.controls[this.preTaskName + '_minute'].setValue(date.getMinutes().toString());
+              this.formGroup.controls[`${this.preTaskName}_minute`].setValue(date.getMinutes().toString());
             }
           }
         } else if (res == 'hourly') {
@@ -105,7 +105,7 @@ export class EntityTaskComponent implements OnInit {
           }
 
           if (this.isNew && this.mintue_field) {
-            this.formGroup.controls[this.preTaskName + '_minute'].setValue(date.getMinutes().toString());
+            this.formGroup.controls[`${this.preTaskName}_minute`].setValue(date.getMinutes().toString());
           }
         } else if (res == 'daily') {
           this.month_field['isHidden'] = true;
@@ -117,9 +117,9 @@ export class EntityTaskComponent implements OnInit {
           }
 
           if (this.isNew) {
-            this.formGroup.controls[this.preTaskName + '_hour'].setValue(date.getHours().toString());
+            this.formGroup.controls[`${this.preTaskName}_hour`].setValue(date.getHours().toString());
             if (this.mintue_field) {
-              this.formGroup.controls[this.preTaskName + '_minute'].setValue(date.getMinutes().toString());
+              this.formGroup.controls[`${this.preTaskName}_minute`].setValue(date.getMinutes().toString());
             }
           }
         } else if (res == 'weekly') {
@@ -132,10 +132,10 @@ export class EntityTaskComponent implements OnInit {
           }
 
           if (this.isNew) {
-            this.formGroup.controls[this.preTaskName + '_dayweek'].setValue([date.getDay().toString()]);
-            this.formGroup.controls[this.preTaskName + '_hour'].setValue(date.getHours().toString());
+            this.formGroup.controls[`${this.preTaskName}_dayweek`].setValue([date.getDay().toString()]);
+            this.formGroup.controls[`${this.preTaskName}_hour`].setValue(date.getHours().toString());
             if (this.mintue_field) {
-              this.formGroup.controls[this.preTaskName + '_minute'].setValue(date.getMinutes().toString());
+              this.formGroup.controls[`${this.preTaskName}_minute`].setValue(date.getMinutes().toString());
             }
           }
         } else if (res == 'monthly') {
@@ -148,20 +148,20 @@ export class EntityTaskComponent implements OnInit {
           }
 
           if (this.isNew) {
-            this.formGroup.controls[this.preTaskName + '_daymonth'].setValue(date.getDate().toString());
-            this.formGroup.controls[this.preTaskName + '_hour'].setValue(date.getHours().toString());
+            this.formGroup.controls[`${this.preTaskName}_daymonth`].setValue(date.getDate().toString());
+            this.formGroup.controls[`${this.preTaskName}_hour`].setValue(date.getHours().toString());
             if (this.mintue_field) {
-              this.formGroup.controls[this.preTaskName + '_minute'].setValue(date.getMinutes().toString());
+              this.formGroup.controls[`${this.preTaskName}_minute`].setValue(date.getMinutes().toString());
             }
           }
         }
-      })
+      });
     });
 
     if (!this.isNew) {
-      let query = this.conf.resource_name + '/' + this.pk;
+      const query = `${this.conf.resource_name}/${this.pk}`;
       // if we want to use this again we will need to convert to websocket
-      /*this.rest.get(query, {}).subscribe((res) => {
+      /* this.rest.get(query, {}).subscribe((res) => {
         if (res.data) {
           this.data = res.data;
           for (let i in this.data) {
@@ -216,7 +216,7 @@ export class EntityTaskComponent implements OnInit {
             }
           }
         }
-      });*/
+      }); */
       this.showDefaults = true;
     }
 
@@ -248,28 +248,28 @@ export class EntityTaskComponent implements OnInit {
     event.preventDefault();
     event.stopPropagation();
     this.error = null;
-    let value = _.cloneDeep(this.formGroup.value);
+    const value = _.cloneDeep(this.formGroup.value);
 
-    if (value[this.preTaskName + '_repeat'] == 'hourly') {
-      value[this.preTaskName + '_dayweek'] = '*';
-      value[this.preTaskName + '_month'] = '*';
-      value[this.preTaskName + '_daymonth'] = '*';
-      value[this.preTaskName + '_hour'] = '*';
-    } else if (value[this.preTaskName + '_repeat'] == 'daily') {
-      value[this.preTaskName + '_dayweek'] = '*';
-      value[this.preTaskName + '_month'] = '*';
-      value[this.preTaskName + '_daymonth'] = '*';
-    } else if (value[this.preTaskName + '_repeat'] == 'weekly') {
-      value[this.preTaskName + '_month'] = '*';
-      value[this.preTaskName + '_daymonth'] = '*';
-    } else if (value[this.preTaskName + '_repeat'] == 'monthly') {
-      value[this.preTaskName + '_dayweek'] = '*';
-      value[this.preTaskName + '_month'] = '*';
+    if (value[`${this.preTaskName}_repeat`] == 'hourly') {
+      value[`${this.preTaskName}_dayweek`] = '*';
+      value[`${this.preTaskName}_month`] = '*';
+      value[`${this.preTaskName}_daymonth`] = '*';
+      value[`${this.preTaskName}_hour`] = '*';
+    } else if (value[`${this.preTaskName}_repeat`] == 'daily') {
+      value[`${this.preTaskName}_dayweek`] = '*';
+      value[`${this.preTaskName}_month`] = '*';
+      value[`${this.preTaskName}_daymonth`] = '*';
+    } else if (value[`${this.preTaskName}_repeat`] == 'weekly') {
+      value[`${this.preTaskName}_month`] = '*';
+      value[`${this.preTaskName}_daymonth`] = '*';
+    } else if (value[`${this.preTaskName}_repeat`] == 'monthly') {
+      value[`${this.preTaskName}_dayweek`] = '*';
+      value[`${this.preTaskName}_month`] = '*';
     }
 
     this.loader.open();
     // if we want to use this we will need to convert to websocket
-    /*if (this.isNew) {
+    /* if (this.isNew) {
       this.rest.post(this.conf.resource_name + '/', {
         body: JSON.stringify(value)
       }).subscribe(
@@ -293,7 +293,6 @@ export class EntityTaskComponent implements OnInit {
           this.loader.close();
           new EntityUtils().handleError(this, res);
         });
-    }*/
-
+    } */
   }
 }

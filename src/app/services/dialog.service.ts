@@ -10,206 +10,184 @@ import { ErrorDialog } from '../pages/common/error-dialog/error-dialog.component
 import { InfoDialog } from '../pages/common/info-dialog/info-dialog.component';
 import { GeneralDialogComponent, GeneralDialogConfig } from '../pages/common/general-dialog/general-dialog.component';
 import { SelectDialogComponent } from '../pages/common/select-dialog/select-dialog.component';
-import { AppLoaderService } from '../services/app-loader/app-loader.service';
-import { WebSocketService } from '../services/ws.service';
+import { AppLoaderService } from './app-loader/app-loader.service';
+import { WebSocketService } from './ws.service';
 
 @Injectable()
 export class DialogService {
-    protected loaderOpen = false;
+  protected loaderOpen = false;
 
+  constructor(private dialog: MatDialog, private ws: WebSocketService, protected loader: AppLoaderService) {
+    /* Close all open dialogs when websocket connection is dropped */
+    this.ws.onCloseSubject.pipe(filter((didClose) => !!didClose)).subscribe(() => this.closeAllDialogs());
+  }
 
-    constructor(private dialog: MatDialog, private ws: WebSocketService,protected loader: AppLoaderService) {
-        /* Close all open dialogs when websocket connection is dropped */
-        this.ws.onCloseSubject.pipe(filter(didClose => !!didClose)).subscribe(() => this.closeAllDialogs());
+  confirm(title: string, message: string, hideCheckBox?: boolean, buttonMsg?: string, secondaryCheckBox?: boolean,
+    secondaryCheckBoxMsg?: string, method?: string, data?: any, tooltip?: any, hideCancel?: boolean, cancelMsg?: string, disableClose = false): any {
+    const dialogRef = this.dialog.open(ConfirmDialog, { disableClose });
+
+    dialogRef.componentInstance.title = title;
+    dialogRef.componentInstance.message = message;
+
+    if (buttonMsg) {
+      dialogRef.componentInstance.buttonMsg = buttonMsg;
     }
 
-    public confirm(title: string, message: string, hideCheckBox?: boolean, buttonMsg?: string, secondaryCheckBox?: boolean, 
-        secondaryCheckBoxMsg?: string, method?:string, data?:any, tooltip?:any, hideCancel?:boolean, cancelMsg?: string, disableClose: boolean = false): any {
-
-        let dialogRef: MatDialogRef<ConfirmDialog>;
-
-        dialogRef = this.dialog.open(ConfirmDialog, {disableClose: disableClose});
-
-        dialogRef.componentInstance.title = title;
-        dialogRef.componentInstance.message = message;
-
-        if(buttonMsg) {
-            dialogRef.componentInstance.buttonMsg = buttonMsg;
-        }
-
-        if(hideCheckBox) {
-            dialogRef.componentInstance.hideCheckBox = hideCheckBox;
-        } 
-
-        if(tooltip) {
-            dialogRef.componentInstance.tooltip = tooltip;
-        }
-
-        if (hideCancel) {
-            dialogRef.componentInstance.hideCancel = hideCancel;
-            dialogRef.disableClose = hideCancel;
-        }
-        if(cancelMsg) {
-            dialogRef.componentInstance.cancelMsg = cancelMsg;
-        }
-
-        if(secondaryCheckBox) {
-            dialogRef.componentInstance.secondaryCheckBox = secondaryCheckBox;
-            dialogRef.componentInstance.secondaryCheckBoxMsg = secondaryCheckBoxMsg;
-            dialogRef.componentInstance.data = data;
-            dialogRef.componentInstance.method = method;
-            dialogRef.componentInstance.switchSelectionEmitter.subscribe((selection)=>{
-            if(selection){
-                if(data[0] && data[0].hasOwnProperty('reboot')){
-                    data[0].reboot = !data[0].reboot;
-                }
-                if(data[0] && data[0].hasOwnProperty('overcommit')){
-                    data[0].overcommit = !data[0].overcommit;
-                }
-                return dialogRef;
-            }
-        });
-            return dialogRef;
-        }
-        return dialogRef.afterClosed();
+    if (hideCheckBox) {
+      dialogRef.componentInstance.hideCheckBox = hideCheckBox;
     }
 
-    public passwordConfirm(message: string, disableClose: boolean = true): Observable<boolean> {
-        let dialogRef: MatDialogRef<PasswordDialog>;
-
-        dialogRef = this.dialog.open(PasswordDialog, {disableClose: disableClose});
-
-        dialogRef.componentInstance.message = message;
-
-        return dialogRef.afterClosed();
+    if (tooltip) {
+      dialogRef.componentInstance.tooltip = tooltip;
     }
 
-    public errorReport(title: string, message: string, backtrace: string = '', logs?: any): Observable<boolean> {
-
-        let dialogRef: MatDialogRef<ErrorDialog>;
-
-        dialogRef = this.dialog.open(ErrorDialog);
-
-        dialogRef.componentInstance.title = title;
-        dialogRef.componentInstance.message = message;
-        dialogRef.componentInstance.backtrace = backtrace;
-        if (logs) {
-            dialogRef.componentInstance.logs = logs;
-        }
-
-        return dialogRef.afterClosed();
+    if (hideCancel) {
+      dialogRef.componentInstance.hideCancel = hideCancel;
+      dialogRef.disableClose = hideCancel;
+    }
+    if (cancelMsg) {
+      dialogRef.componentInstance.cancelMsg = cancelMsg;
     }
 
-    public Info(title: string, info: string, width='500px', icon="report_problem", is_html=false ): Observable<boolean> {
-        
-        let dialogRef: MatDialogRef<InfoDialog>;
-
-        dialogRef = this.dialog.open(InfoDialog, {width: width});
-
-        dialogRef.componentInstance.title = title;
-        dialogRef.componentInstance.info = info;
-        dialogRef.componentInstance.icon = icon;
-        dialogRef.componentInstance.is_html = is_html;
-
-        return dialogRef.afterClosed();
-    }
-
-    public select(title: string, options:  Array<any>, optionPlaceHolder: string, method: string, params?: any, message?: string){
-        let data: any;     
-        let dialogRef: MatDialogRef<SelectDialogComponent>;
-
-        dialogRef = this.dialog.open(SelectDialogComponent, {width: '300px'});
-
-        dialogRef.componentInstance.title = title;
-        dialogRef.componentInstance.options = options;
-        dialogRef.componentInstance.optionPlaceHolder = optionPlaceHolder;
-        dialogRef.componentInstance.method = method;
-
-        dialogRef.componentInstance.switchSelectionEmitter.subscribe((selection)=>{
-            if (selection === 'force'){
-                 data = {[selection]: true}
-            }
-            else {
-                data = {[params]: selection}
-            }
-            dialogRef.afterClosed().subscribe((res)=>{
-                if(res){
-                    this.ws.call(method, [data]).subscribe((out)=>{
-                        //this.snackBar.open(message, 'close', { duration: 5000 });
-                    });
-                };
-            });
-        });
-
-
-    }
-
-    public dialogForm(conf: any, disableClose: boolean = false): Observable<boolean> {
-        let dialogRef: MatDialogRef<EntityDialogComponent>;
-
-        dialogRef = this.dialog.open(EntityDialogComponent, {maxWidth: '420px', minWidth: '350px', disableClose: disableClose});
-        dialogRef.componentInstance.conf = conf;
-
-        return dialogRef.afterClosed();
-    }
-
-    public dialogFormWide(conf: any): Observable<boolean> {
-        let dialogRef: MatDialogRef<EntityDialogComponent>;
-
-        dialogRef = this.dialog.open(EntityDialogComponent, {width: '550px', disableClose: true});
-        dialogRef.componentInstance.conf = conf;
-
-        return dialogRef.afterClosed();
-    }
-
-    public doubleConfirm(title: string, message: string, name: string, confirmBox?: boolean, buttonMsg?: string): any {
-        const conf = {
-            title: title,
-            message: message,
-            name: name,
-            confirmInstructions: true,
-            fieldConfig: [
-              {
-                type: 'input',
-                name: 'name',
-                required: true,
-                hideErrMsg: true
-              },
-              {
-                  type: 'checkbox',
-                  name: 'confirm',
-                  placeholder: T('Confirm'),
-                  isHidden: !confirmBox,
-              }
-            ],
-            saveButtonText: buttonMsg ? buttonMsg : T("DELETE"),
-            afterInit: function(entityDialog) {
-                entityDialog.formGroup.controls['name'].valueChanges.subscribe((res) => {
-                    entityDialog.submitEnabled = res === name && (confirmBox ? entityDialog.formGroup.controls['confirm'].value : true);
-                })
-                entityDialog.formGroup.controls['confirm'].valueChanges.subscribe((res) => {
-                    entityDialog.submitEnabled = res && (entityDialog.formGroup.controls['name'].value === name);
-                })
-            },
-            customSubmit: function (entityDialog) {
-                return entityDialog.dialogRef.close(true);
-            }
+    if (secondaryCheckBox) {
+      dialogRef.componentInstance.secondaryCheckBox = secondaryCheckBox;
+      dialogRef.componentInstance.secondaryCheckBoxMsg = secondaryCheckBoxMsg;
+      dialogRef.componentInstance.data = data;
+      dialogRef.componentInstance.method = method;
+      dialogRef.componentInstance.switchSelectionEmitter.subscribe((selection) => {
+        if (selection) {
+          if (data[0] && data[0].hasOwnProperty('reboot')) {
+            data[0].reboot = !data[0].reboot;
           }
-        return this.dialogForm(conf);
-    }
-
-    public closeAllDialogs(): void {
-        for (const openDialog of this.dialog.openDialogs) {
-            openDialog.close();
+          if (data[0] && data[0].hasOwnProperty('overcommit')) {
+            data[0].overcommit = !data[0].overcommit;
+          }
+          return dialogRef;
         }
+      });
+      return dialogRef;
+    }
+    return dialogRef.afterClosed();
+  }
+
+  passwordConfirm(message: string, disableClose = true): Observable<boolean> {
+    const dialogRef = this.dialog.open(PasswordDialog, { disableClose });
+
+    dialogRef.componentInstance.message = message;
+
+    return dialogRef.afterClosed();
+  }
+
+  errorReport(title: string, message: string, backtrace = '', logs?: any): Observable<boolean> {
+    const dialogRef = this.dialog.open(ErrorDialog);
+
+    dialogRef.componentInstance.title = title;
+    dialogRef.componentInstance.message = message;
+    dialogRef.componentInstance.backtrace = backtrace;
+    if (logs) {
+      dialogRef.componentInstance.logs = logs;
     }
 
-    public generalDialog(conf: GeneralDialogConfig, matConfig?: MatDialogConfig) {
-        let dialogRef: MatDialogRef<GeneralDialogComponent>;
+    return dialogRef.afterClosed();
+  }
 
-        dialogRef = this.dialog.open(GeneralDialogComponent, matConfig);
-        dialogRef.componentInstance.conf = conf;
+  Info(title: string, info: string, width = '500px', icon = 'report_problem', is_html = false): Observable<boolean> {
+    const dialogRef = this.dialog.open(InfoDialog, { width });
 
-        return dialogRef.afterClosed();
+    dialogRef.componentInstance.title = title;
+    dialogRef.componentInstance.info = info;
+    dialogRef.componentInstance.icon = icon;
+    dialogRef.componentInstance.is_html = is_html;
+
+    return dialogRef.afterClosed();
+  }
+
+  select(title: string, options: any[], optionPlaceHolder: string, method: string, params?: any, message?: string) {
+    let data: any;
+
+    const dialogRef = this.dialog.open(SelectDialogComponent, { width: '300px' });
+
+    dialogRef.componentInstance.title = title;
+    dialogRef.componentInstance.options = options;
+    dialogRef.componentInstance.optionPlaceHolder = optionPlaceHolder;
+    dialogRef.componentInstance.method = method;
+
+    dialogRef.componentInstance.switchSelectionEmitter.subscribe((selection) => {
+      if (selection === 'force') {
+        data = { [selection]: true };
+      } else {
+        data = { [params]: selection };
+      }
+      dialogRef.afterClosed().subscribe((res) => {
+        if (res) {
+          this.ws.call(method, [data]).subscribe((out) => {
+            // this.snackBar.open(message, 'close', { duration: 5000 });
+          });
+        }
+      });
+    });
+  }
+
+  dialogForm(conf: any, disableClose = false): Observable<boolean> {
+    const dialogRef = this.dialog.open(EntityDialogComponent, { maxWidth: '420px', minWidth: '350px', disableClose });
+    dialogRef.componentInstance.conf = conf;
+
+    return dialogRef.afterClosed();
+  }
+
+  dialogFormWide(conf: any): Observable<boolean> {
+    const dialogRef = this.dialog.open(EntityDialogComponent, { width: '550px', disableClose: true });
+    dialogRef.componentInstance.conf = conf;
+
+    return dialogRef.afterClosed();
+  }
+
+  doubleConfirm(title: string, message: string, name: string, confirmBox?: boolean, buttonMsg?: string): any {
+    const conf = {
+      title,
+      message,
+      name,
+      confirmInstructions: true,
+      fieldConfig: [
+        {
+          type: 'input',
+          name: 'name',
+          required: true,
+          hideErrMsg: true,
+        },
+        {
+          type: 'checkbox',
+          name: 'confirm',
+          placeholder: T('Confirm'),
+          isHidden: !confirmBox,
+        },
+      ],
+      saveButtonText: buttonMsg || T('DELETE'),
+      afterInit(entityDialog) {
+        entityDialog.formGroup.controls['name'].valueChanges.subscribe((res) => {
+          entityDialog.submitEnabled = res === name && (confirmBox ? entityDialog.formGroup.controls['confirm'].value : true);
+        });
+        entityDialog.formGroup.controls['confirm'].valueChanges.subscribe((res) => {
+          entityDialog.submitEnabled = res && (entityDialog.formGroup.controls['name'].value === name);
+        });
+      },
+      customSubmit(entityDialog) {
+        return entityDialog.dialogRef.close(true);
+      },
+    };
+    return this.dialogForm(conf);
+  }
+
+  closeAllDialogs(): void {
+    for (const openDialog of this.dialog.openDialogs) {
+      openDialog.close();
     }
+  }
+
+  generalDialog(conf: GeneralDialogConfig, matConfig?: MatDialogConfig) {
+    const dialogRef = this.dialog.open(GeneralDialogComponent, matConfig);
+    dialogRef.componentInstance.conf = conf;
+
+    return dialogRef.afterClosed();
+  }
 }

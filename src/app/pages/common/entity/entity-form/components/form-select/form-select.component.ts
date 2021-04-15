@@ -1,13 +1,15 @@
-import { Component, ViewChild, Output, EventEmitter, AfterViewInit, AfterViewChecked, ChangeDetectorRef } from '@angular/core';
+import {
+  Component, ViewChild, Output, EventEmitter, AfterViewInit, AfterViewChecked, ChangeDetectorRef,
+} from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs/Observable';
 
+import { MatOptionSelectionChange } from '@angular/material/core';
+import * as _ from 'lodash';
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
 import { TooltipComponent } from '../tooltip/tooltip.component';
-import { MatOptionSelectionChange } from '@angular/material/core';
-import * as _ from 'lodash';
 
 @Component({
   selector: 'form-select',
@@ -18,59 +20,59 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
-  control:any;
+  control: any;
 
-  @ViewChild('selectTrigger', { static: true}) matSelect;
-  @ViewChild('field', { static: true}) field;
+  @ViewChild('selectTrigger', { static: true }) matSelect;
+  @ViewChild('field', { static: true }) field;
 
-  public formReady:boolean = false;
-  public initialValue:any;
-  public selected:any;
-  public allSelected: boolean;
-  public selectedValues: any[] = []; 
-  public selectStates: boolean[] = []; // Collection of checkmark states
-  public selectAllStateCache: boolean[] = []; // Cache the state when select all was toggled
-  public selectAllValueCache: boolean[] = []; // Cache the state when select all was toggled
-  public customTriggerValue:any;
-  private _formValue:any;
-  get formValue(){
+  formReady = false;
+  initialValue: any;
+  selected: any;
+  allSelected: boolean;
+  selectedValues: any[] = [];
+  selectStates: boolean[] = []; // Collection of checkmark states
+  selectAllStateCache: boolean[] = []; // Cache the state when select all was toggled
+  selectAllValueCache: boolean[] = []; // Cache the state when select all was toggled
+  customTriggerValue: any;
+  private _formValue: any;
+  get formValue() {
     return this._formValue;
   }
-  set formValue(value: any){
-    let result = this.config.multiple ? this.selectedValues: this.selected;
-    this._formValue = result
+  set formValue(value: any) {
+    const result = this.config.multiple ? this.selectedValues : this.selected;
+    this._formValue = result;
   }
 
   constructor(public translate: TranslateService, public cd: ChangeDetectorRef) {
   }
 
-  ngAfterViewInit(){
-    this.selectStates = this.config.options.map(item => false);
-    //let testOptions = this.matSelect.options._results;
-    
+  ngAfterViewInit() {
+    this.selectStates = this.config.options.map((item) => false);
+    // let testOptions = this.matSelect.options._results;
+
     this.control = this.group.controls[this.config.name];
     // if control has a value on init
-    if(this.control.value && this.control.value.length > 0){
-        this.selectedValues = this.control.value;
-        // check if any value is invalid
-        if (this.config.multiple && this.config.asyncValidation) {
-          for (const v of this.control.value) {
-            if (_.find(this.config.options, {value: v}) === undefined) {
-              this.config.options.push({label: v + '(invalid)', value: v});
-            }
+    if (this.control.value && this.control.value.length > 0) {
+      this.selectedValues = this.control.value;
+      // check if any value is invalid
+      if (this.config.multiple && this.config.asyncValidation) {
+        for (const v of this.control.value) {
+          if (_.find(this.config.options, { value: v }) === undefined) {
+            this.config.options.push({ label: `${v}(invalid)`, value: v });
           }
         }
+      }
     }
     this.control.valueChanges.subscribe((evt) => {
-      if(evt) {
-        if(this.config.multiple && Array.isArray(evt)) {
+      if (evt) {
+        if (this.config.multiple && Array.isArray(evt)) {
           this.selectedValues = evt;
-          const newStates = this.config.options.map(item => this.selectedValues.indexOf(item.value) !== -1);
+          const newStates = this.config.options.map((item) => this.selectedValues.indexOf(item.value) !== -1);
           const triggerValue = [];
           for (let i = 0; i < this.config.options.length; i++) {
             const item = this.config.options[i];
             if (this.selectedValues.indexOf(item.value) !== -1) {
-              triggerValue.push(item.label)
+              triggerValue.push(item.label);
             }
           }
           this.selectStates = newStates;
@@ -80,14 +82,14 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     });
   }
 
-  ngAfterViewChecked(){
-    if(!this.formReady  && typeof this.config.options !== "undefined" && this.config.options && this.config.options.length > 0){
-        let keys = Object.keys(this.group.controls);
-        let newStates = this.config.options.map(item => this.selectedValues.indexOf(item.value) !== -1);
-        this.selectStates = newStates;
-        this.updateValues();
-        this.formReady = true;
-        this.cd.detectChanges();
+  ngAfterViewChecked() {
+    if (!this.formReady && typeof this.config.options !== 'undefined' && this.config.options && this.config.options.length > 0) {
+      const keys = Object.keys(this.group.controls);
+      const newStates = this.config.options.map((item) => this.selectedValues.indexOf(item.value) !== -1);
+      this.selectStates = newStates;
+      this.updateValues();
+      this.formReady = true;
+      this.cd.detectChanges();
     }
   }
 
@@ -97,20 +99,20 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     }
   }
 
-  onSelect(option, index){
+  onSelect(option, index) {
     this.selected = option.value;
     this.group.value[this.config.name] = this.selected;
     this.formValue = this.selected;
   }
 
-  onToggleSelectAll(){
-    if(!this.allSelected){
+  onToggleSelectAll() {
+    if (!this.allSelected) {
       // Cache all the things...
-      this.selectAllStateCache = Object.assign([],this.selectStates);// cache the checkmark states
-      this.selectAllValueCache = Object.assign([],this.selectedValues);// cache the values
-      
+      this.selectAllStateCache = Object.assign([], this.selectStates);// cache the checkmark states
+      this.selectAllValueCache = Object.assign([], this.selectedValues);// cache the values
+
       // Deal with the values...
-      const newValues = this.config.options.map(item => item.value);
+      const newValues = this.config.options.map((item) => item.value);
       this.selectedValues = newValues;
 
       // Deal with checkmark states...
@@ -123,34 +125,33 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
       this.selectedValues = this.selectAllValueCache;
       this.allSelected = false;
     }
-    
-    //let testOption = this.matSelect.options._results[0];
+
+    // let testOption = this.matSelect.options._results[0];
   }
 
-  isDisabled(index){
-    let option = this.config.options[index];
+  isDisabled(index) {
+    const option = this.config.options[index];
     return option.disabled ? option.disabled : false;
   }
-  isHiddenFromDisplay(index){
+  isHiddenFromDisplay(index) {
     const option = this.config.options[index];
     return option.hiddenFromDisplay ? option.hiddenFromDisplay : false;
   }
 
-  onToggleSelect(option, index){
-    if(!this.config.multiple){
-      this.onSelect(option,index);
+  onToggleSelect(option, index) {
+    if (!this.config.multiple) {
+      this.onSelect(option, index);
       return;
     }
 
     this.group.value[this.config.name] = this.selectedValues;
-    
   }
 
-  updateValues(){
-    let newValues = [];
-    let triggerValue = [];
+  updateValues() {
+    const newValues = [];
+    const triggerValue = [];
     this.selectStates.forEach((item, index) => {
-      if(item){
+      if (item) {
         newValues.push(this.config.options[index].value);
         triggerValue.push(this.config.options[index].label);
       }

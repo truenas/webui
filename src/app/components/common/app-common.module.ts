@@ -1,12 +1,14 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from "@angular/forms";
-import { RouterModule } from "@angular/router";
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { TranslateModule } from '@ngx-translate/core';
+import { ChartistModule } from 'ng-chartist';
+import { HttpClientModule } from '@angular/common/http';
+import { AngularSvgIconModule, SvgIconRegistryService } from 'angular-svg-icon';
 import { MaterialModule } from '../../appMaterial.module';
 
-import { ChartistModule } from 'ng-chartist';
 import { TopbarComponent } from './topbar/topbar.component';
 import { NavigationComponent } from './navigation/navigation.component';
 import { NotificationsComponent } from './notifications/notifications.component';
@@ -17,13 +19,10 @@ import { ThemeService } from '../../services/theme/theme.service';
 import { DialogService } from '../../services/dialog.service';
 import { CustomizerComponent } from './customizer/customizer.component';
 import { BreadcrumbComponent } from './breadcrumb/breadcrumb.component';
-//import { LineChartComponent } from './lineChart';
-//import { LineChartService } from './lineChart/lineChart.service';
+// import { LineChartComponent } from './lineChart';
+// import { LineChartService } from './lineChart/lineChart.service';
 import { LanguageService } from '../../services/language.service';
-import { HttpClientModule } from '@angular/common/http';
 import { LocaleService } from '../../services/locale.service';
-
-import { AngularSvgIconModule, SvgIconRegistryService } from 'angular-svg-icon';
 
 @NgModule({
   imports: [
@@ -36,16 +35,16 @@ import { AngularSvgIconModule, SvgIconRegistryService } from 'angular-svg-icon';
     TranslateModule,
     ChartistModule,
     HttpClientModule,
-    AngularSvgIconModule.forRoot()
+    AngularSvgIconModule.forRoot(),
   ],
   declarations: [
     AdminLayoutComponent,
     AuthLayoutComponent,
     TopbarComponent,
     NavigationComponent,
-    NotificationsComponent, CustomizerComponent, BreadcrumbComponent, //LineChartComponent
+    NotificationsComponent, CustomizerComponent, BreadcrumbComponent, // LineChartComponent
   ],
-  providers: [ThemeService, DialogService, /*LineChartService,*/ LanguageService, LocaleService, SvgIconRegistryService],
-  exports: [/*LineChartComponent*/]
+  providers: [ThemeService, DialogService, /* LineChartService, */ LanguageService, LocaleService, SvgIconRegistryService],
+  exports: [/* LineChartComponent */],
 })
 export class AppCommonModule {}

@@ -12,33 +12,31 @@ export interface PageOptions {
   url: string;
 }
 
-// This makes the metadata available globally 
-// Deal-Breaker: Angular injects the component's 
+// This makes the metadata available globally
+// Deal-Breaker: Angular injects the component's
 // directory path forcing relative paths
 export const PageComponentMetadata = {
   selector: 'page',
   template: '',
-  styleUrls: ['./page.component.css']
-}
+  styleUrls: ['./page.component.css'],
+};
 
 @Component({
   selector: 'page',
   template: '',
-  styleUrls: ['./page.component.css']
+  styleUrls: ['./page.component.css'],
 })
 export class PageComponent {
-
-  public name: string = "PageComponent";
-  public url: string;
+  name = 'PageComponent';
+  url: string;
   protected core: CoreService;
 
-  constructor(){
-	  //super();
+  constructor() {
+	  // super();
     this.core = CoreServiceInjector.get(CoreService);
   }
-    
-  ngAfterViewInit(){
-    //this.loadView(CardComponent,{header:});
+
+  ngAfterViewInit() {
+    // this.loadView(CardComponent,{header:});
   }
-     
 }

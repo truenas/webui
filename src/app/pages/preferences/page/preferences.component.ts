@@ -1,18 +1,20 @@
-import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef, OnChanges, OnDestroy } from '@angular/core';
-import { NgModel }   from '@angular/forms';
-import {Router} from '@angular/router';
+import {
+  ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, ViewContainerRef, OnChanges, OnDestroy,
+} from '@angular/core';
+import { NgModel } from '@angular/forms';
+import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
-import {RestService, WebSocketService} from '../../../services/';
-import { ThemeService, Theme} from 'app/services/theme/theme.service';
+import { ThemeService, Theme } from 'app/services/theme/theme.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
+import { RestService, WebSocketService } from '../../../services';
 
 @Component({
-  selector : 'ui-preferences',
-  template:`
+  selector: 'ui-preferences',
+  template: `
   <mat-card class="prefs-card">
   <!--<mat-toolbar-row style="margin-bottom:16px;">
   <h4>User Preferences</h4>
@@ -28,10 +30,9 @@ import { Subject } from 'rxjs';
 
   </mat-card>
   `,
-  styleUrls: ['./preferences.component.css']
+  styleUrls: ['./preferences.component.css'],
 })
 export class PreferencesPage implements OnInit, OnDestroy {
-
   /*
    //Preferences Object Structure
    platform:string; // FreeNAS || TrueNAS
@@ -44,27 +45,27 @@ export class PreferencesPage implements OnInit, OnDestroy {
 
    */
 
-  //public target: Subject<CoreEvent> = new Subject();
+  // public target: Subject<CoreEvent> = new Subject();
 
-    constructor(
-      protected router: Router,
-      protected rest: RestService,
-      protected ws: WebSocketService,
-      protected _injector: Injector,
-      protected _appRef: ApplicationRef,
-      public themeService:ThemeService,
-      private core:CoreService
-    ) {}
+  constructor(
+    protected router: Router,
+    protected rest: RestService,
+    protected ws: WebSocketService,
+    protected _injector: Injector,
+    protected _appRef: ApplicationRef,
+    public themeService: ThemeService,
+    private core: CoreService,
+  ) {}
 
-    ngOnInit(){
-      //this.init();
-    }
+  ngOnInit() {
+    // this.init();
+  }
 
-    ngOnDestroy(){
-      this.core.unregister({observerClass:this});
-    }
+  ngOnDestroy() {
+    this.core.unregister({ observerClass: this });
+  }
 
-    /*ngOnChanges(changes){
+  /* ngOnChanges(changes){
       if(changes.baseTheme){
         alert("baseTheme Changed!")
       }
@@ -91,9 +92,6 @@ export class PreferencesPage implements OnInit, OnDestroy {
       });
       this.generateFieldConfig();
     }
-
-
-
 
      setFavoriteFields(){
        for(let i = 0; i < this.themeService.freenasThemes.length; i++){
@@ -134,5 +132,5 @@ export class PreferencesPage implements OnInit, OnDestroy {
            this.fieldConfig.push(this.fieldSets[i].config[ii]);
          }
        }
-     }*/
+     } */
 }

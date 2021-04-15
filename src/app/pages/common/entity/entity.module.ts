@@ -1,25 +1,27 @@
-
-
 import { CommonModule } from '@angular/common';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../../appMaterial.module';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { MatSortHeader, MatSort } from '@angular/material/sort';
-import {DragDropModule} from '@angular/cdk/drag-drop';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TreeModule } from 'angular-tree-component';
 import { NgxUploaderModule } from 'ngx-uploader';
 import { FlexLayoutModule } from '@angular/flex-layout';
-
-import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { DocsService} from '../../../services/docs.service';
-import { RestService, WebSocketService, JobService } from '../../../services/index';
 import { Ng2DropdownModule } from 'ng2-material-dropdown';
 import { TranslateModule } from '@ngx-translate/core';
 import { TreeTableModule } from 'primeng/treetable';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CdkTableModule } from '@angular/cdk/table';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { A11yModule } from '@angular/cdk/a11y';
+import { TaskScheduleListComponent } from 'app/pages/task-calendar/components/task-schedule-list/task-schedule-list.component';
+import { MaterialModule } from '../../../appMaterial.module';
+
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { DocsService } from '../../../services/docs.service';
+import { RestService, WebSocketService, JobService } from '../../../services/index';
 
 import { DynamicFieldDirective } from './entity-form/components/dynamic-field/dynamic-field.directive';
 import { FormArrayComponent } from './entity-form/components/form-array/form-array.component';
@@ -58,7 +60,7 @@ import { EntityTableRowDetailsComponent } from './entity-table/entity-table-row-
 import { EntityTreeTableComponent } from './entity-tree-table/entity-tree-table.component';
 import { EntityCardComponent } from './entity-card/entity-card.component';
 import { EntityTemplateDirective } from './entity-template.directive';
-import { FormReadFileComponent } from './entity-form/components/form-readfile/form-readfile.component'
+import { FormReadFileComponent } from './entity-form/components/form-readfile/form-readfile.component';
 import { EntityWizardComponent } from './entity-wizard/entity-wizard.component';
 import { EntityTaskComponent } from './entity-task/entity-task.component';
 import { EntityDialogComponent } from './entity-dialog/entity-dialog.component';
@@ -68,9 +70,6 @@ import { FormPermissionsComponent } from './entity-form/components/form-permissi
 import { EntityJobComponent } from './entity-job/entity-job.component';
 
 // CDK
-import { CdkTableModule } from '@angular/cdk/table';
-import { OverlayModule } from '@angular/cdk/overlay';
-import {A11yModule} from '@angular/cdk/a11y';
 
 import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
 
@@ -79,7 +78,6 @@ import { ToolbarButtonComponent } from './entity-toolbar/components/toolbar-butt
 import { ToolbarMenuComponent } from './entity-toolbar/components/toolbar-menu/toolbar-menu.component';
 import { ToolbarMultimenuComponent } from './entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
 import { EntityRowDetailsComponent } from './entity-table/entity-row-details.component';
-import { TaskScheduleListComponent } from 'app/pages/task-calendar/components/task-schedule-list/task-schedule-list.component';
 import { FormStatusComponent } from './entity-form/components/form-status/form-status.component';
 
 @NgModule({
@@ -87,7 +85,7 @@ import { FormStatusComponent } from './entity-form/components/form-status/form-s
     CommonModule, FormsModule, ReactiveFormsModule, DragDropModule,
     MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule.forRoot(),
     Ng2DropdownModule, NgxUploaderModule, FlexLayoutModule, TranslateModule,
-    OverlayModule, A11yModule, TreeTableModule, NgxFilesizeModule, CommonDirectivesModule
+    OverlayModule, A11yModule, TreeTableModule, NgxFilesizeModule, CommonDirectivesModule,
   ],
   declarations: [
     TaskScheduleListComponent,
@@ -142,7 +140,7 @@ import { FormStatusComponent } from './entity-form/components/form-status/form-s
     ToolbarButtonComponent,
     ToolbarMenuComponent,
     ToolbarMultimenuComponent,
-    FormStatusComponent
+    FormStatusComponent,
   ],
   exports: [
     EntityTemplateDirective,
@@ -155,7 +153,7 @@ import { FormStatusComponent } from './entity-form/components/form-status/form-s
     EntityCardComponent,
     EntityCardActionsComponent,
     EntityTableAddActionsComponent,
-    EntityTableActionsComponent,    
+    EntityTableActionsComponent,
     DynamicFieldDirective,
     SmdFabSpeedDialTrigger,
     SmdFabSpeedDialActions,
@@ -199,13 +197,13 @@ import { FormStatusComponent } from './entity-form/components/form-status/form-s
     EntityToolbarComponent,
     EntitySnackbarComponent,
     EntityTableRowDetailsComponent,
-    TaskScheduleListComponent
+    TaskScheduleListComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
     AppLoaderService,
     DocsService,
-    JobService
-  ]
+    JobService,
+  ],
 })
 export class EntityModule {}

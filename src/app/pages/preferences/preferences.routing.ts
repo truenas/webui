@@ -6,15 +6,15 @@ import { CustomThemeComponent } from './page/forms/customtheme/customtheme.compo
 export const routes: Routes = [
   {
     path: '',
-    component : PreferencesPage,
-    data: {title: 'Preferences', breadcrumb:'Preferences'},
-    pathMatch : 'full'
+    component: PreferencesPage,
+    data: { title: 'Preferences', breadcrumb: 'Preferences' },
+    pathMatch: 'full',
   },
   {
     path: 'create-theme',
-    component : CustomThemeComponent,
-    data: {title: 'Create New Theme', breadcrumb:'Create New Theme'},
-    pathMatch : 'full'
-  }
-]
+    component: CustomThemeComponent,
+    data: { title: 'Create New Theme', breadcrumb: 'Create New Theme' },
+    pathMatch: 'full',
+  },
+];
 export const routing: ModuleWithProviders = RouterModule.forChild(routes);

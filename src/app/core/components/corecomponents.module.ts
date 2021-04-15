@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { MaterialModule } from '../../appMaterial.module';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { PortalModule } from '@angular/cdk/portal';
 import { CommonModule } from '@angular/common';
@@ -9,19 +8,13 @@ import { ViewComponent } from 'app/core/components/view/view.component';
 import { CardComponent } from 'app/core/components/card/card.component';
 import { ViewControlComponent } from 'app/core/components/viewcontrol/viewcontrol.component';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
-import { Display,DisplayContainer } from 'app/core/components/display/display.component';
-import { ViewButtonComponent } from './viewbutton/viewbutton.component';
+import { Display, DisplayContainer } from 'app/core/components/display/display.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { FormsModule }   from '@angular/forms';
-import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
+import { FormsModule } from '@angular/forms';
 
 import { ViewChartComponent } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
-import { ViewChartGaugeComponent } from './viewchartgauge/viewchartgauge.component';
-import { ViewChartBarComponent } from './viewchartbar/viewchartbar.component';
-import { ViewChartLineComponent } from './viewchartline/viewchartline.component';
-import { StorageService } from '../../services/storage.service';
 
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { WidgetChartComponent } from 'app/core/components/widgets/widgetchart/widgetchart.component';
@@ -33,10 +26,16 @@ import { WidgetMemoryComponent } from 'app/core/components/widgets/widgetmemory/
 import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
 import { SimpleFailoverBtnComponent, SimpleFailoverBtnDialog } from 'app/core/components/widgets/widgetsysinfo/simple-failover-btn.component';
 
-
 import { TranslateModule } from '@ngx-translate/core';
-import { ContextMenuComponent } from './context-menu/context-menu.component';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
+import { ContextMenuComponent } from './context-menu/context-menu.component';
+import { StorageService } from '../../services/storage.service';
+import { ViewChartLineComponent } from './viewchartline/viewchartline.component';
+import { ViewChartBarComponent } from './viewchartbar/viewchartbar.component';
+import { ViewChartGaugeComponent } from './viewchartgauge/viewchartgauge.component';
+import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
+import { ViewButtonComponent } from './viewbutton/viewbutton.component';
+import { MaterialModule } from '../../appMaterial.module';
 import { TextLimiterDirective } from './directives/text-limiter/text-limiter.directive';
 import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
 import { WidgetControllerComponent } from './widgets/widgetcontroller/widgetcontroller.component';
@@ -44,7 +43,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
 
 /*
  *
- * This is the Core Module. By importing this module you'll 
+ * This is the Core Module. By importing this module you'll
  * ensure your page will have the right dependencies in place
  * to make use of Core Components
  *
@@ -59,7 +58,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     FlexLayoutModule,
     FormsModule,
     TranslateModule,
-    CommonDirectivesModule
+    CommonDirectivesModule,
   ],
   declarations: [
     ContextMenuComponent,
@@ -103,7 +102,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     ContextMenuComponent,
     CopyPasteMessageComponent,
     PageComponent,
-    ViewComponent, 
+    ViewComponent,
     ViewChartComponent,
     ViewChartDonutComponent,
     ViewChartGaugeComponent,
@@ -126,7 +125,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
   ],
-  entryComponents:[
+  entryComponents: [
     ContextMenuComponent,
     CopyPasteMessageComponent,
     DisplayContainer,
@@ -153,8 +152,8 @@ import { ConvertPipe } from './pipes/convert.pipe';
     SimpleFailoverBtnComponent,
     SimpleFailoverBtnDialog,
   ],
-  providers:[
-    StorageService
-  ]
+  providers: [
+    StorageService,
+  ],
 })
 export class CoreComponents {}

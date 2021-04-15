@@ -1,34 +1,33 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import { MatDialog } from '@angular/material/dialog';
+import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from '../../../services/ws.service';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from '../../../services/dialog.service';
-import { MatDialog } from '@angular/material/dialog';
 import globalHelptext from '../../../helptext/global-helptext';
-import { EntityJobComponent } from '../../../../app/pages/common/entity/entity-job/entity-job.component';
+import { EntityJobComponent } from '../../../pages/common/entity/entity-job/entity-job.component';
 import { T } from '../../../translate-marker';
-import { LocaleService } from 'app/services/locale.service';
 
 @Component({
   selector: 'app-config-reset',
   templateUrl: './config-reset.component.html',
   styleUrls: ['./config-reset.component.css'],
-  providers: []
+  providers: [],
 })
 export class ConfigResetComponent implements OnInit {
-
-  public product_type: string;
-  public copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
-  public dialogRef: any;
+  product_type: string;
+  copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
+  dialogRef: any;
 
   constructor(protected ws: WebSocketService, protected router: Router,
     protected loader: AppLoaderService, public translate: TranslateService,
     protected dialogService: DialogService, protected dialog: MatDialog, private localeService: LocaleService) {
-      this.ws = ws;
-      this.ws.call('system.product_type').subscribe((res)=>{
-        this.product_type = res;
-      });
+    this.ws = ws;
+    this.ws.call('system.product_type').subscribe((res) => {
+      this.product_type = res;
+    });
   }
 
   isWSConnected() {
@@ -51,8 +50,8 @@ export class ConfigResetComponent implements OnInit {
   }
 
   resetConfigSubmit() {
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Resetting. Please wait..." }, disableClose: true });
-    this.dialogRef.componentInstance.setCall('config.reset', [{ reboot: true}]);
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Resetting. Please wait...' }, disableClose: true });
+    this.dialogRef.componentInstance.setCall('config.reset', [{ reboot: true }]);
     this.dialogRef.componentInstance.setDescription(T('Resetting system configuration to default settings. The system will restart.'));
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe(() => {
@@ -68,5 +67,4 @@ export class ConfigResetComponent implements OnInit {
       this.dialogService.errorReport(res.error, res.state, res.exception);
     });
   }
-
 }

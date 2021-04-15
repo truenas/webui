@@ -6,45 +6,45 @@ import { Validators, ValidationErrors, FormControl } from '@angular/forms';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import * as _ from 'lodash';
 import { AdminLayoutComponent } from '../../../components/common/layouts/admin-layout/admin-layout.component';
-import { StorageService, ValidationService, WebSocketService } from '../../../services/';
-import { AppLoaderService } from "../../../services/app-loader/app-loader.service";
-import { DialogService } from "../../../services/dialog.service";
+import { StorageService, ValidationService, WebSocketService } from '../../../services';
+import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
+import { DialogService } from '../../../services/dialog.service';
 import { T } from '../../../translate-marker';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
-import * as _ from 'lodash';
 
 @Component({
   selector: 'app-system-advanced',
-  template: `<entity-form [conf]="this"></entity-form>`,
+  template: '<entity-form [conf]="this"></entity-form>',
   styleUrls: ['advanced.component.css'],
-  providers: [DatePipe]
+  providers: [DatePipe],
 })
 export class AdvancedComponent implements OnDestroy {
-  //protected resource_name: string = 'system/advanced';
-  public job: any = {};
+  // protected resource_name: string = 'system/advanced';
+  job: any = {};
   protected queryCall = 'system.advanced.config';
   protected adv_serialconsole: any;
   protected adv_serialconsole_subscription: any;
-  public adv_serialport: any;
-  public adv_serialspeed: any;
-  public swapondrive: any;
-  public swapondrive_subscription: any;
-  public entityForm: any;
+  adv_serialport: any;
+  adv_serialspeed: any;
+  swapondrive: any;
+  swapondrive_subscription: any;
+  entityForm: any;
   protected dialogRef: any;
-  public product_type: string;
-  public is_ha = false;
-  public custActions: Array < any > = [{
+  product_type: string;
+  is_ha = false;
+  custActions: any[] = [{
     id: 'save_debug',
     name: T('Save Debug'),
-    function: () => { 
+    function: () => {
       this.ws.call('system.info', []).subscribe((res) => {
-        let fileName = "";
-        let mimetype = 'application/gzip'; 
+        let fileName = '';
+        let mimetype = 'application/gzip';
         if (res) {
           const hostname = res.hostname.split('.')[0];
-          const date = this.datePipe.transform(new Date(), "yyyyMMddHHmmss");
+          const date = this.datePipe.transform(new Date(), 'yyyyMMddHHmmss');
           if (this.is_ha) {
             mimetype = 'application/x-tar';
             fileName = `debug-${hostname}-${date}.tar`;
@@ -58,14 +58,14 @@ export class AdvancedComponent implements OnDestroy {
               (res) => {
                 const url = res[1];
                 let failed = false;
-                this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
+                this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe((file) => {
                   this.storage.downloadBlob(file, fileName);
-                }, err => {
+                }, (err) => {
                   failed = true;
                   if (this.dialogRef) {
                     this.dialogRef.close();
                   }
-                  if(err instanceof HttpErrorResponse) {
+                  if (err instanceof HttpErrorResponse) {
                     this.dialog.errorReport(helptext_system_advanced.debug_download_failed_title, helptext_system_advanced.debug_download_failed_message, err.message);
                   } else {
                     this.dialog.errorReport(helptext_system_advanced.debug_download_failed_title, helptext_system_advanced.debug_download_failed_message, err);
@@ -73,7 +73,7 @@ export class AdvancedComponent implements OnDestroy {
                 });
                 if (!failed) {
                   let reported = false; // prevent error from popping up multiple times
-                  this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Saving Debug") }, disableClose: true });
+                  this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: T('Saving Debug') }, disableClose: true });
                   this.dialogRef.componentInstance.jobId = res[0];
                   this.dialogRef.componentInstance.wsshow();
                   this.dialogRef.componentInstance.success.subscribe((save_debug) => {
@@ -90,16 +90,17 @@ export class AdvancedComponent implements OnDestroy {
               },
               (err) => {
                 new EntityUtils().handleWSError(this, err, this.dialog);
-              });
+              },
+            );
           }
-        })
-      })
-    } 
-  }
-];
+        });
+      });
+    },
+  },
+  ];
 
-  public fieldConfig: FieldConfig[] = [];
-  public fieldSets = new FieldSets([
+  fieldConfig: FieldConfig[] = [];
+  fieldSets = new FieldSets([
     {
       name: helptext_system_advanced.fieldset_console,
       label: true,
@@ -110,13 +111,13 @@ export class AdvancedComponent implements OnDestroy {
           type: 'checkbox',
           name: 'consolemenu',
           placeholder: helptext_system_advanced.consolemenu_placeholder,
-          tooltip: helptext_system_advanced.consolemenu_tooltip
+          tooltip: helptext_system_advanced.consolemenu_tooltip,
         },
         {
           type: 'checkbox',
           name: 'serialconsole',
           placeholder: helptext_system_advanced.serialconsole_placeholder,
-          tooltip: helptext_system_advanced.serialconsole_tooltip
+          tooltip: helptext_system_advanced.serialconsole_tooltip,
         },
         {
           type: 'select',
@@ -125,40 +126,40 @@ export class AdvancedComponent implements OnDestroy {
           options: [],
           tooltip: helptext_system_advanced.serialport_tooltip,
           relation: [{
-            action : 'DISABLE',
-            when : [{
+            action: 'DISABLE',
+            when: [{
               name: 'serialconsole',
-              value: false
-            }]
-          }]
+              value: false,
+            }],
+          }],
         },
         {
           type: 'select',
           name: 'serialspeed',
           placeholder: helptext_system_advanced.serialspeed_placeholder,
           options: [
-              { label: '9600', value: "9600" },
-              { label: '19200', value: "19200" },
-              { label: '38400', value: "38400" },
-              { label: '57600', value: "57600" },
-              { label: '115200', value: "115200" },
+            { label: '9600', value: '9600' },
+            { label: '19200', value: '19200' },
+            { label: '38400', value: '38400' },
+            { label: '57600', value: '57600' },
+            { label: '115200', value: '115200' },
           ],
           tooltip: helptext_system_advanced.serialspeed_tooltip,
           relation: [{
-            action : 'DISABLE',
-            when : [{
+            action: 'DISABLE',
+            when: [{
               name: 'serialconsole',
-              value: false
-            }]
+              value: false,
+            }],
           }],
         },
         {
           type: 'textarea',
           name: 'motd',
           placeholder: helptext_system_advanced.motd_placeholder,
-          tooltip: helptext_system_advanced.motd_tooltip
-        }
-      ]
+          tooltip: helptext_system_advanced.motd_tooltip,
+        },
+      ],
     },
     { name: 'spacer', label: false, width: '2%' },
     {
@@ -172,13 +173,13 @@ export class AdvancedComponent implements OnDestroy {
           name: 'swapondrive',
           placeholder: helptext_system_advanced.swapondrive_placeholder,
           tooltip: helptext_system_advanced.swapondrive_tooltip,
-          validation : [
+          validation: [
             ...helptext_system_advanced.swapondrive_validation,
             (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find(c => c.name === 'swapondrive');
+              const config = this.fieldConfig.find((c) => c.name === 'swapondrive');
               const errors = control.value && isNaN(this.storage.convertHumanStringToNum(control.value, false, 'g'))
                 ? { invalid_byte_string: true }
-                : null
+                : null;
 
               if (errors) {
                 config.hasErrors = true;
@@ -189,24 +190,24 @@ export class AdvancedComponent implements OnDestroy {
               }
 
               return errors;
-            }
+            },
           ],
           required: true,
           blurStatus: true,
           blurEvent: this.blurEvent,
-          parent: this
+          parent: this,
         },
         {
           type: 'input',
           name: 'overprovision',
           placeholder: helptext_system_advanced.overprovision.placeholder,
           tooltip: helptext_system_advanced.overprovision.tooltip,
-          validation : [
+          validation: [
             (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find(c => c.name === 'overprovision');
+              const config = this.fieldConfig.find((c) => c.name === 'overprovision');
               const errors = control.value && isNaN(this.storage.convertHumanStringToNum(control.value, false, 'g'))
                 ? { invalid_byte_string: true }
-                : null
+                : null;
 
               if (errors) {
                 config.hasErrors = true;
@@ -217,13 +218,13 @@ export class AdvancedComponent implements OnDestroy {
               }
 
               return errors;
-            }
+            },
           ],
           blurStatus: true,
           blurEvent: this.opBlurEvent,
-          parent: this
+          parent: this,
         },
-      ]
+      ],
     },
     { name: 'divider', divider: true },
     {
@@ -236,22 +237,22 @@ export class AdvancedComponent implements OnDestroy {
           type: 'checkbox',
           name: 'consolemsg',
           placeholder: helptext_system_advanced.consolemsg_placeholder,
-          tooltip: helptext_system_advanced.consolemsg_tooltip
+          tooltip: helptext_system_advanced.consolemsg_tooltip,
         },
         {
           type: 'checkbox',
           name: 'traceback',
           placeholder: helptext_system_advanced.traceback_placeholder,
           tooltip: helptext_system_advanced.traceback_tooltip,
-          isHidden: true
+          isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'advancedmode',
           placeholder: helptext_system_advanced.advancedmode_placeholder,
-          tooltip: helptext_system_advanced.advancedmode_tooltip
-        }
-      ]
+          tooltip: helptext_system_advanced.advancedmode_tooltip,
+        },
+      ],
     },
     { name: 'spacer', label: false, width: '2%' },
     {
@@ -265,15 +266,15 @@ export class AdvancedComponent implements OnDestroy {
           type: 'checkbox',
           name: 'autotune',
           placeholder: helptext_system_advanced.autotune_placeholder,
-          tooltip: helptext_system_advanced.autotune_tooltip
+          tooltip: helptext_system_advanced.autotune_tooltip,
         },
         {
           type: 'checkbox',
           name: 'debugkernel',
           placeholder: helptext_system_advanced.debugkernel_placeholder,
-          tooltip: helptext_system_advanced.debugkernel_tooltip
+          tooltip: helptext_system_advanced.debugkernel_tooltip,
         },
-      ]
+      ],
     },
     { name: 'divider', divider: true },
     {
@@ -288,10 +289,10 @@ export class AdvancedComponent implements OnDestroy {
           placeholder: helptext_system_advanced.sed_user_placeholder,
           tooltip: helptext_system_advanced.sed_user_tooltip,
           options: [
-            {label:'user', value:'USER'},
-            {label:'master', value:'MASTER'}
+            { label: 'user', value: 'USER' },
+            { label: 'master', value: 'MASTER' },
           ],
-          value : 'USER'
+          value: 'USER',
         },
         {
           type: 'input',
@@ -299,7 +300,7 @@ export class AdvancedComponent implements OnDestroy {
           placeholder: helptext_system_advanced.sed_passwd_placeholder,
           tooltip: helptext_system_advanced.sed_passwd_tooltip,
           inputType: 'password',
-          togglePw: true
+          togglePw: true,
         },
         {
           type: 'input',
@@ -308,9 +309,9 @@ export class AdvancedComponent implements OnDestroy {
           tooltip: helptext_system_advanced.sed_passwd2_tooltip,
           inputType: 'password',
           togglePw: true,
-          validation : this.validationService.matchOtherValidator('sed_passwd')
-        }
-      ]
+          validation: this.validationService.matchOtherValidator('sed_passwd'),
+        },
+      ],
     },
     { name: 'spacer', label: false, width: '2%' },
     {
@@ -323,7 +324,7 @@ export class AdvancedComponent implements OnDestroy {
           type: 'checkbox',
           name: 'fqdn_syslog',
           placeholder: helptext_system_advanced.fqdn_placeholder,
-          tooltip: helptext_system_advanced.fqdn_tooltip
+          tooltip: helptext_system_advanced.fqdn_tooltip,
         },
         {
           type: 'select',
@@ -353,17 +354,17 @@ export class AdvancedComponent implements OnDestroy {
           options: [],
           relation: [
             {
-              action: "SHOW",
+              action: 'SHOW',
               when: [{
-                name: "syslog_transport",
-                value: 'TLS'
-              }]
-            }
-          ]
-        }
-      ]
+                name: 'syslog_transport',
+                value: 'TLS',
+              }],
+            },
+          ],
+        },
+      ],
     },
-    { name: 'divider', divider: true }
+    { name: 'divider', divider: true },
   ]);
 
   constructor(
@@ -375,17 +376,17 @@ export class AdvancedComponent implements OnDestroy {
     public datePipe: DatePipe,
     public http: HttpClient,
     public storage: StorageService,
-    public validationService: ValidationService
-    ) {}
+    public validationService: ValidationService,
+  ) {}
 
   resourceTransformIncomingRestData(data) {
-    !data.swapondrive || data.swapondrive === 0 ? 
-      data.swapondrive = '0 GiB' :
-    data.swapondrive = this.storage.convertBytestoHumanReadable(data.swapondrive * 1073741824, 0);
-    
-    !data.overprovision || data.overprovision === 0 ?
-      data.overprovision = null :
-    data.overprovision = this.storage.convertBytestoHumanReadable(data.overprovision * 1073741824, 0);
+    !data.swapondrive || data.swapondrive === 0
+      ? data.swapondrive = '0 GiB'
+      : data.swapondrive = this.storage.convertBytestoHumanReadable(data.swapondrive * 1073741824, 0);
+
+    !data.overprovision || data.overprovision === 0
+      ? data.overprovision = null
+      : data.overprovision = this.storage.convertBytestoHumanReadable(data.overprovision * 1073741824, 0);
     return data;
   }
 
@@ -393,22 +394,21 @@ export class AdvancedComponent implements OnDestroy {
     if (this.swapondrive_subscription) {
       this.swapondrive_subscription.unsubscribe();
     }
-
   }
   preInit() {
     const syslog_tls_certificate_field = this.fieldSets.config('syslog_tls_certificate');
     this.ws.call('certificate.query').subscribe((certs) => {
       for (const cert of certs) {
-        syslog_tls_certificate_field.options.push({label: cert.name, value: cert.id});
+        syslog_tls_certificate_field.options.push({ label: cert.name, value: cert.id });
       }
-    })
+    });
   }
   afterInit(entityEdit: any) {
     this.ws.call('failover.licensed').subscribe((is_ha) => {
       this.is_ha = is_ha;
     });
     this.entityForm = entityEdit;
-    this.ws.call('system.product_type').subscribe((res)=>{
+    this.ws.call('system.product_type').subscribe((res) => {
       this.product_type = res;
       if (this.product_type === 'ENTERPRISE') {
         entityEdit.setDisabled('swapondrive', true, true);
@@ -421,11 +421,10 @@ export class AdvancedComponent implements OnDestroy {
           const filteredValue = value ? this.storage.convertHumanStringToNum(value.toString(), false, 'g') : undefined;
           if (filteredValue === 0) {
             this.swapondrive.warnings = helptext_system_advanced.swapondrive_warning;
-          } else if (filteredValue > 99*1073741824 ){
+          } else if (filteredValue > 99 * 1073741824) {
             this.swapondrive.warnings = helptext_system_advanced.swapondrive_max_warning;
           } else {
             this.swapondrive.warnings = null;
-
           }
         });
       }
@@ -434,42 +433,42 @@ export class AdvancedComponent implements OnDestroy {
         if (!value || value === '') {
           this.storage.humanReadable = '';
         }
-                const formField = this.fieldSets.config('overprovision');
+        const formField = this.fieldSets.config('overprovision');
         const filteredValue = value ? this.storage.convertHumanStringToNum(value, false, 'g') : undefined;
-      })
-  
-      this.ws.call(this.queryCall).subscribe((adv_values)=>{
+      });
+
+      this.ws.call(this.queryCall).subscribe((adv_values) => {
         entityEdit.formGroup.controls['sed_passwd2'].setValue(adv_values.sed_passwd);
-      })
+      });
       this.adv_serialport = this.fieldSets.config('serialport');
       this.adv_serialspeed = this.fieldSets.config('serialspeed');
-      this.adv_serialconsole =
-      entityEdit.formGroup.controls['serialconsole'];
+      this.adv_serialconsole = entityEdit.formGroup.controls['serialconsole'];
       this.adv_serialspeed['isHidden'] = !this.adv_serialconsole.value;
       this.adv_serialport['isHidden'] = !this.adv_serialconsole.value;
       this.adv_serialconsole_subscription = this.adv_serialconsole.valueChanges.subscribe((value) => {
         this.adv_serialspeed['isHidden'] = !value;
         this.adv_serialport['isHidden'] = !value;
       });
-      entityEdit.ws.call('system.advanced.serial_port_choices').subscribe((serial_port_choices)=>{
-        for(const k in serial_port_choices){
+      entityEdit.ws.call('system.advanced.serial_port_choices').subscribe((serial_port_choices) => {
+        for (const k in serial_port_choices) {
           this.adv_serialport.options.push(
             {
-              label: k, value: serial_port_choices[k]
-            }
-          )}
+              label: k, value: serial_port_choices[k],
+            },
+          );
+        }
       });
-    })
+    });
     setTimeout(() => {
       this.storage.humanReadable = '';
-    }, 500)
+    }, 500);
   }
 
-  public customSubmit(body) {
-    body.swapondrive = this.storage.convertHumanStringToNum(body.swapondrive)/1073741824;
-    body.overprovision = this.storage.convertHumanStringToNum(body.overprovision)/1073741824;
-    body.legacy_ui ? window.localStorage.setItem('exposeLegacyUI', body.legacy_ui) :
-      window.localStorage.setItem('exposeLegacyUI', 'false');
+  customSubmit(body) {
+    body.swapondrive = this.storage.convertHumanStringToNum(body.swapondrive) / 1073741824;
+    body.overprovision = this.storage.convertHumanStringToNum(body.overprovision) / 1073741824;
+    body.legacy_ui ? window.localStorage.setItem('exposeLegacyUI', body.legacy_ui)
+      : window.localStorage.setItem('exposeLegacyUI', 'false');
     delete body.sed_passwd2;
     this.load.open();
     return this.ws.call('system.advanced.update', [body]).subscribe((res) => {

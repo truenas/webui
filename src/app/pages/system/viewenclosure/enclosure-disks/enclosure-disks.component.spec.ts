@@ -8,9 +8,9 @@ describe('EnclosureDisksComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ EnclosureDisksComponent ]
+      declarations: [EnclosureDisksComponent],
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
