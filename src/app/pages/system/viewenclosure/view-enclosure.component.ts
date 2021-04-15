@@ -105,6 +105,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
       this.system = new SystemProfiler(this.system_product, evt.data);
       this.selectedEnclosure = this.system.profile[this.system.headIndex];
       core.emit({name: 'DisksRequest', sender: this});
+      core.emit({name: 'SensorDataRequest', sender: this});
     });
 
     core.register({observerClass: this, eventName: 'EnclosureLabelChanged'}).subscribe((evt:CoreEvent) => {
@@ -114,18 +115,28 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
 
     core.register({observerClass: this, eventName: 'PoolData'}).subscribe((evt:CoreEvent) => {
       this.system.pools = evt.data;
+      this.events.next({name: 'PoolsChanged', sender: this});
       this.addViews();
     });
 
 
     core.register({observerClass: this, eventName: 'SensorData'}).subscribe((evt:CoreEvent) => {
       this.system.sensorData = evt.data;
-      core.emit({name: 'PoolDataRequest', sender: this});
+    });
+
+    core.register({observerClass: this, eventName: 'DisksChanged'}).subscribe((evt:CoreEvent) => {
+      if(evt.data.cleared){
+        // Extra actions if disk is removed
+        const removedDiskFields = this.system.getDiskByID(evt.data.id); 
+      } 
+
+      this.fetchData();
+      
     });
 
     core.register({observerClass: this, eventName: 'DisksData'}).subscribe((evt:CoreEvent) => {
       this.system.diskData = evt.data;
-      core.emit({name: 'SensorDataRequest', sender: this});
+      core.emit({name: 'PoolDataRequest', sender: this});
       setTimeout(() => {
         this.spinner = false;
       }, 1500);
@@ -142,6 +153,10 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     });
 
     core.emit({name: 'SysInfoRequest', sender: this});
+  }
+
+  fetchData(){
+    this.core.emit({name: 'DisksRequest', sender: this});
   }
 
   ngAfterContentInit(){

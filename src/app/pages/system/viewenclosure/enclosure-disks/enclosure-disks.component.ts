@@ -156,9 +156,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   ){
     
     this.themeUtils = new ThemeUtils();
-    core.register({observerClass: this, eventName: 'DisksChanged'}).subscribe((evt:CoreEvent) => {
-      // REACT TO EVENT PROVIDED BY DISK.QUERY
-    });
 
     core.register({observerClass: this, eventName: 'MediaChange'}).subscribe((evt:CoreEvent) => {
       this.mqAlias = evt.data.mqAlias;
@@ -232,6 +229,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
             this.pendingDialog.dialogRef.close();
           }
           break;
+        case "PoolsChanged":
+          this.setDisksEnabledState();
+          this.setCurrentView(this.defaultView);
+          break;
       }
     });
 
@@ -303,10 +304,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.destroyAllEnclosures();
     this.app.stage.destroy(true);
     this.app.destroy(true, true); 
-    //this.mediaObs.unsubscribe();
   }
 
-  loadEnclosure(enclosure, view?:string){
+  loadEnclosure(enclosure, view?:string, update?:boolean){
+
       if(this.selectedDisk){
         this.selectedDisk = null;
         this.clearDisk();
@@ -337,8 +338,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         } else if (this.exitingView == 'expanders'){
           this.exit('full-stage');
         } 
-          
-        this.createEnclosure(enclosure); 
+         
+        if(update){
+          this.createEnclosure(enclosure); 
+        }
       }
   }
 
