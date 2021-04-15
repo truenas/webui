@@ -18,6 +18,7 @@ from pytest_bdd import (
 @scenario('features/NAS-T1049.feature', 'Verify the version number, ixsystems link, and copyright year')
 def test_verify_the_version_number_ixsystems_link_and_copyright_year(driver):
     """Verify the version number, ixsystems link, and copyright year."""
+    pass
 
 
 @given('the browser is open on the TrueNAS URL and logged in')

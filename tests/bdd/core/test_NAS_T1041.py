@@ -24,6 +24,7 @@ from pytest_bdd import (
 @scenario('features/NAS-T1041.feature', 'Verify home directories work for SMB share')
 def test_verify_home_directories_work_for_smb_share(driver):
     """Verify home directories work for SMB share."""
+    pass
 
 
 @given('the browser is open on the TrueNAS URL and logged in')

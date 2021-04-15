@@ -17,13 +17,13 @@ from pytest_bdd import (
     when
 )
 # random mount point to avoid the same test to break if it ever run in the same time
-digit = ''.join(random.choices(string.digits, k=2))
-mountpoint = f'/mnt/nfs_host{digit}'
+mountpoint = f'/mnt/nfs_host{"".join(random.choices(string.digits, k=2))}'
 
 
 @scenario('features/NAS-T1052.feature', 'Verify authorized IP address works for NFS share')
 def test_verify_authorized_ip_address_works_for_nfs_share(driver):
     """Verify authorized IP address works for NFS share."""
+    pass
 
 
 @given('the browser is open on the TrueNAS URL and logged in')

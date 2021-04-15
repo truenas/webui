@@ -18,6 +18,7 @@ from pytest_bdd import (
 @scenario('features/NAS-T1048.feature', 'Verify rollback of boot environment works')
 def test_verify_rollback_of_boot_environment_works(driver):
     """Verify rollback of boot environment works."""
+    pass
 
 
 @given('the browser is open on the TrueNAS URL and logged in')

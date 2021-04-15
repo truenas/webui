@@ -1,6 +1,8 @@
 # coding=utf-8
 """Core feature tests."""
 
+import random
+import string
 import time
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
@@ -19,10 +21,14 @@ from pytest_bdd import (
     parsers
 )
 
+# random mount point to avoid the same test to break if it ever run in the same time
+mountpoint = f'/mnt/nfs_host{"".join(random.choices(string.digits, k=2))}'
+
 
 @scenario('features/NAS-T1050.feature', 'Verify NFS allows Non-Root Access')
 def test_verify_nfs_allows_nonroot_access(driver):
     """Verify NFS allows Non-Root Access."""
+    pass
 
 
 @given('the browser is open on the TrueNAS URL and logged in')
@@ -248,7 +254,7 @@ def create_a_directory_on_the_client(driver, client, password):
     global host, passwd
     host = client
     passwd = password
-    cmd = 'mkdir /tmp/nfsnoroot'
+    cmd = f'mkdir {mountpoint}'
     login_results = ssh_cmd(cmd, 'root', passwd, host)
     assert login_results['result'], str(login_results)
 
@@ -256,7 +262,7 @@ def create_a_directory_on_the_client(driver, client, password):
 @then('mount the NAS share to the mountpoint directory')
 def mount_the_NAS_share_to_the_mountpoint_directory(driver, nas_ip):
     """mount the NAS share to the mountpoint directory."""
-    cmd = f'mount_nfs {nas_ip}:/mnt/tank/nfs /tmp/nfsnoroot'
+    cmd = f'mount_nfs {nas_ip}:/mnt/tank/nfs {mountpoint}'
     login_results = ssh_cmd(cmd, 'root', passwd, host)
     assert login_results['result'], str(login_results)
 
@@ -264,7 +270,7 @@ def mount_the_NAS_share_to_the_mountpoint_directory(driver, nas_ip):
 @then('add a directory in the mountpoint and a file in the directory')
 def add_a_directory_in_the_mountpoint_and_a_file_in_the_directory(driver):
     """add a directory in the mountpoint and a file in the directory."""
-    cmd = 'mkdir /tmp/nfsnoroot/mydir && touch /tmp/nfsnoroot/mydir/myfile.txt'
+    cmd = f'mkdir {mountpoint}/mydir && touch {mountpoint}/mydir/myfile.txt'
     login_results = ssh_cmd(cmd, 'root', passwd, host)
     assert login_results['result'], str(login_results)
 
@@ -272,10 +278,10 @@ def add_a_directory_in_the_mountpoint_and_a_file_in_the_directory(driver):
 @then('umount the NFS share and verify the mountpoint is empty')
 def umount_the_nfs_share_and_verify_the_mountpoint_is_empty(driver):
     """umount the NFS share and verify the mountpoint is empty."""
-    cmd = 'umount /tmp/nfsnoroot'
+    cmd = f'umount {mountpoint}'
     login_results = ssh_cmd(cmd, 'root', passwd, host)
     assert login_results['result'], str(login_results)
-    cmd = 'test -z (ls -A -- "/tmp/nfsnoroot")'
+    cmd = f'test -z (ls -A -- "{mountpoint}")'
     login_results = ssh_cmd(cmd, 'root', passwd, host)
     assert login_results['result'], str(login_results)
 
@@ -283,10 +289,10 @@ def umount_the_nfs_share_and_verify_the_mountpoint_is_empty(driver):
 @then('mount nfs share and verify that the file is in the mountpoint')
 def mount_nfs_share_and_verify_that_the_file_is_in_the_mountpoint(driver, nas_ip):
     """mount nfs share and verify that the file is in the mountpoint."""
-    cmd = f'mount_nfs {nas_ip}:/mnt/tank/nfs /tmp/nfsnoroot'
+    cmd = f'mount_nfs {nas_ip}:/mnt/tank/nfs {mountpoint}'
     login_results = ssh_cmd(cmd, 'root', passwd, host)
     assert login_results['result'], str(login_results)
-    cmd = 'test -f /tmp/nfsnoroot/mydir/myfile.txt'
+    cmd = f'test -f {mountpoint}/mydir/myfile.txt'
     login_results = ssh_cmd(cmd, 'root', passwd, host)
     assert login_results['result'], str(login_results)
 
@@ -294,7 +300,7 @@ def mount_nfs_share_and_verify_that_the_file_is_in_the_mountpoint(driver, nas_ip
 @then('delete the directory in the mountpoint')
 def delete_the_directory_in_the_mountpoint(driver):
     """delete the directory in the mountpoint."""
-    cmd = 'rm -rf /tmp/nfsnoroot/mydir'
+    cmd = f'rm -rf {mountpoint}/mydir'
     login_results = ssh_cmd(cmd, 'root', passwd, host)
     assert login_results['result'], str(login_results)
 
@@ -302,6 +308,6 @@ def delete_the_directory_in_the_mountpoint(driver):
 @then('umount the mountpoint and delete the mountpoint directory')
 def umount_the_mountpoint_and_delete_the_mountpoint_directory(driver):
     """umount the mountpoint and delete the mountpoint directory."""
-    cmd = 'umount /tmp/nfsnoroot && rm -rf /tmp/nfsnoroot'
+    cmd = f'umount {mountpoint} && rm -rf {mountpoint}'
     login_results = ssh_cmd(cmd, 'root', passwd, host)
     assert login_results['result'], str(login_results)

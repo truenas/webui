@@ -21,7 +21,7 @@ from pytest_bdd import (
 )
 
 user = os.environ.get('USER')
-mount_point = '/tmp/iscsi_'.join(random.choices(string.digits, k=2))
+mount_point = f'/tmp/iscsi_{"".join(random.choices(string.digits, k=2))}'
 
 
 @scenario('features/NAS-T1028.feature', 'Start iscsi services and connect to the iscsi zvol and file share without auth')
