@@ -1,4 +1,4 @@
-name: build_image
+name: 'External PR Docker Build'
 
 on:
   pull_request:
@@ -10,8 +10,9 @@ env:
   PR_NUMBER: ${{ github.event.pull_request.number }}
 
 jobs:
-  if: github.event.pull_request.head.repo.full_name != github.repository
+ 
   docker:
+    if: github.event.pull_request.head.repo.full_name != github.repository
     environment: CIENV
     runs-on: ubuntu-latest
     steps:

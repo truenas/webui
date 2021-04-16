@@ -1,4 +1,4 @@
-name: build_image
+name: 'Internal PR Docker Build'
 
 on:
   pull_request:
@@ -11,8 +11,8 @@ env:
 
 jobs:
   docker:
-    runs-on: ubuntu-latest
     if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
