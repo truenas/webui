@@ -50,7 +50,7 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
 @when('you are on the dashboard')
 def you_are_on_the_dashboard(driver):
     """you are on the dashboard."""
-    assert wait_on_element(driver, 7, '//a[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 7, '//li[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
 
 
@@ -140,7 +140,7 @@ def when_the_system_login_shows_up_input_testing1_as_the_new_password(driver):
 @then('reboot the system and try to login using the previous password testing')
 def reboot_the_system_and_try_to_login_using_the_previous_password_testing(driver):
     """reboot the system and try to login using the previous password testing."""
-    assert wait_on_element(driver, 7, '//a[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 7, '//li[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__power"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__power"]').click()
@@ -242,5 +242,5 @@ def login_using_the_original_password_testing(driver):
 @then('the original password should work')
 def the_original_password_should_work(driver):
     """the original password should work."""
-    assert wait_on_element(driver, 7, '//a[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 7, '//li[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')

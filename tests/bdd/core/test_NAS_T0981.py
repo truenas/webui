@@ -45,7 +45,7 @@ def login_appears_enter_the_root_user_and_is_password(driver, root_password):
 @then('you should see the dashboard')
 def you_should_see_the_dashboard(driver):
     """you should see the dashboard."""
-    assert wait_on_element(driver, 5, '//a[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 5, '//li[contains(.,"Dashboard")]')
     if wait_on_element(driver, 5, '//div[contains(.,"Looking for help?")]'):
         assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]')
         driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
