@@ -46,7 +46,7 @@
               <div class="product-image {{product_enclosure}} {{product_type === 'ENTERPRISE' ? 'truenas' : 'freenas'}} {{product_image == 'ix-original.svg' ? 'ix-logo' : ''}}">
                 <img *ngIf="product_image; else generic" 
                   id="{{product_model}}"
-                  [ngClass.clickable]="enclosureSupport"
+                  [ngClass]="{'clickable': enclosureSupport}"
                   matTooltip="View Enclosure"
                   matTooltipPosition="above"
                   [matTooltipDisabled]="!enclosureSupport"
