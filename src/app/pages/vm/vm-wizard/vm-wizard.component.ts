@@ -48,6 +48,7 @@ export class VMWizardComponent {
   public title = helptext.formTitle;
   public hideCancel = true;
   private maxVCPUs = 16;
+  private gpus: any;
 
   entityWizard: any;
   public res;
@@ -402,6 +403,31 @@ export class VMWizardComponent {
         },
       ]
     },
+    {
+      label: T("GPU"),
+      fieldConfig: [
+        {
+          type: 'checkbox',
+          name: 'hide_from_msr',
+          placeholder: T('Hide from MSR'),
+          value: false
+        },
+        {
+          type: 'select',
+          placeholder: T("Isolated PCI ID's"),
+          name: 'isolated_gpu_pci_ids',
+          multiple: true,
+          options: []
+        },
+        {
+          type: 'select',
+          placeholder: T("GPU"),
+          name: 'gpu',
+          options: [],
+          required: true
+        }
+      ]
+    }
   ]
 
   protected releaseField: any;
@@ -427,6 +453,22 @@ export class VMWizardComponent {
       const vcpu_limit = _.find(this.wizardConfig[1].fieldConfig, {'name' : 'vcpu_limit'});
       vcpu_limit.paraText = helptext.vcpus_warning + ` ${this.maxVCPUs} ` + helptext.vcpus_warning_b;
     })
+
+    this.ws.call("device.gpu_pci_ids_choices").subscribe((pci_choices: Object) => {
+      const isolated_gpu_pci_ids = _.find(this.wizardConfig[5].fieldConfig, {name : "isolated_gpu_pci_ids"});
+      for(let key in pci_choices) {
+        isolated_gpu_pci_ids.options.push({label: key, value: pci_choices[key]})
+      }
+    })
+
+    this.ws.call("device.get_gpus").subscribe((gpus) => {
+      this.gpus = gpus;
+      const gpu = _.find(this.wizardConfig[5].fieldConfig, {name : "gpu"});
+      for(let item of gpus) {
+        gpu.options.push({label: item.description, value: item.addr.pci_slot})
+      }
+    })
+
   }
 
   customNext(stepper) {
@@ -894,6 +936,16 @@ async customSubmit(value) {
     const vm_payload = {}
     const zvol_payload = {}
 
+    if(value.isolated_gpu_pci_ids && value.isolated_gpu_pci_ids.length) {
+      this.loader.open();
+      this.ws.call('system.advanced.update', [{isolated_gpu_pci_ids: value.isolated_gpu_pci_ids}]).subscribe(() => {
+        this.loader.close();
+      }, (res) => {
+        this.loader.close();
+        new EntityUtils().handleWSError(this.entityWizard, res);
+      });
+    }
+
     if(value.datastore) {
       value.datastore = value.datastore.replace('/mnt/','')
       hdd = value.datastore+"/"+value.name.replace(/\s+/g, '-')+"-"+Math.random().toString(36).substring(7);
@@ -932,6 +984,16 @@ async customSubmit(value) {
         {"dtype": "NIC", "attributes": {"type": value.NIC_type, "mac": value.NIC_mac, "nic_attach":value.nic_attach}},
         {"dtype": "DISK", "attributes": {"path": hdd, "type": value.hdd_type, 'physical_sectorsize': null, 'logical_sectorsize': null}},
       ]
+    }
+
+    if(value.gpu) {
+      const gpuIndex = this.gpus.findIndex(gpu => gpu.addr.pci_slot == value.gpu);
+      vm_payload["devices"].push(...this.gpus[gpuIndex].devices.map(d => {
+        return {
+          dtype: "PCI",
+          attributes: {...d}
+        }
+      }))
     }
 
     if (value.enable_display) {
