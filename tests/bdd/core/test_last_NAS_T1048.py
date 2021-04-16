@@ -77,7 +77,7 @@ def click_on_the_three_dots_of_the_initial_be_click_the_activate_button(driver):
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__ACTIVATE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__ACTIVATE"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    time.sleep(0.5)
+    time.sleep(1)
 
 
 @then('verify that the initial BE show "Reboot" in the Active column')
@@ -157,7 +157,7 @@ def click_on_the_three_dots_of_the_default_be_click_the_activate_button(driver):
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__ACTIVATE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__ACTIVATE"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    time.sleep(0.5)
+    time.sleep(1)
 
 
 @then('verify that the default BE show "Reboot" in the Active column')

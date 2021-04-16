@@ -111,7 +111,7 @@ def the_user_edit_page_should_open(driver):
 @then('input the public key in the SSH Public Key field, then click save')
 def input_the_public_key_in_the_ssh_public_key_field_then_click_save(driver, ssh_key):
     """input the public key in the SSH Public Key field, then click save."""
-    assert wait_on_element(driver, 5, '//textarea[@placeholder="SSH Public Key"]')
+    assert wait_on_element(driver, 5, '//textarea[@placeholder="SSH Public Key"]', 'clickable')
     driver.find_element_by_xpath('//textarea[@placeholder="SSH Public Key"]').clear()
     driver.find_element_by_xpath('//textarea[@placeholder="SSH Public Key"]').send_keys(ssh_key)
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
@@ -134,6 +134,7 @@ def reopen_the_user_edit_page(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__EDIT_ericbsd"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Identification")]')
+    time.sleep(1)
 
 
 @then('verify the public key save properly')
