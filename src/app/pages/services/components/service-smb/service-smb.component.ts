@@ -8,23 +8,24 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import * as _ from 'lodash';
 import helptext from '../../../../helptext/services/components/service-smb';
 import global_helptext from '../../../../helptext/global-helptext';
-import { IdmapService, RestService, ServicesService, UserService, WebSocketService } from '../../../../services/';
+import {
+  IdmapService, RestService, ServicesService, UserService, WebSocketService,
+} from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
 @Component({
   selector: 'smb-edit',
-  template: ` <entity-form [conf]="this"></entity-form>`,
+  template: ' <entity-form [conf]="this"></entity-form>',
   providers: [ServicesService, IdmapService],
 })
 
 export class ServiceSMBComponent {
-
   protected queryCall = 'smb.config';
   protected route_success: string[] = ['services'];
-  public formGroup: any;
-  public error: string;
-  protected query_call = "directoryservice.idmap_";
-  protected idmap_type = 'tdb'
+  formGroup: any;
+  error: string;
+  protected query_call = 'directoryservice.idmap_';
+  protected idmap_type = 'tdb';
   protected targetDS = '5';
   protected isBasicMode = true;
 
@@ -35,7 +36,7 @@ export class ServiceSMBComponent {
   protected defaultIdmap: any;
   protected dialogRef: any;
   protected idNumber: any;
-  public entityEdit: any;
+  entityEdit: any;
   private validBindIps: any;
 
   protected advanced_field = [
@@ -49,12 +50,12 @@ export class ServiceSMBComponent {
     'admin_group',
     'bindip',
     'smb_options',
-    'aapl_extensions'
+    'aapl_extensions',
   ];
   protected hiddenFieldSets = [helptext.cifs_srv_fieldset_other];
 
-  public fieldConfig: FieldConfig[];
-  public fieldSets: FieldSet[] = [
+  fieldConfig: FieldConfig[];
+  fieldSets: FieldSet[] = [
     {
       name: helptext.cifs_srv_fieldset_netbios,
       label: true,
@@ -65,17 +66,17 @@ export class ServiceSMBComponent {
           placeholder: helptext.cifs_srv_netbiosname_placeholder,
           tooltip: helptext.cifs_srv_netbiosname_tooltip,
           required: true,
-          validation : helptext.cifs_srv_netbiosname_validation
+          validation: helptext.cifs_srv_netbiosname_validation,
         },
         {
-          type : 'input',
-          name : 'netbiosname_b',
-          placeholder : helptext.cifs_srv_netbiosname_b_placeholder,
-          tooltip : helptext.cifs_srv_netbiosname_b_tooltip,
-          validation : helptext.cifs_srv_netbiosname_b_validation,
-          required : true,
+          type: 'input',
+          name: 'netbiosname_b',
+          placeholder: helptext.cifs_srv_netbiosname_b_placeholder,
+          tooltip: helptext.cifs_srv_netbiosname_b_tooltip,
+          validation: helptext.cifs_srv_netbiosname_b_validation,
+          required: true,
           isHidden: true,
-          disabled: true
+          disabled: true,
         },
         {
           type: 'chip',
@@ -84,17 +85,17 @@ export class ServiceSMBComponent {
           tooltip: helptext.cifs_srv_netbiosalias_tooltip,
           validation: [
             (control: FormControl): ValidationErrors => {
-              const config = this.fieldConfig.find(c => c.name === 'netbiosalias');
+              const config = this.fieldConfig.find((c) => c.name === 'netbiosalias');
               const aliasArr = control.value ? control.value : [];
               let counter = 0;
-              aliasArr.forEach(alias => {
+              aliasArr.forEach((alias) => {
                 if (alias.length > 15) {
                   counter++;
                 }
-              })
+              });
               const errors = control.value && counter > 0
                 ? { error: true }
-                : null
+                : null;
 
               if (errors) {
                 config.hasErrors = true;
@@ -105,8 +106,8 @@ export class ServiceSMBComponent {
               }
 
               return errors;
-            }
-          ]
+            },
+          ],
         },
         {
           type: 'input',
@@ -114,7 +115,7 @@ export class ServiceSMBComponent {
           placeholder: helptext.cifs_srv_workgroup_placeholder,
           tooltip: helptext.cifs_srv_workgroup_tooltip,
           required: true,
-          validation : helptext.cifs_srv_workgroup_validation
+          validation: helptext.cifs_srv_workgroup_validation,
         },
         {
           type: 'input',
@@ -133,8 +134,8 @@ export class ServiceSMBComponent {
           name: 'ntlmv1_auth',
           placeholder: helptext.cifs_srv_ntlmv1_auth_placeholder,
           tooltip: helptext.cifs_srv_ntlmv1_auth_tooltip,
-        }
-      ]
+        },
+      ],
     },
 
     { name: 'divider', divider: false },
@@ -184,16 +185,16 @@ export class ServiceSMBComponent {
           options: [],
           searchOptions: [],
           parent: this,
-          updater: this.updateGroupSearchOptions
-        }
-      ]
+          updater: this.updateGroupSearchOptions,
+        },
+      ],
     },
-    { name: 'vertical-spacer', width: '2%'},
+    { name: 'vertical-spacer', width: '2%' },
     {
-    name: "otherColTwo",
-    label: false,
-    width: '49%',
-    config: [
+      name: 'otherColTwo',
+      label: false,
+      width: '49%',
+      config: [
         {
           type: 'select',
           name: 'guest',
@@ -219,44 +220,44 @@ export class ServiceSMBComponent {
           placeholder: helptext.cifs_srv_bindip_placeholder,
           tooltip: helptext.cifs_srv_bindip_tooltip,
           options: [],
-          multiple: true
+          multiple: true,
         },
         {
           type: 'textarea',
           name: 'smb_options',
           placeholder: helptext.cifs_srv_smb_options_placeholder,
           tooltip: helptext.cifs_srv_smb_options_tooltip,
-        }
-      ]
+        },
+      ],
     },
-    { name: 'divider', divider: true }
+    { name: 'divider', divider: true },
   ];
 
-  public custActions: Array<any> = [
+  custActions: any[] = [
     {
-      id : 'basic_mode',
-      name : global_helptext.basic_options,
-      function : () => {
-        this.hiddenFieldSets.forEach(setId => (this.fieldSets.find(set => set.name === setId).label = false));
-        this.fieldSets.filter(set => set.name === 'divider')[0].divider = false;
+      id: 'basic_mode',
+      name: global_helptext.basic_options,
+      function: () => {
+        this.hiddenFieldSets.forEach((setId) => (this.fieldSets.find((set) => set.name === setId).label = false));
+        this.fieldSets.filter((set) => set.name === 'divider')[0].divider = false;
         this.isBasicMode = !this.isBasicMode;
-      }
+      },
     },
     {
-      'id' : 'advanced_mode',
-      name : global_helptext.advanced_options,
-      function : () => {
-        this.hiddenFieldSets.forEach(setId => (this.fieldSets.find(set => set.name === setId).label = true));
-        this.fieldSets.filter(set => set.name === 'divider').forEach(set => set.divider = true);
+      id: 'advanced_mode',
+      name: global_helptext.advanced_options,
+      function: () => {
+        this.hiddenFieldSets.forEach((setId) => (this.fieldSets.find((set) => set.name === setId).label = true));
+        this.fieldSets.filter((set) => set.name === 'divider').forEach((set) => set.divider = true);
         this.isBasicMode = !this.isBasicMode;
-      }
-    }
+      },
+    },
   ];
 
   isCustActionVisible(actionId: string) {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {
       return false;
-    } else if (actionId === 'basic_mode' && this.isBasicMode === true) {
+    } if (actionId === 'basic_mode' && this.isBasicMode === true) {
       return false;
     }
     return true;
@@ -270,40 +271,40 @@ export class ServiceSMBComponent {
       });
     }
 
-    const otherSet = _.find(this.fieldSets, {"name": helptext.cifs_srv_fieldset_other})
-    const otherColTwoSet = _.find(this.fieldSets, {"name": "otherColTwo"})
+    const otherSet = _.find(this.fieldSets, { name: helptext.cifs_srv_fieldset_other });
+    const otherColTwoSet = _.find(this.fieldSets, { name: 'otherColTwo' });
 
-    this.cifs_srv_unixcharset = otherSet.config.find(config => config.name === "unixcharset");
-    this.ws.call("smb.unixcharset_choices").subscribe((res) => {
+    this.cifs_srv_unixcharset = otherSet.config.find((config) => config.name === 'unixcharset');
+    this.ws.call('smb.unixcharset_choices').subscribe((res) => {
       const values = Object.values(res);
       for (let i = 0; i < values.length; i++) {
-        this.cifs_srv_unixcharset.options.push({label: values[i], value: values[i]});
+        this.cifs_srv_unixcharset.options.push({ label: values[i], value: values[i] });
       }
     });
 
     this.servicesService.getSmbBindIPChoices().subscribe((res) => {
       this.validBindIps = res;
-      this.cifs_srv_bindip = otherColTwoSet.config.find(config => config.name === "bindip");
-        for (let key in res) {
-          if (res.hasOwnProperty(key)) {
-              this.cifs_srv_bindip.options.push({ label: res[key], value: res[key] });
-          }
+      this.cifs_srv_bindip = otherColTwoSet.config.find((config) => config.name === 'bindip');
+      for (const key in res) {
+        if (res.hasOwnProperty(key)) {
+          this.cifs_srv_bindip.options.push({ label: res[key], value: res[key] });
+        }
       }
     });
 
     this.ws.call('user.query').subscribe((res) => {
-      this.cifs_srv_guest = otherColTwoSet.config.find(config => config.name === "guest");
+      this.cifs_srv_guest = otherColTwoSet.config.find((config) => config.name === 'guest');
       res.forEach((user) => {
         this.cifs_srv_guest.options.push({ label: user.username, value: user.username });
       });
     });
 
-    this.userService.groupQueryDSCache("", true).subscribe(items => {
+    this.userService.groupQueryDSCache('', true).subscribe((items) => {
       const groups = [];
       items.forEach((item) => {
-        groups.push({label: item.group, value: item.group});
+        groups.push({ label: item.group, value: item.group });
       });
-      this.cifs_srv_admin_group = otherSet.config.find(config => config.name === 'admin_group');
+      this.cifs_srv_admin_group = otherSet.config.find((config) => config.name === 'admin_group');
       groups.forEach((group) => {
         this.cifs_srv_admin_group.options.push({ label: group.label, value: group.value });
       });
@@ -317,42 +318,40 @@ export class ServiceSMBComponent {
     protected idmapService: IdmapService, protected userService: UserService,
     protected loader: AppLoaderService, protected dialog: MatDialog) {}
 
-    resourceTransformIncomingRestData(data) {
-      // If validIps is slow to load, skip check on load (It's still done on save)
-      if (this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
-        return this.compareBindIps(data);
-      }
-      return data;
+  resourceTransformIncomingRestData(data) {
+    // If validIps is slow to load, skip check on load (It's still done on save)
+    if (this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
+      return this.compareBindIps(data);
     }
-  
-    compareBindIps(data) {
-      // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
-      data.bindip = data.bindip ? data.bindip : [];
-      if(this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
-        data.bindip.forEach(ip => {
-          if (!Object.values(this.validBindIps).includes(ip)) {
-            data.bindip.splice(data.bindip[ip], 1)
-          }
-        })
-      } else {
-        data.bindip = [];
-      }
-      return data;
-    }
-
-  afterInit(entityEdit: EntityFormComponent) {
-    entityEdit.submitFunction = body => {
-      return this.ws.call('smb.update', [body])
-    };
+    return data;
   }
 
-  updateGroupSearchOptions(value = "", parent) {
-    parent.userService.groupQueryDSCache(value, true).subscribe(items => {
+  compareBindIps(data) {
+    // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
+    data.bindip = data.bindip ? data.bindip : [];
+    if (this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
+      data.bindip.forEach((ip) => {
+        if (!Object.values(this.validBindIps).includes(ip)) {
+          data.bindip.splice(data.bindip[ip], 1);
+        }
+      });
+    } else {
+      data.bindip = [];
+    }
+    return data;
+  }
+
+  afterInit(entityEdit: EntityFormComponent) {
+    entityEdit.submitFunction = (body) => this.ws.call('smb.update', [body]);
+  }
+
+  updateGroupSearchOptions(value = '', parent) {
+    parent.userService.groupQueryDSCache(value, true).subscribe((items) => {
       const groups = [];
       for (let i = 0; i < items.length; i++) {
-        groups.push({label: items[i].group, value: items[i].group});
+        groups.push({ label: items[i].group, value: items[i].group });
       }
-        parent.cifs_srv_admin_group.searchOptions = groups;
+      parent.cifs_srv_admin_group.searchOptions = groups;
     });
   }
 

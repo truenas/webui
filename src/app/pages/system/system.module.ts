@@ -13,36 +13,36 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
 
 import { GeneralComponent } from './general/general.component';
-import { AdvancedComponent } from './advanced/';
-import { DatasetComponent } from './dataset/';
-import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
-import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename/';
-import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
+import { AdvancedComponent } from './advanced';
+import { DatasetComponent } from './dataset';
+import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone';
+import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename';
+import { BootEnvironmentListComponent } from './bootenv/bootenv-list';
 import { BootEnvironmentCreateComponent } from './bootenv/bootenv-create';
 import { BootEnvReplaceFormComponent } from './bootenv/bootenv-replace';
-import { BootStatusListComponent } from './bootenv/bootenv-status/';
+import { BootStatusListComponent } from './bootenv/bootenv-status';
 import { BootEnvAttachFormComponent } from './bootenv/bootenv-attach';
-import { TunableListComponent } from './tunable/tunable-list/';
-import { TunableFormComponent } from './tunable/tunable-form/';
-import { UpdateComponent } from './update/';
-import { ManualUpdateComponent } from './update/manualupdate/';
-import { NTPServerFormComponent } from './ntpservers/ntpserver-form/';
-import { NTPServerListComponent } from './ntpservers/ntpserver-list/';
-import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list/';
-import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form/';
+import { TunableListComponent } from './tunable/tunable-list';
+import { TunableFormComponent } from './tunable/tunable-form';
+import { UpdateComponent } from './update';
+import { ManualUpdateComponent } from './update/manualupdate';
+import { NTPServerFormComponent } from './ntpservers/ntpserver-form';
+import { NTPServerListComponent } from './ntpservers/ntpserver-list';
+import { CloudCredentialsListComponent } from './CloudCredentials/CloudCredentials-list';
+import { CloudCredentialsFormComponent } from './CloudCredentials/cloudcredentials-form';
 import { SshConnectionsListComponent } from './ssh-connections/ssh-connections-list/ssh-connections-list.component';
 import { SshConnectionsFormComponent } from './ssh-connections/ssh-connections-form/ssh-connections-form.component';
 import { SshKeypairsListComponent } from './ssh-keypairs/ssh-keypairs-list/ssh-keypairs-list.component';
 import { SshKeypairsFormComponent } from './ssh-keypairs/ssh-keypairs-form/ssh-keypairs-form.component';
-import { CertificateAuthorityListComponent } from './ca/ca-list/';
-import { CertificateAuthorityAddComponent } from './ca/ca-add/';
-import { CertificateAuthorityEditComponent } from './ca/ca-edit/';
-import { CertificateAuthoritySignComponent } from './ca/ca-sign/';
-import { CertificateEditComponent } from './certificates/certificate-edit/';
+import { CertificateAuthorityListComponent } from './ca/ca-list';
+import { CertificateAuthorityAddComponent } from './ca/ca-add';
+import { CertificateAuthorityEditComponent } from './ca/ca-edit';
+import { CertificateAuthoritySignComponent } from './ca/ca-sign';
+import { CertificateEditComponent } from './certificates/certificate-edit';
 import { CertificateListComponent } from './certificates/certificate-list';
 import { CertificateAddComponent } from './certificates/certificate-add';
 import { SupportComponent } from './support/support.component';
-import { AlertServiceListComponent } from './alertservice/alertservice-list/';
+import { AlertServiceListComponent } from './alertservice/alertservice-list';
 import { TranslateModule } from '@ngx-translate/core';
 import { EmailComponent } from './email';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
@@ -60,8 +60,8 @@ import { ProductionStatusComponent } from './support/production-status/productio
 import { ProactiveComponent } from './support/proactive/proactive.component';
 import { TnSupportComponent } from './support/tn-support/tn-support.component';
 import { FnSupportComponent } from './support/fn-support/fn-support.component';
-import { FnSysInfoComponent } from './support/fn-sys-info/fn-sys-info.component'
-import { KmipComponent} from './kmip/kmip.component';
+import { FnSysInfoComponent } from './support/fn-sys-info/fn-sys-info.component';
+import { KmipComponent } from './kmip/kmip.component';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { QRDialog } from './two-factor/two-factor.component';
 
@@ -70,7 +70,7 @@ import { QRDialog } from './two-factor/two-factor.component';
     EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, NgxUploaderModule, routing,
     MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule,
-    EnclosureModule, CommonDirectivesModule, QRCodeModule
+    EnclosureModule, CommonDirectivesModule, QRCodeModule,
   ],
   declarations: [
     GeneralComponent,
@@ -122,9 +122,9 @@ import { QRDialog } from './two-factor/two-factor.component';
     FnSysInfoComponent,
     KmipComponent,
     TwoFactorComponent,
-    QRDialog
+    QRDialog,
   ],
   entryComponents: [QRDialog],
-  providers: []
+  providers: [],
 })
 export class SystemModule {}

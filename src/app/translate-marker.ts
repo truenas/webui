@@ -1,3 +1,3 @@
-  export function T(str: string) {
-    return str;
-  }
+export function T(str: string) {
+  return str;
+}

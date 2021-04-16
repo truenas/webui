@@ -1,1 +1,1 @@
-export {DatasetComponent} from './dataset.component';
+export { DatasetComponent } from './dataset.component';

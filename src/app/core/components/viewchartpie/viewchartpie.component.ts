@@ -4,19 +4,17 @@ import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/view
 
 @Component({
   selector: 'viewchartpie',
-  template:ViewChartMetadata.template,
-  //templateUrl: './viewchartpie.component.html',
-  styleUrls: ['./viewchartpie.component.css']
+  template: ViewChartMetadata.template,
+  // templateUrl: './viewchartpie.component.html',
+  styleUrls: ['./viewchartpie.component.css'],
 })
 export class ViewChartPieComponent extends ViewChartDonutComponent implements OnInit {
+  chartType = 'pie';
 
-  public chartType:string = "pie"
-
-  constructor() { 
+  constructor() {
     super();
   }
 
   ngOnInit() {
   }
-
 }

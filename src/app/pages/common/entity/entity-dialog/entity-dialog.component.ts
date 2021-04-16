@@ -2,7 +2,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Component, Input, OnInit } from '@angular/core';
 
-import { EntityFormService } from '../entity-form//services/entity-form.service';
+import { EntityFormService } from '../entity-form/services/entity-form.service';
 import { FieldRelationService } from '../entity-form/services/field-relation.service';
 import { FieldConfig } from '../entity-form/models/field-config.interface';
 import { FormGroup } from '@angular/forms';
@@ -19,27 +19,26 @@ import { T } from '../../../../translate-marker';
   selector: 'app-entity-dialog',
   templateUrl: './entity-dialog.component.html',
   styleUrls: ['./entity-dialog.component.css'],
-  providers: [EntityFormService, DatePipe, FieldRelationService]
+  providers: [EntityFormService, DatePipe, FieldRelationService],
 })
 export class EntityDialogComponent implements OnInit {
-
   @Input() conf: DialogFormConfiguration;
 
-  public title: string;
-  public warning: string;
-  public fieldConfig: Array < FieldConfig > ;
-  public formGroup: FormGroup;
-  public saveButtonText: string;
-  public cancelButtonText = "Cancel";
-  public detachButtonText: string;
-  public getKeyButtonText: string;
-  public error: string;
-  public formValue: any;
-  public showPassword = false;
-  public parent: any;
-  public submitEnabled = true;
-  public instructions: string;
-  public confirmCheckbox = false;
+  title: string;
+  warning: string;
+  fieldConfig: FieldConfig[] ;
+  formGroup: FormGroup;
+  saveButtonText: string;
+  cancelButtonText = 'Cancel';
+  detachButtonText: string;
+  getKeyButtonText: string;
+  error: string;
+  formValue: any;
+  showPassword = false;
+  parent: any;
+  submitEnabled = true;
+  instructions: string;
+  confirmCheckbox = false;
 
   constructor(public dialogRef: MatDialogRef < EntityDialogComponent >,
     protected translate: TranslateService,
@@ -52,13 +51,13 @@ export class EntityDialogComponent implements OnInit {
     protected fieldRelationService: FieldRelationService) {}
 
   ngOnInit() {
-    this.translate.get(this.conf.title).subscribe(title => {
+    this.translate.get(this.conf.title).subscribe((title) => {
       this.title = title;
     });
 
     this.fieldConfig = this.conf.fieldConfig;
-    
-    if(this.conf.parent) {
+
+    if (this.conf.parent) {
       this.parent = this.conf.parent;
     }
 
@@ -85,10 +84,10 @@ export class EntityDialogComponent implements OnInit {
       }
     }
 
-    if(this.conf.afterInit) {
+    if (this.conf.afterInit) {
       this.conf.afterInit(this);
     }
-    this.instructions = T(`Enter <strong>${ this.conf['name'] }</strong> below to confirm.`)
+    this.instructions = T(`Enter <strong>${this.conf['name']}</strong> below to confirm.`);
   }
 
   submit() {
@@ -101,7 +100,7 @@ export class EntityDialogComponent implements OnInit {
       this.loader.open();
       this.ws.call(this.conf.method_ws, [this.formValue]).subscribe(
         () => {},
-        e => {
+        (e) => {
           this.loader.close();
           this.dialogRef.close(false);
           new EntityUtils().handleWSError(this, e);
@@ -109,7 +108,7 @@ export class EntityDialogComponent implements OnInit {
         () => {
           this.loader.close();
           this.dialogRef.close(true);
-        }
+        },
       );
     }
   }
@@ -128,13 +127,13 @@ export class EntityDialogComponent implements OnInit {
   }
 
   togglePW() {
-    let inputs = document.getElementsByTagName('input');
+    const inputs = document.getElementsByTagName('input');
     for (let i = 0; i < inputs.length; i++) {
-      if (!inputs[i].placeholder.toLowerCase().includes('current') && 
-          !inputs[i].placeholder.toLowerCase().includes('root')) {
-        if (inputs[i].placeholder.toLowerCase().includes('password') || 
-        inputs[i].placeholder.toLowerCase().includes('passphrase') ||
-        inputs[i].placeholder.toLowerCase().includes('secret')) {
+      if (!inputs[i].placeholder.toLowerCase().includes('current')
+          && !inputs[i].placeholder.toLowerCase().includes('root')) {
+        if (inputs[i].placeholder.toLowerCase().includes('password')
+        || inputs[i].placeholder.toLowerCase().includes('passphrase')
+        || inputs[i].placeholder.toLowerCase().includes('secret')) {
           if (inputs[i].type === 'password') {
             inputs[i].type = 'text';
           } else {
@@ -146,14 +145,13 @@ export class EntityDialogComponent implements OnInit {
     this.showPassword = !this.showPassword;
   }
 
-  setDisabled(name: string, disable: boolean, hide?: boolean, status?:string) {
+  setDisabled(name: string, disable: boolean, hide?: boolean, status?: string) {
     // if field is hidden, disable it too
     if (hide) {
       disable = hide;
     } else {
       hide = false;
     }
-
 
     this.fieldConfig = this.fieldConfig.map((item) => {
       if (item.name === name) {
@@ -166,10 +164,7 @@ export class EntityDialogComponent implements OnInit {
     if (this.formGroup.controls[name]) {
       const method = disable ? 'disable' : 'enable';
       this.formGroup.controls[name][method]();
-      return;
     }
-
-
   }
 
   toggleSubmit(data) {

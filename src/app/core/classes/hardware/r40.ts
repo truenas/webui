@@ -4,18 +4,17 @@ import { Chassis } from './chassis';
 import { ChassisView } from './chassis-view';
 
 export class R40 extends Chassis {
-
-  constructor(){
+  constructor() {
     super();
-    this.model = "r40";
+    this.model = 'r40';
 
     this.front = new ChassisView();
     this.front.container = new PIXI.Container();
-    this.front.chassisPath = "assets/images/hardware/r40/r40_960w.png";
-    this.front.driveTrayBackgroundPath = "assets/images/hardware/r40/r40_960w_drivetray_handle.png" 
-    this.front.driveTrayHandlePath = "assets/images/hardware/r40/r40_960w_drivetray_handle.png"
+    this.front.chassisPath = 'assets/images/hardware/r40/r40_960w.png';
+    this.front.driveTrayBackgroundPath = 'assets/images/hardware/r40/r40_960w_drivetray_handle.png';
+    this.front.driveTrayHandlePath = 'assets/images/hardware/r40/r40_960w_drivetray_handle.png';
 
-    this.front.chassisScale = {x:1.14, y: 1.04};
+    this.front.chassisScale = { x: 1.14, y: 1.04 };
     this.front.chassisOffsetX = -4;
     this.front.chassisOffsetY = 5;
 
@@ -29,5 +28,4 @@ export class R40 extends Chassis {
     this.front.rows = 1;
     this.front.columns = 48;
   }
-
 }

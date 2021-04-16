@@ -1,4 +1,6 @@
-import { Component, OnInit, AfterViewInit,OnDestroy, Input, ViewChild, Renderer2, ElementRef, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component, OnInit, AfterViewInit, OnDestroy, Input, ViewChild, Renderer2, ElementRef, OnChanges, SimpleChanges,
+} from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Router } from '@angular/router';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
@@ -26,17 +28,17 @@ import {
   everyFrame,
   keyframes,
   timeline,
-  //velocity,
+  // velocity,
   multicast,
   action,
   transform,
-  //transformMap,
-  //clamp
-  } from 'popmotion';
+  // transformMap,
+  // clamp
+} from 'popmotion';
 
 interface NetIfInfo {
-  name:string;
-  primary:string;
+  name: string;
+  primary: string;
   aliases?: string;
 }
 
@@ -57,166 +59,153 @@ interface Slide {
   index?: string;
 }
 
-
 @Component({
   selector: 'widget-nic',
-  templateUrl:'./widgetnic.component.html',
-  styleUrls: ['./widgetnic.component.css']
+  templateUrl: './widgetnic.component.html',
+  styleUrls: ['./widgetnic.component.css'],
 })
-export class WidgetNicComponent extends WidgetComponent implements OnInit, AfterViewInit,OnDestroy, OnChanges {
-
+export class WidgetNicComponent extends WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   @Input() stats;
   @Input() nicState;
-  @ViewChild('carousel', {static:true}) carousel:ElementRef;
-  @ViewChild('carouselparent', {static:false}) carouselParent:ElementRef;
-  public traffic: NetTraffic;
-  public currentSlide:string = "0";
-  
-  get currentSlideName(){
+  @ViewChild('carousel', { static: true }) carousel: ElementRef;
+  @ViewChild('carouselparent', { static: false }) carouselParent: ElementRef;
+  traffic: NetTraffic;
+  currentSlide = '0';
+
+  get currentSlideName() {
     return this.path[parseInt(this.currentSlide)].name;
   }
 
-  get previousSlide(){
+  get previousSlide() {
     return this.currentSlide == '0' ? 0 : parseInt(this.currentSlide) - 1;
   }
 
-  public title: string = "Interface";
+  title = 'Interface';
 
   path: Slide[] = [
-    { name: T("overview")},
-    { name: T("empty")},
-    { name: T("empty")}
+    { name: T('overview') },
+    { name: T('empty') },
+    { name: T('empty') },
   ];
 
-  get ipAddresses(){
-    if(!this.nicState && !this.nicState.aliases){ return [];}
+  get ipAddresses() {
+    if (!this.nicState && !this.nicState.aliases) { return []; }
 
-    let result = this.nicState.aliases.filter((item) => {
-      return item.type == 'INET' || item.type == 'INET6' ;
-    });
-    
-    return result;
-  }
-
-  get vlanAddresses(){
-    if(!this.nicState){ return [];}
-    if(this.path[2].name == 'empty' || this.nicState.vlans.length == 0 || !this.nicState.vlans[ parseInt(this.path[2].index) ]){ return [];}
-
-    let vlan = this.nicState.vlans[ parseInt(this.path[2].index) ];
-    let result = vlan.aliases.filter((item) => {
-      return item.type == 'INET' || item.type == 'INET6' ;
-    });
+    const result = this.nicState.aliases.filter((item) => item.type == 'INET' || item.type == 'INET6');
 
     return result;
   }
 
-  get linkState(){
-    if(!this.nicState && !this.nicState.aliases){ return [];}
+  get vlanAddresses() {
+    if (!this.nicState) { return []; }
+    if (this.path[2].name == 'empty' || this.nicState.vlans.length == 0 || !this.nicState.vlans[parseInt(this.path[2].index)]) { return []; }
+
+    const vlan = this.nicState.vlans[parseInt(this.path[2].index)];
+    const result = vlan.aliases.filter((item) => item.type == 'INET' || item.type == 'INET6');
+
+    return result;
+  }
+
+  get linkState() {
+    if (!this.nicState && !this.nicState.aliases) { return []; }
     return this.nicState.link_state.replace(/_/g, ' ');
   }
 
-  constructor(public router: Router, public translate: TranslateService){
+  constructor(public router: Router, public translate: TranslateService) {
     super(translate);
     this.configurable = false;
   }
 
-  ngOnDestroy(){
-    this.core.emit({name:"StatsRemoveListener", data:{name:"NIC", obj:this}});
-    this.core.unregister({observerClass:this});
+  ngOnDestroy() {
+    this.core.emit({ name: 'StatsRemoveListener', data: { name: 'NIC', obj: this } });
+    this.core.unregister({ observerClass: this });
   }
 
-  ngOnChanges(changes: SimpleChanges){
-    if(changes.nicState ){
-      this.title = this.currentSlide == "0" ? "Interface" : this.nicState.name;
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.nicState) {
+      this.title = this.currentSlide == '0' ? 'Interface' : this.nicState.name;
     }
-
   }
 
-  ngOnInit(){
+  ngOnInit() {
   }
 
-  ngAfterViewInit(){
-    this.stats.subscribe((evt:CoreEvent) => {
-      if(evt.name == "NetTraffic_" + this.nicState.name){
+  ngAfterViewInit() {
+    this.stats.subscribe((evt: CoreEvent) => {
+      if (evt.name == 'NetTraffic_' + this.nicState.name) {
         const sent: Converted = this.convert(evt.data.sent_bytes_rate);
         const received: Converted = this.convert(evt.data.received_bytes_rate);
 
-        let t = {
+        const t = {
           sent: sent.value,
           sentUnits: sent.units,
           received: received.value,
-          receivedUnits: received.units
-        }
+          receivedUnits: received.units,
+        };
 
-        this.traffic = t; //evt.data;
+        this.traffic = t; // evt.data;
       }
-    })
+    });
   }
 
-  updateSlide(name:string,verified: boolean, slideIndex:number, dataIndex?: number){
-    if(name !=="overview" && !verified){ return; }
-    let slide: Slide = {
-      name: name,
-      index: typeof dataIndex !== 'undefined' ? dataIndex.toString() : null
-    }
+  updateSlide(name: string, verified: boolean, slideIndex: number, dataIndex?: number) {
+    if (name !== 'overview' && !verified) { return; }
+    const slide: Slide = {
+      name,
+      index: typeof dataIndex !== 'undefined' ? dataIndex.toString() : null,
+    };
 
     this.path[slideIndex] = slide;
     this.updateSlidePosition(slideIndex);
-    
   }
 
-  updateSlidePosition(value){
-    if(value.toString() == this.currentSlide){ return; }
+  updateSlidePosition(value) {
+    if (value.toString() == this.currentSlide) { return; }
     const carousel = this.carouselParent.nativeElement.querySelector('.carousel');
     const slide = this.carouselParent.nativeElement.querySelector('.slide');
 
-    let el = styler(carousel);
-    let slideW = styler(slide).get('width');
+    const el = styler(carousel);
+    const slideW = styler(slide).get('width');
 
     tween({
-      from:{ x: (parseInt(this.currentSlide) * 100) * -1 },
-      to:{ x: (value * slideW) * -1 },
-      duration: 250
+      from: { x: (parseInt(this.currentSlide) * 100) * -1 },
+      to: { x: (value * slideW) * -1 },
+      duration: 250,
     }).start(el.set);
-    
+
     this.currentSlide = value.toString();
-    this.title = this.currentSlide == "0" ? "Interface" : this.nicState.name;
-    
+    this.title = this.currentSlide == '0' ? 'Interface' : this.nicState.name;
   }
 
-  vlanAliases(vlanIndex:string|number){
-    if(typeof vlanIndex == 'string'){ vlanIndex = parseInt(vlanIndex); }
-    let vlan = this.nicState.vlans[vlanIndex];
-    let result = vlan.aliases.filter((item) => {
-      return item.type == 'INET' || item.type == 'INET6';
-    });
+  vlanAliases(vlanIndex: string|number) {
+    if (typeof vlanIndex == 'string') { vlanIndex = parseInt(vlanIndex); }
+    const vlan = this.nicState.vlans[vlanIndex];
+    const result = vlan.aliases.filter((item) => item.type == 'INET' || item.type == 'INET6');
     return result;
   }
 
-  getMbps(arr:number[]){
+  getMbps(arr: number[]) {
     // NOTE: Stat is in bytes so we convert
     // no average
-    let result = arr[0]/1024/1024;
-    if(result > 999){
-      return result.toFixed(1)
-    } else if(result < 1000 && result > 99){
+    const result = arr[0] / 1024 / 1024;
+    if (result > 999) {
+      return result.toFixed(1);
+    } if (result < 1000 && result > 99) {
       return result.toFixed(2);
-    } else if(result > 9 && result < 100){
+    } if (result > 9 && result < 100) {
       return result.toFixed(3);
-    } else if(result < 10){
+    } if (result < 10) {
       return result.toFixed(4);
-    } else {
-      return -1;
     }
-    
+    return -1;
   }
 
-  convert(value): Converted{
+  convert(value): Converted {
     let result;
     let units;
 
     // uppercase so we handle bits and bytes...
-    switch(this.optimizeUnits(value)){
+    switch (this.optimizeUnits(value)) {
       case 'B':
       case 'KB':
         units = T('KiB');
@@ -243,22 +232,21 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
         result = 0.00;
     }
 
-    return result ? { value: result.toFixed(2), units: units } : { value: '0.00', units: units };
+    return result ? { value: result.toFixed(2), units } : { value: '0.00', units };
   }
 
-  optimizeUnits(value){
-    let units: string = 'B';
-    if(value > 1024 && value < (1024 * 1024)){
+  optimizeUnits(value) {
+    let units = 'B';
+    if (value > 1024 && value < (1024 * 1024)) {
       units = 'KB';
-    } else if (value >= (1024 * 1024) && value < (1024 * 1024 * 1024)){
-      units = 'MB'
-    } else if (value >= (1024 * 1024 * 1024) && value < (1024 * 1024 * 1024 * 1024)){
-      units = 'GB'
-    } else if (value >= (1024 * 1024 * 1024 * 1024) && value < (1024 * 1024 * 1024 * 1024 * 1024)){
-      units = 'TB'
+    } else if (value >= (1024 * 1024) && value < (1024 * 1024 * 1024)) {
+      units = 'MB';
+    } else if (value >= (1024 * 1024 * 1024) && value < (1024 * 1024 * 1024 * 1024)) {
+      units = 'GB';
+    } else if (value >= (1024 * 1024 * 1024 * 1024) && value < (1024 * 1024 * 1024 * 1024 * 1024)) {
+      units = 'TB';
     }
 
     return units;
   }
-
 }

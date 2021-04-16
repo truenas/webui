@@ -1,48 +1,48 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { IscsiService } from '../../../../../services/';
+import { IscsiService } from '../../../../../services';
 import * as _ from 'lodash';
 import { T } from 'app/translate-marker';
 import { EntityUtils } from '../../../../common/entity/utils';
 
 @Component({
-  selector : 'app-iscsi-associated-target-list',
-  template : `
+  selector: 'app-iscsi-associated-target-list',
+  template: `
     <entity-table [conf]="this" [title]="tableTitle"></entity-table>
   `,
   providers: [IscsiService],
 })
 export class AssociatedTargetListComponent {
-  public tableTitle = 'Associated Targets';
+  tableTitle = 'Associated Targets';
   protected queryCall = 'iscsi.targetextent.query';
   protected wsDelete = 'iscsi.targetextent.delete';
-  protected route_add: string[] = [ 'sharing', 'iscsi', 'associatedtarget', 'add' ];
-  protected route_add_tooltip: string = "Add Target/Extent";
-  protected route_edit: string[] = [ 'sharing', 'iscsi', 'associatedtarget', 'edit' ];
+  protected route_add: string[] = ['sharing', 'iscsi', 'associatedtarget', 'add'];
+  protected route_add_tooltip = 'Add Target/Extent';
+  protected route_edit: string[] = ['sharing', 'iscsi', 'associatedtarget', 'edit'];
 
-  public columns: Array<any> = [
+  columns: any[] = [
     {
-      name : T('Target'),
-      prop : 'target',
-      always_display: true
+      name: T('Target'),
+      prop: 'target',
+      always_display: true,
     },
     {
-      name : T('LUN ID'),
-      prop : 'lunid',
+      name: T('LUN ID'),
+      prop: 'lunid',
     },
     {
-      name : T('Extent'),
-      prop : 'extent',
-    }
+      name: T('Extent'),
+      prop: 'extent',
+    },
   ];
-  public rowIdentifier = 'target';
-  public config: any = {
-    paging : true,
-    sorting : {columns : this.columns},
+  rowIdentifier = 'target';
+  config: any = {
+    paging: true,
+    sorting: { columns: this.columns },
     deleteMsg: {
       title: 'Target/Extent',
-      key_props: ['target', 'extent']
+      key_props: ['target', 'extent'],
     },
   };
 
@@ -60,8 +60,8 @@ export class AssociatedTargetListComponent {
         const extent_list = res;
 
         for (let i = 0; i < entityList.rows.length; i++) {
-          entityList.rows[i].target = _.find(target_list, {id: entityList.rows[i].target})['name'];
-          entityList.rows[i].extent = _.find(extent_list, {id: entityList.rows[i].extent})['name'];
+          entityList.rows[i].target = _.find(target_list, { id: entityList.rows[i].target })['name'];
+          entityList.rows[i].extent = _.find(extent_list, { id: entityList.rows[i].extent })['name'];
         }
       });
     });
@@ -71,13 +71,13 @@ export class AssociatedTargetListComponent {
       id: row.target,
       name: 'edit',
       icon: 'edit',
-      label: T("Edit"),
+      label: T('Edit'),
       onClick: (rowinner) => { this.entityList.doEdit(rowinner.id); },
     }, {
       id: row.target,
       name: 'delete',
       icon: 'delete',
-      label: T("Delete"),
+      label: T('Delete'),
       onClick: (rowinner) => {
         let deleteMsg = this.entityList.getDeleteMessage(rowinner);
         this.iscsiService.getGlobalSessions().subscribe(
@@ -90,22 +90,22 @@ export class AssociatedTargetListComponent {
             }
             deleteMsg = warningMsg + deleteMsg;
 
-            this.entityList.dialogService.confirm( T("Delete"), deleteMsg, false, T("Delete")).subscribe((dialres) => {
+            this.entityList.dialogService.confirm(T('Delete'), deleteMsg, false, T('Delete')).subscribe((dialres) => {
               if (dialres) {
                 this.entityList.loader.open();
                 this.entityList.loaderOpen = true;
                 this.entityList.ws.call(this.wsDelete, [rowinner.id, true]).subscribe(
-                  (resinner) => { this.entityList.getData() },
+                  (resinner) => { this.entityList.getData(); },
                   (resinner) => {
                     new EntityUtils().handleError(this, resinner);
                     this.entityList.loader.close();
-                  }
+                  },
                 );
               }
             });
-          }
-        )
-      }
+          },
+        );
+      },
     }];
   }
 }

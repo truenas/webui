@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
@@ -9,18 +9,17 @@ import { helptext_system_ca } from 'app/helptext/system/ca';
 
 @Component({
   selector: 'app-ca-edit',
-  template: `<entity-form [conf]="this"></entity-form>`
+  template: '<entity-form [conf]="this"></entity-form>',
 })
 export class CertificateAuthorityEditComponent {
-
-  protected queryCall: string = 'certificateauthority.query';
+  protected queryCall = 'certificateauthority.query';
   protected editCall = 'certificateauthority.update';
   protected route_success: string[] = ['system', 'ca'];
-  protected isEntity: boolean = true;
-  protected queryCallOption: Array<any> = [["id", "="]];
+  protected isEntity = true;
+  protected queryCallOption: any[] = [['id', '=']];
 
   protected fieldConfig: FieldConfig[];
-  public fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext_system_ca.edit.fieldset_certificate,
       label: true,
@@ -33,7 +32,7 @@ export class CertificateAuthorityEditComponent {
           placeholder: helptext_system_ca.edit.name.placeholder,
           tooltip: helptext_system_ca.edit.name.tooltip,
           required: true,
-          validation: helptext_system_ca.edit.name.validation
+          validation: helptext_system_ca.edit.name.validation,
         },
         {
           type: 'textarea',
@@ -47,8 +46,8 @@ export class CertificateAuthorityEditComponent {
           placeholder: helptext_system_ca.edit.privatekey.placeholder,
           readonly: true,
         },
-      ]
-    }
+      ],
+    },
   ];
 
   private pk: any;
@@ -58,8 +57,8 @@ export class CertificateAuthorityEditComponent {
     protected loader: AppLoaderService) {}
 
   preInit() {
-    this.route.params.subscribe(params => {
-      if (params['pk']) { 
+    this.route.params.subscribe((params) => {
+      if (params['pk']) {
         // fixme: entity-form should do this automatically but the logic appears broken
         // and i don't know what fixing it will break, tbf after release
         this.queryCallOption[0].push(parseInt(params['pk']));
@@ -68,7 +67,7 @@ export class CertificateAuthorityEditComponent {
   }
 
   afterInit(entityEdit: any) {
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       if (params['pk']) {
         // see above, this should just be handled properly by entity-form
         this.pk = parseInt(params['pk']);
@@ -77,7 +76,7 @@ export class CertificateAuthorityEditComponent {
   }
 
   customSubmit(value) {
-    let payload = {};
+    const payload = {};
     payload['name'] = value.name;
 
     this.loader.open();
@@ -89,7 +88,7 @@ export class CertificateAuthorityEditComponent {
       (res) => {
         this.loader.close();
         new EntityUtils().handleError(this, res);
-      }
+      },
     );
   }
 }

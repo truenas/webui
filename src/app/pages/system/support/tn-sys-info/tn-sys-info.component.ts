@@ -9,7 +9,7 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 
 @Component({
   selector: 'app-tn-sys-info',
-  templateUrl: './tn-sys-info.component.html'
+  templateUrl: './tn-sys-info.component.html',
 })
 export class TnSysInfoComponent implements OnInit {
   product_type: string;
@@ -39,10 +39,10 @@ export class TnSysInfoComponent implements OnInit {
           name: 'license',
           placeholder: helptext.update_license.license_placeholder,
           required: true,
-        }
+        },
       ],
       saveButtonText: helptext.update_license.save_button,
-      customSubmit: function (entityDialog) {
+      customSubmit(entityDialog) {
         const value = entityDialog.formValue.license ? entityDialog.formValue.license.trim() : null;
         self.loader.open();
         entityDialog.error = null;
@@ -53,26 +53,26 @@ export class TnSysInfoComponent implements OnInit {
             entityDialog.formGroup.controls['license'].markAsUntouched();
             entityDialog.error = null;
           }
-        })
+        });
         self.ws.call('system.license_update', [value]).subscribe((res) => {
           entityDialog.dialogRef.close(true);
           self.loader.close();
-          self.dialogService.confirm(helptext.update_license.reload_dialog_title, 
+          self.dialogService.confirm(helptext.update_license.reload_dialog_title,
             helptext.update_license.reload_dialog_message, true, helptext.update_license.reload_dialog_action)
             .subscribe((confirm: any) => {
               if (confirm) {
                 document.location.reload(true);
               }
-          });
+            });
         },
         (err) => {
           self.loader.close();
-          const errorText = err.reason ? err.reason.replace('[EFAULT]', '') : T('Something went wrong. Please try again.')
-          entityDialog.formGroup.controls['license'].setErrors({'invalid': true})
+          const errorText = err.reason ? err.reason.replace('[EFAULT]', '') : T('Something went wrong. Please try again.');
+          entityDialog.formGroup.controls['license'].setErrors({ invalid: true });
           entityDialog.error = errorText;
         });
-      }
-    }
+      },
+    };
     this.dialogService.dialogForm(licenseForm);
   }
 }

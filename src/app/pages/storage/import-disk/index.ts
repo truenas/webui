@@ -1,1 +1,1 @@
-export {ImportDiskComponent} from './import-disk.component';
+export { ImportDiskComponent } from './import-disk.component';

@@ -1,8 +1,8 @@
-import { FieldConfig} from './field-config.interface';
-import { FieldSet} from './fieldset.interface';
+import { FieldConfig } from './field-config.interface';
+import { FieldSet } from './fieldset.interface';
 
 export interface Wizard {
-  label:string;
-  fieldConfig:FieldConfig[];
+  label: string;
+  fieldConfig: FieldConfig[];
   fieldSets?: FieldSet[];
 }

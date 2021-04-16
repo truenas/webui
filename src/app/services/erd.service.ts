@@ -1,25 +1,23 @@
 import { Injectable } from '@angular/core';
 
 /**
- * This class is used for getting a resize event like window's resize.. but 
- * from Div elements.  I had this copied and pasted 4x.. Got old.. So put 
+ * This class is used for getting a resize event like window's resize.. but
+ * from Div elements.  I had this copied and pasted 4x.. Got old.. So put
  * it in a service.
- * 
+ *
  */
 @Injectable()
 export class ErdService {
-
   constructor() {}
 
   /**
-   * This method would typically be called in a component's 
+   * This method would typically be called in a component's
    * ngAfterViewInit() implementation.
-   * 
+   *
    * @param elementId - Name of element on view to attach to.
    */
-  public attachResizeEventToElement(elementId: string) {
-    setTimeout(()=>{
-
+  attachResizeEventToElement(elementId: string) {
+    setTimeout(() => {
       let erd: any = null;
 
       // This invokes the element-resize-detector js library under node_modules
@@ -31,8 +29,8 @@ export class ErdService {
       }
 
       const elementAny = document.getElementById(elementId);
-      if( typeof(erd) !== "undefined" && erd !== null &&
-            typeof(elementAny) !== "undefined" && elementAny !== null ) {
+      if (typeof (erd) !== 'undefined' && erd !== null
+            && typeof (elementAny) !== 'undefined' && elementAny !== null) {
         erd.listenTo(elementAny, (element) => {
           (<any>window).dispatchEvent(new Event('resize'));
         });

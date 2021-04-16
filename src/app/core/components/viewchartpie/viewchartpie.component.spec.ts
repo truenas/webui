@@ -8,9 +8,9 @@ describe('ViewchartpieComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ViewchartpieComponent ]
+      declarations: [ViewchartpieComponent],
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

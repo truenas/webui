@@ -8,7 +8,7 @@ import helptext from '../../../../helptext/directoryservice/kerberoskeytabs-form
 
 @Component({
   selector: 'app-kerberos-keytbas-form',
-  template: `<entity-form [conf]="this"></entity-form>`
+  template: '<entity-form [conf]="this"></entity-form>',
 })
 export class KerberosKeytabsFormComponent {
   protected addCall = 'kerberos.keytab.create';
@@ -18,22 +18,22 @@ export class KerberosKeytabsFormComponent {
   protected isNew = true;
   protected queryKey = 'id';
   protected route_success: string[] = ['directoryservice', 'kerberoskeytabs'];
-  protected isEntity =  true;
+  protected isEntity = true;
 
   protected fieldConfig: FieldConfig[] = [];
-  public fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext.kkt_heading,
       class: 'heading',
-      label:true,
-      config:[
+      label: true,
+      config: [
         {
           type: 'input',
           name: helptext.kkt_ktname_name,
           placeholder: helptext.kkt_ktname_placeholder,
           tooltip: helptext.kkt_ktname_tooltip,
           required: true,
-          validation : helptext.kkt_ktname_validation
+          validation: helptext.kkt_ktname_validation,
         },
         {
           type: 'input',
@@ -43,20 +43,20 @@ export class KerberosKeytabsFormComponent {
           tooltip: helptext.kkt_ktfile_tooltip,
           fileType: 'binary',
           required: true,
-          validation : helptext.kkt_ktfile_validation
-        }
-      ]
-    }
+          validation: helptext.kkt_ktfile_validation,
+        },
+      ],
+    },
   ];
 
   constructor(private router: Router, protected aroute: ActivatedRoute) {}
 
   preInit() {
-    this.aroute.params.subscribe(params => {
+    this.aroute.params.subscribe((params) => {
       if (params.pk) {
         this.pk = parseInt(params.pk);
         this.isNew = false;
       }
-    })
+    });
   }
 }
