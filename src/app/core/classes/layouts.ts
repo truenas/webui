@@ -1,7 +1,7 @@
 export interface LayoutContainer {
-  layout:string;
+  layout: string;
   align: string;
-  gap:string;
+  gap: string;
 }
 
 export interface LayoutChild {

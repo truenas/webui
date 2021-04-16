@@ -4,29 +4,27 @@ import { Router } from '@angular/router';
 import * as _ from 'lodash';
 
 import { WebSocketService } from '../../../../services';
-import { TaskService } from '../../../../services/';
+import { TaskService } from '../../../../services';
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
 import { TaskScheduleListComponent } from '../../components/task-schedule-list/task-schedule-list.component';
 
-
 @Component({
   selector: 'app-scrub-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
-  providers: [TaskService]
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
+  providers: [TaskService],
 })
 export class ScrubListComponent {
-
-  public title = "Scrub Tasks";
-  //protected resource_name = 'storage/scrub';
-  public queryCall:string = 'pool.scrub.query';
-  protected wsDelete: string = 'pool.scrub.delete';
+  title = 'Scrub Tasks';
+  // protected resource_name = 'storage/scrub';
+  queryCall = 'pool.scrub.query';
+  protected wsDelete = 'pool.scrub.delete';
   protected route_add: string[] = ['tasks', 'scrub', 'add'];
-  protected route_add_tooltip = "Add Scrub Task";
+  protected route_add_tooltip = 'Add Scrub Task';
   protected route_edit: string[] = ['tasks', 'scrub', 'edit'];
   protected entityList: any;
 
-  public columns: Array < any > = [
+  columns: any[] = [
     { name: 'Pool', prop: 'pool_name', always_display: true },
     { name: 'Threshold days', prop: 'threshold' },
     { name: 'Description', prop: 'description' },
@@ -34,13 +32,13 @@ export class ScrubListComponent {
     { name: 'Next Run', prop: 'scrub_next_run' },
     { name: 'Enabled', prop: 'enabled' },
   ];
-  public rowIdentifier = 'id';
-  public config: any = {
+  rowIdentifier = 'id';
+  config: any = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
       title: 'Scrub Task',
-      key_props: ['pool_name']
+      key_props: ['pool_name'],
     },
   };
 

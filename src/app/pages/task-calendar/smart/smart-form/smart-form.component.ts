@@ -5,27 +5,26 @@ import * as _ from 'lodash';
 
 import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { TaskService, StorageService, WebSocketService } from '../../../../services/';
+import { TaskService, StorageService, WebSocketService } from '../../../../services';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import helptext from '../../../../helptext/task-calendar/smart/smart';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 
 @Component({
   selector: 'smart-test-add',
-  template: `<entity-form [conf]="this"></entity-form>`,
-  providers: [TaskService, StorageService, EntityFormService]
+  template: '<entity-form [conf]="this"></entity-form>',
+  providers: [TaskService, StorageService, EntityFormService],
 })
 export class SmartFormComponent {
-
-  public queryCall = "smart.test.query";
+  queryCall = 'smart.test.query';
   protected addCall = 'smart.test.create';
   protected editCall = 'smart.test.update';
-  protected customFilter: Array<any> = [[["id", "="]]];
+  protected customFilter: any[] = [[['id', '=']]];
   protected route_success: string[] = ['tasks', 'smart'];
   protected entityForm: EntityFormComponent;
-  protected isEntity: boolean = true;
+  protected isEntity = true;
 
-  public fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: 'S.M.A.R.T. Test',
       class: 'add-cron',
@@ -52,7 +51,7 @@ export class SmartFormComponent {
             when: [{
               name: 'all_disks',
               value: true,
-            }]
+            }],
           }],
         }, {
           type: 'select',
@@ -75,15 +74,15 @@ export class SmartFormComponent {
             {
               label: 'OFFLINE',
               value: 'OFFLINE',
-            }
+            },
           ],
           required: true,
-          validation: helptext.smarttest_type_validation
+          validation: helptext.smarttest_type_validation,
         }, {
           type: 'input',
           name: 'desc',
           placeholder: helptext.smarttest_desc_placeholder,
-          tooltip: helptext.smarttest_desc_tooltip
+          tooltip: helptext.smarttest_desc_tooltip,
         },
         {
           type: 'scheduler',
@@ -92,43 +91,43 @@ export class SmartFormComponent {
           tooltip: helptext.smarttest_picker_tooltip,
           validation: helptext.smarttest_picker_validation,
           required: true,
-          value: "0 0 * * *",
-          noMinutes: true
-        }
-      ]
-    }
+          value: '0 0 * * *',
+          noMinutes: true,
+        },
+      ],
+    },
   ];
 
   protected disk_field: any;
   protected pk: any;
 
   constructor(protected router: Router,
-              protected ws: WebSocketService,
-              protected taskService: TaskService,
-              protected storageService: StorageService,
-              protected entityFormService: EntityFormService,
-              protected aroute: ActivatedRoute) {
-    this.disk_field = _.find(this.fieldSets[0].config, { 'name': 'disks' });
+    protected ws: WebSocketService,
+    protected taskService: TaskService,
+    protected storageService: StorageService,
+    protected entityFormService: EntityFormService,
+    protected aroute: ActivatedRoute) {
+    this.disk_field = _.find(this.fieldSets[0].config, { name: 'disks' });
     this.ws.call('smart.test.disk_choices').subscribe(
       (res) => {
         for (const key in res) {
-          this.disk_field.options.push({ label: res[key], value: key })
+          this.disk_field.options.push({ label: res[key], value: key });
         }
-      }, err => new EntityUtils().handleWSError(this, err)
-    )
+      }, (err) => new EntityUtils().handleWSError(this, err),
+    );
   }
 
   resourceTransformIncomingRestData(data) {
-    data['smarttest_picker'] = "0" + " " +
-      data.schedule.hour + " " +
-      data.schedule.dom + " " +
-      data.schedule.month + " " +
-      data.schedule.dow;
+    data['smarttest_picker'] = '0' + ' '
+      + data.schedule.hour + ' '
+      + data.schedule.dom + ' '
+      + data.schedule.month + ' '
+      + data.schedule.dow;
     return data;
   }
 
   preInit() {
-    this.aroute.params.subscribe(params => {
+    this.aroute.params.subscribe((params) => {
       if (params['pk']) {
         this.pk = params['pk'];
         this.customFilter[0][0].push(parseInt(params['pk']));
@@ -137,7 +136,7 @@ export class SmartFormComponent {
   }
 
   beforeSubmit(value) {
-    const spl = value.smarttest_picker.split(" ");
+    const spl = value.smarttest_picker.split(' ');
     delete value.smarttest_picker;
 
     value['schedule'] = {

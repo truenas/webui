@@ -2,20 +2,18 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'convert',
-  pure:false
+  pure: false,
 })
 export class ConvertPipe implements PipeTransform {
-
   transform(value: any, args: any): any {
-
     return this.calculate(value, args);
   }
 
-  calculate(value, args){
-    if(!value){ return 0.00;}
+  calculate(value, args) {
+    if (!value) { return 0.00; }
     let result;
     // uppercase so we handle bits and bytes...
-    switch(args.toUpperCase()){
+    switch (args.toUpperCase()) {
       case 'B TO KB':
         result = value / 1024;
         break;
@@ -37,5 +35,4 @@ export class ConvertPipe implements PipeTransform {
 
     return result ? result.toFixed(2) : 0.00;
   }
-
 }

@@ -15,10 +15,10 @@ import { TranslateModule } from '@ngx-translate/core';
     MatDialogModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    TranslateModule
+    TranslateModule,
   ],
   providers: [AppLoaderService],
   declarations: [AppLoaderComponent],
-  entryComponents: [AppLoaderComponent]
+  entryComponents: [AppLoaderComponent],
 })
 export class AppLoaderModule { }

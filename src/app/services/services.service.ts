@@ -1,14 +1,14 @@
-import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {Observable, Subject, Subscription} from 'rxjs/Rx';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, Subject, Subscription } from 'rxjs/Rx';
 
-import {EntityUtils} from '../pages/common/entity/utils'
-import {WebSocketService} from './ws.service';
+import { EntityUtils } from '../pages/common/entity/utils';
+import { WebSocketService } from './ws.service';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class ServicesService {
-  constructor(protected ws: WebSocketService) {};
-  
+  constructor(protected ws: WebSocketService) {}
+
   getSmbBindIPChoices() {
     return this.ws.call('smb.bindip_choices');
   }
@@ -36,7 +36,7 @@ export class ServicesService {
   getOpenServerCipherChoices() {
     return this.ws.call('openvpn.server.cipher_choices');
   }
-  
+
   generateOpenServerClientConfig(id: number, address: string) {
     return this.ws.call('openvpn.server.client_configuration_generation', [id, address]);
   }
@@ -49,7 +49,7 @@ export class ServicesService {
   getClientInfo() {
     return this.ws.call('openvpn.client.config');
   }
- 
+
   // -- end of OpenVPN Service
   getLLDPCountries() {
     return this.ws.call('lldp.country_choices');

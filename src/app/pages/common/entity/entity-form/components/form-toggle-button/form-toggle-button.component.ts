@@ -10,13 +10,13 @@ import * as _ from 'lodash';
 @Component({
   selector: 'form-toggle-button',
   templateUrl: './form-toggle-button.component.html',
-  styleUrls: ['./form-toggle-button.component.css']
+  styleUrls: ['./form-toggle-button.component.css'],
 })
 export class FormToggleButtonComponent implements Field, OnInit {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
-  public groupValue: Array < any >= [];
+  groupValue: any[] = [];
   protected init: boolean;
   protected control: any;
 
@@ -30,11 +30,11 @@ export class FormToggleButtonComponent implements Field, OnInit {
       if (this.init && this.config.options && res) {
         this.init = false;
         let all_selected = false;
-        let values = _.split(this.control.value, ',');
+        const values = _.split(this.control.value, ',');
         if (this.control.value == '*') {
           all_selected = true;
         }
-        for (let i in this.config.options) {
+        for (const i in this.config.options) {
           if (_.indexOf(values, this.config.options[i].value) > -1) {
             this.config.options[i].checked = false;
             this.check(this.config.options[i]);
@@ -46,14 +46,13 @@ export class FormToggleButtonComponent implements Field, OnInit {
           }
         }
       }
-
     });
   }
 
   check(item) {
     this.init = false;
     item.checked = !item.checked;
-    let target = _.findIndex(this.groupValue, _.unary(_.partialRight(_.includes, item.value)));
+    const target = _.findIndex(this.groupValue, _.unary(_.partialRight(_.includes, item.value)));
     if (target > -1) {
       this.groupValue.splice(target, 1);
     } else {

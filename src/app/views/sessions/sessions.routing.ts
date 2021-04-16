@@ -11,19 +11,19 @@ export const SessionsRoutes: Routes = [
     children: [{
       path: 'signup',
       component: SignupComponent,
-      data: { title: 'Signup' }
+      data: { title: 'Signup' },
     }, {
       path: 'signin',
       component: SigninComponent,
-      data: { title: 'Signin' }
+      data: { title: 'Signin' },
     }, {
       path: 'forgot-password',
       component: ForgotPasswordComponent,
-      data: { title: 'Forgot password' }
+      data: { title: 'Forgot password' },
     }, {
       path: 'lockscreen',
       component: LockscreenComponent,
-      data: { title: 'Lockscreen' }
-    }]
-  }
+      data: { title: 'Lockscreen' },
+    }],
+  },
 ];

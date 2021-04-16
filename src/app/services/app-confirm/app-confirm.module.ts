@@ -10,11 +10,11 @@ import { AppComfirmComponent } from './app-confirm.component';
   imports: [
     MatDialogModule,
     MatButtonModule,
-    FlexLayoutModule
+    FlexLayoutModule,
   ],
   exports: [AppComfirmComponent],
   declarations: [AppComfirmComponent],
   providers: [AppConfirmService],
-  entryComponents: [AppComfirmComponent]
+  entryComponents: [AppComfirmComponent],
 })
 export class AppConfirmModule { }

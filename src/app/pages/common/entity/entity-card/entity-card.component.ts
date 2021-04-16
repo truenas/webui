@@ -1,14 +1,14 @@
-import { Component, OnInit, AfterViewInit, Input, Output, EventEmitter, ElementRef, ViewEncapsulation, ViewChild, TemplateRef } from '@angular/core';
+import {
+  Component, OnInit, AfterViewInit, Input, Output, EventEmitter, ElementRef, ViewEncapsulation, ViewChild, TemplateRef,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { DataSource } from '@angular/cdk/collections';
-import { Observable ,  BehaviorSubject ,  Subscription } from 'rxjs';
+import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 
-
-
-import {iXObject} from 'app/core/classes/ix-object';
+import { iXObject } from 'app/core/classes/ix-object';
 import { TranslateService } from '@ngx-translate/core';
 
-//local libs
+// local libs
 import { RestService } from '../../../../services/rest.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import { DialogService } from '../../../../services/dialog.service';
@@ -19,10 +19,9 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
   selector: 'entity-card',
   templateUrl: './entity-card.component.html',
   styleUrls: ['./entity-card.component.css'],
-  providers: [DialogService]
+  providers: [DialogService],
 })
 export class EntityCardComponent extends iXObject implements OnInit {
-
   @Input('conf') conf: any;
   @Input() width: string;
   @Input() height: string;
@@ -30,52 +29,50 @@ export class EntityCardComponent extends iXObject implements OnInit {
   @Output() editCard: EventEmitter<boolean> = new EventEmitter<boolean>();
   @Input() front: TemplateRef<any>;
   @Input() back: TemplateRef<any>;
-  @Input() lazyLoaded: boolean = false;
-  public actions: boolean = false;
+  @Input() lazyLoaded = false;
+  actions = false;
 
-  public busy: Subscription;
+  busy: Subscription;
 
-  public rows: Array < any > = [];
-  public columns: Array < any > = [];
-  public page: number = 1;
-  public itemsPerPage: number = 10;
-  public maxSize: number = 5;
-  public numPages: number = 1;
-  public length: number = 0;
-  public config: any = {
+  rows: any[] = [];
+  columns: any[] = [];
+  page = 1;
+  itemsPerPage = 10;
+  maxSize = 5;
+  numPages = 1;
+  length = 0;
+  config: any = {
     paging: true,
     sorting: { columns: this.columns },
   };
-  protected loaderOpen: boolean = false;
+  protected loaderOpen = false;
 
-
-  constructor(protected rest: RestService, protected ws: WebSocketService,  protected router: Router,
-    protected _eRef: ElementRef, private dialog: DialogService, protected loader: AppLoaderService, 
+  constructor(protected rest: RestService, protected ws: WebSocketService, protected router: Router,
+    protected _eRef: ElementRef, private dialog: DialogService, protected loader: AppLoaderService,
     translate: TranslateService) {
-    super()
+    super();
   }
 
   ngOnInit() {
     if (this.conf.preInit) {
       this.conf.preInit(this);
     }
-    //this.getData();
+    // this.getData();
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
     }
   }
 
-  ngAfterViewInit(){
-    if(this.conf){
+  ngAfterViewInit() {
+    if (this.conf) {
       this.isFlipped = this.conf.isFlipped;
-      //console.log("conf exists!!")
+      // console.log("conf exists!!")
     } else {
       alert("conf doesn't exist!!");
     }
   }
 
   toggle(row: any) {
-
     let rpc: string;
 
     if (row[this.conf.toggleProp] !== this.conf.runnningState) {
@@ -84,9 +81,9 @@ export class EntityCardComponent extends iXObject implements OnInit {
       rpc = this.conf.toggleStop;
     }
 
-    this.busy = this.ws.call(rpc, [ row.id ]).subscribe((res) => {
+    this.busy = this.ws.call(rpc, [row.id]).subscribe((res) => {
       if (res) {
-        row[this.conf.toggleProp]= 'RUNNING';
+        row[this.conf.toggleProp] = 'RUNNING';
       } else {
         row[this.conf.toggleProp] = 'STOPPED';
       }
@@ -94,12 +91,12 @@ export class EntityCardComponent extends iXObject implements OnInit {
   }
 
   getData() {
-    let offset = this.itemsPerPage * (this.page - 1);
-    let sort: Array < String > = [];
+    const offset = this.itemsPerPage * (this.page - 1);
+    const sort: String[] = [];
     let options: Object = new Object();
 
-    for (let i in this.config.sorting.columns) {
-      let col = this.config.sorting.columns[i];
+    for (const i in this.config.sorting.columns) {
+      const col = this.config.sorting.columns[i];
       if (col.sort == 'asc') {
         sort.push(col.name);
       } else if (col.sort == 'desc') {
@@ -125,12 +122,13 @@ export class EntityCardComponent extends iXObject implements OnInit {
         if (this.conf.dataHandler) {
           this.conf.dataHandler(this);
         }
-      });*/
+      }); */
   }
 
   onChangeTable(
     config,
-    page: any = { page: this.page, itemsPerPage: this.itemsPerPage }) {
+    page: any = { page: this.page, itemsPerPage: this.itemsPerPage },
+  ) {
     if (config.filtering) {
       Object.assign(this.config.filtering, config.filtering);
     }
@@ -142,7 +140,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
   }
 
   trClass(row) {
-    let classes = [];
+    const classes = [];
     classes.push('treegrid-' + row.id);
     if (row._parent) {
       classes.push('treegrid-parent-' + row._parent);
@@ -154,9 +152,9 @@ export class EntityCardComponent extends iXObject implements OnInit {
     if (this.conf.cardActions) {
       this.actions = true;
       return this.conf.cardActions;
-    } else {
-      this.actions = false;
-      /*
+    }
+    this.actions = false;
+    /*
       return [{
         id: "edit",
         label: "Edit",
@@ -166,16 +164,14 @@ export class EntityCardComponent extends iXObject implements OnInit {
 	  this.lazyLoaded = true;
 	  //this.conf.isFlipped = true;
 	},
-      }]*/
-    }
+      }] */
   }
 
   getAddActions() {
     if (this.conf.getAddActions) {
       return this.conf.getAddActions();
-    } else {
-      return [];
     }
+    return [];
   }
 
   rowValue(row, attr) {
@@ -199,10 +195,9 @@ export class EntityCardComponent extends iXObject implements OnInit {
   }
 
   doDelete() {
-
-    this.dialog.confirm("Delete", "Delete this item?").subscribe((res) => {
+    this.dialog.confirm('Delete', 'Delete this item?').subscribe((res) => {
       if (res) {
-	/*
+        /*
         this.loader.open();
         this.loaderOpen = true;
         let data = {};
@@ -214,11 +209,11 @@ export class EntityCardComponent extends iXObject implements OnInit {
         );
 	*/
       }
-    })
+    });
 
     this.toggleFlip();
   }
-  toggleFlip(){
-  this.conf.isFlipped = !this.conf.isFlipped;
+  toggleFlip() {
+    this.conf.isFlipped = !this.conf.isFlipped;
   }
 }

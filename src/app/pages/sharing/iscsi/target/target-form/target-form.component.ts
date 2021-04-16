@@ -3,26 +3,25 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 
-import { IscsiService, WebSocketService, AppLoaderService } from '../../../../../services/';
+import { IscsiService, WebSocketService, AppLoaderService } from '../../../../../services';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
 
 @Component({
   selector: 'app-iscsi-target-form',
-  template: `<entity-form [conf]="this"></entity-form>`,
+  template: '<entity-form [conf]="this"></entity-form>',
   providers: [IscsiService],
 })
 export class TargetFormComponent {
-
   protected queryCall = 'iscsi.target.query';
   protected addCall = 'iscsi.target.create';
   protected editCall = 'iscsi.target.update';
-  public route_success: string[] = ['sharing', 'iscsi', 'target'];
-  protected customFilter: Array<any> = [[["id", "="]]];
+  route_success: string[] = ['sharing', 'iscsi', 'target'];
+  protected customFilter: any[] = [[['id', '=']]];
   protected isEntity = true;
 
-  public fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext_sharing_iscsi.fieldset_target_basic,
       label: true,
@@ -51,21 +50,21 @@ export class TargetFormComponent {
           options: [
             {
               label: 'iSCSI',
-              value: 'ISCSI'
+              value: 'ISCSI',
             },
             {
               label: 'Fibre Channel',
-              value: 'FC'
+              value: 'FC',
             },
             {
               label: 'Both',
-              value: 'BOTH'
-            }
+              value: 'BOTH',
+            },
           ],
           value: 'ISCSI',
           isHidden: true,
-        }
-      ]
+        },
+      ],
     },
     {
       name: helptext_sharing_iscsi.fieldset_target_group,
@@ -118,7 +117,7 @@ export class TargetFormComponent {
                 {
                   label: 'Mutual CHAP',
                   value: 'CHAP_MUTUAL',
-                }
+                },
               ],
               class: 'inline',
               width: '50%',
@@ -135,11 +134,11 @@ export class TargetFormComponent {
             },
           ],
           listFields: [],
-        }
-      ]
-    }
-  ]
-  public fieldConfig;
+        },
+      ],
+    },
+  ];
+  fieldConfig;
 
   private pk: any;
   protected entityForm: any;
@@ -155,15 +154,15 @@ export class TargetFormComponent {
         if (res.license && res.license.features.indexOf('FIBRECHANNEL') > -1) {
           _.find(basicFieldset.config, { name: 'mode' }).isHidden = false;
         }
-      }
-    )
+      },
+    );
   }
 
   async prerequisite(): Promise<boolean> {
     const targetGroupFieldset = _.find(this.fieldSets, { class: 'group' });
-    const portalGroupField = _.find(targetGroupFieldset.config, { 'name': 'groups' }).templateListField[0];
-    const initiatorGroupField = _.find(targetGroupFieldset.config, { 'name': 'groups' }).templateListField[1];
-    const authGroupField = _.find(targetGroupFieldset.config, { 'name': 'groups' }).templateListField[3];
+    const portalGroupField = _.find(targetGroupFieldset.config, { name: 'groups' }).templateListField[0];
+    const initiatorGroupField = _.find(targetGroupFieldset.config, { name: 'groups' }).templateListField[1];
+    const authGroupField = _.find(targetGroupFieldset.config, { name: 'groups' }).templateListField[3];
     const promise1 = new Promise((resolve, reject) => {
       this.iscsiService.listPortals().toPromise().then(
         (protalRes) => {
@@ -172,13 +171,13 @@ export class TargetFormComponent {
             if (protalRes[i].comment) {
               label += ' (' + protalRes[i].comment + ')';
             }
-            portalGroupField.options.push({ label: label, value: protalRes[i].id })
+            portalGroupField.options.push({ label, value: protalRes[i].id });
           }
           resolve(true);
         },
         (protalErr) => {
           resolve(false);
-        }
+        },
       );
     });
     const promise2 = new Promise((resolve, reject) => {
@@ -187,19 +186,19 @@ export class TargetFormComponent {
           initiatorGroupField.options.push({ label: 'None', value: null });
           for (let i = 0; i < initiatorsRes.length; i++) {
             const optionLabel = initiatorsRes[i].id + ' (' + (initiatorsRes[i].initiators.length === 0 ? 'ALL Initiators Allowed' : initiatorsRes[i].initiators.toString()) + ')';
-            initiatorGroupField.options.push({ label: optionLabel, value: initiatorsRes[i].id })
+            initiatorGroupField.options.push({ label: optionLabel, value: initiatorsRes[i].id });
           }
           resolve(true);
         },
         (initiatorsErr) => {
           resolve(false);
-        }
+        },
       );
     });
     const promise3 = new Promise((resolve, reject) => {
       this.iscsiService.getAuth().toPromise().then(
         (authRes) => {
-          const tags = _.uniq(authRes.map(item => item.tag));
+          const tags = _.uniq(authRes.map((item) => item.tag));
           authGroupField.options.push({ label: 'None', value: null });
           for (const tag of tags) {
             authGroupField.options.push({ label: tag, value: tag });
@@ -208,26 +207,22 @@ export class TargetFormComponent {
         },
         (authErr) => {
           resolve(false);
-        }
+        },
       );
     });
 
     return await Promise.all([promise1, promise2, promise3]).then(
-      (res) => {
-        return true;
-      }
+      (res) => true,
     );
   }
 
   preInit() {
-    this.aroute.params.subscribe(params => {
+    this.aroute.params.subscribe((params) => {
       if (params['pk']) {
         this.pk = params['pk'];
         this.customFilter[0][0].push(parseInt(params['pk'], 10));
       }
     });
-
-
   }
 
   afterInit(entityForm: any) {
@@ -245,7 +240,7 @@ export class TargetFormComponent {
       (res) => {
         this.loader.close();
         new EntityUtils().handleWSError(this.entityForm, res);
-      }
+      },
     );
   }
 }

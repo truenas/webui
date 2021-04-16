@@ -1,21 +1,21 @@
 import { NgModule, Injector } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
-import { FlexLayoutModule } from "@angular/flex-layout";
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgxWebstorageModule } from 'ngx-webstorage';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 
-import { MaterialModule} from './appMaterial.module'; //customized MaterialModule
+import { MaterialModule } from './appMaterial.module'; // customized MaterialModule
 import { rootRouterConfig } from './app.routes';
-import { AppCommonModule } from "./components/common/app-common.module";
+import { AppCommonModule } from './components/common/app-common.module';
 import { AppComponent } from './app.component';
 
 import { RoutePartsService } from './services/route-parts/route-parts.service';
-import { NavigationService } from "./services/navigation/navigation.service";
+import { NavigationService } from './services/navigation/navigation.service';
 import { AuthService } from './services/auth/auth.service';
 import { ConfirmDialog } from './pages/common/confirm-dialog/confirm-dialog.component';
 import { PasswordDialog } from './pages/common/password-dialog/password-dialog.component';
@@ -26,7 +26,7 @@ import { DirectoryServicesMonitorComponent } from './components/common/dialog/di
 import { ConsolePanelModalDialog } from './components/common/dialog/consolepanel/consolepanel-dialog.component';
 import { DownloadKeyModalDialog } from './components/common/dialog/downloadkey/downloadkey-dialog.component';
 import { ResilverProgressDialogComponent } from './components/common/dialog/resilver-progress/resilver-progress.component';
-import {SelectDialogComponent} from './pages/common/select-dialog/select-dialog.component'
+import { SelectDialogComponent } from './pages/common/select-dialog/select-dialog.component';
 import { ErrorDialog } from './pages/common/error-dialog/error-dialog.component';
 import { InfoDialog } from './pages/common/info-dialog/info-dialog.component';
 import { GeneralDialogComponent } from './pages/common/general-dialog/general-dialog.component';
@@ -41,12 +41,12 @@ import { NotificationsService } from 'app/services/notifications.service';
 import { MarkdownModule } from 'ngx-markdown';
 
 // Core Application Services and Service Injector
-import { CoreServices} from 'app/core/services/coreservices.module';
+import { CoreServices } from 'app/core/services/coreservices.module';
 import { setCoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreComponents } from 'app/core/components/corecomponents.module';
 
 import { ErdService } from 'app/services/erd.service';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { EntityDialogComponent } from './pages/common/entity/entity-dialog/entity-dialog.component';
 import { FormCheckboxComponent } from './pages/common/entity/entity-form/components/form-checkbox/form-checkbox.component';
@@ -71,8 +71,8 @@ export function createTranslateLoader(http: HttpClient) {
       loader: {
         provide: TranslateLoader,
         useFactory: (createTranslateLoader),
-        deps: [HttpClient]
-      }
+        deps: [HttpClient],
+      },
     }),
     MaterialModule,
     RouterModule.forRoot(rootRouterConfig, { useHash: false }),
@@ -98,7 +98,7 @@ export function createTranslateLoader(http: HttpClient) {
     ConsolePanelModalDialog,
     DownloadKeyModalDialog,
     ResilverProgressDialogComponent,
-    SelectDialogComponent
+    SelectDialogComponent,
   ],
   providers: [
     RoutePartsService,
@@ -106,12 +106,12 @@ export function createTranslateLoader(http: HttpClient) {
     AuthService,
     WebSocketService,
     RestService,
-    AppLoaderService, 
+    AppLoaderService,
     NotificationsService,
     ErdService,
     ENV_PROVIDERS],
   bootstrap: [
-    AppComponent
+    AppComponent,
   ],
   entryComponents: [
     AppLoaderComponent,
@@ -132,16 +132,16 @@ export function createTranslateLoader(http: HttpClient) {
     FormCheckboxComponent,
     FormInputComponent,
     FormSelectComponent,
-    FormParagraphComponent
+    FormParagraphComponent,
   ],
 })
-export class AppModule { 
+export class AppModule {
   /**
    *      * Allows for retrieving singletons using `AppModule.injector.get(MyService)`
    *           * This is good to prevent injecting the service as constructor parameter.
    *                */
-   static injector: Injector;
-   constructor(injector: Injector) {
-     setCoreServiceInjector(injector);
-   }
+  static injector: Injector;
+  constructor(injector: Injector) {
+    setCoreServiceInjector(injector);
+  }
 }
