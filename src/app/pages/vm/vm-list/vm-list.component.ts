@@ -455,11 +455,11 @@ export class VMListComponent implements OnDestroy {
             label: T("Display"),
             onClick: display_vm => {
                 this.loader.open();
-                this.ws.call("vm.get_display_devices", [display_vm.id]).subscribe((res) => {
-                    if(res.length === 1 && !res[0].attributes.password_configured) {
-                        this.ws.call("vm.get_display_web_uri", [display_vm.id]).subscribe((res) => {
+                this.ws.call("vm.get_display_devices", [display_vm.id]).subscribe((display_devices_res) => {
+                    if(display_devices_res.length === 1 && !display_devices_res[0].attributes.password_configured) {
+                        this.ws.call("vm.get_display_web_uri", [display_vm.id, "10.234.1.13"]).subscribe((web_uri_res) => {
                             this.loader.close();
-                            window.open(res[0], "_blank")
+                            window.open(web_uri_res[display_devices_res[0].id], "_blank")
                         }, err => {
                             this.loader.close();
                             new EntityUtils().handleError(this, err);
@@ -473,13 +473,13 @@ export class VMListComponent implements OnDestroy {
                                 type: 'radio',
                                 name: 'display_device',
                                 placeholder: T("Display Device"),
-                                options: res.map((d) => {return {label: d.attributes.type, value: d.id};}),
+                                options: display_devices_res.map((d) => {return {label: d.attributes.type, value: d.id};}),
                                 validation: [Validators.required],
                             }],
                             saveButtonText: "Open",
                             parent: this,
                             customSubmit: (entityDialog) => {
-                                const display_device = _.find(res, {id: entityDialog.formValue.display_device});
+                                const display_device = _.find(display_devices_res, {id: entityDialog.formValue.display_device});
                                 if(display_device.attributes.password_configured) {
                                     const pass_conf: DialogFormConfiguration = {
                                         title: T("Enter password"),
@@ -495,9 +495,9 @@ export class VMListComponent implements OnDestroy {
                                         parent: this,
                                         customSubmit: (passDialog) => {
                                             this.loader.open();
-                                            this.ws.call("vm.get_display_web_uri", [display_vm.id, "192.168.18.147", {"devices_passwords": [{"device_id": display_device.id, "password": passDialog.formValue.password}]}]).subscribe((pass_res) => {
+                                            this.ws.call("vm.get_display_web_uri", [display_vm.id, "10.234.1.13", {"devices_passwords": [{"device_id": display_device.id, "password": passDialog.formValue.password}]}]).subscribe((pass_res) => {
                                                 this.loader.close();
-                                                window.open(pass_res[0], "_blank")
+                                                window.open(pass_res[display_device.id], "_blank")
                                             }, err => {
                                                 this.loader.close();
                                                 new EntityUtils().handleError(this, err);
@@ -508,9 +508,9 @@ export class VMListComponent implements OnDestroy {
                                     this.dialogService.dialogForm(pass_conf);
                                 } else {
                                     this.loader.open();
-                                    this.ws.call("vm.get_display_web_uri", [display_vm.id]).subscribe((res) => {
+                                    this.ws.call("vm.get_display_web_uri", [display_vm.id, "10.234.1.13"]).subscribe((web_uris_res) => {
                                         this.loader.close();
-                                        window.open(res[0], "_blank")
+                                        window.open(web_uris_res[display_device.id], "_blank")
                                     }, err => {
                                         this.loader.close();
                                         new EntityUtils().handleError(this, err);
