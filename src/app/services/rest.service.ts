@@ -8,18 +8,8 @@ import 'rxjs/Rx';
 
 
 import { Injectable } from '@angular/core';
-/* import {
-  Headers,
-  Http,
-  Request,
-  RequestMethod,
-  RequestOptions,
-  Response
-} from '@angular/http'; */
 
 import { HttpClient } from '@angular/common/http';
-
-import { environment } from '../../environments/environment';
 
 import { WebSocketService } from './ws.service';
 
@@ -49,7 +39,7 @@ export class RestService {
 
     if (range) {
       total = range.split('/');
-      total = new Number(total[total.length - 1]);
+      total = Number(total[total.length - 1]);
     }
     if (res.status !== 204) {
       try {

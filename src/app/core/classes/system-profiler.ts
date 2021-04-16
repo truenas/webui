@@ -29,8 +29,9 @@ export class SystemProfiler {
     return this._diskData;
   }
   set diskData(obj){
+    this._diskData = null;
     this._diskData = obj;
-    this.parseDiskData(this._diskData);
+    this.parseDiskData(obj);
     this.parseEnclosures(this._enclosures);
   }
 
@@ -61,9 +62,9 @@ export class SystemProfiler {
     this.parseSensorData(this._sensorData);
   }
 
-  constructor(model, data) {
+  constructor(model, enclosures) {
     this.platform = model;
-    this.enclosures = data;
+    this.enclosures = enclosures;
     this.createProfile();
   }
 
@@ -113,10 +114,13 @@ export class SystemProfiler {
   }
 
   private parseDiskData(disks){
+    // Clean the slate before we start
+    this.profile.forEach(enc => enc.disks = []);
+
     let data = disks; // DEBUG
     data.forEach((item, index) => {
 
-      if(!item.enclosure){return} 
+      if(!item.enclosure){return} // Ignore boot disks
 
       let enclosure = this.profile[item.enclosure.number];
       if(!enclosure){return} 
@@ -318,6 +322,10 @@ export class SystemProfiler {
   
   getEnclosureLabel(key){
     return this.enclosures[key].label == this.enclosures[key].name ? this.enclosures[key].label : this.enclosures[key].model;
+  }
+
+  public getDiskByID(id: string){
+    return this.diskData ? this.diskData.find((disk) => disk.identifier == id) : null;
   }
 
 }

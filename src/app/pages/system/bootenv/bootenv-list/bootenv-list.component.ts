@@ -121,7 +121,7 @@ export class BootEnvironmentListComponent {
           this.doActivate(row.id);
         }
       });
-     } 
+     }
 
     actions.push({
       label : T("Clone"),
@@ -140,7 +140,7 @@ export class BootEnvironmentListComponent {
             [ "system", "boot", "rename", row.id ]));
       }
     });
-    
+
     if (row.active === '-'){
       actions.push({
         label: T("Delete"),
@@ -187,7 +187,6 @@ export class BootEnvironmentListComponent {
     return actions;
   }
 
-  // tslint:disable-next-line: member-ordering
   public multiActions: Array < any > = [{
     id: "mdelete",
     label: T("Delete"),
