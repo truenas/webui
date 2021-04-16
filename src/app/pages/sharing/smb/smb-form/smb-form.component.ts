@@ -368,15 +368,28 @@ export class SMBFormComponent {
   restartService(entityForm, source: string) {
     const message = source === 'timemachine' ? helptext_sharing_smb.restart_smb_dialog.message_time_machine
       : helptext_sharing_smb.restart_smb_dialog.message_allow_deny;
-    this.dialog.confirm(helptext_sharing_smb.restart_smb_dialog.title, message,
-      true, helptext_sharing_smb.restart_smb_dialog.title, false, '', '', '', '', false,
-      helptext_sharing_smb.restart_smb_dialog.cancel_btn).subscribe((res) => {
+    this.dialog.confirm(
+      helptext_sharing_smb.restart_smb_dialog.title,
+      message,
+      true,
+      helptext_sharing_smb.restart_smb_dialog.action_btn,
+      false,
+      '',
+      '',
+      '',
+      '',
+      false,
+      helptext_sharing_smb.restart_smb_dialog.cancel_btn,
+    ).subscribe((res) => {
       if (res) {
         this.loader.open();
         this.ws.call('service.restart', ['cifs']).subscribe(() => {
           this.loader.close();
-          this.dialog.Info(helptext_sharing_smb.restarted_smb_dialog.title,
-            helptext_sharing_smb.restarted_smb_dialog.message, '250px').subscribe(() => {
+          this.dialog.Info(
+            helptext_sharing_smb.restarted_smb_dialog.title,
+            helptext_sharing_smb.restarted_smb_dialog.message,
+            '250px',
+          ).subscribe(() => {
             this.checkACLactions(entityForm);
           });
         }, (err) => {
