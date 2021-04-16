@@ -238,6 +238,18 @@ export class VMListComponent implements OnDestroy {
             }
         });
     }
+    extractHostname(url: string) {
+        let hostname;
+        if (url.indexOf("//") > -1) {
+            hostname = url.split('/')[2];
+        } else {
+            hostname = url.split('/')[0];
+        }
+        hostname = hostname.split(':')[0];
+        hostname = hostname.split('?')[0];
+
+        return hostname;
+    }
 
     doRowAction(row, method, params = [row.id], updateTable = false) {
         if (method === 'vm.stop') {
@@ -457,7 +469,7 @@ export class VMListComponent implements OnDestroy {
                 this.loader.open();
                 this.ws.call("vm.get_display_devices", [display_vm.id]).subscribe((display_devices_res) => {
                     if(display_devices_res.length === 1 && !display_devices_res[0].attributes.password_configured) {
-                        this.ws.call("vm.get_display_web_uri", [display_vm.id, "10.234.1.13"]).subscribe((web_uri_res) => {
+                        this.ws.call("vm.get_display_web_uri", [display_vm.id, this.extractHostname(window.origin)]).subscribe((web_uri_res) => {
                             this.loader.close();
                             window.open(web_uri_res[display_devices_res[0].id], "_blank")
                         }, err => {
@@ -495,7 +507,7 @@ export class VMListComponent implements OnDestroy {
                                         parent: this,
                                         customSubmit: (passDialog) => {
                                             this.loader.open();
-                                            this.ws.call("vm.get_display_web_uri", [display_vm.id, "10.234.1.13", {"devices_passwords": [{"device_id": display_device.id, "password": passDialog.formValue.password}]}]).subscribe((pass_res) => {
+                                            this.ws.call("vm.get_display_web_uri", [display_vm.id, this.extractHostname(window.origin), {"devices_passwords": [{"device_id": display_device.id, "password": passDialog.formValue.password}]}]).subscribe((pass_res) => {
                                                 this.loader.close();
                                                 window.open(pass_res[display_device.id], "_blank")
                                             }, err => {
@@ -508,7 +520,7 @@ export class VMListComponent implements OnDestroy {
                                     this.dialogService.dialogForm(pass_conf);
                                 } else {
                                     this.loader.open();
-                                    this.ws.call("vm.get_display_web_uri", [display_vm.id, "10.234.1.13"]).subscribe((web_uris_res) => {
+                                    this.ws.call("vm.get_display_web_uri", [display_vm.id, this.extractHostname(window.origin)]).subscribe((web_uris_res) => {
                                         this.loader.close();
                                         window.open(web_uris_res[display_device.id], "_blank")
                                     }, err => {
