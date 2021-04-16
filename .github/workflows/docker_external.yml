@@ -1,7 +1,6 @@
 name: build_image
 
 on:
-  if: github.event.pull_request.head.repo.full_name != github.repository
   pull_request:
     types:
       - 'synchronize'
@@ -11,6 +10,7 @@ env:
   PR_NUMBER: ${{ github.event.pull_request.number }}
 
 jobs:
+  if: github.event.pull_request.head.repo.full_name != github.repository
   docker:
     environment: CIENV
     runs-on: ubuntu-latest
