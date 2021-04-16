@@ -106,6 +106,19 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
       this.screenType = st;
     });
+
+    // Fetch CPU core count from SysInfo cache
+    this.core.register({
+      observerClass: this, 
+      eventName:"SysInfo"
+    }).subscribe((evt: CoreEvent) => {
+      this.coreCount = evt.data.cores;
+    });
+
+    this.core.emit({
+      name: "SysInfoRequest",
+      sender: this
+    });
   }
 
   ngOnDestroy(){
@@ -114,7 +127,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
   ngAfterViewInit(){
 
-    this.core.register({observerClass: this, eventName:"ThemeChanged"}).subscribe((evt: CoreEvent) => {
+    this.core.register({
+      observerClass: this, 
+      eventName:"ThemeChanged"
+    }).subscribe((evt: CoreEvent) => {
       d3.select('#grad1 .begin')
         .style('stop-color', this.getHighlightColor(0))
 
@@ -137,19 +153,15 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.tempAvailable = data.temperature && Object.keys(data.temperature).length > 0 ? 'true' : 'false';
     let usageColumn: any[] = ["Usage"];
     let temperatureColumn: any[] = ["Temperature"];
+    let temperatureValues = [];
 
 
     // Calculate number of cores...
     let keys = Object.keys(data);
     const threads = keys.filter((n) => !isNaN(parseFloat(n)));
-    let temperatureValues = [];
+    this.threadCount = threads.length;
 
-    this.hyperthread = threads.length !== Object.keys(data.temperature).length;
-
-    if(!this.coreCount){
-      this.threadCount = threads.length;
-      this.coreCount = this.hyperthread ? threads.length / 2 : threads.length;
-    }
+    this.hyperthread = threads.length !== this.coreCount;
     
     for(let i = 0; i < this.threadCount; i++){
       usageColumn.push( parseInt(data[i.toString()].usage.toFixed(1)) );
