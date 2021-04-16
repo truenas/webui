@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { ProductType } from '../../../enums/product-type.enum';
 import { WebSocketService, SystemGeneralService } from '../../../services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -13,18 +14,20 @@ import { LocaleService } from 'app/services/locale.service';
   templateUrl: './shutdown.component.html',
   styleUrls: ['./shutdown.component.css']
 })
-export class ShutdownComponent implements OnInit {    
-  
-  public product_type: string;
+export class ShutdownComponent implements OnInit {
+
+  public product_type: ProductType;
   public copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
   public getProdType: Subscription;
 
-  constructor(protected ws: WebSocketService, protected router: Router, 
+  readonly ProductType = ProductType;
+
+  constructor(protected ws: WebSocketService, protected router: Router,
     protected loader: AppLoaderService, public translate: TranslateService,
     protected dialogService: DialogService, private sysGeneralService: SystemGeneralService, private localeService: LocaleService) {
       this.ws = ws;
       this.getProdType = this.sysGeneralService.getProductType.subscribe((res)=>{
-        this.product_type = res;
+        this.product_type = res as ProductType;
         this.getProdType.unsubscribe();
       });
   }

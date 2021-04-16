@@ -3,6 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { ProductType } from '../../../../enums/product-type.enum';
 import { T } from '../../../../translate-marker';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import * as _ from 'lodash';
@@ -95,7 +96,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
   }
 
   preInit(entityForm: any) {
-    if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
+    if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         if (is_ha) {
           this.isHA = true;

@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
+import { ProductType } from '../../../enums/product-type.enum';
 import { WebSocketService, SystemGeneralService, StorageService } from '../../../services/';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -48,7 +49,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   public isUpdateRunning = false;
   public updateMethod: string = 'update.update';
   public is_ha = false;
-  public product_type: string;
+  public product_type: ProductType;
   public ds: any;
   public failover_upgrade_pending = false;
   public busy: Subscription;
@@ -93,11 +94,14 @@ export class UpdateComponent implements OnInit, OnDestroy {
   };
 
   protected dialogRef: any;
+
+  readonly ProductType = ProductType;
+
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected ws: WebSocketService, protected dialog: MatDialog, public sysGenService: SystemGeneralService,
     protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService,
     protected storage: StorageService, protected http: HttpClient, public core: CoreService) {
-      this.sysGenService.updateRunning.subscribe((res) => { 
+      this.sysGenService.updateRunning.subscribe((res) => {
         res === 'true' ? this.isUpdateRunning = true : this.isUpdateRunning = false });
   }
 
@@ -127,7 +131,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.product_type = window.localStorage.getItem('product_type');
+    this.product_type = window.localStorage.getItem('product_type') as ProductType;
 
     // Get system info from global cache
     this.core.register({ observerClass: this, eventName: "SysInfo"}).subscribe((evt: CoreEvent) => {
@@ -141,15 +145,15 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
       this.busy2 = this.ws.call('update.get_trains').subscribe((res) => {
         this.fullTrainList = res.trains;
-  
+
         // On page load, make sure we are working with train of the current OS
         this.train = res.current;
         this.selectedTrain = res.current;
-  
+
         if (this.autoCheck) {
           this.check();
         }
-  
+
         this.trains = [];
         for (const i in res.trains) {
           this.trains.push({ name: i, description: res.trains[i].description });
@@ -157,7 +161,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
         if (this.trains.length > 0) {
           this.singleDescription = this.trains[0].description;
         }
-        
+
         if (this.fullTrainList[res.current]) {
           if (this.fullTrainList[res.current].description.toLowerCase().includes('[nightly]')) {
             this.currentTrainDescription = '[nightly]';
@@ -168,7 +172,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
           } else {
             this.currentTrainDescription = res.trains[this.selectedTrain].description.toLowerCase();
           }
-        } else { 
+        } else {
             this.currentTrainDescription = '';
         }
         // To remember train descrip if user switches away and then switches back
@@ -176,7 +180,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
       });
     });
 
-    if (this.product_type.includes('ENTERPRISE')) {
+    if (this.product_type.includes(ProductType.Enterprise)) {
       setTimeout(() => { // To get around too many concurrent calls???
         this.ws.call('failover.licensed').subscribe((res) => {
           if (res) {
@@ -184,7 +188,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
             this.is_ha = true;
           };
           this.checkForUpdateRunning();
-        });        
+        });
       })
 
     } else {
@@ -281,7 +285,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
   setTrainAndCheck() {
     this.showSpinner = true;
-    this.ws.call('update.set_train', [this.train]).subscribe(() => { 
+    this.ws.call('update.set_train', [this.train]).subscribe(() => {
       this.check();
     },(err) => {
       new EntityUtils().handleWSError(this, err, this.dialogService);
@@ -294,7 +298,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
 
   check() {
     // Reset the template
-    this.updates_available = false; 
+    this.updates_available = false;
     this.releaseNotes = '';
 
     this.showSpinner = true;
@@ -547,7 +551,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
         this.dialogService.errorReport(res.error, res.reason, res.trace.formatted);
       });
     } else {
-      this.ws.call('update.set_train', [this.train]).subscribe(() => { 
+      this.ws.call('update.set_train', [this.train]).subscribe(() => {
         this.dialogRef.componentInstance.setCall('failover.upgrade');
         this.dialogRef.componentInstance.disableProgressValue(true);
         this.dialogRef.componentInstance.submit();
@@ -555,9 +559,9 @@ export class UpdateComponent implements OnInit, OnDestroy {
           this.dialogService.closeAllDialogs();
           this.isUpdateRunning = false;
           this.sysGenService.updateDone(); // Send 'finished' signal to topbar
-          this.router.navigate(['/']); 
-          this.dialogService.confirm(helptext.ha_update.complete_title, 
-            helptext.ha_update.complete_msg, true, 
+          this.router.navigate(['/']);
+          this.dialogService.confirm(helptext.ha_update.complete_title,
+            helptext.ha_update.complete_msg, true,
             helptext.ha_update.complete_action,false, '','','','', true).subscribe(() => {
             });
         });
@@ -585,7 +589,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
             mimetype = 'application/x-sqlite3';
           }
         }
-  
+
         entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
           .subscribe(
             (succ) => {
@@ -616,7 +620,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
             }
           );
     }
-  
+
     // Continutes the update (based on its type) after the Save Config dialog is closed
     continueUpdate() {
       switch (this.updateType) {

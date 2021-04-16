@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { helptext_system_email } from 'app/helptext/system/email';
 import * as _ from 'lodash';
+import { ProductType } from '../../../enums/product-type.enum';
 import { DialogService, RestService, WebSocketService, AppLoaderService } from '../../../services/';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
@@ -47,7 +48,7 @@ export class EmailComponent implements OnDestroy {
         delete value.send_mail_method;
         delete value.oauth_applied;
 
-        const product_type = window.localStorage.getItem('product_type');
+        const product_type = window.localStorage.getItem('product_type') as ProductType;
         const mailObj = {
           "subject" : "TrueNAS Test Message",
           "text" : `This is a test message from TrueNAS ${product_type}.`,
@@ -252,7 +253,7 @@ export class EmailComponent implements OnDestroy {
     this.pass = this.fieldSets.config('pass');
     this.smtp = entityEdit.formGroup.controls['smtp'];
     this.sendMailMethod = entityEdit.formGroup.controls['send_mail_method'];
-    
+
     this.oauthCreds.subscribe(value => {
       this.sendMailMethod.setValue(!value.client_id);
     });
