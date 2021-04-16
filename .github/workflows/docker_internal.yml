@@ -1,4 +1,4 @@
-name: build_image
+name: 'Internal PR Docker Build'
 
 on:
   pull_request:
