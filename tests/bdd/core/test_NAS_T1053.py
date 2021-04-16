@@ -52,7 +52,7 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
 def on_the_dashboard_click_on_sharing_on_the_side_menu_click_on_unix_shares(driver):
     """on the dashboard, click on Sharing on the side menu, click on Unix Shares."""
     assert wait_on_element(driver, 10, '//li[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Sharing"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Sharing"]').click()
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Unix Shares (NFS)"]', 'clickable')

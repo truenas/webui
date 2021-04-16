@@ -48,7 +48,7 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
 def you_should_be_on_the_dashboard(driver):
     """you should be on the dashboard."""
     assert wait_on_element(driver, 10, '//li[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
 
 
 @then('click Storage on the side menu and click Pools')

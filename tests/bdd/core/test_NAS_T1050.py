@@ -57,7 +57,7 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
 def on_the_dashboard_click_on_storage_on_the_side_menu_click_on_pools(driver):
     """on the dashboard, click on Storage on the side menu, click on Pools."""
     assert wait_on_element(driver, 10, '//li[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Pools"]', 'clickable')
