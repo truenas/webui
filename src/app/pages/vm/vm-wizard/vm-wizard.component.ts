@@ -991,7 +991,9 @@ async customSubmit(value) {
       vm_payload["devices"].push(...this.gpus[gpuIndex].devices.map(d => {
         return {
           dtype: "PCI",
-          attributes: {...d}
+          attributes: {
+            pptdev: d.vm_pci_slot
+          }
         }
       }))
     }
