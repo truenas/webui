@@ -31,19 +31,15 @@ export class ViewComponent extends View {
     this.themeService = CoreServiceInjector.get(ThemeService);
   }
 
-  ngOnInit() {
-
-  }
-  
   set data(data:any){
     this._data = data;
   }
 
-  get data(){
+  get data(): any {
     return this._data;
   }
 
-  colorsFromTheme(){
+  colorsFromTheme(): string[] {
     let theme = this.themeService.currentTheme();
     let accentColors: string[] = []; //[theme.magenta, theme.cyan, theme.red, theme.blue, theme.green, theme.orange, theme.yellow, theme.violet]
     for(let i = 0; i < theme.accentColors.length; i++){

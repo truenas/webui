@@ -39,12 +39,13 @@ export class AboutModalDialog {
     protected translate: TranslateService,
     protected core: CoreService,
     private prefServices: PreferencesService,
-    private localeService: LocaleService) {
+    private localeService: LocaleService
+  ) {
       this.extraMsg = data.extraMsg;
       this.systemType = data.systemType;
     }
 
-    turnOffWelcomeDialog() {
+    turnOffWelcomeDialog(): void {
       this.core.emit({ name: "ChangePreference", data: {key: "showWelcomeDialog", value: false}, sender:this});
     }
 }

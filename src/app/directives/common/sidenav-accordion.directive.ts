@@ -22,10 +22,11 @@ export class SideNavAccordionDirective implements OnInit {
   }
 
   @HostListener('click', ['$event'])
-  onClick($event) {
-    var parentLi = domHelper.findClosest($event.target, 'mat-list-item');
-    domHelper.addClass($event.target.parentElement, 'highlight')
-    setTimeout(() => {domHelper.removeClass($event.target.parentElement, 'highlight')}, 100);
+  onClick($event: MouseEvent) {
+    const target = $event.target as HTMLElement;
+    var parentLi = domHelper.findClosest(target, 'mat-list-item');
+    domHelper.addClass(target.parentElement, 'highlight')
+    setTimeout(() => {domHelper.removeClass(target.parentElement, 'highlight')}, 100);
     if (!domHelper.hasClass(parentLi, 'has-submenu')) {
       // PREVENTS CLOSING PARENT ITEM
       return;
@@ -34,16 +35,16 @@ export class SideNavAccordionDirective implements OnInit {
   }
 
   // For collapsed sidebar
-  @HostListener('mouseenter', ['$event'])
-  onMouseEnter($event) {
+  @HostListener('mouseenter')
+  onMouseEnter() {
     let elem = this.el.nativeElement;
     let isCollapsed = domHelper.hasClass(document.body, 'collapsed-menu');
     if (!isCollapsed)
       return;
     domHelper.addClass(elem, 'open');
   }
-  @HostListener('mouseleave', ['$event'])
-  onMouseLeave($event) {
+  @HostListener('mouseleave')
+  onMouseLeave() {
     let elem = this.el.nativeElement;
     let isCollapsed = domHelper.hasClass(document.body, 'collapsed-menu');
     if (!isCollapsed)

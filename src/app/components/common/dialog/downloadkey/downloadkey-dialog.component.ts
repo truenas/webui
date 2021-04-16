@@ -34,7 +34,7 @@ export class DownloadKeyModalDialog {
     public dialog: MatDialog,
     private loader:AppLoaderService) { }
 
-  downloadKey() {
+  downloadKey(): void {
     const payload = [this.volumeId];
     if (this.fileName !== undefined) {
       payload.push(this.fileName);

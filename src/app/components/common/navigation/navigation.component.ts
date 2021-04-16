@@ -14,7 +14,7 @@ import { filter } from 'rxjs/operators';
   templateUrl: './navigation.template.html'
 })
 export class NavigationComponent extends ViewControllerComponent implements OnInit {
-  hasIconTypeMenuItem;
+  hasIconTypeMenuItem: boolean;
   iconTypeMenuTitle:string;
   menuItems:any[];
   menuList = document.getElementsByClassName('top-level');
@@ -28,7 +28,7 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.iconTypeMenuTitle = this.navService.iconTypeMenuTitle;
     // Loads menu items from NavigationService
     this.navService.menuItems$.subscribe(menuItem => {
@@ -94,15 +94,15 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
     });
   }
 
-  toggleMenu(state, sub) {
+  toggleMenu(state: any, sub: any): void {
     this.onToggleMenu.emit([state, sub]);
   }
 
-  closeMenu() {
+  closeMenu(): void {
     this.onCloseMenu.emit();
   }
 
-  updateHighlightedClass(state) {
+  updateHighlightedClass(state: any): void {
     this.isHighlighted = state;
   }
  }

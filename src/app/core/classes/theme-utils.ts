@@ -3,11 +3,11 @@ export class ThemeUtils {
   constructor() {
   }
 
-  public textContrast(cssVar, bgVar){
+  public textContrast(cssVar: string, bgVar: string){
     let txtColor = '';
     // Convert hex value to RGB
     const cssVarType = this.getValueType(cssVar);
-    let props = cssVarType == 'hex' ? this.hexToRGB(cssVar) : { rgb: this.rgbToArray(cssVar) }; 
+    let props = cssVarType == 'hex' ? this.hexToRGB(cssVar) : { rgb: this.rgbToArray(cssVar) };
 
     // Find the average value to determine brightness
     let brightest = (props.rgb[0] + props.rgb[1] + props.rgb[2]) / 3;
@@ -17,7 +17,7 @@ export class ThemeUtils {
     } else if(brightest > 191) {
       txtColor = "#333333"
     } else {
-      // RGB averages between 144-197 are to be 
+      // RGB averages between 144-197 are to be
       // matched to bg2 css variable.
       const bgPropType = this.getValueType(bgVar);
       let bgProp = bgPropType == 'hex' ?  this.hexToRGB(bgVar) : { rgb: this.rgbToArray(bgVar) };
@@ -48,7 +48,7 @@ export class ThemeUtils {
     }
 
     return valueType;
-    
+
   }
 
   convertToRGB(value: string){
@@ -67,7 +67,7 @@ export class ThemeUtils {
     }
   }
 
-  hexToRGB(str) {
+  hexToRGB(str: string) {
     const valueType = this.getValueType(str); // cssVar || hex || rgb || rgba
     if(valueType != "hex") console.error("This method takes a hex value as a parameter but was given a value of type " + valueType);
 
@@ -111,11 +111,11 @@ export class ThemeUtils {
     const trimFront = value.replace(prefix, "");
     const trimmed = trimFront.replace(")", "");
     const output = trimmed.split(",");
-    
+
     return output.map((str) => parseFloat(str));
   }
 
-  
+
   public colorFromMeta(meta:string):string{
     let trimFront = meta.replace('var(--','');
     let trimmed = trimFront.replace(')','');
@@ -139,37 +139,37 @@ export class ThemeUtils {
     return this.adjustLightness(value, pc, "darken");
   }
 
-  lighten(value: string, pc: number ): string{ 
+  lighten(value: string, pc: number ): string{
     return this.adjustLightness(value, pc, "lighten");
   }
 
-  adjustLightness(value: string, pc: number, method: string = "darken"): string{ 
+  adjustLightness(value: string, pc: number, method: string = "darken"): string{
     const rgb: number[] = this.forceRGB(value);
     const hsl: number[] = this.rgbToHSL(rgb, false, false);
     let lightness:number = method == "lighten" ? hsl[2] + pc : hsl[2] - pc;
     lightness = lightness > 100 ? 100 : lightness;
 
     const adjusted = [hsl[0],hsl[1], lightness];
-   
+
     const css =  "hsl(" + adjusted[0] + ", " + adjusted[1] + "%, " + adjusted[2] + "%)";
 
     const rgbStr = rgb.toString();
     const hslStr = adjusted.toString();
-    
+
     return css;
   }
 
   rgbToHSL(param: any, inputString: boolean = true, outputString: boolean = true): any{
     const value = inputString ? this.forceRGB(param) : param;
-     
+
     const r = value[0] /= 255;
     const g = value[1] /= 255;
     const b = value[2] /= 255;
-    
+
     const cmin = Math.min(r,g,b);
     const cmax = Math.max(r,g,b);
     const delta = cmax - cmin;
-    
+
     let h = 0;
     let s = 0;
     let l = 0;
@@ -196,8 +196,8 @@ export class ThemeUtils {
     l = +(l * 100).toFixed(1);
     s = +(s * 100).toFixed(1);
 
-    if(outputString){ 
-      return "hsl(" + h + ", " + s + "%, " + l + "%)" 
+    if(outputString){
+      return "hsl(" + h + ", " + s + "%, " + l + "%)"
     } else {
       return [h,s,l];
     }
@@ -210,7 +210,7 @@ export class ThemeUtils {
     const trimFront = value.replace(prefix, "");
     const trimmed = trimFront.replace(")", "");
     const output = trimmed.split(",");
-    
+
     return output.map((str) => parseFloat(str));
   }
 }

@@ -31,7 +31,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
   private shellSubscription: any;
   public shell_tooltip = helptext.serial_shell_tooltip;
   private fitAddon: any;
-  
+
   clearLine = "\u001b[2K\r"
   protected pk: string;
 
@@ -69,11 +69,11 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     }
   };
 
-  onResize(event) {
+  onResize() {
     this.resizeTerm();
   }
 
-  onFontSizeChanged(event) {
+  onFontSizeChanged() {
     this.resizeTerm();
   }
 
@@ -102,7 +102,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     span.innerHTML = 'a';
 
     let cols = 0;
-    while(span.offsetWidth < domWidth) {      
+    while(span.offsetWidth < domWidth) {
       span.innerHTML += 'a';
       cols++;
     }
@@ -112,7 +112,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     if (cols < 80) {
       cols = 80;
     }
-    
+
     if (rows < 10) {
       rows = 10;
     }
@@ -143,14 +143,14 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     this.xterm.loadAddon(this.fitAddon);
 
     var font = new FontFaceObserver(this.font_name);
-    
+
     font.load().then((e) => {
       this.xterm.open(this.container.nativeElement);
       this.fitAddon.fit();
       this.xterm._initialized = true;
     }, function (e) {
       console.log('Font is not available', e);
-    });    
+    });
   }
 
   resizeTerm(){
@@ -181,5 +181,5 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     this.dialog.open(CopyPasteMessageComponent);
     return false;
   }
-  
+
 }

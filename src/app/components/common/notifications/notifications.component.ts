@@ -22,7 +22,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
   constructor(private router: Router, private notificationsService: NotificationsService, protected localeService: LocaleService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.initData();
     this.notificationsService.getNotifications().subscribe((notifications)=>{
       this.notifications = [];
@@ -48,7 +48,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     })
   }
 
-  initData() {
+  initData(): void {
     this.notifications = [];
     this.dismissedNotifications = [];
 
@@ -62,35 +62,35 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     });
   }
 
-  closeAll(e) {
+  closeAll(e: MouseEvent): void {
     e.preventDefault();
     this.notificationsService.dismissNotifications(this.notifications);
   }
 
-  reopenAll(e) {
+  reopenAll(e: MouseEvent): void {
     e.preventDefault();
     this.notificationsService.restoreNotifications(this.dismissedNotifications);
   }
 
-  turnMeOff(notification: NotificationAlert, e) {
+  turnMeOff(notification: NotificationAlert, e: MouseEvent): void {
     e.preventDefault();
     this.notificationsService.dismissNotifications([notification]);
   }
 
-  turnMeOn(notification: NotificationAlert, e) {
+  turnMeOn(notification: NotificationAlert, e: MouseEvent): void {
     e.preventDefault();
     this.notificationsService.restoreNotifications([notification]);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.dateFormatSubscription.unsubscribe();
   }
 
-  closeNotificationsPanel() {
+  closeNotificationsPanel(): void {
     this.notificPanel.close();
   }
 
-  navigateTo(link: string[]) {
+  navigateTo(link: string[]): void {
     this.notificPanel.close();
     this.router.navigate(link);
   }

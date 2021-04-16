@@ -31,7 +31,7 @@ export class StorageService {
     return this.ws.call(this.diskResource, []);
   }
 
-  downloadFile(filename, contents, mime_type){
+  downloadFile(filename: string, contents: string, mime_type: string){
     mime_type = mime_type || "text/plain";
 
     let byteCharacters = atob(contents);
@@ -48,7 +48,7 @@ export class StorageService {
     this.downloadBlob(blob, filename);
   }
 
-  downloadBlob(blob, filename) {
+  downloadBlob(blob: Blob, filename: string) {
     let dlink = document.createElement('a');
     document.body.appendChild(dlink);
     dlink.download = filename;
@@ -211,7 +211,7 @@ export class StorageService {
     this.diskNames = arr;
   }
 
-  diskToggleBucket(bool) {
+  diskToggleBucket(bool: boolean) {
     this.diskToggleStatus = bool;
   }
 

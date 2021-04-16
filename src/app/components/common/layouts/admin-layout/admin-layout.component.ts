@@ -21,7 +21,7 @@ import { LocaleService } from 'app/services/locale.service';
   styleUrls: ['./admin-layout.component.css'],
 })
 export class AdminLayoutComponent implements OnInit, AfterViewChecked {
-  private isMobile;
+  private isMobile: boolean;
   screenSizeWatcher: Subscription;
   getAdvancedConfig: Subscription;
   isSidenavOpen: Boolean = true;
@@ -49,7 +49,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   @ViewChild('footerBarScroll', { static: true}) private footerBarScroll: ElementRef;
   freenasThemes;
 
-  get sidenavWidth(){
+  get sidenavWidth(): string {
     return this.getSidenavWidth();
   }
 
@@ -130,7 +130,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.freenasThemes = this.themeService.allThemes;
     this.currentTheme = this.themeService.currentTheme().name;
     let navigationHold = document.getElementById('scroll-area');
@@ -153,11 +153,11 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     this.core.emit({name:"SysInfoRequest", sender:this});
   }
 
-  ngAfterViewChecked() {
+  ngAfterViewChecked(): void {
     this.scrollToBottomOnFooterBar();
   }
 
-  updateSidenav(force?:string) {
+  updateSidenav(force?:string): void {
     if(force){
       this.isSidenavOpen = force == 'open' ? true : false;
       this.isSidenotOpen = force == 'open' ? false : true;
@@ -193,12 +193,12 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     } catch(err) { }
   }
 
-  checkIfConsoleMsgShows() {
+  checkIfConsoleMsgShows(): void {
     this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig
       .subscribe(res => this.onShowConsoleFooterBar(res.consolemsg));
   }
 
-  getLogConsoleMsg() {
+  getLogConsoleMsg(): void {
     let subName = "filesystem.file_tail_follow:/var/log/messages:500";
 
     this.ws.sub(subName).subscribe((res) => {
@@ -208,7 +208,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     });
   }
 
-  accumulateConsoleMsg(msg, num) {
+  accumulateConsoleMsg(msg: string, num: number): string {
     let msgs = "";
     const msgarr = msg.split("\n");
 
@@ -234,7 +234,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     return msgs;
   }
 
-  onShowConsoleFooterBar(data) {
+  onShowConsoleFooterBar(data: boolean): void {
     if(data && this.consoleMsg == "") {
       this.getLogConsoleMsg();
     }
@@ -242,7 +242,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     this.isShowFooterConsole = data;
   }
 
-  onShowConsolePanel() {
+  onShowConsolePanel(): void {
     let dialogRef = this.dialog.open(ConsolePanelModalDialog, {});
     const sub = dialogRef.componentInstance.onEventEmitter.subscribe(() => {
       dialogRef.componentInstance.consoleMsg = this.accumulateConsoleMsg("", 500);
@@ -254,23 +254,23 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     });
   }
 
-  public onOpenNav($event) {
+  public onOpenNav(): void {
     this.isSidenavOpen = true;
   }
 
-  public onCloseNav($event) {
+  public onCloseNav(): void {
     this.isSidenavOpen = false;
   }
 
-  public onOpenNotify($event) {
+  public onOpenNotify(): void {
     this.isSidenotOpen = true;
   }
 
-  public onCloseNotify($event) {
+  public onCloseNotify(): void {
     this.isSidenotOpen = false;
   }
 
-  changeState($event) {
+  changeState($event: any): void {
     if ($event.transfer) {
       if (this.media.isActive('xs') || this.media.isActive('sm')) {
         this.sideNave.close();
@@ -278,16 +278,16 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  openModal(id: string) {
+  openModal(id: string): void {
     this.modalService.open(id, {});
   }
 
-  closeModal(id: string) {
+  closeModal(id: string): void {
     this.modalService.close(id);
   }
 
   // For the slide-in menu
-  toggleMenu(menuInfo?) {
+  toggleMenu(menuInfo?: any): void {
     if (this.isOpen && !menuInfo || this.isOpen && menuInfo[0] === this.menuName) {
       this.isOpen = false;
     } else if (menuInfo) {

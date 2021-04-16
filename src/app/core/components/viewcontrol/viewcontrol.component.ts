@@ -16,7 +16,4 @@ export class ViewControlComponent extends ViewControl {
     super();
   }
 
-  ngOnInit() {
-  }
-
 }

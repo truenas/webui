@@ -67,7 +67,7 @@ export class CoreService {
       });
   }
 
-  private dispatchTable = [];
+  private dispatchTable: any[] = [];
 
   public register(reg:Registration){
     reg.observable = new Subject();

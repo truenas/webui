@@ -22,7 +22,7 @@ import { ViewChartComponent, ViewChartMetadata } from 'app/core/components/viewc
       </div>
 
       <div id="{{chartId}}" [ngClass]="chartClass" fxFlex="50"></div>
-      
+
       <div *ngIf="chartLoaded && legendPosition == 'right'"  class="legend-wrapper" fxFlex="50">
         <div class="legend-x legend-item" *ngIf="chartConfig.data.x">Time: <span *ngIf="showLegendValues" class="legend-item-time">{{legend[0].x}}</span></div>
         <div class="legend-html" fxLayout="row wrap" fxLayoutAlign="space-between" fxLayoutGap="16px" >
@@ -48,11 +48,11 @@ export class ViewChartDonutComponent extends ViewChartComponent implements OnIni
   public chartType: string = 'donut';
   public legendPosition:string = 'right'; // Valid positions are top or right
 
-  constructor() { 
+  constructor() {
     super();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.showLegendValues = true;
   }
 
@@ -79,7 +79,7 @@ export class ViewChartDonutComponent extends ViewChartComponent implements OnIni
           value: (value, ratio, id, index) => {
             if(this.units){
               console.log("Units = " + this.units)
-              return value + this.units; 
+              return value + this.units;
             } else {
               return value;
             }

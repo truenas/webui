@@ -11,7 +11,7 @@ import * as _ from 'lodash';
 
 @Component({
   selector : 'app-entity-table-actions',
-  styleUrls: ['./entity-table-actions.component.scss'], 
+  styleUrls: ['./entity-table-actions.component.scss'],
   templateUrl : './entity-table-actions.component.html'
 })
 export class EntityTableActionsComponent implements OnInit, OnChanges {
@@ -36,7 +36,7 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
       return (this.actions.length == 1);
     }
   }
-  
+
   public get inlineActions(): boolean {
     return this.entity.conf.inlineActions || false;
   }
@@ -62,12 +62,12 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
   ngOnChanges() {
     this.getActions()
   }
- 
+
   getActions() {
     this.actions = this.entity.getActions(this.row);
   }
 
-  noPropogate(e){
+  noPropogate(e: MouseEvent){
     e.stopPropagation();
   }
 
@@ -77,7 +77,7 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
     } else {
       const hasGroups = (this.actions);
       const action = this.actions && this.isSingleAction && hasGroups ? this.actions[0].actions[0] : this.actions[0];
-      
+
       return action;
     }
   }

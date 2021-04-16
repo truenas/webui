@@ -20,7 +20,7 @@ export class WebSocketService {
   socket: WebSocket;
   connected: boolean = false;
   loggedIn: boolean = false;
-  @LocalStorage() token;
+  @LocalStorage() token: string;
   redirectUrl: string = '';
   shuttingdown = false;
 
@@ -69,7 +69,7 @@ export class WebSocketService {
     this.socket.onclose = this.onclose.bind(this);
   }
 
-  onopen(event) {
+  onopen() {
     this.onOpenSubject.next(true);
     this.send({"msg" : "connect", "version" : "1", "support" : [ "1" ]});
   }
@@ -82,7 +82,7 @@ export class WebSocketService {
     }
   }
 
-  onclose(event) {
+  onclose() {
     this.connected = false;
     this.onCloseSubject.next(true);
     setTimeout(this.connect.bind(this), 5000);
@@ -207,10 +207,10 @@ export class WebSocketService {
   sub(name): Observable<any> {
 
     let nom = name.replace('.','_'); // Avoid weird behavior
-    if(!this.pendingSubs[nom]){ 
+    if(!this.pendingSubs[nom]){
       this.pendingSubs[nom]= {
-        observers: {} 
-      }; 
+        observers: {}
+      };
     }
 
     let uuid = UUID.UUID();
@@ -219,12 +219,12 @@ export class WebSocketService {
 
     let obs = Observable.create((observer) => {
       this.pendingSubs[nom].observers[uuid] = observer;
-      this.send(payload);      
-      
-      // cleanup routine 
+      this.send(payload);
+
+      // cleanup routine
       observer.complete = () => {
         let unsub_payload = {"id" : uuid, "msg" : "unsub" };
-        this.send(unsub_payload);  
+        this.send(unsub_payload);
         this.pendingSubs[nom].observers[uuid].unsubscribe();
         delete this.pendingSubs[nom].observers[uuid];
         if(!this.pendingSubs[nom].observers){ delete this.pendingSubs[nom]}
@@ -267,7 +267,7 @@ export class WebSocketService {
       }
 
       this.loggedIn = true;
-      
+
       // Subscribe to all events by default
       this.send({
         "id" : UUID.UUID(),

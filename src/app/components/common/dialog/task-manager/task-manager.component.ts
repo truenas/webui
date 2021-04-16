@@ -49,7 +49,7 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
       this.dataSource = new MatTableDataSource<any>([]);
     }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.sysGeneralService.getSysInfo().subscribe((res) => {
       this.timeZone = res.timezone;
     })
@@ -80,7 +80,7 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
     )
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.subscrition.unsubscribe();
   }
 
@@ -93,18 +93,18 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
     return source;
   }
 
-  applyFilter(filterValue: string) {
+  applyFilter(filterValue: string): void {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  getReadableDate(data: any) {
+  getReadableDate(data: any): string {
     if (data != null) {
       return this.localeService.formatDateTime(new Date(data.$date), this.timeZone);
     }
     return;
   }
 
-  showLogs(element) {
+  showLogs(element): void {
     this.dialogService.confirm(T('Logs'), `<pre>${element.logs_excerpt}</pre>`, true, T('Download Logs'),
       false, '', '', '', '', false, T('Close'), true).subscribe(
       (dialog_res) => {

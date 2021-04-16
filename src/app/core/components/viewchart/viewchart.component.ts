@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnInit, OnChanges, Input, HostListener } from '@angular/core';
+import { Component, AfterViewInit, OnInit, OnChanges, Input, HostListener, SimpleChanges } from '@angular/core';
 import { LayoutChild } from 'app/core/classes/layouts';
 import { ViewComponent } from 'app/core/components/view/view.component';
 import {UUID} from 'angular2-uuid';
@@ -85,26 +85,26 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
 
   protected chartConfig: any;//ChartConfiguration;
 
-  constructor() { 
+  constructor() {
     super();
     this.chartId = "chart-" + UUID.UUID();
     this.chartType = "pie";
     this.units = '';
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.render();
   }
 
-  ngOnChanges(changes) {
+  ngOnChanges(changes: SimpleChanges): void {
     if(changes.data){ // This only works with @Input() properties
       console.log(changes.data);
       if(this.chartConfig){
         this.chart.load({
           columns: [changes.data]
         });
-      } 
-      
+      }
+
     }
   }
 
@@ -117,7 +117,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
       this._data = [];
     } else {
       let result: any[] = [];
- 
+
       for(let i = 0; i < d.length; i++){
         // setup data
         let item = d[i];
@@ -146,7 +146,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
     }
   }
 
-  get chartId(){
+  get chartId(): string {
     return this._chartId;
   }
 
@@ -154,11 +154,11 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
     this._chartId = sel;
   }
 
-  get chartClass(){
+  get chartClass(): string {
     return this._chartType;
   }
 
-  get chartType(){
+  get chartType(): string {
     return this._chartType;
   }
 
@@ -166,7 +166,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
     this._chartType = str;
   }
 
-  findLegendItem(item:Legend){
+  findLegendItem(item:Legend): number {
     for(let i = 0; i < this.legend.length; i++){
       let legendItem = this.legend[i];
       if(legendItem.name == item.name){
@@ -192,7 +192,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
        format: {
          value: (value, ratio, id, index) => {
            if(this.units){
-             return value + this.units; 
+             return value + this.units;
            } else {
              return value;
            }
@@ -203,7 +203,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
     return this.chartConfig;
   }
 
-  focus(item){
+  focus(item): void {
     if(item.visible){
       this.chart.hide(item.name);
     } else {
@@ -212,7 +212,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
       item.visible = !item.visible;
   }
 
-  refresh(){
+  refresh(): void {
     // Reset legend to avoid concatenation
     this.render();
   }

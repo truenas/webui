@@ -24,7 +24,7 @@ export class BreadcrumbComponent implements OnInit {
   private core: CoreService,
   private localeService: LocaleService) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
   // must be running once to get breadcrumbs
     this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
     // generate url from parts

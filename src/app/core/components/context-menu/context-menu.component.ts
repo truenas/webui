@@ -3,9 +3,9 @@
  * Based on https://stackblitz.com/edit/wizdm-contextmenu
  *
  * Note that the menu is defined by the declaring component.
- * 
+ *
  * Template example:
- 
+
     <app-context-menu [matMenuTriggerFor]="shellMenuContent" #shellContextMenu>
       <mat-menu #shellMenuContent="matMenu" xPosition="before">
         <ng-template matMenuContent>
@@ -43,7 +43,7 @@ export class ContextMenuComponent extends MatMenuTrigger {
   @HostBinding("style.left") private _x: string;
   @HostBinding("style.top") private _y: string;
 
-  public open({ x, y }: MouseEvent, data?: any) {
+  public open({ x, y }: MouseEvent, data?: any): boolean {
     /* Pass along the context data to support lazily-rendered content */
     if (!!data) {
       this.menuData = data;

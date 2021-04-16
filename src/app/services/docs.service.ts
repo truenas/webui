@@ -8,7 +8,7 @@ export class DocsService {
 
     constructor(public ws: WebSocketService) {  }
 
-    docReplace(message):string {
+    docReplace(message: string): string {
         if (message != undefined && typeof message === 'string') {
             // I really hate this but for some reason # markers are getting a "\" appended to them by the translate service now
             message = message.replace(/\\#/g, "#");

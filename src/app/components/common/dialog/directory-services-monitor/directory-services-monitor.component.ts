@@ -23,11 +23,11 @@ export class DirectoryServicesMonitorComponent implements OnInit {
 
   constructor(private ws: WebSocketService, private router: Router ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.getStatus();
   }
 
-  getStatus() {
+  getStatus(): void {
     let tempArray = [];
     this.showSpinner = true;
     this.ws.call('directoryservices.get_state').subscribe((res) => {
@@ -39,7 +39,7 @@ export class DirectoryServicesMonitorComponent implements OnInit {
     });
   }
 
-  goTo(el) {
+  goTo(el: string): void {
     this.router.navigate([`/directoryservice/${el}`])
   }
 }

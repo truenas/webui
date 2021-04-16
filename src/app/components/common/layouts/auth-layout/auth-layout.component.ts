@@ -17,11 +17,11 @@ export class AuthLayoutComponent implements OnInit {
     language.getBrowserLanguage();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.setCssVars(this.theme);
   }
 
-  setCssVars(theme:Theme){
+  setCssVars(theme:Theme): void {
 
     let palette = Object.keys(theme);
     palette.splice(0,6);
