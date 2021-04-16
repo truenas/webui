@@ -46,7 +46,7 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
 @when('you are on the Dashboard')
 def you_are_on_the_dashboard(driver):
     """you are on the Dashboard."""
-    assert wait_on_element(driver, 7, '//li[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 10, '//li[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
 
 
@@ -123,7 +123,7 @@ def reboot_the_system_wait_for_login_and_login(driver):
 @then('on the Dashboard, click on System on the side menu, click on Boot')
 def on_the_dashboard_click_on_system_on_the_side_menu_click_on_boot(driver):
     """on the Dashboard, click on System on the side menu, click on Boot."""
-    assert wait_on_element(driver, 7, '//li[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 10, '//li[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__System"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()

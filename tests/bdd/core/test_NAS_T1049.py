@@ -46,7 +46,7 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
 @when('on the Dashboard, verify the System Information Version')
 def on_the_dashboard_verify_the_system_information_version(driver, iso_version):
     """on the Dashboard, verify the System Information Version."""
-    assert wait_on_element(driver, 7, '//li[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 10, '//li[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
     assert wait_on_element(driver, 7, '//strong[contains(.,"Version:")]')
     element = driver.find_element_by_xpath('//strong[contains(.,"Version:")]/../div/span')

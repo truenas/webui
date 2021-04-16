@@ -44,7 +44,7 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
 @when('you see the dashboard')
 def you_see_the_dashboard(driver):
     """you see the dashboard."""
-    assert wait_on_element(driver, 7, '//li[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 10, '//li[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
 
 
