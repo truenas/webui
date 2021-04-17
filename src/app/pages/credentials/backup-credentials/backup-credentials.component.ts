@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { WebSocketService, KeychainCredentialService, AppLoaderService, 
+import { WebSocketService, KeychainCredentialService, AppLoaderService,
   DialogService, ReplicationService, StorageService, CloudCredentialService } from 'app/services';
 import { ModalService } from '../../../services/modal.service';
 import { SshConnectionsFormComponent } from './forms/ssh-connections-form.component';
@@ -23,7 +23,7 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
   protected sshConnections: SshConnectionsFormComponent;
   protected sshKeypairs: SshKeypairsFormComponent;
   protected cloudCredentials: CloudCredentialsFormComponent;
-
+  protected providers: Array<any>;
 
   constructor(private aroute: ActivatedRoute, private keychainCredentialService: KeychainCredentialService,
     private ws: WebSocketService, private loader: AppLoaderService, private dialogService: DialogService,
@@ -32,14 +32,19 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
      private modalService: ModalService) {}
 
   ngOnInit(): void {
-    this.getCards();
-    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
-      this.getCards();
-    })
-    this.refreshForms();
-    this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
-      this.refreshForms();
-    });
+    this.cloudCredentialsService.getProviders().subscribe(
+      (res) => {
+        this.providers = res;
+        this.getCards();
+        this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
+          this.getCards();
+        })
+        this.refreshForms();
+        this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
+          this.refreshForms();
+        });
+      }
+    );
   }
 
   getCards() {
@@ -61,9 +66,10 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
           },
           edit: function(row) {
             this.parent.modalService.open('slide-in-form', this.parent.cloudCredentials, row.id);
-          }
+          },
+          dataSourceHelper: this.cloudCredentialsDataSourceHelper.bind(this),
         }
-      },{ 
+      },{
         name: 'sshConnections', flex: 30,
         tableConf: {
           title: 'SSH Connections',
@@ -106,6 +112,20 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
         }
       }
     ];
+  }
+
+  cloudCredentialsDataSourceHelper(res) {
+    if (this.providers) {
+      res = res.map(item => {
+        const credentialProvider = this.providers.find(provider => provider.name == item.provider);
+        if (credentialProvider) {
+          item.provider = credentialProvider.title;
+        }
+        return item;
+      });
+    }
+
+    return res;
   }
 
   sshConnectionsDataSourceHelper(res) {
