@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { RestService, WebSocketService, NetworkService, StorageService } from '../../../services';
+import { RestService, WebSocketService, NetworkService, StorageService, SystemGeneralService } from '../../../services';
 import { PreferencesService} from 'app/core/services/preferences.service';
 import { FormGroup, Validators, ValidationErrors, FormControl } from '@angular/forms';
 import { Wizard } from '../../common/entity/entity-form/models/wizard.interface';
@@ -443,7 +443,7 @@ export class VMWizardComponent {
     public messageService: MessageService,
     private dialogService: DialogService, private storageService: StorageService,
     protected prefService: PreferencesService, private translate: TranslateService,
-    protected modalService: ModalService) {
+    protected modalService: ModalService, private systemGeneralService: SystemGeneralService) {
 
   }
 
@@ -470,7 +470,7 @@ export class VMWizardComponent {
       }
     })
 
-    this.ws.call("system.advanced.config").subscribe((res) => {
+    this.systemGeneralService.getAdvancedConfig.subscribe((res) => {
       ( < FormGroup > this.entityWizard.formArray.get([5])).controls['isolated_gpu_pci_ids'].setValue(res.isolated_gpu_pci_ids)
     });
 
