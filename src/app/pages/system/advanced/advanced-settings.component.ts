@@ -34,6 +34,7 @@ import { InputTableConf } from 'app/pages/common/entity/table/table.component';
 import { EmptyConfig } from '../../common/entity/entity-empty/entity-empty.component';
 import { ConsoleFormComponent } from './console-form/console-form.component';
 import { TunableFormComponent } from '../tunable/tunable-form/tunable-form.component';
+import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-pcis-form.component';
 
 @Component({
   selector: 'app-advanced-settings',
@@ -56,6 +57,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   // Components included in this dashboard
   protected tunableFormComponent: TunableFormComponent;
   protected consoleFormComponent: ConsoleFormComponent;
+  protected isolatedGpuPcisFormComponent: IsolatedGpuPcisFormComponent;
   protected kernelFormComponent: KernelFormComponent;
   protected syslogFormComponent: SyslogFormComponent;
   protected cronFormComponent: CronFormComponent;
@@ -220,7 +222,6 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
-    console.log('afterInit::entityEdit', entityEdit);
 
     this.ws.call('failover.licensed').subscribe((is_ha) => {
       this.is_ha = is_ha;
@@ -256,6 +257,13 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   getDataCardData() {
     this.getAdvancedConfig = this.ws.call('system.advanced.config').subscribe((res) => {
       this.configData = res;
+      const isolated_gpu_pci_ids_str = res.isolated_gpu_pci_ids.reduce((acc, id) => {
+        if(acc.length) {
+          acc += ", ";
+        }
+        acc+=id;
+        return acc;
+      })
       this.dataCards = [
         {
           title: helptext_system_advanced.fieldset_console,
@@ -335,9 +343,14 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
         },
         {
           id: 'sysctl',
-          title: helptext_system_advanced.fieldset_sysctl,
+          title: helptext_system_advanced.fieldset_sysctl + " - rehan",
           tableConf: this.sysctlTableConf,
         },
+        {
+          title: T("Isolated GPU PCI Ids"),
+          id: 'isolated_gpu_pci_ids',
+          items: [{label: "Isolated GPU PCI IDs", value: isolated_gpu_pci_ids_str}]
+        }
       ];
     });
   }
@@ -362,6 +375,9 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
         break;
       case 'initshutdown':
         addComponent = this.initShutdownFormComponent;
+        break;
+      case 'isolated_gpu_pci_ids':
+        addComponent = this.isolatedGpuPcisFormComponent;
         break;
       default:
         break;
@@ -487,6 +503,14 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
       this.sysGeneralService,
       this.modalService,
     );
+
+    this.isolatedGpuPcisFormComponent = new IsolatedGpuPcisFormComponent(
+      this.ws,
+      this.loader,
+      this.sysGeneralService,
+      this.modalService,
+    );
+
     this.kernelFormComponent = new KernelFormComponent(
       this.router,
       this.language,
