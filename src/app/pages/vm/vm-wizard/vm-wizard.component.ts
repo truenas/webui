@@ -417,6 +417,7 @@ export class VMWizardComponent {
           placeholder: T("Isolated PCI ID's"),
           name: 'isolated_gpu_pci_ids',
           multiple: true,
+          required: true,
           options: []
         },
         {
@@ -455,9 +456,9 @@ export class VMWizardComponent {
     })
 
     this.ws.call("device.gpu_pci_ids_choices").subscribe((pci_choices: Object) => {
-      const isolated_gpu_pci_ids = _.find(this.wizardConfig[5].fieldConfig, {name : "isolated_gpu_pci_ids"});
+      const isolated_gpu_pci_ids_conf = _.find(this.wizardConfig[5].fieldConfig, {name : "isolated_gpu_pci_ids"});
       for(let key in pci_choices) {
-        isolated_gpu_pci_ids.options.push({label: key, value: pci_choices[key]})
+        isolated_gpu_pci_ids_conf.options.push({label: key, value: pci_choices[key]})
       }
     })
 
@@ -468,6 +469,10 @@ export class VMWizardComponent {
         gpu.options.push({label: item.description, value: item.addr.pci_slot})
       }
     })
+
+    this.ws.call("system.advanced.config").subscribe((res) => {
+      ( < FormGroup > this.entityWizard.formArray.get([5])).controls['isolated_gpu_pci_ids'].setValue(res.isolated_gpu_pci_ids)
+    });
 
   }
 
@@ -643,6 +648,18 @@ export class VMWizardComponent {
             ( < FormGroup > entityWizard.formArray.get([2])).get('hdd_path').valueChanges.subscribe((existing_hdd_path)=>{
               this.summary[T('Disk')] = existing_hdd_path;
             })
+        }
+      });
+
+      const isolated_gpu_pci_ids_control = ( < FormGroup > entityWizard.formArray.get([5])).get('isolated_gpu_pci_ids');
+      isolated_gpu_pci_ids_control.valueChanges.subscribe((isolated_pci_ids) => {
+        const isolated_gpu_pci_ids_conf = _.find(this.wizardConfig[5].fieldConfig, {name : "isolated_gpu_pci_ids"});
+        if(isolated_pci_ids.length >= isolated_gpu_pci_ids_conf.options.length) {
+          isolated_gpu_pci_ids_conf.warnings = "A minimum of 2 GPUs are required in the host to ensure that host has at least 1 GPU available.";
+          isolated_gpu_pci_ids_control.setErrors({ maxPCIIds: true})
+        } else if(isolated_pci_ids.length > 0) {
+          isolated_gpu_pci_ids_conf.warnings = null;
+          isolated_gpu_pci_ids_control.setErrors(null);
         }
       });
 
