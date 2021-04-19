@@ -19,9 +19,10 @@ export class UserService {
   listUsers() { return this.ws.call(this.userQuery, {limit: 50}); };
 
   listGroups() { return this.ws.call(this.groupQuery, {limit: 50}); };
-  
+
   groupQueryDSCache(search = "", hideBuiltIn = false, offset = 0) {
-    let queryArgs = [];
+    // TODO: Proper type for query API.
+    let queryArgs: any[] = [];
     search = search.trim();
     if (search.length > 0) {
       queryArgs = [["group", "^", search]];
@@ -31,17 +32,17 @@ export class UserService {
     }
     return this.ws.call(this.groupQuery, [queryArgs, {...this.queryOptions, offset}]);
   }
-  
-  getGroupByGID(gid) {
+
+  getGroupByGID(gid: string) {
     return this.ws.call(this.groupQuery, [[["gid", "=", gid]], this.queryOptions]);
   }
 
-  getGroupByName(group) {
+  getGroupByName(group: string) {
     return this.ws.call(this.uncachedGroupQuery, [group]);
   }
 
   userQueryDSCache(search = "", offset = 0) {
-    let queryArgs = [];
+    let queryArgs: any[] = [];
     search = search.trim();
     if (search.length > 0) {
       queryArgs = [["username", "^", search]];
@@ -49,11 +50,11 @@ export class UserService {
     return this.ws.call(this.userQuery, [queryArgs, {...this.queryOptions, offset}]);
   }
 
-  getUserByUID(uid) {
+  getUserByUID(uid: string) {
     return this.ws.call(this.userQuery, [[["uid", "=", uid]], this.queryOptions]);
   }
 
-  getUserByName(username) {
+  getUserByName(username: string) {
     return this.ws.call(this.uncachedUserQuery, [username]);
   }
 

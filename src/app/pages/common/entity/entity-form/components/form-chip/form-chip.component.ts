@@ -53,7 +53,7 @@ export class FormChipComponent implements Field, OnInit {
         }
     }
 
-    remove(item): void {
+    remove(item: any): void {
         const index = this.chipLists.indexOf(item);
 
         if (index >= 0) {
@@ -68,7 +68,7 @@ export class FormChipComponent implements Field, OnInit {
       this.chipCtrl.setValue(null);
     }
 
-    updateSearchOptions(value) {
+    updateSearchOptions(value: any) {
       if(this.config.updater && this.config.parent) {
         if (this.config.updateLocal) {
           this.config.updater(value, this.config.parent, this.config);

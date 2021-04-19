@@ -24,7 +24,7 @@ export class PasswordDialog {
   public data: string;
   public tooltip = globalHelptext.rootpw.tooltip;
   public hideCancel = false;
-  public customSumbit;
+  public customSumbit: any;
   public showPassword = false;
   public inputType = 'password';
   public errors = '';
@@ -32,12 +32,12 @@ export class PasswordDialog {
 
   @Output() switchSelectionEmitter = new EventEmitter<any>();
 
-  constructor(public dialogRef: MatDialogRef < PasswordDialog >, protected translate: TranslateService, 
+  constructor(public dialogRef: MatDialogRef < PasswordDialog >, protected translate: TranslateService,
               protected sysGeneralService: SystemGeneralService) {
   }
 
-  onChangeEvent(event) {
-    this.password = event.target.value;
+  onChangeEvent(event: Event) {
+    this.password = (event.target as HTMLInputElement).value;
     if (this.password !== '') {
       this.isSubmitEnabled = true;
     }

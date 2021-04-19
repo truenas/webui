@@ -33,10 +33,10 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
 
   temperatureScales: boolean = false;
 
-  constructor(public el:ElementRef, 
-    protected core: CoreService, 
-    public sanitizer: DomSanitizer,  
-    public mediaObserver: MediaObserver, 
+  constructor(public el:ElementRef,
+    protected core: CoreService,
+    public sanitizer: DomSanitizer,
+    public mediaObserver: MediaObserver,
     public cdr: ChangeDetectorRef,
     public dialogService: DialogService,
   ){
@@ -45,9 +45,9 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     this.pixiHeight = 480;
   }
 
-  createExtractedEnclosure(profile){
+  createExtractedEnclosure(profile: any){
     // MINIs have no support for expansion shelves
-    // therefore we will never need to create 
+    // therefore we will never need to create
     // any enclosure selection UI. Leave this
     // empty or the base class will throw errors
   }
@@ -95,7 +95,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
   }
 
   stackPositions(log:boolean = false){
-    const result = this.enclosure.driveTrayObjects.map((dt, index) => { 
+    const result = this.enclosure.driveTrayObjects.map((dt: DriveTray, index: number) => {
       const disk = this.findDiskBySlotNumber(index + 1);
         return dt.container.getGlobalPosition();
     });

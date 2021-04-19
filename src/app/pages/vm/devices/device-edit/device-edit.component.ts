@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -362,7 +363,7 @@ export class DeviceEditComponent implements OnInit {
     });
   }
   //Setting values coming from backend and populating formgroup with it.
-  setgetValues(activeformgroup, deviceInformation) {
+  setgetValues(activeformgroup: FormGroup, deviceInformation: any[]) {
     for (const value in deviceInformation) {
       const fg = activeformgroup.controls[value];
       if (typeof fg !== "undefined") {
@@ -471,7 +472,7 @@ export class DeviceEditComponent implements OnInit {
 
   afterInit() {
 
-    this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]], {"extra": {"properties": ["id"]}}]).subscribe((zvols)=>{
+    this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]], {"extra": {"properties": ["id"]}}]).subscribe((zvols: any[])=>{
       zvols.forEach(zvol => {
         _.find(this.diskFieldConfig, {name:'path'}).options.push(
           {

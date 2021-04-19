@@ -12,15 +12,15 @@ export enum EmptyType {
 	no_search_results = 'no_search_results',
 };
 export interface EmptyConfig {
-	type: EmptyType, 
-	large: boolean, 
-	title: string, 
-	message?: string, 
+	type: EmptyType,
+	large: boolean,
+	title: string,
+	message?: string,
 	icon?: string,
 	button?: {
 		label: string,
-		action()
-	}, 
+		action(): any
+	},
 }
 @Component ({
 	selector: 'entity-empty',
@@ -48,7 +48,7 @@ export class EntityEmptyComponent {
   isLoading() {
     return this.conf.type == EmptyType.loading;
   }
-  
+
 	getIcon() {
 		let icon = "logo";
 		if (this.conf.icon) {

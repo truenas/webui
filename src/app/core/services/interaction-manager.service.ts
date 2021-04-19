@@ -2,12 +2,12 @@ import { Injectable } from '@angular/core';
 import { DisplayObject } from '../classes/display-object';
 import { LayoutObject } from '../classes/layout-object';
 import { CoreService, CoreEvent } from './core.service';
-import { 
-  tween, 
-  styler, 
-  listen, 
-  pointer, 
-  value, 
+import {
+  tween,
+  styler,
+  listen,
+  pointer,
+  value,
   decay,
   spring,
   physics,
@@ -61,7 +61,7 @@ export class InteractionManagerService {
       this.registerElement(config); // Expects CSS id selector for element
     });
 
-    messageBus.register({observerClass:this, eventName:"RequestDisplayObjectReference"}).subscribe((evt:CoreEvent) => {   
+    messageBus.register({observerClass:this, eventName:"RequestDisplayObjectReference"}).subscribe((evt:CoreEvent) => {
       const element = this.getChildById(evt.data);
       messageBus.emit({name:element.id, data:element});
     });
@@ -91,13 +91,13 @@ export class InteractionManagerService {
         if(this.displayObjectWithFocus){ this.displayObjectWithFocus.hasFocus = false;}
         this.displayObjectWithFocus = evt.sender;
         this.displayObjectWithFocus.hasFocus = true;
-        
+
       }
       // Does this object belong to a layout?
       let layout = this.getLayoutParent(evt.sender);
       if(layout){
         layout.beginInteractiveMovement(evt.sender);
-      } 
+      }
     });
 
     messageBus.register({observerClass:this, eventName:"DisplayObjectReleased"}).subscribe((evt:CoreEvent) => {
@@ -106,9 +106,9 @@ export class InteractionManagerService {
       if(layout){
         //console.log("This belongs to a layout");
         //console.log(this.displayList);
-        layout.endInteractiveMovement(evt.sender); 
+        layout.endInteractiveMovement(evt.sender);
       }
-      if(this.displayObjectWithFocus && this.displayObjectWithFocus == evt.sender){  
+      if(this.displayObjectWithFocus && this.displayObjectWithFocus == evt.sender){
         //this.displayObjectWithFocus.hasFocus = false;
         //this.displayObjectWithFocus = null;
       }
@@ -129,12 +129,12 @@ export class InteractionManagerService {
   registerElement(config, layout?:LayoutObject){
      const selector = config.id;
      const observable = multicast();
-     const el = (<any>document).querySelector(selector);
-     const resizeHandleTop = (<any>document).querySelector(selector + ' .resize-handle-top');
-     const resizeHandleRight = (<any>document).querySelector(selector + ' .resize-handle-right');
-     const resizeHandleBottom = (<any>document).querySelector(selector + ' .resize-handle-bottom');
-     const resizeHandleLeft = (<any>document).querySelector(selector + ' .resize-handle-left');
-     
+     const el = document.querySelector(selector);
+     const resizeHandleTop = document.querySelector(selector + ' .resize-handle-top');
+     const resizeHandleRight = document.querySelector(selector + ' .resize-handle-right');
+     const resizeHandleBottom = document.querySelector(selector + ' .resize-handle-bottom');
+     const resizeHandleLeft = document.querySelector(selector + ' .resize-handle-left');
+
      let tracker: DisplayObject;
      if(config.moveHandle){
       const moveHandle = (<any>document).querySelector(config.moveHandle);
@@ -142,14 +142,14 @@ export class InteractionManagerService {
      } else {
       tracker = new DisplayObject(el, observable, this.messageBus);
      }
-     
+
      tracker.anchored = config.anchored ? config.anchored : false;
      tracker.moveable = config.moveable ? config.moveable : true;
      tracker.resizeable = config.resizeable ? config.resizeable : true;
 
 
      let registration: DisplayObjectRegistration = {displayObject: tracker, layout: layout ? layout : null};
-     this.displayList.push(registration) 
+     this.displayList.push(registration)
 
      return registration.displayObject;
   }
@@ -203,7 +203,7 @@ export class InteractionManagerService {
       /*if(collisionTarget){
         console.log(collisionTarget)
       }*/
-      
+
     })
   }
 

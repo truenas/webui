@@ -30,27 +30,27 @@ export class Display implements OnInit,AfterViewInit{
     return compRef.instance ;
   }
 
-  addChild(instance){
+  addChild(instance: any){
     let compRef = this.getChild(instance);
 
     // Insert into DOM
     this.viewContainerRef.insert(compRef.hostView);// addChild();
 
-  
+
     // Deal with component's selector element
     let container = this.viewContainerRef.element.nativeElement;
 
 
     // Setup ChangeDetection and add to DisplayList
-    compRef.changeDetectorRef.detectChanges();    
+    compRef.changeDetectorRef.detectChanges();
     this.displayList.push(instance);
   }
 
-  private moveContents(compRef, container ){
+  private moveContents(compRef: any, container: any ){
     let selector = compRef.hostView.rootNodes["0"];
     let contents = compRef.hostView.rootNodes["0"].childNodes;
     let node: any;
-    
+
     for(let i = 0; i < contents.length; i++){
       if(contents[i].tagName == "MD-CARD"){
 	this.renderer.appendChild(container, contents[i]);
@@ -59,7 +59,7 @@ export class Display implements OnInit,AfterViewInit{
     }
   }
 
-  removeChild(instance){
+  removeChild(instance: any){
     let compRef = this.getChild(instance);
 
     // Remove from children
@@ -74,7 +74,7 @@ export class Display implements OnInit,AfterViewInit{
     compRef.destroy();
   }
 
-  getChild(instance){
+  getChild(instance: any){
     for(let i = 0; i < this.children.length; i++){
       if(this.children[i].instance == instance){
 	return this.children[i];

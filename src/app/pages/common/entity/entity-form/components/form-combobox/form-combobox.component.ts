@@ -31,11 +31,11 @@ export class FormComboboxComponent implements Field {
 
   constructor(public translate: TranslateService) {}
 
-  onChangeOption(value) {
+  onChangeOption(value: any) {
     this.group.controls[this.config.name].setValue(value);
   }
 
-  updateSearchOptions(value) {
+  updateSearchOptions(value: any) {
     if(this.config.updater && this.config.parent) {
       if (this.config.updateLocal) {
         this.config.updater(value, this.config.parent, this.config);

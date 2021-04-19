@@ -200,7 +200,7 @@ export class ThemeService {
       bg1:'#002b36',
       bg2:'#073642',
       fg1:'#586e75',
-      fg2:'#7f99a2', 
+      fg2:'#7f99a2',
       'alt-bg1':'rgba(122,122,122,0.25)',
       'alt-bg2':'#0b4f60',//'#314c54',
       'alt-fg1':'#839496',
@@ -247,7 +247,7 @@ export class ThemeService {
       labelSwatch:"fg1",
       description:'High contrast theme based on Legacy UI color scheme',
       accentColors:['green', 'violet', 'orange', 'cyan', 'magenta', 'red', 'yellow', 'blue'],
-      primary:"var(--blue)", 
+      primary:"var(--blue)",
       topbar:"var(--black)",
       accent:"var(--magenta)",
       bg1:'#dddddd',
@@ -334,14 +334,14 @@ export class ThemeService {
       } else if(!evt.data.allowPwToggle){
         (<any>document).documentElement.style.setProperty("--toggle_pw_display_prop", "none");
       }
-      
+
       if(evt.data.enableWarning){
         (<any>document).documentElement.style.setProperty("--enableWarning","inline");
       } else if(!evt.data.allowPwToggle){
         (<any>document).documentElement.style.setProperty("--enableWarning", "none");
       }
-      
-   
+
+
   }
 
   resetToDefaultTheme(){
@@ -350,7 +350,7 @@ export class ThemeService {
   }
 
   get isDefaultTheme(){
-    return this.activeTheme == this.defaultTheme; 
+    return this.activeTheme == this.defaultTheme;
   }
 
   currentTheme():Theme{
@@ -366,7 +366,7 @@ export class ThemeService {
       let t = this.allThemes[i];
       if(t.name == name){ return t;}
     }
-    
+
     //Optionally reset if not found
     this.resetToDefaultTheme();
 
@@ -386,23 +386,23 @@ export class ThemeService {
     this.core.emit({name:"ChangeThemePreference", data:theme.name});
   }
 
-  setCssVars(theme:Theme){ 
+  setCssVars(theme:Theme){
     // Sets CSS Custom Properties for an entire theme
-    let keys = Object.keys(theme);
+    let keys = Object.keys(theme) as (keyof Theme)[];
 
     // Filter out deprecated properties and meta properties
     let palette = keys.filter( (v) => { return v != 'label' && v != 'logoPath' && v != 'logoTextPath' && v != 'favorite' && v != 'labelSwatch' && v != 'description' && v != 'name'; } )
 
     palette.forEach((color) => {
-      let swatch = theme[color];
-      
-      // Generate aux. text styles 
+      let swatch = theme[color] as any;
+
+      // Generate aux. text styles
       if(this.freenasThemes[0].accentColors.indexOf(color) !== -1){
-        let txtColor = this.utils.textContrast(theme[color], theme["bg2"]);
+        let txtColor = this.utils.textContrast(swatch, theme["bg2"]);
         (<any>document).documentElement.style.setProperty("--" + color + "-txt", txtColor);
       }
 
-      (<any>document).documentElement.style.setProperty("--" + color, theme[color]);
+      (<any>document).documentElement.style.setProperty("--" + color, swatch);
     });
 
     // Add Black White and Grey Variables
@@ -417,8 +417,8 @@ export class ThemeService {
     // Set Material aux. text styles
     let primaryColor = this.utils.colorFromMeta(theme["primary"]); // eg. blue
     let accentColor = this.utils.colorFromMeta(theme["accent"]); // eg. yellow
-    let primaryTextColor = this.utils.textContrast(theme[primaryColor], theme["bg2"]);
-    let accentTextColor = this.utils.textContrast(theme[accentColor], theme["bg2"]);
+    let primaryTextColor = this.utils.textContrast((theme as any)[primaryColor], theme["bg2"]);
+    let accentTextColor = this.utils.textContrast((theme as any)[accentColor], theme["bg2"]);
 
     (<any>document).documentElement.style.setProperty("--primary-txt", primaryTextColor);
     (<any>document).documentElement.style.setProperty("--accent-txt", accentTextColor);
@@ -447,8 +447,8 @@ export class ThemeService {
       topbarTextColor = this.utils.textContrast(theme.topbar, theme["bg2"]);
       (<any>document).documentElement.style.setProperty("--topbar-txt", topbarTextColor);
     } else if(!theme['topbar-txt'] && !theme.topbar) {
-      
-      topbarTextColor = this.utils.textContrast(theme[primaryColor], theme["bg2"]);
+
+      topbarTextColor = this.utils.textContrast((theme as any)[primaryColor], theme["bg2"]);
       (<any>document).documentElement.style.setProperty("--topbar-txt", topbarTextColor);
     }
 
@@ -462,7 +462,7 @@ export class ThemeService {
     }
   }
 
-  hexToRGB(str) {
+  hexToRGB(str: string) {
     return this.utils.hexToRGB(str);
   }
 
@@ -479,7 +479,7 @@ export class ThemeService {
   darkTest(css: string): boolean{
     const rgb = this.utils.forceRGB(css);
     const hsl = this.utils.rgbToHSL(rgb, false, false);
-   
+
     return hsl[2] < 50 ? true : false;
   }
 

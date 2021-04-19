@@ -108,7 +108,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
       })
     }
 
-    this.ws.call('pool.query').subscribe((pools)=>{
+    this.ws.call('pool.query').subscribe((pools: any)=>{
       if(pools){
         pools.forEach(pool => {
           if (pool.is_decrypted){
@@ -135,7 +135,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
       })
     })
 
-    entityForm.formGroup.controls['filelocation'].valueChanges.subscribe((filelocation)=>{
+    entityForm.formGroup.controls['filelocation'].valueChanges.subscribe((filelocation: string)=>{
       if(filelocation === ":temp:"){
         _.find(this.fieldConfig,{name:'filename'}).fileLocation = null;
       } else {
@@ -159,7 +159,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
       };
       this.dialogRef.componentInstance.changeAltMessage(helptext.manual_update_description);
       this.dialogRef.componentInstance.wspost(this.subs.apiEndPoint, this.subs.formData);
-      this.dialogRef.componentInstance.success.subscribe((succ)=>{
+      this.dialogRef.componentInstance.success.subscribe(()=>{
         this.dialogRef.close(false);
         if (!this.isHA) {
           if (ures[0].attributes.preferences['rebootAfterManualUpdate']) {
@@ -167,7 +167,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
           } else {
             this.translate.get('Restart').subscribe((reboot: string) => {
               this.translate.get(helptext.rebootAfterManualUpdate.manual_reboot_msg).subscribe((reboot_prompt: string) => {
-                this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
+                this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res: boolean) => {
                   if (reboot_res) {
                     this.router.navigate(['/others/reboot']);
                   }
@@ -186,7 +186,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
             });
         }
       })
-      this.dialogRef.componentInstance.prefailure.subscribe((prefailure)=>{
+      this.dialogRef.componentInstance.prefailure.subscribe((prefailure: any)=>{
         this.dialogRef.close(false);
         this.dialogService.errorReport(helptext.manual_update_error_dialog.message,
           `${prefailure.status.toString()} ${prefailure.statusText}`);
@@ -194,7 +194,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
       })
       this.dialogRef.componentInstance.failure
         .pipe(take(1))
-        .subscribe((failure)=>{
+        .subscribe((failure: any)=>{
           this.dialogRef.close(false);
           this.dialogService.errorReport(failure.error,failure.state,failure.exception);
           this.save_button_enabled = true;
@@ -224,17 +224,17 @@ updater(file: any, parent: any){
   }
 }
 
-  showRunningUpdate(jobId) {
+  showRunningUpdate(jobId: number) {
       this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Update" }, disableClose: true });
       if (this.isHA) {
         this.dialogRef.componentInstance.disableProgressValue(true);
       };
       this.dialogRef.componentInstance.jobId = jobId;
       this.dialogRef.componentInstance.wsshow();
-      this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.dialogRef.componentInstance.success.subscribe(() => {
         this.router.navigate(['/others/reboot']);
       });
-      this.dialogRef.componentInstance.failure.subscribe((err) => {
+      this.dialogRef.componentInstance.failure.subscribe((err: any) => {
         new EntityUtils().handleWSError(this, err, this.dialogService);
       });
   }

@@ -426,13 +426,13 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     this.displayFormGroup = this.entityFormService.createFormGroup(this.displayFieldConfig);
 
     this.activeFormGroup = this.cdromFormGroup;
-    this.diskFormGroup.controls['path'].valueChanges.subscribe((res) => {
+    this.diskFormGroup.controls['path'].valueChanges.subscribe((res: string) => {
       if(res === 'new') {
         this.diskFormGroup.controls['path'].setValue('');
         this.addZvol();
       }
     });
-    this.formGroup.controls['dtype'].valueChanges.subscribe((res) => {
+    this.formGroup.controls['dtype'].valueChanges.subscribe((res: any) => {
       this.selectedType = res;
       if (res === 'CDROM') {
         this.activeFormGroup = this.cdromFormGroup;
@@ -473,7 +473,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
 
   async afterInit() {
 
-    this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
+    this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols: any)=>{
       zvols.forEach(zvol => {
         _.find(this.diskFieldConfig, {name:'path'}).options.push(
           {
@@ -506,7 +506,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       }
       // if type == 'Container Provider' and rawfile boot device exists, hide rootpwd and boot fields.
       if (_.find(vm[0].devices, {dtype:'RAW'}) && vm[0].type ==="Container Provider") {
-        vm[0].devices.forEach(element => {
+        vm[0].devices.forEach((element: any) => {
           if(element.dtype === "RAW") {
             if (element.attributes.boot) {
               this.rootpwd = _.find(this.rawfileFieldConfig, {'name': 'rootpwd'});
@@ -577,8 +577,8 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     this.modalService.open('slide-in-form', this.addZvolComponent);
   }
 
-  updateZvolSearchOptions(value = "", parent) {
-    parent.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"],["id", "^", value]]]).subscribe((zvols)=>{
+  updateZvolSearchOptions(value = "", parent: any) {
+    parent.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"],["id", "^", value]]]).subscribe((zvols: any[])=>{
       const searchedZvols = [];
       zvols.forEach(zvol => {
         searchedZvols.push(

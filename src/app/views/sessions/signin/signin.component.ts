@@ -189,9 +189,9 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   loginToken() {
     let middleware_token;
-    if (window['MIDDLEWARE_TOKEN']) {
-      middleware_token = window['MIDDLEWARE_TOKEN'];
-      window['MIDDLEWARE_TOKEN'] = null;
+    if ((window as any)['MIDDLEWARE_TOKEN']) {
+      middleware_token = (window as any)['MIDDLEWARE_TOKEN'];
+      (window as any)['MIDDLEWARE_TOKEN'] = null;
     } else if (window.localStorage.getItem('middleware_token')) {
       middleware_token = window.localStorage.getItem('middleware_token');
       window.localStorage.removeItem('middleware_token');

@@ -85,7 +85,7 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
   }
 
   getData(): Observable<any> {
-    const source = Observable.create((observer) => {
+    const source = Observable.create((observer: any) => {
         this.subscrition = this.ws.subscribe("core.get_jobs").subscribe((res) => {
           observer.next(res.fields);
         });
@@ -104,10 +104,10 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
     return;
   }
 
-  showLogs(element): void {
+  showLogs(element: any): void {
     this.dialogService.confirm(T('Logs'), `<pre>${element.logs_excerpt}</pre>`, true, T('Download Logs'),
       false, '', '', '', '', false, T('Close'), true).subscribe(
-      (dialog_res) => {
+      (dialog_res: boolean) => {
         if (dialog_res) {
           this.ws.call('core.download', ['filesystem.get', [element.logs_path], element.id + '.log']).subscribe(
             (snack_res) => {
