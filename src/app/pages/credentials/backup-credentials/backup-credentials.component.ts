@@ -33,17 +33,18 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
      private modalService: ModalService) {}
 
   ngOnInit(): void {
+    this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
+      this.getCards();
+    })
+    this.refreshForms();
+    this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
+      this.refreshForms();
+    });
+
     this.getProviders = this.cloudCredentialsService.getProviders().subscribe(
       (res) => {
         this.providers = res;
         this.getCards();
-        this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
-          this.getCards();
-        })
-        this.refreshForms();
-        this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
-          this.refreshForms();
-        });
       }
     );
   }
@@ -124,7 +125,7 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
         }
       }
       return item;
-    });;
+    });
   }
 
   sshConnectionsDataSourceHelper(res) {
