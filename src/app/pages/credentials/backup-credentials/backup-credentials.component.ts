@@ -18,6 +18,7 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
   cards: any;
   refreshTable: Subscription;
   refreshForm: Subscription;
+  getProviders: Subscription;
 
   // Components included in this dashboard
   protected sshConnections: SshConnectionsFormComponent;
@@ -32,7 +33,7 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
      private modalService: ModalService) {}
 
   ngOnInit(): void {
-    this.cloudCredentialsService.getProviders().subscribe(
+    this.getProviders = this.cloudCredentialsService.getProviders().subscribe(
       (res) => {
         this.providers = res;
         this.getCards();
@@ -115,17 +116,15 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
   }
 
   cloudCredentialsDataSourceHelper(res) {
-    if (this.providers) {
-      res = res.map(item => {
+    return res.map(item => {
+      if (this.providers) {
         const credentialProvider = this.providers.find(provider => provider.name == item.provider);
         if (credentialProvider) {
           item.provider = credentialProvider.title;
         }
-        return item;
-      });
-    }
-
-    return res;
+      }
+      return item;
+    });;
   }
 
   sshConnectionsDataSourceHelper(res) {
@@ -166,6 +165,10 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.refreshTable.unsubscribe();
     this.refreshForm.unsubscribe();
+
+    if (this.getProviders) {
+      this.getProviders.unsubscribe();
+    }
   }
 
 }
