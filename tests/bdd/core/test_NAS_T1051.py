@@ -81,7 +81,6 @@ def input_00000_in_authorized_network(driver):
     """input 0.0.0.0/0 in Authorized Network."""
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Authorized Networks"]', 'clickable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Authorized Networks"]').clear()
-    #driver.find_element_by_xpath('//input[@ix-auto="input__Authorized Networks"]').send_keys('0.0.0.0/0')
 
 
 @then('click Save, the nfs share should save without errors')

@@ -254,7 +254,7 @@ def create_a_directory_on_the_client(driver, client, password):
     global host, passwd
     host = client
     passwd = password
-    cmd = f'mkdir {mountpoint}'
+    cmd = f'mkdir -p {mountpoint}'
     login_results = ssh_cmd(cmd, 'root', passwd, host)
     assert login_results['result'], str(login_results)
 

@@ -109,7 +109,7 @@ def on_the_permissions_page_set_the_user_to_nobody_and_the_group_to_nogroup(driv
     assert wait_on_element(driver, 7, '//input[@placeholder="User"]', 'clickable')
     driver.find_element_by_xpath('//input[@placeholder="User"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="User"]').send_keys('nobody')
-    assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__nobody"]', 'clickable')
+    assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__nobody"]')
     ActionChains(driver).send_keys(Keys.ESCAPE).perform()
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply User"]/label/div')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply User"]/label/div').click()
@@ -201,7 +201,7 @@ def create_a_directory_on_the_client_with_password(driver, client, password):
     global host, passwd
     host = client
     passwd = password
-    cmd = f'mkdir {mountpoint}'
+    cmd = f'mkdir -p {mountpoint}'
     login_results = ssh_cmd(cmd, 'root', passwd, host)
     assert login_results['result'], str(login_results)
 
