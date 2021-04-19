@@ -112,7 +112,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       observerClass: this, 
       eventName:"SysInfo"
     }).subscribe((evt: CoreEvent) => {
-      this.coreCount = evt.data.cores;
+      this.coreCount = evt.data.physical_cores;
     });
 
     this.core.emit({
