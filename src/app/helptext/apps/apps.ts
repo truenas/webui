@@ -9,7 +9,14 @@ export default {
     jobTitle: T('Configuring...'),
     success: T('Success'),
     message: T('Using pool '),
-    unsetPool: T('Unset Pool')
+    unsetPool: {
+      label: T('Unset Pool'),
+      confirm: {
+        title: T('Unset Pool'),
+        message: T('Confirm to unset pool?'),
+        button: T('Unset'),
+      }
+    },
   },
 
   message: {
