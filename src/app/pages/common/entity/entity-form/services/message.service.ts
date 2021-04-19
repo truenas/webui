@@ -6,7 +6,7 @@ export class MessageService {
   private messageSource = new Subject<any>();
   public messageSourceHasNewMessage$ = this.messageSource.asObservable();
   constructor() {}
-  newMessage(message){
+  newMessage(message: any){
     this.messageSource.next(message);
   }
 }

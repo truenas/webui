@@ -10,7 +10,7 @@ import { T } from '../../../../translate-marker';
 })
 export class SmartResultsComponent {
 
-    public title;
+    public title: string;
     protected queryCall = "smart.test.results";
     protected queryCallOption = [];
 
@@ -28,7 +28,7 @@ export class SmartResultsComponent {
     };
     protected noActions = true;
 
-    protected disk;
+    protected disk: string;
     constructor(private aroute: ActivatedRoute, protected translate: TranslateService,) { }
     preInit(entityForm: any) {
         this.aroute.params.subscribe(params => {
@@ -42,7 +42,7 @@ export class SmartResultsComponent {
         });
     }
 
-    resourceTransformIncomingRestData(data) {
+    resourceTransformIncomingRestData(data: any) {
         return data.tests || [];
     }
 }

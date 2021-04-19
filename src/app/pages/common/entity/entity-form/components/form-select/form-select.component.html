@@ -21,22 +21,22 @@
         id="{{config.name}}_form-select-spinner"
         *ngIf="config.isLoading">
       </mat-spinner>
-    <mat-select 
+    <mat-select
       #selectTrigger
       [value]="formValue"
-      [formControlName]="config.name" 
-      [multiple]="config.multiple" 
-      [required]="config.required" 
+      [formControlName]="config.name"
+      [multiple]="config.multiple"
+      [required]="config.required"
       (selectionChange)="onChangeOption($event)"
       ix-auto ix-auto-type="select" ix-auto-identifier="{{config.placeholder}}">
 
-     
+
       <mat-select-trigger *ngIf="config.multiple">
         <span *ngFor="let value of customTriggerValue ; last as isLast">
             {{ value }}{{ isLast ? '' : ', ' }}
         </span>
       </mat-select-trigger>
-     
+
       <!--
         <div class="mat-option" (click)="onToggleSelectAll()">
           <span *ngIf="config.multiple">
@@ -66,7 +66,7 @@
           </mat-option>
 
           <!-- else -->
-          <mat-option *ngIf="!option?.disable" [value]="option.value" (click)="onToggleSelect(option, i)"
+          <mat-option *ngIf="!option?.disable" [value]="option.value" (click)="onToggleSelect(option)"
             ix-auto
             ix-auto-type="option"
             ix-auto-identifier="{{config.placeholder}}_{{option.label}}">
@@ -101,6 +101,6 @@
   <div class="margin-for-error">
     <form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>
     <mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
-    <mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>    
+    <mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
   </div>
 </div>

@@ -35,20 +35,16 @@ export class LabelFactory {
 
  /*
   * Don't use this class directly.
-  * Instead extend this class for label 
+  * Instead extend this class for label
   * label functionality you need
-  * 
+  *
   */
 
   public events: Subject<CoreEvent>;
   protected mainStage: any;
   protected chassis: Chassis; // The chassis we are labelling
 
-  constructor(chassis, stage){
-    //this.onInit(chassis, stage);
-  }
-
-  onInit(chassis, stage){
+  onInit(chassis: Chassis, stage: any){
     this.chassis = chassis;
     this.mainStage = stage;
     this.events = new Subject<CoreEvent>();

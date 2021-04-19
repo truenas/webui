@@ -52,13 +52,13 @@ export class AppComponent {
     public matIconRegistry: MatIconRegistry,
     public chartDataUtils: ChartDataUtilsService,
     private sysGeneralService: SystemGeneralService) {
-   
+
     this.matIconRegistry.addSvgIconSetInNamespace("mdi",
       this.domSanitizer.bypassSecurityTrustResourceUrl("assets/iconfont/mdi/mdi.svg")
     );
-    
+
     for(const [name, path] of Object.entries(customSvgIcons)) {
-      this.matIconRegistry.addSvgIcon(name, this.domSanitizer.bypassSecurityTrustResourceUrl(path));  
+      this.matIconRegistry.addSvgIcon(name, this.domSanitizer.bypassSecurityTrustResourceUrl(path));
     }
 
     const product = productText.product.trim();
@@ -117,8 +117,8 @@ export class AppComponent {
     }
   }
 
-  private setFavicon(str) {
-    const link = document.querySelector("link[rel*='icon']") || document.createElement("link")
+  private setFavicon(str: string) {
+    const link: HTMLLinkElement = document.querySelector("link[rel*='icon']") || document.createElement("link")
       link['rel'] = "icon";
       link['type'] = "image/png";
       // link.sizes = "16x16";
@@ -126,7 +126,7 @@ export class AppComponent {
       document.getElementsByTagName('head')[0].appendChild(link);
   }
 
-  private detectBrowser(name){
+  private detectBrowser(name: string){
     let N = navigator.appName;
     let UA = navigator.userAgent;
     let temp;

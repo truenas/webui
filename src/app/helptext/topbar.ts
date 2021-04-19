@@ -1,3 +1,4 @@
+import { FailoverDisabledReason } from '../enums/failover-disabled-reason.enum';
 import { T } from '../translate-marker';
 import globalHelptext from '../helptext/global-helptext';
 import { Validators } from '@angular/forms';
@@ -9,15 +10,15 @@ export default {
     ha_is_enabled : T('HA is enabled'),
     ha_status_text_disabled : T('HA Disabled'),
     ha_disabled_reasons : {
-        NO_VOLUME : T('No pools are configured.'),
-        NO_VIP : T('No interfaces configured with Virtual IP.'),
-        NO_SYSTEM_READY : T(`Other ${globalHelptext.ctrlr} has not finished booting.`),
-        NO_PONG : T(`Other ${globalHelptext.ctrlr} cannot be reached.`),
-        NO_FAILOVER : T('Failover is administratively disabled.'),
-        NO_LICENSE: T(`Other ${globalHelptext.ctrlr} has no license.`),
-        DISAGREE_CARP: T(`Nodes CARP states do not agree.`),
-        MISMATCH_DISKS : T(`The ${globalHelptext.ctrlrs} do not have the same quantity of disks.`),
-        NO_CRITICAL_INTERFACES: T('No network interfaces are marked critical for failover.'),
+        [FailoverDisabledReason.NoVolume]: T('No pools are configured.'),
+        [FailoverDisabledReason.NoVip]: T('No interfaces configured with Virtual IP.'),
+        [FailoverDisabledReason.NoSystemReady]: T(`Other ${globalHelptext.ctrlr} has not finished booting.`),
+        [FailoverDisabledReason.NoPong] : T(`Other ${globalHelptext.ctrlr} cannot be reached.`),
+        [FailoverDisabledReason.NoFailover]: T('Failover is administratively disabled.'),
+        [FailoverDisabledReason.NoLicense]: T(`Other ${globalHelptext.ctrlr} has no license.`),
+        [FailoverDisabledReason.DisagreeCarp]: T(`Nodes CARP states do not agree.`),
+        [FailoverDisabledReason.MismatchDisks] : T(`The ${globalHelptext.ctrlrs} do not have the same quantity of disks.`),
+        [FailoverDisabledReason.NoCriticalInterfaces]: T('No network interfaces are marked critical for failover.'),
     },
     legacyUIWarning: `${globalHelptext.legacyUIWarning}`,
     updateRunning_dialog : {
@@ -41,7 +42,7 @@ export default {
         task_manager: T('Task Manager'),
         alerts: T('Alerts'),
         settings: T('Settings'),
-        power: T('Power')        
+        power: T('Power')
     },
 
     signupDialog: {

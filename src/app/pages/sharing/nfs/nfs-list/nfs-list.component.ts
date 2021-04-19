@@ -35,6 +35,6 @@ export class NFSListComponent {
     message: shared.delete_share_message,
     isMessageComplete: true,
     button: T('Unshare'),
-    buildTitle: share => `${T('Unshare')} ${share.paths.join(', ')}`
+    buildTitle: (share: any) => `${T('Unshare')} ${share.paths.join(', ')}`
   }
 }

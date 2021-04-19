@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import helptext from '../../../helptext/vm/vm-cards/vm-cards';
+import { ShellConnectedEvent } from '../../../interfaces/shell.interface';
 import { ShellService, WebSocketService } from '../../../services';
 import { Terminal } from 'xterm';
 import { AttachAddon } from 'xterm-addon-attach';
@@ -49,7 +50,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
       this.pk = params['pk'];
       this.getAuthToken().subscribe((res) => {
         this.initializeWebShell(res);
-        this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
+        this.shellSubscription = this.ss.shellOutput.subscribe((value: any) => {
           if (value !== undefined) {
             // this.xterm.write(value);
           }
@@ -167,7 +168,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     this.ss.token = res;
     this.ss.connect();
 
-    this.ss.shellConnected.subscribe((res)=> {
+    this.ss.shellConnected.subscribe((res: ShellConnectedEvent)=> {
       this.connectionId = res.id;
       this.resizeTerm();
     })

@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { CoreEvent } from 'app/core/services/core.service';
 import { Subscription, interval, Subject } from 'rxjs';
+import { FailoverDisabledReason } from '../../../enums/failover-disabled-reason.enum';
 import { ProductType } from '../../../enums/product-type.enum';
 import * as domHelper from '../../../helpers/dom.helper';
 import network_interfaces_helptext from '../../../helptext/network/interfaces/interfaces-list';
@@ -92,6 +93,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   protected isTcStatusOpened = false;
   protected tcStatusDialogRef: MatDialogRef<TruecommandComponent>;
   public tcStatus: any;
+
+  readonly FailoverDisabledReason = FailoverDisabledReason;
 
   constructor(
     public themeService: ThemeService,

@@ -15,7 +15,7 @@ import { ReportsGlobalControlsComponent } from 'app/pages/reportsdashboard/compo
 import { LocaleService } from 'app/services/locale.service';
 
 export interface GlobalAction {
-  applyConfig(config:any);
+  applyConfig(config:any): any;
 }
 
 

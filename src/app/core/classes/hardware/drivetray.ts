@@ -9,7 +9,7 @@ export class DriveTray {
   public model: string;
   public id: string;
   public vertical: boolean = false;
-  protected loader;
+  protected loader: any;
 
   public enabled: boolean = false;
 
@@ -22,7 +22,7 @@ export class DriveTray {
     this.colorize(value);
   }
 
-  constructor(model, loader){
+  constructor(model: string, loader: any){
     this.model = model;
     this.loader = loader;
     this.container = new PIXI.Container();
@@ -48,10 +48,6 @@ export class DriveTray {
     this.container.addChild(this.handle);
     this.container.calculateBounds();
 
-  }
-
-  loadProgressHandler(){
-    
   }
 
   private colorize(cssColor: string ){

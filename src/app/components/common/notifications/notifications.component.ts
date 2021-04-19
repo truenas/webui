@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { MatSidenav } from '@angular/material/sidenav';
 import { NotificationsService, NotificationAlert } from 'app/services/notifications.service';
 import { LocaleService } from 'app/services/locale.service';
 import { Subscription } from 'rxjs';
@@ -12,7 +13,7 @@ import { Router } from '@angular/router';
 })
 export class NotificationsComponent implements OnInit, OnDestroy {
 
-  @Input() notificPanel;
+  @Input() notificPanel: MatSidenav;
 
   notifications: Array<NotificationAlert> = [];
   dismissedNotifications: Array<NotificationAlert> = []

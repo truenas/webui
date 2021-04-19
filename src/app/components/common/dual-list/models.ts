@@ -32,7 +32,7 @@ export class ListSelectionImpl implements ListSelection {
 
 
 
-  mouseDown(item: any, event?): void {
+  mouseDown(item: any, event?: MouseEvent): void {
     if (!event.ctrlKey) {
       if (!this.isSelected(item)) {
         this._selectedItems.length = 0;
@@ -47,11 +47,11 @@ export class ListSelectionImpl implements ListSelection {
     }
   }
 
-  mouseUp(item: any, event?) {
+  mouseUp(item: any, event?: MouseEvent) {
     if (!event.ctrlKey) {
       if (this._selectedItems.length > 1 && this.isSelected(item)) {
         this._selectedItems.length = 0;
-        this._selectedItems.push(item);      
+        this._selectedItems.push(item);
       }
     }
   }

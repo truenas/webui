@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { helptext_sharing_webdav, shared } from './../../../../helptext/sharing';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -86,12 +87,12 @@ export class WebdavFormComponent {
       protected ws: WebSocketService, private dialog:DialogService) {}
 
     afterInit(entityForm: any) {
-      entityForm.formGroup.controls['perm'].valueChanges.subscribe((value) => {
+      entityForm.formGroup.controls['perm'].valueChanges.subscribe((value: any) => {
         value ? this.confirmSubmit = true : this.confirmSubmit = false;
       })
     };
 
-    afterSave(entityForm) {
+    afterSave(entityForm: any) {
       this.ws.call('service.query', [[]]).subscribe((res) => {
         const service = _.find(res, {"service": "webdav"});
         if (service['enable']) {
@@ -99,13 +100,13 @@ export class WebdavFormComponent {
             this.route_success));
         } else {
             this.dialog.confirm(shared.dialog_title, shared.dialog_message,
-            true, shared.dialog_button).subscribe((dialogRes) => {
+            true, shared.dialog_button).subscribe((dialogRes: any) => {
               if (dialogRes) {
                 entityForm.loader.open();
                 this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
                   this.ws.call('service.start', [service.service]).subscribe((startRes) => {
                     entityForm.loader.close();
-                    this.dialog.Info(T('WebDAV') + shared.dialog_started_title, 
+                    this.dialog.Info(T('WebDAV') + shared.dialog_started_title,
                     T('The WebDAV') + shared.dialog_started_message, '250px').subscribe(() => {
                       this.router.navigate(new Array('/').concat(
                         this.route_success));
@@ -128,7 +129,7 @@ export class WebdavFormComponent {
               }
           });
         }
-  
+
       });
     }
   }

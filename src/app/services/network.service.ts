@@ -36,7 +36,7 @@ export class NetworkService {
     return this.ws.call('interface.vlan_parent_interface_choices');
   }
 
-  getLaggPortsChoices(id = null) {
+  getLaggPortsChoices(id: string = null) {
     return this.ws.call('interface.lag_ports_choices', [id]);
   }
 
@@ -44,7 +44,7 @@ export class NetworkService {
     return this.ws.call('interface.lag_supported_protocols', []);
   }
 
-  getBridgeMembersChoices(id = null) {
+  getBridgeMembersChoices(id: string = null) {
     return this.ws.call('interface.bridge_members_choices', [id]);
   }
 
@@ -72,7 +72,7 @@ export class NetworkService {
         });
   }
 
-  authNetworkValidator(str) {
+  authNetworkValidator(str: string) {
     if (isCidr.v4(str) || isCidr.v6(str)) {
       return true;
     }

@@ -23,7 +23,6 @@ export class NotificationsService {
 
   private subject = new Subject<any>();
   private intervalPeriod = 20000;
-  private interval;
   private notifications: NotificationAlert[] = [];
   private running = false;
   private locale = 'en-US';
@@ -43,7 +42,7 @@ export class NotificationsService {
       if (res.timezone !== 'WET' && res.timezone !== 'posixrules') {
         this.timeZone = res.timezone;
       }
-      
+
       this.ws.call('alert.list', []).subscribe((res) => {
           this.notifications = this.alertsArrivedHandler(res);
           this.subject.next(this.notifications);
@@ -130,7 +129,7 @@ export class NotificationsService {
   //     source:"VolumeVersion"
   //     title:"New feature flags are available for volume %s. Refer to the "Upgrading a ZFS Pool" section of the User Guide for instructions."
   //   }
-  private alertsArrivedHandler(res): NotificationAlert[] {
+  private alertsArrivedHandler(res: any): NotificationAlert[] {
     const returnAlerts = new Array<NotificationAlert>();
     const data: Array<any> = res;
 
@@ -145,7 +144,7 @@ export class NotificationsService {
     return returnAlerts;
   }
 
-  private addNotification(alertObj): NotificationAlert {
+  private addNotification(alertObj: any): NotificationAlert {
     const id: string = alertObj.id;
     const dismissed: boolean = alertObj.dismissed;
     const message: string = <string>alertObj.formatted;

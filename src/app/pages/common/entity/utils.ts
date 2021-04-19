@@ -38,7 +38,7 @@ export class EntityUtils {
         if (fc) {
           const element = document.getElementById(i);
           if (element) {
-            if (entity.conf && entity.conf.advanced_field && 
+            if (entity.conf && entity.conf.advanced_field &&
               _.indexOf(entity.conf.advanced_field, i) > -1 &&
               entity.conf.isBasicMode) {
                 entity.conf.isBasicMode = false;
@@ -49,14 +49,14 @@ export class EntityUtils {
             }
           }
           let errors = '';
-          field.forEach((item, j) => { errors += item + ' '; });
+          field.forEach((item: any) => { errors += item + ' '; });
           fc['hasErrors'] = true;
           fc['errors'] = errors;
         } else {
           if (typeof field === 'string') {
             entity.error = field;
           } else {
-            field.forEach((item, j) => { entity.error += item + '<br />'; });
+            field.forEach((item: any) => { entity.error += item + '<br />'; });
           }
         }
       }
@@ -102,7 +102,7 @@ export class EntityUtils {
         if (fc && !fc['isHidden']) {
           const element = document.getElementById(field);
           if (element) {
-            if (entity.conf && entity.conf.advanced_field && 
+            if (entity.conf && entity.conf.advanced_field &&
               _.indexOf(entity.conf.advanced_field, field) > -1 &&
               entity.conf.isBasicMode) {
                 entity.conf.isBasicMode = false;
@@ -130,7 +130,7 @@ export class EntityUtils {
     }
   }
 
-  errorReport(res, dialog) {
+  errorReport(res: any, dialog: any) {
     if (res.trace && res.trace.formatted && dialog) {
       dialog.errorReport(res.trace.class, res.reason, res.trace.formatted);
     } else if (res.state && res.error && res.exception && dialog) {
@@ -195,7 +195,7 @@ export class EntityUtils {
      * If the value of a control is invaild, we ignore it during sending payload
      */
     let result = true;
-    
+
     if (item === undefined || item === null || item === '') {
       result = false;
     } else if (typeof item === 'object') {
@@ -228,7 +228,7 @@ export class EntityUtils {
       if (key == "release_name" || key == 'undefined' || key.startsWith(FORM_LABEL_KEY_PREFIX)) {
         return;
       }
-      
+
       const key_list = key.split(FORM_KEY_SEPERATOR);
       if (key_list.length > 1) {
         let parent = result;
@@ -250,14 +250,14 @@ export class EntityUtils {
               }
             } else {
               parent[temp_key] = value;
-            }            
+            }
           } else {
             if (!parent[temp_key]) {
               parent[temp_key] = {};
             }
             parent = parent[temp_key];
           }
-        }        
+        }
       } else {
         if (Array.isArray(value)) {
           const arrayValues = value.map(item => {
@@ -313,14 +313,14 @@ export class EntityUtils {
 
     return result;
   }
-  
+
   createRelations(relations:Relation[], parentName:string) {
     const result = relations.map(relation => {
       let relationFieldName = relation.fieldName;
       if (parentName) {
         relationFieldName = `${parentName}${FORM_KEY_SEPERATOR}${relationFieldName}`;
       }
-  
+
       return {
         action: 'SHOW',
         when: [{
@@ -331,7 +331,7 @@ export class EntityUtils {
       };
     });
 
-    return result;    
+    return result;
   }
 
   parseSchemaFieldConfig(schemaConfig: any, parentName: string=null, parentIsList: boolean=false) {
@@ -361,10 +361,10 @@ export class EntityUtils {
           fieldName: item[0],
           operatorName: item[1],
           operatorValue: item[2],
-        };         
+        };
       })
     }
-    
+
     if (schemaConfig.schema.editable === false) {
       fieldConfig['readonly'] = true;
     }
@@ -431,7 +431,7 @@ export class EntityUtils {
 
     } else if (schemaConfig.schema.type == 'dict') {
       fieldConfig = null;
-      
+
       if (schemaConfig.schema.attrs.length > 0) {
         const dictLabel = {
           label: schemaConfig.label,
@@ -466,12 +466,12 @@ export class EntityUtils {
         }
 
         results.push(fieldConfig);
-  
+
         if (schemaConfig.schema.subquestions) {
           schemaConfig.schema.subquestions.forEach(subquestion => {
-    
+
             const subResults = this.parseSchemaFieldConfig(subquestion, parentName);
-    
+
             if (schemaConfig.schema.show_subquestions_if !== undefined) {
               subResults.forEach(subFieldConfig => {
                 subFieldConfig['isHidden'] = true;
@@ -484,7 +484,7 @@ export class EntityUtils {
                 }];
               });
             }
-    
+
             results = results.concat(subResults);
           });
         }
@@ -511,6 +511,6 @@ export class EntityUtils {
         }
       });
     }
-    
+
   }
 }

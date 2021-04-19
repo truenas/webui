@@ -18,11 +18,11 @@ export class AvailablePluginsComponent implements OnInit {
     @Input() parent: any;
 
     protected queryCall = 'plugin.available';
-    protected queryCallOption = {};
+    protected queryCallOption: any = {};
 
     public plugins: any;
     public selectedPlugin: any;
-    public availableRepo = [];
+    public availableRepo: any[] = [];
     public selectedRepo: any;
     public completeList: any;
     public installedPlugins: any = {};
@@ -111,14 +111,14 @@ export class AvailablePluginsComponent implements OnInit {
             });
     }
 
-    switchRepo(event) {
+    switchRepo() {
         this.parent.loader.open();
         this.parent.loaderOpen = true;
         this.queryCallOption['plugin_repository'] = this.selectedRepo;
         this.getPlugin();
     }
 
-    install(plugin) {
+    install(plugin: any) {
         if (!plugin.official) {
             this.parent.dialogService.confirm(
                 T('Warning'),
@@ -127,7 +127,7 @@ export class AvailablePluginsComponent implements OnInit {
  support level. Thorough research is strongly recommended before installing or using an unofficial plugin.'),
                 true, T('Continue')
             ).subscribe(
-                (res) => {
+                (res: any) => {
                     if (res) {
                         this.router.navigate(new Array('').concat(["plugins", "add", plugin.plugin, {'plugin_repository': this.selectedRepo}]));
                     }

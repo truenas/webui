@@ -1,4 +1,4 @@
-export function removeClass(el, className: string) {
+export function removeClass(el: any, className: string) {
   if (!el || el.length === 0)
     return;
   if (!el.length) {
@@ -9,7 +9,7 @@ export function removeClass(el, className: string) {
     }
   }
 }
-export function addClass(el, className: string) {
+export function addClass(el: any, className: string) {
   if (!el)
     return;
   if (!el.length) {
@@ -36,7 +36,7 @@ export function hasClass(el: HTMLElement, className: string) {
     return;
   return (` ${el.className} `).replace(/[\n\t]/g, ' ').indexOf(` ${className} `) > -1;
 }
-export function toggleClass(el, className: string) {
+export function toggleClass(el: any, className: string) {
   if (!el)
     return;
   if (hasClass(el, className)) {

@@ -47,7 +47,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   @ViewChild(MatSidenav, { static: false}) private sideNave: MatSidenav;
   @ViewChild('footerBarScroll', { static: true}) private footerBarScroll: ElementRef;
-  freenasThemes;
+  freenasThemes: any;
 
   get sidenavWidth(): string {
     return this.getSidenavWidth();

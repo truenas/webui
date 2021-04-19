@@ -7,7 +7,7 @@ import { MatButton } from '@angular/material/button';
   styleUrls: ['./forgot-password.component.css']
 })
 export class ForgotPasswordComponent implements OnInit {
-  userEmail;
+  userEmail: string;
   @ViewChild(MatProgressBar, { static: false}) progressBar: MatProgressBar;
   @ViewChild(MatButton, { static: false}) submitButton: MatButton;
   constructor() { }

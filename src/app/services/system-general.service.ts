@@ -10,7 +10,7 @@ export class SystemGeneralService {
 
   protected certificateList = 'certificate.query';
   protected caList = 'certificateauthority.query';
-  
+
   updateRunning = new EventEmitter<string>();
   updateRunningNoticeSent = new EventEmitter<string>();
   updateIsDone$ = new Subject();
@@ -24,7 +24,7 @@ export class SystemGeneralService {
       return observer.next({});
     }
     if((!this.generalConfigInfo || _.isEmpty(this.generalConfigInfo))) {
-      // Since the api call can be made many times before the first response comes back, 
+      // Since the api call can be made many times before the first response comes back,
       // set waiting to true to make if condition false after the first call
       this.generalConfigInfo = { waiting: true};
       this.ws.call('system.general.config').subscribe(res => {
@@ -88,7 +88,7 @@ export class SystemGeneralService {
     }, 5000)
 
   })
-  
+
   constructor(protected rest: RestService, protected ws: WebSocketService) {};
 
   getCA() { return this.ws.call(this.caList, []); }
@@ -106,7 +106,7 @@ export class SystemGeneralService {
   getCertificateCountryChoices() {
     return this.ws.call('certificate.country_choices');
   }
- 
+
   getIPChoices() {
     return this.ws.call('notifier.choices', [ 'IPChoices', [ true, false ] ]);
   }
@@ -178,8 +178,8 @@ export class SystemGeneralService {
   refreshSysGeneral() {
     this.refreshSysGeneral$.next();
   }
- 
-  checkRootPW(password) {
+
+  checkRootPW(password: string) {
     return this.ws.call('auth.check_user', ['root', password]);
   }
 }

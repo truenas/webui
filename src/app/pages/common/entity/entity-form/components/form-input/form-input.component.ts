@@ -13,11 +13,11 @@ import globalHelptext from '../../../../../../helptext/global-helptext';
   styleUrls: ['./form-input.component.scss', '../dynamic-field/dynamic-field.css'],
 })
 export class FormInputComponent implements Field {
-  @ViewChild('fileInput', { static: true}) fileInput;
+  @ViewChild('fileInput', { static: true}) fileInput: HTMLInputElement;
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
-  public fileString;
+  public fileString: string | ArrayBuffer;
   public showPassword = false;
   private hasPasteEvent = false;
 
@@ -25,7 +25,7 @@ export class FormInputComponent implements Field {
     private formService: EntityFormService) {
   }
 
-  changeListener($event): void {
+  changeListener($event: Event): void {
     this.readFile($event.target);
   }
 
@@ -98,7 +98,7 @@ export class FormInputComponent implements Field {
   resetInput() {
     this.group.controls[this.config.name].setValue('');
   }
-  
+
   onPaste(event: ClipboardEvent) {
     if (!this.config.inputType || this.config.inputType !== 'password') {
       this.hasPasteEvent = true;

@@ -45,7 +45,7 @@ export class WidgetControllerComponent extends WidgetComponent implements AfterV
   @Input() emptyConfig: EmptyConfig;
   @Input() actionsConfig: ToolbarConfig;
 
-  @Output() launcher = new EventEmitter()
+  @Output() launcher = new EventEmitter<DashConfigItem>()
 
   public title:string = T("Dashboard");
   public subtitle:string = T("Navigation");
@@ -63,14 +63,6 @@ export class WidgetControllerComponent extends WidgetComponent implements AfterV
     });
   }
 
-  /*ngOnChanges(changes:SimpleChanges){
-    if(changes.renderedWidgets){
-      console.log(changes.renderedWidgets);
-    } else if(changes.hiddenWidgets){
-      console.log(changes.hiddenWidgets);
-    } 
-  }*/
-
   ngOnDestroy(){
     this.core.unregister({observerClass:this});
   }
@@ -83,20 +75,20 @@ export class WidgetControllerComponent extends WidgetComponent implements AfterV
 
   }
 
-  nameFromIdentifier(identifier){
+  nameFromIdentifier(identifier: string){
     const spl = identifier.split(',');
     const key = spl[0];
     const value = spl[1];
 
     if(key == 'name'){
       return value;
-    } else { 
+    } else {
       return '';
     }
 
   }
 
-  launchWidget(widget){
+  launchWidget(widget: DashConfigItem){
     this.launcher.emit(widget);
   }
 

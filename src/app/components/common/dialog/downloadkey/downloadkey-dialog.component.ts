@@ -39,7 +39,7 @@ export class DownloadKeyModalDialog {
     if (this.fileName !== undefined) {
       payload.push(this.fileName);
     }
-    let mimetype;
+    let mimetype: string;
     this.loader.open();
     if (this.new) { // new is ZoL encryption
       mimetype = 'application/json';

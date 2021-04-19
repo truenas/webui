@@ -18,7 +18,7 @@ export class ErrorDialog {
   public message: string;
   public backtrace: string;
   public isCloseMoreInfo: Boolean = true;
-  public logs;
+  public logs: any;
 
   constructor(public dialogRef: MatDialogRef < ErrorDialog >, public translate: TranslateService,
     private ws: WebSocketService, public http: HttpClient, public storage: StorageService) {}
@@ -31,7 +31,7 @@ export class ErrorDialog {
     const content = (<HTMLElement>dialog.querySelector('#err-md-content'));
     const btPanel = (<HTMLElement>dialog.querySelector('#err-bt-panel'));
     const txtarea = (<HTMLElement>dialog.querySelector('#err-bt-text'));
-    
+
     this.isCloseMoreInfo = !this.isCloseMoreInfo;
     if (!this.isCloseMoreInfo) {
       dialog.setAttribute('style','width : 800px; height: 600px');

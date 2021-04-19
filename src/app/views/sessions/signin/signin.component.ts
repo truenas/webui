@@ -5,6 +5,7 @@ import { MatButton } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { FailoverDisabledReason } from '../../../enums/failover-disabled-reason.enum';
 import { ProductType } from '../../../enums/product-type.enum';
 import { matchOtherValidator } from '../../../pages/common/entity/entity-form/validators/password-validation';
 import { TranslateService } from '@ngx-translate/core';
@@ -47,7 +48,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   private interval: any;
   public exposeLegacyUI = false;
   public tokenObservable:Subscription;
-  public HAInterval;
+  public HAInterval: any;
   public isTwoFactor = false;
   private didSetFocus = false;
 
@@ -67,14 +68,14 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     'IMPORTING': T("Importing pools."),
     'ERROR': T("Failover is in an error state.")
   }
-  public failover_ips = [];
-  public ha_disabled_reasons =[];
+  public failover_ips: string[] = [];
+  public ha_disabled_reasons: FailoverDisabledReason[] =[];
   public show_reasons = false;
   public reason_text = {};
   public ha_status_text = T('Checking HA status');
   public ha_status = false;
-  public tc_ip;
-  protected tc_url;
+  public tc_ip: string;
+  protected tc_url: string;
   private getProdType: Subscription;
 
   readonly ProductType = ProductType;
@@ -260,22 +261,22 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
         this.failover_status = res;
         this.ha_info_ready = true;
         if (res !== 'SINGLE') {
-          this.ws.call('failover.get_ips').subscribe(ips => {
+          this.ws.call<string[]>('failover.get_ips').subscribe(ips => {
             this.failover_ips = ips;
           }, err => {
             console.log(err);
           });
-          this.ws.call('failover.disabled_reasons').subscribe(reason => {
+          this.ws.call<FailoverDisabledReason[]>('failover.disabled_reasons').subscribe(reasons => {
             this.checking_status = false;
-            this.ha_disabled_reasons = reason;
+            this.ha_disabled_reasons = reasons;
             this.show_reasons = false;
-            if (reason.length === 0) {
+            if (reasons.length === 0) {
               this.ha_status_text = T('HA is enabled.');
               this.ha_status = true;
-            } else if (reason.length === 1) {
-              if (reason[0] === 'NO_SYSTEM_READY') {
+            } else if (reasons.length === 1) {
+              if (reasons[0] === FailoverDisabledReason.NoSystemReady) {
                 this.ha_status_text = T('HA is reconnecting.');
-              } else if (reason[0] === 'NO_FAILOVER') {
+              } else if (reasons[0] === FailoverDisabledReason.NoFailover) {
                 this.ha_status_text = T('HA is administratively disabled.');
               }
               this.ha_status = false;
@@ -339,7 +340,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       });
   }
 
-  loginCallback(result) {
+  loginCallback(result: boolean) {
     if (result === true) {
       this.successLogin();
     } else {
@@ -399,7 +400,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   onGoToLegacy() {
     this.dialogService.confirm(T("Warning"),
       globalHelptext.legacyUIWarning,
-       true, T('Continue to Legacy UI')).subscribe((res) => {
+       true, T('Continue to Legacy UI')).subscribe((res: boolean) => {
       if (res) {
         window.location.href = '/legacy/';
       }
