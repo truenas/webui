@@ -122,13 +122,13 @@ def the_system_will_reboot_wait_the_login_to_come_back(driver):
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 300, '//input[@formcontrolname="password"]')
     # this sleep give a little to get ready for more load
-    time.sleep(1)
+    time.sleep(2)
 
 
 @then('when the system login shows up, input testing1 as the new password')
 def when_the_system_login_shows_up_input_testing1_as_the_new_password(driver):
     """when the system login shows up, input testing1 as the new password."""
-    assert wait_on_element(driver, 10, '//input[@formcontrolname="password2"]', 'clickable')
+    assert wait_on_element(driver, 20, '//input[@formcontrolname="password2"]', 'clickable')
     driver.find_element_by_xpath('//input[@formcontrolname="password"]').clear()
     driver.find_element_by_xpath('//input[@formcontrolname="password"]').send_keys('testing1')
     driver.find_element_by_xpath('//input[@formcontrolname="password2"]').clear()
@@ -154,7 +154,9 @@ def reboot_the_system_and_try_to_login_using_the_previous_password_testing(drive
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 300, '//input[@placeholder="Username"]', 'clickable')
     # this sleep give a little to get ready for more load
-    time.sleep(1)
+    time.sleep(2)
+    # and look again
+    assert wait_on_element(driver, 20, '//input[@placeholder="Password"]', 'clickable')
     driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
     driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
@@ -206,13 +208,13 @@ def the_system_will_reboot_wait_for_the_login(driver):
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 300, '//input[@placeholder="Username"]')
     # this sleep give a little to get ready for more load
-    time.sleep(1)
+    time.sleep(2)
 
 
 @then('try to login using the new password testing1')
 def try_to_login_using_the_new_password_testing1(driver):
     """try to login using the new password testing1."""
-    assert wait_on_element(driver, 7, '//input[@placeholder="Username"]', 'clickable')
+    assert wait_on_element(driver, 20, '//input[@placeholder="Password"]', 'clickable')
     driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
     driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
