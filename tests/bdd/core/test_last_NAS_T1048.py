@@ -109,7 +109,7 @@ def reboot_the_system_wait_for_login_and_login(driver):
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__RESTART"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__RESTART"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 180, '//input[@placeholder="Username"]', 'clickable')
+    assert wait_on_element(driver, 300, '//input[@placeholder="Username"]', 'clickable')
     # this sleep give a little to get ready for more load
     time.sleep(1)
     driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()

@@ -120,7 +120,7 @@ def the_system_will_reboot_wait_the_login_to_come_back(driver):
     """the system will reboot, wait the login to come back."""
     assert wait_on_element_disappear(driver, 120, '//h1[contains(.,"Resetting. Please wait")]')
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 120, '//input[@formcontrolname="password"]')
+    assert wait_on_element(driver, 300, '//input[@formcontrolname="password"]')
     # this sleep give a little to get ready for more load
     time.sleep(1)
 
@@ -128,7 +128,7 @@ def the_system_will_reboot_wait_the_login_to_come_back(driver):
 @then('when the system login shows up, input testing1 as the new password')
 def when_the_system_login_shows_up_input_testing1_as_the_new_password(driver):
     """when the system login shows up, input testing1 as the new password."""
-    assert wait_on_element(driver, 120, '//input[@formcontrolname="password2"]', 'clickable')
+    assert wait_on_element(driver, 10, '//input[@formcontrolname="password2"]', 'clickable')
     driver.find_element_by_xpath('//input[@formcontrolname="password"]').clear()
     driver.find_element_by_xpath('//input[@formcontrolname="password"]').send_keys('testing1')
     driver.find_element_by_xpath('//input[@formcontrolname="password2"]').clear()
@@ -152,7 +152,7 @@ def reboot_the_system_and_try_to_login_using_the_previous_password_testing(drive
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__RESTART"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__RESTART"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 120, '//input[@placeholder="Username"]', 'clickable')
+    assert wait_on_element(driver, 300, '//input[@placeholder="Username"]', 'clickable')
     # this sleep give a little to get ready for more load
     time.sleep(1)
     driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
@@ -204,7 +204,7 @@ def set_the_file_click_upload(driver):
 def the_system_will_reboot_wait_for_the_login(driver):
     """the system will reboot, wait for the login."""
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 120, '//input[@placeholder="Username"]')
+    assert wait_on_element(driver, 300, '//input[@placeholder="Username"]')
     # this sleep give a little to get ready for more load
     time.sleep(1)
 
