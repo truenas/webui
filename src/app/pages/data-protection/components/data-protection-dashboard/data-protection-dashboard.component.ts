@@ -32,6 +32,7 @@ import { EntityFormService } from '../../../common/entity/entity-form/services/e
 import { InputTableConf } from '../../../common/entity/table/table.component';
 import { CloudsyncFormComponent } from '../../cloudsync/cloudsync-form/cloudsync-form.component';
 import { ReplicationFormComponent } from '../../replication/replication-form/replication-form.component';
+import { ReplicationWizardComponent } from '../../replication/replication-wizard/replication-wizard.component';
 import { RsyncFormComponent } from '../../rsync/rsync-form/rsync-form.component';
 import { ScrubFormComponent } from '../../scrub/scrub-form/scrub-form.component';
 import { SmartFormComponent } from '../../smart/smart-form/smart-form.component';
@@ -66,6 +67,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
   public refreshTable: Subscription;
   public refreshOnClose: Subscription;
   public diskSubscription: Subscription;
+  public messageSubscription: Subscription;
   public disks: any[] = [];
   public parent: any;
 
@@ -73,6 +75,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
   protected scrubFormComponent: ScrubFormComponent;
   protected snapshotFormComponent: SnapshotFormComponent;
   protected replicationFormComponent: ReplicationFormComponent;
+  protected replicationWizardComponent: ReplicationWizardComponent;
   protected cloudsyncFormComponent: CloudsyncFormComponent;
   protected rsyncFormComponent: RsyncFormComponent;
   protected smartFormComponent: SmartFormComponent;
@@ -118,6 +121,15 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     this.refreshForms();
     this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
       this.refreshForms();
+    });
+
+    this.messageSubscription = this.modalService.message$.subscribe((res) => {
+      if (res['action'] === 'open' && res['component'] === 'replicationForm') {
+        this.modalService.open('slide-in-form', this.replicationFormComponent, res['row']);
+      }
+      if (res['action'] === 'open' && res['component'] === 'replicationWizard') {
+        this.modalService.open('slide-in-form', this.replicationWizardComponent, res['row']);
+      }
     });
   }
 
@@ -205,7 +217,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           ],
           parent: this,
           add: function () {
-            this.parent.modalService.open('slide-in-form', this.parent.replicationFormComponent);
+            this.parent.modalService.open('slide-in-form', this.parent.replicationWizardComponent);
           },
           edit: function (row) {
             this.parent.modalService.open('slide-in-form', this.parent.replicationFormComponent, row.id);
@@ -332,6 +344,19 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
       this.taskService,
       this.storage,
       this.dialog,
+      this.modalService,
+    );
+    this.replicationWizardComponent = new ReplicationWizardComponent(
+      this.router,
+      this.keychainCredentialService,
+      this.loader,
+      this.dialog,
+      this.ws,
+      this.replicationService,
+      this.taskService,
+      this.storage,
+      this.datePipe,
+      this.entityFormService,
       this.modalService,
     );
     this.replicationFormComponent = new ReplicationFormComponent(
@@ -791,7 +816,10 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
   }
 
   runningStateButton(jobid) {
-    const dialogRef = this.mdDialog.open(EntityJobComponent, { data: { "title": T("Task is running") }, disableClose: false });
+    const dialogRef = this.mdDialog.open(EntityJobComponent, {
+      data: { title: T('Task is running') },
+      disableClose: false,
+    });
     dialogRef.componentInstance.jobId = jobid;
     dialogRef.componentInstance.wsshow();
     dialogRef.componentInstance.success.subscribe((res) => {

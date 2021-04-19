@@ -1,11 +1,13 @@
+import { ModalService } from './../../../../services/modal.service';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Validators, FormControl } from '@angular/forms';
+import { Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 
 import * as _ from 'lodash';
 
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
+import { EntityWizardComponent } from '../../../common/entity/entity-wizard/entity-wizard.component';
 import helptext from '../../../../helptext/data-protection/replication/replication-wizard';
 import sshConnectionsHelptex from '../../../../helptext/system/ssh-connections';
 
@@ -16,6 +18,66 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { T } from '../../../../translate-marker';
 import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
+import { take } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+
+interface ReplicationState {
+  state: string;
+  datetime: any;
+  error: string;
+  last_snapshot: string | null;
+}
+interface ReplicationTask {
+  allow_from_scratch: boolean;
+  also_include_naming_schema: any[];
+  auto: boolean;
+  compressed: boolean;
+  compression: null
+  direction: "PUSH" | "PULL";
+  embed: boolean;
+  enabled: boolean;
+  encryption: boolean;
+  encryption_key: null
+  encryption_key_format: null
+  encryption_key_location: null
+  exclude: any[];
+  hold_pending_snapshots: boolean;
+  id: number;
+  job: null
+  large_block: boolean;
+  lifetime_unit: "WEEK"
+  lifetime_value: number;
+  logging_level: null
+  name: string;
+  naming_schema: string[];
+  netcat_active_side: null
+  netcat_active_side_listen_address: null
+  netcat_active_side_port_max: null
+  netcat_active_side_port_min: null
+  netcat_passive_side_connect_address: null
+  only_matching_schedule: boolean;
+  periodic_snapshot_tasks: any[];
+  properties: boolean;
+  properties_exclude: string[];
+  properties_override: {}
+  readonly: "REQUIRE"
+  recursive: boolean;
+  replicate: boolean;
+  restrict_schedule: null
+  retention_policy: "SOURCE"
+  retries: number;
+  schedule: null
+  schedule_method: "cron"
+  schedule_picker: "0 0 * * *"
+  source_datasets: string[]
+  source_datasets_from: "local"
+  speed_limit: null
+  ssh_credentials: null
+  state: ReplicationState;
+  target_dataset: "LOCKED"
+  target_dataset_from: "local"
+  transport: "LOCAL"
+}
 
 @Component({
     selector: 'app-replication-wizard',
@@ -23,27 +85,24 @@ import { forbiddenValues } from '../../../common/entity/entity-form/validators/f
     providers: [KeychainCredentialService, ReplicationService, TaskService, DatePipe, EntityFormService]
 })
 export class ReplicationWizardComponent {
+    title = T('Replication Task Wizard')
+    isLinear = true;
+    summary_title = T('Replication Summary');
+    pk: number;
+    getRow: Subscription;
 
-    public route_success: string[] = ['tasks', 'replication'];
-    public isLinear = true;
-    public summary_title = "Replication Summary";
     protected entityWizard: any;
-
-    protected custActions: Array<any> = [
-        {
-            id: 'advanced_add',
-            name: T("Advanced Replication Creation"),
-            function: () => {
-                this.router.navigate(
-                    new Array('').concat(["tasks", "replication", "add"])
-                );
-            }
-        }
-    ];
-
+    protected custActions: Array<any> = [{
+      id: 'advanced_add',
+      name: T("Advanced Replication Creation"),
+      function: () => {
+        this.modalService.close('slide-in-form');
+        const message = { action: 'open', component: 'replicationForm', row: this.pk };
+        this.modalService.message(message);
+      }
+    }];
     protected namesInUse = [];
     protected defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';
-
     protected wizardConfig: Wizard[] = [
         {
             label: helptext.step1_label,
@@ -71,7 +130,7 @@ export class ReplicationWizardComponent {
                     name: 'source',
                     label: false,
                     class: 'source',
-                    width: '49%',
+                    width: '50%',
                     config: [
                         {
                             type: 'select',
@@ -215,7 +274,7 @@ export class ReplicationWizardComponent {
                     name: 'target',
                     label: false,
                     class: 'target',
-                    width: '49%',
+                    width: '50%',
                     config: [
                         {
                             type: 'select',
@@ -746,15 +805,19 @@ export class ReplicationWizardComponent {
         private loader: AppLoaderService, private dialogService: DialogService,
         private ws: WebSocketService, private replicationService: ReplicationService,
         private taskService: TaskService, private storageService: StorageService,
-        private datePipe: DatePipe, private entityFormService: EntityFormService) {
+        private datePipe: DatePipe, private entityFormService: EntityFormService,
+        private modalService: ModalService) {
         this.ws.call('replication.query').subscribe(
             (res) => {
                 this.namesInUse.push(...res.map(replication => replication.name));
             }
         )
+        this.getRow = this.modalService.getRow$.pipe(take(1)).subscribe((rowId: number) => {
+          this.pk = rowId;
+        })
     }
 
-    isCustActionVisible(id, stepperIndex) {
+    isCustActionVisible(actionId: string, stepperIndex: number): boolean {
         if (stepperIndex == 0) {
             return true;
         }
@@ -780,6 +843,9 @@ export class ReplicationWizardComponent {
                     if (task.transport !== 'LEGACY') {
                         const lable = task.name + ' (' + ((task.state && task.state.datetime) ? 'last run ' + this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy') : 'never ran') + ')';
                         exist_replicationField.options.push({ label: lable, value: task });
+                        if (this.pk === task.id) {
+                          this.loadOrClearReplicationTask(task);
+                        }
                     }
                 }
             }
@@ -801,20 +867,13 @@ export class ReplicationWizardComponent {
                 ssh_credentials_source_field.options.push({ label: res[i].name, value: res[i].id });
                 ssh_credentials_target_field.options.push({ label: res[i].name, value: res[i].id });
             }
-            ssh_credentials_source_field.options.push({ label: 'Create New', value: 'NEW' });
-            ssh_credentials_target_field.options.push({ label: 'Create New', value: 'NEW' });
+            ssh_credentials_source_field.options.push({ label: T('Create New'), value: 'NEW' });
+            ssh_credentials_target_field.options.push({ label: T('Create New'), value: 'NEW' });
         })
 
         this.entityWizard.formArray.controls[0].controls['exist_replication'].valueChanges.subscribe((value) => {
             if (value !== null) {
-                if (value !== undefined && value !== '') {
-                    this.loadReplicationTask(value);
-                } else {
-                    if (this.selectedReplicationTask !== undefined && this.selectedReplicationTask !== '') {
-                        this.clearReplicationTask();
-                    }
-                }
-                this.selectedReplicationTask = value;
+              this.loadOrClearReplicationTask(value);
             }
         });
         this.entityWizard.formArray.controls[0].controls['source_datasets'].valueChanges.subscribe((value) => {
@@ -880,6 +939,17 @@ export class ReplicationWizardComponent {
         });
     }
 
+    loadOrClearReplicationTask(task: string): void {
+      if (task !== undefined && task !== '') {
+        this.loadReplicationTask(task);
+      } else {
+        if (this.selectedReplicationTask !== undefined && this.selectedReplicationTask !== '') {
+          this.clearReplicationTask();
+        }
+      }
+      this.selectedReplicationTask = task;
+    }
+
     step1Init() {
         this.entityWizard.formArray.controls[1].controls['retention_policy'].valueChanges.subscribe((value) => {
             const disable = value === 'SOURCE' ? true : false;
@@ -943,6 +1013,7 @@ export class ReplicationWizardComponent {
     }
 
     loadReplicationTask(task) {
+        console.log('task', task);
         if (task.direction === 'PUSH') {
             task['source_datasets_from'] = 'local';
             task['target_dataset_from'] = task.ssh_credentials ? 'remote' : 'local';
@@ -1224,7 +1295,7 @@ export class ReplicationWizardComponent {
 
         this.loader.close();
         if (!toStop) {
-            this.router.navigate(new Array('/').concat(this.route_success));
+          this.modalService.close('slide-in-form');
         }
     }
 
