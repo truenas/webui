@@ -17,7 +17,7 @@ import { KeychainCredentialService, ReplicationService, TaskService, AppLoaderSe
 import { ModalService } from 'app/services/modal.service';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
 import { T } from 'app/translate-marker';
-import { NetcatMode, CipherType, Direction, EncryptionKeyFormat, LifetimeUnit, ReadOnlyMode, ReplicationTask, RetentionPolicy, ScheduleMethod, TransportMode } from 'app/pages/data-protection/replication/replication.interface';
+import { NetcatMode, CipherType, Direction, EncryptionKeyFormat, LifetimeUnit, ReadOnlyMode, ReplicationTask, RetentionPolicy, ScheduleMethod, TransportMode, DatasetSource } from 'app/pages/data-protection/replication/replication.interface';
 
 @Component({
     selector: 'app-replication-wizard',
@@ -30,6 +30,7 @@ export class ReplicationWizardComponent {
     summary_title = T('Replication Summary');
     pk: number;
     getRow: Subscription;
+    saveSubmitText = T('START REPLICATION');
 
     protected entityWizard: any;
     protected custActions: Array<any> = [{
@@ -79,10 +80,10 @@ export class ReplicationWizardComponent {
                             tooltip: helptext.source_datasets_from_tooltip,
                             options: [{
                                 label: T("On this System"),
-                                value: 'local',
+                                value: DatasetSource.Local,
                             }, {
                                 label: T("On a Different System"),
-                                value: 'remote',
+                                value: DatasetSource.Remote,
                             }],
                             required: true,
                             validation: [Validators.required],
@@ -97,7 +98,7 @@ export class ReplicationWizardComponent {
                                 action: 'SHOW',
                                 when: [{
                                     name: 'source_datasets_from',
-                                    value: 'remote',
+                                    value: DatasetSource.Remote,
                                 }]
                             }],
                             isHidden: true,
@@ -130,10 +131,10 @@ export class ReplicationWizardComponent {
                                 connective: 'OR',
                                 when: [{
                                     name: 'source_datasets_from',
-                                    value: 'remote',
+                                    value: DatasetSource.Remote,
                                 }, {
                                     name: 'source_datasets_from',
-                                    value: 'local',
+                                    value: DatasetSource.Local,
                                 }]
                             }],
                         },
@@ -148,10 +149,10 @@ export class ReplicationWizardComponent {
                                 connective: 'OR',
                                 when: [{
                                     name: 'source_datasets_from',
-                                    value: 'remote',
+                                    value: DatasetSource.Remote,
                                 }, {
                                     name: 'source_datasets_from',
-                                    value: 'local',
+                                    value: DatasetSource.Local,
                                 }]
                             }],
                         },
@@ -164,10 +165,10 @@ export class ReplicationWizardComponent {
                                 connective: 'OR',
                                 when: [{
                                     name: 'source_datasets_from',
-                                    value: 'remote',
+                                    value: DatasetSource.Remote,
                                 }, {
                                     name: 'source_datasets_from',
-                                    value: 'local',
+                                    value: DatasetSource.Local,
                                 }]
                             }],
                         },
@@ -181,7 +182,7 @@ export class ReplicationWizardComponent {
                                 action: 'SHOW',
                                 when: [{
                                     name: 'source_datasets_from',
-                                    value: 'local',
+                                    value: DatasetSource.Local,
                                 }]
                             }],
                         },
@@ -199,7 +200,7 @@ export class ReplicationWizardComponent {
                                     value: true,
                                 }, {
                                     name: 'source_datasets_from',
-                                    value: 'remote',
+                                    value: DatasetSource.Remote,
                                 }]
                             }],
                             parent: this,
@@ -223,10 +224,10 @@ export class ReplicationWizardComponent {
                             tooltip: helptext.target_dataset_from_tooltip,
                             options: [{
                                 label: T("On this System"),
-                                value: 'local',
+                                value: DatasetSource.Local,
                             }, {
                                 label: T("On a Different System"),
-                                value: 'remote',
+                                value: DatasetSource.Remote,
                             }],
                             required: true,
                             validation: [Validators.required],
@@ -241,7 +242,7 @@ export class ReplicationWizardComponent {
                                 action: 'SHOW',
                                 when: [{
                                     name: 'target_dataset_from',
-                                    value: 'remote',
+                                    value: DatasetSource.Remote,
                                 }]
                             }],
                             isHidden: true,
@@ -271,10 +272,10 @@ export class ReplicationWizardComponent {
                                 connective: 'OR',
                                 when: [{
                                     name: 'target_dataset_from',
-                                    value: 'remote',
+                                    value: DatasetSource.Remote,
                                 }, {
                                     name: 'target_dataset_from',
-                                    value: 'local',
+                                    value: DatasetSource.Local,
                                 }]
                             }],
                         },
@@ -289,10 +290,10 @@ export class ReplicationWizardComponent {
                                 connective: 'OR',
                                 when: [{
                                     name: 'target_dataset_from',
-                                    value: 'remote',
+                                    value: DatasetSource.Remote,
                                 }, {
                                     name: 'target_dataset_from',
-                                    value: 'local',
+                                    value: DatasetSource.Local,
                                 }]
                             }],
                         },
@@ -433,10 +434,10 @@ export class ReplicationWizardComponent {
                                 connective: 'OR',
                                 when: [{
                                     name: 'source_datasets_from',
-                                    value: 'remote',
+                                    value: DatasetSource.Remote,
                                 }, {
                                     name: 'target_dataset_from',
-                                    value: 'remote',
+                                    value: DatasetSource.Remote,
                                 }]
                             }],
                         },
@@ -709,8 +710,6 @@ export class ReplicationWizardComponent {
             value: CipherType.Standard,
         }
     ];
-
-    protected saveSubmitText = T('START REPLICATION');
     protected selectedReplicationTask: ReplicationTask;
     protected semiSSHFieldGroup: string[] = [
         'url',
@@ -767,8 +766,8 @@ export class ReplicationWizardComponent {
         this.preload_fieldSet = _.find(this.wizardConfig[0].fieldSets, {class: 'preload'});
         this.source_fieldSet = _.find(this.wizardConfig[0].fieldSets, {class: 'source'});
         this.target_fieldSet = _.find(this.wizardConfig[0].fieldSets, {class: 'target'});
-
         this.snapshotsCountField = _.find(this.source_fieldSet.config, { name: 'snapshots_count' });
+
         this.step0Init();
         this.step1Init();
     }
@@ -827,9 +826,9 @@ export class ReplicationWizardComponent {
             const datasetName = i === 'source' ? 'source_datasets' : 'target_dataset';
             const datasetFrom = datasetName + '_from';
             this.entityWizard.formArray.controls[0].controls[datasetFrom].valueChanges.subscribe((value) => {
-                if (value === 'remote') {
+                if (value === DatasetSource.Remote) {
                     if (datasetFrom === 'source_datasets_from') {
-                        this.entityWizard.formArray.controls[0].controls['target_dataset_from'].setValue('local');
+                        this.entityWizard.formArray.controls[0].controls['target_dataset_from'].setValue(DatasetSource.Local);
                         this.setDisable('target_dataset_from', true, false, 0);
                     }
                     const disabled = this.entityWizard.formArray.controls[0].controls[credentialName].value ? false : true;
@@ -843,7 +842,7 @@ export class ReplicationWizardComponent {
             });
 
             this.entityWizard.formArray.controls[0].controls[credentialName].valueChanges.subscribe((value) => {
-                if (value === 'NEW' && this.entityWizard.formArray.controls[0].controls[datasetFrom].value === 'remote') {
+                if (value === 'NEW' && this.entityWizard.formArray.controls[0].controls[datasetFrom].value === DatasetSource.Remote) {
                     this.createSSHConnection(credentialName);
                     this.setDisable(datasetName, false, false, 0);
                 } else {
@@ -890,14 +889,14 @@ export class ReplicationWizardComponent {
 
     step1Init() {
         this.entityWizard.formArray.controls[1].controls['retention_policy'].valueChanges.subscribe((value) => {
-            const disable = value === RetentionPolicy.Source ? true : false;
+            const disable = value === RetentionPolicy.Source;
             disable ? this.entityWizard.formArray.controls[1].controls['lifetime_value'].disable() : this.entityWizard.formArray.controls[1].controls['lifetime_value'].enable();
             disable ? this.entityWizard.formArray.controls[1].controls['lifetime_unit'].disable() : this.entityWizard.formArray.controls[1].controls['lifetime_unit'].enable();
         });
     }
 
     getSourceChildren(node) {
-        const fromLocal = this.entityWizard.formArray.controls[0].controls['source_datasets_from'].value === 'local' ? true : false;
+        const fromLocal = this.entityWizard.formArray.controls[0].controls['source_datasets_from'].value === DatasetSource.Local;
         const sshCredentials = this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value;
 
         if (fromLocal) {
@@ -921,7 +920,7 @@ export class ReplicationWizardComponent {
     }
 
     getTargetChildren(node) {
-        const fromLocal = this.entityWizard.formArray.controls[0].controls['target_dataset_from'].value === 'local' ? true : false;
+        const fromLocal = this.entityWizard.formArray.controls[0].controls['target_dataset_from'].value === DatasetSource.Local;
         const sshCredentials = this.entityWizard.formArray.controls[0].controls['ssh_credentials_target'].value;
         if (fromLocal) {
             return new Promise((resolve, reject) => {
@@ -951,15 +950,19 @@ export class ReplicationWizardComponent {
     }
 
     loadReplicationTask(task: any): void {
+        // TODO: Update logic to use ReplicationTask as a type
+        // Add something similar to resourceTransformIncomingRestData for EntityWizard
+        // 'task.periodic_snapshot_tasks' should be type of number[] currently PeriodicSnapshotTask[]
+        // 'task.ssh_credentials' should be type of number[], currently SshCredentials[]
         if (task.direction === Direction.Push) {
-            task['source_datasets_from'] = 'local';
-            task['target_dataset_from'] = task.ssh_credentials ? 'remote' : 'local';
+            task['source_datasets_from'] = DatasetSource.Local;
+            task['target_dataset_from'] = task.ssh_credentials ? DatasetSource.Remote : DatasetSource.Local;
             if (task.ssh_credentials) {
                 task['ssh_credentials_target'] = task.ssh_credentials.id;
             }
         } else {
-            task['source_datasets_from'] = 'remote';
-            task['target_dataset_from'] = 'local';
+            task['source_datasets_from'] = DatasetSource.Remote;
+            task['target_dataset_from'] = DatasetSource.Local;
             task['ssh_credentials_source'] = task.ssh_credentials.id;
         }
 
@@ -1098,7 +1101,7 @@ export class ReplicationWizardComponent {
         if (item === 'replication') {
             payload = {
                 name: data['name'],
-                direction: data['source_datasets_from'] === 'remote' ? Direction.Pull : Direction.Push,
+                direction: data['source_datasets_from'] === DatasetSource.Remote ? Direction.Pull : Direction.Push,
                 source_datasets: data['source_datasets'],
                 target_dataset: data['target_dataset'],
                 ssh_credentials: data['ssh_credentials_source'] || data['ssh_credentials_target'],
@@ -1193,8 +1196,8 @@ export class ReplicationWizardComponent {
 
         for (const item in createdItems) {
             if (!toStop) {
-                if (!(item === 'periodic_snapshot_tasks' && (value['schedule_method'] !== ScheduleMethod.Cron || value['source_datasets_from'] !== 'local')) &&
-                !(item === 'snapshot' && (this.eligibleSnapshots > 0 || value['source_datasets_from'] !== 'local'))) {
+                if (!(item === 'periodic_snapshot_tasks' && (value['schedule_method'] !== ScheduleMethod.Cron || value['source_datasets_from'] !== DatasetSource.Local)) &&
+                !(item === 'snapshot' && (this.eligibleSnapshots > 0 || value['source_datasets_from'] !== DatasetSource.Local))) {
                     await this.doCreate(value, item).then(
                         (res) => {
                             if (item === 'snapshot') {
@@ -1361,7 +1364,7 @@ export class ReplicationWizardComponent {
             this.ws.call('replication.count_eligible_manual_snapshots', payload).subscribe(
                 (res) => {
                     this.eligibleSnapshots = res.eligible;
-                    const isPush = this.entityWizard.formArray.controls[0].controls['source_datasets_from'].value === 'local';
+                    const isPush = this.entityWizard.formArray.controls[0].controls['source_datasets_from'].value === DatasetSource.Local;
                     let spanClass = 'info-paragraph';
                     let snapexpl = '';
                     if (res.eligible === 0) {

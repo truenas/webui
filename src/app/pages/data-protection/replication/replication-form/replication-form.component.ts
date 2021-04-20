@@ -19,6 +19,7 @@ import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-set
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { ModalService } from 'app/services/modal.service';
 import { CompressionType, Direction, EncryptionKeyFormat, LifetimeUnit, LoggingLevel, NetcatMode, ReadOnlyMode, RetentionPolicy, TransportMode } from 'app/pages/data-protection/replication/replication.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
 @Component({
   selector: 'app-replication-form',
@@ -26,8 +27,7 @@ import { CompressionType, Direction, EncryptionKeyFormat, LifetimeUnit, LoggingL
   providers: [TaskService, KeychainCredentialService, ReplicationService, StorageService],
 })
 export class ReplicationFormComponent {
-  isNew: boolean = false;
-  speedLimitField: any;
+  protected isNew: boolean = false;
   form_message = {
     type: 'notice',
     content: '',
@@ -57,7 +57,7 @@ export class ReplicationFormComponent {
   ];
   protected custActions: Array<any> = [{
     id: 'wizard_add',
-    name: T("Switch to Replication Wizard"),
+    name: T("Switch to Wizard"),
     function: () => {
       this.modalService.close('slide-in-form');
       const message = { action: 'open', component: 'replicationWizard', row: this.pk };
@@ -199,7 +199,7 @@ export class ReplicationFormComponent {
               when: [
                 {
                   name: 'transport',
-                  value: 'LOCAL',
+                  value: TransportMode.Local,
                 },
               ],
             },
@@ -1079,7 +1079,7 @@ export class ReplicationFormComponent {
     },
     { name: 'divider', divider: true },
   ]);
-  protected fieldConfig;
+  protected fieldConfig: FieldConfig;
 
   constructor(
     protected ws: WebSocketService,
@@ -1340,7 +1340,7 @@ export class ReplicationFormComponent {
       wsResponse['properties_override'] = properties_exclude_list;
     }
 
-    wsResponse.encryption_key_location_truenasdb = wsResponse.encryption_key_location === '$TrueNAS' ? true : false;
+    wsResponse.encryption_key_location_truenasdb = wsResponse.encryption_key_location === '$TrueNAS';
     if (wsResponse.encryption_key_location_truenasdb) {
       delete wsResponse.encryption_key_location;
     }

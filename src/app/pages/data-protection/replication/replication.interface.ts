@@ -1,3 +1,5 @@
+import { EntityJob } from 'app/pages/common/entity/entity-job/entity-job.interface';
+
 export enum TransportMode {
   Legacy = 'LEGACY',
   Local = 'LOCAL',
@@ -61,6 +63,11 @@ export enum Direction {
   Pull = 'PULL',
 }
 
+export enum DatasetSource {
+  Local = 'local',
+  Remote = 'remote',
+}
+
 export interface ReplicationState {
   state: string;
   datetime: any;
@@ -69,13 +76,13 @@ export interface ReplicationState {
 }
 
 export interface Schedule {
-  minute: string;
-  hour: string;
-  dom: string;
-  month: string;
-  dow: string;
-  begin: string;
-  end: string;
+  minute?: string;
+  hour?: string;
+  dom?: string;
+  month?: string;
+  dow?: string;
+  begin?: string;
+  end?: string;
 }
 
 export enum ScheduleMethod {
@@ -96,54 +103,63 @@ export interface SshCredentials {
 
 export interface PeriodicSnapshotTask {
   schedule: Schedule | null;
+  allow_empty?: boolean;
+  dataset: string;
+  enabled?: boolean;
+  exclude?: string[];
+  id: number;
+  lifetime_unit: LifetimeUnit;
+  lifetime_value: number;
+  naming_schema: string;
+  recursive: boolean;
 }
 
 export interface ReplicationTask {
-  allow_from_scratch: boolean;
-  also_include_naming_schema: any[];
+  allow_from_scratch?: boolean;
+  also_include_naming_schema?: string[];
   auto: boolean;
-  compressed: boolean;
-  compression: CompressionType | null;
+  compressed?: boolean;
+  compression?: CompressionType | null;
   direction: Direction;
-  embed: boolean;
-  enabled: boolean;
-  encryption: boolean;
-  encryption_key: string | null;
-  encryption_key_format: EncryptionKeyFormat | null;
-  encryption_key_location: string | null;
-  exclude: any[];
-  hold_pending_snapshots: boolean;
+  embed?: boolean;
+  enabled?: boolean;
+  encryption?: boolean;
+  encryption_key?: string | null;
+  encryption_key_format?: EncryptionKeyFormat | null;
+  encryption_key_location?: string | null;
+  exclude?: string[];
+  hold_pending_snapshots?: boolean;
   id: number;
-  job?: any;
-  large_block: boolean;
-  lifetime_unit: LifetimeUnit;
-  lifetime_value: number | null;
-  logging_level: LoggingLevel;
+  job?: EntityJob;
+  large_block?: boolean;
+  lifetime_unit?: LifetimeUnit;
+  lifetime_value?: number | null;
+  logging_level?: LoggingLevel;
   name: string;
-  naming_schema: any[];
-  netcat_active_side: NetcatMode | null;
-  netcat_active_side_listen_address: string | null;
-  netcat_active_side_port_max: number | null;
-  netcat_active_side_port_min: number | null;
-  netcat_passive_side_connect_address: string | null;
-  only_matching_schedule: boolean;
-  periodic_snapshot_tasks: number[] | PeriodicSnapshotTask[];
-  properties: boolean;
-  properties_exclude: string[];
-  properties_override: {};
-  readonly: ReadOnlyMode;
+  naming_schema?: string[];
+  netcat_active_side?: NetcatMode | null;
+  netcat_active_side_listen_address?: string | null;
+  netcat_active_side_port_max?: number | null;
+  netcat_active_side_port_min?: number | null;
+  netcat_passive_side_connect_address?: string | null;
+  only_matching_schedule?: boolean;
+  periodic_snapshot_tasks?: number[] | PeriodicSnapshotTask[];
+  properties?: boolean;
+  properties_exclude?: string[];
+  properties_override?: {};
+  readonly?: ReadOnlyMode;
   recursive: boolean;
-  replicate: boolean;
-  restrict_schedule: Schedule;
+  replicate?: boolean;
+  restrict_schedule?: Schedule;
   retention_policy: RetentionPolicy;
-  retries: number;
-  schedule: Schedule | boolean | null;
+  retries?: number;
+  schedule?: Schedule | boolean | null;
   schedule_method: ScheduleMethod;
   schedule_picker: string;
-  source_datasets: string[];
+  source_datasets?: string[];
   source_datasets_from: string;
-  speed_limit: number | null;
-  ssh_credentials: SshCredentials | number[] | null;
+  speed_limit?: number | null;
+  ssh_credentials?: SshCredentials | number[] | null;
   state: ReplicationState;
   target_dataset: string;
   target_dataset_from: string;
