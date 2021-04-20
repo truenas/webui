@@ -846,5 +846,6 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     this.refreshTable.unsubscribe();
     this.diskSubscription.unsubscribe();
     this.refreshOnClose.unsubscribe();
+    this.messageSubscription.unsubscribe();
   }
 }
