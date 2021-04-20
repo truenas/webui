@@ -38,7 +38,7 @@ import { SmartFormComponent } from 'app/pages/data-protection/smart/smart-form/s
 import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapshot-form/snapshot-form.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
-import { EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.interface';
+import { EntityJob, EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 
@@ -525,7 +525,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
                     'info',
                     true,
                   );
-                  this.job.getJobStatus(jobId).subscribe((job) => {
+                  this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
                     row.state = job.state;
                     row.job = job;
                   });
@@ -610,7 +610,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
                     'info',
                     true,
                   );
-                  this.job.getJobStatus(jobId).subscribe((job) => {
+                  this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
                     row.state = job.state;
                     row.job = job;
                   });
@@ -670,7 +670,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
                       'info',
                       true,
                     );
-                    this.job.getJobStatus(jobId).subscribe((job) => {
+                    this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
                       row.state = job.state;
                       row.job = job;
                     });
@@ -789,7 +789,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
                     'info',
                     true,
                   );
-                  this.job.getJobStatus(jobId).subscribe((job) => {
+                  this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
                     row.state = job.state;
                     row.job = job;
                   });

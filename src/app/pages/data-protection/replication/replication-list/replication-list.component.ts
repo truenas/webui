@@ -25,6 +25,7 @@ import { ReplicationWizardComponent } from 'app/pages/data-protection/replicatio
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationTask } from 'app/pages/data-protection/replication/replication.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
+import { EntityJob } from 'app/pages/common/entity/entity-job/entity-job.interface';
 
 @Component({
   selector: 'app-replication-list',
@@ -111,7 +112,7 @@ export class ReplicationListComponent {
             if (res) {
               row.state = { state: EntityJobState.Running };
               this.ws.call('replication.run', [row.id]).subscribe(
-                (res) => {
+                (jobId: number) => {
                   this.dialog.Info(
                     T('Task started'),
                     T('Replication <i>') + row.name + T('</i> has started.'),
@@ -119,7 +120,7 @@ export class ReplicationListComponent {
                     'info',
                     true,
                   );
-                  this.job.getJobStatus(res).subscribe((job) => {
+                  this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
                     row.state = { state: job.state };
                     row.job = job;
                   });
