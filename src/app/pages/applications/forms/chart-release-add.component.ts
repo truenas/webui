@@ -31,7 +31,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
   private dialogRef: any;
   public hideCancel = true;
   public summary = {};
-  summary_title = 'Chart Release Summary';
+  summaryTitle = 'Chart Release Summary';
   private entityWizard: any;
   private destroy$ = new Subject();
   // private isLinear = true;

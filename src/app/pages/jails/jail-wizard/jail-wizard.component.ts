@@ -26,7 +26,7 @@ export class JailWizardComponent {
   protected addWsCall = 'jail.create';
   public route_success: string[] = ['jails'];
   public summary = {};
-  summary_title = "Jail Summary";
+  summaryTitle = "Jail Summary";
   objectKeys = Object.keys;
   entityWizard: any;
   protected namesInUse = [];

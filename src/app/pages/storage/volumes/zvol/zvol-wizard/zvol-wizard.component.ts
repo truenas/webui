@@ -63,7 +63,7 @@ export class ZvolWizardComponent {
     public title: string;
     public isLinear = true;
     public summary = {};
-    summary_title = "Zvol Summary";
+    summaryTitle = "Zvol Summary";
 
     protected origVolSize;
     protected origHuman;

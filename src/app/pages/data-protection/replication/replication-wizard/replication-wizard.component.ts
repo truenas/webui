@@ -26,7 +26,7 @@ export class ReplicationWizardComponent {
 
     public route_success: string[] = ['tasks', 'replication'];
     public isLinear = true;
-    public summary_title = "Replication Summary";
+    public summaryTitle = "Replication Summary";
     protected entityWizard: any;
 
     protected custActions: Array<any> = [
