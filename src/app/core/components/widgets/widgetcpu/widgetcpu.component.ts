@@ -112,7 +112,9 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       observerClass: this, 
       eventName:"SysInfo"
     }).subscribe((evt: CoreEvent) => {
+      this.threadCount = evt.data.cores;
       this.coreCount = evt.data.physical_cores;
+      this.hyperthread = this.threadCount !== this.coreCount;
     });
 
     this.core.emit({
@@ -156,12 +158,9 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     let temperatureValues = [];
 
 
-    // Calculate number of cores...
+    // Filter out stats per thread
     let keys = Object.keys(data);
     const threads = keys.filter((n) => !isNaN(parseFloat(n)));
-    this.threadCount = threads.length;
-
-    this.hyperthread = threads.length !== this.coreCount;
     
     for(let i = 0; i < this.threadCount; i++){
       usageColumn.push( parseInt(data[i.toString()].usage.toFixed(1)) );
@@ -169,10 +168,13 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       const mod = threads.length % 2;
       let temperatureIndex = this.hyperthread ? Math.floor(i/2 - mod) : i;
 
-      if(data.temperature && data.temperature[temperatureIndex]){
+      if (data.temperature && data.temperature[temperatureIndex] && !data.temperature_celsius) {
         const temperatureAsCelsius = (data.temperature[temperatureIndex] / 10 - 273.05).toFixed(1);
         temperatureValues.push( parseInt(temperatureAsCelsius) );
+      } else if (data.temperature_celsius && data.temperature_celsius[temperatureIndex]) {
+        temperatureValues.push( data.temperature_celsius[temperatureIndex] );
       }
+       
     }
     
     temperatureColumn = temperatureColumn.concat(temperatureValues);
