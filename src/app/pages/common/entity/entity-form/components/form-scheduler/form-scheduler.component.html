@@ -20,7 +20,7 @@
       <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
     </div>
 
-    <ng-template (backdropClick)="backdropClicked($event)"
+    <ng-template (backdropClick)="backdropClicked()"
       cdkConnectedOverlay
       [cdkConnectedOverlayOrigin]="trigger"
       [cdkConnectedOverlayOpen]="isOpen">

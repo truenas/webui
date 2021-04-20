@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { CoreEvent } from 'app/core/services/core.service';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { Subscription, interval, Subject } from 'rxjs';
 import { FailoverDisabledReason } from '../../../enums/failover-disabled-reason.enum';
 import { ProductType } from '../../../enums/product-type.enum';
@@ -62,11 +63,11 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   isDirServicesMonitorOpened = false;
   taskDialogRef: MatDialogRef<TaskManagerComponent>;
   dirServicesMonitor: MatDialogRef<DirectoryServicesMonitorComponent>;
-  dirServicesStatus = [];
+  dirServicesStatus: any[] = [];
   showDirServicesIcon = false;
   exposeLegacyUI = false;
   ha_status_text: string;
-  ha_disabled_reasons = [];
+  ha_disabled_reasons: FailoverDisabledReason[] = [];
   ha_pending = false;
   is_ha = false;
   upgradeWaitingToFinish = false;
@@ -335,7 +336,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   onShutdown(): void {
     this.translate.get('Shut down').subscribe((shutdown: string) => {
       this.translate.get('Shut down the system?').subscribe((shutdown_prompt: string) => {
-        this.dialogService.confirm(shutdown, shutdown_prompt, false, T('Shut Down')).subscribe((res) => {
+        this.dialogService.confirm(shutdown, shutdown_prompt, false, T('Shut Down')).subscribe((res: boolean) => {
           if (res) {
             this.router.navigate(['/others/shutdown']);
           }
@@ -347,7 +348,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   onReboot(): void {
     this.translate.get('Restart').subscribe((reboot: string) => {
       this.translate.get('Restart the system?').subscribe((reboot_prompt: string) => {
-        this.dialogService.confirm(reboot, reboot_prompt, false, T('Restart')).subscribe((res) => {
+        this.dialogService.confirm(reboot, reboot_prompt, false, T('Restart')).subscribe((res: any) => {
           if (res) {
             this.router.navigate(['/others/reboot']);
           }
@@ -361,12 +362,12 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       if (!eula_accepted || window.localStorage.getItem('upgrading_status') === 'upgrading') {
         this.ws.call('truenas.get_eula').subscribe(eula => {
           this.dialogService.confirm(T("End User License Agreement - TrueNAS"), eula, true,
-          T("I Agree"), false, null, '', null, null, true).subscribe(accept_eula => {
+          T("I Agree"), false, null, '', null, null, true).subscribe((accept_eula: boolean) => {
             if (accept_eula) {
               window.localStorage.removeItem('upgrading_status');
               this.ws.call('truenas.accept_eula')
                 .subscribe(),
-                err => { console.error(err)};
+                (err: any) => { console.error(err)};
             }
           });
         });
@@ -416,7 +417,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.dialogService.confirm(
         network_interfaces_helptext.checkin_title,
         network_interfaces_helptext.pending_checkin_dialog_text,
-        true, network_interfaces_helptext.checkin_button).subscribe(res => {
+        true, network_interfaces_helptext.checkin_button).subscribe((res: boolean) => {
           if (res) {
             this.user_check_in_prompted = false;
             this.loader.open();
@@ -444,7 +445,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.dialogService.confirm(
         network_interfaces_helptext.pending_changes_title,
         network_interfaces_helptext.pending_changes_message,
-        true, T('Continue')).subscribe(res => {
+        true, T('Continue')).subscribe((res: boolean) => {
           if (res) {
             this.router.navigate(['/network']);
           }
@@ -568,18 +569,18 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.dialogService.confirm(
       T("Pending Upgrade"),
       T("There is an upgrade waiting to finish."),
-      true, T('Continue')).subscribe(res => {
+      true, T('Continue')).subscribe((res: boolean) => {
         if (res) {
           this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Update") }, disableClose: false });
           this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
           this.dialogRef.componentInstance.disableProgressValue(true);
           this.dialogRef.componentInstance.submit();
-          this.dialogRef.componentInstance.success.subscribe((success) => {
+          this.dialogRef.componentInstance.success.subscribe((success: any) => {
             this.dialogRef.close(false);
             console.info('success', success);
             this.upgradeWaitingToFinish = false
           });
-          this.dialogRef.componentInstance.failure.subscribe((failure) => {
+          this.dialogRef.componentInstance.failure.subscribe((failure: any) => {
             this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
           });
         }
@@ -652,7 +653,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         }
       ],
       parent: this,
-      customSubmit: function (entityDialog) {
+      customSubmit: function (entityDialog: EntityDialogComponent) {
         entityDialog.dialogRef.close();
         entityDialog.parent.updateTC();
       }
@@ -662,7 +663,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   updateTC(): void {
     const self = this;
-    let updateDialog;
+    let updateDialog: EntityDialogComponent;
     const conf: DialogFormConfiguration = {
       title: self.tcConnected ? helptext.updateDialog.title_update : helptext.updateDialog.title_connect,
       fieldConfig: [
@@ -717,7 +718,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       },
       saveButtonText: self.tcConnected ? helptext.updateDialog.save_btn : helptext.updateDialog.connect_btn,
       parent: this,
-      afterInit: function(entityDialog) {
+      afterInit: function(entityDialog: EntityDialogComponent) {
         updateDialog = entityDialog;
         // load settings
         if (self.tcConnected) {
@@ -729,7 +730,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           })
         }
       },
-      customSubmit: function(entityDialog) {
+      customSubmit: function(entityDialog: EntityDialogComponent) {
         self.loader.open();
         self.ws.call(self.tc_updateCall, [entityDialog.formValue]).subscribe(
           (res) => {

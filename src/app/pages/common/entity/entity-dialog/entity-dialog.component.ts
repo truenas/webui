@@ -1,3 +1,4 @@
+import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Component, Input, OnInit } from '@angular/core';
@@ -57,7 +58,7 @@ export class EntityDialogComponent implements OnInit {
     });
 
     this.fieldConfig = this.conf.fieldConfig;
-    
+
     if(this.conf.parent) {
       this.parent = this.conf.parent;
     }
@@ -88,7 +89,7 @@ export class EntityDialogComponent implements OnInit {
     if(this.conf.afterInit) {
       this.conf.afterInit(this);
     }
-    this.instructions = T(`Enter <strong>${ this.conf['name'] }</strong> below to confirm.`)
+    this.instructions = T(`Enter <strong>${ (this.conf as any)['name'] }</strong> below to confirm.`)
   }
 
   submit() {
@@ -130,9 +131,9 @@ export class EntityDialogComponent implements OnInit {
   togglePW() {
     let inputs = document.getElementsByTagName('input');
     for (let i = 0; i < inputs.length; i++) {
-      if (!inputs[i].placeholder.toLowerCase().includes('current') && 
+      if (!inputs[i].placeholder.toLowerCase().includes('current') &&
           !inputs[i].placeholder.toLowerCase().includes('root')) {
-        if (inputs[i].placeholder.toLowerCase().includes('password') || 
+        if (inputs[i].placeholder.toLowerCase().includes('password') ||
         inputs[i].placeholder.toLowerCase().includes('passphrase') ||
         inputs[i].placeholder.toLowerCase().includes('secret')) {
           if (inputs[i].type === 'password') {
@@ -172,7 +173,7 @@ export class EntityDialogComponent implements OnInit {
 
   }
 
-  toggleSubmit(data) {
+  toggleSubmit(data: MatCheckboxChange) {
     this.submitEnabled = data.checked;
   }
 }

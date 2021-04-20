@@ -28,10 +28,10 @@ import { ChartEventsDialog } from '../dialogs/chart-events/chart-events-dialog.c
 export class ChartReleasesComponent implements OnInit {
   @Output() updateTab = new EventEmitter();
 
-  public filteredChartItems = [];
+  public filteredChartItems: any[] = [];
   public filterString = '';
 
-  public chartItems = {};
+  public chartItems: any = {};
   @Output() switchTab = new EventEmitter<string>();
 
   private dialogRef: any;
@@ -43,11 +43,11 @@ export class ChartReleasesComponent implements OnInit {
   private refreshForm: Subscription;
   public settingsEvent: Subject<CoreEvent>;
   private chartReleaseChangedListener: any;
-  
+
   private selectedAppName: String;
-  private podList = [];
-  private podDetails = {};
- 
+  private podList: any[] = [];
+  private podDetails: any = {};
+
   public emptyPageConf: EmptyConfig = {
     type: EmptyType.loading,
     large: true,
@@ -158,7 +158,7 @@ export class ChartReleasesComponent implements OnInit {
     } else if (evt.data.event_control == 'bulk') {
       this.onBulkAction(evt.data.bulk.value);
     }
-  }  
+  }
 
   viewCatalog() {
     this.updateTab.emit({name: 'SwitchTab', value: 0});
@@ -192,11 +192,11 @@ export class ChartReleasesComponent implements OnInit {
   getChartItems() {
     return Object.values(this.chartItems);
   }
-  
+
   addChartReleaseChangedEventListner() {
     this.chartReleaseChangedListener = this.ws.subscribe("chart.release.query").subscribe((evt) => {
       const app = this.chartItems[evt.id];
-      
+
       if (app && evt && evt.fields) {
         app.status = evt.fields.status;
         app.version = evt.fields.chart_metadata.version;
@@ -213,9 +213,9 @@ export class ChartReleasesComponent implements OnInit {
         app.portal = evt.fields.portals && evt.fields.portals.web_portal ? evt.fields.portals.web_portal[0] : '';
         app.history = !(_.isEmpty(evt.fields.history));
 
-        let ports = [];
+        let ports: any[] = [];
         if (evt.fields.used_ports) {
-          evt.fields.used_ports.forEach(item => {
+          evt.fields.used_ports.forEach((item: any) => {
             ports.push(`${item.port}\\${item.protocol}`)
           })
           app['used_ports'] = ports.join(', ');
@@ -246,8 +246,8 @@ export class ChartReleasesComponent implements OnInit {
           } else {
             this.appService.getChartReleases().subscribe(charts => {
               this.chartItems = {};
-              
-              charts.forEach(chart => {
+
+              charts.forEach((chart: any) => {
                 let chartObj = {
                   name: chart.name,
                   catalog: chart.catalog,
@@ -271,17 +271,17 @@ export class ChartReleasesComponent implements OnInit {
                   history: !(_.isEmpty(chart.history)),
                   selected: false,
                 };
-        
-                let ports = [];
+
+                let ports: any[] = [];
                 if (chart.used_ports) {
-                  chart.used_ports.forEach(item => {
+                  chart.used_ports.forEach((item: any) => {
                     ports.push(`${item.port}\\${item.protocol}`)
                   })
-                  chartObj['used_ports'] = ports.join(', ');
+                  (chartObj as any)['used_ports'] = ports.join(', ');
                   this.chartItems[chartObj.name] = chartObj;
-                }  
+                }
               })
-              
+
               if (this.getChartItems().length == 0) {
                 this.showLoadStatus(EmptyType.no_page_data );
               }
@@ -327,13 +327,13 @@ export class ChartReleasesComponent implements OnInit {
   update(name: string) {
     this.translate.get(helptext.charts.upgrade_dialog.msg).subscribe(msg => {
       this.dialogService.confirm(helptext.charts.upgrade_dialog.title, msg + name + '?')
-      .subscribe(res => {
+      .subscribe((res: boolean) => {
         if (res) {
           this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
             helptext.charts.upgrade_dialog.job) }, disableClose: true});
           this.dialogRef.componentInstance.setCall('chart.release.upgrade', [name]);
           this.dialogRef.componentInstance.submit();
-          this.dialogRef.componentInstance.success.subscribe((res) => {
+          this.dialogRef.componentInstance.success.subscribe(() => {
             this.dialogService.closeAllDialogs();
           });
         }
@@ -358,7 +358,7 @@ export class ChartReleasesComponent implements OnInit {
       helptext.charts.rollback_dialog.job) }, disableClose: true});
     self.dialogRef.componentInstance.setCall('chart.release.rollback', [self.rollbackChartName, payload]);
     self.dialogRef.componentInstance.submit();
-    self.dialogRef.componentInstance.success.subscribe((res) => {
+    self.dialogRef.componentInstance.success.subscribe(() => {
       self.dialogService.closeAllDialogs();
     });
   }
@@ -376,16 +376,16 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   getSelectedItems() {
-    const selectedItems = [];
+    const selectedItems: any[] = [];
     this.filteredChartItems.forEach(element => {
       if (element.selected) {
         selectedItems.push(element.name);
       }
-    });   
+    });
     return selectedItems;
   }
-  
-  checkAll(checkedItems) {
+
+  checkAll(checkedItems: any[]) {
     let selectAll = true;
     if (checkedItems.length == this.filteredChartItems.length) {
       selectAll = false;
@@ -400,13 +400,13 @@ export class ChartReleasesComponent implements OnInit {
 
   onBulkAction(actionName: string) {
     const checkedItems = this.getSelectedItems();
-    
+
     if (actionName === 'select_all') {
       this.checkAll(checkedItems);
     } else {
       if (checkedItems.length > 0) {
         if (actionName === 'delete') {
-          this.bulkDelete(checkedItems);      
+          this.bulkDelete(checkedItems);
         } else {
           checkedItems.forEach(name => {
             switch (actionName) {
@@ -418,7 +418,7 @@ export class ChartReleasesComponent implements OnInit {
                 break;
             }
           });
-    
+
           this.translate.get(helptext.bulkActions.finished).subscribe(msg => {
             this.dialogService.Info(helptext.bulkActions.success, msg,
               '500px', 'info', true);
@@ -429,19 +429,19 @@ export class ChartReleasesComponent implements OnInit {
           this.dialogService.errorReport(helptext.bulkActions.error, msg);
         });
       }
-    } 
+    }
   }
 
   delete(name: string) {
     this.translate.get(helptext.charts.delete_dialog.msg).subscribe(msg => {
       this.dialogService.confirm(helptext.charts.delete_dialog.title, msg + name + '?')
-      .subscribe(res => {
+      .subscribe((res: boolean) => {
         if (res) {
           this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
             helptext.charts.delete_dialog.job) }, disableClose: true});
           this.dialogRef.componentInstance.setCall('chart.release.delete', [name]);
           this.dialogRef.componentInstance.submit();
-          this.dialogRef.componentInstance.success.subscribe((res) => {
+          this.dialogRef.componentInstance.success.subscribe(() => {
             this.dialogService.closeAllDialogs();
             this.refreshChartReleases();
           });
@@ -454,13 +454,13 @@ export class ChartReleasesComponent implements OnInit {
     let name = names.join(",");
     this.translate.get(helptext.charts.delete_dialog.msg).subscribe(msg => {
       this.dialogService.confirm(helptext.charts.delete_dialog.title, msg + name + '?')
-      .subscribe(res => {
+      .subscribe((res: any) => {
         if (res) {
           this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
             helptext.charts.delete_dialog.job) }, disableClose: true});
           this.dialogRef.componentInstance.setCall('core.bulk', ['chart.release.delete', names.map(item => [item])]);
           this.dialogRef.componentInstance.submit();
-          this.dialogRef.componentInstance.success.subscribe((res) => {
+          this.dialogRef.componentInstance.success.subscribe((res: any) => {
 
             this.dialogService.closeAllDialogs();
             let message = "";
@@ -512,7 +512,7 @@ export class ChartReleasesComponent implements OnInit {
           }
         });
         this.choosePod.fieldConfig[1].value = this.podDetails[this.podList[0]][0];
-        this.choosePod.fieldConfig[1].options = this.podDetails[this.podList[0]].map(item => {
+        this.choosePod.fieldConfig[1].options = this.podDetails[this.podList[0]].map((item: any) => {
           return {
             label: item,
             value: item,
@@ -541,7 +541,7 @@ export class ChartReleasesComponent implements OnInit {
           }
         });
         this.choosePodForLogs.fieldConfig[1].value = this.podDetails[this.podList[0]][0];
-        this.choosePodForLogs.fieldConfig[1].options = this.podDetails[this.podList[0]].map(item => {
+        this.choosePodForLogs.fieldConfig[1].options = this.podDetails[this.podList[0]].map((item: any) => {
           return {
             label: item,
             value: item,
@@ -571,10 +571,10 @@ export class ChartReleasesComponent implements OnInit {
 
   afterShellDialogInit(entityDialog: any) {
     const self = entityDialog.parent;
-    entityDialog.formGroup.controls['pods'].valueChanges.subscribe(value => {
+    entityDialog.formGroup.controls['pods'].valueChanges.subscribe((value: any) => {
       const containers = self.podDetails[value];
       const containerFC = _.find(entityDialog.fieldConfig, {'name' : 'containers'});
-      containerFC.options = containers.map(item => {
+      containerFC.options = containers.map((item: any) => {
         return {
           label: item,
           value: item,
@@ -586,10 +586,10 @@ export class ChartReleasesComponent implements OnInit {
 
   afterLogsDialogInit(entityDialog: any) {
     const self = entityDialog.parent;
-    entityDialog.formGroup.controls['pods'].valueChanges.subscribe(value => {
+    entityDialog.formGroup.controls['pods'].valueChanges.subscribe((value: any) => {
       const containers = self.podDetails[value];
       const containerFC = _.find(entityDialog.fieldConfig, {'name' : 'containers'});
-      containerFC.options = containers.map(item => {
+      containerFC.options = containers.map((item: any) => {
         return {
           label: item,
           value: item,
@@ -598,7 +598,7 @@ export class ChartReleasesComponent implements OnInit {
       entityDialog.formGroup.controls['containers'].setValue(containers[0]);
     })
   }
-  
+
   showChartEvents(name: string) {
     const catalogApp = this.chartItems[name];
     if (catalogApp) {

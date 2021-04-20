@@ -24,8 +24,8 @@ export class TableService {
         private mdDialog: MatDialog) { }
 
     // get table data source
-    getData(table) {
-        table.ws.call(table.tableConf.queryCall).subscribe(res => {
+    getData(table: any) {
+        table.ws.call(table.tableConf.queryCall).subscribe((res: any) => {
             if (table.tableConf.dataSourceHelper) {
                 res = table.tableConf.dataSourceHelper(res);
             }
@@ -60,7 +60,7 @@ export class TableService {
         });
     }
 
-    delete(table, item, action?) {
+    delete(table: any, item: any, action?: any) {
         const deleteMsg =
             table.tableConf.confirmDeleteDialog && table.tableConf.confirmDeleteDialog.isMessageComplete
                 ? ''
@@ -76,7 +76,7 @@ export class TableService {
 
         if (table.tableConf.deleteMsg && table.tableConf.deleteMsg.doubleConfirm) {
             // double confirm: input delete item's name to confirm deletion
-            table.tableConf.deleteMsg.doubleConfirm(item).subscribe((doubleConfirmDialog) => {
+            table.tableConf.deleteMsg.doubleConfirm(item).subscribe((doubleConfirmDialog: any) => {
                 if (doubleConfirmDialog) {
                     this.doDelete(table, item);
                 }
@@ -86,7 +86,7 @@ export class TableService {
                 dialog.hasOwnProperty("title") ? dialog['title'] : T("Delete"),
                 dialog.hasOwnProperty("message") ? dialog['message'] + deleteMsg : deleteMsg,
                 dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : false,
-                dialog.hasOwnProperty("button") ? dialog['button'] : T("Delete")).subscribe((res) => {
+                dialog.hasOwnProperty("button") ? dialog['button'] : T("Delete")).subscribe((res: boolean) => {
                     if (res) {
                         this.doDelete(table, item);
                     }
@@ -95,7 +95,7 @@ export class TableService {
     }
 
     // generate delete msg
-    getDeleteMessage(table, item, action = T("Delete ")) {
+    getDeleteMessage(table: any, item: any, action = T("Delete ")) {
         let deleteMsg = T("Delete the selected item?");
         if (table.tableConf.deleteMsg) {
             deleteMsg = action + table.tableConf.deleteMsg.title;
@@ -117,7 +117,7 @@ export class TableService {
     }
 
     // excute deletion of item
-    doDelete(table, item) {
+    doDelete(table: any, item: any) {
         if (table.tableConf.deleteCallIsJob) {
             this.loader.open();
             table.loaderOpen = true;
@@ -134,14 +134,14 @@ export class TableService {
 
         if (!table.tableConf.deleteCallIsJob) {
             table.busy = table.ws.call(table.tableConf.deleteCall, params).subscribe(
-                (resinner) => {
+                () => {
                     this.getData(table);
                     table.excuteDeletion = true;
                     if (table.tableConf.afterDelete) {
                         table.tableConf.afterDelete();
                     }
                 },
-                (resinner) => {
+                (resinner: any) => {
                     new EntityUtils().handleWSError(this, resinner, this.dialogService);
                     this.loader.close();
                     table.loaderOpen = false;
@@ -158,9 +158,9 @@ export class TableService {
               if (table.tableConf.afterDelete) {
                   table.tableConf.afterDelete();
               }
-  
+
             });
-            this.dialogRef.componentInstance.failure.subscribe((err) => {
+            this.dialogRef.componentInstance.failure.subscribe((err: any) => {
                 this.loader.close();
                 table.loaderOpen = false;
                 new EntityUtils().handleWSError(this, err, this.dialogService);
@@ -168,7 +168,7 @@ export class TableService {
         }
     }
 
-    unifyState(state) {
+    unifyState(state: string) {
         switch(state.toUpperCase()) {
           case 'UP':
             return stateClass.UP;
@@ -178,7 +178,7 @@ export class TableService {
         }
     }
 
-    updateStateInfoIcon(elemntId, type: 'sent' | 'received') {
+    updateStateInfoIcon(elemntId: string, type: 'sent' | 'received') {
         const targetEl = document.getElementById(elemntId);
         const targetIcon = targetEl.firstElementChild;
         if (targetIcon) {

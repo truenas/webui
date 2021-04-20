@@ -10,7 +10,7 @@ import * as _ from 'lodash';
 
 @Component({
   selector : 'app-entity-card-actions',
-  styleUrls: ['./entity-card-actions.component.scss'], 
+  styleUrls: ['./entity-card-actions.component.scss'],
   templateUrl : './entity-card-actions.component.html'
 })
 export class EntityCardActionsComponent implements OnInit {
@@ -31,8 +31,7 @@ export class EntityCardActionsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.actions = this.entity.getCardActions(this.row);
-    let removeIds = [];
+    this.actions = this.entity.getCardActions();
     for (let i = 0; i < this.actions.length; i++) {
       if (this.entity.conf.isActionVisible) {
         this.actions[i].visible = this.entity.conf.isActionVisible.bind(
