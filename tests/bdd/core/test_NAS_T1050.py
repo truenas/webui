@@ -44,6 +44,9 @@ def test_verify_nfs_allows_nonroot_access(driver):
     value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Allow non-root mount"]', 'class', 'mat-checkbox-checked')
     if value_exist:
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Allow non-root mount"]').click()
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
 
 @given('the browser is open on the TrueNAS URL and logged in')

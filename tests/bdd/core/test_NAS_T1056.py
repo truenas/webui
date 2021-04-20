@@ -1,9 +1,11 @@
 # coding=utf-8
-"""CORE feature tests."""
+"""Core feature tests."""
 
 import random
 import string
 import time
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
     is_element_present,
@@ -21,9 +23,9 @@ from pytest_bdd import (
 mountpoint = f'/mnt/nfs_host{"".join(random.choices(string.digits, k=2))}'
 
 
-@scenario('features/NAS-T1055.feature', 'Verify maproot user and group works for NFS share')
-def test_verify_maproot_user_and_group_works_for_nfs_share(driver):
-    """Verify maproot user and group works for NFS share."""
+@scenario('features/NAS-T1056.feature', 'Verify Mapall user and group works for NFS share')
+def test_verify_mapall_user_and_group_works_for_nfs_share(driver):
+    """Verify Mapall user and group works for NFS share."""
     pass
 
 
@@ -45,7 +47,7 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
     else:
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
-        time.sleep(0.5)
+        time.sleep(1)
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -71,12 +73,12 @@ def click_on_the_tank_pool_three_dots_button_select_add_dataset(driver):
     assert wait_on_element(driver, 7, '//h4[contains(.,"Name and Options")]')
 
 
-@then('input maproot for Name, select Generic as Share Type and click Submit')
-def input_maproot_for_name_select_generic_as_share_type_and_click_submit(driver):
-    """input maproot for Name, select Generic as Share Type and click Submit."""
+@then('input mapall for Name, select Generic as Share Type and click Submit')
+def input_mapall_for_name_select_generic_as_share_type_and_click_submit(driver):
+    """input mapall for Name, select Generic as Share Type and click Submit."""
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys('maproot')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys('mapall')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Share Type"]').click()
     assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__Share Type_Generic"]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_Generic"]').click()
@@ -88,11 +90,48 @@ def input_maproot_for_name_select_generic_as_share_type_and_click_submit(driver)
 def the_dataset_should_be_created_without_error(driver):
     """the dataset should be created without error."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 10, '//span[contains(.,"maproot")]')
+    assert wait_on_element(driver, 10, '//span[contains(.,"mapall")]')
+
+
+@then('click on the mapall dataset 3 dots button, select Edit Permissions')
+def click_on_the_mapall_dataset_3_dots_button_select_edit_permissions(driver):
+    """click on the mapall dataset 3 dots button, select Edit Permissions."""
+    assert wait_on_element(driver, 7, '//mat-icon[@id="actions_menu_button__mapall"]', 'clickable')
+    driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__mapall"]').click()
+    assert wait_on_element(driver, 7, '//button[@ix-auto="action__mapall_Edit Permissions"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="action__mapall_Edit Permissions"]').click()
+
+
+@then('on the Permissions page, set the user to nobody and the Group to nogroup')
+def on_the_permissions_page_set_the_user_to_nobody_and_the_group_to_nogroup(driver):
+    """on the Permissions page, set the user to nobody and the Group to nogroup."""
+    assert wait_on_element(driver, 7, '//input[@placeholder="User"]', 'clickable')
+    driver.find_element_by_xpath('//input[@placeholder="User"]').clear()
+    driver.find_element_by_xpath('//input[@placeholder="User"]').send_keys('nobody')
+    assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__nobody"]')
+    ActionChains(driver).send_keys(Keys.ESCAPE).perform()
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply User"]/label/div')
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply User"]/label/div').click()
+    assert wait_on_element(driver, 7, '//input[@placeholder="Group"]')
+    driver.find_element_by_xpath('//input[@placeholder="Group"]').clear()
+    driver.find_element_by_xpath('//input[@placeholder="Group"]').send_keys('nogroup')
+    assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__nogroup"]')
+    ActionChains(driver).send_keys(Keys.ESCAPE).perform()
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div', 'clickable')
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div').click()
+
+
+@then('click Save, the permissions should save without error')
+def click_save_the_permissions_should_save_without_error(driver):
+    """click Save, the permissions should save without error."""
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 10, '//span[contains(.,"mapall")]')
 
 
 @then('click on Sharing on the side menu, click on Unix Shares (NFS)')
-def click_on_sharing_on_the_side_menu_click_on_maproot_shares_nfs(driver):
+def click_on_sharing_on_the_side_menu_click_on_unix_shares_nfs(driver):
     """click on Sharing on the side menu, click on Unix Shares (NFS)."""
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Sharing"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Sharing"]').click()
@@ -110,31 +149,31 @@ def on_the_windows_shares_click_add(driver):
 
 
 @then(parsers.parse('input "{description}" in the Description'))
-def input_maproot_share_in_the_description(driver, description):
-    """input "Maproot share" in the Description."""
+def input_mapall_share_in_the_description(driver, description):
+    """input "Mapall share" in the Description."""
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Description"]', 'clickable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys(description)
 
 
-@then('input the maproot dataset path in Paths click ADVANCED OPTIONS')
-def input_the_maproot_dataset_path_in_paths_click_advanced_options(driver):
-    """input the maproot dataset path in Paths click ADVANCED OPTIONS."""
+@then('input the mapall dataset path in Paths click ADVANCED OPTIONS')
+def input_the_mapall_dataset_path_in_paths_click_advanced_options(driver):
+    """input the mapall dataset path in Paths click ADVANCED OPTIONS."""
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__path"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__path"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__path"]').send_keys('/mnt/tank/maproot')
+    driver.find_element_by_xpath('//input[@ix-auto="input__path"]').send_keys('/mnt/tank/mapall')
     if is_element_present(driver, '//button[@ix-auto="button__ADVANCED OPTIONS"]'):
         driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
 
 
-@then('input nobody in Maproot User input nogroup in Maproot Group')
-def input_nobody_in_maproot_user_input_nogroup_in_maproot_group(driver):
-    """input nobody in Maproot User input nogroup in Maproot Group."""
-    assert wait_on_element(driver, 7, '//input[@placeholder="Maproot User"]', 'clickable')
-    driver.find_element_by_xpath('//input[@placeholder="Maproot User"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Maproot User"]').send_keys('nobody')
-    driver.find_element_by_xpath('//input[@placeholder="Maproot Group"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Maproot Group"]').send_keys('nogroup')
+@then('input nobody in Mapall User input nogroup in Mapall Group')
+def input_nobody_in_mapall_user_input_nogroup_in_mapall_group(driver):
+    """input nobody in Mapall User input nogroup in Mapall Group."""
+    assert wait_on_element(driver, 7, '//input[@placeholder="Mapall User"]', 'clickable')
+    driver.find_element_by_xpath('//input[@placeholder="Mapall User"]').clear()
+    driver.find_element_by_xpath('//input[@placeholder="Mapall User"]').send_keys('nobody')
+    driver.find_element_by_xpath('//input[@placeholder="Mapall Group"]').clear()
+    driver.find_element_by_xpath('//input[@placeholder="Mapall Group"]').send_keys('nogroup')
 
 
 @then('click Submit, the new share should be created without error')
