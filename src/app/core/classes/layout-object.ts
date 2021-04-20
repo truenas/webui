@@ -363,7 +363,7 @@ import {
 
      private createListHorizontal(constrain?: boolean){
        if(constrain){
-         this.collection.forEach((item) => {
+         this.collection.forEach((item: any) => {
            item.constrainY = true;
          })
        }
@@ -373,7 +373,7 @@ import {
 
      private createListVertical(constrain?: boolean){
        if(constrain){
-         this.collection.forEach((item) => {
+         this.collection.forEach((item: any) => {
            item.constrainX = true;
          });
        }

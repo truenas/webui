@@ -28,7 +28,7 @@ export class NISComponent {
       'name' : helptext.nis_custactions_clearcache_name,
        function : async () => {
          this.systemGeneralService.refreshDirServicesCache().subscribe((cache_status)=>{
-          this.dialogservice.Info(helptext.nis_custactions_clearcache_dialog_title, 
+          this.dialogservice.Info(helptext.nis_custactions_clearcache_dialog_title,
             helptext.nis_custactions_clearcache_dialog_message);
         })
       }
@@ -37,10 +37,10 @@ export class NISComponent {
 
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
-    { 
+    {
       name: helptext.nis_label,
       class: 'nis',
-      label: true,   
+      label: true,
       config: [
         {
           type : 'input',
@@ -84,7 +84,7 @@ export class NISComponent {
               private dialogservice: DialogService) {}
 
   afterInit(entityForm: any) {
-    entityForm.submitFunction = body => this.ws.call(this.addCall, [body]);
+    entityForm.submitFunction = (body: any) => this.ws.call(this.addCall, [body]);
   }
 
 }

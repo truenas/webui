@@ -52,7 +52,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
       this.pk = params['pk'];
       this.getAuthToken().subscribe((res) => {
         this.initializeWebShell(res);
-        this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
+        this.shellSubscription = this.ss.shellOutput.subscribe((value: any) => {
           if (value !== undefined) {
             // this.xterm.write(value);
 
@@ -81,12 +81,12 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     this.dialog.open(CopyPasteMessageComponent);
     return false;
   }
-  
-  onResize(event) {
+
+  onResize() {
     this.resizeTerm();
   }
 
-  onFontSizeChanged(event) {
+  onFontSizeChanged() {
     this.resizeTerm();
   }
 
@@ -119,7 +119,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     span.innerHTML = 'a';
 
     let cols = 0;
-    while(span.offsetWidth < domWidth) {      
+    while(span.offsetWidth < domWidth) {
       span.innerHTML += 'a';
       cols++;
     }
@@ -129,7 +129,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     if (cols < 80) {
       cols = 80;
     }
-    
+
     if (rows < 10) {
       rows = 10;
     }
@@ -158,16 +158,16 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     this.xterm.loadAddon(attachAddon);
     this.fitAddon = new FitAddon();
     this.xterm.loadAddon(this.fitAddon);
-    
+
     var font = new FontFaceObserver(this.font_name);
-    
+
     font.load().then((e) => {
       this.xterm.open(this.container.nativeElement);
       this.fitAddon.fit();
       this.xterm._initialized = true;
     }, function (e) {
       console.log('Font is not available', e);
-    });    
+    });
   }
 
   resizeTerm(){
@@ -184,7 +184,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     this.ss.jailId = this.pk;
     this.ss.connect();
 
-    this.ss.shellConnected.subscribe((res)=> {
+    this.ss.shellConnected.subscribe((res: any)=> {
       this.connectionId = res.id;
       this.resizeTerm();
     })

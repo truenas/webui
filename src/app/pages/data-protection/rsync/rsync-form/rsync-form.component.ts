@@ -268,10 +268,10 @@ export class RsyncFormComponent implements OnDestroy {
     });
   }
 
-  beforeSubmit(value) {
+  beforeSubmit(value: any) {
     const spl = value.rsync_picker.split(' ');
     delete value.rsync_picker;
-    const schedule = {};
+    const schedule: any = {};
     schedule['minute'] = spl[0];
     schedule['hour'] = spl[1];
     schedule['dom'] = spl[2];
@@ -280,15 +280,15 @@ export class RsyncFormComponent implements OnDestroy {
     value['schedule'] = schedule;
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     data[
       'rsync_picker'
     ] = `${data.schedule.minute} ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
     return data;
   }
 
-  updateUserSearchOptions(value = '', parent) {
-    parent.userService.userQueryDSCache(value).subscribe((items) => {
+  updateUserSearchOptions(value = '', parent: any) {
+    parent.userService.userQueryDSCache(value).subscribe((items: any) => {
       const users = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -297,7 +297,7 @@ export class RsyncFormComponent implements OnDestroy {
     });
   }
 
-  hideFields(mode) {
+  hideFields(mode: any) {
     let hide_fields;
     let show_fields;
     if (mode === 'SSH') {
