@@ -122,7 +122,7 @@ def the_system_will_reboot_wait_the_login_to_come_back(driver):
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 300, '//input[@formcontrolname="password"]')
     # this sleep give a little to get ready for more load
-    time.sleep(2)
+    time.sleep(3)
 
 
 @then('when the system login shows up, input testing1 as the new password')
@@ -154,7 +154,7 @@ def reboot_the_system_and_try_to_login_using_the_previous_password_testing(drive
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 300, '//input[@placeholder="Username"]', 'clickable')
     # this sleep give a little to get ready for more load
-    time.sleep(2)
+    time.sleep(3)
     # and look again
     assert wait_on_element(driver, 20, '//input[@placeholder="Password"]', 'clickable')
     driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
@@ -208,7 +208,7 @@ def the_system_will_reboot_wait_for_the_login(driver):
     assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 300, '//input[@placeholder="Username"]')
     # this sleep give a little to get ready for more load
-    time.sleep(2)
+    time.sleep(3)
 
 
 @then('try to login using the new password testing1')
