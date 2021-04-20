@@ -1,21 +1,43 @@
-import { ModalService } from 'app/services/modal.service';
-import { ReplicationFormComponent } from './../replication-form/replication-form.component';
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Validators } from '@angular/forms';
+import { DatePipe } from '@angular/common';
 
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
-import { DialogService, JobService, WebSocketService, StorageService, TaskService, KeychainCredentialService, ReplicationService } from '../../../../services';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import globalHelptext from '../../../../helptext/global-helptext';
-import helptext from '../../../../helptext/data-protection/replication/replication';
+import {
+  DialogService,
+  JobService,
+  WebSocketService,
+  StorageService,
+  TaskService,
+  KeychainCredentialService,
+  ReplicationService,
+} from 'app/services';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import globalHelptext from 'app/helptext/global-helptext';
+import helptext from 'app/helptext/data-protection/replication/replication';
 import { EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.interface';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { ModalService } from 'app/services/modal.service';
+import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
+import { ReplicationTask } from 'app/pages/data-protection/replication/replication.interface';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 
 @Component({
   selector: 'app-replication-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
-  providers: [JobService, StorageService, TaskService, KeychainCredentialService, ReplicationService],
+  providers: [
+    JobService,
+    StorageService,
+    TaskService,
+    KeychainCredentialService,
+    ReplicationService,
+    EntityFormService,
+    DatePipe,
+  ],
 })
 export class ReplicationListComponent {
   public title = T('Replication Tasks');
@@ -24,7 +46,7 @@ export class ReplicationListComponent {
   protected route_add: string[] = ['tasks', 'replication', 'wizard'];
   protected route_edit: string[] = ['tasks', 'replication', 'edit'];
   protected route_success: string[] = ['tasks', 'replication'];
-  public entityList: any;
+  public entityList: EntityTableComponent;
   protected asyncView = true;
 
   public columns: Array<any> = [
@@ -60,13 +82,16 @@ export class ReplicationListComponent {
     protected taskService: TaskService,
     protected keychainCredentialService: KeychainCredentialService,
     protected replicationService: ReplicationService,
+    protected loader: AppLoaderService,
+    protected datePipe: DatePipe,
+    protected entityFormService: EntityFormService,
   ) {}
 
-  afterInit(entityList: any) {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
   }
 
-  resourceTransformIncomingRestData(tasks: any[]): any[] {
+  resourceTransformIncomingRestData(tasks: any[]): ReplicationTask[] {
     return tasks.map((task) => {
       task.ssh_connection = task.ssh_credentials ? task.ssh_credentials.name : '-';
       task.task_last_snapshot = task.state.last_snapshot ? task.state.last_snapshot : T('No snapshots sent yet');
@@ -74,7 +99,7 @@ export class ReplicationListComponent {
     });
   }
 
-  getActions(parentrow) {
+  getActions(parentrow: any): any[] {
     return [
       {
         id: parentrow.name,
@@ -138,16 +163,14 @@ export class ReplicationListComponent {
             ],
             saveButtonText: helptext.replication_restore_dialog.saveButton,
             customSubmit: function (entityDialog) {
-              parent.entityList.loader.open();
+              parent.loader.open();
               parent.ws.call('replication.restore', [row.id, entityDialog.formValue]).subscribe(
                 (res) => {
                   entityDialog.dialogRef.close(true);
-                  parent.entityList.loaderOpen = true;
-                  parent.entityList.needRefreshTable = true;
                   parent.entityList.getData();
                 },
                 (err) => {
-                  parent.entityList.loader.close(true);
+                  parent.loader.close();
                   new EntityUtils().handleWSError(entityDialog, err, parent.dialog);
                 },
               );
@@ -177,11 +200,11 @@ export class ReplicationListComponent {
     ];
   }
 
-  onButtonClick(row: any) {
+  onButtonClick(row: any): void {
     this.stateButton(row);
   }
 
-  stateButton(row) {
+  stateButton(row: any): void {
     if (row.job) {
       if (row.state.state === EntityJobState.Running) {
         this.entityList.runningStateButton(row.job.id);
@@ -195,7 +218,7 @@ export class ReplicationListComponent {
     }
   }
 
-  onCheckboxChange(row) {
+  onCheckboxChange(row: any): void {
     this.ws.call('replication.update', [row.id, { enabled: row.enabled }]).subscribe(
       (res) => {
         row.enabled = res.enabled;
@@ -210,11 +233,34 @@ export class ReplicationListComponent {
     );
   }
 
-  doAdd(id?: number) {
-    this.modalService.open('slide-in-form', new ReplicationFormComponent(this.ws, this.taskService, this.storage, this.keychainCredentialService, this.replicationService, this.modalService), id);
+  doAdd(): void {
+    this.modalService.open(
+      'slide-in-form',
+      new ReplicationWizardComponent(
+        this.keychainCredentialService,
+        this.loader,
+        this.dialog,
+        this.ws,
+        this.replicationService,
+        this.datePipe,
+        this.entityFormService,
+        this.modalService,
+      ),
+    );
   }
 
-  doEdit(id: number) {
-    this.doAdd(id);
+  doEdit(id: number): void {
+    this.modalService.open(
+      'slide-in-form',
+      new ReplicationFormComponent(
+        this.ws,
+        this.taskService,
+        this.storage,
+        this.keychainCredentialService,
+        this.replicationService,
+        this.modalService,
+      ),
+      id,
+    );
   }
 }

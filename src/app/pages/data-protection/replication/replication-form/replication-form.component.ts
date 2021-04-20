@@ -1,8 +1,11 @@
-import { AppLoaderService } from './../../../../services/app-loader/app-loader.service';
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
-import helptext from '../../../../helptext/data-protection/replication/replication';
-import repwizardhelptext from '../../../../helptext/data-protection/replication/replication-wizard';
+
+import * as _ from 'lodash';
+import { take } from 'rxjs/operators';
+
+import helptext from 'app/helptext/data-protection/replication/replication';
+import repwizardhelptext from 'app/helptext/data-protection/replication/replication-wizard';
 import {
   WebSocketService,
   TaskService,
@@ -10,64 +13,12 @@ import {
   ReplicationService,
   StorageService,
 } from 'app/services';
-import * as _ from 'lodash';
-import { EntityUtils } from '../../../common/entity/utils';
-import { T } from '../../../../translate-marker';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { T } from 'app/translate-marker';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { ModalService } from 'app/services/modal.service';
-import { take } from 'rxjs/operators';
-
-export enum TransportMode {
-  Local = 'LOCAL',
-  SSH = 'SSH',
-  Netcat = 'SSH+NETCAT',
-}
-
-export enum ReadOnlyMode {
-  Set = 'SET',
-  Require = 'REQUIRE',
-  Ignore = 'IGNORE',
-}
-
-export enum LoggingLevel {
-  Default = 'DEFAULT',
-  Debug = 'DEBUG',
-  Info = 'INFO',
-  Warning = 'WARNING',
-  Error = 'ERROR',
-}
-
-export enum RetentionPolicy {
-  Source = 'SOURCE',
-  Custom = 'CUSTOM',
-  None = 'NONE',
-}
-
-export enum CompressionType {
-  Disabled = 'DISABLED',
-  LZ4 = 'LZ4',
-  PIGZ = 'PIGZ',
-  PLZIP = 'PLZIP',
-}
-
-export enum NetcatMode {
-  Local = 'LOCAL',
-  Remote = 'REMOTE',
-}
-
-export enum EncryptionKeyFormat {
-  Hex = 'HEX',
-  Passphrase = 'PASSPHRASE',
-}
-
-export enum LifetimeUnit {
-  Hour = 'HOUR',
-  Day = 'DAY',
-  Week = 'WEEK',
-  Month = 'MONTH',
-  Year = 'YEAR',
-}
+import { CompressionType, Direction, EncryptionKeyFormat, LifetimeUnit, LoggingLevel, NetcatMode, ReadOnlyMode, RetentionPolicy, TransportMode } from 'app/pages/data-protection/replication/replication.interface';
 
 @Component({
   selector: 'app-replication-form',
@@ -137,14 +88,14 @@ export class ReplicationFormComponent {
           options: [
             {
               label: T('PUSH'),
-              value: 'PUSH',
+              value: Direction.Push,
             },
             {
               label: T('PULL'),
-              value: 'PULL',
+              value: Direction.Pull,
             },
           ],
-          value: 'PUSH',
+          value: Direction.Push,
           relation: [
             {
               action: 'HIDE',
@@ -377,7 +328,7 @@ export class ReplicationFormComponent {
               value: CompressionType.PLZIP,
             },
           ],
-          value: 'DISABLED',
+          value: CompressionType.Disabled,
           relation: [
             {
               action: 'SHOW',
@@ -452,7 +403,7 @@ export class ReplicationFormComponent {
               when: [
                 {
                   name: 'direction',
-                  value: 'PUSH',
+                  value: Direction.Push,
                 },
               ],
             },
@@ -486,7 +437,7 @@ export class ReplicationFormComponent {
               when: [
                 {
                   name: 'direction',
-                  value: 'PULL',
+                  value: Direction.Pull,
                 },
               ],
             },
@@ -614,7 +565,7 @@ export class ReplicationFormComponent {
               when: [
                 {
                   name: 'direction',
-                  value: 'PULL',
+                  value: Direction.Pull,
                 },
               ],
             },
@@ -693,7 +644,7 @@ export class ReplicationFormComponent {
               when: [
                 {
                   name: 'direction',
-                  value: 'PUSH',
+                  value: Direction.Push,
                 },
               ],
             },
@@ -710,7 +661,7 @@ export class ReplicationFormComponent {
               when: [
                 {
                   name: 'direction',
-                  value: 'PULL',
+                  value: Direction.Pull,
                 },
               ],
             },
@@ -758,7 +709,7 @@ export class ReplicationFormComponent {
               when: [
                 {
                   name: 'direction',
-                  value: 'PUSH',
+                  value: Direction.Push,
                 },
               ],
             },
@@ -781,7 +732,7 @@ export class ReplicationFormComponent {
               when: [
                 {
                   name: 'direction',
-                  value: 'PULL',
+                  value: Direction.Pull,
                 },
               ],
             },
@@ -1226,7 +1177,7 @@ export class ReplicationFormComponent {
     }
     this.entityForm.formGroup.controls['target_dataset_PUSH'].valueChanges.subscribe((res) => {
       if (
-        entityForm.formGroup.controls['direction'].value === 'PUSH' &&
+        entityForm.formGroup.controls['direction'].value === Direction.Push &&
         entityForm.formGroup.controls['transport'].value !== TransportMode.Local &&
         entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
       ) {
@@ -1237,7 +1188,7 @@ export class ReplicationFormComponent {
     });
     entityForm.formGroup.controls['direction'].valueChanges.subscribe((res) => {
       if (
-        res === 'PUSH' &&
+        res === Direction.Push &&
         entityForm.formGroup.controls['transport'].value !== TransportMode.Local &&
         entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
       ) {
@@ -1251,7 +1202,7 @@ export class ReplicationFormComponent {
     entityForm.formGroup.controls['transport'].valueChanges.subscribe((res) => {
       if (
         res !== TransportMode.Local &&
-        entityForm.formGroup.controls['direction'].value === 'PUSH' &&
+        entityForm.formGroup.controls['direction'].value === Direction.Push &&
         entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
       ) {
         this.countEligibleManualSnapshots();
@@ -1264,7 +1215,7 @@ export class ReplicationFormComponent {
       }
 
       if (res === TransportMode.Local) {
-        entityForm.formGroup.controls['direction'].setValue('PUSH');
+        entityForm.formGroup.controls['direction'].setValue(Direction.Push);
         entityForm.setDisabled('target_dataset_PUSH', true, true);
         entityForm.setDisabled('ssh_credentials', true, true);
         entityForm.setDisabled('target_dataset_PULL', false, false);
@@ -1352,7 +1303,7 @@ export class ReplicationFormComponent {
       wsResponse['ssh_credentials'] = wsResponse['ssh_credentials'].id;
     }
 
-    wsResponse['compression'] = wsResponse['compression'] === null ? 'DISABLED' : wsResponse['compression'];
+    wsResponse['compression'] = wsResponse['compression'] === null ? CompressionType.Disabled : wsResponse['compression'];
     wsResponse['logging_level'] = wsResponse['logging_level'] === null ? LoggingLevel.Default : wsResponse['logging_level'];
     const snapshotTasks = [];
     for (const item of wsResponse['periodic_snapshot_tasks']) {
@@ -1361,32 +1312,14 @@ export class ReplicationFormComponent {
     wsResponse['periodic_snapshot_tasks'] = snapshotTasks;
 
     if (wsResponse.schedule) {
-      wsResponse['schedule_picker'] =
-        wsResponse.schedule.minute +
-        ' ' +
-        wsResponse.schedule.hour +
-        ' ' +
-        wsResponse.schedule.dom +
-        ' ' +
-        wsResponse.schedule.month +
-        ' ' +
-        wsResponse.schedule.dow;
+      wsResponse['schedule_picker'] = `${wsResponse.schedule.minute} ${wsResponse.schedule.hour} ${wsResponse.schedule.dom} ${wsResponse.schedule.month} ${wsResponse.schedule.dow}`;
       wsResponse['schedule_begin'] = wsResponse.schedule.begin;
       wsResponse['schedule_end'] = wsResponse.schedule.end;
       wsResponse['schedule'] = true;
     }
 
     if (wsResponse.restrict_schedule) {
-      wsResponse['restrict_schedule_picker'] =
-        wsResponse.restrict_schedule.minute +
-        ' ' +
-        wsResponse.restrict_schedule.hour +
-        ' ' +
-        wsResponse.restrict_schedule.dom +
-        ' ' +
-        wsResponse.restrict_schedule.month +
-        ' ' +
-        wsResponse.restrict_schedule.dow;
+      wsResponse['restrict_schedule_picker'] = `${wsResponse.restrict_schedule.minute} ${wsResponse.restrict_schedule.hour} ${wsResponse.restrict_schedule.dom} ${wsResponse.restrict_schedule.month} ${wsResponse.restrict_schedule.dow}`;
       wsResponse['restrict_schedule_begin'] = wsResponse.restrict_schedule.begin;
       wsResponse['restrict_schedule_end'] = wsResponse.restrict_schedule.end;
       wsResponse['restrict_schedule'] = true;
@@ -1412,7 +1345,7 @@ export class ReplicationFormComponent {
       delete wsResponse.encryption_key_location;
     }
 
-    if (wsResponse.encryption_key_format === 'HEX') {
+    if (wsResponse.encryption_key_format === EncryptionKeyFormat.Hex) {
       wsResponse.encryption_key_generate = false;
       wsResponse.encryption_key_hex = wsResponse.encryption_key;
     } else {
@@ -1456,11 +1389,11 @@ export class ReplicationFormComponent {
       data['speed_limit'] = this.storageService.convertHumanStringToNum(data['speed_limit']);
     }
     if (data['transport'] === TransportMode.Local) {
-      data['direction'] = 'PUSH';
+      data['direction'] = Direction.Push;
       data['target_dataset_PUSH'] = _.cloneDeep(data['target_dataset_PULL']);
       delete data['target_dataset_PULL'];
     }
-    if (data['direction'] === 'PUSH') {
+    if (data['direction'] === Direction.Push) {
       for (let i = 0; i < data['source_datasets_PUSH'].length; i++) {
         if (_.startsWith(data['source_datasets_PUSH'][i], '/mnt/')) {
           data['source_datasets_PUSH'][i] = data['source_datasets_PUSH'][i].substring(5);
@@ -1593,7 +1526,7 @@ export class ReplicationFormComponent {
   blurEventNamingSchema(parent) {
     if (
       parent.entityForm &&
-      parent.entityForm.formGroup.controls['direction'].value === 'PUSH' &&
+      parent.entityForm.formGroup.controls['direction'].value === Direction.Push &&
       parent.entityForm.formGroup.controls['transport'].value !== TransportMode.Local &&
       parent.entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
     ) {

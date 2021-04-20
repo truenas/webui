@@ -347,14 +347,11 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
       this.modalService,
     );
     this.replicationWizardComponent = new ReplicationWizardComponent(
-      this.router,
       this.keychainCredentialService,
       this.loader,
       this.dialog,
       this.ws,
       this.replicationService,
-      this.taskService,
-      this.storage,
       this.datePipe,
       this.entityFormService,
       this.modalService,

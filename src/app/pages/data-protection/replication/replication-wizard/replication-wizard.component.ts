@@ -1,83 +1,23 @@
-import { ModalService } from './../../../../services/modal.service';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 
-import * as _ from 'lodash';
-
-import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
-import { EntityWizardComponent } from '../../../common/entity/entity-wizard/entity-wizard.component';
-import helptext from '../../../../helptext/data-protection/replication/replication-wizard';
-import sshConnectionsHelptex from '../../../../helptext/system/ssh-connections';
-
-import { DialogService, KeychainCredentialService, WebSocketService, ReplicationService, TaskService, StorageService } from '../../../../services';
-import { EntityUtils } from '../../../common/entity/utils';
-import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { T } from '../../../../translate-marker';
-import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
 import { take } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
+import * as _ from 'lodash';
 
-interface ReplicationState {
-  state: string;
-  datetime: any;
-  error: string;
-  last_snapshot: string | null;
-}
-interface ReplicationTask {
-  allow_from_scratch: boolean;
-  also_include_naming_schema: any[];
-  auto: boolean;
-  compressed: boolean;
-  compression: null
-  direction: "PUSH" | "PULL";
-  embed: boolean;
-  enabled: boolean;
-  encryption: boolean;
-  encryption_key: null
-  encryption_key_format: null
-  encryption_key_location: null
-  exclude: any[];
-  hold_pending_snapshots: boolean;
-  id: number;
-  job: null
-  large_block: boolean;
-  lifetime_unit: "WEEK"
-  lifetime_value: number;
-  logging_level: null
-  name: string;
-  naming_schema: string[];
-  netcat_active_side: null
-  netcat_active_side_listen_address: null
-  netcat_active_side_port_max: null
-  netcat_active_side_port_min: null
-  netcat_passive_side_connect_address: null
-  only_matching_schedule: boolean;
-  periodic_snapshot_tasks: any[];
-  properties: boolean;
-  properties_exclude: string[];
-  properties_override: {}
-  readonly: "REQUIRE"
-  recursive: boolean;
-  replicate: boolean;
-  restrict_schedule: null
-  retention_policy: "SOURCE"
-  retries: number;
-  schedule: null
-  schedule_method: "cron"
-  schedule_picker: "0 0 * * *"
-  source_datasets: string[]
-  source_datasets_from: "local"
-  speed_limit: null
-  ssh_credentials: null
-  state: ReplicationState;
-  target_dataset: "LOCKED"
-  target_dataset_from: "local"
-  transport: "LOCAL"
-}
+import helptext from 'app/helptext/data-protection/replication/replication-wizard';
+import sshConnectionsHelptex from 'app/helptext/system/ssh-connections';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { KeychainCredentialService, ReplicationService, TaskService, AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { ModalService } from 'app/services/modal.service';
+import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
+import { T } from 'app/translate-marker';
+import { NetcatMode, CipherType, Direction, EncryptionKeyFormat, LifetimeUnit, ReadOnlyMode, ReplicationTask, RetentionPolicy, ScheduleMethod, TransportMode } from 'app/pages/data-protection/replication/replication.interface';
 
 @Component({
     selector: 'app-replication-wizard',
@@ -362,11 +302,11 @@ export class ReplicationWizardComponent {
                             placeholder: helptext.encryption_key_format_placeholder,
                             tooltip: helptext.encryption_key_format_tooltip,
                             options: [{
-                                label: 'HEX',
-                                value: 'HEX',
+                                label: T('HEX'),
+                                value: EncryptionKeyFormat.Hex,
                             }, {
-                                label: 'PASSPHRASE',
-                                value: 'PASSPHRASE',
+                                label: T('PASSPHRASE'),
+                                value: EncryptionKeyFormat.Passphrase,
                             }],
                             relation: [{
                                 action: 'SHOW',
@@ -390,7 +330,7 @@ export class ReplicationWizardComponent {
                                     value: true,
                                 },  {
                                     name: 'encryption_key_format',
-                                    value: 'HEX',
+                                    value: EncryptionKeyFormat.Hex,
                                 }]
                             }],
                         },
@@ -407,7 +347,7 @@ export class ReplicationWizardComponent {
                                     value: true,
                                 }, {
                                     name: 'encryption_key_format',
-                                    value: 'HEX',
+                                    value: EncryptionKeyFormat.Hex,
                                 }, {
                                     name: 'encryption_key_generate',
                                     value: false,
@@ -429,7 +369,7 @@ export class ReplicationWizardComponent {
                                     value: true,
                                 }, {
                                     name: 'encryption_key_format',
-                                    value: 'PASSPHRASE',
+                                    value: EncryptionKeyFormat.Passphrase,
                                 }]
                             }],
                         },
@@ -480,14 +420,14 @@ export class ReplicationWizardComponent {
                             options: [
                                 {
                                     label: T("Encryption (more secure, but slower)"),
-                                    value: 'SSH',
+                                    value: TransportMode.SSH,
                                 },
                                 {
                                     label: T("No Encryption (less secure, but faster)"),
-                                    value: 'SSH+NETCAT',
+                                    value: TransportMode.Netcat,
                                 }
                             ],
-                            value: 'SSH',
+                            value: TransportMode.SSH,
                             relation: [{
                                 action: 'SHOW',
                                 connective: 'OR',
@@ -523,12 +463,12 @@ export class ReplicationWizardComponent {
                     tooltip: helptext.schedule_method_tooltip,
                     options: [{
                         label: T("Run On a Schedule"),
-                        value: 'cron',
+                        value: ScheduleMethod.Cron,
                     }, {
                         label: T("Run Once"),
-                        value: 'once',
+                        value: ScheduleMethod.Once,
                     }],
-                    value: 'cron',
+                    value: ScheduleMethod.Cron,
                     class: 'inline',
                     width: '50%',
                 },
@@ -544,7 +484,7 @@ export class ReplicationWizardComponent {
                         action: 'SHOW',
                         when: [{
                             name: 'schedule_method',
-                            value: 'cron',
+                            value: ScheduleMethod.Cron,
                         }]
                     }],
                     required: true,
@@ -559,7 +499,7 @@ export class ReplicationWizardComponent {
                         action: 'SHOW',
                         when: [{
                             name: 'schedule_method',
-                            value: 'once',
+                            value: ScheduleMethod.Once,
                         }]
                     }],
                     value: true,
@@ -571,15 +511,15 @@ export class ReplicationWizardComponent {
                     tooltip: helptext.retention_policy_tooltip,
                     options: [{
                         label: T("Same as Source"),
-                        value: 'SOURCE',
+                        value: RetentionPolicy.Source,
                     }, {
                         label: T("Never Delete"),
-                        value: 'NONE',
+                        value: RetentionPolicy.None,
                     }, {
                         label: T("Custom"),
-                        value: 'CUSTOM',
+                        value: RetentionPolicy.Custom,
                     }],
-                    value: 'SOURCE',
+                    value: RetentionPolicy.Source,
                     class: 'inline',
                     width: '50%',
                 },
@@ -598,7 +538,7 @@ export class ReplicationWizardComponent {
                         connective: 'OR',
                         when: [{
                             name: 'retention_policy',
-                            value: 'CUSTOM',
+                            value: RetentionPolicy.Custom,
                         }]
                     }],
                 },
@@ -608,21 +548,21 @@ export class ReplicationWizardComponent {
                     tooltip: helptext.lifetime_unit_tooltip,
                     options: [{
                         label: T("Hours"),
-                        value: 'HOUR',
+                        value: LifetimeUnit.Hour,
                     }, {
                         label: T("Days"),
-                        value: 'DAY',
+                        value: LifetimeUnit.Day,
                     }, {
                         label: T("Weeks"),
-                        value: 'WEEK',
+                        value: LifetimeUnit.Week,
                     }, {
                         label: T("Months"),
-                        value: 'MONTH',
+                        value: LifetimeUnit.Month,
                     }, {
                         label: T("Years"),
-                        value: 'YEAR',
+                        value: LifetimeUnit.Year,
                     }],
-                    value: 'WEEK',
+                    value: LifetimeUnit.Week,
                     class: 'inline',
                     width: '25%',
                     relation: [{
@@ -630,7 +570,7 @@ export class ReplicationWizardComponent {
                         connective: 'OR',
                         when: [{
                             name: 'retention_policy',
-                            value: 'CUSTOM',
+                            value: RetentionPolicy.Custom,
                         }]
                     }],
                     required: true,
@@ -757,23 +697,22 @@ export class ReplicationWizardComponent {
             options: [
                 {
                     label: T("Standard (Secure)"),
-                    value: 'STANDARD',
+                    value: CipherType.Standard,
                 }, {
                     label: T("Fast (Less secure)"),
-                    value: 'FAST',
+                    value: CipherType.Fast,
                 }, {
                     label: T("Disabled (Not encrypted)"),
-                    value: 'DISABLED',
+                    value: CipherType.Disabled,
                 }
             ],
-            value: 'STANDARD',
+            value: CipherType.Standard,
         }
     ];
 
     protected saveSubmitText = T('START REPLICATION');
-    protected directions = ['PULL', 'PUSH'];
-    protected selectedReplicationTask: any;
-    protected semiSSHFieldGroup: any[] = [
+    protected selectedReplicationTask: ReplicationTask;
+    protected semiSSHFieldGroup: string[] = [
         'url',
         'password',
     ];
@@ -801,10 +740,9 @@ export class ReplicationWizardComponent {
     protected source_fieldSet;
     protected target_fieldSet;
 
-    constructor(private router: Router, private keychainCredentialService: KeychainCredentialService,
+    constructor(private keychainCredentialService: KeychainCredentialService,
         private loader: AppLoaderService, private dialogService: DialogService,
         private ws: WebSocketService, private replicationService: ReplicationService,
-        private taskService: TaskService, private storageService: StorageService,
         private datePipe: DatePipe, private entityFormService: EntityFormService,
         private modalService: ModalService) {
         this.ws.call('replication.query').subscribe(
@@ -824,7 +762,7 @@ export class ReplicationWizardComponent {
         return false;
     }
 
-    afterInit(entityWizard) {
+    afterInit(entityWizard: EntityWizardComponent): void {
         this.entityWizard = entityWizard;
         this.preload_fieldSet = _.find(this.wizardConfig[0].fieldSets, {class: 'preload'});
         this.source_fieldSet = _.find(this.wizardConfig[0].fieldSets, {class: 'source'});
@@ -838,9 +776,9 @@ export class ReplicationWizardComponent {
     step0Init() {
         const exist_replicationField = _.find(this.preload_fieldSet.config, { name: 'exist_replication' });
         this.replicationService.getReplicationTasks().subscribe(
-            (res) => {
+            (res: ReplicationTask[]) => {
                 for (const task of res) {
-                    if (task.transport !== 'LEGACY') {
+                    if (task.transport !== TransportMode.Legacy) {
                         const lable = task.name + ' (' + ((task.state && task.state.datetime) ? 'last run ' + this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy') : 'never ran') + ')';
                         exist_replicationField.options.push({ label: lable, value: task });
                         if (this.pk === task.id) {
@@ -939,11 +877,11 @@ export class ReplicationWizardComponent {
         });
     }
 
-    loadOrClearReplicationTask(task: string): void {
-      if (task !== undefined && task !== '') {
+    loadOrClearReplicationTask(task: ReplicationTask): void {
+      if (task !== undefined) {
         this.loadReplicationTask(task);
       } else {
-        if (this.selectedReplicationTask !== undefined && this.selectedReplicationTask !== '') {
+        if (this.selectedReplicationTask !== undefined) {
           this.clearReplicationTask();
         }
       }
@@ -952,7 +890,7 @@ export class ReplicationWizardComponent {
 
     step1Init() {
         this.entityWizard.formArray.controls[1].controls['retention_policy'].valueChanges.subscribe((value) => {
-            const disable = value === 'SOURCE' ? true : false;
+            const disable = value === RetentionPolicy.Source ? true : false;
             disable ? this.entityWizard.formArray.controls[1].controls['lifetime_value'].disable() : this.entityWizard.formArray.controls[1].controls['lifetime_value'].enable();
             disable ? this.entityWizard.formArray.controls[1].controls['lifetime_unit'].disable() : this.entityWizard.formArray.controls[1].controls['lifetime_unit'].enable();
         });
@@ -1012,9 +950,8 @@ export class ReplicationWizardComponent {
         disabled ? this.entityWizard.formArray.controls[stepIndex].controls[field].disable() : this.entityWizard.formArray.controls[stepIndex].controls[field].enable();
     }
 
-    loadReplicationTask(task) {
-        console.log('task', task);
-        if (task.direction === 'PUSH') {
+    loadReplicationTask(task: any): void {
+        if (task.direction === Direction.Push) {
             task['source_datasets_from'] = 'local';
             task['target_dataset_from'] = task.ssh_credentials ? 'remote' : 'local';
             if (task.ssh_credentials) {
@@ -1034,24 +971,19 @@ export class ReplicationWizardComponent {
         }
 
         if (task.schedule || task.periodic_snapshot_tasks.length > 0) {
-            const scheduleData = task.periodic_snapshot_tasks[0] || task;
-            task['schedule_method'] = 'cron';
-            task['schedule_picker'] = scheduleData.schedule ?
-            scheduleData.schedule.minute + " " +
-            scheduleData.schedule.hour + " " +
-            scheduleData.schedule.dom + " " +
-            scheduleData.schedule.month + " " +
-            scheduleData.schedule.dow : null;
+            const taskData = task.periodic_snapshot_tasks[0] || task;
+            task['schedule_method'] = ScheduleMethod.Cron;
+            task['schedule_picker'] = taskData.schedule ? `${taskData.schedule.minute} ${taskData.schedule.hour} ${taskData.schedule.dom} ${taskData.schedule.month} ${taskData.schedule.dow}` : null;
 
-            if (scheduleData['lifetime_value'] === null && scheduleData['lifetime_unit'] === null) {
-                task['retention_policy'] = 'NONE';
+            if (taskData['lifetime_value'] === null && taskData['lifetime_unit'] === null) {
+                task['retention_policy'] = RetentionPolicy.None;
             } else {
-                task['lifetime_value'] = scheduleData['lifetime_value'];
-                task['lifetime_unit'] = scheduleData['lifetime_unit'];
-                task['retention_policy'] = task.schedule !== null ? 'CUSTOM' : 'SOURCE';
+                task['lifetime_value'] = taskData['lifetime_value'];
+                task['lifetime_unit'] = taskData['lifetime_unit'];
+                task['retention_policy'] = task.schedule !== null ? RetentionPolicy.Custom : RetentionPolicy.Source;
             }
         } else {
-            task['schedule_method'] = 'once';
+            task['schedule_method'] = ScheduleMethod.Once;
         }
         // periodic_snapshot_tasks
         for (let i of ['schedule_method', 'schedule_picker', 'retention_policy', 'lifetime_value', 'lifetime_unit']) {
@@ -1133,7 +1065,7 @@ export class ReplicationWizardComponent {
                     recursive: data['recursive'],
                     schedule: this.parsePickerTime(data['schedule_picker']),
                     lifetime_value: 2,
-                    lifetime_unit: 'WEEK',
+                    lifetime_unit: LifetimeUnit.Week,
                     naming_schema: data['naming_schema'] ? data['naming_schema'] : this.defaultNamingSchema,
                     enabled: true,
                 };
@@ -1166,25 +1098,25 @@ export class ReplicationWizardComponent {
         if (item === 'replication') {
             payload = {
                 name: data['name'],
-                direction: data['source_datasets_from'] === 'remote' ? 'PULL' : 'PUSH',
+                direction: data['source_datasets_from'] === 'remote' ? Direction.Pull : Direction.Push,
                 source_datasets: data['source_datasets'],
                 target_dataset: data['target_dataset'],
                 ssh_credentials: data['ssh_credentials_source'] || data['ssh_credentials_target'],
-                transport: data['transport'] ? data['transport'] : 'LOCAL',
+                transport: data['transport'] ? data['transport'] : TransportMode.Local,
                 retention_policy: data['retention_policy'],
                 recursive: data['recursive'],
                 encryption: data['encryption'],
             }
             if (payload.encryption) {
                 payload['encryption_key_format'] = data['encryption_key_format'];
-                payload['encryption_key'] = data['encryption_key_format'] === 'PASSPHRASE' ? data['encryption_key_passphrase'] : (data['encryption_key_generate'] ? this.replicationService.generateEncryptionHexKey(64): data['encryption_key_hex']);
+                payload['encryption_key'] = data['encryption_key_format'] === EncryptionKeyFormat.Passphrase ? data['encryption_key_passphrase'] : (data['encryption_key_generate'] ? this.replicationService.generateEncryptionHexKey(64): data['encryption_key_hex']);
                 payload['encryption_key_location'] = data['encryption_key_location_truenasdb'] ? '$TrueNAS' : data['encryption_key_location'];
             }
 
             // schedule option
-            if (data['schedule_method'] === 'cron') {
+            if (data['schedule_method'] === ScheduleMethod.Cron) {
                 payload['auto'] = true;
-                if (payload['direction'] === 'PULL') {
+                if (payload['direction'] === Direction.Pull) {
                     payload['schedule'] = this.parsePickerTime(data['schedule_picker']);
                     payload['naming_schema'] = data['naming_schema'] ? [data['naming_schema']] : [this.defaultNamingSchema]; //default?
                 } else {
@@ -1192,23 +1124,23 @@ export class ReplicationWizardComponent {
                 }
             } else {
                 payload['auto'] = false;
-                if (payload['direction'] === 'PULL') {
+                if (payload['direction'] === Direction.Pull) {
                     payload['naming_schema'] = data['naming_schema'] ? [data['naming_schema']] : [this.defaultNamingSchema];
                 } else {
                     payload['also_include_naming_schema'] = data['naming_schema'] ? [data['naming_schema']] : [this.defaultNamingSchema];
                 }
             }
 
-            if (data['retention_policy'] === 'CUSTOM') {
+            if (data['retention_policy'] === RetentionPolicy.Custom) {
                 payload['lifetime_value'] = data['lifetime_value'];
                 payload['lifetime_unit'] = data['lifetime_unit'];
             }
 
-            if (payload['transport'] === 'SSH+NETCAT') {
-                payload['netcat_active_side'] = 'REMOTE'; // default?
+            if (payload['transport'] === TransportMode.Netcat) {
+                payload['netcat_active_side'] = NetcatMode.Remote; // default?
             }
 
-            payload['readonly'] = data['schedule_method'] === 'cron' || data['readonly'] ? 'SET' : 'IGNORE';
+            payload['readonly'] = data['schedule_method'] === ScheduleMethod.Cron || data['readonly'] ? 'SET' : 'IGNORE';
 
             return this.ws.call('replication.target_unmatched_snapshots', [
                 payload['direction'],
@@ -1261,7 +1193,7 @@ export class ReplicationWizardComponent {
 
         for (const item in createdItems) {
             if (!toStop) {
-                if (!(item === 'periodic_snapshot_tasks' && (value['schedule_method'] !== 'cron' || value['source_datasets_from'] !== 'local')) &&
+                if (!(item === 'periodic_snapshot_tasks' && (value['schedule_method'] !== ScheduleMethod.Cron || value['source_datasets_from'] !== 'local')) &&
                 !(item === 'snapshot' && (this.eligibleSnapshots > 0 || value['source_datasets_from'] !== 'local'))) {
                     await this.doCreate(value, item).then(
                         (res) => {
@@ -1285,7 +1217,7 @@ export class ReplicationWizardComponent {
             }
         }
 
-        if (value['schedule_method'] === 'once' && createdItems['replication'] != undefined) {
+        if (value['schedule_method'] === ScheduleMethod.Once && createdItems['replication'] != undefined) {
             await this.ws.call('replication.run', [createdItems['replication']]).toPromise().then(
                 (res) => {
                     this.dialogService.Info(T('Task started'), T('Replication <i>') + value['name'] + T('</i> has started.'), '500px', 'info', true);
@@ -1413,16 +1345,16 @@ export class ReplicationWizardComponent {
     }
 
     getSnapshots() {
-        let transport = this.entityWizard.formArray.controls[0].controls['transport'].enabled ? this.entityWizard.formArray.controls[0].controls['transport'].value : 'LOCAL';
+        let transport = this.entityWizard.formArray.controls[0].controls['transport'].enabled ? this.entityWizard.formArray.controls[0].controls['transport'].value : TransportMode.Local;
         // count local snapshots if transport is SSH/SSH-NETCAT, and direction is PUSH
         if (this.entityWizard.formArray.controls[0].controls['ssh_credentials_target'].value) {
-            transport = 'LOCAL';
+            transport = TransportMode.Local;
         }
         const payload = [
             this.entityWizard.formArray.controls[0].controls['source_datasets'].value || [],
             (this.entityWizard.formArray.controls[0].controls['naming_schema'].enabled && this.entityWizard.formArray.controls[0].controls['naming_schema'].value) ? this.entityWizard.formArray.controls[0].controls['naming_schema'].value.split(' ') : [this.defaultNamingSchema],
             transport,
-            transport === 'LOCAL' ? null : this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value,
+            transport === TransportMode.Local ? null : this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value,
         ];
 
         if (payload[0].length > 0) {
