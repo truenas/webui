@@ -111,7 +111,7 @@ def reboot_the_system_wait_for_login_and_login(driver):
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 300, '//input[@placeholder="Username"]', 'clickable')
     # this sleep give a little to get ready for more load
-    time.sleep(3)
+    time.sleep(5)
     assert wait_on_element(driver, 20, '//input[@placeholder="Password"]', 'clickable')
     driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
