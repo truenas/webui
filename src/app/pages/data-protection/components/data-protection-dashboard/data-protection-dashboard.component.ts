@@ -4,17 +4,16 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import globalHelptext from 'app/helptext/global-helptext';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { T } from 'app/translate-marker';
+
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
 import { Subscription } from 'rxjs';
-import helptext_cloudsync from '../../../../helptext/data-protection/cloudsync/cloudsync-form';
-import helptext_replication from '../../../../helptext/data-protection/replication/replication';
-import helptext_smart from '../../../../helptext/data-protection/smart/smart';
-import helptext from '../../../../helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
+
+import globalHelptext from 'app/helptext/global-helptext';
+import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
+import helptext_replication from 'app/helptext/data-protection/replication/replication';
+import helptext_smart from 'app/helptext/data-protection/smart/smart';
+import helptext from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
 import {
   DialogService,
   ReplicationService,
@@ -22,23 +21,26 @@ import {
   TaskService,
   UserService,
   WebSocketService,
-} from '../../../../services';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { CloudCredentialService } from '../../../../services/cloudcredential.service';
-import { JobService } from '../../../../services/job.service';
-import { KeychainCredentialService } from '../../../../services/keychaincredential.services';
-import { ModalService } from '../../../../services/modal.service';
-import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { InputTableConf } from '../../../common/entity/table/table.component';
-import { CloudsyncFormComponent } from '../../cloudsync/cloudsync-form/cloudsync-form.component';
-import { ReplicationFormComponent } from '../../replication/replication-form/replication-form.component';
-import { ReplicationWizardComponent } from '../../replication/replication-wizard/replication-wizard.component';
-import { RsyncFormComponent } from '../../rsync/rsync-form/rsync-form.component';
-import { ScrubFormComponent } from '../../scrub/scrub-form/scrub-form.component';
-import { SmartFormComponent } from '../../smart/smart-form/smart-form.component';
-import { SnapshotFormComponent } from '../../snapshot/snapshot-form/snapshot-form.component';
+} from 'app/services';
+import { T } from 'app/translate-marker';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { CloudCredentialService } from 'app/services/cloudcredential.service';
+import { JobService } from 'app/services/job.service';
+import { KeychainCredentialService } from 'app/services/keychaincredential.services';
+import { ModalService } from 'app/services/modal.service';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { InputTableConf } from 'app/pages/common/entity/table/table.component';
+import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
+import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
+import { RsyncFormComponent } from 'app/pages/data-protection/rsync/rsync-form/rsync-form.component';
+import { ScrubFormComponent } from 'app/pages/data-protection/scrub/scrub-form/scrub-form.component';
+import { SmartFormComponent } from 'app/pages/data-protection/smart/smart-form/smart-form.component';
+import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapshot-form/snapshot-form.component';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
 import { EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 
 export interface TaskCard {
   name: string;
