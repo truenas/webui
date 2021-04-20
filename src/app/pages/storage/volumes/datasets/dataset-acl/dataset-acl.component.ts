@@ -632,10 +632,10 @@ export class DatasetAclComponent implements OnDestroy {
     }
     if(this.aclData.acl.length === 0 && !this.emptyAclWarningShown) {
       const conf: DialogFormConfiguration = {
-        title: "No Inheritable ACL Entries",
+        title: T("No Inheritable ACL Entries"),
         fieldConfig:[],
-        warning: "No inheritable ACL entries available. At least one inheritable ACL entry must be added.",
-        saveButtonText: "OK",
+        warning: T("No inheritable ACL entries available. At least one inheritable ACL entry must be added."),
+        saveButtonText: T("OK"),
         hideCancel: true,
         customSubmit: (entityDialog) => {
           entityDialog.dialogRef.close();
