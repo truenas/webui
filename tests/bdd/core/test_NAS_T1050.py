@@ -28,7 +28,22 @@ mountpoint = f'/mnt/nfs_host{"".join(random.choices(string.digits, k=2))}'
 @scenario('features/NAS-T1050.feature', 'Verify NFS allows Non-Root Access')
 def test_verify_nfs_allows_nonroot_access(driver):
     """Verify NFS allows Non-Root Access."""
-    pass
+    if is_element_present(driver, '//li[@aria-label="page 4"]'):
+        assert wait_on_element(driver, 7, '//li[@aria-label="page 2"]', 'clickable')
+        driver.find_element_by_xpath('//li[@aria-label="page 2"]').click()
+    else:
+        # Scroll to NFS service
+        assert wait_on_element(driver, 7, '//div[@ix-auto="overlay__NFS_Running"]')
+        element = driver.find_element_by_xpath('//button[@ix-auto="button__NFS_Actions"]')
+        driver.execute_script("arguments[0].scrollIntoView();", element)
+        time.sleep(0.5)
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__NFS_Actions"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__NFS_Actions"]').click()
+    assert wait_on_element(driver, 7, '//h4[contains(.,"Other Options")]')
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Allow non-root mount"]', 'clickable')
+    value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Allow non-root mount"]', 'class', 'mat-checkbox-checked')
+    if value_exist:
+        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Allow non-root mount"]').click()
 
 
 @given('the browser is open on the TrueNAS URL and logged in')
