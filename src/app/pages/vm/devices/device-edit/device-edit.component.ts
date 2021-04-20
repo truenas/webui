@@ -320,8 +320,8 @@ export class DeviceEditComponent implements OnInit {
       placeholder : helptext.type_placeholder,
       type: 'select',
       options : [
-        {label: 'VNC', value: "VNC"},
-        {label: "SPICE", value:"SPICE"}
+        {label: T("VNC"), value: "VNC"},
+        {label: T("SPICE"), value:"SPICE"}
       ],
     },
     {

@@ -238,8 +238,8 @@ export class VMListComponent implements OnDestroy {
             }
         });
     }
-    extractHostname(url: string) {
-        let hostname;
+    extractHostname(url: string): string {
+        let hostname: string;
         if (url.indexOf("//") > -1) {
             hostname = url.split('/')[2];
         } else {
@@ -488,7 +488,7 @@ export class VMListComponent implements OnDestroy {
                                 options: display_devices_res.map((d) => {return {label: d.attributes.type, value: d.id};}),
                                 validation: [Validators.required],
                             }],
-                            saveButtonText: "Open",
+                            saveButtonText: T("Open"),
                             parent: this,
                             customSubmit: (entityDialog) => {
                                 const display_device = _.find(display_devices_res, {id: entityDialog.formValue.display_device});
