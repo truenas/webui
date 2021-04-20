@@ -6,6 +6,7 @@ import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { MaterialModule } from 'app/appMaterial.module';
 import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
+import { Theme } from 'app/services/theme/theme.service';
 import { Subject } from 'rxjs';
 import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 
@@ -25,7 +26,7 @@ import { ViewChartBarComponent } from 'app/core/components/viewchartbar/viewchar
 import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../../translate-marker';
- 
+
 interface DataPoint {
   usage?: number | string;
   temperature?: number | string;
@@ -60,7 +61,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   set memData(value){
     this._memData = value;
     if(this.legendData && typeof this.legendIndex !== "undefined"){
-      // C3 does not have a way to update tooltip when new data is loaded. 
+      // C3 does not have a way to update tooltip when new data is loaded.
       // So this is the workaround
       this.legendData[0].value = this.memData.data[0][this.legendIndex + 1];
       this.legendData[1].value = this.memData.data[1][this.legendIndex + 1];
@@ -77,12 +78,12 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   public memTotal: number;
   public legendData: any;
   public colorPattern:string[];
-  public currentTheme;
+  public currentTheme: Theme;
 
   public legendColors: string[];
   private legendIndex: number;
   public labels:string[] = [T('Free'), T('ZFS Cache'), T('Services')];
-  
+
   public screenType:string = 'Desktop';
 
   private utils: ThemeUtils;
@@ -103,7 +104,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   }
 
   ngAfterViewInit(){
- 
+
     this.data.subscribe((evt:CoreEvent) => {
       if(evt.name == "ZfsStats"){
         if(evt.data.arc_size){
@@ -121,12 +122,12 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     }
   }
 
-  bytesToGigabytes(value){
+  bytesToGigabytes(value: number){
     return value / 1024 / 1024 / 1024;
   }
 
-  parseMemData(data){
-    /* 
+  parseMemData(data: any){
+    /*
      * PROVIDED BY MIDDLEWARE
      * total
      * available
@@ -142,7 +143,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
      * zfs_cache?
      * */
 
-    let services = data["total"] - data["free"] - data["arc_size"]; 
+    let services = data["total"] - data["free"] - data["arc_size"];
 
     let columns = [
       [ "Free", this.bytesToGigabytes(data["free"]).toFixed(1)],
@@ -153,11 +154,11 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     return columns;
   }
 
-  aggregate(data){
+  aggregate(data: any[]){
     return data.reduce((total, num) => total + num);
   }
 
-  setMemData( data){
+  setMemData( data: any){
 
     let config: any = {}
     config.title = "Cores";
@@ -167,7 +168,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     config.data = this.parseMemData(data);
     this.memData = config;
     this.memChartInit();
-    
+
   }
 
   memChartInit(){
@@ -178,10 +179,10 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
 
     this.isReady = true;
     this.renderChart();
-      
+
   }
 
-  trustedSecurity(style) {
+  trustedSecurity(style: string) {
      return this.sanitizer.bypassSecurityTrustStyle(style);
   }
 
@@ -216,10 +217,10 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
           animateScale: true
         },
         hover: {
-          animationDuration: 0 
+          animationDuration: 0
         },
       }
-      
+
       this.chart = new Chart(this.ctx, {
         type: 'doughnut',
         data:data,
@@ -229,21 +230,21 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     } else {
 
       const ds = this.makeDatasets(this.memData.data);
- 
+
       this.chart.data.datasets[0].data = ds[0].data
       this.chart.update();
     }
   }
 
-  protected makeDatasets(data:any): DataSet[]{
+  protected makeDatasets(data:any[]): DataSet[]{
 
     let datasets = [];
 
     let ds:DataSet = {
-      label: this.labels, 
+      label: this.labels,
       data: data.map(x => { return x[1]}),
-      backgroundColor: [], 
-      borderColor: [], 
+      backgroundColor: [],
+      borderColor: [],
       borderWidth: 1,
     }
 
@@ -259,8 +260,8 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
       const bgRGB = bgColorType == 'hex' ? this.utils.hexToRGB(bgColor).rgb : this.utils.rgbToArray(bgColor);
       const borderRGB = borderColorType == 'hex' ? this.utils.hexToRGB(borderColor).rgb : this.utils.rgbToArray(borderColor);
 
-      ds.backgroundColor.push(this.rgbToString(bgRGB, 0.85));
-      ds.borderColor.push(this.rgbToString(bgRGB));
+      ds.backgroundColor.push(this.rgbToString(bgRGB as any, 0.85));
+      ds.borderColor.push(this.rgbToString(bgRGB as any));
     });
 
     datasets.push(ds);
@@ -268,11 +269,11 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     return datasets
   }
 
-  private processThemeColors(theme):string[]{
+  private processThemeColors(theme: Theme):string[]{
     let colors: string[] = [];
     theme.accentColors.map((color) => {
-      colors.push(theme[color]);
-    }); 
+      colors.push((theme as any)[color]);
+    });
     return colors;
   }
 

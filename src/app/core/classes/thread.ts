@@ -36,7 +36,7 @@ export class Thread extends iXAbstractObject {
 
   // The functions that can be executed by thread.
   // For more info: https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Functions_and_classes_available_to_workers
-  public operations: any; 
+  public operations: any;
 
   constructor(core: CoreService){
     super()
@@ -61,12 +61,12 @@ export class Thread extends iXAbstractObject {
     //this.thread.postMessage("EventTest");
   }
 
-  readonly main = (e) => {
+  readonly main = () => {
     // Some example code to show how messages can be exchanged with main thread
     const context: Worker = self as any; // Needed for TypeScript not to complain. DO NOT REMOVE!
     context.postMessage("ThreadInitialized"); // This inits the worker. DO NOT REMOVE!
     console.log(context)
-    
+
     /*context.onmessage = (msg: MessageEvent) => {
       let evt:CoreEvent = msg.data;
       let response = "SUCCESS!";
@@ -79,7 +79,7 @@ export class Thread extends iXAbstractObject {
 
   }
 
-  createThread(fn) {
+  createThread() {
     //let blob = new Blob(['self.onmessage = ', fn.toString()], { type: 'text/javascript' });
     //let blob = new Blob([fn.toString()], { type: 'text/javascript' });
     //let url = URL.createObjectURL(blob);
@@ -93,7 +93,7 @@ export class Thread extends iXAbstractObject {
       return;
     }
     // Create the worker thread
-    this.thread = this.createThread(this.operations);
+    this.thread = this.createThread();
 
     this.thread.onmessage = this._onmessage; // <-- Why does this not work??
     /*this.thread.onmessage = (e:MessageEvent) => {
@@ -117,7 +117,7 @@ export class Thread extends iXAbstractObject {
     // Initialize the thread
     this.thread.postMessage({name: "StartThread", data: "first message"});
     this.executing = true;
-  
+
   }
 
   exit(){

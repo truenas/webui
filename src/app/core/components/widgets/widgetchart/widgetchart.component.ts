@@ -55,8 +55,8 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
   public chartId = "chart-" + UUID.UUID();
   public chart: any;
   public maxY: number = 100; // Highest number in data
-  public startTime;
-  public endTime;
+  public startTime: string;
+  public endTime: string;
   private utils: ThemeUtils;
 
   constructor(public router: Router, public translate: TranslateService){
@@ -69,14 +69,14 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
     }, 5000)
     let theme = this.themeService.currentTheme();
     this.utils = new ThemeUtils();
-    this.widgetColorCssVar = theme[this.utils.colorFromMeta(theme.primary)];
+    this.widgetColorCssVar = (theme as any)[this.utils.colorFromMeta(theme.primary)];
   }
 
   ngOnDestroy(){
     this.core.unregister({observerClass:this});
   }
 
-  ngAfterViewInit(){ 
+  ngAfterViewInit(){
   }
 
   //Override this method in subclasses
@@ -89,7 +89,7 @@ export class WidgetChartComponent extends WidgetComponent implements AfterViewIn
   protected makeTimeAxis(td:TimeData, data:any,  axis?: string):any[]{
     if(!axis){ axis = 'x';}
       let labels: any[] = [axis];
-    data[0].data.forEach((item, index) =>{
+    data[0].data.forEach((item: any, index: number) =>{
       let date = new Date(td.start * 1000 + index * td.step * 1000);
       labels.push(date);
     });

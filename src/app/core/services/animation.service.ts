@@ -53,7 +53,7 @@ import {
         this.scrollTo(evt.data);
       });
 
-      core.register({observerClass:this, eventName:"Animate"}).subscribe((evt:CoreEvent) => { 
+      core.register({observerClass:this, eventName:"Animate"}).subscribe((evt:CoreEvent) => {
         let config: AnimationConfig = evt.data;
         let missingFinishState: string = "This animation requires you to specify a finishState property which was not given."
           switch(config.animation){
@@ -149,7 +149,7 @@ import {
       ]).start(animationTarget.target.set)
     }
 
-    private fade(animationTarget:DisplayObject, finishState: string){ 
+    private fade(animationTarget:DisplayObject, finishState: string){
       console.log("Fade" + finishState);
       let startOpacity; //animationTarget.target.get('opacity');
       let finishOpacity;
@@ -206,7 +206,7 @@ import {
 
       spring({
         from: {scale: startScale},
-        to: {scale:finishScale}, 
+        to: {scale:finishScale},
         stiffness: {scale:150},
         damping:{scale:15},
         velocity:20
@@ -226,13 +226,13 @@ import {
       const startY = animationTarget.target.get('y');
       const targetY = value(startY, animationTarget.target.set('y'));
 
-      const gravity = (start) => {
+      const gravity = (start: number) => {
         const g = physics({
           acceleration: 2500,
           to: (startY - 200),
           //restSpeed: false
         }).while(v => v <= start).start({
-          update: v => { animationTarget.target.set('y',v)},
+          update: (v: number) => { animationTarget.target.set('y',v)},
           complete(){
           tween({
               from: { y: animationTarget.target.get('y') },
@@ -268,16 +268,19 @@ import {
         return ;
       }
 
-      const elementBorder = value({borderColor: '', borderWidth: 0 }, ({ borderColor, borderWidth }) => animationTarget.element.set({
-        boxShadow: `0 0 0 ${borderWidth}px ${borderColor}` 
-        //border: `solid ${borderWidth} ${borderColor}px`
-      }));
+      const elementBorder = value(
+        {borderColor: '', borderWidth: 0 },
+        ({ borderColor, borderWidth }: { borderColor: string, borderWidth: number },
+        ) => animationTarget.element.set({
+          boxShadow: `0 0 0 ${borderWidth}px ${borderColor}`
+          //border: `solid ${borderWidth} ${borderColor}px`
+        }));
 
-      const radiation = (start, elementBorder) => {
+      const radiation = (start: any, elementBorder: any) => {
         const r = keyframes({
           values: [
             { borderWidth: 0, borderColor: 'rgb(204, 0, 0, 1)' },
-            { borderWidth: 30, borderColor: 'rgb(204, 0, 0, 0)' } 
+            { borderWidth: 30, borderColor: 'rgb(204, 0, 0, 0)' }
           ],
           duration:750
         }).start(elementBorder);
@@ -288,10 +291,10 @@ import {
       },1500);
 
       this.activeAnimations[animationTarget.id] = { animation: radiate, originalState: startShadow};
-      
+
     }
 
-    private scrollTo(destination:string, obj?:any){ 
+    private scrollTo(destination:string, obj?:any){
       let container;
       let rawContainer;
       if(!obj){

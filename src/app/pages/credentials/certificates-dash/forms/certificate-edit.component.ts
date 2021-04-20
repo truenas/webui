@@ -210,7 +210,7 @@ export class CertificateEditComponent {
     })
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     this.incomingData = data;
     if (data.cert_type_CSR) {
       this.isCSR = true;
@@ -241,7 +241,7 @@ export class CertificateEditComponent {
   }
 
   afterInit(entityEdit: any) {
-    this.entityForm = entityEdit;   
+    this.entityForm = entityEdit;
   }
 
   setForm() {
@@ -249,8 +249,8 @@ export class CertificateEditComponent {
       'root_path', 'digest_algorithm', 'key_length', 'key_type', 'until', 'revoked', 'signed_by', 'lifetime'];
     fields.forEach(field => {
       const paragraph = _.find(this.fieldConfig, { 'name': field });
-      this.incomingData[field] || this.incomingData[field] === false ? 
-        paragraph.paraText += this.incomingData[field] : paragraph.paraText += '---'; 
+      this.incomingData[field] || this.incomingData[field] === false ?
+        paragraph.paraText += this.incomingData[field] : paragraph.paraText += '---';
     })
     _.find(this.fieldConfig, { 'name': 'san' }).paraText += this.incomingData.san.join(',');
     const issuer = _.find(this.fieldConfig, { 'name': 'issuer' });
@@ -273,7 +273,7 @@ export class CertificateEditComponent {
           this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
             this.storage.downloadBlob(file, fileName);
           }, err => {
-            this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title, 
+            this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title,
               helptext_system_certificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
           });
         },
@@ -292,7 +292,7 @@ export class CertificateEditComponent {
           this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
             this.storage.downloadBlob(file, fileName);
           }, err => {
-            this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title, 
+            this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title,
               helptext_system_certificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
           });
         },
@@ -304,17 +304,17 @@ export class CertificateEditComponent {
 
   viewCertificate() {
     if (this.incomingData.CSR) {
-    this.dialog.confirm(this.incomingData.name, this.incomingData.CSR, true, 
+    this.dialog.confirm(this.incomingData.name, this.incomingData.CSR, true,
       helptext_system_certificates.viewDialog.download, false, '',
-      '','','', false, helptext_system_certificates.viewDialog.close,false, this.incomingData.CSR,true).subscribe(res => {
+      '','','', false, helptext_system_certificates.viewDialog.close,false, this.incomingData.CSR,true).subscribe((res: boolean) => {
         if (res) {
           this.exportCertificate();
         }
       })
     } else {
-      this.dialog.confirm(this.incomingData.name, this.incomingData.certificate, true, 
+      this.dialog.confirm(this.incomingData.name, this.incomingData.certificate, true,
         helptext_system_certificates.viewDialog.download, false, '',
-      '','','', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.certificate,true).subscribe(res => {
+      '','','', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.certificate,true).subscribe((res: boolean) => {
         if (res) {
           this.exportCertificate();
         }
@@ -323,16 +323,16 @@ export class CertificateEditComponent {
   }
 
   viewKey() {
-    this.dialog.confirm(this.incomingData.name, this.incomingData.privatekey, true, 
+    this.dialog.confirm(this.incomingData.name, this.incomingData.privatekey, true,
       helptext_system_certificates.viewDialog.download, false, '',
-    '','','', false, helptext_system_certificates.viewDialog.close,false,this.incomingData.privatekey,true).subscribe(res => {
+    '','','', false, helptext_system_certificates.viewDialog.close,false,this.incomingData.privatekey,true).subscribe((res: boolean) => {
       if (res) {
         this.exportKey();
       }
     })
   }
 
-  customSubmit(value) {
+  customSubmit(value: any) {
     this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": "Updating Identifier" }});
     this.dialogRef.componentInstance.setCall(this.editCall, [this.rowNum, {'name':value['name']}]);
     this.dialogRef.componentInstance.submit();
@@ -341,7 +341,7 @@ export class CertificateEditComponent {
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
     });
-    this.dialogRef.componentInstance.failure.subscribe((res) => {
+    this.dialogRef.componentInstance.failure.subscribe((res: any) => {
       this.matDialog.closeAll();
       this.modalService.refreshTable();
       new EntityUtils().handleWSError(this.entityForm, res);

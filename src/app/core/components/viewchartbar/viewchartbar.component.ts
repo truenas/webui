@@ -52,7 +52,7 @@ export class ViewChartBarComponent implements AfterViewInit, OnChanges {
   private chart: any;
   public chartClass: string = 'view-chart-bar';
   public chartConfig: any;
-  private _data;
+  private _data: any;
   public chartId = UUID.UUID();
   private margin: number;
   private wrapperNode: Styler;
@@ -102,7 +102,7 @@ export class ViewChartBarComponent implements AfterViewInit, OnChanges {
     this.chartConfig = this.makeConfig();
   }
 
-  update(data?): void {
+  update(data?: any): void {
     if(!data){ data = this.config.data}
 
       this.chart.load({

@@ -5,6 +5,7 @@ import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { MaterialModule } from 'app/appMaterial.module';
 import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
+import { Theme } from 'app/services/theme/theme.service';
 import { Subject } from 'rxjs';
 import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 import Chart from 'chart.js';
@@ -21,7 +22,7 @@ import { ViewChartBarComponent } from 'app/core/components/viewchartbar/viewchar
 import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../../translate-marker';
- 
+
 interface DataPoint {
   usage?: number | string;
   temperature?: number | string;
@@ -55,7 +56,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   set cpuData(value){
     this._cpuData = value;
     /*if(this.legendData && typeof this.legendIndex !== "undefined"){
-      // C3 does not have a way to update tooltip when new data is loaded. 
+      // C3 does not have a way to update tooltip when new data is loaded.
       // So this is the workaround
       this.legendData[0].value = this.cpuData.data[0][this.legendIndex + 1];
       this.legendData[1].value = this.cpuData.data[1][this.legendIndex + 1];
@@ -136,7 +137,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
   }
 
-  parseCpuData(data){
+  parseCpuData(data: any){
     this.tempAvailable = data.temperature && Object.keys(data.temperature).length > 0 ? 'true' : 'false';
     let usageColumn: any[] = ["Usage"];
     let temperatureColumn: any[] = ["Temperature"];
@@ -148,21 +149,21 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     if(!this.coreCount){
       this.coreCount = data.temperature ? keys.length - 2 : keys.length - 1;
     }
-    
+
     for(let i = 0; i < this.coreCount; i++){
       usageColumn.push( parseInt(data[i.toString()].usage.toFixed(1)) );
       if(data.temperature && data.temperature[i]){
         temperatureColumn.push(parseInt(((data.temperature[i] / 10) - 273.05).toFixed(1)));
       }
     }
-    
-    this.setMobileStats(Object.assign([],usageColumn), Object.assign([],temperatureColumn) ); 
+
+    this.setMobileStats(Object.assign([],usageColumn), Object.assign([],temperatureColumn) );
 
     return [usageColumn, temperatureColumn];
-    
+
   }
 
-  setMobileStats(usage, temps){
+  setMobileStats(usage: number[], temps: number[]){
     // Usage
     usage.splice(0,1);
     this.usageMin = Math.min(...usage);
@@ -196,7 +197,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     }
   }
 
-  setCpuData(data){
+  setCpuData(data: any){
     let config: any = {}
     config.title = "Cores";
     config.orientation = 'horizontal';
@@ -206,7 +207,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.coresChartInit();
   }
 
-  setCpuLoadData(data){
+  setCpuLoadData(data: any){
     let config: any = {}
     config.title = data[0];
     config.units = "%";
@@ -244,9 +245,9 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
       let options = {
         events: ['mousemove','mouseout'],
-        onHover: (e) => {
-          if(e.type == "mouseout"){ 
-            this.legendData = null; 
+        onHover: (e: MouseEvent) => {
+          if(e.type == "mouseout"){
+            this.legendData = null;
             this.legendIndex = null
           }
         },
@@ -255,7 +256,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
           mode: 'nearest',
           intersect: true,
           callbacks: {
-            label: (tt, data) => {
+            label: (tt: any, data: any) => {
               if(this.screenType.toLowerCase() == 'mobile'){
                 this.legendData = null;
                 this.legendIndex = null
@@ -264,12 +265,11 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
               this.legendData = data.datasets;
               this.legendIndex = tt.index;
-              
+
               return '';
             }
           },
-          custom: (evt,data) => {
-          }
+          custom: () => {}
         },
         responsive:true,
         maintainAspectRatio: false,
@@ -283,7 +283,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
           animateScale: true
         },
         hover: {
-          animationDuration: 0 
+          animationDuration: 0
         },
         scales: {
           xAxes: [{
@@ -299,7 +299,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
           }]
         }
       }
-      
+
       this.chart = new Chart(this.ctx, {
         type: 'bar',
         data:data,
@@ -309,7 +309,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     } else {
 
       const ds = this.makeDatasets(this.cpuData.data);
- 
+
       this.chart.data.datasets[0].data = ds[0].data;
       this.chart.data.datasets[1].data = ds[1].data;
       this.chart.update();
@@ -320,10 +320,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
     this.currentTheme = this.themeService.currentTheme();
     this.renderChart();
-      
+
   }
 
-  colorFromTemperature(t){
+  colorFromTemperature(t: any){
     let color = "var(--green)";
     if(t.value >= 80){
       color = "var(--red)";
@@ -341,9 +341,9 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     });
   }
 
-  protected makeDatasets(data:any): DataSet[]{
-    let datasets = [];
-    let labels = [];
+  protected makeDatasets(data:any[]): DataSet[]{
+    let datasets: any[] = [];
+    let labels: string[] = [];
     for(let i = 0; i < this.coreCount; i++){
       labels.push((i).toString());
     }
@@ -356,35 +356,35 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
         label: item[0],
         data: data[index].slice(1),
         backgroundColor: '',
-        borderColor: '', 
+        borderColor: '',
         borderWidth: 1,
       }
-  
+
       const accent = this.themeService.isDefaultTheme ? 'orange' : 'accent';
       let color;
       if(accent !== 'accent' && ds.label == 'Temperature'){
         color =  accent;
       } else {
-        const cssVar = ds.label == 'Temperature' ? accent : 'primary'; 
+        const cssVar = ds.label == 'Temperature' ? accent : 'primary';
         color = this.stripVar(this.currentTheme[cssVar])
       }
-      
+
       const bgRGB = this.utils.convertToRGB(this.currentTheme[color]).rgb;
       const borderRGB = this.utils.convertToRGB(this.currentTheme[color]).rgb;
 
-      ds.backgroundColor = this.rgbToString(bgRGB, 0.85);
-      ds.borderColor = this.rgbToString(bgRGB);
+      ds.backgroundColor = this.rgbToString(bgRGB as any, 0.85);
+      ds.borderColor = this.rgbToString(bgRGB as any);
       datasets.push(ds);
     });
-   
+
     return datasets
   }
-  
-  private processThemeColors(theme):string[]{
+
+  private processThemeColors(theme: Theme):string[]{
     let colors: string[] = [];
     theme.accentColors.map((color) => {
-      colors.push(theme[color]);
-    }); 
+      colors.push((theme as any)[color]);
+    });
     return colors;
   }
 

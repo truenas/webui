@@ -29,7 +29,7 @@ export class AcmednsFormComponent {
   protected queryCallOption: any;
   private getRow = new Subscription;
 
-  constructor(protected ws: WebSocketService, protected loader: AppLoaderService, 
+  constructor(protected ws: WebSocketService, protected loader: AppLoaderService,
     protected dialog: DialogService, private modalService: ModalService) {
       this.getRow = this.modalService.getRow$.subscribe(rowId => {
         this.rowNum = rowId;
@@ -60,7 +60,7 @@ export class AcmednsFormComponent {
                 validation : helptext.authenticator_name_validation,
                 parent: this
               },
-              authenticatorConfig 
+              authenticatorConfig
             ]
           }]
         for(let schema of schemas) {
@@ -90,7 +90,7 @@ export class AcmednsFormComponent {
       });
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     for (let item in data.attributes) {
       data[item] = data.attributes[item];
     }
@@ -102,8 +102,8 @@ export class AcmednsFormComponent {
     this.title = this.rowNum ? helptext_system_acme.edit_title : helptext_system_acme.add_title;
   }
 
-  beforeSubmit(value) {
-    const attributes = {};
+  beforeSubmit(value: any) {
+    const attributes: any = {};
     for (let item in value) {
       if (item != 'name' && item != 'authenticator') {
         attributes[item] = value[item];

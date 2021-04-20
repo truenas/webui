@@ -2,16 +2,16 @@ import { DisplayObject } from './display-object';
 import { CoreService, CoreEvent } from '../services/core.service';
 import { timer } from 'rxjs/observable/timer';
 import { debounceTime } from 'rxjs/operators/debounceTime';
-import { 
-  tween, 
-  styler, 
-  listen, 
-  pointer, 
+import {
+  tween,
+  styler,
+  listen,
+  pointer,
   value,
   decay,
   spring,
   physics,
-  //velocity, 
+  //velocity,
   multicast,
   action,
   transform,
@@ -24,7 +24,7 @@ import {
 
 
   /*
-   * Layout Object: A base class for 
+   * Layout Object: A base class for
    * managing collections of Display Objects
    * */
 
@@ -43,7 +43,7 @@ import {
    export class LayoutObject {
 
      //public collection: DisplayObject[]; // rename to displayList?
-     public collection: any; // Try an object literal to see if it performs any better
+     public collection: any = {}; // Try an object literal to see if it performs any better
      private orderedCollection: string[]; // collection of displayObject IDs
      private screenPositions: BoundingBox[];
      private messageBus: CoreService;
@@ -103,12 +103,12 @@ import {
        setTimeout(() => {
          animationTarget = this.collection[10];
          this.test("Radiate", "Start", animationTarget);
-         
+
        },2000);
 
        setTimeout(() => {
          this.test("Radiate", "Stop", animationTarget);
-         
+
        },10000);
 
        //Bounce
@@ -159,21 +159,21 @@ import {
      private test(animation:string, state:string, animationTarget:DisplayObject){
 
        this.messageBus.emit({
-         name:"Animate", 
+         name:"Animate",
          data:{
            animationTarget:animationTarget,
            animation:animation,
            finishState: state
-         }, 
+         },
          sender:this
-       }) 
+       })
      }
 
      public insert(item:DisplayObject, at?:number){// Add new item to collection and regenerate screenPositions
        console.log("Inserting DisplayObject into layout");
        console.warn(this.reorderedCollection);
        // update collection
-       /*if(this.reorderedCollection && this.reorderedCollection.length > 0){ 
+       /*if(this.reorderedCollection && this.reorderedCollection.length > 0){
         this.reorderedCollection.push(item);
        } else {
          this.collection.push(item);
@@ -228,11 +228,11 @@ import {
      public moveToScreenPosition(dragTarget:DisplayObject, index:number, debug?:boolean){ // Move an existing DisplayObject to a new position.
        let startX = dragTarget.x;
        let startY = dragTarget.y;
-       let distance = 0; 
+       let distance = 0;
        let newX = this.screenPositions[index].left;
        let newY = this.screenPositions[index].top;
        //console.log(dragTarget.id);
-       
+
        if(startX == newX && startY == newY){
         //console.log(index)
         return;
@@ -240,16 +240,16 @@ import {
        if(debug) console.log("pretween")
        tween({
          from: {x:startX, y:startY},
-         to: { x: newX, y: newY }, 
+         to: { x: newX, y: newY },
          duration: 250,
          flip: 0
        }).start({
-         update: (v) => {
+         update: (v: any) => {
            if(debug)console.log(v);
            dragTarget.target.set(v);
          },
          complete: () => {
-         dragTarget.x = newX; 
+         dragTarget.x = newX;
          dragTarget.y = newY
          if(debug)console.log("done");
          }
@@ -258,7 +258,7 @@ import {
        if(debug) console.log("posttween")
        // Make sure dragTarget's internal anchorXY gets updated
        /*setTimeout(() => {
-         dragTarget.x = newX; 
+         dragTarget.x = newX;
          dragTarget.y = newY
           console.log("x")
        }, 20) */
@@ -270,7 +270,7 @@ import {
         this.collection[index].y = item.top;
       })
     }*/
-    
+
 
      public beginInteractiveMovement(displayObject:DisplayObject){ // Do collision detection and reorder collection list
        let dragTarget = displayObject;
@@ -300,7 +300,7 @@ import {
          let newCollection = Object.assign(this.orderedCollection , []);
 
          // Run collision detection against the collection
-         this.screenPositions.forEach((item, index) => {  
+         this.screenPositions.forEach((item, index) => {
            let test = this.detectBoxCollision(dragBox, item);
            if(test){
              if(latestPosition !== index){
@@ -326,7 +326,7 @@ import {
                  this.updateCollectionPositions(dragTargetIndex , index, dragTarget);
                }
 
-               this.updateInteractiveMovement(dragTarget,newCollection, index);
+               this.updateInteractiveMovement(dragTarget,newCollection);
              }
              return ;
            }
@@ -334,7 +334,7 @@ import {
        });
      }
 
-     private updateInteractiveMovement(dragTarget, newCollection, index){ // React to new order while in dragging
+     private updateInteractiveMovement(dragTarget: any, newCollection: any){ // React to new order while in dragging
        this.reorderedCollection = newCollection;
      }
 
@@ -347,7 +347,7 @@ import {
        //this.updateStaticPositions();
        }
 
-     private cancelInteractiveMovement(){ // Reset to original layout 
+     private cancelInteractiveMovement(){ // Reset to original layout
        this.reorderedCollection = null;
        this.orderedCollection.forEach((item, index) => {
          let dragTarget = this.collection[index];
@@ -381,7 +381,7 @@ import {
        //this.updateCollectionPositions(0, this.collection.length - 1);
        }
 
-     private updateCollectionPositions( startIndex:number, endIndex:number, dragTarget?:DisplayObject){ 
+     private updateCollectionPositions( startIndex:number, endIndex:number, dragTarget?:DisplayObject){
 
        /*console.log("Collection = " + this.collection.length);
        if(this.reorderedCollection && this.reorderedCollection.length > 0){
@@ -390,7 +390,7 @@ import {
 
        for(let i = startIndex; i <= endIndex; i++){
          let el = this.collection[this.orderedCollection[i]];
-         
+
          if(el.hasFocus){ continue; }
          //if(dragTarget && el == dragTarget){ continue; }
          this.moveToScreenPosition(el, i);
@@ -410,7 +410,7 @@ import {
        // Create an arrangement of elements
        for (let i = 0; i < total; i++) {
          let el = this.collection[this.orderedCollection[i]];
-         if(this.itemSize){ 
+         if(this.itemSize){
            el.width = this.itemSize.width;
            el.height = this.itemSize.height;
          }
@@ -448,7 +448,7 @@ import {
          item.elevateOnSelect = true;
        }
 
-       private calcRows(elWidth, marg){
+       private calcRows(elWidth: number, marg: number){
          let containerDimensions;
          if(this.container){
            containerDimensions = this.container.getBoundingClientRect();
@@ -459,7 +459,7 @@ import {
          return containerDimensions.width / (elWidth + marg * 2);
        }
 
-       private detectCollisionByXY(a, b){
+       private detectCollisionByXY(a: any, b: any){
          // a = dragTarget , b = target
          let test: boolean = false;
          const range = 16; // margin of error
@@ -469,7 +469,7 @@ import {
            return test;
        }
 
-       private detectCollision(a, b) {
+       private detectCollision(a: any, b: any) {
          return !(
            ((a.y + a.height) < (b.y)) ||
            (a.y > (b.y + b.height)) ||
@@ -478,7 +478,7 @@ import {
          );
        }
 
-       private detectBoxCollision(a, b) {
+       private detectBoxCollision(a: any, b: any) {
          return !(
            ((a.bottom) < (b.top)) ||
            (a.top > (b.bottom)) ||

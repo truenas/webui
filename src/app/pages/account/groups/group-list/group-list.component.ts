@@ -1,6 +1,7 @@
 import {Component, OnDestroy} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../services/ws.service';
@@ -34,7 +35,7 @@ export class GroupListComponent implements OnDestroy {
     }
   };
   protected addComponent: GroupFormComponent;
-  
+
   public columns: Array<any> = [
     {name : 'Group', prop : 'group', always_display: true},
     {name : 'GID', prop : 'gid'},
@@ -52,7 +53,7 @@ export class GroupListComponent implements OnDestroy {
     },
   };
 
-  constructor(private _router: Router, protected dialogService: DialogService, 
+  constructor(private _router: Router, protected dialogService: DialogService,
     protected loader: AppLoaderService,protected ws: WebSocketService,
     protected prefService: PreferencesService, private translate: TranslateService,
     protected aroute: ActivatedRoute, private modalService: ModalService){}
@@ -69,27 +70,27 @@ export class GroupListComponent implements OnDestroy {
       this.refreshTableSubscription.unsubscribe();
     }
   }
-  
+
   refreshGroupForm() {
     this.addComponent = new GroupFormComponent(this._router,this.ws,this.modalService);
   }
 
-  resourceTransformIncomingRestData(data) {
-    // Default setting is to hide builtin groups 
+  resourceTransformIncomingRestData(data: any[]) {
+    // Default setting is to hide builtin groups
     if (this.prefService.preferences.hide_builtin_groups) {
-      let newData = []
+      let newData: any[] = []
       data.forEach((item) => {
         if (!item.builtin) {
           newData.push(item);
         }
-      }) 
+      })
       return data = newData;
     }
     return data;
   }
 
-  afterInit(entityList: any) { 
-    this.entityList = entityList; 
+  afterInit(entityList: any) {
+    this.entityList = entityList;
     setTimeout(() => {
       if(this.prefService.preferences.showGroupListMessage) {
         this.showOneTimeBuiltinMsg();
@@ -108,14 +109,14 @@ export class GroupListComponent implements OnDestroy {
     return true;
   }
 
-  getActions(row) {
+  getActions(row: any) {
     const actions = [];
     actions.push({
       id: row.group,
       name: helptext.group_list_actions_id_member,
       label : helptext.group_list_actions_label_member,
       icon: 'people',
-      onClick : (members) => {
+      onClick : (members: any) => {
         this._router.navigate(new Array('/').concat(
           [ "credentials", "groups", "members", members.id ]));
       }
@@ -126,7 +127,7 @@ export class GroupListComponent implements OnDestroy {
         icon: 'edit',
         label : helptext.group_list_actions_label_edit,
         name: helptext.group_list_actions_id_edit,
-        onClick : (members_edit) => {
+        onClick : (members_edit: any) => {
           this.modalService.open('slide-in-form', this.addComponent, members_edit.id)
         }
       })
@@ -135,7 +136,7 @@ export class GroupListComponent implements OnDestroy {
         icon: 'delete',
         name: 'delete',
         label : helptext.group_list_actions_label_delete,
-        onClick : (members_delete) => {
+        onClick : (members_delete: any) => {
           const self = this;
           const conf: DialogFormConfiguration = {
             title: helptext.deleteDialog.title,
@@ -153,7 +154,7 @@ export class GroupListComponent implements OnDestroy {
                 });
               }
             },
-            customSubmit: function (entityDialog) {
+            customSubmit: function (entityDialog: EntityDialogComponent) {
               entityDialog.dialogRef.close(true);
               self.loader.open();
               self.ws.call(self.wsDelete, [members_delete.id, entityDialog.formValue]).subscribe((res) => {
@@ -174,7 +175,7 @@ export class GroupListComponent implements OnDestroy {
     return actions;
   }
 
-  ableToDeleteAllMembers(group){
+  ableToDeleteAllMembers(group: any){
     return group.users.length !== 0;
   }
 
@@ -185,9 +186,9 @@ export class GroupListComponent implements OnDestroy {
       this.translate.get(show).subscribe((action: string) => {
         this.translate.get(helptext.builtins_dialog.title).subscribe((title: string) => {
           this.translate.get(helptext.builtins_dialog.message).subscribe((message: string) => {
-          this.dialogService.confirm(action + title, 
+          this.dialogService.confirm(action + title,
             action + message, true, action)
-            .subscribe((res) => {
+            .subscribe((res: boolean) => {
             if (res) {
                 this.prefService.preferences.hide_builtin_groups = !this.prefService.preferences.hide_builtin_groups;
                 this.prefService.savePreferences();
@@ -203,12 +204,12 @@ export class GroupListComponent implements OnDestroy {
   showOneTimeBuiltinMsg() {
     this.prefService.preferences.showGroupListMessage = false;
     this.prefService.savePreferences();
-    this.dialogService.confirm(helptext.builtinMessageDialog.title, helptext.builtinMessageDialog.message, 
+    this.dialogService.confirm(helptext.builtinMessageDialog.title, helptext.builtinMessageDialog.message,
       true, helptext.builtinMessageDialog.button, false, '', '', '', '', true);
   }
 
   doAdd() {
     this.modalService.open('slide-in-form', this.addComponent);
-  }       
-  
+  }
+
 }
