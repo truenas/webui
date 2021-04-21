@@ -16,8 +16,8 @@ export class StatsService extends BaseService {
 
   protected onAuthenticated(evt: CoreEvent) {
     this.authenticated = true;
-   
-    const queryOptions = { "select": ["name", "type"] };
+
+    const queryOptions = { select: ['name', 'type'] };
 
     this.websocket.sub('reporting.realtime').subscribe((res) => {
       this.core.emit({ name: 'RealtimeStats', data: res, sender: this });
