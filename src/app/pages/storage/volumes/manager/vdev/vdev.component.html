@@ -95,7 +95,9 @@
         </div>
         </div>
         <div class="vdev-close">
-            <button style="margin-top: 12px;" id="vdev__close-button" mat-flat-button class="vdev-action-btn" *ngIf="removable" (click)="remove()" [disabled]="(group === 'data' && manager.vdevs['data'].length < 2)">X</button>
+            <button style="margin-top: 12px;" id="vdev__close-button" mat-flat-button class="vdev-action-btn" *ngIf="removable" (click)="remove()" [disabled]="(group === 'data' && manager.vdevs['data'].length < 2)">
+              <mat-icon>close</mat-icon>
+            </button>
         </div>
     </div>
     <div *ngIf="error" [style.color]="'red'" [innerHTML]="error" class="datainfo"></div>
