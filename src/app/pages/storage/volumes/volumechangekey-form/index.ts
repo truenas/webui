@@ -1,1 +1,1 @@
-export {VolumeChangekeyFormComponent} from './volumechangekey-form.component';
+export { VolumeChangekeyFormComponent } from './volumechangekey-form.component';

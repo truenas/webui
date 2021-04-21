@@ -1,1 +1,1 @@
-export {IPMIComponent} from './ipmi.component';
+export { IPMIComponent } from './ipmi.component';

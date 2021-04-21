@@ -1,20 +1,22 @@
-import {Component, ViewContainerRef, OnInit} from '@angular/core';
-import {FormGroup} from '@angular/forms';
-import {EntityFormService} from '../../services/entity-form.service';
-import {TREE_ACTIONS, KEYS, IActionMapping, TreeModel } from 'angular-tree-component';
+import { Component, ViewContainerRef, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
+import { EntityFormService } from '../../services/entity-form.service';
+import {
+  TREE_ACTIONS, KEYS, IActionMapping, TreeModel,
+} from 'angular-tree-component';
 import { TranslateService } from '@ngx-translate/core';
 
-import {FieldConfig} from '../../models/field-config.interface';
-import {Field} from '../../models/field.interface';
+import { FieldConfig } from '../../models/field-config.interface';
+import { Field } from '../../models/field.interface';
 import { T } from '../../../../../../translate-marker';
 
 @Component({
-  selector : 'form-explorer',
-  templateUrl : './form-explorer.component.html',
-  styleUrls : [
-                '../dynamic-field/dynamic-field.css',
-                './form-explorer.component.scss'
-              ],
+  selector: 'form-explorer',
+  templateUrl: './form-explorer.component.html',
+  styleUrls: [
+    '../dynamic-field/dynamic-field.css',
+    './form-explorer.component.scss',
+  ],
 })
 export class FormExplorerComponent implements Field, OnInit {
   config: FieldConfig;
@@ -22,11 +24,11 @@ export class FormExplorerComponent implements Field, OnInit {
   fieldShow: string;
   nodes: any[];
 
-  private treeVisible: boolean = true;
+  private treeVisible = true;
   private displayFieldName: string;
   private rootSelectable: boolean;
 
-  private actionMapping:IActionMapping = {
+  private actionMapping: IActionMapping = {
     mouse: {
       contextMenu: (tree, node, $event) => {
         $event.preventDefault();
@@ -46,15 +48,15 @@ export class FormExplorerComponent implements Field, OnInit {
           this.setPath(node);
         }
         TREE_ACTIONS.FOCUS(tree, node, $event);
-      }
+      },
     },
     keys: {
       [KEYS.ENTER]: (tree, node, $event) => {
         this.setPath(node);
         TREE_ACTIONS.FOCUS(tree, node, $event);
-      }
-    }
-  }
+      },
+    },
+  };
 
   customTemplateStringOptions = {
     useCheckbox: false,
@@ -66,12 +68,11 @@ export class FormExplorerComponent implements Field, OnInit {
     nodeHeight: 23,
     allowDrag: true,
     useVirtualScroll: false,
-    useTriState: true
-  }
+    useTriState: true,
+  };
 
-
-  constructor (private entityFormService: EntityFormService,
-               public translate: TranslateService){}
+  constructor(private entityFormService: EntityFormService,
+    public translate: TranslateService) {}
 
   ngOnInit() {
     this.rootSelectable = this.config.rootSelectable === undefined ? true : this.config.rootSelectable;
@@ -89,7 +90,7 @@ export class FormExplorerComponent implements Field, OnInit {
       this.customTemplateStringOptions = this.config.customTemplateStringOptions;
       this.config.customTemplateStringOptions.explorer = this;
     }
-    if(this.config.explorerType === "zvol") {
+    if (this.config.explorerType === 'zvol') {
       this.displayFieldName = 'name';
       this.nodes = [{
         mountpoint: this.config.initial,
@@ -97,8 +98,7 @@ export class FormExplorerComponent implements Field, OnInit {
         hasChildren: true,
         expanded: !this.rootSelectable,
       }];
-    }
-    else {
+    } else {
       this.displayFieldName = 'subTitle';
       this.nodes = [{
         name: this.config.initial,
@@ -109,48 +109,40 @@ export class FormExplorerComponent implements Field, OnInit {
     }
   }
 
-  getChildren(node:any) {
+  getChildren(node: any) {
     return new Promise((resolve, reject) => {
-      if(this.config.explorerType === "zvol") {
+      if (this.config.explorerType === 'zvol') {
         resolve(this.entityFormService.getDatasetsAndZvolsListChildren(node));
-      }
-      else if(this.config.explorerType === "directory") {
-        resolve(this.entityFormService.getFilesystemListdirChildren(node, this.config.explorerType, this.config.hideDirs ));
-      }
-      else if(this.config.explorerType === "file") {
+      } else if (this.config.explorerType === 'directory') {
+        resolve(this.entityFormService.getFilesystemListdirChildren(node, this.config.explorerType, this.config.hideDirs));
+      } else if (this.config.explorerType === 'file') {
         resolve(this.entityFormService.getFilesystemListdirChildren(node));
-      }
-      else if (this.config.explorerType === "dataset") {
+      } else if (this.config.explorerType === 'dataset') {
         resolve(this.entityFormService.getPoolDatasets(this.config.explorerParam ? this.config.explorerParam : []));
-      }
-      else {
+      } else {
         resolve(this.entityFormService.getFilesystemListdirChildren(node));
       }
     });
   }
 
-
   private toggleTree() {
     this.treeVisible = !this.treeVisible;
   }
 
-  setPath(node:any) {
-    if(this.config.explorerType === "zvol") {
-      if(!node.data.mountpoint) {
-        node.data.mountpoint = this.config.initial + "/" + node.data.path;
+  setPath(node: any) {
+    if (this.config.explorerType === 'zvol') {
+      if (!node.data.mountpoint) {
+        node.data.mountpoint = this.config.initial + '/' + node.data.path;
       }
       this.group.controls[this.config.name].setValue(node.data.mountpoint);
-    }
-    else {
+    } else {
       this.group.controls[this.config.name].setValue(node.data.name);
     }
   }
 
   onClick(event) {
     const selectedTreeNodes = Object.entries(event.treeModel.selectedLeafNodeIds)
-     .filter(([key, value]) => {
-            return (value === true);
-      }).map((node) => event.treeModel.getNodeById(node[0]));
+      .filter(([key, value]) => (value === true)).map((node) => event.treeModel.getNodeById(node[0]));
     // this is to mark selected node, but not update form value
     if (event.eventName === 'select' && this.group.controls[this.config.name].value && this.group.controls[this.config.name].value.indexOf(event.node.data.name) > -1) {
       return;
@@ -159,24 +151,24 @@ export class FormExplorerComponent implements Field, OnInit {
   }
 
   valueHandler(selectedTreeNodes) {
-    let res = [];
+    const res = [];
     for (let i = 0; i < selectedTreeNodes.length; i++) {
-        if (selectedTreeNodes[i] == undefined) {
-          continue;
+      if (selectedTreeNodes[i] == undefined) {
+        continue;
+      }
+      if (selectedTreeNodes[i].parent.isAllSelected && this.config.tristate) {
+        let parent = selectedTreeNodes[i];
+        while (parent && parent.isRoot != true && parent.parent && !parent.parent.isRoot && parent.parent.isAllSelected) {
+          parent = parent.parent;
         }
-        if (selectedTreeNodes[i].parent.isAllSelected && this.config.tristate) {
-          let parent = selectedTreeNodes[i];
-          while (parent && parent.isRoot != true && parent.parent && !parent.parent.isRoot && parent.parent.isAllSelected) {
-            parent = parent.parent;
-          }
-          if (res.indexOf(parent.data.name) === -1) {
-            res.push(parent.data.name);
-          }
-        } else if (selectedTreeNodes[i].isAllSelected) {
-          if (selectedTreeNodes[i].data.name !== '') {
-            res.push(selectedTreeNodes[i].data.name);
-          }
+        if (res.indexOf(parent.data.name) === -1) {
+          res.push(parent.data.name);
         }
+      } else if (selectedTreeNodes[i].isAllSelected) {
+        if (selectedTreeNodes[i].data.name !== '') {
+          res.push(selectedTreeNodes[i].data.name);
+        }
+      }
     }
     this.group.controls[this.config.name].setValue(res);
   }

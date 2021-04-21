@@ -8,9 +8,9 @@ describe('ViewchartgaugeComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ViewchartgaugeComponent ]
+      declarations: [ViewchartgaugeComponent],
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

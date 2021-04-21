@@ -10,7 +10,7 @@ import { IXAutoDirective } from './ix-auto.directive';
 
 @NgModule({
   imports: [
-    CommonModule
+    CommonModule,
   ],
   declarations: [
     EqualValidatorDirective,
@@ -18,7 +18,7 @@ import { IXAutoDirective } from './ix-auto.directive';
     AppAccordionDirective,
     FontSizeDirective,
     LazyViewerDirective,
-    IXAutoDirective
+    IXAutoDirective,
   ],
   exports: [
     EqualValidatorDirective,
@@ -26,7 +26,7 @@ import { IXAutoDirective } from './ix-auto.directive';
     AppAccordionDirective,
     FontSizeDirective,
     LazyViewerDirective,
-    IXAutoDirective
-  ]
+    IXAutoDirective,
+  ],
 })
 export class CommonDirectivesModule { }

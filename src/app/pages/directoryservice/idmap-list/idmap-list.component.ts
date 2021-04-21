@@ -9,38 +9,40 @@ import helptext from '../../../helptext/directoryservice/idmap';
 
 @Component({
   selector: 'app-idmap-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class IdmapListComponent {
-  public title = "Idmap";
+  title = 'Idmap';
   protected queryCall = 'idmap.query';
-  protected wsDelete = "idmap.delete";
-  protected route_add_tooltip = T("Add Idmap");
-  protected route_edit: string[] = [ 'directoryservice', 'idmap', 'edit' ];
-  protected route_delete: string[] = [ 'idmap', 'delete' ];
+  protected wsDelete = 'idmap.delete';
+  protected route_add_tooltip = T('Add Idmap');
+  protected route_edit: string[] = ['directoryservice', 'idmap', 'edit'];
+  protected route_delete: string[] = ['idmap', 'delete'];
   protected entityList: any;
   protected requiredDomains = [
     'DS_TYPE_ACTIVEDIRECTORY',
     'DS_TYPE_DEFAULT_DOMAIN',
-    'DS_TYPE_LDAP'
+    'DS_TYPE_LDAP',
   ];
 
-  public columns: Array<any> = [
-    {name : T('Name'), prop : 'name', always_display: true, minWidth: 250},
-    {name : T('Backend'), prop : 'idmap_backend', maxWidth: 100},
-    {name : T('DNS Domain Name'), prop : 'dns_domain_name'},
-    {name : T('Range Low'), prop : 'range_low'},
-    {name : T('Range High'), prop : 'range_high'},
-    {name : T('Certificate'), prop : 'cert_name'},
+  columns: any[] = [
+    {
+      name: T('Name'), prop: 'name', always_display: true, minWidth: 250,
+    },
+    { name: T('Backend'), prop: 'idmap_backend', maxWidth: 100 },
+    { name: T('DNS Domain Name'), prop: 'dns_domain_name' },
+    { name: T('Range Low'), prop: 'range_low' },
+    { name: T('Range High'), prop: 'range_high' },
+    { name: T('Certificate'), prop: 'cert_name' },
   ];
 
-  public rowIdentifier = 'name';
-  public config: any = {
-    paging : true,
-    sorting : {columns : this.columns},
+  rowIdentifier = 'name';
+  config: any = {
+    paging: true,
+    sorting: { columns: this.columns },
     deleteMsg: {
       title: T('Idmap'),
-      key_props: ['name']
+      key_props: ['name'],
     },
   };
 
@@ -52,18 +54,18 @@ export class IdmapListComponent {
       if (item.certificate) {
         item.cert_name = item.certificate.cert_name;
       }
-      if (item.name === 'DS_TYPE_ACTIVEDIRECTORY' &&  item.idmap_backend === 'AUTORID') {
-        let obj = data.find(o => o.name === 'DS_TYPE_DEFAULT_DOMAIN');
+      if (item.name === 'DS_TYPE_ACTIVEDIRECTORY' && item.idmap_backend === 'AUTORID') {
+        const obj = data.find((o) => o.name === 'DS_TYPE_DEFAULT_DOMAIN');
         obj.disableEdit = true;
       }
-      const index = helptext.idmap.name.options.findIndex(o => o.value === item.name);
-      if(index >= 0) item.name = helptext.idmap.name.options[index].label;
-    })
+      const index = helptext.idmap.name.options.findIndex((o) => o.value === item.name);
+      if (index >= 0) item.name = helptext.idmap.name.options[index].label;
+    });
     return data;
   }
 
-  afterInit(entityList: any) { 
-    this.entityList = entityList; 
+  afterInit(entityList: any) {
+    this.entityList = entityList;
   }
 
   getAddActions() {
@@ -72,17 +74,17 @@ export class IdmapListComponent {
       onClick: () => {
         this.idmapService.getADStatus().subscribe((res) => {
           if (res.enable) {
-            this.router.navigate(['directoryservice', 'idmap', 'add'])
+            this.router.navigate(['directoryservice', 'idmap', 'add']);
           } else {
-            this.dialogService.confirm(helptext.idmap.enable_ad_dialog.title, helptext.idmap.enable_ad_dialog.message, 
+            this.dialogService.confirm(helptext.idmap.enable_ad_dialog.title, helptext.idmap.enable_ad_dialog.message,
               true, helptext.idmap.enable_ad_dialog.button).subscribe((res) => {
-             if(res) {
-               this.router.navigate(['directoryservice', 'activedirectory'])
-             }
-            })
+              if (res) {
+                this.router.navigate(['directoryservice', 'activedirectory']);
+              }
+            });
           }
-        })      
-      }
+        });
+      },
     }];
   }
 
@@ -93,11 +95,11 @@ export class IdmapListComponent {
       label: T('Edit'),
       disabled: row.disableEdit,
       onClick: (row) => {
-        this.router.navigate(new Array('').concat(['directoryservice', 'idmap', 'edit', row.id]))
-      }
+        this.router.navigate(new Array('').concat(['directoryservice', 'idmap', 'edit', row.id]));
+      },
     });
-    if(!this.requiredDomains.includes(row.name)) {
-      actions.push(      {
+    if (!this.requiredDomains.includes(row.name)) {
+      actions.push({
         id: 'delete',
         label: T('Delete'),
         onClick: (row) => {
@@ -109,12 +111,11 @@ export class IdmapListComponent {
             },
             () => {
               this.entityList.getData();
-            }
+            },
           );
-        }
-      })
-    } 
+        },
+      });
+    }
     return actions;
   }
-
 }

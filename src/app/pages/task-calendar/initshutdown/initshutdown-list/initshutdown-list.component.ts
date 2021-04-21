@@ -3,19 +3,18 @@ import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'app-initshutdown-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class InitshutdownListComponent {
-
-  public title = "Init/Shutdown Scripts"
+  title = 'Init/Shutdown Scripts';
   protected queryCall = 'initshutdownscript.query';
   protected wsDelete = 'initshutdownscript.delete';
   protected route_add: string[] = ['tasks', 'initshutdown', 'add'];
-  protected route_add_tooltip = "Add Init/Shutdown Scripts";
+  protected route_add_tooltip = 'Add Init/Shutdown Scripts';
   protected route_edit: string[] = ['tasks', 'initshutdown', 'edit'];
   protected entityList: any;
 
-  public columns: Array<any> = [
+  columns: any[] = [
     { name: T('Type'), prop: 'type' },
     { name: T('Command'), prop: 'command', hidden: true },
     { name: T('Script'), prop: 'script', hidden: true },
@@ -24,13 +23,13 @@ export class InitshutdownListComponent {
     { name: T('Enabled'), prop: 'enabled' },
     { name: T('Timeout'), prop: 'timeout', hidden: true },
   ];
-  public rowIdentifier = 'type';
-  public config: any = {
+  rowIdentifier = 'type';
+  config: any = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
       title: T('Init/Shutdown Script'),
-      key_props: ['type', 'command', 'script']
+      key_props: ['type', 'command', 'script'],
     },
   };
 

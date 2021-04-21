@@ -1,58 +1,58 @@
-import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
+import {
+  Component, OnInit, ViewChild, ElementRef, Input,
+} from '@angular/core';
 import { Subscription } from 'rxjs';
-import { MatButtonToggleGroup }  from '@angular/material/button-toggle';
+import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { Router } from '@angular/router';
 
 import { environment } from '../../../environments/environment';
-import { RestService, WebSocketService, IscsiService} from '../../services/';
+import { RestService, WebSocketService, IscsiService } from '../../services';
 import { DialogService } from '../../services/dialog.service';
 
 import * as _ from 'lodash';
 import { T } from '../../translate-marker';
 
-
 @Component({
   selector: 'services',
-  styleUrls: [ './services.component.css'],
+  styleUrls: ['./services.component.css'],
   templateUrl: './services.component.html',
-  providers: [IscsiService]
+  providers: [IscsiService],
 })
 export class Services implements OnInit {
-
-  @ViewChild('filter', { static: true}) filter: ElementRef;
-  @Input() searchTerm: string = '';
+  @ViewChild('filter', { static: true }) filter: ElementRef;
+  @Input() searchTerm = '';
   @Input() cards = []; // Display List
-  @ViewChild('viewMode', { static: true}) viewMode: MatButtonToggleGroup;
-  @ViewChild('serviceStatus', { static: true}) serviceStatus: MatSlideToggle;
+  @ViewChild('viewMode', { static: true }) viewMode: MatButtonToggleGroup;
+  @ViewChild('serviceStatus', { static: true }) serviceStatus: MatSlideToggle;
   focusedVM: string;
 
-  public services: any[];
-  public busy: Subscription;
+  services: any[];
+  busy: Subscription;
   productType = window.localStorage.getItem('product_type');
 
-  public name_MAP: Object = {
-    'afp': 'AFP',
-    'dynamicdns': 'Dynamic DNS',
-    'ftp': 'FTP',
-    'iscsitarget': 'iSCSI',
-    'lldp': 'LLDP',
-    'nfs': 'NFS',
-    'openvpn_client': 'OpenVPN Client',
-    'openvpn_server': 'OpenVPN Server',
-    'rsync': 'Rsync',
-    's3': 'S3',
-    'smartd': 'S.M.A.R.T.',
-    'snmp': 'SNMP',
-    'ssh': 'SSH',
-    'cifs': 'SMB',
-    'tftp': 'TFTP',
-    'ups': 'UPS',
-    'webdav': 'WebDAV',
-  }
+  name_MAP: Object = {
+    afp: 'AFP',
+    dynamicdns: 'Dynamic DNS',
+    ftp: 'FTP',
+    iscsitarget: 'iSCSI',
+    lldp: 'LLDP',
+    nfs: 'NFS',
+    openvpn_client: 'OpenVPN Client',
+    openvpn_server: 'OpenVPN Server',
+    rsync: 'Rsync',
+    s3: 'S3',
+    smartd: 'S.M.A.R.T.',
+    snmp: 'SNMP',
+    ssh: 'SSH',
+    cifs: 'SMB',
+    tftp: 'TFTP',
+    ups: 'UPS',
+    webdav: 'WebDAV',
+  };
 
-  public cache = [];
-  public showSpinner: boolean = true;
+  cache = [];
+  showSpinner = true;
   // public viewValue: any;
 
   constructor(protected rest: RestService, protected ws: WebSocketService, protected router: Router,
@@ -69,22 +69,21 @@ export class Services implements OnInit {
       template: 'none',
       isNew: false,
       onChanging: false,
-    }
+    };
     return card;
   }
 
   ngOnInit() {
     // window.localStorage.getItem('viewValue') ? this.viewMode.value = window.localStorage.getItem('viewValue') : this.viewMode.value = 'cards';
     this.viewMode.value = 'table';
-    this.busy =
-      this.ws.call('service.query', [
-        [], { "order_by": ["service"] }
-      ])
+    this.busy = this.ws.call('service.query', [
+      [], { order_by: ['service'] },
+    ])
       .subscribe((res) => {
         this.services = res;
-  
+
         // nfs and webdav are hidden temporarily in SCALE, to be restored when ready
-        let hidden = this.productType === 'SCALE' ? ['nfs', 'webdav', 'netdata'] : ['netdata'];
+        const hidden = this.productType === 'SCALE' ? ['nfs', 'webdav', 'netdata'] : ['netdata'];
         this.services.forEach((item) => {
           if (!hidden.includes(item.service)) {
             if (this.name_MAP[item.service]) {
@@ -97,13 +96,13 @@ export class Services implements OnInit {
             this.cache.push(card);
           }
         });
-        this.cards = _.sortBy(this.cards, [function(i) {return i.label.toLowerCase()}]);
-        this.cache = _.sortBy(this.cache, [function(i) {return i.label.toLowerCase()}]);
+        this.cards = _.sortBy(this.cards, [function (i) { return i.label.toLowerCase(); }]);
+        this.cache = _.sortBy(this.cache, [function (i) { return i.label.toLowerCase(); }]);
         this.showSpinner = false;
       });
   }
 
-  displayFilter(key, query ? ) {
+  displayFilter(key, query ?) {
     if (query == '' || !query) {
       this.displayAll();
     } else {
@@ -140,17 +139,17 @@ export class Services implements OnInit {
       if (service.title == 'iscsitarget') {
         this.iscsiService.getGlobalSessions().subscribe(
           (res) => {
-            const msg = res.length == 0 ? '' : T('<font color="red"> There are ') + res.length +
-              T(' active iSCSI connections.</font><br>Stop the ' + service.label + ' service and close these connections?');
-            this.dialog.confirm(T('Alert'),  msg == '' ? T('Stop ') + service.label + '?' : msg, true, T('Stop')).subscribe(dialogRes => {
+            const msg = res.length == 0 ? '' : T('<font color="red"> There are ') + res.length
+              + T(' active iSCSI connections.</font><br>Stop the ' + service.label + ' service and close these connections?');
+            this.dialog.confirm(T('Alert'), msg == '' ? T('Stop ') + service.label + '?' : msg, true, T('Stop')).subscribe((dialogRes) => {
               if (dialogRes) {
                 this.updateService(rpc, service);
               }
             });
-          }
-        )
+          },
+        );
       } else {
-        this.dialog.confirm(T('Alert'), T('Stop ') + service.label + '?', true, T('Stop')).subscribe(res => {
+        this.dialog.confirm(T('Alert'), T('Stop ') + service.label + '?', true, T('Stop')).subscribe((res) => {
           if (res) {
             this.updateService(rpc, service);
           }
@@ -159,31 +158,30 @@ export class Services implements OnInit {
     } else {
       this.updateService(rpc, service);
     }
-
   }
 
   updateService(rpc, service) {
     service['onChanging'] = true;
     this.busy = this.ws.call(rpc, [service.title]).subscribe((res) => {
       if (res) {
-        if (service.state === "RUNNING" && rpc === 'service.stop') {
-          this.dialog.Info(T("Service failed to stop"),
-              this.name_MAP[service.title] + " " +  T("service failed to stop."));
+        if (service.state === 'RUNNING' && rpc === 'service.stop') {
+          this.dialog.Info(T('Service failed to stop'),
+            this.name_MAP[service.title] + ' ' + T('service failed to stop.'));
         }
         service.state = 'RUNNING';
         service['onChanging'] = false;
       } else {
         if (service.state === 'STOPPED' && rpc === 'service.start') {
-          this.dialog.Info(T("Service failed to start"),
-              this.name_MAP[service.title] + " " +  T("service failed to start."));
+          this.dialog.Info(T('Service failed to start'),
+            this.name_MAP[service.title] + ' ' + T('service failed to start.'));
         }
         service.state = 'STOPPED';
         service['onChanging'] = false;
       }
     }, (res) => {
-      let message = T("Error starting service ");
+      let message = T('Error starting service ');
       if (rpc === 'service.stop') {
-        message = T("Error stopping service ");
+        message = T('Error stopping service ');
       }
       this.dialog.errorReport(message + this.name_MAP[service.title], res.message, res.stack);
       service['onChanging'] = false;

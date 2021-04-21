@@ -13,13 +13,12 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 
 @Component({
   selector: 'app-user-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class UserListComponent {
-
-  public title = "Users";
+  title = 'Users';
   protected route_add: string[] = ['account', 'users', 'add'];
-  protected route_add_tooltip = "Add User";
+  protected route_add_tooltip = 'Add User';
   protected route_edit: string[] = ['account', 'users', 'edit'];
 
   protected entityList: any;
@@ -32,36 +31,52 @@ export class UserListComponent {
   // protected queryCallOption = [['OR', [['uid', '=', 0], ['builtin', '=', false]]]];
   protected queryCallOption = [];
   protected globalConfig = {
-    id: "config",
+    id: 'config',
     tooltip: helptext.globalConfigTooltip,
     onClick: () => {
       this.toggleBuiltins();
-    }
+    },
   };
 
-  public columns: Array < any > = [
-    { name: 'Username', prop: 'username', always_display: true, minWidth: 150},
-    { name: 'UID', prop: 'uid', hidden: false, maxWidth: 100 },
-    { name: 'GID', prop: 'gid', hidden: true, maxWidth: 100 },
-    { name: 'Home directory', prop: 'home', hidden: true  },
-    { name: 'Shell', prop: 'shell', hidden: true, minWidth: 150  },
-    { name: 'Builtin', prop: 'builtin', hidden: false  },
-    { name: 'Full Name', prop: 'full_name', hidden: false, minWidth: 250 },
-    { name: 'Email', prop: 'email', hidden: true, maxWidth: 250 },
-    { name: 'Password Disabled', prop: 'password_disabled', hidden: true, minWidth: 200 },
+  columns: any[] = [
+    {
+      name: 'Username', prop: 'username', always_display: true, minWidth: 150,
+    },
+    {
+      name: 'UID', prop: 'uid', hidden: false, maxWidth: 100,
+    },
+    {
+      name: 'GID', prop: 'gid', hidden: true, maxWidth: 100,
+    },
+    { name: 'Home directory', prop: 'home', hidden: true },
+    {
+      name: 'Shell', prop: 'shell', hidden: true, minWidth: 150,
+    },
+    { name: 'Builtin', prop: 'builtin', hidden: false },
+    {
+      name: 'Full Name', prop: 'full_name', hidden: false, minWidth: 250,
+    },
+    {
+      name: 'Email', prop: 'email', hidden: true, maxWidth: 250,
+    },
+    {
+      name: 'Password Disabled', prop: 'password_disabled', hidden: true, minWidth: 200,
+    },
     { name: 'Lock User', prop: 'locked', hidden: true },
-    { name: 'Permit Sudo', prop: 'sudo', hidden: true  },
-    { name: 'Microsoft Account', prop: 'microsoft_account', hidden: true, minWidth: 170 },
-    { name : 'Samba Authentication', prop: 'smb', hidden: true }
+    { name: 'Permit Sudo', prop: 'sudo', hidden: true },
+    {
+      name: 'Microsoft Account', prop: 'microsoft_account', hidden: true, minWidth: 170,
+    },
+    { name: 'Samba Authentication', prop: 'smb', hidden: true },
   ];
-  public rowIdentifier = 'username';
-  public config: any = {
+  rowIdentifier = 'username';
+  config: any = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
       title: 'User',
-      key_props: ['username']
-    }
+      key_props: ['username'],
+    },
   };
 
   isActionVisible(actionId: string, row: any) {
@@ -72,38 +87,38 @@ export class UserListComponent {
   }
 
   constructor(private router: Router,
-              protected dialogService: DialogService, protected loader: AppLoaderService,
-              protected ws: WebSocketService, protected prefService: PreferencesService,
-              private translate: TranslateService) {
+    protected dialogService: DialogService, protected loader: AppLoaderService,
+    protected ws: WebSocketService, protected prefService: PreferencesService,
+    private translate: TranslateService) {
   }
 
-  afterInit(entityList: any) { 
-    this.entityList = entityList; 
+  afterInit(entityList: any) {
+    this.entityList = entityList;
     setTimeout(() => {
-      if(this.prefService.preferences.showUserListMessage) {
+      if (this.prefService.preferences.showUserListMessage) {
         this.showOneTimeBuiltinMsg();
       }
-    }, 2000)
+    }, 2000);
   }
   getActions(row) {
     const actions = [];
     actions.push({
       id: row.username,
       icon: 'edit',
-      label : helptext.user_list_actions_edit_label,
+      label: helptext.user_list_actions_edit_label,
       name: helptext.user_list_actions_edit_id,
-      onClick : (users_edit) => {
+      onClick: (users_edit) => {
         this.router.navigate(new Array('/').concat(
-          [ "account", "users", "edit", users_edit.id ]));
-      }
+          ['account', 'users', 'edit', users_edit.id],
+        ));
+      },
     });
-    if (row.builtin !== true){
-
+    if (row.builtin !== true) {
       actions.push({
         id: row.username,
         icon: 'delete',
         name: 'delete',
-        label : helptext.user_list_actions_delete_label,
+        label: helptext.user_list_actions_delete_label,
         onClick: (users_edit) => {
           const self = this;
           const conf: DialogFormConfiguration = {
@@ -112,7 +127,7 @@ export class UserListComponent {
             fieldConfig: [],
             confirmCheckbox: true,
             saveButtonText: helptext.deleteDialog.saveButtonText,
-            preInit: function () {
+            preInit() {
               if (self.ableToDeleteGroup(users_edit.id)) {
                 conf.fieldConfig.push({
                   type: 'checkbox',
@@ -122,19 +137,19 @@ export class UserListComponent {
                 });
               }
             },
-            customSubmit: function (entityDialog) {
+            customSubmit(entityDialog) {
               entityDialog.dialogRef.close(true);
               self.loader.open();
               self.ws.call(self.wsDelete, [users_edit.id, entityDialog.formValue]).subscribe((res) => {
                 self.entityList.getData();
                 self.loader.close();
               },
-                (err) => {
-                  new EntityUtils().handleWSError(self, err, self.dialogService);
-                  self.loader.close();
-                })
-            }
-          }
+              (err) => {
+                new EntityUtils().handleWSError(self, err, self.dialogService);
+                self.loader.close();
+              });
+            },
+          };
           this.dialogService.dialogForm(conf);
         },
       });
@@ -142,45 +157,42 @@ export class UserListComponent {
     return actions;
   }
 
-  ableToDeleteGroup(id: any){
-    let user: any
-    let group_users: any
-    user = _.find(this.usr_lst[0], {id});
-    group_users =_.find(this.grp_lst[0], {id: user.group.id})['users'];
+  ableToDeleteGroup(id: any) {
+    const user = _.find(this.usr_lst[0], { id });
+    const group_users = _.find(this.grp_lst[0], { id: user.group.id })['users'];
     // Show checkbox if deleting the last member of a group
-    if(group_users.length === 1){
-      return true
-    };
-    return false
+    if (group_users.length === 1) {
+      return true;
+    }
+    return false;
   }
 
   resourceTransformIncomingRestData(d) {
     let data = Object.assign([], d);
     this.usr_lst.push(data);
-    this.ws.call('group.query').subscribe((res)=>{
+    this.ws.call('group.query').subscribe((res) => {
       this.grp_lst.push(res);
-      data.forEach(user => {
-        const group = _.find(res, {"gid" : user.group.bsdgrp_gid});
-        //user.group.bsdgrp_gid = group['gid'];
+      data.forEach((user) => {
+        const group = _.find(res, { gid: user.group.bsdgrp_gid });
+        // user.group.bsdgrp_gid = group['gid'];
         user.gid = group['gid'];
       });
-      let rows = data;
-      for (let i=0; i<rows.length; i++) {
-        rows[i].details = []
-        rows[i].details.push({label:T("GID"), value:rows[i].group['bsdgrp_gid']},
-                             {label:T("Home Directory"), value:rows[i].home},
-                             {label:T("Shell"), value:rows[i].shell},
-                             {label:T("Email"), value:rows[i].email});
-      };
-      
+      const rows = data;
+      for (let i = 0; i < rows.length; i++) {
+        rows[i].details = [];
+        rows[i].details.push({ label: T('GID'), value: rows[i].group['bsdgrp_gid'] },
+          { label: T('Home Directory'), value: rows[i].home },
+          { label: T('Shell'), value: rows[i].shell },
+          { label: T('Email'), value: rows[i].email });
+      }
     });
-   if (this.prefService.preferences.hide_builtin_users) {
-      let newData = []
+    if (this.prefService.preferences.hide_builtin_users) {
+      const newData = [];
       data.forEach((item) => {
         if (!item.builtin || item.username === 'root') {
           newData.push(item);
         }
-      }) 
+      });
       return data = newData;
     }
     return data;
@@ -188,30 +200,30 @@ export class UserListComponent {
 
   toggleBuiltins() {
     let show;
-    this.prefService.preferences.hide_builtin_users ? show = helptext.builtins_dialog.show :
-      show = helptext.builtins_dialog.hide;
-      this.translate.get(show).subscribe((action: string) => {
-        this.translate.get(helptext.builtins_dialog.title).subscribe((title: string) => {
-          this.translate.get(helptext.builtins_dialog.message).subscribe((message: string) => {
-          this.dialogService.confirm(action + title, 
+    this.prefService.preferences.hide_builtin_users ? show = helptext.builtins_dialog.show
+      : show = helptext.builtins_dialog.hide;
+    this.translate.get(show).subscribe((action: string) => {
+      this.translate.get(helptext.builtins_dialog.title).subscribe((title: string) => {
+        this.translate.get(helptext.builtins_dialog.message).subscribe((message: string) => {
+          this.dialogService.confirm(action + title,
             action + message, true, action)
             .subscribe((res) => {
-            if (res) {
-              this.prefService.preferences.hide_builtin_users = !this.prefService.preferences.hide_builtin_users;
-              this.prefService.savePreferences();
-              this.entityList.needTableResize = false;
-              this.entityList.getData();
-            }
-          })
-        })
-      })
-    })
+              if (res) {
+                this.prefService.preferences.hide_builtin_users = !this.prefService.preferences.hide_builtin_users;
+                this.prefService.savePreferences();
+                this.entityList.needTableResize = false;
+                this.entityList.getData();
+              }
+            });
+        });
+      });
+    });
   }
 
   showOneTimeBuiltinMsg() {
     this.prefService.preferences.showUserListMessage = false;
     this.prefService.savePreferences();
-    this.dialogService.confirm(helptext.builtinMessageDialog.title, helptext.builtinMessageDialog.message, 
+    this.dialogService.confirm(helptext.builtinMessageDialog.title, helptext.builtinMessageDialog.message,
       true, helptext.builtinMessageDialog.button, false, '', '', '', '', true);
   }
 }

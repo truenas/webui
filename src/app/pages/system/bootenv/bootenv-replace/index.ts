@@ -1,1 +1,1 @@
-export {BootEnvReplaceFormComponent} from './bootenv-replace-form.component';
+export { BootEnvReplaceFormComponent } from './bootenv-replace-form.component';

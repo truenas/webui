@@ -1,1 +1,1 @@
-export {BootEnvAttachFormComponent} from './bootenv-attach-form.component';
+export { BootEnvAttachFormComponent } from './bootenv-attach-form.component';

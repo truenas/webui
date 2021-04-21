@@ -8,9 +8,9 @@ describe('AppBlankComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AppBlankComponent ]
+      declarations: [AppBlankComponent],
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

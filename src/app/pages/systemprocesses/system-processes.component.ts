@@ -1,6 +1,8 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  Component, ElementRef, OnDestroy, OnInit, ViewChild,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ShellService, WebSocketService } from '../../services/';
+import { ShellService, WebSocketService } from '../../services';
 import { CopyPasteMessageComponent } from '../shell/copy-paste-message.component';
 
 @Component({
@@ -10,17 +12,16 @@ import { CopyPasteMessageComponent } from '../shell/copy-paste-message.component
 })
 
 export class SystemProcessesComponent implements OnInit, OnDestroy {
-
-  //xter container
-  @ViewChild('terminal', { static: true}) container: ElementRef;
+  // xter container
+  @ViewChild('terminal', { static: true }) container: ElementRef;
 
   // xterm variables
-  public token: any;
-  public xterm: any;
+  token: any;
+  xterm: any;
   private shellSubscription: any;
   private top_displayed = false;
 
-  clearLine = "\u001b[2K\r"
+  clearLine = '\u001b[2K\r';
 
   ngOnInit() {
     const self = this;
@@ -29,9 +30,9 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
       this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
         this.xterm.write(value);
         if (!this.top_displayed) {
-          setTimeout(function() {
+          setTimeout(() => {
             self.xterm.send('top\n');
-            setTimeout(function() {
+            setTimeout(() => {
               self.xterm.setOption('disableStdin', true);
             }, 100);
           }, 1000);
@@ -41,7 +42,7 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
       this.initializeTerminal().then((res) => {
         if (res) {
           // excute 'top' command
-         
+
         }
       });
     });
@@ -51,19 +52,19 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     if (this.shellSubscription) {
       this.shellSubscription.unsubscribe();
     }
-    if (this.ss.connected){
+    if (this.ss.connected) {
       this.ss.socket.close();
     }
-  };
+  }
 
   initializeTerminal() {
     return new Promise((resolve, reject) => {
-      this.xterm = new (<any>window).Terminal({ 
-        //'cursorBlink': true,
-        //'tabStopWidth': 4,
-        'cols': 80,
-        'rows': 25,
-        'focus': false, 
+      this.xterm = new (<any>window).Terminal({
+        // 'cursorBlink': true,
+        // 'tabStopWidth': 4,
+        cols: 80,
+        rows: 25,
+        focus: false,
       });
       this.xterm.open(this.container.nativeElement);
       this.xterm.attach(this.ss);

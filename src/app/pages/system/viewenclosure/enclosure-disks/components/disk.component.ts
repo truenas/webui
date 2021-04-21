@@ -1,4 +1,6 @@
-import { Component, OnInit, AfterViewInit, Input, ElementRef, NgZone, OnDestroy } from '@angular/core';
+import {
+  Component, OnInit, AfterViewInit, Input, ElementRef, NgZone, OnDestroy,
+} from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MaterialModule } from 'app/appMaterial.module';
 
@@ -45,20 +47,18 @@ import { MaterialModule } from 'app/appMaterial.module';
       position:relative;
       left:-5px;
     }
-  `]
+  `],
 })
 
 export class DiskComponent implements AfterViewInit, OnDestroy {
-
   @Input() data: any;
 
-  constructor(public el:ElementRef/*, private ngZone: NgZone*/) { 
+  constructor(public el: ElementRef/* , private ngZone: NgZone */) {
   }
 
   ngAfterViewInit() {
   }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
   }
-
 }

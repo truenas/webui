@@ -12,11 +12,11 @@ import { EnclosureDisksMiniComponent } from './enclosure-disks/enclosure-disks-m
 import { DiskComponent } from './enclosure-disks/components/disk.component';
 import { TabContentComponent } from './enclosure-disks/components/tab-content/tab-content.component';
 import { TemperatureMeterComponent } from './enclosure-disks/components/temperature-meter/temperature-meter.component';
-//import { TooltipComponent } from 'app/pages/common/entity/entity-form/components/tooltip/tooltip.component';
+// import { TooltipComponent } from 'app/pages/common/entity/entity-form/components/tooltip/tooltip.component';
 
 @NgModule({
   imports: [
-    CommonModule, MaterialModule, TranslateModule, FlexLayoutModule, EntityModule
+    CommonModule, MaterialModule, TranslateModule, FlexLayoutModule, EntityModule,
   ],
   declarations: [
     ViewEnclosureComponent,
@@ -25,8 +25,8 @@ import { TemperatureMeterComponent } from './enclosure-disks/components/temperat
     DiskComponent,
     TabContentComponent,
     TemperatureMeterComponent,
-    //TooltipComponent
+    // TooltipComponent
   ],
-  providers: []
+  providers: [],
 })
 export class EnclosureModule {}

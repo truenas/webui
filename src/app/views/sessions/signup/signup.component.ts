@@ -5,16 +5,16 @@ import { MatButton } from '@angular/material/button';
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
-  styleUrls: ['./signup.component.css']
+  styleUrls: ['./signup.component.css'],
 })
 export class SignupComponent implements OnInit {
-  @ViewChild(MatProgressBar, { static: false}) progressBar: MatProgressBar;
-  @ViewChild(MatButton, { static: false}) submitButton: MatButton;
+  @ViewChild(MatProgressBar, { static: false }) progressBar: MatProgressBar;
+  @ViewChild(MatButton, { static: false }) submitButton: MatButton;
   signupData = {
     email: '',
     password: '',
     confirmPassword: '',
-    isAgreed: ''
+    isAgreed: '',
   };
 
   constructor() {}
@@ -28,5 +28,4 @@ export class SignupComponent implements OnInit {
     this.submitButton.disabled = true;
     this.progressBar.mode = 'indeterminate';
   }
-
 }

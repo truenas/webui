@@ -1,64 +1,63 @@
 import { Component } from '@angular/core';
-import { Router } from "@angular/router";
-import { WebSocketService, DialogService } from "../../../../services/";
-import { AppLoaderService } from "../../../../services/app-loader/app-loader.service";
+import { Router } from '@angular/router';
+import { WebSocketService, DialogService } from '../../../../services';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/account/user-change-pw';
 import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
-  template: `<entity-form [conf]="this"></entity-form>`,
+  template: '<entity-form [conf]="this"></entity-form>',
 })
 export class ChangePasswordComponent {
-
-  //protected resource_name = 'account/users/1/password/';
-  protected isEntity: boolean = true;
+  // protected resource_name = 'account/users/1/password/';
+  protected isEntity = true;
   protected entityForm: any;
 
-  public fieldConfig: FieldConfig[] = [];
-  public fieldSets: FieldSet[] = [
+  fieldConfig: FieldConfig[] = [];
+  fieldSets: FieldSet[] = [
     {
       name: helptext.pw_form_title_name,
       class: helptext.pw_form_title_class,
-      label:true,
-      config:[
-      {
-        type : 'input',
-        name : 'curr_password',
-        placeholder : helptext.pw_current_pw_placeholder,
-        inputType : 'password',
-        required: true,
-        togglePw: true,
-      },
-      {
-        type : 'input',
-        name : 'password',
-        placeholder : helptext.pw_new_pw_placeholder,
-        inputType : 'password',
-        required: true,
-        tooltip: helptext.pw_new_pw_tooltip
-      },
-      {
-        type : 'input',
-        name : 'password_conf',
-        placeholder : helptext.pw_confirm_pw_placeholder,
-        inputType : 'password',
-        required: true,
-        validation : helptext.pw_confirm_pw_validation
-      },
-    ]
-  }]
+      label: true,
+      config: [
+        {
+          type: 'input',
+          name: 'curr_password',
+          placeholder: helptext.pw_current_pw_placeholder,
+          inputType: 'password',
+          required: true,
+          togglePw: true,
+        },
+        {
+          type: 'input',
+          name: 'password',
+          placeholder: helptext.pw_new_pw_placeholder,
+          inputType: 'password',
+          required: true,
+          tooltip: helptext.pw_new_pw_tooltip,
+        },
+        {
+          type: 'input',
+          name: 'password_conf',
+          placeholder: helptext.pw_confirm_pw_placeholder,
+          inputType: 'password',
+          required: true,
+          validation: helptext.pw_confirm_pw_validation,
+        },
+      ],
+    }];
 
   constructor(protected ws: WebSocketService, protected router: Router,
-              protected loader: AppLoaderService, protected dialog: DialogService) {
+    protected loader: AppLoaderService, protected dialog: DialogService) {
   }
 
   preInit(entityForm) {
     this.entityForm = entityForm;
   }
 
-  public customSubmit(body) {
+  customSubmit(body) {
     delete body.password_conf;
     this.loader.open();
     return this.ws.call('auth.check_user', ['root', body.curr_password]).subscribe((check) => {
@@ -78,9 +77,8 @@ export class ChangePasswordComponent {
         this.dialog.Info(helptext.pw_invalid_title, helptext.pw_invalid_msg, '300px', 'warning', true);
       }
     }, (res) => {
-       this.loader.close();
+      this.loader.close();
       new EntityUtils().handleWSError(this.entityForm, res);
     });
   }
-
 }

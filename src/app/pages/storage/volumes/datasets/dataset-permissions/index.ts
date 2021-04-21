@@ -1,1 +1,1 @@
-export {DatasetPermissionsComponent} from './dataset-permissions.component';
+export { DatasetPermissionsComponent } from './dataset-permissions.component';
