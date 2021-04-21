@@ -659,7 +659,7 @@ export class VMWizardComponent {
             }
           }
           const listItems = "<li>" + prevSelectedGpus.map((gpu, index) => (index+1)+". "+gpu.description).join("</li><li>") + "</li>"
-          gpusConf.warnings = "A minimum of 1 GPU is required in the host to ensure that host has at least 1 GPU available.<p>GPU's isolated currently <ol>"+listItems+"</ol></p>";
+          gpusConf.warnings = "At least 1 GPU is required by the host for it’s functions.<p>Currently following GPU(s) have been isolated:<ol>"+listItems+"</ol></p><p>With your selection, no GPU is available for the host to consume.</p>";
           gpusFormControl.setErrors({ maxPCIIds: true})
         } else {
           gpusConf.warnings = null;
