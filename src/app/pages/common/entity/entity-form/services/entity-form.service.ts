@@ -50,7 +50,11 @@ export class EntityFormService {
                                                controls[i].initialCount);
           formGroup[controls[i].name] = formArray;
         } else if (controls[i].listFields) {
-          formGroup[controls[i].name] = this.formBuilder.array([]);
+          const formArray = this.formBuilder.array([]);
+          controls[i].listFields.forEach(listField => {
+            formArray.push(this.createFormGroup(listField));
+          });
+          formGroup[controls[i].name] = formArray;
         } else {
           formGroup[controls[i].name] = new FormControl(
               {value : controls[i].value, disabled : controls[i].disabled},
@@ -90,7 +94,7 @@ export class EntityFormService {
     let typeFilter;
     explorerType && explorerType === 'directory' ? typeFilter = [['type', '=', 'DIRECTORY']] : typeFilter = [];
 
-    return this.ws.call('filesystem.listdir', [node.data.name, typeFilter, 
+    return this.ws.call('filesystem.listdir', [node.data.name, typeFilter,
       {"order_by": ["name"], 'limit': 1000}] ).toPromise().then(res => {
       res = _.sortBy(res, function(o) { return o.name.toLowerCase(); });
 
@@ -141,7 +145,7 @@ export class EntityFormService {
 
     // if we ever need this we should convert to websocket
     /*return this.rest.get('storage/volume/', {}).toPromise().then(res => {
-      res.data.forEach((vol) => {           
+      res.data.forEach((vol) => {
         children.push(vol.children[0]);
       });
       return children;
