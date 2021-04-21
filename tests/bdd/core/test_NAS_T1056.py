@@ -182,7 +182,7 @@ def click_submit_the_new_share_should_be_created_without_error(driver):
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 7, '//div[contains(.,"/mnt/tank/maproot")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"/mnt/tank/mapall")]')
 
 
 @then('create a directory on the <client> with <password>')
@@ -199,7 +199,7 @@ def create_a_directory_on_the_client_with_password(driver, client, password):
 @then('mount the NAS share to the mountpoint directory')
 def mount_the_nas_share_to_the_mountpoint_directory(driver, nas_ip):
     """mount the NAS share to the mountpoint directory."""
-    cmd = f'mount_nfs {nas_ip}:/mnt/tank/maproot {mountpoint}'
+    cmd = f'mount_nfs {nas_ip}:/mnt/tank/mapall {mountpoint}'
     login_results = ssh_cmd(cmd, 'root', passwd, host)
     assert login_results['result'], str(login_results)
 
