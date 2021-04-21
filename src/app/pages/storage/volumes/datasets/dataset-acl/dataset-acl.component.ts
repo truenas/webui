@@ -24,20 +24,7 @@ import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-
 import {EntityUtils} from '../../../../common/entity/utils';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 
-interface Acl {
-  perms: object;
-  flags: object;
-  tag: string;
-  type: string;
-  id: number;
-}
-
-interface AccessControlList {
-  uid: number;
-  gid: number;
-  acltype: string;
-  acl: Acl[]
-}
+import { AccessControlList } from 'app/interfaces/access-control-list';
 
 @Component({
   selector : 'app-dataset-acl',
@@ -710,7 +697,7 @@ export class DatasetAclComponent implements OnDestroy {
     this.aces_subscription.unsubscribe();
   }
 
-  beforeSubmit(data) {
+  beforeSubmit(data: any) {
     const dacl = [];
     for (let i = 0; i < data.aces.length; i++) {
       const d = {};
@@ -752,7 +739,7 @@ export class DatasetAclComponent implements OnDestroy {
     data['dacl'] = dacl;
   }
 
-  async customSubmit(body) {
+  async customSubmit(body: any) {
     body.uid = body.apply_user ? body.uid : null;
     body.gid = body.apply_group ? body.gid : null;
     const doesNotWantToEditDataset =
