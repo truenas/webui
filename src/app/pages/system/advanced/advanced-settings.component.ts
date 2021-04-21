@@ -8,7 +8,7 @@ import { Subject, Subscription } from 'rxjs';
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
 
-import { AdvancedConfig } from 'app/interfaces/AdvancedConfig'
+import { AdvancedConfig } from 'app/interfaces/advanced-config'
 
 
 import {

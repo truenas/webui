@@ -9,7 +9,7 @@ import { T } from 'app/translate-marker';
 import _ from 'lodash';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { AdvancedConfig } from 'app/interfaces/AdvancedConfig'
+import { AdvancedConfig } from 'app/interfaces/advanced-config'
 
 @Component({
   selector: 'app-isolated-pcis-form',

@@ -52,6 +52,7 @@ export class VMWizardComponent {
   public hideCancel = true;
   private maxVCPUs = 16;
   private gpus: any;
+  private isolatedGpuPciIds: string[];
 
   entityWizard: EntityWizardComponent;
   public res: any;
@@ -417,15 +418,9 @@ export class VMWizardComponent {
         },
         {
           type: 'select',
-          placeholder: T("Isolated GPU PCI Id's"),
-          name: 'isolated_gpu_pci_ids',
+          placeholder: T("GPU's"),
+          name: 'gpus',
           multiple: true,
-          options: []
-        },
-        {
-          type: 'select',
-          placeholder: T("GPU"),
-          name: 'gpu',
           options: [],
           required: true
         }
@@ -457,23 +452,17 @@ export class VMWizardComponent {
       vcpuLimitConf.paraText = helptext.vcpus_warning + ` ${this.maxVCPUs} ` + helptext.vcpus_warning_b;
     })
 
-    this.ws.call("device.gpu_pci_ids_choices").subscribe((pci_choices: Object) => {
-      const isolatedGpuPciIdsConf = _.find(this.wizardConfig[5].fieldConfig, {name : "isolated_gpu_pci_ids"});
-      for(let key in pci_choices) {
-        isolatedGpuPciIdsConf.options.push({label: key, value: pci_choices[key]})
-      }
-    })
 
-    this.ws.call("device.get_gpus").subscribe((gpus) => {
+    this.ws.call("device.get_info", ["GPU"]).subscribe((gpus) => {
       this.gpus = gpus;
-      const gpu = _.find(this.wizardConfig[5].fieldConfig, {name : "gpu"});
+      const gpusConf = _.find(this.wizardConfig[5].fieldConfig, {name : "gpus"});
       for(let item of gpus) {
-        gpu.options.push({label: item.description, value: item.addr.pci_slot})
+        gpusConf.options.push({label: item.description, value: item.addr.pci_slot})
       }
     })
 
     this.systemGeneralService.getAdvancedConfig.subscribe((res) => {
-      this.getFormControlFromFieldName('isolated_gpu_pci_ids').setValue(res.isolated_gpu_pci_ids)
+      this.isolatedGpuPciIds = res.isolated_gpu_pci_ids
     });
 
   }
@@ -653,19 +642,28 @@ export class VMWizardComponent {
         }
       });
 
-      const isolatedGpuPciIdsControl = this.getFormControlFromFieldName('isolated_gpu_pci_ids');
-      isolatedGpuPciIdsControl.valueChanges.subscribe((isolatedPciIdsValue) => {
-        const isolatedGpuPciIdsConf = _.find(this.wizardConfig[5].fieldConfig, {name : "isolated_gpu_pci_ids"});
-        if(isolatedPciIdsValue.length >= isolatedGpuPciIdsConf.options.length) {
-          isolatedGpuPciIdsConf.warnings = "A minimum of 2 GPUs are required in the host to ensure that host has at least 1 GPU available.";
-          isolatedGpuPciIdsControl.setErrors({ maxPCIIds: true})
-        } else if(isolatedPciIdsValue.length > 0) {
-          isolatedGpuPciIdsConf.warnings = null;
-          isolatedGpuPciIdsControl.setErrors(null);
+      const gpusFormControl = this.getFormControlFromFieldName('gpus');
+      gpusFormControl.valueChanges.subscribe((gpusValue) => {
+        const finalIsolatedPciIds = [...this.isolatedGpuPciIds];
+        for(let gpuValue of gpusValue) {
+          if(finalIsolatedPciIds.findIndex(pciId => pciId === gpuValue) === -1) {
+            finalIsolatedPciIds.push(gpuValue)
+          }
+        }
+        const gpusConf = _.find(this.wizardConfig[5].fieldConfig, {name : "gpus"});
+        if(finalIsolatedPciIds.length >= gpusConf.options.length) {
+          const prevSelectedGpus = [];
+          for(let gpu of this.gpus) {
+            if(this.isolatedGpuPciIds.findIndex(igpi => igpi === gpu.addr.pci_slot ) >= 0) {
+              prevSelectedGpus.push(gpu)
+            }
+          }
+          const listItems = "<li>" + prevSelectedGpus.map((gpu, index) => (index+1)+". "+gpu.description).join("</li><li>") + "</li>"
+          gpusConf.warnings = "A minimum of 1 GPU is required in the host to ensure that host has at least 1 GPU available.<p>GPU's isolated currently <ol>"+listItems+"</ol></p>";
+          gpusFormControl.setErrors({ maxPCIIds: true})
         } else {
-          isolatedGpuPciIdsConf.warnings = null;
-          isolatedGpuPciIdsControl.setErrors(null);
-          isolatedGpuPciIdsControl.setErrors({required: true});
+          gpusConf.warnings = null;
+          gpusFormControl.setErrors(null);
         }
       });
 
@@ -1009,17 +1007,20 @@ export class VMWizardComponent {
       ]
     }
 
-    if(value.gpu) {
-      const gpuIndex = this.gpus.findIndex(gpu => gpu.addr.pci_slot == value.gpu);
-      vmPayload["devices"].push(...this.gpus[gpuIndex].devices.map(gpuDevice => {
-        const device = {
-          dtype: "PCI",
-          attributes: {
-            pptdev: gpuDevice.vm_pci_slot
-          }
-        };
-        return device;
-      }))
+    if(value.gpus) {
+      value.isolated_gpu_pci_ids = []
+      for(let gpuPciSlot of value.gpus) {
+        value.isolated_gpu_pci_ids.push(gpuPciSlot);
+        const gpuIndex = this.gpus.findIndex(gpu => gpu.addr.pci_slot == gpuPciSlot);
+        vmPayload["devices"].push(...this.gpus[gpuIndex].devices.map(gpuDevice => {
+          return {
+            dtype: "PCI",
+            attributes: {
+              pptdev: gpuDevice.vm_pci_slot
+            }
+          };
+        }));
+      }
     }
 
     if (value.enable_display) {
