@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators, FormControl, ValidationErrors } from "@angular/forms";
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Subscription } from 'rxjs/Subscription';
 
 import * as _ from 'lodash';
@@ -30,7 +31,7 @@ export class ExtentFormComponent {
   protected entityForm: EntityFormComponent;
   protected isNew: boolean = false;
   public sub: Subscription;
-  protected originalFilesize;
+  protected originalFilesize: number;
 
   public fieldSets: FieldSet[] = [
     {
@@ -256,7 +257,7 @@ export class ExtentFormComponent {
   protected extent_disk_control: any;
   protected pk: string;
   protected avail_threshold_field: any;
-  protected fieldConfig;
+  protected fieldConfig: FieldConfig[];
 
   constructor(protected router: Router,
               protected aroute: ActivatedRoute,
@@ -297,13 +298,13 @@ export class ExtentFormComponent {
     })
 
     this.extent_type_control = entityForm.formGroup.controls['type'];
-    this.extent_type_control.valueChanges.subscribe((value) => {
+    this.extent_type_control.valueChanges.subscribe((value: any) => {
       this.formUpdate(value);
     });
 
     this.avail_threshold_field = _.find(this.fieldConfig, {'name': 'avail_threshold'});
     this.extent_disk_control = entityForm.formGroup.controls['disk'];
-    this.extent_disk_control.valueChanges.subscribe((value) => {
+    this.extent_disk_control.valueChanges.subscribe((value: any) => {
       // zvol
       if (_.startsWith(value, 'zvol')) {
         this.avail_threshold_field.isHidden = false;
@@ -320,7 +321,7 @@ export class ExtentFormComponent {
     }
   }
 
-  formUpdate (type) {
+  formUpdate (type: string) {
     const isDevice = type == 'FILE' ? false : true;
 
     this.fileFieldGroup.forEach(field => {
@@ -346,7 +347,7 @@ export class ExtentFormComponent {
     });
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     this.originalFilesize = parseInt(data.filesize, 10);
     if (data.type == 'DISK') {
       if (_.startsWith(data['path'], 'zvol')) {
@@ -360,7 +361,7 @@ export class ExtentFormComponent {
     return data;
   }
 
-  customEditCall(value) {
+  customEditCall(value: any) {
     this.loader.open();
     if (value['type'] == 'DISK') {
       value['path'] = value['disk'];
@@ -378,14 +379,14 @@ export class ExtentFormComponent {
 
   }
 
-  beforeSubmit(data) {
+  beforeSubmit(data: any) {
     data.filesize = this.storageService.convertHumanStringToNum(data.filesize, true);
     if (this.pk === undefined || this.originalFilesize !== data.filesize) {
       data.filesize = data.filesize == 0 ? data.filesize : (data.filesize + (data.blocksize - data.filesize%data.blocksize));
     }
   }
 
-  blurFilesize(parent){
+  blurFilesize(parent: any){
     if (parent.entityForm) {
         parent.entityForm.formGroup.controls['filesize'].setValue(parent.storageService.humanReadable);
     }

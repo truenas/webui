@@ -83,7 +83,7 @@ export class SnapshotAddComponent implements AfterViewInit, Formconfiguration {
     this.ws.call("pool.dataset.query", [[["pool", "!=", "freenas-boot"], ["pool", "!=", "boot-pool"]],
      {"extra": {"flat": false}}]).subscribe((res) => {
       const rows = new EntityUtils().flattenData(res);
-      
+
       rows.forEach((dataItem) => {
         if (typeof (dataItem.name) !== 'undefined' && dataItem.name.length > 0) {
           this.fieldConfig[0].options.push({
@@ -117,21 +117,21 @@ export class SnapshotAddComponent implements AfterViewInit, Formconfiguration {
     const nameConfig = this.fieldConfig.find(config => config.name === 'name');
     const namingSchemaControl = this.entityForm.formGroup.get('naming_schema');
 
-    this.nameValidator = (nc: FormControl): { [error_key: string]: string } | null => {  
+    this.nameValidator = (nc: FormControl): { [error_key: string]: string } | null => {
       if (!!nc.value && !!namingSchemaControl.value) {
         nameConfig.hasErrors = nc.touched;
         return {
           duplicateNames: T('Name and Naming Schema cannot be provided at the same time.')
         }
       }
-  
+
       if (!nc.value && !namingSchemaControl.value) {
         nameConfig.hasErrors = nc.touched;
         return {
           nameRequired: T('Name or Naming Schema must be provided.')
         }
       }
-  
+
       nameConfig.hasErrors = false;
       return null;
     }
@@ -139,7 +139,7 @@ export class SnapshotAddComponent implements AfterViewInit, Formconfiguration {
     nameControl.setValidators(this.nameValidator.bind(this));
   }
 
-  beforeSubmit(snapshot): void {
+  beforeSubmit(snapshot: any): void {
     if (!snapshot.name) {
       delete snapshot.name;
     } else if (!snapshot.naming_schema) {

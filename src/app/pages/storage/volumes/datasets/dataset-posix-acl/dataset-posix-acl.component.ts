@@ -3,10 +3,13 @@ import {
   OnDestroy,
 } from '@angular/core';
 import {
+  FormControl,
   FormGroup,
 } from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import { Option } from 'app/interfaces/option.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 
@@ -297,11 +300,11 @@ export class DatasetPosixAclComponent implements OnDestroy {
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
     this.recursive = entityEdit.formGroup.controls['recursive'];
-    this.recursive_subscription = this.recursive.valueChanges.subscribe((value) => {
+    this.recursive_subscription = this.recursive.valueChanges.subscribe((value: any) => {
       if (value === true) {
         this.dialogService.confirm(helptext.dataset_acl_recursive_dialog_warning,
          helptext.dataset_acl_recursive_dialog_warning_message)
-        .subscribe((res) => {
+        .subscribe((res: boolean) => {
           if (!res) {
             this.recursive.setValue(false);
           }
@@ -316,7 +319,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
 
     this.aces_fc = _.find(this.fieldConfig, {"name": "aces"});
     this.aces = this.entityForm.formGroup.controls['aces'];
-    this.aces_subscription = this.aces.valueChanges.subscribe(res => {
+    this.aces_subscription = this.aces.valueChanges.subscribe((res: any) => {
       let controls;
       let user_fc;
       let group_fc;
@@ -357,7 +360,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
     });
   }
 
-  setDisabled(fieldConfig, formControl, disable, hide) {
+  setDisabled(fieldConfig: FieldConfig, formControl: FormControl, disable: boolean, hide: boolean) {
     fieldConfig.disabled = disable;
     fieldConfig['isHidden'] = hide;
     if (formControl && formControl.disabled !== disable) {
@@ -367,13 +370,13 @@ export class DatasetPosixAclComponent implements OnDestroy {
     }
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     if (data.acl.length === 0) {
       setTimeout(() => {
         this.handleEmptyACL();
       }, 1000)
     }
-    return {"aces": []};
+    return {"aces": [] as any};
   }
 
   handleEmptyACL() {
@@ -384,7 +387,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
     })
   }
 
-  async dataHandler(entityForm, defaults?) {
+  async dataHandler(entityForm: any, defaults?: any) {
     entityForm.formGroup.controls['aces'].reset();
     entityForm.formGroup.controls['aces'].controls = [];
     this.aces_fc.listFields = [];
@@ -396,14 +399,14 @@ export class DatasetPosixAclComponent implements OnDestroy {
     if (defaults) {
       res.acl = defaults;
     }
-    const user = await this.userService.getUserObject(res.uid);
+    const user: any = await this.userService.getUserObject(res.uid);
     if (user && user.pw_name) {
       entityForm.formGroup.controls['uid'].setValue(user.pw_name);
     } else {
       entityForm.formGroup.controls['uid'].setValue(res.uid);
       this.uid_fc.warnings = helptext.user_not_found;
     }
-    const group = await this.userService.getGroupObject(res.gid);
+    const group: any = await this.userService.getGroupObject(res.gid);
     if (group && group.gr_name) {
       entityForm.formGroup.controls['gid'].setValue(group.gr_name);
     } else {
@@ -411,7 +414,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
       this.gid_fc.warnings = helptext.group_not_found;
     }
     let data = res.acl;
-    let acl;
+    let acl: any;
     if (!data.length) {
       data = [data];
     }
@@ -427,7 +430,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
         }
       }
       if (acl.tag === 'USER') {
-        const usr = await this.userService.getUserObject(data[i].id);
+        const usr: any = await this.userService.getUserObject(data[i].id);
         if (usr && usr.pw_name) {
           acl.user = usr.pw_name;
         } else {
@@ -435,7 +438,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
           acl['user_not_found'] = true;
         }
       } else if (acl.tag === 'GROUP') {
-        const grp = await this.userService.getGroupObject(data[i].id);
+        const grp: any = await this.userService.getGroupObject(data[i].id);
         if (grp && grp.gr_name) {
           acl.group = grp.gr_name;
         } else {
@@ -474,10 +477,10 @@ export class DatasetPosixAclComponent implements OnDestroy {
     this.aces_subscription.unsubscribe();
   }
 
-  beforeSubmit(data) {
+  beforeSubmit(data: any) {
     const dacl = [];
     for (let i = 0; i < data.aces.length; i++) {
-      const d = {};
+      const d: any = {};
       const acl = data.aces[i];
       d['tag'] = acl.tag;
       d['id'] = -1;
@@ -502,7 +505,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
     data['dacl'] = dacl;
   }
 
-  async customSubmit(body) {
+  async customSubmit(body: any) {
     body.uid = body.apply_user ? body.uid : null;
     body.gid = body.apply_group ? body.gid : null;
 
@@ -566,19 +569,19 @@ export class DatasetPosixAclComponent implements OnDestroy {
         }
       }]);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((res) => {
+    this.dialogRef.componentInstance.success.subscribe(() => {
       this.entityForm.success = true;
       this.dialogRef.close();
       this.router.navigate(new Array('/').concat(
         this.route_success));
     });
-    this.dialogRef.componentInstance.failure.subscribe((res) => {
+    this.dialogRef.componentInstance.failure.subscribe(() => {
     });
   }
 
-  updateGroupSearchOptions(value = "", parent, config) {
-    parent.userService.groupQueryDSCache(value).subscribe(items => {
-      const groups = [];
+  updateGroupSearchOptions(value = "", parent: any, config: FieldConfig) {
+    parent.userService.groupQueryDSCache(value).subscribe((items: any[]) => {
+      const groups: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         groups.push({label: items[i].group, value: items[i].group});
       }
@@ -586,9 +589,9 @@ export class DatasetPosixAclComponent implements OnDestroy {
     });
   }
 
-  updateUserSearchOptions(value = "", parent, config) {
-    parent.userService.userQueryDSCache(value).subscribe(items => {
-      const users = [];
+  updateUserSearchOptions(value = "", parent: any, config: FieldConfig) {
+    parent.userService.userQueryDSCache(value).subscribe((items: any[]) => {
+      const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({label: items[i].username, value: items[i].username});
       }
@@ -610,7 +613,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
       // warning:helptext.stripACL_dialog.warning,
       saveButtonText: helptext.dataset_acl_stripacl_placeholder,
       parent: this,
-      customSubmit: (entityDialog) => {
+      customSubmit: (entityDialog: EntityDialogComponent) => {
         entityDialog.dialogRef.close();
 
         this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Stripping ACLs") }});
@@ -624,13 +627,13 @@ export class DatasetPosixAclComponent implements OnDestroy {
             }
           }]);
         this.dialogRef.componentInstance.submit();
-        this.dialogRef.componentInstance.success.subscribe((res) => {
+        this.dialogRef.componentInstance.success.subscribe(() => {
           this.entityForm.success = true;
           this.dialogRef.close();
           this.router.navigate(new Array('/').concat(
             this.route_success));
         });
-        this.dialogRef.componentInstance.failure.subscribe((err) => {
+        this.dialogRef.componentInstance.failure.subscribe((err: any) => {
           new EntityUtils().handleWSError(this.entityForm, err);
         });
       }
@@ -638,8 +641,8 @@ export class DatasetPosixAclComponent implements OnDestroy {
     this.dialogService.dialogFormWide(conf);
   }
 
-  loadMoreOptions(length, parent, searchText, config) {
-    parent.userService.userQueryDSCache(searchText, length).subscribe(items => {
+  loadMoreOptions(length: number, parent: any, searchText: string, config: FieldConfig) {
+    parent.userService.userQueryDSCache(searchText, length).subscribe((items: any[]) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -652,8 +655,8 @@ export class DatasetPosixAclComponent implements OnDestroy {
     });
   }
 
-  loadMoreGroupOptions(length, parent, searchText, config) {
-    parent.userService.groupQueryDSCache(searchText, false, length).subscribe(items => {
+  loadMoreGroupOptions(length: number, parent: any, searchText: string, config: FieldConfig) {
+    parent.userService.groupQueryDSCache(searchText, false, length).subscribe((items: any[]) => {
       const groups: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         groups.push({ label: items[i].group, value: items[i].group });
