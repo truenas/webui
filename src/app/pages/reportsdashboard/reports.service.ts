@@ -23,7 +23,6 @@ export class ReportsService implements OnDestroy {
   private reportsUtils: Worker;
 
   constructor(private ws: WebSocketService, private core:CoreService) {
-    //@ts-ignore
     this.reportsUtils = new Worker('./reports-utils.worker',{ type: 'module' });
 
     core.register({observerClass: this, eventName:"ReportDataRequest"}).subscribe((evt:CoreEvent) => {

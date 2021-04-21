@@ -6,8 +6,8 @@
 const debug:boolean = true;
 
 const maxDecimals = (input, max?) => {
-  if(!max){ 
-    max = 2; 
+  if(!max){
+    max = 2;
   }
   const str = input.toString().split(".");
   if(!str[1]){
@@ -26,7 +26,7 @@ function arrayAvg(input){
 }
 
 function avgFromReportData(input){
-  let output = []; 
+  let output = [];
   input.forEach((item, index) => {
     let avg = arrayAvg(item);
     output.push([avg]);
@@ -86,29 +86,29 @@ function  convertKMGT(input: number, units: string, fixed?: number){
     shortName = shortName.replace(/i/, '').trim();
     shortName = ` ${shortName.charAt(0).toUpperCase()}${shortName.substr(1).toLowerCase()}`;
   }
- 
+
   //if(fixed && fixed !== -1){
   //  return [output.toFixed(fixed), prefix];
   //} else {
   //  return [output.toString(), prefix];
   //}
-  
-  return { value: output, prefix: prefix, shortName: shortName }; 
+
+  return { value: output, prefix: prefix, shortName: shortName };
 }
 
 function convertByKilo(input){
   if(typeof input !== 'number'){return input}
   let output = input;
-  let prefix: string = ''; 
+  let prefix: string = '';
   let suffix = '';
 
-  if(input >= 1000000){    
+  if(input >= 1000000){
     output = input / 1000000;
     suffix = 'm';
   } else if(input < 1000000 && input >= 1000 ){
     output = input / 1000;
     suffix = 'k';
-  } 
+  }
 
   return { value: output, suffix: suffix , shortName:''};
 }
@@ -146,7 +146,7 @@ function convertAggregations(input, labelY?){
 
   keys.forEach((key) => {
     //output.aggregations[key].map((v) => formatValue(v , units) )
-    output.aggregations[key].forEach((v, index) => { 
+    output.aggregations[key].forEach((v, index) => {
       output.aggregations[key][index] = formatValue(v , units) ;
     });
   });
@@ -262,10 +262,10 @@ function avgCpuTempReport(report){
 
   //Handle Aggregations
   const keys = Object.keys(output.aggregations);
-  keys.forEach((key, index) =>{ 
+  keys.forEach((key, index) =>{
     output.aggregations[key] = [arrayAvg(output.aggregations[key])];
   });
-  
+
   return output;
 }
 
@@ -329,7 +329,6 @@ function processCommands(list){
 }
 
 function emit(evt){
-//@ts-ignore
   postMessage(evt);
 }
 

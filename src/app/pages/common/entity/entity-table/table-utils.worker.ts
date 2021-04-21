@@ -7,8 +7,8 @@
 const tableUtils = {
   debug: true,
   maxDecimals: (input, max?) => {
-    if(!max){ 
-      max = 2; 
+    if(!max){
+      max = 2;
     }
     const str = input.toString().split(".");
     if(!str[1]){
@@ -25,7 +25,7 @@ const tableUtils = {
     return maxDecimals(avg);
   },
   avgFromReportData: (input) => {
-    let output = []; 
+    let output = [];
     input.forEach((item, index) => {
       let avg = arrayAvg(item);
       output.push([avg]);
@@ -44,11 +44,11 @@ const tableUtils = {
     } else if(label.toLowerCase().includes("bits")){
       units = "bits";
     }
-  
+
     if(typeof units == 'undefined'){
       console.warn("Could not infer units from " + label);
     }
-  
+
     return units;
   },
   convertKMGT: (input: number, units: string, fixed?: number) => {
@@ -56,11 +56,11 @@ const tableUtils = {
     const mega = kilo * 1024;
     const giga = mega * 1024;
     const tera = giga * 1024;
-  
+
     let prefix: string = '';
     let shortName: string = '';
     let output: number = input;
-  
+
     if(input > tera){
       prefix = "Tera";
       shortName = " TiB"
@@ -78,35 +78,35 @@ const tableUtils = {
       shortName = " KiB"
       output = input / kilo;
     }
-  
+
     if(units == 'bits'){
       shortName = shortName.replace(/i/, '');
       shortName = shortName.toLowerCase();
     }
-    
-    return { value: output, prefix: prefix, shortName: shortName }; 
+
+    return { value: output, prefix: prefix, shortName: shortName };
   },
   convertByKilo: (input) => {
     if(typeof input !== 'number'){return input}
     let output = input;
-    let prefix: string = ''; 
+    let prefix: string = '';
     let suffix = '';
-  
-    if(input >= 1000000){    
+
+    if(input >= 1000000){
       output = input / 1000000;
       suffix = 'm';
     } else if(input < 1000000 && input >= 1000 ){
       output = input / 1000;
       suffix = 'k';
-    } 
-  
+    }
+
     return { value: output, suffix: suffix , shortName:''};
   },
   formatValue: (value: number, units: string, fixed?: number) => {
     let output = value;
     if(!fixed){ fixed = -1; }
     if(typeof value !== 'number'){ return value;}
-  
+
     let converted;
     switch(units.toLowerCase()){
       case "bits":
@@ -124,17 +124,17 @@ const tableUtils = {
         return typeof output == 'number' ? maxDecimals(converted.value).toString() + converted.suffix : value ;//[this.limitDecimals(value), ''];
         //break;
     }
-  
+
     return output; //? output : value;
   },
   convertAggregations: (input, labelY?) => {
     let output = Object.assign({}, input);
     const units = inferUnits(labelY);
     const keys = Object.keys(output.aggregations);
-  
+
     keys.forEach((key) => {
       //output.aggregations[key].map((v) => formatValue(v , units) )
-      output.aggregations[key].forEach((v, index) => { 
+      output.aggregations[key].forEach((v, index) => {
         output.aggregations[key][index] = formatValue(v , units) ;
       });
     });
@@ -155,7 +155,6 @@ function processTableCommands(list){
 }
 
 function tableUtilsEmit(evt){
-//@ts-ignore
   postMessage(evt);
 }
 

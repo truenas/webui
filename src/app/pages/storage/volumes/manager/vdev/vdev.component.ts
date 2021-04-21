@@ -20,27 +20,26 @@ export class VdevComponent implements OnInit {
   @Input() index: any;
   @Input() group: string;
   @Input() manager: any;
-  @Input() initial_values = {};
-  @ViewChild('dnd', { static: true}) dnd;
+  @Input() initial_values: any = {};
   @ViewChild(DatatableComponent, { static: false}) table: DatatableComponent;
   public type: string;
   public removable: boolean = true;
   public disks: Array<any> = [];
   public selected: Array < any > = [];
   public id: number;
-  public size;
+  public size: number;
   public rawSize = 0;
-  public firstdisksize;
-  public error;
+  public firstdisksize: number;
+  public error: any;
   public diskSizeErrorMsg = helptext.vdev_diskSizeErrorMsg;
   public vdev_type_tooltip = helptext.vdev_type_tooltip;
   public vdev_size_error = helptext.vdev_size_error;
   public vdev_size_error_2 = helptext.vdev_size_error_2;
-  public vdev_disks_error;
-  public vdev_disks_size_error;
+  public vdev_disks_error: any;
+  public vdev_disks_size_error: any;
   public vdev_type_disabled = false;
   private ten_mib = 10 * 1024 * 1024;
-  protected mindisks = {'stripe': 1, 'mirror':2, 'raidz':3, 'raidz2':4, 'raidz3':5}
+  protected mindisks: any = {'stripe': 1, 'mirror':2, 'raidz':3, 'raidz2':4, 'raidz3':5}
 
   public startingHeight: any;
   public expandedRows: any;
@@ -75,7 +74,9 @@ export class VdevComponent implements OnInit {
     if (this.type === undefined) {
       this.type = this.manager.first_data_vdev_type;
     }
-    return helptext.vdev_types[this.type];
+
+    // TODO: Enum
+    return helptext.vdev_types[this.type as keyof typeof helptext.vdev_types];
   }
 
   getTitle() {
@@ -174,7 +175,7 @@ export class VdevComponent implements OnInit {
     this.size = (<any>window).filesize(estimate, {standard : "iec"});
   }
 
-  onSelect({ selected }) {
+  onSelect({ selected }: any) {
     this.selected.splice(0, this.selected.length);
     this.selected.push(...selected);
   }
@@ -197,7 +198,7 @@ export class VdevComponent implements OnInit {
 
   getDisks() { return this.disks; }
 
-  onTypeChange(e) {
+  onTypeChange() {
     this.estimateSize();
     this.manager.getCurrentLayout();
     //console.log(e, this.group);
@@ -214,17 +215,17 @@ export class VdevComponent implements OnInit {
     this.manager.removeVdev(this);
   }
 
-  reorderEvent(event) {
+  reorderEvent(event: any) {
     let sort = event.sorts[0],
       rows = this.disks;
     this.sorter.tableSorter(rows, sort.prop, sort.dir);
   }
 
-  toggleExpandRow(row) {
+  toggleExpandRow(row: any) {
     //console.log('Toggled Expand Row!', row);
     if (!this.startingHeight) {
       this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
-    }  
+    }
     this.table.rowDetail.toggleExpandRow(row);
     setTimeout(() => {
       this.expandedRows = (document.querySelectorAll('.datatable-row-detail').length);
@@ -232,6 +233,6 @@ export class VdevComponent implements OnInit {
       const heightStr = `height: ${newHeight}px`;
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
     }, 100)
-    
+
   }
 }
