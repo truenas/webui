@@ -30,7 +30,7 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
         time.sleep(1)
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver,  10, '//input[@placeholder="Username"]')
+        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
         driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
         driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
