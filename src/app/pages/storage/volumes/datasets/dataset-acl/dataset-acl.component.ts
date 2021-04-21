@@ -497,7 +497,7 @@ export class DatasetAclComponent implements OnDestroy {
       }
     }
 
-    return data; // stupid hacky thing that gets around entityForm's treatment of data
+    return data;
   }
 
   async dataHandler(entityForm, defaults?) {
