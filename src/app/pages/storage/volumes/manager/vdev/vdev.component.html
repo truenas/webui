@@ -7,11 +7,11 @@
     <ngx-datatable
         id="vdev__disk-table"
         #table
-        class="material ml-1 mt-1 mb-1 mr-1 mat-box-shadow" 
-        [rows]="getDisks()" 
-        [headerHeight]="50" 
+        class="material ml-1 mt-1 mb-1 mr-1 mat-box-shadow"
+        [rows]="getDisks()"
+        [headerHeight]="50"
         [rowHeight]="50"
-        [footerHeight]="'auto'" 
+        [footerHeight]="'auto'"
         [limit]="10"
         [selected] = "selected"
         [selectionType]="'checkbox'"
@@ -31,7 +31,7 @@
                 <mat-checkbox id="vdev__disk-table-checkall-{{group}}-{{index}}" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
               </div>
             </ng-template>
-    
+
             <ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-rowIndex="rowIndex" let-onCheckboxChangeFn="onCheckboxChangeFn">
               <div>
                 <mat-checkbox id="vdev__disks-{{disks[rowIndex] ? disks[rowIndex].devname : rowIndex}}" [checked]="isSelected" (change)="onCheckboxChangeFn($event)">&nbsp;</mat-checkbox>
@@ -46,17 +46,17 @@
              [draggable]="false"
              [resizeable]="false">
         </ngx-datatable-column> -->
-        <ngx-datatable-column 
+        <ngx-datatable-column
           [width]="165"
-          name="{{'Disk' | translate}}" 
+          name="{{'Disk' | translate}}"
           prop="devname"></ngx-datatable-column>
         <ngx-datatable-column
           [width]="100"
           name="{{'Type' | translate}}"
           prop="type"></ngx-datatable-column>
-        <ngx-datatable-column 
-          [width]="120"       
-          name="{{'Capacity' | translate}}" 
+        <ngx-datatable-column
+          [width]="120"
+          name="{{'Capacity' | translate}}"
           prop="capacity"></ngx-datatable-column>
         <ngx-datatable-column
           [width]="50"
@@ -104,4 +104,4 @@
 </div>
 </div>
 
-    
+
