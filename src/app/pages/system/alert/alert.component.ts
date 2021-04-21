@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Option } from 'app/interfaces/option.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -20,7 +21,7 @@ interface AlertCategory {
     title: string;
     level: string;
   }[];
-} 
+}
 
 /**
  * This form is unlike other forms in the app which make use of EntityForm.
@@ -41,8 +42,8 @@ export class AlertConfigComponent implements OnInit {
   protected isEntity = true;
   public fieldSets: FieldSets;
   public fieldConfig: FieldConfig[] = [];
-  protected settingOptions: any = [];
-  protected warningOptions: any = [
+  protected settingOptions: Option[] = [];
+  protected warningOptions: Option[] = [
     {label: "INFO", value: "INFO"},
     {label: "NOTICE", value: "NOTICE"},
     {label: "WARNING", value: "WARNING"},
@@ -59,7 +60,7 @@ export class AlertConfigComponent implements OnInit {
   public selectedIndex = 0;
 
   constructor(
-    protected core:CoreService, 
+    protected core:CoreService,
     private ws: WebSocketService,
     private entityFormService: EntityFormService,
     protected loader: AppLoaderService,
@@ -80,7 +81,7 @@ export class AlertConfigComponent implements OnInit {
       this.loader.close();
       new EntityUtils().handleWSError(this, error, this.dialog);
     });
-  
+
     const sets: FieldSet[] = [];
 
     const cat = this.ws.call("alert.list_categories").toPromise();
@@ -128,7 +129,7 @@ export class AlertConfigComponent implements OnInit {
           width: "100%",
           config: config
         }
-      
+
         sets.push(fieldSet);
 
       });

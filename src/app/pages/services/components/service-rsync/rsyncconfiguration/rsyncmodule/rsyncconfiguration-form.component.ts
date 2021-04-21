@@ -144,14 +144,14 @@ export class RYSNCConfigurationFormComponent {
         const accessSet = _.find(this.fieldSets, { name : helptext.rsyncd_fieldset_access });
 
         this.rsyncmod_user = accessSet.config.find(config => config.name === 'user');
-        this.userService.userQueryDSCache().subscribe((users) => {
+        this.userService.userQueryDSCache().subscribe((users: any[]) => {
             users.forEach((user) => {
                 this.rsyncmod_user.options.push({label : user.username, value : user.username})
             });
         });
 
         this.rsyncmod_group = accessSet.config.find(config => config.name === 'group');
-        this.userService.groupQueryDSCache().subscribe((groups) => {
+        this.userService.groupQueryDSCache().subscribe((groups: any[]) => {
             groups.forEach((group) => {
                 this.rsyncmod_group.options.push({label : group.group, value : group.group})
             });
@@ -183,8 +183,8 @@ export class RYSNCConfigurationFormComponent {
         };
     }
 
-    updateGroupSearchOptions(value = "", parent) {
-        parent.userService.groupQueryDSCache(value).subscribe(items => {
+    updateGroupSearchOptions(value = "", parent: any) {
+        parent.userService.groupQueryDSCache(value).subscribe((items: any[]) => {
             const groups = [];
             for (let i = 0; i < items.length; i++) {
                 groups.push({ label: items[i].group, value: items[i].group });
@@ -193,8 +193,8 @@ export class RYSNCConfigurationFormComponent {
         });
     }
 
-    updateUserSearchOptions(value = "", parent) {
-        parent.userService.userQueryDSCache(value).subscribe(items => {
+    updateUserSearchOptions(value = "", parent: any) {
+        parent.userService.userQueryDSCache(value).subscribe((items: any[]) => {
             const users = [];
             for (let i = 0; i < items.length; i++) {
                 users.push({ label: items[i].username, value: items[i].username });

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Option } from 'app/interfaces/option.interface';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import {FormBuilder, FormControl, FormGroup, FormArray, Validators} from '@angular/forms';
@@ -31,7 +32,7 @@ export class ChartReleaseEditComponent {
   private name: string;
   private getRow = new Subscription;
   private rowName: string;
-  private interfaceList: any[] = [];
+  private interfaceList: Option[] = [];
   private dialogRef: any;
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [

@@ -2,6 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { Option } from 'app/interfaces/option.interface';
 
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-permissions';
@@ -179,7 +180,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
     });
 
     this.userService.userQueryDSCache().subscribe(items => {
-      const users = [];
+      const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
       }
@@ -188,7 +189,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
     });
 
     this.userService.groupQueryDSCache().subscribe(items => {
-      const groups = [];
+      const groups: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         groups.push({ label: items[i].group, value: items[i].group });
       }

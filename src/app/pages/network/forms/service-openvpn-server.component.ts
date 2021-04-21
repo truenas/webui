@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { ServicesService, DialogService, AppLoaderService, WebSocketService, StorageService } from 'app/services';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
@@ -175,12 +176,12 @@ export class OpenvpnServerComponent {
             }
           ],
           saveButtonText: ('Submit'),
-          customSubmit: function (entityDialog) {
+          customSubmit: function (entityDialog: EntityDialogComponent) {
             self.ws.call('interface.websocket_local_ip').subscribe(localip => {
               const value = entityDialog.formValue;
               entityDialog.dialogRef.close(true);
               self.loader.open();
-              self.services.generateOpenServerClientConfig(value.client_certificate_id, 
+              self.services.generateOpenServerClientConfig(value.client_certificate_id,
                 localip).subscribe((key) => {
                 const filename = 'openVPNClientConfig.ovpn';
                 const blob = new Blob([key], {type: 'text/plain'});
@@ -205,14 +206,14 @@ export class OpenvpnServerComponent {
     protected ws: WebSocketService,
     protected storageService: StorageService,) { }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     data.server = `${data.server}/${data.netmask}`;
     return data;
   }
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
-    entityEdit.submitFunction = body => this.services.updateOpenVPN('openvpn.server.update', body); 
+    entityEdit.submitFunction = (body: any) => this.services.updateOpenVPN('openvpn.server.update', body);
 
     this.services.getClientInfo().subscribe((res) => {
       this.certID = res.client_certificate;
@@ -232,25 +233,25 @@ export class OpenvpnServerComponent {
           {label : `${item} ${res[item]}`, value : item});
       };
     });
-    this.services.getCerts().subscribe((res) => {
+    this.services.getCerts().subscribe((res: any[]) => {
       const config = this.fieldConfig.find(c => c.name === 'server_certificate');
       res.forEach((item) => {
         config.options.push({label: item.name, value: item.id})
       })
       this.certOptions = config.options;
     });
-    this.services.getCAs().subscribe((res) => {
+    this.services.getCAs().subscribe((res: any[]) => {
       const config = this.fieldConfig.find(c => c.name === 'root_ca');
       res.forEach((item) => {
         config.options.push({label: item.name, value: item.id})
       })
     });
-    entityEdit.formGroup.controls['server'].valueChanges.subscribe((res) => {
+    entityEdit.formGroup.controls['server'].valueChanges.subscribe((res: string) => {
       this.serverAddress = res;
     })
   }
 
-  beforeSubmit(data) {
+  beforeSubmit(data: any) {
     const serverInfo = data.server.split('/');
     data.server = serverInfo[0];
     data.netmask = parseInt(serverInfo[1]);

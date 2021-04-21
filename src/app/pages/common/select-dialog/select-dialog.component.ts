@@ -1,6 +1,7 @@
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Component, Output, EventEmitter} from '@angular/core';
+import { Option } from 'app/interfaces/option.interface';
 
 @Component({
   selector: 'app-select-dialog',
@@ -10,7 +11,7 @@ import { Component, Output, EventEmitter} from '@angular/core';
 export class SelectDialogComponent {
 
   public title: string;
-  public options: Array<{ label: string, value: string }>;
+  public options: Option[];
   public optionPlaceHolder: string;
   public method: string;
   public params: string;

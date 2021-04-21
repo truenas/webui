@@ -9,8 +9,6 @@ import * as _ from 'lodash';
 })
 export class ServiceRSYNCComponent implements OnInit {
 
-  @ViewChild('tabGroup', { static: true}) tabGroup;
-
   public activedTab = 'configure';
   public navLinks: Array < any > = [{
       label: 'Configure',

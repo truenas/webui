@@ -7,6 +7,7 @@ import {
   FormGroup,
 } from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
+import { Option } from 'app/interfaces/option.interface';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 
@@ -868,7 +869,7 @@ export class DatasetAclComponent implements OnDestroy {
 
   loadMoreOptions(length, parent, searchText, config) {
     parent.userService.userQueryDSCache(searchText, length).subscribe(items => {
-      const users = [];
+      const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
       }
@@ -882,7 +883,7 @@ export class DatasetAclComponent implements OnDestroy {
 
   loadMoreGroupOptions(length, parent, searchText, config) {
     parent.userService.groupQueryDSCache(searchText, false, length).subscribe(items => {
-      const groups = [];
+      const groups: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         groups.push({ label: items[i].group, value: items[i].group });
       }

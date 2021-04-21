@@ -124,8 +124,8 @@ export class ServiceTFTPComponent {
     entityEdit.submitFunction = body => this.ws.call('tftp.update', [body]);
   }
 
-  updateUserSearchOptions(value = "", parent) {
-    parent.userService.userQueryDSCache(value).subscribe(items => {
+  updateUserSearchOptions(value = "", parent: any) {
+    parent.userService.userQueryDSCache(value).subscribe((items: any[]) => {
       const users = [];
       for (let i = 0; i < items.length; i++) {
         users.push({label: items[i].username, value: items[i].username});

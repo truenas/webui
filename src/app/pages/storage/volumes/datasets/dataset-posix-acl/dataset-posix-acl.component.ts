@@ -6,6 +6,7 @@ import {
   FormGroup,
 } from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
+import { Option } from 'app/interfaces/option.interface';
 import * as _ from 'lodash';
 import {Subscription} from 'rxjs';
 
@@ -176,7 +177,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
               type: 'checkbox',
               name: 'default',
               placeholder: helptext.posix_default.placeholder,
-              tooltip: helptext.posix_default.tooltip, 
+              tooltip: helptext.posix_default.tooltip,
               isHidden: false
             }
           ],
@@ -244,7 +245,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
   ];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-              protected aroute: ActivatedRoute, 
+              protected aroute: ActivatedRoute,
               protected ws: WebSocketService, protected userService: UserService,
               protected storageService: StorageService, protected dialogService: DialogService,
               protected loader: AppLoaderService, protected dialog: MatDialog) {}
@@ -303,7 +304,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
         .subscribe((res) => {
           if (!res) {
             this.recursive.setValue(false);
-          }   
+          }
         });
       }
     });
@@ -414,7 +415,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
     if (!data.length) {
       data = [data];
     }
-    
+
     for (let i = 0; i < data.length; i++) {
       acl = {};
       acl.tag = data[i].tag;
@@ -639,7 +640,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
 
   loadMoreOptions(length, parent, searchText, config) {
     parent.userService.userQueryDSCache(searchText, length).subscribe(items => {
-      const users = [];
+      const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
       }
@@ -653,7 +654,7 @@ export class DatasetPosixAclComponent implements OnDestroy {
 
   loadMoreGroupOptions(length, parent, searchText, config) {
     parent.userService.groupQueryDSCache(searchText, false, length).subscribe(items => {
-      const groups = [];
+      const groups: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         groups.push({ label: items[i].group, value: items[i].group });
       }

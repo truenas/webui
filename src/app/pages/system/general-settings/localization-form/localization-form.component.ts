@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
+import { Option } from 'app/interfaces/option.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -19,8 +20,8 @@ export class LocalizationFormComponent implements OnDestroy{
   protected queryCall = 'none';
   protected updateCall = 'system.general.update';
   public sortLanguagesByName = true;
-  public languageList: { label: string; value: string }[] = [];
-  public languageKey: string;  
+  public languageList: Option[] = [];
+  public languageKey: string;
   private dateTimeChangeSubscription: Subscription;
   private getDataFromDash: Subscription;
   public title = helptext.localeTitle;
@@ -102,7 +103,7 @@ export class LocalizationFormComponent implements OnDestroy{
     private sysGeneralService: SystemGeneralService,
     public localeService: LocaleService,
     private modalService: ModalService
-  ) {     
+  ) {
       this.getDataFromDash = this.sysGeneralService.sendConfigData$.subscribe(res => {
         this.configData = res;
       })
@@ -128,7 +129,7 @@ export class LocalizationFormComponent implements OnDestroy{
         .config.find(config => config.name === "timezone").options = tzChoices;
         this.entityForm.formGroup.controls['timezone'].setValue(this.configData.timezone);
     });
- 
+
     entityEdit.formGroup.controls['language_sort'].valueChanges.subscribe((res)=> {
       res ? this.sortLanguagesByName = true : this.sortLanguagesByName = false;
       this.makeLanguageList();
@@ -170,7 +171,7 @@ export class LocalizationFormComponent implements OnDestroy{
   makeLanguageList() {
     this.sysGeneralService.languageChoices().subscribe((res) => {
       this.languageList = res
-      let options = 
+      let options =
         Object.keys(this.languageList || {}).map(key => ({
           label: this.sortLanguagesByName
             ? `${this.languageList[key]} (${key})`
@@ -186,7 +187,7 @@ export class LocalizationFormComponent implements OnDestroy{
       this.entityForm.formGroup.controls['language'].setValue(this.configData.language);
     });
   }
-   
+
   beforeSubmit(value) {
     delete value.language_sort;
     value.language = this.languageKey;

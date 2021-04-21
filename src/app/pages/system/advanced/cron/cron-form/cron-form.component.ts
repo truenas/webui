@@ -1,4 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
+import { Option } from 'app/interfaces/option.interface';
 
 import * as _ from 'lodash';
 
@@ -110,7 +111,7 @@ export class CronFormComponent {
 
   updateUserSearchOptions(value = '', parent) {
     parent.userService.userQueryDSCache(value).subscribe((items) => {
-      const users = [];
+      const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
       }

@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { Option } from 'app/interfaces/option.interface';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -40,7 +41,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
   protected acmeAddComponent: CertificateAcmeAddComponent;
   protected acmeDNSComponent: AcmednsFormComponent;
   private downloadActions: any;
-  private unsignedCAs: any[] = [];
+  private unsignedCAs: Option[] = [];
   private caId: any;
 
   constructor(private modalService: ModalService, private router: Router, private route: ActivatedRoute,

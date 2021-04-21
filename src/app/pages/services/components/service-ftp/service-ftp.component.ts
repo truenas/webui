@@ -24,7 +24,7 @@ export class ServiceFTPComponent implements OnInit {
   protected rootloginSubscription: any;
   protected warned = false;
   protected rootlogin: boolean;
-  protected fieldConfig;
+  protected fieldConfig: any;
   public title = helptext.formTitle;
 
   protected bwFields = ['localuserbw', 'localuserdlbw', 'anonuserbw', 'anonuserdlbw'];
@@ -414,10 +414,10 @@ export class ServiceFTPComponent implements OnInit {
     this.entityForm = entityEdit;
     entityEdit.submitFunction = this.submitFunction;
     this.rootlogin_fg = entityEdit.formGroup.controls['rootlogin'];
-    this.rootloginSubscription = 
-      this.rootlogin_fg.valueChanges.subscribe(res => {
+    this.rootloginSubscription =
+      this.rootlogin_fg.valueChanges.subscribe((res: any) => {
       if (res && !this.warned && !this.rootlogin) {
-        this.dialog.confirm(helptext.rootlogin_dialog_title, helptext.rootlogin_dialog_message, false, T('Continue'), false, '', null, {}, null, false, T('Cancel'), true).subscribe(confirm => {
+        this.dialog.confirm(helptext.rootlogin_dialog_title, helptext.rootlogin_dialog_message, false, T('Continue'), false, '', null, {}, null, false, T('Cancel'), true).subscribe((confirm: any) => {
           if (!confirm) {
             this.rootlogin_fg.setValue(false);
           } else {
@@ -430,8 +430,8 @@ export class ServiceFTPComponent implements OnInit {
       }
     });
 
-    this.bwFields.forEach(field => 
-      entityEdit.formGroup.controls[field].valueChanges.subscribe((value) => {
+    this.bwFields.forEach(field =>
+      entityEdit.formGroup.controls[field].valueChanges.subscribe((value: any) => {
         const formField = _.find(this.fieldConfig, { name: field });
         const filteredValue = value ? this.storageService.convertHumanStringToNum(value, false, 'kmgtp') : undefined;
         formField['hasErrors'] = false;
@@ -441,14 +441,14 @@ export class ServiceFTPComponent implements OnInit {
           formField['errors'] = helptext.bandwidth_err;
         };
       }));
-    
-    // 'Erase' humanReadable after load to keep from accidentaly resetting values 
+
+    // 'Erase' humanReadable after load to keep from accidentaly resetting values
     setTimeout(() => {
       this.storageService.humanReadable = '';
     }, 1000)
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     this.bwFields.forEach(field =>
       data[field] = this.storageService.convertBytestoHumanReadable(data[field] * 1024, 0, 'KiB'));
     this.rootlogin = data['rootlogin'];
@@ -474,8 +474,8 @@ export class ServiceFTPComponent implements OnInit {
     return data;
   }
 
-  beforeSubmit(data) {
-    this.bwFields.forEach(field => 
+  beforeSubmit(data: any) {
+    this.bwFields.forEach(field =>
       data[field] = this.storageService.convertHumanStringToNum(data[field])/1024);
 
     let fileperm = parseInt(data['filemask'], 8);
@@ -501,31 +501,31 @@ export class ServiceFTPComponent implements OnInit {
     this.rootloginSubscription.unsubscribe();
   }
 
-  blurEvent(parent) {
+  blurEvent(parent: any) {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'localuserbw');
     }
   }
 
-  blurEvent2(parent) {
+  blurEvent2(parent: any) {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'localuserdlbw');
     }
   }
 
-  blurEvent3(parent) {
+  blurEvent3(parent: any) {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'anonuserbw');
     }
   }
 
-  blurEvent4(parent) {
+  blurEvent4(parent: any) {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'anonuserdlbw');
     }
   }
 
-  transformValue(parent, fieldname: string) {
+  transformValue(parent: any, fieldname: string) {
     parent.entityForm.formGroup.controls[fieldname].setValue(parent.storageService.humanReadable || 0);
     // Clear humanReadable value to keep from accidentally setting it elsewhere
     parent.storageService.humanReadable = '';

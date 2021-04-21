@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from "@angular/forms";
+import { Option } from 'app/interfaces/option.interface';
 
 import * as _ from 'lodash';
 import { IscsiService, WebSocketService, AppLoaderService } from '../../../../../services/';
@@ -26,7 +27,7 @@ export class PortalFormComponent {
   protected isEntity = true;
 
   protected getValidOptions = this.iscsiService.getIpChoices().toPromise().then(res => {
-    const options = [];
+    const options: Option[] = [];
     for (const ip in res) {
       options.push({ label: res[ip], value: ip });
     }

@@ -1,5 +1,6 @@
 import { Component, IterableDiffers } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Option } from 'app/interfaces/option.interface';
 import * as _ from 'lodash';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -192,7 +193,7 @@ export class UserQuotaFormComponent {
 
   updateSearchOptions(value = "", parent) {
     parent.userService.userQueryDSCache(value).subscribe(items => {
-      const entries = [];
+      const entries: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         entries.push({ label: items[i].username, value: items[i].username });
       }

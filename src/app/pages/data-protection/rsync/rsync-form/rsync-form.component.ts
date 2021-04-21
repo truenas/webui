@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Option } from 'app/interfaces/option.interface';
 
 import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
@@ -289,7 +290,7 @@ export class RsyncFormComponent implements OnDestroy {
 
   updateUserSearchOptions(value = '', parent: any) {
     parent.userService.userQueryDSCache(value).subscribe((items: any) => {
-      const users = [];
+      const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
       }

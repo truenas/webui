@@ -3,6 +3,7 @@ import { FormControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
+import { Option } from 'app/interfaces/option.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -23,7 +24,7 @@ export class GuiFormComponent implements OnDestroy{
   protected queryCall = 'none';
   protected updateCall = 'system.general.update';
   public sortLanguagesByName = true;
-  public languageList: { label: string; value: string }[] = [];
+  public languageList: Option[] = [];
   public languageKey: string;
   private getDataFromDash: Subscription;
   public fieldConfig: FieldConfig[] = []
