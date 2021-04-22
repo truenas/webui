@@ -1,4 +1,10 @@
 {
-    "tslint.enable": true,
-    "vsicons.presets.angular": true
+  "vsicons.presets.angular": true,
+  "eslint.options": {
+    "extensions": [".ts", ".html"]
+  },
+  "eslint.validate": [
+    "typescript",
+    "html"
+  ]
 }

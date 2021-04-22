@@ -18,140 +18,147 @@ import helptext from '../../../../helptext/storage/volumes/volume-import-wizard'
 @Component({
   selector: 'app-volumeimport-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
-  providers : [ ]
+  providers: [],
 })
 export class VolumeImportWizardComponent {
-
-  public route_success: string[] = ['storage', 'pools'];
-  public route_create: string[] = ['storage', 'pools', 'manager'];
-  public summary = {};
+  route_success: string[] = ['storage', 'pools'];
+  route_create: string[] = ['storage', 'pools', 'manager'];
+  summary = {};
   isLinear = true;
   firstFormGroup: FormGroup;
   protected dialogRef: any;
   objectKeys = Object.keys;
-  summary_title = "Pool Import Summary";
-  public subs: any;
-  public saveSubmitText = T("Import");
-  public entityWizard: any;
+  summary_title = 'Pool Import Summary';
+  subs: any;
+  saveSubmitText = T('Import');
+  entityWizard: any;
   protected productType: any;
   protected importIndex = 2;
 
   protected wizardConfig: Wizard[] = [{
-      label: helptext.is_new_main_label,
-      fieldConfig: [
-        {
-          type: 'radio',
-          name: 'is_new',
-          placeholder: helptext.is_new_placeholder,
-          options: [
-            {label: helptext.is_new_option1_label,
-             name: 'create_new_pool_opt',
-             tooltip: helptext.is_new_option1_tooltip,
-             value: true},
-            {label: helptext.is_new_option2_label,
-             name: 'import_pool_opt',
-             tooltip: helptext.is_new_option2_tooltip,
-             value: false},
-          ],
-          value: true
-        },
-      ]
-    },
-    {
-      label: helptext.enctrypted_main_label,
-      fieldConfig: [
-        {
-          type: 'radio',
-          name: 'encrypted',
-          placeholder: helptext.enctypted_placeholder,
-          options: [
-            {label: helptext.encrypted_option1_label,
-             tooltip: helptext.encrypted_option1_tooltip,
-             value: false},
-            {label: helptext.encrypted_option2_label,
-             tooltip: helptext.encrypted_option2_tooltip,
-             value: true}
-          ],
-          value: false
-        },
-        {
-          type: 'select',
-          multiple: true,
-          name: 'devices',
-          placeholder: helptext.devices_placeholder,
-          validation : helptext.devices_validation,
-          tooltip: helptext.devices_tooltip,
-          required: true,
-          isHidden: true,
-          disabled: true,
-          options: [],
-          relation: [{
-            action: 'HIDE',
-            when: [{
-              name: 'encrypted',
-              value: false,
-            }]
-          }]
-        },
-        {
-          type: 'upload',
-          name: 'key',
-          placeholder: helptext.key_placeholder,
-          tooltip: helptext.key_tooltip,
-          fileLocation: '',
-          message: this.messageService,
-          updater: this.updater,
-          parent: this,
-          isHidden: true,
-          disabled: true,
-          hideButton: true,
-          relation: [{
-            action: 'HIDE',
-            when: [{
-              name: 'encrypted',
-              value: false,
-            }]
-          }]
-        },
-        {
-          type: 'input',
-          name: 'passphrase',
-          placeholder: helptext.passphrase_placeholder,
-          tooltip: helptext.passphrase_tooltip,
-          inputType: 'password',
-          togglePw: true,
-          isHidden: true,
-          disabled: true,
-          relation: [{
-            action: 'HIDE',
-            when: [{
-              name: 'encrypted',
-              value: false,
-            }]
-          }]
-        }
-      ]
-    },
-    {
-      label: helptext.import_label,
-      fieldConfig: [
-        {
-            type: 'select',
-            name: 'guid',
-            placeholder: helptext.guid_placeholder,
-            tooltip: helptext.guid_tooltip,
-            options: [],
-            validation : [ Validators.required ],
-            required: true,
-        }
-      ]
-    },
+    label: helptext.is_new_main_label,
+    fieldConfig: [
+      {
+        type: 'radio',
+        name: 'is_new',
+        placeholder: helptext.is_new_placeholder,
+        options: [
+          {
+            label: helptext.is_new_option1_label,
+            name: 'create_new_pool_opt',
+            tooltip: helptext.is_new_option1_tooltip,
+            value: true,
+          },
+          {
+            label: helptext.is_new_option2_label,
+            name: 'import_pool_opt',
+            tooltip: helptext.is_new_option2_tooltip,
+            value: false,
+          },
+        ],
+        value: true,
+      },
+    ],
+  },
+  {
+    label: helptext.enctrypted_main_label,
+    fieldConfig: [
+      {
+        type: 'radio',
+        name: 'encrypted',
+        placeholder: helptext.enctypted_placeholder,
+        options: [
+          {
+            label: helptext.encrypted_option1_label,
+            tooltip: helptext.encrypted_option1_tooltip,
+            value: false,
+          },
+          {
+            label: helptext.encrypted_option2_label,
+            tooltip: helptext.encrypted_option2_tooltip,
+            value: true,
+          },
+        ],
+        value: false,
+      },
+      {
+        type: 'select',
+        multiple: true,
+        name: 'devices',
+        placeholder: helptext.devices_placeholder,
+        validation: helptext.devices_validation,
+        tooltip: helptext.devices_tooltip,
+        required: true,
+        isHidden: true,
+        disabled: true,
+        options: [],
+        relation: [{
+          action: 'HIDE',
+          when: [{
+            name: 'encrypted',
+            value: false,
+          }],
+        }],
+      },
+      {
+        type: 'upload',
+        name: 'key',
+        placeholder: helptext.key_placeholder,
+        tooltip: helptext.key_tooltip,
+        fileLocation: '',
+        message: this.messageService,
+        updater: this.updater,
+        parent: this,
+        isHidden: true,
+        disabled: true,
+        hideButton: true,
+        relation: [{
+          action: 'HIDE',
+          when: [{
+            name: 'encrypted',
+            value: false,
+          }],
+        }],
+      },
+      {
+        type: 'input',
+        name: 'passphrase',
+        placeholder: helptext.passphrase_placeholder,
+        tooltip: helptext.passphrase_tooltip,
+        inputType: 'password',
+        togglePw: true,
+        isHidden: true,
+        disabled: true,
+        relation: [{
+          action: 'HIDE',
+          when: [{
+            name: 'encrypted',
+            value: false,
+          }],
+        }],
+      },
+    ],
+  },
+  {
+    label: helptext.import_label,
+    fieldConfig: [
+      {
+        type: 'select',
+        name: 'guid',
+        placeholder: helptext.guid_placeholder,
+        tooltip: helptext.guid_tooltip,
+        options: [],
+        validation: [Validators.required],
+        required: true,
+      },
+    ],
+  },
   ];
 
-  updater(file: any, parent: any){
+  updater(file: any, parent: any) {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
-      parent.subs = {"apiEndPoint":file.apiEndPoint, "file": fileBrowser.files[0]}
+      parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
     }
   }
 
@@ -182,7 +189,8 @@ export class VolumeImportWizardComponent {
   customNext(stepper) {
     if (this.isNew) {
       this.router.navigate(new Array('/').concat(
-        this.route_create));
+        this.route_create,
+      ));
     } else if (stepper._selectedIndex === (this.importIndex - 1)) {
       if (this.encrypted && this.encrypted.value) {
         this.decryptDisks(stepper);
@@ -197,38 +205,38 @@ export class VolumeImportWizardComponent {
 
   decryptDisks(stepper) {
     if (this.devices_fg.status === 'INVALID') {
-      this.dialogService.Info(T("Disk Selection Required"), T("Select one or more disks to decrypt."));
+      this.dialogService.Info(T('Disk Selection Required'), T('Select one or more disks to decrypt.'));
       return;
     }
     if (!this.subs) {
-      this.dialogService.Info(T("Encryption Key Required"), T("Select a key before decrypting the disks."));
+      this.dialogService.Info(T('Encryption Key Required'), T('Select a key before decrypting the disks.'));
     }
     const formData: FormData = new FormData();
-    let params = [this.devices_fg.value];
+    const params = [this.devices_fg.value];
     if (this.passphrase_fg.value != null) {
       params.push(this.passphrase_fg.value);
     }
     formData.append('data', JSON.stringify({
-      "method": "disk.decrypt",
-      "params": params
+      method: 'disk.decrypt',
+      params,
     }));
     formData.append('file', this.subs.file);
 
-    let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":helptext.decrypt_disks_title}, disableClose: true});
+    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: helptext.decrypt_disks_title }, disableClose: true });
     dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
-    dialogRef.componentInstance.success.subscribe(res=>{
+    dialogRef.componentInstance.success.subscribe((res) => {
       dialogRef.close(false);
       this.getImportableDisks();
       stepper.next();
     }),
     dialogRef.componentInstance.failure.subscribe((res) => {
       dialogRef.close(false);
-      this.dialogService.errorReport(T("Error decrypting disks"), res.error, res.exception);
+      this.dialogService.errorReport(T('Error decrypting disks'), res.error, res.exception);
     });
   }
 
   getImportableDisks() {
-    let dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": helptext.find_pools_title}, disableClose: true});
+    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: helptext.find_pools_title }, disableClose: true });
     dialogRef.componentInstance.setDescription(helptext.find_pools_msg);
     dialogRef.componentInstance.setCall('pool.import_find', []);
     dialogRef.componentInstance.submit();
@@ -237,7 +245,7 @@ export class VolumeImportWizardComponent {
         this.guid.options = [];
         const result = res.result;
         for (let i = 0; i < result.length; i++) {
-          this.guid.options.push({label:result[i].name + ' | ' + result[i].guid, value:result[i].guid});
+          this.guid.options.push({ label: result[i].name + ' | ' + result[i].guid, value: result[i].guid });
         }
       }
       dialogRef.close(false);
@@ -251,56 +259,54 @@ export class VolumeImportWizardComponent {
   preInit(entityWizard: EntityWizardComponent) {
     this.productType = window.localStorage.getItem('product_type');
     if (this.productType === 'SCALE') {
-      this.wizardConfig.splice(1,1);
+      this.wizardConfig.splice(1, 1);
       this.importIndex = 1;
     }
   }
 
   afterInit(entityWizard: EntityWizardComponent) {
-    const createPoolText = T("Create Pool")
+    const createPoolText = T('Create Pool');
     this.entityWizard = entityWizard;
-    this.entityWizard.customNextText = createPoolText
-    this.is_new_subscription =
-    ( < FormGroup > entityWizard.formArray.get([0]).get('is_new'))
+    this.entityWizard.customNextText = createPoolText;
+    this.is_new_subscription = (< FormGroup > entityWizard.formArray.get([0]).get('is_new'))
       .valueChanges.subscribe((isNew) => {
-      this.isNew = isNew;
-      if (isNew) {
-        this.entityWizard.customNextText = createPoolText
-      } else {
-        this.entityWizard.customNextText = T("Next");
-      }
-    });
-    
-    if (this.productType !== 'SCALE') {
-      this.encrypted = ( < FormGroup > entityWizard.formArray.get([1]).get('encrypted'));
-      this.devices = _.find(this.wizardConfig[1].fieldConfig, {'name': 'devices'});
-      this.devices_fg = ( < FormGroup > entityWizard.formArray.get([1]).get('devices'));
-      this.key = _.find(this.wizardConfig[1].fieldConfig, {'name': 'key'});
-      this.key_fg = ( < FormGroup > entityWizard.formArray.get([1]).get('key'));
-      this.passphrase = _.find(this.wizardConfig[1].fieldConfig, {'name': 'passphrase'});
-      this.passphrase_fg = ( < FormGroup > entityWizard.formArray.get([1]).get('passphrase'));
+        this.isNew = isNew;
+        if (isNew) {
+          this.entityWizard.customNextText = createPoolText;
+        } else {
+          this.entityWizard.customNextText = T('Next');
+        }
+      });
 
-      this.ws.call('disk.get_encrypted', [{"unused": true}]).subscribe((res)=>{
+    if (this.productType !== 'SCALE') {
+      this.encrypted = (< FormGroup > entityWizard.formArray.get([1]).get('encrypted'));
+      this.devices = _.find(this.wizardConfig[1].fieldConfig, { name: 'devices' });
+      this.devices_fg = (< FormGroup > entityWizard.formArray.get([1]).get('devices'));
+      this.key = _.find(this.wizardConfig[1].fieldConfig, { name: 'key' });
+      this.key_fg = (< FormGroup > entityWizard.formArray.get([1]).get('key'));
+      this.passphrase = _.find(this.wizardConfig[1].fieldConfig, { name: 'passphrase' });
+      this.passphrase_fg = (< FormGroup > entityWizard.formArray.get([1]).get('passphrase'));
+
+      this.ws.call('disk.get_encrypted', [{ unused: true }]).subscribe((res) => {
         for (let i = 0; i < res.length; i++) {
-          this.devices.options.push({label:res[i].name, value:res[i].dev});
+          this.devices.options.push({ label: res[i].name, value: res[i].dev });
         }
       });
     }
 
-    this.guid = _.find(this.wizardConfig[this.importIndex].fieldConfig, {'name': 'guid'});
-    this.guid_subscription =
-    ( < FormGroup > entityWizard.formArray.get([this.importIndex]).get('guid'))
-    .valueChanges.subscribe((res) => {
-      let pool = _.find(this.guid.options, {'value': res});
-      this.summary[T('Pool to import')] = pool['label'];
-      const pool_label = pool.label.split(' ');
-      if (pool.label.length > 0) {
-        this.pool = pool_label[0];
-      }
-    });
+    this.guid = _.find(this.wizardConfig[this.importIndex].fieldConfig, { name: 'guid' });
+    this.guid_subscription = (< FormGroup > entityWizard.formArray.get([this.importIndex]).get('guid'))
+      .valueChanges.subscribe((res) => {
+        const pool = _.find(this.guid.options, { value: res });
+        this.summary[T('Pool to import')] = pool['label'];
+        const pool_label = pool.label.split(' ');
+        if (pool.label.length > 0) {
+          this.pool = pool_label[0];
+        }
+      });
 
     if (this.productType !== 'SCALE') {
-      this.message_subscription = this.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
+      this.message_subscription = this.messageService.messageSourceHasNewMessage$.subscribe((message) => {
         this.key_fg.setValue(message);
       });
     }
@@ -309,40 +315,41 @@ export class VolumeImportWizardComponent {
   customSubmit(value) {
     if (value.encrypted) {
       const formData: FormData = new FormData();
-      const params = {"guid": value.guid};
+      const params = { guid: value.guid };
       if (value.passphrase && value.passphrase != null) {
         params['passphrase'] = value.passphrase;
       }
       formData.append('data', JSON.stringify({
-        "method": "pool.import_pool",
-        "params": [params]
+        method: 'pool.import_pool',
+        params: [params],
       }));
       formData.append('file', this.subs.file);
-      let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Importing Pool"}, disableClose: true});
+      const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Importing Pool' }, disableClose: true });
       dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
-      dialogRef.componentInstance.success.subscribe(res=>{
+      dialogRef.componentInstance.success.subscribe((res) => {
         dialogRef.close(false);
         this.router.navigate(new Array('/').concat(
-          this.route_success));
+          this.route_success,
+        ));
       }),
       dialogRef.componentInstance.failure.subscribe((res) => {
         dialogRef.close(false);
         this.errorReport(res);
       });
     } else {
-      let dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Importing Pool") }, disableClose: true});
-      dialogRef.componentInstance.setDescription(T("Importing Pool..."));
-      dialogRef.componentInstance.setCall('pool.import_pool', [{'guid':value.guid}]);
+      const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Importing Pool') }, disableClose: true });
+      dialogRef.componentInstance.setDescription(T('Importing Pool...'));
+      dialogRef.componentInstance.setCall('pool.import_pool', [{ guid: value.guid }]);
       dialogRef.componentInstance.submit();
       dialogRef.componentInstance.success.subscribe((res) => {
         dialogRef.close(false);
         if (this.pool) {
-          this.ws.call('pool.dataset.query', [[['pool','=',this.pool]]]).subscribe(datasets => {
+          this.ws.call('pool.dataset.query', [[['pool', '=', this.pool]]]).subscribe((datasets) => {
             let found = false;
-            for (let i=0; i < datasets.length; i++) {
+            for (let i = 0; i < datasets.length; i++) {
               if (datasets[i].encrypted && datasets[i].locked) {
                 found = true;
-                this.dialogService.confirm(helptext.unlock_dataset_dialog_title, helptext.unlock_dataset_dialog_message, true, helptext.unlock_dataset_dialog_button).subscribe(unlock => {
+                this.dialogService.confirm(helptext.unlock_dataset_dialog_title, helptext.unlock_dataset_dialog_message, true, helptext.unlock_dataset_dialog_button).subscribe((unlock) => {
                   if (unlock) {
                     const route_unlock = this.route_success.concat(['id', this.pool, 'dataset', 'unlock', this.pool]);
                     this.router.navigate(new Array('/').concat(route_unlock));
@@ -356,12 +363,13 @@ export class VolumeImportWizardComponent {
                 this.router.navigate(new Array('/').concat(this.route_success));
               }
             }
-          }, err => {
+          }, (err) => {
             new EntityUtils().handleWSError(this, err, this.dialogService);
           });
         } else { // shouldn't ever get here but who knows lol
-        this.router.navigate(new Array('/').concat(
-          this.route_success));
+          this.router.navigate(new Array('/').concat(
+            this.route_success,
+          ));
         }
       });
       dialogRef.componentInstance.failure.subscribe((res) => {
@@ -373,9 +381,9 @@ export class VolumeImportWizardComponent {
 
   errorReport(res) {
     if (res.reason && res.trace) {
-      this.dialogService.errorReport(T("Error importing pool"), res.reason, res.trace.formatted);
+      this.dialogService.errorReport(T('Error importing pool'), res.reason, res.trace.formatted);
     } else if (res.error && res.exception) {
-      this.dialogService.errorReport(T("Error importing pool"), res.error, res.exception)
+      this.dialogService.errorReport(T('Error importing pool'), res.error, res.exception);
     } else {
       console.log(res);
     }
@@ -388,5 +396,4 @@ export class VolumeImportWizardComponent {
     }
     this.is_new_subscription.unsubscribe();
   }
-
 }

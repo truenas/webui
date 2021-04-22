@@ -1,1 +1,1 @@
-export {BootStatusListComponent} from './bootenv-status.component';
+export { BootStatusListComponent } from './bootenv-status.component';

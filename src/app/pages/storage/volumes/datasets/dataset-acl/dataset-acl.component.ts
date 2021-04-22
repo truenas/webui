@@ -6,14 +6,14 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   FormGroup,
 } from '@angular/forms';
-import {ActivatedRoute, Router} from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
-import {Subscription} from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { UserService } from '../../../../../services/user.service';
-import {WebSocketService, StorageService, DialogService} from '../../../../../services/';
+import { WebSocketService, StorageService, DialogService } from '../../../../../services';
 import {
-  FieldConfig
+  FieldConfig,
 } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -21,17 +21,16 @@ import { T } from '../../../../../translate-marker';
 import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-acl';
 import { MatDialog } from '@angular/material/dialog';
 import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-job.component';
-import {EntityUtils} from '../../../../common/entity/utils';
+import { EntityUtils } from '../../../../common/entity/utils';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 
 import { AccessControlList } from 'app/interfaces/access-control-list';
 
 @Component({
-  selector : 'app-dataset-acl',
-  template : `<entity-form [conf]="this"></entity-form>`
+  selector: 'app-dataset-acl',
+  template: '<entity-form [conf]="this"></entity-form>',
 })
 export class DatasetAclComponent implements OnDestroy {
-
   protected queryCall = 'filesystem.getacl';
   protected updateCall = 'filesystem.setacl';
   protected isEntity = true;
@@ -50,15 +49,15 @@ export class DatasetAclComponent implements OnDestroy {
   private aces_fc: any;
   private aces_subscription: any;
   private entityForm: any;
-  public sub: Subscription;
-  public formGroup: FormGroup;
-  public data: Object = {};
-  public error: string;
-  public busy: Subscription;
+  sub: Subscription;
+  formGroup: FormGroup;
+  data: Object = {};
+  error: string;
+  busy: Subscription;
   protected fs: any = (<any>window).filesize;
-  protected dialogRef: any
-  protected route_success: string[] = [ 'storage', 'pools' ];
-  public save_button_enabled = true;
+  protected dialogRef: any;
+  protected route_success: string[] = ['storage', 'pools'];
+  save_button_enabled = true;
   private homeShare: boolean;
   private isTrivialMessageSent = false;
   private aclData: AccessControlList;
@@ -67,21 +66,21 @@ export class DatasetAclComponent implements OnDestroy {
   protected uid_fc: any;
   protected gid_fc: any;
 
-  public fieldSetDisplay  = 'default';//default | carousel | stepper
-  public fieldConfig: FieldConfig[] = [];
-  public fieldSets: FieldSet[] = [
+  fieldSetDisplay = 'default';// default | carousel | stepper
+  fieldConfig: FieldConfig[] = [];
+  fieldSets: FieldSet[] = [
     {
       name: helptext.dataset_acl_title_file,
-      class: "dataset-acl-editor",
+      class: 'dataset-acl-editor',
       label: true,
       width: '50%',
-      config:[
+      config: [
         {
           type: 'input',
-          name : 'path',
+          name: 'path',
           class: 'hello-mom',
-          placeholder : helptext.dataset_acl_path_placeholder,
-          readonly: true
+          placeholder: helptext.dataset_acl_path_placeholder,
+          readonly: true,
         },
         {
           type: 'combobox',
@@ -101,7 +100,7 @@ export class DatasetAclComponent implements OnDestroy {
           placeholder: helptext.apply_user.placeholder,
           tooltip: helptext.apply_user.tooltip,
           value: false,
-         },
+        },
         {
           type: 'combobox',
           name: 'gid',
@@ -118,9 +117,9 @@ export class DatasetAclComponent implements OnDestroy {
           name: 'apply_group',
           placeholder: helptext.apply_group.placeholder,
           tooltip: helptext.apply_group.tooltip,
-          value: false
-        }
-      ]
+          value: false,
+        },
+      ],
     },
     {
       name: helptext.dataset_acl_title_list,
@@ -174,7 +173,7 @@ export class DatasetAclComponent implements OnDestroy {
               tooltip: helptext.dataset_acl_type_tooltip,
               options: helptext.dataset_acl_type_options,
               required: true,
-              value: 'ALLOW'
+              value: 'ALLOW',
             },
             {
               type: 'select',
@@ -183,7 +182,7 @@ export class DatasetAclComponent implements OnDestroy {
               placeholder: helptext.dataset_acl_perms_type_placeholder,
               tooltip: helptext.dataset_acl_perms_type_tooltip,
               options: helptext.dataset_acl_perms_type_options,
-              value: 'BASIC'
+              value: 'BASIC',
             },
             {
               type: 'select',
@@ -192,7 +191,7 @@ export class DatasetAclComponent implements OnDestroy {
               placeholder: helptext.dataset_acl_perms_placeholder,
               tooltip: helptext.dataset_acl_perms_tooltip,
               options: helptext.dataset_acl_basic_perms_options,
-              value: 'MODIFY'
+              value: 'MODIFY',
             },
             {
               type: 'select',
@@ -211,7 +210,7 @@ export class DatasetAclComponent implements OnDestroy {
               placeholder: helptext.dataset_acl_flags_type_placeholder,
               tooltip: helptext.dataset_acl_flags_type_tooltip,
               options: helptext.dataset_acl_flags_type_options,
-              value: 'BASIC'
+              value: 'BASIC',
             },
             {
               type: 'select',
@@ -219,7 +218,7 @@ export class DatasetAclComponent implements OnDestroy {
               placeholder: helptext.dataset_acl_flags_placeholder,
               tooltip: helptext.dataset_acl_flags_tooltip,
               options: helptext.dataset_acl_basic_flags_options,
-              value: 'INHERIT'
+              value: 'INHERIT',
             },
             {
               type: 'select',
@@ -230,15 +229,15 @@ export class DatasetAclComponent implements OnDestroy {
               placeholder: helptext.dataset_acl_flags_placeholder,
               tooltip: helptext.dataset_acl_flags_tooltip,
               options: helptext.dataset_acl_advanced_flags_options,
-            }
+            },
           ],
-          listFields: []
-        }
-      ]
+          listFields: [],
+        },
+      ],
     },
     {
       name: 'divider',
-      divider: true
+      divider: true,
     },
     {
       name: helptext.dataset_acl_title_advanced,
@@ -250,7 +249,7 @@ export class DatasetAclComponent implements OnDestroy {
           name: 'recursive',
           placeholder: helptext.dataset_acl_recursive_placeholder,
           tooltip: helptext.dataset_acl_recursive_tooltip,
-          value: false
+          value: false,
         },
         {
           type: 'checkbox',
@@ -265,60 +264,58 @@ export class DatasetAclComponent implements OnDestroy {
             when: [{
               name: 'recursive',
               value: false,
-            }]
+            }],
           }],
-        }
-      ]
+        },
+      ],
     },
     {
       name: 'divider',
-      divider: true
+      divider: true,
     },
   ];
 
-  public custActions: Array<any> = [
+  custActions: any[] = [
     {
-      id : 'use_perm_editor',
-      name : helptext.permissions_editor_button,
-      function : () => {
+      id: 'use_perm_editor',
+      name: helptext.permissions_editor_button,
+      function: () => {
         this.router.navigate(new Array('/').concat([
-          "storage", "pools", "permissions", this.datasetId
+          'storage', 'pools', 'permissions', this.datasetId,
         ]));
-      }
+      },
     },
     {
-      id : 'strip_acl',
-      name : helptext.dataset_acl_stripacl_placeholder,
-      function : () => {
+      id: 'strip_acl',
+      name: helptext.dataset_acl_stripacl_placeholder,
+      function: () => {
         this.doStripACL();
-      }
+      },
     },
     {
-      id : 'show_defaults',
-      name : helptext.preset_cust_action_btn,
-      function : () => {
+      id: 'show_defaults',
+      name: helptext.preset_cust_action_btn,
+      function: () => {
         this.showChoiceDialog(true);
-      }
-    }
+      },
+    },
   ];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-              protected aroute: ActivatedRoute, 
-              protected ws: WebSocketService, protected userService: UserService,
-              protected storageService: StorageService, protected dialogService: DialogService,
-              protected loader: AppLoaderService, protected dialog: MatDialog,
-              private translate: TranslateService) {}
+    protected aroute: ActivatedRoute,
+    protected ws: WebSocketService, protected userService: UserService,
+    protected storageService: StorageService, protected dialogService: DialogService,
+    protected loader: AppLoaderService, protected dialog: MatDialog,
+    private translate: TranslateService) {}
 
-  
   isCustActionVisible(actionId: string) {
     if (actionId === 'show_defaults') {
       return true;
     }
     if (this.aclIsTrivial) {
-      return actionId === 'use_perm_editor' ? true : false;
-    } else {
-      return actionId === 'strip_acl' ? true : false;
+      return actionId === 'use_perm_editor';
     }
+    return actionId === 'strip_acl';
   }
 
   preInit(entityEdit: any) {
@@ -326,12 +323,12 @@ export class DatasetAclComponent implements OnDestroy {
     if (urlParams.get('homeShare')) {
       this.homeShare = true;
     }
-    this.sub = this.aroute.params.subscribe(params => {
+    this.sub = this.aroute.params.subscribe((params) => {
       this.datasetId = params['path'];
       this.path = '/mnt/' + params['path'];
-      const path_fc = _.find(this.fieldSets[0].config, {name:'path'});
+      const path_fc = _.find(this.fieldSets[0].config, { name: 'path' });
       path_fc.value = this.path;
-      this.route.queryParams.subscribe(qparams => {
+      this.route.queryParams.subscribe((qparams) => {
         if (qparams && qparams.default) {
           this.pk = qparams.default;
         } else {
@@ -340,29 +337,29 @@ export class DatasetAclComponent implements OnDestroy {
       });
     });
 
-    this.userService.userQueryDSCache().subscribe(items => {
+    this.userService.userQueryDSCache().subscribe((items) => {
       const users = [];
       for (let i = 0; i < items.length; i++) {
-        users.push({label: items[i].username, value: items[i].username});
+        users.push({ label: items[i].username, value: items[i].username });
       }
       this.userOptions = users;
 
       this.uid_fc.options = this.userOptions;
     });
 
-    this.userService.groupQueryDSCache().subscribe(items => {
+    this.userService.groupQueryDSCache().subscribe((items) => {
       const groups = [];
       for (let i = 0; i < items.length; i++) {
-        groups.push({label: items[i].group, value: items[i].group});
+        groups.push({ label: items[i].group, value: items[i].group });
       }
       this.groupOptions = groups;
 
       this.gid_fc.options = this.groupOptions;
     });
     this.ws.call('filesystem.default_acl_choices').subscribe((res) => {
-      res.forEach(item => {
+      res.forEach((item) => {
         this.defaults.push({ label: item, value: item });
-      })
+      });
     });
   }
 
@@ -372,24 +369,24 @@ export class DatasetAclComponent implements OnDestroy {
     this.recursive_subscription = this.recursive.valueChanges.subscribe((value) => {
       if (value === true) {
         this.dialogService.confirm(helptext.dataset_acl_recursive_dialog_warning,
-         helptext.dataset_acl_recursive_dialog_warning_message)
-        .subscribe((res) => {
-          if (!res) {
-            this.recursive.setValue(false);
-          }    
-        });
+          helptext.dataset_acl_recursive_dialog_warning_message)
+          .subscribe((res) => {
+            if (!res) {
+              this.recursive.setValue(false);
+            }
+          });
       }
     });
 
-    this.ws.call('filesystem.acl_is_trivial', [this.path]).subscribe(acl_is_trivial => {
+    this.ws.call('filesystem.acl_is_trivial', [this.path]).subscribe((acl_is_trivial) => {
       this.aclIsTrivial = acl_is_trivial;
     }, (err) => {
       new EntityUtils().handleWSError(this.entityForm, err);
     });
 
-    this.aces_fc = _.find(this.fieldConfig, {"name": "aces"});
+    this.aces_fc = _.find(this.fieldConfig, { name: 'aces' });
     this.aces = this.entityForm.formGroup.controls['aces'];
-    this.aces_subscription = this.aces.valueChanges.subscribe(res => {
+    this.aces_subscription = this.aces.valueChanges.subscribe((res) => {
       let controls;
       let user_fc;
       let group_fc;
@@ -403,8 +400,8 @@ export class DatasetAclComponent implements OnDestroy {
         for (let i = 0; i < listFields.length; i++) {
           controls = listFields[i];
           if (controls) {
-            user_fc = _.find(controls, {"name": "user"});
-            group_fc = _.find(controls, {"name": "group"});
+            user_fc = _.find(controls, { name: 'user' });
+            group_fc = _.find(controls, { name: 'group' });
             if (user_fc.options === undefined || user_fc.options.length === 0) {
               user_fc.options = this.userOptions;
             }
@@ -427,9 +424,9 @@ export class DatasetAclComponent implements OnDestroy {
               this.setDisabled(user_fc, this.aces.controls[i].controls['user'], true, true);
               this.setDisabled(group_fc, this.aces.controls[i].controls['group'], true, true);
             }
-            adv_perms_fc = _.find(controls, {"name": "advanced_perms"});
-            basic_perms_fc = _.find(controls, {"name": "basic_perms"});
-            if (res[i].perms_type === "ADVANCED") {
+            adv_perms_fc = _.find(controls, { name: 'advanced_perms' });
+            basic_perms_fc = _.find(controls, { name: 'basic_perms' });
+            if (res[i].perms_type === 'ADVANCED') {
               adv_perms_fc.isHidden = false;
               adv_perms_fc.required = true;
               basic_perms_fc.isHidden = true;
@@ -439,16 +436,16 @@ export class DatasetAclComponent implements OnDestroy {
               adv_perms_fc.required = false;
               basic_perms_fc.isHidden = false;
               basic_perms_fc.required = true;
-              if (res[i].basic_perms === "OTHER") {
+              if (res[i].basic_perms === 'OTHER') {
                 basic_perms_fc.warnings = helptext.dataset_acl_basic_perms_other_warning;
                 canSave = false;
               } else {
                 basic_perms_fc.warnings = null;
               }
             }
-            adv_flags_fc = _.find(controls, {"name": "advanced_flags"});
-            basic_flags_fc = _.find(controls, {"name": "basic_flags"});
-            if (res[i].flags_type === "ADVANCED") {
+            adv_flags_fc = _.find(controls, { name: 'advanced_flags' });
+            basic_flags_fc = _.find(controls, { name: 'basic_flags' });
+            if (res[i].flags_type === 'ADVANCED') {
               adv_flags_fc.isHidden = false;
               adv_flags_fc.required = true;
               basic_flags_fc.isHidden = true;
@@ -467,14 +464,14 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   chooseDefaultSetting(value: string) {
-      let num;
-      value === 'RESTRICTED' ? num = 2 : num = 3;
-      while(this.aces.controls.length > num) {
-        this.aces.removeAt(num)
-      }
-      this.ws.call('filesystem.get_default_acl', [value]).subscribe((res) => {
-        this.dataHandler(this.entityForm, res);
-      });
+    let num;
+    value === 'RESTRICTED' ? num = 2 : num = 3;
+    while (this.aces.controls.length > num) {
+      this.aces.removeAt(num);
+    }
+    this.ws.call('filesystem.get_default_acl', [value]).subscribe((res) => {
+      this.dataHandler(this.entityForm, res);
+    });
   }
 
   setDisabled(fieldConfig, formControl, disable, hide) {
@@ -483,7 +480,6 @@ export class DatasetAclComponent implements OnDestroy {
     if (formControl && formControl.disabled !== disable) {
       const method = disable ? 'disable' : 'enable';
       formControl[method]();
-      return;
     }
   }
 
@@ -504,8 +500,8 @@ export class DatasetAclComponent implements OnDestroy {
     entityForm.formGroup.controls['aces'].reset();
     entityForm.formGroup.controls['aces'].controls = [];
     this.aces_fc.listFields = [];
-    this.gid_fc = _.find(this.fieldConfig, {"name": "gid"});
-    this.uid_fc = _.find(this.fieldConfig, {"name": "uid"});
+    this.gid_fc = _.find(this.fieldConfig, { name: 'gid' });
+    this.uid_fc = _.find(this.fieldConfig, { name: 'uid' });
 
     this.loader.open();
     const res = entityForm.queryResponse;
@@ -534,7 +530,7 @@ export class DatasetAclComponent implements OnDestroy {
     if (!data.length) {
       data = [data];
     }
-    
+
     for (let i = 0; i < data.length; i++) {
       acl = {};
       acl.type = data[i].type;
@@ -562,7 +558,7 @@ export class DatasetAclComponent implements OnDestroy {
       } else {
         acl.flags_type = 'ADVANCED';
         const flags = data[i].flags;
-        acl.advanced_flags = []
+        acl.advanced_flags = [];
         for (const flag in flags) {
           if (flags.hasOwnProperty(flag) && flags[flag]) {
             acl.advanced_flags.push(flag);
@@ -575,38 +571,38 @@ export class DatasetAclComponent implements OnDestroy {
       } else {
         acl.perms_type = 'ADVANCED';
         const perms = data[i].perms;
-        acl.advanced_perms = []
+        acl.advanced_perms = [];
         for (const perm in perms) {
           if (perms.hasOwnProperty(perm) && perms[perm]) {
             acl.advanced_perms.push(perm);
           }
         }
       }
-      const propName = "aces";
+      const propName = 'aces';
       const aces_fg = entityForm.formGroup.controls[propName];
       if (aces_fg.controls[i] === undefined) {
         // add controls;
-        const templateListField = _.cloneDeep(_.find(this.fieldConfig, {'name': propName}).templateListField);
+        const templateListField = _.cloneDeep(_.find(this.fieldConfig, { name: propName }).templateListField);
         aces_fg.push(entityForm.entityFormService.createFormGroup(templateListField));
         this.aces_fc.listFields.push(templateListField);
       }
 
       for (const prop in acl) {
         if (acl.hasOwnProperty(prop)) {
-          if (prop === "basic_perms" && acl[prop] === "OTHER") {
+          if (prop === 'basic_perms' && acl[prop] === 'OTHER') {
             _.find(
               _.find(
-                this.aces_fc.listFields[i], {"name": prop}
-                )['options'], {value: "OTHER"}
-              )['hiddenFromDisplay'] = false;
+                this.aces_fc.listFields[i], { name: prop },
+              )['options'], { value: 'OTHER' },
+            )['hiddenFromDisplay'] = false;
           }
-          if (prop === "user" && acl['user_not_found']) {
-            delete(acl['user_not_found']);
-            _.find(this.aces_fc.listFields[i], {"name": prop})['warnings'] = helptext.user_not_found;
+          if (prop === 'user' && acl['user_not_found']) {
+            delete (acl['user_not_found']);
+            _.find(this.aces_fc.listFields[i], { name: prop })['warnings'] = helptext.user_not_found;
           }
-          if (prop === "group" && acl['group_not_found']) {
-            delete(acl['group_not_found']);
-            _.find(this.aces_fc.listFields[i], {"name": prop})['warnings'] = helptext.group_not_found;
+          if (prop === 'group' && acl['group_not_found']) {
+            delete (acl['group_not_found']);
+            _.find(this.aces_fc.listFields[i], { name: prop })['warnings'] = helptext.group_not_found;
           }
           aces_fg.controls[i].controls[prop].setValue(acl[prop]);
         }
@@ -634,13 +630,14 @@ export class DatasetAclComponent implements OnDestroy {
   }
 
   showChoiceDialog(presetsOnly = false) {
-    let msg1, msg2;
-    this.translate.get(helptext.type_dialog.radio_preset_tooltip).subscribe(m1 => {
-      this.translate.get(helptext.preset_dialog.message).subscribe(m2 => {
+    let msg1; let
+      msg2;
+    this.translate.get(helptext.type_dialog.radio_preset_tooltip).subscribe((m1) => {
+      this.translate.get(helptext.preset_dialog.message).subscribe((m2) => {
         msg1 = m1;
         msg2 = m2;
-      })
-    })
+      });
+    });
     const conf: DialogFormConfiguration = {
       title: presetsOnly ? helptext.type_dialog.radio_preset : helptext.type_dialog.title,
       message: presetsOnly ? `${msg1} ${msg2}` : null,
@@ -649,16 +646,20 @@ export class DatasetAclComponent implements OnDestroy {
           type: 'radio',
           name: 'useDefault',
           options: [
-            {label: helptext.type_dialog.radio_preset,
-             name: 'defaultACL',
-             tooltip: helptext.type_dialog.radio_preset_tooltip,
-             value: true},
-            {label: helptext.type_dialog.radio_custom,
-             name: 'customACL',
-             value: false},
+            {
+              label: helptext.type_dialog.radio_preset,
+              name: 'defaultACL',
+              tooltip: helptext.type_dialog.radio_preset_tooltip,
+              value: true,
+            },
+            {
+              label: helptext.type_dialog.radio_custom,
+              name: 'customACL',
+              value: false,
+            },
           ],
           value: true,
-          isHidden: presetsOnly
+          isHidden: presetsOnly,
         },
         {
           type: 'select',
@@ -671,11 +672,11 @@ export class DatasetAclComponent implements OnDestroy {
               when: [{
                 name: 'useDefault',
                 value: true,
-              }]
+              }],
             },
           ],
-          required: true
-        }
+          required: true,
+        },
       ],
       saveButtonText: helptext.type_dialog.button,
       parent: this,
@@ -687,8 +688,8 @@ export class DatasetAclComponent implements OnDestroy {
           this.chooseDefaultSetting(defaultOptions);
         }
         this.isTrivialMessageSent = true;
-      }
-    }
+      },
+    };
     this.dialogService.dialogForm(conf);
   }
 
@@ -704,14 +705,14 @@ export class DatasetAclComponent implements OnDestroy {
       const acl = data.aces[i];
       d['tag'] = acl.tag;
       d['id'] = null;
-      if (acl.tag === "USER") {
+      if (acl.tag === 'USER') {
         d['id'] = acl.user;
-      } else if (acl.tag === "GROUP") {
+      } else if (acl.tag === 'GROUP') {
         d['id'] = acl.group;
       }
       d['type'] = acl.type;
-      if (acl.perms_type === "BASIC") {
-        d['perms'] = {'BASIC':acl.basic_perms};
+      if (acl.perms_type === 'BASIC') {
+        d['perms'] = { BASIC: acl.basic_perms };
       } else {
         d['perms'] = {};
         const adv_perm_options = helptext.dataset_acl_advanced_perms_options;
@@ -722,8 +723,8 @@ export class DatasetAclComponent implements OnDestroy {
           }
         }
       }
-      if (acl.flags_type === "BASIC") {
-        d['flags'] = {'BASIC':acl.basic_flags};
+      if (acl.flags_type === 'BASIC') {
+        d['flags'] = { BASIC: acl.basic_flags };
       } else {
         d['flags'] = {};
         const adv_flag_options = helptext.dataset_acl_advanced_flags_options;
@@ -742,9 +743,8 @@ export class DatasetAclComponent implements OnDestroy {
   async customSubmit(body: any) {
     body.uid = body.apply_user ? body.uid : null;
     body.gid = body.apply_group ? body.gid : null;
-    const doesNotWantToEditDataset =
-      this.storageService.isDatasetTopLevel(body.path.replace("mnt/", "")) &&
-      !(await this.dialogService
+    const doesNotWantToEditDataset = this.storageService.isDatasetTopLevel(body.path.replace('mnt/', ''))
+      && !(await this.dialogService
         .confirm(helptext.dataset_acl_dialog_warning, helptext.dataset_acl_toplevel_dialog_message)
         .toPromise());
 
@@ -752,79 +752,83 @@ export class DatasetAclComponent implements OnDestroy {
       return;
     }
 
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": helptext.save_dialog.title }});
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: helptext.save_dialog.title } });
     this.dialogRef.componentInstance.setDescription(helptext.save_dialog.message);
-    let dacl = body.dacl;
+    const dacl = body.dacl;
 
-    await this.userService.getUserByName(body.uid).toPromise().then(userObj => {
+    await this.userService.getUserByName(body.uid).toPromise().then((userObj) => {
       if (userObj && userObj.hasOwnProperty('pw_uid')) {
         body.uid = userObj.pw_uid;
       }
-    }, err => {
+    }, (err) => {
       console.error(err);
     });
 
-    await this.userService.getGroupByName(body.gid).toPromise().then(groupObj => {
+    await this.userService.getGroupByName(body.gid).toPromise().then((groupObj) => {
       if (groupObj && groupObj.hasOwnProperty('gr_gid')) {
         body.gid = groupObj.gr_gid;
       }
-    }, err => {
+    }, (err) => {
       console.error(err);
     });
 
     for (let i = 0; i < dacl.length; i++) {
       if (dacl[i].tag === 'USER') {
-        await this.userService.getUserByName(dacl[i].id).toPromise().then(userObj => {
+        await this.userService.getUserByName(dacl[i].id).toPromise().then((userObj) => {
           if (userObj && userObj.hasOwnProperty('pw_uid')) {
             dacl[i]['id'] = userObj.pw_uid;
           }
-        }, err => {
+        }, (err) => {
           console.error(err);
         });
-
       } else if (dacl[i].tag === 'GROUP') {
-        await this.userService.getGroupByName(dacl[i].id).toPromise().then(groupObj => {
+        await this.userService.getGroupByName(dacl[i].id).toPromise().then((groupObj) => {
           if (groupObj && groupObj.hasOwnProperty('gr_gid')) {
             dacl[i]['id'] = groupObj.gr_gid;
           }
-        }, err => {
+        }, (err) => {
           console.error(err);
         });
       }
     }
     this.dialogRef.componentInstance.setCall(this.updateCall,
-      [{'path': body.path, 'dacl': dacl,
-        'uid': body.uid, 'gid': body.gid,
-        'options' : {'recursive': body.recursive,
-        'traverse': body.traverse
-        }
+      [{
+        path: body.path,
+        dacl,
+        uid: body.uid,
+        gid: body.gid,
+        options: {
+          recursive: body.recursive,
+          traverse: body.traverse,
+        },
       }]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.entityForm.success = true;
       this.dialogRef.close();
       this.router.navigate(new Array('/').concat(
-        this.route_success));
+        this.route_success,
+      ));
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
     });
   }
 
-  updateGroupSearchOptions(value = "", parent, config) {
-    parent.userService.groupQueryDSCache(value).subscribe(items => {
+  updateGroupSearchOptions(value = '', parent, config) {
+    parent.userService.groupQueryDSCache(value).subscribe((items) => {
       const groups = [];
       for (let i = 0; i < items.length; i++) {
-        groups.push({label: items[i].group, value: items[i].group});
+        groups.push({ label: items[i].group, value: items[i].group });
       }
       config.searchOptions = groups;
     });
   }
 
-  updateUserSearchOptions(value = "", parent, config) {
-    parent.userService.userQueryDSCache(value).subscribe(items => {
+  updateUserSearchOptions(value = '', parent, config) {
+    parent.userService.userQueryDSCache(value).subscribe((items) => {
       const users = [];
       for (let i = 0; i < items.length; i++) {
-        users.push({label: items[i].username, value: items[i].username});
+        users.push({ label: items[i].username, value: items[i].username });
       }
       config.searchOptions = users;
     });
@@ -838,8 +842,8 @@ export class DatasetAclComponent implements OnDestroy {
         {
           type: 'checkbox',
           name: 'traverse',
-          placeholder: helptext.stripACL_dialog.traverse_checkbox
-        }
+          placeholder: helptext.stripACL_dialog.traverse_checkbox,
+        },
       ],
       // warning:helptext.stripACL_dialog.warning,
       saveButtonText: helptext.dataset_acl_stripacl_placeholder,
@@ -847,28 +851,32 @@ export class DatasetAclComponent implements OnDestroy {
       customSubmit: (entityDialog) => {
         entityDialog.dialogRef.close();
 
-        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Stripping ACLs") }});
-        this.dialogRef.componentInstance.setDescription(T("Stripping ACLs..."));
+        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Stripping ACLs') } });
+        this.dialogRef.componentInstance.setDescription(T('Stripping ACLs...'));
 
         this.dialogRef.componentInstance.setCall(this.updateCall,
-          [{'path': this.path, 'dacl': [],
-            'options' : {'recursive': true,
-            'traverse': entityDialog.formValue.traverse ? true : false,
-            'stripacl': true
-            }
+          [{
+            path: this.path,
+            dacl: [],
+            options: {
+              recursive: true,
+              traverse: !!entityDialog.formValue.traverse,
+              stripacl: true,
+            },
           }]);
         this.dialogRef.componentInstance.submit();
         this.dialogRef.componentInstance.success.subscribe((res) => {
           this.entityForm.success = true;
           this.dialogRef.close();
           this.router.navigate(new Array('/').concat(
-            this.route_success));
+            this.route_success,
+          ));
         });
         this.dialogRef.componentInstance.failure.subscribe((err) => {
           new EntityUtils().handleWSError(this.entityForm, err);
         });
-      }
-    }
+      },
+    };
     this.dialogService.dialogFormWide(conf);
   }
 }

@@ -1,16 +1,15 @@
-
-FreeNAS 11 WebUI
+TrueNAS WebUI
 ================
-![CI](https://github.com/freenas/webui/workflows/CI/badge.svg?branch=master)
+![CI](https://github.com/truenas/webui/workflows/CI/badge.svg?branch=master)
 
 
-This is the project for the new angular.io WebUI for FreeNAS 11. It is meant to coexist with current FreeNAS 11 Django/Dojo WebUI.
+This is the project for the Angular.io WebUI for TrueNAS CORE & TrueNAS SCALE.
 
 # Development requirements
 
   - yarn >= 1.12
   - Node.js >= 8.9
-  - Running FreeNAS 11 Nightly Machine (VM is fine)
+  - Running TrueNAS 12 Nightly Machine (VM is fine)
 
 
 # Getting started
@@ -21,10 +20,10 @@ Install the development requirements (FreeBSD 11 or later):
 # pkg install yarn
 ```
 
-Checkout FreeNAS git repository:
+Checkout TrueNAS git repository:
 
 ```sh
-$ git clone https://github.com/freenas/webui.git
+$ git clone https://github.com/truenas/webui.git
 $ cd webui
 ```
 
@@ -38,7 +37,7 @@ Run the environment configuration script
 (if your ip address changes later you may repeat this step)
 
 ```sh
-$ ./setup_env.js -i <ip address or FQDN of the server where FreeNAS is running>
+$ ./setup_env.js -i <ip address or FQDN of the server where TrueNAS is running>
 ```
 
 To start run

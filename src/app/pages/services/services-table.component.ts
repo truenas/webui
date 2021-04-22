@@ -1,42 +1,42 @@
-import { Component, OnChanges, OnInit, ViewChild, Input } from '@angular/core';
+import {
+  Component, OnChanges, OnInit, ViewChild, Input,
+} from '@angular/core';
 import { Router } from '@angular/router';
-import { RestService, WebSocketService } from '../../services/';
+import { RestService, WebSocketService } from '../../services';
 
 @Component({
   selector: 'services-table',
   templateUrl: './services-table.component.html',
-  styleUrls: ['./services-table.component.css']
+  styleUrls: ['./services-table.component.css'],
 })
 export class ServicesTableComponent implements OnChanges, OnInit {
-
   @Input() conf: any;
   @Input() data: any[];
-  @ViewChild('datatable', { static: true}) datatable;
+  @ViewChild('datatable', { static: true }) datatable;
 
-
-  public columns: Array < any > = [
+  columns: any[] = [
     { name: 'Running', prop: 'state' },
     { name: 'Label', prop: 'label' },
     { name: 'Enable', prop: 'enable' },
-    { name: 'Actions', prop: 'cardActions' }
+    { name: 'Actions', prop: 'cardActions' },
   ];
 
-  public pageSize:number = 12;
-  public minPageSize: number = 3;
-  public baseWindowHeight: number = 910;
-  public tableHeight:number;
-  public isFooterConsoleOpen: boolean;
+  pageSize = 12;
+  minPageSize = 3;
+  baseWindowHeight = 910;
+  tableHeight: number;
+  isFooterConsoleOpen: boolean;
 
   constructor(protected router: Router, protected rest: RestService, protected ws: WebSocketService) {}
 
   ngOnInit() {
     this.findPageSize();
-    
-    window.onresize = () => {
-      this.findPageSize()
-    }
 
-    this.ws.call('system.advanced.config').subscribe((res)=> {
+    window.onresize = () => {
+      this.findPageSize();
+    };
+
+    this.ws.call('system.advanced.config').subscribe((res) => {
       if (res) {
         this.isFooterConsoleOpen = res.consolemsg;
         this.setTableHeight(this.datatable);
@@ -45,8 +45,8 @@ export class ServicesTableComponent implements OnChanges, OnInit {
   }
 
   findPageSize() {
-    let x = window.innerHeight - this.baseWindowHeight;
-    this.pageSize = 12 + (Math.floor(x/50));
+    const x = window.innerHeight - this.baseWindowHeight;
+    this.pageSize = 12 + (Math.floor(x / 50));
     if (this.pageSize < this.minPageSize) {
       this.pageSize = this.minPageSize;
     }
@@ -54,8 +54,8 @@ export class ServicesTableComponent implements OnChanges, OnInit {
   }
 
   ngOnChanges(changes) {
-    if(changes.data){
-      let newData = Object.assign(this.data,{});
+    if (changes.data) {
+      const newData = Object.assign(this.data, {});
       this.data = newData;
     }
     if (this.datatable) {
@@ -65,11 +65,11 @@ export class ServicesTableComponent implements OnChanges, OnInit {
     }
   }
 
-  setTableHeight(t){
+  setTableHeight(t) {
     if (this.isFooterConsoleOpen) {
-      this.tableHeight = (50*this.pageSize) + 50  
+      this.tableHeight = (50 * this.pageSize) + 50;
     } else {
-      this.tableHeight = (50*this.pageSize) + 100;
+      this.tableHeight = (50 * this.pageSize) + 100;
     }
   }
 }

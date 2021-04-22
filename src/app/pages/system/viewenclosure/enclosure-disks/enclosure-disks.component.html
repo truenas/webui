@@ -55,7 +55,7 @@
                   [style.background]="subenclosure ? theme[theme.accentColors[subenclosure.poolKeys[pool]]] : theme[theme.accentColors[selectedEnclosure.poolKeys[pool]]]">
                 </div>
                 {{pool}} 
-                <span *ngIf="!system.pools[selectedEnclosure.poolKeys[pool]].healthy">
+                <span *ngIf="!system.pools[selectedEnclosure.poolKeys[pool]] || !system.pools[selectedEnclosure.poolKeys[pool]].healthy">
                   <mat-icon fontSet="mdi-set" role="img" fontIcon="mdi-alert"></mat-icon>
                 </span>
               </div>
@@ -99,7 +99,7 @@
         <!-- DETAILS OVERLAY -->
           <div *ngIf="currentView == 'details' || exitingView == 'details'" class="details stage-left dom-overlay">
             <div class="content">
-              <h2 class="disk-name {{selectedDisk.name}}">{{selectedDisk.name}}</h2>
+              <h1 class="disk-name {{selectedDisk.name}}">{{selectedDisk.name}}</h1>
               <div class="title">
                 <span class="semibold">vdev: </span> 
                 <span *ngIf="selectedVdev.type == 'DISK'"> NONE </span>
@@ -115,6 +115,10 @@
                     <span *ngSwitchDefault> {{selectedVdev.topology.toUpperCase()}}</span>
                   </ng-container>
                 </ng-container>
+              </div>
+              <div class="title">
+                <span class="semibold">Slot: </span> 
+                <span>{{selectedDisk.enclosure.slot}}</span> 
               </div>
             </div>
           </div>

@@ -22,11 +22,11 @@ import { ApiKeysComponent } from './api-keys.component';
     CommonDirectivesModule,
     CoreComponents,
     TranslateModule,
-    routing
+    routing,
   ],
   declarations: [
     ApiKeysComponent,
 
-  ]
+  ],
 })
 export class ApiKeysModule { }

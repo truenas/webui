@@ -1,4 +1,6 @@
-import { Component, ViewChild, Input, OnInit } from '@angular/core';
+import {
+  Component, ViewChild, Input, OnInit,
+} from '@angular/core';
 import { Display } from 'app/core/components/display/display.component';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { MaterialModule } from '../../../appMaterial.module';
@@ -15,57 +17,53 @@ export interface CardData {
 export const CardComponentMetadata = {
   selector: '[card]',
   templateUrl: './card.component.html',
-  styleUrls: ['./card.component.css']
-}
+  styleUrls: ['./card.component.css'],
+};
 
 @Component({
   selector: '[card]',
   templateUrl: './card.component.html',
-  styleUrls: ['./card.component.css']
+  styleUrls: ['./card.component.css'],
 })
 export class CardComponent extends ViewControllerComponent {
-
   readonly componentName = CardComponent;
-  @Input() data: any; 
-
+  @Input() data: any;
 
   /*
    * Properties
    * Wraps all content in an md-card
-   * private headerTitle?: string 
-   * private headerOptions?: ViewControl 
+   * private headerTitle?: string
+   * private headerOptions?: ViewControl
    * private primaryAction?: ViewFabButton
    * Methods
    * addHeaderTitle(title: string);
    * addHeaderOptions(); // adds Options menu to header
    * addFooterControls(ViewButton[]);
    * addPrimaryAction(btn:  ViewFabButton);
-   */	
+   */
 
-  //@ViewChild('display', { static: true}) display; // Already created in base class by default
-  public primaryAction?: any; /*ViewFabButton*/
-  public header: boolean = false;
-  public headerTitle?: string;
-  //public headerOptions?: any; /*ViewControl*/
-  @ViewChild('headerOptions', { static: true}) headerOptions;
+  // @ViewChild('display', { static: true}) display; // Already created in base class by default
+  primaryAction?: any; /* ViewFabButton */
+  header = false;
+  headerTitle?: string;
+  // public headerOptions?: any; /*ViewControl*/
+  @ViewChild('headerOptions', { static: true }) headerOptions;
 
-  public footer: boolean = true;
-  @ViewChild('footerControls', { static: true}) footerControls;
+  footer = true;
+  @ViewChild('footerControls', { static: true }) footerControls;
 
-  constructor(){
+  constructor() {
     super();
-    this.layoutChild = {flex:"100%"};
+    this.layoutChild = { flex: '100%' };
   }
 
-  getHeaderTitle(): string{
+  getHeaderTitle(): string {
     return this.headerTitle;
   }
-  setHeaderTitle(title: string){
-    this.headerTitle = title
+  setHeaderTitle(title: string) {
+    this.headerTitle = title;
   }
-  addHeaderOptions(){} // adds Options menu to header
-  addFooterControls(controls: any /*ViewButton[]*/){}
-  addPrimaryAction(fab:any/*ViewFabButton*/){}
-
-
+  addHeaderOptions() {} // adds Options menu to header
+  addFooterControls(controls: any /* ViewButton[] */) {}
+  addPrimaryAction(fab: any/* ViewFabButton */) {}
 }

@@ -1,35 +1,37 @@
-import {Component, ViewContainerRef, OnInit, OnDestroy} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {
+  Component, ViewContainerRef, OnInit, OnDestroy,
+} from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
-import {FieldConfig} from '../../models/field-config.interface';
-import {Field} from '../../models/field.interface';
-import {TooltipComponent} from '../tooltip/tooltip.component';
+import { FieldConfig } from '../../models/field-config.interface';
+import { Field } from '../../models/field.interface';
+import { TooltipComponent } from '../tooltip/tooltip.component';
 import { Subject } from 'rxjs';
 
 @Component({
-  selector : 'form-permissions',
-  styleUrls : [ '../dynamic-field/dynamic-field.css', 'form-permissions.css'],
-  templateUrl : './form-permissions.component.html',
+  selector: 'form-permissions',
+  styleUrls: ['../dynamic-field/dynamic-field.css', 'form-permissions.css'],
+  templateUrl: './form-permissions.component.html',
 })
 export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
 
-  private ownerRead: boolean = false;
-  private ownerWrite: boolean = false;
-  private ownerExec: boolean = false;
-  private groupRead: boolean = false;
-  private groupWrite: boolean = false;
-  private groupExec: boolean = false;
-  private otherRead: boolean = false;
-  private otherWrite: boolean = false;
-  private otherExec: boolean = false;
+  private ownerRead = false;
+  private ownerWrite = false;
+  private ownerExec = false;
+  private groupRead = false;
+  private groupWrite = false;
+  private groupExec = false;
+  private otherRead = false;
+  private otherWrite = false;
+  private otherExec = false;
 
-  private owner: number = 0;
-  private grp: number = 0;
-  private other: number = 0;
+  private owner = 0;
+  private grp = 0;
+  private other = 0;
   private value: string;
   private control: any;
 
@@ -139,14 +141,14 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
   }
 
   refreshPermissions() {
-    this.value = this.owner.toString() + 
-        this.grp.toString() + this.other.toString();
+    this.value = this.owner.toString()
+        + this.grp.toString() + this.other.toString();
     this.group.controls[this.config.name].setValue(this.value);
   }
-  
+
   ngOnInit() {
     this.control = this.group.controls[this.config.name];
-    this.control.valueChanges.subscribe(data => {
+    this.control.valueChanges.subscribe((data) => {
       if (this.value != data) {
         this.setValue(data);
         this.refreshPermissions();
@@ -165,14 +167,13 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
     this.ngUnsubscribe.complete();
   }
 
-  setValue(value: string = '000') {
+  setValue(value = '000') {
     if (this.config.value && this.formatRe.test(this.config.value)) {
       this.value = this.config.value;
-    }
-    else if (value && this.formatRe.test(value)) {
+    } else if (value && this.formatRe.test(value)) {
       this.value = value;
     }
-    
+
     let owner = parseInt(this.value[0]);
     this.owner = owner;
     let grp = parseInt(this.value[1]);

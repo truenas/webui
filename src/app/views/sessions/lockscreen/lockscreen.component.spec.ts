@@ -8,9 +8,9 @@ describe('LockscreenComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LockscreenComponent ]
+      declarations: [LockscreenComponent],
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

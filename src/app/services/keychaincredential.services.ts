@@ -4,14 +4,13 @@ import { WebSocketService } from './ws.service';
 
 @Injectable()
 export class KeychainCredentialService {
+  constructor(protected ws: WebSocketService) { }
 
-    constructor(protected ws: WebSocketService) { }
+  getSSHKeys() {
+    return this.ws.call('keychaincredential.query', [[['type', '=', 'SSH_KEY_PAIR']]]);
+  }
 
-    getSSHKeys() {
-        return this.ws.call('keychaincredential.query', [[["type", "=", "SSH_KEY_PAIR"]]]);
-    }
-
-    getSSHConnections() {
-        return this.ws.call('keychaincredential.query', [[["type", "=", "SSH_CREDENTIALS"]]]);
-    }
+  getSSHConnections() {
+    return this.ws.call('keychaincredential.query', [[['type', '=', 'SSH_CREDENTIALS']]]);
+  }
 }

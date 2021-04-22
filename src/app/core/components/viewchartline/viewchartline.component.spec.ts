@@ -8,9 +8,9 @@ describe('ViewchartlineComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ViewchartlineComponent ]
+      declarations: [ViewchartlineComponent],
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

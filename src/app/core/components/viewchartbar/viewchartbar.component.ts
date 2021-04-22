@@ -1,8 +1,10 @@
-import { Component, AfterViewInit, Input, ViewChild, ElementRef, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component, AfterViewInit, Input, ViewChild, ElementRef, OnChanges, SimpleChanges,
+} from '@angular/core';
 import { ViewChartComponent, ViewChartMetadata } from 'app/core/components/viewchart/viewchart.component';
-import {UUID} from 'angular2-uuid';
+import { UUID } from 'angular2-uuid';
 import * as d3 from 'd3';
-import { transition, Transition } from 'd3-transition'
+import { transition, Transition } from 'd3-transition';
 import {
   tween,
   styler,
@@ -16,20 +18,20 @@ import {
   everyFrame,
   keyframes,
   timeline,
-  //velocity,
+  // velocity,
   multicast,
   action,
   transform,
-  //transformMap,
-  //clamp
-  } from 'popmotion';
+  // transformMap,
+  // clamp
+} from 'popmotion';
 
 export interface BarChartConfig {
   label: boolean; // to turn off the min/max labels.
   units: string;
   min?: number; // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
   max?: number; // 100 is default
-  width?: number; 
+  width?: number;
   data: BarDataSource[];
   orientation?: string; // horizontal || vertical
 }
@@ -43,16 +45,15 @@ export interface BarDataSource {
 @Component({
   selector: 'viewchartbar',
   templateUrl: './viewchartbar.component.html',
-  styleUrls: ['./viewchartbar.component.css']
+  styleUrls: ['./viewchartbar.component.css'],
 })
 export class ViewChartBarComponent implements AfterViewInit, OnChanges {
-
-  public title:string = '';
-  private chart: any; 
-  public chartClass: string = 'view-chart-bar';
-  public chartConfig: any;
+  title = '';
+  private chart: any;
+  chartClass = 'view-chart-bar';
+  chartConfig: any;
   private _data;
-  public chartId = UUID.UUID();
+  chartId = UUID.UUID();
   private xScale;
   private yScale;
   private barScale;
@@ -60,19 +61,18 @@ export class ViewChartBarComponent implements AfterViewInit, OnChanges {
   private wrapperNode;
 
   @Input() config: BarChartConfig;
-  @ViewChild('wrapper', {static: true}) el: ElementRef;
+  @ViewChild('wrapper', { static: true }) el: ElementRef;
 
-  constructor() { 
-    //super();
+  constructor() {
+    // super();
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if(changes.config){
-      if(changes.config.currentValue && changes.config.currentValue.data){
-
+    if (changes.config) {
+      if (changes.config.currentValue && changes.config.currentValue.data) {
         this.data = changes.config.currentValue.data;
 
-        if(!this.wrapperNode){
+        if (!this.wrapperNode) {
           this.render();
         } else {
           this.update(changes.config.currentValue.data);
@@ -85,63 +85,57 @@ export class ViewChartBarComponent implements AfterViewInit, OnChanges {
     this.render();
   }
 
-  get data(){
-    return this._data
+  get data() {
+    return this._data;
   }
 
-  set data(d){
+  set data(d) {
     this._data = d;
   }
 
-  render(){
+  render() {
     this.margin = 32;
 
-    let wrapper = d3.select("#bar-" + this.chartId);
-    if(!this.el){ return }
+    const wrapper = d3.select('#bar-' + this.chartId);
+    if (!this.el) { return; }
     console.log(this.el.nativeElement);
-    this.wrapperNode = styler(this.el.nativeElement,{});
+    this.wrapperNode = styler(this.el.nativeElement, {});
 
     this.chartConfig = this.makeConfig();
   }
 
-  update(data?){
-    if(!data){ data = this.config.data}
-    
-      this.chart.load({
-        columns: this.config.data,
-      })
-      
-  }
-  
+  update(data?) {
+    if (!data) { data = this.config.data; }
 
-  makeConfig(){
-  
+    this.chart.load({
+      columns: this.config.data,
+    });
+  }
+
+  makeConfig() {
     this.chartConfig = {
       bindto: '#bar-' + this.chartId,
       data: {
         columns: this.config.data,
-        type: 'bar'
+        type: 'bar',
       },
-      bar:{
-        label:{
-          show: false
+      bar: {
+        label: {
+          show: false,
         },
-        width:15,
-        fullCircle:true
+        width: 15,
+        fullCircle: true,
       },
-      tooltip:{
+      tooltip: {
         show: false,
       },
       interaction: {
-        enabled: false
+        enabled: false,
       },
       legend: {
-        hide:true
-      }
-    }
+        hide: true,
+      },
+    };
     return this.chartConfig;
   }
-
-
-
 }

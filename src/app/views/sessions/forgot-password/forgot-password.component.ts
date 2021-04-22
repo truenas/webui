@@ -4,12 +4,12 @@ import { MatButton } from '@angular/material/button';
 @Component({
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.component.html',
-  styleUrls: ['./forgot-password.component.css']
+  styleUrls: ['./forgot-password.component.css'],
 })
 export class ForgotPasswordComponent implements OnInit {
   userEmail;
-  @ViewChild(MatProgressBar, { static: false}) progressBar: MatProgressBar;
-  @ViewChild(MatButton, { static: false}) submitButton: MatButton;
+  @ViewChild(MatProgressBar, { static: false }) progressBar: MatProgressBar;
+  @ViewChild(MatButton, { static: false }) submitButton: MatButton;
   constructor() { }
 
   ngOnInit() {

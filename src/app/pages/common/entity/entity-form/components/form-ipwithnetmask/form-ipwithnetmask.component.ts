@@ -1,4 +1,6 @@
-import { Component, Output, ViewChild, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component, Output, ViewChild, EventEmitter, OnInit, OnDestroy,
+} from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -21,7 +23,7 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
   netmask = '24';
   netmaskOptions = this.network.getV4Netmasks();
   value: string;
-  netmaskPreset: number
+  netmaskPreset: number;
 
   private ipv6netmaskoptions = this.network.getV6PrefixLength();
   private ipv4netmaskoptions = this.network.getV4Netmasks();
@@ -45,7 +47,7 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
     this.valueSubscription.unsubscribe();
   }
 
-  setAddress($event){
+  setAddress($event) {
     const address = $event.target.value;
     this.setAddressAndNetmask(address);
   }
@@ -53,19 +55,19 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
   setNetmaskOptions() {
     if (this.address.indexOf(':') === -1) {
       this.netmaskOptions = this.ipv4netmaskoptions;
-    }  else {
+    } else {
       this.netmaskOptions = this.ipv6netmaskoptions;
     }
   }
 
-  setNetmask($event){
+  setNetmask($event) {
     this.netmask = $event.value;
     this.setValue();
   }
 
   setValue() {
-    let value = this.address + "/" + this.netmask;
-    if (this.address.trim() === '' || this.address === undefined){ 
+    let value = this.address + '/' + this.netmask;
+    if (this.address.trim() === '' || this.address === undefined) {
       value = '';
     }
     if (value !== this.value) {

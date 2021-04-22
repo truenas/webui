@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from "@angular/router";
+import { RouterModule } from '@angular/router';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,7 +18,7 @@ import { ForgotPasswordComponent } from './forgot-password/forgot-password.compo
 import { LockscreenComponent } from './lockscreen/lockscreen.component';
 import { SigninComponent } from './signin/signin.component';
 import { SignupComponent } from './signup/signup.component';
-import { SessionsRoutes } from "./sessions.routing";
+import { SessionsRoutes } from './sessions.routing';
 
 @NgModule({
   imports: [
@@ -35,8 +35,8 @@ import { SessionsRoutes } from "./sessions.routing";
     MatTooltipModule,
     FlexLayoutModule,
     TranslateModule,
-    RouterModule.forChild(SessionsRoutes)
+    RouterModule.forChild(SessionsRoutes),
   ],
-  declarations: [ForgotPasswordComponent, LockscreenComponent, SigninComponent, SignupComponent]
+  declarations: [ForgotPasswordComponent, LockscreenComponent, SigninComponent, SignupComponent],
 })
 export class SessionsModule { }

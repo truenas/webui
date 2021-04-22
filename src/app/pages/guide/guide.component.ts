@@ -8,13 +8,12 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
   styleUrls: ['./guide.component.css'],
 })
 
-export class GuideComponent implements OnInit{
-
-  public safeUrl: SafeUrl;
+export class GuideComponent implements OnInit {
+  safeUrl: SafeUrl;
 
   constructor(public sanitizer: DomSanitizer) {}
 
   ngOnInit() {
-	this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl("//" + environment.remote + "//docs/freenas.html");
+    this.safeUrl = this.sanitizer.bypassSecurityTrustResourceUrl('//' + environment.remote + '//docs/freenas.html');
   }
 }

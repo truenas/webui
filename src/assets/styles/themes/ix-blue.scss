@@ -1549,7 +1549,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     color: rgb(19, 19, 19);
   }
 
-  confirm-dialog pre {
+  confirm-dialog pre,
+  error-dialog pre {
       overflow-x: auto;
       white-space: pre-wrap;
       white-space: -moz-pre-wrap;
