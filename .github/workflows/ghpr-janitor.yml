@@ -1,0 +1,18 @@
+# This workflow runs checks every 6 hours for package versions that
+# can be deleted using https://github.com/stripethree/gpr-janitor
+
+on:
+  schedule:
+    - cron: "5 */6 * * *"
+
+jobs:
+  package-cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: stripethree/gpr-janitor@v2
+        with:
+          dry-run: false
+          keep-versions: 30
+          min-age-days: 30
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

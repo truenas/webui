@@ -15,11 +15,11 @@ Images only require the environment variable TNIP to be set to the IP or Hostnam
 Example:
 
 ```
-# docker container run -it -e TNIP=192.168.0.30 -p 8080:80 ixsystems/truenas-webui:latest
+# docker container run -it -e TNIP=192.168.0.30 -p 8080:80 docker.pkg.github.com/truenas/webui:latest
 ```
 This would allow you to access the running WebUI on http://localhost:8080
 
-NOTE: Pull requests are also generated as Docker images and can be used for testing by replacing the ":latest" tag with the pull-request ID. I.E. "ixsystems/truenas-webui:5010"
+NOTE: Pull requests are also generated as Docker images and can be used for testing by replacing the ":latest" tag with the pull-request ID. I.E. "/truenas/webui:5010"
 
 # Development requirements
 
