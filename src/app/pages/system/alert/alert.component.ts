@@ -55,7 +55,7 @@ export class AlertConfigComponent implements OnInit {
   public formGroup: any;
   public settingFormGroup: any;
   public isReady = false;
-  protected defaults = [];
+  protected defaults: any[] = [];
 
   public selectedIndex = 0;
 
@@ -87,10 +87,10 @@ export class AlertConfigComponent implements OnInit {
     const cat = this.ws.call("alert.list_categories").toPromise();
     cat.then(categories => {
       this.addButtons(categories);
-      categories.forEach((category, index) => {
+      categories.forEach((category: any, index: number) => {
         const modulo = index % 2;
 
-        let config = [];
+        let config: any[] = [];
         for (let i = 0; i < category.classes.length; i++) {
           const c = category.classes[i];
           const warningOptions = [];
@@ -164,8 +164,8 @@ export class AlertConfigComponent implements OnInit {
 
   }
 
-  addButtons(categories) {
-    let options = [];
+  addButtons(categories: any[]) {
+    let options: Option[] = [];
     categories.forEach((category, index) => {
       options.push({ label: category.title, value: index });
     });
@@ -204,7 +204,7 @@ export class AlertConfigComponent implements OnInit {
   }
 
   onSubmit() {
-    const payload = { classes: {} };
+    const payload: any = { classes: {} };
 
     for (const key in this.formGroup.value) {
       const key_values = key.split('_');
