@@ -1,8 +1,10 @@
-export interface AclFlags {
-    FILE_INHERIT: boolean;
-    DIRECTORY_INHERIT: boolean;
-    NO_PROPAGATE_INHERIT: boolean;
-    INHERIT_ONLY: boolean;
-    INHERITED: boolean;
-    BASIC: string;
+export enum AclFlag {
+    FileInherit = 'FILE_INHERIT',
+    DirectoryInherit = 'DIRECTORY_INHERIT',
+    NoPropagateInherit = 'NO_PROPAGATE_INHERIT',
+    InheritOnly = 'INHERIT_ONLY',
+    Inherited = 'INHERITED',
+    Basic = 'BASIC'
 }
+
+export type AclFlags = { [K in AclFlag]: boolean };
