@@ -7,12 +7,14 @@ on:
       - 'opened'
 
 env:
+  environment: CIENV
   PR_NUMBER: ${{ github.event.pull_request.number }}
+  DOCKER_USER: ${{ secrets.DOCKER_USER }}
+  DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
 
 jobs:
    docker:
     if: github.event.pull_request.head.repo.full_name != github.repository
-    environment: CIENV
     runs-on: ubuntu-latest
     steps:
       - name: Set up QEMU
@@ -22,8 +24,8 @@ jobs:
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
-          username: ${{ secrets.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_TOKEN }}
+          username: ${{ DOCKER_USER }}
+          password: ${{ DOCKER_TOKEN }}
       - name: Build and push
         id: docker_build
         uses: docker/build-push-action@v2
