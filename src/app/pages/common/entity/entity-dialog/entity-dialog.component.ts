@@ -57,7 +57,7 @@ export class EntityDialogComponent implements OnInit {
     });
 
     this.fieldConfig = this.conf.fieldConfig;
-    
+
     if(this.conf.parent) {
       this.parent = this.conf.parent;
     }
@@ -81,7 +81,7 @@ export class EntityDialogComponent implements OnInit {
     for (const i in this.fieldConfig) {
       const config = this.fieldConfig[i];
       if (config.relation.length > 0) {
-        this.fieldRelationService.setRelation(config, this.formGroup, this.fieldConfig);
+        this.fieldRelationService.setRelation(config, this.formGroup);
       }
     }
 
@@ -130,9 +130,9 @@ export class EntityDialogComponent implements OnInit {
   togglePW() {
     let inputs = document.getElementsByTagName('input');
     for (let i = 0; i < inputs.length; i++) {
-      if (!inputs[i].placeholder.toLowerCase().includes('current') && 
+      if (!inputs[i].placeholder.toLowerCase().includes('current') &&
           !inputs[i].placeholder.toLowerCase().includes('root')) {
-        if (inputs[i].placeholder.toLowerCase().includes('password') || 
+        if (inputs[i].placeholder.toLowerCase().includes('password') ||
         inputs[i].placeholder.toLowerCase().includes('passphrase') ||
         inputs[i].placeholder.toLowerCase().includes('secret')) {
           if (inputs[i].type === 'password') {

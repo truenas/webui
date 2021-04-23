@@ -108,7 +108,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
               name: 'name',
               placeholder: helptext.chartForm.container.env_vars.key.placeholder,
               tooltip: helptext.chartForm.container.env_vars.key.tooltip,
-            }, 
+            },
             {
               type: 'input',
               name: 'value',
@@ -136,7 +136,6 @@ export class ChartReleaseAddComponent implements OnDestroy {
           label: 'Add External Interface',
           box: true,
           width: '100%',
-          customEventMethod: this.onChangeExternalInterfaces,
           templateListField: [
             {
               type: 'select',
@@ -161,16 +160,16 @@ export class ChartReleaseAddComponent implements OnDestroy {
                   type: 'ipwithnetmask',
                   name: 'staticIP',
                   placeholder: helptext.chartForm.externalInterfaces.staticConfig.placeholder,
-                  relation: [
-                    {
-                      action: 'ENABLE',
-                      when: [{
-                        name: 'ipam',
-                        value: 'static',
-                      }]
-                    },
-                  ],
-                }, 
+                },
+              ],
+              relation: [
+                {
+                  action: 'ENABLE',
+                  when: [{
+                    name: 'ipam',
+                    value: 'static',
+                  }]
+                },
               ],
               listFields: []
             },
@@ -183,16 +182,24 @@ export class ChartReleaseAddComponent implements OnDestroy {
                   type: 'ipwithnetmask',
                   name: 'destination',
                   placeholder: helptext.chartForm.externalInterfaces.staticRoutes.destination.placeholder,
-                }, 
+                },
                 {
                   type: 'input',
                   name: 'gateway',
                   placeholder: helptext.chartForm.externalInterfaces.staticRoutes.gateway.placeholder,
                 }
               ],
-              listFields: []
+              listFields: [],
+              relation: [
+                {
+                  action: 'ENABLE',
+                  when: [{
+                    name: 'ipam',
+                    value: 'static',
+                  }]
+                },
+              ],
             }
-            
           ],
           listFields: []
         },
@@ -239,13 +246,13 @@ export class ChartReleaseAddComponent implements OnDestroy {
               name: 'containerPort',
               placeholder: helptext.chartForm.portForwardingList.containerPort.placeholder,
               validation: helptext.chartForm.portForwardingList.containerPort.validation
-            }, 
+            },
             {
               type: 'input',
               name: 'nodePort',
               placeholder: helptext.chartForm.portForwardingList.nodePort.placeholder,
-              validation: helptext.chartForm.portForwardingList.nodePort.validation,   
-            },  
+              validation: helptext.chartForm.portForwardingList.nodePort.validation,
+            },
             {
               type: 'select',
               name: 'protocol',
@@ -275,7 +282,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
               hideDirs: 'ix-applications',
               placeholder: helptext.chartForm.hostPathVolumes.hostPath.placeholder,
               tooltip: helptext.chartForm.hostPathVolumes.hostPath.tooltip,
-            }, 
+            },
             {
               type: 'input',
               name: 'mountPath',
@@ -360,7 +367,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
     try {
 
       const gpuConfiguration = catalogApp.schema.questions.find(question => question.variable=='gpuConfiguration');
-  
+
       if (gpuConfiguration && gpuConfiguration.schema.attrs.length > 0) {
         const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(gpuConfiguration);
         const gpuWizardConfig = {
@@ -370,28 +377,10 @@ export class ChartReleaseAddComponent implements OnDestroy {
 
         this.wizardConfig.push(gpuWizardConfig);
       }
-      
+
     } catch(error) {
       return this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
-  }
-
-  onChangeExternalInterfaces(listComponent: FormListComponent) {
-    
-    listComponent.listsFromArray.controls.forEach((externalInterface, index) => {
-      const staticRoutesFC = _.find(listComponent.config.listFields[index], {'name': 'staticRoutes'});
-      const staticIPConfigurationsFC = _.find(listComponent.config.listFields[index], {'name': 'staticIPConfigurations'});
-  
-      (<FormGroup>externalInterface).controls['ipam'].valueChanges.subscribe(value => {
-        if (value === 'static') {
-          staticIPConfigurationsFC.isHidden = false;
-          staticRoutesFC.isHidden = false;
-        } else {
-          staticIPConfigurationsFC.isHidden = true;
-          staticRoutesFC.isHidden = true;
-        }
-      })
-    });
   }
 
   makeSummary(step: string | number, fieldName: string | number, label: string | number) {
@@ -446,7 +435,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
                 type: i.ipam,
               }
             }
-          );            
+          );
         } else {
           let ipList = [];
           if (i.staticIPConfigurations && i.staticIPConfigurations.length > 0) {
@@ -486,14 +475,14 @@ export class ChartReleaseAddComponent implements OnDestroy {
         externalInterfaces: ext_interfaces,
         hostPathVolumes: hpVolumes,
         hostNetwork: data.hostNetwork,
-        image: { 
+        image: {
           repository: data.repository,
           pullPolicy: data.pullPolicy,
           tag: data.tag
-        }, 
-        portForwardingList: pfList, 
+        },
+        portForwardingList: pfList,
         updateStrategy: data.updateStrategy,
-        volumes: volList, 
+        volumes: volList,
         workloadType: 'Deployment',
         securityContext: {
           privileged: data.privileged,
@@ -518,7 +507,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
 
   ngOnDestroy(){
     this.destroy$.next();
-    this.destroy$.complete(); 
+    this.destroy$.complete();
   }
 
 }

@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {FormControl, FormGroup} from "@angular/forms";
+import {FormControl, FormGroup, FormArray} from "@angular/forms";
 
 import {FieldConfig} from "../models/field-config.interface";
 import {
@@ -56,7 +56,7 @@ export class FieldRelationService {
                             formGroup: FormGroup): boolean {
     return this.isFormControlToBe(relGroup, formGroup, true);
   }
-  
+
   isFormControlToBeHide(relGroup: RelationGroup,
     formGroup: FormGroup): boolean {
     return this.isFormControlToBe(relGroup, formGroup, false);
@@ -78,7 +78,7 @@ export class FieldRelationService {
             let parsedValues = {};
             new EntityUtils().parseFormControlValues(formGroupValue, parsedValues);
             const key_list = rel.name.split(FORM_KEY_SEPERATOR);
-            
+
             key_list.forEach(key => {
               if (parsedValues && parsedValues[key] != undefined) {
                 parsedValues = parsedValues[key];
@@ -99,7 +99,7 @@ export class FieldRelationService {
             disable_action = ACTION_HIDE;
             enable_action = ACTION_SHOW;
           }
-          
+
           if (hasControlValue && relGroup.action === disable_action) {
             if (index > 0 && relGroup.connective === CONNECTION_AND &&
                 !toBeDisabled) {
@@ -189,22 +189,36 @@ export class FieldRelationService {
     return control && condition.status === control.status;
   }
 
-  setRelation(config: FieldConfig, formGroup, fieldConfig) {
-    const activations = this.findActivationRelation(config.relation);
-    if (activations) {
-      const tobeDisabled = this.isFormControlToBeDisabled(activations, formGroup);
-      const tobeHide = this.isFormControlToBeHide(activations, formGroup);
-      this.setDisabled(fieldConfig, formGroup, config.name, tobeDisabled, tobeHide);
 
-      this.getRelatedFormControls(config, formGroup).forEach(control => {
-        control.valueChanges.subscribe(() => { 
-          this.relationUpdate(config, activations, formGroup, fieldConfig); 
+  setRelation(config: FieldConfig, formGroup: FormGroup) {
+    if (config.relation && config.relation.length > 0) {
+      const activations = this.findActivationRelation(config.relation);
+      if (activations) {
+        const tobeDisabled = this.isFormControlToBeDisabled(activations, formGroup);
+        const tobeHide = this.isFormControlToBeHide(activations, formGroup);
+        this.setDisabled(config, formGroup, tobeDisabled, tobeHide);
+
+        this.getRelatedFormControls(config, formGroup).forEach(control => {
+          control.valueChanges.subscribe((value) => {
+            setTimeout(() => {
+              this.relationUpdate(config, activations, formGroup);
+            }, 100);
+          });
         });
-      });
+      }
+    }
+
+    if (config.listFields) {
+      const formArray = formGroup.get(config.name) as FormArray;
+      for (let i=0; i<config.listFields.length; i++) {
+        config.listFields[i].forEach(subFieldConfig => {
+          this.setRelation(subFieldConfig, formArray.at(i) as FormGroup);
+        });
+      }
     }
   }
 
-  setDisabled(fieldConfig: FieldConfig[], formGroup: any, name: string, disable: boolean, hide?: boolean, status?:string) {
+  setDisabled(fieldConfig: FieldConfig, formGroup: FormGroup, disable: boolean, hide?: boolean, status?:string) {
     // if field is hidden, disable it too
     if (hide) {
       disable = hide;
@@ -212,26 +226,20 @@ export class FieldRelationService {
       hide = false;
     }
 
+    fieldConfig.disabled = disable;
+    fieldConfig.isHidden = hide;
 
-    fieldConfig = fieldConfig.map((item) => {
-      if (item.name === name) {
-        item.disabled = disable;
-        item['isHidden'] = hide;
-      }
-      return item;
-    });
-
-    if (formGroup.controls[name]) {
+    if (formGroup.controls[fieldConfig.name]) {
       const method = disable ? 'disable' : 'enable';
-      formGroup.controls[name][method]();
+      formGroup.controls[fieldConfig.name][method]();
       return;
     }
   }
 
-  relationUpdate(config: any, activations: any, formGroup: any, fieldConfig: FieldConfig[]) {
+  relationUpdate(config: FieldConfig, activations: any, formGroup: FormGroup) {
     const tobeDisabled = this.isFormControlToBeDisabled(activations, formGroup);
     const tobeHide = this.isFormControlToBeHide(activations, formGroup);
-    this.setDisabled(fieldConfig, formGroup, config.name, tobeDisabled, tobeHide);
+    this.setDisabled(config, formGroup, tobeDisabled, tobeHide);
   }
 
   isDeepEqual(data1, data2) {
@@ -244,7 +252,7 @@ export class FieldRelationService {
         if (data1.length !== data2.length) {
           return false;
         }
-      
+
         for (let i=0; i<data2.length; i++) {
           const val1 = data1[i];
           const val2 = data2[i];
@@ -256,11 +264,11 @@ export class FieldRelationService {
       case 'object':
         const keys1 = Object.keys(data1);
         const keys2 = Object.keys(data2);
-      
+
         if (keys1.length !== keys2.length) {
           return false;
         }
-      
+
         for (const key of keys1) {
           const val1 = data1[key];
           const val2 = data2[key];
@@ -275,10 +283,10 @@ export class FieldRelationService {
           return false;
         }
     }
-  
+
     return true;
   }
-  
+
   getDataType(data) {
     if (Array.isArray(data)) {
       return 'array';
@@ -487,7 +495,7 @@ export class FieldRelationService {
 
     return result;
   }
-  
+
   isRelationIn(x, y) {
     let result = false;
 
@@ -535,5 +543,5 @@ export class FieldRelationService {
 
     return result;
   }
-  
+
 }

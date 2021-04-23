@@ -229,7 +229,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     for (const i in this.fieldConfig) {
       const config = this.fieldConfig[i];
       if (config.relation.length > 0) {
-        this.setRelation(config, this.formGroup);
+        this.fieldRelationService.setRelation(config, this.formGroup);
       }
     }
   }
@@ -653,25 +653,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   setDisabled(name: string, disable: boolean, hide?: boolean, status?:string) {
     const fieldConfig = this.fieldConfig.find((item) => item.name === name);
-    this._setDisabled(fieldConfig, this.formGroup, disable, hide, status);
-  }
-
-  private _setDisabled(fieldConfig: FieldConfig, formGroup: FormGroup, disable: boolean, hide?: boolean, status?:string) {
-    // if field is hidden, disable it too
-    if (hide) {
-      disable = hide;
-    } else {
-      hide = false;
-    }
-
-    fieldConfig.disabled = disable;
-    fieldConfig.isHidden = hide;
-
-    if (formGroup.controls[fieldConfig.name]) {
-      const method = disable ? 'disable' : 'enable';
-      formGroup.controls[fieldConfig.name][method]();
-      return;
-    }
+    this.fieldRelationService.setDisabled(fieldConfig, this.formGroup, disable, hide, status);
   }
 
   setValue(name: string, value: any) {
@@ -760,46 +742,13 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
     for (let i = 0; i < fieldConfig['listFields'].length; i++) {
       fieldConfig['listFields'][i].forEach(subFieldConfig => {
-        this.setRelation(subFieldConfig, formArray.at(i) as FormGroup);
+        this.fieldRelationService.setRelation(subFieldConfig, formArray.at(i) as FormGroup);
       });
     }
 
     formArray.markAllAsTouched();
   }
 
-  setRelation(config: FieldConfig, formGroup: FormGroup) {
-    if (config.relation && config.relation.length > 0) {
-      const activations = this.fieldRelationService.findActivationRelation(config.relation);
-      if (activations) {
-        const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(activations, formGroup);
-        const tobeHide = this.fieldRelationService.isFormControlToBeHide(activations, formGroup);
-        this._setDisabled(config, formGroup, tobeDisabled, tobeHide);
-
-        this.fieldRelationService.getRelatedFormControls(config, formGroup).forEach(control => {
-          control.valueChanges.subscribe((value) => {
-            setTimeout(() => {
-              this.relationUpdate(config, activations, formGroup);
-            }, 100);
-          });
-        });
-      }
-    }
-
-    if (config.listFields) {
-      const formArray = formGroup.get(config.name) as FormArray;
-      for (let i=0; i<config.listFields.length; i++) {
-        config.listFields[i].forEach(subFieldConfig => {
-          this.setRelation(subFieldConfig, formArray.at(i) as FormGroup);
-        });
-      }
-    }
-  }
-
-  relationUpdate(config: FieldConfig, activations: any, formGroup: FormGroup) {
-    const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(activations, formGroup);
-    const tobeHide = this.fieldRelationService.isFormControlToBeHide(activations, formGroup);
-    this._setDisabled(config, formGroup, tobeDisabled, tobeHide);
-  }
 
   ngOnDestroy() {
 

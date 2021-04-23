@@ -127,7 +127,7 @@ export class ChartReleaseEditComponent {
               name: 'name',
               placeholder: helptext.chartForm.container.env_vars.key.placeholder,
               tooltip: helptext.chartForm.container.env_vars.key.tooltip,
-            }, 
+            },
             {
               type: 'input',
               name: 'value',
@@ -163,7 +163,6 @@ export class ChartReleaseEditComponent {
           name: 'externalInterfaces',
           width: '100%',
           box: true,
-          customEventMethod: this.onChangeExternalInterfaces,
           templateListField: [
             {
               type: 'select',
@@ -183,25 +182,23 @@ export class ChartReleaseEditComponent {
               type: 'list',
               name: 'staticIPConfigurations',
               width: '100%',
-              // isHidden: true,
               templateListField: [
                 {
                   type: 'ipwithnetmask',
                   name: 'staticIP',
                   placeholder: helptext.chartForm.externalInterfaces.staticConfig.placeholder,
-                  // isHidden: true,
-                  relation: [
-                    {
-                      action: 'ENABLE',
-                      when: [{
-                        name: 'ipam',
-                        value: 'static',
-                      }]
-                    },
-                  ],
-                }, 
+                },
               ],
-              listFields: []
+              listFields: [],
+              relation: [
+                {
+                  action: 'SHOW',
+                  when: [{
+                    name: 'ipam',
+                    value: 'static',
+                  }]
+                },
+              ],
             },
             {
               type: 'list',
@@ -213,16 +210,25 @@ export class ChartReleaseEditComponent {
                   type: 'ipwithnetmask',
                   name: 'destination',
                   placeholder: helptext.chartForm.externalInterfaces.staticRoutes.destination.placeholder,
-                }, 
+                },
                 {
                   type: 'input',
                   name: 'gateway',
                   placeholder: helptext.chartForm.externalInterfaces.staticRoutes.gateway.placeholder,
                 }
               ],
-              listFields: []
+              listFields: [],
+              relation: [
+                {
+                  action: 'SHOW',
+                  when: [{
+                    name: 'ipam',
+                    value: 'static',
+                  }]
+                },
+              ],
             }
-            
+
           ],
           listFields: []
         }
@@ -276,13 +282,13 @@ export class ChartReleaseEditComponent {
               name: 'containerPort',
               placeholder: helptext.chartForm.portForwardingList.containerPort.placeholder,
               validation: helptext.chartForm.portForwardingList.containerPort.validation,
-            }, 
+            },
             {
               type: 'input',
               name: 'nodePort',
               placeholder: helptext.chartForm.portForwardingList.nodePort.placeholder,
               validation: helptext.chartForm.portForwardingList.nodePort.validation,
-            },  
+            },
             {
               type: 'select',
               name: 'protocol',
@@ -314,7 +320,7 @@ export class ChartReleaseEditComponent {
               hideDirs: 'ix-applications',
               placeholder: helptext.chartForm.hostPathVolumes.hostPath.placeholder,
               tooltip: helptext.chartForm.hostPathVolumes.hostPath.tooltip,
-            }, 
+            },
             {
               type: 'input',
               name: 'mountPath',
@@ -408,14 +414,14 @@ export class ChartReleaseEditComponent {
 
         hasGpuConfig = true;
       }
-      
+
     } catch(error) {
       return this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
 
     return hasGpuConfig;
   }
-  
+
   resourceTransformIncomingRestData(data) {
     this.name = data.name;
     data.config.release_name = data.name;
@@ -452,34 +458,16 @@ export class ChartReleaseEditComponent {
     return data.config;
   }
 
-  onChangeExternalInterfaces(listComponent: FormListComponent) {
-    
-    listComponent.listsFromArray.controls.forEach((externalInterface, index) => {
-      const staticRoutesFC = _.find(listComponent.config.listFields[index], {'name': 'staticRoutes'});
-      const staticIPConfigurationsFC = _.find(listComponent.config.listFields[index], {'name': 'staticIPConfigurations'});
-  
-      (<FormGroup>externalInterface).controls['ipam'].valueChanges.subscribe(value => {
-        if (value === 'static') {
-          staticIPConfigurationsFC.isHidden = false;
-          staticRoutesFC.isHidden = false;
-        } else {
-          staticIPConfigurationsFC.isHidden = true;
-          staticRoutesFC.isHidden = true;
-        }
-      })
-    });
-  }
-
   customSubmit(data) {
 
     let parsedData = {};
     this.entityUtils.parseFormControlValues(data, parsedData);
-    
+
     let envVars = [];
     if (data.containerEnvironmentVariables && data.containerEnvironmentVariables.length > 0 && data.containerEnvironmentVariables[0].name) {
       envVars = data.containerEnvironmentVariables;
     }
-    
+
     let pfList = [];
     if (data.portForwardingList && data.portForwardingList.length > 0 && data.portForwardingList[0].containerPort) {
       pfList = data.portForwardingList;
@@ -506,7 +494,7 @@ export class ChartReleaseEditComponent {
                 type: i.ipam,
               }
             }
-          );            
+          );
         } else {
           let ipList = [];
           if (i.staticIPConfigurations && i.staticIPConfigurations.length > 0) {
@@ -541,21 +529,21 @@ export class ChartReleaseEditComponent {
         externalInterfaces: ext_interfaces,
         hostPathVolumes: hpVolumes,
         hostNetwork: data.hostNetwork,
-        image: { 
+        image: {
           repository: data.repository,
           pullPolicy: data.pullPolicy,
           tag: data.tag
-        }, 
-        portForwardingList: pfList, 
+        },
+        portForwardingList: pfList,
         updateStrategy: data.updateStrategy,
-        volumes: volList, 
+        volumes: volList,
         workloadType: 'Deployment',
         securityContext: {
           privileged: data.privileged,
         }
       }
     }]
- 
+
     if (parsedData['gpuConfiguration']) {
       payload[1]['values']['gpuConfiguration'] = parsedData['gpuConfiguration'];
     }
