@@ -3,6 +3,8 @@ import { Validators } from '@angular/forms';
 
 export default {
 // Kerberos Keytabs form
+title_add: T('Add Kerberos Keytab'),
+title_edit: T('Edit Kerberos Keytab'),
 kkt_heading: T('Kerberos Keytab'),
 kkt_ktname_name: 'name',
 kkt_ktname_placeholder: T('Name'),

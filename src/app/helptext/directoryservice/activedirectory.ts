@@ -3,6 +3,7 @@ import { Validators } from '@angular/forms';
 import globalHelptext from '../../helptext/global-helptext';
 
 export default {
+title: T('Active Directory'),
 activedirectory_custactions_basic_id: 'basic_mode',
 activedirectory_custactions_advanced_id: 'advanced_mode',
 activedirectory_custactions_edit_imap_id: 'edit_idmap',
