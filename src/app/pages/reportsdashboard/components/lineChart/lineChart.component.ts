@@ -10,23 +10,12 @@ import {UUID} from 'angular2-uuid';
 import * as moment from 'moment-timezone';
 import Dygraph from 'dygraphs';
 import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
-import Chart from 'chart.js';
-import * as simplify from 'simplify-js';
 
 interface Conversion {
   value: number;
   prefix?: string;
   suffix?: string;
   shortName?: string;
-}
-
-// For Chart.js
-interface DataSet {
-  label: string;
-  data: number[];
-  backgroundColor: string[];
-  borderColor: string[];
-  borderWidth: number;
 }
 
 @Component({
