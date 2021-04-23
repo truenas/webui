@@ -63,9 +63,8 @@ def click_on_the_accounts_on_the_side_menu_click_on_users(driver):
 @then('when the Users page should open, click on the "Add" Button')
 def when_the_users_page_should_open_click_on_the_add_button(driver):
     """when the Users page should open, click on the "Add" Button."""
-    if wait_on_element(driver, 2, '//h1[contains(.,"Display Note")]'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__Users_ADD"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__Users_ADD"]').click()
 
 
