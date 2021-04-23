@@ -217,7 +217,6 @@ def click_on_service_on_the_side_menu(driver):
     """click on service on the side menu."""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Services"]').click()
     assert wait_on_element(driver, 5, '//li[contains(.,"Services")]')
-    time.sleep(1)
 
 
 @then('on the Service page, scroll to NFS and click on the pencil')
