@@ -58,6 +58,10 @@ vm_config
 tests/config.cfg
 tests/bdd/config.cfg
 *.feature
+tests/bdd/*.html*
+firefox.core
+code-oss.core
+chrome.core
 
 # Junit results for Jenkins
 tests/bdd/results/junit/*.xml
