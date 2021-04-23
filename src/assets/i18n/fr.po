@@ -2152,6 +2152,9 @@ msgstr ""
 "Ajouter <i>@realm</i> à <i>cn</i> dans les requêtes LDAP pour les groupes "
 "et les utilisateurs lorsque CN utilisateur est défini)."
 
+msgid "Append Data"
+msgstr ""
+
 msgid ""
 "Appends a suffix to the share connection path.  This is used to provide "
 "unique shares on a per-user, per-computer, or per-IP address basis.  "
@@ -5051,6 +5054,9 @@ msgstr "Supprimer"
 msgid "Delete "
 msgstr "Supprimer "
 
+msgid "Delete Children"
+msgstr ""
+
 msgid "Delete Dataset"
 msgstr "Supprimer le dataset"
 
@@ -5417,6 +5423,9 @@ msgstr "Répertoires et Permissions"
 
 msgid "Directory"
 msgstr "Répertoire"
+
+msgid "Directory Inherit"
+msgstr ""
 
 msgid "Directory Mask"
 msgstr "Masque du répertoire"
@@ -7749,6 +7758,9 @@ msgstr "Ports Fibre Channel"
 msgid "File Information"
 msgstr "Informations sur le fichier"
 
+msgid "File Inherit"
+msgstr ""
+
 msgid "File Mask"
 msgstr "Masque de fichier"
 
@@ -8002,6 +8014,9 @@ msgstr "Nom de l'expéditeur"
 
 msgid "Full"
 msgstr "Plein"
+
+msgid "Full Control"
+msgstr ""
 
 msgid "Full Filesystem Replication"
 msgstr "Réplication complète du système de fichier"
@@ -9024,8 +9039,14 @@ msgstr "Héritage (chiffré)"
 msgid "Inherit (non-encrypted)"
 msgstr "Héritage (non chiffré)"
 
+msgid "Inherit Only"
+msgstr ""
+
 msgid "Inherit encryption properties from parent"
 msgstr "Hériter des propriétés de chiffrement du parent"
+
+msgid "Inherited"
+msgstr ""
 
 msgid "Inherits"
 msgstr "Hérite"
@@ -10251,6 +10272,9 @@ msgstr "Modèle"
 msgid "Model:"
 msgstr "Modèle:"
 
+msgid "Modify"
+msgstr ""
+
 msgid ""
 "Modify for disks that understand <a "
 "href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\" "
@@ -10759,6 +10783,9 @@ msgstr "Pas de temps d'avertissement de communication"
 msgid "No Encryption (less secure, but faster)"
 msgstr "Pas de chiffrement (moins sûr, mais plus rapide)"
 
+msgid "No Inherit"
+msgstr ""
+
 msgid "No Item"
 msgstr ""
 
@@ -10772,6 +10799,9 @@ msgid "No Pools"
 msgstr "Aucun volume"
 
 msgid "No Pools Found"
+msgstr ""
+
+msgid "No Propagate Inherit"
 msgstr ""
 
 msgid "No Recent Events"
@@ -11339,6 +11369,9 @@ msgstr "Unité organisationnelle de l'entité."
 
 msgid "Other"
 msgstr "Autre"
+
+msgid "Other (Too complicated to be displayed)"
+msgstr ""
 
 msgid "Other Options"
 msgstr "Autres options"
@@ -12002,6 +12035,9 @@ msgstr "Clé privée"
 msgid "Private Key ID"
 msgstr "ID de clé privée"
 
+msgid "Privileged"
+msgstr ""
+
 msgid ""
 "Privileges are the same as the guest account.  Guest access is disabled by "
 "default in Windows 10 version 1709 and  Windows Server version 1903. "
@@ -12230,8 +12266,20 @@ msgstr "Réouverture de toutes les alertes"
 msgid "Read"
 msgstr "Lire"
 
+msgid "Read ACL"
+msgstr ""
+
+msgid "Read Attributes"
+msgstr ""
+
+msgid "Read Data"
+msgstr ""
+
 msgid "Read Errors"
 msgstr "Erreurs de lecture"
+
+msgid "Read Named Attributes"
+msgstr ""
 
 msgid "Read Only"
 msgstr "Lecture seule"
@@ -13321,6 +13369,9 @@ msgstr ""
 
 msgid "Security"
 msgstr "Sécurité"
+
+msgid "Security Settings"
+msgstr ""
 
 msgid ""
 "See <a "
@@ -15348,13 +15399,14 @@ msgid ""
 "<i>pool1</i> with a Naming Schema of  <i>customsnap-%Y%m%d.%H%M</i> have "
 "names like  <i>pool1@customsnap-20190315.0527</i>."
 msgstr ""
-"Chaîne de format de nom d'instantané. La valeur par défaut est <code>auto-%Y-%m-%d_"
-"%H-%M</code> . Doit inclure les chaînes <i>%Y</i>,  <i>%m</i>, <i>%d</i>, <i>%H</"
-"i>, et <i>%M</i>, qui sont remplacées par l’année à quatre chiffres, mois, jour du "
-"mois, heure et minute tel que défini <a href=\"https://www.freebsd.org/cgi/man.cgi?"
-"query=strftime\" target=\"_blank\">strftime(3)</a>.<br><br>.  Par exemple, les "
-"instantanés <i>de pool1</i> avec un schéma nommant  <i>customsnap-%Y%m%d.%H%M</i> "
-"ont des noms comme  <i>pool1@customsnap-20190315.0527</i>."
+"Chaîne de format de nom d'instantané. La valeur par défaut est "
+"<code>auto-%Y-%m-%d_%H-%M</code> . Doit inclure les chaînes <i>%Y</i>,  "
+"<i>%m</i>, <i>%d</i>, <i>%H</i>, et <i>%M</i>, qui sont remplacées par "
+"l’année à quatre chiffres, mois, jour du mois, heure et minute tel que "
+"défini <a href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\" "
+"target=\"_blank\">strftime(3)</a>.<br><br>.  Par exemple, les instantanés "
+"<i>de pool1</i> avec un schéma nommant  <i>customsnap-%Y%m%d.%H%M</i> ont "
+"des noms comme  <i>pool1@customsnap-20190315.0527</i>."
 
 msgid ""
 "Snapshot schedule for this  replication task. Choose from previously "
@@ -15380,8 +15432,8 @@ msgid ""
 "Some authentication tools default to 30 seconds and do not support custom "
 "intervals."
 msgstr ""
-"Certains outils d’authentification par défaut à 30 secondes et ne supportent pas "
-"les intervalles personnalisés."
+"Certains outils d’authentification par défaut à 30 secondes et ne "
+"supportent pas les intervalles personnalisés."
 
 msgid "Something went wrong"
 msgstr "Quelque chose s'est mal passé"
@@ -15463,8 +15515,8 @@ msgstr ""
 
 msgid "Specify arguments for container command. Use <i>ENTER</i> after each entry."
 msgstr ""
-"Spécifiez les arguments de la commande de conteneur. Utilisez <i>ENTER</i> après "
-"chaque entrée."
+"Spécifiez les arguments de la commande de conteneur. Utilisez <i>ENTER</i> "
+"après chaque entrée."
 
 msgid ""
 "Specify how many servers to create. Increase if NFS client responses are "
@@ -15811,6 +15863,9 @@ msgstr "Sync pairs (peer) réussi."
 
 msgid "Synced"
 msgstr "Synchronisé"
+
+msgid "Synchronize"
+msgstr ""
 
 msgid "Synchronize Destination Snapshots With Source"
 msgstr "Synchroniser les instantanés de destination avec la source"
@@ -18817,11 +18872,26 @@ msgstr "Voulez-vous ajouter un nom de principal de service (SPN) maintenant ?"
 msgid "Write"
 msgstr "Écrire"
 
+msgid "Write ACL"
+msgstr ""
+
+msgid "Write Attributes"
+msgstr ""
+
+msgid "Write Data"
+msgstr ""
+
 msgid "Write Errors"
 msgstr "Erreurs d'écriture"
 
+msgid "Write Named Attributes"
+msgstr ""
+
 msgid "Write Only"
 msgstr "Écriture seulement"
+
+msgid "Write Owner"
+msgstr ""
 
 msgid "Write a percentage limit of a single CPU core."
 msgstr "Écrivez une limite de pourcentage pour un seul cœur de processeur."
@@ -19063,6 +19133,9 @@ msgstr "enforce_statfs"
 msgid "error"
 msgstr "erreur"
 
+msgid "everyone@"
+msgstr ""
+
 msgid "exec_clean"
 msgstr "exec_clean"
 
@@ -19104,6 +19177,9 @@ msgstr "expire en"
 
 msgid "group"
 msgstr "groupe"
+
+msgid "group@"
+msgstr ""
 
 msgid "gzip (default level, 6)"
 msgstr "gzip (niveau par défaut, 6)"
@@ -19284,6 +19360,9 @@ msgstr "aperçu"
 msgid "owner"
 msgstr "propriétaire"
 
+msgid "owner@"
+msgstr ""
+
 msgid "password"
 msgstr "mot de passe"
 
@@ -19345,6 +19424,9 @@ msgstr "instantané"
 
 msgid "snapshots"
 msgstr "instantanés"
+
+msgid "snapshots could not be deleted."
+msgstr ""
 
 msgid "software, which is provided as-is with no warranty."
 msgstr "logiciel, qui est fourni tel quel sans garantie."
