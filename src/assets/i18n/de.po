@@ -13556,7 +13556,7 @@ msgid ""
 msgstr ""
 
 msgid "Start on Boot"
-msgstr "Beim Booten staten"
+msgstr "Beim Booten starten"
 
 msgid "Start the scrub now?"
 msgstr "Scrub jetzt starten?"
