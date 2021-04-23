@@ -1,0 +1,36 @@
+<div
+  class="wrapper"
+  gdGap="8px"
+  gdRows="fit-content(30vh)"
+  gdColumns="50% 50%"
+  gdColumns.lt-lg="50% 50%"
+  gdColumns.lt-md="auto"
+  gdAreas="activedirectory-card ldap-card | idmap-card kerberos_settings-card| kerberos_realms-card kerberos_keytab-card"
+  gdAreas.lt-lg="activedirectory-card ldap-card | idmap-card kerberos_settings-card| kerberos_realms-card kerberos_keytab-card"
+  gdAreas.lt-md="activedirectory-card | ldap-card | idmap-card | kerberos_settings-card | kerberos_realms-card | kerberos_keytab-card"
+>
+  <ng-container *ngFor="let card of dataCards;">
+    <mat-card [gdArea]="card.id + '-card'">
+      <mat-toolbar-row>
+        <h3>{{ card.title | translate }}</h3>
+        <div class="actions action-icon">
+          <button mat-button color="default" (click)="doAdd(card.id)">
+            {{ 'Settings' | translate }}
+          </button>
+        </div>
+      </mat-toolbar-row>
+
+      <mat-card-content>
+        <mat-list>
+          <mat-list-item *ngFor="let item of card.items" class="card-list-item">
+            <span class="label">{{ item.label | translate }}:</span>
+            <span class="value">{{ item.value || ('None' | translate) }}</span>
+          </mat-list-item>
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+  </ng-container>
+  <ng-container *ngFor="let card of tableCards; index as i">
+    <app-table [conf]="card.tableConf" [gdArea]="card.id + '-card'"></app-table>
+  </ng-container>
+</div>

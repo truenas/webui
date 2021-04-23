@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { ProductType } from '../../../../enums/product-type.enum';
 import helptext from '../../../../helptext/data-protection/replication/replication';
 import repwizardhelptext from '../../../../helptext/data-protection/replication/replication-wizard';
 import {
@@ -1161,7 +1162,7 @@ export class ReplicationFormComponent {
     this.isNew = entityForm.isNew;
     this.title = entityForm.isNew ? helptext.replication_task_add : helptext.replication_task_edit;
 
-    const isTruenasCore = window.localStorage.getItem('product_type') === 'CORE' ? true : false;
+    const isTruenasCore = window.localStorage.getItem('product_type') === ProductType.Core;
     const readonlyCtrl = this.entityForm.formGroup.controls['readonly'];
     if (this.pk === undefined) {
       readonlyCtrl.setValue(isTruenasCore ? 'SET' : 'REQUIRE');

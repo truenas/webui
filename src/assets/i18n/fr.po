@@ -2152,6 +2152,9 @@ msgstr ""
 "Ajouter <i>@realm</i> à <i>cn</i> dans les requêtes LDAP pour les groupes "
 "et les utilisateurs lorsque CN utilisateur est défini)."
 
+msgid "Append Data"
+msgstr ""
+
 msgid ""
 "Appends a suffix to the share connection path.  This is used to provide "
 "unique shares on a per-user, per-computer, or per-IP address basis.  "
@@ -2949,7 +2952,7 @@ msgid "CN Realm"
 msgstr "CN Realm"
 
 msgid "CONNECT"
-msgstr "CONNECTE"
+msgstr "CONNEXION"
 
 msgid "COPY TO CLIPBOARD"
 msgstr "COPIER DANS LE PRESSE-PAPIERS"
@@ -5051,6 +5054,9 @@ msgstr "Supprimer"
 msgid "Delete "
 msgstr "Supprimer "
 
+msgid "Delete Children"
+msgstr ""
+
 msgid "Delete Dataset"
 msgstr "Supprimer le dataset"
 
@@ -5417,6 +5423,9 @@ msgstr "Répertoires et Permissions"
 
 msgid "Directory"
 msgstr "Répertoire"
+
+msgid "Directory Inherit"
+msgstr ""
 
 msgid "Directory Mask"
 msgstr "Masque du répertoire"
@@ -7749,6 +7758,9 @@ msgstr "Ports Fibre Channel"
 msgid "File Information"
 msgstr "Informations sur le fichier"
 
+msgid "File Inherit"
+msgstr ""
+
 msgid "File Mask"
 msgstr "Masque de fichier"
 
@@ -8002,6 +8014,9 @@ msgstr "Nom de l'expéditeur"
 
 msgid "Full"
 msgstr "Plein"
+
+msgid "Full Control"
+msgstr ""
 
 msgid "Full Filesystem Replication"
 msgstr "Réplication complète du système de fichier"
@@ -9024,8 +9039,14 @@ msgstr "Héritage (chiffré)"
 msgid "Inherit (non-encrypted)"
 msgstr "Héritage (non chiffré)"
 
+msgid "Inherit Only"
+msgstr ""
+
 msgid "Inherit encryption properties from parent"
 msgstr "Hériter des propriétés de chiffrement du parent"
+
+msgid "Inherited"
+msgstr ""
 
 msgid "Inherits"
 msgstr "Hérite"
@@ -10251,6 +10272,9 @@ msgstr "Modèle"
 msgid "Model:"
 msgstr "Modèle:"
 
+msgid "Modify"
+msgstr ""
+
 msgid ""
 "Modify for disks that understand <a "
 "href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\" "
@@ -10759,6 +10783,9 @@ msgstr "Pas de temps d'avertissement de communication"
 msgid "No Encryption (less secure, but faster)"
 msgstr "Pas de chiffrement (moins sûr, mais plus rapide)"
 
+msgid "No Inherit"
+msgstr ""
+
 msgid "No Item"
 msgstr ""
 
@@ -10772,6 +10799,9 @@ msgid "No Pools"
 msgstr "Aucun volume"
 
 msgid "No Pools Found"
+msgstr ""
+
+msgid "No Propagate Inherit"
 msgstr ""
 
 msgid "No Recent Events"
@@ -11339,6 +11369,9 @@ msgstr "Unité organisationnelle de l'entité."
 
 msgid "Other"
 msgstr "Autre"
+
+msgid "Other (Too complicated to be displayed)"
+msgstr ""
 
 msgid "Other Options"
 msgstr "Autres options"
@@ -12002,6 +12035,9 @@ msgstr "Clé privée"
 msgid "Private Key ID"
 msgstr "ID de clé privée"
 
+msgid "Privileged"
+msgstr ""
+
 msgid ""
 "Privileges are the same as the guest account.  Guest access is disabled by "
 "default in Windows 10 version 1709 and  Windows Server version 1903. "
@@ -12230,8 +12266,20 @@ msgstr "Réouverture de toutes les alertes"
 msgid "Read"
 msgstr "Lire"
 
+msgid "Read ACL"
+msgstr ""
+
+msgid "Read Attributes"
+msgstr ""
+
+msgid "Read Data"
+msgstr ""
+
 msgid "Read Errors"
 msgstr "Erreurs de lecture"
+
+msgid "Read Named Attributes"
+msgstr ""
 
 msgid "Read Only"
 msgstr "Lecture seule"
@@ -13226,13 +13274,13 @@ msgid "Scrub interval (in days)"
 msgstr "Intervalle de nettoyage (en jours)"
 
 msgid "Search Available Applications"
-msgstr ""
+msgstr "Rechercher les applications disponibles"
 
 msgid "Search Catalogs"
-msgstr ""
+msgstr "Recherche dans les catalogues"
 
 msgid "Search Docker Images"
-msgstr ""
+msgstr "Rechercher des images Docker"
 
 msgid "Search For Connected Groups"
 msgstr "Recherche de groupes connectés"
@@ -13241,7 +13289,7 @@ msgid "Search For Connected Users"
 msgstr "Recherche d'utilisateurs connectés"
 
 msgid "Search Installed Applications"
-msgstr ""
+msgstr "Rechercher des applications installées"
 
 msgid ""
 "Search for all connected groups.  Type a group name and press <i>ENTER</i>. "
@@ -13268,6 +13316,13 @@ msgid ""
 "target=\"_blank\">    iXsystems storage page</a>    for enterprise-grade "
 "storage solutions and support."
 msgstr ""
+"Recherchez dans l' <a href=\"https://jira.ixsystems.com/projects/NAS/issues/\"    "
+"target=\"_blank\">outil de suivi des problèmes TrueNAS</a> pour vous assurer que "
+"le problème n'a pas déjà été signalé avant de signaler un bug, rapport ou demande "
+"de fonctionnalité. Si un problème a déjà été créé, ajoutez un commentaire au "
+"problème existant. Veuillez visiter la <a href=\"http://www.ixsystems.com/storage/"
+"\" target=\"_blank\"> page de stockage iXsystems </a> pour des solutions de "
+"stockage et une assistance de niveau entreprise."
 
 msgid "Searches"
 msgstr "Recherches"
@@ -13321,6 +13376,9 @@ msgstr ""
 
 msgid "Security"
 msgstr "Sécurité"
+
+msgid "Security Settings"
+msgstr ""
 
 msgid ""
 "See <a "
@@ -13900,6 +13958,7 @@ msgstr ""
 
 msgid "Select the system services that will be allowed to communicate externally."
 msgstr ""
+"Sélectionnez les services système qui seront autorisés à communiquer à l’extérieur."
 
 msgid ""
 "Select the type of LDAP server to use. This can be the        LDAP server "
@@ -13915,6 +13974,8 @@ msgid ""
 "Select the unused zvol or zvol snapshot. Select <i>Create New</i> to create "
 "a new zvol."
 msgstr ""
+"Sélectionnez l’instantané zvol ou zvol inutilisé. Sélectionnez <i>Créer nouveau</"
+"i> pour créer un nouveau zvol."
 
 msgid ""
 "Select the user to control the dataset. Users created manually or imported "
@@ -14096,10 +14157,10 @@ msgid "Service Announcement"
 msgstr "Annonce de service"
 
 msgid "Service Announcement:"
-msgstr ""
+msgstr "Annonce de service:"
 
 msgid "Service CIDR"
-msgstr ""
+msgstr "Service CIDR"
 
 msgid "Service Key"
 msgstr "Clé de service"
@@ -14114,7 +14175,7 @@ msgid "Services"
 msgstr "Services"
 
 msgid "Set ACL for this dataset"
-msgstr ""
+msgstr "Définir une ACL pour ce dataset"
 
 msgid "Set Frequency"
 msgstr "Définir la fréquence"
@@ -14213,7 +14274,7 @@ msgstr ""
 "utilisé à la place du mot de passe SED global."
 
 msgid "Set production status as active"
-msgstr ""
+msgstr "Définir le statut de production comme actif"
 
 msgid ""
 "Set resource limitations of the jail using the <a "
@@ -14895,7 +14956,7 @@ msgid "Set to start this VM when the system boots."
 msgstr "Réglé pour démarrer cette VM au démarrage du système."
 
 msgid "Set to store the encryption key in the TrueNAS database."
-msgstr ""
+msgstr "Réglez pour stocker la clé de chiffrement dans la base de données TrueNAS."
 
 msgid ""
 "Set to suppress informational messages from the                remote "
@@ -14973,6 +15034,8 @@ msgid ""
 "Set to use encryption when replicating data. Additional encryption options "
 "will appear."
 msgstr ""
+"Définir pour utiliser le chiffrement lors de la reproduction des données. D’autres "
+"options de chiffrement s’afficheront."
 
 msgid ""
 "Set to use the <i>Schedule</i> in place  of the <i>Replicate Specific "
@@ -15348,13 +15411,14 @@ msgid ""
 "<i>pool1</i> with a Naming Schema of  <i>customsnap-%Y%m%d.%H%M</i> have "
 "names like  <i>pool1@customsnap-20190315.0527</i>."
 msgstr ""
-"Chaîne de format de nom d'instantané. La valeur par défaut est <code>auto-%Y-%m-%d_"
-"%H-%M</code> . Doit inclure les chaînes <i>%Y</i>,  <i>%m</i>, <i>%d</i>, <i>%H</"
-"i>, et <i>%M</i>, qui sont remplacées par l’année à quatre chiffres, mois, jour du "
-"mois, heure et minute tel que défini <a href=\"https://www.freebsd.org/cgi/man.cgi?"
-"query=strftime\" target=\"_blank\">strftime(3)</a>.<br><br>.  Par exemple, les "
-"instantanés <i>de pool1</i> avec un schéma nommant  <i>customsnap-%Y%m%d.%H%M</i> "
-"ont des noms comme  <i>pool1@customsnap-20190315.0527</i>."
+"Chaîne de format de nom d'instantané. La valeur par défaut est "
+"<code>auto-%Y-%m-%d_%H-%M</code> . Doit inclure les chaînes <i>%Y</i>,  "
+"<i>%m</i>, <i>%d</i>, <i>%H</i>, et <i>%M</i>, qui sont remplacées par "
+"l’année à quatre chiffres, mois, jour du mois, heure et minute tel que "
+"défini <a href=\"https://www.freebsd.org/cgi/man.cgi?query=strftime\" "
+"target=\"_blank\">strftime(3)</a>.<br><br>.  Par exemple, les instantanés "
+"<i>de pool1</i> avec un schéma nommant  <i>customsnap-%Y%m%d.%H%M</i> ont "
+"des noms comme  <i>pool1@customsnap-20190315.0527</i>."
 
 msgid ""
 "Snapshot schedule for this  replication task. Choose from previously "
@@ -15380,8 +15444,8 @@ msgid ""
 "Some authentication tools default to 30 seconds and do not support custom "
 "intervals."
 msgstr ""
-"Certains outils d’authentification par défaut à 30 secondes et ne supportent pas "
-"les intervalles personnalisés."
+"Certains outils d’authentification par défaut à 30 secondes et ne "
+"supportent pas les intervalles personnalisés."
 
 msgid "Something went wrong"
 msgstr "Quelque chose s'est mal passé"
@@ -15463,8 +15527,8 @@ msgstr ""
 
 msgid "Specify arguments for container command. Use <i>ENTER</i> after each entry."
 msgstr ""
-"Spécifiez les arguments de la commande de conteneur. Utilisez <i>ENTER</i> après "
-"chaque entrée."
+"Spécifiez les arguments de la commande de conteneur. Utilisez <i>ENTER</i> "
+"après chaque entrée."
 
 msgid ""
 "Specify how many servers to create. Increase if NFS client responses are "
@@ -15766,7 +15830,7 @@ msgid "Suggest Layout"
 msgstr "Suggérer une mise en page"
 
 msgid "Summary"
-msgstr ""
+msgstr "Résumé"
 
 msgid "Sun"
 msgstr "Dim"
@@ -15811,6 +15875,9 @@ msgstr "Sync pairs (peer) réussi."
 
 msgid "Synced"
 msgstr "Synchronisé"
+
+msgid "Synchronize"
+msgstr ""
 
 msgid "Synchronize Destination Snapshots With Source"
 msgstr "Synchroniser les instantanés de destination avec la source"
@@ -16040,6 +16107,8 @@ msgid ""
 "href=\"https://core.telegram.org/bots#3-how-do-i-create-a-bot\" "
 "target=\"_blank\">How to create a Telegram Bot</a>)"
 msgstr ""
+"Telegram Bot API Token (<a href=\"https://core.telegram.org/bots#3-how-do-i-create-"
+"a-bot\" target=\"_blank\">Comment créer un Bot Telegram</a>)"
 
 msgid "Temperature"
 msgstr "Température"
@@ -17010,8 +17079,8 @@ msgid ""
 "or <b>CONNECT</b> to join an existing instance."
 msgstr ""
 "Cela permet à votre système TrueNAS d'être contrôlé et administré par "
-"TrueCommand. Cliquez sur <b>SIGNUP</b> pour créer une nouvelle instance "
-"TrueCommand Cloud ou sur <b>CONNECT</b> pour rejoindre une instance "
+"TrueCommand. Cliquez sur <b>INSCRIPTION</b> pour créer une nouvelle instance "
+"TrueCommand Cloud ou sur <b>CONNEXION</b> pour rejoindre une instance "
 "existante."
 
 msgid "This certificate's public key is used for key management."
@@ -17562,7 +17631,7 @@ msgid "Unencrypted pools can be imported directly."
 msgstr "Les volumes non chiffrés peuvent être importés directement."
 
 msgid "Unhealthy"
-msgstr ""
+msgstr "Défectueux"
 
 msgid "Unique LUN ID. The default is generated from the MAC address of the system."
 msgstr ""
@@ -17706,7 +17775,7 @@ msgid "Update "
 msgstr "Mettre à jour "
 
 msgid "Update Available"
-msgstr ""
+msgstr "Mise à jour disponible"
 
 msgid "Update File"
 msgstr "Mettre à jour le fichier"
@@ -18411,10 +18480,10 @@ msgid "Version"
 msgstr "Version"
 
 msgid "Version Info"
-msgstr ""
+msgstr "Infos version"
 
 msgid "Versions"
-msgstr ""
+msgstr "Versions"
 
 msgid "Video, < 100ms latency"
 msgstr "Vidéo, latence < 100ms"
@@ -18817,11 +18886,26 @@ msgstr "Voulez-vous ajouter un nom de principal de service (SPN) maintenant ?"
 msgid "Write"
 msgstr "Écrire"
 
+msgid "Write ACL"
+msgstr ""
+
+msgid "Write Attributes"
+msgstr ""
+
+msgid "Write Data"
+msgstr ""
+
 msgid "Write Errors"
 msgstr "Erreurs d'écriture"
 
+msgid "Write Named Attributes"
+msgstr ""
+
 msgid "Write Only"
 msgstr "Écriture seulement"
+
+msgid "Write Owner"
+msgstr ""
 
 msgid "Write a percentage limit of a single CPU core."
 msgstr "Écrivez une limite de pourcentage pour un seul cœur de processeur."
@@ -19063,6 +19147,9 @@ msgstr "enforce_statfs"
 msgid "error"
 msgstr "erreur"
 
+msgid "everyone@"
+msgstr ""
+
 msgid "exec_clean"
 msgstr "exec_clean"
 
@@ -19104,6 +19191,9 @@ msgstr "expire en"
 
 msgid "group"
 msgstr "groupe"
+
+msgid "group@"
+msgstr ""
 
 msgid "gzip (default level, 6)"
 msgstr "gzip (niveau par défaut, 6)"
@@ -19284,6 +19374,9 @@ msgstr "aperçu"
 msgid "owner"
 msgstr "propriétaire"
 
+msgid "owner@"
+msgstr ""
+
 msgid "password"
 msgstr "mot de passe"
 
@@ -19345,6 +19438,9 @@ msgstr "instantané"
 
 msgid "snapshots"
 msgstr "instantanés"
+
+msgid "snapshots could not be deleted."
+msgstr ""
 
 msgid "software, which is provided as-is with no warranty."
 msgstr "logiciel, qui est fourni tel quel sans garantie."

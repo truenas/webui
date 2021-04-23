@@ -71,7 +71,7 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     span.innerHTML = 'a';
 
     let cols = 0;
-    while(span.offsetWidth < domWidth) {      
+    while(span.offsetWidth < domWidth) {
       span.innerHTML += 'a';
       cols++;
     }
@@ -81,7 +81,7 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     if (cols < 80) {
       cols = 80;
     }
-    
+
     if (rows < 10) {
       rows = 10;
     }
@@ -110,16 +110,16 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     this.xterm.loadAddon(attachAddon);
     this.fitAddon = new FitAddon();
     this.xterm.loadAddon(this.fitAddon);
-    
+
     var font = new FontFaceObserver(this.font_name);
-    
+
     font.load().then((e) => {
       this.xterm.open(this.container.nativeElement);
       this.fitAddon.fit();
       this.xterm._initialized = true;
     }, function (e) {
       console.log('Font is not available', e);
-    });    
+    });
   }
 
   resizeTerm(){
@@ -127,10 +127,11 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
     this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res)=> {
+      this.xterm.focus();
     });
     return true;
   }
-  
+
   initializeWebShell(res: string) {
     this.ss.token = res;
     this.ss.connect();
@@ -162,7 +163,7 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     this.font_size = 14;
     this.resizeTerm();
   }
-  
+
   constructor(private ws: WebSocketService, public ss: ShellService, private dialog: MatDialog) {
   }
 }

@@ -1,3 +1,4 @@
+import { ProductType } from '../../../../enums/product-type.enum';
 import { EmptyConfig, EmptyType } from './../../../common/entity/entity-empty/entity-empty.component';
 import { Component, ElementRef, OnInit, AfterViewChecked, OnDestroy } from '@angular/core';
 import { Validators } from '@angular/forms';
@@ -110,7 +111,7 @@ export class VolumesListTableConfig implements InputTableConf {
   public restartServices = false;
   public subs: any;
   public message_subscription: any;
-  public productType = window.localStorage.getItem('product_type');
+  public productType = window.localStorage.getItem('product_type') as ProductType;
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -171,8 +172,8 @@ export class VolumesListTableConfig implements InputTableConf {
                             p1 += `<br> - ${i}`
                           })
                         })
-    
-                      })                      
+
+                      })
                     })
                   })
 
@@ -197,7 +198,7 @@ export class VolumesListTableConfig implements InputTableConf {
                           if (process.name) {
                             p1 += `<br> - ${process.name}`
                           }
-  
+
                         });
                       })
 
@@ -331,7 +332,7 @@ export class VolumesListTableConfig implements InputTableConf {
       });
     }
 
-    if (this.parentVolumesListComponent.has_encrypted_root[rowData.name] 
+    if (this.parentVolumesListComponent.has_encrypted_root[rowData.name]
       && this.parentVolumesListComponent.has_key_dataset[rowData.name]) {
       actions.push({
         label: T("Export Dataset Keys"),
@@ -539,7 +540,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     entityDialog.dialogRef.close();
                     self.translate.get(helptext.pool_options_dialog.dialog_saved_message1).subscribe(msg1 => {
                       self.translate.get(helptext.pool_options_dialog.dialog_saved_message2).subscribe(msg2 => {
-                        self.dialogService.Info(helptext.pool_options_dialog.dialog_saved_title, 
+                        self.dialogService.Info(helptext.pool_options_dialog.dialog_saved_title,
                           msg1 + row.name + msg2);
                         self.parentVolumesListComponent.repaintMe();
                       })
@@ -647,8 +648,8 @@ export class VolumesListTableConfig implements InputTableConf {
           async function doDetach() {
             const sysPool = await self.ws.call('systemdataset.config').pipe(map(res => res['pool'])).toPromise();
             let title, warningA, warningB, unknownA, unknownB, encrypted, sysPoolWarning;
-            self.translate.get(helptext.exportDialog.warningSysDataset).subscribe(sysWarn => { 
-              sysPoolWarning = sysWarn;        
+            self.translate.get(helptext.exportDialog.warningSysDataset).subscribe(sysWarn => {
+              sysPoolWarning = sysWarn;
               self.translate.get(helptext.exportDialog.title).subscribe(t => {
                 title = t;
                 self.translate.get(helptext.exportDialog.warningA).subscribe(a => {
@@ -754,7 +755,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   let dialogRef = self.mdDialog.open(EntityJobComponent, {data: {"title":helptext.exporting}, disableClose: true});
                   dialogRef.updateSize('300px');
                   dialogRef.componentInstance.setDescription(helptext.exporting);
-                  dialogRef.componentInstance.setCall("pool.export", [row1.id, { destroy: value.destroy, 
+                  dialogRef.componentInstance.setCall("pool.export", [row1.id, { destroy: value.destroy,
                     cascade: value.cascade, restart_services: self.restartServices }]);
                   dialogRef.componentInstance.submit();
                   dialogRef.componentInstance.success.subscribe(res=>{
@@ -830,7 +831,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     };
                   });
                 }
-              }            
+              }
               self.dialogService.dialogFormWide(conf);
             })
           })
@@ -878,7 +879,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   })
 
                 } else {
-                  self.translate.get('Start scrub on pool').subscribe(msg => {               
+                  self.translate.get('Start scrub on pool').subscribe(msg => {
                   this.dialogService.confirm(T("Scrub Pool"), `${msg} <i>${row1.name}</i>?`, false, T("Start Scrub")).subscribe((res) => {
                     if (res) {
                       this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { "title": T('Scrub Pool') }, disableClose: false });
@@ -894,7 +895,7 @@ export class VolumesListTableConfig implements InputTableConf {
                           } else {
                             self.translate.get('Stopped the scrub on pool').subscribe(msg => {
                               this.dialogService.Info(T('Stop Scrub'), `${msg} <i>${row1.name}</i>.`, '300px', "info", true);
-                            
+
                             })
                           }
                         }
@@ -1097,7 +1098,7 @@ export class VolumesListTableConfig implements InputTableConf {
                         this._router.navigate(new Array('/').concat([
                           "storage", "id", rowData.pool, "dataset",
                           "posix-acl", rowData.id
-                        ]));                    
+                        ]));
                       } else {
                         this._router.navigate(new Array('/').concat([
                           "storage", "id", rowData.pool, "dataset",
@@ -1211,11 +1212,11 @@ export class VolumesListTableConfig implements InputTableConf {
               true, T('Delete Zvol')).subscribe((confirmed) => {
               if (confirmed === true) {
                 this.loader.open();
-  
+
                 this.ws.call('pool.dataset.delete', [rowData.id, {"recursive": true}]).subscribe((wsResp) => {
                   this.loader.close();
                   this.parentVolumesListComponent.repaintMe();
-  
+
                 }, (res) => {
                   this.loader.close();
                   self.translate.get('Error Deleting zvol ').subscribe(msg => {
@@ -1223,7 +1224,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   })
                 });
               }
-            });              
+            });
             })
           })
 
@@ -1359,8 +1360,8 @@ export class VolumesListTableConfig implements InputTableConf {
             let key_child = false;
             for (let i = 0; i < this.datasetData.length; i++) {
               let ds = this.datasetData[i];
-              if (ds['id'].startsWith(row.id) && ds.id !== row.id && 
-                ds.encryption_root && (ds.id === ds.encryption_root) && 
+              if (ds['id'].startsWith(row.id) && ds.id !== row.id &&
+                ds.encryption_root && (ds.id === ds.encryption_root) &&
                 ds.key_format && ds.key_format.value && ds.key_format.value === 'HEX') {
                 key_child = true;
                 break;
@@ -1454,7 +1455,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   name: 'algorithm',
                   placeholder: dataset_helptext.dataset_form_encryption.algorithm_placeholder,
                   disabled: true,
-                  value: (row.encryption_algorithm && row.encryption_algorithm.value) ? row.encryption_algorithm.value : '' 
+                  value: (row.encryption_algorithm && row.encryption_algorithm.value) ? row.encryption_algorithm.value : ''
                 },
                 {
                   type: 'checkbox',
@@ -1532,7 +1533,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     entityDialog.loader.open();
                     entityDialog.ws.call(method, payload).subscribe(res => {
                       entityDialog.loader.close();
-                      self.dialogService.Info(helptext.encryption_options_dialog.dialog_saved_title, 
+                      self.dialogService.Info(helptext.encryption_options_dialog.dialog_saved_title,
                         helptext.encryption_options_dialog.dialog_saved_message1 + row.id + helptext.encryption_options_dialog.dialog_saved_message2);
                       entityDialog.dialogRef.close();
                       self.parentVolumesListComponent.repaintMe();
@@ -1564,7 +1565,7 @@ export class VolumesListTableConfig implements InputTableConf {
                       entityDialog.dialogRef.close();
                       self.translate.get(helptext.encryption_options_dialog.dialog_saved_message1).subscribe(msg1 => {
                         self.translate.get(helptext.encryption_options_dialog.dialog_saved_message2).subscribe(msg2 => {
-                          self.dialogService.Info(helptext.encryption_options_dialog.dialog_saved_title, 
+                          self.dialogService.Info(helptext.encryption_options_dialog.dialog_saved_title,
                             msg1 + row.id + msg2);
                           self.parentVolumesListComponent.repaintMe();
                         })
@@ -1595,10 +1596,10 @@ export class VolumesListTableConfig implements InputTableConf {
               let force_umount = false;
               this.translate.get(helptext.lock_dataset_dialog.dialog_title).subscribe(titleTr => {
                 this.translate.get(helptext.lock_dataset_dialog.dialog_message).subscribe(messageTr => {
-                  const ds = this.dialogService.confirm(titleTr + row.name, `${messageTr} ${row.name}?`, 
-                    false, helptext.lock_dataset_dialog.button, 
+                  const ds = this.dialogService.confirm(titleTr + row.name, `${messageTr} ${row.name}?`,
+                    false, helptext.lock_dataset_dialog.button,
                     true, helptext.lock_dataset_dialog.checkbox_message, 'pool.dataset.lock', params);
-                  
+
                   ds.componentInstance.switchSelectionEmitter.subscribe((res) => {
                     force_umount = res;
                   });
@@ -1625,7 +1626,7 @@ export class VolumesListTableConfig implements InputTableConf {
                         });
                       });
                     }
-                  });  
+                  });
                 })
               })
 
@@ -1666,7 +1667,7 @@ export class VolumesListTableConfig implements InputTableConf {
                           });
                         }
                     })
-                  });  
+                  });
                 }
               })
             }
@@ -1712,7 +1713,7 @@ export class VolumesListTableConfig implements InputTableConf {
         actions.push({title: helptext.encryption_actions_title, actions: encryption_actions});
       }
     }
-    node.data.actions = actions; 
+    node.data.actions = actions;
 
     node.children = [];
 
@@ -1808,7 +1809,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       }
 
       return actions;
-      
+
     },
     conf: new VolumesListTableConfig(this, this.router, "", [], this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http, this.validationService)
   };
@@ -1834,21 +1835,21 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   protected aroute: ActivatedRoute;
   private refreshTableSubscription: any;
   private datasetQuery = 'pool.dataset.query';
-  /* 
-   * Please note that extra options are special in that they are passed directly to ZFS. 
-   * This is why 'encryptionroot' is included in order to get 'encryption_root' in the response 
+  /*
+   * Please note that extra options are special in that they are passed directly to ZFS.
+   * This is why 'encryptionroot' is included in order to get 'encryption_root' in the response
    * */
   private datasetQueryOptions = [[], {
     "extra": {
       "properties": [
-        "type", 
-        "used", 
-        "available", 
-        "compression", 
-        "readonly", 
-        "dedup", 
-        "org.freenas:description", 
-        "compressratio", 
+        "type",
+        "used",
+        "available",
+        "compression",
+        "readonly",
+        "dedup",
+        "org.freenas:description",
+        "compressratio",
         "encryption",
         "encryptionroot",
         "keystatus",
@@ -1860,7 +1861,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   constructor(protected core: CoreService ,protected rest: RestService, protected router: Router, protected ws: WebSocketService,
     protected _eRef: ElementRef, protected dialogService: DialogService, protected loader: AppLoaderService,
     protected mdDialog: MatDialog, protected erdService: ErdService, protected translate: TranslateService,
-    public sorter: StorageService, protected job: JobService, protected storage: StorageService, protected pref: PreferencesService, 
+    public sorter: StorageService, protected job: JobService, protected storage: StorageService, protected pref: PreferencesService,
       protected messageService: MessageService, protected http:HttpClient, modalService: ModalService, public tableService: EntityTableService, protected validationService: ValidationService) {
 
     super(core, rest, router, ws, _eRef, dialogService, loader, erdService, translate, sorter, job, pref, mdDialog, modalService, tableService);
@@ -1875,7 +1876,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.ngOnInit();
   }
 
-  ngOnDestroy(){ 
+  ngOnDestroy(){
     if (this.refreshTableSubscription) {
       this.refreshTableSubscription.unsubscribe();
     }
@@ -1900,7 +1901,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         if (res.hasOwnProperty(key)) {
           const pool = key.split('/')[0];
           this.has_key_dataset[pool] = true;
-        }  
+        }
       }
     });
 
@@ -1909,7 +1910,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         this.repaintMe();
       })
     }
-    
+
     combineLatest([this.ws.call('pool.query', []), this.ws.call(this.datasetQuery, this.datasetQueryOptions)]).subscribe(async ([pools, datasets]) => {
       if (pools.length > 0) {
         for (const pool of pools) {
@@ -1984,7 +1985,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.dialogService, this.storageService, this.translate, this.modalService);
 
     this.addDatasetFormComponent = new DatasetFormComponent(this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService);
-    
+
   }
 
   addZvol(id, isNew) {
@@ -1996,7 +1997,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   addDataset(pool, id) {
     this.addDatasetFormComponent.setParent(id);
     this.addDatasetFormComponent.setVolId(pool);
-    this.addDatasetFormComponent.setTitle("Add Dataset");
+    this.addDatasetFormComponent.setTitle(T("Add Dataset"));
     this.modalService.open('slide-in-form', this.addDatasetFormComponent, id);
 
   }
@@ -2007,11 +2008,11 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
     this.editDatasetFormComponent.setPk(id);
     this.editDatasetFormComponent.setVolId(pool);
-    this.editDatasetFormComponent.setTitle("Edit Dataset");
+    this.editDatasetFormComponent.setTitle(T("Edit Dataset"));
     this.modalService.open('slide-in-form', this.editDatasetFormComponent, id);
-    
+
   }
-  
+
   createPool() {
     this.router.navigate(['/storage/manager'])
   }

@@ -9,6 +9,7 @@ import { T } from "app/translate-marker";
 import * as _ from 'lodash';
 import { combineLatest, of, Subscription } from 'rxjs';
 import { catchError, map, switchMap, take, tap, filter, debounceTime } from 'rxjs/operators';
+import { ProductType } from '../../../../enums/product-type.enum';
 import { AppLoaderService, DialogService, RestService, WebSocketService, SystemGeneralService } from '../../../../services/';
 import { Validators } from '@angular/forms';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -29,10 +30,10 @@ export class SMBFormComponent implements OnDestroy {
   public isTimeMachineOn = false;
   public title = helptext_sharing_smb.formTitle;
   public namesInUse: string[] = [];
-  public productType = window.localStorage.getItem('product_type');
+  public productType = window.localStorage.getItem('product_type') as ProductType;
   private hostsAllowOnLoad = [];
   private hostsDenyOnLoad = [];
-  private stripACLWarningSent = false; 
+  private stripACLWarningSent = false;
   private mangleWarningSent = false;
   private mangle: boolean;
   private getAdvancedConfig: Subscription;
@@ -228,10 +229,10 @@ export class SMBFormComponent implements OnDestroy {
           tooltip: helptext_sharing_smb.tooltip_auxsmbconf,
           isHidden: true,
         },
-      
+
       ]
     },
-    { name: 'divider', divider: true }    
+    { name: 'divider', divider: true }
   ]
 
   private cifs_vfsobjects: any;
@@ -352,7 +353,7 @@ export class SMBFormComponent implements OnDestroy {
     if (entityForm.formGroup.controls['timemachine'].value && !this.isTimeMachineOn) {
       this.restartService(entityForm, 'timemachine');
     } else {
-      this.checkAllowDeny(entityForm);   
+      this.checkAllowDeny(entityForm);
     }
   }
 
@@ -369,17 +370,17 @@ export class SMBFormComponent implements OnDestroy {
     let message = source === 'timemachine' ? helptext_sharing_smb.restart_smb_dialog.message_time_machine :
       helptext_sharing_smb.restart_smb_dialog.message_allow_deny;
     this.dialog.confirm(helptext_sharing_smb.restart_smb_dialog.title, message,
-      true, helptext_sharing_smb.restart_smb_dialog.title, false, '','','','',false, 
+      true, helptext_sharing_smb.restart_smb_dialog.title, false, '','','','',false,
       helptext_sharing_smb.restart_smb_dialog.cancel_btn).subscribe((res) => {
         if (res) {
           this.loader.open();
           this.ws.call('service.restart', ['cifs']).subscribe(() => {
             this.loader.close();
-            this.dialog.Info(helptext_sharing_smb.restarted_smb_dialog.title, 
+            this.dialog.Info(helptext_sharing_smb.restarted_smb_dialog.title,
               helptext_sharing_smb.restarted_smb_dialog.message, '250px').subscribe(() => {
                 this.checkACLactions(entityForm);
               })
-          }, (err) => { 
+          }, (err) => {
             this.loader.close();
             this.dialog.errorReport('Error', err.err, err.backtrace);
           }
@@ -389,7 +390,7 @@ export class SMBFormComponent implements OnDestroy {
         }
       });
   }
- 
+
   checkACLactions(entityForm) {
     const sharePath: string = entityForm.formGroup.get('path').value;
     const datasetId = sharePath.replace('/mnt/', '');
@@ -400,7 +401,7 @@ export class SMBFormComponent implements OnDestroy {
     if (homeShare && entityForm.isNew) {
       return this.router.navigate(
         ['/'].concat(ACLRoute),{ queryParams: {homeShare: true}})
-      
+
     }
     // If this call returns true OR an [ENOENT] err comes back, just return to table
     // because the pool or ds is encrypted. Otherwise, do the next checks
@@ -413,11 +414,11 @@ export class SMBFormComponent implements OnDestroy {
      * If share does have trivial ACL, check if user wants to edit dataset permissions. If not,
      * nav to SMB shares list view.
      */
-    const promptUserACLEdit = () => 
+    const promptUserACLEdit = () =>
       this.ws.call('filesystem.acl_is_trivial', [sharePath]).pipe(
         switchMap((isTrivialACL: boolean) =>
           /* If share does not have trivial ACL, move on. Otherwise, perform some async data-gathering operations */
-          !isTrivialACL || !datasetId.includes('/') || this.productType.includes('SCALE')
+          !isTrivialACL || !datasetId.includes('/') || this.productType.includes(ProductType.Scale)
             ? combineLatest(of(false), of({}))
             : combineLatest(
                 /* Check if user wants to edit the share's ACL */
@@ -468,7 +469,7 @@ export class SMBFormComponent implements OnDestroy {
                       entityForm.loader.close();
                     }),
                     switchMap(() => {
-                    return this.dialog.Info(T('SMB') + shared.dialog_started_title, 
+                    return this.dialog.Info(T('SMB') + shared.dialog_started_title,
                       T('The SMB') + shared.dialog_started_message, '250px')
                     }),
                     catchError(error => {
@@ -491,7 +492,7 @@ export class SMBFormComponent implements OnDestroy {
         this.router.navigate(['/'].concat(this.route_success));
       } else {
         // If some other err comes back from filesystem.path_is_encrypted
-        this.dialog.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, 
+        this.dialog.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title,
           err.reason, err.trace.formatted);
       }
     })
@@ -552,7 +553,7 @@ export class SMBFormComponent implements OnDestroy {
     const path_fc = entityForm.formGroup.controls['path'];
     entityForm.formGroup.controls['acl'].valueChanges
     .pipe (debounceTime(100))
-      .subscribe(res => { 
+      .subscribe(res => {
       if (!res && path_fc.value && !this.stripACLWarningSent) {
         this.ws.call('filesystem.acl_is_trivial', [path_fc.value]).subscribe (res => {
           if (!res) {

@@ -2045,6 +2045,9 @@ msgstr ""
 "Добавлять <i>@realm</i> к <i>cn</i> в запросах LDAP для групп и "
 "пользователей, если задан User CN)."
 
+msgid "Append Data"
+msgstr ""
+
 msgid ""
 "Appends a suffix to the share connection path.  This is used to provide "
 "unique shares on a per-user, per-computer, or per-IP address basis.  "
@@ -4823,6 +4826,9 @@ msgstr "Удалить"
 msgid "Delete "
 msgstr "Удалить"
 
+msgid "Delete Children"
+msgstr ""
+
 msgid "Delete Dataset"
 msgstr "Удалить набор данных"
 
@@ -5150,6 +5156,9 @@ msgstr "Каталоги и разрешения"
 
 msgid "Directory"
 msgstr "Каталог"
+
+msgid "Directory Inherit"
+msgstr ""
 
 msgid "Directory Mask"
 msgstr "Маска каталога"
@@ -7310,6 +7319,9 @@ msgstr ""
 msgid "File Information"
 msgstr "Информация о файле"
 
+msgid "File Inherit"
+msgstr ""
+
 msgid "File Mask"
 msgstr ""
 
@@ -7539,6 +7551,9 @@ msgstr "От имени"
 
 msgid "Full"
 msgstr "Полная"
+
+msgid "Full Control"
+msgstr ""
 
 msgid "Full Filesystem Replication"
 msgstr "Полная репликация файловой системы"
@@ -8537,8 +8552,14 @@ msgstr "Наследовать (зашифрован)"
 msgid "Inherit (non-encrypted)"
 msgstr "Наследовать (не зашифрован)"
 
+msgid "Inherit Only"
+msgstr ""
+
 msgid "Inherit encryption properties from parent"
 msgstr "Наследовать свойства шифрования от родителя"
+
+msgid "Inherited"
+msgstr ""
 
 msgid "Inherits"
 msgstr "Наследует"
@@ -9731,6 +9752,9 @@ msgstr "Модель"
 msgid "Model:"
 msgstr "Модель:"
 
+msgid "Modify"
+msgstr ""
+
 msgid ""
 "Modify for disks that understand <a "
 "href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\" "
@@ -10211,6 +10235,9 @@ msgstr "Время предупреждения об отсутствии свя
 msgid "No Encryption (less secure, but faster)"
 msgstr "Без шифрования (менее безопасно, но быстрее)"
 
+msgid "No Inherit"
+msgstr ""
+
 msgid "No Item"
 msgstr ""
 
@@ -10224,6 +10251,9 @@ msgid "No Pools"
 msgstr "Нет пулов"
 
 msgid "No Pools Found"
+msgstr ""
+
+msgid "No Propagate Inherit"
 msgstr ""
 
 msgid "No Recent Events"
@@ -10748,6 +10778,9 @@ msgstr "Организационная единица юридического �
 
 msgid "Other"
 msgstr "Другие"
+
+msgid "Other (Too complicated to be displayed)"
+msgstr ""
 
 msgid "Other Options"
 msgstr "Другие опции"
@@ -11353,6 +11386,9 @@ msgstr "Закрытый ключ"
 msgid "Private Key ID"
 msgstr "Ид. закрытого ключа"
 
+msgid "Privileged"
+msgstr ""
+
 msgid ""
 "Privileges are the same as the guest account.  Guest access is disabled by "
 "default in Windows 10 version 1709 and  Windows Server version 1903. "
@@ -11567,8 +11603,20 @@ msgstr ""
 msgid "Read"
 msgstr "Чтение"
 
+msgid "Read ACL"
+msgstr ""
+
+msgid "Read Attributes"
+msgstr ""
+
+msgid "Read Data"
+msgstr ""
+
 msgid "Read Errors"
 msgstr "Ошибки чтения"
+
+msgid "Read Named Attributes"
+msgstr ""
 
 msgid "Read Only"
 msgstr "Только чтение"
@@ -12623,6 +12671,9 @@ msgstr ""
 
 msgid "Security"
 msgstr "Безопасность"
+
+msgid "Security Settings"
+msgstr ""
 
 msgid ""
 "See <a "
@@ -14945,6 +14996,9 @@ msgid "Sync to peer succeeded."
 msgstr "Синхронизация на пару прошла успешно."
 
 msgid "Synced"
+msgstr ""
+
+msgid "Synchronize"
 msgstr ""
 
 msgid "Synchronize Destination Snapshots With Source"
@@ -17612,10 +17666,25 @@ msgstr ""
 msgid "Write"
 msgstr "Запись"
 
+msgid "Write ACL"
+msgstr ""
+
+msgid "Write Attributes"
+msgstr ""
+
+msgid "Write Data"
+msgstr ""
+
 msgid "Write Errors"
 msgstr "Ошибки записи"
 
+msgid "Write Named Attributes"
+msgstr ""
+
 msgid "Write Only"
+msgstr ""
+
+msgid "Write Owner"
 msgstr ""
 
 msgid "Write a percentage limit of a single CPU core."
@@ -17846,6 +17915,9 @@ msgstr ""
 msgid "error"
 msgstr "ошибка"
 
+msgid "everyone@"
+msgstr ""
+
 msgid "exec_clean"
 msgstr ""
 
@@ -17887,6 +17959,9 @@ msgstr "истекает через"
 
 msgid "group"
 msgstr "группа"
+
+msgid "group@"
+msgstr ""
 
 msgid "gzip (default level, 6)"
 msgstr ""
@@ -18061,6 +18136,9 @@ msgstr "обзор"
 msgid "owner"
 msgstr "владелец"
 
+msgid "owner@"
+msgstr ""
+
 msgid "password"
 msgstr "пароль"
 
@@ -18119,6 +18197,9 @@ msgid "snapshot"
 msgstr ""
 
 msgid "snapshots"
+msgstr ""
+
+msgid "snapshots could not be deleted."
 msgstr ""
 
 msgid "software, which is provided as-is with no warranty."
