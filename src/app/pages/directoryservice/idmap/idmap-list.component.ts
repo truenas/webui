@@ -155,6 +155,7 @@ export class IdmapListComponent implements OnDestroy {
       this.router,
       this.ws,
       this.modalService,
+      this.mdDialog,
       this.sysGeneralService,
       this.dialog,
     );
