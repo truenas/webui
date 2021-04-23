@@ -24,6 +24,8 @@ import { EntityJobComponent } from '../../../../common/entity/entity-job/entity-
 import { EntityUtils } from '../../../../common/entity/utils';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 
+import { AccessControlList } from 'app/interfaces/access-control-list';
+
 @Component({
   selector: 'app-dataset-acl',
   template: '<entity-form [conf]="this"></entity-form>',
@@ -58,6 +60,8 @@ export class DatasetAclComponent implements OnDestroy {
   save_button_enabled = true;
   private homeShare: boolean;
   private isTrivialMessageSent = false;
+  private aclData: AccessControlList;
+  private emptyAclWarningShown = false;
 
   protected uid_fc: any;
   protected gid_fc: any;
@@ -479,26 +483,17 @@ export class DatasetAclComponent implements OnDestroy {
     }
   }
 
-  resourceTransformIncomingRestData(data) {
-    if (data.acl.length === 0) {
-      setTimeout(() => {
-        this.handleEmptyACL();
-      }, 1000);
-    } else if (this.homeShare) {
-      this.ws.call('filesystem.get_default_acl', ['HOME']).subscribe((res) => {
-        data.acl = res;
-      });
+  resourceTransformIncomingRestData(data: AccessControlList) {
+    this.aclData = {...data};
+    if (data.acl.length > 0) {
+      if (this.homeShare) {
+        this.ws.call('filesystem.get_default_acl', ['HOME']).subscribe(res => {
+          data.acl = res;
+        })
+      }
     }
 
-    return { aces: [] }; // stupid hacky thing that gets around entityForm's treatment of data
-  }
-
-  handleEmptyACL() {
-    this.loader.close();
-    this.dialogService.errorReport(helptext.empty_acl_dialog.title, helptext.empty_acl_dialog.message)
-      .subscribe(() => {
-        this.router.navigate(new Array('/').concat(this.route_success));
-      });
+    return data;
   }
 
   async dataHandler(entityForm, defaults?) {
@@ -614,8 +609,23 @@ export class DatasetAclComponent implements OnDestroy {
       }
     }
     this.loader.close();
+    
     if (this.aclIsTrivial && !this.isTrivialMessageSent && !this.homeShare) {
       this.showChoiceDialog();
+    }
+    if(this.aclData.acl.length === 0 && !this.emptyAclWarningShown) {
+      const conf: DialogFormConfiguration = {
+        title: T("No Inheritable ACL Entries"),
+        fieldConfig:[],
+        warning: T("No inheritable ACL entries available. At least one inheritable ACL entry must be added."),
+        saveButtonText: T("OK"),
+        hideCancel: true,
+        customSubmit: (entityDialog) => {
+          entityDialog.dialogRef.close();
+          this.emptyAclWarningShown = true;
+        }
+      }
+      this.dialogService.dialogForm(conf);
     }
   }
 
@@ -688,7 +698,7 @@ export class DatasetAclComponent implements OnDestroy {
     this.aces_subscription.unsubscribe();
   }
 
-  beforeSubmit(data) {
+  beforeSubmit(data: any) {
     const dacl = [];
     for (let i = 0; i < data.aces.length; i++) {
       const d = {};
@@ -730,7 +740,7 @@ export class DatasetAclComponent implements OnDestroy {
     data['dacl'] = dacl;
   }
 
-  async customSubmit(body) {
+  async customSubmit(body: any) {
     body.uid = body.apply_user ? body.uid : null;
     body.gid = body.apply_group ? body.gid : null;
     const doesNotWantToEditDataset = this.storageService.isDatasetTopLevel(body.path.replace('mnt/', ''))
