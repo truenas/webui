@@ -2,6 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import * as _ from 'lodash';
+import { ProductType } from '../../../enums/product-type.enum';
 import { NetworkService, DialogService, WebSocketService } from '../../../services';
 import { T } from '../../../translate-marker';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
@@ -367,7 +368,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       this.failover_vhid.options.push({ label: i, value: i });
     }
 
-    if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
+    if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
       this.ws.call('failover.node').subscribe((node) => {
         if (node === 'A') {
           this.ipPlaceholder = ` (${globalHelptext.thisCtlr})`;
@@ -383,7 +384,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       })
     }
 
-    if (window.localStorage.getItem('product_type').includes('ENTERPRISE') &&
+    if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise) &&
       window.localStorage.getItem('alias_ips') === 'show') {
       const failover_virtual_address = _.find(this.ipListControl.templateListField, { "name": "failover_virtual_address" });
       const failover_address = _.find(this.ipListControl.templateListField, { 'name': 'failover_address' });
@@ -408,10 +409,10 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       }
     });
 
-    if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
+    if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         this.failover_fieldset.label = is_ha;
-        if (window.localStorage.getItem('product_type').includes('SCALE')) {
+        if (window.localStorage.getItem('product_type').includes(ProductType.Scale)) {
           _.remove(this.failover_fields, function (el) {
             return el === 'failover_vhid';
           });

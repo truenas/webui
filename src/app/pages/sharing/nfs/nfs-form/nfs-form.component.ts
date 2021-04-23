@@ -6,6 +6,7 @@ import { helptext_sharing_nfs, shared } from 'app/helptext/sharing';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { T } from "app/translate-marker";
 import * as _ from 'lodash';
+import { ProductType } from '../../../../enums/product-type.enum';
 import { DialogService, NetworkService, RestService, WebSocketService } from '../../../../services/';
 import { UserService } from '../../../../services/user.service';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
@@ -30,7 +31,7 @@ export class NFSFormComponent {
   protected isBasicMode = true;
   public entityForm: EntityFormComponent;
   public save_button_enabled = true;
-  productType = window.localStorage.getItem('product_type');
+  productType = window.localStorage.getItem('product_type') as ProductType;
   hideOnScale = ['alldirs', 'quiet'];
 
   public fieldSets = new FieldSets([
@@ -261,7 +262,7 @@ export class NFSFormComponent {
               protected ws: WebSocketService, private dialog:DialogService,
               public networkService: NetworkService) {
                 const pathsTemplate = this.fieldSets.config('paths').templateListField;
-                if (this.productType.includes('SCALE')) {
+                if (this.productType.includes(ProductType.Scale)) {
                   pathsTemplate.push({
                     type: 'input',
                     name: 'alias',
@@ -315,7 +316,7 @@ export class NFSFormComponent {
       this.maproot_group.options = groups;
     });
 
-    if (this.productType.includes('SCALE')) {
+    if (this.productType.includes(ProductType.Scale)) {
       this.hideOnScale.forEach(name => {
         this.entityForm.setDisabled(name, true, true);
       })
@@ -390,7 +391,7 @@ export class NFSFormComponent {
               this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
                 this.ws.call('service.start', [service.service]).subscribe((startRes) => {
                   entityForm.loader.close();
-                  this.dialog.Info(T('NFS') + shared.dialog_started_title, 
+                  this.dialog.Info(T('NFS') + shared.dialog_started_title,
                   T('The NFS') + shared.dialog_started_message, '250px').subscribe(() => {
                     this.router.navigate(new Array('/').concat(
                       this.route_success));

@@ -1,3 +1,4 @@
+import { ProductType } from '../../../../enums/product-type.enum';
 import { EmptyConfig, EmptyType } from './../../../common/entity/entity-empty/entity-empty.component';
 import { Component, ElementRef, OnInit, AfterViewChecked, OnDestroy } from '@angular/core';
 import { Validators } from '@angular/forms';
@@ -110,7 +111,7 @@ export class VolumesListTableConfig implements InputTableConf {
   public restartServices = false;
   public subs: any;
   public message_subscription: any;
-  public productType = window.localStorage.getItem('product_type');
+  public productType = window.localStorage.getItem('product_type') as ProductType;
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,

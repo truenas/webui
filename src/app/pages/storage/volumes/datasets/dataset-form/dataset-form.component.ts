@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, Observable } from 'rxjs';
 
 import * as _ from 'lodash';
+import { ProductType } from '../../../../../enums/product-type.enum';
 import { WebSocketService, StorageService } from '../../../../../services/';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
@@ -88,7 +89,7 @@ export class DatasetFormComponent implements Formconfiguration{
   protected legacy_encryption = false;
   public namesInUse = [];
   public nameIsCaseInsensitive = false;
-  public productType: string;
+  public productType: ProductType;
 
   public humanReadable = {'quota': '', 'refquota': '', 'reservation': '', 'refreservation': '', 'special_small_block_size':''}
 
@@ -912,9 +913,9 @@ export class DatasetFormComponent implements Formconfiguration{
 
   afterInit(entityForm: EntityFormComponent): void {
     // aclmode not yet available in SCALE
-    this.productType = window.localStorage.getItem('product_type');
+    this.productType = window.localStorage.getItem('product_type') as ProductType;
     const aclControl = entityForm.formGroup.get('aclmode');
-    if (!this.productType.includes('SCALE')) {
+    if (!this.productType.includes(ProductType.Scale)) {
       this.advanced_field.push('aclmode')
     } else {
       aclControl.disable();
@@ -922,7 +923,7 @@ export class DatasetFormComponent implements Formconfiguration{
     }
     ///
     this.entityForm = entityForm;
-    if (this.productType.includes('ENTERPRISE')) {
+    if (this.productType.includes(ProductType.Enterprise)) {
       this.ws.call('system.info').subscribe((res) => {
         if (res.license && res.license.features.indexOf('DEDUP') > -1) {
           this.entityForm.setDisabled('deduplication',false, false);
@@ -965,7 +966,7 @@ export class DatasetFormComponent implements Formconfiguration{
 
     entityForm.formGroup.get('share_type').valueChanges.pipe(filter(shareType => !!shareType && entityForm.isNew)).subscribe(shareType => {
       const caseControl = entityForm.formGroup.get('casesensitivity');
-      if (!this.productType.includes('SCALE')) {
+      if (!this.productType.includes(ProductType.Scale)) {
         if (shareType === 'SMB') {
           aclControl.setValue('RESTRICTED');
           caseControl.setValue('INSENSITIVE');
@@ -1416,7 +1417,7 @@ export class DatasetFormComponent implements Formconfiguration{
         special_small_block_size: this.OrigHuman['special_small_block_size']
      };
 
-     if (!this.productType.includes('SCALE')) {
+     if (!this.productType.includes(ProductType.Scale)) {
        returnValue.aclmode = this.getFieldValueOrRaw(wsResponse.aclmode);
      }
 

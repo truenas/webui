@@ -2,8 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
+import { ProductType } from '../../enums/product-type.enum';
 
-import { WebSocketService, NetworkService, DialogService, StorageService, 
+import { WebSocketService, NetworkService, DialogService, StorageService,
   AppLoaderService, ServicesService } from '../../services';
 import { T } from '../../translate-marker';
 import helptext from '../../helptext/network/interfaces/interfaces-list';
@@ -136,7 +137,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       this.parent.modalService.open('slide-in-form', this.parent.addComponent);
     },
   }
-  
+
   public openvpnTableConf = {
     title: T('OpenVPN'),
     queryCall: 'service.query',
@@ -288,7 +289,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       }
     });
 
-    if (window.localStorage.getItem('product_type') === 'ENTERPRISE') {
+    if (window.localStorage.getItem('product_type') === ProductType.Enterprise) {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         if (is_ha) {
           this.ws.call('failover.disabled_reasons').subscribe((failover_disabled) => {
@@ -393,8 +394,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     if (this.affectedServices.length > 0) {
       this.translate.get(helptext.services_restarted.message_a).subscribe(msgA => {
         this.translate.get(helptext.services_restarted.message_b).subscribe(msgB => {
-          this.dialog.confirm(helptext.services_restarted.title, msgA + ' ' + 
-          this.uniqueIPs.join(', ') +  ' ' + msgB + ' ' + this.affectedServices.join(', '), 
+          this.dialog.confirm(helptext.services_restarted.title, msgA + ' ' +
+          this.uniqueIPs.join(', ') +  ' ' + msgB + ' ' + this.affectedServices.join(', '),
           true, helptext.services_restarted.button).subscribe(res => {
        if (res) {
          this.finishCheckin();

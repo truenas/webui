@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
 import * as _ from 'lodash';
+import { ProductType } from '../../../enums/product-type.enum';
 import { DialogService, WebSocketService } from '../../../services';
 import { ipv4Validator } from '../../common/entity/entity-form/validators/ip-validation';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
@@ -161,7 +162,7 @@ export class IPMIFromComponent {
 
   async prerequisite(): Promise<boolean> {
     return new Promise(async (resolve, reject) => {
-      if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
+      if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
         await this.ws.call('failover.licensed').toPromise().then((is_ha) => {
           this.is_ha = is_ha;
         });

@@ -6,7 +6,8 @@ import vol_helptext  from 'app/helptext/storage/volumes/volume-list';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { DialogService, WebSocketService } from 'app/services';
 import { T } from 'app/translate-marker';
- 
+import { ProductType } from '../../../../enums/product-type.enum';
+
 @Component({
   selector : 'app-smb-list',
   template : `<entity-table [title]="title" [conf]="this"></entity-table>`
@@ -21,7 +22,7 @@ export class SMBListComponent {
   protected route_edit: string[] = [ 'sharing', 'smb', 'edit' ];
   protected route_delete: string[] = [ 'sharing', 'smb', 'delete' ];
   private entityList: EntityTableComponent;
-  productType = window.localStorage.getItem('product_type');
+  productType = window.localStorage.getItem('product_type') as ProductType;
 
   public columns: any[] = [
     {name: helptext_sharing_smb.column_name, prop: 'name', always_display: true },
@@ -46,7 +47,7 @@ export class SMBListComponent {
     buildTitle: share => `${T('Unshare')} ${share.name}`
   }
 
-  constructor(private ws: WebSocketService, private router: Router, 
+  constructor(private ws: WebSocketService, private router: Router,
     private dialogService: DialogService, private translate: TranslateService) {}
 
   afterInit(entityList: any) {
@@ -103,7 +104,7 @@ export class SMBListComponent {
             if(res) {
               this.lockedPathDialog(row.path);
             } else {
-              if (this.productType.includes('SCALE')) {
+              if (this.productType.includes(ProductType.Scale)) {
                 this.router.navigate(
                   ["/"].concat(["storage", "id", poolName, "dataset", "posix-acl", datasetId]));
               } else {
@@ -112,7 +113,7 @@ export class SMBListComponent {
               }
             }
           }, err => {
-            this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, 
+            this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title,
               err.reason, err.trace.formatted);
           })
         }
@@ -126,7 +127,7 @@ export class SMBListComponent {
       }
     ];
     // Temporary: Drop from menu if SCALE
-    if (this.productType.includes('SCALE')) {
+    if (this.productType.includes(ProductType.Scale)) {
       const shareAclRow = rows.find(row => row.name === 'share_acl')
       rows.splice(rows.indexOf(shareAclRow), 1);
     }
@@ -136,7 +137,7 @@ export class SMBListComponent {
   lockedPathDialog(path: string) {
     this.translate.get(helptext_sharing_smb.action_edit_acl_dialog.message1).subscribe(msg1 => {
       this.translate.get(helptext_sharing_smb.action_edit_acl_dialog.message2).subscribe(msg2 => {
-        this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, 
+        this.dialogService.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title,
           `${msg1} <i>${path}</i> ${msg2}`)
       })
     })

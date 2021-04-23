@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
+import { ProductType } from '../../../enums/product-type.enum';
 
 import { TooltipsService, WebSocketService } from '../../../services';
 import { EntityFormComponent } from '../../common/entity/entity-form';
@@ -232,7 +233,7 @@ export class ConfigurationComponent {
   }
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
-    if (['ENTERPRISE', 'SCALE_ENTERPRISE'].includes(window.localStorage.getItem('product_type'))) {
+    if ([ProductType.Enterprise, ProductType.ScaleEnterprise].includes(window.localStorage.getItem('product_type') as ProductType)) {
       this.ws.call('failover.licensed').subscribe((is_ha) => { //fixme, stupid race condition makes me need to call this again
         for (let i = 0; i < this.failover_fields.length; i++) {
           entityEdit.setDisabled(this.failover_fields[i], !is_ha, !is_ha);

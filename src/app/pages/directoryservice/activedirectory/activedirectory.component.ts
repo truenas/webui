@@ -1,6 +1,7 @@
 import {ApplicationRef, Component, Injector} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
+import { ProductType } from '../../../enums/product-type.enum';
 
 import { EntityUtils } from '../../common/entity/utils';
 import { SystemGeneralService, WebSocketService } from '../../../services/';
@@ -349,7 +350,7 @@ export class ActiveDirectoryComponent {
   }
 
   preInit(entityForm: any) {
-    if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
+    if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         if (is_ha) {
           this.ws.call('smb.get_smb_ha_mode').subscribe((ha_mode) => {

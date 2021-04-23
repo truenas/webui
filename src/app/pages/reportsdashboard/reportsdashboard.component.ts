@@ -45,7 +45,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   public scrolledIndex: number = 0;
   public isFooterConsoleOpen;
 
-  public product_type: string = window.localStorage['product_type'];
   public retroLogo: string;
 
   public multipathTitles: any = {};

@@ -9,6 +9,4 @@ if (environment.production) {
     enableProdMode();
   }
 
-  
-  // Please build stupid jenkins
 platformBrowserDynamic().bootstrapModule(AppModule);
