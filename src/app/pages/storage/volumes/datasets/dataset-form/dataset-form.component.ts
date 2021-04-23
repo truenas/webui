@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 
 import * as _ from 'lodash';
 import { ProductType } from '../../../../../enums/product-type.enum';
@@ -776,7 +776,7 @@ export class DatasetFormComponent implements Formconfiguration{
     '1M':'1048576'
   };
 
-  setBasicMode(basic_mode) {
+  setBasicMode(basic_mode: boolean): void {
     this.isBasicMode = basic_mode;
     if (this.encrypted_parent && !this.inherit_encryption) {
       _.find(this.fieldConfig, {name:'encryption'}).isHidden = basic_mode;
@@ -786,9 +786,8 @@ export class DatasetFormComponent implements Formconfiguration{
     _.find(this.fieldSets, {name:"quota_divider"}).divider = !basic_mode;
   }
 
-  convertHumanStringToNum(hstr, field) {
-
-    const IECUnitLetters = this.storageService.IECUnits.map(unit => unit.charAt(0).toUpperCase()).join('');
+  // TODO: Narrow down `field` type
+  convertHumanStringToNum(hstr: any, field: string): number {
 
     let num = 0;
     let unit = '';
@@ -862,38 +861,38 @@ export class DatasetFormComponent implements Formconfiguration{
     return data;
   }
 
-  blurEventQuota(parent){
+  blurEventQuota(parent): void {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['quota'].setValue(parent.humanReadable['quota']);
     }
   }
 
-  blurEventRefQuota(parent){
+  blurEventRefQuota(parent): void {
     if (parent.entityForm) {
         parent.entityForm.formGroup.controls['refquota'].setValue(parent.humanReadable['refquota']);
     }
   }
 
-  blurEventReservation(parent){
+  blurEventReservation(parent): void {
     if (parent.entityForm) {
         parent.entityForm.formGroup.controls['reservation'].setValue(parent.humanReadable['reservation']);
     }
   }
 
-  blurEventRefReservation(parent){
+  blurEventRefReservation(parent): void {
     if (parent.entityForm) {
         parent.entityForm.formGroup.controls['refreservation'].setValue(parent.humanReadable['refreservation']);
     }
   }
 
-  blurSpecialSmallBlocks(parent){
+  blurSpecialSmallBlocks(parent): void {
     if (parent.entityForm) {
         parent.entityForm.formGroup.controls['special_small_block_size'].setValue(parent.humanReadable['special_small_block_size']);
     }
   }
 
 
-  isCustActionVisible(actionId: string) {
+  isCustActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && this.isBasicMode === false) {
       return false;
     } else if (actionId === 'basic_mode' && this.isBasicMode === true) {
@@ -902,15 +901,17 @@ export class DatasetFormComponent implements Formconfiguration{
     return true;
   }
 
-  constructor(protected router: Router, protected aroute: ActivatedRoute,
+  constructor(
+    protected router: Router,
+    protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
-    protected loader: AppLoaderService, protected dialogService: DialogService,
+    protected loader: AppLoaderService,
+    protected dialogService: DialogService,
     protected storageService: StorageService,
-    protected modalService: ModalService ) { }
+    protected modalService: ModalService,
+  ) { }
 
-
-
-  afterInit(entityForm: EntityFormComponent) {
+  afterInit(entityForm: EntityFormComponent): void {
     // aclmode not yet available in SCALE
     this.productType = window.localStorage.getItem('product_type') as ProductType;
     const aclControl = entityForm.formGroup.get('aclmode');
@@ -964,29 +965,6 @@ export class DatasetFormComponent implements Formconfiguration{
     }
 
     entityForm.formGroup.get('share_type').valueChanges.pipe(filter(shareType => !!shareType && entityForm.isNew)).subscribe(shareType => {
-      /*
-      **aclmode not available in SCALE, so replace this ...
-
-      const aclControl = entityForm.formGroup.get('aclmode');
-      const caseControl = entityForm.formGroup.get('casesensitivity');
-      if (shareType === 'SMB') {
-        aclControl.setValue('RESTRICTED');
-        caseControl.setValue('INSENSITIVE');
-        aclControl.disable();
-        caseControl.disable();
-      } else {
-        aclControl.setValue('PASSTHROUGH');
-        caseControl.setValue('SENSITIVE');
-        aclControl.enable();
-        caseControl.enable();
-      }
-
-      aclControl.updateValueAndValidity();
-      caseControl.updateValueAndValidity();
-
-      */
-
-      // ...with this
       const caseControl = entityForm.formGroup.get('casesensitivity');
       if (!this.productType.includes(ProductType.Scale)) {
         if (shareType === 'SMB') {
@@ -1012,7 +990,6 @@ export class DatasetFormComponent implements Formconfiguration{
         }
         caseControl.updateValueAndValidity();
       }
-      //////
     });
 
     this.recordsize_fg = this.entityForm.formGroup.controls['recordsize'];
@@ -1036,13 +1013,9 @@ export class DatasetFormComponent implements Formconfiguration{
   }
 
   paramMap: any;
-  preInit(entityForm: EntityFormComponent) {
-
-    // this.paramMap = (<any>this.aroute.params).getValue();
-
+  preInit(entityForm: EntityFormComponent): void  {
 
     this.volid = this.paramMap['volid'];
-
 
     if (this.paramMap['pk'] !== undefined) {
       this.pk = this.paramMap['pk'];
@@ -1443,16 +1416,10 @@ export class DatasetFormComponent implements Formconfiguration{
         sync: this.getFieldValueOrRaw(wsResponse.sync),
         special_small_block_size: this.OrigHuman['special_small_block_size']
      };
-     //
+
      if (!this.productType.includes(ProductType.Scale)) {
        returnValue.aclmode = this.getFieldValueOrRaw(wsResponse.aclmode);
      }
-
-     // If combacks as Megabytes... Re-convert it to K.  Oddly enough.. It only takes K as an input.
-    //  if( returnValue.recordsize !== undefined && returnValue.recordsize.indexOf("M") !== -1) {
-    //    const value = Number.parseInt(returnValue.recordsize.replace("M", ""));
-    //    returnValue.recordsize = "" + ( 1024 * value ) + "K";
-    //  }
 
      if (sizeValues['quota'] || sizeValues['refquota'] || sizeValues['refreservation'] || sizeValues['reservation'] || sizeValues['special_small_block_size'] ||
       !quota_warning_inherit || !quota_critical_inherit || !refquota_warning_inherit|| !refquota_critical_inherit ||
@@ -1463,7 +1430,7 @@ export class DatasetFormComponent implements Formconfiguration{
      return returnValue;
   }
 
-  editSubmit(body: any) {
+  editSubmit(body: any): Observable<any> {
     const data: any = this.sendAsBasicOrAdvanced(body);
     if (data['special_small_block_size'] === 0) {
       delete data.special_small_block_size;
@@ -1504,7 +1471,7 @@ export class DatasetFormComponent implements Formconfiguration{
     return this.ws.call('pool.dataset.update', [this.pk, data]);
   }
 
-  addSubmit(body: any) {
+  addSubmit(body: any): Observable<any> {
     const data: any = this.sendAsBasicOrAdvanced(body);
     if (data['special_small_block_size'] === 0) {
       delete data.special_small_block_size;
@@ -1580,7 +1547,7 @@ export class DatasetFormComponent implements Formconfiguration{
     return this.ws.call('pool.dataset.create', [ data ]);
   }
 
-  customSubmit(body) {
+  customSubmit(body): Subscription {
     this.loader.open();
 
     return ((this.isNew === true ) ? this.addSubmit(body) : this.editSubmit(body)).subscribe((restPostResp) => {
@@ -1615,32 +1582,31 @@ export class DatasetFormComponent implements Formconfiguration{
       })
     }, (res) => {
       this.loader.close();
-      this.modalService.close('slide-in-form');
       new EntityUtils().handleWSError(this.entityForm, res);
     });
   }
 
-  setParent(id) {
+  setParent(id): void {
     if(!this.paramMap) {
       this.paramMap = {};
     }
     this.paramMap.parent = id;
   }
 
-  setVolId(pool) {
+  setVolId(pool): void {
     if(!this.paramMap) {
       this.paramMap = {};
     }
     this.paramMap.volid = pool;
   }
-  setPk(id) {
+  setPk(id): void {
     if(!this.paramMap) {
       this.paramMap = {};
     }
     this.paramMap.pk = id;
   }
 
-  setTitle(title) {
-    this.title = T(title);
+  setTitle(title: string): void {
+    this.title = title;
   }
 }

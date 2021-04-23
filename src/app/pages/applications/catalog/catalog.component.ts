@@ -22,8 +22,8 @@ import  helptext  from '../../../helptext/apps/apps';
 import { CatalogSummaryDialog } from '../dialogs/catalog-summary/catalog-summary-dialog.component';
 
 interface SelectOption {
-	label: string, 
-	value: string, 
+	label: string,
+	value: string,
 }
 
 @Component({
@@ -87,11 +87,11 @@ export class CatalogComponent implements OnInit {
       res.forEach(catalog => {
         this.catalogNames.push(catalog.label);
         catalog.preferred_trains.forEach(train => {
-          for (let i in catalog.trains[train]) {  
+          for (let i in catalog.trains[train]) {
             let item = catalog.trains[train][i];
             let versions = item.versions;
             let latest, latestDetails;
-  
+
             const versionKeys = [];
             Object.keys(versions).forEach(versionKey => {
               if (versions[versionKey].healthy) {
@@ -100,10 +100,10 @@ export class CatalogComponent implements OnInit {
             });
 
             let sorted_version_labels = versionKeys.sort(this.utils.versionCompare);
-  
+
             latest = sorted_version_labels[0];
             latestDetails = versions[latest];
-  
+
             let catalogItem = {
               name: item.name,
               catalog: {
@@ -122,7 +122,7 @@ export class CatalogComponent implements OnInit {
             this.catalogApps.push(catalogItem);
           }
         });
-        
+
       });
       this.refreshToolbarMenus();
       this.filerApps();
@@ -134,7 +134,7 @@ export class CatalogComponent implements OnInit {
       switch (evt.data.settings.value) {
         case 'select_pool':
           return this.selectPool();
-        
+
         case 'advanced_settings':
           this.modalService.open('slide-in-form', this.kubernetesForm);
           break;
@@ -185,7 +185,7 @@ export class CatalogComponent implements OnInit {
   selectPool() {
     this.appService.getPoolList().subscribe(res => {
       if (res.length === 0) {
-        this.dialogService.confirm(helptext.noPool.title, helptext.noPool.message, true, 
+        this.dialogService.confirm(helptext.noPool.title, helptext.noPool.message, true,
           helptext.noPool.action).subscribe(res => {
             if (res) {
               this.router.navigate(['storage', 'manager']);
@@ -196,7 +196,7 @@ export class CatalogComponent implements OnInit {
         res.forEach(pool => {
           this.poolList.push({label: pool.name, value: pool.name})
         })
-        this.dialogService.dialogForm(this.choosePool, true);
+        this.dialogService.dialogForm(this.choosePool, false);
       }
     })
   }
@@ -290,5 +290,5 @@ export class CatalogComponent implements OnInit {
       this.loadCatalogs();
     });
   }
-  
+
 }
