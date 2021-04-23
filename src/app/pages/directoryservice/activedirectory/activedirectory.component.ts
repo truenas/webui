@@ -9,6 +9,8 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import {  DialogService } from '../../../services/';
 import helptext from '../../../helptext/directoryservice/activedirectory';
 import global_helptext from '../../../helptext/global-helptext';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 
 @Component({
   selector : 'app-activedirectory',
@@ -26,7 +28,7 @@ export class ActiveDirectoryComponent {
   protected nss_info: any;
   public adStatus = false;
   entityEdit: any;
-
+  protected dialogRef: MatDialogRef<EntityJobComponent, void>;
   public custActions: Array<any> = [
     {
       'id' : helptext.activedirectory_custactions_basic_id,
@@ -332,9 +334,9 @@ export class ActiveDirectoryComponent {
   }
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-              protected ws: WebSocketService,
+              protected ws: WebSocketService, protected dialog: MatDialog,
               protected _injector: Injector, protected _appRef: ApplicationRef,
-              protected systemGeneralService: SystemGeneralService,
+              protected systemGeneralService: SystemGeneralService, protected dialogService: DialogService,
               protected dialogservice: DialogService) {}
 
   resourceTransformIncomingRestData(data) {
@@ -472,6 +474,23 @@ export class ActiveDirectoryComponent {
         this.kerberos_principal.options.push(
             {label : item, value : item});
       });
+    });
+
+    if (value.job_id) {
+      this.showStartingJob(value.job_id);
+    }
+  }
+
+  // Shows starting progress as a job dialog
+  showStartingJob(jobId) {
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Start" }, disableClose: true });
+    this.dialogRef.componentInstance.jobId = jobId;
+    this.dialogRef.componentInstance.wsshow();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.dialogRef.close();
+    });
+    this.dialogRef.componentInstance.failure.subscribe((err) => {
+      this.dialogRef.close();
     });
   }
 }
