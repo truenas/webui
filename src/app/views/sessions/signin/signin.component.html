@@ -6,10 +6,10 @@
         <div [hidden]="!(connected() && logo_ready)">
           <div class="text-center logo-wrapper" *ngIf="logo_ready">
             <img class="logo-bg" alt="Logo image background of stars and sky at night" src="assets/images/stars-sky-1200w.jpg" srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x">
-            <mat-icon svgIcon="truenas_core_logo_full" *ngIf="product_type === 'CORE'; else isTruenas" class="logo" alt="TrueNAS CORE logo"></mat-icon>
+            <mat-icon svgIcon="truenas_core_logo_full" *ngIf="product_type === ProductType.Core; else isTruenas" class="logo" alt="TrueNAS CORE logo"></mat-icon>
             <ng-template #isTruenas>
-              <mat-icon *ngIf="product_type === 'ENTERPRISE'" class="logo" svgIcon="truenas_enterprise_logo_full" alt="TrueNAS ENTERPRISE logo"></mat-icon>
-              <mat-icon *ngIf="product_type === 'SCALE' || product_type == 'SCALE_ENTERPRISE'" class="logo" svgIcon="truenas_scale_logo_full" alt="TrueNAS SCALE logo"></mat-icon>
+              <mat-icon *ngIf="product_type === ProductType.Enterprise" class="logo" svgIcon="truenas_enterprise_logo_full" alt="TrueNAS ENTERPRISE logo"></mat-icon>
+              <mat-icon *ngIf="product_type === ProductType.Scale || product_type == ProductType.ScaleEnterprise" class="logo" svgIcon="truenas_scale_logo_full" alt="TrueNAS SCALE logo"></mat-icon>
             </ng-template>
           </div>
 
@@ -98,13 +98,13 @@
                   <button name="signin_button2" mat-button color="primary" class="mat-accent full-width mb-1" type="submit" [disabled]="!setPasswordForm.form.valid">{{"Sign in" | translate}}</button>
                 </form>
               </div>
-  
+
               <div id="legacy-btn-wrapper" *ngIf='exposeLegacyUI'>
                 <button mat-button color="default" class="mb-1 full-width" style="text-transform:capitalize !important;" (click)="onGoToLegacy()">{{"LEGACY WEB INTERFACE" | translate}}</button>
               </div>
             </div>
 
-            <span *ngIf="product_type === 'ENTERPRISE' && failover_status != 'SINGLE'"><div class="ha-status">
+            <span *ngIf="product_type === ProductType.Enterprise && failover_status != 'SINGLE'"><div class="ha-status">
               <div class="ha-status-txt">
                 <p>{{ha_status_text}}</p>
                 <span *ngIf="show_reasons"><p *ngFor='let reason of ha_disabled_reasons'>
@@ -118,12 +118,12 @@
                 </span>
               </div>
             </div></span>
-  
+
             <div class="truecommand" *ngIf="tc_ip" (click)="gotoTC()">
                 <img id="truecommand-logo" src="assets/images/truecommand/truecommand-logo-mark-full-color-rgb.svg">
                 <span class="truecommand-txt">TrueCommand IP: {{tc_ip}}</span>
             </div>
-  
+
             <div class="copyright-line">
               <span  class="copyright-txt">TrueNAS {{product_type}} ® © {{copyrightYear}} </span>
               <img id="full-logo" (click)="openIX()" src="assets/images/ix_logo_full.png">

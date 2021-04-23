@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
+import { ProductType } from '../../../enums/product-type.enum';
 
 import { EntityUtils } from '../../common/entity/utils';
 import { SystemGeneralService, WebSocketService } from '../../../services/';
@@ -10,6 +11,8 @@ import { DialogService } from '../../../services/';
 import helptext from '../../../helptext/directoryservice/activedirectory';
 import global_helptext from '../../../helptext/global-helptext';
 import { ModalService } from '../../../services/modal.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 
 @Component({
   selector: 'app-activedirectory',
@@ -28,7 +31,7 @@ export class ActiveDirectoryComponent {
   protected nss_info: any;
   public adStatus = false;
   entityEdit: any;
-
+  protected dialogRef: MatDialogRef<EntityJobComponent, void>;
   public custActions: Array<any> = [
     {
       'id': helptext.activedirectory_custactions_basic_id,
@@ -294,7 +297,7 @@ export class ActiveDirectoryComponent {
 
   constructor(protected router: Router,
     protected ws: WebSocketService,
-    private modalService: ModalService,
+    private modalService: ModalService, protected dialog: MatDialog,
     protected systemGeneralService: SystemGeneralService,
     protected dialogservice: DialogService) { }
 
@@ -308,7 +311,7 @@ export class ActiveDirectoryComponent {
   }
 
   preInit(entityForm: any) {
-    if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
+    if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         if (is_ha) {
           this.ws.call('smb.get_smb_ha_mode').subscribe((ha_mode) => {
@@ -433,6 +436,23 @@ export class ActiveDirectoryComponent {
         this.kerberos_principal.options.push(
           { label: item, value: item });
       });
+    });
+
+    if (value.job_id) {
+      this.showStartingJob(value.job_id);
+    }
+  }
+
+  // Shows starting progress as a job dialog
+  showStartingJob(jobId) {
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Start" }, disableClose: true });
+    this.dialogRef.componentInstance.jobId = jobId;
+    this.dialogRef.componentInstance.wsshow();
+    this.dialogRef.componentInstance.success.subscribe((res) => {
+      this.dialogRef.close();
+    });
+    this.dialogRef.componentInstance.failure.subscribe((err) => {
+      this.dialogRef.close();
     });
   }
 }

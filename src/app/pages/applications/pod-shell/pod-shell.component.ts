@@ -60,7 +60,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
   constructor(protected core:CoreService,
     private ws: WebSocketService,
     public ss: ShellService,
-    private dialogService: DialogService, 
+    private dialogService: DialogService,
     public translate: TranslateService,
     protected aroute: ActivatedRoute,
     protected router: Router,
@@ -85,7 +85,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
 
           this.getAuthToken().subscribe((res) => {
             this.initializeWebShell(res);
-            
+
             this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
               if (value !== undefined) {
                 if (_.trim(value) == "logout") {
@@ -112,7 +112,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
       this.shellConnectedSubscription.unsubscribe();
     }
   }
-  
+
   refreshToolbarButtons() {
     this.formEvents = new Subject();
     this.formEvents.subscribe((evt: CoreEvent) => {
@@ -135,7 +135,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
           label: 'Set font size',
           type: 'slider',
           min: 10,
-          max: 20, 
+          max: 20,
           step: 1,
           value: this.font_size,
         },
@@ -205,7 +205,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     return false;
   }
 
-  initializeTerminal() {    
+  initializeTerminal() {
     const size = this.getSize();
     const setting = {
       cursorBlink: false,
@@ -224,15 +224,15 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     this.xterm.loadAddon(this.fitAddon);
 
     var font = new FontFaceObserver(this.font_name);
-    
+
     font.load().then((e) => {
       this.xterm.open(this.container.nativeElement);
       this.fitAddon.fit();
       this.xterm._initialized = true;
     }, function (e) {
       console.log('Font is not available', e);
-    });    
-    
+    });
+
   }
 
   updateTerminal() {
@@ -259,7 +259,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     span.innerHTML = 'a';
 
     let cols = 0;
-    while(span.offsetWidth < domWidth) {      
+    while(span.offsetWidth < domWidth) {
       span.innerHTML += 'a';
       cols++;
     }
@@ -269,7 +269,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     if (cols < 80) {
       cols = 80;
     }
-    
+
     if (rows < 10) {
       rows = 10;
     }
@@ -285,6 +285,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
     this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res)=> {
+      this.xterm.focus();
     });
     return true;
   }
@@ -293,13 +294,13 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     this.ss.token = res;
     this.reconnect();
     this.initializeTerminal();
-    this.refreshToolbarButtons();  
+    this.refreshToolbarButtons();
 
     this.shellConnectedSubscription = this.ss.shellConnected.subscribe((res)=> {
       this.shellConnected = res.connected;
       this.connectionId = res.id;
       this.updateTerminal();
-      this.refreshToolbarButtons();      
+      this.refreshToolbarButtons();
       this.resizeTerm();
     })
   }
@@ -368,7 +369,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     self.pod_name = entityDialog.formGroup.controls['pods'].value;
     self.conatiner_name = entityDialog.formGroup.controls['containers'].value;
     self.command = entityDialog.formGroup.controls['command'].value;
-    
+
     self.reconnect();
     self.dialogService.closeAllDialogs();
   }

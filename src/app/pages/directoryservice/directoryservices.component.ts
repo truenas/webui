@@ -319,6 +319,7 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
       this.router,
       this.ws,
       this.modalService,
+      this.mdDialog,
       this.sysGeneralService,
       this.dialog,
     );

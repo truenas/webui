@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { ProductType } from '../../../../enums/product-type.enum';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
 import * as _ from 'lodash';
@@ -39,7 +40,7 @@ export class DeviceEditComponent implements OnInit {
   public vminfo: any;
   public boot: any;
   public error: string;
-  private productType: string = window.localStorage.getItem('product_type');
+  private productType = window.localStorage.getItem('product_type') as ProductType;
 
   public custActions: any[];
 
@@ -68,7 +69,7 @@ export class DeviceEditComponent implements OnInit {
         label: 'Display',
         value: 'DISPLAY',
         }
-      ], 
+      ],
       value: helptext.dtype_value,
       required: true,
       validation: helptext.dtype_validation,
@@ -97,7 +98,7 @@ export class DeviceEditComponent implements OnInit {
       inputType: 'number'
     },
   ];
-  //disk 
+  //disk
   public diskFieldConfig: FieldConfig[] = [
     {
       name : 'path',
@@ -370,7 +371,7 @@ export class DeviceEditComponent implements OnInit {
       else {
         console.log(deviceInformation,value,activeformgroup)
       }
-      
+
 
     }
   }
@@ -437,7 +438,7 @@ export class DeviceEditComponent implements OnInit {
         this.activeFormGroup = this.rawfileFormGroup;
         this.isCustActionVisible = false;
         // special case where RAW file device is used as a BOOT device.
-        if (this.vminfo.attributes.boot && this.vminfo.attributes.rootpwd) { 
+        if (this.vminfo.attributes.boot && this.vminfo.attributes.rootpwd) {
           this.rootpwd = _.find(this.rawfileFieldConfig, {'name': 'rootpwd'});
           this.rootpwd['isHidden'] = false;
           this.boot = _.find(this.rawfileFieldConfig, {'name': 'boot'});
@@ -460,7 +461,7 @@ export class DeviceEditComponent implements OnInit {
       })
     });
 
-    if (!this.productType.includes('SCALE')) {
+    if (!this.productType.includes(ProductType.Scale)) {
       _.find(this.displayFieldConfig, {name:'wait'}).isHidden = false;
       _.find(this.displayFieldConfig, {name:'resolution'}).isHidden = false;
     }
@@ -511,7 +512,7 @@ export class DeviceEditComponent implements OnInit {
         "attributes":deviceValue,
         "order": deviceOrder
       };
-  
+
       this.loader.open();
       this.ws.call(this.updateCall, [ params.pk, payload ]).subscribe(() => {
           this.loader.close();

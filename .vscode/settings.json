@@ -1,4 +1,6 @@
 {
     "tslint.enable": true,
-    "vsicons.presets.angular": true
+    "vsicons.presets.angular": true,
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "typescript.preferences.importModuleSpecifier": "non-relative"
 }

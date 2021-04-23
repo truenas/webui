@@ -1622,6 +1622,9 @@ msgid ""
 "when User CN is set)."
 msgstr ""
 
+msgid "Append Data"
+msgstr ""
+
 msgid ""
 "Appends a suffix to the share connection path.  This is used to provide "
 "unique shares on a per-user, per-computer, or per-IP address basis.  "
@@ -3986,6 +3989,9 @@ msgstr ""
 msgid "Delete "
 msgstr ""
 
+msgid "Delete Children"
+msgstr ""
+
 msgid "Delete Dataset"
 msgstr ""
 
@@ -4284,6 +4290,9 @@ msgid "Directories and Permissions"
 msgstr ""
 
 msgid "Directory"
+msgstr ""
+
+msgid "Directory Inherit"
 msgstr ""
 
 msgid "Directory Mask"
@@ -6182,6 +6191,9 @@ msgstr ""
 msgid "File Information"
 msgstr ""
 
+msgid "File Inherit"
+msgstr ""
+
 msgid "File Mask"
 msgstr ""
 
@@ -6389,6 +6401,9 @@ msgid "From Name"
 msgstr ""
 
 msgid "Full"
+msgstr ""
+
+msgid "Full Control"
 msgstr ""
 
 msgid "Full Filesystem Replication"
@@ -7261,7 +7276,13 @@ msgstr ""
 msgid "Inherit (non-encrypted)"
 msgstr ""
 
+msgid "Inherit Only"
+msgstr ""
+
 msgid "Inherit encryption properties from parent"
+msgstr ""
+
+msgid "Inherited"
 msgstr ""
 
 msgid "Inherits"
@@ -8322,6 +8343,9 @@ msgstr ""
 msgid "Model:"
 msgstr ""
 
+msgid "Modify"
+msgstr ""
+
 msgid ""
 "Modify for disks that understand <a "
 "href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\" "
@@ -8756,6 +8780,9 @@ msgstr ""
 msgid "No Encryption (less secure, but faster)"
 msgstr ""
 
+msgid "No Inherit"
+msgstr ""
+
 msgid "No Item"
 msgstr ""
 
@@ -8769,6 +8796,9 @@ msgid "No Pools"
 msgstr ""
 
 msgid "No Pools Found"
+msgstr ""
+
+msgid "No Propagate Inherit"
 msgstr ""
 
 msgid "No Recent Events"
@@ -9237,6 +9267,9 @@ msgid "Organizational unit of the entity."
 msgstr ""
 
 msgid "Other"
+msgstr ""
+
+msgid "Other (Too complicated to be displayed)"
 msgstr ""
 
 msgid "Other Options"
@@ -9802,6 +9835,9 @@ msgstr "Chave Privada"
 msgid "Private Key ID"
 msgstr ""
 
+msgid "Privileged"
+msgstr ""
+
 msgid ""
 "Privileges are the same as the guest account.  Guest access is disabled by "
 "default in Windows 10 version 1709 and  Windows Server version 1903. "
@@ -9992,7 +10028,19 @@ msgstr ""
 msgid "Read"
 msgstr ""
 
+msgid "Read ACL"
+msgstr ""
+
+msgid "Read Attributes"
+msgstr ""
+
+msgid "Read Data"
+msgstr ""
+
 msgid "Read Errors"
+msgstr ""
+
+msgid "Read Named Attributes"
 msgstr ""
 
 msgid "Read Only"
@@ -10985,6 +11033,9 @@ msgstr ""
 
 msgid "Security"
 msgstr "Segurança"
+
+msgid "Security Settings"
+msgstr ""
 
 msgid ""
 "See <a "
@@ -12883,6 +12934,9 @@ msgid "Sync to peer succeeded."
 msgstr ""
 
 msgid "Synced"
+msgstr ""
+
+msgid "Synchronize"
 msgstr ""
 
 msgid "Synchronize Destination Snapshots With Source"
@@ -15250,10 +15304,25 @@ msgstr ""
 msgid "Write"
 msgstr ""
 
+msgid "Write ACL"
+msgstr ""
+
+msgid "Write Attributes"
+msgstr ""
+
+msgid "Write Data"
+msgstr ""
+
 msgid "Write Errors"
 msgstr ""
 
+msgid "Write Named Attributes"
+msgstr ""
+
 msgid "Write Only"
+msgstr ""
+
+msgid "Write Owner"
 msgstr ""
 
 msgid "Write a percentage limit of a single CPU core."
@@ -15478,6 +15547,9 @@ msgstr "enforce_statfs"
 msgid "error"
 msgstr ""
 
+msgid "everyone@"
+msgstr ""
+
 msgid "exec_clean"
 msgstr ""
 
@@ -15518,6 +15590,9 @@ msgid "expires in"
 msgstr ""
 
 msgid "group"
+msgstr ""
+
+msgid "group@"
 msgstr ""
 
 msgid "gzip (default level, 6)"
@@ -15693,6 +15768,9 @@ msgstr ""
 msgid "owner"
 msgstr "owner"
 
+msgid "owner@"
+msgstr ""
+
 msgid "password"
 msgstr "password"
 
@@ -15751,6 +15829,9 @@ msgid "snapshot"
 msgstr ""
 
 msgid "snapshots"
+msgstr ""
+
+msgid "snapshots could not be deleted."
 msgstr ""
 
 msgid "software, which is provided as-is with no warranty."

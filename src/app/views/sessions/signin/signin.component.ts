@@ -5,6 +5,7 @@ import { MatButton } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { ProductType } from '../../../enums/product-type.enum';
 import { matchOtherValidator } from '../../../pages/common/entity/entity-form/validators/password-validation';
 import { TranslateService } from '@ngx-translate/core';
 import globalHelptext from '../../../helptext/global-helptext';
@@ -31,7 +32,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('username', {read: ElementRef}) usernameInput: ElementRef<HTMLElement>;
 
   private failed: Boolean = false;
-  public product_type: string;
+  public product_type: ProductType;
   public logo_ready: Boolean = false;
   public product = productText.product;
   public showPassword = false;
@@ -76,6 +77,8 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   protected tc_url;
   private getProdType: Subscription;
 
+  readonly ProductType = ProductType;
+
   constructor(private ws: WebSocketService, private router: Router,
     private snackBar: MatSnackBar, public translate: TranslateService,
     private dialogService: DialogService,
@@ -103,11 +106,11 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.logo_ready) {
       this.getProdType = this.sysGeneralService.getProductType.subscribe((res)=>{
         this.logo_ready = true;
-        this.product_type = res;
+        this.product_type = res as ProductType;
         if (this.interval) {
           clearInterval(this.interval);
         }
-        if (this.product_type.includes('ENTERPRISE') || this.product_type === 'SCALE') {
+        if (this.product_type.includes(ProductType.Enterprise) || this.product_type === ProductType.Scale) {
           if (this.HAInterval) {
             clearInterval(this.HAInterval);
           }
@@ -122,7 +125,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
           }
         }
         window.localStorage.setItem('product_type', res);
-        if (this.product_type === 'ENTERPRISE' && window.localStorage.exposeLegacyUI === 'true') {
+        if (this.product_type === ProductType.Enterprise && window.localStorage.exposeLegacyUI === 'true') {
           this.exposeLegacyUI = true;
         }
       });
@@ -134,7 +137,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       if (!this.didSetFocus) {
         this.didSetFocus = true;
         this.usernameInput.nativeElement.focus();
-      }      
+      }
     });
   }
 
@@ -228,29 +231,29 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   canLogin() {
-    
+
     if (this.logo_ready && this.connected &&
        (this.failover_status === 'SINGLE' ||
         this.failover_status === 'MASTER' ||
-        this.product_type === 'CORE' )) {
+        this.product_type === ProductType.Core )) {
 
           if (!this.didSetFocus && this.usernameInput) {
             setTimeout(() => {
               this.didSetFocus = true;
-              this.usernameInput.nativeElement.focus();            
+              this.usernameInput.nativeElement.focus();
             }, 10);
-            
+
           }
 
           return true;
     } else {
-      
+
       return false;
     }
   }
 
   getHAStatus() {
-    if ((this.product_type.includes('ENTERPRISE') || this.product_type === 'SCALE')
+    if ((this.product_type.includes(ProductType.Enterprise) || this.product_type === ProductType.Scale)
       && !this.checking_status) {
       this.checking_status = true;
       this.ws.call('failover.status').subscribe(res => {

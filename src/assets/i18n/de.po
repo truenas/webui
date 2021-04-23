@@ -1739,6 +1739,9 @@ msgid ""
 "when User CN is set)."
 msgstr ""
 
+msgid "Append Data"
+msgstr ""
+
 msgid ""
 "Appends a suffix to the share connection path.  This is used to provide "
 "unique shares on a per-user, per-computer, or per-IP address basis.  "
@@ -4165,6 +4168,9 @@ msgstr "Löschen"
 msgid "Delete "
 msgstr "Löschen "
 
+msgid "Delete Children"
+msgstr ""
+
 msgid "Delete Dataset"
 msgstr "Datensatz löschen"
 
@@ -4470,6 +4476,9 @@ msgstr "Verzeichnisse und Berechtigungen"
 
 msgid "Directory"
 msgstr "Verzeichnis"
+
+msgid "Directory Inherit"
+msgstr ""
 
 msgid "Directory Mask"
 msgstr "Verzeichnismaske"
@@ -6462,6 +6471,9 @@ msgstr ""
 msgid "File Information"
 msgstr "Dateiinformationen"
 
+msgid "File Inherit"
+msgstr ""
+
 msgid "File Mask"
 msgstr ""
 
@@ -6671,6 +6683,9 @@ msgid "From Name"
 msgstr "Von Namen"
 
 msgid "Full"
+msgstr ""
+
+msgid "Full Control"
 msgstr ""
 
 msgid "Full Filesystem Replication"
@@ -7560,7 +7575,13 @@ msgstr ""
 msgid "Inherit (non-encrypted)"
 msgstr ""
 
+msgid "Inherit Only"
+msgstr ""
+
 msgid "Inherit encryption properties from parent"
+msgstr ""
+
+msgid "Inherited"
 msgstr ""
 
 msgid "Inherits"
@@ -8635,6 +8656,9 @@ msgstr "Model"
 msgid "Model:"
 msgstr "Model:"
 
+msgid "Modify"
+msgstr ""
+
 msgid ""
 "Modify for disks that understand <a "
 "href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\" "
@@ -9076,6 +9100,9 @@ msgstr ""
 msgid "No Encryption (less secure, but faster)"
 msgstr ""
 
+msgid "No Inherit"
+msgstr ""
+
 msgid "No Item"
 msgstr ""
 
@@ -9089,6 +9116,9 @@ msgid "No Pools"
 msgstr "Keine Pools"
 
 msgid "No Pools Found"
+msgstr ""
+
+msgid "No Propagate Inherit"
 msgstr ""
 
 msgid "No Recent Events"
@@ -9558,6 +9588,9 @@ msgstr ""
 
 msgid "Other"
 msgstr "Andere"
+
+msgid "Other (Too complicated to be displayed)"
+msgstr ""
 
 msgid "Other Options"
 msgstr "Andere Optionen"
@@ -10153,6 +10186,9 @@ msgstr "Privat Schlüssel"
 msgid "Private Key ID"
 msgstr "ID des privaten Schlüssels"
 
+msgid "Privileged"
+msgstr ""
+
 msgid ""
 "Privileges are the same as the guest account.  Guest access is disabled by "
 "default in Windows 10 version 1709 and  Windows Server version 1903. "
@@ -10385,8 +10421,20 @@ msgstr ""
 msgid "Read"
 msgstr "Lesen"
 
+msgid "Read ACL"
+msgstr ""
+
+msgid "Read Attributes"
+msgstr ""
+
+msgid "Read Data"
+msgstr ""
+
 msgid "Read Errors"
 msgstr "Lesefehler"
+
+msgid "Read Named Attributes"
+msgstr ""
 
 msgid "Read Only"
 msgstr "Nur lesen"
@@ -11461,6 +11509,9 @@ msgstr ""
 
 msgid "Security"
 msgstr "Sicherheit"
+
+msgid "Security Settings"
+msgstr ""
 
 msgid ""
 "See <a "
@@ -13505,7 +13556,7 @@ msgid ""
 msgstr ""
 
 msgid "Start on Boot"
-msgstr "Beim Booten staten"
+msgstr "Beim Booten starten"
 
 msgid "Start the scrub now?"
 msgstr "Scrub jetzt starten?"
@@ -13753,6 +13804,9 @@ msgid "Sync to peer succeeded."
 msgstr ""
 
 msgid "Synced"
+msgstr ""
+
+msgid "Synchronize"
 msgstr ""
 
 msgid "Synchronize Destination Snapshots With Source"
@@ -16271,11 +16325,26 @@ msgstr ""
 msgid "Write"
 msgstr "Schreiben"
 
+msgid "Write ACL"
+msgstr ""
+
+msgid "Write Attributes"
+msgstr ""
+
+msgid "Write Data"
+msgstr ""
+
 msgid "Write Errors"
 msgstr "Schreibfehler"
 
+msgid "Write Named Attributes"
+msgstr ""
+
 msgid "Write Only"
 msgstr "Nur schreiben"
+
+msgid "Write Owner"
+msgstr ""
 
 msgid "Write a percentage limit of a single CPU core."
 msgstr "Schreiben Sie einen prozentualen Grenzwert für einen einzelnen CPU-Kern."
@@ -16502,6 +16571,9 @@ msgstr ""
 msgid "error"
 msgstr "Fehler"
 
+msgid "everyone@"
+msgstr ""
+
 msgid "exec_clean"
 msgstr ""
 
@@ -16543,6 +16615,9 @@ msgstr ""
 
 msgid "group"
 msgstr "Gruppe"
+
+msgid "group@"
+msgstr ""
 
 msgid "gzip (default level, 6)"
 msgstr ""
@@ -16717,6 +16792,9 @@ msgstr "Überblick"
 msgid "owner"
 msgstr "Besitzer"
 
+msgid "owner@"
+msgstr ""
+
 msgid "password"
 msgstr "Passwort"
 
@@ -16775,6 +16853,9 @@ msgid "snapshot"
 msgstr ""
 
 msgid "snapshots"
+msgstr ""
+
+msgid "snapshots could not be deleted."
 msgstr ""
 
 msgid "software, which is provided as-is with no warranty."

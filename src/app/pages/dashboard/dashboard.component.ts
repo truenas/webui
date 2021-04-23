@@ -74,7 +74,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // For widgetsysinfo
   public isHA: boolean; // = false;
-  public product_type = window.localStorage['product_type'];
   public sysinfoReady: boolean = false;
 
   // For CPU widget
@@ -93,21 +92,21 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public showSpinner: boolean = true;
 
-  constructor(protected core:CoreService, protected ws: WebSocketService, 
+  constructor(protected core:CoreService, protected ws: WebSocketService,
     public mediaObserver: MediaObserver, private el: ElementRef, public modalService: ModalService){
 
     core.register({observerClass: this, eventName: "SidenavStatus"}).subscribe((evt: CoreEvent) => {
       setTimeout(() => {
-        this.checkScreenSize();      
+        this.checkScreenSize();
       }, 100);
     });
 
     this.statsDataEvents = new Subject<CoreEvent>();
-    
+
     this.checkScreenSize();
-    
+
     window.onresize = () => {
-      this.checkScreenSize();     
+      this.checkScreenSize();
     }
   }
 
@@ -125,7 +124,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.screenType = st;
 
-    // Eliminate top level scrolling 
+    // Eliminate top level scrolling
     let wrapper = (<any>document).querySelector('.fn-maincontent');
     wrapper.style.overflow = this.screenType == 'Mobile' ? 'hidden' : 'auto';
     this.optimizeWidgetContainer();
@@ -133,7 +132,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   optimizeWidgetContainer(){
     let wrapper = (<any>document).querySelector('.rightside-content-hold');
-    
+
     const withMargin = this.widgetWidth + 8;
     const max = Math.floor(wrapper.offsetWidth / withMargin);
     const odw = max * withMargin;
@@ -143,7 +142,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   onMobileLaunch(evt: DashConfigItem) {
     this.activeMobileWidget = [evt];
 
-    // Transition 
+    // Transition
     const vp = this.el.nativeElement.querySelector('.mobile-viewport');
     let viewport = styler(vp);
     const c = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
@@ -161,7 +160,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onMobileBack() {
-    // Transition 
+    // Transition
     const vp = this.el.nativeElement.querySelector('.mobile-viewport');
     let viewport = styler(vp);
     const c = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
@@ -176,7 +175,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       to:{ x: endX },
       duration: 250
     }).start({
-      update: (v) => { 
+      update: (v) => {
         carousel.set(v);
       },
       complete: () => {
@@ -217,11 +216,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(){
-    
+
     this.stopListeners();
     this.core.unregister({observerClass:this});
 
-    // Restore top level scrolling 
+    // Restore top level scrolling
     let wrapper = (<any>document).querySelector('.fn-maincontent');
     wrapper.style.overflow = 'auto';
   }
@@ -238,7 +237,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       evt.data.forEach((item, index) => {
         nicKeys[item.name] = index.toString();
       });
-        
+
       // Process Vlans (attach vlans to their parent)
       evt.data.forEach((item, index) => {
         if(item.type !== "VLAN" && !clone[index].state.vlans){
@@ -261,14 +260,14 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         if(item.type == "LINK_AGGREGATION" ){
           clone[index].state.lagg_ports = item.lag_ports;
           item.lag_ports.forEach((nic) => {
-            // Consolidate addresses 
+            // Consolidate addresses
             clone[index].state.aliases.forEach((item) => { item.interface = nic});
             clone[index].state.aliases = clone[index].state.aliases.concat(clone[nicKeys[nic]].state.aliases);
 
             // Consolidate vlans
             clone[index].state.vlans.forEach((item) => { item.interface = nic});
             clone[index].state.vlans = clone[index].state.vlans.concat(clone[nicKeys[nic]].state.vlans);
-            
+
             // Mark interface for removal
             removeNics[nic] = nicKeys[nic];
           });
@@ -277,7 +276,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
       // Remove NICs from list
       for(let i = clone.length - 1; i >= 0; i--){
-        if(removeNics[clone[i].name]){ 
+        if(removeNics[clone[i].name]){
           // Remove
           clone.splice(i, 1)
         } else {
@@ -285,7 +284,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           clone[i].state.aliases = clone[i].state.aliases.filter(address => address.type == "INET" || address.type == 'INET6');
         }
       }
-      
+
       // Update NICs array
       this.nics = clone;
 
@@ -338,12 +337,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   stopListeners(){
     // unsubscribe from middleware
-    if(this.statsEvents){ 
+    if(this.statsEvents){
       this.statsEvents.complete();
     }
 
     // unsubsribe from global actions
-    if(this.formEvents){ 
+    if(this.formEvents){
       this.formEvents.complete();
     }
   }
@@ -365,7 +364,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         used:evt.data[i].used.parsed,
         used_pct: (used_pct * 100).toFixed(0) + '%'
       }
-      
+
       vd[zvol.id] = zvol;
     }
     this.volumeData = vd;
@@ -477,9 +476,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const spl = item.identifier.split(',');
     const key = spl[0];
     const value = spl[1];
-    
+
     const pool = this.pools.filter(pool => pool[key] == value);
-    return this.volumeData && this.volumeData[pool[0].name] ? this.volumeData[pool[0].name] : ''; 
+    return this.volumeData && this.volumeData[pool[0].name] ? this.volumeData[pool[0].name] : '';
   }
 
   dataFromConfig(item:DashConfigItem){
@@ -526,10 +525,10 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     //this.modalService.open('slide-in-form', this.addComponent);
     if(this.formComponent){
       delete this.formComponent;
-    } 
+    }
     this.generateFormComponent();
     this.modalService.open('slide-in-form', this.formComponent);
-   
+
   }
 
   generateFormComponent(){
@@ -587,7 +586,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         })
       }
    ];
-    
+
     this.formComponent = new EntityFormConfigurationComponent();
     this.formComponent.fieldSets = new FieldSets(fieldSets);
     this.formComponent.title = 'Dashboard Configuration';
@@ -645,16 +644,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         let key = widget.identifier ? 'identifier' : 'name';
 
         return widget[key] == w[key];
-      }); 
+      });
 
       if(matches.length == 1){
         clone[index] = matches[0];
       }
 
     });
-  
+
     this.dashState = clone;
-  
+
   }
 
 }

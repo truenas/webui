@@ -2,6 +2,7 @@ import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+import { ProductType } from '../../../../enums/product-type.enum';
 import { WebSocketService } from '../../../../services/';
 import { T } from '../../../../translate-marker';
 
@@ -27,7 +28,7 @@ export class TunableListComponent {
   protected route_add_scale: string[] = ["system", "sysctl", "add"];
   protected route_add_tooltip_scale = T("Add Sysctl");
 
-  protected product_type;
+  protected product_type: ProductType;
 
   public busy: Subscription;
   public sub: Subscription;
@@ -66,17 +67,17 @@ export class TunableListComponent {
     multiSelect: true
   }
 
-  constructor(protected router: Router, 
+  constructor(protected router: Router,
     protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
-    protected _injector: Injector, 
+    protected _injector: Injector,
     protected _appRef: ApplicationRef) {}
 
   preInit(entityList: any) {
     this.entityList = entityList;
     this.sub = this.aroute.params.subscribe(params => {});
-    this.product_type = window.localStorage.getItem('product_type');
-    if (this.product_type === 'SCALE' || this.product_type === 'SCALE_ENTERPRISE') {
+    this.product_type = window.localStorage.getItem('product_type') as ProductType;
+    if (this.product_type === ProductType.Scale || this.product_type === ProductType.ScaleEnterprise) {
       this.route_add = this.route_add_scale;
       this.route_edit = this.route_edit_scale;
       this.route_success = this.route_success_scale;

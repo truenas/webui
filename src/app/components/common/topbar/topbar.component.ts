@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { CoreEvent } from 'app/core/services/core.service';
 import { Subscription, interval, Subject } from 'rxjs';
+import { ProductType } from '../../../enums/product-type.enum';
 import * as domHelper from '../../../helpers/dom.helper';
 import network_interfaces_helptext from '../../../helptext/network/interfaces/interfaces-list';
 import helptext from '../../../helptext/topbar';
@@ -117,7 +118,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     }
 
   ngOnInit() {
-    if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
+    if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
       this.checkEULA();
 
       this.ws.call('failover.licensed').subscribe((is_ha) => {
@@ -150,9 +151,9 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
               this.systemWillRestart = true;
               if (res.fields.state === 'SUCCESS') {
                 this.router.navigate(['/others/reboot']);
-              } 
+              }
             }
-          } 
+          }
 
         if (!this.updateNotificationSent) {
           this.updateInProgress();
@@ -258,7 +259,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.showWelcome = evt.data.showWelcomeDialog;
     if (this.showWelcome) {
       this.onShowAbout();
-    }   
+    }
   }
 
   checkLegacyUISetting() {
@@ -317,8 +318,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   onShowAbout() {
     let dialogRef = this.dialog.open(AboutModalDialog, {
       maxWidth: '600px',
-      data: { 
-        extraMsg: this.showWelcome, 
+      data: {
+        extraMsg: this.showWelcome,
         systemType: this.systemType
       },
       disableClose: true
@@ -617,7 +618,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   };
 
   showUpdateDialog() {
-    let message = this.is_ha || !this.systemWillRestart ? helptext.updateRunning_dialog.message : 
+    let message = this.is_ha || !this.systemWillRestart ? helptext.updateRunning_dialog.message :
       helptext.updateRunning_dialog.message + helptext.updateRunning_dialog.message_pt2;
     this.dialogService.confirm(helptext.updateRunning_dialog.title,
       message,
@@ -858,7 +859,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     }
     this.dialogService.dialogForm(conf);
   }
-  
+
   navExternal(link) {
     return window.open(link);
   }
