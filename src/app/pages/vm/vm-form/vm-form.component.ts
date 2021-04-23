@@ -10,11 +10,14 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { T } from '../../../translate-marker';
 import helptext from './../../../helptext/vm/vm-wizard/vm-wizard';
 import globalHelptext from './../../../helptext/global-helptext';
-import {WebSocketService, StorageService, VmService, ValidationService} from '../../../services/';
+import {WebSocketService, StorageService, VmService, ValidationService, AppLoaderService, DialogService, SystemGeneralService} from '../../../services/';
 import { Validators } from '@angular/forms';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 import { GpuDevice } from 'app/interfaces/gpu-device';
+import { combineLatest, Observable } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 
 @Component({
   selector : 'app-vm',
@@ -34,6 +37,7 @@ export class VmFormComponent {
   public cores: number;
   public threads: number;
   private gpus: GpuDevice[];
+  private isolatedGpuPciIds: string[];
   private maxVCPUs: number;
   private productType: string = window.localStorage.getItem('product_type');
   protected queryCallOption: Array<any> = [];
@@ -188,11 +192,11 @@ export class VmFormComponent {
   private bootloader: any;
   public bootloader_type: any[];
 
-  constructor(protected router: Router,
+  constructor(protected router: Router, private loader: AppLoaderService,
               protected ws: WebSocketService, protected storageService: StorageService,
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected vmService: VmService, protected route: ActivatedRoute,
-              private translate: TranslateService
+              private translate: TranslateService, private dialogService: DialogService, private systemGeneralService: SystemGeneralService
               ) {}
 
   preInit(entityForm: EntityFormComponent) {
@@ -257,7 +261,35 @@ export class VmFormComponent {
       });
     }
 
+    this.systemGeneralService.getAdvancedConfig.subscribe((res) => {
+      this.isolatedGpuPciIds = res.isolated_gpu_pci_ids
+    });
     
+
+    const gpusFormControl = this.entityForm.formGroup.controls['gpus'];
+    gpusFormControl.valueChanges.subscribe((gpusValue) => {
+      const finalIsolatedPciIds = [...this.isolatedGpuPciIds];
+      for(let gpuValue of gpusValue) {
+        if(finalIsolatedPciIds.findIndex(pciId => pciId === gpuValue) === -1) {
+          finalIsolatedPciIds.push(gpuValue)
+        }
+      }
+      const gpusConf = _.find(this.entityForm.fieldConfig, {name : "gpus"});
+      if(finalIsolatedPciIds.length >= gpusConf.options.length) {
+        const prevSelectedGpus = [];
+        for(let gpu of this.gpus) {
+          if(this.isolatedGpuPciIds.findIndex(igpi => igpi === gpu.addr.pci_slot ) >= 0) {
+            prevSelectedGpus.push(gpu)
+          }
+        }
+        const listItems = "<li>" + prevSelectedGpus.map((gpu, index) => (index+1)+". "+gpu.description).join("</li><li>") + "</li>"
+        gpusConf.warnings = "At least 1 GPU is required by the host for it’s functions.<p>Currently following GPU(s) have been isolated:<ol>"+listItems+"</ol></p><p>With your selection, no GPU is available for the host to consume.</p>";
+        gpusFormControl.setErrors({ maxPCIIds: true})
+      } else {
+        gpusConf.warnings = null;
+        gpusFormControl.setErrors(null);
+      }
+    });
   }
 
   blurEvent(parent){
@@ -326,6 +358,11 @@ export class VmFormComponent {
       data['memory'] = Math.round(this.storageService.convertHumanStringToNum(data['memory'])/1048576);
     }
 
+    return data;
+  }
+
+
+  customSubmit(updatedVmData) {
     const pciDevicesToCreate = [];
     const vmPciDeviceIdsToRemove = [];
     
@@ -339,7 +376,7 @@ export class VmFormComponent {
       }
       return true;
     });
-    const currentGpusSelected = this.gpus.filter((gpu) => data['gpus'].includes(gpu.addr.pci_slot));
+    const currentGpusSelected = this.gpus.filter((gpu) => updatedVmData['gpus'].includes(gpu.addr.pci_slot));
 
     for(let currentGpu of currentGpusSelected) {
       let found = false;
@@ -353,6 +390,7 @@ export class VmFormComponent {
         const gpuPciDevicesConverted = gpuPciDevices.map(pptDev => {
           return {
             dtype: "PCI",
+            vm: this.rawVmData.id,
             attributes: {
               pptdev: pptDev.vm_pci_slot
             }
@@ -370,12 +408,47 @@ export class VmFormComponent {
         }
       }
       if(!found) {
-        vmPciDeviceIdsToRemove.push(...prevVmPciDevices.filter(prevVmPciDevice => prevGpu.devices.map(prevGpuPciDevice => prevGpuPciDevice.vm_pci_slot).includes(prevVmPciDevice.attributes.pptdev)).map(prevVmPciDevice => prevVmPciDevice.id));
+        const prevVmGpuPciDevicesPciSlots = prevGpu.devices.map(prevGpuPciDevice => prevGpuPciDevice.vm_pci_slot);
+        const vmPciDevices = prevVmPciDevices.filter(prevVmPciDevice => prevVmGpuPciDevicesPciSlots.includes(prevVmPciDevice.attributes.pptdev));
+        const vmPciDeviceIds = vmPciDevices.map(prevVmPciDevice => prevVmPciDevice.id);
+        vmPciDeviceIdsToRemove.push(...vmPciDeviceIds);
       }
     }
+    
+    const observables: Observable<any>[] = [];
+    if(updatedVmData.gpus) {
+      const finalIsolatedPciIds = [...this.isolatedGpuPciIds];
+      for(let gpuValue of updatedVmData.gpus) {
+        if(finalIsolatedPciIds.findIndex(pciId => pciId === gpuValue) === -1) {
+          finalIsolatedPciIds.push(gpuValue)
+        }
+      }
+      observables.push(this.ws.call('system.advanced.update', [{isolated_gpu_pci_ids: finalIsolatedPciIds}]));
+    }
+    
+    for(let deviceId of vmPciDeviceIdsToRemove) {
+      observables.push(this.ws.call("datastore.delete", ["vm.device", deviceId]));
+    }
+    
+    for(let device of pciDevicesToCreate) {
+      observables.push(this.ws.call("vm.device.create", [device]));
+    }
 
-    delete data['gpus'];
-    return data;
+    
+    
+    delete updatedVmData['gpus'];
+    this.loader.open();
+    observables.push(this.ws.call("vm.update", [this.rawVmData.id, updatedVmData]));
+    
+    combineLatest(observables).subscribe(
+      responses_array => {
+        this.loader.close();
+        this.router.navigate(new Array('/').concat(this.route_success));
+      },
+      error => {
+        this.loader.close();
+        new EntityUtils().handleWSError(this, error, this.dialogService);
+      }
+    )
   }
-
 }

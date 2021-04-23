@@ -1008,9 +1008,7 @@ export class VMWizardComponent {
     }
 
     if(value.gpus) {
-      value.isolated_gpu_pci_ids = []
       for(let gpuPciSlot of value.gpus) {
-        value.isolated_gpu_pci_ids.push(gpuPciSlot);
         const gpuIndex = this.gpus.findIndex(gpu => gpu.addr.pci_slot == gpuPciSlot);
         vmPayload["devices"].push(...this.gpus[gpuIndex].devices.map(gpuDevice => {
           return {
@@ -1050,8 +1048,14 @@ export class VMWizardComponent {
     }
     
     this.loader.open();
-    if(value.isolated_gpu_pci_ids && value.isolated_gpu_pci_ids.length) {
-      this.ws.call('system.advanced.update', [{isolated_gpu_pci_ids: value.isolated_gpu_pci_ids}]).subscribe(
+    if(value.gpus) {
+      const finalIsolatedPciIds = [...this.isolatedGpuPciIds];
+      for(let gpuValue of value.gpus) {
+        if(finalIsolatedPciIds.findIndex(pciId => pciId === gpuValue) === -1) {
+          finalIsolatedPciIds.push(gpuValue)
+        }
+      }
+      this.ws.call('system.advanced.update', [{isolated_gpu_pci_ids: finalIsolatedPciIds}]).subscribe(
         (res) => res,
         (err) =>  new EntityUtils().handleWSError(this.entityWizard, err)
       );
