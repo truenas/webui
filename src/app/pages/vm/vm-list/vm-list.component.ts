@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { ProductType } from '../../../enums/product-type.enum';
 
 import { WebSocketService, StorageService, AppLoaderService, DialogService, RestService, VmService, NetworkService } from '../../../services/';
 import { ModalService } from 'app/services/modal.service';
@@ -42,7 +43,7 @@ export class VMListComponent implements OnDestroy {
     protected route_edit: string[] = ['vm', 'edit'];
     protected dialogRef: any;
     private eventSubscription: Subscription;
-    private productType: string = window.localStorage.getItem('product_type');
+    private productType = window.localStorage.getItem('product_type') as ProductType;
     protected addComponent: VMWizardComponent;
 
     public entityList: any;
@@ -93,7 +94,7 @@ export class VMListComponent implements OnDestroy {
         private vmService: VmService, private networkService: NetworkService,
         private messageService: MessageService, private prefService: PreferencesService,
         private translate: TranslateService) {
-            if (this.productType !== 'SCALE') {
+            if (this.productType !== ProductType.Scale) {
                 this.columns.push({ name: T("Com Port"), prop: 'com_port', hidden: true })
             }
          }
@@ -138,7 +139,7 @@ export class VMListComponent implements OnDestroy {
         for (let vm_index = 0; vm_index < vms.length; vm_index++) {
             vms[vm_index]['state'] = vms[vm_index]['status']['state'];
             vms[vm_index]['com_port'] = `/dev/nmdm${vms[vm_index]['id']}B`;
-            vms[vm_index]['shutdown_timeout'] += T(' seconds') 
+            vms[vm_index]['shutdown_timeout'] += T(' seconds')
             if (this.checkDisplay(vms[vm_index])) {
                 vms[vm_index]['port'] = this.displayPort(vms[vm_index]);
             } else {
@@ -157,7 +158,7 @@ export class VMListComponent implements OnDestroy {
         if (!devices || devices.length === 0) {
             return false;
         };
-        if (this.productType !== 'SCALE' && (vm.bootloader === 'GRUB' || vm.bootloader === "UEFI_CSM")) {
+        if (this.productType !== ProductType.Scale && (vm.bootloader === 'GRUB' || vm.bootloader === "UEFI_CSM")) {
             return false;
         };
         for (let i = 0; i < devices.length; i++) {
@@ -172,7 +173,7 @@ export class VMListComponent implements OnDestroy {
         if (!devices || devices.length === 0) {
             return false;
         };
-        if (this.productType !== 'SCALE' && (vm.bootloader === 'GRUB' || vm.bootloader === "UEFI_CSM")) {
+        if (this.productType !== ProductType.Scale && (vm.bootloader === 'GRUB' || vm.bootloader === "UEFI_CSM")) {
             return false;
         };
         for (let i = 0; i < devices.length; i++) {
@@ -213,7 +214,7 @@ export class VMListComponent implements OnDestroy {
         } else {
             method = this.wsMethods.start;
             this.doRowAction(row, method);
-        } 
+        }
     }
 
     onMemoryError(row) {
@@ -241,7 +242,7 @@ export class VMListComponent implements OnDestroy {
 
     doRowAction(row, method, params = [row.id], updateTable = false) {
         if (method === 'vm.stop') {
-            this.dialogRef = this.dialog.open(EntityJobComponent, 
+            this.dialogRef = this.dialog.open(EntityJobComponent,
                 { data: { "title": T("Stopping " + row.name) }, disableClose: false });
             this.dialogRef.componentInstance.setCall(method, [params[0], params[1]]);
             this.dialogRef.componentInstance.submit();
@@ -255,7 +256,7 @@ export class VMListComponent implements OnDestroy {
               this.dialogService.Info(T('Finished'), T('If ' + row.name + T(' is still running, \
  the Guest OS did not respond as expected. It is possible to use <i>Power Off</i> or the <i>Force Stop \
  After Timeout</i> option to stop the VM.')) , '450px', 'info', true);
-            this.checkMemory(); 
+            this.checkMemory();
             });
             this.dialogRef.componentInstance.failure.subscribe((err) => {
               new EntityUtils().handleWSError(this, err, this.dialogService);
@@ -406,7 +407,7 @@ export class VMListComponent implements OnDestroy {
                             }
                         ];
                         parent.doRowAction(delete_row, parent.wsDelete, params, true);
-                    }                  
+                    }
                 }
                 this.dialogService.dialogForm(conf);
             }
@@ -551,7 +552,7 @@ export class VMListComponent implements OnDestroy {
     isActionVisible(actionId: string, row: any) {
         if (actionId === 'DISPLAY' && (row["status"]["state"] !== "RUNNING" || !this.checkDisplay(row))) {
             return false;
-        } else if ((actionId === 'POWER_OFF' || actionId === 'STOP' || actionId === 'RESTART' || 
+        } else if ((actionId === 'POWER_OFF' || actionId === 'STOP' || actionId === 'RESTART' ||
             actionId === 'SERIAL') && row["status"]["state"] !== "RUNNING") {
             return false;
         } else if (actionId === 'START' && row["status"]["state"] === "RUNNING") {
@@ -572,5 +573,5 @@ export class VMListComponent implements OnDestroy {
 
     doAdd() {
         this.modalService.open('slide-in-form', this.addComponent);
-      } 
+      }
  }

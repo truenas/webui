@@ -7,6 +7,7 @@ import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { ViewChartDonutComponent } from 'app/core/components/viewchartdonut/viewchartdonut.component';
 import { ViewChartPieComponent } from 'app/core/components/viewchartpie/viewchartpie.component';
 import { ViewChartLineComponent } from 'app/core/components/viewchartline/viewchartline.component';
+import { ProductType } from '../../../../enums/product-type.enum';
 import { WebSocketService, SystemGeneralService } from '../../../../services/';
 import { LocaleService } from "app/services/locale.service";
 import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
@@ -51,7 +52,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   public manufacturer:string = '';
   public buildDate:string;
   public loader:boolean = false;
-  public product_type: string = window.localStorage['product_type'];
+  public product_type = window.localStorage['product_type'] as ProductType;
   public systemLogo: any;
   public isFN: boolean = false;
   public isUpdateRunning = false;
@@ -61,6 +62,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   public screenType: string = 'Desktop';
   public uptimeString: string;
   public dateTime: string;
+
+  readonly ProductType = ProductType;
 
   constructor(public router: Router, public translate: TranslateService, private ws: WebSocketService,
     public sysGenService: SystemGeneralService,  public mediaObserver: MediaObserver,
@@ -118,7 +121,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
       this.core.emit({name:"HAStatusRequest"});
 
     }
-    if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
+    if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
       this.ws.call('failover.licensed').subscribe((res) => {
         if (res) {
           this.updateMethod = 'failover.upgrade';

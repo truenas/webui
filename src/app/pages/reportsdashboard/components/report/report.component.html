@@ -4,7 +4,7 @@
       <mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxFlex="100" class="mat-card-toolbar">
         <mat-card-title fxFlex="65%">
           <h3>
-            {{reportTitle}} 
+            {{reportTitle}}
             <span *ngIf="multipathTitle">
               {{multipathTitle}}
               <mat-icon class="multipath-icon" role="img" svgIcon="multipath"></mat-icon>
@@ -65,7 +65,7 @@
               <div >
                 <span *ngIf="data && legendData">
                   <h4>
-                    <strong>Start:</strong> 
+                    <strong>Start:</strong>
                     <span style="font-weight:normal;">&nbsp;&nbsp;{{startTime}}</span>
                     <br ngClass.gt-sm="hidden">
                     <span style="margin-left:0px;" class="text-small"> ({{timezone}})</span>
@@ -78,7 +78,7 @@
               <div >
                 <span *ngIf="data && legendData">
                   <h4>
-                    <strong>End:</strong> 
+                    <strong>End:</strong>
                     <span style="font-weight:normal;">&nbsp;&nbsp;{{endTime}}</span>
                     <br ngClass.gt-sm="hidden">
                     <span style="opacity:0;" class="text-small"> ({{timezone}})</span>
@@ -96,7 +96,7 @@
             <div >
               <span *ngIf="data && legendData && legendData.xHTML">
                 <h4>
-                  <strong>Time:</strong> 
+                  <strong>Time:</strong>
                   <span *ngIf="legendData && legendData.xHTML" style="font-weight:normal;">
                     &nbsp;&nbsp;
                     {{legendData.xHTML}}
@@ -161,9 +161,9 @@
 
     <mat-card *ngIf="!ready && retroLogo" class="front zero-state" fxLayout="row wrap" fxlayoutGap="16px" fxLayoutAlign="center center">
           <mat-icon *ngIf="retroLogo == 1" class="generic" svgIcon="freenas_logo_full"></mat-icon>
-          <mat-icon *ngIf="retroLogo == 0 && product_type == 'CORE'" class="generic" svgIcon="truenas_core_logo_full"></mat-icon>
-          <mat-icon *ngIf="retroLogo == 0 && product_type == 'ENTERPRISE'" class="generic" svgIcon="truenas_enterprise_logo_full"></mat-icon>
-          <mat-icon *ngIf="retroLogo == 0 && product_type == 'SCALE' || product_type == 'SCALE_ENTERPRISE'" class="generic" svgIcon="truenas_scale_logo_full"></mat-icon>
+          <mat-icon *ngIf="retroLogo == 0 && product_type == ProductType.Core" class="generic" svgIcon="truenas_core_logo_full"></mat-icon>
+          <mat-icon *ngIf="retroLogo == 0 && product_type == ProductType.Enterprise" class="generic" svgIcon="truenas_enterprise_logo_full"></mat-icon>
+          <mat-icon *ngIf="retroLogo == 0 && product_type == ProductType.Scale || product_type == ProductType.ScaleEnterprise" class="generic" svgIcon="truenas_scale_logo_full"></mat-icon>
     </mat-card>
 
     <ng-template *ngIf="configurable">

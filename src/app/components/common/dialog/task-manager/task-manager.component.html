@@ -41,6 +41,7 @@
                 <span *ngIf="element.time_finished != null"><b>{{ 'Finished Time:' | translate }}</b> {{getReadableDate(element.time_finished)}}</span>
                 <span *ngIf="element.error != null"><b>{{ 'Error:' | translate }}</b> {{element.error}}</span>
                 <span *ngIf="element.logs_excerpt != null && element.logs_excerpt != '' && element.logs_path != null"><button mat-flat-button color="primary" (click)="showLogs(element)">{{ 'View Logs' | translate }}</button></span>
+                <span *ngIf="element.state == 'RUNNING' && element.abortable"><button mat-flat-button color="primary" (click)="abort(element)">{{ 'Abort' | translate }}</button></span>
             </mat-cell>
         </ng-container>
 

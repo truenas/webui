@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { ProductType } from '../../../../enums/product-type.enum';
 import { RestService, WebSocketService, DialogService } from '../../../../services';
 import { FormGroup, Validators } from '@angular/forms';
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
@@ -19,7 +20,7 @@ import { ModalService } from 'app/services/modal.service';
 @Component({
   selector: 'app-volumeimport-wizard',
   template: '<entity-wizard [conf]="this"></entity-wizard>',
-  providers : [ ] 
+  providers : [ ]
 })
 export class VolumeImportWizardComponent {
 
@@ -37,7 +38,7 @@ export class VolumeImportWizardComponent {
   protected productType: any;
   protected importIndex = 2;
   public title: string;
-  
+
   protected wizardConfig: Wizard[] = [{
       label: helptext.is_new_main_label,
       fieldConfig: [
@@ -186,7 +187,7 @@ export class VolumeImportWizardComponent {
     if (stepper._selectedIndex === (this.importIndex - 1)) {
       if (this.encrypted && this.encrypted.value) {
         this.decryptDisks(stepper);
-      } 
+      }
       else {
         this.getImportableDisks();
         stepper.next();
@@ -250,8 +251,8 @@ export class VolumeImportWizardComponent {
   }
 
   preInit(entityWizard: EntityWizardComponent) {
-    this.productType = window.localStorage.getItem('product_type');
-    if (this.productType.includes('SCALE')) {
+    this.productType = window.localStorage.getItem('product_type') as ProductType;
+    if (this.productType.includes(ProductType.Scale)) {
       this.wizardConfig.splice(0,2);
       this.importIndex = 0;
       this.getImportableDisks();
@@ -267,7 +268,7 @@ export class VolumeImportWizardComponent {
   afterInit(entityWizard: EntityWizardComponent) {
     this.entityWizard = entityWizard;
 
-    if (!this.productType.includes('SCALE')) {
+    if (!this.productType.includes(ProductType.Scale)) {
       this.encrypted = ( < FormGroup > entityWizard.formArray.get([1]).get('encrypted'));
       this.devices = _.find(this.wizardConfig[1].fieldConfig, {'name': 'devices'});
       this.devices_fg = ( < FormGroup > entityWizard.formArray.get([1]).get('devices'));
@@ -295,7 +296,7 @@ export class VolumeImportWizardComponent {
       }
     });
 
-    if (!this.productType.includes('SCALE')) {
+    if (!this.productType.includes(ProductType.Scale)) {
       this.message_subscription = this.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
         this.key_fg.setValue(message);
       });
@@ -338,7 +339,7 @@ export class VolumeImportWizardComponent {
         } else {
           console.error("Something went wrong. No pool found!");
         }
-        
+
       });
       dialogRef.componentInstance.failure.subscribe((res) => {
         dialogRef.close(false);

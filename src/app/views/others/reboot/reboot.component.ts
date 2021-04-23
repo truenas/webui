@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ProductType } from '../../../enums/product-type.enum';
 import { WebSocketService, SystemGeneralService } from '../../../services';
 import { Subscription } from 'rxjs';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
@@ -16,17 +17,19 @@ import { LocaleService } from 'app/services/locale.service';
 })
 export class RebootComponent implements OnInit {
 
-  public product_type: string;
+  public product_type: ProductType;
   public copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
   private getProdType: Subscription;
 
-  constructor(protected ws: WebSocketService, protected router: Router, 
+  readonly ProductType = ProductType;
+
+  constructor(protected ws: WebSocketService, protected router: Router,
     protected loader: AppLoaderService, public translate: TranslateService,
     protected dialogService: DialogService, protected dialog: MatDialog,
     private sysGeneralService: SystemGeneralService, private localeService: LocaleService) {
       this.ws = ws;
       this.getProdType = this.sysGeneralService.getProductType.subscribe((res)=>{
-        this.product_type = res;
+        this.product_type = res as ProductType;
         this.getProdType.unsubscribe();
       });
   }
@@ -44,7 +47,7 @@ export class RebootComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.product_type = window.localStorage.getItem('product_type');
+    this.product_type = window.localStorage.getItem('product_type') as ProductType;
 
     this.dialog.closeAll();
     this.ws.call('system.reboot', {}).subscribe(

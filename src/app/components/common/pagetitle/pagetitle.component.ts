@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy, Input, ViewChild } from '@angular/core';
 import { Router, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { ProductType } from '../../../enums/product-type.enum';
 import { RoutePartsService } from '../../../services/route-parts/route-parts.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Display } from 'app/core/components/display/display.component';
@@ -26,7 +27,7 @@ export interface GlobalAction {
 export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('viewcontroller', {static: false}) viewcontroller: ViewControllerComponent;
   @Input() breadcrumbs: boolean;
-  @Input() product_type;
+  @Input() product_type: ProductType;
   public titleText: string;
   public copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
   private hasInitialized: boolean = false;
@@ -36,10 +37,10 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
   routeParts:any[];
   public isEnabled: boolean = true;
   constructor(private router: Router,
-  private routePartsService: RoutePartsService, 
+  private routePartsService: RoutePartsService,
   private activeRoute: ActivatedRoute,
   private core: CoreService,
-  private localeService: LocaleService) { 
+  private localeService: LocaleService) {
   }
 
   ngOnInit() {
@@ -66,10 +67,10 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)).subscribe((routeChange) => {
         this.destroyActions();
-  
+
         this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
         this.titleText = this.routeParts && this.routeParts[0].title ? this.routeParts[0].title : '';
-  
+
         // generate url from parts
         this.routeParts.reverse().map((item, i) => {
           // prepend / to first part
