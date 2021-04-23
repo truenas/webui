@@ -12,6 +12,9 @@ import helptext from './../../../helptext/vm/vm-wizard/vm-wizard';
 import globalHelptext from './../../../helptext/global-helptext';
 import {WebSocketService, StorageService, VmService, ValidationService} from '../../../services/';
 import { Validators } from '@angular/forms';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+
+import { GpuDevice } from 'app/interfaces/gpu-device';
 
 @Component({
   selector : 'app-vm',
@@ -24,11 +27,13 @@ export class VmFormComponent {
   protected editCall = 'vm.update';
   protected isEntity = true;
   protected route_success: string[] = [ 'vm' ];
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
   protected save_button_enabled: boolean;
+  private rawVmData: any;
   public vcpus: number;
   public cores: number;
   public threads: number;
+  private gpus: GpuDevice[];
   private maxVCPUs: number;
   private productType: string = window.localStorage.getItem('product_type');
   protected queryCallOption: Array<any> = [];
@@ -88,7 +93,8 @@ export class VmFormComponent {
       class: 'spacer',
       label:false,
       width: '2%',
-      config:[]},
+      config:[]
+    },
     {
       name: helptext.vm_cpu_mem_title,
       class: 'vm_settings',
@@ -148,6 +154,35 @@ export class VmFormComponent {
         },
 
       ]
+    },
+    {
+      name: 'spacer',
+      class: 'spacer',
+      label:false,
+      width: '2%',
+      config:[]
+    },
+    {
+      name: T("GPU"),
+      class: 'vm_settings',
+      label:true,
+      width: '49%',
+      config: [
+        {
+          type: 'checkbox',
+          name: 'hide_from_msr',
+          placeholder: T('Hide from MSR'),
+          value: false
+        },
+        {
+          type: 'select',
+          placeholder: T("GPU's"),
+          name: 'gpus',
+          multiple: true,
+          options: [],
+          required: true
+        }
+      ]
     }
   ]
   private bootloader: any;
@@ -160,7 +195,8 @@ export class VmFormComponent {
               private translate: TranslateService
               ) {}
 
-  preInit(entityForm: any) {
+  preInit(entityForm: EntityFormComponent) {
+
     this.entityForm = entityForm;
     this.route.params.subscribe(params => {
       if (params['pk']) {
@@ -173,7 +209,7 @@ export class VmFormComponent {
     })
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: EntityFormComponent) {
     this.bootloader =_.find(this.fieldConfig, {name : 'bootloader'});
     this.vmService.getBootloaderOptions().subscribe(options => {
       for(const option in options) {
@@ -220,6 +256,8 @@ export class VmFormComponent {
         };
       });
     }
+
+    
   }
 
   blurEvent(parent){
@@ -259,15 +297,85 @@ export class VmFormComponent {
     }
   };
 
-  resourceTransformIncomingRestData(wsResponse) {
-    wsResponse['memory'] = this.storageService.convertBytestoHumanReadable(wsResponse['memory']*1048576, 0);
-    return wsResponse;
+  resourceTransformIncomingRestData(vmRes) {
+    this.rawVmData = vmRes;
+    vmRes['memory'] = this.storageService.convertBytestoHumanReadable(vmRes['memory']*1048576, 0);
+    this.ws.call("device.get_info", ["GPU"]).subscribe((gpus: GpuDevice[]) => {
+      this.gpus = gpus;
+      const vmPciSlots: string[] = vmRes.devices.filter(device => device.dtype === 'PCI').map(pciDevice => pciDevice.attributes.pptdev);
+      const gpusConf = _.find(this.entityForm.fieldConfig, {name : "gpus"});
+      for(let item of gpus) {
+        gpusConf.options.push({label: item.description, value: item.addr.pci_slot})
+      }
+      const vmGpus = this.gpus.filter((gpu) => {
+        for(let gpuPciDevice of gpu.devices) {
+          if(!vmPciSlots.includes(gpuPciDevice.vm_pci_slot)) {
+            return false;
+          }
+        }
+        return true;
+      });
+      const gpuVmPciSlots = vmGpus.map(gpu => gpu.addr.pci_slot);
+      this.entityForm.formGroup.controls['gpus'].setValue(gpuVmPciSlots);
+    });
+    return vmRes;
   }
 
   beforeSubmit(data) {
     if (data['memory'] !== undefined && data['memory'] !== null) {
-    data['memory'] = Math.round(this.storageService.convertHumanStringToNum(data['memory'])/1048576);
+      data['memory'] = Math.round(this.storageService.convertHumanStringToNum(data['memory'])/1048576);
     }
+
+    const pciDevicesToCreate = [];
+    const vmPciDeviceIdsToRemove = [];
+    
+    const prevVmPciDevices = this.rawVmData.devices.filter(device => device.dtype === 'PCI');
+    const prevVmPciSlots: string[] = prevVmPciDevices.map(pciDevice => pciDevice.attributes.pptdev);
+    const prevGpus = this.gpus.filter((gpu) => {
+      for(let gpuPciDevice of gpu.devices) {
+        if(!prevVmPciSlots.includes(gpuPciDevice.vm_pci_slot)) {
+          return false;
+        }
+      }
+      return true;
+    });
+    const currentGpusSelected = this.gpus.filter((gpu) => data['gpus'].includes(gpu.addr.pci_slot));
+
+    for(let currentGpu of currentGpusSelected) {
+      let found = false;
+      for(let prevGpu of prevGpus) {
+        if(prevGpu.addr.pci_slot === currentGpu.addr.pci_slot) {
+          found = true;
+        }
+      }
+      if(!found) {
+        const gpuPciDevices = currentGpu.devices.filter(gpuPciDevice => !prevVmPciSlots.includes(gpuPciDevice.vm_pci_slot));
+        const gpuPciDevicesConverted = gpuPciDevices.map(pptDev => {
+          return {
+            dtype: "PCI",
+            attributes: {
+              pptdev: pptDev.vm_pci_slot
+            }
+          };
+        });
+        pciDevicesToCreate.push(...gpuPciDevicesConverted);
+      }
+    }
+
+    for(let prevGpu of prevGpus) {
+      let found = false;
+      for(let currentGpu of currentGpusSelected) {
+        if(currentGpu.addr.pci_slot === prevGpu.addr.pci_slot) {
+          found = true;
+        }
+      }
+      if(!found) {
+        vmPciDeviceIdsToRemove.push(...prevVmPciDevices.filter(prevVmPciDevice => prevGpu.devices.map(prevGpuPciDevice => prevGpuPciDevice.vm_pci_slot).includes(prevVmPciDevice.attributes.pptdev)).map(prevVmPciDevice => prevVmPciDevice.id));
+      }
+    }
+
+    delete data['gpus'];
+    return data;
   }
 
 }
