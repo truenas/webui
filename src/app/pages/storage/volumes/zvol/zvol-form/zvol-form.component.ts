@@ -425,8 +425,6 @@ export class ZvolFormComponent implements Formconfiguration {
       this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]),
     ]).subscribe(
       ([pk_pool, pk_dataset]) => {
-        console.log('pk_pool', pk_pool);
-        console.log('pk_dataset', pk_dataset);
         if (pk_pool[0].encrypt !== 0) {
           this.legacy_encryption = true;
         }
@@ -609,7 +607,6 @@ export class ZvolFormComponent implements Formconfiguration {
               const humansize = this.storageService.convertBytestoHumanReadable(volumesize);
               this.origHuman = humansize;
 
-              console.log('Setting name to ', pk_dataset[0].name);
               entityForm.formGroup.controls['name'].setValue(pk_dataset[0].name);
               if (pk_dataset[0].comments) {
                 entityForm.formGroup.controls['comments'].setValue(pk_dataset[0].comments.value);
@@ -733,12 +730,6 @@ export class ZvolFormComponent implements Formconfiguration {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['volsize'].setValue(parent.storageService.humanReadable);
     }
-  }
-
-  resourceTransformIncomingRestData(data: any) {
-    console.log('Got data', data);
-    data.name += ' - Rehan';
-    return data;
   }
 
   addSubmit(body: any) {
