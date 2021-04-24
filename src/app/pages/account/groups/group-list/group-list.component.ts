@@ -160,7 +160,12 @@ export class GroupListComponent implements OnDestroy {
                       value: false,
                       onChange: (valueChangeData: { event: MatCheckboxChange }) => {
                         if (valueChangeData.event.checked) {
-                          self.dialogService.Info('Following users will be deleted', usersInGroup.map((user, index) => (index + 1) + '. ' + user.full_name + ' (' + user.username + ')').join('\n'));
+                          self.dialogService.Info('Following users will be deleted', usersInGroup.map((user, index) => {
+                            if (user.full_name && user.full_name.length) {
+                              return (index + 1) + '. ' + user.full_name + ' (' + user.username + ')';
+                            }
+                            return (index + 1) + '. ' + user.username;
+                          }).join('\n'));
                         }
                       },
                     });
