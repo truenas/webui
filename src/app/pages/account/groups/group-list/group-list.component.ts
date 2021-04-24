@@ -11,6 +11,8 @@ import { ModalService } from '../../../../services/modal.service';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { GroupFormComponent } from '../group-form/group-form.component';
+import { MatCheckboxChange } from '@angular/material/checkbox';
+import { User } from 'app/interfaces/user';
 
 @Component({
   selector : 'app-group-list',
@@ -137,36 +139,53 @@ export class GroupListComponent implements OnDestroy {
         label : helptext.group_list_actions_label_delete,
         onClick : (members_delete) => {
           const self = this;
-          const conf: DialogFormConfiguration = {
-            title: helptext.deleteDialog.title,
-            message: helptext.deleteDialog.message + `<i>${members_delete.group}</i>?`,
-            fieldConfig: [],
-            confirmCheckbox: true,
-            saveButtonText: helptext.deleteDialog.saveButtonText,
-            preInit: function () {
-              if (self.ableToDeleteAllMembers(members_delete)) {
-                conf.fieldConfig.push({
-                  type: 'checkbox',
-                  name: 'delete_users',
-                  placeholder: T(`Delete all ${members_delete.users.length} users with this primary group?`),
-                  value: false,
-                });
+          this.loader.open();
+          self.ws.call("user.query", [[["group.id", "=", members_delete.id]]]).subscribe(
+            (usersInGroup: User[]) => {
+              this.loader.close();
+
+              const conf: DialogFormConfiguration = {
+                title: helptext.deleteDialog.title,
+                message: helptext.deleteDialog.message + `<i>${members_delete.group}</i>?`,
+                fieldConfig: [],
+                confirmCheckbox: true,
+                saveButtonText: helptext.deleteDialog.saveButtonText,
+                preInit: function () {
+                  if (usersInGroup.length > 0) {
+                    conf.fieldConfig.push({
+                      type: 'checkbox',
+                      name: 'delete_users',
+                      placeholder: T(`Delete ${usersInGroup.length} user(s) with this primary group?`),
+                      value: false,
+                      onChange: (valueChangeData: { event: MatCheckboxChange }) => {
+                        if(valueChangeData.event.checked) {
+                          self.dialogService.Info("Following users will be deleted", usersInGroup.map((user, index) => (index+1)+". "+user.full_name+" ("+user.username+")").join("\n"));
+                        }
+                      }
+                    });
+                    
+                  }
+                },
+                customSubmit: function (entityDialog) {
+                  entityDialog.dialogRef.close(true);
+                  self.loader.open();
+                  self.ws.call(self.wsDelete, [members_delete.id, entityDialog.formValue]).subscribe((res) => {
+                    self.entityList.getData();
+                    self.loader.close();
+                  },
+                    (err) => {
+                      new EntityUtils().handleWSError(self, err, self.dialogService);
+                      self.loader.close();
+                    })
+                }
               }
-            },
-            customSubmit: function (entityDialog) {
-              entityDialog.dialogRef.close(true);
-              self.loader.open();
-              self.ws.call(self.wsDelete, [members_delete.id, entityDialog.formValue]).subscribe((res) => {
-                self.entityList.getData();
-                self.loader.close();
-              },
-                (err) => {
-                  new EntityUtils().handleWSError(self, err, self.dialogService);
-                  self.loader.close();
-                })
+              this.dialogService.dialogForm(conf);
+            }, err => {
+              this.loader.close();
+              new EntityUtils().handleWSError(self, err, self.dialogService);
             }
-          }
-          this.dialogService.dialogForm(conf);
+          )
+          
         },
       });
     }
