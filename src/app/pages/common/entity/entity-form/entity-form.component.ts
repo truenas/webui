@@ -273,7 +273,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         } else {
           this.pk = params['pk'];
         }
-        
+
         if (this.pk && !this.conf.isNew) {
           if (this.conf.editCall) {
             this.submitFunction = this.editCall;  // this is strange so I AM NOTING it...  this.editCall internally calls this.conf.editCall with some fluff.
@@ -281,7 +281,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
           } else {
             //this.submitFunction = this.editSubmit;
             this.resourceName = this.resourceName + this.pk + '/';
-          }      
+          }
         } else {
           if (this.conf.saveSubmitText === undefined) {
             this.saveSubmitText = T('Save');
@@ -351,21 +351,23 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                 delete this.data['changed_schema'];
               }
             }
-            for (const i in this.data) {
-              const fg = this.formGroup.controls[i];
+            for (const key in this.data) {
+              const fg = this.formGroup.controls[key];
               if (fg) {
-                const current_field = this.fieldConfig.find((control) => control.name === i);
+                const current_field = this.fieldConfig.find((control) => control.name === key);
                 if (current_field.type === "array") {
-                    this.setArrayValue(this.data[i], fg, i);
+                    this.setArrayValue(this.data[key], fg, key);
                 } else if (current_field.type === "list") {
-                  this.setListValue(this.data[i], fg as FormArray, i)
+                  this.setListValue(this.data[key], fg as FormArray, key)
                 } else {
-                  if (!_.isArray(this.data[i]) && current_field.type === "select" && current_field.multiple) {
-                    if (this.data[i]) {
-                      this.data[i] = _.split(this.data[i], ',');
+                  if (!_.isArray(this.data[key]) && current_field.type === "select" && current_field.multiple) {
+                    if (this.data[key]) {
+                      this.data[key] = _.split(this.data[key], ',');
                     }
                   }
-                  fg.setValue(this.data[i]);
+                  if (!(current_field.type === "select" && current_field.options.length == 0)) {
+                    fg.setValue(this.data[key]);
+                  }
                 }
               }
             }
@@ -397,7 +399,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                   } else if (current_field.type === "list") {
                     this.setObjectListValue(this.wsResponse[i], this.wsfg, i)
                   } else {
-                    this.wsfg.setValue(this.wsResponse[i]);
+                    if (!(current_field.type === "select" && current_field.options.length == 0)) {
+                      this.wsfg.setValue(this.wsResponse[i]);
+                    }
                   }
                 } else {
                   if (this.conf.dataAttributeHandler) {
@@ -462,7 +466,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     return this.ws.call(call, payload);
   }
 
-  editSubmit(body: any) { 
+  editSubmit(body: any) {
     let resource = this.resourceName;
     if (this.conf.custom_edit_query) {
       resource = this.conf.custom_edit_query;
@@ -490,13 +494,13 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       resource = this.conf.custom_add_query;
     }
 
-    return this.rest.post(resource, {body}, this.conf.route_usebaseUrl); 
+    return this.rest.post(resource, {body}, this.conf.route_usebaseUrl);
   }
 
-  onSubmit(event: Event) {   
+  onSubmit(event: Event) {
     if (this.conf.confirmSubmit && this.conf.confirmSubmitDialog) {
       this.dialog.confirm(this.conf.confirmSubmitDialog['title'],
-                          this.conf.confirmSubmitDialog['message'], 
+                          this.conf.confirmSubmitDialog['message'],
                           this.conf.confirmSubmitDialog.hasOwnProperty("hideCheckbox") ?
                               this.conf.confirmSubmitDialog['hideCheckbox'] : false,
                           this.conf.confirmSubmitDialog.hasOwnProperty("button") ?
@@ -512,7 +516,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
   }
 
-  doSubmit(event: Event) {  
+  doSubmit(event: Event) {
     event.preventDefault();
     event.stopPropagation();
     this.error = null;
@@ -556,14 +560,14 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
                           if (this.conf.isEditJob && res.error) {
                             if (res.exc_info && res.exc_info.extra) {
-                              new EntityUtils().handleWSError(this, res); 
+                              new EntityUtils().handleWSError(this, res);
                             } else {
                               this.dialog.errorReport('Error', res.error, res.exception);
                             }
                           } else {
                             if (this.conf.afterSave) {
                               this.conf.afterSave(this);
-                            } else { 
+                            } else {
                               if (this.conf.route_success) {
                                 this.router.navigate(new Array('/').concat(
                                     this.conf.route_success));
@@ -571,7 +575,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                                 this.success = true;
                                 this.formGroup.markAsPristine();
                               }
-  
+
                               if (this.conf.afterSubmit) {
                                 this.conf.afterSubmit(value);
                               }
@@ -592,7 +596,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                           if (this.conf.errorReport){
                             this.conf.errorReport(res);
                           } else if (res.hasOwnProperty("reason") && (res.hasOwnProperty("trace"))) {
-                            new EntityUtils().handleWSError(this, res); 
+                            new EntityUtils().handleWSError(this, res);
                           }
                           else {
                             new EntityUtils().handleError(this, res);
@@ -742,13 +746,13 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             const fieldConfig = _.find(templateListField, {'name': key});
             if (fieldConfig && fieldConfig.type == "list") {
               const subTemplateListField = _.cloneDeep(fieldConfig.templateListField);
-              
+
               for(let j=0; j < value.length; j++) {
                 const subNewfg =  this.entityFormService.createFormGroup(subTemplateListField);
                 subNewfg.setParent(newfg);
                 (<FormArray>newfg.controls[key]).push(subNewfg);
                 _.find(templateListField, {'name': key}).listFields.push(subTemplateListField);
-              }            
+              }
             }
           }
         }
@@ -764,7 +768,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             if (fieldConfig.type == "list") {
               for (let j = 0; j < value.length; j++) {
                 const subList = value[j];
-                
+
                 for (const [subKey, subValue] of Object.entries(subList)) {
                   if (<FormGroup>control.controls[j]) {
                     const subControl = (<FormGroup>control.controls[j]).controls[subKey];
@@ -772,20 +776,20 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                   }
                 }
               }
-  
+
             } else {
               control.setValue(value);
             }
-          }        
+          }
         }
       } else {
         const key = templateListField[0].name;
         const control = (<FormGroup>formArray.controls[i]).controls[key];
         if (control) {
           control.setValue(listValue[i]);
-        }      
+        }
       }
-      
+
     }
     formArray.markAllAsTouched();
   }
@@ -798,9 +802,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.setDisabled(config.name, tobeDisabled, tobeHide);
 
       this.fieldRelationService.getRelatedFormControls(config, this.formGroup).forEach(control => {
-        control.valueChanges.subscribe((value) => { 
+        control.valueChanges.subscribe((value) => {
           setTimeout(() => {
-            this.relationUpdate(config, activations); 
+            this.relationUpdate(config, activations);
           }, 100);
         });
       });
@@ -813,10 +817,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     this.setDisabled(config.name, tobeDisabled, tobeHide);
   }
 
-  ngOnDestroy() { 
-    
+  ngOnDestroy() {
+
     if( typeof(this.sub) !== "undefined" && typeof(this.sub.unsubscribe) !== "undefined" ) {
-      this.sub.unsubscribe(); 
+      this.sub.unsubscribe();
     }
     this.getAdvancedConfig.unsubscribe();
   }
