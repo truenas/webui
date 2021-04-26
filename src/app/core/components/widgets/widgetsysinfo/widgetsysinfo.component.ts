@@ -32,32 +32,33 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
   // HA
   @Input('isHA') isHA: boolean = false
   @Input('passive') isPassive: boolean = false
+  @Input('enclosure') enclosureSupport: boolean = false;
 
   public title: string = T("System Info");
   public data: any;
-  public memory:string;
-  public imagePath:string = "assets/images/";
-  public ready:boolean = false;
+  public memory: string;
+  public imagePath: string = "assets/images/";
+  public ready: boolean = false;
   public retroLogo: number = -1;
-  public product_image = '';
-  public product_model = '';
-  public product_enclosure = ''; // rackmount || tower
-  public certified = false;
+  public product_image: string = '';
+  public product_model: string = '';
+  public product_enclosure: string = ''; // rackmount || tower
+  public certified: boolean = false;
   public failoverBtnLabel: string = "FAILOVER TO STANDBY"
-  public updateAvailable:boolean = false;
-  private _updateBtnStatus:string = "default";
-  public updateBtnLabel:string = T("Check for Updates")
+  public updateAvailable: boolean = false;
+  private _updateBtnStatus: string = "default";
+  public updateBtnLabel: string = T("Check for Updates")
   private _themeAccentColors: string[];
   public connectionIp = environment.remote
-  public manufacturer:string = '';
-  public buildDate:string;
-  public loader:boolean = false;
+  public manufacturer: string = '';
+  public buildDate: string;
+  public loader: boolean = false;
   public product_type = window.localStorage['product_type'] as ProductType;
   public systemLogo: any;
   public isFN: boolean = false;
   public isUpdateRunning = false;
   public is_ha: boolean;
-  public ha_status:string;
+  public ha_status: string;
   public updateMethod = 'update.update';
   public screenType: string = 'Desktop';
   public uptimeString: string;
@@ -327,5 +328,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
     }
   }
 
-
+  goToEnclosure(){
+    if(this.enclosureSupport) this.router.navigate(['/system/viewenclosure']);
+  }
 }
