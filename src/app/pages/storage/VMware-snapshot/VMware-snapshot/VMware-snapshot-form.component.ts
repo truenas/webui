@@ -34,9 +34,9 @@ export class VMwareSnapshotFormComponent {
 
   protected entityForm: any;
   private datastore: any;
-  private datastoreList: any;
-  private dataListComplete: any;
-  private fileSystemList: any;
+  private datastoreList: any[];
+  private dataListComplete: any[];
+  private fileSystemList: any[];
 
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
@@ -125,11 +125,11 @@ export class VMwareSnapshotFormComponent {
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService, 
+    protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService,
     protected loader: AppLoaderService,) { }
 
   preInit(entityForm: any) {
-    const queryPayload = []
+    const queryPayload: any[] = []
     this.route.params.subscribe(params => {
       queryPayload.push("id");
       queryPayload.push("=");
@@ -148,7 +148,7 @@ export class VMwareSnapshotFormComponent {
       this.datastore.options.length = 0;
     }
 
-    this.entityForm.formGroup.controls['datastore'].valueChanges.subscribe((res) => {
+    this.entityForm.formGroup.controls['datastore'].valueChanges.subscribe((res: any) => {
       this.datastoreList.forEach((e) => {
        if( res === e.name) {
          this.entityForm.formGroup.controls['filesystem'].setValue(e.filesystems[0]);
@@ -180,11 +180,11 @@ export class VMwareSnapshotFormComponent {
           secondObj.description = T('(No description)');
         }
         this.dialogService.confirm(T('Are you sure?'), T('The filesystem ') + firstObj.name + T(' is ') +
-          firstObj.description + T(' but datastore ') + secondObj.name + T(' is ') + secondObj.description + 
-          T('. Is this correct?'), true).subscribe((res) => {
+          firstObj.description + T(' but datastore ') + secondObj.name + T(' is ') + secondObj.description +
+          T('. Is this correct?'), true).subscribe((res: boolean) => {
             if (res === true) {
               this.loader.open();
-              this.ws.call(this.addCall, [payload]).subscribe((res) => {
+              this.ws.call(this.addCall, [payload]).subscribe(() => {
                 this.loader.close();
                 this.router.navigate(new Array('/').concat(this.route_success));
               },
@@ -193,7 +193,7 @@ export class VMwareSnapshotFormComponent {
                this.dialogService.errorReport(T('Error'),e_res);
              })
             }
-         }) 
+         })
         } else {
           this.loader.open();
           this.ws.call(this.addCall, [payload]).subscribe((res) => {
@@ -207,7 +207,7 @@ export class VMwareSnapshotFormComponent {
         }
   }
 
-  customEditCall(body){
+  customEditCall(body: any){
     if(this.entityForm.pk){
       this.entityForm.loader.open();
       this.ws.call('vmware.update', [this.entityForm.pk, body]).subscribe((res)=>{
@@ -229,26 +229,26 @@ export class VMwareSnapshotFormComponent {
     }
 
   }
-  blurEvent(parent){
+  blurEvent(parent: any){
     if(parent.entityForm){
       this.datastore = _.find(parent.fieldConfig, {name:'datastore'});
-      const payload = {};
+      const payload: any = {};
       payload['hostname'] = parent.entityForm.formGroup.value.hostname;
       payload['username'] = parent.entityForm.formGroup.value.username;
       payload['password'] = parent.entityForm.formGroup.value.password;
 
       if(payload['password'] !== "" && typeof(payload['password'])!== "undefined") {
         parent.loader.open();
-        parent.ws.call("vmware.match_datastores_with_datasets", [payload]).subscribe((res) => {
-          res.filesystems.forEach(filesystem_item => {
+        parent.ws.call("vmware.match_datastores_with_datasets", [payload]).subscribe((res: any) => {
+          res.filesystems.forEach((filesystem_item: any) => {
             _.find(parent.fieldConfig, {name : 'filesystem'})['options'].push(
               {
                 label : filesystem_item.name, value : filesystem_item.name
               }
-            );   
+            );
           });
 
-          res.datastores.forEach((i) => {
+          res.datastores.forEach((i: any) => {
             if(i.filesystems.length > 0) {
               parent.datastoreList.push(i);
             }
@@ -266,7 +266,7 @@ export class VMwareSnapshotFormComponent {
           parent.loader.close();
         }
         ,
-        (error)=>{
+        (error: any)=>{
           this.datastore.options.length = 0;
           parent.loader.close();
           if (error.reason && error.reason.includes('[ETIMEDOUT]')) {

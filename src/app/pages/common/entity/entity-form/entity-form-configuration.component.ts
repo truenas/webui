@@ -24,12 +24,12 @@ export class EntityFormConfigurationComponent implements Formconfiguration {
   @ViewChild('regularForm', {static : false}) regularForm: EntityFormComponent;
 
   public fieldConfig: FieldConfig[] = [];
-  public fieldSets: FieldSets; 
+  public fieldSets: FieldSets;
 
   private entityEdit: EntityFormComponent;
-  
+
   public title = '';
-  public afterModalFormClosed;
+  public afterModalFormClosed: any;
   public formType: string;
 
   _isOneColumnForm: boolean = false;
@@ -42,9 +42,9 @@ export class EntityFormConfigurationComponent implements Formconfiguration {
   }
 
   // EntityForm
-  public customSubmit?;
-  public queryCall?;
-  protected updateCall?;
+  public customSubmit?: any;
+  public queryCall?: any;
+  protected updateCall?: any;
   public isEntity = true;
 
   // EntityFormEmbedded (This is for when your form doesn't submit to backend like view configs etc.)
@@ -54,13 +54,13 @@ export class EntityFormConfigurationComponent implements Formconfiguration {
   constructor() {
   }
 
-  preInit(entity) {
+  preInit() {
   }
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     if(this.formType == 'EntityFormComponent' && this.target && !this.customSubmit){
-      this.customSubmit = (values) => {
+      this.customSubmit = (values: any) => {
         this.target.next({
           name: 'FormSubmit',
           data: values,

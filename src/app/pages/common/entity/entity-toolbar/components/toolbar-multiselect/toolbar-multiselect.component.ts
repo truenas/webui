@@ -1,5 +1,6 @@
 import { Component, ViewChild, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
+import { MatSelect } from '@angular/material/select';
 import { TranslateService } from '@ngx-translate/core';
 import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
 
@@ -12,8 +13,8 @@ import { Control } from '../../models/control.interface';
   templateUrl: './toolbar-multiselect.component.html'
 })
 export class ToolbarMultiSelectComponent extends iXAbstractObject implements OnInit, OnChanges {
-  @ViewChild('selectTrigger') mySel;
-  @Input() config?: ControlConfig; 
+  @ViewChild('selectTrigger') mySel: MatSelect;
+  @Input() config?: ControlConfig;
   @Input() controller: Subject<any>;
   allSelected:boolean = null;
   public values: any[] = [];
@@ -36,7 +37,7 @@ export class ToolbarMultiSelectComponent extends iXAbstractObject implements OnI
     this.updateController();
   }
 
-  onClick(value, index){
+  onClick(value: any, index: number){
 
     if(this.selectStates[index]){
       if(this.checkLength()){this.allSelected = false;}
@@ -74,14 +75,14 @@ export class ToolbarMultiSelectComponent extends iXAbstractObject implements OnI
     this.updateController();
   }
 
-  isChecked(option){
+  isChecked(){
     return true;
   }
 
-  onChangeOption(e){
+  onChangeOption(){
   }
 
-  compareValues(x, y):boolean{
+  compareValues(x: any, y: any):boolean{
     return x == y;
   }
 }

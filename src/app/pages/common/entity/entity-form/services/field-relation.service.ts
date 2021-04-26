@@ -56,7 +56,7 @@ export class FieldRelationService {
                             formGroup: FormGroup): boolean {
     return this.isFormControlToBe(relGroup, formGroup, true);
   }
-  
+
   isFormControlToBeHide(relGroup: RelationGroup,
     formGroup: FormGroup): boolean {
     return this.isFormControlToBe(relGroup, formGroup, false);
@@ -75,10 +75,10 @@ export class FieldRelationService {
             controlValue = control.value
           } else {
             let formGroupValue = _.cloneDeep(formGroup.value);
-            let parsedValues = {};
+            let parsedValues: any = {};
             new EntityUtils().parseFormControlValues(formGroupValue, parsedValues);
             const key_list = rel.name.split(FORM_KEY_SEPERATOR);
-            
+
             key_list.forEach(key => {
               if (parsedValues && parsedValues[key] != undefined) {
                 parsedValues = parsedValues[key];
@@ -99,7 +99,7 @@ export class FieldRelationService {
             disable_action = ACTION_HIDE;
             enable_action = ACTION_SHOW;
           }
-          
+
           if (hasControlValue && relGroup.action === disable_action) {
             if (index > 0 && relGroup.connective === CONNECTION_AND &&
                 !toBeDisabled) {
@@ -189,7 +189,7 @@ export class FieldRelationService {
     return control && condition.status === control.status;
   }
 
-  setRelation(config: FieldConfig, formGroup, fieldConfig) {
+  setRelation(config: FieldConfig, formGroup: FormGroup, fieldConfig: any) {
     const activations = this.findActivationRelation(config.relation);
     if (activations) {
       const tobeDisabled = this.isFormControlToBeDisabled(activations, formGroup);
@@ -197,8 +197,8 @@ export class FieldRelationService {
       this.setDisabled(fieldConfig, formGroup, config.name, tobeDisabled, tobeHide);
 
       this.getRelatedFormControls(config, formGroup).forEach(control => {
-        control.valueChanges.subscribe(() => { 
-          this.relationUpdate(config, activations, formGroup, fieldConfig); 
+        control.valueChanges.subscribe(() => {
+          this.relationUpdate(config, activations, formGroup, fieldConfig);
         });
       });
     }
@@ -234,7 +234,7 @@ export class FieldRelationService {
     this.setDisabled(fieldConfig, formGroup, config.name, tobeDisabled, tobeHide);
   }
 
-  isDeepEqual(data1, data2) {
+  isDeepEqual(data1: any, data2: any) {
     if (this.getDataType(data1) != this.getDataType(data2)) {
       return false;
     }
@@ -244,7 +244,7 @@ export class FieldRelationService {
         if (data1.length !== data2.length) {
           return false;
         }
-      
+
         for (let i=0; i<data2.length; i++) {
           const val1 = data1[i];
           const val2 = data2[i];
@@ -256,11 +256,11 @@ export class FieldRelationService {
       case 'object':
         const keys1 = Object.keys(data1);
         const keys2 = Object.keys(data2);
-      
+
         if (keys1.length !== keys2.length) {
           return false;
         }
-      
+
         for (const key of keys1) {
           const val1 = data1[key];
           const val2 = data2[key];
@@ -275,11 +275,11 @@ export class FieldRelationService {
           return false;
         }
     }
-  
+
     return true;
   }
-  
-  getDataType(data) {
+
+  getDataType(data: unknown) {
     if (Array.isArray(data)) {
       return 'array';
     } else if (data != null && typeof data === 'object') {
@@ -289,11 +289,11 @@ export class FieldRelationService {
     };
   }
 
-  isRelationEqual(x, y) {
+  isRelationEqual(x: any, y: any) {
     return this.isDeepEqual(x, y);
   }
 
-  isRelationGreaterThan(x, y) {
+  isRelationGreaterThan(x: any, y: any) {
     let result = false;
     switch (this.getDataType(x)) {
       case 'array':
@@ -335,7 +335,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationGreaterThanOrEqual(x, y) {
+  isRelationGreaterThanOrEqual(x: any, y: any) {
     let result = false;
     switch (this.getDataType(x)) {
       case 'array':
@@ -377,7 +377,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationLessThan(x, y) {
+  isRelationLessThan(x: any, y: any) {
     let result = false;
     switch (this.getDataType(x)) {
       case 'array':
@@ -419,7 +419,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationLessThanOrEqual(x, y) {
+  isRelationLessThanOrEqual(x: any, y: any) {
     let result = false;
     switch (this.getDataType(x)) {
       case 'array':
@@ -461,7 +461,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationRegMatch(x, y) {
+  isRelationRegMatch(x: any, y: any) {
     let result = false;
     if (typeof x == 'string' && typeof y == 'string') {
       result = !!x.match(y);
@@ -470,7 +470,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationStartsWith(x, y) {
+  isRelationStartsWith(x: any, y: any) {
     let result = false;
     if (typeof x == 'string' && typeof y == 'string') {
       result = x.startsWith(y);
@@ -479,7 +479,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationEndsWith(x, y) {
+  isRelationEndsWith(x: any, y: any) {
     let result = false;
     if (typeof x == 'string' && typeof y == 'string') {
       result = x.endsWith(y);
@@ -487,8 +487,8 @@ export class FieldRelationService {
 
     return result;
   }
-  
-  isRelationIn(x, y) {
+
+  isRelationIn(x: any, y: any) {
     let result = false;
 
     if (y !== null) {
@@ -535,5 +535,5 @@ export class FieldRelationService {
 
     return result;
   }
-  
+
 }

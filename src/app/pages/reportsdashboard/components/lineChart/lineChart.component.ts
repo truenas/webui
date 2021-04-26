@@ -10,8 +10,6 @@ import {UUID} from 'angular2-uuid';
 import * as moment from 'moment-timezone';
 import Dygraph from 'dygraphs';
 import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
-import Chart from 'chart.js';
-import * as simplify from 'simplify-js';
 
 interface Conversion {
   value: number;
@@ -20,17 +18,8 @@ interface Conversion {
   shortName?: string;
 }
 
-// For Chart.js
-interface DataSet {
-  label: string;
-  data: number[];
-  backgroundColor: string[];
-  borderColor: string[];
-  borderWidth: number;
-}
-
 @Component({
-  selector: 'linechart', 
+  selector: 'linechart',
      templateUrl:'./lineChart.component.html',
      styleUrls:['./lineChart.component.css']
 })
@@ -43,7 +32,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
   @Input() title: string;
   @Input() timezone: string;
 
-  @Input() legends?: string[]; 
+  @Input() legends?: string[];
   @Input() type: string = 'line';
   @Input() convertToCelsius?: true;
   @Input() dataStructure: 'columns'; // rows vs columns
@@ -90,9 +79,9 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     this.legendEvents = new BehaviorSubject({xHTML:''});
     this.legendLabels = new BehaviorSubject([]);
     this.legendAnalytics = new BehaviorSubject([]);
-  } 
+  }
 
-  applyHandledData(columns, linechartData, legendLabels){
+  applyHandledData(columns: any, linechartData: any, legendLabels: any){
     this.columns = columns;
     this.linechartData = linechartData;
     this.legendLabels.next(legendLabels);
@@ -104,7 +93,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
   }
 
   // dygraph renderer
-  public renderGraph(option){
+  public renderGraph(option: any){
     let data = this.makeTimeAxis(this.data);
     let labels = data.shift();
 
@@ -128,35 +117,35 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
        axes: {
          y:{
            yRangePad: 24,
-           axisLabelFormatter: ( numero, granularity, opts, dygraph  ) => {
+           axisLabelFormatter: ( numero: any ) => {
              let converted = this.formatLabelValue(numero, this.inferUnits(this.labelY), 1, true);
              let suffix = converted.suffix ? converted.suffix : '';
              return this.limitDecimals(converted.value).toString() + suffix;
            },
          }
        },
-       legendFormatter: (data) => {
+       legendFormatter: (data: any) => {
          let clone = Object.assign({}, data);
-         clone.series.forEach((item, index) => {
+         clone.series.forEach((item: any, index: number) => {
            if(!item.y){ return; }
            let converted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), 1, true);
            let suffix = converted.shortName !== undefined ? converted.shortName : (converted.suffix !== undefined ?  converted.suffix : '');
            clone.series[index].yHTML = this.limitDecimals(converted.value).toString() + suffix;
-        
+
          });
-         
+
          this.core.emit({name: "LegendEvent-" + this.chartId,data:clone, sender: this})
          return "";
        },
        series: () => {
-         let s = {};
+         let s: any = {};
          this.data.legend.forEach((item, index) => {
            s[item] = {plotter: smoothPlotter};
          });
 
          return s;
        },
-       drawCallback: (dygraph, is_initial) =>{
+       drawCallback: (dygraph: any) =>{
          if(dygraph.axes_){
           let numero = dygraph.axes_[0].maxyval;
           let converted = this.formatLabelValue(numero, this.inferUnits(this.labelY));
@@ -179,11 +168,12 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
 
   }
 
-  makeColumn(data:ReportData, legendKey): number[]{
-    let result = [];
+  makeColumn(data:ReportData, legendKey: any): number[]{
+    let result: any = [];
 
     for(let i = 0; i < data.data.length; i++){
-      const value = data.data[i][legendKey];
+      // TODO: Incorrect type
+      const value = (data.data[i] as any)[legendKey];
       result.push(value);
     }
 
@@ -202,7 +192,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
           legend.unshift('x');
           rows.push(legend);
 
-          for(let i = 0; i < rd.data.length; i++){ 
+          for(let i = 0; i < rd.data.length; i++){
             let item = Object.assign([], rd.data[i]);
             let dateStr = moment.tz(new Date(rd.start * 1000 + i * rd.step * 1000), this.timezone).format();
             //UTC: 2020-12-17T16:33:10Z
@@ -210,8 +200,8 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
             //Change dateStr from '2020-12-17T08:36:30-08:00' to '2020-12-17T08:36'
             let list = dateStr.split(':');
             dateStr = list.join(':');
-            let date = new Date(dateStr);            
-            
+            let date = new Date(dateStr);
+
             item.unshift(date);
             rows.push(item);
           }
@@ -221,7 +211,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
 
           let columns = [];
 
-          for(let i = 0; i < rd.data.length; i++){ 
+          for(let i = 0; i < rd.data.length; i++){
             let date = new Date(rd.start * 1000 + i * rd.step * 1000);
             columns.push(date);
           }
@@ -231,24 +221,24 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
 
   }
 
-  private processThemeColors(theme):string[]{
+  private processThemeColors(theme: Theme):string[]{
     this.theme = theme;
     let colors: string[] = [];
     theme.accentColors.map((color) => {
-      colors.push(theme[color]);
-    }); 
+      colors.push((theme as any)[color]);
+    });
     return colors;
   }
 
   private createColorObject(){
-    let obj = {};
+    let obj: any = {};
     this.legends.forEach((item, index)=>{
       obj[item] = this.colorPattern[index]
     })
     return obj;
   }
 
-  public fetchData(rrdOptions, timeformat?: string, culling?:number){
+  public fetchData(rrdOptions: any, timeformat?: string, culling?:number){
     if(timeformat){
       this.timeFormat = timeformat;
     }
@@ -280,8 +270,8 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
 
     if(typeof units == 'undefined'){
       console.warn("Could not infer units from " + this.labelY);
-    } 
-    
+    }
+
     return units;
   }
 
@@ -289,7 +279,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     let output:Conversion = {value: value};
     if(!fixed){ fixed = -1; }
     if(typeof value !== 'number'){ return value; }
-    
+
     switch(units.toLowerCase()){
       case "bits":
       case "bytes":
@@ -304,21 +294,21 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     return output;
   }
 
-  convertByKilo(input): Conversion{
+  convertByKilo(input: number): Conversion{
     if(typeof input !== 'number'){return input}
     let output = input;
-    let prefix: string = ''; 
+    let prefix: string = '';
     let suffix = '';
-  
-    if(input >= 1000000){    
+
+    if(input >= 1000000){
       output = input / 1000000;
       suffix = 'm';
     } else if(input < 1000000 && input >= 1000 ){
       output = input / 1000;
       suffix = 'k';
-    } 
-  
-    return { value: output, suffix: suffix };  
+    }
+
+    return { value: output, suffix: suffix };
   }
 
   limitDecimals(numero: number){
@@ -384,9 +374,9 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
 
   ngOnDestroy(){
     this.core.unregister({observerClass:this});
-    
+
     this.chart.destroy();
-    
+
   }
 
 }

@@ -157,7 +157,7 @@ export class StorageFormComponent implements OnInit{
     entityForm.mountPointAdd = this.mountPointAdd;
     entityForm.mountpointId = this.mountpointId;
 
-    this.jailService.listJails().subscribe((res) => {
+    this.jailService.listJails().subscribe((res: any[]) => {
       res.forEach((item) => {
         this.jail.options.push({ label: item.host_hostuuid, value: item.host_hostuuid });
       });

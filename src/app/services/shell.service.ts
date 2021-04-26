@@ -16,8 +16,8 @@ export class ShellService {
   public socket: WebSocket;
   connected = false;
   loggedIn = false;
-  @LocalStorage() username;
-  @LocalStorage() password;
+  @LocalStorage() username: string;
+  @LocalStorage() password: string;
   redirectUrl = '';
   public token: string;
   public jailId: string;
@@ -46,7 +46,7 @@ export class ShellService {
     this.socket.onclose = this.onclose.bind(this);
   }
 
-  onopen(event) {
+  onopen() {
     this.onOpenSubject.next(true);
     if (this.jailId) {
       this.send(JSON.stringify({ "token": this.token, "options": {"jail": this.jailId }}));
@@ -74,7 +74,7 @@ export class ShellService {
   //empty eventListener for attach socket
   addEventListener() {}
 
-  onclose(event) {
+  onclose() {
     this.connected = false;
     this.onCloseSubject.next(true);
     this.shellConnected.emit({
@@ -119,7 +119,7 @@ export class ShellService {
   }
 
   subscribe(name: string): Observable < any > {
-    const source = Observable.create((observer) => {
+    const source = Observable.create((observer: any) => {
       if (this.subscriptions.has(name)) {
         this.subscriptions.get(name).push(observer);
       } else {
@@ -129,7 +129,7 @@ export class ShellService {
     return source;
   }
 
-  unsubscribe(observer) {
+  unsubscribe(observer: any) {
     // FIXME: just does not have a good performance :)
     this.subscriptions.forEach((v, k) => {
       v.forEach((item) => {

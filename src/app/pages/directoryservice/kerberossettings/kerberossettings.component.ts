@@ -36,8 +36,8 @@ export class KerberosSettingsComponent {
       ]
     }
   ];
-  
-  resourceTransformIncomingRestData(data) {
+
+  resourceTransformIncomingRestData(data: any) {
     return data;
   }
 }

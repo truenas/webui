@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { SortDirection } from '@angular/material/sort';
 import { WebSocketService } from './ws.service';
 import { RestService } from './rest.service';
 
@@ -55,9 +56,9 @@ export class StorageService {
     dlink.href =  window.URL.createObjectURL(blob);
     dlink.onclick = function(e) {
         // revokeObjectURL needs a delay to work properly
-        var that = this;
+        var that: any = this;
         setTimeout(function() {
-            window.URL.revokeObjectURL(that['href']);
+            window.URL.revokeObjectURL(that.href);
         }, 1500);
     };
 
@@ -65,7 +66,7 @@ export class StorageService {
     dlink.remove();
   }
 
-  streamDownloadFile(http:HttpClient, url:string, filename:string, mime_type:string): Observable<any>{
+  streamDownloadFile(http:HttpClient, url:string, filename:string, mime_type:string): Observable<Blob>{
     return http.post(url, '',
     { responseType: 'blob' }).pipe(
     map(
@@ -76,10 +77,10 @@ export class StorageService {
   }
 
   // Handles sorting for entity tables and some other ngx datatables
-  tableSorter(arr, key, asc) {
-    let tempArr = [],
-      sorter,
-      myCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+  tableSorter(arr: any[], key: string, asc: SortDirection) {
+    let tempArr: any[] = [];
+    let sorter: any;
+    const myCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
     // Breaks out the key to sort by
     arr.forEach((item) => {
@@ -186,7 +187,7 @@ export class StorageService {
       sorter = tempArr.sort(myCollator.compare);
     }
       // Rejoins the sorted keys with the rest of the row data
-      let v;
+      let v: any;
       // ascending or decending
       asc==='asc' ? (v = 1) : (v = -1);
       arr.sort((a, b) => {
@@ -203,11 +204,11 @@ export class StorageService {
   }
 
   // This section passes data from disk-list to disk-bulk-edit form
-  diskIdsBucket(arr) {
+  diskIdsBucket(arr: any) {
     this.ids = arr;
   }
 
-  diskNamesBucket(arr) {
+  diskNamesBucket(arr: any) {
     this.diskNames = arr;
   }
 
@@ -215,7 +216,7 @@ export class StorageService {
     this.diskToggleStatus = bool;
   }
 
-  diskNameSort(disks) {
+  diskNameSort(disks: any[]) {
     for (let i = 0; i < disks.length; i++) {
       for (let j = 0; j < disks.length - i - 1; j++) {
         const k = j + 1;
@@ -233,7 +234,7 @@ export class StorageService {
     }
   }
 
-  poolUnlockServiceChoices(id): Observable<{ label: string; value: string; }[]> {
+  poolUnlockServiceChoices(id: string): Observable<{ label: string; value: string; }[]> {
     return this.ws.call("pool.unlock_services_restart_choices", [id]).pipe(
       map((response: { [serviceId: string]: string }) =>
         Object.keys(response || {}).map(serviceId => ({
@@ -247,7 +248,7 @@ export class StorageService {
   getDatasetNameOptions(): Observable<{ label: string; value: string }[]> {
     return this.ws
       .call("pool.filesystem_choices")
-      .pipe(map(response => response.map(value => ({ label: value, value }))));
+      .pipe(map(response => response.map((value: any) => ({ label: value, value }))));
   }
 
   /**
@@ -269,7 +270,7 @@ export class StorageService {
 
   // ----------------------- //
 
-  normalizeUnit(unitStr) {
+  normalizeUnit(unitStr: string) {
     // normalize short units ("MB") or human units ("M") to IEC units ("MiB")
     // unknown values return undefined
 
@@ -294,7 +295,7 @@ export class StorageService {
     }
   }
 
-  convertUnitToNum(unitStr) {
+  convertUnitToNum(unitStr: string) {
       // convert IEC ("MiB"), short ("MB"), or human ("M") units to numbers
       // unknown units are evaluated as 1
 
@@ -334,7 +335,7 @@ export class StorageService {
   // allowedUnits (optional) should include any or all of 'kmgtp', the first letters of KiB, Mib, etc. The first letter
   // is used as the default, so for 'gtp', an entered value of 256 becomes 256 GiB. If you don't pass in allowedUnits,
   // all of the above are accepted AND no unit is attached to an unlabeled number, so 256 is considered 256 bytes.
-    convertHumanStringToNum(hstr, dec=false, allowedUnits?: string) {
+    convertHumanStringToNum(hstr: any, dec=false, allowedUnits?: string) {
       const IECUnitLetters = this.IECUnits.map(unit => unit.charAt(0).toUpperCase()).join('');
 
       let num = 0;
@@ -386,7 +387,7 @@ export class StorageService {
   };
 
   // Converts a number from bytes to the most natural human readable format
-  convertBytestoHumanReadable(bytes, decimalPlaces?, min_units?, hideBytes?: boolean ) {
+  convertBytestoHumanReadable(bytes: number, decimalPlaces?: number, min_units?: string, hideBytes?: boolean ) {
     let i = -1;
     let dec, units;
     decimalPlaces !== undefined ? dec = decimalPlaces : dec = 2;

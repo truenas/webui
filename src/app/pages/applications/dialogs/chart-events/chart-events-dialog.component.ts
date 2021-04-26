@@ -27,7 +27,7 @@ export class ChartEventsDialog implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     protected localeService: LocaleService,
     private loader:AppLoaderService,
-    private appService: ApplicationsService) { 
+    private appService: ApplicationsService) {
     this.catalogApp = data;
     if (!this.catalogApp.used_ports) {
       this.catalogApp.used_ports = helptext.chartEventDialog.noPorts;
@@ -81,12 +81,12 @@ export class ChartEventsDialog implements OnInit {
     let label: string;
     if ( this.catalogApp.update_available ) {
       label = helptext.chartEventDialog.statusUpdateAvailableTo + this.catalogApp.human_latest_version;
-    } else if (this.catalogApp.container_images_update_available) {      
+    } else if (this.catalogApp.container_images_update_available) {
       label = helptext.chartEventDialog.containerImageStatusUpdateAvailableTo;
-      const updateAvailableImages = Object.keys(this.containerImages).filter(imageName=>this.containerImages[imageName].update_available);
+      const updateAvailableImages = Object.keys(this.containerImages).filter(imageName=>(this.containerImages as any)[imageName].update_available);
       label += updateAvailableImages.join(",");
     }
-    
+
     return label;
   }
 }

@@ -69,7 +69,7 @@ export class EntityWizardComponent implements OnInit {
 
       // Fallback if no fieldsets are defined
       if(this.conf.wizardConfig[i].fieldSets){
-        let fieldConfig = [];
+        let fieldConfig: any[] = [];
         /* Temp patch to support both FieldSet approaches */
         const fieldSets = this.conf.wizardConfig[i].fieldSets.list ? this.conf.wizardConfig[i].fieldSets.list() : this.conf.wizardConfig[i].fieldSets;
         for(let j = 0; j < fieldSets.length; j++){
@@ -157,7 +157,7 @@ export class EntityWizardComponent implements OnInit {
     }
 
     for (let i in this.conf.wizardConfig) {
-      this.conf.wizardConfig[i].fieldConfig = this.conf.wizardConfig[i].fieldConfig.map((item) => {
+      this.conf.wizardConfig[i].fieldConfig = this.conf.wizardConfig[i].fieldConfig.map((item: any) => {
         if (item.name === name) {
           item.disabled = disable;
           item['isHidden'] = hide;
@@ -222,7 +222,7 @@ export class EntityWizardComponent implements OnInit {
   originalOrder = function () {};
 
 
-  isFieldsetAvailabel(fieldset) {
+  isFieldsetAvailabel(fieldset: any) {
     if (fieldset.config) {
       for (let i = 0; i < fieldset.config.length; i++) {
         if (!fieldset.config[i].isHidden) {
@@ -233,7 +233,7 @@ export class EntityWizardComponent implements OnInit {
     return false;
   }
 
-  handleNext(currentStep) {
+  handleNext(currentStep: any) {
     currentStep.stepControl.markAllAsTouched();
     if (this.conf.customNext !== undefined) {
       this.conf.customNext(this.stepper);
@@ -250,7 +250,7 @@ export class EntityWizardComponent implements OnInit {
         this.conf.summary = [];
         for(let step=0; step<this.conf.wizardConfig.length; step++){
           const wizard = this.conf.wizardConfig[step];
-          wizard.fieldConfig.forEach(fieldConfig => {
+          wizard.fieldConfig.forEach((fieldConfig: any) => {
             const formControl = ( < FormGroup > this.formArray.get([step]).get(fieldConfig.name));
             if (formControl) {
               let summaryName = fieldConfig.placeholder;

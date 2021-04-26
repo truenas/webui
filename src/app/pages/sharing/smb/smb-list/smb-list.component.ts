@@ -44,7 +44,7 @@ export class SMBListComponent {
     message: shared.delete_share_message,
     isMessageComplete: true,
     button: T('Unshare'),
-    buildTitle: share => `${T('Unshare')} ${share.name}`
+    buildTitle: (share: any) => `${T('Unshare')} ${share.name}`
   }
 
   constructor(private ws: WebSocketService, private router: Router,
@@ -54,7 +54,7 @@ export class SMBListComponent {
     this.entityList = entityList;
   }
 
-  getActions(row): any[] {
+  getActions(row: any): any[] {
     let rowName = row.path.replace("/mnt/", "");
     let poolName = rowName.split('/')[0];
     let optionDisabled;
@@ -65,14 +65,14 @@ export class SMBListComponent {
         icon: 'edit',
         name: "edit",
         label: "Edit",
-        onClick: row => this.entityList.doEdit(row.id)
+        onClick: (row: any) => this.entityList.doEdit(row.id)
       },
       {
         id: row.name,
         icon: 'security',
         name: "share_acl",
         label: helptext_sharing_smb.action_share_acl,
-        onClick: row => {
+        onClick: (row: any) => {
           this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).subscribe(
             res => {
               if(res) {
@@ -81,7 +81,7 @@ export class SMBListComponent {
                 // A home share has a name (homes) set; row.name works for other shares
                 const searchName = row.home ? 'homes' : row.name;
                 this.ws.call('smb.sharesec.query', [[["share_name", "=", searchName]]]).subscribe(
-                  (res) => {
+                  (res: any) => {
                     this.router.navigate(
                       ["/"].concat(["sharing", "smb", "acl", res[0].id]));
                   }
@@ -97,7 +97,7 @@ export class SMBListComponent {
         disabled: optionDisabled,
         matTooltip: vol_helptext.acl_edit_msg,
         label: helptext_sharing_smb.action_edit_acl,
-        onClick: row => {
+        onClick: (row: any) => {
           const datasetId = rowName;
           this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).subscribe(
             res => {
@@ -123,12 +123,12 @@ export class SMBListComponent {
         icon: 'delete',
         name: "delete",
         label: "Delete",
-        onClick: row => this.entityList.doDelete(row)
+        onClick: (row: any) => this.entityList.doDelete(row)
       }
     ];
     // Temporary: Drop from menu if SCALE
     if (this.productType.includes(ProductType.Scale)) {
-      const shareAclRow = rows.find(row => row.name === 'share_acl')
+      const shareAclRow = rows.find((row: any) => row.name === 'share_acl')
       rows.splice(rows.indexOf(shareAclRow), 1);
     }
     return rows;

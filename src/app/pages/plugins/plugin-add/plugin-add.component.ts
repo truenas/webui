@@ -341,13 +341,13 @@ export class PluginAddComponent implements OnInit {
 
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
     this.formGroup.disable();
-    this.formGroup.controls['ip4_addr'].valueChanges.subscribe((res) => {
+    this.formGroup.controls['ip4_addr'].valueChanges.subscribe(() => {
       this.updateIpValidation()
     });
-    this.formGroup.controls['ip6_addr'].valueChanges.subscribe((res) => {
+    this.formGroup.controls['ip6_addr'].valueChanges.subscribe(() => {
       this.updateIpValidation();
     });
-    this.formGroup.controls['dhcp'].valueChanges.subscribe((res) => {
+    this.formGroup.controls['dhcp'].valueChanges.subscribe((res: any) => {
       if(!this.showSpinner) {
         if (res && !this.formGroup.controls['nat'].disabled) {
           this.setDisabled('nat', true);
@@ -449,7 +449,7 @@ export class PluginAddComponent implements OnInit {
     this.dialogRef.componentInstance.setDescription(T("Installing plugin..."));
     this.dialogRef.componentInstance.setCall(this.addCall, [value]);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((res) => {
+    this.dialogRef.componentInstance.success.subscribe((res: any) => {
       this.dialogRef.componentInstance.setTitle(T("Plugin installed successfully"));
       let install_notes = '<p><b>Install Notes:</b></p>';
       for (const msg of res.result.install_notes.split('\n')) {
@@ -458,7 +458,7 @@ export class PluginAddComponent implements OnInit {
       this.dialogRef.componentInstance.setDescription(install_notes);
       this.dialogRef.componentInstance.showCloseButton = true;
 
-      this.dialogRef.afterClosed().subscribe(result => {
+      this.dialogRef.afterClosed().subscribe(() => {
         this.router.navigate(new Array('/').concat(this.route_success));
       });
     });

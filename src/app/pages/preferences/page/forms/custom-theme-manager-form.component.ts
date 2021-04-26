@@ -20,7 +20,7 @@ import { T } from '../../../../translate-marker';
     </ng-container>
   `
 })
-export class CustomThemeManagerFormComponent implements OnInit, OnChanges, OnDestroy {
+export class CustomThemeManagerFormComponent implements OnInit, OnDestroy {
 
   /*
    //Preferences Object Structure
@@ -38,7 +38,7 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges, OnDes
   public emptyMessage: string = T("No custom themes. Click <b>Create New Theme</b> to create a new custom theme.")
 
   public target: Subject<CoreEvent> = new Subject();
-  public values = [];
+  public values: boolean[] = [];
   public saveSubmitText = T("Delete Selected");
   protected isEntity: boolean = true; // was true
   private colorOptions: any[] = [];
@@ -69,7 +69,7 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges, OnDes
     ngOnInit(){
         this.initSubjects();
       // Only initialize if customThemes exist
-      if(this.themeService.customThemes && this.themeService.customThemes.length > 0){  
+      if(this.themeService.customThemes && this.themeService.customThemes.length > 0){
         this.themesExist = true;
         this.initForm();
       }
@@ -83,9 +83,6 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges, OnDes
 
     ngOnDestroy(){
       this.core.unregister({observerClass:this});
-    }
-
-    ngOnChanges(changes){
     }
 
     initForm(){
@@ -118,7 +115,7 @@ export class CustomThemeManagerFormComponent implements OnInit, OnChanges, OnDes
     }
 
     loadValues(key:string){
-      let values = [];
+      let values: boolean[] = [];
 
       for(let i = 0; i < this.themeService.customThemes.length; i++){
         let theme = this.themeService.customThemes[i];

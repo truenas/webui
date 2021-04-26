@@ -27,7 +27,7 @@ export class FormUploadComponent {
   public apiEndPoint = '/_upload?auth_token=' + this.ws.token;
   public fileList: any;
   public fbrowser: any;
-  
+
   constructor(
     protected ws: WebSocketService,protected http: HttpClient, private loader: AppLoaderService,
     public dialog: DialogService, public translate: TranslateService) {}
@@ -80,7 +80,7 @@ export class FormUploadComponent {
 
   }
 }
-newMessage(message){
+newMessage(message: any){
   if(this.config.message){
     this.config.message.newMessage(message);
   }

@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { Subscription } from 'rxjs/Subscription';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { RestService, WebSocketService, DialogService } from '../../../../services';
 import { FormGroup, Validators } from '@angular/forms';
@@ -26,7 +28,7 @@ export class VolumeImportWizardComponent {
 
   // public route_success: string[] = ['storage'];
   public route_create: string[] = ['storage', 'manager'];
-  public summary = {};
+  public summary: any = {};
   isLinear = true;
   firstFormGroup: FormGroup;
   protected dialogRef: any;
@@ -159,21 +161,21 @@ export class VolumeImportWizardComponent {
   }
 
   private disks_decrypted = false;
-  protected stepper;
+  protected stepper: string;
 
   protected isNew = true;
-  protected is_new_subscription;
-  protected encrypted;
-  protected devices;
-  protected devices_fg;
-  protected key;
-  protected key_fg;
-  protected passphrase;
-  protected passphrase_fg;
-  protected guid;
-  protected pool;
-  protected guid_subscription;
-  protected message_subscription;
+  protected is_new_subscription: Subscription;
+  protected encrypted: FormGroup;
+  protected devices: FieldConfig;
+  protected devices_fg: FormGroup;
+  protected key: FieldConfig;
+  protected key_fg: FormGroup;
+  protected passphrase: FieldConfig;
+  protected passphrase_fg: FormGroup;
+  protected guid: FieldConfig;
+  protected pool: any;
+  protected guid_subscription: Subscription;
+  protected message_subscription: Subscription;
   protected hideCancel = true;
 
   constructor(protected rest: RestService, protected ws: WebSocketService,
@@ -183,7 +185,7 @@ export class VolumeImportWizardComponent {
 
   }
 
-  customNext(stepper) {
+  customNext(stepper: any) {
     if (stepper._selectedIndex === (this.importIndex - 1)) {
       if (this.encrypted && this.encrypted.value) {
         this.decryptDisks(stepper);
@@ -197,7 +199,7 @@ export class VolumeImportWizardComponent {
     }
   }
 
-  decryptDisks(stepper) {
+  decryptDisks(stepper: any) {
     if (this.devices_fg.status === 'INVALID') {
       this.dialogService.Info(T("Disk Selection Required"), T("Select one or more disks to decrypt."));
       return;
@@ -218,12 +220,12 @@ export class VolumeImportWizardComponent {
 
     let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":helptext.decrypt_disks_title}, disableClose: true});
     dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
-    dialogRef.componentInstance.success.subscribe(res=>{
+    dialogRef.componentInstance.success.subscribe(() =>{
       dialogRef.close(false);
       this.getImportableDisks();
       stepper.next();
     }),
-    dialogRef.componentInstance.failure.subscribe((res) => {
+    dialogRef.componentInstance.failure.subscribe((res: any) => {
       dialogRef.close(false);
       this.dialogService.errorReport(T("Error decrypting disks"), res.error, res.exception);
     });
@@ -234,7 +236,7 @@ export class VolumeImportWizardComponent {
     dialogRef.componentInstance.setDescription(helptext.find_pools_msg);
     dialogRef.componentInstance.setCall('pool.import_find', []);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.subscribe((res) => {
+    dialogRef.componentInstance.success.subscribe((res: any) => {
       if (res && res.result) {
         this.guid.options = [];
         const result = res.result;
@@ -244,7 +246,7 @@ export class VolumeImportWizardComponent {
       }
       dialogRef.close(false);
     });
-    dialogRef.componentInstance.failure.subscribe((res) => {
+    dialogRef.componentInstance.failure.subscribe((res: any) => {
       new EntityUtils().handleWSError(this.entityWizard, res, this.dialogService);
       dialogRef.close(false);
     });
@@ -303,10 +305,10 @@ export class VolumeImportWizardComponent {
     }
   }
 
-  customSubmit(value) {
+  customSubmit(value: any) {
     if (value.encrypted) {
       const formData: FormData = new FormData();
-      const params = {"guid": value.guid};
+      const params: any = {"guid": value.guid};
       if (value.passphrase && value.passphrase != null) {
         params['passphrase'] = value.passphrase;
       }
@@ -317,12 +319,12 @@ export class VolumeImportWizardComponent {
       formData.append('file', this.subs.file);
       let dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Importing Pool"}, disableClose: true});
       dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
-      dialogRef.componentInstance.success.subscribe(res=>{
+      dialogRef.componentInstance.success.subscribe(() =>{
         dialogRef.close(false);
         this.modalService.close('slide-in-form');
         this.modalService.refreshTable();
       }),
-      dialogRef.componentInstance.failure.subscribe((res) => {
+      dialogRef.componentInstance.failure.subscribe((res: any) => {
         dialogRef.close(false);
         this.errorReport(res);
       });
@@ -331,7 +333,7 @@ export class VolumeImportWizardComponent {
       dialogRef.componentInstance.setDescription(T("Importing Pool..."));
       dialogRef.componentInstance.setCall('pool.import_pool', [{'guid':value.guid}]);
       dialogRef.componentInstance.submit();
-      dialogRef.componentInstance.success.subscribe((res) => {
+      dialogRef.componentInstance.success.subscribe(() => {
         dialogRef.close(false);
         if (this.pool) {
           this.modalService.close('slide-in-form');
@@ -341,14 +343,14 @@ export class VolumeImportWizardComponent {
         }
 
       });
-      dialogRef.componentInstance.failure.subscribe((res) => {
+      dialogRef.componentInstance.failure.subscribe((res: any) => {
         dialogRef.close(false);
         this.errorReport(res);
       });
     }
   }
 
-  errorReport(res) {
+  errorReport(res: any) {
     if (res.reason && res.trace) {
       this.dialogService.errorReport(T("Error importing pool"), res.reason, res.trace.formatted);
     } else if (res.error && res.exception) {

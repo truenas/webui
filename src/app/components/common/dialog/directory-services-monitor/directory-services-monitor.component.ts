@@ -18,7 +18,7 @@ import { WebSocketService } from '../../../../services/';
 })
 export class DirectoryServicesMonitorComponent implements OnInit {
   displayedColumns: string[] = ['icon', 'name', 'state'];
-  dataSource = [];
+  dataSource: any[] = [];
   showSpinner = false;
 
   constructor(private ws: WebSocketService, private router: Router ) {}
@@ -28,7 +28,7 @@ export class DirectoryServicesMonitorComponent implements OnInit {
   }
 
   getStatus(): void {
-    let tempArray = [];
+    let tempArray: any[] = [];
     this.showSpinner = true;
     this.ws.call('directoryservices.get_state').subscribe((res) => {
       this.showSpinner = false;

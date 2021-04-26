@@ -6,7 +6,7 @@ import { WebSocketService } from './ws.service';
 @Injectable()
 export class CloudCredentialService {
   protected credentialProviders: string = 'cloudsync.providers';
-  protected byteMap: Object= {
+  protected byteMap = {
     'T': 1024**4,
     'G': 1024**3,
     'M': 1024**2,
@@ -25,14 +25,15 @@ export class CloudCredentialService {
   }
 
   getByte(data: string): any {
-      let unit = 'K'; // default unit
+      // TODO: Here and in other places extract to proper type
+      let unit: keyof CloudCredentialService['byteMap'] = 'K'; // default unit
       let index = -1;
 
       for (let i = 0; i < data.length; i++) {
         if (data[i].toUpperCase() == 'B' || data[i].toUpperCase() == 'K' ||
             data[i].toUpperCase() == 'M' || data[i].toUpperCase() == 'G' ||
             data[i].toUpperCase() == 'T') {
-          unit = data[i].toUpperCase();
+          unit = data[i].toUpperCase() as keyof CloudCredentialService['byteMap'];
           index = i;
           break;
         }

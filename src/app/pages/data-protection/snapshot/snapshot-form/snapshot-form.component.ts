@@ -169,7 +169,7 @@ export class SnapshotFormComponent implements OnDestroy {
     );
 
     this.datasetFg = entityForm.formGroup.controls['dataset'];
-    this.dataset_subscription = this.datasetFg.valueChanges.subscribe(value => {
+    this.dataset_subscription = this.datasetFg.valueChanges.subscribe((value: any) => {
       if (this.dataset_disabled && this.dataset !== value) {
         this.save_button_enabled = true;
         datasetField.warnings = '';
@@ -194,7 +194,7 @@ export class SnapshotFormComponent implements OnDestroy {
     }
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     data['snapshot_picker'] = `${data.schedule.minute} ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`
     data['begin'] = data.schedule.begin;
     data['end'] = data.schedule.end;
@@ -204,7 +204,7 @@ export class SnapshotFormComponent implements OnDestroy {
     return data;
   }
 
-  beforeSubmit(value) {
+  beforeSubmit(value: any) {
     const lifetime = value.lifetime.split(' ');
     value['lifetime_value'] = lifetime[0];
     value['lifetime_unit'] = _.endsWith(lifetime[1], 'S') ? lifetime[1].substring(0, lifetime[1].length -1) : lifetime[1];

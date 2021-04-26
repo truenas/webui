@@ -1,3 +1,4 @@
+import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Component, Output, EventEmitter} from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -24,17 +25,18 @@ export class ConfirmDialog {
   public hideCancel = false;
   public textToCopy: string;
   public keyTextArea: boolean;
-  public customSumbit;
+  // TODO: Typo
+  public customSumbit: any;
 
   @Output() switchSelectionEmitter = new EventEmitter<any>();
 
   constructor(public dialogRef: MatDialogRef < ConfirmDialog >, protected translate: TranslateService ) {
   }
 
-  toggleSubmit(data) {
+  toggleSubmit(data: MatCheckboxChange) {
     this.isSubmitEnabled = data.checked;
   }
-  secondaryCheckBoxEvent(data){
+  secondaryCheckBoxEvent(){
     this.switchSelectionEmitter.emit(this.secondaryCheckBox);
 
   }

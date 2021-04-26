@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
 import * as _ from 'lodash';
 
@@ -63,7 +65,7 @@ export class AssociatedTargetFormComponent {
     }
   ];
 
-  protected fieldConfig;
+  protected fieldConfig: FieldConfig[];
 
   protected target_control: any;
   protected extent_control: any;
@@ -82,7 +84,7 @@ export class AssociatedTargetFormComponent {
     });
   }
 
-  afterInit(entityForm: any) {
+  afterInit(entityForm: EntityFormComponent) {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
 
@@ -103,13 +105,13 @@ export class AssociatedTargetFormComponent {
     });
   }
 
-  beforeSubmit(value) {
+  beforeSubmit(value: any) {
     if (value['lunid'] === "") {
       delete value['lunid'];
     }
   }
 
-  customEditCall(value) {
+  customEditCall(value: any) {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).subscribe(
       (res) => {

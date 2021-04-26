@@ -13,7 +13,7 @@ import {EntityTableComponent} from './entity-table.component';
 export class EntityTableAddActionsComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   @ViewChild('filter', { static: false}) filter: ElementRef;
   @Input('entity') entity: EntityTableComponent;
-  public conf;
+  public conf: any;
 
   public actions: any[];
   public menuTriggerMessage:string = "Click for options";
@@ -28,8 +28,8 @@ export class EntityTableAddActionsComponent implements OnInit, AfterViewInit, On
 
   constructor(protected translate: TranslateService) { }
 
-  ngOnInit() { 
-    this.actions = this.entity.getAddActions(); 
+  ngOnInit() {
+    this.actions = this.entity.getAddActions();
   }
 
   ngOnDestroy(){
@@ -43,7 +43,7 @@ export class EntityTableAddActionsComponent implements OnInit, AfterViewInit, On
     console.log(changes);
   }
 
-  applyConfig(entity){
+  applyConfig(entity: any){
     this.entity = entity;
     this.conf = entity.conf;
     this.filterInit();

@@ -182,7 +182,7 @@ export class VmFormComponent {
       }
     });
 
-    entityForm.formGroup.controls['memory'].valueChanges.subscribe((value) => {
+    entityForm.formGroup.controls['memory'].valueChanges.subscribe((value: any) => {
       const mem = _.find(this.fieldConfig, {name: "memory"});
       if (typeof(value) === 'number') {
         value = value.toString();

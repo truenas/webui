@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from '@angular/router';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { matchOtherValidator, doesNotEqual } from "app/pages/common/entity/entity-form/validators/password-validation";
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../../services/ws.service';
@@ -130,9 +131,9 @@ export class AuthorizedAccessFormComponent {
     });
   }
 
-  afterInit(entityForm) {
-    const secretControl: FormControl = entityForm.formGroup.controls['secret'];
-    const peersecretControl: FormControl = entityForm.formGroup.controls['peersecret'];
+  afterInit(entityForm: EntityFormComponent) {
+    const secretControl = entityForm.formGroup.controls['secret'] as FormControl;
+    const peersecretControl = entityForm.formGroup.controls['peersecret'] as FormControl;
     const peeruserFieldset = _.find(this.fieldSets, {class: 'peeruser'});
     const peersecretConfig = _.find(peeruserFieldset.config, {name: 'peersecret'});
 
@@ -185,12 +186,12 @@ export class AuthorizedAccessFormComponent {
     })
   }
 
-  beforeSubmit(value) {
+  beforeSubmit(value: any) {
     delete value['secret_confirm'];
     delete value['peersecret_confirm'];
   }
 
-  customEditCall(value) {
+  customEditCall(value: any) {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).subscribe(
       (res) => {

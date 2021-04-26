@@ -21,7 +21,7 @@ export class SupportFormUnlicensedComponent {
   public screenshot: any;
   public password_fc: any;
   public username_fc: any;
-  public subs: any;
+  public subs: any[];
   public saveSubmitText = helptext.submitBtn;
   public isEntity = true;
   public title = helptext.ticket;
@@ -141,7 +141,7 @@ export class SupportFormUnlicensedComponent {
     this.entityEdit = entityEdit;
   }
 
-  blurEvent(parent){
+  blurEvent(parent: any){
     this.password_fc = _.find(parent.fieldConfig, { name: 'password' });
     this.username_fc = _.find(parent.fieldConfig, { name: 'username' });
     this.category = _.find(parent.fieldConfig, {name: "category"});
@@ -158,7 +158,7 @@ export class SupportFormUnlicensedComponent {
         }
         if(this.category.options.length === 0 && this.username !== '' && this.password !== ''){
           this.category.isLoading = true;
-          parent.ws.call('support.fetch_categories',[this.username,this.password]).subscribe((res)=>{
+          parent.ws.call('support.fetch_categories',[this.username,this.password]).subscribe((res: string[])=>{
             this.category.isLoading = false;
             parent.entityEdit.setDisabled('category', false);
             let options = [];
@@ -167,7 +167,7 @@ export class SupportFormUnlicensedComponent {
                 options.push({label : property, value : res[property]});
               }
               this.category.options = _.sortBy(options, ['label']);
-            }},(error)=>{
+            }},(error: any)=>{
               if (error.reason[0] === '[') {
                 while (error.reason[0] !== ' ') {
                   error.reason = error.reason.slice(1);
@@ -182,8 +182,8 @@ export class SupportFormUnlicensedComponent {
       }
   }
 
-  customSubmit(entityEdit): void {
-    let payload = {};
+  customSubmit(entityEdit: any): void {
+    let payload: any = {};
     payload['username'] = entityEdit.username;
     payload['password'] = entityEdit.password;
     payload['category'] = entityEdit.category;
@@ -191,17 +191,17 @@ export class SupportFormUnlicensedComponent {
     payload['body'] = entityEdit.body;
     payload['type'] = entityEdit.type;
     if (entityEdit.attach_debug) {
-      payload['attach_debug'] = entityEdit.attach_debug;     
+      payload['attach_debug'] = entityEdit.attach_debug;
     }
     this.openDialog(payload);
   };
 
-  openDialog(payload) {
+  openDialog(payload: any) {
     const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":T("Ticket"),"CloseOnClickOutside":true}});
-    let url;
+    let url: string;
     dialogRef.componentInstance.setCall('support.new_ticket', [payload]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.subscribe(res=>{
+    dialogRef.componentInstance.success.subscribe((res: any)=>{
       if (res.result) {
         url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
       }
@@ -214,10 +214,10 @@ export class SupportFormUnlicensedComponent {
           }));
           formData.append('file', item.file, item.apiEndPoint);
           dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
-          dialogRef.componentInstance.success.subscribe(res=>{
+          dialogRef.componentInstance.success.subscribe(()=>{
             this.resetForm();
-          }),
-          dialogRef.componentInstance.failure.subscribe((res) => {
+          });
+          dialogRef.componentInstance.failure.subscribe((res: any) => {
             dialogRef.componentInstance.setDescription(res.error);
           });
         });
@@ -227,7 +227,7 @@ export class SupportFormUnlicensedComponent {
         this.resetForm();
       }
     })
-    dialogRef.componentInstance.failure.subscribe((res) => {
+    dialogRef.componentInstance.failure.subscribe((res: any) => {
       dialogRef.componentInstance.setDescription(res.error);
     });
   }
