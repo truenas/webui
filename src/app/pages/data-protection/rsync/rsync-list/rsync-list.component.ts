@@ -3,14 +3,16 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 import * as _ from 'lodash';
-import { WebSocketService, DialogService, TaskService, JobService, UserService } from '../../../../services';
-import { EntityUtils } from '../../../common/entity/utils';
-import { T } from '../../../../translate-marker';
-import globalHelptext from '../../../../helptext/global-helptext';
+
+import { WebSocketService, DialogService, TaskService, JobService, UserService } from 'app/services';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { T } from 'app/translate-marker';
+import globalHelptext from 'app/helptext/global-helptext';
 import { ModalService } from 'app/services/modal.service';
-import { RsyncFormComponent } from '../rsync-form/rsync-form.component';
+import { RsyncFormComponent } from 'app/pages/data-protection/rsync/rsync-form/rsync-form.component';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { EntityJob, EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.interface';
+import { EntityJob } from 'app/interfaces/entity-job.interface';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Component({
   selector: 'app-rsync-list',

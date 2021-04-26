@@ -17,7 +17,6 @@ import {
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/data-protection/replication/replication';
-import { EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
@@ -25,7 +24,8 @@ import { ReplicationWizardComponent } from 'app/pages/data-protection/replicatio
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationTask } from 'app/pages/data-protection/replication/replication.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
-import { EntityJob } from 'app/pages/common/entity/entity-job/entity-job.interface';
+import { EntityJob } from 'app/interfaces/entity-job.interface';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Component({
   selector: 'app-replication-list',

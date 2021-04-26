@@ -1,10 +1,12 @@
+import { HttpClient } from '@angular/common/http';
 import { OnInit, Component, EventEmitter, Output, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { WebSocketService, RestService } from '../../../../services/';
+
 import { TranslateService } from '@ngx-translate/core';
-import { HttpClient } from '@angular/common/http';
 import * as _ from 'lodash';
-import { EntityJobState } from './entity-job.interface';
+
+import { WebSocketService, RestService } from 'app/services/';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Component({
   selector: 'entity-job',

@@ -38,9 +38,10 @@ import { SmartFormComponent } from 'app/pages/data-protection/smart/smart-form/s
 import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapshot-form/snapshot-form.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
-import { EntityJob, EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import { EntityJob } from 'app/interfaces/entity-job.interface';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 export interface TaskCard {
   name: string;

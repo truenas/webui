@@ -1,13 +1,4 @@
-export enum EntityJobState {
-  Pending = 'PENDING',
-  Running = 'RUNNING',
-  Hold = 'HOLD',
-  Error = 'ERROR',
-  Failed = 'FAILED',
-  Aborted = 'ABORTED',
-  Success = 'SUCCESS',
-  Finished = 'FINISHED',
-}
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 export interface EntityJob {
   abortable: boolean;

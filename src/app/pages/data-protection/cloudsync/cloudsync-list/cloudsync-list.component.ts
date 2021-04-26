@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
+import { MatDialog } from '@angular/material/dialog';
 
-import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
+
+import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import {
   AppLoaderService,
   CloudCredentialService,
@@ -12,16 +14,16 @@ import {
   JobService,
   TaskService,
   WebSocketService,
-} from '../../../../services';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { T } from '../../../../translate-marker';
-import { EntityUtils } from '../../../common/entity/utils';
-import globalHelptext from '../../../../helptext/global-helptext';
-import helptext from '../../../../helptext/data-protection/cloudsync/cloudsync-form';
-import { CloudsyncFormComponent } from '../cloudsync-form/cloudsync-form.component';
-import { MatDialog } from '@angular/material/dialog';
+} from 'app/services';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { T } from 'app/translate-marker';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import globalHelptext from 'app/helptext/global-helptext';
+import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
+import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { ModalService } from 'app/services/modal.service';
-import { EntityJob, EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.interface';
+import { EntityJob } from 'app/interfaces/entity-job.interface';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Component({
   selector: 'app-cloudsync-list',

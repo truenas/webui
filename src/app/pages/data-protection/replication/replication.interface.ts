@@ -1,4 +1,4 @@
-import { EntityJob } from 'app/pages/common/entity/entity-job/entity-job.interface';
+import { EntityJob } from 'app/interfaces/entity-job.interface';
 
 export enum TransportMode {
   Legacy = 'LEGACY',
