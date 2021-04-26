@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { WebSocketService, SystemGeneralService, DialogService, LanguageService, StorageService }
   from '../../../services/';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
@@ -25,7 +26,7 @@ import { AdminLayoutComponent } from '../../../components/common/layouts/admin-l
   templateUrl: './general-settings.component.html',
 })
 export class GeneralSettingsComponent implements OnInit, OnDestroy {
-  dataCards = [];
+  dataCards: any[] = [];
   supportTitle = helptext.supportTitle;
   ntpTitle = helptext.ntpTitle;
   localeData: any;
@@ -228,10 +229,10 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
 
   doNTPDelete(server: any) {
     this.dialog.confirm(helptext.deleteServer.title, `${helptext.deleteServer.message} ${server.address}?`,
-      false, helptext.deleteServer.message).subscribe(res => {
+      false, helptext.deleteServer.message).subscribe((res: boolean) => {
       if (res) {
         this.loader.open();
-        this.ws.call('system.ntpserver.delete', [server.id]).subscribe(res => {
+        this.ws.call('system.ntpserver.delete', [server.id]).subscribe(() => {
           this.loader.close();
           this.getNTPData();
         }, err => {
@@ -249,12 +250,12 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     })
   }
 
-  saveConfigSubmit(entityDialog) {
+  saveConfigSubmit(entityDialog: any) {
     parent = entityDialog.parent;
     entityDialog.loader.open();
-    entityDialog.ws.call('system.info', []).subscribe((res) => {
+    entityDialog.ws.call('system.info', []).subscribe((res: any) => {
       let fileName = "";
-      let mimetype;
+      let mimetype: string;
       if (res) {
         let hostname = res.hostname.split('.')[0];
         let date = entityDialog.datePipe.transform(new Date(),"yyyyMMddHHmmss");
@@ -270,27 +271,27 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
 
       entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
         .subscribe(
-          (download) => {
+          (download: any) => {
             const url = download[1];
-            entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype).subscribe(file => {
+            entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype).subscribe((file: Blob) => {
               entityDialog.loader.close();
               entityDialog.dialogRef.close();
               entityDialog.parent.storage.downloadBlob(file, fileName);
-            }, err => {
+            }, (err: any) => {
               entityDialog.loader.close();
               entityDialog.dialogRef.close();
               entityDialog.parent.dialog.errorReport(helptext.config_download.failed_title,
                 helptext.config_download.failed_message, err.message);
             });
           },
-          (err) => {
+          (err: any) => {
             entityDialog.loader.close();
             entityDialog.dialogRef.close();
             new EntityUtils().handleWSError(entityDialog, err, entityDialog.dialog);
           }
         );
     },
-    (err) => {
+    (err: any) => {
       entityDialog.loader.close();
       entityDialog.dialogRef.close();
       new EntityUtils().handleWSError(entityDialog, err, entityDialog.dialog);
@@ -304,7 +305,7 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     }
   }
 
-  uploadConfigSubmit(entityDialog) {
+  uploadConfigSubmit(entityDialog: EntityDialogComponent) {
     const parent = entityDialog.conf.fieldConfig[0].parent;
     const formData: FormData = new FormData();
 
@@ -317,16 +318,16 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
         }));
     formData.append('file', parent.subs.file);
     dialogRef.componentInstance.wspost(parent.subs.apiEndPoint, formData);
-    dialogRef.componentInstance.success.subscribe(res=>{
+    dialogRef.componentInstance.success.subscribe(()=>{
       dialogRef.close();
       parent.router.navigate(['/others/reboot']);
     })
-    dialogRef.componentInstance.failure.subscribe((res) => {
+    dialogRef.componentInstance.failure.subscribe((res: any) => {
       dialogRef.componentInstance.setDescription(res.error);
     });
   }
 
-  resetConfigSubmit(entityDialog) {
+  resetConfigSubmit(entityDialog: EntityDialogComponent) {
     const parent = entityDialog.parent;
     parent.router.navigate(new Array('').concat(['others', 'config-reset']))
   }

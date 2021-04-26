@@ -501,10 +501,10 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
 
   callGetFunction(skipActions=false) {
     this.getFunction.subscribe(
-      (res) => {
+      (res: any) => {
         this.handleData(res, skipActions);
       },
-      (res) => {
+      (res: any) => {
         this.isTableEmpty = true;
         this.emptyTableConf = {
           title: T("Something went wrong"),

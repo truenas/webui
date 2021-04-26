@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { WebSocketService, KeychainCredentialService, AppLoaderService, 
+import { WebSocketService, KeychainCredentialService, AppLoaderService,
   DialogService, ReplicationService, StorageService, CloudCredentialService } from 'app/services';
 import { ModalService } from '../../../services/modal.service';
 import { SshConnectionsFormComponent } from './forms/ssh-connections-form.component';
@@ -56,14 +56,14 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
           ],
           hideHeader: false,
           parent: this,
-          add: function(row) {
+          add: function() {
             this.parent.modalService.open('slide-in-form', this.parent.cloudCredentials);
           },
-          edit: function(row) {
+          edit: function(row: any) {
             this.parent.modalService.open('slide-in-form', this.parent.cloudCredentials, row.id);
           }
         }
-      },{ 
+      },{
         name: 'sshConnections', flex: 30,
         tableConf: {
           title: 'SSH Connections',
@@ -76,10 +76,10 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
           ],
           hideHeader: true,
           parent: this,
-          add: function(row) {
+          add: function() {
             this.parent.modalService.open('slide-in-form', this.parent.sshConnections);
           },
-          edit: function(row) {
+          edit: function(row: any) {
             this.parent.modalService.open('slide-in-form', this.parent.sshConnections, row.id);
           }
         }
@@ -97,10 +97,10 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
           ],
           hideHeader: true,
           parent: this,
-          add: function(row) {
+          add: function() {
             this.parent.modalService.open('slide-in-form', this.parent.sshKeypairs);
           },
-          edit: function(row) {
+          edit: function(row: any) {
             this.parent.modalService.open('slide-in-form', this.parent.sshKeypairs, row.id);
           },
         }
@@ -108,11 +108,11 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
     ];
   }
 
-  sshConnectionsDataSourceHelper(res) {
+  sshConnectionsDataSourceHelper(res: any[]) {
     return res.filter(item => item.type === 'SSH_CREDENTIALS');
   }
 
-  sshKeyPairsDataSourceHelper(res) {
+  sshKeyPairsDataSourceHelper(res: any[]) {
     return res.filter(item => item.type === 'SSH_KEY_PAIR');
   }
 
@@ -120,7 +120,7 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
     return [{
       icon: 'save_alt',
       name: "download",
-      onClick: (rowinner) => {
+      onClick: (rowinner: any) => {
         console.log(rowinner)
         const name = rowinner.name;
         for (let key_type in rowinner.attributes) {

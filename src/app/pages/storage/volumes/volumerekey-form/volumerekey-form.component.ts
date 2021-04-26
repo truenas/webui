@@ -99,36 +99,36 @@ export class VolumeRekeyFormComponent implements Formconfiguration {
   }
 
   afterInit(entityForm: any) {
-    entityForm.formGroup.controls['encryptionkey_passphrase'].valueChanges.subscribe((res) => {
+    entityForm.formGroup.controls['encryptionkey_passphrase'].valueChanges.subscribe((res: any) => {
       let instructions = _.find(this.fieldConfig, {'name' : 'set_recoverykey-instructions'});
       let field = _.find(this.fieldConfig, {'name' : 'set_recoverykey'});
       res !== '' ? entityForm.setDisabled('set_recoverykey', false) : entityForm.setDisabled('set_recoverykey', true);
     })
   }
- 
-  customSubmit(value) {
+
+  customSubmit(value: any) {
     this.ws.call('auth.check_user', ['root', value.passphrase]).subscribe((res) => {
       if (!res) {
         this.dialogService.Info('Error', 'The administrator password is incorrect.', '340px');
       } else {
         this.ws.call('pool.rekey', [parseInt(this.pk), {'admin_password': value.passphrase}])
         .subscribe(() => {
-          switch (true) 
+          switch (true)
             {
               case value.encryptionkey_passphrase && !value.set_recoverykey:
-                this.encryptionService.setPassphrase(this.pk, value.encryptionkey_passphrase, 
+                this.encryptionService.setPassphrase(this.pk, value.encryptionkey_passphrase,
                   value.passphrase, value.name, this.route_success,false);
                 break;
-  
+
               case !value.encryptionkey_passphrase && value.set_recoverykey:
                 this.encryptionService.openEncryptDialog(this.pk, this.route_success, value.name, true);
                 break;
-  
+
               case value.encryptionkey_passphrase && value.set_recoverykey:
-                  this.encryptionService.setPassphrase(this.pk, value.encryptionkey_passphrase, 
+                  this.encryptionService.setPassphrase(this.pk, value.encryptionkey_passphrase,
                     value.passphrase, value.name, this.route_success, true, true);
                 break;
-  
+
               default:
                 this.dialogService.Info(T('Success'), T('Successfully reset encryption for pool: ') + value.name);
                 this.encryptionService.openEncryptDialog(this.pk, this.route_success, this.poolName);
@@ -136,7 +136,7 @@ export class VolumeRekeyFormComponent implements Formconfiguration {
         },
         (err) => {
           this.dialogService.errorReport(T("Error resetting encryption for pool: " + value.name), err.reason, err.trace.formatted);
-        });       
+        });
       }
     });
   }

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { ProductType } from '../../../../enums/product-type.enum';
 
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
@@ -58,15 +59,13 @@ export class GlobalconfigurationComponent {
     }
   ];
 
-  public fieldConfig;
-
   constructor(
     protected dialogService: DialogService,
     protected ws: WebSocketService,
     protected loader: AppLoaderService,
     private sysGeneralService: SystemGeneralService) {}
 
-  afterInit(entityForm) {
+  afterInit(entityForm: EntityFormComponent) {
     entityForm.submitFunction = entityForm.editCall;
     this.getProdType = this.sysGeneralService.getProductType.subscribe((res)=>{
       if (res === ProductType.Enterprise) {
@@ -76,18 +75,18 @@ export class GlobalconfigurationComponent {
     });
   }
 
-  beforeSubmit(value) {
+  beforeSubmit(value: any) {
     if (value.pool_avail_threshold == "") {
       value.pool_avail_threshold = null;
     }
   }
 
-  afterSubmit(data) {
+  afterSubmit() {
     this.ws.call('service.query', [[]]).subscribe((service_res) => {
       const service = _.find(service_res, {"service": "iscsitarget"});
       if (!service['enable']) {
         this.dialogService.confirm(shared.dialog_title, shared.dialog_message,
-          true, shared.dialog_button).subscribe((dialogRes) => {
+          true, shared.dialog_button).subscribe((dialogRes: boolean) => {
             if (dialogRes) {
               this.loader.open();
               this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {

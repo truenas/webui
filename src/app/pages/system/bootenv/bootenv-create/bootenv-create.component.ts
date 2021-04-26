@@ -43,8 +43,8 @@ export class BootEnvironmentCreateComponent {
   afterInit(entityForm: any) {
     entityForm.submitFunction = this.submitFunction;
   }
-  submitFunction(entityForm){
-    const payload = {};
+  submitFunction(entityForm: any){
+    const payload: any = {};
     payload['name'] = entityForm.name;
     return this.ws.call('bootenv.create', [payload]);
   }

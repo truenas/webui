@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { ProductType } from '../../../enums/product-type.enum';
 
 import { WebSocketService, StorageService, AppLoaderService, DialogService, RestService, VmService, NetworkService } from '../../../services/';
@@ -118,11 +119,11 @@ export class VMListComponent implements OnDestroy {
             this.translate,this.modalService);
       }
 
-    afterInit(entityList) {
+    afterInit(entityList: any) {
         this.checkMemory();
         this.entityList = entityList;
         this.eventSubscription = this.ws.subscribe('vm.query').subscribe(event => {
-            const changedRow = this.entityList.rows.find(o => o.id === event.id);
+            const changedRow = (this.entityList.rows as any[]).find(o => o.id === event.id);
             if (event.fields.state === 'RUNNING') {
                 changedRow.state = 'RUNNING';
                 changedRow.status.state = 'RUNNING';
@@ -135,7 +136,7 @@ export class VMListComponent implements OnDestroy {
         })
     }
 
-    resourceTransformIncomingRestData(vms) {
+    resourceTransformIncomingRestData(vms: any[]) {
         for (let vm_index = 0; vm_index < vms.length; vm_index++) {
             vms[vm_index]['state'] = vms[vm_index]['status']['state'];
             vms[vm_index]['com_port'] = `/dev/nmdm${vms[vm_index]['id']}B`;
@@ -153,7 +154,7 @@ export class VMListComponent implements OnDestroy {
         return vms;
     }
 
-    checkDisplay(vm) {
+    checkDisplay(vm: any) {
         const devices = vm.devices
         if (!devices || devices.length === 0) {
             return false;
@@ -168,7 +169,7 @@ export class VMListComponent implements OnDestroy {
         }
     }
 
-    displayPort(vm) {
+    displayPort(vm: any) {
         const devices = vm.devices
         if (!devices || devices.length === 0) {
             return false;
@@ -183,8 +184,8 @@ export class VMListComponent implements OnDestroy {
         }
     }
 
-    onSliderChange(row) {
-        let method;
+    onSliderChange(row: any) {
+        let method: string;
         if (row['status']['state'] === "RUNNING") {
             method = this.wsMethods.stop;
             const parent = this;
@@ -201,7 +202,7 @@ export class VMListComponent implements OnDestroy {
                     }
                 ],
                 saveButtonText: T('Stop'),
-                customSubmit: function (entityDialog) {
+                customSubmit: function (entityDialog: EntityDialogComponent) {
                     entityDialog.dialogRef.close(true);
                     let forceValue = false; // We are not exposing this in the UI
                     let forceValueTimeout = entityDialog.formValue.force_after_timeout ? true : false;
@@ -217,7 +218,7 @@ export class VMListComponent implements OnDestroy {
         }
     }
 
-    onMemoryError(row) {
+    onMemoryError(row: any) {
         const memoryDialog = this.dialogService.confirm(
             helptext.memory_dialog.title,
             helptext.memory_dialog.message,
@@ -229,24 +230,24 @@ export class VMListComponent implements OnDestroy {
             [{ 'overcommit': false }],
             helptext.memory_dialog.tooltip);
 
-        memoryDialog.componentInstance.switchSelectionEmitter.subscribe((res) => {
+        memoryDialog.componentInstance.switchSelectionEmitter.subscribe(() => {
             memoryDialog.componentInstance.isSubmitEnabled = !memoryDialog.componentInstance.isSubmitEnabled;
         });
 
-        memoryDialog.afterClosed().subscribe((dialogRes) => {
+        memoryDialog.afterClosed().subscribe((dialogRes: boolean) => {
             if (dialogRes) {
                 this.doRowAction(row, this.wsMethods.start, [row.id, { "overcommit": true }]);
             }
         });
     }
 
-    doRowAction(row, method, params = [row.id], updateTable = false) {
+    doRowAction(row: any, method: string, params = [row.id], updateTable = false) {
         if (method === 'vm.stop') {
             this.dialogRef = this.dialog.open(EntityJobComponent,
                 { data: { "title": T("Stopping " + row.name) }, disableClose: false });
             this.dialogRef.componentInstance.setCall(method, [params[0], params[1]]);
             this.dialogRef.componentInstance.submit();
-            this.dialogRef.componentInstance.success.subscribe((succ) => {
+            this.dialogRef.componentInstance.success.subscribe(() => {
                 if (updateTable) {
                     this.entityList.getData();
                 } else {
@@ -258,7 +259,7 @@ export class VMListComponent implements OnDestroy {
  After Timeout</i> option to stop the VM.')) , '450px', 'info', true);
             this.checkMemory();
             });
-            this.dialogRef.componentInstance.failure.subscribe((err) => {
+            this.dialogRef.componentInstance.failure.subscribe((err: any) => {
               new EntityUtils().handleWSError(this, err, this.dialogService);
             });
         } else {
@@ -292,7 +293,7 @@ export class VMListComponent implements OnDestroy {
     updateRows(rows: Array<any>): Promise<boolean> {
         return new Promise((resolve, reject) => {
             this.ws.call(this.queryCall).subscribe(
-                (res) => {
+                (res: any[]) => {
                     for (const row of rows) {
                         const targetIndex = _.findIndex(res, function (o) { return o['id'] === row.id });
                         if (targetIndex === -1) {
@@ -313,17 +314,17 @@ export class VMListComponent implements OnDestroy {
         });
     };
 
-    onCheckboxChange(row) {
+    onCheckboxChange(row: any) {
         row.autostart = !row.autostart;
         this.doRowAction(row, this.wsMethods.update, [row.id, { 'autostart': row.autostart }]);
     }
 
-    getActions(row) {
+    getActions(row: any) {
         return [{
             id: "START",
             icon: "play_arrow",
             label: T("Start"),
-            onClick: start_row => {
+            onClick: (start_row: any) => {
                 this.onSliderChange(start_row);
             }
         },
@@ -331,7 +332,7 @@ export class VMListComponent implements OnDestroy {
             id: "RESTART",
             icon: "replay",
             label: T("Restart"),
-            onClick: restart_row => {
+            onClick: (restart_row: any) => {
                 this.doRowAction(restart_row, this.wsMethods.restart);
             }
         },
@@ -339,7 +340,7 @@ export class VMListComponent implements OnDestroy {
             id: "POWER_OFF",
             icon: "power_settings_new",
             label: T("Power Off"),
-            onClick: power_off_row => {
+            onClick: (power_off_row: any) => {
                 this.doRowAction(row, this.wsMethods.poweroff, [power_off_row.id]);
             }
         },
@@ -347,7 +348,7 @@ export class VMListComponent implements OnDestroy {
             id: "STOP",
             icon: "stop",
             label: T("Stop"),
-            onClick: stop_row => {
+            onClick: (stop_row: any) => {
                 this.onSliderChange(stop_row);
             }
         },
@@ -355,7 +356,7 @@ export class VMListComponent implements OnDestroy {
             id: 'EDIT',
             icon: "edit",
             label: T("Edit"),
-            onClick: edit_row => {
+            onClick: (edit_row: any) => {
                 this.router.navigate(new Array("").concat(["vm", "edit", edit_row.id]));
             }
         },
@@ -363,7 +364,7 @@ export class VMListComponent implements OnDestroy {
             id: 'DELETE',
             icon: "delete",
             label: T("Delete"),
-            onClick: delete_row => {
+            onClick: (delete_row: any) => {
                 const parent = this;
                 const conf: DialogFormConfiguration = {
                     title: T('Delete Virtual Machine'),
@@ -397,7 +398,7 @@ export class VMListComponent implements OnDestroy {
                         }
                     ],
                     saveButtonText: T('Delete'),
-                    customSubmit: function (entityDialog) {
+                    customSubmit: function (entityDialog: EntityDialogComponent) {
                         entityDialog.dialogRef.close(true);
                         const params = [
                             delete_row.id,
@@ -416,7 +417,7 @@ export class VMListComponent implements OnDestroy {
             id: 'DEVICES',
             icon: "device_hub",
             label: T("Devices"),
-            onClick: devices_row => {
+            onClick: (devices_row: any) => {
                 this.router.navigate(new Array("").concat(["vm", devices_row.id, "devices", devices_row.name]));
             }
         },
@@ -424,7 +425,7 @@ export class VMListComponent implements OnDestroy {
             id: 'CLONE',
             icon: "filter_none",
             label: T("Clone"),
-            onClick: clone_row => {
+            onClick: (clone_row: any) => {
                 const parent = this;
                 const conf: DialogFormConfiguration = {
                     title: T("Name"),
@@ -438,7 +439,7 @@ export class VMListComponent implements OnDestroy {
                         }
                     ],
                     saveButtonText: T("Clone"),
-                    customSubmit: function (entityDialog) {
+                    customSubmit: function (entityDialog: EntityDialogComponent) {
                         entityDialog.dialogRef.close(true);
                         const params = [clone_row.id];
                         if (entityDialog.formValue.name) {
@@ -454,9 +455,9 @@ export class VMListComponent implements OnDestroy {
             id: 'DISPLAY',
             icon: "settings_ethernet",
             label: T("Display"),
-            onClick: display_vm => {
+            onClick: (display_vm: any) => {
                 this.loader.open();
-                this.ws.call("vm.get_display_devices", [display_vm.id]).subscribe((res) => {
+                this.ws.call("vm.get_display_devices", [display_vm.id]).subscribe((res: any[]) => {
                     this.loader.close();
                     const conf: DialogFormConfiguration = {
                         title: T("Pick a display device to open"),
@@ -469,7 +470,7 @@ export class VMListComponent implements OnDestroy {
                           }],
                         saveButtonText: "Open",
                         parent: this,
-                        customSubmit: (entityDialog) => {
+                        customSubmit: (entityDialog: EntityDialogComponent) => {
                             const display_device = _.find(res, {id: entityDialog.formValue.display_device});
                             if(display_device.attributes.password_configured) {
                                 const pass_conf: DialogFormConfiguration = {
@@ -484,7 +485,7 @@ export class VMListComponent implements OnDestroy {
                                     }],
                                     saveButtonText: T("Open"),
                                     parent: this,
-                                    customSubmit: (passDialog) => {
+                                    customSubmit: (passDialog: any) => {
                                         this.loader.open();
                                         this.ws.call("vm.get_display_web_uri", [display_device.id, passDialog.formValue.password]).subscribe((res) => {
                                             this.loader.close();
@@ -520,7 +521,7 @@ export class VMListComponent implements OnDestroy {
             id: 'SERIAL',
             icon: "keyboard_arrow_right",
             label: T("Serial"),
-            onClick: vm => {
+            onClick: (vm: any) => {
                 this.router.navigate(new Array("").concat(["vm", "serial", vm.id]));
             }
         },
@@ -528,7 +529,7 @@ export class VMListComponent implements OnDestroy {
             id: 'LOGS',
             icon: "content_paste",
             label: T("Download Logs"),
-            onClick: vm => {
+            onClick: (vm: any) => {
                 const path = `/var/log/libvirt/bhyve/${vm.id}_${vm.name}.log`;
                 const filename = `${vm.id}_${vm.name}.log`;
                 this.ws.call('core.download', ['filesystem.get', [path], filename]).subscribe(

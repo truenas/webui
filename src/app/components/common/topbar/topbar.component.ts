@@ -460,7 +460,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   onGoToLegacy(): void {
     this.dialogService.confirm(T("Warning"),
       helptext.legacyUIWarning,
-      true, T("Continue to Legacy UI")).subscribe((res) => {
+      true, T("Continue to Legacy UI")).subscribe((res: boolean) => {
       if (res) {
         window.location.href = '/legacy/';
       }
@@ -835,7 +835,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       saveButtonText: T('Save'),
       custActions: [],
       parent: this,
-      customSubmit: (entityDialog) => {
+      customSubmit: (entityDialog: EntityDialogComponent) => {
         this.loader.open();
         const pwChange = entityDialog.formValue;
         delete pwChange.password_conf;

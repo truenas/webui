@@ -11,9 +11,7 @@ import { T } from "app/translate-marker";
   providers: [IscsiService]
 })
 export class ISCSI implements OnInit {
-
-  @ViewChild('tabGroup', { static: true}) tabGroup;
-
+  
   public activedTab: string = 'configuration';
   public navLinks: Array < any > = [{
       label: T('Target Global Configuration'),

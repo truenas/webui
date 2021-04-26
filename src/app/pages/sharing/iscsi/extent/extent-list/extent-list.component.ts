@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { DialogFormConfiguration } from '../../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityUtils } from '../../../../common/entity/utils';
 
@@ -13,7 +14,7 @@ import { T } from 'app/translate-marker';
 })
 export class ExtentListComponent {
   public tableTitle = 'Extents';
-  protected entityTable;
+  protected entityTable: any;
   protected queryCall = 'iscsi.extent.query';
   protected route_add: string[] = [ 'sharing', 'iscsi', 'extent', 'add' ];
   protected route_add_tooltip: string = "Add Extent";
@@ -52,23 +53,23 @@ export class ExtentListComponent {
     },
   };
 
-  getActions(row) {
+  getActions() {
     return [{
       name: 'edit',
       id: "edit",
       icon: 'edit',
       label: T("Edit"),
-      onClick: (rowinner) => { this.entityTable.doEdit(rowinner.id); },
+      onClick: (rowinner: any) => { this.entityTable.doEdit(rowinner.id); },
     }, {
       name: 'delete',
       id: "delete",
       icon: 'delete',
       label: T("Delete"),
-      onClick: (rowinner) => { this.doDelete(rowinner); },
+      onClick: (rowinner: any) => { this.doDelete(rowinner); },
     },]
   }
 
-  doDelete(row) {
+  doDelete(row: any) {
     const id = row.id;
     const self = this;
     const entityTable = this.entityTable;
@@ -97,17 +98,17 @@ export class ExtentListComponent {
         }
       ],
       saveButtonText: T("Delete"),
-      customSubmit: function (entityDialog) {
+      customSubmit: function (entityDialog: EntityDialogComponent) {
         const value = entityDialog.formValue;
         entityTable.loader.open();
         entityTable.loaderOpen = true;
         entityTable.ws.call(self.wsDelete, [id, value.remove, value.force]).subscribe(
-          (resinner) => {
+          () => {
             entityDialog.dialogRef.close(true);
             entityTable.getData();
             entityTable.excuteDeletion = true;
           },
-          (err) => {
+          (err: any) => {
             entityTable.loader.close();
             new EntityUtils().handleWSError(entityTable, err, entityTable.dialogService);
           }

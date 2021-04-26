@@ -1,6 +1,7 @@
 
 
 import { Injectable } from '@angular/core';
+import { Option } from 'app/interfaces/option.interface';
 import { map } from 'rxjs/operators';
 import { RestService } from './rest.service';
 import { WebSocketService } from './ws.service';
@@ -76,7 +77,7 @@ export class UserService {
     return group;
   }
 
-  async shellChoices(userId?: number): Promise<{ label: string, value: string}[]> {
+  async shellChoices(userId?: number): Promise<Option[]> {
     return await this.ws
       .call("user.shell_choices", userId ? [userId] : [])
       .pipe(

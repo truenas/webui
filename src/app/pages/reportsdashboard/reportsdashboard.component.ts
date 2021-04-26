@@ -1,6 +1,9 @@
 import { Component, ElementRef, OnInit, OnDestroy, AfterViewInit, EventEmitter, Output, ViewChild } from '@angular/core';
+import { MatOption } from '@angular/material/core';
+import { MatListOption } from '@angular/material/list';
 import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
+import { Option } from 'app/interfaces/option.interface';
 import * as _ from 'lodash';
 import { Subject, BehaviorSubject, Subscription } from 'rxjs';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
@@ -43,7 +46,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
   @ViewChild('container', {static:true}) container:ElementRef;
   public scrollContainer:HTMLElement;
   public scrolledIndex: number = 0;
-  public isFooterConsoleOpen;
+  public isFooterConsoleOpen: boolean;
 
   public retroLogo: string;
 
@@ -66,20 +69,20 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
   // Report Builder Options (entity-form-embedded)
   public target: Subject<CoreEvent> = new Subject();
-  public values = [];
+  public values: any[] = [];
   public toolbarConfig: ToolbarConfig;
   protected isEntity: boolean = true;
-  public diskDevices = [];
-  public diskMetrics = [];
-  public categoryDevices = [];
-  public categoryMetrics = [];
+  public diskDevices: any[] = [];
+  public diskMetrics: any[] = [];
+  public categoryDevices: any[] = [];
+  public categoryMetrics: any[] = [];
   public saveSubmitText = T("Generate Reports");
   public actionButtonsAlign = "left";
   public fieldConfig:FieldConfig[] = [];
   public fieldSets: FieldSet[];
   public diskReportConfigReady: boolean = false;
   private getAdvancedConfig: Subscription;
-  public actionsConfig;
+  public actionsConfig: any;
   public formComponent: ReportsConfigComponent;
 
   constructor(private erdService: ErdService,
@@ -122,7 +125,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
     this.core.register({observerClass: this, eventName:"ReportingGraphs"}).subscribe((evt:CoreEvent) => {
       if (evt.data) {
-        let allReports = evt.data.map((report) => {
+        let allReports: any[] = evt.data.map((report: any) => {
           let list = [];
           if(report.identifiers){
             for(let i = 0; i < report.identifiers.length; i++){
@@ -150,10 +153,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
   diskQueries(){
 
-    this.ws.call('multipath.query').subscribe((multipath_res) => {
-      let multipathDisks = [];
+    this.ws.call('multipath.query').subscribe((multipath_res: any[]) => {
+      let multipathDisks: any[] = [];
       multipath_res.forEach((m) => {
-        const children = m.children.map((child) => {
+        const children = m.children.map((child: any) => {
           return {disk:m.name.replace('multipath/', ''), name: child.name, status: child.status};
         });
         multipathDisks = multipathDisks.concat(children);
@@ -182,7 +185,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
     this.core.emit({ name:"GlobalActions", data: this.actionsConfig, sender: this });
   }
 
-  getVisibility(key){
+  getVisibility(key: number){
     const test = this.visibleReports.indexOf(key);
     return test == -1 ? false : true;
   }
@@ -191,14 +194,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
     return this.visibleReports;
   }
 
-  nextBatch(evt, offset){
+  nextBatch(evt: number){
     this.scrolledIndex = evt;
   }
-
-  trackByIndex(i){
-    return i;
-  }
-
 
   generateTabs(){
       let labels = [T('CPU'), T('Disk'), T('Memory'), T('Network'), T('NFS'), T('Partition'), T('System'), T('Target'), T('ZFS')];
@@ -262,7 +260,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
     if(tab.label == 'Disk'){ this.diskReportBuilderSetup() }
   }
 
-  navigateToTab(tabName){
+  navigateToTab(tabName: string){
     const link = '/reportsdashboard/' + tabName.toLowerCase();
     this.router.navigate([link]);
   }
@@ -320,7 +318,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
   flattenReports(list:Report[]){
     // Based on identifiers, create a single dimensional array of reports to render
-    let result = [];
+    let result: any[] = [];
     list.forEach((report) => {
       // Without identifiers
 
@@ -418,7 +416,7 @@ diskReportBuilderSetup(){
   }
 
   generateValues(){
-    let metrics = [];
+    let metrics: Option[] = [];
 
     this.diskReports.forEach((item) => {
       let formatted = item.title.replace(/ \(.*\)/, '');// remove placeholders for identifiers eg. '({identifier})'
@@ -471,7 +469,7 @@ diskReportBuilderSetup(){
       metric = metric.map((v) => v.value);
     }
 
-    let visible = [];
+    let visible: number[] = [];
     this.activeReports.forEach((item, index) => {
       const deviceMatch = device.indexOf(item.identifiers[0]) !== -1;
       const metricMatch = metric.indexOf(item.name) !== -1;
@@ -485,13 +483,13 @@ diskReportBuilderSetup(){
     this.visibleReports = visible;
   }
 
-  parseDisks(res,multipathDisks){
+  parseDisks(res: any[], multipathDisks: any[]){
     let uniqueNames = res.filter((disk) => !disk.devname.includes('multipath'))
       .map(d => d.devname);
 
     let activeDisks = multipathDisks.filter((disk) => disk.status == 'ACTIVE');
 
-    let multipathTitles = {};
+    let multipathTitles: any = {};
 
     let multipathNames = activeDisks.map((disk) => {
       let label = disk.disk; //disk.name + ' (multipath : ' + disk.disk  + ')';

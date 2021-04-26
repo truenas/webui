@@ -17,7 +17,7 @@ import { forbiddenValues } from '../../../common/entity/entity-form/validators/f
 })
 export class GroupFormComponent {
   protected isEntity: boolean = true;
-  protected namesInUse = [];
+  protected namesInUse: string[] = [];
   protected queryCall = 'group.query';
   protected addCall = 'group.create';
   protected editCall = 'group.update';
@@ -81,12 +81,12 @@ export class GroupFormComponent {
   private bsdgrp_gid: any;
   private allow: any;
 
-  constructor(protected router: Router, 
-    protected ws: WebSocketService, 
+  constructor(protected router: Router,
+    protected ws: WebSocketService,
     private modalService: ModalService) {
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     data['name'] = data['group'];
     this.getNamesInUse(data['name']);
     return data;
@@ -96,22 +96,22 @@ export class GroupFormComponent {
     this.ws.call('group.query').subscribe(
       (res)=>{
         if (currentName) {
-          _.remove(res, function(group) {
+          _.remove(res, function(group: any) {
             return group['group'] == currentName;
           });
         }
-        this.namesInUse.push(...res.map(group => group.group));
+        this.namesInUse.push(...res.map((group: any) => group.group));
     });
   }
 
   afterInit(entityForm: any) {
     this.ws.call('user.query',[]).subscribe((res) => {
-      this.users = res.map((u) =>{
+      this.users = res.map((u: any) =>{
         let user = Object.assign({}, u);
         user.gid = user.group.bsdgrp_gid;
         return user;
       });
-  
+
       let gid = 999;
       this.bsdgrp_gid = _.find(this.fieldSets[0].config, { name: "gid" });
       this.users.forEach((item, i) => {
@@ -131,9 +131,9 @@ export class GroupFormComponent {
         this.getNamesInUse();
         this.ws.call('group.get_next_gid').subscribe((res)=>{
           entityForm.formGroup.controls['gid'].setValue(res);
-        })    
+        })
       }
-      
+
 
     });
   }

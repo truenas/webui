@@ -124,7 +124,7 @@ export class OpenvpnClientComponent {
   constructor(protected services: ServicesService) { }
 
   afterInit(entityEdit: any) {
-    entityEdit.submitFunction = body => this.services.updateOpenVPN('openvpn.client.update', body); 
+    entityEdit.submitFunction = (body: any) => this.services.updateOpenVPN('openvpn.client.update', body);
 
     this.services.getOpenVPNClientAuthAlgorithmChoices().subscribe((res) => {
       const config = this.fieldConfig.find(c => c.name === 'authentication_algorithm');
@@ -140,13 +140,13 @@ export class OpenvpnClientComponent {
           {label : `${item} ${res[item]}`, value : item});
       };
     });
-    this.services.getCerts().subscribe((res) => {
+    this.services.getCerts().subscribe((res: any[]) => {
       const config = this.fieldConfig.find(c => c.name === 'client_certificate');
       res.forEach((item) => {
         config.options.push({label: item.name, value: item.id})
       })
     });
-    this.services.getCAs().subscribe((res) => {
+    this.services.getCAs().subscribe((res: any[]) => {
       const config = this.fieldConfig.find(c => c.name === 'root_ca');
       res.forEach((item) => {
         config.options.push({label: item.name, value: item.id})
@@ -162,8 +162,8 @@ export class OpenvpnClientComponent {
 
     entityEdit.formGroup.controls['root_ca'].valueChanges.subscribe(() => {
       cert['hasErrors'] = false;
-      ca['hasErrors'] = false;      
-      entityEdit.formGroup.controls['client_certificate'].updateValueAndValidity();      
+      ca['hasErrors'] = false;
+      entityEdit.formGroup.controls['client_certificate'].updateValueAndValidity();
     })
   }
 }

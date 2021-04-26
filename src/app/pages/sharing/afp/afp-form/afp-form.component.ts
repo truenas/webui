@@ -3,6 +3,7 @@ import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptext_sharing_afp, shared } from 'app/helptext/sharing';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
@@ -230,7 +231,7 @@ export class AFPFormComponent implements OnDestroy {
           name: 'comment',
           placeholder: helptext_sharing_afp.placeholder_comment,
           tooltip: helptext_sharing_afp.tooltip_comment
-        },   
+        },
         {
           type: 'input',
           name: 'timemachine_quota',
@@ -327,7 +328,7 @@ export class AFPFormComponent implements OnDestroy {
       .pipe(
         map(([shares, pm]) => {
           const pk = parseInt(pm.get("pk"), 10);
-          return shares
+          return (shares as any[])
             .filter(share => isNaN(pk) || share.id !== pk)
             .map(share => share.name);
         })
@@ -374,12 +375,12 @@ export class AFPFormComponent implements OnDestroy {
     this.afp_timemachine_quota = this.fieldSets.config('timemachine_quota');
     this.afp_timemachine = entityForm.formGroup.controls['timemachine'];
     this.afp_timemachine_quota['isHidden'] = !this.afp_timemachine.value;
-    this.afp_timemachine_subscription = this.afp_timemachine.valueChanges.subscribe((value) => {
+    this.afp_timemachine_subscription = this.afp_timemachine.valueChanges.subscribe((value: any) => {
       this.afp_timemachine_quota['isHidden'] = !value;
     });
 
     /*  If name is empty, auto-populate after path selection */
-    entityForm.formGroup.controls['path'].valueChanges.subscribe(path => {
+    entityForm.formGroup.controls['path'].valueChanges.subscribe((path: any) => {
       const nameControl = entityForm.formGroup.controls['name'];
       if (path && !nameControl.value) {
         nameControl.setValue(path.split('/').pop());
@@ -390,30 +391,30 @@ export class AFPFormComponent implements OnDestroy {
   ngOnDestroy() {
     this.afp_timemachine_subscription.unsubscribe();
   }
-  
-  resourceTransformIncomingRestData(share) {
-    share.allow = share.allow.map(name => ({ name }));
-    share.deny = share.deny.map(name => ({ name }));
-    share.ro = share.ro.map(name => ({ name }));
-    share.rw = share.rw.map(name => ({ name }));
-    share.hostsallow = share.hostsallow.map(address => ({ address }));
-    share.hostsdeny = share.hostsdeny.map(address => ({ address }));
+
+  resourceTransformIncomingRestData(share: any) {
+    share.allow = share.allow.map((name: any) => ({ name }));
+    share.deny = share.deny.map((name: any) => ({ name }));
+    share.ro = share.ro.map((name: any) => ({ name }));
+    share.rw = share.rw.map((name: any) => ({ name }));
+    share.hostsallow = share.hostsallow.map((address: any) => ({ address }));
+    share.hostsdeny = share.hostsdeny.map((address: any) => ({ address }));
 
     return share;
   }
 
-  clean(share) {
-    share.allow = share.allow.filter(n => !!n.name).map(name => name.name);
-    share.deny = share.deny.filter(n => !!n.name).map(name => name.name);
-    share.ro = share.ro.filter(n => !!n.name).map(name => name.name);
-    share.rw = share.rw.filter(n => !!n.name).map(name => name.name);
-    share.hostsallow = share.hostsallow.filter(a => !!a.address).map(address => address.address);
-    share.hostsdeny = share.hostsdeny.filter(a => !!a.address).map(address => address.address);
+  clean(share: any) {
+    share.allow = (share.allow as any[]).filter(n => !!n.name).map(name => name.name);
+    share.deny = (share.deny as any[]).filter(n => !!n.name).map(name => name.name);
+    share.ro = (share.ro as any[]).filter(n => !!n.name).map(name => name.name);
+    share.rw = (share.rw as any[]).filter(n => !!n.name).map(name => name.name);
+    share.hostsallow = (share.hostsallow as any[]).filter(a => !!a.address).map(address => address.address);
+    share.hostsdeny = (share.hostsdeny as any[]).filter(a => !!a.address).map(address => address.address);
 
     return share;
   }
 
-  afterSave(entityForm) {
+  afterSave(entityForm: any) {
     this.ws.call('service.query', []).subscribe((res) => {
       const service = _.find(res, {"service": "afp"});
       if (service['enable']) {
@@ -421,13 +422,13 @@ export class AFPFormComponent implements OnDestroy {
           this.route_success));
       } else {
           this.dialog.confirm(shared.dialog_title,
-          shared.dialog_message, true, shared.dialog_button).subscribe((dialogRes) => {
+          shared.dialog_message, true, shared.dialog_button).subscribe((dialogRes: boolean) => {
             if (dialogRes) {
               entityForm.loader.open();
               this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
                 this.ws.call('service.start', [service.service]).subscribe((startRes) => {
                   entityForm.loader.close();
-                  this.dialog.Info(T('AFP') + shared.dialog_started_title, 
+                  this.dialog.Info(T('AFP') + shared.dialog_started_title,
                     T('The AFP') + shared.dialog_started_message, '250px').subscribe(() => {
                       this.router.navigate(new Array('/').concat(
                         this.route_success));
@@ -481,7 +482,7 @@ export class AFPFormComponent implements OnDestroy {
         }
       ],
       parent: this,
-      customSubmit: (entityDialog) => {
+      customSubmit: (entityDialog: EntityDialogComponent) => {
         entityDialog.dialogRef.close();
         this.router.navigate(['sharing', 'smb', 'add']);
       }

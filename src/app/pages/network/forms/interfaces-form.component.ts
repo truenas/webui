@@ -278,10 +278,10 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   private lagg_fields = ['lag_protocol', 'lag_ports'];
   private bridge_fields = ['bridge_members'];
   private failover_fields = ['failover_critical', 'failover_group', 'failover_vhid'];
-  private vlan_fieldset;
-  private lag_fieldset;
-  private bridge_fieldset;
-  private failover_fieldset;
+  private vlan_fieldset: FieldSet;
+  private lag_fieldset: FieldSet;
+  private bridge_fieldset: FieldSet;
+  private failover_fieldset: FieldSet;
   private vlan_pcp: any;
   private vlan_pint: any;
   private lag_ports: any;
@@ -308,7 +308,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   }
 
   public title: string;
-  public afterModalFormClosed;
+  public afterModalFormClosed: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected networkService: NetworkService, protected dialog: DialogService,
@@ -397,9 +397,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     }
     this.aliases_fc = _.find(this.fieldConfig, { "name": "aliases" });
 
-    this.offload_warning_sub = entityForm.formGroup.controls['disable_offload_capabilities'].valueChanges.subscribe(res => {
+    this.offload_warning_sub = entityForm.formGroup.controls['disable_offload_capabilities'].valueChanges.subscribe((res: any) => {
       if (res && !this.offload_warned) {
-        this.dialog.confirm(helptext.disable_offload_capabilities_warning_title, helptext.disable_offload_capabilities_warning_msg).subscribe(confirm => {
+        this.dialog.confirm(helptext.disable_offload_capabilities_warning_title, helptext.disable_offload_capabilities_warning_msg).subscribe((confirm: boolean) => {
           if (confirm) {
             this.offload_warned = true;
           } else {
@@ -421,7 +421,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           entityForm.setDisabled(this.failover_fields[i], !is_ha, !is_ha);
         }
         if (is_ha) {
-          this.aliases_subscription = this.entityForm.formGroup.controls['aliases'].valueChanges.subscribe(res => {
+          this.aliases_subscription = this.entityForm.formGroup.controls['aliases'].valueChanges.subscribe((res: any) => {
             let v6_found = false;
             let mismatch_found = false;
             for (let i = 0; i < res.length; i++) {
@@ -457,7 +457,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     }
     if (entityForm.isNew) {
       this.type_fg = entityForm.formGroup.controls['type'];
-      this.type_subscription = this.type_fg.valueChanges.subscribe((type) => {
+      this.type_subscription = this.type_fg.valueChanges.subscribe((type: any) => {
         this.setType(type);
       });
       this.networkService.getVlanParentInterfaceChoices().subscribe((res) => {
@@ -486,7 +486,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     }
   }
 
-  clean(data) {
+  clean(data: any) {
     if (data['mtu'] === '') {
       data['mtu'] = 1500;
     }
@@ -533,9 +533,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     return data;
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     const aliases = data['aliases'];
-    const a = [];
+    const a: any[] = [];
     const failover_aliases = data['failover_aliases'];
     const failover_virtual_aliases = data['failover_virtual_aliases'];
     for (let i = 0; i < aliases.length; i++) {

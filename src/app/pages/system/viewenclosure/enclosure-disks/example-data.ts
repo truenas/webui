@@ -2,27 +2,27 @@
  DISKQUERY RESPONSE...
 
 {
-  "identifier": "{serial_lunid}K5H5G09A_5000cca25e4247cc", 
- "name": "da3", 
- "subsystem": "da", 
- "number": 3, 
- "serial": "K5H5G09A", 
- "size": "2000398934016", 
- "multipath_name": "", 
- "multipath_member": "", 
- "description": "", 
- "transfermode": "Auto", 
- "hddstandby": "ALWAYS ON", 
- "advpowermgmt": "DISABLED", 
- "acousticlevel": "DISABLED", 
- "togglesmart": true, 
- "smartoptions": "", 
- "expiretime": null, 
+  "identifier": "{serial_lunid}K5H5G09A_5000cca25e4247cc",
+ "name": "da3",
+ "subsystem": "da",
+ "number": 3,
+ "serial": "K5H5G09A",
+ "size": "2000398934016",
+ "multipath_name": "",
+ "multipath_member": "",
+ "description": "",
+ "transfermode": "Auto",
+ "hddstandby": "ALWAYS ON",
+ "advpowermgmt": "DISABLED",
+ "acousticlevel": "DISABLED",
+ "togglesmart": true,
+ "smartoptions": "",
+ "expiretime": null,
  "enclosure_num": 0,
- "enclosure_slot": 11, 
- "passwd": "", 
+ "enclosure_slot": 11,
+ "passwd": "",
  "devname": "da3"
-} 
+}
 
  */
 
@@ -35,7 +35,7 @@ export class ExampleData {
 
   private templates: Template[] = [];
 
-  constructor() { 
+  constructor() {
   }
 
   addEnclosure(slots: number){
@@ -55,27 +55,27 @@ export class ExampleData {
 
       for(let i  = 0; i < total; i++){
         let disk = {
-         "identifier": "{serial_lunid}K5H5G09A_5000cca25e4247cc", 
-         "name": "da" + tally, 
-         "subsystem": "da", 
-         "number": tally, 
-         "serial": "K5H5G09A", 
-         "size": "2000398934016", 
-         "multipath_name": "", 
-         "multipath_member": "", 
-         "description": "", 
-         "transfermode": "Auto", 
-         "hddstandby": "ALWAYS ON", 
-         "advpowermgmt": "DISABLED", 
-         "acousticlevel": "DISABLED", 
-         "togglesmart": true, 
-         "smartoptions": "", 
-         "expiretime": null, 
+         "identifier": "{serial_lunid}K5H5G09A_5000cca25e4247cc",
+         "name": "da" + tally,
+         "subsystem": "da",
+         "number": tally,
+         "serial": "K5H5G09A",
+         "size": "2000398934016",
+         "multipath_name": "",
+         "multipath_member": "",
+         "description": "",
+         "transfermode": "Auto",
+         "hddstandby": "ALWAYS ON",
+         "advpowermgmt": "DISABLED",
+         "acousticlevel": "DISABLED",
+         "togglesmart": true,
+         "smartoptions": "",
+         "expiretime": null as string,
          "enclosure_num": index,
-         "enclosure_slot": i, 
-         "passwd": "", 
+         "enclosure_slot": i,
+         "passwd": "",
          "devname": "da" + tally
-        } 
+        }
 
         result.push(disk);
         tally++
@@ -87,6 +87,6 @@ export class ExampleData {
     return result;
 
   }
-  
+
 
 }

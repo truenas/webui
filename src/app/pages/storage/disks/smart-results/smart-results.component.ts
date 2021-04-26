@@ -12,7 +12,7 @@ export class SmartResultsComponent {
 
     public title: string;
     protected queryCall = "smart.test.results";
-    protected queryCallOption = [];
+    protected queryCallOption: any = [];
 
     public columns: Array<any> = [
         { name: T('ID'), prop: 'num', always_display: true },

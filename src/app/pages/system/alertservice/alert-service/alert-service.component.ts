@@ -707,7 +707,7 @@ export class AlertServiceComponent {
     });
   }
 
-  afterInit(entityForm) {
+  afterInit(entityForm: any) {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
   }
@@ -725,7 +725,7 @@ export class AlertServiceComponent {
     }
   }
 
-  generateTelegramChatIdsPayload(data, i) {
+  generateTelegramChatIdsPayload(data: any, i: string) {
     const wrongChatIds: string[] = [];
     // Telegram chat IDs must be an array of integer
     const arrayChatIds: [] = data[i].map((strChatId: string) => {
@@ -743,8 +743,8 @@ export class AlertServiceComponent {
     return Array.from(new Set(arrayChatIds));
   }
 
-  generatePayload(data) {
-    const payload = { attributes: {} };
+  generatePayload(data: any) {
+    const payload: any = { attributes: {} };
 
     for (const i in data) {
       if (i === 'name' || i === 'type' || i === 'enabled' || i === 'level') {
@@ -761,7 +761,7 @@ export class AlertServiceComponent {
     return payload;
   }
 
-  customSubmit(value) {
+  customSubmit(value: any) {
     this.entityFormService.clearFormError(this.fieldConfig);
     const payload = this.generatePayload(value);
 
@@ -789,7 +789,7 @@ export class AlertServiceComponent {
     }
   }
 
-  getErrorField(field) {
+  getErrorField(field: string) {
     return _.find(this.fieldConfig, { 'name': this.entityForm.formGroup.controls['type'].value + '-' + field });
   }
 }

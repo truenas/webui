@@ -108,7 +108,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
       })
     }
 
-    this.ws.call('pool.query').subscribe((pools: any)=>{
+    this.ws.call('pool.query').subscribe((pools: any[])=>{
       if(pools){
         pools.forEach(pool => {
           if (pool.is_decrypted){
@@ -127,7 +127,7 @@ export class ManualUpdateComponent extends ViewControllerComponent {
         ures[0].attributes.preferences['rebootAfterManualUpdate'] = false
       }
       entityForm.formGroup.controls['rebootAfterManualUpdate'].setValue(ures[0].attributes.preferences['rebootAfterManualUpdate']);
-      entityForm.formGroup.controls['rebootAfterManualUpdate'].valueChanges.subscribe((form_res)=>{
+      entityForm.formGroup.controls['rebootAfterManualUpdate'].valueChanges.subscribe((form_res: any)=>{
         ures[0].attributes.preferences['rebootAfterManualUpdate'] = form_res;
         this.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).subscribe((res)=>{
         })

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core'
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 
 import * as myIP from 'what-is-my-ip-address';
 
@@ -36,7 +37,7 @@ export class PluginsComponent {
   protected wsMultiDelete = 'core.bulk';
   protected entityList: any;
 
-  public availablePools: any;
+  public availablePools: any[];
   public activatedPool: any;
 
   public columns: Array<any> = [
@@ -59,7 +60,7 @@ export class PluginsComponent {
       title: 'Plugin',
       key_props: ['name'],
       id_prop: 'name',
-      doubleConfirm: (item) => {
+      doubleConfirm: (item: any) => {
         return this.dialogService.doubleConfirm(
           T('Verify Deletion of ') + item.name + T(' Plugin'),
           T('Deleting the <b>') + item.name + T('</b> plugin deletes all data and snapshots stored with it.'),
@@ -71,8 +72,8 @@ export class PluginsComponent {
   };
 
   protected cardHeaderComponent = AvailablePluginsComponent;
-  protected availablePlugins;
-  protected allPlugins;
+  protected availablePlugins: any[];
+  protected allPlugins: any[];
 
   public multiActions: Array<any> = [
     {
@@ -81,7 +82,7 @@ export class PluginsComponent {
       icon: "play_arrow",
       enable: true,
       ttpos: "above", // tooltip position
-      onClick: (selected) => {
+      onClick: (selected: any) => {
         const selectedJails = this.getSelectedNames(selected);
         this.loader.open();
         this.entityList.busy =
@@ -108,7 +109,7 @@ export class PluginsComponent {
       icon: "stop",
       enable: true,
       ttpos: "above",
-      onClick: (selected) => {
+      onClick: (selected: any) => {
         const selectedJails = this.getSelectedNames(selected);
         this.loader.open();
         this.entityList.busy =
@@ -134,7 +135,7 @@ export class PluginsComponent {
       icon: "update",
       enable: true,
       ttpos: "above",
-      onClick: (selected) => {
+      onClick: (selected: any) => {
         const selectedJails = this.getSelectedNames(selected);
         this.dialogService.Info(helptext.multi_update_dialog.title, helptext.multi_update_dialog.content);
         this.entityList.busy =
@@ -232,7 +233,7 @@ export class PluginsComponent {
       true,
       jailHelptext.noPoolDialog.buttonMsg);
 
-      dialogRef.subscribe((res) => {
+      dialogRef.subscribe((res: boolean) => {
         if (res) {
           this.router.navigate(new Array('/').concat(['storage', 'pools', 'manager']));
         }
@@ -260,7 +261,7 @@ export class PluginsComponent {
         }
       ],
       saveButtonText: jailHelptext.activatePoolDialog.saveButtonText,
-      customSubmit: function (entityDialog) {
+      customSubmit: function (entityDialog: EntityDialogComponent) {
         const value = entityDialog.formValue;
         self.entityList.loader.open();
         self.ws.call('jail.activate', [value['selectedPool']]).subscribe(
@@ -285,7 +286,7 @@ export class PluginsComponent {
     }
   }
 
-  prerequisiteFailedHandler(entityList) {
+  prerequisiteFailedHandler(entityList: any) {
     this.entityList = entityList;
   }
 
@@ -306,7 +307,7 @@ export class PluginsComponent {
         if (entityList.rows[i][ipType] != null) {
           entityList.rows[i][ipType] = entityList.rows[i][ipType]
             .split(',')
-            .map(function (e) {
+            .map(function (e: any) {
               return _.split(e, '|').length > 1 ? _.split(e, '|')[1] : e;
             })
             .join(',');
@@ -315,7 +316,7 @@ export class PluginsComponent {
     };
   }
 
-  getSelectedNames(selectedJails) {
+  getSelectedNames(selectedJails: any[]) {
     const selected: any = [];
     for (const i in selectedJails) {
       selected.push([selectedJails[i]['name']]);
@@ -328,14 +329,14 @@ export class PluginsComponent {
       this.ws.call('plugin.query').subscribe(
         (res) => {
             for (const row of rows) {
-              const targetIndex = _.findIndex(res, function (o) { return o['name'] === row.name });
+              const targetIndex = _.findIndex(res, function (o: any) { return o['name'] === row.name });
               if (targetIndex === -1) {
                 reject(false);
               }
               for (const i in row) {
                 row[i] = ((i === 'ip4' || i === 'ip6') && res[targetIndex][i] != null) ? res[targetIndex][i]
                   .split(',')
-                  .map(function (e) {
+                  .map(function (e: any) {
                     return _.split(e, '|').length > 1 ? _.split(e, '|')[1] : e;
                   })
                   .join(',') : (i === 'boot' ? (res[targetIndex][i] === 'on' ? true : false) : res[targetIndex][i]);
@@ -372,13 +373,13 @@ export class PluginsComponent {
   }
 
 
-  getActions(parentrow) {
+  getActions(parentrow: any) {
     const actions = [{
       name: parentrow.name,
       id: "start",
       label: T("START"),
       icon: 'play_arrow',
-      onClick: (row) => {
+      onClick: (row: any) => {
         this.loader.open();
         this.ws.job('jail.start', [row.name]).subscribe(
           (res) => {
@@ -397,7 +398,7 @@ export class PluginsComponent {
       id: "restart",
       label: T("RESTART"),
       icon: 'replay',
-      onClick: (row) => {
+      onClick: (row: any) => {
         this.loader.open();
         this.ws.job('jail.restart', [row.name]).subscribe(
           (res) => {
@@ -416,7 +417,7 @@ export class PluginsComponent {
       id: "stop",
       label: T("STOP"),
       icon: 'stop',
-      onClick: (row) => {
+      onClick: (row: any) => {
         this.loader.open();
         this.ws.job('jail.stop', [row.name]).subscribe(
           (res) => {
@@ -435,12 +436,12 @@ export class PluginsComponent {
       id: "update",
       label: T("UPDATE"),
       icon: 'update',
-      onClick: (row) => {
+      onClick: (row: any) => {
         const dialogRef = this.matDialog.open(EntityJobComponent, { data: { "title": T("Updating Plugin") }, disableClose: true });
         dialogRef.componentInstance.disableProgressValue(true);
         dialogRef.componentInstance.setCall('jail.update_to_latest_patch', [row.name]);
         dialogRef.componentInstance.submit();
-        dialogRef.componentInstance.success.subscribe((res) => {
+        dialogRef.componentInstance.success.subscribe(() => {
           dialogRef.close(true);
           this.updateRows([row]);
           this.dialogService.Info(T('Plugin Updated'), T("Plugin ") + row.name + T(" updated."));
@@ -452,7 +453,7 @@ export class PluginsComponent {
       icon: 'device_hub',
       id: "mount",
       label: T("Mount points"),
-      onClick: (row) => {
+      onClick: (row: any) => {
         this.router.navigate(
           new Array('').concat(["jails", "storage", row.name]));
       }
@@ -462,7 +463,7 @@ export class PluginsComponent {
       id: "management",
       label: T("MANAGE"),
       icon: 'settings',
-      onClick: (row) => {
+      onClick: (row: any) => {
         this.gotoAdminPortal(row);
       }
     },
@@ -471,7 +472,7 @@ export class PluginsComponent {
       id: "delete",
       label: T("UNINSTALL"),
       icon: 'delete',
-      onClick: (row) => {
+      onClick: (row: any) => {
         this.entityList.doDelete(row);
       }
     }];
@@ -555,11 +556,11 @@ export class PluginsComponent {
     document.body.removeChild(form);
   }
 
-  wsDeleteParams(row, id) {
+  wsDeleteParams(row: any, id: string) {
     return row.state === 'up' ? [id, {force: true}] : [id];
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any[]) {
     return data.map(plugin =>  {
       plugin['boot'] = plugin['boot'] === 'on' ? true : false;
       plugin['icon'] = _.find(this.allPlugins, {plugin: plugin.plugin}) ?
@@ -568,7 +569,7 @@ export class PluginsComponent {
     });
   }
 
-  onCheckboxChange(row) {
+  onCheckboxChange(row: any) {
     this.loader.open();
     row.boot = !row.boot;
     this.ws.call('plugin.update', [row.id, {'boot': row.boot ? 'on' : 'off'}] )
@@ -585,7 +586,7 @@ export class PluginsComponent {
       });
   }
 
-  gotoAdminPortal(row) {
+  gotoAdminPortal(row: any) {
     if (row.admin_portals.length > 1) {
       const conf: DialogFormConfiguration = {
         title: helptext.portal_dialog.title,
@@ -594,12 +595,12 @@ export class PluginsComponent {
             type: 'select',
             name: 'admin_portal',
             placeholder: helptext.portal_dialog.admin_portal_placeholder,
-            options: row.admin_portals ? row.admin_portals.map(item => {return {label: item, value: item}}) : [],
+            options: row.admin_portals ? row.admin_portals.map((item: any) => {return {label: item, value: item}}) : [],
             value: row.admin_portals[0]
           }
         ],
         saveButtonText: helptext.portal_dialog.saveButtonText,
-        customSubmit: function (entityDialog) {
+        customSubmit: function (entityDialog: EntityDialogComponent) {
           const value = entityDialog.formValue;
           window.open(value.admin_portal);
           entityDialog.dialogRef.close(true);
@@ -611,7 +612,7 @@ export class PluginsComponent {
     }
   }
 
-  iconAction(row) {
+  iconAction(row: any) {
     if (row.state === "up" && row.admin_portals.length > 0) {
       this.gotoAdminPortal(row);
     }

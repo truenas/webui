@@ -31,13 +31,13 @@ export class CertificateAddComponent {
   protected addWsCall = "certificate.create";
   protected dialogRef: any;
   private entityForm: any;
-  private CSRList = [];
+  private CSRList: any[] = [];
   private title = helptext_system_certificates.add.title;
   private getType = new Subscription;
   private type: any;
   public hideCancel = true;
   private isLinear = true;
-  private summary = {};
+  private summary: any = {};
 
   entityWizard: any;
   private currentStep = 0;
@@ -648,7 +648,7 @@ export class CertificateAddComponent {
 
   preInit(entityWizard: EntityWizardComponent) {
     this.entityWizard = entityWizard;
-    this.systemGeneralService.getUnsignedCAs().subscribe((res) => {
+    this.systemGeneralService.getUnsignedCAs().subscribe((res: any[]) => {
       this.signedby = this.getTarget('signedby');
       res.forEach((item) => {
         this.signedby.options.push(
@@ -672,7 +672,7 @@ export class CertificateAddComponent {
       };
     });
 
-    this.ws.call('certificate.query').subscribe((res) => {
+    this.ws.call('certificate.query').subscribe((res: any[]) => {
       this.csrlist = this.getTarget('csrlist');
       res.forEach((item) => {
         if (item.CSR !== null) {
@@ -699,14 +699,14 @@ export class CertificateAddComponent {
     });
   }
 
-  customNext(stepper) {
+  customNext(stepper: any) {
     stepper.next();
     this.currentStep = stepper._selectedIndex;
   }
 
-  getSummaryValueLabel(fieldConfig, value) {
+  getSummaryValueLabel(fieldConfig: any, value: any) {
     if (fieldConfig.type == 'select') {
-      const option = fieldConfig.options.find(option => option.value == value);
+      const option = fieldConfig.options.find((option: any) => option.value == value);
       if (option) {
         value = option.label;
       }
@@ -715,7 +715,7 @@ export class CertificateAddComponent {
     return value;
   }
 
-  addToSummary(fieldName) {
+  addToSummary(fieldName: string) {
     const fieldConfig = this.getTarget(fieldName);
     if (!fieldConfig.isHidden) {
       const fieldName = fieldConfig.name;
@@ -728,7 +728,7 @@ export class CertificateAddComponent {
     }
   }
 
-  removeFromSummary(fieldName) {
+  removeFromSummary(fieldName: string) {
     const fieldConfig = this.getTarget(fieldName);
     delete this.summary[fieldConfig.placeholder];
   }
@@ -912,7 +912,7 @@ export class CertificateAddComponent {
     this.setSummary();
   }
 
-  loadProfiles(value, reset?) {
+  loadProfiles(value: any, reset?: any) {
     if (value) {
       Object.keys(value).forEach(item => {
         if (item === 'cert_extensions') {
@@ -954,7 +954,7 @@ export class CertificateAddComponent {
     }
   }
 
-  getStep(fieldName: any) {
+  getStep(fieldName: string) {
 
     const stepNumber = this.wizardConfig.findIndex((step) => {
       const index = step.fieldConfig.findIndex(field => {
@@ -977,7 +977,7 @@ export class CertificateAddComponent {
     }
   }
 
-  getTarget(fieldName: any) {
+  getTarget(fieldName: string) {
 
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
@@ -1049,10 +1049,10 @@ export class CertificateAddComponent {
           if (data[key]) {
             if (type_prop.length === 1) {
               for (let i = 0; i < data[key].length; i++) {
-                cert_extensions[type_prop[0]][data[key][i]] = true;
+                (cert_extensions as any)[type_prop[0]][data[key][i]] = true;
               }
             } else {
-              cert_extensions[type_prop[0]][type_prop[1]] = data[key];
+              (cert_extensions as any)[type_prop[0]][type_prop[1]] = data[key];
             }
           }
           delete data[key];
@@ -1065,16 +1065,16 @@ export class CertificateAddComponent {
     return data;
   }
 
-  customSubmit(data){
+  customSubmit(data: any){
     const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Creating Certificate") }, disableClose: true });
     dialogRef.componentInstance.setCall(this.addWsCall, [data]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.subscribe((res) => {
+    dialogRef.componentInstance.success.subscribe(() => {
       this.dialog.closeAll();
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
     });
-    dialogRef.componentInstance.failure.subscribe((err) => {
+    dialogRef.componentInstance.failure.subscribe((err: any) => {
       this.dialog.closeAll()
       // Dialog needed b/c handleWSError doesn't open a dialog when rejection comes back from provider
       if (err.error.includes('[EFAULT')) {

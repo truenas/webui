@@ -249,7 +249,7 @@ export class LdapComponent {
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected systemGeneralService: SystemGeneralService) {}
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     delete data['bindpw'];
     data['hostname_noreq'] = data['hostname'];
     this.ldap_hostname = data['hostname'];
@@ -259,7 +259,7 @@ export class LdapComponent {
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
 
-    this.ws.call('kerberos.realm.query').subscribe((res) => {
+    this.ws.call('kerberos.realm.query').subscribe((res: any[]) => {
       this.ldap_kerberos_realm = _.find(this.fieldConfig, {name : 'kerberos_realm'});
       res.forEach((item) => {
         this.ldap_kerberos_realm.options.push(
@@ -267,7 +267,7 @@ export class LdapComponent {
       })
     })
 
-    this.ws.call('kerberos.keytab.kerberos_principal_choices').subscribe((res) => {
+    this.ws.call('kerberos.keytab.kerberos_principal_choices').subscribe((res: any[]) => {
       this.ldap_kerberos_principal = _.find(this.fieldConfig, {name : 'kerberos_principal'});
       res.forEach((item) => {
         this.ldap_kerberos_principal.options.push(
@@ -275,7 +275,7 @@ export class LdapComponent {
       });
     });
 
-    this.ws.call('ldap.ssl_choices').subscribe((res) => {
+    this.ws.call('ldap.ssl_choices').subscribe((res: any[]) => {
       this.ldap_ssl = _.find(this.fieldConfig, {name : 'ssl'});
       res.forEach((item) => {
         this.ldap_ssl.options.push(
@@ -283,7 +283,7 @@ export class LdapComponent {
       });
     });
 
-    this.systemGeneralService.getCertificates().subscribe((res) => {
+    this.systemGeneralService.getCertificates().subscribe((res: any[]) => {
       this.ldapCertificate =
           _.find(this.fieldConfig, {name : 'certificate'});
       res.forEach((item) => {
@@ -297,7 +297,7 @@ export class LdapComponent {
       }
     });
 
-    this.ws.call('ldap.schema_choices').subscribe((res) => {
+    this.ws.call('ldap.schema_choices').subscribe((res: any[]) => {
       this.ldap_schema = _.find(this.fieldConfig, {name: 'schema'});
       res.forEach((item => {
         this.ldap_schema.options.push(
@@ -308,7 +308,7 @@ export class LdapComponent {
     const enabled = entityEdit.formGroup.controls['enable'].value;
     this.entityForm.setDisabled('hostname', !enabled, !enabled);
     this.entityForm.setDisabled('hostname_noreq', enabled, enabled);
-    entityEdit.formGroup.controls['enable'].valueChanges.subscribe((res)=> {
+    entityEdit.formGroup.controls['enable'].valueChanges.subscribe((res: any)=> {
       this.entityForm.setDisabled('hostname', !res, !res);
       this.entityForm.setDisabled('hostname_noreq', res, res);
       if(!res){
@@ -325,7 +325,7 @@ export class LdapComponent {
     }, 500)
   }
 
-  beforeSubmit(data){
+  beforeSubmit(data: any){
     if(data["enable"]){
       data["hostname_noreq"] = data["hostname"];
     } else {

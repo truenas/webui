@@ -18,7 +18,7 @@ import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/ent
 
 
 interface PodLogEvent {
-  data: string, 
+  data: string,
   timestamp: string
 }
 
@@ -38,7 +38,7 @@ export class PodLogsComponent implements OnInit {
   public pod_name: string;
   public container_name: string;
   protected tail_lines: number = 500;
-  protected podDetails: object;
+  protected podDetails: any;
   protected tempPodDetails: object;
   protected apps: string[] = [];
   protected route_success: string[] = ['apps'];
@@ -46,11 +46,11 @@ export class PodLogsComponent implements OnInit {
   public choosePod: DialogFormConfiguration;
   private podLogsChangedListener: any;
   public podLogs: PodLogEvent[];
-  
+
   constructor(protected core:CoreService,
     private ws: WebSocketService,
-    private appService: ApplicationsService, 
-    private dialogService: DialogService, 
+    private appService: ApplicationsService,
+    private dialogService: DialogService,
     public translate: TranslateService,
     protected aroute: ActivatedRoute,
     protected loader: AppLoaderService,
@@ -68,7 +68,7 @@ export class PodLogsComponent implements OnInit {
       this.tail_lines = params['tail_lines'];
 
       //Get app list
-      this.appService.getChartReleaseNames().subscribe(charts => {        
+      this.appService.getChartReleaseNames().subscribe((charts: any[]) => {
         charts.forEach(chart => {
           this.apps.push(chart.name);
         });
@@ -77,7 +77,7 @@ export class PodLogsComponent implements OnInit {
       //Get pod list for the selected app
       this.ws.call('chart.release.pod_logs_choices', [this.chart_release_name]).subscribe(res => {
         this.podDetails = res;
-  
+
         const podDetail = res[this.pod_name];
         if (!podDetail) {
           this.dialogService.confirm(helptext.podLogs.nopod.title, helptext.podLogs.nopod.message, true, 'Close', false, null, null, null, null, true);
@@ -116,9 +116,9 @@ export class PodLogsComponent implements OnInit {
   scrollToBottom(): void {
     try {
         this.logContainer.nativeElement.scrollTop = this.logContainer.nativeElement.scrollHeight;
-    } catch(err) { 
+    } catch(err) {
 
-    }                 
+    }
   }
 
   setupToolbarButtons() {
@@ -140,7 +140,7 @@ export class PodLogsComponent implements OnInit {
         label: 'Set font size',
         type: 'slider',
         min: 10,
-        max: 20, 
+        max: 20,
         step: 1,
         value: this.font_size,
       },
@@ -174,7 +174,7 @@ export class PodLogsComponent implements OnInit {
     let containerOptions = [];
 
     if (this.pod_name && this.podDetails[this.pod_name]) {
-      containerOptions = this.podDetails[this.pod_name].map(item => {
+      containerOptions = this.podDetails[this.pod_name].map((item: any) => {
         return {
           label: item,
           value: item,
@@ -248,15 +248,22 @@ export class PodLogsComponent implements OnInit {
     self.loader.open();
     const fileName = `${chart_release_name}_${pod_name}_${container_name}.log`;
     const mimetype = 'application/octet-stream';
-    self.ws.call('core.download', ['chart.release.pod_logs', [chart_release_name, {pod_name: pod_name, container_name: container_name, tail_lines: tail_lines}], fileName]).subscribe(res => {
+    self.ws.call(
+      'core.download',
+      [
+        'chart.release.pod_logs',
+        [chart_release_name, {pod_name: pod_name, container_name: container_name, tail_lines: tail_lines}],
+        fileName
+      ],
+    ).subscribe((res: any) => {
       self.loader.close();
       const url = res[1];
-      self.storageService.streamDownloadFile(self.http, url, fileName, mimetype).subscribe(file => {
+      self.storageService.streamDownloadFile(self.http, url, fileName, mimetype).subscribe((file: Blob) => {
         if(res !== null && res !== "") {
           self.storageService.downloadBlob(file, fileName);
         }
       });
-    }, (e) => {
+    }, (e: any) => {
       self.loader.close();
       new EntityUtils().handleWSError(self, e, self.dialogService);
     });
@@ -286,12 +293,12 @@ export class PodLogsComponent implements OnInit {
       containerFC.options = [];
 
       self.loader.open();
-      self.ws.call('chart.release.pod_logs_choices', [value]).subscribe(res => {
+      self.ws.call('chart.release.pod_logs_choices', [value]).subscribe((res: any) => {
         self.loader.close();
         self.tempPodDetails = res;
         let pod_name;
         if (Object.keys(self.tempPodDetails).length > 0) {
-          pod_name = Object.keys(self.tempPodDetails)[0];        
+          pod_name = Object.keys(self.tempPodDetails)[0];
         } else {
           pod_name = null;
         }
@@ -305,13 +312,13 @@ export class PodLogsComponent implements OnInit {
         entityDialog.formGroup.controls['pods'].setValue(pod_name);
       })
     });
-    
+
     //when pod selection changed
     entityDialog.formGroup.controls['pods'].valueChanges.subscribe(value => {
       if (value) {
         const containers = self.tempPodDetails[value];
-      
-        containerFC.options = containers.map(item => {
+
+        containerFC.options = containers.map((item: any) => {
           return {
             label: item,
             value: item,
@@ -321,8 +328,8 @@ export class PodLogsComponent implements OnInit {
           entityDialog.formGroup.controls['containers'].setValue(containers[0]);
         } else {
           entityDialog.formGroup.controls['containers'].setValue(null);
-        }       
-      }      
+        }
+      }
     })
   }
 }

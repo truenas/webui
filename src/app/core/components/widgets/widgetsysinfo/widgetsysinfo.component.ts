@@ -70,7 +70,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
     private locale: LocaleService){
     super(translate);
     this.configurable = false;
-    this.sysGenService.updateRunning.subscribe((res) => {
+    this.sysGenService.updateRunning.subscribe((res: string) => {
       res === 'true' ? this.isUpdateRunning = true : this.isUpdateRunning = false;
     });
 
@@ -79,9 +79,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
       this.screenType = st;
     });
   }
-
-
-  log(str){ console.log(str); }
 
   ngAfterViewInit(){
 
@@ -155,7 +152,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
     let theme = this.themeService.currentTheme();
     this._themeAccentColors = [];
     for(let color in theme.accentColors){
-      this._themeAccentColors.push(theme[theme.accentColors[color]]);
+      this._themeAccentColors.push((theme as any)[theme.accentColors[color]]);
     }
     return this._themeAccentColors;
   }
@@ -237,7 +234,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
     return result;
   }
 
-  setProductImage(data){
+  setProductImage(data: any){
     if(this.manufacturer !== 'ixsystems') return;
 
     if(data.system_product.includes('MINI')){
@@ -249,7 +246,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
     }
   }
 
-  setTrueNASImage(sys_product) {
+  setTrueNASImage(sys_product: any) {
     this.product_enclosure = 'rackmount';
 
     if (sys_product.includes('X10')) {
@@ -293,7 +290,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit,On
     }
   }
 
-  setMiniImage(sys_product) {
+  setMiniImage(sys_product: any) {
     this.product_enclosure = 'tower';
 
     if (sys_product && sys_product.includes('CERTIFIED')) {

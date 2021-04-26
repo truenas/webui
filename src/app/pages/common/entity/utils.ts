@@ -141,16 +141,16 @@ export class EntityUtils {
     }
   }
 
-  isObject = function(a) {
+  isObject = function(a: unknown): a is object {
     return (!!a) && (a.constructor === Object);
   };
 
-  flattenData(data, level = 0, parent?: any) {
-    let ndata = [];
+  flattenData(data: any | any[], level = 0, parent?: any) {
+    let ndata: any[] = [];
     if (this.isObject(data)){
       data = [data]
     }
-    data.forEach((item) => {
+    (data as any[]).forEach((item) => {
       item._level = level;
       if (parent) {
         item._parent = parent.id;
@@ -164,7 +164,7 @@ export class EntityUtils {
     return ndata;
   }
 
-  bool(v) {
+  bool(v: any): boolean {
     return v === "false" || v === "null" || v === "NaN" || v === "undefined" ||
                    v === "0"
                ? false
@@ -178,13 +178,15 @@ export class EntityUtils {
    /**
    * make cron time dow consistence
    */
-  parseDOW(cron) {
+  parseDOW(cron: string) {
     const dowOptions = ["sun","mon","tue","wed","thu","fri","sat","sun"];
     const cronArray = cron.replace(/00/g, '0').split(' ');
     if (cronArray[cronArray.length - 1] !== '*') {
       cronArray[cronArray.length - 1] = cronArray[cronArray.length - 1]
-      .split(',')
-      .map(element => dowOptions[element] || element).join(',');
+        .split(',')
+        // TODO: Probably a bug
+        .map(element => (dowOptions as any)[element] || element)
+        .join(',');
     }
     return cronArray.join(' ');
   }
@@ -281,7 +283,7 @@ export class EntityUtils {
     return result;
   }
 
-  changeNull2String(value) {
+  changeNull2String(value: any) {
     let result = value;
     if (value === null) {
       result = NULL_VALUE;
@@ -290,8 +292,8 @@ export class EntityUtils {
     return result;
   }
 
-  changeNullString2Null(data) {
-    let result;
+  changeNullString2Null(data: any) {
+    let result: any;
     if (data === undefined || data === null || data === '') {
       result = data;
     } else if (Array.isArray(data)) {
@@ -335,7 +337,7 @@ export class EntityUtils {
   }
 
   parseSchemaFieldConfig(schemaConfig: any, parentName: string=null, parentIsList: boolean=false) {
-    let results = [];
+    let results: any[] = [];
 
     if (schemaConfig.schema.hidden) {
       return results;
@@ -346,7 +348,7 @@ export class EntityUtils {
       name = `${parentName}${FORM_KEY_SEPERATOR}${name}`;
     }
 
-    let fieldConfig = {
+    let fieldConfig: any = {
       required: schemaConfig.schema.required,
       value: schemaConfig.schema.default,
       tooltip: schemaConfig.description,
@@ -356,7 +358,7 @@ export class EntityUtils {
 
     let relations: Relation[] = null;
     if (schemaConfig.schema.show_if) {
-      relations = schemaConfig.schema.show_if.map(item => {
+      relations = (schemaConfig.schema.show_if as any[]).map(item => {
         return {
           fieldName: item[0],
           operatorName: item[1],
@@ -371,7 +373,7 @@ export class EntityUtils {
 
     if (schemaConfig.schema.enum) {
       fieldConfig['type'] = 'select';
-      fieldConfig['options'] = schemaConfig.schema.enum.map(option => {
+      fieldConfig['options'] = (schemaConfig.schema.enum as any[]).map(option => {
         return {
           value: option.value,
           label: option.description,
@@ -421,8 +423,8 @@ export class EntityUtils {
       fieldConfig['width'] = '100%';
       fieldConfig['listFields'] = [];
 
-      let listFields = [];
-      schemaConfig.schema.items.forEach(item => {
+      let listFields: any[] = [];
+      (schemaConfig.schema.items as any[]).forEach(item => {
         const fields = this.parseSchemaFieldConfig(item, null, true);
         listFields = listFields.concat(fields);
       });
@@ -433,7 +435,7 @@ export class EntityUtils {
       fieldConfig = null;
 
       if (schemaConfig.schema.attrs.length > 0) {
-        const dictLabel = {
+        const dictLabel: any = {
           label: schemaConfig.label,
           name: FORM_LABEL_KEY_PREFIX + name,
           type: 'label',
@@ -446,7 +448,7 @@ export class EntityUtils {
         results = results.concat(dictLabel);
       }
 
-      schemaConfig.schema.attrs.forEach(dictConfig => {
+      (schemaConfig.schema.attrs as any[]).forEach(dictConfig => {
         const subResults = this.parseSchemaFieldConfig(dictConfig, name, parentIsList);
 
         if (relations) {
@@ -468,7 +470,7 @@ export class EntityUtils {
         results.push(fieldConfig);
 
         if (schemaConfig.schema.subquestions) {
-          schemaConfig.schema.subquestions.forEach(subquestion => {
+          (schemaConfig.schema.subquestions as any[]).forEach(subquestion => {
 
             const subResults = this.parseSchemaFieldConfig(subquestion, parentName);
 
@@ -496,7 +498,7 @@ export class EntityUtils {
     return results;
   }
 
-  parseConfigData(configData:object, parentKey:string, result:object) {
+  parseConfigData(configData:any, parentKey:string, result:any) {
     if (configData !== undefined && configData !== null) {
       Object.keys(configData).forEach(key => {
         const value = configData[key];
