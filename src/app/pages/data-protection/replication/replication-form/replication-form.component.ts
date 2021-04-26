@@ -1537,9 +1537,6 @@ export class ReplicationFormComponent {
   }
 
   isCustActionVisible(actionId: string): boolean {
-    if (actionId === 'wizard_add' && this.pk === undefined) {
-      return true;
-    }
-    return false;
+    return actionId === 'wizard_add' && this.pk === undefined;
   }
 }

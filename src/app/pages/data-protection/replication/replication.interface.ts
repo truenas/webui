@@ -72,7 +72,7 @@ export interface ReplicationState {
   state: string;
   datetime: any;
   error: string;
-  last_snapshot: string | null;
+  last_snapshot: string;
 }
 
 export interface Schedule {
@@ -124,24 +124,24 @@ export interface ReplicationTask {
   embed?: boolean;
   enabled?: boolean;
   encryption?: boolean;
-  encryption_key?: string | null;
+  encryption_key?: string;
   encryption_key_format?: EncryptionKeyFormat | null;
-  encryption_key_location?: string | null;
+  encryption_key_location?: string;
   exclude?: string[];
   hold_pending_snapshots?: boolean;
   id: number;
   job?: EntityJob;
   large_block?: boolean;
   lifetime_unit?: LifetimeUnit;
-  lifetime_value?: number | null;
+  lifetime_value?: number;
   logging_level?: LoggingLevel;
   name: string;
   naming_schema?: string[];
   netcat_active_side?: NetcatMode | null;
-  netcat_active_side_listen_address?: string | null;
-  netcat_active_side_port_max?: number | null;
-  netcat_active_side_port_min?: number | null;
-  netcat_passive_side_connect_address?: string | null;
+  netcat_active_side_listen_address?: string;
+  netcat_active_side_port_max?: number;
+  netcat_active_side_port_min?: number;
+  netcat_passive_side_connect_address?: string;
   only_matching_schedule?: boolean;
   periodic_snapshot_tasks?: number[] | PeriodicSnapshotTask[];
   properties?: boolean;
@@ -158,7 +158,7 @@ export interface ReplicationTask {
   schedule_picker: string;
   source_datasets?: string[];
   source_datasets_from: string;
-  speed_limit?: number | null;
+  speed_limit?: number;
   ssh_credentials?: SshCredentials | number[] | null;
   state: ReplicationState;
   target_dataset: string;

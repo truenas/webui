@@ -12,16 +12,16 @@ export enum EntityJobState {
 export interface EntityJob {
   abortable: boolean;
   arguments: (number | string)[];
-  description: string | null;
-  error: string | null;
-  exc_info: { type: string; extra: string | null } | null;
-  exception: string | null;
+  description: string;
+  error: string;
+  exc_info: { type: string; extra: string } | null;
+  exception: string;
   id: number;
-  logs_excerpt: string | null;
-  logs_path: string | null;
+  logs_excerpt: string;
+  logs_path: string;
   method: string;
-  progress: { percent: number | null; description: string | null; extra: string | null };
-  result: null;
+  progress: { percent: number; description: string; extra: string };
+  result: string;
   state: EntityJobState;
   time_finished: { $date: number } | null;
   time_started: { $date: number } | null;
