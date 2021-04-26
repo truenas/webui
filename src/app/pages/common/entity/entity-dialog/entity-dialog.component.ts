@@ -24,7 +24,7 @@ import { T } from '../../../../translate-marker';
 })
 export class EntityDialogComponent implements OnInit {
 
-  @Input() conf: DialogFormConfiguration;
+  @Input() conf: any;
 
   public title: string;
   public warning: string;

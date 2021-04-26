@@ -1,3 +1,4 @@
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { EmptyConfig, EmptyType } from './../../../common/entity/entity-empty/entity-empty.component';
 import { Component, ElementRef, OnInit, AfterViewChecked, OnDestroy } from '@angular/core';
@@ -9,7 +10,11 @@ import { DownloadKeyModalDialog } from 'app/components/common/dialog/downloadkey
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { EntityTableService } from 'app/pages/common/entity/entity-table/entity-table.service';
-import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
+import {
+  EntityTableAction,
+  EntityTableComponent,
+  InputTableConf
+} from 'app/pages/common/entity/entity-table/entity-table.component';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErdService } from 'app/services/erd.service';
@@ -124,7 +129,7 @@ export class VolumesListTableConfig implements InputTableConf {
     protected loader: AppLoaderService,
     protected translate: TranslateService,
     protected storageService: StorageService,
-    protected volumeData: Object,
+    protected volumeData: any,
     protected messageService: MessageService,
     protected http: HttpClient,
     protected validationService: ValidationService
@@ -155,18 +160,18 @@ export class VolumesListTableConfig implements InputTableConf {
         if (self.parentVolumesListComponent.systemdatasetPool != rowData.name) {
           actions.push({
             label: T("Lock"),
-            onClick: (row1) => {
+            onClick: (row1: any) => {
               let p1 = '';
               const self = this;
               this.loader.open();
-              this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
+              this.ws.call('pool.attachments', [row1.id]).subscribe((res: any[]) => {
                 if (res.length > 0) {
                   self.translate.get(helptext.encryptMsgA).subscribe(servicesMsgA => {
                     self.translate.get(helptext.encryptMsgB).subscribe(servicesMsgB => {
                       p1 = servicesMsgA + `<i>${row1.name}</i>` + servicesMsgB;
                       res.forEach((item) => {
                         p1 += `<br><br>${item.type}:`;
-                        item.attachments.forEach((i) => {
+                        item.attachments.forEach((i: string) => {
                           const tempArr = i.split(',');
                           tempArr.forEach((i) => {
                             p1 += `<br> - ${i}`
@@ -178,9 +183,9 @@ export class VolumesListTableConfig implements InputTableConf {
                   })
 
                 }
-                this.ws.call('pool.processes', [row1.id]).subscribe((res) => {
-                  const running_processes = [];
-                  const running_unknown_processes = [];
+                this.ws.call('pool.processes', [row1.id]).subscribe((res: any[]) => {
+                  const running_processes: any[] = [];
+                  const running_unknown_processes: any[] = [];
                   if (res.length > 0) {
                     res.forEach((item) => {
                       if (!item.service) {
@@ -256,7 +261,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   }
                 ],
                 saveButtonText: T("Lock Pool"),
-                customSubmit: function (entityDialog) {
+                customSubmit: function (entityDialog: EntityDialogComponent) {
                   const value = entityDialog.formValue;
                   self.loader.open();
                   self.ws.job('pool.lock', [row1.id, value.passphrase]).subscribe(
@@ -286,7 +291,7 @@ export class VolumesListTableConfig implements InputTableConf {
       } else {
         actions.push({
           label: T("Unlock"),
-          onClick: (row1) => {
+          onClick: (row1: any) => {
             this.unlockAction(row1);
           }
         });
@@ -295,7 +300,7 @@ export class VolumesListTableConfig implements InputTableConf {
       if (rowData.is_decrypted) {
         actions.push({
           label: T("Encryption Key/Passphrase"),
-          onClick: (row1) => {
+          onClick: (row1: any) => {
             this._router.navigate(new Array('/').concat(
               ["storage", "changekey", row1.id]));
           }
@@ -305,7 +310,7 @@ export class VolumesListTableConfig implements InputTableConf {
     } else if (rowData.encrypt === 1 && rowData.is_decrypted && self.parentVolumesListComponent.systemdatasetPool != rowData.name) {
       actions.push({
         label: T("Encryption Key"),
-        onClick: (row1) => {
+        onClick: (row1: any) => {
           this._router.navigate(new Array('/').concat(
             ["storage", "createkey", row1.id]));
         }
@@ -316,7 +321,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
       actions.push({
         label: T("Manage Recovery Key"),
-        onClick: (row1) => {
+        onClick: (row1: any) => {
           this._router.navigate(new Array('/').concat(
             ["storage", "addkey", row1.id]));
         }
@@ -324,7 +329,7 @@ export class VolumesListTableConfig implements InputTableConf {
 
       actions.push({
         label: T("Reset Keys"),
-        onClick: (row1) => {
+        onClick: (row1: any) => {
           this._router.navigate(new Array('/').concat(
             ["storage", "rekey", row1.id]));
 
@@ -336,7 +341,7 @@ export class VolumesListTableConfig implements InputTableConf {
       && this.parentVolumesListComponent.has_key_dataset[rowData.name]) {
       actions.push({
         label: T("Export Dataset Keys"),
-        onClick: (row1) => {
+        onClick: (row1: any) => {
           const message = helptext.export_keys_message + row1.name;
           const fileName = "dataset_" + row1.name + "_keys.json";
           this.dialogService.passwordConfirm(message).subscribe(export_keys => {
@@ -371,7 +376,7 @@ export class VolumesListTableConfig implements InputTableConf {
     }
   }
 
-  unlockAction(row1) {
+  unlockAction(row1: any) {
     const self = this;
     this.storageService.poolUnlockServiceChoices(row1.id).pipe(
       map(serviceChoices => {
@@ -412,7 +417,7 @@ export class VolumesListTableConfig implements InputTableConf {
               options: serviceChoices
             }
           ],
-          afterInit: function(entityDialog) {
+          afterInit: function(entityDialog: EntityDialogComponent) {
             self.message_subscription = self.messageService.messageSourceHasNewMessage$.subscribe((message)=>{
               entityDialog.formGroup.controls['key'].setValue(message);
             });
@@ -440,7 +445,7 @@ export class VolumesListTableConfig implements InputTableConf {
             });
           },
           saveButtonText: T("Unlock"),
-          customSubmit: function (entityDialog) {
+          customSubmit: function (entityDialog: EntityDialogComponent) {
             let done = false;
             const value = entityDialog.formValue;
             const params = [row1.id, {passphrase: value.passphrase, services_restart: value.services_restart}]
@@ -458,7 +463,7 @@ export class VolumesListTableConfig implements InputTableConf {
               dialogRef.componentInstance.setCall('pool.unlock', params);
               dialogRef.componentInstance.submit();
             }
-            dialogRef.componentInstance.success.subscribe((res) => {
+            dialogRef.componentInstance.success.subscribe(() => {
               if (!done) {
                 dialogRef.close(false);
                 entityDialog.dialogRef.close(true);
@@ -469,7 +474,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 })
               }
             });
-            dialogRef.componentInstance.failure.subscribe((res) => {
+            dialogRef.componentInstance.failure.subscribe((res: any) => {
               dialogRef.close(false);
               new EntityUtils().handleWSError(self, res ,self.dialogService);
             });
@@ -488,7 +493,7 @@ export class VolumesListTableConfig implements InputTableConf {
     ]);
   }
 
-  getActions(rowData: any) {
+  getActions(rowData: any): any[] {
     rowData.is_passphrase = (rowData.key_format && rowData.key_format.parsed === 'passphrase' ? true : false);
     let rowDataPathSplit = [];
     const self = this;
@@ -504,7 +509,7 @@ export class VolumesListTableConfig implements InputTableConf {
           id: rowData.name,
           name: T('Pool Options'),
           label: T('Pool Options'),
-          onClick: (row) => {
+          onClick: (row: any) => {
             //const autotrim = (row.autotrim === 'ON');
 
             const self = this;
@@ -521,12 +526,12 @@ export class VolumesListTableConfig implements InputTableConf {
                 },
               ],
               saveButtonText: helptext.encryption_options_dialog.save_button,
-              afterInit: function(entityDialog) {
+              afterInit: function() {
               },
-              customSubmit: function(entityDialog) {
+              customSubmit: function(entityDialog: EntityDialogComponent) {
                 const formValue = entityDialog.formValue;
                 let method = 'pool.update';
-                const body = {};
+                const body: any = {};
                 const payload = [row.id];
                 body['autotrim'] = (formValue.autotrim ? 'ON': 'OFF');
                 payload.push(body);
@@ -534,7 +539,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 dialogRef.componentInstance.setDescription(helptext.pool_options_dialog.saving_pool_options);
                 dialogRef.componentInstance.setCall(method, payload);
                 dialogRef.componentInstance.submit();
-                dialogRef.componentInstance.success.subscribe(res=>{
+                dialogRef.componentInstance.success.subscribe((res: any)=>{
                   if (res) {
                     dialogRef.close()
                     entityDialog.dialogRef.close();
@@ -547,7 +552,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     })
                   }
                 });
-                dialogRef.componentInstance.failure.subscribe(err =>{
+                dialogRef.componentInstance.failure.subscribe((err: any) =>{
                   if (err) {
                     dialogRef.close();
                     new EntityUtils().handleWSError(entityDialog, err, self.dialogService);
@@ -565,13 +570,13 @@ export class VolumesListTableConfig implements InputTableConf {
         name: 'Export/Disconnect',
         label: helptext.exportAction,
         color: 'warn',
-        onClick: (row1) => {
+        onClick: (row1: any) => {
           let encryptedStatus = row1.encrypt,
           self = this;
 
           if (rowData.is_decrypted && rowData.status !== 'UNKNOWN') {
             this.loader.open();
-            this.ws.call('pool.attachments', [row1.id]).subscribe((res) => {
+            this.ws.call('pool.attachments', [row1.id]).subscribe((res: any[]) => {
               if (res.length > 0) {
                 let servicesA, servicesB;
                 self.translate.get(helptext.exportMessages.servicesA).subscribe(a => {
@@ -581,9 +586,9 @@ export class VolumesListTableConfig implements InputTableConf {
                     p1 =  a + `<i>${row1.name}</i>` + b;
                     res.forEach((item) => {
                       p1 += `<br><b>${item.type}:</b>`;
-                      item.attachments.forEach((i) => {
+                      item.attachments.forEach((i: any) => {
                         let tempArr = i.split(',');
-                        tempArr.forEach((i) => {
+                        tempArr.forEach((i: any) => {
                           p1 += `<br> - ${i}`
                         })
                       })
@@ -592,9 +597,9 @@ export class VolumesListTableConfig implements InputTableConf {
                 })
                 p1 += `<br /><br />`;
               }
-              this.ws.call('pool.processes', [row1.id]).subscribe((res) => {
-                let running_processes = [];
-                let running_unknown_processes = [];
+              this.ws.call('pool.processes', [row1.id]).subscribe((res: any[]) => {
+                let running_processes: any[] = [];
+                let running_unknown_processes: any[] = [];
                 if (res.length > 0) {
                   res.forEach((item) => {
                     if (!item.service) {
@@ -647,7 +652,13 @@ export class VolumesListTableConfig implements InputTableConf {
 
           async function doDetach() {
             const sysPool = await self.ws.call('systemdataset.config').pipe(map(res => res['pool'])).toPromise();
-            let title, warningA, warningB, unknownA, unknownB, encrypted, sysPoolWarning;
+            let title: string;
+            let warningA: string;
+            let warningB: string;
+            let unknownA: string;
+            let unknownB: string;
+            let encrypted: string;
+            let sysPoolWarning: string;
             self.translate.get(helptext.exportDialog.warningSysDataset).subscribe(sysWarn => {
               sysPoolWarning = sysWarn;
               self.translate.get(helptext.exportDialog.title).subscribe(t => {
@@ -750,7 +761,7 @@ export class VolumesListTableConfig implements InputTableConf {
                       dialogRef.componentInstance.fileName = 'pool_' + row1.name + '_encryption.key';
                     }
                   }],
-                customSubmit: function (entityDialog) {
+                customSubmit: function (entityDialog: EntityDialogComponent) {
                   const value = entityDialog.formValue;
                   let dialogRef = self.mdDialog.open(EntityJobComponent, {data: {"title":helptext.exporting}, disableClose: true});
                   dialogRef.updateSize('300px');
@@ -758,7 +769,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   dialogRef.componentInstance.setCall("pool.export", [row1.id, { destroy: value.destroy,
                     cascade: value.cascade, restart_services: self.restartServices }]);
                   dialogRef.componentInstance.submit();
-                  dialogRef.componentInstance.success.subscribe(res=>{
+                  dialogRef.componentInstance.success.subscribe(()=>{
                     entityDialog.dialogRef.close(true);
                     self.translate.get(helptext.exportSuccess).subscribe(msg => {
                       self.translate.get(helptext.destroyed).subscribe(destroyed => {
@@ -772,13 +783,15 @@ export class VolumesListTableConfig implements InputTableConf {
                       })
                     })
                   }),
-                  dialogRef.componentInstance.failure.subscribe((res) => {
+                  dialogRef.componentInstance.failure.subscribe((res: any) => {
                     let conditionalErrMessage = '';
                     if (res.error) {
                       if (res.exc_info.extra && res.exc_info.extra['code'] === 'control_services') {
                         entityDialog.dialogRef.close(true);
                         dialogRef.close(true);
-                        let stopMsg, restartMsg, continueMsg;
+                        let stopMsg: string;
+                        let restartMsg: string;
+                        let continueMsg: string;
                         self.translate.get(helptext.exportMessages.onfail.stopServices).subscribe(stop => {
                           self.translate.get(helptext.exportMessages.onfail.restartServices).subscribe(restart => {
                             self.translate.get(helptext.exportMessages.onfail.continueMessage).subscribe(continueRes => {
@@ -789,7 +802,7 @@ export class VolumesListTableConfig implements InputTableConf {
                           })
                           if (res.exc_info.extra.stop_services.length > 0) {
                               conditionalErrMessage += `<div class="warning-box">` + stopMsg;
-                              res.exc_info.extra.stop_services.forEach((item) => {
+                              res.exc_info.extra.stop_services.forEach((item: string) => {
                                 conditionalErrMessage += `<br>- ${item}`;
                               });
                           }
@@ -798,14 +811,14 @@ export class VolumesListTableConfig implements InputTableConf {
                               conditionalErrMessage += '<br><br>';
                             }
                             conditionalErrMessage += `<div class="warning-box">` + restartMsg;
-                            res.exc_info.extra.restart_services.forEach((item) => {
+                            res.exc_info.extra.restart_services.forEach((item: string) => {
                               conditionalErrMessage += `<br>- ${item}`;
                             });
                           }
                           conditionalErrMessage += `<br><br>`+ continueMsg + `</div><br />`;
                             self.dialogService.confirm(helptext.exportError,
                               conditionalErrMessage, true, helptext.exportMessages.onfail.continueAction)
-                                .subscribe((res) => {
+                                .subscribe((res: boolean) => {
                                   if (res) {
                                     self.restartServices = true;
                                     this.customSubmit(entityDialog);
@@ -844,7 +857,7 @@ export class VolumesListTableConfig implements InputTableConf {
           id: rowData.name,
           name: 'Add Vdevs',
           label: T("Add Vdevs"),
-          onClick: (row1) => {
+          onClick: (row1: any) => {
             this._router.navigate(new Array('/').concat(
               ["storage", "manager", row1.id]));
           }
@@ -853,17 +866,17 @@ export class VolumesListTableConfig implements InputTableConf {
           id: rowData.name,
           name: 'Scrub Pool',
           label: T("Scrub Pool"),
-          onClick: (row1) => {
+          onClick: (row1: any) => {
             this.getPoolData(row1.id).subscribe((res) => {
               if (res[0]) {
                 if (res[0].scan.function === "SCRUB" && res[0].scan.state === "SCANNING") {
                   self.translate.get("Stop the scrub on ").subscribe(msg => {
                     this.dialogService.confirm(T("Scrub Pool"), msg + row1.name + '?', false, T("Stop Scrub"))
-                    .subscribe((res) => {
+                    .subscribe((res: boolean) => {
                       if (res) {
                         this.loader.open();
                         this.ws.call('pool.scrub', [row1.id, 'STOP']).subscribe(
-                          (res) => {
+                          () => {
                             this.loader.close();
                             self.translate.get('Stopping scrub on pool').subscribe(msg => {
                               this.dialogService.Info(T("Stop Scrub"), `${msg} <i>${row1.name}</i>`, '300px', "info", true);
@@ -880,27 +893,27 @@ export class VolumesListTableConfig implements InputTableConf {
 
                 } else {
                   self.translate.get('Start scrub on pool').subscribe(msg => {
-                  this.dialogService.confirm(T("Scrub Pool"), `${msg} <i>${row1.name}</i>?`, false, T("Start Scrub")).subscribe((res) => {
+                  this.dialogService.confirm(T("Scrub Pool"), `${msg} <i>${row1.name}</i>?`, false, T("Start Scrub")).subscribe((res: boolean) => {
                     if (res) {
                       this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { "title": T('Scrub Pool') }, disableClose: false });
                       this.dialogRef.componentInstance.setCall('pool.scrub', [row1.id, 'START']);
                       this.dialogRef.componentInstance.submit();
                       this.dialogRef.componentInstance.success.subscribe(
-                        (jobres) => {
+                        (jobres: any) => {
                           this.dialogRef.close(false);
                           if (jobres.progress.percent == 100 && jobres.progress.description === "Scrub finished") {
-                            self.translate.get('Scrub complete on pool').subscribe(msg => {
+                            self.translate.get('Scrub complete on pool').subscribe((msg: string) => {
                               this.dialogService.Info(T('Scrub Complete'), `${msg} <i>${row1.name}</i>.`, '300px', "info", true);
                             })
                           } else {
-                            self.translate.get('Stopped the scrub on pool').subscribe(msg => {
+                            self.translate.get('Stopped the scrub on pool').subscribe((msg: string) => {
                               this.dialogService.Info(T('Stop Scrub'), `${msg} <i>${row1.name}</i>.`, '300px', "info", true);
 
                             })
                           }
                         }
                       );
-                      this.dialogRef.componentInstance.failure.subscribe((err) => {
+                      this.dialogRef.componentInstance.failure.subscribe((err: any) => {
                         this.dialogRef.componentInstance.setDescription(err.error);
                       });
                     }
@@ -915,7 +928,7 @@ export class VolumesListTableConfig implements InputTableConf {
           id: rowData.name,
           name: 'Status',
           label: T("Status"),
-          onClick: (row1) => {
+          onClick: (row1: any) => {
             this._router.navigate(new Array('/').concat(
               ["storage", "status", row1.id]));
           }
@@ -924,7 +937,7 @@ export class VolumesListTableConfig implements InputTableConf {
           id: rowData.name,
           name: T('Expand Pool'),
           label: T("Expand Pool"),
-          onClick: (row1) => {
+          onClick: (row1: any) => {
             const parent = this;
             const conf: DialogFormConfiguration = {
               title: helptext.expand_pool_dialog.title + row1.name,
@@ -944,12 +957,12 @@ export class VolumesListTableConfig implements InputTableConf {
                 }
               ],
               saveButtonText: helptext.expand_pool_dialog.save_button,
-              customSubmit: function (entityDialog) {
+              customSubmit: function (entityDialog: EntityDialogComponent) {
                 doExpand(entityDialog);
               }
             }
 
-            function doExpand(entityDialog?) {
+            function doExpand(entityDialog?: EntityDialogComponent) {
               parent.loader.open();
               const payload = [row1.id];
               if (entityDialog) {
@@ -1010,14 +1023,14 @@ export class VolumesListTableConfig implements InputTableConf {
             id: rowData.name,
             name: T('Upgrade Pool'),
             label: T("Upgrade Pool"),
-            onClick: (row1) => {
+            onClick: (row1: any) => {
               this.translate.get(helptext.upgradePoolDialog_warning).subscribe(warning => {
                 this.dialogService
                   .confirm(
                     T("Upgrade Pool"),
                       warning + row1.name
                   )
-                  .subscribe(confirmResult => {
+                  .subscribe((confirmResult: boolean) => {
                     if (confirmResult === true) {
                       this.loader.open();
                       this.ws.call("pool.upgrade", [rowData.id]).subscribe(
@@ -1059,7 +1072,7 @@ export class VolumesListTableConfig implements InputTableConf {
           id: rowData.name,
           name: T('Add Dataset'),
           label: T("Add Dataset"),
-          onClick: (row1) => {
+          onClick: () => {
             this.parentVolumesListComponent.addDataset(rowData.pool, rowData.id);
           }
         });
@@ -1067,7 +1080,7 @@ export class VolumesListTableConfig implements InputTableConf {
           id: rowData.name,
           name: T('Add Zvol'),
           label: T("Add Zvol"),
-          onClick: (row1) => {
+          onClick: () => {
             this.parentVolumesListComponent.addZvol(rowData.id, true);
           }
         });
@@ -1076,7 +1089,7 @@ export class VolumesListTableConfig implements InputTableConf {
         id: rowData.name,
         name: T('Edit Options'),
         label: T("Edit Options"),
-        onClick: (row1) => {
+        onClick: () => {
           this.parentVolumesListComponent.editDataset(rowData.pool, rowData.id);
         }
       });
@@ -1086,7 +1099,7 @@ export class VolumesListTableConfig implements InputTableConf {
               name: T('Edit Permissions'),
               label: T("Edit Permissions"),
               ttposition: 'left',
-              onClick: (row1) => {
+              onClick: () => {
                 this.ws.call('filesystem.acl_is_trivial', ['/mnt/' + rowData.id]).subscribe(acl_is_trivial => {
                   if (acl_is_trivial) {
                     this._router.navigate(new Array('/').concat([
@@ -1114,7 +1127,7 @@ export class VolumesListTableConfig implements InputTableConf {
               id: rowData.name,
               name: T('User Quotas'),
               label: T('User Quotas'),
-              onClick: (row1) => {
+              onClick: () => {
                 this._router.navigate(new Array('/').concat([
                   "storage", "user-quotas", rowData.id
                 ]));
@@ -1124,7 +1137,7 @@ export class VolumesListTableConfig implements InputTableConf {
               id: rowData.name,
               name: T('Group Quotas'),
               label: T('Group Quotas'),
-              onClick: (row1) => {
+              onClick: () => {
                 this._router.navigate(new Array('/').concat([
                   "storage", "group-quotas", rowData.id
                 ]));
@@ -1138,7 +1151,7 @@ export class VolumesListTableConfig implements InputTableConf {
           id: rowData.name,
           name: T('Delete Dataset'),
           label: T("Delete Dataset"),
-          onClick: (row1) => {
+          onClick: (row1: any) => {
             self.translate.get('Delete Dataset').subscribe(msg1 => {
               self.translate.get('The').subscribe(theTr => {
                 self.translate.get('dataset and all snapshots stored with it <b>will be permanently deleted</b>.').subscribe(msg2 => {
@@ -1148,7 +1161,7 @@ export class VolumesListTableConfig implements InputTableConf {
                     row1.name,
                     true,
                     T("DELETE DATASET")
-                  ).subscribe((doubleConfirmDialog) => {
+                  ).subscribe((doubleConfirmDialog: boolean) => {
                     if (doubleConfirmDialog) {
                       this.loader.open();
                       this.ws.call('pool.dataset.delete', [rowData.id, {"recursive": true}]).subscribe(
@@ -1161,7 +1174,7 @@ export class VolumesListTableConfig implements InputTableConf {
                           if (e_res.reason.indexOf('Device busy') > -1) {
                             self.translate.get('Force deletion of dataset ').subscribe(msg => {
                               this.dialogService.confirm(T('Device Busy'),msg + "<i>" + row1.name + "</i>?", false, T('Force Delete')).subscribe(
-                                (res) => {
+                                (res: boolean) => {
                                   if (res) {
                                     this.loader.open();
                                     this.ws.call('pool.dataset.delete', [rowData.id, {"recursive": true, "force": true}]).subscribe(
@@ -1204,12 +1217,12 @@ export class VolumesListTableConfig implements InputTableConf {
         id: rowData.name,
         name: T('Delete Zvol'),
         label: T("Delete Zvol"),
-        onClick: (row1) => {
+        onClick: (row1: any) => {
           self.translate.get("Delete the zvol ").subscribe(msg1 => {
             self.translate.get(" and all snapshots of it?").subscribe(msg2 => {
               this.dialogService.doubleConfirm(T("Delete "),
               msg1 + "<b><i>" + row1.name + "</i></b>"+ msg2, row1.name,
-              true, T('Delete Zvol')).subscribe((confirmed) => {
+              true, T('Delete Zvol')).subscribe((confirmed: boolean) => {
               if (confirmed === true) {
                 this.loader.open();
 
@@ -1235,7 +1248,7 @@ export class VolumesListTableConfig implements InputTableConf {
         id: rowData.name,
         name: T('Edit Zvol'),
         label: T("Edit Zvol"),
-        onClick: (row1) => {
+        onClick: () => {
           this.parentVolumesListComponent.addZvol(rowData.id, false);
         }
       });
@@ -1247,7 +1260,7 @@ export class VolumesListTableConfig implements InputTableConf {
         id: rowData.name,
         name: T('Create Snapshot'),
         label: T("Create Snapshot"),
-        onClick: (row) => {
+        onClick: (row: any) => {
           this.ws.call('vmware.dataset_has_vms',[row.id, false]).subscribe((vmware_res)=>{
             this.vmware_res_status = vmware_res;
           })
@@ -1277,9 +1290,9 @@ export class VolumesListTableConfig implements InputTableConf {
                 placeholder: helptext.snapshotDialog_recursive_placeholder,
                 tooltip: helptext.snapshotDialog_recursive_tooltip,
                 parent: this,
-                updater: parent => {
+                updater: (parent: any) => {
                   parent.recursiveIsChecked = !parent.recursiveIsChecked;
-                  parent.ws.call('vmware.dataset_has_vms',[row.id, parent.recursiveIsChecked]).subscribe((vmware_res)=>{
+                  parent.ws.call('vmware.dataset_has_vms',[row.id, parent.recursiveIsChecked]).subscribe((vmware_res: any)=>{
                     parent.vmware_res_status = vmware_res;
                     _.find(parent.dialogConf.fieldConfig, {name : "vmware_sync"})['isHidden'] = !parent.vmware_res_status;
                   });
@@ -1310,7 +1323,7 @@ export class VolumesListTableConfig implements InputTableConf {
           id: rowData.name,
           name: T('Promote Dataset'),
           label: T("Promote Dataset"),
-          onClick: (row1) => {
+          onClick: (row1: any) => {
             this.loader.open();
 
             this.ws.call('pool.dataset.promote', [row1.id]).subscribe((wsResp) => {
@@ -1332,7 +1345,7 @@ export class VolumesListTableConfig implements InputTableConf {
     return actions;
   }
 
-  getEncryptedDatasetActions(rowData) {
+  getEncryptedDatasetActions(rowData: any) {
     const encryption_actions = [];
     if (rowData.encrypted) {
       if (rowData.locked){
@@ -1341,7 +1354,7 @@ export class VolumesListTableConfig implements InputTableConf {
             id:rowData.name,
             name: T('Unlock'),
             label: T('Unlock'),
-            onClick: (row1) => {
+            onClick: () => {
               //unlock
               this._router.navigate(new Array('/').concat([
                 "storage", "id", rowData.pool, "dataset",
@@ -1355,7 +1368,7 @@ export class VolumesListTableConfig implements InputTableConf {
           id: rowData.name,
           name: T('Encryption Options'),
           label: T('Encryption Options'),
-          onClick: (row) => {
+          onClick: (row: any) => {
             // open encryption options dialog
             let key_child = false;
             for (let i = 0; i < this.datasetData.length; i++) {
@@ -1465,7 +1478,7 @@ export class VolumesListTableConfig implements InputTableConf {
                 }
               ],
               saveButtonText: helptext.encryption_options_dialog.save_button,
-              afterInit: function(entityDialog) {
+              afterInit: function(entityDialog: EntityDialogComponent) {
                 const inherit_encryption_fg = entityDialog.formGroup.controls['inherit_encryption'];
                 const encryption_type_fg = entityDialog.formGroup.controls['encryption_type'];
                 const encryption_type_fc = _.find(entityDialog.fieldConfig, {name: 'encryption_type'});
@@ -1522,22 +1535,22 @@ export class VolumesListTableConfig implements InputTableConf {
                   }
                 });
               },
-              customSubmit: function(entityDialog) {
+              customSubmit: function(entityDialog: any) {
                 const formValue = entityDialog.formValue;
                 let method = 'pool.dataset.change_key';
-                const body = {};
+                const body: any = {};
                 const payload = [row.id];
                 if (formValue.inherit_encryption) {
                   if (row.is_encrypted_root) { // only try to change to inherit if not currently inheriting
                     method = 'pool.dataset.inherit_parent_encryption_properties';
                     entityDialog.loader.open();
-                    entityDialog.ws.call(method, payload).subscribe(res => {
+                    entityDialog.ws.call(method, payload).subscribe(() => {
                       entityDialog.loader.close();
                       self.dialogService.Info(helptext.encryption_options_dialog.dialog_saved_title,
                         helptext.encryption_options_dialog.dialog_saved_message1 + row.id + helptext.encryption_options_dialog.dialog_saved_message2);
                       entityDialog.dialogRef.close();
                       self.parentVolumesListComponent.repaintMe();
-                    }, (err) => {
+                    }, (err: any) => {
                       entityDialog.loader.close();
                       new EntityUtils().handleWSError(entityDialog, err, self.dialogService);
                     });
@@ -1559,7 +1572,7 @@ export class VolumesListTableConfig implements InputTableConf {
                   dialogRef.componentInstance.setDescription(helptext.encryption_options_dialog.saving_encryption_options);
                   dialogRef.componentInstance.setCall(method, payload);
                   dialogRef.componentInstance.submit();
-                  dialogRef.componentInstance.success.subscribe(res=>{
+                  dialogRef.componentInstance.success.subscribe((res: any)=>{
                     if (res) {
                       dialogRef.close()
                       entityDialog.dialogRef.close();
@@ -1572,7 +1585,7 @@ export class VolumesListTableConfig implements InputTableConf {
                       })
                     }
                   });
-                  dialogRef.componentInstance.failure.subscribe(err =>{
+                  dialogRef.componentInstance.failure.subscribe((err: any) =>{
                     if (err) {
                       dialogRef.close();
                       new EntityUtils().handleWSError(entityDialog, err, self.dialogService);
@@ -1590,7 +1603,7 @@ export class VolumesListTableConfig implements InputTableConf {
             id: rowData.name,
             name: T('Lock'),
             label: T('Lock'),
-            onClick: (row) => {
+            onClick: (row: any) => {
               // lock
               const params = [row.id];
               let force_umount = false;
@@ -1600,10 +1613,10 @@ export class VolumesListTableConfig implements InputTableConf {
                     false, helptext.lock_dataset_dialog.button,
                     true, helptext.lock_dataset_dialog.checkbox_message, 'pool.dataset.lock', params);
 
-                  ds.componentInstance.switchSelectionEmitter.subscribe((res) => {
+                  ds.componentInstance.switchSelectionEmitter.subscribe((res: any) => {
                     force_umount = res;
                   });
-                  ds.afterClosed().subscribe((status)=>{
+                  ds.afterClosed().subscribe((status: any)=>{
                     if(status){
                       this.translate.get(helptext.lock_dataset_dialog.locking_dataset_description).subscribe(lock_ds_description => {
                         const dialogRef = this.mdDialog.open(EntityJobComponent, {data: {"title":helptext.lock_dataset_dialog.locking_dataset}, disableClose: true});
@@ -1612,7 +1625,7 @@ export class VolumesListTableConfig implements InputTableConf {
                         dialogRef.componentInstance.setCall(ds.componentInstance.method, params);
                         dialogRef.componentInstance.submit();
                         let done = false;
-                        dialogRef.componentInstance.success.subscribe((res) => {
+                        dialogRef.componentInstance.success.subscribe(() => {
                           if (!done) {
                             dialogRef.close(false);
                             done = true;
@@ -1620,7 +1633,7 @@ export class VolumesListTableConfig implements InputTableConf {
                           }
                         });
 
-                        dialogRef.componentInstance.failure.subscribe((res) => {
+                        dialogRef.componentInstance.failure.subscribe((res: any) => {
                           dialogRef.close(false);
                           new EntityUtils().handleWSError(this, res ,this.dialogService);
                         });
@@ -1641,19 +1654,19 @@ export class VolumesListTableConfig implements InputTableConf {
             id: rowData.id,
             name: T('Export Key'),
             label: T('Export Key'),
-            onClick: (row) => {
+            onClick: () => {
               this.dialogService.passwordConfirm(message).subscribe(export_keys => {
                 if (export_keys) {
                   const dialogRef = this.mdDialog.open(EntityJobComponent, {data: {"title":T('Retrieving Key')}, disableClose: true});
                   dialogRef.componentInstance.setCall('pool.dataset.export_key', [rowData.id]);
                   dialogRef.componentInstance.submit();
-                  dialogRef.componentInstance.success.subscribe((res) => {
+                  dialogRef.componentInstance.success.subscribe((res: any) => {
                     dialogRef.close();
                     this.dialogService.confirm(`Key for ${rowData.id}`, res.result, true, T('Download Key'), false,
-                      '','','','',false, T('Close')).subscribe(download => {
+                      '','','','',false, T('Close')).subscribe((download: boolean) => {
                         if (download) {
                           this.loader.open();
-                          this.ws.call('core.download', ['pool.dataset.export_key', [rowData.id, true], fileName]).subscribe(res => {
+                          this.ws.call('core.download', ['pool.dataset.export_key', [rowData.id, true], fileName]).subscribe((res: any) => {
                             this.loader.close();
                             const url = res[1];
                             this.storageService.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
@@ -1678,8 +1691,8 @@ export class VolumesListTableConfig implements InputTableConf {
     return encryption_actions;
   }
 
-  clickAction(rowData) {
-    const editPermissions = rowData.actions[0].actions.find(o => o.name === 'Edit Permissions');
+  clickAction(rowData: any) {
+    const editPermissions = rowData.actions[0].actions.find((o: any) => o.name === 'Edit Permissions');
     if (!rowData.locked && editPermissions) {
       if (!rowData.id.includes('/')) {
         editPermissions.disabled = true;
@@ -1730,7 +1743,7 @@ export class VolumesListTableConfig implements InputTableConf {
     return node;
   }
 
-  getMoreDatasetInfo(dataObj, parent) {
+  getMoreDatasetInfo(dataObj: any, parent: any) {
     const dataset_data2 = this.datasetData;
     this.translate.get(T("Inherits")).subscribe(inherits => {
       for (const k in dataset_data2) {
@@ -1790,8 +1803,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   conf: InputTableConf = new VolumesListTableConfig(this, this.router, "", [], this.mdDialog, this.ws, this.dialogService, this.loader, this.translate, this.storage, {}, this.messageService, this.http, this.validationService);
 
   actionComponent = {
-    getActions: (row) => {
-      let actions = [
+    getActions: (row: any) => {
+      let actions: any[] = [
         {
           name: 'pool_actions',
           title: helptext.pool_actions_title,
@@ -1817,8 +1830,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   expanded = false;
   public paintMe = true;
   public systemdatasetPool: any;
-  public has_encrypted_root = {};
-  public has_key_dataset = {};
+  public has_encrypted_root: any = {};
+  public has_key_dataset: any = {};
   public entityEmptyConf: EmptyConfig = {
     type: EmptyType.first_use,
     large: true,
@@ -1839,7 +1852,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
    * Please note that extra options are special in that they are passed directly to ZFS.
    * This is why 'encryptionroot' is included in order to get 'encryption_root' in the response
    * */
-  private datasetQueryOptions = [[], {
+  private datasetQueryOptions = [[] as any, {
     "extra": {
       "properties": [
         "type",
@@ -1911,7 +1924,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       })
     }
 
-    combineLatest([this.ws.call('pool.query', []), this.ws.call(this.datasetQuery, this.datasetQueryOptions)]).subscribe(async ([pools, datasets]) => {
+    combineLatest([this.ws.call('pool.query', []), this.ws.call<any[]>(this.datasetQuery, this.datasetQueryOptions)]).subscribe(async ([pools, datasets]) => {
       if (pools.length > 0) {
         for (const pool of pools) {
           pool.is_upgraded = await this.ws.call('pool.is_upgraded', [pool.id]).toPromise();
@@ -1922,7 +1935,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           /* Filter out system datasets */
           const pChild = datasets.find(set => set.name === pool.name);
           if (pChild) {
-            pChild.children = pChild.children.filter(child => child.name.indexOf(`${pool.name}/.system`) === -1 && child.name.indexOf(`${pool.name}/.glusterfs`) === -1);
+            pChild.children = pChild.children.filter((child: any) => child.name.indexOf(`${pool.name}/.system`) === -1 && child.name.indexOf(`${pool.name}/.glusterfs`) === -1);
           }
           pool.children = pChild ? [pChild] : [];
 
@@ -1988,13 +2001,13 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   }
 
-  addZvol(id, isNew) {
+  addZvol(id: string, isNew: boolean) {
     this.addZvolComponent.setParent(id);
     this.addZvolComponent.isNew = isNew;
     this.modalService.open('slide-in-form', this.addZvolComponent, id);
   }
 
-  addDataset(pool, id) {
+  addDataset(pool: any, id: string) {
     this.addDatasetFormComponent.setParent(id);
     this.addDatasetFormComponent.setVolId(pool);
     this.addDatasetFormComponent.setTitle("Add Dataset");
@@ -2002,7 +2015,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   }
 
-  editDataset(pool, id) {
+  editDataset(pool: any, id: string) {
 
     this.editDatasetFormComponent = new DatasetFormComponent(this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService);
 

@@ -1,6 +1,8 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/services/components/service-tftp';
 import { RestService, UserService, WebSocketService } from '../../../../services/';
@@ -92,7 +94,7 @@ export class ServiceTFTPComponent {
     { name: 'divider', divider: true }
   ];
 
-  protected tftp_username: any;
+  protected tftp_username: FieldConfig;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
               protected rest: RestService, protected ws: WebSocketService,
@@ -109,7 +111,7 @@ export class ServiceTFTPComponent {
 
   preInit(entityEdit: any) {
     this.userService.userQueryDSCache().subscribe(items => {
-      const users = [];
+      const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({label: items[i].username, value: items[i].username});
       }
@@ -126,7 +128,7 @@ export class ServiceTFTPComponent {
 
   updateUserSearchOptions(value = "", parent: any) {
     parent.userService.userQueryDSCache(value).subscribe((items: any[]) => {
-      const users = [];
+      const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({label: items[i].username, value: items[i].username});
       }

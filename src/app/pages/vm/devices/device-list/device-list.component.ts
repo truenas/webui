@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -65,7 +66,7 @@ export class DeviceListComponent {
     return actionId === 'delete' && row.id === true ? false : true;
   }
 
-  getActions(row) {
+  getActions(row: any) {
     const self = this;
         const actions = [];
         actions.push({
@@ -73,7 +74,7 @@ export class DeviceListComponent {
           name: 'edit',
           icon: 'edit',
           label : T("Edit"),
-          onClick : (edit_row) => {
+          onClick : (edit_row: any) => {
             this.router.navigate(new Array('').concat(
                 [ "vm", this.pk, "devices", this.vm, "edit", edit_row.id, edit_row.dtype ]));
           }
@@ -83,7 +84,7 @@ export class DeviceListComponent {
           name: 'delete',
           icon: 'delete',
           label : T("Delete"),
-          onClick : (delete_row) => {
+          onClick : (delete_row: any) => {
             this.deviceDelete(delete_row);
           },
         });
@@ -92,9 +93,9 @@ export class DeviceListComponent {
           name: 'reorder',
           icon: 'reorder',
           label : T("Change Device Order"),
-          onClick : (row1) => {
+          onClick : (row1: any) => {
             self.translate.get('Change order for ').subscribe(orderMsg => {
-              const conf: DialogFormConfiguration = { 
+              const conf: DialogFormConfiguration = {
                 title: T('Change Device Order'),
                 message: orderMsg + `<b>${row1.dtype} ${row1.id}</b>`,
                 parent: this,
@@ -104,10 +105,10 @@ export class DeviceListComponent {
                 }
               ],
                 saveButtonText: T('Save'),
-                preInit: function (entityDialog) {
+                preInit: function (entityDialog: EntityDialogComponent) {
                   _.find(entityDialog.fieldConfig, {'name':'order'})['value'] = row1.order;
                 },
-                customSubmit: function (entityDialog) {
+                customSubmit: function (entityDialog: EntityDialogComponent) {
                   const value = entityDialog.formValue;
                   self.loader.open();
                   self.ws.call('vm.device.update',[row1.id,{'order':value.order}]).subscribe((succ)=>{
@@ -121,7 +122,7 @@ export class DeviceListComponent {
                     self.loader.close();
                     this.parent.entityList.getData();
                   });
-    
+
                 }
               }
               self.dialogService.dialogForm(conf);
@@ -134,7 +135,7 @@ export class DeviceListComponent {
             name: 'details',
             icon: 'list',
             label : T("Details"),
-            onClick : (device) => {
+            onClick : (device: any) => {
               self.translate.get('Change order for ').subscribe(detailMsg => {
                 let details = ``
                 for (const attribute in device.attributes) {
@@ -146,11 +147,11 @@ export class DeviceListComponent {
           });
         return actions;
     }
-  
-  deviceDelete(row){
+
+  deviceDelete(row: any){
     this.translate.get('Delete').subscribe(msg => {
-      this.dialogService.confirm(T("Delete"), `${msg} <b>${row.dtype} ${row.id}</b>`, 
-      true, T('Delete Device')).subscribe((res) => {
+      this.dialogService.confirm(T("Delete"), `${msg} <b>${row.dtype} ${row.id}</b>`,
+      true, T('Delete Device')).subscribe((res: boolean) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;

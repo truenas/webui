@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Validators } from '@angular/forms';
 
 import { helptext_sharing_nfs, shared } from 'app/helptext/sharing';
+import { Option } from 'app/interfaces/option.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { T } from "app/translate-marker";
 import * as _ from 'lodash';
@@ -322,7 +323,7 @@ export class NFSFormComponent {
       })
     }
 
-    EntityForm.formGroup.controls['paths'].valueChanges.subscribe((res) => {
+    EntityForm.formGroup.controls['paths'].valueChanges.subscribe((res: any[]) => {
       const aliases = res.filter(p => !!p.alias);
 
       if (aliases.length > 0 && aliases.length !== res.length) {
@@ -345,7 +346,7 @@ export class NFSFormComponent {
     return true;
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     const paths = [];
     for (let i = 0; i < data['paths'].length; i++) {
       paths.push({'path':data['paths'][i], alias: data['aliases'][i] ? data['aliases'][i] : undefined});
@@ -367,17 +368,17 @@ export class NFSFormComponent {
     return data;
   }
 
-  clean(data) {
+  clean(data: any) {
     return {
       ...data,
-      paths: data.paths.filter(p => !!p.path).map(p => p.path),
-      aliases: data.paths.filter(p => !!p.alias).map(p => p.alias),
-      networks: data.networks.filter(n => !!n.network).map(n => n.network),
-      hosts: data.hosts.filter(h => !!h.host).map(h => h.host)
+      paths: (data.paths as any[]).filter(p => !!p.path).map(p => p.path),
+      aliases: (data.paths as any[]).filter(p => !!p.alias).map(p => p.alias),
+      networks: (data.networks as any[]).filter(n => !!n.network).map(n => n.network),
+      hosts: (data.hosts as any[]).filter(h => !!h.host).map(h => h.host)
     };
   }
 
-  afterSave(entityForm) {
+  afterSave(entityForm: any) {
     this.ws.call('service.query', [[]]).subscribe((res) => {
       const service = _.find(res, {"service": "nfs"});
       if (service['enable']) {
@@ -385,7 +386,7 @@ export class NFSFormComponent {
           this.route_success));
       } else {
           this.dialog.confirm(shared.dialog_title, shared.dialog_message,
-          true, shared.dialog_button).subscribe((dialogRes) => {
+          true, shared.dialog_button).subscribe((dialogRes: boolean) => {
             if (dialogRes) {
               entityForm.loader.open();
               this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
@@ -418,17 +419,17 @@ export class NFSFormComponent {
     });
   }
 
-  updateMapAllGroupSearchOptions(value = "", parent) {
+  updateMapAllGroupSearchOptions(value = "", parent: any) {
     parent.updateGroupSearchOptions(value, parent, 'mapall_group');
   }
 
-  updateMapRootGroupSearchOptions(value = "", parent) {
+  updateMapRootGroupSearchOptions(value = "", parent: any) {
     parent.updateGroupSearchOptions(value, parent, 'maproot_group');
   }
 
-  updateGroupSearchOptions(value = "", parent, field) {
-    parent.userService.groupQueryDSCache(value).subscribe(items => {
-      const groups = [];
+  updateGroupSearchOptions(value = "", parent: any, field: any) {
+    parent.userService.groupQueryDSCache(value).subscribe((items: any[]) => {
+      const groups: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         groups.push({label: items[i].group, value: items[i].group});
       }
@@ -436,17 +437,17 @@ export class NFSFormComponent {
     });
   }
 
-  updateMapAllUserSearchOptions(value = "", parent) {
+  updateMapAllUserSearchOptions(value = "", parent: any) {
     parent.updateUserSearchOptions(value, parent, 'mapall_user');
   }
 
-  updateMapRootUserSearchOptions(value = "", parent) {
+  updateMapRootUserSearchOptions(value = "", parent: any) {
     parent.updateUserSearchOptions(value, parent, 'maproot_user');
   }
 
-  updateUserSearchOptions(value = "", parent, field) {
-    parent.userService.userQueryDSCache(value).subscribe(items => {
-      const users = [];
+  updateUserSearchOptions(value = "", parent: any, field: any) {
+    parent.userService.userQueryDSCache(value).subscribe((items: any[]) => {
+      const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({label: items[i].username, value: items[i].username});
       }

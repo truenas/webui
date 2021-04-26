@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Option } from 'app/interfaces/option.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
 import helptext from '../../../../../../helptext/services/components/service-rsync';
@@ -185,7 +186,7 @@ export class RYSNCConfigurationFormComponent {
 
     updateGroupSearchOptions(value = "", parent: any) {
         parent.userService.groupQueryDSCache(value).subscribe((items: any[]) => {
-            const groups = [];
+            const groups: Option[] = [];
             for (let i = 0; i < items.length; i++) {
                 groups.push({ label: items[i].group, value: items[i].group });
             }
@@ -195,7 +196,7 @@ export class RYSNCConfigurationFormComponent {
 
     updateUserSearchOptions(value = "", parent: any) {
         parent.userService.userQueryDSCache(value).subscribe((items: any[]) => {
-            const users = [];
+            const users: Option[] = [];
             for (let i = 0; i < items.length; i++) {
                 users.push({ label: items[i].username, value: items[i].username });
             }

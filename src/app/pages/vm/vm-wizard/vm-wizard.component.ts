@@ -430,7 +430,7 @@ export class VMWizardComponent {
     })
   }
 
-  customNext(stepper) {
+  customNext(stepper: any) {
     stepper.next();
     this.currentStep = stepper._selectedIndex;
     if (this.currentStep === 2) {
@@ -460,7 +460,7 @@ export class VMWizardComponent {
   }
 
   afterInit(entityWizard: EntityWizardComponent) {
-    this.ws.call('vm.query').subscribe((res: any) => {
+    this.ws.call('vm.query').subscribe((res: any[]) => {
       res.forEach(i => this.namesInUse.push(i.name));
     })
 

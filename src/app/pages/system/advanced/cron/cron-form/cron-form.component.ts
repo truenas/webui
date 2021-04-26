@@ -109,8 +109,8 @@ export class CronFormComponent {
 
   constructor(protected userService: UserService, protected modalService: ModalService) {}
 
-  updateUserSearchOptions(value = '', parent) {
-    parent.userService.userQueryDSCache(value).subscribe((items) => {
+  updateUserSearchOptions(value = '', parent: any) {
+    parent.userService.userQueryDSCache(value).subscribe((items: any[]) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -137,16 +137,16 @@ export class CronFormComponent {
     });
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     const schedule = data['schedule'];
     data['cron_picker'] = `${schedule.minute} ${schedule.hour} ${schedule.dom} ${schedule.month} ${schedule.dow}`;
     return data;
   }
 
-  beforeSubmit(value) {
+  beforeSubmit(value: any) {
     let spl = value.cron_picker.split(' ');
     delete value.cron_picker;
-    const schedule = {};
+    const schedule: any = {};
     schedule['minute'] = spl[0];
     schedule['hour'] = spl[1];
     schedule['dom'] = spl[2];

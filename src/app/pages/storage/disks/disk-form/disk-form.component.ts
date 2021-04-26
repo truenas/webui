@@ -185,7 +185,7 @@ export class DiskFormComponent {
   protected disk_advpowermgmt: any;
   protected disk_acousticlevel: any;
   protected title: String;
-  
+
   public rowid: any;
 
   constructor(
@@ -196,7 +196,7 @@ export class DiskFormComponent {
   ) {
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     delete data.passwd;
     return data;
   }
@@ -204,9 +204,9 @@ export class DiskFormComponent {
 
   preInit() {
     this.aroute.params.subscribe(params => {
-      /* 
+      /*
        * Make sure the route is "storage/disks" before
-       * using the pk value 
+       * using the pk value
        * */
       if (params['pk'] && this._router.url.startsWith("/storage/disks")){
         this.customFilter[0][0].push(params['pk']);
@@ -215,14 +215,14 @@ export class DiskFormComponent {
   }
 
   afterInit(entityEdit: any) {
-    entityEdit.formGroup.controls['hddstandby'].valueChanges.subscribe(value => {
+    entityEdit.formGroup.controls['hddstandby'].valueChanges.subscribe((value: any) => {
       if (value === 'ALWAYS ON') {
         entityEdit.formGroup.controls['hddstandby_force'].setValue(false);
       }
     })
   }
 
-  beforeSubmit(value) {
+  beforeSubmit(value: any) {
     if (!value.hddstandby_force) {
       value.hddstandby_force = false;
     }
@@ -243,7 +243,7 @@ export class DiskFormComponent {
     value.informational = value.informational === '' ? null : value.informational;
   }
 
-  inIt(pk) {
+  inIt(pk: string) {
     this.title = helptext.disk_form_title;
 
     delete this.route_success;

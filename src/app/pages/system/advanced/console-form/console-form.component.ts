@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { Subscription } from 'rxjs';
-import { DialogService, LanguageService, StorageService, 
+import { DialogService, LanguageService, StorageService,
   SystemGeneralService, WebSocketService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { ModalService } from '../../../../services/modal.service';
@@ -84,9 +84,9 @@ export class ConsoleFormComponent implements OnDestroy{
         }
       ]
     },
-    { 
+    {
       name:'divider',
-      divider: true 
+      divider: true
     }
   ]);
 
@@ -112,7 +112,7 @@ export class ConsoleFormComponent implements OnDestroy{
 
   preInit() {}
 
-  reconnect(href) {
+  reconnect(href: string) {
     if (this.entityForm.ws.connected) {
       this.loader.close();
       // ws is connected
@@ -126,11 +126,11 @@ export class ConsoleFormComponent implements OnDestroy{
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
-    
+
     this.serialPortChoicesSubscription = this.ws.call('system.advanced.serial_port_choices').subscribe((serial_port_choices)=>{
       const serialport = this.fieldSets.config('serialport');
       serialport.options = [];
-      
+
       for(const k in serial_port_choices){
         serialport.options.push({
           label: k, value: serial_port_choices[k]
@@ -139,7 +139,7 @@ export class ConsoleFormComponent implements OnDestroy{
     });
   }
 
-  public customSubmit(body) {
+  public customSubmit(body: any) {
     this.loader.open();
     return this.ws.call('system.advanced.update', [body]).subscribe(() => {
       this.loader.close();
@@ -153,7 +153,7 @@ export class ConsoleFormComponent implements OnDestroy{
     });
   }
 
-  getKeyByValue(object, value) {
+  getKeyByValue(object: any, value: any) {
     return Object.keys(object).find(key => object[key] === value);
   }
 

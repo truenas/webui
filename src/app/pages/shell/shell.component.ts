@@ -48,7 +48,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit() {
     this.getAuthToken().subscribe((res) => {
       this.initializeWebShell(res);
-      this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
+      this.shellSubscription = this.ss.shellOutput.subscribe(() => {
       });
       this.initializeTerminal();
     });
@@ -68,7 +68,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
 
     this.core.unregister({observerClass: this});
   }
-  
+
   refreshToolbarButtons() {
     this.formEvents = new Subject();
     this.formEvents.subscribe((evt: CoreEvent) => {
@@ -92,7 +92,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
           label: 'Set font size',
           type: 'slider',
           min: 10,
-          max: 20, 
+          max: 20,
           step: 1,
           value: this.font_size,
         },
@@ -130,11 +130,11 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     this.core.emit({name:"GlobalActions", data: actionsConfig, sender: this});
   }
 
-  onResize(event) {
+  onResize() {
     this.resizeTerm();
   }
 
-  onFontSizeChanged(event) {
+  onFontSizeChanged() {
     this.resizeTerm();
   }
 
@@ -162,7 +162,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   initializeTerminal() {
-    
+
     const size = this.getSize();
 
     const setting = {
@@ -182,15 +182,15 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     this.xterm.loadAddon(this.fitAddon);
 
     var font = new FontFaceObserver(this.font_name);
-    
+
     font.load().then((e) => {
       this.xterm.open(this.container.nativeElement);
       this.fitAddon.fit();
       this.xterm._initialized = true;
     }, function (e) {
       console.log('Font is not available', e);
-    });    
-    
+    });
+
   }
 
   getSize() {
@@ -204,7 +204,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     span.innerHTML = 'a';
 
     let cols = 0;
-    while(span.offsetWidth < domWidth) {      
+    while(span.offsetWidth < domWidth) {
       span.innerHTML += 'a';
       cols++;
     }
@@ -214,7 +214,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     if (cols < 80) {
       cols = 80;
     }
-    
+
     if (rows < 10) {
       rows = 10;
     }
@@ -238,20 +238,20 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     this.ss.token = res;
     this.ss.connect();
 
-    this.refreshToolbarButtons();  
+    this.refreshToolbarButtons();
 
-    this.shellConnectedSubscription = this.ss.shellConnected.subscribe((res)=> {
+    this.shellConnectedSubscription = this.ss.shellConnected.subscribe((res: any)=> {
       this.shellConnected = res.connected;
       this.connectionId = res.id;
-          
+
       if (this.attachAddon) {
         this.attachAddon.dispose();
       }
-      
+
       this.attachAddon = new AttachAddon(this.ss.socket);
       this.xterm.loadAddon(this.attachAddon);
 
-      this.refreshToolbarButtons();      
+      this.refreshToolbarButtons();
       this.resizeTerm();
     })
   }

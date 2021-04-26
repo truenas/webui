@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Type } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
@@ -41,7 +41,7 @@ import { TunableFormComponent } from '../tunable/tunable-form/tunable-form.compo
   providers: [DatePipe, UserService],
 })
 export class AdvancedSettingsComponent implements OnInit, OnDestroy {
-  dataCards = [];
+  dataCards: any[] = [];
   configData: any;
   refreshCardData: Subscription;
   refreshTable: Subscription;
@@ -69,7 +69,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   };
   public is_ha = false;
   public formEvents: Subject<CoreEvent>;
-  public actionsConfig;
+  public actionsConfig: any;
   protected dialogRef: any;
 
   public cronTableConf: InputTableConf = {
@@ -244,7 +244,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   updateSyslogOnTable() {
     this.dataCards.forEach((card) => {
       if (card.id === 'syslog') {
-        card.items.forEach((item) => {
+        card.items.forEach((item: any) => {
           if (item.label === helptext_system_advanced.system_dataset_placeholder) {
             item.value = this.syslog ? helptext.enabled : helptext.disabled;
           }
@@ -343,7 +343,12 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   }
 
   doAdd(name: string, id?: number) {
-    let addComponent;
+    let addComponent: TunableFormComponent
+      | ConsoleFormComponent
+      | SyslogFormComponent
+      | KernelFormComponent
+      | CronFormComponent
+      | InitshutdownFormComponent;
     switch (name) {
       case 'console':
         addComponent = this.consoleFormComponent;
@@ -407,10 +412,10 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
           true,
           helptext_system_advanced.dialog_button_ok,
         )
-        .subscribe((ires) => {
+        .subscribe((ires: boolean) => {
           if (ires) {
             this.ws.call('core.download', ['system.debug', [], fileName]).subscribe(
-              (res) => {
+              (res: any) => {
                 const url = res[1];
                 let failed = false;
                 this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(
@@ -445,10 +450,10 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
                   });
                   this.dialogRef.componentInstance.jobId = res[0];
                   this.dialogRef.componentInstance.wsshow();
-                  this.dialogRef.componentInstance.success.subscribe((save_debug) => {
+                  this.dialogRef.componentInstance.success.subscribe(() => {
                     this.dialogRef.close();
                   });
-                  this.dialogRef.componentInstance.failure.subscribe((save_debug_err) => {
+                  this.dialogRef.componentInstance.failure.subscribe((save_debug_err: any) => {
                     this.dialogRef.close();
                     if (!reported) {
                       new EntityUtils().handleWSError(this, save_debug_err, this.dialog);
@@ -513,7 +518,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     this.initShutdownFormComponent = new InitshutdownFormComponent(this.modalService);
   }
 
-  cronDataSourceHelper(data) {
+  cronDataSourceHelper(data: any[]) {
     return data.map((job) => {
       job.cron_schedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
 
