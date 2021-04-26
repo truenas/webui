@@ -5,7 +5,7 @@
 // and add it to our commands below
 const debug:boolean = true;
 
-const maxDecimals = (input, max?) => {
+const maxDecimals = (input: number, max?: number) => {
   if(!max){
     max = 2;
   }
@@ -16,17 +16,17 @@ const maxDecimals = (input, max?) => {
   }
   const decimals = str[1].length;
   const output = decimals > max ? input.toFixed(max): input;
-  return parseFloat(output);
+  return parseFloat(output as any);
 }
 
-function arrayAvg(input){
+function arrayAvg(input: number[]){
   let sum = input.reduce((acc, cv) => acc + cv);
   let avg = sum / input.length;
   return maxDecimals(avg);
 }
 
-function avgFromReportData(input){
-  let output = [];
+function avgFromReportData(input: any[]){
+  let output: any[] = [];
   input.forEach((item, index) => {
     let avg = arrayAvg(item);
     output.push([avg]);
@@ -96,7 +96,7 @@ function  convertKMGT(input: number, units: string, fixed?: number){
   return { value: output, prefix: prefix, shortName: shortName };
 }
 
-function convertByKilo(input){
+function convertByKilo(input: number){
   if(typeof input !== 'number'){return input}
   let output = input;
   let prefix: string = '';
@@ -114,7 +114,7 @@ function convertByKilo(input){
 }
 
 function formatValue(value: number, units: string, fixed?: number){
-  let output = value;
+  let output: any = value;
   if(!fixed){ fixed = -1; }
   if(typeof value !== 'number'){ return value;}
 
@@ -139,22 +139,22 @@ function formatValue(value: number, units: string, fixed?: number){
   return output; //? output : value;
 }
 
-function convertAggregations(input, labelY?){
+function convertAggregations(input: any, labelY?: string){
   let output = Object.assign({}, input);
   const units = inferUnits(labelY);
   const keys = Object.keys(output.aggregations);
 
   keys.forEach((key) => {
     //output.aggregations[key].map((v) => formatValue(v , units) )
-    output.aggregations[key].forEach((v, index) => {
+    (output.aggregations[key] as any[]).forEach((v, index) => {
       output.aggregations[key][index] = formatValue(v , units) ;
     });
   });
   return output;
 }
 
-function optimizeLegend(input){
-  let output = input;
+function optimizeLegend(input: any){
+  let output: { legend: string[] } = input;
   // Do stuff
   switch(input.name){
     case 'upsbatterycharge':
@@ -252,7 +252,7 @@ function optimizeLegend(input){
   return output;
 }
 
-function avgCpuTempReport(report){
+function avgCpuTempReport(report: any){
   let output = Object.assign({}, report);
   // Handle Data
   output.data = avgFromReportData(report.data);
@@ -274,61 +274,61 @@ function avgCpuTempReport(report){
 // using text input. The Unix way ;-)
 const commands = {
   // POC commands
-  echo: (input) => {
+  echo: (input: string) => {
     console.log(input);
     return input;
   },
-  toLowerCase: (input) => {
+  toLowerCase: (input: string) => {
     let output = input.toLowerCase();
     console.log(output);
     return output;
   },
-  length: (input) => {
+  length: (input: string) => {
     let output = input.length;
     console.log(output);
     return output;
   },
-  avgFromReportData: (input) => {
+  avgFromReportData: (input: any) => {
     let output = avgFromReportData(input);
     return output;
   },
-  optimizeLegend: (input) => {
+  optimizeLegend: (input: any) => {
     let output = optimizeLegend(input);
     return output;
   },
-  convertAggregations: (input, options?) => {
+  convertAggregations: (input: any, options?: any) => {
     let output = options ? convertAggregations(input, ...options) : input;
     if(!options) {
       console.warn("You must specify a label to parse. (Usually the Y axis label). Returning input value instead");
     }
     return output;
   },
-  avgCpuTempReport: (input) => {
+  avgCpuTempReport: (input: any) => {
     let output = avgCpuTempReport(input);
     return output;
   },
-  arrayAvg: (input) => {
+  arrayAvg: (input: any) => {
     let output = arrayAvg(input);
     return output;
   },
-  maxDecimals: (input, options?) => {
+  maxDecimals: (input: any, options?: any) => {
     let output = options ? maxDecimals(input, ...options) : maxDecimals(input);
     return output;
   },
 }
 
-function processCommands(list){
-  let output;
+function processCommands(list: any[]){
+  let output: any;
   list.forEach((item, index) => {
     let input = item.input == '--pipe' || item.input == '|' ? output : item.input;
-    output = item.options ? commands[item.command](input, item.options) : commands[item.command](input);
+    output = item.options ? (commands as any)[item.command](input, item.options) : (commands as any)[item.command](input);
 
   });
 
   return output;
 }
 
-function emit(evt){
+function emit(evt: any){
   postMessage(evt);
 }
 
