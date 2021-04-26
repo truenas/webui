@@ -842,6 +842,9 @@ msgstr "AWS Region"
 msgid "Abort"
 msgstr ""
 
+msgid "Abort the task"
+msgstr ""
+
 msgid "About"
 msgstr "Über"
 
@@ -1036,6 +1039,12 @@ msgid "Add Init/Shutdown Script"
 msgstr ""
 
 msgid "Add Interface"
+msgstr ""
+
+msgid "Add Kerberos Keytab"
+msgstr ""
+
+msgid "Add Kerberos Realm"
 msgstr ""
 
 msgid "Add Kerberos SPN Entry"
@@ -4841,6 +4850,9 @@ msgstr ""
 msgid "Edit DNS Authenticator"
 msgstr ""
 
+msgid "Edit Dataset"
+msgstr ""
+
 msgid "Edit Disk(s)"
 msgstr "Datenträger bearbeiten"
 
@@ -4860,6 +4872,12 @@ msgid "Edit Init/Shutdown Script"
 msgstr ""
 
 msgid "Edit Interface"
+msgstr ""
+
+msgid "Edit Kerberos Keytab"
+msgstr ""
+
+msgid "Edit Kerberos Realm"
 msgstr ""
 
 msgid "Edit Options"
@@ -7915,6 +7933,9 @@ msgstr "Kerberos Prinzipal"
 
 msgid "Kerberos Realm"
 msgstr "Kerberos Realm"
+
+msgid "Kerberos Realms"
+msgstr ""
 
 msgid "Kerberos Settings"
 msgstr "Kerberos Einstellungen"
@@ -14939,8 +14960,8 @@ msgid ""
 "target=\"_blank\">zpool(8)</a> for more details on the special allocation"
 msgstr ""
 
-msgid "Thread number:"
-msgstr "Thread Nummer:"
+msgid "Thread:"
+msgstr ""
 
 msgid "Threads"
 msgstr "Threads"
@@ -16530,6 +16551,9 @@ msgid "comment"
 msgstr "Kommentar"
 
 msgid "coredumpsize"
+msgstr ""
+
+msgid "cores"
 msgstr ""
 
 msgid "cpuset"
