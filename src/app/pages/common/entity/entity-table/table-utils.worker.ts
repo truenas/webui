@@ -6,7 +6,7 @@
 
 const tableUtils = {
   debug: true,
-  maxDecimals: (input, max?) => {
+  maxDecimals: (input: any, max?: number) => {
     if(!max){
       max = 2;
     }
@@ -19,13 +19,13 @@ const tableUtils = {
     const output = decimals > max ? input.toFixed(max): input;
     return parseFloat(output);
   },
-  arrayAvg: (input) => {
+  arrayAvg: (input: any[]) => {
     let sum = input.reduce((acc, cv) => acc + cv);
     let avg = sum / input.length;
     return maxDecimals(avg);
   },
-  avgFromReportData: (input) => {
-    let output = [];
+  avgFromReportData: (input: any[]) => {
+    let output: any[] = [];
     input.forEach((item, index) => {
       let avg = arrayAvg(item);
       output.push([avg]);
@@ -86,7 +86,7 @@ const tableUtils = {
 
     return { value: output, prefix: prefix, shortName: shortName };
   },
-  convertByKilo: (input) => {
+  convertByKilo: (input: number) => {
     if(typeof input !== 'number'){return input}
     let output = input;
     let prefix: string = '';
@@ -103,7 +103,7 @@ const tableUtils = {
     return { value: output, suffix: suffix , shortName:''};
   },
   formatValue: (value: number, units: string, fixed?: number) => {
-    let output = value;
+    let output: any = value;
     if(!fixed){ fixed = -1; }
     if(typeof value !== 'number'){ return value;}
 
@@ -127,14 +127,14 @@ const tableUtils = {
 
     return output; //? output : value;
   },
-  convertAggregations: (input, labelY?) => {
+  convertAggregations: (input: any, labelY?: string) => {
     let output = Object.assign({}, input);
     const units = inferUnits(labelY);
     const keys = Object.keys(output.aggregations);
 
     keys.forEach((key) => {
       //output.aggregations[key].map((v) => formatValue(v , units) )
-      output.aggregations[key].forEach((v, index) => {
+      output.aggregations[key].forEach((v: any, index: number) => {
         output.aggregations[key][index] = formatValue(v , units) ;
       });
     });
@@ -143,18 +143,18 @@ const tableUtils = {
 }
 
 
-function processTableCommands(list){
-  let output;
+function processTableCommands(list: any[]){
+  let output: any;
   list.forEach((item, index) => {
     let input = item.input == '--pipe' || item.input == '|' ? output : item.input;
-    output = item.options ? tableUtils[item.command](input, item.options) : tableUtils[item.command](input);
+    output = item.options ? (tableUtils as any)[item.command](input, item.options) : (tableUtils as any)[item.command](input);
 
   });
 
   return output;
 }
 
-function tableUtilsEmit(evt){
+function tableUtilsEmit(evt: any){
   postMessage(evt);
 }
 

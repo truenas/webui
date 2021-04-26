@@ -8,7 +8,7 @@ import { ChartData } from 'app/core/components/viewchart/viewchart.component';
 import { Theme } from 'app/services/theme/theme.service';
 import { Subject } from 'rxjs';
 import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
-import Chart from 'chart.js';
+import { Chart, ChartDataSets, InteractionMode } from 'chart.js';
 
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
@@ -22,21 +22,6 @@ import { ViewChartBarComponent } from 'app/core/components/viewchartbar/viewchar
 import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../../translate-marker';
-
-interface DataPoint {
-  usage?: number | string;
-  temperature?: number | string;
-  coreNumber: number;
-}
-
-// For Chart.js
-interface DataSet {
-  label: string;
-  data: number[];
-  backgroundColor: string;
-  borderColor?: string;
-  borderWidth?: number;
-}
 
 @Component({
   selector: 'widget-cpu',
@@ -253,7 +238,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
         },
         tooltips:{
           enabled: false,
-          mode: 'nearest',
+          mode: 'nearest' as InteractionMode,
           intersect: true,
           callbacks: {
             label: (tt: any, data: any) => {
@@ -341,8 +326,8 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     });
   }
 
-  protected makeDatasets(data:any[]): DataSet[]{
-    let datasets: any[] = [];
+  protected makeDatasets(data:any[]): ChartDataSets[]{
+    let datasets: ChartDataSets[] = [];
     let labels: string[] = [];
     for(let i = 0; i < this.coreCount; i++){
       labels.push((i).toString());
@@ -352,7 +337,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     // Create the data...
     data.forEach((item, index) => {
 
-      let ds:DataSet = {
+      let ds: ChartDataSets = {
         label: item[0],
         data: data[index].slice(1),
         backgroundColor: '',

@@ -12,6 +12,6 @@ import {TooltipComponent} from '../tooltip/tooltip.component';
 })
 export class FormArrayComponent implements Field {
   config: FieldConfig;
-  group: FormGroup;
+  group: any; // TODO: Probably incorrect access in template
   fieldShow: string;
 }

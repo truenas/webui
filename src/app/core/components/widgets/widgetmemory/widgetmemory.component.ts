@@ -12,12 +12,8 @@ import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
-import Chart from 'chart.js';
+import { Chart, ChartColor, ChartDataSets } from 'chart.js';
 
-// Deprecated
-import * as d3 from 'd3';
-
-import filesize from 'filesize';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 
 
@@ -26,21 +22,6 @@ import { ViewChartBarComponent } from 'app/core/components/viewchartbar/viewchar
 import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../../translate-marker';
-
-interface DataPoint {
-  usage?: number | string;
-  temperature?: number | string;
-  coreNumber: number;
-}
-
-// For Chart.js
-interface DataSet {
-  label: string[];
-  data: number[];
-  backgroundColor: string[];
-  borderColor: string[];
-  borderWidth: number;
-}
 
 @Component({
   selector: 'widget-memory',
@@ -236,12 +217,12 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     }
   }
 
-  protected makeDatasets(data:any[]): DataSet[]{
+  protected makeDatasets(data:any[]): ChartDataSets[]{
 
-    let datasets = [];
+    let datasets: ChartDataSets[] = [];
 
-    let ds:DataSet = {
-      label: this.labels,
+    let ds: ChartDataSets = {
+      label: this.labels as any,
       data: data.map(x => { return x[1]}),
       backgroundColor: [],
       borderColor: [],
@@ -260,8 +241,8 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
       const bgRGB = bgColorType == 'hex' ? this.utils.hexToRGB(bgColor).rgb : this.utils.rgbToArray(bgColor);
       const borderRGB = borderColorType == 'hex' ? this.utils.hexToRGB(borderColor).rgb : this.utils.rgbToArray(borderColor);
 
-      ds.backgroundColor.push(this.rgbToString(bgRGB as any, 0.85));
-      ds.borderColor.push(this.rgbToString(bgRGB as any));
+      (ds.backgroundColor as ChartColor[]).push(this.rgbToString(bgRGB as any, 0.85));
+      (ds.borderColor as ChartColor[]).push(this.rgbToString(bgRGB as any));
     });
 
     datasets.push(ds);

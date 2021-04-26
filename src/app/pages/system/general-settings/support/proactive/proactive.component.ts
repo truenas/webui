@@ -171,7 +171,7 @@ export class ProactiveComponent {
   },
 ]
 
-  constructor(public ws: WebSocketService, protected loader: AppLoaderService, 
+  constructor(public ws: WebSocketService, protected loader: AppLoaderService,
     protected dialogService: DialogService, private translate: TranslateService,
     private modalService: ModalService) { }
 
@@ -197,7 +197,7 @@ export class ProactiveComponent {
     ];
 
     setTimeout(() => {
-      this.ws.call('support.is_available').subscribe((res) => { 
+      this.ws.call('support.is_available').subscribe((res) => {
         if (!res) {
           for (const i in proactiveFields) {
             this.entityEdit.setDisabled(proactiveFields[i], true, false);
@@ -235,7 +235,7 @@ export class ProactiveComponent {
     })
   }
 
-  beforeSubmit(data) {
+  beforeSubmit(data: any) {
     delete data.proactive_instructions;
     delete data.proactive_second_title;
     delete data.proactive_section_border;
@@ -246,14 +246,14 @@ export class ProactiveComponent {
     }
   }
 
-  customSubmit(data) {
+  customSubmit(data: any) {
     this.loader.open();
     this.ws.call('support.update', [data]).subscribe(() => {
       this.loader.close();
       this.modalService.close('slide-in-form');
-      this.dialogService.Info(helptext.proactive.dialog_title, 
+      this.dialogService.Info(helptext.proactive.dialog_title,
         helptext.proactive.dialog_mesage, '350px', 'info', true);
-    }, 
+    },
     (err) => {
       this.loader.close();
       this.dialogService.errorReport(helptext.proactive.dialog_err,
