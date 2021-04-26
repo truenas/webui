@@ -130,14 +130,14 @@ export class InitshutdownFormComponent {
     this.pk = entityForm.pk;
     this.title = entityForm.isNew ? helptext.ini_add : helptext.ini_edit;
     this.type_control = entityForm.formGroup.controls['type'];
-    this.type_control.valueChanges.subscribe((value) => {
+    this.type_control.valueChanges.subscribe((value: any) => {
       this.formUpdate(value);
     });
 
     this.type_control.setValue('COMMAND');
   }
 
-  formUpdate(type) {
+  formUpdate(type: any) {
     let isCommand = type == 'COMMAND' ? true : false;
 
     this.entityForm.setDisabled('script', isCommand, isCommand);

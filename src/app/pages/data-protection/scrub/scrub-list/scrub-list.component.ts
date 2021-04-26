@@ -60,7 +60,7 @@ export class ScrubListComponent {
     protected entityFormService: EntityFormService,
   ) {}
 
-  resourceTransformIncomingRestData(data: any): any {
+  resourceTransformIncomingRestData(data: any[]): any {
     return data.map((task) => {
       task.schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
 

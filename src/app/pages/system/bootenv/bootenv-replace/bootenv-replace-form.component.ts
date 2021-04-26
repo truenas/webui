@@ -22,8 +22,8 @@ export class BootEnvReplaceFormComponent {
 
   public fieldConfig: FieldConfig[] =[
     {
-      type: 'select', 
-      name: 'dev', 
+      type: 'select',
+      name: 'dev',
       placeholder: helptext_system_bootenv.replace_name_placeholder,
       options :[]
     },
@@ -45,14 +45,14 @@ preInit(entityForm: any) {
   afterInit(entityForm: any) {
     this.entityForm = entityForm;
     this.diskChoice = _.find(this.fieldConfig, {'name':'dev'});
-    this.ws.call('disk.get_unused').subscribe((res)=>{
+    this.ws.call('disk.get_unused').subscribe((res: any[])=>{
       res.forEach((item) => {
         this.diskChoice.options.push({label : item.name, value : item.name});
       });
     });
     entityForm.submitFunction = this.submitFunction;
   }
-  submitFunction(entityForm){
+  submitFunction(entityForm: any){
     const payload = this.pk.substring(5, this.pk.length);
     return this.ws.call('boot.replace', [payload, entityForm.dev]);
   }

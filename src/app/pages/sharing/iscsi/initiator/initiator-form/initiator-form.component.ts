@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
@@ -80,11 +81,11 @@ export class InitiatorFormComponent implements OnInit {
     }
   ];
 
-  public formGroup;
-  public connectedInitiators;
+  public formGroup: FormGroup;
+  public connectedInitiators: any[];
   public connectedInitiatorsDisabled = false;
   public connectedInitiatorsTooltip = helptext_sharing_iscsi.initiator_form_tooltip_connected_initiators;
-  public error;
+  public error: string;
 
   constructor(
     protected router: Router,
@@ -150,7 +151,7 @@ export class InitiatorFormComponent implements OnInit {
     }
   }
 
-  onSubmit(event) {
+  onSubmit() {
     this.error = null;
     const value = _.cloneDeep(this.formGroup.value);
 

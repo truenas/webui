@@ -63,13 +63,13 @@ export class SnapshotListComponent {
     this.stateButton(row);
   }
 
-  stateButton(row) {
+  stateButton(row: any) {
     if (row.state.state === 'ERROR') {
       this.dialogService.errorReport(row.state.state, row.state.error);
     }
   }
 
-  onCheckboxChange(row) {
+  onCheckboxChange(row: any) {
     row.enabled = !row.enabled;
     this.ws.call('pool.snapshottask.update', [row.id, { enabled: row.enabled }]).subscribe(
       (res) => {

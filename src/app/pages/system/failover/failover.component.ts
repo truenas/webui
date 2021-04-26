@@ -25,7 +25,7 @@ export class FailoverComponent implements OnDestroy {
   protected failoverDisableSubscription: any;
   public alreadyDisabled = false;
   public confirmSubmit = false;
-  public saveSubmitText = helptext_system_failover.save_button_text; 
+  public saveSubmitText = helptext_system_failover.save_button_text;
   public confirmSubmitDialog = {
     title: T("Disable Failover"),
     message: T(""),
@@ -42,14 +42,14 @@ export class FailoverComponent implements OnDestroy {
       function: () => {
         const params = [{"reboot": false}]
         const ds = this.dialog.confirm(
-          helptext_system_failover.dialog_sync_to_peer_title, 
+          helptext_system_failover.dialog_sync_to_peer_title,
           helptext_system_failover.dialog_sync_to_peer_message,
           false, helptext_system_failover.dialog_button_ok,
           true,
           helptext_system_failover.dialog_sync_to_peer_checkbox,
           'failover.sync_to_peer',
           params);
-        ds.afterClosed().subscribe((status)=>{
+        ds.afterClosed().subscribe((status: any)=>{
           if(status){
             this.load.open();
             this.ws.call(
@@ -71,7 +71,7 @@ export class FailoverComponent implements OnDestroy {
       function: () => {
         this.dialog.confirm(helptext_system_failover.dialog_sync_from_peer_title,
                             helptext_system_failover.dialog_sync_from_peer_message, false,
-                            helptext_system_failover.dialog_button_ok).subscribe((confirm) => {
+                            helptext_system_failover.dialog_button_ok).subscribe((confirm: boolean) => {
           if (confirm) {
             this.load.open();
             this.ws.call('failover.sync_from_peer').subscribe((res) => {
@@ -133,17 +133,17 @@ export class FailoverComponent implements OnDestroy {
 
   afterInit(entityEdit: any) {
     this.entityForm = entityEdit;
-    this.failoverDisableSubscription = 
-      this.entityForm.formGroup.controls['disabled'].valueChanges.subscribe(res => {
+    this.failoverDisableSubscription =
+      this.entityForm.formGroup.controls['disabled'].valueChanges.subscribe((res: boolean) => {
         if (!this.alreadyDisabled) {
           this.confirmSubmit = res;
         }
       });
     this.master_fg = this.entityForm.formGroup.controls['master']
-    this.masterSubscription = 
-      this.master_fg.valueChanges.subscribe(res => {
+    this.masterSubscription =
+      this.master_fg.valueChanges.subscribe((res: any) => {
       if (!res && !this.warned) {
-        this.dialog.confirm(helptext_system_failover.master_dialog_title, helptext_system_failover.master_dialog_warning, false, T('Continue'), false, '', null, {}, null, false, T('Cancel'), true).subscribe(confirm => {
+        this.dialog.confirm(helptext_system_failover.master_dialog_title, helptext_system_failover.master_dialog_warning, false, T('Continue'), false, '', null, {}, null, false, T('Cancel'), true).subscribe((confirm: boolean) => {
           if (!confirm) {
             this.master_fg.setValue(true);
           } else {
@@ -159,9 +159,9 @@ export class FailoverComponent implements OnDestroy {
     });
   }
 
-  public customSubmit(body) {
+  public customSubmit(body: any) {
     this.load.open();
-    return this.ws.call('failover.update', [body]).subscribe((res) => {
+    return this.ws.call('failover.update', [body]).subscribe(() => {
       this.alreadyDisabled = body['disabled'];
       this.load.close();
       this.dialog.Info(T("Settings saved."), '', '300px', 'info', true).subscribe(saved => {
@@ -175,7 +175,7 @@ export class FailoverComponent implements OnDestroy {
     });
   }
 
-  resourceTransformIncomingRestData(value) {
+  resourceTransformIncomingRestData(value: any) {
     this.alreadyDisabled = value['disabled'];
     value['master'] = true;
     return value;

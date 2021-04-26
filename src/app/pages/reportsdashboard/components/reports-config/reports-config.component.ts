@@ -80,14 +80,14 @@ export class ReportsConfigComponent {
     { name: 'divider', divider: true }
   ]);
 
-  public afterModalFormSaved?();
+  public afterModalFormSaved?(): any;
 
   constructor(
     private ws: WebSocketService,
     protected dialog: DialogService,
   ) {}
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     this.graphPoints = data.graph_points;
     this.graphAge = data.graph_age;
     this.isCpuCheckboxChecked = data.cpu_in_percentage;
@@ -99,11 +99,11 @@ export class ReportsConfigComponent {
     this.entityForm = entityEdit;
   }
 
-  public customSubmit(body) {
+  public customSubmit(body: any) {
     if (body.graph_age !== this.graphAge || body.graph_points !== this.graphPoints ||
       body.cpu_in_percentage !== this.isCpuCheckboxChecked) {
       this.dialog.confirm(helptext.dialog.title, helptext.dialog.message, false,
-        helptext.dialog.action).subscribe((res) => {
+        helptext.dialog.action).subscribe((res: any) => {
         if (res) {
           body.confirm_rrd_destroy = true;
           this.doSubmit(body)
@@ -115,7 +115,7 @@ export class ReportsConfigComponent {
 
   }
 
-  doSubmit(body) {
+  doSubmit(body: any) {
     this.graphAge = body.graph_age;
     this.graphPoints = body.graph_points;
     this.isCpuCheckboxChecked = body.cpu_in_percentage;

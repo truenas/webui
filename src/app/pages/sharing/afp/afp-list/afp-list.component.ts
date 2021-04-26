@@ -36,6 +36,6 @@ export class AFPListComponent {
     message: shared.delete_share_message,
     isMessageComplete: true,
     button: T('Unshare'),
-    buildTitle: share => `${T('Unshare')} ${share.name}`
+    buildTitle: (share: any) => `${T('Unshare')} ${share.name}`
   }
 }

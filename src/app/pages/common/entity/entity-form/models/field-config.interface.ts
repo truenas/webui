@@ -1,4 +1,5 @@
 import { ValidatorFn, AsyncValidatorFn } from '@angular/forms';
+import { Option } from 'app/interfaces/option.interface';
 import { RelationGroup } from './field-relation.interface';
 export enum UnitType {
   duration = 'duration',
@@ -27,7 +28,9 @@ export interface FieldConfig {
   acceptedFiles?: string, fileLocation?: string, fileType?: string,width?:string,
   message?: any, updater?:any, parent?:any,togglePw?:boolean, paraText?: any,
   hideOthersPermissions?: boolean, blurStatus?:boolean,blurEvent?:any,noMinutes?:boolean,
-  warnings?: string, hideButton?:boolean, searchOptions?: any[], hideDirs?: any,
+  warnings?: string, hideButton?:boolean,
+  searchOptions?: Option[];
+  hideDirs?: any,
   listFields?: Array<FieldConfig>[], templateListField?: FieldConfig[],
   updateLocal?: boolean, isLoading?: boolean, textAreaRows?: number, netmaskPreset?: number,
   isLargeText?: boolean, paragraphIcon?: string, paragraphIconSize?: string, zeroStateMessage?: string, isDoubleConfirm?:boolean,

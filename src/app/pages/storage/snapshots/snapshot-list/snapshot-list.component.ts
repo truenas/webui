@@ -1,5 +1,6 @@
-import { ApplicationRef, Component, Injector } from '@angular/core';
+import { ApplicationRef, Component, Injector, Type } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { WebSocketService, StorageService, DialogService } from 'app/services';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { Subscription } from 'rxjs';
@@ -36,12 +37,12 @@ export class SnapshotListComponent {
   };
 
   // Vairables to show or hide the extra columns
-  protected queryCallOption = [];
+  protected queryCallOption: any[] = [];
   protected queryCallOptionShow = [[["pool", "!=", "freenas-boot"], ["pool", "!=", "boot-pool"]], {"select": ["name", "properties"], "order_by": ["name"]}];
   protected queryCallOptionHide = [[["pool", "!=", "freenas-boot"], ["pool", "!=", "boot-pool"]], {"select": ["name"], "order_by": ["name"]}];
   protected hasDetails: boolean;
   protected columnFilter = window.localStorage.getItem('snapshotXtraCols') === 'true' ? true : false;
-  protected rowDetailComponent;
+  protected rowDetailComponent: Type<SnapshotDetailsComponent>;
   public snapshotXtraCols = false;
 
   public columns: Array<any> = [
@@ -85,7 +86,7 @@ export class SnapshotListComponent {
       icon: "delete",
       enable: true,
       ttpos: "above",
-      onClick: (selected) => {
+      onClick: (selected: any) => {
         this.doMultiDelete(selected);
       }
     }
@@ -156,8 +157,8 @@ export class SnapshotListComponent {
       }
     }
 
-  resourceTransformIncomingRestData(rows: any) {
-    //// 
+  resourceTransformIncomingRestData(rows: any[]) {
+    ////
     rows.forEach((row) => {
       if (row.properties) {
         row.used = this.storageService.convertBytestoHumanReadable(row.properties.used.rawvalue);
@@ -169,7 +170,7 @@ export class SnapshotListComponent {
     return rows;
   }
 
-  rowValue(row, attr) {
+  rowValue(row: any, attr: any) {
     switch (attr) {
       case 'used':
         return (<any>window).filesize(row[attr], { standard: "iec" });
@@ -187,14 +188,14 @@ export class SnapshotListComponent {
         icon: "delete",
         name: this.config.name,
         label: helptext.label_delete,
-        onClick: snapshot => this.doDelete(snapshot)
+        onClick: (snapshot: any) => this.doDelete(snapshot)
       },
       {
         id: "clone",
         icon: "filter_none",
         name: this.config.name,
         label: helptext.label_clone,
-        onClick: snapshot =>
+        onClick: (snapshot: any) =>
           this._router.navigate(new Array("/").concat(["storage", "snapshots", "clone", snapshot.name]))
       },
       {
@@ -202,7 +203,7 @@ export class SnapshotListComponent {
         icon: "history",
         name: this.config.name,
         label: helptext.label_rollback,
-        onClick: snapshot => this.doRollback(snapshot)
+        onClick: (snapshot: any) => this.doRollback(snapshot)
       }
     ];
   }
@@ -215,7 +216,7 @@ export class SnapshotListComponent {
     this.sub = this._route.params.subscribe(params => { });
   }
 
-  callGetFunction(entityList) {
+  callGetFunction(entityList: any) {
     this.ws.call('systemdataset.config').toPromise().then((res) => {
       if (res && res.basename && res.basename !== '') {
         this.queryCallOption[0][2] = (["name", "!^", res.basename]);
@@ -238,7 +239,7 @@ export class SnapshotListComponent {
     });
   }
 
-  wsMultiDeleteParams(selected: any) {
+  wsMultiDeleteParams(selected: any[]) {
     let params: Array<any> = ['zfs.snapshot.delete'];
 
     const snapshots = selected.map(item => [item.dataset + '@' + item.snapshot]);
@@ -248,17 +249,17 @@ export class SnapshotListComponent {
     return params;
   }
 
-  doDelete(item) {
+  doDelete(item: any) {
     const deleteMsg = T("Delete snapshot ") + item.name  + "?";
-    this.entityList.dialogService.confirm(T("Delete"), deleteMsg, false, T('Delete')).subscribe((res) => {
+    this.entityList.dialogService.confirm(T("Delete"), deleteMsg, false, T('Delete')).subscribe((res: boolean) => {
       if (res) {
         this.entityList.loader.open();
         this.entityList.loaderOpen = true;
         this.ws.call(this.wsDelete, [item.name]).subscribe(
-          (res) => { 
-            this.entityList.getData() 
+          () => {
+            this.entityList.getData()
           },
-          (res) => {
+          (res: any) => {
             new EntityUtils().handleWSError(this, res, this.entityList.dialogService);
             this.entityList.loaderOpen = false;
             this.entityList.loader.close();
@@ -267,26 +268,26 @@ export class SnapshotListComponent {
     });
   }
 
-  doMultiDelete(selected){
+  doMultiDelete(selected: any){
     let multiDeleteMsg = this.entityList.getMultiDeleteMessage(selected);
-    this.dialogService.confirm('Delete', multiDeleteMsg, false, T('Delete') ).subscribe((res) => {
+    this.dialogService.confirm('Delete', multiDeleteMsg, false, T('Delete') ).subscribe((res: boolean) => {
       if(res){
         this.startMultiDeleteProgress(selected);
       }
     });
   }
 
-  startMultiDeleteProgress(selected){
+  startMultiDeleteProgress(selected: any){
     const params = this.wsMultiDeleteParams(selected);
     let dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T("Deleting Snapshots")}, disableClose: true });
     dialogRef.componentInstance.setCall(this.wsMultiDelete, params);
     dialogRef.componentInstance.submit();
 
-    dialogRef.componentInstance.success.subscribe((job_res) => {
+    dialogRef.componentInstance.success.subscribe((job_res: any) => {
       let jobErrors: string[] = [];
       let jobSuccess: any[] = [];
 
-      job_res.result.forEach((item) => {
+      job_res.result.forEach((item: any) => {
         if(item.error){
           jobErrors.push(item.error);
         } else {
@@ -298,7 +299,7 @@ export class SnapshotListComponent {
       this.entityList.getData();
       this.entityList.selected = [];
 
-      
+
       if(jobErrors.length > 0){
         const errorTitle = T('Warning') + ', ' + jobErrors.length + ' of ' + params[1].length + ' ' + T('snapshots could not be deleted.');
 
@@ -306,7 +307,7 @@ export class SnapshotListComponent {
         errorMessage = errorMessage.split(',').join('');
         errorMessage = errorMessage.split('[').join('\n *** [');
         errorMessage = errorMessage.split(']').join(']\n');
-        
+
         this.dialogService.errorReport(errorTitle, '', errorMessage);
       } else {
         let infoTitle: string = T('Deleted') + ' ' + jobSuccess.length + ' ';
@@ -315,20 +316,20 @@ export class SnapshotListComponent {
       }
     });
 
-    dialogRef.componentInstance.failure.subscribe((err) => {
+    dialogRef.componentInstance.failure.subscribe((err: any) => {
       new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
       dialogRef.close();
     });
   }
 
-  doRollback(item) {
+  doRollback(item: any) {
     this.entityList.loader.open();
     this.entityList.loaderOpen = true;
     this.ws.call(this.queryCall, [[["id","=",item.name]]]).subscribe(res => {
       const snapshot = res[0];
       this.entityList.loader.close();
       this.entityList.loaderOpen = false;
-      const msg = T(`Use snapshot <i>${item.snapshot}</i> to roll <b>${item.dataset}</b> back to `) + 
+      const msg = T(`Use snapshot <i>${item.snapshot}</i> to roll <b>${item.dataset}</b> back to `) +
         new Date(snapshot.properties.creation.parsed.$date).toLocaleString() + '?';
       this.rollbackFormConf.message = msg;
       this.rollback = snapshot;
@@ -340,11 +341,11 @@ export class SnapshotListComponent {
     });
   }
 
-  rollbackSubmit(entityDialog) {
+  rollbackSubmit(entityDialog: EntityDialogComponent) {
     const parent = entityDialog.parent;
     const item = entityDialog.parent.rollback;
     const recursive = entityDialog.formValue.recursive;
-    const data = {};
+    const data: any = {};
     if (recursive !== null) {
       data[recursive] = true;
     }
@@ -354,11 +355,11 @@ export class SnapshotListComponent {
     parent.ws
       .call('zfs.snapshot.rollback', [item.name, data])
       .subscribe(
-        (res) => {
+        () => {
           entityDialog.dialogRef.close();
           parent.entityList.getData();
         },
-        (err) => {
+        (err: any) => {
           parent.entityList.loaderOpen = false;
           parent.entityList.loader.close();
           entityDialog.dialogRef.close();
@@ -377,7 +378,7 @@ export class SnapshotListComponent {
       message = helptext.extra_cols.message_show;
       button = helptext.extra_cols.button_show;
     }
-    this.dialogService.confirm(title, message, true, button).subscribe(res => {
+    this.dialogService.confirm(title, message, true, button).subscribe((res: boolean) => {
      if (res) {
        this.entityList.loader.open();
        this.snapshotXtraCols = !this.snapshotXtraCols;

@@ -31,8 +31,8 @@ export class SMBFormComponent implements OnDestroy {
   public title = helptext_sharing_smb.formTitle;
   public namesInUse: string[] = [];
   public productType = window.localStorage.getItem('product_type') as ProductType;
-  private hostsAllowOnLoad = [];
-  private hostsDenyOnLoad = [];
+  private hostsAllowOnLoad: any[] = [];
+  private hostsDenyOnLoad: any[] = [];
   private stripACLWarningSent = false;
   private mangleWarningSent = false;
   private mangle: boolean;
@@ -281,7 +281,7 @@ export class SMBFormComponent implements OnDestroy {
 
   public entityForm: EntityFormComponent;
   public presets: any;
-  protected presetFields = [];
+  protected presetFields: any[] = [];
 
   constructor(
     protected router: Router,
@@ -293,7 +293,7 @@ export class SMBFormComponent implements OnDestroy {
     private sysGeneralService: SystemGeneralService
   ) {
     combineLatest(
-      this.ws.call("sharing.smb.query", []),
+      this.ws.call<any[]>("sharing.smb.query", []),
       this.activatedRoute.paramMap
     )
       .pipe(
@@ -309,7 +309,7 @@ export class SMBFormComponent implements OnDestroy {
       });
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     this.mangle = data.aapl_name_mangling;
     this.hostsAllowOnLoad = data.hostsallow ? [...data.hostsallow] : [];
     this.hostsDenyOnLoad = data.hostsdeny ? [...data.hostsdeny] : [];
@@ -349,7 +349,7 @@ export class SMBFormComponent implements OnDestroy {
       });
   }
 
-  afterSave(entityForm) {
+  afterSave(entityForm: EntityFormComponent) {
     if (entityForm.formGroup.controls['timemachine'].value && !this.isTimeMachineOn) {
       this.restartService(entityForm, 'timemachine');
     } else {
@@ -357,7 +357,7 @@ export class SMBFormComponent implements OnDestroy {
     }
   }
 
-  checkAllowDeny(entityForm) {
+  checkAllowDeny(entityForm: EntityFormComponent) {
     if (!_.isEqual(this.hostsAllowOnLoad, entityForm.formGroup.controls['hostsallow'].value) ||
       !_.isEqual(this.hostsDenyOnLoad, entityForm.formGroup.controls['hostsdeny'].value)) {
           this.restartService(entityForm, 'allowdeny');
@@ -366,12 +366,12 @@ export class SMBFormComponent implements OnDestroy {
     }
   }
 
-  restartService(entityForm, source: string) {
+  restartService(entityForm: EntityFormComponent, source: string) {
     let message = source === 'timemachine' ? helptext_sharing_smb.restart_smb_dialog.message_time_machine :
       helptext_sharing_smb.restart_smb_dialog.message_allow_deny;
     this.dialog.confirm(helptext_sharing_smb.restart_smb_dialog.title, message,
       true, helptext_sharing_smb.restart_smb_dialog.title, false, '','','','',false,
-      helptext_sharing_smb.restart_smb_dialog.cancel_btn).subscribe((res) => {
+      helptext_sharing_smb.restart_smb_dialog.cancel_btn).subscribe((res: boolean) => {
         if (res) {
           this.loader.open();
           this.ws.call('service.restart', ['cifs']).subscribe(() => {
@@ -391,7 +391,7 @@ export class SMBFormComponent implements OnDestroy {
       });
   }
 
-  checkACLactions(entityForm) {
+  checkACLactions(entityForm: any) {
     const sharePath: string = entityForm.formGroup.get('path').value;
     const datasetId = sharePath.replace('/mnt/', '');
     const poolName = datasetId.split('/')[0];
