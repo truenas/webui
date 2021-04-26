@@ -62,7 +62,62 @@ export class ChartReleaseEditComponent {
           required: true
         },
         {
-          type: 'dict',
+          type: 'input',
+          name: 'tag',
+          placeholder: helptext.chartForm.image.tag.placeholder,
+          tooltip: helptext.chartForm.image.tag.tooltip,
+          value: 'latest'
+        },
+        {
+          type: 'select',
+          name: 'pullPolicy',
+          placeholder: helptext.chartForm.image.pullPolicy.placeholder,
+          tooltip: helptext.chartForm.image.pullPolicy.tooltip,
+          options: helptext.chartForm.image.pullPolicy.options,
+          value: helptext.chartForm.image.pullPolicy.options[0].value
+        }
+      ]
+    },
+    {
+      name: helptext.chartForm.update.title,
+      label: true,
+      width: '50%',
+      config: [
+        {
+          type: 'select',
+          name: 'updateStrategy',
+          placeholder: helptext.chartForm.update.placeholder,
+          tooltip: helptext.chartForm.update.tooltip,
+          options: helptext.chartForm.update.options,
+          value: helptext.chartForm.update.options[0].value
+        },
+      ]
+    },
+    {
+      name: helptext.chartForm.container.title,
+      label: true,
+      width: '50%',
+      config: [
+        {
+          type: 'chip',
+          name: 'containerCommand',
+          placeholder: helptext.chartForm.container.command.placeholder,
+          tooltip: helptext.chartForm.container.command.tooltip,
+        },
+        {
+          type: 'chip',
+          name: 'containerArgs',
+          placeholder: helptext.chartForm.container.args.placeholder,
+          tooltip: helptext.chartForm.container.args.tooltip
+        }
+      ]
+    },
+    {
+      name: helptext.chartForm.container.env_vars.title,
+      label: true,
+      config: [
+        {
+          type: 'list',
           name: 'containerEnvironmentVariables',
           width: '100%',
           box: true,
