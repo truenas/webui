@@ -123,6 +123,7 @@ export class EntityJobComponent implements OnInit {
 
   jobUpdate(job: any) {
     this.job = job;
+    this.showAbortButton = this.job.abortable;
     if (job.progress) {
       this.progress.emit(job.progress);
     }
@@ -138,6 +139,7 @@ export class EntityJobComponent implements OnInit {
       .subscribe(
         (res) => {
           this.job = res;
+          this.showAbortButton = this.job.abortable;
           if (this.showRealtimeLogs && this.job.logs_path && !this.realtimeLogsSubscribed) {
             this.getRealtimeLogs();
           }
@@ -211,6 +213,7 @@ export class EntityJobComponent implements OnInit {
 
   wsjobUpdate(job: any) {
     this.job = job;
+    this.showAbortButton = this.job.abortable;
     if (job.fields) {
       this.job.state = job.fields.state;
     }

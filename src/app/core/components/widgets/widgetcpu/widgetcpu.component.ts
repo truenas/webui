@@ -34,50 +34,47 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   @ViewChild('cores',{static: true}) cpuCores: ViewChartBarComponent;
   @Input() data: Subject<CoreEvent>;
   @Input() cpuModel: string;
-  public chart: any;// Chart.js instance with per core data
-  public ctx: any; // canvas context for chart.js
+  chart: any;// Chart.js instance with per core data
+  ctx: any; // canvas context for chart.js
   private _cpuData: any;
   get cpuData() { return this._cpuData}
   set cpuData(value){
     this._cpuData = value;
-    /*if(this.legendData && typeof this.legendIndex !== "undefined"){
-      // C3 does not have a way to update tooltip when new data is loaded.
-      // So this is the workaround
-      this.legendData[0].value = this.cpuData.data[0][this.legendIndex + 1];
-      this.legendData[1].value = this.cpuData.data[1][this.legendIndex + 1];
-    }*/
   }
 
-  public cpuAvg: any;
-  public title:string = T("CPU");
-  public subtitle:string = T("% of all cores");
-  public widgetColorCssVar = "var(--accent)";
-  public configurable = false;
-  public chartId = UUID.UUID();
-  public coreCount: number;
-  public legendData: any;
-  public screenType: string = 'Desktop'; // Desktop || Mobile
+  cpuAvg: any;
+  title:string = T("CPU");
+  subtitle:string = T("% of all cores");
+  widgetColorCssVar = "var(--accent)";
+  configurable = false;
+  chartId = UUID.UUID();
+  coreCount: number;
+  threadCount: number;
+  hyperthread: boolean;
+  legendData: any;
+  screenType: string = 'Desktop'; // Desktop || Mobile
 
   // Mobile Stats
-  public tempAvailable: string = 'false';
-  public tempMax: number;
-  public tempMaxThreads: number[] = [];
-  public tempMin: number;
-  public tempMinThreads: number[] = [];
-  public usageMax: number;
-  public usageMaxThreads: number[] = [];
-  public usageMin: number;
-  public usageMinThreads: number[] = [];
+  tempAvailable: string = 'false';
+  tempMax: number;
+  tempMaxThreads: number[] = [];
+  tempMin: number;
+  tempMinThreads: number[] = [];
 
-  public legendColors: string[];
+  usageMax: number;
+  usageMaxThreads: number[] = [];
+  usageMin: number;
+  usageMinThreads: number[] = [];
+
+  legendColors: string[];
   private legendIndex: number;
 
-  public labels: string[] = [];
+  labels: string[] = [];
   protected currentTheme: any;
   private utils: ThemeUtils;
 
 
-  constructor(public router: Router, public translate: TranslateService, public mediaObserver: MediaObserver, private el: ElementRef){
+  constructor(router: Router, public translate: TranslateService, public mediaObserver: MediaObserver, private el: ElementRef){
     super(translate);
 
     this.utils = new ThemeUtils();
@@ -95,6 +92,21 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
       this.screenType = st;
     });
+
+    // Fetch CPU core count from SysInfo cache
+    this.core.register({
+      observerClass: this,
+      eventName:"SysInfo"
+    }).subscribe((evt: CoreEvent) => {
+      this.threadCount = evt.data.cores;
+      this.coreCount = evt.data.physical_cores;
+      this.hyperthread = this.threadCount !== this.coreCount;
+    });
+
+    this.core.emit({
+      name: "SysInfoRequest",
+      sender: this
+    });
   }
 
   ngOnDestroy(){
@@ -103,7 +115,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
   ngAfterViewInit(){
 
-    this.core.register({observerClass: this, eventName:"ThemeChanged"}).subscribe((evt: CoreEvent) => {
+    this.core.register({
+      observerClass: this,
+      eventName:"ThemeChanged"
+    }).subscribe((evt: CoreEvent) => {
       d3.select('#grad1 .begin')
         .style('stop-color', this.getHighlightColor(0))
 
@@ -126,22 +141,28 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.tempAvailable = data.temperature && Object.keys(data.temperature).length > 0 ? 'true' : 'false';
     let usageColumn: any[] = ["Usage"];
     let temperatureColumn: any[] = ["Temperature"];
+    let temperatureValues = [];
 
 
-    // Calculate number of cores...
+    // Filter out stats per thread
     let keys = Object.keys(data);
+    const threads = keys.filter((n) => !isNaN(parseFloat(n)));
 
-    if(!this.coreCount){
-      this.coreCount = data.temperature ? keys.length - 2 : keys.length - 1;
-    }
-
-    for(let i = 0; i < this.coreCount; i++){
+    for(let i = 0; i < this.threadCount; i++){
       usageColumn.push( parseInt(data[i.toString()].usage.toFixed(1)) );
-      if(data.temperature && data.temperature[i]){
-        temperatureColumn.push(parseInt(((data.temperature[i] / 10) - 273.05).toFixed(1)));
-      }
-    }
 
+      const mod = threads.length % 2;
+      let temperatureIndex = this.hyperthread ? Math.floor(i/2 - mod) : i;
+
+      if (data.temperature && data.temperature[temperatureIndex] && !data.temperature_celsius) {
+        const temperatureAsCelsius = (data.temperature[temperatureIndex] / 10 - 273.05).toFixed(1);
+        temperatureValues.push( parseInt(temperatureAsCelsius) );
+      } else if (data.temperature_celsius && data.temperature_celsius[temperatureIndex]) {
+        temperatureValues.push( data.temperature_celsius[temperatureIndex] );
+      }
+
+    }
+temperatureColumn = temperatureColumn.concat(temperatureValues);
     this.setMobileStats(Object.assign([],usageColumn), Object.assign([],temperatureColumn) );
 
     return [usageColumn, temperatureColumn];
@@ -329,7 +350,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   protected makeDatasets(data:any[]): ChartDataSets[]{
     let datasets: ChartDataSets[] = [];
     let labels: string[] = [];
-    for(let i = 0; i < this.coreCount; i++){
+    for(let i = 0; i < this.threadCount; i++){
       labels.push((i).toString());
     }
     this.labels = labels;

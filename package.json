@@ -20,7 +20,6 @@
     "test": "ng test",
     "lint": "ng lint",
     "snyk": "snyk test",
-    "e2e": "ng e2e",
     "clean:dist": "yarn run rimraf dist",
     "clean:coverage": "yarn run rimraf coverage",
     "reinstall": "yarn run rimraf yarn.lock; yarn run rimraf node_modules; yarn cache clean -f; yarn install",
@@ -28,7 +27,8 @@
     "po2json": "node scripts/convert_po2json.js",
     "create_po_pr": "yarn run extract && node scripts/create_pr.js",
     "generate_licenses": "yarn licenses generate-disclaimer > src/assets/disclaimer.txt && yarn licenses list --json > src/assets/licenses.json",
-    "generate_licenses_list": "yarn licenses list > licenses.txt"
+    "generate_licenses_list": "yarn licenses list > licenses.txt",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -121,6 +121,10 @@
     "@angular-devkit/build-angular": "0.1000.1",
     "@angular-devkit/build-optimizer": "0.901.0",
     "@angular-devkit/core": "10.0.1",
+    "@angular-eslint/builder": "1.2.0",
+    "@angular-eslint/eslint-plugin": "1.2.0",
+    "@angular-eslint/eslint-plugin-template": "1.2.0",
+    "@angular-eslint/template-parser": "1.2.0",
     "@angular/cli": "10.0.1",
     "@angular/compiler-cli": "10.0.3",
     "@biesbjerg/ngx-translate-extract": "2.3.4",
@@ -131,10 +135,15 @@
     "@types/lodash": "4.14.160",
     "@types/node": "10.12.7",
     "@types/pixi.js": "4.8.7",
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
     "@types/chart.js": "2.9.4",
     "codelyzer": "5.2.1",
     "commander": "4.1.1",
     "enhanced-resolve": "4.1.1",
+    "eslint": "^7.24.0",
+    "eslint-config-airbnb-typescript": "^12.3.1",
+    "husky": "^6.0.0",
     "jasmine-core": "3.5.0",
     "jasmine-spec-reporter": "4.2.1",
     "karma": "4.4.1",
@@ -143,12 +152,15 @@
     "karma-coverage-istanbul-reporter": "2.1.1",
     "karma-jasmine": "3.1.1",
     "karma-jasmine-html-reporter": "1.5.2",
+    "lint-staged": "^10.0.10",
     "po2json": "1.0.0-beta-2",
     "protractor": "5.4.3",
     "snyk": "^1.467.0",
     "ts-node": "8.6.2",
-    "tslint": "~6.1.0",
     "typescript": "3.9.6",
     "webpack-cli": "3.3.11"
+  },
+  "lint-staged": {
+    "*.{ts,html}": "eslint --cache --fix"
   }
 }

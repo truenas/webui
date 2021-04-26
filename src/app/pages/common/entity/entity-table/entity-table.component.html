@@ -66,7 +66,9 @@
         <ng-container *ngIf="column !== 'expandedDetail' && column !== 'action' && column !== 'multiselect' && column !== 'expansion-chevrons' && !isInteractive(column)" [sticky]="isLeftStickyColumnNo(i)"
        matColumnDef="{{column}}">
           <th [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i), 'sticky-border-right': isLeftStickyColumnNo(i) && isTableOverflow()}" class="data-column" mat-header-cell *matHeaderCellDef>{{currentColumns[i].name}}</th>
-          <td [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i), 'sticky-border-right': isLeftStickyColumnNo(i) && isTableOverflow()}" [ngStyle]="{'cursor': (checkLength() && !conf.onRowClick) ? 'auto' : 'pointer'}" class="data-column" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)" mat-cell *matCellDef="let element">{{element[column]}}</td>
+          <td [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i), 'sticky-border-right': isLeftStickyColumnNo(i) && isTableOverflow()}" [ngStyle]="{'cursor': (checkLength() && !conf.onRowClick) ? 'auto' : 'pointer'}" class="data-column" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)" mat-cell *matCellDef="let element">
+            <div class="text-overflow-ellipsis">{{element[column]}}</div>
+          </td>
         </ng-container>
   
         <!-- Expansion Chevrons -->

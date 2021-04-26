@@ -196,7 +196,7 @@ export class CatalogComponent implements OnInit {
         res.forEach((pool: any) => {
           this.poolList.push({label: pool.name, value: pool.name})
         })
-        this.dialogService.dialogForm(this.choosePool, true);
+        this.dialogService.dialogForm(this.choosePool, false);
       }
     })
   }

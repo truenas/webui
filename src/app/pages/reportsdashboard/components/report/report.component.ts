@@ -62,6 +62,8 @@ export interface Report {
   vertical_label: string;
   identifiers?: string[];
   isRendered?: boolean[];
+  stacked: boolean;
+  stacked_show_total: boolean;
 }
 
 export interface ReportData {
@@ -73,7 +75,7 @@ export interface ReportData {
   legend: string[];
   name: string;
   step: number;
-  data: number[];
+  data: number[][];
 }
 
 @Component({

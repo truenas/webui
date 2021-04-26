@@ -134,8 +134,8 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           columns: [
             { name: T('Pool'), prop: 'pool_name' },
             { name: T('Description'), prop: 'description' },
-            { name: T('Next Run'), prop: 'scrub_next_run' },
-            { name: T('Enabled'), prop: 'enabled' },
+            { name: T('Next Run'), prop: 'scrub_next_run', width: '80px' },
+            { name: T('Enabled'), prop: 'enabled', width: '50px' },
           ],
           deleteMsg: {
             title: T('Scrub Task'),
@@ -165,7 +165,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             { name: T('Pool/Dataset'), prop: 'dataset' },
             { name: T('Recursive'), prop: 'recursive' },
             { name: T('Keep for'), prop: 'keepfor' },
-            { name: T('Enabled'), prop: 'enabled', selectable: true },
+            { name: T('Enabled'), prop: 'enabled', checkbox: true, width: '50px' },
             {
               name: T('State'),
               prop: 'state',
@@ -203,7 +203,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           isActionVisible: this.isActionVisible,
           columns: [
             { name: T('Name'), prop: 'name' },
-            { name: T('Enabled'), prop: 'enabled', checkbox: true },
+            { name: T('Enabled'), prop: 'enabled', checkbox: true, width: '50px' },
             { name: T('Last Snapshot'), prop: 'task_last_snapshot' },
             {
               name: T('State'),
@@ -244,8 +244,8 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
               prop: 'description',
               always_display: true,
             },
-            { name: T('Next Run'), prop: 'next_run', hidden: true },
-            { name: T('Enabled'), prop: 'enabled' },
+            { name: T('Next Run'), prop: 'next_run', hidden: true, width: '80px' },
+            { name: T('Enabled'), prop: 'enabled', width: '50px' },
             {
               name: T('State'),
               prop: 'state',
@@ -280,7 +280,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           columns: [
             { name: T('Path'), prop: 'path' },
             { name: T('Remote Host'), prop: 'remotehost' },
-            { name: T('Enabled'), prop: 'enabled' },
+            { name: T('Enabled'), prop: 'enabled', width: '50px' },
             { name: T('State'), prop: 'state', state: 'state', button: true },
           ],
           dataSourceHelper: this.rsyncDataSourceHelper,

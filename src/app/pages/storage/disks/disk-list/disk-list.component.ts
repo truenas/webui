@@ -230,6 +230,9 @@ export class DiskListComponent {
                     dialogRef.componentInstance.failure.subscribe((wipeRes: any) => {
                       dialogRef.componentInstance.setDescription(wipeRes.error);
                     });
+                    dialogRef.componentInstance.aborted.subscribe(() => {
+                      dialogRef.close(true);
+                    });
                     entityDialogForm.dialogRef.close(true);
                   }
                 });

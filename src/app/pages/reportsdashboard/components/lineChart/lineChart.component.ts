@@ -31,6 +31,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
   @Input() report: Report;
   @Input() title: string;
   @Input() timezone: string;
+  @Input() stacked: boolean = false;
 
   @Input() legends?: string[];
   @Input() type: string = 'line';
@@ -94,6 +95,18 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
 
   // dygraph renderer
   public renderGraph(option: any){
+
+    if(this.data.name=="cpu") {
+      this.data.legend = this.data.legend.reverse();
+      for(let i = 0;i<this.data.data.length; i++) {
+        const newRow = []
+        while(this.data.data[i].length) {
+          newRow.push(this.data.data[i].pop())
+        }
+        this.data.data[i] = newRow;
+      }
+    }
+
     let data = this.makeTimeAxis(this.data);
     let labels = data.shift();
 
@@ -106,6 +119,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     let options = {
        drawPoints:false,// Must be disabled for smoothPlotter
        pointSize:1,
+       includeZero: true,
        highlightCircleSize:4,
        strokeWidth:1,
        colors: this.colorPattern,
@@ -131,20 +145,27 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
            let converted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), 1, true);
            let suffix = converted.shortName !== undefined ? converted.shortName : (converted.suffix !== undefined ?  converted.suffix : '');
            clone.series[index].yHTML = this.limitDecimals(converted.value).toString() + suffix;
-
+if(!clone.stackedTotal) {
+             clone.stackedTotal = 0;
+           }
+           clone.stackedTotal += item.y;
          });
-
+if(clone.stackedTotal >= 0) {
+           let converted = this.formatLabelValue(clone.stackedTotal, this.inferUnits(this.labelY), 1, true);
+           let suffix = converted.shortName !== undefined ? converted.shortName : (converted.suffix !== undefined ?  converted.suffix : '');
+           clone.stackedTotalHTML = this.limitDecimals(converted.value).toString() + suffix;
+         }
          this.core.emit({name: "LegendEvent-" + this.chartId,data:clone, sender: this})
          return "";
        },
        series: () => {
-         let s: any = {};
-         this.data.legend.forEach((item, index) => {
-           s[item] = {plotter: smoothPlotter};
-         });
+          let s: any = {};
+          this.data.legend.forEach((item, index) => {
+            s[item] = {plotter: smoothPlotter};
+          });
 
-         return s;
-       },
+          return s;
+        },
        drawCallback: (dygraph: any) =>{
          if(dygraph.axes_){
           let numero = dygraph.axes_[0].maxyval;
@@ -157,7 +178,8 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
          } else {
           console.warn("axes not found");
          }
-       }
+       },
+       stackedGraph: this.stacked
      }
 
      if(option == 'update'){
@@ -180,17 +202,15 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     return result;
   }
 
-  protected makeTimeAxis(rd:ReportData, data?: number[]):any[]{
-    if(!data){ data = rd.data; }
-
-      const structure = this.library == 'chart.js' ? 'columns' : 'rows'
-        if(structure == 'rows'){
-          // Push dates to row based data...
-          let rows = [];
-          // Add legend with axis to beginning of array
-          let legend = Object.assign([],rd.legend);
-          legend.unshift('x');
-          rows.push(legend);
+  protected makeTimeAxis(rd:ReportData):any[]{
+    const structure = this.library == 'chart.js' ? 'columns' : 'rows';
+    if(structure == 'rows'){
+      // Push dates to row based data...
+      let rows = [];
+      // Add legend with axis to beginning of array
+      let legend = Object.assign([],rd.legend);
+      legend.unshift('x');
+      rows.push(legend);
 
           for(let i = 0; i < rd.data.length; i++){
             let item = Object.assign([], rd.data[i]);
@@ -216,9 +236,8 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
             columns.push(date);
           }
 
-          return columns;
-        }
-
+      return columns;
+    }
   }
 
   private processThemeColors(theme: Theme):string[]{

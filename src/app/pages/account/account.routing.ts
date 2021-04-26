@@ -9,7 +9,7 @@ import { UserListComponent } from './users/user-list/';
 import { UserFormComponent } from './users/user-form/';
 import { ChangePasswordComponent } from "./users/change-password/change-password.component";
 import { TwoFactorComponent } from '../system/two-factor/two-factor.component';
-import { DirectoryservicesComponent } from '../directoryservice/directoryservices/directoryservices.component';
+import { DirectoryservicesComponent } from '../directoryservice/directoryservices.component';
 import { BackupCredentialsComponent } from '../credentials/backup-credentials/backup-credentials.component';
 
 import { T } from '../../translate-marker';

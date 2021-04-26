@@ -1026,6 +1026,9 @@ msgstr "Región de AWS"
 msgid "Abort"
 msgstr "Abortar"
 
+msgid "Abort the task"
+msgstr ""
+
 msgid "About"
 msgstr "Acerca de"
 
@@ -1251,6 +1254,12 @@ msgstr ""
 
 msgid "Add Interface"
 msgstr "Añadir interfaz"
+
+msgid "Add Kerberos Keytab"
+msgstr ""
+
+msgid "Add Kerberos Realm"
+msgstr ""
 
 msgid "Add Kerberos SPN Entry"
 msgstr "Agregar entrada de SPN de Kerberos"
@@ -2131,6 +2140,9 @@ msgid ""
 msgstr ""
 "Agregue <i>@realm</i> a <i>can</i> en consultas LDAP tanto para grupos como "
 "para usuarios cuando se establece el CN de usuario)."
+
+msgid "Append Data"
+msgstr ""
 
 msgid ""
 "Appends a suffix to the share connection path.  This is used to provide "
@@ -4985,6 +4997,9 @@ msgstr "Eliminar"
 msgid "Delete "
 msgstr "Eliminar "
 
+msgid "Delete Children"
+msgstr ""
+
 msgid "Delete Dataset"
 msgstr "Eliminar conjunto de datos"
 
@@ -5348,6 +5363,9 @@ msgstr "Directorios y Permisos"
 
 msgid "Directory"
 msgstr "Directorio"
+
+msgid "Directory Inherit"
+msgstr ""
 
 msgid "Directory Mask"
 msgstr "Máscara de directorio"
@@ -5727,6 +5745,9 @@ msgstr ""
 msgid "Edit DNS Authenticator"
 msgstr "Editar el autenticador de DNS"
 
+msgid "Edit Dataset"
+msgstr ""
+
 msgid "Edit Disk(s)"
 msgstr "Editar disco(s)"
 
@@ -5747,6 +5768,12 @@ msgstr ""
 
 msgid "Edit Interface"
 msgstr "Editar interfaz"
+
+msgid "Edit Kerberos Keytab"
+msgstr ""
+
+msgid "Edit Kerberos Realm"
+msgstr ""
 
 msgid "Edit Options"
 msgstr "Editar opciones"
@@ -7680,6 +7707,9 @@ msgstr "Puertos de canal de fibra"
 msgid "File Information"
 msgstr "Información del archivo"
 
+msgid "File Inherit"
+msgstr ""
+
 msgid "File Mask"
 msgstr "Máscara de archivo"
 
@@ -7933,6 +7963,9 @@ msgstr "Del nombre"
 
 msgid "Full"
 msgstr "Completo"
+
+msgid "Full Control"
+msgstr ""
 
 msgid "Full Filesystem Replication"
 msgstr "Replicación completa del sistema de archivos"
@@ -8950,8 +8983,14 @@ msgstr "Heredar (encriptado)"
 msgid "Inherit (non-encrypted)"
 msgstr "Heredar (no encriptado)"
 
+msgid "Inherit Only"
+msgstr ""
+
 msgid "Inherit encryption properties from parent"
 msgstr "Heredar propiedades de cifrado de los elementos primarios"
+
+msgid "Inherited"
+msgstr ""
 
 msgid "Inherits"
 msgstr "Hereda"
@@ -9330,6 +9369,9 @@ msgstr "Principal Kerberos"
 
 msgid "Kerberos Realm"
 msgstr "Reino Kerberos"
+
+msgid "Kerberos Realms"
+msgstr ""
 
 msgid "Kerberos Settings"
 msgstr "Configuración de Kerberos"
@@ -10176,6 +10218,9 @@ msgstr "Modelo"
 msgid "Model:"
 msgstr "Modelo:"
 
+msgid "Modify"
+msgstr ""
+
 msgid ""
 "Modify for disks that understand <a "
 "href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\" "
@@ -10686,6 +10731,9 @@ msgstr "Sin tiempo de advertencia de comunicación"
 msgid "No Encryption (less secure, but faster)"
 msgstr "Sin encriptación (menos seguro, pero más rápido)"
 
+msgid "No Inherit"
+msgstr ""
+
 msgid "No Item"
 msgstr ""
 
@@ -10699,6 +10747,9 @@ msgid "No Pools"
 msgstr "Sin Grupos (Pools)"
 
 msgid "No Pools Found"
+msgstr ""
+
+msgid "No Propagate Inherit"
 msgstr ""
 
 msgid "No Recent Events"
@@ -11269,6 +11320,9 @@ msgstr "Unidad organizativa de la entidad."
 
 msgid "Other"
 msgstr "Otro"
+
+msgid "Other (Too complicated to be displayed)"
+msgstr ""
 
 msgid "Other Options"
 msgstr "Otras opciones"
@@ -11926,6 +11980,9 @@ msgstr "Clave privada"
 msgid "Private Key ID"
 msgstr "ID de clave privada"
 
+msgid "Privileged"
+msgstr ""
+
 msgid ""
 "Privileges are the same as the guest account.  Guest access is disabled by "
 "default in Windows 10 version 1709 and  Windows Server version 1903. "
@@ -12158,8 +12215,20 @@ msgstr "Reabrir todas las alertas"
 msgid "Read"
 msgstr "Leer"
 
+msgid "Read ACL"
+msgstr ""
+
+msgid "Read Attributes"
+msgstr ""
+
+msgid "Read Data"
+msgstr ""
+
 msgid "Read Errors"
 msgstr "Errores de lectura"
+
+msgid "Read Named Attributes"
+msgstr ""
 
 msgid "Read Only"
 msgstr "Sólo lectura"
@@ -13268,6 +13337,9 @@ msgstr ""
 
 msgid "Security"
 msgstr "Seguridad"
+
+msgid "Security Settings"
+msgstr ""
 
 msgid ""
 "See <a "
@@ -15758,6 +15830,9 @@ msgstr "Sincronización con el par exitosa."
 msgid "Synced"
 msgstr "Sincronizado"
 
+msgid "Synchronize"
+msgstr ""
+
 msgid "Synchronize Destination Snapshots With Source"
 msgstr "Sincronice las instantáneas de destino con el origen"
 
@@ -17150,8 +17225,8 @@ msgstr ""
 "target=\"_blank\">zpool(8)</a> para obtener más detalles sobre la "
 "asignación especial."
 
-msgid "Thread number:"
-msgstr "Número de hilo:"
+msgid "Thread:"
+msgstr ""
 
 msgid "Threads"
 msgstr "Hilos"
@@ -18734,11 +18809,26 @@ msgstr "¿Desea agregar un nombre principal de servicio (SPN) ahora?"
 msgid "Write"
 msgstr "Escribir"
 
+msgid "Write ACL"
+msgstr ""
+
+msgid "Write Attributes"
+msgstr ""
+
+msgid "Write Data"
+msgstr ""
+
 msgid "Write Errors"
 msgstr "Errores de escritura"
 
+msgid "Write Named Attributes"
+msgstr ""
+
 msgid "Write Only"
 msgstr "Sólo escritura"
+
+msgid "Write Owner"
+msgstr ""
 
 msgid "Write a percentage limit of a single CPU core."
 msgstr "Escriba un límite porcentual de un solo núcleo de CPU."
@@ -18938,6 +19028,9 @@ msgstr "comentario"
 msgid "coredumpsize"
 msgstr "coredumpsize"
 
+msgid "cores"
+msgstr ""
+
 msgid "cpuset"
 msgstr "cpuset"
 
@@ -18976,6 +19069,9 @@ msgstr "enforce_statfs"
 
 msgid "error"
 msgstr "error"
+
+msgid "everyone@"
+msgstr ""
 
 msgid "exec_clean"
 msgstr "exec_clean"
@@ -19018,6 +19114,9 @@ msgstr "expira en"
 
 msgid "group"
 msgstr "grupo"
+
+msgid "group@"
+msgstr ""
 
 msgid "gzip (default level, 6)"
 msgstr "gzip (nivel predeterminado, 6)"
@@ -19198,6 +19297,9 @@ msgstr "visión general"
 msgid "owner"
 msgstr "propietario"
 
+msgid "owner@"
+msgstr ""
+
 msgid "password"
 msgstr "contraseña"
 
@@ -19256,6 +19358,9 @@ msgid "snapshot"
 msgstr ""
 
 msgid "snapshots"
+msgstr ""
+
+msgid "snapshots could not be deleted."
 msgstr ""
 
 msgid "software, which is provided as-is with no warranty."

@@ -89,6 +89,9 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   public stripeVdevTypeError: any = null;
   public stripeVdevTypeErrorMessage = helptext.manager_stripeVdevTypeErrorMessage;
 
+  public logVdevTypeWarning: string = null;
+  public logVdevTypeWarningMessage = helptext.manager_logVdevWarningMessage;
+
   public vdevdisksError = false;
   public vdevdisksSizeError = false;
 
@@ -234,6 +237,12 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.translate.get(this.stripeVdevTypeErrorMessage).subscribe((errorMessage) => {
       const vdevType = group === 'special' ? 'metadata' : group;
       this.stripeVdevTypeError = `${T('A stripe')} ${vdevType} ${errorMessage}`;
+    });
+  }
+
+  getLogVdevTypeWarningMsg() {
+    this.translate.get(this.logVdevTypeWarningMessage).subscribe((errorMessage) => {
+      this.logVdevTypeWarning = errorMessage;
     });
   }
 
@@ -410,6 +419,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.vdevtypeError = null;
     this.vdevdisksError = false;
     this.stripeVdevTypeError = null;
+    this.logVdevTypeWarning = null;
     this.vdevdisksSizeError = false;
     this.has_savable_errors = false;
     this.emptyDataVdev = false;
@@ -463,7 +473,12 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       if (['dedup', 'log', 'special', 'data'].includes(vdev.group)) {
         if (vdev.disks.length >= 1 && vdev.type.toLowerCase() === 'stripe') {
-          this.getStripeVdevTypeErrorMsg(vdev.group);
+          if (vdev.group === 'log') {
+            this.getLogVdevTypeWarningMsg();
+          } else {
+            this.getStripeVdevTypeErrorMsg(vdev.group);
+          }
+
           this.has_savable_errors = true;
         }
       }

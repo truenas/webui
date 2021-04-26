@@ -2,7 +2,8 @@ import { T } from '../../translate-marker';
 import { Validators } from '@angular/forms';
 
 export default {
-
+    title_add: T('Add Idmap'),
+    title_edit: T('Edit Idmap'),
     idmap: {
     required_validator: [Validators.required],
     settings_label: T('Settings'),

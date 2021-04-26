@@ -231,7 +231,7 @@ export class ReplicationListComponent {
             }
           });
       } else {
-        this.dialog.errorReport(row.state.state, row.state.error);
+        this.dialog.errorReport(row.state.state, `<pre>${row.state.error}</pre>`);
       }
     }
   }

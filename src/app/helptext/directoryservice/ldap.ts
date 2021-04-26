@@ -2,6 +2,8 @@ import { T } from '../../translate-marker';
 import { Validators } from '@angular/forms';
 
 export default {
+title: T('LDAP'),
+
 ldap_server_creds: T('Server Credentials'),
 ldap_advanced: T('Advanced Settings'),
 

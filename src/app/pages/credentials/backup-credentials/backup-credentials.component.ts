@@ -18,12 +18,13 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
   cards: any;
   refreshTable: Subscription;
   refreshForm: Subscription;
+  getProviders: Subscription;
 
   // Components included in this dashboard
   protected sshConnections: SshConnectionsFormComponent;
   protected sshKeypairs: SshKeypairsFormComponent;
   protected cloudCredentials: CloudCredentialsFormComponent;
-
+  protected providers: Array<any>;
 
   constructor(private aroute: ActivatedRoute, private keychainCredentialService: KeychainCredentialService,
     private ws: WebSocketService, private loader: AppLoaderService, private dialogService: DialogService,
@@ -32,7 +33,6 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
      private modalService: ModalService) {}
 
   ngOnInit(): void {
-    this.getCards();
     this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
       this.getCards();
     })
@@ -40,6 +40,13 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
     this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
       this.refreshForms();
     });
+
+    this.getProviders = this.cloudCredentialsService.getProviders().subscribe(
+      (res) => {
+        this.providers = res;
+        this.getCards();
+      }
+    );
   }
 
   getCards() {
@@ -61,7 +68,8 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
           },
           edit: function(row: any) {
             this.parent.modalService.open('slide-in-form', this.parent.cloudCredentials, row.id);
-          }
+          },
+          dataSourceHelper: this.cloudCredentialsDataSourceHelper.bind(this),
         }
       },{
         name: 'sshConnections', flex: 30,
@@ -108,6 +116,18 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
     ];
   }
 
+  cloudCredentialsDataSourceHelper(res: any[]) {
+    return res.map(item => {
+      if (this.providers) {
+        const credentialProvider = this.providers.find(provider => provider.name == item.provider);
+        if (credentialProvider) {
+          item.provider = credentialProvider.title;
+        }
+      }
+      return item;
+    });
+  }
+
   sshConnectionsDataSourceHelper(res: any[]) {
     return res.filter(item => item.type === 'SSH_CREDENTIALS');
   }
@@ -146,6 +166,10 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.refreshTable.unsubscribe();
     this.refreshForm.unsubscribe();
+
+    if (this.getProviders) {
+      this.getProviders.unsubscribe();
+    }
   }
 
 }

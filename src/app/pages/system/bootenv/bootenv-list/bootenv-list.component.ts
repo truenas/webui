@@ -190,7 +190,6 @@ export class BootEnvironmentListComponent implements OnDestroy{
     return actions;
   }
 
-  // tslint:disable-next-line: member-ordering
   public multiActions: Array < any > = [{
     id: "mdelete",
     label: T("Delete"),

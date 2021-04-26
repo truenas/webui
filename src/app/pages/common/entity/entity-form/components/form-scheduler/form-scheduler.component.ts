@@ -274,19 +274,6 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
       this.timezone = res.timezone;
       moment.tz.setDefault(res.timezone);
 
-      let utcOffset = moment.tz(this.timezone).utcOffset();
-      // Convert offset in minutes (-420) to hours (-700) for Angular date pipe
-      let tempOffset = ((utcOffset/60)*100).toString();
-      if (tempOffset[0] !== '-') {
-        tempOffset = '+' + tempOffset;
-      }
-      // Pad to 5 characters (60 to +0060, etc)
-      while (tempOffset.length < 5) {
-        let tempStr = tempOffset.slice(1);
-        tempOffset = tempOffset[0] + '0' + tempStr;
-      }
-      this.offset = tempOffset;
-
       this.minDate = moment();
       this.maxDate = moment().endOf('month');
       this.currentDate= moment();
@@ -312,7 +299,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
       this.crontab = this.control.value;
     }
     // 'E' adds the day abbreviation
-    this.ngDateFormat = `E ${this.localeService.getAngularFormat()}`;
+    this.ngDateFormat = `E ${this.localeService.getAngularFormat()} Z`;
   }
 
   ngAfterViewInit(){
@@ -520,7 +507,6 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   private getCalendarCells(){
     let rows = this.calendar.nativeElement.children[0].children[1].children;
     let cells: any[] = [];
-
     for(let i = 0; i < rows.length; i++){
       let row = rows[i].childNodes;
       let tds = [];
@@ -734,6 +720,22 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     // Days of Week
     this.updateDaysOfWeekFields(arr[4]);
     this._daysOfWeek = arr[4];
+  }
+
+  convertToUtcOffset(offset: number): string {
+    // Convert offset in minutes (-420) to hours (-700) for Angular date pipe
+
+    let tempOffset = ((offset/60)*100).toString();
+    if (tempOffset[0] !== '-') {
+      tempOffset = '+' + tempOffset;
+    }
+    // Pad to 5 characters (60 to +0060, etc)
+    while (tempOffset.length < 5) {
+      let tempStr = tempOffset.slice(1);
+      tempOffset = tempOffset[0] + '0' + tempStr;
+    }
+
+    return tempOffset;
   }
 
   ngOnDestroy() {

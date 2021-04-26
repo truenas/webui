@@ -2010,7 +2010,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   addDataset(pool: any, id: string) {
     this.addDatasetFormComponent.setParent(id);
     this.addDatasetFormComponent.setVolId(pool);
-    this.addDatasetFormComponent.setTitle("Add Dataset");
+    this.addDatasetFormComponent.setTitle(T("Add Dataset"));
     this.modalService.open('slide-in-form', this.addDatasetFormComponent, id);
 
   }
@@ -2021,7 +2021,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
     this.editDatasetFormComponent.setPk(id);
     this.editDatasetFormComponent.setVolId(pool);
-    this.editDatasetFormComponent.setTitle("Edit Dataset");
+    this.editDatasetFormComponent.setTitle(T("Edit Dataset"));
     this.modalService.open('slide-in-form', this.editDatasetFormComponent, id);
 
   }

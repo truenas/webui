@@ -9,18 +9,18 @@ import helptext from '../../../helptext/directoryservice/kerberossettings';
 })
 
 export class KerberosSettingsComponent {
-
+  protected title: string = helptext.ks_label;
   protected queryCall = 'kerberos.config';
   protected addCall = 'kerberos.update';
   protected editCall = 'kerberos.update';
-
+  protected isOneColumnForm = true;
   public fieldConfig: FieldConfig[] = []
   public fieldSets: FieldSet[] = [
     {
       name: helptext.ks_label,
       class: 'heading',
-      label:true,
-      config:[
+      label: false,
+      config: [
         {
           type: 'textarea',
           name: helptext.ks_appdefaults_name,

@@ -159,6 +159,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
     this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res)=> {
+      this.xterm.focus();
     });
     return true;
   }
