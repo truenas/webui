@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import * as _ from 'lodash';
+import { ProductType } from '../../../../enums/product-type.enum';
 import { WebSocketService } from '../../../../services/ws.service';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -19,7 +20,7 @@ export class EntityDashboardComponent implements OnInit {
 	protected scale_exclude = ['nis', 'multipaths']
 	protected enterpriseOnly= ['viewenclosure'];
 
-	productType = window.localStorage.getItem('product_type');
+	productType = window.localStorage.getItem('product_type') as ProductType;
 
 	constructor(
 				protected ws: WebSocketService,
@@ -42,12 +43,12 @@ export class EntityDashboardComponent implements OnInit {
 				this.routeParts.push(routeConfigs[i]);
 			}
 		}
-		
+
 		let exclude = [];
-			if (this.productType.includes('SCALE')) {
+			if (this.productType.includes(ProductType.Scale)) {
 				exclude = exclude.concat(this.scale_exclude);
 			}
-			if (!this.productType.includes('ENTERPRISE')) {
+			if (!this.productType.includes(ProductType.Enterprise)) {
 				exclude = exclude.concat(this.enterpriseOnly);
 			}
 		// if (window.localStorage.getItem('is_freenas') === 'false') {
@@ -61,7 +62,7 @@ export class EntityDashboardComponent implements OnInit {
 		// 	exclude = exclude.concat(this.freenas_exclude);
 		// }
 		this.ws.call('ipmi.is_loaded').subscribe((res)=>{
-			if(res !== true){ 
+			if(res !== true){
 				this.remove('ipmi');
 			}
 		});

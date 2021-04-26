@@ -434,6 +434,13 @@ export default {
         tooltip: T('')
       }
     },
+    security: {
+      title: T('Security Settings'),
+      privileged: {
+        placeholder: T('Privileged'),
+        tooltip: T('')
+      },
+    },
   },
 
   chartWizard: {
@@ -506,7 +513,7 @@ export default {
     statusUpdateAvailable: T('Update available'),
     containerImageStatusUpdateAvailableTo: T('Following container images are available to update:\n'),
     statusUpdateAvailableTo: T('Available version:\n'),
-    tooltipHeader: T('Conainter Images'),
+    tooltipHeader: T('Container Images'),
   },
 
   manageCatalogs: {

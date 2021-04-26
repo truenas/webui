@@ -1,0 +1,23 @@
+.control-group {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.control-group > *{
+  display:inline-block;
+  max-height:36px;
+}
+
+::ng-deep {
+  button.menu-toggle {
+    .mat-button-wrapper {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .mat-icon {
+      position: relative;
+      right: -10px;
+    }
+  }
+}

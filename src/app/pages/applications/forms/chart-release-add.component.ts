@@ -319,7 +319,18 @@ export class ChartReleaseAddComponent implements OnDestroy {
           listFields: []
         }
       ]
-    }
+    },
+    {
+      label: helptext.chartForm.security.title,
+      fieldConfig: [
+        {
+          type: 'checkbox',
+          name: 'privileged',
+          placeholder: helptext.chartForm.security.privileged.placeholder,
+          value: false,
+        }
+      ],
+    },
   ]
 
   private summaryItems = [
@@ -484,6 +495,9 @@ export class ChartReleaseAddComponent implements OnDestroy {
         updateStrategy: data.updateStrategy,
         volumes: volList, 
         workloadType: 'Deployment',
+        securityContext: {
+          privileged: data.privileged,
+        }
       }
     }];
 

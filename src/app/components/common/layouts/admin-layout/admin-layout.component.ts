@@ -5,6 +5,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { NavigationEnd, Router } from '@angular/router';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
 import { Subscription } from "rxjs";
+import { ProductType } from '../../../../enums/product-type.enum';
 import * as domHelper from '../../../../helpers/dom.helper';
 import { RestService, WebSocketService, SystemGeneralService } from '../../../../services';
 import { LanguageService } from '../../../../services/language.service';
@@ -31,7 +32,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   consoleMsg: String = "";
   hostname: string;
   consoleMSgList: any[] = [];
-  public product_type = window.localStorage['product_type'];
+  public product_type = window.localStorage['product_type'] as ProductType;
   public logoPath: string = 'assets/images/light-logo.svg';
   public logoTextPath: string = 'assets/images/light-logo-text.svg';
   public currentTheme: string = "";
@@ -41,7 +42,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   menuName: string;
   subs:any[];
   public copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
-  // we will just have to add to this list as more languages are added
+
+  readonly ProductType = ProductType;
 
   @ViewChild(MatSidenav, { static: false}) private sideNave: MatSidenav;
   @ViewChild('footerBarScroll', { static: true}) private footerBarScroll: ElementRef;
@@ -64,7 +66,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     private localeService: LocaleService) {
     // detect server type
     sysGeneralService.getProductType.subscribe((res)=>{
-      this.product_type = res;
+      this.product_type = res as ProductType;
     });
 
     // Close sidenav after route change in mobile

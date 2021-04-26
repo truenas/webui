@@ -29,7 +29,6 @@ export class DatasetPermissionsComponent implements OnDestroy {
   private entityForm: any;
   protected userField: any;
   protected groupField: any;
-  productType = window.localStorage.getItem('product_type');
 
   public fieldSets: FieldSet[] = [
     {
@@ -147,7 +146,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
             this.router.navigate(new Array('/').concat([
               "storage", "id", this.datasetId.split('/')[0], "dataset",
               "posix-acl", this.datasetId
-            ]));                    
+            ]));
           } else {
             this.router.navigate(new Array('/').concat([
               "storage", "id", this.datasetId.split('/')[0], "dataset",
@@ -252,7 +251,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
     }
     delete data.apply_user;
     delete data.apply_group
-    
+
     data['acl'] = [];
 
     data['options'] = {

@@ -303,13 +303,13 @@ export class DatasetAclComponent implements OnDestroy {
   ];
 
   constructor(protected router: Router, protected route: ActivatedRoute,
-              protected aroute: ActivatedRoute, 
+              protected aroute: ActivatedRoute,
               protected ws: WebSocketService, protected userService: UserService,
               protected storageService: StorageService, protected dialogService: DialogService,
               protected loader: AppLoaderService, protected dialog: MatDialog,
               private translate: TranslateService) {}
 
-  
+
   isCustActionVisible(actionId: string) {
     if (actionId === 'show_defaults') {
       return true;
@@ -376,7 +376,7 @@ export class DatasetAclComponent implements OnDestroy {
         .subscribe((res) => {
           if (!res) {
             this.recursive.setValue(false);
-          }    
+          }
         });
       }
     });
@@ -501,7 +501,6 @@ export class DatasetAclComponent implements OnDestroy {
         })
       }
     }
-     // stupid hacky thing that gets around entityForm's treatment of data
   }
 
   handleEmptyACL() {
@@ -543,7 +542,7 @@ export class DatasetAclComponent implements OnDestroy {
     if (!data.length) {
       data = [data];
     }
-    
+
     for (let i = 0; i < data.length; i++) {
       acl = {};
       acl.type = data[i].type;
@@ -866,7 +865,7 @@ export class DatasetAclComponent implements OnDestroy {
     }
     this.dialogService.dialogFormWide(conf);
   }
-  
+
   loadMoreOptions(length, parent, searchText, config) {
     parent.userService.userQueryDSCache(searchText, length).subscribe(items => {
       const users = [];

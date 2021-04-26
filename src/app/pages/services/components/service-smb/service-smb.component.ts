@@ -6,6 +6,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
+import { ProductType } from '../../../../enums/product-type.enum';
 import helptext from '../../../../helptext/services/components/service-smb';
 import global_helptext from '../../../../helptext/global-helptext';
 import { IdmapService, RestService, ServicesService, UserService, WebSocketService } from '../../../../services/';
@@ -269,7 +270,7 @@ export class ServiceSMBComponent {
 
   preInit(entityForm: any) {
     this.entityEdit = entityForm;
-    if (window.localStorage.getItem('product_type').includes('ENTERPRISE')) {
+    if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
       this.ws.call('failover.licensed').subscribe((is_ha) => {
         entityForm.setDisabled('netbiosname_b', !is_ha, !is_ha);
       });
@@ -329,7 +330,7 @@ export class ServiceSMBComponent {
       }
       return data;
     }
-  
+
     compareBindIps(data) {
       // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
       data.bindip = data.bindip ? data.bindip : [];

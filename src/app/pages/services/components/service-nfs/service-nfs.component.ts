@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { map } from 'rxjs/operators';
+import { ProductType } from '../../../../enums/product-type.enum';
 import helptext from '../../../../helptext/services/components/service-nfs';
 import { RestService, WebSocketService, DialogService } from '../../../../services/';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -16,7 +17,7 @@ import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/r
 export class ServiceNFSComponent {
   protected queryCall = 'nfs.config';
   protected route_success: string[] = ['services'];
-  productType = window.localStorage.getItem('product_type');
+  productType = window.localStorage.getItem('product_type') as ProductType;
   hideOnScale = ['servers', 'allow_nonroot', 'mountd_log', 'statd_lockd_log'];
   public title = helptext.formTitle;
   private v4krbValue: boolean;
@@ -126,7 +127,7 @@ export class ServiceNFSComponent {
           placeholder: helptext.nfs_srv_allow_nonroot_placeholder,
           tooltip: helptext.nfs_srv_allow_nonroot_tooltip,
         },
-        
+
         {
           type: 'checkbox',
           name: 'userd_manage_gids',
@@ -210,7 +211,7 @@ export class ServiceNFSComponent {
   }
 
   afterInit(entityForm: EntityFormComponent) {
-    if (this.productType.includes('SCALE')) {
+    if (this.productType.includes(ProductType.Scale)) {
       this.hideOnScale.forEach(name => {
         entityForm.setDisabled(name, true, true);
       })
@@ -218,7 +219,7 @@ export class ServiceNFSComponent {
     entityForm.submitFunction = body => this.ws.call('nfs.update', [body]);
 
     this.ipChoices$.subscribe(ipChoices => {
-      ipChoices.forEach(ip => { 
+      ipChoices.forEach(ip => {
         this.validBindIps.push(ip.value);
       });
       this.fieldSets

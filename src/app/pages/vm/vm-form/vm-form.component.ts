@@ -3,6 +3,7 @@ import {Router, ActivatedRoute} from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { FormControl } from '@angular/forms';
 import * as _ from 'lodash';
+import { ProductType } from '../../../enums/product-type.enum';
 import {
   FieldConfig
 } from '../../common/entity/entity-form/models/field-config.interface';
@@ -30,7 +31,7 @@ export class VmFormComponent {
   public cores: number;
   public threads: number;
   private maxVCPUs: number;
-  private productType: string = window.localStorage.getItem('product_type');
+  private productType = window.localStorage.getItem('product_type') as ProductType;
   protected queryCallOption: Array<any> = [];
 
   public fieldConfig: FieldConfig[] = []
@@ -41,16 +42,16 @@ export class VmFormComponent {
         label:true,
         width: '49%',
         config:[
-        { 
-          type: 'input', 
-          name: 'name', 
-          placeholder: helptext.name_placeholder, 
+        {
+          type: 'input',
+          name: 'name',
+          placeholder: helptext.name_placeholder,
           tooltip: helptext.name_tooltip
         },
-        { 
-          type: 'input', 
-          name : 'description', 
-          placeholder : helptext.description_placeholder, 
+        {
+          type: 'input',
+          name : 'description',
+          placeholder : helptext.description_placeholder,
           tooltip: helptext.description_tooltip
         },
         {
@@ -60,25 +61,25 @@ export class VmFormComponent {
           type: 'select',
           options: [{ label: helptext.time_local_text, value: 'LOCAL'}, { label: helptext.time_utc_text, value: 'UTC' }]
         },
-        { 
-          type: 'select', 
-          name : 'bootloader', 
-          placeholder : helptext.bootloader_placeholder, 
+        {
+          type: 'select',
+          name : 'bootloader',
+          placeholder : helptext.bootloader_placeholder,
           tooltip: helptext.bootloader_tooltip,
           options: []
         },
-        { 
-          type: 'input', 
-          name : 'shutdown_timeout', 
+        {
+          type: 'input',
+          name : 'shutdown_timeout',
           inputType: 'number',
-          placeholder : helptext.shutdown_timeout.placeholder, 
+          placeholder : helptext.shutdown_timeout.placeholder,
           tooltip: helptext.shutdown_timeout.tooltip,
           validation: helptext.shutdown_timeout.validation
         },
-        { 
-          type: 'checkbox', 
-          name : 'autostart', 
-          placeholder : helptext.autostart_placeholder, 
+        {
+          type: 'checkbox',
+          name : 'autostart',
+          placeholder : helptext.autostart_placeholder,
           tooltip: helptext.autostart_tooltip
         }
       ]
@@ -95,27 +96,27 @@ export class VmFormComponent {
       label:true,
       width: '49%',
       config:[
-        { 
-          type : 'input', 
+        {
+          type : 'input',
           name: 'vcpus',
           inputType: 'number',
-          placeholder : helptext.vcpus_placeholder, 
+          placeholder : helptext.vcpus_placeholder,
           tooltip: helptext.vcpus_tooltip,
           validation: [Validators.required, Validators.min(1), this.cpuValidator('threads'),]
         },
-        { 
-          type : 'input', 
+        {
+          type : 'input',
           name: 'cores',
           inputType: 'number',
-          placeholder : helptext.cores.placeholder, 
+          placeholder : helptext.cores.placeholder,
           tooltip: helptext.cores.tooltip,
           validation: [Validators.required, Validators.min(1), this.cpuValidator('threads'),]
         },
-        { 
-          type : 'input', 
+        {
+          type : 'input',
           name: 'threads',
           inputType: 'number',
-          placeholder : helptext.threads.placeholder, 
+          placeholder : helptext.threads.placeholder,
           tooltip: helptext.threads.tooltip,
           validation: [Validators.required, Validators.min(1), this.cpuValidator('threads'),]
         },
@@ -137,9 +138,9 @@ export class VmFormComponent {
           ],
           isHidden: true
         },
-        { 
-          type: 'input', 
-          name : 'memory', 
+        {
+          type: 'input',
+          name : 'memory',
           placeholder : `${helptext.memory_placeholder} ${globalHelptext.human_readable.suggestion_label}`,
           tooltip: helptext.memory_tooltip,
           blurStatus : true,
@@ -205,7 +206,7 @@ export class VmFormComponent {
       this.threads = value;
     })
 
-    if (this.productType.includes('SCALE')) {
+    if (this.productType.includes(ProductType.Scale)) {
       _.find(this.fieldConfig, {name : 'cpu_mode'})['isHidden'] = false;
       const cpuModel = _.find(this.fieldConfig, {name : 'cpu_model'});
       cpuModel.isHidden = false;
@@ -235,7 +236,7 @@ export class VmFormComponent {
     }
   }
 
-  cpuValidator(name: string) { 
+  cpuValidator(name: string) {
     const self = this;
     return function validCPU(control: FormControl) {
       const config = self.fieldConfig.find(c => c.name === name);
@@ -243,7 +244,7 @@ export class VmFormComponent {
           const errors = self.vcpus * self.cores * self.threads > self.maxVCPUs
           ? { validCPU : true }
           : null;
-  
+
           if (errors) {
             config.hasErrors = true;
             config.hasErrors = true;

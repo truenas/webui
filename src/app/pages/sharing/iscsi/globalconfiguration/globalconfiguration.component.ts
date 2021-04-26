@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ProductType } from '../../../../enums/product-type.enum';
 
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { DialogService, WebSocketService, AppLoaderService, SystemGeneralService } from '../../../../services';
@@ -68,7 +69,7 @@ export class GlobalconfigurationComponent {
   afterInit(entityForm) {
     entityForm.submitFunction = entityForm.editCall;
     this.getProdType = this.sysGeneralService.getProductType.subscribe((res)=>{
-      if (res === 'ENTERPRISE') {
+      if (res === ProductType.Enterprise) {
         entityForm.setDisabled('alua', false, false);
       }
       this.getProdType.unsubscribe();
@@ -92,7 +93,7 @@ export class GlobalconfigurationComponent {
               this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
                 this.ws.call('service.start', [service.service]).subscribe((startRes) => {
                   this.loader.close();
-                  this.dialogService.Info(T('iSCSI') + shared.dialog_started_title, 
+                  this.dialogService.Info(T('iSCSI') + shared.dialog_started_title,
                   T('The iSCSI') + shared.dialog_started_message, '250px');
                 }, (err) => {
                   this.loader.close();

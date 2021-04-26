@@ -212,7 +212,7 @@ export class ReplicationListComponent {
       } else if (row.state.state === EntityJobState.Hold) {
         this.dialog.Info(T('Task is on hold'), row.state.reason, '500px', 'info', true);
       } else {
-        this.job.showLogs(row.job);
+        this.dialog.errorReport(row.state.state, `<pre>${row.state.error}</pre>`);
       }
     } else {
       this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
