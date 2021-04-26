@@ -986,7 +986,7 @@ msgid "ACME Certificate"
 msgstr "Certificat ACME"
 
 msgid "ACME DNS-Authenticators"
-msgstr ""
+msgstr "Authentificateurs ACME-DNS"
 
 msgid "ACME Server Directory URI"
 msgstr "URI du Serveur d'annuaire ACME"
@@ -1239,10 +1239,10 @@ msgid "Add Cloud Credential"
 msgstr "Ajouter des informations d'identification Cloud"
 
 msgid "Add Cloud Sync Task"
-msgstr ""
+msgstr "Ajouter une tâche de synchronisation Cloud"
 
 msgid "Add Cron Job"
-msgstr ""
+msgstr "Ajouter un tâche Cron"
 
 msgid "Add DNS Authenticator"
 msgstr "Ajouter DNS Authenticator"
@@ -1260,7 +1260,7 @@ msgid "Add Idmap"
 msgstr "Ajouter Idmap"
 
 msgid "Add Init/Shutdown Script"
-msgstr ""
+msgstr "Ajouter un script Init/Arrêt"
 
 msgid "Add Interface"
 msgstr "Ajouter une interface"
@@ -1290,7 +1290,7 @@ msgid "Add Recovery Key"
 msgstr "Ajouter une clé de récupération"
 
 msgid "Add Replication Task"
-msgstr ""
+msgstr "Ajouter une tâche de réplication"
 
 msgid "Add Rsync Task"
 msgstr ""
@@ -1352,7 +1352,7 @@ msgid "Add any notes about this zvol."
 msgstr "Ajouter des notes sur ce zvol."
 
 msgid "Add catalog to system even if some trains are unhealthy."
-msgstr ""
+msgstr "Ajoutez un catalogue au système même si certains canaux ne sont pas sains."
 
 msgid ""
 "Add lines to the jail <i>resolv.conf</i>. <b>Example:</b> <i>nameserver "
@@ -3009,6 +3009,8 @@ msgid ""
 "Can be set to <i>0</i>, left empty for TrueNAS to assign a port when the VM "
 "is started, or set to a fixed, preferred port number."
 msgstr ""
+"Peut être réglé à <i>0</i>, laissez vide pour que TrueNAS assigne un port lorsque "
+"la VM est démarrée, ou fixez un numéro de port préféré."
 
 msgid "Cancel"
 msgstr "Annuler"
@@ -3047,16 +3049,16 @@ msgid "Catalog"
 msgstr "Catalogue"
 
 msgid "Catalog Name"
-msgstr ""
+msgstr "Nom du catalogue"
 
 msgid "Catalog Summary"
-msgstr ""
+msgstr "Résumé du catalogue"
 
 msgid "Catalogs"
-msgstr ""
+msgstr "Catalogues"
 
 msgid "Categories"
-msgstr ""
+msgstr "Catégories"
 
 msgid "Category"
 msgstr "Catégorie"
@@ -3371,7 +3373,7 @@ msgid "Choose a Device"
 msgstr "Choisissez un périphérique"
 
 msgid "Choose a Tag"
-msgstr ""
+msgstr "Choisissez un tag"
 
 msgid "Choose a cipher algorithm to encrypt data channel packets."
 msgstr ""
@@ -3869,7 +3871,7 @@ msgid "Cluster CIDR"
 msgstr ""
 
 msgid "Cluster DNS IP"
-msgstr ""
+msgstr "Cluster DNS IP"
 
 msgid "Cluster Name"
 msgstr "Nom du cluster"
@@ -4522,7 +4524,7 @@ msgid "Cron Job"
 msgstr "Job Cron"
 
 msgid "Cron Jobs"
-msgstr ""
+msgstr "Tâches Cron"
 
 msgid ""
 "Cryptographic protocols for securing client/server connections. Select "
@@ -5585,10 +5587,10 @@ msgid "Dismiss All Alerts"
 msgstr "Ignorer toutes les alertes"
 
 msgid "Display"
-msgstr ""
+msgstr "Afficher"
 
 msgid "Display Device"
-msgstr ""
+msgstr "Périphérique d’affichage"
 
 msgid "Display Login"
 msgstr "Afficher le Login"
@@ -5597,10 +5599,10 @@ msgid "Display Note"
 msgstr "Note d'affichage"
 
 msgid "Display Port"
-msgstr ""
+msgstr "Port d’affichage"
 
 msgid "Display Type"
-msgstr ""
+msgstr "Type d’affichage"
 
 msgid "Display console messages in real time at the bottom of the browser."
 msgstr "Affichage des messages de la console en temps réel en bas du navigateur."
@@ -5609,6 +5611,9 @@ msgid ""
 "Display network interface IP address. The primary interface IP address is "
 "the default. A different interface IP address can be chosen."
 msgstr ""
+"Afficher l’adresse IP de l’interface réseau. L’adresse IP de l’interface "
+"principale est la valeur par défaut. Une autre adresse IP d’interface peut être "
+"choisie."
 
 msgid "Distinguished Name"
 msgstr "Nom distinctif"
@@ -5633,7 +5638,7 @@ msgid "Docker Host"
 msgstr "Docker Hôte"
 
 msgid "Docker Registry Authentication"
-msgstr ""
+msgstr "Authentification du registre Docker"
 
 msgid "Docker image pull policy"
 msgstr "Politique de récupération d'image Docker"
@@ -5802,16 +5807,16 @@ msgid "Edit CSR"
 msgstr "Modifier CSR"
 
 msgid "Edit Catalog"
-msgstr ""
+msgstr "Modifier le catalogue"
 
 msgid "Edit Certificate"
 msgstr "Modifier Certificat"
 
 msgid "Edit Cloud Sync Task"
-msgstr ""
+msgstr "Modifier la tâche de synchronisation Cloud"
 
 msgid "Edit Cron Job"
-msgstr ""
+msgstr "Modifier la tâche Cron"
 
 msgid "Edit DNS Authenticator"
 msgstr "Modifier DNS Authenticator"
@@ -5835,7 +5840,7 @@ msgid "Edit Idmap"
 msgstr "Modifier Idmap"
 
 msgid "Edit Init/Shutdown Script"
-msgstr ""
+msgstr "Modifier le script d'Init/Arrêt"
 
 msgid "Edit Interface"
 msgstr "Modifier l’interface"
@@ -5850,7 +5855,7 @@ msgid "Edit Options"
 msgstr "Modifier les options"
 
 msgid "Edit Periodic Snapshot Task"
-msgstr ""
+msgstr "Modifier la tâche d’instantané périodique"
 
 msgid "Edit Permissions"
 msgstr "Modifier les autorisations"
@@ -5865,16 +5870,16 @@ msgid "Edit Pool Options for "
 msgstr "Modifier les options de volume pour "
 
 msgid "Edit Replication Task"
-msgstr ""
+msgstr "Modifier la tâche de réplication"
 
 msgid "Edit Rsync Task"
-msgstr ""
+msgstr "Modifier la tâche Rsync"
 
 msgid "Edit S.M.A.R.T. Test"
-msgstr ""
+msgstr "Modifier le test S.M.A.R.T"
 
 msgid "Edit Scrub Task"
-msgstr ""
+msgstr "Modifier la tâche Scrub"
 
 msgid "Edit Share ACL"
 msgstr "Modifier l'ACL du partage"
@@ -5999,7 +6004,7 @@ msgid "Enable Debug Kernel"
 msgstr "Activer Kernel Debug"
 
 msgid "Enable Display"
-msgstr ""
+msgstr "Activer l’affichage"
 
 msgid "Enable FSRVP"
 msgstr "Activer le FSRVP"
@@ -6071,6 +6076,8 @@ msgid ""
 "Enable a Display (Virtual Network Computing) remote connection. Requires "
 "<i>UEFI</i> booting."
 msgstr ""
+"Activez une connexion à d'affichage à distance (Virtual Network Computing). "
+"Nécessite un démarrage <i>UEFI</i>."
 
 msgid "Enable automatic support alerts to iXsystems (Silver/Gold support only)"
 msgstr ""
@@ -7050,10 +7057,10 @@ msgid "Enter passphrase to lock pool "
 msgstr "Entrez la passphrase pour verrouiller le volume "
 
 msgid "Enter password"
-msgstr ""
+msgstr "Entrez le mot de passe"
 
 msgid "Enter password to unlock this display device"
-msgstr ""
+msgstr "Entrez le mot de passe pour déverrouiller ce périphérique d'affichage"
 
 msgid "Enter password."
 msgstr "Entrez le mot de passe."
@@ -7512,7 +7519,7 @@ msgid "Error updating disks"
 msgstr "Erreur pendant la mise à jour des disques"
 
 msgid "Error while creating the "
-msgstr ""
+msgstr "Erreur lors de la création de la "
 
 msgid "Error:"
 msgstr "Erreur :"
@@ -8918,13 +8925,13 @@ msgid "Image"
 msgstr "Image"
 
 msgid "Image ID"
-msgstr ""
+msgstr "ID de l’image"
 
 msgid "Image Name"
-msgstr ""
+msgstr "Nom de l’image"
 
 msgid "Image Pull Policy"
-msgstr ""
+msgstr "Politique d'extraction de l'image"
 
 msgid "Image Repository"
 msgstr "Référentiel de l'image"
@@ -9070,10 +9077,10 @@ msgid "Inherits"
 msgstr "Hérite"
 
 msgid "Init/Shutdown Script"
-msgstr "Script de Démarrage/Arrêt"
+msgstr "Script Init/Arrêt"
 
 msgid "Init/Shutdown Scripts"
-msgstr ""
+msgstr "Scripts Init/Arrêt"
 
 msgid ""
 "Initial secret authentication key.  When an authentication key is not set, "
@@ -9269,10 +9276,10 @@ msgstr ""
 "non valable."
 
 msgid "Invalid value. Must be greater than or equal to "
-msgstr ""
+msgstr "Valeur invalide. Doit être supérieur ou égal à "
 
 msgid "Invalid value. Must be less than or equal to "
-msgstr ""
+msgstr "Valeur invalide. Doit être inférieur ou égal à "
 
 msgid ""
 "Invalid value. Valid values are numbers followed by optional unit letters  "
@@ -9317,16 +9324,16 @@ msgstr ""
 "contenant différents nombres de disques. Continuer ?"
 
 msgid "It seems you haven't configured pools yet."
-msgstr ""
+msgstr "Il semble que vous n’avez pas encore configuré les volumes."
 
 msgid "It seems you haven't setup any "
 msgstr "Il semble que vous n'en ayez pas configuré "
 
 msgid "Item"
-msgstr ""
+msgstr "Élément"
 
 msgid "Item Name"
-msgstr ""
+msgstr "Nom de l'élément"
 
 msgid "Items Delete Failed"
 msgstr "La suppression des éléments a échouée"
@@ -9415,7 +9422,7 @@ msgid "Keep"
 msgstr "Conserver"
 
 msgid "Keep for"
-msgstr ""
+msgstr "Garder pour"
 
 msgid "Keep snapshot for"
 msgstr "Conservez des instantanés pour"
@@ -12902,25 +12909,25 @@ msgid "Rights"
 msgstr ""
 
 msgid "Roll Back"
-msgstr ""
+msgstr "Retour arrière"
 
 msgid "Roll back"
-msgstr ""
+msgstr "Retour arrière"
 
 msgid "Roll back "
-msgstr ""
+msgstr "Retour arrière "
 
 msgid "Roll back snapshots"
-msgstr ""
+msgstr "Restaurer les instantanés"
 
 msgid "Roll back snapshots of ix_volumes"
-msgstr ""
+msgstr "Restaurer les instantanés de ix_volumes"
 
 msgid "Rollback"
 msgstr "Retour arrière"
 
 msgid "Rolling back..."
-msgstr ""
+msgstr "Retour arrière en cours..."
 
 msgid "Room"
 msgstr "Pièce"
@@ -12962,16 +12969,16 @@ msgid "Routing Key"
 msgstr "Clé de routage"
 
 msgid "Rsync Configure"
-msgstr ""
+msgstr "Configuration Rsync"
 
 msgid "Rsync Mode"
 msgstr "Mode Rsync"
 
 msgid "Rsync Module"
-msgstr ""
+msgstr "Module Rsync"
 
 msgid "Rsync Tasks"
-msgstr ""
+msgstr "Tâches Rsync"
 
 msgid "Run As User"
 msgstr "Exécuter en tant qu'utilisateur"
@@ -13025,28 +13032,28 @@ msgid "S.M.A.R.T Test Results of "
 msgstr "Résultats du test S.M.A.R.T de "
 
 msgid "S.M.A.R.T."
-msgstr ""
+msgstr "S.M.A.R.T."
 
 msgid "S.M.A.R.T. Test"
 msgstr "Test S.M.A.R.T"
 
 msgid "S.M.A.R.T. Tests"
-msgstr ""
+msgstr "Tests S.M.A.R.T"
 
 msgid "S.M.A.R.T. extra options"
 msgstr "Options supplémentaires S.M.A.R.T"
 
 msgid "S.M.A.R.T./SED"
-msgstr ""
+msgstr "S.M.A.R.T./SED"
 
 msgid "S3"
-msgstr ""
+msgstr "S3"
 
 msgid "SAN"
-msgstr ""
+msgstr "SAN"
 
 msgid "SAN: "
-msgstr ""
+msgstr "SAN: "
 
 msgid "SAVE"
 msgstr "ENREGISTRER"
@@ -13085,16 +13092,16 @@ msgid "SMB"
 msgstr "SMB"
 
 msgid "SMB - Primary Domain"
-msgstr ""
+msgstr "SMB - Domaine primaire"
 
 msgid "SMB Service"
 msgstr "Service SMB"
 
 msgid "SMTP"
-msgstr ""
+msgstr "SMTP"
 
 msgid "SMTP Authentication"
-msgstr ""
+msgstr "Authentification SMTP"
 
 msgid ""
 "SMTP port number. Typically <i>25,465</i> (secure SMTP), or <i>587</i> "
@@ -13289,7 +13296,7 @@ msgid "Scrub Task"
 msgstr "Tâche de scrub"
 
 msgid "Scrub Tasks"
-msgstr ""
+msgstr "Tâche Scrub"
 
 msgid "Scrub interval (in days)"
 msgstr "Intervalle de nettoyage (en jours)"
@@ -16073,10 +16080,10 @@ msgid "Tag to use for the specified image"
 msgstr "Balise à utiliser pour l'image spécifiée"
 
 msgid "Tags"
-msgstr ""
+msgstr "Tags"
 
 msgid "Tail Lines"
-msgstr ""
+msgstr "Lignes de queue"
 
 msgid "Take Snapshot"
 msgstr "Prendre un instantané"
@@ -18624,7 +18631,7 @@ msgid "Warning: iSCSI Target is already in use.</font><br>"
 msgstr "Attention : La cible iSCSI  est déjà utilisé.</font><br>"
 
 msgid "We ran into an error while trying to create the "
-msgstr ""
+msgstr "Nous avons rencontré une erreur en essayant de créer le "
 
 msgid "Weak Ciphers"
 msgstr "Faiblesse de chiffrement"
