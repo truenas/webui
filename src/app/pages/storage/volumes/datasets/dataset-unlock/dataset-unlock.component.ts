@@ -2,6 +2,7 @@ import {
   Component,
   OnDestroy,
 } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 
@@ -183,7 +184,7 @@ export class DatasetUnlockComponent implements OnDestroy {
     dialogRef.componentInstance.setDescription(helptext.fetching_encryption_summary_message + this.pk);
     dialogRef.componentInstance.setCall(this.queryCall, [this.pk]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.subscribe(res=>{
+    dialogRef.componentInstance.success.subscribe((res: any)=>{
       if (res) {
         dialogRef.close();
         if (res.result && res.result.length > 0) {
@@ -217,7 +218,7 @@ export class DatasetUnlockComponent implements OnDestroy {
         }
       }
     });
-    dialogRef.componentInstance.failure.subscribe(err => {
+    dialogRef.componentInstance.failure.subscribe((err: any) => {
       if (err) {
         dialogRef.close();
         new EntityUtils().handleWSError(entityEdit, err, this.dialogService);
@@ -227,7 +228,7 @@ export class DatasetUnlockComponent implements OnDestroy {
     this.key_file_fg = entityEdit.formGroup.controls['key_file'];
     this.unlock_children_fg = entityEdit.formGroup.controls['unlock_children'];
 
-    this.key_file_subscription = this.key_file_fg.valueChanges.subscribe(hide_key_datasets => {
+    this.key_file_subscription = this.key_file_fg.valueChanges.subscribe((hide_key_datasets: any) => {
       for (let i = 0; i < this.datasets.controls.length; i++) {
         const dataset_controls = this.datasets.controls[i].controls;
         const controls = listFields[i];
@@ -249,7 +250,7 @@ export class DatasetUnlockComponent implements OnDestroy {
         }
       }
     });
-    this.unlock_children_subscription = this.unlock_children_fg.valueChanges.subscribe(unlock_children => {
+    this.unlock_children_subscription = this.unlock_children_fg.valueChanges.subscribe((unlock_children: any) => {
       for (let i = 0; i < this.datasets.controls.length; i++) {
         const controls = listFields[i];
         const dataset_controls = this.datasets.controls[i].controls;
@@ -276,7 +277,7 @@ export class DatasetUnlockComponent implements OnDestroy {
     })
   }
 
-  setDisabled(fieldConfig, formControl, disable, hide) {
+  setDisabled(fieldConfig: FieldConfig, formControl: FormControl, disable: boolean, hide: boolean) {
     fieldConfig.disabled = disable;
     fieldConfig['isHidden'] = hide;
     if (!hide) {
@@ -296,7 +297,7 @@ export class DatasetUnlockComponent implements OnDestroy {
     this.unlock_children_subscription.unsubscribe();
   }
 
-  customSubmit(body) {
+  customSubmit(body: any) {
     const datasets = [];
     let num = 1; // only unlock the first dataset (the root) if unlock_children is disabled
     if (body['unlock_children']) {
@@ -304,7 +305,7 @@ export class DatasetUnlockComponent implements OnDestroy {
     }
     for (let i = 0; i < num; i++) {
       const dataset = body.datasets[i];
-      const ds = {name:dataset.name}
+      const ds: any = {name:dataset.name}
       if (dataset.is_passphrase) {
         // don't pass empty passphrases, they won't work
         if (dataset.passphrase && dataset.passphrase !== '') {
@@ -333,7 +334,7 @@ export class DatasetUnlockComponent implements OnDestroy {
       dialogRef.componentInstance.setCall(this.queryCall, [this.pk, payload]);
       dialogRef.componentInstance.submit();
     }
-    dialogRef.componentInstance.success.subscribe(res => {
+    dialogRef.componentInstance.success.subscribe((res: any) => {
       dialogRef.close();
       // show summary dialog;
       const errors = [];
@@ -357,13 +358,13 @@ export class DatasetUnlockComponent implements OnDestroy {
         unlockDialogRef.componentInstance.data = payload;
       }
     });
-    dialogRef.componentInstance.failure.subscribe(err => {
+    dialogRef.componentInstance.failure.subscribe((err: any) => {
       dialogRef.close();
       new EntityUtils().handleWSError(this.entityForm, err, this.dialogService);
     });
   }
 
-  unlockSubmit(payload) {
+  unlockSubmit(payload: any) {
     payload['recursive'] = this.unlock_children_fg.value;
     const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":helptext.unlocking_datasets_title}, disableClose: true});
     if (payload.key_file && this.subs) {
@@ -378,7 +379,7 @@ export class DatasetUnlockComponent implements OnDestroy {
       dialogRef.componentInstance.setCall(this.updateCall, [this.pk, payload]);
       dialogRef.componentInstance.submit();
     }
-    dialogRef.componentInstance.success.subscribe(res => {
+    dialogRef.componentInstance.success.subscribe((res: any) => {
       dialogRef.close();
       const errors = [];
       const skipped = [];
@@ -413,7 +414,7 @@ export class DatasetUnlockComponent implements OnDestroy {
         }
       }
     });
-    dialogRef.componentInstance.failure.subscribe(err => {
+    dialogRef.componentInstance.failure.subscribe((err: any) => {
       dialogRef.close();
       new EntityUtils().handleWSError(this.entityForm, err, this.dialogService);
     });

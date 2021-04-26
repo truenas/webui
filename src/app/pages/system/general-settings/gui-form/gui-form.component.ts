@@ -123,8 +123,8 @@ export class GuiFormComponent implements OnDestroy{
   ];
 
   private ui_certificate: any;
-  private addresses: any;
-  private v6addresses: any;
+  private addresses: any[];
+  private v6addresses: any[];
   private http_port: any;
   private https_port: any;
   private redirect: any;
@@ -150,7 +150,7 @@ export class GuiFormComponent implements OnDestroy{
     })
   }
 
-  IPValidator(name: string, wildcard: string) {
+  IPValidator(name: 'ui_address' | 'ui_v6address', wildcard: string) {
     const self = this;
     return function validIPs(control: FormControl) {
       const config =
@@ -184,7 +184,7 @@ export class GuiFormComponent implements OnDestroy{
     this.v6addresses = this.configData['ui_v6address'];
   }
 
-  reconnect(href) {
+  reconnect(href: string) {
     if (this.entityForm.ws.connected) {
       this.loader.close();
       // ws is connected
@@ -204,7 +204,7 @@ export class GuiFormComponent implements OnDestroy{
       .config.find(config => config.name === "ui_certificate");
 
     entityEdit.ws.call('system.general.ui_certificate_choices')
-      .subscribe((res) => {
+      .subscribe((res: any) => {
         this.ui_certificate.options = [{ label: "---", value: null }];
         for (const id in res) {
           this.ui_certificate.options.push({ label: res[id], value: id });
@@ -217,7 +217,7 @@ export class GuiFormComponent implements OnDestroy{
       .config.find(config => config.name === "ui_httpsprotocols");
 
     entityEdit.ws.call('system.general.ui_httpsprotocols_choices').subscribe(
-      (res) => {
+      (res: any) => {
         httpsprotocolsField.options = [];
         for (const key in res) {
           httpsprotocolsField.options.push({ label: res[key], value: key });
@@ -252,12 +252,12 @@ export class GuiFormComponent implements OnDestroy{
 
   }
 
-  beforeSubmit(value) {
+  beforeSubmit(value: any) {
     delete value.language_sort;
     value.language = this.languageKey;
   }
 
-  afterSubmit(value) {
+  afterSubmit(value: any) {
     const new_http_port = value.ui_port;
     const new_https_port = value.ui_httpsport;
     const new_redirect = value.ui_httpsredirect;
@@ -273,7 +273,7 @@ export class GuiFormComponent implements OnDestroy{
         !(this.v6addresses.length === new_v6addresses.length &&
            this.v6addresses.every((val, index) => val === new_v6addresses[index]))) {
       this.dialog.confirm(helptext.dialog_confirm_title, helptext.dialog_confirm_title)
-        .subscribe((res)=> {
+        .subscribe((res: boolean)=> {
           if (res) {
             let href = window.location.href;
             let hostname = window.location.hostname;
@@ -290,8 +290,8 @@ export class GuiFormComponent implements OnDestroy{
 
             this.loader.open();
             this.entityForm.ws.shuttingdown = true; // not really shutting down, just stop websocket detection temporarily
-            this.entityForm.ws.call("service.restart", ["http"]).subscribe((res)=> {
-            }, (res) => {
+            this.entityForm.ws.call("service.restart", ["http"]).subscribe(()=> {
+            }, (res: any) => {
               this.loader.close();
               this.dialog.errorReport(helptext.dialog_error_title, res.reason, res.trace.formatted);
             });
@@ -307,7 +307,7 @@ export class GuiFormComponent implements OnDestroy{
     this.modalService.refreshTable();
   }
 
-  public customSubmit(body) {
+  public customSubmit(body: any) {
     this.loader.open();
     return this.ws.call('system.general.update', [body]).subscribe(() => {
       this.loader.close();
@@ -323,7 +323,7 @@ export class GuiFormComponent implements OnDestroy{
     });
   }
 
-  getKeyByValue(object, value) {
+  getKeyByValue(object: any, value: any) {
     return Object.keys(object).find(key => object[key] === value);
   }
 

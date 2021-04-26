@@ -30,14 +30,14 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
   @ViewChild('navigation', { static: false}) nav: ElementRef
 
   //public currentView: ViewConfig
-  public currentView: ViewConfig =  { 
+  public currentView: ViewConfig =  {
       name: 'Disks',
       alias: 'Disks',
       icon: "harddisk",
       id: 0,
       showInNavbar: true
   }
-   
+
   public scrollContainer: HTMLElement;
   public system: SystemProfiler;
   public selectedEnclosure: any;
@@ -46,7 +46,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
 
   public supportedHardware: boolean = false;
   public system_manufacturer: string;
-  private _system_product;
+  private _system_product: string;
   get system_product(){
     return this._system_product;
   }
@@ -57,7 +57,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     }
   }
 
-  changeView(id){
+  changeView(id: number){
     this.currentView = this.views[id];
   }
 
@@ -157,7 +157,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
     this.scrollContainer.style.overflow = 'auto';
   }
 
-  selectEnclosure(value){
+  selectEnclosure(value: any){
     this.selectedEnclosure = this.system.profile[value];
     this.addViews();
   }
@@ -165,7 +165,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
   extractVisualizations(){
     this.system.profile.forEach((item, index) => {
       if(this.system.rearIndex && item.enclosureKey == this.system.rearIndex){ return; }
-      if(this.system.profile){  
+      if(this.system.profile){
         this.events.next({name:"CanvasExtract", data: this.system.profile[index], sender:this});
       }
     })
@@ -173,19 +173,19 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
 
   addViews(){
     let views = [];
-    let disks =  { 
+    let disks =  {
         name: 'Disks',
         alias: 'Disks',
         icon: "harddisk",
         id: 0,
         showInNavbar: true
     }
-    
-    views.unshift(disks);
-    let matchIndex; 
 
-    this.system.enclosures[this.selectedEnclosure.enclosureKey].elements.forEach((element, index) => {
-      let view = { 
+    views.unshift(disks);
+    let matchIndex;
+
+    (this.system.enclosures[this.selectedEnclosure.enclosureKey].elements as any[]).forEach((element, index) => {
+      let view = {
         name: element.name,
         alias: '',
         icon: "",

@@ -17,8 +17,8 @@ export class GroupQuotaFormComponent {
   public entityForm: any;
   public pk: string;
   protected route_success: string[];
-  public searchedEntries = [];
-  public entryField;
+  public searchedEntries: any[] = [];
+  public entryField: FieldConfig;
   private isNew = true;
   private dq: string;
   private oq: string;
@@ -103,7 +103,7 @@ export class GroupQuotaFormComponent {
     this.pk = paramMap.pk;
   }
 
-  async validateEntry(value) {
+  async validateEntry(value: any) {
     const validEntry = await this.userService.getGroupObject(value);
     if (!validEntry) {
       const chips = document.getElementsByTagName('mat-chip');
@@ -142,18 +142,18 @@ export class GroupQuotaFormComponent {
     this.entryField = _.find(this.fieldSets.find(set => set.name === helptext.groups.group_title).config,
       { 'name': 'searched_entries' });
 
-    this.ws.call('group.query').subscribe(res => {
+    this.ws.call('group.query').subscribe((res: any[]) => {
       res.map(entry => {
         this.selectedEntriesField.options.push({label: entry.group, value: entry.gid});
       });
     });
 
-    this.entityForm.formGroup.controls['data_quota'].valueChanges.subscribe((res) => {
+    this.entityForm.formGroup.controls['data_quota'].valueChanges.subscribe((res: any) => {
       this.dq = res;
       this.allowSubmit();
     })
 
-    this.entityForm.formGroup.controls['obj_quota'].valueChanges.subscribe((res) => {
+    this.entityForm.formGroup.controls['obj_quota'].valueChanges.subscribe((res: any) => {
       this.oq = res;
       this.allowSubmit();
     })
@@ -162,13 +162,13 @@ export class GroupQuotaFormComponent {
       this.allowSubmit();
     })
 
-    this.entityForm.formGroup.controls['searched_entries'].valueChanges.subscribe(value => {
+    this.entityForm.formGroup.controls['searched_entries'].valueChanges.subscribe((value: any) => {
       if (value) {
         this.validateEntry(value[value.length - 1])
       }
     })
 
-    entityEdit.formGroup.controls['data_quota'].valueChanges.subscribe((value) => {
+    entityEdit.formGroup.controls['data_quota'].valueChanges.subscribe((value: any) => {
       const formField = _.find(this.fieldConfig, { name: 'data_quota' });
       const filteredValue = value ? this.storageService.convertHumanStringToNum(value, false, 'kmgtp') : undefined;
       formField['hasErrors'] = false;
@@ -180,19 +180,19 @@ export class GroupQuotaFormComponent {
     })
   }
 
-  blurEvent(parent) {
+  blurEvent(parent: any) {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'data_quota');
     }
   }
 
-  transformValue(parent, fieldname: string) {
+  transformValue(parent: any, fieldname: string) {
     parent.entityForm.formGroup.controls[fieldname].setValue(parent.storageService.humanReadable || 0);
     parent.storageService.humanReadable = '';
   }
 
-  updateSearchOptions(value = "", parent) {
-    parent.userService.groupQueryDSCache(value).subscribe(items => {
+  updateSearchOptions(value = "", parent: any) {
+    parent.userService.groupQueryDSCache(value).subscribe((items: any[]) => {
       const entries: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         entries.push({ label: items[i].group, value: items[i].group });
@@ -201,13 +201,13 @@ export class GroupQuotaFormComponent {
     });
   }
 
-  customSubmit(data) {
-    const payload = [];
+  customSubmit(data: any) {
+    const payload: any[] = [];
     if (!data.system_entries) {
       data.system_entries = [];
     }
     if (data.searched_entries.length > 0) {
-      data.searched_entries.forEach(entry => {
+      data.searched_entries.forEach((entry: any) => {
         if (!data.system_entries.includes(entry)) {
           data.system_entries.push(entry)
         }
@@ -215,7 +215,7 @@ export class GroupQuotaFormComponent {
     }
 
     if (data.system_entries) {
-      data.system_entries.forEach((entry) => {
+      data.system_entries.forEach((entry: any) => {
         if (data.data_quota) {
           const dq = this.storageService.convertHumanStringToNum(data.data_quota);
           if (dq >= 0) {

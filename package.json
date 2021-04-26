@@ -131,6 +131,7 @@
     "@types/lodash": "4.14.160",
     "@types/node": "10.12.7",
     "@types/pixi.js": "4.8.7",
+    "@types/chart.js": "2.9.4",
     "codelyzer": "5.2.1",
     "commander": "4.1.1",
     "enhanced-resolve": "4.1.1",
