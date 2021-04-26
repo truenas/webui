@@ -127,7 +127,7 @@ export class ServiceDDNSComponent {
               ) {}
 
   afterInit(entityForm: any) {
-    entityForm.ws.call('dyndns.config').subscribe((res)=>{
+    entityForm.ws.call('dyndns.config').subscribe((res: any)=>{
       entityForm.formGroup.controls['provider'].setValue(res.provider);
       entityForm.formGroup.controls['checkip_ssl'].setValue(res.checkip_ssl);
       entityForm.formGroup.controls['checkip_server'].setValue(res.checkip_server);
@@ -145,7 +145,7 @@ export class ServiceDDNSComponent {
     })
     entityForm.submitFunction = this.submitFunction;
 
-    entityForm.formGroup.controls['provider'].valueChanges.subscribe((res) => {;
+    entityForm.formGroup.controls['provider'].valueChanges.subscribe((res: any) => {;
        if (res === 'custom') {
         this.hideField('custom_ddns_server', false, entityForm);
         this.hideField('custom_ddns_path', false, entityForm);
@@ -156,7 +156,7 @@ export class ServiceDDNSComponent {
     });
   }
 
-  clean(value) {
+  clean(value: any) {
     delete value['password2'];
 
     return value;
@@ -173,7 +173,7 @@ export class ServiceDDNSComponent {
 
   }
 
-  preInit(entityForm) {
+  preInit() {
     this.provider = this.fieldSets.config("provider");
     this.ws.call("dyndns.provider_choices").subscribe(res => {
       for (const key in res) {
@@ -186,5 +186,5 @@ export class ServiceDDNSComponent {
   hideField(fieldName: any, show: boolean, entity: any) {
     this.fieldSets.config(fieldName).isHidden = show;
     entity.setDisabled(fieldName, show, show);
-  }  
+  }
 }

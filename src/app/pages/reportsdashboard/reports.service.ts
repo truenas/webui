@@ -12,7 +12,7 @@ export interface Command {
   command: string; // Use '|' or '--pipe' to use the output of previous command as input
   input: any;
   options?: any[]; // Function parameters
-} 
+}
 
 @Injectable({
   providedIn: 'root'
@@ -22,15 +22,14 @@ export class ReportsService implements OnDestroy {
   public dataEvents: Subject<CoreEvent> = new Subject<CoreEvent>();
   private reportsUtils: Worker;
 
-  constructor(private ws: WebSocketService, private core:CoreService) { 
-    //@ts-ignore
+  constructor(private ws: WebSocketService, private core:CoreService) {
     this.reportsUtils = new Worker('./reports-utils.worker',{ type: 'module' });
 
     core.register({observerClass: this, eventName:"ReportDataRequest"}).subscribe((evt:CoreEvent) => {
       ws.call('reporting.get_data', [[evt.data.params],evt.data.timeFrame]).subscribe((raw_res) =>{
         let res;
 
-        // If requested, we truncate trailing null values 
+        // If requested, we truncate trailing null values
         if(evt.data.truncate){
           let truncated = this.truncateData(raw_res[0].data);
           res = Object.assign([], raw_res);
@@ -51,7 +50,7 @@ export class ReportsService implements OnDestroy {
           }
         ]
 
-        // We average out cputemps for v11.3. 
+        // We average out cputemps for v11.3.
         // Move this to backend for 12.
         if(evt.data.report.name == "cputemp"){
           // Do a complete replacement instead...
@@ -59,9 +58,9 @@ export class ReportsService implements OnDestroy {
             command: 'avgCpuTempReport',
             input: res[0]
           }]
-  
+
           this.reportsUtils.postMessage({name:'ProcessCommandsAsReportData', data: repl, sender: evt.sender.chartId});
-  
+
         } else {
           //this.core.emit({name:"ReportData-" + evt.sender.chartId, data: res[0], sender:this});
           this.reportsUtils.postMessage({name:'ProcessCommandsAsReportData', data: commands, sender: evt.sender.chartId});
@@ -98,26 +97,26 @@ export class ReportsService implements OnDestroy {
     this.reportsUtils.postMessage({name:'ProcessCommands', data: pipeLine, sender: 'chartID'});
   }
 
-  truncateData(data){
+  truncateData(data: any){
     let finished = false;
     let index = data.length - 1;
     do{
-    
+
       //True only when all the values are null
-      const isEmpty = !data[index].reduce((acc, v) => {
+      const isEmpty = !data[index].reduce((acc: any, v: any) => {
         // Treat zero as a value
         const value = v !== null ? 1 : v;
         return acc + value;
       });
-    
-      if(isEmpty){ 
+
+      if(isEmpty){
         data.splice(index, 1);
       } else {
         finished = true;
       }
       index--
     } while(!finished && data.length > 0);
-    
+
     return data;
   }
 

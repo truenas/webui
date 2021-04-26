@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Option } from 'app/interfaces/option.interface';
 
 import * as _ from 'lodash';
 import { ProductType } from '../../../enums/product-type.enum';
@@ -26,7 +27,7 @@ export class IPMIFromComponent {
   public currentControllerLabel: string;
   public failoverControllerLabel: string;
   public managementIP: string;
-  public options: Array<any> = [
+  public options: Option[] = [
     { label: 'Indefinitely', value: 'force' },
     { label: '15 seconds', value: 15 },
     { label: '30 seconds', value: 30 },

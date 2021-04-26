@@ -69,7 +69,7 @@ export class SnapshotCloneComponent {
     entityForm.formGroup.controls['snapshot'].setValue(this.pk);
   }
 
-  setName(name) {
+  setName(name: string) {
     let value;
     if (name.indexOf('/') !== -1) {
       value = name.replace("@", "-") + "-clone";

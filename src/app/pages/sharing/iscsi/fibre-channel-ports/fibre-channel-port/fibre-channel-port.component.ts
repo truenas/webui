@@ -125,14 +125,14 @@ export class FibreChannelPortComponent implements OnInit {
         }
     }
 
-    isShow(field) {
+    isShow(field: string) {
         if (field === 'target' || field == 'initiators') {
             return this.formGroup.controls['mode'].value == 'TARGET';
         }
         return true;
     }
 
-    onSubmit(event) {
+    onSubmit() {
         let value = _.cloneDeep(this.formGroup.value);
         delete value['initiators'];
 

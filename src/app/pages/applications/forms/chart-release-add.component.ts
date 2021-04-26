@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Option } from 'app/interfaces/option.interface';
 import * as _ from 'lodash';
 import { FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
@@ -35,7 +36,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
   private entityWizard: any;
   private destroy$ = new Subject();
   // private isLinear = true;
-  private interfaceList: any[] = [];
+  private interfaceList: Option[] = [];
   private entityUtils = new EntityUtils();
 
   protected fieldConfig: FieldConfig[];

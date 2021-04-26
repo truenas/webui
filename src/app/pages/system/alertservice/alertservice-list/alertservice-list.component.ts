@@ -40,7 +40,7 @@ export class AlertServiceListComponent {
     protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
     protected dialogService: DialogService) { }
-  
+
   isActionVisible(actionId: string, row: any) {
     if (actionId === 'edit' && this.providerList.indexOf(row.type) === -1) {
       return false;
@@ -48,7 +48,7 @@ export class AlertServiceListComponent {
     return true;
   }
 
-  onCheckboxChange(row) {
+  onCheckboxChange(row: any) {
     row.enabled = !row.enabled;
     this.ws.call('alertservice.update', [row.id, {'enabled': row.enabled}] )
     .subscribe(

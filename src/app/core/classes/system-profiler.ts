@@ -35,7 +35,7 @@ export class SystemProfiler {
   }
 
 
-  private _enclosures: any;
+  private _enclosures: any[];
   get enclosures(){
     return this._enclosures;
   }
@@ -43,7 +43,7 @@ export class SystemProfiler {
     this._enclosures = obj;
   }
 
-  private _pools: any;
+  private _pools: any[];
   get pools(){
     return this._pools;
   }
@@ -312,7 +312,7 @@ export class SystemProfiler {
     return capacity;
   }
 
-  getEnclosureLabel(key: string){
+  getEnclosureLabel(key: number){
     return this.enclosures[key].label == this.enclosures[key].name ? this.enclosures[key].label : this.enclosures[key].model;
   }
 }

@@ -57,19 +57,19 @@ export class TargetListComponent implements OnInit{
     this.entityList = entityList;
   }
 
-  getActions(row) {
+  getActions(row: any) {
     return [{
       id: row.name,
       icon: 'edit',
       name: "edit",
       label: T("Edit"),
-      onClick: (rowinner) => { this.entityList.doEdit(rowinner.id); },
+      onClick: (rowinner: any) => { this.entityList.doEdit(rowinner.id); },
     }, {
       id: row.name,
       icon: 'delete',
       name: "delete",
       label: T("Delete"),
-      onClick: (rowinner) => {
+      onClick: (rowinner: any) => {
         let deleteMsg = this.entityList.getDeleteMessage(rowinner);
         this.iscsiService.getGlobalSessions().subscribe(
           (res) => {
@@ -84,13 +84,13 @@ export class TargetListComponent implements OnInit{
             }
             deleteMsg = warningMsg + deleteMsg;
 
-            this.entityList.dialogService.confirm( T("Delete"), deleteMsg, false, T("Delete")).subscribe((dialres) => {
+            this.entityList.dialogService.confirm( T("Delete"), deleteMsg, false, T("Delete")).subscribe((dialres: boolean) => {
               if (dialres) {
                 this.entityList.loader.open();
                 this.entityList.loaderOpen = true;
                 this.entityList.ws.call(this.wsDelete, payload).subscribe(
-                  (resinner) => { this.entityList.getData() },
-                  (resinner) => {
+                  () => { this.entityList.getData() },
+                  (resinner: any) => {
                     new EntityUtils().handleWSError(this, resinner, this.entityList.dialogService);
                     this.entityList.loader.close();
                   }

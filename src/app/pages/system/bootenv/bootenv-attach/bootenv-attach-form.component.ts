@@ -57,19 +57,19 @@ preInit(entityForm: any) {
     let disksize = 0
     this.entityForm = entityForm;
     this.diskChoice = _.find(this.fieldConfig, {'name':'dev'});
-    this.ws.call('disk.get_unused').subscribe((res)=>{
+    this.ws.call('disk.get_unused').subscribe((res: any[])=>{
       res.forEach((item) => {
         const disk_name = item.name
         disksize = (<any>window).filesize(item['size'], { standard: "iec" });
         item.name = `${item.name} (${disksize})`;
-        this.diskChoice.options.push({label : item.name, value : disk_name});        
+        this.diskChoice.options.push({label : item.name, value : disk_name});
       });
     });
 
   }
 
-  customSubmit(entityForm){
-    const payload = {};
+  customSubmit(entityForm: any){
+    const payload: any = {};
     payload['expand'] = entityForm.expand;
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Attach Device" }, disableClose: true });
     this.dialogRef.componentInstance.setDescription("Attaching Device...");
@@ -77,7 +77,7 @@ preInit(entityForm: any) {
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe(() => {
       this.dialogRef.close(true);
-      this.dialogService.Info(helptext_system_bootenv.attach_dialog.title, 
+      this.dialogService.Info(helptext_system_bootenv.attach_dialog.title,
         `<i>${entityForm.dev}</i> ${helptext_system_bootenv.attach_dialog.message}`, '300px', 'info', true)
         .subscribe(() => {
           this.router.navigate(
@@ -85,7 +85,7 @@ preInit(entityForm: any) {
           );
         })
     });
-    this.dialogRef.componentInstance.failure.subscribe((res) => {
+    this.dialogRef.componentInstance.failure.subscribe((res: any) => {
       this.dialogRef.componentInstance.setDescription(res.error);
     });
   }

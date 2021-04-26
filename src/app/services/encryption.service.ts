@@ -20,10 +20,10 @@ export class EncryptionService {
         protected loader: AppLoaderService, protected storage: StorageService,
         protected mdDialog: MatDialog, protected router: Router, protected http: HttpClient) {}
 
-    setPassphrase(row, encryptKeyPassphrase, adminPassphrase, poolName, route_success, 
-      addRecoveryKey?: boolean, downloadEncrytpKey?: boolean, success_message?) {
+    setPassphrase(row: any, encryptKeyPassphrase: string, adminPassphrase: string, poolName: string, route_success: any,
+      addRecoveryKey?: boolean, downloadEncrytpKey?: boolean, success_message?: string) {
       this.loader.open();
-      this.ws.call('pool.passphrase', [parseInt(row), {'passphrase': encryptKeyPassphrase, 
+      this.ws.call('pool.passphrase', [parseInt(row), {'passphrase': encryptKeyPassphrase,
         'admin_password': adminPassphrase}]).subscribe(() => {
           this.loader.close();
           this.dialogService.Info(T('Set Passphrase'), T(`Passphrase ${success_message} <i>${poolName}</i>`), '300px', "info", true)
@@ -35,7 +35,7 @@ export class EncryptionService {
       });
     };
 
-    openEncryptDialog(row, route_success, poolName, addRecoveryKey?) {
+    openEncryptDialog(row: any, route_success: any, poolName: string, addRecoveryKey?: boolean) {
       let dialogRef = this.mdDialog.open(DownloadKeyModalDialog, {disableClose:true});
       dialogRef.componentInstance.volumeId = row;
       dialogRef.componentInstance.fileName = 'pool_' + poolName + '_encryption.key';
@@ -48,13 +48,13 @@ export class EncryptionService {
           };
       });
     };
-    
-    makeRecoveryKey(row, poolName, route_success) {
+
+    makeRecoveryKey(row: any, poolName: string, route_success: any) {
       this.loader.open();
       const fileName = 'pool_' + poolName + '_recovery.key'
       this.ws.call('core.download', ['pool.recoverykey_add', [parseInt(row)], fileName]).subscribe((res) => {
         this.loader.close();
-        this.dialogService.confirm(helptext.set_recoverykey_dialog_title, helptext.set_recoverykey_dialog_message, 
+        this.dialogService.confirm(helptext.set_recoverykey_dialog_title, helptext.set_recoverykey_dialog_message,
           true, helptext.set_recoverykey_dialog_button, false, '', '', '', '', true).subscribe(() => {
             const url = res[1];
             const mimetype = 'application/octet-stream';
@@ -72,9 +72,9 @@ export class EncryptionService {
       });
     };
 
-    deleteRecoveryKey(row, adminPassphrase, poolName, route_success) {
+    deleteRecoveryKey(row: any, adminPassphrase: string, poolName: string, route_success: any) {
       this.dialogService.confirm(helptext.delete_recovery_key_title, helptext.delete_recovery_key_message, true, T('Delete Key'))
-        .subscribe((res) => {
+        .subscribe((res: boolean) => {
           if (res) {
             this.loader.open();
             this.ws.call('pool.recoverykey_rm', [parseInt(row), {'admin_password': adminPassphrase}]).subscribe(() => {
