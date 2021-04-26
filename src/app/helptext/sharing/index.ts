@@ -1,6 +1,5 @@
 import { T } from "app/translate-marker";
 
-export * from "./afp/afp";
 export * from "./iscsi/iscsi";
 export * from "./nfs/nfs";
 export * from "./smb/smb";
@@ -13,10 +12,10 @@ export const shared = {
     dialog_title: T("Enable service"),
     dialog_message: T("Enable this service to start automatically."),
     dialog_button: T("Enable Service"),
-  
+
     dialog_started_title: T(' Service'),
     dialog_started_message: T(' service has been enabled.')
-    
+
 }
 
 

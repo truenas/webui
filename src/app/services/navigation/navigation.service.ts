@@ -2,14 +2,12 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { T } from '../../translate-marker';
 
-import * as _ from 'lodash';
-
 interface IMenuItem {
   type: string; // Possible values: link/slideOut/icon/separator/extLink
   name ? : string; // Used as display text for item and title for separator type
   state ? : string; // Router state
   icon ? : string; // Item icon name
-  tooltip ? : string; // Tooltip text 
+  tooltip ? : string; // Tooltip text
   disabled ? : boolean; // If true, item will not be appeared in sidenav.
   sub ? : IChildItem[] // Dropdown items
 }
@@ -52,7 +50,6 @@ export class NavigationService {
       icon: 'folder_shared',
       state: 'sharing',
       sub: [
-        { name: T('Apple Shares (AFP)'), state: 'afp' },
         { name: T('Block Shares (iSCSI)'), state: 'iscsi' },
         { name: T('Unix Shares (NFS)'), state: 'nfs' },
         { name: T('WebDAV Shares'), state: 'webdav' },
@@ -155,11 +152,7 @@ export class NavigationService {
   // navigation component has subscribed this Observable
   menuItems$ = this.menuItems.asObservable();
 
-
-
-  constructor() { }
-
-  publishNavigationChange(menuType: string) {
+  publishNavigationChange(): void {
     this.menuItems.next(this.defaultMenu);
   }
 }

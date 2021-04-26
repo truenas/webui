@@ -23,8 +23,8 @@ export class CustomizerComponent implements OnInit {
   constructor(private navService: NavigationService) { }
 
   ngOnInit() {}
-  changeSidenav(data) {
-    this.navService.publishNavigationChange(data.value)
+  changeSidenav() {
+    this.navService.publishNavigationChange()
   }
   toggleBreadcrumb(data) {
     this.breadcrumb.isEnabled = data.checked;

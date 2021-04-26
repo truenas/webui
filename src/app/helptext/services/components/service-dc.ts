@@ -51,14 +51,5 @@ dc_passwd_validation :
 
 dc_passwd2_placeholder : T('Confirm password'),
 
-afp_srv_map_acls_label : 'Kerberos Realm:',
-afp_srv_map_acls_placeholder : T('Kerberos Realm'),
-afp_srv_map_acls_tooltip : T('Auto-populates with information from the <b>Realm</b>\
- when the settings in this screen are saved.'),
-afp_srv_map_acls_options : [
-      {label : 'Rights', value : 'rights'},
-      {label : 'None', value : 'none'},
-      {label : 'Mode', value : 'mode'},
-],
 ad_monitor_warning : T('')
 }

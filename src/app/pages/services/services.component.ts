@@ -1,16 +1,11 @@
-import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { MatButtonToggleGroup }  from '@angular/material/button-toggle';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { NavigationExtras, Router } from '@angular/router';
 
-import { environment } from '../../../environments/environment';
 import { RestService, WebSocketService, IscsiService, SystemGeneralService} from '../../services/';
 import { DialogService } from '../../services/dialog.service';
 
-import * as _ from 'lodash';
 import { T } from '../../translate-marker';
-
 
 @Component({
   selector: 'services',
@@ -26,13 +21,13 @@ export class Services implements OnInit {
   protected queryCallOption = [[], { "order_by": ["service"] }];
   protected rowIdentifier = 'name';
   protected inlineActions = true;
-  
+
   public columns: Array<any> = [
     { name: 'Name', prop: 'name', always_display: true },
     { name: 'Running', prop: 'state', toggle: true, always_display: true },
     { name: 'Start Automatically', prop: 'enable', checkbox: true, always_display: true },
   ];
-  
+
   public config: any = {
     paging: false,
     sorting: { columns: this.columns },
@@ -41,7 +36,6 @@ export class Services implements OnInit {
   public busy: Subscription;
 
   public name_MAP: Object = {
-    'afp': 'AFP',
     'dynamicdns': 'Dynamic DNS',
     'ftp': 'FTP',
     'glusterd': 'Gluster',
@@ -65,10 +59,10 @@ export class Services implements OnInit {
 
   constructor(protected rest: RestService, protected ws: WebSocketService, protected router: Router,
     private dialog: DialogService, private iscsiService: IscsiService, private sysGeneralService: SystemGeneralService) {}
-  
+
   resourceTransformIncomingRestData(data) {
-    let hidden = ['netdata'];
-    
+    let hidden = ['netdata', 'afp'];
+
     return data.map((item) => {
       item.title = item.service;
       if (!hidden.includes(item.service)) {
@@ -78,7 +72,7 @@ export class Services implements OnInit {
           item.name = item.service;
         }
       }
-      
+
       return item;
     });
   }
@@ -91,7 +85,7 @@ export class Services implements OnInit {
       }
     });
   }
-  
+
   getActions(parentRow) {
     const actions = [{
       actionName: 'configure',
@@ -122,11 +116,11 @@ export class Services implements OnInit {
     }
     return actions;
   }
-  
+
   onSliderChange(service) {
     this.toggle(service);
   }
-  
+
   onCheckboxChange(service) {
     this.enableToggle(service);
   }
