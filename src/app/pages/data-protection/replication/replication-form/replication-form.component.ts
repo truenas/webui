@@ -1,7 +1,11 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
-import helptext from '../../../../helptext/data-protection/replication/replication';
-import repwizardhelptext from '../../../../helptext/data-protection/replication/replication-wizard';
+
+import * as _ from 'lodash';
+import { take } from 'rxjs/operators';
+
+import helptext from 'app/helptext/data-protection/replication/replication';
+import repwizardhelptext from 'app/helptext/data-protection/replication/replication-wizard';
 import {
   WebSocketService,
   TaskService,
@@ -9,13 +13,13 @@ import {
   ReplicationService,
   StorageService,
 } from 'app/services';
-import * as _ from 'lodash';
-import { EntityUtils } from '../../../common/entity/utils';
-import { T } from '../../../../translate-marker';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { T } from 'app/translate-marker';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { ModalService } from 'app/services/modal.service';
-import { take } from 'rxjs/operators';
+import { CompressionType, Direction, EncryptionKeyFormat, LifetimeUnit, LoggingLevel, NetcatMode, ReadOnlyMode, RetentionPolicy, TransportMode } from 'app/pages/data-protection/replication/replication.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
 @Component({
   selector: 'app-replication-form',
@@ -23,6 +27,11 @@ import { take } from 'rxjs/operators';
   providers: [TaskService, KeychainCredentialService, ReplicationService, StorageService],
 })
 export class ReplicationFormComponent {
+  protected isNew: boolean = false;
+  form_message = {
+    type: 'notice',
+    content: '',
+  };
   protected queryCall = 'replication.query';
   protected queryCallOption: Array<any> = [];
   protected addCall = 'replication.create';
@@ -32,27 +41,29 @@ export class ReplicationFormComponent {
   protected queryRes: any;
   protected title: string;
   protected pk: number;
-  public isNew: boolean = false;
-  public speedLimitField: any;
-  public form_message = {
-    type: 'notice',
-    content: '',
-  };
-
   protected retentionPolicyChoice = [
     {
-      label: 'Same as Source',
-      value: 'SOURCE',
+      label: T('Same as Source'),
+      value: RetentionPolicy.Source,
     },
     {
-      label: 'Custom',
-      value: 'CUSTOM',
+      label: T('Custom'),
+      value: RetentionPolicy.Custom,
     },
     {
-      label: 'None',
-      value: 'NONE',
+      label: T('None'),
+      value: RetentionPolicy.None,
     },
   ];
+  protected custActions: Array<any> = [{
+    id: 'wizard_add',
+    name: T("Switch to Wizard"),
+    function: () => {
+      this.modalService.close('slide-in-form');
+      const message = { action: 'open', component: 'replicationWizard', row: this.pk };
+      this.modalService.message(message);
+    }
+  }];
 
   public fieldSets: FieldSets = new FieldSets([
     {
@@ -76,22 +87,22 @@ export class ReplicationFormComponent {
           tooltip: helptext.direction_tooltip,
           options: [
             {
-              label: 'PUSH',
-              value: 'PUSH',
+              label: T('PUSH'),
+              value: Direction.Push,
             },
             {
-              label: 'PULL',
-              value: 'PULL',
+              label: T('PULL'),
+              value: Direction.Pull,
             },
           ],
-          value: 'PUSH',
+          value: Direction.Push,
           relation: [
             {
               action: 'HIDE',
               when: [
                 {
                   name: 'transport',
-                  value: 'LOCAL',
+                  value: TransportMode.Local,
                 },
               ],
             },
@@ -104,19 +115,19 @@ export class ReplicationFormComponent {
           tooltip: helptext.transport_tooltip,
           options: [
             {
-              label: 'SSH',
-              value: 'SSH',
+              label: T('SSH'),
+              value: TransportMode.SSH,
             },
             {
-              label: 'SSH+NETCAT',
-              value: 'SSH+NETCAT',
+              label: T('SSH+NETCAT'),
+              value: TransportMode.Netcat,
             },
             {
-              label: 'LOCAL',
-              value: 'LOCAL',
+              label: T('LOCAL'),
+              value: TransportMode.Local,
             },
           ],
-          value: 'SSH',
+          value: TransportMode.SSH,
         },
         {
           type: 'input',
@@ -133,27 +144,27 @@ export class ReplicationFormComponent {
           tooltip: helptext.logging_level_tooltip,
           options: [
             {
-              label: 'DEFAULT',
-              value: 'DEFAULT',
+              label: T('DEFAULT'),
+              value: LoggingLevel.Default,
             },
             {
-              label: 'DEBUG',
-              value: 'DEBUG',
+              label: T('DEBUG'),
+              value: LoggingLevel.Debug,
             },
             {
-              label: 'INFO',
-              value: 'INFO',
+              label: T('INFO'),
+              value: LoggingLevel.Info,
             },
             {
-              label: 'WARNING',
-              value: 'WARNING',
+              label: T('WARNING'),
+              value: LoggingLevel.Warning,
             },
             {
-              label: 'ERROR',
-              value: 'ERROR',
+              label: T('ERROR'),
+              value: LoggingLevel.Error,
             },
           ],
-          value: 'DEFAULT',
+          value: LoggingLevel.Default,
         },
         {
           type: 'checkbox',
@@ -188,7 +199,7 @@ export class ReplicationFormComponent {
               when: [
                 {
                   name: 'transport',
-                  value: 'LOCAL',
+                  value: TransportMode.Local,
                 },
               ],
             },
@@ -203,22 +214,22 @@ export class ReplicationFormComponent {
           tooltip: helptext.netcat_active_side_tooltip,
           options: [
             {
-              label: 'LOCAL',
-              value: 'LOCAL',
+              label: T('LOCAL'),
+              value: NetcatMode.Local,
             },
             {
-              label: 'REMOTE',
-              value: 'REMOTE',
+              label: T('REMOTE'),
+              value: NetcatMode.Remote,
             },
           ],
-          value: 'LOCAL',
+          value: NetcatMode.Local,
           relation: [
             {
               action: 'SHOW',
               when: [
                 {
                   name: 'transport',
-                  value: 'SSH+NETCAT',
+                  value: TransportMode.Netcat,
                 },
               ],
             },
@@ -235,7 +246,7 @@ export class ReplicationFormComponent {
               when: [
                 {
                   name: 'transport',
-                  value: 'SSH+NETCAT',
+                  value: TransportMode.Netcat,
                 },
               ],
             },
@@ -253,7 +264,7 @@ export class ReplicationFormComponent {
               when: [
                 {
                   name: 'transport',
-                  value: 'SSH+NETCAT',
+                  value: TransportMode.Netcat,
                 },
               ],
             },
@@ -271,7 +282,7 @@ export class ReplicationFormComponent {
               when: [
                 {
                   name: 'transport',
-                  value: 'SSH+NETCAT',
+                  value: TransportMode.Netcat,
                 },
               ],
             },
@@ -288,7 +299,7 @@ export class ReplicationFormComponent {
               when: [
                 {
                   name: 'transport',
-                  value: 'SSH+NETCAT',
+                  value: TransportMode.Netcat,
                 },
               ],
             },
@@ -301,30 +312,30 @@ export class ReplicationFormComponent {
           tooltip: helptext.compression_tooltip,
           options: [
             {
-              label: 'Disabled',
-              value: 'DISABLED', // should set it to be null before submit
+              label: T('Disabled'),
+              value: CompressionType.Disabled, // should set it to be null before submit
             },
             {
-              label: 'lz4 (fastest)',
-              value: 'LZ4',
+              label: T('lz4 (fastest)'),
+              value: CompressionType.LZ4,
             },
             {
-              label: 'pigz (all rounder)',
-              value: 'PIGZ',
+              label: T('pigz (all rounder)'),
+              value: CompressionType.PIGZ,
             },
             {
-              label: 'plzip (best compression)',
-              value: 'PLZIP',
+              label: T('plzip (best compression)'),
+              value: CompressionType.PLZIP,
             },
           ],
-          value: 'DISABLED',
+          value: CompressionType.Disabled,
           relation: [
             {
               action: 'SHOW',
               when: [
                 {
                   name: 'transport',
-                  value: 'SSH',
+                  value: TransportMode.SSH,
                 },
               ],
             },
@@ -342,7 +353,7 @@ export class ReplicationFormComponent {
               when: [
                 {
                   name: 'transport',
-                  value: 'SSH',
+                  value: TransportMode.SSH,
                 },
               ],
             },
@@ -358,13 +369,6 @@ export class ReplicationFormComponent {
           tooltip: helptext.large_block_tooltip,
           value: true,
         },
-        // {
-        //     type: 'checkbox',
-        //     name: 'embed',
-        //     placeholder: helptext.embed_placeholder,
-        //     tooltip: helptext.embed_tooltip,
-        //     value: true,
-        // },
         {
           type: 'checkbox',
           name: 'compressed',
@@ -399,7 +403,7 @@ export class ReplicationFormComponent {
               when: [
                 {
                   name: 'direction',
-                  value: 'PUSH',
+                  value: Direction.Push,
                 },
               ],
             },
@@ -433,7 +437,7 @@ export class ReplicationFormComponent {
               when: [
                 {
                   name: 'direction',
-                  value: 'PULL',
+                  value: Direction.Pull,
                 },
               ],
             },
@@ -561,7 +565,7 @@ export class ReplicationFormComponent {
               when: [
                 {
                   name: 'direction',
-                  value: 'PULL',
+                  value: Direction.Pull,
                 },
               ],
             },
@@ -640,7 +644,7 @@ export class ReplicationFormComponent {
               when: [
                 {
                   name: 'direction',
-                  value: 'PUSH',
+                  value: Direction.Push,
                 },
               ],
             },
@@ -657,7 +661,7 @@ export class ReplicationFormComponent {
               when: [
                 {
                   name: 'direction',
-                  value: 'PULL',
+                  value: Direction.Pull,
                 },
               ],
             },
@@ -705,7 +709,7 @@ export class ReplicationFormComponent {
               when: [
                 {
                   name: 'direction',
-                  value: 'PUSH',
+                  value: Direction.Push,
                 },
               ],
             },
@@ -728,7 +732,7 @@ export class ReplicationFormComponent {
               when: [
                 {
                   name: 'direction',
-                  value: 'PULL',
+                  value: Direction.Pull,
                 },
               ],
             },
@@ -741,16 +745,16 @@ export class ReplicationFormComponent {
           tooltip: helptext.readonly_tooltip,
           options: [
             {
-              label: 'SET',
-              value: 'SET',
+              label: T('SET'),
+              value: ReadOnlyMode.Set,
             },
             {
-              label: 'REQUIRE',
-              value: 'REQUIRE',
+              label: T('REQUIRE'),
+              value: ReadOnlyMode.Require,
             },
             {
-              label: 'IGNORE',
-              value: 'IGNORE',
+              label: T('IGNORE'),
+              value: ReadOnlyMode.Ignore,
             },
           ],
         },
@@ -768,12 +772,12 @@ export class ReplicationFormComponent {
           tooltip: repwizardhelptext.encryption_key_format_tooltip,
           options: [
             {
-              label: 'HEX',
-              value: 'HEX',
+              label: T('HEX'),
+              value: EncryptionKeyFormat.Hex,
             },
             {
-              label: 'PASSPHRASE',
-              value: 'PASSPHRASE',
+              label: T('PASSPHRASE'),
+              value: EncryptionKeyFormat.Passphrase,
             },
           ],
           relation: [
@@ -805,7 +809,7 @@ export class ReplicationFormComponent {
                 },
                 {
                   name: 'encryption_key_format',
-                  value: 'HEX',
+                  value: EncryptionKeyFormat.Hex,
                 },
               ],
             },
@@ -827,7 +831,7 @@ export class ReplicationFormComponent {
                 },
                 {
                   name: 'encryption_key_format',
-                  value: 'HEX',
+                  value: EncryptionKeyFormat.Hex,
                 },
                 {
                   name: 'encryption_key_generate',
@@ -855,7 +859,7 @@ export class ReplicationFormComponent {
                 },
                 {
                   name: 'encryption_key_format',
-                  value: 'PASSPHRASE',
+                  value: EncryptionKeyFormat.Passphrase,
                 },
               ],
             },
@@ -913,7 +917,7 @@ export class ReplicationFormComponent {
           placeholder: helptext.retention_policy_placeholder,
           tooltip: helptext.retention_policy_tooltip,
           options: this.retentionPolicyChoice,
-          value: 'NONE',
+          value: RetentionPolicy.None,
         },
         {
           type: 'input',
@@ -927,7 +931,7 @@ export class ReplicationFormComponent {
               when: [
                 {
                   name: 'retention_policy',
-                  value: 'CUSTOM',
+                  value: RetentionPolicy.Custom,
                 },
               ],
             },
@@ -941,34 +945,34 @@ export class ReplicationFormComponent {
           tooltip: helptext.lifetime_unit_tooltip,
           options: [
             {
-              label: 'Hour(s)',
-              value: 'HOUR',
+              label: T('Hour(s)'),
+              value: LifetimeUnit.Hour,
             },
             {
-              label: 'Day(s)',
-              value: 'DAY',
+              label: T('Day(s)'),
+              value: LifetimeUnit.Day,
             },
             {
-              label: 'Week(s)',
-              value: 'WEEK',
+              label: T('Week(s)'),
+              value: LifetimeUnit.Week,
             },
             {
-              label: 'Month(s)',
-              value: 'MONTH',
+              label: T('Month(s)'),
+              value: LifetimeUnit.Month,
             },
             {
-              label: 'Year(s)',
-              value: 'YEAR',
+              label: T('Year(s)'),
+              value: LifetimeUnit.Year,
             },
           ],
-          value: 'WEEK',
+          value: LifetimeUnit.Week,
           relation: [
             {
               action: 'SHOW',
               when: [
                 {
                   name: 'retention_policy',
-                  value: 'CUSTOM',
+                  value: RetentionPolicy.Custom,
                 },
               ],
             },
@@ -1075,7 +1079,7 @@ export class ReplicationFormComponent {
     },
     { name: 'divider', divider: true },
   ]);
-  protected fieldConfig;
+  protected fieldConfig: FieldConfig;
 
   constructor(
     protected ws: WebSocketService,
@@ -1085,7 +1089,7 @@ export class ReplicationFormComponent {
     protected replicationService: ReplicationService,
     protected modalService: ModalService,
   ) {
-    this.modalService.getRow$.pipe(take(1)).subscribe((id: string) => {
+    this.modalService.getRow$.pipe(take(1)).subscribe((id: number) => {
       this.queryCallOption = [['id', '=', id]];
     });
     const sshCredentialsField = this.fieldSets.config('ssh_credentials');
@@ -1164,7 +1168,7 @@ export class ReplicationFormComponent {
     const isTruenasCore = window.localStorage.getItem('product_type') === 'CORE' ? true : false;
     const readonlyCtrl = this.entityForm.formGroup.controls['readonly'];
     if (this.pk === undefined) {
-      readonlyCtrl.setValue(isTruenasCore ? 'SET' : 'REQUIRE');
+      readonlyCtrl.setValue(isTruenasCore ? ReadOnlyMode.Set : ReadOnlyMode.Require);
     }
 
     if (this.entityForm.formGroup.controls['speed_limit'].value) {
@@ -1173,8 +1177,8 @@ export class ReplicationFormComponent {
     }
     this.entityForm.formGroup.controls['target_dataset_PUSH'].valueChanges.subscribe((res) => {
       if (
-        entityForm.formGroup.controls['direction'].value === 'PUSH' &&
-        entityForm.formGroup.controls['transport'].value !== 'LOCAL' &&
+        entityForm.formGroup.controls['direction'].value === Direction.Push &&
+        entityForm.formGroup.controls['transport'].value !== TransportMode.Local &&
         entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
       ) {
         this.countEligibleManualSnapshots();
@@ -1184,8 +1188,8 @@ export class ReplicationFormComponent {
     });
     entityForm.formGroup.controls['direction'].valueChanges.subscribe((res) => {
       if (
-        res === 'PUSH' &&
-        entityForm.formGroup.controls['transport'].value !== 'LOCAL' &&
+        res === Direction.Push &&
+        entityForm.formGroup.controls['transport'].value !== TransportMode.Local &&
         entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
       ) {
         this.countEligibleManualSnapshots();
@@ -1197,8 +1201,8 @@ export class ReplicationFormComponent {
     const retentionPolicyField = this.fieldSets.config('retention_policy');
     entityForm.formGroup.controls['transport'].valueChanges.subscribe((res) => {
       if (
-        res !== 'LOCAL' &&
-        entityForm.formGroup.controls['direction'].value === 'PUSH' &&
+        res !== TransportMode.Local &&
+        entityForm.formGroup.controls['direction'].value === Direction.Push &&
         entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
       ) {
         this.countEligibleManualSnapshots();
@@ -1210,8 +1214,8 @@ export class ReplicationFormComponent {
         retentionPolicyField.options = this.retentionPolicyChoice;
       }
 
-      if (res === 'LOCAL') {
-        entityForm.formGroup.controls['direction'].setValue('PUSH');
+      if (res === TransportMode.Local) {
+        entityForm.formGroup.controls['direction'].setValue(Direction.Push);
         entityForm.setDisabled('target_dataset_PUSH', true, true);
         entityForm.setDisabled('ssh_credentials', true, true);
         entityForm.setDisabled('target_dataset_PULL', false, false);
@@ -1299,8 +1303,8 @@ export class ReplicationFormComponent {
       wsResponse['ssh_credentials'] = wsResponse['ssh_credentials'].id;
     }
 
-    wsResponse['compression'] = wsResponse['compression'] === null ? 'DISABLED' : wsResponse['compression'];
-    wsResponse['logging_level'] = wsResponse['logging_level'] === null ? 'DEFAULT' : wsResponse['logging_level'];
+    wsResponse['compression'] = wsResponse['compression'] === null ? CompressionType.Disabled : wsResponse['compression'];
+    wsResponse['logging_level'] = wsResponse['logging_level'] === null ? LoggingLevel.Default : wsResponse['logging_level'];
     const snapshotTasks = [];
     for (const item of wsResponse['periodic_snapshot_tasks']) {
       snapshotTasks.push(item.id);
@@ -1308,32 +1312,14 @@ export class ReplicationFormComponent {
     wsResponse['periodic_snapshot_tasks'] = snapshotTasks;
 
     if (wsResponse.schedule) {
-      wsResponse['schedule_picker'] =
-        wsResponse.schedule.minute +
-        ' ' +
-        wsResponse.schedule.hour +
-        ' ' +
-        wsResponse.schedule.dom +
-        ' ' +
-        wsResponse.schedule.month +
-        ' ' +
-        wsResponse.schedule.dow;
+      wsResponse['schedule_picker'] = `${wsResponse.schedule.minute} ${wsResponse.schedule.hour} ${wsResponse.schedule.dom} ${wsResponse.schedule.month} ${wsResponse.schedule.dow}`;
       wsResponse['schedule_begin'] = wsResponse.schedule.begin;
       wsResponse['schedule_end'] = wsResponse.schedule.end;
       wsResponse['schedule'] = true;
     }
 
     if (wsResponse.restrict_schedule) {
-      wsResponse['restrict_schedule_picker'] =
-        wsResponse.restrict_schedule.minute +
-        ' ' +
-        wsResponse.restrict_schedule.hour +
-        ' ' +
-        wsResponse.restrict_schedule.dom +
-        ' ' +
-        wsResponse.restrict_schedule.month +
-        ' ' +
-        wsResponse.restrict_schedule.dow;
+      wsResponse['restrict_schedule_picker'] = `${wsResponse.restrict_schedule.minute} ${wsResponse.restrict_schedule.hour} ${wsResponse.restrict_schedule.dom} ${wsResponse.restrict_schedule.month} ${wsResponse.restrict_schedule.dow}`;
       wsResponse['restrict_schedule_begin'] = wsResponse.restrict_schedule.begin;
       wsResponse['restrict_schedule_end'] = wsResponse.restrict_schedule.end;
       wsResponse['restrict_schedule'] = true;
@@ -1354,12 +1340,12 @@ export class ReplicationFormComponent {
       wsResponse['properties_override'] = properties_exclude_list;
     }
 
-    wsResponse.encryption_key_location_truenasdb = wsResponse.encryption_key_location === '$TrueNAS' ? true : false;
+    wsResponse.encryption_key_location_truenasdb = wsResponse.encryption_key_location === '$TrueNAS';
     if (wsResponse.encryption_key_location_truenasdb) {
       delete wsResponse.encryption_key_location;
     }
 
-    if (wsResponse.encryption_key_format === 'HEX') {
+    if (wsResponse.encryption_key_format === EncryptionKeyFormat.Hex) {
       wsResponse.encryption_key_generate = false;
       wsResponse.encryption_key_hex = wsResponse.encryption_key;
     } else {
@@ -1402,12 +1388,12 @@ export class ReplicationFormComponent {
     if (data['speed_limit'] !== undefined && data['speed_limit'] !== null) {
       data['speed_limit'] = this.storageService.convertHumanStringToNum(data['speed_limit']);
     }
-    if (data['transport'] === 'LOCAL') {
-      data['direction'] = 'PUSH';
+    if (data['transport'] === TransportMode.Local) {
+      data['direction'] = Direction.Push;
       data['target_dataset_PUSH'] = _.cloneDeep(data['target_dataset_PULL']);
       delete data['target_dataset_PULL'];
     }
-    if (data['direction'] === 'PUSH') {
+    if (data['direction'] === Direction.Push) {
       for (let i = 0; i < data['source_datasets_PUSH'].length; i++) {
         if (_.startsWith(data['source_datasets_PUSH'][i], '/mnt/')) {
           data['source_datasets_PUSH'][i] = data['source_datasets_PUSH'][i].substring(5);
@@ -1440,18 +1426,6 @@ export class ReplicationFormComponent {
       delete data['target_dataset_PULL'];
     }
 
-    // data["exclude"] = typeof data['exclude'] === "string" ? data['exclude'].split(',') : data['exclude'];
-    // data["periodic_snapshot_tasks"] = typeof data['periodic_snapshot_tasks'] === "string" ? data['periodic_snapshot_tasks'].split(' ') : data['periodic_snapshot_tasks'];
-    // if (data["naming_schema"] === '') {
-    //     delete data["naming_schema"];
-    // }
-    // if (data["also_include_naming_schema"] === '') {
-    //     delete data["also_include_naming_schema"];
-    // }
-
-    // data["naming_schema"] = typeof data['naming_schema'] === "string" ? data['naming_schema'].split(' ') : data['naming_schema'];
-    // data["also_include_naming_schema"] = typeof data['also_include_naming_schema'] === "string" ? data['also_include_naming_schema'].split(' ') : data['also_include_naming_schema'];
-
     if (data['schedule']) {
       data['schedule'] = this.parsePickerTime(data['schedule_picker'], data['schedule_begin'], data['schedule_end']);
       delete data['schedule_picker'];
@@ -1471,10 +1445,10 @@ export class ReplicationFormComponent {
       delete data['restrict_schedule'];
     }
 
-    if (data['compression'] === 'DISABLED') {
+    if (data['compression'] === CompressionType.Disabled) {
       delete data['compression'];
     }
-    if (data['logging_level'] === 'DEFAULT') {
+    if (data['logging_level'] === LoggingLevel.Default) {
       delete data['logging_level'];
     }
 
@@ -1484,7 +1458,7 @@ export class ReplicationFormComponent {
     delete data['encryption_key_location_truenasdb'];
 
     data['encryption_key'] =
-      data['encryption_key_format'] === 'PASSPHRASE'
+      data['encryption_key_format'] === EncryptionKeyFormat.Passphrase
         ? data['encryption_key_passphrase']
         : data['encryption_key_generate']
         ? this.replicationService.generateEncryptionHexKey(64)
@@ -1495,7 +1469,7 @@ export class ReplicationFormComponent {
 
     // for edit replication task
     if (!this.entityForm.isNew) {
-      if (data['transport'] === 'LOCAL') {
+      if (data['transport'] === TransportMode.Local) {
         data['ssh_credentials'] = null;
       }
 
@@ -1529,7 +1503,7 @@ export class ReplicationFormComponent {
 
     const transport = this.entityForm.formGroup.controls['transport'].value;
     const sshCredentials = this.entityForm.formGroup.controls['ssh_credentials'].value;
-    if ((sshCredentials === undefined || sshCredentials === '') && transport !== 'LOCAL') {
+    if ((sshCredentials === undefined || sshCredentials === '') && transport !== TransportMode.Local) {
       for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
         const fieldConfig = this.fieldSets.config(item);
         fieldConfig.hasErrors = true;
@@ -1552,13 +1526,17 @@ export class ReplicationFormComponent {
   blurEventNamingSchema(parent) {
     if (
       parent.entityForm &&
-      parent.entityForm.formGroup.controls['direction'].value === 'PUSH' &&
-      parent.entityForm.formGroup.controls['transport'].value !== 'LOCAL' &&
+      parent.entityForm.formGroup.controls['direction'].value === Direction.Push &&
+      parent.entityForm.formGroup.controls['transport'].value !== TransportMode.Local &&
       parent.entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
     ) {
       parent.countEligibleManualSnapshots();
     } else {
       parent.form_message.content = '';
     }
+  }
+
+  isCustActionVisible(actionId: string): boolean {
+    return actionId === 'wizard_add' && this.pk === undefined;
   }
 }

@@ -10,7 +10,7 @@ import globalHelptext from '../../../../helptext/global-helptext';
 import { ModalService } from 'app/services/modal.service';
 import { RsyncFormComponent } from '../rsync-form/rsync-form.component';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.interface';
+import { EntityJob, EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.interface';
 
 @Component({
   selector: 'app-rsync-list',
@@ -88,7 +88,7 @@ export class RsyncListComponent {
           if (run) {
             row.state = { state: EntityJobState.Running };
             this.ws.call('rsynctask.run', [row.id]).subscribe(
-              (res) => {
+              (jobId: number) => {
                 this.dialog.Info(
                   T('Task Started'),
                   'Rsync task <i>' + row.remotehost + ' - ' + row.remotemodule + '</i> started.',
@@ -96,7 +96,7 @@ export class RsyncListComponent {
                   'info',
                   true,
                 );
-                this.job.getJobStatus(res).subscribe((job) => {
+                this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
                   row.state = { state: job.state };
                   row.job = job;
                 });
@@ -145,7 +145,7 @@ export class RsyncListComponent {
         task.state = { state: EntityJobState.Pending };
       } else {
         task.state = { state: task.job.state };
-        this.job.getJobStatus(task.job.id).subscribe((job) => {
+        this.job.getJobStatus(task.job.id).subscribe((job: EntityJob) => {
           task.state = { state: job.state };
           task.job = job;
         });

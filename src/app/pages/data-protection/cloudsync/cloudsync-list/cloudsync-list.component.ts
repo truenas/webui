@@ -21,7 +21,7 @@ import helptext from '../../../../helptext/data-protection/cloudsync/cloudsync-f
 import { CloudsyncFormComponent } from '../cloudsync-form/cloudsync-form.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalService } from 'app/services/modal.service';
-import { EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.interface';
+import { EntityJob, EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.interface';
 
 @Component({
   selector: 'app-cloudsync-list',
@@ -109,7 +109,7 @@ export class CloudsyncListComponent implements InputTableConf {
         task.state = { state: EntityJobState.Pending };
       } else {
         task.state = { state: task.job.state };
-        this.job.getJobStatus(task.job.id).subscribe((job) => {
+        this.job.getJobStatus(task.job.id).subscribe((job: EntityJob) => {
           task.state = { state: job.state };
           task.job = job;
         });
@@ -132,7 +132,7 @@ export class CloudsyncListComponent implements InputTableConf {
             if (res) {
               row.state = { state: EntityJobState.Running };
               this.ws.call('cloudsync.sync', [row.id]).subscribe(
-                (jobId) => {
+                (jobId: number) => {
                   this.dialog.Info(
                     T('Task Started'),
                     T('Cloud sync <i>') + row.description + T('</i> has started.'),
@@ -140,7 +140,7 @@ export class CloudsyncListComponent implements InputTableConf {
                     'info',
                     true,
                   );
-                  this.job.getJobStatus(jobId).subscribe((job) => {
+                  this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
                     row.state = { state: job.state };
                     row.job = job;
                   });
@@ -188,7 +188,7 @@ export class CloudsyncListComponent implements InputTableConf {
           this.dialog.confirm(helptext.dry_run_title, helptext.dry_run_dialog, true).subscribe((dialog_res) => {
             if (dialog_res) {
               this.ws.call('cloudsync.sync', [row.id, { dry_run: true }]).subscribe(
-                (res) => {
+                (jobId: number) => {
                   this.dialog.Info(
                     T('Task Started'),
                     T('Cloud sync <i>') + row.description + T('</i> has started.'),
@@ -196,7 +196,7 @@ export class CloudsyncListComponent implements InputTableConf {
                     'info',
                     true,
                   );
-                  this.job.getJobStatus(res).subscribe((job) => {
+                  this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
                     row.state = { state: job.state };
                     row.job = job;
                   });
