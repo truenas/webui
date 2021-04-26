@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { T } from '../../../../translate-marker';
 import { DialogService, StorageService, ValidationService, UserService } from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
@@ -27,13 +28,12 @@ export class UserListComponent implements OnDestroy {
 
   protected entityList: any;
   protected loaderOpen = false;
-  protected usr_lst = [];
-  protected grp_lst = [];
+  protected usr_lst: any[] = [];
+  protected grp_lst: any[] = [];
   protected hasDetails = true;
   protected queryCall = 'user.query';
   protected wsDelete = 'user.delete';
   // protected queryCallOption = [['OR', [['uid', '=', 0], ['builtin', '=', false]]]];
-  protected queryCallOption = [];
   protected globalConfig = {
     id: "config",
     tooltip: helptext.globalConfigTooltip,
@@ -94,17 +94,17 @@ export class UserListComponent implements OnDestroy {
 
   ngOnDestroy(){
     if(this.refreshTableSubscription){
-      this.refreshTableSubscription.unsubscribe(); 
+      this.refreshTableSubscription.unsubscribe();
     }
   }
-  
+
   refreshUserForm() {
     this.addComponent = new UserFormComponent(this.router,this.ws, this.storageService,this.loader,
       this.userService,this.validationService,this.modalService);
   }
 
-  afterInit(entityList: any) { 
-    this.entityList = entityList; 
+  afterInit(entityList: any) {
+    this.entityList = entityList;
     setTimeout(() => {
       if(this.prefService.preferences.showUserListMessage) {
         this.showOneTimeBuiltinMsg();
@@ -115,14 +115,14 @@ export class UserListComponent implements OnDestroy {
       this.entityList.getData();
     })
   }
-  getActions(row) {
+  getActions(row: any) {
     const actions = [];
     actions.push({
       id: row.username,
       icon: 'edit',
       label : helptext.user_list_actions_edit_label,
       name: helptext.user_list_actions_edit_id,
-      onClick : (users_edit) => {
+      onClick : (users_edit: any) => {
         this.modalService.open('slide-in-form', this.addComponent, users_edit.id)
       }
     });
@@ -133,7 +133,7 @@ export class UserListComponent implements OnDestroy {
         icon: 'delete',
         name: 'delete',
         label : helptext.user_list_actions_delete_label,
-        onClick: (users_edit) => {
+        onClick: (users_edit: any) => {
           const self = this;
           const conf: DialogFormConfiguration = {
             title: helptext.deleteDialog.title,
@@ -151,7 +151,7 @@ export class UserListComponent implements OnDestroy {
                 });
               }
             },
-            customSubmit: function (entityDialog) {
+            customSubmit: function (entityDialog: EntityDialogComponent) {
               entityDialog.dialogRef.close(true);
               self.loader.open();
               self.ws.call(self.wsDelete, [users_edit.id, entityDialog.formValue]).subscribe((res) => {
@@ -183,14 +183,14 @@ export class UserListComponent implements OnDestroy {
     return false
   }
 
-  resourceTransformIncomingRestData(d) {
+  resourceTransformIncomingRestData(d: any) {
     let data = Object.assign([], d);
     this.usr_lst = [];
     this.grp_lst = [];
     this.usr_lst.push(data);
     this.ws.call('group.query').subscribe((res)=>{
       this.grp_lst.push(res);
-      data.forEach(user => {
+      data.forEach((user: any) => {
         const group = _.find(res, {"gid" : user.group.bsdgrp_gid});
         //user.group.bsdgrp_gid = group['gid'];
         user.gid = group['gid'];
@@ -203,15 +203,15 @@ export class UserListComponent implements OnDestroy {
                              {label:T("Shell"), value:rows[i].shell},
                              {label:T("Email"), value:rows[i].email});
       };
-      
+
     });
    if (this.prefService.preferences.hide_builtin_users) {
-      let newData = []
-      data.forEach((item) => {
+      let newData: any[] = []
+      data.forEach((item: any) => {
         if (!item.builtin || item.username === 'root') {
           newData.push(item);
         }
-      }) 
+      })
       return data = newData;
     }
     return data;
@@ -224,9 +224,9 @@ export class UserListComponent implements OnDestroy {
       this.translate.get(show).subscribe((action: string) => {
         this.translate.get(helptext.builtins_dialog.title).subscribe((title: string) => {
           this.translate.get(helptext.builtins_dialog.message).subscribe((message: string) => {
-          this.dialogService.confirm(action + title, 
+          this.dialogService.confirm(action + title,
             action + message, true, action)
-            .subscribe((res) => {
+            .subscribe((res: boolean) => {
             if (res) {
               this.prefService.preferences.hide_builtin_users = !this.prefService.preferences.hide_builtin_users;
               this.prefService.savePreferences();
@@ -242,7 +242,7 @@ export class UserListComponent implements OnDestroy {
   showOneTimeBuiltinMsg() {
     this.prefService.preferences.showUserListMessage = false;
     this.prefService.savePreferences();
-    this.dialogService.confirm(helptext.builtinMessageDialog.title, helptext.builtinMessageDialog.message, 
+    this.dialogService.confirm(helptext.builtinMessageDialog.title, helptext.builtinMessageDialog.message,
       true, helptext.builtinMessageDialog.button, false, '', '', '', '', true);
   }
 

@@ -99,7 +99,7 @@ export class BootStatusListComponent implements OnInit {
         write_errors: 0,
         checksum_errors: 0,
       };
-  
+
       if (data.stats) {
         stats = data.stats;
       }
@@ -110,7 +110,7 @@ export class BootStatusListComponent implements OnInit {
       if (!data.device || data.device == null) {
         data.device = data.path;
       }
-  
+
       const item: PoolDiskInfo = {
         name: data.name ? data.name : data.device,
         read: stats.read_errors ? stats.read_errors : 0,
@@ -123,14 +123,14 @@ export class BootStatusListComponent implements OnInit {
       if (data.type && boot_pool_data && boot_pool_data.type === 'mirror' && data.path) {
         item.actions = [{
           label: T("Detach"),
-          onClick: (row) => {
+          onClick: (row: any) => {
             this.detach(row.name)
           },
           isHidden: false,
         },
         {
           label: T("Replace"),
-          onClick: (row) => { this._router.navigate(new Array('').concat([ "system", "boot", "replace", row.name ]));
+          onClick: (row: any) => { this._router.navigate(new Array('').concat([ "system", "boot", "replace", row.name ]));
           },
           isHidden: false,
         }];
@@ -140,7 +140,7 @@ export class BootStatusListComponent implements OnInit {
         item.actions = [
         {
           label: T("Replace"),
-          onClick: (row) => { this._router.navigate(new Array('').concat([ "system", "boot", "replace", row.name ]));
+          onClick: (row: any) => { this._router.navigate(new Array('').concat([ "system", "boot", "replace", row.name ]));
           },
           isHidden: false,
         }];
@@ -150,14 +150,14 @@ export class BootStatusListComponent implements OnInit {
         item.actions = [
         {
           label: T("Attach"),
-          onClick: (row) => {
+          onClick: (row: any) => {
             this._router.navigate(new Array('').concat([ "system", "boot", "attach", row.name ]));
           },
           isHidden: false,
         },
         {
           label: T("Replace"),
-          onClick: (row) => { this._router.navigate(new Array('').concat([ "system", "boot", "replace", row.name ]));
+          onClick: (row: any) => { this._router.navigate(new Array('').concat([ "system", "boot", "replace", row.name ]));
           },
           isHidden: false,
         }];

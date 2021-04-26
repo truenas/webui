@@ -14,7 +14,7 @@ export class EntityTreeTableService {
   constructor(private ws: WebSocketService) {}
 
   // Do we still need this?
-  buildTree(data) {
+  buildTree(data: any) {
     let tree: Array<TreeNode> = [];
     for (let i = 0; i < data.length; i++) {
       const node = this.getNode(data[i]);
@@ -23,7 +23,7 @@ export class EntityTreeTableService {
     return tree;
   }
 
-  buildTable(data, expandAll: boolean = false){
+  buildTable(data: any, expandAll: boolean = false){
     // Converts a Tree structure to a flat list
     let flatList: TreeNode[] = [];
 
@@ -40,14 +40,14 @@ export class EntityTreeTableService {
         node.expanded = true;
       }
 
-      if(node.expanded && node.expanded.toString() !== 'true'){ 
+      if(node.expanded && node.expanded.toString() !== 'true'){
         node.expanded = false;
-      } 
+      }
 
       node.indexPath = !parentIndexPath && rows.length == 0 ? [nodeIndex] : parentIndexPath.concat([nodeIndex]);
       rows.push(node);
 
-      if(node.children.length > 0 && node.expanded && node.expanded.toString() == 'true'){ 
+      if(node.children.length > 0 && node.expanded && node.expanded.toString() == 'true'){
         // ...but the Children!
         this.walk(node.children, rows, node.indexPath,  expandAll);
       }
@@ -56,7 +56,7 @@ export class EntityTreeTableService {
   }
 
   findNode(indexPath: number[], treeData: TreeNode[]){
-    let currentNode;
+    let currentNode: any;
     indexPath.forEach((tier, index) => {
       currentNode = index == 0 ? treeData[0] : currentNode.children[tier];
     });
@@ -65,13 +65,13 @@ export class EntityTreeTableService {
   }
 
   findParents(indexPath: number[], data: TreeNode[], asObject: boolean = true){
-    
+
     let output = asObject ? {} : [];
     let path = Object.assign([], indexPath);
 
     for(let i = indexPath.length - 1; i >= 0; i--){
         const node = this.findNode(path, data);
-        output[node.data.id] = true;
+        (output as any)[node.data.id] = true;
         path.pop();
     }
 
@@ -86,11 +86,11 @@ export class EntityTreeTableService {
     let clone = Object.assign([], treeData);
 
     node[prop] = value;
-    
+
     return clone;
   }
 
-  filteredTable(key, value, data, preserveExpansion: boolean = false){
+  filteredTable(key: any, value: any, data: any, preserveExpansion: boolean = false){
 
     // Fully expanded and flattened list
     let args = preserveExpansion ? [data] : [data, true];
@@ -98,8 +98,8 @@ export class EntityTreeTableService {
     let flattened = preserveExpansion ? this.buildTable(data) : this.buildTable(data, true);
 
     // Parents we need to keep
-    let preserve = {};
-    
+    let preserve: any = {};
+
     for(let index = flattened.length - 1; index >= 0; index-- ){
       const row = flattened[index];
       if( row.data[key].includes(value) ) {
@@ -113,7 +113,7 @@ export class EntityTreeTableService {
           flattened.splice(index, 1);
         }
       }
-      
+
     }
 
     return flattened;
@@ -121,8 +121,8 @@ export class EntityTreeTableService {
   }
 
   // Do we still need this?
-  getNode(item) {
-    let nodeData = {};
+  getNode(item: any) {
+    let nodeData: any = {};
     for (const prop in item) {
       nodeData[prop] = item[prop];
     }

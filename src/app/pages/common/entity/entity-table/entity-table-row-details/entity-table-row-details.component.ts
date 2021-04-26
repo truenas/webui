@@ -12,7 +12,7 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
   @Input() config: any;
   @Input() parent: EntityTableComponent & { conf: any };
 
-  public columns = [];
+  public columns: any[] = [];
   public actions: EntityTableAction[] = [];
 
   ngOnInit() {
@@ -25,7 +25,7 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
     this.actions = this.getActions();
   }
 
-  getPropValue(prop, isCronTime = false) {
+  getPropValue(prop: string, isCronTime = false) {
     let val =_.get(this.config, prop.split('.'));
     if (val === undefined || val === null) {
       val = 'N/A';
@@ -34,7 +34,7 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
   }
 
   buildColumns(): void {
-    this.columns = this.parent.allColumns.filter(col => !this.parent.conf.columns.some(c => c.prop === col.prop));
+    this.columns = this.parent.allColumns.filter(col => !this.parent.conf.columns.some((c: any) => c.prop === col.prop));
   }
 
   getActions(): EntityTableAction[] {

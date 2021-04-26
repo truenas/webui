@@ -17,18 +17,18 @@ export class IdmapFormComponent {
 
   protected route_success: string[] = ['directoryservice', 'idmap'];
   protected isEntity: boolean = true;
-  protected namesInUse = [];
+  protected namesInUse: string[] = [];
   protected queryCall = 'idmap.query';
   protected addCall = 'idmap.create';
   protected editCall = 'idmap.update';
   protected queryCallOption: Array<any> = [["id", "="]];
   public rangeLowValidation = [
-    ...helptext.idmap.required_validator, 
+    ...helptext.idmap.required_validator,
     this.validationService.rangeValidator(1000, 2147483647)
   ];
   public rangeHighValidation = [
-    ...helptext.idmap.required_validator, 
-    this.validationService.rangeValidator(1000, 2147483647), 
+    ...helptext.idmap.required_validator,
+    this.validationService.rangeValidator(1000, 2147483647),
     this.validationService.greaterThan('range_low', [helptext.idmap.range_low.placeholder])
   ];
   private entityForm: any;
@@ -116,7 +116,7 @@ export class IdmapFormComponent {
 
       ]
     },
-    {      
+    {
       name: 'vert-spacer',
       class: 'vert-spacer',
       label:false,
@@ -284,7 +284,7 @@ export class IdmapFormComponent {
   constructor(protected idmapService: IdmapService, protected validationService: ValidationService,
     protected route: ActivatedRoute, protected dialogService: DialogService, protected dialog: MatDialog) { }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     for (let item in data.options) {
       data[item] = data.options[item]
     }
@@ -309,7 +309,7 @@ export class IdmapFormComponent {
       this.hideField(option, true, entityEdit);
     })
 
-    this.idmapService.getCerts().subscribe((res) => {
+    this.idmapService.getCerts().subscribe((res: any[]) => {
       const config = this.fieldConfig.find(c => c.name === 'certificate');
       config.options.push({label: '---', value: null})
       res.forEach((item) => {
@@ -317,7 +317,7 @@ export class IdmapFormComponent {
       })
     });
 
-    entityEdit.formGroup.controls['idmap_backend'].valueChanges.subscribe((value) => {
+    entityEdit.formGroup.controls['idmap_backend'].valueChanges.subscribe((value: any) => {
       this.optionsFields.forEach((option) => {
         this.hideField(option, true, entityEdit);
       })
@@ -339,7 +339,7 @@ export class IdmapFormComponent {
       }
     });
 
-    entityEdit.formGroup.controls['name'].valueChanges.subscribe(value => {
+    entityEdit.formGroup.controls['name'].valueChanges.subscribe((value: any) => {
       if (value === 'DS_TYPE_DEFAULT_DOMAIN') {
         entityEdit.formGroup.controls['idmap_backend'].setValue('TDB');
         this.hideField('idmap_backend', true, entityEdit);
@@ -370,7 +370,7 @@ export class IdmapFormComponent {
     entity.setDisabled(fieldName, show, show);
   }
 
-  beforeSubmit(data) {
+  beforeSubmit(data: any) {
     if (data.dns_domain_name === null) {
       delete data.dns_domain_name;
     }
@@ -378,7 +378,7 @@ export class IdmapFormComponent {
       data.name = data.custom_name;
       delete data.custom_name;
     }
-    let options = {}
+    let options: any = {}
     for (let item in data) {
       if (this.optionsFields.includes(item)) {
         if(data[item]) {
@@ -390,21 +390,21 @@ export class IdmapFormComponent {
     data['options'] = options;
   }
 
-  afterSubmit(value) {
+  afterSubmit() {
     this.dialogService.confirm(helptext.idmap.clear_cache_dialog.title, helptext.idmap.clear_cache_dialog.message,
       true)
-      .subscribe((res) => {
+      .subscribe((res: boolean) => {
         if (res) {
-          this.dialogRef = this.dialog.open(EntityJobComponent, { 
+          this.dialogRef = this.dialog.open(EntityJobComponent, {
             data: { "title": (helptext.idmap.clear_cache_dialog.job_title) }, disableClose: true});
           this.dialogRef.componentInstance.setCall('idmap.clear_idmap_cache');
           this.dialogRef.componentInstance.submit();
-          this.dialogRef.componentInstance.success.subscribe((res) => {
+          this.dialogRef.componentInstance.success.subscribe(() => {
             this.dialog.closeAll();
             this.dialogService.Info(helptext.idmap.clear_cache_dialog.success_title,
               helptext.idmap.clear_cache_dialog.success_msg, '250px', '', true)
           });
-          this.dialogRef.componentInstance.failure.subscribe((res) => {
+          this.dialogRef.componentInstance.failure.subscribe((res: any) => {
             this.dialog.closeAll()
             new EntityUtils().handleWSError(this.entityForm, res);
           });

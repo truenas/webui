@@ -101,7 +101,7 @@ export interface VolumeData {
 })
 export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
 
-  @Input() poolState;
+  @Input() poolState: any;
   @Input() volumeData:any;//VolumeData;
   @ViewChild('carousel', {static:true}) carousel:ElementRef;
   @ViewChild('carouselparent', {static:false}) carouselParent:ElementRef;
@@ -124,7 +124,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   get currentSlideIndex(){
     return this.path.length > 0 ? parseInt(this.currentSlide) : this.title;
   }
-  
+
   get currentSlideName(){
     return this.path[parseInt(this.currentSlide)].name;
   }
@@ -139,7 +139,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   get totalDisks(){
     if(this.poolState && this.poolState.topology){
       let total = 0;
-      this.poolState.topology.data.forEach((item) => {
+      this.poolState.topology.data.forEach((item: any) => {
         if(item.type == "DISK"){
           total++
         } else {
@@ -155,19 +155,19 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   private _unhealthyDisks: string[];
   get unhealthyDisks(){
     if(this.poolState && this.poolState.topology){
-      let unhealthy = []; // Disks with errors
-      this.poolState.topology.data.forEach((item) => {
+      let unhealthy: any[] = []; // Disks with errors
+      this.poolState.topology.data.forEach((item: any) => {
         if(item.type == "DISK"){
           let diskErrors = item.read_errors + item.write_errors + item.checksum_errors;
 
-          if(diskErrors > 0) { 
+          if(diskErrors > 0) {
             unhealthy.push(item.disk);
           }
         } else {
-          item.children.forEach((device) => {
+          item.children.forEach((device: any) => {
             let diskErrors = device.read_errors + device.write_errors + device.checksum_errors;
 
-            if(diskErrors > 0) { 
+            if(diskErrors > 0) {
               unhealthy.push(device.disk);
             }
           });
@@ -175,7 +175,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       });
       return { totalErrors: unhealthy.length/*errors.toString()*/, disks: unhealthy};
     } else {
-      return {totalErrors: "Unknown", disks: []};
+      return {totalErrors: "Unknown", disks: [] as any[]};
     }
   }
 
@@ -197,7 +197,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   get currentDiskDetailsKeys(){
     return this.currentDiskDetails ? Object.keys(this.currentDiskDetails) : [];
   }
-  
+
 
   constructor(public router: Router, public translate: TranslateService, private cdr: ChangeDetectorRef){
     super(translate);
@@ -210,8 +210,8 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   ngOnChanges(changes: SimpleChanges){
     if(changes.poolState){
-    } 
-    
+    }
+
     if(changes.volumeData){
       this.getAvailableSpace();
     }
@@ -221,7 +221,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   ngAfterContentInit(){
-    
+
   }
 
   ngAfterViewInit(){
@@ -244,20 +244,21 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
     this.core.register({observerClass:this,eventName:"MultipathData"}).subscribe((evt:CoreEvent) => {
       this.currentMultipathDetails = evt.data[0];
-      
-      const activeDisk = evt.data[0].children.filter(prop => prop.status == "ACTIVE");
+
+      const activeDisk = evt.data[0].children.filter((prop: any) => prop.status == "ACTIVE");
       this.core.emit({name:"DisksRequest", data:[[["name", "=", activeDisk[0].name]]]});
     });
 
     this.core.register({observerClass:this,eventName:"DisksData"}).subscribe((evt:CoreEvent) => {
-      let currentName = this.path[this.currentSlideIndex] && this.path[this.currentSlideIndex].dataSource ?
-        this.currentMultipathDetails ? 
-          this.checkMultipathLabel(this.path[this.currentSlideIndex].dataSource.disk) :
-          this.path[this.currentSlideIndex].dataSource.disk ?
-            this.path[this.currentSlideIndex].dataSource.disk :
-            'unknown': 
+      const currentPath = (this.path as any)[this.currentSlideIndex] as Slide;
+      let currentName = currentPath && currentPath.dataSource ?
+        this.currentMultipathDetails ?
+          this.checkMultipathLabel(currentPath.dataSource.disk) :
+          currentPath.dataSource.disk ?
+            currentPath.dataSource.disk :
+            'unknown':
         'unknown';
-      
+
       if ((!currentName || currentName === 'unknown') && evt.data.length == 0) {
         this.currentDiskDetails = null;
       } else if (currentName && evt.data.length > 0 && currentName === evt.data[0].name) {
@@ -288,12 +289,12 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       usedValue = usedObj.value;
     }
     let used: ChartData = {
-      legend: 'Used', 
+      legend: 'Used',
       data: [usedValue]
     };
 
     if(usedValue == "Locked"){
-      // When Locked, Bail before we try to get details. 
+      // When Locked, Bail before we try to get details.
       // (errors start after this...)
       return 0;
     }
@@ -307,7 +308,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       this.voldataavail = true;
     }
     let available: ChartData = {
-      legend:'Available', 
+      legend:'Available',
       data: [availableValue]
     };
 
@@ -331,10 +332,10 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   getDiskDetails(key:string, value:string, isMultipath?:boolean){
     if(isMultipath && key == 'name'){
-     
+
       let v = "multipath/" + this.checkMultipathLabel(value);
       this.core.emit({name:"MultipathRequest", data:[[[key, "=", v]]]});
-    
+
     } else if(!isMultipath) {
 
       delete this.currentMultipathDetails
@@ -345,7 +346,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }
   }
 
-  checkMultipathLabel(name){
+  checkMultipathLabel(name: string){
     if(name == null){
       name =  "N/A";
     }
@@ -369,7 +370,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }
   }
 
-  trimMultipath(disk, vdev?){
+  trimMultipath(disk: string){
     if(!disk || disk == null){
       return {name: disk};
     }
@@ -401,7 +402,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
         template: this.templates[name],
         topology: topology
       }
-  
+
       this.path[slideIndex] = slide;
     } else if(direction == 'back'){
       // empty the path segment
@@ -412,7 +413,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   }
 
-  updateSlidePosition(value){
+  updateSlidePosition(value: any){
     if(value.toString() == this.currentSlide){ return; }
 
     const carousel = this.carouselParent.nativeElement.querySelector('.carousel')
@@ -429,10 +430,10 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       to:{ x: endX },
       duration: 250
     }).start(el.set);
-    
+
     this.currentSlide = value.toString();
     this.title = this.currentSlide == "0" ? "Pool" : this.poolState.name;
-    
+
   }
 
   checkVolumeHealth(){

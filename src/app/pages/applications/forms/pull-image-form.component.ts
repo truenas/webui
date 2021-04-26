@@ -75,8 +75,8 @@ export class PullImageFormComponent {
     private modalService: ModalService) {
   }
 
-  customSubmit(data) {
-    const params = {
+  customSubmit(data: any) {
+    const params: any = {
       from_image: data.from_image
     };
 

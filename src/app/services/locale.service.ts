@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Option } from 'app/interfaces/option.interface';
 import * as moment from 'moment-timezone';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { SystemGeneralService } from '../services';
@@ -45,11 +46,11 @@ export class LocaleService {
         });
     }
 
-    getDateFormatOptions(tz?: string) {
+    getDateFormatOptions(tz?: string): Option[] {
         if (tz) {
             moment.tz.setDefault(tz);
         }
-        const options = [
+        return [
             { label: moment().format('YYYY-MM-DD'), value: 'YYYY-MM-DD' },
             { label: moment().format('MMMM D, YYYY'), value: 'MMMM D, YYYY' },
             { label: moment().format('D MMMM, YYYY'), value: 'D MMMM, YYYY' },
@@ -59,19 +60,17 @@ export class LocaleService {
             { label: moment().format('DD/MM/YYYY'), value: 'DD/MM/YYYY' },
             { label: moment().format('DD.MM.YYYY'), value: 'DD.MM.YYYY' }
           ];
-          return options;
     }
 
-    getTimeFormatOptions(tz?: string) {
+    getTimeFormatOptions(tz?: string): Option[] {
         if (tz) {
             moment.tz.setDefault(tz);
         }
-        const options = [
+        return [
             { label: `${moment().format('HH:mm:ss')} ${this.t24}`, value: 'HH:mm:ss' },
             { label: moment().format('hh:mm:ss a'), value: 'hh:mm:ss a' },
             { label: moment().format('hh:mm:ss A'), value: 'hh:mm:ss A' }
         ];
-        return options;
     }
 
     formatDateTime(date: Date, tz?: string) {

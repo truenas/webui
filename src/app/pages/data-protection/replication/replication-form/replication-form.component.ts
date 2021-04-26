@@ -1076,7 +1076,7 @@ export class ReplicationFormComponent {
     },
     { name: 'divider', divider: true },
   ]);
-  protected fieldConfig;
+  protected fieldConfig: any;
 
   constructor(
     protected ws: WebSocketService,
@@ -1172,7 +1172,7 @@ export class ReplicationFormComponent {
       const presetSpeed = this.entityForm.formGroup.controls['speed_limit'].value.toString();
       this.storageService.humanReadable = presetSpeed;
     }
-    this.entityForm.formGroup.controls['target_dataset_PUSH'].valueChanges.subscribe((res) => {
+    this.entityForm.formGroup.controls['target_dataset_PUSH'].valueChanges.subscribe(() => {
       if (
         entityForm.formGroup.controls['direction'].value === 'PUSH' &&
         entityForm.formGroup.controls['transport'].value !== 'LOCAL' &&
@@ -1289,7 +1289,7 @@ export class ReplicationFormComponent {
     entityForm.formGroup.controls['auto'].setValue(entityForm.formGroup.controls['auto'].value);
   }
 
-  resourceTransformIncomingRestData(wsResponse) {
+  resourceTransformIncomingRestData(wsResponse: any) {
     this.queryRes = _.cloneDeep(wsResponse);
     wsResponse['source_datasets_PUSH'] = wsResponse['source_datasets'];
     wsResponse['target_dataset_PUSH'] = wsResponse['target_dataset'];
@@ -1370,7 +1370,7 @@ export class ReplicationFormComponent {
     return wsResponse;
   }
 
-  parsePickerTime(picker, begin, end) {
+  parsePickerTime(picker: any, begin: any, end: any) {
     const spl = picker.split(' ');
     return {
       minute: spl[0],
@@ -1383,7 +1383,7 @@ export class ReplicationFormComponent {
     };
   }
 
-  beforeSubmit(data) {
+  beforeSubmit(data: any) {
     const targetDatasetPush = _.cloneDeep(data['target_dataset_PUSH']);
 
     if (data['replicate']) {
@@ -1392,7 +1392,7 @@ export class ReplicationFormComponent {
       data['exclude'] = [];
     }
     if (data['properties_override']) {
-      const properties_exclude_obj = {};
+      const properties_exclude_obj: any = {};
       for (let item of data['properties_override']) {
         item = item.split('=');
         properties_exclude_obj[item[0]] = item[1];
@@ -1523,7 +1523,7 @@ export class ReplicationFormComponent {
     }
   }
 
-  getChildren(node) {
+  getChildren() {
     for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
       this.fieldSets.config(item).hasErrors = false;
     }
@@ -1544,13 +1544,13 @@ export class ReplicationFormComponent {
     });
   }
 
-  blurEvent(parent) {
+  blurEvent(parent: any) {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['speed_limit'].setValue(parent.storageService.humanReadable);
     }
   }
 
-  blurEventNamingSchema(parent) {
+  blurEventNamingSchema(parent: any) {
     if (
       parent.entityForm &&
       parent.entityForm.formGroup.controls['direction'].value === 'PUSH' &&

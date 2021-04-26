@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { helptext_sharing_smb } from 'app/helptext/sharing/smb/smb';
@@ -134,7 +135,7 @@ export class SMBAclComponent {
         });
     }
 
-    afterInit(entityForm) {
+    afterInit(entityForm: EntityFormComponent) {
         this.entityForm = entityForm;
         this.shareACLField = _.find(entityForm.fieldConfig, {name: 'share_acl'});
 
@@ -161,7 +162,7 @@ export class SMBAclComponent {
         })
     }
 
-    updateRequiredValidator(fieldName, index, required) {
+    updateRequiredValidator(fieldName: string, index: number, required: boolean) {
         const fieldCtrl = this.entityForm.formGroup.controls['share_acl'].controls[index].controls[fieldName];
         const fieldConfig =  _.find(this.shareACLField['listFields'][index], {name: fieldName});
         if (fieldConfig.required !== required) {
@@ -175,7 +176,7 @@ export class SMBAclComponent {
         }
     }
 
-    resourceTransformIncomingRestData(data) {
+    resourceTransformIncomingRestData(data: any) {
         for (let i = 0; i < data['share_acl'].length; i++) {
             if (data['share_acl'][i]['ae_who_name']) {
                 data['share_acl'][i]['ae_who_name_domain'] = data['share_acl'][i]['ae_who_name']['domain'];
@@ -186,7 +187,7 @@ export class SMBAclComponent {
         return data;
     }
 
-    beforeSubmit(data) {
+    beforeSubmit(data: any) {
        delete data['share_name']
         for (const acl of data.share_acl) {
             if (acl['ae_who_sid'] !== undefined && acl['ae_who_sid'] !== '') {

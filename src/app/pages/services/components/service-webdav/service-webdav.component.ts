@@ -101,7 +101,7 @@ export class ServiceWebdavComponent implements OnDestroy {
       protected validationService: ValidationService
   ) {}
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     const certificate = data['certssl'];
     if (certificate && certificate.id) {
       data['certssl'] = certificate.id;
@@ -121,16 +121,16 @@ export class ServiceWebdavComponent implements OnDestroy {
     this.webdav_protocol = entityForm.formGroup.controls['protocol'];
     this.handleProtocol(this.webdav_protocol.value);
     this.handleAuth(this.webdav_htauth.value);
-    this.webdav_protocol_subscription = this.webdav_protocol.valueChanges.subscribe((value) => {
+    this.webdav_protocol_subscription = this.webdav_protocol.valueChanges.subscribe((value: any) => {
       this.handleProtocol(value);
     });
-    this.webdav_htauth_subscription = this.webdav_htauth.valueChanges.subscribe((value) => {
+    this.webdav_htauth_subscription = this.webdav_htauth.valueChanges.subscribe((value: any) => {
       this.handleAuth(value);
     });
 
     this.webdav_certssl =
       _.find(this.fieldConfig, {'name' : 'certssl'});
-    this.systemGeneralService.getCertificates().subscribe((res) => {
+    this.systemGeneralService.getCertificates().subscribe((res: any[]) => {
       if (res.length > 0) {
         res.forEach((item) => {
           this.webdav_certssl.options.push(

@@ -36,14 +36,14 @@ export class KerberosRealmsListComponent {
 
   constructor(private router: Router){}
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any[]) {
     data.forEach((row) => {
       this.keyList.forEach((key) => {
         if (row.hasOwnProperty(key)) {
           row[key] = (row[key].join(' '));
         }
       })
-      
+
     })
     return data;
   }

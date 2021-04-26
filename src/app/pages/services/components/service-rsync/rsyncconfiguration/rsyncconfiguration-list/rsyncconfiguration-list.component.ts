@@ -20,7 +20,7 @@ import { T } from '../../../../../../translate-marker';
 
     public columns: Array<any> = [
         { name: T('Name'), prop: 'name' },
-        { name: T('Comment'), prop: 'comment' },    
+        { name: T('Comment'), prop: 'comment' },
         { name: T('Path'), prop: 'path' },
         { name: T('Mode'), prop: 'mode' },
         { name: T('Maximum connections'), prop: 'maxconn', hidden: true },
@@ -36,7 +36,7 @@ import { T } from '../../../../../../translate-marker';
     sorting : { columns : this.columns },
     };
 
-    dataHandler(res) {
+    dataHandler(res: any) {
       const rows = res.rows;
       for (let i=0; i<rows.length; i++) {
         rows[i].details = [];
@@ -46,6 +46,6 @@ import { T } from '../../../../../../translate-marker';
                              {label: T("Auxiliary parameters"), value:rows[i]["auxiliary"]}
         );
       }
-      
+
     }
   }

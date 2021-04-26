@@ -18,7 +18,7 @@ export class ToolbarMenuComponent extends iXAbstractObject {
     super()
   }
 
-  onClick(value){
+  onClick(value: any){
     this.config.value = value;
     let message:Control = {name: this.config.name, value: this.config.value}
     this.controller.next(message);

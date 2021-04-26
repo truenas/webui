@@ -216,7 +216,7 @@ export class ConfigurationComponent {
   private entityEdit: EntityFormComponent;
   private failover_fields = ['hostname_b', 'hostname_virtual'];
   public title = helptext.title;
-  public afterModalFormClosed;
+  public afterModalFormClosed: any;
 
   constructor(protected router: Router,
     protected ws: WebSocketService) { }
@@ -243,7 +243,7 @@ export class ConfigurationComponent {
     this.entityEdit.submitFunction = this.submitFunction;
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     if (data.hosts && data.hosts !== '') {
       data['hosts'] = data.hosts.split('\n');
     } else {
@@ -265,7 +265,7 @@ export class ConfigurationComponent {
     return data;
   }
 
-  clean(data) {
+  clean(data: any) {
     data.hosts = data.hosts.length > 0 ? data.hosts.join('\n') : '';
     data['service_announcement'] = {
       'netbios': data['netbios'],
@@ -283,7 +283,7 @@ export class ConfigurationComponent {
     return this.ws.call('network.configuration.update', [body]);
   }
 
-  beforeSubmit(data) {
+  beforeSubmit(data: any) {
     if (data['outbound_network_activity'] === 'ALLOW' || data['outbound_network_activity'] === 'DENY') {
       data['activity'] = {type: data['outbound_network_activity'], 'activities': []};
     } else {

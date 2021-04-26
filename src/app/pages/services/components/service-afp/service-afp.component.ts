@@ -19,7 +19,7 @@ export class ServiceAFPComponent {
   public title = helptext.formTitle;
 
   public fieldConfig: FieldConfig[] = [];
-  
+
   public fieldSets: FieldSet[] = [
     {
       name: helptext.afp_fieldset_path,
@@ -121,7 +121,7 @@ export class ServiceAFPComponent {
               protected _injector: Injector, protected _appRef: ApplicationRef,
               protected userService: UserService, protected iscsiService: IscsiService,) {}
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     // If validIps is slow to load, skip check on load (It's still done on save)
     if(this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
       return this.compareBindIps(data);
@@ -129,11 +129,11 @@ export class ServiceAFPComponent {
     return data;
   }
 
-  compareBindIps(data) {
+  compareBindIps(data: any) {
     // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
     data.bindip = data.bindip ? data.bindip : [];
     if(this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
-      data.bindip.forEach(ip => {
+      data.bindip.forEach((ip: any) => {
         if (!Object.values(this.validBindIps).includes(ip)) {
           data.bindip.splice(data.bindip[ip], 1)
         }
@@ -143,7 +143,7 @@ export class ServiceAFPComponent {
     }
     return data;
   }
-  
+
   afterInit(entityEdit: any) {
     entityEdit.submitFunction = this.submitFunction;
     let self = this;
@@ -171,7 +171,7 @@ export class ServiceAFPComponent {
     return this.ws.call('afp.update', [body]);
   }
 
-  beforeSubmit(data) {
+  beforeSubmit(data: any) {
     data = this.compareBindIps(data);
   }
 }

@@ -25,11 +25,11 @@ export class JailWizardComponent {
 
   protected addWsCall = 'jail.create';
   public route_success: string[] = ['jails'];
-  public summary = {};
+  public summary: any = {};
   summary_title = "Jail Summary";
   objectKeys = Object.keys;
   entityWizard: any;
-  protected namesInUse = [];
+  protected namesInUse: string[] = [];
 
   isLinear = true;
   firstFormGroup: FormGroup;
@@ -300,7 +300,7 @@ export class JailWizardComponent {
   public ipv4: any;
   public ipv6: any;
   protected template_list: string[];
-  protected unfetchedRelease = [];
+  protected unfetchedRelease: any[] = [];
   protected showSpinner = true;
 
   constructor(protected rest: RestService,
@@ -368,7 +368,7 @@ export class JailWizardComponent {
     );
   }
 
-  updateIpAddress(entityWizard, type) {
+  updateIpAddress(entityWizard: EntityWizardComponent, type: any) {
     if (type == 'ipv4') {
       let ip4_interface_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip4_interface'];
       let ip4_address_control = (< FormGroup > entityWizard.formArray.get([1])).controls['ip4_addr'];
@@ -417,7 +417,7 @@ export class JailWizardComponent {
   async afterInit(entityWizard: EntityWizardComponent) {
     this.entityWizard = entityWizard;
     this.entityWizard.formGroup.disable();
-    await this.jailService.listJails().toPromise().then((res) => {
+    await this.jailService.listJails().toPromise().then((res: any[]) => {
       res.forEach(i => this.namesInUse.push(i.id));
       this.entityWizard.showSpinner = false;
       this.entityWizard.formGroup.enable();
@@ -526,7 +526,7 @@ export class JailWizardComponent {
     });
   }
 
-  beforeSubmit(value) {
+  beforeSubmit(value: any) {
     let property: any = [];
 
     if (value['jailtype'] === 'basejail') {
@@ -577,22 +577,22 @@ export class JailWizardComponent {
     return value;
   }
 
-  customSubmit(value) {
+  customSubmit(value: any) {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Creating Jail") }, disableClose: true});
     this.dialogRef.componentInstance.setDescription(T("Creating Jail..."));
     this.dialogRef.componentInstance.setCall(this.addWsCall, [value]);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((res) => {
+    this.dialogRef.componentInstance.success.subscribe(() => {
       this.dialogRef.close(true);
       this.router.navigate(new Array('/').concat(this.route_success));
     });
-    this.dialogRef.componentInstance.failure.subscribe((res) => {
+    this.dialogRef.componentInstance.failure.subscribe((res: any) => {
       this.dialogRef.close();
       new EntityUtils().handleWSError(this, res, this.dialogService);
     });
   }
 
-  isCustActionVisible(id, stepperIndex) {
+  isCustActionVisible(id: any, stepperIndex: any) {
     if (stepperIndex == 0) {
       return true;
     }

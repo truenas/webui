@@ -7,7 +7,7 @@ export interface CardWidgetConf {
     icon?: string,
     showGroupTitle?: boolean;
     name?:string,
-    onclick?(),
+    onclick?(): any,
 }
 
 @Component ({

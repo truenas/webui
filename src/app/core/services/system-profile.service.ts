@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { BaseService } from './base.service';
 import { CoreEvent } from './core.service';
 import helptext from '../../helptext/topbar';
@@ -163,7 +164,7 @@ export class SystemProfileService extends BaseService {
       this.features.HA = true;
 
       // HA Status Change Call
-      this.websocket.call('failover.disabled_reasons').subscribe((res) => {
+      this.websocket.call<FailoverDisabledReason[]>('failover.disabled_reasons').subscribe((res) => {
         this.updateHA(res);
       });
     }
@@ -171,7 +172,7 @@ export class SystemProfileService extends BaseService {
     return this.features;
   }
 
-  updateHA(res){
+  updateHA(res: FailoverDisabledReason[]){
     const ha_enabled = res.length == 0 ? true : false;
     const ha_status_text = res.length == 0 ? helptext.ha_status_text_enabled : helptext.ha_status_text_disabled;
 

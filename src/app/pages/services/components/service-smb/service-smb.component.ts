@@ -87,7 +87,7 @@ export class ServiceSMBComponent {
           validation: [
             (control: FormControl): ValidationErrors => {
               const config = this.fieldConfig.find(c => c.name === 'netbiosalias');
-              const aliasArr = control.value ? control.value : [];
+              const aliasArr: any[] = control.value ? control.value : [];
               let counter = 0;
               aliasArr.forEach(alias => {
                 if (alias.length > 15) {
@@ -297,15 +297,15 @@ export class ServiceSMBComponent {
       }
     });
 
-    this.ws.call('user.query').subscribe((res) => {
+    this.ws.call('user.query').subscribe((res: any[]) => {
       this.cifs_srv_guest = otherColTwoSet.config.find(config => config.name === "guest");
       res.forEach((user) => {
         this.cifs_srv_guest.options.push({ label: user.username, value: user.username });
       });
     });
 
-    this.userService.groupQueryDSCache("", true).subscribe(items => {
-      const groups = [];
+    this.userService.groupQueryDSCache("", true).subscribe((items: any[]) => {
+      const groups: any[] = [];
       items.forEach((item) => {
         groups.push({label: item.group, value: item.group});
       });
@@ -323,7 +323,7 @@ export class ServiceSMBComponent {
     protected idmapService: IdmapService, protected userService: UserService,
     protected loader: AppLoaderService, protected dialog: MatDialog) {}
 
-    resourceTransformIncomingRestData(data) {
+    resourceTransformIncomingRestData(data: any) {
       // If validIps is slow to load, skip check on load (It's still done on save)
       if (this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
         return this.compareBindIps(data);
@@ -331,11 +331,11 @@ export class ServiceSMBComponent {
       return data;
     }
 
-    compareBindIps(data) {
+    compareBindIps(data: any) {
       // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
       data.bindip = data.bindip ? data.bindip : [];
       if(this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
-        data.bindip.forEach(ip => {
+        data.bindip.forEach((ip: any) => {
           if (!Object.values(this.validBindIps).includes(ip)) {
             data.bindip.splice(data.bindip[ip], 1)
           }
@@ -352,8 +352,8 @@ export class ServiceSMBComponent {
     };
   }
 
-  updateGroupSearchOptions(value = "", parent) {
-    parent.userService.groupQueryDSCache(value, true).subscribe(items => {
+  updateGroupSearchOptions(value = "", parent: any) {
+    parent.userService.groupQueryDSCache(value, true).subscribe((items: any[]) => {
       const groups = [];
       for (let i = 0; i < items.length; i++) {
         groups.push({label: items[i].group, value: items[i].group});
@@ -362,7 +362,7 @@ export class ServiceSMBComponent {
     });
   }
 
-  beforeSubmit(data) {
+  beforeSubmit(data: any) {
     data = this.compareBindIps(data);
   }
 }

@@ -23,7 +23,7 @@ export class EntityJobComponent implements OnInit {
   public showCloseButton = true;
   public showAbortButton = false; // enable to abort job
   public jobId: Number;
-  public progressNumberType;
+  public progressNumberType: any;
   public hideProgressValue = false;
   public altMessage: string;
   public showRealtimeLogs = false;
@@ -53,7 +53,7 @@ export class EntityJobComponent implements OnInit {
       this.showCloseButton = true;
       this.dialogRef.disableClose = true;
     }
-    this.progress.subscribe(progress => {
+    this.progress.subscribe((progress: any) => {
       if (progress.description) {
         this.description = progress.description;
       }
@@ -68,10 +68,10 @@ export class EntityJobComponent implements OnInit {
       this.disableProgressValue(progress.percent == null);
     });
 
-    this.failure.subscribe(job => {
+    this.failure.subscribe((job: any) => {
       job.error = _.replace(job.error, '<', '< ');
       job.error = _.replace(job.error, '>', ' >');
-  
+
       this.description = '<b>Error:</b> ' + job.error;
     })
   }
@@ -121,7 +121,7 @@ export class EntityJobComponent implements OnInit {
     });
   }
 
-  jobUpdate(job) {
+  jobUpdate(job: any) {
     this.job = job;
     if (job.progress) {
       this.progress.emit(job.progress);
@@ -176,7 +176,7 @@ export class EntityJobComponent implements OnInit {
         () => {
         });
   }*/
-  public wspost(path, options) {
+  public wspost(path: string, options: any) {
     this.http.post(path, options).subscribe(
         (res) => {
           this.job = res;
@@ -209,7 +209,7 @@ export class EntityJobComponent implements OnInit {
     });
   }
 
-  wsjobUpdate(job) {
+  wsjobUpdate(job: any) {
     this.job = job;
     if (job.fields) {
       this.job.state = job.fields.state;

@@ -190,7 +190,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
      tooltip:{
        show:false,
        format: {
-         value: (value, ratio, id, index) => {
+         value: (value: any) => {
            if(this.units){
              return value + this.units;
            } else {
@@ -203,7 +203,7 @@ export class ViewChartComponent extends ViewComponent implements AfterViewInit {
     return this.chartConfig;
   }
 
-  focus(item): void {
+  focus(item: any): void {
     if(item.visible){
       this.chart.hide(item.name);
     } else {

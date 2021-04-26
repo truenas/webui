@@ -1,5 +1,5 @@
 <mat-card>
-    <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup">
+    <form (ngSubmit)="onSubmit()" [formGroup]="formGroup">
         <div class="form-wrap">
             <div [ngClass]="'form-line'" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)">
                 <div id="dynamicField_allow_all_initiators" dynamicField [config]="fieldConfig[0]" [group]="formGroup"

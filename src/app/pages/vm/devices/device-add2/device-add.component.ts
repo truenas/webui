@@ -473,7 +473,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
 
   async afterInit() {
 
-    this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols: any)=>{
+    this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols: any[])=>{
       zvols.forEach(zvol => {
         _.find(this.diskFieldConfig, {name:'path'}).options.push(
           {

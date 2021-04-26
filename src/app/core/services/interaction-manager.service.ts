@@ -36,7 +36,6 @@ export interface DisplayObjectConfig {
 export class InteractionManagerService {
   private displayList: DisplayObjectRegistration[];
   private displayObjectWithFocus: DisplayObject;
-  private desktop;
   public messageBus: CoreService;
 
   constructor(messageBus:CoreService){
@@ -46,7 +45,7 @@ export class InteractionManagerService {
       // Expects LayoutObject and array of CSS selectors
       //let collection: DisplayObject[] = [];
       let collection: any = {};
-      evt.data.selectors.forEach((item) => {
+      evt.data.selectors.forEach((item: any) => {
         let displayObject = this.registerElement(item, evt.data.layout);
         //collection.push(displayObject);
         collection[displayObject.id] = displayObject;
@@ -126,7 +125,7 @@ export class InteractionManagerService {
         })
   }
 
-  registerElement(config, layout?:LayoutObject){
+  registerElement(config: any, layout?:LayoutObject){
      const selector = config.id;
      const observable = multicast();
      const el = document.querySelector(selector);
@@ -154,7 +153,7 @@ export class InteractionManagerService {
      return registration.displayObject;
   }
 
-  unregisterElement(tracker){
+  unregisterElement(tracker: any){
     tracker.interactive = false;
     let index = this.displayList.indexOf(tracker);
     this.displayList.splice(index, 1);
@@ -208,7 +207,7 @@ export class InteractionManagerService {
   }
 
   // Collision Detection Goes Here...
-  private detectCollision(a, b) {
+  private detectCollision(a: any, b: any) {
       return !(
           ((a.y + a.height) < (b.y)) ||
           (a.y > (b.y + b.height)) ||

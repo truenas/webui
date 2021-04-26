@@ -47,8 +47,8 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
   public subtitle:string = '';
   public chartType: string = 'gauge';
   public chartClass: string = 'view-chart-gauge';
-  private _data;
-  private arc;
+  private _data: any;
+  private arc: any;
   public chartId = UUID.UUID();
   private doublePI = 2 * Math.PI;
   public units = "%"; // default unit type
@@ -165,7 +165,7 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
     this.update(this.config.data[1])
   }
 
-  update(value){
+  update(value: any){
     if (!document.hidden) {
       d3.transition()
         .select('#gauge-' + this.chartId + ' path.value')
@@ -177,12 +177,12 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
     }
   }
 
-  load(newAngle){
-    return (d) => {
+  load(newAngle: number){
+    return (d: any) => {
 
     let interpolate = d3.interpolate(d.endAngle, newAngle);
 
-      return (t) => {
+      return (t: any) => {
 
         d.endAngle = interpolate(t);
 
@@ -191,7 +191,7 @@ export class ViewChartGaugeComponent /*extends DisplayObject*/ implements AfterV
     };
   }
 
-  percentToAngle(value){
+  percentToAngle(value: number){
     return value  / 100 * this.doublePI;
   }
 

@@ -130,16 +130,16 @@ export class CertificateAcmeAddComponent {
     protected loader: AppLoaderService, private dialog: MatDialog,
     protected entityFormService: EntityFormService, protected dialogService: DialogService,
     private modalService: ModalService
-  ) { 
+  ) {
     this.getRow = this.modalService.getRow$.subscribe(rowId => {
       this.rowNum = rowId;
       this.queryCallOption = [["id", "=", rowId]];
       this.getRow.unsubscribe();
     })
   }
-  
-  preInit(entityForm: EntityFormComponent) { 
-    this.ws.call('acme.dns.authenticator.query').subscribe(authenticators => {
+
+  preInit(entityForm: EntityFormComponent) {
+    this.ws.call('acme.dns.authenticator.query').subscribe((authenticators: any[]) => {
       this.dns_map = _.find(this.fieldSets[2].config[0].templateListField, {'name' : 'authenticators'});
       authenticators.forEach(item => {
         this.dns_map.options.push({ label: item.name, value: item.id})
@@ -153,7 +153,7 @@ export class CertificateAcmeAddComponent {
       }
       entityForm.formGroup.controls['acme_directory_uri'].setValue(Object.keys(choices)[0])
     })
-    
+
   }
 
   afterInit(entityEdit: any) {
@@ -167,7 +167,7 @@ export class CertificateAcmeAddComponent {
     this.ws.call(this.queryCall, [this.queryCallOption]).subscribe((res) => {
       this.commonName = res[0].common;
       this.csrOrg = res[0];
-      
+
       this.ws.call('certificate.get_domain_names', [this.rowNum]).subscribe(domains => {
         if (domains && domains.length > 0) {
           for (let i = 0; i < domains.length; i++) {
@@ -179,7 +179,7 @@ export class CertificateAcmeAddComponent {
               this.domainList_fc.listFields.push(templateListField);
             }
 
-            const controls = listFields[i];            
+            const controls = listFields[i];
             const name_text_fc = _.find(controls, {name: 'name_text'});
             const auth_fc = _.find(controls, {name: 'authenticators'});
             this.domainList.controls[i].controls['name_text'].setValue(domains[i]);
@@ -192,9 +192,9 @@ export class CertificateAcmeAddComponent {
 
   }
 
-  customSubmit(value) {
-    let dns_mapping = { };
-    value.domains.forEach(domain => {
+  customSubmit(value: any) {
+    let dns_mapping: any = { };
+    value.domains.forEach((domain: any) => {
       dns_mapping[domain.name_text] = domain.authenticators
     })
 
@@ -214,13 +214,13 @@ export class CertificateAcmeAddComponent {
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
     });
-    this.dialogRef.componentInstance.failure.subscribe((err) => {
+    this.dialogRef.componentInstance.failure.subscribe((err: any) => {
       this.dialog.closeAll()
       // Dialog needed b/c handleWSError doesn't open a dialog when rejection comes back from provider
       if (err.error.includes('[EFAULT')) {
         new EntityUtils().handleWSError(this.entityForm, err);
       } else {
-      this.dialogService.errorReport(helptext_system_certificates.acme.error_dialog.title, 
+      this.dialogService.errorReport(helptext_system_certificates.acme.error_dialog.title,
         err.exc_info.type, err.exception)
       }
     });
