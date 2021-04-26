@@ -123,7 +123,7 @@ export class BootEnvironmentListComponent implements OnDestroy{
           this.doActivate(row.id);
         }
       });
-     } 
+     }
 
     actions.push({
       label : T("Clone"),
@@ -142,7 +142,7 @@ export class BootEnvironmentListComponent implements OnDestroy{
             [ "system", "boot", "rename", row.id ]));
       }
     });
-    
+
     if (row.active === '-' || row.active === ''){
       actions.push({
         label: T("Delete"),
@@ -189,7 +189,6 @@ export class BootEnvironmentListComponent implements OnDestroy{
     return actions;
   }
 
-  // tslint:disable-next-line: member-ordering
   public multiActions: Array < any > = [{
     id: "mdelete",
     label: T("Delete"),
