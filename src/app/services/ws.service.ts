@@ -6,6 +6,7 @@ import {Observable, Subject} from 'rxjs';
 
 import {environment} from '../../environments/environment';
 import { filter, map } from 'rxjs/operators';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Injectable()
 export class WebSocketService {
@@ -207,10 +208,10 @@ export class WebSocketService {
   sub(name): Observable<any> {
 
     let nom = name.replace('.','_'); // Avoid weird behavior
-    if(!this.pendingSubs[nom]){ 
+    if(!this.pendingSubs[nom]){
       this.pendingSubs[nom]= {
-        observers: {} 
-      }; 
+        observers: {}
+      };
     }
 
     let uuid = UUID.UUID();
@@ -219,12 +220,12 @@ export class WebSocketService {
 
     let obs = Observable.create((observer) => {
       this.pendingSubs[nom].observers[uuid] = observer;
-      this.send(payload);      
-      
-      // cleanup routine 
+      this.send(payload);
+
+      // cleanup routine
       observer.complete = () => {
         let unsub_payload = {"id" : uuid, "msg" : "unsub" };
-        this.send(unsub_payload);  
+        this.send(unsub_payload);
         this.pendingSubs[nom].observers[uuid].unsubscribe();
         delete this.pendingSubs[nom].observers[uuid];
         if(!this.pendingSubs[nom].observers){ delete this.pendingSubs[nom]}
@@ -241,7 +242,7 @@ export class WebSocketService {
         this.subscribe("core.get_jobs").subscribe((res) => {
           if (res.id == job_id) {
             observer.next(res.fields);
-            if (res.fields.state == 'SUCCESS' || res.fields.state == 'FAILED') {
+            if (res.fields.state === EntityJobState.Success || res.fields.state == EntityJobState.Failed) {
               observer.complete();
             }
           }
@@ -267,7 +268,7 @@ export class WebSocketService {
       }
 
       this.loggedIn = true;
-      
+
       // Subscribe to all events by default
       this.send({
         "id" : UUID.UUID(),

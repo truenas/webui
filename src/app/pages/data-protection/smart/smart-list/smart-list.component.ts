@@ -1,28 +1,31 @@
+import { Router, ActivatedRoute } from '@angular/router';
 import { Component, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
+
 import { StorageService } from 'app/services/storage.service';
 import helptext from 'app/helptext/data-protection/smart/smart';
 import { T } from 'app/translate-marker';
-import { SmartFormComponent } from '../smart-form/smart-form.component';
+import { SmartFormComponent } from 'app/pages/data-protection/smart/smart-form/smart-form.component';
 import { ModalService } from 'app/services/modal.service';
-import { Router, ActivatedRoute } from '@angular/router';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { TaskService } from 'app/services';
-import { WebSocketService } from '../../../../services/ws.service';
+import { TaskService, WebSocketService } from 'app/services';
+import { InputTableConf } from 'app/pages/common/entity/table/table.component';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 
 @Component({
   selector: 'app-smart-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
   providers: [TaskService, EntityFormService],
 })
-export class SmartListComponent implements OnDestroy {
-  public title = 'S.M.A.R.T. Tests';
+export class SmartListComponent implements InputTableConf, OnDestroy {
+  public title = T('S.M.A.R.T. Tests');
   public queryCall = 'smart.test.query';
-  protected route_add: string[] = ['tasks', 'smart', 'add'];
-  protected route_add_tooltip = 'Add S.M.A.R.T. Test';
-  protected route_edit: string[] = ['tasks', 'smart', 'edit'];
-  protected wsDelete = 'smart.test.delete';
-  private disksSubscription: Subscription;
+  public route_add: string[] = ['tasks', 'smart', 'add'];
+  public route_add_tooltip = 'Add S.M.A.R.T. Test';
+  public route_edit: string[] = ['tasks', 'smart', 'edit'];
+  public wsDelete = 'smart.test.delete';
+  public entityList: EntityTableComponent;
+  public parent: any;
 
   public columns: Array<any> = [
     {
@@ -43,11 +46,13 @@ export class SmartListComponent implements OnDestroy {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'S.M.A.R.T. Test',
+      title: T('S.M.A.R.T. Test'),
       key_props: ['type', 'desc'],
     },
   };
   public listDisks = [];
+  private disksSubscription: Subscription;
+  private onModalClose: Subscription;
 
   constructor(
     protected ws: WebSocketService,
@@ -61,6 +66,13 @@ export class SmartListComponent implements OnDestroy {
     this.disksSubscription = this.storageService.listDisks().subscribe((listDisks) => {
       this.listDisks = listDisks;
     });
+  }
+
+  afterInit(entityList: EntityTableComponent): void {
+    this.entityList = entityList;
+    this.onModalClose = this.modalService.onClose$.subscribe(() => {
+      this.entityList.getData();
+    })
   }
 
   resourceTransformIncomingRestData(data: any) {
@@ -87,8 +99,7 @@ export class SmartListComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.disksSubscription) {
-      this.disksSubscription.unsubscribe();
-    }
+    this.disksSubscription?.unsubscribe();
+    this.onModalClose?.unsubscribe();
   }
 }

@@ -1,10 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
+import { MatDialog } from '@angular/material/dialog';
 
-import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { Subscription } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
+
+import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import {
   AppLoaderService,
   CloudCredentialService,
@@ -12,29 +15,30 @@ import {
   JobService,
   TaskService,
   WebSocketService,
-} from '../../../../services';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { T } from '../../../../translate-marker';
-import { EntityUtils } from '../../../common/entity/utils';
-import globalHelptext from '../../../../helptext/global-helptext';
-import helptext from '../../../../helptext/data-protection/cloudsync/cloudsync-form';
-import { CloudsyncFormComponent } from '../cloudsync-form/cloudsync-form.component';
-import { MatDialog } from '@angular/material/dialog';
+} from 'app/services';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { T } from 'app/translate-marker';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import globalHelptext from 'app/helptext/global-helptext';
+import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
+import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { ModalService } from 'app/services/modal.service';
+import { EntityJob } from 'app/interfaces/entity-job.interface';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Component({
   selector: 'app-cloudsync-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
   providers: [JobService, TaskService, CloudCredentialService],
 })
-export class CloudsyncListComponent implements InputTableConf {
-  public title = 'Cloud Sync Tasks';
+export class CloudsyncListComponent implements InputTableConf, OnDestroy {
+  public title = T('Cloud Sync Tasks');
   public queryCall = 'cloudsync.query';
   public route_add: string[] = ['tasks', 'cloudsync', 'add'];
   public route_add_tooltip = 'Add Cloud Sync Task';
   public route_edit: string[] = ['tasks', 'cloudsync', 'edit'];
   public wsDelete = 'cloudsync.delete';
-  protected entityList: any;
+  public entityList: EntityTableComponent;
   public asyncView = true;
 
   public columns: Array<any> = [
@@ -58,13 +62,7 @@ export class CloudsyncListComponent implements InputTableConf {
     { name: T('Day of Month'), prop: 'dom', hidden: true },
     { name: T('Month'), prop: 'month', hidden: true },
     { name: T('Day of Week'), prop: 'dow', hidden: true },
-    {
-      name: T('Status'),
-      prop: 'state',
-      state: 'state',
-      infoStates: ['NOT RUN SINCE LAST BOOT'],
-      button: true,
-    },
+    { name: T('Status'), prop: 'state', state: 'state', button: true },
     { name: T('Enabled'), prop: 'enabled' },
   ];
   public rowIdentifier = 'description';
@@ -72,10 +70,11 @@ export class CloudsyncListComponent implements InputTableConf {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'Cloud Sync Task',
+      title: T('Cloud Sync Task'),
       key_props: ['description'],
     },
   };
+  private onModalClose: Subscription;
 
   constructor(
     protected router: Router,
@@ -90,8 +89,11 @@ export class CloudsyncListComponent implements InputTableConf {
     protected loader: AppLoaderService,
   ) {}
 
-  afterInit(entityList: any) {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
+    this.onModalClose = this.modalService.onClose$.subscribe(() => {
+      this.entityList.getData();
+    })
   }
 
   resourceTransformIncomingRestData(data) {
@@ -111,11 +113,12 @@ export class CloudsyncListComponent implements InputTableConf {
       }).value._date.fromNow();
 
       if (task.job == null) {
-        task.state = { state: T('NOT RUN SINCE LAST BOOT') };
+        task.state = { state: EntityJobState.Pending };
       } else {
         task.state = { state: task.job.state };
-        this.job.getJobStatus(task.job.id).subscribe((t) => {
-          task.state = t.job ? { state: t.job.state } : null;
+        this.job.getJobStatus(task.job.id).subscribe((job: EntityJob) => {
+          task.state = { state: job.state };
+          task.job = job;
         });
       }
 
@@ -134,9 +137,9 @@ export class CloudsyncListComponent implements InputTableConf {
         onClick: (row) => {
           this.dialog.confirm(T('Run Now'), T('Run this cloud sync now?'), true).subscribe((res) => {
             if (res) {
-              row.state = 'RUNNING';
+              row.state = { state: EntityJobState.Running };
               this.ws.call('cloudsync.sync', [row.id]).subscribe(
-                (res) => {
+                (jobId: number) => {
                   this.dialog.Info(
                     T('Task Started'),
                     T('Cloud sync <i>') + row.description + T('</i> has started.'),
@@ -144,9 +147,9 @@ export class CloudsyncListComponent implements InputTableConf {
                     'info',
                     true,
                   );
-                  this.job.getJobStatus(res).subscribe((task) => {
-                    row.state = task.state;
-                    row.job = task;
+                  this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
+                    row.state = { state: job.state };
+                    row.job = job;
                   });
                 },
                 (err) => {
@@ -192,7 +195,7 @@ export class CloudsyncListComponent implements InputTableConf {
           this.dialog.confirm(helptext.dry_run_title, helptext.dry_run_dialog, true).subscribe((dialog_res) => {
             if (dialog_res) {
               this.ws.call('cloudsync.sync', [row.id, { dry_run: true }]).subscribe(
-                (res) => {
+                (jobId: number) => {
                   this.dialog.Info(
                     T('Task Started'),
                     T('Cloud sync <i>') + row.description + T('</i> has started.'),
@@ -200,9 +203,9 @@ export class CloudsyncListComponent implements InputTableConf {
                     'info',
                     true,
                   );
-                  this.job.getJobStatus(res).subscribe((task) => {
-                    row.state = task.state;
-                    row.job = task;
+                  this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
+                    row.state = { state: job.state };
+                    row.job = job;
                   });
                 },
                 (err) => {
@@ -277,16 +280,14 @@ export class CloudsyncListComponent implements InputTableConf {
               });
             },
             customSubmit: function (entityDialog) {
-              parent.entityList.loader.open();
+              parent.loader.open();
               parent.ws.call('cloudsync.restore', [row.id, entityDialog.formValue]).subscribe(
                 (res) => {
                   entityDialog.dialogRef.close(true);
-                  parent.entityList.loaderOpen = true;
-                  parent.entityList.needRefreshTable = true;
                   parent.entityList.getData();
                 },
                 (err) => {
-                  parent.entityList.loader.close(true);
+                  parent.loader.close();
                   new EntityUtils().handleWSError(entityDialog, err, parent.dialog);
                 },
               );
@@ -317,9 +318,9 @@ export class CloudsyncListComponent implements InputTableConf {
   }
 
   isActionVisible(actionId: string, row: any) {
-    if (actionId === 'run_now' && row.job && row.job.state === 'RUNNING') {
+    if (actionId === 'run_now' && row.job && row.job.state === EntityJobState.Running) {
       return false;
-    } else if (actionId === 'stop' && (row.job ? row.job && row.job.state !== 'RUNNING' : true)) {
+    } else if (actionId === 'stop' && (row.job ? row.job && row.job.state !== EntityJobState.Running : true)) {
       return false;
     }
     return true;
@@ -331,7 +332,7 @@ export class CloudsyncListComponent implements InputTableConf {
 
   stateButton(row) {
     if (row.job) {
-      if (row.state.state === 'RUNNING') {
+      if (row.state.state === EntityJobState.Running) {
         this.entityList.runningStateButton(row.job.id);
       } else {
         this.job.showLogs(row.job);
@@ -361,5 +362,9 @@ export class CloudsyncListComponent implements InputTableConf {
 
   doEdit(id: number) {
     this.doAdd(id);
+  }
+
+  ngOnDestroy(): void {
+    this.onModalClose?.unsubscribe();
   }
 }

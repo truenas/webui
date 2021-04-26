@@ -4,14 +4,14 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatTableModule, MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router, NavigationStart } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import * as _ from 'lodash';
 import { fromEvent as observableFromEvent, Observable, of, Subscription } from 'rxjs';
-import { catchError, debounceTime, distinctUntilChanged, filter, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, filter, switchMap, take, tap } from 'rxjs/operators';
 import { DialogService, JobService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { ErdService } from '../../../../services/erd.service';
@@ -21,7 +21,7 @@ import { WebSocketService } from '../../../../services/ws.service';
 import { ModalService } from '../../../../services/modal.service';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../utils';
-
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { EntityTableService } from './entity-table.service';
 import { EntityTableRowDetailsComponent } from './entity-table-row-details/entity-table-row-details.component';
 import { EntityTableAddActionsComponent } from './entity-table-add-actions.component';
@@ -106,7 +106,7 @@ export interface Command {
   command: string; // Use '|' or '--pipe' to use the output of previous command as input
   input: any;
   options?: any[]; // Function parameters
-} 
+}
 
 const DETAIL_HEIGHT = 24;
 
@@ -126,13 +126,13 @@ const DETAIL_HEIGHT = 24;
 export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() public title = '';
   @Input() public conf: InputTableConf;
-  
+
   @ViewChild('defaultMultiActions', { static: false}) defaultMultiActions: ElementRef;
   @ViewChild('newEntityTable', { static: false}) entitytable: any;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(CdkVirtualScrollViewport, { static: false}) viewport: CdkVirtualScrollViewport;
-  
+
   public scrollContainer: HTMLElement;
   public scrolledIndex: number = 0;
   public tableMouseEvent: MouseEvent;
@@ -194,7 +194,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   public hasActions = true;
   public sortKey: string;
   public filterValue: string = ''; //the filter string filled in search input.
-  // Global Actions in Page Title 
+  // Global Actions in Page Title
   protected actionsConfig: any;
   protected loaderOpen = false;
   protected toDeleteRow: any;
@@ -204,15 +204,15 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   private needTableResize = true;
   private routeSub: any;
   private _multiActionsIconsOnly: boolean = false;
-  
+
   public get multiActionsIconsOnly(){
     return this._multiActionsIconsOnly;
   }
-  
+
   public set multiActionsIconsOnly(value:boolean){
     this._multiActionsIconsOnly = value;
   }
-  
+
   public get currentColumns(): any[] {
     const result = this.alwaysDisplayedCols.concat(this.conf.columns);
 
@@ -240,7 +240,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.hasDetails() && !this.conf.rowDetailComponent
     ? (this.allColumns.length - this.conf.columns.length) * DETAIL_HEIGHT + 76 // add space for padding
     : this.conf.detailRowHeight || 100;
-    
+
   public get isAllSelected() {
     return this.selection.selected.length === this.currentRows.length;
   }
@@ -287,7 +287,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.conf.config?.pagingOptions?.pageSizeOptions) {
       this.paginationPageSizeOptions = this.conf.config.pagingOptions.pageSizeOptions;
     }
-    
+
     this.sortKey = (this.conf.config.deleteMsg && this.conf.config.deleteMsg.key_props) ? this.conf.config.deleteMsg.key_props[0] : this.conf.columns[0].prop;
     setTimeout(async() => {
       if (this.conf.prerequisite) {
@@ -430,7 +430,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dataSource.paginator.firstPage();
     }
   }
-  
+
   dropLastMaxWidth() {
     // Reset all column maxWidths
     this.conf.columns.forEach((column) => {
@@ -579,7 +579,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if ((this.expandedRows === 0 || !this.asyncView || this.excuteDeletion || this.needRefreshTable) && this.filterValue === '') {
       this.excuteDeletion = false;
       this.needRefreshTable = false;
-      
+
       this.needTableResize = true;
       this.currentRows = this.rows;
       this.paginationPageIndex  = 0;
@@ -596,7 +596,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           title: T("No ")+this.title,
           message: T(`It seems you haven't setup any `) + this.title + T(` yet.`)
         };
-        
+
       } else {
         this.emptyTableConf = {
           type: EmptyType.no_page_data,
@@ -618,7 +618,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dataSource.sort = this.sort;
 
     this.filter(this.filterValue);
-    
+
     if (this.conf.config.paging) {
       //On first load, paginator is not rendered because table is empty, so we force render here so that we can get valid paginator instance
       setTimeout(() => {
@@ -1033,7 +1033,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.conf.columns = [...this.conf.columns, col];
     }
     this.selectColumnsToShowOrHide();
-    
+
   }
 
   // Stores currently selected columns in preference service
@@ -1062,7 +1062,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!(this.conf.columns.length === this.originalConfColumns.length &&
         this.conf.columns.length === this.allColumns.length)) {
       this.conf.columns = this.originalConfColumns;
-      
+
       this.selectColumnsToShowOrHide();
     }
   }
@@ -1083,7 +1083,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
       this.conf.columns = [];
       this.selectColumnsToShowOrHide();
     }
-    
+
     return this.conf.columns
   }
 
@@ -1099,16 +1099,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.multiActionsIconsOnly = !this.multiActionsIconsOnly;
   }
 
-  getButtonClass(state) {
+  getButtonClass(state: EntityJobState): string {
     switch(state) {
-      case 'PENDING' : return 'fn-theme-orange';
-      case 'RUNNING' : return 'fn-theme-orange';
-      case 'ABORTED' : return 'fn-theme-orange';
-      case 'FINISHED' : return 'fn-theme-green';
-      case 'SUCCESS' : return 'fn-theme-green';
-      case 'ERROR' : return 'fn-theme-red';
-      case 'FAILED' : return 'fn-theme-red';
-      case 'HOLD' : return 'fn-theme-yellow';
+      case EntityJobState.Pending: return 'fn-theme-orange';
+      case EntityJobState.Running: return 'fn-theme-orange';
+      case EntityJobState.Aborted: return 'fn-theme-orange';
+      case EntityJobState.Finished: return 'fn-theme-green';
+      case EntityJobState.Success: return 'fn-theme-green';
+      case EntityJobState.Error: return 'fn-theme-red';
+      case EntityJobState.Failed: return 'fn-theme-red';
+      case EntityJobState.Hold: return 'fn-theme-yellow';
       default: return 'fn-theme-primary';
     }
   }
@@ -1117,7 +1117,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (colConfig.infoStates) {
       return _.indexOf(colConfig.infoStates, value) < 0;
     } else {
-      return value !== 'PENDING';
+      return value !== EntityJobState.Pending;
     }
   }
 
@@ -1146,7 +1146,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   masterToggle(){
-    this.isAllSelected ? this.selection.clear() : 
+    this.isAllSelected ? this.selection.clear() :
     this.currentRows.forEach((row) => this.selection.select(row));
   }
 
@@ -1167,7 +1167,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           cell.classList.remove('hover');
         }
       }
-    }; 
+    };
   }
 
   findRow(el){
