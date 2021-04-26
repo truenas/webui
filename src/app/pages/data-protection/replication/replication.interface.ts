@@ -102,7 +102,7 @@ export interface SshCredentials {
 }
 
 export interface PeriodicSnapshotTask {
-  schedule: Schedule | null;
+  schedule: Schedule;
   allow_empty?: boolean;
   dataset: string;
   enabled?: boolean;
@@ -119,13 +119,13 @@ export interface ReplicationTask {
   also_include_naming_schema?: string[];
   auto: boolean;
   compressed?: boolean;
-  compression?: CompressionType | null;
+  compression?: CompressionType;
   direction: Direction;
   embed?: boolean;
   enabled?: boolean;
   encryption?: boolean;
   encryption_key?: string;
-  encryption_key_format?: EncryptionKeyFormat | null;
+  encryption_key_format?: EncryptionKeyFormat;
   encryption_key_location?: string;
   exclude?: string[];
   hold_pending_snapshots?: boolean;
@@ -137,7 +137,7 @@ export interface ReplicationTask {
   logging_level?: LoggingLevel;
   name: string;
   naming_schema?: string[];
-  netcat_active_side?: NetcatMode | null;
+  netcat_active_side?: NetcatMode;
   netcat_active_side_listen_address?: string;
   netcat_active_side_port_max?: number;
   netcat_active_side_port_min?: number;
@@ -153,13 +153,13 @@ export interface ReplicationTask {
   restrict_schedule?: Schedule;
   retention_policy: RetentionPolicy;
   retries?: number;
-  schedule?: Schedule | boolean | null;
+  schedule?: Schedule | boolean;
   schedule_method: ScheduleMethod;
   schedule_picker: string;
   source_datasets?: string[];
   source_datasets_from: string;
   speed_limit?: number;
-  ssh_credentials?: SshCredentials | number[] | null;
+  ssh_credentials?: SshCredentials | number[];
   state: ReplicationState;
   target_dataset: string;
   target_dataset_from: string;

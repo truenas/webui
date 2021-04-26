@@ -14,7 +14,7 @@ export interface EntityJob {
   arguments: (number | string)[];
   description: string;
   error: string;
-  exc_info: { type: string; extra: string } | null;
+  exc_info: { type: string; extra: string };
   exception: string;
   id: number;
   logs_excerpt: string;
@@ -23,6 +23,6 @@ export interface EntityJob {
   progress: { percent: number; description: string; extra: string };
   result: string;
   state: EntityJobState;
-  time_finished: { $date: number } | null;
-  time_started: { $date: number } | null;
+  time_finished: { $date: number };
+  time_started: { $date: number };
 }
