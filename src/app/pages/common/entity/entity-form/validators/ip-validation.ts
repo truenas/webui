@@ -6,18 +6,18 @@ import * as isCidr from 'is-cidr';
   // Accepts ipv4 or ipv6 addresses with no CIDR (ie, /24)
   export function ipv4or6Validator(control: string) {
     let thisControl: FormControl;
-  
+
     return function ipValidate(control: FormControl) {
-  
+
       if (!control.parent) {
         return null;
       }
-  
+
       // Initializing the validator.
       if (!thisControl) {
         thisControl = control;
       }
-  
+
       if(thisControl.value == "" || thisControl.value == undefined) {
         return null;
       }
@@ -25,7 +25,7 @@ import * as isCidr from 'is-cidr';
       if (!ipRegex({exact: true, includeBoundaries: true }).test(thisControl.value)) {
             return {ip2 : true};
         };
-      
+
 
       return null;
     }
@@ -34,13 +34,13 @@ import * as isCidr from 'is-cidr';
   // Accepts ipv4 or ipv6 addresses with a CIDR (ie, /24)
   export function ipv4or6cidrValidator(control: string) {
     let thisControl: FormControl;
-  
+
     return function ipValidate(control: FormControl) {
-  
+
       if (!control.parent) {
         return null;
       }
-  
+
       // Initializing the validator.
       if (!thisControl) {
         thisControl = control;
@@ -60,13 +60,13 @@ import * as isCidr from 'is-cidr';
     // Accepts ipv4 or ipv6 addresses with an OPTIONAL CIDR (ie, /24)
     export function ipv4or6OptionalCidrValidator(control: string) {
       let thisControl: FormControl;
-    
+
       return function ipValidate(control: FormControl) {
-    
+
         if (!control.parent) {
           return null;
         }
-    
+
         // Initializing the validator.
         if (!thisControl) {
           thisControl = control;
@@ -74,13 +74,13 @@ import * as isCidr from 'is-cidr';
         if(thisControl.value == "" || thisControl.value == undefined) {
           return null;
         }
-  
+
         if (!isCidr.v4(thisControl.value) && !isCidr.v6(thisControl.value) &&
           !ipRegex({exact: true, includeBoundaries: true }).test(thisControl.value))
         {
               return {ip2 : true};
           };
-  
+
         return null;
       }
     }
@@ -88,18 +88,18 @@ import * as isCidr from 'is-cidr';
   // Accepts ipv4 addresses with no CIDR (ie, /24)
   export function ipv4Validator(control: string) {
     let thisControl: FormControl;
-  
+
     return function ipValidate(control: FormControl) {
-  
+
       if (!control.parent) {
         return null;
       }
-  
+
       // Initializing the validator.
       if (!thisControl) {
         thisControl = control;
       }
-  
+
       if(thisControl.value == "" || thisControl.value == undefined) {
         return null;
       }
@@ -107,7 +107,7 @@ import * as isCidr from 'is-cidr';
       if (!ipRegex.v4({exact: true }).test(thisControl.value)) {
             return {ip2 : true};
         };
-      
+
 
       return null;
     }
@@ -116,13 +116,13 @@ import * as isCidr from 'is-cidr';
   // Accepts ipv6 addresses with no CIDR (ie, /24)
   export function ipv6Validator(control: string) {
     let thisControl: FormControl;
-  
+
     return function ipValidate(control: FormControl) {
-  
+
       if (!control.parent) {
         return null;
       }
-  
+
       // Initializing the validator.
       if (!thisControl) {
         thisControl = control;
@@ -134,7 +134,7 @@ import * as isCidr from 'is-cidr';
       if (!ipRegex.v6({exact: true }).test(thisControl.value)) {
           return {ip2 : true};
         };
-      
+
 
       return null;
     }
@@ -176,7 +176,7 @@ export function ipValidator(type: string = 'ipv4' || 'ipv6' || 'all') {
       if (thisControl.value.length > 1) {
           if (type === 'all') {
               if (!checkIp('ipv4') || !checkIp('ipv6')) {
-                  return { ip: true, info: error }
+                  return { ip: true, info: error as any }
               }
           } else {
               if (!checkIp(type)) {
@@ -189,4 +189,4 @@ export function ipValidator(type: string = 'ipv4' || 'ipv6' || 'all') {
   }
 }
 
-  
+

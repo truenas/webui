@@ -1,5 +1,6 @@
 import { Component, Input, OnDestroy } from "@angular/core";
 import { Router } from "@angular/router";
+import { Option } from 'app/interfaces/option.interface';
 import { Subscription } from 'rxjs';
 import helptext from "app/helptext/storage/snapshots/snapshots";
 import {
@@ -27,7 +28,7 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
   @Input() public config: { name: string };
   @Input() public parent: EntityTableComponent & { conf: SnapshotListComponent };
 
-  public details: { label: string; value: string | number }[] = [];
+  public details: Option[] = [];
   public actions: EntityAction[] = [];
 
   constructor(private _ws: WebSocketService, private _router: Router, private localeService: LocaleService,

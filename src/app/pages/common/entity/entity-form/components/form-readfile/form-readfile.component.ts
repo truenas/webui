@@ -16,12 +16,12 @@ export class FormReadFileComponent implements Field {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
-  public fileString;
+  public fileString: string | ArrayBuffer;
 
   constructor(private entityFormService: EntityFormService,
               public translate: TranslateService) {}
- 
-  changeListener($event): void {
+
+  changeListener($event: Event): void {
     this.readFile($event.target);
   }
 
@@ -34,7 +34,7 @@ export class FormReadFileComponent implements Field {
       this.contents(fReader.result);
    };
    return fReader.readAsText(file);
-   
+
   }
 
   contents(result:any) {

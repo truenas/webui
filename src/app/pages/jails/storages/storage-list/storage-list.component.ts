@@ -15,9 +15,9 @@ import helptext from '../../../../helptext/jails/storage';
 })
 export class StorageListComponent {
 
-  public title;
+  public title: string;
   protected queryCall = 'jail.fstab';
-  protected queryCallOption = [];
+  protected queryCallOption: any[] = [];
   protected queryRes: any = [];
   protected route_add: string[] = ['jails', 'storage'];
   protected route_delete: string[] = ['jails', 'storage'];
@@ -60,7 +60,7 @@ export class StorageListComponent {
     });
   }
 
-  afterInit(entityTable) {
+  afterInit(entityTable: any) {
     this.entityList = entityTable;
   }
 
@@ -71,7 +71,7 @@ export class StorageListComponent {
     if (data[0]) {
       for(const i in data[0]) {
         if (data[0][i].type && data[0][i].type != "SYSTEM") {
-          const row = [];
+          const row: any = {};
           row['source'] = data[0][i].entry[0];
           row['destination'] = data[0][i].entry[1];
           row['fstype'] = data[0][i].entry[2];
@@ -86,7 +86,7 @@ export class StorageListComponent {
     }
   }
 
-  doDelete(item) {
+  doDelete(item: any) {
     this.ws.call('jail.query', [
       [
         ["host_hostuuid", "=", this.jailId]
@@ -99,14 +99,13 @@ export class StorageListComponent {
         this.translate.get(deleteMsg).subscribe((res) => {
           deleteMsg = res;
         });
-        this.dialog.confirm(T("Delete"), deleteMsg, false, T('Delete Mount Point')).subscribe((res) => {
+        this.dialog.confirm(T("Delete"), deleteMsg, false, T('Delete Mount Point')).subscribe((res: boolean) => {
           if (res) {
             this.entityList.loader.open();
             this.entityList.loaderOpen = true;
-            let data = {};
             this.busy = this.ws.call('jail.fstab', [this.jailId, { "action": "REMOVE", "index": item.id}]).subscribe(
-              (res) => { this.entityList.getData() },
-              (res) => {
+              () => { this.entityList.getData() },
+              (res: any) => {
                 new EntityUtils().handleWSError(this, res, this.dialog);
                 this.entityList.loader.close();
               }
@@ -140,7 +139,7 @@ export class StorageListComponent {
     })
   }
 
-  getActions(row) {
+  getActions(row: any) {
     const rowName = row.source.replace("/mnt/", "");
     const poolName = rowName.split('/')[0];
     let optionDisabled;
@@ -151,7 +150,7 @@ export class StorageListComponent {
         id: "edit",
         icon: 'edit',
         label: T("Edit"),
-        onClick: (rowinner) => { this.entityList.doEdit(rowinner.id); },
+        onClick: (rowinner: any) => { this.entityList.doEdit(rowinner.id); },
       }, {
         id: row.name,
         icon: 'security',
@@ -159,7 +158,7 @@ export class StorageListComponent {
         disabled: optionDisabled,
         matTooltip: helptext.acl_edit_msg,
         label: helptext.action_edit_acl,
-        onClick: (rowinner) => {
+        onClick: () => {
           const datasetId = rowName;
           this.router.navigate(
             ["/"].concat(["storage", "pools", "id", poolName, "dataset", "acl", datasetId]));
@@ -169,7 +168,7 @@ export class StorageListComponent {
         id: "delete",
         icon: 'delete',
         label: T("Delete"),
-        onClick: (rowinner) => { this.doDelete(rowinner); },
+        onClick: (rowinner: any) => { this.doDelete(rowinner); },
       }
     ]
   }

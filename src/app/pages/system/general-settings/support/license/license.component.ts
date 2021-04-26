@@ -35,7 +35,7 @@ export class LicenseComponent {
   constructor(private ws: WebSocketService, private modalService: ModalService,
     private loader: AppLoaderService, private dialog: DialogService) { }
 
-  customSubmit(form) {
+  customSubmit(form: any) {
     this.loader.open();
     this.ws.call(this.updateCall, [form.license]).subscribe(() => {
       this.loader.close();
@@ -44,11 +44,11 @@ export class LicenseComponent {
       this.dialog.confirm(helptext.update_license.reload_dialog_title,
         helptext.update_license.reload_dialog_message, true, helptext.update_license.reload_dialog_action,
         false, '','', '','', true, '', true)
-        .subscribe((res) => {
+        .subscribe((res: boolean) => {
           if (res) {
             document.location.reload(true);
           }
-      });    
+      });
       this.modalService.close('slide-in-form');
     }, err => {
       this.loader.close();

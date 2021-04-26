@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Option } from 'app/interfaces/option.interface';
 
 import * as _ from 'lodash';
 import { ProductType } from '../../../enums/product-type.enum';
@@ -26,7 +27,7 @@ export class IPMIFromComponent {
   public currentControllerLabel: string;
   public failoverControllerLabel: string;
   public managementIP: string;
-  public options: Array<any> = [
+  public options: Option[] = [
     { label: 'Indefinitely', value: 'force' },
     { label: '15 seconds', value: 15 },
     { label: '30 seconds', value: 30 },
@@ -151,7 +152,7 @@ export class IPMIFromComponent {
     }];
 
   public queryKey = 'id';
-  public channelValue;
+  public channelValue: any;
   protected isEntity = true;
 
   constructor(
@@ -213,42 +214,42 @@ export class IPMIFromComponent {
     this.channelValue = entityEdit.pk;
     this.entityEdit = entityEdit;
 
-    entityEdit.formGroup.controls['password'].statusChanges.subscribe((status) => {
+    entityEdit.formGroup.controls['password'].statusChanges.subscribe((status: any) => {
       this.setErrorStatus(status, _.find(this.fieldConfig, { name: "password" }));
     })
 
-    entityEdit.formGroup.controls['ipaddress'].statusChanges.subscribe((status) => {
+    entityEdit.formGroup.controls['ipaddress'].statusChanges.subscribe((status: any) => {
       this.setErrorStatus(status, _.find(this.fieldConfig, { name: "ipaddress" }));
       const ipValue = entityEdit.formGroup.controls['ipaddress'].value;
       const btn = <HTMLInputElement>document.getElementById('cust_button_Manage');
       status === 'INVALID' || ipValue === '0.0.0.0' ? btn.disabled = true : btn.disabled = false;
     })
 
-    entityEdit.formGroup.controls['ipaddress'].valueChanges.subscribe((value) => {
+    entityEdit.formGroup.controls['ipaddress'].valueChanges.subscribe((value: any) => {
       this.managementIP = value;
     })
 
-    entityEdit.formGroup.controls['netmask'].statusChanges.subscribe((status) => {
+    entityEdit.formGroup.controls['netmask'].statusChanges.subscribe((status: any) => {
       this.setErrorStatus(status, _.find(this.fieldConfig, { name: "netmask" }));
     })
 
-    entityEdit.formGroup.controls['gateway'].statusChanges.subscribe((status) => {
+    entityEdit.formGroup.controls['gateway'].statusChanges.subscribe((status: any) => {
       this.setErrorStatus(status, _.find(this.fieldConfig, { name: "gateway" }));
     })
 
     if (entityEdit.formGroup.controls['remoteController']) {
-      entityEdit.formGroup.controls['remoteController'].valueChanges.subscribe((res) => {
+      entityEdit.formGroup.controls['remoteController'].valueChanges.subscribe(() => {
         this.loadData();
       })
     }
 
   }
 
-  setErrorStatus(status, field) {
+  setErrorStatus(status: any, field: any) {
     status === 'INVALID' ? field.hasErrors = true : field.hasErrors = false;
   }
 
-  customSubmit(payload) {
+  customSubmit(payload: any) {
     let call = this.ws.call('ipmi.update', [this.channelValue, payload]);
     if (this.entityEdit.formGroup.controls['remoteController'] && this.entityEdit.formGroup.controls['remoteController'].value) {
       call = this.ws.call('failover.call_remote', ['ipmi.update', [this.channelValue, payload]]);
@@ -264,7 +265,7 @@ export class IPMIFromComponent {
     });
   }
 
-  loadData(filter = []) {
+  loadData(filter: any[] = []) {
     let query = this.ws.call(this.queryCall, filter);
     if (this.entityEdit.formGroup.controls['remoteController'] && this.entityEdit.formGroup.controls['remoteController'].value) {
       query = this.ws.call('failover.call_remote', [this.queryCall, [filter]]);

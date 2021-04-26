@@ -1,5 +1,6 @@
 import {Component, Input, ViewChild, ElementRef} from '@angular/core';
 import {FormGroup} from '@angular/forms';
+import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { TranslateService } from '@ngx-translate/core';
 import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
 
@@ -26,7 +27,7 @@ export class ToolbarCheckboxComponent extends iXAbstractObject {
     super()
   }
 
-  onChange(event){
+  onChange(event: MatCheckboxChange){
     this.controller.next({name: this.config.name, value: event.checked});
   }
 

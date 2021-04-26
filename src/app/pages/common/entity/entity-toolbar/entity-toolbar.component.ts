@@ -9,7 +9,7 @@ import {
   QueryList,
   TemplateRef,
   ViewChildren,
-  OnChanges,
+  OnChanges, SimpleChanges,
 } from '@angular/core';
 
 import * as _ from 'lodash';
@@ -34,7 +34,7 @@ import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.componen
 export class EntityToolbarComponent implements OnDestroy, OnChanges, GlobalAction {
 
   @Input('conf') conf: ToolbarConfig; //ControlConfig[];
-  public config;
+  public config: any;
   public controller: Subject<Control>;
   public values: any;
 
@@ -47,7 +47,6 @@ export class EntityToolbarComponent implements OnDestroy, OnChanges, GlobalActio
   init(){
     this.controller.subscribe((evt:Control) => {
       let clone = Object.assign([], this.values);
-      let control = clone[evt.name] = evt.value
       this.values = clone;
       clone['event_control'] = evt.name;
       this.config.target.next({name:"ToolbarChanged", data:clone});
@@ -67,14 +66,14 @@ export class EntityToolbarComponent implements OnDestroy, OnChanges, GlobalActio
     });
 
     // Setup Initial Values
-    let obj = {}
-    this.config.controls.forEach((item) => {
+    let obj: any = {}
+    this.config.controls.forEach((item: any) => {
       obj[item.name] = item.value;
     });
     this.values = obj;
   }
 
-  ngOnChanges(changes) {
+  ngOnChanges(changes: SimpleChanges) {
     if (changes.conf) {
       // Do Stuff
       this.config = changes.conf.currentValue; // For when config is provided via template
@@ -83,12 +82,12 @@ export class EntityToolbarComponent implements OnDestroy, OnChanges, GlobalActio
   }
 
 
-  ngOnDestroy() { 
+  ngOnDestroy() {
     // Clean up after ourselves...
   }
 
   // For when config is provided via JS
-  applyConfig(conf){
+  applyConfig(conf: any){
     this.config = conf;
     this.init();
   }

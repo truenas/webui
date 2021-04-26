@@ -1,5 +1,6 @@
 import { Component, ViewContainerRef, AfterViewInit, OnInit, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { MatTabGroup } from '@angular/material/tabs';
 import { TranslateService } from '@ngx-translate/core';
 
 import { FieldConfig } from '../../models/field-config.interface';
@@ -25,9 +26,9 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
   protected active_tab: any;
   protected value: any;
   protected init: boolean;
-  @ViewChild('tabGroup', { static: true}) tabGroup;
+  @ViewChild('tabGroup', { static: true}) tabGroup: MatTabGroup;
 
-  constructor(protected entityFormService: EntityFormService, 
+  constructor(protected entityFormService: EntityFormService,
               public translate: TranslateService) {}
   ngAfterViewInit() {
     this.active_tab = this.config.tabs[this.tabGroup.selectedIndex];

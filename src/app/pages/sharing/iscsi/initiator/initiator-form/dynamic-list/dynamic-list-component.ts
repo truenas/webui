@@ -52,7 +52,7 @@ export class DynamicListComponent implements OnInit {
             this.inputControl.setValue(null);
         }
     }
-    remove(item) {
+    remove(item: any) {
         this.listControl.value.delete(item);
     }
     drop() {

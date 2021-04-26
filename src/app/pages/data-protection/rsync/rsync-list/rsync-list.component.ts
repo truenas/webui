@@ -75,15 +75,15 @@ export class RsyncListComponent {
     this.entityList = entityList;
   }
 
-  getActions(row) {
+  getActions(row: any) {
     const actions = [];
     actions.push({
       id: row.path,
       icon: 'play_arrow',
       label: T('Run Now'),
       name: 'run',
-      onClick: (members) => {
-        this.dialog.confirm(T('Run Now'), T('Run this rsync now?'), true).subscribe((run) => {
+      onClick: () => {
+        this.dialog.confirm(T('Run Now'), T('Run this rsync now?'), true).subscribe((run: boolean) => {
           if (run) {
             row.state = 'RUNNING';
             this.ws.call('rsynctask.run', [row.id]).subscribe(
@@ -122,7 +122,7 @@ export class RsyncListComponent {
       icon: 'delete',
       name: 'delete',
       label: T('Delete'),
-      onClick: (task_delete) => {
+      onClick: () => {
         this.entityList.doDelete(row);
       },
     });
@@ -130,7 +130,7 @@ export class RsyncListComponent {
     return actions;
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any[]) {
     return data.map((task) => {
       task.minute = task.schedule['minute'];
       task.hour = task.schedule['hour'];
@@ -156,7 +156,7 @@ export class RsyncListComponent {
     this.stateButton(row);
   }
 
-  stateButton(row) {
+  stateButton(row: any) {
     if (row.job) {
       if (row.state.state === 'RUNNING') {
         this.entityList.runningStateButton(row.job.id);

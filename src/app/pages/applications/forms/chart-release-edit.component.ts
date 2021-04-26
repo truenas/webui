@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Option } from 'app/interfaces/option.interface';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import {FormBuilder, FormControl, FormGroup, FormArray, Validators} from '@angular/forms';
@@ -31,7 +32,7 @@ export class ChartReleaseEditComponent {
   private name: string;
   private getRow = new Subscription;
   private rowName: string;
-  private interfaceList = [];
+  private interfaceList: Option[] = [];
   private dialogRef: any;
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
@@ -127,7 +128,7 @@ export class ChartReleaseEditComponent {
               name: 'name',
               placeholder: helptext.chartForm.container.env_vars.key.placeholder,
               tooltip: helptext.chartForm.container.env_vars.key.tooltip,
-            }, 
+            },
             {
               type: 'input',
               name: 'value',
@@ -199,7 +200,7 @@ export class ChartReleaseEditComponent {
                       }]
                     },
                   ],
-                }, 
+                },
               ],
               listFields: []
             },
@@ -213,7 +214,7 @@ export class ChartReleaseEditComponent {
                   type: 'ipwithnetmask',
                   name: 'destination',
                   placeholder: helptext.chartForm.externalInterfaces.staticRoutes.destination.placeholder,
-                }, 
+                },
                 {
                   type: 'input',
                   name: 'gateway',
@@ -222,7 +223,7 @@ export class ChartReleaseEditComponent {
               ],
               listFields: []
             }
-            
+
           ],
           listFields: []
         }
@@ -276,13 +277,13 @@ export class ChartReleaseEditComponent {
               name: 'containerPort',
               placeholder: helptext.chartForm.portForwardingList.containerPort.placeholder,
               validation: helptext.chartForm.portForwardingList.containerPort.validation,
-            }, 
+            },
             {
               type: 'input',
               name: 'nodePort',
               placeholder: helptext.chartForm.portForwardingList.nodePort.placeholder,
               validation: helptext.chartForm.portForwardingList.nodePort.validation,
-            },  
+            },
             {
               type: 'select',
               name: 'protocol',
@@ -314,7 +315,7 @@ export class ChartReleaseEditComponent {
               hideDirs: 'ix-applications',
               placeholder: helptext.chartForm.hostPathVolumes.hostPath.placeholder,
               tooltip: helptext.chartForm.hostPathVolumes.hostPath.tooltip,
-            }, 
+            },
             {
               type: 'input',
               name: 'mountPath',
@@ -390,11 +391,11 @@ export class ChartReleaseEditComponent {
       })
      }
 
-  parseSchema(schema) {
+  parseSchema(schema: any) {
     let hasGpuConfig = false;
     try {
 
-      const gpuConfiguration = schema.questions.find(question => question.variable=='gpuConfiguration');
+      const gpuConfiguration = schema.questions.find((question: any) => question.variable=='gpuConfiguration');
 
       if (gpuConfiguration && gpuConfiguration.schema.attrs.length > 0) {
         const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(gpuConfiguration);
@@ -408,15 +409,15 @@ export class ChartReleaseEditComponent {
 
         hasGpuConfig = true;
       }
-      
+
     } catch(error) {
       return this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
 
     return hasGpuConfig;
   }
-  
-  resourceTransformIncomingRestData(data) {
+
+  resourceTransformIncomingRestData(data: any) {
     this.name = data.name;
     data.config.release_name = data.name;
     data.config.repository = data.config.image.repository;
@@ -428,10 +429,10 @@ export class ChartReleaseEditComponent {
       data.config.privileged = data.config.securityContext.privileged;
     }
     if (data.config.externalInterfaces) {
-      data.config.externalInterfaces.forEach(i => {
-        let tempArr = [];
+      data.config.externalInterfaces.forEach((i: any) => {
+        let tempArr: any[] = [];
         if (i.ipam.staticIPConfigurations && i.ipam.staticIPConfigurations.length > 0) {
-          i.ipam.staticIPConfigurations.forEach(j => {
+          i.ipam.staticIPConfigurations.forEach((j: any) => {
             tempArr.push({staticIP: j})
           })
           i.staticIPConfigurations = tempArr;
@@ -453,11 +454,11 @@ export class ChartReleaseEditComponent {
   }
 
   onChangeExternalInterfaces(listComponent: FormListComponent) {
-    
+
     listComponent.listsFromArray.controls.forEach((externalInterface, index) => {
       const staticRoutesFC = _.find(listComponent.config.listFields[index], {'name': 'staticRoutes'});
       const staticIPConfigurationsFC = _.find(listComponent.config.listFields[index], {'name': 'staticIPConfigurations'});
-  
+
       (<FormGroup>externalInterface).controls['ipam'].valueChanges.subscribe(value => {
         if (value === 'static') {
           staticIPConfigurationsFC.isHidden = false;
@@ -470,16 +471,16 @@ export class ChartReleaseEditComponent {
     });
   }
 
-  customSubmit(data) {
+  customSubmit(data: any) {
 
-    let parsedData = {};
+    let parsedData: any = {};
     this.entityUtils.parseFormControlValues(data, parsedData);
-    
+
     let envVars = [];
     if (data.containerEnvironmentVariables && data.containerEnvironmentVariables.length > 0 && data.containerEnvironmentVariables[0].name) {
       envVars = data.containerEnvironmentVariables;
     }
-    
+
     let pfList = [];
     if (data.portForwardingList && data.portForwardingList.length > 0 && data.portForwardingList[0].containerPort) {
       pfList = data.portForwardingList;
@@ -495,9 +496,9 @@ export class ChartReleaseEditComponent {
       volList = data.volumes;
     }
 
-    let ext_interfaces = [];
+    let ext_interfaces: any[] = [];
     if (data.externalInterfaces && data.externalInterfaces.length > 0 && data.externalInterfaces[0].hostInterface) {
-      data.externalInterfaces.forEach(i => {
+      data.externalInterfaces.forEach((i: any) => {
         if (i.ipam !== 'static') {
           ext_interfaces.push(
             {
@@ -506,11 +507,11 @@ export class ChartReleaseEditComponent {
                 type: i.ipam,
               }
             }
-          );            
+          );
         } else {
-          let ipList = [];
+          let ipList: any[] = [];
           if (i.staticIPConfigurations && i.staticIPConfigurations.length > 0) {
-            i.staticIPConfigurations.forEach(item => {
+            i.staticIPConfigurations.forEach((item: any) => {
               ipList.push(item.staticIP);
             })
           }
@@ -541,23 +542,23 @@ export class ChartReleaseEditComponent {
         externalInterfaces: ext_interfaces,
         hostPathVolumes: hpVolumes,
         hostNetwork: data.hostNetwork,
-        image: { 
+        image: {
           repository: data.repository,
           pullPolicy: data.pullPolicy,
           tag: data.tag
-        }, 
-        portForwardingList: pfList, 
+        },
+        portForwardingList: pfList,
         updateStrategy: data.updateStrategy,
-        volumes: volList, 
+        volumes: volList,
         workloadType: 'Deployment',
         securityContext: {
           privileged: data.privileged,
         }
       }
     }]
- 
+
     if (parsedData['gpuConfiguration']) {
-      payload[1]['values']['gpuConfiguration'] = parsedData['gpuConfiguration'];
+      (payload[1] as any)['values']['gpuConfiguration'] = parsedData['gpuConfiguration'];
     }
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (

@@ -38,7 +38,7 @@ export class VolumesListControlsComponent
   @ViewChild('filter', { static: false }) filter: ElementRef
   @Input() entity: any // Can't specify VolumesListComponent without creating circular dependency;
 
-  public conf
+  public conf: any;
   public filterValue: string = ''
   public actions: any[]
   public menuTriggerMessage: string = 'Click for options'
@@ -191,11 +191,11 @@ export class VolumesListControlsComponent
         this.poolValue = res.pool
       })
   }
-  
+
   customSubmitSystemDatasetPool(entityDialog: any) {
     const self = entityDialog.parent
     self.loader.open()
-    self.ws.call('service.query').subscribe((services) => {
+    self.ws.call('service.query').subscribe((services: any) => {
       const smbShare = _.find(services, { service: 'cifs' })
       if (smbShare.state === 'RUNNING') {
         self.loader.close()
@@ -206,7 +206,7 @@ export class VolumesListControlsComponent
             false,
             T('Continue')
           )
-          .subscribe((confirmed) => {
+          .subscribe((confirmed: boolean) => {
             if (confirmed) {
               self.updateSystemDatasetPool(entityDialog)
             }
@@ -230,7 +230,7 @@ export class VolumesListControlsComponent
       { pool: pool },
     ])
     self.dialogRef.componentInstance.submit()
-    self.dialogRef.componentInstance.success.subscribe((res) => {
+    self.dialogRef.componentInstance.success.subscribe((res: any) => {
       if (res.error) {
         if (res.exc_info && res.exc_info.extra) {
           res.extra = res.exc_info.extra
@@ -241,7 +241,7 @@ export class VolumesListControlsComponent
         self.poolValue = pool
         self.entity.systemdatasetPool = pool
         self.dialogService.closeAllDialogs()
-        self.translate.get(helptext.choosePool.message).subscribe((msg) => {
+        self.translate.get(helptext.choosePool.message).subscribe((msg: string) => {
           self.dialogService.Info(
             helptext.choosePool.success,
             msg + res.result.pool,
@@ -252,7 +252,7 @@ export class VolumesListControlsComponent
         })
       }
     })
-    self.dialogRef.componentInstance.failure.subscribe((err) => {
+    self.dialogRef.componentInstance.failure.subscribe((err: any) => {
       new EntityUtils().handleWSError(self, err, self.dialogService)
     })
   }

@@ -39,7 +39,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
 
   public formGroup: any;
   public error: string;
-  protected namesInUse = [];
+  protected namesInUse: string[] = [];
 
   protected interfaces = this.jailFromService.interfaces;
 
@@ -837,7 +837,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
   protected ip6_interfaceField = _.find(this.basicfieldConfig, { 'name': 'ip6_addr' }).templateListField[0];
   protected vnet_default_interfaceField = _.find(this.basicfieldConfig, { 'name': 'vnet_default_interface' });
   protected template_list: string[];
-  protected unfetchedRelease = [];
+  protected unfetchedRelease: any[] = [];
   public showSpinner = true;
 
   public save_button_enabled: boolean;
@@ -902,11 +902,11 @@ export class JailFormComponent implements OnInit, AfterViewInit {
 
   setValuechange() {
     const httpsField = _.find(this.formFields, { 'name': 'https' });
-    this.formGroup.controls['release'].valueChanges.subscribe((res) => {
+    this.formGroup.controls['release'].valueChanges.subscribe((res: any) => {
       httpsField.isHidden = _.indexOf(this.unfetchedRelease, res) > -1 ? false : true;
     });
 
-    this.formGroup.controls['dhcp'].valueChanges.subscribe((res) => {
+    this.formGroup.controls['dhcp'].valueChanges.subscribe((res: any) => {
       ['vnet', 'bpf'].forEach((item) => {
         if (res) {
           this.formGroup.controls[item].setValue(res);
@@ -919,14 +919,14 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     });
 
     const vnetFieldConfig = _.find(this.basicfieldConfig, { 'name': 'vnet' });
-    this.formGroup.controls['nat'].valueChanges.subscribe((res) => {
+    this.formGroup.controls['nat'].valueChanges.subscribe((res: any) => {
       if (res) {
         this.formGroup.controls['vnet'].setValue(res);
       }
       vnetFieldConfig.required = res;
     });
 
-    this.formGroup.controls['vnet'].valueChanges.subscribe((res) => {
+    this.formGroup.controls['vnet'].valueChanges.subscribe((res: any) => {
       const hasError = (!res && (
         (this.formGroup.controls['dhcp'].value || this.formGroup.controls['nat'].value) ||
         this.formGroup.controls['auto_configure_ip6'].value)) ? true : false;
@@ -939,25 +939,25 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     });
 
     const bpfFieldConfig = _.find(this.basicfieldConfig, { 'name': 'bpf' });
-    this.formGroup.controls['bpf'].valueChanges.subscribe((res) => {
+    this.formGroup.controls['bpf'].valueChanges.subscribe((res: any) => {
       const hasError = (!res && this.formGroup.controls['dhcp'].value) ? true : false;
       bpfFieldConfig.hasErrors = hasError;
       bpfFieldConfig.errors = hasError ? T('BPF is required.') : '';
     });
 
-    this.formGroup.controls['auto_configure_ip6'].valueChanges.subscribe((res) => {
+    this.formGroup.controls['auto_configure_ip6'].valueChanges.subscribe((res: any) => {
       this.formGroup.controls['vnet'].setValue(res ? true : this.formGroup.controls['vnet'].value);
       _.find(this.basicfieldConfig, { 'name': 'vnet' }).required = res;
     });
 
     ['ip4_addr', 'ip6_addr'].forEach((item) => {
-      this.formGroup.controls[item].valueChanges.subscribe((res) => {
+      this.formGroup.controls[item].valueChanges.subscribe(() => {
         this.jailFromService.updateInterface(this.formGroup, this.basicfieldConfig);
       });
     });
   }
 
-  loadInterfaces(res, i) {
+  loadInterfaces(res: any, i: any) {
     if (i === 'interfaces') {
       const ventInterfaces = res['interfaces'].split(',');
       for (const item of ventInterfaces) {
@@ -1108,7 +1108,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
         this.jailFromService.setDisabled(this.formGroup, this.formFields, 'plugin_name', true, true);
       }
 
-      await this.jailService.listJails().toPromise().then((res) => {
+      await this.jailService.listJails().toPromise().then((res: any[]) => {
         res.forEach(i => {
           if (i.id !== this.pk) {
             this.namesInUse.push(i.id);
@@ -1141,7 +1141,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
     this.router.navigate(new Array('').concat(this.plugin === undefined ? this.route_success : this.plugin_route_success));
   }
 
-  openJobDialog(type: 'pluginInstall' | 'jailInstall' | 'jailEdit', wsCall, payload) {
+  openJobDialog(type: 'pluginInstall' | 'jailInstall' | 'jailEdit', wsCall: any, payload: any) {
     const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": helptext.jailFormJobDialog[type].title }, disableClose: true });
     dialogRef.componentInstance.setDescription(helptext.jailFormJobDialog[type].description);
     dialogRef.componentInstance.setCall(wsCall, payload);
@@ -1245,7 +1245,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
       delete value['uuid'];
 
       const dialogRef = this.openJobDialog('pluginInstall', this.pluginAddCall, [value]);
-      dialogRef.componentInstance.success.subscribe((res) => {
+      dialogRef.componentInstance.success.subscribe((res: any) => {
         dialogRef.componentInstance.setTitle(T("Plugin Installed Successfully"));
         let install_notes = '<p><b>Install Notes:</b></p>';
         for (const msg of res.result.install_notes.split('\n')) {
@@ -1260,11 +1260,11 @@ export class JailFormComponent implements OnInit, AfterViewInit {
       });
     } else if (this.pk === undefined) {
       const dialogRef = this.openJobDialog('jailInstall', this.addCall, [value]);
-      dialogRef.componentInstance.success.subscribe((res) => {
+      dialogRef.componentInstance.success.subscribe(() => {
         dialogRef.close(true);
         this.router.navigate(new Array('/').concat(this.route_success));
       });
-      dialogRef.componentInstance.failure.subscribe((res) => {
+      dialogRef.componentInstance.failure.subscribe((res: any) => {
         dialogRef.close();
         // show error inline if error is EINVAL
         if (res.error.indexOf('[EINVAL]') > -1) {
@@ -1291,7 +1291,7 @@ export class JailFormComponent implements OnInit, AfterViewInit {
               'plugin': this.isPlugin,
             }
             const dialogRef = this.openJobDialog('jailEdit', this.upgradeCall, [this.pk, option]);
-            dialogRef.componentInstance.success.subscribe((dialogRes) => {
+            dialogRef.componentInstance.success.subscribe(() => {
               dialogRef.close(true);
               this.router.navigate(new Array('/').concat(this.route_success));
             });

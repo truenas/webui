@@ -11,7 +11,7 @@ import { Subject } from 'rxjs/Subject';
   selector : 'toolbar-button',
   styleUrls : [ 'toolbar-button.component.scss' ],
   template : `
-    <div 
+    <div
       class="toolbar-button" [class.has-tooltip]="config.tooltip">
       <button
         ix-auto ix-auto-type="button" [ix-auto-identifier]="id + '_entity_toolbar_' + config.label"
@@ -32,7 +32,7 @@ export class ToolbarButtonComponent extends iXAbstractObject {
     super()
   }
 
-  onClick(value){
+  onClick(value: any){
     this.config.value = value;
     this.controller.next({name: this.config.name, value: this.config.value});
   }

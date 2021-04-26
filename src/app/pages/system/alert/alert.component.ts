@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Option } from 'app/interfaces/option.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -20,7 +21,7 @@ interface AlertCategory {
     title: string;
     level: string;
   }[];
-} 
+}
 
 /**
  * This form is unlike other forms in the app which make use of EntityForm.
@@ -41,8 +42,8 @@ export class AlertConfigComponent implements OnInit {
   protected isEntity = true;
   public fieldSets: FieldSets;
   public fieldConfig: FieldConfig[] = [];
-  protected settingOptions: any = [];
-  protected warningOptions: any = [
+  protected settingOptions: Option[] = [];
+  protected warningOptions: Option[] = [
     {label: "INFO", value: "INFO"},
     {label: "NOTICE", value: "NOTICE"},
     {label: "WARNING", value: "WARNING"},
@@ -54,12 +55,12 @@ export class AlertConfigComponent implements OnInit {
   public formGroup: any;
   public settingFormGroup: any;
   public isReady = false;
-  protected defaults = [];
+  protected defaults: any[] = [];
 
   public selectedIndex = 0;
 
   constructor(
-    protected core:CoreService, 
+    protected core:CoreService,
     private ws: WebSocketService,
     private entityFormService: EntityFormService,
     protected loader: AppLoaderService,
@@ -80,16 +81,16 @@ export class AlertConfigComponent implements OnInit {
       this.loader.close();
       new EntityUtils().handleWSError(this, error, this.dialog);
     });
-  
+
     const sets: FieldSet[] = [];
 
     const cat = this.ws.call("alert.list_categories").toPromise();
     cat.then(categories => {
       this.addButtons(categories);
-      categories.forEach((category, index) => {
+      categories.forEach((category: any, index: number) => {
         const modulo = index % 2;
 
-        let config = [];
+        let config: any[] = [];
         for (let i = 0; i < category.classes.length; i++) {
           const c = category.classes[i];
           const warningOptions = [];
@@ -128,7 +129,7 @@ export class AlertConfigComponent implements OnInit {
           width: "100%",
           config: config
         }
-      
+
         sets.push(fieldSet);
 
       });
@@ -163,8 +164,8 @@ export class AlertConfigComponent implements OnInit {
 
   }
 
-  addButtons(categories) {
-    let options = [];
+  addButtons(categories: any[]) {
+    let options: Option[] = [];
     categories.forEach((category, index) => {
       options.push({ label: category.title, value: index });
     });
@@ -203,7 +204,7 @@ export class AlertConfigComponent implements OnInit {
   }
 
   onSubmit() {
-    const payload = { classes: {} };
+    const payload: any = { classes: {} };
 
     for (const key in this.formGroup.value) {
       const key_values = key.split('_');

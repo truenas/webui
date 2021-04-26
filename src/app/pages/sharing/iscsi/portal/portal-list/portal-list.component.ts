@@ -49,7 +49,7 @@ export class PortalListComponent {
       key_props: ['tag']
     },
   };
-  public ipChoicies;
+  public ipChoicies: any[];
   constructor(protected router: Router, protected iscsiService: IscsiService) {}
 
   prerequisite(): Promise<boolean> {
@@ -65,7 +65,7 @@ export class PortalListComponent {
       });
   }
 
-  dataHandler(data) {
+  dataHandler(data: any) {
     for (const i in data.rows) {
       for (const ip in data.rows[i].listen) {
         const listenIP = this.ipChoicies[data.rows[i].listen[ip].ip] || data.rows[i].listen[ip].ip;

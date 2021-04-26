@@ -29,7 +29,7 @@ export class CertificateAuthorityAddComponent {
   public hideCancel = true;
 
   private isLinear = true;
-  private summary = {};
+  private summary: any = {};
 
   entityWizard: any;
   private currentStep = 0;
@@ -568,12 +568,12 @@ export class CertificateAuthorityAddComponent {
   private entityForm: any;
 
   constructor(protected ws: WebSocketService, private modalService: ModalService,
-              protected loader: AppLoaderService, private dialogService: DialogService, 
+              protected loader: AppLoaderService, private dialogService: DialogService,
               protected systemGeneralService: SystemGeneralService) {}
 
   preInit(entityWizard: EntityWizardComponent) {
     this.entityWizard = entityWizard;
-    this.systemGeneralService.getUnsignedCAs().subscribe((res) => {
+    this.systemGeneralService.getUnsignedCAs().subscribe((res: any[]) => {
       this.signedby = this.getTarget('signedby');
       res.forEach((item) => {
         this.signedby.options.push(
@@ -612,14 +612,14 @@ export class CertificateAuthorityAddComponent {
     });
   }
 
-  customNext(stepper) {
+  customNext(stepper: any) {
     stepper.next();
-    this.currentStep = stepper._selectedIndex;    
+    this.currentStep = stepper._selectedIndex;
   }
 
-  getSummaryValueLabel(fieldConfig, value) {
+  getSummaryValueLabel(fieldConfig: any, value: any) {
     if (fieldConfig.type == 'select') {
-      const option = fieldConfig.options.find(option => option.value == value);
+      const option = fieldConfig.options.find((option: any) => option.value == value);
       if (option) {
         value = option.label;
       }
@@ -628,20 +628,20 @@ export class CertificateAuthorityAddComponent {
     return value;
   }
 
-  addToSummary(fieldName) {
+  addToSummary(fieldName: string) {
     const fieldConfig = this.getTarget(fieldName);
     if (!fieldConfig.isHidden) {
       const fieldName = fieldConfig.name;
       if (fieldConfig.value !== undefined) {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, fieldConfig.value);
-      }        
+      }
       this.getField(fieldName).valueChanges.subscribe((res) => {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, res);
       })
     }
   }
 
-  removeFromSummary(fieldName) {
+  removeFromSummary(fieldName: string) {
     const fieldConfig = this.getTarget(fieldName);
     delete this.summary[fieldConfig.placeholder];
   }
@@ -673,7 +673,7 @@ export class CertificateAuthorityAddComponent {
     this.getField('create_type').valueChanges.subscribe((res) => {
       this.wizardConfig[1].skip = false;
       this.wizardConfig[2].skip = false;
-      
+
       if (res == 'CA_CREATE_INTERNAL') {
         for (let i in this.intermediatecaFields) {
           this.hideField(this.intermediatecaFields[i], true, entity);
@@ -780,7 +780,7 @@ export class CertificateAuthorityAddComponent {
 
   }
 
-  loadProfiels(value, reset?) {
+  loadProfiels(value: any, reset?: any) {
     if (value) {
       Object.keys(value).forEach(item => {
         if (item === 'cert_extensions') {
@@ -823,7 +823,7 @@ export class CertificateAuthorityAddComponent {
   }
 
   getStep(fieldName: any) {
-    
+
     const stepNumber = this.wizardConfig.findIndex((step) => {
       const index = step.fieldConfig.findIndex(field => {
         return fieldName == field.name;
@@ -835,25 +835,25 @@ export class CertificateAuthorityAddComponent {
   }
 
   getField(fieldName: any) {
-    
+
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
       const target = ( < FormGroup > this.entityWizard.formArray.get([stepNumber])).controls[fieldName];
       return target;
     } else {
       return null;
-    }    
+    }
   }
 
   getTarget(fieldName: any) {
-    
+
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
       const target = _.find(this.wizardConfig[stepNumber].fieldConfig, {'name': fieldName});
       return target;
     } else {
       return null;
-    }    
+    }
   }
 
   hideField(fieldName: any, show: boolean, entity: any) {
@@ -861,8 +861,8 @@ export class CertificateAuthorityAddComponent {
     this.setDisabled(fieldName, show);
   }
 
-  setDisabled(fieldName: any, disable: boolean) {    
-    const target = this.getField(fieldName);    
+  setDisabled(fieldName: any, disable: boolean) {
+    const target = this.getField(fieldName);
     if (disable) {
       target.disable();
     } else {
@@ -894,10 +894,10 @@ export class CertificateAuthorityAddComponent {
           if (data[key]) {
             if (type_prop.length === 1) {
               for (let i = 0; i < data[key].length; i++) {
-                cert_extensions[type_prop[0]][data[key][i]] = true;
+                (cert_extensions as any)[type_prop[0]][data[key][i]] = true;
               }
             } else {
-              cert_extensions[type_prop[0]][type_prop[1]] = data[key];
+              (cert_extensions as any)[type_prop[0]][type_prop[1]] = data[key];
             }
           }
           delete data[key]
@@ -911,7 +911,7 @@ export class CertificateAuthorityAddComponent {
     return data;
   }
 
-  customSubmit(data) {
+  customSubmit(data: any) {
     this.loader.open();
     this.ws.call(this.addWsCall, [data]).subscribe(vm_res => {
       this.loader.close();

@@ -87,21 +87,16 @@ export class DatasetFormComponent implements Formconfiguration{
   protected encryption_type = 'key';
   protected generate_key = true;
   protected legacy_encryption = false;
-  public namesInUse = [];
+  public namesInUse: string[] = [];
   public nameIsCaseInsensitive = false;
   public productType: ProductType;
 
   public humanReadable = {'quota': '', 'refquota': '', 'reservation': '', 'refreservation': '', 'special_small_block_size':''}
 
-  private quota_subscription;
-  private refquota_subscription;
-  private reservation_subscription;
-  private refreservation_subscription;
-
-  private inherit_encryption_subscription;
-  private encryption_subscription;
-  private encryption_type_subscription;
-  private generate_key_subscription;
+  private inherit_encryption_subscription: Subscription;
+  private encryption_subscription: Subscription;
+  private encryption_type_subscription: Subscription;
+  private generate_key_subscription: Subscription;
 
   private minquota = 1024 * 1024 * 1024; // 1G minimum
   private minrefquota = 1024 * 1024 * 1024;
@@ -112,8 +107,8 @@ export class DatasetFormComponent implements Formconfiguration{
   protected passphrase_parent = false;
 
   protected size_fields = ['quota', 'refquota', 'reservation', 'refreservation', 'special_small_block_size'];
-  protected OrigSize = {};
-  protected OrigHuman = {};
+  protected OrigSize: any = {};
+  protected OrigHuman: any = {};
 
   protected warning = 80;
   protected critical = 95;
@@ -776,7 +771,7 @@ export class DatasetFormComponent implements Formconfiguration{
     '1M':'1048576'
   };
 
-  setBasicMode(basic_mode) {
+  setBasicMode(basic_mode: boolean) {
     this.isBasicMode = basic_mode;
     if (this.encrypted_parent && !this.inherit_encryption) {
       _.find(this.fieldConfig, {name:'encryption'}).isHidden = basic_mode;
@@ -786,16 +781,16 @@ export class DatasetFormComponent implements Formconfiguration{
     _.find(this.fieldSets, {name:"quota_divider"}).divider = !basic_mode;
   }
 
-  convertHumanStringToNum(hstr, field) {
+  convertHumanStringToNum(hstr: any, field: string) {
 
-    const IECUnitLetters = this.storageService.IECUnits.map(unit => unit.charAt(0).toUpperCase()).join('');
+    const IECUnitLetters = this.storageService.IECUnits.map((unit: any) => unit.charAt(0).toUpperCase()).join('');
 
     let num = 0;
     let unit = '';
 
     // empty value is evaluated as null
     if (!hstr) {
-        this.humanReadable[field] = null;
+        (this.humanReadable as any)[field] = null;
         return null;
     }
 
@@ -808,10 +803,10 @@ export class DatasetFormComponent implements Formconfiguration{
 
     // get leading number
     if ( num = hstr.match(/^(\d+(\.\d+)?)/) ) {
-        num = num[1];
+        num = (num as any)[1];
     } else {
         // leading number is required
-        this.humanReadable[field] = '';
+        (this.humanReadable as any)[field] = '';
         return NaN;
     }
 
@@ -819,13 +814,13 @@ export class DatasetFormComponent implements Formconfiguration{
     unit = hstr.replace(num, '');
     if ( (unit) && !(unit = this.storageService.normalizeUnit(unit)) ) {
         // error when unit is present but not recognized
-        this.humanReadable[field] = '';
+        (this.humanReadable as any)[field] = '';
         return NaN;
     }
 
     let spacer = (unit) ? ' ' : '';
 
-    this.humanReadable[field] = num.toString() + spacer + unit;
+    (this.humanReadable as any)[field] = num.toString() + spacer + unit;
     return num * this.storageService.convertUnitToNum(unit);
 }
 
@@ -862,31 +857,31 @@ export class DatasetFormComponent implements Formconfiguration{
     return data;
   }
 
-  blurEventQuota(parent){
+  blurEventQuota(parent: any){
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['quota'].setValue(parent.humanReadable['quota']);
     }
   }
 
-  blurEventRefQuota(parent){
+  blurEventRefQuota(parent: any){
     if (parent.entityForm) {
         parent.entityForm.formGroup.controls['refquota'].setValue(parent.humanReadable['refquota']);
     }
   }
 
-  blurEventReservation(parent){
+  blurEventReservation(parent: any){
     if (parent.entityForm) {
         parent.entityForm.formGroup.controls['reservation'].setValue(parent.humanReadable['reservation']);
     }
   }
 
-  blurEventRefReservation(parent){
+  blurEventRefReservation(parent: any){
     if (parent.entityForm) {
         parent.entityForm.formGroup.controls['refreservation'].setValue(parent.humanReadable['refreservation']);
     }
   }
 
-  blurSpecialSmallBlocks(parent){
+  blurSpecialSmallBlocks(parent: any){
     if (parent.entityForm) {
         parent.entityForm.formGroup.controls['special_small_block_size'].setValue(parent.humanReadable['special_small_block_size']);
     }
@@ -935,7 +930,7 @@ export class DatasetFormComponent implements Formconfiguration{
     this.dedup_fg = this.entityForm.formGroup.controls['deduplication'];
     this.dedup_field = _.find(this.fieldConfig, {name:'deduplication'});
     this.dedup_value = this.dedup_fg.value;
-    this.dedup_fg.valueChanges.subscribe(dedup=>{
+    this.dedup_fg.valueChanges.subscribe((dedup: any)=>{
       if (dedup === 'INHERIT' || dedup === 'OFF') {
         this.dedup_field.warnings = ''
       } else {
@@ -1018,8 +1013,8 @@ export class DatasetFormComponent implements Formconfiguration{
     this.recordsize_fg = this.entityForm.formGroup.controls['recordsize'];
 
     this.recordsize_field = _.find(this.fieldConfig, {name:'recordsize'});
-    this.recordsize_fg.valueChanges.subscribe((record_size)=>{
-      const record_size_number = parseInt(this.reverseRecordSizeMap[record_size],10);
+    this.recordsize_fg.valueChanges.subscribe((record_size: string)=>{
+      const record_size_number = parseInt((this.reverseRecordSizeMap as any)[record_size],10);
       if(this.minimum_recommended_dataset_recordsize && this.recommended_size_number){
         this.recordsize_warning = helptext.dataset_form_warning_1 +
           this.minimum_recommended_dataset_recordsize +
@@ -1071,7 +1066,7 @@ export class DatasetFormComponent implements Formconfiguration{
       const root = this.parent.split("/")[0];
       this.ws.call('pool.dataset.recommended_zvol_blocksize',[root]).subscribe(res=>{
         this.minimum_recommended_dataset_recordsize = res;
-        this.recommended_size_number = parseInt(this.reverseRecordSizeMap[this.minimum_recommended_dataset_recordsize],0);
+        this.recommended_size_number = parseInt((this.reverseRecordSizeMap as any)[this.minimum_recommended_dataset_recordsize],0);
       });
       combineLatest(this.ws.call('pool.query', [[["name","=",root]]]), this.ws.call('pool.dataset.query', [[["id", "=", this.pk]]])).subscribe(
         ([pk_pool, pk_dataset])=>{
@@ -1141,7 +1136,7 @@ export class DatasetFormComponent implements Formconfiguration{
           for (let i = 0; i < this.encryption_fields.length; i++) {
               this.entityForm.setDisabled(this.encryption_fields[i], true, true);
           }
-          this.inherit_encryption_subscription = inherit_encryption_fg.valueChanges.subscribe(inherit => {
+          this.inherit_encryption_subscription = inherit_encryption_fg.valueChanges.subscribe((inherit: any) => {
             this.inherit_encryption = inherit;
             if (inherit) {
               for (let i = 0; i < all_encryption_fields.length; i++) {
@@ -1167,11 +1162,11 @@ export class DatasetFormComponent implements Formconfiguration{
               }
             }
           });
-          this.encryption_subscription = encryption_fg.valueChanges.subscribe(encryption => {
+          this.encryption_subscription = encryption_fg.valueChanges.subscribe((encryption: any) => {
             // if on an encrypted parent we should warn the user, otherwise just disable the fields
             if (this.encrypted_parent && !encryption && !this.non_encrypted_warned) {
               this.dialogService.confirm(helptext.dataset_form_encryption.non_encrypted_warning_title,
-                helptext.dataset_form_encryption.non_encrypted_warning_warning).subscribe(confirm => {
+                helptext.dataset_form_encryption.non_encrypted_warning_warning).subscribe((confirm: boolean) => {
                   if (confirm) {
                     this.non_encrypted_warned = true;
                     for (let i = 0; i < all_encryption_fields.length; i++) {
@@ -1204,7 +1199,7 @@ export class DatasetFormComponent implements Formconfiguration{
               }
             }
           });
-          this.encryption_type_subscription = encryption_type_fg.valueChanges.subscribe(type => {
+          this.encryption_type_subscription = encryption_type_fg.valueChanges.subscribe((type: any) => {
             this.encryption_type = type;
             const key = (type === 'key');
             this.entityForm.setDisabled('passphrase', key, key);
@@ -1217,7 +1212,7 @@ export class DatasetFormComponent implements Formconfiguration{
               this.entityForm.setDisabled('key', true, true)
             }
           })
-          this.generate_key_subscription = this.entityForm.formGroup.controls['generate_key'].valueChanges.subscribe(generate_key => {
+          this.generate_key_subscription = this.entityForm.formGroup.controls['generate_key'].valueChanges.subscribe((generate_key: boolean) => {
             this.generate_key = generate_key;
             this.entityForm.setDisabled('key', generate_key, generate_key);
           });
@@ -1367,21 +1362,21 @@ export class DatasetFormComponent implements Formconfiguration{
 
   }
 
-  getFieldValueOrRaw(field): any {
+  getFieldValueOrRaw(field: any): any {
     if( field === undefined || field.value === undefined) {
       return field;
     }
     return field.value;
   }
 
-  getFieldValueOrNone(field): any {
+  getFieldValueOrNone(field: any): any {
     if (field === undefined || field.value === undefined) {
       return null;
     }
     return field.value;
   }
 
-  isInherited(field, value): boolean {
+  isInherited(field: any, value: any): boolean {
     if (!field) {
       return true;
     }
@@ -1391,7 +1386,7 @@ export class DatasetFormComponent implements Formconfiguration{
     return false;
   }
 
-  resourceTransformIncomingRestData(wsResponse): any {
+  resourceTransformIncomingRestData(wsResponse: any): any {
     if (wsResponse.special_small_block_size && wsResponse.special_small_block_size.rawvalue === '0') {
       delete wsResponse.special_small_block_size;
     }
@@ -1403,7 +1398,7 @@ export class DatasetFormComponent implements Formconfiguration{
     const refquota_warning_inherit = this.isInherited(wsResponse.refquota_warning, refquota_warning);
     const refquota_critical = this.getFieldValueOrNone(wsResponse.refquota_critical) ? this.getFieldValueOrNone(wsResponse.refquota_critical) : this.critical;
     const refquota_critical_inherit = this.isInherited(wsResponse.refquota_critical, refquota_critical);
-    const sizeValues = {};
+    const sizeValues: any = {};
     for (let i = 0; i < this.size_fields.length; i++) {
       const field = this.size_fields[i];
       if (wsResponse[field] && wsResponse[field].rawvalue) {
@@ -1411,7 +1406,7 @@ export class DatasetFormComponent implements Formconfiguration{
       }
       sizeValues[field] = this.getFieldValueOrRaw(wsResponse[field]);
       this.convertHumanStringToNum(sizeValues[field], field);
-      this.OrigHuman[field] = this.humanReadable[field];
+      this.OrigHuman[field] = (this.humanReadable as any)[field];
     }
 
      const returnValue: DatasetFormData = {
@@ -1580,7 +1575,7 @@ export class DatasetFormComponent implements Formconfiguration{
     return this.ws.call('pool.dataset.create', [ data ]);
   }
 
-  customSubmit(body) {
+  customSubmit(body: any) {
     this.loader.open();
 
     return ((this.isNew === true ) ? this.addSubmit(body) : this.editSubmit(body)).subscribe((restPostResp) => {
@@ -1591,7 +1586,7 @@ export class DatasetFormComponent implements Formconfiguration{
         if (res === false) {
           this.dialogService.confirm(helptext.afterSubmitDialog.title,
             helptext.afterSubmitDialog.message, true, helptext.afterSubmitDialog.actionBtn, false, '', '', '','',
-            false, helptext.afterSubmitDialog.cancelBtn).subscribe(res => {
+            false, helptext.afterSubmitDialog.cancelBtn).subscribe((res: boolean) => {
             if (res) {
               this.ws.call('filesystem.getacl', [parentPath]).subscribe(({acltype}) => {
                 if (acltype === 'POSIX1E') {
@@ -1620,27 +1615,27 @@ export class DatasetFormComponent implements Formconfiguration{
     });
   }
 
-  setParent(id) {
+  setParent(id: any) {
     if(!this.paramMap) {
       this.paramMap = {};
     }
     this.paramMap.parent = id;
   }
 
-  setVolId(pool) {
+  setVolId(pool: any) {
     if(!this.paramMap) {
       this.paramMap = {};
     }
     this.paramMap.volid = pool;
   }
-  setPk(id) {
+  setPk(id: any) {
     if(!this.paramMap) {
       this.paramMap = {};
     }
     this.paramMap.pk = id;
   }
 
-  setTitle(title) {
+  setTitle(title: string) {
     this.title = T(title);
   }
 }

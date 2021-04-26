@@ -7,7 +7,7 @@ import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { DialogService, LanguageService, StorageService, 
+import { DialogService, LanguageService, StorageService,
   SystemGeneralService, WebSocketService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { ModalService } from '../../../../services/modal.service';
@@ -46,9 +46,9 @@ export class KernelFormComponent implements OnDestroy{
         },
       ]
     },
-    { 
+    {
       name:'divider',
-      divider: true 
+      divider: true
     }
   ];
 
@@ -72,7 +72,7 @@ export class KernelFormComponent implements OnDestroy{
     })
   }
 
-  reconnect(href) {
+  reconnect(href: string) {
     if (this.entityForm.ws.connected) {
       this.loader.close();
       // ws is connected
@@ -88,7 +88,7 @@ export class KernelFormComponent implements OnDestroy{
     this.entityForm = entityEdit;
   }
 
-   public customSubmit(body) {
+   public customSubmit(body: any) {
     this.loader.open();
     return this.ws.call('system.advanced.update', [body]).subscribe(() => {
       this.loader.close();
@@ -100,10 +100,6 @@ export class KernelFormComponent implements OnDestroy{
       this.loader.close();
       new EntityUtils().handleWSError(this.entityForm, res);
     });
-  }
-
-  getKeyByValue(object, value) {
-    return Object.keys(object).find(key => object[key] === value);
   }
 
   ngOnDestroy() {

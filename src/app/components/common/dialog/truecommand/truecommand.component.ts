@@ -33,7 +33,7 @@ export class TruecommandComponent {
       })
     }
 
-    update(data): void {
+    update(data: any): void {
       this.tc = data;
     }
 }

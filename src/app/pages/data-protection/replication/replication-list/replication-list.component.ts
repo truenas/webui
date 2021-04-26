@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Validators } from '@angular/forms';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
@@ -69,15 +70,15 @@ export class ReplicationListComponent {
     });
   }
 
-  getActions(parentrow) {
+  getActions(parentrow: any) {
     return [
       {
         id: parentrow.name,
         icon: 'play_arrow',
         name: 'run',
         label: T('Run Now'),
-        onClick: (row) => {
-          this.dialog.confirm(T('Run Now'), T('Replicate <i>') + row.name + T('</i> now?'), true).subscribe((res) => {
+        onClick: (row: any) => {
+          this.dialog.confirm(T('Run Now'), T('Replicate <i>') + row.name + T('</i> now?'), true).subscribe((res: boolean) => {
             if (res) {
               row.state = 'RUNNING';
               this.ws.call('replication.run', [row.id]).subscribe(
@@ -103,7 +104,7 @@ export class ReplicationListComponent {
         id: 'restore',
         label: T('Restore'),
         icon: 'restore',
-        onClick: (row) => {
+        onClick: (row: any) => {
           const parent = this;
           const conf: DialogFormConfiguration = {
             title: helptext.replication_restore_dialog.title,
@@ -128,7 +129,7 @@ export class ReplicationListComponent {
               },
             ],
             saveButtonText: helptext.replication_restore_dialog.saveButton,
-            customSubmit: function (entityDialog) {
+            customSubmit: function (entityDialog: EntityDialogComponent) {
               parent.entityList.loader.open();
               parent.ws.call('replication.restore', [row.id, entityDialog.formValue]).subscribe(
                 (res) => {
@@ -152,7 +153,7 @@ export class ReplicationListComponent {
         icon: 'edit',
         name: 'edit',
         label: T('Edit'),
-        onClick: (row) => {
+        onClick: (row: any) => {
           this.route_edit.push(row.id);
           this.router.navigate(this.route_edit);
         },
@@ -162,7 +163,7 @@ export class ReplicationListComponent {
         icon: 'delete',
         name: 'delete',
         label: T('Delete'),
-        onClick: (row) => {
+        onClick: (row: any) => {
           this.entityList.doDelete(row);
         },
       },
@@ -173,7 +174,7 @@ export class ReplicationListComponent {
     this.stateButton(row);
   }
 
-  stateButton(row) {
+  stateButton(row: any) {
     if (row.state.state === 'RUNNING') {
       this.entityList.runningStateButton(row.job.id);
     } else if (row.state.state === 'HOLD') {
@@ -206,7 +207,7 @@ export class ReplicationListComponent {
             T('Cancel'),
             true,
           )
-          .subscribe((dialog_res) => {
+          .subscribe((dialog_res: boolean) => {
             if (dialog_res) {
               this.ws.call('core.download', ['filesystem.get', [row.job.logs_path], row.job.id + '.log']).subscribe(
                 (snack_res) => {
@@ -235,7 +236,7 @@ export class ReplicationListComponent {
     }
   }
 
-  onCheckboxChange(row) {
+  onCheckboxChange(row: any) {
     this.ws.call('replication.update', [row.id, { enabled: row.enabled }]).subscribe(
       (res) => {
         row.enabled = res.enabled;

@@ -1,5 +1,6 @@
 import { Component, Output, ViewChild, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { MatSelectChange } from '@angular/material/select/select';
 import { TranslateService } from '@ngx-translate/core';
 
 import { FieldConfig } from '../../models/field-config.interface';
@@ -33,7 +34,7 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
 
   ngOnInit() {
     this.control = this.group.controls[this.config.name];
-    this.valueSubscription = this.control.valueChanges.subscribe((res) => {
+    this.valueSubscription = this.control.valueChanges.subscribe((res: string) => {
       this.setAddressAndNetmask(res);
     });
     if (this.control.value) {
@@ -45,8 +46,8 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
     this.valueSubscription.unsubscribe();
   }
 
-  setAddress($event){
-    const address = $event.target.value;
+  setAddress($event: FocusEvent){
+    const address = ($event.target as HTMLInputElement).value;
     this.setAddressAndNetmask(address);
   }
 
@@ -58,14 +59,14 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
     }
   }
 
-  setNetmask($event){
+  setNetmask($event: MatSelectChange){
     this.netmask = $event.value;
     this.setValue();
   }
 
   setValue() {
     let value = this.address + "/" + this.netmask;
-    if (this.address.trim() === '' || this.address === undefined){ 
+    if (this.address.trim() === '' || this.address === undefined){
       value = '';
     }
     if (value !== this.value) {
@@ -74,7 +75,7 @@ export class FormIpWithNetmaskComponent implements Field, OnInit, OnDestroy {
     }
   }
 
-  setAddressAndNetmask(value) {
+  setAddressAndNetmask(value: string) {
     const strings = value.split('/');
     this.address = strings[0];
     if (strings.length > 1) {

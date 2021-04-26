@@ -15,10 +15,10 @@ export interface Temperature {
 export class DiskTemperatureService extends BaseService {
 
   protected disks: any[] = [];
-  protected broadcast;
+  protected broadcast: any;
   protected subscribers: number = 0;
 
-  constructor() { 
+  constructor() {
     super();
 
     this.core.register({observerClass: this, eventName:"DiskTemperaturesSubscribe"}).subscribe((evt: CoreEvent) => {
@@ -38,7 +38,7 @@ export class DiskTemperatureService extends BaseService {
 
   protected onAuthenticated(evt: CoreEvent){
     this.authenticated = true;
-   
+
     // TODO: use disk.query to detect drive change events
     const queryOptions = {"select":["name", "type"]};
     this.websocket.call('disk.query',[[], queryOptions]).subscribe((res) =>{

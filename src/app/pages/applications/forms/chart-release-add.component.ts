@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Option } from 'app/interfaces/option.interface';
 import * as _ from 'lodash';
 import { FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
@@ -30,12 +31,12 @@ export class ChartReleaseAddComponent implements OnDestroy {
   private title = helptext.chartForm.title;
   private dialogRef: any;
   public hideCancel = true;
-  public summary = {};
+  public summary: any = {};
   summary_title = 'Chart Release Summary';
   private entityWizard: any;
   private destroy$ = new Subject();
   // private isLinear = true;
-  private interfaceList = [];
+  private interfaceList: Option[] = [];
   private entityUtils = new EntityUtils();
 
   protected fieldConfig: FieldConfig[];
@@ -108,7 +109,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
               name: 'name',
               placeholder: helptext.chartForm.container.env_vars.key.placeholder,
               tooltip: helptext.chartForm.container.env_vars.key.tooltip,
-            }, 
+            },
             {
               type: 'input',
               name: 'value',
@@ -170,7 +171,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
                       }]
                     },
                   ],
-                }, 
+                },
               ],
               listFields: []
             },
@@ -183,7 +184,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
                   type: 'ipwithnetmask',
                   name: 'destination',
                   placeholder: helptext.chartForm.externalInterfaces.staticRoutes.destination.placeholder,
-                }, 
+                },
                 {
                   type: 'input',
                   name: 'gateway',
@@ -192,7 +193,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
               ],
               listFields: []
             }
-            
+
           ],
           listFields: []
         },
@@ -239,13 +240,13 @@ export class ChartReleaseAddComponent implements OnDestroy {
               name: 'containerPort',
               placeholder: helptext.chartForm.portForwardingList.containerPort.placeholder,
               validation: helptext.chartForm.portForwardingList.containerPort.validation
-            }, 
+            },
             {
               type: 'input',
               name: 'nodePort',
               placeholder: helptext.chartForm.portForwardingList.nodePort.placeholder,
-              validation: helptext.chartForm.portForwardingList.nodePort.validation,   
-            },  
+              validation: helptext.chartForm.portForwardingList.nodePort.validation,
+            },
             {
               type: 'select',
               name: 'protocol',
@@ -275,7 +276,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
               hideDirs: 'ix-applications',
               placeholder: helptext.chartForm.hostPathVolumes.hostPath.placeholder,
               tooltip: helptext.chartForm.hostPathVolumes.hostPath.tooltip,
-            }, 
+            },
             {
               type: 'input',
               name: 'mountPath',
@@ -356,11 +357,11 @@ export class ChartReleaseAddComponent implements OnDestroy {
     })
   }
 
-  parseSchema(catalogApp) {
+  parseSchema(catalogApp: any) {
     try {
 
-      const gpuConfiguration = catalogApp.schema.questions.find(question => question.variable=='gpuConfiguration');
-  
+      const gpuConfiguration = catalogApp.schema.questions.find((question: any) => question.variable=='gpuConfiguration');
+
       if (gpuConfiguration && gpuConfiguration.schema.attrs.length > 0) {
         const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(gpuConfiguration);
         const gpuWizardConfig = {
@@ -370,18 +371,18 @@ export class ChartReleaseAddComponent implements OnDestroy {
 
         this.wizardConfig.push(gpuWizardConfig);
       }
-      
+
     } catch(error) {
       return this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
   }
 
   onChangeExternalInterfaces(listComponent: FormListComponent) {
-    
+
     listComponent.listsFromArray.controls.forEach((externalInterface, index) => {
       const staticRoutesFC = _.find(listComponent.config.listFields[index], {'name': 'staticRoutes'});
       const staticIPConfigurationsFC = _.find(listComponent.config.listFields[index], {'name': 'staticIPConfigurations'});
-  
+
       (<FormGroup>externalInterface).controls['ipam'].valueChanges.subscribe(value => {
         if (value === 'static') {
           staticIPConfigurationsFC.isHidden = false;
@@ -410,9 +411,9 @@ export class ChartReleaseAddComponent implements OnDestroy {
     entity.setDisabled(fieldName, show, show);
   }
 
-  customSubmit(data) {
+  customSubmit(data: any) {
 
-    let parsedData = {};
+    let parsedData: any = {};
     this.entityUtils.parseFormControlValues(data, parsedData);
 
     let envVars = [];
@@ -435,9 +436,9 @@ export class ChartReleaseAddComponent implements OnDestroy {
       volList = data.volumes;
     }
 
-    let ext_interfaces = [];
+    let ext_interfaces: any[] = [];
     if (data.externalInterfaces && data.externalInterfaces.length > 0 && data.externalInterfaces[0].hostInterface) {
-      data.externalInterfaces.forEach(i => {
+      data.externalInterfaces.forEach((i: any) => {
         if (i.ipam !== 'static') {
           ext_interfaces.push(
             {
@@ -446,11 +447,11 @@ export class ChartReleaseAddComponent implements OnDestroy {
                 type: i.ipam,
               }
             }
-          );            
+          );
         } else {
-          let ipList = [];
+          let ipList: any[] = [];
           if (i.staticIPConfigurations && i.staticIPConfigurations.length > 0) {
-            i.staticIPConfigurations.forEach(item => {
+            i.staticIPConfigurations.forEach((item: any) => {
               ipList.push(item.staticIP);
             })
           }
@@ -486,14 +487,14 @@ export class ChartReleaseAddComponent implements OnDestroy {
         externalInterfaces: ext_interfaces,
         hostPathVolumes: hpVolumes,
         hostNetwork: data.hostNetwork,
-        image: { 
+        image: {
           repository: data.repository,
           pullPolicy: data.pullPolicy,
           tag: data.tag
-        }, 
-        portForwardingList: pfList, 
+        },
+        portForwardingList: pfList,
         updateStrategy: data.updateStrategy,
-        volumes: volList, 
+        volumes: volList,
         workloadType: 'Deployment',
         securityContext: {
           privileged: data.privileged,
@@ -502,7 +503,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
     }];
 
     if (parsedData['gpuConfiguration']) {
-      payload[0].values['gpuConfiguration'] = parsedData['gpuConfiguration'];
+      (payload[0].values as any)['gpuConfiguration'] = parsedData['gpuConfiguration'];
     }
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
@@ -518,7 +519,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
 
   ngOnDestroy(){
     this.destroy$.next();
-    this.destroy$.complete(); 
+    this.destroy$.complete();
   }
 
 }

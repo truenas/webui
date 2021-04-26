@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from "@angular/forms";
+import { Option } from 'app/interfaces/option.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
 import * as _ from 'lodash';
 import { IscsiService, WebSocketService, AppLoaderService } from '../../../../../services/';
@@ -26,7 +28,7 @@ export class PortalFormComponent {
   protected isEntity = true;
 
   protected getValidOptions = this.iscsiService.getIpChoices().toPromise().then(res => {
-    const options = [];
+    const options: Option[] = [];
     for (const ip in res) {
       options.push({ label: res[ip], value: ip });
     }
@@ -124,7 +126,7 @@ export class PortalFormComponent {
     }
   ]
 
-  protected fieldConfig;
+  protected fieldConfig: FieldConfig[];
   protected pk: any;
   protected authgroup_field: any;
   protected entityForm: any;
@@ -177,12 +179,12 @@ export class PortalFormComponent {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
 
-    entityForm.formGroup.controls['listen'].valueChanges.subscribe((res) => {
+    entityForm.formGroup.controls['listen'].valueChanges.subscribe((res: any) => {
       this.genPortalAddress(res);
     })
   }
 
-  customEditCall(value) {
+  customEditCall(value: any) {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).subscribe(
       (res) => {
@@ -196,12 +198,12 @@ export class PortalFormComponent {
     );
   }
 
-  genPortalAddress(data) {
-    let ips = [];
+  genPortalAddress(data: any) {
+    let ips: any[] = [];
     for (let i = 0; i < data.length; i++) {
       if (data[i]['ip']) {
         const samePortIps = data[i]['ip'].reduce(
-          (fullIps, currip) => fullIps.concat({ip:currip, port:data[i]['port']})
+          (fullIps: any[], currip: any) => fullIps.concat({ip:currip, port:data[i]['port']})
         , []);
         ips = ips.concat(samePortIps);
       }
@@ -209,14 +211,15 @@ export class PortalFormComponent {
     this.ip = ips;
   }
 
-  beforeSubmit(data) {
+  beforeSubmit(data: any) {
     data['listen'] = this.ip;
   }
 
-  resourceTransformIncomingRestData(data) {
-    const ports = new Map();
+  resourceTransformIncomingRestData(data: any) {
+    const ports = new Map() as any;
     const groupedIp = [];
     for (let i = 0; i < data['listen'].length; i++) {
+      // TODO: Incorrect usage of map. Update to .get
       if (ports[data['listen'][i].port] === undefined) {
         ports[data['listen'][i].port] = [];
         groupedIp.push({ip: ports[data['listen'][i].port], port:data['listen'][i].port});

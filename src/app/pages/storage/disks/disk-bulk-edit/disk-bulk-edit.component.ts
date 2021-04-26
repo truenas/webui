@@ -117,7 +117,7 @@ export class DiskBulkEditComponent {
     }
   }
 
-  customSubmit(event) {
+  customSubmit(event: any) {
     this.loader.open();
     let req = []
     let data = {

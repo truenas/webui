@@ -50,7 +50,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
 
 
   constructor(protected rest: RestService, protected ws: WebSocketService,  protected router: Router,
-    protected _eRef: ElementRef, private dialog: DialogService, protected loader: AppLoaderService, 
+    protected _eRef: ElementRef, private dialog: DialogService, protected loader: AppLoaderService,
     translate: TranslateService) {
     super()
   }
@@ -96,7 +96,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
   getData() {
     let offset = this.itemsPerPage * (this.page - 1);
     let sort: Array < String > = [];
-    let options: Object = new Object();
+    let options: any = {};
 
     for (let i in this.config.sorting.columns) {
       let col = this.config.sorting.columns[i];
@@ -129,7 +129,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
   }
 
   onChangeTable(
-    config,
+    config: any,
     page: any = { page: this.page, itemsPerPage: this.itemsPerPage }) {
     if (config.filtering) {
       Object.assign(this.config.filtering, config.filtering);
@@ -141,7 +141,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
     this.getData();
   }
 
-  trClass(row) {
+  trClass(row: any) {
     let classes = [];
     classes.push('treegrid-' + row.id);
     if (row._parent) {
@@ -150,7 +150,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
     return classes.join(' ');
   }
 
-  getCardActions(row) {
+  getCardActions() {
     if (this.conf.cardActions) {
       this.actions = true;
       return this.conf.cardActions;
@@ -178,7 +178,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
     }
   }
 
-  rowValue(row, attr) {
+  rowValue(row: any, attr: any) {
     if (this.conf.rowValue) {
       return this.conf.rowValue(row, attr);
     }
@@ -200,7 +200,7 @@ export class EntityCardComponent extends iXObject implements OnInit {
 
   doDelete() {
 
-    this.dialog.confirm("Delete", "Delete this item?").subscribe((res) => {
+    this.dialog.confirm("Delete", "Delete this item?").subscribe((res: boolean) => {
       if (res) {
 	/*
         this.loader.open();

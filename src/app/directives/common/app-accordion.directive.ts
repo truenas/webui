@@ -18,8 +18,8 @@ export class AppAccordionDirective implements OnInit {
     })
   }
 
-  @HostListener('click', ['$event'])
-  onClick($event) {
+  @HostListener('click')
+  onClick() {
     this.toggleOpen();
   }
 

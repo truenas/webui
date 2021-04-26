@@ -1,4 +1,14 @@
-import { ApplicationRef, Component, Injector, OnInit, AfterViewInit, OnChanges, OnDestroy, ViewChild } from '@angular/core';
+import {
+  ApplicationRef,
+  Component,
+  Injector,
+  OnInit,
+  AfterViewInit,
+  OnChanges,
+  OnDestroy,
+  ViewChild,
+  SimpleChanges
+} from '@angular/core';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
 import { EntityFormEmbeddedComponent } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
@@ -31,7 +41,7 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
   @ViewChild('embeddedForm', {static: false}) embeddedForm: EntityFormEmbeddedComponent;
   public target: Subject<CoreEvent> = new Subject();
   public isWaiting: boolean = false;
-  public values = [];
+  public values: any[] = [];
   public preferences: any;
   public saveSubmitText = T("Update Preferences");
   public multiStateSubmit = true;
@@ -88,7 +98,7 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
     ngAfterViewInit(){
     }
 
-    ngOnChanges(changes){
+    ngOnChanges(changes: SimpleChanges){
       if(changes.baseTheme){
         alert("baseTheme Changed!")
       }
@@ -128,7 +138,7 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
 
           // We don't store this in the backend
           delete prefs.reset;
-          
+
           this.core.emit({name:"ChangePreferences",data: prefs});
           this.target.next({name:"SubmitStart", sender: this});
           this.isWaiting = true;
@@ -149,7 +159,7 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
        }
      }
 
-     onPreferences(prefs){
+     onPreferences(prefs: any){
       this.fieldSets[0].config = [
         {
           type: 'select',
@@ -216,11 +226,11 @@ export class GeneralPreferencesFormComponent implements OnInit, AfterViewInit, O
        }
      }
 
-     beforeSubmit(data) {
+     beforeSubmit(data: any) {
        data.tableDisplayedColumns ? data.tableDisplayedColumns = [] : delete(data.tableDisplayedColumns);
      }
 
-     updateValues(prefs){
+     updateValues(prefs: any){
       const keys = Object.keys(this.embeddedForm.formGroup.controls);
       keys.forEach((key) => {
         if(key !== 'reset'){

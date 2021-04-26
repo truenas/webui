@@ -115,7 +115,7 @@ export class SmartFormComponent {
     })
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     data['smarttest_picker'] = `0 ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`
     return data;
   }
@@ -127,7 +127,7 @@ export class SmartFormComponent {
     this.title = !!entityForm.isNew ? helptext.smart_test_add : helptext.smart_test_edit;
   }
 
-  beforeSubmit(value) {
+  beforeSubmit(value: any) {
     const spl = value.smarttest_picker.split(" ");
     delete value.smarttest_picker;
 

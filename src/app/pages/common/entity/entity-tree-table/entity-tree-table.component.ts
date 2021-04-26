@@ -35,7 +35,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
   get conf() { return this._conf; }
   @Input() expandRootNodes = false;
   @Input() parentId?: string;
-  
+
   filter: FilterValue = { column: 'name', value: ''};
   showActions = true;
 
@@ -67,7 +67,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
       this.displayedColumns = cols.map(col => col.prop);
 
       const mutated = Object.assign([], this._conf.tableData);
-      
+
       this.treeDataSource = this._conf.tableData;
       let flattened = this.treeTableService.buildTable(mutated);
       this.tableDataSource = flattened;
@@ -91,12 +91,12 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
 
       return nodes.sort((data1, data2) => {
         const isAsc = sort.direction === 'asc';
-        
+
         let value1 = this.resolve(sort.sortBy, data1.data);
         let value2 = this.resolve(sort.sortBy, data2.data);
 
         let result = null;
-  
+
         if (value1 == null && value2 != null)
           result = -1;
         else if (value1 != null && value2 == null)
@@ -107,12 +107,12 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
           result = value1.localeCompare(value2);
         else
           result = (value1 < value2) ? -1 : (value1 > value2) ? 1 : 0;
-  
+
         return ((isAsc ? 1 : -1) * result);
       });
     }
 
-    resolve(path, obj) {
+    resolve(path: string, obj: any) {
       return path.split('.').reduce(function(prev, curr) {
           return prev ? prev[curr] : null
       }, obj || self)
@@ -140,34 +140,34 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
       );
     }
 
-    clickAction() {
+    clickAction(): any {
       return null;
     }
 
-    expandNode(rootNode){
+    expandNode(rootNode: any){
       const value = rootNode.expanded ? rootNode.expanded = false : true;
       this.treeDataSource = this.treeTableService.editNode('expanded', value, rootNode.indexPath, this.treeDataSource);
 
       if(this.filter.value.length > 0){
         this.tableDataSource = this.treeTableService.filteredTable(this.filter.column, this.filter.value, this.treeDataSource, true);
       } else {
-        this.tableDataSource = this.treeTableService.buildTable(this.treeDataSource); 
+        this.tableDataSource = this.treeTableService.buildTable(this.treeDataSource);
       }
 
       this.table.renderRows();
     }
 
-    filterNodes(key: string, value: any){ 
+    filterNodes(key: string, value: any){
       if(value.length > 0){
         this.tableDataSource = this.treeTableService.filteredTable(key, value, this.treeDataSource);
       } else {
-        this.tableDataSource = this.treeTableService.buildTable(this.treeDataSource); 
+        this.tableDataSource = this.treeTableService.buildTable(this.treeDataSource);
       }
       this.filter = { column: key, value: value };
       this.table.renderRows();
     }
 
-    onHover(evt, over = true){
+    onHover(evt: any, over = true){
       const row = this.findRow(evt);
       const cells = row.children;
 
@@ -185,7 +185,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
 
     }
 
-    findRow(el){
+    findRow(el: any){
       let target = el.target;
 
       do {

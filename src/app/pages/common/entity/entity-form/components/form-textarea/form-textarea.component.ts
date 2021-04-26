@@ -19,10 +19,10 @@ export class FormTextareaComponent implements Field {
   group: FormGroup;
   fieldShow: string;
   private hasPasteEvent = false;
-  public fileString;
+  public fileString: string | ArrayBuffer;
 
   constructor(public translate: TranslateService) {}
-  
+
   blurEvent(){
     if(this.config.blurStatus){
       this.config.blurEvent(this.config.parent)
@@ -48,7 +48,7 @@ export class FormTextareaComponent implements Field {
     }
   }
 
-  changeListener($event): void {
+  changeListener($event: Event): void {
     this.readFile($event.target);
   }
 

@@ -22,8 +22,8 @@ import  helptext  from '../../../helptext/apps/apps';
 import { CatalogSummaryDialog } from '../dialogs/catalog-summary/catalog-summary-dialog.component';
 
 interface SelectOption {
-	label: string, 
-	value: string, 
+	label: string,
+	value: string,
 }
 
 @Component({
@@ -34,10 +34,10 @@ interface SelectOption {
 export class CatalogComponent implements OnInit {
   @Output() updateTab = new EventEmitter();
 
-  public catalogApps = [];
+  public catalogApps: any[] = [];
   public catalogNames: string[] = [];
   public filteredCatalogNames: string[] = [];
-  public filteredCatalogApps = [];
+  public filteredCatalogApps: any[] = [];
   public filterString = '';
   private dialogRef: any;
   private poolList: SelectOption[] = [];
@@ -81,18 +81,18 @@ export class CatalogComponent implements OnInit {
   }
 
   loadCatalogs() {
-    this.appService.getAllCatalogItems().subscribe(res => {
+    this.appService.getAllCatalogItems().subscribe((res: any[]) => {
       this.catalogNames = [];
       this.catalogApps = [];
       res.forEach(catalog => {
         this.catalogNames.push(catalog.label);
-        catalog.preferred_trains.forEach(train => {
-          for (let i in catalog.trains[train]) {  
+        catalog.preferred_trains.forEach((train: any) => {
+          for (let i in catalog.trains[train]) {
             let item = catalog.trains[train][i];
             let versions = item.versions;
             let latest, latestDetails;
-  
-            const versionKeys = [];
+
+            const versionKeys: any[] = [];
             Object.keys(versions).forEach(versionKey => {
               if (versions[versionKey].healthy) {
                 versionKeys.push(versionKey);
@@ -100,10 +100,10 @@ export class CatalogComponent implements OnInit {
             });
 
             let sorted_version_labels = versionKeys.sort(this.utils.versionCompare);
-  
+
             latest = sorted_version_labels[0];
             latestDetails = versions[latest];
-  
+
             let catalogItem = {
               name: item.name,
               catalog: {
@@ -122,7 +122,7 @@ export class CatalogComponent implements OnInit {
             this.catalogApps.push(catalogItem);
           }
         });
-        
+
       });
       this.refreshToolbarMenus();
       this.filerApps();
@@ -134,7 +134,7 @@ export class CatalogComponent implements OnInit {
       switch (evt.data.settings.value) {
         case 'select_pool':
           return this.selectPool();
-        
+
         case 'advanced_settings':
           this.modalService.open('slide-in-form', this.kubernetesForm);
           break;
@@ -152,7 +152,7 @@ export class CatalogComponent implements OnInit {
       this.syncAll();
     } else if (evt.data.event_control == 'catalogs') {
       this.filteredCatalogNames = [];
-      evt.data.catalogs.forEach(catalog => {
+      evt.data.catalogs.forEach((catalog: any) => {
         if (catalog) {
           this.filteredCatalogNames.push(catalog.value);
         }
@@ -185,15 +185,15 @@ export class CatalogComponent implements OnInit {
   selectPool() {
     this.appService.getPoolList().subscribe(res => {
       if (res.length === 0) {
-        this.dialogService.confirm(helptext.noPool.title, helptext.noPool.message, true, 
-          helptext.noPool.action).subscribe(res => {
+        this.dialogService.confirm(helptext.noPool.title, helptext.noPool.message, true,
+          helptext.noPool.action).subscribe((res: any) => {
             if (res) {
               this.router.navigate(['storage', 'manager']);
             }
           })
       } else {
         this.poolList.length = 0;
-        res.forEach(pool => {
+        res.forEach((pool: any) => {
           this.poolList.push({label: pool.name, value: pool.name})
         })
         this.dialogService.dialogForm(this.choosePool, true);
@@ -206,7 +206,7 @@ export class CatalogComponent implements OnInit {
       helptext.choosePool.jobTitle) }, disableClose: true});
     this.dialogRef.componentInstance.setCall('kubernetes.update', [{pool: null}]);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((res) => {
+    this.dialogRef.componentInstance.success.subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.selectedPool = null;
       this.refreshToolbarMenus();
@@ -216,7 +216,7 @@ export class CatalogComponent implements OnInit {
       })
     });
 
-    this.dialogRef.componentInstance.failure.subscribe((err) => {
+    this.dialogRef.componentInstance.failure.subscribe((err: any) => {
       new EntityUtils().handleWSError(self, err, this.dialogService);
     })
   }
@@ -228,16 +228,16 @@ export class CatalogComponent implements OnInit {
       helptext.choosePool.jobTitle) }, disableClose: true});
     self.dialogRef.componentInstance.setCall('kubernetes.update', [{pool: pool}]);
     self.dialogRef.componentInstance.submit();
-    self.dialogRef.componentInstance.success.subscribe((res) => {
+    self.dialogRef.componentInstance.success.subscribe((res: any) => {
       self.selectedPool = pool;
       self.refreshToolbarMenus();
       self.dialogService.closeAllDialogs();
-      self.translate.get(helptext.choosePool.message).subscribe(msg => {
+      self.translate.get(helptext.choosePool.message).subscribe((msg: string) => {
         self.dialogService.Info(helptext.choosePool.success, msg + res.result.pool,
           '500px', 'info', true);
       })
     });
-    self.dialogRef.componentInstance.failure.subscribe((err) => {
+    self.dialogRef.componentInstance.failure.subscribe((err: string) => {
       new EntityUtils().handleWSError(self, err, self.dialogService);
     })
   }
@@ -290,5 +290,5 @@ export class CatalogComponent implements OnInit {
       this.loadCatalogs();
     });
   }
-  
+
 }

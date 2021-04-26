@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 
 import { T } from '../../../../translate-marker';
 import * as _ from 'lodash';
@@ -18,7 +19,7 @@ import { EntityUtils } from '../../../common/entity/utils';
 export class DiskListComponent {
   public title = T("Disks");
   protected queryCall = "disk.query";
-  protected queryCallOption = [[], {"extra":{"pools": true}}];
+  protected queryCallOption = [[] as any, {"extra":{"pools": true}}];
   noAdd = true;
 
   public columns: Array<any> = [
@@ -61,7 +62,7 @@ export class DiskListComponent {
     icon: "edit",
     enable: true,
     ttpos: "above",
-    onClick: (selected) => {
+    onClick: (selected: any) => {
       if (selected.length > 1) {
         for (let i of selected) {
           this.diskIds.push(i.identifier);
@@ -111,7 +112,7 @@ export class DiskListComponent {
     icon: 'play_arrow',
     enable: true,
     ttpos: "above",
-    onClick: (selected) => {
+    onClick: (selected: any) => {
       this.manualTest(selected);
     }
   }]
@@ -125,13 +126,13 @@ export class DiskListComponent {
     this.ws.call('smart.test.disk_choices').subscribe(res => this.SMARTdiskChoices = res, err => new EntityUtils().handleWSError(this, err))
   }
 
-  getActions(parentRow) {
+  getActions(parentRow: any) {
     const actions = [{
       id: parentRow.name,
       icon: 'edit',
       name: 'edit',
       label: T("Edit"),
-      onClick: (row) => {
+      onClick: (row: any) => {
         this.router.navigate(new Array('/').concat([
           "storage", "disks", "edit", row.identifier
         ]));
@@ -141,7 +142,7 @@ export class DiskListComponent {
       icon: 'format_list_bulleted',
       name: 'manual_test',
       label: T("Manual Test"),
-      onClick: (row) => {
+      onClick: (row: any) => {
         this.manualTest(row);
       }
     }];
@@ -203,20 +204,20 @@ export class DiskListComponent {
               }
             ],
             saveButtonText: helptext.diskWipeDialogForm.saveButtonText,
-            afterInit: function (entityDialogForm) {
+            afterInit: function (entityDialogForm: EntityDialogComponent) {
               entityDialogForm.formGroup.controls['disk_name'].setValue(row.name);
             },
-            customSubmit: function (entityDialogForm) {
+            customSubmit: function (entityDialogForm: EntityDialogComponent) {
               self.dialogService.confirm(
                 helptext.diskWipeDialogForm.title + row.name,
-                helptext.diskWipeDialogForm.confirmContent).subscribe((res) => {
+                helptext.diskWipeDialogForm.confirmContent).subscribe((res: boolean) => {
                   if (res) {
                     const dialogRef = self.dialog.open(EntityJobComponent, { data: { "title": helptext.diskWipeDialogForm.title + row.name } });
                     dialogRef.componentInstance.setDescription(helptext.diskWipeDialogForm.startDescription);
                     dialogRef.componentInstance.setCall('disk.wipe', [entityDialogForm.formValue.disk_name, entityDialogForm.formValue.wipe_method]);
                     dialogRef.componentInstance.submit();
 
-                    dialogRef.componentInstance.success.subscribe((wipeRes) => {
+                    dialogRef.componentInstance.success.subscribe(() => {
                       if (dialogRef.componentInstance) {
                         dialogRef.close(true);
                         self.dialogService.generalDialog({
@@ -226,7 +227,7 @@ export class DiskListComponent {
                         });
                       }
                     });
-                    dialogRef.componentInstance.failure.subscribe((wipeRes) => {
+                    dialogRef.componentInstance.failure.subscribe((wipeRes: any) => {
                       dialogRef.componentInstance.setDescription(wipeRes.error);
                     });
                     entityDialogForm.dialogRef.close(true);
@@ -251,7 +252,7 @@ export class DiskListComponent {
     }
   }
 
-  afterInit(entityList) {
+  afterInit(entityList: any) {
     this.ws.subscribe('disk.query').subscribe((res) => {
       if (res) {
         entityList.needTableResize = false;
@@ -260,12 +261,12 @@ export class DiskListComponent {
     })
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any[]) {
     data.forEach(i => i.pool = i.pool ? i.pool : 'N/A');
     return data;
   }
 
-  manualTest(selected) {
+  manualTest(selected: any) {
     const parent = this;
     const disks = Array.isArray(selected) ? selected.map(item => item.name) : [selected.name];
     const disksIdentifier = Array.isArray(selected) ? selected.map(item => {
@@ -307,9 +308,9 @@ export class DiskListComponent {
         }
       ],
       saveButtonText: helptext.manual_test_dialog.saveButtonText,
-      customSubmit: function (entityDialog) {
+      customSubmit: function (entityDialog: EntityDialogComponent) {
         disksIdentifier.forEach(item => {
-          item['type'] = entityDialog.formValue.type;
+          (item as any)['type'] = entityDialog.formValue.type;
         });
 
         parent.ws.call('smart.test.manual_test', [disksIdentifier]).subscribe(
@@ -326,7 +327,7 @@ export class DiskListComponent {
     this.dialogService.dialogForm(conf);
   }
 
-  generateManualTestSummary(res) {
+  generateManualTestSummary(res: any) {
     let success_note = '<h4>Expected Finished Time:</h4>';
     let hasSuccessNote = false;
     let fail_note = '<h4>Errors:</h4>';

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 
 import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import * as cronParser from 'cron-parser';
@@ -94,7 +95,7 @@ export class CloudsyncListComponent implements InputTableConf {
     this.entityList = entityList;
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any[]) {
     return data.map((task) => {
       task.minute = task.schedule['minute'];
       task.hour = task.schedule['hour'];
@@ -123,7 +124,7 @@ export class CloudsyncListComponent implements InputTableConf {
     });
   }
 
-  getActions(parentrow) {
+  getActions(parentrow: any) {
     return [
       {
         actionName: parentrow.description,
@@ -131,12 +132,12 @@ export class CloudsyncListComponent implements InputTableConf {
         label: T('Run Now'),
         icon: 'play_arrow',
         name: 'run',
-        onClick: (row) => {
-          this.dialog.confirm(T('Run Now'), T('Run this cloud sync now?'), true).subscribe((res) => {
+        onClick: (row: any) => {
+          this.dialog.confirm(T('Run Now'), T('Run this cloud sync now?'), true).subscribe((res: boolean) => {
             if (res) {
               row.state = 'RUNNING';
               this.ws.call('cloudsync.sync', [row.id]).subscribe(
-                (res) => {
+                (res: any) => {
                   this.dialog.Info(
                     T('Task Started'),
                     T('Cloud sync <i>') + row.description + T('</i> has started.'),
@@ -162,8 +163,8 @@ export class CloudsyncListComponent implements InputTableConf {
         id: 'stop',
         label: T('Stop'),
         icon: 'stop',
-        onClick: (row) => {
-          this.dialog.confirm(T('Stop'), T('Stop this cloud sync?'), true).subscribe((res) => {
+        onClick: (row: any) => {
+          this.dialog.confirm(T('Stop'), T('Stop this cloud sync?'), true).subscribe((res: any) => {
             if (res) {
               this.ws.call('cloudsync.abort', [row.id]).subscribe(
                 (wsRes) => {
@@ -188,8 +189,8 @@ export class CloudsyncListComponent implements InputTableConf {
         id: 'dryrun',
         label: helptext.action_button_dry_run,
         icon: 'sync',
-        onClick: (row) => {
-          this.dialog.confirm(helptext.dry_run_title, helptext.dry_run_dialog, true).subscribe((dialog_res) => {
+        onClick: (row: any) => {
+          this.dialog.confirm(helptext.dry_run_title, helptext.dry_run_dialog, true).subscribe((dialog_res: any) => {
             if (dialog_res) {
               this.ws.call('cloudsync.sync', [row.id, { dry_run: true }]).subscribe(
                 (res) => {
@@ -218,7 +219,7 @@ export class CloudsyncListComponent implements InputTableConf {
         id: 'restore',
         label: T('Restore'),
         icon: 'restore',
-        onClick: (row) => {
+        onClick: (row: any) => {
           const parent = this;
           const conf: DialogFormConfiguration = {
             title: T('Restore Cloud Sync Task'),
@@ -262,7 +263,7 @@ export class CloudsyncListComponent implements InputTableConf {
               },
             ],
             saveButtonText: 'Restore',
-            afterInit: function (entityDialog) {
+            afterInit: function (entityDialog: EntityDialogComponent) {
               entityDialog.formGroup.get('transfer_mode').valueChanges.subscribe((mode) => {
                 const paragraph = conf.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
                 switch (mode) {
@@ -276,7 +277,7 @@ export class CloudsyncListComponent implements InputTableConf {
                 }
               });
             },
-            customSubmit: function (entityDialog) {
+            customSubmit: function (entityDialog: EntityDialogComponent) {
               parent.entityList.loader.open();
               parent.ws.call('cloudsync.restore', [row.id, entityDialog.formValue]).subscribe(
                 (res) => {
@@ -300,7 +301,7 @@ export class CloudsyncListComponent implements InputTableConf {
         actionName: parentrow.description,
         icon: 'edit',
         label: T('Edit'),
-        onClick: (row) => {
+        onClick: (row: any) => {
           this.doEdit(row.id);
         },
       },
@@ -309,7 +310,7 @@ export class CloudsyncListComponent implements InputTableConf {
         id: 'delete',
         label: T('Delete'),
         icon: 'delete',
-        onClick: (row) => {
+        onClick: (row: any) => {
           this.entityList.doDelete(row);
         },
       },
@@ -325,11 +326,11 @@ export class CloudsyncListComponent implements InputTableConf {
     return true;
   }
 
-  onButtonClick(row) {
+  onButtonClick(row: any) {
     this.stateButton(row);
   }
 
-  stateButton(row) {
+  stateButton(row: any) {
     if (row.job) {
       if (row.state.state === 'RUNNING') {
         this.entityList.runningStateButton(row.job.id);

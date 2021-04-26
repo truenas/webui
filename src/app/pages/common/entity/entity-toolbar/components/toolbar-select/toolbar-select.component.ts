@@ -1,5 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {FormGroup} from '@angular/forms';
+import { MatSelectChange } from '@angular/material/select/select';
 import { TranslateService } from '@ngx-translate/core';
 import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
 
@@ -37,7 +38,7 @@ export class ToolbarSelectComponent extends iXAbstractObject {
     super();
   }
 
-  onChange(event){
+  onChange(event: MatSelectChange){
     this.config.value = event.value;
     this.controller.next({name: this.config.name, value: this.config.value});
   }

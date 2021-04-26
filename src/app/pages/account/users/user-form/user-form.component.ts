@@ -24,7 +24,7 @@ export class UserFormComponent {
   protected isEntity  = true;
   protected isNew: boolean;
   public entityForm: any;
-  protected namesInUse = [];
+  protected namesInUse: string[] = [];
   private homeSharePath: string;
   protected columnsOnForm = 2;
   public title: string;
@@ -298,8 +298,8 @@ export class UserFormComponent {
   private groups: any;
   private password_disabled: any;
 
-  constructor(protected router: Router, 
-              protected ws: WebSocketService, 
+  constructor(protected router: Router,
+              protected ws: WebSocketService,
               protected storageService: StorageService,
               public loader: AppLoaderService,
               private userService: UserService,
@@ -308,7 +308,7 @@ export class UserFormComponent {
               ) {
       this.ws.call('user.query').subscribe(
         (res)=>{
-          this.namesInUse.push(...res.map(user => user.username));
+          this.namesInUse.push(...res.map((user: any) => user.username));
         }
       );
     };
@@ -325,7 +325,7 @@ export class UserFormComponent {
         .showConfig("password_conf_edit");
       entityForm.setDisabled('password', true, true);
       entityForm.setDisabled('password_conf', true, true);
-      this.password_disabled.valueChanges.subscribe((password_disabled)=>{
+      this.password_disabled.valueChanges.subscribe((password_disabled: boolean)=>{
         if (!password_disabled) {
           entityForm.formGroup.controls['sudo'].setValue(false);
           entityForm.formGroup.controls['locked'].setValue(false);
@@ -342,7 +342,7 @@ export class UserFormComponent {
       this.fieldSets
         .showConfig("password")
         .showConfig("password_conf");
-      this.password_disabled.valueChanges.subscribe((password_disabled)=>{
+      this.password_disabled.valueChanges.subscribe((password_disabled: boolean)=>{
         if (!password_disabled) {
           entityForm.formGroup.controls['sudo'].setValue(false);
           entityForm.formGroup.controls['locked'].setValue(false);
@@ -361,7 +361,7 @@ export class UserFormComponent {
             this.homeSharePath = res[0].path;
             this.entityForm.formGroup.controls['home'].setValue(this.homeSharePath);
             // ...then add on /<username>
-            this.entityForm.formGroup.controls['username'].valueChanges.subscribe(value => {
+            this.entityForm.formGroup.controls['username'].valueChanges.subscribe((value: string) => {
               this.entityForm.formGroup.controls['home'].setValue(`${this.homeSharePath}/${value}`);
             })
           }
@@ -386,7 +386,7 @@ export class UserFormComponent {
       for (let i = 0; i < res.length; i++) {
         this.group.options.push({ label : res[i].group, value : res[i].id });
         this.groups.options.push({label : res[i].group, value : res[i].id})
-      }  
+      }
     });
 
     /* list users */
@@ -402,7 +402,7 @@ export class UserFormComponent {
 
       if (!entityForm.isNew) {
         entityForm.setDisabled('uid', true);
-        entityForm.formGroup.controls['username'].setValue(res[0].username);   
+        entityForm.formGroup.controls['username'].setValue(res[0].username);
         // Be sure namesInUse is loaded, edit it, set username again to force validation
         setTimeout(() => {
           this.namesInUse.splice(this.namesInUse.indexOf(res[0].username), 1);
@@ -463,7 +463,7 @@ export class UserFormComponent {
 
   }
 
-  clean_uid(value) {
+  clean_uid(value: any) {
     delete value['password_conf'];
     if (value['uid'] === null) {
       delete value['uid'];
@@ -504,7 +504,7 @@ export class UserFormComponent {
     delete entityForm['password_conf']
     return this.ws.call('user.update', [this.pk, entityForm]);
   }
-  blurEvent(parent){
+  blurEvent(parent: any){
     if(parent.entityForm && parent.entityForm.isNew) {
       let username: string
       const fullname = parent.entityForm.formGroup.controls.full_name.value.split(/[\s,]+/);

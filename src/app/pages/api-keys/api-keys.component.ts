@@ -22,8 +22,8 @@ export class ApiKeysComponent {
     public addCall = "api_key.create";
     public editCall = "api_key.update";
 
-    public currItem;
-    public entityList;
+    public currItem: any;
+    public entityList: any;
 
     public columns: Array<any> = [
         { name: helptext.col_name, prop: 'name', always_display: true },
@@ -57,7 +57,7 @@ export class ApiKeysComponent {
         method_ws: this.addCall,
         saveButtonText: helptext.formDialog.add_button,
         customSubmit: this.doSubmit,
-        afterInit: function (entityFrom) {
+        afterInit: function (entityFrom: any) {
             const disableCheckbox = this.parent.currItem ? false : true;
             entityFrom.setDisabled('reset', disableCheckbox, disableCheckbox);
             if (this.parent.currItem) {
@@ -97,46 +97,46 @@ export class ApiKeysComponent {
         private clipboard: Clipboard,
         private localeService: LocaleService) { }
 
-    afterInit(entityList) {
+    afterInit(entityList: any) {
         this.entityList = entityList;
     }
-    resourceTransformIncomingRestData(data) {
+    resourceTransformIncomingRestData(data: any[]) {
         return data.map(item => {
             item['created_time'] = this.localeService.formatDateTime(item.created_at.$date);;
             return item;
         });
     }
 
-    doSubmit(entityDialogForm) {
+    doSubmit(entityDialogForm: any) {
         const that = entityDialogForm.parent;
         if (that.currItem) {
             that.ws.call(that.editCall, [that.currItem.id, entityDialogForm.formValue]).subscribe(
-                (res) => {
+                (res: any) => {
                     entityDialogForm.dialogRef.close(true);
                     if (res.key) {
                         that.displayKey(res.key);
                     }
                     that.entityList.getData();
                 },
-                (err) => {
+                (err: any) => {
                     new EntityUtils().handleWSError(that, err, that.apikeysFormConf.fieldConfig);
                 }
             )
         } else {
             that.ws.call(that.addCall, [entityDialogForm.formValue]).subscribe(
-                (res) => {
+                (res: any) => {
                     entityDialogForm.dialogRef.close(true);
                     that.displayKey(res.key);
                     that.entityList.getData();
                 },
-                (err) => {
+                (err: any) => {
                     new EntityUtils().handleWSError(this, err, that.dialogService, that.apikeysFormConf.fieldConfig);
                 }
             )
         }
     }
 
-    displayKey(key) {
+    displayKey(key: string) {
         const self = this;
         let dialogRef: MatDialogRef<ConfirmDialog>;
         dialogRef = this.dialog.open(ConfirmDialog, { disableClose: true });
@@ -152,13 +152,13 @@ export class ApiKeysComponent {
             self.clipboard.copy(key);
         }
     }
-    getActions(row) {
+    getActions() {
         return [{
             name: helptext.action_edit,
             id: "edit",
             icon: 'edit',
             label: "Edit",
-            onClick: (rowinner) => {
+            onClick: (rowinner: any) => {
                 this.apikeysFormConf.title = helptext.formDialog.edit_title;
                 this.apikeysFormConf.saveButtonText = helptext.formDialog.edit_button;
                 this.apikeysFormConf.method_ws = this.editCall;
@@ -170,7 +170,7 @@ export class ApiKeysComponent {
             id: "delete",
             icon: 'delete',
             label: "Delete",
-            onClick: (rowinner) => {
+            onClick: (rowinner: any) => {
                 this.entityList.doDelete(rowinner);
             },
         }];

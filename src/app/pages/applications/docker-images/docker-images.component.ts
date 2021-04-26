@@ -92,7 +92,7 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
     this.entityList = entityList;
   }
 
-  getActions(row) {
+  getActions(row: any) {
     const actions = [];
     actions.push({
       id: row.id,
@@ -100,7 +100,7 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
       label : helptext.dockerImages.menu.update,
       name: 'update',
       disabled: !row.update_available,
-      onClick : (row) => {
+      onClick : (row: any) => {
         this.onClickUpdateImage(row);
       }
     }, {
@@ -108,7 +108,7 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
       icon: 'delete',
       label : helptext.dockerImages.menu.delete,
       name: 'delete',
-      onClick : (row) => {
+      onClick : (row: any) => {
         this.entityList.doDelete(row);
       }
     });
@@ -116,8 +116,8 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
     return actions;
   }
 
-  resourceTransformIncomingRestData(d) {
-    const data = [];
+  resourceTransformIncomingRestData(d: any[]) {
+    const data: any[] = [];
     d.forEach(row => {
       if (!row.system_image) {
         row.state = row.update_available?helptext.dockerImages.updateAvailable:'';
@@ -141,9 +141,9 @@ export class DockerImagesComponent implements OnInit, OnDestroy {
     }
   }
 
-  onClickUpdateImage(row) {
+  onClickUpdateImage(row: any) {
     if (row.repo_tags.length > 0) {
-      this.chooseTag.fieldConfig[0].options = row.repo_tags.map(item => {
+      this.chooseTag.fieldConfig[0].options = row.repo_tags.map((item: any) => {
         return {
           label: item,
           value: item,

@@ -60,11 +60,11 @@ export class EmailComponent implements OnDestroy {
           this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "EMAIL" }, disableClose: true });
           this.dialogRef.componentInstance.setCall('mail.send', [mailObj, value]);
           this.dialogRef.componentInstance.submit();
-          this.dialogRef.componentInstance.success.subscribe((s_res)=>{
+          this.dialogRef.componentInstance.success.subscribe(()=>{
             this.dialogRef.close(false);
             this.dialogservice.Info(T("Email"), T("Test email sent!"))
           });
-          this.dialogRef.componentInstance.failure.subscribe((e_res) => {
+          this.dialogRef.componentInstance.failure.subscribe((e_res: any) => {
             this.dialogRef.componentInstance.setDescription(e_res.error);
           });
         });
@@ -198,7 +198,7 @@ export class EmailComponent implements OnDestroy {
               encodeURIComponent(window.location.toString()), "_blank", "width=640,height=480");
             window.addEventListener("message", doAuth, false);
 
-            function doAuth(message) {
+            function doAuth(message: any) {
               if (message.data.oauth_portal) {
                 if (message.data.error) {
                   dialogService.errorReport(T('Error'), message.data.error);
@@ -230,7 +230,7 @@ export class EmailComponent implements OnDestroy {
               protected dialog: MatDialog, protected loader: AppLoaderService
             ) {}
 
-  resourceTransformIncomingRestData(data): void {
+  resourceTransformIncomingRestData(data: any): void {
     if(_.isEmpty(data.oauth)) {
       this.sendMailMethod.setValue(true);
     } else {
@@ -303,7 +303,7 @@ export class EmailComponent implements OnDestroy {
     this.smtpSubscription.unsubscribe();
   }
 
-  saveConfigSubmit(emailConfig): void {
+  saveConfigSubmit(emailConfig: any): void {
     this.loader.open();
     const is_smtp_method = this.sendMailMethod.value;
 

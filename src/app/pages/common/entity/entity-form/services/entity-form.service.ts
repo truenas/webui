@@ -86,16 +86,16 @@ export class EntityFormService {
   }
 
   getFilesystemListdirChildren(node: any, explorerType?: string, hideDirs?:any, showHiddenFiles = false ) {
-    const children = [];
-    let typeFilter;
+    const children: any[] = [];
+    let typeFilter: any;
     explorerType && explorerType === 'directory' ? typeFilter = [['type', '=', 'DIRECTORY']] : typeFilter = [];
 
-    return this.ws.call('filesystem.listdir', [node.data.name, typeFilter, 
+    return this.ws.call('filesystem.listdir', [node.data.name, typeFilter,
       {"order_by": ["name"], 'limit': 1000}] ).toPromise().then(res => {
       res = _.sortBy(res, function(o) { return o.name.toLowerCase(); });
 
       for (let i = 0; i < res.length; i++) {
-        const child = {};
+        const child: any = {};
         if(!showHiddenFiles){
           if (res[i].hasOwnProperty('name') && !res[i].name.startsWith('.')) {
             if(res[i].type === 'SYMLINK') {
@@ -141,15 +141,15 @@ export class EntityFormService {
 
     // if we ever need this we should convert to websocket
     /*return this.rest.get('storage/volume/', {}).toPromise().then(res => {
-      res.data.forEach((vol) => {           
+      res.data.forEach((vol) => {
         children.push(vol.children[0]);
       });
       return children;
     });*/
   }
 
-  getPoolDatasets(param = []) {
-    const nodes = [];
+  getPoolDatasets(param: any[] = []) {
+    const nodes: any[] = [];
     return this.ws.call('pool.filesystem_choices', param).toPromise().then((res)=> {
       for (let i = 0; i < res.length; i++) {
         const pathArr = res[i].split('/');
@@ -158,7 +158,7 @@ export class EntityFormService {
                 name: res[i],
                 subTitle: pathArr[0],
                 hasChildren: false,
-                children: [],
+                children: [] as any,
             };
             nodes.push(node);
         } else {
@@ -171,7 +171,7 @@ export class EntityFormService {
                 name: res[i],
                 subTitle: pathArr[j],
                 hasChildren: false,
-                children: [],
+                children: [] as any,
             };
             parent.children.push(node);
             parent.hasChildren = true;
@@ -181,7 +181,7 @@ export class EntityFormService {
     })
   }
 
-  clearFormError(fieldConfig) {
+  clearFormError(fieldConfig: any[]) {
     for (let f = 0; f < fieldConfig.length; f++) {
       fieldConfig[f]['errors'] = '';
       fieldConfig[f]['hasErrors'] = false;
@@ -239,7 +239,7 @@ export class EntityFormService {
 
   getHumanReadableUnit(num: number, unit: string, type: UnitType) {
     if (type === UnitType.duration) {
-      let readableUnit = unit.length > 1 ? unit : this.shortDurationUnit[unit];
+      let readableUnit = unit.length > 1 ? unit : (this.shortDurationUnit as any)[unit];
       if (num <= 1 && _.endsWith(readableUnit, 'S')) {
         readableUnit = readableUnit.substring(0, readableUnit.length - 1);
       } else if(num >1 && !_.endsWith(readableUnit, 'S')) {

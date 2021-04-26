@@ -146,7 +146,7 @@ export class FormExplorerComponent implements Field, OnInit {
     }
   }
 
-  onClick(event) {
+  onClick(event: any) {
     const selectedTreeNodes = Object.entries(event.treeModel.selectedLeafNodeIds)
      .filter(([key, value]) => {
             return (value === true);
@@ -158,7 +158,7 @@ export class FormExplorerComponent implements Field, OnInit {
     this.valueHandler(selectedTreeNodes);
   }
 
-  valueHandler(selectedTreeNodes) {
+  valueHandler(selectedTreeNodes: any) {
     let res = [];
     for (let i = 0; i < selectedTreeNodes.length; i++) {
         if (selectedTreeNodes[i] == undefined) {
@@ -181,7 +181,7 @@ export class FormExplorerComponent implements Field, OnInit {
     this.group.controls[this.config.name].setValue(res);
   }
 
-  loadNodeChildren(event) {
+  loadNodeChildren(event: any) {
     if (this.customTemplateStringOptions.useCheckbox && this.group.controls[this.config.name].value) {
       for (const item of (event.node.data.children || [])) {
         if (this.group.controls[this.config.name].value.indexOf(item.name) > -1) {
@@ -192,7 +192,7 @@ export class FormExplorerComponent implements Field, OnInit {
     }
   }
 
-  onToggle(event) {
+  onToggle(event: any) {
     if (event.isExpanded && this.customTemplateStringOptions.useCheckbox && this.group.controls[this.config.name].value) {
       for (const item of (event.node.data.children || [])) {
         if (this.group.controls[this.config.name].value.indexOf(item.name) > -1) {

@@ -12,7 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class EntityDashboardComponent implements OnInit {
 
-	public routeParts: any = [];
+	public routeParts: any[] = [];
 	protected parent: string = "";
 
 	protected freenas_exclude = ['failover', 'viewenclosure'];
@@ -32,7 +32,7 @@ export class EntityDashboardComponent implements OnInit {
 
 	ngOnInit() {
 		this.parent = this.aroute.parent.parent.routeConfig.path;
-		let routeConfigs = this.aroute.parent.routeConfig.children;
+		let routeConfigs: any = this.aroute.parent.routeConfig.children;
 		for (let i in routeConfigs) {
 			if (routeConfigs[i].path !== "" && routeConfigs[i].path.indexOf(':') < 0) {
 				if (_.find(routeConfigs[i].children, {path: 'add'})) {
@@ -44,7 +44,7 @@ export class EntityDashboardComponent implements OnInit {
 			}
 		}
 
-		let exclude = [];
+		let exclude: string[] = [];
 			if (this.productType.includes(ProductType.Scale)) {
 				exclude = exclude.concat(this.scale_exclude);
 			}
@@ -76,17 +76,17 @@ export class EntityDashboardComponent implements OnInit {
 		}
 	}
 
-	remove(element) {
+	remove(element: string) {
 		this.routeParts = _.remove(this.routeParts, function(r) {
 			return r['path'] !== element;
 		});
 	}
 
-	goList(item) {
+	goList(item: any) {
 		this.router.navigate(new Array('/').concat([this.parent, item.path]));
 	}
 
-	goAdd(item) {
+	goAdd(item: any) {
 		this.router.navigate(new Array('/').concat([this.parent, item.path, item.addPath]));
 	}
 }

@@ -10,7 +10,7 @@ import {TooltipComponent} from '../tooltip/tooltip.component';
   templateUrl : './form-colorpicker.component.html',
   styleUrls:['./form-colorpicker.component.css']
 })
-export class FormColorpickerComponent implements Field,OnInit,OnChanges{
+export class FormColorpickerComponent implements Field,OnInit{
   public config:FieldConfig;
   group: FormGroup;
   fieldShow: string;
@@ -36,11 +36,6 @@ export class FormColorpickerComponent implements Field,OnInit,OnChanges{
   }
 
   constructor(){}
-
-  ngOnChanges(changes){
-    if(changes.group){
-    }
-  }
 
   ngOnInit(){
     this.config.value = this.group.value[this.config.name];

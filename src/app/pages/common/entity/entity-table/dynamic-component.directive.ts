@@ -1,5 +1,5 @@
 import {
-  ComponentFactoryResolver,
+  ComponentFactoryResolver, ComponentRef,
   Directive,
   Input,
   OnInit,
@@ -9,9 +9,9 @@ import { config } from 'rxjs';
 
 @Directive({selector : '[dynamicComponent]'})
 export class DynamicComponentDirective implements OnInit {
-  @Input() component;
-  @Input() config;
-  @Input() parent;
+  @Input() component: any;
+  @Input() config: any;
+  @Input() parent: any;
 
   constructor(private resolver: ComponentFactoryResolver,
               private container: ViewContainerRef) {}

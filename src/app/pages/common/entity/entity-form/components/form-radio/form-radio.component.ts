@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {FormGroup} from '@angular/forms';
+import { MatRadioChange } from '@angular/material/radio/radio';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs/Subscription';
 
@@ -29,7 +30,7 @@ export class FormRadioComponent implements Field {
     this.valueChangesSubscription.unsubscribe();
   }
 
-  onChangeRadio($event) {
+  onChangeRadio($event: MatRadioChange) {
     if (this.config.onChange !== undefined && this.config.onChange != null) {
       this.config.onChange({ event: $event });
     }

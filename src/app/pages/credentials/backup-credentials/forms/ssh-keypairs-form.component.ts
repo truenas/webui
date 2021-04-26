@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { Subscription } from 'rxjs';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
@@ -105,7 +106,7 @@ export class SshKeypairsFormComponent {
     ];
 
     constructor(private aroute: ActivatedRoute, private ws: WebSocketService, private loader: AppLoaderService,
-        private dialogService: DialogService, private storage: StorageService, private modalService: ModalService) { 
+        private dialogService: DialogService, private storage: StorageService, private modalService: ModalService) {
             this.getRow = this.modalService.getRow$.subscribe(rowId => {
                 this.rowNum = rowId;
                 this.getRow.unsubscribe();
@@ -148,7 +149,7 @@ export class SshKeypairsFormComponent {
         )
     }
 
-    downloadKey(key_type) {
+    downloadKey(key_type: any) {
         const name = this.entityForm.formGroup.controls['name'].value;
         const key = this.entityForm.formGroup.controls[key_type].value;
         const filename = name + '_' + key_type + '_rsa';
@@ -156,13 +157,13 @@ export class SshKeypairsFormComponent {
         this.storage.downloadBlob(blob, filename);
     }
 
-    afterInit(entityForm) {
+    afterInit(entityForm: EntityFormComponent) {
         this.entityForm = entityForm;
         this.fieldConfig = entityForm.fieldConfig;
-        this.entityForm.formGroup.controls['private_key'].valueChanges.subscribe((res) => {
+        this.entityForm.formGroup.controls['private_key'].valueChanges.subscribe(() => {
             this.clearPreviousErrors();
         });
-        this.entityForm.formGroup.controls['public_key'].valueChanges.subscribe((res) => {
+        this.entityForm.formGroup.controls['public_key'].valueChanges.subscribe(() => {
             this.clearPreviousErrors();
         });
 
@@ -174,14 +175,14 @@ export class SshKeypairsFormComponent {
         while (elements[0]) elements[0].parentNode.removeChild(elements[0]);
     }
 
-    resourceTransformIncomingRestData(wsResponse) {
+    resourceTransformIncomingRestData(wsResponse: any) {
         for (const item in wsResponse.attributes) {
             wsResponse[item] = wsResponse.attributes[item];
         }
         return wsResponse;
     }
 
-    beforeSubmit(data) {
+    beforeSubmit(data: any) {
         if (data.remote_host_key_button || data.remote_host_key_button === '') {
             delete data.remote_host_key_button;
         }

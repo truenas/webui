@@ -31,13 +31,13 @@ import { combineLatest, forkJoin, Observable } from 'rxjs';
 export class VMWizardComponent {
 
   protected addWsCall = 'vm.create';
-  public summary = {};
+  public summary: any = {};
   isLinear = true;
   firstFormGroup: FormGroup;
   protected dialogRef: any;
   objectKeys = Object.keys;
   summary_title = T("VM Summary");
-  public namesInUse = [];
+  public namesInUse: string[] = [];
   public statSize: any;
   public displayPort: number;
   public vcpus: number = 1;
@@ -51,7 +51,7 @@ export class VMWizardComponent {
   private maxVCPUs = 16;
 
   entityWizard: any;
-  public res;
+  public res: any;
   private productType = window.localStorage.getItem('product_type') as ProductType;
 
   protected wizardConfig: Wizard[] = [
@@ -430,7 +430,7 @@ export class VMWizardComponent {
     })
   }
 
-  customNext(stepper) {
+  customNext(stepper: any) {
     stepper.next();
     this.currentStep = stepper._selectedIndex;
     if (this.currentStep === 2) {
@@ -460,7 +460,7 @@ export class VMWizardComponent {
   }
 
   afterInit(entityWizard: EntityWizardComponent) {
-    this.ws.call('vm.query').subscribe((res) => {
+    this.ws.call('vm.query').subscribe((res: any[]) => {
       res.forEach(i => this.namesInUse.push(i.name));
     })
 
@@ -499,7 +499,7 @@ export class VMWizardComponent {
       });
 
     this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
-      zvols.forEach(zvol => {
+      zvols.forEach((zvol: any) => {
         _.find(this.wizardConfig[2].fieldConfig, {name : 'hdd_path'}).options.push(
           {
             label : zvol.id, value : zvol.id
@@ -661,7 +661,7 @@ export class VMWizardComponent {
         ( < FormGroup > entityWizard.formArray.get([4]).get('iso_path')).setValue(message);
       })
       this.res = res;
-      const grub = this.bootloader.options.find(o => o.value === 'GRUB');
+      const grub = this.bootloader.options.find((option: any) => option.value === 'GRUB');
       const grubIndex = this.bootloader.options.indexOf(grub);
       if (res === 'Windows') {
         if (grub) {
@@ -755,7 +755,8 @@ export class VMWizardComponent {
       });
 
       setTimeout(() => {
-        let global_label, global_tooltip;
+        let global_label: string;
+        let global_tooltip: string;
         this.translate.get(helptext.memory_placeholder).subscribe(mem => {
           this.translate.get(helptext.global_label).subscribe(gLabel => {
             this.translate.get(helptext.global_tooltip).subscribe(gTooltip => {
@@ -783,7 +784,7 @@ export class VMWizardComponent {
       }, 2000)
 
   }
-  getRndInteger(min, max) {
+  getRndInteger(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
 
@@ -861,7 +862,7 @@ volSizeValidator(name: string) {
   }
 };
 
-blurEvent2(parent){
+blurEvent2(parent: any){
   const enteredVal = parent.entityWizard.formGroup.value.formArray[1].memory;
   const vm_memory_requested = parent.storageService.convertHumanStringToNum(enteredVal);
   if (isNaN(vm_memory_requested)) {
@@ -876,7 +877,7 @@ blurEvent2(parent){
   }
 }
 
-blurEvent3(parent){
+blurEvent3(parent: any){
   const enteredVal = parent.entityWizard.formArray.controls[2].value.volsize;
   const volsize = parent.storageService.convertHumanStringToNum(enteredVal, false, 'mgtp');
   if (volsize >= 1048576 ) {
@@ -890,10 +891,10 @@ blurEvent3(parent){
   }
 }
 
-async customSubmit(value) {
+async customSubmit(value: any) {
     let hdd;
-    const vm_payload = {}
-    const zvol_payload = {}
+    const vm_payload: any = {}
+    const zvol_payload: any = {}
 
     if(value.datastore) {
       value.datastore = value.datastore.replace('/mnt/','')

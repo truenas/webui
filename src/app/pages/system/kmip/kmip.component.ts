@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 
 import { SystemGeneralService, DialogService, WebSocketService } from '../../../services/';
+import { EntityFormComponent } from '../../common/entity/entity-form';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { helptext_system_kmip } from 'app/helptext/system/kmip';
@@ -125,7 +126,7 @@ export class KmipComponent {
     ];
 
     public showSpinner = true;
-    public kmip_enabled;
+    public kmip_enabled: boolean;
     public sync_pending = false;
 
     constructor(
@@ -171,24 +172,24 @@ export class KmipComponent {
             }
         });
     }
-    afterInit(entityForm) {
+    afterInit(entityForm: EntityFormComponent) {
         this.entityForm = entityForm;
         this.fieldConfig = entityForm.fieldConfig;
     }
 
-    customSubmit(data) {
+    customSubmit(data: any) {
         if (data['server'] === null) {
             data['server'] = '';
         }
         const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": helptext_system_kmip.jobDialog.title }, disableClose: true });
         dialogRef.componentInstance.setCall(this.editCall, [data]);
         dialogRef.componentInstance.submit();
-        dialogRef.componentInstance.success.subscribe((res) => {
+        dialogRef.componentInstance.success.subscribe(() => {
             dialogRef.close(true);
             this.entityForm.success = true;
             this.entityForm.formGroup.markAsPristine();
         });
-        dialogRef.componentInstance.failure.subscribe((err) => {
+        dialogRef.componentInstance.failure.subscribe((err: any) => {
             dialogRef.close(true);
             if (err.exc_info && err.exc_info.extra) {
                 err.extra = err.exc_info.extra;

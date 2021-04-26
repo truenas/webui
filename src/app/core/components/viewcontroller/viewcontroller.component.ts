@@ -6,19 +6,6 @@ import { ViewController } from 'app/core/classes/viewcontroller';
 import { LayoutContainer, LayoutChild } from 'app/core/classes/layouts';
 import { Subject } from 'rxjs';
 
-export const ViewControllerMetadata = {
-  template: `
-  <div 
-  [fxLayout]="layoutContainer.layout" 
-  [fxLayoutAlign]="layoutContainer.align" 
-  [fxLayoutGap]="layoutContainer.gap"
-  >
-    <display style="display:none;" #display></display>
-  </div>
-  `,
-  styles:[ ':host {display:block;}' ]
-}
-
 export interface ViewConfig {
   componentName: any,
   componentData: any;
@@ -27,13 +14,21 @@ export interface ViewConfig {
 
 @Component({
   selector: 'viewcontroller',
-  template:ViewControllerMetadata.template,
-  styles:ViewControllerMetadata.styles
+  template: `
+    <div
+    [fxLayout]="layoutContainer.layout"
+    [fxLayoutAlign]="layoutContainer.align"
+    [fxLayoutGap]="layoutContainer.gap"
+    >
+      <display style="display:none;" #display></display>
+    </div>
+  `,
+  styles:[ ':host {display:block;}' ]
 })
 export class ViewControllerComponent extends ViewController implements AfterViewInit, OnDestroy {
 
   readonly componentName = ViewControllerComponent;
-  @ViewChild('display', { static: true}) display;
+  @ViewChild('display', { static: true}) display: Display;
   protected core: CoreService;
   public controlEvents: Subject<CoreEvent> = new Subject();
 
@@ -52,21 +47,20 @@ export class ViewControllerComponent extends ViewController implements AfterView
     this.core.unregister({observerClass:this});
   }
 
-  
+
   public create(component:any, container?:string){
     if(!container){ container = 'display'}
-    let instance= this[container].create(component);
-    return instance;
+    return (this as any)[container].create(component);
   }
 
-  public addChild(instance, container?: string){
+  public addChild(instance: any, container?: string){
     if(!container){ container = 'display'}
-    this[container].addChild(instance);
+    (this as any)[container].addChild(instance);
   }
 
-  public removeChild(instance, container?: string){
+  public removeChild(instance: any, container?: string){
     if(!container){ container = 'display'}
-    this[container].removeChild(instance);
+    (this as any)[container].removeChild(instance);
   }
 
 }

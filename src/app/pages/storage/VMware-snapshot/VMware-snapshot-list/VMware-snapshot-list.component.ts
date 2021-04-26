@@ -39,14 +39,14 @@ export class VMwareSnapshotListComponent {
     return true;
   }
 
-  getActions(row) {
+  getActions(row: any) {
     let actions = [];
     actions.push({
       id: row.hostname,
       icon: 'delete',
       name: 'delete',
       label : T("Delete"),
-      onClick : (row) => {
+      onClick : (row: any) => {
         this.entityList.doDelete(row);
       }
     });
@@ -55,7 +55,7 @@ export class VMwareSnapshotListComponent {
         icon: 'edit',
         name: 'edit',
         label : T("Edit"),
-        onClick : (row) => {
+        onClick : (row: any) => {
           this._router.navigate(new Array('/').concat(
               [ "storage", "vmware-Snapshots", "edit", row.id ]));
         }

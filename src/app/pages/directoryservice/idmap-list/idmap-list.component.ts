@@ -47,7 +47,7 @@ export class IdmapListComponent {
   constructor(protected idmapService: IdmapService, protected router: Router,
     protected dialogService: DialogService) { }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any[]) {
     data.forEach((item) => {
       if (item.certificate) {
         item.cert_name = item.certificate.cert_name;
@@ -62,8 +62,8 @@ export class IdmapListComponent {
     return data;
   }
 
-  afterInit(entityList: any) { 
-    this.entityList = entityList; 
+  afterInit(entityList: any) {
+    this.entityList = entityList;
   }
 
   getAddActions() {
@@ -74,25 +74,25 @@ export class IdmapListComponent {
           if (res.enable) {
             this.router.navigate(['directoryservice', 'idmap', 'add'])
           } else {
-            this.dialogService.confirm(helptext.idmap.enable_ad_dialog.title, helptext.idmap.enable_ad_dialog.message, 
-              true, helptext.idmap.enable_ad_dialog.button).subscribe((res) => {
+            this.dialogService.confirm(helptext.idmap.enable_ad_dialog.title, helptext.idmap.enable_ad_dialog.message,
+              true, helptext.idmap.enable_ad_dialog.button).subscribe((res: boolean) => {
              if(res) {
                this.router.navigate(['directoryservice', 'activedirectory'])
              }
             })
           }
-        })      
+        })
       }
     }];
   }
 
-  getActions(row) {
+  getActions(row: any) {
     const actions = [];
     actions.push({
       id: 'edit',
       label: T('Edit'),
       disabled: row.disableEdit,
-      onClick: (row) => {
+      onClick: (row: any) => {
         this.router.navigate(new Array('').concat(['directoryservice', 'idmap', 'edit', row.id]))
       }
     });
@@ -100,11 +100,10 @@ export class IdmapListComponent {
       actions.push(      {
         id: 'delete',
         label: T('Delete'),
-        onClick: (row) => {
+        onClick: (row: any) => {
           this.entityList.doDeleteJob(row).subscribe(
-            (progress) => {
-            },
-            (err) => {
+            () => {},
+            (err: any) => {
               new EntityUtils().handleWSError(this.entityList, err);
             },
             () => {
@@ -113,7 +112,7 @@ export class IdmapListComponent {
           );
         }
       })
-    } 
+    }
     return actions;
   }
 

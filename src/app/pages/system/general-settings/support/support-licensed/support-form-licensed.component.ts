@@ -22,7 +22,7 @@ export class SupportFormLicensedComponent {
 
   public entityEdit: any;
   public screenshot: any;
-  public subs: any;
+  public subs: any[];
   public saveSubmitText = helptext.submitBtn;
   public title = helptext.ticket;
   public custActions: Array<any> = [];
@@ -194,11 +194,11 @@ export class SupportFormLicensedComponent {
         if (control.value) {
 
         let counter = 0;
-        const regex = 
+        const regex =
         /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        
+
         if (control.value) {
-          control.value.forEach((item) => {
+          control.value.forEach((item: string) => {
                 if (!item.match(regex)) {
                     counter++;
                 }
@@ -208,7 +208,7 @@ export class SupportFormLicensedComponent {
         const errors = control.value && control.value.length > 0 && counter > 0
         ? { validEmails : true }
         : null;
-    
+
         if (errors) {
           config.hasErrors = true;
           config.errors = helptext.cc.err;
@@ -222,8 +222,8 @@ export class SupportFormLicensedComponent {
     }
 };
 
-  customSubmit(entityEdit): void {
-    let payload = {};
+  customSubmit(entityEdit: any): void {
+    let payload: any = {};
     payload['name'] = entityEdit.name;
     payload['email'] = entityEdit.email;
     if (entityEdit.cc) {
@@ -239,12 +239,12 @@ export class SupportFormLicensedComponent {
     this.openDialog(payload);
   };
 
-  openDialog(payload) {
+  openDialog(payload: any) {
     const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Ticket","CloseOnClickOutside":true}});
-    let url;
+    let url: string;
     dialogRef.componentInstance.setCall('support.new_ticket', [payload]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.subscribe(res=>{
+    dialogRef.componentInstance.success.subscribe((res: any)=>{
       if (res.result) {
         url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
       }
@@ -257,10 +257,10 @@ export class SupportFormLicensedComponent {
             }));
             formData.append('file', item.file, item.apiEndPoint);
             dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
-            dialogRef.componentInstance.success.subscribe(res=>{
+            dialogRef.componentInstance.success.subscribe(()=>{
               this.resetForm();
             }),
-            dialogRef.componentInstance.failure.subscribe((res) => {
+            dialogRef.componentInstance.failure.subscribe((res: any) => {
               dialogRef.componentInstance.setDescription(res.error);
             });
         });
@@ -270,7 +270,7 @@ export class SupportFormLicensedComponent {
         this.resetForm();
       }
     })
-    dialogRef.componentInstance.failure.subscribe((res) => {
+    dialogRef.componentInstance.failure.subscribe((res: any) => {
       dialogRef.componentInstance.setDescription(res.error);
     });
   }

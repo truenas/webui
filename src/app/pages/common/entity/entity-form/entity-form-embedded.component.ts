@@ -12,9 +12,9 @@ import {
   ViewChild,
   ViewChildren,
   OnChanges,
-  AfterViewInit
+  AfterViewInit, SimpleChanges
 } from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, FormArray, Validators} from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormArray, Validators, Form } from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
@@ -34,53 +34,53 @@ import { Formconfiguration } from './entity-form.component';
 import { CoreEvent } from 'app/core/services/core.service';
 
 export interface FormConfig {
-  fieldSets?;
-  fieldSetDisplay?;
-  values?;
-  saveSubmitText?;
-  preInit?;
+  fieldSets?: any;
+  fieldSetDisplay?: any;
+  values?: any;
+  saveSubmitText?: any;
+  preInit?: any;
   target?: Subject<CoreEvent>;
-  resource_name?;
-  isEntity?;
-  addCall?;
-  editCall?;
-  queryCall?;
-  queryCallOption?;
-  isNew?;
-  pk?;
-  custom_get_query?;
+  resource_name?: any;
+  isEntity?: any;
+  addCall?: any;
+  editCall?: any;
+  queryCall?: any;
+  queryCallOption?: any;
+  isNew?: any;
+  pk?: any;
+  custom_get_query?: any;
   fieldConfig?: FieldConfig[];
-  resourceTransformIncomingRestData?;
-  route_usebaseUrl?;
-  afterInit?;
-  initial?;
-  dataHandler?;
-  dataAttributeHandler?;
-  route_cancel?;
-  route_success?;
-  route_delete?;
-  custom_edit_query?;
-  custom_add_query?;
+  resourceTransformIncomingRestData?: any;
+  route_usebaseUrl?: any;
+  afterInit?: any;
+  initial?: any;
+  dataHandler?: any;
+  dataAttributeHandler?: any;
+  route_cancel?: any;
+  route_success?: any;
+  route_delete?: any;
+  custom_edit_query?: any;
+  custom_add_query?: any;
   actionButtonsAlign?: string;
   custActions?: any[];
   customFilter?:any[];
-  
-  beforeSubmit?;
-  afterSubmit?;
-  customSubmit?;
-  clean?;
-  errorReport?;
-  hide_fileds?;
-  isBasicMode?
-  advanced_field?
-  basic_field?;
-  route_conf?;
-  preHandler?;
-  initialCount?
-  initialCount_default?;
 
-  goBack?();
-  onSuccess?(res);
+  beforeSubmit?: any;
+  afterSubmit?: any;
+  customSubmit?: any;
+  clean?: any;
+  errorReport?: any;
+  hide_fileds?: any;
+  isBasicMode?: any;
+  advanced_field?: any;
+  basic_field?: any;
+  route_conf?: any;
+  preHandler?: any;
+  initialCount?: any;
+  initialCount_default?: any;
+
+  goBack?(): any;
+  onSuccess?(res: any): any;
   multiStateSubmit?:boolean;
 }
 
@@ -103,7 +103,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   public fieldConfig: FieldConfig[];
   public hasConf = true;
   public saveSubmitText = T("Save");
-  public saveSubmitStatus:string = ""; 
+  public saveSubmitStatus:string = "";
   public actionButtonsAlign = "center";
 
   get controls() {
@@ -119,8 +119,8 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   @ContentChildren(EntityTemplateDirective)
   templates: QueryList<EntityTemplateDirective>;
 
-  @ViewChildren('component') components;
-  @ViewChild('entityForm', {static: false}) entityForm;
+  @ViewChildren('component') components: any;
+  @ViewChild('entityForm', {static: false}) entityForm: any;
 
   public busy: Subscription;
 
@@ -148,7 +148,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     if(this.conf.saveSubmitText) {
       this.saveSubmitText = this.conf.saveSubmitText;
     }
-    
+
     if (this.conf.preInit) {
       this.conf.preInit(this);
     }
@@ -217,10 +217,10 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 	if (this.conf.initial) {
 	  this.conf.initial.bind(this.conf)(this);
 	}
-    } 
+    }
   }
 
-  ngOnChanges(changes) {
+  ngOnChanges(changes: SimpleChanges) {
     if (changes.formGroup) {
       this.onFormGroupChanged();
     }
@@ -234,13 +234,13 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     }
   }
 
-  setControlChangeDetection(){ 
+  setControlChangeDetection(){
     this.formGroup.valueChanges.subscribe((evt) => {
         this.target.next({name:"FormGroupValueChanged",data:evt,sender:this.formGroup});
     });
     let fg = Object.keys(this.formGroup.controls);
     fg.forEach((control) => {
-      this.formGroup.controls[control].valueChanges.subscribe((evt) => { 
+      this.formGroup.controls[control].valueChanges.subscribe((evt) => {
       });
     });
   }
@@ -275,8 +275,8 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     let value = _.cloneDeep(this.formGroup.value);
     for (const i in value) {
       if (value.hasOwnProperty(i)) {
-	if (this.conf['clean_' + i]) {
-	  value = this.conf['clean_' + i](value, i);
+	if ((this.conf as any)['clean_' + i]) {
+	  value = (this.conf as any)['clean_' + i](value, i);
 	}
       }
     }
@@ -303,7 +303,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 
   }
 
-  after(value) {
+  after(value: any) {
     if (this.conf.afterSubmit) {
       this.conf.afterSubmit(value);
     }
@@ -405,9 +405,9 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     this.setDisabled(config.name, tobeDisabled);
   }
 
-  ngOnDestroy() { 
+  ngOnDestroy() {
     if(this.sub){
-      this.sub.unsubscribe(); 
+      this.sub.unsubscribe();
     }
   }
 

@@ -35,7 +35,7 @@ export class RestService {
   constructor(private http: HttpClient, private ws: WebSocketService) {
     const self = this;
     this.http = http;
-    this.openapi = Observable.create(function (observer) {
+    this.openapi = Observable.create(function () {
 /*      self.get('swagger.json', {}).subscribe((res) => {
         observer.next(res.data);
       });*/
@@ -95,8 +95,8 @@ export class RestService {
       catchError(this.handleError),); */
   }
 
-  buildOptions(options) {
-    let result: Object = new Object();
+  buildOptions(options: any) {
+    let result: any = new Object();
     let search: Array<String> = [];
     for (let i in options) {
       if (i == 'offset') {
