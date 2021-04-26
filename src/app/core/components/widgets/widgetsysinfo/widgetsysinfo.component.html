@@ -44,7 +44,15 @@
             <div class="content-left" [fxFlex.xs]="product_type === 'ENTERPRISE' && product_image == 'X10'? 80 : 60" fxFlex.gt-xs="60"  fxLayout="column" fxLayoutAlign="center center">
 
               <div class="product-image {{product_enclosure}} {{product_type === 'ENTERPRISE' ? 'truenas' : 'freenas'}} {{product_image == 'ix-original.svg' ? 'ix-logo' : ''}}">
-                <img *ngIf="product_image; else generic" [src]="'assets/images/' + product_image" id="{{product_model}}">
+                <img *ngIf="product_image; else generic" 
+                  id="{{product_model}}"
+                  [class.clickable]="enclosureSupport"
+                  matTooltip="View Enclosure"
+                  matTooltipPosition="above"
+                  [matTooltipDisabled]="!enclosureSupport"
+                  (click)="goToEnclosure();" 
+                  [src]="'assets/images/' + product_image">
+
                   <ng-template #generic>
                     <!--<mat-icon *ngIf="product_type === 'CORE' && !certified" class="generic" svgIcon="freenas_logomark"></mat-icon>-->
                     <mat-icon *ngIf="retroLogo == 1 && !isPassive" class="generic" svgIcon="freenas_logomark"></mat-icon>
