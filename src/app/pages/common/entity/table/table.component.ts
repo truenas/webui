@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 
 import { WebSocketService } from 'app/services';
 import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
-import { EntityJobState } from '../entity-job/entity-job.interface';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { TableService } from './table.service';
 
 

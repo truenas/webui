@@ -19,8 +19,16 @@ import { T } from 'app/translate-marker';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { ModalService } from 'app/services/modal.service';
-import { CompressionType, Direction, EncryptionKeyFormat, LifetimeUnit, LoggingLevel, NetcatMode, ReadOnlyMode, RetentionPolicy, TransportMode } from 'app/pages/data-protection/replication/replication.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { CompressionType } from 'app/enums/compression-type.enum';
+import { Direction } from 'app/enums/direction.enum';
+import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
+import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
+import { LoggingLevel } from 'app/enums/logging-level.enum';
+import { NetcatMode } from 'app/enums/netcat-mode.enum';
+import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
+import { RetentionPolicy } from 'app/enums/retention-policy.enum';
+import { TransportMode } from 'app/enums/transport-mode.enum';
 
 @Component({
   selector: 'app-replication-form',

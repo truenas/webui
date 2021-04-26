@@ -1,23 +1,39 @@
+import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { DatePipe } from '@angular/common';
 
-import { take } from 'rxjs/operators';
-import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
+import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 
+import { CipherType } from 'app/enums/cipher-type.enum';
+import { DatasetSource } from 'app/enums/dataset-source.enum';
+import { Direction } from 'app/enums/direction.enum';
+import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
+import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
+import { NetcatMode } from 'app/enums/netcat-mode.enum';
+import { RetentionPolicy } from 'app/enums/retention-policy.enum';
+import { ScheduleMethod } from 'app/enums/schedule-method.enum';
+import { TransportMode } from 'app/enums/transport-mode.enum';
 import helptext from 'app/helptext/data-protection/replication/replication-wizard';
 import sshConnectionsHelptex from 'app/helptext/system/ssh-connections';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { KeychainCredentialService, ReplicationService, TaskService, AppLoaderService, DialogService, WebSocketService } from 'app/services';
-import { ModalService } from 'app/services/modal.service';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import {
+  AppLoaderService,
+  DialogService,
+  KeychainCredentialService,
+  ReplicationService,
+  TaskService,
+  WebSocketService,
+} from 'app/services';
+import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
-import { NetcatMode, CipherType, Direction, EncryptionKeyFormat, LifetimeUnit, ReadOnlyMode, ReplicationTask, RetentionPolicy, ScheduleMethod, TransportMode, DatasetSource } from 'app/pages/data-protection/replication/replication.interface';
 
 @Component({
     selector: 'app-replication-wizard',

@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { DialogService, StorageService, WebSocketService } from '../../../../services';
-import { T } from '../../../../translate-marker';
+import { DialogService, StorageService, WebSocketService } from 'app/services';
+import { TaskService } from 'app/services/task.service';
+import { T } from 'app/translate-marker';
 import { ModalService } from 'app/services/modal.service';
-import { TaskService } from '../../../../services/task.service';
-import { SnapshotFormComponent } from '../snapshot-form/snapshot-form.component';
-import { EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.interface';
+import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapshot-form/snapshot-form.component';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Component({
   selector: 'app-snapshot-task-list',

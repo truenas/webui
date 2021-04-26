@@ -8,7 +8,7 @@ import { DialogService } from './dialog.service';
 import { StorageService } from './storage.service';
 import { T } from '../translate-marker';
 import globalHelptext from '../helptext/global-helptext';
-import { EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.interface';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Injectable()
 export class JobService {

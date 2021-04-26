@@ -6,7 +6,7 @@ import {Observable, Subject} from 'rxjs';
 
 import {environment} from '../../environments/environment';
 import { filter, map } from 'rxjs/operators';
-import { EntityJobState } from 'app/pages/common/entity/entity-job/entity-job.interface';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Injectable()
 export class WebSocketService {

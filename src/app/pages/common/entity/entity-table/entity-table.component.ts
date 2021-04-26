@@ -21,7 +21,7 @@ import { WebSocketService } from '../../../../services/ws.service';
 import { ModalService } from '../../../../services/modal.service';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../utils';
-import { EntityJobState } from '../entity-job/entity-job.interface';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { EntityTableService } from './entity-table.service';
 import { EntityTableRowDetailsComponent } from './entity-table-row-details/entity-table-row-details.component';
 import { EntityTableAddActionsComponent } from './entity-table-add-actions.component';
