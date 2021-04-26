@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
+import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
 import { WebSocketService, DialogService, TaskService, JobService, UserService } from 'app/services';
@@ -13,21 +14,23 @@ import { RsyncFormComponent } from 'app/pages/data-protection/rsync/rsync-form/r
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityJob } from 'app/interfaces/entity-job.interface';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 
 @Component({
   selector: 'app-rsync-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
   providers: [TaskService, JobService, UserService, EntityFormService],
 })
-export class RsyncListComponent {
+export class RsyncListComponent implements InputTableConf, OnDestroy {
   public title = T('Rsync Tasks');
-  protected queryCall = 'rsynctask.query';
-  protected wsDelete = 'rsynctask.delete';
-  protected route_add: string[] = ['tasks', 'rsync', 'add'];
-  protected route_add_tooltip = 'Add Rsync Task';
-  protected route_edit: string[] = ['tasks', 'rsync', 'edit'];
-  protected entityList: any;
-  protected asyncView = true;
+  public queryCall = 'rsynctask.query';
+  public wsDelete = 'rsynctask.delete';
+  public route_add: string[] = ['tasks', 'rsync', 'add'];
+  public route_add_tooltip = 'Add Rsync Task';
+  public route_edit: string[] = ['tasks', 'rsync', 'edit'];
+  public entityList: EntityTableComponent;
+  public asyncView = true;
 
   public columns: Array<any> = [
     { name: T('Path'), prop: 'path', always_display: true },
@@ -60,6 +63,7 @@ export class RsyncListComponent {
       key_props: ['remotehost', 'remotemodule'],
     },
   };
+  private onModalClose: Subscription;
 
   constructor(
     protected router: Router,
@@ -74,8 +78,11 @@ export class RsyncListComponent {
     protected entityFormService: EntityFormService,
   ) {}
 
-  afterInit(entityList: any) {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
+    this.onModalClose = this.modalService.onClose$.subscribe(() => {
+      this.entityList.getData();
+    });
   }
 
   getActions(row) {
@@ -182,5 +189,9 @@ export class RsyncListComponent {
 
   doEdit(id: number) {
     this.doAdd(id);
+  }
+
+  ngOnDestroy(): void {
+    this.onModalClose?.unsubscribe();
   }
 }

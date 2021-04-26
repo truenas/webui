@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
@@ -26,6 +26,8 @@ import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityJob } from 'app/interfaces/entity-job.interface';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { Subscription } from 'rxjs';
+import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 
 @Component({
   selector: 'app-replication-list',
@@ -40,15 +42,15 @@ import { EntityJobState } from 'app/enums/entity-job-state.enum';
     DatePipe,
   ],
 })
-export class ReplicationListComponent {
+export class ReplicationListComponent implements InputTableConf, OnDestroy {
   public title = T('Replication Tasks');
-  protected queryCall = 'replication.query';
-  protected wsDelete = 'replication.delete';
-  protected route_add: string[] = ['tasks', 'replication', 'wizard'];
-  protected route_edit: string[] = ['tasks', 'replication', 'edit'];
-  protected route_success: string[] = ['tasks', 'replication'];
+  public queryCall = 'replication.query';
+  public wsDelete = 'replication.delete';
+  public route_add: string[] = ['tasks', 'replication', 'wizard'];
+  public route_edit: string[] = ['tasks', 'replication', 'edit'];
+  public route_success: string[] = ['tasks', 'replication'];
   public entityList: EntityTableComponent;
-  protected asyncView = true;
+  public asyncView = true;
 
   public columns: Array<any> = [
     { name: T('Name'), prop: 'name', always_display: true },
@@ -72,6 +74,7 @@ export class ReplicationListComponent {
       key_props: ['name'],
     },
   };
+  private onModalClose: Subscription;
 
   constructor(
     private ws: WebSocketService,
@@ -90,6 +93,9 @@ export class ReplicationListComponent {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
+    this.onModalClose = this.modalService.onClose$.subscribe(() => {
+      this.entityList.getData();
+    });
   }
 
   resourceTransformIncomingRestData(tasks: any[]): ReplicationTask[] {
@@ -263,5 +269,9 @@ export class ReplicationListComponent {
       ),
       id,
     );
+  }
+
+  ngOnDestroy(): void {
+    this.onModalClose?.unsubscribe();
   }
 }

@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { Component, OnDestroy } from '@angular/core';
 
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, StorageService, WebSocketService } from 'app/services';
 import { TaskService } from 'app/services/task.service';
@@ -7,19 +9,21 @@ import { T } from 'app/translate-marker';
 import { ModalService } from 'app/services/modal.service';
 import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapshot-form/snapshot-form.component';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 
 @Component({
   selector: 'app-snapshot-task-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
   providers: [TaskService, StorageService],
 })
-export class SnapshotListComponent {
+export class SnapshotListComponent implements InputTableConf, OnDestroy {
   public title = T('Periodic Snapshot Tasks');
-  protected queryCall = 'pool.snapshottask.query';
-  protected wsDelete = 'pool.snapshottask.delete';
-  protected route_add: string[] = ['tasks', 'snapshot', 'add'];
-  protected route_add_tooltip = 'Add Periodic Snapshot Task';
-  protected route_edit: string[] = ['tasks', 'snapshot', 'edit'];
+  public queryCall = 'pool.snapshottask.query';
+  public wsDelete = 'pool.snapshottask.delete';
+  public route_add: string[] = ['tasks', 'snapshot', 'add'];
+  public route_add_tooltip = 'Add Periodic Snapshot Task';
+  public route_edit: string[] = ['tasks', 'snapshot', 'edit'];
+  public entityList: EntityTableComponent;
   public asyncView = true;
 
   public columns: Array<any> = [
@@ -41,6 +45,7 @@ export class SnapshotListComponent {
       key_props: ['dataset', 'naming_schema', 'keepfor'],
     },
   };
+  private onModalClose: Subscription;
 
   constructor(
     private dialogService: DialogService,
@@ -50,6 +55,13 @@ export class SnapshotListComponent {
     private storageService: StorageService,
     private dialog: DialogService,
   ) {}
+
+  afterInit(entityList: EntityTableComponent): void {
+    this.entityList = entityList;
+    this.onModalClose = this.modalService.onClose$.subscribe(() => {
+      this.entityList.getData();
+    })
+  }
 
   dataHandler(table: any) {
     for (let i = 0; i < table.rows.length; i++) {
@@ -92,5 +104,9 @@ export class SnapshotListComponent {
 
   doEdit(id: number) {
     this.doAdd(id);
+  }
+
+  ngOnDestroy(): void {
+    this.onModalClose?.unsubscribe();
   }
 }

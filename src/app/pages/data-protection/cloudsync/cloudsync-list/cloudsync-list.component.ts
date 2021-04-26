@@ -1,12 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
+import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
 
-import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableComponent, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import {
   AppLoaderService,
   CloudCredentialService,
@@ -30,14 +31,14 @@ import { EntityJobState } from 'app/enums/entity-job-state.enum';
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
   providers: [JobService, TaskService, CloudCredentialService],
 })
-export class CloudsyncListComponent implements InputTableConf {
+export class CloudsyncListComponent implements InputTableConf, OnDestroy {
   public title = T('Cloud Sync Tasks');
   public queryCall = 'cloudsync.query';
   public route_add: string[] = ['tasks', 'cloudsync', 'add'];
   public route_add_tooltip = 'Add Cloud Sync Task';
   public route_edit: string[] = ['tasks', 'cloudsync', 'edit'];
   public wsDelete = 'cloudsync.delete';
-  protected entityList: any;
+  public entityList: EntityTableComponent;
   public asyncView = true;
 
   public columns: Array<any> = [
@@ -73,6 +74,7 @@ export class CloudsyncListComponent implements InputTableConf {
       key_props: ['description'],
     },
   };
+  private onModalClose: Subscription;
 
   constructor(
     protected router: Router,
@@ -87,8 +89,11 @@ export class CloudsyncListComponent implements InputTableConf {
     protected loader: AppLoaderService,
   ) {}
 
-  afterInit(entityList: any) {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
+    this.onModalClose = this.modalService.onClose$.subscribe(() => {
+      this.entityList.getData();
+    })
   }
 
   resourceTransformIncomingRestData(data) {
@@ -275,16 +280,14 @@ export class CloudsyncListComponent implements InputTableConf {
               });
             },
             customSubmit: function (entityDialog) {
-              parent.entityList.loader.open();
+              parent.loader.open();
               parent.ws.call('cloudsync.restore', [row.id, entityDialog.formValue]).subscribe(
                 (res) => {
                   entityDialog.dialogRef.close(true);
-                  parent.entityList.loaderOpen = true;
-                  parent.entityList.needRefreshTable = true;
                   parent.entityList.getData();
                 },
                 (err) => {
-                  parent.entityList.loader.close(true);
+                  parent.loader.close();
                   new EntityUtils().handleWSError(entityDialog, err, parent.dialog);
                 },
               );
@@ -359,5 +362,9 @@ export class CloudsyncListComponent implements InputTableConf {
 
   doEdit(id: number) {
     this.doAdd(id);
+  }
+
+  ngOnDestroy(): void {
+    this.onModalClose?.unsubscribe();
   }
 }
