@@ -1,0 +1,9 @@
+<div id="{{config.name}}" class="dynamic-field mat-dict" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
+  <ng-container *ngFor="let field of config.templateListField; let ii = index" >
+    <div *ngIf="!field.isHidden" fxFlex="calc(100% - 100px)"
+      [ngClass]="{'form-inline': field.class == 'inline', 'form-line': field.class !== 'inline'}"
+      fxFlex.gt-xs="calc({{field.width}} - 100px - 32px)">
+      <div dynamicField [config]="field" [group]="dictFormGroup"></div>
+    </div>
+  </ng-container>
+</div>
