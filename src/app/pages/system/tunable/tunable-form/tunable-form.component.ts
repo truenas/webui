@@ -1,3 +1,4 @@
+import { ProductType } from '../../../../enums/product-type.enum';
 import { EntityFormComponent } from './../../../common/entity/entity-form/entity-form.component';
 import { Component } from '@angular/core';
 import { helptext_system_tunable as helptext } from 'app/helptext/system/tunable';
@@ -22,7 +23,7 @@ export class TunableFormComponent {
 
   protected isEntity: boolean = true;
 
-  protected product_type: any;
+  protected product_type: ProductType;
   protected type_fc: any;
 
   protected fieldConfig: FieldConfig[] = [];
@@ -86,8 +87,8 @@ export class TunableFormComponent {
         this.type_fc.options.push({ label: tunables[key], value: key });
       }
     });
-    this.product_type = window.localStorage.getItem('product_type');
-    if (this.product_type === 'SCALE' || this.product_type === 'SCALE_ENTERPRISE') {
+    this.product_type = window.localStorage.getItem('product_type') as ProductType;
+    if (this.product_type === ProductType.Scale || this.product_type === ProductType.ScaleEnterprise) {
       this.type_fc.value = 'SYSCTL';
       this.type_fc.isHidden = true;
       this.fieldSets[0].name = helptext.metadata.fieldsets_scale[0];

@@ -81,7 +81,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     this.dialog.open(CopyPasteMessageComponent);
     return false;
   }
-  
+
   onResize(event) {
     this.resizeTerm();
   }
@@ -119,7 +119,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     span.innerHTML = 'a';
 
     let cols = 0;
-    while(span.offsetWidth < domWidth) {      
+    while(span.offsetWidth < domWidth) {
       span.innerHTML += 'a';
       cols++;
     }
@@ -129,7 +129,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     if (cols < 80) {
       cols = 80;
     }
-    
+
     if (rows < 10) {
       rows = 10;
     }
@@ -158,16 +158,16 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     this.xterm.loadAddon(attachAddon);
     this.fitAddon = new FitAddon();
     this.xterm.loadAddon(this.fitAddon);
-    
+
     var font = new FontFaceObserver(this.font_name);
-    
+
     font.load().then((e) => {
       this.xterm.open(this.container.nativeElement);
       this.fitAddon.fit();
       this.xterm._initialized = true;
     }, function (e) {
       console.log('Font is not available', e);
-    });    
+    });
   }
 
   resizeTerm(){
@@ -175,6 +175,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
     this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res)=> {
+      this.xterm.focus();
     });
     return true;
   }

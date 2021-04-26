@@ -2,6 +2,7 @@ import { Component, AfterViewInit, AfterContentInit, Input, ViewChild, OnDestroy
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { WebSocketService, SystemGeneralService } from 'app/services/';
+import { ProductType } from '../../../../enums/product-type.enum';
 import { ReportsService } from '../../reports.service';
 import { MaterialModule } from 'app/appMaterial.module';
 import { Subject, Subscription } from 'rxjs';
@@ -50,6 +51,8 @@ export interface Report {
   vertical_label: string;
   identifiers?: string[];
   isRendered?: boolean[];
+  stacked: boolean;
+  stacked_show_total: boolean;
 }
 
 export interface ReportData {
@@ -61,7 +64,7 @@ export interface ReportData {
   legend: string[];
   name: string;
   step: number;
-  data: number[];
+  data: number[][];
 }
 
 @Component({
@@ -83,15 +86,17 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
 
   public data: ReportData;
   public ready: boolean = false;
-  public product_type = window.localStorage['product_type'];
+  public product_type = window.localStorage['product_type'] as ProductType;
   private delay: number = 1000; // delayed report render time
-  
+
+  readonly ProductType = ProductType;
+
   get reportTitle(){
     let suffix = null;
     let trimmed = this.report.title.replace(/[\(\)]/g, '');
     if(this.multipathTitle){
       trimmed = trimmed.replace(this.identifier, '');
-      return trimmed; 
+      return trimmed;
     } else {
       return this.identifier ? trimmed.replace(/{identifier}/, this.identifier) : this.report.title;
     }
@@ -152,7 +157,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
   public showLegendValues:boolean = false;
   public chartId = "chart-" + UUID.UUID();
   public chartColors: string[];
-  
+
   get startTime(){
     return this.localeService.formatDateTime(new Date(this.currentStartDate), this.timezone);
   }
@@ -167,28 +172,28 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
 
   }
 
-  constructor(public router: Router, 
+  constructor(public router: Router,
     public translate: TranslateService,
     private rs: ReportsService,
     private ws: WebSocketService,
     protected localeService: LocaleService, private sysGeneralService: SystemGeneralService){
-    super(translate); 
-    
+    super(translate);
+
     this.core.register({observerClass:this, eventName:"ReportData-" + this.chartId}).subscribe((evt:CoreEvent) => {
       this.data = evt.data;
     });
-    
+
     this.core.register({observerClass:this, eventName:"LegendEvent-" + this.chartId}).subscribe((evt:CoreEvent) => {
       let clone = Object.assign({}, evt.data);
       clone.xHTML = this.formatTime(evt.data.xHTML);
       this.legendData = clone;
     });
 
-    this.core.register({ observerClass:this, eventName:"ThemeData" }).subscribe((evt:CoreEvent)=>{ 
+    this.core.register({ observerClass:this, eventName:"ThemeData" }).subscribe((evt:CoreEvent)=>{
       this.chartColors = this.processThemeColors(evt.data);
     });
 
-    this.core.register({ observerClass:this, eventName:"ThemeChanged" }).subscribe((evt:CoreEvent)=>{ 
+    this.core.register({ observerClass:this, eventName:"ThemeChanged" }).subscribe((evt:CoreEvent)=>{
         this.chartColors = this.processThemeColors(evt.data);
     });
 
@@ -215,18 +220,18 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
   ngOnChanges(changes){
     if(changes.report){
       if(changes.report.previousValue && this.ready == false){
-        this.setupData(changes); 
+        this.setupData(changes);
       } else if(!changes.report.previousValue ){
         setTimeout(() => {
           this.ready = true;
-          this.setupData(changes); 
+          this.setupData(changes);
         }, this.delay);
       } else if(changes.report.previousValue.title !== changes.report.currentValue.title){
-        this.setupData(changes); 
+        this.setupData(changes);
       }
       if(changes.multipathTitle && changes.multipathTitle.currentValue){
       }
-    } 
+    }
   }
 
   private setupData(changes){
@@ -241,7 +246,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     let colors: string[] = [];
     theme.accentColors.map((color) => {
       colors.push(theme[color]);
-    }); 
+    });
     return colors;
   }
 
@@ -251,14 +256,14 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
 
   timeZoomIn(){
     // more detail
-    const max = 4; 
+    const max = 4;
     if(this.timeZoomIndex == max){ return;}
     this.timeZoomIndex += 1;
     const zoom = this.zoomLevels[this.timeZoomIndex];
     const rrdOptions = this.convertTimespan(zoom.timespan);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
-    
+
     let identifier = this.report.identifiers ? this.report.identifiers[0] : null;
     this.fetchReportData(rrdOptions, this.report, identifier);
   }
@@ -272,7 +277,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     const rrdOptions = this.convertTimespan(zoom.timespan);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
-    
+
     let identifier = this.report.identifiers ? this.report.identifiers[0] : null;
     this.fetchReportData(rrdOptions, this.report, identifier);
   }
@@ -282,7 +287,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     const rrdOptions = this.convertTimespan(zoom.timespan, 'backward', this.currentStartDate);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
-    
+
     let identifier = this.report.identifiers ? this.report.identifiers[0] : null;
     this.fetchReportData(rrdOptions, this.report, identifier);
   }
@@ -293,14 +298,14 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     const rrdOptions = this.convertTimespan(zoom.timespan, 'forward', this.currentEndDate);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
-    
+
     let identifier = this.report.identifiers ? this.report.identifiers[0] : null;
     this.fetchReportData(rrdOptions, this.report, identifier);
   }
 
   getServerTime(){
-    
-    let xmlHttp = new XMLHttpRequest(); 
+
+    let xmlHttp = new XMLHttpRequest();
     xmlHttp.open('HEAD',window.location.origin.toString(),false);
     xmlHttp.setRequestHeader("Content-Type", "text/html");
     xmlHttp.send('');
@@ -315,11 +320,11 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
 
   // Convert timespan to start/end options for RRDTool
   convertTimespan(timespan, direction: string = 'backward', currentDate?:number): TimeData{
-    
+
     let units: string;
     let value: number;
 
-    const now = this.getServerTime(); 
+    const now = this.getServerTime();
 
     let startDate:Date;
     let endDate:Date;
@@ -373,7 +378,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
       this.stepForwardDisabled = true;
     } else {
       this.stepForwardDisabled = false;
-    } 
+    }
 
      return {
       start: startDate.getTime(),
@@ -390,8 +395,8 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     const serverTime = this.getServerTime();
     const start = Math.floor(rrdOptions.start / 1000);
     const end = Math.floor(rrdOptions.end / 1000);
-    let timeFrame = {"start": start, "end": end}; 
-    
+    let timeFrame = {"start": start, "end": end};
+
     this.core.emit({name:"ReportDataRequest", data:{report: report, params: params, timeFrame: timeFrame, truncate: this.stepForwardDisabled}, sender: this});
   }
 

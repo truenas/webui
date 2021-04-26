@@ -1,5 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { ProductType } from '../../../../enums/product-type.enum';
 import { DialogService } from '../../../../services/dialog.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
@@ -13,7 +14,7 @@ import { LocaleService } from 'app/services/locale.service';
 
 export interface DialogData {
   extraMsg: boolean;
-  systemType: string;
+  systemType: ProductType;
 }
 
 @Component({
@@ -23,20 +24,22 @@ export interface DialogData {
 })
 export class AboutModalDialog {
   public copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
-  public product_type: string;
+  public product_type: ProductType;
   public extraMsg: boolean;
-  public systemType: string;
+  public systemType: ProductType;
   helptext = helptext;
+
+  readonly ProductType = ProductType;
 
   constructor(
     public dialogRef: MatDialogRef<AboutModalDialog>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     protected loader: AppLoaderService,
-    protected http: HttpClient, protected dialogService: DialogService, 
+    protected http: HttpClient, protected dialogService: DialogService,
     protected translate: TranslateService,
     protected core: CoreService,
     private prefServices: PreferencesService,
-    private localeService: LocaleService) { 
+    private localeService: LocaleService) {
       this.extraMsg = data.extraMsg;
       this.systemType = data.systemType;
     }

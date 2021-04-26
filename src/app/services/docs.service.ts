@@ -1,3 +1,4 @@
+import { ProductType } from '../enums/product-type.enum';
 import urls from '../helptext/urls';
 import { WebSocketService } from './ws.service';
 import {Injectable} from '@angular/core';
@@ -9,7 +10,7 @@ export class DocsService {
 
     docReplace(message):string {
         if (message != undefined && typeof message === 'string') {
-            // I really hate this but for some reason # markers are getting a "\" appended to them by the translate service now 
+            // I really hate this but for some reason # markers are getting a "\" appended to them by the translate service now
             message = message.replace(/\\#/g, "#");
 
             for (const url in urls) {
@@ -33,7 +34,7 @@ export class DocsService {
                 }
             }
 
-            const product_type = window.localStorage.getItem('product_type');
+            const product_type = window.localStorage.getItem('product_type') as ProductType;
             message = message.replace(/--nas--/g, `truenas ${product_type}`);
             message = message.replace(/--NAS--/g, `TrueNAS ${product_type}`);
         }

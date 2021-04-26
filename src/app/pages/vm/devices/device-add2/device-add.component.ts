@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { ProductType } from '../../../../enums/product-type.enum';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
 import { EntityFormService } from '../../../../pages/common/entity/entity-form/services/entity-form.service';
@@ -42,7 +43,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   public boot: any;
   public custActions: any[];
   public error: string;
-  private productType: string = window.localStorage.getItem('product_type');
+  private productType = window.localStorage.getItem('product_type') as ProductType;
 
   protected addZvolComponent: ZvolWizardComponent;
 
@@ -99,7 +100,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       inputType: 'number'
     },
   ];
-  //disk 
+  //disk
   public diskFieldConfig: FieldConfig[] = [
     {
       type: 'combobox',
@@ -365,7 +366,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       };
       const pathField =_.find(this.diskFieldConfig, {name:'path'});
       pathField.options.splice(pathField.options.findIndex(o => o.value === 'new'), 0, newZvol);
-      
+
       this.diskFormGroup.controls['path'].setValue(newZvol.value);
     });
     // nic
@@ -460,7 +461,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       this.route_success = ['vm', this.vmid, 'devices', this.vmname];
     });
 
-    if (!this.productType.includes('SCALE')) {
+    if (!this.productType.includes(ProductType.Scale)) {
       _.find(this.displayFieldConfig, {name:'wait'}).isHidden = false;
       _.find(this.displayFieldConfig, {name:'resolution'}).isHidden = false;
     }
@@ -471,14 +472,14 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   }
 
   async afterInit() {
-    
+
     this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]]]).subscribe((zvols)=>{
       zvols.forEach(zvol => {
         _.find(this.diskFieldConfig, {name:'path'}).options.push(
           {
             label : zvol.id, value : '/dev/zvol/' + zvol.id
           }
-        );   
+        );
       });
       _.find(this.diskFieldConfig, {name:'path'}).options.push({
         label: 'Add New', value: 'new', sticky: 'bottom'
@@ -502,7 +503,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
             this.displayFormGroup.controls['type'].setValue(typee.options[0].value);
           }
         }
-      } 
+      }
       // if type == 'Container Provider' and rawfile boot device exists, hide rootpwd and boot fields.
       if (_.find(vm[0].devices, {dtype:'RAW'}) && vm[0].type ==="Container Provider") {
         vm[0].devices.forEach(element => {
@@ -515,7 +516,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
             }
 
           }
-          
+
         });
 
       }
@@ -557,7 +558,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
         "attributes":deviceValue,
         "order": deviceOrder
       };
-  
+
       this.loader.open();
       this.ws.call(this.addCall, [payload]).subscribe(() => {
           this.loader.close();
@@ -571,7 +572,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       );
     });
   }
-  
+
   addZvol() {
     this.modalService.open('slide-in-form', this.addZvolComponent);
   }
@@ -584,7 +585,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
           {
             label : zvol.id, value : '/dev/zvol/' + zvol.id
           }
-        );  
+        );
       });
       searchedZvols.push({
         label: 'Add New', value: 'new', sticky: 'bottom'

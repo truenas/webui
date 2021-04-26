@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
+import { ProductType } from '../../../enums/product-type.enum';
 import { RoutePartsService } from '../../../services/route-parts/route-parts.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import globalHelptext from '../../../helptext/global-helptext';
@@ -12,13 +13,13 @@ import { LocaleService } from 'app/services/locale.service';
   styleUrls: ['./breadcrumb.component.css']
 })
 export class BreadcrumbComponent implements OnInit {
-  @Input() product_type;
+  @Input() product_type: ProductType;
   public copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
 
   routeParts:any[];
   public isEnabled: boolean = true;
   constructor(private router: Router,
-  private routePartsService: RoutePartsService, 
+  private routePartsService: RoutePartsService,
   private activeRoute: ActivatedRoute,
   private core: CoreService,
   private localeService: LocaleService) { }

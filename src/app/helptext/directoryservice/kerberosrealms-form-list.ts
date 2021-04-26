@@ -4,6 +4,9 @@ import { Validators } from '@angular/forms';
 export default {
 
 // For Kerberos Realms form
+title_add: T('Add Kerberos Realm'),
+title_edit: T('Edit Kerberos Realm'),
+
 kerb_form_heading: T('Kerberos Realm'),
 
 krbrealm_form_realm_name: 'realm',
