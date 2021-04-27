@@ -422,6 +422,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     this.vdevtypeError = null;
     this.vdevdisksError = false;
     this.stripeVdevTypeError = null;
+    this.logVdevTypeWarning = null;
     this.vdevdisksSizeError = false;
     this.has_savable_errors = false;
     this.emptyDataVdev = false;

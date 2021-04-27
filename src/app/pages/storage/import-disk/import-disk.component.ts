@@ -20,12 +20,14 @@ import { EntityUtils } from '../../common/entity/utils';
 import { Formconfiguration } from '../../common/entity/entity-form/entity-form.component';
 import { T } from '../../../translate-marker';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
+import { CoreService, CoreEvent } from 'app/core/services/core.service';
 
 @Component({
   selector: 'app-import-disk',
   template: `
   <div *ngIf="initialized">
-    <entity-form [conf]="this"></entity-form>
+
+  <entity-form [conf]="this"></entity-form>
   </div>`,
 })
 export class ImportDiskComponent implements OnDestroy, Formconfiguration {
@@ -71,6 +73,7 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
           isHidden: true,
         },
         {
+
           type: 'explorer',
           name: 'dst_path',
           placeholder: helptext.import_disk_dst_path_placeholder,
@@ -96,7 +99,7 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
   constructor(protected router: Router, protected rest: RestService,
     protected ws: WebSocketService, protected dialog: MatDialog,
     protected _injector: Injector, protected _appRef: ApplicationRef, protected dialogService: DialogService,
-    protected job: JobService) {}
+    protected job: JobService, protected core: CoreService) {}
 
   preInit(entityForm: any) {
     this.entityForm = entityForm;
@@ -140,11 +143,10 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
 
     this.makeList();
 
-    this.ws.subscribe('disk.query').subscribe((res) => {
-		  if (res) {
-        this.makeList();
-		  }
-	  });
+    // Listen for disks being added/removed
+    this.core.register({ observerClass: this, eventName: 'DisksChanged' }).subscribe((evt: CoreEvent) => {
+      this.makeList();
+    });
   }
 
   makeList() {
@@ -162,6 +164,7 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
           }
         }
       }
+
       this.initialized = true;
     }, (res) => {
       this.dialogService.errorReport(T('Error getting disk data'), res.message, res.stack);
@@ -175,10 +178,12 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
     if (payload.fs_type === 'msdosfs' && payload.msdosfs_locale) {
       fs_options['locale'] = payload.msdosfs_locale;
     }
+
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Importing Disk') } });
     this.dialogRef.componentInstance.setDescription(T('Importing Disk...'));
     this.dialogRef.componentInstance.setCall('pool.import_disk', [payload.volume, payload.fs_type, fs_options, payload.dst_path]);
     this.dialogRef.componentInstance.submit();
+
     this.dialogRef.componentInstance.success.subscribe((job_res) => {
       this.dialogRef.close();
       this.entityForm.success = true;
@@ -193,6 +198,7 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
         },
       ];
     });
+
     this.dialogRef.componentInstance.aborted.subscribe((job) => {
       this.dialogRef.close();
       this.entityForm.success = false;
@@ -213,6 +219,7 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
   }
 
   ngOnDestroy() {
+    this.core.unregister({ observerClass: this });
     this.fs_type_subscription.unsubscribe();
   }
 }

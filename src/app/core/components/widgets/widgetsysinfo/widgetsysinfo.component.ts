@@ -34,24 +34,26 @@ interface BrandingConfig {
   styleUrls: ['./widgetsysinfo.component.css'],
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, OnDestroy, AfterViewInit {
-  // HA
-  @Input('isHA') isHA = false;
-  @Input('passive') isPassive = false;
 
-  title: string = T('System Info');
+  // HA
+  @Input('isHA') isHA: boolean = false;
+  @Input('passive') isPassive: boolean = false;
+  @Input('enclosure') enclosureSupport: boolean = false;
+
+  title: string = T("System Info");
   data: any;
   memory: string;
-  imagePath = 'assets/images/';
-  ready = false;
-  retroLogo = -1;
-  product_image = '';
-  product_model = '';
-  product_enclosure = ''; // rackmount || tower
-  certified = false;
-  failoverBtnLabel = 'FAILOVER TO STANDBY';
-  updateAvailable = false;
-  private _updateBtnStatus: string = this.themeService.isDefaultTheme ? 'primary' : 'default';
-  updateBtnLabel: string = T('Check for Updates');
+  imagePath: string = "assets/images/";
+  ready: boolean = false;
+  retroLogo: number = -1;
+  product_image: string = '';
+  product_model: string = '';
+  product_enclosure: string = ''; // rackmount || tower
+  certified: boolean = false;
+  failoverBtnLabel: string = "FAILOVER TO STANDBY"
+  updateAvailable: boolean = false;
+  private _updateBtnStatus: string = this.themeService.isDefaultTheme ? "primary" : "default";
+  updateBtnLabel: string = T("Check for Updates")
   private _themeAccentColors: string[];
   connectionIp = environment.remote;
   manufacturer = '';
@@ -318,4 +320,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
         break;
     }
   }
+
+  goToEnclosure(){
+    if(this.enclosureSupport) this.router.navigate(['/system/viewenclosure']);
+  }
+
 }

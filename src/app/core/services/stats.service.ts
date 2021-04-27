@@ -17,7 +17,6 @@ export class StatsService extends BaseService {
   protected onAuthenticated(evt: CoreEvent) {
     this.authenticated = true;
 
-    // TODO: use disk.query to detect drive change events
     const queryOptions = { select: ['name', 'type'] };
 
     this.websocket.sub('reporting.realtime').subscribe((res) => {
