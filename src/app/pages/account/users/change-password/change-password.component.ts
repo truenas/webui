@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from "@angular/router";
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { WebSocketService, DialogService } from "../../../../services/";
 import { AppLoaderService } from "../../../../services/app-loader/app-loader.service";
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -14,7 +15,7 @@ export class ChangePasswordComponent {
 
   //protected resource_name = 'account/users/1/password/';
   protected isEntity: boolean = true;
-  protected entityForm: any;
+  protected entityForm: EntityFormComponent;
 
   public fieldConfig: FieldConfig[] = [];
   public fieldSets: FieldSet[] = [
@@ -54,11 +55,11 @@ export class ChangePasswordComponent {
               protected loader: AppLoaderService, protected dialog: DialogService) {
   }
 
-  preInit(entityForm) {
+  preInit(entityForm: EntityFormComponent) {
     this.entityForm = entityForm;
   }
 
-  public customSubmit(body) {
+  public customSubmit(body: any) {
     delete body.password_conf;
     this.loader.open();
     return this.ws.call('auth.check_user', ['root', body.curr_password]).subscribe((check) => {

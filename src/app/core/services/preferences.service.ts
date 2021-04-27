@@ -16,7 +16,7 @@ export interface UserPreferences {
   retroLogo?: boolean; // Brings back FreeNAS branding
   timestamp?:Date;
   userTheme?:string; // Theme name
-  customThemes?: Theme[]; 
+  customThemes?: Theme[];
   favoriteThemes?: string[]; // Deprecate
   showGuide?:boolean; // Guided Tour on/off
   showTooltips?:boolean; // Form Tooltips on/off // Deprecated, remove in v12!
@@ -65,7 +65,7 @@ export class PreferencesService {
     "storedValues": {} // For key/value pairs to save most recent values in form fields, etc
   }
 
-  public preferences: UserPreferences; 
+  public preferences: UserPreferences;
 
   constructor(protected core: CoreService, protected themeService: ThemeService,private api:ApiService,private router:Router,
     private aroute: ActivatedRoute) {
@@ -140,7 +140,7 @@ export class PreferencesService {
 
     // Change the entire preferences object at once
     this.core.register({observerClass:this, eventName:"ChangePreferences"}).subscribe((evt:CoreEvent) => {
-      let prefs = this.preferences;
+      let prefs: any = this.preferences;
       Object.keys(evt.data).forEach(function(key){
         prefs[key] = evt.data[key];
       });
@@ -151,7 +151,7 @@ export class PreferencesService {
 
     // Change a single preference item
     this.core.register({observerClass:this, eventName:"ChangePreference"}).subscribe((evt:CoreEvent) => {
-      let prefs = Object.assign(this.preferences, {});
+      let prefs: any = Object.assign(this.preferences, {});
       prefs[evt.data.key] = evt.data.value;
       prefs.timestamp = new Date();
       this.preferences = prefs;
@@ -169,9 +169,9 @@ export class PreferencesService {
       const report = this.sanityCheck(data);
       console.log(report);
     }
-    
-    let clone: UserPreferences = {}; 
-    const keys = Object.keys(this.preferences);
+
+    let clone: any = {};
+    const keys = Object.keys(this.preferences) as (keyof PreferencesService['preferences'])[];
     keys.forEach((key) => {
       if(data[key] !== undefined){
         // If middleware object contains a valid key, store the value
@@ -183,10 +183,10 @@ export class PreferencesService {
     });
     this.preferences = clone;
 
-    if(this.startupComplete){ 
+    if(this.startupComplete){
       this.core.emit({name:"UserPreferencesChanged", data:this.preferences, sender: this});
-    } 
-    
+    }
+
   }
 
   // Save to middleware
@@ -228,12 +228,12 @@ export class PreferencesService {
     });
     if(this.debug && oldKeys.length > 0)console.log(oldKeys.length + " Deprecated Preferences Found!");
 
-    // Find New 
+    // Find New
     newKeys = currentKeys.filter((key) => {
       return savedKeys.indexOf(key) == -1;
     });
     if(this.debug && newKeys.length > 0)console.log(newKeys.length + " New Preferences Found!");
-    
+
 
     const report: PropertyReport = {
       middlewareProperties: savedKeys, // Inbound from Middleware

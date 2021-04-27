@@ -25,8 +25,8 @@ export class TooltipComponent {
 
   constructor(public translate: TranslateService) {}
 
-  showTooltip($event) {
-    this.isShowTooltip = $event;
+  showTooltip(isTooltipShown: boolean) {
+    this.isShowTooltip = isTooltipShown;
     let formParent = this.findParent();
     let posRight = this.tooltip.nativeElement.offsetLeft + this.tooltip.nativeElement.offsetWidth;
     this.tooltipMsgStyle = {
@@ -67,14 +67,14 @@ export class TooltipComponent {
     for (let i = 0; i < tooltips.length; i++) {
       tooltips[i].firstChild.classList.remove('show');
     }
-   
+
     if (!this.isShowTooltip) {
       this.isShowTooltip = true;
       el.add('show');
       this.dragTarget.reset();
       this.isMoved = false;
       this.showTooltip(true);
-      
+
     } else {
       this.showTooltip(false);
       this.isShowTooltip = false;
@@ -107,7 +107,7 @@ export class TooltipComponent {
     return card;
   }
 
-  hideTail(evt?){
+  hideTail(){
     this.isMoved = true;
   }
 

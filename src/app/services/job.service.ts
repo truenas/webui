@@ -19,10 +19,10 @@ export class JobService {
 
   constructor(protected ws: WebSocketService, protected dialog: DialogService, protected storage: StorageService, protected http: HttpClient) {};
 
-  getJobStatus(job_id): Observable<any> {
-    let source = Observable.create((observer) => {
+  getJobStatus(jobId: any): Observable<any> {
+    let source = Observable.create((observer: any) => {
       this.ws.subscribe("core.get_jobs").subscribe((res) => {
-        if (res.id == job_id) {
+        if (res.id == jobId) {
           observer.next(res.fields);
           if (res.fields.state === EntityJobState.Success || res.fields.state === EntityJobState.Failed) {
             observer.complete();
@@ -33,7 +33,7 @@ export class JobService {
     return source;
   }
 
-  showLogs(job, title?, cancelMsg?) {
+  showLogs(job: any, title?: string, cancelMsg?: string) {
     let dialog_title, cancelButtonMsg;
     title ? dialog_title = title : dialog_title = T("Logs");
     cancelMsg ? cancelButtonMsg = cancelMsg : cancelButtonMsg = T('Close');
@@ -53,7 +53,7 @@ export class JobService {
         const target_job = job;
         this.dialog.confirm(dialog_title, `<pre>${log}</pre>`, true, T('Download Logs'),
           false, '', '', '', '', false, cancelButtonMsg, true).subscribe(
-          (dialog_res) => {
+          (dialog_res: boolean) => {
             if (dialog_res) {
               this.ws.call('core.download', ['filesystem.get', [target_job.logs_path], target_job.id + '.log']).subscribe(
                 (snack_res) => {

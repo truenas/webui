@@ -182,7 +182,7 @@ export class VmFormComponent {
       }
     });
 
-    entityForm.formGroup.controls['memory'].valueChanges.subscribe((value) => {
+    entityForm.formGroup.controls['memory'].valueChanges.subscribe((value: any) => {
       const mem = _.find(this.fieldConfig, {name: "memory"});
       if (typeof(value) === 'number') {
         value = value.toString();
@@ -196,13 +196,13 @@ export class VmFormComponent {
       };
     });
 
-    entityForm.formGroup.controls['vcpus'].valueChanges.subscribe((value) => {
+    entityForm.formGroup.controls['vcpus'].valueChanges.subscribe((value: number) => {
       this.vcpus = value;
     })
-    entityForm.formGroup.controls['cores'].valueChanges.subscribe((value) => {
+    entityForm.formGroup.controls['cores'].valueChanges.subscribe((value: number) => {
       this.cores = value;
     })
-    entityForm.formGroup.controls['threads'].valueChanges.subscribe((value) => {
+    entityForm.formGroup.controls['threads'].valueChanges.subscribe((value: number) => {
       this.threads = value;
     })
 
@@ -223,7 +223,7 @@ export class VmFormComponent {
     }
   }
 
-  blurEvent(parent){
+  blurEvent(parent: any){
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['memory'].setValue(parent.storageService.humanReadable)
       let valString = (parent.entityForm.formGroup.controls['memory'].value);
@@ -260,12 +260,12 @@ export class VmFormComponent {
     }
   };
 
-  resourceTransformIncomingRestData(wsResponse) {
+  resourceTransformIncomingRestData(wsResponse: any) {
     wsResponse['memory'] = this.storageService.convertBytestoHumanReadable(wsResponse['memory']*1048576, 0);
     return wsResponse;
   }
 
-  beforeSubmit(data) {
+  beforeSubmit(data: any) {
     if (data['memory'] !== undefined && data['memory'] !== null) {
     data['memory'] = Math.round(this.storageService.convertHumanStringToNum(data['memory'])/1048576);
     }

@@ -2,6 +2,7 @@
 import { Component, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { helptext_system_bootenv } from 'app/helptext/system/bootenv';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 import { DialogService } from 'app/services';
 import * as moment from 'moment';
@@ -75,7 +76,7 @@ export class BootEnvironmentListComponent implements OnDestroy{
   }
 
   dataHandler(entityList: any) {
-    entityList.rows.forEach((row) => {
+    entityList.rows.forEach((row: any) => {
       if (row.active !== '-' && row.active !== '') {
         row.hideCheckbox = true;
       }
@@ -84,7 +85,7 @@ export class BootEnvironmentListComponent implements OnDestroy{
     })
   }
 
-  rowValue(row, attr) {
+  rowValue(row: any, attr: string) {
     if (attr === 'created'){
       return this.localeService.formatDateTime(row.created.$date);
     }
@@ -113,13 +114,13 @@ export class BootEnvironmentListComponent implements OnDestroy{
     return true;
   }
 
-  getActions(row) {
+  getActions(row: any) {
     const actions = [];
     if (!row.active.includes('Reboot')) {
       actions.push({
         label : T("Activate"),
         id: "activate",
-        onClick : (row) => {
+        onClick : (row: any) => {
           this.doActivate(row.id);
         }
       });
@@ -128,7 +129,7 @@ export class BootEnvironmentListComponent implements OnDestroy{
     actions.push({
       label : T("Clone"),
       id: "clone",
-      onClick : (row) => {
+      onClick : (row: any) => {
         this._router.navigate(new Array('').concat(
             [ "system", "boot", "clone", row.id ]));
       }
@@ -137,7 +138,7 @@ export class BootEnvironmentListComponent implements OnDestroy{
     actions.push({
       label : T("Rename"),
       id: "rename",
-      onClick : (row) => {
+      onClick : (row: any) => {
         this._router.navigate(new Array('').concat(
             [ "system", "boot", "rename", row.id ]));
       }
@@ -147,7 +148,7 @@ export class BootEnvironmentListComponent implements OnDestroy{
       actions.push({
         label: T("Delete"),
         id: "delete",
-        onClick: row =>
+        onClick: (row: any) =>
           this.entityList.doDeleteJob(row).subscribe(
             success => {
               if (!success) {
@@ -171,7 +172,7 @@ export class BootEnvironmentListComponent implements OnDestroy{
       actions.push({
         label : T("Unkeep"),
         id: "keep",
-        onClick : (row) => {
+        onClick : (row: any) => {
           this.toggleKeep(row.id, row.keep);
         }
       });
@@ -180,7 +181,7 @@ export class BootEnvironmentListComponent implements OnDestroy{
       actions.push({
         label : T("Keep"),
         id: "keep",
-        onClick : (row) => {
+        onClick : (row: any) => {
           this.toggleKeep(row.id, row.keep);
         }
       });
@@ -195,7 +196,7 @@ export class BootEnvironmentListComponent implements OnDestroy{
     icon: "delete",
     enable: true,
     ttpos: "above",
-    onClick: (selected) => {
+    onClick: (selected: any) => {
       for(let i = selected.length -1; i >= 0 ; i--) {
         if(selected[i].active !== '-' && selected[i].active !== '') {
            selected.splice(i, 1);
@@ -205,8 +206,8 @@ export class BootEnvironmentListComponent implements OnDestroy{
     }
   }];
 
-  getSelectedNames(selectedBootenvs)  {
-    let selected: any = [];
+  getSelectedNames(selectedBootenvs: any)  {
+    let selected: any[] = [];
     for (let i in selectedBootenvs) {
       if (selectedBootenvs[i].active === '-' || selectedBootenvs[i].active === '') {
         selected.push([selectedBootenvs[i].id]);
@@ -221,19 +222,18 @@ export class BootEnvironmentListComponent implements OnDestroy{
     return params;
   }
 
-  doActivate(id) {
-    this.dialog.confirm(T("Activate"), T("Activate this Boot Environment?"), false, helptext_system_bootenv.list_dialog_activate_action).subscribe((res) => {
+  doActivate(id: string) {
+    this.dialog.confirm(T("Activate"), T("Activate this Boot Environment?"), false, helptext_system_bootenv.list_dialog_activate_action).subscribe((res: boolean) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
-        let data = {};
         this.busy = this.ws.call(this.wsActivate, [id]).subscribe(
-          (res) => {
+          () => {
             this.entityList.getData();
             this.loader.close();
             this.entityList.selection.clear();
           },
-          (res) => {
+          (res: any) => {
             new EntityUtils().handleWSError(this, res, this.dialog);
             this.loader.close();
           }
@@ -259,19 +259,18 @@ export class BootEnvironmentListComponent implements OnDestroy{
     });
   }
 
-  toggleKeep(id, status) {
+  toggleKeep(id: string, status: any) {
     if (!status){
-      this.dialog.confirm(T("Keep"), T("Keep this Boot Environment?"), false, helptext_system_bootenv.list_dialog_keep_action).subscribe((res) => {
+      this.dialog.confirm(T("Keep"), T("Keep this Boot Environment?"), false, helptext_system_bootenv.list_dialog_keep_action).subscribe((res: boolean) => {
         if (res) {
           this.loader.open();
           this.loaderOpen = true;
-          let data = {};
           this.busy = this.ws.call(this.wsKeep, [id, { "keep" : true }]).subscribe(
-            (res) => { this.entityList.getData();
+            () => { this.entityList.getData();
               this.loader.close();
               this.entityList.selection.clear();
             },
-            (res) => {
+            (res: any) => {
               new EntityUtils().handleWSError(this, res, this.dialog);
               this.loader.close();
             }
@@ -279,17 +278,16 @@ export class BootEnvironmentListComponent implements OnDestroy{
         }
       })
     } else {
-      this.dialog.confirm(T("Unkeep"), T("No longer keep this Boot Environment?"), false, helptext_system_bootenv.list_dialog_unkeep_action).subscribe((res) => {
+      this.dialog.confirm(T("Unkeep"), T("No longer keep this Boot Environment?"), false, helptext_system_bootenv.list_dialog_unkeep_action).subscribe((res: boolean) => {
         if (res) {
           this.loader.open();
           this.loaderOpen = true;
-          let data = {};
           this.busy = this.ws.call(this.wsKeep, [id, { "keep" : false }]).subscribe(
-            (res) => { this.entityList.getData();
+            () => { this.entityList.getData();
               this.loader.close();
               this.entityList.selection.clear();
             },
-            (res) => {
+            (res: any) => {
               new EntityUtils().handleWSError(this, res, this.dialog);
               this.loader.close();
             }
@@ -346,10 +344,10 @@ export class BootEnvironmentListComponent implements OnDestroy{
               saveButtonText: T('Update Interval'),
               cancelButtonText: T('Close'),
               parent: this,
-              customSubmit: function(entityDialog) {
+              customSubmit: function(entityDialog: EntityDialogComponent) {
                 const scrubIntervalValue: number = parseInt(entityDialog.formValue.new_scrub_interval);
                 if( scrubIntervalValue > 0){
-                  localWS.call('boot.set_scrub_interval',[scrubIntervalValue]).subscribe((res)=>{
+                  localWS.call('boot.set_scrub_interval',[scrubIntervalValue]).subscribe(()=>{
                     localDialog.closeAllDialogs();
                     localDialog.Info(T('Scrub Interval Set'), T(`Scrub interval set to ${scrubIntervalValue} days`), '300px', 'info', true);
                   })
@@ -383,15 +381,15 @@ export class BootEnvironmentListComponent implements OnDestroy{
   }
 
   scrub() {
-    this.dialog.confirm(T("Scrub"), T("Start the scrub now?"), false, helptext_system_bootenv.list_dialog_scrub_action).subscribe((res) => {
+    this.dialog.confirm(T("Scrub"), T("Start the scrub now?"), false, helptext_system_bootenv.list_dialog_scrub_action).subscribe((res: boolean) => {
       if (res) {
         this.loader.open();
         this.loaderOpen = true;
-        this.busy = this.ws.call('boot.scrub').subscribe((res) => {
+        this.busy = this.ws.call('boot.scrub').subscribe(() => {
           this.loader.close();
           this.dialog.Info(T('Scrub Started'), T(''), '300px', 'info', true);
           },
-          (res) => {
+          (res: any) => {
             this.dialog.errorReport(res.error, res.reason, res);
             this.loader.close();
           }

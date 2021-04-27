@@ -139,14 +139,14 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
   }
 
   refreshPermissions() {
-    this.value = this.owner.toString() + 
+    this.value = this.owner.toString() +
         this.grp.toString() + this.other.toString();
     this.group.controls[this.config.name].setValue(this.value);
   }
-  
+
   ngOnInit() {
     this.control = this.group.controls[this.config.name];
-    this.control.valueChanges.subscribe(data => {
+    this.control.valueChanges.subscribe((data: any) => {
       if (this.value != data) {
         this.setValue(data);
         this.refreshPermissions();
@@ -172,7 +172,7 @@ export class FormPermissionsComponent implements Field, OnInit, OnDestroy {
     else if (value && this.formatRe.test(value)) {
       this.value = value;
     }
-    
+
     let owner = parseInt(this.value[0]);
     this.owner = owner;
     let grp = parseInt(this.value[1]);

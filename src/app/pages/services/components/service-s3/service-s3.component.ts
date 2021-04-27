@@ -25,7 +25,7 @@ export class ServiceS3Component implements OnDestroy {
   private ip_address: any;
   private initial_path: any;
   private warned = false;
-  private validBindIps = [];
+  private validBindIps: string[] = [];
   public title = helptext.formTitle;
 
   public fieldConfig: FieldConfig[] = [];
@@ -118,9 +118,9 @@ export class ServiceS3Component implements OnDestroy {
 
   afterInit(entityForm: any) {
     this.storage_path = entityForm.formGroup.controls['storage_path'];
-    this.storage_path_subscription = this.storage_path.valueChanges.subscribe((res) => {
+    this.storage_path_subscription = this.storage_path.valueChanges.subscribe((res: any) => {
       if(res && res != this.initial_path && !this.warned) {
-        this.dialog.confirm(helptext.path_warning_title, helptext.path_warning_msg).subscribe(confirm => {
+        this.dialog.confirm(helptext.path_warning_title, helptext.path_warning_msg).subscribe((confirm: boolean) => {
           if (!confirm) {
             this.storage_path.setValue(this.initial_path);
           } else {
@@ -129,7 +129,7 @@ export class ServiceS3Component implements OnDestroy {
         });
       }
     });
-    this.systemGeneralService.getCertificates().subscribe((res)=>{
+    this.systemGeneralService.getCertificates().subscribe((res: any[])=>{
       this.certificate = _.find(this.fieldConfig, {name:'certificate'});
       if (res.length > 0) {
         res.forEach(item => {
@@ -148,7 +148,7 @@ export class ServiceS3Component implements OnDestroy {
         )
       )
       .subscribe(choices => {
-        choices.forEach(ip => { 
+        choices.forEach(ip => {
           this.validBindIps.push(ip.value)
         });
         _.find(this.fieldConfig, { name: "bindip" }).options = choices;
@@ -156,7 +156,7 @@ export class ServiceS3Component implements OnDestroy {
     entityForm.submitFunction = this.submitFunction;
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     if (data.certificate && data.certificate.id) {
       data['certificate'] = data.certificate.id;
     }
@@ -164,7 +164,7 @@ export class ServiceS3Component implements OnDestroy {
       this.initial_path = data.storage_path;
     }
     delete data['secret_key'];
-    
+
     // If validIps is slow to load, skip check on load (It's still done on save)
     if (this.validBindIps.length > 0) {
       return this.compareBindIps(data);
@@ -172,7 +172,7 @@ export class ServiceS3Component implements OnDestroy {
     return data;
   }
 
-  compareBindIps(data) {
+  compareBindIps(data: any) {
     if (data.bindip && this.validBindIps.length > 0) {
       if (!this.validBindIps.includes(data.bindip)) {
         data.bindip = '';
@@ -187,7 +187,7 @@ export class ServiceS3Component implements OnDestroy {
 
   }
 
-  beforeSubmit(data) {
+  beforeSubmit(data: any) {
     data = this.compareBindIps(data);
   }
 

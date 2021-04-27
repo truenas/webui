@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { Option } from 'app/interfaces/option.interface';
 import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -40,7 +41,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
   protected acmeAddComponent: CertificateAcmeAddComponent;
   protected acmeDNSComponent: AcmednsFormComponent;
   private downloadActions: any;
-  private unsignedCAs = [];
+  private unsignedCAs: Option[] = [];
   private caId: any;
 
   constructor(private modalService: ModalService, private router: Router, private route: ActivatedRoute,
@@ -57,12 +58,12 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
     this.refreshForm = this.modalService.refreshForm$.subscribe(() => {
       this.refreshForms();
     });
-    this.message = this.modalService.message$.subscribe(res => {
+    this.message = this.modalService.message$.subscribe((res: any) => {
       if (res['action'] === 'open' && res['component'] === 'acmeComponent')  {
         this.openForm(this.acmeAddComponent, res['row']);
       }
     })
-    this.systemGeneralService.getUnsignedCertificates().subscribe( (res) => {
+    this.systemGeneralService.getUnsignedCertificates().subscribe( (res: any[]) => {
       res.forEach((item) => {
         this.unsignedCAs.push(
           { label : item.name, value : parseInt(item.id)}
@@ -92,7 +93,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
           add: function() {
             this.parent.modalService.open('slide-in-form', this.parent.certificateAddComponent);
           },
-          edit: function(row) {
+          edit: function(row: any) {
             this.parent.modalService.open('slide-in-form', this.parent.certificateEditComponent, row.id);
           }
         }
@@ -115,7 +116,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
           add: function() {
             this.parent.modalService.open('slide-in-form', this.parent.certificateAddComponent, 'csr');
           },
-          edit: function(row) {
+          edit: function(row: any) {
             this.parent.modalService.open('slide-in-form', this.parent.certificateEditComponent, row.id);
           }
         }
@@ -138,10 +139,10 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
           add: function() {
             this.parent.modalService.open('slide-in-form', this.parent.certificateAuthorityAddComponent);
           },
-          edit: function(row) {
+          edit: function(row: any) {
             this.parent.modalService.open('slide-in-form', this.parent.certificateAuthorityEditComponent, row.id);
           },
-          delete: function(row, table) {
+          delete: function(row: any, table: any) {
             if (row.signed_certificates > 0) {
               this.parent.dialogService.confirm(helptext_system_ca.delete_error.title, helptext_system_ca.delete_error.message,
                 true, helptext_system_ca.delete_error.button, false, '', '', '', '', true)
@@ -166,16 +167,16 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
           add: function() {
             this.parent.modalService.open('slide-in-form', this.parent.acmeDNSComponent);
           },
-          edit: function(row) {
+          edit: function(row: any) {
             this.parent.modalService.open('slide-in-form', this.parent.acmeDNSComponent, row.id);
           },
         }
       }
-      
+
     ]
   }
 
-  certificatesDataSourceHelper(res) {
+  certificatesDataSourceHelper(res: any[]) {
     res.forEach(certificate => {
       if(_.isObject(certificate.issuer)) {
         certificate.issuer = certificate.issuer.name;
@@ -184,11 +185,11 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
     return res.filter(item => item.certificate !== null);
   }
 
-  csrDataSourceHelper(res) {
+  csrDataSourceHelper(res: any[]) {
     return res.filter(item => item.CSR !== null);
   }
 
-  caDataSourceHelper(res) {
+  caDataSourceHelper(res: any[]) {
     res.forEach(row => {
       if (_.isObject(row.issuer)) {
         row.issuer = row.issuer.name;
@@ -202,7 +203,7 @@ export class CertificatesDashComponent implements OnInit, OnDestroy {
       this.ws,this.dialog,this.systemGeneralService,this.modalService, this.loader,this.dialogService,);
     this.certificateEditComponent = new CertificateEditComponent(
       this.ws,this.dialog,this.loader,this.dialogService,this.modalService,this.storage,this.http);
-    this.certificateAuthorityAddComponent = new CertificateAuthorityAddComponent(this.ws, this.modalService, this.loader,this.dialogService, 
+    this.certificateAuthorityAddComponent = new CertificateAuthorityAddComponent(this.ws, this.modalService, this.loader,this.dialogService,
       this.systemGeneralService);
     this.certificateAuthorityEditComponent = new CertificateAuthorityEditComponent(this.ws,this.loader,
       this.modalService,this.storage, this.http,this.dialogService,this.systemGeneralService);
@@ -215,8 +216,8 @@ certificateActions() {
     this.downloadActions = [{
       icon: 'save_alt',
       name: "download",
-      
-      onClick: (rowinner) => {
+
+      onClick: (rowinner: any) => {
         const path = rowinner.CSR ? rowinner.csr_path : rowinner.certificate_path;
         const fileName = rowinner.name + '.crt'; // what about for a csr?
           this.ws.call('core.download', ['filesystem.get', [path], fileName]).subscribe(
@@ -226,7 +227,7 @@ certificateActions() {
               this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
                 this.storage.downloadBlob(file, fileName);
               }, err => {
-                this.dialogService.errorReport(helptext_system_certificates.list.download_error_dialog.title, 
+                this.dialogService.errorReport(helptext_system_certificates.list.download_error_dialog.title,
                   helptext_system_certificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
               });
             },
@@ -242,7 +243,7 @@ certificateActions() {
               this.storage.streamDownloadFile(this.http, url, keyName, mimetype).subscribe(file => {
                 this.storage.downloadBlob(file, keyName);
               }, err => {
-                this.dialogService.errorReport(helptext_system_certificates.list.download_error_dialog.title, 
+                this.dialogService.errorReport(helptext_system_certificates.list.download_error_dialog.title,
                   helptext_system_certificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
               });
             },
@@ -262,7 +263,7 @@ certificateActions() {
       icon: 'build',
       name: 'create_ACME',
       matTooltip: T('Create ACME Certificate'),
-      onClick: (rowinner) => {
+      onClick: (rowinner: any) => {
         this.modalService.open('slide-in-form', this.acmeAddComponent, rowinner.id);
         event.stopPropagation();
       }
@@ -277,7 +278,7 @@ certificateActions() {
       icon: 'beenhere',
       name: 'sign_CSR',
       matTooltip: helptext_system_ca.list.action_sign,
-      onClick: (rowinner) => {
+      onClick: (rowinner: any) => {
         this.dialogService.dialogForm(this.signCSRFormConf);
         this.caId = rowinner.id;
         event.stopPropagation();
@@ -287,7 +288,7 @@ certificateActions() {
     return caRowActions;
   }
 
-  openForm(component, id) {
+  openForm(component: any, id: any) {
     setTimeout(() => {
       this.modalService.open('slide-in-form', component, id);
     }, 200)
@@ -319,7 +320,7 @@ certificateActions() {
     parent: this,
   }
 
-  doSignCSR(entityDialog) {
+  doSignCSR(entityDialog: any) {
     const self = entityDialog.parent
     const payload = {
       'ca_id': self.caId,
@@ -331,7 +332,7 @@ certificateActions() {
       entityDialog.loader.close();
       self.dialogService.closeAllDialogs();
       self.getCards();
-    }, (err) => {
+    }, (err: any) => {
       entityDialog.loader.close();
       self.dialogService.errorReport(helptext_system_ca.error, err.reason, err.trace.formatted);
     })

@@ -49,7 +49,7 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
       this.dataSource = new MatTableDataSource<any>([]);
     }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.sysGeneralService.getSysInfo().subscribe((res) => {
       this.timeZone = res.timezone;
     })
@@ -80,12 +80,12 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
     )
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.subscrition.unsubscribe();
   }
 
   getData(): Observable<any> {
-    const source = Observable.create((observer) => {
+    const source = Observable.create((observer: any) => {
         this.subscrition = this.ws.subscribe("core.get_jobs").subscribe((res) => {
           observer.next(res.fields);
         });
@@ -93,21 +93,21 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
     return source;
   }
 
-  applyFilter(filterValue: string) {
+  applyFilter(filterValue: string): void {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  getReadableDate(data: any) {
+  getReadableDate(data: any): string {
     if (data != null) {
       return this.localeService.formatDateTime(new Date(data.$date), this.timeZone);
     }
     return;
   }
 
-  showLogs(element) {
+  showLogs(element: any): void {
     this.dialogService.confirm(T('Logs'), `<pre>${element.logs_excerpt}</pre>`, true, T('Download Logs'),
       false, '', '', '', '', false, T('Close'), true).subscribe(
-      (dialog_res) => {
+      (dialog_res: boolean) => {
         if (dialog_res) {
           this.ws.call('core.download', ['filesystem.get', [element.logs_path], element.id + '.log']).subscribe(
             (snack_res) => {
@@ -129,10 +129,10 @@ export class TaskManagerComponent implements OnInit, OnDestroy{
       });
   }
 
-  abort(element) {
+  abort(element: any) {
     this.dialogService.confirm(T('Abort the task'), `<pre>${element.method}</pre>`, true, T('Abort'),
       false, '', '', '', '', false, T('Close'), true).subscribe(
-      (dialog_res) => {
+      (dialog_res: boolean) => {
         if (dialog_res) {
           this.ws.call('core.job_abort', [element.id]).subscribe();
         }

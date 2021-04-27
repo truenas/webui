@@ -11,7 +11,7 @@ export class ConvertPipe implements PipeTransform {
     return this.calculate(value, args);
   }
 
-  calculate(value, args){
+  calculate(value: number, args: any): string | number {
     if(!value){ return 0.00;}
     let result;
     // uppercase so we handle bits and bytes...

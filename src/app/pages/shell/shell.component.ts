@@ -48,7 +48,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit() {
     this.getAuthToken().subscribe((res) => {
       this.initializeWebShell(res);
-      this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
+      this.shellSubscription = this.ss.shellOutput.subscribe(() => {
       });
       this.initializeTerminal();
     });
@@ -130,11 +130,11 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     this.core.emit({name:"GlobalActions", data: actionsConfig, sender: this});
   }
 
-  onResize(event) {
+  onResize() {
     this.resizeTerm();
   }
 
-  onFontSizeChanged(event) {
+  onFontSizeChanged() {
     this.resizeTerm();
   }
 
@@ -241,7 +241,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
 
     this.refreshToolbarButtons();
 
-    this.shellConnectedSubscription = this.ss.shellConnected.subscribe((res)=> {
+    this.shellConnectedSubscription = this.ss.shellConnected.subscribe((res: any)=> {
       this.shellConnected = res.connected;
       this.connectionId = res.id;
 

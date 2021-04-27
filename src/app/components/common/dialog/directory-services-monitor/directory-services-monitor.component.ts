@@ -18,17 +18,17 @@ import { WebSocketService } from '../../../../services/';
 })
 export class DirectoryServicesMonitorComponent implements OnInit {
   displayedColumns: string[] = ['icon', 'name', 'state'];
-  dataSource = [];
+  dataSource: any[] = [];
   showSpinner = false;
 
   constructor(private ws: WebSocketService, private router: Router ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.getStatus();
   }
 
-  getStatus() {
-    let tempArray = [];
+  getStatus(): void {
+    let tempArray: any[] = [];
     this.showSpinner = true;
     this.ws.call('directoryservices.get_state').subscribe((res) => {
       this.showSpinner = false;
@@ -39,7 +39,7 @@ export class DirectoryServicesMonitorComponent implements OnInit {
     });
   }
 
-  goTo(el) {
+  goTo(el: string): void {
     this.router.navigate([`/directoryservice/${el}`])
   }
 }

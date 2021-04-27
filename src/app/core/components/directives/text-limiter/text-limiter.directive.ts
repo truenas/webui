@@ -7,7 +7,7 @@ import { TextLimiterTooltipComponent } from './text-limiter-tooltip/text-limiter
   selector: '[textLimiter]'
 })
 export class TextLimiterDirective implements AfterViewInit {
- 
+
   @Input() popup: boolean = true;
   @Input() threshold: number;
   private defaultThreshold = 10;
@@ -17,7 +17,7 @@ export class TextLimiterDirective implements AfterViewInit {
   private text: string = '';
 
   @HostListener('mouseenter')
-  show() {
+  show(): void {
     if(!this.popup) return;
     if(this.text !== this.rawText){
 
@@ -33,15 +33,15 @@ export class TextLimiterDirective implements AfterViewInit {
   }
 
   @HostListener('mouseout')
-  hide() {
+  hide(): void {
     if(!this.popup) return;
     this.overlayRef.detach();
   }
 
   constructor(private el: ElementRef, private overlayPositionBuilder: OverlayPositionBuilder, private overlay: Overlay) {
   }
-  
-  ngAfterViewInit() {
+
+  ngAfterViewInit(): void {
     this.rawText = this.el.nativeElement.innerText;
     this.text = this.truncate(this.rawText);
     this.el.nativeElement.innerText = this.text;
@@ -51,7 +51,7 @@ export class TextLimiterDirective implements AfterViewInit {
       // Create position attached to the elementRef
       .flexibleConnectedTo(this.el)
       // Describe how to connect overlay to the elementRef
-      // Means, attach overlay's center bottom point to the         
+      // Means, attach overlay's center bottom point to the
       // top center point of the elementRef.
       .withPositions([{
         originX: 'center',
@@ -64,7 +64,7 @@ export class TextLimiterDirective implements AfterViewInit {
       this.overlayRef = this.overlay.create({ positionStrategy });
   }
 
-  truncate(str: string){
+  truncate(str: string): string {
     if(str.length > this.threshold){
       const truncated = str.substring(0, this.threshold - 3);
       return truncated + '...';

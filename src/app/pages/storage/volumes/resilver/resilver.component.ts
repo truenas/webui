@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 import * as _ from 'lodash';
+import { EntityFormComponent } from '../../../common/entity/entity-form';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { TaskService } from '../../../../services';
@@ -93,7 +94,7 @@ export class ResilverComponent {
     }
   }
 
-  afterInit(entityForm) {
+  afterInit(entityForm: EntityFormComponent) {
     entityForm.submitFunction = entityForm.editCall;
   }
 }

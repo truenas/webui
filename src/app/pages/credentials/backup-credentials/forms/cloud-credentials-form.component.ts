@@ -97,7 +97,7 @@ export class CloudCredentialsFormComponent {
           required: true,
           isHidden: true,
           inputType: 'password',
-    
+
           relation: [
             {
               action: 'SHOW',
@@ -1185,7 +1185,7 @@ export class CloudCredentialsFormComponent {
       function : () => {
         this.entityForm.loader.open();
         this.entityForm.error = '';
-        const attributes = {};
+        const attributes: any = {};
         const value = _.cloneDeep(this.entityForm.formGroup.value);
         this.beforeSubmit(value);
         let attr_name: string;
@@ -1297,7 +1297,7 @@ export class CloudCredentialsFormComponent {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
 
-    entityForm.formGroup.controls['provider'].valueChanges.subscribe((res) => {
+    entityForm.formGroup.controls['provider'].valueChanges.subscribe((res: any) => {
       if (this.providerField.hasErrors) {
         this.providerField.hasErrors = false;
         this.providerField.errors = '';
@@ -1312,17 +1312,17 @@ export class CloudCredentialsFormComponent {
       entityForm.setDisabled('oauth_signin_button', !this.credentialsOauth, !this.credentialsOauth)
     });
     // preview service_account_credentials
-    entityForm.formGroup.controls['service_account_credentials-GOOGLE_CLOUD_STORAGE'].valueChanges.subscribe((value)=>{
+    entityForm.formGroup.controls['service_account_credentials-GOOGLE_CLOUD_STORAGE'].valueChanges.subscribe((value: any)=>{
       entityForm.formGroup.controls['preview-GOOGLE_CLOUD_STORAGE'].setValue(value);
     });
     // Allow blank values for pass and key_file fields (but at least one should be non-blank)
-    entityForm.formGroup.controls['pass-SFTP'].valueChanges.subscribe((res) => {
+    entityForm.formGroup.controls['pass-SFTP'].valueChanges.subscribe((res: any) => {
       if (res !== undefined) {
         const required = res === '' ? true : false;
         this.setFieldRequired('private_key-SFTP', required, entityForm);
       }
     });
-    entityForm.formGroup.controls['private_key-SFTP'].valueChanges.subscribe((res) => {
+    entityForm.formGroup.controls['private_key-SFTP'].valueChanges.subscribe((res: any) => {
       if (res !== undefined) {
         const required = res === '' ? true : false;
         this.setFieldRequired('pass-SFTP', required, entityForm);
@@ -1331,7 +1331,7 @@ export class CloudCredentialsFormComponent {
 
     const driveTypeCtrl = entityForm.formGroup.controls['drive_type-ONEDRIVE'];
     const driveIdCtrl = entityForm.formGroup.controls['drive_id-ONEDRIVE'];
-    entityForm.formGroup.controls['drives-ONEDRIVE'].valueChanges.subscribe((res) => {
+    entityForm.formGroup.controls['drives-ONEDRIVE'].valueChanges.subscribe((res: any) => {
       if (res) {
         driveTypeCtrl.setValue(res.drive_type);
         driveIdCtrl.setValue(res.drive_id);
@@ -1345,7 +1345,7 @@ export class CloudCredentialsFormComponent {
     const tenantCtrl = entityForm.formGroup.controls['tenant-OPENSTACK_SWIFT'];
     const tenantIdCtrl = entityForm.formGroup.controls['tenant_id-OPENSTACK_SWIFT'];
     entityForm.formGroup.controls['auth_version-OPENSTACK_SWIFT'].valueChanges.subscribe(
-      (res) => {
+      (res: any) => {
         if (res === '1') {
           this.setFieldRequired('tenant-OPENSTACK_SWIFT', false, entityForm);
           this.setFieldRequired('tenant_id-OPENSTACK_SWIFT', false, entityForm);
@@ -1360,14 +1360,14 @@ export class CloudCredentialsFormComponent {
     )
 
     entityForm.formGroup.controls['tenant-OPENSTACK_SWIFT'].valueChanges.subscribe(
-      (res) => {
+      (res: any) => {
         if (authCtrl.value !== '1') {
           this.setFieldRequired('tenant_id-OPENSTACK_SWIFT', res === '' || res === undefined, entityForm);
         }
       }
     )
     entityForm.formGroup.controls['tenant_id-OPENSTACK_SWIFT'].valueChanges.subscribe(
-      (res) => {
+      (res: any) => {
         if (authCtrl.value !== '1') {
           this.setFieldRequired('tenant-OPENSTACK_SWIFT', res === '' || res === undefined, entityForm);
         }
@@ -1375,7 +1375,7 @@ export class CloudCredentialsFormComponent {
     )
   }
 
-  verifyCredentials(value) {
+  verifyCredentials(value: any) {
     delete value['name'];
     this.ws.call('cloudsync.credentials.verify', [value]).subscribe(
       (res) => {
@@ -1401,7 +1401,7 @@ export class CloudCredentialsFormComponent {
 
     window.addEventListener("message", doAuth, false);
 
-    function doAuth(message) {
+    function doAuth(message: any) {
       if (message.data.oauth_portal) {
         if (message.data.error) {
           dialogService.errorReport(T('Error'), message.data.error);
@@ -1424,7 +1424,7 @@ export class CloudCredentialsFormComponent {
     }
   }
 
-  async makeNewKeyPair(value, submitting?: boolean) {
+  async makeNewKeyPair(value: any, submitting?: boolean) {
     await this.replicationService.genSSHKeypair().then(
       async (res) => {
         const payload = {
@@ -1434,7 +1434,7 @@ export class CloudCredentialsFormComponent {
         };
         await this.ws.call('keychaincredential.create', [payload]).toPromise().then(
           (sshKey) => {
-            
+
             this.keyID = sshKey.id;
             const privateKeySFTPField = _.find(this.fieldConfig, {'name': 'private_key-SFTP'});
             privateKeySFTPField.options.push({ label: payload.name, value: this.keyID});
@@ -1458,9 +1458,9 @@ export class CloudCredentialsFormComponent {
       });
   }
 
-  finishSubmit(value) {
+  finishSubmit(value: any) {
     this.entityForm.loader.open();
-    const attributes = {};
+    const attributes: any = {};
     let attr_name: string;
     for (const item in value) {
       if (item != 'name' && item != 'provider') {
@@ -1474,13 +1474,13 @@ export class CloudCredentialsFormComponent {
     value['attributes'] = attributes;
 
     this.entityForm.submitFunction(value).subscribe(
-      (res) => {
+      () => {
           this.entityForm.loader.close();
           this.modalService.close('slide-in-form');
           this.modalService.refreshTable();
 
       },
-      (err) => {
+      (err: any) => {
           this.entityForm.loader.close();
           this.modalService.refreshTable();
           if (err.hasOwnProperty("reason") && (err.hasOwnProperty("trace"))) {
@@ -1491,14 +1491,14 @@ export class CloudCredentialsFormComponent {
       });
   }
 
-  beforeSubmit(value) {
+  beforeSubmit(value: any) {
     if (!this.credentialsOauth) {
       delete value['client_id'];
       delete value['client_secret'];
     }
   }
 
-  async customSubmit(value) {
+  async customSubmit(value: any) {
     delete value['oauth_signin_button'];
     if (value['private_key-SFTP'] === 'NEW') {
       this.makeNewKeyPair(value, true);
@@ -1525,7 +1525,7 @@ export class CloudCredentialsFormComponent {
     }
   }
 
-  getOnedriveList(data) {
+  getOnedriveList(data: any) {
     if (data.error) {
       this.entityForm.setDisabled('drives-ONEDRIVE', true, true);
       return;

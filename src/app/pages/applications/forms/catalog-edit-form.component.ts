@@ -49,7 +49,7 @@ export class CatalogEditFormComponent {
   ]);
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
-    private modalService: ModalService) 
+    private modalService: ModalService)
   {
     this.modalService.getRow$.subscribe((label: string) => {
       this.customFilter = [[["id", "=", label]], {"extra": {"item_details": true}}];
@@ -60,10 +60,10 @@ export class CatalogEditFormComponent {
     this.modalService.refreshTable();
   }
 
-  resourceTransformIncomingRestData(d) {
+  resourceTransformIncomingRestData(d: any) {
     let data = Object.assign([], d);
     const trains = Object.keys(d.trains);
-    
+
     const trainOptions = trains.map(train => {
       return {
         label: train,

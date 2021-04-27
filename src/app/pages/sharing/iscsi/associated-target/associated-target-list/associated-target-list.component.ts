@@ -66,19 +66,19 @@ export class AssociatedTargetListComponent {
       });
     });
   }
-  getActions(row) {
+  getActions(row: any) {
     return [{
       id: row.target,
       name: 'edit',
       icon: 'edit',
       label: T("Edit"),
-      onClick: (rowinner) => { this.entityList.doEdit(rowinner.id); },
+      onClick: (rowinner: any) => { this.entityList.doEdit(rowinner.id); },
     }, {
       id: row.target,
       name: 'delete',
       icon: 'delete',
       label: T("Delete"),
-      onClick: (rowinner) => {
+      onClick: (rowinner: any) => {
         let deleteMsg = this.entityList.getDeleteMessage(rowinner);
         this.iscsiService.getGlobalSessions().subscribe(
           (res) => {
@@ -90,13 +90,13 @@ export class AssociatedTargetListComponent {
             }
             deleteMsg = warningMsg + deleteMsg;
 
-            this.entityList.dialogService.confirm( T("Delete"), deleteMsg, false, T("Delete")).subscribe((dialres) => {
+            this.entityList.dialogService.confirm( T("Delete"), deleteMsg, false, T("Delete")).subscribe((dialres: boolean) => {
               if (dialres) {
                 this.entityList.loader.open();
                 this.entityList.loaderOpen = true;
                 this.entityList.ws.call(this.wsDelete, [rowinner.id, true]).subscribe(
-                  (resinner) => { this.entityList.getData() },
-                  (resinner) => {
+                  () => { this.entityList.getData() },
+                  (resinner: any) => {
                     new EntityUtils().handleError(this, resinner);
                     this.entityList.loader.close();
                   }

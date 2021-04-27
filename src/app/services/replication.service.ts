@@ -14,7 +14,7 @@ export class ReplicationService {
         return this.ws.call('pool.snapshottask.query');
     }
 
-    querySSHConnection(id) {
+    querySSHConnection(id: string) {
         return this.ws.call('keychaincredential.query', [[["id", "=", id]]]);
     }
 
@@ -22,7 +22,7 @@ export class ReplicationService {
         return this.ws.call('keychaincredential.generate_ssh_key_pair').toPromise();
     }
 
-    getRemoteDataset(transport, sshCredentials, parentComponent) {
+    getRemoteDataset(transport: any, sshCredentials: string, parentComponent: any) {
         const queryParams = [transport];
         if (transport !== 'LOCAL') {
             queryParams.push(sshCredentials)
@@ -37,7 +37,7 @@ export class ReplicationService {
                             name: res[i],
                             subTitle: pathArr[0],
                             hasChildren: false,
-                            children: [],
+                            children: [] as any,
                         };
                         nodes.push(node);
                     } else {
@@ -50,7 +50,7 @@ export class ReplicationService {
                             name: res[i],
                             subTitle: pathArr[j],
                             hasChildren: false,
-                            children: [],
+                            children: [] as any,
                         };
                         parent.children.push(node);
                         parent.hasChildren = true;
@@ -69,7 +69,7 @@ export class ReplicationService {
         return this.ws.call('replication.query');
     }
 
-    generateEncryptionHexKey(length) {
+    generateEncryptionHexKey(length: number) {
         const characters = '0123456789abcdef';
         let res = '';
         for ( let i = 0; i < length; i++ ) {

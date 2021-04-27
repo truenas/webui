@@ -4,6 +4,7 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
@@ -126,7 +127,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
       this.refreshForms();
     });
 
-    this.messageSubscription = this.modalService.message$.subscribe((res) => {
+    this.messageSubscription = this.modalService.message$.subscribe((res: any) => {
       if (res['action'] === 'open' && res['component'] === 'replicationForm') {
         this.modalService.open('slide-in-form', this.replicationFormComponent, res['row']);
       }
@@ -388,7 +389,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     this.smartFormComponent = new SmartFormComponent(this.ws, this.modalService);
   }
 
-  scrubDataSourceHelper(data: any) {
+  scrubDataSourceHelper(data: any[]) {
     return data.map((task) => {
       task.schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
 
@@ -405,7 +406,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  cloudsyncDataSourceHelper(data: any) {
+  cloudsyncDataSourceHelper(data: any[]) {
     return data.map((task) => {
       task.minute = task.schedule['minute'];
       task.hour = task.schedule['hour'];
@@ -425,7 +426,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         task.state = EntityJobState.Pending;
       } else {
         task.state = task.job.state;
-        this.parent.job.getJobStatus(task.job.id).subscribe((job) => {
+        this.parent.job.getJobStatus(task.job.id).subscribe((job: any) => {
           task.state = job.state;
           task.job = job;
         });
@@ -435,7 +436,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  replicationDataSourceHelper(data: any) {
+  replicationDataSourceHelper(data: any[]) {
     return data.map((task) => {
       task.ssh_connection = task.ssh_credentials ? task.ssh_credentials.name : '-';
       task.task_last_snapshot = task.state.last_snapshot ? task.state.last_snapshot : T('No snapshots sent yet');
@@ -443,7 +444,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         task.state = task.state.state;
       } else {
         task.state = task.job.state;
-        this.parent.job.getJobStatus(task.job.id).subscribe((job) => {
+        this.parent.job.getJobStatus(task.job.id).subscribe((job: any) => {
           task.state = job.state;
           task.job = job;
         });
@@ -452,15 +453,15 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  smartTestsDataSourceHelper(data: any) {
+  smartTestsDataSourceHelper(data: any[]) {
     return data.map((test) => {
       test.schedule = `${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
       if (test.all_disks) {
         test.disks = [T('All Disks')];
       } else if (test.disks.length) {
         test.disks = test.disks
-          .map((identifier) => {
-            const fullDisk = this.parent.disks.find((item) => item.identifier === identifier);
+          .map((identifier: any) => {
+            const fullDisk = this.parent.disks.find((item: any) => item.identifier === identifier);
             if (fullDisk) {
               identifier = fullDisk.devname;
             }
@@ -472,7 +473,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  snapshotDataSourceHelper(data: any) {
+  snapshotDataSourceHelper(data: any[]) {
     return data.map((task) => {
       task.state = task.state.state;
       task.keepfor = `${task.lifetime_value} ${task.lifetime_unit}(S)`;
@@ -481,7 +482,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  rsyncDataSourceHelper(data: any) {
+  rsyncDataSourceHelper(data: any[]) {
     return data.map((task) => {
       task.minute = task.schedule['minute'];
       task.hour = task.schedule['hour'];
@@ -495,7 +496,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         task.state = EntityJobState.Pending;
       } else {
         task.state = task.job.state;
-        this.parent.job.getJobStatus(task.job.id).subscribe((job) => {
+        this.parent.job.getJobStatus(task.job.id).subscribe((job: any) => {
           task.state = job.state;
           task.job = job;
         });
@@ -513,8 +514,8 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         name: 'run',
         label: T('Run Now'),
         matTooltip: T('Run Now'),
-        onClick: (row) => {
-          this.dialog.confirm(T('Run Now'), T('Replicate <i>') + row.name + T('</i> now?'), true).subscribe((res) => {
+        onClick: (row: any) => {
+          this.dialog.confirm(T('Run Now'), T('Replicate <i>') + row.name + T('</i> now?'), true).subscribe((res: boolean) => {
             if (res) {
               row.state = EntityJobState.Running;
               this.ws.call('replication.run', [row.id]).subscribe(
@@ -544,7 +545,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         label: T('Restore'),
         matTooltip: T('Restore'),
         icon: 'restore',
-        onClick: (row) => {
+        onClick: (row: any) => {
           const parent = this;
           const conf: DialogFormConfiguration = {
             title: helptext_replication.replication_restore_dialog.title,
@@ -569,7 +570,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
               },
             ],
             saveButtonText: helptext_replication.replication_restore_dialog.saveButton,
-            customSubmit: function (entityDialog) {
+            customSubmit: function (entityDialog: EntityDialogComponent) {
               parent.loader.open();
               parent.ws.call('replication.restore', [row.id, entityDialog.formValue]).subscribe(
                 (res) => {
@@ -598,12 +599,12 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         icon: 'play_arrow',
         matTooltip: T('Run Now'),
         name: 'run',
-        onClick: (row) => {
-          this.dialog.confirm(T('Run Now'), T('Run this cloud sync now?'), true).subscribe((res) => {
+        onClick: (row: any) => {
+          this.dialog.confirm(T('Run Now'), T('Run this cloud sync now?'), true).subscribe((res: boolean) => {
             if (res) {
               row.state = EntityJobState.Running;
               this.ws.call('cloudsync.sync', [row.id]).subscribe(
-                (jobId) => {
+                (jobId: any) => {
                   this.dialog.Info(
                     T('Task Started'),
                     T('Cloud sync <i>') + row.description + T('</i> has started.'),
@@ -630,8 +631,8 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         icon: 'stop',
         matTooltip: T('Stop'),
         name: 'stop',
-        onClick: (row) => {
-          this.dialog.confirm(T('Stop'), T('Stop this cloud sync?'), true).subscribe((res) => {
+        onClick: (row: any) => {
+          this.dialog.confirm(T('Stop'), T('Stop this cloud sync?'), true).subscribe((res: any) => {
             if (res) {
               this.ws.call('cloudsync.abort', [row.id]).subscribe(
                 () => {
@@ -657,10 +658,10 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         icon: 'sync',
         matTooltip: helptext_cloudsync.action_button_dry_run,
         name: 'dry_run',
-        onClick: (row) => {
+        onClick: (row: any) => {
           this.dialog
             .confirm(helptext_cloudsync.dry_run_title, helptext_cloudsync.dry_run_dialog, true)
-            .subscribe((dialog_res) => {
+            .subscribe((dialog_res: any) => {
               if (dialog_res) {
                 this.ws.call('cloudsync.sync', [row.id, { dry_run: true }]).subscribe(
                   (jobId) => {
@@ -690,7 +691,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         icon: 'restore',
         matTooltip: T('Restore'),
         name: 'restore',
-        onClick: (row) => {
+        onClick: (row: any) => {
           const parent = this;
           const conf: DialogFormConfiguration = {
             title: T('Restore Cloud Sync Task'),
@@ -734,8 +735,8 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
               },
             ],
             saveButtonText: 'Restore',
-            afterInit: function (entityDialog) {
-              entityDialog.formGroup.get('transfer_mode').valueChanges.subscribe((mode) => {
+            afterInit: function (entityDialog: EntityDialogComponent) {
+              entityDialog.formGroup.get('transfer_mode').valueChanges.subscribe((mode: any) => {
                 const paragraph = conf.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
                 switch (mode) {
                   case 'SYNC':
@@ -748,7 +749,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
                 }
               });
             },
-            customSubmit: function (entityDialog) {
+            customSubmit: function (entityDialog: EntityDialogComponent) {
               parent.loader.open();
               parent.ws.call('cloudsync.restore', [row.id, entityDialog.formValue]).subscribe(
                 (res) => {
@@ -777,8 +778,8 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
         label: T('Run Now'),
         matTooltip: T('Run Now'),
         name: 'run',
-        onClick: (row) => {
-          this.dialog.confirm(T('Run Now'), T('Run this rsync now?'), true).subscribe((run) => {
+        onClick: (row: any) => {
+          this.dialog.confirm(T('Run Now'), T('Run this rsync now?'), true).subscribe((run: boolean) => {
             if (run) {
               row.state = EntityJobState.Running;
               this.ws.call('rsynctask.run', [row.id]).subscribe(
@@ -815,22 +816,22 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  runningStateButton(jobid) {
+  runningStateButton(jobid: any) {
     const dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: { title: T('Task is running') },
       disableClose: false,
     });
     dialogRef.componentInstance.jobId = jobid;
     dialogRef.componentInstance.wsshow();
-    dialogRef.componentInstance.success.subscribe((res) => {
+    dialogRef.componentInstance.success.subscribe(() => {
       dialogRef.close();
     });
-    dialogRef.componentInstance.failure.subscribe((err) => {
+    dialogRef.componentInstance.failure.subscribe(() => {
       dialogRef.close();
     });
   }
 
-  stateButton(row) {
+  stateButton(row: any) {
     if (row.job) {
       if (row.state === EntityJobState.Running) {
         this.runningStateButton(row.job.id);

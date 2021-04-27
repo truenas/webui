@@ -30,7 +30,7 @@ export class ApplicationsService {
     return this.ws.call('docker.images.query');
   }
 
-  getCatItems(label) {
+  getCatItems(label: string) {
     return this.ws.call('catalog.items', [label]);
   }
 
@@ -38,7 +38,7 @@ export class ApplicationsService {
     let secondOption = {"extra": {"history": true}};
 
     if (name) {
-      return this.ws.call('chart.release.query', [[['name', '=', name]]]);  
+      return this.ws.call('chart.release.query', [[['name', '=', name]]]);
     }
     return this.ws.call('chart.release.query', [[], secondOption]);
   }
@@ -71,7 +71,7 @@ export class ApplicationsService {
   getChartReleaseEvents(name: string) {
     return this.ws.call('chart.release.events', [name]);
   }
-  
+
   getContainerConfig() {
     return this.ws.call('container.config');
   }

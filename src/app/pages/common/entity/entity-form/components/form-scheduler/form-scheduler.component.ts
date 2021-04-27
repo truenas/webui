@@ -190,14 +190,14 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   get sat(){ return this._sat}
   set sat(val){ this._sat = val; this.formatDaysOfWeek()}
 
-  public minDate;
-  public maxDate;
-  public currentDate;
-  public activeDate;
+  public minDate: moment.Moment;
+  public maxDate: moment.Moment;
+  public currentDate: moment.Moment;
+  public activeDate: string;
   public generatedSchedule: any[] = [];
   public generatedScheduleSubset:number = 0;
-  protected beginTime;
-  protected endTime;
+  protected beginTime: moment.Moment;
+  protected endTime: moment.Moment;
   public picker:boolean = false;
   private _textInput:string = '';
   public crontab:string = "custom";
@@ -291,7 +291,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
 
   ngOnInit(){
     this.control = this.group.controls[this.config.name];
-    this.control.valueChanges.subscribe((evt) => {
+    this.control.valueChanges.subscribe((evt: string) => {
       this.crontab = evt;
     });
     if (this.control.value) {
@@ -313,7 +313,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
   }
 
-  onChangeOption($event) {
+  onChangeOption($event: Event) {
     if (this.config.onChangeOption !== undefined && this.config.onChangeOption != null) {
       this.config.onChangeOption({ event: $event });
     }
@@ -335,7 +335,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
   }
 
-  backdropClicked(evt){
+  backdropClicked(){
     this.togglePopup();
   }
 
@@ -354,7 +354,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
   }
 
-  onScroll(e){
+  onScroll(){
     let lastChild = this.schedulePreview.nativeElement.lastElementChild;
     let el = this.schedulePreview.nativeElement;
     if((el.scrollHeight - el.scrollTop) == el.offsetHeight){
@@ -363,7 +363,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   }
 
 
-  private setCalendar(direction){
+  private setCalendar(direction: 'next' | 'previous'){
     let newDate;
     if(direction == "next"){
       newDate = moment(this.minDate).add(1,'months');
@@ -381,7 +381,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     this.generateSchedule();
   }
 
-  private getMinDate(d){
+  private getMinDate(d: moment.Moment){
     let dt = moment(d).add(1, 'seconds');
     let newMinDate;
     let thisMonth = moment().month();
@@ -399,7 +399,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
   }
 
   // check if candidate schedule is between the beginTime and endTime
-  isValidSchedule(schedule): boolean {
+  isValidSchedule(schedule: any): boolean {
     const scheduleArray = schedule.toString().split(' ');
     const time = moment(scheduleArray[4], 'hh:mm:ss');
     if (this.beginTime && this.endTime) {
@@ -425,7 +425,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
       adjusted =  moment(this.minDate).subtract(1, 'seconds').toDate();
     }
 
-    let options = {
+    let options: any = {
       currentDate: adjusted,
       endDate: this.maxDate,//max
       iterator: true
@@ -458,13 +458,13 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
 
     if(!nextSubset){
       // Extra job so we can find days.
-      let daySchedule = [];
+      let daySchedule: any[] = [];
       let spl = this.crontab.split(" ");
       // Modified crontab so we can find days;
       let crontabDays = "0 0 " + " "+ spl[1] + " " + spl[2] + " " + spl[3] + " " + spl[4];
       let intervalDays = parser.parseExpression(crontabDays, {
         currentDate:  moment(this.minDate).subtract(1, 'seconds').toDate(),
-        endDate: this.maxDate,
+        endDate: this.maxDate as any,
         iterator:true
       });
 
@@ -490,7 +490,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
   }
 
-  private updateCalendar(schedule){
+  private updateCalendar(schedule: any){
     let nodes = this.getCalendarCells();
     for(let i = 0; i < nodes.length; i++){
       let nodeClass = "mat-calendar-body-cell ng-star-inserted";
@@ -506,8 +506,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
 
   private getCalendarCells(){
     let rows = this.calendar.nativeElement.children[0].children[1].children;
-    let cells = [];
-
+    let cells: any[] = [];
     for(let i = 0; i < rows.length; i++){
       let row = rows[i].childNodes;
       let tds = [];
@@ -521,21 +520,21 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     return cells;
   }
 
-  getAttribute(attr, node){
+  getAttribute(attr: string, node: HTMLElement){
     let a = node.attributes.getNamedItem(attr);
     if(a){
       return a.value;
     }
   }
 
-  setAttribute(attr, node, value){
-    let a = (<any>document).createAttribute(attr);
+  setAttribute(attr: string, node: HTMLElement, value: string){
+    let a = document.createAttribute(attr);
     a.value = value;
     node.attributes.removeNamedItem(attr);
     node.attributes.setNamedItem(a);
   }
 
-  private checkSchedule(aria?,sched?){
+  private checkSchedule(aria?: string, sched?: any){
     if(!aria){ return; }
     if(!sched){ sched= this.generatedSchedule}
 
@@ -592,7 +591,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     this.updateCronTab();
   }
 
-  updateMonthsFields(rule){
+  updateMonthsFields(rule: string){
     // Wild card
    if(rule == "*"){
     this._jan = false;
@@ -654,7 +653,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
    }
 
-  updateDaysOfWeekFields(rule){
+  updateDaysOfWeekFields(rule: string){
     // Wild card
    if(rule == "*"){
     this._sun = false;
@@ -697,7 +696,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
    }
 
-  updateCronTab(preset?){
+  updateCronTab(preset?: any){
     this.crontab = "";
     if(!preset){
       let result = this.minutes + " " + this.hours + " " + this.days + " " + this._months + " " + this._daysOfWeek;
@@ -708,7 +707,7 @@ export class FormSchedulerComponent implements Field, OnInit, OnChanges, AfterVi
     }
   }
 
-  convertPreset(value){
+  convertPreset(value: string){
     let arr = value.split(" ");
     this._minutes = arr[0];
     this._hours = arr[1];

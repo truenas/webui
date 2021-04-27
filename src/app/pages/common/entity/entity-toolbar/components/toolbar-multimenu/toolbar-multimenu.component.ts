@@ -13,7 +13,7 @@ import { Control} from '../../models/control.interface';
   templateUrl: 'toolbar-multimenu.component.html'
 })
 export class ToolbarMultimenuComponent extends iXAbstractObject implements OnInit, OnChanges {
-  @Input() config?: ControlConfig; 
+  @Input() config?: ControlConfig;
   @Input() controller: Subject<any>;
   allSelected:boolean = false;
   public values: any[] = [];
@@ -40,18 +40,18 @@ export class ToolbarMultimenuComponent extends iXAbstractObject implements OnIni
               this.selectStates[j] = true;
               break;
             }
-          }    
+          }
         }
       }
     } else {
       this.values.push(this.config.options[0]);
       this.selectStates[0] = true;
     }
-    
+
     this.updateController();
   }
 
-  onClick(value, index){
+  onClick(value: any, index: number){
     if(this.selectStates[index]){
       if(this.checkLength()){this.allSelected = false;}
       let vIndex = this.values.indexOf(value);
@@ -86,7 +86,7 @@ export class ToolbarMultimenuComponent extends iXAbstractObject implements OnIni
     this.updateController();
   }
 
-  isChecked(option){
+  isChecked(){
     return true;
   }
 }

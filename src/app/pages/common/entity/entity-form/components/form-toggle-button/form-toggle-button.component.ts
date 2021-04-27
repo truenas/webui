@@ -26,7 +26,7 @@ export class FormToggleButtonComponent implements Field, OnInit {
     this.init = true;
     this.control = this.group.controls[this.config.name];
 
-    this.control.valueChanges.subscribe((res) => {
+    this.control.valueChanges.subscribe((res: any) => {
       if (this.init && this.config.options && res) {
         this.init = false;
         let all_selected = false;
@@ -50,7 +50,7 @@ export class FormToggleButtonComponent implements Field, OnInit {
     });
   }
 
-  check(item) {
+  check(item: any) {
     this.init = false;
     item.checked = !item.checked;
     let target = _.findIndex(this.groupValue, _.unary(_.partialRight(_.includes, item.value)));

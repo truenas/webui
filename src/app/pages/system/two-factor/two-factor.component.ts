@@ -132,7 +132,7 @@ export class TwoFactorComponent {
       function : () => {
         this.dialog.confirm(helptext.two_factor.confirm_dialog.title,
           helptext.two_factor.confirm_dialog.message, true,
-          helptext.two_factor.confirm_dialog.btn).subscribe(res => {
+          helptext.two_factor.confirm_dialog.btn).subscribe((res: boolean) => {
             if (res) {
               this.loader.open();
               this.ws.call('auth.twofactor.update', [{enabled: true}] ).subscribe(() => {
@@ -184,7 +184,7 @@ export class TwoFactorComponent {
     protected loader: AppLoaderService,
     protected mdDialog: MatDialog) { }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     data.ssh = data.services.ssh;
     this.secret = data.secret;
     this.TwoFactorEnabled = data.enabled;
@@ -203,7 +203,7 @@ export class TwoFactorComponent {
     return true;
   }
 
-  
+
   isCustActionDisabled(action_id: string) {
     // Disables the 'Enable 2F' & 'Show QR' buttons if there is no secret
     if (action_id === 'renew_secret') {
@@ -211,13 +211,13 @@ export class TwoFactorComponent {
     } else if (action_id === 'show_qr') {
       return this.secret && this.secret !== '' ? false : true;
     }
-  } 
+  }
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     this.getURI();
     const intervalValue = _.find(this.fieldConfig, {name: 'interval'});
-    entityEdit.formGroup.controls['interval'].valueChanges.subscribe(val => {
+    entityEdit.formGroup.controls['interval'].valueChanges.subscribe((val: string) => {
       if (parseInt(val) !== 30) {
         intervalValue.hint = helptext.two_factor.interval.hint;
       } else {
@@ -239,18 +239,18 @@ export class TwoFactorComponent {
 
   updateEnabledStatus() {
     const enabled = _.find(this.fieldConfig, { name: 'enabled_status' });
-    this.TwoFactorEnabled ? 
+    this.TwoFactorEnabled ?
       enabled.paraText = helptext.two_factor.enabled_status_true :
       enabled.paraText = helptext.two_factor.enabled_status_false;
   }
 
-  customSubmit(data) {
+  customSubmit(data: any) {
     if (data.otp_digits === this.digitsOnLoad && data.interval === this.intervalOnLoad) {
       this.doSubmit(data);
     } else {
       this.dialog.confirm(helptext.two_factor.submitDialog.title,
         helptext.two_factor.submitDialog.message, true, helptext.two_factor.submitDialog.btn)
-        .subscribe(res => {
+        .subscribe((res: boolean) => {
           if (res) {
             this.intervalOnLoad = data.interval;
             this.digitsOnLoad = data.otp_digits;
@@ -260,7 +260,7 @@ export class TwoFactorComponent {
     }
   }
 
-  doSubmit(data, openQR = false) {
+  doSubmit(data: any, openQR = false) {
     data.enabled = this.TwoFactorEnabled;
     data.services = { ssh: data.ssh };
     const extras = ['instructions', 'enabled_status', 'secret', 'uri', 'ssh'];
@@ -290,7 +290,7 @@ export class TwoFactorComponent {
   renewSecret() {
     this.dialog.confirm(helptext.two_factor.renewSecret.title,
        helptext.two_factor.renewSecret.message, true,
-       helptext.two_factor.renewSecret.btn).subscribe(res => {
+       helptext.two_factor.renewSecret.btn).subscribe((res: boolean) => {
          if (res) {
            this.loader.open();
            this.ws.call('auth.twofactor.renew_secret').subscribe(() => {
@@ -328,7 +328,8 @@ export class QRDialog {
 
 constructor(
   public dialogRef: MatDialogRef<QRDialog>,
-  @Inject(MAT_DIALOG_DATA) public data) {}
+  @Inject(MAT_DIALOG_DATA) public data: any,
+) {}
 
 onNoClick(): void {
   this.dialogRef.close();

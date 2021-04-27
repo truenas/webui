@@ -36,7 +36,7 @@ export class KerberosRealmsListComponent implements OnDestroy {
 
   constructor(private modalService: ModalService) { }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any[]) {
     data.forEach((row) => {
       this.keyList.forEach((key) => {
         if (row.hasOwnProperty(key)) {
@@ -70,19 +70,19 @@ export class KerberosRealmsListComponent implements OnDestroy {
     }];
   }
 
-  getActions(row) {
+  getActions(row: any) {
     const actions = [];
     actions.push({
       id: 'edit',
       label: T('Edit'),
       disabled: row.disableEdit,
-      onClick: (row) => {
+      onClick: (row: any) => {
         this.doAdd(row.id);
       }
     }, {
       id: 'delete',
       label: T('Delete'),
-      onClick: (row) => {
+      onClick: (row: any) => {
         this.entityList.doDelete(row);
       }
     });

@@ -23,8 +23,8 @@ export class DialogService {
         this.ws.onCloseSubject.pipe(filter(didClose => !!didClose)).subscribe(() => this.closeAllDialogs());
     }
 
-    public confirm(title: string, message: string, hideCheckBox?: boolean, buttonMsg?: string, secondaryCheckBox?: boolean, 
-        secondaryCheckBoxMsg?: string, method?:string, data?:any, tooltip?:any, hideCancel?:boolean, cancelMsg?: string, 
+    public confirm(title: string, message: string, hideCheckBox?: boolean, buttonMsg?: string, secondaryCheckBox?: boolean,
+        secondaryCheckBoxMsg?: string, method?:string, data?:any, tooltip?:any, hideCancel?:boolean, cancelMsg?: string,
         disableClose: boolean = false, textToCopy?: string, keyTextArea?:boolean): any {
 
         let dialogRef: MatDialogRef<ConfirmDialog>;
@@ -40,7 +40,7 @@ export class DialogService {
 
         if(hideCheckBox) {
             dialogRef.componentInstance.hideCheckBox = hideCheckBox;
-        } 
+        }
 
         if(tooltip) {
             dialogRef.componentInstance.tooltip = tooltip;
@@ -67,7 +67,7 @@ export class DialogService {
             dialogRef.componentInstance.secondaryCheckBoxMsg = secondaryCheckBoxMsg;
             dialogRef.componentInstance.data = data;
             dialogRef.componentInstance.method = method;
-            dialogRef.componentInstance.switchSelectionEmitter.subscribe((selection)=>{
+            dialogRef.componentInstance.switchSelectionEmitter.subscribe((selection: any)=>{
             if(selection){
                 if(data[0] && data[0].hasOwnProperty('reboot')){
                     data[0].reboot = !data[0].reboot;
@@ -110,7 +110,7 @@ export class DialogService {
     }
 
     public Info(title: string, info: string, width='500px', icon="report_problem", is_html=false ): Observable<boolean> {
-        
+
         let dialogRef: MatDialogRef<InfoDialog>;
 
         dialogRef = this.dialog.open(InfoDialog, {width: width});
@@ -124,7 +124,7 @@ export class DialogService {
     }
 
     public select(title: string, options:  Array<any>, optionPlaceHolder: string, method: string, params?: any, message?: string){
-        let data: any;     
+        let data: any;
         let dialogRef: MatDialogRef<SelectDialogComponent>;
 
         dialogRef = this.dialog.open(SelectDialogComponent, {width: '300px'});
@@ -134,7 +134,7 @@ export class DialogService {
         dialogRef.componentInstance.optionPlaceHolder = optionPlaceHolder;
         dialogRef.componentInstance.method = method;
 
-        dialogRef.componentInstance.switchSelectionEmitter.subscribe((selection)=>{
+        dialogRef.componentInstance.switchSelectionEmitter.subscribe((selection: any)=>{
             if (selection === 'force'){
                  data = {[selection]: true}
             }
@@ -192,7 +192,7 @@ export class DialogService {
               }
             ],
             saveButtonText: buttonMsg ? buttonMsg : T("DELETE"),
-            afterInit: function(entityDialog) {
+            afterInit: function(entityDialog: EntityDialogComponent) {
                 entityDialog.formGroup.controls['name'].valueChanges.subscribe((res) => {
                     entityDialog.submitEnabled = res === name && (confirmBox ? entityDialog.formGroup.controls['confirm'].value : true);
                 })
@@ -200,7 +200,7 @@ export class DialogService {
                     entityDialog.submitEnabled = res && (entityDialog.formGroup.controls['name'].value === name);
                 })
             },
-            customSubmit: function (entityDialog) {
+            customSubmit: function (entityDialog: EntityDialogComponent) {
                 return entityDialog.dialogRef.close(true);
             }
           }

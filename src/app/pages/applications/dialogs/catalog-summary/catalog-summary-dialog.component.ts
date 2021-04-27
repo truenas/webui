@@ -17,14 +17,14 @@ export class CatalogSummaryDialog implements OnInit {
   public statusOptions: string[] = ['All', 'Healthy', 'Unhealthy'];
   helptext = helptext;
   public selectedStatus: string = this.statusOptions[0];
-  public filteredVersions: object;
-  
+  public filteredVersions: any;
+
   constructor(
     public dialogRef: MatDialogRef<CatalogSummaryDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     protected localeService: LocaleService,
     private loader:AppLoaderService,
-    private appService: ApplicationsService) { 
+    private appService: ApplicationsService) {
     this.catalogApp = data;
   }
 
@@ -46,7 +46,7 @@ export class CatalogSummaryDialog implements OnInit {
     return Object.keys(this.filteredVersions).length > 0;
   }
 
-  versionStatusLabel(version) {
+  versionStatusLabel(version: any) {
     let label = '';
     if (this.selectedStatus == this.statusOptions[0]) {
       if (version.value.healthy) {

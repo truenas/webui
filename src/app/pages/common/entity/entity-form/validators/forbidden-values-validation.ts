@@ -1,6 +1,6 @@
 import { FormControl } from '@angular/forms'
 
-export function forbiddenValues(arrayOfValues: any, caseInsensitive?: boolean) {
+export function forbiddenValues(arrayOfValues: any[], caseInsensitive?: boolean) {
   let thisControl: FormControl;
 
   return function forbiddenValuesValidate(control: FormControl) {
@@ -19,7 +19,7 @@ export function forbiddenValues(arrayOfValues: any, caseInsensitive?: boolean) {
     }
 
     if (caseInsensitive) {
-      arrayOfValues.forEach((item) => {
+      arrayOfValues.forEach((item: any) => {
         item = item.toLowerCase();
       })
       if (arrayOfValues.includes(thisControl.value.toLowerCase())) {

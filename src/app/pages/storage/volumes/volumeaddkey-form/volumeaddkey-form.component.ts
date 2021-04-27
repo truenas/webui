@@ -118,14 +118,14 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
   }
 
   afterInit(entityForm: any) {
-    entityForm.formGroup.controls['password'].valueChanges.subscribe((res) => {
+    entityForm.formGroup.controls['password'].valueChanges.subscribe((res: string) => {
       this.admin_pw = res;
       let btn = <HTMLInputElement> document.getElementById('cust_button_Invalidate Existing Key')
       this.admin_pw !== '' ? btn.disabled = false : btn.disabled = true;
     })
   }
-    
-  customSubmit(value) { 
+
+  customSubmit(value: any) {
     this.ws.call('auth.check_user', ['root', value.password]).subscribe((res) => {
       if (res) {
         this.encryptionService.makeRecoveryKey(this.pk, value.name, this.route_return);

@@ -19,9 +19,9 @@ export class UnlockDialogComponent {
   public buttonMsg: string = helptext.unlock_dataset_dialog.ok_button;
   public cancelMsg: string = helptext.unlock_dataset_dialog.cancel_button;
   public skipped_message: string = helptext.unlock_result_dialog.skipped_message;
-  public unlock_datasets = [];
-  public error_datasets = [];
-  public skipped_datasets = [];
+  public unlock_datasets: any[] = [];
+  public error_datasets: any[] = [];
+  public skipped_datasets: any[] = [];
   public tooltip: string;
   public hideCancel = false;
   public final = false;
@@ -54,7 +54,7 @@ export class UnlockDialogComponent {
     this.parent.dialogOpen = false;
   }
 
-  showError(dataset) {
+  showError(dataset: any) {
     if (this.parent.dialogService && dataset.unlock_error) {
       this.parent.dialogService.Info(helptext.unlock_dataset_dialog.error_dialog_title + dataset.name, dataset.unlock_error);
     }

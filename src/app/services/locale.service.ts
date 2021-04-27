@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Option } from 'app/interfaces/option.interface';
 import * as moment from 'moment-timezone';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { SystemGeneralService } from '../services';
@@ -16,7 +17,7 @@ export class LocaleService {
     dateTimeFormatChange$ = new Subject();
     public target: Subject<CoreEvent> = new Subject();
 
-    constructor(public prefService: PreferencesService, public sysGeneralService: SystemGeneralService, 
+    constructor(public prefService: PreferencesService, public sysGeneralService: SystemGeneralService,
         private core: CoreService) {
         this.sysGeneralService.getGeneralConfig.subscribe(res => {
             this.timeZone = res.timezone;
@@ -45,12 +46,12 @@ export class LocaleService {
         });
     }
 
-    getDateFormatOptions(tz?: string) {
+    getDateFormatOptions(tz?: string): Option[] {
         if (tz) {
             moment.tz.setDefault(tz);
         }
-        const options = [
-            { label: moment().format('YYYY-MM-DD'), value: 'YYYY-MM-DD' },     
+        return [
+            { label: moment().format('YYYY-MM-DD'), value: 'YYYY-MM-DD' },
             { label: moment().format('MMMM D, YYYY'), value: 'MMMM D, YYYY' },
             { label: moment().format('D MMMM, YYYY'), value: 'D MMMM, YYYY' },
             { label: moment().format('MMM D, YYYY'), value: 'MMM D, YYYY' },
@@ -59,32 +60,30 @@ export class LocaleService {
             { label: moment().format('DD/MM/YYYY'), value: 'DD/MM/YYYY' },
             { label: moment().format('DD.MM.YYYY'), value: 'DD.MM.YYYY' }
           ];
-          return options;
     }
 
-    getTimeFormatOptions(tz?: string) {
+    getTimeFormatOptions(tz?: string): Option[] {
         if (tz) {
             moment.tz.setDefault(tz);
         }
-        const options = [
+        return [
             { label: `${moment().format('HH:mm:ss')} ${this.t24}`, value: 'HH:mm:ss' },
             { label: moment().format('hh:mm:ss a'), value: 'hh:mm:ss a' },
             { label: moment().format('hh:mm:ss A'), value: 'hh:mm:ss A' }
         ];
-        return options;
     }
 
-    formatDateTime(date, tz?) {      
+    formatDateTime(date: Date, tz?: string) {
         tz ? moment.tz.setDefault(tz) : moment.tz.setDefault(this.timeZone);
         return moment(date).format(`${this.dateFormat} ${this.timeFormat}`);
     }
 
-    formatDateTimeWithNoTz(date) {      
+    formatDateTimeWithNoTz(date: Date) {
         moment.tz.setDefault('')
         return moment(date).format(`${this.dateFormat} ${this.timeFormat}`);
     }
 
-    getTimeOnly(date, seconds=true, tz?) {
+    getTimeOnly(date: Date, seconds=true, tz?: string) {
         tz ? moment.tz.setDefault(tz) : moment.tz.setDefault(this.timeZone);
         let format: string;
         if (!seconds) {
@@ -108,7 +107,7 @@ export class LocaleService {
         return moment(date).format(format);
     }
 
-    saveDateTimeFormat(dateFormat, timeFormat) {
+    saveDateTimeFormat(dateFormat: any, timeFormat: any) {
         this.dateFormat = dateFormat;
         this.timeFormat = timeFormat;
         this.storeDateTimeFormat(this.dateFormat, this.timeFormat);
@@ -135,13 +134,13 @@ export class LocaleService {
         return this.timeFormat;
     }
 
-    getDateAndTime(tz?) {
+    getDateAndTime(tz?: string) {
         if (tz) {
             moment.tz.setDefault(tz);
         }
         return [moment().format(this.dateFormat), moment().format(this.timeFormat)];
     }
-    
+
     // Translates moment.js format to angular template format for use in special cases such as form-scheduler
     getAngularFormat() {
         let ngTimeFormat: string;

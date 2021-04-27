@@ -14,7 +14,7 @@ import { RsyncFormComponent } from 'app/pages/data-protection/rsync/rsync-form/r
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityJob } from 'app/interfaces/entity-job.interface';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
-import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 
 @Component({
@@ -85,15 +85,15 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
     });
   }
 
-  getActions(row) {
-    const actions = [];
+  getActions(row: any): any[] {
+    const actions: any[] = [];
     actions.push({
       id: row.path,
       icon: 'play_arrow',
       label: T('Run Now'),
       name: 'run',
-      onClick: (members) => {
-        this.dialog.confirm(T('Run Now'), T('Run this rsync now?'), true).subscribe((run) => {
+      onClick: () => {
+        this.dialog.confirm(T('Run Now'), T('Run this rsync now?'), true).subscribe((run: boolean) => {
           if (run) {
             row.state = { state: EntityJobState.Running };
             this.ws.call('rsynctask.run', [row.id]).subscribe(
@@ -132,7 +132,7 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
       icon: 'delete',
       name: 'delete',
       label: T('Delete'),
-      onClick: (task_delete) => {
+      onClick: () => {
         this.entityList.doDelete(row);
       },
     });
@@ -140,7 +140,7 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
     return actions;
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any[]) {
     return data.map((task) => {
       task.minute = task.schedule['minute'];
       task.hour = task.schedule['hour'];
@@ -167,7 +167,7 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
     this.stateButton(row);
   }
 
-  stateButton(row) {
+  stateButton(row: any) {
     if (row.job) {
       if (row.state.state === EntityJobState.Running) {
         this.entityList.runningStateButton(row.job.id);

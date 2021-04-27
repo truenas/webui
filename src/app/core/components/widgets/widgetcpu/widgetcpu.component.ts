@@ -5,9 +5,10 @@ import { ThemeUtils } from 'app/core/classes/theme-utils';
 import { MaterialModule } from 'app/appMaterial.module';
 import { NgForm } from '@angular/forms';
 import { ChartData } from 'app/core/components/viewchart/viewchart.component';
+import { Theme } from 'app/services/theme/theme.service';
 import { Subject } from 'rxjs';
 import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
-import Chart from 'chart.js';
+import { Chart, ChartDataSets, InteractionMode } from 'chart.js';
 
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
@@ -21,21 +22,6 @@ import { ViewChartBarComponent } from 'app/core/components/viewchartbar/viewchar
 import { TranslateService } from '@ngx-translate/core';
 
 import { T } from '../../../../translate-marker';
- 
-interface DataPoint {
-  usage?: number | string;
-  temperature?: number | string;
-  coreNumber: number;
-}
-
-// For Chart.js
-interface DataSet {
-  label: string;
-  data: number[];
-  backgroundColor: string;
-  borderColor?: string;
-  borderWidth?: number;
-}
 
 @Component({
   selector: 'widget-cpu',
@@ -109,7 +95,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
     // Fetch CPU core count from SysInfo cache
     this.core.register({
-      observerClass: this, 
+      observerClass: this,
       eventName:"SysInfo"
     }).subscribe((evt: CoreEvent) => {
       this.threadCount = evt.data.cores;
@@ -130,7 +116,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   ngAfterViewInit(){
 
     this.core.register({
-      observerClass: this, 
+      observerClass: this,
       eventName:"ThemeChanged"
     }).subscribe((evt: CoreEvent) => {
       d3.select('#grad1 .begin')
@@ -151,7 +137,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
   }
 
-  parseCpuData(data){
+  parseCpuData(data: any){
     this.tempAvailable = data.temperature && Object.keys(data.temperature).length > 0 ? 'true' : 'false';
     let usageColumn: any[] = ["Usage"];
     let temperatureColumn: any[] = ["Temperature"];
@@ -161,7 +147,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     // Filter out stats per thread
     let keys = Object.keys(data);
     const threads = keys.filter((n) => !isNaN(parseFloat(n)));
-    
+
     for(let i = 0; i < this.threadCount; i++){
       usageColumn.push( parseInt(data[i.toString()].usage.toFixed(1)) );
 
@@ -174,18 +160,16 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       } else if (data.temperature_celsius && data.temperature_celsius[temperatureIndex]) {
         temperatureValues.push( data.temperature_celsius[temperatureIndex] );
       }
-       
+
     }
-    
-    temperatureColumn = temperatureColumn.concat(temperatureValues);
-    
-    this.setMobileStats(Object.assign([],usageColumn), Object.assign([],temperatureColumn) ); 
+temperatureColumn = temperatureColumn.concat(temperatureValues);
+    this.setMobileStats(Object.assign([],usageColumn), Object.assign([],temperatureColumn) );
 
     return [usageColumn, temperatureColumn];
-    
+
   }
 
-  setMobileStats(usage, temps){
+  setMobileStats(usage: number[], temps: number[]){
     // Usage
     usage.splice(0,1);
     this.usageMin = Math.min(...usage);
@@ -219,7 +203,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     }
   }
 
-  setCpuData(data){
+  setCpuData(data: any){
     let config: any = {}
     config.title = "Cores";
     config.orientation = 'horizontal';
@@ -229,7 +213,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.coresChartInit();
   }
 
-  setCpuLoadData(data){
+  setCpuLoadData(data: any){
     let config: any = {}
     config.title = data[0];
     config.units = "%";
@@ -267,18 +251,18 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
       let options = {
         events: ['mousemove','mouseout'],
-        onHover: (e) => {
-          if(e.type == "mouseout"){ 
-            this.legendData = null; 
+        onHover: (e: MouseEvent) => {
+          if(e.type == "mouseout"){
+            this.legendData = null;
             this.legendIndex = null
           }
         },
         tooltips:{
           enabled: false,
-          mode: 'nearest',
+          mode: 'nearest' as InteractionMode,
           intersect: true,
           callbacks: {
-            label: (tt, data) => {
+            label: (tt: any, data: any) => {
               if(this.screenType.toLowerCase() == 'mobile'){
                 this.legendData = null;
                 this.legendIndex = null
@@ -287,12 +271,11 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
               this.legendData = data.datasets;
               this.legendIndex = tt.index;
-              
+
               return '';
             }
           },
-          custom: (evt,data) => {
-          }
+          custom: () => {}
         },
         responsive:true,
         maintainAspectRatio: false,
@@ -306,7 +289,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
           animateScale: true
         },
         hover: {
-          animationDuration: 0 
+          animationDuration: 0
         },
         scales: {
           xAxes: [{
@@ -322,7 +305,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
           }]
         }
       }
-      
+
       this.chart = new Chart(this.ctx, {
         type: 'bar',
         data:data,
@@ -332,7 +315,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     } else {
 
       const ds = this.makeDatasets(this.cpuData.data);
- 
+
       this.chart.data.datasets[0].data = ds[0].data;
       this.chart.data.datasets[1].data = ds[1].data;
       this.chart.update();
@@ -343,10 +326,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
     this.currentTheme = this.themeService.currentTheme();
     this.renderChart();
-      
+
   }
 
-  colorFromTemperature(t){
+  colorFromTemperature(t: any){
     let color = "var(--green)";
     if(t.value >= 80){
       color = "var(--red)";
@@ -364,9 +347,9 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     });
   }
 
-  protected makeDatasets(data:any): DataSet[]{
-    let datasets = [];
-    let labels = [];
+  protected makeDatasets(data:any[]): ChartDataSets[]{
+    let datasets: ChartDataSets[] = [];
+    let labels: string[] = [];
     for(let i = 0; i < this.threadCount; i++){
       labels.push((i).toString());
     }
@@ -375,39 +358,39 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     // Create the data...
     data.forEach((item, index) => {
 
-      let ds:DataSet = {
+      let ds: ChartDataSets = {
         label: item[0],
         data: data[index].slice(1),
         backgroundColor: '',
-        borderColor: '', 
+        borderColor: '',
         borderWidth: 1,
       }
-  
+
       const accent = this.themeService.isDefaultTheme ? 'orange' : 'accent';
       let color;
       if(accent !== 'accent' && ds.label == 'Temperature'){
         color =  accent;
       } else {
-        const cssVar = ds.label == 'Temperature' ? accent : 'primary'; 
+        const cssVar = ds.label == 'Temperature' ? accent : 'primary';
         color = this.stripVar(this.currentTheme[cssVar])
       }
-      
+
       const bgRGB = this.utils.convertToRGB(this.currentTheme[color]).rgb;
       const borderRGB = this.utils.convertToRGB(this.currentTheme[color]).rgb;
 
-      ds.backgroundColor = this.rgbToString(bgRGB, 0.85);
-      ds.borderColor = this.rgbToString(bgRGB);
+      ds.backgroundColor = this.rgbToString(bgRGB as any, 0.85);
+      ds.borderColor = this.rgbToString(bgRGB as any);
       datasets.push(ds);
     });
-   
+
     return datasets
   }
-  
-  private processThemeColors(theme):string[]{
+
+  private processThemeColors(theme: Theme):string[]{
     let colors: string[] = [];
     theme.accentColors.map((color) => {
-      colors.push(theme[color]);
-    }); 
+      colors.push((theme as any)[color]);
+    });
     return colors;
   }
 

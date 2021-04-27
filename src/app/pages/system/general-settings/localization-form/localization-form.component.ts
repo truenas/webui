@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
+import { Option } from 'app/interfaces/option.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -19,8 +20,8 @@ export class LocalizationFormComponent implements OnDestroy{
   protected queryCall = 'none';
   protected updateCall = 'system.general.update';
   public sortLanguagesByName = true;
-  public languageList: { label: string; value: string }[] = [];
-  public languageKey: string;  
+  public languageList: any = [];
+  public languageKey: string;
   private dateTimeChangeSubscription: Subscription;
   private getDataFromDash: Subscription;
   public title = helptext.localeTitle;
@@ -84,7 +85,7 @@ export class LocalizationFormComponent implements OnDestroy{
     private sysGeneralService: SystemGeneralService,
     public localeService: LocaleService,
     private modalService: ModalService
-  ) {     
+  ) {
       this.getDataFromDash = this.sysGeneralService.sendConfigData$.subscribe(res => {
         this.configData = res;
       })
@@ -110,13 +111,13 @@ export class LocalizationFormComponent implements OnDestroy{
         .config.find(config => config.name === "timezone").options = tzChoices;
         this.entityForm.formGroup.controls['timezone'].setValue(this.configData.timezone);
     });
- 
+
     this.getDateTimeFormats();
     this.dateTimeChangeSubscription = this.localeService.dateTimeFormatChange$.subscribe(() => {
       this.getDateTimeFormats();
     })
 
-    entityEdit.formGroup.controls['language'].valueChanges.subscribe((res) => {
+    entityEdit.formGroup.controls['language'].valueChanges.subscribe((res: any) => {
       this.languageKey = this.getKeyByValue(this.languageList, res);
       if (this.languageList[res]) {
         entityEdit.formGroup.controls['language'].setValue(`${this.languageList[res]}`);
@@ -146,8 +147,8 @@ export class LocalizationFormComponent implements OnDestroy{
 
   makeLanguageList() {
     this.sysGeneralService.languageChoices().subscribe((res) => {
-      this.languageList = res
-      let options = 
+      this.languageList = res;
+      let options: Option[] =
         Object.keys(this.languageList || {}).map(key => ({
           label: this.sortLanguagesByName
             ? `${this.languageList[key]} (${key})`
@@ -163,17 +164,17 @@ export class LocalizationFormComponent implements OnDestroy{
       this.entityForm.formGroup.controls['language'].setValue(this.configData.language);
     });
   }
-   
-  beforeSubmit(value) {
+
+  beforeSubmit(value: any) {
     value.language = this.languageKey;
   }
 
-  afterSubmit(value) {
+  afterSubmit(value: any) {
     this.setTimeOptions(value.timezone);
     this.language.setLang(value.language);
   }
 
-  public customSubmit(body) {
+  public customSubmit(body: any) {
     this.localeService.saveDateTimeFormat(body.date_format, body.time_format);
     delete body.date_format;
     delete body.time_format;
@@ -192,7 +193,7 @@ export class LocalizationFormComponent implements OnDestroy{
     });
   }
 
-  getKeyByValue(object, value) {
+  getKeyByValue(object: any, value: any) {
     return Object.keys(object).find(key => object[key] === value);
   }
 

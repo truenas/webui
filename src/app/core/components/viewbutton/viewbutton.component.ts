@@ -7,7 +7,7 @@ import { ViewControlComponent } from 'app/core/components/viewcontrol/viewcontro
   templateUrl: './viewbutton.component.html',
   //styleUrls: ['./viewbutton.component.css']
 })
-export class ViewButtonComponent extends ViewControlComponent implements OnInit {
+export class ViewButtonComponent extends ViewControlComponent {
 
   readonly componentName = ViewButtonComponent;
   public raised: boolean = false;
@@ -20,9 +20,4 @@ export class ViewButtonComponent extends ViewControlComponent implements OnInit 
   constructor() {
     super();
   }
-
-  ngOnInit() {
-  }
-
-
 }

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import * as _ from 'lodash';
 import { DialogService } from '../../../../app/services';
 import { RestService, WebSocketService } from '../../../services';
@@ -21,14 +22,14 @@ import helptext from '../../../helptext/jails/jails-list';
 export class JailListComponent {
 
   public isPoolActivated: boolean;
-  public selectedPool;
+  public selectedPool: any;
   public activatedPool: any;
   public availablePools: any;
   public title = "Jails";
   protected queryCall = 'jail.query';
   protected wsDelete = 'jail.delete';
   protected wsMultiDelete = 'core.bulk';
-  public entityList;
+  public entityList: any;
   protected route_add = ["jails", "add", "wizard"];
   protected route_add_tooltip = "Add Jail";
   public toActivatePool: boolean = false;
@@ -62,7 +63,7 @@ export class JailListComponent {
       icon: "play_arrow",
       enable: true,
       ttpos: "above", // tooltip position
-      onClick: (selected) => {
+      onClick: (selected: any) => {
         let selectedJails = this.getSelectedNames(selected);
         this.loader.open();
         this.entityList.busy =
@@ -99,16 +100,16 @@ export class JailListComponent {
       icon: "stop",
       enable: true,
       ttpos: "above",
-      onClick: (selected) => {
-        let dialog = {};
+      onClick: (selected: any) => {
+        let dialog: any = {};
         this.dialogService.confirm("Stop", "Stop the selected jails?",
-          dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true, T('Stop')).subscribe((res) => {
+          dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true, T('Stop')).subscribe((res: boolean) => {
           if (res) {
             let selectedJails = this.getSelectedNames(selected);
             this.loader.open();
             this.entityList.busy =
               this.ws.job('core.bulk', ["jail.stop", selectedJails]).subscribe(
-                (res) => {
+                () => {
                   for (let i in selected) {
                     selected[i].state = 'down';
                     this.updateRow(selected[i]);
@@ -130,7 +131,7 @@ export class JailListComponent {
       icon: "update",
       enable: true,
       ttpos: "above",
-      onClick: (selected) => {
+      onClick: (selected: any) => {
         const selectedJails = this.getSelectedNames(selected);
         this.dialogService.Info(T('Jail Update'), T('Updating selected plugins.'));
         this.entityList.busy =
@@ -162,7 +163,7 @@ export class JailListComponent {
       icon: "delete",
       enable: true,
       ttpos: "above",
-      onClick: (selected) => {
+      onClick: (selected: any) => {
         this.entityList.doMultiDelete(selected);
       }
     },
@@ -193,7 +194,7 @@ export class JailListComponent {
       true,
       helptext.noPoolDialog.buttonMsg);
 
-      dialogRef.subscribe((res) => {
+      dialogRef.subscribe((res: boolean) => {
         if (res) {
           this.router.navigate(new Array('/').concat(['storage', 'pools', 'manager']));
         }
@@ -232,7 +233,7 @@ export class JailListComponent {
       }
     });
   }
-  prerequisiteFailedHandler(entityList) {
+  prerequisiteFailedHandler(entityList: any) {
     this.entityList = entityList;
   }
 
@@ -250,7 +251,7 @@ export class JailListComponent {
           type: 'select',
           name: 'selectedPool',
           placeholder: helptext.activatePoolDialog.selectedPool_placeholder,
-          options: this.availablePools ? this.availablePools.map(pool => {
+          options: this.availablePools ? this.availablePools.map((pool: any) => {
             return {
               label: pool.name + (pool.is_decrypted ? (pool.status === 'ONLINE' ? '' : ` (${pool.status})`) : ' (Locked)'),
               value: pool.name,
@@ -261,7 +262,7 @@ export class JailListComponent {
         }
       ],
       saveButtonText: helptext.activatePoolDialog.saveButtonText,
-      customSubmit: function (entityDialog) {
+      customSubmit: function (entityDialog: EntityDialogComponent) {
         const value = entityDialog.formValue;
         self.entityList.loader.open();
         self.ws.call('jail.activate', [value['selectedPool']]).subscribe(
@@ -287,13 +288,13 @@ export class JailListComponent {
     }
   }
 
-  getActions(parentRow) {
+  getActions(parentRow: any) {
     return [{
         name: parentRow.host_hostuuid,
         icon: 'edit',
         id: "edit",
         label: T("Edit"),
-        onClick: (row) => {
+        onClick: (row: any) => {
           this.router.navigate(
             new Array('').concat(["jails", "edit", row.host_hostuuid]));
         }
@@ -303,7 +304,7 @@ export class JailListComponent {
         icon: 'device_hub',
         id: "mount",
         label: T("Mount points"),
-        onClick: (row) => {
+        onClick: (row: any) => {
           this.router.navigate(
             new Array('').concat(["jails", "storage", row.host_hostuuid]));
         }
@@ -313,11 +314,11 @@ export class JailListComponent {
         icon: 'play_arrow',
         id: "start",
         label: T("Start"),
-        onClick: (row) => {
+        onClick: (row: any) => {
           const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Starting Jail") }, disableClose: true });
           dialogRef.componentInstance.setCall('jail.start', [row.host_hostuuid]);
           dialogRef.componentInstance.submit();
-          dialogRef.componentInstance.success.subscribe((res) => {
+          dialogRef.componentInstance.success.subscribe(() => {
             dialogRef.close(true);
             this.updateRow(row);
             this.updateMultiAction([row]);
@@ -329,11 +330,11 @@ export class JailListComponent {
         icon: 'cached',
         id: "restart",
         label: T("Restart"),
-        onClick: (row) => {
+        onClick: (row: any) => {
           const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Restarting Jail") }, disableClose: true });
           dialogRef.componentInstance.setCall('jail.restart', [row.host_hostuuid]);
           dialogRef.componentInstance.submit();
-          dialogRef.componentInstance.success.subscribe((res) => {
+          dialogRef.componentInstance.success.subscribe(() => {
             dialogRef.close(true);
             this.updateRow(row);
             this.updateMultiAction([row]);
@@ -345,15 +346,15 @@ export class JailListComponent {
         icon: 'stop',
         id: "stop",
         label: T("Stop"),
-        onClick: (row) => {
-          let dialog = {};
-          this.dialogService.confirm("Stop", "Stop the selected jail?", 
-            dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true , T('Stop')).subscribe((dialog_res) => {
+        onClick: (row: any) => {
+          let dialog: any = {};
+          this.dialogService.confirm("Stop", "Stop the selected jail?",
+            dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true , T('Stop')).subscribe((dialog_res: boolean) => {
               if (dialog_res) {
                 const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Stopping Jail") }, disableClose: true });
                 dialogRef.componentInstance.setCall('jail.stop', [row.host_hostuuid]);
                 dialogRef.componentInstance.submit();
-                dialogRef.componentInstance.success.subscribe((res) => {
+                dialogRef.componentInstance.success.subscribe(() => {
                   dialogRef.close(true);
                   this.updateRow(row);
                   this.updateMultiAction([row]);
@@ -367,15 +368,15 @@ export class JailListComponent {
         icon: 'update',
         id: "update",
         label: T("Update"),
-        onClick: (row) => {
+        onClick: (row: any) => {
           this.dialogService.confirm(
             helptext.updateConfirmDialog.title,
-            helptext.updateConfirmDialog.message, true).subscribe((dialog_res)=> {
+            helptext.updateConfirmDialog.message, true).subscribe((dialog_res: boolean)=> {
               if (dialog_res) {
                 const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Updating Jail") }, disableClose: true });
                 dialogRef.componentInstance.setCall('jail.update_to_latest_patch', [row.host_hostuuid]);
                 dialogRef.componentInstance.submit();
-                dialogRef.componentInstance.success.subscribe((res) => {
+                dialogRef.componentInstance.success.subscribe(() => {
                   dialogRef.close(true);
                   this.updateRow(row);
                   this.dialogService.Info(T('Jail Updated'), T("Jail <i>") + row.host_hostuuid + T("</i> updated."), '500px', 'info', true);
@@ -389,7 +390,7 @@ export class JailListComponent {
         icon: 'keyboard_arrow_right',
         id: "shell",
         label: T("Shell"),
-        onClick: (row) => {
+        onClick: (row: any) => {
           this.router.navigate(
             new Array('').concat(["jails", "shell", row.host_hostuuid]));
         }
@@ -399,14 +400,14 @@ export class JailListComponent {
         icon: 'delete',
         id: "delete",
         label: T("Delete"),
-        onClick: (row) => {
+        onClick: (row: any) => {
           this.entityList.doDelete(row);
         }
       }
     ]
   }
-  
-  public isActionVisible(actionId: string, row): boolean {
+
+  public isActionVisible(actionId: string, row: any): boolean {
     if (actionId === "start" && row.state === "up") {
       return false;
     } else if (actionId === "stop" && row.state === "down") {
@@ -420,7 +421,7 @@ export class JailListComponent {
     return true;
   }
 
-  getSelectedNames(selectedJails) {
+  getSelectedNames(selectedJails: any[]) {
     let selected: any = [];
     for (let i in selectedJails) {
       selected.push([selectedJails[i].host_hostuuid]);
@@ -428,7 +429,7 @@ export class JailListComponent {
     return selected;
   }
 
-  updateRow(row) {
+  updateRow(row: any) {
     this.ws.call(this.queryCall, [[["host_hostuuid", "=", row.host_hostuuid]]]).subscribe(
       (res) => {
         if (res[0]) {
@@ -482,7 +483,7 @@ export class JailListComponent {
     }
   }
 
-  wsDeleteParams(row, id) {
+  wsDeleteParams(row: any, id: any) {
     return row.state === 'up' ? [id, {force: true}] : [id];
   }
 }

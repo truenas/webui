@@ -4,6 +4,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent, MatAutocomplete } from '@angular/material/autocomplete';
 import { TranslateService } from '@ngx-translate/core';
+import { Option } from 'app/interfaces/option.interface';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
@@ -53,7 +54,7 @@ export class FormChipComponent implements Field, OnInit {
         }
     }
 
-    remove(item): void {
+    remove(item: any): void {
         const index = this.chipLists.indexOf(item);
 
         if (index >= 0) {
@@ -68,7 +69,7 @@ export class FormChipComponent implements Field, OnInit {
       this.chipCtrl.setValue(null);
     }
 
-    updateSearchOptions(value) {
+    updateSearchOptions(value: any) {
       if(this.config.updater && this.config.parent) {
         if (this.config.updateLocal) {
           this.config.updater(value, this.config.parent, this.config);
@@ -77,7 +78,7 @@ export class FormChipComponent implements Field, OnInit {
         }
       } else {
         value = value.toLowerCase();
-        const searchOptions = [];
+        const searchOptions: Option[] = [];
         for (let i = 0; i < this.config.options.length; i++) {
           if (this.config.options[i].label.toLowerCase().includes(value)) {
             searchOptions.push(this.config.options[i]);

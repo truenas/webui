@@ -34,8 +34,8 @@ import { KerberosKeytabsFormComponent } from './kerberoskeytabs/kerberoskeytabs-
   providers: [DatePipe, UserService],
 })
 export class DirectoryservicesComponent implements OnInit, OnDestroy {
-  dataCards = [];
-  tableCards = [];
+  dataCards: any[] = [];
+  tableCards: any[] = [];
 
   refreshOnClose: Subscription;
 
@@ -260,7 +260,12 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
   }
 
   doAdd(name: string, id?: number) {
-    let addComponent;
+    let addComponent: ActiveDirectoryComponent
+      | IdmapFormComponent
+      | LdapComponent
+      | KerberosRealmsFormComponent
+      | KerberosSettingsComponent
+      | KerberosKeytabsFormComponent;
     switch (name) {
       case 'activedirectory':
         addComponent = this.activeDirectoryFormComponent;
@@ -290,7 +295,7 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
           this.modalService.open('slide-in-form', addComponent, id);
         } else {
           this.dialog.confirm(idmapHelptext.idmap.enable_ad_dialog.title, idmapHelptext.idmap.enable_ad_dialog.message,
-            true, idmapHelptext.idmap.enable_ad_dialog.button).subscribe((res) => {
+            true, idmapHelptext.idmap.enable_ad_dialog.button).subscribe((res: boolean) => {
               if (res) {
                 addComponent = this.activeDirectoryFormComponent;
                 this.modalService.open('slide-in-form', addComponent, id);

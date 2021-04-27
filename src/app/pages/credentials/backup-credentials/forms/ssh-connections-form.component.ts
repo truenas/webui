@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { Subscription } from 'rxjs';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
@@ -28,8 +29,8 @@ export class SshConnectionsFormComponent {
     protected addCall = this.sshCalls['manual'];
     protected editCall = 'keychaincredential.update';
     protected isEntity = true;
-    protected namesInUseConnection = [];
-    protected namesInUse = [];
+    protected namesInUseConnection: string[] = [];
+    protected namesInUse: string[] = [];
     public title = helptext.formTitle;
     protected isOneColumnForm = true;
     private rowNum: any;
@@ -243,7 +244,7 @@ export class SshConnectionsFormComponent {
                 });
             }
         this.keychainCredentialService.getSSHConnections().toPromise().then(
-            (res) => {
+            (res: any[]) => {
                 const sshConnections = res.filter(item => item.id != this.rowNum).map(sshConnection => sshConnection.name);
                 this.namesInUse.push(...sshConnections);
                 this.namesInUseConnection.push(...sshConnections);
@@ -251,7 +252,7 @@ export class SshConnectionsFormComponent {
         )
         const privateKeyField = _.find(this.fieldSets[1].config, { name: 'private_key' });
         this.keychainCredentialService.getSSHKeys().toPromise().then(
-            (res) => {
+            (res: any[]) => {
                 this.namesInUse.push(...res.filter(sshKey => sshKey.name.endsWith(' Key')).map(sshKey =>
                     sshKey.name.substring(0, sshKey.name.length - 4)));
                 for (const i in res) {
@@ -261,14 +262,14 @@ export class SshConnectionsFormComponent {
         )
     }
 
-    afterInit(entityForm) {
+    afterInit(entityForm: EntityFormComponent) {
         this.entityForm = entityForm;
         this.fieldConfig = entityForm.fieldConfig;
         this.updateDiscoverButtonDisabled();
         if (this.entityForm.isNew) {
-            this.addCall = this.sshCalls[this.entityForm.formGroup.controls['setup_method'].value];
-            this.entityForm.formGroup.controls['setup_method'].valueChanges.subscribe((res) => {
-                this.addCall = this.sshCalls[res];
+            this.addCall = this.sshCalls[this.entityForm.formGroup.controls['setup_method'].value as keyof SshConnectionsFormComponent['sshCalls']];
+            this.entityForm.formGroup.controls['setup_method'].valueChanges.subscribe((res: any) => {
+                this.addCall = this.sshCalls[res as keyof SshConnectionsFormComponent['sshCalls']];
                 this.updateDiscoverButtonDisabled();
             });
         } else {
@@ -277,7 +278,7 @@ export class SshConnectionsFormComponent {
 
         const nameCtrl = this.entityForm.formGroup.controls['name'];
         let preValue =  this.entityForm.formGroup.controls['private_key'].value;
-        this.entityForm.formGroup.controls['private_key'].valueChanges.subscribe((res) => {
+        this.entityForm.formGroup.controls['private_key'].valueChanges.subscribe((res: any) => {
             if (res === 'NEW') {
                 nameCtrl.setValidators([Validators.required, forbiddenValues(this.namesInUse)]);
                 nameCtrl.updateValueAndValidity();
@@ -289,11 +290,11 @@ export class SshConnectionsFormComponent {
             this.updateDiscoverButtonDisabled();
         });
 
-        this.entityForm.formGroup.controls['host'].valueChanges.subscribe((res) => {
+        this.entityForm.formGroup.controls['host'].valueChanges.subscribe(() => {
             this.updateDiscoverButtonDisabled();
         });
 
-        this.entityForm.formGroup.controls['username'].valueChanges.subscribe((res) => {
+        this.entityForm.formGroup.controls['username'].valueChanges.subscribe(() => {
             this.updateDiscoverButtonDisabled();
         });
     }
@@ -316,10 +317,10 @@ export class SshConnectionsFormComponent {
         }
 
         const field = _.find(fieldConfig, {name : fieldName});
-        
+
         field.disabled = disable;
         field['isHidden'] = hide;
-        
+
         if (this.entityForm.formGroup.controls[fieldName]) {
           const method = disable ? 'disable' : 'enable';
           this.entityForm.formGroup.controls[fieldName][method]();
@@ -347,14 +348,14 @@ export class SshConnectionsFormComponent {
         )
     }
 
-    resourceTransformIncomingRestData(wsResponse) {
+    resourceTransformIncomingRestData(wsResponse: any) {
         for (const item in wsResponse.attributes) {
             wsResponse[item] = wsResponse.attributes[item];
         }
         return wsResponse;
     }
 
-    async customSubmit(data) {
+    async customSubmit(data: any) {
         delete data.remote_host_key_button;
         this.loader.open();
         if (data['private_key'] == 'NEW') {
@@ -382,7 +383,7 @@ export class SshConnectionsFormComponent {
         }
 
         if (data['setup_method'] === 'manual') {
-            const attributes = {};
+            const attributes: any = {};
             for (const item in this.manualMethodFields) {
                 attributes[this.manualMethodFields[item]] = data[this.manualMethodFields[item]];
                 delete data[this.manualMethodFields[item]];
@@ -395,12 +396,12 @@ export class SshConnectionsFormComponent {
         delete data['setup_method'];
 
         this.entityForm.submitFunction(data).subscribe(
-            (res) => {
+            () => {
                 this.loader.close();
                 this.modalService.close('slide-in-form');
                 this.modalService.refreshTable();
             },
-            (err) => {
+            (err: any) => {
                 this.loader.close();
                 this.modalService.refreshTable();
                 if (err.hasOwnProperty("reason") && (err.hasOwnProperty("trace"))) {

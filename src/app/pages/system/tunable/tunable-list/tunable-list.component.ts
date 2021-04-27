@@ -42,7 +42,7 @@ export class TunableListComponent {
       icon: "delete",
       enable: true,
       ttpos: "above",
-      onClick: (selected) => {
+      onClick: (selected: any) => {
         this.entityList.doMultiDelete(selected);
       }
     }

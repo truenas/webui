@@ -65,13 +65,13 @@ interface Slide {
 })
 export class WidgetNicComponent extends WidgetComponent implements OnInit, AfterViewInit,OnDestroy, OnChanges {
 
-  @Input() stats;
-  @Input() nicState;
+  @Input() stats: any;
+  @Input() nicState: any;
   @ViewChild('carousel', {static:true}) carousel:ElementRef;
   @ViewChild('carouselparent', {static:false}) carouselParent:ElementRef;
   public traffic: NetTraffic;
   public currentSlide:string = "0";
-  
+
   get currentSlideName(){
     return this.path[parseInt(this.currentSlide)].name;
   }
@@ -91,10 +91,10 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
   get ipAddresses(){
     if(!this.nicState && !this.nicState.aliases){ return [];}
 
-    let result = this.nicState.aliases.filter((item) => {
+    let result = this.nicState.aliases.filter((item: any) => {
       return item.type == 'INET' || item.type == 'INET6' ;
     });
-    
+
     return result;
   }
 
@@ -103,7 +103,7 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     if(this.path[2].name == 'empty' || this.nicState.vlans.length == 0 || !this.nicState.vlans[ parseInt(this.path[2].index) ]){ return [];}
 
     let vlan = this.nicState.vlans[ parseInt(this.path[2].index) ];
-    let result = vlan.aliases.filter((item) => {
+    let result = vlan.aliases.filter((item: any) => {
       return item.type == 'INET' || item.type == 'INET6' ;
     });
 
@@ -162,10 +162,10 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
 
     this.path[slideIndex] = slide;
     this.updateSlidePosition(slideIndex);
-    
+
   }
 
-  updateSlidePosition(value){
+  updateSlidePosition(value: number){
     if(value.toString() == this.currentSlide){ return; }
     const carousel = this.carouselParent.nativeElement.querySelector('.carousel');
     const slide = this.carouselParent.nativeElement.querySelector('.slide');
@@ -178,16 +178,16 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
       to:{ x: (value * slideW) * -1 },
       duration: 250
     }).start(el.set);
-    
+
     this.currentSlide = value.toString();
     this.title = this.currentSlide == "0" ? "Interface" : this.nicState.name;
-    
+
   }
 
   vlanAliases(vlanIndex:string|number){
     if(typeof vlanIndex == 'string'){ vlanIndex = parseInt(vlanIndex); }
     let vlan = this.nicState.vlans[vlanIndex];
-    let result = vlan.aliases.filter((item) => {
+    let result = vlan.aliases.filter((item: any) => {
       return item.type == 'INET' || item.type == 'INET6';
     });
     return result;
@@ -208,10 +208,10 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     } else {
       return -1;
     }
-    
+
   }
 
-  convert(value): Converted{
+  convert(value: number): Converted{
     let result;
     let units;
 
@@ -246,7 +246,7 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     return result ? { value: result.toFixed(2), units: units } : { value: '0.00', units: units };
   }
 
-  optimizeUnits(value){
+  optimizeUnits(value: number){
     let units: string = 'B';
     if(value > 1024 && value < (1024 * 1024)){
       units = 'KB';
@@ -261,7 +261,7 @@ export class WidgetNicComponent extends WidgetComponent implements OnInit, After
     return units;
   }
 
-  manageInterface(_interface) {
+  manageInterface(_interface: any) {
     const navigationExtras: NavigationExtras = {state: {editInterface: _interface.name}};
     this.router.navigate(['network'], navigationExtras);
   }

@@ -50,7 +50,7 @@ export class SmartListComponent implements InputTableConf, OnDestroy {
       key_props: ['type', 'desc'],
     },
   };
-  public listDisks = [];
+  public listDisks: any[] = [];
   private disksSubscription: Subscription;
   private onModalClose: Subscription;
 
@@ -75,13 +75,13 @@ export class SmartListComponent implements InputTableConf, OnDestroy {
     })
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any[]) {
     return data.map((test) => {
       test.schedule = `${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
       if (test.all_disks) {
         test.disks = [T('All Disks')];
       } else if (test.disks.length) {
-        const readableDisks = test.disks.map((disk) => {
+        const readableDisks = test.disks.map((disk: any) => {
           return this.listDisks.find((item) => item.identifier === disk).devname;
         });
         test.disks = readableDisks;

@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { ShellConnectedEvent } from '../../interfaces/shell.interface';
 import { ShellService, WebSocketService } from '../../services/';
 import { CopyPasteMessageComponent } from '../shell/copy-paste-message.component';
 import { Terminal } from 'xterm';
@@ -35,7 +36,7 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     const self = this;
     this.getAuthToken().subscribe((res) => {
       this.initializeWebShell(res);
-      this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
+      this.shellSubscription = this.ss.shellOutput.subscribe(() => {
         // this.xterm.write(value);
         if (!this.top_displayed) {
           setTimeout(function() {
@@ -136,7 +137,7 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     this.ss.token = res;
     this.ss.connect();
 
-    this.ss.shellConnected.subscribe((res)=> {
+    this.ss.shellConnected.subscribe((res: ShellConnectedEvent)=> {
       this.connectionId = res.id;
       this.resizeTerm();
     })
@@ -151,11 +152,11 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  onResize(event) {
+  onResize() {
     this.resizeTerm();
   }
 
-  onFontSizeChanged(event) {
+  onFontSizeChanged() {
     this.resizeTerm();
   }
 

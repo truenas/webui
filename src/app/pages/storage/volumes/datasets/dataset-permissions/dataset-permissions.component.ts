@@ -2,6 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
+import { Option } from 'app/interfaces/option.interface';
 
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../../helptext/storage/volumes/datasets/dataset-permissions';
@@ -179,7 +180,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
     });
 
     this.userService.userQueryDSCache().subscribe(items => {
-      const users = [];
+      const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
       }
@@ -188,7 +189,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
     });
 
     this.userService.groupQueryDSCache().subscribe(items => {
-      const groups = [];
+      const groups: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         groups.push({ label: items[i].group, value: items[i].group });
       }
@@ -206,10 +207,10 @@ export class DatasetPermissionsComponent implements OnDestroy {
       entityEdit.formGroup.controls['group'].setValue(res.group);
     });
     this.recursive = entityEdit.formGroup.controls['recursive'];
-    this.recursive_subscription = this.recursive.valueChanges.subscribe((value) => {
+    this.recursive_subscription = this.recursive.valueChanges.subscribe((value: any) => {
       if (value === true) {
         this.dialog.confirm(T("Warning"), T("Setting permissions recursively will affect this directory and any others below it. This might make data inaccessible."))
-          .subscribe((res) => {
+          .subscribe((res: boolean) => {
             if (!res) {
               this.recursive.setValue(false);
             }
@@ -222,8 +223,8 @@ export class DatasetPermissionsComponent implements OnDestroy {
     this.recursive_subscription.unsubscribe();
   }
 
-  updateGroupSearchOptions(value = "", parent) {
-    parent.userService.groupQueryDSCache(value).subscribe(items => {
+  updateGroupSearchOptions(value = "", parent: any) {
+    parent.userService.groupQueryDSCache(value).subscribe((items: any) => {
       const groups = [];
       for (let i = 0; i < items.length; i++) {
         groups.push({ label: items[i].group, value: items[i].group });
@@ -232,8 +233,8 @@ export class DatasetPermissionsComponent implements OnDestroy {
     });
   }
 
-  updateUserSearchOptions(value = "", parent) {
-    parent.userService.userQueryDSCache(value).subscribe(items => {
+  updateUserSearchOptions(value = "", parent: any) {
+    parent.userService.userQueryDSCache(value).subscribe((items: any) => {
       const users = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -242,7 +243,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
     });
   }
 
-  beforeSubmit(data) {
+  beforeSubmit(data: any) {
     if (!data.apply_user) {
       delete data.user;
     };
@@ -269,24 +270,24 @@ export class DatasetPermissionsComponent implements OnDestroy {
 
   }
 
-  customSubmit(data) {
+  customSubmit(data: any) {
     this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { "title": T("Saving Permissions") }});
     this.dialogRef.componentInstance.setDescription(T("Saving Permissions..."));
     this.dialogRef.componentInstance.setCall(this.updateCall, [this.datasetId, data]);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((res) => {
+    this.dialogRef.componentInstance.success.subscribe(() => {
       this.entityForm.success = true;
       this.dialogRef.close();
       this.router.navigate(new Array('/').concat(
         this.route_success));
     });
-    this.dialogRef.componentInstance.failure.subscribe((err) => {
+    this.dialogRef.componentInstance.failure.subscribe((err: any) => {
       console.error(err)
     });
   }
 
-  loadMoreOptions(length, parent, searchText) {
-    parent.userService.userQueryDSCache(searchText, length).subscribe(items => {
+  loadMoreOptions(length: number, parent: any, searchText: string) {
+    parent.userService.userQueryDSCache(searchText, length).subscribe((items: any[]) => {
       const users = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -299,8 +300,8 @@ export class DatasetPermissionsComponent implements OnDestroy {
     });
   }
 
-  loadMoreGroupOptions(length, parent, searchText) {
-    parent.userService.groupQueryDSCache(searchText, false, length).subscribe(items => {
+  loadMoreGroupOptions(length: number, parent: any, searchText: string) {
+    parent.userService.groupQueryDSCache(searchText, false, length).subscribe((items: any[]) => {
       const groups = [];
       for (let i = 0; i < items.length; i++) {
         groups.push({ label: items[i].group, value: items[i].group });

@@ -63,10 +63,10 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
           ],
           hideHeader: false,
           parent: this,
-          add: function(row) {
+          add: function() {
             this.parent.modalService.open('slide-in-form', this.parent.cloudCredentials);
           },
-          edit: function(row) {
+          edit: function(row: any) {
             this.parent.modalService.open('slide-in-form', this.parent.cloudCredentials, row.id);
           },
           dataSourceHelper: this.cloudCredentialsDataSourceHelper.bind(this),
@@ -84,10 +84,10 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
           ],
           hideHeader: true,
           parent: this,
-          add: function(row) {
+          add: function() {
             this.parent.modalService.open('slide-in-form', this.parent.sshConnections);
           },
-          edit: function(row) {
+          edit: function(row: any) {
             this.parent.modalService.open('slide-in-form', this.parent.sshConnections, row.id);
           }
         }
@@ -105,10 +105,10 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
           ],
           hideHeader: true,
           parent: this,
-          add: function(row) {
+          add: function() {
             this.parent.modalService.open('slide-in-form', this.parent.sshKeypairs);
           },
-          edit: function(row) {
+          edit: function(row: any) {
             this.parent.modalService.open('slide-in-form', this.parent.sshKeypairs, row.id);
           },
         }
@@ -116,7 +116,7 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
     ];
   }
 
-  cloudCredentialsDataSourceHelper(res) {
+  cloudCredentialsDataSourceHelper(res: any[]) {
     return res.map(item => {
       if (this.providers) {
         const credentialProvider = this.providers.find(provider => provider.name == item.provider);
@@ -128,11 +128,11 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
     });
   }
 
-  sshConnectionsDataSourceHelper(res) {
+  sshConnectionsDataSourceHelper(res: any[]) {
     return res.filter(item => item.type === 'SSH_CREDENTIALS');
   }
 
-  sshKeyPairsDataSourceHelper(res) {
+  sshKeyPairsDataSourceHelper(res: any[]) {
     return res.filter(item => item.type === 'SSH_KEY_PAIR');
   }
 
@@ -140,7 +140,7 @@ export class BackupCredentialsComponent implements OnInit, OnDestroy {
     return [{
       icon: 'save_alt',
       name: "download",
-      onClick: (rowinner) => {
+      onClick: (rowinner: any) => {
         console.log(rowinner)
         const name = rowinner.name;
         for (let key_type in rowinner.attributes) {

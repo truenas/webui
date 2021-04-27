@@ -1,7 +1,18 @@
-import { Component, AfterViewInit, AfterContentInit, Input, ViewChild, OnDestroy, OnChanges, ElementRef} from '@angular/core';
+import {
+  Component,
+  AfterViewInit,
+  AfterContentInit,
+  Input,
+  ViewChild,
+  OnDestroy,
+  OnChanges,
+  ElementRef,
+  SimpleChanges
+} from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { WebSocketService, SystemGeneralService } from 'app/services/';
+import { Theme } from 'app/services/theme/theme.service';
 import { ProductType } from '../../../../enums/product-type.enum';
 import { ReportsService } from '../../reports.service';
 import { MaterialModule } from 'app/appMaterial.module';
@@ -165,7 +176,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     return this.localeService.formatDateTime(new Date(this.currentEndDate), this.timezone);
   }
 
-  formatTime(stamp){
+  formatTime(stamp: any){
     let parsed = Date.parse(stamp);
     const result = this.localeService.formatDateTimeWithNoTz(new Date(parsed));
     return result.toLowerCase() !== 'invalid date' ?  result : null;
@@ -217,7 +228,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
 
   ngAfterContentInit(){}
 
-  ngOnChanges(changes){
+  ngOnChanges(changes: SimpleChanges){
     if(changes.report){
       if(changes.report.previousValue && this.ready == false){
         this.setupData(changes);
@@ -234,18 +245,18 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     }
   }
 
-  private setupData(changes){
+  private setupData(changes: SimpleChanges){
       const zoom = this.zoomLevels[this.timeZoomIndex];
       const rrdOptions = this.convertTimespan(zoom.timespan)
       let identifier = changes.report.currentValue.identifiers ? changes.report.currentValue.identifiers[0] : null;
       this.fetchReportData(rrdOptions, changes.report.currentValue, identifier);
   }
 
-  private processThemeColors(theme):string[]{
+  private processThemeColors(theme: Theme):string[]{
     //this.theme = theme;
     let colors: string[] = [];
     theme.accentColors.map((color) => {
-      colors.push(theme[color]);
+      colors.push((theme as any)[color]);
     });
     return colors;
   }
@@ -319,7 +330,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
 
 
   // Convert timespan to start/end options for RRDTool
-  convertTimespan(timespan, direction: string = 'backward', currentDate?:number): TimeData{
+  convertTimespan(timespan: any, direction: string = 'backward', currentDate?:number): TimeData{
 
     let units: string;
     let value: number;
@@ -387,7 +398,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     }
   }
 
-  fetchReportData(rrdOptions, report:Report, identifier?: string){
+  fetchReportData(rrdOptions: any, report:Report, identifier?: string){
     // Report options
     let params = identifier ? { name: report.name, identifier: identifier} : { name: report.name };
 

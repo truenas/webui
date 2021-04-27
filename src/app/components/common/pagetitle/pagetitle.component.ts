@@ -15,7 +15,7 @@ import { ReportsGlobalControlsComponent } from 'app/pages/reportsdashboard/compo
 import { LocaleService } from 'app/services/locale.service';
 
 export interface GlobalAction {
-  applyConfig(config:any);
+  applyConfig(config:any): any;
 }
 
 
@@ -31,8 +31,8 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
   public titleText: string;
   public copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
   private hasInitialized: boolean = false;
-  private globalActionsConfig;
-  private globalActions;
+  private globalActionsConfig: any;
+  private globalActions: any;
 
   routeParts:any[];
   public isEnabled: boolean = true;
@@ -43,7 +43,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
   private localeService: LocaleService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
   // must be running once to get breadcrumbs
     this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
     this.titleText = this.routeParts && this.routeParts[0].title ? this.routeParts[0].title : '';
@@ -117,19 +117,19 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  ngAfterViewInit(){
+  ngAfterViewInit(): void {
     if(this.globalActionsConfig){
       this.renderActions(this.globalActionsConfig);
     }
     this.hasInitialized = true;
   }
 
-  ngOnDestroy(){
+  ngOnDestroy(): void {
     this.core.unregister({observerClass: this});
     delete this.globalActionsConfig;
   }
 
-  createAction(){
+  createAction(): void {
     this.viewcontroller.layoutContainer = {layout: 'row', align: 'end center', gap:'2px'};
     this.globalActions = this.viewcontroller.create(ViewButtonComponent);
     this.globalActions.label = 'Global Action';
@@ -139,7 +139,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
     this.viewcontroller.addChild(this.globalActions);
   }
 
-  renderActions(config: any){
+  renderActions(config: any): void {
     if(this.globalActions){
       this.destroyActions();
     }
@@ -155,7 +155,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
     this.viewcontroller.addChild(this.globalActions);
   }
 
-  destroyActions(){
+  destroyActions(): void {
       if(this.globalActions){
         this.viewcontroller.removeChild(this.globalActions);
         this.globalActionsConfig = null;

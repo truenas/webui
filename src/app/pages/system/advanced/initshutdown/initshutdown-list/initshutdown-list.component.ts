@@ -39,7 +39,7 @@ export class InitshutdownListComponent {
   constructor(public modalService: ModalService) {}
 
 
-  afterInit(entityList) {
+  afterInit(entityList: any) {
     this.entityList = entityList;
 
     this.modalService.onClose$.subscribe(() => {

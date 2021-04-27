@@ -25,7 +25,7 @@ export class ChartFormComponent {
   protected isEntity: boolean = true;
   protected utils: CommonUtils;
 
-  private title;
+  private title: string;
   private name: string;
   private getRow = new Subscription;
   private rowName: string;
@@ -46,15 +46,15 @@ export class ChartFormComponent {
     this.utils = new CommonUtils();
   }
 
-  setTitle(title) {
+  setTitle(title: string) {
     this.title = title;
   }
-  
-  parseSchema(catalogApp, isEdit=false) {
+
+  parseSchema(catalogApp: any, isEdit=false) {
     try {
       this.catalogApp = catalogApp;
-      this.title = this.catalogApp.name; 
-  
+      this.title = this.catalogApp.name;
+
       this.fieldSets = [
         {
           name: helptext.chartForm.release_name.name,
@@ -72,7 +72,7 @@ export class ChartFormComponent {
           colspan: 2
         },
       ];
-      this.catalogApp.schema.groups.forEach(group => {
+      this.catalogApp.schema.groups.forEach((group: any) => {
         this.fieldSets.push({
           name: group.name,
           label: true,
@@ -80,26 +80,26 @@ export class ChartFormComponent {
           colspan: 2
         })
       });
-      this.catalogApp.schema.questions.forEach(question => {
-        const fieldSet = this.fieldSets.find(fieldSet => fieldSet.name == question.group);
+      this.catalogApp.schema.questions.forEach((question: any) => {
+        const fieldSet = this.fieldSets.find((fieldSet: any) => fieldSet.name == question.group);
         if (fieldSet) {
           const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(question);
           fieldSet.config = fieldSet.config.concat(fieldConfigs);
         }
       });
-  
+
       this.fieldSets = this.fieldSets.filter(fieldSet => fieldSet.config.length > 0);
-      
+
     } catch(error) {
       return this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     const chartSchema = {
       name: data.chart_metadata.name,
       catalog: {
-        id: null,
+        id: null as any,
         label: data.catalog,
       },
       schema: data.chart_schema.schema,
@@ -107,11 +107,11 @@ export class ChartFormComponent {
 
     this.parseSchema(chartSchema, true);
     this.name = data.name;
-    const configData = {};
+    const configData: any = {};
     this.entityUtils.parseConfigData(data.config, null, configData);
     configData['release_name'] = data.name;
     configData['changed_schema'] = true;
-    
+
     return configData;
   }
 
@@ -126,7 +126,7 @@ export class ChartFormComponent {
     }
   }
 
-  customSubmit(data) {
+  customSubmit(data: any) {
     let apiCall = this.addCall;
     let values = {};
     this.entityUtils.parseFormControlValues(data, values);

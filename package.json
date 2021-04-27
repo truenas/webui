@@ -137,6 +137,7 @@
     "@types/pixi.js": "4.8.7",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
+    "@types/chart.js": "2.9.4",
     "codelyzer": "5.2.1",
     "commander": "4.1.1",
     "enhanced-resolve": "4.1.1",

@@ -4,7 +4,7 @@ import * as domHelper from '../../helpers/dom.helper';
 
 @Directive({ selector: '[appAccordion]' })
 export class AppAccordionDirective implements OnInit {
-  parentLi;
+  parentLi: HTMLElement;
 
   constructor(private el: ElementRef) { }
   ngOnInit() {
@@ -18,8 +18,8 @@ export class AppAccordionDirective implements OnInit {
     })
   }
 
-  @HostListener('click', ['$event'])
-  onClick($event) {
+  @HostListener('click')
+  onClick() {
     this.toggleOpen();
   }
 

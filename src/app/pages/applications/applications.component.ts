@@ -39,15 +39,15 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
   protected utils: CommonUtils;
   private refreshTable: Subscription;
 
-  constructor(private appService: ApplicationsService, 
-    private core: CoreService, 
+  constructor(private appService: ApplicationsService,
+    private core: CoreService,
     protected aroute: ActivatedRoute,
-    private modalService: ModalService) 
-  { 
+    private modalService: ModalService)
+  {
     this.utils = new CommonUtils();
   }
 
-  ngOnInit(): void {    
+  ngOnInit(): void {
     this.setupToolbar();
 
     this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
@@ -88,7 +88,7 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
       this.dockeImagesTab.onToolbarAction(evt);
     })
 
-    let controls: any[] = [      
+    let controls: any[] = [
       {
         name: 'filter',
         type: 'input',
@@ -114,7 +114,7 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
   updateToolbar() {
     this.toolbarConfig.controls.splice(1);
     const search = this.toolbarConfig.controls[0];
-    
+
     switch (this.selectedIndex) {
       case 0:
         search.placeholder = helptext.availablePlaceholder;
@@ -153,7 +153,7 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
         bulk.options.forEach(option => {
           if (option.value != 'select_all') {
             option.disabled = !this.isSelectedOneMore;
-          } 
+          }
         });
         this.toolbarConfig.controls.push(bulk);
         break;
@@ -191,15 +191,15 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
       label: helptext.settings,
       type: 'menu',
       options: [
-        { label: helptext.choose, value: 'select_pool' }, 
-        { label: helptext.advanced, value: 'advanced_settings' }, 
+        { label: helptext.choose, value: 'select_pool' },
+        { label: helptext.advanced, value: 'advanced_settings' },
       ]
     };
 
     if (this.isSelectedPool) {
       if (setting.options.length == 2) {
         const unsetOption = {
-          label: helptext.unset_pool, 
+          label: helptext.unset_pool,
           value: 'unset_pool'
         };
         setting.options.push(unsetOption);
@@ -222,7 +222,7 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
     this.toolbarConfig.target.next({name:"UpdateControls", data: this.toolbarConfig.controls});
   }
 
-  updateTab(evt) {
+  updateTab(evt: any) {
     if (evt.name == 'SwitchTab') {
       this.selectedIndex = evt.value;
     } else if (evt.name == 'UpdateToolbar') {
@@ -231,7 +231,7 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
       this.updateToolbar();
     } else if (evt.name == 'catalogToolbarChanged') {
       this.isSelectedPool = evt.value;
-      this.catalogOptions = evt.catalogNames.map((catalogName) => {
+      this.catalogOptions = evt.catalogNames.map((catalogName: any) => {
         return {
           label: this.utils.capitalizeFirstLetter(catalogName),
           value: catalogName,
@@ -251,7 +251,7 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
         this.chartTab.refreshChartReleases();
       } else {
         this.catalogTab.loadCatalogs();
-      }      
+      }
     } else if (this.selectedIndex == 1) {
       this.chartTab.refreshChartReleases();
     } else if (this.selectedIndex == 2) {

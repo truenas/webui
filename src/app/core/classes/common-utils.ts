@@ -3,7 +3,7 @@ export class CommonUtils {
 	constructor() {
 	}
 
-	versionCompare(a, b: any) {
+	versionCompare(a: string, b: string): number {
 		if (a === b) {
 			return 0;
 		}
@@ -38,8 +38,8 @@ export class CommonUtils {
 		// Otherwise they are the same.
 		return 0;
 	}
-  
-	capitalizeFirstLetter(text:string) {
+
+	capitalizeFirstLetter(text:string): string {
 		text = text.toLowerCase();
 		return text.charAt(0).toUpperCase() + text.slice(1);
 	}

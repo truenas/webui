@@ -10,13 +10,8 @@ import { ComponentPortal } from '@angular/cdk/portal';
   styleUrls: ['./html-tooltip.directive.css']
 })
 
-export class HtmlTooltipComponent implements OnInit {
+export class HtmlTooltipComponent {
   @Input() html = '';
-
-  constructor() { }
-
-  ngOnInit() {
-  }
 }
 
 @Directive({
@@ -24,11 +19,11 @@ export class HtmlTooltipComponent implements OnInit {
 })
 
 export class HtmlTooltipDirective implements AfterViewInit {
- 
+
   @Input() htmlTooltip: string;
   private overlayRef: OverlayRef;
 
-  @HostListener('mouseenter') show() {
+  @HostListener('mouseenter') show(): void {
     // Create tooltip portal
     const tooltipPortal = new ComponentPortal(HtmlTooltipComponent);
 
@@ -39,21 +34,21 @@ export class HtmlTooltipDirective implements AfterViewInit {
     tooltipRef.instance.html = this.htmlTooltip;
   }
 
-  @HostListener('mouseout') hide() {
+  @HostListener('mouseout') hide(): void {
     this.overlayRef.detach();
   }
 
   constructor(private el: ElementRef, private overlayPositionBuilder: OverlayPositionBuilder, private overlay: Overlay) {
   }
-  
-  ngAfterViewInit() {
+
+  ngAfterViewInit(): void {
     this.overlayRef = this.overlay.create({});
 
     const positionStrategy = this.overlayPositionBuilder
       // Create position attached to the elementRef
       .flexibleConnectedTo(this.el)
       // Describe how to connect overlay to the elementRef
-      // Means, attach overlay's center bottom point to the         
+      // Means, attach overlay's center bottom point to the
       // top center point of the elementRef.
       .withPositions([{
         originX: 'center',

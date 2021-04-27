@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Option } from 'app/interfaces/option.interface';
 import { WebSocketService, RestService, AppLoaderService, DialogService } from "../../../../services";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TranslateService } from '@ngx-translate/core';
@@ -42,7 +43,7 @@ interface poolDiskInfo {
   styleUrls: ['./volume-status.component.css']
 })
 export class VolumeStatusComponent implements OnInit {
-  
+
   public actionEvents: Subject<CoreEvent>;
   public poolScan: any;
   public timeRemaining: any = {};
@@ -151,7 +152,7 @@ export class VolumeStatusComponent implements OnInit {
     protected modalService: ModalService
   ) {}
 
-  getZfsPoolScan(poolName) {
+  getZfsPoolScan(poolName: string) {
     this.ws.subscribe('zfs.pool.scan').subscribe(
       (res) => {
         if (res.fields && res.fields.name == poolName) {
@@ -201,8 +202,8 @@ export class VolumeStatusComponent implements OnInit {
   }
 
   getUnusedDisk() {
-    const availableDisks = [];
-    const availableDisksForExtend = [];
+    const availableDisks: Option[] = [];
+    const availableDisksForExtend: Option[] = [];
     this.ws.call('disk.get_unused').subscribe((res) => {
       for (const i in res) {
         availableDisks.push({
@@ -265,11 +266,11 @@ export class VolumeStatusComponent implements OnInit {
     this.loader.close();
   }
 
-  getAction(data, category, vdev_type): any {
+  getAction(data: any, category: any, vdev_type: any): any {
     const actions = [{
       id: 'edit',
       label: helptext.actions_label.edit,
-      onClick: (row) => {
+      onClick: (row: any) => {
         const pIndex = row.name.lastIndexOf('p');
         const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
 
@@ -285,7 +286,7 @@ export class VolumeStatusComponent implements OnInit {
     }, {
       id: 'offline',
       label: helptext.actions_label.offline,
-      onClick: (row) => {
+      onClick: (row: any) => {
         let name = row.name;
         // if use path as name, show the full path
         if (!_.startsWith(name, '/')) {
@@ -297,12 +298,12 @@ export class VolumeStatusComponent implements OnInit {
           helptext.offline_disk.message + name + "?" + (this.pool.encrypt == 0 ? '' : helptext.offline_disk.encryptPoolWarning),
           false,
           helptext.offline_disk.buttonMsg
-        ).subscribe((res) => {
+        ).subscribe((res: any) => {
           if (res) {
             this.loader.open();
             const value = { label: row.guid };
             this.ws.call('pool.offline', [this.pk, value]).subscribe(
-              (res) => {
+              () => {
                 this.getData();
                 this.loader.close();
               },
@@ -318,7 +319,7 @@ export class VolumeStatusComponent implements OnInit {
     }, {
       id: 'online',
       label: helptext.actions_label.online,
-      onClick: (row) => {
+      onClick: (row: any) => {
         const pIndex = row.name.lastIndexOf('p');
         const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
 
@@ -327,12 +328,12 @@ export class VolumeStatusComponent implements OnInit {
           helptext.online_disk.message + diskName + "?",
           false,
           helptext.online_disk.buttonMsg,
-        ).subscribe((res) => {
+        ).subscribe((res: any) => {
           if (res) {
             this.loader.open();
             let value = { label: row.guid };
             this.ws.call('pool.online', [this.pk, value]).subscribe(
-              (res) => {
+              () => {
                 this.getData();
                 this.loader.close();
               },
@@ -348,7 +349,7 @@ export class VolumeStatusComponent implements OnInit {
     }, {
       id: 'replace',
       label: helptext.actions_label.replace,
-      onClick: (row) => {
+      onClick: (row: any) => {
         let name = row.name;
         if (!_.startsWith(name, '/')) {
           const pIndex = name.lastIndexOf('p');
@@ -369,14 +370,14 @@ export class VolumeStatusComponent implements OnInit {
             dialogRef.componentInstance.setDescription(helptext.replace_disk.description);
             dialogRef.componentInstance.setCall('pool.replace', [pk, entityDialog.formValue]);
             dialogRef.componentInstance.submit();
-            dialogRef.componentInstance.success.subscribe(res=>{
+            dialogRef.componentInstance.success.subscribe(()=>{
               dialogRef.close(true);
               entityDialog.dialogRef.close(true);
               entityDialog.parent.getData();
               entityDialog.parent.getUnusedDisk();
               entityDialog.parent.dialogService.Info(helptext.replace_disk.title, helptext.replace_disk.info_dialog_content + name + ".", '', 'info', true);
             }),
-            dialogRef.componentInstance.failure.subscribe((res) => {
+            dialogRef.componentInstance.failure.subscribe((res: any) => {
               dialogRef.close();
               entityDialog.dialogRef.close();
               let err = helptext.replace_disk.err_msg;
@@ -393,7 +394,7 @@ export class VolumeStatusComponent implements OnInit {
     }, {
       id: 'remove',
       label: helptext.actions_label.remove,
-      onClick: (row) => {
+      onClick: (row: any) => {
         let diskName = row.name;
         if (!_.startsWith(row.name, '/')) {
           const pIndex = row.name.lastIndexOf('p');
@@ -405,11 +406,11 @@ export class VolumeStatusComponent implements OnInit {
           helptext.remove_disk.message + diskName + "?",
           false,
           helptext.remove_disk.buttonMsg
-        ).subscribe((res) => {
+        ).subscribe((res: any) => {
           if (res) {
             this.loader.open();
             this.ws.call('pool.remove', [this.pk, {label: row.guid}]).subscribe(
-              (res) => {
+              () => {
                 this.getData();
                 this.loader.close();
               },
@@ -425,7 +426,7 @@ export class VolumeStatusComponent implements OnInit {
     }, {
       id: 'detach',
       label: helptext.actions_label.detach,
-      onClick: (row) => {
+      onClick: (row: any) => {
         const pIndex = row.name.lastIndexOf('p');
         const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
 
@@ -434,11 +435,11 @@ export class VolumeStatusComponent implements OnInit {
           helptext.detach_disk.message + diskName + "?",
           false,
           helptext.detach_disk.buttonMsg
-        ).subscribe((res) => {
+        ).subscribe((res: any) => {
           if (res) {
             this.loader.open();
             this.ws.call('pool.detach', [this.pk, {label: row.guid}]).subscribe(
-              (res) => {
+              () => {
                 this.getData();
                 this.getUnusedDisk();
                 this.loader.close();
@@ -476,11 +477,11 @@ export class VolumeStatusComponent implements OnInit {
     return actions;
   }
 
-  extendAction(data) {
+  extendAction() {
     return [{
       id: 'extend',
       label: helptext.actions_label.extend,
-      onClick: (row) => {
+      onClick: (row: any) => {
         const pk = this.pk;
         _.find(this.extendVdevFormFields, { name: 'target_vdev' }).value = row.guid;
         const conf: DialogFormConfiguration = {
@@ -495,14 +496,14 @@ export class VolumeStatusComponent implements OnInit {
             dialogRef.componentInstance.setDescription(helptext.extend_disk.description);
             dialogRef.componentInstance.setCall('pool.attach', [pk, entityDialog.formValue]);
             dialogRef.componentInstance.submit();
-            dialogRef.componentInstance.success.subscribe(res=>{
+            dialogRef.componentInstance.success.subscribe(()=>{
               dialogRef.close(true);
               entityDialog.dialogRef.close(true);
               entityDialog.parent.getData();
               entityDialog.parent.getUnusedDisk();
               entityDialog.parent.dialogService.Info(helptext.extend_disk.title, helptext.extend_disk.info_dialog_content + name + ".", '', 'info', true);
             }),
-            dialogRef.componentInstance.failure.subscribe((res) => {
+            dialogRef.componentInstance.failure.subscribe((res: any) => {
               dialogRef.close();
               entityDialog.dialogRef.close();
               let err = helptext.extend_disk.err_msg;
@@ -519,7 +520,7 @@ export class VolumeStatusComponent implements OnInit {
     }, {
       id: 'Remove',
       label: helptext.actions_label.remove,
-      onClick: (row) => {
+      onClick: (row: any) => {
         let diskName = row.name;
         if (!_.startsWith(row.name, '/')) {
           const pIndex = row.name.lastIndexOf('p');
@@ -531,11 +532,11 @@ export class VolumeStatusComponent implements OnInit {
           helptext.remove_disk.message + diskName + "?",
           false,
           helptext.remove_disk.buttonMsg
-        ).subscribe((res) => {
+        ).subscribe((res: any) => {
           if (res) {
             this.loader.open();
             this.ws.call('pool.remove', [this.pk, {label: row.guid}]).subscribe(
-              (res) => {
+              () => {
                 this.getData();
                 this.loader.close();
               },
@@ -583,7 +584,7 @@ export class VolumeStatusComponent implements OnInit {
       if (data.type == 'DISK') {
         item.actions = [{title:'Disk Actions', actions: this.getAction(data, category, vdev_type)}];
       } else if (data.type === 'MIRROR') {
-        item.actions = [{title: 'Mirror Actions', actions: this.extendAction(data)}];
+        item.actions = [{title: 'Mirror Actions', actions: this.extendAction()}];
       }
     }
     return item;
@@ -597,7 +598,7 @@ export class VolumeStatusComponent implements OnInit {
 
     if (data.children) {
       if (data.children.length === 0 && vdev_type === undefined) {
-        const extend_action = this.extendAction(data);
+        const extend_action = this.extendAction();
         node.data.actions.push(extend_action[0]);
       }
       vdev_type = data.name;
@@ -648,7 +649,7 @@ export class VolumeStatusComponent implements OnInit {
     return;
   }
 
-  onClickEdit(pk) {
+  onClickEdit(pk: string) {
     let diskForm = new DiskFormComponent(this.router, this.rest, this.ws, this.aroute);
     diskForm.inIt(pk);
     this.modalService.open('slide-in-form', diskForm);

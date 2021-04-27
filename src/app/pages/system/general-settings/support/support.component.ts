@@ -24,15 +24,13 @@ export class SupportComponent implements OnInit {
   public scrshot: any;
   public subs: any;
   public isProduction: boolean;
-  public updateButton: any;
-  public FN_instructions;
   public product_image = '';
   public isProductImageRack = false;
   public extraMargin = true;
   public serverList = ['M40', 'M50', 'X10', 'X20', 'Z20', 'Z30', 'Z35', 'Z50'];
   public systemInfo: any;
   public hasLicense = false;
-  public licenseInfo = null;
+  public licenseInfo: any = null;
   public links = [helptext.docHub, helptext.forums, helptext.licensing];
   public licenseButtonText: string;
   public ticketText = helptext.ticket;
@@ -99,12 +97,12 @@ export class SupportComponent implements OnInit {
     this.licenseInfo.daysLeftinContract = this.daysTillExpiration(now, then);
   }
 
-  daysTillExpiration(now, then) {
+  daysTillExpiration(now: Date, then: Date) {
     const oneDay = 24*60*60*1000; // milliseconds in a day
     return Math.round((then.getTime() - now.getTime())/(oneDay))
   }
 
-  getServerImage(sys_product) {
+  getServerImage(sys_product: string) {
     let imagePath = '';
     this.serverList.forEach(model => {
       if (sys_product.includes(model)) {
@@ -121,7 +119,7 @@ export class SupportComponent implements OnInit {
     }
   }
 
-  getMiniImage(sys_product) {
+  getMiniImage(sys_product: string) {
     switch(sys_product){
       case "FREENAS-MINI-2.0":
       case "FREENAS-MINI-3.0-E":
@@ -209,7 +207,7 @@ export class SupportComponent implements OnInit {
       dialogRef.componentInstance.setTitle(helptext.is_production_dialog.title);
       dialogRef.componentInstance.setDescription(helptext.is_production_dialog.message);
     },
-    (err) => {
+    (err: any) => {
       self.loader.close();
       self.dialogRef.close();
       self.dialog.errorReport(helptext.is_production_error_dialog.title,

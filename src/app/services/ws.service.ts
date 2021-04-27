@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {UUID} from 'angular2-uuid';
 import {LocalStorage} from 'ngx-webstorage';
-import {Observable, Subject} from 'rxjs';
+import { Observable, Observer, Subject } from 'rxjs';
 
 import {environment} from '../../environments/environment';
 import { filter, map } from 'rxjs/operators';
@@ -21,7 +21,7 @@ export class WebSocketService {
   socket: WebSocket;
   connected: boolean = false;
   loggedIn: boolean = false;
-  @LocalStorage() token;
+  @LocalStorage() token: string;
   redirectUrl: string = '';
   shuttingdown = false;
 
@@ -70,7 +70,7 @@ export class WebSocketService {
     this.socket.onclose = this.onclose.bind(this);
   }
 
-  onopen(event) {
+  onopen() {
     this.onOpenSubject.next(true);
     this.send({"msg" : "connect", "version" : "1", "support" : [ "1" ]});
   }
@@ -83,7 +83,7 @@ export class WebSocketService {
     }
   }
 
-  onclose(event) {
+  onclose() {
     this.connected = false;
     this.onCloseSubject.next(true);
     setTimeout(this.connect.bind(this), 5000);
@@ -99,7 +99,7 @@ export class WebSocketService {
     }
   }
 
-  onmessage(msg) {
+  onmessage(msg: { data: string }) {
     try {
       var data = JSON.parse(msg.data);
     } catch (e) {
@@ -155,7 +155,7 @@ export class WebSocketService {
     }
   }
 
-  send(payload) {
+  send(payload: any) {
     if (this.socket.readyState == WebSocket.OPEN) {
       this.socket.send(JSON.stringify(payload));
     } else {
@@ -163,8 +163,8 @@ export class WebSocketService {
     }
   }
 
-  subscribe(name): Observable<any> {
-    let source = Observable.create((observer) => {
+  subscribe(name: string): Observable<any> {
+    let source = Observable.create((observer: any) => {
       if (this.subscriptions.has(name)) {
         this.subscriptions.get(name).push(observer);
       } else {
@@ -174,7 +174,7 @@ export class WebSocketService {
     return source;
   }
 
-  unsubscribe(observer) {
+  unsubscribe(observer: any) {
     // FIXME: just does not have a good performance :)
     this.subscriptions.forEach((v, k) => {
       v.forEach((item) => {
@@ -185,13 +185,13 @@ export class WebSocketService {
     });
   }
 
-  call(method, params?: any, debug = false): Observable<any> {
+  call<R = any>(method: string, params?: any, debug = false): Observable<R> {
 
     let uuid = UUID.UUID();
     let payload = {"id" : uuid, "msg" : "method", "method" : method, "params" : params};
 
     // Create the observable
-    let source = Observable.create((observer) => {
+    let source = Observable.create((observer: any) => {
       this.pendingCalls.set(uuid, {
         "method" : method,
         "args" : params,
@@ -205,7 +205,7 @@ export class WebSocketService {
     return source;
   }
 
-  sub(name): Observable<any> {
+  sub(name: string): Observable<any> {
 
     let nom = name.replace('.','_'); // Avoid weird behavior
     if(!this.pendingSubs[nom]){
@@ -218,7 +218,7 @@ export class WebSocketService {
     let payload =
         {"id" : uuid, "name" : name, "msg" : "sub" };
 
-    let obs = Observable.create((observer) => {
+    let obs = Observable.create((observer: any) => {
       this.pendingSubs[nom].observers[uuid] = observer;
       this.send(payload);
 
@@ -236,8 +236,8 @@ export class WebSocketService {
     return obs;
   }
 
-  job(method, params?: any): Observable<any> {
-    let source = Observable.create((observer) => {
+  job(method: any, params?: any): Observable<any> {
+    let source = Observable.create((observer: any) => {
       this.call(method, params).subscribe((job_id) => {
         this.subscribe("core.get_jobs").subscribe((res) => {
           if (res.id == job_id) {
@@ -252,16 +252,16 @@ export class WebSocketService {
     return source;
   }
 
-  login(username, password, otp_token?): Observable<any> {
+  login(username: string, password: string, otp_token?: string): Observable<any> {
     let params = otp_token ? [username, password, otp_token] : [username, password]
-    return Observable.create((observer) => {
+    return Observable.create((observer: any) => {
       this.call('auth.login', params).subscribe((result) => {
         this.loginCallback(result, observer);
       });
     });
   }
 
-  loginCallback(result, observer) {
+  loginCallback(result: any, observer: Observer<any>) {
     if (result === true) {
       if(!this.loggedIn){
         this._authStatus.next(this.loggedIn);
@@ -283,8 +283,8 @@ export class WebSocketService {
     observer.complete();
   }
 
-  login_token(token): Observable<any> {
-    return Observable.create((observer) => {
+  login_token(token: string): Observable<any> {
+    return Observable.create((observer: any) => {
       if(token) {
         this.call('auth.token', [ token ]).subscribe((result) => {
           this.loginCallback(result, observer);

@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
 import { WebSocketService } from '../../../services';
 import { EntityFormService } from '../../common/entity/entity-form/services/entity-form.service';
@@ -74,7 +76,7 @@ export class JailFormService {
         protected fieldRelationService: FieldRelationService,
         protected dialog: MatDialog) { }
 
-    createForm(formFields) {
+    createForm(formFields: FieldConfig[]) {
         const formGroup = this.entityFormService.createFormGroup(formFields);
 
         for (const i in formFields) {
@@ -85,7 +87,7 @@ export class JailFormService {
         }
         return formGroup;
     }
-    setRelation(formGroup, formFields, config: FieldConfig) {
+    setRelation(formGroup: FormGroup, formFields: FieldConfig[], config: FieldConfig) {
         const activations =
             this.fieldRelationService.findActivationRelation(config.relation);
         if (activations) {
@@ -103,7 +105,7 @@ export class JailFormService {
         }
     }
 
-    setDisabled(formGroup, formFields, name: string, disable: boolean, hide?: boolean) {
+    setDisabled(formGroup: FormGroup, formFields: FieldConfig[], name: string, disable: boolean, hide?: boolean) {
         if (hide) {
             disable = hide;
         } else {
@@ -124,7 +126,7 @@ export class JailFormService {
         }
     }
 
-    relationUpdate(formGroup, formFields, config: FieldConfig, activations: any) {
+    relationUpdate(formGroup: FormGroup, formFields: FieldConfig[], config: FieldConfig, activations: any) {
         const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
             activations, formGroup);
         const tobeHide = this.fieldRelationService.isFormControlToBeHide(
@@ -132,10 +134,10 @@ export class JailFormService {
         this.setDisabled(formGroup, formFields, config.name, tobeDisabled, tobeHide);
     }
 
-    updateInterface(formGroup, basicfieldConfig, addVnet?) {
+    updateInterface(formGroup: any, basicfieldConfig: FieldConfig[], addVnet?: any) {
         for (const ipType of ['ip4', 'ip6']) {
             const targetPropName = ipType + '_addr';
-            for (let i = 0; i < formGroup.controls[targetPropName].controls.length; i++) {
+            for (let i = 0; i < (formGroup.controls[targetPropName]).controls.length; i++) {
                 const subipInterfaceField = _.find(_.find(basicfieldConfig, { 'name': targetPropName }).listFields[i], { 'name': ipType + '_interface' });
 
                 if (addVnet != undefined) {
@@ -145,7 +147,7 @@ export class JailFormService {
         }
     }
 
-    getFullIP(type: string, ipInterface: string, ip: string, netmask: string, ip4_interfaceField, ip6_interfaceField) {
+    getFullIP(type: string, ipInterface: string, ip: string, netmask: string, ip4_interfaceField: any, ip6_interfaceField: any) {
         let full_address = ip;
         if (ipInterface != '') {
             const validInterface = _.find(type === 'ip4' ? ip4_interfaceField.options : ip6_interfaceField.options, { value: ipInterface }) !== undefined;
@@ -157,7 +159,7 @@ export class JailFormService {
         return full_address;
     }
 
-    getPluginDefaluts(plugin, pluginRepository) {
+    getPluginDefaluts(plugin: any, pluginRepository: any) {
         return this.ws.call('plugin.defaults', [{
             plugin: plugin,
             plugin_repository: pluginRepository,
@@ -169,13 +171,13 @@ export class JailFormService {
         return this.ws.call('interface.query', [[["name", "rnin", "vnet0:"]]]);
     }
 
-    handleTFfiledValues(res, i) {
+    handleTFfiledValues(res: any, i: any) {
         if (_.indexOf(this.TFfields, i) > -1) {
             res[i] = res[i] == '1' ? true : false;
         }
     }
 
-    deparseNatForwards(value, formGroup, networkfieldConfig) {
+    deparseNatForwards(value: any, formGroup: FormGroup, networkfieldConfig: FieldConfig[]) {
         if (value == 'none') {
             formGroup.controls['nat_forwards_checkbox'].setValue(false);
             return;
@@ -184,19 +186,21 @@ export class JailFormService {
         value = value.split(',');
         for (let i = 0; i < value.length; i++) {
             const nat_forward = value[i].split(new RegExp('[(:)]'));
-            if (formGroup.controls['nat_forwards'].controls[i] == undefined) {
+            const natForwardsControlGroup = formGroup.controls['nat_forwards'] as FormGroup;
+            const natForwardsControl = natForwardsControlGroup.controls[i] as FormGroup;
+            if (natForwardsControl == undefined) {
                 // add controls;
                 const templateListField = _.cloneDeep(_.find(networkfieldConfig, { 'name': 'nat_forwards' }).templateListField);
-                formGroup.controls['nat_forwards'].push(this.entityFormService.createFormGroup(templateListField));
+              (natForwardsControlGroup as any).push(this.entityFormService.createFormGroup(templateListField));
                 _.find(networkfieldConfig, { 'name': 'nat_forwards' }).listFields.push(templateListField);
             }
-            formGroup.controls['nat_forwards'].controls[i].controls['protocol'].setValue(nat_forward[0]);
-            formGroup.controls['nat_forwards'].controls[i].controls['jail_port'].setValue(nat_forward[1]);
-            formGroup.controls['nat_forwards'].controls[i].controls['host_port'].setValue(nat_forward[2]);
+            natForwardsControl.controls['protocol'].setValue(nat_forward[0]);
+            natForwardsControl.controls['jail_port'].setValue(nat_forward[1]);
+            natForwardsControl.controls['host_port'].setValue(nat_forward[2]);
         }
     }
 
-    parseNatForwards(value) {
+    parseNatForwards(value: any) {
         if (value['nat_forwards_checkbox'] === true) {
             const multi_nat_forwards = [];
             for (let i = 0; i < value['nat_forwards'].length; i++) {
@@ -220,7 +224,7 @@ export class JailFormService {
         delete value['nat_forwards_checkbox'];
     }
 
-    parseIpaddr(value, ip4_interfaceField, ip6_interfaceField) {
+    parseIpaddr(value: any, ip4_interfaceField: any, ip6_interfaceField: any) {
         for (const ipType of ['ip4', 'ip6']) {
             const propName = ipType + '_addr';
             if (value[propName] != undefined) {
@@ -239,7 +243,7 @@ export class JailFormService {
         }
     }
 
-    deparseIpaddr(value, ipType, formGroup, basicfieldConfig) {
+    deparseIpaddr(value: any, ipType: any, formGroup: any, basicfieldConfig: FieldConfig[]) {
         value = value.split(',');
         const propName = ipType + '_addr';
         for (let i = 0; i < value.length; i++) {
@@ -266,7 +270,7 @@ export class JailFormService {
         }
     }
 
-    getPluginDefaults(plugin, pluginRepository, formGroup, networkfieldConfig): Promise<boolean> {
+    getPluginDefaults(plugin: any, pluginRepository: any, formGroup: any, networkfieldConfig: FieldConfig[]): Promise<boolean> {
         return new Promise(async (resolve, reject) => {
             await this.ws.call('plugin.defaults', [{
                 plugin: plugin,

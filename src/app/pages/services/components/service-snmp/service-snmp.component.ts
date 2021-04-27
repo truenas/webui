@@ -148,13 +148,13 @@ export class ServiceSNMPComponent {
     entityForm.submitFunction = this.submitFunction;
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     delete data['v3_privpassphrase'];
     delete data['v3_password'];
     return data;
   }
 
-  clean(value) {
+  clean(value: any) {
     if (!value['v3']){
       value['v3_password'] = "";
       value['v3_privpassphrase'] = "";

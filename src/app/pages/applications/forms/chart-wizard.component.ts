@@ -31,7 +31,7 @@ export class ChartWizardComponent implements OnDestroy {
   public summary = {};
   public isAutoSummary: boolean = true;
   public hideCancel = true;
-  private title;
+  private title: string;
   private dialogRef: any;
   protected fieldConfig: FieldConfig[];
   public wizardConfig: Wizard[] = []
@@ -48,7 +48,7 @@ export class ChartWizardComponent implements OnDestroy {
   setTitle(title: string) {
     this.title = title;
   }
-  
+
   setCatalogApp(catalogApp: any) {
     this.catalogApp = catalogApp;
     this.parseSchema();
@@ -56,8 +56,8 @@ export class ChartWizardComponent implements OnDestroy {
 
   parseSchema() {
     try {
-      this.title = this.catalogApp.name; 
-      const versionKeys = [];
+      this.title = this.catalogApp.name;
+      const versionKeys: any[] = [];
       Object.keys(this.catalogApp.versions).forEach(versionKey => {
         if (this.catalogApp.versions[versionKey].healthy) {
           versionKeys.push(versionKey);
@@ -74,7 +74,7 @@ export class ChartWizardComponent implements OnDestroy {
       if (!this.selectedVersionKey) {
         this.selectedVersionKey = versionKeys[0];
       }
-      
+
       const selectedVersion = this.catalogApp.versions[this.selectedVersionKey];
 
       this.wizardConfig = [];
@@ -96,26 +96,26 @@ export class ChartWizardComponent implements OnDestroy {
           required: true,
         }],
       });
-      
-      selectedVersion.schema.groups.forEach(group => {
+
+      selectedVersion.schema.groups.forEach((group: any) => {
         this.wizardConfig.push({
           label: group.name,
           fieldConfig: [],
         })
       });
 
-      selectedVersion.schema.questions.forEach(question => {
-        const wizard = this.wizardConfig.find(wizard => wizard.label == question.group);
+      selectedVersion.schema.questions.forEach((question: any) => {
+        const wizard = this.wizardConfig.find((wizard: any) => wizard.label == question.group);
         if (wizard) {
           const wizardFieldConfigs = new EntityUtils().parseSchemaFieldConfig(question);
           wizard.fieldConfig = wizard.fieldConfig.concat(wizardFieldConfigs);
         }
       });
-  
+
       this.wizardConfig = this.wizardConfig.filter(wizard => wizard.fieldConfig.length > 0);
       if (this.entityWizard) {
         this.entityWizard.resetFields();
-        this.entityWizard.formArray.get([0]).get('version').valueChanges.subscribe(value => {
+        this.entityWizard.formArray.get([0]).get('version').valueChanges.subscribe((value: any) => {
           this.selectedVersionKey = value;
           this.parseSchema();
         });
@@ -168,6 +168,6 @@ export class ChartWizardComponent implements OnDestroy {
 
   ngOnDestroy(){
     this.destroy$.next();
-    this.destroy$.complete(); 
+    this.destroy$.complete();
   }
 }

@@ -29,7 +29,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public formComponent: EntityFormConfigurationComponent;
   public formEvents: Subject<CoreEvent>;
-  public actionsConfig;
+  public actionsConfig: any;
 
   public screenType: string = 'Desktop'; // Desktop || Mobile
   public optimalDesktopWidth: string = '100%';
@@ -175,7 +175,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       to:{ x: endX },
       duration: 250
     }).start({
-      update: (v) => {
+      update: (v: any) => {
         carousel.set(v);
       },
       complete: () => {
@@ -185,7 +185,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
-  onMobileResize(evt){
+  onMobileResize(evt: Event){
     if(this.screenType == 'Desktop'){ return; }
     const vp = this.el.nativeElement.querySelector('.mobile-viewport');
     let viewport = styler(vp);
@@ -193,7 +193,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     let carousel = styler(c);
 
     const startX = viewport.get('x');
-    const endX = this.activeMobileWidget.length > 0 ? evt.target.innerWidth * -1 : 0;
+    const endX = this.activeMobileWidget.length > 0 ? (evt.target as Window).innerWidth * -1 : 0;
 
     if(startX !== endX){
       carousel.set('x', endX);
@@ -230,16 +230,16 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.core.register({observerClass:this,eventName:"NicInfo"}).subscribe((evt:CoreEvent) => {
       let clone = Object.assign([],evt.data);
-      let removeNics = {};
+      let removeNics: any = {};
 
       // Store keys for fast lookup
-      let nicKeys = {};
-      evt.data.forEach((item, index) => {
+      let nicKeys: any = {};
+      (evt.data as any[]).forEach((item, index) => {
         nicKeys[item.name] = index.toString();
       });
 
       // Process Vlans (attach vlans to their parent)
-      evt.data.forEach((item, index) => {
+      (evt.data as any[]).forEach((item, index) => {
         if(item.type !== "VLAN" && !clone[index].state.vlans){
           clone[index].state.vlans = [];
         }
@@ -253,19 +253,19 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           clone[parentIndex].state.vlans.push(item.state);
           removeNics[item.name] = index;
         }
-      })
+      });
 
       // Process LAGGs
-      evt.data.forEach((item, index) => {
+      (evt.data as any[]).forEach((item, index) => {
         if(item.type == "LINK_AGGREGATION" ){
           clone[index].state.lagg_ports = item.lag_ports;
-          item.lag_ports.forEach((nic) => {
+          item.lag_ports.forEach((nic: any) => {
             // Consolidate addresses
-            clone[index].state.aliases.forEach((item) => { item.interface = nic});
+            clone[index].state.aliases.forEach((item: any) => { item.interface = nic});
             clone[index].state.aliases = clone[index].state.aliases.concat(clone[nicKeys[nic]].state.aliases);
 
             // Consolidate vlans
-            clone[index].state.vlans.forEach((item) => { item.interface = nic});
+            clone[index].state.vlans.forEach((item: any) => { item.interface = nic});
             clone[index].state.vlans = clone[index].state.vlans.concat(clone[nicKeys[nic]].state.vlans);
 
             // Mark interface for removal
@@ -281,7 +281,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           clone.splice(i, 1)
         } else {
           // Only keep INET addresses
-          clone[i].state.aliases = clone[i].state.aliases.filter(address => address.type == "INET" || address.type == 'INET6');
+          clone[i].state.aliases = clone[i].state.aliases.filter((address: any) => address.type == "INET" || address.type == 'INET6');
         }
       }
 
@@ -348,7 +348,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   setVolumeData(evt:CoreEvent){
-    let vd = {};
+    let vd: any = {};
 
     for(let i in evt.data){
       if(typeof evt.data[i] == undefined || !evt.data[i]){ continue; }
@@ -482,9 +482,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   dataFromConfig(item:DashConfigItem){
-    let spl;
-    let key;
-    let value;
+    let spl: string[];
+    let key: string;
+    let value: string;
     if(item.identifier){
       spl = item.identifier.split(',');
       key = spl[0];
@@ -532,7 +532,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   generateFormComponent(){
-    let widgetTypes = [];
+    let widgetTypes: any[] = [];
     this.dashState.forEach((item) => {
       if(widgetTypes.indexOf(item.name) == -1){
         widgetTypes.push(item.name);
@@ -630,7 +630,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  applyState(state){
+  applyState(state: any[]){
     // This reconciles current state with saved dashState
 
     if(!this.dashState){

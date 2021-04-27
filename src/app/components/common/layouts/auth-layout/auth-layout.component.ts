@@ -17,13 +17,13 @@ export class AuthLayoutComponent implements OnInit {
     language.getBrowserLanguage();
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.setCssVars(this.theme);
   }
 
-  setCssVars(theme:Theme){
+  setCssVars(theme:Theme): void {
 
-    let palette = Object.keys(theme);
+    let palette = Object.keys(theme) as (keyof Theme)[];
     palette.splice(0,6);
 
     let admin_layout_el = (<any>document).getElementsByTagName('APP-AUTH-LAYOUT')[0];

@@ -20,7 +20,7 @@ export class TruecommandComponent {
     public translate: TranslateService,
     private dialogService: DialogService) {}
 
-    gotoTC() {
+    gotoTC(): void {
       this.dialogService.generalDialog({
         title: helptext.tcDialog.title,
         message: helptext.tcDialog.message,
@@ -33,7 +33,7 @@ export class TruecommandComponent {
       })
     }
 
-    update(data) {
+    update(data: any): void {
       this.tc = data;
     }
 }

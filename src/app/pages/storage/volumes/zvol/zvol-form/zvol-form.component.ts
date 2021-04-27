@@ -58,11 +58,11 @@ export class ZvolFormComponent implements Formconfiguration {
   public edit_data: any;
   protected entityForm: any;
   public minimum_recommended_zvol_volblocksize: string;
-  public namesInUse = [];
+  public namesInUse: string[] = [];
   public title: string;
 
-  protected origVolSize;
-  protected origHuman;
+  protected origVolSize: any;
+  protected origHuman: any;
 
   protected non_encrypted_warned = false;
   protected legacy_encryption = false;
@@ -72,7 +72,7 @@ export class ZvolFormComponent implements Formconfiguration {
   protected encryption_type = 'key';
   protected generate_key = true;
   protected encryption_algorithm: string;
-  
+
   private sync_inherit: any;
   private compression_inherit: any;
   private deduplication_inherit: any;
@@ -83,10 +83,10 @@ export class ZvolFormComponent implements Formconfiguration {
   private compression_collection: any;
   private deduplication_collection: any;
 
-  private inherit_encryption_subscription;
-  private encryption_subscription;
-  private encryption_type_subscription;
-  private generate_key_subscription;
+  private inherit_encryption_subscription: Subscription;
+  private encryption_subscription: Subscription;
+  private encryption_type_subscription: Subscription;
+  private generate_key_subscription: Subscription;
 
   public custActions: Array<any> = [
     {
@@ -158,7 +158,7 @@ export class ZvolFormComponent implements Formconfiguration {
 
             const size = control.value && typeof control.value == "string" ? this.storageService.convertHumanStringToNum(control.value, true) : null;
             const humanSize = control.value;
-            
+
             let errors = control.value && isNaN(size)
               ? { invalid_byte_string: true }
               : null
@@ -170,7 +170,7 @@ export class ZvolFormComponent implements Formconfiguration {
               config.hasErrors = true;
               config.errors = helptext.zvol_volsize_zero_error;
               errors = { invalid_byte_string: true };
-            } else if ((this.origHuman && humanSize) && 
+            } else if ((this.origHuman && humanSize) &&
                       (humanSize !== this.origHuman) &&
                       (size < this.origVolSize)){
               config.hasErrors = true;
@@ -447,9 +447,9 @@ export class ZvolFormComponent implements Formconfiguration {
           _.find(this.fieldConfig, {name:'encryption_type'}).isHidden = true;
         }
         inherit_encrypt_placeholder = helptext.dataset_form_encryption.inherit_checkbox_encrypted;
-      } 
+      }
       _.find(this.fieldConfig, {name:'inherit_encryption'}).placeholder = inherit_encrypt_placeholder;
-        
+
 
       if (this.isNew) {
         if (this.legacy_encryption) {
@@ -485,7 +485,7 @@ export class ZvolFormComponent implements Formconfiguration {
           for (let i = 0; i < this.encryption_fields.length; i++) {
               this.entityForm.setDisabled(this.encryption_fields[i], true, true);
           }
-          this.inherit_encryption_subscription = inherit_encryption_fg.valueChanges.subscribe(inherit => {
+          this.inherit_encryption_subscription = inherit_encryption_fg.valueChanges.subscribe((inherit: any) => {
             this.inherit_encryption = inherit;
             if (inherit) {
               for (let i = 0; i < all_encryption_fields.length; i++) {
@@ -511,11 +511,11 @@ export class ZvolFormComponent implements Formconfiguration {
               }
             }
           });
-          this.encryption_subscription = encryption_fg.valueChanges.subscribe(encryption => {
+          this.encryption_subscription = encryption_fg.valueChanges.subscribe((encryption: any) => {
             // if on an encrypted parent we should warn the user, otherwise just disable the fields
             if (this.encrypted_parent && !encryption && !this.non_encrypted_warned) {
               this.dialogService.confirm(helptext.dataset_form_encryption.non_encrypted_warning_title,
-                helptext.dataset_form_encryption.non_encrypted_warning_warning).subscribe(confirm => {
+                helptext.dataset_form_encryption.non_encrypted_warning_warning).subscribe((confirm: boolean) => {
                   if (confirm) {
                     this.non_encrypted_warned = true;
                     for (let i = 0; i < all_encryption_fields.length; i++) {
@@ -548,7 +548,7 @@ export class ZvolFormComponent implements Formconfiguration {
               }
             }
           });
-          this.encryption_type_subscription = encryption_type_fg.valueChanges.subscribe(type => {
+          this.encryption_type_subscription = encryption_type_fg.valueChanges.subscribe((type: any) => {
             this.encryption_type = type;
             const key = (type === 'key');
             this.entityForm.setDisabled('passphrase', key, key);
@@ -561,7 +561,7 @@ export class ZvolFormComponent implements Formconfiguration {
               this.entityForm.setDisabled('key', true, true)
             }
           })
-          this.generate_key_subscription = this.entityForm.formGroup.controls['generate_key'].valueChanges.subscribe(generate_key => {
+          this.generate_key_subscription = this.entityForm.formGroup.controls['generate_key'].valueChanges.subscribe((generate_key: any) => {
             this.generate_key = generate_key;
             this.entityForm.setDisabled('key', generate_key, generate_key);
           });
@@ -569,7 +569,7 @@ export class ZvolFormComponent implements Formconfiguration {
       }else {
         entityForm.setDisabled('name',true);
       }
-    
+
       this.translate.get('Inherit').subscribe(inheritTr => {
 
         if(pk_dataset && pk_dataset[0].type ==="FILESYSTEM"){
@@ -588,7 +588,7 @@ export class ZvolFormComponent implements Formconfiguration {
             this.minimum_recommended_zvol_volblocksize = res;
           })
 
-          
+
         } else {
           let parent_dataset = pk_dataset[0].name.split('/')
           parent_dataset.pop()
@@ -597,7 +597,7 @@ export class ZvolFormComponent implements Formconfiguration {
           this.ws.call('pool.dataset.query', [[["id","=",parent_dataset]]]).subscribe((parent_dataset_res)=>{
 
             this.custActions = null;
-            
+
             this.sparseHidden =true;
             this.volblocksizeHidden =true;
             _.find(this.fieldConfig, {name:'sparse'})['isHidden']=true;
@@ -671,7 +671,7 @@ export class ZvolFormComponent implements Formconfiguration {
         }
       })
     })
-    
+
   }
 
   afterInit(entityForm: EntityFormComponent) {
@@ -685,7 +685,7 @@ export class ZvolFormComponent implements Formconfiguration {
       this.entityForm.setDisabled('inherit_encryption', true, true);
     }
 
-    
+
     const name = _.find(this.fieldConfig, {name:'name'});
     const sparse =   _.find(this.fieldConfig, {name:'sparse'});
     const sync = _.find(this.fieldConfig, {name:'sync'});
@@ -698,7 +698,7 @@ export class ZvolFormComponent implements Formconfiguration {
     }
 
     if (this.compression_inherit) {
-      compression.options = this.compression_inherit.concat(compression.options);        
+      compression.options = this.compression_inherit.concat(compression.options);
     }
 
     if (this.deduplication_inherit) {
@@ -723,15 +723,15 @@ export class ZvolFormComponent implements Formconfiguration {
     if (this.deduplication_collection) {
       deduplication.options = this.deduplication_collection.concat(deduplication.options);
     }
-    
-    this.entityForm.formGroup.controls['volblocksize'].valueChanges.subscribe((res)=>{
-      const res_number = parseInt(this.reverseZvolBlockSizeMap[res],10);
+
+    this.entityForm.formGroup.controls['volblocksize'].valueChanges.subscribe((res: any)=>{
+      const res_number = parseInt((this.reverseZvolBlockSizeMap as any)[res],10);
       if(this.minimum_recommended_zvol_volblocksize){
-        const recommended_size_number = parseInt(this.reverseZvolBlockSizeMap[this.minimum_recommended_zvol_volblocksize],0);
+        const recommended_size_number = parseInt((this.reverseZvolBlockSizeMap as any)[this.minimum_recommended_zvol_volblocksize],0);
         if (res_number < recommended_size_number){
           this.translate.get(helptext.blocksize_warning.a).subscribe(blockMsgA => (
             this.translate.get(helptext.blocksize_warning.b).subscribe(blockMsgB => {
-              _.find(this.fieldConfig, {name:'volblocksize'}).warnings = 
+              _.find(this.fieldConfig, {name:'volblocksize'}).warnings =
               `${blockMsgA} ${this.minimum_recommended_zvol_volblocksize}. ${blockMsgB}`
             })
           ))
@@ -743,7 +743,7 @@ export class ZvolFormComponent implements Formconfiguration {
     });
   }
 
-  blurVolsize(parent){
+  blurVolsize(parent: any){
     if (parent.entityForm) {
         parent.entityForm.formGroup.controls['volsize'].setValue(parent.storageService.humanReadable);
     }
@@ -809,7 +809,7 @@ export class ZvolFormComponent implements Formconfiguration {
   editSubmit(body: any) {
      this.ws.call('pool.dataset.query', [[["id", "=", this.parent]]]).subscribe((res)=>{
       this.edit_data = this.sendAsBasicOrAdvanced(body);
-      
+
       if (this.edit_data.inherit_encryption) {
         delete this.edit_data.encryption;
       } else {
@@ -836,7 +836,7 @@ export class ZvolFormComponent implements Formconfiguration {
       delete this.edit_data.pbkdf2iters;
       delete this.edit_data.encryption_type;
       delete this.edit_data.algorithm;
-      
+
       let volblocksize_integer_value = res[0].volblocksize.value.match(/[a-zA-Z]+|[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)+/g)[0];
       volblocksize_integer_value = parseInt(volblocksize_integer_value,10)
       if (volblocksize_integer_value === 512){
@@ -886,7 +886,7 @@ export class ZvolFormComponent implements Formconfiguration {
     }
   }
 
-  setParent(id) {
+  setParent(id: string) {
     this.parent = id;
   }
 }

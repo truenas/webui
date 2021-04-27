@@ -28,28 +28,28 @@ export class DualListboxComponent implements OnInit {
   selectedItems: ListSelection;
   dragging = false;
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.availableItems = new ListSelectionImpl(
       difference(this.items, this._selectedItems, this.key)
     );
     this.selectedItems = new ListSelectionImpl(this._selectedItems);
   }
 
-  select() {
+  select(): void {
     const { from, to } = transfer(this.availableItems, this.selectedItems);
     this.availableItems = from;
     this.selectedItems = to;
     this.selectedItemsChange.emit(this.selectedItems.totalItems);
   }
 
-  return() {
+  return(): void {
     const { from, to } = transfer(this.selectedItems, this.availableItems);
     this.selectedItems = from;
     this.availableItems = to;
     this.selectedItemsChange.emit(this.selectedItems.totalItems);
   }
-  
-  drop(event: CdkDragDrop<string[]>) {
+
+  drop(event: CdkDragDrop<string[]>): void {
     if (event.previousContainer === event.container) {
       let chosenItems = document.querySelectorAll('.chosen');
       chosenItems.forEach((item) => {
@@ -66,14 +66,14 @@ export class DualListboxComponent implements OnInit {
     this.dragging = false;
   }
 
-  public onDragStart(event: CdkDragStart<string[]>) {
+  public onDragStart(event: CdkDragStart<string[]>): void {
     let div = document.querySelector(`#${event.source.dropContainer.id}`);
     this.dragging = true;
     let b = div.querySelector('.draggable:active')
     let chosenItems = div.querySelectorAll('.chosen');
     if (chosenItems.length > 0) {
-      b.insertAdjacentHTML('afterbegin', 
-      `<div id="counter" style="background: red; color: white; border-radius: 50%; 
+      b.insertAdjacentHTML('afterbegin',
+      `<div id="counter" style="background: red; color: white; border-radius: 50%;
         width:20px; height: 20px; text-align: center; font-weight: 700;
         position: relative; top: 5px; left: 5px;">
         ${chosenItems.length.toString()}</div>`);

@@ -1,5 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {FormGroup} from '@angular/forms';
+import { MatSliderChange } from '@angular/material/slider/slider';
 import { TranslateService } from '@ngx-translate/core';
 import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
 
@@ -11,7 +12,7 @@ import { Subject } from 'rxjs/Subject';
   selector : 'toolbar-slider',
   styleUrls : [ 'toolbar-slider.component.scss' ],
   template : `
-    <div 
+    <div
       class="toolbar-slider">
       {{ config.label | translate}}:
       <mat-slider [min]="config.min" [max]="config.max" [value]="config.value" [step]="config.step" (change)="onChange($event)"
@@ -27,7 +28,7 @@ export class ToolbarSliderComponent extends iXAbstractObject {
     super()
   }
 
-  onChange(event){
+  onChange(event: MatSliderChange){
     this.config.value = event.value;
     this.controller.next({name: this.config.name, value: this.config.value});
   }

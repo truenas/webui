@@ -23,13 +23,14 @@ import {
   //transformMap,
   //clamp
   } from 'popmotion';
+import { Styler } from 'stylefire/lib/styler/types';
 
 export interface BarChartConfig {
   label: boolean; // to turn off the min/max labels.
   units: string;
   min?: number; // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
   max?: number; // 100 is default
-  width?: number; 
+  width?: number;
   data: BarDataSource[];
   orientation?: string; // horizontal || vertical
 }
@@ -48,25 +49,22 @@ export interface BarDataSource {
 export class ViewChartBarComponent implements AfterViewInit, OnChanges {
 
   public title:string = '';
-  private chart: any; 
+  private chart: any;
   public chartClass: string = 'view-chart-bar';
   public chartConfig: any;
-  private _data;
+  private _data: any;
   public chartId = UUID.UUID();
-  private xScale;
-  private yScale;
-  private barScale;
-  private margin;
-  private wrapperNode;
+  private margin: number;
+  private wrapperNode: Styler;
 
   @Input() config: BarChartConfig;
   @ViewChild('wrapper', {static: true}) el: ElementRef;
 
-  constructor() { 
+  constructor() {
     //super();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: SimpleChanges): void {
     if(changes.config){
       if(changes.config.currentValue && changes.config.currentValue.data){
 
@@ -81,7 +79,7 @@ export class ViewChartBarComponent implements AfterViewInit, OnChanges {
     }
   }
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.render();
   }
 
@@ -93,7 +91,7 @@ export class ViewChartBarComponent implements AfterViewInit, OnChanges {
     this._data = d;
   }
 
-  render(){
+  render(): void {
     this.margin = 32;
 
     let wrapper = d3.select("#bar-" + this.chartId);
@@ -104,18 +102,18 @@ export class ViewChartBarComponent implements AfterViewInit, OnChanges {
     this.chartConfig = this.makeConfig();
   }
 
-  update(data?){
+  update(data?: any): void {
     if(!data){ data = this.config.data}
-    
+
       this.chart.load({
         columns: this.config.data,
       })
-      
+
   }
-  
+
 
   makeConfig(){
-  
+
     this.chartConfig = {
       bindto: '#bar-' + this.chartId,
       data: {

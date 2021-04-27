@@ -25,7 +25,7 @@ export class CertificateAuthorityEditComponent {
   private rowNum: any;
   private title: string;
   private incomingData: any;
-  private unsignedCAs = [];
+  private unsignedCAs: any[] = [];
 
   protected fieldConfig: FieldConfig[];
   public fieldSets: FieldSet[] = [
@@ -202,7 +202,7 @@ export class CertificateAuthorityEditComponent {
       })
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     this.incomingData = data;
     this.setForm();
     return data;
@@ -236,7 +236,7 @@ export class CertificateAuthorityEditComponent {
       name: helptext_system_certificates.edit.signCSR,
       function: () => {
         this.systemGeneralService.getUnsignedCertificates().subscribe( (res) => {
-          res.forEach((item) => {
+          res.forEach((item: any) => {
             this.unsignedCAs.push(
               { label : item.name, value : parseInt(item.id)}
             );
@@ -252,8 +252,8 @@ export class CertificateAuthorityEditComponent {
       'root_path', 'digest_algorithm', 'key_length', 'key_type', 'until', 'revoked', 'signed_certificates', 'lifetime'];
     fields.forEach(field => {
       const paragraph = _.find(this.fieldConfig, { 'name': field });
-      this.incomingData[field] || this.incomingData[field] === false ? 
-        paragraph.paraText += this.incomingData[field] : paragraph.paraText += '---'; 
+      this.incomingData[field] || this.incomingData[field] === false ?
+        paragraph.paraText += this.incomingData[field] : paragraph.paraText += '---';
     })
     _.find(this.fieldConfig, { 'name': 'san' }).paraText += this.incomingData.san.join(',');
     const issuer = _.find(this.fieldConfig, { 'name': 'issuer' });
@@ -268,7 +268,7 @@ export class CertificateAuthorityEditComponent {
     this.title = helptext_system_ca.edit.title;
   }
 
-  doSignCSR(entityDialog) {
+  doSignCSR(entityDialog: any) {
     const self = entityDialog.parent
     const payload = {
       'ca_id': self.rowNum,
@@ -280,16 +280,16 @@ export class CertificateAuthorityEditComponent {
       entityDialog.loader.close();
       self.dialog.closeAllDialogs();
       self.modalService.refreshTable();
-    }, (err) => {
+    }, (err: any) => {
       entityDialog.loader.close();
       self.dialog.errorReport(helptext_system_ca.error, err.reason, err.trace.formatted);
     })
   }
 
   viewCertificate() {
-    this.dialog.confirm(this.incomingData.name, this.incomingData.certificate, true, 
+    this.dialog.confirm(this.incomingData.name, this.incomingData.certificate, true,
       helptext_system_certificates.viewDialog.download, false, '',
-    '','','', false, helptext_system_certificates.viewDialog.close,false,this.incomingData.certificate,true).subscribe(res => {
+    '','','', false, helptext_system_certificates.viewDialog.close,false,this.incomingData.certificate,true).subscribe((res: boolean) => {
       if (res) {
         this.exportCertificate();
       }
@@ -305,7 +305,7 @@ export class CertificateAuthorityEditComponent {
         this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
           this.storage.downloadBlob(file, fileName);
         }, err => {
-          this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title, 
+          this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title,
             helptext_system_certificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
         });
       },
@@ -316,9 +316,9 @@ export class CertificateAuthorityEditComponent {
   }
 
   viewKey() {
-    this.dialog.confirm(this.incomingData.name, this.incomingData.privatekey, true, 
+    this.dialog.confirm(this.incomingData.name, this.incomingData.privatekey, true,
       helptext_system_certificates.viewDialog.download, false, '',
-    '','','', false, helptext_system_certificates.viewDialog.close,false,this.incomingData.privatekey,true).subscribe(res => {
+    '','','', false, helptext_system_certificates.viewDialog.close,false,this.incomingData.privatekey,true).subscribe((res: boolean) => {
       if (res) {
         this.exportKey();
       }
@@ -334,7 +334,7 @@ export class CertificateAuthorityEditComponent {
         this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(file => {
           this.storage.downloadBlob(file, fileName);
         }, err => {
-          this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title, 
+          this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title,
             helptext_system_certificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
         });
       },
@@ -343,9 +343,9 @@ export class CertificateAuthorityEditComponent {
       }
     );
   }
-  
-  customSubmit(value) {
-    let payload = {};
+
+  customSubmit(value: any) {
+    let payload: any = {};
     payload['name'] = value.name;
 
     this.loader.open();

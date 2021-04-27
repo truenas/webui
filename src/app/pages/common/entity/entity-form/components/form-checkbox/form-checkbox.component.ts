@@ -1,5 +1,6 @@
 import {Component, ViewContainerRef} from '@angular/core';
 import {FormGroup} from '@angular/forms';
+import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { TranslateService } from '@ngx-translate/core';
 
 import {FieldConfig} from '../../models/field-config.interface';
@@ -26,13 +27,13 @@ export class FormCheckboxComponent implements Field {
     }
   }
 
-  onChangeCheckbox($event) {
+  onChangeCheckbox($event: MatCheckboxChange) {
     if (this.config.onChange !== undefined && this.config.onChange != null) {
       this.config.onChange({ event: $event });
     }
   }
-  
-  preventClick($event) {
+
+  preventClick($event: MouseEvent) {
     $event.preventDefault();
     return true;
   }

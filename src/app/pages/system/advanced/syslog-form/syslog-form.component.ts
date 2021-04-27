@@ -90,9 +90,9 @@ export class SyslogFormComponent implements OnDestroy {
         },
       ],
     },
-    { 
+    {
       name:'divider',
-      divider: true 
+      divider: true
     }
   ]
 
@@ -118,7 +118,7 @@ export class SyslogFormComponent implements OnDestroy {
     )
   }
 
-  reconnect(href) {
+  reconnect(href: string) {
     if (this.entityForm.ws.connected) {
       this.loader.close()
       // ws is connected
@@ -137,7 +137,7 @@ export class SyslogFormComponent implements OnDestroy {
     })
   }
 
-  public customSubmit(body) {
+  public customSubmit(body: any) {
     this.loader.open()
     const syslog_value = body.syslog
     delete body.syslog
@@ -168,10 +168,6 @@ export class SyslogFormComponent implements OnDestroy {
       this.loader.close()
       new EntityUtils().handleWSError(this.entityForm, res)
     })
-  }
-
-  getKeyByValue(object, value) {
-    return Object.keys(object).find((key) => object[key] === value)
   }
 
   ngOnDestroy() {

@@ -52,7 +52,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
       this.pk = params['pk'];
       this.getAuthToken().subscribe((res) => {
         this.initializeWebShell(res);
-        this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
+        this.shellSubscription = this.ss.shellOutput.subscribe((value: any) => {
           if (value !== undefined) {
             // this.xterm.write(value);
 
@@ -82,11 +82,11 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     return false;
   }
 
-  onResize(event) {
+  onResize() {
     this.resizeTerm();
   }
 
-  onFontSizeChanged(event) {
+  onFontSizeChanged() {
     this.resizeTerm();
   }
 
@@ -185,7 +185,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     this.ss.jailId = this.pk;
     this.ss.connect();
 
-    this.ss.shellConnected.subscribe((res)=> {
+    this.ss.shellConnected.subscribe((res: any)=> {
       this.connectionId = res.id;
       this.resizeTerm();
     })

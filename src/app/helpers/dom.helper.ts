@@ -1,4 +1,4 @@
-export function removeClass(el, className) {
+export function removeClass(el: any, className: string) {
   if (!el || el.length === 0)
     return;
   if (!el.length) {
@@ -9,7 +9,7 @@ export function removeClass(el, className) {
     }
   }
 }
-export function addClass(el, className) {
+export function addClass(el: any, className: string) {
   if (!el)
     return;
   if (!el.length) {
@@ -20,7 +20,7 @@ export function addClass(el, className) {
     }
   }
 }
-export function findClosest(el, className) {
+export function findClosest(el: HTMLElement, className: string): HTMLElement {
   if (!el)
     return;
   while (el) {
@@ -31,12 +31,12 @@ export function findClosest(el, className) {
     el = parent;
   }
 }
-export function hasClass(el, className) {
+export function hasClass(el: HTMLElement, className: string) {
   if (!el)
     return;
   return (` ${el.className} `).replace(/[\n\t]/g, ' ').indexOf(` ${className} `) > -1;
 }
-export function toggleClass(el, className) {
+export function toggleClass(el: any, className: string) {
   if (!el)
     return;
   if (hasClass(el, className)) {
@@ -48,7 +48,7 @@ export function toggleClass(el, className) {
 export function changeTheme(themes: any[], themeName: string) {
   // Remove default
   /*removeClass(document.body, 'ix-blue');
-  
+
   themes.forEach((theme) => {
     removeClass(document.body, theme.name);
     //removeClass(document.body, 'native');

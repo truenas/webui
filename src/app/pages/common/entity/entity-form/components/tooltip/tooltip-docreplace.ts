@@ -6,7 +6,7 @@ import {DocsService} from '../../../../../../services/docs.service';
 })
 export class TooltipDocReplacePipe implements PipeTransform {
     constructor(public docsService: DocsService) {}
-    transform(message): string {
+    transform(message: string): string {
         return this.docsService.docReplace(message);
     }
 }

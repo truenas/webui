@@ -41,7 +41,7 @@ import {
 
     /*
      * Don't use this class directly.
-     * Instead extend this class for each 
+     * Instead extend this class for each
      * hardware unit with your customizations
      * */
 
@@ -118,8 +118,8 @@ import {
        this.loader = new PIXI.loaders.Loader();
        // LOAD OUR ASSETS
        this.loader
-         .add(this.model + "_chassis", this.chassisPath) 
-         .add(this.model + "_drivetray_bg", this.driveTrayBackgroundPath) 
+         .add(this.model + "_chassis", this.chassisPath)
+         .add(this.model + "_drivetray_bg", this.driveTrayBackgroundPath)
          .add(this.model + "_drivetray_handle", this.driveTrayHandlePath);
 
          // LOAD ALT UNIFORM ASSETS
@@ -138,10 +138,10 @@ import {
      onLoaded(){
        const outlineFilterBlue = new PIXI.filters.OutlineFilter(2, 0x99ff99);
        const bloomFilter = new PIXI.filters.AdvancedBloomFilter({
-         threshold: 0.9, 
-         bloomScale: 1.5, 
-         brightness: 1.5, 
-         blur: 20, 
+         threshold: 0.9,
+         bloomScale: 1.5,
+         brightness: 1.5,
+         blur: 20,
          quality: 10
        });
 
@@ -175,7 +175,7 @@ import {
          dt.handle.filters = this.filters;
 
          dt.container.interactive = true;
-         let clickHandler = (evt) => {this.onTap(evt, dt);}
+         let clickHandler = (evt: MouseEvent) => {this.onTap(evt, dt);}
            dt.container.on( 'click', clickHandler);
 
          this.driveTrays.addChild(dt.container);
@@ -195,7 +195,7 @@ import {
        this.driveTrays.y = 78;
      }
 
-     onTap(evt, driveTray){
+     onTap(evt: MouseEvent, driveTray: DriveTray){
 
        this.events.next({name:"DriveSelected", data: driveTray});
 
@@ -203,7 +203,7 @@ import {
        driveTray.background.alpha = 1;
 
        setTimeout(() =>{
-         const glow = (v) => driveTray.background.alpha = v;
+         const glow = (v: number) => driveTray.background.alpha = v;
          tween({
            from: 1,
            to: startAlpha,
@@ -219,7 +219,7 @@ import {
        const duration = 50;
 
        setTimeout(() =>{
-         const fade = (v) => this.chassis.alpha = v;
+         const fade = (v: number) => this.chassis.alpha = v;
          tween({
            from: 0,
            to: this.chassisOpacity ? this.chassisOpacity : opacity,
@@ -229,35 +229,35 @@ import {
 
 
        this.driveTrayObjects.forEach((item, index) => {
-         // Staggered handles fade in  
+         // Staggered handles fade in
          setTimeout(() =>{
-           const updateAlpha = (v) => {
+           const updateAlpha = (v: number) => {
              return item.handle.alpha = v;
            }
 
            tween({
              from: item.handle.alpha,
-             to: item.enabled ? 1 : opacity, 
+             to: item.enabled ? 1 : opacity,
              duration: duration /*+ 1000*/,
              ease: easing.backOut,
              //flip: Infinity
              }).start({
-               update: v => { updateAlpha(v) },
+               update: (v: number) => { updateAlpha(v) },
                complete: () => {
                  if(index == this.driveTrayObjects.length - 1){
                    this.events.next({name: "Ready"});
-                 } 
+                 }
                }
              });
          }, delay)
 
-         // Staggered tray backgrounds fade in  
+         // Staggered tray backgrounds fade in
          setTimeout(() =>{
-           const updateAlpha = (v) => item.background.alpha = v;
+           const updateAlpha = (v: number) => item.background.alpha = v;
 
            tween({
              from: item.background.alpha,
-             to: opacity, 
+             to: opacity,
              duration: duration,
              ease: easing.backOut,
            }).start(updateAlpha);
@@ -281,7 +281,7 @@ import {
        return dt;
      }
 
-     generatePosition(displayObject, index, xOffset: number = 0, yOffset: number = 0): Position{
+     generatePosition(displayObject: Container, index: number, xOffset: number = 0, yOffset: number = 0): Position{
        let gapX = 10;
        let gapY = 2;
        let mod = index % this.columns;
@@ -305,9 +305,9 @@ import {
        dts.proj.mapSprite(dts, quad);
      }
 
-     colorDriveTray(slot, color){
+     colorDriveTray(slot: number, color: string){
        const driveIndex = slot - this.slotRange.start;
-       if(driveIndex < 0 || driveIndex >= this.totalDriveTrays){ 
+       if(driveIndex < 0 || driveIndex >= this.totalDriveTrays){
          console.warn("IGNORING DRIVE AT INDEX " + driveIndex + " SLOT " + slot + " IS OUT OF RANGE");
          return;
        }

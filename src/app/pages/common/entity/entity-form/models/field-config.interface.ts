@@ -1,4 +1,5 @@
 import { ValidatorFn, AsyncValidatorFn } from '@angular/forms';
+import { Option } from 'app/interfaces/option.interface';
 import { RelationGroup } from './field-relation.interface';
 export enum UnitType {
   duration = 'duration',
@@ -12,7 +13,9 @@ export interface InputUnitConfig {
 }
 
 export interface FieldConfig {
-  onChange?(data: any), alert?: { message: string, forValues: any[] }, searchable?: boolean, disabled?: boolean, label?: string, inlineLabel?: string, name: string, options?: any[],
+  onChange?(data: any): void,
+  alert?: { message: string, forValues: any[] },
+  searchable?: boolean, disabled?: boolean, label?: string, inlineLabel?: string, name: string, options?: any[],
   errors?: string, hasErrors?: boolean, placeholder?: string, type: string,
   inputType?: string, inputUnit?: InputUnitConfig, validation?: any[] | ValidatorFn | ValidatorFn[],
   asyncValidation?: AsyncValidatorFn | AsyncValidatorFn[],
@@ -25,13 +28,16 @@ export interface FieldConfig {
   acceptedFiles?: string, fileLocation?: string, fileType?: string,width?:string,
   message?: any, updater?:any, parent?:any,togglePw?:boolean, paraText?: any,
   hideOthersPermissions?: boolean, blurStatus?:boolean,blurEvent?:any,noMinutes?:boolean,
-  warnings?: string, hideButton?:boolean, searchOptions?: any[], hideDirs?: any,
+  warnings?: string, hideButton?:boolean,
+  searchOptions?: Option[];
+  hideDirs?: any,
   listFields?: Array<FieldConfig>[], templateListField?: FieldConfig[],
   updateLocal?: boolean, isLoading?: boolean, textAreaRows?: number, netmaskPreset?: number,
   isLargeText?: boolean, paragraphIcon?: string, paragraphIconSize?: string, zeroStateMessage?: string, isDoubleConfirm?:boolean,
   maskValue?: any, hideErrMsg?: boolean, id?: string, autocomplete?: boolean,
   buttonClass?: string, buttonColor?: string, filereader?: boolean, box?: boolean,
-  customEventMethod?(data:any), onChangeOption?(data:any), hint?:string, loadMoreOptions?: any,
-  enableTextWrapForOptions?: boolean, expandedHeight?: boolean, addInitialList?: boolean, 
+  customEventMethod?(data:any): void,
+  onChangeOption?(data:any): void, hint?:string, loadMoreOptions?: any,
+  enableTextWrapForOptions?: boolean, expandedHeight?: boolean, addInitialList?: boolean,
 }
 

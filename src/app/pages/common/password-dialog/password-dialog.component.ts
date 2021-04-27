@@ -22,7 +22,7 @@ export class PasswordDialog {
   public data: string;
   public tooltip = globalHelptext.rootpw.tooltip;
   public hideCancel = false;
-  public customSumbit;
+  public customSumbit: any;
   public showPassword = false;
   public inputType = 'password';
   public errors = '';

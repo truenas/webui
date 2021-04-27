@@ -95,14 +95,14 @@ export class KubernetesSettingsComponent {
     },
   ]
 
-  constructor(protected ws: WebSocketService, private loader: AppLoaderService, 
-    private dialogService: DialogService, private modalService: ModalService, 
+  constructor(protected ws: WebSocketService, private loader: AppLoaderService,
+    private dialogService: DialogService, private modalService: ModalService,
     private appService: ApplicationsService) { }
 
   preInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     const pool_control = _.find(this.fieldSets[0].config, {'name' : 'pool'});
-    this.appService.getPoolList().subscribe(pools => {
+    this.appService.getPoolList().subscribe((pools: any[]) => {
       pools.forEach(pool => {
         pool_control.options.push({ label: pool.name, value: pool.name })
       })
@@ -114,7 +114,7 @@ export class KubernetesSettingsComponent {
       }
     })
     const v4_interface_control = _.find(this.fieldSets[1].config, {'name' : 'route_v4_interface'});
-    this.appService.getInterfaces().subscribe(interfaces => {
+    this.appService.getInterfaces().subscribe((interfaces: any[]) => {
       interfaces.forEach(i => {
         v4_interface_control.options.push({ label: i.name, value: i.name });
       })
@@ -129,7 +129,7 @@ export class KubernetesSettingsComponent {
     });
   }
 
-  beforeSubmit(data) {
+  beforeSubmit(data: any) {
     if (data.route_v4_gateway === '') {
       data.route_v4_gateway = null;
     }
@@ -141,20 +141,20 @@ export class KubernetesSettingsComponent {
     delete data.enable_container_image_update;
   }
 
-  customSubmit(data) {
+  customSubmit(data: any) {
     this.loader.open();
 
     const promises = [];
     promises.push(this.ws.job(this.editCall, [data]).toPromise());
     promises.push(this.appService.updateContainerConfig(this.newEnableContainerImageUpdate).toPromise());
-    
+
     Promise.all(promises).then((res) => {
       this.loader.close();
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
     }, (err) => {
       this.loader.close();
-      new EntityUtils().handleWSError(this, err, this.dialogService);      
+      new EntityUtils().handleWSError(this, err, this.dialogService);
     });
   }
 }

@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 
 import { TranslateService } from '@ngx-translate/core';
+import { Option } from 'app/interfaces/option.interface';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
@@ -31,11 +32,11 @@ export class FormComboboxComponent implements Field {
 
   constructor(public translate: TranslateService) {}
 
-  onChangeOption(value) {
+  onChangeOption(value: any) {
     this.group.controls[this.config.name].setValue(value);
   }
 
-  updateSearchOptions(value) {
+  updateSearchOptions(value: any) {
     if(this.config.updater && this.config.parent) {
       if (this.config.updateLocal) {
         this.config.updater(value, this.config.parent, this.config);
@@ -44,7 +45,7 @@ export class FormComboboxComponent implements Field {
       }
     } else {
       value = value.toLowerCase();
-      let searchOptions = [];
+      let searchOptions: Option[] = [];
       for (let i = 0; i < this.config.options.length; i++) {
         if (this.config.options[i].label.toLowerCase().includes(value)) {
 

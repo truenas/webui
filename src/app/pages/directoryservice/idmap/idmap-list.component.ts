@@ -59,7 +59,7 @@ export class IdmapListComponent implements OnDestroy {
     protected dialogService: DialogService
   ) { }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any[]) {
     data.forEach((item) => {
       if (item.certificate) {
         item.cert_name = item.certificate.cert_name;
@@ -96,7 +96,7 @@ export class IdmapListComponent implements OnDestroy {
             this.doAdd();
           } else {
             this.dialogService.confirm(helptext.idmap.enable_ad_dialog.title, helptext.idmap.enable_ad_dialog.message,
-              true, helptext.idmap.enable_ad_dialog.button).subscribe((res) => {
+              true, helptext.idmap.enable_ad_dialog.button).subscribe((res: boolean) => {
                 if (res) {
                   this.showADForm();
                 }
@@ -107,13 +107,13 @@ export class IdmapListComponent implements OnDestroy {
     }];
   }
 
-  getActions(row) {
+  getActions(row: any) {
     const actions = [];
     actions.push({
       id: 'edit',
       label: T('Edit'),
       disabled: row.disableEdit,
-      onClick: (row) => {
+      onClick: (row: any) => {
         this.doAdd(row.id);
       }
     });
@@ -121,11 +121,10 @@ export class IdmapListComponent implements OnDestroy {
       actions.push({
         id: 'delete',
         label: T('Delete'),
-        onClick: (row) => {
+        onClick: (row: any) => {
           this.entityList.doDeleteJob(row).subscribe(
-            (progress) => {
-            },
-            (err) => {
+            () => {},
+            (err: any) => {
               new EntityUtils().handleWSError(this.entityList, err);
             },
             () => {

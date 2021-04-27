@@ -18,7 +18,7 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
   protected entityList: any;
   public quotaValue: number;
   protected fullFilter =  [['OR',[['used_bytes', '>', 0], ['obj_used', '>', 0]]]];
-  protected emptyFilter = [];
+  protected emptyFilter: string[] = [];
   protected useFullFilter = true;
 
   public columns: Array < any > = [
@@ -62,7 +62,7 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
     ]
   }
 
-  getActions(row) {
+  getActions(row: any) {
     const self = this;
     const actions = [];
     actions.push({
@@ -125,7 +125,7 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
             saveButtonText: helptext.shared.set,
             cancelButtonText: helptext.shared.cancel,
 
-            customSubmit(data) {
+            customSubmit(data: any) {
               const entryData = data.formValue;
               const payload = [];
               payload.push({
@@ -160,7 +160,7 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
     return actions;
   }
 
-  preInit(entityList) {
+  preInit(entityList: any) {
     this.entityList = entityList;
     const paramMap: any = (<any>this.aroute.params).getValue();
     this.pk = paramMap.pk;
@@ -168,16 +168,16 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
   }
 
 
-  callGetFunction(entityList) {
+  callGetFunction(entityList: any) {
     const filter = this.useFullFilter ? this.fullFilter : this.emptyFilter;
     this.ws.call('pool.dataset.get_quota', [this.pk, 'USER', filter]).subscribe(res => {
       entityList.handleData(res, true);
     })
   }
 
-  dataHandler(data): void {
+  dataHandler(data: any): void {
     this.translate.get(helptext.shared.nameErr).subscribe(msg => {
-      data.rows.forEach(row => {
+      data.rows.forEach((row: any) => {
         if (!row.name) {
           row.name = `*ERR* (${msg}), ID: ${row.id}`;
         }
@@ -188,11 +188,11 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
         row.used_percent = `${Math.round((row.used_percent) * 100) / 100}%`;
         row.obj_used_percent = `${Math.round((row.obj_used_percent) * 100) / 100}%`;
       })
-      return data;    
+      return data;
     })
   }
 
-  blurEvent(parent) {
+  blurEvent(parent: any) {
     (<HTMLInputElement>document.getElementById('data-quota_input')).value =
       parent.storageService.humanReadable;
   }
@@ -208,7 +208,7 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
       message = helptext.users.filter_dialog.message_filter;
       button = helptext.users.filter_dialog.button_filter;
     }
-    this.dialogService.confirm(title, message, true, button).subscribe(res => {
+    this.dialogService.confirm(title, message, true, button).subscribe((res: boolean) => {
      if (res) {
        this.entityList.loader.open();
        this.useFullFilter = !this.useFullFilter;

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import * as _ from 'lodash';
 import { ProductType } from '../../../enums/product-type.enum';
 
@@ -95,12 +96,12 @@ export class ActiveDirectoryComponent {
               },
             ],
             saveButtonText: helptext.activedirectory_custactions_leave_domain,
-            customSubmit: function (entityDialog) {
+            customSubmit: function (entityDialog: any) {
               const value = entityDialog.formValue;
               const self = entityDialog;
               self.loader.open();
               self.ws.call('activedirectory.leave', [{ username: value.username, password: value.password }])
-                .subscribe((res) => {
+                .subscribe(() => {
                   self.loader.close();
                   self.dialogRef.close(true);
                   _.find(that.fieldConfig, { 'name': 'enable' })['value'] = false;
@@ -110,7 +111,7 @@ export class ActiveDirectoryComponent {
                   that.dialogservice.Info(helptext.ad_leave_domain_dialog.success,
                     helptext.ad_leave_domain_dialog.success_msg, '400px', 'info', true);
                 },
-                  err => {
+                  (err: any) => {
                     self.loader.close();
                     new EntityUtils().handleWSError(helptext.ad_leave_domain_dialog.error, err, that.dialogservice);
                   });
@@ -301,7 +302,7 @@ export class ActiveDirectoryComponent {
     protected systemGeneralService: SystemGeneralService,
     protected dialogservice: DialogService) { }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     if (data['kerberos_realm'] && data['kerberos_realm'] !== null) {
       data['kerberos_realm'] = data['kerberos_realm'].id;
     }
@@ -331,7 +332,7 @@ export class ActiveDirectoryComponent {
     this.entityEdit = entityEdit;
     this.ws.call('kerberos.realm.query').subscribe((res) => {
       this.kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' });
-      res.forEach((item) => {
+      res.forEach((item: any) => {
         this.kerberos_realm.options.push(
           { label: item.realm, value: item.id });
       });
@@ -339,7 +340,7 @@ export class ActiveDirectoryComponent {
 
     this.ws.call('kerberos.keytab.kerberos_principal_choices').subscribe((res) => {
       this.kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' });
-      res.forEach((item) => {
+      res.forEach((item: any) => {
         this.kerberos_principal.options.push(
           { label: item, value: item });
       });
@@ -347,17 +348,17 @@ export class ActiveDirectoryComponent {
 
     this.ws.call('activedirectory.nss_info_choices').subscribe((res) => {
       this.nss_info = _.find(this.fieldConfig, { name: 'nss_info' });
-      res.forEach((item) => {
+      res.forEach((item: any) => {
         this.nss_info.options.push(
           { label: item, value: item });
       });
     });
 
-    entityEdit.formGroup.controls['enable'].valueChanges.subscribe((res) => {
+    entityEdit.formGroup.controls['enable'].valueChanges.subscribe((res: any) => {
       _.find(this.fieldConfig, { 'name': 'bindpw' })['required'] = res;
     });
 
-    entityEdit.formGroup.controls['kerberos_principal'].valueChanges.subscribe((res) => {
+    entityEdit.formGroup.controls['kerberos_principal'].valueChanges.subscribe((res: any) => {
       if (res) {
         entityEdit.setDisabled('bindname', true);
         entityEdit.setDisabled('bindpw', true);
@@ -376,7 +377,7 @@ export class ActiveDirectoryComponent {
     entityEdit.submitFunction = this.submitFunction;
   }
 
-  setBasicMode(basic_mode) {
+  setBasicMode(basic_mode: boolean) {
     this.isBasicMode = basic_mode;
     _.find(this.fieldSets, { class: 'adv_row' }).label = !basic_mode;
     _.find(this.fieldSets, { class: 'adv_column1' }).label = !basic_mode;
@@ -384,7 +385,7 @@ export class ActiveDirectoryComponent {
     _.find(this.fieldSets, { class: 'divider1' }).divider = !basic_mode;
   }
 
-  beforeSubmit(data) {
+  beforeSubmit(data: any) {
     data.netbiosalias = data.netbiosalias.trim();
     if (data.netbiosalias.length > 0) {
       data.netbiosalias = data.netbiosalias.split(" ");
@@ -412,7 +413,7 @@ export class ActiveDirectoryComponent {
     return this.ws.call('activedirectory.update', [body]);
   }
 
-  responseOnSubmit(value) {
+  responseOnSubmit(value: any) {
     this.entityEdit.formGroup.controls['kerberos_principal'].setValue(value.kerberos_principal);
     this.entityEdit.formGroup.controls['kerberos_realm'].setValue(value['kerberos_realm']);
 
@@ -420,7 +421,7 @@ export class ActiveDirectoryComponent {
       this.adStatus = true;
     }
 
-    this.ws.call('kerberos.realm.query').subscribe((res) => {
+    this.ws.call('kerberos.realm.query').subscribe((res: any[]) => {
       this.kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' });
       res.forEach((item) => {
         this.kerberos_realm.options.push(
@@ -428,7 +429,7 @@ export class ActiveDirectoryComponent {
       });
     });
 
-    this.ws.call('kerberos.keytab.kerberos_principal_choices').subscribe((res) => {
+    this.ws.call('kerberos.keytab.kerberos_principal_choices').subscribe((res: any[]) => {
       this.kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' });
       this.kerberos_principal.options.length = 0;
       this.kerberos_principal.options.push({ label: '---', value: null });
@@ -444,14 +445,14 @@ export class ActiveDirectoryComponent {
   }
 
   // Shows starting progress as a job dialog
-  showStartingJob(jobId) {
+  showStartingJob(jobId: number) {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Start" }, disableClose: true });
     this.dialogRef.componentInstance.jobId = jobId;
     this.dialogRef.componentInstance.wsshow();
-    this.dialogRef.componentInstance.success.subscribe((res) => {
+    this.dialogRef.componentInstance.success.subscribe(() => {
       this.dialogRef.close();
     });
-    this.dialogRef.componentInstance.failure.subscribe((err) => {
+    this.dialogRef.componentInstance.failure.subscribe(() => {
       this.dialogRef.close();
     });
   }

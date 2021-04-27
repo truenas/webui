@@ -1,3 +1,4 @@
+import { Theme } from 'app/services/theme/theme.service';
 import { Container, Texture, Sprite } from 'pixi.js';
 import { OutlineFilter } from '@pixi/filter-outline';
 import { AdvancedBloomFilter } from '@pixi/filter-advanced-bloom';
@@ -16,12 +17,12 @@ interface Position {
 export class VDevLabelsSVG {
 
  /*
-  * We create an SVG layer on top of the PIXI canvas 
-  * to achieve crisper lines. Apparently drawing 
+  * We create an SVG layer on top of the PIXI canvas
+  * to achieve crisper lines. Apparently drawing
   * thin lines in WebGL is problematic without
-  * resorting to caching them as bitmaps which 
+  * resorting to caching them as bitmaps which
   * essentially renders them static.
-  * 
+  *
   */
 
   public events: Subject<CoreEvent>;
@@ -35,12 +36,11 @@ export class VDevLabelsSVG {
   public highlightColor: string;
   public highlightedDiskName: string;
   public selectedDisk: any;
-  public ClickByProxy;
-  
+
   private textAreas: any;
   private trays: any = {};
 
-  constructor(chassis, app, theme, disk){
+  constructor(chassis: ChassisView, app: any, theme: Theme, disk: any){
     this.selectedDisk = disk;
     this.color = 'var(--cyan)';
     this.selectedDiskColor = 'var(--yellow)';
@@ -49,7 +49,7 @@ export class VDevLabelsSVG {
     this.onInit(chassis, app);
   }
 
-  onInit(chassis, app){
+  onInit(chassis: ChassisView, app: any){
     this.chassis = chassis;
     this.app = app;
     this.mainStage = this.app.stage;
@@ -109,7 +109,7 @@ export class VDevLabelsSVG {
     d3.select('#' + op.id + ' svg').remove();
     d3.select('#' + op.id + ' canvas.clickpad').remove();
     this.app.renderer.plugins.interaction.setTargetElement(this.app.renderer.view);
-    
+
   }
 
   d3Init(){
@@ -134,7 +134,7 @@ export class VDevLabelsSVG {
     return this.app.renderer.view.offsetParent
   }
 
-  createVdevLabelTile(x,y,w,h, className, diskName){
+  createVdevLabelTile(x: number, y: number, w: number, h: number, className: string, diskName: string){
     let color = diskName == this.selectedDisk.devname ? this.selectedDiskColor : this.color;
     let opacity = diskName == this.selectedDisk.devname ? 1 : 0.5;
     opacity = 1;
@@ -151,7 +151,7 @@ export class VDevLabelsSVG {
   }
 
 
-  createVdevLabels(vdev){
+  createVdevLabels(vdev: any){
     let disks = vdev.disks ? Object.keys(vdev.disks) : [this.selectedDisk.devname]; // NOTE: vdev.slots only has values for current enclosure
     let xOffset = this.chassis.container.x + this.chassis.container.width + 16;
     let freeSpace = this.app._options.width - xOffset;
@@ -170,19 +170,19 @@ export class VDevLabelsSVG {
         let tileClass = "tile tile_" + disk;
         this.createVdevLabelTile(tray.x, tray.y, src.width * this.chassis.container.scale.x, src.height * this.chassis.container.scale.y, tileClass, disk);
         this.trays[ disk ] = {x: tray.x, y: tray.y, width: src.width * this.chassis.container.scale.x, height: src.height * this.chassis.container.scale.y};
-      } 
+      }
     });
 
   }
 
-  calculateParentOffsets(el){
-    // Template uses CSS to center and align text so 
+  calculateParentOffsets(el: any){
+    // Template uses CSS to center and align text so
     // we need to compensate with absolute positions
     // of wrapper elements
-    
+
     // 1 up
     let legend = el.nativeElement.childNodes[0].childNodes[1];
-    
+
     // 2 up
     let content = el.nativeElement.childNodes[0];
 
@@ -192,7 +192,7 @@ export class VDevLabelsSVG {
     return {x: xOffset, y: yOffset - 6}
   }
 
-  traceElements(vdev, overlay, retrace?){
+  traceElements(vdev: any, overlay: any, retrace?: boolean){
     if(retrace){
       this.svg.selectAll("path").remove();
     }
@@ -200,14 +200,14 @@ export class VDevLabelsSVG {
     let disks = Object.keys(vdev.disks);// NOTE: vdev.slots only has values for current enclosure
     let op = this.getParent();// Parent div
     disks.forEach((disk, index) => {
-      
+
       let present = false; // Is the disk in this enclosure?
       if(typeof vdev.slots[disk] !== 'undefined'){
         present = true;
         // Create tile if the disk is in the current enclosure
 
         let tray = this.trays[disk];
-        
+
         let el = overlay.nativeElement.querySelector('div.vdev-disk.' + disk);
         let parentOffsets = this.calculateParentOffsets(overlay);
         let startX = tray.x + tray.width;
@@ -219,10 +219,10 @@ export class VDevLabelsSVG {
     });
   }
 
-  createTrace(startX,startY, endX, endY, diskName){
+  createTrace(startX: number, startY: number, endX: number, endY: number, diskName: string){
     let color = diskName == this.selectedDisk.devname ? this.selectedDiskColor : this.color;
     let opacity = diskName == this.selectedDisk.devname ? 1 : 0.25;
-  
+
     let svgPath = "M" + startX + " " + startY + " L" + endX + " " + endY + " Z"
 
     this.svg.append("path")
@@ -233,21 +233,21 @@ export class VDevLabelsSVG {
 
   }
 
-  highlightTrace(devname){
+  highlightTrace(devname: string){
     if(devname == this.selectedDisk.devname){ return; }
 
     let targetEl = this.getParent().querySelector('svg path.' + devname);
     targetEl.setAttribute('stroke-opacity', 1);
   }
 
-  unhighlightTrace(devname){
+  unhighlightTrace(devname: string){
     if(devname == this.selectedDisk.devname){ return; }
 
     let targetEl = this.getParent().querySelector('svg path.' + devname);
     targetEl.setAttribute('stroke-opacity', 1);
   }
 
-  unhighlightAllTraces(traces, exceptions: string[]){
+  unhighlightAllTraces(traces: any[], exceptions: string[]){
     if(!exceptions){ exceptions = [];}
 
     traces.forEach((item, index) => {
@@ -258,7 +258,7 @@ export class VDevLabelsSVG {
     this.showAllTiles(tiles);
   }
 
-  showTrace(devname, overlay){
+  showTrace(devname: string, overlay: any){
     let labels = overlay.nativeElement.querySelectorAll('.vdev-disk');
     let paths = this.getParent().querySelectorAll('svg path');
     this.hideAllTraces(paths, [this.selectedDisk.devname, devname]);
@@ -267,7 +267,7 @@ export class VDevLabelsSVG {
     targetEl.style['stroke-opacity'] = 1;
   }
 
-  hideAllTraces(traces, exceptions: string[]){
+  hideAllTraces(traces: any[], exceptions: string[]){
     if(!exceptions){ exceptions = []; }
 
     traces.forEach((item, index)=>{
@@ -276,27 +276,27 @@ export class VDevLabelsSVG {
     });
   }
 
-  showTile(devname){
+  showTile(devname: string){
     let targetEl = this.getParent().querySelector('rect.tile_' + devname);
     if(targetEl){
       targetEl.style.opacity = 1;
     }
   }
 
-  hideTile(devname){
+  hideTile(devname: string){
     let targetEl = this.getParent().querySelector('rect.tile_' + devname);
     if(targetEl){
       targetEl.style.opacity = 0;
     }
   }
 
-  hideAllTiles(tiles, exceptions?:string[]){
-    tiles.forEach((item, index) => {
+  hideAllTiles(tiles: any[], exceptions?:string[]){
+    tiles.forEach((item) => {
       item.style.opacity = 0;
     });
   }
 
-  showAllTiles(tiles, exceptions?: string[]){
+  showAllTiles(tiles: any[], exceptions?: string[]){
     tiles.forEach((item, index) => {
       item.style.opacity = 1;
     })

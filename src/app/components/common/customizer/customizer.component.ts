@@ -1,4 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
+import { MatRadioChange } from '@angular/material/radio/radio';
 import { NavigationService } from "../../../services/navigation/navigation.service";
 
 @Component({
@@ -6,10 +8,10 @@ import { NavigationService } from "../../../services/navigation/navigation.servi
   templateUrl: './customizer.component.html',
   styleUrls: ['./customizer.component.css']
 })
-export class CustomizerComponent implements OnInit {
+export class CustomizerComponent {
   isCustomizerOpen = false;
   selectedMenu = 'icon-menu';
-  @Input() breadcrumb;
+  @Input() breadcrumb: { isEnabled: boolean };
   sidenavTypes = [{
     name: 'Default Menu',
     value: 'default-menu'
@@ -22,11 +24,10 @@ export class CustomizerComponent implements OnInit {
   }]
   constructor(private navService: NavigationService) { }
 
-  ngOnInit() {}
-  changeSidenav(data) {
-    this.navService.publishNavigationChange(data.value)
+  changeSidenav(event: MatRadioChange): void {
+    this.navService.publishNavigationChange(event.value)
   }
-  toggleBreadcrumb(data) {
-    this.breadcrumb.isEnabled = data.checked;
+  toggleBreadcrumb(event: MatCheckboxChange): void {
+    this.breadcrumb.isEnabled = event.checked;
   }
 }

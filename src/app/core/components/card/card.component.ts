@@ -26,31 +26,31 @@ export const CardComponentMetadata = {
 export class CardComponent extends ViewControllerComponent {
 
   readonly componentName = CardComponent;
-  @Input() data: any; 
+  @Input() data: any;
 
 
   /*
    * Properties
    * Wraps all content in an md-card
-   * private headerTitle?: string 
-   * private headerOptions?: ViewControl 
+   * private headerTitle?: string
+   * private headerOptions?: ViewControl
    * private primaryAction?: ViewFabButton
    * Methods
    * addHeaderTitle(title: string);
    * addHeaderOptions(); // adds Options menu to header
    * addFooterControls(ViewButton[]);
    * addPrimaryAction(btn:  ViewFabButton);
-   */	
+   */
 
   //@ViewChild('display', { static: true}) display; // Already created in base class by default
   public primaryAction?: any; /*ViewFabButton*/
   public header: boolean = false;
   public headerTitle?: string;
   //public headerOptions?: any; /*ViewControl*/
-  @ViewChild('headerOptions', { static: true}) headerOptions;
+  @ViewChild('headerOptions', { static: true}) headerOptions: any;
 
   public footer: boolean = true;
-  @ViewChild('footerControls', { static: true}) footerControls;
+  @ViewChild('footerControls', { static: true}) footerControls: any;
 
   constructor(){
     super();

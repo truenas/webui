@@ -119,7 +119,7 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
       this.initialized = true;
     });
 
-    this.fs_type_subscription = this.fs_type.valueChanges.subscribe((value) => {
+    this.fs_type_subscription = this.fs_type.valueChanges.subscribe((value: any) => {
       if (value === 'msdosfs') {
         this.msdosfs_locale['isHidden'] = false;
       } else {
@@ -127,8 +127,8 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
       }
     });
 
-    entityForm.formGroup.controls['volume'].valueChanges.subscribe((res) => {
-      this.ws.call('pool.import_disk_autodetect_fs_type', [res]).subscribe((res) => {
+    entityForm.formGroup.controls['volume'].valueChanges.subscribe((res: any) => {
+      this.ws.call('pool.import_disk_autodetect_fs_type', [res]).subscribe((res: any) => {
         // If ws call fails to return type, no type is selected; otherwise, type is autoselected.
         for ( let option of this.fs_type_list.options) {
           if (res === option.value) {
@@ -168,9 +168,9 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
       });
   }
 
-  customSubmit(payload){
+  customSubmit(payload: any){
     this.custActions = [];
-    const fs_options = {}
+    const fs_options: any = {}
       if (payload.fs_type === "msdosfs" && payload.msdosfs_locale) {
         fs_options["locale"] = payload.msdosfs_locale;
       }
@@ -178,7 +178,7 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
     this.dialogRef.componentInstance.setDescription(T("Importing Disk..."));
     this.dialogRef.componentInstance.setCall('pool.import_disk', [payload.volume, payload.fs_type, fs_options ,payload.dst_path]);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe((job_res) => {
+    this.dialogRef.componentInstance.success.subscribe((job_res: any) => {
       this.dialogRef.close();
       this.entityForm.success = true;
       this.job.showLogs(job_res, T('Disk Imported: Log Summary'), T('Close'));
@@ -192,7 +192,7 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
         }
       ];
     });
-    this.dialogRef.componentInstance.aborted.subscribe((job) => {
+    this.dialogRef.componentInstance.aborted.subscribe((job: any) => {
       this.dialogRef.close();
       this.entityForm.success = false;
       this.job.showLogs(job, T('Disk Import Aborted: Log Summary'), T('Close'));
@@ -206,7 +206,7 @@ export class ImportDiskComponent implements OnDestroy, Formconfiguration {
         }
       ];
     });
-    this.dialogRef.componentInstance.failure.subscribe((err) => {
+    this.dialogRef.componentInstance.failure.subscribe((err: any) => {
       new EntityUtils().handleWSError(this.entityForm, err);
     });
 

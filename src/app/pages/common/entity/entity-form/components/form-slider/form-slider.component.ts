@@ -1,5 +1,6 @@
 import { Component, ViewContainerRef, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { MatSliderChange } from '@angular/material/slider/slider';
 import { TranslateService } from '@ngx-translate/core';
 
 import { FieldConfig } from '../../models/field-config.interface';
@@ -26,7 +27,7 @@ export class FormSliderComponent implements Field, OnInit {
     })
   }
 
-  updateValue($event) {
+  updateValue($event: MatSliderChange) {
     this.value = $event.value;
   }
 }

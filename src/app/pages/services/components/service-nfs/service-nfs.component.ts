@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { map } from 'rxjs/operators';
@@ -161,7 +162,7 @@ export class ServiceNFSComponent {
         Object.keys(ips || {}).map(key => ({ label: key, value: key }))
       )
     );
-  private validBindIps = [];
+  private validBindIps: string[] = [];
 
   public custActions: Array<any> = [
     {
@@ -178,7 +179,7 @@ export class ServiceNFSComponent {
     private dialog: DialogService
   ) {}
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     this.v4krbValue = data.v4_krb;
     // If validIps is slow to load, skip check on load (It's still done on save)
     if (this.validBindIps, this.validBindIps.length) {
@@ -195,11 +196,11 @@ export class ServiceNFSComponent {
       return false;
   }
 
-  compareBindIps(data) {
+  compareBindIps(data: any) {
     // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
     data.bindip = data.bindip ? data.bindip : [];
     if(this.validBindIps && this.validBindIps.length > 0) {
-      data.bindip.forEach(ip => {
+      data.bindip.forEach((ip: any) => {
         if (!this.validBindIps.includes(ip)) {
           data.bindip.splice(data.bindip[ip], 1)
         }
@@ -247,7 +248,7 @@ export class ServiceNFSComponent {
     })
   }
 
-  beforeSubmit(data) {
+  beforeSubmit(data: any) {
     if (!data.userd_manage_gids) {
       data.userd_manage_gids = false;
     }
@@ -260,7 +261,7 @@ export class ServiceNFSComponent {
     data = this.compareBindIps(data);
   }
 
-  afterSave(data) {
+  afterSave(data: any) {
     this.router.navigate(this.route_success);
     if (data.formGroup.value.v4_krb && !this.v4krbValue) {
       this.addSPN();
@@ -272,7 +273,7 @@ export class ServiceNFSComponent {
     if (!this.hasNfsStatus && this.adHealth === 'HEALTHY') {
       this.dialog.confirm(helptext.add_principal_prompt.title,
         helptext.add_principal_prompt.message,true, helptext.add_principal_prompt.affirmative,
-        false,'','','','',false, helptext.add_principal_prompt.negative).subscribe(res => {
+        false,'','','','',false, helptext.add_principal_prompt.negative).subscribe((res: boolean) => {
         if (res) {
           this.dialog.dialogForm(
             {
@@ -294,7 +295,7 @@ export class ServiceNFSComponent {
                 }
               ],
               saveButtonText: helptext.add_principal_form.action,
-              customSubmit: function (entityDialog) {
+              customSubmit: function (entityDialog: any) {
                 const value = entityDialog.formValue;
                 const self = entityDialog;
                 self.loader.open();
@@ -304,7 +305,7 @@ export class ServiceNFSComponent {
                     self.dialogRef.close(true);
                     that.dialog.Info(helptext.addSPN.success, helptext.addSPN.success_msg);
                   },
-                  err => {
+                  (err: any) => {
                     self.loader.close();
                     self.dialogRef.close(true);
                     that.dialog.errorReport(helptext.add_principal_form.error_title,

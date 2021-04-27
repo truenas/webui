@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import * as _ from 'lodash';
 
 import { IscsiService, WebSocketService, AppLoaderService } from '../../../../../services/';
@@ -139,7 +140,7 @@ export class TargetFormComponent {
       ]
     }
   ]
-  public fieldConfig;
+  public fieldConfig: FieldConfig[];
 
   private pk: any;
   protected entityForm: any;
@@ -198,7 +199,7 @@ export class TargetFormComponent {
     });
     const promise3 = new Promise((resolve, reject) => {
       this.iscsiService.getAuth().toPromise().then(
-        (authRes) => {
+        (authRes: any[]) => {
           const tags = _.uniq(authRes.map(item => item.tag));
           authGroupField.options.push({ label: 'None', value: null });
           for (const tag of tags) {
@@ -235,7 +236,7 @@ export class TargetFormComponent {
     this.fieldConfig = entityForm.fieldConfig;
   }
 
-  customEditCall(value) {
+  customEditCall(value: any) {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).subscribe(
       (res) => {

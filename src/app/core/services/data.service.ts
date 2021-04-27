@@ -9,7 +9,7 @@ import { DiskStateService } from './disk-state.service';
 import { StatsService } from './stats.service';
 
 /*
- * This is a collection of services that will 
+ * This is a collection of services that will
  * make calls when UI initializes and cache it
  * for later use
  * */
@@ -38,7 +38,7 @@ export class DataService implements OnDestroy {
   }
 
   fetch(job: MultiCall){
-    let results = [];
+    let results: any[] = [];
     let tally = 0;
     job.queue.forEach((call: ApiCall, index) => {
       this.ws.call(call.namespace, call.args).subscribe((res) => {

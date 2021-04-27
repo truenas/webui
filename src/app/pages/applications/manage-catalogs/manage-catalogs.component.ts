@@ -26,7 +26,7 @@ export class ManageCatalogsComponent implements OnDestroy {
   protected loaderOpen = false;
   protected queryCall = 'catalog.query';
   protected wsDelete = 'catalog.delete';
-  protected queryCallOption = [[], {"extra": {"item_details": true}}];
+  protected queryCallOption = [[] as any, {"extra": {"item_details": true}}];
   protected disableActionsConfig = true;
   private dialogRef: any;
   protected addComponent: CatalogAddFormComponent;
@@ -51,7 +51,7 @@ export class ManageCatalogsComponent implements OnDestroy {
   };
 
   public filterString: string = '';
-  constructor(private mdDialog: MatDialog, 
+  constructor(private mdDialog: MatDialog,
               protected dialogService: DialogService, protected loader: AppLoaderService,
               protected ws: WebSocketService, protected prefService: PreferencesService,
               private modalService: ModalService) {
@@ -70,7 +70,7 @@ export class ManageCatalogsComponent implements OnDestroy {
       this.refreshTableSubscription.unsubscribe();
     }
   }
-  
+
   refreshUserForm() {
     this.addComponent = new CatalogAddFormComponent(this.mdDialog,this.dialogService, this.modalService);
     this.editComponent = new CatalogEditFormComponent(this.mdDialog,this.dialogService, this.modalService);
@@ -81,18 +81,18 @@ export class ManageCatalogsComponent implements OnDestroy {
     this.entityList.filter(this.filterString);
   }
 
-  afterInit(entityList: any) { 
-    this.entityList = entityList; 
+  afterInit(entityList: any) {
+    this.entityList = entityList;
   }
 
-  getActions(row) {
+  getActions(row: any) {
     const actions = [];
     actions.push({
       id: row.id,
       icon: 'edit',
       label : helptext.manageCatalogs.menu.edit,
       name: 'edit',
-      onClick : (row) => {
+      onClick : (row: any) => {
         this.edit(row);
       }
     }, {
@@ -100,7 +100,7 @@ export class ManageCatalogsComponent implements OnDestroy {
       icon: 'refresh',
       label : helptext.manageCatalogs.menu.refresh,
       name: 'refresh',
-      onClick : (row) => {
+      onClick : (row: any) => {
         this.refreshRow(row);
       }
     }, {
@@ -109,7 +109,7 @@ export class ManageCatalogsComponent implements OnDestroy {
       label : helptext.manageCatalogs.menu.delete,
       name: 'delete',
       disabled: row.builtin,
-      onClick : (row) => {
+      onClick : (row: any) => {
         this.entityList.doDelete(row);
       }
     }, {
@@ -117,7 +117,7 @@ export class ManageCatalogsComponent implements OnDestroy {
       icon: 'summary',
       label : helptext.manageCatalogs.menu.summary,
       name: 'summary',
-      onClick : (row) => {
+      onClick : (row: any) => {
         this.showSummary(row);
       }
     });
@@ -125,7 +125,7 @@ export class ManageCatalogsComponent implements OnDestroy {
     return actions;
   }
 
-  resourceTransformIncomingRestData(d) {
+  resourceTransformIncomingRestData(d: any) {
     let data = Object.assign([], d);
     return data;
   }
@@ -135,16 +135,16 @@ export class ManageCatalogsComponent implements OnDestroy {
     this.modalService.open('slide-in-form', this.addComponent);
   }
 
-  edit(row) {
+  edit(row: any) {
     this.modalService.open('slide-in-form', this.editComponent, row.label)
   }
 
-  refreshRow(row) {
+  refreshRow(row: any) {
     this.syncRow(row);
   }
 
-  showSummary(row) {
-    let dialogRef = this.mdDialog.open(ManageCatalogSummaryDialog, {
+  showSummary(row: any) {
+    this.mdDialog.open(ManageCatalogSummaryDialog, {
       width: '534px',
       data: row,
       disableClose: false,
@@ -173,7 +173,7 @@ export class ManageCatalogsComponent implements OnDestroy {
     });
   }
 
-  syncRow(row) {
+  syncRow(row: any) {
     const payload = [row.label];
     this.loader.open();
     this.ws.call("catalog.sync", payload).subscribe(
@@ -188,7 +188,7 @@ export class ManageCatalogsComponent implements OnDestroy {
     );
   }
 
-  onRowClick(row) {
+  onRowClick(row: any) {
     this.showSummary(row);
   }
 }

@@ -86,7 +86,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
           this.getAuthToken().subscribe((res) => {
             this.initializeWebShell(res);
 
-            this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
+            this.shellSubscription = this.ss.shellOutput.subscribe((value: any) => {
               if (value !== undefined) {
                 if (_.trim(value) == "logout") {
                   this.xterm.destroy();
@@ -174,11 +174,11 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     this.core.emit({name:"GlobalActions", data: actionsConfig, sender: this});
   }
 
-  onResize(event) {
+  onResize() {
     this.resizeTerm();
   }
 
-  onFontSizeChanged(event) {
+  onFontSizeChanged() {
     this.resizeTerm();
   }
 
@@ -296,7 +296,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     this.initializeTerminal();
     this.refreshToolbarButtons();
 
-    this.shellConnectedSubscription = this.ss.shellConnected.subscribe((res)=> {
+    this.shellConnectedSubscription = this.ss.shellConnected.subscribe((res: any)=> {
       this.shellConnected = res.connected;
       this.connectionId = res.id;
       this.updateTerminal();
@@ -340,7 +340,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
         placeholder: helptext.podConsole.chooseConatiner.placeholder,
         required: true,
         value: this.conatiner_name,
-        options: this.podDetails[this.pod_name].map(item => {
+        options: this.podDetails[this.pod_name].map((item: any) => {
           return {
             label: item,
             value: item,
@@ -377,10 +377,10 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
   afterShellDialogInit(entityDialog: any) {
     const self = entityDialog.parent;
 
-    entityDialog.formGroup.controls['pods'].valueChanges.subscribe(value => {
+    entityDialog.formGroup.controls['pods'].valueChanges.subscribe((value: any) => {
       const containers = self.podDetails[value];
       const containerFC = _.find(entityDialog.fieldConfig, {'name' : 'containers'});
-      containerFC.options = containers.map(item => {
+      containerFC.options = containers.map((item: any) => {
         return {
           label: item,
           value: item,

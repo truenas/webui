@@ -24,7 +24,7 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
   protected _chartType: string;
   protected _timeData: TimeData;
 
-  constructor() { 
+  constructor() {
     super();
     this.chartType = "line";
     this.timeFormat = '%m/%d/%Y'
@@ -64,7 +64,7 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
   protected makeTimeAxis(td:TimeData, axis?: string):any[]{
     if(!axis){ axis = 'x';}
       let labels: any[] = [axis];
-    this._data[0].forEach((item, index) =>{
+    this._data[0].forEach((item: any, index: number) =>{
       let date = new Date(td.start * 1000 + index * td.step * 1000);
       labels.push(date);
     });
@@ -106,7 +106,7 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
         }
       },
       data: {
-        type: this.chartType, 
+        type: this.chartType,
         columns: this._data
       },
       size:{
@@ -139,7 +139,7 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
           this.tooltipHeight = String((h*0.8));
           return {top: y, left: left}
         },*/
-        contents: (raw, defaultTitleFormat, defaultValueFormat, color) => {
+        contents: (raw: any) => {
           //console.log(this.data);
           //if(!this.tooltipHeight){ return "";}
           //let tthSplit = this.tooltipHeight.split('px');
@@ -163,10 +163,10 @@ export class ViewChartLineComponent extends ViewChartComponent implements OnInit
           return '<div style="display:none;">tooltips disabled</div>'
         },
         format: {
-          value: (value, ratio, id, index) => {
+          value: (value: any) => {
             if(this.units){
               console.log("Units = " + this.units)
-              return value + this.units; 
+              return value + this.units;
             } else {
               return value;
             }
