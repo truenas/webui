@@ -51,9 +51,6 @@ export class ServiceSMARTComponent {
             { label: T('Idle'), value: PowerMode.Idle },
           ],
           required: true,
-          onChangeOption: (data: { event: MatSelectChange }) => {
-            console.log('data', data.event.value);
-          },
           validation: [Validators.required],
         },
         {
