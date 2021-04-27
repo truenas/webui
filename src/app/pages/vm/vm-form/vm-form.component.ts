@@ -1,124 +1,127 @@
-import {ApplicationRef, Component, Injector} from '@angular/core';
-import {Router, ActivatedRoute} from '@angular/router';
+import { ApplicationRef, Component, Injector } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { FormControl } from '@angular/forms';
 import * as _ from 'lodash';
 import { ProductType } from '../../../enums/product-type.enum';
 import {
-  FieldConfig
+  FieldConfig,
 } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { T } from '../../../translate-marker';
-import helptext from './../../../helptext/vm/vm-wizard/vm-wizard';
-import globalHelptext from './../../../helptext/global-helptext';
-import {WebSocketService, StorageService, VmService, ValidationService} from '../../../services/';
+import helptext from '../../../helptext/vm/vm-wizard/vm-wizard';
+import globalHelptext from '../../../helptext/global-helptext';
+import {
+  WebSocketService, StorageService, VmService, ValidationService,
+} from '../../../services';
 import { Validators } from '@angular/forms';
 
 @Component({
-  selector : 'app-vm',
-  template : `<entity-form [conf]="this"></entity-form>`,
-  providers: [StorageService]
+  selector: 'app-vm',
+  template: '<entity-form [conf]="this"></entity-form>',
+  providers: [StorageService],
 
 })
 export class VmFormComponent {
   protected queryCall = 'vm.query';
   protected editCall = 'vm.update';
   protected isEntity = true;
-  protected route_success: string[] = [ 'vm' ];
+  protected route_success: string[] = ['vm'];
   protected entityForm: any;
   protected save_button_enabled: boolean;
-  public vcpus: number;
-  public cores: number;
-  public threads: number;
+  vcpus: number;
+  cores: number;
+  threads: number;
   private maxVCPUs: number;
   private productType = window.localStorage.getItem('product_type') as ProductType;
-  protected queryCallOption: Array<any> = [];
+  protected queryCallOption: any[] = [];
 
-  public fieldConfig: FieldConfig[] = []
-  public fieldSets: FieldSet[] = [
-      {
-        name: helptext.vm_settings_title,
-        class: 'vm_settings',
-        label:true,
-        width: '49%',
-        config:[
+  fieldConfig: FieldConfig[] = [];
+  fieldSets: FieldSet[] = [
+    {
+      name: helptext.vm_settings_title,
+      class: 'vm_settings',
+      label: true,
+      width: '49%',
+      config: [
         {
           type: 'input',
           name: 'name',
           placeholder: helptext.name_placeholder,
-          tooltip: helptext.name_tooltip
+          tooltip: helptext.name_tooltip,
         },
         {
           type: 'input',
-          name : 'description',
-          placeholder : helptext.description_placeholder,
-          tooltip: helptext.description_tooltip
+          name: 'description',
+          placeholder: helptext.description_placeholder,
+          tooltip: helptext.description_tooltip,
         },
         {
           name: 'time',
           placeholder: helptext.time_placeholder,
           tooltip: helptext.time_tooltip,
           type: 'select',
-          options: [{ label: helptext.time_local_text, value: 'LOCAL'}, { label: helptext.time_utc_text, value: 'UTC' }]
+          options: [{ label: helptext.time_local_text, value: 'LOCAL' }, { label: helptext.time_utc_text, value: 'UTC' }],
         },
         {
           type: 'select',
-          name : 'bootloader',
-          placeholder : helptext.bootloader_placeholder,
+          name: 'bootloader',
+          placeholder: helptext.bootloader_placeholder,
           tooltip: helptext.bootloader_tooltip,
-          options: []
+          options: [],
         },
         {
           type: 'input',
-          name : 'shutdown_timeout',
+          name: 'shutdown_timeout',
           inputType: 'number',
-          placeholder : helptext.shutdown_timeout.placeholder,
+          placeholder: helptext.shutdown_timeout.placeholder,
           tooltip: helptext.shutdown_timeout.tooltip,
-          validation: helptext.shutdown_timeout.validation
+          validation: helptext.shutdown_timeout.validation,
         },
         {
           type: 'checkbox',
-          name : 'autostart',
-          placeholder : helptext.autostart_placeholder,
-          tooltip: helptext.autostart_tooltip
-        }
-      ]
+          name: 'autostart',
+          placeholder: helptext.autostart_placeholder,
+          tooltip: helptext.autostart_tooltip,
+        },
+      ],
     },
     {
       name: 'spacer',
       class: 'spacer',
-      label:false,
+      label: false,
       width: '2%',
-      config:[]},
+      config: [],
+    },
     {
       name: helptext.vm_cpu_mem_title,
       class: 'vm_settings',
-      label:true,
+      label: true,
       width: '49%',
-      config:[
+      config: [
         {
-          type : 'input',
+          type: 'input',
           name: 'vcpus',
           inputType: 'number',
-          placeholder : helptext.vcpus_placeholder,
+          placeholder: helptext.vcpus_placeholder,
           tooltip: helptext.vcpus_tooltip,
-          validation: [Validators.required, Validators.min(1), this.cpuValidator('threads'),]
+          validation: [Validators.required, Validators.min(1), this.cpuValidator('threads')],
         },
         {
-          type : 'input',
+          type: 'input',
           name: 'cores',
           inputType: 'number',
-          placeholder : helptext.cores.placeholder,
+          placeholder: helptext.cores.placeholder,
           tooltip: helptext.cores.tooltip,
-          validation: [Validators.required, Validators.min(1), this.cpuValidator('threads'),]
+          validation: [Validators.required, Validators.min(1), this.cpuValidator('threads')],
         },
         {
-          type : 'input',
+          type: 'input',
           name: 'threads',
           inputType: 'number',
-          placeholder : helptext.threads.placeholder,
+          placeholder: helptext.threads.placeholder,
           tooltip: helptext.threads.tooltip,
-          validation: [Validators.required, Validators.min(1), this.cpuValidator('threads'),]
+          validation: [Validators.required, Validators.min(1), this.cpuValidator('threads')],
         },
         {
           type: 'select',
@@ -126,7 +129,7 @@ export class VmFormComponent {
           placeholder: helptext.cpu_mode.placeholder,
           tooltip: helptext.cpu_mode.tooltip,
           options: helptext.cpu_mode.options,
-          isHidden: true
+          isHidden: true,
         },
         {
           type: 'select',
@@ -134,102 +137,101 @@ export class VmFormComponent {
           placeholder: helptext.cpu_model.placeholder,
           tooltip: helptext.cpu_model.tooltip,
           options: [
-            { label: '---', value: ''}
+            { label: '---', value: '' },
           ],
-          isHidden: true
+          isHidden: true,
         },
         {
           type: 'input',
-          name : 'memory',
-          placeholder : `${helptext.memory_placeholder} ${globalHelptext.human_readable.suggestion_label}`,
+          name: 'memory',
+          placeholder: `${helptext.memory_placeholder} ${globalHelptext.human_readable.suggestion_label}`,
           tooltip: helptext.memory_tooltip,
-          blurStatus : true,
-          blurEvent : this.blurEvent,
-          parent : this
+          blurStatus: true,
+          blurEvent: this.blurEvent,
+          parent: this,
         },
 
-      ]
-    }
-  ]
+      ],
+    },
+  ];
   private bootloader: any;
-  public bootloader_type: any[];
+  bootloader_type: any[];
 
   constructor(protected router: Router,
-              protected ws: WebSocketService, protected storageService: StorageService,
-              protected _injector: Injector, protected _appRef: ApplicationRef,
-              protected vmService: VmService, protected route: ActivatedRoute,
-              private translate: TranslateService
-              ) {}
+    protected ws: WebSocketService, protected storageService: StorageService,
+    protected _injector: Injector, protected _appRef: ApplicationRef,
+    protected vmService: VmService, protected route: ActivatedRoute,
+    private translate: TranslateService) {}
 
   preInit(entityForm: any) {
     this.entityForm = entityForm;
-    this.route.params.subscribe(params => {
+    this.route.params.subscribe((params) => {
       if (params['pk']) {
-        let opt = params.pk ? ['id', "=", parseInt(params.pk, 10)] : [];
-        this.queryCallOption = [opt]
-        }
-      })
-    this.ws.call('vm.maximum_supported_vcpus').subscribe(max => {
+        const opt = params.pk ? ['id', '=', parseInt(params.pk, 10)] : [];
+        this.queryCallOption = [opt];
+      }
+    });
+    this.ws.call('vm.maximum_supported_vcpus').subscribe((max) => {
       this.maxVCPUs = max;
-    })
+    });
   }
 
   afterInit(entityForm: any) {
-    this.bootloader =_.find(this.fieldConfig, {name : 'bootloader'});
-    this.vmService.getBootloaderOptions().subscribe(options => {
-      for(const option in options) {
-        this.bootloader.options.push({label : options[option], value : option})
+    this.bootloader = _.find(this.fieldConfig, { name: 'bootloader' });
+    this.vmService.getBootloaderOptions().subscribe((options) => {
+      for (const option in options) {
+        this.bootloader.options.push({ label: options[option], value: option });
       }
     });
 
     entityForm.formGroup.controls['memory'].valueChanges.subscribe((value: any) => {
-      const mem = _.find(this.fieldConfig, {name: "memory"});
-      if (typeof(value) === 'number') {
+      const mem = _.find(this.fieldConfig, { name: 'memory' });
+      if (typeof (value) === 'number') {
         value = value.toString();
       }
       const filteredValue = this.storageService.convertHumanStringToNum(value);
       mem['hasErrors'] = false;
       mem['errors'] = '';
       if (isNaN(filteredValue)) {
-          mem['hasErrors'] = true;
-          mem['errors'] = globalHelptext.human_readable.input_error;
-      };
+        mem['hasErrors'] = true;
+        mem['errors'] = globalHelptext.human_readable.input_error;
+      }
     });
 
     entityForm.formGroup.controls['vcpus'].valueChanges.subscribe((value: number) => {
       this.vcpus = value;
-    })
+    });
     entityForm.formGroup.controls['cores'].valueChanges.subscribe((value: number) => {
       this.cores = value;
-    })
+    });
     entityForm.formGroup.controls['threads'].valueChanges.subscribe((value: number) => {
       this.threads = value;
-    })
+    });
 
     if (this.productType.includes(ProductType.Scale)) {
-      _.find(this.fieldConfig, {name : 'cpu_mode'})['isHidden'] = false;
-      const cpuModel = _.find(this.fieldConfig, {name : 'cpu_model'});
+      _.find(this.fieldConfig, { name: 'cpu_mode' })['isHidden'] = false;
+      const cpuModel = _.find(this.fieldConfig, { name: 'cpu_model' });
       cpuModel.isHidden = false;
 
-      this.vmService.getCPUModels().subscribe(models => {
-        for (let model in models) {
+      this.vmService.getCPUModels().subscribe((models) => {
+        for (const model in models) {
           cpuModel.options.push(
             {
-              label : model, value : models[model]
-            }
+              label: model, value: models[model],
+            },
           );
-        };
+        }
       });
     }
   }
 
-  blurEvent(parent: any){
+  blurEvent(parent: any) {
     if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['memory'].setValue(parent.storageService.humanReadable)
-      let valString = (parent.entityForm.formGroup.controls['memory'].value);
-      let valBytes = Math.round(parent.storageService.convertHumanStringToNum(valString)/1048576);
+      parent.entityForm.formGroup.controls['memory'].setValue(parent.storageService.humanReadable);
+      const valString = (parent.entityForm.formGroup.controls['memory'].value);
+      const valBytes = Math.round(parent.storageService.convertHumanStringToNum(valString) / 1048576);
       if (valBytes < 256) {
-        const mem = _.find(parent.fieldConfig, {name: "memory"});
+        const mem = _.find(parent.fieldConfig, { name: 'memory' });
         mem['hasErrors'] = true;
         mem['errors'] = helptext.memory_size_err;
       }
@@ -239,36 +241,35 @@ export class VmFormComponent {
   cpuValidator(name: string) {
     const self = this;
     return function validCPU(control: FormControl) {
-      const config = self.fieldConfig.find(c => c.name === name);
-        setTimeout(() => {
-          const errors = self.vcpus * self.cores * self.threads > self.maxVCPUs
-          ? { validCPU : true }
+      const config = self.fieldConfig.find((c) => c.name === name);
+      setTimeout(() => {
+        const errors = self.vcpus * self.cores * self.threads > self.maxVCPUs
+          ? { validCPU: true }
           : null;
 
-          if (errors) {
-            config.hasErrors = true;
-            config.hasErrors = true;
-            self.translate.get(helptext.vcpus_warning).subscribe(warning => {
-              config.warnings = warning + ` ${self.maxVCPUs}.`;
-            })
-          } else {
-            config.hasErrors = false;
-            config.warnings = '';
-          }
-          return errors;
-        }, 100)
-    }
-  };
+        if (errors) {
+          config.hasErrors = true;
+          config.hasErrors = true;
+          self.translate.get(helptext.vcpus_warning).subscribe((warning) => {
+            config.warnings = warning + ` ${self.maxVCPUs}.`;
+          });
+        } else {
+          config.hasErrors = false;
+          config.warnings = '';
+        }
+        return errors;
+      }, 100);
+    };
+  }
 
   resourceTransformIncomingRestData(wsResponse: any) {
-    wsResponse['memory'] = this.storageService.convertBytestoHumanReadable(wsResponse['memory']*1048576, 0);
+    wsResponse['memory'] = this.storageService.convertBytestoHumanReadable(wsResponse['memory'] * 1048576, 0);
     return wsResponse;
   }
 
   beforeSubmit(data: any) {
     if (data['memory'] !== undefined && data['memory'] !== null) {
-    data['memory'] = Math.round(this.storageService.convertHumanStringToNum(data['memory'])/1048576);
+      data['memory'] = Math.round(this.storageService.convertHumanStringToNum(data['memory']) / 1048576);
     }
   }
-
 }

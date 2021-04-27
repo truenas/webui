@@ -1,10 +1,12 @@
-import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild,ViewEncapsulation } from '@angular/core';
+import {
+  Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild, ViewEncapsulation,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { DialogService, ShellService, WebSocketService } from '../../../services';
-import helptext from "./../../../helptext/apps/apps";
+import helptext from '../../../helptext/apps/apps';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
@@ -16,10 +18,9 @@ import { StorageService } from 'app/services/storage.service';
 import { HttpClient } from '@angular/common/http';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 
-
 interface PodLogEvent {
-  data: string,
-  timestamp: string
+  data: string;
+  timestamp: string;
 }
 
 @Component({
@@ -31,23 +32,23 @@ interface PodLogEvent {
 })
 
 export class PodLogsComponent implements OnInit {
-  @ViewChild('logContainer', { static: true}) logContainer: ElementRef;
-  public font_size: number = 14;
-  public formEvents: Subject<CoreEvent>;
-  public chart_release_name: string;
-  public pod_name: string;
-  public container_name: string;
-  protected tail_lines: number = 500;
+  @ViewChild('logContainer', { static: true }) logContainer: ElementRef;
+  font_size = 14;
+  formEvents: Subject<CoreEvent>;
+  chart_release_name: string;
+  pod_name: string;
+  container_name: string;
+  protected tail_lines = 500;
   protected podDetails: any;
   protected tempPodDetails: object;
   protected apps: string[] = [];
   protected route_success: string[] = ['apps'];
 
-  public choosePod: DialogFormConfiguration;
+  choosePod: DialogFormConfiguration;
   private podLogsChangedListener: any;
-  public podLogs: PodLogEvent[];
+  podLogs: PodLogEvent[];
 
-  constructor(protected core:CoreService,
+  constructor(protected core: CoreService,
     private ws: WebSocketService,
     private appService: ApplicationsService,
     private dialogService: DialogService,
@@ -61,21 +62,21 @@ export class PodLogsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.aroute.params.subscribe(params => {
+    this.aroute.params.subscribe((params) => {
       this.chart_release_name = params['rname'];
       this.pod_name = params['pname'];
       this.container_name = params['cname'];
       this.tail_lines = params['tail_lines'];
 
-      //Get app list
+      // Get app list
       this.appService.getChartReleaseNames().subscribe((charts: any[]) => {
-        charts.forEach(chart => {
+        charts.forEach((chart) => {
           this.apps.push(chart.name);
         });
       });
 
-      //Get pod list for the selected app
-      this.ws.call('chart.release.pod_logs_choices', [this.chart_release_name]).subscribe(res => {
+      // Get pod list for the selected app
+      this.ws.call('chart.release.pod_logs_choices', [this.chart_release_name]).subscribe((res) => {
         this.podDetails = res;
 
         const podDetail = res[this.pod_name];
@@ -95,28 +96,28 @@ export class PodLogsComponent implements OnInit {
     }
   }
 
-  //subscribe pod log for selected app, pod and container.
+  // subscribe pod log for selected app, pod and container.
   reconnect() {
     this.podLogs = [];
     if (this.podLogsChangedListener) {
       this.podLogsChangedListener.complete();
     }
 
-    let subName = `kubernetes.pod_log_follow:{"release_name":"${this.chart_release_name}", "pod_name":"${this.pod_name}", "container_name":"${this.container_name}", "tail_lines": ${this.tail_lines}}`;
+    const subName = `kubernetes.pod_log_follow:{"release_name":"${this.chart_release_name}", "pod_name":"${this.pod_name}", "container_name":"${this.container_name}", "tail_lines": ${this.tail_lines}}`;
 
     this.podLogsChangedListener = this.ws.sub(subName).subscribe((res: PodLogEvent) => {
-      if(res){
+      if (res) {
         this.podLogs.push(res);
         this.scrollToBottom();
       }
     });
   }
 
-  //scroll to bottom, show last log.
+  // scroll to bottom, show last log.
   scrollToBottom(): void {
     try {
-        this.logContainer.nativeElement.scrollTop = this.logContainer.nativeElement.scrollHeight;
-    } catch(err) {
+      this.logContainer.nativeElement.scrollTop = this.logContainer.nativeElement.scrollHeight;
+    } catch (err) {
 
     }
   }
@@ -162,24 +163,21 @@ export class PodLogsComponent implements OnInit {
       actionType: EntityToolbarComponent,
       actionConfig: {
         target: this.formEvents,
-        controls: controls,
-      }
+        controls,
+      },
     };
 
-    this.core.emit({name:"GlobalActions", data: actionsConfig, sender: this});
+    this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
   }
 
-  updateChooseLogsDialog(isDownload: boolean = false) {
-
+  updateChooseLogsDialog(isDownload = false) {
     let containerOptions = [];
 
     if (this.pod_name && this.podDetails[this.pod_name]) {
-      containerOptions = this.podDetails[this.pod_name].map((item: any) => {
-        return {
-          label: item,
-          value: item,
-        }
-      });
+      containerOptions = this.podDetails[this.pod_name].map((item: any) => ({
+        label: item,
+        value: item,
+      }));
     }
 
     this.choosePod = {
@@ -190,52 +188,48 @@ export class PodLogsComponent implements OnInit {
         placeholder: helptext.podLogs.chooseApp.placeholder,
         required: true,
         value: this.chart_release_name,
-        options: this.apps.map(item => {
-          return {
-            label: item,
-            value: item,
-          }
-        })
-      },{
+        options: this.apps.map((item) => ({
+          label: item,
+          value: item,
+        })),
+      }, {
         type: 'select',
         name: 'pods',
         placeholder: helptext.podLogs.choosePod.placeholder,
         required: true,
         value: this.pod_name,
-        options: Object.keys(this.podDetails).map(item => {
-          return {
-            label: item,
-            value: item,
-          }
-        })
-      },{
+        options: Object.keys(this.podDetails).map((item) => ({
+          label: item,
+          value: item,
+        })),
+      }, {
         type: 'select',
         name: 'containers',
         placeholder: helptext.podLogs.chooseConatiner.placeholder,
         required: true,
         value: this.container_name,
         options: containerOptions,
-      },{
+      }, {
         type: 'input',
         name: 'tail_lines',
         placeholder: helptext.podLogs.tailLines.placeholder,
         value: this.tail_lines,
         required: true,
       }],
-      saveButtonText: isDownload?helptext.podLogs.downloadBtn:helptext.podLogs.chooseBtn,
-      customSubmit: isDownload?this.download:this.onChooseLogs,
+      saveButtonText: isDownload ? helptext.podLogs.downloadBtn : helptext.podLogs.chooseBtn,
+      customSubmit: isDownload ? this.download : this.onChooseLogs,
       afterInit: this.afterLogsDialogInit,
       parent: this,
-    }
+    };
   }
 
-  showChooseLogsDialog(isDownload:boolean = false) {
+  showChooseLogsDialog(isDownload = false) {
     this.tempPodDetails = this.podDetails;
     this.updateChooseLogsDialog(isDownload);
     this.dialogService.dialogForm(this.choosePod, true);
   }
 
-  //download log
+  // download log
   download(entityDialog: EntityDialogComponent) {
     const self = entityDialog.parent;
     const chart_release_name = entityDialog.formGroup.controls['apps'].value;
@@ -252,14 +246,14 @@ export class PodLogsComponent implements OnInit {
       'core.download',
       [
         'chart.release.pod_logs',
-        [chart_release_name, {pod_name: pod_name, container_name: container_name, tail_lines: tail_lines}],
-        fileName
+        [chart_release_name, { pod_name, container_name, tail_lines }],
+        fileName,
       ],
     ).subscribe((res: any) => {
       self.loader.close();
       const url = res[1];
       self.storageService.streamDownloadFile(self.http, url, fileName, mimetype).subscribe((file: Blob) => {
-        if(res !== null && res !== "") {
+        if (res !== null && res !== '') {
           self.storageService.downloadBlob(file, fileName);
         }
       });
@@ -284,11 +278,11 @@ export class PodLogsComponent implements OnInit {
   afterLogsDialogInit(entityDialog: EntityDialogComponent) {
     const self = entityDialog.parent;
 
-    const podFC = _.find(entityDialog.fieldConfig, {'name' : 'pods'});
-    const containerFC = _.find(entityDialog.fieldConfig, {'name' : 'containers'});
+    const podFC = _.find(entityDialog.fieldConfig, { name: 'pods' });
+    const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' });
 
-    //when app selection changed
-    entityDialog.formGroup.controls['apps'].valueChanges.subscribe(value => {
+    // when app selection changed
+    entityDialog.formGroup.controls['apps'].valueChanges.subscribe((value) => {
       podFC.options = [];
       containerFC.options = [];
 
@@ -303,33 +297,29 @@ export class PodLogsComponent implements OnInit {
           pod_name = null;
         }
 
-        podFC.options = Object.keys(self.tempPodDetails).map(item => {
-          return {
-            label: item,
-            value: item,
-          }
-        });
+        podFC.options = Object.keys(self.tempPodDetails).map((item) => ({
+          label: item,
+          value: item,
+        }));
         entityDialog.formGroup.controls['pods'].setValue(pod_name);
-      })
+      });
     });
 
-    //when pod selection changed
-    entityDialog.formGroup.controls['pods'].valueChanges.subscribe(value => {
+    // when pod selection changed
+    entityDialog.formGroup.controls['pods'].valueChanges.subscribe((value) => {
       if (value) {
         const containers = self.tempPodDetails[value];
 
-        containerFC.options = containers.map((item: any) => {
-          return {
-            label: item,
-            value: item,
-          }
-        });
+        containerFC.options = containers.map((item: any) => ({
+          label: item,
+          value: item,
+        }));
         if (containers && containers.length > 0) {
           entityDialog.formGroup.controls['containers'].setValue(containers[0]);
         } else {
           entityDialog.formGroup.controls['containers'].setValue(null);
         }
       }
-    })
+    });
   }
 }

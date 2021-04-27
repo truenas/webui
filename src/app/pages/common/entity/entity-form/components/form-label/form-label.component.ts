@@ -1,4 +1,6 @@
-import { Component, Output, ViewChild, EventEmitter } from '@angular/core';
+import {
+  Component, Output, ViewChild, EventEmitter,
+} from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 

@@ -8,7 +8,6 @@ import { Injectable } from '@angular/core';
  */
 @Injectable()
 export class ErdService {
-
   constructor() {}
 
   /**
@@ -17,9 +16,8 @@ export class ErdService {
    *
    * @param elementId - Name of element on view to attach to.
    */
-  public attachResizeEventToElement(elementId: string) {
-    setTimeout(()=>{
-
+  attachResizeEventToElement(elementId: string) {
+    setTimeout(() => {
       let erd: any = null;
 
       // This invokes the element-resize-detector js library under node_modules
@@ -31,8 +29,8 @@ export class ErdService {
       }
 
       const elementAny = document.getElementById(elementId);
-      if( typeof(erd) !== "undefined" && erd !== null &&
-            typeof(elementAny) !== "undefined" && elementAny !== null ) {
+      if (typeof (erd) !== 'undefined' && erd !== null
+            && typeof (elementAny) !== 'undefined' && elementAny !== null) {
         erd.listenTo(() => {
           (<any>window).dispatchEvent(new Event('resize'));
         });

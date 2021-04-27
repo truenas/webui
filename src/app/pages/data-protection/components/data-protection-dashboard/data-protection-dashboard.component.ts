@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef, Component, OnDestroy, OnInit,
+} from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -64,16 +66,16 @@ export interface TaskCard {
   ],
 })
 export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
-  public dataCards: TaskCard[] = [];
-  public configData: any;
-  public entityForm: any;
-  public refreshForm: Subscription;
-  public refreshTable: Subscription;
-  public refreshOnClose: Subscription;
-  public diskSubscription: Subscription;
-  public messageSubscription: Subscription;
-  public disks: any[] = [];
-  public parent: any;
+  dataCards: TaskCard[] = [];
+  configData: any;
+  entityForm: any;
+  refreshForm: Subscription;
+  refreshTable: Subscription;
+  refreshOnClose: Subscription;
+  diskSubscription: Subscription;
+  messageSubscription: Subscription;
+  disks: any[] = [];
+  parent: any;
 
   // Components included in this dashboard
   protected scrubFormComponent: ScrubFormComponent;
@@ -159,10 +161,10 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             key_props: ['pool_name'],
           },
           parent: this,
-          add: function () {
+          add() {
             this.parent.modalService.open('slide-in-form', this.parent.scrubFormComponent);
           },
-          edit: function (row) {
+          edit(row) {
             this.parent.modalService.open('slide-in-form', this.parent.scrubFormComponent, row.id);
           },
         },
@@ -182,19 +184,23 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             { name: T('Pool/Dataset'), prop: 'dataset' },
             { name: T('Recursive'), prop: 'recursive' },
             { name: T('Keep for'), prop: 'keepfor' },
-            { name: T('Enabled'), prop: 'enabled', checkbox: true, width: '50px' },
-            { name: T('State'), prop: 'state', state: 'state', button: true },
+            {
+              name: T('Enabled'), prop: 'enabled', checkbox: true, width: '50px',
+            },
+            {
+              name: T('State'), prop: 'state', state: 'state', button: true,
+            },
           ],
           dataSourceHelper: this.snapshotDataSourceHelper,
           isActionVisible: this.isActionVisible,
           parent: this,
-          add: function () {
+          add() {
             this.parent.modalService.open('slide-in-form', this.parent.snapshotFormComponent);
           },
-          edit: function (row) {
+          edit(row) {
             this.parent.modalService.open('slide-in-form', this.parent.snapshotFormComponent, row.id);
           },
-          onButtonClick: function (row) {
+          onButtonClick(row) {
             this.parent.stateButton(row);
           },
         },
@@ -215,18 +221,22 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           isActionVisible: this.isActionVisible,
           columns: [
             { name: T('Name'), prop: 'name' },
-            { name: T('Enabled'), prop: 'enabled', checkbox: true, width: '50px' },
+            {
+              name: T('Enabled'), prop: 'enabled', checkbox: true, width: '50px',
+            },
             { name: T('Last Snapshot'), prop: 'task_last_snapshot' },
-            { name: T('State'), prop: 'state', button: true, state: 'state' },
+            {
+              name: T('State'), prop: 'state', button: true, state: 'state',
+            },
           ],
           parent: this,
-          add: function () {
+          add() {
             this.parent.modalService.open('slide-in-form', this.parent.replicationWizardComponent);
           },
-          edit: function (row) {
+          edit(row) {
             this.parent.modalService.open('slide-in-form', this.parent.replicationFormComponent, row.id);
           },
-          onButtonClick: function (row) {
+          onButtonClick(row) {
             this.parent.stateButton(row);
           },
         },
@@ -247,18 +257,22 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
           isActionVisible: this.isActionVisible,
           columns: [
             { name: T('Description'), prop: 'description' },
-            { name: T('Next Run'), prop: 'next_run', hidden: true, width: '80px' },
+            {
+              name: T('Next Run'), prop: 'next_run', hidden: true, width: '80px',
+            },
             { name: T('Enabled'), prop: 'enabled', width: '50px' },
-            { name: T('State'), prop: 'state', state: 'state', button: true }
+            {
+              name: T('State'), prop: 'state', state: 'state', button: true,
+            },
           ],
           parent: this,
-          add: function () {
+          add() {
             this.parent.modalService.open('slide-in-form', this.parent.cloudsyncFormComponent);
           },
-          edit: function (row) {
+          edit(row) {
             this.parent.modalService.open('slide-in-form', this.parent.cloudsyncFormComponent, row.id);
           },
-          onButtonClick: function (row) {
+          onButtonClick(row) {
             this.parent.stateButton(row);
           },
         },
@@ -278,19 +292,21 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             { name: T('Path'), prop: 'path' },
             { name: T('Remote Host'), prop: 'remotehost' },
             { name: T('Enabled'), prop: 'enabled', width: '50px' },
-            { name: T('State'), prop: 'state', state: 'state', button: true },
+            {
+              name: T('State'), prop: 'state', state: 'state', button: true,
+            },
           ],
           dataSourceHelper: this.rsyncDataSourceHelper,
           getActions: this.getRsyncActions.bind(this),
           isActionVisible: this.isActionVisible,
           parent: this,
-          add: function () {
+          add() {
             this.parent.modalService.open('slide-in-form', this.parent.rsyncFormComponent);
           },
-          edit: function (row) {
+          edit(row) {
             this.parent.modalService.open('slide-in-form', this.parent.rsyncFormComponent, row.id);
           },
-          onButtonClick: function (row) {
+          onButtonClick(row) {
             this.parent.stateButton(row);
           },
         },
@@ -323,10 +339,10 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
               prop: 'schedule',
             },
           ],
-          add: function () {
+          add() {
             this.parent.modalService.open('slide-in-form', this.parent.smartFormComponent);
           },
-          edit: function (row) {
+          edit(row) {
             this.parent.modalService.open('slide-in-form', this.parent.smartFormComponent, row.id);
           },
         },
@@ -570,7 +586,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
               },
             ],
             saveButtonText: helptext_replication.replication_restore_dialog.saveButton,
-            customSubmit: function (entityDialog: EntityDialogComponent) {
+            customSubmit(entityDialog: EntityDialogComponent) {
               parent.loader.open();
               parent.ws.call('replication.restore', [row.id, entityDialog.formValue]).subscribe(
                 (res) => {
@@ -735,7 +751,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
               },
             ],
             saveButtonText: 'Restore',
-            afterInit: function (entityDialog: EntityDialogComponent) {
+            afterInit(entityDialog: EntityDialogComponent) {
               entityDialog.formGroup.get('transfer_mode').valueChanges.subscribe((mode: any) => {
                 const paragraph = conf.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
                 switch (mode) {
@@ -749,7 +765,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
                 }
               });
             },
-            customSubmit: function (entityDialog: EntityDialogComponent) {
+            customSubmit(entityDialog: EntityDialogComponent) {
               parent.loader.open();
               parent.ws.call('cloudsync.restore', [row.id, entityDialog.formValue]).subscribe(
                 (res) => {
@@ -810,7 +826,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
   isActionVisible(name: string, row: any) {
     if (name === 'run' && row.job && row.state === EntityJobState.Running) {
       return false;
-    } else if (name === 'stop' && (row.job ? row.job && row.state !== EntityJobState.Running : true)) {
+    } if (name === 'stop' && (row.job ? row.job && row.state !== EntityJobState.Running : true)) {
       return false;
     }
     return true;

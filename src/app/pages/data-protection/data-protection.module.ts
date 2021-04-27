@@ -6,7 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
-import { DataProtectionRoutes } from "./data-protection.routing";
+import { DataProtectionRoutes } from './data-protection.routing';
 import { EntityModule } from '../common/entity/entity.module';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -32,13 +32,13 @@ import { DataProtectionDashboardComponent } from './components/data-protection-d
     FlexLayoutModule,
     CalendarModule.forRoot({
       provide: DateAdapter,
-      useFactory: adapterFactory
+      useFactory: adapterFactory,
     }),
     RouterModule.forChild(DataProtectionRoutes),
     EntityModule,
     FormsModule,
     ReactiveFormsModule,
-    TranslateModule
+    TranslateModule,
   ],
   declarations: [
     SnapshotListComponent,
@@ -54,7 +54,7 @@ import { DataProtectionDashboardComponent } from './components/data-protection-d
     ScrubFormComponent,
     CloudsyncListComponent,
     CloudsyncFormComponent,
-    DataProtectionDashboardComponent
-  ]
+    DataProtectionDashboardComponent,
+  ],
 })
 export class DataProtectionModule {}

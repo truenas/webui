@@ -5,138 +5,139 @@ import { ProductType } from '../../../../enums/product-type.enum';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { T } from '../../../../translate-marker';
 import * as _ from 'lodash';
-import { EntityFormService } from '../../../../pages/common/entity/entity-form/services/entity-form.service';
+import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
 import { TranslateService } from '@ngx-translate/core';
 
-import { RestService, WebSocketService, SystemGeneralService, NetworkService, VmService } from '../../../../services/';
+import {
+  RestService, WebSocketService, SystemGeneralService, NetworkService, VmService,
+} from '../../../../services';
 import { EntityUtils } from '../../../common/entity/utils';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import helptext from '../../../../helptext/vm/devices/device-add-edit';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { DialogService } from '../../../../services/dialog.service';
 @Component({
-  selector : 'app-device-edit',
-  templateUrl : './device-edit.component.html',
+  selector: 'app-device-edit',
+  templateUrl: './device-edit.component.html',
   styleUrls: ['./device-edit.component.scss'],
 })
 export class DeviceEditComponent implements OnInit {
-
   protected updateCall = 'vm.device.update';
   protected route_success: string[];
-  public deviceid: any;
-  public vmname: any;
-  public fieldSets: any;
-  public isCustActionVisible = false;
+  deviceid: any;
+  vmname: any;
+  fieldSets: any;
+  isCustActionVisible = false;
   protected ipAddress: any = [];
-  public selectedType = 'CDROM';
-  public formGroup: any;
-  public activeFormGroup: any;
-  public cdromFormGroup: any;
-  public diskFormGroup: any;
-  public nicFormGroup: any;
-  public rawfileFormGroup: any;
-  public pciFormGroup: any;
-  public displayFormGroup: any;
-  public rootpwd: any;
-  public vminfo: any;
-  public boot: any;
-  public error: string;
+  selectedType = 'CDROM';
+  formGroup: any;
+  activeFormGroup: any;
+  cdromFormGroup: any;
+  diskFormGroup: any;
+  nicFormGroup: any;
+  rawfileFormGroup: any;
+  pciFormGroup: any;
+  displayFormGroup: any;
+  rootpwd: any;
+  vminfo: any;
+  boot: any;
+  error: string;
   private productType = window.localStorage.getItem('product_type') as ProductType;
 
-  public custActions: any[];
+  custActions: any[];
 
-  public fieldConfig: FieldConfig[] = [
+  fieldConfig: FieldConfig[] = [
     {
       type: 'select',
       name: 'dtype',
       placeholder: helptext.dtype_placeholder,
       options: [
         {
-        label: 'CD-ROM',
-        value: 'CDROM',
+          label: 'CD-ROM',
+          value: 'CDROM',
         }, {
-        label: 'NIC',
-        value: 'NIC',
+          label: 'NIC',
+          value: 'NIC',
         }, {
-        label: 'Disk',
-        value: 'DISK',
+          label: 'Disk',
+          value: 'DISK',
         }, {
-        label: 'Raw File',
-        value: 'RAW',
+          label: 'Raw File',
+          value: 'RAW',
         }, {
-        label: 'PCI Passthru Device',
-        value: 'PCI',
+          label: 'PCI Passthru Device',
+          value: 'PCI',
         }, {
-        label: 'Display',
-        value: 'DISPLAY',
-        }
+          label: 'Display',
+          value: 'DISPLAY',
+        },
       ],
       value: helptext.dtype_value,
       required: true,
       validation: helptext.dtype_validation,
-      isHidden: true
-    }
+      isHidden: true,
+    },
   ];
 
   // cd-rom
-  public cdromFieldConfig: FieldConfig[] = [
+  cdromFieldConfig: FieldConfig[] = [
     {
-      type : 'explorer',
+      type: 'explorer',
       initial: '/mnt',
-      name : 'path',
-      placeholder : helptext.cd_path_placeholder,
-      tooltip : helptext.cd_path_tooltip,
-      validation : helptext.cd_path_validation,
+      name: 'path',
+      placeholder: helptext.cd_path_placeholder,
+      tooltip: helptext.cd_path_tooltip,
+      validation: helptext.cd_path_validation,
       required: true,
-      disabled: false
+      disabled: false,
     },
     {
-      name : 'order',
-      placeholder : helptext.order_placeholder,
-      tooltip : helptext.order_tooltip,
+      name: 'order',
+      placeholder: helptext.order_placeholder,
+      tooltip: helptext.order_tooltip,
       type: 'input',
       value: null,
-      inputType: 'number'
+      inputType: 'number',
     },
   ];
-  //disk
-  public diskFieldConfig: FieldConfig[] = [
+  // disk
+  diskFieldConfig: FieldConfig[] = [
     {
-      name : 'path',
-      placeholder : helptext.zvol_path_placeholder,
-      tooltip : helptext.zvol_path_tooltip,
+      name: 'path',
+      placeholder: helptext.zvol_path_placeholder,
+      tooltip: helptext.zvol_path_tooltip,
       type: 'select',
       required: true,
-      validation : helptext.zvol_path_validation,
-      options:[],
-      disabled: false
+      validation: helptext.zvol_path_validation,
+      options: [],
+      disabled: false,
     },
     {
-      name : 'type',
-      placeholder : helptext.mode_placeholder,
-      tooltip : helptext.mode_tooltip,
+      name: 'type',
+      placeholder: helptext.mode_placeholder,
+      tooltip: helptext.mode_tooltip,
       type: 'select',
-      options : helptext.mode_options,
+      options: helptext.mode_options,
     },
     {
-      name : 'sectorsize',
-      placeholder : helptext.sectorsize_placeholder,
-      tooltip : helptext.sectorsize_tooltip,
+      name: 'sectorsize',
+      placeholder: helptext.sectorsize_placeholder,
+      tooltip: helptext.sectorsize_tooltip,
       type: 'select',
       options: helptext.sectorsize_options,
-      value: 0
+      value: 0,
     },
     {
-      name : 'order',
-      placeholder : helptext.order_placeholder,
-      tooltip : helptext.order_tooltip,
+      name: 'order',
+      placeholder: helptext.order_placeholder,
+      tooltip: helptext.order_tooltip,
       type: 'input',
       value: null,
-      inputType: 'number'
+      inputType: 'number',
     },
   ];
-  //nic
-  public nicFieldConfig: FieldConfig[] = [
+  // nic
+  nicFieldConfig: FieldConfig[] = [
     {
       name: 'type',
       placeholder: helptext.adapter_type_placeholder,
@@ -145,7 +146,7 @@ export class DeviceEditComponent implements OnInit {
       options: [],
       validation: helptext.adapter_type_validation,
       required: true,
-      disabled: false
+      disabled: false,
     },
     {
       name: 'mac',
@@ -162,236 +163,232 @@ export class DeviceEditComponent implements OnInit {
       type: 'select',
       options: [],
       validation: helptext.nic_attach_validation,
-      required: true
+      required: true,
     },
     {
-      name : 'order',
-      placeholder : helptext.order_placeholder,
-      tooltip : helptext.order_tooltip,
+      name: 'order',
+      placeholder: helptext.order_placeholder,
+      tooltip: helptext.order_tooltip,
       type: 'input',
       value: null,
-      inputType: 'number'
+      inputType: 'number',
     },
   ];
   protected nic_attach: any;
   protected nicType: any;
   protected nicMac: any;
 
-  //rawfile
-  public rawfileFieldConfig: FieldConfig[] = [
+  // rawfile
+  rawfileFieldConfig: FieldConfig[] = [
     {
-      type : 'explorer',
+      type: 'explorer',
       initial: '/mnt',
-      name : 'path',
-      placeholder : helptext.raw_file_path_placeholder,
-      tooltip : helptext.raw_file_path_tooltip,
+      name: 'path',
+      placeholder: helptext.raw_file_path_placeholder,
+      tooltip: helptext.raw_file_path_tooltip,
       required: true,
       validation: helptext.raw_file_path_validation,
-      disabled: false
+      disabled: false,
     },
     {
-      type : 'select',
-      name : 'sectorsize',
-      placeholder : helptext.sectorsize_placeholder,
-      tooltip : helptext.sectorsize_tooltip,
-      options: helptext.sectorsize_options,
-      value: 0
-    },
-    {
-      name : 'type',
-      placeholder : helptext.mode_placeholder,
-      tooltip : helptext.mode_tooltip,
       type: 'select',
-      options : helptext.mode_options,
+      name: 'sectorsize',
+      placeholder: helptext.sectorsize_placeholder,
+      tooltip: helptext.sectorsize_tooltip,
+      options: helptext.sectorsize_options,
+      value: 0,
     },
     {
-      name : 'order',
-      placeholder : helptext.order_placeholder,
-      tooltip : helptext.order_tooltip,
+      name: 'type',
+      placeholder: helptext.mode_placeholder,
+      tooltip: helptext.mode_tooltip,
+      type: 'select',
+      options: helptext.mode_options,
+    },
+    {
+      name: 'order',
+      placeholder: helptext.order_placeholder,
+      tooltip: helptext.order_tooltip,
       type: 'input',
       value: null,
-      inputType: 'number'
+      inputType: 'number',
     },
     {
-      type : 'input',
-      name : 'size',
-      placeholder : helptext.raw_size_placeholder,
-      tooltip : helptext.raw_size_tooltip,
-      inputType : 'number',
+      type: 'input',
+      name: 'size',
+      placeholder: helptext.raw_size_placeholder,
+      tooltip: helptext.raw_size_tooltip,
+      inputType: 'number',
     },
     {
-      type : 'input',
-      name : 'rootpwd',
-      placeholder : helptext.rootpwd_placeholder,
-      tooltip : helptext.rootpwd_tooltip,
-      inputType : 'password',
-      isHidden: true
+      type: 'input',
+      name: 'rootpwd',
+      placeholder: helptext.rootpwd_placeholder,
+      tooltip: helptext.rootpwd_tooltip,
+      inputType: 'password',
+      isHidden: true,
     },
     {
-      type : 'checkbox',
-      name : 'boot',
-      placeholder : helptext.boot_placeholder,
-      tooltip : helptext.boot_tooltip,
-      isHidden: true
+      type: 'checkbox',
+      name: 'boot',
+      placeholder: helptext.boot_placeholder,
+      tooltip: helptext.boot_tooltip,
+      isHidden: true,
     },
   ];
 
-  //pci
-  public pciFieldConfig: FieldConfig[] = [
+  // pci
+  pciFieldConfig: FieldConfig[] = [
     {
       name: 'pptdev',
       placeholder: helptext.pptdev_placeholder,
       tooltip: helptext.pptdev_tooltip,
       type: 'select',
       options: [],
-      required: true
+      required: true,
     },
     {
-      name : 'order',
-      placeholder : helptext.order_placeholder,
-      tooltip : helptext.order_tooltip,
+      name: 'order',
+      placeholder: helptext.order_placeholder,
+      tooltip: helptext.order_tooltip,
       type: 'input',
       value: null,
-      inputType: 'number'
+      inputType: 'number',
     },
   ];
   protected pptdev: any;
 
-  //Display
-  public displayFieldConfig: FieldConfig[]  = [
+  // Display
+  displayFieldConfig: FieldConfig[] = [
     {
-      name : 'port',
-      placeholder : helptext.port_placeholder,
-      tooltip : helptext.port_tooltip,
-      type : 'input',
+      name: 'port',
+      placeholder: helptext.port_placeholder,
+      tooltip: helptext.port_tooltip,
+      type: 'input',
       inputType: 'number',
       required: true,
-      disabled: false
+      disabled: false,
     },
     {
-      name : 'wait',
-      placeholder : helptext.wait_placeholder,
-      tooltip : helptext.wait_tooltip,
+      name: 'wait',
+      placeholder: helptext.wait_placeholder,
+      tooltip: helptext.wait_tooltip,
       type: 'checkbox',
-      isHidden: true
+      isHidden: true,
     },
     {
-      name : 'resolution',
-      placeholder : helptext.resolution_placeholder,
-      tooltip : helptext.resolution_tooltip,
+      name: 'resolution',
+      placeholder: helptext.resolution_placeholder,
+      tooltip: helptext.resolution_tooltip,
       type: 'select',
-      options : helptext.resolution_options,
-      isHidden: true
+      options: helptext.resolution_options,
+      isHidden: true,
     },
     {
-      name : 'bind',
-      placeholder : helptext.bind_placeholder,
-      tooltip : helptext.bind_tooltip,
+      name: 'bind',
+      placeholder: helptext.bind_placeholder,
+      tooltip: helptext.bind_tooltip,
       type: 'select',
-      options : [],
+      options: [],
     },
     {
-      name : 'password',
-      placeholder : helptext.password_placeholder,
-      tooltip : helptext.password_tooltip,
-      type : 'input',
-      inputType : 'password',
-      validation: helptext.password_validation
+      name: 'password',
+      placeholder: helptext.password_placeholder,
+      tooltip: helptext.password_tooltip,
+      type: 'input',
+      inputType: 'password',
+      validation: helptext.password_validation,
     },
     {
-      name : 'web',
-      placeholder : helptext.web_placeholder,
-      tooltip : helptext.web_tooltip,
-      type: 'checkbox'
+      name: 'web',
+      placeholder: helptext.web_placeholder,
+      tooltip: helptext.web_tooltip,
+      type: 'checkbox',
     },
     {
-      name : 'order',
-      placeholder : helptext.order_placeholder,
-      tooltip : helptext.order_tooltip,
+      name: 'order',
+      placeholder: helptext.order_placeholder,
+      tooltip: helptext.order_tooltip,
       type: 'input',
       value: null,
-      inputType: 'number'
+      inputType: 'number',
     },
   ];
 
   constructor(protected router: Router,
-              protected aroute: ActivatedRoute,
-              protected rest: RestService,
-              protected ws: WebSocketService,
-              protected entityFormService: EntityFormService,
-              public translate: TranslateService,
-              protected loader: AppLoaderService,
-              protected systemGeneralService: SystemGeneralService,
-              protected networkService: NetworkService,
-              protected dialogService: DialogService,
-              private core:CoreService,
-              protected vmService: VmService) {}
-
+    protected aroute: ActivatedRoute,
+    protected rest: RestService,
+    protected ws: WebSocketService,
+    protected entityFormService: EntityFormService,
+    public translate: TranslateService,
+    protected loader: AppLoaderService,
+    protected systemGeneralService: SystemGeneralService,
+    protected networkService: NetworkService,
+    protected dialogService: DialogService,
+    private core: CoreService,
+    protected vmService: VmService) {}
 
   preInit() {
     // Display
     this.ws.call('vm.device.bind_choices').subscribe((res) => {
-      if(res && Object.keys(res).length > 0) {
-        this.ipAddress = _.find(this.displayFieldConfig, {'name' : 'bind'});
+      if (res && Object.keys(res).length > 0) {
+        this.ipAddress = _.find(this.displayFieldConfig, { name: 'bind' });
         Object.keys(res).forEach((address) => {
-          this.ipAddress.options.push({label : address, value : address});
+          this.ipAddress.options.push({ label: address, value: address });
         });
-      };
+      }
     });
 
     // nic
     this.networkService.getVmNicChoices().subscribe((res) => {
-      this.nic_attach = _.find(this.nicFieldConfig, { 'name': 'nic_attach' });
-      this.nic_attach.options = Object.keys(res || {}).map(nicId => ({
+      this.nic_attach = _.find(this.nicFieldConfig, { name: 'nic_attach' });
+      this.nic_attach.options = Object.keys(res || {}).map((nicId) => ({
         label: nicId,
-        value: nicId
+        value: nicId,
       }));
     });
 
-    this.nicType = _.find(this.nicFieldConfig, { name: "type" });
+    this.nicType = _.find(this.nicFieldConfig, { name: 'type' });
     this.vmService.getNICTypes().forEach((item) => {
       this.nicType.options.push({ label: item[1], value: item[0] });
     });
 
     // pci
     this.ws.call('vm.device.passthrough_device_choices').subscribe((res) => {
-      this.pptdev = _.find(this.pciFieldConfig, { 'name': 'pptdev' });
-      this.pptdev.options = Object.keys(res || {}).map(pptdevId => ({
+      this.pptdev = _.find(this.pciFieldConfig, { name: 'pptdev' });
+      this.pptdev.options = Object.keys(res || {}).map((pptdevId) => ({
         label: pptdevId,
-        value: pptdevId
+        value: pptdevId,
       }));
     });
   }
-  //Setting values coming from backend and populating formgroup with it.
+  // Setting values coming from backend and populating formgroup with it.
   setgetValues(activeformgroup: FormGroup, deviceInformation: any[]) {
     for (const value in deviceInformation) {
       const fg = activeformgroup.controls[value];
-      if (typeof fg !== "undefined") {
+      if (typeof fg !== 'undefined') {
         fg.setValue(deviceInformation[value]);
+      } else {
+        console.log(deviceInformation, value, activeformgroup);
       }
-      else {
-        console.log(deviceInformation,value,activeformgroup)
-      }
-
-
     }
   }
   async ngOnInit() {
     this.preInit();
-    this.aroute.params.subscribe(params => {
-      this.deviceid = parseInt(params['pk'],10);
+    this.aroute.params.subscribe((params) => {
+      this.deviceid = parseInt(params['pk'], 10);
       this.vmname = params['name'];
       this.route_success = ['vm', params['vmid'], 'devices', this.vmname];
     });
 
-    this.core.emit({name:"SysInfoRequest"});
+    this.core.emit({ name: 'SysInfoRequest' });
 
     this.fieldSets = [
       {
-        name:'FallBack',
-        class:'fallback',
-        width:'100%',
-        divider:false,
+        name: 'FallBack',
+        class: 'fallback',
+        width: '100%',
+        divider: false,
         fieldConfig: this.fieldConfig,
         cdromFieldConfig: this.cdromFieldConfig,
         diskFieldConfig: this.diskFieldConfig,
@@ -401,12 +398,11 @@ export class DeviceEditComponent implements OnInit {
         displayFieldConfig: this.displayFieldConfig,
       },
       {
-        name:'divider',
-        divider:true,
-        width:'100%'
-      }
+        name: 'divider',
+        divider: true,
+        width: '100%',
+      },
     ];
-
 
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
     this.cdromFormGroup = this.entityFormService.createFormGroup(this.cdromFieldConfig);
@@ -416,13 +412,12 @@ export class DeviceEditComponent implements OnInit {
     this.pciFormGroup = this.entityFormService.createFormGroup(this.pciFieldConfig);
     this.displayFormGroup = this.entityFormService.createFormGroup(this.displayFieldConfig);
 
-
     this.activeFormGroup = this.cdromFormGroup;
-    await this.ws.call('vm.device.query',[[["id", "=", this.deviceid]]]).subscribe((res) => {
+    await this.ws.call('vm.device.query', [[['id', '=', this.deviceid]]]).subscribe((res) => {
       if (res[0].attributes.physical_sectorsize !== undefined && res[0].attributes.logical_sectorsize !== undefined) {
         res[0].attributes['sectorsize'] = res[0].attributes.logical_sectorsize === null ? 0 : res[0].attributes.logical_sectorsize;
       }
-      const deviceInformation = {...res[0].attributes, ...{ 'order' : res[0].order }};
+      const deviceInformation = { ...res[0].attributes, ...{ order: res[0].order } };
       this.vminfo = res[0];
       res = res[0].dtype;
       this.selectedType = res;
@@ -440,9 +435,9 @@ export class DeviceEditComponent implements OnInit {
         this.isCustActionVisible = false;
         // special case where RAW file device is used as a BOOT device.
         if (this.vminfo.attributes.boot && this.vminfo.attributes.rootpwd) {
-          this.rootpwd = _.find(this.rawfileFieldConfig, {'name': 'rootpwd'});
+          this.rootpwd = _.find(this.rawfileFieldConfig, { name: 'rootpwd' });
           this.rootpwd['isHidden'] = false;
-          this.boot = _.find(this.rawfileFieldConfig, {'name': 'boot'});
+          this.boot = _.find(this.rawfileFieldConfig, { name: 'boot' });
           this.boot['isHidden'] = false;
         }
       } else if (res === 'PCI') {
@@ -452,36 +447,34 @@ export class DeviceEditComponent implements OnInit {
         this.activeFormGroup = this.displayFormGroup;
         this.isCustActionVisible = false;
       }
-      this.setgetValues(this.activeFormGroup,deviceInformation);
+      this.setgetValues(this.activeFormGroup, deviceInformation);
     });
-  this.aroute.params.subscribe(params => {
-      this.ws.call('vm.query',[[['id', '=', parseInt(params['vmid'] ,10)]]]).subscribe((res)=>{
-        if(res[0].status.state === "RUNNING") {
-          this.activeFormGroup.setErrors({ 'invalid': true });
+    this.aroute.params.subscribe((params) => {
+      this.ws.call('vm.query', [[['id', '=', parseInt(params['vmid'], 10)]]]).subscribe((res) => {
+        if (res[0].status.state === 'RUNNING') {
+          this.activeFormGroup.setErrors({ invalid: true });
         }
-      })
+      });
     });
 
     if (!this.productType.includes(ProductType.Scale)) {
-      _.find(this.displayFieldConfig, {name:'wait'}).isHidden = false;
-      _.find(this.displayFieldConfig, {name:'resolution'}).isHidden = false;
+      _.find(this.displayFieldConfig, { name: 'wait' }).isHidden = false;
+      _.find(this.displayFieldConfig, { name: 'resolution' }).isHidden = false;
     }
 
     this.afterInit();
   }
 
   afterInit() {
-
-    this.ws.call("pool.dataset.query",[[["type", "=", "VOLUME"]], {"extra": {"properties": ["id"]}}]).subscribe((zvols: any[])=>{
-      zvols.forEach(zvol => {
-        _.find(this.diskFieldConfig, {name:'path'}).options.push(
+    this.ws.call('pool.dataset.query', [[['type', '=', 'VOLUME']], { extra: { properties: ['id'] } }]).subscribe((zvols: any[]) => {
+      zvols.forEach((zvol) => {
+        _.find(this.diskFieldConfig, { name: 'path' }).options.push(
           {
-            label : zvol.id, value : '/dev/zvol/' + zvol.id
-          }
+            label: zvol.id, value: '/dev/zvol/' + zvol.id,
+          },
         );
       });
     });
-
 
     this.custActions = [
       {
@@ -490,9 +483,9 @@ export class DeviceEditComponent implements OnInit {
         function: () => {
           this.ws.call('vm.random_mac').subscribe((random_mac) => {
             this.nicFormGroup.controls['mac'].setValue(random_mac);
-          })
-        }
-      }
+          });
+        },
+      },
     ];
   }
 
@@ -501,7 +494,7 @@ export class DeviceEditComponent implements OnInit {
   }
 
   onSubmit(event: Event) {
-    this.aroute.params.subscribe(params => {
+    this.aroute.params.subscribe((params) => {
       const deviceValue = _.cloneDeep(this.activeFormGroup.value);
       const deviceOrder = deviceValue['order'];
       delete deviceValue.order;
@@ -509,21 +502,20 @@ export class DeviceEditComponent implements OnInit {
       deviceValue['logical_sectorsize'] = deviceValue['sectorsize'] === 0 ? null : deviceValue['sectorsize'];
       delete deviceValue['sectorsize'];
       const payload = {
-        "dtype": this.vminfo.dtype,
-        "attributes":deviceValue,
-        "order": deviceOrder
+        dtype: this.vminfo.dtype,
+        attributes: deviceValue,
+        order: deviceOrder,
       };
 
       this.loader.open();
-      this.ws.call(this.updateCall, [ params.pk, payload ]).subscribe(() => {
-          this.loader.close();
-          this.router.navigate(new Array('/').concat(this.route_success));
-        },
-        (e_res) => {
-          this.loader.close();
-          new EntityUtils().handleWSError(this, e_res, this.dialogService);
-        }
-      );
+      this.ws.call(this.updateCall, [params.pk, payload]).subscribe(() => {
+        this.loader.close();
+        this.router.navigate(new Array('/').concat(this.route_success));
+      },
+      (e_res) => {
+        this.loader.close();
+        new EntityUtils().handleWSError(this, e_res, this.dialogService);
+      });
     });
   }
 }

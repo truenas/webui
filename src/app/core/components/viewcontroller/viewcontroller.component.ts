@@ -1,4 +1,6 @@
-import { Component,ComponentRef, AfterViewInit, ViewChild, OnDestroy } from '@angular/core';
+import {
+  Component, ComponentRef, AfterViewInit, ViewChild, OnDestroy,
+} from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { Display } from 'app/core/components/display/display.component';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
@@ -7,7 +9,7 @@ import { LayoutContainer, LayoutChild } from 'app/core/classes/layouts';
 import { Subject } from 'rxjs';
 
 export interface ViewConfig {
-  componentName: any,
+  componentName: any;
   componentData: any;
   controller?: Subject<any>;
 }
@@ -23,44 +25,41 @@ export interface ViewConfig {
       <display style="display:none;" #display></display>
     </div>
   `,
-  styles:[ ':host {display:block;}' ]
+  styles: [':host {display:block;}'],
 })
 export class ViewControllerComponent extends ViewController implements AfterViewInit, OnDestroy {
-
   readonly componentName = ViewControllerComponent;
-  @ViewChild('display', { static: true}) display: Display;
+  @ViewChild('display', { static: true }) display: Display;
   protected core: CoreService;
-  public controlEvents: Subject<CoreEvent> = new Subject();
+  controlEvents: Subject<CoreEvent> = new Subject();
 
-  public layoutContainer:LayoutContainer = {layout:"row", align:"space-between center", gap:"2%"}
-  public layoutChild?:LayoutChild;
+  layoutContainer: LayoutContainer = { layout: 'row', align: 'space-between center', gap: '2%' };
+  layoutChild?: LayoutChild;
 
   constructor() {
     super();
     this.core = CoreServiceInjector.get(CoreService);
   }
 
-  ngAfterViewInit(){
+  ngAfterViewInit() {
   }
 
-  ngOnDestroy(){
-    this.core.unregister({observerClass:this});
+  ngOnDestroy() {
+    this.core.unregister({ observerClass: this });
   }
 
-
-  public create(component:any, container?:string){
-    if(!container){ container = 'display'}
+  create(component: any, container?: string) {
+    if (!container) { container = 'display'; }
     return (this as any)[container].create(component);
   }
 
-  public addChild(instance: any, container?: string){
-    if(!container){ container = 'display'}
+  addChild(instance: any, container?: string) {
+    if (!container) { container = 'display'; }
     (this as any)[container].addChild(instance);
   }
 
-  public removeChild(instance: any, container?: string){
-    if(!container){ container = 'display'}
+  removeChild(instance: any, container?: string) {
+    if (!container) { container = 'display'; }
     (this as any)[container].removeChild(instance);
   }
-
 }

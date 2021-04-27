@@ -15,19 +15,19 @@ import { T } from '../../../translate-marker';
 
 @Component({
   selector: 'app-ipmi',
-  template: `<entity-form [conf]="this"></entity-form>`,
+  template: '<entity-form [conf]="this"></entity-form>',
 })
 export class IPMIFromComponent {
-  public title = "IMPI"
-  protected queryCall = "ipmi.query";
+  title = 'IMPI';
+  protected queryCall = 'ipmi.query';
 
   protected entityEdit: any;
-  public is_ha = false;
-  public controllerName = globalHelptext.Ctrlr;
-  public currentControllerLabel: string;
-  public failoverControllerLabel: string;
-  public managementIP: string;
-  public options: Option[] = [
+  is_ha = false;
+  controllerName = globalHelptext.Ctrlr;
+  currentControllerLabel: string;
+  failoverControllerLabel: string;
+  managementIP: string;
+  options: Option[] = [
     { label: 'Indefinitely', value: 'force' },
     { label: '15 seconds', value: 15 },
     { label: '30 seconds', value: 30 },
@@ -35,27 +35,28 @@ export class IPMIFromComponent {
     { label: '2 minute', value: 120 },
     { label: '3 minute', value: 180 },
     { label: '4 minute', value: 240 },
-    { label: 'Turn OFF', value: 0 }
-  ]
-  public custActions: Array<any> = [
+    { label: 'Turn OFF', value: 0 },
+  ];
+  custActions: any[] = [
     {
-      'id': 'ipmi_identify',
-      'name': T('Identify Light'),
+      id: 'ipmi_identify',
+      name: T('Identify Light'),
       function: () => {
         this.dialog.select(
-          'IPMI Identify', this.options, 'IPMI flash duration', 'ipmi.identify', 'seconds', "IPMI identify command issued");
-      }
+          'IPMI Identify', this.options, 'IPMI flash duration', 'ipmi.identify', 'seconds', 'IPMI identify command issued',
+        );
+      },
     },
     {
-      'id': 'connect',
-      'name': T('Manage'),
+      id: 'connect',
+      name: T('Manage'),
       function: () => {
         window.open(`http://${this.managementIP}`);
-      }
-    }
+      },
+    },
   ];
-  public fieldConfig: FieldConfig[] = []
-  public fieldSets: FieldSet[] = [
+  fieldConfig: FieldConfig[] = [];
+  fieldSets: FieldSet[] = [
     {
       name: helptext.ipmi_configuration,
       label: true,
@@ -80,9 +81,9 @@ export class IPMIFromComponent {
               when: [{
                 name: 'dhcp',
                 value: true,
-              }]
+              }],
             },
-          ]
+          ],
         },
         {
           type: 'input',
@@ -98,9 +99,9 @@ export class IPMIFromComponent {
               when: [{
                 name: 'dhcp',
                 value: true,
-              }]
+              }],
             },
-          ]
+          ],
         },
         {
           type: 'input',
@@ -116,9 +117,9 @@ export class IPMIFromComponent {
               when: [{
                 name: 'dhcp',
                 value: true,
-              }]
+              }],
             },
-          ]
+          ],
         },
         {
           type: 'input',
@@ -127,7 +128,7 @@ export class IPMIFromComponent {
           tooltip: helptext.vlan_tooltip,
           inputType: 'number',
         },
-      ]
+      ],
     },
     {
       name: helptext.ipmi_password_reset,
@@ -144,21 +145,21 @@ export class IPMIFromComponent {
           togglePw: true,
           tooltip: helptext.password_tooltip,
         },
-      ]
+      ],
     },
     {
       name: 'divider',
-      divider: true
+      divider: true,
     }];
 
-  public queryKey = 'id';
-  public channelValue: any;
+  queryKey = 'id';
+  channelValue: any;
   protected isEntity = true;
 
   constructor(
     protected ws: WebSocketService,
     protected dialog: DialogService,
-    protected loader: AppLoaderService
+    protected loader: AppLoaderService,
   ) { }
 
   async prerequisite(): Promise<boolean> {
@@ -175,7 +176,7 @@ export class IPMIFromComponent {
           this.fieldSets.unshift({
             name: helptext.ipmi_remote_controller,
             class: 'remote-controller',
-            width: "100%",
+            width: '100%',
             label: true,
             config: [
               {
@@ -190,24 +191,23 @@ export class IPMIFromComponent {
                   {
                     label: `Standby: ${this.controllerName} ${this.failoverControllerLabel}`,
                     value: true,
-                  }
+                  },
                 ],
                 value: false,
-              }
-            ]
+              },
+            ],
           }, {
             name: 'ipmi_divider',
-            divider: true
+            divider: true,
           });
           resolve(true);
         } else {
           resolve(true);
-        };
+        }
       } else {
         resolve(true);
-      };
-    })
-
+      }
+    });
   }
 
   afterInit(entityEdit: any) {
@@ -215,34 +215,33 @@ export class IPMIFromComponent {
     this.entityEdit = entityEdit;
 
     entityEdit.formGroup.controls['password'].statusChanges.subscribe((status: any) => {
-      this.setErrorStatus(status, _.find(this.fieldConfig, { name: "password" }));
-    })
+      this.setErrorStatus(status, _.find(this.fieldConfig, { name: 'password' }));
+    });
 
     entityEdit.formGroup.controls['ipaddress'].statusChanges.subscribe((status: any) => {
-      this.setErrorStatus(status, _.find(this.fieldConfig, { name: "ipaddress" }));
+      this.setErrorStatus(status, _.find(this.fieldConfig, { name: 'ipaddress' }));
       const ipValue = entityEdit.formGroup.controls['ipaddress'].value;
       const btn = <HTMLInputElement>document.getElementById('cust_button_Manage');
       status === 'INVALID' || ipValue === '0.0.0.0' ? btn.disabled = true : btn.disabled = false;
-    })
+    });
 
     entityEdit.formGroup.controls['ipaddress'].valueChanges.subscribe((value: any) => {
       this.managementIP = value;
-    })
+    });
 
     entityEdit.formGroup.controls['netmask'].statusChanges.subscribe((status: any) => {
-      this.setErrorStatus(status, _.find(this.fieldConfig, { name: "netmask" }));
-    })
+      this.setErrorStatus(status, _.find(this.fieldConfig, { name: 'netmask' }));
+    });
 
     entityEdit.formGroup.controls['gateway'].statusChanges.subscribe((status: any) => {
-      this.setErrorStatus(status, _.find(this.fieldConfig, { name: "gateway" }));
-    })
+      this.setErrorStatus(status, _.find(this.fieldConfig, { name: 'gateway' }));
+    });
 
     if (entityEdit.formGroup.controls['remoteController']) {
       entityEdit.formGroup.controls['remoteController'].valueChanges.subscribe(() => {
         this.loadData();
-      })
+      });
     }
-
   }
 
   setErrorStatus(status: any, field: any) {
@@ -258,7 +257,7 @@ export class IPMIFromComponent {
     this.loader.open();
     return call.subscribe((res) => {
       this.loader.close();
-      this.dialog.Info(T("Settings saved."), '', '300px', 'info', true);
+      this.dialog.Info(T('Settings saved.'), '', '300px', 'info', true);
     }, (res) => {
       this.loader.close();
       new EntityUtils().handleWSError(this.entityEdit, res);
@@ -281,5 +280,4 @@ export class IPMIFromComponent {
       }
     });
   }
-
 }

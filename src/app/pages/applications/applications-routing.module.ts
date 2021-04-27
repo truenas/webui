@@ -8,9 +8,9 @@ import { T } from '../../translate-marker';
 
 const routes: Routes = [
   {
-    path : '',
-    component : ApplicationsComponent,
-    children: []
+    path: '',
+    component: ApplicationsComponent,
+    children: [],
   }, {
     path: 'shell/:rname/:pname/:cname',
     component: PodShellComponent,
@@ -19,11 +19,11 @@ const routes: Routes = [
     path: 'logs/:rname/:pname/:cname/:tail_lines',
     component: PodLogsComponent,
     data: { title: T('Pod Logs'), breadcrumb: T('Pod Logs') },
-  }
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class ApplicationsRoutingModule { }

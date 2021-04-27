@@ -13,12 +13,11 @@ import { LocaleService } from 'app/services/locale.service';
 @Component({
   selector: 'system-failover',
   templateUrl: './failover.component.html',
-  styleUrls: ['./failover.component.css']
+  styleUrls: ['./failover.component.css'],
 })
 export class FailoverComponent implements OnInit {
-
-  public product_type: ProductType;
-  public copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
+  product_type: ProductType;
+  copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
   private getProdType: Subscription;
 
   readonly ProductType = ProductType;
@@ -27,11 +26,11 @@ export class FailoverComponent implements OnInit {
     protected loader: AppLoaderService, public translate: TranslateService,
     protected dialogService: DialogService, protected dialog: MatDialog,
     private sysGeneralService: SystemGeneralService, private localeService: LocaleService) {
-      this.ws = ws;
-      this.getProdType = this.sysGeneralService.getProductType.subscribe((res)=>{
-        this.product_type = res as ProductType;
-        this.getProdType.unsubscribe();
-      });
+    this.ws = ws;
+    this.getProdType = this.sysGeneralService.getProductType.subscribe((res) => {
+      this.product_type = res as ProductType;
+      this.getProdType.unsubscribe();
+    });
   }
 
   isWSConnected() {
@@ -54,7 +53,7 @@ export class FailoverComponent implements OnInit {
       (res) => {
       },
       (res) => { // error on reboot
-        this.dialogService.errorReport(res.error, res.reason, res.trace.formatted).subscribe(closed => {
+        this.dialogService.errorReport(res.error, res.reason, res.trace.formatted).subscribe((closed) => {
           this.router.navigate(['/session/signin']);
         });
       },
@@ -64,6 +63,7 @@ export class FailoverComponent implements OnInit {
         setTimeout(() => {
           this.isWSConnected();
         }, 1000);
-      });
+      },
+    );
   }
 }

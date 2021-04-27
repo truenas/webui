@@ -16,20 +16,20 @@ import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-tabl
 
 @Component({
   selector: 'app-scrub-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, UserService, EntityFormService],
 })
 export class ScrubListComponent implements InputTableConf, OnDestroy {
-  public title = T('Scrub Tasks');
-  public queryCall: string = 'pool.scrub.query';
-  public wsDelete: string = 'pool.scrub.delete';
-  public route_add: string[] = ['tasks', 'scrub', 'add'];
-  public route_add_tooltip = 'Add Scrub Task';
-  public route_edit: string[] = ['tasks', 'scrub', 'edit'];
-  public entityList: EntityTableComponent;
-  public parent: any;
+  title = T('Scrub Tasks');
+  queryCall = 'pool.scrub.query';
+  wsDelete = 'pool.scrub.delete';
+  route_add: string[] = ['tasks', 'scrub', 'add'];
+  route_add_tooltip = 'Add Scrub Task';
+  route_edit: string[] = ['tasks', 'scrub', 'edit'];
+  entityList: EntityTableComponent;
+  parent: any;
 
-  public columns: Array<any> = [
+  columns: any[] = [
     { name: T('Pool'), prop: 'pool_name', always_display: true },
     { name: T('Threshold days'), prop: 'threshold' },
     { name: T('Description'), prop: 'description' },
@@ -44,8 +44,8 @@ export class ScrubListComponent implements InputTableConf, OnDestroy {
     { name: T('Next Run'), prop: 'scrub_next_run' },
     { name: T('Enabled'), prop: 'enabled' },
   ];
-  public rowIdentifier = 'id';
-  public config: any = {
+  rowIdentifier = 'id';
+  config: any = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {

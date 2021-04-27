@@ -3,39 +3,41 @@ import { MatDialog } from '@angular/material/dialog';
 import { Option } from 'app/interfaces/option.interface';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import {FormBuilder, FormControl, FormGroup, FormArray, Validators} from '@angular/forms';
+import {
+  FormBuilder, FormControl, FormGroup, FormArray, Validators,
+} from '@angular/forms';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import { ModalService } from '../../../services/modal.service';
 import { DialogService } from '../../../services/index';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { ApplicationsService } from '../applications.service';
-import  helptext  from '../../../helptext/apps/apps';
+import helptext from '../../../helptext/apps/apps';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormListComponent } from '../../common/entity/entity-form/components/form-list/form-list.component';
 import { EntityUtils } from '../../common/entity/utils';
 
 @Component({
   selector: 'app-chart-release-edit',
-  template: `<entity-form [conf]="this"></entity-form>`
+  template: '<entity-form [conf]="this"></entity-form>',
 })
 export class ChartReleaseEditComponent {
-  protected queryCall: string = 'chart.release.query';
-  protected queryCallOption: Array<any>;
+  protected queryCall = 'chart.release.query';
+  protected queryCallOption: any[];
   protected customFilter: any[];
-  protected editCall: string = 'chart.release.update';
-  protected isEntity: boolean = true;
+  protected editCall = 'chart.release.update';
+  protected isEntity = true;
   protected entityForm: EntityFormComponent;
   private entityUtils = new EntityUtils();
 
-  private title= helptext.chartForm.editTitle;
+  private title = helptext.chartForm.editTitle;
   private name: string;
-  private getRow = new Subscription;
+  private getRow = new Subscription();
   private rowName: string;
   private interfaceList: Option[] = [];
   private dialogRef: any;
   protected fieldConfig: FieldConfig[];
-  public fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: 'Name',
       width: '100%',
@@ -45,10 +47,10 @@ export class ChartReleaseEditComponent {
           name: 'release_name',
           placeholder: helptext.chartForm.release_name.placeholder,
           tooltip: helptext.chartForm.release_name.tooltip,
-          disabled: true
-        }
+          disabled: true,
+        },
       ],
-      colspan: 2
+      colspan: 2,
     },
     {
       name: helptext.chartForm.image.title,
@@ -60,14 +62,14 @@ export class ChartReleaseEditComponent {
           name: 'repository',
           placeholder: helptext.chartForm.image.repo.placeholder,
           tooltip: helptext.chartForm.image.repo.tooltip,
-          required: true
+          required: true,
         },
         {
           type: 'input',
           name: 'tag',
           placeholder: helptext.chartForm.image.tag.placeholder,
           tooltip: helptext.chartForm.image.tag.tooltip,
-          value: 'latest'
+          value: 'latest',
         },
         {
           type: 'select',
@@ -75,9 +77,9 @@ export class ChartReleaseEditComponent {
           placeholder: helptext.chartForm.image.pullPolicy.placeholder,
           tooltip: helptext.chartForm.image.pullPolicy.tooltip,
           options: helptext.chartForm.image.pullPolicy.options,
-          value: helptext.chartForm.image.pullPolicy.options[0].value
-        }
-      ]
+          value: helptext.chartForm.image.pullPolicy.options[0].value,
+        },
+      ],
     },
     {
       name: helptext.chartForm.update.title,
@@ -90,9 +92,9 @@ export class ChartReleaseEditComponent {
           placeholder: helptext.chartForm.update.placeholder,
           tooltip: helptext.chartForm.update.tooltip,
           options: helptext.chartForm.update.options,
-          value: helptext.chartForm.update.options[0].value
+          value: helptext.chartForm.update.options[0].value,
         },
-      ]
+      ],
     },
     {
       name: helptext.chartForm.container.title,
@@ -109,9 +111,9 @@ export class ChartReleaseEditComponent {
           type: 'chip',
           name: 'containerArgs',
           placeholder: helptext.chartForm.container.args.placeholder,
-          tooltip: helptext.chartForm.container.args.tooltip
-        }
-      ]
+          tooltip: helptext.chartForm.container.args.tooltip,
+        },
+      ],
     },
     {
       name: helptext.chartForm.container.env_vars.title,
@@ -134,10 +136,10 @@ export class ChartReleaseEditComponent {
               name: 'value',
               placeholder: helptext.chartForm.container.env_vars.value.placeholder,
               tooltip: helptext.chartForm.container.env_vars.value.tooltip,
-            }
+            },
           ],
-          listFields: []
-        }
+          listFields: [],
+        },
       ],
       colspan: 2,
     },
@@ -151,9 +153,9 @@ export class ChartReleaseEditComponent {
           name: 'hostNetwork',
           placeholder: helptext.chartForm.hostNetwork.placeholder,
           tooltip: helptext.chartForm.hostNetwork.tooltip,
-          value: false
-        }
-      ]
+          value: false,
+        },
+      ],
     },
     {
       name: helptext.chartForm.externalLabel,
@@ -171,7 +173,7 @@ export class ChartReleaseEditComponent {
               name: 'hostInterface',
               placeholder: helptext.chartForm.externalInterfaces.host.placeholder,
               tooltip: helptext.chartForm.externalInterfaces.host.tooltip,
-              options: this.interfaceList
+              options: this.interfaceList,
             },
             {
               type: 'select',
@@ -197,12 +199,12 @@ export class ChartReleaseEditComponent {
                       when: [{
                         name: 'ipam',
                         value: 'static',
-                      }]
+                      }],
                     },
                   ],
                 },
               ],
-              listFields: []
+              listFields: [],
             },
             {
               type: 'list',
@@ -219,14 +221,14 @@ export class ChartReleaseEditComponent {
                   type: 'input',
                   name: 'gateway',
                   placeholder: helptext.chartForm.externalInterfaces.staticRoutes.gateway.placeholder,
-                }
+                },
               ],
-              listFields: []
-            }
+              listFields: [],
+            },
 
           ],
-          listFields: []
-        }
+          listFields: [],
+        },
       ],
       colspan: 2,
     },
@@ -246,7 +248,7 @@ export class ChartReleaseEditComponent {
         {
           type: 'paragraph',
           name: 'paragraph_dns_config',
-          paraText: helptext.chartForm.DNSConfig.label
+          paraText: helptext.chartForm.DNSConfig.label,
         },
         {
           type: 'chip',
@@ -259,8 +261,8 @@ export class ChartReleaseEditComponent {
           name: 'searches',
           placeholder: helptext.chartForm.DNSConfig.searches.placeholder,
           tooltip: helptext.chartForm.DNSConfig.searches.tooltip,
-        }
-      ]
+        },
+      ],
     },
     {
       name: helptext.chartForm.portForwardingList.title,
@@ -289,11 +291,11 @@ export class ChartReleaseEditComponent {
               name: 'protocol',
               placeholder: helptext.chartForm.portForwardingList.protocol.placeholder,
               options: helptext.chartForm.portForwardingList.protocol.options,
-              value: helptext.chartForm.portForwardingList.protocol.options[0].value
-            }
+              value: helptext.chartForm.portForwardingList.protocol.options[0].value,
+            },
           ],
-          listFields: []
-        }
+          listFields: [],
+        },
       ],
       colspan: 2,
     },
@@ -326,10 +328,10 @@ export class ChartReleaseEditComponent {
               type: 'checkbox',
               name: 'readOnly',
               placeholder: helptext.chartForm.hostPathVolumes.readOnly.placeholder,
-            }
+            },
           ],
-          listFields: []
-        }
+          listFields: [],
+        },
       ],
       colspan: 2,
     },
@@ -355,10 +357,10 @@ export class ChartReleaseEditComponent {
               placeholder: helptext.chartForm.volumes.mountPath.placeholder,
               tooltip: helptext.chartForm.volumes.mountPath.tooltip,
               type: 'input',
-            }
+            },
           ],
-          listFields: []
-        }
+          listFields: [],
+        },
       ],
       colspan: 2,
     },
@@ -371,46 +373,44 @@ export class ChartReleaseEditComponent {
           name: 'privileged',
           placeholder: helptext.chartForm.security.privileged.placeholder,
           value: false,
-        }
+        },
       ],
       colspan: 2,
     },
-  ]
+  ];
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
     private modalService: ModalService, private appService: ApplicationsService) {
-      this.appService.getNICChoices().subscribe(res => {
-        for (let item in res) {
-          this.interfaceList.push({ label: item, value: item})
-        }
-      })
-      this.getRow = this.modalService.getRow$.subscribe((rowName: string) => {
-        this.rowName = rowName;
-        this.customFilter = [[["id", "=", rowName]], {extra: {include_chart_schema: true}}];
-        this.getRow.unsubscribe();
-      })
-     }
+    this.appService.getNICChoices().subscribe((res) => {
+      for (const item in res) {
+        this.interfaceList.push({ label: item, value: item });
+      }
+    });
+    this.getRow = this.modalService.getRow$.subscribe((rowName: string) => {
+      this.rowName = rowName;
+      this.customFilter = [[['id', '=', rowName]], { extra: { include_chart_schema: true } }];
+      this.getRow.unsubscribe();
+    });
+  }
 
   parseSchema(schema: any) {
     let hasGpuConfig = false;
     try {
-
-      const gpuConfiguration = schema.questions.find((question: any) => question.variable=='gpuConfiguration');
+      const gpuConfiguration = schema.questions.find((question: any) => question.variable == 'gpuConfiguration');
 
       if (gpuConfiguration && gpuConfiguration.schema.attrs.length > 0) {
         const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(gpuConfiguration);
         const gpuFieldSet = {
           name: gpuConfiguration.group,
           label: true,
-          config: fieldConfigs
+          config: fieldConfigs,
         };
 
         this.fieldSets.push(gpuFieldSet);
 
         hasGpuConfig = true;
       }
-
-    } catch(error) {
+    } catch (error) {
       return this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
 
@@ -430,17 +430,17 @@ export class ChartReleaseEditComponent {
     }
     if (data.config.externalInterfaces) {
       data.config.externalInterfaces.forEach((i: any) => {
-        let tempArr: any[] = [];
+        const tempArr: any[] = [];
         if (i.ipam.staticIPConfigurations && i.ipam.staticIPConfigurations.length > 0) {
           i.ipam.staticIPConfigurations.forEach((j: any) => {
-            tempArr.push({staticIP: j})
-          })
+            tempArr.push({ staticIP: j });
+          });
           i.staticIPConfigurations = tempArr;
           i.staticRoutes = i.ipam.staticRoutes;
         }
 
         i.ipam = i.ipam.type;
-      })
+      });
     }
 
     if (data.gpuConfiguration) {
@@ -454,12 +454,11 @@ export class ChartReleaseEditComponent {
   }
 
   onChangeExternalInterfaces(listComponent: FormListComponent) {
-
     listComponent.listsFromArray.controls.forEach((externalInterface, index) => {
-      const staticRoutesFC = _.find(listComponent.config.listFields[index], {'name': 'staticRoutes'});
-      const staticIPConfigurationsFC = _.find(listComponent.config.listFields[index], {'name': 'staticIPConfigurations'});
+      const staticRoutesFC = _.find(listComponent.config.listFields[index], { name: 'staticRoutes' });
+      const staticIPConfigurationsFC = _.find(listComponent.config.listFields[index], { name: 'staticIPConfigurations' });
 
-      (<FormGroup>externalInterface).controls['ipam'].valueChanges.subscribe(value => {
+      (<FormGroup>externalInterface).controls['ipam'].valueChanges.subscribe((value) => {
         if (value === 'static') {
           staticIPConfigurationsFC.isHidden = false;
           staticRoutesFC.isHidden = false;
@@ -467,13 +466,12 @@ export class ChartReleaseEditComponent {
           staticIPConfigurationsFC.isHidden = true;
           staticRoutesFC.isHidden = true;
         }
-      })
+      });
     });
   }
 
   customSubmit(data: any) {
-
-    let parsedData: any = {};
+    const parsedData: any = {};
     this.entityUtils.parseFormControlValues(data, parsedData);
 
     let envVars = [];
@@ -496,7 +494,7 @@ export class ChartReleaseEditComponent {
       volList = data.volumes;
     }
 
-    let ext_interfaces: any[] = [];
+    const ext_interfaces: any[] = [];
     if (data.externalInterfaces && data.externalInterfaces.length > 0 && data.externalInterfaces[0].hostInterface) {
       data.externalInterfaces.forEach((i: any) => {
         if (i.ipam !== 'static') {
@@ -505,15 +503,15 @@ export class ChartReleaseEditComponent {
               hostInterface: i.hostInterface,
               ipam: {
                 type: i.ipam,
-              }
-            }
+              },
+            },
           );
         } else {
-          let ipList: any[] = [];
+          const ipList: any[] = [];
           if (i.staticIPConfigurations && i.staticIPConfigurations.length > 0) {
             i.staticIPConfigurations.forEach((item: any) => {
               ipList.push(item.staticIP);
-            })
+            });
           }
           ext_interfaces.push(
             {
@@ -521,22 +519,22 @@ export class ChartReleaseEditComponent {
               ipam: {
                 type: i.ipam,
                 staticIPConfigurations: ipList,
-                staticRoutes: i.staticRoutes
-              }
-            }
+                staticRoutes: i.staticRoutes,
+              },
+            },
           );
         }
-      })
+      });
     }
 
-    let payload = [this.name, {
+    const payload = [this.name, {
       values: {
         containerArgs: data.containerArgs,
         containerCommand: data.containerCommand,
         containerEnvironmentVariables: envVars,
         dnsConfig: {
           nameservers: data.nameservers,
-          searches: data.searches
+          searches: data.searches,
         },
         dnsPolicy: data.dnsPolicy,
         externalInterfaces: ext_interfaces,
@@ -545,7 +543,7 @@ export class ChartReleaseEditComponent {
         image: {
           repository: data.repository,
           pullPolicy: data.pullPolicy,
-          tag: data.tag
+          tag: data.tag,
         },
         portForwardingList: pfList,
         updateStrategy: data.updateStrategy,
@@ -553,16 +551,21 @@ export class ChartReleaseEditComponent {
         workloadType: 'Deployment',
         securityContext: {
           privileged: data.privileged,
-        }
-      }
-    }]
+        },
+      },
+    }];
 
     if (parsedData['gpuConfiguration']) {
       (payload[1] as any)['values']['gpuConfiguration'] = parsedData['gpuConfiguration'];
     }
 
-    this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
-      helptext.installing) }, disableClose: true});
+    this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+      data: {
+        title: (
+          helptext.installing),
+      },
+      disableClose: true,
+    });
     this.dialogRef.componentInstance.setCall(this.editCall, payload);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe(() => {
@@ -571,5 +574,4 @@ export class ChartReleaseEditComponent {
       this.modalService.refreshTable();
     });
   }
-
 }

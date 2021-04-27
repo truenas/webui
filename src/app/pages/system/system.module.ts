@@ -12,21 +12,21 @@ import { routing } from './system.routing';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
 
-import { AdvancedSettingsComponent } from './advanced/';
-import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/';
-import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename/';
-import { BootEnvironmentListComponent } from './bootenv/bootenv-list/';
+import { AdvancedSettingsComponent } from './advanced';
+import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone';
+import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename';
+import { BootEnvironmentListComponent } from './bootenv/bootenv-list';
 import { BootEnvironmentCreateComponent } from './bootenv/bootenv-create';
 import { BootEnvReplaceFormComponent } from './bootenv/bootenv-replace';
-import { BootStatusListComponent } from './bootenv/bootenv-status/';
+import { BootStatusListComponent } from './bootenv/bootenv-status';
 import { BootEnvAttachFormComponent } from './bootenv/bootenv-attach';
-import { TunableListComponent } from './tunable/tunable-list/';
-import { TunableFormComponent } from './tunable/tunable-form/';
-import { UpdateComponent } from './update/';
-import { ManualUpdateComponent } from './update/manualupdate/';
+import { TunableListComponent } from './tunable/tunable-list';
+import { TunableFormComponent } from './tunable/tunable-form';
+import { UpdateComponent } from './update';
+import { ManualUpdateComponent } from './update/manualupdate';
 import { NTPServerFormComponent } from './general-settings/ntpservers/ntpserver-form';
 import { SupportComponent } from './general-settings/support/support.component';
-import { AlertServiceListComponent } from './alertservice/alertservice-list/';
+import { AlertServiceListComponent } from './alertservice/alertservice-list';
 import { TranslateModule } from '@ngx-translate/core';
 import { EmailComponent } from './email';
 import { AlertServiceComponent } from './alertservice/alert-service/alert-service.component';
@@ -37,8 +37,8 @@ import { EulaComponent } from './general-settings/support/eula/eula.component';
 import { ProactiveComponent } from './general-settings/support/proactive/proactive.component';
 import { SupportFormLicensedComponent } from './general-settings/support/support-licensed/support-form-licensed.component';
 import { SupportFormUnlicensedComponent } from './general-settings/support/support-unlicensed/support-form-unlicensed.component';
-import { SysInfoComponent } from './general-settings/support/sys-info/sys-info.component'
-import { KmipComponent} from './kmip/kmip.component';
+import { SysInfoComponent } from './general-settings/support/sys-info/sys-info.component';
+import { KmipComponent } from './kmip/kmip.component';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { QRDialog } from './two-factor/two-factor.component';
 import { GeneralSettingsComponent } from './general-settings/general-settings.component';
@@ -58,7 +58,7 @@ import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-
     EntityModule, CommonModule, FormsModule,
     ReactiveFormsModule, NgxUploaderModule, routing,
     MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule,
-    EnclosureModule, CommonDirectivesModule, QRCodeModule
+    EnclosureModule, CommonDirectivesModule, QRCodeModule,
   ],
   declarations: [
     AdvancedSettingsComponent,
@@ -98,9 +98,9 @@ import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-
     InitshutdownFormComponent,
     InitshutdownListComponent,
     CronFormComponent,
-    CronListComponent
+    CronListComponent,
   ],
   entryComponents: [QRDialog],
-  providers: []
+  providers: [],
 })
 export class SystemModule {}

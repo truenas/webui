@@ -10,15 +10,15 @@ import helptext from '../../../../helptext/storage/resilver/resilver';
 
 @Component({
   selector: 'resilver-priority',
-  template: `<entity-form [conf]="this"></entity-form>`,
-  providers: [TaskService]
+  template: '<entity-form [conf]="this"></entity-form>',
+  providers: [TaskService],
 })
 export class ResilverComponent {
-  protected queryCall: string = 'pool.resilver.config';
-  protected editCall: string = 'pool.resilver.update';
+  protected queryCall = 'pool.resilver.config';
+  protected editCall = 'pool.resilver.update';
   protected route_success: string[] = ['storage'];
 
-  public fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext.fieldset_resilver,
       class: 'resilver',
@@ -77,16 +77,16 @@ export class ResilverComponent {
           }],
           value: [1, 2, 3, 4, 5, 6, 7],
           required: true,
-          validation : helptext.weekday_validation
-        }
-      ]
-    }
+          validation: helptext.weekday_validation,
+        },
+      ],
+    },
   ];
-  public fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
 
   constructor(protected router: Router, protected taskService: TaskService) {
-    const begin_field = _.find(this.fieldSets[0].config, { 'name': 'begin' });
-    const end_field = _.find(this.fieldSets[0].config, { 'name': 'end' });
+    const begin_field = _.find(this.fieldSets[0].config, { name: 'begin' });
+    const end_field = _.find(this.fieldSets[0].config, { name: 'end' });
     const time_options = this.taskService.getTimeOptions();
     for (let i = 0; i < time_options.length; i++) {
       begin_field.options.push({ label: time_options[i].label, value: time_options[i].value });

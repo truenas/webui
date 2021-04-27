@@ -11,22 +11,22 @@ import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-cron-initshutdown-add',
-  template: `<entity-form [conf]="this"></entity-form>`,
+  template: '<entity-form [conf]="this"></entity-form>',
 })
 export class InitshutdownFormComponent {
   protected title: string;
   protected queryCall = 'initshutdownscript.query';
   protected addCall = 'initshutdownscript.create';
   protected editCall = 'initshutdownscript.update';
-  protected customFilter: Array<any> = [];
+  protected customFilter: any[] = [];
   protected entityForm: EntityFormComponent;
-  protected isEntity: boolean = true;
-  protected isOneColumnForm: boolean = true;
+  protected isEntity = true;
+  protected isOneColumnForm = true;
   protected type_control: any;
   protected pk: any;
 
-  public fieldConfig: FieldConfig[] = [];
-  public fieldSets: FieldSet[] = [
+  fieldConfig: FieldConfig[] = [];
+  fieldSets: FieldSet[] = [
     {
       name: helptext.ini_title,
       class: 'add-init',
@@ -138,7 +138,7 @@ export class InitshutdownFormComponent {
   }
 
   formUpdate(type: any) {
-    let isCommand = type == 'COMMAND' ? true : false;
+    const isCommand = type == 'COMMAND';
 
     this.entityForm.setDisabled('script', isCommand, isCommand);
     this.entityForm.setDisabled('command', !isCommand, !isCommand);

@@ -1,10 +1,10 @@
-export const ACTION_DISABLE = "DISABLE";
-export const ACTION_ENABLE = "ENABLE";
-export const ACTION_SHOW = "SHOW";
-export const ACTION_HIDE = "HIDE";
+export const ACTION_DISABLE = 'DISABLE';
+export const ACTION_ENABLE = 'ENABLE';
+export const ACTION_SHOW = 'SHOW';
+export const ACTION_HIDE = 'HIDE';
 
-export const CONNECTION_AND = "AND";
-export const CONNECTION_OR = "OR";
+export const CONNECTION_AND = 'AND';
+export const CONNECTION_OR = 'OR';
 
 export interface Relation {
   fieldName: string;

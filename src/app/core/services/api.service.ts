@@ -4,393 +4,392 @@ import { WebSocketService } from '../../services/ws.service';
 import { RestService } from '../../services/rest.service';
 import { CoreService, CoreEvent } from './core.service';
 import { DialogService } from '../../services';
-//import { DataService } from './data.service';
+// import { DataService } from './data.service';
 
 export interface ApiCall {
   namespace: string; // namespace for ws and path for rest
   args?: any;
   operation?: string; // DEPRECATED - Used for REST calls only
-  responseEvent ?: any;// The event name of the response this service will send
-  errorResponseEvent ?: any;// The event name of the response this service will send in case it fails
+  responseEvent?: any;// The event name of the response this service will send
+  errorResponseEvent?: any;// The event name of the response this service will send in case it fails
 }
 
 interface ApiDefinition {
   apiCall: ApiCall;
-  preProcessor?: (def:ApiCall) => ApiCall;
-  postProcessor?: (res:ApiCall, callArgs:any) => ApiCall;
+  preProcessor?: (def: ApiCall) => ApiCall;
+  postProcessor?: (res: ApiCall, callArgs: any) => ApiCall;
 }
 
 @Injectable()
 export class ApiService {
-
-  public debug:boolean = false;
+  debug = false;
 
   private apiDefinitions = {
-    UserAttributesRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2.0",
-        namespace:"user.query",
-        args: [] as any[],// eg. [["id", "=", "foo"]]
-        responseEvent: "UserAttributes"
+    UserAttributesRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0',
+        namespace: 'user.query',
+        args: [] as any[], // eg. [["id", "=", "foo"]]
+        responseEvent: 'UserAttributes',
       },
-      preProcessor(def:ApiCall){
-        let clone = Object.assign({}, def);
-        clone.args = [[["id", "=", 1]]];
-        return clone
+      preProcessor(def: ApiCall) {
+        const clone = { ...def };
+        clone.args = [[['id', '=', 1]]];
+        return clone;
       },
-      postProcessor(res: any){
-        let cloneRes = Object.assign({},res);
+      postProcessor(res: any) {
+        const cloneRes = { ...res };
         return cloneRes[0].attributes;
-      }
-    },
-    UserDataRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2.0",
-        namespace:"user.query",
-        args: [] as any[],// eg. [["id", "=", "foo"]]
-        responseEvent: "UserData"
       },
-      preProcessor(def:ApiCall){
-        //console.log("API SERVICE: USER DATA REQUESTED");
-        return def
-      }
     },
-    UserDataUpdate:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2.0",
-        namespace:"user.set_attribute",
+    UserDataRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0',
+        namespace: 'user.query',
+        args: [] as any[], // eg. [["id", "=", "foo"]]
+        responseEvent: 'UserData',
+      },
+      preProcessor(def: ApiCall) {
+        // console.log("API SERVICE: USER DATA REQUESTED");
+        return def;
+      },
+    },
+    UserDataUpdate: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0',
+        namespace: 'user.set_attribute',
         args: [] as any[],
       },
-      preProcessor(def:ApiCall){
-        let uid:number = 1;
-        let redef = Object.assign({}, def);
-        redef.args =  [ uid, "preferences",def.args ] ;
+      preProcessor(def: ApiCall) {
+        const uid = 1;
+        const redef = { ...def };
+        redef.args = [uid, 'preferences', def.args];
         return redef;
       },
-      postProcessor(res: any, callArgs: any, core: any){
-        let cloneRes = Object.assign({},res);
-        if(res == 1){
-          core.emit({name:"UserDataRequest", data: [[[ "id", "=", 1 ]]] });
+      postProcessor(res: any, callArgs: any, core: any) {
+        const cloneRes = { ...res };
+        if (res == 1) {
+          core.emit({ name: 'UserDataRequest', data: [[['id', '=', 1]]] });
         }
         return cloneRes;
-      }
-    },
-    VolumeDataRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2.0",
-        namespace: "pool.dataset.query",
-        args: [] as any[],
-        responseEvent: "VolumeData"
       },
-      preProcessor(def:ApiCall){
+    },
+    VolumeDataRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0',
+        namespace: 'pool.dataset.query',
+        args: [] as any[],
+        responseEvent: 'VolumeData',
+      },
+      preProcessor(def: ApiCall) {
         const queryFilters = [
-          ["name","~", "^[^\/]+$" ], // Root datasets only
+          ['name', '~', '^[^\/]+$'], // Root datasets only
         ];
 
         return { args: [queryFilters], ...def };
       },
     },
-    DisksRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2.0",
+    DisksRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0',
         args: [] as any[],
-        namespace: "disk.query",
-        responseEvent: "DisksData"
-      }
-    },
-    MultipathRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2.0",
-        args: [] as any[],
-        namespace: "multipath.query",
-        responseEvent: "MultipathData"
-      }
-    },
-    EnclosureDataRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2.0",
-        args: [] as any[],
-        namespace: "enclosure.query",
-        responseEvent: "EnclosureData"
-      }
-    },
-    EnclosureUpdate:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2.0",
-        args: [] as any[],
-        namespace: "enclosure.update",
-        responseEvent: "EnclosureChanged"
+        namespace: 'disk.query',
+        responseEvent: 'DisksData',
       },
     },
-    SetEnclosureLabel:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2.0",
+    MultipathRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0',
         args: [] as any[],
-        namespace: "enclosure.update",
-        responseEvent: "EnclosureLabelChanged"
+        namespace: 'multipath.query',
+        responseEvent: 'MultipathData',
       },
-      preProcessor(def:ApiCall){
-        let redef = Object.assign({}, def);
-        const args = [def.args.id, {label: def.args.label}];
+    },
+    EnclosureDataRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0',
+        args: [] as any[],
+        namespace: 'enclosure.query',
+        responseEvent: 'EnclosureData',
+      },
+    },
+    EnclosureUpdate: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0',
+        args: [] as any[],
+        namespace: 'enclosure.update',
+        responseEvent: 'EnclosureChanged',
+      },
+    },
+    SetEnclosureLabel: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0',
+        args: [] as any[],
+        namespace: 'enclosure.update',
+        responseEvent: 'EnclosureLabelChanged',
+      },
+      preProcessor(def: ApiCall) {
+        const redef = { ...def };
+        const args = [def.args.id, { label: def.args.label }];
         redef.args = args;
         return redef;
       },
-      postProcessor(res: any, callArgs: any){
-        return {label: res.label, index: callArgs.index, id: res.id};
-      }
-    },
-    SetEnclosureSlotStatus:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2.0",
-        args: [] as any[],
-        namespace: "enclosure.set_slot_status",
-        responseEvent: "EnclosureSlotStatusChanged"
-      }
-    },
-    PoolDataRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2.0",
-        args: [] as any[],
-        namespace: "pool.query",
-        responseEvent: "PoolData"
-      }
-    },
-    PoolDisksRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2.0",
-        namespace:"pool.get_disks",
-        args: [] as any[],
-        responseEvent: "PoolDisks"
+      postProcessor(res: any, callArgs: any) {
+        return { label: res.label, index: callArgs.index, id: res.id };
       },
-      preProcessor(def:ApiCall){
-        let redef = Object.assign({}, def);
-        redef.responseEvent = def.args.length > 0 ? def.responseEvent + def.args.join() : def.responseEvent ;
+    },
+    SetEnclosureSlotStatus: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0',
+        args: [] as any[],
+        namespace: 'enclosure.set_slot_status',
+        responseEvent: 'EnclosureSlotStatusChanged',
+      },
+    },
+    PoolDataRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0',
+        args: [] as any[],
+        namespace: 'pool.query',
+        responseEvent: 'PoolData',
+      },
+    },
+    PoolDisksRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0',
+        namespace: 'pool.get_disks',
+        args: [] as any[],
+        responseEvent: 'PoolDisks',
+      },
+      preProcessor(def: ApiCall) {
+        const redef = { ...def };
+        redef.responseEvent = def.args.length > 0 ? def.responseEvent + def.args.join() : def.responseEvent;
         return redef;
       },
-      postProcessor(res: any, callArgs: any){
-        let cloneRes = Object.assign({},res);
-        cloneRes = {callArgs:callArgs ,data: res}
+      postProcessor(res: any, callArgs: any) {
+        let cloneRes = { ...res };
+        cloneRes = { callArgs, data: res };
         return cloneRes;
-      }
-    },
-    PrimaryNicInfoRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2.0",
-        namespace:"interface.websocket_interface",
-        args: [] as any[],
-        responseEvent: "PrimaryNicInfo"
-      }
-    },
-    NicInfoRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2.0",
-        namespace:"interface.query",
-        args: [] as any[],
-        responseEvent: "NicInfo"
-      }
-    },
-    NetInfoRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2.0",
-        namespace:"network.general.summary",
-        args: [] as any[],
-        responseEvent: "NetInfo"
-      }
-    },
-    UpdateCheck:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2.0",
-        namespace:"update.check_available",
-        args: [] as any[],
-        responseEvent: "UpdateChecked"
-      }
-    },
-    VmProfilesRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2.0", // Middleware returns device info but no status
-        namespace: "vm.query",
-        args: [] as any[],
-        responseEvent: "VmProfiles"
-      }
-    },
-    VmProfileRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2.0",
-        namespace:"vm.query",
-        args: [] as any[],// eg. [["id", "=", "foo"]]
-        responseEvent: "VmProfile"
-      }
-    },
-    VmProfileUpdate:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2.0",
-        namespace:"vm.update",
-        args: [] as any[],// eg. [25, {"name": "Fedora", "description": "Linux", "vcpus": 1, "memory": 2048, "bootloader": "UEFI", "autostart": true}]
-        responseEvent: "VmProfileRequest"
       },
-      postProcessor(res: any){
-        //DEBUG: console.log(res);
-        let cloneRes = Object.assign({},res);
-        cloneRes = [[["id","=",res]]];// eg. [["id", "=", "foo"]]
+    },
+    PrimaryNicInfoRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0',
+        namespace: 'interface.websocket_interface',
+        args: [] as any[],
+        responseEvent: 'PrimaryNicInfo',
+      },
+    },
+    NicInfoRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0',
+        namespace: 'interface.query',
+        args: [] as any[],
+        responseEvent: 'NicInfo',
+      },
+    },
+    NetInfoRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0',
+        namespace: 'network.general.summary',
+        args: [] as any[],
+        responseEvent: 'NetInfo',
+      },
+    },
+    UpdateCheck: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0',
+        namespace: 'update.check_available',
+        args: [] as any[],
+        responseEvent: 'UpdateChecked',
+      },
+    },
+    VmProfilesRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0', // Middleware returns device info but no status
+        namespace: 'vm.query',
+        args: [] as any[],
+        responseEvent: 'VmProfiles',
+      },
+    },
+    VmProfileRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0',
+        namespace: 'vm.query',
+        args: [] as any[], // eg. [["id", "=", "foo"]]
+        responseEvent: 'VmProfile',
+      },
+    },
+    VmProfileUpdate: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0',
+        namespace: 'vm.update',
+        args: [] as any[], // eg. [25, {"name": "Fedora", "description": "Linux", "vcpus": 1, "memory": 2048, "bootloader": "UEFI", "autostart": true}]
+        responseEvent: 'VmProfileRequest',
+      },
+      postProcessor(res: any) {
+        // DEBUG: console.log(res);
+        let cloneRes = { ...res };
+        cloneRes = [[['id', '=', res]]];// eg. [["id", "=", "foo"]]
         return cloneRes;
-      }
-    },
-    VmStatusRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2.0",
-        namespace:"vm.query",
-        args: [] as any[],// eg. [["id", "=", "foo"]]
-        responseEvent: "VmStatus"
       },
-      postProcessor(res: any){
+    },
+    VmStatusRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0',
+        namespace: 'vm.query',
+        args: [] as any[], // eg. [["id", "=", "foo"]]
+        responseEvent: 'VmStatus',
+      },
+      postProcessor(res: any) {
         const cloneRes = [];
         for (const vmstatus of res) {
-          cloneRes.push({id:vmstatus.id ,state: vmstatus.status.state})
+          cloneRes.push({ id: vmstatus.id, state: vmstatus.status.state });
         }
         return cloneRes;
-      }
-    },
-    VmStart:{
-      apiCall:{
-        protocol:"websocket",
-        version:"1",
-        namespace:"vm.start",
-        args:[] as any,
-        responseEvent:"VmProfiles",
-        errorResponseEvent: "VmStartFailure"
       },
-      postProcessor(res: any, callArgs: any){
-        let cloneRes = Object.assign({},res);
-        cloneRes = {id:callArgs[0] ,state: res} // res:boolean
+    },
+    VmStart: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '1',
+        namespace: 'vm.start',
+        args: [] as any,
+        responseEvent: 'VmProfiles',
+        errorResponseEvent: 'VmStartFailure',
+      },
+      postProcessor(res: any, callArgs: any) {
+        let cloneRes = { ...res };
+        cloneRes = { id: callArgs[0], state: res }; // res:boolean
         return cloneRes;
-      }
-    },
-    VmRestart:{
-      apiCall:{
-        protocol:"websocket",
-        version:"1",
-        namespace:"vm.restart",
-        args:[] as any,
-        responseEvent:"VmProfiles",
-        errorResponseEvent: "VmStartFailure"
       },
-      postProcessor(res: any, callArgs: any){
-        let cloneRes = Object.assign({},res);
-        cloneRes = {id:callArgs[0] ,state: res} // res:boolean
+    },
+    VmRestart: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '1',
+        namespace: 'vm.restart',
+        args: [] as any,
+        responseEvent: 'VmProfiles',
+        errorResponseEvent: 'VmStartFailure',
+      },
+      postProcessor(res: any, callArgs: any) {
+        let cloneRes = { ...res };
+        cloneRes = { id: callArgs[0], state: res }; // res:boolean
         return cloneRes;
-      }
-    },
-    VmStop:{
-      apiCall:{
-        protocol:"websocket",
-        version:"1",
-        namespace:"vm.stop",
-        args:[] as any,
-        responseEvent:"VmProfiles",
-        errorResponseEvent: "VmStopFailure"
       },
-      postProcessor(res: any, callArgs: any){
-        let cloneRes = Object.assign({},res);
-        cloneRes = {id:callArgs[0]} // res:boolean
+    },
+    VmStop: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '1',
+        namespace: 'vm.stop',
+        args: [] as any,
+        responseEvent: 'VmProfiles',
+        errorResponseEvent: 'VmStopFailure',
+      },
+      postProcessor(res: any, callArgs: any) {
+        let cloneRes = { ...res };
+        cloneRes = { id: callArgs[0] }; // res:boolean
         return cloneRes;
-      }
-    },
-    VmPowerOff:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2",
-        namespace:"vm.stop",
-        args:[] as any,
-        responseEvent:"VmProfiles",
-        errorResponseEvent: "VmStopFailure"
       },
-      preProcessor(def:ApiCall){
-        let redef = Object.assign({}, def);
+    },
+    VmPowerOff: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2',
+        namespace: 'vm.stop',
+        args: [] as any,
+        responseEvent: 'VmProfiles',
+        errorResponseEvent: 'VmStopFailure',
+      },
+      preProcessor(def: ApiCall) {
+        const redef = { ...def };
         redef.args.push(true);
         return redef;
       },
-      postProcessor(res: any, callArgs: any){
-        let cloneRes = Object.assign({},res);
-        cloneRes = {id:callArgs[0]} // res:boolean
+      postProcessor(res: any, callArgs: any) {
+        let cloneRes = { ...res };
+        cloneRes = { id: callArgs[0] }; // res:boolean
         return cloneRes;
-      }
-    },
-    VmCreate:{
-      apiCall:{
-        protocol:"websocket",
-        version:"1",
-        namespace:"vm.create",
-        args:[] as any,
-        responseEvent:"VmProfiles"
-      }
-    },
-    VmClone:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2",
-        namespace:"vm.clone",
-        args:[] as any,
-        responseEvent:"VmProfiles",
-        errorResponseEvent: "VmCloneFailure"
       },
-      postProcessor(res: any){
-        let cloneRes = Object.assign({},res);
+    },
+    VmCreate: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '1',
+        namespace: 'vm.create',
+        args: [] as any,
+        responseEvent: 'VmProfiles',
+      },
+    },
+    VmClone: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2',
+        namespace: 'vm.clone',
+        args: [] as any,
+        responseEvent: 'VmProfiles',
+        errorResponseEvent: 'VmCloneFailure',
+      },
+      postProcessor(res: any) {
+        let cloneRes = { ...res };
         cloneRes = null;
         return cloneRes;
-      }
+      },
     },
-    VmDelete:{
-      apiCall:{
-        protocol:"websocket",
-        version:"1",
-        namespace:"vm.delete",
-        args:[] as any,
-        errorResponseEvent: "VmDeleteFailure",
-        responseEvent:"VmProfiles",
+    VmDelete: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '1',
+        namespace: 'vm.delete',
+        args: [] as any,
+        errorResponseEvent: 'VmDeleteFailure',
+        responseEvent: 'VmProfiles',
       },
     },
     // Used by stats service!!
-    StatsRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2",
-        namespace:"stats.get_data",
-        args:{},
-        responseEvent:"StatsData"
+    StatsRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2',
+        namespace: 'stats.get_data',
+        args: {},
+        responseEvent: 'StatsData',
       },
-      preProcessor(def:ApiCall){
-        let redef = Object.assign({}, def);
-        redef.responseEvent = "Stats" + def.args.responseEvent;
+      preProcessor(def: ApiCall) {
+        const redef = { ...def };
+        redef.responseEvent = 'Stats' + def.args.responseEvent;
         redef.args = def.args.args;
         return redef;
       },
-      postProcessor(res: any, callArgs: any){
-        let cloneRes = Object.assign({},res);
-        let legend = res.meta.legend;
-        let l = [];
-        for(let i in legend){
-          if(callArgs.legendPrefix){
-            let spl = legend[i].split(callArgs.legendPrefix);
+      postProcessor(res: any, callArgs: any) {
+        const cloneRes = { ...res };
+        const legend = res.meta.legend;
+        const l = [];
+        for (const i in legend) {
+          if (callArgs.legendPrefix) {
+            const spl = legend[i].split(callArgs.legendPrefix);
             l.push(spl[1]);
           } else {
             l.push(legend[i]);
@@ -398,125 +397,125 @@ export class ApiService {
         }
         cloneRes.meta.legend = l;
         return cloneRes;
-      }
+      },
     },
     // Used by stats service!!
-    StatsSourcesRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"1",
-        namespace:"stats.get_sources",
-        args:[] as any,
-        responseEvent:"StatsSources"
-      }
-    },
-    ReportingGraphsRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2",
-        namespace:"reporting.graphs",
-        args:[] as any,
-        responseEvent:"ReportingGraphs"
-      }
-    },
-    StatsCpuRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"1",
-        namespace:"stats.get_data",
-        args:[] as any,
-        responseEvent:"StatsData"
+    StatsSourcesRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '1',
+        namespace: 'stats.get_sources',
+        args: [] as any,
+        responseEvent: 'StatsSources',
       },
-      preProcessor(def:ApiCall){
-        let redef = Object.assign({}, def);
-        //Do some stuff here
-        let dataList = [];
-        let oldDataList = redef.args[0];
-        let options = redef.args[1];
+    },
+    ReportingGraphsRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2',
+        namespace: 'reporting.graphs',
+        args: [] as any,
+        responseEvent: 'ReportingGraphs',
+      },
+    },
+    StatsCpuRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '1',
+        namespace: 'stats.get_data',
+        args: [] as any,
+        responseEvent: 'StatsData',
+      },
+      preProcessor(def: ApiCall) {
+        const redef = { ...def };
+        // Do some stuff here
+        const dataList = [];
+        const oldDataList = redef.args[0];
+        const options = redef.args[1];
 
-        for(let i in oldDataList){
+        for (const i in oldDataList) {
           dataList.push({
-            source:"aggregation-cpu-sum",
-            type:"cpu-" + oldDataList[i],
-            dataset:"value"
+            source: 'aggregation-cpu-sum',
+            type: 'cpu-' + oldDataList[i],
+            dataset: 'value',
           });
         }
 
-        redef.args = [dataList,options];
+        redef.args = [dataList, options];
         redef.responseEvent = 'StatsCpuData';
         return redef;
       },
-      postProcessor(res: any){
-        let cloneRes = Object.assign({},res);
-        let legend = res.meta.legend;
-        let l = [];
-        for(let i in legend){
-          let spl = legend[i].split("aggregation-cpu-sum/cpu-");
+      postProcessor(res: any) {
+        const cloneRes = { ...res };
+        const legend = res.meta.legend;
+        const l = [];
+        for (const i in legend) {
+          const spl = legend[i].split('aggregation-cpu-sum/cpu-');
           l.push(spl[1]);
         }
         cloneRes.meta.legend = l;
         return cloneRes;
-      }
-    },
-    StatsMemoryRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"1",
-        namespace:"stats.get_data",
-        args:[] as any,
-        responseEvent:"StatsData"
       },
-      preProcessor(def:ApiCall){
-        let redef = Object.assign({}, def);
-        //Do some stuff here
+    },
+    StatsMemoryRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '1',
+        namespace: 'stats.get_data',
+        args: [] as any,
+        responseEvent: 'StatsData',
+      },
+      preProcessor(def: ApiCall) {
+        const redef = { ...def };
+        // Do some stuff here
 
-        let dataList = [];
-        let oldDataList = redef.args[0];
-        let options = redef.args[1];
+        const dataList = [];
+        const oldDataList = redef.args[0];
+        const options = redef.args[1];
 
-        for(let i in oldDataList){
+        for (const i in oldDataList) {
           dataList.push({
-            source:"memory",
-            type:"memory-" + oldDataList[i],
-            dataset:"value"
+            source: 'memory',
+            type: 'memory-' + oldDataList[i],
+            dataset: 'value',
           });
         }
 
-        redef.args = [dataList,options];
+        redef.args = [dataList, options];
         redef.responseEvent = 'StatsMemoryData';
         return redef;
       },
-      postProcessor(res: any){
-        let cloneRes = Object.assign({},res);
-        let legend = res.meta.legend;
-        let l = [];
-        for(let i in legend){
-          let spl = legend[i].split("memory/memory-");
+      postProcessor(res: any) {
+        const cloneRes = { ...res };
+        const legend = res.meta.legend;
+        const l = [];
+        for (const i in legend) {
+          const spl = legend[i].split('memory/memory-');
           l.push(spl[1]);
         }
         cloneRes.meta.legend = l;
         return cloneRes;
-      }
-    },
-    StatsDiskTempRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2",
-        namespace:"stats.get_data",
-        args:[] as any,
-        responseEvent:"StatsData"
       },
-      preProcessor(def:ApiCall){
-        //Clone the object
-        let redef = Object.assign({}, def);
-        let dataList = [];
-        let oldDataList = redef.args[0];
+    },
+    StatsDiskTempRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2',
+        namespace: 'stats.get_data',
+        args: [] as any,
+        responseEvent: 'StatsData',
+      },
+      preProcessor(def: ApiCall) {
+        // Clone the object
+        const redef = { ...def };
+        const dataList = [];
+        const oldDataList = redef.args[0];
 
-        for(let i in oldDataList){
+        for (const i in oldDataList) {
           dataList.push({
-            source:"disktemp-" + oldDataList,// disk name
-            type:"temperature",
-            dataset:"value"
+            source: 'disktemp-' + oldDataList, // disk name
+            type: 'temperature',
+            dataset: 'value',
           });
         }
 
@@ -524,257 +523,254 @@ export class ApiService {
         redef.responseEvent = 'StatsDiskTemp';
         return redef;
       },
-      postProcessor(res: any, callArgs: any){
-        let cloneRes = Object.assign({},res);
-        let legend = res.meta.legend;
-        let l = [];
-        for(let i in legend){
-          let spl = legend[i];
+      postProcessor(res: any, callArgs: any) {
+        const cloneRes = { ...res };
+        const legend = res.meta.legend;
+        const l = [];
+        for (const i in legend) {
+          const spl = legend[i];
           l.push(spl[1]);
         }
         cloneRes.meta.legend = l;
-        return {callArgs:callArgs, data:cloneRes};
-      }
-    },
-    StatsLoadAvgRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"1",
-        namespace:"stats.get_data",
-        args:[] as any,
-        responseEvent:"StatsData"
+        return { callArgs, data: cloneRes };
       },
-      preProcessor(def:ApiCall){
-        let redef = Object.assign({}, def);
-        //Do some stuff here
-        let dataList = [];
-        let oldDataList = redef.args[0];
-        let options = redef.args[1];
+    },
+    StatsLoadAvgRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '1',
+        namespace: 'stats.get_data',
+        args: [] as any,
+        responseEvent: 'StatsData',
+      },
+      preProcessor(def: ApiCall) {
+        const redef = { ...def };
+        // Do some stuff here
+        const dataList = [];
+        const oldDataList = redef.args[0];
+        const options = redef.args[1];
 
-        for(let i in oldDataList){
+        for (const i in oldDataList) {
           dataList.push({
-            source:"processes",
-            type:"ps_" + oldDataList[i],
-            dataset:"value"
+            source: 'processes',
+            type: 'ps_' + oldDataList[i],
+            dataset: 'value',
           });
         }
 
-        redef.args = [dataList,options];
+        redef.args = [dataList, options];
         redef.responseEvent = 'StatsLoadAvgData';
         return redef;
       },
-      postProcessor(res: any){
-        let cloneRes = Object.assign({},res);
-        let legend = res.meta.legend;
-        let l = [];
-        for(let i in legend){
-          let spl = legend[i].split("processes/ps_state-");
+      postProcessor(res: any) {
+        const cloneRes = { ...res };
+        const legend = res.meta.legend;
+        const l = [];
+        for (const i in legend) {
+          const spl = legend[i].split('processes/ps_state-');
           l.push(spl[1]);
         }
         cloneRes.meta.legend = l;
         return cloneRes;
-      }
+      },
     },
-    StatsVmemoryUsageRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2.0",
-        namespace:"vm.get_vmemory_in_use",
-        args: [] as any[],// eg. [["id", "=", "foo"]]
-        responseEvent: "StatsVmemoryUsage"
-      }
+    StatsVmemoryUsageRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0',
+        namespace: 'vm.get_vmemory_in_use',
+        args: [] as any[], // eg. [["id", "=", "foo"]]
+        responseEvent: 'StatsVmemoryUsage',
+      },
     },
-    DisksInfoRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2.0",
-        namespace:"disk.query",
+    DisksInfoRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0',
+        namespace: 'disk.query',
         args: [] as any[],
-        responseEvent: "DisksInfo"
-      }
+        responseEvent: 'DisksInfo',
+      },
     },
-    SensorDataRequest:{
-      apiCall:{
-        protocol:"websocket",
-        version:"2.0",
-        namespace:"sensor.query",
+    SensorDataRequest: {
+      apiCall: {
+        protocol: 'websocket',
+        version: '2.0',
+        namespace: 'sensor.query',
         args: [] as any[],
-        responseEvent: "SensorData"
-      }
+        responseEvent: 'SensorData',
+      },
     },
-  }
+  };
 
   constructor(
     protected core: CoreService,
     protected ws: WebSocketService,
     protected rest: RestService,
-    private dialog:DialogService,
+    private dialog: DialogService,
   ) {
-    this.ws.authStatus.subscribe((evt:any) =>{
-      this.core.emit({ name:"UserDataRequest",data:[[["id", "=", 1]]]});
-      this.core.emit({name:"Authenticated",data:evt,sender:this});
+    this.ws.authStatus.subscribe((evt: any) => {
+      this.core.emit({ name: 'UserDataRequest', data: [[['id', '=', 1]]] });
+      this.core.emit({ name: 'Authenticated', data: evt, sender: this });
     });
     this.registerDefinitions();
   }
 
-  registerDefinitions(){
-    //DEBUG: console.log("APISERVICE: Registering API Definitions");
-    for(var def in this.apiDefinitions){
-      //DEBUG: console.log("def = " + def);
-      this.core.register({observerClass:this, eventName:def}).subscribe(
-        (evt:CoreEvent) => {
-          //Process Event if CoreEvent is in the api definitions list
+  registerDefinitions() {
+    // DEBUG: console.log("APISERVICE: Registering API Definitions");
+    for (var def in this.apiDefinitions) {
+      // DEBUG: console.log("def = " + def);
+      this.core.register({ observerClass: this, eventName: def }).subscribe(
+        (evt: CoreEvent) => {
+          // Process Event if CoreEvent is in the api definitions list
           // TODO: Proper type:
           const name = evt.name as keyof ApiService['apiDefinitions'];
-          if(this.apiDefinitions[name]){
-            //DEBUG: console.log(evt);
-            let apiDef = this.apiDefinitions[name];
-            //DEBUG: console.log(apiDef)
-            //let call = this.parseCoreEvent(evt);
-            if(apiDef.apiCall.protocol == 'websocket'){
-              this.callWebsocket(evt,apiDef);
-            } else if(apiDef.apiCall.protocol == 'rest'){
-              this.callRest(evt,apiDef);
+          if (this.apiDefinitions[name]) {
+            // DEBUG: console.log(evt);
+            const apiDef = this.apiDefinitions[name];
+            // DEBUG: console.log(apiDef)
+            // let call = this.parseCoreEvent(evt);
+            if (apiDef.apiCall.protocol == 'websocket') {
+              this.callWebsocket(evt, apiDef);
+            } else if (apiDef.apiCall.protocol == 'rest') {
+              this.callRest(evt, apiDef);
             }
           }
         },
         (err) => {
-          //DEBUG: console.log(err)
-          });
+          // DEBUG: console.log(err)
+        },
+      );
     }
   }
 
-  private callRest(evt: any, def: any){
-    let baseUrl = "/api/v" + def.apiCall.version + "/";
-    let cloneDef = Object.assign({},def);
-    if(evt.data){
+  private callRest(evt: any, def: any) {
+    const baseUrl = '/api/v' + def.apiCall.version + '/';
+    const cloneDef = { ...def };
+    if (evt.data) {
       // PreProcessor: ApiDefinition manipulates call to be sent out.
-      if(def.preProcessor){
+      if (def.preProcessor) {
         cloneDef.apiCall = def.preProcessor(def.apiCall);
       }
 
-      let call = cloneDef.apiCall;//this.parseEventRest(evt);
+      const call = cloneDef.apiCall;// this.parseEventRest(evt);
       call.args = evt.data;
       (this.rest as any)[call.operation](baseUrl + call.namespace, evt.data, false).subscribe((res: any) => {
-        if(this.debug){
-          console.log("*** API Response:");
-          console.log(res)
+        if (this.debug) {
+          console.log('*** API Response:');
+          console.log(res);
         }
 
         // PostProcess
-        if(def.postProcessor){
-          res = def.postProcessor(res,evt.data,this.core);
+        if (def.postProcessor) {
+          res = def.postProcessor(res, evt.data, this.core);
         }
 
-        this.core.emit({name:call.responseEvent,data:res.data, sender: evt.data});
+        this.core.emit({ name: call.responseEvent, data: res.data, sender: evt.data });
       });
     } else {
       // PreProcessor: ApiDefinition manipulates call to be sent out.
-      if(def.preProcessor){
+      if (def.preProcessor) {
         cloneDef.apiCall = def.preProcessor(def.apiCall);
       }
 
-      let call = cloneDef.apiCall;//this.parseEventRest(evt);
+      const call = cloneDef.apiCall;// this.parseEventRest(evt);
       call.args = evt.data;
-      (this.rest as any)[call.operation](baseUrl + call.namespace,{}, false).subscribe((res: any) => {
-        if(this.debug){
-          console.log("*** API Response:");
+      (this.rest as any)[call.operation](baseUrl + call.namespace, {}, false).subscribe((res: any) => {
+        if (this.debug) {
+          console.log('*** API Response:');
           console.log(call);
         }
 
         // PostProcess
-        if(def.postProcessor){
-          res = def.postProcessor(res,evt.data,this.core);
+        if (def.postProcessor) {
+          res = def.postProcessor(res, evt.data, this.core);
         }
 
-        this.core.emit({name:call.responseEvent,data:res.data, sender: evt.data});
+        this.core.emit({ name: call.responseEvent, data: res.data, sender: evt.data });
       });
     }
-
   }
 
-  async callWebsocket(evt:CoreEvent, def: any){
-    let cloneDef = Object.assign({}, def);
+  async callWebsocket(evt: CoreEvent, def: any) {
+    const cloneDef = { ...def };
     const async_calls = [
-      "vm.start",
-      "vm.delete"
-    ]
+      'vm.start',
+      'vm.delete',
+    ];
 
-    if(evt.data){
+    if (evt.data) {
       cloneDef.apiCall.args = evt.data;
 
-      if(def.preProcessor && !async_calls.includes(def.apiCall.namespace)){
-        cloneDef.apiCall =  def.preProcessor(def.apiCall, this);
+      if (def.preProcessor && !async_calls.includes(def.apiCall.namespace)) {
+        cloneDef.apiCall = def.preProcessor(def.apiCall, this);
       }
 
       // PreProcessor: ApiDefinition manipulates call to be sent out.
-      if(def.preProcessor && async_calls.includes(def.apiCall.namespace)) {
-        cloneDef.apiCall =  await def.preProcessor(def.apiCall, this);
+      if (def.preProcessor && async_calls.includes(def.apiCall.namespace)) {
+        cloneDef.apiCall = await def.preProcessor(def.apiCall, this);
         if (!cloneDef.apiCall) {
-          this.core.emit({name:"VmStopped", data:{id:evt.data[0]}});
+          this.core.emit({ name: 'VmStopped', data: { id: evt.data[0] } });
           return;
         }
-      };
+      }
 
-
-      let call = cloneDef.apiCall;//this.parseEventWs(evt);
+      const call = cloneDef.apiCall;// this.parseEventWs(evt);
       this.ws.call(call.namespace, call.args).subscribe((res) => {
-        if(this.debug){
-          console.log("*** API Response:");
-          console.log(call)
+        if (this.debug) {
+          console.log('*** API Response:');
+          console.log(call);
         }
 
         // PostProcess
-        if(def.postProcessor){
-          res = def.postProcessor(res,evt.data,this.core);
+        if (def.postProcessor) {
+          res = def.postProcessor(res, evt.data, this.core);
         }
-        if(this.debug){
+        if (this.debug) {
           console.log(call.responseEvent);
           console.log(res);
         }
-        //this.core.emit({name:call.responseEvent, data:res, sender: evt.data}); // OLD WAY
-        if(call.responseEvent){
-          this.core.emit({name:call.responseEvent, data:res, sender: this});
+        // this.core.emit({name:call.responseEvent, data:res, sender: evt.data}); // OLD WAY
+        if (call.responseEvent) {
+          this.core.emit({ name: call.responseEvent, data: res, sender: this });
         }
       },
-      (error)=>{
-          error.id = call.args;
-          if (call.errorResponseEvent){
-            this.core.emit({name:call.errorResponseEvent, data:error, sender: this});
-          }
-          this.core.emit({name:call.responseEvent, data:error, sender: this});
+      (error) => {
+        error.id = call.args;
+        if (call.errorResponseEvent) {
+          this.core.emit({ name: call.errorResponseEvent, data: error, sender: this });
+        }
+        this.core.emit({ name: call.responseEvent, data: error, sender: this });
       });
     } else {
       // PreProcessor: ApiDefinition manipulates call to be sent out.
-      if(def.preProcessor){
+      if (def.preProcessor) {
         cloneDef.apiCall = def.preProcessor(def.apiCall);
       }
 
-      let call = cloneDef.apiCall;//this.parseEventWs(evt);
+      const call = cloneDef.apiCall;// this.parseEventWs(evt);
       this.ws.call(call.namespace, call.args || []).subscribe((res) => {
-        if(this.debug){
-          console.log("*** API Response:");
+        if (this.debug) {
+          console.log('*** API Response:');
           console.log(call);
         }
 
         // PostProcess
-        if(def.postProcessor){
-          res = def.postProcessor(res,evt.data,this.core);
+        if (def.postProcessor) {
+          res = def.postProcessor(res, evt.data, this.core);
         }
 
-        //this.core.emit({name:call.responseEvent, data:res, sender:evt.data }); // OLD WAY
-        if(call.responseEvent){
-          this.core.emit({name:call.responseEvent, data:res, sender:this });
+        // this.core.emit({name:call.responseEvent, data:res, sender:evt.data }); // OLD WAY
+        if (call.responseEvent) {
+          this.core.emit({ name: call.responseEvent, data: res, sender: this });
         }
-      },(error)=>{
+      }, (error) => {
         console.log(error);
-        if(call.responseFailedEvent){
+        if (call.responseFailedEvent) {
           error.id = call.args;
-          this.core.emit({name:call.responseFailedEvent, data:error, sender: this});
+          this.core.emit({ name: call.responseFailedEvent, data: error, sender: this });
         }
-
       });
     }
   }
-
 }

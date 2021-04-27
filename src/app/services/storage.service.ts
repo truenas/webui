@@ -10,75 +10,77 @@ import { HttpClient } from '@angular/common/http';
 
 @Injectable()
 export class StorageService {
-  protected diskResource: string = 'disk.query';
+  protected diskResource = 'disk.query';
 
-  public ids: any;
-  public diskNames: any;
-  public hddStandby: any;
-  public diskToggleStatus: boolean;
-  public SMARToptions: any;
-  public advPowerMgt: any;
-  public acousticLevel: any;
-  public humanReadable: any;
-  public IECUnits = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
+  ids: any;
+  diskNames: any;
+  hddStandby: any;
+  diskToggleStatus: boolean;
+  SMARToptions: any;
+  advPowerMgt: any;
+  acousticLevel: any;
+  humanReadable: any;
+  IECUnits = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
 
   constructor(protected ws: WebSocketService, protected rest: RestService) {}
 
   filesystemStat(path: string) {
-    return this.ws.call('filesystem.stat', [path])
+    return this.ws.call('filesystem.stat', [path]);
   }
 
   listDisks() {
     return this.ws.call(this.diskResource, []);
   }
 
-  downloadFile(filename: string, contents: string, mime_type: string){
-    mime_type = mime_type || "text/plain";
+  downloadFile(filename: string, contents: string, mime_type: string) {
+    mime_type = mime_type || 'text/plain';
 
-    let byteCharacters = atob(contents);
+    const byteCharacters = atob(contents);
 
-    let byteNumbers = new Array(byteCharacters.length);
+    const byteNumbers = new Array(byteCharacters.length);
     for (let i = 0; i < byteCharacters.length; i++) {
       byteNumbers[i] = byteCharacters.charCodeAt(i);
     }
 
-    let byteArray = new Uint8Array(byteNumbers);
+    const byteArray = new Uint8Array(byteNumbers);
 
-    let blob = new Blob([byteArray], {type: mime_type});
+    const blob = new Blob([byteArray], { type: mime_type });
 
     this.downloadBlob(blob, filename);
   }
 
   downloadBlob(blob: Blob, filename: string) {
-    let dlink = document.createElement('a');
+    const dlink = document.createElement('a');
     document.body.appendChild(dlink);
     dlink.download = filename;
-    dlink.href =  window.URL.createObjectURL(blob);
-    dlink.onclick = function(e) {
-        // revokeObjectURL needs a delay to work properly
-        var that: any = this;
-        setTimeout(function() {
-            window.URL.revokeObjectURL(that.href);
-        }, 1500);
+    dlink.href = window.URL.createObjectURL(blob);
+    dlink.onclick = function (e) {
+      // revokeObjectURL needs a delay to work properly
+      var that: any = this;
+      setTimeout(() => {
+        window.URL.revokeObjectURL(that.href);
+      }, 1500);
     };
 
     dlink.click();
     dlink.remove();
   }
 
-  streamDownloadFile(http:HttpClient, url:string, filename:string, mime_type:string): Observable<Blob>{
+  streamDownloadFile(http: HttpClient, url: string, filename: string, mime_type: string): Observable<Blob> {
     return http.post(url, '',
-    { responseType: 'blob' }).pipe(
-    map(
-      (res) => {
-            const blob = new Blob([res], {type: mime_type} );
-            return blob;
-      }));
+      { responseType: 'blob' }).pipe(
+      map(
+        (res) => {
+          const blob = new Blob([res], { type: mime_type });
+          return blob;
+        },
+      ),
+    );
   }
 
   // Handles sorting for entity tables and some other ngx datatables
   tableSorter(arr: any[], key: string, asc: SortDirection) {
-    let tempArr: any[] = [];
+    const tempArr: any[] = [];
     let sorter: any;
     const myCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
 
@@ -88,7 +90,7 @@ export class StorageService {
     });
 
     // If all values are the same, just return the array without sorting or flipping it
-    if (!tempArr.some( (val, i, arr) => val !== arr[0] )) {
+    if (!tempArr.some((val, i, arr) => val !== arr[0])) {
       return arr;
     }
 
@@ -100,65 +102,65 @@ export class StorageService {
     // Select table columns labled with GiB, Mib, etc
     // Regex checks for ' XiB' with a leading space and X === K, M, G or T
     // also include bytes unit, which will get from convertBytestoHumanReadable function
-    if (typeof(tempArr[n]) === 'string' &&
-      (tempArr[n].slice(-2) === ' B' || /\s[KMGT]iB$/.test(tempArr[n].slice(-4) ) || tempArr[n].slice(-6) === ' bytes')) {
-    let bytes = [], kbytes = [], mbytes = [], gbytes = [], tbytes = [];
-    for (let i of tempArr) {
-      if (i) {
-        if (i.slice(-2) === ' B') {
-          bytes.push(i);
-        } else {
-          switch (i.slice(-3)) {
-            case 'KiB':
-              kbytes.push(i);
-              break;
-            case 'MiB':
-              mbytes.push(i);
-              break;
-            case 'GiB':
-              gbytes.push(i);
-              break;
-            case 'TiB':
-              tbytes.push(i);
+    if (typeof (tempArr[n]) === 'string'
+      && (tempArr[n].slice(-2) === ' B' || /\s[KMGT]iB$/.test(tempArr[n].slice(-4)) || tempArr[n].slice(-6) === ' bytes')) {
+      let bytes = []; let kbytes = []; let mbytes = []; let gbytes = []; let
+        tbytes = [];
+      for (const i of tempArr) {
+        if (i) {
+          if (i.slice(-2) === ' B') {
+            bytes.push(i);
+          } else {
+            switch (i.slice(-3)) {
+              case 'KiB':
+                kbytes.push(i);
+                break;
+              case 'MiB':
+                mbytes.push(i);
+                break;
+              case 'GiB':
+                gbytes.push(i);
+                break;
+              case 'TiB':
+                tbytes.push(i);
+            }
           }
         }
       }
 
-    }
+      // Sort each array independently, then put them back together
+      bytes = bytes.sort(myCollator.compare);
+      kbytes = kbytes.sort(myCollator.compare);
+      mbytes = mbytes.sort(myCollator.compare);
+      gbytes = gbytes.sort(myCollator.compare);
+      tbytes = tbytes.sort(myCollator.compare);
 
-    // Sort each array independently, then put them back together
-    bytes = bytes.sort(myCollator.compare);
-    kbytes = kbytes.sort(myCollator.compare);
-    mbytes = mbytes.sort(myCollator.compare);
-    gbytes = gbytes.sort(myCollator.compare);
-    tbytes = tbytes.sort(myCollator.compare);
+      sorter = bytes.concat(kbytes, mbytes, gbytes, tbytes);
 
-    sorter = bytes.concat(kbytes, mbytes, gbytes, tbytes)
-
-  // Select disks where last two chars = a digit and the one letter space abbrev
-  } else if (typeof(tempArr[n]) === 'string' &&
-      tempArr[n][tempArr[n].length-1].match(/[KMGTB]/) &&
-      tempArr[n][tempArr[n].length-2].match(/[0-9]/)) {
-
-      let B = [], K = [], M = [], G = [], T = [];
-      for (let i of tempArr) {
+      // Select disks where last two chars = a digit and the one letter space abbrev
+    } else if (typeof (tempArr[n]) === 'string'
+      && tempArr[n][tempArr[n].length - 1].match(/[KMGTB]/)
+      && tempArr[n][tempArr[n].length - 2].match(/[0-9]/)) {
+      let B = []; let K = []; let M = []; let G = []; let
+        T = [];
+      for (const i of tempArr) {
         switch (i.slice(-1)) {
-            case 'B':
-              B.push(i);
-              break;
-            case 'K':
-              K.push(i);
-              break;
-            case 'M':
-              M.push(i);
-              break;
-            case 'G':
-              G.push(i);
-              break;
-            case 'T':
-              T.push(i);
-          }
+          case 'B':
+            B.push(i);
+            break;
+          case 'K':
+            K.push(i);
+            break;
+          case 'M':
+            M.push(i);
+            break;
+          case 'G':
+            G.push(i);
+            break;
+          case 'T':
+            T.push(i);
         }
+      }
 
       // Sort each array independently, then put them back together
       B = B.sort(myCollator.compare);
@@ -167,38 +169,36 @@ export class StorageService {
       G = G.sort(myCollator.compare);
       T = T.sort(myCollator.compare);
 
-      sorter = B.concat(K, M, G, T)
+      sorter = B.concat(K, M, G, T);
 
     // Select strings that Date.parse can turn into a number (ie, that are a legit date)
-    } else if (typeof(tempArr[n]) === 'string' &&
-      !isNaN(Date.parse(tempArr[n]))) {
-        let timeArr = [];
-        for (let i of tempArr) {
-          timeArr.push(Date.parse(i));
-        }
-        timeArr = timeArr.sort();
-
-        sorter = [];
-        for (let elem of timeArr) {
-         sorter.push(moment(elem).format('YYYY-MM-DD HH:mm:ss')); // formate should matched locale service
-        }
+    } else if (typeof (tempArr[n]) === 'string'
+      && !isNaN(Date.parse(tempArr[n]))) {
+      let timeArr = [];
+      for (const i of tempArr) {
+        timeArr.push(Date.parse(i));
       }
-    else {
+      timeArr = timeArr.sort();
+
+      sorter = [];
+      for (const elem of timeArr) {
+        sorter.push(moment(elem).format('YYYY-MM-DD HH:mm:ss')); // formate should matched locale service
+      }
+    } else {
       sorter = tempArr.sort(myCollator.compare);
     }
-      // Rejoins the sorted keys with the rest of the row data
-      let v: any;
-      // ascending or decending
-      asc==='asc' ? (v = 1) : (v = -1);
-      arr.sort((a, b) => {
-        const A = a[key],
-            B = b[key];
-        if (sorter.indexOf(A) > sorter.indexOf(B)) {
-            return 1 * v;
-        } else {
-            return -1 * v;
-        }
-      });
+    // Rejoins the sorted keys with the rest of the row data
+    let v: any;
+    // ascending or decending
+    asc === 'asc' ? (v = 1) : (v = -1);
+    arr.sort((a, b) => {
+      const A = a[key];
+      const B = b[key];
+      if (sorter.indexOf(A) > sorter.indexOf(B)) {
+        return 1 * v;
+      }
+      return -1 * v;
+    });
 
     return arr;
   }
@@ -234,21 +234,20 @@ export class StorageService {
     }
   }
 
-  poolUnlockServiceChoices(id: string): Observable<{ label: string; value: string; }[]> {
-    return this.ws.call("pool.unlock_services_restart_choices", [id]).pipe(
+  poolUnlockServiceChoices(id: string): Observable<{ label: string; value: string }[]> {
+    return this.ws.call('pool.unlock_services_restart_choices', [id]).pipe(
       map((response: { [serviceId: string]: string }) =>
-        Object.keys(response || {}).map(serviceId => ({
-            label: response[serviceId],
-            value: serviceId
-        }))
-      )
+        Object.keys(response || {}).map((serviceId) => ({
+          label: response[serviceId],
+          value: serviceId,
+        }))),
     );
   }
 
   getDatasetNameOptions(): Observable<{ label: string; value: string }[]> {
     return this.ws
-      .call("pool.filesystem_choices")
-      .pipe(map(response => response.map((value: any) => ({ label: value, value }))));
+      .call('pool.filesystem_choices')
+      .pipe(map((response) => response.map((value: any) => ({ label: value, value }))));
   }
 
   /**
@@ -276,34 +275,33 @@ export class StorageService {
 
     // empty unit is valid, just return
     if (!unitStr) {
-        return '';
+      return '';
     }
 
-    const IECUnitsStr   = this.IECUnits.join('|');
-    const shortUnitsStr = this.IECUnits.map(unit => unit.charAt(0) + unit.charAt(2)).join('|');
-    const humanUnitsStr = this.IECUnits.map(unit => unit.charAt(0)).join('|');
-    const allUnitsStr   = (IECUnitsStr + '|' + shortUnitsStr + '|' + humanUnitsStr).toUpperCase();
+    const IECUnitsStr = this.IECUnits.join('|');
+    const shortUnitsStr = this.IECUnits.map((unit) => unit.charAt(0) + unit.charAt(2)).join('|');
+    const humanUnitsStr = this.IECUnits.map((unit) => unit.charAt(0)).join('|');
+    const allUnitsStr = (IECUnitsStr + '|' + shortUnitsStr + '|' + humanUnitsStr).toUpperCase();
     const unitsRE = new RegExp('^\\s*(' + allUnitsStr + '){1}\\s*$');
 
     unitStr = unitStr.toUpperCase();
     if (unitStr.match(unitsRE)) {
-        // always return IEC units
-        // could take a parameter to return short or human units
-        return unitStr.charAt(0).toUpperCase() + 'iB';
-    } else {
-        return undefined;
+      // always return IEC units
+      // could take a parameter to return short or human units
+      return unitStr.charAt(0).toUpperCase() + 'iB';
     }
+    return undefined;
   }
 
   convertUnitToNum(unitStr: string) {
-      // convert IEC ("MiB"), short ("MB"), or human ("M") units to numbers
-      // unknown units are evaluated as 1
+    // convert IEC ("MiB"), short ("MB"), or human ("M") units to numbers
+    // unknown units are evaluated as 1
 
-      unitStr = this.normalizeUnit(unitStr);
-      if (!unitStr) {
-          return 1;
-      }
-      return (1024**( this.IECUnits.indexOf(unitStr)+1) );
+    unitStr = this.normalizeUnit(unitStr);
+    if (!unitStr) {
+      return 1;
+    }
+    return (1024 ** (this.IECUnits.indexOf(unitStr) + 1));
   }
 
   // sample data, input and return values
@@ -335,61 +333,62 @@ export class StorageService {
   // allowedUnits (optional) should include any or all of 'kmgtp', the first letters of KiB, Mib, etc. The first letter
   // is used as the default, so for 'gtp', an entered value of 256 becomes 256 GiB. If you don't pass in allowedUnits,
   // all of the above are accepted AND no unit is attached to an unlabeled number, so 256 is considered 256 bytes.
-    convertHumanStringToNum(hstr: any, dec=false, allowedUnits?: string) {
-      const IECUnitLetters = this.IECUnits.map(unit => unit.charAt(0).toUpperCase()).join('');
+  convertHumanStringToNum(hstr: any, dec = false, allowedUnits?: string) {
+    const IECUnitLetters = this.IECUnits.map((unit) => unit.charAt(0).toUpperCase()).join('');
 
-      let num = 0;
-      let unit = '';
+    let num = 0;
+    let unit = '';
 
-      // empty value is evaluated as zero
-      if (!hstr) {
-          this.humanReadable = '0';
-          return 0;
-      }
+    // empty value is evaluated as zero
+    if (!hstr) {
+      this.humanReadable = '0';
+      return 0;
+    }
 
-      // remove whitespace
-      hstr = hstr.replace(/\s+/g, '');
+    // remove whitespace
+    hstr = hstr.replace(/\s+/g, '');
 
-      // get leading number
-      let match = [];
-      if (dec) {
-        match = hstr.match(/^(\d+(\.\d+)?)/);
-      } else {
-        match = hstr.match(/^(\d+)/);
-      }
-      if ( match && match.length > 1 ) {
-          num = match[1];
-      } else {
-          // leading number is required
-          this.humanReadable = '';
-          return NaN;
-      }
+    // get leading number
+    let match = [];
+    if (dec) {
+      match = hstr.match(/^(\d+(\.\d+)?)/);
+    } else {
+      match = hstr.match(/^(\d+)/);
+    }
+    if (match && match.length > 1) {
+      num = match[1];
+    } else {
+      // leading number is required
+      this.humanReadable = '';
+      return NaN;
+    }
 
-      // get optional unit
-      unit = hstr.replace(num, '');
-      if (!unit && allowedUnits) {
-        unit = allowedUnits[0];
-      };
-      // error when unit is present and...
-      if ( (unit) &&
+    // get optional unit
+    unit = hstr.replace(num, '');
+    if (!unit && allowedUnits) {
+      unit = allowedUnits[0];
+    }
+    // error when unit is present and...
+    if ((unit)
           // ...allowedUnits are passed in but unit is not in allowed Units
-          (allowedUnits && !allowedUnits.toLowerCase().includes(unit[0].toLowerCase()) ||
+          && (allowedUnits && !allowedUnits.toLowerCase().includes(unit[0].toLowerCase())
           // ...when allowedUnits are not passed in and unit is not recognized
-          !(unit = this.normalizeUnit(unit))) ) {
-        this.humanReadable = '';
-        return NaN;
-      }
+          || !(unit = this.normalizeUnit(unit)))) {
+      this.humanReadable = '';
+      return NaN;
+    }
 
-      let spacer = (unit) ? ' ' : '';
+    const spacer = (unit) ? ' ' : '';
 
-      this.humanReadable = num.toString() + spacer + unit;
-      return num * this.convertUnitToNum(unit);
-  };
+    this.humanReadable = num.toString() + spacer + unit;
+    return num * this.convertUnitToNum(unit);
+  }
 
   // Converts a number from bytes to the most natural human readable format
-  convertBytestoHumanReadable(bytes: number, decimalPlaces?: number, min_units?: string, hideBytes?: boolean ) {
+  convertBytestoHumanReadable(bytes: number, decimalPlaces?: number, min_units?: string, hideBytes?: boolean) {
     let i = -1;
-    let dec, units;
+    let dec; let
+      units;
     decimalPlaces !== undefined ? dec = decimalPlaces : dec = 2;
     if (bytes >= 1024) {
       do {
@@ -397,13 +396,11 @@ export class StorageService {
         i++;
       } while (bytes >= 1024 && i < 4);
       units = this.IECUnits[i];
+    } else if (min_units) {
+      units = min_units;
     } else {
-      if (min_units) {
-        units = min_units;
-      } else {
-        units = hideBytes ? '' : 'bytes';
-      }
+      units = hideBytes ? '' : 'bytes';
     }
     return `${Math.max(bytes, 0.1).toFixed(dec)} ${units}`;
-  };
+  }
 }

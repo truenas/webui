@@ -12,12 +12,12 @@ import { ContainersComingsoonComponent } from './containers-comingsoon/container
 @NgModule({
   imports: [
     EntityModule, CommonModule, FormsModule, MaterialModule, NgxDualListboxModule,
-    ReactiveFormsModule, routing, TranslateModule
+    ReactiveFormsModule, routing, TranslateModule,
   ],
   declarations: [
     ContainersComingsoonComponent,
   ],
   providers: [
-  ]
+  ],
 })
 export class ContainersModule {}

@@ -26,8 +26,8 @@ import { OpenvpnServerComponent } from './forms/service-openvpn-server.component
 @NgModule({
   imports: [
     EntityModule, CommonModule, FormsModule,
-    ReactiveFormsModule, NgxUploaderModule, routing, MaterialModule, FlexLayoutModule, 
-    TranslateModule, CommonDirectivesModule
+    ReactiveFormsModule, NgxUploaderModule, routing, MaterialModule, FlexLayoutModule,
+    TranslateModule, CommonDirectivesModule,
   ],
   declarations: [
     StaticRouteFormComponent,
@@ -39,7 +39,7 @@ import { OpenvpnServerComponent } from './forms/service-openvpn-server.component
     OpenvpnClientComponent,
     OpenvpnServerComponent,
   ],
-  providers: [NetworkService, EntityFormService, CoreService]
+  providers: [NetworkService, EntityFormService, CoreService],
 })
 export class NetworkModule {
 }

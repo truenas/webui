@@ -1,1 +1,1 @@
-export { AdvancedSettingsComponent } from './advanced-settings.component'
+export { AdvancedSettingsComponent } from './advanced-settings.component';

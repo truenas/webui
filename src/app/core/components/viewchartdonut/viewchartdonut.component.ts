@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ViewChartComponent, ViewChartMetadata } from 'app/core/components/viewchart/viewchart.component';
-//import * as c3 from 'c3';
+// import * as c3 from 'c3';
 
 @Component({
   selector: 'viewchartdonut',
@@ -37,16 +37,15 @@ import { ViewChartComponent, ViewChartMetadata } from 'app/core/components/viewc
       </div>
 
     </div>
-  `
-  //template:ViewChartDonutMetadata.template
-  //templateUrl: './viewchartpie.component.html',
-  //styleUrls: ['./viewchartdonut.component.css']
-  })
+  `,
+  // template:ViewChartDonutMetadata.template
+  // templateUrl: './viewchartpie.component.html',
+  // styleUrls: ['./viewchartdonut.component.css']
+})
 export class ViewChartDonutComponent extends ViewChartComponent implements OnInit {
-
-  public title:string = '';
-  public chartType: string = 'donut';
-  public legendPosition:string = 'right'; // Valid positions are top or right
+  title = '';
+  chartType = 'donut';
+  legendPosition = 'right'; // Valid positions are top or right
 
   constructor() {
     super();
@@ -56,41 +55,39 @@ export class ViewChartDonutComponent extends ViewChartComponent implements OnIni
     this.showLegendValues = true;
   }
 
-  makeConfig(){
+  makeConfig() {
     this.chartConfig = {
       bindto: '#' + this._chartId,
       data: {
         columns: this._data,
-        type: this.chartType
+        type: this.chartType,
       },
-      donut:{
+      donut: {
         title: this.title,
-        width:15,
+        width: 15,
         label: {
-          show: false
-        }
+          show: false,
+        },
       },
-      size:{
+      size: {
         width: this.width,
-        height: this.height
+        height: this.height,
       },
-      tooltip:{
+      tooltip: {
         format: {
           value: (value: any) => {
-            if(this.units){
-              console.log("Units = " + this.units)
+            if (this.units) {
+              console.log('Units = ' + this.units);
               return value + this.units;
-            } else {
-              return value;
             }
-          }
-        }
-      }
-    }
+            return value;
+          },
+        },
+      },
+    };
     this.tooltipOptions = {
-      show:false
-    }
+      show: false,
+    };
     return this.chartConfig;
   }
-
 }

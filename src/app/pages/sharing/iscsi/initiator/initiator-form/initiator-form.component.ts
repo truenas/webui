@@ -7,7 +7,7 @@ import { EntityFormService } from '../../../../common/entity/entity-form/service
 import { FieldRelationService } from '../../../../common/entity/entity-form/services/field-relation.service';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { EntityUtils } from '../../../../common/entity/utils';
-import { WebSocketService, DialogService, NetworkService } from '../../../../../services/';
+import { WebSocketService, DialogService, NetworkService } from '../../../../../services';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import * as _ from 'lodash';
 import { ipv4or6OptionalCidrValidator } from '../../../../common/entity/entity-form/validators/ip-validation';
@@ -16,18 +16,17 @@ import { ipv4or6OptionalCidrValidator } from '../../../../common/entity/entity-f
   selector: 'app-iscsi-initiator-form',
   templateUrl: './initiator-form.component.html',
   styleUrls: ['./initiator-form.component.css', '../../../../common/entity/entity-form/entity-form.component.scss'],
-  providers: [FieldRelationService, NetworkService]
+  providers: [FieldRelationService, NetworkService],
 })
 export class InitiatorFormComponent implements OnInit {
-
   protected addCall = 'iscsi.initiator.create';
   protected queryCall = 'iscsi.initiator.query';
   protected editCall = 'iscsi.initiator.update';
-  protected customFilter: Array<any> = [[["id", "="]]];
-  public route_success: string[] = ['sharing', 'iscsi', 'initiator'];
+  protected customFilter: any[] = [[['id', '=']]];
+  route_success: string[] = ['sharing', 'iscsi', 'initiator'];
   protected pk: any;
 
-  public fieldConfig: FieldConfig[] = [
+  fieldConfig: FieldConfig[] = [
     {
       type: 'checkbox',
       name: 'all',
@@ -50,8 +49,8 @@ export class InitiatorFormComponent implements OnInit {
         when: [{
           name: 'all',
           value: true,
-        }]
-      }]
+        }],
+      }],
     },
     {
       type: 'input-list',
@@ -70,22 +69,22 @@ export class InitiatorFormComponent implements OnInit {
         when: [{
           name: 'all',
           value: true,
-        }]
-      }]
+        }],
+      }],
     },
     {
       type: 'input',
       name: 'comment',
       placeholder: helptext_sharing_iscsi.initiator_form_placeholder_comment,
       tooltip: helptext_sharing_iscsi.initiator_form_tooltip_comment,
-    }
+    },
   ];
 
-  public formGroup: FormGroup;
-  public connectedInitiators: any[];
-  public connectedInitiatorsDisabled = false;
-  public connectedInitiatorsTooltip = helptext_sharing_iscsi.initiator_form_tooltip_connected_initiators;
-  public error: string;
+  formGroup: FormGroup;
+  connectedInitiators: any[];
+  connectedInitiatorsDisabled = false;
+  connectedInitiatorsTooltip = helptext_sharing_iscsi.initiator_form_tooltip_connected_initiators;
+  error: string;
 
   constructor(
     protected router: Router,
@@ -95,7 +94,8 @@ export class InitiatorFormComponent implements OnInit {
     protected entityFormService: EntityFormService,
     protected fieldRelationService: FieldRelationService,
     protected dialog: DialogService,
-    protected networkService: NetworkService) { }
+    protected networkService: NetworkService,
+  ) { }
 
   getConnectedInitiators() {
     this.ws.call('iscsi.global.sessions').subscribe(
@@ -104,12 +104,13 @@ export class InitiatorFormComponent implements OnInit {
       },
       (err) => {
         new EntityUtils().handleWSError(this, err);
-      })
+      },
+    );
   }
   ngOnInit() {
     this.getConnectedInitiators();
 
-    this.aroute.params.subscribe(params => {
+    this.aroute.params.subscribe((params) => {
       if (params['pk']) {
         this.pk = params['pk'];
         this.customFilter[0][0].push(parseInt(params['pk'], 10));
@@ -125,8 +126,8 @@ export class InitiatorFormComponent implements OnInit {
     }
 
     this.formGroup.controls['initiators'].statusChanges.subscribe((res) => {
-      this.connectedInitiatorsDisabled = res === 'DISABLED' ? true : false;
-    })
+      this.connectedInitiatorsDisabled = res === 'DISABLED';
+    });
 
     if (this.pk) {
       this.ws.call(this.queryCall, this.customFilter).subscribe(
@@ -147,7 +148,8 @@ export class InitiatorFormComponent implements OnInit {
         },
         (err) => {
           new EntityUtils().handleWSError(this, err);
-        })
+        },
+      );
     }
   }
 
@@ -165,7 +167,7 @@ export class InitiatorFormComponent implements OnInit {
     if (this.pk === undefined) {
       submitFunction = this.ws.call(this.addCall, [value]);
     } else {
-      submitFunction = this.ws.call(this.editCall, [this.pk, value])
+      submitFunction = this.ws.call(this.editCall, [this.pk, value]);
     }
 
     this.loader.open();
@@ -177,8 +179,8 @@ export class InitiatorFormComponent implements OnInit {
       (err) => {
         this.loader.close();
         new EntityUtils().handleWSError(this, err);
-      }
-    )
+      },
+    );
   }
 
   goBack() {
@@ -186,28 +188,32 @@ export class InitiatorFormComponent implements OnInit {
   }
 
   setRelation(config: FieldConfig) {
-    const activations =
-      this.fieldRelationService.findActivationRelation(config.relation);
+    const activations = this.fieldRelationService.findActivationRelation(config.relation);
     if (activations) {
       const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
-        activations, this.formGroup);
+        activations, this.formGroup,
+      );
       const tobeHide = this.fieldRelationService.isFormControlToBeHide(
-        activations, this.formGroup);
+        activations, this.formGroup,
+      );
       this.setDisabled(config.name, tobeDisabled, tobeHide);
 
       this.fieldRelationService.getRelatedFormControls(config, this.formGroup)
-        .forEach(control => {
+        .forEach((control) => {
           control.valueChanges.subscribe(
-            () => { this.relationUpdate(config, activations); });
+            () => { this.relationUpdate(config, activations); },
+          );
         });
     }
   }
 
   relationUpdate(config: FieldConfig, activations: any) {
     const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
-      activations, this.formGroup);
+      activations, this.formGroup,
+    );
     const tobeHide = this.fieldRelationService.isFormControlToBeHide(
-      activations, this.formGroup);
+      activations, this.formGroup,
+    );
     this.setDisabled(config.name, tobeDisabled, tobeHide);
   }
 
@@ -230,7 +236,6 @@ export class InitiatorFormComponent implements OnInit {
     if (this.formGroup.controls[name]) {
       const method = disable ? 'disable' : 'enable';
       this.formGroup.controls[name][method]();
-      return;
     }
   }
 }

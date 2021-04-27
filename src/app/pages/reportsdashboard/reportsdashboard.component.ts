@@ -1,7 +1,11 @@
-import { Component, ElementRef, OnInit, OnDestroy, AfterViewInit, EventEmitter, Output, ViewChild } from '@angular/core';
+import {
+  Component, ElementRef, OnInit, OnDestroy, AfterViewInit, EventEmitter, Output, ViewChild,
+} from '@angular/core';
 import { MatOption } from '@angular/material/core';
 import { MatListOption } from '@angular/material/list';
-import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
+import {
+  Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot,
+} from '@angular/router';
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { Option } from 'app/interfaces/option.interface';
 import * as _ from 'lodash';
@@ -25,7 +29,7 @@ import { T } from '../../translate-marker';
 import {
   SystemGeneralService,
   WebSocketService,
-} from '../../services/';
+} from '../../services';
 
 import { ReportsConfigComponent } from './components/reports-config/reports-config.component';
 
@@ -38,97 +42,95 @@ interface Tab {
   selector: 'reportsdashboard',
   styleUrls: ['./reportsdashboard.scss'],
   templateUrl: './reportsdashboard.html',
-  providers: [SystemGeneralService]
+  providers: [SystemGeneralService],
 })
-export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleChartConfigDataFunc,*/ AfterViewInit {
+export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleChartConfigDataFunc, */ AfterViewInit {
+  @ViewChild(CdkVirtualScrollViewport, { static: false }) viewport: CdkVirtualScrollViewport;
+  @ViewChild('container', { static: true }) container: ElementRef;
+  scrollContainer: HTMLElement;
+  scrolledIndex = 0;
+  isFooterConsoleOpen: boolean;
 
-  @ViewChild(CdkVirtualScrollViewport, {static:false}) viewport:CdkVirtualScrollViewport;
-  @ViewChild('container', {static:true}) container:ElementRef;
-  public scrollContainer:HTMLElement;
-  public scrolledIndex: number = 0;
-  public isFooterConsoleOpen: boolean;
+  retroLogo: string;
 
-  public retroLogo: string;
+  multipathTitles: any = {};
+  diskReports: Report[];
+  otherReports: Report[];
+  activeReports: Report[] = [];
 
-  public multipathTitles: any = {};
-  public diskReports: Report[];
-  public otherReports: Report[];
-  public activeReports: Report[] = [];
+  activeTab = 'CPU'; // Tabs (lower case only): CPU, Disk, Memory, Network, NFS, Partition?, System, Target, UPS, ZFS
+  activeTabVerified = false;
+  allTabs: Tab[] = [];
+  loadingReports = false;
 
-  public activeTab: string = "CPU"; // Tabs (lower case only): CPU, Disk, Memory, Network, NFS, Partition?, System, Target, UPS, ZFS
-  public activeTabVerified: boolean = false;
-  public allTabs: Tab[] = [];
-  public loadingReports: boolean = false;
+  displayList: number[] = [];
+  visibleReports: number[] = [];
 
-  public displayList: number[] = [];
-  public visibleReports:number[] = [];
-
-  public totalVisibleReports:number = 4;
-  public viewportEnd: boolean = false;
-  public viewportOffset = new BehaviorSubject(null);
+  totalVisibleReports = 4;
+  viewportEnd = false;
+  viewportOffset = new BehaviorSubject(null);
 
   // Report Builder Options (entity-form-embedded)
-  public target: Subject<CoreEvent> = new Subject();
-  public values: any[] = [];
-  public toolbarConfig: ToolbarConfig;
-  protected isEntity: boolean = true;
-  public diskDevices: any[] = [];
-  public diskMetrics: any[] = [];
-  public categoryDevices: any[] = [];
-  public categoryMetrics: any[] = [];
-  public saveSubmitText = T("Generate Reports");
-  public actionButtonsAlign = "left";
-  public fieldConfig:FieldConfig[] = [];
-  public fieldSets: FieldSet[];
-  public diskReportConfigReady: boolean = false;
+  target: Subject<CoreEvent> = new Subject();
+  values: any[] = [];
+  toolbarConfig: ToolbarConfig;
+  protected isEntity = true;
+  diskDevices: any[] = [];
+  diskMetrics: any[] = [];
+  categoryDevices: any[] = [];
+  categoryMetrics: any[] = [];
+  saveSubmitText = T('Generate Reports');
+  actionButtonsAlign = 'left';
+  fieldConfig: FieldConfig[] = [];
+  fieldSets: FieldSet[];
+  diskReportConfigReady = false;
   private getAdvancedConfig: Subscription;
-  public actionsConfig: any;
-  public formComponent: ReportsConfigComponent;
+  actionsConfig: any;
+  formComponent: ReportsConfigComponent;
 
   constructor(private erdService: ErdService,
     public translate: TranslateService,
     public modalService: ModalService,
     public dialogService: DialogService,
-    private router:Router,
-    private core:CoreService,
+    private router: Router,
+    private core: CoreService,
     private rs: ReportsService,
     protected ws: WebSocketService, private sysGeneralService: SystemGeneralService) {
 
     // EXAMPLE METHOD
-    //this.viewport.scrollToIndex(5);
+    // this.viewport.scrollToIndex(5);
   }
 
   ngOnInit() {
-
-    this.scrollContainer = document.querySelector('.rightside-content-hold ');//this.container.nativeElement;
+    this.scrollContainer = document.querySelector('.rightside-content-hold ');// this.container.nativeElement;
     this.scrollContainer.style.overflow = 'hidden';
 
-    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe((res)=> {
+    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe((res) => {
       if (res) {
         this.isFooterConsoleOpen = res.consolemsg;
       }
     });
 
-    this.core.register({observerClass: this, eventName:"UserPreferencesReady"}).subscribe((evt:CoreEvent) => {
-      this.retroLogo = evt.data.retroLogo ? "1" : "0";
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).subscribe((evt: CoreEvent) => {
+      this.retroLogo = evt.data.retroLogo ? '1' : '0';
     });
 
-    this.core.register({observerClass: this, eventName:"UserPreferencesChanged"}).subscribe((evt:CoreEvent) => {
-      this.retroLogo = evt.data.retroLogo ? "1" : "0";
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).subscribe((evt: CoreEvent) => {
+      this.retroLogo = evt.data.retroLogo ? '1' : '0';
     });
 
-    this.core.register({observerClass: this, eventName:"UserPreferences"}).subscribe((evt:CoreEvent) => {
-      this.retroLogo = evt.data.retroLogo ? "1" : "0";
+    this.core.register({ observerClass: this, eventName: 'UserPreferences' }).subscribe((evt: CoreEvent) => {
+      this.retroLogo = evt.data.retroLogo ? '1' : '0';
     });
 
-    this.core.emit({name:"UserPreferencesRequest"});
+    this.core.emit({ name: 'UserPreferencesRequest' });
 
-    this.core.register({observerClass: this, eventName:"ReportingGraphs"}).subscribe((evt:CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ReportingGraphs' }).subscribe((evt: CoreEvent) => {
       if (evt.data) {
-        let allReports: any[] = evt.data.map((report: any) => {
-          let list = [];
-          if(report.identifiers){
-            for(let i = 0; i < report.identifiers.length; i++){
+        const allReports: any[] = evt.data.map((report: any) => {
+          const list = [];
+          if (report.identifiers) {
+            for (let i = 0; i < report.identifiers.length; i++) {
               list.push(true);
             }
           } else {
@@ -151,129 +153,118 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
     this.diskQueries();
   }
 
-  diskQueries(){
-
+  diskQueries() {
     this.ws.call('multipath.query').subscribe((multipath_res: any[]) => {
       let multipathDisks: any[] = [];
       multipath_res.forEach((m) => {
-        const children = m.children.map((child: any) => {
-          return {disk:m.name.replace('multipath/', ''), name: child.name, status: child.status};
-        });
+        const children = m.children.map((child: any) => ({ disk: m.name.replace('multipath/', ''), name: child.name, status: child.status }));
         multipathDisks = multipathDisks.concat(children);
       });
 
       this.ws.call('disk.query').subscribe((res) => {
         this.parseDisks(res, multipathDisks);
-        this.core.emit({name:"ReportingGraphsRequest", sender: this});
+        this.core.emit({ name: 'ReportingGraphsRequest', sender: this });
       });
     });
-
   }
 
   ngOnDestroy() {
     this.scrollContainer.style.overflow = 'auto';
-    this.core.unregister({observerClass:this});
+    this.core.unregister({ observerClass: this });
     this.getAdvancedConfig.unsubscribe();
   }
 
   ngAfterViewInit(): void {
-    this.erdService.attachResizeEventToElement("dashboardcontainerdiv");
+    this.erdService.attachResizeEventToElement('dashboardcontainerdiv');
 
     this.setupSubscriptions();
 
     this.actionsConfig = { actionType: ReportsGlobalControlsComponent, actionConfig: this };
-    this.core.emit({ name:"GlobalActions", data: this.actionsConfig, sender: this });
+    this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
   }
 
-  getVisibility(key: number){
+  getVisibility(key: number) {
     const test = this.visibleReports.indexOf(key);
-    return test == -1 ? false : true;
+    return test != -1;
   }
 
-  getBatch(lastSeen: string){
+  getBatch(lastSeen: string) {
     return this.visibleReports;
   }
 
-  nextBatch(evt: number){
+  nextBatch(evt: number) {
     this.scrolledIndex = evt;
   }
 
-  generateTabs(){
-      let labels = [T('CPU'), T('Disk'), T('Memory'), T('Network'), T('NFS'), T('Partition'), T('System'), T('Target'), T('ZFS')];
-      let UPS = this.otherReports.find((report) => {
-        return report.title.startsWith('UPS');
-      });
+  generateTabs() {
+    const labels = [T('CPU'), T('Disk'), T('Memory'), T('Network'), T('NFS'), T('Partition'), T('System'), T('Target'), T('ZFS')];
+    const UPS = this.otherReports.find((report) => report.title.startsWith('UPS'));
 
-      if(UPS){
-        labels.splice(8,0,'UPS');
-      }
+    if (UPS) {
+      labels.splice(8, 0, 'UPS');
+    }
 
-      labels.forEach((item) =>{
-        this.allTabs.push({label:item, value:item.toLowerCase()});
-      })
+    labels.forEach((item) => {
+      this.allTabs.push({ label: item, value: item.toLowerCase() });
+    });
   }
 
-
-  activateTabFromUrl (){
-    let subpath = this.router.url.split("/reportsdashboard/");
-    let tabFound = this.allTabs.find((tab) =>{
-      return tab.value === subpath[1];
-    });
+  activateTabFromUrl() {
+    const subpath = this.router.url.split('/reportsdashboard/');
+    const tabFound = this.allTabs.find((tab) => tab.value === subpath[1]);
     this.updateActiveTab(tabFound);
   }
 
-  isActiveTab(str:string){
+  isActiveTab(str: string) {
     let test: boolean;
-    if(!this.activeTab){
+    if (!this.activeTab) {
       test = ('/reportsdashboard/' + str.toLowerCase()) == this.router.url;
     } else {
       test = (this.activeTab == str.toLowerCase());
     }
-     return test;
+    return test;
   }
 
-  updateActiveTab(tab:Tab){
-
+  updateActiveTab(tab: Tab) {
     // Change the URL without reloading page/component
     // the old fashioned way
-    window.history.replaceState({}, '','/reportsdashboard/' + tab.value);
+    window.history.replaceState({}, '', '/reportsdashboard/' + tab.value);
 
-    let pseudoRouteEvent = [
+    const pseudoRouteEvent = [
       {
-        url: "/reportsdashboard/" + tab.value,
-        title:"Reporting",
-        breadcrumb:"Reporting",
-        disabled:true
+        url: '/reportsdashboard/' + tab.value,
+        title: 'Reporting',
+        breadcrumb: 'Reporting',
+        disabled: true,
       },
       {
-        url: "",
+        url: '',
         title: tab.label,
         breadcrumb: tab.label,
-        disabled:true
-      }
-    ]
+        disabled: true,
+      },
+    ];
 
-    this.core.emit({name: "PseudoRouteChange", data: pseudoRouteEvent});
+    this.core.emit({ name: 'PseudoRouteChange', data: pseudoRouteEvent });
 
     this.activateTab(tab.label);
 
-    if(tab.label == 'Disk'){ this.diskReportBuilderSetup() }
+    if (tab.label == 'Disk') { this.diskReportBuilderSetup(); }
   }
 
-  navigateToTab(tabName: string){
+  navigateToTab(tabName: string) {
     const link = '/reportsdashboard/' + tabName.toLowerCase();
     this.router.navigate([link]);
   }
 
-
-  activateTab(name:string){
+  activateTab(name: string) {
     this.activeTab = name;
     this.activeTabVerified = true;
 
-    let reportCategories = name == 'Disk' ? this.diskReports : this.otherReports.filter((report) => {
+    const reportCategories = name == 'Disk' ? this.diskReports : this.otherReports.filter((report) => {
       // Tabs: CPU, Disk, Memory, Network, NFS, Partition, System, Target, UPS, ZFS
       let condition;
-      switch(name){
+      switch (name) {
         case 'CPU':
           condition = (report.name == 'cpu' || report.name == 'load' || report.name == 'cputemp');
           break;
@@ -301,8 +292,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
         case 'ZFS':
           condition = report.name.startsWith('arc');
           break;
-      default:
-        condition = true;
+        default:
+          condition = true;
       }
 
       return condition;
@@ -310,32 +301,32 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
 
     this.activeReports = this.flattenReports(reportCategories);
 
-    if(name !== 'Disk'){
+    if (name !== 'Disk') {
       const keys = Object.keys(this.activeReports);
       this.visibleReports = keys.map((v) => parseInt(v));
     }
   }
 
-  flattenReports(list:Report[]){
+  flattenReports(list: Report[]) {
     // Based on identifiers, create a single dimensional array of reports to render
-    let result: any[] = [];
+    const result: any[] = [];
     list.forEach((report) => {
       // Without identifiers
 
       // With identifiers
-      if(report.identifiers){
-        report.identifiers.forEach((item,index) => {
-          let r = Object.assign({}, report);
-          r.title = r.title.replace(/{identifier}/, item );
+      if (report.identifiers) {
+        report.identifiers.forEach((item, index) => {
+          const r = { ...report };
+          r.title = r.title.replace(/{identifier}/, item);
 
           r.identifiers = [item];
-          if(report.isRendered[index]){
+          if (report.isRendered[index]) {
             r.isRendered = [true];
             result.push(r);
           }
         });
-      } else if(!report.identifiers && report.isRendered[0]) {
-        let r = Object.assign({}, report);
+      } else if (!report.identifiers && report.isRendered[0]) {
+        const r = { ...report };
         r.identifiers = [];
         result.push(r);
       }
@@ -344,188 +335,187 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /*HandleCha
     return result;
   }
 
-// Disk Report Filtering
+  // Disk Report Filtering
 
-diskReportBuilderSetup(){
-
+  diskReportBuilderSetup() {
     this.generateValues();
 
     // Entity-Toolbar Config
     this.toolbarConfig = {
       target: this.target,
       controls: [
-          {
-            //type: 'multimenu',
-            type: 'multiselect',
-            name: 'devices',
-            label: T('Devices'),
-            placeholder: T('Devices'),
-            disabled:false,
-            multiple: true,
-            options: this.diskDevices.map((v) => v), // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
-            customTriggerValue: 'Select Disks',
-          },
-          {
-            type: 'multiselect',
-            name: 'metrics',
-            label: T('Metrics'),
-            placeholder: T('Metrics'),
-            customTriggerValue: T('Select Reports'),
-            disabled: false,
-            multiple: true,
-            options: this.diskMetrics ? this.diskMetrics.map((v) => v) : [T('Not Available')], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
-          }
-      ]
-    }
+        {
+          // type: 'multimenu',
+          type: 'multiselect',
+          name: 'devices',
+          label: T('Devices'),
+          placeholder: T('Devices'),
+          disabled: false,
+          multiple: true,
+          options: this.diskDevices.map((v) => v), // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
+          customTriggerValue: 'Select Disks',
+        },
+        {
+          type: 'multiselect',
+          name: 'metrics',
+          label: T('Metrics'),
+          placeholder: T('Metrics'),
+          customTriggerValue: T('Select Reports'),
+          disabled: false,
+          multiple: true,
+          options: this.diskMetrics ? this.diskMetrics.map((v) => v) : [T('Not Available')], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+        },
+      ],
+    };
 
     // Entity-Form Config
     this.fieldSets = [
       {
-        name:'Report Options',
-        class:'preferences',
-        label:false,
-        width:'600px',
-        config:[
+        name: 'Report Options',
+        class: 'preferences',
+        label: false,
+        width: '600px',
+        config: [
           {
             type: 'select',
             name: 'devices',
-            width:'calc(50% - 16px)',
+            width: 'calc(50% - 16px)',
             placeholder: T('Choose a Device'),
             options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
             required: true,
             multiple: true,
-            tooltip:T('Choose a device for your report.'),
-            class:'inline'
+            tooltip: T('Choose a device for your report.'),
+            class: 'inline',
           },
           {
             type: 'select',
             name: 'metrics',
-            width:'calc(50% - 16px)',
+            width: 'calc(50% - 16px)',
             placeholder: T('Choose a metric'),
-            options: this.diskMetrics ? this.diskMetrics : [{label:'None available', value:'negative'}], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+            options: this.diskMetrics ? this.diskMetrics : [{ label: 'None available', value: 'negative' }], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
             required: true,
             multiple: true,
-            tooltip:T('Choose a metric to display.'),
-            class:'inline'
-          }
-        ]
-      }
-    ]
+            tooltip: T('Choose a metric to display.'),
+            class: 'inline',
+          },
+        ],
+      },
+    ];
 
     this.generateFieldConfig();
   }
 
-  generateValues(){
-    let metrics: Option[] = [];
+  generateValues() {
+    const metrics: Option[] = [];
 
     this.diskReports.forEach((item) => {
       let formatted = item.title.replace(/ \(.*\)/, '');// remove placeholders for identifiers eg. '({identifier})'
       formatted = formatted.replace(/identifier/, '');
       formatted = formatted.replace(/[{][}]/, '');
       formatted = formatted.replace(/requests on/, '');
-      metrics.push({label: formatted, value: item.name});
+      metrics.push({ label: formatted, value: item.name });
     });
 
     this.diskMetrics = metrics;
   }
 
-  generateFieldConfig(){
-    for(let i in this.fieldSets){
-      for(let ii in this.fieldSets[i].config){
+  generateFieldConfig() {
+    for (const i in this.fieldSets) {
+      for (const ii in this.fieldSets[i].config) {
         this.fieldConfig.push(this.fieldSets[i].config[ii]);
       }
     }
     this.diskReportConfigReady = true;
   }
 
-  setupSubscriptions(){
+  setupSubscriptions() {
     this.target.subscribe((evt: CoreEvent) => {
-      switch(evt.name){
+      switch (evt.name) {
         case 'FormSubmitted':
           this.buildDiskReport(evt.data.devices, evt.data.metrics);
-        break;
+          break;
         case 'ToolbarChanged':
-          if(evt.data.devices && evt.data.metrics){
+          if (evt.data.devices && evt.data.metrics) {
             this.buildDiskReport(evt.data.devices, evt.data.metrics);
           }
-        break;
+          break;
       }
     });
 
-    this.target.next({name:"Refresh"});
+    this.target.next({ name: 'Refresh' });
   }
 
-  buildDiskReport(device: string | any[], metric: string | any[]){
+  buildDiskReport(device: string | any[], metric: string | any[]) {
     // Convert strings to arrays
-    if(typeof device == "string"){
+    if (typeof device == 'string') {
       device = [device];
     } else {
       device = device.map((v) => v.value);
     }
 
-    if(typeof metric == "string"){
+    if (typeof metric == 'string') {
       metric = [metric];
     } else {
       metric = metric.map((v) => v.value);
     }
 
-    let visible: number[] = [];
+    const visible: number[] = [];
     this.activeReports.forEach((item, index) => {
       const deviceMatch = device.indexOf(item.identifiers[0]) !== -1;
       const metricMatch = metric.indexOf(item.name) !== -1;
-      const condition = (deviceMatch && metricMatch)
-      if(condition){
+      const condition = (deviceMatch && metricMatch);
+      if (condition) {
         visible.push(index);
       }
-
     });
 
     this.visibleReports = visible;
   }
 
-  parseDisks(res: any[], multipathDisks: any[]){
-    let uniqueNames = res.filter((disk) => !disk.devname.includes('multipath'))
-      .map(d => d.devname);
+  parseDisks(res: any[], multipathDisks: any[]) {
+    const uniqueNames = res.filter((disk) => !disk.devname.includes('multipath'))
+      .map((d) => d.devname);
 
-    let activeDisks = multipathDisks.filter((disk) => disk.status == 'ACTIVE');
+    const activeDisks = multipathDisks.filter((disk) => disk.status == 'ACTIVE');
 
-    let multipathTitles: any = {};
+    const multipathTitles: any = {};
 
-    let multipathNames = activeDisks.map((disk) => {
-      let label = disk.disk; //disk.name + ' (multipath : ' + disk.disk  + ')';
+    const multipathNames = activeDisks.map((disk) => {
+      const label = disk.disk; // disk.name + ' (multipath : ' + disk.disk  + ')';
       // Update activeReports with multipathTitles
       multipathTitles[disk.name] = label;
-      return { label: disk.disk, value: disk.name, labelIcon: 'multipath', labelIconType: 'custom' };
+      return {
+        label: disk.disk, value: disk.name, labelIcon: 'multipath', labelIconType: 'custom',
+      };
     });
 
     this.multipathTitles = multipathTitles;
 
-    //uniqueNames = uniqueNames.concat(multipathNames);
+    // uniqueNames = uniqueNames.concat(multipathNames);
 
-    let diskDevices = uniqueNames.map((devname) => {
-      let spl = devname.split(' ');
-      let obj = {label: devname, value: spl[0]};
+    const diskDevices = uniqueNames.map((devname) => {
+      const spl = devname.split(' ');
+      const obj = { label: devname, value: spl[0] };
       return obj;
     });
 
     this.diskDevices = diskDevices.concat(multipathNames);
-
   }
 
   showConfigForm() {
     if (this.formComponent) {
-      delete this.formComponent
+      delete this.formComponent;
     }
-    this.generateFormComponent()
-    this.modalService.open('slide-in-form', this.formComponent)
+    this.generateFormComponent();
+    this.modalService.open('slide-in-form', this.formComponent);
   }
 
   generateFormComponent() {
-    this.formComponent = new ReportsConfigComponent(this.ws, this.dialogService)
+    this.formComponent = new ReportsConfigComponent(this.ws, this.dialogService);
     this.formComponent.title = T('Reports Configuration');
     this.formComponent.isOneColumnForm = true;
     this.formComponent.afterModalFormSaved = () => {
-      this.modalService.close('slide-in-form')
-    }
+      this.modalService.close('slide-in-form');
+    };
   }
 }

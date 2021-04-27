@@ -18,22 +18,20 @@ export interface PageOptions {
 export const PageComponentMetadata = {
   selector: 'page',
   template: '',
-  styleUrls: ['./page.component.css']
-}
+  styleUrls: ['./page.component.css'],
+};
 
 @Component({
   selector: 'page',
   template: '',
-  styleUrls: ['./page.component.css']
+  styleUrls: ['./page.component.css'],
 })
 export class PageComponent {
-
-  public name: string = "PageComponent";
-  public url: string;
+  name = 'PageComponent';
+  url: string;
   protected core: CoreService;
 
-  constructor(){
+  constructor() {
     this.core = CoreServiceInjector.get(CoreService);
   }
-
 }

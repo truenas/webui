@@ -1,25 +1,27 @@
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Component, AfterViewChecked, ViewChild, ElementRef, EventEmitter, OnInit } from '@angular/core';
-import { WebSocketService } from '../../../../services/';
+import {
+  Component, AfterViewChecked, ViewChild, ElementRef, EventEmitter, OnInit,
+} from '@angular/core';
+import { WebSocketService } from '../../../../services';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'consolepanel-dialog',
   styleUrls: ['./consolepanel-dialog.component.scss'],
-  templateUrl: './consolepanel-dialog.component.html'
+  templateUrl: './consolepanel-dialog.component.html',
 })
 export class ConsolePanelModalDialog implements OnInit {
-
-  public refreshMsg: String = "Check to stop refresh";
-  public intervalPing: any;
-  public consoleMsg: String = "Loading...";
-  @ViewChild('footerBarScroll', { static: true}) private footerBarScroll: ElementRef;
+  refreshMsg: String = 'Check to stop refresh';
+  intervalPing: any;
+  consoleMsg: String = 'Loading...';
+  @ViewChild('footerBarScroll', { static: true }) private footerBarScroll: ElementRef;
   onEventEmitter = new EventEmitter();
 
   constructor(
     protected translate: TranslateService,
-    public dialogRef: MatDialogRef<ConsolePanelModalDialog>) { }
+    public dialogRef: MatDialogRef<ConsolePanelModalDialog>,
+  ) { }
 
   ngOnInit(): void {
     this.getLogConsoleMsg();
@@ -28,20 +30,20 @@ export class ConsolePanelModalDialog implements OnInit {
   scrollToBottomOnFooterBar(): void {
     try {
       this.footerBarScroll.nativeElement.scrollTop = this.footerBarScroll.nativeElement.scrollHeight;
-    } catch(err) { }
+    } catch (err) { }
   }
 
   getLogConsoleMsg(): void {
-    this.intervalPing = setInterval( () => {
+    this.intervalPing = setInterval(() => {
       let isScrollBottom = false;
-      let delta = 3;
+      const delta = 3;
 
-      if(this.footerBarScroll.nativeElement.scrollTop + this.footerBarScroll.nativeElement.offsetHeight + delta >= this.footerBarScroll.nativeElement.scrollHeight) {
+      if (this.footerBarScroll.nativeElement.scrollTop + this.footerBarScroll.nativeElement.offsetHeight + delta >= this.footerBarScroll.nativeElement.scrollHeight) {
         isScrollBottom = true;
       }
       this.onEventEmitter.emit();
-      if(isScrollBottom) {
-        let timeout = setTimeout(() => {
+      if (isScrollBottom) {
+        const timeout = setTimeout(() => {
           this.scrollToBottomOnFooterBar();
           clearTimeout(timeout);
         }, 500);
@@ -49,20 +51,19 @@ export class ConsolePanelModalDialog implements OnInit {
     }, 1000);
 
     // First, will load once.
-    let timeout = setTimeout(() => {
+    const timeout = setTimeout(() => {
       this.scrollToBottomOnFooterBar();
       clearTimeout(timeout);
     }, 1500);
   }
 
   onStopRefresh(data: MatCheckboxChange): void {
-    if(data.checked) {
+    if (data.checked) {
       clearInterval(this.intervalPing);
       this.refreshMsg = 'Uncheck to restart refresh';
-    }
-    else {
+    } else {
       this.getLogConsoleMsg();
-      this.refreshMsg = "Check to stop refresh";
+      this.refreshMsg = 'Check to stop refresh';
     }
   }
 }

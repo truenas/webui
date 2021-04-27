@@ -1,4 +1,6 @@
-import { Directive, Component, Input, OnInit, AfterViewInit, ElementRef, HostListener, ComponentRef } from '@angular/core';
+import {
+  Directive, Component, Input, OnInit, AfterViewInit, ElementRef, HostListener, ComponentRef,
+} from '@angular/core';
 import { Overlay, OverlayRef, OverlayPositionBuilder } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 
@@ -7,7 +9,7 @@ import { ComponentPortal } from '@angular/cdk/portal';
   template: `<div class="tooltip-container">
               <div class="html-tooltip" [innerHTML]="html"></div>
             </div>`,
-  styleUrls: ['./html-tooltip.directive.css']
+  styleUrls: ['./html-tooltip.directive.css'],
 })
 
 export class HtmlTooltipComponent {
@@ -15,11 +17,10 @@ export class HtmlTooltipComponent {
 }
 
 @Directive({
-  selector: '[htmlTooltip]'
+  selector: '[htmlTooltip]',
 })
 
 export class HtmlTooltipDirective implements AfterViewInit {
-
   @Input() htmlTooltip: string;
   private overlayRef: OverlayRef;
 
@@ -57,7 +58,7 @@ export class HtmlTooltipDirective implements AfterViewInit {
         overlayY: 'bottom',
       }]);
 
-      // Connect position strategy
-      this.overlayRef = this.overlay.create({ positionStrategy });
+    // Connect position strategy
+    this.overlayRef = this.overlay.create({ positionStrategy });
   }
 }

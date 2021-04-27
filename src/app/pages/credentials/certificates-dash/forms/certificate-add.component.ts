@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
 
 import * as _ from 'lodash';
-import { SystemGeneralService, WebSocketService } from '../../../../services/';
+import { SystemGeneralService, WebSocketService } from '../../../../services';
 import { ModalService } from 'app/services/modal.service';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -21,28 +21,27 @@ import { DialogService } from '../../../../services/dialog.service';
 import { T } from '../../../../translate-marker';
 
 @Component({
-  selector : 'system-certificate-add',
-  template : `<entity-form [conf]="this"></entity-form>`,
-  providers : [ SystemGeneralService ]
+  selector: 'system-certificate-add',
+  template: '<entity-form [conf]="this"></entity-form>',
+  providers: [SystemGeneralService],
 })
 
 export class CertificateAddComponent {
-
-  protected addWsCall = "certificate.create";
+  protected addWsCall = 'certificate.create';
   protected dialogRef: any;
   private entityForm: any;
   private CSRList: any[] = [];
   private title = helptext_system_certificates.add.title;
-  private getType = new Subscription;
+  private getType = new Subscription();
   private type: any;
-  public hideCancel = true;
+  hideCancel = true;
   private isLinear = true;
   private summary: any = {};
 
   entityWizard: any;
   private currentStep = 0;
 
-  public wizardConfig: Wizard[] = [
+  wizardConfig: Wizard[] = [
     {
       label: helptext_system_certificates.add.fieldset_basic,
       fieldConfig: [
@@ -83,11 +82,11 @@ export class CertificateAddComponent {
               }, {
                 name: 'create_type',
                 value: 'CERTIFICATE_CREATE_IMPORTED_CSR',
-              }]
+              }],
             },
-          ]
-        }
-      ]
+          ],
+        },
+      ],
     },
     {
       label: helptext_system_ca.add.fieldset_type,
@@ -106,7 +105,7 @@ export class CertificateAddComponent {
           placeholder: helptext_system_certificates.add.signedby.placeholder,
           tooltip: helptext_system_certificates.add.signedby.tooltip,
           options: [
-            { label: '---', value: null }
+            { label: '---', value: null },
           ],
           isHidden: true,
           disabled: true,
@@ -118,9 +117,9 @@ export class CertificateAddComponent {
               when: [{
                 name: 'csronsys',
                 value: true,
-              }]
+              }],
             },
-          ]
+          ],
         },
         {
           type: 'select',
@@ -128,7 +127,7 @@ export class CertificateAddComponent {
           placeholder: helptext_system_certificates.add.signedby.placeholder,
           tooltip: helptext_system_certificates.add.signedby.tooltip,
           options: [
-            { label: '---', value: null }
+            { label: '---', value: null },
           ],
           isHidden: true,
           disabled: true,
@@ -142,13 +141,13 @@ export class CertificateAddComponent {
           tooltip: helptext_system_ca.add.key_type.tooltip,
           options: [
             { label: 'RSA', value: 'RSA' },
-            { label: 'EC', value: 'EC' }
+            { label: 'EC', value: 'EC' },
           ],
           value: 'RSA',
           isHidden: false,
           disabled: true,
           required: true,
-          validation: helptext_system_certificates.add.key_type.validation
+          validation: helptext_system_certificates.add.key_type.validation,
         },
         {
           type: 'select',
@@ -165,9 +164,9 @@ export class CertificateAddComponent {
               when: [{
                 name: 'key_type',
                 value: 'EC',
-              }]
+              }],
             },
-          ]
+          ],
         },
         {
           type: 'select',
@@ -189,9 +188,9 @@ export class CertificateAddComponent {
               when: [{
                 name: 'key_type',
                 value: 'RSA',
-              }]
+              }],
             },
-          ]
+          ],
         },
         {
           type: 'select',
@@ -221,7 +220,7 @@ export class CertificateAddComponent {
           validation: helptext_system_certificates.add.lifetime.validation,
           isHidden: false,
         },
-      ]
+      ],
     },
     {
       label: helptext_system_certificates.add.fieldset_certificate,
@@ -297,8 +296,8 @@ export class CertificateAddComponent {
           required: true,
           validation: helptext_system_certificates.add.san.validation,
           isHidden: false,
-        }
-      ]
+        },
+      ],
     },
     {
       label: helptext_system_certificates.add.fieldset_extra,
@@ -321,9 +320,9 @@ export class CertificateAddComponent {
               when: [{
                 name: 'BasicConstraints-enabled',
                 value: true,
-              }]
+              }],
             },
-          ]
+          ],
         },
         {
           type: 'select',
@@ -341,7 +340,7 @@ export class CertificateAddComponent {
               value: 'extension_critical',
               label: helptext_system_certificates.add.basic_constraints.extension_critical.placeholder,
               tooltip: helptext_system_certificates.add.basic_constraints.extension_critical.tooltip,
-            }
+            },
           ],
           relation: [
             {
@@ -349,9 +348,9 @@ export class CertificateAddComponent {
               when: [{
                 name: 'BasicConstraints-enabled',
                 value: true,
-              }]
+              }],
             },
-          ]
+          ],
         },
         {
           type: 'checkbox',
@@ -375,7 +374,7 @@ export class CertificateAddComponent {
               value: 'extension_critical',
               label: helptext_system_certificates.add.authority_key_identifier.extension_critical.placeholder,
               tooltip: helptext_system_certificates.add.authority_key_identifier.extension_critical.tooltip,
-            }
+            },
           ],
           relation: [
             {
@@ -383,9 +382,9 @@ export class CertificateAddComponent {
               when: [{
                 name: 'AuthorityKeyIdentifier-enabled',
                 value: true,
-              }]
+              }],
             },
-          ]
+          ],
         },
         {
           type: 'checkbox',
@@ -407,9 +406,9 @@ export class CertificateAddComponent {
               when: [{
                 name: 'ExtendedKeyUsage-enabled',
                 value: true,
-              }]
+              }],
             },
-          ]
+          ],
         },
         {
           type: 'checkbox',
@@ -422,9 +421,9 @@ export class CertificateAddComponent {
               when: [{
                 name: 'ExtendedKeyUsage-enabled',
                 value: true,
-              }]
+              }],
             },
-          ]
+          ],
         },
         {
           type: 'checkbox',
@@ -496,9 +495,9 @@ export class CertificateAddComponent {
               when: [{
                 name: 'KeyUsage-enabled',
                 value: true,
-              }]
+              }],
             },
-          ]
+          ],
         },
         {
           type: 'textarea',
@@ -531,9 +530,9 @@ export class CertificateAddComponent {
               when: [{
                 name: 'csronsys',
                 value: true,
-              }]
+              }],
             },
-          ]
+          ],
         },
         {
           type: 'input',
@@ -550,9 +549,9 @@ export class CertificateAddComponent {
               when: [{
                 name: 'csronsys',
                 value: true,
-              }]
+              }],
             },
-          ]
+          ],
         },
         {
           type: 'input',
@@ -566,15 +565,15 @@ export class CertificateAddComponent {
               when: [{
                 name: 'csronsys',
                 value: true,
-              }]
+              }],
             },
-          ]
-        }
-      ]
+          ],
+        },
+      ],
     },
 
-  ]
-  private internalFields: Array<any> = [
+  ];
+  private internalFields: any[] = [
     'signedby',
     'key_type',
     'ec_curve',
@@ -590,7 +589,7 @@ export class CertificateAddComponent {
     'common',
     'san',
   ];
-  private csrFields: Array<any> = [
+  private csrFields: any[] = [
     'key_type',
     'key_length',
     'ec_curve',
@@ -604,21 +603,21 @@ export class CertificateAddComponent {
     'common',
     'san',
   ];
-  private importFields: Array<any> = [
+  private importFields: any[] = [
     'certificate',
     'csronsys',
     'csrlist',
     'privatekey',
     'passphrase',
-    'passphrase2'
+    'passphrase2',
   ];
-  private importCSRFields: Array<any> = [
+  private importCSRFields: any[] = [
     'CSR',
     'privatekey',
     'passphrase',
-    'passphrase2'
+    'passphrase2',
   ];
-  private extensionFields: Array<any> = [
+  private extensionFields: any[] = [
     'BasicConstraints-enabled',
     'BasicConstraints-path_length',
     'BasicConstraints',
@@ -634,17 +633,17 @@ export class CertificateAddComponent {
   private country: any;
   private signedby: any;
   private csrlist: any;
-  public identifier: any;
-  public usageField: any;
+  identifier: any;
+  usageField: any;
   private currentProfile: any;
 
   constructor(protected ws: WebSocketService, protected dialog: MatDialog,
-              protected systemGeneralService: SystemGeneralService, private modalService: ModalService,
-              protected loader: AppLoaderService, private dialogService: DialogService) {
-                this.getType = this.modalService.getRow$.subscribe(rowId => {
-                  this.type = rowId;
-                })
-              }
+    protected systemGeneralService: SystemGeneralService, private modalService: ModalService,
+    protected loader: AppLoaderService, private dialogService: DialogService) {
+    this.getType = this.modalService.getRow$.subscribe((rowId) => {
+      this.type = rowId;
+    });
+  }
 
   preInit(entityWizard: EntityWizardComponent) {
     this.entityWizard = entityWizard;
@@ -652,14 +651,15 @@ export class CertificateAddComponent {
       this.signedby = this.getTarget('signedby');
       res.forEach((item) => {
         this.signedby.options.push(
-            {label : item.name, value : item.id});
+          { label: item.name, value: item.id },
+        );
       });
     });
 
     this.ws.call('certificate.ec_curve_choices').subscribe((res) => {
-      const ec_curves_field = this.getTarget('ec_curve')
-      for(const key in res) {
-        ec_curves_field.options.push({label: res[key], value: key});
+      const ec_curves_field = this.getTarget('ec_curve');
+      for (const key in res) {
+        ec_curves_field.options.push({ label: res[key], value: key });
       }
     });
 
@@ -667,9 +667,9 @@ export class CertificateAddComponent {
       this.country = this.getTarget('country');
       for (const item in res) {
         this.country.options.push(
-          { label : res[item], value : item}
+          { label: res[item], value: item },
         );
-      };
+      }
     });
 
     this.ws.call('certificate.query').subscribe((res: any[]) => {
@@ -678,24 +678,24 @@ export class CertificateAddComponent {
         if (item.CSR !== null) {
           this.CSRList.push(item);
           this.csrlist.options.push(
-            {label: item.name, value: item.id}
-          )
+            { label: item.name, value: item.id },
+          );
         }
-      })
+      });
     });
 
     this.usageField = this.getTarget('ExtendedKeyUsage-usages');
     this.ws.call('certificate.extended_key_usage_choices').subscribe((res) => {
-      Object.keys(res).forEach(key => {
-        this.usageField.options.push({label: res[key], value: key})
+      Object.keys(res).forEach((key) => {
+        this.usageField.options.push({ label: res[key], value: key });
       });
     });
 
     const profilesField = this.getTarget('profiles');
     this.ws.call('certificate.profiles').subscribe((res) => {
-      Object.keys(res).forEach(item => {
-        profilesField.options.push({label: item, value: res[item]});
-      })
+      Object.keys(res).forEach((item) => {
+        profilesField.options.push({ label: item, value: res[item] });
+      });
     });
   }
 
@@ -724,7 +724,7 @@ export class CertificateAddComponent {
       }
       this.getField(fieldName).valueChanges.subscribe((res) => {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, res);
-      })
+      });
     }
   }
 
@@ -745,39 +745,39 @@ export class CertificateAddComponent {
   afterInit(entity: EntityWizardComponent) {
     this.entityForm = entity;
     // this.fieldConfig = entity.fieldConfig;
-    for (let i in this.csrFields) {
+    for (const i in this.csrFields) {
       this.hideField(this.csrFields[i], true, entity);
     }
-    for (let i in this.importFields) {
+    for (const i in this.importFields) {
       this.hideField(this.importFields[i], true, entity);
     }
-    for (let i in this.importCSRFields) {
+    for (const i in this.importCSRFields) {
       this.hideField(this.importCSRFields[i], true, entity);
     }
-    for (let i in this.internalFields) {
+    for (const i in this.internalFields) {
       this.hideField(this.internalFields[i], false, entity);
     }
     this.hideField(this.internalFields[2], true, entity);
-    this.getField('csronsys').valueChanges.subscribe(res => {
-        this.hideField('csrlist', !res, entity);
-    })
+    this.getField('csronsys').valueChanges.subscribe((res) => {
+      this.hideField('csrlist', !res, entity);
+    });
     this.getField('create_type').valueChanges.subscribe((res) => {
       this.wizardConfig[2].skip = false;
 
       if (res == 'CERTIFICATE_CREATE_INTERNAL') {
-        for (let i in this.csrFields) {
+        for (const i in this.csrFields) {
           this.hideField(this.csrFields[i], true, entity);
         }
-        for (let i in this.importFields) {
+        for (const i in this.importFields) {
           this.hideField(this.importFields[i], true, entity);
         }
-        for (let i in this.importCSRFields) {
+        for (const i in this.importCSRFields) {
           this.hideField(this.importCSRFields[i], true, entity);
         }
-        for (let i in this.internalFields) {
+        for (const i in this.internalFields) {
           this.hideField(this.internalFields[i], false, entity);
         }
-        for (let i in this.extensionFields) {
+        for (const i in this.extensionFields) {
           this.hideField(this.extensionFields[i], false, entity);
         }
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
@@ -786,21 +786,20 @@ export class CertificateAddComponent {
         } else if (this.getField('key_type').value === 'EC') {
           this.setDisabled('key_length', true);
         }
-
       } else if (res == 'CERTIFICATE_CREATE_CSR') {
-        for (let i in this.internalFields) {
+        for (const i in this.internalFields) {
           this.hideField(this.internalFields[i], true, entity);
         }
-        for (let i in this.importFields) {
+        for (const i in this.importFields) {
           this.hideField(this.importFields[i], true, entity);
         }
-        for (let i in this.importCSRFields) {
+        for (const i in this.importCSRFields) {
           this.hideField(this.importCSRFields[i], true, entity);
         }
-        for (let i in this.csrFields) {
+        for (const i in this.csrFields) {
           this.hideField(this.csrFields[i], false, entity);
         }
-        for (let i in this.extensionFields) {
+        for (const i in this.extensionFields) {
           this.hideField(this.extensionFields[i], false, entity);
         }
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
@@ -809,21 +808,20 @@ export class CertificateAddComponent {
         } else if (this.getField('key_type').value === 'EC') {
           this.setDisabled('key_length', true);
         }
-
       } else if (res == 'CERTIFICATE_CREATE_IMPORTED') {
-        for (let i in this.internalFields) {
+        for (const i in this.internalFields) {
           this.hideField(this.internalFields[i], true, entity);
         }
-        for (let i in this.csrFields) {
+        for (const i in this.csrFields) {
           this.hideField(this.csrFields[i], true, entity);
         }
-        for (let i in this.importCSRFields) {
+        for (const i in this.importCSRFields) {
           this.hideField(this.importCSRFields[i], true, entity);
         }
-        for (let i in this.importFields) {
+        for (const i in this.importFields) {
           this.hideField(this.importFields[i], false, entity);
         }
-        for (let i in this.extensionFields) {
+        for (const i in this.extensionFields) {
           this.hideField(this.extensionFields[i], true, entity);
         }
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
@@ -836,21 +834,20 @@ export class CertificateAddComponent {
         }
 
         this.wizardConfig[2].skip = true;
-
       } else if (res == 'CERTIFICATE_CREATE_IMPORTED_CSR') {
-        for (let i in this.internalFields) {
+        for (const i in this.internalFields) {
           this.hideField(this.internalFields[i], true, entity);
         }
-        for (let i in this.csrFields) {
+        for (const i in this.csrFields) {
           this.hideField(this.csrFields[i], true, entity);
         }
-        for (let i in this.importFields) {
+        for (const i in this.importFields) {
           this.hideField(this.importFields[i], true, entity);
         }
-        for (let i in this.importCSRFields) {
+        for (const i in this.importCSRFields) {
           this.hideField(this.importCSRFields[i], false, entity);
         }
-        for (let i in this.extensionFields) {
+        for (const i in this.extensionFields) {
           this.hideField(this.extensionFields[i], true, entity);
         }
 
@@ -863,7 +860,7 @@ export class CertificateAddComponent {
     this.getField('name').valueChanges.subscribe((res) => {
       this.identifier = res;
       this.setSummary();
-    })
+    });
 
     this.getField('name').statusChanges.subscribe((res) => {
       if (this.identifier && res === 'INVALID') {
@@ -872,7 +869,7 @@ export class CertificateAddComponent {
         this.getTarget('name')['hasErrors'] = false;
       }
       this.setSummary();
-    })
+    });
 
     this.getField('ExtendedKeyUsage-enabled').valueChanges.subscribe((res) => {
       const usagesRequired = res !== undefined ? res : false;
@@ -897,7 +894,7 @@ export class CertificateAddComponent {
 
     if (this.type && this.type === 'csr') {
       this.getField('create_type').setValue(helptext_system_certificates.add.csr_create_type.value);
-      let certType = this.getTarget('create_type');
+      const certType = this.getTarget('create_type');
       certType.options = helptext_system_certificates.add.csr_create_type.options;
       certType.placeholder = helptext_system_certificates.add.csr_create_type.placeholder;
       certType.tooltip = helptext_system_certificates.add.csr_create_type.tooltip;
@@ -914,15 +911,15 @@ export class CertificateAddComponent {
 
   loadProfiles(value: any, reset?: any) {
     if (value) {
-      Object.keys(value).forEach(item => {
+      Object.keys(value).forEach((item) => {
         if (item === 'cert_extensions') {
-          Object.keys(value['cert_extensions']).forEach(type => {
-            Object.keys(value['cert_extensions'][type]).forEach(prop => {
+          Object.keys(value['cert_extensions']).forEach((type) => {
+            Object.keys(value['cert_extensions'][type]).forEach((prop) => {
               let ctrl = this.getField(`${type}-${prop}`);
               if (ctrl) {
                 if (reset && ctrl.value === value['cert_extensions'][type][prop]) {
                   ctrl.setValue(undefined);
-                } else if (!reset){
+                } else if (!reset) {
                   ctrl.setValue(value['cert_extensions'][type][prop]);
                 }
               } else {
@@ -932,34 +929,29 @@ export class CertificateAddComponent {
                 if (reset && value['cert_extensions'][type][prop] === true && optionIndex > -1) {
                   config.splice(optionIndex, 1);
                   ctrl.setValue(config);
-                } else if (!reset){
+                } else if (!reset) {
                   if (value['cert_extensions'][type][prop] === true && optionIndex === -1) {
                     config.push(prop);
-                  } else if (value['cert_extensions'][type][prop] === false && optionIndex > -1 ) {
+                  } else if (value['cert_extensions'][type][prop] === false && optionIndex > -1) {
                     config.splice(optionIndex, 1);
                   }
                   ctrl.setValue(config);
                 }
               }
-            })
-          })
-        } else {
-          if (reset && this.getField(item).value === value[item]) {
-            this.getField(item).setValue(undefined);
-          } else if (!reset){
-            this.getField(item).setValue(value[item]);
-          }
+            });
+          });
+        } else if (reset && this.getField(item).value === value[item]) {
+          this.getField(item).setValue(undefined);
+        } else if (!reset) {
+          this.getField(item).setValue(value[item]);
         }
       });
     }
   }
 
   getStep(fieldName: string) {
-
     const stepNumber = this.wizardConfig.findIndex((step) => {
-      const index = step.fieldConfig.findIndex(field => {
-        return fieldName == field.name;
-      });
+      const index = step.fieldConfig.findIndex((field) => fieldName == field.name);
       return index > -1;
     });
 
@@ -967,25 +959,21 @@ export class CertificateAddComponent {
   }
 
   getField(fieldName: any) {
-
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
-      const target = ( < FormGroup > this.entityWizard.formArray.get([stepNumber])).controls[fieldName];
+      const target = (< FormGroup > this.entityWizard.formArray.get([stepNumber])).controls[fieldName];
       return target;
-    } else {
-      return null;
     }
+    return null;
   }
 
   getTarget(fieldName: string) {
-
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
-      const target = _.find(this.wizardConfig[stepNumber].fieldConfig, {'name': fieldName});
+      const target = _.find(this.wizardConfig[stepNumber].fieldConfig, { name: fieldName });
       return target;
-    } else {
-      return null;
     }
+    return null;
   }
 
   hideField(fieldName: any, show: boolean, entity: any) {
@@ -1003,11 +991,11 @@ export class CertificateAddComponent {
   }
 
   beforeSubmit(data: any) {
-    if(data.san) {
-      for(let i = 0;i<data.san.length;i++) {
+    if (data.san) {
+      for (let i = 0; i < data.san.length; i++) {
         let sanValue = '';
-        for(let key in data.san[i]) {
-          sanValue+= data.san[i][key];
+        for (const key in data.san[i]) {
+          sanValue += data.san[i][key];
         }
         data.san[i] = sanValue;
       }
@@ -1018,9 +1006,8 @@ export class CertificateAddComponent {
           data.privatekey = item.privatekey;
           data.passphrase = item.passphrase;
           data.passphrase2 = item.passphrase2;
-          return;
         }
-      })
+      });
     }
     delete data.csronsys;
     delete data.csrlist;
@@ -1035,12 +1022,12 @@ export class CertificateAddComponent {
     }
     if (data.create_type === 'CERTIFICATE_CREATE_INTERNAL' || data.create_type === 'CERTIFICATE_CREATE_CSR') {
       const cert_extensions = {
-        'BasicConstraints': {},
-        'AuthorityKeyIdentifier': {},
-        'ExtendedKeyUsage': {},
-        'KeyUsage': {},
-      }
-      Object.keys(data).forEach(key => {
+        BasicConstraints: {},
+        AuthorityKeyIdentifier: {},
+        ExtendedKeyUsage: {},
+        KeyUsage: {},
+      };
+      Object.keys(data).forEach((key) => {
         if (key.startsWith('BasicConstraints') || key.startsWith('AuthorityKeyIdentifier') || key.startsWith('ExtendedKeyUsage') || key.startsWith('KeyUsage')) {
           const type_prop = key.split('-');
           if (data[key] === '') {
@@ -1065,8 +1052,8 @@ export class CertificateAddComponent {
     return data;
   }
 
-  customSubmit(data: any){
-    const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Creating Certificate") }, disableClose: true });
+  customSubmit(data: any) {
+    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Creating Certificate') }, disableClose: true });
     dialogRef.componentInstance.setCall(this.addWsCall, [data]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.subscribe(() => {
@@ -1075,13 +1062,13 @@ export class CertificateAddComponent {
       this.modalService.refreshTable();
     });
     dialogRef.componentInstance.failure.subscribe((err: any) => {
-      this.dialog.closeAll()
+      this.dialog.closeAll();
       // Dialog needed b/c handleWSError doesn't open a dialog when rejection comes back from provider
       if (err.error.includes('[EFAULT')) {
         new EntityUtils().handleWSError(this.entityForm, err);
       } else {
-      this.dialogService.errorReport(helptext_system_certificates.acme.error_dialog.title,
-        err.exc_info.type, err.exception)
+        this.dialogService.errorReport(helptext_system_certificates.acme.error_dialog.title,
+          err.exc_info.type, err.exception);
       }
     });
   }

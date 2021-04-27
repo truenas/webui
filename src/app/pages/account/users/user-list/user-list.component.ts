@@ -3,7 +3,9 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { T } from '../../../../translate-marker';
-import { DialogService, StorageService, ValidationService, UserService } from 'app/services';
+import {
+  DialogService, StorageService, ValidationService, UserService,
+} from 'app/services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../../services/ws.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
@@ -16,14 +18,13 @@ import { UserFormComponent } from '../user-form/user-form.component';
 
 @Component({
   selector: 'app-user-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
-  providers: [UserService]
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
+  providers: [UserService],
 })
 export class UserListComponent implements OnDestroy {
-
-  public title = "Users";
+  title = 'Users';
   protected route_add: string[] = ['account', 'users', 'add'];
-  protected route_add_tooltip = "Add User";
+  protected route_add_tooltip = 'Add User';
   protected route_edit: string[] = ['account', 'users', 'edit'];
 
   protected entityList: any;
@@ -35,39 +36,55 @@ export class UserListComponent implements OnDestroy {
   protected wsDelete = 'user.delete';
   // protected queryCallOption = [['OR', [['uid', '=', 0], ['builtin', '=', false]]]];
   protected globalConfig = {
-    id: "config",
+    id: 'config',
     tooltip: helptext.globalConfigTooltip,
     onClick: () => {
       this.toggleBuiltins();
-    }
+    },
   };
 
   protected addComponent: UserFormComponent;
   private refreshTableSubscription: any;
 
-  public columns: Array < any > = [
-    { name: 'Username', prop: 'username', always_display: true, minWidth: 150},
-    { name: 'UID', prop: 'uid', hidden: false, maxWidth: 100 },
-    { name: 'GID', prop: 'gid', hidden: true, maxWidth: 100 },
-    { name: 'Home directory', prop: 'home', hidden: true  },
-    { name: 'Shell', prop: 'shell', hidden: true, minWidth: 150  },
-    { name: 'Builtin', prop: 'builtin', hidden: false  },
-    { name: 'Full Name', prop: 'full_name', hidden: false, minWidth: 250 },
-    { name: 'Email', prop: 'email', hidden: true, maxWidth: 250 },
-    { name: 'Password Disabled', prop: 'password_disabled', hidden: true, minWidth: 200 },
+  columns: any[] = [
+    {
+      name: 'Username', prop: 'username', always_display: true, minWidth: 150,
+    },
+    {
+      name: 'UID', prop: 'uid', hidden: false, maxWidth: 100,
+    },
+    {
+      name: 'GID', prop: 'gid', hidden: true, maxWidth: 100,
+    },
+    { name: 'Home directory', prop: 'home', hidden: true },
+    {
+      name: 'Shell', prop: 'shell', hidden: true, minWidth: 150,
+    },
+    { name: 'Builtin', prop: 'builtin', hidden: false },
+    {
+      name: 'Full Name', prop: 'full_name', hidden: false, minWidth: 250,
+    },
+    {
+      name: 'Email', prop: 'email', hidden: true, maxWidth: 250,
+    },
+    {
+      name: 'Password Disabled', prop: 'password_disabled', hidden: true, minWidth: 200,
+    },
     { name: 'Lock User', prop: 'locked', hidden: true },
-    { name: 'Permit Sudo', prop: 'sudo', hidden: true  },
-    { name: 'Microsoft Account', prop: 'microsoft_account', hidden: true, minWidth: 170 },
-    { name : 'Samba Authentication', prop: 'smb', hidden: true }
+    { name: 'Permit Sudo', prop: 'sudo', hidden: true },
+    {
+      name: 'Microsoft Account', prop: 'microsoft_account', hidden: true, minWidth: 170,
+    },
+    { name: 'Samba Authentication', prop: 'smb', hidden: true },
   ];
-  public rowIdentifier = 'username';
-  public config: any = {
+  rowIdentifier = 'username';
+  config: any = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
       title: 'User',
-      key_props: ['username']
-    }
+      key_props: ['username'],
+    },
   };
 
   isActionVisible(actionId: string, row: any) {
@@ -78,61 +95,60 @@ export class UserListComponent implements OnDestroy {
   }
 
   constructor(private router: Router,
-              protected dialogService: DialogService, protected loader: AppLoaderService,
-              protected ws: WebSocketService, protected prefService: PreferencesService,
-              private translate: TranslateService, private modalService: ModalService,
-              private storageService: StorageService, private userService: UserService,
-              private validationService: ValidationService) {
+    protected dialogService: DialogService, protected loader: AppLoaderService,
+    protected ws: WebSocketService, protected prefService: PreferencesService,
+    private translate: TranslateService, private modalService: ModalService,
+    private storageService: StorageService, private userService: UserService,
+    private validationService: ValidationService) {
   }
 
   ngOnInit() {
     this.refreshUserForm();
     this.modalService.refreshForm$.subscribe(() => {
       this.refreshUserForm();
-    })
+    });
   }
 
-  ngOnDestroy(){
-    if(this.refreshTableSubscription){
+  ngOnDestroy() {
+    if (this.refreshTableSubscription) {
       this.refreshTableSubscription.unsubscribe();
     }
   }
 
   refreshUserForm() {
-    this.addComponent = new UserFormComponent(this.router,this.ws, this.storageService,this.loader,
-      this.userService,this.validationService,this.modalService);
+    this.addComponent = new UserFormComponent(this.router, this.ws, this.storageService, this.loader,
+      this.userService, this.validationService, this.modalService);
   }
 
   afterInit(entityList: any) {
     this.entityList = entityList;
     setTimeout(() => {
-      if(this.prefService.preferences.showUserListMessage) {
+      if (this.prefService.preferences.showUserListMessage) {
         this.showOneTimeBuiltinMsg();
       }
-    }, 2000)
+    }, 2000);
 
     this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
       this.entityList.getData();
-    })
+    });
   }
   getActions(row: any) {
     const actions = [];
     actions.push({
       id: row.username,
       icon: 'edit',
-      label : helptext.user_list_actions_edit_label,
+      label: helptext.user_list_actions_edit_label,
       name: helptext.user_list_actions_edit_id,
-      onClick : (users_edit: any) => {
-        this.modalService.open('slide-in-form', this.addComponent, users_edit.id)
-      }
+      onClick: (users_edit: any) => {
+        this.modalService.open('slide-in-form', this.addComponent, users_edit.id);
+      },
     });
-    if (row.builtin !== true){
-
+    if (row.builtin !== true) {
       actions.push({
         id: row.username,
         icon: 'delete',
         name: 'delete',
-        label : helptext.user_list_actions_delete_label,
+        label: helptext.user_list_actions_delete_label,
         onClick: (users_edit: any) => {
           const self = this;
           const conf: DialogFormConfiguration = {
@@ -141,7 +157,7 @@ export class UserListComponent implements OnDestroy {
             fieldConfig: [],
             confirmCheckbox: true,
             saveButtonText: helptext.deleteDialog.saveButtonText,
-            preInit: function () {
+            preInit() {
               if (self.ableToDeleteGroup(users_edit.id)) {
                 conf.fieldConfig.push({
                   type: 'checkbox',
@@ -151,19 +167,19 @@ export class UserListComponent implements OnDestroy {
                 });
               }
             },
-            customSubmit: function (entityDialog: EntityDialogComponent) {
+            customSubmit(entityDialog: EntityDialogComponent) {
               entityDialog.dialogRef.close(true);
               self.loader.open();
               self.ws.call(self.wsDelete, [users_edit.id, entityDialog.formValue]).subscribe((res) => {
                 self.entityList.getData();
                 self.loader.close();
               },
-                (err) => {
-                  new EntityUtils().handleWSError(self, err, self.dialogService);
-                  self.loader.close();
-                })
-            }
-          }
+              (err) => {
+                new EntityUtils().handleWSError(self, err, self.dialogService);
+                self.loader.close();
+              });
+            },
+          };
           this.dialogService.dialogForm(conf);
         },
       });
@@ -171,16 +187,14 @@ export class UserListComponent implements OnDestroy {
     return actions;
   }
 
-  ableToDeleteGroup(id: any){
-    let user: any
-    let group_users: any
-    user = _.find(this.usr_lst[0], {id});
-    group_users =_.find(this.grp_lst[0], {id: user.group.id})['users'];
+  ableToDeleteGroup(id: any) {
+    const user = _.find(this.usr_lst[0], { id });
+    const group_users = _.find(this.grp_lst[0], { id: user.group.id })['users'];
     // Show checkbox if deleting the last member of a group
-    if(group_users.length === 1){
-      return true
-    };
-    return false
+    if (group_users.length === 1) {
+      return true;
+    }
+    return false;
   }
 
   resourceTransformIncomingRestData(d: any) {
@@ -188,30 +202,29 @@ export class UserListComponent implements OnDestroy {
     this.usr_lst = [];
     this.grp_lst = [];
     this.usr_lst.push(data);
-    this.ws.call('group.query').subscribe((res)=>{
+    this.ws.call('group.query').subscribe((res) => {
       this.grp_lst.push(res);
       data.forEach((user: any) => {
-        const group = _.find(res, {"gid" : user.group.bsdgrp_gid});
-        //user.group.bsdgrp_gid = group['gid'];
+        const group = _.find(res, { gid: user.group.bsdgrp_gid });
+        // user.group.bsdgrp_gid = group['gid'];
         user.gid = group['gid'];
       });
-      let rows = data;
-      for (let i=0; i<rows.length; i++) {
-        rows[i].details = []
-        rows[i].details.push({label:T("GID"), value:rows[i].group['bsdgrp_gid']},
-                             {label:T("Home Directory"), value:rows[i].home},
-                             {label:T("Shell"), value:rows[i].shell},
-                             {label:T("Email"), value:rows[i].email});
-      };
-
+      const rows = data;
+      for (let i = 0; i < rows.length; i++) {
+        rows[i].details = [];
+        rows[i].details.push({ label: T('GID'), value: rows[i].group['bsdgrp_gid'] },
+          { label: T('Home Directory'), value: rows[i].home },
+          { label: T('Shell'), value: rows[i].shell },
+          { label: T('Email'), value: rows[i].email });
+      }
     });
-   if (this.prefService.preferences.hide_builtin_users) {
-      let newData: any[] = []
+    if (this.prefService.preferences.hide_builtin_users) {
+      const newData: any[] = [];
       data.forEach((item: any) => {
         if (!item.builtin || item.username === 'root') {
           newData.push(item);
         }
-      })
+      });
       return data = newData;
     }
     return data;
@@ -219,24 +232,24 @@ export class UserListComponent implements OnDestroy {
 
   toggleBuiltins() {
     let show;
-    this.prefService.preferences.hide_builtin_users ? show = helptext.builtins_dialog.show :
-      show = helptext.builtins_dialog.hide;
-      this.translate.get(show).subscribe((action: string) => {
-        this.translate.get(helptext.builtins_dialog.title).subscribe((title: string) => {
-          this.translate.get(helptext.builtins_dialog.message).subscribe((message: string) => {
+    this.prefService.preferences.hide_builtin_users ? show = helptext.builtins_dialog.show
+      : show = helptext.builtins_dialog.hide;
+    this.translate.get(show).subscribe((action: string) => {
+      this.translate.get(helptext.builtins_dialog.title).subscribe((title: string) => {
+        this.translate.get(helptext.builtins_dialog.message).subscribe((message: string) => {
           this.dialogService.confirm(action + title,
             action + message, true, action)
             .subscribe((res: boolean) => {
-            if (res) {
-              this.prefService.preferences.hide_builtin_users = !this.prefService.preferences.hide_builtin_users;
-              this.prefService.savePreferences();
-              this.entityList.needTableResize = false;
-              this.entityList.getData();
-            }
-          })
-        })
-      })
-    })
+              if (res) {
+                this.prefService.preferences.hide_builtin_users = !this.prefService.preferences.hide_builtin_users;
+                this.prefService.savePreferences();
+                this.entityList.needTableResize = false;
+                this.entityList.getData();
+              }
+            });
+        });
+      });
+    });
   }
 
   showOneTimeBuiltinMsg() {

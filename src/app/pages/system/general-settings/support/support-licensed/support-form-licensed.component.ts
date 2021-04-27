@@ -14,134 +14,134 @@ import { ModalService } from '../../../../../services/modal.service';
 
 @Component({
   selector: 'app-support-form-licensed',
-  template : `<entity-form [conf]="this"></entity-form>`
+  template: '<entity-form [conf]="this"></entity-form>',
 
 })
 export class SupportFormLicensedComponent {
   private queryCall = 'none';
 
-  public entityEdit: any;
-  public screenshot: any;
-  public subs: any[];
-  public saveSubmitText = helptext.submitBtn;
-  public title = helptext.ticket;
-  public custActions: Array<any> = [];
-  public fieldConfig: FieldConfig[] = []
-  public fieldSets: FieldSet[] = [
+  entityEdit: any;
+  screenshot: any;
+  subs: any[];
+  saveSubmitText = helptext.submitBtn;
+  title = helptext.ticket;
+  custActions: any[] = [];
+  fieldConfig: FieldConfig[] = [];
+  fieldSets: FieldSet[] = [
     {
       name: 'column1',
       label: false,
-      config:[
+      config: [
         {
-          type : 'input',
-          name : 'name',
-          placeholder : helptext.name.placeholder,
-          tooltip : helptext.name.tooltip,
+          type: 'input',
+          name: 'name',
+          placeholder: helptext.name.placeholder,
+          tooltip: helptext.name.tooltip,
           tooltipPosition: 'below',
           required: true,
-          validation : helptext.name.validation
+          validation: helptext.name.validation,
         },
         {
-          type : 'input',
-          name : 'email',
-          placeholder : helptext.email.placeholder,
-          tooltip : helptext.email.tooltip,
+          type: 'input',
+          name: 'email',
+          placeholder: helptext.email.placeholder,
+          tooltip: helptext.email.tooltip,
           tooltipPosition: 'above',
           required: true,
-          validation : helptext.email.validation
+          validation: helptext.email.validation,
         },
         {
-          type : 'chip',
-          name : 'cc',
-          placeholder : helptext.cc.placeholder,
-          tooltip : helptext.cc.tooltip,
+          type: 'chip',
+          name: 'cc',
+          placeholder: helptext.cc.placeholder,
+          tooltip: helptext.cc.tooltip,
           tooltipPosition: 'above',
-          validation: [this.emailListValidator('cc')]
+          validation: [this.emailListValidator('cc')],
         },
         {
-          type : 'input',
-          name : 'phone',
-          placeholder : helptext.phone.placeholder,
-          tooltip : helptext.phone.tooltip,
+          type: 'input',
+          name: 'phone',
+          placeholder: helptext.phone.placeholder,
+          tooltip: helptext.phone.tooltip,
           tooltipPosition: 'above',
           required: true,
-          validation : helptext.phone.validation
+          validation: helptext.phone.validation,
         },
         {
-          type : 'select',
-          name : 'TNCategory',
-          placeholder : helptext.type.placeholder,
-          tooltip : helptext.type.tooltip,
+          type: 'select',
+          name: 'TNCategory',
+          placeholder: helptext.type.placeholder,
+          tooltip: helptext.type.tooltip,
           tooltipPosition: 'above',
-          options:[
-            {label: 'Bug', value: 'BUG'},
-            {label: 'Hardware', value: 'HARDWARE'},
-            {label: 'Installation/Setup', value: 'INSTALL'},
-            {label: 'Performance', value: 'PERFORMANCE'}
+          options: [
+            { label: 'Bug', value: 'BUG' },
+            { label: 'Hardware', value: 'HARDWARE' },
+            { label: 'Installation/Setup', value: 'INSTALL' },
+            { label: 'Performance', value: 'PERFORMANCE' },
           ],
-          value: 'BUG'
+          value: 'BUG',
         },
         {
-          type : 'select',
-          name : 'environment',
-          placeholder : helptext.environment.placeholder,
-          tooltip : helptext.environment.tooltip,
+          type: 'select',
+          name: 'environment',
+          placeholder: helptext.environment.placeholder,
+          tooltip: helptext.environment.tooltip,
           tooltipPosition: 'above',
-          options:[
-            {label: 'Production', value: 'production'},
-            {label: 'Staging', value: 'staging'},
-            {label: 'Testing', value: 'testing'},
-            {label: 'Prototyping', value: 'prototyping'},
-            {label: 'Initial Deployment/Setup', value: 'initial'}
+          options: [
+            { label: 'Production', value: 'production' },
+            { label: 'Staging', value: 'staging' },
+            { label: 'Testing', value: 'testing' },
+            { label: 'Prototyping', value: 'prototyping' },
+            { label: 'Initial Deployment/Setup', value: 'initial' },
           ],
           validation: helptext.environment.validation,
-          value: 'production'
-        }
-      ]
+          value: 'production',
+        },
+      ],
     },
     {
-    name: 'col2',
-    label: false,
-    class: 'lowerme',
-    config: [
+      name: 'col2',
+      label: false,
+      class: 'lowerme',
+      config: [
         {
-          type : 'select',
-          name : 'criticality',
-          placeholder : helptext.criticality.placeholder,
-          tooltip : helptext.criticality.tooltip,
+          type: 'select',
+          name: 'criticality',
+          placeholder: helptext.criticality.placeholder,
+          tooltip: helptext.criticality.tooltip,
           tooltipPosition: 'left',
-          options:[
-            {label: 'Inquiry', value: 'inquiry'},
-            {label: 'Loss of Functionality', value: 'loss_functionality'},
-            {label: 'Total Down', value: 'total_down'}
+          options: [
+            { label: 'Inquiry', value: 'inquiry' },
+            { label: 'Loss of Functionality', value: 'loss_functionality' },
+            { label: 'Total Down', value: 'total_down' },
           ],
           validation: helptext.criticality.validation,
-          value: 'inquiry'
+          value: 'inquiry',
         },
         {
-          type : 'input',
-          name : 'title',
-          placeholder : helptext.title.placeholder,
-          tooltip : helptext.title.tooltip,
+          type: 'input',
+          name: 'title',
+          placeholder: helptext.title.placeholder,
+          tooltip: helptext.title.tooltip,
           tooltipPosition: 'left',
           required: true,
-          validation : helptext.title.validation
+          validation: helptext.title.validation,
         },
         {
-          type : 'textarea',
-          name : 'body',
-          placeholder : helptext.body.placeholder,
-          tooltip : helptext.body.tooltip,
+          type: 'textarea',
+          name: 'body',
+          placeholder: helptext.body.placeholder,
+          tooltip: helptext.body.tooltip,
           tooltipPosition: 'left',
           required: true,
-          validation : helptext.body.validation,
-          textAreaRows: 8
+          validation: helptext.body.validation,
+          textAreaRows: 8,
         },
         {
-          type : 'checkbox',
-          name : 'attach_debug',
-          placeholder : helptext.attach_debug.placeholder,
-          tooltip : helptext.attach_debug.tooltip,
+          type: 'checkbox',
+          name: 'attach_debug',
+          placeholder: helptext.attach_debug.placeholder,
+          tooltip: helptext.attach_debug.tooltip,
           tooltipPosition: 'left',
         },
         {
@@ -155,11 +155,11 @@ export class SupportFormLicensedComponent {
           parent: this,
           hideButton: true,
           hasErrors: true,
-          multiple: true
-        }
-      ]
-    }
-  ]
+          multiple: true,
+        },
+      ],
+    },
+  ];
 
   constructor(public dialog: MatDialog, public loader: AppLoaderService,
     public ws: WebSocketService, public dialogService: DialogService, public router: Router,
@@ -169,45 +169,43 @@ export class SupportFormLicensedComponent {
     this.entityEdit = entityEdit;
     this.custActions = [
       {
-        id : 'userguide',
+        id: 'userguide',
         name: helptext.update_license.user_guide_button,
-        function : () => {
+        function: () => {
           // TODO: Need updated address before release
-          window.open('https://www.truenas.com/docs/hub/')
-        }
+          window.open('https://www.truenas.com/docs/hub/');
+        },
       },
       {
-        id : 'eula',
+        id: 'eula',
         name: helptext.update_license.eula_button,
-        function : () => {
+        function: () => {
           this.modalService.close('slide-in-form');
           this.router.navigate(['/system/support/eula']);
-        }
-      }
-    ]
+        },
+      },
+    ];
   }
 
   emailListValidator(name: string) {
     const self = this;
     return function validEmails(control: FormControl) {
-        const config = self.fieldConfig.find(c => c.name === name);
-        if (control.value) {
-
+      const config = self.fieldConfig.find((c) => c.name === name);
+      if (control.value) {
         let counter = 0;
-        const regex =
-        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
         if (control.value) {
           control.value.forEach((item: string) => {
-                if (!item.match(regex)) {
-                    counter++;
-                }
-            });
+            if (!item.match(regex)) {
+              counter++;
+            }
+          });
         }
 
         const errors = control.value && control.value.length > 0 && counter > 0
-        ? { validEmails : true }
-        : null;
+          ? { validEmails: true }
+          : null;
 
         if (errors) {
           config.hasErrors = true;
@@ -219,11 +217,11 @@ export class SupportFormLicensedComponent {
 
         return errors;
       }
-    }
-};
+    };
+  }
 
   customSubmit(entityEdit: any): void {
-    let payload: any = {};
+    const payload: any = {};
     payload['name'] = entityEdit.name;
     payload['email'] = entityEdit.email;
     if (entityEdit.cc) {
@@ -237,45 +235,45 @@ export class SupportFormLicensedComponent {
     payload['title'] = entityEdit.title;
     payload['body'] = entityEdit.body;
     this.openDialog(payload);
-  };
+  }
 
   openDialog(payload: any) {
-    const dialogRef = this.dialog.open(EntityJobComponent, {data: {"title":"Ticket","CloseOnClickOutside":true}});
+    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Ticket', CloseOnClickOutside: true } });
     let url: string;
     dialogRef.componentInstance.setCall('support.new_ticket', [payload]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.subscribe((res: any)=>{
+    dialogRef.componentInstance.success.subscribe((res: any) => {
       if (res.result) {
         url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
       }
       if (res.method === 'support.new_ticket' && this.subs && this.subs.length > 0) {
         this.subs.forEach((item) => {
           const formData: FormData = new FormData();
-            formData.append('data', JSON.stringify({
-              "method": "support.attach_ticket",
-              "params": [{'ticket': (res.result.ticket), 'filename': item.file.name }]
-            }));
-            formData.append('file', item.file, item.apiEndPoint);
-            dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
-            dialogRef.componentInstance.success.subscribe(()=>{
-              this.resetForm();
-            }),
-            dialogRef.componentInstance.failure.subscribe((res: any) => {
-              dialogRef.componentInstance.setDescription(res.error);
-            });
+          formData.append('data', JSON.stringify({
+            method: 'support.attach_ticket',
+            params: [{ ticket: (res.result.ticket), filename: item.file.name }],
+          }));
+          formData.append('file', item.file, item.apiEndPoint);
+          dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
+          dialogRef.componentInstance.success.subscribe(() => {
+            this.resetForm();
+          }),
+          dialogRef.componentInstance.failure.subscribe((res: any) => {
+            dialogRef.componentInstance.setDescription(res.error);
+          });
         });
         dialogRef.componentInstance.setDescription(url);
       } else {
         dialogRef.componentInstance.setDescription(url);
         this.resetForm();
       }
-    })
+    });
     dialogRef.componentInstance.failure.subscribe((res: any) => {
       dialogRef.componentInstance.setDescription(res.error);
     });
   }
 
-  updater(file: any, parent: any){
+  updater(file: any, parent: any) {
     parent.subs = [];
     const fileBrowser = file.fileInput.nativeElement;
     this.screenshot = _.find(parent.fieldConfig, { name: 'screenshot' });
@@ -285,20 +283,19 @@ export class SupportFormLicensedComponent {
         if (fileBrowser.files[i].size >= 52428800) {
           this.screenshot['hasErrors'] = true;
           this.screenshot['errors'] = 'File size is limited to 50 MiB.';
-        }
-        else {
-          parent.subs.push({"apiEndPoint":file.apiEndPoint, "file": fileBrowser.files[i]});
+        } else {
+          parent.subs.push({ apiEndPoint: file.apiEndPoint, file: fileBrowser.files[i] });
         }
       }
     }
   }
 
-  resetForm () {
+  resetForm() {
     this.entityEdit.formGroup.reset();
     this.entityEdit.formGroup.controls['TNCategory'].setValue('BUG');
     this.entityEdit.formGroup.controls['environment'].setValue('production');
     this.entityEdit.formGroup.controls['criticality'].setValue('inquiry');
     this.subs = [];
     this.modalService.close('slide-in-form');
-  };
+  }
 }

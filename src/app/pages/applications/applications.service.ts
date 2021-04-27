@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { WebSocketService } from '../../services/index';
 
-@Injectable({ providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class ApplicationsService {
-
   constructor(private ws: WebSocketService) {}
 
   getPoolList() {
@@ -19,7 +18,7 @@ export class ApplicationsService {
   }
 
   getAllCatalogItems() {
-    return this.ws.call('catalog.query', [[], {"extra": {"item_details": true}}]);
+    return this.ws.call('catalog.query', [[], { extra: { item_details: true } }]);
   }
 
   getBindIPChoices() {
@@ -35,7 +34,7 @@ export class ApplicationsService {
   }
 
   getChartReleases(name?: string) {
-    let secondOption = {"extra": {"history": true}};
+    const secondOption = { extra: { history: true } };
 
     if (name) {
       return this.ws.call('chart.release.query', [[['name', '=', name]]]);
@@ -44,11 +43,11 @@ export class ApplicationsService {
   }
 
   getChartReleaseNames() {
-    return this.ws.call('chart.release.query', [[], {select: ['name']}]);
+    return this.ws.call('chart.release.query', [[], { select: ['name'] }]);
   }
 
   setReplicaCount(name: string, count: number) {
-    return this.ws.call('chart.release.scale', [name, { replica_count: count}]);
+    return this.ws.call('chart.release.scale', [name, { replica_count: count }]);
   }
 
   getPodConsoleChoices(name: string) {
@@ -64,7 +63,7 @@ export class ApplicationsService {
   }
 
   getChartReleaseWithResources(name: string) {
-    let secondOption = {"extra": {"retrieve_resources": true}};
+    const secondOption = { extra: { retrieve_resources: true } };
     return this.ws.call('chart.release.query', [[['name', '=', name]], secondOption]);
   }
 
@@ -77,7 +76,6 @@ export class ApplicationsService {
   }
 
   updateContainerConfig(enable_image_updates: boolean) {
-    return this.ws.call('container.update', [{enable_image_updates: enable_image_updates}]);
+    return this.ws.call('container.update', [{ enable_image_updates }]);
   }
-
- }
+}
