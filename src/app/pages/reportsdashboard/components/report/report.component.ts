@@ -101,7 +101,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
   readonly ProductType = ProductType;
 
   get reportTitle() {
-    const suffix = null;
     let trimmed = this.report.title.replace(/[\(\)]/g, '');
     if (this.multipathTitle) {
       trimmed = trimmed.replace(this.identifier, '');
