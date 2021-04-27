@@ -18,7 +18,7 @@ import { ModalService } from 'app/services/modal.service';
 
 @Component({
   selector: 'app-cloudsync-add',
-  template: '<entity-form [conf]=\'this\'></entity-form>',
+  template: '<entity-form [conf]="this"></entity-form>',
   providers: [CloudCredentialService, JobService],
 })
 export class CloudsyncFormComponent {

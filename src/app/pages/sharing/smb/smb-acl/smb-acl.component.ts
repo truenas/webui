@@ -9,7 +9,7 @@ import * as _ from 'lodash';
 
 @Component({
   selector: 'app-smb-acl',
-  template: '<entity-form [conf]=\'this\'></entity-form>',
+  template: '<entity-form [conf]="this"></entity-form>',
 })
 export class SMBAclComponent {
   protected queryCall = 'smb.sharesec.query';
