@@ -25,17 +25,17 @@ export class CronFormComponent {
   protected pk: any;
   protected data: any;
   protected user_field: any;
-  protected isOneColumnForm: boolean = true;
-  protected isEntity: boolean = true;
+  protected isOneColumnForm = true;
+  protected isEntity = true;
 
-  public isNew: boolean = false;
-  public entityForm: EntityFormComponent;
-  public formGroup: any;
-  public error: string;
-  public fieldConfig: FieldConfig[] = [];
-  public fieldSetDisplay: string = 'no-margins';
+  isNew = false;
+  entityForm: EntityFormComponent;
+  formGroup: any;
+  error: string;
+  fieldConfig: FieldConfig[] = [];
+  fieldSetDisplay = 'no-margins';
 
-  public fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext.cron_fieldsets[0],
       class: 'add-cron',
@@ -144,7 +144,7 @@ export class CronFormComponent {
   }
 
   beforeSubmit(value: any) {
-    let spl = value.cron_picker.split(' ');
+    const spl = value.cron_picker.split(' ');
     delete value.cron_picker;
     const schedule: any = {};
     schedule['minute'] = spl[0];

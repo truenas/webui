@@ -47,14 +47,14 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
   protected kerberosRealmsFormComponent: KerberosRealmsFormComponent;
   protected kerberosKeytabsFormComponent: KerberosKeytabsFormComponent;
 
-  public emptyPageConf: EmptyConfig = {
+  emptyPageConf: EmptyConfig = {
     type: EmptyType.no_page_data,
     title: T('No sysctls configured'),
     large: false,
     message: T('To configure sysctls, click the "Add" button.'),
   };
 
-  public idmapTableConf: InputTableConf = {
+  idmapTableConf: InputTableConf = {
     title: helptext.idmap.title,
     titleHref: '/directoryservice/idmap',
     queryCall: 'idmap.query',
@@ -66,22 +66,24 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     emptyEntityLarge: false,
     parent: this,
     columns: [
-      { name: T('Name'), prop: 'name', always_display: true, minWidth: 250 },
+      {
+        name: T('Name'), prop: 'name', always_display: true, minWidth: 250,
+      },
       { name: T('Backend'), prop: 'idmap_backend', maxWidth: 100 },
       { name: T('DNS Domain Name'), prop: 'dns_domain_name' },
       { name: T('Range Low'), prop: 'range_low' },
       { name: T('Range High'), prop: 'range_high' },
       { name: T('Certificate'), prop: 'cert_name' },
     ],
-    add: function () {
+    add() {
       this.parent.doAdd('idmap');
     },
-    edit: function (row) {
+    edit(row) {
       this.parent.doAdd('idmap', row.id);
     },
   };
 
-  public kerberosRealmsTableConf: InputTableConf = {
+  kerberosRealmsTableConf: InputTableConf = {
     title: helptext.kerberosRealms.title,
     titleHref: '/directoryservice/kerberosrealms',
     queryCall: 'kerberos.realm.query',
@@ -98,15 +100,15 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
       { name: T('Admin Server'), prop: 'admin_server' },
       { name: T('Password Server'), prop: 'kpasswd_server' },
     ],
-    add: function () {
+    add() {
       this.parent.doAdd('kerberos_realms');
     },
-    edit: function (row) {
+    edit(row) {
       this.parent.doAdd('kerberos_realms', row.id);
     },
   };
 
-  public kerberosKeytabTableConf: InputTableConf = {
+  kerberosKeytabTableConf: InputTableConf = {
     title: helptext.kerberosKeytab.title,
     titleHref: '/directoryservice/kerberoskeytabs',
     queryCall: 'kerberos.keytab.query',
@@ -120,14 +122,13 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
     columns: [
       { name: 'Name', prop: 'name', always_display: true },
     ],
-    add: function () {
+    add() {
       this.parent.doAdd('kerberos_keytab');
     },
-    edit: function (row) {
+    edit(row) {
       this.parent.doAdd('kerberos_keytab', row.id);
     },
   };
-
 
   constructor(
     private ws: WebSocketService,
@@ -172,7 +173,6 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
   }
 
   getDataCardData() {
-
     const activeDirectoryPromise = this.ws.call('activedirectory.config').toPromise();
     const ldapPromise = this.ws.call('ldap.config').toPromise();
     const kerberosSettingsPromise = this.ws.call('kerberos.config').toPromise();
@@ -194,7 +194,7 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
         let ldapBindDN = null;
 
         if (res[1]) {
-          ldapHostname = res[1].hostname.join(",");
+          ldapHostname = res[1].hostname.join(',');
           ldapBaseDN = res[1].basedn;
           ldapBindDN = res[1].binddn;
         }
@@ -255,17 +255,17 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
             ],
           },
         ];
-      }
+      },
     );
   }
 
   doAdd(name: string, id?: number) {
     let addComponent: ActiveDirectoryComponent
-      | IdmapFormComponent
-      | LdapComponent
-      | KerberosRealmsFormComponent
-      | KerberosSettingsComponent
-      | KerberosKeytabsFormComponent;
+    | IdmapFormComponent
+    | LdapComponent
+    | KerberosRealmsFormComponent
+    | KerberosSettingsComponent
+    | KerberosKeytabsFormComponent;
     switch (name) {
       case 'activedirectory':
         addComponent = this.activeDirectoryFormComponent;
@@ -296,18 +296,17 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
         } else {
           this.dialog.confirm(idmapHelptext.idmap.enable_ad_dialog.title, idmapHelptext.idmap.enable_ad_dialog.message,
             true, idmapHelptext.idmap.enable_ad_dialog.button).subscribe((res: boolean) => {
-              if (res) {
-                addComponent = this.activeDirectoryFormComponent;
-                this.modalService.open('slide-in-form', addComponent, id);
-              }
-            })
+            if (res) {
+              addComponent = this.activeDirectoryFormComponent;
+              this.modalService.open('slide-in-form', addComponent, id);
+            }
+          });
         }
-      })
+      });
     } else {
       this.modalService.open('slide-in-form', addComponent, id);
     }
   }
-
 
   refreshTables() {
     this.getDataCardData();
@@ -317,7 +316,6 @@ export class DirectoryservicesComponent implements OnInit, OnDestroy {
       }
     });
   }
-
 
   refreshForms() {
     this.activeDirectoryFormComponent = new ActiveDirectoryComponent(

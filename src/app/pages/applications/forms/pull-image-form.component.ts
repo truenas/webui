@@ -5,7 +5,7 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import { ModalService } from '../../../services/modal.service';
 import { DialogService } from '../../../services/index';
-import  helptext  from '../../../helptext/apps/apps';
+import helptext from '../../../helptext/apps/apps';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { WebSocketService } from '../../../services/ws.service';
@@ -13,18 +13,18 @@ import { EntityUtils } from '../../common/entity/utils';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 @Component({
   selector: 'app-pull-image-form',
-  template: `<entity-form [conf]="this"></entity-form>`
+  template: '<entity-form [conf]="this"></entity-form>',
 })
 export class PullImageFormComponent {
-  protected queryCall: string = 'container.image.query';
+  protected queryCall = 'container.image.query';
   protected customFilter: any[];
-  protected addCall: string = 'container.image.pull';
-  protected isEntity: boolean = true;
+  protected addCall = 'container.image.pull';
+  protected isEntity = true;
   protected entityForm: EntityFormComponent;
-  private title= helptext.pullImageForm.title;
+  private title = helptext.pullImageForm.title;
   private dialogRef: any;
   protected fieldConfig: FieldConfig[];
-  public fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext.pullImageForm.label,
       label: true,
@@ -44,11 +44,11 @@ export class PullImageFormComponent {
           placeholder: helptext.pullImageForm.password.placeholder,
           tooltip: helptext.pullImageForm.password.tooltip,
         },
-      ]
+      ],
     },
     {
-      name:'divider',
-      divider:true
+      name: 'divider',
+      divider: true,
     },
     {
       name: 'Name',
@@ -59,7 +59,7 @@ export class PullImageFormComponent {
           name: 'from_image',
           placeholder: helptext.pullImageForm.imageName.placeholder,
           tooltip: helptext.pullImageForm.imageName.tooltip,
-          required: true
+          required: true,
         },
         {
           type: 'input',
@@ -69,7 +69,7 @@ export class PullImageFormComponent {
         },
       ],
     },
-  ]
+  ];
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
     private modalService: ModalService) {
@@ -77,7 +77,7 @@ export class PullImageFormComponent {
 
   customSubmit(data: any) {
     const params: any = {
-      from_image: data.from_image
+      from_image: data.from_image,
     };
 
     if (data.tag) {
@@ -93,12 +93,17 @@ export class PullImageFormComponent {
       }
     }
 
-    let payload = [];
+    const payload = [];
     payload.push(params);
 
-    this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
-      helptext.dockerImages.pulling) }, disableClose: true});
-    this.dialogRef.componentInstance.setCall("container.image.pull", payload);
+    this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+      data: {
+        title: (
+          helptext.dockerImages.pulling),
+      },
+      disableClose: true,
+    });
+    this.dialogRef.componentInstance.setCall('container.image.pull', payload);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe(() => {
       this.dialogService.closeAllDialogs();

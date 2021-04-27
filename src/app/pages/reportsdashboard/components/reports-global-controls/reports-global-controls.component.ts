@@ -1,5 +1,9 @@
-import { Component, ElementRef, Input, OnInit, OnDestroy, AfterViewInit, EventEmitter, Output, ViewChild } from '@angular/core';
-import { Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
+import {
+  Component, ElementRef, Input, OnInit, OnDestroy, AfterViewInit, EventEmitter, Output, ViewChild,
+} from '@angular/core';
+import {
+  Router, NavigationEnd, NavigationCancel, ActivatedRoute, ActivatedRouteSnapshot,
+} from '@angular/router';
 import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import * as _ from 'lodash';
 import { Subject, BehaviorSubject, Subscription } from 'rxjs';
@@ -24,13 +28,11 @@ interface Tab {
   templateUrl: './reports-global-controls.component.html',
 })
 export class ReportsGlobalControlsComponent implements GlobalAction {
+  config: any; // Reports page
 
-  public config: any; // Reports page
+  constructor() {}
 
-  constructor(){}
-
-  applyConfig(conf: any){
+  applyConfig(conf: any) {
     this.config = conf;
   }
-
 }

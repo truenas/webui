@@ -6,81 +6,81 @@ import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector: 'app-reports-config',
-  template: `<entity-form [conf]="this"></entity-form>`,
+  template: '<entity-form [conf]="this"></entity-form>',
   styleUrls: ['reports-config.component.css'],
 })
 export class ReportsConfigComponent {
-  public job: any = {};
+  job: any = {};
   protected queryCall = 'reporting.config';
-  public title: string;
-  public isOneColumnForm: boolean;
-  public entityForm: any;
-  public isCpuCheckboxChecked: boolean;
-  public graphPoints: any;
-  public graphAge: any;
-  public graphite_separateinstances: any;
+  title: string;
+  isOneColumnForm: boolean;
+  entityForm: any;
+  isCpuCheckboxChecked: boolean;
+  graphPoints: any;
+  graphAge: any;
+  graphite_separateinstances: any;
 
   custActions: any[] = [
     {
-      id:'reset',
-      name:helptext.reset_button,
-      function : () => {
+      id: 'reset',
+      name: helptext.reset_button,
+      function: () => {
         this.entityForm.formGroup.controls['cpu_in_percentage'].setValue(false);
         this.entityForm.formGroup.controls['graphite_separateinstances'].setValue(false);
         this.entityForm.formGroup.controls['graphite'].setValue(this.entityForm.wsResponse['graphite']);
         this.entityForm.formGroup.controls['graph_age'].setValue(12);
         this.entityForm.formGroup.controls['graph_points'].setValue(1200);
         this.entityForm.formGroup.markAsDirty();
-      }
-    }
-  ]
+      },
+    },
+  ];
 
-  public fieldSets = new FieldSets([
+  fieldSets = new FieldSets([
     {
       name: helptext.fieldset_general,
       class: 'general',
       label: true,
       config: [
         {
-          type: "checkbox",
-          name: "cpu_in_percentage",
+          type: 'checkbox',
+          name: 'cpu_in_percentage',
           placeholder: helptext.cpu_in_percentage_placeholder,
-          tooltip: helptext.cpu_in_percentage_tooltip
+          tooltip: helptext.cpu_in_percentage_tooltip,
         },
         {
-          type: "checkbox",
-          name: "graphite_separateinstances",
-          placeholder:helptext.graphite_separateinstances_placeholder,
-          tooltip: helptext.graphite_separateinstances_tooltip
+          type: 'checkbox',
+          name: 'graphite_separateinstances',
+          placeholder: helptext.graphite_separateinstances_placeholder,
+          tooltip: helptext.graphite_separateinstances_tooltip,
         },
         {
-          type: "input",
-          name: "graphite",
+          type: 'input',
+          name: 'graphite',
           placeholder: helptext.graphite_placeholder,
-          tooltip: helptext.graphite_tooltip
+          tooltip: helptext.graphite_tooltip,
         },
         {
-          type: "input",
-          name: "graph_age",
+          type: 'input',
+          name: 'graph_age',
           placeholder: helptext.graph_age_placeholder,
           tooltip: helptext.graph_age_tooltip,
           validation: helptext.graph_age_validation,
-          required: true
+          required: true,
         },
         {
-          type: "input",
-          name: "graph_points",
+          type: 'input',
+          name: 'graph_points',
           placeholder: helptext.graph_points_placeholder,
           tooltip: helptext.graph_points_tooltip,
           validation: helptext.graph_points_validation,
-          required: true
-        }
-      ]
+          required: true,
+        },
+      ],
     },
-    { name: 'divider', divider: true }
+    { name: 'divider', divider: true },
   ]);
 
-  public afterModalFormSaved?(): any;
+  afterModalFormSaved?(): any;
 
   constructor(
     private ws: WebSocketService,
@@ -99,20 +99,19 @@ export class ReportsConfigComponent {
     this.entityForm = entityEdit;
   }
 
-  public customSubmit(body: any) {
-    if (body.graph_age !== this.graphAge || body.graph_points !== this.graphPoints ||
-      body.cpu_in_percentage !== this.isCpuCheckboxChecked) {
+  customSubmit(body: any) {
+    if (body.graph_age !== this.graphAge || body.graph_points !== this.graphPoints
+      || body.cpu_in_percentage !== this.isCpuCheckboxChecked) {
       this.dialog.confirm(helptext.dialog.title, helptext.dialog.message, false,
         helptext.dialog.action).subscribe((res: any) => {
         if (res) {
           body.confirm_rrd_destroy = true;
-          this.doSubmit(body)
+          this.doSubmit(body);
         }
-      })
+      });
     } else {
-      this.doSubmit(body)
+      this.doSubmit(body);
     }
-
   }
 
   doSubmit(body: any) {

@@ -1,1 +1,1 @@
-export {NTPServerFormComponent} from './ntpserver-form.component';
+export { NTPServerFormComponent } from './ntpserver-form.component';

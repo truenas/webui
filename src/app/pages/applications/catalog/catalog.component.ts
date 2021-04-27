@@ -1,4 +1,6 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import {
+  Component, OnInit, Output, EventEmitter,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
@@ -18,58 +20,58 @@ import { ChartReleaseAddComponent } from '../forms/chart-release-add.component';
 import { ChartFormComponent } from '../forms/chart-form.component';
 import { ChartWizardComponent } from '../forms/chart-wizard.component';
 import { CommonUtils } from 'app/core/classes/common-utils';
-import  helptext  from '../../../helptext/apps/apps';
+import helptext from '../../../helptext/apps/apps';
 import { CatalogSummaryDialog } from '../dialogs/catalog-summary/catalog-summary-dialog.component';
 
 interface SelectOption {
-	label: string,
-	value: string,
+  label: string;
+  value: string;
 }
 
 @Component({
   selector: 'app-catalog',
   templateUrl: './catalog.component.html',
-  styleUrls: ['../applications.component.scss']
+  styleUrls: ['../applications.component.scss'],
 })
 export class CatalogComponent implements OnInit {
   @Output() updateTab = new EventEmitter();
 
-  public catalogApps: any[] = [];
-  public catalogNames: string[] = [];
-  public filteredCatalogNames: string[] = [];
-  public filteredCatalogApps: any[] = [];
-  public filterString = '';
+  catalogApps: any[] = [];
+  catalogNames: string[] = [];
+  filteredCatalogNames: string[] = [];
+  filteredCatalogApps: any[] = [];
+  filterString = '';
   private dialogRef: any;
   private poolList: SelectOption[] = [];
-  private selectedPool: string = '';
-  public settingsEvent: Subject<CoreEvent>;
+  private selectedPool = '';
+  settingsEvent: Subject<CoreEvent>;
   private kubernetesForm: KubernetesSettingsComponent;
   private chartReleaseForm: ChartReleaseAddComponent;
   private refreshForm: Subscription;
   private refreshTable: Subscription;
   protected utils: CommonUtils;
 
-  public choosePool: DialogFormConfiguration = {
+  choosePool: DialogFormConfiguration = {
     title: helptext.choosePool.title,
     fieldConfig: [{
       type: 'select',
       name: 'pools',
       placeholder: helptext.choosePool.placeholder,
       required: true,
-      options: this.poolList
+      options: this.poolList,
     }],
     method_ws: 'kubernetes.update',
     saveButtonText: helptext.choosePool.action,
     customSubmit: this.doPoolSelect,
     parent: this,
-  }
+  };
 
   constructor(private dialogService: DialogService, private appLoaderService: AppLoaderService,
     private mdDialog: MatDialog, private translate: TranslateService, protected ws: WebSocketService,
     private router: Router, private core: CoreService, private modalService: ModalService,
     private appService: ApplicationsService, private sysGeneralService: SystemGeneralService) {
-      this.utils = new CommonUtils();
-    }
+    this.utils = new CommonUtils();
+  }
 
   ngOnInit(): void {
     this.loadCatalogs();
@@ -84,49 +86,47 @@ export class CatalogComponent implements OnInit {
     this.appService.getAllCatalogItems().subscribe((res: any[]) => {
       this.catalogNames = [];
       this.catalogApps = [];
-      res.forEach(catalog => {
+      res.forEach((catalog) => {
         this.catalogNames.push(catalog.label);
         catalog.preferred_trains.forEach((train: any) => {
-          for (let i in catalog.trains[train]) {
-            let item = catalog.trains[train][i];
-            let versions = item.versions;
-            let latest, latestDetails;
+          for (const i in catalog.trains[train]) {
+            const item = catalog.trains[train][i];
+            const versions = item.versions;
 
             const versionKeys: any[] = [];
-            Object.keys(versions).forEach(versionKey => {
+            Object.keys(versions).forEach((versionKey) => {
               if (versions[versionKey].healthy) {
                 versionKeys.push(versionKey);
               }
             });
 
-            let sorted_version_labels = versionKeys.sort(this.utils.versionCompare);
+            const sorted_version_labels = versionKeys.sort(this.utils.versionCompare);
 
-            latest = sorted_version_labels[0];
-            latestDetails = versions[latest];
+            const latest = sorted_version_labels[0];
+            const latestDetails = versions[latest];
 
-            let catalogItem = {
+            const catalogItem = {
               name: item.name,
               catalog: {
                 id: catalog.id,
                 label: catalog.label,
-                train: train,
+                train,
               },
-              icon_url: item.icon_url? item.icon_url : '/assets/images/ix-original.png',
+              icon_url: item.icon_url ? item.icon_url : '/assets/images/ix-original.png',
               latest_version: latestDetails.human_version,
               info: latestDetails.app_readme,
               categories: item.categories,
               healthy: item.healthy,
               versions: item.versions,
               schema: latestDetails.schema,
-            }
+            };
             this.catalogApps.push(catalogItem);
           }
         });
-
       });
       this.refreshToolbarMenus();
       this.filerApps();
-    })
+    });
   }
 
   onToolbarAction(evt: CoreEvent) {
@@ -163,39 +163,39 @@ export class CatalogComponent implements OnInit {
   }
 
   refreshToolbarMenus() {
-    this.updateTab.emit({name: 'catalogToolbarChanged', value: !!this.selectedPool, catalogNames: this.catalogNames});
+    this.updateTab.emit({ name: 'catalogToolbarChanged', value: !!this.selectedPool, catalogNames: this.catalogNames });
   }
 
   refreshForms() {
-    this.kubernetesForm = new KubernetesSettingsComponent(this.ws, this.appLoaderService, this.dialogService,this.modalService, this.appService);
-    this.chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
+    this.kubernetesForm = new KubernetesSettingsComponent(this.ws, this.appLoaderService, this.dialogService, this.modalService, this.appService);
+    this.chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog, this.dialogService, this.modalService, this.appService);
   }
 
   checkForConfiguredPool() {
-    this.appService.getKubernetesConfig().subscribe(res => {
+    this.appService.getKubernetesConfig().subscribe((res) => {
       if (!res.pool) {
         this.selectPool();
       } else {
         this.selectedPool = res.pool;
       }
       this.refreshToolbarMenus();
-    })
+    });
   }
 
   selectPool() {
-    this.appService.getPoolList().subscribe(res => {
+    this.appService.getPoolList().subscribe((res) => {
       if (res.length === 0) {
         this.dialogService.confirm(helptext.noPool.title, helptext.noPool.message, true,
           helptext.noPool.action).subscribe((res: any) => {
-            if (res) {
-              this.router.navigate(['storage', 'manager']);
-            }
-          })
+          if (res) {
+            this.router.navigate(['storage', 'manager']);
+          }
+        });
       } else {
         this.poolList.length = 0;
         res.forEach((pool: any) => {
-          this.poolList.push({label: pool.name, value: pool.name})
-        })
+          this.poolList.push({ label: pool.name, value: pool.name });
+        });
         if (this.selectedPool) {
           this.choosePool.fieldConfig[0].value = this.selectedPool;
         } else {
@@ -204,40 +204,50 @@ export class CatalogComponent implements OnInit {
 
         this.dialogService.dialogForm(this.choosePool, true);
       }
-    })
+    });
   }
 
   doUnsetPool() {
     this.dialogService.confirm(helptext.choosePool.unsetPool.confirm.title, helptext.choosePool.unsetPool.confirm.message, true,
       helptext.choosePool.unsetPool.confirm.button).subscribe((res: boolean) => {
-        if (res) {
-          this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
-            helptext.choosePool.jobTitle) }, disableClose: true});
-          this.dialogRef.componentInstance.setCall('kubernetes.update', [{pool: null}]);
-          this.dialogRef.componentInstance.submit();
-          this.dialogRef.componentInstance.success.subscribe(() => {
-            this.dialogService.closeAllDialogs();
-            this.selectedPool = null;
-            this.refreshToolbarMenus();
-            this.translate.get(helptext.choosePool.unsetPool.label).subscribe(msg => {
-              this.dialogService.Info(helptext.choosePool.success, msg,
-                '500px', 'info', true);
-            })
+      if (res) {
+        this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+          data: {
+            title: (
+              helptext.choosePool.jobTitle),
+          },
+          disableClose: true,
+        });
+        this.dialogRef.componentInstance.setCall('kubernetes.update', [{ pool: null }]);
+        this.dialogRef.componentInstance.submit();
+        this.dialogRef.componentInstance.success.subscribe(() => {
+          this.dialogService.closeAllDialogs();
+          this.selectedPool = null;
+          this.refreshToolbarMenus();
+          this.translate.get(helptext.choosePool.unsetPool.label).subscribe((msg) => {
+            this.dialogService.Info(helptext.choosePool.success, msg,
+              '500px', 'info', true);
           });
+        });
 
-          this.dialogRef.componentInstance.failure.subscribe((err: any) => {
-            new EntityUtils().handleWSError(self, err, this.dialogService);
-          })
-        }
-      })
+        this.dialogRef.componentInstance.failure.subscribe((err: any) => {
+          new EntityUtils().handleWSError(self, err, this.dialogService);
+        });
+      }
+    });
   }
 
   doPoolSelect(entityDialog: any) {
     const self = entityDialog.parent;
     const pool = entityDialog.formGroup.controls['pools'].value;
-    self.dialogRef = self.mdDialog.open(EntityJobComponent, { data: { 'title': (
-      helptext.choosePool.jobTitle) }, disableClose: true});
-    self.dialogRef.componentInstance.setCall('kubernetes.update', [{pool: pool}]);
+    self.dialogRef = self.mdDialog.open(EntityJobComponent, {
+      data: {
+        title: (
+          helptext.choosePool.jobTitle),
+      },
+      disableClose: true,
+    });
+    self.dialogRef.componentInstance.setCall('kubernetes.update', [{ pool }]);
     self.dialogRef.componentInstance.submit();
     self.dialogRef.componentInstance.success.subscribe((res: any) => {
       self.selectedPool = pool;
@@ -246,21 +256,21 @@ export class CatalogComponent implements OnInit {
       self.translate.get(helptext.choosePool.message).subscribe((msg: string) => {
         self.dialogService.Info(helptext.choosePool.success, msg + res.result.pool,
           '500px', 'info', true);
-      })
+      });
     });
     self.dialogRef.componentInstance.failure.subscribe((err: string) => {
       new EntityUtils().handleWSError(self, err, self.dialogService);
-    })
+    });
   }
 
-  doInstall(name: string, catalog: string = "OFFICIAL", train: string = "charts") {
-    const catalogApp = this.catalogApps.find(app => app.name==name && app.catalog.id==catalog && app.catalog.train==train);
+  doInstall(name: string, catalog = 'OFFICIAL', train = 'charts') {
+    const catalogApp = this.catalogApps.find((app) => app.name == name && app.catalog.id == catalog && app.catalog.train == train);
     if (catalogApp && catalogApp.name != 'ix-chart') {
-      const chartWizardComponent = new ChartWizardComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
+      const chartWizardComponent = new ChartWizardComponent(this.mdDialog, this.dialogService, this.modalService, this.appService);
       chartWizardComponent.setCatalogApp(catalogApp);
       this.modalService.open('slide-in-form', chartWizardComponent);
     } else {
-      const chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog,this.dialogService,this.modalService,this.appService);
+      const chartReleaseForm = new ChartReleaseAddComponent(this.mdDialog, this.dialogService, this.modalService, this.appService);
       chartReleaseForm.parseSchema(catalogApp);
       this.modalService.open('slide-in-form', chartReleaseForm);
     }
@@ -268,22 +278,22 @@ export class CatalogComponent implements OnInit {
 
   filerApps() {
     if (this.filterString) {
-      this.filteredCatalogApps = this.catalogApps.filter(app => app.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1);
+      this.filteredCatalogApps = this.catalogApps.filter((app) => app.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1);
     } else {
       this.filteredCatalogApps = this.catalogApps;
     }
 
     if (this.filteredCatalogNames.length > 0) {
-      this.filteredCatalogApps = this.filteredCatalogApps.filter(app => this.filteredCatalogNames.includes(app.catalog.label));
+      this.filteredCatalogApps = this.filteredCatalogApps.filter((app) => this.filteredCatalogNames.includes(app.catalog.label));
     }
 
-    this.filteredCatalogApps = this.filteredCatalogApps.filter(app => app.name !== 'ix-chart');
+    this.filteredCatalogApps = this.filteredCatalogApps.filter((app) => app.name !== 'ix-chart');
   }
 
-  showSummaryDialog(name: string, catalog: string = "OFFICIAL", train: string = "charts") {
-    const catalogApp = this.catalogApps.find(app => app.name==name && app.catalog.id==catalog && app.catalog.train==train);
+  showSummaryDialog(name: string, catalog = 'OFFICIAL', train = 'charts') {
+    const catalogApp = this.catalogApps.find((app) => app.name == name && app.catalog.id == catalog && app.catalog.train == train);
     if (catalogApp) {
-      let dialogRef = this.mdDialog.open(CatalogSummaryDialog, {
+      const dialogRef = this.mdDialog.open(CatalogSummaryDialog, {
         width: '470px',
         data: catalogApp,
         disableClose: false,
@@ -292,14 +302,18 @@ export class CatalogComponent implements OnInit {
   }
 
   syncAll() {
-    this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
-      helptext.installing) }, disableClose: true});
-    this.dialogRef.componentInstance.setCall("catalog.sync_all");
+    this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+      data: {
+        title: (
+          helptext.installing),
+      },
+      disableClose: true,
+    });
+    this.dialogRef.componentInstance.setCall('catalog.sync_all');
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.loadCatalogs();
     });
   }
-
 }

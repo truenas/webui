@@ -1,1 +1,1 @@
-export {DatasetPosixAclComponent} from './dataset-posix-acl.component';
+export { DatasetPosixAclComponent } from './dataset-posix-acl.component';

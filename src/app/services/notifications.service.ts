@@ -1,6 +1,8 @@
 import { Injectable, OnInit, OnDestroy } from '@angular/core';
 import { RestService, WebSocketService, SystemGeneralService } from 'app/services';
-import { Observable ,  Observer ,  Subject, Subscription } from 'rxjs';
+import {
+  Observable, Observer, Subject, Subscription,
+} from 'rxjs';
 import * as _ from 'lodash';
 
 export interface NotificationAlert {
@@ -17,47 +19,42 @@ export interface NotificationAlert {
   dismissed: boolean;
 }
 
-
 @Injectable()
 export class NotificationsService {
-
   private subject = new Subject<any>();
   private intervalPeriod = 20000;
   private notifications: NotificationAlert[] = [];
   private running = false;
   private locale = 'en-US';
-  private timeZone = 'UTC'
+  private timeZone = 'UTC';
   private getGenConfig: Subscription;
 
   constructor(private restService: RestService, private ws: WebSocketService,
     private sysGeneralService: SystemGeneralService) {
-
     this.initMe();
-
   }
 
   initMe(): void {
-
     this.getGenConfig = this.sysGeneralService.getGeneralConfig.subscribe((res) => {
       if (res.timezone !== 'WET' && res.timezone !== 'posixrules') {
         this.timeZone = res.timezone;
       }
 
       this.ws.call('alert.list', []).subscribe((res) => {
-          this.notifications = this.alertsArrivedHandler(res);
-          this.subject.next(this.notifications);
+        this.notifications = this.alertsArrivedHandler(res);
+        this.subject.next(this.notifications);
       });
 
       this.ws.sub('alert.list').subscribe((res) => { // check for updates to alerts
-        const notification  = this.alertsArrivedHandler([res])[0];
-        if (!_.find(this.notifications, {id:notification.id})) {
+        const notification = this.alertsArrivedHandler([res])[0];
+        if (!_.find(this.notifications, { id: notification.id })) {
           this.notifications.push(notification);
         }
         this.subject.next(this.notifications);
       });
 
       this.ws.subscribe('alert.list').subscribe((res) => { // check for changed alerts
-        if (res && res.msg === "changed" && res.cleared) {
+        if (res && res.msg === 'changed' && res.cleared) {
           const index = _.findIndex(this.notifications, { id: res.id });
           if (index !== -1) {
             this.notifications.splice(index, 1);
@@ -66,29 +63,28 @@ export class NotificationsService {
         }
       });
     });
-
   }
 
-  public getNotifications(): Observable<any> {
+  getNotifications(): Observable<any> {
     return this.subject.asObservable();
   }
 
-  public getNotificationList(): NotificationAlert[] {
+  getNotificationList(): NotificationAlert[] {
     return this.notifications;
   }
 
-  public dismissNotifications(notifications: Array<NotificationAlert>) {
-    const notificationMap = new Map<string,NotificationAlert>();
+  dismissNotifications(notifications: NotificationAlert[]) {
+    const notificationMap = new Map<string, NotificationAlert>();
 
     notifications.forEach((notification) => {
       notificationMap.set(notification.id, notification);
       this.ws.call('alert.dismiss', [notification.id]).subscribe((res) => {
-        console.log("alert dismissed id:" + notification.id);
+        console.log('alert dismissed id:' + notification.id);
       });
     });
 
-    this.notifications.forEach((notification)=>{
-      if( notificationMap.has(notification.id) === true ) {
+    this.notifications.forEach((notification) => {
+      if (notificationMap.has(notification.id) === true) {
         notification.dismissed = true;
       }
     });
@@ -96,18 +92,18 @@ export class NotificationsService {
     this.subject.next(this.notifications);
   }
 
-  public restoreNotifications(notifications: Array<NotificationAlert>) {
-    const notificationMap = new Map<string,NotificationAlert>();
+  restoreNotifications(notifications: NotificationAlert[]) {
+    const notificationMap = new Map<string, NotificationAlert>();
 
     notifications.forEach((notification) => {
       notificationMap.set(notification.id, notification);
       this.ws.call('alert.restore', [notification.id]).subscribe((res) => {
-        console.log("alert restore id:" + notification.id);
+        console.log('alert restore id:' + notification.id);
       });
     });
 
-    this.notifications.forEach((notification)=>{
-      if( notificationMap.has(notification.id) === true ) {
+    this.notifications.forEach((notification) => {
+      if (notificationMap.has(notification.id) === true) {
         notification.dismissed = false;
       }
     });
@@ -131,13 +127,11 @@ export class NotificationsService {
   //   }
   private alertsArrivedHandler(res: any): NotificationAlert[] {
     const returnAlerts = new Array<NotificationAlert>();
-    const data: Array<any> = res;
+    const data: any[] = res;
 
     if (data && data.length > 0) {
       data.forEach((alertObj: NotificationAlert) => {
-
         returnAlerts.push(this.addNotification(alertObj));
-
       });
     }
 
@@ -151,42 +145,42 @@ export class NotificationsService {
     const level: string = <string>alertObj.level;
     const date: Date = new Date(alertObj.datetime.$date);
     const dateStr = date.toUTCString();
-    const dateStrLocale = date.toLocaleString(this.locale, {timeZone: this.timeZone});
+    const dateStrLocale = date.toLocaleString(this.locale, { timeZone: this.timeZone });
     const one_shot: boolean = alertObj.one_shot;
     let icon_tooltip: string = <string>alertObj.level;
-    //const dateStr = date.toDateString() + " " + this.getTimeAsString(date.getTime());
-    const routeName = "/dashboard"
-    let icon = "info";
-    let color = "primary";
+    // const dateStr = date.toDateString() + " " + this.getTimeAsString(date.getTime());
+    const routeName = '/dashboard';
+    let icon = 'info';
+    let color = 'primary';
 
-    if (level === "WARNING") {
-      icon = "warning";
-      color = "accent";
+    if (level === 'WARNING') {
+      icon = 'warning';
+      color = 'accent';
     } else if (level === 'ERROR') {
-      icon = "error";
-      color = "warn";
+      icon = 'error';
+      color = 'warn';
     } else if (level === 'CRITICAL') {
-      icon = "error";
-      color = "warn";
+      icon = 'error';
+      color = 'warn';
     }
 
     if (one_shot) {
-      icon = "notifications_active";
-      icon_tooltip = "This is a ONE-SHOT " + level + " alert, it won't be dismissed automatically";
+      icon = 'notifications_active';
+      icon_tooltip = 'This is a ONE-SHOT ' + level + " alert, it won't be dismissed automatically";
     }
 
     const newNotification: NotificationAlert = {
-      id: id,
-      message: message,
-      icon: icon,
-      icon_tooltip: icon_tooltip,
+      id,
+      message,
+      icon,
+      icon_tooltip,
       time: dateStr,
       time_locale: dateStrLocale,
       timezone: this.timeZone,
       route: routeName,
-      color: color,
-      level: level,
-      dismissed: dismissed
+      color,
+      level,
+      dismissed,
     };
 
     return newNotification;
@@ -195,5 +189,4 @@ export class NotificationsService {
   ngOnDestroy() {
     this.getGenConfig.unsubscribe();
   }
-
 }

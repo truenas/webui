@@ -15,9 +15,9 @@ import {
 import * as _ from 'lodash';
 import { TranslateService } from '@ngx-translate/core';
 
-import {AppLoaderService} from '../../../../services/app-loader/app-loader.service';
-import {EntityTemplateDirective} from '../entity-template.directive';
-import {EntityUtils} from '../utils';
+import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { EntityTemplateDirective } from '../entity-template.directive';
+import { EntityUtils } from '../utils';
 
 import { Subscription } from 'rxjs/Subscription';
 import { CoreEvent } from 'app/core/services/core.service';
@@ -27,46 +27,46 @@ import { ToolbarConfig, ControlConfig } from './models/control-config.interface'
 import { GlobalAction } from 'app/components/common/pagetitle/pagetitle.component';
 
 @Component({
-  selector : 'entity-toolbar',
-  templateUrl : './entity-toolbar.component.html',
-  styleUrls : [ './entity-toolbar.component.scss' ],
+  selector: 'entity-toolbar',
+  templateUrl: './entity-toolbar.component.html',
+  styleUrls: ['./entity-toolbar.component.scss'],
 })
 export class EntityToolbarComponent implements OnDestroy, OnChanges, GlobalAction {
-
-  @Input('conf') conf: ToolbarConfig; //ControlConfig[];
-  public config: any;
-  public controller: Subject<Control>;
-  public values: any;
+  @Input('conf') conf: ToolbarConfig; // ControlConfig[];
+  config: any;
+  controller: Subject<Control>;
+  values: any;
 
   constructor(
     protected loader: AppLoaderService,
-    public translate: TranslateService) {
+    public translate: TranslateService,
+  ) {
     this.controller = new Subject();
   }
 
-  init(){
-    this.controller.subscribe((evt:Control) => {
-      let clone = Object.assign([], this.values);
+  init() {
+    this.controller.subscribe((evt: Control) => {
+      const clone = Object.assign([], this.values);
       this.values = clone;
       clone['event_control'] = evt.name;
-      this.config.target.next({name:"ToolbarChanged", data:clone});
-    })
+      this.config.target.next({ name: 'ToolbarChanged', data: clone });
+    });
 
-    this.config.target.subscribe((evt:CoreEvent) => {
-      switch(evt.name){
-        case "Refresh":
+    this.config.target.subscribe((evt: CoreEvent) => {
+      switch (evt.name) {
+        case 'Refresh':
           // The parent can ping toolbar for latest values
           // Useful for getting initial values
-          this.config.target.next({name:"ToolbarChanged", data:this.values});
-        break;
-        case "UpdateControls":
+          this.config.target.next({ name: 'ToolbarChanged', data: this.values });
+          break;
+        case 'UpdateControls':
           this.config.controls = evt.data;
-        break;
+          break;
       }
     });
 
     // Setup Initial Values
-    let obj: any = {}
+    const obj: any = {};
     this.config.controls.forEach((item: any) => {
       obj[item.name] = item.value;
     });
@@ -81,13 +81,12 @@ export class EntityToolbarComponent implements OnDestroy, OnChanges, GlobalActio
     }
   }
 
-
   ngOnDestroy() {
     // Clean up after ourselves...
   }
 
   // For when config is provided via JS
-  applyConfig(conf: any){
+  applyConfig(conf: any) {
     this.config = conf;
     this.init();
   }

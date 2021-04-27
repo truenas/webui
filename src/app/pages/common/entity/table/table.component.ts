@@ -1,4 +1,6 @@
-import { Component, OnInit, Input, ViewChild, AfterViewInit, AfterViewChecked } from '@angular/core';
+import {
+  Component, OnInit, Input, ViewChild, AfterViewInit, AfterViewChecked,
+} from '@angular/core';
 import { MatCard } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -8,7 +10,6 @@ import { WebSocketService } from 'app/services';
 import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { TableService } from './table.service';
-
 
 export interface InputTableConf {
   title?: string;
@@ -52,17 +53,17 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   @ViewChild('apptable') apptable: any;
   @ViewChild('table') table: any;
 
-  public _tableConf: InputTableConf;
-  public title = '';
-  public titleHref: string;
-  public dataSource: any[];
-  public displayedDataSource: any[];
-  public displayedColumns: any[];
-  public hideHeader = false;
-  public actions: any[];
-  public emptyConf: EmptyConfig;
-  public showViewMore = false;
-  public showCollapse = false;
+  _tableConf: InputTableConf;
+  title = '';
+  titleHref: string;
+  dataSource: any[];
+  displayedDataSource: any[];
+  displayedColumns: any[];
+  hideHeader = false;
+  actions: any[];
+  emptyConf: EmptyConfig;
+  showViewMore = false;
+  showCollapse = false;
 
   protected idProp = 'id';
 
@@ -216,7 +217,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   getButtonClass(state: EntityJobState): string {
-    switch(state) {
+    switch (state) {
       case EntityJobState.Pending: return 'fn-theme-orange';
       case EntityJobState.Running: return 'fn-theme-orange';
       case EntityJobState.Aborted: return 'fn-theme-orange';

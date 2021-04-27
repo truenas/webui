@@ -3,7 +3,7 @@ import {
   ElementRef,
   Input,
   OnInit,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { StorageService } from '../../../../../services/storage.service';
@@ -11,38 +11,39 @@ import { DatatableComponent } from '@swimlane/ngx-datatable';
 import helptext from '../../../../../helptext/storage/volumes/manager/vdev';
 
 @Component({
-  selector : 'app-vdev',
-  templateUrl : 'vdev.component.html',
-  styleUrls : [ 'vdev.component.css' ],
+  selector: 'app-vdev',
+  templateUrl: 'vdev.component.html',
+  styleUrls: ['vdev.component.css'],
 })
 export class VdevComponent implements OnInit {
-
   @Input() index: any;
   @Input() group: string;
   @Input() manager: any;
   @Input() initial_values: any = {};
-  @ViewChild(DatatableComponent, { static: false}) table: DatatableComponent;
-  public type: string;
-  public removable: boolean = true;
-  public disks: Array<any> = [];
-  public selected: Array < any > = [];
-  public id: number;
-  public size: number;
-  public rawSize = 0;
-  public firstdisksize: number;
-  public error: any;
-  public diskSizeErrorMsg = helptext.vdev_diskSizeErrorMsg;
-  public vdev_type_tooltip = helptext.vdev_type_tooltip;
-  public vdev_size_error = helptext.vdev_size_error;
-  public vdev_size_error_2 = helptext.vdev_size_error_2;
-  public vdev_disks_error: any;
-  public vdev_disks_size_error: any;
-  public vdev_type_disabled = false;
+  @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
+  type: string;
+  removable = true;
+  disks: any[] = [];
+  selected: any[] = [];
+  id: number;
+  size: number;
+  rawSize = 0;
+  firstdisksize: number;
+  error: any;
+  diskSizeErrorMsg = helptext.vdev_diskSizeErrorMsg;
+  vdev_type_tooltip = helptext.vdev_type_tooltip;
+  vdev_size_error = helptext.vdev_size_error;
+  vdev_size_error_2 = helptext.vdev_size_error_2;
+  vdev_disks_error: any;
+  vdev_disks_size_error: any;
+  vdev_type_disabled = false;
   private ten_mib = 10 * 1024 * 1024;
-  protected mindisks: any = {'stripe': 1, 'mirror':2, 'raidz':3, 'raidz2':4, 'raidz3':5}
+  protected mindisks: any = {
+    stripe: 1, mirror: 2, raidz: 3, raidz2: 4, raidz3: 5,
+  };
 
-  public startingHeight: any;
-  public expandedRows: any;
+  startingHeight: any;
+  expandedRows: any;
 
   constructor(public elementRef: ElementRef,
     public translate: TranslateService,
@@ -80,7 +81,7 @@ export class VdevComponent implements OnInit {
   }
 
   getTitle() {
-    return "Vdev " + (this.index + 1) + ": " + this.type.charAt(0).toUpperCase() + this.type.slice(1);
+    return 'Vdev ' + (this.index + 1) + ': ' + this.type.charAt(0).toUpperCase() + this.type.slice(1);
   }
 
   addDisk(disk: any) {
@@ -100,24 +101,24 @@ export class VdevComponent implements OnInit {
   }
 
   guessVdevType() {
-    if (this.group === "data" && !this.vdev_type_disabled) {
+    if (this.group === 'data' && !this.vdev_type_disabled) {
       if (this.disks.length === 2) {
-        this.type = "mirror";
+        this.type = 'mirror';
       } else if (this.disks.length === 3) {
-        this.type = "raidz";
-      } else if (this.disks.length >= 4 && this.disks.length <= 8 ) {
-        this.type = "raidz2";
+        this.type = 'raidz';
+      } else if (this.disks.length >= 4 && this.disks.length <= 8) {
+        this.type = 'raidz2';
       } else if (this.disks.length >= 9) {
-        this.type = "raidz3";
+        this.type = 'raidz3';
       } else {
-        this.type = "stripe";
+        this.type = 'stripe';
       }
     }
-    if (this.group === "special" && !this.vdev_type_disabled) {
+    if (this.group === 'special' && !this.vdev_type_disabled) {
       if (this.disks.length >= 2) {
-        this.type = "mirror";
+        this.type = 'mirror';
       } else {
-        this.type = "stripe";
+        this.type = 'stripe';
       }
     }
   }
@@ -159,20 +160,20 @@ export class VdevComponent implements OnInit {
     if (this.type === undefined) { // do the same as getType() to prevent issues while repeating
       this.type = this.manager.first_data_vdev_type;
     }
-    if (this.type === "mirror") {
+    if (this.type === 'mirror') {
       estimate = smallestdisk;
-    } else if (this.type === "raidz") {
+    } else if (this.type === 'raidz') {
       estimate = totalsize - smallestdisk;
-    } else if (this.type === "raidz2") {
+    } else if (this.type === 'raidz2') {
       estimate = totalsize - 2 * smallestdisk;
-    } else if (this.type === "raidz3") {
+    } else if (this.type === 'raidz3') {
       estimate = totalsize - 3 * smallestdisk;
     } else {
       estimate = stripeSize; // stripe
     }
 
-    this.rawSize =estimate;
-    this.size = (<any>window).filesize(estimate, {standard : "iec"});
+    this.rawSize = estimate;
+    this.size = (<any>window).filesize(estimate, { standard: 'iec' });
   }
 
   onSelect({ selected }: any) {
@@ -201,7 +202,7 @@ export class VdevComponent implements OnInit {
   onTypeChange() {
     this.estimateSize();
     this.manager.getCurrentLayout();
-    //console.log(e, this.group);
+    // console.log(e, this.group);
   }
 
   getRawSize() {
@@ -216,13 +217,13 @@ export class VdevComponent implements OnInit {
   }
 
   reorderEvent(event: any) {
-    let sort = event.sorts[0],
-      rows = this.disks;
+    const sort = event.sorts[0];
+    const rows = this.disks;
     this.sorter.tableSorter(rows, sort.prop, sort.dir);
   }
 
   toggleExpandRow(row: any) {
-    //console.log('Toggled Expand Row!', row);
+    // console.log('Toggled Expand Row!', row);
     if (!this.startingHeight) {
       this.startingHeight = document.getElementsByClassName('ngx-datatable')[0].clientHeight;
     }
@@ -232,7 +233,6 @@ export class VdevComponent implements OnInit {
       const newHeight = (this.expandedRows * 100) + this.startingHeight;
       const heightStr = `height: ${newHeight}px`;
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
-    }, 100)
-
+    }, 100);
   }
 }

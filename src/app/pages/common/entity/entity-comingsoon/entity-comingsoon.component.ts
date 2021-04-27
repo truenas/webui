@@ -6,18 +6,16 @@ import urls from '../../../../helptext/urls';
   selector: 'entity-comingsoon',
   templateUrl: './entity-comingsoon.component.html',
   styleUrls: ['./entity-comingsoon.component.css', '../entity-form/entity-form.component.scss'],
-  providers: []
+  providers: [],
 })
 export class EntityComingsoonComponent {
-  @Input('conf') conf = {help_path:'hub/scale/dev-notes/'};
-  public helpurl: any; 
+  @Input('conf') conf = { help_path: 'hub/scale/dev-notes/' };
+  helpurl: any;
 
   constructor() {
-
     this.helpurl = urls.docurl;
     if (this.conf['help_path']) {
       this.helpurl = this.helpurl.concat(this.conf['help_path']);
     }
   }
-
 }

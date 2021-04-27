@@ -14,7 +14,7 @@ import { FieldSets } from '../../../common/entity/entity-form/classes/field-sets
 
 @Component({
   selector: 'app-rsync-task-add',
-  template: `<entity-form [conf]="this"></entity-form>`,
+  template: '<entity-form [conf]="this"></entity-form>',
   providers: [TaskService, UserService],
 })
 export class RsyncFormComponent implements OnDestroy {
@@ -24,13 +24,13 @@ export class RsyncFormComponent implements OnDestroy {
   protected queryKey = 'id';
   protected entityForm: EntityFormComponent;
   protected pk: number;
-  protected isEntity: boolean = true;
+  protected isEntity = true;
   protected title: string;
   protected isNew: boolean;
 
-  protected preTaskName: string = 'rsync';
-  public fieldConfig: FieldConfig[] = [];
-  public fieldSets: FieldSets = new FieldSets([
+  protected preTaskName = 'rsync';
+  fieldConfig: FieldConfig[] = [];
+  fieldSets: FieldSets = new FieldSets([
     {
       name: helptext.fieldset_source,
       class: 'source',

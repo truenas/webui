@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { OnInit, Component, EventEmitter, Output, Inject } from '@angular/core';
+import {
+  OnInit, Component, EventEmitter, Output, Inject,
+} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { TranslateService } from '@ngx-translate/core';
@@ -14,31 +16,30 @@ import { EntityJobState } from 'app/enums/entity-job-state.enum';
   styleUrls: ['./entity-job.component.css'],
 })
 export class EntityJobComponent implements OnInit {
+  job: any = {};
+  progressTotalPercent = 0;
+  description: string;
+  method: string;
+  args: any[] = [];
 
-  public job: any = {};
-  public progressTotalPercent = 0;
-  public description: string;
-  public method: string;
-  public args: any[] = [];
-
-  public title = '';
-  public showCloseButton = true;
-  public showAbortButton = false; // enable to abort job
-  public jobId: Number;
-  public progressNumberType: any;
-  public hideProgressValue = false;
-  public altMessage: string;
-  public showRealtimeLogs = false;
-  public EntityJobState = EntityJobState;
+  title = '';
+  showCloseButton = true;
+  showAbortButton = false; // enable to abort job
+  jobId: Number;
+  progressNumberType: any;
+  hideProgressValue = false;
+  altMessage: string;
+  showRealtimeLogs = false;
+  EntityJobState = EntityJobState;
 
   private realtimeLogsSubscribed = false;
-  public realtimeLogs = '';
+  realtimeLogs = '';
   @Output() progress = new EventEmitter();
   @Output() success = new EventEmitter();
   @Output() aborted = new EventEmitter();
   @Output() failure = new EventEmitter();
   @Output() prefailure = new EventEmitter();
-  constructor(public dialogRef: MatDialogRef < EntityJobComponent > ,
+  constructor(public dialogRef: MatDialogRef < EntityJobComponent >,
     private ws: WebSocketService, public rest: RestService,
     @Inject(MAT_DIALOG_DATA) public data: any, translate: TranslateService, protected http: HttpClient) {}
 
@@ -63,8 +64,7 @@ export class EntityJobComponent implements OnInit {
       if (progress.percent) {
         if (this.progressNumberType === 'nopercent') {
           this.progressTotalPercent = progress.percent * 100;
-        }
-        else {
+        } else {
           this.progressTotalPercent = progress.percent;
         }
       }
@@ -76,10 +76,10 @@ export class EntityJobComponent implements OnInit {
       job.error = _.replace(job.error, '>', ' >');
 
       this.description = '<b>Error:</b> ' + job.error;
-    })
+    });
   }
 
-  setCall(method: string, args ?: any[]) {
+  setCall(method: string, args?: any[]) {
     this.method = method;
     if (args) {
       this.args = args;
@@ -106,18 +106,18 @@ export class EntityJobComponent implements OnInit {
     this.hideProgressValue = hide;
   }
 
-  public show() {
+  show() {
     this.ws.call('core.get_jobs', [
-        [
-          ['id', '=', this.jobId]
-        ]
-      ])
+      [
+        ['id', '=', this.jobId],
+      ],
+    ])
       .subscribe((res) => {
         if (res.length > 0) {
           this.jobUpdate(res[0]);
         }
       });
-    this.ws.subscribe("core.get_jobs").subscribe((res) => {
+    this.ws.subscribe('core.get_jobs').subscribe((res) => {
       if (res.id === this.jobId) {
         this.jobUpdate(res);
       }
@@ -137,7 +137,7 @@ export class EntityJobComponent implements OnInit {
     }
   }
 
-  public submit() {
+  submit() {
     this.ws.job(this.method, this.args)
       .subscribe(
         (res) => {
@@ -161,38 +161,40 @@ export class EntityJobComponent implements OnInit {
             this.failure.emit(this.job);
           }
           if (this.realtimeLogsSubscribed) {
-            this.ws.unsubscribe("filesystem.file_tail_follow:" + this.job.logs_path);
+            this.ws.unsubscribe('filesystem.file_tail_follow:' + this.job.logs_path);
           }
-        });
+        },
+      );
   }
 
-  public wspost(path: string, options: any) {
+  wspost(path: string, options: any) {
     this.http.post(path, options).subscribe(
-        (res) => {
-          this.job = res;
-          if (this.job && this.job.job_id) {
-            this.jobId = this.job.job_id;
-          }
-          this.wsshow();
-        },
-        (err) => {
-          this.prefailure.emit(err)
-        },
-        () => {
-        });
+      (res) => {
+        this.job = res;
+        if (this.job && this.job.job_id) {
+          this.jobId = this.job.job_id;
+        }
+        this.wsshow();
+      },
+      (err) => {
+        this.prefailure.emit(err);
+      },
+      () => {
+      },
+    );
   }
-  public wsshow() {
+  wsshow() {
     this.ws.call('core.get_jobs', [
-        [
-          ['id', '=', this.jobId]
-        ]
-      ])
+      [
+        ['id', '=', this.jobId],
+      ],
+    ])
       .subscribe((res) => {
         if (res.length > 0) {
           this.wsjobUpdate(res[0]);
         }
       });
-    this.ws.subscribe("core.get_jobs").subscribe((res) => {
+    this.ws.subscribe('core.get_jobs').subscribe((res) => {
       if (res.id === this.jobId) {
         this.wsjobUpdate(res);
       }
@@ -211,19 +213,15 @@ export class EntityJobComponent implements OnInit {
     if (job.fields) {
       if (job.fields.state === EntityJobState.Running) {
         this.progress.emit(this.job.fields.progress);
-      }
-      else if(job.fields.state === EntityJobState.Success){
+      } else if (job.fields.state === EntityJobState.Success) {
         this.success.emit(this.job.fields);
-      }
-      else if ((job.fields.state === EntityJobState.Failed) || job.fields.error) {
+      } else if ((job.fields.state === EntityJobState.Failed) || job.fields.error) {
         this.failure.emit(this.job.fields);
       }
-    } else {
-      if (job.state === EntityJobState.Success) {
-        this.success.emit(this.job);
-      } else if (job.state === EntityJobState.Failed) {
-        this.failure.emit(this.job);
-      }
+    } else if (job.state === EntityJobState.Success) {
+      this.success.emit(this.job);
+    } else if (job.state === EntityJobState.Failed) {
+      this.failure.emit(this.job);
     }
   }
 
@@ -233,17 +231,17 @@ export class EntityJobComponent implements OnInit {
 
   getRealtimeLogs() {
     this.realtimeLogsSubscribed = true;
-    const subName = "filesystem.file_tail_follow:" + this.job.logs_path;
+    const subName = 'filesystem.file_tail_follow:' + this.job.logs_path;
     this.ws.sub(subName).subscribe((res) => {
       this.scrollBottom();
-      if(res && res.data && typeof res.data === 'string'){
+      if (res && res.data && typeof res.data === 'string') {
         this.realtimeLogs += res.data;
       }
     });
   }
 
   scrollBottom() {
-    const cardContainer = document.getElementsByClassName("entity-job-dialog")[0];
+    const cardContainer = document.getElementsByClassName('entity-job-dialog')[0];
     cardContainer.scrollTop = cardContainer.scrollHeight;
   }
 }

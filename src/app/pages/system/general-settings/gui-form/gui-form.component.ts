@@ -7,8 +7,10 @@ import { Option } from 'app/interfaces/option.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { DialogService, LanguageService, StorageService,
-  SystemGeneralService, WebSocketService } from '../../../../services/';
+import {
+  DialogService, LanguageService, StorageService,
+  SystemGeneralService, WebSocketService,
+} from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { ModalService } from '../../../../services/modal.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -17,108 +19,108 @@ import { AdminLayoutComponent } from 'app/components/common/layouts/admin-layout
 
 @Component({
   selector: 'app-gui-form',
-  template: `<entity-form [conf]="this"></entity-form>`,
-  providers: []
+  template: '<entity-form [conf]="this"></entity-form>',
+  providers: [],
 })
-export class GuiFormComponent implements OnDestroy{
+export class GuiFormComponent implements OnDestroy {
   protected queryCall = 'none';
   protected updateCall = 'system.general.update';
-  public sortLanguagesByName = true;
-  public languageList: Option[] = [];
-  public languageKey: string;
+  sortLanguagesByName = true;
+  languageList: Option[] = [];
+  languageKey: string;
   private getDataFromDash: Subscription;
-  public fieldConfig: FieldConfig[] = []
+  fieldConfig: FieldConfig[] = [];
 
-  public fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext.stg_fieldset_gui,
-      width: "100%",
+      width: '100%',
       label: true,
       config: [
         {
-          type: "select",
-          name: "ui_certificate",
+          type: 'select',
+          name: 'ui_certificate',
           placeholder: helptext.stg_guicertificate.placeholder,
           tooltip: helptext.stg_guicertificate.tooltip,
-          options: [{ label: "---", value: null }],
+          options: [{ label: '---', value: null }],
           required: true,
-          validation: helptext.stg_guicertificate.validation
+          validation: helptext.stg_guicertificate.validation,
         },
         {
-          type: "select",
-          name: "ui_address",
+          type: 'select',
+          name: 'ui_address',
           multiple: true,
           placeholder: helptext.stg_guiaddress.placeholder,
           tooltip: helptext.stg_guiaddress.tooltip,
           required: true,
           options: [],
-          validation: [this.IPValidator("ui_address", "0.0.0.0")]
+          validation: [this.IPValidator('ui_address', '0.0.0.0')],
         },
         {
-          type: "select",
-          name: "ui_v6address",
+          type: 'select',
+          name: 'ui_v6address',
           multiple: true,
           placeholder: helptext.stg_guiv6address.placeholder,
           tooltip: helptext.stg_guiv6address.tooltip,
           required: true,
           options: [],
-          validation: [this.IPValidator("ui_v6address", "::")]
+          validation: [this.IPValidator('ui_v6address', '::')],
         },
         {
-          type: "input",
-          name: "ui_port",
+          type: 'input',
+          name: 'ui_port',
           placeholder: helptext.stg_guiport.placeholder,
           tooltip: helptext.stg_guiport.tooltip,
-          inputType: "number",
-          validation: helptext.stg_guiport.validation
+          inputType: 'number',
+          validation: helptext.stg_guiport.validation,
         },
         {
-          type: "input",
-          name: "ui_httpsport",
+          type: 'input',
+          name: 'ui_httpsport',
           placeholder: helptext.stg_guihttpsport.placeholder,
           tooltip: helptext.stg_guihttpsport.tooltip,
-          inputType: "number",
-          validation: helptext.stg_guihttpsport.validation
+          inputType: 'number',
+          validation: helptext.stg_guihttpsport.validation,
         },
         {
-          type: "select",
+          type: 'select',
           multiple: true,
-          name: "ui_httpsprotocols",
+          name: 'ui_httpsprotocols',
           placeholder: helptext.stg_guihttpsprotocols.placeholder,
           tooltip: helptext.stg_guihttpsprotocols.tooltip,
           options: [],
         },
         {
-          type: "checkbox",
-          name: "ui_httpsredirect",
+          type: 'checkbox',
+          name: 'ui_httpsredirect',
           placeholder: helptext.stg_guihttpsredirect.placeholder,
-          tooltip: helptext.stg_guihttpsredirect.tooltip
-        }
-      ]
+          tooltip: helptext.stg_guihttpsredirect.tooltip,
+        },
+      ],
     },
     {
       name: helptext.stg_fieldset_other,
       label: true,
       config: [
         {
-          type: "checkbox",
-          name: "crash_reporting",
+          type: 'checkbox',
+          name: 'crash_reporting',
           placeholder: helptext.crash_reporting.placeholder,
-          tooltip: helptext.crash_reporting.tooltip
+          tooltip: helptext.crash_reporting.tooltip,
         },
         {
-          type: "checkbox",
-          name: "usage_collection",
+          type: 'checkbox',
+          name: 'usage_collection',
           placeholder: helptext.usage_collection.placeholder,
-          tooltip: helptext.usage_collection.tooltip
+          tooltip: helptext.usage_collection.tooltip,
         },
         {
-          type: "checkbox",
-          name: "ui_consolemsg",
+          type: 'checkbox',
+          name: 'ui_consolemsg',
           placeholder: helptext.consolemsg_placeholder,
-          tooltip: helptext.consolemsg_tooltip
-        }
-      ]
+          tooltip: helptext.consolemsg_tooltip,
+        },
+      ],
     },
   ];
 
@@ -145,31 +147,30 @@ export class GuiFormComponent implements OnDestroy{
     private modalService: ModalService,
     private adminLayout: AdminLayoutComponent,
   ) {
-    this.getDataFromDash = this.sysGeneralService.sendConfigData$.subscribe(res => {
+    this.getDataFromDash = this.sysGeneralService.sendConfigData$.subscribe((res) => {
       this.configData = res;
-    })
+    });
   }
 
   IPValidator(name: 'ui_address' | 'ui_v6address', wildcard: string) {
     const self = this;
     return function validIPs(control: FormControl) {
-      const config =
-        self.fieldSets.find(set => set.name === helptext.stg_fieldset_gui).config.find(c => c.name === name);
+      const config = self.fieldSets.find((set) => set.name === helptext.stg_fieldset_gui).config.find((c) => c.name === name);
 
       const errors = control.value && control.value.length > 1 && _.indexOf(control.value, wildcard) !== -1
-        ? { validIPs : true }
+        ? { validIPs: true }
         : null;
 
-        if (errors) {
-          config.hasErrors = true;
-          config.errors = helptext.validation_errors[name];
-        } else {
-          config.hasErrors = false;
-          config.errors = '';
-        }
+      if (errors) {
+        config.hasErrors = true;
+        config.errors = helptext.validation_errors[name];
+      } else {
+        config.hasErrors = false;
+        config.errors = '';
+      }
 
-        return errors;
-    }
+      return errors;
+    };
   }
 
   preInit() {
@@ -200,12 +201,12 @@ export class GuiFormComponent implements OnDestroy{
     this.entityForm = entityEdit;
 
     this.ui_certificate = this.fieldSets
-      .find(set => set.name === helptext.stg_fieldset_gui)
-      .config.find(config => config.name === "ui_certificate");
+      .find((set) => set.name === helptext.stg_fieldset_gui)
+      .config.find((config) => config.name === 'ui_certificate');
 
     entityEdit.ws.call('system.general.ui_certificate_choices')
       .subscribe((res: any) => {
-        this.ui_certificate.options = [{ label: "---", value: null }];
+        this.ui_certificate.options = [{ label: '---', value: null }];
         for (const id in res) {
           this.ui_certificate.options.push({ label: res[id], value: id });
         }
@@ -213,8 +214,8 @@ export class GuiFormComponent implements OnDestroy{
       });
 
     const httpsprotocolsField = this.fieldSets
-      .find(set => set.name === helptext.stg_fieldset_gui)
-      .config.find(config => config.name === "ui_httpsprotocols");
+      .find((set) => set.name === helptext.stg_fieldset_gui)
+      .config.find((config) => config.name === 'ui_httpsprotocols');
 
     entityEdit.ws.call('system.general.ui_httpsprotocols_choices').subscribe(
       (res: any) => {
@@ -223,24 +224,25 @@ export class GuiFormComponent implements OnDestroy{
           httpsprotocolsField.options.push({ label: res[key], value: key });
         }
         entityEdit.formGroup.controls['ui_httpsprotocols'].setValue(this.configData.ui_httpsprotocols);
-    });
+      },
+    );
 
     this.sysGeneralService
       .ipChoicesv4()
-      .subscribe(ips => {
+      .subscribe((ips) => {
         this.fieldSets
-          .find(set => set.name === helptext.stg_fieldset_gui)
-          .config.find(config => config.name === "ui_address").options = ips;
-          entityEdit.formGroup.controls['ui_address'].setValue(this.configData.ui_address);
+          .find((set) => set.name === helptext.stg_fieldset_gui)
+          .config.find((config) => config.name === 'ui_address').options = ips;
+        entityEdit.formGroup.controls['ui_address'].setValue(this.configData.ui_address);
       });
 
     this.sysGeneralService
       .ipChoicesv6()
-      .subscribe(v6Ips => {
+      .subscribe((v6Ips) => {
         this.fieldSets
-          .find(set => set.name === helptext.stg_fieldset_gui)
-          .config.find(config => config.name === "ui_v6address").options = v6Ips;
-            entityEdit.formGroup.controls['ui_v6address'].setValue(this.configData.ui_v6address);
+          .find((set) => set.name === helptext.stg_fieldset_gui)
+          .config.find((config) => config.name === 'ui_v6address').options = v6Ips;
+        entityEdit.formGroup.controls['ui_v6address'].setValue(this.configData.ui_v6address);
       });
 
     entityEdit.formGroup.controls['ui_port'].setValue(this.configData.ui_port);
@@ -249,7 +251,6 @@ export class GuiFormComponent implements OnDestroy{
     entityEdit.formGroup.controls['crash_reporting'].setValue(this.configData.crash_reporting);
     entityEdit.formGroup.controls['usage_collection'].setValue(this.configData.usage_collection);
     entityEdit.formGroup.controls['ui_consolemsg'].setValue(this.configData.ui_consolemsg);
-
   }
 
   beforeSubmit(value: any) {
@@ -264,21 +265,21 @@ export class GuiFormComponent implements OnDestroy{
     const new_guicertificate = value.ui_certificate;
     const new_addresses = value.ui_address;
     const new_v6addresses = value.ui_v6address;
-    if (this.http_port !== new_http_port ||
-        this.https_port !== new_https_port ||
-        this.redirect !== new_redirect ||
-        this.guicertificate !== new_guicertificate ||
-        !(this.addresses.length === new_addresses.length &&
-           this.addresses.every((val, index) => val === new_addresses[index])) ||
-        !(this.v6addresses.length === new_v6addresses.length &&
-           this.v6addresses.every((val, index) => val === new_v6addresses[index]))) {
+    if (this.http_port !== new_http_port
+        || this.https_port !== new_https_port
+        || this.redirect !== new_redirect
+        || this.guicertificate !== new_guicertificate
+        || !(this.addresses.length === new_addresses.length
+           && this.addresses.every((val, index) => val === new_addresses[index]))
+        || !(this.v6addresses.length === new_v6addresses.length
+           && this.v6addresses.every((val, index) => val === new_v6addresses[index]))) {
       this.dialog.confirm(helptext.dialog_confirm_title, helptext.dialog_confirm_title)
-        .subscribe((res: boolean)=> {
+        .subscribe((res: boolean) => {
           if (res) {
             let href = window.location.href;
-            let hostname = window.location.hostname;
+            const hostname = window.location.hostname;
             let port = window.location.port;
-            let protocol = window.location.protocol;
+            const protocol = window.location.protocol;
 
             if (new_http_port !== this.http_port && protocol == 'http:') {
               port = new_http_port;
@@ -290,7 +291,7 @@ export class GuiFormComponent implements OnDestroy{
 
             this.loader.open();
             this.entityForm.ws.shuttingdown = true; // not really shutting down, just stop websocket detection temporarily
-            this.entityForm.ws.call("service.restart", ["http"]).subscribe(()=> {
+            this.entityForm.ws.call('service.restart', ['http']).subscribe(() => {
             }, (res: any) => {
               this.loader.close();
               this.dialog.errorReport(helptext.dialog_error_title, res.reason, res.trace.formatted);
@@ -307,7 +308,7 @@ export class GuiFormComponent implements OnDestroy{
     this.modalService.refreshTable();
   }
 
-  public customSubmit(body: any) {
+  customSubmit(body: any) {
     this.loader.open();
     return this.ws.call('system.general.update', [body]).subscribe(() => {
       this.loader.close();
@@ -324,11 +325,10 @@ export class GuiFormComponent implements OnDestroy{
   }
 
   getKeyByValue(object: any, value: any) {
-    return Object.keys(object).find(key => object[key] === value);
+    return Object.keys(object).find((key) => object[key] === value);
   }
 
   ngOnDestroy() {
     this.getDataFromDash.unsubscribe();
   }
-
 }

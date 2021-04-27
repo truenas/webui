@@ -1,26 +1,26 @@
-import { Directive, Input, AfterViewInit, ElementRef, HostListener, ComponentRef } from '@angular/core';
+import {
+  Directive, Input, AfterViewInit, ElementRef, HostListener, ComponentRef,
+} from '@angular/core';
 import { Overlay, OverlayRef, OverlayPositionBuilder } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { TextLimiterTooltipComponent } from './text-limiter-tooltip/text-limiter-tooltip.component';
 
 @Directive({
-  selector: '[textLimiter]'
+  selector: '[textLimiter]',
 })
 export class TextLimiterDirective implements AfterViewInit {
-
-  @Input() popup: boolean = true;
+  @Input() popup = true;
   @Input() threshold: number;
   private defaultThreshold = 10;
   private overlayRef: OverlayRef;
 
-  private rawText: string = '';
-  private text: string = '';
+  private rawText = '';
+  private text = '';
 
   @HostListener('mouseenter')
   show(): void {
-    if(!this.popup) return;
-    if(this.text !== this.rawText){
-
+    if (!this.popup) return;
+    if (this.text !== this.rawText) {
       // Create tooltip portal
       const tooltipPortal = new ComponentPortal(TextLimiterTooltipComponent);
 
@@ -34,7 +34,7 @@ export class TextLimiterDirective implements AfterViewInit {
 
   @HostListener('mouseout')
   hide(): void {
-    if(!this.popup) return;
+    if (!this.popup) return;
     this.overlayRef.detach();
   }
 
@@ -60,18 +60,15 @@ export class TextLimiterDirective implements AfterViewInit {
         overlayY: 'bottom',
       }]);
 
-      // Connect position strategy
-      this.overlayRef = this.overlay.create({ positionStrategy });
+    // Connect position strategy
+    this.overlayRef = this.overlay.create({ positionStrategy });
   }
 
   truncate(str: string): string {
-    if(str.length > this.threshold){
+    if (str.length > this.threshold) {
       const truncated = str.substring(0, this.threshold - 3);
       return truncated + '...';
-    } else {
-      return str;
     }
+    return str;
   }
-
-
 }

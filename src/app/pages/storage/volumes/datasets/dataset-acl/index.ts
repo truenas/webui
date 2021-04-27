@@ -1,1 +1,1 @@
-export {DatasetAclComponent} from './dataset-acl.component';
+export { DatasetAclComponent } from './dataset-acl.component';

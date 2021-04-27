@@ -1,4 +1,6 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation, OnDestroy } from '@angular/core';
+import {
+  Component, OnInit, ViewChild, ViewEncapsulation, OnDestroy,
+} from '@angular/core';
 import { ApplicationsService } from './applications.service';
 import { ModalService } from '../../services/modal.service';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
@@ -8,7 +10,7 @@ import { CatalogComponent } from './catalog/catalog.component';
 import { ChartReleasesComponent } from './chart-releases/chart-releases.component';
 import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.component';
 import { Subject, Subscription } from 'rxjs';
-import  helptext  from '../../helptext/apps/apps';
+import helptext from '../../helptext/apps/apps';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { MatTabChangeEvent } from '@angular/material/tabs';
@@ -22,28 +24,26 @@ import { DockerImagesComponent } from './docker-images/docker-images.component';
 })
 
 export class ApplicationsComponent implements OnInit, OnDestroy {
-
-  @ViewChild(CatalogComponent, { static: false}) private catalogTab: CatalogComponent;
-  @ViewChild(ChartReleasesComponent, { static: false}) private chartTab: ChartReleasesComponent;
-  @ViewChild(ManageCatalogsComponent, { static: false}) private manageCatalogTab: ManageCatalogsComponent;
-  @ViewChild(DockerImagesComponent, { static: false}) private dockeImagesTab: DockerImagesComponent;
-  selectedIndex: number = 0;
+  @ViewChild(CatalogComponent, { static: false }) private catalogTab: CatalogComponent;
+  @ViewChild(ChartReleasesComponent, { static: false }) private chartTab: ChartReleasesComponent;
+  @ViewChild(ManageCatalogsComponent, { static: false }) private manageCatalogTab: ManageCatalogsComponent;
+  @ViewChild(DockerImagesComponent, { static: false }) private dockeImagesTab: DockerImagesComponent;
+  selectedIndex = 0;
   isSelectedOneMore = false;
   isSelectedAll = false;
   isSelectedPool = false;
-  public settingsEvent: Subject<CoreEvent>;
-  public filterString = '';
-  public toolbarConfig: ToolbarConfig;
-  public catalogOptions: any[] = [];
-  public selectedCatalogOptions: any[] = [];
+  settingsEvent: Subject<CoreEvent>;
+  filterString = '';
+  toolbarConfig: ToolbarConfig;
+  catalogOptions: any[] = [];
+  selectedCatalogOptions: any[] = [];
   protected utils: CommonUtils;
   private refreshTable: Subscription;
 
   constructor(private appService: ApplicationsService,
     private core: CoreService,
     protected aroute: ActivatedRoute,
-    private modalService: ModalService)
-  {
+    private modalService: ModalService) {
     this.utils = new CommonUtils();
   }
 
@@ -56,8 +56,8 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    //If the route parameter "tabIndex" is 1, switch tab to "Installed applications".
-    this.aroute.params.subscribe(params => {
+    // If the route parameter "tabIndex" is 1, switch tab to "Installed applications".
+    this.aroute.params.subscribe((params) => {
       if (params['tabIndex'] == 1) {
         this.selectedIndex = 1;
         this.refreshTab();
@@ -65,8 +65,8 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(){
-    if(this.refreshTable){
+  ngOnDestroy() {
+    if (this.refreshTable) {
       this.refreshTable.unsubscribe();
     }
   }
@@ -86,29 +86,28 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
       this.chartTab.onToolbarAction(evt);
       this.manageCatalogTab.onToolbarAction(evt);
       this.dockeImagesTab.onToolbarAction(evt);
-    })
+    });
 
-    let controls: any[] = [
+    const controls: any[] = [
       {
         name: 'filter',
         type: 'input',
         value: this.filterString,
-      }
+      },
     ];
 
     const toolbarConfig = {
       target: this.settingsEvent,
-      controls: controls,
-    }
+      controls,
+    };
     const settingsConfig = {
       actionType: EntityToolbarComponent,
-      actionConfig: toolbarConfig
+      actionConfig: toolbarConfig,
     };
 
     this.toolbarConfig = toolbarConfig;
 
-    this.core.emit({name:"GlobalActions", data: settingsConfig, sender: this});
-
+    this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
   }
 
   updateToolbar() {
@@ -123,17 +122,17 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
           label: helptext.refresh,
           type: 'button',
           color: 'secondary',
-          value: 'refresh_all'
+          value: 'refresh_all',
         });
 
         this.toolbarConfig.controls.push({
           type: 'multimenu',
           name: 'catalogs',
           label: helptext.catalogs,
-          disabled:false,
+          disabled: false,
           multiple: true,
           options: this.catalogOptions,
-          value:  this.selectedCatalogOptions,
+          value: this.selectedCatalogOptions,
           customTriggerValue: helptext.catalogs,
         });
         break;
@@ -150,7 +149,7 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
         } else {
           bulk.options[0].label = helptext.bulkActions.selectAll;
         }
-        bulk.options.forEach(option => {
+        bulk.options.forEach((option) => {
           if (option.value != 'select_all') {
             option.disabled = !this.isSelectedOneMore;
           }
@@ -164,14 +163,14 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
           label: helptext.refresh,
           type: 'button',
           color: 'secondary',
-          value: 'refresh_catalogs'
+          value: 'refresh_catalogs',
         });
         this.toolbarConfig.controls.push({
           name: 'add_catalog',
           label: helptext.addCatalog,
           type: 'button',
           color: 'secondary',
-          value: 'add_catalog'
+          value: 'add_catalog',
         });
         break;
       case 3:
@@ -181,7 +180,7 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
           label: helptext.pullImage,
           type: 'button',
           color: 'secondary',
-          value: 'pull_image'
+          value: 'pull_image',
         });
         break;
     }
@@ -193,21 +192,19 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
       options: [
         { label: helptext.choose, value: 'select_pool' },
         { label: helptext.advanced, value: 'advanced_settings' },
-      ]
+      ],
     };
 
     if (this.isSelectedPool) {
       if (setting.options.length == 2) {
         const unsetOption = {
           label: helptext.unset_pool,
-          value: 'unset_pool'
+          value: 'unset_pool',
         };
         setting.options.push(unsetOption);
       }
-    } else {
-      if (setting.options.length == 3) {
-        setting.options = setting.options.filter(ctl => ctl.label !== helptext.unset_pool);
-      }
+    } else if (setting.options.length == 3) {
+      setting.options = setting.options.filter((ctl) => ctl.label !== helptext.unset_pool);
     }
     this.toolbarConfig.controls.push(setting);
 
@@ -216,10 +213,10 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
       label: helptext.launch,
       type: 'button',
       color: 'primary',
-      value: 'launch'
+      value: 'launch',
     });
 
-    this.toolbarConfig.target.next({name:"UpdateControls", data: this.toolbarConfig.controls});
+    this.toolbarConfig.target.next({ name: 'UpdateControls', data: this.toolbarConfig.controls });
   }
 
   updateTab(evt: any) {
@@ -231,19 +228,17 @@ export class ApplicationsComponent implements OnInit, OnDestroy {
       this.updateToolbar();
     } else if (evt.name == 'catalogToolbarChanged') {
       this.isSelectedPool = evt.value;
-      this.catalogOptions = evt.catalogNames.map((catalogName: any) => {
-        return {
-          label: this.utils.capitalizeFirstLetter(catalogName),
-          value: catalogName,
-        };
-      });
+      this.catalogOptions = evt.catalogNames.map((catalogName: any) => ({
+        label: this.utils.capitalizeFirstLetter(catalogName),
+        value: catalogName,
+      }));
       this.selectedCatalogOptions = this.catalogOptions;
 
       this.updateToolbar();
     }
   }
 
-  refreshTab(switchToAppTab:boolean = false) {
+  refreshTab(switchToAppTab = false) {
     this.updateToolbar();
     if (this.selectedIndex == 0) {
       if (switchToAppTab) {

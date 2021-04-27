@@ -13,20 +13,20 @@ import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-tabl
 
 @Component({
   selector: 'app-snapshot-task-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, StorageService],
 })
 export class SnapshotListComponent implements InputTableConf, OnDestroy {
-  public title = T('Periodic Snapshot Tasks');
-  public queryCall = 'pool.snapshottask.query';
-  public wsDelete = 'pool.snapshottask.delete';
-  public route_add: string[] = ['tasks', 'snapshot', 'add'];
-  public route_add_tooltip = 'Add Periodic Snapshot Task';
-  public route_edit: string[] = ['tasks', 'snapshot', 'edit'];
-  public entityList: EntityTableComponent;
-  public asyncView = true;
+  title = T('Periodic Snapshot Tasks');
+  queryCall = 'pool.snapshottask.query';
+  wsDelete = 'pool.snapshottask.delete';
+  route_add: string[] = ['tasks', 'snapshot', 'add'];
+  route_add_tooltip = 'Add Periodic Snapshot Task';
+  route_edit: string[] = ['tasks', 'snapshot', 'edit'];
+  entityList: EntityTableComponent;
+  asyncView = true;
 
-  public columns: Array<any> = [
+  columns: any[] = [
     { name: T('Pool/Dataset'), prop: 'dataset', always_display: true },
     { name: T('Recursive'), prop: 'recursive' },
     { name: T('Naming Schema'), prop: 'naming_schema' },
@@ -34,10 +34,12 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
     { name: T('Legacy'), prop: 'legacy', hidden: true },
     { name: T('VMware Sync'), prop: 'vmware_sync', hidden: true },
     { name: T('Enabled'), prop: 'enabled', selectable: true },
-    { name: T('State'), prop: 'state', state: 'state', button: true },
+    {
+      name: T('State'), prop: 'state', state: 'state', button: true,
+    },
   ];
-  public rowIdentifier = 'id';
-  public config: any = {
+  rowIdentifier = 'id';
+  config: any = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -60,7 +62,7 @@ export class SnapshotListComponent implements InputTableConf, OnDestroy {
     this.entityList = entityList;
     this.onModalClose = this.modalService.onClose$.subscribe(() => {
       this.entityList.getData();
-    })
+    });
   }
 
   dataHandler(table: any) {

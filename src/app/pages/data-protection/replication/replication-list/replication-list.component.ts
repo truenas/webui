@@ -32,7 +32,7 @@ import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-tabl
 
 @Component({
   selector: 'app-replication-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [
     JobService,
     StorageService,
@@ -44,16 +44,16 @@ import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-tabl
   ],
 })
 export class ReplicationListComponent implements InputTableConf, OnDestroy {
-  public title = T('Replication Tasks');
-  public queryCall = 'replication.query';
-  public wsDelete = 'replication.delete';
-  public route_add: string[] = ['tasks', 'replication', 'wizard'];
-  public route_edit: string[] = ['tasks', 'replication', 'edit'];
-  public route_success: string[] = ['tasks', 'replication'];
-  public entityList: EntityTableComponent;
-  public asyncView = true;
+  title = T('Replication Tasks');
+  queryCall = 'replication.query';
+  wsDelete = 'replication.delete';
+  route_add: string[] = ['tasks', 'replication', 'wizard'];
+  route_edit: string[] = ['tasks', 'replication', 'edit'];
+  route_success: string[] = ['tasks', 'replication'];
+  entityList: EntityTableComponent;
+  asyncView = true;
 
-  public columns: Array<any> = [
+  columns: any[] = [
     { name: T('Name'), prop: 'name', always_display: true },
     { name: T('Direction'), prop: 'direction' },
     { name: T('Transport'), prop: 'transport', hidden: true },
@@ -63,11 +63,13 @@ export class ReplicationListComponent implements InputTableConf, OnDestroy {
     { name: T('Recursive'), prop: 'recursive', hidden: true },
     { name: T('Auto'), prop: 'auto', hidden: true },
     { name: T('Enabled'), prop: 'enabled', checkbox: true },
-    { name: T('State'), prop: 'state', button: true, state: 'state' },
+    {
+      name: T('State'), prop: 'state', button: true, state: 'state',
+    },
     { name: T('Last Snapshot'), prop: 'task_last_snapshot' },
   ];
 
-  public config: any = {
+  config: any = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -170,7 +172,7 @@ export class ReplicationListComponent implements InputTableConf, OnDestroy {
               },
             ],
             saveButtonText: helptext.replication_restore_dialog.saveButton,
-            customSubmit: function (entityDialog: EntityDialogComponent) {
+            customSubmit(entityDialog: EntityDialogComponent) {
               parent.loader.open();
               parent.ws.call('replication.restore', [row.id, entityDialog.formValue]).subscribe(
                 (res) => {

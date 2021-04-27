@@ -26,5 +26,4 @@ export class SysInfoComponent {
 
   constructor(protected loader: AppLoaderService, protected dialogService: DialogService,
     protected ws: WebSocketService) { }
-
 }

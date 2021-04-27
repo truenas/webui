@@ -1,1 +1,1 @@
-export {EntityJobComponent} from './entity-job.component';
+export { EntityJobComponent } from './entity-job.component';

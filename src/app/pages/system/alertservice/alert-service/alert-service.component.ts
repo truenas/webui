@@ -3,7 +3,7 @@ import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import * as _ from 'lodash';
-import { WebSocketService, AppLoaderService, DialogService } from '../../../../services/';
+import { WebSocketService, AppLoaderService, DialogService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
@@ -13,23 +13,22 @@ import helptext from '../../../../helptext/system/alert-service';
 
 @Component({
   selector: 'app-alertservice',
-  template: `<entity-form [conf]="this"></entity-form>`,
-  providers: [EntityFormService]
+  template: '<entity-form [conf]="this"></entity-form>',
+  providers: [EntityFormService],
 })
 export class AlertServiceComponent {
-
   protected addCall = 'alertservice.create';
   protected queryCall = 'alertservice.query';
-  protected queryCallOption: Array<any> = [['id', '=']];
+  protected queryCallOption: any[] = [['id', '=']];
   protected editCall = 'alertservice.update';
   protected testCall = 'alertservice.test';
-  public route_success: string[] = ['system', 'alertservice'];
+  route_success: string[] = ['system', 'alertservice'];
 
   protected isEntity = true;
-  public entityForm: any;
+  entityForm: any;
 
-  public fieldConfig: FieldConfig[];
-  public fieldSets: FieldSet[] = [
+  fieldConfig: FieldConfig[];
+  fieldSets: FieldSet[] = [
     {
       name: helptext.fieldset_basic,
       label: true,
@@ -62,7 +61,7 @@ export class AlertServiceComponent {
           }, {
             label: 'E-Mail',
             value: 'Mail',
-          },{
+          }, {
             label: 'InfluxDB',
             value: 'InfluxDB',
           }, {
@@ -101,11 +100,11 @@ export class AlertServiceComponent {
             { label: 'Error', value: 'ERROR' },
             { label: 'Critical', value: 'CRITICAL' },
             { label: 'Alert', value: 'ALERT' },
-            { label: 'Emergency', value: 'EMERGENCY' }
+            { label: 'Emergency', value: 'EMERGENCY' },
           ],
           value: 'WARNING',
-        }
-      ]
+        },
+      ],
     },
     {
       name: helptext.fieldset_setting,
@@ -122,12 +121,12 @@ export class AlertServiceComponent {
           required: true,
           validation: [Validators.required],
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'AWSSNS',
-            }]
-          }]
+            }],
+          }],
         }, {
           type: 'input',
           name: 'AWSSNS-topic_arn',
@@ -136,12 +135,12 @@ export class AlertServiceComponent {
           required: true,
           validation: [Validators.required],
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'AWSSNS',
-            }]
-          }]
+            }],
+          }],
         }, {
           type: 'input',
           name: 'AWSSNS-aws_access_key_id',
@@ -150,12 +149,12 @@ export class AlertServiceComponent {
           required: true,
           validation: [Validators.required],
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'AWSSNS',
-            }]
-          }]
+            }],
+          }],
         }, {
           type: 'input',
           name: 'AWSSNS-aws_secret_access_key',
@@ -166,12 +165,12 @@ export class AlertServiceComponent {
           required: true,
           validation: [Validators.required],
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'AWSSNS',
-            }]
-          }]
+            }],
+          }],
         },
         // Mail
         {
@@ -181,12 +180,12 @@ export class AlertServiceComponent {
           placeholder: helptext.Mail_email_placeholder,
           tooltip: helptext.Mail_email_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'Mail',
-            }]
-          }]
+            }],
+          }],
         },
         // InfluxDB
         {
@@ -195,11 +194,11 @@ export class AlertServiceComponent {
           placeholder: helptext.InfluxDB_host_placeholder,
           tooltip: helptext.InfluxDB_host_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'InfluxDB',
-            }]
+            }],
           }],
           required: true,
           validation: [Validators.required],
@@ -209,11 +208,11 @@ export class AlertServiceComponent {
           placeholder: helptext.InfluxDB_username_placeholder,
           tooltip: helptext.InfluxDB_username_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'InfluxDB',
-            }]
+            }],
           }],
           required: true,
           validation: [Validators.required],
@@ -225,11 +224,11 @@ export class AlertServiceComponent {
           togglePw: true,
           tooltip: helptext.InfluxDB_password_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'InfluxDB',
-            }]
+            }],
           }],
           required: true,
           validation: [Validators.required],
@@ -239,11 +238,11 @@ export class AlertServiceComponent {
           placeholder: helptext.InfluxDB_database_placeholder,
           tooltip: helptext.InfluxDB_database_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'InfluxDB',
-            }]
+            }],
           }],
           required: true,
           validation: [Validators.required],
@@ -253,11 +252,11 @@ export class AlertServiceComponent {
           placeholder: helptext.InfluxDB_series_name_placeholder,
           tooltip: helptext.InfluxDB_series_name_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'InfluxDB',
-            }]
+            }],
           }],
           required: true,
           validation: [Validators.required],
@@ -269,11 +268,11 @@ export class AlertServiceComponent {
           placeholder: helptext.Mattermost_url_placeholder,
           tooltip: helptext.Mattermost_url_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'Mattermost',
-            }]
+            }],
           }],
           required: true,
           validation: [Validators.required],
@@ -283,11 +282,11 @@ export class AlertServiceComponent {
           placeholder: helptext.Mattermost_username_placeholder,
           tooltip: helptext.Mattermost_username_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'Mattermost',
-            }]
+            }],
           }],
           required: true,
           validation: [Validators.required],
@@ -297,11 +296,11 @@ export class AlertServiceComponent {
           placeholder: helptext.Mattermost_channel_placeholder,
           tooltip: helptext.Mattermost_channel_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'Mattermost',
-            }]
+            }],
           }],
         }, {
           type: 'input',
@@ -309,11 +308,11 @@ export class AlertServiceComponent {
           placeholder: helptext.Mattermost_icon_url_placeholder,
           tooltip: helptext.Mattermost_icon_url_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'Mattermost',
-            }]
+            }],
           }],
         },
         // OpsGenie
@@ -323,11 +322,11 @@ export class AlertServiceComponent {
           placeholder: helptext.OpsGenie_api_key_placeholder,
           tooltip: helptext.OpsGenie_api_key_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'OpsGenie',
-            }]
+            }],
           }],
           required: true,
           validation: [Validators.required],
@@ -337,12 +336,12 @@ export class AlertServiceComponent {
           placeholder: helptext.OpsGenie_api_url_placeholder,
           tooltip: helptext.OpsGenie_api_url_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'OpsGenie',
-            }]
-          }]
+            }],
+          }],
         },
         // PagerDuty
         {
@@ -351,11 +350,11 @@ export class AlertServiceComponent {
           placeholder: helptext.PagerDuty_service_key_placeholder,
           tooltip: helptext.PagerDuty_service_key_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'PagerDuty',
-            }]
+            }],
           }],
           required: true,
           validation: [Validators.required],
@@ -365,11 +364,11 @@ export class AlertServiceComponent {
           placeholder: helptext.PagerDuty_client_name_placeholder,
           tooltip: helptext.PagerDuty_client_name_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'PagerDuty',
-            }]
+            }],
           }],
           required: true,
           validation: [Validators.required],
@@ -381,11 +380,11 @@ export class AlertServiceComponent {
           placeholder: helptext.Slack_url_placeholder,
           tooltip: helptext.Slack_url_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'Slack',
-            }]
+            }],
           }],
           required: true,
           validation: [Validators.required],
@@ -397,11 +396,11 @@ export class AlertServiceComponent {
           placeholder: helptext.SNMPTrap_host_placeholder,
           tooltip: helptext.SNMPTrap_host_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'SNMPTrap',
-            }]
+            }],
           }],
           required: true,
           validation: [Validators.required],
@@ -413,11 +412,11 @@ export class AlertServiceComponent {
           placeholder: helptext.SNMPTrap_port_placeholder,
           tooltip: helptext.SNMPTrap_port_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'SNMPTrap',
-            }]
+            }],
           }],
           value: 162,
         },
@@ -427,11 +426,11 @@ export class AlertServiceComponent {
           placeholder: helptext.SNMPTrap_v3_placeholder,
           tooltip: helptext.SNMPTrap_v3_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'SNMPTrap',
-            }]
+            }],
           }],
           value: false,
         },
@@ -441,16 +440,16 @@ export class AlertServiceComponent {
           placeholder: helptext.SNMPTrap_v3_username_placeholder,
           tooltip: helptext.SNMPTrap_v3_username_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             connective: 'AND',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'SNMPTrap',
             }, {
-              name: "SNMPTrap-v3",
+              name: 'SNMPTrap-v3',
               value: true,
-            }]
-          }]
+            }],
+          }],
         },
         {
           type: 'input',
@@ -458,16 +457,16 @@ export class AlertServiceComponent {
           placeholder: helptext.SNMPTrap_v3_authkey_placeholder,
           tooltip: helptext.SNMPTrap_v3_authkey_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             connective: 'AND',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'SNMPTrap',
             }, {
-              name: "SNMPTrap-v3",
+              name: 'SNMPTrap-v3',
               value: true,
-            }]
-          }]
+            }],
+          }],
         },
         {
           type: 'input',
@@ -475,16 +474,16 @@ export class AlertServiceComponent {
           placeholder: helptext.SNMPTrap_v3_privkey_placeholder,
           tooltip: helptext.SNMPTrap_v3_privkey_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             connective: 'AND',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'SNMPTrap',
             }, {
-              name: "SNMPTrap-v3",
+              name: 'SNMPTrap-v3',
               value: true,
-            }]
-          }]
+            }],
+          }],
         },
         {
           type: 'select',
@@ -519,19 +518,19 @@ export class AlertServiceComponent {
             {
               label: 'HMAC384SHA512',
               value: '384SHA512',
-            }
+            },
           ],
           value: '',
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             connective: 'AND',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'SNMPTrap',
             }, {
-              name: "SNMPTrap-v3",
+              name: 'SNMPTrap-v3',
               value: true,
-            }]
+            }],
           }],
         },
         {
@@ -571,20 +570,20 @@ export class AlertServiceComponent {
             {
               label: 'CFB128-AES-256 Blumenthal',
               value: 'AESBLUMENTHALCFB256',
-            }
+            },
           ],
           value: '',
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             connective: 'AND',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'SNMPTrap',
             }, {
-              name: "SNMPTrap-v3",
+              name: 'SNMPTrap-v3',
               value: true,
-            }]
-          }]
+            }],
+          }],
         },
         {
           type: 'input',
@@ -592,11 +591,11 @@ export class AlertServiceComponent {
           placeholder: helptext.SNMPTrap_community_placeholder,
           tooltip: helptext.SNMPTrap_community_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'SNMPTrap',
-            }]
+            }],
           }],
           value: 'public',
         },
@@ -607,11 +606,11 @@ export class AlertServiceComponent {
           placeholder: helptext.Telegram_bot_token_placeholder,
           tooltip: helptext.Telegram_bot_token_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'Telegram',
-            }]
+            }],
           }],
           required: true,
           validation: [Validators.required],
@@ -622,11 +621,11 @@ export class AlertServiceComponent {
           placeholder: helptext.Telegram_chat_ids_placeholder,
           tooltip: helptext.Telegram_chat_ids_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'Telegram',
-            }]
+            }],
           }],
           required: true,
           validation: [Validators.required],
@@ -638,11 +637,11 @@ export class AlertServiceComponent {
           placeholder: helptext.VictorOps_api_key_placeholder,
           tooltip: helptext.VictorOps_api_key_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'VictorOps',
-            }]
+            }],
           }],
           required: true,
           validation: [Validators.required],
@@ -652,20 +651,20 @@ export class AlertServiceComponent {
           placeholder: helptext.VictorOps_routing_key_placeholder,
           tooltip: helptext.VictorOps_routing_key_tooltip,
           relation: [{
-            action: "SHOW",
+            action: 'SHOW',
             when: [{
-              name: "type",
+              name: 'type',
               value: 'VictorOps',
-            }]
+            }],
           }],
           required: true,
           validation: [Validators.required],
-        }
-      ]
-    }
+        },
+      ],
+    },
   ];
 
-  public custActions: Array<any> = [
+  custActions: any[] = [
     {
       id: 'authenticate',
       name: T('SEND TEST ALERT'),
@@ -686,9 +685,10 @@ export class AlertServiceComponent {
           (err) => {
             this.loader.close();
             new EntityUtils().handleWSError(this, err, this.entityForm.dialog);
-          });
-      }
-    }
+          },
+        );
+      },
+    },
   ];
 
   constructor(
@@ -697,10 +697,11 @@ export class AlertServiceComponent {
     protected ws: WebSocketService,
     protected entityFormService: EntityFormService,
     protected loader: AppLoaderService,
-    protected dialogService: DialogService) { }
+    protected dialogService: DialogService,
+  ) { }
 
   preInit() {
-    this.aroute.params.subscribe(params => {
+    this.aroute.params.subscribe((params) => {
       if (params['pk']) {
         this.queryCallOption[0].push(Number(params['pk']));
       }
@@ -775,7 +776,8 @@ export class AlertServiceComponent {
         (err) => {
           this.loader.close();
           new EntityUtils().handleWSError(this, err, this.entityForm.dialog);
-        });
+        },
+      );
     } else {
       this.ws.call(this.editCall, [this.entityForm.pk, payload]).subscribe(
         (res) => {
@@ -785,11 +787,12 @@ export class AlertServiceComponent {
         (err) => {
           this.loader.close();
           new EntityUtils().handleWSError(this, err, this.entityForm.dialog);
-        });
+        },
+      );
     }
   }
 
   getErrorField(field: string) {
-    return _.find(this.fieldConfig, { 'name': this.entityForm.formGroup.controls['type'].value + '-' + field });
+    return _.find(this.fieldConfig, { name: this.entityForm.formGroup.controls['type'].value + '-' + field });
   }
 }

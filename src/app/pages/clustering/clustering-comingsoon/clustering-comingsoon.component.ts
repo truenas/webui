@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 
 @Component({
-    selector: 'clustering-comingsoon',
-    template: `
+  selector: 'clustering-comingsoon',
+  template: `
     <entity-comingsoon></entity-comingsoon>`,
-    styleUrls: []
+  styleUrls: [],
 })
 export class ClusteringComingsoonComponent {
 
-} 
+}

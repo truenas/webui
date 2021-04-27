@@ -1,4 +1,6 @@
-import { Component, ViewContainerRef, AfterViewInit, OnInit, ViewChild } from '@angular/core';
+import {
+  Component, ViewContainerRef, AfterViewInit, OnInit, ViewChild,
+} from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatTabGroup } from '@angular/material/tabs';
 import { TranslateService } from '@ngx-translate/core';
@@ -21,15 +23,15 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
   group: FormGroup;
   fieldShow: string;
 
-  public tabFormGroup: any;
+  tabFormGroup: any;
   protected control: any;
   protected active_tab: any;
   protected value: any;
   protected init: boolean;
-  @ViewChild('tabGroup', { static: true}) tabGroup: MatTabGroup;
+  @ViewChild('tabGroup', { static: true }) tabGroup: MatTabGroup;
 
   constructor(protected entityFormService: EntityFormService,
-              public translate: TranslateService) {}
+    public translate: TranslateService) {}
   ngAfterViewInit() {
     this.active_tab = this.config.tabs[this.tabGroup.selectedIndex];
     this.setControlValue();
@@ -40,17 +42,17 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
 
     this.tabFormGroup = this.entityFormService.createFormGroup(this.config.tabs);
     this.control = this.group.controls[this.config.name];
-    for (let item in this.tabFormGroup.controls) {
+    for (const item in this.tabFormGroup.controls) {
       this.tabFormGroup.controls[item].valueChanges.subscribe(() => {
         this.setControlValue();
-      })
+      });
     }
 
     this.group.controls[this.config.name].valueChanges.subscribe((res) => {
       if (this.init && res) {
         this.init = false;
         if (_.startsWith(this.control.value, '*/')) {
-          this.tabGroup.selectedIndex = 0
+          this.tabGroup.selectedIndex = 0;
           this.active_tab = this.config.tabs[0];
           this.value = Number(_.trim(this.control.value, '*/'));
           this.tabFormGroup.controls[this.active_tab.name].setValue(this.value);
@@ -60,7 +62,6 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
           this.tabFormGroup.controls[this.active_tab.name].setValue(this.control.value.split(','));
         }
       }
-
     });
   }
 

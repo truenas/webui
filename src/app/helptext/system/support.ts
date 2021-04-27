@@ -1,5 +1,5 @@
-import { Validators } from "@angular/forms";
-import { T } from "app/translate-marker";
+import { Validators } from '@angular/forms';
+import { T } from 'app/translate-marker';
 
 export const helptext_system_support = {
   proactive: {
@@ -14,126 +14,126 @@ export const helptext_system_support = {
     pc_email_placeholder: T('Email'),
     pc_phone_placeholder: T('Phone Number'),
     pc_validation: [Validators.required],
-    pc_email_validation: [Validators. required, Validators.email],
+    pc_email_validation: [Validators.required, Validators.email],
 
     secondary_contact: T('Secondary Contact'),
     sec_name_placeholder: T('Name'),
     sec_title_placeholder: T('Title'),
     sec_email_placeholder: T('Email'),
     sec_phone_placeholder: T('Phone Number'),
-    sec_email_validation: [Validators. required, Validators.email],
+    sec_email_validation: [Validators.required, Validators.email],
 
     enable_checkbox_placeholder: T('Enable iXsystems Proactive Support'),
     save_button: T('Save'),
     dialog_title: T('Settings saved'),
     dialog_mesage: T('Successfully saved proactive support settings.'),
-    dialog_err: T('Error Saving Proactive Support Settings')
+    dialog_err: T('Error Saving Proactive Support Settings'),
   },
 
   username: {
-    placeholder: T("Username"),
+    placeholder: T('Username'),
     tooltip: T(
       'Enter a valid username for the <a\
  href="https://jira.ixsystems.com/projects/NAS/issues/"\
- target="_blank">TrueNAS bug tracking system</a>'
+ target="_blank">TrueNAS bug tracking system</a>',
     ),
-    validation: [Validators.required]
+    validation: [Validators.required],
   },
 
   password: {
-    placeholder: T("Password"),
-    tooltip: T("Enter the bug tracker account password."),
-    validation: [Validators.required]
+    placeholder: T('Password'),
+    tooltip: T('Enter the bug tracker account password.'),
+    validation: [Validators.required],
   },
 
   type: {
-    placeholder: T("Type"),
+    placeholder: T('Type'),
     tooltip: T(
-      "Select <i>Bug</i> when reporting an issue or\
- <i>Feature</i> when requesting new functionality."
-    )
+      'Select <i>Bug</i> when reporting an issue or\
+ <i>Feature</i> when requesting new functionality.',
+    ),
   },
 
   name: {
-    placeholder: T("Name"),
-    tooltip: T("Enter the name of the contact person."),
-    validation: [Validators.required]
+    placeholder: T('Name'),
+    tooltip: T('Enter the name of the contact person.'),
+    validation: [Validators.required],
   },
 
   email: {
-    placeholder: T("Email"),
-    tooltip: T("Enter the email of the contact person. Use the format <i>name</i>@<i>domain.com</i>."),
-    validation: [Validators.required, Validators.email]
+    placeholder: T('Email'),
+    tooltip: T('Enter the email of the contact person. Use the format <i>name</i>@<i>domain.com</i>.'),
+    validation: [Validators.required, Validators.email],
   },
 
   cc: {
-    placeholder: T("CC"),
-    tooltip: T("Email addresses to receive copies of iXsystems Support \
+    placeholder: T('CC'),
+    tooltip: T('Email addresses to receive copies of iXsystems Support \
   messages about this issue. Use the format <i>name</i>@<i>domain.com</i>. \
-  Separate entries by pressing <code>Enter</code>."),
+  Separate entries by pressing <code>Enter</code>.'),
     err: T('Email addresses must be entered in the format \
   <i>local-name</i>@<i>domain.com<i>, with entries separated by pressing \
-  <code>Enter</code>.')
+  <code>Enter</code>.'),
   },
 
   phone: {
-    placeholder: T("Phone"),
-    tooltip: T("Enter the phone number of the contact person."),
-    validation: [Validators.required]
+    placeholder: T('Phone'),
+    tooltip: T('Enter the phone number of the contact person.'),
+    validation: [Validators.required],
   },
 
   category: {
-    placeholder: T("Category"),
+    placeholder: T('Category'),
     tooltip: T(
-      "This field remains empty until a valid\
+      'This field remains empty until a valid\
  <b>Username</b> and <b>Password</b> is entered.\
  Choose the category that best describes the bug or\
- feature being reported."
+ feature being reported.',
     ),
-    validation: [Validators.required]
+    validation: [Validators.required],
   },
 
   environment: {
-    placeholder: T("Environment"),
-    tooltip: T("Select the appropriate environment."), //DRAFT TOOLTIP
-    validation: [Validators.required]
+    placeholder: T('Environment'),
+    tooltip: T('Select the appropriate environment.'), // DRAFT TOOLTIP
+    validation: [Validators.required],
   },
 
   criticality: {
-    placeholder: T("Criticality"),
-    tooltip: T("Select the appropriate level of criticality."), //DRAFT TOOLTIP
-    validation: [Validators.required]
+    placeholder: T('Criticality'),
+    tooltip: T('Select the appropriate level of criticality.'), // DRAFT TOOLTIP
+    validation: [Validators.required],
   },
 
   attach_debug: {
-    placeholder: T("Attach Debug"),
+    placeholder: T('Attach Debug'),
     tooltip: T(
-      "Set to generate and attach to the new issue a report\
+      'Set to generate and attach to the new issue a report\
  containing an overview of the system hardware, build\
  string, and configuration. This can take several\
- minutes."
-    )
+ minutes.',
+    ),
   },
 
   title: {
-    placeholder: T("Subject"),
-    tooltip: T("Enter a descriptive title for the new issue."),
-    validation: [Validators.required]
+    placeholder: T('Subject'),
+    tooltip: T('Enter a descriptive title for the new issue.'),
+    validation: [Validators.required],
   },
 
   body: {
-    placeholder: T("Description"),
+    placeholder: T('Description'),
     tooltip: T(
-      "Enter a one to three paragraph summary of the issue.\
+      'Enter a one to three paragraph summary of the issue.\
  Describe the problem and provide any steps to\
- replicate the issue."
+ replicate the issue.',
     ),
-    validation: [Validators.required]
+    validation: [Validators.required],
   },
 
   screenshot: {
-  placeholder: T( "Attach screenshots."),
-  tooltip: T( "Select one or more screenshots that illustrate the problem.")
+    placeholder: T('Attach screenshots.'),
+    tooltip: T('Select one or more screenshots that illustrate the problem.'),
   },
 
   update_license: {
@@ -147,23 +147,23 @@ export const helptext_system_support = {
     reload_dialog_message: T('Reload the page for the license to take effect.'),
     reload_dialog_action: T('Reload now'),
     error_dialog_title: T('Error Unlocking'),
-    snackbar_action: T('Close')
+    snackbar_action: T('Close'),
   },
 
   core_upgrade_license: {
     dialog_title: T('Add or Update a License'),
-     dialog_msg: T('To update the current software license or upgrade from TrueNAS Core® to TrueNAS \
- Enterprise®, copy the text of the TrueNAS license and paste it in this box.')
+    dialog_msg: T('To update the current software license or upgrade from TrueNAS Core® to TrueNAS \
+ Enterprise®, copy the text of the TrueNAS license and paste it in this box.'),
   },
 
   is_production_checkbox: {
     placeholder: T('This is a production system'),
-    tooltip: T('Set system production state and optionally send initial debug.')
+    tooltip: T('Set system production state and optionally send initial debug.'),
   },
 
   is_production_debug: {
     placeholder: T('Send initial debug'),
-    tooltip: T('Send initial debug.')
+    tooltip: T('Send initial debug.'),
   },
 
   is_production_submit: T('Update Status'),
@@ -174,12 +174,12 @@ export const helptext_system_support = {
 
   is_production_job: {
     title: T('Production Status'),
-    message: T('Updating production status...')
+    message: T('Updating production status...'),
   },
-  
+
   is_production_dialog: {
     title: T('Status updated'),
-    message: T('Production status successfully updated')
+    message: T('Production status successfully updated'),
   },
 
   FN_instructions: T('Search the <a href="https://jira.ixsystems.com/projects/NAS/issues/" \
@@ -195,11 +195,11 @@ export const helptext_system_support = {
    Create a Jira account</a> to file an issue. Use a valid \
    email address when registering to receive issue status updates.'),
 
-   submitBtn: T('Save'),
-  
-   contactUs: T('Contact Support'),
+  submitBtn: T('Save'),
 
-   docHub: T('<a href="https://www.truenas.com/docs/hub/" target="_blank">\
+  contactUs: T('Contact Support'),
+
+  docHub: T('<a href="https://www.truenas.com/docs/hub/" target="_blank">\
  TrueNAS Documentation Hub</a> - Read and contribute to the open-source documentation.'),
 
   forums: T('<a href="https://www.ixsystems.com/community/" target="_blank">\
@@ -216,8 +216,7 @@ export const helptext_system_support = {
     title: T('Update Production Status'),
     message: T('Set production status as active'),
     checkbox: T('Send initial debug'),
-    button: T('Proceed')
-  }
+    button: T('Proceed'),
+  },
 
-  
 };

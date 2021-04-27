@@ -13,25 +13,25 @@ import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector: 'app-cron-snapshot-task-add',
-  template: `<entity-form [conf]="this"></entity-form>`,
-  providers: [TaskService]
+  template: '<entity-form [conf]="this"></entity-form>',
+  providers: [TaskService],
 })
 export class SnapshotFormComponent implements OnDestroy {
-  protected queryCall = "pool.snapshottask.query";
-  protected addCall = "pool.snapshottask.create";
-  protected editCall = "pool.snapshottask.update";
-  protected isEntity: boolean = true;
+  protected queryCall = 'pool.snapshottask.query';
+  protected addCall = 'pool.snapshottask.create';
+  protected editCall = 'pool.snapshottask.update';
+  protected isEntity = true;
   protected pk: number;
   protected dataset: any;
-  protected dataset_disabled: boolean = false;
+  protected dataset_disabled = false;
   protected datasetFg: any;
   protected dataset_subscription: Subscription;
-  protected save_button_enabled: boolean = true;
+  protected save_button_enabled = true;
   protected entityForm: EntityFormComponent;
-  public title: string;
-  public isNew: boolean = false;
+  title: string;
+  isNew = false;
 
-  public fieldSets: FieldSets = new FieldSets([
+  fieldSets: FieldSets = new FieldSets([
     {
       name: helptext.fieldset_dataset,
       class: 'dataset',
@@ -46,19 +46,19 @@ export class SnapshotFormComponent implements OnDestroy {
           options: [],
           required: true,
           validation: [Validators.required],
-        },{
+        }, {
           type: 'chip',
           name: 'exclude',
           placeholder: helptext.exclude_placeholder,
-          tooltip: helptext.exclude_tooltip
-        },{
+          tooltip: helptext.exclude_tooltip,
+        }, {
           type: 'checkbox',
           name: 'recursive',
           placeholder: helptext.recursive_placeholder,
           tooltip: helptext.recursive_tooltip,
-          value: true
+          value: true,
         },
-      ]
+      ],
     },
     {
       name: helptext.fieldset_schedule,
@@ -71,14 +71,14 @@ export class SnapshotFormComponent implements OnDestroy {
           name: 'lifetime',
           placeholder: helptext.lifetime_placeholder,
           tooltip: helptext.lifetime_tooltip,
-          value: "2 WEEKS",
+          value: '2 WEEKS',
           required: true,
           inputUnit: {
             type: UnitType.duration,
             decimal: false,
             default: 'HOUR',
-            allowUnits: ['HOUR', 'DAY', 'WEEK', 'MONTH', 'YEAR']
-          }
+            allowUnits: ['HOUR', 'DAY', 'WEEK', 'MONTH', 'YEAR'],
+          },
         }, {
           type: 'input',
           name: 'naming_schema',
@@ -94,7 +94,7 @@ export class SnapshotFormComponent implements OnDestroy {
           options: ['begin', 'end'],
           validation: [Validators.required],
           required: true,
-          value: "0 0 * * *"
+          value: '0 0 * * *',
         }, {
           type: 'select',
           name: 'begin',
@@ -125,17 +125,17 @@ export class SnapshotFormComponent implements OnDestroy {
           placeholder: helptext.enabled_placeholder,
           tooltip: helptext.enabled_tooltip,
           value: true,
-        }
-      ]
+        },
+      ],
     },
     { name: 'divider', divider: true },
-  ])
-  public fieldConfig: FieldConfig;
+  ]);
+  fieldConfig: FieldConfig;
 
   constructor(protected taskService: TaskService,
-              protected storageService: StorageService,
-              protected dialog: DialogService,
-              protected modalService: ModalService) {
+    protected storageService: StorageService,
+    protected dialog: DialogService,
+    protected modalService: ModalService) {
     const begin_field = this.fieldSets.config('begin');
     const end_field = this.fieldSets.config('end');
     const time_options = this.taskService.getTimeOptions();
@@ -154,18 +154,18 @@ export class SnapshotFormComponent implements OnDestroy {
     const datasetField = this.fieldSets.config('dataset');
 
     this.storageService.getDatasetNameOptions().subscribe(
-      options => {
-        if (this.dataset !== undefined && !_.find(options, {'label' : this.dataset})) {
-          const disabled_dataset = {'label': this.dataset, 'value': this.dataset, 'disable': true};
+      (options) => {
+        if (this.dataset !== undefined && !_.find(options, { label: this.dataset })) {
+          const disabled_dataset = { label: this.dataset, value: this.dataset, disable: true };
           this.dataset_disabled = true;
           options.push(disabled_dataset);
 
           datasetField.warnings = helptext.dataset_warning;
           this.save_button_enabled = false;
         }
-        datasetField.options = _.sortBy(options, [o => o.label]);
+        datasetField.options = _.sortBy(options, [(o) => o.label]);
       },
-      error => new EntityUtils().handleWSError(this, error, this.dialog)
+      (error) => new EntityUtils().handleWSError(this, error, this.dialog),
     );
 
     this.datasetFg = entityForm.formGroup.controls['dataset'];
@@ -176,16 +176,15 @@ export class SnapshotFormComponent implements OnDestroy {
       }
     });
 
-    entityForm.formGroup.controls['snapshot_picker'].valueChanges.subscribe(value => {
+    entityForm.formGroup.controls['snapshot_picker'].valueChanges.subscribe((value) => {
       if (value === '0 0 * * *' || value === '0 0 * * sun' || value === '0 0 1 * *') {
         this.entityForm.setDisabled('begin', true, true);
         this.entityForm.setDisabled('end', true, true);
-
       } else {
         this.entityForm.setDisabled('begin', false, false);
         this.entityForm.setDisabled('end', false, false);
       }
-    })
+    });
   }
 
   ngOnDestroy() {
@@ -195,7 +194,7 @@ export class SnapshotFormComponent implements OnDestroy {
   }
 
   resourceTransformIncomingRestData(data: any) {
-    data['snapshot_picker'] = `${data.schedule.minute} ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`
+    data['snapshot_picker'] = `${data.schedule.minute} ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
     data['begin'] = data.schedule.begin;
     data['end'] = data.schedule.end;
 
@@ -207,10 +206,10 @@ export class SnapshotFormComponent implements OnDestroy {
   beforeSubmit(value: any) {
     const lifetime = value.lifetime.split(' ');
     value['lifetime_value'] = lifetime[0];
-    value['lifetime_unit'] = _.endsWith(lifetime[1], 'S') ? lifetime[1].substring(0, lifetime[1].length -1) : lifetime[1];
+    value['lifetime_unit'] = _.endsWith(lifetime[1], 'S') ? lifetime[1].substring(0, lifetime[1].length - 1) : lifetime[1];
     delete value.lifetime;
 
-    const spl = value.snapshot_picker.split(" ");
+    const spl = value.snapshot_picker.split(' ');
     delete value.snapshot_picker;
 
     value['schedule'] = {
@@ -220,7 +219,7 @@ export class SnapshotFormComponent implements OnDestroy {
       dom: spl[2],
       month: spl[3],
       dow: spl[4],
-      minute: spl[0]
+      minute: spl[0],
     };
     delete value['begin'];
     delete value['end'];

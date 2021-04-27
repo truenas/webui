@@ -1,7 +1,9 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { T } from '../../../translate-marker';
-import { IdmapService, ValidationService, SystemGeneralService, WebSocketService } from 'app/services';
+import {
+  IdmapService, ValidationService, SystemGeneralService, WebSocketService,
+} from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { IdmapFormComponent } from './idmap-form.component';
@@ -12,22 +14,24 @@ import { ActiveDirectoryComponent } from '../activedirectory/activedirectory.com
 import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-idmap-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class IdmapListComponent implements OnDestroy {
-  public title = "Idmap";
+  title = 'Idmap';
   protected queryCall = 'idmap.query';
-  protected wsDelete = "idmap.delete";
+  protected wsDelete = 'idmap.delete';
   protected entityList: any;
   protected idmapFormComponent: IdmapFormComponent;
   protected requiredDomains = [
     'DS_TYPE_ACTIVEDIRECTORY',
     'DS_TYPE_DEFAULT_DOMAIN',
-    'DS_TYPE_LDAP'
+    'DS_TYPE_LDAP',
   ];
 
-  public columns: Array<any> = [
-    { name: T('Name'), prop: 'name', always_display: true, minWidth: 250 },
+  columns: any[] = [
+    {
+      name: T('Name'), prop: 'name', always_display: true, minWidth: 250,
+    },
     { name: T('Backend'), prop: 'idmap_backend', maxWidth: 100 },
     { name: T('DNS Domain Name'), prop: 'dns_domain_name' },
     { name: T('Range Low'), prop: 'range_low' },
@@ -35,13 +39,13 @@ export class IdmapListComponent implements OnDestroy {
     { name: T('Certificate'), prop: 'cert_name' },
   ];
 
-  public rowIdentifier = 'name';
-  public config: any = {
+  rowIdentifier = 'name';
+  config: any = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
       title: T('Idmap'),
-      key_props: ['name']
+      key_props: ['name'],
     },
   };
 
@@ -56,7 +60,7 @@ export class IdmapListComponent implements OnDestroy {
     private dialog: DialogService,
     protected router: Router,
     public mdDialog: MatDialog,
-    protected dialogService: DialogService
+    protected dialogService: DialogService,
   ) { }
 
   resourceTransformIncomingRestData(data: any[]) {
@@ -65,12 +69,12 @@ export class IdmapListComponent implements OnDestroy {
         item.cert_name = item.certificate.cert_name;
       }
       if (item.name === 'DS_TYPE_ACTIVEDIRECTORY' && item.idmap_backend === 'AUTORID') {
-        let obj = data.find(o => o.name === 'DS_TYPE_DEFAULT_DOMAIN');
+        const obj = data.find((o) => o.name === 'DS_TYPE_DEFAULT_DOMAIN');
         obj.disableEdit = true;
       }
-      const index = helptext.idmap.name.options.findIndex(o => o.value === item.name);
+      const index = helptext.idmap.name.options.findIndex((o) => o.value === item.name);
       if (index >= 0) item.name = helptext.idmap.name.options[index].label;
-    })
+    });
     return data;
   }
 
@@ -78,7 +82,7 @@ export class IdmapListComponent implements OnDestroy {
     this.entityList = entityList;
     this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
       this.entityList.getData();
-    })
+    });
   }
 
   ngOnDestroy() {
@@ -97,13 +101,13 @@ export class IdmapListComponent implements OnDestroy {
           } else {
             this.dialogService.confirm(helptext.idmap.enable_ad_dialog.title, helptext.idmap.enable_ad_dialog.message,
               true, helptext.idmap.enable_ad_dialog.button).subscribe((res: boolean) => {
-                if (res) {
-                  this.showADForm();
-                }
-              })
+              if (res) {
+                this.showADForm();
+              }
+            });
           }
-        })
-      }
+        });
+      },
     }];
   }
 
@@ -115,7 +119,7 @@ export class IdmapListComponent implements OnDestroy {
       disabled: row.disableEdit,
       onClick: (row: any) => {
         this.doAdd(row.id);
-      }
+      },
     });
     if (!this.requiredDomains.includes(row.name)) {
       actions.push({
@@ -129,10 +133,10 @@ export class IdmapListComponent implements OnDestroy {
             },
             () => {
               this.entityList.getData();
-            }
+            },
           );
-        }
-      })
+        },
+      });
     }
     return actions;
   }
@@ -161,5 +165,4 @@ export class IdmapListComponent implements OnDestroy {
 
     this.modalService.open('slide-in-form', formComponent);
   }
-
 }

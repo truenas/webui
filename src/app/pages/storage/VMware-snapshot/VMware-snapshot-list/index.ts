@@ -1,1 +1,1 @@
-export {VMwareSnapshotListComponent} from './VMware-snapshot-list.component';
+export { VMwareSnapshotListComponent } from './VMware-snapshot-list.component';

@@ -1,1 +1,1 @@
-export {DatasetUnlockComponent} from './dataset-unlock.component';
+export { DatasetUnlockComponent } from './dataset-unlock.component';

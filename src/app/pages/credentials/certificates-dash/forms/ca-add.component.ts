@@ -3,7 +3,7 @@ import { FormGroup, Validators } from '@angular/forms';
 
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import * as _ from 'lodash';
-import { SystemGeneralService, WebSocketService } from '../../../../services/';
+import { SystemGeneralService, WebSocketService } from '../../../../services';
 import { ModalService } from 'app/services/modal.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
@@ -14,19 +14,17 @@ import { T } from '../../../../translate-marker';
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../../common/entity/entity-wizard/entity-wizard.component';
 
-
 @Component({
-  selector : 'system-ca-add',
-  template : `<entity-form [conf]="this"></entity-form>`,
-  providers : [ SystemGeneralService ]
+  selector: 'system-ca-add',
+  template: '<entity-form [conf]="this"></entity-form>',
+  providers: [SystemGeneralService],
 })
 
 export class CertificateAuthorityAddComponent {
-
-  protected addWsCall = "certificateauthority.create";
-  protected isEntity: boolean = true;
+  protected addWsCall = 'certificateauthority.create';
+  protected isEntity = true;
   private title: string;
-  public hideCancel = true;
+  hideCancel = true;
 
   private isLinear = true;
   private summary: any = {};
@@ -34,7 +32,7 @@ export class CertificateAuthorityAddComponent {
   entityWizard: any;
   private currentStep = 0;
 
-  public wizardConfig: Wizard[] = [
+  wizardConfig: Wizard[] = [
     {
       label: helptext_system_ca.add.fieldset_basic,
       fieldConfig: [
@@ -69,7 +67,7 @@ export class CertificateAuthorityAddComponent {
             {
               label: '---------',
               value: {},
-            }
+            },
           ],
           relation: [
             {
@@ -77,11 +75,11 @@ export class CertificateAuthorityAddComponent {
               when: [{
                 name: 'create_type',
                 value: 'CA_CREATE_IMPORTED',
-              }]
+              }],
             },
-          ]
-        }
-      ]
+          ],
+        },
+      ],
     },
     {
       label: helptext_system_ca.add.fieldset_type,
@@ -92,12 +90,12 @@ export class CertificateAuthorityAddComponent {
           placeholder: helptext_system_ca.add.signedby.placeholder,
           tooltip: helptext_system_ca.add.signedby.tooltip,
           options: [
-            { label: '---', value: null }
+            { label: '---', value: null },
           ],
           isHidden: true,
           disabled: true,
           required: true,
-          validation: helptext_system_ca.add.signedby.validation
+          validation: helptext_system_ca.add.signedby.validation,
         },
         {
           type: 'select',
@@ -106,13 +104,13 @@ export class CertificateAuthorityAddComponent {
           tooltip: helptext_system_ca.add.key_type.tooltip,
           options: [
             { label: 'RSA', value: 'RSA' },
-            { label: 'EC', value: 'EC' }
+            { label: 'EC', value: 'EC' },
           ],
           value: 'RSA',
           isHidden: false,
           disabled: true,
           required: true,
-          validation: helptext_system_ca.add.key_type.validation
+          validation: helptext_system_ca.add.key_type.validation,
         },
         {
           type: 'select',
@@ -129,7 +127,7 @@ export class CertificateAuthorityAddComponent {
               when: [{
                 name: 'key_type',
                 value: 'EC',
-              }]
+              }],
             },
           ],
         },
@@ -153,9 +151,9 @@ export class CertificateAuthorityAddComponent {
               when: [{
                 name: 'key_type',
                 value: 'RSA',
-              }]
+              }],
             },
-          ]
+          ],
         },
         {
           type: 'select',
@@ -185,7 +183,7 @@ export class CertificateAuthorityAddComponent {
           validation: helptext_system_ca.add.lifetime.validation,
           isHidden: false,
         },
-      ]
+      ],
     },
     {
       label: helptext_system_ca.add.fieldset_certificate,
@@ -261,8 +259,8 @@ export class CertificateAuthorityAddComponent {
           required: true,
           validation: helptext_system_ca.add.san.validation,
           isHidden: false,
-        }
-      ]
+        },
+      ],
     },
     {
       label: helptext_system_ca.add.fieldset_extra,
@@ -285,9 +283,9 @@ export class CertificateAuthorityAddComponent {
               when: [{
                 name: 'BasicConstraints-enabled',
                 value: true,
-              }]
+              }],
             },
-          ]
+          ],
         },
         {
           type: 'select',
@@ -305,7 +303,7 @@ export class CertificateAuthorityAddComponent {
               value: 'extension_critical',
               label: helptext_system_ca.add.basic_constraints.extension_critical.placeholder,
               tooltip: helptext_system_ca.add.basic_constraints.extension_critical.tooltip,
-            }
+            },
           ],
           relation: [
             {
@@ -313,9 +311,9 @@ export class CertificateAuthorityAddComponent {
               when: [{
                 name: 'BasicConstraints-enabled',
                 value: true,
-              }]
+              }],
             },
-          ]
+          ],
         },
         {
           type: 'checkbox',
@@ -339,7 +337,7 @@ export class CertificateAuthorityAddComponent {
               value: 'extension_critical',
               label: helptext_system_ca.add.authority_key_identifier.extension_critical.placeholder,
               tooltip: helptext_system_ca.add.authority_key_identifier.extension_critical.tooltip,
-            }
+            },
           ],
           relation: [
             {
@@ -347,9 +345,9 @@ export class CertificateAuthorityAddComponent {
               when: [{
                 name: 'AuthorityKeyIdentifier-enabled',
                 value: true,
-              }]
+              }],
             },
-          ]
+          ],
         },
         {
           type: 'checkbox',
@@ -371,9 +369,9 @@ export class CertificateAuthorityAddComponent {
               when: [{
                 name: 'ExtendedKeyUsage-enabled',
                 value: true,
-              }]
+              }],
             },
-          ]
+          ],
         },
         {
           type: 'checkbox',
@@ -386,9 +384,9 @@ export class CertificateAuthorityAddComponent {
               when: [{
                 name: 'ExtendedKeyUsage-enabled',
                 value: true,
-              }]
+              }],
             },
-          ]
+          ],
         },
         {
           type: 'checkbox',
@@ -460,9 +458,9 @@ export class CertificateAuthorityAddComponent {
               when: [{
                 name: 'KeyUsage-enabled',
                 value: true,
-              }]
+              }],
             },
-          ]
+          ],
         },
         {
           type: 'textarea',
@@ -488,20 +486,20 @@ export class CertificateAuthorityAddComponent {
           inputType: 'password',
           validation: helptext_system_ca.add.passphrase.validation,
           isHidden: true,
-          togglePw: true
+          togglePw: true,
         },
         {
           type: 'input',
           name: 'passphrase2',
           inputType: 'password',
           placeholder: helptext_system_ca.add.passphrase2.placeholder,
-          isHidden: true
-        }
-      ]
-    }
+          isHidden: true,
+        },
+      ],
+    },
   ];
 
-  private internalcaFields: Array<any> = [
+  private internalcaFields: any[] = [
     'key_type',
     'ec_curve',
     'key_length',
@@ -516,7 +514,7 @@ export class CertificateAuthorityAddComponent {
     'common',
     'san',
   ];
-  private intermediatecaFields: Array<any> = [
+  private intermediatecaFields: any[] = [
     'signedby',
     'key_type',
     'ec_curve',
@@ -532,13 +530,13 @@ export class CertificateAuthorityAddComponent {
     'common',
     'san',
   ];
-  private importcaFields: Array<any> = [
+  private importcaFields: any[] = [
     'certificate',
     'privatekey',
     'passphrase',
     'passphrase2',
   ];
-  private extensionFields: Array<any> = [
+  private extensionFields: any[] = [
     'BasicConstraints-enabled',
     'BasicConstraints-path_length',
     'BasicConstraints',
@@ -551,7 +549,7 @@ export class CertificateAuthorityAddComponent {
     'KeyUsage',
   ];
 
-  private relationFields: Array<any> = [
+  private relationFields: any[] = [
     'create_type',
     'key_type',
     'BasicConstraints-enabled',
@@ -562,14 +560,14 @@ export class CertificateAuthorityAddComponent {
 
   private country: any;
   private signedby: any;
-  public identifier: any;
-  public usageField: any;
+  identifier: any;
+  usageField: any;
   private currenProfile: any;
   private entityForm: any;
 
   constructor(protected ws: WebSocketService, private modalService: ModalService,
-              protected loader: AppLoaderService, private dialogService: DialogService,
-              protected systemGeneralService: SystemGeneralService) {}
+    protected loader: AppLoaderService, private dialogService: DialogService,
+    protected systemGeneralService: SystemGeneralService) {}
 
   preInit(entityWizard: EntityWizardComponent) {
     this.entityWizard = entityWizard;
@@ -577,38 +575,39 @@ export class CertificateAuthorityAddComponent {
       this.signedby = this.getTarget('signedby');
       res.forEach((item) => {
         this.signedby.options.push(
-            {label : item.name, value : item.id});
+          { label: item.name, value: item.id },
+        );
       });
     });
 
     this.ws.call('certificate.ec_curve_choices').subscribe((res) => {
-      const ec_curves_field = this.getTarget('ec_curve')
-      for(const key in res) {
-        ec_curves_field.options.push({label: res[key], value: key});
+      const ec_curves_field = this.getTarget('ec_curve');
+      for (const key in res) {
+        ec_curves_field.options.push({ label: res[key], value: key });
       }
     });
 
-   this.systemGeneralService.getCertificateCountryChoices().subscribe((res) => {
+    this.systemGeneralService.getCertificateCountryChoices().subscribe((res) => {
       this.country = this.getTarget('country');
       for (const item in res) {
         this.country.options.push(
-          { label : res[item], value : item}
+          { label: res[item], value: item },
         );
-      };
+      }
     });
 
     this.usageField = this.getTarget('ExtendedKeyUsage-usages');
     this.ws.call('certificate.extended_key_usage_choices').subscribe((res) => {
-      Object.keys(res).forEach(key => {
-        this.usageField.options.push({label: res[key], value: key})
+      Object.keys(res).forEach((key) => {
+        this.usageField.options.push({ label: res[key], value: key });
       });
     });
 
     const profilesField = this.getTarget('profiles');
     this.ws.call('certificateauthority.profiles').subscribe((res) => {
-      Object.keys(res).forEach(item => {
-        profilesField.options.push({label: item, value: res[item]});
-      })
+      Object.keys(res).forEach((item) => {
+        profilesField.options.push({ label: item, value: res[item] });
+      });
     });
   }
 
@@ -637,7 +636,7 @@ export class CertificateAuthorityAddComponent {
       }
       this.getField(fieldName).valueChanges.subscribe((res) => {
         this.summary[fieldConfig.placeholder] = this.getSummaryValueLabel(fieldConfig, res);
-      })
+      });
     }
   }
 
@@ -659,32 +658,32 @@ export class CertificateAuthorityAddComponent {
     this.entityForm = entity;
     this.title = helptext_system_ca.add.title;
 
-    for (let i in this.intermediatecaFields) {
+    for (const i in this.intermediatecaFields) {
       this.hideField(this.intermediatecaFields[i], true, entity);
     }
-    for (let i in this.importcaFields) {
+    for (const i in this.importcaFields) {
       this.hideField(this.importcaFields[i], true, entity);
     }
-    for (let i in this.internalcaFields) {
+    for (const i in this.internalcaFields) {
       this.hideField(this.internalcaFields[i], false, entity);
     }
-    this.hideField(this.internalcaFields[1], true, entity)
+    this.hideField(this.internalcaFields[1], true, entity);
 
     this.getField('create_type').valueChanges.subscribe((res) => {
       this.wizardConfig[1].skip = false;
       this.wizardConfig[2].skip = false;
 
       if (res == 'CA_CREATE_INTERNAL') {
-        for (let i in this.intermediatecaFields) {
+        for (const i in this.intermediatecaFields) {
           this.hideField(this.intermediatecaFields[i], true, entity);
         }
-        for (let i in this.importcaFields) {
+        for (const i in this.importcaFields) {
           this.hideField(this.importcaFields[i], true, entity);
         }
-        for (let i in this.internalcaFields) {
+        for (const i in this.internalcaFields) {
           this.hideField(this.internalcaFields[i], false, entity);
         }
-        for (let i in this.extensionFields) {
+        for (const i in this.extensionFields) {
           this.hideField(this.extensionFields[i], false, entity);
         }
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
@@ -693,18 +692,17 @@ export class CertificateAuthorityAddComponent {
         } else if (this.getField('key_type').value === 'EC') {
           this.hideField('key_length', true, entity);
         }
-
       } else if (res == 'CA_CREATE_INTERMEDIATE') {
-        for (let i in this.internalcaFields) {
+        for (const i in this.internalcaFields) {
           this.hideField(this.internalcaFields[i], true, entity);
         }
-        for (let i in this.importcaFields) {
+        for (const i in this.importcaFields) {
           this.hideField(this.importcaFields[i], true, entity);
         }
-        for (let i in this.intermediatecaFields) {
+        for (const i in this.intermediatecaFields) {
           this.hideField(this.intermediatecaFields[i], false, entity);
         }
-        for (let i in this.extensionFields) {
+        for (const i in this.extensionFields) {
           this.hideField(this.extensionFields[i], false, entity);
         }
         if (this.getField('key_type').value === 'RSA') {
@@ -712,18 +710,17 @@ export class CertificateAuthorityAddComponent {
         } else if (this.getField('key_type').value === 'EC') {
           this.hideField('key_length', true, entity);
         }
-
       } else if (res == 'CA_CREATE_IMPORTED') {
-        for (let i in this.internalcaFields) {
+        for (const i in this.internalcaFields) {
           this.hideField(this.internalcaFields[i], true, entity);
         }
-        for (let i in this.intermediatecaFields) {
+        for (const i in this.intermediatecaFields) {
           this.hideField(this.intermediatecaFields[i], true, entity);
         }
-        for (let i in this.importcaFields) {
+        for (const i in this.importcaFields) {
           this.hideField(this.importcaFields[i], false, entity);
         }
-        for (let i in this.extensionFields) {
+        for (const i in this.extensionFields) {
           this.hideField(this.extensionFields[i], true, entity);
         }
 
@@ -731,13 +728,13 @@ export class CertificateAuthorityAddComponent {
         this.wizardConfig[2].skip = true;
       }
       this.setSummary();
-    })
+    });
 
     this.getField('name').valueChanges.subscribe((res) => {
       this.identifier = res;
       this.summary[this.getTarget('name').placeholder] = res;
       this.setSummary();
-    })
+    });
 
     this.getField('name').statusChanges.subscribe((res) => {
       if (this.identifier && res === 'INVALID') {
@@ -746,7 +743,7 @@ export class CertificateAuthorityAddComponent {
         this.getTarget('name')['hasErrors'] = false;
       }
       this.setSummary();
-    })
+    });
 
     this.getField('ExtendedKeyUsage-enabled').valueChanges.subscribe((res) => {
       const usagesRequired = res !== undefined ? res : false;
@@ -759,7 +756,7 @@ export class CertificateAuthorityAddComponent {
       }
       this.getField('ExtendedKeyUsage-usages').updateValueAndValidity();
       this.setSummary();
-    })
+    });
 
     this.getField('profiles').valueChanges.subscribe((res) => {
       // undo revious profile settings
@@ -770,27 +767,26 @@ export class CertificateAuthorityAddComponent {
       this.setSummary();
     });
 
-    for (let i in this.relationFields) {
+    for (const i in this.relationFields) {
       this.getField(this.relationFields[i]).valueChanges.subscribe((res) => {
         this.setSummary();
-      })
+      });
     }
 
     this.setSummary();
-
   }
 
   loadProfiels(value: any, reset?: any) {
     if (value) {
-      Object.keys(value).forEach(item => {
+      Object.keys(value).forEach((item) => {
         if (item === 'cert_extensions') {
-          Object.keys(value['cert_extensions']).forEach(type => {
-            Object.keys(value['cert_extensions'][type]).forEach(prop => {
+          Object.keys(value['cert_extensions']).forEach((type) => {
+            Object.keys(value['cert_extensions'][type]).forEach((prop) => {
               let ctrl = this.getField(`${type}-${prop}`);
               if (ctrl) {
                 if (reset && ctrl.value === value['cert_extensions'][type][prop]) {
                   ctrl.setValue(undefined);
-                } else if (!reset){
+                } else if (!reset) {
                   ctrl.setValue(value['cert_extensions'][type][prop]);
                 }
               } else {
@@ -800,34 +796,29 @@ export class CertificateAuthorityAddComponent {
                 if (reset && value['cert_extensions'][type][prop] === true && optionIndex > -1) {
                   config.splice(optionIndex, 1);
                   ctrl.setValue(config);
-                } else if (!reset){
+                } else if (!reset) {
                   if (value['cert_extensions'][type][prop] === true && optionIndex === -1) {
                     config.push(prop);
-                  } else if (value['cert_extensions'][type][prop] === false && optionIndex > -1 ) {
+                  } else if (value['cert_extensions'][type][prop] === false && optionIndex > -1) {
                     config.splice(optionIndex, 1);
                   }
                   ctrl.setValue(config);
                 }
               }
-            })
-          })
-        } else {
-          if (reset && this.entityForm.formGroup.controls[item].value === value[item]) {
-            this.entityForm.formGroup.controls[item].setValue(undefined);
-          } else if (!reset){
-            this.entityForm.formGroup.controls[item].setValue(value[item]);
-          }
+            });
+          });
+        } else if (reset && this.entityForm.formGroup.controls[item].value === value[item]) {
+          this.entityForm.formGroup.controls[item].setValue(undefined);
+        } else if (!reset) {
+          this.entityForm.formGroup.controls[item].setValue(value[item]);
         }
       });
     }
   }
 
   getStep(fieldName: any) {
-
     const stepNumber = this.wizardConfig.findIndex((step) => {
-      const index = step.fieldConfig.findIndex(field => {
-        return fieldName == field.name;
-      });
+      const index = step.fieldConfig.findIndex((field) => fieldName == field.name);
       return index > -1;
     });
 
@@ -835,25 +826,21 @@ export class CertificateAuthorityAddComponent {
   }
 
   getField(fieldName: any) {
-
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
-      const target = ( < FormGroup > this.entityWizard.formArray.get([stepNumber])).controls[fieldName];
+      const target = (< FormGroup > this.entityWizard.formArray.get([stepNumber])).controls[fieldName];
       return target;
-    } else {
-      return null;
     }
+    return null;
   }
 
   getTarget(fieldName: any) {
-
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
-      const target = _.find(this.wizardConfig[stepNumber].fieldConfig, {'name': fieldName});
+      const target = _.find(this.wizardConfig[stepNumber].fieldConfig, { name: fieldName });
       return target;
-    } else {
-      return null;
     }
+    return null;
   }
 
   hideField(fieldName: any, show: boolean, entity: any) {
@@ -880,12 +867,12 @@ export class CertificateAuthorityAddComponent {
     }
     if (data.create_type === 'CA_CREATE_INTERNAL' || data.create_type === 'CA_CREATE_INTERMEDIATE') {
       const cert_extensions = {
-        'BasicConstraints': {},
-        'AuthorityKeyIdentifier': {},
-        'ExtendedKeyUsage': {},
-        'KeyUsage': {},
-      }
-      Object.keys(data).forEach(key => {
+        BasicConstraints: {},
+        AuthorityKeyIdentifier: {},
+        ExtendedKeyUsage: {},
+        KeyUsage: {},
+      };
+      Object.keys(data).forEach((key) => {
         if (key.startsWith('BasicConstraints') || key.startsWith('AuthorityKeyIdentifier') || key.startsWith('ExtendedKeyUsage') || key.startsWith('KeyUsage')) {
           const type_prop = key.split('-');
           if (data[key] === '') {
@@ -900,7 +887,7 @@ export class CertificateAuthorityAddComponent {
               (cert_extensions as any)[type_prop[0]][type_prop[1]] = data[key];
             }
           }
-          delete data[key]
+          delete data[key];
         }
       });
       data['cert_extensions'] = cert_extensions;
@@ -913,14 +900,13 @@ export class CertificateAuthorityAddComponent {
 
   customSubmit(data: any) {
     this.loader.open();
-    this.ws.call(this.addWsCall, [data]).subscribe(vm_res => {
+    this.ws.call(this.addWsCall, [data]).subscribe((vm_res) => {
       this.loader.close();
       this.modalService.refreshTable();
       this.modalService.close('slide-in-form');
-    },(error) => {
+    }, (error) => {
       this.loader.close();
-      this.dialogService.errorReport(T("Error creating CA."), error.reason, error.trace.formatted);
+      this.dialogService.errorReport(T('Error creating CA.'), error.reason, error.trace.formatted);
     });
   }
-
 }

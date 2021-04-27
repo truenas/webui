@@ -14,15 +14,15 @@ import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector: 'disk-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class DiskListComponent {
-  public title = T("Disks");
-  protected queryCall = "disk.query";
-  protected queryCallOption = [[] as any, {"extra":{"pools": true}}];
+  title = T('Disks');
+  protected queryCall = 'disk.query';
+  protected queryCallOption = [[] as any, { extra: { pools: true } }];
   noAdd = true;
 
-  public columns: Array<any> = [
+  columns: any[] = [
     { name: T('Name'), prop: 'name', always_display: true },
     { name: T('Serial'), prop: 'serial' },
     { name: T('Disk Size'), prop: 'readable_size' },
@@ -31,40 +31,40 @@ export class DiskListComponent {
     { name: T('Description'), prop: 'description', hidden: true },
     { name: T('Model'), prop: 'model', hidden: true },
     { name: T('Transfer Mode'), prop: 'transfermode', hidden: true },
-    { name: T("Rotation Rate (RPM)"), prop: 'rotationrate', hidden: true },
+    { name: T('Rotation Rate (RPM)'), prop: 'rotationrate', hidden: true },
     { name: T('HDD Standby'), prop: 'hddstandby', hidden: true },
     { name: T('Adv. Power Management'), prop: 'advpowermgmt', hidden: true },
     { name: T('Acoustic Level'), prop: 'acousticlevel', hidden: true },
     { name: T('Enable S.M.A.R.T.'), prop: 'togglesmart', hidden: true },
     { name: T('S.M.A.R.T. extra options'), prop: 'smartoptions', hidden: true },
   ];
-  public config: any = {
+  config: any = {
     paging: true,
     sorting: { columns: this.columns },
     multiSelect: true,
     deleteMsg: {
       title: 'User',
-      key_props: ['name']
+      key_props: ['name'],
     },
   };
-  public diskIds: Array<any> = [];
-  public diskNames: Array<any> = [];
-  public hddStandby: Array<any> = [];
-  public advPowerMgt: Array<any> = [];
-  public acousticLevel: Array<any> = [];
-  public diskToggle: boolean;
-  public SMARToptions: Array<any> = [];
+  diskIds: any[] = [];
+  diskNames: any[] = [];
+  hddStandby: any[] = [];
+  advPowerMgt: any[] = [];
+  acousticLevel: any[] = [];
+  diskToggle: boolean;
+  SMARToptions: any[] = [];
   private SMARTdiskChoices: any = {};
 
-  public multiActions: Array<any> = [{
-    id: "medit",
-    label: T("Edit Disk(s)"),
-    icon: "edit",
+  multiActions: any[] = [{
+    id: 'medit',
+    label: T('Edit Disk(s)'),
+    icon: 'edit',
     enable: true,
-    ttpos: "above",
+    ttpos: 'above',
     onClick: (selected: any) => {
       if (selected.length > 1) {
-        for (let i of selected) {
+        for (const i of selected) {
           this.diskIds.push(i.identifier);
           this.diskNames.push(i.name);
           this.hddStandby.push(i.hddstandby);
@@ -80,50 +80,49 @@ export class DiskListComponent {
         this.diskbucket.diskToggleBucket(this.diskToggle);
 
         // If all items match in an array, this fills in the value in the form; otherwise, blank
-        this.hddStandby.every((val, i, arr) => val === arr[0]) ?
-          this.diskbucket.hddStandby = this.hddStandby[0] :
-            this.diskbucket.hddStandby = undefined;
+        this.hddStandby.every((val, i, arr) => val === arr[0])
+          ? this.diskbucket.hddStandby = this.hddStandby[0]
+          : this.diskbucket.hddStandby = undefined;
 
-          this.advPowerMgt.every((val, i, arr) => val === arr[0]) ?
-            this.diskbucket.advPowerMgt = this.advPowerMgt[0] :
-              this.diskbucket.advPowerMgt = undefined;
+        this.advPowerMgt.every((val, i, arr) => val === arr[0])
+          ? this.diskbucket.advPowerMgt = this.advPowerMgt[0]
+          : this.diskbucket.advPowerMgt = undefined;
 
-            this.acousticLevel.every((val, i, arr) => val === arr[0]) ?
-              this.diskbucket.acousticLevel = this.acousticLevel[0] :
-                this.diskbucket.acousticLevel = undefined;
+        this.acousticLevel.every((val, i, arr) => val === arr[0])
+          ? this.diskbucket.acousticLevel = this.acousticLevel[0]
+          : this.diskbucket.acousticLevel = undefined;
 
-              this.SMARToptions.every((val, i, arr) => val === arr[0]) ?
-                this.diskbucket.SMARToptions = this.SMARToptions[0] :
-                  this.diskbucket.SMARToptions = undefined;
+        this.SMARToptions.every((val, i, arr) => val === arr[0])
+          ? this.diskbucket.SMARToptions = this.SMARToptions[0]
+          : this.diskbucket.SMARToptions = undefined;
 
-                this.router.navigate(new Array('/').concat([
-                  "storage", "disks", "bulk-edit"
-                ]));
+        this.router.navigate(new Array('/').concat([
+          'storage', 'disks', 'bulk-edit',
+        ]));
       } else {
         this.router.navigate(new Array('/').concat([
-          "storage", "disks", "edit", selected[0].identifier
+          'storage', 'disks', 'edit', selected[0].identifier,
         ]));
       }
-
-    }
+    },
   }, {
     id: 'mmanualtest',
-    label: T("Manual Test"),
+    label: T('Manual Test'),
     icon: 'play_arrow',
     enable: true,
-    ttpos: "above",
+    ttpos: 'above',
     onClick: (selected: any) => {
       this.manualTest(selected);
-    }
-  }]
+    },
+  }];
 
   protected unused: any[] = [];
   constructor(protected ws: WebSocketService, protected router: Router, public diskbucket: StorageService, protected dialogService: DialogService,
     protected localeService: LocaleService, private dialog: MatDialog) {
     this.ws.call('disk.get_unused', []).subscribe((unused_res) => {
       this.unused = unused_res;
-    }, err => new EntityUtils().handleWSError(this, err));
-    this.ws.call('smart.test.disk_choices').subscribe(res => this.SMARTdiskChoices = res, err => new EntityUtils().handleWSError(this, err))
+    }, (err) => new EntityUtils().handleWSError(this, err));
+    this.ws.call('smart.test.disk_choices').subscribe((res) => this.SMARTdiskChoices = res, (err) => new EntityUtils().handleWSError(this, err));
   }
 
   getActions(parentRow: any) {
@@ -131,34 +130,34 @@ export class DiskListComponent {
       id: parentRow.name,
       icon: 'edit',
       name: 'edit',
-      label: T("Edit"),
+      label: T('Edit'),
       onClick: (row: any) => {
         this.router.navigate(new Array('/').concat([
-          "storage", "disks", "edit", row.identifier
+          'storage', 'disks', 'edit', row.identifier,
         ]));
-      }
+      },
     }, {
       id: parentRow.name,
       icon: 'format_list_bulleted',
       name: 'manual_test',
-      label: T("Manual Test"),
+      label: T('Manual Test'),
       onClick: (row: any) => {
         this.manualTest(row);
-      }
+      },
     }];
 
-    for(let key in this.SMARTdiskChoices) {
-      if(key === parentRow.identifier) {
+    for (const key in this.SMARTdiskChoices) {
+      if (key === parentRow.identifier) {
         actions.push({
           id: parentRow.name,
           icon: 'format_list_bulleted',
           name: 'smartresults',
-          label: T("S.M.A.R.T Test Results"),
+          label: T('S.M.A.R.T Test Results'),
           onClick: (row) => {
             this.router.navigate(new Array('/').concat([
-              "storage", "disks", "smartresults", row.name
+              'storage', 'disks', 'smartresults', row.name,
             ]));
-          }
+          },
         });
         break;
       }
@@ -170,7 +169,7 @@ export class DiskListComponent {
         id: parentRow.name,
         icon: 'delete_sweep',
         name: 'wipe',
-        label: T("Wipe"),
+        label: T('Wipe'),
         onClick: (row) => {
           const self = this;
           const conf: DialogFormConfiguration = {
@@ -181,7 +180,7 @@ export class DiskListComponent {
                 name: 'disk_name',
                 placeholder: helptext.dw_disk_name_placeholder,
                 tooltip: helptext.dw_disk_name_tooltip,
-                readonly: true
+                readonly: true,
               },
               {
                 type: 'select',
@@ -198,49 +197,50 @@ export class DiskListComponent {
                   }, {
                     label: T('Full with random data'),
                     value: 'FULL_RANDOM',
-                  }
+                  },
                 ],
                 value: 'QUICK',
-              }
+              },
             ],
             saveButtonText: helptext.diskWipeDialogForm.saveButtonText,
-            afterInit: function (entityDialogForm: EntityDialogComponent) {
+            afterInit(entityDialogForm: EntityDialogComponent) {
               entityDialogForm.formGroup.controls['disk_name'].setValue(row.name);
             },
-            customSubmit: function (entityDialogForm: EntityDialogComponent) {
+            customSubmit(entityDialogForm: EntityDialogComponent) {
               self.dialogService.confirm(
                 helptext.diskWipeDialogForm.title + row.name,
-                helptext.diskWipeDialogForm.confirmContent).subscribe((res: boolean) => {
-                  if (res) {
-                    const dialogRef = self.dialog.open(EntityJobComponent, { data: { "title": helptext.diskWipeDialogForm.title + row.name } });
-                    dialogRef.componentInstance.setDescription(helptext.diskWipeDialogForm.startDescription);
-                    dialogRef.componentInstance.setCall('disk.wipe', [entityDialogForm.formValue.disk_name, entityDialogForm.formValue.wipe_method]);
-                    dialogRef.componentInstance.submit();
+                helptext.diskWipeDialogForm.confirmContent,
+              ).subscribe((res: boolean) => {
+                if (res) {
+                  const dialogRef = self.dialog.open(EntityJobComponent, { data: { title: helptext.diskWipeDialogForm.title + row.name } });
+                  dialogRef.componentInstance.setDescription(helptext.diskWipeDialogForm.startDescription);
+                  dialogRef.componentInstance.setCall('disk.wipe', [entityDialogForm.formValue.disk_name, entityDialogForm.formValue.wipe_method]);
+                  dialogRef.componentInstance.submit();
 
-                    dialogRef.componentInstance.success.subscribe(() => {
-                      if (dialogRef.componentInstance) {
-                        dialogRef.close(true);
-                        self.dialogService.generalDialog({
-                          title: helptext.diskWipeDialogForm.title + row.name,
-                          message: helptext.diskWipeDialogForm.infoContent,
-                          hideCancel: true,
-                        });
-                      }
-                    });
-                    dialogRef.componentInstance.failure.subscribe((wipeRes: any) => {
-                      dialogRef.componentInstance.setDescription(wipeRes.error);
-                    });
-                    dialogRef.componentInstance.aborted.subscribe(() => {
+                  dialogRef.componentInstance.success.subscribe(() => {
+                    if (dialogRef.componentInstance) {
                       dialogRef.close(true);
-                    });
-                    entityDialogForm.dialogRef.close(true);
-                  }
-                });
-            }
-          }
+                      self.dialogService.generalDialog({
+                        title: helptext.diskWipeDialogForm.title + row.name,
+                        message: helptext.diskWipeDialogForm.infoContent,
+                        hideCancel: true,
+                      });
+                    }
+                  });
+                  dialogRef.componentInstance.failure.subscribe((wipeRes: any) => {
+                    dialogRef.componentInstance.setDescription(wipeRes.error);
+                  });
+                  dialogRef.componentInstance.aborted.subscribe(() => {
+                    dialogRef.close(true);
+                  });
+                  entityDialogForm.dialogRef.close(true);
+                }
+              });
+            },
+          };
           this.dialogService.dialogForm(conf);
-        }
-      })
+        },
+      });
     }
     return actions;
   }
@@ -261,20 +261,18 @@ export class DiskListComponent {
         entityList.needTableResize = false;
         entityList.getData();
       }
-    })
+    });
   }
 
   resourceTransformIncomingRestData(data: any[]) {
-    data.forEach(i => i.pool = i.pool ? i.pool : 'N/A');
+    data.forEach((i) => i.pool = i.pool ? i.pool : 'N/A');
     return data;
   }
 
   manualTest(selected: any) {
     const parent = this;
-    const disks = Array.isArray(selected) ? selected.map(item => item.name) : [selected.name];
-    const disksIdentifier = Array.isArray(selected) ? selected.map(item => {
-      return { 'identifier': item.identifier }
-    }) : [{ 'identifier': selected.identifier }];
+    const disks = Array.isArray(selected) ? selected.map((item) => item.name) : [selected.name];
+    const disksIdentifier = Array.isArray(selected) ? selected.map((item) => ({ identifier: item.identifier })) : [{ identifier: selected.identifier }];
     const conf: DialogFormConfiguration = {
       title: helptext.manual_test_dialog.title,
       fieldConfig: [
@@ -305,28 +303,28 @@ export class DiskListComponent {
             {
               label: 'OFFLINE',
               value: 'OFFLINE',
-            }
+            },
           ],
           value: 'LONG',
-        }
+        },
       ],
       saveButtonText: helptext.manual_test_dialog.saveButtonText,
-      customSubmit: function (entityDialog: EntityDialogComponent) {
-        disksIdentifier.forEach(item => {
+      customSubmit(entityDialog: EntityDialogComponent) {
+        disksIdentifier.forEach((item) => {
           (item as any)['type'] = entityDialog.formValue.type;
         });
 
         parent.ws.call('smart.test.manual_test', [disksIdentifier]).subscribe(
-          res => {
+          (res) => {
             entityDialog.dialogRef.close(true);
             parent.generateManualTestSummary(res);
           },
-          err => {
+          (err) => {
             new EntityUtils().handleWSError(parent, err, parent.dialogService, conf.fieldConfig);
-          }
-        )
-      }
-    }
+          },
+        );
+      },
+    };
     this.dialogService.dialogForm(conf);
   }
 
@@ -339,7 +337,7 @@ export class DiskListComponent {
     for (let i = 0; i < res.length; i++) {
       if (res[i].expected_result_time) {
         hasSuccessNote = true;
-        success_note += `<b>${res[i].disk}</b>: ${this.localeService.formatDateTime(res[i].expected_result_time.$date)}<br>`
+        success_note += `<b>${res[i].disk}</b>: ${this.localeService.formatDateTime(res[i].expected_result_time.$date)}<br>`;
       } else if (res[i].error) {
         hasFailNote = true;
         fail_note += `<b>${res[i].disk}</b><br>${res[i].error}<br>`;
@@ -350,6 +348,7 @@ export class DiskListComponent {
       (hasSuccessNote ? success_note + '<br>' : '') + (hasFailNote ? fail_note : ''),
       '600px',
       'info',
-      true);
+      true,
+    );
   }
 }

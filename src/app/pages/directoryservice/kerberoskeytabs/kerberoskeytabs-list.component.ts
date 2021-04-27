@@ -6,26 +6,25 @@ import { Subscription } from 'rxjs';
 import { KerberosKeytabsFormComponent } from './kerberoskeytabs-form.component';
 @Component({
   selector: 'app-kerberos-keytabs-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class KerberosKeytabsListComponent {
-
-  public title = "Kerberos Keytabs";
+  title = 'Kerberos Keytabs';
   protected queryCall = 'kerberos.keytab.query';
   protected wsDelete = 'kerberos.keytab.delete';
   protected entityList: any;
   private refreshTableSubscription: Subscription;
 
-  public columns: Array<any> = [
+  columns: any[] = [
     { name: 'Name', prop: 'name', always_display: true },
   ];
-  public rowIdentifier = 'name';
-  public config: any = {
+  rowIdentifier = 'name';
+  config: any = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
       title: helptext.kkt_list_delmsg_title,
-      key_props: helptext.kkt_list_delmsgkey_props
+      key_props: helptext.kkt_list_delmsgkey_props,
     },
   };
 
@@ -35,7 +34,7 @@ export class KerberosKeytabsListComponent {
     this.entityList = entityList;
     this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
       this.entityList.getData();
-    })
+    });
   }
 
   ngOnDestroy() {
@@ -49,7 +48,7 @@ export class KerberosKeytabsListComponent {
       label: T('Add'),
       onClick: () => {
         this.doAdd();
-      }
+      },
     }];
   }
 
@@ -61,13 +60,13 @@ export class KerberosKeytabsListComponent {
       disabled: row.disableEdit,
       onClick: (row: any) => {
         this.doAdd(row.id);
-      }
+      },
     }, {
       id: 'delete',
       label: T('Delete'),
       onClick: (row: any) => {
         this.entityList.doDelete(row);
-      }
+      },
     });
 
     return actions;
@@ -77,5 +76,4 @@ export class KerberosKeytabsListComponent {
     const formComponent = new KerberosKeytabsFormComponent(this.modalService);
     this.modalService.open('slide-in-form', formComponent, id);
   }
-
 }

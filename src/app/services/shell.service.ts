@@ -1,4 +1,6 @@
-import { Injectable, EventEmitter, Output, Input } from '@angular/core';
+import {
+  Injectable, EventEmitter, Output, Input,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { UUID } from 'angular2-uuid';
 import { LocalStorage } from 'ngx-webstorage';
@@ -8,28 +10,27 @@ import { ShellConnectedEvent } from '../interfaces/shell.interface';
 
 @Injectable()
 export class ShellService {
-
   onCloseSubject: Subject < any > ;
   onOpenSubject: Subject < any > ;
   pendingCalls: any;
   pendingMessages: any[] = [];
-  public socket: WebSocket;
+  socket: WebSocket;
   connected = false;
   loggedIn = false;
   @LocalStorage() username: string;
   @LocalStorage() password: string;
   redirectUrl = '';
-  public token: string;
-  public jailId: string;
-  public vmId: number;
-  public podInfo: any;
+  token: string;
+  jailId: string;
+  vmId: number;
+  podInfo: any;
 
-  //input and output and eventEmmitter
+  // input and output and eventEmmitter
   private shellCmdOutput: any;
-  @Output() shellOutput = new EventEmitter < any > ();
+  @Output() shellOutput = new EventEmitter < any >();
   @Output() shellConnected = new EventEmitter<ShellConnectedEvent>();
 
-  public subscriptions: Map < string, Array < any >> = new Map < string, Array < any >> ();
+  subscriptions: Map < string, any[]> = new Map < string, any[]>();
 
   constructor(private _router: Router) {
     this.onOpenSubject = new Subject();
@@ -39,8 +40,9 @@ export class ShellService {
 
   connect() {
     this.socket = new WebSocket(
-      (window.location.protocol === 'https:' ? 'wss://' : 'ws://') +
-      environment.remote + '/websocket/shell/');
+      (window.location.protocol === 'https:' ? 'wss://' : 'ws://')
+      + environment.remote + '/websocket/shell/',
+    );
     this.socket.onmessage = this.onmessage.bind(this);
     this.socket.onopen = this.onopen.bind(this);
     this.socket.onclose = this.onclose.bind(this);
@@ -49,18 +51,21 @@ export class ShellService {
   onopen() {
     this.onOpenSubject.next(true);
     if (this.jailId) {
-      this.send(JSON.stringify({ "token": this.token, "options": {"jail": this.jailId }}));
+      this.send(JSON.stringify({ token: this.token, options: { jail: this.jailId } }));
     } else if (this.vmId) {
-      this.send(JSON.stringify({ "token": this.token, "options": {"vm_id": this.vmId}}));
+      this.send(JSON.stringify({ token: this.token, options: { vm_id: this.vmId } }));
     } else if (this.podInfo) {
-      this.send(JSON.stringify({ "token": this.token, "options": {
-        "chart_release_name": this.podInfo.chart_release_name,
-        "pod_name": this.podInfo.pod_name,
-        "container_name": this.podInfo.container_name,
-        "command": this.podInfo.command
-      }}));
+      this.send(JSON.stringify({
+        token: this.token,
+        options: {
+          chart_release_name: this.podInfo.chart_release_name,
+          pod_name: this.podInfo.pod_name,
+          container_name: this.podInfo.container_name,
+          command: this.podInfo.command,
+        },
+      }));
     } else {
-      this.send(JSON.stringify({ "token": this.token }));
+      this.send(JSON.stringify({ token: this.token }));
     }
   }
 
@@ -71,7 +76,7 @@ export class ShellService {
     }
   }
 
-  //empty eventListener for attach socket
+  // empty eventListener for attach socket
   addEventListener() {}
 
   onclose() {
@@ -82,27 +87,26 @@ export class ShellService {
     });
   }
 
-
   onmessage(msg: any) {
     let data: any;
 
     try {
       data = JSON.parse(msg.data);
     } catch (e) {
-      data = { 'msg': 'please discard this' };
+      data = { msg: 'please discard this' };
     }
 
-    if (data.msg === "connected") {
+    if (data.msg === 'connected') {
       this.connected = true;
       this.onconnect();
       this.shellConnected.emit({
         connected: this.connected,
-        id: data.id
+        id: data.id,
       });
       return;
     }
 
-    if (!this.connected || data.msg === "ping") {
+    if (!this.connected || data.msg === 'ping') {
       return;
     }
 
@@ -139,5 +143,4 @@ export class ShellService {
       });
     });
   }
-
 }

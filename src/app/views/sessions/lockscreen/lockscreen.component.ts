@@ -5,15 +5,15 @@ import { MatButton } from '@angular/material/button';
 @Component({
   selector: 'app-lockscreen',
   templateUrl: './lockscreen.component.html',
-  styleUrls: ['./lockscreen.component.css']
+  styleUrls: ['./lockscreen.component.css'],
 })
 export class LockscreenComponent implements OnInit {
-  @ViewChild(MatProgressBar, { static: false}) progressBar: MatProgressBar;
-  @ViewChild(MatButton, { static: false}) submitButton: MatButton;
+  @ViewChild(MatProgressBar, { static: false }) progressBar: MatProgressBar;
+  @ViewChild(MatButton, { static: false }) submitButton: MatButton;
 
   lockscreenData = {
-    password: ''
-  }
+    password: '',
+  };
 
   constructor() { }
 

@@ -18,13 +18,13 @@ import {
   everyFrame,
   keyframes,
   timeline,
-  //velocity,
+  // velocity,
   multicast,
   action,
   transform,
-  //transformMap,
-  //clamp
-  } from 'popmotion';
+  // transformMap,
+  // clamp
+} from 'popmotion';
 
 interface Position {
   x: number;
@@ -32,36 +32,34 @@ interface Position {
 }
 
 export class LabelFactory {
-
- /*
+  /*
   * Don't use this class directly.
   * Instead extend this class for label
   * label functionality you need
   *
   */
 
-  public events: Subject<CoreEvent>;
+  events: Subject<CoreEvent>;
   protected mainStage: any;
   protected chassis: Chassis; // The chassis we are labelling
 
-  onInit(chassis: Chassis, stage: any){
+  onInit(chassis: Chassis, stage: any) {
     this.chassis = chassis;
     this.mainStage = stage;
     this.events = new Subject<CoreEvent>();
   }
 
-  onDestroy(){
-    console.log("Clean up after yourself")
+  onDestroy() {
+    console.log('Clean up after yourself');
   }
 
   // Animate into view
-  enter(){
-    console.log("Animate into view...")
+  enter() {
+    console.log('Animate into view...');
   }
 
   // Animate out of view
-  exit(){
-    console.log("Animate out of view...")
+  exit() {
+    console.log('Animate out of view...');
   }
-
 }

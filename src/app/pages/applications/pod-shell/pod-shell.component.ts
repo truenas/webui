@@ -1,11 +1,13 @@
-import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild,ViewEncapsulation } from '@angular/core';
+import {
+  Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild, ViewEncapsulation,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import * as _ from 'lodash';
 import { DialogService, ShellService, WebSocketService } from '../../../services';
-import helptext from "./../../../helptext/shell/shell";
+import helptext from '../../../helptext/shell/shell';
 import { Terminal } from 'xterm';
 import { AttachAddon } from 'xterm-addon-attach';
 import { FitAddon } from 'xterm-addon-fit';
@@ -26,26 +28,26 @@ import { DialogFormConfiguration } from '../../common/entity/entity-dialog/dialo
 export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
   // sets the shell prompt
   @Input() prompt = '';
-  //xter container
-  @ViewChild('terminal', { static: true}) container: ElementRef;
+  // xter container
+  @ViewChild('terminal', { static: true }) container: ElementRef;
   // xterm variables
   cols: string;
   rows: string;
   font_size = 14;
   font_name = 'Inconsolata';
-  public token: any;
-  public xterm: any;
-  public resize_terminal = true;
+  token: any;
+  xterm: any;
+  resize_terminal = true;
   private shellSubscription: any;
   private shellConnectedSubscription: any;
   private fitAddon: any;
-  public formEvents: Subject<CoreEvent>;
+  formEvents: Subject<CoreEvent>;
 
-  public usage_tooltip = helptext.usage_tooltip;
+  usage_tooltip = helptext.usage_tooltip;
 
-  clearLine = "\u001b[2K\r"
-  public shellConnected: boolean = false;
-  public connectionId: string;
+  clearLine = '\u001b[2K\r';
+  shellConnected = false;
+  connectionId: string;
   protected chart_release_name: string;
   protected pod_name: string;
   protected command: string;
@@ -54,10 +56,10 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
 
   protected route_success: string[] = ['apps'];
 
-  public choosePod: DialogFormConfiguration;
+  choosePod: DialogFormConfiguration;
   private attachAddon: AttachAddon;
 
-  constructor(protected core:CoreService,
+  constructor(protected core: CoreService,
     private ws: WebSocketService,
     public ss: ShellService,
     private dialogService: DialogService,
@@ -68,12 +70,12 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit() {
-    this.aroute.params.subscribe(params => {
+    this.aroute.params.subscribe((params) => {
       this.chart_release_name = params['rname'];
       this.pod_name = params['pname'];
       this.command = params['cname'];
 
-      this.ws.call('chart.release.pod_console_choices', [this.chart_release_name]).subscribe(res => {
+      this.ws.call('chart.release.pod_console_choices', [this.chart_release_name]).subscribe((res) => {
         this.podDetails = res;
 
         const podDetail = res[this.pod_name];
@@ -88,7 +90,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
 
             this.shellSubscription = this.ss.shellOutput.subscribe((value: any) => {
               if (value !== undefined) {
-                if (_.trim(value) == "logout") {
+                if (_.trim(value) == 'logout') {
                   this.xterm.destroy();
                   this.router.navigate(new Array('/').concat(this.route_success));
                 }
@@ -96,19 +98,19 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
             });
           });
         }
-      })
+      });
     });
   }
 
   ngOnDestroy() {
-    if (this.ss.connected){
+    if (this.ss.connected) {
       this.ss.socket.close();
     }
-    if(this.shellSubscription){
+    if (this.shellSubscription) {
       this.shellSubscription.unsubscribe();
     }
 
-    if(this.shellConnectedSubscription){
+    if (this.shellConnectedSubscription) {
       this.shellConnectedSubscription.unsubscribe();
     }
   }
@@ -167,11 +169,11 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
       actionType: EntityToolbarComponent,
       actionConfig: {
         target: this.formEvents,
-        controls: controls,
-      }
+        controls,
+      },
     };
 
-    this.core.emit({name:"GlobalActions", data: actionsConfig, sender: this});
+    this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
   }
 
   onResize() {
@@ -188,7 +190,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: {
-    [propKey: string]: SimpleChange
+    [propKey: string]: SimpleChange;
   }) {
     const log: string[] = [];
     for (const propName in changes) {
@@ -215,7 +217,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
       focus: true,
       fontSize: this.font_size,
       fontFamily: this.font_name,
-      allowTransparency: true
+      allowTransparency: true,
     };
 
     this.xterm = new Terminal(setting);
@@ -229,10 +231,9 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
       this.xterm.open(this.container.nativeElement);
       this.fitAddon.fit();
       this.xterm._initialized = true;
-    }, function (e) {
+    }, (e) => {
       console.log('Font is not available', e);
     });
-
   }
 
   updateTerminal() {
@@ -245,7 +246,6 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     }
     this.attachAddon = new AttachAddon(this.ss.socket);
     this.xterm.loadAddon(this.attachAddon);
-
   }
 
   getSize() {
@@ -259,7 +259,7 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     span.innerHTML = 'a';
 
     let cols = 0;
-    while(span.offsetWidth < domWidth) {
+    while (span.offsetWidth < domWidth) {
       span.innerHTML += 'a';
       cols++;
     }
@@ -275,16 +275,16 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     return {
-      rows: rows,
-      cols: cols
-    }
+      rows,
+      cols,
+    };
   }
 
-  resizeTerm(){
+  resizeTerm() {
     const size = this.getSize();
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
-    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res)=> {
+    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res) => {
       this.xterm.focus();
     });
     return true;
@@ -296,13 +296,13 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
     this.initializeTerminal();
     this.refreshToolbarButtons();
 
-    this.shellConnectedSubscription = this.ss.shellConnected.subscribe((res: any)=> {
+    this.shellConnectedSubscription = this.ss.shellConnected.subscribe((res: any) => {
       this.shellConnected = res.connected;
       this.connectionId = res.id;
       this.updateTerminal();
       this.refreshToolbarButtons();
       this.resizeTerm();
-    })
+    });
   }
 
   getAuthToken() {
@@ -328,35 +328,31 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
         placeholder: helptext.podConsole.choosePod.placeholder,
         required: true,
         value: this.pod_name,
-        options: Object.keys(this.podDetails).map(item => {
-          return {
-            label: item,
-            value: item,
-          }
-        })
-      },{
+        options: Object.keys(this.podDetails).map((item) => ({
+          label: item,
+          value: item,
+        })),
+      }, {
         type: 'select',
         name: 'containers',
         placeholder: helptext.podConsole.chooseConatiner.placeholder,
         required: true,
         value: this.conatiner_name,
-        options: this.podDetails[this.pod_name].map((item: any) => {
-          return {
-            label: item,
-            value: item,
-          }
-        })
-      },{
+        options: this.podDetails[this.pod_name].map((item: any) => ({
+          label: item,
+          value: item,
+        })),
+      }, {
         type: 'input',
         name: 'command',
         placeholder: helptext.podConsole.chooseCommand.placeholder,
-        value: this.command
+        value: this.command,
       }],
       saveButtonText: helptext.podConsole.choosePod.action,
       customSubmit: this.onChooseShell,
       afterInit: this.afterShellDialogInit,
       parent: this,
-    }
+    };
   }
 
   showChooseShellDialog() {
@@ -379,14 +375,12 @@ export class PodShellComponent implements OnInit, OnChanges, OnDestroy {
 
     entityDialog.formGroup.controls['pods'].valueChanges.subscribe((value: any) => {
       const containers = self.podDetails[value];
-      const containerFC = _.find(entityDialog.fieldConfig, {'name' : 'containers'});
-      containerFC.options = containers.map((item: any) => {
-        return {
-          label: item,
-          value: item,
-        }
-      });
+      const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' });
+      containerFC.options = containers.map((item: any) => ({
+        label: item,
+        value: item,
+      }));
       entityDialog.formGroup.controls['containers'].setValue(containers[0]);
-    })
+    });
   }
 }

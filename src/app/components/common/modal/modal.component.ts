@@ -1,101 +1,102 @@
-﻿import { Component, ElementRef, Input, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component, ElementRef, Input, OnInit, OnDestroy,
+} from '@angular/core';
 
 import { ModalService } from '../../../services/modal.service';
 
 @Component({
-    selector: 'jw-modal',
-    templateUrl: 'modal.component.html',
-    styleUrls: ['./modal.component.css'],
+  selector: 'jw-modal',
+  templateUrl: 'modal.component.html',
+  styleUrls: ['./modal.component.css'],
 })
 export class ModalComponent implements OnInit, OnDestroy {
-    @Input() id: string;
-    private element: any;
-    public conf: any;
-    public formOpen = false;
-    public wizard = false;
-    modal: HTMLElement;
-    background: HTMLElement;
-    slideIn: HTMLElement;
-    title: string;
+  @Input() id: string;
+  private element: any;
+  conf: any;
+  formOpen = false;
+  wizard = false;
+  modal: HTMLElement;
+  background: HTMLElement;
+  slideIn: HTMLElement;
+  title: string;
 
-    constructor(private modalService: ModalService, private el: ElementRef) {
-        this.element = el.nativeElement;
+  constructor(private modalService: ModalService, private el: ElementRef) {
+    this.element = el.nativeElement;
+  }
+
+  ngOnInit(): void {
+    const modal = this;
+
+    // ensure id attribute exists
+    if (!this.id) {
+      console.error('modal must have an id');
+      return;
     }
 
-    ngOnInit(): void {
-        let modal = this;
+    // move element to bottom of page (just before </body>) so it can be displayed above everything else
+    document.body.appendChild(this.element);
 
-        // ensure id attribute exists
-        if (!this.id) {
-            console.error('modal must have an id');
-            return;
-        }
+    // close modal on background click
+    this.element.addEventListener('click', (e: any) => {
+      if (e.target.className === 'jw-modal') {
+        modal.close();
+      }
+    });
 
-        // move element to bottom of page (just before </body>) so it can be displayed above everything else
-        document.body.appendChild(this.element);
+    // add self (this modal instance) to the modal service so it's accessible from controllers
+    this.modalService.add(this);
+  }
 
-        // close modal on background click
-        this.element.addEventListener('click', function (e: any) {
-            if (e.target.className === 'jw-modal') {
-                modal.close();
-            }
-        });
+  // remove self from modal service when component is destroyed
+  ngOnDestroy(): void {
+    this.modalService.remove(this.id);
+    this.element.remove();
+  }
 
-        // add self (this modal instance) to the modal service so it's accessible from controllers
-        this.modalService.add(this);
+  // open modal
+  open(conf: any): void {
+    this.conf = conf;
+    this.conf.isModalForm = true;
+    this.conf.closeModalForm = this.close.bind(this);
 
+    // Takes a bit for title to be set dynamically in the form
+    const checkTitle = setInterval(() => {
+      this.title = this.conf.title ? this.conf.title : '';
+    }, 100);
+    setTimeout(() => {
+      clearInterval(checkTitle);
+    }, 1000);
+    this.modal = document.querySelector(`.${this.id}`);
+    this.background = document.querySelector(`.${this.id}-background`);
+    this.slideIn = document.querySelector('.slide-in-form');
+
+    if (conf.wizardConfig) {
+      this.wizard = true;
     }
+    this.modal.classList.add('open');
+    this.background.classList.add('open');
+    this.formOpen = true;
+    document.body.classList.add('jw-modal-open');
 
-    // remove self from modal service when component is destroyed
-    ngOnDestroy(): void {
-        this.modalService.remove(this.id);
-        this.element.remove();
+    this.conf.columnsOnForm = 1;
+    if (this.el.nativeElement.offsetWidth >= 960 && !this.conf.isOneColumnForm) {
+      this.conf.columnsOnForm = 2;
+      this.slideIn.classList.add('wide');
     }
+  }
 
-    // open modal
-    open(conf:any): void {
-        this.conf = conf;
-        this.conf.isModalForm = true;
-        this.conf.closeModalForm = this.close.bind(this);
-
-        // Takes a bit for title to be set dynamically in the form
-        const checkTitle = setInterval(() => {
-            this.title = this.conf.title ? this.conf.title : '';
-        }, 100)
-        setTimeout(() => {
-            clearInterval(checkTitle);
-        }, 1000);
-        this.modal = document.querySelector(`.${this.id}`);
-        this.background = document.querySelector(`.${this.id}-background`);
-        this.slideIn = document.querySelector('.slide-in-form');
-
-        if (conf.wizardConfig) {
-            this.wizard = true;
-        }
-        this.modal.classList.add('open');
-        this.background.classList.add('open');
-        this.formOpen = true;
-        document.body.classList.add('jw-modal-open');
-
-        this.conf.columnsOnForm = 1;
-        if (this.el.nativeElement.offsetWidth >= 960 && !this.conf.isOneColumnForm) {
-            this.conf.columnsOnForm = 2;
-            this.slideIn.classList.add('wide');
-        }
-    }
-
-    // close modal
-    close(): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            this.modal.classList.remove('open');
-            this.background.classList.remove('open');
-            document.body.classList.remove('jw-modal-open');
-            this.slideIn.classList.remove('wide');
-            this.formOpen = false;
-            this.modalService.refreshForm();
-            this.wizard = false;
-            this.title = '';
-            resolve(true);
-        });
-    }
+  // close modal
+  close(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.modal.classList.remove('open');
+      this.background.classList.remove('open');
+      document.body.classList.remove('jw-modal-open');
+      this.slideIn.classList.remove('wide');
+      this.formOpen = false;
+      this.modalService.refreshForm();
+      this.wizard = false;
+      this.title = '';
+      resolve(true);
+    });
+  }
 }

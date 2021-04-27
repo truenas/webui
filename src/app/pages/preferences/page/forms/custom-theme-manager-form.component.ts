@@ -1,27 +1,28 @@
-import { ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, OnDestroy, ViewContainerRef, OnChanges } from '@angular/core';
-import { NgModel }   from '@angular/forms';
-import {Router} from '@angular/router';
+import {
+  ApplicationRef, Input, Output, EventEmitter, Component, Injector, OnInit, OnDestroy, ViewContainerRef, OnChanges,
+} from '@angular/core';
+import { NgModel } from '@angular/forms';
+import { Router } from '@angular/router';
 import * as _ from 'lodash';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
-import {RestService, WebSocketService} from 'app/services/';
-import { ThemeService, Theme} from 'app/services/theme/theme.service';
+import { RestService, WebSocketService } from 'app/services/';
+import { ThemeService, Theme } from 'app/services/theme/theme.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
 
 @Component({
-  selector : 'custom-theme-manager-form',
-  template:`
+  selector: 'custom-theme-manager-form',
+  template: `
     <ng-container *ngIf="themeService && themeService.customThemes && themeService.customThemes.length > 0">
       <entity-form-embedded fxFlex="100" fxFlex.gt-xs="450px" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>
     </ng-container>
-  `
+  `,
 })
 export class CustomThemeManagerFormComponent implements OnInit, OnDestroy {
-
   /*
    //Preferences Object Structure
    platform:string; // FreeNAS || TrueNAS
@@ -34,135 +35,132 @@ export class CustomThemeManagerFormComponent implements OnInit, OnDestroy {
 
    */
 
-  public themesExist:boolean = false;
-  public emptyMessage: string = T("No custom themes. Click <b>Create New Theme</b> to create a new custom theme.")
+  themesExist = false;
+  emptyMessage: string = T('No custom themes. Click <b>Create New Theme</b> to create a new custom theme.');
 
-  public target: Subject<CoreEvent> = new Subject();
-  public values: boolean[] = [];
-  public saveSubmitText = T("Delete Selected");
-  protected isEntity: boolean = true; // was true
+  target: Subject<CoreEvent> = new Subject();
+  values: boolean[] = [];
+  saveSubmitText = T('Delete Selected');
+  protected isEntity = true; // was true
   private colorOptions: any[] = [];
   private customThemeOptions: any[] = [];
-  private customThemeFields: any[] = []
-  public fieldConfig:FieldConfig[] = [];
-  public fieldSetDisplay:string = 'no-margins';//default | carousel | stepper
-    public fieldSets: FieldSet[] = [
-      {
-        name:T('Manage Custom Themes'),
-        class:'theme-manager',
-        width:'100%',
-        label:true,
-        config:this.customThemeFields
-      }
-    ]
+  private customThemeFields: any[] = [];
+  fieldConfig: FieldConfig[] = [];
+  fieldSetDisplay = 'no-margins';// default | carousel | stepper
+  fieldSets: FieldSet[] = [
+    {
+      name: T('Manage Custom Themes'),
+      class: 'theme-manager',
+      width: '100%',
+      label: true,
+      config: this.customThemeFields,
+    },
+  ];
 
-    constructor(
-      protected router: Router,
-      protected rest: RestService,
-      protected ws: WebSocketService,
-      protected _injector: Injector,
-      protected _appRef: ApplicationRef,
-      public themeService:ThemeService,
-      protected core:CoreService
-    ) {}
+  constructor(
+    protected router: Router,
+    protected rest: RestService,
+    protected ws: WebSocketService,
+    protected _injector: Injector,
+    protected _appRef: ApplicationRef,
+    public themeService: ThemeService,
+    protected core: CoreService,
+  ) {}
 
-    ngOnInit(){
-        this.initSubjects();
-      // Only initialize if customThemes exist
-      if(this.themeService.customThemes && this.themeService.customThemes.length > 0){
-        this.themesExist = true;
-        this.initForm();
-      }
-
-      // Otherwise wait for change events from message bus
-      this.core.register({observerClass:this,eventName:"ThemeListsChanged"}).subscribe((evt:CoreEvent) => {
-        this.initForm();
-      });
-
+  ngOnInit() {
+    this.initSubjects();
+    // Only initialize if customThemes exist
+    if (this.themeService.customThemes && this.themeService.customThemes.length > 0) {
+      this.themesExist = true;
+      this.initForm();
     }
 
-    ngOnDestroy(){
-      this.core.unregister({observerClass:this});
+    // Otherwise wait for change events from message bus
+    this.core.register({ observerClass: this, eventName: 'ThemeListsChanged' }).subscribe((evt: CoreEvent) => {
+      this.initForm();
+    });
+  }
+
+  ngOnDestroy() {
+    this.core.unregister({ observerClass: this });
+  }
+
+  initForm() {
+    this.loadValues('deselectAll');
+
+    if (!this.customThemeFields || this.customThemeFields.length == 0 || this.customThemeFields.length != this.themeService.customThemes.length) {
+      this.setCustomThemeFields();
     }
-
-    initForm(){
-      this.loadValues("deselectAll");
-
-      if(!this.customThemeFields || this.customThemeFields.length == 0 || this.customThemeFields.length != this.themeService.customThemes.length){
-        this.setCustomThemeFields();
-      }
-      if(!this.fieldConfig || this.fieldConfig.length == 0){
-        this.generateFieldConfig();
-      }
+    if (!this.fieldConfig || this.fieldConfig.length == 0) {
+      this.generateFieldConfig();
     }
+  }
 
-    initSubjects(){
-      this.target.subscribe((evt:CoreEvent) => {
-        switch(evt.name){
-        case "FormSubmitted":
-          let submission = [];
-          let keys = Object.keys(evt.data);
-          for(let i = 0; i < this.themeService.customThemes.length; i++){
-            let theme = this.themeService.customThemes[i];
-            if(!evt.data[theme.name]){
+  initSubjects() {
+    this.target.subscribe((evt: CoreEvent) => {
+      switch (evt.name) {
+        case 'FormSubmitted':
+          const submission = [];
+          const keys = Object.keys(evt.data);
+          for (let i = 0; i < this.themeService.customThemes.length; i++) {
+            const theme = this.themeService.customThemes[i];
+            if (!evt.data[theme.name]) {
               submission.push(theme);
             }
           }
-          this.core.emit({name:"ChangeCustomThemesPreference",data:submission});
+          this.core.emit({ name: 'ChangeCustomThemesPreference', data: submission });
           break;
-        }
-      });
-    }
-
-    loadValues(key:string){
-      let values: boolean[] = [];
-
-      for(let i = 0; i < this.themeService.customThemes.length; i++){
-        let theme = this.themeService.customThemes[i];
-        switch(key ){
-        case "selectAll":
-          values.push(true);
-        break;
-        case "deselectAll":
-          values.push(false);
-        break;
-        case "favorites":
-          values.push(theme.favorite);
-        }
-
       }
-      this.values = values;
+    });
+  }
+
+  loadValues(key: string) {
+    const values: boolean[] = [];
+
+    for (let i = 0; i < this.themeService.customThemes.length; i++) {
+      const theme = this.themeService.customThemes[i];
+      switch (key) {
+        case 'selectAll':
+          values.push(true);
+          break;
+        case 'deselectAll':
+          values.push(false);
+          break;
+        case 'favorites':
+          values.push(theme.favorite);
+      }
+    }
+    this.values = values;
+  }
+
+  setCustomThemeFields() {
+    if (this.customThemeFields && this.customThemeFields.length > 0) {
+      this.customThemeFields.splice(0, this.customThemeFields.length);
     }
 
-     setCustomThemeFields(){
-       if(this.customThemeFields && this.customThemeFields.length > 0){
-        this.customThemeFields.splice(0,this.customThemeFields.length);
-       }
+    const ctf = [];
 
-       let ctf = [];
+    for (let i = 0; i < this.themeService.customThemes.length; i++) {
+      const theme = this.themeService.customThemes[i];
+      const field = {
+        type: 'checkbox',
+        name: theme.name,
+        width: '200px',
+        placeholder: theme.label,
+        tooltip: 'Delete custom theme ' + theme.label,
+        class: 'inline',
+      };
+      this.customThemeFields.push(field);
+    }
+  }
 
-       for(let i = 0; i < this.themeService.customThemes.length; i++){
-         let theme = this.themeService.customThemes[i];
-         let field = {
-           type: 'checkbox',
-           name: theme.name,
-           width: '200px',
-           placeholder:theme.label,
-           tooltip: 'Delete custom theme ' + theme.label ,
-           class:'inline'
-         }
-         this.customThemeFields.push(field);
-       }
-
-     }
-
-     generateFieldConfig(){
-       let fc = [];
-       for(let i in this.fieldSets){
-         for(let ii in this.fieldSets[i].config){
-           fc.push(this.fieldSets[i].config[ii]);
-         }
-       }
-       this.fieldConfig = this.customThemeFields;
-     }
+  generateFieldConfig() {
+    const fc = [];
+    for (const i in this.fieldSets) {
+      for (const ii in this.fieldSets[i].config) {
+        fc.push(this.fieldSets[i].config[ii]);
+      }
+    }
+    this.fieldConfig = this.customThemeFields;
+  }
 }

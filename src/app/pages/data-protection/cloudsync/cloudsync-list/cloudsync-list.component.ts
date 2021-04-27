@@ -30,20 +30,20 @@ import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Component({
   selector: 'app-cloudsync-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [JobService, TaskService, CloudCredentialService],
 })
 export class CloudsyncListComponent implements InputTableConf, OnDestroy {
-  public title = T('Cloud Sync Tasks');
-  public queryCall = 'cloudsync.query';
-  public route_add: string[] = ['tasks', 'cloudsync', 'add'];
-  public route_add_tooltip = 'Add Cloud Sync Task';
-  public route_edit: string[] = ['tasks', 'cloudsync', 'edit'];
-  public wsDelete = 'cloudsync.delete';
-  public entityList: EntityTableComponent;
-  public asyncView = true;
+  title = T('Cloud Sync Tasks');
+  queryCall = 'cloudsync.query';
+  route_add: string[] = ['tasks', 'cloudsync', 'add'];
+  route_add_tooltip = 'Add Cloud Sync Task';
+  route_edit: string[] = ['tasks', 'cloudsync', 'edit'];
+  wsDelete = 'cloudsync.delete';
+  entityList: EntityTableComponent;
+  asyncView = true;
 
-  public columns: Array<any> = [
+  columns: any[] = [
     { name: T('Description'), prop: 'description', always_display: true },
     { name: T('Credential'), prop: 'credential', hidden: true },
     { name: T('Direction'), prop: 'direction', hidden: true },
@@ -64,11 +64,13 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
     { name: T('Day of Month'), prop: 'dom', hidden: true },
     { name: T('Month'), prop: 'month', hidden: true },
     { name: T('Day of Week'), prop: 'dow', hidden: true },
-    { name: T('Status'), prop: 'state', state: 'state', button: true },
+    {
+      name: T('Status'), prop: 'state', state: 'state', button: true,
+    },
     { name: T('Enabled'), prop: 'enabled' },
   ];
-  public rowIdentifier = 'description';
-  public config: any = {
+  rowIdentifier = 'description';
+  config: any = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -95,7 +97,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
     this.entityList = entityList;
     this.onModalClose = this.modalService.onClose$.subscribe(() => {
       this.entityList.getData();
-    })
+    });
   }
 
   resourceTransformIncomingRestData(data: any[]) {
@@ -267,7 +269,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
               },
             ],
             saveButtonText: 'Restore',
-            afterInit: function (entityDialog: EntityDialogComponent) {
+            afterInit(entityDialog: EntityDialogComponent) {
               entityDialog.formGroup.get('transfer_mode').valueChanges.subscribe((mode) => {
                 const paragraph = conf.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
                 switch (mode) {
@@ -281,7 +283,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
                 }
               });
             },
-            customSubmit: function (entityDialog: EntityDialogComponent) {
+            customSubmit(entityDialog: EntityDialogComponent) {
               parent.loader.open();
               parent.ws.call('cloudsync.restore', [row.id, entityDialog.formValue]).subscribe(
                 (res) => {
@@ -322,7 +324,7 @@ export class CloudsyncListComponent implements InputTableConf, OnDestroy {
   isActionVisible(actionId: string, row: any) {
     if (actionId === 'run_now' && row.job && row.job.state === EntityJobState.Running) {
       return false;
-    } else if (actionId === 'stop' && (row.job ? row.job && row.job.state !== EntityJobState.Running : true)) {
+    } if (actionId === 'stop' && (row.job ? row.job && row.job.state !== EntityJobState.Running : true)) {
       return false;
     }
     return true;
