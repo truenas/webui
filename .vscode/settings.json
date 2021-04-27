@@ -6,5 +6,7 @@
   "eslint.validate": [
     "typescript",
     "html"
-  ]
+  ],
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.updateImportsOnFileMove.enabled": "always",
 }
