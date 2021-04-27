@@ -1,10 +1,19 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { T } from 'app/translate-marker';
 import helptext from '../../../../helptext/services/components/service-smart';
 import { RestService, WebSocketService } from '../../../../services';
+
+enum PowerMode {
+  Never = 'NEVER',
+  Sleep = 'SLEEP',
+  Standby = 'STANDBY',
+  Idle = 'IDLE',
+}
 
 @Component({
   selector: 'smart-edit',
@@ -33,9 +42,17 @@ export class ServiceSMARTComponent {
           name: 'powermode',
           placeholder: helptext.smart_powermode_placeholder,
           tooltip: helptext.smart_powermode_tooltip,
-          options: helptext.smart_powermode_options,
+          options: [
+            { label: T('Never'), value: PowerMode.Never },
+            { label: T('Sleep'), value: PowerMode.Sleep },
+            { label: T('Standby'), value: PowerMode.Standby },
+            { label: T('Idle'), value: PowerMode.Idle },
+          ],
           required: true,
-          validation: helptext.smart_powermode_validation,
+          onChangeOption: (data: { event: MatSelectChange }) => {
+            console.log('data', data.event.value);
+          },
+          validation: [Validators.required],
         },
         {
           type: 'input',
@@ -43,7 +60,7 @@ export class ServiceSMARTComponent {
           placeholder: helptext.smart_difference_placeholder,
           tooltip: helptext.smart_difference_tooltip,
           required: true,
-          validation: helptext.smart_difference_validation,
+          validation: [Validators.required],
         },
         {
           type: 'input',
@@ -51,7 +68,7 @@ export class ServiceSMARTComponent {
           placeholder: helptext.smart_informational_placeholder,
           tooltip: helptext.smart_informational_tooltip,
           required: true,
-          validation: helptext.smart_informational_validation,
+          validation: [Validators.required],
         },
         {
           type: 'input',
@@ -59,7 +76,7 @@ export class ServiceSMARTComponent {
           placeholder: helptext.smart_critical_placeholder,
           tooltip: helptext.smart_critical_tooltip,
           required: true,
-          validation: helptext.smart_critical_validation,
+          validation: [Validators.required],
         },
       ],
     },
