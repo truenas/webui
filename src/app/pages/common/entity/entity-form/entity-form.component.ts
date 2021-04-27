@@ -359,6 +359,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                     this.setArrayValue(this.data[i], fg, i);
                 } else if (current_field.type === "list") {
                   this.setListValue(this.data[i], fg as FormArray, i)
+                } else if (current_field.type === "dict") {
+                  fg.patchValue(this.data[i]);
                 } else {
                   if (!_.isArray(this.data[i]) && current_field.type === "select" && current_field.multiple) {
                     if (this.data[i]) {
@@ -396,6 +398,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                       this.setArrayValue(this.wsResponse[i], this.wsfg, i);
                   } else if (current_field.type === "list") {
                     this.setObjectListValue(this.wsResponse[i], this.wsfg, current_field)
+                  } else if (current_field.type === "dict") {
+                    this.wsfg.patchValue(this.wsResponse[i]);
                   } else {
                     this.wsfg.setValue(this.wsResponse[i]);
                   }
@@ -748,7 +752,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
     formArray.markAllAsTouched();
   }
-
 
   ngOnDestroy() {
 

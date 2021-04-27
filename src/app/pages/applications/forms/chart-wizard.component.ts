@@ -48,7 +48,7 @@ export class ChartWizardComponent implements OnDestroy {
   setTitle(title: string) {
     this.title = title;
   }
-  
+
   setCatalogApp(catalogApp: any) {
     this.catalogApp = catalogApp;
     this.parseSchema();
@@ -56,7 +56,7 @@ export class ChartWizardComponent implements OnDestroy {
 
   parseSchema() {
     try {
-      this.title = this.catalogApp.name; 
+      this.title = this.catalogApp.name;
       const versionKeys = [];
       Object.keys(this.catalogApp.versions).forEach(versionKey => {
         if (this.catalogApp.versions[versionKey].healthy) {
@@ -74,7 +74,7 @@ export class ChartWizardComponent implements OnDestroy {
       if (!this.selectedVersionKey) {
         this.selectedVersionKey = versionKeys[0];
       }
-      
+
       const selectedVersion = this.catalogApp.versions[this.selectedVersionKey];
 
       this.wizardConfig = [];
@@ -96,7 +96,7 @@ export class ChartWizardComponent implements OnDestroy {
           required: true,
         }],
       });
-      
+
       selectedVersion.schema.groups.forEach(group => {
         this.wizardConfig.push({
           label: group.name,
@@ -111,7 +111,7 @@ export class ChartWizardComponent implements OnDestroy {
           wizard.fieldConfig = wizard.fieldConfig.concat(wizardFieldConfigs);
         }
       });
-  
+
       this.wizardConfig = this.wizardConfig.filter(wizard => wizard.fieldConfig.length > 0);
       if (this.entityWizard) {
         this.entityWizard.resetFields();
@@ -142,9 +142,6 @@ export class ChartWizardComponent implements OnDestroy {
     let apiCall = this.addCall;
     delete data.version;
 
-    let values = {};
-    new EntityUtils().parseFormControlValues(data, values);
-
     let payload = [];
     payload.push({
       catalog: this.catalogApp.catalog.id,
@@ -152,7 +149,7 @@ export class ChartWizardComponent implements OnDestroy {
       release_name: data.release_name,
       train: this.catalogApp.catalog.train,
       version: this.selectedVersionKey,
-      values: values
+      values: data
     });
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
@@ -168,6 +165,6 @@ export class ChartWizardComponent implements OnDestroy {
 
   ngOnDestroy(){
     this.destroy$.next();
-    this.destroy$.complete(); 
+    this.destroy$.complete();
   }
 }

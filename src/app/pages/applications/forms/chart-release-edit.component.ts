@@ -135,8 +135,252 @@ export class ChartReleaseEditComponent {
               tooltip: helptext.chartForm.container.env_vars.value.tooltip,
             }
           ],
+          listFields: []
+        }
+      ],
+      colspan: 2,
+    },
+    {
+      name: helptext.chartForm.networking,
+      label: true,
+      width: '50%',
+      config: [
+        {
+          type: 'checkbox',
+          name: 'hostNetwork',
+          placeholder: helptext.chartForm.hostNetwork.placeholder,
+          tooltip: helptext.chartForm.hostNetwork.tooltip,
+          value: false
         }
       ]
+    },
+    {
+      name: helptext.chartForm.externalLabel,
+      label: true,
+      config: [
+        {
+          type: 'list',
+          name: 'externalInterfaces',
+          width: '100%',
+          box: true,
+          templateListField: [
+            {
+              type: 'select',
+              name: 'hostInterface',
+              placeholder: helptext.chartForm.externalInterfaces.host.placeholder,
+              tooltip: helptext.chartForm.externalInterfaces.host.tooltip,
+              options: this.interfaceList
+            },
+            {
+              type: 'select',
+              name: 'ipam',
+              placeholder: helptext.chartForm.externalInterfaces.ipam.placeholder,
+              tooltip: helptext.chartForm.externalInterfaces.ipam.tooltip,
+              options: helptext.chartForm.externalInterfaces.ipam.options,
+            },
+            {
+              type: 'list',
+              name: 'staticIPConfigurations',
+              width: '100%',
+              // isHidden: true,
+              templateListField: [
+                {
+                  type: 'ipwithnetmask',
+                  name: 'staticIP',
+                  placeholder: helptext.chartForm.externalInterfaces.staticConfig.placeholder,
+                  // isHidden: true,
+                },
+              ],
+              listFields: [],
+              relation: [
+                {
+                  action: 'SHOW',
+                  when: [{
+                    name: 'ipam',
+                    value: 'static',
+                  }]
+                },
+              ],
+            },
+            {
+              type: 'list',
+              name: 'staticRoutes',
+              width: '100%',
+              // isHidden: true,
+              templateListField: [
+                {
+                  type: 'ipwithnetmask',
+                  name: 'destination',
+                  placeholder: helptext.chartForm.externalInterfaces.staticRoutes.destination.placeholder,
+                },
+                {
+                  type: 'input',
+                  name: 'gateway',
+                  placeholder: helptext.chartForm.externalInterfaces.staticRoutes.gateway.placeholder,
+                }
+              ],
+              listFields: [],
+              relation: [
+                {
+                  action: 'SHOW',
+                  when: [{
+                    name: 'ipam',
+                    value: 'static',
+                  }]
+                },
+              ],
+            }
+
+          ],
+          listFields: []
+        }
+      ],
+      colspan: 2,
+    },
+    {
+      name: helptext.chartForm.DNSPolicy.title,
+      label: true,
+      width: '50%',
+      config: [
+        {
+          type: 'select',
+          name: 'dnsPolicy',
+          placeholder: helptext.chartForm.DNSPolicy.placeholder,
+          tooltip: helptext.chartForm.DNSPolicy.tooltip,
+          options: helptext.chartForm.DNSPolicy.options,
+          value: helptext.chartForm.DNSPolicy.options[0].value,
+        },
+        {
+          type: 'paragraph',
+          name: 'paragraph_dns_config',
+          paraText: helptext.chartForm.DNSConfig.label
+        },
+        {
+          type: 'chip',
+          name: 'nameservers',
+          placeholder: helptext.chartForm.DNSConfig.nameservers.placeholder,
+          tooltip: helptext.chartForm.DNSConfig.nameservers.tooltip,
+        },
+        {
+          type: 'chip',
+          name: 'searches',
+          placeholder: helptext.chartForm.DNSConfig.searches.placeholder,
+          tooltip: helptext.chartForm.DNSConfig.searches.tooltip,
+        }
+      ]
+    },
+    {
+      name: helptext.chartForm.portForwardingList.title,
+      label: true,
+      config: [
+        {
+          type: 'list',
+          name: 'portForwardingList',
+          width: '100%',
+          box: true,
+          templateListField: [
+            {
+              type: 'input',
+              name: 'containerPort',
+              placeholder: helptext.chartForm.portForwardingList.containerPort.placeholder,
+              validation: helptext.chartForm.portForwardingList.containerPort.validation,
+            },
+            {
+              type: 'input',
+              name: 'nodePort',
+              placeholder: helptext.chartForm.portForwardingList.nodePort.placeholder,
+              validation: helptext.chartForm.portForwardingList.nodePort.validation,
+            },
+            {
+              type: 'select',
+              name: 'protocol',
+              placeholder: helptext.chartForm.portForwardingList.protocol.placeholder,
+              options: helptext.chartForm.portForwardingList.protocol.options,
+              value: helptext.chartForm.portForwardingList.protocol.options[0].value
+            }
+          ],
+          listFields: []
+        }
+      ],
+      colspan: 2,
+    },
+    {
+      name: helptext.chartForm.hostPathVolumes.title,
+      label: true,
+      config: [
+        {
+          type: 'list',
+          name: 'hostPathVolumes',
+          width: '100%',
+          box: true,
+          templateListField: [
+            {
+              type: 'explorer',
+              name: 'hostPath',
+              initial: '/mnt',
+              explorerType: 'directory',
+              hideDirs: 'ix-applications',
+              placeholder: helptext.chartForm.hostPathVolumes.hostPath.placeholder,
+              tooltip: helptext.chartForm.hostPathVolumes.hostPath.tooltip,
+            },
+            {
+              type: 'input',
+              name: 'mountPath',
+              placeholder: helptext.chartForm.hostPathVolumes.mountPath.placeholder,
+              tooltip: helptext.chartForm.hostPathVolumes.mountPath.tooltip,
+            },
+            {
+              type: 'checkbox',
+              name: 'readOnly',
+              placeholder: helptext.chartForm.hostPathVolumes.readOnly.placeholder,
+            }
+          ],
+          listFields: []
+        }
+      ],
+      colspan: 2,
+    },
+    {
+      name: helptext.chartForm.volumes.title,
+      label: true,
+      class: 'volume_fields',
+      config: [
+        {
+          type: 'list',
+          name: 'volumes',
+          width: '100%',
+          box: true,
+          templateListField: [
+            {
+              name: 'datasetName',
+              placeholder: helptext.chartForm.volumes.datasetName.placeholder,
+              tooltip: helptext.chartForm.volumes.datasetName.tooltip,
+              type: 'input',
+            },
+            {
+              name: 'mountPath',
+              placeholder: helptext.chartForm.volumes.mountPath.placeholder,
+              tooltip: helptext.chartForm.volumes.mountPath.tooltip,
+              type: 'input',
+            }
+          ],
+          listFields: []
+        }
+      ],
+      colspan: 2,
+    },
+    {
+      name: helptext.chartForm.security.title,
+      label: true,
+      config: [
+        {
+          type: 'checkbox',
+          name: 'privileged',
+          placeholder: helptext.chartForm.security.privileged.placeholder,
+          value: false,
+        }
+      ],
+      colspan: 2,
     },
   ]
 
@@ -206,10 +450,6 @@ export class ChartReleaseEditComponent {
       })
     }
 
-    if (data.gpuConfiguration) {
-      this.entityUtils.parseConfigData(data.gpuConfiguration, 'gpuConfiguration', data.config);
-    }
-
     const hasGpuConfig = this.parseSchema(data.chart_schema.schema);
     data.config['changed_schema'] = hasGpuConfig;
 
@@ -217,9 +457,6 @@ export class ChartReleaseEditComponent {
   }
 
   customSubmit(data) {
-
-    let parsedData = {};
-    this.entityUtils.parseFormControlValues(data, parsedData);
 
     let envVars = [];
     if (data.containerEnvironmentVariables && data.containerEnvironmentVariables.length > 0 && data.containerEnvironmentVariables[0].name) {
@@ -302,8 +539,8 @@ export class ChartReleaseEditComponent {
       }
     }]
 
-    if (parsedData['gpuConfiguration']) {
-      payload[1]['values']['gpuConfiguration'] = parsedData['gpuConfiguration'];
+    if (data['gpuConfiguration']) {
+      payload[1]['values']['gpuConfiguration'] = data['gpuConfiguration'];
     }
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (

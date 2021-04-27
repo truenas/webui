@@ -73,24 +73,6 @@ export class FieldRelationService {
           if (control) {
             hasControlValue = true;
             controlValue = control.value
-          } else {
-            let formGroupValue = _.cloneDeep(formGroup.value);
-            let parsedValues = {};
-            new EntityUtils().parseFormControlValues(formGroupValue, parsedValues);
-            const key_list = rel.name.split(FORM_KEY_SEPERATOR);
-
-            key_list.forEach(key => {
-              if (parsedValues && parsedValues[key] != undefined) {
-                parsedValues = parsedValues[key];
-              } else {
-                parsedValues = null;
-              }
-            });
-
-            if (parsedValues) {
-              hasControlValue = true;
-              controlValue = parsedValues;
-            }
           }
 
           let disable_action = ACTION_DISABLE;

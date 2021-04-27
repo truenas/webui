@@ -49,12 +49,12 @@ export class ChartFormComponent {
   setTitle(title) {
     this.title = title;
   }
-  
+
   parseSchema(catalogApp, isEdit=false) {
     try {
       this.catalogApp = catalogApp;
-      this.title = this.catalogApp.name; 
-  
+      this.title = this.catalogApp.name;
+
       this.fieldSets = [
         {
           name: helptext.chartForm.release_name.name,
@@ -87,9 +87,9 @@ export class ChartFormComponent {
           fieldSet.config = fieldSet.config.concat(fieldConfigs);
         }
       });
-  
+
       this.fieldSets = this.fieldSets.filter(fieldSet => fieldSet.config.length > 0);
-      
+
     } catch(error) {
       return this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
@@ -107,12 +107,11 @@ export class ChartFormComponent {
 
     this.parseSchema(chartSchema, true);
     this.name = data.name;
-    const configData = {};
-    this.entityUtils.parseConfigData(data.config, null, configData);
-    configData['release_name'] = data.name;
-    configData['changed_schema'] = true;
-    
-    return configData;
+
+    data.config['release_name'] = data.name;
+    data.config['changed_schema'] = true;
+
+    return data.config;
   }
 
   afterInit(entityEdit: any) {
@@ -128,8 +127,6 @@ export class ChartFormComponent {
 
   customSubmit(data) {
     let apiCall = this.addCall;
-    let values = {};
-    this.entityUtils.parseFormControlValues(data, values);
 
     let payload = [];
     payload.push({
@@ -138,7 +135,7 @@ export class ChartFormComponent {
       release_name: data.release_name,
       train: 'charts',
       version: 'latest',
-      values: values
+      values: data
     });
 
     if (this.rowName) {

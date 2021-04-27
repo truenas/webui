@@ -116,8 +116,228 @@ export class ChartReleaseAddComponent implements OnDestroy {
               tooltip: helptext.chartForm.container.env_vars.value.tooltip,
             }
           ],
+          listFields: []
+        }
+      ],
+    },
+    {
+      label: helptext.chartForm.networking,
+      fieldConfig: [
+        {
+          type: 'checkbox',
+          name: 'hostNetwork',
+          placeholder: helptext.chartForm.hostNetwork.placeholder,
+          tooltip: helptext.chartForm.hostNetwork.tooltip,
+          value: false
+        },
+        {
+          type: 'list',
+          name: 'externalInterfaces',
+          label: 'Add External Interface',
+          box: true,
+          width: '100%',
+          templateListField: [
+            {
+              type: 'select',
+              name: 'hostInterface',
+              placeholder: helptext.chartForm.externalInterfaces.host.placeholder,
+              tooltip: helptext.chartForm.externalInterfaces.host.tooltip,
+              options: this.interfaceList,
+            },
+            {
+              type: 'select',
+              name: 'ipam',
+              placeholder: helptext.chartForm.externalInterfaces.ipam.placeholder,
+              tooltip: helptext.chartForm.externalInterfaces.ipam.tooltip,
+              options: helptext.chartForm.externalInterfaces.ipam.options,
+            },
+            {
+              type: 'list',
+              name: 'staticIPConfigurations',
+              width: '100%',
+              templateListField: [
+                {
+                  type: 'ipwithnetmask',
+                  name: 'staticIP',
+                  placeholder: helptext.chartForm.externalInterfaces.staticConfig.placeholder,
+                },
+              ],
+              listFields: [],
+              relation: [
+                {
+                  action: 'SHOW',
+                  when: [{
+                    name: 'ipam',
+                    value: 'static',
+                  }]
+                },
+              ],
+            },
+            {
+              type: 'list',
+              name: 'staticRoutes',
+              width: '100%',
+              templateListField: [
+                {
+                  type: 'ipwithnetmask',
+                  name: 'destination',
+                  placeholder: helptext.chartForm.externalInterfaces.staticRoutes.destination.placeholder,
+                },
+                {
+                  type: 'input',
+                  name: 'gateway',
+                  placeholder: helptext.chartForm.externalInterfaces.staticRoutes.gateway.placeholder,
+                }
+              ],
+              listFields: [],
+              relation: [
+                {
+                  action: 'SHOW',
+                  when: [{
+                    name: 'ipam',
+                    value: 'static',
+                  }]
+                },
+              ],
+            }
+
+          ],
+          listFields: []
+        },
+        {
+          type: 'select',
+          name: 'dnsPolicy',
+          placeholder: helptext.chartForm.DNSPolicy.placeholder,
+          tooltip: helptext.chartForm.DNSPolicy.tooltip,
+          options: helptext.chartForm.DNSPolicy.options,
+          value: helptext.chartForm.DNSPolicy.options[0].value,
+        },
+        {
+          type: 'paragraph',
+          name: 'paragraph_dns_config',
+          paraText: helptext.chartForm.DNSConfig.label
+        },
+        {
+          type: 'chip',
+          name: 'nameservers',
+          placeholder: helptext.chartForm.DNSConfig.nameservers.placeholder,
+          tooltip: helptext.chartForm.DNSConfig.nameservers.tooltip,
+          value: []
+        },
+        {
+          type: 'chip',
+          name: 'searches',
+          placeholder: helptext.chartForm.DNSConfig.searches.placeholder,
+          tooltip: helptext.chartForm.DNSConfig.searches.tooltip,
+          value: []
         }
       ]
+    },
+    {
+      label: helptext.chartForm.portForwardingList.title,
+      fieldConfig: [
+        {
+          type: 'list',
+          name: 'portForwardingList',
+          box: true,
+          width: '100%',
+          templateListField: [
+            {
+              type: 'input',
+              name: 'containerPort',
+              placeholder: helptext.chartForm.portForwardingList.containerPort.placeholder,
+              validation: helptext.chartForm.portForwardingList.containerPort.validation
+            },
+            {
+              type: 'input',
+              name: 'nodePort',
+              placeholder: helptext.chartForm.portForwardingList.nodePort.placeholder,
+              validation: helptext.chartForm.portForwardingList.nodePort.validation,
+            },
+            {
+              type: 'select',
+              name: 'protocol',
+              placeholder: helptext.chartForm.portForwardingList.protocol.placeholder,
+              options: helptext.chartForm.portForwardingList.protocol.options,
+              value: helptext.chartForm.portForwardingList.protocol.options[0].value
+            }
+          ],
+          listFields: []
+        }
+      ],
+    },
+    {
+      label: helptext.chartForm.hostPathVolumes.title,
+      fieldConfig: [
+        {
+          type: 'list',
+          name: 'hostPathVolumes',
+          width: '100%',
+          box: true,
+          templateListField: [
+            {
+              type: 'explorer',
+              name: 'hostPath',
+              initial: '/mnt',
+              explorerType: 'directory',
+              hideDirs: 'ix-applications',
+              placeholder: helptext.chartForm.hostPathVolumes.hostPath.placeholder,
+              tooltip: helptext.chartForm.hostPathVolumes.hostPath.tooltip,
+            },
+            {
+              type: 'input',
+              name: 'mountPath',
+              placeholder: helptext.chartForm.hostPathVolumes.mountPath.placeholder,
+              tooltip: helptext.chartForm.hostPathVolumes.mountPath.tooltip,
+            },
+            {
+              type: 'checkbox',
+              name: 'readOnly',
+              placeholder: helptext.chartForm.hostPathVolumes.readOnly.placeholder,
+              value: false,
+
+            }
+          ],
+          listFields: []
+        }
+      ],
+    },
+    {
+      label: helptext.chartForm.volumes.title,
+      fieldConfig: [
+        {
+          type: 'list',
+          name: 'volumes',
+          width: '100%',
+          box: true,
+          templateListField: [
+            {
+              name: 'datasetName',
+              placeholder: helptext.chartForm.volumes.datasetName.placeholder,
+              tooltip: helptext.chartForm.volumes.datasetName.tooltip,
+              type: 'input',
+            },
+            {
+              name: 'mountPath',
+              placeholder: helptext.chartForm.volumes.mountPath.placeholder,
+              tooltip: helptext.chartForm.volumes.mountPath.tooltip,
+              type: 'input',
+            }
+          ],
+          listFields: []
+        }
+      ]
+    },
+    {
+      label: helptext.chartForm.security.title,
+      fieldConfig: [
+        {
+          type: 'checkbox',
+          name: 'privileged',
+          placeholder: helptext.chartForm.security.privileged.placeholder,
+          value: false,
+        }
+      ],
     },
   ]
 
@@ -181,9 +401,6 @@ export class ChartReleaseAddComponent implements OnDestroy {
   }
 
   customSubmit(data) {
-
-    let parsedData = {};
-    this.entityUtils.parseFormControlValues(data, parsedData);
 
     let envVars = [];
     if (data.containerEnvironmentVariables && data.containerEnvironmentVariables.length > 0 && data.containerEnvironmentVariables[0].name) {
@@ -271,8 +488,8 @@ export class ChartReleaseAddComponent implements OnDestroy {
       }
     }];
 
-    if (parsedData['gpuConfiguration']) {
-      payload[0].values['gpuConfiguration'] = parsedData['gpuConfiguration'];
+    if (data['gpuConfiguration']) {
+      payload[0].values['gpuConfiguration'] = data['gpuConfiguration'];
     }
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (

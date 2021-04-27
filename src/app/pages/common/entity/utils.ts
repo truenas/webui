@@ -222,65 +222,6 @@ export class EntityUtils {
     return result;
   }
 
-  parseFormControlValues(data: any, result: any) {
-    Object.keys(data).forEach(key => {
-      const value = data[key];
-      if (key == "release_name" || key == 'undefined' || key.startsWith(FORM_LABEL_KEY_PREFIX)) {
-        return;
-      }
-
-      const key_list = key.split(FORM_KEY_SEPERATOR);
-      if (key_list.length > 1) {
-        let parent = result;
-        for(let i=0; i<key_list.length; i++) {
-          const temp_key = key_list[i];
-          if (i == key_list.length - 1) {
-            if (Array.isArray(value)) {
-              const arrayValues = value.map(item => {
-                if (Object.keys(item).length > 1) {
-                  let subValue = {};
-                  this.parseFormControlValues(item, subValue);
-                  return subValue;
-                } else {
-                  return item[Object.keys(item)[0]];
-                }
-              });
-              if (arrayValues.length > 0) {
-                parent[temp_key] = arrayValues.filter(this.filterArrayFunction.bind(this));
-              }
-            } else {
-              parent[temp_key] = value;
-            }
-          } else {
-            if (!parent[temp_key]) {
-              parent[temp_key] = {};
-            }
-            parent = parent[temp_key];
-          }
-        }
-      } else {
-        if (Array.isArray(value)) {
-          const arrayValues = value.map(item => {
-            if (Object.keys(item).length > 1) {
-              let subValue = {};
-              this.parseFormControlValues(item, subValue);
-              return subValue;
-            } else {
-              return item[Object.keys(item)[0]];
-            }
-          });
-          if (arrayValues.length > 0) {
-            result[key] = arrayValues.filter(this.filterArrayFunction.bind(this));
-          }
-        } else {
-          result[key] = value;
-        }
-      }
-    });
-
-    return result;
-  }
-
   changeNull2String(value) {
     let result = value;
     if (value === null) {
@@ -314,12 +255,9 @@ export class EntityUtils {
     return result;
   }
 
-  createRelations(relations:Relation[], parentName:string) {
+  createRelations(relations:Relation[]) {
     const result = relations.map(relation => {
       let relationFieldName = relation.fieldName;
-      if (parentName) {
-        relationFieldName = `${parentName}${FORM_KEY_SEPERATOR}${relationFieldName}`;
-      }
 
       return {
         action: 'SHOW',
@@ -430,39 +368,65 @@ export class EntityUtils {
       fieldConfig['templateListField'] = listFields;
 
     } else if (schemaConfig.schema.type == 'dict') {
-      fieldConfig = null;
 
-      if (schemaConfig.schema.attrs.length > 0) {
-        const dictLabel = {
-          label: schemaConfig.label,
-          name: FORM_LABEL_KEY_PREFIX + name,
-          type: 'label',
-        };
+      if (parentIsList) {
+        fieldConfig = null;
+        if (schemaConfig.schema.attrs.length > 0) {
+          const dictLabel = {
+            label: schemaConfig.label,
+            name: FORM_LABEL_KEY_PREFIX + name,
+            type: 'label',
+          };
 
-        if (relations) {
-          dictLabel['relation'] = this.createRelations(relations, parentName);
-        }
+          if (relations) {
+            dictLabel['relation'] = this.createRelations(relations);
+          }
 
-        results = results.concat(dictLabel);
-      }
+          results = results.concat(dictLabel);
 
-      schemaConfig.schema.attrs.forEach(dictConfig => {
-        const subResults = this.parseSchemaFieldConfig(dictConfig, name, parentIsList);
+          schemaConfig.schema.attrs.forEach(dictConfig => {
+            const subResults = this.parseSchemaFieldConfig(dictConfig, name, parentIsList);
 
-        if (relations) {
-          subResults.forEach(subResult => {
-            subResult['relation'] = this.createRelations(relations, parentName);
+            if (relations) {
+              subResults.forEach(subResult => {
+                subResult['relation'] = this.createRelations(relations);
+              });
+            }
+            results = results.concat(subResults);
           });
         }
-        results = results.concat(subResults);
-      });
+      } else {
+        fieldConfig['type'] = 'dict';
+        fieldConfig['label'] = `Configure ${schemaConfig.label}`;
+        fieldConfig['width'] = '100%';
+
+        if (schemaConfig.schema.attrs.length > 0) {
+          if (relations) {
+            fieldConfig['relation'] = this.createRelations(relations);
+          }
+
+          let subFields = [];
+          schemaConfig.schema.attrs.forEach(dictConfig => {
+            let fields = this.parseSchemaFieldConfig(dictConfig, null, false);
+            subFields = subFields.concat(fields);
+
+            if (relations) {
+              subFields.forEach(subResult => {
+                subResult['relation'] = this.createRelations(relations);
+              });
+            }
+          });
+          fieldConfig['subFields'] = subFields;
+        }
+      }
+
     }
 
     if (fieldConfig) {
 
       if (fieldConfig['type']) {
         if (relations) {
-          fieldConfig['relation'] = this.createRelations(relations, parentName);
+          fieldConfig['relation'] = this.createRelations(relations);
         }
 
         results.push(fieldConfig);
@@ -496,21 +460,4 @@ export class EntityUtils {
     return results;
   }
 
-  parseConfigData(configData:object, parentKey:string, result:object) {
-    if (configData !== undefined && configData !== null) {
-      Object.keys(configData).forEach(key => {
-        const value = configData[key];
-        let fullKey = key;
-        if (parentKey) {
-          fullKey = `${parentKey}${FORM_KEY_SEPERATOR}${key}`;
-        }
-        if (!Array.isArray(value) && typeof value === 'object') {
-          this.parseConfigData(value, fullKey, result);
-        } else {
-          result[fullKey] = value;
-        }
-      });
-    }
-
-  }
 }
