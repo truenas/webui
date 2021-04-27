@@ -152,29 +152,30 @@ export class GroupListComponent implements OnDestroy {
                 confirmCheckbox: true,
                 saveButtonText: helptext.deleteDialog.saveButtonText,
                 preInit() {
-                  if (usersInGroup.length > 0) {
-                    conf.fieldConfig.push({
-                      type: 'checkbox',
-                      name: 'delete_users',
-                      placeholder: T(`Delete ${usersInGroup.length} user(s) with this primary group?`),
-                      value: false,
-                      onChange: (valueChangeData: { event: MatCheckboxChange }) => {
-                        if (valueChangeData.event.checked) {
-                          self.dialogService.Info('Following users will be deleted', usersInGroup.map((user, index) => {
-                            if (user.full_name && user.full_name.length) {
-                              return (index + 1) + '. ' + user.username + ' (' + user.full_name + ')';
-                            }
-                            return (index + 1) + '. ' + user.username;
-                          }).join('\n'));
-                        }
-                      },
-                    });
+                  if (!usersInGroup.length) {
+                    return;
                   }
+                  conf.fieldConfig.push({
+                    type: 'checkbox',
+                    name: 'delete_users',
+                    placeholder: T(`Delete ${usersInGroup.length} user(s) with this primary group?`),
+                    value: false,
+                    onChange: (valueChangeData: { event: MatCheckboxChange }) => {
+                      if (valueChangeData.event.checked) {
+                        self.dialogService.Info('Following users will be deleted', usersInGroup.map((user, index) => {
+                          if (user.full_name && user.full_name.length) {
+                            return (index + 1) + '. ' + user.username + ' (' + user.full_name + ')';
+                          }
+                          return (index + 1) + '. ' + user.username;
+                        }).join('\n'));
+                      }
+                    },
+                  });
                 },
                 customSubmit(entityDialog) {
                   entityDialog.dialogRef.close(true);
                   self.loader.open();
-                  self.ws.call(self.wsDelete, [members_delete.id, entityDialog.formValue]).subscribe((res) => {
+                  self.ws.call(self.wsDelete, [members_delete.id, entityDialog.formValue]).subscribe(() => {
                     self.entityList.getData();
                     self.loader.close();
                   },
