@@ -134,12 +134,12 @@ export class CatalogComponent implements OnInit {
       switch (evt.data.settings.value) {
         case 'select_pool':
           return this.selectPool();
-
         case 'advanced_settings':
           this.modalService.open('slide-in-form', this.kubernetesForm);
           break;
 
         case 'unset_pool':
+
           this.doUnsetPool();
           break;
       }
@@ -196,29 +196,40 @@ export class CatalogComponent implements OnInit {
         res.forEach((pool: any) => {
           this.poolList.push({label: pool.name, value: pool.name})
         })
-        this.dialogService.dialogForm(this.choosePool, false);
+        if (this.selectedPool) {
+          this.choosePool.fieldConfig[0].value = this.selectedPool;
+        } else {
+          delete this.choosePool.fieldConfig[0].value;
+        }
+
+        this.dialogService.dialogForm(this.choosePool, true);
       }
     })
   }
 
   doUnsetPool() {
-    this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
-      helptext.choosePool.jobTitle) }, disableClose: true});
-    this.dialogRef.componentInstance.setCall('kubernetes.update', [{pool: null}]);
-    this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.subscribe(() => {
-      this.dialogService.closeAllDialogs();
-      this.selectedPool = null;
-      this.refreshToolbarMenus();
-      this.translate.get(helptext.choosePool.unsetPool).subscribe(msg => {
-        this.dialogService.Info(helptext.choosePool.success, msg,
-          '500px', 'info', true);
-      })
-    });
+    this.dialogService.confirm(helptext.choosePool.unsetPool.confirm.title, helptext.choosePool.unsetPool.confirm.message, true,
+      helptext.choosePool.unsetPool.confirm.button).subscribe((res: boolean) => {
+        if (res) {
+          this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { 'title': (
+            helptext.choosePool.jobTitle) }, disableClose: true});
+          this.dialogRef.componentInstance.setCall('kubernetes.update', [{pool: null}]);
+          this.dialogRef.componentInstance.submit();
+          this.dialogRef.componentInstance.success.subscribe(() => {
+            this.dialogService.closeAllDialogs();
+            this.selectedPool = null;
+            this.refreshToolbarMenus();
+            this.translate.get(helptext.choosePool.unsetPool.label).subscribe(msg => {
+              this.dialogService.Info(helptext.choosePool.success, msg,
+                '500px', 'info', true);
+            })
+          });
 
-    this.dialogRef.componentInstance.failure.subscribe((err: any) => {
-      new EntityUtils().handleWSError(self, err, this.dialogService);
-    })
+          this.dialogRef.componentInstance.failure.subscribe((err: any) => {
+            new EntityUtils().handleWSError(self, err, this.dialogService);
+          })
+        }
+      })
   }
 
   doPoolSelect(entityDialog: any) {

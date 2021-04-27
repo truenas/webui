@@ -41,24 +41,6 @@ export class LocalizationFormComponent implements OnDestroy{
           options: [],
         },
         {
-          type: "radio",
-          name: "language_sort",
-          placeholder: helptext.stg_language_sort_label,
-          options: [
-            {
-              label: helptext.stg_language_sort_name,
-              name: "language_name",
-              value: true
-            },
-            {
-              label: helptext.stg_language_sort_code,
-              name: "language_code",
-              value: false
-            }
-          ],
-          value: true,
-        },
-        {
           type: "select",
           name: "kbdmap",
           placeholder: helptext.stg_kbdmap.placeholder,
@@ -130,11 +112,6 @@ export class LocalizationFormComponent implements OnDestroy{
         this.entityForm.formGroup.controls['timezone'].setValue(this.configData.timezone);
     });
 
-    entityEdit.formGroup.controls['language_sort'].valueChanges.subscribe((res: any)=> {
-      res ? this.sortLanguagesByName = true : this.sortLanguagesByName = false;
-      this.makeLanguageList();
-    });
-
     this.getDateTimeFormats();
     this.dateTimeChangeSubscription = this.localeService.dateTimeFormatChange$.subscribe(() => {
       this.getDateTimeFormats();
@@ -189,7 +166,6 @@ export class LocalizationFormComponent implements OnDestroy{
   }
 
   beforeSubmit(value: any) {
-    delete value.language_sort;
     value.language = this.languageKey;
   }
 

@@ -352,21 +352,23 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                 delete this.data['changed_schema'];
               }
             }
-            for (const i in this.data) {
-              const fg = this.formGroup.controls[i];
+            for (const key in this.data) {
+              const fg = this.formGroup.controls[key];
               if (fg) {
-                const current_field = this.fieldConfig.find((control) => control.name === i);
+                const current_field = this.fieldConfig.find((control) => control.name === key);
                 if (current_field.type === "array") {
-                    this.setArrayValue(this.data[i], fg, i);
+                    this.setArrayValue(this.data[key], fg, key);
                 } else if (current_field.type === "list") {
-                  this.setListValue(this.data[i], fg as FormArray, i)
+                  this.setListValue(this.data[key], fg as FormArray, key)
                 } else {
-                  if (!_.isArray(this.data[i]) && current_field.type === "select" && current_field.multiple) {
-                    if (this.data[i]) {
-                      this.data[i] = _.split(this.data[i], ',');
+                  if (!_.isArray(this.data[key]) && current_field.type === "select" && current_field.multiple) {
+                    if (this.data[key]) {
+                      this.data[key] = _.split(this.data[key], ',');
                     }
                   }
-                  fg.setValue(this.data[i]);
+                  if (!(current_field.type === "select" && current_field.options.length == 0)) {
+                    fg.setValue(this.data[key]);
+                  }
                 }
               }
             }
@@ -398,7 +400,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                   } else if (current_field.type === "list") {
                     this.setObjectListValue(this.wsResponse[i], this.wsfg, i)
                   } else {
-                    this.wsfg.setValue(this.wsResponse[i]);
+                    if (!(current_field.type === "select" && current_field.options.length == 0)) {
+                      this.wsfg.setValue(this.wsResponse[i]);
+                    }
                   }
                 } else {
                   if (this.conf.dataAttributeHandler) {

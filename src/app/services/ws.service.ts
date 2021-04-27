@@ -6,6 +6,7 @@ import { Observable, Observer, Subject } from 'rxjs';
 
 import {environment} from '../../environments/environment';
 import { filter, map } from 'rxjs/operators';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Injectable()
 export class WebSocketService {
@@ -241,7 +242,7 @@ export class WebSocketService {
         this.subscribe("core.get_jobs").subscribe((res) => {
           if (res.id == job_id) {
             observer.next(res.fields);
-            if (res.fields.state == 'SUCCESS' || res.fields.state == 'FAILED') {
+            if (res.fields.state === EntityJobState.Success || res.fields.state == EntityJobState.Failed) {
               observer.complete();
             }
           }

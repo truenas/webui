@@ -143,6 +143,7 @@ export class NavigationService {
         { name: T('Failover'), state: 'failover', disabled: true },
         { name: T('Services'), state: 'services' },
         { name: T('Shell'), state: 'shell' },
+        { name: T('Enclosure'), state: 'viewenclosure', disabled: true },
       ]
     }
   ]

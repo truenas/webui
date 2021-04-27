@@ -1,54 +1,59 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import * as _ from 'lodash';
-
-import { UserService, WebSocketService } from '../../../../services';
-import { TaskService } from '../../../../services';
+import { Subscription } from 'rxjs';
 import * as cronParser from 'cron-parser';
 import { Moment } from 'moment';
+
+import { UserService, WebSocketService, TaskService } from 'app/services';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { ScrubFormComponent } from '../scrub-form/scrub-form.component';
-import { ModalService } from '../../../../services/modal.service';
+import { ScrubFormComponent } from 'app/pages/data-protection/scrub/scrub-form/scrub-form.component';
+import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 
 @Component({
   selector: 'app-scrub-list',
   template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
   providers: [TaskService, UserService, EntityFormService],
 })
-export class ScrubListComponent {
-  public title = 'Scrub Tasks';
+export class ScrubListComponent implements InputTableConf, OnDestroy {
+  public title = T('Scrub Tasks');
   public queryCall: string = 'pool.scrub.query';
-  protected wsDelete: string = 'pool.scrub.delete';
-  protected route_add: string[] = ['tasks', 'scrub', 'add'];
-  protected route_add_tooltip = 'Add Scrub Task';
-  protected route_edit: string[] = ['tasks', 'scrub', 'edit'];
-  protected entityList: any;
+  public wsDelete: string = 'pool.scrub.delete';
+  public route_add: string[] = ['tasks', 'scrub', 'add'];
+  public route_add_tooltip = 'Add Scrub Task';
+  public route_edit: string[] = ['tasks', 'scrub', 'edit'];
+  public entityList: EntityTableComponent;
+  public parent: any;
 
   public columns: Array<any> = [
-    { name: 'Pool', prop: 'pool_name', always_display: true },
-    { name: 'Threshold days', prop: 'threshold' },
-    { name: 'Description', prop: 'description' },
+    { name: T('Pool'), prop: 'pool_name', always_display: true },
+    { name: T('Threshold days'), prop: 'threshold' },
+    { name: T('Description'), prop: 'description' },
     {
-      name: 'Schedule',
+      name: T('Schedule'),
       prop: 'schedule',
       widget: {
         icon: 'calendar-range',
         component: 'TaskScheduleListComponent',
       },
     },
-    { name: 'Next Run', prop: 'scrub_next_run' },
-    { name: 'Enabled', prop: 'enabled' },
+    { name: T('Next Run'), prop: 'scrub_next_run' },
+    { name: T('Enabled'), prop: 'enabled' },
   ];
   public rowIdentifier = 'id';
   public config: any = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'Scrub Task',
+      title: T('Scrub Task'),
       key_props: ['pool_name'],
     },
   };
+  private onModalClose: Subscription;
 
   constructor(
     protected router: Router,
@@ -59,6 +64,13 @@ export class ScrubListComponent {
     protected userService: UserService,
     protected entityFormService: EntityFormService,
   ) {}
+
+  afterInit(entityList: EntityTableComponent): void {
+    this.entityList = entityList;
+    this.onModalClose = this.modalService.onClose$.subscribe(() => {
+      this.entityList.getData();
+    });
+  }
 
   resourceTransformIncomingRestData(data: any[]): any {
     return data.map((task) => {
@@ -79,5 +91,9 @@ export class ScrubListComponent {
 
   doEdit(id: number) {
     this.doAdd(id);
+  }
+
+  ngOnDestroy(): void {
+    this.onModalClose?.unsubscribe();
   }
 }

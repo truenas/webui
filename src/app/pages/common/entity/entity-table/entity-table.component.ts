@@ -4,14 +4,14 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { MatTableModule, MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router, NavigationStart } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import * as _ from 'lodash';
 import { fromEvent as observableFromEvent, Observable, of, Subscription } from 'rxjs';
-import { catchError, debounceTime, distinctUntilChanged, filter, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, filter, switchMap, take, tap } from 'rxjs/operators';
 import { DialogService, JobService } from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { ErdService } from '../../../../services/erd.service';
@@ -21,7 +21,7 @@ import { WebSocketService } from '../../../../services/ws.service';
 import { ModalService } from '../../../../services/modal.service';
 import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../utils';
-
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 import { EntityTableService } from './entity-table.service';
 import { EntityTableRowDetailsComponent } from './entity-table-row-details/entity-table-row-details.component';
 import { EntityTableAddActionsComponent } from './entity-table-add-actions.component';
@@ -1096,17 +1096,16 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     this.multiActionsIconsOnly = !this.multiActionsIconsOnly;
   }
 
-  // TODO: Enum
-  getButtonClass(state: string) {
+  getButtonClass(state: EntityJobState): string {
     switch(state) {
-      case 'PENDING' : return 'fn-theme-orange';
-      case 'RUNNING' : return 'fn-theme-orange';
-      case 'ABORTED' : return 'fn-theme-orange';
-      case 'FINISHED' : return 'fn-theme-green';
-      case 'SUCCESS' : return 'fn-theme-green';
-      case 'ERROR' : return 'fn-theme-red';
-      case 'FAILED' : return 'fn-theme-red';
-      case 'HOLD' : return 'fn-theme-yellow';
+      case EntityJobState.Pending: return 'fn-theme-orange';
+      case EntityJobState.Running: return 'fn-theme-orange';
+      case EntityJobState.Aborted: return 'fn-theme-orange';
+      case EntityJobState.Finished: return 'fn-theme-green';
+      case EntityJobState.Success: return 'fn-theme-green';
+      case EntityJobState.Error: return 'fn-theme-red';
+      case EntityJobState.Failed: return 'fn-theme-red';
+      case EntityJobState.Hold: return 'fn-theme-yellow';
       default: return 'fn-theme-primary';
     }
   }
@@ -1115,7 +1114,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     if (colConfig.infoStates) {
       return _.indexOf(colConfig.infoStates, value) < 0;
     } else {
-      return value !== 'PENDING';
+      return value !== EntityJobState.Pending;
     }
   }
 

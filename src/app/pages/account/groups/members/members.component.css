@@ -34,6 +34,7 @@
   left: 23px;
 }
 
-mat-card-title {
+.form-card .mat-card-title {
   margin-left: 15px;
+  margin-top: 15px;
 }

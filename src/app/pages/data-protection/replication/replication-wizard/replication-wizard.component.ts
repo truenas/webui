@@ -1,24 +1,42 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { Validators, FormControl } from '@angular/forms';
 import { DatePipe } from '@angular/common';
+import { Component } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 
 import * as _ from 'lodash';
+import { Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 
-import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
-import helptext from '../../../../helptext/data-protection/replication/replication-wizard';
-import sshConnectionsHelptex from '../../../../helptext/system/ssh-connections';
-
-import { DialogService, KeychainCredentialService, WebSocketService, ReplicationService, TaskService, StorageService } from '../../../../services';
-import { EntityUtils } from '../../../common/entity/utils';
-import { EntityFormService } from '../../../common/entity/entity-form/services/entity-form.service';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
-import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { T } from '../../../../translate-marker';
-import { forbiddenValues } from '../../../common/entity/entity-form/validators/forbidden-values-validation';
+import { CipherType } from 'app/enums/cipher-type.enum';
+import { DatasetSource } from 'app/enums/dataset-source.enum';
+import { Direction } from 'app/enums/direction.enum';
+import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
+import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
+import { NetcatMode } from 'app/enums/netcat-mode.enum';
+import { RetentionPolicy } from 'app/enums/retention-policy.enum';
+import { ScheduleMethod } from 'app/enums/schedule-method.enum';
+import { TransportMode } from 'app/enums/transport-mode.enum';
+import helptext from 'app/helptext/data-protection/replication/replication-wizard';
+import sshConnectionsHelptex from 'app/helptext/system/ssh-connections';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
+import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
+import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import {
+  AppLoaderService,
+  DialogService,
+  KeychainCredentialService,
+  ReplicationService,
+  TaskService,
+  WebSocketService,
+} from 'app/services';
+import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 
 @Component({
     selector: 'app-replication-wizard',
@@ -26,27 +44,25 @@ import { forbiddenValues } from '../../../common/entity/entity-form/validators/f
     providers: [KeychainCredentialService, ReplicationService, TaskService, DatePipe, EntityFormService]
 })
 export class ReplicationWizardComponent {
+    title = T('Replication Task Wizard')
+    isLinear = true;
+    summary_title = T('Replication Summary');
+    pk: number;
+    getRow: Subscription;
+    saveSubmitText = T('START REPLICATION');
 
-    public route_success: string[] = ['tasks', 'replication'];
-    public isLinear = true;
-    public summary_title = "Replication Summary";
     protected entityWizard: any;
-
-    protected custActions: Array<any> = [
-        {
-            id: 'advanced_add',
-            name: T("Advanced Replication Creation"),
-            function: () => {
-                this.router.navigate(
-                    new Array('').concat(["tasks", "replication", "add"])
-                );
-            }
-        }
-    ];
-
+    protected custActions: Array<any> = [{
+      id: 'advanced_add',
+      name: T("Advanced Replication Creation"),
+      function: () => {
+        this.modalService.close('slide-in-form');
+        const message = { action: 'open', component: 'replicationForm', row: this.pk };
+        this.modalService.message(message);
+      }
+    }];
     protected namesInUse: string[] = [];
     protected defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';
-
     protected wizardConfig: Wizard[] = [
         {
             label: helptext.step1_label,
@@ -74,7 +90,7 @@ export class ReplicationWizardComponent {
                     name: 'source',
                     label: false,
                     class: 'source',
-                    width: '49%',
+                    width: '50%',
                     config: [
                         {
                             type: 'select',
@@ -83,10 +99,10 @@ export class ReplicationWizardComponent {
                             tooltip: helptext.source_datasets_from_tooltip,
                             options: [{
                                 label: T("On this System"),
-                                value: 'local',
+                                value: DatasetSource.Local,
                             }, {
                                 label: T("On a Different System"),
-                                value: 'remote',
+                                value: DatasetSource.Remote,
                             }],
                             required: true,
                             validation: [Validators.required],
@@ -101,7 +117,7 @@ export class ReplicationWizardComponent {
                                 action: 'SHOW',
                                 when: [{
                                     name: 'source_datasets_from',
-                                    value: 'remote',
+                                    value: DatasetSource.Remote,
                                 }]
                             }],
                             isHidden: true,
@@ -134,10 +150,10 @@ export class ReplicationWizardComponent {
                                 connective: 'OR',
                                 when: [{
                                     name: 'source_datasets_from',
-                                    value: 'remote',
+                                    value: DatasetSource.Remote,
                                 }, {
                                     name: 'source_datasets_from',
-                                    value: 'local',
+                                    value: DatasetSource.Local,
                                 }]
                             }],
                         },
@@ -152,10 +168,10 @@ export class ReplicationWizardComponent {
                                 connective: 'OR',
                                 when: [{
                                     name: 'source_datasets_from',
-                                    value: 'remote',
+                                    value: DatasetSource.Remote,
                                 }, {
                                     name: 'source_datasets_from',
-                                    value: 'local',
+                                    value: DatasetSource.Local,
                                 }]
                             }],
                         },
@@ -168,10 +184,10 @@ export class ReplicationWizardComponent {
                                 connective: 'OR',
                                 when: [{
                                     name: 'source_datasets_from',
-                                    value: 'remote',
+                                    value: DatasetSource.Remote,
                                 }, {
                                     name: 'source_datasets_from',
-                                    value: 'local',
+                                    value: DatasetSource.Local,
                                 }]
                             }],
                         },
@@ -185,7 +201,7 @@ export class ReplicationWizardComponent {
                                 action: 'SHOW',
                                 when: [{
                                     name: 'source_datasets_from',
-                                    value: 'local',
+                                    value: DatasetSource.Local,
                                 }]
                             }],
                         },
@@ -203,7 +219,7 @@ export class ReplicationWizardComponent {
                                     value: true,
                                 }, {
                                     name: 'source_datasets_from',
-                                    value: 'remote',
+                                    value: DatasetSource.Remote,
                                 }]
                             }],
                             parent: this,
@@ -218,7 +234,7 @@ export class ReplicationWizardComponent {
                     name: 'target',
                     label: false,
                     class: 'target',
-                    width: '49%',
+                    width: '50%',
                     config: [
                         {
                             type: 'select',
@@ -227,10 +243,10 @@ export class ReplicationWizardComponent {
                             tooltip: helptext.target_dataset_from_tooltip,
                             options: [{
                                 label: T("On this System"),
-                                value: 'local',
+                                value: DatasetSource.Local,
                             }, {
                                 label: T("On a Different System"),
-                                value: 'remote',
+                                value: DatasetSource.Remote,
                             }],
                             required: true,
                             validation: [Validators.required],
@@ -245,7 +261,7 @@ export class ReplicationWizardComponent {
                                 action: 'SHOW',
                                 when: [{
                                     name: 'target_dataset_from',
-                                    value: 'remote',
+                                    value: DatasetSource.Remote,
                                 }]
                             }],
                             isHidden: true,
@@ -275,10 +291,10 @@ export class ReplicationWizardComponent {
                                 connective: 'OR',
                                 when: [{
                                     name: 'target_dataset_from',
-                                    value: 'remote',
+                                    value: DatasetSource.Remote,
                                 }, {
                                     name: 'target_dataset_from',
-                                    value: 'local',
+                                    value: DatasetSource.Local,
                                 }]
                             }],
                         },
@@ -293,10 +309,10 @@ export class ReplicationWizardComponent {
                                 connective: 'OR',
                                 when: [{
                                     name: 'target_dataset_from',
-                                    value: 'remote',
+                                    value: DatasetSource.Remote,
                                 }, {
                                     name: 'target_dataset_from',
-                                    value: 'local',
+                                    value: DatasetSource.Local,
                                 }]
                             }],
                         },
@@ -306,11 +322,11 @@ export class ReplicationWizardComponent {
                             placeholder: helptext.encryption_key_format_placeholder,
                             tooltip: helptext.encryption_key_format_tooltip,
                             options: [{
-                                label: 'HEX',
-                                value: 'HEX',
+                                label: T('HEX'),
+                                value: EncryptionKeyFormat.Hex,
                             }, {
-                                label: 'PASSPHRASE',
-                                value: 'PASSPHRASE',
+                                label: T('PASSPHRASE'),
+                                value: EncryptionKeyFormat.Passphrase,
                             }],
                             relation: [{
                                 action: 'SHOW',
@@ -334,7 +350,7 @@ export class ReplicationWizardComponent {
                                     value: true,
                                 },  {
                                     name: 'encryption_key_format',
-                                    value: 'HEX',
+                                    value: EncryptionKeyFormat.Hex,
                                 }]
                             }],
                         },
@@ -351,7 +367,7 @@ export class ReplicationWizardComponent {
                                     value: true,
                                 }, {
                                     name: 'encryption_key_format',
-                                    value: 'HEX',
+                                    value: EncryptionKeyFormat.Hex,
                                 }, {
                                     name: 'encryption_key_generate',
                                     value: false,
@@ -373,7 +389,7 @@ export class ReplicationWizardComponent {
                                     value: true,
                                 }, {
                                     name: 'encryption_key_format',
-                                    value: 'PASSPHRASE',
+                                    value: EncryptionKeyFormat.Passphrase,
                                 }]
                             }],
                         },
@@ -424,23 +440,23 @@ export class ReplicationWizardComponent {
                             options: [
                                 {
                                     label: T("Encryption (more secure, but slower)"),
-                                    value: 'SSH',
+                                    value: TransportMode.SSH,
                                 },
                                 {
                                     label: T("No Encryption (less secure, but faster)"),
-                                    value: 'SSH+NETCAT',
+                                    value: TransportMode.Netcat,
                                 }
                             ],
-                            value: 'SSH',
+                            value: TransportMode.SSH,
                             relation: [{
                                 action: 'SHOW',
                                 connective: 'OR',
                                 when: [{
                                     name: 'source_datasets_from',
-                                    value: 'remote',
+                                    value: DatasetSource.Remote,
                                 }, {
                                     name: 'target_dataset_from',
-                                    value: 'remote',
+                                    value: DatasetSource.Remote,
                                 }]
                             }],
                         },
@@ -467,12 +483,12 @@ export class ReplicationWizardComponent {
                     tooltip: helptext.schedule_method_tooltip,
                     options: [{
                         label: T("Run On a Schedule"),
-                        value: 'cron',
+                        value: ScheduleMethod.Cron,
                     }, {
                         label: T("Run Once"),
-                        value: 'once',
+                        value: ScheduleMethod.Once,
                     }],
-                    value: 'cron',
+                    value: ScheduleMethod.Cron,
                     class: 'inline',
                     width: '50%',
                 },
@@ -488,7 +504,7 @@ export class ReplicationWizardComponent {
                         action: 'SHOW',
                         when: [{
                             name: 'schedule_method',
-                            value: 'cron',
+                            value: ScheduleMethod.Cron,
                         }]
                     }],
                     required: true,
@@ -503,7 +519,7 @@ export class ReplicationWizardComponent {
                         action: 'SHOW',
                         when: [{
                             name: 'schedule_method',
-                            value: 'once',
+                            value: ScheduleMethod.Once,
                         }]
                     }],
                     value: true,
@@ -515,15 +531,15 @@ export class ReplicationWizardComponent {
                     tooltip: helptext.retention_policy_tooltip,
                     options: [{
                         label: T("Same as Source"),
-                        value: 'SOURCE',
+                        value: RetentionPolicy.Source,
                     }, {
                         label: T("Never Delete"),
-                        value: 'NONE',
+                        value: RetentionPolicy.None,
                     }, {
                         label: T("Custom"),
-                        value: 'CUSTOM',
+                        value: RetentionPolicy.Custom,
                     }],
-                    value: 'SOURCE',
+                    value: RetentionPolicy.Source,
                     class: 'inline',
                     width: '50%',
                 },
@@ -542,7 +558,7 @@ export class ReplicationWizardComponent {
                         connective: 'OR',
                         when: [{
                             name: 'retention_policy',
-                            value: 'CUSTOM',
+                            value: RetentionPolicy.Custom,
                         }]
                     }],
                 },
@@ -552,21 +568,21 @@ export class ReplicationWizardComponent {
                     tooltip: helptext.lifetime_unit_tooltip,
                     options: [{
                         label: T("Hours"),
-                        value: 'HOUR',
+                        value: LifetimeUnit.Hour,
                     }, {
                         label: T("Days"),
-                        value: 'DAY',
+                        value: LifetimeUnit.Day,
                     }, {
                         label: T("Weeks"),
-                        value: 'WEEK',
+                        value: LifetimeUnit.Week,
                     }, {
                         label: T("Months"),
-                        value: 'MONTH',
+                        value: LifetimeUnit.Month,
                     }, {
                         label: T("Years"),
-                        value: 'YEAR',
+                        value: LifetimeUnit.Year,
                     }],
-                    value: 'WEEK',
+                    value: LifetimeUnit.Week,
                     class: 'inline',
                     width: '25%',
                     relation: [{
@@ -574,7 +590,7 @@ export class ReplicationWizardComponent {
                         connective: 'OR',
                         when: [{
                             name: 'retention_policy',
-                            value: 'CUSTOM',
+                            value: RetentionPolicy.Custom,
                         }]
                     }],
                     required: true,
@@ -701,23 +717,20 @@ export class ReplicationWizardComponent {
             options: [
                 {
                     label: T("Standard (Secure)"),
-                    value: 'STANDARD',
+                    value: CipherType.Standard,
                 }, {
                     label: T("Fast (Less secure)"),
-                    value: 'FAST',
+                    value: CipherType.Fast,
                 }, {
                     label: T("Disabled (Not encrypted)"),
-                    value: 'DISABLED',
+                    value: CipherType.Disabled,
                 }
             ],
-            value: 'STANDARD',
+            value: CipherType.Standard,
         }
     ];
-
-    protected saveSubmitText = T('START REPLICATION');
-    protected directions = ['PULL', 'PUSH'];
-    protected selectedReplicationTask: any;
-    protected semiSSHFieldGroup: any[] = [
+    protected selectedReplicationTask: ReplicationTask;
+    protected semiSSHFieldGroup: string[] = [
         'url',
         'password',
     ];
@@ -745,32 +758,35 @@ export class ReplicationWizardComponent {
     protected source_fieldSet: FieldSet;
     protected target_fieldSet: FieldSet;
 
-    constructor(private router: Router, private keychainCredentialService: KeychainCredentialService,
+    constructor(private keychainCredentialService: KeychainCredentialService,
         private loader: AppLoaderService, private dialogService: DialogService,
         private ws: WebSocketService, private replicationService: ReplicationService,
-        private taskService: TaskService, private storageService: StorageService,
-        private datePipe: DatePipe, private entityFormService: EntityFormService) {
+        private datePipe: DatePipe, private entityFormService: EntityFormService,
+        private modalService: ModalService) {
         this.ws.call('replication.query').subscribe(
             (res: any[]) => {
                 this.namesInUse.push(...res.map(replication => replication.name));
             }
         )
+        this.getRow = this.modalService.getRow$.pipe(take(1)).subscribe((rowId: number) => {
+          this.pk = rowId;
+        })
     }
 
-    isCustActionVisible(id: any, stepperIndex: any) {
+    isCustActionVisible(actionId: string, stepperIndex: number): boolean {
         if (stepperIndex == 0) {
             return true;
         }
         return false;
     }
 
-    afterInit(entityWizard: any) {
+    afterInit(entityWizard: EntityWizardComponent): void {
         this.entityWizard = entityWizard;
         this.preload_fieldSet = _.find(this.wizardConfig[0].fieldSets, {class: 'preload'});
         this.source_fieldSet = _.find(this.wizardConfig[0].fieldSets, {class: 'source'});
         this.target_fieldSet = _.find(this.wizardConfig[0].fieldSets, {class: 'target'});
-
         this.snapshotsCountField = _.find(this.source_fieldSet.config, { name: 'snapshots_count' });
+
         this.step0Init();
         this.step1Init();
     }
@@ -778,11 +794,14 @@ export class ReplicationWizardComponent {
     step0Init() {
         const exist_replicationField = _.find(this.preload_fieldSet.config, { name: 'exist_replication' });
         this.replicationService.getReplicationTasks().subscribe(
-            (res) => {
+            (res: ReplicationTask[]) => {
                 for (const task of res) {
-                    if (task.transport !== 'LEGACY') {
+                    if (task.transport !== TransportMode.Legacy) {
                         const lable = task.name + ' (' + ((task.state && task.state.datetime) ? 'last run ' + this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy') : 'never ran') + ')';
                         exist_replicationField.options.push({ label: lable, value: task });
+                        if (this.pk === task.id) {
+                          this.loadOrClearReplicationTask(task);
+                        }
                     }
                 }
             }
@@ -804,20 +823,13 @@ export class ReplicationWizardComponent {
                 ssh_credentials_source_field.options.push({ label: res[i].name, value: res[i].id });
                 ssh_credentials_target_field.options.push({ label: res[i].name, value: res[i].id });
             }
-            ssh_credentials_source_field.options.push({ label: 'Create New', value: 'NEW' });
-            ssh_credentials_target_field.options.push({ label: 'Create New', value: 'NEW' });
+            ssh_credentials_source_field.options.push({ label: T('Create New'), value: 'NEW' });
+            ssh_credentials_target_field.options.push({ label: T('Create New'), value: 'NEW' });
         })
 
         this.entityWizard.formArray.controls[0].controls['exist_replication'].valueChanges.subscribe((value: any) => {
             if (value !== null) {
-                if (value !== undefined && value !== '') {
-                    this.loadReplicationTask(value);
-                } else {
-                    if (this.selectedReplicationTask !== undefined && this.selectedReplicationTask !== '') {
-                        this.clearReplicationTask();
-                    }
-                }
-                this.selectedReplicationTask = value;
+              this.loadOrClearReplicationTask(value);
             }
         });
         this.entityWizard.formArray.controls[0].controls['source_datasets'].valueChanges.subscribe(() => {
@@ -833,9 +845,9 @@ export class ReplicationWizardComponent {
             const datasetName = i === 'source' ? 'source_datasets' : 'target_dataset';
             const datasetFrom = datasetName + '_from';
             this.entityWizard.formArray.controls[0].controls[datasetFrom].valueChanges.subscribe((value: any) => {
-                if (value === 'remote') {
+                if (value === DatasetSource.Remote) {
                     if (datasetFrom === 'source_datasets_from') {
-                        this.entityWizard.formArray.controls[0].controls['target_dataset_from'].setValue('local');
+                        this.entityWizard.formArray.controls[0].controls['target_dataset_from'].setValue(DatasetSource.Local);
                         this.setDisable('target_dataset_from', true, false, 0);
                     }
                     const disabled = this.entityWizard.formArray.controls[0].controls[credentialName].value ? false : true;
@@ -849,7 +861,7 @@ export class ReplicationWizardComponent {
             });
 
             this.entityWizard.formArray.controls[0].controls[credentialName].valueChanges.subscribe((value: any) => {
-                if (value === 'NEW' && this.entityWizard.formArray.controls[0].controls[datasetFrom].value === 'remote') {
+                if (value === 'NEW' && this.entityWizard.formArray.controls[0].controls[datasetFrom].value === DatasetSource.Remote) {
                     this.createSSHConnection(credentialName);
                     this.setDisable(datasetName, false, false, 0);
                 } else {
@@ -883,16 +895,27 @@ export class ReplicationWizardComponent {
         });
     }
 
+    loadOrClearReplicationTask(task: ReplicationTask): void {
+      if (task !== undefined) {
+        this.loadReplicationTask(task);
+      } else {
+        if (this.selectedReplicationTask !== undefined) {
+          this.clearReplicationTask();
+        }
+      }
+      this.selectedReplicationTask = task;
+    }
+
     step1Init() {
         this.entityWizard.formArray.controls[1].controls['retention_policy'].valueChanges.subscribe((value: any) => {
-            const disable = value === 'SOURCE' ? true : false;
+            const disable = value === RetentionPolicy.Source;
             disable ? this.entityWizard.formArray.controls[1].controls['lifetime_value'].disable() : this.entityWizard.formArray.controls[1].controls['lifetime_value'].enable();
             disable ? this.entityWizard.formArray.controls[1].controls['lifetime_unit'].disable() : this.entityWizard.formArray.controls[1].controls['lifetime_unit'].enable();
         });
     }
 
     getSourceChildren(node: any) {
-        const fromLocal = this.entityWizard.formArray.controls[0].controls['source_datasets_from'].value === 'local' ? true : false;
+        const fromLocal = this.entityWizard.formArray.controls[0].controls['source_datasets_from'].value === DatasetSource.Local;
         const sshCredentials = this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value;
 
         if (fromLocal) {
@@ -916,7 +939,7 @@ export class ReplicationWizardComponent {
     }
 
     getTargetChildren(node: any) {
-        const fromLocal = this.entityWizard.formArray.controls[0].controls['target_dataset_from'].value === 'local' ? true : false;
+        const fromLocal = this.entityWizard.formArray.controls[0].controls['target_dataset_from'].value === DatasetSource.Local;
         const sshCredentials = this.entityWizard.formArray.controls[0].controls['ssh_credentials_target'].value;
         if (fromLocal) {
             return new Promise((resolve, reject) => {
@@ -945,16 +968,20 @@ export class ReplicationWizardComponent {
         disabled ? this.entityWizard.formArray.controls[stepIndex].controls[field].disable() : this.entityWizard.formArray.controls[stepIndex].controls[field].enable();
     }
 
-    loadReplicationTask(task: any) {
-        if (task.direction === 'PUSH') {
-            task['source_datasets_from'] = 'local';
-            task['target_dataset_from'] = task.ssh_credentials ? 'remote' : 'local';
+    loadReplicationTask(task: any): void {
+        // TODO: Update logic to use ReplicationTask as a type
+        // Add something similar to resourceTransformIncomingRestData for EntityWizard
+        // 'task.periodic_snapshot_tasks' should be type of number[] currently PeriodicSnapshotTask[]
+        // 'task.ssh_credentials' should be type of number[], currently SshCredentials[]
+        if (task.direction === Direction.Push) {
+            task['source_datasets_from'] = DatasetSource.Local;
+            task['target_dataset_from'] = task.ssh_credentials ? DatasetSource.Remote : DatasetSource.Local;
             if (task.ssh_credentials) {
                 task['ssh_credentials_target'] = task.ssh_credentials.id;
             }
         } else {
-            task['source_datasets_from'] = 'remote';
-            task['target_dataset_from'] = 'local';
+            task['source_datasets_from'] = DatasetSource.Remote;
+            task['target_dataset_from'] = DatasetSource.Local;
             task['ssh_credentials_source'] = task.ssh_credentials.id;
         }
 
@@ -966,24 +993,19 @@ export class ReplicationWizardComponent {
         }
 
         if (task.schedule || task.periodic_snapshot_tasks.length > 0) {
-            const scheduleData = task.periodic_snapshot_tasks[0] || task;
-            task['schedule_method'] = 'cron';
-            task['schedule_picker'] = scheduleData.schedule ?
-            scheduleData.schedule.minute + " " +
-            scheduleData.schedule.hour + " " +
-            scheduleData.schedule.dom + " " +
-            scheduleData.schedule.month + " " +
-            scheduleData.schedule.dow : null;
+            const taskData = task.periodic_snapshot_tasks[0] || task;
+            task['schedule_method'] = ScheduleMethod.Cron;
+            task['schedule_picker'] = taskData.schedule ? `${taskData.schedule.minute} ${taskData.schedule.hour} ${taskData.schedule.dom} ${taskData.schedule.month} ${taskData.schedule.dow}` : null;
 
-            if (scheduleData['lifetime_value'] === null && scheduleData['lifetime_unit'] === null) {
-                task['retention_policy'] = 'NONE';
+            if (taskData['lifetime_value'] === null && taskData['lifetime_unit'] === null) {
+                task['retention_policy'] = RetentionPolicy.None;
             } else {
-                task['lifetime_value'] = scheduleData['lifetime_value'];
-                task['lifetime_unit'] = scheduleData['lifetime_unit'];
-                task['retention_policy'] = task.schedule !== null ? 'CUSTOM' : 'SOURCE';
+                task['lifetime_value'] = taskData['lifetime_value'];
+                task['lifetime_unit'] = taskData['lifetime_unit'];
+                task['retention_policy'] = task.schedule !== null ? RetentionPolicy.Custom : RetentionPolicy.Source;
             }
         } else {
-            task['schedule_method'] = 'once';
+            task['schedule_method'] = ScheduleMethod.Once;
         }
         // periodic_snapshot_tasks
         for (let i of ['schedule_method', 'schedule_picker', 'retention_policy', 'lifetime_value', 'lifetime_unit']) {
@@ -1065,7 +1087,7 @@ export class ReplicationWizardComponent {
                     recursive: data['recursive'],
                     schedule: this.parsePickerTime(data['schedule_picker']),
                     lifetime_value: 2,
-                    lifetime_unit: 'WEEK',
+                    lifetime_unit: LifetimeUnit.Week,
                     naming_schema: data['naming_schema'] ? data['naming_schema'] : this.defaultNamingSchema,
                     enabled: true,
                 };
@@ -1098,25 +1120,25 @@ export class ReplicationWizardComponent {
         if (item === 'replication') {
             payload = {
                 name: data['name'],
-                direction: data['source_datasets_from'] === 'remote' ? 'PULL' : 'PUSH',
+                direction: data['source_datasets_from'] === DatasetSource.Remote ? Direction.Pull : Direction.Push,
                 source_datasets: data['source_datasets'],
                 target_dataset: data['target_dataset'],
                 ssh_credentials: data['ssh_credentials_source'] || data['ssh_credentials_target'],
-                transport: data['transport'] ? data['transport'] : 'LOCAL',
+                transport: data['transport'] ? data['transport'] : TransportMode.Local,
                 retention_policy: data['retention_policy'],
                 recursive: data['recursive'],
                 encryption: data['encryption'],
             }
             if (payload.encryption) {
                 payload['encryption_key_format'] = data['encryption_key_format'];
-                payload['encryption_key'] = data['encryption_key_format'] === 'PASSPHRASE' ? data['encryption_key_passphrase'] : (data['encryption_key_generate'] ? this.replicationService.generateEncryptionHexKey(64): data['encryption_key_hex']);
+                payload['encryption_key'] = data['encryption_key_format'] === EncryptionKeyFormat.Passphrase ? data['encryption_key_passphrase'] : (data['encryption_key_generate'] ? this.replicationService.generateEncryptionHexKey(64): data['encryption_key_hex']);
                 payload['encryption_key_location'] = data['encryption_key_location_truenasdb'] ? '$TrueNAS' : data['encryption_key_location'];
             }
 
             // schedule option
-            if (data['schedule_method'] === 'cron') {
+            if (data['schedule_method'] === ScheduleMethod.Cron) {
                 payload['auto'] = true;
-                if (payload['direction'] === 'PULL') {
+                if (payload['direction'] === Direction.Pull) {
                     payload['schedule'] = this.parsePickerTime(data['schedule_picker']);
                     payload['naming_schema'] = data['naming_schema'] ? [data['naming_schema']] : [this.defaultNamingSchema]; //default?
                 } else {
@@ -1124,23 +1146,23 @@ export class ReplicationWizardComponent {
                 }
             } else {
                 payload['auto'] = false;
-                if (payload['direction'] === 'PULL') {
+                if (payload['direction'] === Direction.Pull) {
                     payload['naming_schema'] = data['naming_schema'] ? [data['naming_schema']] : [this.defaultNamingSchema];
                 } else {
                     payload['also_include_naming_schema'] = data['naming_schema'] ? [data['naming_schema']] : [this.defaultNamingSchema];
                 }
             }
 
-            if (data['retention_policy'] === 'CUSTOM') {
+            if (data['retention_policy'] === RetentionPolicy.Custom) {
                 payload['lifetime_value'] = data['lifetime_value'];
                 payload['lifetime_unit'] = data['lifetime_unit'];
             }
 
-            if (payload['transport'] === 'SSH+NETCAT') {
-                payload['netcat_active_side'] = 'REMOTE'; // default?
+            if (payload['transport'] === TransportMode.Netcat) {
+                payload['netcat_active_side'] = NetcatMode.Remote; // default?
             }
 
-            payload['readonly'] = data['schedule_method'] === 'cron' || data['readonly'] ? 'SET' : 'IGNORE';
+            payload['readonly'] = data['schedule_method'] === ScheduleMethod.Cron || data['readonly'] ? 'SET' : 'IGNORE';
 
             return this.ws.call('replication.target_unmatched_snapshots', [
                 payload['direction'],
@@ -1193,8 +1215,8 @@ export class ReplicationWizardComponent {
 
         for (const item in createdItems) {
             if (!toStop) {
-                if (!(item === 'periodic_snapshot_tasks' && (value['schedule_method'] !== 'cron' || value['source_datasets_from'] !== 'local')) &&
-                !(item === 'snapshot' && (this.eligibleSnapshots > 0 || value['source_datasets_from'] !== 'local'))) {
+                if (!(item === 'periodic_snapshot_tasks' && (value['schedule_method'] !== ScheduleMethod.Cron || value['source_datasets_from'] !== DatasetSource.Local)) &&
+                !(item === 'snapshot' && (this.eligibleSnapshots > 0 || value['source_datasets_from'] !== DatasetSource.Local))) {
                     await this.doCreate(value, item).then(
                         (res) => {
                             if (item === 'snapshot') {
@@ -1217,7 +1239,7 @@ export class ReplicationWizardComponent {
             }
         }
 
-        if (value['schedule_method'] === 'once' && createdItems['replication'] != undefined) {
+        if (value['schedule_method'] === ScheduleMethod.Once && createdItems['replication'] != undefined) {
             await this.ws.call('replication.run', [createdItems['replication']]).toPromise().then(
                 (res) => {
                     this.dialogService.Info(T('Task started'), T('Replication <i>') + value['name'] + T('</i> has started.'), '500px', 'info', true);
@@ -1227,7 +1249,7 @@ export class ReplicationWizardComponent {
 
         this.loader.close();
         if (!toStop) {
-            this.router.navigate(new Array('/').concat(this.route_success));
+          this.modalService.close('slide-in-form');
         }
     }
 
@@ -1345,23 +1367,23 @@ export class ReplicationWizardComponent {
     }
 
     getSnapshots() {
-        let transport = this.entityWizard.formArray.controls[0].controls['transport'].enabled ? this.entityWizard.formArray.controls[0].controls['transport'].value : 'LOCAL';
+        let transport = this.entityWizard.formArray.controls[0].controls['transport'].enabled ? this.entityWizard.formArray.controls[0].controls['transport'].value : TransportMode.Local;
         // count local snapshots if transport is SSH/SSH-NETCAT, and direction is PUSH
         if (this.entityWizard.formArray.controls[0].controls['ssh_credentials_target'].value) {
-            transport = 'LOCAL';
+            transport = TransportMode.Local;
         }
         const payload = [
             this.entityWizard.formArray.controls[0].controls['source_datasets'].value || [],
             (this.entityWizard.formArray.controls[0].controls['naming_schema'].enabled && this.entityWizard.formArray.controls[0].controls['naming_schema'].value) ? this.entityWizard.formArray.controls[0].controls['naming_schema'].value.split(' ') : [this.defaultNamingSchema],
             transport,
-            transport === 'LOCAL' ? null : this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value,
+            transport === TransportMode.Local ? null : this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value,
         ];
 
         if (payload[0].length > 0) {
             this.ws.call('replication.count_eligible_manual_snapshots', payload).subscribe(
                 (res) => {
                     this.eligibleSnapshots = res.eligible;
-                    const isPush = this.entityWizard.formArray.controls[0].controls['source_datasets_from'].value === 'local';
+                    const isPush = this.entityWizard.formArray.controls[0].controls['source_datasets_from'].value === DatasetSource.Local;
                     let spanClass = 'info-paragraph';
                     let snapexpl = '';
                     if (res.eligible === 0) {

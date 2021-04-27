@@ -28,6 +28,7 @@ import { CronFormComponent } from './advanced/cron/cron-form/cron-form.component
 import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
 import { InitshutdownFormComponent } from './advanced/initshutdown/initshutdown-form/initshutdown-form.component';
 import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-list/initshutdown-list.component';
+import { ViewEnclosureComponent } from './viewenclosure';
 
 export const routes: Routes = [
   {
@@ -45,6 +46,10 @@ export const routes: Routes = [
       path: 'advanced',
       component: AdvancedSettingsComponent,
       data: { title: T('Advanced'), breadcrumb: T('Advanced'), icon: 'settings' },
+    }, {
+      path: 'viewenclosure',
+      component: ViewEnclosureComponent,
+      data: { title: T('View Enclosure'), breadcrumb: T('View Enclosure'), icon: 'settings' },
     }, {
       path: 'boot',
       data: { title: T('Boot'), breadcrumb: T('Boot'), icon: 'replay' },
