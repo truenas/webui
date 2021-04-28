@@ -159,7 +159,7 @@ export class EntityUtils {
 
   bool(v: any): boolean {
     return v === 'false' || v === 'null' || v === 'NaN' || v === 'undefined'
-                   || v === '0'
+      || v === '0'
       ? false
       : !!v;
   }
@@ -194,7 +194,7 @@ export class EntityUtils {
       result = false;
     } else if (Array.isArray(item)) {
       let isAllEmpty = true;
-      item.forEach(subValue => {
+      item.forEach((subValue) => {
         if (this.filterArrayFunction(subValue)) {
           isAllEmpty = false;
         }
@@ -204,7 +204,7 @@ export class EntityUtils {
       }
     } else if (typeof item === 'object') {
       let isAllEmpty = true;
-      Object.values(item).forEach(value => {
+      Object.values(item).forEach((value) => {
         if (this.filterArrayFunction(value)) {
           isAllEmpty = false;
         }
@@ -248,9 +248,9 @@ export class EntityUtils {
     return result;
   }
 
-  createRelations(relations:Relation[]) {
-    const result = relations.map(relation => {
-      let relationFieldName = relation.fieldName;
+  createRelations(relations: Relation[]) {
+    const result = relations.map((relation) => {
+      const relationFieldName = relation.fieldName;
 
       return {
         action: 'SHOW',
@@ -350,7 +350,6 @@ export class EntityUtils {
 
       fieldConfig['templateListField'] = listFields;
     } else if (schemaConfig.schema.type == 'dict') {
-
       if (parentIsList) {
         fieldConfig = null;
         if (schemaConfig.schema.attrs.length > 0) {
@@ -361,16 +360,16 @@ export class EntityUtils {
           };
 
           if (relations) {
-            (dictLabel as any)['relation']  = this.createRelations(relations);
+            (dictLabel as any)['relation'] = this.createRelations(relations);
           }
 
           results = results.concat(dictLabel);
 
-          (schemaConfig.schema.attrs as any[]).forEach(dictConfig => {
+          (schemaConfig.schema.attrs as any[]).forEach((dictConfig) => {
             const subResults = this.parseSchemaFieldConfig(dictConfig, name, parentIsList);
 
             if (relations) {
-              subResults.forEach(subResult => {
+              subResults.forEach((subResult) => {
                 subResult['relation'] = this.createRelations(relations);
               });
             }
@@ -387,13 +386,13 @@ export class EntityUtils {
             fieldConfig['relation'] = this.createRelations(relations);
           }
 
-          let subFields: any[]= [];
-          (schemaConfig.schema.attrs as any[]).forEach(dictConfig => {
-            let fields = this.parseSchemaFieldConfig(dictConfig, null, false);
+          let subFields: any[] = [];
+          (schemaConfig.schema.attrs as any[]).forEach((dictConfig) => {
+            const fields = this.parseSchemaFieldConfig(dictConfig, null, false);
             subFields = subFields.concat(fields);
 
             if (relations) {
-              subFields.forEach(subResult => {
+              subFields.forEach((subResult) => {
                 subResult['relation'] = this.createRelations(relations);
               });
             }
@@ -401,7 +400,6 @@ export class EntityUtils {
           fieldConfig['subFields'] = subFields;
         }
       }
-
     }
 
     if (fieldConfig) {
@@ -439,5 +437,4 @@ export class EntityUtils {
 
     return results;
   }
-
 }

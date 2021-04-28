@@ -49,7 +49,7 @@ export class ChartFormComponent {
     this.title = title;
   }
 
-  parseSchema(catalogApp: any, isEdit=false) {
+  parseSchema(catalogApp: any, isEdit = false) {
     try {
       this.catalogApp = catalogApp;
       this.title = this.catalogApp.name;
@@ -133,7 +133,7 @@ export class ChartFormComponent {
       release_name: data.release_name,
       train: 'charts',
       version: 'latest',
-      values: data
+      values: data,
     });
 
     if (this.rowName) {
