@@ -2,16 +2,20 @@ import {
   Directive, ElementRef, Input, Output, HostBinding, HostListener, EventEmitter, OnInit,
 } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
+import { LayoutService } from 'app/core/services/layout.service';
 import * as domHelper from '../../helpers/dom.helper';
 
 @Directive({ selector: '[sideNavAccordion]' })
 export class SideNavAccordionDirective implements OnInit {
-  constructor(private el: ElementRef) {
-  }
+  constructor(
+    private el: ElementRef,
+    private layoutService: LayoutService,
+  ) {}
+
   ngOnInit() {
     const self = this;
     var subMenu = this.el.nativeElement.querySelector('.mat-list-item-content > mat-nav-list');
-    const isCollapsed = domHelper.hasClass(document.body, 'collapsed-menu');
+    const isCollapsed = this.layoutService.isMenuCollapsed;
     if (subMenu) this.el.nativeElement.className += ' has-submenu';
 
     // remove open class that is added my router
@@ -39,14 +43,14 @@ export class SideNavAccordionDirective implements OnInit {
   @HostListener('mouseenter')
   onMouseEnter() {
     const elem = this.el.nativeElement;
-    const isCollapsed = domHelper.hasClass(document.body, 'collapsed-menu');
+    const isCollapsed = this.layoutService.isMenuCollapsed;
     if (!isCollapsed) return;
     domHelper.addClass(elem, 'open');
   }
   @HostListener('mouseleave')
   onMouseLeave() {
     const elem = this.el.nativeElement;
-    const isCollapsed = domHelper.hasClass(document.body, 'collapsed-menu');
+    const isCollapsed = this.layoutService.isMenuCollapsed;
     if (!isCollapsed) return;
     domHelper.removeClass(elem, 'open');
   }
