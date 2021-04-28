@@ -13,7 +13,7 @@ import { ViewControllerComponent } from 'app/core/components/viewcontroller/view
 import { Display } from 'app/core/components/display/display.component';
 import { ViewButtonComponent } from './viewbutton/viewbutton.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { FormsModule }   from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { CommonDirectivesModule } from '../../directives/common/common-directives.module';
 
 import { ViewChartComponent } from 'app/core/components/viewchart/viewchart.component';
@@ -34,7 +34,6 @@ import { WidgetMemoryComponent } from 'app/core/components/widgets/widgetmemory/
 import { WidgetPoolComponent } from 'app/core/components/widgets/widgetpool/widgetpool.component';
 import { SimpleFailoverBtnComponent, SimpleFailoverBtnDialog } from 'app/core/components/widgets/widgetsysinfo/simple-failover-btn.component';
 
-
 import { TranslateModule } from '@ngx-translate/core';
 import { ContextMenuComponent } from './context-menu/context-menu.component';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
@@ -46,7 +45,7 @@ import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.compo
 import { HtmlTooltipDirective } from './directives/html-tooltip/html-tooltip.directive';
 /*
  *
- * This is the Core Module. By importing this module you'll 
+ * This is the Core Module. By importing this module you'll
  * ensure your page will have the right dependencies in place
  * to make use of Core Components
  *
@@ -62,7 +61,7 @@ import { HtmlTooltipDirective } from './directives/html-tooltip/html-tooltip.dir
     FormsModule,
     TranslateModule,
     CommonDirectivesModule,
-    EntityModule
+    EntityModule,
   ],
   declarations: [
     ContextMenuComponent,
@@ -106,7 +105,7 @@ import { HtmlTooltipDirective } from './directives/html-tooltip/html-tooltip.dir
     ContextMenuComponent,
     CopyPasteMessageComponent,
     PageComponent,
-    ViewComponent, 
+    ViewComponent,
     ViewChartComponent,
     ViewChartDonutComponent,
     ViewChartGaugeComponent,
@@ -132,7 +131,7 @@ import { HtmlTooltipDirective } from './directives/html-tooltip/html-tooltip.dir
     SimpleFailoverBtnDialog,
     CopyButtonComponent,
   ],
-  entryComponents:[
+  entryComponents: [
     ContextMenuComponent,
     CopyPasteMessageComponent,
     ViewComponent,
@@ -159,8 +158,8 @@ import { HtmlTooltipDirective } from './directives/html-tooltip/html-tooltip.dir
     SimpleFailoverBtnDialog,
     CopyButtonComponent,
   ],
-  providers:[
-    StorageService
-  ]
+  providers: [
+    StorageService,
+  ],
 })
 export class CoreComponents {}

@@ -13,23 +13,23 @@ import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-set
 
 @Component({
   selector: 'app-scrub-task-add',
-  template: `<entity-form [conf]="this"></entity-form>`,
+  template: '<entity-form [conf]="this"></entity-form>',
   providers: [TaskService],
 })
 export class ScrubFormComponent {
-  protected queryCall: string = 'pool.scrub.query';
+  protected queryCall = 'pool.scrub.query';
   protected queryKey = 'id';
   protected pk: number;
   protected editCall = 'pool.scrub.update';
   protected addCall = 'pool.scrub.create';
   protected entityForm: EntityFormComponent;
-  protected isEntity: boolean = true;
-  protected preTaskName: string = 'scrub';
-  protected isOneColumnForm: boolean = true;
-  public title: string;
-  public isNew: boolean = false;
-  public fieldConfig: FieldConfig[] = [];
-  public fieldSets: FieldSets = new FieldSets([
+  protected isEntity = true;
+  protected preTaskName = 'scrub';
+  protected isOneColumnForm = true;
+  title: string;
+  isNew = false;
+  fieldConfig: FieldConfig[] = [];
+  fieldSets: FieldSets = new FieldSets([
     {
       name: helptext.scrub_fieldsets[0],
       class: 'add-scrub',
@@ -100,7 +100,7 @@ export class ScrubFormComponent {
     this.title = entityForm.isNew ? helptext.scrub_task_add : helptext.scrub_task_edit;
 
     this.volume_field = this.fieldSets.config('pool');
-    this.taskService.getVolumeList().subscribe((res) => {
+    this.taskService.getVolumeList().subscribe((res: any[]) => {
       res.forEach((item) => {
         this.volume_field.options.push({ label: item.name, value: item.id });
       });
@@ -119,7 +119,7 @@ export class ScrubFormComponent {
     });
   }
 
-  beforeSubmit(value) {
+  beforeSubmit(value: any) {
     const spl = value.scrub_picker.split(' ');
     value.schedule = {};
     value.schedule['minute'] = spl[0];
@@ -130,7 +130,7 @@ export class ScrubFormComponent {
     delete value.scrub_picker;
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     this.entityForm.formGroup.controls['threshold'].setValue(data.threshold);
     this.entityForm.formGroup.controls['enabled'].setValue(data.enabled);
     this.entityForm.formGroup.controls['description'].setValue(data.description);

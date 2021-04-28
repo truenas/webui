@@ -11,173 +11,173 @@ import { helptext_system_support as helptext } from 'app/helptext/system/support
 
 @Component({
   selector: 'app-proactive',
-  template : `<entity-form [conf]="this"></entity-form>`
+  template: '<entity-form [conf]="this"></entity-form>',
 })
 export class ProactiveComponent {
-  public entityEdit: any;
+  entityEdit: any;
   protected queryCall = 'support.config';
-  public contacts: any;
-  public controls: any;
-  public save_button_enabled: boolean;
-  public title = helptext.proactive.title;
-  public fieldConfig: FieldConfig[] = []
-  public fieldSets: FieldSet[] = [
-  {
-    name: 'col1',
-    label: false,
-    config:[
-      {
-        type: 'paragraph',
-        name: 'proactive_title',
-        paraText: helptext.proactive.primary_contact,
-        tooltip: helptext.proactive.instructions
-      },
-      {
-        type: 'input',
-        name: 'name',
-        placeholder : helptext.proactive.pc_name_placeholder,
-        required: true,
-        validation : helptext.proactive.pc_validation,
-        relation: [{
-          action: 'DISABLE',
-          when: [{
+  contacts: any;
+  controls: any;
+  save_button_enabled: boolean;
+  title = helptext.proactive.title;
+  fieldConfig: FieldConfig[] = [];
+  fieldSets: FieldSet[] = [
+    {
+      name: 'col1',
+      label: false,
+      config: [
+        {
+          type: 'paragraph',
+          name: 'proactive_title',
+          paraText: helptext.proactive.primary_contact,
+          tooltip: helptext.proactive.instructions,
+        },
+        {
+          type: 'input',
+          name: 'name',
+          placeholder: helptext.proactive.pc_name_placeholder,
+          required: true,
+          validation: helptext.proactive.pc_validation,
+          relation: [{
+            action: 'DISABLE',
+            when: [{
               name: 'enabled',
               value: false,
-          }]
-        }]
-      },
-      {
-        type: 'input',
-        name: 'title',
-        placeholder : helptext.proactive.pc_title_placeholder,
-        required: true,
-        validation : helptext.proactive.pc_validation,
-        relation: [{
-          action: 'DISABLE',
-          when: [{
+            }],
+          }],
+        },
+        {
+          type: 'input',
+          name: 'title',
+          placeholder: helptext.proactive.pc_title_placeholder,
+          required: true,
+          validation: helptext.proactive.pc_validation,
+          relation: [{
+            action: 'DISABLE',
+            when: [{
               name: 'enabled',
               value: false,
-          }]
-        }]
-      },
-      {
-        type: 'input',
-        name: 'email',
-        placeholder : helptext.proactive.pc_email_placeholder,
-        required: true,
-        validation : helptext.proactive.pc_email_validation,
-        relation: [{
-          action: 'DISABLE',
-          when: [{
+            }],
+          }],
+        },
+        {
+          type: 'input',
+          name: 'email',
+          placeholder: helptext.proactive.pc_email_placeholder,
+          required: true,
+          validation: helptext.proactive.pc_email_validation,
+          relation: [{
+            action: 'DISABLE',
+            when: [{
               name: 'enabled',
               value: false,
-          }]
-        }]
-      },
-      {
-        type: 'input',
-        name: 'phone',
-        placeholder : helptext.proactive.pc_phone_placeholder,
-        required: true,
-        validation : helptext.proactive.pc_validation,
-        relation: [{
-          action: 'DISABLE',
-          when: [{
+            }],
+          }],
+        },
+        {
+          type: 'input',
+          name: 'phone',
+          placeholder: helptext.proactive.pc_phone_placeholder,
+          required: true,
+          validation: helptext.proactive.pc_validation,
+          relation: [{
+            action: 'DISABLE',
+            when: [{
               name: 'enabled',
               value: false,
-          }]
-        }]
-      },
-    ]
-  },
-  {
-    name: 'col2',
-    label: false,
-    config:[
-      {
-        type: 'paragraph',
-        name: 'proactive_second_title',
-        paraText: helptext.proactive.secondary_contact
-      },
-      {
-        type: 'input',
-        name: 'secondary_name',
-        placeholder : helptext.proactive.sec_name_placeholder,
-        required: true,
-        validation : helptext.proactive.pc_validation,
-        relation: [{
-          action: 'DISABLE',
-          when: [{
+            }],
+          }],
+        },
+      ],
+    },
+    {
+      name: 'col2',
+      label: false,
+      config: [
+        {
+          type: 'paragraph',
+          name: 'proactive_second_title',
+          paraText: helptext.proactive.secondary_contact,
+        },
+        {
+          type: 'input',
+          name: 'secondary_name',
+          placeholder: helptext.proactive.sec_name_placeholder,
+          required: true,
+          validation: helptext.proactive.pc_validation,
+          relation: [{
+            action: 'DISABLE',
+            when: [{
               name: 'enabled',
               value: false,
-          }]
-        }]
-      },
-      {
-        type: 'input',
-        name: 'secondary_title',
-        placeholder :  helptext.proactive.sec_title_placeholder,
-        required: true,
-        validation : helptext.proactive.pc_validation,
-        relation: [{
-          action: 'DISABLE',
-          when: [{
+            }],
+          }],
+        },
+        {
+          type: 'input',
+          name: 'secondary_title',
+          placeholder: helptext.proactive.sec_title_placeholder,
+          required: true,
+          validation: helptext.proactive.pc_validation,
+          relation: [{
+            action: 'DISABLE',
+            when: [{
               name: 'enabled',
               value: false,
-          }]
-        }]
-      },
-      {
-        type: 'input',
-        name: 'secondary_email',
-        placeholder : helptext.proactive.sec_email_placeholder,
-        validation: helptext.proactive.sec_email_validation,
-        required: true,
-        relation: [{
-          action: 'DISABLE',
-          when: [{
+            }],
+          }],
+        },
+        {
+          type: 'input',
+          name: 'secondary_email',
+          placeholder: helptext.proactive.sec_email_placeholder,
+          validation: helptext.proactive.sec_email_validation,
+          required: true,
+          relation: [{
+            action: 'DISABLE',
+            when: [{
               name: 'enabled',
               value: false,
-          }]
-        }]
-      },
-      {
-        type: 'input',
-        name: 'secondary_phone',
-        placeholder : helptext.proactive.sec_phone_placeholder,
-        required: true,
-        validation : helptext.proactive.pc_validation,
-        relation: [{
-          action: 'DISABLE',
-          when: [{
+            }],
+          }],
+        },
+        {
+          type: 'input',
+          name: 'secondary_phone',
+          placeholder: helptext.proactive.sec_phone_placeholder,
+          required: true,
+          validation: helptext.proactive.pc_validation,
+          relation: [{
+            action: 'DISABLE',
+            when: [{
               name: 'enabled',
               value: false,
-          }]
-        }]
-      }
-    ]
-  },
-  {
-    name: 'enabled',
-    label: false,
-    width: '100%',
-    config:[
-      {
-        type: 'checkbox',
-        name: 'enabled',
-        placeholder: helptext.proactive.enable_checkbox_placeholder,
-      }
-    ]
-  },
-]
+            }],
+          }],
+        },
+      ],
+    },
+    {
+      name: 'enabled',
+      label: false,
+      width: '100%',
+      config: [
+        {
+          type: 'checkbox',
+          name: 'enabled',
+          placeholder: helptext.proactive.enable_checkbox_placeholder,
+        },
+      ],
+    },
+  ];
 
-  constructor(public ws: WebSocketService, protected loader: AppLoaderService, 
+  constructor(public ws: WebSocketService, protected loader: AppLoaderService,
     protected dialogService: DialogService, private translate: TranslateService,
     private modalService: ModalService) { }
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
-    const proactiveFields: Array<any> = [
+    const proactiveFields: any[] = [
       'enabled',
       'name',
       'title',
@@ -187,24 +187,24 @@ export class ProactiveComponent {
       'secondary_title',
       'secondary_email',
       'secondary_phone',
-      'proactive_title'
+      'proactive_title',
     ];
 
-    const proactiveParatext: Array<any> = [
+    const proactiveParatext: any[] = [
       'proactive_instructions',
       'proactive_title',
       'proactive_second_title',
     ];
 
     setTimeout(() => {
-      this.ws.call('support.is_available').subscribe((res) => { 
+      this.ws.call('support.is_available').subscribe((res) => {
         if (!res) {
           for (const i in proactiveFields) {
             this.entityEdit.setDisabled(proactiveFields[i], true, false);
             proactiveParatext.forEach((i) => {
               document.getElementById(i).style.opacity = '0.38';
             });
-          };
+          }
           this.save_button_enabled = false;
         } else {
           this.getContacts();
@@ -217,9 +217,8 @@ export class ProactiveComponent {
             }
           });
         }
-      })
+      });
     }, 1000);
-
   }
 
   getContacts() {
@@ -228,37 +227,36 @@ export class ProactiveComponent {
       if (res && res !== {}) {
         for (const i in res) {
           if (i !== 'id') {
-            this.controls[i].setValue(res[i])
+            this.controls[i].setValue(res[i]);
           }
         }
       }
-    })
+    });
   }
 
-  beforeSubmit(data) {
+  beforeSubmit(data: any) {
     delete data.proactive_instructions;
     delete data.proactive_second_title;
     delete data.proactive_section_border;
-    delete data.proactive_section_title
+    delete data.proactive_section_title;
     delete data.proactive_title;
     if (!data.enabled) {
       data.enabled = false;
     }
   }
 
-  customSubmit(data) {
+  customSubmit(data: any) {
     this.loader.open();
     this.ws.call('support.update', [data]).subscribe(() => {
       this.loader.close();
       this.modalService.close('slide-in-form');
-      this.dialogService.Info(helptext.proactive.dialog_title, 
+      this.dialogService.Info(helptext.proactive.dialog_title,
         helptext.proactive.dialog_mesage, '350px', 'info', true);
-    }, 
+    },
     (err) => {
       this.loader.close();
       this.dialogService.errorReport(helptext.proactive.dialog_err,
         err.error.message, err.error.traceback);
     });
-  };
-
+  }
 }

@@ -1,1 +1,1 @@
-export {ZvolFormComponent} from './zvol-form.component';
+export { ZvolFormComponent } from './zvol-form.component';

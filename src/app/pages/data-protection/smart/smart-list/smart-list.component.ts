@@ -1,30 +1,33 @@
+import { Router, ActivatedRoute } from '@angular/router';
 import { Component, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
+
 import { StorageService } from 'app/services/storage.service';
 import helptext from 'app/helptext/data-protection/smart/smart';
 import { T } from 'app/translate-marker';
-import { SmartFormComponent } from '../smart-form/smart-form.component';
+import { SmartFormComponent } from 'app/pages/data-protection/smart/smart-form/smart-form.component';
 import { ModalService } from 'app/services/modal.service';
-import { Router, ActivatedRoute } from '@angular/router';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { TaskService } from 'app/services';
-import { WebSocketService } from '../../../../services/ws.service';
+import { TaskService, WebSocketService } from 'app/services';
+import { InputTableConf } from 'app/pages/common/entity/table/table.component';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 
 @Component({
   selector: 'app-smart-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, EntityFormService],
 })
-export class SmartListComponent implements OnDestroy {
-  public title = 'S.M.A.R.T. Tests';
-  public queryCall = 'smart.test.query';
-  protected route_add: string[] = ['tasks', 'smart', 'add'];
-  protected route_add_tooltip = 'Add S.M.A.R.T. Test';
-  protected route_edit: string[] = ['tasks', 'smart', 'edit'];
-  protected wsDelete = 'smart.test.delete';
-  private disksSubscription: Subscription;
+export class SmartListComponent implements InputTableConf, OnDestroy {
+  title = T('S.M.A.R.T. Tests');
+  queryCall = 'smart.test.query';
+  route_add: string[] = ['tasks', 'smart', 'add'];
+  route_add_tooltip = 'Add S.M.A.R.T. Test';
+  route_edit: string[] = ['tasks', 'smart', 'edit'];
+  wsDelete = 'smart.test.delete';
+  entityList: EntityTableComponent;
+  parent: any;
 
-  public columns: Array<any> = [
+  columns: any[] = [
     {
       name: helptext.smartlist_column_disks,
       prop: 'disks',
@@ -38,16 +41,18 @@ export class SmartListComponent implements OnDestroy {
     { name: helptext.smartlist_column_description, prop: 'desc' },
     { name: helptext.smartlist_column_schedule, prop: 'schedule' },
   ];
-  public rowIdentifier = 'type';
-  public config: any = {
+  rowIdentifier = 'type';
+  config: any = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'S.M.A.R.T. Test',
+      title: T('S.M.A.R.T. Test'),
       key_props: ['type', 'desc'],
     },
   };
-  public listDisks = [];
+  listDisks: any[] = [];
+  private disksSubscription: Subscription;
+  private onModalClose: Subscription;
 
   constructor(
     protected ws: WebSocketService,
@@ -63,15 +68,20 @@ export class SmartListComponent implements OnDestroy {
     });
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  afterInit(entityList: EntityTableComponent): void {
+    this.entityList = entityList;
+    this.onModalClose = this.modalService.onClose$.subscribe(() => {
+      this.entityList.getData();
+    });
+  }
+
+  resourceTransformIncomingRestData(data: any[]) {
     return data.map((test) => {
       test.schedule = `${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
       if (test.all_disks) {
         test.disks = [T('All Disks')];
       } else if (test.disks.length) {
-        const readableDisks = test.disks.map((disk) => {
-          return this.listDisks.find((item) => item.identifier === disk).devname;
-        });
+        const readableDisks = test.disks.map((disk: any) => this.listDisks.find((item) => item.identifier === disk).devname);
         test.disks = readableDisks;
       }
       return test;
@@ -87,8 +97,7 @@ export class SmartListComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.disksSubscription) {
-      this.disksSubscription.unsubscribe();
-    }
+    this.disksSubscription?.unsubscribe();
+    this.onModalClose?.unsubscribe();
   }
 }

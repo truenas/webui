@@ -1,4 +1,6 @@
-import { Component, AfterViewInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
+import {
+  Component, AfterViewInit, Input, ViewChild, Output, EventEmitter,
+} from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
@@ -18,56 +20,54 @@ import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'widget',
-  templateUrl:'./widget.component.html'
+  templateUrl: './widget.component.html',
 })
 export class WidgetComponent extends iXObject implements AfterViewInit {
-
-  protected core:CoreService;
-  public themeService: ThemeService;
+  protected core: CoreService;
+  themeService: ThemeService;
   @Input() widgetSize: string;
-  @Input() rendered?:boolean = true;
-  @Input() configurable:boolean = false;
+  @Input() rendered?: boolean = true;
+  @Input() configurable = false;
   @Output() back = new EventEmitter();
-  public title:string = T("Widget Base Class");
-  public chartSize:number;
+  title: string = T('Widget Base Class');
+  chartSize: number;
 
-  //public configurable: boolean = true;
-  public flipAnimation = "stop";
-  public flipDirection = "vertical";
-  public isFlipped: boolean = false;
+  // public configurable: boolean = true;
+  flipAnimation = 'stop';
+  flipDirection = 'vertical';
+  isFlipped = false;
 
-  constructor(public translate: TranslateService){
+  constructor(public translate: TranslateService) {
     super();
     this.core = CoreServiceInjector.get(CoreService);
     this.themeService = CoreServiceInjector.get(ThemeService);
   }
 
-  ngAfterViewInit(){
+  ngAfterViewInit() {
   }
 
-  toggleConfig(){
-    if(this.isFlipped){
-      this.flipAnimation = "unflip";
+  toggleConfig() {
+    if (this.isFlipped) {
+      this.flipAnimation = 'unflip';
     } else {
-      this.flipAnimation = "flip"
+      this.flipAnimation = 'flip';
     }
 
-    if(this.flipDirection == "vertical"){
-      this.flipAnimation += "V";
-    } else if(this.flipDirection == "horizontal"){
-      this.flipAnimation += "H";
+    if (this.flipDirection == 'vertical') {
+      this.flipAnimation += 'V';
+    } else if (this.flipDirection == 'horizontal') {
+      this.flipAnimation += 'H';
     }
 
     this.isFlipped = !this.isFlipped;
   }
 
-  setPreferences(form:NgForm){
-    console.log("******** FORM SUBMITTED!! ********");
+  setPreferences(form: NgForm) {
+    console.log('******** FORM SUBMITTED!! ********');
     console.log(form);
   }
 
-  goBack(){
+  goBack() {
     this.back.emit();
   }
-
 }

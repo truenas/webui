@@ -853,6 +853,9 @@ msgstr "AWS地区"
 msgid "Abort"
 msgstr ""
 
+msgid "Abort the task"
+msgstr ""
+
 msgid "About"
 msgstr "关于"
 
@@ -1057,6 +1060,12 @@ msgid "Add Init/Shutdown Script"
 msgstr ""
 
 msgid "Add Interface"
+msgstr ""
+
+msgid "Add Kerberos Keytab"
+msgstr ""
+
+msgid "Add Kerberos Realm"
 msgstr ""
 
 msgid "Add Kerberos SPN Entry"
@@ -1809,6 +1818,9 @@ msgid ""
 "Append <i>@realm</i> to <i>cn</i> in LDAP queries for both groups and users "
 "when User CN is set)."
 msgstr "在设置用户 CN 时，在 LDAP 查询中为组和用户追加<i>@realm</i>到<i>cn</i>。"
+
+msgid "Append Data"
+msgstr ""
 
 msgid ""
 "Appends a suffix to the share connection path.  This is used to provide "
@@ -4306,6 +4318,9 @@ msgstr "删除"
 msgid "Delete "
 msgstr "删除 "
 
+msgid "Delete Children"
+msgstr ""
+
 msgid "Delete Dataset"
 msgstr "删除数据集"
 
@@ -4629,6 +4644,9 @@ msgstr "目录和权限"
 
 msgid "Directory"
 msgstr "目录"
+
+msgid "Directory Inherit"
+msgstr ""
 
 msgid "Directory Mask"
 msgstr "目录掩码"
@@ -4985,6 +5003,9 @@ msgstr ""
 msgid "Edit DNS Authenticator"
 msgstr ""
 
+msgid "Edit Dataset"
+msgstr ""
+
 msgid "Edit Disk(s)"
 msgstr "编辑磁盘"
 
@@ -5004,6 +5025,12 @@ msgid "Edit Init/Shutdown Script"
 msgstr ""
 
 msgid "Edit Interface"
+msgstr ""
+
+msgid "Edit Kerberos Keytab"
+msgstr ""
+
+msgid "Edit Kerberos Realm"
 msgstr ""
 
 msgid "Edit Options"
@@ -6650,6 +6677,9 @@ msgstr ""
 msgid "File Information"
 msgstr "文件信息"
 
+msgid "File Inherit"
+msgstr ""
+
 msgid "File Mask"
 msgstr "文件掩码"
 
@@ -6869,6 +6899,9 @@ msgid "From Name"
 msgstr "从名称"
 
 msgid "Full"
+msgstr ""
+
+msgid "Full Control"
 msgstr ""
 
 msgid "Full Filesystem Replication"
@@ -7769,8 +7802,14 @@ msgstr "继承（加密）"
 msgid "Inherit (non-encrypted)"
 msgstr "继承（未加密）"
 
+msgid "Inherit Only"
+msgstr ""
+
 msgid "Inherit encryption properties from parent"
 msgstr "从父级继承加密属性"
+
+msgid "Inherited"
+msgstr ""
 
 msgid "Inherits"
 msgstr "继承"
@@ -8116,6 +8155,9 @@ msgstr "Kerberos主体"
 
 msgid "Kerberos Realm"
 msgstr "Kerberos领域"
+
+msgid "Kerberos Realms"
+msgstr ""
 
 msgid "Kerberos Settings"
 msgstr "Kerberos设置"
@@ -8888,6 +8930,9 @@ msgstr "型号"
 msgid "Model:"
 msgstr "型号："
 
+msgid "Modify"
+msgstr ""
+
 msgid ""
 "Modify for disks that understand <a "
 "href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\" "
@@ -9348,6 +9393,9 @@ msgstr "没有通讯警告时间"
 msgid "No Encryption (less secure, but faster)"
 msgstr "没有加密（安全性较低，但速度更快）"
 
+msgid "No Inherit"
+msgstr ""
+
 msgid "No Item"
 msgstr ""
 
@@ -9361,6 +9409,9 @@ msgid "No Pools"
 msgstr "没有池"
 
 msgid "No Pools Found"
+msgstr ""
+
+msgid "No Propagate Inherit"
 msgstr ""
 
 msgid "No Recent Events"
@@ -9857,6 +9908,9 @@ msgstr "实体组织单位。"
 
 msgid "Other"
 msgstr "其他"
+
+msgid "Other (Too complicated to be displayed)"
+msgstr ""
 
 msgid "Other Options"
 msgstr "其他选项"
@@ -10457,6 +10511,9 @@ msgstr "私钥"
 msgid "Private Key ID"
 msgstr "私钥ID"
 
+msgid "Privileged"
+msgstr ""
+
 msgid ""
 "Privileges are the same as the guest account.  Guest access is disabled by "
 "default in Windows 10 version 1709 and  Windows Server version 1903. "
@@ -10658,8 +10715,20 @@ msgstr ""
 msgid "Read"
 msgstr "读取"
 
+msgid "Read ACL"
+msgstr ""
+
+msgid "Read Attributes"
+msgstr ""
+
+msgid "Read Data"
+msgstr ""
+
 msgid "Read Errors"
 msgstr "读取错误"
+
+msgid "Read Named Attributes"
+msgstr ""
 
 msgid "Read Only"
 msgstr "只读"
@@ -11668,6 +11737,9 @@ msgstr "保护此数据集中的数据。直到使用加密密钥或密码将其
 
 msgid "Security"
 msgstr "安全"
+
+msgid "Security Settings"
+msgstr ""
 
 msgid ""
 "See <a "
@@ -13685,6 +13757,9 @@ msgstr "与对等方同步成功。"
 msgid "Synced"
 msgstr "已同步"
 
+msgid "Synchronize"
+msgstr ""
+
 msgid "Synchronize Destination Snapshots With Source"
 msgstr "将目标快照与源同步"
 
@@ -14774,8 +14849,8 @@ msgid ""
 "target=\"_blank\">zpool(8)</a> for more details on the special allocation"
 msgstr ""
 
-msgid "Thread number:"
-msgstr "线程号："
+msgid "Thread:"
+msgstr ""
 
 msgid "Threads"
 msgstr "线程"
@@ -16172,11 +16247,26 @@ msgstr ""
 msgid "Write"
 msgstr "写入"
 
+msgid "Write ACL"
+msgstr ""
+
+msgid "Write Attributes"
+msgstr ""
+
+msgid "Write Data"
+msgstr ""
+
 msgid "Write Errors"
 msgstr "写入错误"
 
+msgid "Write Named Attributes"
+msgstr ""
+
 msgid "Write Only"
 msgstr "只写"
+
+msgid "Write Owner"
+msgstr ""
 
 msgid "Write a percentage limit of a single CPU core."
 msgstr "输入单个处理器核心的占用百分比限制。"
@@ -16367,6 +16457,9 @@ msgstr "备注"
 msgid "coredumpsize"
 msgstr "核心转储大小"
 
+msgid "cores"
+msgstr ""
+
 msgid "cpuset"
 msgstr "cpuset"
 
@@ -16405,6 +16498,9 @@ msgstr "执行_statfs"
 
 msgid "error"
 msgstr "错误"
+
+msgid "everyone@"
+msgstr ""
 
 msgid "exec_clean"
 msgstr "执行_清洗"
@@ -16447,6 +16543,9 @@ msgstr "过期日期在"
 
 msgid "group"
 msgstr "群组"
+
+msgid "group@"
+msgstr ""
 
 msgid "gzip (default level, 6)"
 msgstr ""
@@ -16623,6 +16722,9 @@ msgstr "概览"
 msgid "owner"
 msgstr "所有者"
 
+msgid "owner@"
+msgstr ""
+
 msgid "password"
 msgstr "密码"
 
@@ -16681,6 +16783,9 @@ msgid "snapshot"
 msgstr ""
 
 msgid "snapshots"
+msgstr ""
+
+msgid "snapshots could not be deleted."
 msgstr ""
 
 msgid "software, which is provided as-is with no warranty."

@@ -1,32 +1,40 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
+import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
-import { WebSocketService, DialogService, TaskService, JobService, UserService } from '../../../../services';
-import { EntityUtils } from '../../../common/entity/utils';
-import { T } from '../../../../translate-marker';
-import globalHelptext from '../../../../helptext/global-helptext';
+
+import {
+  WebSocketService, DialogService, TaskService, JobService, UserService,
+} from 'app/services';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { T } from 'app/translate-marker';
+import globalHelptext from 'app/helptext/global-helptext';
 import { ModalService } from 'app/services/modal.service';
-import { RsyncFormComponent } from '../rsync-form/rsync-form.component';
+import { RsyncFormComponent } from 'app/pages/data-protection/rsync/rsync-form/rsync-form.component';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { EntityJob } from 'app/interfaces/entity-job.interface';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { EntityTableAction, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 
 @Component({
   selector: 'app-rsync-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, JobService, UserService, EntityFormService],
 })
-export class RsyncListComponent {
-  public title = 'Rsync Tasks';
-  protected queryCall = 'rsynctask.query';
-  protected wsDelete = 'rsynctask.delete';
-  protected route_add: string[] = ['tasks', 'rsync', 'add'];
-  protected route_add_tooltip = 'Add Rsync Task';
-  protected route_edit: string[] = ['tasks', 'rsync', 'edit'];
-  protected entityList: any;
-  protected asyncView = true;
+export class RsyncListComponent implements InputTableConf, OnDestroy {
+  title = T('Rsync Tasks');
+  queryCall = 'rsynctask.query';
+  wsDelete = 'rsynctask.delete';
+  route_add: string[] = ['tasks', 'rsync', 'add'];
+  route_add_tooltip = 'Add Rsync Task';
+  route_edit: string[] = ['tasks', 'rsync', 'edit'];
+  entityList: EntityTableComponent;
+  asyncView = true;
 
-  public columns: Array<any> = [
+  columns: any[] = [
     { name: T('Path'), prop: 'path', always_display: true },
     { name: T('Remote Host'), prop: 'remotehost' },
     { name: T('Remote SSH Port'), prop: 'remoteport', hidden: true },
@@ -45,18 +53,21 @@ export class RsyncListComponent {
     { name: T('Short Description'), prop: 'desc', hidden: true },
     { name: T('User'), prop: 'user' },
     { name: T('Delay Updates'), prop: 'delayupdates', hidden: true },
-    { name: T('Status'), prop: 'state', state: 'state', button: true },
+    {
+      name: T('Status'), prop: 'state', state: 'state', button: true,
+    },
     { name: T('Enabled'), prop: 'enabled', hidden: true },
   ];
-  public rowIdentifier = 'path';
-  public config: any = {
+  rowIdentifier = 'path';
+  config: any = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'Rsync Task',
+      title: T('Rsync Task'),
       key_props: ['remotehost', 'remotemodule'],
     },
   };
+  private onModalClose: Subscription;
 
   constructor(
     protected router: Router,
@@ -71,23 +82,26 @@ export class RsyncListComponent {
     protected entityFormService: EntityFormService,
   ) {}
 
-  afterInit(entityList: any) {
+  afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
+    this.onModalClose = this.modalService.onClose$.subscribe(() => {
+      this.entityList.getData();
+    });
   }
 
-  getActions(row) {
-    const actions = [];
+  getActions(row: any): any[] {
+    const actions: any[] = [];
     actions.push({
       id: row.path,
       icon: 'play_arrow',
       label: T('Run Now'),
       name: 'run',
-      onClick: (members) => {
-        this.dialog.confirm(T('Run Now'), T('Run this rsync now?'), true).subscribe((run) => {
+      onClick: () => {
+        this.dialog.confirm(T('Run Now'), T('Run this rsync now?'), true).subscribe((run: boolean) => {
           if (run) {
-            row.state = 'RUNNING';
+            row.state = { state: EntityJobState.Running };
             this.ws.call('rsynctask.run', [row.id]).subscribe(
-              (res) => {
+              (jobId: number) => {
                 this.dialog.Info(
                   T('Task Started'),
                   'Rsync task <i>' + row.remotehost + ' - ' + row.remotemodule + '</i> started.',
@@ -95,9 +109,9 @@ export class RsyncListComponent {
                   'info',
                   true,
                 );
-                this.job.getJobStatus(res).subscribe((task) => {
-                  row.state = task.state;
-                  row.job = task;
+                this.job.getJobStatus(jobId).subscribe((job: EntityJob) => {
+                  row.state = { state: job.state };
+                  row.job = job;
                 });
               },
               (err) => {
@@ -122,7 +136,7 @@ export class RsyncListComponent {
       icon: 'delete',
       name: 'delete',
       label: T('Delete'),
-      onClick: (task_delete) => {
+      onClick: () => {
         this.entityList.doDelete(row);
       },
     });
@@ -130,7 +144,7 @@ export class RsyncListComponent {
     return actions;
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any[]) {
     return data.map((task) => {
       task.minute = task.schedule['minute'];
       task.hour = task.schedule['hour'];
@@ -141,11 +155,12 @@ export class RsyncListComponent {
       task.cron = `${task.minute} ${task.hour} ${task.dom} ${task.month} ${task.dow}`;
 
       if (task.job == null) {
-        task.state = { state: T('PENDING') };
+        task.state = { state: EntityJobState.Pending };
       } else {
         task.state = { state: task.job.state };
-        this.job.getJobStatus(task.job.id).subscribe((t) => {
-          task.state = t.job ? { state: t.job.state } : null;
+        this.job.getJobStatus(task.job.id).subscribe((job: EntityJob) => {
+          task.state = { state: job.state };
+          task.job = job;
         });
       }
       return task;
@@ -156,9 +171,9 @@ export class RsyncListComponent {
     this.stateButton(row);
   }
 
-  stateButton(row) {
+  stateButton(row: any) {
     if (row.job) {
-      if (row.state.state === 'RUNNING') {
+      if (row.state.state === EntityJobState.Running) {
         this.entityList.runningStateButton(row.job.id);
       } else {
         this.job.showLogs(row.job);
@@ -178,5 +193,9 @@ export class RsyncListComponent {
 
   doEdit(id: number) {
     this.doAdd(id);
+  }
+
+  ngOnDestroy(): void {
+    this.onModalClose?.unsubscribe();
   }
 }

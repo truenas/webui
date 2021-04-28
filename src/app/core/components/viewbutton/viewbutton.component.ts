@@ -5,24 +5,18 @@ import { ViewControlComponent } from 'app/core/components/viewcontrol/viewcontro
 @Component({
   selector: 'viewbutton',
   templateUrl: './viewbutton.component.html',
-  //styleUrls: ['./viewbutton.component.css']
+  // styleUrls: ['./viewbutton.component.css']
 })
-export class ViewButtonComponent extends ViewControlComponent implements OnInit {
-
+export class ViewButtonComponent extends ViewControlComponent {
   readonly componentName = ViewButtonComponent;
-  public raised: boolean = false;
-  public contextColor: string = "primary";
-  public label: string = 'Button';
-  public tooltipEnabled:boolean = false;
-  public tooltipText: string;
-  public tooltipPlacement: string;
+  raised = false;
+  contextColor = 'primary';
+  label = 'Button';
+  tooltipEnabled = false;
+  tooltipText: string;
+  tooltipPlacement: string;
 
   constructor() {
     super();
   }
-
-  ngOnInit() {
-  }
-
-
 }

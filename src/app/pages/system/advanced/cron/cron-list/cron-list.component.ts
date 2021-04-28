@@ -15,19 +15,19 @@ import { UserService } from '../../../../../services/user.service';
 
 @Component({
   selector: 'app-cron-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, UserService],
 })
 export class CronListComponent {
-  public title = 'Cron Jobs';
+  title = 'Cron Jobs';
   protected wsDelete = 'cronjob.delete';
-  public queryCall: string = 'cronjob.query';
+  queryCall = 'cronjob.query';
   protected route_add: string[] = ['tasks', 'cron', 'add'];
   protected route_add_tooltip = 'Add Cron Job';
   protected route_edit: string[] = ['tasks', 'cron', 'edit'];
-  public entityList: any;
+  entityList: any;
 
-  public columns: Array<any> = [
+  columns: any[] = [
     { name: T('Users'), prop: 'user', always_display: true },
     { name: T('Command'), prop: 'command' },
     { name: T('Description'), prop: 'description' },
@@ -46,8 +46,8 @@ export class CronListComponent {
     { name: T('Hide Stdout'), prop: 'stdout', hidden: true },
     { name: T('Hide Stderr'), prop: 'stderr', hidden: true },
   ];
-  public rowIdentifier = 'user';
-  public config: any = {
+  rowIdentifier = 'user';
+  config: any = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -64,7 +64,7 @@ export class CronListComponent {
     protected taskService: TaskService,
     public dialog: DialogService,
     public modalService: ModalService,
-    public userService: UserService
+    public userService: UserService,
   ) {}
 
   afterInit(entityList: any) {
@@ -85,14 +85,14 @@ export class CronListComponent {
     this.doAdd(id);
   }
 
-  getActions(tableRow) {
+  getActions(tableRow: any) {
     return [
       {
         name: this.config.name,
         label: T('Run Now'),
         id: 'run',
         icon: 'play_arrow',
-        onClick: (row) =>
+        onClick: (row: any) =>
           this.dialog
             .confirm(T('Run Now'), T('Run this job now?'), true)
             .pipe(
@@ -100,11 +100,10 @@ export class CronListComponent {
               switchMap(() => this.ws.call('cronjob.run', [row.id])),
             )
             .subscribe(
-              (res) => {
-                const message =
-                  row.enabled == true
-                    ? T('This job is scheduled to run again ' + row.next_run + '.')
-                    : T('This job will not run again until it is enabled.');
+              () => {
+                const message = row.enabled == true
+                  ? T('This job is scheduled to run again ' + row.next_run + '.')
+                  : T('This job will not run again until it is enabled.');
                 this.dialog.Info(
                   T('Job ' + row.description + ' Completed Successfully'),
                   message,
@@ -113,7 +112,7 @@ export class CronListComponent {
                   true,
                 );
               },
-              (err) => new EntityUtils().handleError(this, err),
+              (err: any) => new EntityUtils().handleError(this, err),
             ),
       },
       {
@@ -121,15 +120,15 @@ export class CronListComponent {
         label: T('Edit'),
         icon: 'edit',
         id: 'edit',
-        onClick: (row) => this.doEdit(row.id),
+        onClick: (row: any) => this.doEdit(row.id),
       },
       {
         id: tableRow.id,
         name: this.config.name,
         icon: 'delete',
         label: T('Delete'),
-        onClick: (row) => {
-          //console.log(row);
+        onClick: (row: any) => {
+          // console.log(row);
           this.entityList.doDelete(row);
         },
       },

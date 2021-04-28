@@ -1,7 +1,7 @@
-<mat-card 
+<mat-card
   class="view-card {{chassis && chassis.front && chassis.front.totalDriveTrays > 7 ? 'mini mini-xl': 'mini'}}"
-  [ngClass]="{'multiple-enclosures': system && system.profile && system.profile.length > 1}" 
-  id="{{currentTab.alias}}" 
+  [ngClass]="{'multiple-enclosures': system && system.profile && system.profile.length > 1}"
+  id="{{currentTab.alias}}"
   (window:resize)="onResize($event)"
   ngClass.gt-md="gt-md"
   ngClass.md="md"
@@ -21,7 +21,7 @@
 
   </mat-toolbar>
 
-  <mat-card-content #cardcontent 
+  <mat-card-content #cardcontent
     fxLayout="row">
     <div fxFlex="60%">
       <!-- LEGEND -->
@@ -63,8 +63,8 @@
         <div *ngIf="enclosure" class="overlay status" style="right: 0;">
           <ng-container *ngFor="let dt of enclosure.driveTrayObjects; let i=index">
             <div *ngIf="findDiskBySlotNumber(i + 1)" style="position:absolute; z-index:12; left:12.5%; top:calc({{stackPositions()[i].y}}px + 8px);">
-              <mat-icon 
-                [ngClass]="{'online': findDiskBySlotNumber(i + 1).status == 'ONLINE', 'alert':findDiskBySlotNumber(i + 1).status !== 'ONLINE' && findDiskBySlotNumber(i + 1).status !== 'AVAILABLE'}" 
+              <mat-icon
+                [ngClass]="{'online': findDiskBySlotNumber(i + 1).status == 'ONLINE', 'alert':findDiskBySlotNumber(i + 1).status !== 'ONLINE' && findDiskBySlotNumber(i + 1).status !== 'AVAILABLE'}"
                 role="img">
                 check_circle
               </mat-icon> &nbsp;
@@ -91,7 +91,7 @@
               <li><strong>Vdev:</strong>  &nbsp;&nbsp;&nbsp;
                 <span *ngIf="selectedVdev.type == 'DISK'">NONE</span>
                 <span *ngIf="selectedVdev.type !== 'DISK'">{{selectedVdev.type == 'None' ? 'UNASSIGNED' : selectedVdev.type}}</span>
-                
+
                 <span *ngIf="selectedVdev.topology"> {{selectedVdev.topology == 'None' ? '' : '(' + selectedVdev.topology.toUpperCase() + ')'}}</span>
               </li>
 
@@ -152,34 +152,34 @@
           <div fxLayout="row wrap" fxLayoutGap="10%">
               <ng-container *ngIf="temperatures && temperatureScales">
                 <ng-container *ngFor="let diskName of temperatures.keys;">
-                  <temperature-meter *ngIf="temperatures.values[diskName]; else notemps" 
-                    [fxFlex]="temperatures && temperatures.keys.length >= 4 ? '40%' : '100%' " 
-                    [source]="diskName" 
+                  <temperature-meter *ngIf="temperatures.values[diskName]; else notemps"
+                    [fxFlex]="temperatures && temperatures.keys.length >= 4 ? '40%' : '100%' "
+                    [source]="diskName"
                     [value]="temperatures.values[diskName]"
                     [unit]="temperatures.unit"
                     [symbolText]="temperatures.symbolText"></temperature-meter>
                   <ng-template #notemps>
                     <div class="no-temp" [fxFlex]="temperatures && temperatures.keys.length >= 4 ? '40%' : '100%' " >
-                      <strong>{{diskName}}:</strong> Unknown{{temperatures.symbolText}} 
-                      <tooltip style="position:relative; top:5px;" 
-                        position="above" 
-                        header="Temperature data missing." 
+                      <strong>{{diskName}}:</strong> Unknown{{temperatures.symbolText}}
+                      <tooltip style="position:relative; top:5px;"
+                        position="above"
+                        header="Temperature data missing."
                         message="No temperature data was reported by the system. There can be a number of reasons why this might occur. For troubleshooting tips please go here">
                       </tooltip>
                     </div>
                   </ng-template>
                 </ng-container>
               </ng-container>
-            
+
             <ul *ngIf="temperatures && !temperatureScales">
               <ng-container>
                 <li *ngFor="let diskName of temperatures.keys;">
                   <strong>{{diskName}}:</strong> &nbsp;&nbsp;&nbsp;
                   {{temperatures.values[diskName] ? temperatures.values[diskName] : 'Temperature not available.'}}
                   {{temperatures.values[diskName] ? temperatures.symbolText + 'C' : ''}}
-                  <tooltip *ngIf="!temperatures.values[diskName]" style="position:relative; top:5px;" 
-                    position="above" 
-                    header="Temperature data missing." 
+                  <tooltip *ngIf="!temperatures.values[diskName]" style="position:relative; top:5px;"
+                    position="above"
+                    header="Temperature data missing."
                     message="No temperature data was reported by the system. There can be a number of reasons why this might occur. For troubleshooting tips please go here">
                   </tooltip>
                 </li>

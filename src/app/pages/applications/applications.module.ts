@@ -65,6 +65,6 @@ import { PullImageFormComponent } from './forms/pull-image-form.component';
     CatalogAddFormComponent,
     CatalogEditFormComponent,
     PullImageFormComponent,
-  ]
+  ],
 })
 export class ApplicationsModule { }

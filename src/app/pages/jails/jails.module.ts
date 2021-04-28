@@ -9,28 +9,28 @@ import { JailService } from '../../services';
 import { EntityModule } from '../common/entity/entity.module';
 
 import { routing } from './jails.routing';
-import { JailListComponent } from './jail-list/';
+import { JailListComponent } from './jail-list';
 import { JailFormComponent } from './jail-form/jail-form.component';
-import { StorageListComponent } from './storages/storage-list/';
-import { StorageFormComponent } from './storages/storage-form/';
-import { JailWizardComponent } from './jail-wizard/';
-import { JailShellComponent } from './jail-shell/';
+import { StorageListComponent } from './storages/storage-list';
+import { StorageFormComponent } from './storages/storage-form';
+import { JailWizardComponent } from './jail-wizard';
+import { JailShellComponent } from './jail-shell';
 
 @NgModule({
-  imports : [
-    CommonModule, FormsModule, ReactiveFormsModule, routing, EntityModule, MaterialModule, TranslateModule, FlexLayoutModule
+  imports: [
+    CommonModule, FormsModule, ReactiveFormsModule, routing, EntityModule, MaterialModule, TranslateModule, FlexLayoutModule,
   ],
-  declarations : [
+  declarations: [
     JailListComponent,
     JailFormComponent,
     StorageListComponent,
     StorageFormComponent,
     JailWizardComponent,
-    JailShellComponent
+    JailShellComponent,
   ],
-  providers : [
+  providers: [
     JailService,
-  ]
+  ],
 })
 export class JailsModule {
 }

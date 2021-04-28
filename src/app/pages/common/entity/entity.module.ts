@@ -1,4 +1,3 @@
-
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
@@ -6,14 +5,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../appMaterial.module';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { MatSortHeader, MatSort } from '@angular/material/sort';
-import {DragDropModule} from '@angular/cdk/drag-drop';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TreeModule } from 'angular-tree-component';
 import { NgxUploaderModule } from 'ngx-uploader';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
-import { DocsService} from '../../../services/docs.service';
+import { DocsService } from '../../../services/docs.service';
 import { RestService, WebSocketService, JobService } from '../../../services/index';
 import { TranslateModule } from '@ngx-translate/core';
 import { TreeTableModule } from 'primeng/treetable';
@@ -60,7 +59,7 @@ import { EntityTableRowDetailsComponent } from './entity-table/entity-table-row-
 import { EntityTreeTableComponent } from './entity-tree-table/entity-tree-table.component';
 import { EntityCardComponent } from './entity-card/entity-card.component';
 import { EntityTemplateDirective } from './entity-template.directive';
-import { FormReadFileComponent } from './entity-form/components/form-readfile/form-readfile.component'
+import { FormReadFileComponent } from './entity-form/components/form-readfile/form-readfile.component';
 import { EntityWizardComponent } from './entity-wizard/entity-wizard.component';
 import { EntityTaskComponent } from './entity-task/entity-task.component';
 import { EntityDialogComponent } from './entity-dialog/entity-dialog.component';
@@ -72,9 +71,9 @@ import { EntityJobComponent } from './entity-job/entity-job.component';
 
 // CDK
 import { CdkTableModule } from '@angular/cdk/table';
-import {CdkTreeModule} from '@angular/cdk/tree';
+import { CdkTreeModule } from '@angular/cdk/tree';
 import { OverlayModule } from '@angular/cdk/overlay';
-import {A11yModule} from '@angular/cdk/a11y';
+import { A11yModule } from '@angular/cdk/a11y';
 
 import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
 
@@ -95,13 +94,12 @@ import { EntityEmptyComponent } from './entity-empty/entity-empty.component';
 
 import { TableComponent } from './table/table.component';
 
-
 @NgModule({
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule, DragDropModule, RouterModule,
     MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule.forRoot(),
     NgxUploaderModule, FlexLayoutModule, TranslateModule, CdkTreeModule,
-    OverlayModule, A11yModule, TreeTableModule, NgxFilesizeModule, CommonDirectivesModule
+    OverlayModule, A11yModule, TreeTableModule, NgxFilesizeModule, CommonDirectivesModule,
   ],
   declarations: [
     TaskScheduleListComponent,
@@ -242,7 +240,7 @@ import { TableComponent } from './table/table.component';
     EntityTableService,
     AppLoaderService,
     DocsService,
-    JobService
-  ]
+    JobService,
+  ],
 })
 export class EntityModule {}

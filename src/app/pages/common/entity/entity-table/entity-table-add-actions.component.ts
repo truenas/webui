@@ -1,64 +1,65 @@
-import { Component, ElementRef, Input, ViewChild, OnInit, AfterViewInit, OnDestroy, OnChanges, SimpleChanges} from '@angular/core';
+import {
+  Component, ElementRef, Input, ViewChild, OnInit, AfterViewInit, OnDestroy, OnChanges, SimpleChanges,
+} from '@angular/core';
 import { fromEvent as observableFromEvent } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 
-import {EntityTableComponent} from './entity-table.component';
-
+import { EntityTableComponent } from './entity-table.component';
 
 @Component({
-  selector : 'app-entity-table-add-actions',
-  templateUrl: './entity-table-add-actions.component.html'
+  selector: 'app-entity-table-add-actions',
+  templateUrl: './entity-table-add-actions.component.html',
 })
 export class EntityTableAddActionsComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
-  @ViewChild('filter', { static: false}) filter: ElementRef;
+  @ViewChild('filter', { static: false }) filter: ElementRef;
   @Input('entity') entity: EntityTableComponent;
-  public conf;
+  conf: any;
 
-  public actions: any[];
-  public menuTriggerMessage:string = "Click for options";
+  actions: any[];
+  menuTriggerMessage = 'Click for options';
 
-  public spin: boolean = true;
-  public direction: string = 'left';
-  public animationMode: string = 'fling';
-  get totalActions(){
-    let addAction = this.entity.conf.route_add ? 1 : 0;
+  spin = true;
+  direction = 'left';
+  animationMode = 'fling';
+  get totalActions() {
+    const addAction = this.entity.conf.route_add ? 1 : 0;
     return this.actions.length + addAction;
   }
 
   constructor(protected translate: TranslateService) { }
 
-  ngOnInit() { 
-    this.actions = this.entity.getAddActions(); 
+  ngOnInit() {
+    this.actions = this.entity.getAddActions();
   }
 
-  ngOnDestroy(){
+  ngOnDestroy() {
   }
 
-  ngAfterViewInit(){
+  ngAfterViewInit() {
     this.filterInit();
   }
 
-  ngOnChanges(changes:SimpleChanges){
+  ngOnChanges(changes: SimpleChanges) {
     console.log(changes);
   }
 
-  applyConfig(entity){
+  applyConfig(entity: any) {
     this.entity = entity;
     this.conf = entity.conf;
     this.filterInit();
   }
 
-  //Set the filter event handler.
-  filterInit(){
+  // Set the filter event handler.
+  filterInit() {
     if (this.filter && this.entity) {
       observableFromEvent(this.filter.nativeElement, 'keyup').pipe(
         debounceTime(150),
-        distinctUntilChanged(),)
+        distinctUntilChanged(),
+      )
         .subscribe((evt) => {
           this.entity.filter(this.filter.nativeElement.value);
         });
     }
   }
-
 }

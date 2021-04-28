@@ -7,8 +7,10 @@ import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { DialogService, LanguageService, StorageService, 
-  SystemGeneralService, WebSocketService } from '../../../../services';
+import {
+  DialogService, LanguageService, StorageService,
+  SystemGeneralService, WebSocketService,
+} from '../../../../services';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { ModalService } from '../../../../services/modal.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
@@ -16,17 +18,17 @@ import { EntityUtils } from '../../../common/entity/utils';
 
 @Component({
   selector: 'app-kernel-form',
-  template: `<entity-form [conf]="this"></entity-form>`,
-  providers: []
+  template: '<entity-form [conf]="this"></entity-form>',
+  providers: [],
 })
-export class KernelFormComponent implements OnDestroy{
+export class KernelFormComponent implements OnDestroy {
   protected queryCall = 'system.advanced.config';
   protected updateCall = 'system.advanced.update';
   protected isOneColumnForm = true;
   private getDataFromDash: Subscription;
-  public fieldConfig: FieldConfig[] = []
+  fieldConfig: FieldConfig[] = [];
 
-  public fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext_system_advanced.fieldset_kernel,
       label: false,
@@ -36,20 +38,20 @@ export class KernelFormComponent implements OnDestroy{
           type: 'checkbox',
           name: 'autotune',
           placeholder: helptext_system_advanced.autotune_placeholder,
-          tooltip: helptext_system_advanced.autotune_tooltip
+          tooltip: helptext_system_advanced.autotune_tooltip,
         },
         {
           type: 'checkbox',
           name: 'debugkernel',
           placeholder: helptext_system_advanced.debugkernel_placeholder,
-          tooltip: helptext_system_advanced.debugkernel_tooltip
+          tooltip: helptext_system_advanced.debugkernel_tooltip,
         },
-      ]
+      ],
     },
-    { 
-      name:'divider',
-      divider: true 
-    }
+    {
+      name: 'divider',
+      divider: true,
+    },
   ];
 
   private entityForm: any;
@@ -65,14 +67,14 @@ export class KernelFormComponent implements OnDestroy{
     public http: HttpClient,
     protected storage: StorageService,
     private sysGeneralService: SystemGeneralService,
-    private modalService: ModalService
+    private modalService: ModalService,
   ) {
-    this.getDataFromDash = this.sysGeneralService.sendConfigData$.subscribe(res => {
+    this.getDataFromDash = this.sysGeneralService.sendConfigData$.subscribe((res) => {
       this.configData = res;
-    })
+    });
   }
 
-  reconnect(href) {
+  reconnect(href: string) {
     if (this.entityForm.ws.connected) {
       this.loader.close();
       // ws is connected
@@ -88,7 +90,7 @@ export class KernelFormComponent implements OnDestroy{
     this.entityForm = entityEdit;
   }
 
-   public customSubmit(body) {
+  customSubmit(body: any) {
     this.loader.open();
     return this.ws.call('system.advanced.update', [body]).subscribe(() => {
       this.loader.close();
@@ -102,12 +104,7 @@ export class KernelFormComponent implements OnDestroy{
     });
   }
 
-  getKeyByValue(object, value) {
-    return Object.keys(object).find(key => object[key] === value);
-  }
-
   ngOnDestroy() {
     this.getDataFromDash.unsubscribe();
   }
-
 }

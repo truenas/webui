@@ -8,9 +8,9 @@ describe('TextLimiterTooltipComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TextLimiterTooltipComponent ]
+      declarations: [TextLimiterTooltipComponent],
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

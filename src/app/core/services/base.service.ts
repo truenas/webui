@@ -4,26 +4,25 @@ import { CoreService, CoreEvent } from './core.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BaseService {
-
   protected websocket: WebSocketService;
   protected core: CoreService;
-  protected authenticated: boolean = false;
+  protected authenticated = false;
 
-  constructor() { 
+  constructor() {
     this.core = CoreServiceInjector.get(CoreService);
     this.websocket = CoreServiceInjector.get(WebSocketService);
     this.core.register({
       observerClass: this,
-      eventName: "Authenticated"
+      eventName: 'Authenticated',
     }).subscribe((evt: CoreEvent) => {
       this.authenticated = true;
       this.onAuthenticated(evt);
     });
   }
 
-  protected onAuthenticated(evt: CoreEvent){
+  protected onAuthenticated(evt: CoreEvent) {
   }
 }

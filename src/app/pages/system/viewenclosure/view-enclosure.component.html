@@ -14,7 +14,6 @@
   
   <!-- Persistent Visualizer -->
   <div class="main-content" fxFlex="calc(100% - {{ (system.enclosures.length * 240).toString() }}px )">
-    <button mat-button color="warn" (click)="fetchData()" style="position: absolute; top: 12px; right: 32px;">Refresh</button>
   
     <div>
       <mat-spinner [diameter]="40" *ngIf="spinner" class="spinner"></mat-spinner>

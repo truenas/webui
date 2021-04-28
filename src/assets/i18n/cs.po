@@ -818,6 +818,9 @@ msgstr ""
 msgid "Abort"
 msgstr ""
 
+msgid "Abort the task"
+msgstr ""
+
 msgid "About"
 msgstr "O software"
 
@@ -1010,6 +1013,12 @@ msgid "Add Init/Shutdown Script"
 msgstr ""
 
 msgid "Add Interface"
+msgstr ""
+
+msgid "Add Kerberos Keytab"
+msgstr ""
+
+msgid "Add Kerberos Realm"
 msgstr ""
 
 msgid "Add Kerberos SPN Entry"
@@ -1684,6 +1693,9 @@ msgstr ""
 msgid ""
 "Append <i>@realm</i> to <i>cn</i> in LDAP queries for both groups and users "
 "when User CN is set)."
+msgstr ""
+
+msgid "Append Data"
 msgstr ""
 
 msgid ""
@@ -4050,6 +4062,9 @@ msgstr "Smazat"
 msgid "Delete "
 msgstr ""
 
+msgid "Delete Children"
+msgstr ""
+
 msgid "Delete Dataset"
 msgstr "Smazat datovou sadu"
 
@@ -4349,6 +4364,9 @@ msgstr ""
 
 msgid "Directory"
 msgstr "Složka"
+
+msgid "Directory Inherit"
+msgstr ""
 
 msgid "Directory Mask"
 msgstr ""
@@ -4701,6 +4719,9 @@ msgstr ""
 msgid "Edit DNS Authenticator"
 msgstr ""
 
+msgid "Edit Dataset"
+msgstr ""
+
 msgid "Edit Disk(s)"
 msgstr "Upravit disky"
 
@@ -4720,6 +4741,12 @@ msgid "Edit Init/Shutdown Script"
 msgstr ""
 
 msgid "Edit Interface"
+msgstr ""
+
+msgid "Edit Kerberos Keytab"
+msgstr ""
+
+msgid "Edit Kerberos Realm"
 msgstr ""
 
 msgid "Edit Options"
@@ -6256,6 +6283,9 @@ msgstr ""
 msgid "File Information"
 msgstr ""
 
+msgid "File Inherit"
+msgstr ""
+
 msgid "File Mask"
 msgstr ""
 
@@ -6463,6 +6493,9 @@ msgid "From Name"
 msgstr ""
 
 msgid "Full"
+msgstr ""
+
+msgid "Full Control"
 msgstr ""
 
 msgid "Full Filesystem Replication"
@@ -7339,7 +7372,13 @@ msgstr ""
 msgid "Inherit (non-encrypted)"
 msgstr ""
 
+msgid "Inherit Only"
+msgstr ""
+
 msgid "Inherit encryption properties from parent"
+msgstr ""
+
+msgid "Inherited"
 msgstr ""
 
 msgid "Inherits"
@@ -7669,6 +7708,9 @@ msgstr ""
 
 msgid "Kerberos Realm"
 msgstr "Kerberos oblast"
+
+msgid "Kerberos Realms"
+msgstr ""
 
 msgid "Kerberos Settings"
 msgstr "Nastavení pro Kerberos"
@@ -8404,6 +8446,9 @@ msgstr ""
 msgid "Model:"
 msgstr ""
 
+msgid "Modify"
+msgstr ""
+
 msgid ""
 "Modify for disks that understand <a "
 "href=\"https://en.wikipedia.org/wiki/Automatic_acoustic_management\" "
@@ -8838,6 +8883,9 @@ msgstr ""
 msgid "No Encryption (less secure, but faster)"
 msgstr ""
 
+msgid "No Inherit"
+msgstr ""
+
 msgid "No Item"
 msgstr ""
 
@@ -8851,6 +8899,9 @@ msgid "No Pools"
 msgstr ""
 
 msgid "No Pools Found"
+msgstr ""
+
+msgid "No Propagate Inherit"
 msgstr ""
 
 msgid "No Recent Events"
@@ -9319,6 +9370,9 @@ msgid "Organizational unit of the entity."
 msgstr "Organizační jednotka entity"
 
 msgid "Other"
+msgstr ""
+
+msgid "Other (Too complicated to be displayed)"
 msgstr ""
 
 msgid "Other Options"
@@ -9884,6 +9938,9 @@ msgstr "Soukromá část klíče"
 msgid "Private Key ID"
 msgstr "Identifikátor soukromého klíče"
 
+msgid "Privileged"
+msgstr ""
+
 msgid ""
 "Privileges are the same as the guest account.  Guest access is disabled by "
 "default in Windows 10 version 1709 and  Windows Server version 1903. "
@@ -10074,7 +10131,19 @@ msgstr ""
 msgid "Read"
 msgstr ""
 
+msgid "Read ACL"
+msgstr ""
+
+msgid "Read Attributes"
+msgstr ""
+
+msgid "Read Data"
+msgstr ""
+
 msgid "Read Errors"
+msgstr ""
+
+msgid "Read Named Attributes"
 msgstr ""
 
 msgid "Read Only"
@@ -11067,6 +11136,9 @@ msgstr ""
 
 msgid "Security"
 msgstr "Zabezpečení"
+
+msgid "Security Settings"
+msgstr ""
 
 msgid ""
 "See <a "
@@ -12967,6 +13039,9 @@ msgstr ""
 msgid "Synced"
 msgstr ""
 
+msgid "Synchronize"
+msgstr ""
+
 msgid "Synchronize Destination Snapshots With Source"
 msgstr ""
 
@@ -14003,7 +14078,7 @@ msgid ""
 "target=\"_blank\">zpool(8)</a> for more details on the special allocation"
 msgstr ""
 
-msgid "Thread number:"
+msgid "Thread:"
 msgstr ""
 
 msgid "Threads"
@@ -15332,10 +15407,25 @@ msgstr ""
 msgid "Write"
 msgstr ""
 
+msgid "Write ACL"
+msgstr ""
+
+msgid "Write Attributes"
+msgstr ""
+
+msgid "Write Data"
+msgstr ""
+
 msgid "Write Errors"
 msgstr ""
 
+msgid "Write Named Attributes"
+msgstr ""
+
 msgid "Write Only"
+msgstr ""
+
+msgid "Write Owner"
 msgstr ""
 
 msgid "Write a percentage limit of a single CPU core."
@@ -15524,6 +15614,9 @@ msgstr "komentář"
 msgid "coredumpsize"
 msgstr "coredumpsize"
 
+msgid "cores"
+msgstr ""
+
 msgid "cpuset"
 msgstr "cpuset"
 
@@ -15562,6 +15655,9 @@ msgstr "enforce_statfs"
 
 msgid "error"
 msgstr "chyba"
+
+msgid "everyone@"
+msgstr ""
 
 msgid "exec_clean"
 msgstr "exec_clean"
@@ -15604,6 +15700,9 @@ msgstr "expiruje během"
 
 msgid "group"
 msgstr "skupina"
+
+msgid "group@"
+msgstr ""
 
 msgid "gzip (default level, 6)"
 msgstr ""
@@ -15778,6 +15877,9 @@ msgstr "přehled"
 msgid "owner"
 msgstr "vlastník"
 
+msgid "owner@"
+msgstr ""
+
 msgid "password"
 msgstr "heslo"
 
@@ -15836,6 +15938,9 @@ msgid "snapshot"
 msgstr ""
 
 msgid "snapshots"
+msgstr ""
+
+msgid "snapshots could not be deleted."
 msgstr ""
 
 msgid "software, which is provided as-is with no warranty."

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { MatDividerModule } from "@angular/material/divider";
+import { MatDividerModule } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
 import { EntityModule } from '../common/entity/entity.module';
 import { MaterialModule } from '../../appMaterial.module';
@@ -19,13 +19,13 @@ import { CertificateAddComponent } from './certificates-dash/forms/certificate-a
 import { CertificateAuthorityAddComponent } from './certificates-dash/forms/ca-add.component';
 import { CertificateAuthorityEditComponent } from './certificates-dash/forms/ca-edit.component';
 import { CertificateAcmeAddComponent } from './certificates-dash/forms/certificate-acme-add.component';
-import { AcmednsFormComponent } from './certificates-dash/forms/acmedns-form.component'
+import { AcmednsFormComponent } from './certificates-dash/forms/acmedns-form.component';
 
 @NgModule({
-  declarations: [ BackupCredentialsComponent, SshConnectionsFormComponent, 
+  declarations: [BackupCredentialsComponent, SshConnectionsFormComponent,
     CloudCredentialsFormComponent, SshKeypairsFormComponent, CertificatesDashComponent, CertificateAcmeAddComponent,
     CertificateAddComponent, CertificateAuthorityAddComponent, CertificateAuthorityEditComponent,
-    CertificateAcmeAddComponent, CertificateEditComponent, AcmednsFormComponent ],
+    CertificateAcmeAddComponent, CertificateEditComponent, AcmednsFormComponent],
   imports: [
     CommonModule,
     MatCardModule,
@@ -34,7 +34,7 @@ import { AcmednsFormComponent } from './certificates-dash/forms/acmedns-form.com
     TranslateModule,
     EntityModule,
     MaterialModule,
-    CommonDirectivesModule
-  ]
+    CommonDirectivesModule,
+  ],
 })
 export class CredentialsModule { }

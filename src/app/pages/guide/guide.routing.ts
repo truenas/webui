@@ -1,11 +1,11 @@
-import {ModuleWithProviders} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import { ModuleWithProviders } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
 
 import { GuideComponent } from './guide.component';
 
-export const routes: Routes = [ {
+export const routes: Routes = [{
   path: '',
-  component: GuideComponent
-} ];
+  component: GuideComponent,
+}];
 
 export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);

@@ -10,11 +10,11 @@
     ix-auto-identifier="backtrace-toggle">
     <mat-icon *ngIf="isCloseMoreInfo">add_circle_outline</mat-icon>
     <mat-icon *ngIf="!isCloseMoreInfo">remove_circle_outline</mat-icon>
-    <span>More info...</span>
+    <span>{{ 'More info...' | translate }}</span>
   </div>
   <div id="err-bt-panel" class="backtrace-panel" [ngClass]="{'open':!isCloseMoreInfo}" *ngIf="backtrace">
-    <textarea id="err-bt-text" readonly matInput>Error: {{backtrace}}</textarea>
-  </div>  
+    <textarea id="err-bt-text" readonly matInput>{{ 'Error' | translate }}: {{backtrace}}</textarea>
+  </div>
 </div>
 <div mat-dialog-actions>
   &nbsp;

@@ -27,8 +27,8 @@
 .container-items {
   align-items: flex-start;
   width: 40%;
-  border: 1px solid #ccc8c8;
-  overflow-y: scroll;
+  border: 1px solid var(--lines);
+  overflow-y: auto;
 }
 
 .container-buttons {
@@ -63,7 +63,14 @@
 }
 
 .list-title {
-  position: absolute;
-  top: 43px;
-  font-size: small;
+  position: sticky;
+  top: 0;
+  left: 0;
+  display: flex;
+  right: 0;
+  width: 100%;
+  padding: 16px;
+  background-color: var(--lines);
+  z-index: 1;
+  border-bottom: 1px solid var(--lines);
 }

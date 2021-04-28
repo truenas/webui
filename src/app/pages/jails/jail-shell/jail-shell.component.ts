@@ -1,11 +1,13 @@
-import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild,ViewEncapsulation } from '@angular/core';
+import {
+  Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild, ViewEncapsulation,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import * as _ from 'lodash';
-import { ShellService, WebSocketService } from '../../../services/';
-import helptext from "./../../../helptext/shell/shell";
+import { ShellService, WebSocketService } from '../../../services';
+import helptext from '../../../helptext/shell/shell';
 import { Terminal } from 'xterm';
 import { AttachAddon } from 'xterm-addon-attach';
 import { FitAddon } from 'xterm-addon-fit';
@@ -22,41 +24,41 @@ import * as FontFaceObserver from 'fontfaceobserver';
 export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
   // sets the shell prompt
   @Input() prompt = '';
-  //xter container
-  @ViewChild('terminal', { static: true}) container: ElementRef;
+  // xter container
+  @ViewChild('terminal', { static: true }) container: ElementRef;
   // xterm variables
   cols: string;
   rows: string;
   font_size = 14;
   font_name = 'Inconsolata';
-  public connectionId: string;
-  public token: any;
-  public xterm: any;
+  connectionId: string;
+  token: any;
+  xterm: any;
   private shellSubscription: any;
   private fitAddon: any;
-  public shell_tooltip = helptext.usage_tooltip;
+  shell_tooltip = helptext.usage_tooltip;
 
-  clearLine = "\u001b[2K\r"
+  clearLine = '\u001b[2K\r';
   protected pk: string;
   protected route_success: string[] = ['jails'];
   constructor(private ws: WebSocketService,
-              public ss: ShellService,
-              protected aroute: ActivatedRoute,
-              public translate: TranslateService,
-              protected router: Router,
-              private dialog: MatDialog) {
-              }
+    public ss: ShellService,
+    protected aroute: ActivatedRoute,
+    public translate: TranslateService,
+    protected router: Router,
+    private dialog: MatDialog) {
+  }
 
   ngOnInit() {
-    this.aroute.params.subscribe(params => {
+    this.aroute.params.subscribe((params) => {
       this.pk = params['pk'];
       this.getAuthToken().subscribe((res) => {
         this.initializeWebShell(res);
-        this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
+        this.shellSubscription = this.ss.shellOutput.subscribe((value: any) => {
           if (value !== undefined) {
             // this.xterm.write(value);
 
-            if (_.trim(value) == "logout") {
+            if (_.trim(value) == 'logout') {
               this.xterm.destroy();
               this.router.navigate(new Array('/').concat(this.route_success));
             }
@@ -65,28 +67,27 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
         this.initializeTerminal();
       });
     });
-
   }
 
   ngOnDestroy() {
     if (this.shellSubscription) {
       this.shellSubscription.unsubscribe();
     }
-    if (this.ss.connected){
+    if (this.ss.connected) {
       this.ss.socket.close();
     }
-  };
+  }
 
   onRightClick(): false {
     this.dialog.open(CopyPasteMessageComponent);
     return false;
   }
-  
-  onResize(event) {
+
+  onResize() {
     this.resizeTerm();
   }
 
-  onFontSizeChanged(event) {
+  onFontSizeChanged() {
     this.resizeTerm();
   }
 
@@ -96,14 +97,14 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: {
-    [propKey: string]: SimpleChange
+    [propKey: string]: SimpleChange;
   }) {
     const log: string[] = [];
     for (const propName in changes) {
       const changedProp = changes[propName];
       // reprint prompt
       if (propName === 'prompt' && this.xterm != null) {
-        this.xterm.write(this.clearLine + this.prompt)
+        this.xterm.write(this.clearLine + this.prompt);
       }
     }
   }
@@ -119,7 +120,7 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     span.innerHTML = 'a';
 
     let cols = 0;
-    while(span.offsetWidth < domWidth) {      
+    while (span.offsetWidth < domWidth) {
       span.innerHTML += 'a';
       cols++;
     }
@@ -129,15 +130,15 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     if (cols < 80) {
       cols = 80;
     }
-    
+
     if (rows < 10) {
       rows = 10;
     }
 
     return {
-      rows: rows,
-      cols: cols
-    }
+      rows,
+      cols,
+    };
   }
 
   initializeTerminal() {
@@ -158,23 +159,24 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     this.xterm.loadAddon(attachAddon);
     this.fitAddon = new FitAddon();
     this.xterm.loadAddon(this.fitAddon);
-    
+
     var font = new FontFaceObserver(this.font_name);
-    
+
     font.load().then((e) => {
       this.xterm.open(this.container.nativeElement);
       this.fitAddon.fit();
       this.xterm._initialized = true;
-    }, function (e) {
+    }, (e) => {
       console.log('Font is not available', e);
-    });    
+    });
   }
 
-  resizeTerm(){
+  resizeTerm() {
     const size = this.getSize();
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
-    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res)=> {
+    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res) => {
+      this.xterm.focus();
     });
     return true;
   }
@@ -184,11 +186,10 @@ export class JailShellComponent implements OnInit, OnChanges, OnDestroy {
     this.ss.jailId = this.pk;
     this.ss.connect();
 
-    this.ss.shellConnected.subscribe((res)=> {
+    this.ss.shellConnected.subscribe((res: any) => {
       this.connectionId = res.id;
       this.resizeTerm();
-    })
-
+    });
   }
 
   getAuthToken() {
