@@ -232,7 +232,7 @@ export class ChartReleaseEditComponent {
                   }],
                 },
               ],
-            }
+            },
 
           ],
           listFields: [],
@@ -535,9 +535,9 @@ export class ChartReleaseEditComponent {
         workloadType: 'Deployment',
         securityContext: {
           privileged: data.privileged,
-        }
-      }
-    }]
+        },
+      },
+    }];
 
     if (data['gpuConfiguration']) {
       (payload[1] as any)['values']['gpuConfiguration'] = data['gpuConfiguration'];
