@@ -1,5 +1,3 @@
-
-
 import { Injectable } from '@angular/core';
 
 import { RestService } from './rest.service';
@@ -7,9 +5,9 @@ import { WebSocketService } from './ws.service';
 
 @Injectable()
 export class JailService {
-  public jailNameRegex = /^[a-zA-Z0-9\._-]+$/;
+  jailNameRegex = /^[a-zA-Z0-9\._-]+$/;
 
-  constructor(protected rest: RestService, protected ws: WebSocketService) { };
+  constructor(protected rest: RestService, protected ws: WebSocketService) { }
 
   listJails() { return this.ws.call('jail.query', {}); }
 

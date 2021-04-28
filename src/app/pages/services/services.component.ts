@@ -1,112 +1,119 @@
-import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
+import {
+  Component, OnInit, ViewChild, ElementRef, Input,
+} from '@angular/core';
 import { Subscription } from 'rxjs';
-import { MatButtonToggleGroup }  from '@angular/material/button-toggle';
+import { MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { NavigationExtras, Router } from '@angular/router';
 
 import { environment } from '../../../environments/environment';
-import { RestService, WebSocketService, IscsiService, SystemGeneralService} from '../../services/';
+import {
+  RestService, WebSocketService, IscsiService, SystemGeneralService,
+} from '../../services';
 import { DialogService } from '../../services/dialog.service';
 
 import * as _ from 'lodash';
 import { T } from '../../translate-marker';
 
-
 @Component({
   selector: 'services',
-  styleUrls: [ './services.component.css'],
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
-  providers: [IscsiService]
+  styleUrls: ['./services.component.css'],
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
+  providers: [IscsiService],
 })
 export class Services implements OnInit {
-  public title = "Services";
-  public isFooterConsoleOpen: boolean;
+  title = 'Services';
+  isFooterConsoleOpen: boolean;
   private getAdvancedConfig: Subscription;
   protected queryCall = 'service.query';
-  protected queryCallOption = [[], { "order_by": ["service"] }];
+  protected queryCallOption = [[] as any, { order_by: ['service'] }];
   protected rowIdentifier = 'name';
   protected inlineActions = true;
-  
-  public columns: Array<any> = [
+
+  columns: any[] = [
     { name: 'Name', prop: 'name', always_display: true },
-    { name: 'Running', prop: 'state', toggle: true, always_display: true },
-    { name: 'Start Automatically', prop: 'enable', checkbox: true, always_display: true },
+    {
+      name: 'Running', prop: 'state', toggle: true, always_display: true,
+    },
+    {
+      name: 'Start Automatically', prop: 'enable', checkbox: true, always_display: true,
+    },
   ];
-  
-  public config: any = {
+
+  config: any = {
     paging: false,
     sorting: { columns: this.columns },
   };
-  public services: any[];
-  public busy: Subscription;
+  services: any[];
+  busy: Subscription;
 
-  public name_MAP: Object = {
-    'afp': 'AFP',
-    'dynamicdns': 'Dynamic DNS',
-    'ftp': 'FTP',
-    'glusterd': 'Gluster',
-    'iscsitarget': 'iSCSI',
-    'lldp': 'LLDP',
-    'nfs': 'NFS',
-    'openvpn_client': 'OpenVPN Client',
-    'openvpn_server': 'OpenVPN Server',
-    'rsync': 'Rsync',
-    's3': 'S3',
-    'smartd': 'S.M.A.R.T.',
-    'snmp': 'SNMP',
-    'ssh': 'SSH',
-    'cifs': 'SMB',
-    'tftp': 'TFTP',
-    'ups': 'UPS',
-    'webdav': 'WebDAV',
-  }
+  name_MAP: Object = {
+    afp: 'AFP',
+    dynamicdns: 'Dynamic DNS',
+    ftp: 'FTP',
+    glusterd: 'Gluster',
+    iscsitarget: 'iSCSI',
+    lldp: 'LLDP',
+    nfs: 'NFS',
+    openvpn_client: 'OpenVPN Client',
+    openvpn_server: 'OpenVPN Server',
+    rsync: 'Rsync',
+    s3: 'S3',
+    smartd: 'S.M.A.R.T.',
+    snmp: 'SNMP',
+    ssh: 'SSH',
+    cifs: 'SMB',
+    tftp: 'TFTP',
+    ups: 'UPS',
+    webdav: 'WebDAV',
+  };
 
-  public showSpinner: boolean = true;
+  showSpinner = true;
 
   constructor(protected rest: RestService, protected ws: WebSocketService, protected router: Router,
     private dialog: DialogService, private iscsiService: IscsiService, private sysGeneralService: SystemGeneralService) {}
-  
-  resourceTransformIncomingRestData(data) {
-    let hidden = ['netdata'];
-    
+
+  resourceTransformIncomingRestData(data: any[]) {
+    const hidden = ['netdata'];
+
     return data.map((item) => {
       item.title = item.service;
       if (!hidden.includes(item.service)) {
-        if (this.name_MAP[item.service]) {
-          item.name = this.name_MAP[item.service];
+        if ((this.name_MAP as any)[item.service]) {
+          item.name = (this.name_MAP as any)[item.service];
         } else {
           item.name = item.service;
         }
       }
-      
+
       return item;
     });
   }
 
   ngOnInit() {
-    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe((res)=> {
+    this.getAdvancedConfig = this.sysGeneralService.getAdvancedConfig.subscribe((res) => {
       if (res) {
         this.isFooterConsoleOpen = res.consolemsg;
         this.getAdvancedConfig.unsubscribe();
       }
     });
   }
-  
-  getActions(parentRow) {
+
+  getActions(parentRow: any) {
     const actions = [{
       actionName: 'configure',
       name: parentRow.service,
       icon: 'edit',
-      id: "Configure",
-      label: T("Configure"),
-      onClick: (row) => {
-        if(row.service === 'openvpn_client' || row.service === 'openvpn_server') {
-          const navigationExtras: NavigationExtras = {state: {configureOpenVPN: row.service.replace('openvpn_', '')}};
+      id: 'Configure',
+      label: T('Configure'),
+      onClick: (row: any) => {
+        if (row.service === 'openvpn_client' || row.service === 'openvpn_server') {
+          const navigationExtras: NavigationExtras = { state: { configureOpenVPN: row.service.replace('openvpn_', '') } };
           this.router.navigate(['network'], navigationExtras);
         } else {
           this.editService(row.service);
         }
-      }
+      },
     }];
     if (parentRow.service === 'netdata' && parentRow.state === 'RUNNING') {
       actions.push({
@@ -116,18 +123,18 @@ export class Services implements OnInit {
         id: 'Launch',
         label: T('Launch'),
         onClick: () => {
-          this.openNetdataPortal()
-        }
-      })
+          this.openNetdataPortal();
+        },
+      });
     }
     return actions;
   }
-  
-  onSliderChange(service) {
+
+  onSliderChange(service: any) {
     this.toggle(service);
   }
-  
-  onCheckboxChange(service) {
+
+  onCheckboxChange(service: any) {
     this.enableToggle(service);
   }
 
@@ -143,17 +150,17 @@ export class Services implements OnInit {
       if (service.title == 'iscsitarget') {
         this.iscsiService.getGlobalSessions().subscribe(
           (res) => {
-            const msg = res.length == 0 ? '' : T('<font color="red"> There are ') + res.length +
-              T(' active iSCSI connections.</font><br>Stop the ' + service.name + ' service and close these connections?');
-            this.dialog.confirm(T('Alert'),  msg == '' ? T('Stop ') + service.name + '?' : msg, true, T('Stop')).subscribe(dialogRes => {
+            const msg = res.length == 0 ? '' : T('<font color="red"> There are ') + res.length
+              + T(' active iSCSI connections.</font><br>Stop the ' + service.name + ' service and close these connections?');
+            this.dialog.confirm(T('Alert'), msg == '' ? T('Stop ') + service.name + '?' : msg, true, T('Stop')).subscribe((dialogRes: boolean) => {
               if (dialogRes) {
                 this.updateService(rpc, service);
               }
             });
-          }
-        )
+          },
+        );
       } else {
-        this.dialog.confirm(T('Alert'), T('Stop ') + service.name + '?', true, T('Stop')).subscribe(res => {
+        this.dialog.confirm(T('Alert'), T('Stop ') + service.name + '?', true, T('Stop')).subscribe((res: boolean) => {
           if (res) {
             this.updateService(rpc, service);
           }
@@ -162,33 +169,32 @@ export class Services implements OnInit {
     } else {
       this.updateService(rpc, service);
     }
-
   }
 
-  updateService(rpc, service) {
+  updateService(rpc: any, service: any) {
     service['onChanging'] = true;
     this.busy = this.ws.call(rpc, [service.title]).subscribe((res) => {
       if (res) {
-        if (service.state === "RUNNING" && rpc === 'service.stop') {
-          this.dialog.Info(T("Service failed to stop"),
-              this.name_MAP[service.title] + " " +  T("service failed to stop."));
+        if (service.state === 'RUNNING' && rpc === 'service.stop') {
+          this.dialog.Info(T('Service failed to stop'),
+            (this.name_MAP as any)[service.title] + ' ' + T('service failed to stop.'));
         }
         service.state = 'RUNNING';
         service['onChanging'] = false;
       } else {
         if (service.state === 'STOPPED' && rpc === 'service.start') {
-          this.dialog.Info(T("Service failed to start"),
-              this.name_MAP[service.title] + " " +  T("service failed to start."));
+          this.dialog.Info(T('Service failed to start'),
+            (this.name_MAP as any)[service.title] + ' ' + T('service failed to start.'));
         }
         service.state = 'STOPPED';
         service['onChanging'] = false;
       }
     }, (res) => {
-      let message = T("Error starting service ");
+      let message = T('Error starting service ');
       if (rpc === 'service.stop') {
-        message = T("Error stopping service ");
+        message = T('Error stopping service ');
       }
-      this.dialog.errorReport(message + this.name_MAP[service.title], res.message, res.stack);
+      this.dialog.errorReport(message + (this.name_MAP as any)[service.title], res.message, res.stack);
       service['onChanging'] = false;
     });
   }

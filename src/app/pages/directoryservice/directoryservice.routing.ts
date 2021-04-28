@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { ActiveDirectoryComponent } from './activedirectory/activedirectory.component';
 import { LdapComponent } from './ldap/ldap.component';
-import { NISComponent } from './nis/';
+import { NISComponent } from './nis';
 import { KerberosRealmsListComponent } from './kerberosrealms/kerberosrealms-list.component';
 import { KerberosSettingsComponent } from './kerberossettings/kerberossettings.component';
 import { KerberosKeytabsListComponent } from './kerberoskeytabs/kerberoskeytabs-list.component';
@@ -20,15 +20,15 @@ export const routes: Routes = [{
     }, {
       path: 'ldap',
       component: LdapComponent,
-      data: { title: 'LDAP', breadcrumb: 'LDAP', icon: 'device_hub' }
+      data: { title: 'LDAP', breadcrumb: 'LDAP', icon: 'device_hub' },
     }, {
       path: 'activedirectory',
       component: ActiveDirectoryComponent,
-      data: { title: 'Active Directory', breadcrumb: 'Active Directory', icon: 'apps' }
+      data: { title: 'Active Directory', breadcrumb: 'Active Directory', icon: 'apps' },
     }, {
       path: 'nis',
       component: NISComponent,
-      data: { title: 'NIS', breadcrumb: 'NIS', icon: 'library_books' }
+      data: { title: 'NIS', breadcrumb: 'NIS', icon: 'library_books' },
     }, {
       path: 'idmap',
       component: IdmapListComponent,
@@ -45,6 +45,6 @@ export const routes: Routes = [{
       path: 'kerberoskeytabs',
       component: KerberosKeytabsListComponent,
       data: { title: 'Kerberos Keytab', breadcrumb: 'Kerberos Keytab', icon: 'apps' },
-    }]
+    }],
 }];
 export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);

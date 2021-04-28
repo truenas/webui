@@ -1,11 +1,11 @@
-import {ModuleWithProviders} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import { ModuleWithProviders } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
 
 import { ShellComponent } from './shell.component';
 
-export const routes: Routes = [ {
+export const routes: Routes = [{
   path: '',
-  component: ShellComponent
-} ];
+  component: ShellComponent,
+}];
 
 export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);

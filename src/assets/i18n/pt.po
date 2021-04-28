@@ -754,6 +754,9 @@ msgstr ""
 msgid "Abort"
 msgstr ""
 
+msgid "Abort the task"
+msgstr ""
+
 msgid "About"
 msgstr "Sobre"
 
@@ -946,6 +949,12 @@ msgid "Add Init/Shutdown Script"
 msgstr ""
 
 msgid "Add Interface"
+msgstr ""
+
+msgid "Add Kerberos Keytab"
+msgstr ""
+
+msgid "Add Kerberos Realm"
 msgstr ""
 
 msgid "Add Kerberos SPN Entry"
@@ -4646,6 +4655,9 @@ msgstr ""
 msgid "Edit DNS Authenticator"
 msgstr ""
 
+msgid "Edit Dataset"
+msgstr ""
+
 msgid "Edit Disk(s)"
 msgstr ""
 
@@ -4665,6 +4677,12 @@ msgid "Edit Init/Shutdown Script"
 msgstr ""
 
 msgid "Edit Interface"
+msgstr ""
+
+msgid "Edit Kerberos Keytab"
+msgstr ""
+
+msgid "Edit Kerberos Realm"
 msgstr ""
 
 msgid "Edit Options"
@@ -7609,6 +7627,9 @@ msgid "Kerberos Principal"
 msgstr ""
 
 msgid "Kerberos Realm"
+msgstr ""
+
+msgid "Kerberos Realms"
 msgstr ""
 
 msgid "Kerberos Settings"
@@ -13975,7 +13996,7 @@ msgid ""
 "target=\"_blank\">zpool(8)</a> for more details on the special allocation"
 msgstr ""
 
-msgid "Thread number:"
+msgid "Thread:"
 msgstr ""
 
 msgid "Threads"
@@ -15507,6 +15528,9 @@ msgstr "comentário"
 
 msgid "coredumpsize"
 msgstr "coredumpsize"
+
+msgid "cores"
+msgstr ""
 
 msgid "cpuset"
 msgstr "cpuset"

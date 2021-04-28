@@ -11,9 +11,9 @@ export const routes: Routes = [
       {
         path: '',
         component: NetworkComponent,
-        data: { title: 'Network', breadcrumb: 'Netwrok', icon: 'settings' }
-      }
-    ]
-  }
+        data: { title: 'Network', breadcrumb: 'Netwrok', icon: 'settings' },
+      },
+    ],
+  },
 ];
 export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);

@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>{{ title | translate }}</h1>
 <div mat-dialog-content id="confirm-msg">
   <span *ngIf="secondaryCheckBox">
-      <mat-checkbox id="confirm-dialog__secondary-checkbox" class="confirm-checkbox" *ngIf="secondaryCheckBox" (change)="secondaryCheckBoxEvent($event)"
+      <mat-checkbox id="confirm-dialog__secondary-checkbox" class="confirm-checkbox" *ngIf="secondaryCheckBox" (change)="secondaryCheckBoxEvent()"
         ix-auto
         ix-auto-type="checkbox"
         ix-auto-identifier="{{secondaryCheckBoxMsg | uppercase}}">

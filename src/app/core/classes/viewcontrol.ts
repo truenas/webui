@@ -6,15 +6,12 @@ export interface Action {
 }
 
 export abstract class ViewControl {
+  action: CoreEvent;
+  target: Subject<CoreEvent>;// (Send actions back to ViewController via this Subject)
+  isEnabled = true;
+  layout: any;
 
-  public action: CoreEvent;
-  public target:Subject<CoreEvent>;// (Send actions back to ViewController via this Subject)
-  public isEnabled: boolean = true;
-  public layout:any; 
-
-  constructor() {}
-
-  sendAction(){
+  sendAction() {
     this.target.next(this.action);
   }
 }

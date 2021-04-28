@@ -1,71 +1,72 @@
-import { ApplicationRef, Component, Injector, OnInit } from '@angular/core';
+import {
+  ApplicationRef, Component, Injector, OnInit,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { ProductType } from '../../../../enums/product-type.enum';
-import { WebSocketService } from '../../../../services/';
+import { WebSocketService } from '../../../../services';
 import { T } from '../../../../translate-marker';
 
 @Component({
   selector: 'system-tunables-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 
 export class TunableListComponent {
-
-  public title = T("Tunables");
-  public title_scale = T('Sysctl');
-  protected wsDelete = "tunable.delete";
-  public queryCall:string = 'tunable.query';
+  title = T('Tunables');
+  title_scale = T('Sysctl');
+  protected wsDelete = 'tunable.delete';
+  queryCall = 'tunable.query';
 
   protected route_edit: string[] = ['system', 'tunable', 'edit'];
-  protected route_success: string[] = [ 'system', 'tunable' ];
-  protected route_add: string[] = ["system", "tunable", "add"];
-  protected route_add_tooltip = T("Add Tunable");
+  protected route_success: string[] = ['system', 'tunable'];
+  protected route_add: string[] = ['system', 'tunable', 'add'];
+  protected route_add_tooltip = T('Add Tunable');
 
   protected route_edit_scale: string[] = ['system', 'sysctl', 'edit'];
-  protected route_success_scale: string[] = [ 'system', 'advanced' ];
-  protected route_add_scale: string[] = ["system", "sysctl", "add"];
-  protected route_add_tooltip_scale = T("Add Sysctl");
+  protected route_success_scale: string[] = ['system', 'advanced'];
+  protected route_add_scale: string[] = ['system', 'sysctl', 'add'];
+  protected route_add_tooltip_scale = T('Add Sysctl');
 
   protected product_type: ProductType;
 
-  public busy: Subscription;
-  public sub: Subscription;
+  busy: Subscription;
+  sub: Subscription;
   protected entityList: any;
 
-  public wsMultiDelete = 'core.bulk';
-  public multiActions: Array < any > = [
+  wsMultiDelete = 'core.bulk';
+  multiActions: any[] = [
     {
-      id: "mdelete",
-      label: T("Delete"),
-      icon: "delete",
+      id: 'mdelete',
+      label: T('Delete'),
+      icon: 'delete',
       enable: true,
-      ttpos: "above",
-      onClick: (selected) => {
+      ttpos: 'above',
+      onClick: (selected: any) => {
         this.entityList.doMultiDelete(selected);
-      }
-    }
+      },
+    },
   ];
 
-  public columns: Array < any > = [
+  columns: any[] = [
     { name: T('Variable'), prop: 'var', always_display: true },
     { name: T('Value'), prop: 'value' },
     { name: T('Type'), prop: 'type' },
     { name: T('Description'), prop: 'comment' },
     { name: T('Enabled'), prop: 'enabled' },
   ];
-  public rowIdentifier = 'var';
+  rowIdentifier = 'var';
 
-  public config: any = {
+  config: any = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
       title: T('Tunable'),
-      key_props: ['var']
+      key_props: ['var'],
     },
-    multiSelect: true
-  }
+    multiSelect: true,
+  };
 
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
@@ -75,7 +76,7 @@ export class TunableListComponent {
 
   preInit(entityList: any) {
     this.entityList = entityList;
-    this.sub = this.aroute.params.subscribe(params => {});
+    this.sub = this.aroute.params.subscribe((params) => {});
     this.product_type = window.localStorage.getItem('product_type') as ProductType;
     if (this.product_type === ProductType.Scale || this.product_type === ProductType.ScaleEnterprise) {
       this.route_add = this.route_add_scale;
@@ -88,10 +89,10 @@ export class TunableListComponent {
   }
 
   wsMultiDeleteParams(selected: any) {
-    let params: Array<any> = [this.wsDelete];
-    let selectedId = [];
+    const params: any[] = [this.wsDelete];
+    const selectedId = [];
     for (const i in selected) {
-     selectedId.push([selected[i].id]);
+      selectedId.push([selected[i].id]);
     }
     params.push(selectedId);
     return params;

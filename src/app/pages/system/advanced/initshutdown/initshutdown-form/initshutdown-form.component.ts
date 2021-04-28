@@ -11,22 +11,22 @@ import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-cron-initshutdown-add',
-  template: `<entity-form [conf]="this"></entity-form>`,
+  template: '<entity-form [conf]="this"></entity-form>',
 })
 export class InitshutdownFormComponent {
   protected title: string;
   protected queryCall = 'initshutdownscript.query';
   protected addCall = 'initshutdownscript.create';
   protected editCall = 'initshutdownscript.update';
-  protected customFilter: Array<any> = [];
+  protected customFilter: any[] = [];
   protected entityForm: EntityFormComponent;
-  protected isEntity: boolean = true;
-  protected isOneColumnForm: boolean = true;
+  protected isEntity = true;
+  protected isOneColumnForm = true;
   protected type_control: any;
   protected pk: any;
 
-  public fieldConfig: FieldConfig[] = [];
-  public fieldSets: FieldSet[] = [
+  fieldConfig: FieldConfig[] = [];
+  fieldSets: FieldSet[] = [
     {
       name: helptext.ini_title,
       class: 'add-init',
@@ -130,15 +130,15 @@ export class InitshutdownFormComponent {
     this.pk = entityForm.pk;
     this.title = entityForm.isNew ? helptext.ini_add : helptext.ini_edit;
     this.type_control = entityForm.formGroup.controls['type'];
-    this.type_control.valueChanges.subscribe((value) => {
+    this.type_control.valueChanges.subscribe((value: any) => {
       this.formUpdate(value);
     });
 
     this.type_control.setValue('COMMAND');
   }
 
-  formUpdate(type) {
-    let isCommand = type == 'COMMAND' ? true : false;
+  formUpdate(type: any) {
+    const isCommand = type == 'COMMAND';
 
     this.entityForm.setDisabled('script', isCommand, isCommand);
     this.entityForm.setDisabled('command', !isCommand, !isCommand);

@@ -5,23 +5,23 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { FieldSet } from '../../common/entity/entity-form/models/fieldset.interface';
 import { ModalService } from '../../../services/modal.service';
 import { DialogService } from '../../../services/index';
-import  helptext  from '../../../helptext/apps/apps';
+import helptext from '../../../helptext/apps/apps';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 
 @Component({
   selector: 'app-catalog-form',
-  template: `<entity-form [conf]="this"></entity-form>`
+  template: '<entity-form [conf]="this"></entity-form>',
 })
 export class CatalogAddFormComponent {
-  protected queryCall: string = 'catalog.query';
+  protected queryCall = 'catalog.query';
   protected customFilter: any[];
-  protected addCall: string = 'catalog.create';
-  protected isEntity: boolean = true;
+  protected addCall = 'catalog.create';
+  protected isEntity = true;
   protected entityForm: EntityFormComponent;
-  private title= helptext.catalogForm.title;
+  private title = helptext.catalogForm.title;
   private dialogRef: any;
   protected fieldConfig: FieldConfig[];
-  public fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: 'Name',
       width: '100%',
@@ -45,7 +45,7 @@ export class CatalogAddFormComponent {
           name: 'repository',
           placeholder: helptext.catalogForm.repository.placeholder,
           tooltip: helptext.catalogForm.repository.tooltip,
-          required: true
+          required: true,
         },
         {
           type: 'chip',
@@ -62,7 +62,7 @@ export class CatalogAddFormComponent {
         },
       ],
     },
-  ]
+  ];
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
     private modalService: ModalService) {

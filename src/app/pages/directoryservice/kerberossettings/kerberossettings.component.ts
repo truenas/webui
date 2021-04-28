@@ -5,7 +5,7 @@ import helptext from '../../../helptext/directoryservice/kerberossettings';
 
 @Component({
   selector: 'directoryservice-kerberossettings',
-  template: `<entity-form [conf]="this"></entity-form>`,
+  template: '<entity-form [conf]="this"></entity-form>',
 })
 
 export class KerberosSettingsComponent {
@@ -14,8 +14,8 @@ export class KerberosSettingsComponent {
   protected addCall = 'kerberos.update';
   protected editCall = 'kerberos.update';
   protected isOneColumnForm = true;
-  public fieldConfig: FieldConfig[] = []
-  public fieldSets: FieldSet[] = [
+  fieldConfig: FieldConfig[] = [];
+  fieldSets: FieldSet[] = [
     {
       name: helptext.ks_label,
       class: 'heading',
@@ -25,19 +25,19 @@ export class KerberosSettingsComponent {
           type: 'textarea',
           name: helptext.ks_appdefaults_name,
           placeholder: helptext.ks_appdefaults_placeholder,
-          tooltip: helptext.ks_appdefaults_tooltip
+          tooltip: helptext.ks_appdefaults_tooltip,
         },
         {
           type: 'textarea',
           name: helptext.ks_libdefaults_name,
           placeholder: helptext.ks_libdefaults_placeholder,
-          tooltip: helptext.ks_libdefaults_tooltip
-        }
-      ]
-    }
+          tooltip: helptext.ks_libdefaults_tooltip,
+        },
+      ],
+    },
   ];
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     return data;
   }
 }

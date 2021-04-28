@@ -1,12 +1,11 @@
 import * as _ from 'lodash';
-import { Relation } from '../entity/entity-form/models/field-relation.interface';
+import { Relation } from './entity-form/models/field-relation.interface';
 
-export const FORM_KEY_SEPERATOR = "__";
-export const FORM_LABEL_KEY_PREFIX = "__label__";
+export const FORM_KEY_SEPERATOR = '__';
+export const FORM_LABEL_KEY_PREFIX = '__label__';
 export const NULL_VALUE = 'null_value';
 
 export class EntityUtils {
-
   handleError(entity: any, res: any) {
     if (res.code === 409) {
       this.handleObjError(entity, res);
@@ -24,7 +23,7 @@ export class EntityUtils {
       }
     } else {
       entity.error = 'Fatal error! Check logs.';
-      console.log("Unknown error code", res.code);
+      console.log('Unknown error code', res.code);
     }
   }
 
@@ -34,30 +33,28 @@ export class EntityUtils {
     for (const i in res.error) {
       if (res.error.hasOwnProperty(i)) {
         const field = res.error[i];
-        const fc = _.find(entity.fieldConfig, {'name' : i});
+        const fc = _.find(entity.fieldConfig, { name: i });
         if (fc) {
           const element = document.getElementById(i);
           if (element) {
-            if (entity.conf && entity.conf.advanced_field &&
-              _.indexOf(entity.conf.advanced_field, i) > -1 &&
-              entity.conf.isBasicMode) {
-                entity.conf.isBasicMode = false;
-              }
+            if (entity.conf && entity.conf.advanced_field
+              && _.indexOf(entity.conf.advanced_field, i) > -1
+              && entity.conf.isBasicMode) {
+              entity.conf.isBasicMode = false;
+            }
             if (!scroll) {
-              element.scrollIntoView({behavior: "auto", block: "end", inline: "nearest"});
+              element.scrollIntoView({ behavior: 'auto', block: 'end', inline: 'nearest' });
               scroll = true;
             }
           }
           let errors = '';
-          field.forEach((item, j) => { errors += item + ' '; });
+          field.forEach((item: any) => { errors += item + ' '; });
           fc['hasErrors'] = true;
           fc['errors'] = errors;
+        } else if (typeof field === 'string') {
+          entity.error = field;
         } else {
-          if (typeof field === 'string') {
-            entity.error = field;
-          } else {
-            field.forEach((item, j) => { entity.error += item + '<br />'; });
-          }
+          field.forEach((item: any) => { entity.error += item + '<br />'; });
         }
       }
     }
@@ -67,10 +64,8 @@ export class EntityUtils {
     let dialog;
     if (dialogService) {
       dialog = dialogService;
-    } else {
-      if (entity) {
-        dialog = entity.dialog;
-      }
+    } else if (entity) {
+      dialog = entity.dialog;
     }
     if (res.exc_info && res.exc_info.extra) {
       res.extra = res.exc_info.extra;
@@ -86,29 +81,29 @@ export class EntityUtils {
         const error = res.extra[i][1];
 
         field = field[1];
-        let fc = _.find(entity.fieldConfig, {'name' : field}) || (entity.getErrorField ? entity.getErrorField(field) : undefined);
+        let fc = _.find(entity.fieldConfig, { name: field }) || (entity.getErrorField ? entity.getErrorField(field) : undefined);
         let stepIndex;
         if (entity.wizardConfig) {
-            _.find(entity.wizardConfig, function(step, index) {
-              stepIndex = index;
-              fc = _.find(step.fieldConfig, {'name' : field});
-              return fc;
-            });
+          _.find(entity.wizardConfig, (step, index) => {
+            stepIndex = index;
+            fc = _.find(step.fieldConfig, { name: field });
+            return fc;
+          });
         }
         if (targetFieldConfig) {
-          fc = _.find(targetFieldConfig, {'name' : field}) || (entity.getErrorField ? entity.getErrorField(field) : undefined);
+          fc = _.find(targetFieldConfig, { name: field }) || (entity.getErrorField ? entity.getErrorField(field) : undefined);
         }
 
         if (fc && !fc['isHidden']) {
           const element = document.getElementById(field);
           if (element) {
-            if (entity.conf && entity.conf.advanced_field &&
-              _.indexOf(entity.conf.advanced_field, field) > -1 &&
-              entity.conf.isBasicMode) {
-                entity.conf.isBasicMode = false;
-              }
+            if (entity.conf && entity.conf.advanced_field
+              && _.indexOf(entity.conf.advanced_field, field) > -1
+              && entity.conf.isBasicMode) {
+              entity.conf.isBasicMode = false;
+            }
             if (!scroll) {
-              element.scrollIntoView({behavior: "auto", block: "end", inline: "nearest"});
+              element.scrollIntoView({ behavior: 'auto', block: 'end', inline: 'nearest' });
               scroll = true;
             }
           }
@@ -117,12 +112,10 @@ export class EntityUtils {
           if (entity.wizardConfig && entity.entityWizard) {
             entity.entityWizard.stepper.selectedIndex = stepIndex;
           }
+        } else if (entity.error) {
+          entity.error = error;
         } else {
-          if (entity.error) {
-            entity.error = error;
-          } else {
-            this.errorReport(res, dialog);
-          }
+          this.errorReport(res, dialog);
         }
       }
     } else {
@@ -130,7 +123,7 @@ export class EntityUtils {
     }
   }
 
-  errorReport(res, dialog) {
+  errorReport(res: any, dialog: any) {
     if (res.trace && res.trace.formatted && dialog) {
       dialog.errorReport(res.trace.class, res.reason, res.trace.formatted);
     } else if (res.state && res.error && res.exception && dialog) {
@@ -141,16 +134,16 @@ export class EntityUtils {
     }
   }
 
-  isObject = function(a) {
+  isObject = function (a: unknown): a is object {
     return (!!a) && (a.constructor === Object);
   };
 
-  flattenData(data, level = 0, parent?: any) {
-    let ndata = [];
-    if (this.isObject(data)){
-      data = [data]
+  flattenData(data: any | any[], level = 0, parent?: any) {
+    let ndata: any[] = [];
+    if (this.isObject(data)) {
+      data = [data];
     }
-    data.forEach((item) => {
+    (data as any[]).forEach((item) => {
       item._level = level;
       if (parent) {
         item._parent = parent.id;
@@ -164,27 +157,29 @@ export class EntityUtils {
     return ndata;
   }
 
-  bool(v) {
-    return v === "false" || v === "null" || v === "NaN" || v === "undefined" ||
-                   v === "0"
-               ? false
-               : !!v;
+  bool(v: any): boolean {
+    return v === 'false' || v === 'null' || v === 'NaN' || v === 'undefined'
+                   || v === '0'
+      ? false
+      : !!v;
   }
 
-  array1DToLabelValuePair(arr: any[]): { label: string, value: any }[] {
-    return arr.map(value => ({ label: value.toString(), value }))
+  array1DToLabelValuePair(arr: any[]): { label: string; value: any }[] {
+    return arr.map((value) => ({ label: value.toString(), value }));
   }
 
-   /**
+  /**
    * make cron time dow consistence
    */
-  parseDOW(cron) {
-    const dowOptions = ["sun","mon","tue","wed","thu","fri","sat","sun"];
+  parseDOW(cron: string) {
+    const dowOptions = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
     const cronArray = cron.replace(/00/g, '0').split(' ');
     if (cronArray[cronArray.length - 1] !== '*') {
       cronArray[cronArray.length - 1] = cronArray[cronArray.length - 1]
-      .split(',')
-      .map(element => dowOptions[element] || element).join(',');
+        .split(',')
+        // TODO: Probably a bug
+        .map((element) => (dowOptions as any)[element] || element)
+        .join(',');
     }
     return cronArray.join(' ');
   }
@@ -222,7 +217,7 @@ export class EntityUtils {
     return result;
   }
 
-  changeNull2String(value) {
+  changeNull2String(value: any) {
     let result = value;
     if (value === null) {
       result = NULL_VALUE;
@@ -231,18 +226,16 @@ export class EntityUtils {
     return result;
   }
 
-  changeNullString2Null(data) {
-    let result;
+  changeNullString2Null(data: any) {
+    let result: any;
     if (data === undefined || data === null || data === '') {
       result = data;
     } else if (Array.isArray(data)) {
-      const arrayValues = data.map(item => {
-        return this.changeNullString2Null(item);
-      });
+      const arrayValues = data.map((item) => this.changeNullString2Null(item));
       result = arrayValues;
     } else if (typeof data === 'object') {
       result = {};
-      Object.keys(data).forEach(key => {
+      Object.keys(data).forEach((key) => {
         const value = this.changeNullString2Null(data[key]);
         result[key] = value;
       });
@@ -265,15 +258,15 @@ export class EntityUtils {
           name: relationFieldName,
           operator: relation.operatorName,
           value: relation.operatorValue,
-        }]
+        }],
       };
     });
 
     return result;
   }
 
-  parseSchemaFieldConfig(schemaConfig: any, parentName: string=null, parentIsList: boolean=false) {
-    let results = [];
+  parseSchemaFieldConfig(schemaConfig: any, parentName: string = null, parentIsList = false) {
+    let results: any[] = [];
 
     if (schemaConfig.schema.hidden) {
       return results;
@@ -284,23 +277,21 @@ export class EntityUtils {
       name = `${parentName}${FORM_KEY_SEPERATOR}${name}`;
     }
 
-    let fieldConfig = {
+    let fieldConfig: any = {
       required: schemaConfig.schema.required,
       value: schemaConfig.schema.default,
       tooltip: schemaConfig.description,
       placeholder: schemaConfig.label,
-      name: name,
-    }
+      name,
+    };
 
     let relations: Relation[] = null;
     if (schemaConfig.schema.show_if) {
-      relations = schemaConfig.schema.show_if.map(item => {
-        return {
-          fieldName: item[0],
-          operatorName: item[1],
-          operatorValue: item[2],
-        };
-      })
+      relations = (schemaConfig.schema.show_if as any[]).map((item) => ({
+        fieldName: item[0],
+        operatorName: item[1],
+        operatorValue: item[2],
+      }));
     }
 
     if (schemaConfig.schema.editable === false) {
@@ -309,13 +300,10 @@ export class EntityUtils {
 
     if (schemaConfig.schema.enum) {
       fieldConfig['type'] = 'select';
-      fieldConfig['options'] = schemaConfig.schema.enum.map(option => {
-        return {
-          value: option.value,
-          label: option.description,
-        }
-      });
-
+      fieldConfig['options'] = (schemaConfig.schema.enum as any[]).map((option) => ({
+        value: option.value,
+        label: option.description,
+      }));
     } else if (schemaConfig.schema.type == 'string') {
       fieldConfig['type'] = 'input';
       if (schemaConfig.schema.private) {
@@ -330,7 +318,6 @@ export class EntityUtils {
       if (schemaConfig.schema.max_length !== undefined) {
         fieldConfig['max'] = schemaConfig.schema.max_length;
       }
-
     } else if (schemaConfig.schema.type == 'int') {
       fieldConfig['type'] = 'input';
       fieldConfig['inputType'] = 'number';
@@ -343,30 +330,25 @@ export class EntityUtils {
       }
     } else if (schemaConfig.schema.type == 'boolean') {
       fieldConfig['type'] = 'checkbox';
-
     } else if (schemaConfig.schema.type == 'hostpath') {
       fieldConfig['type'] = 'explorer';
       fieldConfig['explorerType'] = 'file';
       fieldConfig['initial'] = '/mnt';
-
     } else if (schemaConfig.schema.type == 'path') {
       fieldConfig['type'] = 'input';
-
     } else if (schemaConfig.schema.type == 'list') {
-
       fieldConfig['type'] = 'list';
       fieldConfig['label'] = `Configure ${schemaConfig.label}`;
       fieldConfig['width'] = '100%';
       fieldConfig['listFields'] = [];
 
-      let listFields = [];
-      schemaConfig.schema.items.forEach(item => {
+      let listFields: any[] = [];
+      (schemaConfig.schema.items as any[]).forEach((item) => {
         const fields = this.parseSchemaFieldConfig(item, null, true);
         listFields = listFields.concat(fields);
       });
 
       fieldConfig['templateListField'] = listFields;
-
     } else if (schemaConfig.schema.type == 'dict') {
 
       if (parentIsList) {
@@ -379,12 +361,12 @@ export class EntityUtils {
           };
 
           if (relations) {
-            dictLabel['relation'] = this.createRelations(relations);
+            (dictLabel as any)['relation']  = this.createRelations(relations);
           }
 
           results = results.concat(dictLabel);
 
-          schemaConfig.schema.attrs.forEach(dictConfig => {
+          (schemaConfig.schema.attrs as any[]).forEach(dictConfig => {
             const subResults = this.parseSchemaFieldConfig(dictConfig, name, parentIsList);
 
             if (relations) {
@@ -405,8 +387,8 @@ export class EntityUtils {
             fieldConfig['relation'] = this.createRelations(relations);
           }
 
-          let subFields = [];
-          schemaConfig.schema.attrs.forEach(dictConfig => {
+          let subFields: any[]= [];
+          (schemaConfig.schema.attrs as any[]).forEach(dictConfig => {
             let fields = this.parseSchemaFieldConfig(dictConfig, null, false);
             subFields = subFields.concat(fields);
 
@@ -423,7 +405,6 @@ export class EntityUtils {
     }
 
     if (fieldConfig) {
-
       if (fieldConfig['type']) {
         if (relations) {
           fieldConfig['relation'] = this.createRelations(relations);
@@ -432,19 +413,18 @@ export class EntityUtils {
         results.push(fieldConfig);
 
         if (schemaConfig.schema.subquestions) {
-          schemaConfig.schema.subquestions.forEach(subquestion => {
-
+          (schemaConfig.schema.subquestions as any[]).forEach((subquestion) => {
             const subResults = this.parseSchemaFieldConfig(subquestion, parentName);
 
             if (schemaConfig.schema.show_subquestions_if !== undefined) {
-              subResults.forEach(subFieldConfig => {
+              subResults.forEach((subFieldConfig) => {
                 subFieldConfig['isHidden'] = true;
                 subFieldConfig['relation'] = [{
                   action: 'SHOW',
                   when: [{
-                    name: name,
+                    name,
                     value: schemaConfig.schema.show_subquestions_if,
-                  }]
+                  }],
                 }];
               });
             }
@@ -453,7 +433,7 @@ export class EntityUtils {
           });
         }
       } else {
-        console.error("Unsupported type=", schemaConfig);
+        console.error('Unsupported type=', schemaConfig);
       }
     }
 

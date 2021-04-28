@@ -2,8 +2,9 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import * as _ from 'lodash';
-import { DialogService } from '../../../../app/services';
+import { DialogService } from '../../../services';
 import { RestService, WebSocketService } from '../../../services';
 import { AppLoaderService } from '../../../services/app-loader/app-loader.service';
 import { StorageService } from '../../../services/storage.service';
@@ -15,189 +16,189 @@ import helptext from '../../../helptext/jails/jails-list';
 
 @Component({
   selector: 'app-jail-list',
-  template: `<entity-table [title]="title" [conf]="this" ></entity-table>`,
-  providers: [DialogService, StorageService]
+  template: '<entity-table [title]="title" [conf]="this" ></entity-table>',
+  providers: [DialogService, StorageService],
 })
 export class JailListComponent {
-
-  public isPoolActivated: boolean;
-  public selectedPool;
-  public activatedPool: any;
-  public availablePools: any;
-  public title = "Jails";
+  isPoolActivated: boolean;
+  selectedPool: any;
+  activatedPool: any;
+  availablePools: any;
+  title = 'Jails';
   protected queryCall = 'jail.query';
   protected wsDelete = 'jail.delete';
   protected wsMultiDelete = 'core.bulk';
-  public entityList;
-  protected route_add = ["jails", "add", "wizard"];
-  protected route_add_tooltip = "Add Jail";
-  public toActivatePool: boolean = false;
+  entityList: any;
+  protected route_add = ['jails', 'add', 'wizard'];
+  protected route_add_tooltip = 'Add Jail';
+  toActivatePool = false;
 
-  public columns: Array < any > = [
-    { name: T('JID'), prop: 'jid'},
+  columns: any[] = [
+    { name: T('JID'), prop: 'jid' },
     { name: T('Name'), prop: 'host_hostuuid', always_display: true },
-    { name: T('Boot'), prop: 'boot_readble', hidden: true},
-    { name: T('State'), prop: 'state'},
+    { name: T('Boot'), prop: 'boot_readble', hidden: true },
+    { name: T('State'), prop: 'state' },
     { name: T('Release'), prop: 'release' },
-    { name: T("IPv4"), prop: 'ip4_addr', hidden: true },
-    { name: T("IPv6"), prop: 'ip6_addr', hidden: true },
-    { name: T("Type"), prop: 'type', hidden: true },
-    { name: T("Template"), prop: 'template', hidden: true },
-    { name: T("Basejail"), prop: 'basejail_readble', hidden: true }
+    { name: T('IPv4'), prop: 'ip4_addr', hidden: true },
+    { name: T('IPv6'), prop: 'ip6_addr', hidden: true },
+    { name: T('Type'), prop: 'type', hidden: true },
+    { name: T('Template'), prop: 'template', hidden: true },
+    { name: T('Basejail'), prop: 'basejail_readble', hidden: true },
   ];
-  public rowIdentifier = 'host_hostuuid';
-  public config: any = {
+  rowIdentifier = 'host_hostuuid';
+  config: any = {
     paging: true,
     sorting: { columns: this.columns },
     multiSelect: true,
     deleteMsg: {
       title: 'Jail',
       key_props: ['host_hostuuid'],
-      id_prop: 'host_hostuuid'
+      id_prop: 'host_hostuuid',
     },
   };
-  public multiActions: Array < any > = [{
-      id: "mstart",
-      label: T("Start"),
-      icon: "play_arrow",
-      enable: true,
-      ttpos: "above", // tooltip position
-      onClick: (selected) => {
-        let selectedJails = this.getSelectedNames(selected);
-        this.loader.open();
-        this.entityList.busy =
-          this.ws.job('core.bulk', ["jail.start", selectedJails]).subscribe(
-            (res) => {
-              for (let i in selected) {
-                selected[i].state = 'up';
+  multiActions: any[] = [{
+    id: 'mstart',
+    label: T('Start'),
+    icon: 'play_arrow',
+    enable: true,
+    ttpos: 'above', // tooltip position
+    onClick: (selected: any) => {
+      const selectedJails = this.getSelectedNames(selected);
+      this.loader.open();
+      this.entityList.busy = this.ws.job('core.bulk', ['jail.start', selectedJails]).subscribe(
+        (res) => {
+          for (const i in selected) {
+            selected[i].state = 'up';
+            this.updateRow(selected[i]);
+          }
+          this.updateMultiAction(selected);
+          this.loader.close();
+          let message = '';
+          for (let i = 0; i < res.result.length; i++) {
+            if (res.result[i].error != null) {
+              message = message + '<li>' + selectedJails[i] + ': ' + res.result[i].error + '</li>';
+            }
+          }
+          if (message === '') {
+            this.dialogService.Info(T('Jails Started'), T('Jails started.'));
+          } else {
+            message = '<ul>' + message + '</ul>';
+            this.dialogService.errorReport(T('Jails failed to start'), message);
+          }
+        },
+        (res) => {
+          this.loader.close();
+          new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
+        },
+      );
+    },
+  },
+  {
+    id: 'mstop',
+    label: T('Stop'),
+    icon: 'stop',
+    enable: true,
+    ttpos: 'above',
+    onClick: (selected: any) => {
+      const dialog: any = {};
+      this.dialogService.confirm('Stop', 'Stop the selected jails?',
+        dialog.hasOwnProperty('hideCheckbox') ? dialog['hideCheckbox'] : true, T('Stop')).subscribe((res: boolean) => {
+        if (res) {
+          const selectedJails = this.getSelectedNames(selected);
+          this.loader.open();
+          this.entityList.busy = this.ws.job('core.bulk', ['jail.stop', selectedJails]).subscribe(
+            () => {
+              for (const i in selected) {
+                selected[i].state = 'down';
                 this.updateRow(selected[i]);
               }
               this.updateMultiAction(selected);
               this.loader.close();
-              let message = "";
-              for (let i = 0; i < res.result.length; i++) {
-                if (res.result[i].error != null) {
-                  message = message + '<li>' + selectedJails[i] + ': ' + res.result[i].error + '</li>';
-                }
-              }
-              if (message === "") {
-                this.dialogService.Info(T('Jails Started'), T("Jails started."));
-              } else {
-                message = '<ul>' + message + '</ul>';
-                this.dialogService.errorReport(T('Jails failed to start'), message);
-              }
             },
             (res) => {
               this.loader.close();
               new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
-            });
-      }
-    },
-    {
-      id: "mstop",
-      label: T("Stop"),
-      icon: "stop",
-      enable: true,
-      ttpos: "above",
-      onClick: (selected) => {
-        let dialog = {};
-        this.dialogService.confirm("Stop", "Stop the selected jails?",
-          dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true, T('Stop')).subscribe((res) => {
-          if (res) {
-            let selectedJails = this.getSelectedNames(selected);
-            this.loader.open();
-            this.entityList.busy =
-              this.ws.job('core.bulk', ["jail.stop", selectedJails]).subscribe(
-                (res) => {
-                  for (let i in selected) {
-                    selected[i].state = 'down';
-                    this.updateRow(selected[i]);
-                  }
-                  this.updateMultiAction(selected);
-                  this.loader.close();
-                },
-                (res) => {
-                  this.loader.close();
-                  new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
-                });
-          }
-        })
-      }
-    },
-    {
-      id: "mupdate",
-      label: T("Update"),
-      icon: "update",
-      enable: true,
-      ttpos: "above",
-      onClick: (selected) => {
-        const selectedJails = this.getSelectedNames(selected);
-        this.dialogService.Info(T('Jail Update'), T('Updating selected plugins.'));
-        this.entityList.busy =
-          this.ws.job('core.bulk', ["jail.update_to_latest_patch", selectedJails]).subscribe(
-            (res) => {
-              let message = "";
-              for (let i = 0; i < res.result.length; i++) {
-                if (res.result[i].error != null) {
-                  message = message + '<li>' + selectedJails[i] + ': ' + res.result[i].error + '</li>';
-                } else {
-                  this.updateRow(selected[i]);
-                }
-              }
-              if (message === "") {
-                this.dialogService.Info('', T('Selected jails updated.'), '500px', 'info', true);
-              } else {
-                message = '<ul>' + message + '</ul>';
-                this.dialogService.errorReport(T('Jail Update Failed'), message);
-              }
             },
-            (res) => {
-              new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
-            });
-      }
+          );
+        }
+      });
     },
-    {
-      id: "mdelete",
-      label: T("Delete"),
-      icon: "delete",
-      enable: true,
-      ttpos: "above",
-      onClick: (selected) => {
-        this.entityList.doMultiDelete(selected);
-      }
+  },
+  {
+    id: 'mupdate',
+    label: T('Update'),
+    icon: 'update',
+    enable: true,
+    ttpos: 'above',
+    onClick: (selected: any) => {
+      const selectedJails = this.getSelectedNames(selected);
+      this.dialogService.Info(T('Jail Update'), T('Updating selected plugins.'));
+      this.entityList.busy = this.ws.job('core.bulk', ['jail.update_to_latest_patch', selectedJails]).subscribe(
+        (res) => {
+          let message = '';
+          for (let i = 0; i < res.result.length; i++) {
+            if (res.result[i].error != null) {
+              message = message + '<li>' + selectedJails[i] + ': ' + res.result[i].error + '</li>';
+            } else {
+              this.updateRow(selected[i]);
+            }
+          }
+          if (message === '') {
+            this.dialogService.Info('', T('Selected jails updated.'), '500px', 'info', true);
+          } else {
+            message = '<ul>' + message + '</ul>';
+            this.dialogService.errorReport(T('Jail Update Failed'), message);
+          }
+        },
+        (res) => {
+          new EntityUtils().handleWSError(this.entityList, res, this.dialogService);
+        },
+      );
     },
+  },
+  {
+    id: 'mdelete',
+    label: T('Delete'),
+    icon: 'delete',
+    enable: true,
+    ttpos: 'above',
+    onClick: (selected: any) => {
+      this.entityList.doMultiDelete(selected);
+    },
+  },
   ];
 
   protected globalConfig = {
-    id: "config",
+    id: 'config',
     tooltip: helptext.globalConfig.tooltip,
     onClick: () => {
-      this.prerequisite().then((res)=>{
+      this.prerequisite().then((res) => {
         if (this.availablePools !== undefined) {
           this.activatePool();
         }
-      })
-    }
+      });
+    },
   };
 
   protected addBtnDisabled = true;
 
   constructor(public router: Router, protected rest: RestService, public ws: WebSocketService,
     public loader: AppLoaderService, public dialogService: DialogService, private translate: TranslateService,
-    public sorter: StorageService, public dialog: MatDialog,) {}
+    public sorter: StorageService, public dialog: MatDialog) {}
 
   noPoolDialog() {
     const dialogRef = this.dialogService.confirm(
       helptext.noPoolDialog.title,
       helptext.noPoolDialog.message,
       true,
-      helptext.noPoolDialog.buttonMsg);
+      helptext.noPoolDialog.buttonMsg,
+    );
 
-      dialogRef.subscribe((res) => {
-        if (res) {
-          this.router.navigate(new Array('/').concat(['storage', 'pools', 'manager']));
-        }
-    })
+    dialogRef.subscribe((res: boolean) => {
+      if (res) {
+        this.router.navigate(new Array('/').concat(['storage', 'pools', 'manager']));
+      }
+    });
   }
 
   prerequisite(): Promise<boolean> {
@@ -208,7 +209,7 @@ export class JailListComponent {
           this.noPoolDialog();
           return;
         }
-        this.availablePools = res
+        this.availablePools = res;
       }, (err) => {
         resolve(false);
         new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
@@ -225,14 +226,15 @@ export class JailListComponent {
           }
         }, (err) => {
           this.dialogService.errorReport(err.trace.class, err.reason, err.trace.formatted).subscribe(
-            (res)=> {
+            (res) => {
               resolve(false);
-            });
-        })
+            },
+          );
+        });
       }
     });
   }
-  prerequisiteFailedHandler(entityList) {
+  prerequisiteFailedHandler(entityList: any) {
     this.entityList = entityList;
   }
 
@@ -250,22 +252,20 @@ export class JailListComponent {
           type: 'select',
           name: 'selectedPool',
           placeholder: helptext.activatePoolDialog.selectedPool_placeholder,
-          options: this.availablePools ? this.availablePools.map(pool => {
-            return {
-              label: pool.name + (pool.is_decrypted ? (pool.status === 'ONLINE' ? '' : ` (${pool.status})`) : ' (Locked)'),
-              value: pool.name,
-              disable: !pool.is_decrypted || pool.status !== 'ONLINE'
-            }
-          }) : [],
-          value: this.activatedPool
-        }
+          options: this.availablePools ? this.availablePools.map((pool: any) => ({
+            label: pool.name + (pool.is_decrypted ? (pool.status === 'ONLINE' ? '' : ` (${pool.status})`) : ' (Locked)'),
+            value: pool.name,
+            disable: !pool.is_decrypted || pool.status !== 'ONLINE',
+          })) : [],
+          value: this.activatedPool,
+        },
       ],
       saveButtonText: helptext.activatePoolDialog.saveButtonText,
-      customSubmit: function (entityDialog) {
+      customSubmit(entityDialog: EntityDialogComponent) {
         const value = entityDialog.formValue;
         self.entityList.loader.open();
         self.ws.call('jail.activate', [value['selectedPool']]).subscribe(
-          (res)=>{
+          (res) => {
             self.addBtnDisabled = false;
             self.activatedPool = value['selectedPool'];
             entityDialog.dialogRef.close(true);
@@ -274,162 +274,168 @@ export class JailListComponent {
             self.dialogService.Info(
               helptext.activatePoolDialog.successInfoDialog.title,
               helptext.activatePoolDialog.successInfoDialog.message + value['selectedPool'],
-              '500px', 'info', true);
+              '500px', 'info', true,
+            );
           },
           (res) => {
             self.entityList.loader.close();
             new EntityUtils().handleWSError(self.entityList, res, self.dialogService);
-          });
-      }
-    }
+          },
+        );
+      },
+    };
     if (this.availablePools) {
       this.dialogService.dialogForm(conf);
     }
   }
 
-  getActions(parentRow) {
+  getActions(parentRow: any) {
     return [{
-        name: parentRow.host_hostuuid,
-        icon: 'edit',
-        id: "edit",
-        label: T("Edit"),
-        onClick: (row) => {
-          this.router.navigate(
-            new Array('').concat(["jails", "edit", row.host_hostuuid]));
-        }
+      name: parentRow.host_hostuuid,
+      icon: 'edit',
+      id: 'edit',
+      label: T('Edit'),
+      onClick: (row: any) => {
+        this.router.navigate(
+          new Array('').concat(['jails', 'edit', row.host_hostuuid]),
+        );
       },
-      {
-        name: parentRow.host_hostuuid,
-        icon: 'device_hub',
-        id: "mount",
-        label: T("Mount points"),
-        onClick: (row) => {
-          this.router.navigate(
-            new Array('').concat(["jails", "storage", row.host_hostuuid]));
-        }
+    },
+    {
+      name: parentRow.host_hostuuid,
+      icon: 'device_hub',
+      id: 'mount',
+      label: T('Mount points'),
+      onClick: (row: any) => {
+        this.router.navigate(
+          new Array('').concat(['jails', 'storage', row.host_hostuuid]),
+        );
       },
-      {
-        name: parentRow.host_hostuuid,
-        icon: 'play_arrow',
-        id: "start",
-        label: T("Start"),
-        onClick: (row) => {
-          const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Starting Jail") }, disableClose: true });
-          dialogRef.componentInstance.setCall('jail.start', [row.host_hostuuid]);
-          dialogRef.componentInstance.submit();
-          dialogRef.componentInstance.success.subscribe((res) => {
-            dialogRef.close(true);
-            this.updateRow(row);
-            this.updateMultiAction([row]);
-          });
-        }
+    },
+    {
+      name: parentRow.host_hostuuid,
+      icon: 'play_arrow',
+      id: 'start',
+      label: T('Start'),
+      onClick: (row: any) => {
+        const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Starting Jail') }, disableClose: true });
+        dialogRef.componentInstance.setCall('jail.start', [row.host_hostuuid]);
+        dialogRef.componentInstance.submit();
+        dialogRef.componentInstance.success.subscribe(() => {
+          dialogRef.close(true);
+          this.updateRow(row);
+          this.updateMultiAction([row]);
+        });
       },
-      {
-        name: parentRow.host_hostuuid,
-        icon: 'cached',
-        id: "restart",
-        label: T("Restart"),
-        onClick: (row) => {
-          const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Restarting Jail") }, disableClose: true });
-          dialogRef.componentInstance.setCall('jail.restart', [row.host_hostuuid]);
-          dialogRef.componentInstance.submit();
-          dialogRef.componentInstance.success.subscribe((res) => {
-            dialogRef.close(true);
-            this.updateRow(row);
-            this.updateMultiAction([row]);
-          });
-        }
+    },
+    {
+      name: parentRow.host_hostuuid,
+      icon: 'cached',
+      id: 'restart',
+      label: T('Restart'),
+      onClick: (row: any) => {
+        const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Restarting Jail') }, disableClose: true });
+        dialogRef.componentInstance.setCall('jail.restart', [row.host_hostuuid]);
+        dialogRef.componentInstance.submit();
+        dialogRef.componentInstance.success.subscribe(() => {
+          dialogRef.close(true);
+          this.updateRow(row);
+          this.updateMultiAction([row]);
+        });
       },
-      {
-        name: parentRow.host_hostuuid,
-        icon: 'stop',
-        id: "stop",
-        label: T("Stop"),
-        onClick: (row) => {
-          let dialog = {};
-          this.dialogService.confirm("Stop", "Stop the selected jail?", 
-            dialog.hasOwnProperty("hideCheckbox") ? dialog['hideCheckbox'] : true , T('Stop')).subscribe((dialog_res) => {
-              if (dialog_res) {
-                const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Stopping Jail") }, disableClose: true });
-                dialogRef.componentInstance.setCall('jail.stop', [row.host_hostuuid]);
-                dialogRef.componentInstance.submit();
-                dialogRef.componentInstance.success.subscribe((res) => {
-                  dialogRef.close(true);
-                  this.updateRow(row);
-                  this.updateMultiAction([row]);
-                });
-              }
-          })
-        }
+    },
+    {
+      name: parentRow.host_hostuuid,
+      icon: 'stop',
+      id: 'stop',
+      label: T('Stop'),
+      onClick: (row: any) => {
+        const dialog: any = {};
+        this.dialogService.confirm('Stop', 'Stop the selected jail?',
+          dialog.hasOwnProperty('hideCheckbox') ? dialog['hideCheckbox'] : true, T('Stop')).subscribe((dialog_res: boolean) => {
+          if (dialog_res) {
+            const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Stopping Jail') }, disableClose: true });
+            dialogRef.componentInstance.setCall('jail.stop', [row.host_hostuuid]);
+            dialogRef.componentInstance.submit();
+            dialogRef.componentInstance.success.subscribe(() => {
+              dialogRef.close(true);
+              this.updateRow(row);
+              this.updateMultiAction([row]);
+            });
+          }
+        });
       },
-      {
-        name: parentRow.host_hostuuid,
-        icon: 'update',
-        id: "update",
-        label: T("Update"),
-        onClick: (row) => {
-          this.dialogService.confirm(
-            helptext.updateConfirmDialog.title,
-            helptext.updateConfirmDialog.message, true).subscribe((dialog_res)=> {
-              if (dialog_res) {
-                const dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": T("Updating Jail") }, disableClose: true });
-                dialogRef.componentInstance.setCall('jail.update_to_latest_patch', [row.host_hostuuid]);
-                dialogRef.componentInstance.submit();
-                dialogRef.componentInstance.success.subscribe((res) => {
-                  dialogRef.close(true);
-                  this.updateRow(row);
-                  this.dialogService.Info(T('Jail Updated'), T("Jail <i>") + row.host_hostuuid + T("</i> updated."), '500px', 'info', true);
-                });
-              }
-          });
-        }
+    },
+    {
+      name: parentRow.host_hostuuid,
+      icon: 'update',
+      id: 'update',
+      label: T('Update'),
+      onClick: (row: any) => {
+        this.dialogService.confirm(
+          helptext.updateConfirmDialog.title,
+          helptext.updateConfirmDialog.message, true,
+        ).subscribe((dialog_res: boolean) => {
+          if (dialog_res) {
+            const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Updating Jail') }, disableClose: true });
+            dialogRef.componentInstance.setCall('jail.update_to_latest_patch', [row.host_hostuuid]);
+            dialogRef.componentInstance.submit();
+            dialogRef.componentInstance.success.subscribe(() => {
+              dialogRef.close(true);
+              this.updateRow(row);
+              this.dialogService.Info(T('Jail Updated'), T('Jail <i>') + row.host_hostuuid + T('</i> updated.'), '500px', 'info', true);
+            });
+          }
+        });
       },
-      {
-        name: parentRow.host_hostuuid,
-        icon: 'keyboard_arrow_right',
-        id: "shell",
-        label: T("Shell"),
-        onClick: (row) => {
-          this.router.navigate(
-            new Array('').concat(["jails", "shell", row.host_hostuuid]));
-        }
+    },
+    {
+      name: parentRow.host_hostuuid,
+      icon: 'keyboard_arrow_right',
+      id: 'shell',
+      label: T('Shell'),
+      onClick: (row: any) => {
+        this.router.navigate(
+          new Array('').concat(['jails', 'shell', row.host_hostuuid]),
+        );
       },
-      {
-        name: parentRow.host_hostuuid,
-        icon: 'delete',
-        id: "delete",
-        label: T("Delete"),
-        onClick: (row) => {
-          this.entityList.doDelete(row);
-        }
-      }
-    ]
+    },
+    {
+      name: parentRow.host_hostuuid,
+      icon: 'delete',
+      id: 'delete',
+      label: T('Delete'),
+      onClick: (row: any) => {
+        this.entityList.doDelete(row);
+      },
+    },
+    ];
   }
-  
-  public isActionVisible(actionId: string, row): boolean {
-    if (actionId === "start" && row.state === "up") {
+
+  isActionVisible(actionId: string, row: any): boolean {
+    if (actionId === 'start' && row.state === 'up') {
       return false;
-    } else if (actionId === "stop" && row.state === "down") {
+    } if (actionId === 'stop' && row.state === 'down') {
       return false;
-    } else if (actionId === "shell" && row.state === "down") {
+    } if (actionId === 'shell' && row.state === 'down') {
       return false;
-    } else if (actionId === "restart" && row.state === "down") {
+    } if (actionId === 'restart' && row.state === 'down') {
       return false;
     }
 
     return true;
   }
 
-  getSelectedNames(selectedJails) {
-    let selected: any = [];
-    for (let i in selectedJails) {
+  getSelectedNames(selectedJails: any[]) {
+    const selected: any = [];
+    for (const i in selectedJails) {
       selected.push([selectedJails[i].host_hostuuid]);
     }
     return selected;
   }
 
-  updateRow(row) {
-    this.ws.call(this.queryCall, [[["host_hostuuid", "=", row.host_hostuuid]]]).subscribe(
+  updateRow(row: any) {
+    this.ws.call(this.queryCall, [[['host_hostuuid', '=', row.host_hostuuid]]]).subscribe(
       (res) => {
         if (res[0]) {
           const prefix = (res[0].state === 'up' && res[0].dhcp === 'on') ? 'DHCP: ' : '';
@@ -441,25 +447,26 @@ export class JailListComponent {
             }
           }
         }
-      });
+      },
+    );
   }
 
   updateMultiAction(selected: any) {
     if (_.find(selected, ['state', 'up'])) {
-     _.find(this.multiActions, {'id': 'mstop' as any})['enable'] = true;
+      _.find(this.multiActions, { id: 'mstop' as any })['enable'] = true;
     } else {
-      _.find(this.multiActions, {'id': 'mstop' as any})['enable'] = false;
+      _.find(this.multiActions, { id: 'mstop' as any })['enable'] = false;
     }
 
     if (_.find(selected, ['state', 'down'])) {
-     _.find(this.multiActions, {'id': 'mstart' as any})['enable'] = true;
+      _.find(this.multiActions, { id: 'mstart' as any })['enable'] = true;
     } else {
-      _.find(this.multiActions, {'id': 'mstart' as any})['enable'] = false;
+      _.find(this.multiActions, { id: 'mstart' as any })['enable'] = false;
     }
   }
 
   wsMultiDeleteParams(selected: any) {
-    let params: Array<any> = ['jail.delete'];
+    const params: any[] = ['jail.delete'];
     params.push(this.getSelectedNames(selected));
     return params;
   }
@@ -468,9 +475,9 @@ export class JailListComponent {
     // Call sort on load to make sure initial sort is by Jail name, asecnding
     entityList.rows = this.sorter.tableSorter(entityList.rows, 'host_hostuuid', 'asc');
     for (let i = 0; i < entityList.rows.length; i++) {
-      entityList.rows[i].boot_readble =  entityList.rows[i].boot === 0 ? 'off' : 'on';
-      entityList.rows[i].source_template =  entityList.rows[i].source_template  ? entityList.rows[i].source_template : '-';
-      entityList.rows[i].basejail_readble =  entityList.rows[i].basejail === 0 ? 'no' : 'yes';
+      entityList.rows[i].boot_readble = entityList.rows[i].boot === 0 ? 'off' : 'on';
+      entityList.rows[i].source_template = entityList.rows[i].source_template ? entityList.rows[i].source_template : '-';
+      entityList.rows[i].basejail_readble = entityList.rows[i].basejail === 0 ? 'no' : 'yes';
 
       const prefix = (entityList.rows[i].state === 'up' && entityList.rows[i].dhcp === 'on') ? 'DHCP: ' : '';
       if (_.split(entityList.rows[i].ip4_addr, '|').length > 1) {
@@ -482,7 +489,7 @@ export class JailListComponent {
     }
   }
 
-  wsDeleteParams(row, id) {
-    return row.state === 'up' ? [id, {force: true}] : [id];
+  wsDeleteParams(row: any, id: any) {
+    return row.state === 'up' ? [id, { force: true }] : [id];
   }
 }

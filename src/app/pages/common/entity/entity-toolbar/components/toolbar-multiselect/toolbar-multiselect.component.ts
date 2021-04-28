@@ -1,5 +1,8 @@
-import { Component, ViewChild, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component, ViewChild, Input, OnInit, OnChanges, SimpleChanges,
+} from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
+import { MatSelect } from '@angular/material/select';
 import { TranslateService } from '@ngx-translate/core';
 import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
 
@@ -8,27 +11,27 @@ import { ControlConfig } from '../../models/control-config.interface';
 import { Control } from '../../models/control.interface';
 
 @Component({
-  selector : 'toolbar-multiselect',
-  templateUrl: './toolbar-multiselect.component.html'
+  selector: 'toolbar-multiselect',
+  templateUrl: './toolbar-multiselect.component.html',
 })
 export class ToolbarMultiSelectComponent extends iXAbstractObject implements OnInit, OnChanges {
-  @ViewChild('selectTrigger') mySel;
-  @Input() config?: ControlConfig; 
+  @ViewChild('selectTrigger') mySel: MatSelect;
+  @Input() config?: ControlConfig;
   @Input() controller: Subject<any>;
-  allSelected:boolean = null;
-  public values: any[] = [];
+  allSelected: boolean = null;
+  values: any[] = [];
   private selectStates: boolean [] = [];
 
   constructor(public translate: TranslateService) {
-    super()
+    super();
   }
 
-  ngOnChanges(changes:SimpleChanges){
-    if(changes.config){
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.config) {
     }
   }
 
-  ngOnInit(){
+  ngOnInit() {
     this.selectStates.length = this.config.options.length;
     this.selectStates.fill(false);
     this.values.push(this.config.options[0]);
@@ -36,37 +39,36 @@ export class ToolbarMultiSelectComponent extends iXAbstractObject implements OnI
     this.updateController();
   }
 
-  onClick(value, index){
-
-    if(this.selectStates[index]){
-      if(this.checkLength()){this.allSelected = false;}
-      let vIndex = this.values.indexOf(value);
-      this.values.splice(vIndex,1);
-      this.mySel.options.forEach( (item) => item.deselect());
+  onClick(value: any, index: number) {
+    if (this.selectStates[index]) {
+      if (this.checkLength()) { this.allSelected = false; }
+      const vIndex = this.values.indexOf(value);
+      this.values.splice(vIndex, 1);
+      this.mySel.options.forEach((item) => item.deselect());
     } else {
       this.values.push(value);
-      this.mySel.options.forEach( (item) => item.select());
+      this.mySel.options.forEach((item) => item.select());
     }
     this.mySel.close();
     this.selectStates[index] = !this.selectStates[index];
     this.updateController();
   }
 
-  updateController(){
+  updateController() {
     this.config.value = this.values;
-    let message: Control = {name: this.config.name, value: this.values};
+    const message: Control = { name: this.config.name, value: this.values };
     this.controller.next(message);
   }
 
-  checkLength(){
+  checkLength() {
     return this.values.length === this.selectStates.length;
   }
 
-  checkAll(){
+  checkAll() {
     this.allSelected = this.checkLength();
-    if(!this.allSelected){
+    if (!this.allSelected) {
       this.selectStates.fill(true);
-      this.values = Object.assign([],this.config.options);
+      this.values = Object.assign([], this.config.options);
     } else {
       this.selectStates.fill(false);
       this.values = [];
@@ -74,14 +76,14 @@ export class ToolbarMultiSelectComponent extends iXAbstractObject implements OnI
     this.updateController();
   }
 
-  isChecked(option){
+  isChecked() {
     return true;
   }
 
-  onChangeOption(e){
+  onChangeOption() {
   }
 
-  compareValues(x, y):boolean{
+  compareValues(x: any, y: any): boolean {
     return x == y;
   }
 }

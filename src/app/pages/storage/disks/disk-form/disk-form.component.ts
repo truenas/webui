@@ -3,25 +3,24 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Validators } from '@angular/forms';
 import * as _ from 'lodash';
 
-import { RestService, WebSocketService } from '../../../../services/';
+import { RestService, WebSocketService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/storage/disks/disks';
 
 @Component({
-  selector : 'app-disk-form',
-  template : `<entity-form [conf]="this"></entity-form>`
+  selector: 'app-disk-form',
+  template: '<entity-form [conf]="this"></entity-form>',
 })
 export class DiskFormComponent {
-
   protected route_success: string[] = ['storage', 'disks'];
   protected queryCall = 'disk.query';
   protected editCall = 'disk.update';
-  protected customFilter: Array<any> = [[["identifier", "="]]];
+  protected customFilter: any[] = [[['identifier', '=']]];
   protected isEntity = true;
 
   protected fieldConfig: FieldConfig[];
-  public fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext.fieldset_disk,
       label: true,
@@ -179,50 +178,49 @@ export class DiskFormComponent {
       ],
     },
     { name: 'divider', divider: true },
-  ]
+  ];
 
   protected disk_hddstandby: any;
   protected disk_advpowermgmt: any;
   protected disk_acousticlevel: any;
   protected title: String;
-  
-  public rowid: any;
+
+  rowid: any;
 
   constructor(
     private _router: Router,
     protected rest: RestService,
     protected ws: WebSocketService,
-    protected aroute: ActivatedRoute
+    protected aroute: ActivatedRoute,
   ) {
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     delete data.passwd;
     return data;
   }
 
-
   preInit() {
-    this.aroute.params.subscribe(params => {
-      /* 
+    this.aroute.params.subscribe((params) => {
+      /*
        * Make sure the route is "storage/disks" before
-       * using the pk value 
+       * using the pk value
        * */
-      if (params['pk'] && this._router.url.startsWith("/storage/disks")){
+      if (params['pk'] && this._router.url.startsWith('/storage/disks')) {
         this.customFilter[0][0].push(params['pk']);
       }
     });
   }
 
   afterInit(entityEdit: any) {
-    entityEdit.formGroup.controls['hddstandby'].valueChanges.subscribe(value => {
+    entityEdit.formGroup.controls['hddstandby'].valueChanges.subscribe((value: any) => {
       if (value === 'ALWAYS ON') {
         entityEdit.formGroup.controls['hddstandby_force'].setValue(false);
       }
-    })
+    });
   }
 
-  beforeSubmit(value) {
+  beforeSubmit(value: any) {
     if (!value.hddstandby_force) {
       value.hddstandby_force = false;
     }
@@ -231,7 +229,7 @@ export class DiskFormComponent {
     }
 
     if (value.clear_pw) {
-      value.passwd= '';
+      value.passwd = '';
     }
 
     delete value.clear_pw;
@@ -243,7 +241,7 @@ export class DiskFormComponent {
     value.informational = value.informational === '' ? null : value.informational;
   }
 
-  inIt(pk) {
+  inIt(pk: string) {
     this.title = helptext.disk_form_title;
 
     delete this.route_success;

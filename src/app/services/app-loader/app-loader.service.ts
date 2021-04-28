@@ -10,16 +10,16 @@ export class AppLoaderService {
 
   constructor(private dialog: MatDialog) { }
 
-  public open(title: string = T('Please wait')): Observable<boolean> {
+  open(title: string = T('Please wait')): Observable<boolean> {
     if (this.dialogRef === undefined) {
-      this.dialogRef = this.dialog.open(AppLoaderComponent, {disableClose: true});
+      this.dialogRef = this.dialog.open(AppLoaderComponent, { disableClose: true });
       this.dialogRef.updateSize('200px', '200px');
       this.dialogRef.componentInstance.title = title;
       return this.dialogRef.afterClosed();
     }
   }
 
-  public close() {
+  close() {
     if (this.dialogRef) {
       this.dialogRef.close();
       this.dialogRef = undefined;
@@ -27,6 +27,6 @@ export class AppLoaderService {
   }
 
   // These pass signals from various components to entity form component to start/stop progress spinner
-  public callStarted = new EventEmitter<string>();
-  public callDone = new EventEmitter<string>();
+  callStarted = new EventEmitter<string>();
+  callDone = new EventEmitter<string>();
 }

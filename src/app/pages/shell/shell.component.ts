@@ -1,9 +1,11 @@
-import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild, ViewEncapsulation } from "@angular/core";
-import { TranslateService } from "@ngx-translate/core";
+import {
+  Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild, ViewEncapsulation,
+} from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ShellService, WebSocketService } from "../../services/";
-import helptext from "./../../helptext/shell/shell";
-import { CopyPasteMessageComponent } from "./copy-paste-message.component";
+import { ShellService, WebSocketService } from '../../services';
+import helptext from '../../helptext/shell/shell';
+import { CopyPasteMessageComponent } from './copy-paste-message.component';
 import { Terminal } from 'xterm';
 import { AttachAddon } from 'xterm-addon-attach';
 import { FitAddon } from 'xterm-addon-fit';
@@ -23,50 +25,50 @@ import { T } from 'app/translate-marker';
 export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   // sets the shell prompt
   @Input() prompt = '';
-  //xter container
-  @ViewChild('terminal', { static: true}) container: ElementRef;
+  // xter container
+  @ViewChild('terminal', { static: true }) container: ElementRef;
   // xterm variables
   cols: string;
   rows: string;
   font_size = 14;
   font_name = 'Inconsolata';
-  public token: any;
-  public xterm: any;
-  public resize_terminal = true;
+  token: any;
+  xterm: any;
+  resize_terminal = true;
   private shellSubscription: any;
   private shellConnectedSubscription: any;
   private fitAddon: any;
-  public formEvents: Subject<CoreEvent>;
+  formEvents: Subject<CoreEvent>;
 
-  public usage_tooltip = helptext.usage_tooltip;
+  usage_tooltip = helptext.usage_tooltip;
   private attachAddon: AttachAddon;
 
-  clearLine = "\u001b[2K\r"
-  public shellConnected: boolean = false;
-  public connectionId: string;
+  clearLine = '\u001b[2K\r';
+  shellConnected = false;
+  connectionId: string;
 
   ngOnInit() {
     this.getAuthToken().subscribe((res) => {
       this.initializeWebShell(res);
-      this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
+      this.shellSubscription = this.ss.shellOutput.subscribe(() => {
       });
       this.initializeTerminal();
     });
   }
 
   ngOnDestroy() {
-    if (this.ss.connected){
+    if (this.ss.connected) {
       this.ss.socket.close();
     }
-    if(this.shellSubscription){
+    if (this.shellSubscription) {
       this.shellSubscription.unsubscribe();
     }
 
-    if(this.shellConnectedSubscription){
+    if (this.shellConnectedSubscription) {
       this.shellConnectedSubscription.unsubscribe();
     }
 
-    this.core.unregister({observerClass: this});
+    this.core.unregister({ observerClass: this });
   }
 
   refreshToolbarButtons() {
@@ -123,18 +125,18 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
       actionType: EntityToolbarComponent,
       actionConfig: {
         target: this.formEvents,
-        controls: controls,
-      }
+        controls,
+      },
     };
 
-    this.core.emit({name:"GlobalActions", data: actionsConfig, sender: this});
+    this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
   }
 
-  onResize(event) {
+  onResize() {
     this.resizeTerm();
   }
 
-  onFontSizeChanged(event) {
+  onFontSizeChanged() {
     this.resizeTerm();
   }
 
@@ -144,7 +146,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: {
-    [propKey: string]: SimpleChange
+    [propKey: string]: SimpleChange;
   }) {
     const log: string[] = [];
     for (const propName in changes) {
@@ -162,7 +164,6 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   initializeTerminal() {
-
     const size = this.getSize();
 
     const setting = {
@@ -173,7 +174,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
       focus: true,
       fontSize: this.font_size,
       fontFamily: this.font_name,
-      allowTransparency: true
+      allowTransparency: true,
     };
 
     this.xterm = new Terminal(setting);
@@ -187,10 +188,9 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
       this.xterm.open(this.container.nativeElement);
       this.fitAddon.fit();
       this.xterm._initialized = true;
-    }, function (e) {
+    }, (e) => {
       console.log('Font is not available', e);
     });
-
   }
 
   getSize() {
@@ -204,7 +204,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     span.innerHTML = 'a';
 
     let cols = 0;
-    while(span.offsetWidth < domWidth) {
+    while (span.offsetWidth < domWidth) {
       span.innerHTML += 'a';
       cols++;
     }
@@ -220,16 +220,16 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     return {
-      rows: rows,
-      cols: cols
-    }
+      rows,
+      cols,
+    };
   }
 
-  resizeTerm(){
+  resizeTerm() {
     const size = this.getSize();
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
-    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res)=> {
+    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res) => {
       this.xterm.focus();
     });
     return true;
@@ -241,7 +241,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
 
     this.refreshToolbarButtons();
 
-    this.shellConnectedSubscription = this.ss.shellConnected.subscribe((res)=> {
+    this.shellConnectedSubscription = this.ss.shellConnected.subscribe((res: any) => {
       this.shellConnected = res.connected;
       this.connectionId = res.id;
 
@@ -254,7 +254,7 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
 
       this.refreshToolbarButtons();
       this.resizeTerm();
-    })
+    });
   }
 
   getAuthToken() {
@@ -265,6 +265,6 @@ export class ShellComponent implements OnInit, OnChanges, OnDestroy {
     this.ss.connect();
   }
 
-  constructor(protected core:CoreService, private ws: WebSocketService, public ss: ShellService, public translate: TranslateService, private dialog: MatDialog) {
+  constructor(protected core: CoreService, private ws: WebSocketService, public ss: ShellService, public translate: TranslateService, private dialog: MatDialog) {
   }
 }

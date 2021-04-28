@@ -10,22 +10,22 @@ export const routes: Routes = [
     path: '',
     data: { title: 'Plugins', breadcrumb: 'Plugins' },
     children: [
-    {
-      path: '',
-      component: PluginsComponent,
-      data: { title: 'Plugins', breadcrumb: 'Plugins', icon: 'developer_board'}
-    },
-    {
-      path: 'add/:name',
-      component: PluginAddComponent,
-      data: { title: 'Add', breadcrumb: 'Add' },
-    },
-    {
-      path: 'advanced/:plugin',
-      component: JailFormComponent,
-      data: { title: 'Advanced Add', breadcrumb: 'Advanced Add' },
-    },
-    ]
-  }
+      {
+        path: '',
+        component: PluginsComponent,
+        data: { title: 'Plugins', breadcrumb: 'Plugins', icon: 'developer_board' },
+      },
+      {
+        path: 'add/:name',
+        component: PluginAddComponent,
+        data: { title: 'Add', breadcrumb: 'Add' },
+      },
+      {
+        path: 'advanced/:plugin',
+        component: JailFormComponent,
+        data: { title: 'Advanced Add', breadcrumb: 'Advanced Add' },
+      },
+    ],
+  },
 ];
 export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);

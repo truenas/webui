@@ -1,1 +1,1 @@
-export {EntityCardComponent} from './entity-card.component';
+export { EntityCardComponent } from './entity-card.component';

@@ -1,4 +1,6 @@
-import { Component, Output, ViewChild, EventEmitter } from '@angular/core';
+import {
+  Component, Output, ViewChild, EventEmitter,
+} from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -13,19 +15,19 @@ import globalHelptext from '../../../../../../helptext/global-helptext';
   styleUrls: ['./form-input.component.scss', '../dynamic-field/dynamic-field.css'],
 })
 export class FormInputComponent implements Field {
-  @ViewChild('fileInput', { static: true}) fileInput;
+  @ViewChild('fileInput', { static: true }) fileInput: HTMLInputElement;
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
-  public fileString;
-  public showPassword = false;
+  fileString: string | ArrayBuffer;
+  showPassword = false;
   private hasPasteEvent = false;
 
   constructor(public translate: TranslateService,
     private formService: EntityFormService) {
   }
 
-  changeListener($event): void {
+  changeListener($event: Event): void {
     this.readFile($event.target);
   }
 
@@ -36,7 +38,7 @@ export class FormInputComponent implements Field {
     fReader.onloadend = (e) => {
       this.fileString = fReader.result;
       this.contents(fReader.result);
-    }
+    };
     if (this.config.fileType == 'binary') {
       fReader.readAsBinaryString(file);
     } else {
@@ -44,17 +46,17 @@ export class FormInputComponent implements Field {
     }
   }
 
-  contents(result:any) {
-    if (this.config.fileType == 'binary'){
+  contents(result: any) {
+    if (this.config.fileType == 'binary') {
       this.group.controls[this.config.name].setValue(btoa(result));
     } else {
       this.group.controls[this.config.name].setValue(result);
     }
   }
 
-  blurEvent(){
-    if(this.config.blurStatus){
-      this.config.blurEvent(this.config.parent)
+  blurEvent() {
+    if (this.config.blurStatus) {
+      this.config.blurEvent(this.config.parent);
     }
   }
 
@@ -67,7 +69,7 @@ export class FormInputComponent implements Field {
     if (this.config.inputUnit) {
       const phrasedValue = this.formService.phraseInputData(this.group.controls[this.config.name].value, this.config.inputUnit);
       if (isNaN(phrasedValue)) {
-        this.group.controls[this.config.name].setErrors({manualValidateError: true, manualValidateErrorMsg: globalHelptext.invalidInputValueWithUnit});
+        this.group.controls[this.config.name].setErrors({ manualValidateError: true, manualValidateErrorMsg: globalHelptext.invalidInputValueWithUnit });
       }
       if (phrasedValue) {
         this.group.controls[this.config.name].setValue(phrasedValue);
@@ -78,11 +80,11 @@ export class FormInputComponent implements Field {
       const numberValue = this.group.controls[this.config.name].value * 1;
       this.group.controls[this.config.name].setValue(numberValue);
       if (this.config.min !== undefined && numberValue < this.config.min) {
-        this.group.controls[this.config.name].setErrors({manualValidateError: true, manualValidateErrorMsg: globalHelptext.invalidInputValueWithMin + this.config.min});
+        this.group.controls[this.config.name].setErrors({ manualValidateError: true, manualValidateErrorMsg: globalHelptext.invalidInputValueWithMin + this.config.min });
       }
 
       if (this.config.max !== undefined && numberValue > this.config.max) {
-        this.group.controls[this.config.name].setErrors({manualValidateError: true, manualValidateErrorMsg: globalHelptext.invalidInputValueWithMax + this.config.max});
+        this.group.controls[this.config.name].setErrors({ manualValidateError: true, manualValidateErrorMsg: globalHelptext.invalidInputValueWithMax + this.config.max });
       }
     }
   }
@@ -98,7 +100,7 @@ export class FormInputComponent implements Field {
   resetInput() {
     this.group.controls[this.config.name].setValue('');
   }
-  
+
   onPaste(event: ClipboardEvent) {
     if (!this.config.inputType || this.config.inputType !== 'password') {
       this.hasPasteEvent = true;
@@ -119,5 +121,4 @@ export class FormInputComponent implements Field {
       this.config.warnings = null;
     }
   }
-
 }

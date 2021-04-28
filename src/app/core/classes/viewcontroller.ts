@@ -8,23 +8,22 @@ export interface ViewControllerOptions {
 }
 
 export abstract class ViewController {
-
-  public name: string = "ViewController";
+  name = 'ViewController';
   protected controlEvents: Subject<CoreEvent>;
 
   constructor(options?: ViewControllerOptions) {
-    if(options){
+    if (options) {
       this.setControlEvents(options.events);
     } else {
       this.setControlEvents();
     }
   }
 
-  public setControlEvents(subj?:Subject<CoreEvent>){
-    if(subj){
+  setControlEvents(subj?: Subject<CoreEvent>) {
+    if (subj) {
       this.controlEvents = subj;
     } else {
       this.controlEvents = new Subject();
     }
-  } 
+  }
 }

@@ -9,7 +9,14 @@ export default {
     jobTitle: T('Configuring...'),
     success: T('Success'),
     message: T('Using pool '),
-    unsetPool: T('Unset Pool')
+    unsetPool: {
+      label: T('Unset Pool'),
+      confirm: {
+        title: T('Unset Pool'),
+        message: T('Confirm to unset pool?'),
+        button: T('Unset'),
+      },
+    },
   },
 
   message: {
@@ -17,7 +24,7 @@ export default {
     not_configured: T('Applications not configured'),
     not_running: T('Applications are not running'),
     no_installed: T('No Applications Installed'),
-    no_installed_message: T('Applications you install will automatically appear here. Click below and browse the TrueNAS catalog to get started.')
+    no_installed_message: T('Applications you install will automatically appear here. Click below and browse the TrueNAS catalog to get started.'),
   },
 
   installing: T('Installing'),
@@ -60,8 +67,8 @@ export default {
         label: T('Delete'),
         icon: 'delete',
         disabled: false,
-      }
-    ]
+      },
+    ],
   },
 
   launch: T('Launch Docker Image'),
@@ -78,76 +85,76 @@ export default {
   install: {
     title: T('Ready to Install'),
     msg1: T('Install '),
-    msg2: T(' on pool ')
+    msg2: T(' on pool '),
   },
 
   noPool: {
     title: T('No Pools Found'),
     message: T('At least one pool must be available to use apps'),
-    action: T('Create Pool')
+    action: T('Create Pool'),
   },
 
   kubForm: {
     title: T('Kubernetes Settings'),
     pool: {
       placeholder: T('Pool'),
-      tooltip: T('Choose a pool for the Apps')
+      tooltip: T('Choose a pool for the Apps'),
     },
     cluster_cidr: {
       placeholder: T('Cluster CIDR'),
-      tooltip: T('')
+      tooltip: T(''),
     },
     service_cidr: {
       placeholder: T('Service CIDR'),
-      tooltip: T('')
+      tooltip: T(''),
     },
     cluster_dns_ip: {
       placeholder: T('Cluster DNS IP'),
-      tooltip: T('')
+      tooltip: T(''),
     },
     node_ip: {
       placeholder: T('Node IP'),
-      tooltip: T('')
+      tooltip: T(''),
     },
     route_v4_interface: {
       placeholder: T('Route v4 Interface'),
-      tooltip: T('')
+      tooltip: T(''),
     },
     route_v4_gateway: {
       placeholder: T('Route v4 Gateway'),
-      tooltip: T('')
+      tooltip: T(''),
     },
     route_v6_interface: {
       placeholder: T('Route v6 Interface'),
-      tooltip: T('')
+      tooltip: T(''),
     },
     route_v6_gateway: {
       placeholder: T('Route v6 Gateway'),
-      tooltip: T('')
+      tooltip: T(''),
     },
     enable_container_image_update: {
       placeholder: T('Enable Container Image Updates'),
-      tooltip: T('')
-    }
+      tooltip: T(''),
+    },
   },
 
   charts: {
     delete_dialog: {
       title: T('Delete'),
       msg: T('Delete '),
-      job: T('Deleting...')
+      job: T('Deleting...'),
     },
 
     update_dialog: {
       title: T('Update'),
       msg: T('Update '),
-      job: T('Updating...')
+      job: T('Updating...'),
     },
 
     upgrade_dialog: {
       title: T('Upgrade'),
       msg: T('Upgrade '),
-      job: T('Upgrading...')
+      job: T('Upgrading...'),
     },
 
     rollback_dialog: {
@@ -158,17 +165,17 @@ export default {
       },
       snapshot: {
         placeholder: T('Roll back snapshots'),
-        tooltip: T('Roll back snapshots of ix_volumes')
+        tooltip: T('Roll back snapshots of ix_volumes'),
       },
       force: {
         placeholder: T('Force'),
-        tooltip: T('Used for rollback of a chart release and snapshots of ix_volumes')
+        tooltip: T('Used for rollback of a chart release and snapshots of ix_volumes'),
       },
       action: T('Roll back'),
 
       msg: T('Roll back '),
-      job: T('Rolling back...')
-    }
+      job: T('Rolling back...'),
+    },
   },
 
   chartForm: {
@@ -180,48 +187,48 @@ export default {
     },
     catalog: {
       placeholder: T('Catalog'),
-      tooltip: T('')
+      tooltip: T(''),
     },
     item: {
       placeholder: T('Item'),
-      tooltip: T('')
+      tooltip: T(''),
     },
     release_name: {
       name: T('Name'),
       placeholder: T('Application Name'),
-      tooltip: T('')
+      tooltip: T(''),
     },
     train: {
       placeholder: T('Train'),
-      tooltip: T('')
+      tooltip: T(''),
     },
     version: {
       placeholder: T('Version'),
-      tooltip: T('')
+      tooltip: T(''),
     },
     repository: {
       placeholder: T('Image repository'),
-      tooltip: T('')
+      tooltip: T(''),
     },
     container_port: {
       placeholder: T('Container port'),
-      tooltip: T('')
+      tooltip: T(''),
     },
     node_port: {
       placeholder: T('Node port'),
       tooltip: T('The range of valid ports is 9000-65535.'),
-      validation: [Validators.min(9000), Validators.max(65535)]
+      validation: [Validators.min(9000), Validators.max(65535)],
     },
 
     image: {
       title: T('Image'),
       tag: {
         placeholder: T('Image Tag'),
-        tooltip: T('Tag to use for the specified image')
+        tooltip: T('Tag to use for the specified image'),
       },
       repo: {
         placeholder: T('Image Repository'),
-        tooltip: T('Docker image repository')
+        tooltip: T('Docker image repository'),
       },
       pullPolicy: {
         placeholder: T('Image Pull Policy'),
@@ -229,74 +236,74 @@ export default {
         options: [
           {
             value: 'IfNotPresent',
-            label: T('Only pull image if not present on host.')
+            label: T('Only pull image if not present on host.'),
           },
           {
             value: 'Always',
-            label: T('Always pull image even if present on host.')
+            label: T('Always pull image even if present on host.'),
           },
           {
             value: 'Never',
-            label: T('Never pull image even if it is not present on host.')
-          }
-        ]
-      }
+            label: T('Never pull image even if it is not present on host.'),
+          },
+        ],
+      },
     },
     update: {
       title: T('Restart/Update'),
       placeholder: T('Update Strategy'),
       tooltip: T(''),
-        options: [
-          {
-            value: 'RollingUpdate',
-            label: T('Create new pods and then kill old ones.')
-          },
-          {
-            value: 'Recreate',
-            label: T('Kill existing pods before creating new ones.')
-          }
-        ]
+      options: [
+        {
+          value: 'RollingUpdate',
+          label: T('Create new pods and then kill old ones.'),
+        },
+        {
+          value: 'Recreate',
+          label: T('Kill existing pods before creating new ones.'),
+        },
+      ],
     },
     restart: {
       placeholder: T('Restart Policy'),
       tooltip: T(''),
-        options: [
-          {
-            value: 'Always',
-            label: T('Always restart containers in a pod if they exit.')
-          },
-          {
-            value: 'OnFailure',
-            label: T('Only restart containers if they exit with a failure.')
-          },
-          {
-            value: 'Never',
-            label: T('Never restart containers if they exit.')
-          }
-        ]
+      options: [
+        {
+          value: 'Always',
+          label: T('Always restart containers in a pod if they exit.'),
+        },
+        {
+          value: 'OnFailure',
+          label: T('Only restart containers if they exit with a failure.'),
+        },
+        {
+          value: 'Never',
+          label: T('Never restart containers if they exit.'),
+        },
+      ],
     },
     container: {
       title: T('Container Entrypoint'),
       command: {
         placeholder: T('Container CMD'),
         tooltip: T('Commands to execute inside container overriding image CMD default. \
- Use <i>ENTER</i> after each entry.')
+ Use <i>ENTER</i> after each entry.'),
       },
       args: {
         placeholder: T('Container Args'),
-        tooltip: T('Specify arguments for container command. Use <i>ENTER</i> after each entry.')
+        tooltip: T('Specify arguments for container command. Use <i>ENTER</i> after each entry.'),
       },
       env_vars: {
         title: T('Container Environment Variables'),
         key: {
           placeholder: T('Environment Variable Name'),
-          tooltip: T('')
+          tooltip: T(''),
         },
         value: {
           placeholder: T('Environment Variable Value'),
-          tooltip: T('')
-        }
-      }
+          tooltip: T(''),
+        },
+      },
     },
     networking: T('Networking'),
     externalInterfaces: {
@@ -311,17 +318,17 @@ export default {
         options: [
           {
             value: 'dhcp',
-            label: T('Use DHCP')
+            label: T('Use DHCP'),
           },
           {
             value: 'static',
-            label: T('Use static IP')
-          }
-        ]
+            label: T('Use static IP'),
+          },
+        ],
       },
       staticConfig: {
         placeholder: T('Static IP'),
-        tooltip: T('')
+        tooltip: T(''),
       },
       staticRoutes: {
         title: T('Static Route Configuration'),
@@ -330,9 +337,9 @@ export default {
           placeholder: T('Static Route: Destination'),
         },
         gateway: {
-          placeholder: T('Static Route: Gateway')
-        }
-      }
+          placeholder: T('Static Route: Gateway'),
+        },
+      },
     },
     DNSPolicy: {
       title: T('DNS'),
@@ -343,102 +350,102 @@ export default {
       options: [
         {
           value: 'Default',
-          label: T('Use Default DNS Policy')
+          label: T('Use Default DNS Policy'),
         },
         {
           value: 'None',
-          label: T('Ignore DNS settings from the Kuberentes cluster')
-        }
-      ]
+          label: T('Ignore DNS settings from the Kuberentes cluster'),
+        },
+      ],
     },
     DNSConfig: {
       label: T('DNS Configuration'),
       nameservers: {
         placeholder: T('Nameservers'),
-        tooltip: T('Use <i>ENTER</i> after each entry.')
+        tooltip: T('Use <i>ENTER</i> after each entry.'),
       },
       searches: {
         placeholder: T('Searches'),
-        tooltip: T('Use <i>ENTER</i> after each entry.')
-      }
+        tooltip: T('Use <i>ENTER</i> after each entry.'),
+      },
     },
     hostNetwork: {
       title: T('Host Network/Host Ports'),
       placeholder: T('Host Network'),
-      tooltip: T('Provide access to node network namespace for the workload.')
+      tooltip: T('Provide access to node network namespace for the workload.'),
     },
     externalLabel: T('Add External Interfaces'),
     hostPortsList: {
       containerPort: {
         placeholder: T('Container Port'),
         validation: [
-          Validators.pattern("^[0-9]*$"),
-        ]
+          Validators.pattern('^[0-9]*$'),
+        ],
       },
       hostPort: {
         placeholder: T('Host Port'),
 
-      }
+      },
     },
     portForwardingList: {
       title: T('Port Forwarding List'),
       containerPort: {
         placeholder: T('Container Port'),
         validation: [
-          Validators.pattern("^[0-9]*$"),
-        ]
+          Validators.pattern('^[0-9]*$'),
+        ],
       },
       nodePort: {
         placeholder: T('Node Port'),
         tooltip: T('The range of valid ports is 9000-65535.'),
         validation: [
-          Validators.pattern("^[0-9]*$"),
-          Validators.min(9000), Validators.max(65535)]
+          Validators.pattern('^[0-9]*$'),
+          Validators.min(9000), Validators.max(65535)],
       },
       protocol: {
         placeholder: T('Protocol'),
         options: [
           {
             value: 'TCP',
-            label: T('TCP Protocol')
+            label: T('TCP Protocol'),
           },
           {
             value: 'UDP',
-            label: T('UDP Protocol')
-          }
-        ]
-      }
+            label: T('UDP Protocol'),
+          },
+        ],
+      },
     },
     hostPathVolumes: {
       title: T('Host Path Volumes'),
       hostPath: {
         placeholder: T('Host Path'),
-        tooltip: T('')
+        tooltip: T(''),
       },
       mountPath: {
         placeholder: T('Mount Path'),
-        tooltip: T('Path where host path will be mounted inside the pod')
+        tooltip: T('Path where host path will be mounted inside the pod'),
       },
       readOnly: {
         placeholder: T('Read Only'),
-      }
+      },
     },
     volumes: {
       title: T('Volumes'),
       mountPath: {
         placeholder: T('Mount Path'),
-        tooltip: T('Path where the volume path will be mounted inside the pod')
+        tooltip: T('Path where the volume path will be mounted inside the pod'),
       },
       datasetName: {
         placeholder: T('Dataset Name'),
-        tooltip: T('')
-      }
+        tooltip: T(''),
+      },
     },
     security: {
       title: T('Security Settings'),
       privileged: {
         placeholder: T('Privileged'),
-        tooltip: T('')
+        tooltip: T(''),
       },
     },
   },
@@ -447,19 +454,19 @@ export default {
     nameGroup: {
       label: 'Application Name',
       version: 'Version',
-    }
+    },
   },
 
   wizardLabels: {
     image: T('Image and Policies'),
-    container: T('Container Settings')
+    container: T('Container Settings'),
   },
 
   updateImageDialog: {
     title: T('Update Image'),
     message: T('Update the image for '),
     success: T('Success'),
-    successMsg: T('The image was updated.')
+    successMsg: T('The image was updated.'),
   },
 
   podConsole: {
@@ -470,7 +477,7 @@ export default {
     choosePod: {
       title: T('Choose pod'),
       placeholder: T('Pods'),
-      action: T('Choose')
+      action: T('Choose'),
     },
     chooseConatiner: {
       title: T('Choose container'),
@@ -478,7 +485,7 @@ export default {
     },
     chooseCommand: {
       placeholder: T('Commands'),
-    }
+    },
   },
 
   podLogs: {
@@ -504,7 +511,7 @@ export default {
   },
 
   actionBtnText: {
-    close: T('Close')
+    close: T('Close'),
   },
 
   chartEventDialog: {
@@ -513,7 +520,7 @@ export default {
     statusUpdateAvailable: T('Update available'),
     containerImageStatusUpdateAvailableTo: T('Following container images are available to update:\n'),
     statusUpdateAvailableTo: T('Available version:\n'),
-    tooltipHeader: T('Conainter Images'),
+    tooltipHeader: T('Container Images'),
   },
 
   manageCatalogs: {
@@ -537,7 +544,7 @@ export default {
     },
     updateAvailable: T('Update Available'),
     chooseTag: {
-      title: T("Choose a Tag"),
+      title: T('Choose a Tag'),
       selectTag: {
         placeholder: T('Please select a tag'),
       },
@@ -591,4 +598,4 @@ export default {
       tooltip: T('Please specifies tag of the image'),
     },
   },
-}
+};

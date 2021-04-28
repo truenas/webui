@@ -1,6 +1,9 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+  Component, ElementRef, OnDestroy, OnInit, ViewChild, ViewEncapsulation,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ShellService, WebSocketService } from '../../services/';
+import { ShellConnectedEvent } from '../../interfaces/shell.interface';
+import { ShellService, WebSocketService } from '../../services';
 import { CopyPasteMessageComponent } from '../shell/copy-paste-message.component';
 import { Terminal } from 'xterm';
 import { AttachAddon } from 'xterm-addon-attach';
@@ -16,18 +19,17 @@ import * as FontFaceObserver from 'fontfaceobserver';
 })
 
 export class SystemProcessesComponent implements OnInit, OnDestroy {
-
-  //xter container
-  @ViewChild('terminal', { static: true}) container: ElementRef;
+  // xter container
+  @ViewChild('terminal', { static: true }) container: ElementRef;
 
   // xterm variables
-  public token: any;
-  public xterm: any;
+  token: any;
+  xterm: any;
   private shellSubscription: any;
   private top_displayed = false;
   private fitAddon: any;
-  public connectionId: string;
-  clearLine = "\u001b[2K\r"
+  connectionId: string;
+  clearLine = '\u001b[2K\r';
   font_size = 14;
   font_name = 'Inconsolata';
 
@@ -35,12 +37,12 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     const self = this;
     this.getAuthToken().subscribe((res) => {
       this.initializeWebShell(res);
-      this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
+      this.shellSubscription = this.ss.shellOutput.subscribe(() => {
         // this.xterm.write(value);
         if (!this.top_displayed) {
-          setTimeout(function() {
+          setTimeout(() => {
             self.xterm.send('top\n');
-            setTimeout(function() {
+            setTimeout(() => {
               self.xterm.setOption('disableStdin', true);
             }, 100);
           }, 1000);
@@ -55,10 +57,10 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     if (this.shellSubscription) {
       this.shellSubscription.unsubscribe();
     }
-    if (this.ss.connected){
+    if (this.ss.connected) {
       this.ss.socket.close();
     }
-  };
+  }
 
   getSize() {
     const domWidth = this.container.nativeElement.offsetWidth;
@@ -71,7 +73,7 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     span.innerHTML = 'a';
 
     let cols = 0;
-    while(span.offsetWidth < domWidth) {
+    while (span.offsetWidth < domWidth) {
       span.innerHTML += 'a';
       cols++;
     }
@@ -87,9 +89,9 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     }
 
     return {
-      rows: rows,
-      cols: cols
-    }
+      rows,
+      cols,
+    };
   }
 
   initializeTerminal() {
@@ -117,16 +119,16 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
       this.xterm.open(this.container.nativeElement);
       this.fitAddon.fit();
       this.xterm._initialized = true;
-    }, function (e) {
+    }, (e) => {
       console.log('Font is not available', e);
     });
   }
 
-  resizeTerm(){
+  resizeTerm() {
     const size = this.getSize();
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
-    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res)=> {
+    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res) => {
       this.xterm.focus();
     });
     return true;
@@ -136,10 +138,10 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     this.ss.token = res;
     this.ss.connect();
 
-    this.ss.shellConnected.subscribe((res)=> {
+    this.ss.shellConnected.subscribe((res: ShellConnectedEvent) => {
       this.connectionId = res.id;
       this.resizeTerm();
-    })
+    });
   }
 
   getAuthToken() {
@@ -151,11 +153,11 @@ export class SystemProcessesComponent implements OnInit, OnDestroy {
     return false;
   }
 
-  onResize(event) {
+  onResize() {
     this.resizeTerm();
   }
 
-  onFontSizeChanged(event) {
+  onFontSizeChanged() {
     this.resizeTerm();
   }
 

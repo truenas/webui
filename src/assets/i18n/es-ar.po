@@ -1026,6 +1026,9 @@ msgstr "Región de AWS"
 msgid "Abort"
 msgstr "Abortar"
 
+msgid "Abort the task"
+msgstr ""
+
 msgid "About"
 msgstr "Acerca de"
 
@@ -1251,6 +1254,12 @@ msgstr ""
 
 msgid "Add Interface"
 msgstr "Añadir interfaz"
+
+msgid "Add Kerberos Keytab"
+msgstr ""
+
+msgid "Add Kerberos Realm"
+msgstr ""
 
 msgid "Add Kerberos SPN Entry"
 msgstr "Agregar entrada de SPN de Kerberos"
@@ -5736,6 +5745,9 @@ msgstr ""
 msgid "Edit DNS Authenticator"
 msgstr "Editar el autenticador de DNS"
 
+msgid "Edit Dataset"
+msgstr ""
+
 msgid "Edit Disk(s)"
 msgstr "Editar disco(s)"
 
@@ -5756,6 +5768,12 @@ msgstr ""
 
 msgid "Edit Interface"
 msgstr "Editar interfaz"
+
+msgid "Edit Kerberos Keytab"
+msgstr ""
+
+msgid "Edit Kerberos Realm"
+msgstr ""
 
 msgid "Edit Options"
 msgstr "Editar opciones"
@@ -9351,6 +9369,9 @@ msgstr "Principal Kerberos"
 
 msgid "Kerberos Realm"
 msgstr "Reino Kerberos"
+
+msgid "Kerberos Realms"
+msgstr ""
 
 msgid "Kerberos Settings"
 msgstr "Configuración de Kerberos"
@@ -17204,8 +17225,8 @@ msgstr ""
 "target=\"_blank\">zpool(8)</a> para obtener más detalles sobre la "
 "asignación especial."
 
-msgid "Thread number:"
-msgstr "Número de hilo:"
+msgid "Thread:"
+msgstr ""
 
 msgid "Threads"
 msgstr "Hilos"
@@ -19006,6 +19027,9 @@ msgstr "comentario"
 
 msgid "coredumpsize"
 msgstr "coredumpsize"
+
+msgid "cores"
+msgstr ""
 
 msgid "cpuset"
 msgstr "cpuset"

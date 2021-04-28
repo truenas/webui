@@ -1,38 +1,39 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Validators } from "@angular/forms";
+import { Validators } from '@angular/forms';
+import { Option } from 'app/interfaces/option.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
 import * as _ from 'lodash';
-import { IscsiService, WebSocketService, AppLoaderService } from '../../../../../services/';
+import { IscsiService, WebSocketService, AppLoaderService } from '../../../../../services';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
-import { ipValidator } from "app/pages/common/entity/entity-form/validators/ip-validation";
+import { ipValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 
 import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
-import { selectedOptionValidator } from "app/pages/common/entity/entity-form/validators/invalid-option-selected";
+import { selectedOptionValidator } from 'app/pages/common/entity/entity-form/validators/invalid-option-selected';
 
 @Component({
   selector: 'app-iscsi-portal-add',
-  template: `<entity-form [conf]="this"></entity-form>`,
+  template: '<entity-form [conf]="this"></entity-form>',
   providers: [IscsiService],
 })
 export class PortalFormComponent {
-
   protected addCall = 'iscsi.portal.create';
   protected queryCall = 'iscsi.portal.query';
   protected editCall = 'iscsi.portal.update';
   protected route_success: string[] = ['sharing', 'iscsi', 'portals'];
-  protected customFilter: Array<any> = [[["id", "="]]];
+  protected customFilter: any[] = [[['id', '=']]];
   protected isEntity = true;
 
-  protected getValidOptions = this.iscsiService.getIpChoices().toPromise().then(res => {
-    const options = [];
+  protected getValidOptions = this.iscsiService.getIpChoices().toPromise().then((res) => {
+    const options: Option[] = [];
     for (const ip in res) {
       options.push({ label: res[ip], value: ip });
     }
     return options;
   });
-  public fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext_sharing_iscsi.fieldset_portal_basic,
       label: true,
@@ -44,8 +45,8 @@ export class PortalFormComponent {
           name: 'comment',
           placeholder: helptext_sharing_iscsi.portal_form_placeholder_comment,
           tooltip: helptext_sharing_iscsi.portal_form_tooltip_comment,
-        }
-      ]
+        },
+      ],
     },
     {
       name: helptext_sharing_iscsi.fieldset_portal_authgroup,
@@ -70,7 +71,7 @@ export class PortalFormComponent {
             {
               label: 'Mutual CHAP',
               value: 'CHAP_MUTUAL',
-            }
+            },
           ],
           value: 'NONE',
         },
@@ -81,8 +82,8 @@ export class PortalFormComponent {
           tooltip: helptext_sharing_iscsi.portal_form_tooltip_discovery_authgroup,
           options: [{ label: '---', value: null }],
           value: null,
-        }
-      ]
+        },
+      ],
     },
     {
       name: helptext_sharing_iscsi.fieldset_portal_ip,
@@ -105,7 +106,7 @@ export class PortalFormComponent {
               width: '60%',
               required: true,
               validation: [Validators.required, ipValidator('all')],
-              asyncValidation: [selectedOptionValidator(this.getValidOptions)]
+              asyncValidation: [selectedOptionValidator(this.getValidOptions)],
             },
             {
               type: 'input',
@@ -116,15 +117,15 @@ export class PortalFormComponent {
               validation: helptext_sharing_iscsi.portal_form_validators_port,
               class: 'inline',
               width: '30%',
-            }
+            },
           ],
           listFields: [],
-        }
-      ]
-    }
-  ]
+        },
+      ],
+    },
+  ];
 
-  protected fieldConfig;
+  protected fieldConfig: FieldConfig[];
   protected pk: any;
   protected authgroup_field: any;
   protected entityForm: any;
@@ -136,34 +137,34 @@ export class PortalFormComponent {
     protected loader: AppLoaderService,
     protected ws: WebSocketService) { }
 
-    prerequisite(): Promise<boolean> {
-      return new Promise(async (resolve, reject) => {
-        const listenIpField = _.find(this.fieldSets[2].config, { 'name': 'listen' }).templateListField[0];
-        await this.iscsiService.getIpChoices().toPromise().then((ips) => {
-          for (const ip in ips) {
-            listenIpField.options.push({ label: ips[ip], value: ip });
-          }
-          const listenListFields = _.find(this.fieldSets[2].config, { 'name': 'listen' }).listFields;
-          for (const listenField of listenListFields) {
-            const ipField = _.find(listenField, { name: 'ip' });
-            ipField.options = listenIpField.options;
-          }
-          resolve(true);
-        }, (err) => {
-          resolve(false);
-        });
+  prerequisite(): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+      const listenIpField = _.find(this.fieldSets[2].config, { name: 'listen' }).templateListField[0];
+      await this.iscsiService.getIpChoices().toPromise().then((ips) => {
+        for (const ip in ips) {
+          listenIpField.options.push({ label: ips[ip], value: ip });
+        }
+        const listenListFields = _.find(this.fieldSets[2].config, { name: 'listen' }).listFields;
+        for (const listenField of listenListFields) {
+          const ipField = _.find(listenField, { name: 'ip' });
+          ipField.options = listenIpField.options;
+        }
+        resolve(true);
+      }, (err) => {
+        resolve(false);
       });
-    }
+    });
+  }
 
   preInit() {
-    this.aroute.params.subscribe(params => {
+    this.aroute.params.subscribe((params) => {
       if (params['pk']) {
         this.pk = params['pk'];
         this.customFilter[0][0].push(parseInt(params['pk'], 10));
       }
     });
-    const authgroupFieldset = _.find(this.fieldSets, {'class': 'authgroup'});
-    this.authgroup_field = _.find(authgroupFieldset.config, { 'name': 'discovery_authgroup' });
+    const authgroupFieldset = _.find(this.fieldSets, { class: 'authgroup' });
+    this.authgroup_field = _.find(authgroupFieldset.config, { name: 'discovery_authgroup' });
     this.iscsiService.getAuth().subscribe((res) => {
       for (let i = 0; i < res.length; i++) {
         if (_.find(this.authgroup_field.options, { value: res[i].tag }) == undefined) {
@@ -177,12 +178,12 @@ export class PortalFormComponent {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
 
-    entityForm.formGroup.controls['listen'].valueChanges.subscribe((res) => {
+    entityForm.formGroup.controls['listen'].valueChanges.subscribe((res: any) => {
       this.genPortalAddress(res);
-    })
+    });
   }
 
-  customEditCall(value) {
+  customEditCall(value: any) {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).subscribe(
       (res) => {
@@ -192,34 +193,36 @@ export class PortalFormComponent {
       (res) => {
         this.loader.close();
         new EntityUtils().handleWSError(this.entityForm, res);
-      }
+      },
     );
   }
 
-  genPortalAddress(data) {
-    let ips = [];
+  genPortalAddress(data: any) {
+    let ips: any[] = [];
     for (let i = 0; i < data.length; i++) {
       if (data[i]['ip']) {
         const samePortIps = data[i]['ip'].reduce(
-          (fullIps, currip) => fullIps.concat({ip:currip, port:data[i]['port']})
-        , []);
+          (fullIps: any[], currip: any) => fullIps.concat({ ip: currip, port: data[i]['port'] }),
+          [],
+        );
         ips = ips.concat(samePortIps);
       }
     }
     this.ip = ips;
   }
 
-  beforeSubmit(data) {
+  beforeSubmit(data: any) {
     data['listen'] = this.ip;
   }
 
-  resourceTransformIncomingRestData(data) {
-    const ports = new Map();
+  resourceTransformIncomingRestData(data: any) {
+    const ports = new Map() as any;
     const groupedIp = [];
     for (let i = 0; i < data['listen'].length; i++) {
+      // TODO: Incorrect usage of map. Update to .get
       if (ports[data['listen'][i].port] === undefined) {
         ports[data['listen'][i].port] = [];
-        groupedIp.push({ip: ports[data['listen'][i].port], port:data['listen'][i].port});
+        groupedIp.push({ ip: ports[data['listen'][i].port], port: data['listen'][i].port });
       }
       ports[data['listen'][i].port].push(data['listen'][i]['ip']);
     }

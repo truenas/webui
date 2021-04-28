@@ -7,44 +7,42 @@ import { ModalService } from '../../../services/modal.service';
 import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-user-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class KerberosRealmsListComponent implements OnDestroy {
-
-  public title = "Kerberos Realms";
+  title = 'Kerberos Realms';
   protected queryCall = 'kerberos.realm.query';
   protected wsDelete = 'kerberos.realm.delete';
-  public keyList = ['admin_server', 'kdc', 'kpasswd_server'];
+  keyList = ['admin_server', 'kdc', 'kpasswd_server'];
   protected entityList: any;
   private refreshTableSubscription: Subscription;
 
-  public columns: Array<any> = [
+  columns: any[] = [
     { name: T('Realm'), prop: 'realm', always_display: true },
     { name: T('KDC'), prop: 'kdc' },
     { name: T('Admin Server'), prop: 'admin_server' },
     { name: T('Password Server'), prop: 'kpasswd_server' },
   ];
-  public rowIdentifier = 'realm';
-  public config: any = {
+  rowIdentifier = 'realm';
+  config: any = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
       title: helptext.krb_realmlist_deletemessage_title,
-      key_props: helptext.krb_realmlist_deletemessage_key_props
+      key_props: helptext.krb_realmlist_deletemessage_key_props,
     },
   };
 
   constructor(private modalService: ModalService) { }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any[]) {
     data.forEach((row) => {
       this.keyList.forEach((key) => {
         if (row.hasOwnProperty(key)) {
           row[key] = (row[key].join(' '));
         }
-      })
-
-    })
+      });
+    });
     return data;
   }
 
@@ -52,7 +50,7 @@ export class KerberosRealmsListComponent implements OnDestroy {
     this.entityList = entityList;
     this.refreshTableSubscription = this.modalService.refreshTable$.subscribe(() => {
       this.entityList.getData();
-    })
+    });
   }
 
   ngOnDestroy() {
@@ -66,25 +64,25 @@ export class KerberosRealmsListComponent implements OnDestroy {
       label: T('Add'),
       onClick: () => {
         this.doAdd();
-      }
+      },
     }];
   }
 
-  getActions(row) {
+  getActions(row: any) {
     const actions = [];
     actions.push({
       id: 'edit',
       label: T('Edit'),
       disabled: row.disableEdit,
-      onClick: (row) => {
+      onClick: (row: any) => {
         this.doAdd(row.id);
-      }
+      },
     }, {
       id: 'delete',
       label: T('Delete'),
-      onClick: (row) => {
+      onClick: (row: any) => {
         this.entityList.doDelete(row);
-      }
+      },
     });
 
     return actions;
