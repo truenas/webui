@@ -1,8 +1,6 @@
 import * as _ from 'lodash';
 import { Relation } from './entity-form/models/field-relation.interface';
 
-export const FORM_KEY_SEPERATOR = '__';
-export const FORM_LABEL_KEY_PREFIX = '__label__';
 export const NULL_VALUE = 'null_value';
 
 export class EntityUtils {
@@ -272,10 +270,7 @@ export class EntityUtils {
       return results;
     }
 
-    let name = schemaConfig.variable;
-    if (!parentIsList && parentName) {
-      name = `${parentName}${FORM_KEY_SEPERATOR}${name}`;
-    }
+    const name = schemaConfig.variable;
 
     let fieldConfig: any = {
       required: schemaConfig.schema.required,
@@ -355,7 +350,7 @@ export class EntityUtils {
         if (schemaConfig.schema.attrs.length > 0) {
           const dictLabel = {
             label: schemaConfig.label,
-            name: FORM_LABEL_KEY_PREFIX + name,
+            name,
             type: 'label',
           };
 
@@ -378,7 +373,7 @@ export class EntityUtils {
         }
       } else {
         fieldConfig['type'] = 'dict';
-        fieldConfig['label'] = `Configure ${schemaConfig.label}`;
+        fieldConfig['label'] = schemaConfig.label;
         fieldConfig['width'] = '100%';
 
         if (schemaConfig.schema.attrs.length > 0) {

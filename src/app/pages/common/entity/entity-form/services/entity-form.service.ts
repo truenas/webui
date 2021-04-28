@@ -50,13 +50,15 @@ export class EntityFormService {
           formGroup[controls[i].name] = formArray;
         } else if (controls[i].listFields) {
           const formArray = this.formBuilder.array([]);
-          controls[i].listFields.forEach(listField => {
+          controls[i].listFields.forEach((listField) => {
             formArray.push(this.createFormGroup(listField));
           });
           formGroup[controls[i].name] = formArray;
         } else if (controls[i].subFields) {
           const subformGroup = this.createFormGroup(controls[i].subFields);
           formGroup[controls[i].name] = subformGroup;
+        } else if (controls[i].type == 'label') {
+          continue;
         } else {
           formGroup[controls[i].name] = new FormControl(
             { value: controls[i].value, disabled: controls[i].disabled },

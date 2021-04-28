@@ -143,7 +143,7 @@ export class CatalogComponent implements OnInit {
           this.doUnsetPool();
           break;
       }
-    } else if (evt.data.event_control == 'launch' && evt.data.launch) {
+    } else if (evt.data.event_control == 'launch') {
       this.doInstall('ix-chart');
     } else if (evt.data.event_control == 'filter') {
       this.filterString = evt.data.filter;
@@ -152,11 +152,13 @@ export class CatalogComponent implements OnInit {
       this.syncAll();
     } else if (evt.data.event_control == 'catalogs') {
       this.filteredCatalogNames = [];
-      evt.data.catalogs.forEach((catalog: any) => {
-        if (catalog) {
-          this.filteredCatalogNames.push(catalog.value);
-        }
-      });
+      if (evt.data.catalogs) {
+        evt.data.catalogs.forEach((catalog: any) => {
+          if (catalog) {
+            this.filteredCatalogNames.push(catalog.value);
+          }
+        });
+      }
 
       this.filerApps();
     }

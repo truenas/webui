@@ -1,5 +1,5 @@
-import { Injectable } from "@angular/core";
-import { FormControl, FormGroup, FormArray } from "@angular/forms";
+import { Injectable } from '@angular/core';
+import { FormControl, FormGroup, FormArray } from '@angular/forms';
 
 import { FieldConfig } from '../models/field-config.interface';
 import {
@@ -13,7 +13,7 @@ import {
   RelationGroup,
 } from '../models/field-relation.interface';
 import * as _ from 'lodash';
-import { EntityUtils, FORM_KEY_SEPERATOR } from '../../utils';
+
 @Injectable()
 export class FieldRelationService {
   constructor() {}
@@ -171,7 +171,6 @@ export class FieldRelationService {
     return control && condition.status === control.status;
   }
 
-
   setRelation(config: FieldConfig, formGroup: FormGroup) {
     if (config.relation && config.relation.length > 0) {
       const activations = this.findActivationRelation(config.relation);
@@ -180,7 +179,7 @@ export class FieldRelationService {
         const tobeHide = this.isFormControlToBeHide(activations, formGroup);
         this.setDisabled(config, formGroup, tobeDisabled, tobeHide);
 
-        this.getRelatedFormControls(config, formGroup).forEach(control => {
+        this.getRelatedFormControls(config, formGroup).forEach((control) => {
           control.valueChanges.subscribe((value) => {
             this.relationUpdate(config, activations, formGroup);
           });
@@ -190,15 +189,15 @@ export class FieldRelationService {
 
     if (config.listFields) {
       const formArray = formGroup.get(config.name) as FormArray;
-      for (let i=0; i<config.listFields.length; i++) {
-        config.listFields[i].forEach(subFieldConfig => {
+      for (let i = 0; i < config.listFields.length; i++) {
+        config.listFields[i].forEach((subFieldConfig) => {
           this.setRelation(subFieldConfig, formArray.at(i) as FormGroup);
         });
       }
     }
   }
 
-  setDisabled(fieldConfig: FieldConfig, formGroup: FormGroup, disable: boolean, hide?: boolean, status?:string) {
+  setDisabled(fieldConfig: FieldConfig, formGroup: FormGroup, disable: boolean, hide?: boolean, status?: string) {
     // if field is hidden, disable it too
     if (hide) {
       disable = hide;
@@ -212,7 +211,6 @@ export class FieldRelationService {
     if (formGroup.controls[fieldConfig.name]) {
       const method = disable ? 'disable' : 'enable';
       formGroup.controls[fieldConfig.name][method]();
-      return;
     }
   }
 
