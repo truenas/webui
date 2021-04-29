@@ -172,7 +172,7 @@ export class GroupListComponent implements OnDestroy {
                     },
                   });
                 },
-                customSubmit(entityDialog) {
+                customSubmit(entityDialog: EntityDialogComponent) {
                   entityDialog.dialogRef.close(true);
                   self.loader.open();
                   self.ws.call(self.wsDelete, [members_delete.id, entityDialog.formValue]).subscribe(() => {
