@@ -26,7 +26,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { ModalService } from '../../../../services/modal.service';
 import { EntityTemplateDirective } from '../entity-template.directive';
 import { EntityUtils } from '../utils';
-
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FieldConfig } from './models/field-config.interface';
 import { FieldSet } from './models/fieldset.interface';
 import { EntityFormService } from './services/entity-form.service';
@@ -124,7 +124,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     if (this.conf.fieldSets) {
       this.fieldConfig = [];
       /* Temp patch to support both FieldSet approaches */
-      this.fieldSets = this.conf.fieldSets.list ? this.conf.fieldSets.list() : this.conf.fieldSets;
+      this.fieldSets = (this.conf.fieldSets instanceof FieldSets) ? this.conf.fieldSets.list() : this.conf.fieldSets;
       for (let i = 0; i < this.fieldSets.length; i++) {
         const fieldset = this.fieldSets[i];
         if (!fieldset.divider) {

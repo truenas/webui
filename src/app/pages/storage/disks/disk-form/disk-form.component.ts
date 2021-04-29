@@ -184,7 +184,7 @@ export class DiskFormComponent implements FormConfiguration {
   protected disk_hddstandby: any;
   protected disk_advpowermgmt: any;
   protected disk_acousticlevel: any;
-  title: String;
+  title: string;
 
   rowid: any;
 

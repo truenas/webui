@@ -1,39 +1,41 @@
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { Subject } from 'rxjs';
 import { CoreEvent } from 'app/core/services/core.service';
 
 export interface FormConfiguration {
   prerequisite?: any;
-  fieldSets?: any;
-  fieldSetDisplay?: any;
+  fieldSets?: FieldSets | FieldSet[];
+  fieldSetDisplay?: string;
   values?: any;
-  saveSubmitText?: any;
+  saveSubmitText?: string;
   preInit?: any;
   target?: Subject<CoreEvent>;
-  resource_name?: any;
-  isEntity?: any;
-  addCall?: any;
-  editCall?: any;
-  isEditJob?: any;
-  queryCall?: any;
+  resource_name?: string;
+  isEntity?: boolean;
+  addCall?: string;
+  editCall?: string;
+  isEditJob?: boolean;
+  queryCall?: string;
   queryCallOption?: any;
-  queryKey?: any; // use this to define your id for websocket call
-  isNew?: any;
+  queryKey?: string; // use this to define your id for websocket call
+  isNew?: boolean;
   pk?: any;
   rowid?: any;
-  custom_get_query?: any;
+  custom_get_query?: string;
   fieldConfig?: FieldConfig[];
   resourceTransformIncomingRestData?: any;
-  route_usebaseUrl?: any;
+  route_usebaseUrl?: boolean;
   afterInit?: any;
   initial?: any;
   dataHandler?: any;
   dataAttributeHandler?: any;
-  route_cancel?: any;
-  route_success?: any;
+  route_cancel?: string[];
+  route_success?: string[];
   route_delete?: any;
-  custom_edit_query?: any;
-  custom_add_query?: any;
+  custom_edit_query?: string;
+  custom_add_query?: string;
   custActions?: any[];
   compactCustomActions?: any[];
   customFilter?: any[];
@@ -42,7 +44,7 @@ export interface FormConfiguration {
   afterSave?: any;
   blurEvent?: any;
   customEditCall?: any;
-  save_button_enabled?: any;
+  save_button_enabled?: boolean;
   hideSaveBtn?: boolean;
   form_message?: {
     type: string; // info || warning
@@ -54,16 +56,16 @@ export interface FormConfiguration {
   customSubmit?: any;
   clean?: any;
   errorReport?: any;
-  hide_fileds?: any;
-  isBasicMode?: any;
-  advanced_field?: any;
-  basic_field?: any;
-  route_conf?: any;
+  hide_fileds?: string[];
+  isBasicMode?: boolean;
+  advanced_field?: string[];
+  basic_field?: string[];
+  route_conf?: string[];
   preHandler?: any;
   initialCount?: any;
   initialCount_default?: any;
   responseOnSubmit?: any;
-  title?: any;
+  title?: string;
   columnsOnForm?: number;
 
   closeModalForm?(): any;

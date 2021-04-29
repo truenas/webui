@@ -21,7 +21,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 export class KubernetesSettingsComponent implements FormConfiguration {
   queryCall = 'kubernetes.config';
   editCall = 'kubernetes.update';
-  isEditJob: Boolean = true;
+  isEditJob = true;
   private dialogRef: any;
   private newEnableContainerImageUpdate = true;
   title = helptext.kubForm.title;
