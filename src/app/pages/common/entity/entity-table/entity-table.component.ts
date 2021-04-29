@@ -199,6 +199,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
   hasActions = true;
   sortKey: string;
   filterValue = ''; // the filter string filled in search input.
+  readonly EntityJobState = EntityJobState;
   // Global Actions in Page Title
   protected actionsConfig: any;
   protected loaderOpen = false;

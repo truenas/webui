@@ -16,7 +16,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { LocaleService } from 'app/services/locale.service';
 import {
   WebSocketService, JobService, SystemGeneralService, DialogService, StorageService,
-} from 'app/services/';
+} from 'app/services';
 import { T } from 'app/translate-marker';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
@@ -42,6 +42,7 @@ export class TaskManagerComponent implements OnInit, OnDestroy {
   expandedElement: any | null;
   timeZone: string;
   private subscrition: Subscription;
+  readonly EntityJobState = EntityJobState;
 
   constructor(
     public dialogRef: MatDialogRef<TaskManagerComponent>,
