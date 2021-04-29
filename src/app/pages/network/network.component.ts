@@ -24,6 +24,7 @@ import { CoreEvent } from 'app/core/services/core.service';
 import { ViewControllerComponent } from 'app/core/components/viewcontroller/viewcontroller.component';
 import { EntityUtils } from '../common/entity/utils';
 import * as ipRegex from 'ip-regex';
+import { ServiceStatus } from 'app/enums/service-status.enum';
 
 @Component({
   selector: 'app-interfaces-list',
@@ -607,10 +608,10 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
           (res) => {
             if (res) {
               this.dialog.Info(T('Service failed to stop'), T('OpenVPN ') + rowinner.service_label + ' ' + T('service failed to stop.'));
-              rowinner.state = 'RUNNING';
+              rowinner.state = ServiceStatus.Running;
               rowinner['onChanging'] = false;
             } else {
-              rowinner.state = 'STOPPED';
+              rowinner.state = ServiceStatus.Stopped;
               rowinner['onChanging'] = false;
             }
           },
@@ -630,11 +631,11 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         this.ws.call('service.start', [rowinner.service]).subscribe(
           (res) => {
             if (res) {
-              rowinner.state = 'RUNNING';
+              rowinner.state = ServiceStatus.Running;
               rowinner['onChanging'] = false;
             } else {
               this.dialog.Info(T('Service failed to start'), T('OpenVPN ') + rowinner.service_label + ' ' + T('service failed to start.'));
-              rowinner.state = 'STOPPED';
+              rowinner.state = ServiceStatus.Stopped;
               rowinner['onChanging'] = false;
             }
           },
@@ -649,7 +650,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   isOpenVpnActionVisible(name: string, row: any) {
-    if ((name === 'start' && row.state === 'RUNNING') || (name === 'stop' && row.state === 'STOPPED')) {
+    if ((name === 'start' && row.state === ServiceStatus.Running) || (name === 'stop' && row.state === ServiceStatus.Stopped)) {
       return false;
     }
     return true;

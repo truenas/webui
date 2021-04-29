@@ -1,19 +1,15 @@
-import {
-  Component, OnInit, ViewChild, ElementRef, Input,
-} from '@angular/core';
-import { Subscription } from 'rxjs';
-import { MatButtonToggleGroup } from '@angular/material/button-toggle';
-import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { Component, OnInit } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 
-import { environment } from '../../../environments/environment';
+import * as _ from 'lodash';
+import { Subscription } from 'rxjs';
+
+import { DialogService } from 'app/services/dialog.service';
 import {
   RestService, WebSocketService, IscsiService, SystemGeneralService,
-} from '../../services';
-import { DialogService } from '../../services/dialog.service';
-
-import * as _ from 'lodash';
-import { T } from '../../translate-marker';
+} from 'app/services/';
+import { T } from 'app/translate-marker';
+import { ServiceStatus } from 'app/enums/service-status.enum';
 
 @Component({
   selector: 'services',
@@ -115,7 +111,7 @@ export class Services implements OnInit {
         }
       },
     }];
-    if (parentRow.service === 'netdata' && parentRow.state === 'RUNNING') {
+    if (parentRow.service === 'netdata' && parentRow.state === ServiceStatus.Running) {
       actions.push({
         actionName: 'launch',
         name: parentRow.service,
@@ -140,7 +136,7 @@ export class Services implements OnInit {
 
   toggle(service: any) {
     let rpc: string;
-    if (service.state != 'RUNNING') {
+    if (service.state !== ServiceStatus.Running) {
       rpc = 'service.start';
     } else {
       rpc = 'service.stop';
@@ -175,18 +171,18 @@ export class Services implements OnInit {
     service['onChanging'] = true;
     this.busy = this.ws.call(rpc, [service.title]).subscribe((res) => {
       if (res) {
-        if (service.state === 'RUNNING' && rpc === 'service.stop') {
+        if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
           this.dialog.Info(T('Service failed to stop'),
             (this.name_MAP as any)[service.title] + ' ' + T('service failed to stop.'));
         }
-        service.state = 'RUNNING';
+        service.state = ServiceStatus.Running;
         service['onChanging'] = false;
       } else {
-        if (service.state === 'STOPPED' && rpc === 'service.start') {
+        if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
           this.dialog.Info(T('Service failed to start'),
             (this.name_MAP as any)[service.title] + ' ' + T('service failed to start.'));
         }
-        service.state = 'STOPPED';
+        service.state = ServiceStatus.Stopped;
         service['onChanging'] = false;
       }
     }, (res) => {

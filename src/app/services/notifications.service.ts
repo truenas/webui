@@ -1,9 +1,10 @@
-import { Injectable, OnInit, OnDestroy } from '@angular/core';
-import { RestService, WebSocketService, SystemGeneralService } from 'app/services';
-import {
-  Observable, Observer, Subject, Subscription,
-} from 'rxjs';
+import { Injectable } from '@angular/core';
+
+import { Observable, Subject, Subscription } from 'rxjs';
 import * as _ from 'lodash';
+
+import { AlertLevel } from 'app/enums/alert-level.enum';
+import { WebSocketService, SystemGeneralService } from 'app/services';
 
 export interface NotificationAlert {
   id: string;
@@ -15,22 +16,22 @@ export interface NotificationAlert {
   timezone: string;
   route: string;
   color: string;
-  level: string;
+  level: AlertLevel;
   dismissed: boolean;
 }
 
 @Injectable()
 export class NotificationsService {
   private subject = new Subject<any>();
-  private intervalPeriod = 20000;
   private notifications: NotificationAlert[] = [];
-  private running = false;
   private locale = 'en-US';
   private timeZone = 'UTC';
   private getGenConfig: Subscription;
 
-  constructor(private restService: RestService, private ws: WebSocketService,
-    private sysGeneralService: SystemGeneralService) {
+  constructor(
+    private ws: WebSocketService,
+    private sysGeneralService: SystemGeneralService,
+  ) {
     this.initMe();
   }
 
@@ -45,7 +46,8 @@ export class NotificationsService {
         this.subject.next(this.notifications);
       });
 
-      this.ws.sub('alert.list').subscribe((res) => { // check for updates to alerts
+      this.ws.sub('alert.list').subscribe((res) => {
+        // check for updates to alerts
         const notification = this.alertsArrivedHandler([res])[0];
         if (!_.find(this.notifications, { id: notification.id })) {
           this.notifications.push(notification);
@@ -53,7 +55,8 @@ export class NotificationsService {
         this.subject.next(this.notifications);
       });
 
-      this.ws.subscribe('alert.list').subscribe((res) => { // check for changed alerts
+      this.ws.subscribe('alert.list').subscribe((res) => {
+        // check for changed alerts
         if (res && res.msg === 'changed' && res.cleared) {
           const index = _.findIndex(this.notifications, { id: res.id });
           if (index !== -1) {
@@ -111,20 +114,6 @@ export class NotificationsService {
     this.subject.next(this.notifications);
   }
 
-  // response array from 'alert.lst'
-  //   {
-  //     args:"tank"
-  //     datetime:{$date: 1525108866081}
-  //     dismissed:false
-  //     formatted:"New feature flags are available for volume tank. Refer to the "Upgrading a ZFS Pool" section of the User Guide for instructions."
-  //     id:"A;VolumeVersion;["New feature flags are available for volume %s. Refer to the \"Upgrading a ZFS Pool\" section of the User Guide for instructions.", "tank"]"
-  //     key:"["New feature flags are available for volume %s. Refer to the \"Upgrading a ZFS Pool\" section of the User Guide for instructions.", "tank"]"
-  //     level:"WARNING"
-  //     mail:null
-  //     node:"A"
-  //     source:"VolumeVersion"
-  //     title:"New feature flags are available for volume %s. Refer to the "Upgrading a ZFS Pool" section of the User Guide for instructions."
-  //   }
   private alertsArrivedHandler(res: any): NotificationAlert[] {
     const returnAlerts = new Array<NotificationAlert>();
     const data: any[] = res;
@@ -142,24 +131,23 @@ export class NotificationsService {
     const id: string = alertObj.id;
     const dismissed: boolean = alertObj.dismissed;
     const message: string = <string>alertObj.formatted;
-    const level: string = <string>alertObj.level;
+    const level: AlertLevel = alertObj.level;
     const date: Date = new Date(alertObj.datetime.$date);
     const dateStr = date.toUTCString();
     const dateStrLocale = date.toLocaleString(this.locale, { timeZone: this.timeZone });
     const one_shot: boolean = alertObj.one_shot;
     let icon_tooltip: string = <string>alertObj.level;
-    // const dateStr = date.toDateString() + " " + this.getTimeAsString(date.getTime());
     const routeName = '/dashboard';
     let icon = 'info';
     let color = 'primary';
 
-    if (level === 'WARNING') {
+    if (level === AlertLevel.Warning) {
       icon = 'warning';
       color = 'accent';
-    } else if (level === 'ERROR') {
+    } else if (level === AlertLevel.Error) {
       icon = 'error';
       color = 'warn';
-    } else if (level === 'CRITICAL') {
+    } else if (level === AlertLevel.Critical) {
       icon = 'error';
       color = 'warn';
     }
