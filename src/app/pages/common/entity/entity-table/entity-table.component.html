@@ -55,13 +55,13 @@
   <!-- BATCH OPERATIONS END -->
 
   <div class="table-container">
-    <table *ngIf="conf && currentColumns && currentColumns.length > 0 && dataSource" 
-      multiTemplateDataRows mat-table 
+    <table *ngIf="conf && currentColumns && currentColumns.length > 0 && dataSource"
+      multiTemplateDataRows mat-table
       [dataSource]="dataSource" matSort
        style="min-width: {{displayedColumns.length * 25}}px; border-collapse: separate;"
       #newEntityTable>
       <ng-container *ngFor="let column of columnsToString(currentColumns, 'prop'); let i = index;">
-  
+
         <!-- Column Template -->
         <ng-container *ngIf="column !== 'expandedDetail' && column !== 'action' && column !== 'multiselect' && column !== 'expansion-chevrons' && !isInteractive(column)" [sticky]="isLeftStickyColumnNo(i)"
        matColumnDef="{{column}}">
@@ -70,7 +70,7 @@
             <div class="text-overflow-ellipsis">{{element[column]}}</div>
           </td>
         </ng-container>
-  
+
         <!-- Expansion Chevrons -->
         <ng-container *ngIf="column == 'expansion-chevrons'" matColumnDef="{{column}}" stickyEnd>
           <th class="expansion-chevrons-column" [ngClass]="{'sticky-border-left': isTableOverflow()}" mat-header-cell *matHeaderCellDef></th>
@@ -85,7 +85,7 @@
             </ng-container>
           </td>
         </ng-container>
-  
+
         <!-- Threedot Actions -->
         <ng-container *ngIf="column == 'action'" matColumnDef="{{column}}" stickyEnd>
           <th class="threedot-column" [ngClass]="{'sticky-border-left': isTableOverflow()}" mat-header-cell *matHeaderCellDef></th>
@@ -95,7 +95,7 @@
             </app-entity-table-actions>
           </td>
         </ng-container>
-  
+
         <!-- Multiselect Checkboxes -->
         <ng-container *ngIf="column == 'multiselect'" matColumnDef="{{column}}" sticky>
           <th class="multiselect-column" mat-header-cell *matHeaderCellDef>
@@ -117,7 +117,7 @@
             </mat-checkbox>
           </td>
         </ng-container>
-        
+
         <!-- Interactive Toggle Column -->
         <ng-container *ngIf="column == 'state' && isInteractive(column)" matColumnDef="{{column}}">
           <th class="toggle-column" mat-header-cell *matHeaderCellDef>{{currentColumns[i].name}}</th>
@@ -128,12 +128,12 @@
               <div class="clickable" *ngIf="currentColumns[i].toggle"
                 id="overlay__{{element.name}}_Running"
                 ix-auto ix-auto-type="overlay" [ix-auto-identifier]="column + element.name"
-                (click)="$event.stopPropagation(); this.conf.onSliderChange(element)" 
+                (click)="$event.stopPropagation(); this.conf.onSliderChange(element)"
                 matTooltip="{{element.state}}" matTooltipPosition="right">
               </div>
 
               <mat-slide-toggle *ngIf="currentColumns[i].toggle"
-                [checked]="element[column] === 'RUNNING' ? true : false"
+                [checked]="element[column] === EntityJobState.Running"
                 id="slide-toggle__{{column}}_{{element.name}}"
                 ix-auto ix-auto-type="slider" ix-auto-identifier="{{column}}__{{element.name}}">
               </mat-slide-toggle>
@@ -149,7 +149,7 @@
             </ng-template>
           </td>
         </ng-container>
-        
+
         <!-- Interactive Checkbox Column -->
         <ng-container *ngIf="(column == 'enabled' || column == 'enable' || column == 'autostart') && isInteractive(column)" matColumnDef="{{column}}">
           <th class="toggle-column" mat-header-cell *matHeaderCellDef>{{currentColumns[i].name}}</th>
@@ -161,12 +161,12 @@
               [(ngModel)]="element[column]"
               (change)="this.conf.onCheckboxChange(element)"
               (click)="$event.stopPropagation()"
-              ix-auto ix-auto-type="checkbox" ix-auto-identifier="{{ column }}__{{ element.name}}"></mat-checkbox>         
+              ix-auto ix-auto-type="checkbox" ix-auto-identifier="{{ column }}__{{ element.name}}"></mat-checkbox>
           </td>
         </ng-container>
-  
+
       </ng-container>
-  
+
       <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
       <ng-container matColumnDef="expandedDetail">
         <td mat-cell *matCellDef="let element" [attr.colspan]="currentColumns.length">
@@ -175,26 +175,26 @@
           </div>
         </td>
       </ng-container>
-  
-     
+
+
       <tr mat-header-row *matHeaderRowDef="columnsToString(currentColumns, 'prop')"></tr>
-      <tr mat-row class="element-row" id="{{element[getFirstKey(element)]}}" 
+      <tr mat-row class="element-row" id="{{element[getFirstKey(element)]}}"
         ix-auto ix-auto-type="expander" ix-auto-identifier="{{element[getFirstKey(element)]}}"
         *matRowDef="let element; columns: columnsToString(currentColumns, 'prop'); let i = dataIndex;"
         (click)="doRowClick(element)"
         [ngClass]="{'expanded-row': expandedElement === element}">
       </tr>
-  
+
       <ng-container *ngIf="hasDetails() === true">
         <tr mat-row class="details-row" *matRowDef="let row; columns: ['expandedDetail'];"></tr>
       </ng-container>
     </table>
   </div>
- 
+
   <mat-card-footer style="padding: 0 !important" *ngIf="conf.config.paging">
-    <mat-paginator 
-      [pageIndex]="paginationPageIndex" 
-      [pageSize]="paginationPageSize" 
+    <mat-paginator
+      [pageIndex]="paginationPageIndex"
+      [pageSize]="paginationPageSize"
       [pageSizeOptions]="paginationPageSizeOptions"
       [showFirstLastButtons]="paginationShowFirstLastButtons"
     ></mat-paginator>

@@ -34,6 +34,7 @@ import { DialogFormConfiguration } from '../../../pages/common/entity/entity-dia
 import { TruecommandComponent } from '../dialog/truecommand/truecommand.component';
 import { ResilverProgressDialogComponent } from '../dialog/resilver-progress/resilver-progress.component';
 import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Component({
   selector: 'topbar',
@@ -140,7 +141,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.ws.subscribe('core.get_jobs').subscribe((res) => {
       if (res && res.fields.method === 'update.update' || res.fields.method === 'failover.upgrade') {
         this.updateIsRunning = true;
-        if (res.fields.state === 'FAILED' || res.fields.state === 'ABORTED') {
+        if (res.fields.state === EntityJobState.Failed || res.fields.state === EntityJobState.Aborted) {
           this.updateIsRunning = false;
           this.systemWillRestart = false;
         }
@@ -155,7 +156,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         if (!this.is_ha) {
           if (res && res.fields && res.fields.arguments[0] && res.fields.arguments[0].reboot) {
             this.systemWillRestart = true;
-            if (res.fields.state === 'SUCCESS') {
+            if (res.fields.state === EntityJobState.Success) {
               this.router.navigate(['/others/reboot']);
             }
           }
@@ -225,7 +226,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     });
 
     setInterval(() => {
-      if (this.resilveringDetails && this.resilveringDetails.scan.state == 'FINISHED') {
+      if (this.resilveringDetails && this.resilveringDetails.scan.state == EntityJobState.Finished) {
         this.showResilvering = false;
         this.resilveringDetails = '';
       }

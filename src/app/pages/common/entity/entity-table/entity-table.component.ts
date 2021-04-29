@@ -866,7 +866,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
     );
   }
 
-  doDeleteJob(item: any): Observable<{ state: 'SUCCESS' | 'FAILURE' } | false> {
+  doDeleteJob(item: any): Observable<{ state: EntityJobState } | false> {
     const deleteMsg = this.getDeleteMessage(item);
     let id: string;
     if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.id_prop) {
@@ -976,7 +976,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
           if (this.conf.wsMultiDeleteParams) {
             this.busy = this.ws.job(this.conf.wsMultiDelete, this.conf.wsMultiDeleteParams(selected)).subscribe(
               (res1) => {
-                if (res1.state === 'SUCCESS') {
+                if (res1.state === EntityJobState.Success) {
                   this.loader.close();
                   this.loaderOpen = false;
                   this.getData();
