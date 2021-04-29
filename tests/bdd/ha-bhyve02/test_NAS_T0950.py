@@ -19,6 +19,7 @@ from pytest_bdd import (
 @scenario('features/NAS-T950.feature', 'Edit User Email')
 def test_edit_user_email(driver):
     """Edit User Email."""
+    pass
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))

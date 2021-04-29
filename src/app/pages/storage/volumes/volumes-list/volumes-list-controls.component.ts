@@ -27,6 +27,8 @@ import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
 import _ from 'lodash';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
 
 @Component({
   selector: 'app-volumes-list-controls',
@@ -196,8 +198,8 @@ implements GlobalAction, OnInit, AfterViewInit, OnDestroy {
     const self = entityDialog.parent;
     self.loader.open();
     self.ws.call('service.query').subscribe((services: any) => {
-      const smbShare = _.find(services, { service: 'cifs' });
-      if (smbShare.state === 'RUNNING') {
+      const smbService = _.find(services, { service: 'cifs' });
+      if (smbService.state === ServiceStatus.Running) {
         self.loader.close();
         self.dialogService
           .confirm(
@@ -236,7 +238,7 @@ implements GlobalAction, OnInit, AfterViewInit, OnDestroy {
         }
         new EntityUtils().handleWSError(this, res);
       }
-      if (res.state === 'SUCCESS') {
+      if (res.state === EntityJobState.Success) {
         self.poolValue = pool;
         self.entity.systemdatasetPool = pool;
         self.dialogService.closeAllDialogs();

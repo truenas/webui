@@ -16,6 +16,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import helptext from '../../../../helptext/vm/devices/device-add-edit';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { DialogService } from '../../../../services/dialog.service';
+import { ServiceStatus } from 'app/enums/service-status.enum';
 @Component({
   selector: 'app-device-edit',
   templateUrl: './device-edit.component.html',
@@ -451,7 +452,7 @@ export class DeviceEditComponent implements OnInit {
     });
     this.aroute.params.subscribe((params) => {
       this.ws.call('vm.query', [[['id', '=', parseInt(params['vmid'], 10)]]]).subscribe((res) => {
-        if (res[0].status.state === 'RUNNING') {
+        if (res[0].status.state === ServiceStatus.Running) {
           this.activeFormGroup.setErrors({ invalid: true });
         }
       });
