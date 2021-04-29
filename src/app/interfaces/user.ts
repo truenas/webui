@@ -1,31 +1,28 @@
-interface Attributes {
-    preferences: object;
-}
+import { Preferences } from './preferences';
+import { Group } from './group';
+
 export interface User {
+    id: number;
     uid: number;
     username: string;
-    group: object;
-    group_create: boolean;
+    unixhash: string;
+    smbhash: string;
     home: string;
-    home_mode: string;
     shell: string;
-    email: string;
-    password: string;
+    full_name: string;
+    builtin: boolean;
+    smb: boolean;
     password_disabled: boolean;
     locked: boolean;
-    microsoft_account: boolean;
-    smb: boolean;
     sudo: boolean;
     sudo_nopasswd: boolean;
-    sudo_commands: string[];
+    sudo_commands: { [property: string]: any }[]
+    microsoft_account: boolean;
+    attributes: { preferences: Preferences }
+    email: string;
+    group: Group;
+    groups: { [property: string]: any }[]
     sshpubkey: string;
-    groups: number[];
-    attributes: Attributes;
-    builtin: boolean;
-    full_name: string;
-    id: number;
-    id_type_both: boolean;
     local: boolean;
-    smbhash: string;
-    unixhash: string;
+    id_type_both: boolean;
 }
