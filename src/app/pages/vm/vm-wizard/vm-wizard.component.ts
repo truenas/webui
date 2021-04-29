@@ -1008,8 +1008,8 @@ export class VMWizardComponent {
 
     if (value.gpus) {
       for (const gpuPciSlot of value.gpus) {
-        const gpuIndex = this.gpus.findIndex((gpu) => gpu.addr.pci_slot == gpuPciSlot);
-        vmPayload['devices'].push(...this.gpus[gpuIndex].devices.map((gpuDevice) => ({
+        const gpuIndex = this.gpus.findIndex((gpu: any) => gpu.addr.pci_slot == gpuPciSlot);
+        vmPayload['devices'].push(...this.gpus[gpuIndex].devices.map((gpuDevice: any) => ({
           dtype: 'PCI',
           attributes: {
             pptdev: gpuDevice.vm_pci_slot,

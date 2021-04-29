@@ -20,7 +20,7 @@ export class IsolatedGpuPcisFormComponent implements Formconfiguration {
   queryCall = 'system.advanced.config';
   updateCall = 'system.advanced.update';
   isOneColumnForm = true;
-  private advancedConfig: Object;
+  private advancedConfig: AdvancedConfig;
 
   fieldSets = new FieldSets([
     {
@@ -57,7 +57,7 @@ export class IsolatedGpuPcisFormComponent implements Formconfiguration {
   afterInit(entityForm: EntityFormComponent) {
     this.entityForm = entityForm;
 
-    this.ws.call('device.gpu_pci_ids_choices').subscribe((pci_choices: Object) => {
+    this.ws.call('device.gpu_pci_ids_choices').subscribe((pci_choices: { [prop: string]: string | any }) => {
       const isolatedGpuPciIdsConf = this.fieldSets.config('isolated_gpu_pci_ids');
       for (const key in pci_choices) {
         isolatedGpuPciIdsConf.options.push({ label: key, value: pci_choices[key] });
