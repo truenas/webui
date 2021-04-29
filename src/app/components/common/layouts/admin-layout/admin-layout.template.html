@@ -60,7 +60,7 @@
     <!-- Top Bar -->
     <!-- Template reference variables of Left sidebar and Right notification is supplied -->
     <!-- Listens language change event -->
-    <topbar [sidenav]="sidenav" [notificPanel]="notificationPanel" (onLangChange)="language.setMiddlewareLanguage($event)"></topbar>
+    <topbar [sidenav]="sidenav" [notificPanel]="notificationPanel"></topbar>
 
     <!-- Slide-in menu and overlay -->
     <div class="slidein-nav" [ngClass]="{'slidein-open' : isOpen}">
