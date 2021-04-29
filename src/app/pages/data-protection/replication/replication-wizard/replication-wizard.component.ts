@@ -46,7 +46,7 @@ import { T } from 'app/translate-marker';
 export class ReplicationWizardComponent {
   title = T('Replication Task Wizard');
   isLinear = true;
-  summary_title = T('Replication Summary');
+  summaryTitle = T('Replication Summary');
   pk: number;
   getRow: Subscription;
   saveSubmitText = T('START REPLICATION');

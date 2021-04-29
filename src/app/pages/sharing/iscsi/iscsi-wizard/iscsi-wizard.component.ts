@@ -25,7 +25,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 export class IscsiWizardComponent {
   route_success: string[] = ['sharing', 'iscsi'];
   isLinear = true;
-  summary_title = 'iSCSI Summary';
+  summaryTitle = 'iSCSI Summary';
   summaryObj: { [name: string]: any } = {
     name: null,
     type: null,

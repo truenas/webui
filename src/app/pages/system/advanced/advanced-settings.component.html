@@ -5,17 +5,20 @@
   gdColumns="50% 50%"
   gdColumns.lt-lg="50% 50%"
   gdColumns.lt-md="auto"
-  gdAreas="data-card1 data-card2 | sysctl-card data-card3 | cron-card initshutdown-card"
-  gdAreas.lt-lg="data-card1 data-card2 | sysctl-card data-card3 | cron-card initshutdown-card"
-  gdAreas.lt-md="data-card1 | data-card2 | sysctl-card | data-card3 | cron-card | initshutdown-card"
+  gdAreas="data-card1 data-card2 | sysctl-card data-card3 | cron-card initshutdown-card | data-card7 ."
+  gdAreas.lt-lg="data-card1 data-card2 | sysctl-card data-card3 | cron-card initshutdown-card | data-card7 ."
+  gdAreas.lt-md="data-card1 | data-card2 | sysctl-card | data-card3 | cron-card | initshutdown-card | data-card7"
 >
   <ng-container *ngFor="let card of dataCards; index as i">
-    <mat-card class="data-card{{ i + 1 }}" gdArea="data-card{{ i + 1 }}">
+    <mat-card *ngIf="['cron', 'initshutdown', 'sysctl'].includes(card.id) === false" class="data-card{{ i + 1 }}" gdArea="data-card{{ i + 1 }}">
       <mat-toolbar-row>
         <h3>{{ card.title | translate }}</h3>
         <div class="actions action-icon">
-          <button mat-button color="default" (click)="doAdd(card.id)">
+          <button *ngIf="card.id!=='isolated_gpu_pci_ids'" mat-button color="default" (click)="doAdd(card.id)">
             {{ 'Settings' | translate }}
+          </button>
+          <button *ngIf="card.id==='isolated_gpu_pci_ids'" mat-button color="default" (click)="doAdd(card.id)">
+            {{ 'Configure' | translate }}
           </button>
         </div>
       </mat-toolbar-row>

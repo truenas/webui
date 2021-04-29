@@ -5,7 +5,7 @@ import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/ent
 import { ProductType } from '../../../enums/product-type.enum';
 
 import {
-  WebSocketService, StorageService, AppLoaderService, DialogService, RestService, VmService, NetworkService,
+  WebSocketService, StorageService, AppLoaderService, DialogService, RestService, VmService, NetworkService, SystemGeneralService,
 } from '../../../services';
 import { ModalService } from 'app/services/modal.service';
 import { MessageService } from '../../common/entity/entity-form/services/message.service';
@@ -98,7 +98,7 @@ export class VMListComponent implements OnDestroy {
     private http: HttpClient, private modalService: ModalService, private rest: RestService,
     private vmService: VmService, private networkService: NetworkService,
     private messageService: MessageService, private prefService: PreferencesService,
-    private translate: TranslateService,
+    private translate: TranslateService, private systemGeneralService: SystemGeneralService,
   ) {
     if (this.productType !== ProductType.Scale) {
       this.columns.push({ name: T('Com Port'), prop: 'com_port', hidden: true });
@@ -121,7 +121,7 @@ export class VMListComponent implements OnDestroy {
   refreshVMWizard() {
     this.addComponent = new VMWizardComponent(this.rest, this.ws, this.vmService, this.networkService, this.loader,
       this.dialog, this.messageService, this.dialogService, this.storageService, this.prefService,
-      this.translate, this.modalService);
+      this.translate, this.modalService, this.systemGeneralService);
   }
 
   afterInit(entityList: any) {
