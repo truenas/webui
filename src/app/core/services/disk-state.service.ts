@@ -20,7 +20,7 @@ export class DiskStateService extends BaseService {
 
   protected onAuthenticated(evt: CoreEvent) {
     this.authenticated = true;
-    this.ws.sub('disk.query').subscribe((res) => {
+    this.ws.sub('disk.query').subscribe((res: any) => {
       this.core.emit({ name: 'DisksChanged', data: res, sender: this });
     });
   }

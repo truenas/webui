@@ -2,7 +2,7 @@
   class="view-card {{chassis && chassis.front && chassis.front.totalDriveTrays > 7 ? 'mini mini-xl': 'mini'}}"
   [ngClass]="{'multiple-enclosures': system && system.profile && system.profile.length > 1}"
   id="{{currentTab.alias}}"
-  (window:resize)="onResize()"
+  (window:resize)="onResize($event)"
   ngClass.gt-md="gt-md"
   ngClass.md="md"
   ngClass.sm="sm"
