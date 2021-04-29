@@ -8,6 +8,7 @@ import {
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import helptext from '../../../../helptext/services/components/service-afp';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'afp-edit',
@@ -15,9 +16,9 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
   providers: [UserService, IscsiService],
 })
 
-export class ServiceAFPComponent {
-  protected route_success: string[] = ['services'];
-  protected queryCall = 'afp.config';
+export class ServiceAFPComponent implements FormConfiguration {
+  route_success: string[] = ['services'];
+  queryCall = 'afp.config';
   title = helptext.formTitle;
 
   fieldConfig: FieldConfig[] = [];

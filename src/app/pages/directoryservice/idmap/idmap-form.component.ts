@@ -9,19 +9,20 @@ import { EntityUtils } from '../../common/entity/utils';
 import helptext from '../../../helptext/directoryservice/idmap';
 import { ModalService } from '../../../services/modal.service';
 import { Subscription } from 'rxjs';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'app-idmap-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class IdmapFormComponent {
-  protected title: string;
-  protected isEntity = true;
+export class IdmapFormComponent implements FormConfiguration {
+  title: string;
+  isEntity = true;
   protected namesInUse: string[] = [];
-  protected queryCall = 'idmap.query';
-  protected addCall = 'idmap.create';
-  protected editCall = 'idmap.update';
-  protected pk: any;
-  protected queryKey = 'id';
+  queryCall = 'idmap.query';
+  addCall = 'idmap.create';
+  editCall = 'idmap.update';
+  pk: any;
+  queryKey = 'id';
   private getRow = new Subscription();
   rangeLowValidation = [
     ...helptext.idmap.required_validator,
@@ -41,10 +42,10 @@ export class IdmapFormComponent {
     'DS_TYPE_LDAP',
   ];
   protected readOnly = false;
-  protected fieldConfig: FieldConfig[] = [];
+  fieldConfig: FieldConfig[] = [];
   protected isOneColumnForm = true;
   fieldSetDisplay = 'default';
-  protected fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext.idmap.settings_label,
       class: 'idmap-configuration-form',

@@ -11,19 +11,20 @@ import { AppLoaderService } from '../../../services/app-loader/app-loader.servic
 import { WebSocketService } from '../../../services/ws.service';
 import { EntityUtils } from '../../common/entity/utils';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'app-pull-image-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class PullImageFormComponent {
-  protected queryCall = 'container.image.query';
-  protected customFilter: any[];
-  protected addCall = 'container.image.pull';
-  protected isEntity = true;
+export class PullImageFormComponent implements FormConfiguration {
+  queryCall = 'container.image.query';
+  customFilter: any[];
+  addCall = 'container.image.pull';
+  isEntity = true;
   protected entityForm: EntityFormComponent;
-  private title = helptext.pullImageForm.title;
+  title = helptext.pullImageForm.title;
   private dialogRef: any;
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
       name: helptext.pullImageForm.label,

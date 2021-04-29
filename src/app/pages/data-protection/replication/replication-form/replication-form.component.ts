@@ -29,27 +29,28 @@ import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-replication-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [TaskService, KeychainCredentialService, ReplicationService, StorageService],
 })
-export class ReplicationFormComponent {
-  protected isNew = false;
+export class ReplicationFormComponent implements FormConfiguration {
+  isNew = false;
   form_message = {
     type: 'notice',
     content: '',
   };
-  protected queryCall = 'replication.query';
-  protected queryCallOption: any[] = [];
-  protected addCall = 'replication.create';
-  protected editCall = 'replication.update';
-  protected isEntity = true;
+  queryCall = 'replication.query';
+  queryCallOption: any[] = [];
+  addCall = 'replication.create';
+  editCall = 'replication.update';
+  isEntity = true;
   protected entityForm: any;
   protected queryRes: any;
-  protected title: string;
-  protected pk: number;
+  title: string;
+  pk: number;
   protected retentionPolicyChoice = [
     {
       label: T('Same as Source'),
@@ -64,7 +65,7 @@ export class ReplicationFormComponent {
       value: RetentionPolicy.None,
     },
   ];
-  protected custActions: any[] = [{
+  custActions: any[] = [{
     id: 'wizard_add',
     name: T('Switch to Wizard'),
     function: () => {
@@ -1088,7 +1089,6 @@ export class ReplicationFormComponent {
     },
     { name: 'divider', divider: true },
   ]);
-  protected fieldConfig: FieldConfig;
 
   constructor(
     protected ws: WebSocketService,

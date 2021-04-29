@@ -9,6 +9,7 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { ipv4Validator, ipv6Validator } from '../../common/entity/entity-form/validators/ip-validation';
 import helptext from '../../../helptext/network/configuration/configuration';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-networkconfiguration',
@@ -17,10 +18,10 @@ import helptext from '../../../helptext/network/configuration/configuration';
   `,
   providers: [TooltipsService],
 })
-export class ConfigurationComponent {
+export class ConfigurationComponent implements FormConfiguration {
   // protected resource_name: string = 'network/globalconfiguration/';
-  protected queryCall = 'network.configuration.config';
-  protected updateCall = 'network.configuration.update';
+  queryCall = 'network.configuration.config';
+  updateCall = 'network.configuration.update';
   isEntity = false;
   fieldConfig: FieldConfig[] = [];
   fieldSets = new FieldSets([

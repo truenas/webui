@@ -7,19 +7,20 @@ import { RestService, WebSocketService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/storage/disks/disks';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-disk-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class DiskFormComponent {
-  protected route_success: string[] = ['storage', 'disks'];
-  protected queryCall = 'disk.query';
-  protected editCall = 'disk.update';
-  protected customFilter: any[] = [[['identifier', '=']]];
-  protected isEntity = true;
+export class DiskFormComponent implements FormConfiguration {
+  route_success: string[] = ['storage', 'disks'];
+  queryCall = 'disk.query';
+  editCall = 'disk.update';
+  customFilter: any[] = [[['identifier', '=']]];
+  isEntity = true;
 
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
       name: helptext.fieldset_disk,
@@ -183,7 +184,7 @@ export class DiskFormComponent {
   protected disk_hddstandby: any;
   protected disk_advpowermgmt: any;
   protected disk_acousticlevel: any;
-  protected title: String;
+  title: String;
 
   rowid: any;
 

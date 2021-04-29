@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import * as _ from 'lodash';
 import { WebSocketService, AppLoaderService, DialogService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EncryptionService } from '../../../../services/encryption.service';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/volume-key';
@@ -14,7 +14,7 @@ import helptext from '../../../../helptext/storage/volumes/volume-key';
   selector: 'app-volumeunlock-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class VolumeRekeyFormComponent implements Formconfiguration {
+export class VolumeRekeyFormComponent implements FormConfiguration {
   saveSubmitText = T('Reset Encryption');
 
   queryCall = 'pool.query';

@@ -14,7 +14,7 @@ import {
 import { DialogService } from 'app/services/dialog.service';
 import { EncryptionService } from '../../../../services/encryption.service';
 import { MatDialog } from '@angular/material/dialog';
-import { Formconfiguration } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { T } from '../../../../translate-marker';
 import helptext from '../../../../helptext/storage/volumes/volume-key';
@@ -23,7 +23,7 @@ import helptext from '../../../../helptext/storage/volumes/volume-key';
   selector: 'app-createpassphrase-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class VolumeChangekeyFormComponent implements Formconfiguration {
+export class VolumeChangekeyFormComponent implements FormConfiguration {
   saveSubmitText = T('Change Passphrase');
 
   queryCall = 'pool.query';

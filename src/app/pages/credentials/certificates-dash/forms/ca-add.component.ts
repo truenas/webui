@@ -13,6 +13,7 @@ import { T } from '../../../../translate-marker';
 
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../../common/entity/entity-wizard/entity-wizard.component';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'system-ca-add',
@@ -20,10 +21,10 @@ import { EntityWizardComponent } from '../../../common/entity/entity-wizard/enti
   providers: [SystemGeneralService],
 })
 
-export class CertificateAuthorityAddComponent {
+export class CertificateAuthorityAddComponent implements FormConfiguration {
   protected addWsCall = 'certificateauthority.create';
-  protected isEntity = true;
-  private title: string;
+  isEntity = true;
+  title: string;
   hideCancel = true;
 
   private isLinear = true;

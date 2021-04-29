@@ -5,13 +5,14 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { WebSocketService, DialogService, AppLoaderService } from 'app/services/';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { helptext } from 'app/helptext/system/2FA';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-two-factor',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class TwoFactorComponent {
-  protected queryCall = 'auth.twofactor.config';
+export class TwoFactorComponent implements FormConfiguration {
+  queryCall = 'auth.twofactor.config';
   private entityEdit: any;
   private TwoFactorEnabled: boolean;
   qrInfo: string;

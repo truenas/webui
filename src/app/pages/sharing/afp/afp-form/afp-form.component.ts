@@ -13,26 +13,27 @@ import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DialogService, WebSocketService } from '../../../../services';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-afp-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class AFPFormComponent implements OnDestroy {
-  protected route_success = ['sharing', 'afp'];
-  protected queryCall = 'sharing.afp.query';
-  protected editCall = 'sharing.afp.update';
-  protected addCall = 'sharing.afp.create';
-  protected pk: number;
-  protected queryKey = 'id';
-  protected isEntity = true;
-  protected isBasicMode = true;
+export class AFPFormComponent implements FormConfiguration, OnDestroy {
+  route_success = ['sharing', 'afp'];
+  queryCall = 'sharing.afp.query';
+  editCall = 'sharing.afp.update';
+  addCall = 'sharing.afp.create';
+  pk: number;
+  queryKey = 'id';
+  isEntity = true;
+  isBasicMode = true;
   afp_timemachine: any;
   afp_timemachine_quota: any;
   afp_timemachine_subscription: any;
   title = helptext_sharing_afp.formTitle;
   private namesInUse: string[] = [];
-  private fieldSets = new FieldSets([
+  fieldSets = new FieldSets([
     {
       name: helptext_sharing_afp.fieldset_general,
       class: 'general',
@@ -262,7 +263,7 @@ export class AFPFormComponent implements OnDestroy {
     { name: 'divider_last', divider: true },
   ]);
 
-  protected advanced_field: any[] = [
+  advanced_field: any[] = [
     'comment',
     'upriv',
     'auxparams',

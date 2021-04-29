@@ -19,6 +19,7 @@ import { EntityWizardComponent } from '../../../common/entity/entity-wizard/enti
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../services/dialog.service';
 import { T } from '../../../../translate-marker';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'system-certificate-add',
@@ -26,12 +27,12 @@ import { T } from '../../../../translate-marker';
   providers: [SystemGeneralService],
 })
 
-export class CertificateAddComponent {
+export class CertificateAddComponent implements FormConfiguration {
   protected addWsCall = 'certificate.create';
   protected dialogRef: any;
   private entityForm: any;
   private CSRList: any[] = [];
-  private title = helptext_system_certificates.add.title;
+  title = helptext_system_certificates.add.title;
   private getType = new Subscription();
   private type: any;
   hideCancel = true;

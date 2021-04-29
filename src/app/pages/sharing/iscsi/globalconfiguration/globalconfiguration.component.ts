@@ -10,14 +10,15 @@ import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 import { shared, helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { T } from 'app/translate-marker';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-iscsi-globalconfiguration',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class GlobalconfigurationComponent {
-  protected queryCall = 'iscsi.global.config';
-  protected editCall = 'iscsi.global.update';
+export class GlobalconfigurationComponent implements FormConfiguration {
+  queryCall = 'iscsi.global.config';
+  editCall = 'iscsi.global.update';
   private getProdType: Subscription;
 
   fieldSets: FieldSet[] = [

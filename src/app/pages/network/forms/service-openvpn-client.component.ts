@@ -5,14 +5,14 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 
 import helptext from 'app/helptext/services/components/service-openvpn';
-
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'openvpn-client',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 
-export class OpenvpnClientComponent {
-  protected queryCall = 'openvpn.client.config';
+export class OpenvpnClientComponent implements FormConfiguration {
+  queryCall = 'openvpn.client.config';
   title = helptext.client.formTitle;
 
   fieldConfig: FieldConfig[] = [];

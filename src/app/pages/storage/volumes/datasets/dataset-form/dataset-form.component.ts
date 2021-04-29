@@ -9,7 +9,7 @@ import { EntityUtils } from '../../../../common/entity/utils';
 import { FieldConfig } from '../../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
-import { Formconfiguration } from '../../../../common/entity/entity-form/entity-form.component';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from '../../../../common/entity/entity-form';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from '../../../../../translate-marker';
@@ -59,7 +59,7 @@ interface DatasetFormData {
   selector: 'app-dataset-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class DatasetFormComponent implements Formconfiguration {
+export class DatasetFormComponent implements FormConfiguration {
   title: string;
   volid: string;
   sub: Subscription;

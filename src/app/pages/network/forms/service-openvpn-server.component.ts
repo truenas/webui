@@ -8,14 +8,14 @@ import { FieldConfig } from '../../common/entity/entity-form/models/field-config
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 
 import helptext from 'app/helptext/services/components/service-openvpn';
-
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'openvpn-server',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 
-export class OpenvpnServerComponent {
-  protected queryCall = 'openvpn.server.config';
+export class OpenvpnServerComponent implements FormConfiguration {
+  queryCall = 'openvpn.server.config';
   protected certID: number;
   protected serverAddress: string;
   protected entityEdit: any;

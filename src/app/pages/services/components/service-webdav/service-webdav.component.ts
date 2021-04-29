@@ -10,6 +10,7 @@ import {
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/services/components/service-webdav';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'webdav-edit',
@@ -17,11 +18,11 @@ import helptext from '../../../../helptext/services/components/service-webdav';
   providers: [SystemGeneralService],
 })
 
-export class ServiceWebdavComponent implements OnDestroy {
+export class ServiceWebdavComponent implements FormConfiguration, OnDestroy {
   // protected resource_name: string = 'services/webdav';
-  protected queryCall = 'webdav.config';
-  protected editCall = 'webdav.update';
-  protected route_success: string[] = ['services'];
+  queryCall = 'webdav.config';
+  editCall = 'webdav.update';
+  route_success: string[] = ['services'];
   title = helptext.formTitle;
 
   fieldConfig: FieldConfig[] = [];

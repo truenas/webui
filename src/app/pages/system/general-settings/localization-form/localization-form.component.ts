@@ -12,14 +12,15 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { LocaleService } from 'app/services/locale.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-localization-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [],
 })
-export class LocalizationFormComponent implements OnDestroy {
-  protected queryCall = 'none';
+export class LocalizationFormComponent implements FormConfiguration, OnDestroy {
+  queryCall = 'none';
   protected updateCall = 'system.general.update';
   sortLanguagesByName = true;
   languageList: any = [];

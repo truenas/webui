@@ -6,17 +6,18 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/services/components/service-tftp';
 import { RestService, UserService, WebSocketService } from '../../../../services';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'tftp-edit',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class ServiceTFTPComponent {
-  protected queryCall = 'tftp.config';
-  protected route_success: string[] = ['services'];
+export class ServiceTFTPComponent implements FormConfiguration {
+  queryCall = 'tftp.config';
+  route_success: string[] = ['services'];
   title = helptext.formTitle;
 
-  protected fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext.tftp_fieldset_path,
       label: true,

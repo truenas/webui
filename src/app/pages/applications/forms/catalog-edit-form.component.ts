@@ -10,19 +10,20 @@ import helptext from '../../../helptext/apps/apps';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormListComponent } from '../../common/entity/entity-form/components/form-list/form-list.component';
 import { EntityUtils } from '../../common/entity/utils';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-catalog-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class CatalogEditFormComponent {
-  protected queryCall = 'catalog.query';
-  protected editCall = 'catalog.update';
-  protected customFilter: any[];
-  protected isEntity = true;
-  protected isEditJob = false;
-  protected entityForm: EntityFormComponent;
-  private title = helptext.catalogForm.editTitle;
+export class CatalogEditFormComponent implements FormConfiguration {
+  queryCall = 'catalog.query';
+  editCall = 'catalog.update';
+  customFilter: any[];
+  isEntity = true;
+  isEditJob = false;
+  entityForm: EntityFormComponent;
+  title = helptext.catalogForm.editTitle;
   fieldSets: FieldSets = new FieldSets([
     {
       name: 'Name',

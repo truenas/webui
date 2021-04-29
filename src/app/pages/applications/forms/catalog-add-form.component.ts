@@ -7,20 +7,21 @@ import { ModalService } from '../../../services/modal.service';
 import { DialogService } from '../../../services/index';
 import helptext from '../../../helptext/apps/apps';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-catalog-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class CatalogAddFormComponent {
-  protected queryCall = 'catalog.query';
-  protected customFilter: any[];
-  protected addCall = 'catalog.create';
-  protected isEntity = true;
+export class CatalogAddFormComponent implements FormConfiguration {
+  queryCall = 'catalog.query';
+  customFilter: any[];
+  addCall = 'catalog.create';
+  isEntity = true;
   protected entityForm: EntityFormComponent;
-  private title = helptext.catalogForm.title;
+  title = helptext.catalogForm.title;
   private dialogRef: any;
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
       name: 'Name',

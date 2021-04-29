@@ -12,21 +12,22 @@ import { ModalService } from '../../../../services/modal.service';
 import { T } from '../../../../translate-marker';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-cloudcredentials-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [CloudCredentialService, ReplicationService],
 })
-export class CloudCredentialsFormComponent {
-  protected isEntity = true;
-  protected addCall = 'cloudsync.credentials.create';
-  protected queryCall = 'cloudsync.credentials.query';
-  protected editCall = 'cloudsync.credentials.update';
-  protected queryCallOption: any[];
+export class CloudCredentialsFormComponent implements FormConfiguration {
+  isEntity = true;
+  addCall = 'cloudsync.credentials.create';
+  queryCall = 'cloudsync.credentials.query';
+  editCall = 'cloudsync.credentials.update';
+  queryCallOption: any[];
   protected formGroup: FormGroup;
   protected id: any;
-  protected pk: any;
+  pk: any;
   protected keyID: number;
   protected isOneColumnForm = true;
   private rowNum: any;
@@ -1172,7 +1173,7 @@ export class CloudCredentialsFormComponent {
     },
   ];
 
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
 
   protected providers: any[];
   protected providerField: any;

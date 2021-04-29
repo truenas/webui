@@ -10,20 +10,20 @@ import { TaskService } from '../../../../services';
 
 import helptext from '../../../../helptext/data-protection/scrub/scrub-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 @Component({
   selector: 'app-scrub-task-add',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [TaskService],
 })
-export class ScrubFormComponent {
-  protected queryCall = 'pool.scrub.query';
-  protected queryKey = 'id';
-  protected pk: number;
-  protected editCall = 'pool.scrub.update';
-  protected addCall = 'pool.scrub.create';
+export class ScrubFormComponent implements FormConfiguration {
+  queryCall = 'pool.scrub.query';
+  queryKey = 'id';
+  pk: number;
+  editCall = 'pool.scrub.update';
+  addCall = 'pool.scrub.create';
   protected entityForm: EntityFormComponent;
-  protected isEntity = true;
+  isEntity = true;
   protected preTaskName = 'scrub';
   protected isOneColumnForm = true;
   title: string;

@@ -4,20 +4,21 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/services/components/service-ups';
 import { RestService, WebSocketService } from '../../../../services';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'ups-edit',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class ServiceUPSComponent {
+export class ServiceUPSComponent implements FormConfiguration {
   protected ups_driver: any;
   private ups_drivers_list: any[] = [];
   private ups_driver_key: any;
   protected ups_port: any;
   protected entityForm: any;
 
-  protected queryCall = 'ups.config';
-  protected route_success: string[] = ['services'];
+  queryCall = 'ups.config';
+  route_success: string[] = ['services'];
   title = helptext.formTitle;
 
   fieldSets: FieldSet[] = [

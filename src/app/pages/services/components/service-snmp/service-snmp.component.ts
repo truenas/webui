@@ -8,6 +8,7 @@ import {
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import helptext from '../../../../helptext/services/components/service-snmp';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'snmp-edit',
@@ -15,10 +16,10 @@ import helptext from '../../../../helptext/services/components/service-snmp';
   providers: [IscsiService, IdmapService],
 })
 
-export class ServiceSNMPComponent {
-  protected updateCall = 'snmp.update';
-  protected queryCall = 'snmp.config';
-  protected route_success: string[] = ['services'];
+export class ServiceSNMPComponent implements FormConfiguration {
+  updateCall = 'snmp.update';
+  queryCall = 'snmp.config';
+  route_success: string[] = ['services'];
   title = helptext.formTitle;
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [

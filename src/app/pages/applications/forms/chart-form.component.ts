@@ -11,26 +11,27 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from '../../../helptext/apps/apps';
 import { EntityUtils, FORM_KEY_SEPERATOR, FORM_LABEL_KEY_PREFIX } from '../../common/entity/utils';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'chart-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class ChartFormComponent {
-  protected queryCall = 'chart.release.query';
-  protected queryCallOption: any[];
-  protected customFilter: any[];
-  protected addCall = 'chart.release.create';
-  protected editCall = 'chart.release.update';
-  protected isEntity = true;
+export class ChartFormComponent implements FormConfiguration {
+  queryCall = 'chart.release.query';
+  queryCallOption: any[];
+  customFilter: any[];
+  addCall = 'chart.release.create';
+  editCall = 'chart.release.update';
+  isEntity = true;
   protected utils: CommonUtils;
 
-  private title: string;
+  title: string;
   private name: string;
   private getRow = new Subscription();
   private rowName: string;
   private dialogRef: any;
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [];
   private catalogApp: any;
   private entityUtils = new EntityUtils();

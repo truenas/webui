@@ -9,18 +9,19 @@ import helptext from '../../../../helptext/services/components/service-ssh';
 import { NetworkService, RestService, WebSocketService } from '../../../../services';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'ssh-edit',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [NetworkService],
 })
-export class ServiceSSHComponent implements OnInit {
+export class ServiceSSHComponent implements FormConfiguration, OnInit {
   // Form Layout
-  protected isBasicMode = true;
-  protected queryCall = 'ssh.config';
+  isBasicMode = true;
+  queryCall = 'ssh.config';
   title = helptext.formTitle;
-  protected route_success: string[] = ['services'];
+  route_success: string[] = ['services'];
 
   fieldSets: FieldSet[] = [
     {
@@ -111,7 +112,7 @@ export class ServiceSSHComponent implements OnInit {
     { name: 'divider', divider: true },
   ];
 
-  protected advanced_field: string[] = [
+  advanced_field: string[] = [
     'bindiface',
     'compression',
     'sftp_log_level',

@@ -13,17 +13,18 @@ import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.int
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-certificate-acme-add',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [EntityFormService],
 })
-export class CertificateAcmeAddComponent {
-  protected addCall = 'certificate.create';
-  protected queryCall = 'certificate.query';
-  protected isEntity = true;
-  protected isNew = true;
+export class CertificateAcmeAddComponent implements FormConfiguration {
+  addCall = 'certificate.create';
+  queryCall = 'certificate.query';
+  isEntity = true;
+  isNew = true;
   private csrOrg: any;
   formArray: FormArray;
   commonName: string;
@@ -31,9 +32,9 @@ export class CertificateAcmeAddComponent {
   private getRow = new Subscription();
   private rowNum: any;
   private dns_map: any;
-  private title = helptext_system_certificates.list.action_create_acme_certificate;
+  title = helptext_system_certificates.list.action_create_acme_certificate;
   protected isOneColumnForm = true;
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
       name: helptext_system_certificates.acme.fieldset_acme,
@@ -119,8 +120,8 @@ export class CertificateAcmeAddComponent {
 
   protected entityForm: any;
   protected dialogRef: any;
-  protected queryCallOption: any[];
-  protected initialCount = 1;
+  queryCallOption: any[];
+  initialCount = 1;
   private domainList: any;
   private domainList_fc: any;
 

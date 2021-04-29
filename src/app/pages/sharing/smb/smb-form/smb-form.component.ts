@@ -17,20 +17,21 @@ import {
 } from '../../../../services';
 import { Validators } from '@angular/forms';
 import globalHelptext from 'app/helptext/global-helptext';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-smb-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class SMBFormComponent implements OnDestroy {
-  protected queryCall = 'sharing.smb.query';
-  protected addCall = 'sharing.smb.create';
-  protected editCall = 'sharing.smb.update';
-  protected pk: number;
-  protected queryKey = 'id';
-  protected route_success: string[] = ['sharing', 'smb'];
-  protected isEntity = true;
-  protected isBasicMode = true;
+export class SMBFormComponent implements FormConfiguration, OnDestroy {
+  queryCall = 'sharing.smb.query';
+  addCall = 'sharing.smb.create';
+  editCall = 'sharing.smb.update';
+  pk: number;
+  queryKey = 'id';
+  route_success: string[] = ['sharing', 'smb'];
+  isEntity = true;
+  isBasicMode = true;
   isTimeMachineOn = false;
   title = helptext_sharing_smb.formTitle;
   namesInUse: string[] = [];
@@ -42,7 +43,7 @@ export class SMBFormComponent implements OnDestroy {
   private mangle: boolean;
   private getAdvancedConfig: Subscription;
 
-  protected fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext_sharing_smb.fieldset_basic,
       class: 'basic',
@@ -241,7 +242,7 @@ export class SMBFormComponent implements OnDestroy {
 
   private cifs_vfsobjects: any;
 
-  protected advanced_field: any[] = [
+  advanced_field: any[] = [
     'acl',
     'ro',
     'browsable',

@@ -7,19 +7,20 @@ import * as _ from 'lodash';
 import { DialogService, WebSocketService } from '../../../../services';
 import { Router } from '@angular/router';
 import { T } from 'app/translate-marker';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-user-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 
-export class WebdavFormComponent {
-  protected queryCall = 'sharing.webdav.query';
-  protected queryKey = 'id';
-  protected addCall = 'sharing.webdav.create';
-  protected editCall = 'sharing.webdav.update';
-  protected route_success: string[] = ['sharing', 'webdav'];
-  protected isEntity = true;
+export class WebdavFormComponent implements FormConfiguration {
+  queryCall = 'sharing.webdav.query';
+  queryKey = 'id';
+  addCall = 'sharing.webdav.create';
+  editCall = 'sharing.webdav.update';
+  route_success: string[] = ['sharing', 'webdav'];
+  isEntity = true;
 
   confirmSubmit = true;
   confirmSubmitDialog = {
@@ -30,7 +31,7 @@ export class WebdavFormComponent {
 
   fieldConfig: FieldConfig[] = [];
   fieldSetDisplay = 'default';
-  protected fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext_sharing_webdav.fieldset_name,
       class: 'webdav-configuration-form',

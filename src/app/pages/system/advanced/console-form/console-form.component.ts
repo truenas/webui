@@ -12,15 +12,16 @@ import { ModalService } from '../../../../services/modal.service';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-console-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [],
 })
-export class ConsoleFormComponent implements OnDestroy {
-  protected queryCall = 'system.advanced.config';
-  protected updateCall = 'system.advanced.update';
+export class ConsoleFormComponent implements FormConfiguration, OnDestroy {
+  queryCall = 'system.advanced.config';
+  updateCall = 'system.advanced.update';
   protected isOneColumnForm = true;
   private getDataFromDash: Subscription;
   private serialPortChoicesSubscription: Subscription;
@@ -94,7 +95,7 @@ export class ConsoleFormComponent implements OnDestroy {
 
   private entityForm: any;
   private configData: any;
-  protected title = helptext_system_advanced.fieldset_console;
+  title = helptext_system_advanced.fieldset_console;
 
   constructor(
     protected router: Router,

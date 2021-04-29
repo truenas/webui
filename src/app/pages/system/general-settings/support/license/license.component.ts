@@ -5,14 +5,15 @@ import { DialogService, WebSocketService } from '../../../../../services';
 import { ModalService } from '../../../../../services/modal.service';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-license',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [],
 })
-export class LicenseComponent {
-  private queryCall = 'none';
+export class LicenseComponent implements FormConfiguration {
+  queryCall = 'none';
   private updateCall = 'system.license_update';
   protected isOneColumnForm = true;
   fieldSets: FieldSet[] = [

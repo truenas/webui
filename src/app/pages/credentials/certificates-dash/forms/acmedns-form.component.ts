@@ -7,25 +7,26 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { helptext_system_acme as helptext, helptext_system_acme } from 'app/helptext/system/acme';
 import _ from 'lodash';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-acmedns-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class AcmednsFormComponent {
-  protected addCall = 'acme.dns.authenticator.create';
-  protected queryCall = 'acme.dns.authenticator.query';
-  protected editCall = 'acme.dns.authenticator.update';
-  protected isEntity = true;
+export class AcmednsFormComponent implements FormConfiguration {
+  addCall = 'acme.dns.authenticator.create';
+  queryCall = 'acme.dns.authenticator.query';
+  editCall = 'acme.dns.authenticator.update';
+  isEntity = true;
   protected isOneColumnForm = true;
   title: string;
 
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [];
 
   protected entityForm: any;
   private rowNum: any;
-  protected queryCallOption: any;
+  queryCallOption: any;
   private getRow = new Subscription();
 
   constructor(protected ws: WebSocketService, protected loader: AppLoaderService,

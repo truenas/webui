@@ -15,22 +15,23 @@ import { EntityUtils } from '../../../../common/entity/utils';
 import { AppLoaderService } from '../../../../../services/app-loader/app-loader.service';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import globalHelptext from 'app/helptext/global-helptext';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-iscsi-initiator-form',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [IscsiService, StorageService],
 })
-export class ExtentFormComponent {
-  protected addCall = 'iscsi.extent.create';
-  protected queryCall = 'iscsi.extent.query';
-  protected editCall = 'iscsi.extent.update';
-  protected customFilter: any[] = [[['id', '=']]];
+export class ExtentFormComponent implements FormConfiguration {
+  addCall = 'iscsi.extent.create';
+  queryCall = 'iscsi.extent.query';
+  editCall = 'iscsi.extent.update';
+  customFilter: any[] = [[['id', '=']]];
   // protected resource_name: string = 'services/iscsi/extent';
-  protected route_success: string[] = ['sharing', 'iscsi', 'extent'];
-  protected isEntity = true;
+  route_success: string[] = ['sharing', 'iscsi', 'extent'];
+  isEntity = true;
   protected entityForm: EntityFormComponent;
-  protected isNew = false;
+  isNew = false;
   sub: Subscription;
   protected originalFilesize: number;
 
@@ -256,9 +257,9 @@ export class ExtentFormComponent {
   ];
   protected extent_type_control: any;
   protected extent_disk_control: any;
-  protected pk: string;
+  pk: string;
   protected avail_threshold_field: any;
-  protected fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[];
 
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,

@@ -9,19 +9,20 @@ import { WebSocketService } from '../../../../../services/ws.service';
 import { EntityUtils } from '../../../../common/entity/utils';
 import { FieldSet } from '../../../../common/entity/entity-form/models/fieldset.interface';
 import * as _ from 'lodash';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'app-iscsi-authorizedaccess-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class AuthorizedAccessFormComponent {
-  protected addCall = 'iscsi.auth.create';
-  protected queryCall = 'iscsi.auth.query';
-  protected editCall = 'iscsi.auth.update';
+export class AuthorizedAccessFormComponent implements FormConfiguration {
+  addCall = 'iscsi.auth.create';
+  queryCall = 'iscsi.auth.query';
+  editCall = 'iscsi.auth.update';
   // protected resource_name: string = 'services/iscsi/authcredential';
-  protected route_success: string[] = ['sharing', 'iscsi', 'auth'];
-  protected isEntity = true;
-  protected customFilter: any[] = [[['id', '=']]];
+  route_success: string[] = ['sharing', 'iscsi', 'auth'];
+  isEntity = true;
+  customFilter: any[] = [[['id', '=']]];
 
   fieldSets: FieldSet[] = [
     {
@@ -114,7 +115,7 @@ export class AuthorizedAccessFormComponent {
     },
   ];
 
-  protected pk: any;
+  pk: any;
   protected peeruser_field: any;
   protected peersecret_field: any;
 

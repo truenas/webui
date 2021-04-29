@@ -9,15 +9,16 @@ import helptext from '../../../../helptext/services/components/service-nfs';
 import { RestService, WebSocketService, DialogService } from '../../../../services';
 import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'nfs-edit',
   template: ' <entity-form [conf]="this"></entity-form>',
 })
 
-export class ServiceNFSComponent {
-  protected queryCall = 'nfs.config';
-  protected route_success: string[] = ['services'];
+export class ServiceNFSComponent implements FormConfiguration {
+  queryCall = 'nfs.config';
+  route_success: string[] = ['services'];
   productType = window.localStorage.getItem('product_type') as ProductType;
   hideOnScale = ['servers', 'allow_nonroot', 'mountd_log', 'statd_lockd_log'];
   title = helptext.formTitle;
