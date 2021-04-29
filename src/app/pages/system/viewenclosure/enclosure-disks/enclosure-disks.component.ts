@@ -36,11 +36,17 @@ import { DialogService } from 'app/services/dialog.service';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { T } from '../../../../translate-marker';
 
+export enum EnclosureLocation {
+  Front = 'front',
+  Rear = 'rear',
+  Internal = 'internal',
+}
+
 export interface DiskFailure {
   disk: string;
   enclosure: number;
   slot: number;
-  location: string; // front || rear || internal;
+  location: EnclosureLocation;
   reasons?: string[];
 }
 
@@ -73,7 +79,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   subenclosure: any; // Declare rear and internal enclosure visualizations here
 
   chassis: Chassis;
-  view = 'front'; // front || rear || internal
+  view: EnclosureLocation = EnclosureLocation.Front;
   protected _enclosure: ChassisView; // Visualization
   get enclosure() {
     if (!this.chassis) return null;
@@ -130,6 +136,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   protected pixiWidth = 960;
   protected pixiHeight = 304;
   protected temperatures?: Temperature;
+
+  readonly EnclosureLocation = EnclosureLocation;
 
   get cardWidth() {
     return this.overview.nativeElement.offsetWidth;
@@ -283,7 +291,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     if (changes.selectedEnclosure) {
       // Enabled subenclosure functionality
       this.subenclosure = changes.selectedEnclosure.currentValue.enclosureKey == this.system.headIndex && this.system.rearIndex ? changes.selectedEnclosure.currentValue : undefined;
-      this.loadEnclosure(changes.selectedEnclosure.currentValue, 'front');
+      this.loadEnclosure(changes.selectedEnclosure.currentValue, EnclosureLocation.Front);
     }
   }
 
@@ -296,7 +304,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     // this.mediaObs.unsubscribe();
   }
 
-  loadEnclosure(enclosure: any, view?: string, update?: boolean) {
+  loadEnclosure(enclosure: any, view?: EnclosureLocation, update?: boolean) {
     this.destroyEnclosure();
 
     if (view) {
@@ -517,7 +525,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     enclosure.load();
   }
 
-  extractEnclosure(enclosure: any, profile: any) {
+  extractEnclosure(enclosure: ChassisView, profile: any) {
     // let extractor = new PIXI.extract.CanvasExtract(this.renderer);
     const canvas = this.app.renderer.plugins.extract.canvas(enclosure.container);
     this.controllerEvents.next({ name: 'EnclosureCanvas', data: { canvas, profile }, sender: this });
@@ -688,7 +696,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     });
   }
 
-  optimizeChassisOpacity(extractedEnclosure?: any) {
+  optimizeChassisOpacity(extractedEnclosure?: ChassisView) {
     const css = (<any>document).documentElement.style.getPropertyValue('--contrast-darkest');
     const hsl = this.themeUtils.hslToArray(css);
 
@@ -706,7 +714,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
   }
 
-  setDisksEnabledState(enclosure?: any) {
+  setDisksEnabledState(enclosure?: ChassisView) {
     if (!enclosure) { enclosure = this.enclosure; }
     enclosure.driveTrayObjects.forEach((dt: any, index: number) => {
       // let disk = this.findDiskBySlotNumber(index + 1);
@@ -735,7 +743,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     });
   }
 
-  setDiskHealthState(disk: any, enclosure: any = this.enclosure, updateGL = false) {
+  setDiskHealthState(disk: any, enclosure: ChassisView = this.enclosure, updateGL = false) {
     let index = -1;
 
     enclosure.driveTrayObjects.forEach((dto: any, i: number) => {
@@ -772,8 +780,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
 
     // Also check slot status
-    const elements = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex ? this.system.enclosures[disk.enclosure.number].elements : this.system.enclosures[disk.enclosure.number].elements[0].elements;
-    const slot = elements.filter((s: any) => s.slot == disk.enclosure.slot);
+    const elements: any[] = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex ? this.system.enclosures[disk.enclosure.number].elements : this.system.enclosures[disk.enclosure.number].elements[0].elements;
+    const slot = elements.filter((s: any) => s.slot == disk.enclosure.slot)[0];
 
     if (!failed && slot.fault) {
       failed = true;
@@ -819,7 +827,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       }
 
       if (failed) {
-        const location = this.subenclosure && disk.enclosure.number == this.system.rearIndex ? 'rear' : 'front';
+        const location = this.subenclosure && disk.enclosure.number == this.system.rearIndex ? EnclosureLocation.Rear : EnclosureLocation.Front;
         const failure: DiskFailure = {
           disk: disk.name, enclosure: disk.enclosure.number, slot: disk.enclosure.slot, location,
         };
@@ -1009,7 +1017,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }, 50);
   }
 
-  enclosureOverride(view: string) {
+  enclosureOverride(view: EnclosureLocation) {
     if (view !== this.view) {
       this.loadEnclosure(this.selectedEnclosure, view);
     }
