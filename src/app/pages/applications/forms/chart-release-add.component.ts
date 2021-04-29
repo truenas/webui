@@ -200,7 +200,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
                   }],
                 },
               ],
-            }
+            },
 
           ],
           listFields: [],
@@ -400,7 +400,6 @@ export class ChartReleaseAddComponent implements OnDestroy {
   }
 
   customSubmit(data: any) {
-
     let envVars = [];
     if (data.containerEnvironmentVariables && data.containerEnvironmentVariables.length > 0 && data.containerEnvironmentVariables[0].name) {
       envVars = data.containerEnvironmentVariables;
@@ -488,7 +487,7 @@ export class ChartReleaseAddComponent implements OnDestroy {
     }];
 
     if (data['gpuConfiguration']) {
-      (payload[1] as any).values['gpuConfiguration'] = data['gpuConfiguration'];
+      (payload[0] as any).values['gpuConfiguration'] = data['gpuConfiguration'];
     }
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {
