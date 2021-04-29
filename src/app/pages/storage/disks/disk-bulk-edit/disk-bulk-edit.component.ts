@@ -9,6 +9,7 @@ import { AppLoaderService } from '../../../../services/app-loader/app-loader.ser
 import { DialogService } from '../../../../services/dialog.service';
 import { StorageService } from '../../../../services/storage.service';
 import helptext from '../../../../helptext/storage/disks/disks';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
 
 @Component({
   selector: 'app-disk-bulk-edit',
@@ -138,7 +139,7 @@ export class DiskBulkEditComponent {
     this.ws.job('core.bulk', ['disk.update', req])
       .subscribe(
         (res) => {
-          if (res.state === 'SUCCESS') {
+          if (res.state === EntityJobState.Success) {
             this.loader.close();
             let success_state = true;
             for (let i = 0; i < res.result.length; i++) {

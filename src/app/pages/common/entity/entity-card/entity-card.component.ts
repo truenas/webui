@@ -1,19 +1,17 @@
 import {
-  Component, OnInit, AfterViewInit, Input, Output, EventEmitter, ElementRef, ViewEncapsulation, ViewChild, TemplateRef,
+  Component, OnInit, Input, Output, EventEmitter, ElementRef, TemplateRef,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { DataSource } from '@angular/cdk/collections';
-import { Observable, BehaviorSubject, Subscription } from 'rxjs';
 
-import { iXObject } from 'app/core/classes/ix-object';
+import { Subscription } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 
-// local libs
-import { RestService } from '../../../../services/rest.service';
-import { WebSocketService } from '../../../../services/ws.service';
-import { DialogService } from '../../../../services/dialog.service';
-import { EntityUtils } from '../utils';
-import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
+import { iXObject } from 'app/core/classes/ix-object';
+import { ServiceStatus } from 'app/enums/service-status.enum';
+import { RestService } from 'app/services/rest.service';
+import { WebSocketService } from 'app/services/ws.service';
+import { DialogService } from 'app/services/dialog.service';
+import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
 @Component({
   selector: 'entity-card',
@@ -83,9 +81,9 @@ export class EntityCardComponent extends iXObject implements OnInit {
 
     this.busy = this.ws.call(rpc, [row.id]).subscribe((res) => {
       if (res) {
-        row[this.conf.toggleProp] = 'RUNNING';
+        row[this.conf.toggleProp] = ServiceStatus.Running;
       } else {
-        row[this.conf.toggleProp] = 'STOPPED';
+        row[this.conf.toggleProp] = ServiceStatus.Stopped;
       }
     });
   }

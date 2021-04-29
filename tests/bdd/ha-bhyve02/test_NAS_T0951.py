@@ -20,6 +20,7 @@ from pytest_bdd import (
 @scenario('features/NAS-T951.feature', 'Edit user auxiliary group')
 def test_edit_user_auxiliary_group(driver):
     """Edit user auxiliary group."""
+    pass
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
