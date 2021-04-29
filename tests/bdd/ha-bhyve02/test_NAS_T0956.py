@@ -18,6 +18,7 @@ from pytest_bdd import (
 @scenario('features/NAS-T956.feature', 'Edit User Try Change Password with mismatched passwords')
 def test_edit_user_try_change_password_with_mismatched_passwords(driver):
     """Edit User Try Change Password with mismatched passwords."""
+    pass
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
