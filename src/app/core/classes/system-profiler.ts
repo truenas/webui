@@ -46,12 +46,12 @@ export class SystemProfiler {
     this.parseEnclosures(this._enclosures);
   }
 
-  private _enclosures: any;
+  private _enclosures: Enclosure[];
   get enclosures() {
     return this._enclosures;
   }
-  set enclosures(obj) {
-    this._enclosures = obj;
+  set enclosures(enclosures: Enclosure[]) {
+    this._enclosures = enclosures;
   }
 
   private _pools: any;
@@ -72,14 +72,14 @@ export class SystemProfiler {
     this.parseSensorData(this._sensorData);
   }
 
-  constructor(model: string, enclosures: any) {
+  constructor(model: string, enclosures: Enclosure[]) {
     this.platform = model;
     this.enclosures = enclosures;
     this.createProfile();
   }
 
   createProfile() {
-    let rearEnclosure;
+    let rearEnclosure: Enclosure;
 
     // with the enclosure info we set up basic data structure
     for (let i = 0; i < this.enclosures.length; i++) {
