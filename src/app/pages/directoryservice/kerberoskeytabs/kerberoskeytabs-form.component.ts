@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
 import { ModalService } from '../../../services/modal.service';
 @Component({
   selector: 'app-kerberos-keytbas-form',
-  template: `<entity-form [conf]="this"></entity-form>`
+  template: '<entity-form [conf]="this"></entity-form>',
 })
 export class KerberosKeytabsFormComponent {
   protected title: string;
@@ -18,10 +18,10 @@ export class KerberosKeytabsFormComponent {
   protected pk: any;
   protected queryKey = 'id';
   protected isEntity = true;
-  private getRow = new Subscription;
+  private getRow = new Subscription();
   protected isOneColumnForm = true;
   protected fieldConfig: FieldConfig[] = [];
-  public fieldSets: FieldSet[] = [
+  fieldSets: FieldSet[] = [
     {
       name: helptext.kkt_heading,
       class: 'heading',
@@ -33,7 +33,7 @@ export class KerberosKeytabsFormComponent {
           placeholder: helptext.kkt_ktname_placeholder,
           tooltip: helptext.kkt_ktname_tooltip,
           required: true,
-          validation: helptext.kkt_ktname_validation
+          validation: helptext.kkt_ktname_validation,
         },
         {
           type: 'input',
@@ -43,14 +43,14 @@ export class KerberosKeytabsFormComponent {
           tooltip: helptext.kkt_ktfile_tooltip,
           fileType: 'binary',
           required: true,
-          validation: helptext.kkt_ktfile_validation
-        }
-      ]
-    }
+          validation: helptext.kkt_ktfile_validation,
+        },
+      ],
+    },
   ];
 
   constructor(private modalService: ModalService) {
-    this.getRow = this.modalService.getRow$.subscribe(rowId => {
+    this.getRow = this.modalService.getRow$.subscribe((rowId) => {
       this.pk = rowId;
       this.getRow.unsubscribe();
     });

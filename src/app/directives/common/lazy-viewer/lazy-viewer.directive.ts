@@ -1,4 +1,6 @@
-import { Directive, OnInit, Input, ElementRef, Renderer2, HostListener } from '@angular/core';
+import {
+  Directive, OnInit, Input, ElementRef, Renderer2, HostListener,
+} from '@angular/core';
 
 /*
  * This directive hides elements with the provided selector
@@ -6,26 +8,24 @@ import { Directive, OnInit, Input, ElementRef, Renderer2, HostListener } from '@
  * */
 
 @Directive({
-  selector: '[lazyViewer]'
+  selector: '[lazyViewer]',
 })
-export class LazyViewerDirective  implements OnInit{
-
+export class LazyViewerDirective implements OnInit {
   @Input() container?: string;
   @Input() view?: string;
 
-  constructor(private renderer: Renderer2, private el: ElementRef) { 
+  constructor(private renderer: Renderer2, private el: ElementRef) {
   }
 
-  ngOnInit(){
-    /*console.log(this.view);
-    console.log(this.el);*/
+  ngOnInit() {
+    /* console.log(this.view);
+    console.log(this.el); */
   }
 
   @HostListener('mouseenter') onMouseEnter() {
-    //console.log(this.el.nativeElement.querySelectorAll(this.view));
-  }
- 
-  @HostListener('mouseleave') onMouseLeave() {
+    // console.log(this.el.nativeElement.querySelectorAll(this.view));
   }
 
+  @HostListener('mouseleave') onMouseLeave() {
+  }
 }

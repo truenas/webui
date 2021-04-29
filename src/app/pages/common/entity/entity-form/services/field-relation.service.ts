@@ -1,7 +1,7 @@
-import {Injectable} from "@angular/core";
-import {FormControl, FormGroup} from "@angular/forms";
+import { Injectable } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 
-import {FieldConfig} from "../models/field-config.interface";
+import { FieldConfig } from '../models/field-config.interface';
 import {
   ACTION_DISABLE,
   ACTION_ENABLE,
@@ -10,40 +10,39 @@ import {
   CONNECTION_AND,
   CONNECTION_OR,
   FieldRelation,
-  RelationGroup
-} from "../models/field-relation.interface";
+  RelationGroup,
+} from '../models/field-relation.interface';
 import * as _ from 'lodash';
 import { EntityUtils, FORM_KEY_SEPERATOR } from '../../utils';
 @Injectable()
 export class FieldRelationService {
-
   constructor() {}
 
   findActivationRelation(relGroups: RelationGroup[]): RelationGroup {
-    return relGroups.find(rel => rel.action === ACTION_DISABLE ||
-                                 rel.action === ACTION_ENABLE ||
-                                 rel.action === ACTION_SHOW ||
-                                 rel.action === ACTION_HIDE);
+    return relGroups.find((rel) => rel.action === ACTION_DISABLE
+                                 || rel.action === ACTION_ENABLE
+                                 || rel.action === ACTION_SHOW
+                                 || rel.action === ACTION_HIDE);
   }
 
   getRelatedFormControls(model: FieldConfig,
-                         controlGroup: FormGroup): FormControl[] {
-    let controls: FormControl[] = [];
+    controlGroup: FormGroup): FormControl[] {
+    const controls: FormControl[] = [];
 
-    model.relation.forEach(relGroup => relGroup.when.forEach(rel => {
+    model.relation.forEach((relGroup) => relGroup.when.forEach((rel) => {
       if (model.name === rel.name) {
         throw new Error(`FormControl ${model.name} cannot depend on itself`);
       }
-      let control = <FormControl>controlGroup.get(rel.name);
-      if (control &&
-          !controls.some(controlElement => controlElement === control)) {
+      const control = <FormControl>controlGroup.get(rel.name);
+      if (control
+          && !controls.some((controlElement) => controlElement === control)) {
         controls.push(control);
       } else {
-        const subControlKeys = Object.keys(controlGroup.controls).filter(key => key.startsWith(`${rel.name}_`));
-        subControlKeys.forEach(key => {
-          let control = <FormControl>controlGroup.get(key);
-          if (control &&
-              !controls.some(controlElement => controlElement === control)) {
+        const subControlKeys = Object.keys(controlGroup.controls).filter((key) => key.startsWith(`${rel.name}_`));
+        subControlKeys.forEach((key) => {
+          const control = <FormControl>controlGroup.get(key);
+          if (control
+              && !controls.some((controlElement) => controlElement === control)) {
             controls.push(control);
           }
         });
@@ -53,84 +52,85 @@ export class FieldRelationService {
   }
 
   isFormControlToBeDisabled(relGroup: RelationGroup,
-                            formGroup: FormGroup): boolean {
+    formGroup: FormGroup): boolean {
     return this.isFormControlToBe(relGroup, formGroup, true);
   }
-  
+
   isFormControlToBeHide(relGroup: RelationGroup,
     formGroup: FormGroup): boolean {
     return this.isFormControlToBe(relGroup, formGroup, false);
   }
 
   isFormControlToBe(relGroup: RelationGroup,
-                            formGroup: FormGroup, isDisable:boolean): boolean {
+    formGroup: FormGroup, isDisable: boolean): boolean {
     return relGroup.when.reduce(
-        (toBeDisabled: boolean, rel: FieldRelation, index: number) => {
-          let control = formGroup.get(rel.name);
-          let hasControlValue = false;
-          let controlValue = null;
+      (toBeDisabled: boolean, rel: FieldRelation, index: number) => {
+        const control = formGroup.get(rel.name);
+        let hasControlValue = false;
+        let controlValue = null;
 
-          if (control) {
+        if (control) {
+          hasControlValue = true;
+          controlValue = control.value;
+        } else {
+          const formGroupValue = _.cloneDeep(formGroup.value);
+          let parsedValues: any = {};
+          new EntityUtils().parseFormControlValues(formGroupValue, parsedValues);
+          const key_list = rel.name.split(FORM_KEY_SEPERATOR);
+
+          key_list.forEach((key) => {
+            if (parsedValues && parsedValues[key] != undefined) {
+              parsedValues = parsedValues[key];
+            } else {
+              parsedValues = null;
+            }
+          });
+
+          if (parsedValues) {
             hasControlValue = true;
-            controlValue = control.value
-          } else {
-            let formGroupValue = _.cloneDeep(formGroup.value);
-            let parsedValues = {};
-            new EntityUtils().parseFormControlValues(formGroupValue, parsedValues);
-            const key_list = rel.name.split(FORM_KEY_SEPERATOR);
-            
-            key_list.forEach(key => {
-              if (parsedValues && parsedValues[key] != undefined) {
-                parsedValues = parsedValues[key];
-              } else {
-                parsedValues = null;
-              }
-            });
-
-            if (parsedValues) {
-              hasControlValue = true;
-              controlValue = parsedValues;
-            }
+            controlValue = parsedValues;
           }
+        }
 
-          let disable_action = ACTION_DISABLE;
-          let enable_action = ACTION_ENABLE;
-          if (!isDisable) {
-            disable_action = ACTION_HIDE;
-            enable_action = ACTION_SHOW;
-          }
-          
-          if (hasControlValue && relGroup.action === disable_action) {
-            if (index > 0 && relGroup.connective === CONNECTION_AND &&
-                !toBeDisabled) {
-              return false;
-            }
-            if (index > 0 && relGroup.connective === CONNECTION_OR &&
-                toBeDisabled) {
-              return true;
-            }
-            return this.checkValueConditionIsTrue(rel.value, controlValue, rel.operator) || this.checkStatusConditionIsTrue(rel, control);
-          }
+        let disable_action = ACTION_DISABLE;
+        let enable_action = ACTION_ENABLE;
+        if (!isDisable) {
+          disable_action = ACTION_HIDE;
+          enable_action = ACTION_SHOW;
+        }
 
-          if (hasControlValue && relGroup.action === enable_action) {
-            if (index > 0 && relGroup.connective === CONNECTION_AND &&
-                toBeDisabled) {
-              return true;
-            }
-            if (index > 0 && relGroup.connective === CONNECTION_OR &&
-                !toBeDisabled) {
-              return false;
-            }
-            return !(this.checkValueConditionIsTrue(rel.value, controlValue, rel.operator) || this.checkStatusConditionIsTrue(rel, control));
+        if (hasControlValue && relGroup.action === disable_action) {
+          if (index > 0 && relGroup.connective === CONNECTION_AND
+                && !toBeDisabled) {
+            return false;
           }
+          if (index > 0 && relGroup.connective === CONNECTION_OR
+                && toBeDisabled) {
+            return true;
+          }
+          return this.checkValueConditionIsTrue(rel.value, controlValue, rel.operator) || this.checkStatusConditionIsTrue(rel, control);
+        }
 
-          return false;
-        },
-        false);
+        if (hasControlValue && relGroup.action === enable_action) {
+          if (index > 0 && relGroup.connective === CONNECTION_AND
+                && toBeDisabled) {
+            return true;
+          }
+          if (index > 0 && relGroup.connective === CONNECTION_OR
+                && !toBeDisabled) {
+            return false;
+          }
+          return !(this.checkValueConditionIsTrue(rel.value, controlValue, rel.operator) || this.checkStatusConditionIsTrue(rel, control));
+        }
+
+        return false;
+      },
+      false,
+    );
   }
 
-  checkValueConditionIsTrue(conditionValue:any, controlValue:any, operator:string) {
-    let result:boolean = false;
+  checkValueConditionIsTrue(conditionValue: any, controlValue: any, operator: string) {
+    let result = false;
 
     switch (operator) {
       case '=':
@@ -185,33 +185,32 @@ export class FieldRelationService {
     return result;
   }
 
-  checkStatusConditionIsTrue(condition:any, control:any) {
+  checkStatusConditionIsTrue(condition: any, control: any) {
     return control && condition.status === control.status;
   }
 
-  setRelation(config: FieldConfig, formGroup, fieldConfig) {
+  setRelation(config: FieldConfig, formGroup: FormGroup, fieldConfig: any) {
     const activations = this.findActivationRelation(config.relation);
     if (activations) {
       const tobeDisabled = this.isFormControlToBeDisabled(activations, formGroup);
       const tobeHide = this.isFormControlToBeHide(activations, formGroup);
       this.setDisabled(fieldConfig, formGroup, config.name, tobeDisabled, tobeHide);
 
-      this.getRelatedFormControls(config, formGroup).forEach(control => {
-        control.valueChanges.subscribe(() => { 
-          this.relationUpdate(config, activations, formGroup, fieldConfig); 
+      this.getRelatedFormControls(config, formGroup).forEach((control) => {
+        control.valueChanges.subscribe(() => {
+          this.relationUpdate(config, activations, formGroup, fieldConfig);
         });
       });
     }
   }
 
-  setDisabled(fieldConfig: FieldConfig[], formGroup: any, name: string, disable: boolean, hide?: boolean, status?:string) {
+  setDisabled(fieldConfig: FieldConfig[], formGroup: any, name: string, disable: boolean, hide?: boolean, status?: string) {
     // if field is hidden, disable it too
     if (hide) {
       disable = hide;
     } else {
       hide = false;
     }
-
 
     fieldConfig = fieldConfig.map((item) => {
       if (item.name === name) {
@@ -224,7 +223,6 @@ export class FieldRelationService {
     if (formGroup.controls[name]) {
       const method = disable ? 'disable' : 'enable';
       formGroup.controls[name][method]();
-      return;
     }
   }
 
@@ -234,7 +232,7 @@ export class FieldRelationService {
     this.setDisabled(fieldConfig, formGroup, config.name, tobeDisabled, tobeHide);
   }
 
-  isDeepEqual(data1, data2) {
+  isDeepEqual(data1: any, data2: any) {
     if (this.getDataType(data1) != this.getDataType(data2)) {
       return false;
     }
@@ -244,8 +242,8 @@ export class FieldRelationService {
         if (data1.length !== data2.length) {
           return false;
         }
-      
-        for (let i=0; i<data2.length; i++) {
+
+        for (let i = 0; i < data2.length; i++) {
           const val1 = data1[i];
           const val2 = data2[i];
           if (!this.isDeepEqual(val1, val2)) {
@@ -256,11 +254,11 @@ export class FieldRelationService {
       case 'object':
         const keys1 = Object.keys(data1);
         const keys2 = Object.keys(data2);
-      
+
         if (keys1.length !== keys2.length) {
           return false;
         }
-      
+
         for (const key of keys1) {
           const val1 = data1[key];
           const val2 = data2[key];
@@ -275,25 +273,24 @@ export class FieldRelationService {
           return false;
         }
     }
-  
+
     return true;
   }
-  
-  getDataType(data) {
+
+  getDataType(data: unknown) {
     if (Array.isArray(data)) {
       return 'array';
-    } else if (data != null && typeof data === 'object') {
+    } if (data != null && typeof data === 'object') {
       return 'object';
-    } else {
-      return 'basic';
-    };
+    }
+    return 'basic';
   }
 
-  isRelationEqual(x, y) {
+  isRelationEqual(x: any, y: any) {
     return this.isDeepEqual(x, y);
   }
 
-  isRelationGreaterThan(x, y) {
+  isRelationGreaterThan(x: any, y: any) {
     let result = false;
     switch (this.getDataType(x)) {
       case 'array':
@@ -335,7 +332,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationGreaterThanOrEqual(x, y) {
+  isRelationGreaterThanOrEqual(x: any, y: any) {
     let result = false;
     switch (this.getDataType(x)) {
       case 'array':
@@ -377,7 +374,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationLessThan(x, y) {
+  isRelationLessThan(x: any, y: any) {
     let result = false;
     switch (this.getDataType(x)) {
       case 'array':
@@ -419,7 +416,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationLessThanOrEqual(x, y) {
+  isRelationLessThanOrEqual(x: any, y: any) {
     let result = false;
     switch (this.getDataType(x)) {
       case 'array':
@@ -461,7 +458,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationRegMatch(x, y) {
+  isRelationRegMatch(x: any, y: any) {
     let result = false;
     if (typeof x == 'string' && typeof y == 'string') {
       result = !!x.match(y);
@@ -470,7 +467,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationStartsWith(x, y) {
+  isRelationStartsWith(x: any, y: any) {
     let result = false;
     if (typeof x == 'string' && typeof y == 'string') {
       result = x.startsWith(y);
@@ -479,7 +476,7 @@ export class FieldRelationService {
     return result;
   }
 
-  isRelationEndsWith(x, y) {
+  isRelationEndsWith(x: any, y: any) {
     let result = false;
     if (typeof x == 'string' && typeof y == 'string') {
       result = x.endsWith(y);
@@ -487,8 +484,8 @@ export class FieldRelationService {
 
     return result;
   }
-  
-  isRelationIn(x, y) {
+
+  isRelationIn(x: any, y: any) {
     let result = false;
 
     if (y !== null) {
@@ -535,5 +532,4 @@ export class FieldRelationService {
 
     return result;
   }
-  
 }

@@ -1,39 +1,31 @@
-import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
+import {
+  Component, OnInit, Input, ViewChild, ElementRef,
+} from '@angular/core';
 import { MaterialModule } from '../../../appMaterial.module';
-
 
 @Component({
   selector: 'copy-btn',
   templateUrl: './copy-btn.component.html',
-  styleUrls: ['./copy-btn.component.css']
+  styleUrls: ['./copy-btn.component.css'],
 })
-export class CopyButtonComponent implements OnInit {
-  
-  @ViewChild('el', { static: false}) el: ElementRef;  
+export class CopyButtonComponent {
+  @ViewChild('el', { static: false }) el: ElementRef;
   @Input() text: string;
   @Input() showPopup = true;
-  public popupIsVisible: boolean = false;
+  popupIsVisible = false;
 
-  constructor() {
-  }
-
-  ngOnInit() {
-  }
-
-  onIconClick(){
+  onIconClick(): void {
     this.popupIsVisible = !this.popupIsVisible;
     this.copyToClipboard();
   }
 
-  onPopupClose(){
+  onPopupClose(): void {
     this.popupIsVisible = false;
   }
 
-  copyToClipboard(){
+  copyToClipboard(): void {
     this.el.nativeElement.focus();
     this.el.nativeElement.select();
-    (<any>document).execCommand("copy");
+    document.execCommand('copy');
   }
-
-
 }

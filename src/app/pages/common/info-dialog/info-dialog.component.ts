@@ -5,19 +5,15 @@ import { TranslateService } from '@ngx-translate/core';
 @Component({
   selector: 'info-dialog',
   templateUrl: './info-dialog.component.html',
-  styleUrls : [ './info-dialog.component.scss' ]
+  styleUrls: ['./info-dialog.component.scss'],
 })
 export class InfoDialog {
+  title: string;
+  info: string;
+  icon: string;
+  is_html: boolean;
 
-  public title: string;
-  public info: string;
-  public icon: string;
-  public is_html: boolean;
+  constructor(public dialogRef: MatDialogRef < InfoDialog >, protected translate: TranslateService) {
 
-
-  constructor(public dialogRef: MatDialogRef < InfoDialog >, protected translate: TranslateService ) {
-    
   }
-
-
 }

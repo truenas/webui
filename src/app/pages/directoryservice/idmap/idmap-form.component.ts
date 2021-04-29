@@ -11,26 +11,26 @@ import { ModalService } from '../../../services/modal.service';
 import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-idmap-form',
-  template: `<entity-form [conf]="this"></entity-form>`
+  template: '<entity-form [conf]="this"></entity-form>',
 })
 export class IdmapFormComponent {
   protected title: string;
-  protected isEntity: boolean = true;
-  protected namesInUse = [];
+  protected isEntity = true;
+  protected namesInUse: string[] = [];
   protected queryCall = 'idmap.query';
   protected addCall = 'idmap.create';
   protected editCall = 'idmap.update';
   protected pk: any;
   protected queryKey = 'id';
-  private getRow = new Subscription;
-  public rangeLowValidation = [
-    ...helptext.idmap.required_validator,
-    this.validationService.rangeValidator(1000, 2147483647)
-  ];
-  public rangeHighValidation = [
+  private getRow = new Subscription();
+  rangeLowValidation = [
     ...helptext.idmap.required_validator,
     this.validationService.rangeValidator(1000, 2147483647),
-    this.validationService.greaterThan('range_low', [helptext.idmap.range_low.placeholder])
+  ];
+  rangeHighValidation = [
+    ...helptext.idmap.required_validator,
+    this.validationService.rangeValidator(1000, 2147483647),
+    this.validationService.greaterThan('range_low', [helptext.idmap.range_low.placeholder]),
   ];
   private entityForm: any;
   protected backendChoices: any;
@@ -38,12 +38,12 @@ export class IdmapFormComponent {
   protected requiredDomains = [
     'DS_TYPE_ACTIVEDIRECTORY',
     'DS_TYPE_DEFAULT_DOMAIN',
-    'DS_TYPE_LDAP'
+    'DS_TYPE_LDAP',
   ];
   protected readOnly = false;
   protected fieldConfig: FieldConfig[] = [];
   protected isOneColumnForm = true;
-  public fieldSetDisplay = 'default';
+  fieldSetDisplay = 'default';
   protected fieldSets: FieldSet[] = [
     {
       name: helptext.idmap.settings_label,
@@ -57,7 +57,7 @@ export class IdmapFormComponent {
           name: 'idmap_backend',
           placeholder: helptext.idmap.idmap_backend.placeholder,
           tooltip: helptext.idmap.idmap_backend.tooltip,
-          options: []
+          options: [],
         },
         {
           type: 'select',
@@ -65,7 +65,7 @@ export class IdmapFormComponent {
           placeholder: helptext.idmap.name.placeholder,
           tooltip: helptext.idmap.name.tooltip,
           required: true,
-          options: helptext.idmap.name.options
+          options: helptext.idmap.name.options,
         },
         {
           type: 'input',
@@ -79,9 +79,9 @@ export class IdmapFormComponent {
               when: [{
                 name: 'name',
                 value: 'custom',
-              }]
-            }
-          ]
+              }],
+            },
+          ],
         },
         {
           type: 'input',
@@ -96,7 +96,7 @@ export class IdmapFormComponent {
           placeholder: helptext.idmap.range_low.placeholder,
           tooltip: helptext.idmap.range_tooltip,
           validation: this.rangeLowValidation,
-          required: true
+          required: true,
         },
         {
           type: 'input',
@@ -105,7 +105,7 @@ export class IdmapFormComponent {
           placeholder: helptext.idmap.range_high.placeholder,
           tooltip: helptext.idmap.range_tooltip,
           validation: this.rangeHighValidation,
-          required: true
+          required: true,
         },
         {
           type: 'select',
@@ -113,10 +113,10 @@ export class IdmapFormComponent {
           placeholder: helptext.idmap.certificate_id.placeholder,
           tooltip: helptext.idmap.certificate_id.tooltip,
           options: [],
-          isHidden: true
+          isHidden: true,
         },
 
-      ]
+      ],
     },
     {
       name: helptext.idmap.options_label,
@@ -130,7 +130,7 @@ export class IdmapFormComponent {
           name: 'schema_mode',
           placeholder: helptext.idmap.schema_mode.placeholder,
           tooltip: helptext.idmap.schema_mode.tooltip,
-          options: helptext.idmap.schema_mode.options
+          options: helptext.idmap.schema_mode.options,
         },
         {
           type: 'checkbox',
@@ -194,14 +194,14 @@ export class IdmapFormComponent {
           name: 'ssl',
           placeholder: helptext.idmap.ssl.placeholder,
           tooltip: helptext.idmap.ssl.tooltip,
-          options: helptext.idmap.ssl.options
+          options: helptext.idmap.ssl.options,
         },
         {
           type: 'select',
           name: 'linked_service',
           placeholder: helptext.idmap.linked_service.placeholder,
           tooltip: helptext.idmap.linked_service.tooltip,
-          options: helptext.idmap.linked_service.options
+          options: helptext.idmap.linked_service.options,
         },
         {
           type: 'input',
@@ -250,12 +250,12 @@ export class IdmapFormComponent {
           name: 'sssd_compat',
           placeholder: helptext.idmap.sssd_compat.placeholder,
           tooltip: helptext.idmap.sssd_compat.tooltip,
-        }
-      ]
-    }
+        },
+      ],
+    },
   ];
 
-  private optionsFields: Array<any> = [
+  private optionsFields: any[] = [
     'schema_mode',
     'unix_primary_group',
     'unix_nss_info',
@@ -276,20 +276,20 @@ export class IdmapFormComponent {
     'cn_realm',
     'ldap_domain',
     'sssd_compat',
-  ]
+  ];
 
   constructor(protected idmapService: IdmapService, protected validationService: ValidationService,
     private modalService: ModalService,
     protected dialogService: DialogService, protected dialog: MatDialog) {
-    this.getRow = this.modalService.getRow$.subscribe(rowId => {
+    this.getRow = this.modalService.getRow$.subscribe((rowId) => {
       this.pk = rowId;
       this.getRow.unsubscribe();
     });
   }
 
-  resourceTransformIncomingRestData(data) {
-    for (let item in data.options) {
-      data[item] = data.options[item]
+  resourceTransformIncomingRestData(data: any) {
+    for (const item in data.options) {
+      data[item] = data.options[item];
     }
     if (data.certificate) {
       data.certificate = data.certificate.id;
@@ -303,26 +303,26 @@ export class IdmapFormComponent {
     this.entityForm = entityEdit;
     this.optionsFields.forEach((option) => {
       this.hideField(option, true, entityEdit);
-    })
-
-    this.idmapService.getCerts().subscribe((res) => {
-      const config = this.fieldConfig.find(c => c.name === 'certificate');
-      config.options.push({ label: '---', value: null })
-      res.forEach((item) => {
-        config.options.push({ label: item.name, value: item.id })
-      })
     });
 
-    entityEdit.formGroup.controls['idmap_backend'].valueChanges.subscribe((value) => {
+    this.idmapService.getCerts().subscribe((res: any[]) => {
+      const config = this.fieldConfig.find((c) => c.name === 'certificate');
+      config.options.push({ label: '---', value: null });
+      res.forEach((item) => {
+        config.options.push({ label: item.name, value: item.id });
+      });
+    });
+
+    entityEdit.formGroup.controls['idmap_backend'].valueChanges.subscribe((value: any) => {
       this.optionsFields.forEach((option) => {
         this.hideField(option, true, entityEdit);
-      })
-      for (let i in this.backendChoices[value].parameters) {
+      });
+      for (const i in this.backendChoices[value].parameters) {
         this.optionsFields.forEach((option) => {
           if (option === i) {
             const params = this.backendChoices[value].parameters[option];
             this.hideField(option, false, entityEdit);
-            let field = _.find(this.fieldConfig, { name: option });
+            const field = _.find(this.fieldConfig, { name: option });
             field['required'] = params.required;
             entityEdit.formGroup.controls[option].setValue(params.default);
             if (value === 'LDAP' || value === 'RFC2307') {
@@ -331,42 +331,42 @@ export class IdmapFormComponent {
               this.hideField('certificate', true, entityEdit);
             }
           }
-        })
+        });
       }
     });
 
-    entityEdit.formGroup.controls['name'].valueChanges.subscribe(value => {
+    entityEdit.formGroup.controls['name'].valueChanges.subscribe((value: any) => {
       if (value === 'DS_TYPE_DEFAULT_DOMAIN') {
         entityEdit.formGroup.controls['idmap_backend'].setValue('TDB');
         this.hideField('idmap_backend', true, entityEdit);
       } else if (_.find(this.fieldConfig, { name: 'idmap_backend' }).isHidden) {
         this.hideField('idmap_backend', false, entityEdit);
       }
-    })
+    });
 
     this.idmapService.getBackendChoices().subscribe((res) => {
       this.backendChoices = res;
-      const config = this.fieldConfig.find(c => c.name === 'idmap_backend');
-      for (let item in res) {
-        config.options.push({ label: item, value: item })
+      const config = this.fieldConfig.find((c) => c.name === 'idmap_backend');
+      for (const item in res) {
+        config.options.push({ label: item, value: item });
       }
       entityEdit.formGroup.controls['idmap_backend'].setValue('AD');
     });
 
     setTimeout(() => {
       if (this.readOnly) {
-        entityEdit.setDisabled('name', true, false)
+        entityEdit.setDisabled('name', true, false);
       }
     }, 500);
   }
 
   hideField(fieldName: any, show: boolean, entity: any) {
-    let target = _.find(this.fieldConfig, { 'name': fieldName });
+    const target = _.find(this.fieldConfig, { name: fieldName });
     target['isHidden'] = show;
     entity.setDisabled(fieldName, show, show);
   }
 
-  beforeSubmit(data) {
+  beforeSubmit(data: any) {
     if (data.dns_domain_name === null) {
       delete data.dns_domain_name;
     }
@@ -374,40 +374,39 @@ export class IdmapFormComponent {
       data.name = data.custom_name;
       delete data.custom_name;
     }
-    let options = {}
-    for (let item in data) {
+    const options: any = {};
+    for (const item in data) {
       if (this.optionsFields.includes(item)) {
         if (data[item]) {
           options[item] = data[item];
         }
-        delete data[item]
+        delete data[item];
       }
     }
     data['options'] = options;
   }
 
-  afterSubmit(value) {
+  afterSubmit() {
     this.modalService.refreshTable();
     this.dialogService.confirm(helptext.idmap.clear_cache_dialog.title, helptext.idmap.clear_cache_dialog.message,
       true)
-      .subscribe((res) => {
+      .subscribe((res: boolean) => {
         if (res) {
           this.dialogRef = this.dialog.open(EntityJobComponent, {
-            data: { "title": (helptext.idmap.clear_cache_dialog.job_title) }, disableClose: true
+            data: { title: (helptext.idmap.clear_cache_dialog.job_title) }, disableClose: true,
           });
           this.dialogRef.componentInstance.setCall('idmap.clear_idmap_cache');
           this.dialogRef.componentInstance.submit();
-          this.dialogRef.componentInstance.success.subscribe((res) => {
+          this.dialogRef.componentInstance.success.subscribe(() => {
             this.dialog.closeAll();
             this.dialogService.Info(helptext.idmap.clear_cache_dialog.success_title,
-              helptext.idmap.clear_cache_dialog.success_msg, '250px', '', true)
+              helptext.idmap.clear_cache_dialog.success_msg, '250px', '', true);
           });
-          this.dialogRef.componentInstance.failure.subscribe((res) => {
-            this.dialog.closeAll()
+          this.dialogRef.componentInstance.failure.subscribe((res: any) => {
+            this.dialog.closeAll();
             new EntityUtils().handleWSError(this.entityForm, res);
           });
         }
-      })
+      });
   }
-
 }

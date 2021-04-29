@@ -1,8 +1,8 @@
-<mat-card 
-  class="view-card rackmount" 
+<mat-card
+  class="view-card rackmount"
   [ngClass]="{'multiple-enclosures': system && system.profile && system.profile.length > 1}"
-  id="{{currentTab.alias}}" 
-  (window:resize)="onResize($event)"
+  id="{{currentTab.alias}}"
+  (window:resize)="onResize()"
   ngClass.gt-md="gt-md"
   ngClass.md="md"
   ngClass.sm="sm"
@@ -10,8 +10,8 @@
 
   <mat-toolbar id="Disks-toolbar">
     <div *ngIf="selectedEnclosure" class="mat-card-title-text">
-      {{currentTab.alias}} on 
-      {{system.enclosures[selectedEnclosure.enclosureKey].label == system.enclosures[selectedEnclosure.enclosureKey].name ? selectedEnclosure.model : system.enclosures[selectedEnclosure.enclosureKey].label}} 
+      {{currentTab.alias}} on
+      {{system.enclosures[selectedEnclosure.enclosureKey].label == system.enclosures[selectedEnclosure.enclosureKey].name ? selectedEnclosure.model : system.enclosures[selectedEnclosure.enclosureKey].label}}
       ({{selectedEnclosure.enclosureKey}})
     </div>
 
@@ -30,15 +30,15 @@
 
   <!-- Tabs other than Disks -->
   <tab-content class="other-tab" *ngIf="currentTab.alias !== 'Disks'" [data]="system.enclosures[selectedEnclosure.enclosureKey].elements[currentTab.elementIndex]" ></tab-content>
-  
+
   <mat-card-content id="Disks-content" [class]="currentTab.alias">
 
     <!-- VISUALIZATION/OVERVIEW -->
     <div class="disks-overview-wrapper">
-      <div #disksoverview 
-        id="disks-overview" 
+      <div #disksoverview
+        id="disks-overview"
         [class]="currentView">
-      
+
 
         <!-- POOLS OVERLAY -->
         <div *ngIf="currentView == 'pools' || exitingView == 'pools'" class="pools stage-left dom-overlay" >
@@ -50,7 +50,7 @@
           <div class="content">
 
             <div *ngIf="enclosurePools.length > 0; else noPools" class="legend">
-              <div *ngFor="let pool of enclosurePools; let i=index"><div class="swatch" 
+              <div *ngFor="let pool of enclosurePools; let i=index"><div class="swatch"
               [style.background]="subenclosure ? theme[theme.accentColors[subenclosure.poolKeys[pool]]] : theme[theme.accentColors[selectedEnclosure.poolKeys[pool]]]">
               </div>
               {{pool}} 
@@ -92,7 +92,7 @@
             <div class="content">
               <h1 class="disk-name {{selectedDisk.name}}">{{selectedDisk.name}}</h1>
               <div class="title">
-                <span class="semibold">vdev: </span> 
+                <span class="semibold">vdev: </span>
                 <span *ngIf="selectedVdev.type == 'DISK'"> NONE </span>
                 <span *ngIf="selectedVdev.type !== 'DISK'">{{selectedVdev.type == 'None' ? 'UNASSIGNED' : selectedVdev.type}}</span>
               </div>
@@ -106,7 +106,7 @@
               </div>
             </div>
           </div>
-          
+
           <div #domLabels *ngIf="currentView == 'details' || exitingView == 'details'" class="details stage-right dom-overlay">
             <div class="content" (mouseenter)="toggleHighlightMode('on')" (mouseleave)="toggleHighlightMode('off')">
 
@@ -131,8 +131,8 @@
         <!-- FRONT/REAR TOGGLE -->
         <!--<div *ngIf="subenclosure && currentView != 'expanders'" class="caption dom-overlay front-rear-toggle">-->
         <div *ngIf="chassis && (chassis.rear || chassis.internal) && currentView != 'expanders'" class="caption dom-overlay front-rear-toggle">
-          <button mat-button (click)="enclosureOverride('front')">FRONT</button>
-          <button *ngIf="chassis.rear" mat-button (click)="enclosureOverride('rear')">REAR</button>
+          <button mat-button (click)="enclosureOverride(EnclosureLocation.Front)">FRONT</button>
+          <button *ngIf="chassis.rear" mat-button (click)="enclosureOverride(EnclosureLocation.Rear)">REAR</button>
           <button *ngIf="chassis.internal" mat-button (click)="enclosureOverride('rear')">Internal</button>
         </div>
 
@@ -149,14 +149,14 @@
             </div>
           </div>
         </div>
-        
+
       </div>
     </div>
 
     <!-- DETAILS/TITLE -->
-    <div id="disks-details-header" [class]="currentView"> 
+    <div id="disks-details-header" [class]="currentView">
       <a class="btn-default back fn-theme-primary" (click)="clearDisk()" *ngIf="currentView == 'details'"><mat-icon role="img">chevron_left</mat-icon></a>
-      {{selectedDisk ? 'Disk Details for ' + selectedDisk.name : 'Disks Overview'}} 
+      {{selectedDisk ? 'Disk Details for ' + selectedDisk.name : 'Disks Overview'}}
     </div>
 
     <!-- DETAILS/OVERVIEW -->
@@ -171,7 +171,7 @@
               Loading...
             </div>
           </ng-template>
-  
+
           <div *ngIf="system && system.pools && enclosurePools; else loading" fxFlex class="tiles" [class.active]="currentView == 'pools' " fxLayout="column" fxLayoutAlign="center center">
             <div class="primary-number" >{{ enclosurePools.length }}</div>
             <div class="title">Pools in Enclosure</div>
@@ -181,7 +181,7 @@
             <div *ngIf="unhealthyPools && unhealthyPools.length < 1" class="subtitle">All pools are online.</div>
             <button mat-button class="" color="default" (click)="setCurrentView('pools')">SHOW POOLS</button>
           </div>
-  
+
           <div *ngIf="system; else loading" fxFlex class="tiles" [class.active]="currentView == 'status' " fxLayout="column" fxLayoutAlign="center center">
             <div class="primary-number" >{{failedDisks.length}}</div>
             <div class="title">Failed Disk<span *ngIf="failedDisks.length != 1">s</span></div>
@@ -195,14 +195,14 @@
             </div>
             <button mat-button color="default" (click)="setCurrentView('status')">SHOW STATUS</button>
           </div>
-  
+
           <div *ngIf="system && expanders; else loading" fxFlex class="tiles" [class.active]="currentView == 'expanders' " fxLayout="column" fxLayoutAlign="center center">
             <div class="primary-number" >{{expanders.length}}</div>
             <div class="title">SAS Expanders</div>
             <div class="subtitle">on this enclosure</div>
             <button mat-button color="default" (click)="setCurrentView('expanders')">SHOW EXPANDER STATUS</button>
           </div>
-  
+
         </div>
       </div>
     </ng-template>
@@ -211,7 +211,7 @@
     <ng-template #details>
       <div  #diskdetails id="disks-details">
         <div class="details-wrapper" fxFill fxLayout="row" fxLayoutAlign="space-around stretch">
-  
+
           <div fxFlex="25" class="disk-basic-details" fxLayout="column" fxLayoutAlign="center center">
             <disk-ui [data]="selectedDisk"></disk-ui><!-- disk icon + labels -->
             <div class="capacity">{{converter(selectedDisk.size)}}</div>
@@ -219,7 +219,7 @@
               <button id="identify-btn" mat-button color="primary" (click)="toggleSlotStatus()">Identify Drive</button>
             </div>
           </div>
-  
+
           <div fxFlex="75" class="tiles disk-advanced-details" >
 
             <div class="details-wrapper" fxLayout="row wrap" fxLayoutGap="16px">

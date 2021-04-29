@@ -32,17 +32,17 @@ import { TransportMode } from 'app/enums/transport-mode.enum';
 
 @Component({
   selector: 'app-replication-form',
-  template: `<entity-form [conf]="this"></entity-form>`,
+  template: '<entity-form [conf]="this"></entity-form>',
   providers: [TaskService, KeychainCredentialService, ReplicationService, StorageService],
 })
 export class ReplicationFormComponent {
-  protected isNew: boolean = false;
+  protected isNew = false;
   form_message = {
     type: 'notice',
     content: '',
   };
   protected queryCall = 'replication.query';
-  protected queryCallOption: Array<any> = [];
+  protected queryCallOption: any[] = [];
   protected addCall = 'replication.create';
   protected editCall = 'replication.update';
   protected isEntity = true;
@@ -64,17 +64,17 @@ export class ReplicationFormComponent {
       value: RetentionPolicy.None,
     },
   ];
-  protected custActions: Array<any> = [{
+  protected custActions: any[] = [{
     id: 'wizard_add',
-    name: T("Switch to Wizard"),
+    name: T('Switch to Wizard'),
     function: () => {
       this.modalService.close('slide-in-form');
       const message = { action: 'open', component: 'replicationWizard', row: this.pk };
       this.modalService.message(message);
-    }
+    },
   }];
 
-  public fieldSets: FieldSets = new FieldSets([
+  fieldSets: FieldSets = new FieldSets([
     {
       name: helptext.fieldset_general,
       label: true,
@@ -1117,7 +1117,7 @@ export class ReplicationFormComponent {
           res[i].lifetime_unit
         } (S) - ${res[i].enabled ? 'Enabled' : 'Disabled'}`;
         periodicSnapshotTasksField.options.push({
-          label: label,
+          label,
           value: res[i].id,
         });
       }
@@ -1184,11 +1184,11 @@ export class ReplicationFormComponent {
       const presetSpeed = this.entityForm.formGroup.controls['speed_limit'].value.toString();
       this.storageService.humanReadable = presetSpeed;
     }
-    this.entityForm.formGroup.controls['target_dataset_PUSH'].valueChanges.subscribe((res) => {
+    this.entityForm.formGroup.controls['target_dataset_PUSH'].valueChanges.subscribe(() => {
       if (
-        entityForm.formGroup.controls['direction'].value === Direction.Push &&
-        entityForm.formGroup.controls['transport'].value !== TransportMode.Local &&
-        entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
+        entityForm.formGroup.controls['direction'].value === Direction.Push
+        && entityForm.formGroup.controls['transport'].value !== TransportMode.Local
+        && entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
       ) {
         this.countEligibleManualSnapshots();
       } else {
@@ -1197,9 +1197,9 @@ export class ReplicationFormComponent {
     });
     entityForm.formGroup.controls['direction'].valueChanges.subscribe((res) => {
       if (
-        res === Direction.Push &&
-        entityForm.formGroup.controls['transport'].value !== TransportMode.Local &&
-        entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
+        res === Direction.Push
+        && entityForm.formGroup.controls['transport'].value !== TransportMode.Local
+        && entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
       ) {
         this.countEligibleManualSnapshots();
       } else {
@@ -1210,9 +1210,9 @@ export class ReplicationFormComponent {
     const retentionPolicyField = this.fieldSets.config('retention_policy');
     entityForm.formGroup.controls['transport'].valueChanges.subscribe((res) => {
       if (
-        res !== TransportMode.Local &&
-        entityForm.formGroup.controls['direction'].value === Direction.Push &&
-        entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
+        res !== TransportMode.Local
+        && entityForm.formGroup.controls['direction'].value === Direction.Push
+        && entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
       ) {
         this.countEligibleManualSnapshots();
       } else {
@@ -1301,7 +1301,7 @@ export class ReplicationFormComponent {
     entityForm.formGroup.controls['auto'].setValue(entityForm.formGroup.controls['auto'].value);
   }
 
-  resourceTransformIncomingRestData(wsResponse) {
+  resourceTransformIncomingRestData(wsResponse: any) {
     this.queryRes = _.cloneDeep(wsResponse);
     wsResponse['source_datasets_PUSH'] = wsResponse['source_datasets'];
     wsResponse['target_dataset_PUSH'] = wsResponse['target_dataset'];
@@ -1364,7 +1364,7 @@ export class ReplicationFormComponent {
     return wsResponse;
   }
 
-  parsePickerTime(picker, begin, end) {
+  parsePickerTime(picker: any, begin: any, end: any) {
     const spl = picker.split(' ');
     return {
       minute: spl[0],
@@ -1372,12 +1372,12 @@ export class ReplicationFormComponent {
       dom: spl[2],
       month: spl[3],
       dow: spl[4],
-      begin: begin,
-      end: end,
+      begin,
+      end,
     };
   }
 
-  beforeSubmit(data) {
+  beforeSubmit(data: any) {
     const targetDatasetPush = _.cloneDeep(data['target_dataset_PUSH']);
 
     if (data['replicate']) {
@@ -1386,7 +1386,7 @@ export class ReplicationFormComponent {
       data['exclude'] = [];
     }
     if (data['properties_override']) {
-      const properties_exclude_obj = {};
+      const properties_exclude_obj: any = {};
       for (let item of data['properties_override']) {
         item = item.split('=');
         properties_exclude_obj[item[0]] = item[1];
@@ -1424,10 +1424,9 @@ export class ReplicationFormComponent {
           ? _.cloneDeep(data['source_datasets_PULL'])
           : _.cloneDeep(data['source_datasets_PULL']).split(',').map(_.trim),
       );
-      data['target_dataset'] =
-        typeof data['target_dataset_PULL'] === 'string'
-          ? _.cloneDeep(data['target_dataset_PULL'])
-          : _.cloneDeep(data['target_dataset_PULL']).toString();
+      data['target_dataset'] = typeof data['target_dataset_PULL'] === 'string'
+        ? _.cloneDeep(data['target_dataset_PULL'])
+        : _.cloneDeep(data['target_dataset_PULL']).toString();
       if (_.startsWith(data['target_dataset'], '/mnt/')) {
         data['target_dataset'] = data['target_dataset'].substring(5);
       }
@@ -1466,10 +1465,9 @@ export class ReplicationFormComponent {
     }
     delete data['encryption_key_location_truenasdb'];
 
-    data['encryption_key'] =
-      data['encryption_key_format'] === EncryptionKeyFormat.Passphrase
-        ? data['encryption_key_passphrase']
-        : data['encryption_key_generate']
+    data['encryption_key'] = data['encryption_key_format'] === EncryptionKeyFormat.Passphrase
+      ? data['encryption_key_passphrase']
+      : data['encryption_key_generate']
         ? this.replicationService.generateEncryptionHexKey(64)
         : data['encryption_key_hex'];
     delete data['encryption_key_passphrase'];
@@ -1484,13 +1482,13 @@ export class ReplicationFormComponent {
 
       for (const prop in this.queryRes) {
         if (
-          prop !== 'id' &&
-          prop !== 'state' &&
-          prop !== 'embed' &&
-          prop !== 'job' &&
-          prop !== 'dedup' &&
-          prop !== 'large_block' &&
-          data[prop] === undefined
+          prop !== 'id'
+          && prop !== 'state'
+          && prop !== 'embed'
+          && prop !== 'job'
+          && prop !== 'dedup'
+          && prop !== 'large_block'
+          && data[prop] === undefined
         ) {
           if (prop === 'only_matching_schedule' || prop === 'hold_pending_snapshots') {
             data[prop] = false;
@@ -1505,7 +1503,7 @@ export class ReplicationFormComponent {
     }
   }
 
-  getChildren(node) {
+  getChildren() {
     for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
       this.fieldSets.config(item).hasErrors = false;
     }
@@ -1526,18 +1524,18 @@ export class ReplicationFormComponent {
     });
   }
 
-  blurEvent(parent) {
+  blurEvent(parent: any) {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['speed_limit'].setValue(parent.storageService.humanReadable);
     }
   }
 
-  blurEventNamingSchema(parent) {
+  blurEventNamingSchema(parent: any) {
     if (
-      parent.entityForm &&
-      parent.entityForm.formGroup.controls['direction'].value === Direction.Push &&
-      parent.entityForm.formGroup.controls['transport'].value !== TransportMode.Local &&
-      parent.entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
+      parent.entityForm
+      && parent.entityForm.formGroup.controls['direction'].value === Direction.Push
+      && parent.entityForm.formGroup.controls['transport'].value !== TransportMode.Local
+      && parent.entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
     ) {
       parent.countEligibleManualSnapshots();
     } else {

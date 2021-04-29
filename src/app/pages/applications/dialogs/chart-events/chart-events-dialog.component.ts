@@ -1,7 +1,9 @@
-import { OnInit, Component, ViewEncapsulation, Inject } from '@angular/core';
+import {
+  OnInit, Component, ViewEncapsulation, Inject,
+} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ApplicationsService } from '../../applications.service';
-import  helptext  from '../../../../helptext/apps/apps';
+import helptext from '../../../../helptext/apps/apps';
 import { LocaleService } from 'app/services/locale.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
@@ -13,12 +15,12 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 })
 
 export class ChartEventsDialog implements OnInit {
-  public catalogApp: any;
-  public containerImages: any[] = [];
-  public chartEvents:any[] = [];
-  public pods:any[] = [];
-  public deployments:any[] = [];
-  public statefulsets:any[] = [];
+  catalogApp: any;
+  containerImages: any[] = [];
+  chartEvents: any[] = [];
+  pods: any[] = [];
+  deployments: any[] = [];
+  statefulsets: any[] = [];
 
   helptext = helptext;
 
@@ -26,8 +28,9 @@ export class ChartEventsDialog implements OnInit {
     public dialogRef: MatDialogRef<ChartEventsDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     protected localeService: LocaleService,
-    private loader:AppLoaderService,
-    private appService: ApplicationsService) { 
+    private loader: AppLoaderService,
+    private appService: ApplicationsService,
+  ) {
     this.catalogApp = data;
     if (!this.catalogApp.used_ports) {
       this.catalogApp.used_ports = helptext.chartEventDialog.noPorts;
@@ -51,42 +54,40 @@ export class ChartEventsDialog implements OnInit {
         if (res[1]) {
           this.chartEvents = res[1];
         }
-      }
+      },
     );
   }
 
-  //return the container image status
+  // return the container image status
   containerImageStatus(containerImage: any) {
     if (containerImage.value.update_available) {
       return helptext.chartEventDialog.statusUpdateAvailable;
-    } else {
-      return helptext.chartEventDialog.statusUpToDate;
     }
+    return helptext.chartEventDialog.statusUpToDate;
   }
 
-  //return the chart app status
+  // return the chart app status
   appStatus() {
-
     let label: string;
     if (!this.catalogApp.update_available && !this.catalogApp.container_images_update_available) {
       label = helptext.chartEventDialog.statusUpToDate;
-    } else if ( this.catalogApp.update_available || this.catalogApp.container_images_update_available) {
+    } else if (this.catalogApp.update_available || this.catalogApp.container_images_update_available) {
       label = helptext.chartEventDialog.statusUpdateAvailable;
     }
     return label;
   }
 
-  //return the tooltip string for the version availabe to update
+  // return the tooltip string for the version availabe to update
   getUpdateVersionTooltip() {
     let label: string;
-    if ( this.catalogApp.update_available ) {
+    if (this.catalogApp.update_available) {
       label = helptext.chartEventDialog.statusUpdateAvailableTo + this.catalogApp.human_latest_version;
-    } else if (this.catalogApp.container_images_update_available) {      
+    } else if (this.catalogApp.container_images_update_available) {
       label = helptext.chartEventDialog.containerImageStatusUpdateAvailableTo;
-      const updateAvailableImages = Object.keys(this.containerImages).filter(imageName=>this.containerImages[imageName].update_available);
-      label += updateAvailableImages.join(",");
+      const updateAvailableImages = Object.keys(this.containerImages).filter((imageName) => (this.containerImages as any)[imageName].update_available);
+      label += updateAvailableImages.join(',');
     }
-    
+
     return label;
   }
 }

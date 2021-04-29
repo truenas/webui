@@ -18,6 +18,7 @@ from pytest_bdd import (
 @scenario('features/NAS-T957.feature', 'Verify invalid email cannot enter be in the User Edit Page')
 def test_verify_invalid_email_cannot_enter_be_in_the_user_edit_page(driver):
     """Verify invalid email cannot enter be in the User Edit Page."""
+    pass
 
 
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))

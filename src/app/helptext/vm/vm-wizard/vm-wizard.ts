@@ -1,191 +1,191 @@
 import { T } from '../../../translate-marker';
 import { Validators } from '@angular/forms';
 import { regexValidator } from '../../../pages/common/entity/entity-form/validators/regex-validation';
-import globalHelptext from './../../../helptext/global-helptext';
+import globalHelptext from '../../global-helptext';
 
 export default {
-no_pools_dialog: {
-  title: T('No Pools'),
-  msg: T('Virtual Machines cannot be created or started without a pool to store them.'),
-  action: T('Create Pool')
-},
+  no_pools_dialog: {
+    title: T('No Pools'),
+    msg: T('Virtual Machines cannot be created or started without a pool to store them.'),
+    action: T('Create Pool'),
+  },
 
-formTitle: T('Create Virtual Machine'),
+  formTitle: T('Create Virtual Machine'),
 
-wizard_type_label: T('Select VM wizard type'),
-wizard_type_placeholder: T('Virtual Machine (VM) Wizard type.'),
-wizard_type_tooltip: T('Select the Virtual Machine (VM) Wizard type.'),
-wizard_type_options: [
-  {label: T('Virtual Machine (VM)'), value: 'vm'},
-],
-wizard_type_validation : [ Validators.required ],
-wizard_type_value: 'vm',
+  wizard_type_label: T('Select VM wizard type'),
+  wizard_type_placeholder: T('Virtual Machine (VM) Wizard type.'),
+  wizard_type_tooltip: T('Select the Virtual Machine (VM) Wizard type.'),
+  wizard_type_options: [
+    { label: T('Virtual Machine (VM)'), value: 'vm' },
+  ],
+  wizard_type_validation: [Validators.required],
+  wizard_type_value: 'vm',
 
-os_label: T('Operating System'),
-os_placeholder: T('Guest Operating System'),
-os_tooltip: T('Choose the VM operating system type.'),
-os_options: [
-  {label: T('Windows'), value: 'Windows'},
-  {label: T('Linux'), value: 'Linux'},
-  {label: T('FreeBSD'), value: 'FreeBSD'},
-],
-os_validation : [ Validators.required ],
+  os_label: T('Operating System'),
+  os_placeholder: T('Guest Operating System'),
+  os_tooltip: T('Choose the VM operating system type.'),
+  os_options: [
+    { label: T('Windows'), value: 'Windows' },
+    { label: T('Linux'), value: 'Linux' },
+    { label: T('FreeBSD'), value: 'FreeBSD' },
+  ],
+  os_validation: [Validators.required],
 
-name_placeholder : T('Name'),
-name_tooltip : T('Enter an alphanumeric name for the virtual machine.'),
-name_validation : [ Validators.required ],
+  name_placeholder: T('Name'),
+  name_tooltip: T('Enter an alphanumeric name for the virtual machine.'),
+  name_validation: [Validators.required],
 
-description_placeholder : T('Description'),
-description_tooltip : T('Description (optional).'),
+  description_placeholder: T('Description'),
+  description_tooltip: T('Description (optional).'),
 
-time_placeholder : T('System Clock'),
-time_tooltip: T('VM system time. Default is <i>Local</i>.'),
-time_local_text: T('Local'),
-time_utc_text: T('UTC'),
+  time_placeholder: T('System Clock'),
+  time_tooltip: T('VM system time. Default is <i>Local</i>.'),
+  time_local_text: T('Local'),
+  time_utc_text: T('UTC'),
 
-bootloader_placeholder : T('Boot Method'),
-bootloader_tooltip : T('Select <i>UEFI</i> for newer operating systems or\
+  bootloader_placeholder: T('Boot Method'),
+  bootloader_tooltip: T('Select <i>UEFI</i> for newer operating systems or\
  <i>UEFI-CSM</i> (Compatibility Support Mode) for\
  older operating systems that only support BIOS\
  booting. <i>Grub</i> is not recommended but can be\
  used when the other options do not work.'),
 
-autostart_placeholder : T('Start on Boot'),
-autostart_tooltip : T('Set to start this VM when the system boots.'),
+  autostart_placeholder: T('Start on Boot'),
+  autostart_tooltip: T('Set to start this VM when the system boots.'),
 
-enable_display_placeholder : T('Enable Display'),
-enable_display_tooltip : T('Enable a Display (Virtual Network Computing) remote\
+  enable_display_placeholder: T('Enable Display'),
+  enable_display_tooltip: T('Enable a Display (Virtual Network Computing) remote\
  connection. Requires <i>UEFI</i> booting.'),
 
-display_bind_placeholder: T("Bind"),
-display_bind_tooltip: T("Display network interface IP address. The primary\
+  display_bind_placeholder: T('Bind'),
+  display_bind_tooltip: T('Display network interface IP address. The primary\
  interface IP address is the default. A different interface IP\
- address can be chosen."),
+ address can be chosen.'),
 
-vcpus_label: T('CPU and Memory'),
-vcpus_warning: T('The product of vCPUs, cores and threads must not exceed'),
-vcpus_warning_b: T('on this system.'),
-vcpus_placeholder: T('Virtual CPUs'),
-vcpus_validation : [ Validators.required, Validators.min(1), Validators.max(16) ],
-vcpus_tooltip: T('Number of virtual CPUs to allocate to the virtual\
+  vcpus_label: T('CPU and Memory'),
+  vcpus_warning: T('The product of vCPUs, cores and threads must not exceed'),
+  vcpus_warning_b: T('on this system.'),
+  vcpus_placeholder: T('Virtual CPUs'),
+  vcpus_validation: [Validators.required, Validators.min(1), Validators.max(16)],
+  vcpus_tooltip: T('Number of virtual CPUs to allocate to the virtual\
  machine. The VM operating system\
  might have operational or licensing\
  restrictions on the number of CPUs.'),
 
-cores: {
-  placeholder: T('Cores'),
-  tooltip: T('Specify the number of cores per virtual CPU socket.'),
-}, 
+  cores: {
+    placeholder: T('Cores'),
+    tooltip: T('Specify the number of cores per virtual CPU socket.'),
+  },
 
-threads: {
-  placeholder: T('Threads'),
-  tooltip: T('Specify the number of threads per core.')
-},
+  threads: {
+    placeholder: T('Threads'),
+    tooltip: T('Specify the number of threads per core.'),
+  },
 
-shutdown_timeout: {
-  placeholder: T('Shutdown Timeout'),
-  tooltip: T('The time in seconds the system waits for the VM to cleanly shut down. \
+  shutdown_timeout: {
+    placeholder: T('Shutdown Timeout'),
+    tooltip: T('The time in seconds the system waits for the VM to cleanly shut down. \
  During system shutdown, the system initiates poweroff for the VM after the shutdown \
  timeout has expired.'),
-validation : [Validators.min(0) ],
+    validation: [Validators.min(0)],
 
-},
+  },
 
-cpu_mode: {
-  placeholder: T('CPU Mode'),
-  tooltip: T(''),
-  options: [
-    {label: 'Custom', value: 'CUSTOM'},
-    {label: 'Host Model', value: 'HOST-MODEL'},
-    {label: 'Host Passthrough', value: 'HOST-PASSTHROUGH'},
-  ]
-},
+  cpu_mode: {
+    placeholder: T('CPU Mode'),
+    tooltip: T(''),
+    options: [
+      { label: 'Custom', value: 'CUSTOM' },
+      { label: 'Host Model', value: 'HOST-MODEL' },
+      { label: 'Host Passthrough', value: 'HOST-PASSTHROUGH' },
+    ],
+  },
 
-cpu_model: {
-  placeholder: T('CPU Model'),
-  tooltip: T(''),
-},
+  cpu_model: {
+    placeholder: T('CPU Model'),
+    tooltip: T(''),
+  },
 
-memory_placeholder: T('Memory Size'),
-global_label: globalHelptext.human_readable.suggestion_label,
-memory_validation : [Validators.required],
-memory_tooltip: T('Allocate RAM for the VM. Minimum value is 256 MiB.'),
-global_tooltip: globalHelptext.human_readable.suggestion_tooltip,
-memory_unit: T('bytes.'),
-memory_size_err: T('Allocate at least 256 MiB.'),
-memory_warning: T('Caution: Allocating too much memory can slow the \
+  memory_placeholder: T('Memory Size'),
+  global_label: globalHelptext.human_readable.suggestion_label,
+  memory_validation: [Validators.required],
+  memory_tooltip: T('Allocate RAM for the VM. Minimum value is 256 MiB.'),
+  global_tooltip: globalHelptext.human_readable.suggestion_tooltip,
+  memory_unit: T('bytes.'),
+  memory_size_err: T('Allocate at least 256 MiB.'),
+  memory_warning: T('Caution: Allocating too much memory can slow the \
  system or prevent VMs from running.'),
-vm_mem_title: T('Available Memory:'),
+  vm_mem_title: T('Available Memory:'),
 
-disks_label: T('Disks'),
-disk_radio_tooltip: T('Select <i>Create new disk image</i> to create a new\
+  disks_label: T('Disks'),
+  disk_radio_tooltip: T('Select <i>Create new disk image</i> to create a new\
  zvol on an existing dataset. This is used as a\
  virtual hard drive for the VM. Select <i>Use\
  existing disk image</i> to use an existing zvol or\
  file for the VM.'),
-disk_radio_options_new_label: T("Create new disk image"),
-disk_radio_options_existing_label: T("Use existing disk image"),
+  disk_radio_options_new_label: T('Create new disk image'),
+  disk_radio_options_existing_label: T('Use existing disk image'),
 
-volsize_placeholder : T('Size'),
-volsize_tooltip: T('Allocate space for the new zvol.'),
-volsize_tooltip_B: T('MiB. Units \
+  volsize_placeholder: T('Size'),
+  volsize_tooltip: T('Allocate space for the new zvol.'),
+  volsize_tooltip_B: T('MiB. Units \
  smaller than MiB are not allowed.'),
-volsize_validation: [Validators.required],
-volsize_min_err: T('Minimum size is 1 MiB'),
+  volsize_validation: [Validators.required],
+  volsize_min_err: T('Minimum size is 1 MiB'),
 
-datastore_tooltip: T('Select a dataset for the new zvol.'),
-datastore_placeholder: T('Zvol Location'),
+  datastore_tooltip: T('Select a dataset for the new zvol.'),
+  datastore_placeholder: T('Zvol Location'),
 
-hdd_type_placeholder: T('Select Disk Type'),
-hdd_type_tooltip: T('Select desired disk type.'),
-hdd_type_options : [
-  {label : 'AHCI', value : 'AHCI'},
-  {label : 'VirtIO', value : 'VIRTIO'},
-],
-hdd_type_value: 'AHCI',
+  hdd_type_placeholder: T('Select Disk Type'),
+  hdd_type_tooltip: T('Select desired disk type.'),
+  hdd_type_options: [
+    { label: 'AHCI', value: 'AHCI' },
+    { label: 'VirtIO', value: 'VIRTIO' },
+  ],
+  hdd_type_value: 'AHCI',
 
-hdd_path_placeholder: T('Select Existing zvol'),
-hdd_path_tooltip: T('Browse to the desired zvol on the disk.'),
+  hdd_path_placeholder: T('Select Existing zvol'),
+  hdd_path_tooltip: T('Browse to the desired zvol on the disk.'),
 
-NIC_label: T('Network Interface'),
-NIC_type_placeholder : T('Adapter Type'),
-NIC_type_tooltip : T('<i>Intel e82545 (e1000)</i> emulates the same\
+  NIC_label: T('Network Interface'),
+  NIC_type_placeholder: T('Adapter Type'),
+  NIC_type_tooltip: T('<i>Intel e82545 (e1000)</i> emulates the same\
  Intel Ethernet card. This provides compatibility\
  with most operating systems. <i>VirtIO</i>\
  provides better performance when the operating\
  system installed in the VM supports VirtIO\
  paravirtualized network drivers.'),
 
-NIC_type_validation : [ Validators.required ],
+  NIC_type_validation: [Validators.required],
 
-NIC_mac_placeholder : T('Mac Address'),
-NIC_mac_tooltip : T('Enter the desired address into the field to\
+  NIC_mac_placeholder: T('Mac Address'),
+  NIC_mac_tooltip: T('Enter the desired address into the field to\
  override the randomized MAC address.'),
-NIC_mac_value : '00:a0:98:FF:FF:FF',
-NIC_mac_validation : [ regexValidator(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i) ],
+  NIC_mac_value: '00:a0:98:FF:FF:FF',
+  NIC_mac_validation: [regexValidator(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i)],
 
-nic_attach_placeholder : T('Attach NIC'),
-nic_attach_tooltip : T('Select the physical interface to associate with\
+  nic_attach_placeholder: T('Attach NIC'),
+  nic_attach_tooltip: T('Select the physical interface to associate with\
  the VM.'),
-nic_attach_validation : [ Validators.required ],
+  nic_attach_validation: [Validators.required],
 
-media_label: T('Installation Media'),
-iso_path_placeholder : T('Optional: Choose installation media image'),
-iso_path_tooltip: T('Browse to the operating system installer image file.'),
-iso_path_validation : [ Validators.required ],
+  media_label: T('Installation Media'),
+  iso_path_placeholder: T('Optional: Choose installation media image'),
+  iso_path_tooltip: T('Browse to the operating system installer image file.'),
+  iso_path_validation: [Validators.required],
 
-upload_iso_checkbox_placeholder : T('Upload an installer image file'),
-upload_iso_checkbox_tooltip: T('Set to display image upload options.'),
+  upload_iso_checkbox_placeholder: T('Upload an installer image file'),
+  upload_iso_checkbox_tooltip: T('Set to display image upload options.'),
 
-upload_iso_path_placeholder : T('ISO save location'),
-upload_iso_path_tooltip: T('Choose a location to store the installer image file.'),
-upload_iso_path_validation: [],
+  upload_iso_path_placeholder: T('ISO save location'),
+  upload_iso_path_tooltip: T('Choose a location to store the installer image file.'),
+  upload_iso_path_validation: [],
 
-upload_iso_placeholder : T('ISO upload location'),
-upload_iso_tooltip: T('Browse to the installer image file and click <b>Upload</b>.'),
-upload_iso_validation : [  ],
+  upload_iso_placeholder: T('ISO upload location'),
+  upload_iso_tooltip: T('Browse to the installer image file and click <b>Upload</b>.'),
+  upload_iso_validation: [],
 
-vm_settings_title: T('General VM Settings'),
-vm_cpu_mem_title: T('CPUs and Memory')
+  vm_settings_title: T('General VM Settings'),
+  vm_cpu_mem_title: T('CPUs and Memory'),
 
-}
+};

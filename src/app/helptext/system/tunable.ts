@@ -1,15 +1,15 @@
-import { Validators } from "@angular/forms";
-import { T } from "app/translate-marker";
+import { Validators } from '@angular/forms';
+import { T } from 'app/translate-marker';
 
 export const helptext_system_tunable = {
-  metadata:{
-    fieldsets:[T('Tunable')],
-    fieldsets_scale:[T('Sysctl')]
+  metadata: {
+    fieldsets: [T('Tunable')],
+    fieldsets_scale: [T('Sysctl')],
   },
   var: {
-    placeholder: T("Variable"),
+    placeholder: T('Variable'),
     tooltip: T(
-      "Enter the name of the loader, sysctl, or rc.conf\
+      'Enter the name of the loader, sysctl, or rc.conf\
  variable to configure. <i>loader</i> tunables are used\
  to specify parameters to pass to the kernel or load\
  additional modules at boot time. <i>rc.conf</i>\
@@ -17,13 +17,13 @@ export const helptext_system_tunable = {
  and only take effect after a reboot. <i>sysctl</i> \
  tunables are used to configure kernel parameters while\
  the system is running and generally take effect\
- immediately."
+ immediately.',
     ),
-    validation: [Validators.required]
+    validation: [Validators.required],
   },
 
   value: {
-    placeholder: T("Value"),
+    placeholder: T('Value'),
     tooltip: T(
       'Enter a value to use for the <a\
  href="https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/boot-introduction.html#boot-loader-commands"\
@@ -31,32 +31,32 @@ export const helptext_system_tunable = {
  href="https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/configtuning-sysctl.html"\
  target="_blank">sysctl</a>, or <a\
  href="https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/config-tuning.html"\
- target="_blank">rc.conf</a> variable.'
+ target="_blank">rc.conf</a> variable.',
     ),
-    validation: [Validators.required]
+    validation: [Validators.required],
   },
 
   type: {
-    placeholder: T("Type"),
+    placeholder: T('Type'),
     tooltip: T(
-      "Creating or editing a <i>sysctl</i> immediately\
+      'Creating or editing a <i>sysctl</i> immediately\
  updates the Variable to the configured Value. A restart\
  is required to apply <i>loader</i> or <i>rc.conf</i>\
  tunables. Configured tunables remain in effect until\
- deleted or Enabled is unset."
-    )
+ deleted or Enabled is unset.',
+    ),
   },
 
   description: {
-    placeholder: T("Description"),
-    tooltip: T("Enter a description of the tunable.")
+    placeholder: T('Description'),
+    tooltip: T('Enter a description of the tunable.'),
   },
 
   enabled: {
-    placeholder: T("Enabled"),
+    placeholder: T('Enabled'),
     tooltip: T(
-      "Enable this tunable. Unset to disable this tunable\
- without deleting it."
-    )
+      'Enable this tunable. Unset to disable this tunable\
+ without deleting it.',
+    ),
   },
 };

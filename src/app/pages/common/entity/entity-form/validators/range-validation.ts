@@ -1,16 +1,15 @@
 import { AbstractControl } from '@angular/forms';
-import { FormControl, FormGroup } from '@angular/forms'
+import { FormControl, FormGroup } from '@angular/forms';
 
 export function rangeValidator(min: number, max?: number) {
-
   let thisControl: FormControl;
 
   return function rangeValidate(control: FormControl) {
     let regex;
     if (min === 0) {
-      regex = /^(0|[1-9]\d*)$/
+      regex = /^(0|[1-9]\d*)$/;
     } else {
-      regex = /^[1-9]\d*$/
+      regex = /^[1-9]\d*$/;
     }
 
     if (!control.parent) {
@@ -39,6 +38,6 @@ export function rangeValidator(min: number, max?: number) {
       }
     }
 
-    return {range: true, rangeValue:{min: min, max: max}};
-  }
+    return { range: true, rangeValue: { min, max } };
+  };
 }

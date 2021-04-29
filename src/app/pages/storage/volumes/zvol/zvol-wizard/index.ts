@@ -1,1 +1,1 @@
-export {ZvolWizardComponent} from './zvol-wizard.component';
+export { ZvolWizardComponent } from './zvol-wizard.component';

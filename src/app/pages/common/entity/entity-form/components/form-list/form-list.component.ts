@@ -16,7 +16,7 @@ export class FormListComponent implements Field, OnInit {
   group: FormGroup;
   fieldShow: string;
 
-  public listsFromArray: FormArray;
+  listsFromArray: FormArray;
 
   constructor(private entityFormService: EntityFormService, private formBuilder: FormBuilder) {}
 
@@ -38,7 +38,7 @@ export class FormListComponent implements Field, OnInit {
     }
   }
 
-  delete(id) {
+  delete(id: number) {
     this.listsFromArray.removeAt(id);
     this.config.listFields.splice(id, 1);
     if (this.config.customEventMethod) {

@@ -1,5 +1,7 @@
-import { Component, Input, Inject, OnDestroy } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {
+  Component, Input, Inject, OnDestroy,
+} from '@angular/core';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { helptext_system_failover } from 'app/helptext/system/failover';
@@ -11,18 +13,18 @@ interface DialogData {
 @Component({
   selector: 'simple-failover-button',
   template: `<button mat-button style="opacity:1; background-color: var(--primary) !important; color: var(--primary-txt) !important;" [color]="color" [disabled]="disabled" (click)="openDialog()"
-    ix-auto ix-auto-type="button" ix-auto-identifier="Initiate Failover">Initiate Failover</button>`, 
+    ix-auto ix-auto-type="button" ix-auto-identifier="Initiate Failover">Initiate Failover</button>`,
 })
 
 export class SimpleFailoverBtnComponent implements OnDestroy {
-
-  @Input() color:string = 'default';
+  @Input() color = 'default';
   @Input() disabled?: boolean = false;
   constructor(
     private dialog: MatDialog,
     protected matDialog: MatDialog,
     private router: Router,
-    public translate: TranslateService) {}
+    public translate: TranslateService,
+  ) {}
 
   afterInit() {
   }
@@ -30,19 +32,18 @@ export class SimpleFailoverBtnComponent implements OnDestroy {
   openDialog(): void {
     const dialogRef = this.dialog.open(SimpleFailoverBtnDialog, {
       width: '330px',
-      data: { agreed: true}
+      data: { agreed: true },
     });
 
-    dialogRef.afterClosed().subscribe(res => {
-      if(res){
+    dialogRef.afterClosed().subscribe((res) => {
+      if (res) {
         this.router.navigate(['/others/reboot']);
       }
     });
   }
- 
-  ngOnDestroy() { 
-  }
 
+  ngOnDestroy() {
+  }
 }
 
 @Component({
@@ -55,33 +56,32 @@ export class SimpleFailoverBtnComponent implements OnDestroy {
       <button fxFlex="calc(45% - 40px)" fxFlex.xs="45" style="margin-bottom:16px;" mat-button color="accent" (click)="onNoClick()" cdkFocusInitial>{{cancel | translate}}</button>
       <button fxFlex="calc(45% - 40px)" fxFlex.xs="45" style="margin-bottom:16px;" mat-button color="primary" [disabled]="isDisabled" [mat-dialog-close]="data.agreed">{{action | translate}}</button>
     </div>
-  `
+  `,
 })
 export class SimpleFailoverBtnDialog {
-
   private _confirmed: boolean;
-  get confirmed(){
+  get confirmed() {
     return this._confirmed;
   }
 
-  set confirmed(v){
+  set confirmed(v) {
     this._confirmed = v;
     this.isDisabled = !v;
   }
 
-  public isDisabled = true;
-  public title = helptext_system_failover.dialog_initiate_failover_title;
-  public msg1 = helptext_system_failover.dialog_initiate_failover_message;
-  public checkbox = helptext_system_failover.dialog_initiate_failover_checkbox;
-  public cancel = helptext_system_failover.dialog_initiate_cancel;
-  public action = helptext_system_failover.dialog_initiate_action;
+  isDisabled = true;
+  title = helptext_system_failover.dialog_initiate_failover_title;
+  msg1 = helptext_system_failover.dialog_initiate_failover_message;
+  checkbox = helptext_system_failover.dialog_initiate_failover_checkbox;
+  cancel = helptext_system_failover.dialog_initiate_cancel;
+  action = helptext_system_failover.dialog_initiate_action;
 
   constructor(
     public dialogRef: MatDialogRef<SimpleFailoverBtnDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
+    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+  ) {}
 
   onNoClick(): void {
     this.dialogRef.close();
   }
-
 }

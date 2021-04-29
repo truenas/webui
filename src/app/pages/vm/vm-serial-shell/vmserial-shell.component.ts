@@ -1,9 +1,12 @@
-import { Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+  Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChange, ViewChild, ViewEncapsulation,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import helptext from '../../../helptext/vm/vm-cards/vm-cards';
+import { ShellConnectedEvent } from '../../../interfaces/shell.interface';
 import { ShellService, WebSocketService } from '../../../services';
 import { Terminal } from 'xterm';
 import { AttachAddon } from 'xterm-addon-attach';
@@ -19,37 +22,36 @@ import * as FontFaceObserver from 'fontfaceobserver';
 })
 
 export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
-  @Input() prompt= '';
-  @ViewChild('terminal', { static: true}) container: ElementRef;
+  @Input() prompt = '';
+  @ViewChild('terminal', { static: true }) container: ElementRef;
   cols: string;
   rows: string;
   font_size = 14;
   font_name = 'Inconsolata';
-  public connectionId: string;
-  public token: any;
-  public xterm: any;
+  connectionId: string;
+  token: any;
+  xterm: any;
   private shellSubscription: any;
-  public shell_tooltip = helptext.serial_shell_tooltip;
+  shell_tooltip = helptext.serial_shell_tooltip;
   private fitAddon: any;
 
-  clearLine = "\u001b[2K\r"
+  clearLine = '\u001b[2K\r';
   protected pk: string;
 
   constructor(private ws: WebSocketService,
-              public ss: ShellService,
-              protected aroute: ActivatedRoute,
-              public translate: TranslateService,
-              private dialog: MatDialog) {
-              }
-
+    public ss: ShellService,
+    protected aroute: ActivatedRoute,
+    public translate: TranslateService,
+    private dialog: MatDialog) {
+  }
 
   ngOnInit() {
     const self = this;
-    this.aroute.params.subscribe(params => {
+    this.aroute.params.subscribe((params) => {
       this.pk = params['pk'];
       this.getAuthToken().subscribe((res) => {
         this.initializeWebShell(res);
-        this.shellSubscription = this.ss.shellOutput.subscribe((value) => {
+        this.shellSubscription = this.ss.shellOutput.subscribe((value: any) => {
           if (value !== undefined) {
             // this.xterm.write(value);
           }
@@ -57,23 +59,22 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
         this.initializeTerminal();
       });
     });
-
   }
 
   ngOnDestroy() {
     if (this.shellSubscription) {
       this.shellSubscription.unsubscribe();
     }
-    if (this.ss.connected){
+    if (this.ss.connected) {
       this.ss.socket.close();
     }
-  };
+  }
 
-  onResize(event) {
+  onResize() {
     this.resizeTerm();
   }
 
-  onFontSizeChanged(event) {
+  onFontSizeChanged() {
     this.resizeTerm();
   }
 
@@ -83,7 +84,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: {
-    [propKey: string]: SimpleChange
+    [propKey: string]: SimpleChange;
   }) {
     const log: string[] = [];
     for (const propName in changes) {
@@ -102,7 +103,7 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     span.innerHTML = 'a';
 
     let cols = 0;
-    while(span.offsetWidth < domWidth) {
+    while (span.offsetWidth < domWidth) {
       span.innerHTML += 'a';
       cols++;
     }
@@ -118,9 +119,9 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     return {
-      rows: rows,
-      cols: cols
-    }
+      rows,
+      cols,
+    };
   }
 
   initializeTerminal() {
@@ -148,16 +149,16 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
       this.xterm.open(this.container.nativeElement);
       this.fitAddon.fit();
       this.xterm._initialized = true;
-    }, function (e) {
+    }, (e) => {
       console.log('Font is not available', e);
     });
   }
 
-  resizeTerm(){
+  resizeTerm() {
     const size = this.getSize();
     this.xterm.setOption('fontSize', this.font_size);
     this.fitAddon.fit();
-    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res)=> {
+    this.ws.call('core.resize_shell', [this.connectionId, size.cols, size.rows]).subscribe((res) => {
       this.xterm.focus();
     });
     return true;
@@ -168,10 +169,10 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     this.ss.token = res;
     this.ss.connect();
 
-    this.ss.shellConnected.subscribe((res)=> {
+    this.ss.shellConnected.subscribe((res: ShellConnectedEvent) => {
       this.connectionId = res.id;
       this.resizeTerm();
-    })
+    });
   }
 
   getAuthToken() {
@@ -182,5 +183,4 @@ export class VMSerialShellComponent implements OnInit, OnChanges, OnDestroy {
     this.dialog.open(CopyPasteMessageComponent);
     return false;
   }
-
 }

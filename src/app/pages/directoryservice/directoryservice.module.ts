@@ -11,7 +11,7 @@ import { EntityModule } from '../common/entity/entity.module';
 import { ActiveDirectoryComponent } from './activedirectory/activedirectory.component';
 import { routing } from './directoryservice.routing';
 import { LdapComponent } from './ldap/ldap.component';
-import { NISComponent } from './nis/';
+import { NISComponent } from './nis';
 import { KerberosRealmsListComponent } from './kerberosrealms/kerberosrealms-list.component';
 import { KerberosRealmsFormComponent } from './kerberosrealms/kerberosrealms-form.component';
 import { KerberosSettingsComponent } from './kerberossettings/kerberossettings.component';
@@ -25,7 +25,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 @NgModule({
   imports: [
     CommonModule, EntityModule, FormsModule, ReactiveFormsModule, FlexLayoutModule,
-    NgxUploaderModule, routing, MaterialModule, TranslateModule
+    NgxUploaderModule, routing, MaterialModule, TranslateModule,
   ],
   declarations: [
     LdapComponent,
@@ -40,5 +40,5 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     IdmapFormComponent,
     DirectoryservicesComponent,
   ],
-  providers: [SystemGeneralService]
+  providers: [SystemGeneralService],
 }) export class DirectoryServiceModule { }

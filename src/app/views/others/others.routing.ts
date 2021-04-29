@@ -11,20 +11,20 @@ export const OthersRoutes: Routes = [
     children: [{
       path: 'reboot',
       component: RebootComponent,
-      data: { title: 'Reboot', breadcrumb: 'Reboot' }
+      data: { title: 'Reboot', breadcrumb: 'Reboot' },
     }, {
       path: 'shutdown',
       component: ShutdownComponent,
-      data: { title: 'Shutdown', breadcrumb: 'Shutdown' }
+      data: { title: 'Shutdown', breadcrumb: 'Shutdown' },
     }, {
       path: 'failover',
       component: FailoverComponent,
-      data: { title: 'Failover', breadcrumb: 'Failover' }
+      data: { title: 'Failover', breadcrumb: 'Failover' },
     },
     {
       path: 'config-reset',
       component: ConfigResetComponent,
-      data: { title: 'Config-Reset', breadcrumb: 'Config-Reset' }
-    }]
-  }
+      data: { title: 'Config-Reset', breadcrumb: 'Config-Reset' },
+    }],
+  },
 ];

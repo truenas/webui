@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
 import { ModalService } from '../../../services/modal.service';
 @Component({
   selector: 'app-group-form',
-  template: `<entity-form [conf]="this"></entity-form>`
+  template: '<entity-form [conf]="this"></entity-form>',
 })
 export class KerberosRealmsFormComponent {
   protected title: string;
@@ -18,10 +18,10 @@ export class KerberosRealmsFormComponent {
   protected pk: any;
   protected queryKey = 'id';
   protected isEntity = true;
-  private getRow = new Subscription;
+  private getRow = new Subscription();
   protected isOneColumnForm = true;
-  protected fieldConfig: FieldConfig[] = []
-  public fieldSets: FieldSet[] = [
+  protected fieldConfig: FieldConfig[] = [];
+  fieldSets: FieldSet[] = [
     {
       name: helptext.kerb_form_heading,
       class: 'heading',
@@ -33,32 +33,32 @@ export class KerberosRealmsFormComponent {
           placeholder: helptext.krbrealm_form_realm_placeholder,
           tooltip: helptext.krbrealm_form_realm_tooltip,
           required: true,
-          validation: helptext.krbrealm_form_realm_validation
+          validation: helptext.krbrealm_form_realm_validation,
         },
         {
           type: 'chip',
           name: helptext.krbrealm_form_kdc_name,
           placeholder: helptext.krbrealm_form_kdc_placeholder,
-          tooltip: `${helptext.krbrealm_form_kdc_tooltip} ${helptext.multiple_values}`
+          tooltip: `${helptext.krbrealm_form_kdc_tooltip} ${helptext.multiple_values}`,
         },
         {
           type: 'chip',
           name: helptext.krbrealm_form_admin_server_name,
           placeholder: helptext.krbrealm_form_admin_server_placeholder,
-          tooltip: `${helptext.krbrealm_form_admin_server_tooltip} ${helptext.multiple_values}`
+          tooltip: `${helptext.krbrealm_form_admin_server_tooltip} ${helptext.multiple_values}`,
         },
         {
           type: 'chip',
           name: helptext.krbrealm_form_kpasswd_server_name,
           placeholder: helptext.krbrealm_form_kpasswd_server_placeholder,
-          tooltip: `${helptext.krbrealm_form_kpasswd_server_tooltip} ${helptext.multiple_values}`
-        }
-      ]
-    }
+          tooltip: `${helptext.krbrealm_form_kpasswd_server_tooltip} ${helptext.multiple_values}`,
+        },
+      ],
+    },
   ];
 
   constructor(private modalService: ModalService) {
-    this.getRow = this.modalService.getRow$.subscribe(rowId => {
+    this.getRow = this.modalService.getRow$.subscribe((rowId) => {
       this.pk = rowId;
       this.getRow.unsubscribe();
     });

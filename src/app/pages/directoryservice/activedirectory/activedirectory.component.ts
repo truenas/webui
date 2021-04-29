@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import * as _ from 'lodash';
 import { ProductType } from '../../../enums/product-type.enum';
 
 import { EntityUtils } from '../../common/entity/utils';
-import { SystemGeneralService, WebSocketService } from '../../../services/';
+import { SystemGeneralService, WebSocketService } from '../../../services';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { DialogService } from '../../../services/';
+import { DialogService } from '../../../services';
 import helptext from '../../../helptext/directoryservice/activedirectory';
 import global_helptext from '../../../helptext/global-helptext';
 import { ModalService } from '../../../services/modal.service';
@@ -21,53 +22,53 @@ import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.co
 
 export class ActiveDirectoryComponent {
   protected title: string = helptext.title;
-  protected queryCall: string = 'activedirectory.config';
-  protected updateCall: string = 'activedirectory.update';
-  public isEntity = false;
+  protected queryCall = 'activedirectory.config';
+  protected updateCall = 'activedirectory.update';
+  isEntity = false;
   protected isBasicMode = true;
   protected idmapBacked: any = null;
   protected kerberos_realm: any;
   protected kerberos_principal: any;
   protected nss_info: any;
-  public adStatus = false;
+  adStatus = false;
   entityEdit: any;
   protected dialogRef: MatDialogRef<EntityJobComponent, void>;
-  public custActions: Array<any> = [
+  custActions: any[] = [
     {
-      'id': helptext.activedirectory_custactions_basic_id,
-      'name': global_helptext.basic_options,
+      id: helptext.activedirectory_custactions_basic_id,
+      name: global_helptext.basic_options,
       function: () => {
         this.setBasicMode(true);
-      }
+      },
     },
     {
-      'id': helptext.activedirectory_custactions_advanced_id,
-      'name': global_helptext.advanced_options,
+      id: helptext.activedirectory_custactions_advanced_id,
+      name: global_helptext.advanced_options,
       function: () => {
         this.setBasicMode(false);
-      }
+      },
     },
     {
-      'id': helptext.activedirectory_custactions_edit_imap_id,
-      'name': helptext.activedirectory_custactions_edit_imap_name,
+      id: helptext.activedirectory_custactions_edit_imap_id,
+      name: helptext.activedirectory_custactions_edit_imap_name,
       function: () => {
         this.modalService.close('slide-in-form');
         this.router.navigate(new Array('').concat(['directoryservice', 'idmap']));
-      }
+      },
     },
     {
-      'id': helptext.activedirectory_custactions_clearcache_id,
-      'name': helptext.activedirectory_custactions_clearcache_name,
+      id: helptext.activedirectory_custactions_clearcache_id,
+      name: helptext.activedirectory_custactions_clearcache_name,
       function: async () => {
         this.systemGeneralService.refreshDirServicesCache().subscribe((cache_status) => {
           this.dialogservice.Info(helptext.activedirectory_custactions_clearcache_dialog_title,
             helptext.activedirectory_custactions_clearcache_dialog_message);
-        })
-      }
+        });
+      },
     },
     {
-      'id': 'leave_domain',
-      'name': helptext.activedirectory_custactions_leave_domain,
+      id: 'leave_domain',
+      name: helptext.activedirectory_custactions_leave_domain,
       function: () => {
         const that = this;
         this.dialogservice.dialogForm(
@@ -83,7 +84,7 @@ export class ActiveDirectoryComponent {
                 type: 'input',
                 name: 'username',
                 placeholder: helptext.ad_leave_domain_dialog.username,
-                required: true
+                required: true,
               },
               {
                 type: 'input',
@@ -91,38 +92,38 @@ export class ActiveDirectoryComponent {
                 placeholder: helptext.ad_leave_domain_dialog.pw,
                 inputType: 'password',
                 togglePw: true,
-                required: true
+                required: true,
               },
             ],
             saveButtonText: helptext.activedirectory_custactions_leave_domain,
-            customSubmit: function (entityDialog) {
+            customSubmit(entityDialog: any) {
               const value = entityDialog.formValue;
               const self = entityDialog;
               self.loader.open();
               self.ws.call('activedirectory.leave', [{ username: value.username, password: value.password }])
-                .subscribe((res) => {
+                .subscribe(() => {
                   self.loader.close();
                   self.dialogRef.close(true);
-                  _.find(that.fieldConfig, { 'name': 'enable' })['value'] = false;
+                  _.find(that.fieldConfig, { name: 'enable' })['value'] = false;
                   that.entityEdit.formGroup.controls['enable'].setValue(false);
                   that.adStatus = false;
                   that.isCustActionVisible('leave_domain');
                   that.dialogservice.Info(helptext.ad_leave_domain_dialog.success,
                     helptext.ad_leave_domain_dialog.success_msg, '400px', 'info', true);
                 },
-                  err => {
-                    self.loader.close();
-                    new EntityUtils().handleWSError(helptext.ad_leave_domain_dialog.error, err, that.dialogservice);
-                  });
-            }
-          }
+                (err: any) => {
+                  self.loader.close();
+                  new EntityUtils().handleWSError(helptext.ad_leave_domain_dialog.error, err, that.dialogservice);
+                });
+            },
+          },
         );
-      }
+      },
     },
   ];
 
-  public fieldConfig: FieldConfig[] = []
-  public fieldSets: FieldSet[] = [
+  fieldConfig: FieldConfig[] = [];
+  fieldSets: FieldSet[] = [
     {
       name: helptext.ad_section_headers.dc,
       class: 'section_header',
@@ -134,7 +135,7 @@ export class ActiveDirectoryComponent {
           placeholder: helptext.activedirectory_domainname_placeholder,
           tooltip: helptext.activedirectory_domainname_tooltip,
           required: true,
-          validation: helptext.activedirectory_domainname_validation
+          validation: helptext.activedirectory_domainname_validation,
         },
         {
           type: 'input',
@@ -144,7 +145,7 @@ export class ActiveDirectoryComponent {
           required: true,
           validation: helptext.activedirectory_bindname_validation,
           disabled: false,
-          isHidden: true
+          isHidden: true,
         },
         {
           type: 'input',
@@ -154,7 +155,7 @@ export class ActiveDirectoryComponent {
           tooltip: helptext.activedirectory_bindpw_tooltip,
           togglePw: true,
           disabled: false,
-          isHidden: false
+          isHidden: false,
         },
         {
           type: 'checkbox',
@@ -197,8 +198,8 @@ export class ActiveDirectoryComponent {
           name: 'restrict_pam',
           placeholder: helptext.restrict_pam.placeholder,
           tooltip: helptext.restrict_pam.tooltip,
-        }
-      ]
+        },
+      ],
     },
     {
       name: helptext.ad_section_headers.advanced_col1,
@@ -216,7 +217,7 @@ export class ActiveDirectoryComponent {
           name: helptext.activedirectory_kerberos_realm_name,
           placeholder: helptext.activedirectory_kerberos_realm_placeholder,
           tooltip: helptext.activedirectory_kerberos_realm_tooltip,
-          options: [{ label: '---', value: null }]
+          options: [{ label: '---', value: null }],
         },
         {
           type: 'select',
@@ -225,7 +226,7 @@ export class ActiveDirectoryComponent {
           tooltip: helptext.activedirectory_kerberos_principal_tooltip,
           options: [
             { label: '---', value: null },
-          ]
+          ],
         },
         {
           type: 'input',
@@ -250,7 +251,7 @@ export class ActiveDirectoryComponent {
           name: helptext.activedirectory_nss_info_name,
           placeholder: helptext.activedirectory_nss_info_placeholder,
           tooltip: helptext.activedirectory_nss_info_tooltip,
-          options: []
+          options: [],
         },
         {
           type: 'input',
@@ -258,7 +259,7 @@ export class ActiveDirectoryComponent {
           placeholder: helptext.activedirectory_netbiosname_a_placeholder,
           tooltip: helptext.activedirectory_netbiosname_a_tooltip,
           validation: helptext.activedirectory_netbiosname_a_validation,
-          required: true
+          required: true,
         },
         {
           type: 'input',
@@ -268,28 +269,28 @@ export class ActiveDirectoryComponent {
           validation: helptext.activedirectory_netbiosname_b_validation,
           required: true,
           isHidden: true,
-          disabled: true
+          disabled: true,
         },
         {
           type: 'input',
           name: helptext.activedirectory_netbiosalias_name,
           placeholder: helptext.activedirectory_netbiosalias_placeholder,
           tooltip: helptext.activedirectory_netbiosalias_tooltip,
-        }
-      ]
-    }
+        },
+      ],
+    },
   ];
 
-  protected advanced_field: Array<any> = helptext.activedirectory_advanced_fields;
+  protected advanced_field: any[] = helptext.activedirectory_advanced_fields;
 
   isCustActionVisible(actionname: string) {
     if (actionname === 'advanced_mode' && this.isBasicMode === false) {
       return false;
-    } else if (actionname === 'basic_mode' && this.isBasicMode === true) {
+    } if (actionname === 'basic_mode' && this.isBasicMode === true) {
       return false;
-    } else if ((actionname === 'edit_idmap' || actionname === 'leave_domain') && this.isBasicMode === true) {
+    } if ((actionname === 'edit_idmap' || actionname === 'leave_domain') && this.isBasicMode === true) {
       return false;
-    } else if (actionname === 'leave_domain' && this.adStatus === false) {
+    } if (actionname === 'leave_domain' && this.adStatus === false) {
       return false;
     }
     return true;
@@ -301,11 +302,11 @@ export class ActiveDirectoryComponent {
     protected systemGeneralService: SystemGeneralService,
     protected dialogservice: DialogService) { }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     if (data['kerberos_realm'] && data['kerberos_realm'] !== null) {
       data['kerberos_realm'] = data['kerberos_realm'].id;
     }
-    data['netbiosalias'] = data['netbiosalias'].join(" ");
+    data['netbiosalias'] = data['netbiosalias'].join(' ');
     delete data['bindpw'];
     return data;
   }
@@ -318,7 +319,7 @@ export class ActiveDirectoryComponent {
             if (ha_mode === 'LEGACY') {
               entityForm.setDisabled('netbiosname_b', false, false);
             }
-          })
+          });
         }
       });
     }
@@ -331,52 +332,53 @@ export class ActiveDirectoryComponent {
     this.entityEdit = entityEdit;
     this.ws.call('kerberos.realm.query').subscribe((res) => {
       this.kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' });
-      res.forEach((item) => {
+      res.forEach((item: any) => {
         this.kerberos_realm.options.push(
-          { label: item.realm, value: item.id });
+          { label: item.realm, value: item.id },
+        );
       });
     });
 
     this.ws.call('kerberos.keytab.kerberos_principal_choices').subscribe((res) => {
       this.kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' });
-      res.forEach((item) => {
+      res.forEach((item: any) => {
         this.kerberos_principal.options.push(
-          { label: item, value: item });
+          { label: item, value: item },
+        );
       });
     });
 
     this.ws.call('activedirectory.nss_info_choices').subscribe((res) => {
       this.nss_info = _.find(this.fieldConfig, { name: 'nss_info' });
-      res.forEach((item) => {
+      res.forEach((item: any) => {
         this.nss_info.options.push(
-          { label: item, value: item });
+          { label: item, value: item },
+        );
       });
     });
 
-    entityEdit.formGroup.controls['enable'].valueChanges.subscribe((res) => {
-      _.find(this.fieldConfig, { 'name': 'bindpw' })['required'] = res;
+    entityEdit.formGroup.controls['enable'].valueChanges.subscribe((res: any) => {
+      _.find(this.fieldConfig, { name: 'bindpw' })['required'] = res;
     });
 
-    entityEdit.formGroup.controls['kerberos_principal'].valueChanges.subscribe((res) => {
+    entityEdit.formGroup.controls['kerberos_principal'].valueChanges.subscribe((res: any) => {
       if (res) {
         entityEdit.setDisabled('bindname', true);
         entityEdit.setDisabled('bindpw', true);
-        _.find(this.fieldConfig, { 'name': 'bindname' })['isHidden'] = true;
-        _.find(this.fieldConfig, { 'name': 'bindpw' })['isHidden'] = true;
-
+        _.find(this.fieldConfig, { name: 'bindname' })['isHidden'] = true;
+        _.find(this.fieldConfig, { name: 'bindpw' })['isHidden'] = true;
       } else {
         entityEdit.setDisabled('bindname', false);
         entityEdit.setDisabled('bindpw', false);
-        _.find(this.fieldConfig, { 'name': 'bindname' })['isHidden'] = false;
-        _.find(this.fieldConfig, { 'name': 'bindpw' })['isHidden'] = false;
+        _.find(this.fieldConfig, { name: 'bindname' })['isHidden'] = false;
+        _.find(this.fieldConfig, { name: 'bindpw' })['isHidden'] = false;
       }
-
-    })
+    });
 
     entityEdit.submitFunction = this.submitFunction;
   }
 
-  setBasicMode(basic_mode) {
+  setBasicMode(basic_mode: boolean) {
     this.isBasicMode = basic_mode;
     _.find(this.fieldSets, { class: 'adv_row' }).label = !basic_mode;
     _.find(this.fieldSets, { class: 'adv_column1' }).label = !basic_mode;
@@ -384,15 +386,15 @@ export class ActiveDirectoryComponent {
     _.find(this.fieldSets, { class: 'divider1' }).divider = !basic_mode;
   }
 
-  beforeSubmit(data) {
+  beforeSubmit(data: any) {
     data.netbiosalias = data.netbiosalias.trim();
     if (data.netbiosalias.length > 0) {
-      data.netbiosalias = data.netbiosalias.split(" ");
+      data.netbiosalias = data.netbiosalias.split(' ');
     } else {
       data.netbiosalias = [];
     }
     if (data.kerberos_principal) {
-      data.bindpw = ""
+      data.bindpw = '';
     }
     data['site'] = data['site'] === null ? '' : data['site'];
 
@@ -400,8 +402,8 @@ export class ActiveDirectoryComponent {
       data.kerberos_principal = '';
     }
 
-    const allowedNullValues = ['certificate', 'kerberos_realm']
-    for (let i in data) {
+    const allowedNullValues = ['certificate', 'kerberos_realm'];
+    for (const i in data) {
       if (!allowedNullValues.includes(i) && data[i] === null) {
         delete data[i];
       }
@@ -412,7 +414,7 @@ export class ActiveDirectoryComponent {
     return this.ws.call('activedirectory.update', [body]);
   }
 
-  responseOnSubmit(value) {
+  responseOnSubmit(value: any) {
     this.entityEdit.formGroup.controls['kerberos_principal'].setValue(value.kerberos_principal);
     this.entityEdit.formGroup.controls['kerberos_realm'].setValue(value['kerberos_realm']);
 
@@ -420,21 +422,23 @@ export class ActiveDirectoryComponent {
       this.adStatus = true;
     }
 
-    this.ws.call('kerberos.realm.query').subscribe((res) => {
+    this.ws.call('kerberos.realm.query').subscribe((res: any[]) => {
       this.kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' });
       res.forEach((item) => {
         this.kerberos_realm.options.push(
-          { label: item.realm, value: item.id });
+          { label: item.realm, value: item.id },
+        );
       });
     });
 
-    this.ws.call('kerberos.keytab.kerberos_principal_choices').subscribe((res) => {
+    this.ws.call('kerberos.keytab.kerberos_principal_choices').subscribe((res: any[]) => {
       this.kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' });
       this.kerberos_principal.options.length = 0;
       this.kerberos_principal.options.push({ label: '---', value: null });
       res.forEach((item) => {
         this.kerberos_principal.options.push(
-          { label: item, value: item });
+          { label: item, value: item },
+        );
       });
     });
 
@@ -444,14 +448,14 @@ export class ActiveDirectoryComponent {
   }
 
   // Shows starting progress as a job dialog
-  showStartingJob(jobId) {
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "Start" }, disableClose: true });
+  showStartingJob(jobId: number) {
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Start' }, disableClose: true });
     this.dialogRef.componentInstance.jobId = jobId;
     this.dialogRef.componentInstance.wsshow();
-    this.dialogRef.componentInstance.success.subscribe((res) => {
+    this.dialogRef.componentInstance.success.subscribe(() => {
       this.dialogRef.close();
     });
-    this.dialogRef.componentInstance.failure.subscribe((err) => {
+    this.dialogRef.componentInstance.failure.subscribe(() => {
       this.dialogRef.close();
     });
   }

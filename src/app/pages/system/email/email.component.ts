@@ -1,10 +1,14 @@
-import { ApplicationRef, Component, Injector, OnDestroy } from '@angular/core';
+import {
+  ApplicationRef, Component, Injector, OnDestroy,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { helptext_system_email } from 'app/helptext/system/email';
 import * as _ from 'lodash';
 import { ProductType } from '../../../enums/product-type.enum';
-import { DialogService, RestService, WebSocketService, AppLoaderService } from '../../../services/';
+import {
+  DialogService, RestService, WebSocketService, AppLoaderService,
+} from '../../../services';
 import { FieldConfig } from '../../common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from '../../common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -14,31 +18,31 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 import { FormControl } from '@angular/forms';
 
 interface OAuthData {
-  client_id?: string
-  client_secret?: string
-  refresh_token?: string
+  client_id?: string;
+  client_secret?: string;
+  refresh_token?: string;
 }
 
 @Component({
-  selector : 'app-email',
-  template : `
+  selector: 'app-email',
+  template: `
   <entity-form [conf]="this"></entity-form>
-  `
+  `,
 })
 export class EmailComponent implements OnDestroy {
   queryCall = 'mail.config';
   updateCall = 'mail.update';
-  public entityEdit: any;
-  public rootEmail: string;
+  entityEdit: any;
+  rootEmail: string;
   private oauthCreds: BehaviorSubject<OAuthData> = new BehaviorSubject({});
   customSubmit = this.saveConfigSubmit;
-  public custActions: Array < any > = [{
+  custActions: any[] = [{
     id: 'send_mail',
     name: T('Send Test Mail'),
     function: () => {
-      if (this.rootEmail){
+      if (this.rootEmail) {
         const value = _.cloneDeep(this.entityEdit.formGroup.value);
-        if(!value.send_mail_method) {
+        if (!value.send_mail_method) {
           delete value.pass;
           value.smtp = false;
           value.oauth = this.oauthCreds.getValue();
@@ -50,95 +54,98 @@ export class EmailComponent implements OnDestroy {
 
         const product_type = window.localStorage.getItem('product_type') as ProductType;
         const mailObj = {
-          "subject" : "TrueNAS Test Message",
-          "text" : `This is a test message from TrueNAS ${product_type}.`,
-        }
-        this.ws.call('system.info').subscribe(sysInfo => {
-          value.pass = value.pass || this.entityEdit.data.pass
+          subject: 'TrueNAS Test Message',
+          text: `This is a test message from TrueNAS ${product_type}.`,
+        };
+        this.ws.call('system.info').subscribe((sysInfo) => {
+          value.pass = value.pass || this.entityEdit.data.pass;
 
-          mailObj['subject'] += " hostname: " + sysInfo['hostname'];
-          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { "title": "EMAIL" }, disableClose: true });
+          mailObj['subject'] += ' hostname: ' + sysInfo['hostname'];
+          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'EMAIL' }, disableClose: true });
           this.dialogRef.componentInstance.setCall('mail.send', [mailObj, value]);
           this.dialogRef.componentInstance.submit();
-          this.dialogRef.componentInstance.success.subscribe((s_res)=>{
+          this.dialogRef.componentInstance.success.subscribe(() => {
             this.dialogRef.close(false);
-            this.dialogservice.Info(T("Email"), T("Test email sent!"))
+            this.dialogservice.Info(T('Email'), T('Test email sent!'));
           });
-          this.dialogRef.componentInstance.failure.subscribe((e_res) => {
+          this.dialogRef.componentInstance.failure.subscribe((e_res: any) => {
             this.dialogRef.componentInstance.setDescription(e_res.error);
           });
         });
+      } else {
+        this.dialogservice.Info(T('email'), T('Configure the root user email address.'));
       }
-      else{
-        this.dialogservice.Info(T("email"), T("Configure the root user email address."));
-      }
-    }
-  }
-];
+    },
+  },
+  ];
 
-  public fieldSets = new FieldSets([
+  fieldSets = new FieldSets([
     {
       name: helptext_system_email.fieldsets.general,
       label: true,
       config: [
         {
-          type : 'input',
-          name : 'fromemail',
-          placeholder : helptext_system_email.fromemail.placeholder,
-          tooltip : helptext_system_email.fromemail.tooltip,
+          type: 'input',
+          name: 'fromemail',
+          placeholder: helptext_system_email.fromemail.placeholder,
+          tooltip: helptext_system_email.fromemail.tooltip,
           validation: helptext_system_email.fromemail.validation,
-          required: true
+          required: true,
         },
         {
-          type : 'input',
-          name : 'fromname',
-          placeholder : helptext_system_email.fromname.placeholder,
-          tooltip : helptext_system_email.fromname.tooltip,
+          type: 'input',
+          name: 'fromname',
+          placeholder: helptext_system_email.fromname.placeholder,
+          tooltip: helptext_system_email.fromname.tooltip,
         },
         {
           type: 'radio',
           name: 'send_mail_method',
-          onChange: data => {
+          onChange: (data) => {
             this.sendMailMethod.setValue(data.event.value);
           },
           placeholder: helptext_system_email.send_mail_method.placeholder,
           options: [
-            {label: helptext_system_email.send_mail_method.smtp.placeholder,
-             name: 'smtp',
-             tooltip: helptext_system_email.send_mail_method.smtp.tooltip,
-             value: true},
-            {label: helptext_system_email.send_mail_method.gmail.placeholder,
-             name: 'gmail',
-             tooltip: helptext_system_email.send_mail_method.gmail.tooltip,
-             value: false},
+            {
+              label: helptext_system_email.send_mail_method.smtp.placeholder,
+              name: 'smtp',
+              tooltip: helptext_system_email.send_mail_method.smtp.tooltip,
+              value: true,
+            },
+            {
+              label: helptext_system_email.send_mail_method.gmail.placeholder,
+              name: 'gmail',
+              tooltip: helptext_system_email.send_mail_method.gmail.tooltip,
+              value: false,
+            },
           ],
-          value: true
+          value: true,
         },
         {
-          type : 'input',
-          name : 'outgoingserver',
-          placeholder : helptext_system_email.outgoingserver.placeholder,
-          tooltip : helptext_system_email.outgoingserver.tooltip,
+          type: 'input',
+          name: 'outgoingserver',
+          placeholder: helptext_system_email.outgoingserver.placeholder,
+          tooltip: helptext_system_email.outgoingserver.tooltip,
         },
         {
-          type : 'input',
-          name : 'port',
+          type: 'input',
+          name: 'port',
           inputType: 'number',
           validation: helptext_system_email.port.validation,
           required: true,
-          placeholder : helptext_system_email.port.placeholder,
-          tooltip : helptext_system_email.port.tooltip,
+          placeholder: helptext_system_email.port.placeholder,
+          tooltip: helptext_system_email.port.tooltip,
         },
         {
-          type : 'select',
-          name : 'security',
-          placeholder : helptext_system_email.security.placeholder,
-          tooltip : helptext_system_email.security.tooltip,
-          options : [
-            {label : T('Plain (No Encryption)'), value : 'PLAIN'},
-            {label : T('SSL (Implicit TLS)'), value : 'SSL'},
-            {label : T('TLS (STARTTLS)'), value : 'TLS'},
-          ]
+          type: 'select',
+          name: 'security',
+          placeholder: helptext_system_email.security.placeholder,
+          tooltip: helptext_system_email.security.tooltip,
+          options: [
+            { label: T('Plain (No Encryption)'), value: 'PLAIN' },
+            { label: T('SSL (Implicit TLS)'), value: 'SSL' },
+            { label: T('TLS (STARTTLS)'), value: 'TLS' },
+          ],
         },
         {
           type: 'checkbox',
@@ -174,7 +181,7 @@ export class EmailComponent implements OnDestroy {
           isLargeText: true,
           paragraphIcon: 'check_circle',
           paragraphIconSize: '24px',
-          isHidden: true
+          isHidden: true,
         },
         {
           type: 'paragraph',
@@ -184,7 +191,7 @@ export class EmailComponent implements OnDestroy {
           paragraphIconSize: '24px',
           isLargeText: true,
           validation: helptext_system_email.user.validation,
-          isHidden: true
+          isHidden: true,
         },
         {
           type: 'button',
@@ -194,11 +201,11 @@ export class EmailComponent implements OnDestroy {
             const self = this;
             const dialogService = this.dialogservice;
 
-            window.open("https://freenas.org/oauth/gmail?origin=" +
-              encodeURIComponent(window.location.toString()), "_blank", "width=640,height=480");
-            window.addEventListener("message", doAuth, false);
+            window.open('https://freenas.org/oauth/gmail?origin='
+              + encodeURIComponent(window.location.toString()), '_blank', 'width=640,height=480');
+            window.addEventListener('message', doAuth, false);
 
-            function doAuth(message) {
+            function doAuth(message: any) {
               if (message.data.oauth_portal) {
                 if (message.data.error) {
                   dialogService.errorReport(T('Error'), message.data.error);
@@ -207,13 +214,13 @@ export class EmailComponent implements OnDestroy {
                   self.checkForOauthCreds();
                 }
               }
-              window.removeEventListener("message", doAuth);
+              window.removeEventListener('message', doAuth);
             }
-          }
-        }
-      ]
+          },
+        },
+      ],
     },
-    { name: 'divider', divider: true }
+    { name: 'divider', divider: true },
   ]);
 
   protected dialogRef: any;
@@ -225,13 +232,12 @@ export class EmailComponent implements OnDestroy {
   private pass: FieldConfig;
 
   constructor(protected router: Router, protected rest: RestService,
-              protected ws: WebSocketService, protected _injector: Injector,
-              protected _appRef: ApplicationRef,private dialogservice: DialogService,
-              protected dialog: MatDialog, protected loader: AppLoaderService
-            ) {}
+    protected ws: WebSocketService, protected _injector: Injector,
+    protected _appRef: ApplicationRef, private dialogservice: DialogService,
+    protected dialog: MatDialog, protected loader: AppLoaderService) {}
 
-  resourceTransformIncomingRestData(data): void {
-    if(_.isEmpty(data.oauth)) {
+  resourceTransformIncomingRestData(data: any): void {
+    if (_.isEmpty(data.oauth)) {
       this.sendMailMethod.setValue(true);
     } else {
       this.sendMailMethod.setValue(false);
@@ -244,20 +250,19 @@ export class EmailComponent implements OnDestroy {
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     const payload = [];
-    payload.push("username");
-    payload.push("=");
-    payload.push("root");
-    this.ws.call('user.query', [[payload]]).subscribe((res)=>{
+    payload.push('username');
+    payload.push('=');
+    payload.push('root');
+    this.ws.call('user.query', [[payload]]).subscribe((res) => {
       this.rootEmail = res[0].email;
     });
     this.pass = this.fieldSets.config('pass');
     this.smtp = entityEdit.formGroup.controls['smtp'];
     this.sendMailMethod = entityEdit.formGroup.controls['send_mail_method'];
 
-    this.oauthCreds.subscribe(value => {
+    this.oauthCreds.subscribe((value) => {
       this.sendMailMethod.setValue(!value.client_id);
     });
-
 
     this.sendMailMethodSubscription = this.sendMailMethod.valueChanges.subscribe((value) => {
       this.toggleSmtpControls();
@@ -273,7 +278,7 @@ export class EmailComponent implements OnDestroy {
     });
     this.smtpSubscription = this.smtp.valueChanges.subscribe((value) => {
       this.toggleSmtpAuthControls();
-    })
+    });
   }
 
   checkForOauthCreds() {
@@ -303,7 +308,7 @@ export class EmailComponent implements OnDestroy {
     this.smtpSubscription.unsubscribe();
   }
 
-  saveConfigSubmit(emailConfig): void {
+  saveConfigSubmit(emailConfig: any): void {
     this.loader.open();
     const is_smtp_method = this.sendMailMethod.value;
 
@@ -311,7 +316,7 @@ export class EmailComponent implements OnDestroy {
       delete emailConfig.pass;
     }
     if (this.oauthCreds.getValue().client_id) {
-      let oauth = {
+      const oauth = {
         client_id: this.oauthCreds.getValue().client_id,
         client_secret: this.oauthCreds.getValue().client_secret,
         refresh_token: this.oauthCreds.getValue().refresh_token,
@@ -333,13 +338,12 @@ export class EmailComponent implements OnDestroy {
       this.oauthCreds.next({});
     }
 
-
     if (emailConfig.oauth_applied) {
-      delete emailConfig.oauth_applied
+      delete emailConfig.oauth_applied;
     }
 
     if (emailConfig.oauth_not_applied) {
-      delete emailConfig.oauth_not_applied
+      delete emailConfig.oauth_not_applied;
     }
 
     if (emailConfig.hasOwnProperty('send_mail_method')) {
@@ -353,11 +357,11 @@ export class EmailComponent implements OnDestroy {
           this.entityEdit.success = true;
           this.entityEdit.formGroup.markAsPristine();
         },
-        error => {
+        (error) => {
           this.loader.close();
-          new EntityUtils().handleWSError(this, error, this.dialogservice)
+          new EntityUtils().handleWSError(this, error, this.dialogservice);
         },
-        () => this.loader.close()
+        () => this.loader.close(),
       );
   }
 }

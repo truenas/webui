@@ -14,20 +14,20 @@ import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 
 @Component({
   selector: 'app-smart-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, EntityFormService],
 })
 export class SmartListComponent implements InputTableConf, OnDestroy {
-  public title = T('S.M.A.R.T. Tests');
-  public queryCall = 'smart.test.query';
-  public route_add: string[] = ['tasks', 'smart', 'add'];
-  public route_add_tooltip = 'Add S.M.A.R.T. Test';
-  public route_edit: string[] = ['tasks', 'smart', 'edit'];
-  public wsDelete = 'smart.test.delete';
-  public entityList: EntityTableComponent;
-  public parent: any;
+  title = T('S.M.A.R.T. Tests');
+  queryCall = 'smart.test.query';
+  route_add: string[] = ['tasks', 'smart', 'add'];
+  route_add_tooltip = 'Add S.M.A.R.T. Test';
+  route_edit: string[] = ['tasks', 'smart', 'edit'];
+  wsDelete = 'smart.test.delete';
+  entityList: EntityTableComponent;
+  parent: any;
 
-  public columns: Array<any> = [
+  columns: any[] = [
     {
       name: helptext.smartlist_column_disks,
       prop: 'disks',
@@ -41,8 +41,8 @@ export class SmartListComponent implements InputTableConf, OnDestroy {
     { name: helptext.smartlist_column_description, prop: 'desc' },
     { name: helptext.smartlist_column_schedule, prop: 'schedule' },
   ];
-  public rowIdentifier = 'type';
-  public config: any = {
+  rowIdentifier = 'type';
+  config: any = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -50,7 +50,7 @@ export class SmartListComponent implements InputTableConf, OnDestroy {
       key_props: ['type', 'desc'],
     },
   };
-  public listDisks = [];
+  listDisks: any[] = [];
   private disksSubscription: Subscription;
   private onModalClose: Subscription;
 
@@ -72,18 +72,16 @@ export class SmartListComponent implements InputTableConf, OnDestroy {
     this.entityList = entityList;
     this.onModalClose = this.modalService.onClose$.subscribe(() => {
       this.entityList.getData();
-    })
+    });
   }
 
-  resourceTransformIncomingRestData(data: any) {
+  resourceTransformIncomingRestData(data: any[]) {
     return data.map((test) => {
       test.schedule = `${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
       if (test.all_disks) {
         test.disks = [T('All Disks')];
       } else if (test.disks.length) {
-        const readableDisks = test.disks.map((disk) => {
-          return this.listDisks.find((item) => item.identifier === disk).devname;
-        });
+        const readableDisks = test.disks.map((disk: any) => this.listDisks.find((item) => item.identifier === disk).devname);
         test.disks = readableDisks;
       }
       return test;

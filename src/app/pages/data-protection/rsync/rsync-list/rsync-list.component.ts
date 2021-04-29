@@ -5,7 +5,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
-import { WebSocketService, DialogService, TaskService, JobService, UserService } from 'app/services';
+import {
+  WebSocketService, DialogService, TaskService, JobService, UserService,
+} from 'app/services';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { T } from 'app/translate-marker';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -14,25 +16,25 @@ import { RsyncFormComponent } from 'app/pages/data-protection/rsync/rsync-form/r
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityJob } from 'app/interfaces/entity-job.interface';
 import { EntityJobState } from 'app/enums/entity-job-state.enum';
-import { InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction, InputTableConf } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table';
 
 @Component({
   selector: 'app-rsync-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`,
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [TaskService, JobService, UserService, EntityFormService],
 })
 export class RsyncListComponent implements InputTableConf, OnDestroy {
-  public title = T('Rsync Tasks');
-  public queryCall = 'rsynctask.query';
-  public wsDelete = 'rsynctask.delete';
-  public route_add: string[] = ['tasks', 'rsync', 'add'];
-  public route_add_tooltip = 'Add Rsync Task';
-  public route_edit: string[] = ['tasks', 'rsync', 'edit'];
-  public entityList: EntityTableComponent;
-  public asyncView = true;
+  title = T('Rsync Tasks');
+  queryCall = 'rsynctask.query';
+  wsDelete = 'rsynctask.delete';
+  route_add: string[] = ['tasks', 'rsync', 'add'];
+  route_add_tooltip = 'Add Rsync Task';
+  route_edit: string[] = ['tasks', 'rsync', 'edit'];
+  entityList: EntityTableComponent;
+  asyncView = true;
 
-  public columns: Array<any> = [
+  columns: any[] = [
     { name: T('Path'), prop: 'path', always_display: true },
     { name: T('Remote Host'), prop: 'remotehost' },
     { name: T('Remote SSH Port'), prop: 'remoteport', hidden: true },
@@ -51,11 +53,13 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
     { name: T('Short Description'), prop: 'desc', hidden: true },
     { name: T('User'), prop: 'user' },
     { name: T('Delay Updates'), prop: 'delayupdates', hidden: true },
-    { name: T('Status'), prop: 'state', state: 'state', button: true },
+    {
+      name: T('Status'), prop: 'state', state: 'state', button: true,
+    },
     { name: T('Enabled'), prop: 'enabled', hidden: true },
   ];
-  public rowIdentifier = 'path';
-  public config: any = {
+  rowIdentifier = 'path';
+  config: any = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
@@ -85,15 +89,15 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
     });
   }
 
-  getActions(row) {
-    const actions = [];
+  getActions(row: any): any[] {
+    const actions: any[] = [];
     actions.push({
       id: row.path,
       icon: 'play_arrow',
       label: T('Run Now'),
       name: 'run',
-      onClick: (members) => {
-        this.dialog.confirm(T('Run Now'), T('Run this rsync now?'), true).subscribe((run) => {
+      onClick: () => {
+        this.dialog.confirm(T('Run Now'), T('Run this rsync now?'), true).subscribe((run: boolean) => {
           if (run) {
             row.state = { state: EntityJobState.Running };
             this.ws.call('rsynctask.run', [row.id]).subscribe(
@@ -132,7 +136,7 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
       icon: 'delete',
       name: 'delete',
       label: T('Delete'),
-      onClick: (task_delete) => {
+      onClick: () => {
         this.entityList.doDelete(row);
       },
     });
@@ -140,7 +144,7 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
     return actions;
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any[]) {
     return data.map((task) => {
       task.minute = task.schedule['minute'];
       task.hour = task.schedule['hour'];
@@ -167,7 +171,7 @@ export class RsyncListComponent implements InputTableConf, OnDestroy {
     this.stateButton(row);
   }
 
-  stateButton(row) {
+  stateButton(row: any) {
     if (row.job) {
       if (row.state.state === EntityJobState.Running) {
         this.entityList.runningStateButton(row.job.id);

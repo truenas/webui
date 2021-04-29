@@ -87,7 +87,7 @@
     </div>
   </mat-sidenav-content>
   <!-- Notificaation bar -->
-  <mat-sidenav #notificationPanel mode="over" class="" align="end" (open)="onOpenNotify($event)" (close)="onCloseNotify($event)" class="notification-sidenav" position="end">
+  <mat-sidenav #notificationPanel mode="over" class="" align="end" (open)="onOpenNotify()" (close)="onCloseNotify()" class="notification-sidenav" position="end">
     <div class="navigation-hold" fxLayout="column">
       <app-notifications [notificPanel]="notificationPanel"></app-notifications>
     </div>

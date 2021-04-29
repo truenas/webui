@@ -9,18 +9,18 @@ export default {
     system_select: {
       placeholder: T('Select Users Cached by this System'),
       tooltip: T('The list only shows users cached on this system. The search box \
-  below can locate all users, including users connected with Active Directory or other services.')
+  below can locate all users, including users connected with Active Directory or other services.'),
     },
     search: {
       placeholder: T('Search For Connected Users'),
       tooltip: T('Search for all connected users. \
  Type a user name and press <i>ENTER</i>. A warning is shown \
- if there are no matches.')
-            },
+ if there are no matches.'),
+    },
     data_quota: {
       placeholder: T('User Data Quota ') + globalHelptext.human_readable.suggestion_label,
       tooltip: T('Amount of disk space that can be used by the selected users. \
- Entering <code>0</code> (zero) allows all disk space to be used.') + globalHelptext.human_readable.suggestion_tooltip
+ Entering <code>0</code> (zero) allows all disk space to be used.') + globalHelptext.human_readable.suggestion_tooltip,
     },
     obj_quota: {
       placeholder: T('User Object Quota'),
@@ -40,8 +40,8 @@ export default {
       title: T('Edit User'),
       user: {
         placeholder: T('User'),
-      }
-    }
+      },
+    },
   },
 
   groups: {
@@ -51,18 +51,18 @@ export default {
     system_select: {
       placeholder: T('Select Groups Cached by this System'),
       tooltip: T('The list shows only groups cached on this system. The search box \
-  below can locate all groups, including groups connected with Active Directory or other services.')
+  below can locate all groups, including groups connected with Active Directory or other services.'),
     },
     search: {
       placeholder: T('Search For Connected Groups'),
       tooltip: T('Search for all connected groups. \
  Type a group name and press <i>ENTER</i>. A warning is shown \
- if there are no matches.')
-            },
+ if there are no matches.'),
+    },
     data_quota: {
       placeholder: T('Group Data Quota ') + globalHelptext.human_readable.suggestion_label,
       tooltip: T('Amount of disk space that can be used by the selected groups. \
- Entering <code>0</code> (zero) allows all disk space.') + globalHelptext.human_readable.suggestion_tooltip
+ Entering <code>0</code> (zero) allows all disk space.') + globalHelptext.human_readable.suggestion_tooltip,
     },
     obj_quota: {
       placeholder: T('Group Object Quota'),
@@ -82,14 +82,14 @@ export default {
       title: T('Edit Group'),
       group: {
         placeholder: T('Group'),
-      }
-    }
+      },
+    },
   },
 
   shared: {
-      input_error: globalHelptext.human_readable.input_error,
-      set: T('Set Quota'),
-      cancel: T('Cancel'),
-      nameErr: T('Name not found')
-  }
-  }
+    input_error: globalHelptext.human_readable.input_error,
+    set: T('Set Quota'),
+    cancel: T('Cancel'),
+    nameErr: T('Name not found'),
+  },
+};

@@ -1,1 +1,1 @@
-export {FailoverComponent} from './failover.component';
+export { FailoverComponent } from './failover.component';
