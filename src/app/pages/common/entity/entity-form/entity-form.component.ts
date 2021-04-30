@@ -80,8 +80,6 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   @ViewChildren('component') components: any[];
 
-  busy: Subscription;
-
   sub: any;
   error: string;
   success = false;
@@ -469,11 +467,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
 
     if (this.conf.customSubmit) {
-      this.busy = this.conf.customSubmit(value);
+      this.conf.customSubmit(value);
     } else {
       this.loader.open();
       this.loaderOpen = true;
-      this.busy = this.submitFunction(value)
+      this.submitFunction(value)
         .subscribe(
           (res) => {
             this.loader.close();
@@ -615,13 +613,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
 
     data.forEach((value, index) => {
-      if (this.conf.initialCount.hasOwnProperty(name)) {
-        this.conf.initialCount[name] += 1;
-        this.conf.initialCount_default[name] += 1;
-      } else {
-        this.conf.initialCount += 1;
-        this.conf.initialCount_default += 1;
-      }
+      this.conf.initialCount += 1;
+      this.conf.initialCount_default += 1;
 
       const formGroup = this.entityFormService.createFormGroup(array_controls);
       for (const i in value) {

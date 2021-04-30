@@ -276,7 +276,8 @@ export class ChartReleasesComponent implements OnInit {
                 if (chart.used_ports) {
                   chart.used_ports.forEach((item: any) => {
                     ports.push(`${item.port}\\${item.protocol}`);
-                  })(chartObj as any)['used_ports'] = ports.join(', ');
+                  });
+                  (chartObj as any)['used_ports'] = ports.join(', ');
                   this.chartItems[chartObj.name] = chartObj;
                 }
               });

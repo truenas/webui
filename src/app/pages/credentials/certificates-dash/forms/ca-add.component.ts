@@ -5,23 +5,20 @@ import { helptext_system_ca } from 'app/helptext/system/ca';
 import * as _ from 'lodash';
 import { SystemGeneralService, WebSocketService } from '../../../../services';
 import { ModalService } from 'app/services/modal.service';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../services/dialog.service';
 import { T } from '../../../../translate-marker';
 
 import { Wizard } from '../../../common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from '../../../common/entity/entity-wizard/entity-wizard.component';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'system-ca-add',
-  template: '<entity-form [conf]="this"></entity-form>',
+  template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers: [SystemGeneralService],
 })
 
-export class CertificateAuthorityAddComponent implements FormConfiguration {
+export class CertificateAuthorityAddComponent {
   protected addWsCall = 'certificateauthority.create';
   isEntity = true;
   title: string;

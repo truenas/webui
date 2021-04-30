@@ -7,8 +7,6 @@ import * as _ from 'lodash';
 import { SystemGeneralService, WebSocketService } from '../../../../services';
 import { ModalService } from 'app/services/modal.service';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { helptext_system_ca } from 'app/helptext/system/ca';
@@ -19,15 +17,14 @@ import { EntityWizardComponent } from '../../../common/entity/entity-wizard/enti
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 import { DialogService } from '../../../../services/dialog.service';
 import { T } from '../../../../translate-marker';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 
 @Component({
   selector: 'system-certificate-add',
-  template: '<entity-form [conf]="this"></entity-form>',
+  template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers: [SystemGeneralService],
 })
 
-export class CertificateAddComponent implements FormConfiguration {
+export class CertificateAddComponent {
   protected addWsCall = 'certificate.create';
   protected dialogRef: any;
   private entityForm: any;
