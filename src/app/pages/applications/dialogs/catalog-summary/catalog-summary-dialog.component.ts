@@ -1,7 +1,9 @@
-import { OnInit, Component, ViewEncapsulation, Inject } from '@angular/core';
+import {
+  OnInit, Component, ViewEncapsulation, Inject,
+} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ApplicationsService } from '../../applications.service';
-import  helptext  from '../../../../helptext/apps/apps';
+import helptext from '../../../../helptext/apps/apps';
 import { LocaleService } from 'app/services/locale.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
@@ -13,18 +15,19 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 })
 
 export class CatalogSummaryDialog implements OnInit {
-  public catalogApp: any;
-  public statusOptions: string[] = ['All', 'Healthy', 'Unhealthy'];
+  catalogApp: any;
+  statusOptions: string[] = ['All', 'Healthy', 'Unhealthy'];
   helptext = helptext;
-  public selectedStatus: string = this.statusOptions[0];
-  public filteredVersions: object;
-  
+  selectedStatus: string = this.statusOptions[0];
+  filteredVersions: any;
+
   constructor(
     public dialogRef: MatDialogRef<CatalogSummaryDialog>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     protected localeService: LocaleService,
-    private loader:AppLoaderService,
-    private appService: ApplicationsService) { 
+    private loader: AppLoaderService,
+    private appService: ApplicationsService,
+  ) {
     this.catalogApp = data;
   }
 
@@ -34,7 +37,7 @@ export class CatalogSummaryDialog implements OnInit {
 
   onStatusOptionChanged() {
     this.filteredVersions = {};
-    Object.keys(this.catalogApp.versions).forEach(key => {
+    Object.keys(this.catalogApp.versions).forEach((key) => {
       const version = this.catalogApp.versions[key];
       if (this.selectedStatus == this.statusOptions[0] || this.selectedStatus == this.statusOptions[1] && version.healthy || this.selectedStatus == this.statusOptions[2] && !version.healthy) {
         this.filteredVersions[key] = version;
@@ -46,13 +49,13 @@ export class CatalogSummaryDialog implements OnInit {
     return Object.keys(this.filteredVersions).length > 0;
   }
 
-  versionStatusLabel(version) {
+  versionStatusLabel(version: any) {
     let label = '';
     if (this.selectedStatus == this.statusOptions[0]) {
       if (version.value.healthy) {
-        label += "(Healthy)";
+        label += '(Healthy)';
       } else {
-        label += "(Unhealthy)";
+        label += '(Unhealthy)';
       }
     }
 

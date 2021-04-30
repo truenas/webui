@@ -1,5 +1,6 @@
 import { Component, ViewContainerRef, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { MatSliderChange } from '@angular/material/slider/slider';
 import { TranslateService } from '@ngx-translate/core';
 
 import { FieldConfig } from '../../models/field-config.interface';
@@ -15,7 +16,7 @@ export class FormSliderComponent implements Field, OnInit {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
-  public value: any;
+  value: any;
 
   constructor(public translate: TranslateService) {}
 
@@ -23,10 +24,10 @@ export class FormSliderComponent implements Field, OnInit {
     this.value = this.config.min;
     this.group.controls[this.config.name].valueChanges.subscribe((res) => {
       this.value = res;
-    })
+    });
   }
 
-  updateValue($event) {
+  updateValue($event: MatSliderChange) {
     this.value = $event.value;
   }
 }

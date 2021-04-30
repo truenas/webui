@@ -1,9 +1,13 @@
-import { Component, Input, OnInit, AfterContentInit, OnChanges, SimpleChanges, ViewChild, ElementRef, NgZone, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import {
+  Component, Input, OnInit, AfterContentInit, OnChanges, SimpleChanges, ViewChild, ElementRef, NgZone, OnDestroy, ChangeDetectorRef,
+} from '@angular/core';
 import { FlexLayoutModule, MediaObserver } from '@angular/flex-layout';
 import { MaterialModule } from 'app/appMaterial.module';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { ThemeUtils } from 'app/core/classes/theme-utils';
-import { Application, Container, extras, Text, DisplayObject, Graphics, Sprite, Texture, utils} from 'pixi.js';
+import {
+  Application, Container, extras, Text, DisplayObject, Graphics, Sprite, Texture, utils,
+} from 'pixi.js';
 import 'pixi-projection';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import { DriveTray } from 'app/core/classes/hardware/drivetray';
@@ -21,145 +25,152 @@ import { DiskComponent } from './components/disk.component';
 import { TabContentComponent } from './components/tab-content/tab-content.component';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
 import { ErrorMessage } from 'app/core/classes/ix-interfaces';
-import { tween, easing, styler, value, keyframes } from 'popmotion';
+import {
+  tween, easing, styler, value, keyframes,
+} from 'popmotion';
 import { Subject } from 'rxjs';
 import { ExampleData } from './example-data';
-import { DomSanitizer } from "@angular/platform-browser";
+import { DomSanitizer } from '@angular/platform-browser';
 import { Temperature } from 'app/core/services/disk-temperature.service';
 import { DialogService } from 'app/services/dialog.service';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { T } from '../../../../translate-marker';
 
+export enum EnclosureLocation {
+  Front = 'front',
+  Rear = 'rear',
+  Internal = 'internal',
+}
+
 export interface DiskFailure {
   disk: string;
   enclosure: number;
   slot: number;
-  location: string; // front || rear || internal;
+  location: EnclosureLocation;
   reasons?: string[];
 }
 
 @Component({
   selector: 'enclosure-disks',
   templateUrl: './enclosure-disks.component.html',
-  styleUrls: ['./enclosure-disks.component.css']
+  styleUrls: ['./enclosure-disks.component.css'],
 })
 
 export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnDestroy {
-
-  protected pendingDialog:any;
-  protected aborted: boolean = false;
-  private mediaObs;
-  public mqAlias: string;
-  @ViewChild('visualizer', { static: true}) visualizer: ElementRef;
-  @ViewChild('disksoverview', { static: true}) overview: ElementRef;
-  @ViewChild('diskdetails', { static: false}) details: ElementRef;
-  @ViewChild('domLabels', { static: false}) domLabels: ElementRef;
+  protected pendingDialog: any;
+  protected aborted = false;
+  // private mediaObs;
+  mqAlias: string;
+  @ViewChild('visualizer', { static: true }) visualizer: ElementRef;
+  @ViewChild('disksoverview', { static: true }) overview: ElementRef;
+  @ViewChild('diskdetails', { static: false }) details: ElementRef;
+  @ViewChild('domLabels', { static: false }) domLabels: ElementRef;
   @Input('system-profiler') system: SystemProfiler;
   @Input('selected-enclosure') selectedEnclosure: any;
   @Input('current-tab') currentTab: any;
-  @Input('controller-events') controllerEvents:Subject<CoreEvent>;
-  public app;
-  private renderer;
+  @Input('controller-events') controllerEvents: Subject<CoreEvent>;
+  app: Application;
+  private renderer: any;
   private loader = PIXI.loader;
   private resources = PIXI.loader.resources;
-  public container;
-  public system_product: string = 'unknown';
-  public failedDisks: DiskFailure[] = [];
-  public subenclosure: any; // Declare rear and internal enclosure visualizations here
+  container: Container;
+  system_product = 'unknown';
+  failedDisks: DiskFailure[] = [];
+  subenclosure: any; // Declare rear and internal enclosure visualizations here
 
-  public chassis: Chassis;
-  public view: string = "front"; // front || rear || internal
+  chassis: Chassis;
+  view: EnclosureLocation = EnclosureLocation.Front;
   protected _enclosure: ChassisView; // Visualization
-  get enclosure(){
-    return this.chassis ? this.chassis[this.view] : null;
+  get enclosure() {
+    if (!this.chassis) return null;
+
+    const chassisView: ChassisView = this.view == 'rear' ? this.chassis.rear : this.chassis.front;
+    return chassisView;
   }
 
   private _expanders: any[] = [];
-  get expanders () {
-    if(!this.system.platform.includes('MINI') && this.system.enclosures && this.selectedEnclosure.disks[0]){
-      let enclosureNumber =  Number(this.selectedEnclosure.disks[0].enclosure.number);
+  get expanders() {
+    if (!this.system.platform.includes('MINI') && this.system.enclosures && this.selectedEnclosure.disks[0]) {
+      const enclosureNumber = Number(this.selectedEnclosure.disks[0].enclosure.number);
       return this.system.getEnclosureExpanders(enclosureNumber);
-    } else {
-      return this._expanders;
     }
+    return this._expanders;
   }
 
   private _unhealthyPools: string[] = [];
-  get unhealthyPools(){
+  get unhealthyPools() {
     const sickPools = this.getUnhealthyPools();
     return sickPools;
   }
 
   private _selectedVdev: any;
-  get selectedVdev(){
+  get selectedVdev() {
     return this._selectedVdev;
   }
   set selectedVdev(value) {
     this._selectedVdev = value;
-    let disks = value && value.disks ? Object.keys(this.selectedVdev.disks) : null;
+    const disks = value && value.disks ? Object.keys(this.selectedVdev.disks) : null;
 
     // Sort the disks by slot number
-    if(disks && disks.length > 1) {
-      disks.sort((a,b) => {
-        return value.slots[a] - value.slots[b];
-      })
-    } 
+    if (disks && disks.length > 1) {
+      disks.sort((a, b) => value.slots[a] - value.slots[b]);
+    }
     this.selectedVdevDisks = disks;
-    
   }
 
-  get enclosurePools(){
+  get enclosurePools() {
     return Object.keys(this.subenclosure ? this.subenclosure.poolKeys : this.selectedEnclosure.poolKeys);
   }
 
-  public selectedVdevDisks: string[];
-  public selectedDisk: any;
+  selectedVdevDisks: string[];
+  selectedDisk: any;
 
-  public theme: any;
+  theme: any;
   protected themeUtils: ThemeUtils;
-  public currentView: string; // pools || status || expanders || details
-  public exitingView: string; // pools || status || expanders || details
+  currentView: string; // pools || status || expanders || details
+  exitingView: string; // pools || status || expanders || details
   private defaultView = 'pools';
   private labels: VDevLabelsSVG;
   private identifyBtnRef: any;
-  protected maxCardWidth:number = 960;
-  protected pixiWidth: number = 960;
-  protected pixiHeight: number = 304;
-  protected temperatures?:Temperature;
-  
-  get cardWidth(){
+  protected maxCardWidth = 960;
+  protected pixiWidth = 960;
+  protected pixiHeight = 304;
+  protected temperatures?: Temperature;
+
+  readonly EnclosureLocation = EnclosureLocation;
+
+  get cardWidth() {
     return this.overview.nativeElement.offsetWidth;
   }
- 
-  get cardScale(){
+
+  get cardScale() {
     const scale = this.cardWidth / this.maxCardWidth;
     return scale > 1 ? 1 : scale;
   }
 
-  public scaleArgs: string;
- 
+  scaleArgs: string;
 
   constructor(
-    public el:ElementRef, 
-    protected core: CoreService, 
-    public sanitizer: DomSanitizer,  
-    public mediaObserver: MediaObserver, 
+    public el: ElementRef,
+    protected core: CoreService,
+    public sanitizer: DomSanitizer,
+    public mediaObserver: MediaObserver,
     public cdr: ChangeDetectorRef,
     public dialogService: DialogService,
-  ){
-    
+  ) {
     this.themeUtils = new ThemeUtils();
 
-    core.register({observerClass: this, eventName: 'DiskTemperatures'}).subscribe((evt:CoreEvent) => {
-      if(!this.chassis || !this.chassis[this.view] || !this.chassis[this.view].driveTrayObjects){ return; }
+    core.register({ observerClass: this, eventName: 'DiskTemperatures' }).subscribe((evt: CoreEvent) => {
+      const chassisView = this.view == 'rear' ? this.chassis.rear : this.chassis.front;
+      if (!this.chassis || !chassisView || !chassisView.driveTrayObjects) { return; }
 
-      let clone: Temperature = Object.assign({}, evt.data);
+      const clone: Temperature = { ...evt.data };
       clone.values = {};
       clone.keys = [];
 
-      this.chassis[this.view].driveTrayObjects.forEach((dt, index) => {
+      chassisView.driveTrayObjects.forEach((dt: any, index: number) => {
         const disk = this.findDiskBySlotNumber(parseInt(dt.id));
-        if(disk){
+        if (disk) {
           clone.keys.push(disk.name);
           clone.values[disk.name] = evt.data.values[disk.name];
         }
@@ -167,60 +178,57 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
       this.temperatures = clone;
     });
-    core.emit({name:"DiskTemperaturesSubscribe", sender:this});
+    core.emit({ name: 'DiskTemperaturesSubscribe', sender: this });
 
-    core.register({observerClass: this, eventName: 'DisksChanged'}).subscribe((evt:CoreEvent) => {
-      // REACT TO EVENT PROVIDED BY DISK.QUERY
-    });
-
-    core.register({observerClass: this, eventName: 'MediaChange'}).subscribe((evt:CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'MediaChange' }).subscribe((evt: CoreEvent) => {
       this.mqAlias = evt.data.mqAlias;
-     
-      if(evt.data.mqAlias == 'xs' || evt.data.mqAlias == 'sm' || evt.data.mqAlias == 'md'){
-        core.emit({name: 'ForceSidenav', data: 'close', sender: this});
+
+      if (evt.data.mqAlias == 'xs' || evt.data.mqAlias == 'sm' || evt.data.mqAlias == 'md') {
+        core.emit({ name: 'ForceSidenav', data: 'close', sender: this });
         this.resizeView();
       } else {
-        core.emit({name: 'ForceSidenav', data: 'open', sender: this});
+        core.emit({ name: 'ForceSidenav', data: 'open', sender: this });
       }
 
       this.resizeView();
-
     });
 
-    core.register({observerClass: this, eventName: 'ThemeData'}).subscribe((evt:CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'ThemeData' }).subscribe((evt: CoreEvent) => {
       this.theme = evt.data;
     });
 
-    core.register({observerClass: this, eventName: 'ThemeChanged'}).subscribe((evt:CoreEvent) => {
-      if(this.theme == evt.data){ return; }
+    core.register({ observerClass: this, eventName: 'ThemeChanged' }).subscribe((evt: CoreEvent) => {
+      if (this.theme == evt.data) { return; }
       this.theme = evt.data;
       this.setCurrentView(this.currentView);
-      if(this.labels && this.labels.events){
+      if (this.labels && this.labels.events) {
         this.labels.events.next(evt);
       }
       this.optimizeChassisOpacity();
     });
 
-    core.emit({name: 'ThemeDataRequest', sender: this});
-
+    core.emit({ name: 'ThemeDataRequest', sender: this });
   }
 
-  clearDisk(){
+  clearDisk() {
     this.setCurrentView(this.defaultView);
   }
 
   ngAfterContentInit() {
-
-    this.controllerEvents.subscribe((evt:CoreEvent) => {
-      switch(evt.name){
-        case "CanvasExtract":
+    this.controllerEvents.subscribe((evt: CoreEvent) => {
+      switch (evt.name) {
+        case 'CanvasExtract':
           this.createExtractedEnclosure(evt.data);
           break;
-        case "EnclosureLabelChanged":
-          if(this.pendingDialog !== undefined){
+        case 'EnclosureLabelChanged':
+          if (this.pendingDialog !== undefined) {
             this.pendingDialog.loader.close();
             this.pendingDialog.dialogRef.close();
           }
+          break;
+        case 'PoolsChanged':
+          this.setDisksEnabledState();
+          this.setCurrentView(this.defaultView);
           break;
       }
     });
@@ -228,15 +236,14 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.pixiInit();
 
     // Listen for DOM changes to avoid race conditions with animations
-    let callback = (mutationList, observer) => {
-      mutationList.forEach((mutation) => {
-
-        switch(mutation.type) {
+    const callback = (mutationList: any[], observer: any) => {
+      mutationList.forEach((mutation: any) => {
+        switch (mutation.type) {
           case 'childList':
             /* One or more children have been added to and/or removed
                from the tree; see mutation.addedNodes and
                mutation.removedNodes */
-            if(!mutation.addedNodes[0] || !mutation.addedNodes[0].classList || mutation.addedNodes.length == 0 || mutation.addedNodes[0].classList.length == 0){
+            if (!mutation.addedNodes[0] || !mutation.addedNodes[0].classList || mutation.addedNodes.length == 0 || mutation.addedNodes[0].classList.length == 0) {
               break;
             }
             const fullStage: boolean = mutation.addedNodes[0].classList.contains('full-stage');
@@ -244,11 +251,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
             const stageRight: boolean = mutation.addedNodes[0].classList.contains('stage-right');
             const vdevLabels: boolean = mutation.addedNodes[0].classList.contains('vdev-disk');
             const canvasClickpad: boolean = mutation.addedNodes[0].classList.contains('clickpad');
-            if(stageLeft){
+            if (stageLeft) {
               this.enter('stage-left'); // View has changed so we launch transition animations
-            } else if(stageRight){
+            } else if (stageRight) {
               this.enter('stage-right'); // View has changed so we launch transition animations
-            }  else if(fullStage){
+            } else if (fullStage) {
               this.enter('full-stage'); // View has changed so we launch transition animations
             }
             break;
@@ -259,89 +266,88 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
                mutation.oldValue */
 
             const diskName: boolean = mutation.target.classList.contains('disk-name');
-        
-            if(diskName && this.currentView == 'details' && this.exitingView == 'details'){
+
+            if (diskName && this.currentView == 'details' && this.exitingView == 'details') {
               this.update('stage-right'); // View has changed so we launch transition animations
               this.update('stage-left'); // View has changed so we launch transition animations
-              this.labels.events.next({name:"OverlayReady", data: {vdev: this.selectedVdev, overlay:this.domLabels}, sender: this});
+              this.labels.events.next({ name: 'OverlayReady', data: { vdev: this.selectedVdev, overlay: this.domLabels }, sender: this });
             }
             break;
         }
       });
-      
-    }
+    };
 
     const observerOptions = {
       childList: true,
       attributes: true,
-      subtree: true //Omit or set to false to observe only changes to the parent node.
-    }
-    
+      subtree: true, // Omit or set to false to observe only changes to the parent node.
+    };
+
     const domChanges = new MutationObserver(callback);
     domChanges.observe(this.overview.nativeElement, observerOptions);
-
   }
 
-  ngOnChanges(changes:SimpleChanges){
-    if(changes.selectedEnclosure){
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.selectedEnclosure) {
       // Enabled subenclosure functionality
       this.subenclosure = changes.selectedEnclosure.currentValue.enclosureKey == this.system.headIndex && this.system.rearIndex ? changes.selectedEnclosure.currentValue : undefined;
-      this.loadEnclosure(changes.selectedEnclosure.currentValue, 'front');
+      this.loadEnclosure(changes.selectedEnclosure.currentValue, EnclosureLocation.Front);
     }
   }
 
-  ngOnDestroy(){
-    this.core.emit({name:"DiskTemperaturesUnsubscribe", sender:this})
-    this.core.unregister({observerClass: this});
+  ngOnDestroy() {
+    this.core.emit({ name: 'DiskTemperaturesUnsubscribe', sender: this });
+    this.core.unregister({ observerClass: this });
     this.destroyAllEnclosures();
     this.app.stage.destroy(true);
-    this.app.destroy(true, true); 
-    //this.mediaObs.unsubscribe();
+    this.app.destroy(true, true);
+    // this.mediaObs.unsubscribe();
   }
 
-  loadEnclosure(enclosure, view?:string){
-      this.destroyEnclosure();
+  loadEnclosure(enclosure: any, view?: EnclosureLocation, update?: boolean) {
+    this.destroyEnclosure();
 
-      if(view){
-        this.view = view;
+    if (view) {
+      this.view = view;
+    }
+
+    if (this.system && this.selectedEnclosure) {
+      this.getDiskFailures();
+    }
+
+    if (this.enclosure) {
+      this.exitingView = this.currentView;
+      this.currentView = this.defaultView;
+      if (this.exitingView == 'details') {
+        this.labels.exit();
+        if (this.identifyBtnRef) {
+          this.toggleSlotStatus(true);
+          this.radiate(true);
+        }
+        this.exit('stage-left');
+        this.exit('stage-right');
+      } else if (this.exitingView == 'expanders') {
+        this.exit('full-stage');
       }
 
-      if(this.system && this.selectedEnclosure){
-        this.getDiskFailures();
+      if (update) {
+        this.createEnclosure(enclosure);
       }
-
-      if(this.enclosure){ 
-        
-        this.exitingView = this.currentView;
-        this.currentView = this.defaultView;
-        if(this.exitingView == 'details'){
-          this.labels.exit();
-          if(this.identifyBtnRef){
-            this.toggleSlotStatus(true);
-            this.radiate(true);
-          }
-          this.exit('stage-left');
-          this.exit('stage-right');
-        } else if (this.exitingView == 'expanders'){
-          this.exit('full-stage');
-        } 
-          
-        this.createEnclosure(enclosure); 
-      }
+    }
   }
 
-  pixiInit(){
-      PIXI.settings.PRECISION_FRAGMENT = 'highp'; //this makes text looks better? Answer = NO
-      PIXI.settings.SPRITE_MAX_TEXTURES = Math.min(PIXI.settings.SPRITE_MAX_TEXTURES , 16);// Fixes FireFox gl errors
-      PIXI.utils.skipHello();
-      this.app = new PIXI.Application({
-        width: this.pixiWidth,  //960 ,
-        height: this.pixiHeight, //304 ,
-        forceCanvas:false,
-        transparent:true,
-        antialias:true,
-        autoStart:true,
-      });
+  pixiInit() {
+    PIXI.settings.PRECISION_FRAGMENT = 'highp'; // this makes text looks better? Answer = NO
+    PIXI.settings.SPRITE_MAX_TEXTURES = Math.min(PIXI.settings.SPRITE_MAX_TEXTURES, 16);// Fixes FireFox gl errors
+    PIXI.utils.skipHello();
+    this.app = new PIXI.Application({
+      width: this.pixiWidth, // 960 ,
+      height: this.pixiHeight, // 304 ,
+      forceCanvas: false,
+      transparent: true,
+      antialias: true,
+      autoStart: true,
+    });
 
     this.renderer = this.app.renderer;
 
@@ -349,192 +355,193 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.visualizer.nativeElement.appendChild(this.app.view);
 
     this.container = new PIXI.Container();
-    this.container.name = "top_level_container";
-    this.app.stage.name = "stage_container";
+    this.container.name = 'top_level_container';
+    this.app.stage.name = 'stage_container';
     this.app.stage.addChild(this.container);
     this.container.width = this.app.stage.width;
     this.container.height = this.app.stage.height;
 
     this.createEnclosure();
-    this.controllerEvents.next({name:"VisualizerReady", sender:this});
+    this.controllerEvents.next({ name: 'VisualizerReady', sender: this });
   }
 
-  createEnclosure(profile:any = this.selectedEnclosure){
+  createEnclosure(profile: any = this.selectedEnclosure) {
     const enclosure = this.system.enclosures[profile.enclosureKey];
-    switch(enclosure.model){
-      case "M Series":
+    switch (enclosure.model) {
+      case 'M Series':
         this.chassis = new M50();
         break;
-      case "M Series Rear Bays":
+      case 'M Series Rear Bays':
         this.chassis = new M50Rear();
         break;
-      case "X Series":
+      case 'X Series':
       case 'ES12':
         this.chassis = new ES12();
         break;
-      case "Z Series":
-      case "TRUENAS-Z20-HA-D":
+      case 'Z Series':
+      case 'TRUENAS-Z20-HA-D':
       case 'E16':
         this.chassis = new E16();
-      break;
-      case "ES24":
+        break;
+      case 'ES24':
         this.chassis = new ES24();
         break;
-      case "E24":
+      case 'E24':
         this.chassis = new E24();
         break;
-      case "ES60":
+      case 'ES60':
         this.chassis = new ES60();
         break;
-      case "E60":
+      case 'E60':
         this.chassis = new E60();
         break;
       default:
         this.controllerEvents.next({
-          name: 'Error', 
-          data: { 
-            name: 'Unsupported Hardware', 
-            message: 'This chassis has an unknown or missing model value. (METHOD: createEnclosure)'
-          }
+          name: 'Error',
+          data: {
+            name: 'Unsupported Hardware',
+            message: 'This chassis has an unknown or missing model value. (METHOD: createEnclosure)',
+          },
         });
         this.aborted = true;
     }
-    if(this.aborted){
+    if (this.aborted) {
       return;
     }
 
     this.setupEnclosureEvents(enclosure);
   }
-  
-  setupEnclosureEvents(enclosure){
+
+  setupEnclosureEvents(enclosure: any) {
     this.enclosure.events.subscribe((evt) => {
-      switch(evt.name){
-        case "Ready":
+      switch (evt.name) {
+        case 'Ready':
           this.container.addChild(this.enclosure.container);
           this.enclosure.container.name = this.enclosure.model;
           this.enclosure.container.width = this.enclosure.container.width / 2;
           this.enclosure.container.height = this.enclosure.container.height / 2;
-          this.enclosure.container.x = this.app._options.width / 2 - this.enclosure.container.width / 2;
-          this.enclosure.container.y = this.app._options.height / 2 - this.enclosure.container.height / 2;
-          
+
+          this.enclosure.container.x = this.pixiWidth / 2 - this.enclosure.container.width / 2;
+          this.enclosure.container.y = this.pixiHeight / 2 - this.enclosure.container.height / 2;
+
           this.setDisksEnabledState();
           this.setCurrentView(this.defaultView);
-          
+
           this.optimizeChassisOpacity();
-          
-        break;
-        case "DriveSelected":
-          if(this.identifyBtnRef){
+
+          break;
+        case 'DriveSelected':
+          if (this.identifyBtnRef) {
             this.toggleSlotStatus(true);
             this.radiate(true);
           }
 
-          let disk = this.findDiskBySlotNumber( parseInt(evt.data.id) );
-          if(disk == this.selectedDisk){break} // Don't trigger any changes if the same disk is selected
+          const disk = this.findDiskBySlotNumber(parseInt(evt.data.id));
+          if (disk == this.selectedDisk) { break; } // Don't trigger any changes if the same disk is selected
 
-          if(evt.data.enabled){
+          if (evt.data.enabled) {
             this.selectedDisk = disk;
             this.setCurrentView('details');
           }
-        break;
+          break;
       }
     });
 
-    if(!this.resources[this.enclosure.model]){
+    if (!this.resources[this.enclosure.model]) {
       this.enclosure.load();
     } else {
-      this.onImport(); 
+      this.onImport();
     }
   }
 
-  createExtractedEnclosure(profile){
+  createExtractedEnclosure(profile: any) {
     const raw_enclosure = this.system.enclosures[profile.enclosureKey];
-    let chassis;
-    let enclosure;
-    switch(raw_enclosure.model){
-      case "M Series":
+    let chassis: Chassis;
+
+    switch (raw_enclosure.model) {
+      case 'M Series':
         chassis = new M50();
         break;
-      case "X Series":
+      case 'X Series':
       case 'ES12':
         chassis = new ES12();
         break;
-      case "Z Series":
-      case "TRUENAS-Z20-HA-D":
+      case 'Z Series':
+      case 'TRUENAS-Z20-HA-D':
       case 'E16':
         chassis = new E16();
         break;
-      case "E24":
+      case 'E24':
         chassis = new E24();
         break;
-      case "ES24":
+      case 'ES24':
         chassis = new ES24();
         break;
-      case "ES60":
+      case 'ES60':
         chassis = new ES60();
         break;
-      case "E60":
+      case 'E60':
         chassis = new E60();
         break;
       default:
-          this.controllerEvents.next({
-            name: 'Error', 
-            data: { 
-              name: 'Unsupported Hardware', 
-              message: 'This chassis has an unknown or missing model value. (METHOD: createExtractedEnclosure)'
-            }
-          });
-          this.aborted = true;
-      }
+        this.controllerEvents.next({
+          name: 'Error',
+          data: {
+            name: 'Unsupported Hardware',
+            message: 'This chassis has an unknown or missing model value. (METHOD: createExtractedEnclosure)',
+          },
+        });
+        this.aborted = true;
+    }
 
-    if(this.aborted){
+    if (this.aborted) {
       return;
     }
-    
-    enclosure = chassis.front;
-    
+
+    const enclosure: ChassisView = chassis.front;
+
     enclosure.events.subscribe((evt) => {
-      switch(evt.name){
-        case "Ready":
+      switch (evt.name) {
+        case 'Ready':
           this.container.addChild(enclosure.container);
-          enclosure.container.name = enclosure.model + "_for_extraction";
+          enclosure.container.name = enclosure.model + '_for_extraction';
           enclosure.container.width = enclosure.container.width / 2;
           enclosure.container.height = enclosure.container.height / 2;
-          enclosure.container.x = 0; //this.app._options.width / 2 - enclosure.container.width / 2;
-          enclosure.container.y = 0; //this.app._options.height / 2 - enclosure.container.height / 2;
-          //enclosure.chassis.alpha = 0.75;
-          //enclosure.chassis.alpha = 0.35;
+
+          enclosure.container.x = this.pixiWidth / 2 - enclosure.container.width / 2;
+          enclosure.container.y = this.pixiHeight / 2 - enclosure.container.height / 2;
+
           this.optimizeChassisOpacity(enclosure);
 
-          profile.disks.forEach((disk, index) =>{
+          profile.disks.forEach((disk: any, index: number) => {
             this.setDiskHealthState(disk, enclosure);
           });
           this.extractEnclosure(enclosure, profile);
-          
-        break;
+
+          break;
       }
     });
 
     enclosure.load();
   }
 
-  extractEnclosure(enclosure, profile){
-    //let extractor = new PIXI.extract.CanvasExtract(this.renderer);
-    let canvas = this.app.renderer.plugins.extract.canvas(enclosure.container)
-    this.controllerEvents.next({name:"EnclosureCanvas", data:{canvas:canvas, profile: profile}, sender:this});
+  extractEnclosure(enclosure: ChassisView, profile: any) {
+    // let extractor = new PIXI.extract.CanvasExtract(this.renderer);
+    const canvas = this.app.renderer.plugins.extract.canvas(enclosure.container);
+    this.controllerEvents.next({ name: 'EnclosureCanvas', data: { canvas, profile }, sender: this });
     this.container.removeChild(enclosure.container);
-    //delete enclosure;
+    // delete enclosure;
   }
 
-  destroyEnclosure(){
-    if(!this.enclosure){return; }
-    this.enclosure.events.unsubscribe()
+  destroyEnclosure() {
+    if (!this.enclosure) { return; }
+    this.enclosure.events.unsubscribe();
     this.container.removeChild(this.enclosure.container);
     this.enclosure.destroy();
   }
 
-  destroyAllEnclosures(){
-    if(this.enclosure){
+  destroyAllEnclosures() {
+    if (this.enclosure) {
       // Clear out assets
       this.enclosure.destroy();
     }
@@ -542,308 +549,303 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     PIXI.loader.resources = {};
   }
 
-  makeDriveTray():DriveTray{
-    let dt = this.enclosure.makeDriveTray();
+  makeDriveTray(): DriveTray {
+    const dt = this.enclosure.makeDriveTray();
     return dt;
   }
 
-  onImport(){
-    let sprite = PIXI.Sprite.from(this.enclosure.loader.resources.m50.texture.baseTexture);
+  onImport() {
+    const sprite = PIXI.Sprite.from(this.enclosure.loader.resources.m50.texture.baseTexture);
     sprite.x = 0;
     sprite.y = 0;
-    sprite.name=this.enclosure.model + "_sprite"
+    sprite.name = this.enclosure.model + '_sprite';
     sprite.alpha = 0.1;
     this.container.addChild(sprite);
 
-    let dt = this.enclosure.makeDriveTray();
+    const dt = this.enclosure.makeDriveTray();
     this.container.addChild(dt.container);
     this.setCurrentView(this.defaultView);
-    
   }
 
-  setCurrentView(opt: string){
-    if(this.currentView){ this.exitingView = this.currentView; }
+  setCurrentView(opt: string) {
+    if (this.currentView) { this.exitingView = this.currentView; }
     // pools || status || expanders || details
 
-    if(this.labels){
+    if (this.labels) {
       // Start exit animation
       this.labels.exit();
     }
 
-    if(this.exitingView && this.exitingView == 'details' && this.identifyBtnRef){
+    if (this.exitingView && this.exitingView == 'details' && this.identifyBtnRef) {
       this.toggleSlotStatus(true);
       this.radiate(true);
     }
-    
-    switch(opt){
+
+    switch (opt) {
       case 'pools':
         this.container.alpha = 1;
         this.setDisksPoolState();
-      break
+        break;
       case 'status':
         this.container.alpha = 1;
         this.setDisksDisabled();
         this.setDisksHealthState();
-      break
+        break;
       case 'expanders':
         this.container.alpha = 0;
-      break
+        break;
       case 'details':
         this.container.alpha = 1;
         this.setDisksDisabled();
-        //this.setDisksHealthState();
+        // this.setDisksHealthState();
         this.setDisksPoolState();
-        let vdev = this.system.getVdevInfo(this.selectedDisk.devname);
+        const vdev = this.system.getVdevInfo(this.selectedDisk.devname);
         this.selectedVdev = vdev;
 
         this.labels = new VDevLabelsSVG(this.enclosure, this.app, this.theme, this.selectedDisk);
 
-        this.labels.events.next({name:"LabelDrives", data: vdev, sender: this});
+        this.labels.events.next({ name: 'LabelDrives', data: vdev, sender: this });
         let dl;
 
-      break
+        break;
     }
 
     this.currentView = opt;
     this.resizeView();
-    
   }
 
-  update(className:string){ // stage-left or stage-right or expanders
- 
-    let sideStage = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className);
-    let html = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className + ' .content')
-    let el = styler(html, {});
+  update(className: string) { // stage-left or stage-right or expanders
+    const sideStage = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className);
+    const html = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className + ' .content');
+    const el = styler(html, {});
 
-    let x = (sideStage.offsetWidth * 0.5) - (el.get('width') * 0.5);
-    let y = sideStage.offsetTop + (sideStage.offsetHeight * 0.5) - (el.get('height') * 0.5);
+    const x = (sideStage.offsetWidth * 0.5) - (el.get('width') * 0.5);
+    const y = sideStage.offsetTop + (sideStage.offsetHeight * 0.5) - (el.get('height') * 0.5);
     html.style.left = x.toString() + 'px';
     html.style.top = y.toString() + 'px';
   }
 
-  enter(className:string){ // stage-left or stage-right or expanders
-    if(this.exitingView){ 
-      if(className == 'full-stage'){
-        this.exit('stage-left'); 
-        this.exit('stage-right'); 
-      } else if(this.exitingView == 'expanders'){
-        this.exit('full-stage'); 
+  enter(className: string) { // stage-left or stage-right or expanders
+    if (this.exitingView) {
+      if (className == 'full-stage') {
+        this.exit('stage-left');
+        this.exit('stage-right');
+      } else if (this.exitingView == 'expanders') {
+        this.exit('full-stage');
       } else {
         this.exit(className);
       }
     }
-    
- 
-    let sideStage = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className);
-    let html = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className + ' .content')
-    let el = styler(html, {});
 
-    let x = (sideStage.offsetWidth * 0.5) - (el.get('width') * 0.5);
-    let y = sideStage.offsetTop + (sideStage.offsetHeight * 0.5) - (el.get('height') * 0.5);
+    const sideStage = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className);
+    const html = this.overview.nativeElement.querySelector('.' + this.currentView + '.' + className + ' .content');
+    const el = styler(html, {});
+
+    const x = (sideStage.offsetWidth * 0.5) - (el.get('width') * 0.5);
+    const y = sideStage.offsetTop + (sideStage.offsetHeight * 0.5) - (el.get('height') * 0.5);
     html.style.left = x.toString() + 'px';
     html.style.top = y.toString() + 'px';
-    
+
     tween({
-      from:{ scale: 0, opacity: 0},
-      to:{scale: 1, opacity: 1},
-      duration: 360
+      from: { scale: 0, opacity: 0 },
+      to: { scale: 1, opacity: 1 },
+      duration: 360,
     }).start({
-      update: v => { el.set(v); },
+      update: (v: any) => { el.set(v); },
       complete: () => {
-        if(this.currentView == 'details'){
-          this.labels.events.next({name:"OverlayReady", data: {vdev: this.selectedVdev, overlay:this.domLabels}, sender: this});
+        if (this.currentView == 'details') {
+          this.labels.events.next({ name: 'OverlayReady', data: { vdev: this.selectedVdev, overlay: this.domLabels }, sender: this });
         }
-      }
+      },
     });
   }
 
-  exit(className){ // stage-left or stage-right or full-stage
-    let html = this.overview.nativeElement.querySelector('.' + className + '.' + this.exitingView);
-    let el = styler(html, {});
+  exit(className: string) { // stage-left or stage-right or full-stage
+    const html = this.overview.nativeElement.querySelector('.' + className + '.' + this.exitingView);
+    const el = styler(html, {});
     let duration = 360;
 
     // x is the position relative to it's starting point.
     const w = el.get('width');
     const startX = 0;
     let endX = className == 'stage-left' ? w * -1 : w;
-    if(className == 'full-stage'){ 
+    if (className == 'full-stage') {
       endX = startX;
       duration = 10;
     }
 
     // Move stage left
     tween({
-      from:{opacity:1, x:0},
-      to:{
-        opacity:0,
-        x: endX
+      from: { opacity: 1, x: 0 },
+      to: {
+        opacity: 0,
+        x: endX,
       },
-      duration: duration
+      duration,
     }).start({
-      update: v => { el.set(v) },
+      update: (v: any) => { el.set(v); },
       complete: () => {
-        if(this.exitingView == 'details' && this.currentView !== 'details'){
+        if (this.exitingView == 'details' && this.currentView !== 'details') {
           this.selectedDisk = null;
           this.labels = null;
           this.selectedVdev = null;
         }
         this.exitingView = null;
-        el.set({x: 0})
-      }
+        el.set({ x: 0 });
+      },
     });
-
   }
 
-  optimizeChassisOpacity(extractedEnclosure?){
+  optimizeChassisOpacity(extractedEnclosure?: ChassisView) {
     const css = (<any>document).documentElement.style.getPropertyValue('--contrast-darkest');
     const hsl = this.themeUtils.hslToArray(css);
-    
+
     let opacity;
-    if(extractedEnclosure){
+    if (extractedEnclosure) {
       opacity = hsl[2] < 60 ? 0.35 : 0.75;
       extractedEnclosure.chassis.alpha = opacity;
     } else {
       opacity = hsl[2] < 60 ? 0.25 : 0.75;
       this.chassis.front.setChassisOpacity(opacity);
 
-      if(this.chassis.rear){
+      if (this.chassis.rear) {
         this.chassis.rear.setChassisOpacity(opacity);
       }
     }
   }
 
-  setDisksEnabledState(enclosure?){
-    if(!enclosure){enclosure = this.enclosure}
-    enclosure.driveTrayObjects.forEach((dt, index) =>{
-      //let disk = this.findDiskBySlotNumber(index + 1);
-      let disk = this.findDiskBySlotNumber(dt.id);
-      dt.enabled = disk ? true : false;
+  setDisksEnabledState(enclosure?: ChassisView) {
+    if (!enclosure) { enclosure = this.enclosure; }
+    enclosure.driveTrayObjects.forEach((dt: any, index: number) => {
+      // let disk = this.findDiskBySlotNumber(index + 1);
+      const disk = this.findDiskBySlotNumber(dt.id);
+      dt.enabled = !!disk;
     });
   }
 
-  setDisksDisabled(){
-    this.enclosure.driveTrayObjects.forEach((dt, index) =>{
-      let selectedEnclosure = this.subenclosure ? this.subenclosure : this.selectedEnclosure;
-      let disk = selectedEnclosure.disks[index];
-      this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: dt.id, color: 'none'}});
+  setDisksDisabled() {
+    this.enclosure.driveTrayObjects.forEach((dt: any, index: number) => {
+      const selectedEnclosure = this.subenclosure ? this.subenclosure : this.selectedEnclosure;
+      const disk = selectedEnclosure.disks[index];
+      this.enclosure.events.next({ name: 'ChangeDriveTrayColor', data: { id: dt.id, color: 'none' } });
     });
   }
 
-  setDisksHealthState(disk?: any){ // Give it a disk and it will only change that slot
-    let selectedEnclosure = this.subenclosure ? this.subenclosure : this.selectedEnclosure;
-    if(disk || typeof disk !== 'undefined'){
+  setDisksHealthState(disk?: any) { // Give it a disk and it will only change that slot
+    const selectedEnclosure = this.subenclosure ? this.subenclosure : this.selectedEnclosure;
+    if (disk || typeof disk !== 'undefined') {
       this.setDiskHealthState(disk);
       return;
     }
 
-    selectedEnclosure.disks.forEach((disk, index) =>{
+    selectedEnclosure.disks.forEach((disk: any, index: number) => {
       this.setDiskHealthState(disk);
     });
-
   }
 
-  setDiskHealthState(disk: any, enclosure: any = this.enclosure, updateGL: boolean = false){
-      let index;
-      const dt = enclosure.driveTrayObjects.filter( (dto,i) => {
-        const result = (dto.id == disk.enclosure.slot.toString());
-        if(result){
-          index = i;
-        }
-        return result;
-      })[0];
-      if(!dt){
-        return;
-      } else {
-        enclosure.driveTrayObjects[index].enabled = disk.enclosure.slot ? true : false;
+  setDiskHealthState(disk: any, enclosure: ChassisView = this.enclosure, updateGL = false) {
+    let index = -1;
+
+    enclosure.driveTrayObjects.forEach((dto: any, i: number) => {
+      const result = (dto.id == disk.enclosure.slot.toString());
+      if (result) {
+        index = i;
       }
+    });
 
-      let failed: boolean = false;
+    if (index == -1) {
+      return;
+    }
 
-      // Health based on disk.status
-      if(disk && disk.status){
-        switch(disk.status){
-          case "ONLINE":
-            enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot, color: this.theme.green}});
+    enclosure.driveTrayObjects[index].enabled = !!disk.enclosure.slot;
+
+    let failed = false;
+
+    // Health based on disk.status
+    if (disk && disk.status) {
+      switch (disk.status) {
+        case 'ONLINE':
+          enclosure.events.next({ name: 'ChangeDriveTrayColor', data: { id: disk.enclosure.slot, color: this.theme.green } });
           break;
-          case "FAULT":
-            failed = true;
+        case 'FAULT':
+          failed = true;
           break;
-          case "AVAILABLE":
-            enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot, color: '#999999'}});
+        case 'AVAILABLE':
+          enclosure.events.next({ name: 'ChangeDriveTrayColor', data: { id: disk.enclosure.slot, color: '#999999' } });
           break;
-          default:
-            enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot, color: this.theme.yellow}});
+        default:
+          enclosure.events.next({ name: 'ChangeDriveTrayColor', data: { id: disk.enclosure.slot, color: this.theme.yellow } });
           break;
-        }
       }
+    }
 
-      // Also check slot status
-      const elements = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex ?  this.system.enclosures[disk.enclosure.number].elements : this.system.enclosures[disk.enclosure.number].elements[0].elements
-      const slot = elements.filter(s => s.slot == disk.enclosure.slot)
-      
-      if(!failed && slot.fault){
-        failed = true;
-      }
+    // Also check slot status
+    const elements: any[] = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex ? this.system.enclosures[disk.enclosure.number].elements : this.system.enclosures[disk.enclosure.number].elements[0].elements;
+    const slot = elements.filter((s: any) => s.slot == disk.enclosure.slot)[0];
 
-      if(failed){
-        enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot, color: this.theme.red}});
-      } 
+    if (!failed && slot.fault) {
+      failed = true;
+    }
 
+    if (failed) {
+      enclosure.events.next({ name: 'ChangeDriveTrayColor', data: { id: disk.enclosure.slot, color: this.theme.red } });
+    }
   }
 
-  getUnhealthyPools(){
-    let sickPools = [];
-    const pools = this.system.pools.forEach((pool, index) => {
+  getUnhealthyPools() {
+    const sickPools: any[] = [];
+    const pools = this.system.pools.forEach((pool: any, index: number) => {
       const healthy = pool.healthy;
       const inCurrentEnclosure = index == this.selectedEnclosure.poolKeys[pool.name];
-      if(!healthy && inCurrentEnclosure){
+      if (!healthy && inCurrentEnclosure) {
         sickPools.push(pool);
       }
     });
     return sickPools;
   }
 
-  getDiskFailures(enclosure: any = this.enclosure){
-    let failedDisks = [];
-    let selectedEnclosure = this.subenclosure ? this.subenclosure : this.selectedEnclosure;
+  getDiskFailures(enclosure: any = this.enclosure) {
+    const failedDisks: any[] = [];
+    const selectedEnclosure = this.subenclosure ? this.subenclosure : this.selectedEnclosure;
 
-    let analyze = (disk, index) => {
-      let failed: boolean = false;
-      let reasons = [];
+    const analyze = (disk: any, index: number) => {
+      let failed = false;
+      const reasons = [];
 
       // Health based on disk.status
-      if(disk && disk.status && disk.status == 'FAULT'){
-            failed = true;
-            reasons.push("Disk Status is 'FAULT'");
+      if (disk && disk.status && disk.status == 'FAULT') {
+        failed = true;
+        reasons.push("Disk Status is 'FAULT'");
       }
 
       // Also check slot status
-      const elements = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex ?  this.system.enclosures[disk.enclosure.number].elements : this.system.enclosures[disk.enclosure.number].elements[0].elements
-      const slot = elements.filter(s => s.slot == disk.enclosure.slot)
-      
-      if(!failed && slot.fault){
+      const elements = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex ? this.system.enclosures[disk.enclosure.number].elements : this.system.enclosures[disk.enclosure.number].elements[0].elements;
+      const slot = elements.filter((s: any) => s.slot == disk.enclosure.slot);
+
+      if (!failed && slot.fault) {
         failed = true;
       }
 
-      if(failed){
-        const location = this.subenclosure && disk.enclosure.number == this.system.rearIndex ? 'rear' : 'front';
-        const failure: DiskFailure = { disk: disk.name, enclosure: disk.enclosure.number, slot: disk.enclosure.slot, location: location} 
+      if (failed) {
+        const location = this.subenclosure && disk.enclosure.number == this.system.rearIndex ? EnclosureLocation.Rear : EnclosureLocation.Front;
+        const failure: DiskFailure = {
+          disk: disk.name, enclosure: disk.enclosure.number, slot: disk.enclosure.slot, location,
+        };
         failedDisks.push(failure);
       }
-    }
+    };
 
-
-    if(this.subenclosure){
+    if (this.subenclosure) {
       // If this is a head unit with rear bays, treat both enclosures as single unit
-      this.system.profile[this.system.headIndex].disks.forEach((disk, index) =>{
+      this.system.profile[this.system.headIndex].disks.forEach((disk: any, index: number) => {
         analyze(disk, index);
       });
 
-      this.system.profile[this.system.rearIndex].disks.forEach((disk, index) =>{
+      this.system.profile[this.system.rearIndex].disks.forEach((disk: any, index: number) => {
         analyze(disk, index);
       });
     } else {
-      selectedEnclosure.disks.forEach((disk, index) =>{
+      selectedEnclosure.disks.forEach((disk: any, index: number) => {
         analyze(disk, index);
       });
     }
@@ -851,166 +853,161 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.failedDisks = failedDisks;
   }
 
-  setDisksPoolState(){
-    let selectedEnclosure = this.subenclosure ? this.subenclosure : this.selectedEnclosure;
+  setDisksPoolState() {
+    const selectedEnclosure: any = this.subenclosure ? this.subenclosure : this.selectedEnclosure;
     this.setDisksDisabled();
-    let keys = Object.keys(selectedEnclosure.poolKeys);
-    if(keys.length > 0){
-      selectedEnclosure.disks.forEach((disk, index) => {
-        if(disk.enclosure.slot < this.enclosure.slotRange.start || disk.enclosure.slot > this.enclosure.slotRange.end){return};
-        if(!disk.vdev){return};
-        let pIndex = disk.vdev.poolIndex;
-        this.enclosure.events.next({name:"ChangeDriveTrayColor", data:{id: disk.enclosure.slot , color: this.theme[this.theme.accentColors[pIndex]]} });
+
+    const keys: any[] = Object.keys(selectedEnclosure.poolKeys);
+    if (keys.length > 0) {
+      selectedEnclosure.disks.forEach((disk: any, index: number) => {
+        if (disk.enclosure.slot < this.enclosure.slotRange.start || disk.enclosure.slot > this.enclosure.slotRange.end) { return; }
+        if (!disk.vdev) {
+          this.enclosure.events.next({ name: 'ChangeDriveTrayColor', data: { id: disk.enclosure.slot, color: '#999999' } });
+          return;
+        }
+        const pIndex = disk.vdev.poolIndex;
+        this.enclosure.events.next({ name: 'ChangeDriveTrayColor', data: { id: disk.enclosure.slot, color: this.theme[this.theme.accentColors[pIndex]] } });
       });
-    } else {
-      return;
     }
   }
 
-  converter(size: number){
-    let gb = size / 1024 / 1024/ 1024;
-    if(gb > 1000){
-      let tb = gb / 1024;
-      return tb.toFixed(2) + " TB";
-    } else {
-      return gb.toFixed(2) + " GB";
+  converter(size: number): string {
+    const gb = size / 1024 / 1024 / 1024;
+    if (gb > 1000) {
+      const tb = gb / 1024;
+      return tb.toFixed(2) + ' TB';
     }
+    return gb.toFixed(2) + ' GB';
   }
 
-  findDiskBySlotNumber(slot:number){
-    let selectedEnclosure = this.subenclosure ? this.subenclosure : this.selectedEnclosure;
+  findDiskBySlotNumber(slot: number): any {
+    const selectedEnclosure = this.subenclosure ? this.subenclosure : this.selectedEnclosure;
     let disk;
-    for(let i in selectedEnclosure.disks){
-      if(selectedEnclosure.disks[i].enclosure.slot == slot) {
+    for (const i in selectedEnclosure.disks) {
+      if (selectedEnclosure.disks[i].enclosure.slot == slot) {
         disk = selectedEnclosure.disks[i];
         return disk;
       }
     }
-
   }
 
-  toggleHighlightMode(mode:string){
-    if(this.selectedDisk.status == 'AVAILABLE'){ return; }
+  toggleHighlightMode(mode: string) {
+    if (this.selectedDisk.status == 'AVAILABLE') { return; }
 
     this.labels.events.next({
       name: mode == 'on' ? 'EnableHighlightMode' : 'DisableHighlightMode',
-      sender:this
-    })
+      sender: this,
+    });
   }
 
-  showPath(devname){
+  showPath(devname: string) {
     // show the svg path
     this.labels.events.next({
-      name:'ShowPath', 
-      data:{ devname:devname, overlay: this.domLabels}, 
-      sender: this
+      name: 'ShowPath',
+      data: { devname, overlay: this.domLabels },
+      sender: this,
     });
   }
 
-  hidePath(devname){
+  hidePath(devname: string) {
     this.labels.events.next({
-      name:'HidePath',
-      data:{devname: devname, overlay: this.domLabels},
-      sender: this
+      name: 'HidePath',
+      data: { devname, overlay: this.domLabels },
+      sender: this,
     });
   }
 
-  highlightPath(devname){
+  highlightPath(devname: string) {
     // show the svg path
     this.labels.events.next({
-      name:'HighlightDisk', 
-      data:{ devname:devname, overlay: this.domLabels}, 
-      sender: this
+      name: 'HighlightDisk',
+      data: { devname, overlay: this.domLabels },
+      sender: this,
     });
   }
 
-  unhighlightPath(devname){
+  unhighlightPath(devname: string) {
     // show the svg path
     this.labels.events.next({
-      name:'UnhighlightDisk', 
-      data:{ devname:devname, overlay: this.domLabels}, 
-      sender: this
+      name: 'UnhighlightDisk',
+      data: { devname, overlay: this.domLabels },
+      sender: this,
     });
   }
-  
 
-  toggleSlotStatus(kill?: boolean){
-    let selectedEnclosure = this.subenclosure ? this.subenclosure : this.selectedEnclosure;
-    let enclosure_id = this.system.enclosures[selectedEnclosure.enclosureKey].id;
-    let slot = this.selectedDisk.enclosure.slot;
-    let status = !this.identifyBtnRef && !kill ? "IDENTIFY" : "CLEAR";
-    let args = [enclosure_id, slot, status];
+  toggleSlotStatus(kill?: boolean) {
+    const selectedEnclosure = this.subenclosure ? this.subenclosure : this.selectedEnclosure;
+    const enclosure_id = this.system.enclosures[selectedEnclosure.enclosureKey].id;
+    const slot = this.selectedDisk.enclosure.slot;
+    const status = !this.identifyBtnRef && !kill ? 'IDENTIFY' : 'CLEAR';
+    const args = [enclosure_id, slot, status];
 
     // Arguments are Str("enclosure_id"), Int("slot"), Str("status", enum=["CLEAR", "FAULT", "IDENTIFY"])
-    this.core.emit({name: 'SetEnclosureSlotStatus',data: args, sender: this}); 
-    
+    this.core.emit({ name: 'SetEnclosureSlotStatus', data: args, sender: this });
+
     this.radiate();
   }
-  
-  radiate(kill?:boolean){ 
-    // Animation
-    if(this.identifyBtnRef){
 
+  radiate(kill?: boolean) {
+    // Animation
+    if (this.identifyBtnRef) {
       // kill the animation
       this.identifyBtnRef.animation.seek(0);
       this.identifyBtnRef.animation.stop(this.identifyBtnRef.styler);
       this.identifyBtnRef = null;
-      return ;
+    } else if (!this.identifyBtnRef && !kill) {
+      const btn = styler(this.details.nativeElement.querySelector('#identify-btn'), {});
+      const startShadow = btn.get('box-shadow');
 
-    } else if(!this.identifyBtnRef && !kill) {
-
-      let btn = styler(this.details.nativeElement.querySelector('#identify-btn'), {});
-      let startShadow = btn.get('box-shadow');
-
-      const elementBorder = value({borderColor: '', borderWidth: 0 }, ({ borderColor, borderWidth }) => btn.set({
-        boxShadow: `0 0 0 ${borderWidth}px ${borderColor}` 
+      // @ts-ignore
+      const elementBorder = value({ borderColor: '', borderWidth: 0 }, ({ borderColor, borderWidth }) => btn.set({
+        boxShadow: `0 0 0 ${borderWidth}px ${borderColor}`,
       }));
 
       // Convert color to rgb value
-      let cc = this.hexToRGB(this.theme.cyan);
+      const cc = this.hexToRGB(this.theme.cyan);
       const animation = keyframes({
         values: [
-          { borderWidth: 0, borderColor: 'rgb(' + cc.rgb[0] +', ' + cc.rgb[1] +', ' + cc.rgb[2] +')' },
-          { borderWidth: 30, borderColor: 'rgb(' + cc.rgb[0] +', ' + cc.rgb[1] + ', ' + cc.rgb[2] + ', 0)' } 
+          { borderWidth: 0, borderColor: 'rgb(' + cc.rgb[0] + ', ' + cc.rgb[1] + ', ' + cc.rgb[2] + ')' },
+          { borderWidth: 30, borderColor: 'rgb(' + cc.rgb[0] + ', ' + cc.rgb[1] + ', ' + cc.rgb[2] + ', 0)' },
         ],
-        duration:1000,
-        loop: Infinity
+        duration: 1000,
+        loop: Infinity,
       }).start(elementBorder);
 
-      this.identifyBtnRef = { animation: animation, originalState: startShadow, styler: elementBorder};
-
+      this.identifyBtnRef = { animation, originalState: startShadow, styler: elementBorder };
     }
   }
 
-  hexToRGB(str) {
+  hexToRGB(str: string) {
     var spl = str.split('#');
     var hex = spl[1];
-    if(hex.length == 3){
+    if (hex.length == 3) {
       hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
     }
 
     var value = '';
     var rgb = [];
-    for(let i = 0; i < 6; i++){
-      let mod = i % 2;
-      let even = 0;
+    for (let i = 0; i < 6; i++) {
+      const mod = i % 2;
+      const even = 0;
       value += hex[i];
-      if(mod !== even){
-        rgb.push(parseInt(value, 16))
+      if (mod !== even) {
+        rgb.push(parseInt(value, 16));
         value = '';
       }
     }
     return {
-      hex:hex,
-      rgb:rgb
-    }
+      hex,
+      rgb,
+    };
   }
 
-  onResize(evt){
+  onResize(evt: any) {
     this.resizeView();
   }
 
-  resizeView(override?: string){
+  resizeView(override?: string) {
     const visualizer = this.overview.nativeElement.querySelector('#visualizer');
     const left = this.cardWidth < 960 ? ((960 - this.cardWidth) / 2 * -1) : 0;
 
@@ -1020,64 +1017,62 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }, 50);
   }
 
-  enclosureOverride(view: string){
-    if(view !== this.view){
+  enclosureOverride(view: EnclosureLocation) {
+    if (view !== this.view) {
       this.loadEnclosure(this.selectedEnclosure, view);
     }
   }
 
-  setEnclosureLabel(value?: string){
-    let enclosure = this.system.enclosures[this.selectedEnclosure.enclosureKey];
-    if(!value){
+  setEnclosureLabel(value?: string) {
+    const enclosure = this.system.enclosures[this.selectedEnclosure.enclosureKey];
+    if (!value) {
       value = enclosure.name;
     }
 
-    let args = {index: this.selectedEnclosure.enclosureKey, id: enclosure.id, label: value};
-    this.controllerEvents.next({name: "SetEnclosureLabel", data: args, sender: this});
+    const args: any = { index: this.selectedEnclosure.enclosureKey, id: enclosure.id, label: value };
+    this.controllerEvents.next({ name: 'SetEnclosureLabel', data: args, sender: this });
   }
 
-  labelForm(){
-    let self = this;
+  labelForm() {
+    const self = this;
 
     const obj = self.system.enclosures[self.selectedEnclosure.enclosureKey];
     const currentLabel = obj.label !== obj.name ? obj.label : self.selectedEnclosure.model;
-    let conf = {
-      title: T("Change Enclosure Label"),
+    const conf = {
+      title: T('Change Enclosure Label'),
       fieldConfig: [
         {
-          type : 'input',
+          type: 'input',
           inputType: 'text',
           value: currentLabel,
-          name : 'label',
+          name: 'label',
           required: false,
-          placeholder: "Enclosure Label",
-          relation : [
+          placeholder: 'Enclosure Label',
+          relation: [
             {
-              action : 'DISABLE',
-              when : [{
-                name : 'reset',
-                value : true,
+              action: 'DISABLE',
+              when: [{
+                name: 'reset',
+                value: true,
               }],
-            }
+            },
           ],
         },
         {
-          type : 'checkbox',
+          type: 'checkbox',
           value: false,
-          name : 'reset',
-          placeholder: "Reset to default",
+          name: 'reset',
+          placeholder: 'Reset to default',
         },
       ],
       saveButtonText: T('SAVE'),
-      customSubmit: function (entityDialog) {
+      customSubmit(entityDialog: any) {
         self.pendingDialog = entityDialog;
         entityDialog.loader.open();
         self.setEnclosureLabel(entityDialog.formValue.label);
       },
-    }
+    };
 
     this.dialogService.dialogForm(conf);
-
   }
-
 }

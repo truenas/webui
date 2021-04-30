@@ -12,12 +12,12 @@ import { ClusteringComingsoonComponent } from './clustering-comingsoon/clusterin
 @NgModule({
   imports: [
     EntityModule, CommonModule, FormsModule, MaterialModule, NgxDualListboxModule,
-    ReactiveFormsModule, routing, TranslateModule
+    ReactiveFormsModule, routing, TranslateModule,
   ],
   declarations: [
     ClusteringComingsoonComponent,
   ],
   providers: [
-  ]
+  ],
 })
 export class ClusteringModule {}

@@ -1,38 +1,42 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import {
+  Component, Input, OnInit, ViewChild,
+} from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RestService, WebSocketService } from '../../../../services';
-import { AbstractControl, FormControl, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import {
+  AbstractControl, FormControl, FormBuilder, FormGroup, FormArray, Validators,
+} from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { T } from '../../../../translate-marker';
-import {StepperSelectionEvent} from '@angular/cdk/stepper';
-import {FieldSet} from '../../entity/entity-form/models/fieldset.interface';
-import { FieldConfig } from '../../entity/entity-form/models/field-config.interface';
-import { EntityFormService } from '../../entity/entity-form/services/entity-form.service';
-import { FieldRelationService } from '../../entity/entity-form/services/field-relation.service';
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
+import { FieldSet } from '../entity-form/models/fieldset.interface';
+import { FieldConfig } from '../entity-form/models/field-config.interface';
+import { EntityFormService } from '../entity-form/services/entity-form.service';
+import { FieldRelationService } from '../entity-form/services/field-relation.service';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { AppLoaderService } from '../../../../services/app-loader/app-loader.service';
 
 import { MatStepper } from '@angular/material/stepper';
-import { DialogService } from '../../../../services/';
+import { DialogService } from '../../../../services';
 import { EntityUtils } from '../utils';
 
 @Component({
   selector: 'entity-wizard',
   templateUrl: './entity-wizard.component.html',
   styleUrls: ['./entity-wizard.component.css', '../entity-form/entity-form.component.scss'],
-  providers: [EntityFormService, FieldRelationService]
+  providers: [EntityFormService, FieldRelationService],
 })
 export class EntityWizardComponent implements OnInit {
   @Input('conf') conf: any;
-  @ViewChild('stepper', {static: true}) stepper: MatStepper;
+  @ViewChild('stepper', { static: true }) stepper: MatStepper;
 
-  public formGroup: FormGroup;
-  public showSpinner = false;
-  public busy: Subscription;
+  formGroup: FormGroup;
+  showSpinner = false;
+  busy: Subscription;
 
-  public saveSubmitText = T("Submit");
-  public customNextText = T("Next");
+  saveSubmitText = T('Submit');
+  customNextText = T('Next');
 
   get formArray(): AbstractControl | null { return this.formGroup.get('formArray'); }
 
@@ -64,17 +68,16 @@ export class EntityWizardComponent implements OnInit {
   }
 
   resetFields() {
-    let wizardformArray = this.formBuilder.array([]);
-    for (let i in this.conf.wizardConfig) {
-
+    const wizardformArray = this.formBuilder.array([]);
+    for (const i in this.conf.wizardConfig) {
       // Fallback if no fieldsets are defined
-      if(this.conf.wizardConfig[i].fieldSets){
-        let fieldConfig = [];
+      if (this.conf.wizardConfig[i].fieldSets) {
+        let fieldConfig: any[] = [];
         /* Temp patch to support both FieldSet approaches */
         const fieldSets = this.conf.wizardConfig[i].fieldSets.list ? this.conf.wizardConfig[i].fieldSets.list() : this.conf.wizardConfig[i].fieldSets;
-        for(let j = 0; j < fieldSets.length; j++){
+        for (let j = 0; j < fieldSets.length; j++) {
           const fieldset = fieldSets[j];
-          if(fieldset.config){
+          if (fieldset.config) {
             fieldConfig = fieldConfig.concat(fieldset.config);
           }
         }
@@ -83,30 +86,29 @@ export class EntityWizardComponent implements OnInit {
         // const fieldConfig = this.conf.wizardConfig[i].fieldConfig;
         this.conf.wizardConfig[i].fieldSets = [
           {
-            name:'FallBack',
-            class:'fallback',
-            width:'100%',
-            divider:false,
-            config: this.conf.wizardConfig[i].fieldConfig
+            name: 'FallBack',
+            class: 'fallback',
+            width: '100%',
+            divider: false,
+            config: this.conf.wizardConfig[i].fieldConfig,
           },
           {
-            name:'divider',
-            divider:true,
-            width:'100%'
-          }
-        ]
-
+            name: 'divider',
+            divider: true,
+            width: '100%',
+          },
+        ];
       }
       wizardformArray.push(this.entityFormService.createFormGroup(this.conf.wizardConfig[i].fieldConfig));
     }
 
     this.formGroup = this.formBuilder.group({
-      formArray: wizardformArray
+      formArray: wizardformArray,
     });
 
-    for (let i in this.conf.wizardConfig) {
-      for (let j in this.conf.wizardConfig[i].fieldConfig) {
-        let config = this.conf.wizardConfig[i].fieldConfig[j];
+    for (const i in this.conf.wizardConfig) {
+      for (const j in this.conf.wizardConfig[i].fieldConfig) {
+        const config = this.conf.wizardConfig[i].fieldConfig[j];
         if (config.relation.length > 0) {
           this.setRelation(config, i);
         }
@@ -124,7 +126,7 @@ export class EntityWizardComponent implements OnInit {
   }
 
   goBack() {
-    if(this.conf.customCancel) {
+    if (this.conf.customCancel) {
       return this.conf.customCancel();
     }
     let route = this.conf.route_cancel;
@@ -135,16 +137,17 @@ export class EntityWizardComponent implements OnInit {
   }
 
   setRelation(config: FieldConfig, stepIndex: any) {
-    let activations = this.fieldRelationService.findActivationRelation(config.relation);
+    const activations = this.fieldRelationService.findActivationRelation(config.relation);
     if (activations) {
       const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(activations, < FormGroup > this.formArray.get(stepIndex));
       const tobeHide = this.fieldRelationService.isFormControlToBeHide(activations, < FormGroup > this.formArray.get(stepIndex));
       this.setDisabled(config.name, tobeDisabled, stepIndex, tobeHide);
 
       this.fieldRelationService.getRelatedFormControls(config, < FormGroup > this.formArray.get(stepIndex))
-        .forEach(control => {
+        .forEach((control) => {
           control.valueChanges.subscribe(
-            () => { this.relationUpdate(config, activations, stepIndex); });
+            () => { this.relationUpdate(config, activations, stepIndex); },
+          );
         });
     }
   }
@@ -156,8 +159,8 @@ export class EntityWizardComponent implements OnInit {
       hide = false;
     }
 
-    for (let i in this.conf.wizardConfig) {
-      this.conf.wizardConfig[i].fieldConfig = this.conf.wizardConfig[i].fieldConfig.map((item) => {
+    for (const i in this.conf.wizardConfig) {
+      this.conf.wizardConfig[i].fieldConfig = this.conf.wizardConfig[i].fieldConfig.map((item: any) => {
         if (item.name === name) {
           item.disabled = disable;
           item['isHidden'] = hide;
@@ -166,24 +169,25 @@ export class EntityWizardComponent implements OnInit {
       });
     }
 
-    if (( < FormGroup > this.formArray.get([stepIndex])).controls[name]) {
+    if ((< FormGroup > this.formArray.get([stepIndex])).controls[name]) {
       const method = disable ? 'disable' : 'enable';
-      ( < FormGroup > this.formArray.get([stepIndex])).controls[name][method]();
-      return;
+      (< FormGroup > this.formArray.get([stepIndex])).controls[name][method]();
     }
   }
 
   relationUpdate(config: FieldConfig, activations: any, stepIndex: any) {
     const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
-      activations, < FormGroup > this.formArray.get(stepIndex));
+      activations, < FormGroup > this.formArray.get(stepIndex),
+    );
     const tobeHide = this.fieldRelationService.isFormControlToBeHide(
-      activations, < FormGroup > this.formArray.get(stepIndex));
+      activations, < FormGroup > this.formArray.get(stepIndex),
+    );
     this.setDisabled(config.name, tobeDisabled, stepIndex, tobeHide);
   }
 
   onSubmit() {
     let value = {};
-    for (let i in this.formGroup.value.formArray) {
+    for (const i in this.formGroup.value.formArray) {
       value = _.merge(value, _.cloneDeep(this.formGroup.value.formArray[i]));
     }
 
@@ -203,12 +207,10 @@ export class EntityWizardComponent implements OnInit {
           this.loader.close();
           if (res.error) {
             this.dialog.errorReport(res.error, res.reason, res.exception);
+          } else if (this.conf.route_success) {
+            this.router.navigate(new Array('/').concat(this.conf.route_success));
           } else {
-            if (this.conf.route_success) {
-              this.router.navigate(new Array('/').concat(this.conf.route_success));
-            } else {
-              this.dialog.Info(T("Settings saved"), '', '300px', 'info', true);
-            }
+            this.dialog.Info(T('Settings saved'), '', '300px', 'info', true);
           }
         },
         (res) => {
@@ -221,8 +223,7 @@ export class EntityWizardComponent implements OnInit {
 
   originalOrder = function () {};
 
-
-  isFieldsetAvailabel(fieldset) {
+  isFieldsetAvailabel(fieldset: any) {
     if (fieldset.config) {
       for (let i = 0; i < fieldset.config.length; i++) {
         if (!fieldset.config[i].isHidden) {
@@ -233,7 +234,7 @@ export class EntityWizardComponent implements OnInit {
     return false;
   }
 
-  handleNext(currentStep) {
+  handleNext(currentStep: any) {
     currentStep.stepControl.markAllAsTouched();
     if (this.conf.customNext !== undefined) {
       this.conf.customNext(this.stepper);
@@ -248,10 +249,10 @@ export class EntityWizardComponent implements OnInit {
     if (this.conf.isAutoSummary) {
       if (event.selectedIndex == this.conf.wizardConfig.length) {
         this.conf.summary = [];
-        for(let step=0; step<this.conf.wizardConfig.length; step++){
+        for (let step = 0; step < this.conf.wizardConfig.length; step++) {
           const wizard = this.conf.wizardConfig[step];
-          wizard.fieldConfig.forEach(fieldConfig => {
-            const formControl = ( < FormGroup > this.formArray.get([step]).get(fieldConfig.name));
+          wizard.fieldConfig.forEach((fieldConfig: any) => {
+            const formControl = (< FormGroup > this.formArray.get([step]).get(fieldConfig.name));
             if (formControl) {
               let summaryName = fieldConfig.placeholder;
               if (!summaryName) {
@@ -269,13 +270,13 @@ export class EntityWizardComponent implements OnInit {
     let result = formControl.value;
 
     if (fieldConfig.type === 'select') {
-      const selectedOption = fieldConfig.options.find(option => option.value == formControl.value);
-        if (selectedOption) {
-          result = selectedOption.label;
-        }
+      const selectedOption = fieldConfig.options.find((option) => option.value == formControl.value);
+      if (selectedOption) {
+        result = selectedOption.label;
+      }
     } else if (Array.isArray(formControl.value)) {
       let arrayValueCount = 0;
-      formControl.value.forEach(item => {
+      formControl.value.forEach((item) => {
         const isNotEmptyArray = new EntityUtils().filterArrayFunction(item);
         if (isNotEmptyArray) {
           arrayValueCount++;

@@ -1,5 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Router, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
+import {
+  Router, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot,
+} from '@angular/router';
+import { ProductType } from '../../../enums/product-type.enum';
 import { RoutePartsService } from '../../../services/route-parts/route-parts.service';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import globalHelptext from '../../../helptext/global-helptext';
@@ -9,27 +12,27 @@ import { LocaleService } from 'app/services/locale.service';
 @Component({
   selector: 'app-breadcrumb',
   templateUrl: './breadcrumb.component.html',
-  styleUrls: ['./breadcrumb.component.css']
+  styleUrls: ['./breadcrumb.component.css'],
 })
 export class BreadcrumbComponent implements OnInit {
-  @Input() product_type;
-  public copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
+  @Input() product_type: ProductType;
+  copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
 
-  routeParts:any[];
-  public isEnabled: boolean = true;
+  routeParts: any[];
+  isEnabled = true;
   constructor(private router: Router,
-  private routePartsService: RoutePartsService, 
-  private activeRoute: ActivatedRoute,
-  private core: CoreService,
-  private localeService: LocaleService) { }
+    private routePartsService: RoutePartsService,
+    private activeRoute: ActivatedRoute,
+    private core: CoreService,
+    private localeService: LocaleService) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
   // must be running once to get breadcrumbs
     this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
     // generate url from parts
     this.routeParts.reverse().map((item, i) => {
       // prepend / to first part
-      if(i === 0) {
+      if (i === 0) {
         item.url = `/${item.url}`;
         if (!item['toplevel']) {
           item.disabled = true;
@@ -41,13 +44,13 @@ export class BreadcrumbComponent implements OnInit {
       return item;
     });
 
-  // only execute when routechange
-    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe((routeChange) => {
+    // only execute when routechange
+    this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe((routeChange) => {
       this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
       // generate url from parts
       this.routeParts.reverse().map((item, i) => {
         // prepend / to first part
-        if(i === 0) {
+        if (i === 0) {
           item.url = `/${item.url}`;
           if (!item['toplevel']) {
             item.disabled = true;
@@ -60,15 +63,15 @@ export class BreadcrumbComponent implements OnInit {
       });
     });
 
-  // Pseudo routing events (for reports page)
-    this.core.register({observerClass:this, eventName:"PseudoRouteChange"}).subscribe((evt:CoreEvent) => {
-      let routeChange = evt.data;
-      //this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
+    // Pseudo routing events (for reports page)
+    this.core.register({ observerClass: this, eventName: 'PseudoRouteChange' }).subscribe((evt: CoreEvent) => {
+      const routeChange = evt.data;
+      // this.routeParts = this.routePartsService.generateRouteParts(this.activeRoute.snapshot);
       this.routeParts = evt.data;
       // generate url from parts
       this.routeParts.map((item, i) => {
         // prepend / to first part
-        if(i === 0) {
+        if (i === 0) {
           item.url = `/${item.url}`;
           item.disabled = true;
           return item;
@@ -79,5 +82,4 @@ export class BreadcrumbComponent implements OnInit {
       });
     });
   }
-
 }

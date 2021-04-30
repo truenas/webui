@@ -1,4 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component, OnInit, OnDestroy, Type,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
@@ -41,7 +43,7 @@ import { TunableFormComponent } from '../tunable/tunable-form/tunable-form.compo
   providers: [DatePipe, UserService],
 })
 export class AdvancedSettingsComponent implements OnInit, OnDestroy {
-  dataCards = [];
+  dataCards: any[] = [];
   configData: any;
   refreshCardData: Subscription;
   refreshTable: Subscription;
@@ -61,18 +63,18 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   protected cronFormComponent: CronFormComponent;
   protected initShutdownFormComponent: InitshutdownFormComponent;
 
-  public emptyPageConf: EmptyConfig = {
+  emptyPageConf: EmptyConfig = {
     type: EmptyType.no_page_data,
     title: T('No sysctls configured'),
     large: false,
     message: T('To configure sysctls, click the "Add" button.'),
   };
-  public is_ha = false;
-  public formEvents: Subject<CoreEvent>;
-  public actionsConfig;
+  is_ha = false;
+  formEvents: Subject<CoreEvent>;
+  actionsConfig: any;
   protected dialogRef: any;
 
-  public cronTableConf: InputTableConf = {
+  cronTableConf: InputTableConf = {
     title: helptext_system_advanced.fieldset_cron,
     titleHref: '/system/cron',
     queryCall: 'cronjob.query',
@@ -92,15 +94,15 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
       { name: T('Enabled'), prop: 'enabled' },
       { name: T('Next Run'), prop: 'next_run', hidden: true },
     ],
-    add: function () {
+    add() {
       this.parent.doAdd('cron');
     },
-    edit: function (row) {
+    edit(row) {
       this.parent.doAdd('cron', row.id);
     },
   };
 
-  public initShutdownTableConf: InputTableConf = {
+  initShutdownTableConf: InputTableConf = {
     title: helptext_system_advanced.fieldset_initshutdown,
     titleHref: '/system/initshutdown',
     queryCall: 'initshutdownscript.query',
@@ -120,15 +122,15 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
       { name: T('Enabled'), prop: 'enabled' },
       { name: T('Timeout'), prop: 'timeout', hidden: true },
     ],
-    add: function () {
+    add() {
       this.parent.doAdd('initshutdown');
     },
-    edit: function (row) {
+    edit(row) {
       this.parent.doAdd('initshutdown', row.id);
     },
   };
 
-  public sysctlTableConf: InputTableConf = {
+  sysctlTableConf: InputTableConf = {
     title: helptext_system_advanced.fieldset_sysctl,
     queryCall: 'tunable.query',
     deleteCall: 'tunable.delete',
@@ -144,10 +146,10 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
       { name: T('Enabled'), prop: 'enabled' },
       { name: T('Description'), prop: 'comment' },
     ],
-    add: function () {
+    add() {
       this.parent.doAdd('sysctl');
     },
-    edit: function (row) {
+    edit(row) {
       this.parent.doAdd('sysctl', row.id);
     },
   };
@@ -244,7 +246,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   updateSyslogOnTable() {
     this.dataCards.forEach((card) => {
       if (card.id === 'syslog') {
-        card.items.forEach((item) => {
+        card.items.forEach((item: any) => {
           if (item.label === helptext_system_advanced.system_dataset_placeholder) {
             item.value = this.syslog ? helptext.enabled : helptext.disabled;
           }
@@ -343,7 +345,12 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
   }
 
   doAdd(name: string, id?: number) {
-    let addComponent;
+    let addComponent: TunableFormComponent
+    | ConsoleFormComponent
+    | SyslogFormComponent
+    | KernelFormComponent
+    | CronFormComponent
+    | InitshutdownFormComponent;
     switch (name) {
       case 'console':
         addComponent = this.consoleFormComponent;
@@ -407,10 +414,10 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
           true,
           helptext_system_advanced.dialog_button_ok,
         )
-        .subscribe((ires) => {
+        .subscribe((ires: boolean) => {
           if (ires) {
             this.ws.call('core.download', ['system.debug', [], fileName]).subscribe(
-              (res) => {
+              (res: any) => {
                 const url = res[1];
                 let failed = false;
                 this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe(
@@ -445,10 +452,10 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
                   });
                   this.dialogRef.componentInstance.jobId = res[0];
                   this.dialogRef.componentInstance.wsshow();
-                  this.dialogRef.componentInstance.success.subscribe((save_debug) => {
+                  this.dialogRef.componentInstance.success.subscribe(() => {
                     this.dialogRef.close();
                   });
-                  this.dialogRef.componentInstance.failure.subscribe((save_debug_err) => {
+                  this.dialogRef.componentInstance.failure.subscribe((save_debug_err: any) => {
                     this.dialogRef.close();
                     if (!reported) {
                       new EntityUtils().handleWSError(this, save_debug_err, this.dialog);
@@ -513,7 +520,7 @@ export class AdvancedSettingsComponent implements OnInit, OnDestroy {
     this.initShutdownFormComponent = new InitshutdownFormComponent(this.modalService);
   }
 
-  cronDataSourceHelper(data) {
+  cronDataSourceHelper(data: any[]) {
     return data.map((job) => {
       job.cron_schedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
 

@@ -1,21 +1,21 @@
 import { FieldConfig } from '../entity-form/models/field-config.interface';
 
 export interface DialogFormConfiguration {
-  title: string,
-  fieldConfig: Array<FieldConfig>,
-  method_rest?: string,
-  method_ws?: string,
-  saveButtonText?: string,
-  cancelButtonText?: string,
-  custActions?: any[],
-  customSubmit?: any,
-  isCustActionVisible?: any,
-  hideButton?: boolean,
-  message?: any,
-  warning?: any,
-  preInit?: any,
-  afterInit?: any,
-  parent?: any,
-  confirmCheckbox?: boolean,
-  hideCancel?: boolean
+  title: string;
+  fieldConfig: FieldConfig[];
+  method_rest?: string;
+  method_ws?: string;
+  saveButtonText?: string;
+  cancelButtonText?: string;
+  custActions?: any[];
+  customSubmit?: any;
+  isCustActionVisible?: any;
+  hideButton?: boolean;
+  message?: any;
+  warning?: any;
+  preInit?: any;
+  afterInit?: any;
+  parent?: any;
+  confirmCheckbox?: boolean;
+  hideCancel?: boolean;
 }

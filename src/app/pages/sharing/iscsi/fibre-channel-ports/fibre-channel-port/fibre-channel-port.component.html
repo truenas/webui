@@ -1,5 +1,5 @@
 <div class="fc-row-detail">
-    <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" class="form-wrap" #entityForm="ngForm">
+    <form (ngSubmit)="onSubmit()" [formGroup]="formGroup" class="form-wrap" #entityForm="ngForm">
         <ng-container *ngFor="let fieldSet of fieldSets; let i = index">
             <div [ngClass]="fieldSet.class" class="fieldset divider-{{fieldSet.divider}}" fxLayout="row wrap"
                 fxLayoutAlign="start start" fxFlex="100%" fxFlex.gt-xs="calc({{fieldSets[i].width}} - 16px)">

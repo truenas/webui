@@ -1,6 +1,7 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from 'app/core/services/api.service';
+import { LayoutService } from 'app/core/services/layout.service';
 import { StatsService } from 'app/core/services/stats.service';
 import { DiskStateService } from 'app/core/services/disk-state.service';
 import { DiskTemperatureService } from 'app/core/services/disk-temperature.service';
@@ -12,10 +13,9 @@ import { PreferencesService } from 'app/core/services/preferences.service';
 import { ChartDataUtilsService } from 'app/core/services/chart-data-utils.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-
 /*
  *
- * This is the Core Module. By importing this module you'll 
+ * This is the Core Module. By importing this module you'll
  * ensure your page will have the right dependencies in place
  * to make use of the CoreService (event bus) and any helper
  * services that get added later on.
@@ -39,29 +39,30 @@ import { WebSocketService } from 'app/services/ws.service';
     ThemeService,
     PreferencesService,
     ChartDataUtilsService,
-    WebSocketService
+    WebSocketService,
   ],
   exports: [ // Modules and Components here
-    CommonModule
-  ]
+    CommonModule,
+  ],
 })
 export class CoreServices {
   static forRoot(): ModuleWithProviders<CoreServices> {
     return {
       ngModule: CoreServices,
       providers: [
-	CoreService,
-	ApiService,
+        CoreService,
+        ApiService,
         DiskStateService,
         StatsService,
-	DiskTemperatureService,
-	AnimationService,
+        DiskTemperatureService,
+        AnimationService,
         InteractionManagerService,
         PreferencesService,
+        LayoutService,
         ThemeService,
         ChartDataUtilsService,
-        WebSocketService
-      ]
-    }
+        WebSocketService,
+      ],
+    };
   }
 }

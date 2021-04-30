@@ -1,1 +1,1 @@
-export {ViewEnclosureComponent} from './view-enclosure.component';
+export { ViewEnclosureComponent } from './view-enclosure.component';

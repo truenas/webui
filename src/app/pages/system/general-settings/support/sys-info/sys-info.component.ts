@@ -8,23 +8,22 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
   templateUrl: './sys-info.component.html',
 })
 export class SysInfoComponent {
-  @Input() version;
-  @Input() model;
-  @Input() product;
-  @Input() memory;
-  @Input() serial;
-  @Input() FN_instructions;
-  @Input() hasLicense;
+  @Input() version: string;
+  @Input() model: any;
+  @Input() product: any;
+  @Input() memory: string;
+  @Input() serial: string;
+  @Input() FN_instructions: string;
+  @Input() hasLicense: boolean;
 
   // Additional fields for licensed customers
-  @Input() customer_name;
-  @Input() features;
-  @Input() contract_type;
-  @Input() expiration_date;
-  @Input() add_hardware;
-  @Input() daysLeftinContract;
+  @Input() customer_name: string;
+  @Input() features: string;
+  @Input() contract_type: any;
+  @Input() expiration_date: string;
+  @Input() add_hardware: string;
+  @Input() daysLeftinContract: number;
 
   constructor(protected loader: AppLoaderService, protected dialogService: DialogService,
     protected ws: WebSocketService) { }
-
 }

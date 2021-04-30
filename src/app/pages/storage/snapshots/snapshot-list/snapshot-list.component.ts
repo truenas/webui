@@ -1,5 +1,8 @@
-import { ApplicationRef, Component, Injector } from '@angular/core';
+import {
+  ApplicationRef, Component, Injector, Type,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { WebSocketService, StorageService, DialogService } from 'app/services';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { Subscription } from 'rxjs';
@@ -8,87 +11,87 @@ import { T } from '../../../../translate-marker';
 import { EntityUtils } from '../../../common/entity/utils';
 import { EntityJobComponent } from '../../../common/entity/entity-job/entity-job.component';
 import { SnapshotDetailsComponent } from './components/snapshot-details.component';
-import helptext from './../../../../helptext/storage/snapshots/snapshots';
+import helptext from '../../../../helptext/storage/snapshots/snapshots';
 import { DialogFormConfiguration } from '../../../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { MatDialog } from '@angular/material/dialog';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface'
+import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 
 @Component({
   selector: 'app-snapshot-list',
-  template: `<entity-table [title]="title" [conf]="this"></entity-table>`
+  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class SnapshotListComponent {
-  public title = "Snapshots";
+  title = 'Snapshots';
   protected queryCall = 'zfs.snapshot.query';
   protected route_add: string[] = ['storage', 'snapshots', 'add'];
-  protected route_add_tooltip = "Add Snapshot";
+  protected route_add_tooltip = 'Add Snapshot';
   protected wsDelete = 'zfs.snapshot.delete';
   protected loaderOpen = false;
   protected entityList: any;
   protected rollback: any;
-  public busy: Subscription;
-  public sub: Subscription;
+  busy: Subscription;
+  sub: Subscription;
   protected globalConfig = {
-    id: "config",
+    id: 'config',
     onClick: () => {
       this.toggleExtraCols();
-    }
+    },
   };
 
   // Vairables to show or hide the extra columns
-  protected queryCallOption = [];
-  protected queryCallOptionShow = [[["pool", "!=", "freenas-boot"], ["pool", "!=", "boot-pool"]], {"select": ["name", "properties"], "order_by": ["name"]}];
-  protected queryCallOptionHide = [[["pool", "!=", "freenas-boot"], ["pool", "!=", "boot-pool"]], {"select": ["name"], "order_by": ["name"]}];
+  protected queryCallOption: any[] = [];
+  protected queryCallOptionShow = [[['pool', '!=', 'freenas-boot'], ['pool', '!=', 'boot-pool']], { select: ['name', 'properties'], order_by: ['name'] }];
+  protected queryCallOptionHide = [[['pool', '!=', 'freenas-boot'], ['pool', '!=', 'boot-pool']], { select: ['name'], order_by: ['name'] }];
   protected hasDetails: boolean;
-  protected columnFilter = window.localStorage.getItem('snapshotXtraCols') === 'true' ? true : false;
-  protected rowDetailComponent;
-  public snapshotXtraCols = false;
+  protected columnFilter = window.localStorage.getItem('snapshotXtraCols') === 'true';
+  protected rowDetailComponent: Type<SnapshotDetailsComponent>;
+  snapshotXtraCols = false;
 
-  public columns: Array<any> = [
-    {name : 'Dataset', prop : 'dataset'},
-    {name : 'Snapshot', prop : 'snapshot' },
-    {name : 'Used', prop : 'used' },
-    {name : 'Date Created', prop : 'created'},
-    {name : 'Referenced', prop : 'referenced'}
+  columns: any[] = [
+    { name: 'Dataset', prop: 'dataset' },
+    { name: 'Snapshot', prop: 'snapshot' },
+    { name: 'Used', prop: 'used' },
+    { name: 'Date Created', prop: 'created' },
+    { name: 'Referenced', prop: 'referenced' },
   ];
 
-  public columnsHide: Array<any> = [
-    {name : 'Dataset', prop : 'dataset'},
-    {name : 'Snapshot', prop : 'snapshot'}
+  columnsHide: any[] = [
+    { name: 'Dataset', prop: 'dataset' },
+    { name: 'Snapshot', prop: 'snapshot' },
   ];
 
-  public columnsShow: Array<any> = [
-    {name : 'Dataset', prop : 'dataset'},
-    {name : 'Snapshot', prop : 'snapshot' },
-    {name : 'Used', prop : 'used' },
-    {name : 'Date Created', prop : 'created'},
-    {name : 'Referenced', prop : 'referenced'}
+  columnsShow: any[] = [
+    { name: 'Dataset', prop: 'dataset' },
+    { name: 'Snapshot', prop: 'snapshot' },
+    { name: 'Used', prop: 'used' },
+    { name: 'Date Created', prop: 'created' },
+    { name: 'Referenced', prop: 'referenced' },
   ];
-// End the show/hide section
+  // End the show/hide section
 
-  public rowIdentifier = 'dataset';
-  public config: any = {
+  rowIdentifier = 'dataset';
+  config: any = {
     paging: true,
     sorting: { columns: this.columns },
     multiSelect: true,
     deleteMsg: {
       title: 'Snapshot',
-      key_props: ['dataset', 'snapshot']
+      key_props: ['dataset', 'snapshot'],
     },
   };
 
   protected wsMultiDelete = 'core.bulk';
-  public multiActions: Array < any > = [
+  multiActions: any[] = [
     {
-      id: "mdelete",
-      label: "Delete",
-      icon: "delete",
+      id: 'mdelete',
+      label: 'Delete',
+      icon: 'delete',
       enable: true,
-      ttpos: "above",
-      onClick: (selected) => {
+      ttpos: 'above',
+      onClick: (selected: any) => {
         this.doMultiDelete(selected);
-      }
-    }
+      },
+    },
   ];
 
   protected rollbackFieldConf: FieldConfig[] = [
@@ -99,18 +102,18 @@ export class SnapshotListComponent {
         {
           value: null,
           label: helptext.rollback_dataset_placeholder,
-          tooltip: helptext.rollback_dataset_tooltip
+          tooltip: helptext.rollback_dataset_tooltip,
         },
         {
           value: 'recursive',
           label: helptext.rollback_recursive_placeholder,
-          tooltip: helptext.rollback_recursive_tooltip
+          tooltip: helptext.rollback_recursive_tooltip,
         },
         {
           value: 'recursive_clones',
           label: helptext.rollback_recursive_clones_placeholder,
-          tooltip: helptext.rollback_recursive_clones_tooltip
-        }
+          tooltip: helptext.rollback_recursive_clones_tooltip,
+        },
       ],
       placeholder: helptext.rollback_recursive_radio_placeholder,
       tooltip: helptext.rollback_recursive_radio_tooltip,
@@ -120,10 +123,10 @@ export class SnapshotListComponent {
       type: 'checkbox',
       name: 'confirm',
       placeholder: helptext.rollback_confirm,
-      required: true
-    }
+      required: true,
+    },
   ];
-  public rollbackFormConf: DialogFormConfiguration = {
+  rollbackFormConf: DialogFormConfiguration = {
     title: helptext.rollback_title,
     message: '',
     fieldConfig: this.rollbackFieldConf,
@@ -132,49 +135,49 @@ export class SnapshotListComponent {
     customSubmit: this.rollbackSubmit,
     parent: this,
     warning: helptext.rollback_warning,
-  }
+  };
 
   constructor(protected _router: Router, protected _route: ActivatedRoute,
     protected ws: WebSocketService, protected localeService: LocaleService,
     protected _injector: Injector, protected _appRef: ApplicationRef,
     protected storageService: StorageService, protected dialogService: DialogService,
-    protected prefService: PreferencesService, protected dialog:MatDialog) {
-      if (window.localStorage.getItem('snapshotXtraCols') === 'true') {
-        this.queryCallOption = this.queryCallOptionShow;
-        this.rowDetailComponent = null;
-        this.columnFilter = true;
-        this.hasDetails = false;
-        this.columns = this.columnsShow.slice(0);
-        this.snapshotXtraCols = true;
-      } else {
-        this.queryCallOption = this.queryCallOptionHide;
-        this.rowDetailComponent = SnapshotDetailsComponent;
-        this.columnFilter = false;
-        this.hasDetails = true;
-        this.columns = this.columnsHide.slice(0);
-        this.snapshotXtraCols = false;
-      }
+    protected prefService: PreferencesService, protected dialog: MatDialog) {
+    if (window.localStorage.getItem('snapshotXtraCols') === 'true') {
+      this.queryCallOption = this.queryCallOptionShow;
+      this.rowDetailComponent = null;
+      this.columnFilter = true;
+      this.hasDetails = false;
+      this.columns = this.columnsShow.slice(0);
+      this.snapshotXtraCols = true;
+    } else {
+      this.queryCallOption = this.queryCallOptionHide;
+      this.rowDetailComponent = SnapshotDetailsComponent;
+      this.columnFilter = false;
+      this.hasDetails = true;
+      this.columns = this.columnsHide.slice(0);
+      this.snapshotXtraCols = false;
     }
+  }
 
-  resourceTransformIncomingRestData(rows: any) {
-    //// 
+  resourceTransformIncomingRestData(rows: any[]) {
+    /// /
     rows.forEach((row) => {
       if (row.properties) {
         row.used = this.storageService.convertBytestoHumanReadable(row.properties.used.rawvalue);
         row.created = this.localeService.formatDateTime(row.properties.creation.parsed.$date);
         row.referenced = this.storageService.convertBytestoHumanReadable(row.properties.referenced.rawvalue);
       }
-    })
-    ////
+    });
+    /// /
     return rows;
   }
 
-  rowValue(row, attr) {
+  rowValue(row: any, attr: any) {
     switch (attr) {
       case 'used':
-        return (<any>window).filesize(row[attr], { standard: "iec" });
+        return (<any>window).filesize(row[attr], { standard: 'iec' });
       case 'refer':
-        return (<any>window).filesize(row[attr], { standard: "iec" });
+        return (<any>window).filesize(row[attr], { standard: 'iec' });
       default:
         return row[attr];
     }
@@ -183,27 +186,27 @@ export class SnapshotListComponent {
   getActions() {
     return [
       {
-        id: "delete",
-        icon: "delete",
+        id: 'delete',
+        icon: 'delete',
         name: this.config.name,
         label: helptext.label_delete,
-        onClick: snapshot => this.doDelete(snapshot)
+        onClick: (snapshot: any) => this.doDelete(snapshot),
       },
       {
-        id: "clone",
-        icon: "filter_none",
+        id: 'clone',
+        icon: 'filter_none',
         name: this.config.name,
         label: helptext.label_clone,
-        onClick: snapshot =>
-          this._router.navigate(new Array("/").concat(["storage", "snapshots", "clone", snapshot.name]))
+        onClick: (snapshot: any) =>
+          this._router.navigate(new Array('/').concat(['storage', 'snapshots', 'clone', snapshot.name])),
       },
       {
-        id: "rollback",
-        icon: "history",
+        id: 'rollback',
+        icon: 'history',
         name: this.config.name,
         label: helptext.label_rollback,
-        onClick: snapshot => this.doRollback(snapshot)
-      }
+        onClick: (snapshot: any) => this.doRollback(snapshot),
+      },
     ];
   }
 
@@ -212,25 +215,25 @@ export class SnapshotListComponent {
   }
 
   preInit(entityList: any) {
-    this.sub = this._route.params.subscribe(params => { });
+    this.sub = this._route.params.subscribe((params) => { });
   }
 
-  callGetFunction(entityList) {
+  callGetFunction(entityList: any) {
     this.ws.call('systemdataset.config').toPromise().then((res) => {
       if (res && res.basename && res.basename !== '') {
-        this.queryCallOption[0][2] = (["name", "!^", res.basename]);
+        this.queryCallOption[0][2] = (['name', '!^', res.basename]);
       }
       this.ws.call(this.queryCall, this.queryCallOption).subscribe((res1) => {
         entityList.handleData(res1, true);
       },
       (err) => {
-          new EntityUtils().handleWSError(this, res, entityList.dialogService);
+        new EntityUtils().handleWSError(this, res, entityList.dialogService);
       });
     });
   }
 
-  dataHandler(list: { rows: { name: string, dataset: string, snapshot: string }[] }): void {
-    list.rows = list.rows.map(ss => {
+  dataHandler(list: { rows: { name: string; dataset: string; snapshot: string }[] }): void {
+    list.rows = list.rows.map((ss) => {
       const [datasetName, snapshotName] = ss.name.split('@');
       ss.dataset = datasetName;
       ss.snapshot = snapshotName;
@@ -238,114 +241,138 @@ export class SnapshotListComponent {
     });
   }
 
-  wsMultiDeleteParams(selected: any) {
-    let params: Array<any> = ['zfs.snapshot.delete'];
-    let selectedId = [];
-    for (const i in selected) {
-     selectedId.push([selected[i].name]);
-    }
-    params.push(selectedId);
-    params.push("{0}");
+  wsMultiDeleteParams(selected: any[]) {
+    const params: any[] = ['zfs.snapshot.delete'];
+
+    const snapshots = selected.map((item) => [item.dataset + '@' + item.snapshot]);
+    params.push(snapshots);
+    params.push('{0}');
+
     return params;
   }
 
-  doDelete(item) {
-    const deleteMsg = T("Delete snapshot ") + item.name  + "?";
-    this.entityList.dialogService.confirm(T("Delete"), deleteMsg, false, T('Delete')).subscribe((res) => {
+  doDelete(item: any) {
+    const deleteMsg = T('Delete snapshot ') + item.name + '?';
+    this.entityList.dialogService.confirm(T('Delete'), deleteMsg, false, T('Delete')).subscribe((res: boolean) => {
       if (res) {
         this.entityList.loader.open();
         this.entityList.loaderOpen = true;
         this.ws.call(this.wsDelete, [item.name]).subscribe(
-          (res) => { 
-            this.entityList.getData() 
+          () => {
+            this.entityList.getData();
           },
-          (res) => {
+          (res: any) => {
             new EntityUtils().handleWSError(this, res, this.entityList.dialogService);
             this.entityList.loaderOpen = false;
             this.entityList.loader.close();
-        });
+          },
+        );
       }
     });
   }
 
-  doMultiDelete(selected){
-    let multiDeleteMsg = this.entityList.getMultiDeleteMessage(selected);
-    this.dialogService.confirm('Delete', multiDeleteMsg, false, T('Delete') ).subscribe((res) => {
-      if(res){
+  doMultiDelete(selected: any) {
+    const multiDeleteMsg = this.entityList.getMultiDeleteMessage(selected);
+    this.dialogService.confirm('Delete', multiDeleteMsg, false, T('Delete')).subscribe((res: boolean) => {
+      if (res) {
         this.startMultiDeleteProgress(selected);
       }
     });
   }
 
-  startMultiDeleteProgress(selected){
+  startMultiDeleteProgress(selected: any) {
     const params = this.wsMultiDeleteParams(selected);
-    let dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T("Deleting Snapshots")}, disableClose: true });
+    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Deleting Snapshots') }, disableClose: true });
     dialogRef.componentInstance.setCall(this.wsMultiDelete, params);
     dialogRef.componentInstance.submit();
 
-    dialogRef.componentInstance.success.subscribe((job_res) => {
+    dialogRef.componentInstance.success.subscribe((job_res: any) => {
+      const jobErrors: string[] = [];
+      const jobSuccess: any[] = [];
+
+      job_res.result.forEach((item: any) => {
+        if (item.error) {
+          jobErrors.push(item.error);
+        } else {
+          jobSuccess.push(item.result);
+        }
+      });
+
       dialogRef.close();
       this.entityList.getData();
       this.entityList.selected = [];
 
-      let infoMessage: string = T('Deleted') + ' ' + params[1].length + ' ';
-      infoMessage += params[1].length > 1 ? T('snapshots') : T('snapshot');
-      this.dialogService.Info(infoMessage, '', '320px', 'info', true );
+      if (jobErrors.length > 0) {
+        const errorTitle = T('Warning') + ', ' + jobErrors.length + ' of ' + params[1].length + ' ' + T('snapshots could not be deleted.');
+
+        let errorMessage = jobErrors.map((err) => err + '\n').toString();
+        errorMessage = errorMessage.split(',').join('');
+        errorMessage = errorMessage.split('[').join('\n *** [');
+        errorMessage = errorMessage.split(']').join(']\n');
+
+        this.dialogService.errorReport(errorTitle, '', errorMessage);
+      } else {
+        let infoTitle: string = T('Deleted') + ' ' + jobSuccess.length + ' ';
+        infoTitle += jobSuccess.length > 1 ? T('snapshots') : T('snapshot');
+        this.dialogService.Info(infoTitle, '', '320px', 'info', true);
+      }
     });
 
-    dialogRef.componentInstance.failure.subscribe((err) => {
+    dialogRef.componentInstance.failure.subscribe((err: any) => {
       new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
       dialogRef.close();
     });
   }
 
-  doRollback(item) {
+  doRollback(item: any) {
     this.entityList.loader.open();
     this.entityList.loaderOpen = true;
-    this.ws.call(this.queryCall, [[["id","=",item.name]]]).subscribe(res => {
+    this.ws.call(this.queryCall, [[['id', '=', item.name]]]).subscribe((res) => {
       const snapshot = res[0];
       this.entityList.loader.close();
       this.entityList.loaderOpen = false;
-      const msg = T(`Use snapshot <i>${item.snapshot}</i> to roll <b>${item.dataset}</b> back to `) + 
-        new Date(snapshot.properties.creation.parsed.$date).toLocaleString() + '?';
+      const msg = T(`Use snapshot <i>${item.snapshot}</i> to roll <b>${item.dataset}</b> back to `)
+        + new Date(snapshot.properties.creation.parsed.$date).toLocaleString() + '?';
       this.rollbackFormConf.message = msg;
       this.rollback = snapshot;
       this.entityList.dialogService.dialogForm(this.rollbackFormConf);
-    }, err => {
+    }, (err) => {
       this.entityList.loader.close();
       this.entityList.loaderOpen = false;
       new EntityUtils().handleWSError(this.entityList, err, this.entityList.dialogService);
     });
   }
 
-  rollbackSubmit(entityDialog) {
+  rollbackSubmit(entityDialog: EntityDialogComponent) {
     const parent = entityDialog.parent;
     const item = entityDialog.parent.rollback;
     const recursive = entityDialog.formValue.recursive;
-    const data = {};
+    const data: any = {};
     if (recursive !== null) {
       data[recursive] = true;
     }
-    data["force"] = true;
+    data['force'] = true;
     parent.entityList.loader.open();
     parent.entityList.loaderOpen = true;
     parent.ws
       .call('zfs.snapshot.rollback', [item.name, data])
       .subscribe(
-        (res) => {
+        () => {
           entityDialog.dialogRef.close();
           parent.entityList.getData();
         },
-        (err) => {
+        (err: any) => {
           parent.entityList.loaderOpen = false;
           parent.entityList.loader.close();
           entityDialog.dialogRef.close();
           new EntityUtils().handleWSError(parent.entityList, err, parent.entityList.dialogService);
-        });
+        },
+      );
   }
 
   toggleExtraCols() {
-    let title, message, button;
+    let title; let message; let
+      button;
     if (this.snapshotXtraCols) {
       title = helptext.extra_cols.title_hide;
       message = helptext.extra_cols.message_hide;
@@ -355,14 +382,13 @@ export class SnapshotListComponent {
       message = helptext.extra_cols.message_show;
       button = helptext.extra_cols.button_show;
     }
-    this.dialogService.confirm(title, message, true, button).subscribe(res => {
-     if (res) {
-       this.entityList.loader.open();
-       this.snapshotXtraCols = !this.snapshotXtraCols;
-       window.localStorage.setItem('snapshotXtraCols', this.snapshotXtraCols.toString());
-       document.location.reload(true);
-     }
-    })
+    this.dialogService.confirm(title, message, true, button).subscribe((res: boolean) => {
+      if (res) {
+        this.entityList.loader.open();
+        this.snapshotXtraCols = !this.snapshotXtraCols;
+        window.localStorage.setItem('snapshotXtraCols', this.snapshotXtraCols.toString());
+        document.location.reload(true);
+      }
+    });
   }
-
 }

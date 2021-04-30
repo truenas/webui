@@ -1,6 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { WebSocketService, SystemGeneralService, DialogService, LanguageService, StorageService }
-  from '../../../services/';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import {
+  WebSocketService, SystemGeneralService, DialogService, LanguageService, StorageService,
+}
+  from '../../../services';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { LocaleService } from '../../../services/locale.service';
 import { ModalService } from '../../../services/modal.service';
@@ -25,7 +28,7 @@ import { AdminLayoutComponent } from '../../../components/common/layouts/admin-l
   templateUrl: './general-settings.component.html',
 })
 export class GeneralSettingsComponent implements OnInit, OnDestroy {
-  dataCards = [];
+  dataCards: any[] = [];
   supportTitle = helptext.supportTitle;
   ntpTitle = helptext.ntpTitle;
   localeData: any;
@@ -35,13 +38,13 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
   dataSource: any;
   refreshTable: Subscription;
   getGenConfig: Subscription;
-  public formEvents: Subject<CoreEvent>;
+  formEvents: Subject<CoreEvent>;
 
   // Components included in this dashboard
-  protected localizationComponent = new LocalizationFormComponent(this.language,this.ws,this.dialog,this.loader,
-    this.sysGeneralService,this.localeService,this.modalService);
-  protected guiComponent = new GuiFormComponent(this.router,this.language,this.ws,this.dialog,this.loader,
-    this.http,this.storage,this.sysGeneralService,this.modalService, this.adminLayout);
+  protected localizationComponent = new LocalizationFormComponent(this.language, this.ws, this.dialog, this.loader,
+    this.sysGeneralService, this.localeService, this.modalService);
+  protected guiComponent = new GuiFormComponent(this.router, this.language, this.ws, this.dialog, this.loader,
+    this.http, this.storage, this.sysGeneralService, this.modalService, this.adminLayout);
   protected NTPServerFormComponent = new NTPServerFormComponent(this.modalService);
 
   // Dialog forms and info for saving, uploading, resetting config
@@ -50,11 +53,11 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
       type: 'checkbox',
       name: 'secretseed',
       placeholder: helptext.secretseed.placeholder,
-      tooltip: helptext.secretseed.tooltip
-    }
+      tooltip: helptext.secretseed.tooltip,
+    },
   ];
 
-  public saveConfigFormConf: DialogFormConfiguration = {
+  saveConfigFormConf: DialogFormConfiguration = {
     title: helptext.save_config_form.title,
     message: helptext.save_config_form.message,
     fieldConfig: this.saveConfigFieldConf,
@@ -63,49 +66,49 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     customSubmit: this.saveConfigSubmit,
     parent: this,
     warning: helptext.save_config_form.warning,
-  }
+  };
 
   protected uploadConfigFieldConf: FieldConfig[] = [
     {
       type: 'upload',
       name: 'upload_config',
-      placeholder : helptext.upload_config.placeholder,
+      placeholder: helptext.upload_config.placeholder,
       tooltip: helptext.upload_config_form.tooltip,
       validation: helptext.upload_config_form.validation,
       fileLocation: '',
       updater: this.updater,
       parent: this,
       hideButton: true,
-    }
+    },
   ];
 
-  public uploadConfigFormConf: DialogFormConfiguration = {
+  uploadConfigFormConf: DialogFormConfiguration = {
     title: helptext.upload_config_form.title,
     fieldConfig: this.uploadConfigFieldConf,
     method_ws: 'config.upload',
     saveButtonText: helptext.upload_config_form.button_text,
     customSubmit: this.uploadConfigSubmit,
     message: helptext.upload_config_form.message,
-  }
+  };
 
   protected resetConfigFieldConf: FieldConfig[] = [
     {
       type: 'checkbox',
       name: 'reboot_option',
       placeholder: helptext.reset_config_placeholder,
-      required: true
-    }
-  ]
+      required: true,
+    },
+  ];
 
-  public resetConfigFormConf: DialogFormConfiguration = {
+  resetConfigFormConf: DialogFormConfiguration = {
     title: helptext.reset_config_form.title,
     message: helptext.reset_config_form.message,
     fieldConfig: this.resetConfigFieldConf,
     method_ws: 'config.reset',
     saveButtonText: helptext.reset_config_form.button_text,
     customSubmit: this.resetConfigSubmit,
-    parent: this
-  }
+    parent: this,
+  };
 
   constructor(private ws: WebSocketService, private localeService: LocaleService,
     private sysGeneralService: SystemGeneralService, private modalService: ModalService,
@@ -117,11 +120,11 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     this.getDataCardData();
     this.refreshCardData = this.sysGeneralService.refreshSysGeneral$.subscribe(() => {
       this.getDataCardData();
-    })
+    });
     this.getNTPData();
     this.refreshTable = this.modalService.refreshTable$.subscribe(() => {
       this.getNTPData();
-    })
+    });
 
     this.formEvents = new Subject();
     this.formEvents.subscribe((evt: CoreEvent) => {
@@ -153,60 +156,59 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
             options: [
               { label: helptext.actions.save_config, value: 'save_config' },
               { label: helptext.actions.upload_config, value: 'upload_config' },
-              { label: helptext.actions.reset_config, value: 'reset_config' }
-            ]
-          }
-        ]
-      }
+              { label: helptext.actions.reset_config, value: 'reset_config' },
+            ],
+          },
+        ],
+      },
     };
 
-    this.core.emit({name:"GlobalActions", data: actionsConfig, sender: this});
+    this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
   }
 
   getDataCardData() {
-    this.getGenConfig = this.sysGeneralService.getGeneralConfig.subscribe(res => {
+    this.getGenConfig = this.sysGeneralService.getGeneralConfig.subscribe((res) => {
       this.configData = res;
       this.dataCards = [
         {
           title: helptext.guiTitle,
           id: 'gui',
           items: [
-            {label: helptext.stg_guicertificate.placeholder, value: res.ui_certificate.name},
-            {label: helptext.stg_guiaddress.placeholder, value: res.ui_address.join(', ')},
-            {label: helptext.stg_guiv6address.placeholder, value: res.ui_v6address.join(', ')},
-            {label: helptext.stg_guihttpsport.placeholder, value: res.ui_httpsport},
-            {label: helptext.stg_guihttpsprotocols.placeholder, value: res.ui_httpsprotocols.join(', ')},
-            {label: helptext.stg_guihttpsredirect.placeholder, value: res.ui_httpsredirect},
-            {label: helptext.crash_reporting.placeholder, value: res.crash_reporting ? helptext.enabled : helptext.disabled},
-            {label: helptext.usage_collection.placeholder, value: res.usage_collection ? helptext.enabled : helptext.disabled},
-            {label: helptext.consolemsg_placeholder, value: res.ui_consolemsg ? helptext.enabled : helptext.disabled},
+            { label: helptext.stg_guicertificate.placeholder, value: res.ui_certificate.name },
+            { label: helptext.stg_guiaddress.placeholder, value: res.ui_address.join(', ') },
+            { label: helptext.stg_guiv6address.placeholder, value: res.ui_v6address.join(', ') },
+            { label: helptext.stg_guihttpsport.placeholder, value: res.ui_httpsport },
+            { label: helptext.stg_guihttpsprotocols.placeholder, value: res.ui_httpsprotocols.join(', ') },
+            { label: helptext.stg_guihttpsredirect.placeholder, value: res.ui_httpsredirect },
+            { label: helptext.crash_reporting.placeholder, value: res.crash_reporting ? helptext.enabled : helptext.disabled },
+            { label: helptext.usage_collection.placeholder, value: res.usage_collection ? helptext.enabled : helptext.disabled },
+            { label: helptext.consolemsg_placeholder, value: res.ui_consolemsg ? helptext.enabled : helptext.disabled },
           ],
           actions: [
-            { label: helptext.actions.save_config, value: 'saveConfig', icon: 'save_alt'},
+            { label: helptext.actions.save_config, value: 'saveConfig', icon: 'save_alt' },
             { label: helptext.actions.upload_config, value: 'upLoadConfig', icon: 'arrow_upward' },
             { label: helptext.actions.reset_config, value: 'resetConfig', icon: 'replay' },
-          ]
-        }
+          ],
+        },
       ];
 
-      this.sysGeneralService.languageChoices().subscribe(languages => {
-        this.sysGeneralService.kbdMapChoices().subscribe(mapchoices => {
-          const keyboardMap = mapchoices.find(x => x.value === this.configData.kbdmap);
-          this.localeData =
-          {
+      this.sysGeneralService.languageChoices().subscribe((languages) => {
+        this.sysGeneralService.kbdMapChoices().subscribe((mapchoices) => {
+          const keyboardMap = mapchoices.find((x) => x.value === this.configData.kbdmap);
+          this.localeData = {
             title: helptext.localeTitle,
             id: 'localization',
             items: [
-              {label: helptext.stg_language.placeholder, value: languages[res.language]},
-              {label: helptext.date_format.placeholder, value: this.localeService.getDateAndTime(res.timezone)[0]},
-              {label: helptext.time_format.placeholder, value: this.localeService.getDateAndTime(res.timezone)[1]},
-              {label: helptext.stg_timezone.placeholder, value: res.timezone},
-              {label: helptext.stg_kbdmap.placeholder, value: res.kbdmap ? keyboardMap.label : helptext.default}
-            ]
+              { label: helptext.stg_language.placeholder, value: languages[res.language] },
+              { label: helptext.date_format.placeholder, value: this.localeService.getDateAndTime(res.timezone)[0] },
+              { label: helptext.time_format.placeholder, value: this.localeService.getDateAndTime(res.timezone)[1] },
+              { label: helptext.stg_timezone.placeholder, value: res.timezone },
+              { label: helptext.stg_kbdmap.placeholder, value: res.kbdmap ? keyboardMap.label : helptext.default },
+            ],
           };
           this.dataCards.push(this.localeData);
-        })
-      })
+        });
+      });
     });
   }
 
@@ -228,36 +230,36 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
 
   doNTPDelete(server: any) {
     this.dialog.confirm(helptext.deleteServer.title, `${helptext.deleteServer.message} ${server.address}?`,
-      false, helptext.deleteServer.message).subscribe(res => {
+      false, helptext.deleteServer.message).subscribe((res: boolean) => {
       if (res) {
         this.loader.open();
-        this.ws.call('system.ntpserver.delete', [server.id]).subscribe(res => {
+        this.ws.call('system.ntpserver.delete', [server.id]).subscribe(() => {
           this.loader.close();
           this.getNTPData();
-        }, err => {
+        }, (err) => {
           this.loader.close();
           this.dialog.errorReport('Error', err.reason, err.trace.formatted);
-        })
+        });
       }
-    })
+    });
   }
 
   getNTPData() {
-    this.ws.call('system.ntpserver.query').subscribe(res => {
+    this.ws.call('system.ntpserver.query').subscribe((res) => {
       this.dataSource = res;
       this.displayedColumns = ['address', 'burst', 'iburst', 'prefer', 'minpoll', 'maxpoll', 'actions'];
-    })
+    });
   }
 
-  saveConfigSubmit(entityDialog) {
+  saveConfigSubmit(entityDialog: any) {
     parent = entityDialog.parent;
     entityDialog.loader.open();
-    entityDialog.ws.call('system.info', []).subscribe((res) => {
-      let fileName = "";
-      let mimetype;
+    entityDialog.ws.call('system.info', []).subscribe((res: any) => {
+      let fileName = '';
+      let mimetype: string;
       if (res) {
-        let hostname = res.hostname.split('.')[0];
-        let date = entityDialog.datePipe.transform(new Date(),"yyyyMMddHHmmss");
+        const hostname = res.hostname.split('.')[0];
+        const date = entityDialog.datePipe.transform(new Date(), 'yyyyMMddHHmmss');
         fileName = hostname + '-' + res.version + '-' + date;
         if (entityDialog.formValue['secretseed']) {
           mimetype = 'application/x-tar';
@@ -268,67 +270,67 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
         }
       }
 
-      entityDialog.ws.call('core.download', ['config.save', [{ 'secretseed': entityDialog.formValue['secretseed'] }], fileName])
+      entityDialog.ws.call('core.download', ['config.save', [{ secretseed: entityDialog.formValue['secretseed'] }], fileName])
         .subscribe(
-          (download) => {
+          (download: any) => {
             const url = download[1];
-            entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype).subscribe(file => {
+            entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype).subscribe((file: Blob) => {
               entityDialog.loader.close();
               entityDialog.dialogRef.close();
               entityDialog.parent.storage.downloadBlob(file, fileName);
-            }, err => {
+            }, (err: any) => {
               entityDialog.loader.close();
               entityDialog.dialogRef.close();
               entityDialog.parent.dialog.errorReport(helptext.config_download.failed_title,
                 helptext.config_download.failed_message, err.message);
             });
           },
-          (err) => {
+          (err: any) => {
             entityDialog.loader.close();
             entityDialog.dialogRef.close();
             new EntityUtils().handleWSError(entityDialog, err, entityDialog.dialog);
-          }
+          },
         );
     },
-    (err) => {
+    (err: any) => {
       entityDialog.loader.close();
       entityDialog.dialogRef.close();
       new EntityUtils().handleWSError(entityDialog, err, entityDialog.dialog);
     });
   }
 
-  updater(file: any, parent: any){
+  updater(file: any, parent: any) {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
-      parent.subs = {"apiEndPoint":file.apiEndPoint, "file": fileBrowser.files[0]}
+      parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
     }
   }
 
-  uploadConfigSubmit(entityDialog) {
+  uploadConfigSubmit(entityDialog: EntityDialogComponent) {
     const parent = entityDialog.conf.fieldConfig[0].parent;
     const formData: FormData = new FormData();
 
     const dialogRef = parent.mdDialog.open(EntityJobComponent,
-      {data: {"title":helptext.config_upload.title,"CloseOnClickOutside":false}});
-        dialogRef.componentInstance.setDescription(helptext.config_upload.message);
-        formData.append('data', JSON.stringify({
-          "method": "config.upload",
-          "params": []
-        }));
+      { data: { title: helptext.config_upload.title, CloseOnClickOutside: false } });
+    dialogRef.componentInstance.setDescription(helptext.config_upload.message);
+    formData.append('data', JSON.stringify({
+      method: 'config.upload',
+      params: [],
+    }));
     formData.append('file', parent.subs.file);
     dialogRef.componentInstance.wspost(parent.subs.apiEndPoint, formData);
-    dialogRef.componentInstance.success.subscribe(res=>{
+    dialogRef.componentInstance.success.subscribe(() => {
       dialogRef.close();
       parent.router.navigate(['/others/reboot']);
-    })
-    dialogRef.componentInstance.failure.subscribe((res) => {
+    });
+    dialogRef.componentInstance.failure.subscribe((res: any) => {
       dialogRef.componentInstance.setDescription(res.error);
     });
   }
 
-  resetConfigSubmit(entityDialog) {
+  resetConfigSubmit(entityDialog: EntityDialogComponent) {
     const parent = entityDialog.parent;
-    parent.router.navigate(new Array('').concat(['others', 'config-reset']))
+    parent.router.navigate(new Array('').concat(['others', 'config-reset']));
   }
 
   ngOnDestroy() {
@@ -336,5 +338,4 @@ export class GeneralSettingsComponent implements OnInit, OnDestroy {
     this.refreshTable.unsubscribe();
     this.getGenConfig.unsubscribe();
   }
-
 }

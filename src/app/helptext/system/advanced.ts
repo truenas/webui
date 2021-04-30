@@ -1,6 +1,6 @@
-import { Validators } from "@angular/forms";
-import { matchOtherValidator } from "app/pages/common/entity/entity-form/validators/password-validation";
-import { T } from "app/translate-marker";
+import { Validators } from '@angular/forms';
+import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation';
+import { T } from 'app/translate-marker';
 import global_helptext from '../global-helptext';
 
 export const helptext_system_advanced = {
@@ -14,11 +14,11 @@ export const helptext_system_advanced = {
   fieldset_cron: T('Cron Jobs'),
   fieldset_initshutdown: T('Init/Shutdown Scripts'),
 
-  dialog_generate_debug_title: T("Generate Debug File"),
-  dialog_generate_debug_message: T("This operation might take a long time. Proceed?"),
+  dialog_generate_debug_title: T('Generate Debug File'),
+  dialog_generate_debug_message: T('This operation might take a long time. Proceed?'),
   dialog_button_ok: T('Proceed'),
 
-  system_dataset_placeholder: T("Use System Dataset"),
+  system_dataset_placeholder: T('Use System Dataset'),
   system_dataset_tooltip: T('Store system logs on the system dataset. Unset to store system logs in <i>/var/</i> on the operating system device.'),
 
   variable: T('Variable'),
@@ -29,12 +29,12 @@ export const helptext_system_advanced = {
   },
 
   debug_dialog: {
-    failure_msg: T("Failed to generate debug file."),
-    failure_title: T("Failed")
+    failure_msg: T('Failed to generate debug file.'),
+    failure_title: T('Failed'),
   },
 
-  snackbar_network_error_message: T("Check the network connection."),
-  snackbar_network_error_action: T("Failed"),
+  snackbar_network_error_message: T('Check the network connection.'),
+  snackbar_network_error_action: T('Failed'),
 
   consolemenu_placeholder: T('Show Text Console without Password Prompt'),
   consolemenu_tooltip: T('Unset to add a login prompt to the system before\
@@ -57,7 +57,7 @@ export const helptext_system_advanced = {
  devices as they are created without swap. Setting to\
  <i>0</i> disables swap creation completely. <b>STRONGLY\
  DISCOURAGED</b>'),
-  swapondrive_validation: [ Validators.required, Validators.min(0), Validators.max(99) ],
+  swapondrive_validation: [Validators.required, Validators.min(0), Validators.max(99)],
 
   overprovision: {
     placeholder: T('LOG (Write Cache) Overprovision Size in GiB'),
@@ -107,63 +107,63 @@ export const helptext_system_advanced = {
   sed_passwd2_placeholder: T('Confirm SED Password'),
   sed_passwd2_tooltip: T(''),
 
-  swapondrive_warning: T("A swap size of 0 is STRONGLY DISCOURAGED."),
-  swapondrive_max_warning: T("Maximum swap size is 99 GiB"),
+  swapondrive_warning: T('A swap size of 0 is STRONGLY DISCOURAGED.'),
+  swapondrive_max_warning: T('Maximum swap size is 99 GiB'),
 
-  debug_download_failed_title: T("Error Downloading File"),
-  debug_download_failed_message: T("Debug could not be downloaded."),
+  debug_download_failed_title: T('Error Downloading File'),
+  debug_download_failed_message: T('Debug could not be downloaded.'),
 
   sysloglevel: {
-    placeholder: T("Syslog Level"),
+    placeholder: T('Syslog Level'),
     tooltip: T(
-      "When <i>Syslog Server</i> is defined, only logs matching this\
- level are sent."
+      'When <i>Syslog Server</i> is defined, only logs matching this\
+ level are sent.',
     ),
     options: [
-      {label:T('Emergency'), value:'F_EMERG'},
-      {label:T('Alert'), value:'F_ALERT'},
-      {label:T('Critical'), value:'F_CRIT'},
-      {label:T('Error'), value:'F_ERR'},
-      {label:T('Warning'), value:'F_WARNING'},
-      {label:T('Notice'), value:'F_NOTICE'},
-      {label:T('Info'), value:'F_INFO'},
-      {label:T('Debug'), value:'F_DEBUG'},
-      {label:T('Is Debug'), value:'F_IS_DEBUG'}
-    ]
+      { label: T('Emergency'), value: 'F_EMERG' },
+      { label: T('Alert'), value: 'F_ALERT' },
+      { label: T('Critical'), value: 'F_CRIT' },
+      { label: T('Error'), value: 'F_ERR' },
+      { label: T('Warning'), value: 'F_WARNING' },
+      { label: T('Notice'), value: 'F_NOTICE' },
+      { label: T('Info'), value: 'F_INFO' },
+      { label: T('Debug'), value: 'F_DEBUG' },
+      { label: T('Is Debug'), value: 'F_IS_DEBUG' },
+    ],
   },
 
   syslogserver: {
-    placeholder: T("Syslog Server"),
+    placeholder: T('Syslog Server'),
     tooltip: T(
-      "Remote syslog server DNS hostname or IP address.\
+      'Remote syslog server DNS hostname or IP address.\
  Nonstandard port numbers can be used by adding\
  a colon and the port number to the hostname, like\
  <samp>mysyslogserver:1928</samp>. Log entries\
  are written to local logs and sent to the remote\
- syslog server."
-    )
+ syslog server.',
+    ),
   },
 
   syslog_transport: {
-    placeholder: T("Syslog Transport"),
+    placeholder: T('Syslog Transport'),
     tooltip: T('<a href="https://tools.ietf.org/html/rfc8095" target="_blank">Transport Protocol</a>\
  for the remote system log server connection. Choosing Transport Layer Security (TLS)\
  also requires selecting a preconfigured system Certificate.'),
     options: [
-      {label:T('UDP'), value:'UDP'},
-      {label:T('TCP'), value:'TCP'},
-      {label:T('TLS'), value:'TLS'},
-    ]
+      { label: T('UDP'), value: 'UDP' },
+      { label: T('TCP'), value: 'TCP' },
+      { label: T('TLS'), value: 'TLS' },
+    ],
   },
 
   syslog_tls_certificate: {
-    placeholder: T("Syslog TLS Certificate"),
+    placeholder: T('Syslog TLS Certificate'),
     tooltip: T('The preconfigured system <i>Certificate</i> to use for authenticating\
  the TLS protocol connection to the remote system log server.'),
   },
 
   first_time: {
     title: T('Warning'),
-    message: T('Changing Advanced settings can be dangerous when done incorrectly. Please use caution before saving.')
-  }
+    message: T('Changing Advanced settings can be dangerous when done incorrectly. Please use caution before saving.'),
+  },
 };

@@ -1,13 +1,15 @@
-import { Component, OnInit, Input, ViewChild, AfterViewInit, AfterViewChecked } from '@angular/core';
-import { WebSocketService } from 'app/services';
-
-import { TableService } from './table.service';
+import {
+  Component, OnInit, Input, ViewChild, AfterViewInit, AfterViewChecked,
+} from '@angular/core';
+import { MatCard } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 
 import * as _ from 'lodash';
+
+import { WebSocketService } from 'app/services';
 import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
-import { T } from 'app/translate-marker';
-import { EntityJobComponent } from '../entity-job';
-import { MatDialog } from '@angular/material/dialog';
+import { EntityJobState } from 'app/enums/entity-job-state.enum';
+import { TableService } from './table.service';
 
 export interface InputTableConf {
   title?: string;
@@ -24,21 +26,21 @@ export interface InputTableConf {
     title: string;
     key_props: string[];
     id_prop?: string;
-    doubleConfirm?(item);
+    doubleConfirm?(item: any): any;
   }; //
   tableComponent?: TableComponent;
   emptyEntityLarge?: boolean;
   parent: any;
 
-  add?(); // add action function
-  edit?(any); // edit row
-  delete?(item, table); // customize delete row method
-  dataSourceHelper?(any); // customise handle/modify dataSource
-  getInOutInfo?(any); // get in out info if has state column
-  getActions?(); // actions for each row
+  add?(): any; // add action function
+  edit?(any: any): any; // edit row
+  delete?(item: any, table: any): any; // customize delete row method
+  dataSourceHelper?(any: any): any; // customise handle/modify dataSource
+  getInOutInfo?(any: any): any; // get in out info if has state column
+  getActions?(): any; // actions for each row
   isActionVisible?(actionId: string, entity: any): boolean; // determine if action is visible
-  getDeleteCallParams?(row, id): any; // get delete Params
-  onButtonClick?(row);
+  getDeleteCallParams?(row: any, id: any): any; // get delete Params
+  onButtonClick?(row: any): any;
 }
 
 @Component({
@@ -48,20 +50,20 @@ export interface InputTableConf {
   providers: [TableService],
 })
 export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
-  @ViewChild('apptable') apptable;
-  @ViewChild('table') table;
+  @ViewChild('apptable') apptable: any;
+  @ViewChild('table') table: any;
 
-  public _tableConf: InputTableConf;
-  public title = '';
-  public titleHref: string;
-  public dataSource;
-  public displayedDataSource;
-  public displayedColumns;
-  public hideHeader = false;
-  public actions;
-  public emptyConf: EmptyConfig;
-  public showViewMore = false;
-  public showCollapse = false;
+  _tableConf: InputTableConf;
+  title = '';
+  titleHref: string;
+  dataSource: any[];
+  displayedDataSource: any[];
+  displayedColumns: any[];
+  hideHeader = false;
+  actions: any[];
+  emptyConf: EmptyConfig;
+  showViewMore = false;
+  showCollapse = false;
 
   protected idProp = 'id';
 
@@ -69,8 +71,8 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   private TABLE_ROW_HEIGHT = 48;
   private TABLE_MIN_ROWS = 5;
 
-  private tableHeight;
-  private limitRows;
+  private tableHeight: number;
+  private limitRows: number;
   private entityEmptyLarge = false;
   private enableViewMore = false;
 
@@ -155,19 +157,19 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     this.tableService.getData(this);
   }
 
-  editRow(row) {
+  editRow(row: any) {
     if (this._tableConf.edit) {
       this._tableConf.edit(row);
     }
   }
 
-  onButtonClick(row) {
+  onButtonClick(row: any) {
     if (this._tableConf.onButtonClick) {
       this._tableConf.onButtonClick(row);
     }
   }
 
-  deleteRow(row) {
+  deleteRow(row: any) {
     if (this._tableConf.delete) {
       this._tableConf.delete(row, this);
     } else {
@@ -176,11 +178,12 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     event.stopPropagation();
   }
 
-  unifyState(state) {
+  // TODO: Enum
+  unifyState(state: string) {
     return this.tableService.unifyState(state);
   }
 
-  showInOutInfo(element) {
+  showInOutInfo(element: any) {
     if (element.oldSent === undefined) {
       element.oldSent = element.sent_bytes;
     }
@@ -213,26 +216,21 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     this.showCollapse = false;
   }
 
-  getButtonClass(state) {
+  getButtonClass(state: EntityJobState): string {
     switch (state) {
-      case 'PENDING':
-      case 'RUNNING':
-      case 'ABORTED':
-        return 'fn-theme-orange';
-      case 'FINISHED':
-      case 'SUCCESS':
-        return 'fn-theme-green';
-      case 'ERROR':
-      case 'FAILED':
-        return 'fn-theme-red';
-      case 'HOLD':
-        return 'fn-theme-yellow';
-      default:
-        return 'fn-theme-primary';
+      case EntityJobState.Pending: return 'fn-theme-orange';
+      case EntityJobState.Running: return 'fn-theme-orange';
+      case EntityJobState.Aborted: return 'fn-theme-orange';
+      case EntityJobState.Finished: return 'fn-theme-green';
+      case EntityJobState.Success: return 'fn-theme-green';
+      case EntityJobState.Error: return 'fn-theme-red';
+      case EntityJobState.Failed: return 'fn-theme-red';
+      case EntityJobState.Hold: return 'fn-theme-yellow';
+      default: return 'fn-theme-primary';
     }
   }
 
-  determineColumnType(column) {
+  determineColumnType(column: any) {
     if (column.listview) {
       return 'listview';
     }

@@ -5,39 +5,39 @@ import { T } from 'app/translate-marker';
 import { EntityUtils } from '../../../../common/entity/utils';
 
 @Component({
-  selector : 'app-iscsi-target-list',
-  template : `
+  selector: 'app-iscsi-target-list',
+  template: `
     <entity-table [conf]="this" [title]="tableTitle"></entity-table>
   `,
-  providers: [IscsiService]
+  providers: [IscsiService],
 })
-export class TargetListComponent implements OnInit{
+export class TargetListComponent implements OnInit {
   @Input('fcEnabled') fcEnabled: boolean;
 
-  public tableTitle = "Targets";
+  tableTitle = 'Targets';
   protected queryCall = 'iscsi.target.query';
   protected wsDelete = 'iscsi.target.delete';
-  protected route_add: string[] = [ 'sharing', 'iscsi', 'target', 'add' ];
-  protected route_add_tooltip: string = "Add Target";
-  protected route_edit: string[] = [ 'sharing', 'iscsi', 'target', 'edit' ];
+  protected route_add: string[] = ['sharing', 'iscsi', 'target', 'add'];
+  protected route_add_tooltip = 'Add Target';
+  protected route_edit: string[] = ['sharing', 'iscsi', 'target', 'edit'];
 
-  public columns: Array<any> = [
+  columns: any[] = [
     {
-      name : T('Target Name'),
-      prop : 'name',
-      always_display: true
+      name: T('Target Name'),
+      prop: 'name',
+      always_display: true,
     },
     {
-      name : T('Target Alias'),
-      prop : 'alias',
+      name: T('Target Alias'),
+      prop: 'alias',
     },
   ];
-  public config: any = {
-    paging : true,
-    sorting : {columns : this.columns},
+  config: any = {
+    paging: true,
+    sorting: { columns: this.columns },
     deleteMsg: {
       title: 'Target',
-      key_props: ['name']
+      key_props: ['name'],
     },
   };
 
@@ -47,8 +47,8 @@ export class TargetListComponent implements OnInit{
   ngOnInit() {
     if (this.fcEnabled) {
       this.columns.push({
-        name : T('Mode'),
-        prop : 'mode',
+        name: T('Mode'),
+        prop: 'mode',
       });
     }
   }
@@ -57,19 +57,19 @@ export class TargetListComponent implements OnInit{
     this.entityList = entityList;
   }
 
-  getActions(row) {
+  getActions(row: any) {
     return [{
       id: row.name,
       icon: 'edit',
-      name: "edit",
-      label: T("Edit"),
-      onClick: (rowinner) => { this.entityList.doEdit(rowinner.id); },
+      name: 'edit',
+      label: T('Edit'),
+      onClick: (rowinner: any) => { this.entityList.doEdit(rowinner.id); },
     }, {
       id: row.name,
       icon: 'delete',
-      name: "delete",
-      label: T("Delete"),
-      onClick: (rowinner) => {
+      name: 'delete',
+      label: T('Delete'),
+      onClick: (rowinner: any) => {
         let deleteMsg = this.entityList.getDeleteMessage(rowinner);
         this.iscsiService.getGlobalSessions().subscribe(
           (res) => {
@@ -84,22 +84,22 @@ export class TargetListComponent implements OnInit{
             }
             deleteMsg = warningMsg + deleteMsg;
 
-            this.entityList.dialogService.confirm( T("Delete"), deleteMsg, false, T("Delete")).subscribe((dialres) => {
+            this.entityList.dialogService.confirm(T('Delete'), deleteMsg, false, T('Delete')).subscribe((dialres: boolean) => {
               if (dialres) {
                 this.entityList.loader.open();
                 this.entityList.loaderOpen = true;
                 this.entityList.ws.call(this.wsDelete, payload).subscribe(
-                  (resinner) => { this.entityList.getData() },
-                  (resinner) => {
+                  () => { this.entityList.getData(); },
+                  (resinner: any) => {
                     new EntityUtils().handleWSError(this, resinner, this.entityList.dialogService);
                     this.entityList.loader.close();
-                  }
+                  },
                 );
               }
             });
-          }
-        )
-      }
+          },
+        );
+      },
     }];
   }
 }

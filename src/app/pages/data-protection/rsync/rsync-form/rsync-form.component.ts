@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Option } from 'app/interfaces/option.interface';
 
 import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
@@ -13,7 +14,7 @@ import { FieldSets } from '../../../common/entity/entity-form/classes/field-sets
 
 @Component({
   selector: 'app-rsync-task-add',
-  template: `<entity-form [conf]="this"></entity-form>`,
+  template: '<entity-form [conf]="this"></entity-form>',
   providers: [TaskService, UserService],
 })
 export class RsyncFormComponent implements OnDestroy {
@@ -23,13 +24,13 @@ export class RsyncFormComponent implements OnDestroy {
   protected queryKey = 'id';
   protected entityForm: EntityFormComponent;
   protected pk: number;
-  protected isEntity: boolean = true;
+  protected isEntity = true;
   protected title: string;
   protected isNew: boolean;
 
-  protected preTaskName: string = 'rsync';
-  public fieldConfig: FieldConfig[] = [];
-  public fieldSets: FieldSets = new FieldSets([
+  protected preTaskName = 'rsync';
+  fieldConfig: FieldConfig[] = [];
+  fieldSets: FieldSets = new FieldSets([
     {
       name: helptext.fieldset_source,
       class: 'source',
@@ -268,10 +269,10 @@ export class RsyncFormComponent implements OnDestroy {
     });
   }
 
-  beforeSubmit(value) {
+  beforeSubmit(value: any) {
     const spl = value.rsync_picker.split(' ');
     delete value.rsync_picker;
-    const schedule = {};
+    const schedule: any = {};
     schedule['minute'] = spl[0];
     schedule['hour'] = spl[1];
     schedule['dom'] = spl[2];
@@ -280,16 +281,16 @@ export class RsyncFormComponent implements OnDestroy {
     value['schedule'] = schedule;
   }
 
-  resourceTransformIncomingRestData(data) {
+  resourceTransformIncomingRestData(data: any) {
     data[
       'rsync_picker'
     ] = `${data.schedule.minute} ${data.schedule.hour} ${data.schedule.dom} ${data.schedule.month} ${data.schedule.dow}`;
     return data;
   }
 
-  updateUserSearchOptions(value = '', parent) {
-    parent.userService.userQueryDSCache(value).subscribe((items) => {
-      const users = [];
+  updateUserSearchOptions(value = '', parent: any) {
+    parent.userService.userQueryDSCache(value).subscribe((items: any) => {
+      const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
       }
@@ -297,7 +298,7 @@ export class RsyncFormComponent implements OnDestroy {
     });
   }
 
-  hideFields(mode) {
+  hideFields(mode: any) {
     let hide_fields;
     let show_fields;
     if (mode === 'SSH') {

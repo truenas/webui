@@ -1,5 +1,7 @@
-import {Component, Input, ViewChild, ElementRef, ViewEncapsulation} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {
+  Component, Input, ViewChild, ElementRef, ViewEncapsulation,
+} from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { iXAbstractObject } from 'app/core/classes/ix-abstractobject';
 
@@ -8,9 +10,9 @@ import { ControlConfig } from '../../models/control-config.interface';
 import { Subject } from 'rxjs/Subject';
 
 @Component({
-  selector : 'toolbar-input',
-  styleUrls : [ 'toolbar-input.component.scss' ],
-  template : `
+  selector: 'toolbar-input',
+  styleUrls: ['toolbar-input.component.scss'],
+  template: `
     <div class="toolbar-input form-element" id="row-filter">
       <div class="toolbar-input-placeholder" *ngIf="isShowPlaceholder()">{{ config.placeholder }}</div>
       <mat-form-field>
@@ -31,11 +33,11 @@ export class ToolbarInputComponent extends iXAbstractObject {
   @Input() config?: any;
   @Input() controller: Subject<any>;
 
-  @ViewChild('filter', { static: false}) filter: ElementRef;
-  filterValue: string = '';
-  hasFocus: boolean = false;
+  @ViewChild('filter', { static: false }) filter: ElementRef;
+  filterValue = '';
+  hasFocus = false;
   constructor(public translate: TranslateService) {
-    super()
+    super();
   }
 
   reset() {
@@ -44,14 +46,14 @@ export class ToolbarInputComponent extends iXAbstractObject {
     this.send();
   }
 
-  onChange(){
+  onChange() {
     this.filterValue = this.filter.nativeElement.value ? this.filter.nativeElement.value : '';
     this.send();
   }
 
   send() {
     this.config.value = this.filterValue;
-    this.controller.next({name: this.config.name, value: this.config.value});
+    this.controller.next({ name: this.config.name, value: this.config.value });
   }
 
   onFocus() {

@@ -1,4 +1,6 @@
-import { Component, AfterViewInit, Input, ViewChild, OnChanges, SimpleChanges, OnDestroy, Output, EventEmitter} from '@angular/core';
+import {
+  Component, AfterViewInit, Input, ViewChild, OnChanges, SimpleChanges, OnDestroy, Output, EventEmitter,
+} from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { MaterialModule } from 'app/appMaterial.module';
@@ -35,73 +37,57 @@ export interface DashConfigItem {
 @Component({
   selector: 'widget-controller',
   templateUrl: './widgetcontroller.component.html',
-  styleUrls: ['./widgetcontroller.component.css']
+  styleUrls: ['./widgetcontroller.component.css'],
 })
 export class WidgetControllerComponent extends WidgetComponent implements AfterViewInit {
-
   @Input() dashState: DashConfigItem[] = [];
   @Input() renderedWidgets?: number[] = [];
   @Input() hiddenWidgets?: number[] = [];
   @Input() emptyConfig: EmptyConfig;
   @Input() actionsConfig: ToolbarConfig;
 
-  @Output() launcher = new EventEmitter()
+  @Output() launcher = new EventEmitter<DashConfigItem>();
 
-  public title:string = T("Dashboard");
-  public subtitle:string = T("Navigation");
-  public widgetColorCssVar = "var(--accent)";
-  public configurable = false;
-  public screenType: string = 'Desktop'; // Desktop || Mobile
+  title: string = T('Dashboard');
+  subtitle: string = T('Navigation');
+  widgetColorCssVar = 'var(--accent)';
+  configurable = false;
+  screenType = 'Desktop'; // Desktop || Mobile
 
-
-  constructor(public router: Router, public translate: TranslateService, public mediaObserver: MediaObserver){
+  constructor(public router: Router, public translate: TranslateService, public mediaObserver: MediaObserver) {
     super(translate);
 
-    mediaObserver.media$.subscribe((evt) =>{
-      let st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
+    mediaObserver.media$.subscribe((evt) => {
+      const st = evt.mqAlias == 'xs' ? 'Mobile' : 'Desktop';
       this.screenType = st;
     });
   }
 
-  /*ngOnChanges(changes:SimpleChanges){
-    if(changes.renderedWidgets){
-      console.log(changes.renderedWidgets);
-    } else if(changes.hiddenWidgets){
-      console.log(changes.hiddenWidgets);
-    } 
-  }*/
-
-  ngOnDestroy(){
-    this.core.unregister({observerClass:this});
+  ngOnDestroy() {
+    this.core.unregister({ observerClass: this });
   }
 
-  ngAfterViewInit(){
-
-    this.core.register({observerClass: this, eventName:"ThemeChanged"}).subscribe((evt: CoreEvent) => {
+  ngAfterViewInit() {
+    this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).subscribe((evt: CoreEvent) => {
     });
-
-
   }
 
-  nameFromIdentifier(identifier){
+  nameFromIdentifier(identifier: string) {
     const spl = identifier.split(',');
     const key = spl[0];
     const value = spl[1];
 
-    if(key == 'name'){
+    if (key == 'name') {
       return value;
-    } else { 
-      return '';
     }
-
+    return '';
   }
 
-  launchWidget(widget){
+  launchWidget(widget: DashConfigItem) {
     this.launcher.emit(widget);
   }
 
-  triggerConfigure(){
-    this.actionsConfig.target.next({name: 'ToolbarChanged'});
+  triggerConfigure() {
+    this.actionsConfig.target.next({ name: 'ToolbarChanged' });
   }
-
 }
