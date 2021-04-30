@@ -2,6 +2,7 @@ import {
   ApplicationRef, Component, Injector, Type,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ApiEndpoint } from 'app/interfaces/api-directory.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { WebSocketService, StorageService, DialogService } from 'app/services';
 import { PreferencesService } from 'app/core/services/preferences.service';
